@@ -3,13 +3,46 @@
 	<head>
 		<meta charset="UTF-8">
 		<link rel="stylesheet" href="desk-ui.css">
+		<link rel="stylesheet" href="main.css">
 		<script src="vue.min.js"></script>
 		<script src="desk-ui.js"></script>
 		<title>desk-ui Demo</title>
 	</head>
 	<body>
 		<div id="desk-ui">
-			<di-button>默认按钮</di-button>
+			<di-layout type="block" padding="15">
+				<!-- Layout -->
+				<h1>Layout</h1>
+				<di-layout margin="0 0 15 0" radius="4">
+					<di-layout flex="1" bgcolor="#d3dce6" padding="15">1</di-layout>
+					<di-layout flex="1" bgcolor="#e5e9f2" padding="15">1</di-layout>
+				</di-layout>
+				<di-layout radius="4">
+					<di-layout flex="3" bgcolor="#d3dce6" padding="15">3</di-layout>
+					<di-layout flex="5" bgcolor="#e5e9f2" padding="15">5</di-layout>
+					<di-layout flex="2" bgcolor="#d3dce6" padding="15">2</di-layout>
+					<di-layout flex="1" bgcolor="#e5e9f2" padding="15">1</di-layout>
+				</di-layout>
+				<!-- Color -->
+				<h1>Color</h1>
+				<h2>主色</h2>
+				<di-layout>
+					<di-layout flex="1" bgcolor="#58B7FF" padding="15" radius="4" color="#FFF" direction="v">Light Blue<div class="color-tip">#58B7FF</div></di-layout>
+					<di-layout flex="1" bgcolor="#20A0FF" padding="15" margin="0 15" radius="4" color="#FFF" direction="v">Blue<div class="color-tip">#20A0FF</div></di-layout>
+					<di-layout flex="1" bgcolor="#1D8CE0" padding="15" radius="4" color="#FFF" direction="v">Dark Blue<div class="color-tip">#1D8CE0</div></di-layout>
+				</di-layout>
+				<h2>辅助色</h2>
+				<di-layout>
+					<di-layout flex="1" bgcolor="#20A0FF" padding="15" radius="4" color="#FFF" direction="v">Blue<div class="color-tip">#20A0FF</div></di-layout>
+					<di-layout flex="1" bgcolor="#13CE66" padding="15" margin="0 15" radius="4" color="#FFF" direction="v">Success<div class="color-tip">#13CE66</div></di-layout>
+					<di-layout flex="1" bgcolor="#F7BA2A" padding="15" margin="0 15 0 0" radius="4" color="#FFF" direction="v">Warning<div class="color-tip">#F7BA2A</div></di-layout>
+					<di-layout flex="1" bgcolor="#FF4949" padding="15" radius="4" color="#FFF" direction="v">Danger<div class="color-tip">#FF4949</div></di-layout>
+				</di-layout>
+				<h1>Button</h1>
+				<di-layout>
+				  <di-button icon="upload2">默认按钮</di-button><di-button type="primary" margin="0 15">主要按钮</di-button>
+				</di-layout>
+			</di-layout>
 		</div>
 	</body>
 </html>
