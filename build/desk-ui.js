@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", function () {
-    Vue.component("du-button", {
-        template: "<button class=\"du-button\"><slot></button>"
+    Vue.component("di-button", {
+        template: "<button class=\"di-button\"><slot></button>"
     });
     new Vue({
         el: "#desk-ui",
