@@ -40,14 +40,21 @@ document.addEventListener("DOMContentLoaded", function(): void {
 
     /* --- Button --- */
     Vue.component("di-button", {
-        template: `<button class="di-button" :class="classObject" :style="styleObject"><span v-if="icon" :class="['di-icon', 'di-icon--' + icon]" style="margin-right: 5px;"></span><slot></button>`,
+        template: `<button :class="classObject" :style="styleObject" :disabled="disabled"><span v-if="icon" :class="['di-icon', 'di-icon--' + icon]"></span><span><slot></span></button>`,
         props: ["margin", "flex", "padding", "radius", "opacity",
-            "type", "icon"],
+            "type", "icon", "disabled"],
         computed: {
             classObject: function(): Object {
-                return {
-                    "di-button--primary": this.type === "primary"
-                };
+                let o = ["di-button"];
+                if (this.type) {
+                    o.push("di-button--" + this.type);
+                } else {
+                    o.push("di-button--plain");
+                }
+                if (this.disabled === "true") {
+                    o.push("is-disabled");
+                }
+                return o;
             },
             styleObject: function(): Object {
                 return {

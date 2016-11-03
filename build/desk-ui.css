@@ -53,7 +53,15 @@ html,body,button,input{font-size: 14px; font-family: "Helvetica Neue",Helvetica,
 .di-button{display: inline-block; line-height: 1; white-space: nowrap; cursor: pointer; background: #fff; border: 1px solid #c0ccda; -webkit-appearance: none; text-align: center; outline: none; margin: 0; -moz-user-select: none; -webkit-user-select: none; -ms-user-select: none; padding: 10px 15px; border-radius: 4px;}
 .di-button:hover{color: #20a0ff; border-color: #20a0ff}
 .di-button:active{color: #1d90e6; border-color: #1d90e6; outline:none}
+.di-button [class*=di-icon-]+span{margin-left: 5px;}
 
 .di-button--primary{color: #fff; background-color: #20a0ff; border-color: #20a0ff;}
 .di-button--primary:hover{background: #4db3ff; border-color: #4db3ff; color: #fff;}
 .di-button--primary:active{background: #1d90e6; border-color: #1d90e6; color: #fff;}
+
+.di-button--text{border:none;color:#20a0ff;background:transparent}
+.di-button--text:hover{color:#4db3ff}
+.di-button--text:active{color:#1d90e6}
+
+.di-button.is-disabled,.di-button.is-disabled:hover{color:#c0ccda;cursor:not-allowed;background-image:none;background-color:#eff2f7;border-color:#d3dce6}
+.di-button.is-disabled.di-button--plain,.di-button.is-disabled.di-button--plain:hover{background-color:#fff;border-color:#d3dce6;color:#c0ccda}
