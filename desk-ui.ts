@@ -40,10 +40,27 @@ document.addEventListener("DOMContentLoaded", function(): void {
 
     /* --- Button --- */
     Vue.component("di-button", {
-        template: `<button :class="classObject" :style="styleObject" :disabled="disabled"><span v-if="icon" :class="['di-icon', 'di-icon--' + icon]"></span><span><slot></span></button>`,
+        template: `<button :class="classObject" :style="styleObject" :disabled="disabledVal"><span v-if="iconLeft" :class="['di-icon', 'di-icon--' + icon]"></span><span><slot></span><span v-if="iconRight" :class="['di-icon', 'di-icon--' + icon]"></span></button>`,
         props: ["margin", "flex", "padding", "radius", "opacity",
-            "type", "icon", "disabled"],
+            "type", "icon", "disabled", "icon-alien"],
         computed: {
+            disabledVal: function(): boolean {
+                return this.disabled === "true" || this.disabled === true ? true : false;
+            },
+            iconLeft: function(): boolean {
+                if (this.icon) {
+                    if (!this.iconAlien || this.iconAlien === "left")
+                        return true;
+                }
+                return false;
+            },
+            iconRight: function(): boolean {
+                if (this.icon) {
+                    if (this.iconAlien === "right")
+                        return true;
+                }
+                return false;
+            },
             classObject: function(): Object {
                 let o = ["di-button"];
                 if (this.type) {
@@ -51,7 +68,7 @@ document.addEventListener("DOMContentLoaded", function(): void {
                 } else {
                     o.push("di-button--plain");
                 }
-                if (this.disabled === "true") {
+                if (this.disabled === "true" || this.disabled === true) {
                     o.push("is-disabled");
                 }
                 return o;
@@ -72,9 +89,5 @@ document.addEventListener("DOMContentLoaded", function(): void {
                 return "";
             }
         }
-    });
-    /* --- Init --- */
-    new Vue({
-        el: "#desk-ui",
     });
 }, false);

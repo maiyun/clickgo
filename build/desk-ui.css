@@ -54,6 +54,7 @@ html,body,button,input{font-size: 14px; font-family: "Helvetica Neue",Helvetica,
 .di-button:hover{color: #20a0ff; border-color: #20a0ff}
 .di-button:active{color: #1d90e6; border-color: #1d90e6; outline:none}
 .di-button [class*=di-icon-]+span{margin-left: 5px;}
+.di-button span+[class*=di-icon-]{margin-left: 5px;}
 
 .di-button--primary{color: #fff; background-color: #20a0ff; border-color: #20a0ff;}
 .di-button--primary:hover{background: #4db3ff; border-color: #4db3ff; color: #fff;}
@@ -63,5 +64,33 @@ html,body,button,input{font-size: 14px; font-family: "Helvetica Neue",Helvetica,
 .di-button--text:hover{color:#4db3ff}
 .di-button--text:active{color:#1d90e6}
 
+.di-button--success{color:#fff;background-color:#13ce66;border-color:#13ce66}.di-button--success:hover{background:#42d885;border-color:#42d885;color:#fff}
+.di-button--success:active{outline:none}
+.di-button--success.is-active,.di-button--success:active{background:#11b95c;border-color:#11b95c;color:#fff}
+.di-button--success-plain{background:#fff;border:1px solid #c0ccda;color:#1f2d3d}
+.di-button--success-plain:hover{background:#fff;border-color:#13ce66;color:#13ce66}
+.di-button--success-plain:active{background:#fff;border-color:#11b95c;color:#11b95c;outline:none}
+.di-button--warning{color:#fff;background-color:#f7ba2a;border-color:#f7ba2a}
+.di-button--warning:hover{background:#f9c855;border-color:#f9c855;color:#fff}
+.di-button--warning:active{outline:none}
+.di-button--warning.is-active,.di-button--warning:active{background:#dea726;border-color:#dea726;color:#fff}
+.di-button--warning-plain{background:#fff;border:1px solid #c0ccda;color:#1f2d3d}
+.di-button--warning-plain:hover{background:#fff;border-color:#f7ba2a;color:#f7ba2a}
+.di-button--warning-plain:active{background:#fff;border-color:#dea726;color:#dea726;outline:none}
+.di-button--danger{color:#fff;background-color:#ff4949;border-color:#ff4949}
+.di-button--danger:hover{background:#ff6d6d;border-color:#ff6d6d;color:#fff}
+.di-button--danger:active{outline:none}
+.di-button--danger.is-active,.di-button--danger:active{background:#e64242;border-color:#e64242;color:#fff}
+.di-button--danger-plain{background:#fff;border:1px solid #c0ccda;color:#1f2d3d}
+.di-button--danger-plain:hover{background:#fff;border-color:#ff4949;color:#ff4949}
+.di-button--danger-plain:active{background:#fff;border-color:#e64242;color:#e64242;outline:none}
+.di-button--info{color:#fff;background-color:#50bfff;border-color:#50bfff}
+.di-button--info:hover{background:#73ccff;border-color:#73ccff;color:#fff}
+.di-button--info:active{outline:none}
+.di-button--info.is-active,.di-button--info:active{background:#48ace6;border-color:#48ace6;color:#fff}
+.di-button--info-plain{background:#fff;border:1px solid #c0ccda;color:#1f2d3d}
+.di-button--info-plain:hover{background:#fff;border-color:#50bfff;color:#50bfff}
+.di-button--info-plain:active{background:#fff;border-color:#48ace6;color:#48ace6;outline:none}
+
 .di-button.is-disabled,.di-button.is-disabled:hover{color:#c0ccda;cursor:not-allowed;background-image:none;background-color:#eff2f7;border-color:#d3dce6}
-.di-button.is-disabled.di-button--plain,.di-button.is-disabled.di-button--plain:hover{background-color:#fff;border-color:#d3dce6;color:#c0ccda}
+.di-button.is-disabled[class*="-plain"],.di-button.is-disabled[class*="-plain"]:hover{background-color:#fff;border-color:#d3dce6;color:#c0ccda}
