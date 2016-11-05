@@ -3,15 +3,26 @@ document.addEventListener("DOMContentLoaded", function(): void {
     new Vue({
         el: "#desk-ui",
         data: {
+            // --- 按钮 ---
             buttonGlDis: "false",
-            buttonGl2Dis: "false"
+            buttonGl2Dis: "false",
+            // --- 按钮组 ---
+            buttonGroupNextIcon: "arrow-right"
         },
         methods: {
+            // --- 按钮 ---
             buttonGl: function(): void {
                 this.buttonGlDis = this.buttonGlDis === "false" ? "true" : "false";
             },
             buttonGl2: function(): void {
                 this.buttonGl2Dis = this.buttonGl2Dis === "false" ? "true" : "false";
+            },
+            // --- 按钮组 ---
+            buttonGroupNext: function(): void {
+                this.buttonGroupNextIcon = "loading";
+                setTimeout((function(): void {
+                    this.buttonGroupNextIcon = "arrow-right";
+                }).bind(this), 100);
             }
         }
     });

@@ -3,7 +3,8 @@ document.addEventListener("DOMContentLoaded", function () {
         el: "#desk-ui",
         data: {
             buttonGlDis: "false",
-            buttonGl2Dis: "false"
+            buttonGl2Dis: "false",
+            buttonGroupNextIcon: "arrow-right"
         },
         methods: {
             buttonGl: function () {
@@ -11,6 +12,12 @@ document.addEventListener("DOMContentLoaded", function () {
             },
             buttonGl2: function () {
                 this.buttonGl2Dis = this.buttonGl2Dis === "false" ? "true" : "false";
+            },
+            buttonGroupNext: function () {
+                this.buttonGroupNextIcon = "loading";
+                setTimeout((function () {
+                    this.buttonGroupNextIcon = "arrow-right";
+                }).bind(this), 100);
             }
         }
     });
