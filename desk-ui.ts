@@ -68,11 +68,11 @@ Vue.component("di-button-group", {
  * -------------- */
 
 Vue.component("di-button", {
-    template: `<button :class="classObject" :style="styleObject" :disabled="disabledVal"><span v-if="iconLeft" :class="['di-icon', 'di-icon--' + icon]"></span><span v-if="$slots.default"><slot></slot></span><span v-if="iconRight" :class="['di-icon', 'di-icon--' + icon]"></span></button>`,
+    template: `<button :class="classObject" :style="styleObject" :disabled="isDisabled" @click="click"><span v-if="iconLeft" :class="['di-icon', 'di-icon--' + icon]"></span><span v-if="$slots.default"><slot></slot></span><span v-if="iconRight" :class="['di-icon', 'di-icon--' + icon]"></span></button>`,
     props: ["margin", "flex", "padding", "radius", "opacity",
         "type", "icon", "disabled", "icon-alien", "size"],
     computed: {
-        disabledVal: function(): boolean {
+        isDisabled: function(): boolean {
             return this.disabled === "true" || this.disabled === true ? true : false;
         },
         iconLeft: function(): boolean {
@@ -119,6 +119,49 @@ Vue.component("di-button", {
                 return `<span class="di-icon di-icon--${this.icon}" style="margin-right: 5px;"></span>`;
             }
             return "";
+        }
+    },
+    methods: {
+        click: function () {
+            this.$emit("click");
+        }
+    }
+});
+
+/* ---------------- *
+ * --- Checkbox --- *
+ * ---------------- */
+
+Vue.component("di-checkbox", {
+    template: `<label class="di-checkbox":class="{'is-disabled': isDisabled}" :style="styleObject"><span class="di-checkbox__input"><span class="di-checkbox__inner" :class="{'is-checked': isChecked}"></span><input type="checkbox" class="di-checkbox__original" :value="label" :checked="isChecked" :disabled="isDisabled" v-model="isChecked"></span><span class="di-checkbox__label">{{label}}</span></label>`,
+    props: ["margin", "flex", "padding", "radius", "opacity",
+        "label", "checked", "disabled"],
+    data: function() {
+        return {
+            isChecked: false
+        };
+    },
+    created: function () {
+        if (this.checked && (this.checked === true || this.checked === "true"))
+            this.isChecked = true;
+    },
+    computed: {
+        isDisabled: function(): boolean {
+            return this.disabled === "true" || this.disabled === true ? true : false;
+        },
+        styleObject: function(): Object {
+            return {
+                "margin": this.margin && this.margin.replace(/ /g, "px ") + "px",
+                "flex": this.flex,
+                "padding": this.padding && this.padding.replace(/ /g, "px ") + "px",
+                "border-radius": this.radius && this.radius.replace(/ /g, "px ") + "px",
+                "opacity": this.opacity
+            };
+        }
+    },
+    watch: {
+        isChecked: function(val, old) {
+            this.$emit("input", val);
         }
     }
 });

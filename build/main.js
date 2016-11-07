@@ -4,7 +4,9 @@ document.addEventListener("DOMContentLoaded", function () {
         data: {
             buttonGlDis: "false",
             buttonGl2Dis: "false",
-            buttonGroupNextIcon: "arrow-right"
+            buttonGroupNextIcon: "arrow-right",
+            checkboxBtnDis: "false",
+            checkboxBtnText: "false"
         },
         methods: {
             buttonGl: function () {
@@ -18,6 +20,9 @@ document.addEventListener("DOMContentLoaded", function () {
                 setTimeout((function () {
                     this.buttonGroupNextIcon = "arrow-right";
                 }).bind(this), 100);
+            },
+            checkboxBtn: function () {
+                this.checkboxBtnDis = this.checkboxBtnDis === "false" ? "true" : "false";
             }
         }
     });

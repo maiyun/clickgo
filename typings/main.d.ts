@@ -1,7 +1,11 @@
 type VueExOption = {
     template: string,
+    data?: any,
     props?: string[] | Object,
-    computed?: Object
+    computed?: Object,
+    methods?: any,
+    created?: any,
+    watch?: any
 };
 
 declare class Vue {

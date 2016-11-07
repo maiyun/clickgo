@@ -7,7 +7,10 @@ document.addEventListener("DOMContentLoaded", function(): void {
             buttonGlDis: "false",
             buttonGl2Dis: "false",
             // --- 按钮组 ---
-            buttonGroupNextIcon: "arrow-right"
+            buttonGroupNextIcon: "arrow-right",
+            // --- 复选框 ---
+            checkboxBtnDis: "false",
+            checkboxBtnText: "false"
         },
         methods: {
             // --- 按钮 ---
@@ -23,6 +26,10 @@ document.addEventListener("DOMContentLoaded", function(): void {
                 setTimeout((function(): void {
                     this.buttonGroupNextIcon = "arrow-right";
                 }).bind(this), 100);
+            },
+            // --- 复选框 ---
+            checkboxBtn: function(): void {
+                this.checkboxBtnDis = this.checkboxBtnDis === "false" ? "true" : "false";
             }
         }
     });
