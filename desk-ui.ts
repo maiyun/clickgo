@@ -3,6 +3,7 @@
  * ------------ */
 
 Vue.component("di-icon", {
+    name: "DiIcon",
     template: `<span class="di-icon" :class="classObject" :style="styleObject"></span>`,
     props: ["margin",
         "icon"],
@@ -23,6 +24,7 @@ Vue.component("di-icon", {
  * -------------- */
 
 Vue.component("di-layout", {
+    name: "DiLayout",
     template: `<div class="di-layout" :style="styleObject"><slot></div>`,
     props: ["margin", "flex", "padding", "radius", "opacity",
         "bgcolor", "direction", "type", "color"],
@@ -48,6 +50,7 @@ Vue.component("di-layout", {
  * ------------------- */
 
 Vue.component("di-button-group", {
+    name: "DiButtonGroup",
     template: `<div class="di-button-group" :style="styleObject"><slot></div>`,
     props: ["margin", "flex", "padding", "radius", "opacity"],
     computed: {
@@ -68,6 +71,7 @@ Vue.component("di-button-group", {
  * -------------- */
 
 Vue.component("di-button", {
+    name: "DiButton",
     template: `<button :class="classObject" :style="styleObject" :disabled="isDisabled" @click="click"><span v-if="iconLeft" :class="['di-icon', 'di-icon--' + icon]"></span><span v-if="$slots.default"><slot></slot></span><span v-if="iconRight" :class="['di-icon', 'di-icon--' + icon]"></span></button>`,
     props: ["margin", "flex", "padding", "radius", "opacity",
         "type", "icon", "disabled", "icon-alien", "size"],
@@ -133,12 +137,14 @@ Vue.component("di-button", {
  * ---------------- */
 
 Vue.component("di-checkbox", {
+    name: "DiCheckbox",
     template: `<label class="di-checkbox":class="{'is-disabled': isDisabled}" :style="styleObject"><span class="di-checkbox__input"><span class="di-checkbox__inner" :class="{'is-checked': isChecked}"></span><input type="checkbox" class="di-checkbox__original" :value="label" :checked="isChecked" :disabled="isDisabled" v-model="isChecked"></span><span class="di-checkbox__label">{{label}}</span></label>`,
     props: ["margin", "flex", "padding", "radius", "opacity",
         "label", "checked", "disabled"],
     data: function() {
         return {
-            isChecked: false
+            isChecked: false,
+            inGroup: this.$parent.$options.name === "DiCheckboxGroup"
         };
     },
     created: function () {
@@ -161,7 +167,47 @@ Vue.component("di-checkbox", {
     },
     watch: {
         isChecked: function(val, old) {
+            if (!this.inGroup) {
+                this.$emit("input", val);
+            } else {
+                if (val) {
+                    this.$parent.checkList.push(this.label);
+                } else {
+                    this.$parent.checkList.splice(this.$parent.checkList.indexOf(this.label), 1);
+                }
+            }
+        }
+    }
+});
+
+/* --------------------- *
+ * --- CheckboxGroup --- *
+ * --------------------- */
+
+Vue.component("di-checkbox-group", {
+    name: "DiCheckboxGroup",
+    template: `<div class="di-checkbox-group" :style="styleObject"><slot></slot></div>`,
+    props: ["margin", "flex", "padding", "radius", "opacity"],
+    data: function() {
+        return {
+            checkList: []
+        };
+    },
+    computed: {
+        styleObject: function(): Object {
+            return {
+                "margin": this.margin && this.margin.replace(/ /g, "px ") + "px",
+                "flex": this.flex,
+                "padding": this.padding && this.padding.replace(/ /g, "px ") + "px",
+                "border-radius": this.radius && this.radius.replace(/ /g, "px ") + "px",
+                "opacity": this.opacity
+            };
+        }
+    },
+    watch: {
+        checkList: function(val, old) {
             this.$emit("input", val);
+            this.$emit("change", val);
         }
     }
 });

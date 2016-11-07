@@ -59,6 +59,9 @@
 				<h1>多选框</h1>
 				<h2>独立选框</h2>
 				<di-checkbox label="复选框A" :disabled="checkboxBtnDis"></di-checkbox><di-checkbox label="复选框B" checked="true" :disabled="checkboxBtnDis" margin="0 0 0 15"></di-checkbox><di-checkbox label="复选框C" :disabled="checkboxBtnDis" margin="0 0 0 15" v-model="checkboxBtnText"></di-checkbox> ({{checkboxBtnText}})<di-button @click="checkboxBtn" margin="0 0 0 30">使左侧{{checkboxBtnDis==="false"?"禁用":"可用"}}</di-button>
+				<h2>数组选框</h2>
+				<di-checkbox-group v-model="checkboxCheckList" margin="0 0 15 0"><di-checkbox label="复选框A"></di-checkbox><di-checkbox label="复选框B" margin="0 0 0 15"></di-checkbox><di-checkbox label="复选框C" margin="0 0 0 15"></di-checkbox><di-checkbox label="禁用" disabled="true" margin="0 0 0 15"></di-checkbox><di-checkbox label="选中且禁用" disabled="true" checked="true" margin="0 0 0 15"></di-checkbox></di-checkbox-group>
+				已选中：{{checkboxCheckList}}
 			</di-layout>
 		</div>
 	</body>

@@ -10,7 +10,8 @@ document.addEventListener("DOMContentLoaded", function(): void {
             buttonGroupNextIcon: "arrow-right",
             // --- 复选框 ---
             checkboxBtnDis: "false",
-            checkboxBtnText: "false"
+            checkboxBtnText: "false",
+            checkboxCheckList: []
         },
         methods: {
             // --- 按钮 ---

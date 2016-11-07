@@ -1,4 +1,5 @@
 type VueExOption = {
+    name: string,
     template: string,
     data?: any,
     props?: string[] | Object,

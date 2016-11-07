@@ -6,7 +6,8 @@ document.addEventListener("DOMContentLoaded", function () {
             buttonGl2Dis: "false",
             buttonGroupNextIcon: "arrow-right",
             checkboxBtnDis: "false",
-            checkboxBtnText: "false"
+            checkboxBtnText: "false",
+            checkboxCheckList: []
         },
         methods: {
             buttonGl: function () {
