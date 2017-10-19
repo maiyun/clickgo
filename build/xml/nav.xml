@@ -1,0 +1,17 @@
+<NavMenu>
+	<NavMenuItem path="main" text="Main" icon="ziyuan">
+		<NavMenuSub>
+			<NavMenuSubItem path="main.xml" text="Main Page"></NavMenuSubItem>
+			<NavMenuSubItem path="main-js.xml" js="same" text="Same JS"></NavMenuSubItem>
+		</NavMenuSub>
+	</NavMenuItem>
+	<NavMenuItem path="controls" text="Controls" icon="guize">
+		<NavMenuChild>
+			<NavMenuChildItem path="control-flex" text="Flex">
+				<NavMenuSub>
+					<NavMenuSubItem path="control-flexrow.xml" text="FlexRow"></NavMenuSubItem>
+				</NavMenuSub>
+			</NavMenuChildItem>
+		</NavMenuChild>
+	</NavMenuItem>
+</NavMenu>

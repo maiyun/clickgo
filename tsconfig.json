@@ -1,10 +1,13 @@
 {
     "compilerOptions": {
-        "module": "amd",
+        "module": "commonjs",
         "removeComments": true,
         "preserveConstEnums": true,
-        "outDir": "./build/",
+        "outDir": "build/",
         "sourceMap": true,
-        "target": "es5"
+        "target": "es5",
+        "strict": true,
+        "declaration": true, // d.ts
+        "newLine": "LF"
     }
 }

@@ -1,68 +1,21 @@
-<!DOCTYPE html>
+<!DOCTYPE HTML>
 <html>
 	<head>
 		<meta charset="UTF-8">
-		<link rel="stylesheet" href="desk-ui.css">
-		<link rel="stylesheet" href="main.css">
-		<script src="vue.min.js"></script>
-		<script src="desk-ui.js"></script>
-		<script src="main.js"></script>
-		<title>desk-ui Demo</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no">
+		<link rel="stylesheet" href="../src/deskui.css">
+		<script src="tmp/base.js"></script>
+		<script src="deskui.js"></script>
+		<script>
+			DeskUI.init({
+				urlPrefix: 'xml/',
+				jsUrlPrefix: 'js/',
+				navMenuPath: 'nav.xml',
+				mainPath: 'main.xml'
+			});
+		</script>
+		<title>DeskUI Control Panel</title>
 	</head>
 	<body>
-		<div id="desk-ui">
-			<di-layout type="block" padding="15">
-				<!-- Layout -->
-				<h1>Layout</h1>
-				<di-layout margin="0 0 15 0" radius="4">
-					<di-layout flex="1" bgcolor="#d3dce6" padding="15">1</di-layout>
-					<di-layout flex="1" bgcolor="#e5e9f2" padding="15">1</di-layout>
-				</di-layout>
-				<di-layout radius="4">
-					<di-layout flex="3" bgcolor="#d3dce6" padding="15">3</di-layout>
-					<di-layout flex="5" bgcolor="#e5e9f2" padding="15">5</di-layout>
-					<di-layout flex="2" bgcolor="#d3dce6" padding="15">2</di-layout>
-					<di-layout flex="1" bgcolor="#e5e9f2" padding="15">1</di-layout>
-				</di-layout>
-				<!-- Color -->
-				<h1>Color</h1>
-				<h2>主色</h2>
-				<di-layout>
-					<di-layout flex="1" bgcolor="#58B7FF" padding="15" radius="4" color="#FFF" direction="v">Light Blue<div class="color-tip">#58B7FF</div></di-layout>
-					<di-layout flex="1" bgcolor="#20A0FF" padding="15" margin="0 15" radius="4" color="#FFF" direction="v">Blue<div class="color-tip">#20A0FF</div></di-layout>
-					<di-layout flex="1" bgcolor="#1D8CE0" padding="15" radius="4" color="#FFF" direction="v">Dark Blue<div class="color-tip">#1D8CE0</div></di-layout>
-				</di-layout>
-				<h2>辅助色</h2>
-				<di-layout>
-					<di-layout flex="1" bgcolor="#20A0FF" padding="15" radius="4" color="#FFF" direction="v">Blue<div class="color-tip">#20A0FF</div></di-layout>
-					<di-layout flex="1" bgcolor="#13CE66" padding="15" margin="0 15" radius="4" color="#FFF" direction="v">Success<div class="color-tip">#13CE66</div></di-layout>
-					<di-layout flex="1" bgcolor="#F7BA2A" padding="15" margin="0 15 0 0" radius="4" color="#FFF" direction="v">Warning<div class="color-tip">#F7BA2A</div></di-layout>
-					<di-layout flex="1" bgcolor="#FF4949" padding="15" radius="4" color="#FFF" direction="v">Danger<div class="color-tip">#FF4949</div></di-layout>
-				</di-layout>
-				<h1>Button</h1>
-				<h2>普通</h2>
-				<di-button>默认按钮</di-button><di-button type="primary" margin="0 0 0 15">主要按钮</di-button><di-button type="text" margin="0 0 0 15">文字按钮</di-button>
-				<h2>禁用</h2>
-				<di-button disabled="true">默认按钮</di-button><di-button type="primary" disabled="true" margin="0 0 0 15">主要按钮</di-button><di-button type="text" disabled="true" margin="0 0 0 15">文字按钮</di-button>
-				<h2>各类样式</h2>
-				<div style="margin-bottom: 15px;">
-					<di-button type="success" :disabled="buttonGlDis">成功按钮</di-button><di-button type="warning" :disabled="buttonGlDis" margin="0 0 0 15">警告按钮</di-button><di-button type="danger" :disabled="buttonGlDis" margin="0 0 0 15">危险按钮</di-button><di-button type="info" :disabled="buttonGlDis" margin="0 0 0 15">信息按钮</di-button><di-button @click.native="buttonGl" margin="0 0 0 30">使左侧所有按钮{{buttonGlDis==="false"?"不":""}}可用</di-button>
-				</div>
-				<di-button type="success-plain" :disabled="buttonGl2Dis">成功按钮</di-button><di-button type="warning-plain" :disabled="buttonGl2Dis" margin="0 0 0 15">警告按钮</di-button><di-button type="danger-plain" :disabled="buttonGl2Dis" margin="0 0 0 15">危险按钮</di-button><di-button type="info-plain" :disabled="buttonGl2Dis" margin="0 0 0 15">信息按钮</di-button><di-button @click.native="buttonGl2" margin="0 0 0 30">使左侧所有按钮{{buttonGl2Dis==="false"?"不":""}}可用</di-button>
-				<h2>图标按钮</h2>
-				<di-button type="primary" icon="edit"></di-button><di-button type="primary" icon="share" margin="0 0 0 15"></di-button><di-button type="primary" icon="delete" margin="0 0 0 15"></di-button><di-button type="primary" icon="search" margin="0 0 0 15">搜索</di-button><di-button type="primary" icon="upload" icon-alien="right" margin="0 0 0 15">上传</di-button>
-				<h2>按钮组</h2>
-				<p>点击下一页体验 loading 效果</p>
-				<di-button-group><di-button type="primary" icon="arrow-left">上一页</di-button><di-button type="primary" :icon="buttonGroupNextIcon" icon-alien="right" @click.native="buttonGroupNext">下一页</di-button></di-button-group><di-button-group margin="0 0 0 15"><di-button type="success" icon="edit"></di-button><di-button type="warning" icon="share"></di-button><di-button type="info" icon="delete"></di-button></di-button-group>
-				<h2>各种尺寸</h2>
-				<di-button type="primary" size="large">大型按钮</di-button><di-button type="primary" margin="0 0 0 15">正常按钮</di-button><di-button type="primary" size="small" margin="0 0 0 15">小型按钮</di-button><di-button type="primary" size="mini" margin="0 0 0 15">超小按钮</di-button>
-				<h1>多选框</h1>
-				<h2>独立选框</h2>
-				<di-checkbox label="复选框A" :disabled="checkboxBtnDis"></di-checkbox><di-checkbox label="复选框B" checked="true" :disabled="checkboxBtnDis" margin="0 0 0 15"></di-checkbox><di-checkbox label="复选框C" :disabled="checkboxBtnDis" margin="0 0 0 15" v-model="checkboxBtnText"></di-checkbox> ({{checkboxBtnText}})<di-button @click="checkboxBtn" margin="0 0 0 30">使左侧{{checkboxBtnDis==="false"?"禁用":"可用"}}</di-button>
-				<h2>数组选框</h2>
-				<di-checkbox-group v-model="checkboxCheckList" margin="0 0 15 0"><di-checkbox label="复选框A"></di-checkbox><di-checkbox label="复选框B" margin="0 0 0 15"></di-checkbox><di-checkbox label="复选框C" margin="0 0 0 15"></di-checkbox><di-checkbox label="禁用" disabled="true" margin="0 0 0 15"></di-checkbox><di-checkbox label="选中且禁用" disabled="true" checked="true" margin="0 0 0 15"></di-checkbox></di-checkbox-group>
-				已选中：{{checkboxCheckList}}
-			</di-layout>
-		</div>
 	</body>
 </html>
