@@ -166,7 +166,7 @@ var DeskUI = (function () {
     };
     DeskUI._open = function (hash) {
         var _this = this;
-        var hashId = hash.replace(/\//g, "-");
+        var hashId = hash.replace(/[\/\.]/g, "-");
         var $item = $("#nav-menu [href=\"#" + hash + "\"]");
         $("#page-title").text($item.text());
         var $page = $(".page[data-path=\"" + hash + "\"]");
@@ -181,7 +181,7 @@ var DeskUI = (function () {
                 var html = Page.render(text, hash, hashId);
                 $("#box").append(html);
                 $(".page:visible").hide();
-                $(document.getElementById(hashId + "-page")).show();
+                $("#" + hashId + "-page").show();
                 var attrJs = $item.attr("data-js");
                 if (attrJs !== undefined) {
                     if (attrJs === "same")

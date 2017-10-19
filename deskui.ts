@@ -186,7 +186,7 @@ class DeskUI {
 
     // --- AJAX 获取 PAGE 页面 ---
     private static _open(hash: string): void {
-        let hashId: string = hash.replace(/\//g, "-");
+        let hashId: string = hash.replace(/[\/\.]/g, "-");
         // --- 先获取菜单 ---
         let $item = $(`#nav-menu [href="#${hash}"]`);
         $("#page-title").text($item.text());
@@ -203,7 +203,7 @@ class DeskUI {
                 let html: string = Page.render(text, hash, hashId);
                 $("#box").append(html);
                 $(".page:visible").hide();
-                $(document.getElementById(`${hashId}-page`)).show();
+                $(`#${hashId}-page`).show();
                 let attrJs = $item.attr("data-js");
                 if (attrJs !== undefined) {
                     // --- 加载JS ---
