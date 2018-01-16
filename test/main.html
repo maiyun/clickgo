@@ -1,0 +1,43 @@
+<el-page>
+	<el-row gutter="20">
+		<el-col span="12">
+			<el-card header="Price">
+				<div style="font-size: 22px; text-align: center; height: 74px; line-height: 74px;">{{price}}</div>
+				<div style="text-align: center; padding-top: 20px;">
+					<el-button @click="$alert('You clicked recharge.')">Recharge</el-button>
+				</div>
+			</el-card>
+		</el-col>
+		<el-col span="12">
+			<el-card header="SMS">
+				<el-row gutter="20">
+					<el-col span="12" style="border-right: 1px solid #ebeef5;">
+						System: <div style="margin-top: 20px; font-size: 22px; text-align: center;">{{sms}}</div>
+					</el-col>
+					<el-col span="12">
+						Note: <div style="margin-top: 20px; font-size: 22px; text-align: center;">{{smsy}}</div>
+					</el-col>
+				</el-row>
+				<div style="text-align: center; padding-top: 20px;">
+					<el-button @click="$alert('You clicked buy.')">Buy</el-button>
+				</div>
+			</el-card>
+		</el-col>
+	</el-row>
+	<el-card header="List" style="margin-top: 20px;">
+		<el-table :data="list" stripe>
+		    <el-table-column align="center" label="类型" width="80">
+		    	<template slot-scope="scope">
+		    		<el-tag type="success">{{scope.row.type}}</el-tag>
+		    	</template>
+		    </el-table-column>
+		    <el-table-column prop="name" label="Name"></el-table-column>
+		    <el-table-column prop="time" label="Time"></el-table-column>
+		    <el-table-column width="120" align="center" label="Button">
+		    	<template slot-scope="scope">
+		        	<el-button @click="$alert('You clicked Button')">Button</el-button>
+		    	</template>
+		    </el-table-column>
+		</el-table>
+	</el-card>
+</el-page>

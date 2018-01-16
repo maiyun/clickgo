@@ -1,0 +1,1 @@
+export let text: string = "Hello import!";

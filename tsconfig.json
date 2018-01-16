@@ -3,8 +3,8 @@
         "module": "commonjs",
         "removeComments": true,
         "preserveConstEnums": true,
-        "outDir": "build/",
-        "sourceMap": true,
+        "outDir": "dist/",
+        "sourceMap": false,
         "target": "es5",
         "strict": true,
         "declaration": true, // d.ts

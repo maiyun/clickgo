@@ -1,0 +1,9 @@
+/node_modules/
+/test/
+/typings/
+/.gitignore
+/.npmignore
+/tsconfig.json
+/tslint.json
+/.git/
+/.vscode/
