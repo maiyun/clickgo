@@ -1,11 +1,13 @@
 {
   "name": "deskrt",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Managed Management Panel Quick Build Framework.",
   "keywords": [
     "deskrt", "ui", "javascript"
   ],
   "main": "dist/deskrt.js",
   "author": "hanguoshuai",
-  "license": "Apache-2.0"
+  "license": "Apache-2.0",
+  "types": "./dist/deskrt.d.ts",
+  "typings": "./dist/deskrt.d.ts"
 }

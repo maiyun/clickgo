@@ -1,5 +1,5 @@
 /*
- * DeskRT 0.0.1
+ * DeskRT
  * Author: HanGuoShuai
  * Github: https://github.com/MaiyunNET/DeskRT
  */
@@ -10,7 +10,7 @@ namespace DeskRT {
     export class Core {
 
         // --- 核心版本 ---
-        public static version: string = "0.0.1";
+        public static version: string = "0.0.2";
 
         // --- 仅允许设置一次的 ---
         private static _pre: string;
@@ -18,6 +18,7 @@ namespace DeskRT {
         private static _frame: string;
         private static _main: string;
         private static _logo: string;
+        private static _theme: string;
 
         // --- Frame VM ---
         public static __frameVm: any;
@@ -31,17 +32,18 @@ namespace DeskRT {
         public static let: any;
 
         // --- 当前的 script 的标签 DOM ---
-        public static __scriptElement = <HTMLScriptElement>document.querySelector("head > script:last-child");
+        public static __scriptElement: HTMLScriptElement;
 
         // --- 页面相关 ---
         public static __pages: any = {};
 
-        public static init(opt: any, fun: () => void = function(): void {}) {
+        public static init(opt: any) {
             this._pre = opt.pre || "";
             this._end = opt.end || "";
             this._frame = opt.frame || "";
             this._main = opt.main || "";
             this._logo = opt.logo || undefined;
+            this._theme = opt.theme || "default";
             this.let = opt.let || {};
 
             document.addEventListener("DOMContentLoaded", (): void => {
@@ -81,6 +83,7 @@ namespace DeskRT {
                     this.__vuex = new Vuex.Store({
                         state: {
                             path: "", // --- 当前页面 ---
+                            theme: this._theme // --- 当前主题 ---
                         },
                         mutations: {
                             set: function(state: any, o: any) {
@@ -108,7 +111,7 @@ namespace DeskRT {
                                 let textArr = <RegExpMatchArray>text.match(/<el-menu(.+?)<\/el-menu><el-header>(.+?)<\/el-header>/);
                                 if (textArr.length > 0) {
                                     // --- 将 Frame 插入 HTML ---
-                                    body.insertAdjacentHTML("afterbegin", `<div id="el-frame">` +
+                                    body.insertAdjacentHTML("afterbegin", `<div id="el-frame" :class="[elTheme!='default' && 'el-theme-' + elTheme]">` +
                                         `<el-container>` +
                                             `<el-aside width="200px">` +
                                                 `<el-logo${this._logo ? ` style="background-image: url(${this._logo});"` : ""}></el-logo>` +
@@ -129,11 +132,15 @@ namespace DeskRT {
                                         // --- 有 js ---
                                         let methods = js.methods || {};
                                         methods.elSelect = elSelect;
+                                        let computed = js.computed || {};
+                                        computed.elTheme = function() {
+                                            return Core.__vuex.state.theme;
+                                        };
                                         Core.__frameVm = new Vue({
                                             el: "#el-frame",
                                             data: js.data,
                                             methods: methods,
-                                            computed: js.computed
+                                            computed: computed
                                         });
                                     } else {
                                         Core.__frameVm = new Vue({
@@ -331,6 +338,11 @@ namespace DeskRT {
             }
         }
 
+        // --- 更改主题 ---
+        public static setTheme(theme: string) {
+            this.__vuex.commit("set", ["theme", theme]);
+        }
+
         // --- 数组去重 ---
         public static arrayUnique(arr: any[]): any[] {
             let res = [];
@@ -346,7 +358,7 @@ namespace DeskRT {
 
         // --- 去除 html 的空白符、换行 ---
         public static purifyText(text: string): string {
-            return text.replace(/\t/g, "").replace(/    /g, "").replace(/\r\n/g, "").replace(/\n/g, "").replace(/\r/g, "");
+            return text.replace(/\t|\r\n|\n|\r|    /g, "");
         }
 
         // --- HTML 转义 ---
@@ -372,7 +384,6 @@ namespace DeskRT {
 
         public static post(url: string, data: any, success: (o: any) => any) {
             let header = new Headers();
-            // header.append("Content-Type", "application/x-www-form-urlencoded");
             let body = new FormData();
             for (let k in data) {
                 if (data[k] !== undefined) {
@@ -548,5 +559,12 @@ namespace DeskRT {
     }
 
 }
+
+// --- iOS 下 :last-child 在此时获取不到 ---
+(() => {
+    let temp = document.querySelectorAll("head > script");
+    DeskRT.Core.__scriptElement = <HTMLScriptElement>temp[temp.length - 1];
+})();
+
 
 

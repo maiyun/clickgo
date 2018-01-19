@@ -1,5 +1,10 @@
 <el-page>
-	<el-row gutter="20">
+	<el-card header="Theme">
+		<el-button @click="DeskRT.Core.setTheme('')">Default</el-button>
+		<el-button @click="DeskRT.Core.setTheme('stone')" style="margin-left: 12px;">Stone</el-button>
+		<el-button @click="DeskRT.Core.setTheme('dark')" style="margin-left: 12px;">Dark</el-button>
+	</el-card>
+	<el-row gutter="20" style="margin-top: 20px;">
 		<el-col span="12">
 			<el-card header="Price">
 				<div style="font-size: 22px; text-align: center; height: 74px; line-height: 74px;">{{price}}</div>

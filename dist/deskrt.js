@@ -1,23 +1,17 @@
-/*
- * DeskRT 0.0.1
- * Author: HanGuoShuai
- * Github: https://github.com/MaiyunNET/DeskRT
- */
-
 "use strict";
 var DeskRT;
 (function (DeskRT) {
     var Core = (function () {
         function Core() {
         }
-        Core.init = function (opt, fun) {
+        Core.init = function (opt) {
             var _this = this;
-            if (fun === void 0) { fun = function () { }; }
             this._pre = opt.pre || "";
             this._end = opt.end || "";
             this._frame = opt.frame || "";
             this._main = opt.main || "";
             this._logo = opt.logo || undefined;
+            this._theme = opt.theme || "default";
             this.let = opt.let || {};
             document.addEventListener("DOMContentLoaded", function () {
                 var body = document.getElementsByTagName("body")[0];
@@ -52,6 +46,7 @@ var DeskRT;
                     _this.__vuex = new Vuex.Store({
                         state: {
                             path: "",
+                            theme: _this._theme
                         },
                         mutations: {
                             set: function (state, o) {
@@ -75,7 +70,7 @@ var DeskRT;
                                 text = _this.purifyText(text);
                                 var textArr = text.match(/<el-menu(.+?)<\/el-menu><el-header>(.+?)<\/el-header>/);
                                 if (textArr.length > 0) {
-                                    body.insertAdjacentHTML("afterbegin", "<div id=\"el-frame\">" +
+                                    body.insertAdjacentHTML("afterbegin", "<div id=\"el-frame\" :class=\"[elTheme!='default' && 'el-theme-' + elTheme]\">" +
                                         "<el-container>" +
                                         "<el-aside width=\"200px\">" +
                                         ("<el-logo" + (_this._logo ? " style=\"background-image: url(" + _this._logo + ");\"" : "") + "></el-logo>") +
@@ -94,11 +89,15 @@ var DeskRT;
                                     if (js !== undefined) {
                                         var methods = js.methods || {};
                                         methods.elSelect = elSelect;
+                                        var computed = js.computed || {};
+                                        computed.elTheme = function () {
+                                            return Core.__vuex.state.theme;
+                                        };
                                         Core.__frameVm = new Vue({
                                             el: "#el-frame",
                                             data: js.data,
                                             methods: methods,
-                                            computed: js.computed
+                                            computed: computed
                                         });
                                     }
                                     else {
@@ -290,6 +289,9 @@ var DeskRT;
                 head.insertBefore(script, this.__scriptElement);
             }
         };
+        Core.setTheme = function (theme) {
+            this.__vuex.commit("set", ["theme", theme]);
+        };
         Core.arrayUnique = function (arr) {
             var res = [];
             var json = {};
@@ -303,15 +305,14 @@ var DeskRT;
             return res;
         };
         Core.purifyText = function (text) {
-            return text.replace(/\t/g, "").replace(/    /g, "").replace(/\r\n/g, "").replace(/\n/g, "").replace(/\r/g, "");
+            return text.replace(/\t|\r\n|\n|\r|    /g, "");
         };
         Core.html2escape = function (html) {
             return html.replace(/[<>&"]/g, function (c) {
                 return { "<": "&lt;", ">": "&gt;", "&": "&amp;", "\"": "&quot;" }[c];
             });
         };
-        Core.version = "0.0.1";
-        Core.__scriptElement = document.querySelector("head > script:last-child");
+        Core.version = "0.0.2";
         Core.__pages = {};
         Core._LIBS = [];
         return Core;
@@ -499,3 +500,7 @@ var DeskRT;
     }());
     DeskRT.Controls = Controls;
 })(DeskRT || (DeskRT = {}));
+(function () {
+    var temp = document.querySelectorAll("head > script");
+    DeskRT.Core.__scriptElement = temp[temp.length - 1];
+})();
