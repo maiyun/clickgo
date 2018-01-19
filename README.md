@@ -15,22 +15,27 @@ Simply download and include with a script tag. DeskRT will be registered as a gl
 
 > Don’t use the minified version during development. You will miss out on all the nice warnings for common mistakes!
 
+**Development Version**
+
 ```html
-<!-- Development Version -->
 <script src="dist/deskrt.js"></script>
 <link rel="stylesheet" href="dist/deskrt.css">
-<!-- Production Version -->
+```
+
+**Production Version**
+
+```html
 <script src="dist/deskrt.min.js"></script>
 <link rel="stylesheet" href="dist/deskrt.min.css">
 ```
 
-### CDN
+## CDN
 
 Recommended: https://cdn.jsdelivr.net/npm/deskrt, which will reflect the latest version as soon as it is published to npm. You can also browse the source of the npm package at https://cdn.jsdelivr.net/npm/deskrt/.
 
 Also available on [unpkg](https://unpkg.com/deskrt).
 
-### NPM
+## NPM
 
 You can install directly using NPM:
 
