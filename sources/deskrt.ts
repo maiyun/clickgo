@@ -10,7 +10,7 @@ namespace DeskRT {
     export class Core {
 
         // --- 核心版本 ---
-        public static version: string = "0.0.2";
+        public static version: string = "0.0.3";
 
         // --- 仅允许设置一次的 ---
         private static _pre: string;
@@ -147,6 +147,11 @@ namespace DeskRT {
                                             el: "#el-frame",
                                             methods: {
                                                 elSelect: elSelect
+                                            },
+                                            computed: {
+                                                elTheme: function() {
+                                                    return Core.__vuex.state.theme;
+                                                }
                                             }
                                         });
                                     }

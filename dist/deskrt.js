@@ -105,6 +105,11 @@ var DeskRT;
                                             el: "#el-frame",
                                             methods: {
                                                 elSelect: elSelect
+                                            },
+                                            computed: {
+                                                elTheme: function () {
+                                                    return Core.__vuex.state.theme;
+                                                }
                                             }
                                         });
                                     }
