@@ -10,7 +10,7 @@ namespace DeskRT {
     export class Core {
 
         // --- 核心版本 ---
-        public static version: string = "0.0.3";
+        public static version: string = "0.0.4";
 
         // --- 仅允许设置一次的 ---
         private static _pre: string;
@@ -559,6 +559,41 @@ namespace DeskRT {
                         `<el-button @click="$emit('addctr')" type="primary" icon="el-icon-circle-plus-outline" size="small">加控件</el-button>` +
                     `</el-button-group>` +
                 `</div>`
+            });
+            // --- DataButton ---
+            Vue.component("el-data-button-group", {
+                props: {
+                    delimiter: {
+                        default: undefined
+                    }
+                },
+                template: `<div class="el-data-button-group" :class="[delimiter !== undefined && 'el--delimiter']">` +
+                    `<slot>` +
+                `</div>`
+            });
+            Vue.component("el-data-button", {
+                template: `<div class="el-data-button">` +
+                    `<slot>` +
+                `</div>`
+            });
+            // --- TileButton ---
+            Vue.component("el-tile-button", {
+                props: {
+                    href: {
+                        default: undefined
+                    },
+                    background: {
+                        default: undefined
+                    }
+                },
+                template: `<a class="el-tile-button" :class="[background && 'el--background', $slots.icon && 'el--icon']" :href="href" :style="{'background': background}">` +
+                    `<div v-if="$slots.icon" class="el-tile-button__icon">` +
+                        `<slot name="icon">` +
+                    `</div>` +
+                    `<div class="el-tile-button__body">` +
+                        `<slot>` +
+                    `</div>` +
+                `</a>`
             });
         }
     }

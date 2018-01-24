@@ -317,7 +317,7 @@ var DeskRT;
                 return { "<": "&lt;", ">": "&gt;", "&": "&amp;", "\"": "&quot;" }[c];
             });
         };
-        Core.version = "0.0.2";
+        Core.version = "0.0.4";
         Core.__pages = {};
         Core._LIBS = [];
         return Core;
@@ -499,6 +499,39 @@ var DeskRT;
                     "<el-button @click=\"$emit('addctr')\" type=\"primary\" icon=\"el-icon-circle-plus-outline\" size=\"small\">\u52A0\u63A7\u4EF6</el-button>" +
                     "</el-button-group>" +
                     "</div>"
+            });
+            Vue.component("el-data-button-group", {
+                props: {
+                    delimiter: {
+                        default: undefined
+                    }
+                },
+                template: "<div class=\"el-data-button-group\" :class=\"[delimiter !== undefined && 'el--delimiter']\">" +
+                    "<slot>" +
+                    "</div>"
+            });
+            Vue.component("el-data-button", {
+                template: "<div class=\"el-data-button\">" +
+                    "<slot>" +
+                    "</div>"
+            });
+            Vue.component("el-tile-button", {
+                props: {
+                    href: {
+                        default: undefined
+                    },
+                    background: {
+                        default: undefined
+                    }
+                },
+                template: "<a class=\"el-tile-button\" :class=\"[background && 'el--background', $slots.icon && 'el--icon']\" :href=\"href\" :style=\"{'background': background}\">" +
+                    "<div v-if=\"$slots.icon\" class=\"el-tile-button__icon\">" +
+                    "<slot name=\"icon\">" +
+                    "</div>" +
+                    "<div class=\"el-tile-button__body\">" +
+                    "<slot>" +
+                    "</div>" +
+                    "</a>"
             });
         };
         return Controls;

@@ -1,3 +1,7 @@
+# 0.0.4
+[+] Add DataButton.
+[+] Add TileButton.
+
 # 0.0.3
 [*] Fixed a bug where the template was unrecognized when no js module was loaded in the frame.
 
