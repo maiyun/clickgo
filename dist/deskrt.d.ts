@@ -24,6 +24,7 @@ declare namespace DeskRT {
         static arrayUnique(arr: any[]): any[];
         static purifyText(text: string): string;
         static html2escape(html: string): string;
+        static clone(obj: any): any;
     }
     class Http {
         static get(url: string, success: (o: any) => any): void;

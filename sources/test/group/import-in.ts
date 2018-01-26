@@ -1,1 +1,3 @@
-export let text: string = "Hello import!";
+export let data = {
+    text: "Hello import!"
+};

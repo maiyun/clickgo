@@ -1,3 +1,7 @@
+# 0.0.5
+[*] Fix a bug that does not recognize when the label is wrapped.
+[*] Repair multiple import reference the same file, and use the same data cause the object is multiplexed BUG.
+
 # 0.0.4
 [+] Add DataButton.
 [+] Add TileButton.

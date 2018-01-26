@@ -185,7 +185,7 @@ var DeskRT;
                             if (js !== undefined) {
                                 opt = {
                                     el: page_1,
-                                    data: js.data,
+                                    data: Core.clone(js.data),
                                     methods: js.methods,
                                     computed: js.computed
                                 };
@@ -310,14 +310,27 @@ var DeskRT;
             return res;
         };
         Core.purifyText = function (text) {
-            return text.replace(/\t|\r\n|\n|\r|    /g, "");
+            return text.replace(/>([\s\S]+?)</g, function (t, $1) {
+                return ">" + $1.replace(/\t|\r\n|\n|\r|    /g, "") + "<";
+            });
         };
         Core.html2escape = function (html) {
             return html.replace(/[<>&"]/g, function (c) {
                 return { "<": "&lt;", ">": "&gt;", "&": "&amp;", "\"": "&quot;" }[c];
             });
         };
-        Core.version = "0.0.4";
+        Core.clone = function (obj) {
+            var newObj = {};
+            if (obj instanceof Array) {
+                newObj = [];
+            }
+            for (var key in obj) {
+                var val = obj[key];
+                newObj[key] = typeof val === "object" ? Core.clone(val) : val;
+            }
+            return newObj;
+        };
+        Core.version = "0.0.5";
         Core.__pages = {};
         Core._LIBS = [];
         return Core;

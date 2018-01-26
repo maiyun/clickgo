@@ -10,7 +10,7 @@ namespace DeskRT {
     export class Core {
 
         // --- 核心版本 ---
-        public static version: string = "0.0.4";
+        public static version: string = "0.0.5";
 
         // --- 仅允许设置一次的 ---
         private static _pre: string;
@@ -233,7 +233,7 @@ namespace DeskRT {
                             if (js !== undefined) {
                                 opt = {
                                     el: page,
-                                    data: js.data,
+                                    data: Core.clone(js.data),
                                     methods: js.methods,
                                     computed: js.computed
                                 };
@@ -363,7 +363,9 @@ namespace DeskRT {
 
         // --- 去除 html 的空白符、换行 ---
         public static purifyText(text: string): string {
-            return text.replace(/\t|\r\n|\n|\r|    /g, "");
+            return text.replace(/>([\s\S]+?)</g, (t: string, $1: string) => {
+                return ">" + $1.replace(/\t|\r\n|\n|\r|    /g, "") + "<";
+            });
         }
 
         // --- HTML 转义 ---
@@ -371,6 +373,19 @@ namespace DeskRT {
             return html.replace(/[<>&"]/g, (c) => {
                 return (<any>{"<": "&lt;", ">": "&gt;", "&": "&amp;", "\"": "&quot;"})[c];
             });
+        }
+
+        // --- 克隆 ---
+        public static clone(obj: any) {
+            let newObj: any = {};
+            if (obj instanceof Array) {
+                newObj = [];
+            }
+            for (let key in obj) {
+                let val = obj[key];
+                newObj[key] = typeof val === "object" ? Core.clone(val) : val;
+            }
+            return newObj;
         }
 
     }

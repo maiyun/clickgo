@@ -1,3 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.text = "Hello import!";
+exports.data = {
+    text: "Hello import!"
+};
