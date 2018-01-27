@@ -10,7 +10,7 @@ namespace DeskRT {
     export class Core {
 
         // --- 核心版本 ---
-        public static version: string = "0.0.5";
+        public static version: string = "0.0.6";
 
         // --- 仅允许设置一次的 ---
         private static _pre: string;
@@ -211,24 +211,25 @@ namespace DeskRT {
                 }).then((text) => {
                     if (goOn) {
                         // text 内容为 HTML
-                        text = text.slice(9, -10);
-                        let page = document.createElement("div");
-                        page.setAttribute(":class", "['el-page', {'el--show': elPageShow}]");
+                        text = text.trim().slice(8, -9);
+                        // --- TODO ---
+                        let pageHTML = [`<el-page :class="['el-page', {'el--show': elPageShow}]"`];
                         if (text.indexOf("<pre>") !== -1) {
                             text = text.replace(/([\s\S]+?)<pre>([\s\S]+?)<\/pre>([\s\S]*?)/g, (t: string, $1: string, $2: string, $3: string): string => {
                                 return this.purifyText($1) + "<pre>" + $2 + "</pre>";
                             });
                             let lio = text.lastIndexOf("</pre>");
                             text = text.slice(0, lio) + this.purifyText(text.slice(lio));
-                            page.innerHTML = text;
+                            pageHTML.push(text + "/el-page>");
                         } else {
-                            page.innerHTML = this.purifyText(text);
+                            pageHTML.push(this.purifyText(text) + "/el-page>");
                         }
                         // --- js ---
                         let callback = (js?: any) => {
                             Mask.hide();
                             // --- 加载 HTML 到页面 ---
-                            pages.appendChild(page);
+                            pages.insertAdjacentHTML("beforeend", pageHTML.join(""));
+                            let page = pages.childNodes[pages.childNodes.length - 1];
                             let opt: any;
                             if (js !== undefined) {
                                 opt = {
