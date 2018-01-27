@@ -1,6 +1,7 @@
 /node_modules/
 /test/
 /typings/
+/_config.yml
 /.gitignore
 /.npmignore
 /tsconfig.json
