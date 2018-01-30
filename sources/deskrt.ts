@@ -10,7 +10,7 @@ namespace DeskRT {
     export class Core {
 
         // --- 核心版本 ---
-        public static version: string = "0.0.6";
+        public static version: string = "0.0.7";
 
         // --- 仅允许设置一次的 ---
         private static _pre: string;
@@ -234,9 +234,10 @@ namespace DeskRT {
                             if (js !== undefined) {
                                 opt = {
                                     el: page,
-                                    data: Core.clone(js.data),
+                                    data: js.data ? Core.clone(js.data) : {},
                                     methods: js.methods,
-                                    computed: js.computed
+                                    computed: js.computed,
+                                    watch: js.watch ? Core.clone(js.watch) : {}
                                 };
                             } else {
                                 opt = {

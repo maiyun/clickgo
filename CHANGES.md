@@ -1,3 +1,6 @@
+# 0.0.7
+[+] Add watch.
+
 # 0.0.6
 [\*] The &lt;el-page&gt; tag supports arbitrary attributes (like v-loading, class, style, etc.).
 

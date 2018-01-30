@@ -185,9 +185,10 @@ var DeskRT;
                             if (js !== undefined) {
                                 opt = {
                                     el: page,
-                                    data: Core.clone(js.data),
+                                    data: js.data ? Core.clone(js.data) : {},
                                     methods: js.methods,
-                                    computed: js.computed
+                                    computed: js.computed,
+                                    watch: js.watch ? Core.clone(js.watch) : {}
                                 };
                             }
                             else {
@@ -330,7 +331,7 @@ var DeskRT;
             }
             return newObj;
         };
-        Core.version = "0.0.6";
+        Core.version = "0.0.7";
         Core.__pages = {};
         Core._LIBS = [];
         return Core;
