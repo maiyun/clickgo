@@ -10,7 +10,7 @@ namespace DeskRT {
     export class Core {
 
         // --- 核心版本 ---
-        public static version: string = "0.0.7";
+        public static version: string = "0.0.8";
 
         // --- 仅允许设置一次的 ---
         private static _pre: string;
@@ -19,6 +19,7 @@ namespace DeskRT {
         private static _main: string;
         private static _logo: string;
         private static _theme: string;
+        private static _asideWidth: string;
 
         // --- Frame VM ---
         public static __frameVm: any;
@@ -44,6 +45,7 @@ namespace DeskRT {
             this._main = opt.main || "";
             this._logo = opt.logo || undefined;
             this._theme = opt.theme || "default";
+            this._asideWidth = opt.asideWidth || "200px";
             this.let = opt.let || {};
 
             document.addEventListener("DOMContentLoaded", (): void => {
@@ -83,7 +85,8 @@ namespace DeskRT {
                     this.__vuex = new Vuex.Store({
                         state: {
                             path: "", // --- 当前页面 ---
-                            theme: this._theme // --- 当前主题 ---
+                            theme: this._theme, // --- 当前主题 ---
+                            asideWidth: this._asideWidth // --- 左边栏宽度 ---
                         },
                         mutations: {
                             set: function(state: any, o: any) {
@@ -113,7 +116,7 @@ namespace DeskRT {
                                     // --- 将 Frame 插入 HTML ---
                                     body.insertAdjacentHTML("afterbegin", `<div id="el-frame" :class="[elTheme!='default' && 'el-theme-' + elTheme]">` +
                                         `<el-container>` +
-                                            `<el-aside width="200px">` +
+                                            `<el-aside :width="elAsideWidth">` +
                                                 `<el-logo${this._logo ? ` style="background-image: url(${this._logo});"` : ""}></el-logo>` +
                                                 `<el-menu @select="elSelect" :default-active="DeskRT.Core.__vuex.state.path"${textArr[1]}</el-menu>` +
                                             `</el-aside>` +
@@ -136,6 +139,9 @@ namespace DeskRT {
                                         computed.elTheme = function() {
                                             return Core.__vuex.state.theme;
                                         };
+                                        computed.elAsideWidth = function() {
+                                            return Core.__vuex.state.asideWidth;
+                                        };
                                         Core.__frameVm = new Vue({
                                             el: "#el-frame",
                                             data: js.data,
@@ -151,6 +157,9 @@ namespace DeskRT {
                                             computed: {
                                                 elTheme: function() {
                                                     return Core.__vuex.state.theme;
+                                                },
+                                                elAsideWidth: function() {
+                                                    return Core.__vuex.state.asideWidth;
                                                 }
                                             }
                                         });
@@ -348,6 +357,11 @@ namespace DeskRT {
         // --- 更改主题 ---
         public static setTheme(theme: string) {
             this.__vuex.commit("set", ["theme", theme]);
+        }
+
+        // --- 更改边栏宽度 ---
+        public static setAsideWidth(width: string) {
+            this.__vuex.commit("set", ["asideWidth", width]);
         }
 
         // --- 数组去重 ---
@@ -566,14 +580,17 @@ namespace DeskRT {
                 `</div>`
             });
             Vue.component("el-phone-line", {
+                props: {
+                    controls: {
+                        default: []
+                    }
+                },
                 template: `<div class="el-phone-line">` +
                     `<template>` +
                         `<slot>` +
                     `</template>` +
-                    `<el-button-group>` +
-                        `<el-button @click="$emit('addline')" type="primary" icon="el-icon-tickets" size="small">加行</el-button>` +
-                        `<el-button @click="$emit('removeline')" type="primary" icon="el-icon-delete" size="small">删行</el-button>` +
-                        `<el-button @click="$emit('addctr')" type="primary" icon="el-icon-circle-plus-outline" size="small">加控件</el-button>` +
+                    `<el-button-group v-if="controls !== []">` +
+                        `<el-button v-for="control of controls" @click="$emit('action', control.name)" type="primary" :icon="control.icon" size="small">{{control.name}}</el-button>` +
                     `</el-button-group>` +
                 `</div>`
             });

@@ -1,0 +1,10 @@
+<el-page>
+    <el-card header="Phone">
+        <el-phone padding="10px">
+            <el-phone-line v-for="(item, index) of list" :controls="[{'name': 'Add line', 'icon': 'el-icon-circle-plus-outline'}, {'name': 'Remove line'}, {'name': 'Add Button'}]" @action="action(arguments[0], item, index)">
+                <div style="flex:1;" v-for="(it, i) of item" @click="item.splice(i, 1)"><button style="width:100%;">{{it}}</button></div>
+            </el-phone-line>
+            <el-button @click="list.push([])" style="width: 100%;">Add line</el-button>
+        </el-phone>
+    </el-card>
+</el-page>

@@ -12,6 +12,7 @@ var DeskRT;
             this._main = opt.main || "";
             this._logo = opt.logo || undefined;
             this._theme = opt.theme || "default";
+            this._asideWidth = opt.asideWidth || "200px";
             this.let = opt.let || {};
             document.addEventListener("DOMContentLoaded", function () {
                 var body = document.getElementsByTagName("body")[0];
@@ -46,7 +47,8 @@ var DeskRT;
                     _this.__vuex = new Vuex.Store({
                         state: {
                             path: "",
-                            theme: _this._theme
+                            theme: _this._theme,
+                            asideWidth: _this._asideWidth
                         },
                         mutations: {
                             set: function (state, o) {
@@ -72,7 +74,7 @@ var DeskRT;
                                 if (textArr.length > 0) {
                                     body.insertAdjacentHTML("afterbegin", "<div id=\"el-frame\" :class=\"[elTheme!='default' && 'el-theme-' + elTheme]\">" +
                                         "<el-container>" +
-                                        "<el-aside width=\"200px\">" +
+                                        "<el-aside :width=\"elAsideWidth\">" +
                                         ("<el-logo" + (_this._logo ? " style=\"background-image: url(" + _this._logo + ");\"" : "") + "></el-logo>") +
                                         ("<el-menu @select=\"elSelect\" :default-active=\"DeskRT.Core.__vuex.state.path\"" + textArr[1] + "</el-menu>") +
                                         "</el-aside>" +
@@ -93,6 +95,9 @@ var DeskRT;
                                         computed.elTheme = function () {
                                             return Core.__vuex.state.theme;
                                         };
+                                        computed.elAsideWidth = function () {
+                                            return Core.__vuex.state.asideWidth;
+                                        };
                                         Core.__frameVm = new Vue({
                                             el: "#el-frame",
                                             data: js.data,
@@ -109,6 +114,9 @@ var DeskRT;
                                             computed: {
                                                 elTheme: function () {
                                                     return Core.__vuex.state.theme;
+                                                },
+                                                elAsideWidth: function () {
+                                                    return Core.__vuex.state.asideWidth;
                                                 }
                                             }
                                         });
@@ -298,6 +306,9 @@ var DeskRT;
         Core.setTheme = function (theme) {
             this.__vuex.commit("set", ["theme", theme]);
         };
+        Core.setAsideWidth = function (width) {
+            this.__vuex.commit("set", ["asideWidth", width]);
+        };
         Core.arrayUnique = function (arr) {
             var res = [];
             var json = {};
@@ -331,7 +342,7 @@ var DeskRT;
             }
             return newObj;
         };
-        Core.version = "0.0.7";
+        Core.version = "0.0.8";
         Core.__pages = {};
         Core._LIBS = [];
         return Core;
@@ -503,14 +514,17 @@ var DeskRT;
                     "</div>"
             });
             Vue.component("el-phone-line", {
+                props: {
+                    controls: {
+                        default: []
+                    }
+                },
                 template: "<div class=\"el-phone-line\">" +
                     "<template>" +
                     "<slot>" +
                     "</template>" +
-                    "<el-button-group>" +
-                    "<el-button @click=\"$emit('addline')\" type=\"primary\" icon=\"el-icon-tickets\" size=\"small\">\u52A0\u884C</el-button>" +
-                    "<el-button @click=\"$emit('removeline')\" type=\"primary\" icon=\"el-icon-delete\" size=\"small\">\u5220\u884C</el-button>" +
-                    "<el-button @click=\"$emit('addctr')\" type=\"primary\" icon=\"el-icon-circle-plus-outline\" size=\"small\">\u52A0\u63A7\u4EF6</el-button>" +
+                    "<el-button-group v-if=\"controls !== []\">" +
+                    "<el-button v-for=\"control of controls\" @click=\"$emit('action', control.name)\" type=\"primary\" :icon=\"control.icon\" size=\"small\">{{control.name}}</el-button>" +
                     "</el-button-group>" +
                     "</div>"
             });

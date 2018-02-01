@@ -1,3 +1,8 @@
+# 0.0.8
+[+] The el-phone control can use the controls attribute to define the number of buttons (we decided to make this destructive update after multiple evaluations, with the original addline, removeline, and addctr obsolete, instead of the action method).  
+[\*] Repair TileButton in the case of high height, there is no vertical center BUG.  
+[+] Added asideWidth property and setAsideWidth method, you can set the width of the left sidebar.
+
 # 0.0.7
 [+] Add watch.
 

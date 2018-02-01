@@ -7,6 +7,7 @@ declare namespace DeskRT {
         private static _main;
         private static _logo;
         private static _theme;
+        private static _asideWidth;
         static __frameVm: any;
         static __popDiv: HTMLDivElement;
         static __vuex: Vuex.Store;
@@ -21,6 +22,7 @@ declare namespace DeskRT {
         static libs(paths: string[], cb: () => any): void;
         private static _libsLoad(index, paths, cb, head);
         static setTheme(theme: string): void;
+        static setAsideWidth(width: string): void;
         static arrayUnique(arr: any[]): any[];
         static purifyText(text: string): string;
         static html2escape(html: string): string;

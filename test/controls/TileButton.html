@@ -9,7 +9,7 @@
                 </el-tile-button>
             </el-col>
             <el-col span="6">
-                <el-tile-button background="#8FCF8F">
+                <el-tile-button background="#67C23A">
                     <div>Background</div>
                     <div>Content</div>
                 </el-tile-button>
@@ -30,5 +30,23 @@
                 </el-tile-button>
             </el-col>
         </el-row>
+        <div style="margin-top: 20px;">Column:</div>
+        <div style="display: flex; flex-direction: column; height: 500px; margin-top: 20px;">
+            <el-tile-button background="#67C23A" style="flex: 1;">
+                <div>One</div>
+                <div>Content</div>
+            </el-tile-button>
+            <el-tile-button background="#E6A23C" style="flex: 1;">
+                <template slot="icon">
+                    <i class="el-icon-d-zhiliang-xianxing" style="font-size: 28px;"></i>
+                </template>
+                <div>Two</div>
+                <div>Content</div>
+            </el-tile-button>
+            <el-tile-button style="flex: 1;">
+                <div>Three</div>
+                <div>Content</div>
+            </el-tile-button>
+        </div>
     </el-card>
 </el-page>
