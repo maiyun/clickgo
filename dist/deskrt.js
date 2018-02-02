@@ -32,11 +32,8 @@ var DeskRT;
                 };
                 window.addEventListener("hashchange", hashChange);
                 _this.libs([
-                    "https://cdn.jsdelivr.net/npm/vue@2/dist/vue.min.js",
-                    "https://cdn.jsdelivr.net/npm/vuex@3/dist/vuex.min.js",
-                    "https://cdn.jsdelivr.net/npm/element-ui@2/lib/index.js",
-                    "https://cdn.jsdelivr.net/npm/element-ui@2/lib/theme-chalk/index.css",
-                    "https://cdn.jsdelivr.net/npm/systemjs@0/dist/system.js"
+                    "https://cdn.jsdelivr.net/combine/npm/vue@2,npm/vuex@3/dist/vuex.min.js,npm/element-ui@2/lib/index.js,npm/systemjs@0/dist/system.js",
+                    "https://cdn.jsdelivr.net/npm/element-ui@2/lib/theme-chalk/index.css"
                 ], function () {
                     SystemJS.config({
                         packages: {
@@ -342,7 +339,7 @@ var DeskRT;
             }
             return newObj;
         };
-        Core.version = "0.0.8";
+        Core.version = "0.0.9";
         Core.__pages = {};
         Core._LIBS = [];
         return Core;

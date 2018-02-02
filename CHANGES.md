@@ -1,3 +1,7 @@
+# 0.0.9
+[\*] Fixed bug where buttons and boxes would be occluded if z-index in el-phone-line was not 0 (maximum z-index can not exceed 1998).  
+[\*] Optimized loading speed.
+
 # 0.0.8
 [+] The el-phone control can use the controls attribute to define the number of buttons (we decided to make this destructive update after multiple evaluations, with the original addline, removeline, and addctr obsolete, instead of the action method).  
 [\*] Repair TileButton in the case of high height, there is no vertical center BUG.  

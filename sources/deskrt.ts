@@ -10,7 +10,7 @@ namespace DeskRT {
     export class Core {
 
         // --- 核心版本 ---
-        public static version: string = "0.0.8";
+        public static version: string = "0.0.9";
 
         // --- 仅允许设置一次的 ---
         private static _pre: string;
@@ -68,11 +68,8 @@ namespace DeskRT {
                 window.addEventListener("hashchange", hashChange);
                 // --- 加载 vue / vuex / 饿了么框架 / systemjs ---
                 this.libs([
-                    "https://cdn.jsdelivr.net/npm/vue@2/dist/vue.min.js",
-                    "https://cdn.jsdelivr.net/npm/vuex@3/dist/vuex.min.js",
-                    "https://cdn.jsdelivr.net/npm/element-ui@2/lib/index.js",
-                    "https://cdn.jsdelivr.net/npm/element-ui@2/lib/theme-chalk/index.css",
-                    "https://cdn.jsdelivr.net/npm/systemjs@0/dist/system.js"
+                    "https://cdn.jsdelivr.net/combine/npm/vue@2,npm/vuex@3/dist/vuex.min.js,npm/element-ui@2/lib/index.js,npm/systemjs@0/dist/system.js",
+                    "https://cdn.jsdelivr.net/npm/element-ui@2/lib/theme-chalk/index.css"
                 ], () => {
                     // --- 初始化 SystemJS ---
                     SystemJS.config({

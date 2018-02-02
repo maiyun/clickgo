@@ -7,4 +7,18 @@
             <el-button @click="list.push([])" style="width: 100%;">Add line</el-button>
         </el-phone>
     </el-card>
+    <el-card header="zIndex" style="margin-top:20px;">
+        <el-phone padding="10px">
+            <el-phone-line>
+                <div style="position:relative;flex:1;height:60px;">
+                    <div style="background:red;position:absolute;left:10px;top:10px;z-index:999;width:250px;height:50px;cursor:move;color:#FFF;">z-index:999;cursor:move;position:absolute;</div>
+                </div>
+            </el-phone-line>
+            <el-phone-line :controls="[{name:'test1'},{name:'test2'},{name:'test3'}]" @action="$alert('You clicked ' + arguments[0])">
+                <div style="position:relative;flex:1;height:40px;">
+                    <div style="background:green;position:absolute;left:10px;top:10px;z-index:999;width:250px;height:20px;cursor:move;color:#FFF;">z-index:999;cursor:move;position:absolute;</div>
+                </div>
+            </el-phone-line>
+        </el-phone>
+    </el-card>
 </el-page>
