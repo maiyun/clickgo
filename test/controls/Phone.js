@@ -4,13 +4,13 @@ exports.data = {
     list: []
 };
 exports.methods = {
-    action: function (name, item, index) {
+    action: function (name, list, item, index) {
         switch (name) {
             case "Add line":
-                this.list.push([]);
+                list.splice(index + 1, 0, []);
                 break;
             case "Remove line":
-                this.list.splice(index, 1);
+                list.splice(index, 1);
                 break;
             case "Add Button":
                 item.push("1");

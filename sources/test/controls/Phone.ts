@@ -3,13 +3,13 @@ export let data = {
 };
 
 export let methods = {
-    action: function(this: any, name: string, item: string[], index: number) {
+    action: function(this: any, name: string, list: any[], item: string[], index: number) {
         switch (name) {
         case "Add line":
-            this.list.push([]);
+            list.splice(index + 1, 0, []);
             break;
         case "Remove line":
-            this.list.splice(index, 1);
+            list.splice(index, 1);
             break;
         case "Add Button":
             item.push("1");
