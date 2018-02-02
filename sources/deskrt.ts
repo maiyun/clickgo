@@ -10,7 +10,7 @@ namespace DeskRT {
     export class Core {
 
         // --- 核心版本 ---
-        public static version: string = "0.0.9";
+        public static version: string = "0.0.10";
 
         // --- 仅允许设置一次的 ---
         private static _pre: string;

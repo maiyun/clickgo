@@ -1,3 +1,6 @@
+# 0.0.10
+[\*] Fixed calc (YUI compressor's bug).
+
 # 0.0.9
 [\*] Fixed bug where buttons and boxes would be occluded if z-index in el-phone-line was not 0 (maximum z-index can not exceed 1998).  
 [\*] Optimized loading speed.

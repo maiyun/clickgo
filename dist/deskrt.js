@@ -339,7 +339,7 @@ var DeskRT;
             }
             return newObj;
         };
-        Core.version = "0.0.9";
+        Core.version = "0.0.10";
         Core.__pages = {};
         Core._LIBS = [];
         return Core;
