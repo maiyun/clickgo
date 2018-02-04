@@ -1,0 +1,27 @@
+<el-page>
+    <el-card header="Pictureswall">
+        <el-pictureswall v-model="list" pre="controls/" @select="select" @remove="remove"></el-pictureswall>
+        <el-exp>{{JSON.stringify(list)}}</el-exp>
+        <el-tip style="margin-top: 10px;">Linkage:{{linkage}}</el-tip>
+        <el-table-info style="margin-top: 20px;">
+            <el-tr>
+                <el-th>Time</el-th>
+                <el-th>Event</el-th>
+                <el-th>Info</el-th>
+            </el-tr>
+            <el-tr v-for="item of infos">
+                <el-td>{{item.time}}</el-td>
+                <el-td>{{item.event}}</el-td>
+                <el-td>{{item.info}}</el-td>
+            </el-tr>
+        </el-table-info>
+    </el-card>
+    <el-dialog :visible.sync="dialogVisible" title="Select picture" :close-on-click-modal="false">
+        <el-radio-group v-model="selectPic">
+            <el-radio v-for="(it, i) of picList" :label="i" border>{{it}}</el-radio>
+        </el-radio-group>
+        <el-center>
+            <el-button @click="ok">OK</el-button>
+        </el-center>
+    </el-dialog>
+</el-page>

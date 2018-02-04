@@ -1,3 +1,6 @@
+# 0.0.11
+[+] Pictureswall control add remove event, you can get the index parameter to determine which picture is deleted.
+
 # 0.0.10
 [\*] Fixed calc (YUI compressor's bug).
 

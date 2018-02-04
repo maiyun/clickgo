@@ -10,7 +10,7 @@ namespace DeskRT {
     export class Core {
 
         // --- 核心版本 ---
-        public static version: string = "0.0.10";
+        public static version: string = "0.0.11";
 
         // --- 仅允许设置一次的 ---
         private static _pre: string;
@@ -549,7 +549,7 @@ namespace DeskRT {
                                     `<span class="el-upload-list__item-preview" @click="preview(url)">` +
                                         `<i class="el-icon-zoom-in"></i>` +
                                     `</span>` +
-                                    `<span class="el-upload-list__item-delete" @click="value.splice(index, 1);$emit('input', value);">` +
+                                    `<span class="el-upload-list__item-delete" @click="value.splice(index, 1);$emit('remove', index);$emit('input', value);">` +
                                         `<i class="el-icon-delete"></i>` +
                                     `</span>` +
                                 `</span>` +

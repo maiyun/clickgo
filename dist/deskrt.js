@@ -339,7 +339,7 @@ var DeskRT;
             }
             return newObj;
         };
-        Core.version = "0.0.10";
+        Core.version = "0.0.11";
         Core.__pages = {};
         Core._LIBS = [];
         return Core;
@@ -484,7 +484,7 @@ var DeskRT;
                     "<span class=\"el-upload-list__item-preview\" @click=\"preview(url)\">" +
                     "<i class=\"el-icon-zoom-in\"></i>" +
                     "</span>" +
-                    "<span class=\"el-upload-list__item-delete\" @click=\"value.splice(index, 1);$emit('input', value);\">" +
+                    "<span class=\"el-upload-list__item-delete\" @click=\"value.splice(index, 1);$emit('remove', index);$emit('input', value);\">" +
                     "<i class=\"el-icon-delete\"></i>" +
                     "</span>" +
                     "</span>" +
