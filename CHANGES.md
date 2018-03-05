@@ -1,3 +1,6 @@
+# 0.0.12
+[+] &lt;el-page&gt; tag, you can use the &lt;style&gt; tag for style definitions and will only work on the current page.
+
 # 0.0.11
 [+] Pictureswall control add remove event, you can get the index parameter to determine which picture is deleted.
 

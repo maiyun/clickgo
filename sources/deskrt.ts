@@ -10,7 +10,7 @@ namespace DeskRT {
     export class Core {
 
         // --- 核心版本 ---
-        public static version: string = "0.0.11";
+        public static version: string = "0.0.12";
 
         // --- 仅允许设置一次的 ---
         private static _pre: string;
@@ -218,24 +218,45 @@ namespace DeskRT {
                     if (goOn) {
                         // text 内容为 HTML
                         text = text.trim().slice(8, -9);
-                        // --- TODO ---
-                        let pageHTML = [`<el-page :class="['el-page', {'el--show': elPageShow}]"`];
+                        let pageHTML = `<el-page :class="['el-page', {'el--show': elPageShow}]"`;
                         if (text.indexOf("<pre>") !== -1) {
                             text = text.replace(/([\s\S]+?)<pre>([\s\S]+?)<\/pre>([\s\S]*?)/g, (t: string, $1: string, $2: string, $3: string): string => {
                                 return this.purifyText($1) + "<pre>" + $2 + "</pre>";
                             });
                             let lio = text.lastIndexOf("</pre>");
                             text = text.slice(0, lio) + this.purifyText(text.slice(lio));
-                            pageHTML.push(text + "/el-page>");
+                            pageHTML += text + "/el-page>";
                         } else {
-                            pageHTML.push(this.purifyText(text) + "/el-page>");
+                            pageHTML += this.purifyText(text) + "/el-page>";
                         }
-                        // --- js ---
+                        // --- 加载 js 结束（或 JS 就不存在） ---
                         let callback = (js?: any) => {
                             Mask.hide();
+                            // --- 判断是否有 style 样式表 ---
+                            let pageRandom = "";
+                            if (pageHTML.indexOf("<style>") !== -1) {
+                                pageRandom = "data-" + (Math.random() * 1000000000000).toFixed();
+                                pageHTML = pageHTML.replace(/<style>([\s\S]+?)<\/style>/g, (t: string, $1: string): string => {
+                                    // --- html 代码里的 style 删掉 ---
+                                    let style = $1.replace(/([\s\S]+?){([\s\S]+?)}/g, (t1: string, $1: string, $2: string): string => {
+                                        return $1.replace(/([a-zA-Z0-9_]+)/g, (t2: string, $1: string): string => {
+                                            return $1 + "[" + pageRandom + "]";
+                                        }) + "{" + $2 + "}";
+                                    });
+                                    this.__scriptElement.insertAdjacentHTML("afterend", "<style>" + style + "</style>");
+                                    return "";
+                                });
+                            }
                             // --- 加载 HTML 到页面 ---
-                            pages.insertAdjacentHTML("beforeend", pageHTML.join(""));
-                            let page = pages.childNodes[pages.childNodes.length - 1];
+                            pages.insertAdjacentHTML("beforeend", pageHTML);
+                            let page = <HTMLElement>pages.childNodes[pages.childNodes.length - 1];
+                            if (pageRandom !== "") {
+                                // --- 随机 PAGE RANDOM 用于 style 单页面生效 ---
+                                let allElement = page.querySelectorAll("*");
+                                for (let element of <HTMLElement[]><any>allElement) {
+                                    element.setAttribute(pageRandom, "true");
+                                }
+                            }
                             let opt: any;
                             if (js !== undefined) {
                                 opt = {
@@ -625,6 +646,10 @@ namespace DeskRT {
                         `<slot>` +
                     `</div>` +
                 `</a>`
+            });
+            // --- Style ---
+            Vue.component("el-style", {
+                template: `<style><slot></style>`
             });
         }
     }

@@ -170,22 +170,42 @@ var DeskRT;
                 }).then(function (text) {
                     if (goOn_1) {
                         text = text.trim().slice(8, -9);
-                        var pageHTML_1 = ["<el-page :class=\"['el-page', {'el--show': elPageShow}]\""];
+                        var pageHTML_1 = "<el-page :class=\"['el-page', {'el--show': elPageShow}]\"";
                         if (text.indexOf("<pre>") !== -1) {
                             text = text.replace(/([\s\S]+?)<pre>([\s\S]+?)<\/pre>([\s\S]*?)/g, function (t, $1, $2, $3) {
                                 return _this.purifyText($1) + "<pre>" + $2 + "</pre>";
                             });
                             var lio = text.lastIndexOf("</pre>");
                             text = text.slice(0, lio) + _this.purifyText(text.slice(lio));
-                            pageHTML_1.push(text + "/el-page>");
+                            pageHTML_1 += text + "/el-page>";
                         }
                         else {
-                            pageHTML_1.push(_this.purifyText(text) + "/el-page>");
+                            pageHTML_1 += _this.purifyText(text) + "/el-page>";
                         }
                         var callback_2 = function (js) {
                             Mask.hide();
-                            pages.insertAdjacentHTML("beforeend", pageHTML_1.join(""));
+                            var pageRandom = "";
+                            if (pageHTML_1.indexOf("<style>") !== -1) {
+                                pageRandom = "data-" + (Math.random() * 1000000000000).toFixed();
+                                pageHTML_1 = pageHTML_1.replace(/<style>([\s\S]+?)<\/style>/g, function (t, $1) {
+                                    var style = $1.replace(/([\s\S]+?){([\s\S]+?)}/g, function (t1, $1, $2) {
+                                        return $1.replace(/([a-zA-Z0-9_]+)/g, function (t2, $1) {
+                                            return $1 + "[" + pageRandom + "]";
+                                        }) + "{" + $2 + "}";
+                                    });
+                                    _this.__scriptElement.insertAdjacentHTML("afterend", "<style>" + style + "</style>");
+                                    return "";
+                                });
+                            }
+                            pages.insertAdjacentHTML("beforeend", pageHTML_1);
                             var page = pages.childNodes[pages.childNodes.length - 1];
+                            if (pageRandom !== "") {
+                                var allElement = page.querySelectorAll("*");
+                                for (var _i = 0, _a = allElement; _i < _a.length; _i++) {
+                                    var element = _a[_i];
+                                    element.setAttribute(pageRandom, "true");
+                                }
+                            }
                             var opt;
                             if (js !== undefined) {
                                 opt = {
@@ -339,7 +359,7 @@ var DeskRT;
             }
             return newObj;
         };
-        Core.version = "0.0.11";
+        Core.version = "0.0.12";
         Core.__pages = {};
         Core._LIBS = [];
         return Core;
@@ -557,6 +577,9 @@ var DeskRT;
                     "<slot>" +
                     "</div>" +
                     "</a>"
+            });
+            Vue.component("el-style", {
+                template: "<style><slot></style>"
             });
         };
         return Controls;
