@@ -1,3 +1,6 @@
+# 0.0.13
+[*] Fix bug.
+
 # 0.0.12
 [+] &lt;el-page&gt; tag, you can use the &lt;style&gt; tag for style definitions and will only work on the current page.
 

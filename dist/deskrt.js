@@ -188,10 +188,10 @@ var DeskRT;
                             if (pageHTML_1.indexOf("<style>") !== -1) {
                                 pageRandom = "data-" + (Math.random() * 1000000000000).toFixed();
                                 pageHTML_1 = pageHTML_1.replace(/<style>([\s\S]+?)<\/style>/g, function (t, $1) {
-                                    var style = $1.replace(/([\s\S]+?){([\s\S]+?)}/g, function (t1, $1, $2) {
-                                        return $1.replace(/([a-zA-Z0-9_]+)/g, function (t2, $1) {
-                                            return $1 + "[" + pageRandom + "]";
-                                        }) + "{" + $2 + "}";
+                                    var style = $1.replace(/([\s\S]+?){([\s\S]+?)}/g, function (t1, $11, $22) {
+                                        return $1.replace(/([\.#])([a-zA-Z0-9_]+)/g, function (t2, $111, $222) {
+                                            return $111 + $222 + "[" + pageRandom + "]";
+                                        }) + "{" + $22 + "}";
                                     });
                                     _this.__scriptElement.insertAdjacentHTML("afterend", "<style>" + style + "</style>");
                                     return "";
@@ -359,7 +359,7 @@ var DeskRT;
             }
             return newObj;
         };
-        Core.version = "0.0.12";
+        Core.version = "0.0.13";
         Core.__pages = {};
         Core._LIBS = [];
         return Core;

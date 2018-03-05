@@ -10,7 +10,7 @@ namespace DeskRT {
     export class Core {
 
         // --- 核心版本 ---
-        public static version: string = "0.0.12";
+        public static version: string = "0.0.13";
 
         // --- 仅允许设置一次的 ---
         private static _pre: string;
@@ -238,10 +238,10 @@ namespace DeskRT {
                                 pageRandom = "data-" + (Math.random() * 1000000000000).toFixed();
                                 pageHTML = pageHTML.replace(/<style>([\s\S]+?)<\/style>/g, (t: string, $1: string): string => {
                                     // --- html 代码里的 style 删掉 ---
-                                    let style = $1.replace(/([\s\S]+?){([\s\S]+?)}/g, (t1: string, $1: string, $2: string): string => {
-                                        return $1.replace(/([a-zA-Z0-9_]+)/g, (t2: string, $1: string): string => {
-                                            return $1 + "[" + pageRandom + "]";
-                                        }) + "{" + $2 + "}";
+                                    let style = $1.replace(/([\s\S]+?){([\s\S]+?)}/g, (t1: string, $11: string, $22: string): string => {
+                                        return $1.replace(/([\.#])([a-zA-Z0-9_]+)/g, (t2: string, $111: string, $222: string): string => {
+                                            return $111 + $222 + "[" + pageRandom + "]";
+                                        }) + "{" + $22 + "}";
                                     });
                                     this.__scriptElement.insertAdjacentHTML("afterend", "<style>" + style + "</style>");
                                     return "";
