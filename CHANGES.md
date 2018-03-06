@@ -1,3 +1,6 @@
+# 0.0.15
+[*] Fixed bug where HTTP library could not be used under some Safari versions because some Safari versions do not support the fetch function.
+
 # 0.0.14
 [*] Fix bugs.
 

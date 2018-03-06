@@ -10,7 +10,7 @@ namespace DeskRT {
     export class Core {
 
         // --- 核心版本 ---
-        public static version: string = "0.0.14";
+        public static version: string = "0.0.15";
 
         // --- 仅允许设置一次的 ---
         private static _pre: string;
@@ -66,9 +66,13 @@ namespace DeskRT {
                     }
                 };
                 window.addEventListener("hashchange", hashChange);
-                // --- 加载 vue / vuex / 饿了么框架 / systemjs ---
+                // --- 加载 vue / vuex / 饿了么框架 / systemjs / fetch-polyfill* ---
+                let jsPath = "https://cdn.jsdelivr.net/combine/npm/vue@2,npm/vuex@3/dist/vuex.min.js,npm/element-ui@2/lib/index.js,npm/systemjs@0/dist/system.js";
+                if (typeof fetch !== "function") {
+                    jsPath += ",npm/fetch-polyfill@0/fetch.min.js";
+                }
                 this.libs([
-                    "https://cdn.jsdelivr.net/combine/npm/vue@2,npm/vuex@3/dist/vuex.min.js,npm/element-ui@2/lib/index.js,npm/systemjs@0/dist/system.js",
+                    jsPath,
                     "https://cdn.jsdelivr.net/npm/element-ui@2/lib/theme-chalk/index.css"
                 ], () => {
                     // --- 初始化 SystemJS ---

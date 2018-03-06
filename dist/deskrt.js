@@ -31,8 +31,12 @@ var DeskRT;
                     }
                 };
                 window.addEventListener("hashchange", hashChange);
+                var jsPath = "https://cdn.jsdelivr.net/combine/npm/vue@2,npm/vuex@3/dist/vuex.min.js,npm/element-ui@2/lib/index.js,npm/systemjs@0/dist/system.js";
+                if (typeof fetch !== "function") {
+                    jsPath += ",npm/fetch-polyfill@0/fetch.min.js";
+                }
                 _this.libs([
-                    "https://cdn.jsdelivr.net/combine/npm/vue@2,npm/vuex@3/dist/vuex.min.js,npm/element-ui@2/lib/index.js,npm/systemjs@0/dist/system.js",
+                    jsPath,
                     "https://cdn.jsdelivr.net/npm/element-ui@2/lib/theme-chalk/index.css"
                 ], function () {
                     SystemJS.config({
@@ -359,7 +363,7 @@ var DeskRT;
             }
             return newObj;
         };
-        Core.version = "0.0.14";
+        Core.version = "0.0.15";
         Core.__pages = {};
         Core._LIBS = [];
         return Core;
