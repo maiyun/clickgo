@@ -1,3 +1,6 @@
+# 0.0.16
+[*] Fix the reference version number of the third-party library to prevent a library from being updated and make the entire project unusable. Starting from this version, third-party libraries will default to the version that can run normally after initial testing, instead of the latest real-time version.
+
 # 0.0.15
 [*] Fixed bug where HTTP library could not be used under some Safari versions because some Safari versions do not support the fetch function.
 

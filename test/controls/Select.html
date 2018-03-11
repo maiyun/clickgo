@@ -1,0 +1,14 @@
+<el-page>
+    <el-card header="Select">
+        <el-select v-model="value" placeholder="Please select...">
+            <el-option
+              v-for="item of option"
+              :label="item.label"
+              :value="item.value">
+            </el-option>
+          </el-select>
+          <div style="margin-top: 10px;">
+              Value: {{value}}
+          </div>
+    </el-card>
+</el-page>
