@@ -1,3 +1,7 @@
+# 0.0.17
+[+] Http library add error callback.
+[*] Update Vue to 2.5.16, ElementUI to 2.3.4, SystemJS to 0.21.3.
+
 # 0.0.16
 [*] Fix the reference version number of the third-party library to prevent a library from being updated and make the entire project unusable. Starting from this version, third-party libraries will default to the version that can run normally after initial testing, instead of the latest real-time version.
 

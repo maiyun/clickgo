@@ -31,13 +31,13 @@ var DeskRT;
                     }
                 };
                 window.addEventListener("hashchange", hashChange);
-                var jsPath = "https://cdn.jsdelivr.net/combine/npm/vue@2.5.15,npm/vuex@3.0.1/dist/vuex.min.js,npm/element-ui@2.1.0/lib/index.js,npm/systemjs@0.21.0/dist/system.js";
+                var jsPath = "https://cdn.jsdelivr.net/combine/npm/vue@2.5.16,npm/vuex@3.0.1/dist/vuex.min.js,npm/element-ui@2.3.4/lib/index.js,npm/systemjs@0.21.3/dist/system.js";
                 if (typeof fetch !== "function") {
                     jsPath += ",npm/fetch-polyfill@0/fetch.min.js";
                 }
                 _this.libs([
                     jsPath,
-                    "https://cdn.jsdelivr.net/npm/element-ui@2/lib/theme-chalk/index.css"
+                    "https://cdn.jsdelivr.net/npm/element-ui@2.3.4/lib/theme-chalk/index.css"
                 ], function () {
                     SystemJS.config({
                         packages: {
@@ -363,7 +363,7 @@ var DeskRT;
             }
             return newObj;
         };
-        Core.version = "0.0.16";
+        Core.version = "0.0.17";
         Core.__pages = {};
         Core._LIBS = [];
         return Core;
@@ -372,15 +372,19 @@ var DeskRT;
     var Http = (function () {
         function Http() {
         }
-        Http.get = function (url, success) {
+        Http.get = function (url, success, error) {
+            if (error === void 0) { error = function () { }; }
             fetch(url, {
                 method: "GET",
                 credentials: "include"
             }).then(function (res) { return res.json(); }).then(function (j) {
                 success(j);
+            }).catch(function (err) {
+                error(err);
             });
         };
-        Http.post = function (url, data, success) {
+        Http.post = function (url, data, success, error) {
+            if (error === void 0) { error = function () { }; }
             var header = new Headers();
             var body = new FormData();
             for (var k in data) {
@@ -395,6 +399,8 @@ var DeskRT;
                 body: body
             }).then(function (res) { return res.json(); }).then(function (j) {
                 success(j);
+            }).catch(function (err) {
+                error(err);
             });
         };
         return Http;

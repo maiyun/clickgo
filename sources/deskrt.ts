@@ -10,7 +10,7 @@ namespace DeskRT {
     export class Core {
 
         // --- 核心版本 ---
-        public static version: string = "0.0.16";
+        public static version: string = "0.0.17";
 
         // --- 仅允许设置一次的 ---
         private static _pre: string;
@@ -67,13 +67,13 @@ namespace DeskRT {
                 };
                 window.addEventListener("hashchange", hashChange);
                 // --- 加载 vue / vuex / 饿了么框架 / systemjs / fetch-polyfill* ---
-                let jsPath = "https://cdn.jsdelivr.net/combine/npm/vue@2.5.15,npm/vuex@3.0.1/dist/vuex.min.js,npm/element-ui@2.1.0/lib/index.js,npm/systemjs@0.21.0/dist/system.js";
+                let jsPath = "https://cdn.jsdelivr.net/combine/npm/vue@2.5.16,npm/vuex@3.0.1/dist/vuex.min.js,npm/element-ui@2.3.4/lib/index.js,npm/systemjs@0.21.3/dist/system.js";
                 if (typeof fetch !== "function") {
                     jsPath += ",npm/fetch-polyfill@0/fetch.min.js";
                 }
                 this.libs([
                     jsPath,
-                    "https://cdn.jsdelivr.net/npm/element-ui@2/lib/theme-chalk/index.css"
+                    "https://cdn.jsdelivr.net/npm/element-ui@2.3.4/lib/theme-chalk/index.css"
                 ], () => {
                     // --- 初始化 SystemJS ---
                     SystemJS.config({
@@ -431,16 +431,18 @@ namespace DeskRT {
     // --- 网络访问 ---
     export class Http {
 
-        public static get(url: string, success: (o: any) => any) {
+        public static get(url: string, success: (o: any) => any, error: (err: any) => any = () => {}) {
             fetch(url, {
                 method: "GET",
                 credentials: "include"
             }).then((res) => res.json()).then((j) => {
                 success(j);
+            }).catch((err) => {
+                error(err);
             });
         }
 
-        public static post(url: string, data: any, success: (o: any) => any) {
+        public static post(url: string, data: any, success: (o: any) => any, error: (err: any) => any = () => {}) {
             let header = new Headers();
             let body = new FormData();
             for (let k in data) {
@@ -455,6 +457,8 @@ namespace DeskRT {
                 body: body
             }).then((res) => res.json()).then((j) => {
                 success(j);
+            }).catch((err) => {
+                error(err);
             });
         }
 

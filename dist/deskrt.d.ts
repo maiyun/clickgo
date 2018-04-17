@@ -29,8 +29,8 @@ declare namespace DeskRT {
         static clone(obj: any): any;
     }
     class Http {
-        static get(url: string, success: (o: any) => any): void;
-        static post(url: string, data: any, success: (o: any) => any): void;
+        static get(url: string, success: (o: any) => any, error?: (err: any) => any): void;
+        static post(url: string, data: any, success: (o: any) => any, error?: (err: any) => any): void;
     }
     class Mask {
         static show(): void;
