@@ -9,7 +9,7 @@
 
 Quickly and easily create a beautiful console interface.
 
-# Installation
+## Installation
 
 Simply download and include with a script tag. DeskRT will be registered as a global variable.
 
@@ -29,7 +29,7 @@ Simply download and include with a script tag. DeskRT will be registered as a gl
 <link rel="stylesheet" href="dist/deskrt.css">
 ```
 
-## CDN (recommend)
+### CDN (recommend)
 
 Recommended: https://cdn.jsdelivr.net/npm/deskrt, which will reflect the latest version as soon as it is published to npm. You can also browse the source of the npm package at https://cdn.jsdelivr.net/npm/deskrt/.
 
@@ -43,7 +43,7 @@ For example:
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/deskrt@1.0.0/dist/theme/blue/index.css">
 ```
 
-## NPM
+### NPM
 
 You can install directly using NPM:
 
@@ -57,16 +57,20 @@ Or install the developing (unstable) version for newest features:
 $ npm i deskrt@dev --save
 ```
 
-# Note
+## Note
 
 DeskRT demand loading SystemJS, Vue, Vuex, highlight.js, whatwg-fetch, promise-polyfill and ElementUI, but **DO NOT** reference these JS and CSS files. DeskRT will automatically reference. You only need to reference DeskRT's JS and CSS files.
 
-# Test
+## Demo
 
-Test in the browser, visit "dist/test/index.html".
+Clone and visit "dist/test/index.html".
 
 [Click here to visit online.](https://maiyunnet.github.io/DeskRT/dist/test/)
 
-# License
+## Changelog
+
+[Changelog](doc/CHANGELOG.md)
+
+## License
 
 This library is published under [Apache-2.0](./LICENSE) license.

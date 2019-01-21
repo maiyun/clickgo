@@ -86,10 +86,11 @@ class DeskRT {
             let locale = "";
             if (DeskRTTools.i18n !== "") {
                 // --- 设置当前语言 ---
-                if (DeskRTTools.locales.indexOf(navigator.language) === -1) {
+                let naviLocale = localStorage.getItem("locale") || navigator.language;
+                if (DeskRTTools.locales.indexOf(naviLocale) === -1) {
                     locale = DeskRTTools.locales[0];
                 } else {
-                    locale = navigator.language;
+                    locale = naviLocale;
                 }
                 // --- 设置 Element UI 的语言加载器 ---
                 Vue.use(ELEMENT, {
@@ -246,13 +247,13 @@ class DeskRT {
                 let nowPage = DeskRTTools.mainEle.querySelector(".el-page.el--show");
                 if (nowPage) {
                     let pkg = nowPage.getAttribute("locale-pkg") || "";
-                    console.log(nowPage);
                     await DeskRTTools.loadLocale(loc, pkg, () => {
                         this.showMask();
                     }, () => {
                         this.hideMask();
                     });
                     DeskRTTools.vuex.commit("setLocale", loc);
+                    localStorage.setItem("locale", loc);
                 } else {
                     alert(`Page not opened.`);
                 }

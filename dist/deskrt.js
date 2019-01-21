@@ -62,7 +62,7 @@ var DeskRT = (function () {
         this._asideWidth = opt.asideWidth || "200px";
         this.let = opt.let || {};
         document.addEventListener("DOMContentLoaded", function () { return __awaiter(_this, void 0, void 0, function () {
-            var body, jsPath, locale, res, text, _a, df, elFrame, elMenu, elHeader, elMenuHtml, elHeaderHtml, js, _b, onSelect, $l, methods, computed, data;
+            var body, jsPath, locale, naviLocale, res, text, _a, df, elFrame, elMenu, elHeader, elMenuHtml, elHeaderHtml, js, _b, onSelect, $l, methods, computed, data;
             var _this = this;
             return __generator(this, function (_c) {
                 switch (_c.label) {
@@ -108,11 +108,12 @@ var DeskRT = (function () {
                         }
                         locale = "";
                         if (!(DeskRTTools.i18n !== "")) return [3, 3];
-                        if (DeskRTTools.locales.indexOf(navigator.language) === -1) {
+                        naviLocale = localStorage.getItem("locale") || navigator.language;
+                        if (DeskRTTools.locales.indexOf(naviLocale) === -1) {
                             locale = DeskRTTools.locales[0];
                         }
                         else {
-                            locale = navigator.language;
+                            locale = naviLocale;
                         }
                         Vue.use(ELEMENT, {
                             i18n: function (path) {
@@ -273,7 +274,6 @@ var DeskRT = (function () {
                         nowPage = DeskRTTools.mainEle.querySelector(".el-page.el--show");
                         if (!nowPage) return [3, 2];
                         pkg = nowPage.getAttribute("locale-pkg") || "";
-                        console.log(nowPage);
                         return [4, DeskRTTools.loadLocale(loc, pkg, function () {
                                 _this.showMask();
                             }, function () {
@@ -282,6 +282,7 @@ var DeskRT = (function () {
                     case 1:
                         _a.sent();
                         DeskRTTools.vuex.commit("setLocale", loc);
+                        localStorage.setItem("locale", loc);
                         return [3, 3];
                     case 2:
                         alert("Page not opened.");

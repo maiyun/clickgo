@@ -1,5 +1,6 @@
 /.sass-cache/
 /dist/test/
+/doc/
 /node_modules/
 /sources/test/
 /typings/
