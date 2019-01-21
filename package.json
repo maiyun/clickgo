@@ -1,9 +1,9 @@
 {
   "name": "deskrt",
-  "version": "0.0.17",
-  "description": "Managed Management Panel Quick Build Framework.",
+  "version": "1.0.0",
+  "description": "Quickly and easily create a beautiful console interface.",
   "keywords": [
-    "deskrt", "ui", "javascript"
+    "deskrt", "backstage", "console"
   ],
   "main": "dist/deskrt.js",
   "author": "hanguoshuai",

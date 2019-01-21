@@ -1,18 +1,28 @@
+# 1.0.0
+[+] Support mobile mode.  
+[+] Support &lt;script&gt; tag in page.  
+[+] Support i18n.  
+[+] Code tag will be automatic highlight, by highlight.js 9.13.1.  
+[\*] Update Vue to 2.5.21, ElementUI to 2.4.11, SystemJS to 0.21.6, change fetch-polyfill to whatwg-fetch 3.0.0, add promise-polyfill 8.1.0.  
+[\*] Remove namespace.  
+[\*] Optimize the display order of the interface and increase the loading speed of the senses.  
+[\*] Use await/async to rewrite Promise code, and add Promise Polyfill library to support old browser.
+
 # 0.0.17
-[+] Http library add error callback.
-[*] Update Vue to 2.5.16, ElementUI to 2.3.4, SystemJS to 0.21.3.
+[+] Http library add error callback.  
+[\*] Update Vue to 2.5.16, ElementUI to 2.3.4, SystemJS to 0.21.3.
 
 # 0.0.16
-[*] Fix the reference version number of the third-party library to prevent a library from being updated and make the entire project unusable. Starting from this version, third-party libraries will default to the version that can run normally after initial testing, instead of the latest real-time version.
+[\*] Fix the reference version number of the third-party library to prevent a library from being updated and make the entire project unusable. Starting from this version, third-party libraries will default to the version that can run normally after initial testing, instead of the latest real-time version.
 
 # 0.0.15
-[*] Fixed bug where HTTP library could not be used under some Safari versions because some Safari versions do not support the fetch function.
+[\*] Fixed bug where HTTP library could not be used under some Safari versions because some Safari versions do not support the fetch function.
 
 # 0.0.14
-[*] Fix bugs.
+[\*] Fix bugs.
 
 # 0.0.13
-[*] Fix bug.
+[\*] Fix bug.
 
 # 0.0.12
 [+] &lt;el-page&gt; tag, you can use the &lt;style&gt; tag for style definitions and will only work on the current page.

@@ -1,0 +1,64 @@
+<el-page load-script>
+    <el-card header="TileButton">
+        <strong>(Mobile responsive layout) + TileButton:</strong>
+        <el-resp :gutter="gutter" style="margin-top: 20px;">
+            <el-resp-row :gutter="gutter">
+                <el-resp-col flex="1">
+                    <el-tile-button>
+                        <div>Title</div>
+                        <div>Content</div>
+                    </el-tile-button>
+                </el-resp-col>
+                <el-resp-col flex="1">
+                    <el-tile-button background="#67C23A">
+                        <div>Background</div>
+                        <div>Content</div>
+                    </el-tile-button>
+                </el-resp-col>
+            </el-resp-row>
+            <el-resp-row :gutter="gutter">
+                <el-resp-col flex="1">
+                    <el-tile-button href="javascript:void(0);">
+                        <div>Href</div>
+                        <div>Content</div>
+                    </el-tile-button>
+                </el-resp-col>
+                <el-resp-col flex="1">
+                    <el-tile-button>
+                        <template slot="icon">
+                            <i class="el-icon-d-baobiao"></i>
+                        </template>
+                        <div>Icon</div>
+                        <div>Content</div>
+                    </el-tile-button>
+                </el-resp-col>
+            </el-resp-row>
+        </el-resp>
+        <div style="margin-top: 20px;">
+            gutter:
+            <el-radio-group v-model="gutter" size="small" style="margin-left: 10px;">
+                <el-radio-button label="0"></el-radio-button>
+                <el-radio-button label="20"></el-radio-button>
+                <el-radio-button label="40"></el-radio-button>
+            </el-radio-group>
+        </div>
+        <div style="margin-top: 20px; font-weight: bold;">Column:</div>
+        <div style="display: flex; flex-direction: column; height: 500px; margin-top: 20px;">
+            <el-tile-button background="#67C23A" style="flex: 1;">
+                <div>One</div>
+                <div>Content</div>
+            </el-tile-button>
+            <el-tile-button background="#E6A23C" style="flex: 1;">
+                <template slot="icon">
+                    <i class="el-icon-d-zhiliang-xianxing"></i>
+                </template>
+                <div>Two</div>
+                <div>Content</div>
+            </el-tile-button>
+            <el-tile-button style="flex: 1;">
+                <div>Three</div>
+                <div>Content</div>
+            </el-tile-button>
+        </div>
+    </el-card>
+</el-page>

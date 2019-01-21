@@ -1,674 +1,1113 @@
 /*
  * DeskRT
- * Author: HanGuoShuai
+ * Author: Han GuoShuai
  * Github: https://github.com/MaiyunNET/DeskRT
  */
 
-namespace DeskRT {
+// --- 核心 ---
+class DeskRT {
 
-    // --- 核心 ---
-    export class Core {
+    /** DeskRT 核心版本 */
+    public static version: string = "1.0.0";
 
-        // --- 核心版本 ---
-        public static version: string = "0.0.17";
+    /** 全局可用的变量 */
+    public static let: any;
 
-        // --- 仅允许设置一次的 ---
-        private static _pre: string;
-        private static _end: string;
-        private static _frame: string;
-        private static _main: string;
-        private static _logo: string;
-        private static _theme: string;
-        private static _asideWidth: string;
+    // --- 可重复设置的（拥有 get 与 set 方法） ---
 
-        // --- Frame VM ---
-        public static __frameVm: any;
-        // --- Pop Div ---
-        public static __popDiv: HTMLDivElement;
+    /** 当前的左边栏宽度 */
+    private static _asideWidth: string;
+    public static get asideWidth(): string {
+        return this._asideWidth;
+    }
+    public static set asideWidth(width: string) {
+        DeskRTTools.vuex.commit("setAsideWidth", width);
+        this._asideWidth = width;
+    }
 
-        // --- 全局 VUEX ---
-        public static __vuex: Vuex.Store;
+    // --- 初始化 ---
+    public static init(opt: any) {
+        DeskRTTools.pre = opt.pre || "";
+        DeskRTTools.end = opt.end || "";
+        DeskRTTools.i18n = opt.i18n || "";
+        DeskRTTools.locales = opt.locales || ["en", "zh-CN"];
+        let frame = opt.frame || "";
+        let main = opt.main || "";
+        let logo = opt.logo || "";
+        let size = opt.size || "";
+        let paths = opt.paths || {};
+        this._asideWidth = opt.asideWidth || "200px";
+        this.let = opt.let || {};
 
-        // --- 全局变量 ---
-        public static let: any;
+        // --- 网页 DOM 加载完成后开始执行 ---
+        document.addEventListener("DOMContentLoaded", async() => {
+            // --- 获取 body 的 DOM ---
+            let body = document.getElementsByTagName("body")[0];
+            // --- 插入 Pop 层 DOM ---
+            body.innerHTML = `<div id="el-pop">` +
+                `<div id="el-mask" class="el--show">` +
+                    `<div class="el-spin el-spin-spinning"><span class="el-spin-dot"><i></i><i></i><i></i><i></i></span></div>` +
+                `</div>` +
+            `</div>`;
+            DeskRTTools.popEle = <HTMLDivElement>document.getElementById("el-pop");
+            DeskRTTools.headEle = document.getElementsByTagName("head")[0];
 
-        // --- 当前的 script 的标签 DOM ---
-        public static __scriptElement: HTMLScriptElement;
-
-        // --- 页面相关 ---
-        public static __pages: any = {};
-
-        public static init(opt: any) {
-            this._pre = opt.pre || "";
-            this._end = opt.end || "";
-            this._frame = opt.frame || "";
-            this._main = opt.main || "";
-            this._logo = opt.logo || undefined;
-            this._theme = opt.theme || "default";
-            this._asideWidth = opt.asideWidth || "200px";
-            this.let = opt.let || {};
-
-            document.addEventListener("DOMContentLoaded", (): void => {
-                // --- 初始化 HTML ---
-                let body = document.getElementsByTagName("body")[0];
-                body.innerHTML = `<div id="el-pop">` +
-                    `<div id="el-mask">` +
-                        `<div class="el-spin el-spin-spinning"><span class="el-spin-dot"><i></i><i></i><i></i><i></i></span></div>` +
-                    `</div>` +
-                `</div>`;
-                this.__popDiv = <HTMLDivElement>document.getElementById("el-pop");
-                // --- 核心：根据 hash 操控 nav 和加载页面 ---
-                let hashChange = (): void => {
-                    let hash: string = window.location.hash;
-                    if (hash !== "") hash = hash.substr(1);
-                    if (hash !== "") {
-                        this.open(hash);
-                    }
-                };
-                window.addEventListener("hashchange", hashChange);
-                // --- 加载 vue / vuex / 饿了么框架 / systemjs / fetch-polyfill* ---
-                let jsPath = "https://cdn.jsdelivr.net/combine/npm/vue@2.5.16,npm/vuex@3.0.1/dist/vuex.min.js,npm/element-ui@2.3.4/lib/index.js,npm/systemjs@0.21.3/dist/system.js";
-                if (typeof fetch !== "function") {
-                    jsPath += ",npm/fetch-polyfill@0/fetch.min.js";
-                }
-                this.libs([
-                    jsPath,
-                    "https://cdn.jsdelivr.net/npm/element-ui@2.3.4/lib/theme-chalk/index.css"
-                ], () => {
-                    // --- 初始化 SystemJS ---
-                    SystemJS.config({
-                        packages: {
-                            "http:": {defaultExtension: "js?" + this._end},
-                            "https:": {defaultExtension: "js?" + this._end}
-                        }
-                    });
-                    // --- 初始化 vuex ---
-                    this.__vuex = new Vuex.Store({
-                        state: {
-                            path: "", // --- 当前页面 ---
-                            theme: this._theme, // --- 当前主题 ---
-                            asideWidth: this._asideWidth // --- 左边栏宽度 ---
-                        },
-                        mutations: {
-                            set: function(state: any, o: any) {
-                                state[o[0]] = o[1];
-                            }
-                        }
-                    });
-                    // --- 加载控件 ---
-                    Controls.init();
-                    // --- 加载 frame ---
-                    Mask.show();
-                    let goOn = true;
-                    fetch(this._pre + this._frame + ".html?" + this._end).then((res) => {
-                        if (res.status === 404) {
-                            alert(`Error: "` + this._pre + this._frame + `.html" not found.`);
-                            goOn = false;
-                        }
-                        return res.text();
-                    }).then((text) => {
-                        if (goOn) {
-                            let callback = (js?: any) => {
-                                Mask.hide();
-                                // --- 分离 frame 文件中的 menu 和 header ---
-                                text = this.purifyText(text);
-                                let textArr = <RegExpMatchArray>text.match(/<el-menu(.+?)<\/el-menu><el-header>(.+?)<\/el-header>/);
-                                if (textArr.length > 0) {
-                                    // --- 将 Frame 插入 HTML ---
-                                    body.insertAdjacentHTML("afterbegin", `<div id="el-frame" :class="[elTheme!='default' && 'el-theme-' + elTheme]">` +
-                                        `<el-container>` +
-                                            `<el-aside :width="elAsideWidth">` +
-                                                `<el-logo${this._logo ? ` style="background-image: url(${this._logo});"` : ""}></el-logo>` +
-                                                `<el-menu @select="elSelect" :default-active="DeskRT.Core.__vuex.state.path"${textArr[1]}</el-menu>` +
-                                            `</el-aside>` +
-                                            `<el-container>` +
-                                                `<el-header>${textArr[2]}</el-header>` +
-                                                `<el-main id="el-main">` +
-                                                `</el-main>` +
-                                            `</el-container>` +
-                                        `</el-container>` +
-                                    `</div>`);
-                                    // --- 点击菜单项跳转 URL ---
-                                    let elSelect = (index: string) => {
-                                        window.location.hash = "#" + index;
-                                    };
-                                    if (js !== undefined) {
-                                        // --- 有 js ---
-                                        let methods = js.methods || {};
-                                        methods.elSelect = elSelect;
-                                        let computed = js.computed || {};
-                                        computed.elTheme = function() {
-                                            return Core.__vuex.state.theme;
-                                        };
-                                        computed.elAsideWidth = function() {
-                                            return Core.__vuex.state.asideWidth;
-                                        };
-                                        Core.__frameVm = new Vue({
-                                            el: "#el-frame",
-                                            data: js.data,
-                                            methods: methods,
-                                            computed: computed
-                                        });
-                                    } else {
-                                        Core.__frameVm = new Vue({
-                                            el: "#el-frame",
-                                            methods: {
-                                                elSelect: elSelect
-                                            },
-                                            computed: {
-                                                elTheme: function() {
-                                                    return Core.__vuex.state.theme;
-                                                },
-                                                elAsideWidth: function() {
-                                                    return Core.__vuex.state.asideWidth;
-                                                }
-                                            }
-                                        });
-                                    }
-                                    // --- 加载主页 ---
-                                    if (window.location.hash === "") {
-                                        window.location.hash = "#" + this._main;
-                                    } else {
-                                        hashChange();
-                                    }
-                                } else {
-                                    alert("Error: <el-menu> and <el-header> not found.");
-                                }
-                            };
-                            // --- 加载 frame 的 js ---
-                            SystemJS.import(this._pre + this._frame).then((js) => {
-                                callback(js);
-                            }).catch(() => {
-                                callback();
-                            });
-                        }
-                    });
-                });
+            // --- 注册 hashchange 事件，hash 变动时自动 open 页面 ---
+            window.addEventListener("hashchange", async() => {
+                // --- 必须在里面调用，否则函数体内的 this 指针会出问题 ---
+                await DeskRTTools.onHashChange();
             });
-        }
 
-        // --- 开启 page ---
-        public static open(path: string) {
-            // --- 判断有没有问号 ---
-            let queryIndex = path.indexOf("?");
-            let query: any = {};
-            if (queryIndex !== -1) {
-                let queryArray = path.slice(queryIndex + 1).split("&");
-                path = path.slice(0, queryIndex);
-                for (let i = 0; i < queryArray.length; ++i) {
-                    let tmp = queryArray[i].split("=");
-                    query[tmp[0]] = decodeURIComponent(tmp[1]);
-                }
+            // --- 加载 Vue / Vuex / Element UI / SystemJS / whatwg-fetch* / promise-polyfill* ---
+            // --- 别处还有 element-ui 的语言包版本需要对应，以及还有高亮 highlight.js 库 ---
+            let jsPath = "https://cdn.jsdelivr.net/combine/npm/vue@2.5.21,npm/vuex@3.0.1/dist/vuex.min.js,npm/element-ui@2.4.11/lib/index.js,npm/systemjs@0.21.6/dist/system.min.js";
+            if (typeof fetch !== "function") {
+                jsPath += ",npm/whatwg-fetch@3.0.0/fetch.min.js";
             }
-            // --- 设置 path ---
-            this.__vuex.commit("set", ["path", path]);
-            // --- 判断 path 有没有被加载 ---
-            let pages = <HTMLDivElement>document.getElementById("el-main");
-            if (this.__pages[path]) {
-                // --- 已经加载过 ---
-                this.__pages[path].elQuery = query;
-                if (this.__pages[path].elOpen) {
-                    this.__pages[path].elOpen();
+            if (typeof Promise !== "function") {
+                jsPath += ",npm/promise-polyfill@8.1.0/dist/polyfill.min.js";
+            }
+            // --- 异步加载 element 的 css 基文件（是基本的基，不是搞基的基） ---
+            DeskRTTools.headEle.insertAdjacentHTML("afterbegin", `<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/element-ui@2.4.11/lib/theme-chalk/index.css">`);
+            await this.loadScript([jsPath]);
+            // --- 初始化 SystemJS ---
+            System.config({
+                packages: {
+                    "http:": {defaultExtension: "js?" + DeskRTTools.end},
+                    "https:": {defaultExtension: "js?" + DeskRTTools.end}
+                },
+                map: paths
+            });
+            // --- 设置默认控件大小值 ---
+            if (size !== "") {
+                Vue.prototype.$ELEMENT = { size: size, zIndex: 2e3 };
+            }
+            // --- 加载 i18n，需要默认把 Element UI 的当前客户机语言加载，以及加载当前框架 default 语言包以供 frame 界面使用） ---
+            let locale = "";
+            if (DeskRTTools.i18n !== "") {
+                // --- 设置当前语言 ---
+                if (DeskRTTools.locales.indexOf(navigator.language) === -1) {
+                    locale = DeskRTTools.locales[0];
+                } else {
+                    locale = navigator.language;
                 }
-            } else {
-                Mask.show();
-                let goOn = true;
-                fetch(this._pre + path + ".html?" + this._end).then((res) => {
-                    if (res.status === 404) {
-                        goOn = false;
-                    }
-                    return res.text();
-                }).then((text) => {
-                    if (goOn) {
-                        // text 内容为 HTML
-                        text = text.trim().slice(8, -9);
-                        let pageHTML = `<el-page :class="['el-page', {'el--show': elPageShow}]"`;
-                        if (text.indexOf("<pre>") !== -1) {
-                            text = text.replace(/([\s\S]+?)<pre>([\s\S]+?)<\/pre>([\s\S]*?)/g, (t: string, $1: string, $2: string, $3: string): string => {
-                                return this.purifyText($1) + "<pre>" + $2 + "</pre>";
-                            });
-                            let lio = text.lastIndexOf("</pre>");
-                            text = text.slice(0, lio) + this.purifyText(text.slice(lio));
-                            pageHTML += text + "/el-page>";
-                        } else {
-                            pageHTML += this.purifyText(text) + "/el-page>";
+                // --- 设置 Element UI 的语言加载器 ---
+                Vue.use(ELEMENT, {
+                    i18n: function (path: string) {
+                        if (DeskRTTools.vuex.state.locale !== "zh-CN") {
+                            return DeskRTTools.readLocale(path);
                         }
-                        // --- 加载 js 结束（或 JS 就不存在） ---
-                        let callback = (js?: any) => {
-                            Mask.hide();
-                            // --- 判断是否有 style 样式表 ---
-                            let pageRandom = "";
-                            if (pageHTML.indexOf("<style>") !== -1) {
-                                pageRandom = "data-" + (Math.random() * 1000000000000).toFixed();
-                                pageHTML = pageHTML.replace(/<style>([\s\S]+?)<\/style>/g, (t: string, $1: string): string => {
-                                    // --- html 代码里的 style 删掉 ---
-                                    let style = $1.replace(/([\s\S]+?){([\s\S]+?)}/g, (t1: string, $11: string, $22: string): string => {
-                                        return $11.replace(/([\.#])([a-zA-Z0-9_]+)/g, (t2: string, $111: string, $222: string): string => {
-                                            return $111 + $222 + "[" + pageRandom + "]";
-                                        }) + "{" + $22 + "}";
-                                    });
-                                    this.__scriptElement.insertAdjacentHTML("afterend", "<style>" + style + "</style>");
-                                    return "";
-                                });
-                            }
-                            // --- 加载 HTML 到页面 ---
-                            pages.insertAdjacentHTML("beforeend", pageHTML);
-                            let page = <HTMLElement>pages.childNodes[pages.childNodes.length - 1];
-                            if (pageRandom !== "") {
-                                // --- 随机 PAGE RANDOM 用于 style 单页面生效 ---
-                                let allElement = page.querySelectorAll("*");
-                                for (let element of <HTMLElement[]><any>allElement) {
-                                    element.setAttribute(pageRandom, "true");
+                    }
+                });
+                await DeskRTTools.loadLocale(locale);
+            }
+            // --- 初始化 vuex ---
+            DeskRTTools.vuex = new Vuex.Store({
+                state: {
+                    path: "",                       // --- 当前页面 ---
+                    asideWidth: this._asideWidth,   // --- 左边栏宽度 ---
+                    locale: locale                  // --- 当前语言 ---
+                },
+                mutations: {
+                    setPath: function(state: any, val: any) {
+                        state.path = val;
+                    },
+                    setAsideWidth: function(state: any, val: any) {
+                        state.asideWidth = val;
+                    },
+                    setLocale: function(state: any, val: any) {
+                        state.locale = val;
+                    }
+                }
+            });
+            // --- 加载控件定义信息到 Vue ---
+            DeskRTTools.controlsInit();
+
+            // --- 加载框架主要的 frame.html ---
+            let res = await fetch(DeskRTTools.pre + frame + ".html?" + DeskRTTools.end);
+            if (res.status === 404) {
+                alert(`Error: "` + DeskRTTools.pre + frame + `.html" not found.`);
+                return;
+            }
+            let text = this.purify(await res.text());
+            if (text !== "") {
+                // --- 检测 frame 是否要加载 js（load-script 是否存在） ---
+                let df = document.createElement("div");
+                df.innerHTML = text;
+                let elFrame = df.children[0];
+                let elMenu = elFrame.querySelector("el-menu");
+                let elHeader = elFrame.querySelector("el-header");
+                if (elMenu && elHeader) {
+                    let elMenuHtml = elMenu.innerHTML;
+                    let elHeaderHtml = elHeader.innerHTML;
+                    // --- 加载 Frame 的 JS 文件（如果有） ---
+                    let js = undefined;
+                    if (elFrame.getAttribute("load-script") !== null) {
+                        try {
+                            js = await System.import(DeskRTTools.pre + frame);
+                        } catch {
+                            alert(`Load script error(1)`);
+                            return;
+                        }
+                    }
+                    // --- 将 Frame 插入 HTML ---
+                    body.insertAdjacentHTML("afterbegin", `<div id="el-frame" class="el--mask">` +
+                        `<el-container>` +
+                            `<el-aside :width="_asideWidth" :class="{'el--show': elAsideShow}">` +
+                                `<el-logo${logo ? ` style="background-image: url(${logo});"` : ""}></el-logo>` +
+                                `<el-menu @select="_onSelect" :default-active="DeskRTTools.vuex.state.path">${elMenuHtml}</el-menu>` +
+                            `</el-aside>` +
+                            `<el-container>` +
+                                `<el-header>` +
+                                    `<div class="el-header-left">` +
+                                        `<el-header-item @click="elAsideShow=true"><i class="el-icon-d-liebiaoshitucaidan"></i></el-header-item>` +
+                                    `</div>` +
+                                    elHeaderHtml +
+                                `</el-header>` +
+                                `<el-main id="el-main"></el-main>` +
+                            `</el-container>` +
+                        `</el-container>` +
+                        `<div id="el-aside-mask" :class="{'el--show': elAsideShow}" @click="elAsideShow=false"></div>` +
+                    `</div>`);
+                    // --- 点击左侧菜单产生的回调 ---
+                    let onSelect = (index: string) => {
+                        window.location.hash = "#" + index;
+                    };
+                    // --- 读取语言数据 ---
+                    let $l = (key: string) => {
+                        return DeskRTTools.readLocale(key);
+                    };
+                    if (js !== undefined) {
+                        // --- 有 js ---
+                        let methods = js.methods || {};
+                        methods._onSelect = onSelect;
+                        methods.$l = $l;
+                        let computed = js.computed || {};
+                        computed._asideWidth = () => {
+                            return DeskRTTools.vuex.state.asideWidth;
+                        };
+                        let data = js.data || {};
+                        data.elAsideShow = false;
+                        DeskRTTools.frameVue = new Vue({
+                            el: "#el-frame",
+                            data: data,
+                            methods: methods,
+                            computed: computed
+                        });
+                    } else {
+                        DeskRTTools.frameVue = new Vue({
+                            el: "#el-frame",
+                            data: {
+                                elAsideShow: false
+                            },
+                            methods: {
+                                _onSelect: onSelect,
+                                $l: $l
+                            },
+                            computed: {
+                                _asideWidth: () => {
+                                    return DeskRTTools.vuex.state.asideWidth;
                                 }
                             }
-                            let opt: any;
-                            if (js !== undefined) {
-                                opt = {
-                                    el: page,
-                                    data: js.data ? Core.clone(js.data) : {},
-                                    methods: js.methods,
-                                    computed: js.computed,
-                                    watch: js.watch ? Core.clone(js.watch) : {}
-                                };
-                            } else {
-                                opt = {
-                                    el: page
-                                };
-                            }
-                            if (!opt.computed) {
-                                opt.computed = {};
-                            }
-                            if (!opt.data) {
-                                opt.data = {};
-                            }
-                            opt.data.elPagePath = path;
-                            opt.data.elQuery = query;
-                            opt.computed.elPageShow = function(this: any) {
-                                return this.elPagePath === Core.__vuex.state.path;
-                            };
-                            opt.computed.elMobile = function(this: any) {
-                                return this.elMobile === Core.__vuex.state.mobile;
-                            };
-                            let vm: any = new Vue(opt);
-                            this.__pages[path] = vm;
-
-                            let readyRtn = true;
-                            if (vm.elReady !== undefined) {
-                                readyRtn = vm.elReady();
-                            }
-                            if (vm.elOpen && (readyRtn !== false)) {
-                                vm.elOpen();
-                            }
-                        };
-                        SystemJS.import(this._pre + path).then((js) => {
-                            callback(js);
-                        }).catch(() => {
-                            callback();
                         });
                     }
-                });
-            }
-        }
-        public static go(path: string) {
-            window.location.hash = "#" + path;
-        }
-
-        // --- openUrl ---
-        public static openUrl(url: string) {
-            let a = document.getElementById("el-core-openurl");
-            if (!a) {
-                a = document.createElement("a");
-                a.setAttribute("id", "el-core-openurl");
-                a.setAttribute("target", "_blank");
-                this.__popDiv.appendChild(a);
-            }
-            a.setAttribute("href", url);
-            a.click();
-        }
-
-        // --- 顺序加载 libs 后在执行 callback 运行 ---
-        private static _LIBS: string[] = [];
-        public static libs(paths: string[], cb: () => any) {
-            let noLoad: string[] = [];
-            for (let path of paths) {
-                if (this._LIBS.indexOf(path) === -1) {
-                    noLoad.push(path);
-                }
-            }
-            if (noLoad.length > 0) {
-                // --- 顺序加载 ---
-                Mask.show();
-                this._libsLoad(0, noLoad, cb, document.getElementsByTagName("head")[0]);
-            } else {
-                cb();
-            }
-        }
-        private static _libsLoad(index: number, paths: string[], cb: () => any, head: HTMLHeadElement) {
-            this._LIBS.push(paths[index]);
-            let ext = paths[index].slice(-3);
-            if (ext === "css") {
-                let link = document.createElement("link");
-                link.rel = "stylesheet";
-                link.addEventListener("load", () => {
-                    ++index;
-                    if (paths.length === index) {
-                        Mask.hide();
-                        cb();
+                    DeskRTTools.mainEle = <HTMLMainElement>document.getElementById("el-main");
+                    // --- 加载主页 ---
+                    if (window.location.hash === "") {
+                        window.location.hash = "#" + main;
                     } else {
-                        this._libsLoad(index, paths, cb, head);
+                        await DeskRTTools.onHashChange();
                     }
-                });
-                link.href = paths[index] + "?" + this._end;
-                head.insertBefore(link, this.__scriptElement);
-            } else {
-                let script = document.createElement("script");
-                script.addEventListener("load", () => {
-                    ++index;
-                    if (paths.length === index) {
-                        Mask.hide();
-                        cb();
-                    } else {
-                        this._libsLoad(index, paths, cb, head);
-                    }
-                });
-                script.src = paths[index] + "?" + this._end;
-                head.insertBefore(script, this.__scriptElement);
-            }
-        }
-
-        // --- 更改主题 ---
-        public static setTheme(theme: string) {
-            this.__vuex.commit("set", ["theme", theme]);
-        }
-
-        // --- 更改边栏宽度 ---
-        public static setAsideWidth(width: string) {
-            this.__vuex.commit("set", ["asideWidth", width]);
-        }
-
-        // --- 数组去重 ---
-        public static arrayUnique(arr: any[]): any[] {
-            let res = [];
-            let json: any = {};
-            for (let val of arr) {
-                if (!json[val]) {
-                    res.push(val);
-                    json[val] = 1;
+                } else {
+                    alert("Error: <el-menu> or <el-header> not found.");
                 }
+            } else {
+                alert("Error: Frame is empty.");
             }
-            return res;
-        }
+        });
+    }
 
-        // --- 去除 html 的空白符、换行 ---
-        public static purifyText(text: string): string {
-            return text.replace(/>([\s\S]+?)</g, (t: string, $1: string) => {
-                return ">" + $1.replace(/\t|\r\n|\n|\r|    /g, "") + "<";
+    /**
+     * --- 跳转页面到一个新页面 ---
+     * @param path 要跳转的页面
+     */
+    public static go(path: string): void {
+        window.location.hash = "#" + path;
+    }
+
+    /**
+     * --- 切换当前语言（如果语言不存在会被自动加载，会自动触发 callback 和 mask 相关操作） ---
+     * @param loc 目标语言值
+     */
+    public static async setLocale(loc: string) {
+        if (DeskRTTools.vuex.state.locale !== loc) {
+            if (DeskRTTools.locales.indexOf(loc) !== -1) {
+                // --- 检测当前开启页面的 pkg ---
+                let nowPage = DeskRTTools.mainEle.querySelector(".el-page.el--show");
+                if (nowPage) {
+                    let pkg = nowPage.getAttribute("locale-pkg") || "";
+                    console.log(nowPage);
+                    await DeskRTTools.loadLocale(loc, pkg, () => {
+                        this.showMask();
+                    }, () => {
+                        this.hideMask();
+                    });
+                    DeskRTTools.vuex.commit("setLocale", loc);
+                } else {
+                    alert(`Page not opened.`);
+                }
+            } else {
+                alert(`Locale "${loc}" definition not found(locales).`);
+            }
+        }
+    }
+
+    /**
+     * --- 顺序加载 js 后再执行 callback ---
+     * @param paths 要加载文件的路径数组
+     * @param cb 加载完后执行的回调
+     */
+    public static loadScript(paths: string[]): Promise<void> {
+        return new Promise(async (resolve, reject) => {
+            try {
+                if (paths.length > 0) {
+                    for (let i = 0; i < paths.length; ++i) {
+                        if (DeskRTTools.outPath.indexOf(paths[i]) === -1) {
+                            DeskRTTools.outPath.push(paths[i]);
+                            await DeskRTTools.loadOutScript(paths[i] + "?" + DeskRTTools.end);
+                        }
+                    }
+                }
+                resolve();
+            } catch (e) {
+                reject(e);
+            }
+        });
+    }
+    public static loadLink(paths: string[]): Promise<void> {
+        return new Promise(async (resolve, reject) => {
+            try {
+                if (paths.length > 0) {
+                    for (let i = 0; i < paths.length; ++i) {
+                        if (DeskRTTools.outPath.indexOf(paths[i]) === -1) {
+                            DeskRTTools.outPath.push(paths[i]);
+                            await DeskRTTools.loadOutLink(paths[i] + "?" + DeskRTTools.end);
+                        }
+                    }
+                }
+                resolve();
+            } catch (e) {
+                reject(e);
+            }
+        });
+    }
+
+    /**
+     * --- 数组去重 ---
+     * @param arr 要去重的数组
+     */
+    public static arrayUnique(arr: any[]): any[] {
+        let res = [];
+        let json: any = {};
+        for (let val of arr) {
+            if (!json[val]) {
+                res.push(val);
+                json[val] = 1;
+            }
+        }
+        return res;
+    }
+
+    /**
+     * --- 去除 html 的空白符、换行（pre 里的不去除） ---
+     * @param text 要纯净的字符串
+     */
+    public static purify(text: string): string {
+        if (text.toLowerCase().indexOf("<pre") !== -1) {
+            // --- 有代码块，代码块之间的代码不做处理 ---
+            text = text.replace(/^\s+|\s+$/g, "").replace(/([\s\S]*?)<pre([\s\S]*?)>([\s\S]*?)<\/pre>/ig, (t: string, $1: string, $2: string, $3: string): string => {
+                return this._purify($1) + "<pre" + $2 + ">" + this._purifyPre($3) + "</pre>";
+            });
+            let lio = text.toLowerCase().lastIndexOf("</pre>");
+            return text.slice(0, lio) + this._purify(text.slice(lio));
+        } else {
+            return this._purify(text.replace(/^\s+|\s+$/g, ""));
+        }
+    }
+    // --- 去除标签之外的部分 ---
+    private static _purify(text: string): string {
+        text = ">" + text + "<";
+        text = text.replace(/>([\s\S]*?)</g, (t: string, $1: string) => {
+            return ">" + this._purifyTxt($1) + "<";
+        });
+        return text.slice(1, -1);
+    }
+    private static _purifyTxt(text: string): string {
+        return text.replace(/\t|\r\n|  /g, "").replace(/\n|\r/g, "");
+    }
+    private static _purifyPre(text: string): string {
+        text = this.trim(text);
+        if (text.toLowerCase().indexOf("<code") !== -1) {
+            text = text.replace(/<code(.*?)>(\s*)/gi, (t: string, $1: string, $2: string) => {
+                return "<code" + $1 + ">";
+            }).replace(/(\s*?)<\/code/gi, (t: string, $1: string) => {
+                return "</code";
             });
         }
+        return text;
+    }
 
-        // --- HTML 转义 ---
-        public static html2escape(html: string) {
-            return html.replace(/[<>&"]/g, (c) => {
-                return (<any>{"<": "&lt;", ">": "&gt;", "&": "&amp;", "\"": "&quot;"})[c];
-            });
+    /**
+     * --- 完整的克隆一份数组/对象 ---
+     * @param obj 要克隆的对象
+     */
+    public static clone(obj: any) {
+        let newObj: any = {};
+        if (obj instanceof Array) {
+            newObj = [];
         }
-
-        // --- 克隆 ---
-        public static clone(obj: any) {
-            let newObj: any = {};
-            if (obj instanceof Array) {
-                newObj = [];
-            }
-            for (let key in obj) {
-                let val = obj[key];
-                newObj[key] = typeof val === "object" ? Core.clone(val) : val;
-            }
-            return newObj;
+        for (let key in obj) {
+            let val = obj[key];
+            newObj[key] = typeof val === "object" ? DeskRT.clone(val) : val;
         }
+        return newObj;
+    }
 
+    /**
+     * --- 去除前导尾随 ---
+     * @param text 要去除的字符串
+     */
+    public static trim(text: string): string {
+        return text.replace(/^\s+|\s+$/g, "");
+    }
+
+    /**
+     * --- 将一段字符串中的 HTML 代码转义 ---
+     * @param html HTML 代码
+     */
+    public static html2escape(html: string): string {
+        return html.replace(/[<>&"]/g, (c) => {
+            return (<any>{"<": "&lt;", ">": "&gt;", "&": "&amp;", "\"": "&quot;"})[c];
+        });
+    }
+
+    /**
+     * --- 手动传入 code 值并高亮 code 代码块 ---
+     * @param dom Element 对象
+     * @param code code 值
+     */
+    public static highlight(dom: HTMLElement, code: string): void {
+        if (DeskRTTools.highlightjs !== undefined) {
+            dom.innerText = code;
+            DeskRTTools.highlightjs.highlightBlock(dom);
+        } else {
+            alert("Error: highlight.js not loaded.");
+        }
     }
 
     // --- 网络访问 ---
-    export class Http {
 
-        public static get(url: string, success: (o: any) => any, error: (err: any) => any = () => {}) {
-            fetch(url, {
-                method: "GET",
-                credentials: "include"
-            }).then((res) => res.json()).then((j) => {
-                success(j);
-            }).catch((err) => {
-                error(err);
-            });
-        }
-
-        public static post(url: string, data: any, success: (o: any) => any, error: (err: any) => any = () => {}) {
-            let header = new Headers();
-            let body = new FormData();
-            for (let k in data) {
-                if (data[k] !== undefined) {
-                    body.append(k, data[k]);
+    /**
+     * --- 发起 get 请求 ---
+     * @param url 要请求的 URL 地址
+     */
+    public static async get(url: string): Promise<any> {
+        return new Promise(async (resolve, reject) => {
+            try {
+                let res = await fetch(url, {
+                    method: "GET",
+                    credentials: "include"
+                });
+                let text;
+                let ct = res.headers.get("Content-Type") || "";
+                if (ct.indexOf("json") !== -1) {
+                    text = await res.json();
+                } else {
+                    text = await res.text();
                 }
+                resolve(text);
+            } catch (e) {
+                reject(e);
             }
-            fetch(url, {
-                method: "POST",
-                headers: header,
-                credentials: "include",
-                body: body
-            }).then((res) => res.json()).then((j) => {
-                success(j);
-            }).catch((err) => {
-                error(err);
-            });
-        }
+        });
+    }
 
+    /**
+     * --- 发起 post 请求 ---
+     * @param url 要请求的 URL 地址
+     * @param data 发送的数据
+     */
+    public static async post(url: string, data: any): Promise<any> {
+        return new Promise(async (resolve, reject) => {
+            try {
+                let header = new Headers();
+                let body = new FormData();
+                for (let k in data) {
+                    if (data[k] !== undefined) {
+                        body.append(k, data[k]);
+                    }
+                }
+                let res = await fetch(url, {
+                    method: "POST",
+                    headers: header,
+                    credentials: "include",
+                    body: body
+                });
+                let text;
+                let ct = res.headers.get("Content-Type") || "";
+                if (ct.indexOf("json") !== -1) {
+                    text = await res.json();
+                } else {
+                    text = await res.text();
+                }
+                resolve(text);
+            } catch (e) {
+                reject(e);
+            }
+        });
     }
 
     // --- 遮罩 ---
-    export class Mask {
 
-        public static show() {
-            let frame = document.getElementById("el-frame");
-            if (frame !== null) {
-                frame.classList.add("el--mask");
-            }
-            (<HTMLDivElement>document.getElementById("el-mask")).classList.add("el--show");
+    /**
+     * 显示全局遮罩
+     */
+    public static showMask() {
+        let frame = document.getElementById("el-frame");
+        if (frame !== null) {
+            frame.classList.add("el--mask");
         }
-
-        public static hide() {
-            let frame = document.getElementById("el-frame");
-            if (frame !== null) {
-                frame.classList.remove("el--mask");
-            }
-            (<HTMLDivElement>document.getElementById("el-mask")).classList.remove("el--show");
-        }
-
+        (<HTMLDivElement>document.getElementById("el-mask")).classList.add("el--show");
     }
 
-    // --- 控件 ---
-    export class Controls {
-        public static init() {
-            // --- 头部 ---
-            Vue.component("el-header-item", {
-                template: `<div class="el-header-item" @click="$emit('click')"><slot></div>`
-            });
-            Vue.component("el-logo", {
-                template: `<div class="el-logo"></div>`
-            });
-            // --- 信息表格 ---
-            Vue.component("el-table-info", {
-                template: `<table class="el-table-info">` +
-                    `<tbody><slot></tbody>` +
-                `</table>`
-            });
-            Vue.component("el-tr", {
-                template: `<tr>` +
-                    `<slot>` +
-                `</tr>`
-            });
-            Vue.component("el-th", {
-                template: `<th>` +
-                    `<slot>` +
-                `</th>`
-            });
-            Vue.component("el-td", {
-                template: `<td>` +
-                    `<slot>` +
-                `</td>`
-            });
-            // --- 居中上间距 ---
-            Vue.component("el-center", {
-                template: `<div class="el-center">` +
-                    `<slot>` +
-                `</div>`
-            });
-            // --- 嵌入提示 ---
-            Vue.component("el-tip", {
-                template: `<div class="el-tip">` +
-                    `<slot>` +
-                `</div>`
-            });
-            // --- 表单下方小描述 ---
-            Vue.component("el-exp", {
-                template: `<div class="el-exp">` +
-                    `<slot>` +
-                `</div>`
-            });
-            // --- 照片墙 --- 扩展于 el-upload ---
-            Vue.component("el-pictureswall", {
-                props: {
-                    value: {
-                        default: []
-                    },
-                    pre: {
-                        default: ""
-                    },
-                    end: {
-                        default: ""
-                    },
-                    endPreview: {
-                        default: ""
-                    }
-                },
-                data: function() {
-                    return {
-                        dialogVisible: false,
-                        dialogImageUrl: ""
-                    };
-                },
-                methods: {
-                    preview: function(this: any, url: string) {
-                        this.dialogImageUrl = this.pre + url + this.endPreview;
-                        this.dialogVisible = true;
-                    },
-                    click: function(this: any) {
-                        this.$emit("select");
-                    }
-                },
-                template: `<div class="el-pictureswall">` +
-                    `<div>` +
-                        `<ul class="el-upload-list el-upload-list--picture-card">` +
-                            `<li v-for="(url, index) of value" tabindex="0" class="el-upload-list__item is-success">` +
-                                `<img :src="pre + url + end" alt="" class="el-upload-list__item-thumbnail">` +
-                                `<a class="el-upload-list__item-name">` +
-                                    `<i class="el-icon-document"></i>` +
-                                `</a>` +
-                                `<i class="el-icon-close"></i>` +
-                                `<span class="el-upload-list__item-actions">` +
-                                    `<span class="el-upload-list__item-preview" @click="preview(url)">` +
-                                        `<i class="el-icon-zoom-in"></i>` +
-                                    `</span>` +
-                                    `<span class="el-upload-list__item-delete" @click="value.splice(index, 1);$emit('remove', index);$emit('input', value);">` +
-                                        `<i class="el-icon-delete"></i>` +
-                                    `</span>` +
-                                `</span>` +
-                            `</li>` +
-                        `</ul>` +
-                        `<div tabindex="0" class="el-upload el-upload--picture-card" @click="click">` +
-                            `<i class="el-icon-plus"></i>` +
-                            `<input name="file" class="el-upload__input" type="file">` +
-                        `</div>` +
-                    `</div>` +
-                    `<el-dialog :visible.sync="dialogVisible" size="tiny">` +
-                        `<img width="100%" :src="dialogImageUrl" alt="">` +
-                    `</el-dialog>` +
-                `</div>`
-            });
-            // --- 手机样式 ---
-            Vue.component("el-phone", {
-                props: {
-                    padding: {
-                        default: "0"
-                    }
-                },
-                template: `<div class="el-phone">` +
-                    `<div class="el-phone--inner" :style="{padding: padding}"><slot></div>` +
-                `</div>`
-            });
-            Vue.component("el-phone-line", {
-                props: {
-                    controls: {
-                        default: []
-                    }
-                },
-                template: `<div class="el-phone-line">` +
-                    `<template>` +
-                        `<slot>` +
-                    `</template>` +
-                    `<el-button-group v-if="controls !== []">` +
-                        `<el-button v-for="control of controls" @click="$emit('action', control.name)" type="primary" :icon="control.icon" size="small">{{control.name}}</el-button>` +
-                    `</el-button-group>` +
-                `</div>`
-            });
-            // --- DataButton ---
-            Vue.component("el-data-button-group", {
-                props: {
-                    delimiter: {
-                        default: undefined
-                    }
-                },
-                template: `<div class="el-data-button-group" :class="[delimiter !== undefined && 'el--delimiter']">` +
-                    `<slot>` +
-                `</div>`
-            });
-            Vue.component("el-data-button", {
-                template: `<div class="el-data-button">` +
-                    `<slot>` +
-                `</div>`
-            });
-            // --- TileButton ---
-            Vue.component("el-tile-button", {
-                props: {
-                    href: {
-                        default: undefined
-                    },
-                    background: {
-                        default: undefined
-                    }
-                },
-                template: `<a class="el-tile-button" :class="[background && 'el--background', $slots.icon && 'el--icon']" :href="href" :style="{'background': background}">` +
-                    `<div v-if="$slots.icon" class="el-tile-button__icon">` +
-                        `<slot name="icon">` +
-                    `</div>` +
-                    `<div class="el-tile-button__body">` +
-                        `<slot>` +
-                    `</div>` +
-                `</a>`
-            });
-            // --- Style ---
-            Vue.component("el-style", {
-                template: `<style><slot></style>`
-            });
+    /**
+     * 隐藏全局遮罩
+     */
+    public static hideMask() {
+        let frame = document.getElementById("el-frame");
+        if (frame !== null) {
+            frame.classList.remove("el--mask");
         }
+        (<HTMLDivElement>document.getElementById("el-mask")).classList.remove("el--show");
     }
 
 }
 
-// --- iOS 下 :last-child 在此时获取不到 ---
-(() => {
-    let temp = document.querySelectorAll("head > script");
-    DeskRT.Core.__scriptElement = <HTMLScriptElement>temp[temp.length - 1];
-})();
+// --- 其他工具 ---
+class DeskRTTools {
+
+    // --- 变量 ---
+    public static pre: string = "";
+    public static end: string = "";
+
+    // --- i18n 相关 ---
+    /** i18n 文件路径 */
+    public static i18n: string = "";
+    /** 初始化时可自动调整的语言值 */
+    public static locales: string[] = [];
+    /** 已加载的数据包标签 */
+    public static localePkg: string[] = ["zh-CN.element"];
+    /** 已加载的语言包数据 */
+    public static localeObj: any = {
+        "en": {}
+    };
+
+    // --- 对象 ---
+
+    /** 框架的 VUE 对象 */
+    public static frameVue: any;
+    /** 全局 VUEX 对象 */
+    public static vuex: Vuex.Store;
+    /** 所有页面的列表 */
+    public static pages: any = {};
+    /** 已加载的外部路径 */
+    public static outPath: string[] = [];
+    /** 高亮 js 对象 */
+    public static highlightjs: highlightjs;
+
+    // --- DOM 标签 ---
+
+    /** 浮动层的 DOM 对象 */
+    public static popEle: HTMLDivElement;
+    /** el-main 对应的 DOM 对象 */
+    public static mainEle: HTMLMainElement;
+    /** head 标签 */
+    public static headEle: HTMLHeadElement;
 
 
+
+    // --- 事件 Event ---
+
+
+
+    /**
+     * --- 当 Hash 发生改变时则执行 ---
+     */
+    public static async onHashChange() {
+        let hash: string = window.location.hash;
+        if (hash !== "") {
+            hash = hash.substr(1);
+            await this.openPage(hash);
+        }
+    }
+
+
+
+    // --- 其他方法 ---
+
+
+
+    // --- 加载 script 标签（1条）并等待返回成功（无视是否已经加载过） ---
+    public static loadOutScript(path: string): Promise<void> {
+        return new Promise(async (resolve, reject) => {
+            let script = document.createElement("script");
+            script.addEventListener("load", () => {
+                resolve();
+            });
+            script.addEventListener("error", () => {
+                reject("Load error.");
+            });
+            script.src = path;
+            this.headEle.appendChild(script);
+        });
+    }
+    public static loadOutLink(path: string): Promise<void> {
+        return new Promise(async (resolve, reject) => {
+            let link = document.createElement("link");
+            link.rel = "stylesheet";
+            link.addEventListener("load", () => {
+                resolve();
+            });
+            link.addEventListener("error", () => {
+                reject("Load error.");
+            });
+            link.href = path;
+            this.headEle.appendChild(link);
+        });
+    }
+
+    /**
+     * --- 获取语言值（语言不存在会出错，不会自动加载） ---
+     * @param key 读的值，如 message.ok
+     */
+    public static readLocale(key: string): string {
+        try {
+            return key.split(".").reduce((p, k) => p[k], this.localeObj[this.vuex.state.locale]);
+        } catch (e) {
+            console.log(e);
+            return "LocaleError";
+        }
+    }
+
+    /**
+     * --- 根据当前设定语言加载语言包 ---
+     * @param locale 要加载的目标语言
+     * @param pkg 包名，为空自动填充为 default
+     * @param before 如果需要加载，则在加载前会被执行
+     * @param after 如果需要加载，则在加载完毕后会被执行
+     */
+    public static loadLocale(locale: string, pkg: string = "", before: () => any = () => {}, after: () => any = () => {}): Promise<void> {
+        return new Promise(async (resolve, reject) => {
+            if (pkg === "") {
+                pkg = "default";
+            }
+            let isBefore = false;   // --- 是否需要加载额外语言包 ---
+            // --- 先检测 Element UI 的语言包是否加载 ---
+            if (DeskRTTools.localePkg.indexOf(locale + ".element") === -1) {
+                isBefore = true;
+                before();
+                // --- 加载 Element UI 的官方语言包 ---
+                try {
+                    let loc = await System.import(`https://cdn.jsdelivr.net/npm/element-ui@2.4.11/lib/locale/lang/${locale}`);
+                    if (!this.localeObj[locale]) {
+                        this.localeObj[locale] = {};
+                    }
+                    this.localeObj[locale].el = loc.default.el;
+                    this.localePkg.push(locale + ".element");
+                } catch {
+                    reject("Element UI locale file error.");
+                }
+            }
+            // --- 再检测 default 语言包是否加载了（无论如何 default 语言包必须加载） ---
+            if (DeskRTTools.localePkg.indexOf(locale + ".default") === -1) {
+                if (isBefore === false) {
+                    isBefore = true;
+                    before();
+                }
+                try {
+                    let loc = await System.import(`${this.pre}${this.i18n}${locale}`);
+                    if (!this.localeObj[locale]) {
+                        this.localeObj[locale] = {};
+                    }
+                    for (let k in loc.default) {
+                        this.localeObj[locale][k] = loc.default[k];
+                    }
+                    this.localePkg.push(locale + ".default");
+                } catch {
+                    reject(`Load locale file "${locale}.js" error.`);
+                }
+            }
+            // --- 最后检测当前 pkg 是否存在（如果当前 pkg 是 default，则自动会被跳过，因为已经存在于 localePkg 里了） ---
+            if (DeskRTTools.localePkg.indexOf(locale + "." + pkg) === -1) {
+                if (isBefore === false) {
+                    isBefore = true;
+                    before();
+                }
+                try {
+                    let loc = await System.import(`${this.pre}${this.i18n}${locale}${pkg !== "default" ? "." + pkg : ""}`);
+                    if (!this.localeObj[locale]) {
+                        this.localeObj[locale] = {};
+                    }
+                    for (let k in loc.default) {
+                        this.localeObj[locale][k] = loc.default[k];
+                    }
+                    this.localePkg.push(locale + "." + pkg);
+                } catch {
+                    reject(`Load locale file "${locale}${pkg !== "default" ? "." + pkg : ""}.js" error.`);
+                }
+            }
+            // --- 结束 ---
+            if (isBefore) {
+                after();
+            }
+            resolve();
+        });
+    }
+
+    /**
+     * --- 打开/跳转一个页面（URL 处 hash 地址不变，仅仅打开） ---
+     * @param path 要打开的页面地址
+     */
+    public static async openPage(path: string) {
+        // --- 判断有没有问号 ---
+        let queryIndex = path.indexOf("?");
+        let query: any = {};
+        if (queryIndex !== -1) {
+            let queryArray = path.slice(queryIndex + 1).split("&");
+            path = path.slice(0, queryIndex);
+            for (let i = 0; i < queryArray.length; ++i) {
+                let tmp = queryArray[i].split("=");
+                query[tmp[0]] = decodeURIComponent(tmp[1]);
+            }
+        }
+        // --- 判断 path 有没有被加载 ---
+        if (this.pages[path]) {
+            // --- 设置 path ---
+            this.vuex.commit("setPath", path);
+            // --- 已经加载过 ---
+            this.pages[path]._query = query;
+            if (this.pages[path].onOpen) {
+                this.pages[path].onOpen();
+            }
+            // --- 手机端隐藏左侧菜单 ---
+            this.frameVue.elAsideShow = false;
+        } else {
+            // --- 未加载，加载 HTML 和 JS ---
+            DeskRT.showMask();
+            let res = await fetch(this.pre + path + ".html?" + this.end);
+            let text = "";
+            if (res.status === 404) {
+                alert(`404 not found.`);
+                return;
+            } else {
+                text = await res.text();
+            }
+            text = DeskRT.purify(text);
+            if (text !== "") {
+                let df = document.createElement("div");
+                df.innerHTML = text;
+                let elPage = df.children[0];
+                // --- 初始化要插入 page 的 dom ---
+                let pageRandom = "page" + (Math.random() * 1000000000000).toFixed();
+                let pageEle = document.createElement("div");
+                pageEle.setAttribute(":class", "['el-page', {'el--show': _isPageShow}]");
+                pageEle.setAttribute(pageRandom, "");
+                if (elPage.getAttribute("v-loading") !== null) {
+                    pageEle.setAttribute("v-loading", elPage.getAttribute("v-loading") || "");
+                }
+                // --- 检测是否有 script、link ---
+                let needLoadScript: string[] = [];
+                let needLoadLink: string[] = [];
+                let styleTxt: string = ""; // 要插入的 style 的内容
+                for (let i = 0; i < elPage.children.length; ++i) {
+                    let dom = elPage.children[i];
+                    let tagName = dom.tagName.toLowerCase();
+                    if (tagName === "script") {
+                        let outPath;
+                        if (outPath = dom.getAttribute("src")) {
+                            needLoadScript.push(outPath);
+                            dom.remove();
+                        }
+                    } else if (tagName === "link") {
+                        let outPath;
+                        if (outPath = dom.getAttribute("href")) {
+                            needLoadLink.push(outPath);
+                            dom.remove();
+                        }
+                    } else if (tagName === "style") {
+                        styleTxt += dom.innerHTML.replace(/([\s\S]+?){([\s\S]+?)}/g, (t: string, $1: string, $2: string): string => {
+                            return "[" + pageRandom + "] " + $1.replace(/, */g, ",[" + pageRandom + "] ") + "{" + $2 + "}";
+                        });
+                        dom.remove();
+                    }
+                }
+                // --- 加载 i18n （前提是开启了 i18n） ---
+                if (this.i18n !== "") {
+                    let pkg = elPage.getAttribute("locale-pkg") || "";
+                    pageEle.setAttribute("locale-pkg", pkg);
+                    await this.loadLocale(this.vuex.state.locale, pkg);
+                }
+                // --- 加载外部文件 ---
+                await DeskRT.loadScript(needLoadScript);
+                await DeskRT.loadLink(needLoadLink);
+                // --- 页面配套 js、css 加载完后 ---
+                // --- 检测是否要加载 js ---
+                let js = undefined;
+                if (elPage.getAttribute("load-script") !== null) {
+                    pageEle.setAttribute("load-script", "");
+                    try {
+                        js = await System.import(this.pre + path);
+                    } catch {
+                        alert("Load script error(3).");
+                        return;
+                    }
+                }
+                // --- 加载 HTML 到页面 ---
+                pageEle.innerHTML = elPage.innerHTML;
+                this.mainEle.appendChild(pageEle);
+                // --- 追加 style ---
+                if (styleTxt !== "") {
+                    this.headEle.insertAdjacentHTML("beforeend", `<style>${styleTxt}</style>`);
+                }
+                let opt: any;
+                if (js !== undefined) {
+                    opt = {
+                        el: pageEle,
+                        data: js.data ? DeskRT.clone(js.data) : {},
+                        methods: js.methods,
+                        computed: js.computed,
+                        watch: js.watch ? DeskRT.clone(js.watch) : {}
+                    };
+                } else {
+                    opt = {
+                        el: pageEle
+                    };
+                }
+                if (!opt.methods) {
+                    opt.methods = {};
+                }
+                if (!opt.computed) {
+                    opt.computed = {};
+                }
+                if (!opt.data) {
+                    opt.data = {};
+                }
+                opt.data.pagePath = path;
+                opt.data.query = query;
+                opt.computed._isPageShow = function(this: any) {
+                    return this.pagePath === DeskRTTools.vuex.state.path;
+                };
+                opt.computed._isMobile = function(this: any) {
+                    return false;
+                };
+                opt.methods.$l = function(key: string) {
+                    return DeskRTTools.readLocale(key);
+                };
+                let vm: any = new Vue(opt);
+                this.pages[path] = vm;
+
+                let readyRtn = true;
+                if (vm.onReady !== undefined) {
+                    readyRtn = vm.onReady();
+                }
+                if (vm.onOpen && (readyRtn !== false)) {
+                    vm.onOpen();
+                }
+                // --- 判断是否要加载高亮代码着色库（要在页面 VUE 初始化完成后再进行，因为 code 的内容有可能是动态插值插入的） ---
+                let hljs = "https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.13.1/build/highlight.min";
+                let hlcss = "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/androidstudio.min.css";
+                let codeList = vm.$el.querySelectorAll("code");
+                if (codeList.length > 0) {
+                    if (this.highlightjs === undefined) {
+                        // --- 加载 highlightjs 的 js 和 css 库 ---
+                        try {
+                            await DeskRT.loadLink([hlcss]);
+                            let hl = await System.import(hljs);
+                            // --- 进行染色 ---
+                            for (let i = 0; i < codeList.length; ++i) {
+                                hl.highlightBlock(codeList[i]);
+                            }
+                            this.highlightjs = hl;
+                        } catch {
+                            alert("Load script error(2).");
+                            return;
+                        }
+                    } else {
+                        // --- 进行染色 ---
+                        for (let i = 0; i < codeList.length; ++i) {
+                            this.highlightjs.highlightBlock(codeList[i]);
+                        }
+                    }
+                }
+                // --- 加载完毕隐藏 loading 框 ---
+                DeskRT.hideMask();
+                // --- 手机端隐藏左侧菜单（开启页面意味着左侧菜单点击了，也就是在开启状态，此步骤有助于关闭） ---
+                this.frameVue.elAsideShow = false;
+                // --- 设置 path，用于切换页面显示 ---
+                this.vuex.commit("setPath", path);
+            } else {
+                alert(`Page is empty.`);
+            }
+        }
+    }
+
+    /**
+     * 内部控件初始化
+     */
+    public static controlsInit() {
+        // --- 头部 ---
+        Vue.component("el-header-item", {
+            template: `<div class="el-header-item" @click="$emit('click')"><slot></div>`
+        });
+        Vue.component("el-logo", {
+            template: `<div class="el-logo"></div>`
+        });
+        // --- 信息表格 ---
+        Vue.component("el-table-info", {
+            template: `<table class="el-table-info">` +
+                `<tbody><slot></tbody>` +
+            `</table>`
+        });
+        Vue.component("el-tr", {
+            template: `<tr>` +
+                `<slot>` +
+            `</tr>`
+        });
+        Vue.component("el-th", {
+            template: `<th>` +
+                `<slot>` +
+            `</th>`
+        });
+        Vue.component("el-td", {
+            template: `<td>` +
+                `<slot>` +
+            `</td>`
+        });
+        // --- 居中上间距 ---
+        Vue.component("el-center", {
+            template: `<div class="el-center">` +
+                `<slot>` +
+            `</div>`
+        });
+        // --- 嵌入提示 ---
+        Vue.component("el-tip", {
+            template: `<div class="el-tip">` +
+                `<slot>` +
+            `</div>`
+        });
+        // --- 表单下方小描述 ---
+        Vue.component("el-exp", {
+            template: `<div class="el-exp">` +
+                `<slot>` +
+            `</div>`
+        });
+        // --- 照片墙 --- 扩展于 el-upload ---
+        Vue.component("el-pictureswall", {
+            props: {
+                value: {
+                    default: []
+                },
+                pre: {
+                    default: ""
+                },
+                end: {
+                    default: ""
+                },
+                endPreview: {
+                    default: ""
+                }
+            },
+            data: function() {
+                return {
+                    dialogVisible: false,
+                    dialogImageUrl: ""
+                };
+            },
+            methods: {
+                preview: function(this: any, url: string) {
+                    this.dialogImageUrl = this.pre + url + this.endPreview;
+                    this.dialogVisible = true;
+                },
+                click: function(this: any) {
+                    this.$emit("select");
+                }
+            },
+            template: `<div class="el-pictureswall">` +
+                `<div>` +
+                    `<ul class="el-upload-list el-upload-list--picture-card">` +
+                        `<li v-for="(url, index) of value" tabindex="0" class="el-upload-list__item is-success">` +
+                            `<img :src="pre + url + end" alt="" class="el-upload-list__item-thumbnail">` +
+                            `<a class="el-upload-list__item-name">` +
+                                `<i class="el-icon-document"></i>` +
+                            `</a>` +
+                            `<i class="el-icon-close"></i>` +
+                            `<span class="el-upload-list__item-actions">` +
+                                `<span class="el-upload-list__item-preview" @click="preview(url)">` +
+                                    `<i class="el-icon-zoom-in"></i>` +
+                                `</span>` +
+                                `<span class="el-upload-list__item-delete" @click="value.splice(index, 1);$emit('remove', index);$emit('input', value);">` +
+                                    `<i class="el-icon-delete"></i>` +
+                                `</span>` +
+                            `</span>` +
+                        `</li>` +
+                    `</ul>` +
+                    `<div tabindex="0" class="el-upload el-upload--picture-card" @click="click">` +
+                        `<i class="el-icon-plus"></i>` +
+                        `<input name="file" class="el-upload__input" type="file">` +
+                    `</div>` +
+                `</div>` +
+                `<el-dialog :visible.sync="dialogVisible" size="tiny">` +
+                    `<img width="100%" :src="dialogImageUrl" alt="">` +
+                `</el-dialog>` +
+            `</div>`
+        });
+        // --- 手机样式 ---
+        Vue.component("el-phone", {
+            props: {
+                padding: {
+                    default: "0"
+                }
+            },
+            template: `<div class="el-phone">` +
+                `<div class="el-phone--inner" :style="{padding: padding}"><slot></div>` +
+            `</div>`
+        });
+        Vue.component("el-phone-line", {
+            props: {
+                controls: {
+                    default: []
+                }
+            },
+            template: `<div class="el-phone-line">` +
+                `<template>` +
+                    `<slot>` +
+                `</template>` +
+                `<el-button-group v-if="controls !== []">` +
+                    `<el-button v-for="control of controls" @click="$emit('action', control.name)" type="primary" :icon="control.icon" size="small">{{control.name}}</el-button>` +
+                `</el-button-group>` +
+            `</div>`
+        });
+        // --- DataButton ---
+        Vue.component("el-data-button-group", {
+            props: {
+                delimiter: {
+                    default: undefined
+                }
+            },
+            template: `<div class="el-data-button-group" :class="[delimiter !== undefined && 'el--delimiter']">` +
+                `<slot>` +
+            `</div>`
+        });
+        Vue.component("el-data-button", {
+            template: `<div class="el-data-button">` +
+                `<slot>` +
+            `</div>`
+        });
+        // --- TileButton ---
+        Vue.component("el-tile-button", {
+            props: {
+                href: {
+                    default: undefined
+                },
+                background: {
+                    default: undefined
+                }
+            },
+            template: `<a class="el-tile-button" :class="[background && 'el--background', $slots.icon && 'el--icon']" :href="href" :style="{'background': background}">` +
+                `<div v-if="$slots.icon" class="el-tile-button__icon">` +
+                    `<slot name="icon">` +
+                `</div>` +
+                `<div class="el-tile-button__body">` +
+                    `<slot>` +
+                `</div>` +
+            `</a>`
+        });
+        // --- Resp 响应式布局 ---
+        Vue.component("el-resp", {
+            props: {
+                gutter: {
+                    default: undefined
+                }
+            },
+            data: function() {
+                return {
+                    unique: "resp_" + (Math.random() * 100000000000000000)
+                };
+            },
+            template: `<div class="el-resp" :data-unique="unique">` +
+                `<slot>` +
+            `</div>`,
+            mounted: function (this: Vue) {
+                let style = document.createElement("style");
+                DeskRTTools.headEle.insertAdjacentElement("beforeend", style);
+                this.$watch("gutter", () => {
+                    let gutter = this.$props.gutter !== undefined ? parseInt(this.$props.gutter) : undefined;
+                    if (gutter !== undefined && gutter !== 0) {
+                        style.innerHTML = `.el-resp[data-unique="${this.$data.unique}"] > :not(:last-child) {margin: 0 ${gutter}px 0 0;}` +
+                        `@media(min-width: 780px) {` +
+                            `.el-resp[data-unique="${this.$data.unique}"] > * {width: 0;}` +
+                        `}` +
+                        `@media(max-width: 780px) {` +
+                            `.el-resp[data-unique="${this.$data.unique}"] > :not(:last-child) {margin: 0 0 ${gutter}px 0;}` +
+                        `}`;
+                    } else {
+                        style.innerHTML = ``;
+                    }
+                }, {
+                    immediate: true
+                });
+            }
+        });
+        Vue.component("el-resp-row", {
+            props: {
+                gutter: {
+                    default: undefined,
+                    type: Number
+                }
+            },
+            data: function() {
+                return {
+                    unique: "resp_row_" + (Math.random() * 100000000000000000)
+                };
+            },
+            template: `<div class="el-resp-row" :data-unique="unique">` +
+                `<slot>` +
+            `</div>`,
+            mounted: function (this: Vue) {
+                let style = document.createElement("style");
+                DeskRTTools.headEle.insertAdjacentElement("beforeend", style);
+                this.$watch("gutter", () => {
+                    let gutter = this.$props.gutter !== undefined ? parseInt(this.$props.gutter) : undefined;
+                    if (gutter !== undefined && gutter !== 0) {
+                        style.innerHTML = `.el-resp-row[data-unique="${this.$data.unique}"] > :not(:last-child) {margin-right: ${gutter}px;}`;
+                    } else {
+                        style.innerHTML = ``;
+                    }
+                }, {
+                    immediate: true
+                });
+            }
+        });
+        Vue.component("el-resp-col", {
+            props: {
+                flex: {
+                    default: undefined
+                }
+            },
+            template: `<div class="el-resp-col" :style="{flex: flex}">` +
+                `<slot>` +
+            `</div>`
+        });
+    }
+}
 

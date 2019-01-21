@@ -1,0 +1,65 @@
+<el-page load-script>
+    <el-card header="Highlight">
+        HTML:
+        <pre style="margin-top: 20px;"><code class="html">
+&lt;!DOCTYPE html&gt;
+&lt;title&gt;Title&lt;/title&gt;
+
+&lt;style&gt;body {width: 500px;}&lt;/style&gt;
+
+&lt;script type=&quot;application/javascript&quot;&gt;
+function $init() {return true;}
+&lt;/script&gt;
+
+&lt;body&gt;
+&lt;p checked class=&quot;title&quot; id=&#39;title&#39;&gt;Title&lt;/p&gt;
+&lt;!-- here goes the rest of the page --&gt;
+&lt;/body&gt;
+</code></pre>
+        <div style="padding: 20px 0;">PHP:</div>
+        <pre><code class="php">
+&lt;?php
+/**
+  * User: JianSuoQiYue
+  * Date: 2017/07/04 22:48
+  * Last: 2018-12-12 17:48:43
+  */
+declare(strict_types = 1);
+
+namespace lib;
+
+require ETC_PATH.'memcached.php';
+
+class Memcached {
+
+    /* @var $_link \Memcached */
+    private $_link = NULL;
+
+    private $_pre = '';
+
+    /**
+      * @param array $opt
+      * @return Memcached
+      * @throws \Exception
+      */
+    public static function get(array $opt = []): Memcached {
+        $link = new Memcached();
+        $link->connect($opt);
+        return $link;
+    }
+}
+        </code></pre>
+        <el-resp gutter="20" style="margin-top: 20px;">
+            <div>
+                <div>JavaScript:</div>
+                <div style="margin-top: 20px;">
+                    <el-input type="textarea" v-model="code" rows="10"></el-input>
+                </div>
+            </div>
+            <div>
+                <div>Highlight:</div>
+                <pre style="margin-top: 20px;"><code class="js" ref="codeEle" style="height: 220px;">{{code}}</code></pre>
+            </div>
+        </el-resp>
+    </el-card>
+</el-page>

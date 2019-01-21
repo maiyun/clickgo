@@ -1,0 +1,63 @@
+<el-frame load-script>
+	<el-header>
+		<el-dropdown>
+			<el-header-item>Language</el-header-item>
+			<el-dropdown-menu slot="dropdown">
+				<el-dropdown-item @click.native="DeskRT.setLocale('en')">English</el-dropdown-item>
+				<el-dropdown-item @click.native="DeskRT.setLocale('zh-CN')">简体中文</el-dropdown-item>
+				<el-dropdown-item @click.native="DeskRT.setLocale('zh-TW')">繁體中文</el-dropdown-item>
+			</el-dropdown-menu>
+		</el-dropdown>
+		<el-dropdown>
+			<el-header-item>{{username}}</el-header-item>
+			<el-dropdown-menu slot="dropdown">
+				<el-dropdown-item @click.native="$alert($l('frame.msg'), $l('frame.title'), {type: 'info'})">{{$l('frame.logout')}}</el-dropdown-item>
+			</el-dropdown-menu>
+		</el-dropdown>
+	</el-header>
+	<el-menu>
+		<el-menu-item index="main">
+			<template slot="title">
+				<i class="el-icon-news"></i>
+				<span>{{$l('frame.main')}}</span>
+			</template>
+		</el-menu-item>
+		<el-submenu index="phone">
+			<template slot="title">
+				<i class="el-icon-d-jiaosequnti"></i>
+				<span>Group</span>
+			</template>
+			<el-menu-item-group>
+				<template slot="title">Small title</template>
+				<el-menu-item index="group/import">import</el-menu-item>
+				<el-menu-item index="group/import2">import clone</el-menu-item>
+				<el-menu-item index="group/onOpen">onOpen</el-menu-item>
+				<el-menu-item index="group/onReady">onReady</el-menu-item>
+				<el-menu-item index="group/loading">loading</el-menu-item>
+				<el-menu-item index="group/watch">watch</el-menu-item>
+				<el-menu-item index="group/style">style</el-menu-item>
+				<el-menu-item index="group/script">script</el-menu-item>
+				<el-menu-item index="group/localePkg">locale pkg</el-menu-item>
+			</el-menu-item-group>
+		</el-submenu>
+		<el-submenu index="controls">
+			<template slot="title">
+				<i class="el-icon-d-ziyuan"></i>
+				<span>Controls</span>
+			</template>
+			<el-menu-item index="controls/DataButton">DataButton</el-menu-item>
+			<el-menu-item index="controls/TileButton">TileButton</el-menu-item>
+			<el-menu-item index="controls/Phone">Phone</el-menu-item>
+			<el-menu-item index="controls/Pictureswall">Picturewall</el-menu-item>
+			<el-menu-item index="controls/Select">Select</el-menu-item>
+		</el-submenu>
+		<el-submenu index="solution">
+			<template slot="title">
+				<i class="el-icon-d-qiyeyuanquwuye-xianxing"></i>
+				<span>Solution</span>
+			</template>
+			<el-menu-item index="solution/Chart">Chart</el-menu-item>
+			<el-menu-item index="solution/Highlight">Highlight</el-menu-item>
+		</el-submenu>
+	</el-menu>
+</el-frame>

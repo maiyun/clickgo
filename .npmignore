@@ -1,5 +1,7 @@
+/.sass-cache/
+/dist/test/
 /node_modules/
-/test/
+/sources/test/
 /typings/
 /_config.yml
 /.gitignore

@@ -1,0 +1,55 @@
+<el-page load-script>
+	<el-tip>{{$l('main.langInfo')}}</el-tip>
+	<el-card :header="$l('main.theme')">
+		<el-button @click="changeTheme('chalk')" :type="themeName==='chalk'?'primary':undefined">{{$l('main.chalk')}}</el-button>
+		<el-button @click="changeTheme('blue')" :type="themeName==='blue'?'primary':undefined">{{$l('main.blue')}}</el-button>
+		<el-button @click="changeTheme('speed')" :type="themeName==='speed'?'primary':undefined">{{$l('main.speed')}}</el-button>
+		<el-button @click="changeTheme('pen')" disabled>{{$l('main.pen')}}</el-button>
+	</el-card>
+	<el-card :header="$l('main.asideWidth')" style="margin-top: 20px;">
+		<el-button @click="DeskRT.asideWidth='300px'">300{{$l('main.px')}}</el-button>
+		<el-button @click="DeskRT.asideWidth='200px'">200{{$l('main.px')}}</el-button>
+		<el-button @click="DeskRT.asideWidth='160px'">160{{$l('main.px')}}</el-button>
+	</el-card>
+	<el-row gutter="20" style="margin-top: 20px;">
+		<el-col span="12">
+			<el-card :header="$l('main.price')">
+				<div style="font-size: 22px; text-align: center; height: 74px; line-height: 74px;">{{price}}</div>
+				<div style="text-align: center; padding-top: 20px;">
+					<el-button @click="$alert($l('main.rechargeMsg'))">{{$l('main.recharge')}}</el-button>
+				</div>
+			</el-card>
+		</el-col>
+		<el-col span="12">
+			<el-card :header="$l('main.sms')">
+				<el-row gutter="20">
+					<el-col span="12" style="border-right: 1px solid #ebeef5;">
+						{{$l('main.system')}}: <div style="margin-top: 20px; font-size: 22px; text-align: center;">{{sms}}</div>
+					</el-col>
+					<el-col span="12">
+						{{$l('main.note')}}: <div style="margin-top: 20px; font-size: 22px; text-align: center;">{{smsy}}</div>
+					</el-col>
+				</el-row>
+				<div style="text-align: center; padding-top: 20px;">
+					<el-button @click="$alert($l('main.buyMsg'))">{{$l('main.buy')}}</el-button>
+				</div>
+			</el-card>
+		</el-col>
+	</el-row>
+	<el-card header="List" style="margin-top: 20px;">
+		<el-table :data="list" stripe>
+		    <el-table-column align="center" :label="$l('main.type')" width="80">
+		    	<template slot-scope="scope">
+		    		<el-tag type="success">{{scope.row.type}}</el-tag>
+		    	</template>
+		    </el-table-column>
+		    <el-table-column prop="name" :label="$l('main.name')"></el-table-column>
+		    <el-table-column prop="time" :label="$l('main.time')"></el-table-column>
+		    <el-table-column width="120" align="center" :label="$l('main.button')">
+		    	<template slot-scope="scope">
+		        	<el-button @click="$alert($l('main.buttonMsg'))">{{$l('main.button')}}</el-button>
+		    	</template>
+		    </el-table-column>
+		</el-table>
+	</el-card>
+</el-page>

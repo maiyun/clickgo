@@ -1,13 +1,14 @@
 {
     "compilerOptions": {
-        "module": "commonjs",
+        "module": "amd",
         "removeComments": true,
-        "preserveConstEnums": true,
+        "preserveConstEnums": true, // 保留const和enum声明
         "outDir": "dist/",
         "sourceMap": false,
         "target": "es5",
-        "strict": true,
-        "declaration": true, // d.ts
-        "newLine": "LF"
+        "strict": true,             // 严格模式
+        "declaration": true,        // d.ts
+        "newLine": "LF",
+        "lib": ["dom", "es5", "scripthost", "es2015.promise"]
     }
 }

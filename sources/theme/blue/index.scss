@@ -1,0 +1,39 @@
+/* --- 框架 --- */
+#el-frame > .el-container > {
+    // --- 左边栏 ---
+    .el-aside {
+        > {
+            .el-logo {
+                background-color: #409EFF;
+            }
+            // --- 左边菜单 ---
+            .el-menu {
+                background-color: #eef1f6;
+                // --- 子菜单背景色 ---
+                .el-submenu .el-menu {
+                    background-color: #e4e8f1;
+                }
+                .el-menu-item:focus {
+                    background-color: transparent;
+                }
+                // --- 鼠标移动到 item 上的背景颜色 ---
+                .el-menu-item:hover, .el-submenu__title:hover {
+                    background-color: #d1dbe5;
+                }
+            }
+        }
+    }
+    // --- 右 ---
+    .el-container > {
+        .el-header {
+            background-color: #409EFF; color: #FFF;
+            .el-header-item {
+                color: #FFF;
+                &:hover {
+                    color: #FFF;
+                    background-color: rgba(255, 255, 255, .1)
+                }
+            }
+        }
+    }
+}

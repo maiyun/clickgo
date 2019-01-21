@@ -10,5 +10,18 @@ export let data = {
         type: "Type1",
         name: "Two, Two, Two",
         time: "2018-01-16 14:00"
-    }]
+    }],
+    themeName: "chalk"
+};
+
+let linkEle = <HTMLLinkElement>document.getElementById("themeLink");
+export let methods = {
+    changeTheme: function(this: any, name: string) {
+        this.themeName = name;
+        if (name === "chalk") {
+            linkEle.setAttribute("href", ``);
+        } else {
+            linkEle.setAttribute("href", `../theme/${name}/index.css`);
+        }
+    }
 };

@@ -1,42 +1,47 @@
-declare namespace DeskRT {
-    class Core {
-        static version: string;
-        private static _pre;
-        private static _end;
-        private static _frame;
-        private static _main;
-        private static _logo;
-        private static _theme;
-        private static _asideWidth;
-        static __frameVm: any;
-        static __popDiv: HTMLDivElement;
-        static __vuex: Vuex.Store;
-        static let: any;
-        static __scriptElement: HTMLScriptElement;
-        static __pages: any;
-        static init(opt: any): void;
-        static open(path: string): void;
-        static go(path: string): void;
-        static openUrl(url: string): void;
-        private static _LIBS;
-        static libs(paths: string[], cb: () => any): void;
-        private static _libsLoad(index, paths, cb, head);
-        static setTheme(theme: string): void;
-        static setAsideWidth(width: string): void;
-        static arrayUnique(arr: any[]): any[];
-        static purifyText(text: string): string;
-        static html2escape(html: string): string;
-        static clone(obj: any): any;
-    }
-    class Http {
-        static get(url: string, success: (o: any) => any, error?: (err: any) => any): void;
-        static post(url: string, data: any, success: (o: any) => any, error?: (err: any) => any): void;
-    }
-    class Mask {
-        static show(): void;
-        static hide(): void;
-    }
-    class Controls {
-        static init(): void;
-    }
+declare class DeskRT {
+    static version: string;
+    static let: any;
+    private static _asideWidth;
+    static asideWidth: string;
+    static init(opt: any): void;
+    static go(path: string): void;
+    static setLocale(loc: string): Promise<void>;
+    static loadScript(paths: string[]): Promise<void>;
+    static loadLink(paths: string[]): Promise<void>;
+    static arrayUnique(arr: any[]): any[];
+    static purify(text: string): string;
+    private static _purify;
+    private static _purifyTxt;
+    private static _purifyPre;
+    static clone(obj: any): any;
+    static trim(text: string): string;
+    static html2escape(html: string): string;
+    static highlight(dom: HTMLElement, code: string): void;
+    static get(url: string): Promise<any>;
+    static post(url: string, data: any): Promise<any>;
+    static showMask(): void;
+    static hideMask(): void;
+}
+declare class DeskRTTools {
+    static pre: string;
+    static end: string;
+    static i18n: string;
+    static locales: string[];
+    static localePkg: string[];
+    static localeObj: any;
+    static frameVue: any;
+    static vuex: Vuex.Store;
+    static pages: any;
+    static outPath: string[];
+    static highlightjs: highlightjs;
+    static popEle: HTMLDivElement;
+    static mainEle: HTMLMainElement;
+    static headEle: HTMLHeadElement;
+    static onHashChange(): Promise<void>;
+    static loadOutScript(path: string): Promise<void>;
+    static loadOutLink(path: string): Promise<void>;
+    static readLocale(key: string): string;
+    static loadLocale(locale: string, pkg?: string, before?: () => any, after?: () => any): Promise<void>;
+    static openPage(path: string): Promise<void>;
+    static controlsInit(): void;
 }

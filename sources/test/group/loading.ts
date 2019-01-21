@@ -3,7 +3,7 @@ export let data = {
 };
 
 export let methods = {
-    elOpen: function(this: any) {
+    onOpen: function(this: any) {
         this.loading = true;
         setTimeout(() => {
             this.loading = false;

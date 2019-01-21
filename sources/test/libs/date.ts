@@ -14,4 +14,4 @@ export function date() {
             + " " + date.getHours() + seperator2 + date.getMinutes()
             + seperator2 + date.getSeconds();
     return currentdate;
-};
+}

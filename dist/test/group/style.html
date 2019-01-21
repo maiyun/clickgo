@@ -1,0 +1,15 @@
+<el-page>
+    <style>
+        .abc, .a{color: red;}
+        .def{color: darkblue;}
+
+        .b{color: darkgreen;}
+    </style>
+    <el-card header="style">
+        <div>Statistics:</div>
+        <div class="abc">This class is "abc".</div>
+        <div class="def">This class is "def".</div>
+        <div style="margin-top: 20px;">Dynamics:</div>
+        <div v-for="i of 6" :class="i % 2 === 1 ? 'a' : 'b'">{{i % 2 === 1 ? 'red' : 'darkgreen'}}</div>
+    </el-card>
+</el-page>
