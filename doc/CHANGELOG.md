@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.0.1
+[\*] Fix a bug where the logo address does not use the pre variable.
+
 ## 1.0.0
 [+] Support mobile mode.  
 [+] Support &lt;script&gt; tag in page.  

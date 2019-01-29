@@ -183,7 +183,7 @@ var DeskRT = (function () {
                         body.insertAdjacentHTML("afterbegin", "<div id=\"el-frame\" class=\"el--mask\">" +
                             "<el-container>" +
                             "<el-aside :width=\"_asideWidth\" :class=\"{'el--show': elAsideShow}\">" +
-                            ("<el-logo" + (logo ? " style=\"background-image: url(" + logo + ");\"" : "") + "></el-logo>") +
+                            ("<el-logo" + (logo ? " style=\"background-image: url(" + (DeskRTTools.pre + logo) + ");\"" : "") + "></el-logo>") +
                             ("<el-menu @select=\"_onSelect\" :default-active=\"DeskRTTools.vuex.state.path\">" + elMenuHtml + "</el-menu>") +
                             "</el-aside>" +
                             "<el-container>" +
@@ -544,7 +544,7 @@ var DeskRT = (function () {
         }
         document.getElementById("el-mask").classList.remove("el--show");
     };
-    DeskRT.version = "1.0.0";
+    DeskRT.version = "1.0.1";
     return DeskRT;
 }());
 var DeskRTTools = (function () {

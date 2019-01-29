@@ -8,7 +8,7 @@
 class DeskRT {
 
     /** DeskRT 核心版本 */
-    public static version: string = "1.0.0";
+    public static version: string = "1.0.1";
 
     /** 全局可用的变量 */
     public static let: any;
@@ -155,7 +155,7 @@ class DeskRT {
                     body.insertAdjacentHTML("afterbegin", `<div id="el-frame" class="el--mask">` +
                         `<el-container>` +
                             `<el-aside :width="_asideWidth" :class="{'el--show': elAsideShow}">` +
-                                `<el-logo${logo ? ` style="background-image: url(${logo});"` : ""}></el-logo>` +
+                                `<el-logo${logo ? ` style="background-image: url(${DeskRTTools.pre + logo});"` : ""}></el-logo>` +
                                 `<el-menu @select="_onSelect" :default-active="DeskRTTools.vuex.state.path">${elMenuHtml}</el-menu>` +
                             `</el-aside>` +
                             `<el-container>` +
