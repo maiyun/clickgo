@@ -8,7 +8,7 @@
 class DeskRT {
 
     /** DeskRT 核心版本 */
-    public static version: string = "1.0.1";
+    public static version: string = "1.0.2";
 
     /** 全局可用的变量 */
     public static let: any;
@@ -78,10 +78,6 @@ class DeskRT {
                 },
                 map: paths
             });
-            // --- 设置默认控件大小值 ---
-            if (size !== "") {
-                Vue.prototype.$ELEMENT = { size: size, zIndex: 2e3 };
-            }
             // --- 加载 i18n，需要默认把 Element UI 的当前客户机语言加载，以及加载当前框架 default 语言包以供 frame 界面使用） ---
             let locale = "";
             if (DeskRTTools.i18n !== "") {
@@ -93,14 +89,26 @@ class DeskRT {
                     locale = naviLocale;
                 }
                 // --- 设置 Element UI 的语言加载器 ---
-                Vue.use(ELEMENT, {
+                let elOpt: any = {
                     i18n: function (path: string) {
                         if (DeskRTTools.vuex.state.locale !== "zh-CN") {
                             return DeskRTTools.readLocale(path);
                         }
                     }
-                });
+                };
+                // --- 设置默认控件大小值 ---
+                if (size !== "") {
+                    elOpt.size = size;
+                }
+                Vue.use(ELEMENT, elOpt);
                 await DeskRTTools.loadLocale(locale);
+            } else {
+                // --- 设置默认控件大小值 ---
+                if (size !== "") {
+                    Vue.use(ELEMENT, {
+                        size: size
+                    });
+                }
             }
             // --- 初始化 vuex ---
             DeskRTTools.vuex = new Vuex.Store({

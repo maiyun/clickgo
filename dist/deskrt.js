@@ -62,7 +62,7 @@ var DeskRT = (function () {
         this._asideWidth = opt.asideWidth || "200px";
         this.let = opt.let || {};
         document.addEventListener("DOMContentLoaded", function () { return __awaiter(_this, void 0, void 0, function () {
-            var body, jsPath, locale, naviLocale, res, text, _a, df, elFrame, elMenu, elHeader, elMenuHtml, elHeaderHtml, js, _b, onSelect, $l, methods, computed, data;
+            var body, jsPath, locale, naviLocale, elOpt, res, text, _a, df, elFrame, elMenu, elHeader, elMenuHtml, elHeaderHtml, js, _b, onSelect, $l, methods, computed, data;
             var _this = this;
             return __generator(this, function (_c) {
                 switch (_c.label) {
@@ -103,9 +103,6 @@ var DeskRT = (function () {
                             },
                             map: paths
                         });
-                        if (size !== "") {
-                            Vue.prototype.$ELEMENT = { size: size, zIndex: 2e3 };
-                        }
                         locale = "";
                         if (!(DeskRTTools.i18n !== "")) return [3, 3];
                         naviLocale = localStorage.getItem("locale") || navigator.language;
@@ -115,18 +112,29 @@ var DeskRT = (function () {
                         else {
                             locale = naviLocale;
                         }
-                        Vue.use(ELEMENT, {
+                        elOpt = {
                             i18n: function (path) {
                                 if (DeskRTTools.vuex.state.locale !== "zh-CN") {
                                     return DeskRTTools.readLocale(path);
                                 }
                             }
-                        });
+                        };
+                        if (size !== "") {
+                            elOpt.size = size;
+                        }
+                        Vue.use(ELEMENT, elOpt);
                         return [4, DeskRTTools.loadLocale(locale)];
                     case 2:
                         _c.sent();
-                        _c.label = 3;
+                        return [3, 4];
                     case 3:
+                        if (size !== "") {
+                            Vue.use(ELEMENT, {
+                                size: size
+                            });
+                        }
+                        _c.label = 4;
+                    case 4:
                         DeskRTTools.vuex = new Vuex.Store({
                             state: {
                                 path: "",
@@ -147,7 +155,7 @@ var DeskRT = (function () {
                         });
                         DeskRTTools.controlsInit();
                         return [4, fetch(DeskRTTools.pre + frame + ".html?" + DeskRTTools.end)];
-                    case 4:
+                    case 5:
                         res = _c.sent();
                         if (res.status === 404) {
                             alert("Error: \"" + DeskRTTools.pre + frame + ".html\" not found.");
@@ -155,31 +163,31 @@ var DeskRT = (function () {
                         }
                         _a = this.purify;
                         return [4, res.text()];
-                    case 5:
+                    case 6:
                         text = _a.apply(this, [_c.sent()]);
-                        if (!(text !== "")) return [3, 15];
+                        if (!(text !== "")) return [3, 16];
                         df = document.createElement("div");
                         df.innerHTML = text;
                         elFrame = df.children[0];
                         elMenu = elFrame.querySelector("el-menu");
                         elHeader = elFrame.querySelector("el-header");
-                        if (!(elMenu && elHeader)) return [3, 13];
+                        if (!(elMenu && elHeader)) return [3, 14];
                         elMenuHtml = elMenu.innerHTML;
                         elHeaderHtml = elHeader.innerHTML;
                         js = undefined;
-                        if (!(elFrame.getAttribute("load-script") !== null)) return [3, 9];
-                        _c.label = 6;
-                    case 6:
-                        _c.trys.push([6, 8, , 9]);
-                        return [4, System.import(DeskRTTools.pre + frame)];
+                        if (!(elFrame.getAttribute("load-script") !== null)) return [3, 10];
+                        _c.label = 7;
                     case 7:
-                        js = _c.sent();
-                        return [3, 9];
+                        _c.trys.push([7, 9, , 10]);
+                        return [4, System.import(DeskRTTools.pre + frame)];
                     case 8:
+                        js = _c.sent();
+                        return [3, 10];
+                    case 9:
                         _b = _c.sent();
                         alert("Load script error(1)");
                         return [2];
-                    case 9:
+                    case 10:
                         body.insertAdjacentHTML("afterbegin", "<div id=\"el-frame\" class=\"el--mask\">" +
                             "<el-container>" +
                             "<el-aside :width=\"_asideWidth\" :class=\"{'el--show': elAsideShow}\">" +
@@ -239,22 +247,22 @@ var DeskRT = (function () {
                             });
                         }
                         DeskRTTools.mainEle = document.getElementById("el-main");
-                        if (!(window.location.hash === "")) return [3, 10];
+                        if (!(window.location.hash === "")) return [3, 11];
                         window.location.hash = "#" + main;
-                        return [3, 12];
-                    case 10: return [4, DeskRTTools.onHashChange()];
-                    case 11:
+                        return [3, 13];
+                    case 11: return [4, DeskRTTools.onHashChange()];
+                    case 12:
                         _c.sent();
-                        _c.label = 12;
-                    case 12: return [3, 14];
-                    case 13:
+                        _c.label = 13;
+                    case 13: return [3, 15];
+                    case 14:
                         alert("Error: <el-menu> or <el-header> not found.");
-                        _c.label = 14;
-                    case 14: return [3, 16];
-                    case 15:
+                        _c.label = 15;
+                    case 15: return [3, 17];
+                    case 16:
                         alert("Error: Frame is empty.");
-                        _c.label = 16;
-                    case 16: return [2];
+                        _c.label = 17;
+                    case 17: return [2];
                 }
             });
         }); });
@@ -544,7 +552,7 @@ var DeskRT = (function () {
         }
         document.getElementById("el-mask").classList.remove("el--show");
     };
-    DeskRT.version = "1.0.1";
+    DeskRT.version = "1.0.2";
     return DeskRT;
 }());
 var DeskRTTools = (function () {
