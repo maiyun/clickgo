@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.0.2
+[\*] Fix size option is invalid on i18n mode.
+
 ## 1.0.1
 [\*] Fix a bug where the logo address does not use the pre variable.
 
