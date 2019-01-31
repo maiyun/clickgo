@@ -552,7 +552,7 @@ var DeskRT = (function () {
         }
         document.getElementById("el-mask").classList.remove("el--show");
     };
-    DeskRT.version = "1.0.3";
+    DeskRT.version = "1.0.4";
     return DeskRT;
 }());
 var DeskRTTools = (function () {
@@ -731,7 +731,7 @@ var DeskRTTools = (function () {
                         }
                         if (!this.pages[path]) return [3, 3];
                         this.vuex.commit("setPath", path);
-                        this.pages[path]._query = query;
+                        this.pages[path].query = query;
                         if (!this.pages[path].onOpen) return [3, 2];
                         return [4, this.pages[path].onOpen()];
                     case 1:

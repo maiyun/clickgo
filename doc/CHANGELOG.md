@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.0.4
+[\*] Fix a bug that cannot read "query" when "onOpen" method for the second time.
+
 ## 1.0.3
 [\*] onReady and onOpen method can be used async/await function.
 

@@ -8,7 +8,7 @@
 class DeskRT {
 
     /** DeskRT 核心版本 */
-    public static version: string = "1.0.3";
+    public static version: string = "1.0.4";
 
     /** 全局可用的变量 */
     public static let: any;
@@ -704,7 +704,7 @@ class DeskRTTools {
             // --- 设置 path ---
             this.vuex.commit("setPath", path);
             // --- 已经加载过 ---
-            this.pages[path]._query = query;
+            this.pages[path].query = query;
             if (this.pages[path].onOpen) {
                 await this.pages[path].onOpen();
             }
