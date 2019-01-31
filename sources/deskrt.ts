@@ -8,7 +8,7 @@
 class DeskRT {
 
     /** DeskRT 核心版本 */
-    public static version: string = "1.0.2";
+    public static version: string = "1.0.3";
 
     /** 全局可用的变量 */
     public static let: any;
@@ -706,7 +706,7 @@ class DeskRTTools {
             // --- 已经加载过 ---
             this.pages[path]._query = query;
             if (this.pages[path].onOpen) {
-                this.pages[path].onOpen();
+                await this.pages[path].onOpen();
             }
             // --- 手机端隐藏左侧菜单 ---
             this.frameVue.elAsideShow = false;
@@ -825,12 +825,11 @@ class DeskRTTools {
                 let vm: any = new Vue(opt);
                 this.pages[path] = vm;
 
-                let readyRtn = true;
                 if (vm.onReady !== undefined) {
-                    readyRtn = vm.onReady();
+                    await vm.onReady();
                 }
-                if (vm.onOpen && (readyRtn !== false)) {
-                    vm.onOpen();
+                if (vm.onOpen !== undefined) {
+                    await vm.onOpen();
                 }
                 // --- 判断是否要加载高亮代码着色库（要在页面 VUE 初始化完成后再进行，因为 code 的内容有可能是动态插值插入的） ---
                 let hljs = "https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.13.1/build/highlight.min";

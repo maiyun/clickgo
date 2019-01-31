@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.0.3
+[\*] onReady and onOpen method can be used async/await function.
+
 ## 1.0.2
 [\*] Fix size option is invalid on i18n mode.
 

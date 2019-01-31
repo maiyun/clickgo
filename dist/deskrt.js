@@ -552,7 +552,7 @@ var DeskRT = (function () {
         }
         document.getElementById("el-mask").classList.remove("el--show");
     };
-    DeskRT.version = "1.0.2";
+    DeskRT.version = "1.0.3";
     return DeskRT;
 }());
 var DeskRTTools = (function () {
@@ -715,7 +715,7 @@ var DeskRTTools = (function () {
     };
     DeskRTTools.openPage = function (path) {
         return __awaiter(this, void 0, void 0, function () {
-            var queryIndex, query, queryArray, i, tmp, res, text, df, elPage, pageRandom_1, pageEle, needLoadScript, needLoadLink, styleTxt, i, dom, tagName, outPath, outPath, pkg, js, _a, opt, vm, readyRtn, hljs, hlcss, codeList, hl, i, _b, i;
+            var queryIndex, query, queryArray, i, tmp, res, text, df, elPage, pageRandom_1, pageEle, needLoadScript, needLoadLink, styleTxt, i, dom, tagName, outPath, outPath, pkg, js, _a, opt, vm, hljs, hlcss, codeList, hl, i, _b, i;
             return __generator(this, function (_c) {
                 switch (_c.label) {
                     case 0:
@@ -729,30 +729,33 @@ var DeskRTTools = (function () {
                                 query[tmp[0]] = decodeURIComponent(tmp[1]);
                             }
                         }
-                        if (!this.pages[path]) return [3, 1];
+                        if (!this.pages[path]) return [3, 3];
                         this.vuex.commit("setPath", path);
                         this.pages[path]._query = query;
-                        if (this.pages[path].onOpen) {
-                            this.pages[path].onOpen();
-                        }
-                        this.frameVue.elAsideShow = false;
-                        return [3, 22];
+                        if (!this.pages[path].onOpen) return [3, 2];
+                        return [4, this.pages[path].onOpen()];
                     case 1:
+                        _c.sent();
+                        _c.label = 2;
+                    case 2:
+                        this.frameVue.elAsideShow = false;
+                        return [3, 28];
+                    case 3:
                         DeskRT.showMask();
                         return [4, fetch(this.pre + path + ".html?" + this.end)];
-                    case 2:
+                    case 4:
                         res = _c.sent();
                         text = "";
-                        if (!(res.status === 404)) return [3, 3];
+                        if (!(res.status === 404)) return [3, 5];
                         alert("404 not found.");
                         return [2];
-                    case 3: return [4, res.text()];
-                    case 4:
+                    case 5: return [4, res.text()];
+                    case 6:
                         text = _c.sent();
-                        _c.label = 5;
-                    case 5:
+                        _c.label = 7;
+                    case 7:
                         text = DeskRT.purify(text);
-                        if (!(text !== "")) return [3, 21];
+                        if (!(text !== "")) return [3, 27];
                         df = document.createElement("div");
                         df.innerHTML = text;
                         elPage = df.children[0];
@@ -790,34 +793,34 @@ var DeskRTTools = (function () {
                                 dom.remove();
                             }
                         }
-                        if (!(this.i18n !== "")) return [3, 7];
+                        if (!(this.i18n !== "")) return [3, 9];
                         pkg = elPage.getAttribute("locale-pkg") || "";
                         pageEle.setAttribute("locale-pkg", pkg);
                         return [4, this.loadLocale(this.vuex.state.locale, pkg)];
-                    case 6:
-                        _c.sent();
-                        _c.label = 7;
-                    case 7: return [4, DeskRT.loadScript(needLoadScript)];
                     case 8:
                         _c.sent();
+                        _c.label = 9;
+                    case 9: return [4, DeskRT.loadScript(needLoadScript)];
+                    case 10:
+                        _c.sent();
                         return [4, DeskRT.loadLink(needLoadLink)];
-                    case 9:
+                    case 11:
                         _c.sent();
                         js = undefined;
-                        if (!(elPage.getAttribute("load-script") !== null)) return [3, 13];
+                        if (!(elPage.getAttribute("load-script") !== null)) return [3, 15];
                         pageEle.setAttribute("load-script", "");
-                        _c.label = 10;
-                    case 10:
-                        _c.trys.push([10, 12, , 13]);
-                        return [4, System.import(this.pre + path)];
-                    case 11:
-                        js = _c.sent();
-                        return [3, 13];
+                        _c.label = 12;
                     case 12:
+                        _c.trys.push([12, 14, , 15]);
+                        return [4, System.import(this.pre + path)];
+                    case 13:
+                        js = _c.sent();
+                        return [3, 15];
+                    case 14:
                         _a = _c.sent();
                         alert("Load script error(3).");
                         return [2];
-                    case 13:
+                    case 15:
                         pageEle.innerHTML = elPage.innerHTML;
                         this.mainEle.appendChild(pageEle);
                         if (styleTxt !== "") {
@@ -860,51 +863,56 @@ var DeskRTTools = (function () {
                         };
                         vm = new Vue(opt);
                         this.pages[path] = vm;
-                        readyRtn = true;
-                        if (vm.onReady !== undefined) {
-                            readyRtn = vm.onReady();
-                        }
-                        if (vm.onOpen && (readyRtn !== false)) {
-                            vm.onOpen();
-                        }
+                        if (!(vm.onReady !== undefined)) return [3, 17];
+                        return [4, vm.onReady()];
+                    case 16:
+                        _c.sent();
+                        _c.label = 17;
+                    case 17:
+                        if (!(vm.onOpen !== undefined)) return [3, 19];
+                        return [4, vm.onOpen()];
+                    case 18:
+                        _c.sent();
+                        _c.label = 19;
+                    case 19:
                         hljs = "https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.13.1/build/highlight.min";
                         hlcss = "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/androidstudio.min.css";
                         codeList = vm.$el.querySelectorAll("code");
-                        if (!(codeList.length > 0)) return [3, 20];
-                        if (!(this.highlightjs === undefined)) return [3, 19];
-                        _c.label = 14;
-                    case 14:
-                        _c.trys.push([14, 17, , 18]);
+                        if (!(codeList.length > 0)) return [3, 26];
+                        if (!(this.highlightjs === undefined)) return [3, 25];
+                        _c.label = 20;
+                    case 20:
+                        _c.trys.push([20, 23, , 24]);
                         return [4, DeskRT.loadLink([hlcss])];
-                    case 15:
+                    case 21:
                         _c.sent();
                         return [4, System.import(hljs)];
-                    case 16:
+                    case 22:
                         hl = _c.sent();
                         for (i = 0; i < codeList.length; ++i) {
                             hl.highlightBlock(codeList[i]);
                         }
                         this.highlightjs = hl;
-                        return [3, 18];
-                    case 17:
+                        return [3, 24];
+                    case 23:
                         _b = _c.sent();
                         alert("Load script error(2).");
                         return [2];
-                    case 18: return [3, 20];
-                    case 19:
+                    case 24: return [3, 26];
+                    case 25:
                         for (i = 0; i < codeList.length; ++i) {
                             this.highlightjs.highlightBlock(codeList[i]);
                         }
-                        _c.label = 20;
-                    case 20:
+                        _c.label = 26;
+                    case 26:
                         DeskRT.hideMask();
                         this.frameVue.elAsideShow = false;
                         this.vuex.commit("setPath", path);
-                        return [3, 22];
-                    case 21:
+                        return [3, 28];
+                    case 27:
                         alert("Page is empty.");
-                        _c.label = 22;
-                    case 22: return [2];
+                        _c.label = 28;
+                    case 28: return [2];
                 }
             });
         });
