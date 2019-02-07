@@ -38,8 +38,12 @@ code {
 * {
     -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 }
- 
- /* --- 优化 --- */
+::selection {
+    background-color: rgba(64,158,255,0.99);
+    color: #fff;
+}
+
+/* --- 优化 --- */
 .el-menu-item, .el-submenu__title {
     height: initial !important;  // --- 解决左边栏每一个 item 高度上面空白大于下面空白的问题 ---
 }
@@ -82,15 +86,15 @@ code {
     display: flex;
 }
 
- /* --- 加载动画 --- */
- @-webkit-keyframes elRotate {to {-webkit-transform: rotate(405deg);transform: rotate(405deg);}}
- @keyframes elRotate {to {-webkit-transform: rotate(405deg);transform: rotate(405deg);}}
- @-webkit-keyframes elSpinMove {to {opacity: 1;}}
- @keyframes elSpinMove {to {opacity: 1;}}
- .el-spin {font-family: "Helvetica Neue For Number", "Chinese Quote", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", Helvetica, Arial, sans-serif;font-size: 14px;line-height: 1.5;color: rgba(0, 0, 0, 0.65);-webkit-box-sizing: border-box;box-sizing: border-box;margin: 0;padding: 0;list-style: none;color: #1890ff;vertical-align: middle;text-align: center;opacity: 0;position: absolute;-webkit-transition: -webkit-transform 0.3s cubic-bezier(0.78, 0.14, 0.15, 0.86);transition: -webkit-transform 0.3s cubic-bezier(0.78, 0.14, 0.15, 0.86);transition: transform 0.3s cubic-bezier(0.78, 0.14, 0.15, 0.86);transition: transform 0.3s cubic-bezier(0.78, 0.14, 0.15, 0.86), -webkit-transform 0.3s cubic-bezier(0.78, 0.14, 0.15, 0.86);display: none;}
- .el-spin-spinning{opacity: 1;position: static;display: inline-block;}
- .el-spin-dot{position: relative;display: inline-block;width: 20px;height: 20px;-webkit-transform: rotate(45deg);-ms-transform: rotate(45deg);transform: rotate(45deg);-webkit-animation: elRotate 1.2s infinite linear;animation: elRotate 1.2s infinite linear;}
- .el-spin-dot i {
+/* --- 加载动画 --- */
+@-webkit-keyframes elRotate {to {-webkit-transform: rotate(405deg);transform: rotate(405deg);}}
+@keyframes elRotate {to {-webkit-transform: rotate(405deg);transform: rotate(405deg);}}
+@-webkit-keyframes elSpinMove {to {opacity: 1;}}
+@keyframes elSpinMove {to {opacity: 1;}}
+.el-spin {font-family: "Helvetica Neue For Number", "Chinese Quote", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", Helvetica, Arial, sans-serif;font-size: 14px;line-height: 1.5;color: rgba(0, 0, 0, 0.65);-webkit-box-sizing: border-box;box-sizing: border-box;margin: 0;padding: 0;list-style: none;color: #1890ff;vertical-align: middle;text-align: center;opacity: 0;position: absolute;-webkit-transition: -webkit-transform 0.3s cubic-bezier(0.78, 0.14, 0.15, 0.86);transition: -webkit-transform 0.3s cubic-bezier(0.78, 0.14, 0.15, 0.86);transition: transform 0.3s cubic-bezier(0.78, 0.14, 0.15, 0.86);transition: transform 0.3s cubic-bezier(0.78, 0.14, 0.15, 0.86), -webkit-transform 0.3s cubic-bezier(0.78, 0.14, 0.15, 0.86);display: none;}
+.el-spin-spinning{opacity: 1;position: static;display: inline-block;}
+.el-spin-dot{position: relative;display: inline-block;width: 20px;height: 20px;-webkit-transform: rotate(45deg);-ms-transform: rotate(45deg);transform: rotate(45deg);-webkit-animation: elRotate 1.2s infinite linear;animation: elRotate 1.2s infinite linear;}
+.el-spin-dot i {
     width: 9px;height: 9px;border-radius: 100%;background-color: #1890ff;-webkit-transform: scale(0.75);-ms-transform: scale(0.75);transform: scale(0.75);display: block;position: absolute;opacity: 0.3;-webkit-animation: elSpinMove 1s infinite linear alternate;animation: elSpinMove 1s infinite linear alternate;-webkit-transform-origin: 50% 50%;-ms-transform-origin: 50% 50%;transform-origin: 50% 50%;
     &:nth-child(1) {left: 0;top: 0;}
     &:nth-child(2) {right: 0;top: 0;-webkit-animation-delay: 0.4s;animation-delay: 0.4s;}
@@ -98,7 +102,7 @@ code {
     &:nth-child(4) {left: 0;bottom: 0;-webkit-animation-delay: 1.2s;animation-delay: 1.2s;}
 }
  
- /* --- 页面 --- */
+/* --- 页面 --- */
 .el-page {
     display: none;
     flex: 1;
