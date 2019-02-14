@@ -85,14 +85,14 @@ var DeskRT = (function () {
                                 }
                             });
                         }); });
-                        jsPath = "https://cdn.jsdelivr.net/combine/npm/vue@2.5.21,npm/vuex@3.0.1/dist/vuex.min.js,npm/element-ui@2.4.11/lib/index.js,npm/systemjs@0.21.6/dist/system.min.js";
+                        jsPath = "https://cdn.jsdelivr.net/combine/npm/vue@2.6.6,npm/vuex@3.1.0/dist/vuex.min.js,npm/element-ui@2.5.4/lib/index.js,npm/systemjs@0.21.6/dist/system.min.js";
                         if (typeof fetch !== "function") {
                             jsPath += ",npm/whatwg-fetch@3.0.0/fetch.min.js";
                         }
                         if (typeof Promise !== "function") {
                             jsPath += ",npm/promise-polyfill@8.1.0/dist/polyfill.min.js";
                         }
-                        DeskRTTools.headEle.insertAdjacentHTML("afterbegin", "<link rel=\"stylesheet\" href=\"https://cdn.jsdelivr.net/npm/element-ui@2.4.11/lib/theme-chalk/index.css\">");
+                        DeskRTTools.headEle.insertAdjacentHTML("afterbegin", "<link rel=\"stylesheet\" href=\"https://cdn.jsdelivr.net/npm/element-ui@2.5.4/lib/theme-chalk/index.css\">");
                         return [4, this.loadScript([jsPath])];
                     case 1:
                         _c.sent();
@@ -555,7 +555,7 @@ var DeskRT = (function () {
         }
         document.getElementById("el-mask").classList.remove("el--show");
     };
-    DeskRT.version = "1.0.4";
+    DeskRT.version = "1.0.5";
     return DeskRT;
 }());
 var DeskRTTools = (function () {
@@ -645,7 +645,7 @@ var DeskRTTools = (function () {
                         _d.label = 1;
                     case 1:
                         _d.trys.push([1, 3, , 4]);
-                        return [4, System.import("https://cdn.jsdelivr.net/npm/element-ui@2.4.11/lib/locale/lang/" + locale)];
+                        return [4, System.import("https://cdn.jsdelivr.net/npm/element-ui@2.5.4/lib/locale/lang/" + locale)];
                     case 2:
                         loc = _d.sent();
                         if (!this.localeObj[locale]) {
@@ -878,8 +878,8 @@ var DeskRTTools = (function () {
                         _c.sent();
                         _c.label = 19;
                     case 19:
-                        hljs = "https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.13.1/build/highlight.min";
-                        hlcss = "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/androidstudio.min.css";
+                        hljs = "https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.14.2/build/highlight.min";
+                        hlcss = "https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.14.2/build/styles/androidstudio.min.css";
                         codeList = vm.$el.querySelectorAll("code");
                         if (!(codeList.length > 0)) return [3, 26];
                         if (!(this.highlightjs === undefined)) return [3, 25];
