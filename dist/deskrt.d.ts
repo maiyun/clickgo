@@ -5,6 +5,7 @@ declare class DeskRT {
     static asideWidth: string;
     static init(opt: any): void;
     static go(path: string): void;
+    static goBack(): void;
     static setLocale(loc: string): Promise<void>;
     static loadScript(paths: string[]): Promise<void>;
     static loadLink(paths: string[]): Promise<void>;
