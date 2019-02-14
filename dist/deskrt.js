@@ -270,6 +270,9 @@ var DeskRT = (function () {
     DeskRT.go = function (path) {
         window.location.hash = "#" + path;
     };
+    DeskRT.goBack = function () {
+        history.back();
+    };
     DeskRT.setLocale = function (loc) {
         return __awaiter(this, void 0, void 0, function () {
             var nowPage, pkg;

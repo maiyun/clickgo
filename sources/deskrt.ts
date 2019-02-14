@@ -245,6 +245,13 @@ class DeskRT {
     }
 
     /**
+     * --- 返回上级页面（基于原生） ---
+     */
+    public static goBack(): void {
+        history.back();
+    }
+
+    /**
      * --- 切换当前语言（如果语言不存在会被自动加载，会自动触发 callback 和 mask 相关操作） ---
      * @param loc 目标语言值
      */
