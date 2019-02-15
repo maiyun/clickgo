@@ -4,7 +4,7 @@
 
 [+] Add goBack() method.  
 [\*] Optimize "deskrt.scss" file.  
-[\*] Update Vue to 2.6.6, ElementUI to 2.5.4, highlightjs to 9.14.2.  
+[\*] Update Vue to 2.6.6, ElementUI to 2.5.4, highlightjs to 9.14.2.
 
 ## 1.0.4
 
