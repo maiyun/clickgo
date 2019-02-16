@@ -2,5 +2,6 @@ export declare let data: {
     list: never[];
 };
 export declare let methods: {
-    onOpen: (this: Vue) => void;
+    onReady: (this: Vue) => void;
+    onOpen: (this: Vue) => Promise<void>;
 };

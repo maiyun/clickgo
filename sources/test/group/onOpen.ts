@@ -4,7 +4,10 @@ export let data = {
     list: []
 };
 export let methods = {
-    onOpen: function(this: Vue) {
+    onReady: function(this: Vue) {
+        this.$refs.tipDiv.innerHTML = "Opened at:";
+    },
+    onOpen: async function(this: Vue) {
         this.$data.list.push(datetime.date());
     }
 };
