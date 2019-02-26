@@ -4,7 +4,7 @@ declare class DeskRT {
     private static _asideWidth;
     static asideWidth: string;
     static init(opt: any): void;
-    static go(path: string): void;
+    static go(path: string, callback: any[]): void;
     static goBack(): void;
     static setLocale(loc: string): Promise<void>;
     static loadScript(paths: string[]): Promise<void>;
@@ -43,6 +43,7 @@ declare class DeskRTTools {
     static loadOutLink(path: string): Promise<void>;
     static readLocale(key: string): string;
     static loadLocale(locale: string, pkg?: string, before?: () => any, after?: () => any): Promise<void>;
+    static goCallback: any[];
     static openPage(path: string): Promise<void>;
     static controlsInit(): void;
 }

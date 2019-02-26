@@ -86,6 +86,12 @@ code {
     display: flex;
 }
 
+/* --- 顶级文字浅遮罩 --- */
+#el-top-mask {
+    display: none;
+    
+}
+
 /* --- 加载动画 --- */
 @-webkit-keyframes elRotate {to {-webkit-transform: rotate(405deg);transform: rotate(405deg);}}
 @keyframes elRotate {to {-webkit-transform: rotate(405deg);transform: rotate(405deg);}}

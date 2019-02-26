@@ -8,7 +8,7 @@
 class DeskRT {
 
     /** DeskRT 核心版本 */
-    public static version: string = "1.0.5";
+    public static version: string = "1.0.6";
 
     /** 全局可用的变量 */
     public static let: any;
@@ -239,8 +239,12 @@ class DeskRT {
     /**
      * --- 跳转页面到一个新页面 ---
      * @param path 要跳转的页面
+     * @param callback 跳转成功后要执行的 methods 以及一个传参
      */
-    public static go(path: string): void {
+    public static go(path: string, callback: any[]): void {
+        if (callback.length > 0) {
+            DeskRTTools.goCallback = callback;
+        }
         window.location.hash = "#" + path;
     }
 
@@ -690,6 +694,8 @@ class DeskRTTools {
         });
     }
 
+    /** --- 跳转并执行完 onOpen 后是否要再执行的函数 --- */
+    public static goCallback: any[] = [];
     /**
      * --- 打开/跳转一个页面（URL 处 hash 地址不变，仅仅打开） ---
      * @param path 要打开的页面地址
@@ -708,8 +714,6 @@ class DeskRTTools {
         }
         // --- 判断 path 有没有被加载 ---
         if (this.pages[path]) {
-            // --- 设置 path ---
-            this.vuex.commit("setPath", path);
             // --- 已经加载过 ---
             this.pages[path].query = query;
             if (this.pages[path].onOpen) {
@@ -717,6 +721,13 @@ class DeskRTTools {
             }
             // --- 手机端隐藏左侧菜单 ---
             this.frameVue.elAsideShow = false;
+            // --- 设置 path ---
+            this.vuex.commit("setPath", path);
+            // --- 执行用户方法 ---
+            if (this.goCallback.length > 0) {
+                await this.pages[path][this.goCallback[0]](this.goCallback[1]);
+                this.goCallback = [];
+            }
         } else {
             // --- 未加载，加载 HTML 和 JS ---
             DeskRT.showMask();
@@ -870,6 +881,11 @@ class DeskRTTools {
                 this.frameVue.elAsideShow = false;
                 // --- 设置 path，用于切换页面显示 ---
                 this.vuex.commit("setPath", path);
+                // --- 执行用户方法 ---
+                if (this.goCallback.length > 0) {
+                    await vm[this.goCallback[0]](this.goCallback[1]);
+                    this.goCallback = [];
+                }
             } else {
                 alert(`Page is empty.`);
             }
