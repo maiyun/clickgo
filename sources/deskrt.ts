@@ -48,6 +48,7 @@ class DeskRT {
                 `<div id="el-mask" class="el--show">` +
                     `<div class="el-spin el-spin-spinning"><span class="el-spin-dot"><i></i><i></i><i></i><i></i></span></div>` +
                 `</div>` +
+                `<div id="el-text-mask">Loading...</div>` +
             `</div>`;
             DeskRTTools.popEle = <HTMLDivElement>document.getElementById("el-pop");
             DeskRTTools.headEle = document.getElementsByTagName("head")[0];
@@ -241,10 +242,8 @@ class DeskRT {
      * @param path 要跳转的页面
      * @param callback 跳转成功后要执行的 methods 以及一个传参
      */
-    public static go(path: string, callback: any[]): void {
-        if (callback.length > 0) {
-            DeskRTTools.goCallback = callback;
-        }
+    public static go(path: string, callback?: (vm: any) => any): void {
+        DeskRTTools.goCallback = callback;
         window.location.hash = "#" + path;
     }
 
@@ -412,6 +411,18 @@ class DeskRT {
     }
 
     /**
+     * --- 休眠一段时间 ---
+     * @param timeout 休眠时间
+     */
+    public static sleep(timeout: number): Promise<void> {
+        return new Promise(async (resolve, reject) => {
+            setTimeout(() => {
+                resolve();
+            }, timeout);
+        });
+    }
+
+    /**
      * --- 手动传入 code 值并高亮 code 代码块 ---
      * @param dom Element 对象
      * @param code code 值
@@ -492,7 +503,7 @@ class DeskRT {
     /**
      * 显示全局遮罩
      */
-    public static showMask() {
+    public static showMask(): void {
         let frame = document.getElementById("el-frame");
         if (frame !== null) {
             frame.classList.add("el--mask");
@@ -503,12 +514,29 @@ class DeskRT {
     /**
      * 隐藏全局遮罩
      */
-    public static hideMask() {
+    public static hideMask(): void {
         let frame = document.getElementById("el-frame");
         if (frame !== null) {
             frame.classList.remove("el--mask");
         }
         (<HTMLDivElement>document.getElementById("el-mask")).classList.remove("el--show");
+    }
+
+    /**
+     * --- 显示最高层优先级带文字的遮罩 ---
+     * @param text 要显示的文字
+     */
+    public static showTextMask(text: string): void {
+        let $mask =  (<HTMLDivElement>document.getElementById("el-text-mask"));
+        $mask.innerHTML = text;
+        $mask.classList.add("el--show");
+    }
+
+    /**
+     * --- 隐藏最高层优先级带文字的遮罩 ---
+     */
+    public static hideTextMask() {
+        (<HTMLDivElement>document.getElementById("el-text-mask")).classList.remove("el--show");
     }
 
 }
@@ -695,7 +723,7 @@ class DeskRTTools {
     }
 
     /** --- 跳转并执行完 onOpen 后是否要再执行的函数 --- */
-    public static goCallback: any[] = [];
+    public static goCallback?: (vm: any) => any = undefined;
     /**
      * --- 打开/跳转一个页面（URL 处 hash 地址不变，仅仅打开） ---
      * @param path 要打开的页面地址
@@ -724,9 +752,9 @@ class DeskRTTools {
             // --- 设置 path ---
             this.vuex.commit("setPath", path);
             // --- 执行用户方法 ---
-            if (this.goCallback.length > 0) {
-                await this.pages[path][this.goCallback[0]](this.goCallback[1]);
-                this.goCallback = [];
+            if (this.goCallback !== undefined) {
+                await this.goCallback(this.pages[path]);
+                this.goCallback = undefined;
             }
         } else {
             // --- 未加载，加载 HTML 和 JS ---
@@ -882,9 +910,9 @@ class DeskRTTools {
                 // --- 设置 path，用于切换页面显示 ---
                 this.vuex.commit("setPath", path);
                 // --- 执行用户方法 ---
-                if (this.goCallback.length > 0) {
-                    await vm[this.goCallback[0]](this.goCallback[1]);
-                    this.goCallback = [];
+                if (this.goCallback !== undefined) {
+                    await this.goCallback(this.pages[path]);
+                    this.goCallback = undefined;
                 }
             } else {
                 alert(`Page is empty.`);

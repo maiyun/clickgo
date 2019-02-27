@@ -5,3 +5,6 @@ export declare let data: {
 export declare let watch: {
     q: (this: any) => void;
 };
+export declare let methods: {
+    goCallback: (this: any, text: string) => Promise<void>;
+};

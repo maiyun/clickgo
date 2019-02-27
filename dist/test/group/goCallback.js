@@ -37,43 +37,23 @@ define(["require", "exports"], function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.data = {
-        q: "input",
-        w: "none"
-    };
-    exports.watch = {
-        q: function () {
-            var a = [];
-            for (var i = 0; i < this.q.length; ++i) {
-                a.push("{" + this.q.charCodeAt(i) + "}");
-            }
-            this.w = a.join("");
-        }
+        text: "okey, okey. bye!"
     };
     exports.methods = {
-        goCallback: function (text) {
-            return __awaiter(this, void 0, void 0, function () {
-                var tl, i;
+        doit: function () {
+            var _this = this;
+            DeskRT.showTextMask("Automation...");
+            DeskRT.go("group/watch", function (vm) { return __awaiter(_this, void 0, void 0, function () {
                 return __generator(this, function (_a) {
                     switch (_a.label) {
-                        case 0:
-                            this.q = "";
-                            tl = text.length;
-                            i = 0;
-                            _a.label = 1;
+                        case 0: return [4, vm.goCallback(this.text)];
                         case 1:
-                            if (!(i < tl)) return [3, 4];
-                            return [4, DeskRT.sleep(300)];
-                        case 2:
                             _a.sent();
-                            this.q += text[i];
-                            _a.label = 3;
-                        case 3:
-                            ++i;
-                            return [3, 1];
-                        case 4: return [2];
+                            DeskRT.hideTextMask();
+                            return [2];
                     }
                 });
-            });
+            }); });
         }
     };
 });

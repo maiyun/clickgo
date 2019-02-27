@@ -82,14 +82,27 @@ code {
     justify-content: center;
     align-items: center;
 }
-#el-mask.el--show {
-    display: flex;
-}
-
 /* --- 顶级文字浅遮罩 --- */
-#el-top-mask {
+#el-text-mask {
     display: none;
-    
+    background: rgba(0,0,0,.2);
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 10000;
+    justify-content: center;
+    align-items: center;
+    color: #FFF;
+    font-size: 36px;
+    font-weight: 900;
+    -webkit-text-stroke: 2px #000;
+}
+#el-mask, #el-text-mask {
+    &.el--show {
+        display: flex;
+    }
 }
 
 /* --- 加载动画 --- */

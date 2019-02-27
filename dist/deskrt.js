@@ -72,6 +72,7 @@ var DeskRT = (function () {
                             "<div id=\"el-mask\" class=\"el--show\">" +
                             "<div class=\"el-spin el-spin-spinning\"><span class=\"el-spin-dot\"><i></i><i></i><i></i><i></i></span></div>" +
                             "</div>" +
+                            "<div id=\"el-text-mask\">Loading...</div>" +
                             "</div>";
                         DeskRTTools.popEle = document.getElementById("el-pop");
                         DeskRTTools.headEle = document.getElementsByTagName("head")[0];
@@ -268,9 +269,7 @@ var DeskRT = (function () {
         }); });
     };
     DeskRT.go = function (path, callback) {
-        if (callback.length > 0) {
-            DeskRTTools.goCallback = callback;
-        }
+        DeskRTTools.goCallback = callback;
         window.location.hash = "#" + path;
     };
     DeskRT.goBack = function () {
@@ -444,6 +443,17 @@ var DeskRT = (function () {
             return { "<": "&lt;", ">": "&gt;", "&": "&amp;", "\"": "&quot;" }[c];
         });
     };
+    DeskRT.sleep = function (timeout) {
+        var _this = this;
+        return new Promise(function (resolve, reject) { return __awaiter(_this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                setTimeout(function () {
+                    resolve();
+                }, timeout);
+                return [2];
+            });
+        }); });
+    };
     DeskRT.highlight = function (dom, code) {
         if (DeskRTTools.highlightjs !== undefined) {
             dom.innerText = code;
@@ -557,6 +567,14 @@ var DeskRT = (function () {
             frame.classList.remove("el--mask");
         }
         document.getElementById("el-mask").classList.remove("el--show");
+    };
+    DeskRT.showTextMask = function (text) {
+        var $mask = document.getElementById("el-text-mask");
+        $mask.innerHTML = text;
+        $mask.classList.add("el--show");
+    };
+    DeskRT.hideTextMask = function () {
+        document.getElementById("el-text-mask").classList.remove("el--show");
     };
     DeskRT.version = "1.0.6";
     return DeskRT;
@@ -745,11 +763,11 @@ var DeskRTTools = (function () {
                     case 2:
                         this.frameVue.elAsideShow = false;
                         this.vuex.commit("setPath", path);
-                        if (!(this.goCallback.length > 0)) return [3, 4];
-                        return [4, this.pages[path][this.goCallback[0]](this.goCallback[1])];
+                        if (!(this.goCallback !== undefined)) return [3, 4];
+                        return [4, this.goCallback(this.pages[path])];
                     case 3:
                         _c.sent();
-                        this.goCallback = [];
+                        this.goCallback = undefined;
                         _c.label = 4;
                     case 4: return [3, 32];
                     case 5:
@@ -920,11 +938,11 @@ var DeskRTTools = (function () {
                         DeskRT.hideMask();
                         this.frameVue.elAsideShow = false;
                         this.vuex.commit("setPath", path);
-                        if (!(this.goCallback.length > 0)) return [3, 30];
-                        return [4, vm[this.goCallback[0]](this.goCallback[1])];
+                        if (!(this.goCallback !== undefined)) return [3, 30];
+                        return [4, this.goCallback(this.pages[path])];
                     case 29:
                         _c.sent();
-                        this.goCallback = [];
+                        this.goCallback = undefined;
                         _c.label = 30;
                     case 30: return [3, 32];
                     case 31:
@@ -1184,6 +1202,6 @@ var DeskRTTools = (function () {
     };
     DeskRTTools.pages = {};
     DeskRTTools.outPath = [];
-    DeskRTTools.goCallback = [];
+    DeskRTTools.goCallback = undefined;
     return DeskRTTools;
 }());
