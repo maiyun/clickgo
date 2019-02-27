@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.0.6
+
+[+] The go() method adds the "callback" parameter.  
+[+] Add showTextMask() and hideTextMask() methods.  
+[+] Add the sleep() method.
+
 ## 1.0.5
 
 [+] Add goBack() method.  
