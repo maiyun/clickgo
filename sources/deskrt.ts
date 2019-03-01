@@ -3,6 +3,13 @@
  * Author: Han GuoShuai
  * Github: https://github.com/MaiyunNET/DeskRT
  */
+window.onerror = (msg, uri, line, col, err) => {
+    if (err) {
+        alert(err.message + "\n" + err.stack + "\nLine: " + line + "\nColumn: " + col);
+    } else {
+        alert(msg);
+    }
+};
 
 // --- 核心 ---
 class DeskRT {

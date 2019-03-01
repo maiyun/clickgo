@@ -50,8 +50,9 @@ code {
 [class^="el-icon-"], [class*=" el-icon-"] {
     font-family: "element-icons", "d-iconfont" !important;  // --- 加载 DeskRT 的图标库 ---
 }
-// --- 解决在 iOS 等老环境下，弹出窗体不能居中的情况 ---
+
 @media(max-width: 780px) {
+    // --- 解决在 iOS 等老环境下，弹出窗体不能居中的情况 ---
     .el-message-box__wrapper {
         right: inherit;
         bottom: inherit;
@@ -61,8 +62,9 @@ code {
         justify-content: center;
         align-items: center;
     }
-    .el-message-box {
-        width: 80%;
+    // --- 手机模式下宽度舒张 ---
+    .el-message-box, .el-dialog {
+        width: 85%;
     }
 }
 
