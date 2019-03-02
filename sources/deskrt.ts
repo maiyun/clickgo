@@ -15,7 +15,7 @@ window.onerror = (msg, uri, line, col, err) => {
 class DeskRT {
 
     /** DeskRT 核心版本 */
-    public static version: string = "1.0.6";
+    public static version: string = "1.0.7";
 
     /** 全局可用的变量 */
     public static let: any;

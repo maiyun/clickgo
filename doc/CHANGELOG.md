@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.0.7
+
+[+] Add "top" param of showMask().  
+[\*] Fix filter bug, remove filter.  
+[\*] Fix ios touch bug, z-index bug.
+
 ## 1.0.6
 
 [+] The go() method adds the "callback" parameter.  
