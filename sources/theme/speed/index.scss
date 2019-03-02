@@ -51,11 +51,6 @@
     }
 }
 
-/* --- 遮罩 --- */
-#el-frame.el--mask {
-    filter: grayscale(.7);
-}
-
 /* --- el-card --- */
 .el-card.is-always-shadow, .el-card.is-hover-shadow:focus, .el-card.is-hover-shadow:hover {
     box-shadow: 0 1px 2px 0 rgba(161,171,181,.48), 0 2px 4px 0 rgba(213,222,231,.64);

@@ -21,7 +21,7 @@ declare class DeskRT {
     static highlight(dom: HTMLElement, code: string): void;
     static get(url: string): Promise<any>;
     static post(url: string, data: any): Promise<any>;
-    static showMask(): void;
+    static showMask(top?: boolean): void;
     static hideMask(): void;
     static showTextMask(text: string): void;
     static hideTextMask(): void;

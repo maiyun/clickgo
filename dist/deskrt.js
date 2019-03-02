@@ -197,7 +197,7 @@ var DeskRT = (function () {
                         alert("Load script error(1)");
                         return [2];
                     case 10:
-                        body.insertAdjacentHTML("afterbegin", "<div id=\"el-frame\" class=\"el--mask\">" +
+                        body.insertAdjacentHTML("afterbegin", "<div id=\"el-frame\">" +
                             "<el-container>" +
                             "<el-aside :width=\"_asideWidth\" :class=\"{'el--show': elAsideShow}\">" +
                             ("<el-logo" + (logo ? " style=\"background-image: url(" + (DeskRTTools.pre + logo) + ");\"" : "") + "></el-logo>") +
@@ -296,7 +296,7 @@ var DeskRT = (function () {
                         if (!nowPage) return [3, 2];
                         pkg = nowPage.getAttribute("locale-pkg") || "";
                         return [4, DeskRTTools.loadLocale(loc, pkg, function () {
-                                _this.showMask();
+                                _this.showMask(true);
                             }, function () {
                                 _this.hideMask();
                             })];
@@ -562,18 +562,15 @@ var DeskRT = (function () {
             });
         });
     };
-    DeskRT.showMask = function () {
-        var frame = document.getElementById("el-frame");
-        if (frame !== null) {
-            frame.classList.add("el--mask");
+    DeskRT.showMask = function (top) {
+        if (top === void 0) { top = false; }
+        var elMask = document.getElementById("el-mask");
+        elMask.classList.add("el--show");
+        if (top) {
+            elMask.classList.add("el--top");
         }
-        document.getElementById("el-mask").classList.add("el--show");
     };
     DeskRT.hideMask = function () {
-        var frame = document.getElementById("el-frame");
-        if (frame !== null) {
-            frame.classList.remove("el--mask");
-        }
         document.getElementById("el-mask").classList.remove("el--show");
     };
     DeskRT.showTextMask = function (text) {
@@ -779,7 +776,7 @@ var DeskRTTools = (function () {
                         _c.label = 4;
                     case 4: return [3, 32];
                     case 5:
-                        DeskRT.showMask();
+                        DeskRT.showMask(true);
                         return [4, fetch(this.pre + path + ".html?" + this.end)];
                     case 6:
                         res = _c.sent();

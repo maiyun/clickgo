@@ -1,0 +1,13 @@
+<el-page load-script>
+    <el-card header="Dialog">
+        <el-button @click="dialogVisible = true">Open dialog</el-button>
+    </el-card>
+    <el-dialog title="title" :visible.sync="dialogVisible">
+        <span>It's a piece of text.</span>
+        <el-center>
+            <el-button @click="dialogVisible = false" size="mini">Cancel</el-button>
+            <el-button type="primary" @click="dialogVisible = false" size="mini">Ok</el-button>
+            <el-button @click="showLoading()" size="mini">Show loading</el-button>
+        </el-center>
+    </el-dialog>
+</el-page>

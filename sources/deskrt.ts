@@ -61,7 +61,7 @@ class DeskRT {
             DeskRTTools.headEle = document.getElementsByTagName("head")[0];
 
             // --- 注册 hashchange 事件，hash 变动时自动 open 页面 ---
-            window.addEventListener("hashchange", async() => {
+            window.addEventListener("hashchange", async () => {
                 // --- 必须在里面调用，否则函数体内的 this 指针会出问题 ---
                 await DeskRTTools.onHashChange();
             });
@@ -168,7 +168,7 @@ class DeskRT {
                         }
                     }
                     // --- 将 Frame 插入 HTML ---
-                    body.insertAdjacentHTML("afterbegin", `<div id="el-frame" class="el--mask">` +
+                    body.insertAdjacentHTML("afterbegin", `<div id="el-frame">` +
                         `<el-container>` +
                             `<el-aside :width="_asideWidth" :class="{'el--show': elAsideShow}">` +
                                 `<el-logo${logo ? ` style="background-image: url(${DeskRTTools.pre + logo});"` : ""}></el-logo>` +
@@ -273,7 +273,7 @@ class DeskRT {
                 if (nowPage) {
                     let pkg = nowPage.getAttribute("locale-pkg") || "";
                     await DeskRTTools.loadLocale(loc, pkg, () => {
-                        this.showMask();
+                        this.showMask(true);
                     }, () => {
                         this.hideMask();
                     });
@@ -510,22 +510,18 @@ class DeskRT {
     /**
      * 显示全局遮罩
      */
-    public static showMask(): void {
-        let frame = document.getElementById("el-frame");
-        if (frame !== null) {
-            frame.classList.add("el--mask");
+    public static showMask(top: boolean = false): void {
+        let elMask = (<HTMLDivElement>document.getElementById("el-mask"));
+        elMask.classList.add("el--show");
+        if (top) {
+            elMask.classList.add("el--top");
         }
-        (<HTMLDivElement>document.getElementById("el-mask")).classList.add("el--show");
     }
 
     /**
      * 隐藏全局遮罩
      */
     public static hideMask(): void {
-        let frame = document.getElementById("el-frame");
-        if (frame !== null) {
-            frame.classList.remove("el--mask");
-        }
         (<HTMLDivElement>document.getElementById("el-mask")).classList.remove("el--show");
     }
 
@@ -765,7 +761,7 @@ class DeskRTTools {
             }
         } else {
             // --- 未加载，加载 HTML 和 JS ---
-            DeskRT.showMask();
+            DeskRT.showMask(true);
             let res = await fetch(this.pre + path + ".html?" + this.end);
             let text = "";
             if (res.status === 404) {
