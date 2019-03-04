@@ -5,9 +5,9 @@
  */
 window.onerror = (msg, uri, line, col, err) => {
     if (err) {
-        alert(err.message + "\n" + err.stack + "\nLine: " + line + "\nColumn: " + col);
+        alert("Error:\n" + err.message + "\n" + err.stack + "\nLine: " + line + "\nColumn: " + col);
     } else {
-        alert(msg);
+        console.log(msg);
     }
 };
 
@@ -47,7 +47,7 @@ class DeskRT {
         this.let = opt.let || {};
 
         // --- 网页 DOM 加载完成后开始执行 ---
-        document.addEventListener("DOMContentLoaded", async() => {
+        document.addEventListener("DOMContentLoaded", () => {
             // --- 获取 body 的 DOM ---
             let body = document.getElementsByTagName("body")[0];
             // --- 插入 Pop 层 DOM ---
@@ -60,186 +60,199 @@ class DeskRT {
             DeskRTTools.popEle = <HTMLDivElement>document.getElementById("el-pop");
             DeskRTTools.headEle = document.getElementsByTagName("head")[0];
 
-            // --- 注册 hashchange 事件，hash 变动时自动 open 页面 ---
-            window.addEventListener("hashchange", async () => {
-                // --- 必须在里面调用，否则函数体内的 this 指针会出问题 ---
-                await DeskRTTools.onHashChange();
-            });
+            // --- 先加载异步对象，这个很重要 ---
+            let callback = async () => {
+                // --- 注册 hashchange 事件，hash 变动时自动 open 页面 ---
+                window.addEventListener("hashchange", async () => {
+                    // --- 必须在里面调用，否则函数体内的 this 指针会出问题 ---
+                    await DeskRTTools.onHashChange();
+                });
 
-            // --- 加载 Vue / Vuex / Element UI / SystemJS / whatwg-fetch* / promise-polyfill* ---
-            // --- 别处还有 element-ui 的语言包版本需要对应，以及还有高亮 highlight.js 库 ---
-            let jsPath = "https://cdn.jsdelivr.net/combine/npm/vue@2.6.6,npm/vuex@3.1.0/dist/vuex.min.js,npm/element-ui@2.5.4/lib/index.js,npm/systemjs@0.21.6/dist/system.min.js";
-            if (typeof fetch !== "function") {
-                jsPath += ",npm/whatwg-fetch@3.0.0/fetch.min.js";
-            }
-            if (typeof Promise !== "function") {
-                jsPath += ",npm/promise-polyfill@8.1.0/dist/polyfill.min.js";
-            }
-            // --- 异步加载 element 的 css 基文件（是基本的基，不是搞基的基） ---
-            DeskRTTools.headEle.insertAdjacentHTML("afterbegin", `<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/element-ui@2.5.4/lib/theme-chalk/index.css">`);
-            await this.loadScript([jsPath]);
-            // --- 初始化 SystemJS ---
-            System.config({
-                packages: {
-                    "http:": {defaultExtension: "js?" + DeskRTTools.end},
-                    "https:": {defaultExtension: "js?" + DeskRTTools.end}
-                },
-                map: paths
-            });
-            // --- 加载 i18n，需要默认把 Element UI 的当前客户机语言加载，以及加载当前框架 default 语言包以供 frame 界面使用） ---
-            let locale = "";
-            if (DeskRTTools.i18n !== "") {
-                // --- 设置当前语言 ---
-                let naviLocale = localStorage.getItem("locale") || navigator.language;
-                if (DeskRTTools.locales.indexOf(naviLocale) === -1) {
-                    locale = DeskRTTools.locales[0];
-                } else {
-                    locale = naviLocale;
+                // --- 加载 Vue / Vuex / Element UI / SystemJS / whatwg-fetch* / promise-polyfill* ---
+                // --- 别处还有 element-ui 的语言包版本需要对应，以及还有高亮 highlight.js 库 ---
+                let jsPath = "https://cdn.jsdelivr.net/combine/npm/vue@2.6.6,npm/vuex@3.1.0/dist/vuex.min.js,npm/element-ui@2.5.4/lib/index.js,npm/systemjs@0.21.6/dist/system.min.js";
+                if (typeof fetch !== "function") {
+                    jsPath += ",npm/whatwg-fetch@3.0.0/fetch.min.js";
                 }
-                // --- 设置 Element UI 的语言加载器 ---
-                let elOpt: any = {
-                    i18n: function (path: string) {
-                        if (DeskRTTools.vuex.state.locale !== "zh-CN") {
-                            return DeskRTTools.readLocale(path);
-                        }
-                    }
-                };
-                // --- 设置默认控件大小值 ---
-                if (size !== "") {
-                    elOpt.size = size;
-                }
-                Vue.use(ELEMENT, elOpt);
-                await DeskRTTools.loadLocale(locale);
-            } else {
-                // --- 设置默认控件大小值 ---
-                if (size !== "") {
-                    Vue.use(ELEMENT, {
-                        size: size
-                    });
-                }
-            }
-            // --- 初始化 vuex ---
-            DeskRTTools.vuex = new Vuex.Store({
-                state: {
-                    path: "",                       // --- 当前页面 ---
-                    asideWidth: this._asideWidth,   // --- 左边栏宽度 ---
-                    locale: locale                  // --- 当前语言 ---
-                },
-                mutations: {
-                    setPath: function(state: any, val: any) {
-                        state.path = val;
+                // --- 异步加载 element 的 css 基文件（是基本的基，不是搞基的基） ---
+                DeskRTTools.headEle.insertAdjacentHTML("afterbegin", `<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/element-ui@2.5.4/lib/theme-chalk/index.css">`);
+                await this.loadScript([jsPath]);
+                // --- 初始化 SystemJS ---
+                System.config({
+                    packages: {
+                        "http:": {defaultExtension: "js?" + DeskRTTools.end},
+                        "https:": {defaultExtension: "js?" + DeskRTTools.end}
                     },
-                    setAsideWidth: function(state: any, val: any) {
-                        state.asideWidth = val;
-                    },
-                    setLocale: function(state: any, val: any) {
-                        state.locale = val;
-                    }
-                }
-            });
-            // --- 加载控件定义信息到 Vue ---
-            DeskRTTools.controlsInit();
-
-            // --- 加载框架主要的 frame.html ---
-            let res = await fetch(DeskRTTools.pre + frame + ".html?" + DeskRTTools.end);
-            if (res.status === 404) {
-                alert(`Error: "` + DeskRTTools.pre + frame + `.html" not found.`);
-                return;
-            }
-            let text = this.purify(await res.text());
-            if (text !== "") {
-                // --- 检测 frame 是否要加载 js（load-script 是否存在） ---
-                let df = document.createElement("div");
-                df.innerHTML = text;
-                let elFrame = df.children[0];
-                let elMenu = elFrame.querySelector("el-menu");
-                let elHeader = elFrame.querySelector("el-header");
-                if (elMenu && elHeader) {
-                    let elMenuHtml = elMenu.innerHTML;
-                    let elHeaderHtml = elHeader.innerHTML;
-                    // --- 加载 Frame 的 JS 文件（如果有） ---
-                    let js = undefined;
-                    if (elFrame.getAttribute("load-script") !== null) {
-                        try {
-                            js = await System.import(DeskRTTools.pre + frame);
-                        } catch {
-                            alert(`Load script error(1)`);
-                            return;
-                        }
-                    }
-                    // --- 将 Frame 插入 HTML ---
-                    body.insertAdjacentHTML("afterbegin", `<div id="el-frame">` +
-                        `<el-container>` +
-                            `<el-aside :width="_asideWidth" :class="{'el--show': elAsideShow}">` +
-                                `<el-logo${logo ? ` style="background-image: url(${DeskRTTools.pre + logo});"` : ""}></el-logo>` +
-                                `<el-menu @select="_onSelect" :default-active="DeskRTTools.vuex.state.path">${elMenuHtml}</el-menu>` +
-                            `</el-aside>` +
-                            `<el-container>` +
-                                `<el-header>` +
-                                    `<div class="el-header-left">` +
-                                        `<el-header-item @click="elAsideShow=true"><i class="el-icon-d-liebiaoshitucaidan"></i></el-header-item>` +
-                                    `</div>` +
-                                    elHeaderHtml +
-                                `</el-header>` +
-                                `<el-main id="el-main"></el-main>` +
-                            `</el-container>` +
-                        `</el-container>` +
-                        `<div id="el-aside-mask" :class="{'el--show': elAsideShow}" @click="elAsideShow=false"></div>` +
-                    `</div>`);
-                    // --- 点击左侧菜单产生的回调 ---
-                    let onSelect = (index: string) => {
-                        window.location.hash = "#" + index;
-                    };
-                    // --- 读取语言数据 ---
-                    let $l = (key: string) => {
-                        return DeskRTTools.readLocale(key);
-                    };
-                    if (js !== undefined) {
-                        // --- 有 js ---
-                        let methods = js.methods || {};
-                        methods._onSelect = onSelect;
-                        methods.$l = $l;
-                        let computed = js.computed || {};
-                        computed._asideWidth = () => {
-                            return DeskRTTools.vuex.state.asideWidth;
-                        };
-                        let data = js.data || {};
-                        data.elAsideShow = false;
-                        DeskRTTools.frameVue = new Vue({
-                            el: "#el-frame",
-                            data: data,
-                            methods: methods,
-                            computed: computed
-                        });
+                    map: paths
+                });
+                // --- 加载 i18n，需要默认把 Element UI 的当前客户机语言加载，以及加载当前框架 default 语言包以供 frame 界面使用） ---
+                let locale = "";
+                if (DeskRTTools.i18n !== "") {
+                    // --- 设置当前语言 ---
+                    let naviLocale = localStorage.getItem("locale") || navigator.language;
+                    if (DeskRTTools.locales.indexOf(naviLocale) === -1) {
+                        locale = DeskRTTools.locales[0];
                     } else {
-                        DeskRTTools.frameVue = new Vue({
-                            el: "#el-frame",
-                            data: {
-                                elAsideShow: false
-                            },
-                            methods: {
-                                _onSelect: onSelect,
-                                $l: $l
-                            },
-                            computed: {
-                                _asideWidth: () => {
-                                    return DeskRTTools.vuex.state.asideWidth;
-                                }
+                        locale = naviLocale;
+                    }
+                    // --- 设置 Element UI 的语言加载器 ---
+                    let elOpt: any = {
+                        i18n: function (path: string) {
+                            if (DeskRTTools.vuex.state.locale !== "zh-CN") {
+                                return DeskRTTools.readLocale(path);
                             }
+                        }
+                    };
+                    // --- 设置默认控件大小值 ---
+                    if (size !== "") {
+                        elOpt.size = size;
+                    }
+                    Vue.use(ELEMENT, elOpt);
+                    await DeskRTTools.loadLocale(locale);
+                } else {
+                    // --- 设置默认控件大小值 ---
+                    if (size !== "") {
+                        Vue.use(ELEMENT, {
+                            size: size
                         });
                     }
-                    DeskRTTools.mainEle = <HTMLMainElement>document.getElementById("el-main");
-                    // --- 加载主页 ---
-                    if (window.location.hash === "") {
-                        window.location.hash = "#" + main;
+                }
+                // --- 初始化 vuex ---
+                DeskRTTools.vuex = new Vuex.Store({
+                    state: {
+                        path: "",                       // --- 当前页面 ---
+                        asideWidth: this._asideWidth,   // --- 左边栏宽度 ---
+                        locale: locale                  // --- 当前语言 ---
+                    },
+                    mutations: {
+                        setPath: function(state: any, val: any) {
+                            state.path = val;
+                        },
+                        setAsideWidth: function(state: any, val: any) {
+                            state.asideWidth = val;
+                        },
+                        setLocale: function(state: any, val: any) {
+                            state.locale = val;
+                        }
+                    }
+                });
+                // --- 加载控件定义信息到 Vue ---
+                DeskRTTools.controlsInit();
+
+                // --- 加载框架主要的 frame.html ---
+                let res = await fetch(DeskRTTools.pre + frame + ".html?" + DeskRTTools.end);
+                if (res.status === 404) {
+                    alert(`Error: "` + DeskRTTools.pre + frame + `.html" not found.`);
+                    return;
+                }
+                let text = this.purify(await res.text());
+                if (text !== "") {
+                    // --- 检测 frame 是否要加载 js（load-script 是否存在） ---
+                    let df = document.createElement("div");
+                    df.innerHTML = text;
+                    let elFrame = df.children[0];
+                    let elMenu = elFrame.querySelector("el-menu");
+                    let elHeader = elFrame.querySelector("el-header");
+                    if (elMenu && elHeader) {
+                        let elMenuHtml = elMenu.innerHTML;
+                        let elHeaderHtml = elHeader.innerHTML;
+                        // --- 加载 Frame 的 JS 文件（如果有） ---
+                        let js = undefined;
+                        if (elFrame.getAttribute("load-script") !== null) {
+                            try {
+                                js = await System.import(DeskRTTools.pre + frame);
+                            } catch {
+                                alert(`Load script error(1)`);
+                                return;
+                            }
+                        }
+                        // --- 将 Frame 插入 HTML ---
+                        body.insertAdjacentHTML("afterbegin", `<div id="el-frame">` +
+                            `<el-container>` +
+                                `<el-aside :width="_asideWidth" :class="{'el--show': elAsideShow}">` +
+                                    `<el-logo${logo ? ` style="background-image: url(${DeskRTTools.pre + logo});"` : ""}></el-logo>` +
+                                    `<el-menu @select="_onSelect" :default-active="DeskRTTools.vuex.state.path">${elMenuHtml}</el-menu>` +
+                                `</el-aside>` +
+                                `<el-container>` +
+                                    `<el-header>` +
+                                        `<div class="el-header-left">` +
+                                            `<el-header-item @click="elAsideShow=true"><i class="el-icon-d-liebiaoshitucaidan"></i></el-header-item>` +
+                                        `</div>` +
+                                        elHeaderHtml +
+                                    `</el-header>` +
+                                    `<el-main id="el-main"></el-main>` +
+                                `</el-container>` +
+                            `</el-container>` +
+                            `<div id="el-aside-mask" :class="{'el--show': elAsideShow}" @click="elAsideShow=false"></div>` +
+                        `</div>`);
+                        // --- 点击左侧菜单产生的回调 ---
+                        let onSelect = (index: string) => {
+                            window.location.hash = "#" + index;
+                        };
+                        // --- 读取语言数据 ---
+                        let $l = (key: string) => {
+                            return DeskRTTools.readLocale(key);
+                        };
+                        if (js !== undefined) {
+                            // --- 有 js ---
+                            let methods = js.methods || {};
+                            methods._onSelect = onSelect;
+                            methods.$l = $l;
+                            let computed = js.computed || {};
+                            computed._asideWidth = () => {
+                                return DeskRTTools.vuex.state.asideWidth;
+                            };
+                            let data = js.data || {};
+                            data.elAsideShow = false;
+                            DeskRTTools.frameVue = new Vue({
+                                el: "#el-frame",
+                                data: data,
+                                methods: methods,
+                                computed: computed
+                            });
+                        } else {
+                            DeskRTTools.frameVue = new Vue({
+                                el: "#el-frame",
+                                data: {
+                                    elAsideShow: false
+                                },
+                                methods: {
+                                    _onSelect: onSelect,
+                                    $l: $l
+                                },
+                                computed: {
+                                    _asideWidth: () => {
+                                        return DeskRTTools.vuex.state.asideWidth;
+                                    }
+                                }
+                            });
+                        }
+                        DeskRTTools.mainEle = <HTMLMainElement>document.getElementById("el-main");
+                        // --- 加载主页 ---
+                        if (window.location.hash === "") {
+                            window.location.hash = "#" + main;
+                        } else {
+                            await DeskRTTools.onHashChange();
+                        }
                     } else {
-                        await DeskRTTools.onHashChange();
+                        alert("Error: <el-menu> or <el-header> not found.");
                     }
                 } else {
-                    alert("Error: <el-menu> or <el-header> not found.");
+                    alert("Error: Frame is empty.");
                 }
+            };
+            if (typeof Promise !== "function") {
+                let script = document.createElement("script");
+                script.addEventListener("load", () => {
+                    callback();
+                });
+                script.addEventListener("error", () => {
+                    alert("Load error.");
+                });
+                script.src = "https://cdn.jsdelivr.net/npm/promise-polyfill@8.1.0/dist/polyfill.min.js";
+                DeskRTTools.headEle.appendChild(script);
             } else {
-                alert("Error: Frame is empty.");
+                callback();
             }
         });
     }

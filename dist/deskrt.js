@@ -36,10 +36,10 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 window.onerror = function (msg, uri, line, col, err) {
     if (err) {
-        alert(err.message + "\n" + err.stack + "\nLine: " + line + "\nColumn: " + col);
+        alert("Error:\n" + err.message + "\n" + err.stack + "\nLine: " + line + "\nColumn: " + col);
     }
     else {
-        alert(msg);
+        console.log(msg);
     }
 };
 var DeskRT = (function () {
@@ -69,212 +69,225 @@ var DeskRT = (function () {
         var paths = opt.paths || {};
         this._asideWidth = opt.asideWidth || "200px";
         this.let = opt.let || {};
-        document.addEventListener("DOMContentLoaded", function () { return __awaiter(_this, void 0, void 0, function () {
-            var body, jsPath, locale, naviLocale, elOpt, res, text, _a, df, elFrame, elMenu, elHeader, elMenuHtml, elHeaderHtml, js, _b, onSelect, $l, methods, computed, data;
-            var _this = this;
-            return __generator(this, function (_c) {
-                switch (_c.label) {
-                    case 0:
-                        body = document.getElementsByTagName("body")[0];
-                        body.innerHTML = "<div id=\"el-pop\">" +
-                            "<div id=\"el-mask\" class=\"el--show\">" +
-                            "<div class=\"el-spin el-spin-spinning\"><span class=\"el-spin-dot\"><i></i><i></i><i></i><i></i></span></div>" +
-                            "</div>" +
-                            "<div id=\"el-text-mask\">Loading...</div>" +
-                            "</div>";
-                        DeskRTTools.popEle = document.getElementById("el-pop");
-                        DeskRTTools.headEle = document.getElementsByTagName("head")[0];
-                        window.addEventListener("hashchange", function () { return __awaiter(_this, void 0, void 0, function () {
-                            return __generator(this, function (_a) {
-                                switch (_a.label) {
-                                    case 0: return [4, DeskRTTools.onHashChange()];
-                                    case 1:
-                                        _a.sent();
-                                        return [2];
-                                }
-                            });
-                        }); });
-                        jsPath = "https://cdn.jsdelivr.net/combine/npm/vue@2.6.6,npm/vuex@3.1.0/dist/vuex.min.js,npm/element-ui@2.5.4/lib/index.js,npm/systemjs@0.21.6/dist/system.min.js";
-                        if (typeof fetch !== "function") {
-                            jsPath += ",npm/whatwg-fetch@3.0.0/fetch.min.js";
-                        }
-                        if (typeof Promise !== "function") {
-                            jsPath += ",npm/promise-polyfill@8.1.0/dist/polyfill.min.js";
-                        }
-                        DeskRTTools.headEle.insertAdjacentHTML("afterbegin", "<link rel=\"stylesheet\" href=\"https://cdn.jsdelivr.net/npm/element-ui@2.5.4/lib/theme-chalk/index.css\">");
-                        return [4, this.loadScript([jsPath])];
-                    case 1:
-                        _c.sent();
-                        System.config({
-                            packages: {
-                                "http:": { defaultExtension: "js?" + DeskRTTools.end },
-                                "https:": { defaultExtension: "js?" + DeskRTTools.end }
-                            },
-                            map: paths
-                        });
-                        locale = "";
-                        if (!(DeskRTTools.i18n !== "")) return [3, 3];
-                        naviLocale = localStorage.getItem("locale") || navigator.language;
-                        if (DeskRTTools.locales.indexOf(naviLocale) === -1) {
-                            locale = DeskRTTools.locales[0];
-                        }
-                        else {
-                            locale = naviLocale;
-                        }
-                        elOpt = {
-                            i18n: function (path) {
-                                if (DeskRTTools.vuex.state.locale !== "zh-CN") {
-                                    return DeskRTTools.readLocale(path);
-                                }
+        document.addEventListener("DOMContentLoaded", function () {
+            var body = document.getElementsByTagName("body")[0];
+            body.innerHTML = "<div id=\"el-pop\">" +
+                "<div id=\"el-mask\" class=\"el--show\">" +
+                "<div class=\"el-spin el-spin-spinning\"><span class=\"el-spin-dot\"><i></i><i></i><i></i><i></i></span></div>" +
+                "</div>" +
+                "<div id=\"el-text-mask\">Loading...</div>" +
+                "</div>";
+            DeskRTTools.popEle = document.getElementById("el-pop");
+            DeskRTTools.headEle = document.getElementsByTagName("head")[0];
+            var callback = function () { return __awaiter(_this, void 0, void 0, function () {
+                var jsPath, locale, naviLocale, elOpt, res, text, _a, df, elFrame, elMenu, elHeader, elMenuHtml, elHeaderHtml, js, _b, onSelect, $l, methods, computed, data;
+                var _this = this;
+                return __generator(this, function (_c) {
+                    switch (_c.label) {
+                        case 0:
+                            window.addEventListener("hashchange", function () { return __awaiter(_this, void 0, void 0, function () {
+                                return __generator(this, function (_a) {
+                                    switch (_a.label) {
+                                        case 0: return [4, DeskRTTools.onHashChange()];
+                                        case 1:
+                                            _a.sent();
+                                            return [2];
+                                    }
+                                });
+                            }); });
+                            jsPath = "https://cdn.jsdelivr.net/combine/npm/vue@2.6.6,npm/vuex@3.1.0/dist/vuex.min.js,npm/element-ui@2.5.4/lib/index.js,npm/systemjs@0.21.6/dist/system.min.js";
+                            if (typeof fetch !== "function") {
+                                jsPath += ",npm/whatwg-fetch@3.0.0/fetch.min.js";
                             }
-                        };
-                        if (size !== "") {
-                            elOpt.size = size;
-                        }
-                        Vue.use(ELEMENT, elOpt);
-                        return [4, DeskRTTools.loadLocale(locale)];
-                    case 2:
-                        _c.sent();
-                        return [3, 4];
-                    case 3:
-                        if (size !== "") {
-                            Vue.use(ELEMENT, {
-                                size: size
+                            DeskRTTools.headEle.insertAdjacentHTML("afterbegin", "<link rel=\"stylesheet\" href=\"https://cdn.jsdelivr.net/npm/element-ui@2.5.4/lib/theme-chalk/index.css\">");
+                            return [4, this.loadScript([jsPath])];
+                        case 1:
+                            _c.sent();
+                            System.config({
+                                packages: {
+                                    "http:": { defaultExtension: "js?" + DeskRTTools.end },
+                                    "https:": { defaultExtension: "js?" + DeskRTTools.end }
+                                },
+                                map: paths
                             });
-                        }
-                        _c.label = 4;
-                    case 4:
-                        DeskRTTools.vuex = new Vuex.Store({
-                            state: {
-                                path: "",
-                                asideWidth: this._asideWidth,
-                                locale: locale
-                            },
-                            mutations: {
-                                setPath: function (state, val) {
-                                    state.path = val;
-                                },
-                                setAsideWidth: function (state, val) {
-                                    state.asideWidth = val;
-                                },
-                                setLocale: function (state, val) {
-                                    state.locale = val;
-                                }
+                            locale = "";
+                            if (!(DeskRTTools.i18n !== "")) return [3, 3];
+                            naviLocale = localStorage.getItem("locale") || navigator.language;
+                            if (DeskRTTools.locales.indexOf(naviLocale) === -1) {
+                                locale = DeskRTTools.locales[0];
                             }
-                        });
-                        DeskRTTools.controlsInit();
-                        return [4, fetch(DeskRTTools.pre + frame + ".html?" + DeskRTTools.end)];
-                    case 5:
-                        res = _c.sent();
-                        if (res.status === 404) {
-                            alert("Error: \"" + DeskRTTools.pre + frame + ".html\" not found.");
-                            return [2];
-                        }
-                        _a = this.purify;
-                        return [4, res.text()];
-                    case 6:
-                        text = _a.apply(this, [_c.sent()]);
-                        if (!(text !== "")) return [3, 16];
-                        df = document.createElement("div");
-                        df.innerHTML = text;
-                        elFrame = df.children[0];
-                        elMenu = elFrame.querySelector("el-menu");
-                        elHeader = elFrame.querySelector("el-header");
-                        if (!(elMenu && elHeader)) return [3, 14];
-                        elMenuHtml = elMenu.innerHTML;
-                        elHeaderHtml = elHeader.innerHTML;
-                        js = undefined;
-                        if (!(elFrame.getAttribute("load-script") !== null)) return [3, 10];
-                        _c.label = 7;
-                    case 7:
-                        _c.trys.push([7, 9, , 10]);
-                        return [4, System.import(DeskRTTools.pre + frame)];
-                    case 8:
-                        js = _c.sent();
-                        return [3, 10];
-                    case 9:
-                        _b = _c.sent();
-                        alert("Load script error(1)");
-                        return [2];
-                    case 10:
-                        body.insertAdjacentHTML("afterbegin", "<div id=\"el-frame\">" +
-                            "<el-container>" +
-                            "<el-aside :width=\"_asideWidth\" :class=\"{'el--show': elAsideShow}\">" +
-                            ("<el-logo" + (logo ? " style=\"background-image: url(" + (DeskRTTools.pre + logo) + ");\"" : "") + "></el-logo>") +
-                            ("<el-menu @select=\"_onSelect\" :default-active=\"DeskRTTools.vuex.state.path\">" + elMenuHtml + "</el-menu>") +
-                            "</el-aside>" +
-                            "<el-container>" +
-                            "<el-header>" +
-                            "<div class=\"el-header-left\">" +
-                            "<el-header-item @click=\"elAsideShow=true\"><i class=\"el-icon-d-liebiaoshitucaidan\"></i></el-header-item>" +
-                            "</div>" +
-                            elHeaderHtml +
-                            "</el-header>" +
-                            "<el-main id=\"el-main\"></el-main>" +
-                            "</el-container>" +
-                            "</el-container>" +
-                            "<div id=\"el-aside-mask\" :class=\"{'el--show': elAsideShow}\" @click=\"elAsideShow=false\"></div>" +
-                            "</div>");
-                        onSelect = function (index) {
-                            window.location.hash = "#" + index;
-                        };
-                        $l = function (key) {
-                            return DeskRTTools.readLocale(key);
-                        };
-                        if (js !== undefined) {
-                            methods = js.methods || {};
-                            methods._onSelect = onSelect;
-                            methods.$l = $l;
-                            computed = js.computed || {};
-                            computed._asideWidth = function () {
-                                return DeskRTTools.vuex.state.asideWidth;
+                            else {
+                                locale = naviLocale;
+                            }
+                            elOpt = {
+                                i18n: function (path) {
+                                    if (DeskRTTools.vuex.state.locale !== "zh-CN") {
+                                        return DeskRTTools.readLocale(path);
+                                    }
+                                }
                             };
-                            data = js.data || {};
-                            data.elAsideShow = false;
-                            DeskRTTools.frameVue = new Vue({
-                                el: "#el-frame",
-                                data: data,
-                                methods: methods,
-                                computed: computed
-                            });
-                        }
-                        else {
-                            DeskRTTools.frameVue = new Vue({
-                                el: "#el-frame",
-                                data: {
-                                    elAsideShow: false
+                            if (size !== "") {
+                                elOpt.size = size;
+                            }
+                            Vue.use(ELEMENT, elOpt);
+                            return [4, DeskRTTools.loadLocale(locale)];
+                        case 2:
+                            _c.sent();
+                            return [3, 4];
+                        case 3:
+                            if (size !== "") {
+                                Vue.use(ELEMENT, {
+                                    size: size
+                                });
+                            }
+                            _c.label = 4;
+                        case 4:
+                            DeskRTTools.vuex = new Vuex.Store({
+                                state: {
+                                    path: "",
+                                    asideWidth: this._asideWidth,
+                                    locale: locale
                                 },
-                                methods: {
-                                    _onSelect: onSelect,
-                                    $l: $l
-                                },
-                                computed: {
-                                    _asideWidth: function () {
-                                        return DeskRTTools.vuex.state.asideWidth;
+                                mutations: {
+                                    setPath: function (state, val) {
+                                        state.path = val;
+                                    },
+                                    setAsideWidth: function (state, val) {
+                                        state.asideWidth = val;
+                                    },
+                                    setLocale: function (state, val) {
+                                        state.locale = val;
                                     }
                                 }
                             });
-                        }
-                        DeskRTTools.mainEle = document.getElementById("el-main");
-                        if (!(window.location.hash === "")) return [3, 11];
-                        window.location.hash = "#" + main;
-                        return [3, 13];
-                    case 11: return [4, DeskRTTools.onHashChange()];
-                    case 12:
-                        _c.sent();
-                        _c.label = 13;
-                    case 13: return [3, 15];
-                    case 14:
-                        alert("Error: <el-menu> or <el-header> not found.");
-                        _c.label = 15;
-                    case 15: return [3, 17];
-                    case 16:
-                        alert("Error: Frame is empty.");
-                        _c.label = 17;
-                    case 17: return [2];
-                }
-            });
-        }); });
+                            DeskRTTools.controlsInit();
+                            return [4, fetch(DeskRTTools.pre + frame + ".html?" + DeskRTTools.end)];
+                        case 5:
+                            res = _c.sent();
+                            if (res.status === 404) {
+                                alert("Error: \"" + DeskRTTools.pre + frame + ".html\" not found.");
+                                return [2];
+                            }
+                            _a = this.purify;
+                            return [4, res.text()];
+                        case 6:
+                            text = _a.apply(this, [_c.sent()]);
+                            if (!(text !== "")) return [3, 16];
+                            df = document.createElement("div");
+                            df.innerHTML = text;
+                            elFrame = df.children[0];
+                            elMenu = elFrame.querySelector("el-menu");
+                            elHeader = elFrame.querySelector("el-header");
+                            if (!(elMenu && elHeader)) return [3, 14];
+                            elMenuHtml = elMenu.innerHTML;
+                            elHeaderHtml = elHeader.innerHTML;
+                            js = undefined;
+                            if (!(elFrame.getAttribute("load-script") !== null)) return [3, 10];
+                            _c.label = 7;
+                        case 7:
+                            _c.trys.push([7, 9, , 10]);
+                            return [4, System.import(DeskRTTools.pre + frame)];
+                        case 8:
+                            js = _c.sent();
+                            return [3, 10];
+                        case 9:
+                            _b = _c.sent();
+                            alert("Load script error(1)");
+                            return [2];
+                        case 10:
+                            body.insertAdjacentHTML("afterbegin", "<div id=\"el-frame\">" +
+                                "<el-container>" +
+                                "<el-aside :width=\"_asideWidth\" :class=\"{'el--show': elAsideShow}\">" +
+                                ("<el-logo" + (logo ? " style=\"background-image: url(" + (DeskRTTools.pre + logo) + ");\"" : "") + "></el-logo>") +
+                                ("<el-menu @select=\"_onSelect\" :default-active=\"DeskRTTools.vuex.state.path\">" + elMenuHtml + "</el-menu>") +
+                                "</el-aside>" +
+                                "<el-container>" +
+                                "<el-header>" +
+                                "<div class=\"el-header-left\">" +
+                                "<el-header-item @click=\"elAsideShow=true\"><i class=\"el-icon-d-liebiaoshitucaidan\"></i></el-header-item>" +
+                                "</div>" +
+                                elHeaderHtml +
+                                "</el-header>" +
+                                "<el-main id=\"el-main\"></el-main>" +
+                                "</el-container>" +
+                                "</el-container>" +
+                                "<div id=\"el-aside-mask\" :class=\"{'el--show': elAsideShow}\" @click=\"elAsideShow=false\"></div>" +
+                                "</div>");
+                            onSelect = function (index) {
+                                window.location.hash = "#" + index;
+                            };
+                            $l = function (key) {
+                                return DeskRTTools.readLocale(key);
+                            };
+                            if (js !== undefined) {
+                                methods = js.methods || {};
+                                methods._onSelect = onSelect;
+                                methods.$l = $l;
+                                computed = js.computed || {};
+                                computed._asideWidth = function () {
+                                    return DeskRTTools.vuex.state.asideWidth;
+                                };
+                                data = js.data || {};
+                                data.elAsideShow = false;
+                                DeskRTTools.frameVue = new Vue({
+                                    el: "#el-frame",
+                                    data: data,
+                                    methods: methods,
+                                    computed: computed
+                                });
+                            }
+                            else {
+                                DeskRTTools.frameVue = new Vue({
+                                    el: "#el-frame",
+                                    data: {
+                                        elAsideShow: false
+                                    },
+                                    methods: {
+                                        _onSelect: onSelect,
+                                        $l: $l
+                                    },
+                                    computed: {
+                                        _asideWidth: function () {
+                                            return DeskRTTools.vuex.state.asideWidth;
+                                        }
+                                    }
+                                });
+                            }
+                            DeskRTTools.mainEle = document.getElementById("el-main");
+                            if (!(window.location.hash === "")) return [3, 11];
+                            window.location.hash = "#" + main;
+                            return [3, 13];
+                        case 11: return [4, DeskRTTools.onHashChange()];
+                        case 12:
+                            _c.sent();
+                            _c.label = 13;
+                        case 13: return [3, 15];
+                        case 14:
+                            alert("Error: <el-menu> or <el-header> not found.");
+                            _c.label = 15;
+                        case 15: return [3, 17];
+                        case 16:
+                            alert("Error: Frame is empty.");
+                            _c.label = 17;
+                        case 17: return [2];
+                    }
+                });
+            }); };
+            if (typeof Promise !== "function") {
+                var script = document.createElement("script");
+                script.addEventListener("load", function () {
+                    callback();
+                });
+                script.addEventListener("error", function () {
+                    alert("Load error.");
+                });
+                script.src = "https://cdn.jsdelivr.net/npm/promise-polyfill@8.1.0/dist/polyfill.min.js";
+                DeskRTTools.headEle.appendChild(script);
+            }
+            else {
+                callback();
+            }
+        });
     };
     DeskRT.go = function (path, callback) {
         DeskRTTools.goCallback = callback;
