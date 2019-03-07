@@ -3,9 +3,9 @@ export let data = {
 };
 
 export let methods = {
-    showLoading: async function() {
-        DeskRT.showMask();
-        await DeskRT.sleep(1000);
+    showLoading: async function(top: boolean = false) {
+        DeskRT.showMask(top);
+        await DeskRT.sleep(2000);
         DeskRT.hideMask();
     }
 };

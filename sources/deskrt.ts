@@ -15,7 +15,7 @@ window.onerror = (msg, uri, line, col, err) => {
 class DeskRT {
 
     /** DeskRT 核心版本 */
-    public static version: string = "1.0.8";
+    public static version: string = "1.0.9";
 
     /** 全局可用的变量 */
     public static let: any;
@@ -528,6 +528,8 @@ class DeskRT {
         elMask.classList.add("el--show");
         if (top) {
             elMask.classList.add("el--top");
+        } else {
+            elMask.classList.remove("el--top");
         }
     }
 

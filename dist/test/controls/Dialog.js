@@ -40,13 +40,14 @@ define(["require", "exports"], function (require, exports) {
         dialogVisible: false
     };
     exports.methods = {
-        showLoading: function () {
+        showLoading: function (top) {
+            if (top === void 0) { top = false; }
             return __awaiter(this, void 0, void 0, function () {
                 return __generator(this, function (_a) {
                     switch (_a.label) {
                         case 0:
-                            DeskRT.showMask();
-                            return [4, DeskRT.sleep(1000)];
+                            DeskRT.showMask(top);
+                            return [4, DeskRT.sleep(2000)];
                         case 1:
                             _a.sent();
                             DeskRT.hideMask();

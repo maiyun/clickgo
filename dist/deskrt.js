@@ -582,6 +582,9 @@ var DeskRT = (function () {
         if (top) {
             elMask.classList.add("el--top");
         }
+        else {
+            elMask.classList.remove("el--top");
+        }
     };
     DeskRT.hideMask = function () {
         document.getElementById("el-mask").classList.remove("el--show");
@@ -594,7 +597,7 @@ var DeskRT = (function () {
     DeskRT.hideTextMask = function () {
         document.getElementById("el-text-mask").classList.remove("el--show");
     };
-    DeskRT.version = "1.0.8";
+    DeskRT.version = "1.0.9";
     return DeskRT;
 }());
 var DeskRTTools = (function () {

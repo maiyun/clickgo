@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.9
+
+[\*] Fix showMask() method.
+
 ## 1.0.8
 
 [\*] Fix Promise on old browser.
