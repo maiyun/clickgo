@@ -594,7 +594,7 @@ var DeskRT = (function () {
     DeskRT.hideTextMask = function () {
         document.getElementById("el-text-mask").classList.remove("el--show");
     };
-    DeskRT.version = "1.0.7";
+    DeskRT.version = "1.0.8";
     return DeskRT;
 }());
 var DeskRTTools = (function () {
