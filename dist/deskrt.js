@@ -69,6 +69,7 @@ var DeskRT = (function () {
         var paths = opt.paths || {};
         this._asideWidth = opt.asideWidth || "200px";
         this.let = opt.let || {};
+        document.addEventListener("touchstart", function () { });
         document.addEventListener("DOMContentLoaded", function () {
             var body = document.getElementsByTagName("body")[0];
             body.innerHTML = "<div id=\"el-pop\">" +

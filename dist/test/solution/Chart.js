@@ -27,7 +27,7 @@ define(["require", "exports", "echarts"], function (require, exports, echarts) {
             var myChart2 = echarts.init(this.$refs.chart2);
             var option2 = {
                 title: {
-                    text: 'ECharts Line'
+                    text: "ECharts Line"
                 },
                 tooltip: {
                     trigger: "axis"
@@ -36,24 +36,24 @@ define(["require", "exports", "echarts"], function (require, exports, echarts) {
                     data: ["A", "B"]
                 },
                 xAxis: {
-                    type: 'category',
+                    type: "category",
                     boundaryGap: false,
-                    data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+                    data: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
                 },
                 yAxis: {
-                    type: 'value'
+                    type: "value"
                 },
                 series: [
                     {
-                        name: 'A',
-                        type: 'line',
-                        stack: 'Count',
+                        name: "A",
+                        type: "line",
+                        stack: "Count",
                         data: [120, 132, 101, 134, 90, 230, 210]
                     },
                     {
-                        name: 'B',
-                        type: 'line',
-                        stack: 'Count',
+                        name: "B",
+                        type: "line",
+                        stack: "Count",
                         data: [220, 182, 191, 234, 290, 330, 310]
                     }
                 ]

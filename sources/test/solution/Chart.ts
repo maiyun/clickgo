@@ -1,13 +1,12 @@
 import * as echarts from "echarts";
 
 export let data = {
-    
 };
 export let methods = {
     onReady: function(this: Vue) {
         // --- 柱状图表 ---
         let myChart = echarts.init(this.$refs.chart);
-        var option: echarts.EChartOption = {
+        let option: echarts.EChartOption = {
             title: {
                 text: "ECharts Demo"
             },
@@ -31,7 +30,7 @@ export let methods = {
         let myChart2 = echarts.init(this.$refs.chart2);
         let option2: echarts.EChartOption = {
             title: {
-                text: 'ECharts Line'
+                text: "ECharts Line"
             },
             tooltip: {
                 trigger: "axis"
@@ -40,24 +39,24 @@ export let methods = {
                 data: ["A", "B"]
             },
             xAxis: {
-                type: 'category',
+                type: "category",
                 boundaryGap: false,
-                data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+                data: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
             },
             yAxis: {
-                type: 'value'
+                type: "value"
             },
             series: [
                 {
-                    name: 'A',
-                    type: 'line',
-                    stack: 'Count',
+                    name: "A",
+                    type: "line",
+                    stack: "Count",
                     data: [120, 132, 101, 134, 90, 230, 210]
                 },
                 {
-                    name: 'B',
-                    type: 'line',
-                    stack: 'Count',
+                    name: "B",
+                    type: "line",
+                    stack: "Count",
                     data: [220, 182, 191, 234, 290, 330, 310]
                 }
             ]

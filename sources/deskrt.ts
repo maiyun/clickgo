@@ -47,6 +47,7 @@ class DeskRT {
         this.let = opt.let || {};
 
         // --- 网页 DOM 加载完成后开始执行 ---
+        document.addEventListener("touchstart", function() {});
         document.addEventListener("DOMContentLoaded", () => {
             // --- 获取 body 的 DOM ---
             let body = document.getElementsByTagName("body")[0];
