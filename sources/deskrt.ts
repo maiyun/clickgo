@@ -71,7 +71,7 @@ class DeskRT {
 
                 // --- 加载 Vue / Vuex / Element UI / SystemJS / whatwg-fetch* / promise-polyfill* ---
                 // --- 别处还有 element-ui 的语言包版本需要对应，以及还有高亮 highlight.js 库 ---
-                let jsPath = "https://cdn.jsdelivr.net/combine/npm/vue@2.6.6,npm/vuex@3.1.0/dist/vuex.min.js,npm/element-ui@2.5.4/lib/index.js,npm/systemjs@0.21.6/dist/system.min.js";
+                let jsPath = "https://cdn.jsdelivr.net/combine/npm/vue@2.6.9/dist/vue.min.js,npm/vuex@3.1.0/dist/vuex.min.js,npm/element-ui@2.5.4/lib/index.js,npm/systemjs@0.21.6/dist/system.min.js";
                 if (typeof fetch !== "function") {
                     jsPath += ",npm/whatwg-fetch@3.0.0/fetch.min.js";
                 }
