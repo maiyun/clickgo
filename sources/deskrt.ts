@@ -15,7 +15,7 @@ window.onerror = (msg, uri, line, col, err) => {
 class DeskRT {
 
     /** DeskRT 核心版本 */
-    public static version: string = "1.0.9";
+    public static version: string = "1.1.0";
 
     /** 全局可用的变量 */
     public static let: any;
@@ -556,6 +556,34 @@ class DeskRT {
      */
     public static hideTextMask() {
         (<HTMLDivElement>document.getElementById("el-text-mask")).classList.remove("el--show");
+    }
+
+    // --- 窗体类 ---
+
+    /**
+     * --- 显示 alert 窗体 ---
+     * @param text 文本
+     */
+    public static async alert(text: string): Promise<boolean> {
+        await DeskRTTools.frameVue.$alert(text, undefined, {
+            showClose: false
+        });
+        return true;
+    }
+
+    /**
+     * --- 显示确认窗体 ---
+     * @param text 文本
+     */
+    public static async confirm(text: string): Promise<boolean> {
+        try {
+            await DeskRTTools.frameVue.$confirm(text, undefined, {
+                showClose: false
+            });
+            return true;
+        } catch {
+            return false;
+        }
     }
 
 }

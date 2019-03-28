@@ -25,6 +25,8 @@ declare class DeskRT {
     static hideMask(): void;
     static showTextMask(text: string): void;
     static hideTextMask(): void;
+    static alert(text: string): Promise<boolean>;
+    static confirm(text: string): Promise<boolean>;
 }
 declare class DeskRTTools {
     static pre: string;
