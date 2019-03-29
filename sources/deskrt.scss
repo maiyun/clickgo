@@ -194,6 +194,9 @@ code {
     animation-name: elLoading-1;
     border-color: rgba(36, 41, 46, .6);
 }
+.el-loading-2 {
+    box-shadow: 0 0 2px 1px rgba(36, 41, 46, 0.3);
+}
  
 /* --- 页面 --- */
 .el-page {

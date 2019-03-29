@@ -99,11 +99,11 @@ var DeskRT = (function () {
                                     }
                                 });
                             }); });
-                            jsPath = "https://cdn.jsdelivr.net/combine/npm/vue@2.6.9/dist/vue.min.js,npm/vuex@3.1.0/dist/vuex.min.js,npm/element-ui@2.5.4/lib/index.js,npm/systemjs@0.21.6/dist/system.min.js";
+                            jsPath = "https://cdn.jsdelivr.net/combine/npm/vue@2.6.10/dist/vue.min.js,npm/vuex@3.1.0/dist/vuex.min.js,npm/element-ui@2.7.0/lib/index.js,npm/systemjs@0.21.6/dist/system.min.js";
                             if (typeof fetch !== "function") {
                                 jsPath += ",npm/whatwg-fetch@3.0.0/fetch.min.js";
                             }
-                            DeskRTTools.headEle.insertAdjacentHTML("afterbegin", "<link rel=\"stylesheet\" href=\"https://cdn.jsdelivr.net/npm/element-ui@2.5.4/lib/theme-chalk/index.css\">");
+                            DeskRTTools.headEle.insertAdjacentHTML("afterbegin", "<link rel=\"stylesheet\" href=\"https://cdn.jsdelivr.net/npm/element-ui@2.7.0/lib/theme-chalk/index.css\">");
                             return [4, this.loadScript([jsPath])];
                         case 1:
                             _c.sent();
@@ -726,7 +726,7 @@ var DeskRTTools = (function () {
                         _d.label = 1;
                     case 1:
                         _d.trys.push([1, 3, , 4]);
-                        return [4, System.import("https://cdn.jsdelivr.net/npm/element-ui@2.5.4/lib/locale/lang/" + locale)];
+                        return [4, System.import("https://cdn.jsdelivr.net/npm/element-ui@2.7.0/lib/locale/lang/" + locale)];
                     case 2:
                         loc = _d.sent();
                         if (!this.localeObj[locale]) {
@@ -962,8 +962,8 @@ var DeskRTTools = (function () {
                         _c.sent();
                         _c.label = 20;
                     case 20:
-                        hljs = "https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.14.2/build/highlight.min";
-                        hlcss = "https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.14.2/build/styles/androidstudio.min.css";
+                        hljs = "https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.15.6/build/highlight.min";
+                        hlcss = "https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.15.6/build/styles/androidstudio.min.css";
                         codeList = vm.$el.querySelectorAll("code");
                         if (!(codeList.length > 0)) return [3, 27];
                         if (!(this.highlightjs === undefined)) return [3, 26];

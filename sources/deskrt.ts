@@ -74,12 +74,12 @@ class DeskRT {
 
                 // --- 加载 Vue / Vuex / Element UI / SystemJS / whatwg-fetch* / promise-polyfill* ---
                 // --- 别处还有 element-ui 的语言包版本需要对应，以及还有高亮 highlight.js 库 ---
-                let jsPath = "https://cdn.jsdelivr.net/combine/npm/vue@2.6.9/dist/vue.min.js,npm/vuex@3.1.0/dist/vuex.min.js,npm/element-ui@2.5.4/lib/index.js,npm/systemjs@0.21.6/dist/system.min.js";
+                let jsPath = "https://cdn.jsdelivr.net/combine/npm/vue@2.6.10/dist/vue.min.js,npm/vuex@3.1.0/dist/vuex.min.js,npm/element-ui@2.7.0/lib/index.js,npm/systemjs@0.21.6/dist/system.min.js";
                 if (typeof fetch !== "function") {
                     jsPath += ",npm/whatwg-fetch@3.0.0/fetch.min.js";
                 }
                 // --- 异步加载 element 的 css 基文件（是基本的基，不是搞基的基） ---
-                DeskRTTools.headEle.insertAdjacentHTML("afterbegin", `<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/element-ui@2.5.4/lib/theme-chalk/index.css">`);
+                DeskRTTools.headEle.insertAdjacentHTML("afterbegin", `<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/element-ui@2.7.0/lib/theme-chalk/index.css">`);
                 await this.loadScript([jsPath]);
                 // --- 初始化 SystemJS ---
                 System.config({
@@ -716,7 +716,7 @@ class DeskRTTools {
                 before();
                 // --- 加载 Element UI 的官方语言包 ---
                 try {
-                    let loc = await System.import(`https://cdn.jsdelivr.net/npm/element-ui@2.5.4/lib/locale/lang/${locale}`);
+                    let loc = await System.import(`https://cdn.jsdelivr.net/npm/element-ui@2.7.0/lib/locale/lang/${locale}`);
                     if (!this.localeObj[locale]) {
                         this.localeObj[locale] = {};
                     }
@@ -928,8 +928,8 @@ class DeskRTTools {
                 }
                 // --- onOpen 不应该在此处执行 ---
                 // --- 判断是否要加载高亮代码着色库（要在页面 VUE 初始化完成后再进行，因为 code 的内容有可能是动态插值插入的） ---
-                let hljs = "https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.14.2/build/highlight.min";
-                let hlcss = "https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.14.2/build/styles/androidstudio.min.css";
+                let hljs = "https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.15.6/build/highlight.min";
+                let hlcss = "https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.15.6/build/styles/androidstudio.min.css";
                 let codeList = vm.$el.querySelectorAll("code");
                 if (codeList.length > 0) {
                     if (this.highlightjs === undefined) {

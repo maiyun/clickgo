@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.1.0
+
+[+] Add DeskRT.alert(), DeskRT.confirm() methods.  
+[\*] onOpen() method optimization.  
+[\*] Modify the load animation.  
+[\*] Update Vue to 2.6.10, ElementUI to 2.7.0, highlightjs to 9.15.6.
+
 ## 1.0.9
 
 [\*] Fix showMask() method.
