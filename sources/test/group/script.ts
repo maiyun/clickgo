@@ -1,1 +1,3 @@
-alert("done.");
+(async function() {
+    await DeskRT.alert("done.");
+})();
