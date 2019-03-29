@@ -1,21 +1,27 @@
 define(["require", "exports"], function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
+    function pad(str, len) {
+        if (len === void 0) { len = 2; }
+        if (str.length >= len) {
+            return str;
+        }
+        var l = len - str.length;
+        var p = "";
+        for (var i = 0; i < l; ++i) {
+            p += "0";
+        }
+        return p + str;
+    }
     function date() {
         var date = new Date();
         var seperator1 = "-";
         var seperator2 = ":";
         var month = date.getMonth() + 1;
         var strDate = date.getDate();
-        if (month >= 1 && month <= 9) {
-            month = "0" + month;
-        }
-        if (strDate >= 0 && strDate <= 9) {
-            strDate = "0" + strDate;
-        }
-        var currentdate = date.getFullYear() + seperator1 + month + seperator1 + strDate
-            + " " + date.getHours() + seperator2 + date.getMinutes()
-            + seperator2 + date.getSeconds();
+        var currentdate = date.getFullYear() + seperator1 + pad(month.toString()) + seperator1 + pad(strDate.toString())
+            + " " + pad(date.getHours().toString()) + seperator2 + pad(date.getMinutes().toString())
+            + seperator2 + pad(date.getSeconds().toString()) + " " + pad(date.getMilliseconds().toString(), 3);
         return currentdate;
     }
     exports.date = date;

@@ -791,13 +791,15 @@ class DeskRTTools {
         if (this.pages[path]) {
             // --- 已经加载过 ---
             this.pages[path].query = query;
-            if (this.pages[path].onOpen) {
-                await this.pages[path].onOpen();
-            }
             // --- 手机端隐藏左侧菜单 ---
             this.frameVue.elAsideShow = false;
             // --- 设置 path ---
             this.vuex.commit("setPath", path);
+            // --- onOpen 要在所有加载完毕后执行（页面显示之后） ---
+            if (this.pages[path].onOpen) {
+                await DeskRT.sleep(1);
+                await this.pages[path].onOpen();
+            }
             // --- 执行用户方法 ---
             if (this.goCallback !== undefined) {
                 await this.goCallback(this.pages[path]);
@@ -921,9 +923,7 @@ class DeskRTTools {
                 if (vm.onReady !== undefined) {
                     await vm.onReady();
                 }
-                if (vm.onOpen !== undefined) {
-                    await vm.onOpen();
-                }
+                // --- onOpen 不应该在此处执行 ---
                 // --- 判断是否要加载高亮代码着色库（要在页面 VUE 初始化完成后再进行，因为 code 的内容有可能是动态插值插入的） ---
                 let hljs = "https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.14.2/build/highlight.min";
                 let hlcss = "https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.14.2/build/styles/androidstudio.min.css";
@@ -952,10 +952,16 @@ class DeskRTTools {
                 }
                 // --- 加载完毕隐藏 loading 框 ---
                 DeskRT.hideMask();
+                // --- 处理完后，进行统一的界面设定 ---
                 // --- 手机端隐藏左侧菜单（开启页面意味着左侧菜单点击了，也就是在开启状态，此步骤有助于关闭） ---
                 this.frameVue.elAsideShow = false;
                 // --- 设置 path，用于切换页面显示 ---
                 this.vuex.commit("setPath", path);
+                // --- onOpen 要在所有加载完毕后执行（页面显示之后） ---
+                if (vm.onOpen !== undefined) {
+                    await DeskRT.sleep(1);
+                    await vm.onOpen();
+                }
                 // --- 执行用户方法 ---
                 if (this.goCallback !== undefined) {
                     await this.goCallback(this.pages[path]);

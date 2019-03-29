@@ -41,12 +41,12 @@ define(["require", "exports", "../libs/date"], function (require, exports, datet
     };
     exports.methods = {
         onReady: function () {
-            this.$refs.tipDiv.innerHTML = "Opened at:";
+            this.list.push(datetime.date() + " - onReady");
         },
         onOpen: function () {
             return __awaiter(this, void 0, void 0, function () {
                 return __generator(this, function (_a) {
-                    this.$data.list.push(datetime.date());
+                    this.list.push(datetime.date() + " - onOpen");
                     return [2];
                 });
             });
