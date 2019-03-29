@@ -70,7 +70,7 @@ code {
 /* --- 遮罩 --- */
 #el-mask {
     display: none;
-    background: rgba(255,255,255,.2);
+    background: rgba(255,255,255,.4);
     position: fixed;
     left: 0;
     top: 0;
@@ -83,7 +83,7 @@ code {
 /* --- 顶级文字浅遮罩 --- */
 #el-text-mask {
     display: none;
-    background: rgba(0,0,0,.2);
+    background: rgba(0,0,0,.4);
     position: fixed;
     left: 0;
     top: 0;
@@ -107,19 +107,92 @@ code {
 }
 
 /* --- 加载动画 --- */
-@-webkit-keyframes elRotate {to {-webkit-transform: rotate(405deg);transform: rotate(405deg);}}
-@keyframes elRotate {to {-webkit-transform: rotate(405deg);transform: rotate(405deg);}}
-@-webkit-keyframes elSpinMove {to {opacity: 1;}}
-@keyframes elSpinMove {to {opacity: 1;}}
-.el-spin {font-family: "Helvetica Neue For Number", "Chinese Quote", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", Helvetica, Arial, sans-serif;font-size: 14px;line-height: 1.5;color: rgba(0, 0, 0, 0.65);-webkit-box-sizing: border-box;box-sizing: border-box;margin: 0;padding: 0;list-style: none;color: #1890ff;vertical-align: middle;text-align: center;opacity: 0;position: absolute;-webkit-transition: -webkit-transform 0.3s cubic-bezier(0.78, 0.14, 0.15, 0.86);transition: -webkit-transform 0.3s cubic-bezier(0.78, 0.14, 0.15, 0.86);transition: transform 0.3s cubic-bezier(0.78, 0.14, 0.15, 0.86);transition: transform 0.3s cubic-bezier(0.78, 0.14, 0.15, 0.86), -webkit-transform 0.3s cubic-bezier(0.78, 0.14, 0.15, 0.86);display: none;}
-.el-spin-spinning{opacity: 1;position: static;display: inline-block;}
-.el-spin-dot{position: relative;display: inline-block;width: 20px;height: 20px;-webkit-transform: rotate(45deg);-ms-transform: rotate(45deg);transform: rotate(45deg);-webkit-animation: elRotate 1.2s infinite linear;animation: elRotate 1.2s infinite linear;}
-.el-spin-dot i {
-    width: 9px;height: 9px;border-radius: 100%;background-color: #24292e/*#1890ff*/;-webkit-transform: scale(0.75);-ms-transform: scale(0.75);transform: scale(0.75);display: block;position: absolute;opacity: 0.3;-webkit-animation: elSpinMove 1s infinite linear alternate;animation: elSpinMove 1s infinite linear alternate;-webkit-transform-origin: 50% 50%;-ms-transform-origin: 50% 50%;transform-origin: 50% 50%;
-    &:nth-child(1) {left: 0;top: 0;}
-    &:nth-child(2) {right: 0;top: 0;-webkit-animation-delay: 0.4s;animation-delay: 0.4s;}
-    &:nth-child(3) {right: 0;bottom: 0;-webkit-animation-delay: 0.8s;animation-delay: 0.8s;}
-    &:nth-child(4) {left: 0;bottom: 0;-webkit-animation-delay: 1.2s;animation-delay: 1.2s;}
+@-webkit-keyframes elLoading-1 {
+    0% {
+        transform: rotate(45deg);
+    }
+    25% {
+        transform: rotate(-45deg);
+    }
+    50% {
+        transform: rotate(-135deg);
+    }
+    75% {
+        transform: rotate(-225deg);
+    }
+    100% {
+        transform: rotate(-315deg);
+    }
+}
+@keyframes elLoading-1 {
+    0% {
+        transform: rotate(45deg);
+    }
+    25% {
+        transform: rotate(-45deg);
+    }
+    50% {
+        transform: rotate(-135deg);
+    }
+    75% {
+        transform: rotate(-225deg);
+    }
+    100% {
+        transform: rotate(-315deg);
+    }
+}
+@-webkit-keyframes elLoading-2 {
+    0% {
+        transform: rotate(0);
+    }
+    25% {
+        transform: rotate(90deg);
+    }
+    50% {
+        transform: rotate(180deg);
+    }
+    75% {
+        transform: rotate(270deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+@keyframes elLoading-2 {
+    0% {
+        transform: rotate(0);
+    }
+    25% {
+        transform: rotate(90deg);
+    }
+    50% {
+        transform: rotate(180deg);
+    }
+    75% {
+        transform: rotate(270deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+.el-loading {
+    width: 25px;
+    height: 25px;
+    position: relative;
+}
+.el-loading-1, .el-loading-2 {
+    width: 25px;
+    height: 25px;
+    box-sizing: border-box;
+    border: solid 2px #24292e;
+    position: absolute;
+    left: 0;
+    top: 0;
+    animation: elLoading-2 3s ease-in-out infinite;
+}
+.el-loading-1 {
+    animation-name: elLoading-1;
+    border-color: rgba(36, 41, 46, .6);
 }
  
 /* --- 页面 --- */
@@ -153,7 +226,7 @@ code {
         flex-direction: column;
         > {
             .el-logo {
-                background-color: #303133;
+                background-color: #24292e;
                 height: 60px;
                 background-image: url(logo.png);
                 background-size: 150px 20px;

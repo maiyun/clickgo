@@ -74,7 +74,10 @@ var DeskRT = (function () {
             var body = document.getElementsByTagName("body")[0];
             body.innerHTML = "<div id=\"el-pop\">" +
                 "<div id=\"el-mask\" class=\"el--show\">" +
-                "<div class=\"el-spin el-spin-spinning\"><span class=\"el-spin-dot\"><i></i><i></i><i></i><i></i></span></div>" +
+                "<div class=\"el-loading\">" +
+                "<div class=\"el-loading-1\"></div>" +
+                "<div class=\"el-loading-2\"></div>" +
+                "</div>" +
                 "</div>" +
                 "<div id=\"el-text-mask\">Loading...</div>" +
                 "</div>";
