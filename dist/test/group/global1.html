@@ -1,0 +1,29 @@
+<el-page load-script>
+    <el-card header="global1">
+        <el-table-info>
+            <el-tr>
+                <el-th>Name</el-th>
+                <el-th>Age</el-th>
+                <el-th></el-th>
+            </el-tr>
+            <el-tr v-for="(item, index) of $global.gList">
+                <el-td>{{item.name}}</el-td>
+                <el-td>{{item.age}}</el-td>
+                <el-td>
+                    <el-button @click="del(index)">Del</el-button>
+                </el-td>
+            </el-tr>
+            <el-tr>
+                <el-td>
+                    <el-input v-model="name"></el-input>
+                </el-td>
+                <el-td>
+                    <el-input v-model="age"></el-input>
+                </el-td>
+                <el-td>
+                    <el-button @click="add()">Add</el-button>
+                </el-td>
+            </el-tr>
+        </el-table-info>
+    </el-card>
+</el-page>

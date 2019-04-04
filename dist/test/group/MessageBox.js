@@ -47,7 +47,7 @@ define(["require", "exports"], function (require, exports) {
                     switch (_a.label) {
                         case 0:
                             this.text = "Waiting...";
-                            return [4, DeskRT.alert("You clicked \"alert.\"")];
+                            return [4, DeskRT.alert("You clicked \"alert\".")];
                         case 1:
                             r = _a.sent();
                             this.text = r ? "true" : "false";
@@ -63,7 +63,7 @@ define(["require", "exports"], function (require, exports) {
                     switch (_a.label) {
                         case 0:
                             this.text = "Waiting...";
-                            return [4, DeskRT.confirm("You clicked \"alert.\"")];
+                            return [4, DeskRT.confirm("You clicked \"confirm\".")];
                         case 1:
                             r = _a.sent();
                             this.text = r ? "true" : "false";

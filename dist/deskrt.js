@@ -69,6 +69,7 @@ var DeskRT = (function () {
         var paths = opt.paths || {};
         this._asideWidth = opt.asideWidth || "200px";
         this.let = opt.let || {};
+        var global = opt.global || {};
         document.addEventListener("touchstart", function () { });
         document.addEventListener("DOMContentLoaded", function () {
             var body = document.getElementsByTagName("body")[0];
@@ -150,7 +151,8 @@ var DeskRT = (function () {
                                 state: {
                                     path: "",
                                     asideWidth: this._asideWidth,
-                                    locale: locale
+                                    locale: locale,
+                                    global: global
                                 },
                                 mutations: {
                                     setPath: function (state, val) {
@@ -165,6 +167,11 @@ var DeskRT = (function () {
                                 }
                             });
                             DeskRTTools.controlsInit();
+                            Vue.use({
+                                install: function (Vue, options) {
+                                    Vue.prototype.$global = DeskRTTools.vuex.state.global;
+                                }
+                            });
                             return [4, fetch(DeskRTTools.pre + frame + ".html?" + DeskRTTools.end)];
                         case 5:
                             res = _c.sent();
@@ -606,7 +613,8 @@ var DeskRT = (function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4, DeskRTTools.frameVue.$alert(text, undefined, {
-                            showClose: false
+                            showClose: false,
+                            type: "warning"
                         })];
                     case 1:
                         _a.sent();
@@ -623,7 +631,8 @@ var DeskRT = (function () {
                     case 0:
                         _b.trys.push([0, 2, , 3]);
                         return [4, DeskRTTools.frameVue.$confirm(text, undefined, {
-                                showClose: false
+                                showClose: false,
+                                type: "info"
                             })];
                     case 1:
                         _b.sent();
@@ -636,7 +645,7 @@ var DeskRT = (function () {
             });
         });
     };
-    DeskRT.version = "1.1.0";
+    DeskRT.version = "1.2.0";
     return DeskRT;
 }());
 var DeskRTTools = (function () {

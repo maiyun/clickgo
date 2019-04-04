@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.2.0
+
+[+] Add $global for global variable.  
+[\*] Optimize the alert and confirm methods.
+
 ## 1.1.0
 
 [+] Add DeskRT.alert(), DeskRT.confirm() methods.  

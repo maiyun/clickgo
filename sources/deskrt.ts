@@ -1,8 +1,19 @@
-/*
- * DeskRT
- * Author: Han GuoShuai
- * Github: https://github.com/MaiyunNET/DeskRT
+/**
+ * Copyright 2019 Han Guoshuai <zohegs@gmail.com>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
+
 window.onerror = (msg, uri, line, col, err) => {
     if (err) {
         alert("Error:\n" + err.message + "\n" + err.stack + "\nLine: " + line + "\nColumn: " + col);
@@ -15,10 +26,13 @@ window.onerror = (msg, uri, line, col, err) => {
 class DeskRT {
 
     /** DeskRT 核心版本 */
-    public static version: string = "1.1.0";
+    public static version: string = "1.2.0";
 
     /** 全局可用的变量 */
     public static let: any;
+
+    /** 全局可用的响应式变量 */
+    public static g: any;
 
     // --- 可重复设置的（拥有 get 与 set 方法） ---
 
@@ -45,6 +59,7 @@ class DeskRT {
         let paths = opt.paths || {};
         this._asideWidth = opt.asideWidth || "200px";
         this.let = opt.let || {};
+        let global = opt.global || {};
 
         // --- 网页 DOM 加载完成后开始执行 ---
         document.addEventListener("touchstart", function() {});
@@ -126,7 +141,8 @@ class DeskRT {
                     state: {
                         path: "",                       // --- 当前页面 ---
                         asideWidth: this._asideWidth,   // --- 左边栏宽度 ---
-                        locale: locale                  // --- 当前语言 ---
+                        locale: locale,                 // --- 当前语言 ---
+                        global: global                  // --- 全局可变变量 ---
                     },
                     mutations: {
                         setPath: function(state: any, val: any) {
@@ -142,6 +158,13 @@ class DeskRT {
                 });
                 // --- 加载控件定义信息到 Vue ---
                 DeskRTTools.controlsInit();
+
+                // --- 全局响应式变量 ---
+                Vue.use({
+                    install: function(Vue: any, options: any) {
+                        Vue.prototype.$global = DeskRTTools.vuex.state.global;
+                    }
+                });
 
                 // --- 加载框架主要的 frame.html ---
                 let res = await fetch(DeskRTTools.pre + frame + ".html?" + DeskRTTools.end);
@@ -569,7 +592,8 @@ class DeskRT {
      */
     public static async alert(text: string): Promise<boolean> {
         await DeskRTTools.frameVue.$alert(text, undefined, {
-            showClose: false
+            showClose: false,
+            type: "warning"
         });
         return true;
     }
@@ -581,7 +605,8 @@ class DeskRT {
     public static async confirm(text: string): Promise<boolean> {
         try {
             await DeskRTTools.frameVue.$confirm(text, undefined, {
-                showClose: false
+                showClose: false,
+                type: "info"
             });
             return true;
         } catch {

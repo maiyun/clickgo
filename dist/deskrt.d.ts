@@ -1,6 +1,7 @@
 declare class DeskRT {
     static version: string;
     static let: any;
+    static g: any;
     private static _asideWidth;
     static asideWidth: string;
     static init(opt: any): void;
