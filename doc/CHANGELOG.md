@@ -1,5 +1,13 @@
 # Changelog
 
+## 2.0.0
+
+[\*] Remove the init() method and replace it with <script type="deskrt-config">.  
+[\*] Fast loading, the white screen time is very short.  
+[\*] Fully modular support.  
+[\*] Code refactoring, more elegant and more convenient.  
+[\*] Update ElementUI to 2.7.2.
+
 ## 1.2.0
 
 [+] Add $global for global variable.  

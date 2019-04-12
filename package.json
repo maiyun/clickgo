@@ -1,13 +1,18 @@
 {
   "name": "deskrt",
-  "version": "1.2.0",
+  "version": "2.0.0",
   "description": "Quickly and easily create a beautiful console interface.",
   "keywords": [
-    "deskrt", "backstage", "console"
+    "deskrt",
+    "backstage",
+    "console"
   ],
   "main": "dist/deskrt.js",
   "author": "hanguoshuai",
   "license": "Apache-2.0",
   "types": "./dist/deskrt.d.ts",
-  "typings": "./dist/deskrt.d.ts"
+  "typings": "./dist/deskrt.d.ts",
+  "dependencies": {
+    "@types/systemjs": "^0.20.6"
+  }
 }

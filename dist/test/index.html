@@ -4,18 +4,16 @@
 <title>DeskRT Test</title>
 <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no">
-<script src="../deskrt.js?1.2.0"></script>
-<link rel="stylesheet" href="../deskrt.css?1.2.0">
-<link rel="stylesheet" href="" id="themeLink">
-<script>
-DeskRT.init({
+<script src="../loader.js?2.0.0"></script>
+<script type="deskrt-config">
+{
     pre: "",
     end: "2019121145325",
     frame: "frame",
     main: "main",
     // size: "mini",
     asideWidth: "200px",
-    i18n: "locale/",
+    localePath: "locale/",
     locales: ["en", "zh-CN", "zh-TW"],
     global: {
         gList: [
@@ -26,7 +24,7 @@ DeskRT.init({
     paths: {
         echarts: "https://cdn.jsdelivr.net/npm/echarts@4.2.0-rc.2/dist/echarts.min"
     }
-});
+}
 </script>
 </head>
 <body>
