@@ -1,3 +1,5 @@
+import * as DeskRT from "deskrt";
+
 export let data = {
     code: `var trim = function (text) {
     return text.replace(/^\\s+|\\s+$/g, "");

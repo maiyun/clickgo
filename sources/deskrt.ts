@@ -18,33 +18,44 @@
 export const version: string = "2.0.0";
 
 // --- 内部用的变量 ---
-let bodyElement = document.getElementsByTagName("body")[0];
-let headElement = document.getElementsByTagName("head")[0];
-let mainElement: HTMLMainElement;
-let userConfig: any;
-let vuex: Vuex.Store;
-let highlightjs: highlightjs;
-let frameVue: any;
+let _bodyElement = document.getElementsByTagName("body")[0];
+let _headElement = document.getElementsByTagName("head")[0];
+let _mainElement: HTMLMainElement;
+let _config: any;
+let _vuex: Vuex.Store;
+let _highlightjs: highlightjs;
+let _frameVue: any;
+let _tpLibs: any;
 
 // --- 加载资源相关变量 ---
-bodyElement.insertAdjacentHTML("beforeend", `<div id="el-resource"></div>`);
-let resourceElement = <HTMLDivElement>document.getElementById("el-resource");
-let resourceLoaded: string[] = [];
+_bodyElement.insertAdjacentHTML("beforeend", `<div id="el-resource"></div>`);
+let _resourceElement = <HTMLDivElement>document.getElementById("el-resource");
 /**
- * --- 加载 CSS 和图片资源 ---
+ * --- 加载 CSS 和图片资源（跳跃并行加载） ---
  * @param paths 要加载的列表
  */
-export async function loadResource(paths: any[]) {
+export async function loadResource(paths: string[]) {
     return new Promise(function(resolve, reject) {
         let needPaths: any[] = [];
-        for (let item of paths) {
-            if (typeof item === "string") {
-                if (resourceLoaded.indexOf(item) === -1) {
-                    needPaths.push(item);
+        for (let path of paths) {
+            let pathLio = path.lastIndexOf("?");
+            if (pathLio !== -1) {
+                path = path.slice(0, pathLio);
+            }
+            let ext = path.slice(path.lastIndexOf(".") + 1).toLowerCase();
+            if (ext === "css") {
+                if (!_headElement.querySelector(`[data-deskrt-res="${path}"]`)) {
+                    needPaths.push({
+                        ext: ext,
+                        path: path
+                    });
                 }
             } else {
-                if (resourceLoaded.indexOf(item.path) === -1) {
-                    needPaths.push(item);
+                if (!_resourceElement.querySelector(`[data-deskrt-res="${path}"]`)) {
+                    needPaths.push({
+                        ext: ext,
+                        path: path
+                    });
                 }
             }
         }
@@ -55,29 +66,12 @@ export async function loadResource(paths: any[]) {
         }
         let loaded = 0;
         for (let item of needPaths) {
-            let name = "";
-            let path = "";
-            if (typeof item === "string") {
-                path = item;
-            } else {
-                name = item.name;
-                path = item.path;
-            }
-
-            let pathLio = path.lastIndexOf("?");
-            if (pathLio !== -1) {
-                path = path.slice(0, pathLio);
-            }
-            let ext = path.slice(path.lastIndexOf(".") + 1).toLowerCase();
-            if (ext === "css") {
+            if (item.ext === "css") {
                 let link = document.createElement("link");
                 link.rel = "stylesheet";
-                if (name !== "") {
-                    link.setAttribute("name", name);
-                }
+                link.setAttribute("data-deskrt-res", item.path);
                 link.addEventListener("load", function() {
                     ++loaded;
-                    resourceLoaded.push(path);
                     if (loaded === pathsLength) {
                         resolve();
                     }
@@ -85,16 +79,13 @@ export async function loadResource(paths: any[]) {
                 link.addEventListener("error", function(e) {
                     reject(e);
                 });
-                link.href = path;
-                headElement.appendChild(link);
+                link.href = item.path + "?" + _config.end;
+                _headElement.appendChild(link);
             } else {
                 let img = document.createElement("img");
-                if (name !== "") {
-                    img.setAttribute("name", name);
-                }
+                img.setAttribute("data-deskrt-res", item.path);
                 img.addEventListener("load", function() {
                     ++loaded;
-                    resourceLoaded.push(path);
                     if (loaded === pathsLength) {
                         resolve();
                     }
@@ -102,11 +93,36 @@ export async function loadResource(paths: any[]) {
                 img.addEventListener("error", function(e) {
                     reject(e);
                 });
-                img.src = path;
-                resourceElement.appendChild(img);
+                img.src = item.path + "?" + _config.end;
+                _resourceElement.appendChild(img);
             }
         }
     });
+}
+
+/**
+ * --- 移除已经加载的资源 ---
+ * @param paths 要移除的资源列表
+ */
+export function removeResource(paths: string[]) {
+    for (let path of paths) {
+        let pathLio = path.lastIndexOf("?");
+        if (pathLio !== -1) {
+            path = path.slice(0, pathLio);
+        }
+        let ext = path.slice(path.lastIndexOf(".") + 1).toLowerCase();
+        if (ext === "css") {
+            let link = _headElement.querySelector(`[data-deskrt-res="${path}"]`);
+            if (link) {
+                link.remove();
+            }
+        } else {
+            let img = _resourceElement.querySelector(`[data-deskrt-res="${path}"]`);
+            if (img) {
+                img.remove();
+            }
+        }
+    }
 }
 
 /**
@@ -122,11 +138,10 @@ export function loadScript(paths: string[]): Promise<void> {
                     if (pathLio !== -1) {
                         path = path.slice(0, pathLio);
                     }
-                    if (resourceLoaded.indexOf(path) !== -1) {
+                    if (_headElement.querySelector(`[data-deskrt-res="${path}"]`)) {
                         continue;
                     }
-                    resourceLoaded.push(path);
-                    await __loadScript(path + "?" + userConfig.end);
+                    await _loadScript(path);
                 }
             }
             resolve();
@@ -138,17 +153,18 @@ export function loadScript(paths: string[]): Promise<void> {
 /**
  * 加载 script 标签并等待返回成功（无视是否已经加载过）
  */
-function __loadScript(path: string): Promise<void> {
+function _loadScript(path: string): Promise<void> {
     return new Promise(async (resolve, reject) => {
         let script = document.createElement("script");
+        script.setAttribute("data-deskrt-res", path);
         script.addEventListener("load", () => {
             resolve();
         });
         script.addEventListener("error", (e) => {
             reject(e);
         });
-        script.src = path;
-        headElement.appendChild(script);
+        script.src = path + "?" + _config.end;
+        _headElement.appendChild(script);
     });
 }
 
@@ -156,32 +172,38 @@ function __loadScript(path: string): Promise<void> {
  * --- 设置模板 ---
  * @param theme 模板名或者其他 css 文件路径
  */
-export async function setTheme(theme: string): Promise<void> {
-    if (userConfig.theme === theme) {
+export async function setTheme(theme: string, mask: boolean = true): Promise<void> {
+    if (_config.theme === theme) {
         return;
     }
-    let oldLink = headElement.querySelector("[name='deskrt-theme']");
+    let oldPath = _config.theme === "" ? "" : _getThemePath(_config.theme);
     if (theme === "") {
-        if (oldLink) {
-            oldLink.remove();
-        }
-        userConfig.theme = "";
+        removeResource([oldPath]);
+        _config.theme = "";
         return;
     }
-    let path = theme;
+    let path = _getThemePath(theme);
+    if (mask) {
+        showMask(true);
+    }
+    await loadResource([path]);
+    if (oldPath !== "") {
+        removeResource([oldPath]);
+    }
+    _config.theme = theme;
+    if (mask) {
+        hideMask();
+    }
+}
+/**
+ * --- 内部方法，用于获取 theme 路径 ---
+ * @param theme 模板名或路径
+ */
+function _getThemePath(theme: string): string {
     if (theme.indexOf("/") === -1) {
-        path = ROOT_PATH + "theme/" + theme + "/index.css";
+        return ROOT_PATH + "theme/" + theme + "/index.css";
     }
-    showMask(true);
-    await loadResource([{
-        name: "deskrt-theme",
-        path: path
-    }]);
-    if (oldLink) {
-        oldLink.remove();
-    }
-    userConfig.theme = theme;
-    hideMask();
+    return theme;
 }
 
 // --- 语言包相关 ---
@@ -197,15 +219,15 @@ let localeData: any = {
  * @param loc 目标语言值
  */
 export async function setLocale(loc: string) {
-    if (vuex.state.locale === loc) {
+    if (_vuex.state.locale === loc) {
         return;
     }
-    if (userConfig.locales.indexOf(loc) === -1) {
+    if (_config.locales.indexOf(loc) === -1) {
         alert(`[Error] Locale "${loc}" definition not found in "locales".`);
         return;
     }
     // --- 检测当前开启页面的 pkg ---
-    let nowPage = mainElement.querySelector(".el-page.el--show");
+    let nowPage = _mainElement.querySelector(".el-page.el--show");
     if (!nowPage) {
         alert(`[Error] Page not opened.`);
         return;
@@ -216,7 +238,7 @@ export async function setLocale(loc: string) {
     }, () => {
         hideMask();
     });
-    vuex.commit("setLocale", loc);
+    _vuex.commit("setLocale", loc);
     localStorage.setItem("locale", loc);
 }
 
@@ -239,7 +261,7 @@ export function __loadLocale(locale: string, pkg: string = "", before: () => any
             before();
             // --- 加载 Element UI 的官方语言包 ---
             try {
-                let loc = await System.import(`https://cdn.jsdelivr.net/npm/element-ui@2.7.0/lib/locale/lang/${locale}.min`);
+                let loc = await System.import(`https://cdn.jsdelivr.net/npm/${_tpLibs["element-ui@ver"]}/lib/locale/lang/${locale}.min`);
                 if (!localeData[locale]) {
                     localeData[locale] = {};
                 }
@@ -256,7 +278,7 @@ export function __loadLocale(locale: string, pkg: string = "", before: () => any
                 before();
             }
             try {
-                let loc = await System.import(`${userConfig.pre}${userConfig.localePath}${locale}`);
+                let loc = await System.import(`${_config.pre}${_config.localePath}${locale}`);
                 if (!localeData[locale]) {
                     localeData[locale] = {};
                 }
@@ -275,7 +297,7 @@ export function __loadLocale(locale: string, pkg: string = "", before: () => any
                 before();
             }
             try {
-                let loc = await System.import(`${userConfig.pre}${userConfig.localePath}${locale}${pkg !== "default" ? "." + pkg : ""}`);
+                let loc = await System.import(`${_config.pre}${_config.localePath}${locale}${pkg !== "default" ? "." + pkg : ""}`);
                 if (!localeData[locale]) {
                     localeData[locale] = {};
                 }
@@ -301,11 +323,19 @@ export function __loadLocale(locale: string, pkg: string = "", before: () => any
  */
 export function __readLocale(key: string): string {
     try {
-        return key.split(".").reduce((p, k) => p[k], localeData[vuex.state.locale]);
+        return key.split(".").reduce((p, k) => p[k], localeData[_vuex.state.locale]);
     } catch (e) {
         console.log(e);
         return "LocaleError";
     }
+}
+
+/**
+ * --- 设置左边栏宽度 ---
+ * @param width 宽度，如 200px
+ */
+export function setAsideWidth(width: string): void {
+    _vuex.commit("setAsideWidth", width);
 }
 
  /**
@@ -340,12 +370,12 @@ export function html2escape(html: string): string {
  * @param code code 值
  */
 export function highlight(dom: HTMLElement, code: string): void {
-    if (highlightjs === undefined) {
+    if (_highlightjs === undefined) {
         alert(`[Error] "highlight.js" not loaded.`);
         return;
     }
     dom.innerText = code;
-    highlightjs.highlightBlock(dom);
+    _highlightjs.highlightBlock(dom);
 }
 
  /**
@@ -461,7 +491,7 @@ export function hideTextMask() {
  * @param text 文本
  */
 export async function alert(text: string): Promise<boolean> {
-    await frameVue.$alert(text, undefined, {
+    await _frameVue.$alert(text, undefined, {
         showClose: false,
         type: "warning"
     });
@@ -474,7 +504,7 @@ export async function alert(text: string): Promise<boolean> {
  */
 export async function confirm(text: string): Promise<boolean> {
     try {
-        await frameVue.$confirm(text, undefined, {
+        await _frameVue.$confirm(text, undefined, {
             showClose: false,
             type: "info"
         });
@@ -576,23 +606,27 @@ export async function post(url: string, data: any): Promise<any> {
  * --- !内部方法，请勿使用! 获取用户 config ---
  * @param config 用户配置对象
  */
-export async function __getConfig(config: any) {
-    userConfig = config;
+export function __setConfig(config: any) {
+    _config = config;
 }
 
-export async function __getVuex(vx: Vuex.Store) {
-    vuex = vx;
+export function __setVuex(vx: Vuex.Store) {
+    _vuex = vx;
 }
 
-export async function __getMainElement(me: HTMLMainElement) {
-    mainElement = me;
+export function __setMainElement(me: HTMLMainElement) {
+    _mainElement = me;
 }
 
-export async function __getHighlightjs(hjs: highlightjs) {
-    highlightjs = hjs;
+export function __setHighlightjs(hjs: highlightjs) {
+    _highlightjs = hjs;
 }
 
-export async function __getFrameVue(fv: Vue) {
-    frameVue = fv;
+export function __setFrameVue(fv: Vue) {
+    _frameVue = fv;
+}
+
+export function __setTpLibs(tl: any) {
+    _tpLibs = tl;
 }
 

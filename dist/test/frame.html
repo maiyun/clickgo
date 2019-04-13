@@ -3,9 +3,9 @@
 		<el-dropdown>
 			<el-header-item>Language</el-header-item>
 			<el-dropdown-menu slot="dropdown">
-				<el-dropdown-item @click.native="DeskRT.setLocale('en')">English</el-dropdown-item>
-				<el-dropdown-item @click.native="DeskRT.setLocale('zh-CN')">简体中文</el-dropdown-item>
-				<el-dropdown-item @click.native="DeskRT.setLocale('zh-TW')">繁體中文</el-dropdown-item>
+				<el-dropdown-item @click.native="setLocale('en')">English</el-dropdown-item>
+				<el-dropdown-item @click.native="setLocale('zh-CN')">简体中文</el-dropdown-item>
+				<el-dropdown-item @click.native="setLocale('zh-TW')">繁體中文</el-dropdown-item>
 			</el-dropdown-menu>
 		</el-dropdown>
 		<el-dropdown>

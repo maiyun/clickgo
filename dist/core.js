@@ -36,49 +36,52 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 define(["require", "exports", "./deskrt"], function (require, exports, DeskRT) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    var headElement = document.getElementsByTagName("head")[0];
-    var bodyElement = document.getElementsByTagName("body")[0];
-    var mainElement;
-    var ROOT_PATH;
-    var frameVue;
-    var vuex;
-    var UserConfig;
-    var highlightjs;
-    var tpLibs = {
+    var _headElement = document.getElementsByTagName("head")[0];
+    var _bodyElement = document.getElementsByTagName("body")[0];
+    var _mainElement;
+    var _frameVue;
+    var _vuex;
+    var _config;
+    var _highlightjs;
+    var _tpLibs = {
         "vue,vuex,element-ui": "https://cdn.jsdelivr.net/combine/npm/vue@2.6.10/dist/vue.min.js,npm/vuex@3.1.0/dist/vuex.min.js,npm/element-ui@2.7.2/lib/index.js",
         "whatwg-fetch": ",npm/whatwg-fetch@3.0.0/fetch.min.js",
         "element-ui-css": "https://cdn.jsdelivr.net/npm/element-ui@2.7.2/lib/theme-chalk/index.css",
+        "element-ui@ver": "element-ui@2.7.2",
         "highlightjs": "https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.15.6/build/highlight.min",
         "highlightjs-css": "https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.15.6/build/styles/androidstudio.min.css"
     };
-    function onReady(config, rp) {
+    function onReady(config) {
         return __awaiter(this, void 0, void 0, function () {
-            var jsPath, locale, clientLocale, elOpt, res, text, _a, _b, frameDiv, elFrame, elMenu, elHeader, elMenuHtml, elHeaderHtml, js, e_1, onSelect, $l, methods, computed, data;
+            var jsPath, locale, clientLocale, elOpt, res, text, _a, _b, frameDiv, elFrame, elMenu, elHeader, elMenuHtml, elHeaderHtml, js, _c, onSelect, $l, methods, computed, data;
             var _this = this;
-            return __generator(this, function (_c) {
-                switch (_c.label) {
+            return __generator(this, function (_d) {
+                switch (_d.label) {
                     case 0:
-                        ROOT_PATH = rp;
-                        UserConfig = config;
-                        DeskRT.__getConfig(config);
-                        jsPath = tpLibs["vue,vuex,element-ui"];
+                        _config = config;
+                        DeskRT.__setConfig(config);
+                        if (!(_config.theme !== "")) return [3, 2];
+                        return [4, DeskRT.setTheme(_config.theme, false)];
+                    case 1:
+                        _d.sent();
+                        _d.label = 2;
+                    case 2:
+                        DeskRT.__setTpLibs(_tpLibs);
+                        jsPath = _tpLibs["vue,vuex,element-ui"];
                         if (typeof fetch !== "function") {
-                            jsPath += tpLibs["whatwg-fetch"];
+                            jsPath += _tpLibs["whatwg-fetch"];
                         }
                         return [4, DeskRT.loadScript([jsPath])];
-                    case 1:
-                        _c.sent();
+                    case 3:
+                        _d.sent();
                         return [4, DeskRT.loadResource([
-                                tpLibs["element-ui-css"],
-                                {
-                                    name: "deskrt-theme",
-                                    path: ROOT_PATH + "deskrt.css"
-                                }
+                                _tpLibs["element-ui-css"],
+                                ROOT_PATH + "deskrt.css"
                             ])];
-                    case 2:
-                        _c.sent();
+                    case 4:
+                        _d.sent();
                         locale = "";
-                        if (!(config.localePath !== "")) return [3, 4];
+                        if (!(config.localePath !== "")) return [3, 6];
                         clientLocale = localStorage.getItem("locale") || navigator.language;
                         if (config.locales.indexOf(clientLocale) === -1) {
                             locale = config.locales[0];
@@ -88,7 +91,7 @@ define(["require", "exports", "./deskrt"], function (require, exports, DeskRT) {
                         }
                         elOpt = {
                             i18n: function (path) {
-                                if (vuex.state.locale !== "zh-CN") {
+                                if (_vuex.state.locale !== "zh-CN") {
                                     return DeskRT.__readLocale(path);
                                 }
                             }
@@ -98,18 +101,18 @@ define(["require", "exports", "./deskrt"], function (require, exports, DeskRT) {
                         }
                         Vue.use(ELEMENT, elOpt);
                         return [4, DeskRT.__loadLocale(locale)];
-                    case 3:
-                        _c.sent();
-                        return [3, 5];
-                    case 4:
+                    case 5:
+                        _d.sent();
+                        return [3, 7];
+                    case 6:
                         if (config.size) {
                             Vue.use(ELEMENT, {
                                 size: config.size
                             });
                         }
-                        _c.label = 5;
-                    case 5:
-                        vuex = new Vuex.Store({
+                        _d.label = 7;
+                    case 7:
+                        _vuex = new Vuex.Store({
                             state: {
                                 path: "",
                                 asideWidth: config.asideWidth,
@@ -120,17 +123,18 @@ define(["require", "exports", "./deskrt"], function (require, exports, DeskRT) {
                                 setPath: function (state, val) {
                                     state.path = val;
                                 },
+                                setAsideWidth: function (state, val) {
+                                    state.asideWidth = val;
+                                },
                                 setLocale: function (state, val) {
                                     state.locale = val;
                                 }
                             }
                         });
-                        DeskRT.__getVuex(vuex);
+                        DeskRT.__setVuex(_vuex);
                         Vue.use({
                             install: function (Vue, options) {
-                                Vue.prototype.$global = vuex.state.global;
-                                Vue.prototype.$asideWidth = vuex.state.asideWidth;
-                                Vue.prototype.$path = vuex.state.path;
+                                Vue.prototype.$global = _vuex.state.global;
                             }
                         });
                         controlsInit();
@@ -145,16 +149,16 @@ define(["require", "exports", "./deskrt"], function (require, exports, DeskRT) {
                             });
                         }); });
                         return [4, fetch(config.pre + config.frame + ".html?" + config.end)];
-                    case 6:
-                        res = _c.sent();
+                    case 8:
+                        res = _d.sent();
                         if (res.status === 404) {
                             alert("[Error] \"" + config.pre + config.frame + ".html\" not found.");
                             return [2];
                         }
                         _b = (_a = DeskRT).purify;
                         return [4, res.text()];
-                    case 7:
-                        text = _b.apply(_a, [_c.sent()]);
+                    case 9:
+                        text = _b.apply(_a, [_d.sent()]);
                         if (text === "") {
                             alert("[Error] Frame is empty.");
                             return [2];
@@ -171,24 +175,24 @@ define(["require", "exports", "./deskrt"], function (require, exports, DeskRT) {
                         elMenuHtml = elMenu.innerHTML;
                         elHeaderHtml = elHeader.innerHTML;
                         js = undefined;
-                        if (!(elFrame.getAttribute("load-script") !== null)) return [3, 11];
-                        _c.label = 8;
-                    case 8:
-                        _c.trys.push([8, 10, , 11]);
-                        return [4, System.import(config.pre + config.frame)];
-                    case 9:
-                        js = _c.sent();
-                        return [3, 11];
+                        if (!(elFrame.getAttribute("load-script") !== null)) return [3, 13];
+                        _d.label = 10;
                     case 10:
-                        e_1 = _c.sent();
-                        alert("[Error] " + e_1.getMessage());
-                        return [2];
+                        _d.trys.push([10, 12, , 13]);
+                        return [4, System.import(config.pre + config.frame)];
                     case 11:
-                        bodyElement.insertAdjacentHTML("afterbegin", "<div id=\"el-frame\">" +
+                        js = _d.sent();
+                        return [3, 13];
+                    case 12:
+                        _c = _d.sent();
+                        alert("[Error] Frame script not found.");
+                        return [2];
+                    case 13:
+                        _bodyElement.insertAdjacentHTML("afterbegin", "<div id=\"el-frame\">" +
                             "<el-container>" +
-                            "<el-aside :width=\"$asideWidth\" :class=\"{'el--show': $data.__asideShow}\">" +
+                            "<el-aside :width=\"__asideWidth\" :class=\"{'el--show': $data.__asideShow}\">" +
                             ("<el-logo" + (config.logo ? " style=\"background-image: url(" + (config.pre + config.logo) + ");\"" : "") + "></el-logo>") +
-                            ("<el-menu @select=\"__onSelect\" :default-active=\"$path\">" + elMenuHtml + "</el-menu>") +
+                            ("<el-menu @select=\"__onSelect\" :default-active=\"__path\">" + elMenuHtml + "</el-menu>") +
                             "</el-aside>" +
                             "<el-container>" +
                             "<el-header>" +
@@ -213,9 +217,15 @@ define(["require", "exports", "./deskrt"], function (require, exports, DeskRT) {
                             methods.__onSelect = onSelect;
                             methods.$l = $l;
                             computed = js.computed || {};
+                            computed.__asideWidth = function () {
+                                return _vuex.state.asideWidth;
+                            };
+                            computed.__path = function () {
+                                return _vuex.state.path;
+                            };
                             data = js.data || {};
                             data.__asideShow = false;
-                            frameVue = new Vue({
+                            _frameVue = new Vue({
                                 el: "#el-frame",
                                 data: data,
                                 methods: methods,
@@ -223,7 +233,7 @@ define(["require", "exports", "./deskrt"], function (require, exports, DeskRT) {
                             });
                         }
                         else {
-                            frameVue = new Vue({
+                            _frameVue = new Vue({
                                 el: "#el-frame",
                                 data: {
                                     __asideShow: false
@@ -231,20 +241,28 @@ define(["require", "exports", "./deskrt"], function (require, exports, DeskRT) {
                                 methods: {
                                     __onSelect: onSelect,
                                     $l: $l
+                                },
+                                computed: {
+                                    __asideWidth: function () {
+                                        return _vuex.state.asideWidth;
+                                    },
+                                    __path: function () {
+                                        return _vuex.state.path;
+                                    }
                                 }
                             });
                         }
-                        DeskRT.__getFrameVue(frameVue);
-                        mainElement = document.getElementById("el-main");
-                        DeskRT.__getMainElement(mainElement);
-                        if (!(window.location.hash === "")) return [3, 12];
+                        DeskRT.__setFrameVue(_frameVue);
+                        _mainElement = document.getElementById("el-main");
+                        DeskRT.__setMainElement(_mainElement);
+                        if (!(window.location.hash === "")) return [3, 14];
                         window.location.hash = "#" + config.main;
-                        return [3, 14];
-                    case 12: return [4, onHashChange()];
-                    case 13:
-                        _c.sent();
-                        _c.label = 14;
-                    case 14: return [2];
+                        return [3, 16];
+                    case 14: return [4, onHashChange()];
+                    case 15:
+                        _d.sent();
+                        _d.label = 16;
+                    case 16: return [2];
                 }
             });
         });
@@ -271,9 +289,9 @@ define(["require", "exports", "./deskrt"], function (require, exports, DeskRT) {
     var pageData = {};
     function openPage(path) {
         return __awaiter(this, void 0, void 0, function () {
-            var queryIndex, query, queryArray, i, tmp, res, text, df, elPage, pageRandom_1, pageEle, needLoadScript, needLoadLink, styleTxt, i, dom, tagName, outPath, outPath, pkg, js, e_2, opt, vm_1;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
+            var queryIndex, query, queryArray, i, tmp, res, text, df, elPage, pageRandom_1, pageEle, needLoadScript, needLoadLink, styleTxt, i, dom, tagName, outPath, outPath, pkg, js, _a, opt, vm_1;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
                     case 0:
                         queryIndex = path.indexOf("?");
                         query = {};
@@ -287,34 +305,34 @@ define(["require", "exports", "./deskrt"], function (require, exports, DeskRT) {
                         }
                         if (!pageData[path]) return [3, 5];
                         pageData[path].query = query;
-                        frameVue.$data.__asideShow = false;
-                        vuex.commit("setPath", path);
+                        _frameVue.$data.__asideShow = false;
+                        _vuex.commit("setPath", path);
                         if (!pageData[path].onOpen) return [3, 3];
                         return [4, DeskRT.sleep(1)];
                     case 1:
-                        _a.sent();
+                        _b.sent();
                         return [4, pageData[path].onOpen()];
                     case 2:
-                        _a.sent();
-                        _a.label = 3;
+                        _b.sent();
+                        _b.label = 3;
                     case 3: return [4, DeskRT.goCallback(pageData[path])];
                     case 4:
-                        _a.sent();
+                        _b.sent();
                         DeskRT.__setGoCallback(function () { });
                         return [3, 18];
                     case 5:
                         DeskRT.showMask(true);
-                        return [4, fetch(UserConfig.pre + path + ".html?" + UserConfig.end)];
+                        return [4, fetch(_config.pre + path + ".html?" + _config.end)];
                     case 6:
-                        res = _a.sent();
+                        res = _b.sent();
                         text = "";
                         if (!(res.status === 404)) return [3, 7];
                         alert("[Error] 404 not found.");
                         return [2];
                     case 7: return [4, res.text()];
                     case 8:
-                        text = _a.sent();
-                        _a.label = 9;
+                        text = _b.sent();
+                        _b.label = 9;
                     case 9:
                         text = DeskRT.purify(text);
                         if (text === "") {
@@ -358,38 +376,38 @@ define(["require", "exports", "./deskrt"], function (require, exports, DeskRT) {
                                 dom.remove();
                             }
                         }
-                        if (!(UserConfig.localePath !== "")) return [3, 11];
+                        if (!(_config.localePath !== "")) return [3, 11];
                         pkg = elPage.getAttribute("locale-pkg") || "";
                         pageEle.setAttribute("locale-pkg", pkg);
-                        return [4, DeskRT.__loadLocale(vuex.state.locale, pkg)];
+                        return [4, DeskRT.__loadLocale(_vuex.state.locale, pkg)];
                     case 10:
-                        _a.sent();
-                        _a.label = 11;
+                        _b.sent();
+                        _b.label = 11;
                     case 11: return [4, DeskRT.loadScript(needLoadScript)];
                     case 12:
-                        _a.sent();
+                        _b.sent();
                         return [4, DeskRT.loadResource(needLoadLink)];
                     case 13:
-                        _a.sent();
+                        _b.sent();
                         js = undefined;
                         if (!(elPage.getAttribute("load-script") !== null)) return [3, 17];
                         pageEle.setAttribute("load-script", "");
-                        _a.label = 14;
+                        _b.label = 14;
                     case 14:
-                        _a.trys.push([14, 16, , 17]);
-                        return [4, System.import(UserConfig.pre + path)];
+                        _b.trys.push([14, 16, , 17]);
+                        return [4, System.import(_config.pre + path)];
                     case 15:
-                        js = _a.sent();
+                        js = _b.sent();
                         return [3, 17];
                     case 16:
-                        e_2 = _a.sent();
-                        alert("[Error] " + e_2.getMessage());
+                        _a = _b.sent();
+                        alert("[Error] Page script not found.");
                         return [2];
                     case 17:
                         pageEle.innerHTML = elPage.innerHTML;
-                        mainElement.appendChild(pageEle);
+                        _mainElement.appendChild(pageEle);
                         if (styleTxt !== "") {
-                            headElement.insertAdjacentHTML("beforeend", "<style>" + styleTxt + "</style>");
+                            _headElement.insertAdjacentHTML("beforeend", "<style>" + styleTxt + "</style>");
                         }
                         opt = void 0;
                         if (js !== undefined) {
@@ -418,7 +436,7 @@ define(["require", "exports", "./deskrt"], function (require, exports, DeskRT) {
                         opt.data.pagePath = path;
                         opt.data.query = query;
                         opt.computed._isPageShow = function () {
-                            return this.pagePath === vuex.state.path;
+                            return this.pagePath === _vuex.state.path;
                         };
                         opt.computed._isMobile = function () {
                             return false;
@@ -429,7 +447,7 @@ define(["require", "exports", "./deskrt"], function (require, exports, DeskRT) {
                         opt.mounted = function () {
                             this.$nextTick(function () {
                                 return __awaiter(this, void 0, void 0, function () {
-                                    var codeList, i, e_3, i;
+                                    var codeList, i, e_1, i;
                                     return __generator(this, function (_a) {
                                         switch (_a.label) {
                                             case 0:
@@ -441,35 +459,35 @@ define(["require", "exports", "./deskrt"], function (require, exports, DeskRT) {
                                             case 2:
                                                 codeList = vm_1.$el.querySelectorAll("code");
                                                 if (!(codeList.length > 0)) return [3, 9];
-                                                if (!(highlightjs === undefined)) return [3, 8];
+                                                if (!(_highlightjs === undefined)) return [3, 8];
                                                 _a.label = 3;
                                             case 3:
                                                 _a.trys.push([3, 6, , 7]);
-                                                return [4, DeskRT.loadResource([tpLibs["highlightjs-css"]])];
+                                                return [4, DeskRT.loadResource([_tpLibs["highlightjs-css"]])];
                                             case 4:
                                                 _a.sent();
-                                                return [4, System.import(tpLibs.highlightjs)];
+                                                return [4, System.import(_tpLibs.highlightjs)];
                                             case 5:
-                                                highlightjs = _a.sent();
+                                                _highlightjs = _a.sent();
                                                 for (i = 0; i < codeList.length; ++i) {
-                                                    highlightjs.highlightBlock(codeList[i]);
+                                                    _highlightjs.highlightBlock(codeList[i]);
                                                 }
-                                                DeskRT.__getHighlightjs(highlightjs);
+                                                DeskRT.__setHighlightjs(_highlightjs);
                                                 return [3, 7];
                                             case 6:
-                                                e_3 = _a.sent();
-                                                alert("[Error] " + e_3.getMessage());
+                                                e_1 = _a.sent();
+                                                alert("[Error] " + e_1.getMessage());
                                                 return [2];
                                             case 7: return [3, 9];
                                             case 8:
                                                 for (i = 0; i < codeList.length; ++i) {
-                                                    highlightjs.highlightBlock(codeList[i]);
+                                                    _highlightjs.highlightBlock(codeList[i]);
                                                 }
                                                 _a.label = 9;
                                             case 9:
                                                 DeskRT.hideMask();
-                                                frameVue.$data.__asideShow = false;
-                                                vuex.commit("setPath", path);
+                                                _frameVue.$data.__asideShow = false;
+                                                _vuex.commit("setPath", path);
                                                 if (!(vm_1.onOpen !== undefined)) return [3, 12];
                                                 return [4, DeskRT.sleep(1)];
                                             case 10:
@@ -490,7 +508,7 @@ define(["require", "exports", "./deskrt"], function (require, exports, DeskRT) {
                         };
                         vm_1 = new Vue(opt);
                         pageData[path] = vm_1;
-                        _a.label = 18;
+                        _b.label = 18;
                     case 18: return [2];
                 }
             });
@@ -672,7 +690,7 @@ define(["require", "exports", "./deskrt"], function (require, exports, DeskRT) {
             mounted: function () {
                 var _this = this;
                 var style = document.createElement("style");
-                headElement.insertAdjacentElement("beforeend", style);
+                _headElement.insertAdjacentElement("beforeend", style);
                 this.$watch("gutter", function () {
                     var gutter = _this.$props.gutter !== undefined ? parseInt(_this.$props.gutter) : undefined;
                     if (gutter !== undefined && gutter !== 0) {
@@ -710,7 +728,7 @@ define(["require", "exports", "./deskrt"], function (require, exports, DeskRT) {
             mounted: function () {
                 var _this = this;
                 var style = document.createElement("style");
-                headElement.insertAdjacentElement("beforeend", style);
+                _headElement.insertAdjacentElement("beforeend", style);
                 this.$watch("gutter", function () {
                     var gutter = _this.$props.gutter !== undefined ? parseInt(_this.$props.gutter) : undefined;
                     if (gutter !== undefined && gutter !== 0) {

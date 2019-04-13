@@ -1,3 +1,5 @@
+import * as DeskRT from "deskrt";
+
 export let data = {
     text: "Waiting..."
 };

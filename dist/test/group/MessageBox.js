@@ -33,7 +33,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-define(["require", "exports"], function (require, exports) {
+define(["require", "exports", "deskrt"], function (require, exports, DeskRT) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.data = {

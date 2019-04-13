@@ -15,42 +15,42 @@
  */
 import * as DeskRT from "./deskrt";
 
-let headElement = document.getElementsByTagName("head")[0];
-let bodyElement = document.getElementsByTagName("body")[0];
-let mainElement: HTMLMainElement;
-let ROOT_PATH: string;
-let frameVue: Vue;
-let vuex: Vuex.Store;
-let UserConfig: any;
-let highlightjs: highlightjs;
+let _headElement = document.getElementsByTagName("head")[0];
+let _bodyElement = document.getElementsByTagName("body")[0];
+let _mainElement: HTMLMainElement;
+let _frameVue: Vue;
+let _vuex: Vuex.Store;
+let _config: any;
+let _highlightjs: highlightjs;
 
 // --- 要加载的 tp 库的 link ---
-let tpLibs = {
+let _tpLibs = {
     "vue,vuex,element-ui": "https://cdn.jsdelivr.net/combine/npm/vue@2.6.10/dist/vue.min.js,npm/vuex@3.1.0/dist/vuex.min.js,npm/element-ui@2.7.2/lib/index.js",
     "whatwg-fetch": ",npm/whatwg-fetch@3.0.0/fetch.min.js",
     "element-ui-css": "https://cdn.jsdelivr.net/npm/element-ui@2.7.2/lib/theme-chalk/index.css",
+    "element-ui@ver": "element-ui@2.7.2",
     "highlightjs": "https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.15.6/build/highlight.min",
     "highlightjs-css": "https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.15.6/build/styles/androidstudio.min.css"
 };
 
-export async function onReady(config: any, rp: string) {
-    ROOT_PATH = rp;
-    UserConfig = config;
+export async function onReady(config: any) {
+    _config = config;
     // --- 导入 config 到 DeskRT 对象 ---
-    DeskRT.__getConfig(config);
+    DeskRT.__setConfig(config);
+    if (_config.theme !== "") {
+        await DeskRT.setTheme(_config.theme, false);
+    }
+    DeskRT.__setTpLibs(_tpLibs);
     // --- 加载 Vue / Vuex / Element UI / SystemJS / whatwg-fetch* / promise-polyfill* ---
     // --- 别处还有 element-ui 的语言包版本需要对应，以及还有高亮 highlight.js 库 ---
-    let jsPath = tpLibs["vue,vuex,element-ui"];
+    let jsPath = _tpLibs["vue,vuex,element-ui"];
     if (typeof fetch !== "function") {
-        jsPath += tpLibs["whatwg-fetch"];
+        jsPath += _tpLibs["whatwg-fetch"];
     }
     await DeskRT.loadScript([jsPath]);
     await DeskRT.loadResource([
-        tpLibs["element-ui-css"],
-        {
-            name: "deskrt-theme",
-            path: ROOT_PATH + "deskrt.css"
-        }
+        _tpLibs["element-ui-css"],
+        ROOT_PATH + "deskrt.css"
     ]);
     // --- 加载 locale，需要默认把 Element UI 的当前客户机语言加载，以及加载当前框架 default 语言包以供 frame 界面使用） ---
     let locale = "";
@@ -65,7 +65,7 @@ export async function onReady(config: any, rp: string) {
         // --- 设置 Element UI 的语言加载器 ---
         let elOpt: any = {
             i18n: function (path: string) {
-                if (vuex.state.locale !== "zh-CN") {
+                if (_vuex.state.locale !== "zh-CN") {
                     return DeskRT.__readLocale(path);
                 }
             }
@@ -85,7 +85,7 @@ export async function onReady(config: any, rp: string) {
         }
     }
     // --- 创建 vuex 对象 ---
-    vuex = new Vuex.Store({
+    _vuex = new Vuex.Store({
         state: {
             path: "",                                   // --- 当前页面 ---
             asideWidth: config.asideWidth,              // --- 左边栏宽度 ---
@@ -93,8 +93,11 @@ export async function onReady(config: any, rp: string) {
             global: config.global                       // --- 全局可变变量 ---
         },
         mutations: {
-            setPath: function(state: any, val: any) {
+            setPath: function(state: any, val: string) {
                 state.path = val;
+            },
+            setAsideWidth: function(state: any, val: string) {
+                state.asideWidth = val;
             },
             setLocale: function(state: any, val: any) {
                 state.locale = val;
@@ -102,13 +105,11 @@ export async function onReady(config: any, rp: string) {
         }
     });
     // --- 执行 DeskRT 的 ready ---
-    DeskRT.__getVuex(vuex);
+    DeskRT.__setVuex(_vuex);
     // --- 设置全局响应式 ---
     Vue.use({
         install: function(Vue: any, options: any) {
-            Vue.prototype.$global = vuex.state.global;
-            Vue.prototype.$asideWidth = vuex.state.asideWidth;
-            Vue.prototype.$path = vuex.state.path;
+            Vue.prototype.$global = _vuex.state.global;
         }
     });
     // --- 加载控件定义 ---
@@ -146,17 +147,17 @@ export async function onReady(config: any, rp: string) {
     if (elFrame.getAttribute("load-script") !== null) {
         try {
             js = await System.import(config.pre + config.frame);
-        } catch (e) {
-            alert(`[Error] ${e.getMessage()}`);
+        } catch {
+            alert(`[Error] Frame script not found.`);
             return;
         }
     }
     // --- 将 Frame 插入 HTML ---
-    bodyElement.insertAdjacentHTML("afterbegin", `<div id="el-frame">` +
+    _bodyElement.insertAdjacentHTML("afterbegin", `<div id="el-frame">` +
         `<el-container>` +
-            `<el-aside :width="$asideWidth" :class="{'el--show': $data.__asideShow}">` +
+            `<el-aside :width="__asideWidth" :class="{'el--show': $data.__asideShow}">` +
                 `<el-logo${config.logo ? ` style="background-image: url(${config.pre + config.logo});"` : ""}></el-logo>` +
-                `<el-menu @select="__onSelect" :default-active="$path">${elMenuHtml}</el-menu>` +
+                `<el-menu @select="__onSelect" :default-active="__path">${elMenuHtml}</el-menu>` +
             `</el-aside>` +
             `<el-container>` +
                 `<el-header>` +
@@ -185,16 +186,22 @@ export async function onReady(config: any, rp: string) {
         methods.__onSelect = onSelect;
         methods.$l = $l;
         let computed = js.computed || {};
+        computed.__asideWidth = function() {
+            return _vuex.state.asideWidth;
+        };
+        computed.__path = function() {
+            return _vuex.state.path;
+        };
         let data = js.data || {};
         data.__asideShow = false;
-        frameVue = new Vue({
+        _frameVue = new Vue({
             el: "#el-frame",
             data: data,
             methods: methods,
             computed: computed
         });
     } else {
-        frameVue = new Vue({
+        _frameVue = new Vue({
             el: "#el-frame",
             data: {
                 __asideShow: false
@@ -202,13 +209,21 @@ export async function onReady(config: any, rp: string) {
             methods: {
                 __onSelect: onSelect,
                 $l: $l
+            },
+            computed: {
+                __asideWidth: function() {
+                    return _vuex.state.asideWidth;
+                },
+                __path: function() {
+                    return _vuex.state.path;
+                }
             }
         });
     }
-    DeskRT.__getFrameVue(frameVue);
+    DeskRT.__setFrameVue(_frameVue);
     // --- 赋值 ---
-    mainElement = <HTMLMainElement>document.getElementById("el-main");
-    DeskRT.__getMainElement(mainElement);
+    _mainElement = <HTMLMainElement>document.getElementById("el-main");
+    DeskRT.__setMainElement(_mainElement);
     // --- 加载主页 ---
     if (window.location.hash === "") {
         window.location.hash = "#" + config.main;
@@ -251,9 +266,9 @@ async function openPage(path: string) {
         // --- 已经加载过 ---
         pageData[path].query = query;
         // --- 手机端隐藏左侧菜单 ---
-        frameVue.$data.__asideShow = false;
+        _frameVue.$data.__asideShow = false;
         // --- 设置 path ---
-        vuex.commit("setPath", path);
+        _vuex.commit("setPath", path);
         // --- onOpen 要在所有加载完毕后执行（页面显示之后） ---
         if (pageData[path].onOpen) {
             await DeskRT.sleep(1); // 加入延时防止一些因异步导致的异常问题
@@ -265,7 +280,7 @@ async function openPage(path: string) {
     } else {
         // --- 未加载，加载 HTML 和 JS ---
         DeskRT.showMask(true);
-        let res = await fetch(UserConfig.pre + path + ".html?" + UserConfig.end);
+        let res = await fetch(_config.pre + path + ".html?" + _config.end);
         let text = "";
         if (res.status === 404) {
             alert(`[Error] 404 not found.`);
@@ -316,10 +331,10 @@ async function openPage(path: string) {
             }
         }
         // --- 加载 i18n （前提是开启了 i18n） ---
-        if (UserConfig.localePath !== "") {
+        if (_config.localePath !== "") {
             let pkg = elPage.getAttribute("locale-pkg") || "";
             pageEle.setAttribute("locale-pkg", pkg);
-            await DeskRT.__loadLocale(vuex.state.locale, pkg);
+            await DeskRT.__loadLocale(_vuex.state.locale, pkg);
         }
         // --- 加载外部文件 ---
         await DeskRT.loadScript(needLoadScript);
@@ -330,18 +345,18 @@ async function openPage(path: string) {
         if (elPage.getAttribute("load-script") !== null) {
             pageEle.setAttribute("load-script", "");
             try {
-                js = await System.import(UserConfig.pre + path);
-            } catch (e) {
-                alert("[Error] " + e.getMessage());
+                js = await System.import(_config.pre + path);
+            } catch {
+                alert("[Error] Page script not found.");
                 return;
             }
         }
         // --- 加载 HTML 到页面 ---
         pageEle.innerHTML = elPage.innerHTML;
-        mainElement.appendChild(pageEle);
+        _mainElement.appendChild(pageEle);
         // --- 追加 style ---
         if (styleTxt !== "") {
-            headElement.insertAdjacentHTML("beforeend", `<style>${styleTxt}</style>`);
+            _headElement.insertAdjacentHTML("beforeend", `<style>${styleTxt}</style>`);
         }
         let opt: any;
         if (js !== undefined) {
@@ -369,7 +384,7 @@ async function openPage(path: string) {
         opt.data.pagePath = path;
         opt.data.query = query;
         opt.computed._isPageShow = function(this: any) {
-            return this.pagePath === vuex.state.path;
+            return this.pagePath === _vuex.state.path;
         };
         opt.computed._isMobile = function(this: any) {
             return false;
@@ -388,16 +403,16 @@ async function openPage(path: string) {
                 // --- onOpen 不应该在此处执行，onOpen 会在完全准备好后执行（加载界面消失之后） ---
                 let codeList = vm.$el.querySelectorAll("code");
                 if (codeList.length > 0) {
-                    if (highlightjs === undefined) {
+                    if (_highlightjs === undefined) {
                         // --- 加载 highlightjs 的 js 和 css 库 ---
                         try {
-                            await DeskRT.loadResource([tpLibs["highlightjs-css"]]);
-                            highlightjs = await System.import(tpLibs.highlightjs);
+                            await DeskRT.loadResource([_tpLibs["highlightjs-css"]]);
+                            _highlightjs = await System.import(_tpLibs.highlightjs);
                             // --- 进行染色 ---
                             for (let i = 0; i < codeList.length; ++i) {
-                                highlightjs.highlightBlock(codeList[i]);
+                                _highlightjs.highlightBlock(codeList[i]);
                             }
-                            DeskRT.__getHighlightjs(highlightjs);
+                            DeskRT.__setHighlightjs(_highlightjs);
                         } catch (e) {
                             alert("[Error] " + e.getMessage());
                             return;
@@ -405,7 +420,7 @@ async function openPage(path: string) {
                     } else {
                         // --- 进行染色 ---
                         for (let i = 0; i < codeList.length; ++i) {
-                            highlightjs.highlightBlock(codeList[i]);
+                            _highlightjs.highlightBlock(codeList[i]);
                         }
                     }
                 }
@@ -413,9 +428,9 @@ async function openPage(path: string) {
                 DeskRT.hideMask();
                 // --- 处理完后，进行统一的界面设定 ---
                 // --- 手机端隐藏左侧菜单（开启页面意味着左侧菜单点击了，也就是在开启状态，此步骤有助于关闭） ---
-                frameVue.$data.__asideShow = false;
+                _frameVue.$data.__asideShow = false;
                 // --- 设置 path，用于切换页面显示 ---
-                vuex.commit("setPath", path);
+                _vuex.commit("setPath", path);
                 // --- onOpen 要在所有加载完毕后执行（页面显示之后） ---
                 if (vm.onOpen !== undefined) {
                     await DeskRT.sleep(1);
@@ -619,7 +634,7 @@ function controlsInit() {
         `</div>`,
         mounted: function (this: Vue) {
             let style = document.createElement("style");
-            headElement.insertAdjacentElement("beforeend", style);
+            _headElement.insertAdjacentElement("beforeend", style);
             this.$watch("gutter", () => {
                 let gutter = this.$props.gutter !== undefined ? parseInt(this.$props.gutter) : undefined;
                 if (gutter !== undefined && gutter !== 0) {
@@ -655,7 +670,7 @@ function controlsInit() {
         `</div>`,
         mounted: function (this: Vue) {
             let style = document.createElement("style");
-            headElement.insertAdjacentElement("beforeend", style);
+            _headElement.insertAdjacentElement("beforeend", style);
             this.$watch("gutter", () => {
                 let gutter = this.$props.gutter !== undefined ? parseInt(this.$props.gutter) : undefined;
                 if (gutter !== undefined && gutter !== 0) {

@@ -86,6 +86,7 @@ document.addEventListener("DOMContentLoaded", function () {
     config.logo = config.logo || "";
     config.size = config.size || "";
     config.paths = config.paths || {};
+    config.paths.deskrt = ROOT_PATH + "deskrt";
     config.asideWidth = config.asideWidth || "200px";
     config.const = config.const || {};
     config.global = config.global || {};

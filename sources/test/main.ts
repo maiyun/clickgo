@@ -1,3 +1,5 @@
+import * as DeskRT from "deskrt";
+
 export let data = {
     price: "3491.12",
     sms: "99998",
@@ -14,14 +16,18 @@ export let data = {
     themeName: "chalk"
 };
 
-let linkEle = <HTMLLinkElement>document.getElementById("themeLink");
 export let methods = {
+    // --- 更改主题 ---
     changeTheme: function(this: any, name: string) {
         this.themeName = name;
         if (name === "chalk") {
-            linkEle.setAttribute("href", ``);
+            DeskRT.setTheme("");
         } else {
-            linkEle.setAttribute("href", `../theme/${name}/index.css`);
+            DeskRT.setTheme(name);
         }
+    },
+    // --- 设置侧边栏 ---
+    setAsideWidth: function(this: any, width: string) {
+        DeskRT.setAsideWidth(width);
     }
 };

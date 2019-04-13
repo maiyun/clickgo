@@ -1,1 +1,1 @@
-export declare function onReady(config: any, rp: string): Promise<void>;
+export declare function onReady(config: any): Promise<void>;

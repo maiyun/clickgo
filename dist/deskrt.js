@@ -37,31 +37,42 @@ define(["require", "exports"], function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.version = "2.0.0";
-    var bodyElement = document.getElementsByTagName("body")[0];
-    var headElement = document.getElementsByTagName("head")[0];
-    var mainElement;
-    var userConfig;
-    var vuex;
-    var highlightjs;
-    var frameVue;
-    bodyElement.insertAdjacentHTML("beforeend", "<div id=\"el-resource\"></div>");
-    var resourceElement = document.getElementById("el-resource");
-    var resourceLoaded = [];
+    var _bodyElement = document.getElementsByTagName("body")[0];
+    var _headElement = document.getElementsByTagName("head")[0];
+    var _mainElement;
+    var _config;
+    var _vuex;
+    var _highlightjs;
+    var _frameVue;
+    var _tpLibs;
+    _bodyElement.insertAdjacentHTML("beforeend", "<div id=\"el-resource\"></div>");
+    var _resourceElement = document.getElementById("el-resource");
     function loadResource(paths) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 return [2, new Promise(function (resolve, reject) {
                         var needPaths = [];
                         for (var _i = 0, paths_1 = paths; _i < paths_1.length; _i++) {
-                            var item = paths_1[_i];
-                            if (typeof item === "string") {
-                                if (resourceLoaded.indexOf(item) === -1) {
-                                    needPaths.push(item);
+                            var path = paths_1[_i];
+                            var pathLio = path.lastIndexOf("?");
+                            if (pathLio !== -1) {
+                                path = path.slice(0, pathLio);
+                            }
+                            var ext = path.slice(path.lastIndexOf(".") + 1).toLowerCase();
+                            if (ext === "css") {
+                                if (!_headElement.querySelector("[data-deskrt-res=\"" + path + "\"]")) {
+                                    needPaths.push({
+                                        ext: ext,
+                                        path: path
+                                    });
                                 }
                             }
                             else {
-                                if (resourceLoaded.indexOf(item.path) === -1) {
-                                    needPaths.push(item);
+                                if (!_resourceElement.querySelector("[data-deskrt-res=\"" + path + "\"]")) {
+                                    needPaths.push({
+                                        ext: ext,
+                                        path: path
+                                    });
                                 }
                             }
                         }
@@ -71,30 +82,14 @@ define(["require", "exports"], function (require, exports) {
                             return;
                         }
                         var loaded = 0;
-                        var _loop_1 = function (item) {
-                            var name_1 = "";
-                            var path = "";
-                            if (typeof item === "string") {
-                                path = item;
-                            }
-                            else {
-                                name_1 = item.name;
-                                path = item.path;
-                            }
-                            var pathLio = path.lastIndexOf("?");
-                            if (pathLio !== -1) {
-                                path = path.slice(0, pathLio);
-                            }
-                            var ext = path.slice(path.lastIndexOf(".") + 1).toLowerCase();
-                            if (ext === "css") {
+                        for (var _a = 0, needPaths_1 = needPaths; _a < needPaths_1.length; _a++) {
+                            var item = needPaths_1[_a];
+                            if (item.ext === "css") {
                                 var link = document.createElement("link");
                                 link.rel = "stylesheet";
-                                if (name_1 !== "") {
-                                    link.setAttribute("name", name_1);
-                                }
+                                link.setAttribute("data-deskrt-res", item.path);
                                 link.addEventListener("load", function () {
                                     ++loaded;
-                                    resourceLoaded.push(path);
                                     if (loaded === pathsLength) {
                                         resolve();
                                     }
@@ -102,17 +97,14 @@ define(["require", "exports"], function (require, exports) {
                                 link.addEventListener("error", function (e) {
                                     reject(e);
                                 });
-                                link.href = path;
-                                headElement.appendChild(link);
+                                link.href = item.path + "?" + _config.end;
+                                _headElement.appendChild(link);
                             }
                             else {
                                 var img = document.createElement("img");
-                                if (name_1 !== "") {
-                                    img.setAttribute("name", name_1);
-                                }
+                                img.setAttribute("data-deskrt-res", item.path);
                                 img.addEventListener("load", function () {
                                     ++loaded;
-                                    resourceLoaded.push(path);
                                     if (loaded === pathsLength) {
                                         resolve();
                                     }
@@ -120,42 +112,60 @@ define(["require", "exports"], function (require, exports) {
                                 img.addEventListener("error", function (e) {
                                     reject(e);
                                 });
-                                img.src = path;
-                                resourceElement.appendChild(img);
+                                img.src = item.path + "?" + _config.end;
+                                _resourceElement.appendChild(img);
                             }
-                        };
-                        for (var _a = 0, needPaths_1 = needPaths; _a < needPaths_1.length; _a++) {
-                            var item = needPaths_1[_a];
-                            _loop_1(item);
                         }
                     })];
             });
         });
     }
     exports.loadResource = loadResource;
+    function removeResource(paths) {
+        for (var _i = 0, paths_2 = paths; _i < paths_2.length; _i++) {
+            var path = paths_2[_i];
+            var pathLio = path.lastIndexOf("?");
+            if (pathLio !== -1) {
+                path = path.slice(0, pathLio);
+            }
+            var ext = path.slice(path.lastIndexOf(".") + 1).toLowerCase();
+            if (ext === "css") {
+                var link = _headElement.querySelector("[data-deskrt-res=\"" + path + "\"]");
+                if (link) {
+                    link.remove();
+                }
+            }
+            else {
+                var img = _resourceElement.querySelector("[data-deskrt-res=\"" + path + "\"]");
+                if (img) {
+                    img.remove();
+                }
+            }
+        }
+    }
+    exports.removeResource = removeResource;
     function loadScript(paths) {
         var _this = this;
         return new Promise(function (resolve, reject) { return __awaiter(_this, void 0, void 0, function () {
-            var _i, paths_2, path, pathLio, e_1;
+            var _i, paths_3, path, pathLio, e_1;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 5, , 6]);
                         if (!(paths.length > 0)) return [3, 4];
-                        _i = 0, paths_2 = paths;
+                        _i = 0, paths_3 = paths;
                         _a.label = 1;
                     case 1:
-                        if (!(_i < paths_2.length)) return [3, 4];
-                        path = paths_2[_i];
+                        if (!(_i < paths_3.length)) return [3, 4];
+                        path = paths_3[_i];
                         pathLio = path.lastIndexOf("?");
                         if (pathLio !== -1) {
                             path = path.slice(0, pathLio);
                         }
-                        if (resourceLoaded.indexOf(path) !== -1) {
+                        if (_headElement.querySelector("[data-deskrt-res=\"" + path + "\"]")) {
                             return [3, 3];
                         }
-                        resourceLoaded.push(path);
-                        return [4, __loadScript(path + "?" + userConfig.end)];
+                        return [4, _loadScript(path)];
                     case 2:
                         _a.sent();
                         _a.label = 3;
@@ -175,63 +185,67 @@ define(["require", "exports"], function (require, exports) {
         }); });
     }
     exports.loadScript = loadScript;
-    function __loadScript(path) {
+    function _loadScript(path) {
         var _this = this;
         return new Promise(function (resolve, reject) { return __awaiter(_this, void 0, void 0, function () {
             var script;
             return __generator(this, function (_a) {
                 script = document.createElement("script");
+                script.setAttribute("data-deskrt-res", path);
                 script.addEventListener("load", function () {
                     resolve();
                 });
                 script.addEventListener("error", function (e) {
                     reject(e);
                 });
-                script.src = path;
-                headElement.appendChild(script);
+                script.src = path + "?" + _config.end;
+                _headElement.appendChild(script);
                 return [2];
             });
         }); });
     }
-    function setTheme(theme) {
+    function setTheme(theme, mask) {
+        if (mask === void 0) { mask = true; }
         return __awaiter(this, void 0, void 0, function () {
-            var oldLink, path;
+            var oldPath, path;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        if (userConfig.theme === theme) {
+                        if (_config.theme === theme) {
                             return [2];
                         }
-                        oldLink = headElement.querySelector("[name='deskrt-theme']");
+                        oldPath = _config.theme === "" ? "" : _getThemePath(_config.theme);
                         if (theme === "") {
-                            if (oldLink) {
-                                oldLink.remove();
-                            }
-                            userConfig.theme = "";
+                            removeResource([oldPath]);
+                            _config.theme = "";
                             return [2];
                         }
-                        path = theme;
-                        if (theme.indexOf("/") === -1) {
-                            path = ROOT_PATH + "theme/" + theme + "/index.css";
+                        path = _getThemePath(theme);
+                        if (mask) {
+                            showMask(true);
                         }
-                        showMask(true);
-                        return [4, loadResource([{
-                                    name: "deskrt-theme",
-                                    path: path
-                                }])];
+                        return [4, loadResource([path])];
                     case 1:
                         _a.sent();
-                        if (oldLink) {
-                            oldLink.remove();
+                        if (oldPath !== "") {
+                            removeResource([oldPath]);
                         }
-                        userConfig.theme = theme;
-                        hideMask();
+                        _config.theme = theme;
+                        if (mask) {
+                            hideMask();
+                        }
                         return [2];
                 }
             });
         });
     }
     exports.setTheme = setTheme;
+    function _getThemePath(theme) {
+        if (theme.indexOf("/") === -1) {
+            return ROOT_PATH + "theme/" + theme + "/index.css";
+        }
+        return theme;
+    }
     var localeLoaded = ["zh-CN.element"];
     var localeData = {
         "en": {}
@@ -242,14 +256,14 @@ define(["require", "exports"], function (require, exports) {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        if (vuex.state.locale === loc) {
+                        if (_vuex.state.locale === loc) {
                             return [2];
                         }
-                        if (userConfig.locales.indexOf(loc) === -1) {
+                        if (_config.locales.indexOf(loc) === -1) {
                             alert("[Error] Locale \"" + loc + "\" definition not found in \"locales\".");
                             return [2];
                         }
-                        nowPage = mainElement.querySelector(".el-page.el--show");
+                        nowPage = _mainElement.querySelector(".el-page.el--show");
                         if (!nowPage) {
                             alert("[Error] Page not opened.");
                             return [2];
@@ -262,7 +276,7 @@ define(["require", "exports"], function (require, exports) {
                             })];
                     case 1:
                         _a.sent();
-                        vuex.commit("setLocale", loc);
+                        _vuex.commit("setLocale", loc);
                         localStorage.setItem("locale", loc);
                         return [2];
                 }
@@ -290,7 +304,7 @@ define(["require", "exports"], function (require, exports) {
                         _c.label = 1;
                     case 1:
                         _c.trys.push([1, 3, , 4]);
-                        return [4, System.import("https://cdn.jsdelivr.net/npm/element-ui@2.7.0/lib/locale/lang/" + locale + ".min")];
+                        return [4, System.import("https://cdn.jsdelivr.net/npm/" + _tpLibs["element-ui@ver"] + "/lib/locale/lang/" + locale + ".min")];
                     case 2:
                         loc = _c.sent();
                         if (!localeData[locale]) {
@@ -312,7 +326,7 @@ define(["require", "exports"], function (require, exports) {
                         _c.label = 5;
                     case 5:
                         _c.trys.push([5, 7, , 8]);
-                        return [4, System.import("" + userConfig.pre + userConfig.localePath + locale)];
+                        return [4, System.import("" + _config.pre + _config.localePath + locale)];
                     case 6:
                         loc = _c.sent();
                         if (!localeData[locale]) {
@@ -336,7 +350,7 @@ define(["require", "exports"], function (require, exports) {
                         _c.label = 9;
                     case 9:
                         _c.trys.push([9, 11, , 12]);
-                        return [4, System.import("" + userConfig.pre + userConfig.localePath + locale + (pkg !== "default" ? "." + pkg : ""))];
+                        return [4, System.import("" + _config.pre + _config.localePath + locale + (pkg !== "default" ? "." + pkg : ""))];
                     case 10:
                         loc = _c.sent();
                         if (!localeData[locale]) {
@@ -364,7 +378,7 @@ define(["require", "exports"], function (require, exports) {
     exports.__loadLocale = __loadLocale;
     function __readLocale(key) {
         try {
-            return key.split(".").reduce(function (p, k) { return p[k]; }, localeData[vuex.state.locale]);
+            return key.split(".").reduce(function (p, k) { return p[k]; }, localeData[_vuex.state.locale]);
         }
         catch (e) {
             console.log(e);
@@ -372,6 +386,10 @@ define(["require", "exports"], function (require, exports) {
         }
     }
     exports.__readLocale = __readLocale;
+    function setAsideWidth(width) {
+        _vuex.commit("setAsideWidth", width);
+    }
+    exports.setAsideWidth = setAsideWidth;
     function arrayUnique(arr) {
         var res = [];
         var json = {};
@@ -392,12 +410,12 @@ define(["require", "exports"], function (require, exports) {
     }
     exports.html2escape = html2escape;
     function highlight(dom, code) {
-        if (highlightjs === undefined) {
+        if (_highlightjs === undefined) {
             alert("[Error] \"highlight.js\" not loaded.");
             return;
         }
         dom.innerText = code;
-        highlightjs.highlightBlock(dom);
+        _highlightjs.highlightBlock(dom);
     }
     exports.highlight = highlight;
     function purify(text) {
@@ -492,7 +510,7 @@ define(["require", "exports"], function (require, exports) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4, frameVue.$alert(text, undefined, {
+                    case 0: return [4, _frameVue.$alert(text, undefined, {
                             showClose: false,
                             type: "warning"
                         })];
@@ -511,7 +529,7 @@ define(["require", "exports"], function (require, exports) {
                 switch (_b.label) {
                     case 0:
                         _b.trys.push([0, 2, , 3]);
-                        return [4, frameVue.$confirm(text, undefined, {
+                        return [4, _frameVue.$confirm(text, undefined, {
                                 showClose: false,
                                 type: "info"
                             })];
@@ -636,49 +654,28 @@ define(["require", "exports"], function (require, exports) {
         });
     }
     exports.post = post;
-    function __getConfig(config) {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
-                userConfig = config;
-                return [2];
-            });
-        });
+    function __setConfig(config) {
+        _config = config;
     }
-    exports.__getConfig = __getConfig;
-    function __getVuex(vx) {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
-                vuex = vx;
-                return [2];
-            });
-        });
+    exports.__setConfig = __setConfig;
+    function __setVuex(vx) {
+        _vuex = vx;
     }
-    exports.__getVuex = __getVuex;
-    function __getMainElement(me) {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
-                mainElement = me;
-                return [2];
-            });
-        });
+    exports.__setVuex = __setVuex;
+    function __setMainElement(me) {
+        _mainElement = me;
     }
-    exports.__getMainElement = __getMainElement;
-    function __getHighlightjs(hjs) {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
-                highlightjs = hjs;
-                return [2];
-            });
-        });
+    exports.__setMainElement = __setMainElement;
+    function __setHighlightjs(hjs) {
+        _highlightjs = hjs;
     }
-    exports.__getHighlightjs = __getHighlightjs;
-    function __getFrameVue(fv) {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
-                frameVue = fv;
-                return [2];
-            });
-        });
+    exports.__setHighlightjs = __setHighlightjs;
+    function __setFrameVue(fv) {
+        _frameVue = fv;
     }
-    exports.__getFrameVue = __getFrameVue;
+    exports.__setFrameVue = __setFrameVue;
+    function __setTpLibs(tl) {
+        _tpLibs = tl;
+    }
+    exports.__setTpLibs = __setTpLibs;
 });

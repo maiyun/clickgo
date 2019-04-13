@@ -7,9 +7,9 @@
 		<el-button @click="changeTheme('pen')" disabled>{{$l('main.pen')}}</el-button>
 	</el-card>
 	<el-card :header="$l('main.asideWidth')" style="margin-top: 20px;">
-		<el-button @click="DeskRT.asideWidth='300px'">300{{$l('main.px')}}</el-button>
-		<el-button @click="DeskRT.asideWidth='200px'">200{{$l('main.px')}}</el-button>
-		<el-button @click="DeskRT.asideWidth='160px'">160{{$l('main.px')}}</el-button>
+		<el-button @click="setAsideWidth('300px')">300{{$l('main.px')}}</el-button>
+		<el-button @click="setAsideWidth('200px')">200{{$l('main.px')}}</el-button>
+		<el-button @click="setAsideWidth('160px')">160{{$l('main.px')}}</el-button>
 	</el-card>
 	<el-row gutter="20" style="margin-top: 20px;">
 		<el-col span="12">

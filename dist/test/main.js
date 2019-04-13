@@ -1,4 +1,4 @@
-define(["require", "exports"], function (require, exports) {
+define(["require", "exports", "deskrt"], function (require, exports, DeskRT) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.data = {
@@ -16,16 +16,18 @@ define(["require", "exports"], function (require, exports) {
             }],
         themeName: "chalk"
     };
-    var linkEle = document.getElementById("themeLink");
     exports.methods = {
         changeTheme: function (name) {
             this.themeName = name;
             if (name === "chalk") {
-                linkEle.setAttribute("href", "");
+                DeskRT.setTheme("");
             }
             else {
-                linkEle.setAttribute("href", "../theme/" + name + "/index.css");
+                DeskRT.setTheme(name);
             }
+        },
+        setAsideWidth: function (width) {
+            DeskRT.setAsideWidth(width);
         }
     };
 });
