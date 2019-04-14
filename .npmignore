@@ -5,9 +5,10 @@
 /sources/test/
 /typings/
 /_config.yml
-/.gitignore
-/.npmignore
+.gitignore
+.npmignore
 /tsconfig.json
 /tslint.json
-/.git/
-/.vscode/
+.git/
+.vscode/
+.vs/

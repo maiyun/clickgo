@@ -1,4 +1,4 @@
-/.sass-cache/
-/.vs/
-/node_modules/
-/.vscode/
+.sass-cache/
+.vs/
+node_modules/
+.vscode/
