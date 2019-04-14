@@ -14,5 +14,10 @@ export let methods = {
         this.text = "Waiting...";
         let r = await DeskRT.confirm(`You clicked "confirm".`);
         this.text = r ? "true" : "false";
+    },
+    alertConst: async function(this: any) {
+        this.text = "Waiting...";
+        let r = await DeskRT.alert(`The "DeskRT.c.TEST" is "${DeskRT.c.TEST}".`);
+        this.text = r ? "true" : "false";
     }
 };

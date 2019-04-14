@@ -1,4 +1,5 @@
 export declare const version: string;
+export declare let c: any;
 export declare function loadResource(paths: string[]): Promise<{}>;
 export declare function removeResource(paths: string[]): void;
 export declare function loadScript(paths: string[]): Promise<void>;

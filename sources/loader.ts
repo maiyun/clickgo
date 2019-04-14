@@ -34,8 +34,8 @@ document.addEventListener("touchstart", function() {});
 document.addEventListener("DOMContentLoaded", function () {
     // --- z-index 1999 比 dialog、alert 等层级低 ---
     document.getElementsByTagName("body")[0].innerHTML = `<style>` +
-        `#el-mask {display: none; background: rgba(255,255,255,.4); position: fixed; left: 0; top: 0; width: 100%; height: 100%; z-index: 1999; justify-content: center; align-items: center;}` +
-        `#el-text-mask {display: none; background: rgba(0,0,0,.4); position: fixed; left: 0; top: 0; width: 100%; height: 100%; z-index: 20000; justify-content: center; align-items: center; color: #FFF; font-size: 36px; font-weight: 900; -webkit-text-stroke: 2px #000;}` +
+        `#el-mask {display: none; background: rgba(255,255,255,.2); position: fixed; left: 0; top: 0; width: 100%; height: 100%; z-index: 1999; justify-content: center; align-items: center;}` +
+        `#el-text-mask {display: none; background: rgba(0,0,0,.2); position: fixed; left: 0; top: 0; width: 100%; height: 100%; z-index: 20000; justify-content: center; align-items: center; color: #FFF; font-size: 36px; font-weight: 900; -webkit-text-stroke: 2px #000;}` +
         `#el-mask.el--show, #el-text-mask.el--show {display: flex;}` +
         `#el-mask.el--top {z-index: 20001;}` +
         `@-webkit-keyframes elLoading-1 { 0% {transform: rotate(45deg);} 25% {transform: rotate(-45deg);} 50% {transform: rotate(-135deg);} 75% {transform: rotate(-225deg);} 100% {transform: rotate(-315deg);}}` +

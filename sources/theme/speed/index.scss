@@ -69,7 +69,7 @@
 
 /* --- el-card --- */
 .el-card.is-always-shadow, .el-card.is-hover-shadow:focus, .el-card.is-hover-shadow:hover {
-    box-shadow: 0 1px 2px 0 rgba(161,171,181,.48), 0 2px 4px 0 rgba(213,222,231,.64);
+    box-shadow: 0 1px 3px rgba(0,0,0,.05);
 }
 .el-card__header {
     padding: 10px 20px;
@@ -88,7 +88,6 @@
 .el-button {
     box-shadow: 0 1px 2px rgba(220,223,230,.4);
 }
-
 
 /* --- el-tip --- */
 .el-tip{border: 1px solid #50bfff; border-left-width: 5px;}

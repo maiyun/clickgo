@@ -71,6 +71,22 @@ define(["require", "exports", "deskrt"], function (require, exports, DeskRT) {
                     }
                 });
             });
+        },
+        alertConst: function () {
+            return __awaiter(this, void 0, void 0, function () {
+                var r;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0:
+                            this.text = "Waiting...";
+                            return [4, DeskRT.alert("The \"DeskRT.c.TEST\" is \"" + DeskRT.c.TEST + "\".")];
+                        case 1:
+                            r = _a.sent();
+                            this.text = r ? "true" : "false";
+                            return [2];
+                    }
+                });
+            });
         }
     };
 });

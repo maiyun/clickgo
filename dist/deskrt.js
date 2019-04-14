@@ -36,7 +36,8 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 define(["require", "exports"], function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    exports.version = "2.0.0";
+    exports.version = "2.0.1";
+    exports.c = {};
     var _bodyElement = document.getElementsByTagName("body")[0];
     var _headElement = document.getElementsByTagName("head")[0];
     var _mainElement;
@@ -562,100 +563,93 @@ define(["require", "exports"], function (require, exports) {
     }
     exports.goBack = goBack;
     function get(url) {
-        return __awaiter(this, void 0, void 0, function () {
-            var _this = this;
+        var _this = this;
+        return new Promise(function (resolve, reject) { return __awaiter(_this, void 0, void 0, function () {
+            var res, text, ct, e_3;
             return __generator(this, function (_a) {
-                return [2, new Promise(function (resolve, reject) { return __awaiter(_this, void 0, void 0, function () {
-                        var res, text, ct, e_3;
-                        return __generator(this, function (_a) {
-                            switch (_a.label) {
-                                case 0:
-                                    _a.trys.push([0, 6, , 7]);
-                                    return [4, fetch(url, {
-                                            method: "GET",
-                                            credentials: "include"
-                                        })];
-                                case 1:
-                                    res = _a.sent();
-                                    text = void 0;
-                                    ct = res.headers.get("Content-Type") || "";
-                                    if (!(ct.indexOf("json") !== -1)) return [3, 3];
-                                    return [4, res.json()];
-                                case 2:
-                                    text = _a.sent();
-                                    return [3, 5];
-                                case 3: return [4, res.text()];
-                                case 4:
-                                    text = _a.sent();
-                                    _a.label = 5;
-                                case 5:
-                                    resolve(text);
-                                    return [3, 7];
-                                case 6:
-                                    e_3 = _a.sent();
-                                    reject(e_3);
-                                    return [3, 7];
-                                case 7: return [2];
-                            }
-                        });
-                    }); })];
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 6, , 7]);
+                        return [4, fetch(url, {
+                                method: "GET",
+                                credentials: "include"
+                            })];
+                    case 1:
+                        res = _a.sent();
+                        text = void 0;
+                        ct = res.headers.get("Content-Type") || "";
+                        if (!(ct.indexOf("json") !== -1)) return [3, 3];
+                        return [4, res.json()];
+                    case 2:
+                        text = _a.sent();
+                        return [3, 5];
+                    case 3: return [4, res.text()];
+                    case 4:
+                        text = _a.sent();
+                        _a.label = 5;
+                    case 5:
+                        resolve(text);
+                        return [3, 7];
+                    case 6:
+                        e_3 = _a.sent();
+                        reject(e_3);
+                        return [3, 7];
+                    case 7: return [2];
+                }
             });
-        });
+        }); });
     }
     exports.get = get;
     function post(url, data) {
-        return __awaiter(this, void 0, void 0, function () {
-            var _this = this;
+        var _this = this;
+        return new Promise(function (resolve, reject) { return __awaiter(_this, void 0, void 0, function () {
+            var header, body, k, res, text, ct, e_4;
             return __generator(this, function (_a) {
-                return [2, new Promise(function (resolve, reject) { return __awaiter(_this, void 0, void 0, function () {
-                        var header, body, k, res, text, ct, e_4;
-                        return __generator(this, function (_a) {
-                            switch (_a.label) {
-                                case 0:
-                                    _a.trys.push([0, 6, , 7]);
-                                    header = new Headers();
-                                    body = new FormData();
-                                    for (k in data) {
-                                        if (data[k] !== undefined) {
-                                            body.append(k, data[k]);
-                                        }
-                                    }
-                                    return [4, fetch(url, {
-                                            method: "POST",
-                                            headers: header,
-                                            credentials: "include",
-                                            body: body
-                                        })];
-                                case 1:
-                                    res = _a.sent();
-                                    text = void 0;
-                                    ct = res.headers.get("Content-Type") || "";
-                                    if (!(ct.indexOf("json") !== -1)) return [3, 3];
-                                    return [4, res.json()];
-                                case 2:
-                                    text = _a.sent();
-                                    return [3, 5];
-                                case 3: return [4, res.text()];
-                                case 4:
-                                    text = _a.sent();
-                                    _a.label = 5;
-                                case 5:
-                                    resolve(text);
-                                    return [3, 7];
-                                case 6:
-                                    e_4 = _a.sent();
-                                    reject(e_4);
-                                    return [3, 7];
-                                case 7: return [2];
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 6, , 7]);
+                        header = new Headers();
+                        body = new FormData();
+                        for (k in data) {
+                            if (data[k] !== undefined) {
+                                body.append(k, data[k]);
                             }
-                        });
-                    }); })];
+                        }
+                        return [4, fetch(url, {
+                                method: "POST",
+                                headers: header,
+                                credentials: "include",
+                                body: body
+                            })];
+                    case 1:
+                        res = _a.sent();
+                        text = void 0;
+                        ct = res.headers.get("Content-Type") || "";
+                        if (!(ct.indexOf("json") !== -1)) return [3, 3];
+                        return [4, res.json()];
+                    case 2:
+                        text = _a.sent();
+                        return [3, 5];
+                    case 3: return [4, res.text()];
+                    case 4:
+                        text = _a.sent();
+                        _a.label = 5;
+                    case 5:
+                        resolve(text);
+                        return [3, 7];
+                    case 6:
+                        e_4 = _a.sent();
+                        reject(e_4);
+                        return [3, 7];
+                    case 7: return [2];
+                }
             });
-        });
+        }); });
     }
     exports.post = post;
     function __setConfig(config) {
         _config = config;
+        exports.c = config.const;
     }
     exports.__setConfig = __setConfig;
     function __setVuex(vx) {

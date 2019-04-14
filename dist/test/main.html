@@ -4,7 +4,7 @@
 		<el-button @click="changeTheme('chalk')" :type="themeName==='chalk'?'primary':undefined">{{$l('main.chalk')}}</el-button>
 		<el-button @click="changeTheme('blue')" :type="themeName==='blue'?'primary':undefined">{{$l('main.blue')}}</el-button>
 		<el-button @click="changeTheme('speed')" :type="themeName==='speed'?'primary':undefined">{{$l('main.speed')}}</el-button>
-		<el-button @click="changeTheme('pen')" disabled>{{$l('main.pen')}}</el-button>
+		<el-button @click="changeTheme('pen')" :type="themeName==='pen'?'primary':undefined">{{$l('main.pen')}}</el-button>
 	</el-card>
 	<el-card :header="$l('main.asideWidth')" style="margin-top: 20px;">
 		<el-button @click="setAsideWidth('300px')">300{{$l('main.px')}}</el-button>

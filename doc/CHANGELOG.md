@@ -1,6 +1,11 @@
 # Changelog
 
-## 2.0.0
+## 2.0.1
+
+[+] Add "pen" theme.  
+[\*] Fix and optimization.
+
+## 2.0.0-dev
 
 [\*] Remove the init() method and replace it with <script type="deskrt-config">.  
 [\*] Fast loading, the white screen time is very short.  

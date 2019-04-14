@@ -29,14 +29,14 @@ Simply download and include with a script tag. DeskRT will be registered as a gl
 
 ### CDN (recommend)
 
-Recommended: https://cdn.jsdelivr.net/npm/deskrt@2.x.x/dist/loader.min.js, which will reflect the latest version as soon as it is published to npm. You can also browse the source of the npm package at https://cdn.jsdelivr.net/npm/deskrt/.
+Recommended: https://cdn.jsdelivr.net/npm/deskrt@2.0.1/dist/loader.min.js (Less than 3kb minified and gzipped), which will reflect the latest version as soon as it is published to npm. You can also browse the source of the npm package at https://cdn.jsdelivr.net/npm/deskrt/.
 
-Also available on [unpkg](https://unpkg.com/deskrt@2.x.x/dist/loadert.js).
+Also available on [unpkg](https://unpkg.com/deskrt@2.0.1/dist/loader.js).
 
 For example:
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/deskrt@2.x.x/dist/loadert.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/deskrt@2.0.1/dist/loader.js"></script>
 ```
 
 ### NPM

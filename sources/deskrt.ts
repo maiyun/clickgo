@@ -15,7 +15,10 @@
  */
 
 /** --- DeskRT 核心版本 --- */
-export const version: string = "2.0.0";
+export const version: string = "2.0.1";
+
+/** --- 预植常量列表 --- */
+export let c: any = {};
 
 // --- 内部用的变量 ---
 let _bodyElement = document.getElementsByTagName("body")[0];
@@ -546,7 +549,7 @@ export function goBack(): void {
  * --- 发起 get 请求 ---
  * @param url 要请求的 URL 地址
  */
-export async function get(url: string): Promise<any> {
+export function get(url: string): Promise<any> {
     return new Promise(async (resolve, reject) => {
         try {
             let res = await fetch(url, {
@@ -572,7 +575,7 @@ export async function get(url: string): Promise<any> {
  * @param url 要请求的 URL 地址
  * @param data 发送的数据
  */
-export async function post(url: string, data: any): Promise<any> {
+export function post(url: string, data: any): Promise<any> {
     return new Promise(async (resolve, reject) => {
         try {
             let header = new Headers();
@@ -608,6 +611,7 @@ export async function post(url: string, data: any): Promise<any> {
  */
 export function __setConfig(config: any) {
     _config = config;
+    c = config.const;
 }
 
 export function __setVuex(vx: Vuex.Store) {
