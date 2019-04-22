@@ -36,7 +36,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 define(["require", "exports"], function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    exports.version = "2.0.1";
+    exports.version = "2.0.2";
     exports.c = {};
     var _bodyElement = document.getElementsByTagName("body")[0];
     var _headElement = document.getElementsByTagName("head")[0];

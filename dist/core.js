@@ -135,6 +135,8 @@ define(["require", "exports", "./deskrt"], function (require, exports, DeskRT) {
                         Vue.use({
                             install: function (Vue, options) {
                                 Vue.prototype.$global = _vuex.state.global;
+                                Vue.prototype.$go = DeskRT.go;
+                                Vue.prototype.$goBack = DeskRT.goBack;
                             }
                         });
                         controlsInit();

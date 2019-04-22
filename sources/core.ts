@@ -110,6 +110,8 @@ export async function onReady(config: any) {
     Vue.use({
         install: function(Vue: any, options: any) {
             Vue.prototype.$global = _vuex.state.global;
+            Vue.prototype.$go = DeskRT.go;
+            Vue.prototype.$goBack = DeskRT.goBack;
         }
     });
     // --- 加载控件定义 ---

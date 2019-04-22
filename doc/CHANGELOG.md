@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.0.2
+
+[+] Add $go, $goBack methods.
+
 ## 2.0.1
 
 [+] Add "pen" theme.  
