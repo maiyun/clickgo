@@ -7,12 +7,13 @@
     "backstage",
     "console"
   ],
-  "main": "dist/deskrt.js",
+  "main": "dist/loader.js",
   "author": "hanguoshuai",
   "license": "Apache-2.0",
   "types": "./dist/deskrt.d.ts",
   "typings": "./dist/deskrt.d.ts",
-  "dependencies": {
+  "devDependencies": {
+    "@types/echarts": "^4.1.9",
     "@types/systemjs": "^0.20.6"
   }
 }
