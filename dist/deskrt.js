@@ -36,7 +36,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 define(["require", "exports"], function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    exports.version = "2.0.2";
+    exports.version = "2.0.3";
     exports.c = {};
     var _bodyElement = document.getElementsByTagName("body")[0];
     var _headElement = document.getElementsByTagName("head")[0];
@@ -48,7 +48,8 @@ define(["require", "exports"], function (require, exports) {
     var _tpLibs;
     _bodyElement.insertAdjacentHTML("beforeend", "<div id=\"el-resource\"></div>");
     var _resourceElement = document.getElementById("el-resource");
-    function loadResource(paths) {
+    function loadResource(paths, step) {
+        if (step === void 0) { step = function () { }; }
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 return [2, new Promise(function (resolve, reject) {
@@ -83,17 +84,26 @@ define(["require", "exports"], function (require, exports) {
                             return;
                         }
                         var loaded = 0;
-                        for (var _a = 0, needPaths_1 = needPaths; _a < needPaths_1.length; _a++) {
-                            var item = needPaths_1[_a];
+                        var _loop_1 = function (item) {
                             if (item.ext === "css") {
                                 var link = document.createElement("link");
                                 link.rel = "stylesheet";
                                 link.setAttribute("data-deskrt-res", item.path);
                                 link.addEventListener("load", function () {
-                                    ++loaded;
-                                    if (loaded === pathsLength) {
-                                        resolve();
-                                    }
+                                    return __awaiter(this, void 0, void 0, function () {
+                                        return __generator(this, function (_a) {
+                                            switch (_a.label) {
+                                                case 0: return [4, step(item.path)];
+                                                case 1:
+                                                    _a.sent();
+                                                    ++loaded;
+                                                    if (loaded === pathsLength) {
+                                                        resolve();
+                                                    }
+                                                    return [2];
+                                            }
+                                        });
+                                    });
                                 });
                                 link.addEventListener("error", function (e) {
                                     reject(e);
@@ -105,10 +115,20 @@ define(["require", "exports"], function (require, exports) {
                                 var img = document.createElement("img");
                                 img.setAttribute("data-deskrt-res", item.path);
                                 img.addEventListener("load", function () {
-                                    ++loaded;
-                                    if (loaded === pathsLength) {
-                                        resolve();
-                                    }
+                                    return __awaiter(this, void 0, void 0, function () {
+                                        return __generator(this, function (_a) {
+                                            switch (_a.label) {
+                                                case 0: return [4, step(item.path)];
+                                                case 1:
+                                                    _a.sent();
+                                                    ++loaded;
+                                                    if (loaded === pathsLength) {
+                                                        resolve();
+                                                    }
+                                                    return [2];
+                                            }
+                                        });
+                                    });
                                 });
                                 img.addEventListener("error", function (e) {
                                     reject(e);
@@ -116,6 +136,10 @@ define(["require", "exports"], function (require, exports) {
                                 img.src = item.path + "?" + _config.end;
                                 _resourceElement.appendChild(img);
                             }
+                        };
+                        for (var _a = 0, needPaths_1 = needPaths; _a < needPaths_1.length; _a++) {
+                            var item = needPaths_1[_a];
+                            _loop_1(item);
                         }
                     })];
             });
@@ -145,42 +169,46 @@ define(["require", "exports"], function (require, exports) {
         }
     }
     exports.removeResource = removeResource;
-    function loadScript(paths) {
+    function loadScript(paths, step) {
         var _this = this;
+        if (step === void 0) { step = function () { }; }
         return new Promise(function (resolve, reject) { return __awaiter(_this, void 0, void 0, function () {
             var _i, paths_3, path, pathLio, e_1;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        _a.trys.push([0, 5, , 6]);
-                        if (!(paths.length > 0)) return [3, 4];
+                        _a.trys.push([0, 6, , 7]);
+                        if (!(paths.length > 0)) return [3, 5];
                         _i = 0, paths_3 = paths;
                         _a.label = 1;
                     case 1:
-                        if (!(_i < paths_3.length)) return [3, 4];
+                        if (!(_i < paths_3.length)) return [3, 5];
                         path = paths_3[_i];
                         pathLio = path.lastIndexOf("?");
                         if (pathLio !== -1) {
                             path = path.slice(0, pathLio);
                         }
                         if (_headElement.querySelector("[data-deskrt-res=\"" + path + "\"]")) {
-                            return [3, 3];
+                            return [3, 4];
                         }
                         return [4, _loadScript(path)];
                     case 2:
                         _a.sent();
-                        _a.label = 3;
+                        return [4, step(path)];
                     case 3:
+                        _a.sent();
+                        _a.label = 4;
+                    case 4:
                         _i++;
                         return [3, 1];
-                    case 4:
-                        resolve();
-                        return [3, 6];
                     case 5:
+                        resolve();
+                        return [3, 7];
+                    case 6:
                         e_1 = _a.sent();
                         reject(e_1);
-                        return [3, 6];
-                    case 6: return [2];
+                        return [3, 7];
+                    case 7: return [2];
                 }
             });
         }); });

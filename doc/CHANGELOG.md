@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.0.3
+
+[+] Add load progress bar.  
+[\*] Update Vuex to 3.1.1, ElementUI to 2.9.1, highlightjs to 9.15.8.
+
 ## 2.0.2
 
 [+] Add $go, $goBack methods.

@@ -15,7 +15,7 @@
  */
 
 /** --- DeskRT 核心版本 --- */
-export const version: string = "2.0.2";
+export const version: string = "2.0.3";
 
 /** --- 预植常量列表 --- */
 export let c: any = {};
@@ -23,7 +23,7 @@ export let c: any = {};
 // --- 内部用的变量 ---
 let _bodyElement = document.getElementsByTagName("body")[0];
 let _headElement = document.getElementsByTagName("head")[0];
-let _mainElement: HTMLMainElement;
+let _mainElement: HTMLElement;
 let _config: any;
 let _vuex: Vuex.Store;
 let _highlightjs: highlightjs;
@@ -37,7 +37,7 @@ let _resourceElement = <HTMLDivElement>document.getElementById("el-resource");
  * --- 加载 CSS 和图片资源（跳跃并行加载） ---
  * @param paths 要加载的列表
  */
-export async function loadResource(paths: string[]) {
+export async function loadResource(paths: string[], step: (path?: string) => void = () => {}) {
     return new Promise(function(resolve, reject) {
         let needPaths: any[] = [];
         for (let path of paths) {
@@ -73,7 +73,8 @@ export async function loadResource(paths: string[]) {
                 let link = document.createElement("link");
                 link.rel = "stylesheet";
                 link.setAttribute("data-deskrt-res", item.path);
-                link.addEventListener("load", function() {
+                link.addEventListener("load", async function() {
+                    await step(item.path);
                     ++loaded;
                     if (loaded === pathsLength) {
                         resolve();
@@ -87,7 +88,8 @@ export async function loadResource(paths: string[]) {
             } else {
                 let img = document.createElement("img");
                 img.setAttribute("data-deskrt-res", item.path);
-                img.addEventListener("load", function() {
+                img.addEventListener("load", async function() {
+                    await step(item.path);
                     ++loaded;
                     if (loaded === pathsLength) {
                         resolve();
@@ -132,7 +134,7 @@ export function removeResource(paths: string[]) {
  * --- 顺序加载 js ---
  * @param paths 要加载文件的路径数组
  */
-export function loadScript(paths: string[]): Promise<void> {
+export function loadScript(paths: string[], step: (path?: string) => void = () => {}): Promise<void> {
     return new Promise(async (resolve, reject) => {
         try {
             if (paths.length > 0) {
@@ -145,6 +147,7 @@ export function loadScript(paths: string[]): Promise<void> {
                         continue;
                     }
                     await _loadScript(path);
+                    await step(path);
                 }
             }
             resolve();
@@ -618,7 +621,7 @@ export function __setVuex(vx: Vuex.Store) {
     _vuex = vx;
 }
 
-export function __setMainElement(me: HTMLMainElement) {
+export function __setMainElement(me: HTMLElement) {
     _mainElement = me;
 }
 

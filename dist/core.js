@@ -39,17 +39,19 @@ define(["require", "exports", "./deskrt"], function (require, exports, DeskRT) {
     var _headElement = document.getElementsByTagName("head")[0];
     var _bodyElement = document.getElementsByTagName("body")[0];
     var _mainElement;
+    var _progressChunk = document.getElementById("el-progress-chunk");
+    var _progressCount = 6;
     var _frameVue;
     var _vuex;
     var _config;
     var _highlightjs;
     var _tpLibs = {
-        "vue,vuex,element-ui": "https://cdn.jsdelivr.net/combine/npm/vue@2.6.10/dist/vue.min.js,npm/vuex@3.1.0/dist/vuex.min.js,npm/element-ui@2.7.2/lib/index.js",
+        "vue,vuex,element-ui": "https://cdn.jsdelivr.net/combine/npm/vue@2.6.10/dist/vue.min.js,npm/vuex@3.1.1/dist/vuex.min.js,npm/element-ui@2.9.1/lib/index.js",
         "whatwg-fetch": ",npm/whatwg-fetch@3.0.0/fetch.min.js",
-        "element-ui-css": "https://cdn.jsdelivr.net/npm/element-ui@2.7.2/lib/theme-chalk/index.css",
-        "element-ui@ver": "element-ui@2.7.2",
-        "highlightjs": "https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.15.6/build/highlight.min",
-        "highlightjs-css": "https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.15.6/build/styles/androidstudio.min.css"
+        "element-ui-css": "https://cdn.jsdelivr.net/npm/element-ui@2.9.1/lib/theme-chalk/index.css",
+        "element-ui@ver": "element-ui@2.9.1",
+        "highlightjs": "https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.15.8/build/highlight.min",
+        "highlightjs-css": "https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.15.8/build/styles/androidstudio.min.css"
     };
     function onReady(config) {
         return __awaiter(this, void 0, void 0, function () {
@@ -71,13 +73,17 @@ define(["require", "exports", "./deskrt"], function (require, exports, DeskRT) {
                         if (typeof fetch !== "function") {
                             jsPath += _tpLibs["whatwg-fetch"];
                         }
-                        return [4, DeskRT.loadScript([jsPath])];
+                        return [4, DeskRT.loadScript([jsPath], function () {
+                                _progressChunk.style.width = parseFloat(_progressChunk.style.width || "0") + 1 / _progressCount * 100 + "%";
+                            })];
                     case 3:
                         _d.sent();
                         return [4, DeskRT.loadResource([
                                 _tpLibs["element-ui-css"],
                                 ROOT_PATH + "deskrt.css"
-                            ])];
+                            ], function () {
+                                _progressChunk.style.width = parseFloat(_progressChunk.style.width || "0") + 1 / _progressCount * 100 + "%";
+                            })];
                     case 4:
                         _d.sent();
                         locale = "";
@@ -153,6 +159,7 @@ define(["require", "exports", "./deskrt"], function (require, exports, DeskRT) {
                         return [4, fetch(config.pre + config.frame + ".html?" + config.end)];
                     case 8:
                         res = _d.sent();
+                        _progressChunk.style.width = parseFloat(_progressChunk.style.width || "0") + 1 / _progressCount * 100 + "%";
                         if (res.status === 404) {
                             alert("[Error] \"" + config.pre + config.frame + ".html\" not found.");
                             return [2];
@@ -177,19 +184,28 @@ define(["require", "exports", "./deskrt"], function (require, exports, DeskRT) {
                         elMenuHtml = elMenu.innerHTML;
                         elHeaderHtml = elHeader.innerHTML;
                         js = undefined;
-                        if (!(elFrame.getAttribute("load-script") !== null)) return [3, 13];
+                        if (!(elFrame.getAttribute("load-script") !== null)) return [3, 14];
                         _d.label = 10;
                     case 10:
                         _d.trys.push([10, 12, , 13]);
                         return [4, System.import(config.pre + config.frame)];
                     case 11:
                         js = _d.sent();
+                        _progressChunk.style.width = parseFloat(_progressChunk.style.width || "0") + 1 / _progressCount * 100 + "%";
                         return [3, 13];
                     case 12:
                         _c = _d.sent();
                         alert("[Error] Frame script not found.");
                         return [2];
-                    case 13:
+                    case 13: return [3, 15];
+                    case 14:
+                        _progressChunk.style.width = parseFloat(_progressChunk.style.width || "0") + 1 / _progressCount * 100 + "%";
+                        _d.label = 15;
+                    case 15:
+                        document.getElementById("el-progress").style.opacity = "0";
+                        setTimeout(function () {
+                            document.getElementById("el-progress").remove();
+                        }, 2000);
                         _bodyElement.insertAdjacentHTML("afterbegin", "<div id=\"el-frame\">" +
                             "<el-container>" +
                             "<el-aside :width=\"__asideWidth\" :class=\"{'el--show': $data.__asideShow}\">" +
@@ -257,14 +273,14 @@ define(["require", "exports", "./deskrt"], function (require, exports, DeskRT) {
                         DeskRT.__setFrameVue(_frameVue);
                         _mainElement = document.getElementById("el-main");
                         DeskRT.__setMainElement(_mainElement);
-                        if (!(window.location.hash === "")) return [3, 14];
+                        if (!(window.location.hash === "")) return [3, 16];
                         window.location.hash = "#" + config.main;
-                        return [3, 16];
-                    case 14: return [4, onHashChange()];
-                    case 15:
+                        return [3, 18];
+                    case 16: return [4, onHashChange()];
+                    case 17:
                         _d.sent();
-                        _d.label = 16;
-                    case 16: return [2];
+                        _d.label = 18;
+                    case 18: return [2];
                 }
             });
         });

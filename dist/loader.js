@@ -63,11 +63,19 @@ document.addEventListener("DOMContentLoaded", function () {
         ".el-loading-1, .el-loading-2 {width: 25px; height: 25px; box-sizing: border-box; border: solid 2px #24292e; position: absolute; left: 0; top: 0; animation: elLoading-2 3s ease-in-out infinite;}" +
         ".el-loading-1 {animation-name: elLoading-1; border-color: rgba(36, 41, 46, .6);}" +
         ".el-loading-2 {box-shadow: 0 0 2px 1px rgba(36, 41, 46, 0.3);}" +
+        "#el-progress {position: fixed; top: 0; width: 100%; height: 100%; left: 0; line-height: 1px; z-index: 1999; display: flex; justify-content: center; align-items: flex-end; transition: all 2s ease-out; opacity: 1;}" +
+        "#el-progress-content {border: solid 1px #24292e; height: 8px; display: inline-block; width: 70px; border-radius: 4px; padding: 1px; box-sizing: border-box; margin-bottom: 50px; background: #FFF;}" +
+        "#el-progress-chunk {background-color: #24292e; border-radius: 2px; height: 4px; width: 0%; transition: width 5s ease-out;}" +
         "</style>" +
         "<div id=\"el-mask\" class=\"el--show\">" +
         "<div class=\"el-loading\">" +
         "<div class=\"el-loading-1\"></div>" +
         "<div class=\"el-loading-2\"></div>" +
+        "</div>" +
+        "</div>" +
+        "<div id=\"el-progress\">" +
+        "<div id=\"el-progress-content\">" +
+        "<div id=\"el-progress-chunk\"></div>" +
         "</div>" +
         "</div>" +
         "<div id=\"el-text-mask\">Loading...</div>";
@@ -94,7 +102,7 @@ document.addEventListener("DOMContentLoaded", function () {
     var script = document.createElement("script");
     script.addEventListener("load", function () {
         return __awaiter(this, void 0, void 0, function () {
-            var core;
+            var core, epc;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -112,6 +120,9 @@ document.addEventListener("DOMContentLoaded", function () {
                         return [4, System.import(ROOT_PATH + "core")];
                     case 1:
                         core = _a.sent();
+                        epc = document.getElementById("el-progress-chunk");
+                        epc.style.transition = "width 1s ease-out";
+                        epc.style.width = 1 / 6 * 100 + "%";
                         core.onReady(config, ROOT_PATH);
                         return [2];
                 }
@@ -123,4 +134,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
     script.src = "https://cdn.jsdelivr.net/npm/systemjs@0.21.6/dist/system.js";
     document.getElementsByTagName("head")[0].appendChild(script);
+    setTimeout(function () {
+        document.getElementById("el-progress-chunk").style.width = 1 / 6 * 100 + "%";
+    }, 0);
 });

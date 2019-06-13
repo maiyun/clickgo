@@ -17,7 +17,9 @@ import * as DeskRT from "./deskrt";
 
 let _headElement = document.getElementsByTagName("head")[0];
 let _bodyElement = document.getElementsByTagName("body")[0];
-let _mainElement: HTMLMainElement;
+let _mainElement: HTMLElement;
+let _progressChunk = (<HTMLElement>document.getElementById("el-progress-chunk"));
+let _progressCount = 6;
 let _frameVue: Vue;
 let _vuex: Vuex.Store;
 let _config: any;
@@ -25,12 +27,12 @@ let _highlightjs: highlightjs;
 
 // --- 要加载的 tp 库的 link ---
 let _tpLibs = {
-    "vue,vuex,element-ui": "https://cdn.jsdelivr.net/combine/npm/vue@2.6.10/dist/vue.min.js,npm/vuex@3.1.0/dist/vuex.min.js,npm/element-ui@2.7.2/lib/index.js",
+    "vue,vuex,element-ui": "https://cdn.jsdelivr.net/combine/npm/vue@2.6.10/dist/vue.min.js,npm/vuex@3.1.1/dist/vuex.min.js,npm/element-ui@2.9.1/lib/index.js",
     "whatwg-fetch": ",npm/whatwg-fetch@3.0.0/fetch.min.js",
-    "element-ui-css": "https://cdn.jsdelivr.net/npm/element-ui@2.7.2/lib/theme-chalk/index.css",
-    "element-ui@ver": "element-ui@2.7.2",
-    "highlightjs": "https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.15.6/build/highlight.min",
-    "highlightjs-css": "https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.15.6/build/styles/androidstudio.min.css"
+    "element-ui-css": "https://cdn.jsdelivr.net/npm/element-ui@2.9.1/lib/theme-chalk/index.css",
+    "element-ui@ver": "element-ui@2.9.1",
+    "highlightjs": "https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.15.8/build/highlight.min",
+    "highlightjs-css": "https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.15.8/build/styles/androidstudio.min.css"
 };
 
 export async function onReady(config: any) {
@@ -41,17 +43,21 @@ export async function onReady(config: any) {
         await DeskRT.setTheme(_config.theme, false);
     }
     DeskRT.__setTpLibs(_tpLibs);
-    // --- 加载 Vue / Vuex / Element UI / SystemJS / whatwg-fetch* / promise-polyfill* ---
+    // --- 加载 Vue / Vuex / Element UI / SystemJS / whatwg-fetch* ---
     // --- 别处还有 element-ui 的语言包版本需要对应，以及还有高亮 highlight.js 库 ---
     let jsPath = _tpLibs["vue,vuex,element-ui"];
     if (typeof fetch !== "function") {
         jsPath += _tpLibs["whatwg-fetch"];
     }
-    await DeskRT.loadScript([jsPath]);
+    await DeskRT.loadScript([jsPath], function() {
+        _progressChunk.style.width = parseFloat(_progressChunk.style.width || "0") + 1 / _progressCount * 100 + "%";
+    });
     await DeskRT.loadResource([
         _tpLibs["element-ui-css"],
         ROOT_PATH + "deskrt.css"
-    ]);
+    ], function() {
+        _progressChunk.style.width = parseFloat(_progressChunk.style.width || "0") + 1 / _progressCount * 100 + "%";
+    });
     // --- 加载 locale，需要默认把 Element UI 的当前客户机语言加载，以及加载当前框架 default 语言包以供 frame 界面使用） ---
     let locale = "";
     if (config.localePath !== "") {
@@ -123,6 +129,8 @@ export async function onReady(config: any) {
     });
     // --- 加载框架主要的 frame.html ---
     let res = await fetch(config.pre + config.frame + ".html?" + config.end);
+    // --- 加载条 ---
+    _progressChunk.style.width = parseFloat(_progressChunk.style.width || "0") + 1 / _progressCount * 100 + "%";
     if (res.status === 404) {
         alert(`[Error] "` + config.pre + config.frame + `.html" not found.`);
         return;
@@ -149,11 +157,21 @@ export async function onReady(config: any) {
     if (elFrame.getAttribute("load-script") !== null) {
         try {
             js = await System.import(config.pre + config.frame);
+            // --- 加载条 ---
+            _progressChunk.style.width = parseFloat(_progressChunk.style.width || "0") + 1 / _progressCount * 100 + "%";
         } catch {
             alert(`[Error] Frame script not found.`);
             return;
         }
+    } else {
+        // --- 加载条 ---
+        _progressChunk.style.width = parseFloat(_progressChunk.style.width || "0") + 1 / _progressCount * 100 + "%";
     }
+    // --- 隐藏并卸载加载条 ---
+    (<HTMLElement>document.getElementById("el-progress")).style.opacity = "0";
+    setTimeout(function() {
+        (<HTMLElement>document.getElementById("el-progress")).remove();
+    }, 2000);
     // --- 将 Frame 插入 HTML ---
     _bodyElement.insertAdjacentHTML("afterbegin", `<div id="el-frame">` +
         `<el-container>` +
@@ -224,7 +242,7 @@ export async function onReady(config: any) {
     }
     DeskRT.__setFrameVue(_frameVue);
     // --- 赋值 ---
-    _mainElement = <HTMLMainElement>document.getElementById("el-main");
+    _mainElement = <HTMLElement>document.getElementById("el-main");
     DeskRT.__setMainElement(_mainElement);
     // --- 加载主页 ---
     if (window.location.hash === "") {
