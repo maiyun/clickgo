@@ -63,9 +63,9 @@ document.addEventListener("DOMContentLoaded", function () {
         ".el-loading-1, .el-loading-2 {width: 25px; height: 25px; box-sizing: border-box; border: solid 2px #24292e; position: absolute; left: 0; top: 0; animation: elLoading-2 3s ease-in-out infinite;}" +
         ".el-loading-1 {animation-name: elLoading-1; border-color: rgba(36, 41, 46, .6);}" +
         ".el-loading-2 {box-shadow: 0 0 2px 1px rgba(36, 41, 46, 0.3);}" +
-        "#el-progress {position: fixed; top: 0; width: 100%; height: 100%; left: 0; line-height: 1px; z-index: 1999; display: flex; justify-content: center; align-items: flex-end; transition: all 2s ease-out; opacity: 1;}" +
-        "#el-progress-content {border: solid 1px #24292e; height: 8px; display: inline-block; width: 70px; border-radius: 4px; padding: 1px; box-sizing: border-box; margin-bottom: 50px; background: #FFF;}" +
-        "#el-progress-chunk {background-color: #24292e; border-radius: 2px; height: 4px; width: 0%; transition: width 5s ease-out;}" +
+        "#el-progress {position: fixed; top: 0; width: 100%; height: 100%; left: 0; line-height: 1px; z-index: 1999; display: flex; justify-content: center; align-items: flex-end; transition: all 1s ease-out; opacity: 1; pointer-events: none;}" +
+        "#el-progress-content {border-right: solid 2px #24292e; height: 4px; display: inline-block; width: 70px; margin-bottom: 50px; background: #FFF;}" +
+        "#el-progress-chunk {background-color: #24292e; height: 4px; width: 0%; transition: width 5s ease-out; box-shadow: 0 0 5px 2px rgba(36, 41, 46, 0.3);}" +
         "</style>" +
         "<div id=\"el-mask\" class=\"el--show\">" +
         "<div class=\"el-loading\">" +

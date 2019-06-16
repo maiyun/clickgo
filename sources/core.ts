@@ -171,7 +171,7 @@ export async function onReady(config: any) {
     (<HTMLElement>document.getElementById("el-progress")).style.opacity = "0";
     setTimeout(function() {
         (<HTMLElement>document.getElementById("el-progress")).remove();
-    }, 2000);
+    }, 1000);
     // --- 将 Frame 插入 HTML ---
     _bodyElement.insertAdjacentHTML("afterbegin", `<div id="el-frame">` +
         `<el-container>` +
@@ -336,18 +336,21 @@ async function openPage(path: string) {
                 if (outPath = dom.getAttribute("src")) {
                     needLoadScript.push(outPath);
                     dom.remove();
+                    --i;
                 }
             } else if (tagName === "link") {
                 let outPath;
                 if (outPath = dom.getAttribute("href")) {
                     needLoadLink.push(outPath);
                     dom.remove();
+                    --i;
                 }
             } else if (tagName === "style") {
                 styleTxt += dom.innerHTML.replace(/([\s\S]+?){([\s\S]+?)}/g, (t: string, $1: string, $2: string): string => {
                     return "[" + pageRandom + "] " + $1.replace(/, */g, ",[" + pageRandom + "] ") + "{" + $2 + "}";
                 });
                 dom.remove();
+                --i;
             }
         }
         // --- 加载 i18n （前提是开启了 i18n） ---
@@ -366,7 +369,8 @@ async function openPage(path: string) {
             pageEle.setAttribute("load-script", "");
             try {
                 js = await System.import(_config.pre + path);
-            } catch {
+            } catch (e) {
+                console.log(e);
                 alert("[Error] Page script not found.");
                 return;
             }

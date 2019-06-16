@@ -205,7 +205,7 @@ define(["require", "exports", "./deskrt"], function (require, exports, DeskRT) {
                         document.getElementById("el-progress").style.opacity = "0";
                         setTimeout(function () {
                             document.getElementById("el-progress").remove();
-                        }, 2000);
+                        }, 1000);
                         _bodyElement.insertAdjacentHTML("afterbegin", "<div id=\"el-frame\">" +
                             "<el-container>" +
                             "<el-aside :width=\"__asideWidth\" :class=\"{'el--show': $data.__asideShow}\">" +
@@ -307,9 +307,9 @@ define(["require", "exports", "./deskrt"], function (require, exports, DeskRT) {
     var pageData = {};
     function openPage(path) {
         return __awaiter(this, void 0, void 0, function () {
-            var queryIndex, query, queryArray, i, tmp, res, text, df, elPage, pageRandom_1, pageEle, needLoadScript, needLoadLink, styleTxt, i, dom, tagName, outPath, outPath, pkg, js, _a, opt, vm_1;
-            return __generator(this, function (_b) {
-                switch (_b.label) {
+            var queryIndex, query, queryArray, i, tmp, res, text, df, elPage, pageRandom_1, pageEle, needLoadScript, needLoadLink, styleTxt, i, dom, tagName, outPath, outPath, pkg, js, e_1, opt, vm_1;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
                     case 0:
                         queryIndex = path.indexOf("?");
                         query = {};
@@ -328,29 +328,29 @@ define(["require", "exports", "./deskrt"], function (require, exports, DeskRT) {
                         if (!pageData[path].onOpen) return [3, 3];
                         return [4, DeskRT.sleep(1)];
                     case 1:
-                        _b.sent();
+                        _a.sent();
                         return [4, pageData[path].onOpen()];
                     case 2:
-                        _b.sent();
-                        _b.label = 3;
+                        _a.sent();
+                        _a.label = 3;
                     case 3: return [4, DeskRT.goCallback(pageData[path])];
                     case 4:
-                        _b.sent();
+                        _a.sent();
                         DeskRT.__setGoCallback(function () { });
                         return [3, 18];
                     case 5:
                         DeskRT.showMask(true);
                         return [4, fetch(_config.pre + path + ".html?" + _config.end)];
                     case 6:
-                        res = _b.sent();
+                        res = _a.sent();
                         text = "";
                         if (!(res.status === 404)) return [3, 7];
                         alert("[Error] 404 not found.");
                         return [2];
                     case 7: return [4, res.text()];
                     case 8:
-                        text = _b.sent();
-                        _b.label = 9;
+                        text = _a.sent();
+                        _a.label = 9;
                     case 9:
                         text = DeskRT.purify(text);
                         if (text === "") {
@@ -378,6 +378,7 @@ define(["require", "exports", "./deskrt"], function (require, exports, DeskRT) {
                                 if (outPath = dom.getAttribute("src")) {
                                     needLoadScript.push(outPath);
                                     dom.remove();
+                                    --i;
                                 }
                             }
                             else if (tagName === "link") {
@@ -385,6 +386,7 @@ define(["require", "exports", "./deskrt"], function (require, exports, DeskRT) {
                                 if (outPath = dom.getAttribute("href")) {
                                     needLoadLink.push(outPath);
                                     dom.remove();
+                                    --i;
                                 }
                             }
                             else if (tagName === "style") {
@@ -392,6 +394,7 @@ define(["require", "exports", "./deskrt"], function (require, exports, DeskRT) {
                                     return "[" + pageRandom_1 + "] " + $1.replace(/, */g, ",[" + pageRandom_1 + "] ") + "{" + $2 + "}";
                                 });
                                 dom.remove();
+                                --i;
                             }
                         }
                         if (!(_config.localePath !== "")) return [3, 11];
@@ -399,26 +402,27 @@ define(["require", "exports", "./deskrt"], function (require, exports, DeskRT) {
                         pageEle.setAttribute("locale-pkg", pkg);
                         return [4, DeskRT.__loadLocale(_vuex.state.locale, pkg)];
                     case 10:
-                        _b.sent();
-                        _b.label = 11;
+                        _a.sent();
+                        _a.label = 11;
                     case 11: return [4, DeskRT.loadScript(needLoadScript)];
                     case 12:
-                        _b.sent();
+                        _a.sent();
                         return [4, DeskRT.loadResource(needLoadLink)];
                     case 13:
-                        _b.sent();
+                        _a.sent();
                         js = undefined;
                         if (!(elPage.getAttribute("load-script") !== null)) return [3, 17];
                         pageEle.setAttribute("load-script", "");
-                        _b.label = 14;
+                        _a.label = 14;
                     case 14:
-                        _b.trys.push([14, 16, , 17]);
+                        _a.trys.push([14, 16, , 17]);
                         return [4, System.import(_config.pre + path)];
                     case 15:
-                        js = _b.sent();
+                        js = _a.sent();
                         return [3, 17];
                     case 16:
-                        _a = _b.sent();
+                        e_1 = _a.sent();
+                        console.log(e_1);
                         alert("[Error] Page script not found.");
                         return [2];
                     case 17:
@@ -465,7 +469,7 @@ define(["require", "exports", "./deskrt"], function (require, exports, DeskRT) {
                         opt.mounted = function () {
                             this.$nextTick(function () {
                                 return __awaiter(this, void 0, void 0, function () {
-                                    var codeList, i, e_1, i;
+                                    var codeList, i, e_2, i;
                                     return __generator(this, function (_a) {
                                         switch (_a.label) {
                                             case 0:
@@ -493,8 +497,8 @@ define(["require", "exports", "./deskrt"], function (require, exports, DeskRT) {
                                                 DeskRT.__setHighlightjs(_highlightjs);
                                                 return [3, 7];
                                             case 6:
-                                                e_1 = _a.sent();
-                                                alert("[Error] " + e_1.getMessage());
+                                                e_2 = _a.sent();
+                                                alert("[Error] " + e_2.getMessage());
                                                 return [2];
                                             case 7: return [3, 9];
                                             case 8:
@@ -526,7 +530,7 @@ define(["require", "exports", "./deskrt"], function (require, exports, DeskRT) {
                         };
                         vm_1 = new Vue(opt);
                         pageData[path] = vm_1;
-                        _b.label = 18;
+                        _a.label = 18;
                     case 18: return [2];
                 }
             });
