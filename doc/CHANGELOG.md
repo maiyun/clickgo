@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.0.4
+
+[\*] Fix bugs that are missing when loading multiple script and link tags.  
+[\*] Beautify the progress bar UI when loading.  
+[\*] Fix bug that loads progress bar masking page.
+
 ## 2.0.3
 
 [+] Add load progress bar.  
