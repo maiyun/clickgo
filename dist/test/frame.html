@@ -1,6 +1,6 @@
 <el-frame load-script>
 	<el-header>
-		<el-dropdown>
+		<el-dropdown :show-timeout="0">
 			<el-header-item>Language</el-header-item>
 			<el-dropdown-menu slot="dropdown">
 				<el-dropdown-item @click.native="setLocale('en')">English</el-dropdown-item>
@@ -8,7 +8,7 @@
 				<el-dropdown-item @click.native="setLocale('zh-TW')">繁體中文</el-dropdown-item>
 			</el-dropdown-menu>
 		</el-dropdown>
-		<el-dropdown>
+		<el-dropdown :show-timeout="0">
 			<el-header-item>{{username}}</el-header-item>
 			<el-dropdown-menu slot="dropdown">
 				<el-dropdown-item @click.native="$alert($l('frame.msg'), $l('frame.title'), {type: 'info'})">{{$l('frame.logout')}}</el-dropdown-item>

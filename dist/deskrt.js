@@ -270,10 +270,14 @@ define(["require", "exports"], function (require, exports) {
     }
     exports.setTheme = setTheme;
     function _getThemePath(theme) {
-        if (theme.indexOf("/") === -1) {
-            return ROOT_PATH + "theme/" + theme + "/index.css";
+        var l = ["//", "http://", "https://"];
+        for (var _i = 0, l_1 = l; _i < l_1.length; _i++) {
+            var i = l_1[_i];
+            if (theme.slice(0, i.length).toLowerCase() === i) {
+                return theme;
+            }
         }
-        return theme;
+        return ROOT_PATH + "theme/" + theme + "/index.css";
     }
     var localeLoaded = ["zh-CN.element"];
     var localeData = {

@@ -48,8 +48,7 @@ code {
     -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 }
 ::selection {
-    background-color: rgba(64,158,255,0.99);
-    color: #fff;
+    background-color: rgba(64, 158, 255, 0.4);
 }
 
 #el-resource {
@@ -57,6 +56,13 @@ code {
 }
 
 /* --- 优化 --- */
+.el-aside {
+    -webkit-user-select: none;
+    user-select: none;
+    span {
+        line-height: 1;
+    }
+}
 .el-menu-item, .el-submenu__title {
     height: initial !important;  // --- 解决左边栏每一个 item 高度上面空白大于下面空白的问题 ---
 }

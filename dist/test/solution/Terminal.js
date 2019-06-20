@@ -5,10 +5,12 @@ define(["require", "exports"], function (require, exports) {
         starting: false
     };
     var list = [
-        "Last failed login: Sun Jun 16 18:17:59 CST 2019 from 58.242.59.178 on ssh:notty\r\nThere were 691 failed login attempts since the last successful login.\r\nLast login: Sat Jun 15 15:33:26 2019 from 125.119.113.239\r\r\n",
-        "[root@VM_7_11_centos ~]# acme.sh\r\n-bash: acme.sh: command not found\r\n",
+        "Last failed login: Sun Jun 16 18:17:59 CST 2019 from 58.242.59.170 on ssh:notty\r\nThere were 691 failed login attempts since the last successful login.\r\nLast login: Sat Jun 15 15:33:26 2019 from 125.119.113.230\r\r\n",
         "[root@VM_7_11_centos ~]# ",
-        "curl https://get.acme.sh | sh\r\n",
+        "a", "c", "m", "e", ".", "s", "h", "\r\n",
+        "-bash: acme.sh: command not found\r\n",
+        "[root@VM_7_11_centos ~]# ",
+        "c", "u", "r", "l", " ", "h", "t", "t", "p", "s", ":", "/", "/", "g", "e", "t", ".", "a", "c", "m", "e", ".", "s", "h", " ", "|", " ", "s", "h", "\r\n",
         "  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current\r\n                                 Dload  Upload   Total   Spent    Left  Speed\r\n\r  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0",
         "\r  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0",
         "\r100   705    0   705    0     0    672      0 --:--:--  0:00:01 --:--:--   673\r\n",
@@ -73,7 +75,7 @@ define(["require", "exports"], function (require, exports) {
             term.write(list[now]);
             setTimeout(function () {
                 _this._start(now + 1, len);
-            }, rand(300, 1000));
+            }, rand(100, 800));
         }
     };
 });

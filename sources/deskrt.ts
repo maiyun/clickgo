@@ -206,10 +206,13 @@ export async function setTheme(theme: string, mask: boolean = true): Promise<voi
  * @param theme 模板名或路径
  */
 function _getThemePath(theme: string): string {
-    if (theme.indexOf("/") === -1) {
-        return ROOT_PATH + "theme/" + theme + "/index.css";
+    let l = ["//", "http://", "https://"];
+    for (let i of l) {
+        if (theme.slice(0, i.length).toLowerCase() === i) {
+            return theme;
+        }
     }
-    return theme;
+    return ROOT_PATH + "theme/" + theme + "/index.css";
 }
 
 // --- 语言包相关 ---
