@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.0.5
+
+[\*] Themes can use custom paths.  
+[\*] Speed theme optimization.
+
 ## 2.0.4
 
 [\*] Fix bugs that are missing when loading multiple script and link tags.  
