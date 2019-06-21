@@ -65,7 +65,7 @@ document.addEventListener("DOMContentLoaded", function () {
         ".el-loading-2 {box-shadow: 0 0 2px 1px rgba(36, 41, 46, 0.3);}" +
         "#el-progress {position: fixed; top: 0; width: 100%; height: 100%; left: 0; line-height: 1px; z-index: 1999; display: flex; justify-content: center; align-items: flex-end; transition: all 1s ease-out; opacity: 1; pointer-events: none;}" +
         "#el-progress-content {border-right: solid 2px #24292e; height: 4px; display: inline-block; width: 70px; margin-bottom: 50px; background: #FFF;}" +
-        "#el-progress-chunk {background-color: #24292e; height: 4px; width: 0%; transition: width 5s ease-out; box-shadow: 0 0 5px 2px rgba(36, 41, 46, 0.3);}" +
+        "#el-progress-chunk {background-color: #24292e; height: 4px; width: 0%; transition: width 5s ease-out; box-shadow: 0 0 5px rgba(36, 41, 46, 0.3);}" +
         "</style>" +
         "<div id=\"el-mask\" class=\"el--show\">" +
         "<div class=\"el-loading\">" +
