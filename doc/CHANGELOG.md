@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.0.6
+
+[+] Add $isMobile, $locale, $isPageShow.  
+[\*] Optimize the load progress bar.
+
 ## 2.0.5
 
 [\*] Themes can use custom paths.  
