@@ -1,5 +1,7 @@
 <el-page load-script>
 	<el-tip>{{$l('main.langInfo')}}</el-tip>
+	<el-tip>{{$l('main.langNow')}}: {{$locale}}</el-tip>
+	<el-tip>{{$l('main.isMobile')}}: {{$isMobile ? $l('main.true') : $l('main.false')}}</el-tip>
 	<el-card :header="$l('main.theme')">
 		<el-button @click="changeTheme('chalk')" :type="themeName==='chalk'?'primary':undefined">{{$l('main.chalk')}}</el-button>
 		<el-button @click="changeTheme('blue')" :type="themeName==='blue'?'primary':undefined">{{$l('main.blue')}}</el-button>

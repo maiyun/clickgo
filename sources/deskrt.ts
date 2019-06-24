@@ -248,7 +248,7 @@ export async function setLocale(loc: string) {
         hideMask();
     });
     _vuex.commit("setLocale", loc);
-    localStorage.setItem("locale", loc);
+    localStorage.setItem("deskrt-locale", loc);
 }
 
 /**

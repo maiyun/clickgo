@@ -62,7 +62,7 @@ export async function onReady(config: any) {
     let locale = "";
     if (config.localePath !== "") {
         // --- 设置当前语言 ---
-        let clientLocale = localStorage.getItem("locale") || navigator.language;
+        let clientLocale = localStorage.getItem("deskrt-locale") || navigator.language;
         if (config.locales.indexOf(clientLocale) === -1) {
             locale = config.locales[0];
         } else {
@@ -116,6 +116,11 @@ export async function onReady(config: any) {
     Vue.use({
         install: function(Vue: any, options: any) {
             Vue.prototype.$global = _vuex.state.global;
+            Vue.prototype.$l = function(key: string) {
+                return DeskRT.__readLocale(key);
+            };
+            // --- 此值不响应，也没响应的意义，手机电脑还能变来变去？ ---
+            Vue.prototype.$isMobile = navigator.userAgent.toLowerCase().indexOf("mobile") === -1 ? false : true;
             Vue.prototype.$go = DeskRT.go;
             Vue.prototype.$goBack = DeskRT.goBack;
         }
@@ -195,22 +200,20 @@ export async function onReady(config: any) {
     let onSelect = (index: string) => {
         window.location.hash = "#" + index;
     };
-    // --- 读取语言数据 ---
-    let $l = (key: string) => {
-        return DeskRT.__readLocale(key);
-    };
     // --- frameVue 创建 ---
     if (js !== undefined) {
         // --- 有 js ---
         let methods = js.methods || {};
         methods.__onSelect = onSelect;
-        methods.$l = $l;
         let computed = js.computed || {};
         computed.__asideWidth = function() {
             return _vuex.state.asideWidth;
         };
         computed.__path = function() {
             return _vuex.state.path;
+        };
+        computed.$locale = function() {
+            return _vuex.state.locale;
         };
         let data = js.data || {};
         data.__asideShow = false;
@@ -227,8 +230,7 @@ export async function onReady(config: any) {
                 __asideShow: false
             },
             methods: {
-                __onSelect: onSelect,
-                $l: $l
+                __onSelect: onSelect
             },
             computed: {
                 __asideWidth: function() {
@@ -236,6 +238,9 @@ export async function onReady(config: any) {
                 },
                 __path: function() {
                     return _vuex.state.path;
+                },
+                $locale: function() {
+                    return _vuex.state.locale;
                 }
             }
         });
@@ -319,7 +324,7 @@ async function openPage(path: string) {
         // --- 初始化要插入 page 的 dom ---
         let pageRandom = "page" + (Math.random() * 1000000000000).toFixed();
         let pageEle = document.createElement("div");
-        pageEle.setAttribute(":class", "['el-page', {'el--show': _isPageShow}]");
+        pageEle.setAttribute(":class", "['el-page', {'el--show': $isPageShow}]");
         pageEle.setAttribute(pageRandom, "");
         if (elPage.getAttribute("v-loading") !== null) {
             pageEle.setAttribute("v-loading", elPage.getAttribute("v-loading") || "");
@@ -407,14 +412,11 @@ async function openPage(path: string) {
         }
         opt.data.pagePath = path;
         opt.data.query = query;
-        opt.computed._isPageShow = function(this: any) {
+        opt.computed.$isPageShow = function(this: any) {
             return this.pagePath === _vuex.state.path;
         };
-        opt.computed._isMobile = function(this: any) {
-            return false;
-        };
-        opt.methods.$l = function(key: string) {
-            return DeskRT.__readLocale(key);
+        opt.computed.$locale = function() {
+            return _vuex.state.locale;
         };
         // --- page vue 完全挂载完后执行的 ---
         opt.mounted = function () {

@@ -55,7 +55,7 @@ define(["require", "exports", "./deskrt"], function (require, exports, DeskRT) {
     };
     function onReady(config) {
         return __awaiter(this, void 0, void 0, function () {
-            var jsPath, locale, clientLocale, elOpt, res, text, _a, _b, frameDiv, elFrame, elMenu, elHeader, elMenuHtml, elHeaderHtml, js, _c, onSelect, $l, methods, computed, data;
+            var jsPath, locale, clientLocale, elOpt, res, text, _a, _b, frameDiv, elFrame, elMenu, elHeader, elMenuHtml, elHeaderHtml, js, _c, onSelect, methods, computed, data;
             var _this = this;
             return __generator(this, function (_d) {
                 switch (_d.label) {
@@ -88,7 +88,7 @@ define(["require", "exports", "./deskrt"], function (require, exports, DeskRT) {
                         _d.sent();
                         locale = "";
                         if (!(config.localePath !== "")) return [3, 6];
-                        clientLocale = localStorage.getItem("locale") || navigator.language;
+                        clientLocale = localStorage.getItem("deskrt-locale") || navigator.language;
                         if (config.locales.indexOf(clientLocale) === -1) {
                             locale = config.locales[0];
                         }
@@ -141,6 +141,10 @@ define(["require", "exports", "./deskrt"], function (require, exports, DeskRT) {
                         Vue.use({
                             install: function (Vue, options) {
                                 Vue.prototype.$global = _vuex.state.global;
+                                Vue.prototype.$l = function (key) {
+                                    return DeskRT.__readLocale(key);
+                                };
+                                Vue.prototype.$isMobile = navigator.userAgent.toLowerCase().indexOf("mobile") === -1 ? false : true;
                                 Vue.prototype.$go = DeskRT.go;
                                 Vue.prototype.$goBack = DeskRT.goBack;
                             }
@@ -227,19 +231,18 @@ define(["require", "exports", "./deskrt"], function (require, exports, DeskRT) {
                         onSelect = function (index) {
                             window.location.hash = "#" + index;
                         };
-                        $l = function (key) {
-                            return DeskRT.__readLocale(key);
-                        };
                         if (js !== undefined) {
                             methods = js.methods || {};
                             methods.__onSelect = onSelect;
-                            methods.$l = $l;
                             computed = js.computed || {};
                             computed.__asideWidth = function () {
                                 return _vuex.state.asideWidth;
                             };
                             computed.__path = function () {
                                 return _vuex.state.path;
+                            };
+                            computed.$locale = function () {
+                                return _vuex.state.locale;
                             };
                             data = js.data || {};
                             data.__asideShow = false;
@@ -257,8 +260,7 @@ define(["require", "exports", "./deskrt"], function (require, exports, DeskRT) {
                                     __asideShow: false
                                 },
                                 methods: {
-                                    __onSelect: onSelect,
-                                    $l: $l
+                                    __onSelect: onSelect
                                 },
                                 computed: {
                                     __asideWidth: function () {
@@ -266,6 +268,9 @@ define(["require", "exports", "./deskrt"], function (require, exports, DeskRT) {
                                     },
                                     __path: function () {
                                         return _vuex.state.path;
+                                    },
+                                    $locale: function () {
+                                        return _vuex.state.locale;
                                     }
                                 }
                             });
@@ -362,7 +367,7 @@ define(["require", "exports", "./deskrt"], function (require, exports, DeskRT) {
                         elPage = df.children[0];
                         pageRandom_1 = "page" + (Math.random() * 1000000000000).toFixed();
                         pageEle = document.createElement("div");
-                        pageEle.setAttribute(":class", "['el-page', {'el--show': _isPageShow}]");
+                        pageEle.setAttribute(":class", "['el-page', {'el--show': $isPageShow}]");
                         pageEle.setAttribute(pageRandom_1, "");
                         if (elPage.getAttribute("v-loading") !== null) {
                             pageEle.setAttribute("v-loading", elPage.getAttribute("v-loading") || "");
@@ -457,14 +462,11 @@ define(["require", "exports", "./deskrt"], function (require, exports, DeskRT) {
                         }
                         opt.data.pagePath = path;
                         opt.data.query = query;
-                        opt.computed._isPageShow = function () {
+                        opt.computed.$isPageShow = function () {
                             return this.pagePath === _vuex.state.path;
                         };
-                        opt.computed._isMobile = function () {
-                            return false;
-                        };
-                        opt.methods.$l = function (key) {
-                            return DeskRT.__readLocale(key);
+                        opt.computed.$locale = function () {
+                            return _vuex.state.locale;
                         };
                         opt.mounted = function () {
                             this.$nextTick(function () {

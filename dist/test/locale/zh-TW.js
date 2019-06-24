@@ -10,6 +10,8 @@ define(["require", "exports"], function (require, exports) {
         },
         main: {
             langInfo: "框架本身內置 42 種語言，當前示例編寫了三種語言（英語，簡體中文，繁體中文），且僅僅編寫了本頁面和一個 pkg 頁面（Group -> locale pkg），初次載入時會根據客戶當前電腦設定的語言自動切換，也可手動指定，指定後會設置将存儲到本地。如果客戶機的語言沒有被編寫，則自動使用設定語言順序的第一語言顯示，以 locales 陣列為准。",
+            langNow: "當前語言",
+            isMobile: "是否手機",
             theme: "主題",
             chalk: "白堊",
             blue: "風藍",
@@ -30,7 +32,9 @@ define(["require", "exports"], function (require, exports) {
             name: "名稱",
             time: "時間",
             button: "按鈕",
-            buttonMsg: "你點選了按鈕"
+            buttonMsg: "你點選了按鈕",
+            true: "是",
+            false: "否"
         }
     };
 });

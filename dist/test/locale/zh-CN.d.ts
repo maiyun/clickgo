@@ -7,6 +7,8 @@ declare const _default: {
     };
     main: {
         langInfo: string;
+        langNow: string;
+        isMobile: string;
         theme: string;
         chalk: string;
         blue: string;
@@ -28,6 +30,8 @@ declare const _default: {
         time: string;
         button: string;
         buttonMsg: string;
+        true: string;
+        false: string;
     };
 };
 export default _default;

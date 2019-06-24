@@ -310,7 +310,7 @@ define(["require", "exports"], function (require, exports) {
                     case 1:
                         _a.sent();
                         _vuex.commit("setLocale", loc);
-                        localStorage.setItem("locale", loc);
+                        localStorage.setItem("deskrt-locale", loc);
                         return [2];
                 }
             });
