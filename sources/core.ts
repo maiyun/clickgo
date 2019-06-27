@@ -39,9 +39,6 @@ export async function onReady(config: any) {
     _config = config;
     // --- 导入 config 到 DeskRT 对象 ---
     DeskRT.__setConfig(config);
-    if (_config.theme !== "") {
-        await DeskRT.setTheme("", false);
-    }
     DeskRT.__setTpLibs(_tpLibs);
     // --- 加载 Vue / Vuex / Element UI / SystemJS / whatwg-fetch* ---
     // --- 别处还有 element-ui 的语言包版本需要对应，以及还有高亮 highlight.js 库 ---
@@ -58,6 +55,12 @@ export async function onReady(config: any) {
     ], function() {
         _progressChunk.style.width = parseFloat(_progressChunk.style.width || "0") + 1 / _progressCount * 100 + "%";
     });
+    // --- 加载初始化主题配置项 ---
+    if (_config.theme !== "") {
+        let theme = _config.theme;
+        _config.theme = "";
+        await DeskRT.setTheme(theme, false);
+    }
     // --- 加载 locale，需要默认把 Element UI 的当前客户机语言加载，以及加载当前框架 default 语言包以供 frame 界面使用） ---
     let locale = "";
     if (config.localePath !== "") {

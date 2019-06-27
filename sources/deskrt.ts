@@ -15,7 +15,7 @@
  */
 
 /** --- DeskRT 核心版本 --- */
-export const version: string = "2.0.9";
+export const version: string = "2.0.10";
 
 /** --- 预植常量列表 --- */
 export let c: any = {};
@@ -182,11 +182,9 @@ export async function setTheme(theme: string, mask: boolean = true): Promise<voi
     if (_config.theme === theme) {
         return;
     }
-    if (theme === "") {
-        theme = _config.theme;
-    }
     let oldPath = _config.theme === "" ? "" : _getThemePath(_config.theme);
     if (theme === "") {
+        // --- 如果新主题是空，那么，移除老主题 ---
         removeResource([oldPath]);
         _config.theme = "";
         return;
@@ -197,6 +195,7 @@ export async function setTheme(theme: string, mask: boolean = true): Promise<voi
     }
     await loadResource([path]);
     if (oldPath !== "") {
+        // --- 如果旧主题不是空，则移除旧主题 ---
         removeResource([oldPath]);
     }
     _config.theme = theme;

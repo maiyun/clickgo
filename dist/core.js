@@ -55,19 +55,13 @@ define(["require", "exports", "./deskrt"], function (require, exports, DeskRT) {
     };
     function onReady(config) {
         return __awaiter(this, void 0, void 0, function () {
-            var jsPath, locale, clientLocale, elOpt, res, text, _a, _b, frameDiv, elFrame, elMenu, elHeader, elMenuHtml, elHeaderHtml, js, _c, onSelect, methods, computed, data;
+            var jsPath, theme, locale, clientLocale, elOpt, res, text, _a, _b, frameDiv, elFrame, elMenu, elHeader, elMenuHtml, elHeaderHtml, js, _c, onSelect, methods, computed, data;
             var _this = this;
             return __generator(this, function (_d) {
                 switch (_d.label) {
                     case 0:
                         _config = config;
                         DeskRT.__setConfig(config);
-                        if (!(_config.theme !== "")) return [3, 2];
-                        return [4, DeskRT.setTheme("", false)];
-                    case 1:
-                        _d.sent();
-                        _d.label = 2;
-                    case 2:
                         DeskRT.__setTpLibs(_tpLibs);
                         jsPath = _tpLibs["vue,vuex,element-ui"];
                         if (typeof fetch !== "function") {
@@ -76,7 +70,7 @@ define(["require", "exports", "./deskrt"], function (require, exports, DeskRT) {
                         return [4, DeskRT.loadScript([jsPath], function () {
                                 _progressChunk.style.width = parseFloat(_progressChunk.style.width || "0") + 1 / _progressCount * 100 + "%";
                             })];
-                    case 3:
+                    case 1:
                         _d.sent();
                         return [4, DeskRT.loadResource([
                                 _tpLibs["element-ui-css"],
@@ -84,8 +78,16 @@ define(["require", "exports", "./deskrt"], function (require, exports, DeskRT) {
                             ], function () {
                                 _progressChunk.style.width = parseFloat(_progressChunk.style.width || "0") + 1 / _progressCount * 100 + "%";
                             })];
-                    case 4:
+                    case 2:
                         _d.sent();
+                        if (!(_config.theme !== "")) return [3, 4];
+                        theme = _config.theme;
+                        _config.theme = "";
+                        return [4, DeskRT.setTheme(theme, false)];
+                    case 3:
+                        _d.sent();
+                        _d.label = 4;
+                    case 4:
                         locale = "";
                         if (!(config.localePath !== "")) return [3, 6];
                         clientLocale = localStorage.getItem("deskrt-locale") || navigator.language;

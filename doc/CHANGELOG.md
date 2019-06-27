@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.0.10
+
+[\*] Fix bug that initializes theme configuration is invalid.
+
 ## 2.0.9
 
 [\*] Fix bug that initializes theme configuration is invalid.
