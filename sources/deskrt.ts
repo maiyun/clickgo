@@ -15,7 +15,7 @@
  */
 
 /** --- DeskRT 核心版本 --- */
-export const version: string = "2.0.6";
+export const version: string = "2.0.7";
 
 /** --- 预植常量列表 --- */
 export let c: any = {};

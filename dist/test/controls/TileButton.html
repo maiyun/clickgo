@@ -42,6 +42,7 @@
                 <el-radio-button label="40"></el-radio-button>
             </el-radio-group>
         </div>
+
         <div style="margin-top: 20px; font-weight: bold;">Column:</div>
         <div style="display: flex; flex-direction: column; height: 500px; margin-top: 20px;">
             <el-tile-button background="#67C23A" style="flex: 1;">
@@ -60,5 +61,21 @@
                 <div>Content</div>
             </el-tile-button>
         </div>
+
+        <div style="margin-top: 20px; font-weight: bold;">(Mobile responsive layout) + TileButton 2:</div>
+        <el-resp :gutter="10" style="margin-top: 20px;">
+            <el-resp-row flex="2">
+                <el-tile-button>
+                    <div>Title</div>
+                    <div>Content</div>
+                </el-tile-button>
+            </el-resp-row>
+            <el-resp-row flex="1">
+                <el-tile-button background="#67C23A">
+                    <div>Background</div>
+                    <div>Content</div>
+                </el-tile-button>
+            </el-resp-row>
+        </el-resp>
     </el-card>
 </el-page>

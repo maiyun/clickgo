@@ -739,6 +739,10 @@ define(["require", "exports", "./deskrt"], function (require, exports, DeskRT) {
                 gutter: {
                     default: undefined,
                     type: Number
+                },
+                flex: {
+                    default: undefined,
+                    type: Number
                 }
             },
             data: function () {
@@ -746,7 +750,7 @@ define(["require", "exports", "./deskrt"], function (require, exports, DeskRT) {
                     unique: "resp_row_" + (Math.random() * 100000000000000000)
                 };
             },
-            template: "<div class=\"el-resp-row\" :data-unique=\"unique\">" +
+            template: "<div class=\"el-resp-row\" :data-unique=\"unique\" :style=\"{'flex': flex}\">" +
                 "<slot>" +
                 "</div>",
             mounted: function () {

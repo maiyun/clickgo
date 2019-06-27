@@ -317,9 +317,15 @@ code {
 @media(max-width: 780px) {
     .el-resp {
         flex-direction: column;
+        > * {
+            flex: initial !important;
+        }
     }
 }
 
 .el-resp-row {
     display: flex;
+    > * {
+        flex: 1;
+    }
 }
