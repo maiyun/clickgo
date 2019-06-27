@@ -36,7 +36,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 define(["require", "exports"], function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    exports.version = "2.0.8";
+    exports.version = "2.0.9";
     exports.c = {};
     var _bodyElement = document.getElementsByTagName("body")[0];
     var _headElement = document.getElementsByTagName("head")[0];
@@ -242,6 +242,9 @@ define(["require", "exports"], function (require, exports) {
                     case 0:
                         if (_config.theme === theme) {
                             return [2];
+                        }
+                        if (theme === "") {
+                            theme = _config.theme;
                         }
                         oldPath = _config.theme === "" ? "" : _getThemePath(_config.theme);
                         if (theme === "") {

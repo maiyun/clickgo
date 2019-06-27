@@ -15,7 +15,7 @@
  */
 
 /** --- DeskRT 核心版本 --- */
-export const version: string = "2.0.8";
+export const version: string = "2.0.9";
 
 /** --- 预植常量列表 --- */
 export let c: any = {};
@@ -181,6 +181,9 @@ function _loadScript(path: string): Promise<void> {
 export async function setTheme(theme: string, mask: boolean = true): Promise<void> {
     if (_config.theme === theme) {
         return;
+    }
+    if (theme === "") {
+        theme = _config.theme;
     }
     let oldPath = _config.theme === "" ? "" : _getThemePath(_config.theme);
     if (theme === "") {

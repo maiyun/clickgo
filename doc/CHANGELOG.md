@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.0.9
+
+[\*] Fix bug that initializes theme configuration is invalid.
+
 ## 2.0.8
 
 [\*] Fix bug that theme parameter is / unrecognized at the beginning.

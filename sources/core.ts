@@ -40,7 +40,7 @@ export async function onReady(config: any) {
     // --- 导入 config 到 DeskRT 对象 ---
     DeskRT.__setConfig(config);
     if (_config.theme !== "") {
-        await DeskRT.setTheme(_config.theme, false);
+        await DeskRT.setTheme("", false);
     }
     DeskRT.__setTpLibs(_tpLibs);
     // --- 加载 Vue / Vuex / Element UI / SystemJS / whatwg-fetch* ---

@@ -63,7 +63,7 @@ define(["require", "exports", "./deskrt"], function (require, exports, DeskRT) {
                         _config = config;
                         DeskRT.__setConfig(config);
                         if (!(_config.theme !== "")) return [3, 2];
-                        return [4, DeskRT.setTheme(_config.theme, false)];
+                        return [4, DeskRT.setTheme("", false)];
                     case 1:
                         _d.sent();
                         _d.label = 2;
