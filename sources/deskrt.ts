@@ -15,7 +15,7 @@
  */
 
 /** --- DeskRT 核心版本 --- */
-export const version: string = "2.0.7";
+export const version: string = "2.0.8";
 
 /** --- 预植常量列表 --- */
 export let c: any = {};
@@ -206,7 +206,7 @@ export async function setTheme(theme: string, mask: boolean = true): Promise<voi
  * @param theme 模板名或路径
  */
 function _getThemePath(theme: string): string {
-    let l = ["//", "http://", "https://"];
+    let l = ["/", "http://", "https://"];
     for (let i of l) {
         if (theme.slice(0, i.length).toLowerCase() === i) {
             return theme;

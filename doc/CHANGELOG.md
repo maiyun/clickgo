@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.0.8
+
+[\*] Fix bug that theme parameter is / unrecognized at the beginning.
+
 ## 2.0.7
 
 [+] Add flex of el-resp-row.  
