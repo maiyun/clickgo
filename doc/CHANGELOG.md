@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.0.7
+
+[+] Add flex of el-resp-row.  
+[\*] Optimize CSS code.
+
 ## 2.0.6
 
 [+] Add $isMobile, $locale, $isPageShow.  
