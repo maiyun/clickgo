@@ -1,4 +1,4 @@
-.form {backdrop-filter: blur(5px); border: none; box-shadow: none; color: #FFF;}
+.form {-webkit-backdrop-filter: blur(5px); backdrop-filter: blur(5px); border: none; box-shadow: none; color: #FFF;}
 .form.cg-focus {border: none; box-shadow: none; color: #FFF;}
 
 .item:hover {background: rgba(255, 255, 255, .2);}
