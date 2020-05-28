@@ -170,7 +170,6 @@ exports.watch = {
 exports.methods = {
     moveMethod: function (e) {
         var _this = this;
-        e.preventDefault();
         if (e instanceof MouseEvent && ClickGo.hasTouch) {
             return;
         }

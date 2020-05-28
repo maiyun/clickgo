@@ -1002,6 +1002,7 @@ function bindMove(e, opt) {
             return __generator(this, function (_e) {
                 switch (_e.label) {
                     case 0:
+                        e.preventDefault();
                         x = (e instanceof MouseEvent ? e.clientX : e.touches[0].clientX) * ClickGo.rzoom;
                         y = (e instanceof MouseEvent ? e.clientY : e.touches[0].clientY) * ClickGo.rzoom;
                         if (x === tx && y === ty) {
