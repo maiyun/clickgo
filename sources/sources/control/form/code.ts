@@ -129,8 +129,8 @@ export let watch = {
 export let methods = {
     // --- 拖动 ---
     moveMethod: function(this: IVue, e: MouseEvent | TouchEvent): void {
+        e.preventDefault();
         if (e instanceof MouseEvent && ClickGo.hasTouch) {
-            e.preventDefault();
             return;
         }
         let isBorder: TBorderDir = "";
