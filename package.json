@@ -1,19 +1,22 @@
 {
-  "name": "deskrt",
-  "version": "2.0.10",
-  "description": "Quickly and easily create a beautiful console interface.",
+  "name": "clickgo",
+  "version": "3.0.0",
+  "description": "Background interface, software interface, mobile phone APP interface operation library.",
   "keywords": [
     "deskrt",
-    "backstage",
-    "console"
+    "ui",
+    "clickgo"
   ],
   "main": "dist/loader.js",
   "author": "hanguoshuai",
   "license": "Apache-2.0",
   "types": "./dist/deskrt.d.ts",
-  "typings": "./dist/deskrt.d.ts",
   "devDependencies": {
-    "@types/echarts": "^4.1.9",
-    "@types/systemjs": "^0.20.6"
-  }
+    "@types/node": "^14.0.5",
+    "@typescript-eslint/eslint-plugin": "^2.29.0",
+    "@typescript-eslint/parser": "^2.29.0",
+    "eslint": "^6.8.0",
+    "typescript": "^3.8.3"
+  },
+  "dependencies": {}
 }

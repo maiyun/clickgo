@@ -1,42 +1,44 @@
-# DeskRT
+# ClickGo
 
-[![npm version](https://img.shields.io/npm/v/deskrt.svg?colorB=brightgreen)](https://www.npmjs.com/package/deskrt "Stable Version")
-[![npm version](https://img.shields.io/npm/v/deskrt/dev.svg)](https://www.npmjs.com/package/deskrt "Development Version")
-[![License](https://img.shields.io/github/license/MaiyunNET/DeskRT.svg)](https://github.com/MaiyunNET/DeskRT/blob/master/LICENSE)
-[![GitHub issues](https://img.shields.io/github/issues/MaiyunNET/DeskRT.svg)](https://github.com/MaiyunNET/DeskRT/issues)
-[![GitHub Releases](https://img.shields.io/github/release/MaiyunNET/DeskRT.svg)](https://github.com/MaiyunNET/DeskRT/releases "Stable Release")
-[![GitHub Pre-Releases](https://img.shields.io/github/release/MaiyunNET/DeskRT/all.svg)](https://github.com/MaiyunNET/DeskRT/releases "Pre-Release")
+[![npm version](https://img.shields.io/npm/v/clickgo.svg?colorB=brightgreen)](https://www.npmjs.com/package/clickgo "Stable Version")
+[![npm version](https://img.shields.io/npm/v/clickgo/dev.svg)](https://www.npmjs.com/package/clickgo "Development Version")
+[![License](https://img.shields.io/github/license/MaiyunNET/ClickGo.svg)](https://github.com/MaiyunNET/ClickGo/blob/master/LICENSE)
+[![GitHub issues](https://img.shields.io/github/issues/MaiyunNET/ClickGo.svg)](https://github.com/MaiyunNET/ClickGo/issues)
+[![GitHub Releases](https://img.shields.io/github/release/MaiyunNET/ClickGo.svg)](https://github.com/MaiyunNET/ClickGo/releases "Stable Release")
+[![GitHub Pre-Releases](https://img.shields.io/github/release/MaiyunNET/ClickGo/all.svg)](https://github.com/MaiyunNET/ClickGo/releases "Pre-Release")
 
 Quickly and easily create a beautiful console interface.
 
 ## Installation
 
-Simply download and include with a script tag. DeskRT will be registered as a global variable.
+Simply download and include with a script tag. ClickGo will be registered as a global variable.
 
 > Don’t use the minified version during development. You will miss out on all the nice warnings for common mistakes!
 
 **Development Version**
 
 ```html
-<script src="dist/loader.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@litert/loader@0.3.2/dist/index.min.js"></script>
+<script src="index.js"></script>
 ```
 
 **Production Version**
 
 ```html
-<script src="dist/loader.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@litert/loader@0.3.2/dist/index.min.js"></script>
+<script src="index.min.js"></script>
 ```
 
 ### CDN (recommend)
 
-Recommended: https://cdn.jsdelivr.net/npm/deskrt@2.0.1/dist/loader.min.js (Less than 3kb minified and gzipped), which will reflect the latest version as soon as it is published to npm. You can also browse the source of the npm package at https://cdn.jsdelivr.net/npm/deskrt/.
+Recommended: https://cdn.jsdelivr.net/npm/clickgo@3.0.0/dist/loader.min.js (Less than 3kb minified and gzipped), which will reflect the latest version as soon as it is published to npm. You can also browse the source of the npm package at https://cdn.jsdelivr.net/npm/clickgo/.
 
-Also available on [unpkg](https://unpkg.com/deskrt@2.0.1/dist/loader.js).
+Also available on [unpkg](https://unpkg.com/clickgo@3.0.0/dist/loader.js).
 
 For example:
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/deskrt@2.0.1/dist/loader.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/clickgo@3.0.0/dist/index.min.js"></script>
 ```
 
 ### NPM
@@ -44,24 +46,24 @@ For example:
 You can install directly using NPM:
 
 ```sh
-$ npm i deskrt --save
+$ npm i clickgo --save
 ```
 
 Or install the developing (unstable) version for newest features:
 
 ```sh
-$ npm i deskrt@dev --save
+$ npm i clickgo@dev --save
 ```
 
 ## Note
 
-DeskRT demand loading SystemJS, Vue, Vuex, highlight.js, whatwg-fetch and ElementUI, but **DO NOT** reference these JS and CSS files. DeskRT will automatically reference. You only need to reference "loader.js".
+ClickGo demand loading Vue, Vuex, es6-promise, whatwg-fetch, but **DO NOT** reference these JS and CSS files. ClickGo will automatically reference. You only need to reference "loader.js" and "index.js".
 
 ## Demo
 
 Clone and visit "dist/test/index.html".
 
-[Click here to visit online.](https://maiyunnet.github.io/DeskRT/dist/test/)
+[Click here to visit online.](https://maiyunnet.github.io/ClickGo/dist/test/)
 
 ## Changelog
 

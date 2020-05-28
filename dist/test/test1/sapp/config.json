@@ -1,0 +1,18 @@
+{
+    "name": "Clickgo System",
+    "ver": 1,
+    "version": "0.1",
+    "author": "clickgo",
+
+    "controls": [
+        "/clickgo/control/form.cgc",
+        "/clickgo/control/layout.cgc"
+    ],
+    "mainLayout": "/form/task",
+
+    "files": [
+        "/form/task.css",
+        "/form/task.js",
+        "/form/task.xml"
+    ]
+}

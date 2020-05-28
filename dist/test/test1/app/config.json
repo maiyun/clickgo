@@ -1,0 +1,30 @@
+{
+    "name": "Clickgo Test",
+    "ver": 1,
+    "version": "0.1",
+    "author": "clickgo",
+
+    "controls": [
+        "/clickgo/control/form.cgc",
+        "/clickgo/control/button.cgc",
+        "/clickgo/control/label.cgc",
+        "/clickgo/control/layout.cgc"
+    ],
+    "styleGlobal": "/global",
+    "mainLayout": "/form/main",
+
+    "files": [
+        "/form/aero.js",
+        "/form/aero.xml",
+        "/form/borderNone.xml",
+        "/form/error.xml",
+        "/form/main.css",
+        "/form/main.js",
+        "/form/main.xml",
+        "/form/max.xml",
+        "/form/onlyClose.xml",
+        "/form/thin.xml",
+        "/res/icon.svg",
+        "/global.css"
+    ]
+}

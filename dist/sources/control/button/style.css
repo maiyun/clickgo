@@ -1,0 +1,23 @@
+.wrap {
+    border: solid 1px #adadad; background: #e1e1e1; color: #000; display: flex; outline: none; position: relative; padding: 1px;
+}
+.wrap.disabled {
+    border: solid 1px #bfbfbf; background: #cccccc; color: #838383;
+}
+.wrap:hover:not(.disabled) {
+    border: solid 1px #0078d7; background: #e5f1fb; padding: 1px;
+}
+.wrap:active:not(.disabled) {
+    border: solid 1px #005499; background: #cce4f7; padding: 1px;
+}
+.wrap:focus {
+    border: solid 2px #0078d7; padding: 0;
+}
+
+.inner {
+    display: flex; align-items: center; justify-content: center; flex: 1; border: solid 1px transparent;
+}
+.wrap:focus .inner {
+    border: dotted 1px #15010b;
+}
+

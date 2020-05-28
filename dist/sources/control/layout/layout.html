@@ -1,0 +1,3 @@
+<div class="wrap" :class="[scope + direction, gutter && scope + 'gutter' + gutter]" :style="{'width': width && (width + 'px'), 'height': height && (height + 'px'), 'left': left + 'px', 'top': top + 'px', 'z-index': zIndex, 'flex': flex, 'align-items': direction === 'v' ? (alignH && (alignH !== 'center' ? 'flex-' : '') + alignH) : (alignV && (alignV !== 'center' ? 'flex-' : '') + alignV), 'justify-content': direction === 'v' ? (alignV && (alignV !== 'center' ? 'flex-' : '') + alignV) : (alignH && (alignH !== 'center' ? 'flex-' : '') + alignH)}" @click="tap" @mousedown="down" @touchstart="down">
+    <slot>
+</div>

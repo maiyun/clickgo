@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.0.0
+
+[\*] Fully refactored, fresh start.
+
 ## 2.0.10
 
 [\*] Fix bug that initializes theme configuration is invalid.

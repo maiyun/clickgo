@@ -1,7 +1,8 @@
 declare namespace Vuex {
-    class Store {
-        constructor(opt: any);
-        commit(...arg: any[]): any;
-        state: any;
+    export class Store {
+        public constructor(opt: any);
+        public commit(...arg: any[]): any;
+        public state: any;
     }
 }
+

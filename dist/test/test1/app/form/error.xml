@@ -1,0 +1,3 @@
+<form width="200" height="200" title="error">
+    {{missver}}
+</form>

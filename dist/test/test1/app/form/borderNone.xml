@@ -1,0 +1,5 @@
+<form width="300" height="300" title="Border none" border="none">
+    <layout align-h="center" align-v="center" @down="bindMove">
+        <button :focus="focus" @tap="closeForm" padding="0 15">Close</button>
+    </layout>
+</form>

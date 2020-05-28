@@ -1,0 +1,5 @@
+<div class="wrap" :style="{'width': width && (width + 'px'), 'height': height && (height + 'px'), 'left': left + 'px', 'top': top + 'px', 'z-index': zIndex}" @click="tap" @mousedown="down" @touchstart="down">
+    <div class="inner">
+        <slot>
+    </div>
+</div>

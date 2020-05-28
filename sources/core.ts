@@ -1,5 +1,5 @@
 /**
- * Copyright 2019 Han Guoshuai <zohegs@gmail.com>
+ * Copyright 2020 Han Guoshuai <zohegs@gmail.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,717 +13,1170 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import * as DeskRT from "./deskrt";
+import * as Tool from "./lib/Tool";
 
-let _headElement = document.getElementsByTagName("head")[0];
-let _bodyElement = document.getElementsByTagName("body")[0];
-let _mainElement: HTMLElement;
-let _progressChunk = (<HTMLElement>document.getElementById("el-progress-chunk"));
-let _progressCount = 6;
-let _frameVue: Vue;
-let _vuex: Vuex.Store;
-let _config: any;
-let _highlightjs: highlightjs;
+/** --- form list 的 div --- */
+let formListElement: HTMLDivElement = document.createElement("div");
+if (window.devicePixelRatio < 2) {
+    ClickGo.zoom = 1 / window.devicePixelRatio;
+    ClickGo.rzoom = 1 / ClickGo.zoom;
+    formListElement.style.zoom = ClickGo.zoom.toString();
+}
+formListElement.classList.add("cg-form-list");
+document.getElementsByTagName("body")[0].appendChild(formListElement);
 
-// --- 要加载的 tp 库的 link ---
-let _tpLibs = {
-    "vue,vuex,element-ui": "https://cdn.jsdelivr.net/combine/npm/vue@2.6.10/dist/vue.min.js,npm/vuex@3.1.1/dist/vuex.min.js,npm/element-ui@2.9.1/lib/index.js",
-    "whatwg-fetch": ",npm/whatwg-fetch@3.0.0/fetch.min.js",
-    "element-ui-css": "https://cdn.jsdelivr.net/npm/element-ui@2.9.1/lib/theme-chalk/index.css",
-    "element-ui@ver": "element-ui@2.9.1",
-    "highlightjs": "https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.15.8/build/highlight.min",
-    "highlightjs-css": "https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.15.8/build/styles/androidstudio.min.css"
+// --- 绑定 resize 事件 ---
+window.addEventListener("resize", async function() {
+    // --- 将所有已经最大化的窗体的大小重置 ---
+    for (let i = 0; i < formListElement.children.length; ++i) {
+        let el = formListElement.children.item(i) as HTMLElement;
+        if (el.className.indexOf("cg-state-max") === -1) {
+            continue;
+        }
+        let taskId = parseInt(el.getAttribute("data-task-id") as string);
+        let formId = parseInt(el.getAttribute("data-form-id") as string);
+        if (!ClickGo.taskList[taskId]) {
+            continue;
+        }
+        let $vm = ClickGo.taskList[taskId].formList[formId].vue;
+        $vm.$children[0].setPropData("width", ClickGo.getWidth() * ClickGo.rzoom);
+        $vm.$children[0].setPropData("height", ClickGo.getHeight() * ClickGo.rzoom);
+    }
+    // --- 触发 screenResize 事件 ---
+    trigger("screenResize");
+});
+
+// --- 绑定使焦点丢失的事件 ---
+let lostFocusEvent = function(e: MouseEvent | TouchEvent): void {
+    let target = e.target;
+    if (!target) {
+        return;
+    }
+    let element: HTMLElement | null = target as HTMLElement;
+    while (element) {
+        element = element.parentElement;
+        if (!element) {
+            break;
+        }
+        let cla = element.getAttribute("class");
+        if (!cla) {
+            continue;
+        }
+        if (cla.indexOf("cg-form-list") !== -1) {
+            return;
+        }
+    }
+    Tool.changeFormFocus();
 };
+if ("ontouchstart" in document.documentElement) {
+    window.addEventListener("touchstart", lostFocusEvent);
+} else {
+    window.addEventListener("mousedown", lostFocusEvent);
+}
 
-export async function onReady(config: any) {
-    _config = config;
-    // --- 导入 config 到 DeskRT 对象 ---
-    DeskRT.__setConfig(config);
-    DeskRT.__setTpLibs(_tpLibs);
-    // --- 加载 Vue / Vuex / Element UI / SystemJS / whatwg-fetch* ---
-    // --- 别处还有 element-ui 的语言包版本需要对应，以及还有高亮 highlight.js 库 ---
-    let jsPath = _tpLibs["vue,vuex,element-ui"];
-    if (typeof fetch !== "function") {
-        jsPath += _tpLibs["whatwg-fetch"];
-    }
-    await DeskRT.loadScript([jsPath], function() {
-        _progressChunk.style.width = parseFloat(_progressChunk.style.width || "0") + 1 / _progressCount * 100 + "%";
+// --- 从鼠标指针处从小到大缩放然后淡化的圆圈动画特效对象 ---
+let circularElement: HTMLDivElement = document.createElement("div");
+circularElement.style.zoom = ClickGo.zoom.toString();
+circularElement.classList.add("cg-circular");
+document.getElementsByTagName("body")[0].appendChild(circularElement);
+/**
+ * --- 显示从小到大的圆圈动画特效对象 ---
+ * @param x X 坐标
+ * @param y Y 坐标
+ */
+export async function showCircular(x: number, y: number): Promise<void> {
+    circularElement.style.transition = "none";
+    circularElement.style.width = "6px";
+    circularElement.style.height = "6px";
+    circularElement.style.left = x - 3 + "px";
+    circularElement.style.top = y - 3 + "px";
+    circularElement.style.opacity = "1";
+    await new Promise(function(resove) {
+        setTimeout(function() {
+            resove();
+        }, 10);
     });
-    await DeskRT.loadResource([
-        _tpLibs["element-ui-css"],
-        ROOT_PATH + "deskrt.css"
-    ], function() {
-        _progressChunk.style.width = parseFloat(_progressChunk.style.width || "0") + 1 / _progressCount * 100 + "%";
+    circularElement.style.transition = "all .3s ease-out";
+    circularElement.style.width = "60px";
+    circularElement.style.height = "60px";
+    circularElement.style.left = x - 30 + "px";
+    circularElement.style.top = y - 30 + "px";
+    circularElement.style.opacity = "0";
+}
+
+// --- 从鼠标指针处开始从小到大缩放并铺满屏幕（或半个屏幕）的对象 ---
+let rectangleElement: HTMLDivElement = document.createElement("div");
+rectangleElement.style.zoom = ClickGo.zoom.toString();
+rectangleElement.setAttribute("data-pos", "");
+rectangleElement.classList.add("cg-rectangle");
+document.getElementsByTagName("body")[0].appendChild(rectangleElement);
+/**
+ * --- 显示从小到大的矩形动画特效对象 ---
+ * @param x 起始位置
+ * @param y 起始位置
+ * @param pos 最大时位置代号
+ */
+export async function showRectangle(x: number, y: number, pos: TBorderDir): Promise<void> {
+    rectangleElement.style.transition = "none";
+    rectangleElement.style.width = "20px";
+    rectangleElement.style.height = "20px";
+    rectangleElement.style.left = x - 10 + "px";
+    rectangleElement.style.top = y - 10 + "px";
+    rectangleElement.style.opacity = "1";
+    await new Promise(function(resove) {
+        setTimeout(function() {
+            resove();
+        }, 10);
     });
-    // --- 加载初始化主题配置项 ---
-    if (_config.theme !== "") {
-        let theme = _config.theme;
-        _config.theme = "";
-        await DeskRT.setTheme(theme, false);
-    }
-    // --- 加载 locale，需要默认把 Element UI 的当前客户机语言加载，以及加载当前框架 default 语言包以供 frame 界面使用） ---
-    let locale = "";
-    if (config.localePath !== "") {
-        // --- 设置当前语言 ---
-        let clientLocale = localStorage.getItem("deskrt-locale") || navigator.language;
-        if (config.locales.indexOf(clientLocale) === -1) {
-            locale = config.locales[0];
-        } else {
-            locale = clientLocale;
-        }
-        // --- 设置 Element UI 的语言加载器 ---
-        let elOpt: any = {
-            i18n: function (path: string) {
-                if (_vuex.state.locale !== "zh-CN") {
-                    return DeskRT.__readLocale(path);
-                }
-            }
-        };
-        // --- 设置默认控件大小值 ---
-        if (config.size) {
-            elOpt.size = config.size;
-        }
-        Vue.use(ELEMENT, elOpt);
-        await DeskRT.__loadLocale(locale);
-    } else {
-        // --- 设置默认控件大小值 ---
-        if (config.size) {
-            Vue.use(ELEMENT, {
-                size: config.size
-            });
-        }
-    }
-    // --- 创建 vuex 对象 ---
-    _vuex = new Vuex.Store({
-        state: {
-            path: "",                                   // --- 当前页面 ---
-            asideWidth: config.asideWidth,              // --- 左边栏宽度 ---
-            locale: locale,                             // --- 当前语言 ---
-            global: config.global                       // --- 全局可变变量 ---
-        },
-        mutations: {
-            setPath: function(state: any, val: string) {
-                state.path = val;
-            },
-            setAsideWidth: function(state: any, val: string) {
-                state.asideWidth = val;
-            },
-            setLocale: function(state: any, val: any) {
-                state.locale = val;
-            }
-        }
-    });
-    // --- 执行 DeskRT 的 ready ---
-    DeskRT.__setVuex(_vuex);
-    // --- 设置全局响应式 ---
-    Vue.use({
-        install: function(Vue: any, options: any) {
-            Vue.prototype.$global = _vuex.state.global;
-            Vue.prototype.$l = function(key: string) {
-                return DeskRT.__readLocale(key);
-            };
-            // --- 此值不响应，也没响应的意义，手机电脑还能变来变去？ ---
-            Vue.prototype.$isMobile = navigator.userAgent.toLowerCase().indexOf("mobile") === -1 ? false : true;
-            Vue.prototype.$go = DeskRT.go;
-            Vue.prototype.$goBack = DeskRT.goBack;
-        }
-    });
-    // --- 加载控件定义 ---
-    controlsInit();
-    // --- 注册 hashchange 事件，hash 变动时自动 open 页面 ---
-    window.addEventListener("hashchange", async () => {
-        // --- 必须在里面调用，否则函数体内的 this 指针会出问题 ---
-        await onHashChange();
-    });
-    // --- 加载框架主要的 frame.html ---
-    let res = await fetch(config.pre + config.frame + ".html?" + config.end);
-    // --- 加载条 ---
-    _progressChunk.style.width = parseFloat(_progressChunk.style.width || "0") + 1 / _progressCount * 100 + "%";
-    if (res.status === 404) {
-        alert(`[Error] "` + config.pre + config.frame + `.html" not found.`);
+    rectangleElement.style.transition = "all .2s ease-out";
+    rectangleElement.setAttribute("data-dir", "");
+    moveRectangle(pos);
+}
+
+/**
+ * --- 移动矩形到新位置 ---
+ * @param dir 显示的位置代号
+ */
+export function moveRectangle(dir: TBorderDir): void {
+    let dataDir = rectangleElement.getAttribute("data-dir") ?? "";
+    if (dataDir === dir) {
         return;
     }
-    let text = DeskRT.purify(await res.text());
-    if (text === "") {
-        alert("[Error] Frame is empty.");
-        return;
+    rectangleElement.setAttribute("data-dir", dir);
+    let pos = getPositionByBorderDir(dir);
+    let width = pos.width - 20;
+    let height = pos.height - 20;
+    let left = pos.left + 10;
+    let top = pos.top + 10;
+    if (width !== undefined && height !== undefined && left !== undefined && top !== undefined) {
+        rectangleElement.style.width = width + "px";
+        rectangleElement.style.height = height + "px";
+        rectangleElement.style.left = left + "px";
+        rectangleElement.style.top = top + "px";
     }
-    // --- 检测 frame 是否要加载 js（load-script 是否存在） ---
-    let frameDiv = document.createElement("div");
-    frameDiv.innerHTML = text;
-    let elFrame = frameDiv.children[0];
-    let elMenu = elFrame.querySelector("el-menu");
-    let elHeader = elFrame.querySelector("el-header");
-    if (!elMenu || !elHeader) {
-        alert("[Error] <el-menu> or <el-header> not found.");
-        return;
-    }
-    let elMenuHtml = elMenu.innerHTML;
-    let elHeaderHtml = elHeader.innerHTML;
-    // --- 加载 Frame 的 JS 文件（如果有） ---
-    let js = undefined;
-    if (elFrame.getAttribute("load-script") !== null) {
-        try {
-            js = await System.import(config.pre + config.frame);
-            // --- 加载条 ---
-            _progressChunk.style.width = parseFloat(_progressChunk.style.width || "0") + 1 / _progressCount * 100 + "%";
-        } catch {
-            alert(`[Error] Frame script not found.`);
-            return;
+}
+
+/**
+ * --- 结束时请隐藏矩形 ---
+ */
+export function hideRectangle(): void {
+    rectangleElement.style.opacity = "0";
+}
+
+/**
+ * --- 根据 border dir 获取理论窗体大小 ---
+ * @param dir 显示的位置代号
+ */
+export function getPositionByBorderDir(dir: TBorderDir): { "width": number; "height": number; "left": number; "top": number; } {
+    let width!: number, height!: number, left!: number, top!: number;
+    switch (dir) {
+        case "lt": {
+            width = ClickGo.getWidth() / 2;
+            height = ClickGo.getHeight() / 2;
+            left = ClickGo.getLeft();
+            top = ClickGo.getTop();
+            break;
         }
-    } else {
-        // --- 加载条 ---
-        _progressChunk.style.width = parseFloat(_progressChunk.style.width || "0") + 1 / _progressCount * 100 + "%";
+        case "t": {
+            width = ClickGo.getWidth();
+            height = ClickGo.getHeight();
+            left = ClickGo.getLeft();
+            top = ClickGo.getTop();
+            break;
+        }
+        case "tr": {
+            width = ClickGo.getWidth() / 2;
+            height = ClickGo.getHeight() / 2;
+            left = ClickGo.getLeft() + ClickGo.getWidth() / 2;
+            top = ClickGo.getTop();
+            break;
+        }
+        case "r": {
+            width = ClickGo.getWidth() / 2;
+            height = ClickGo.getHeight();
+            left = ClickGo.getLeft() + ClickGo.getWidth() / 2;
+            top = ClickGo.getTop();
+            break;
+        }
+        case "rb": {
+            width = ClickGo.getWidth() / 2;
+            height = ClickGo.getHeight() / 2;
+            left = ClickGo.getLeft() + ClickGo.getWidth() / 2;
+            top = ClickGo.getTop() + ClickGo.getHeight() / 2;
+            break;
+        }
+        case "b": {
+            width = ClickGo.getWidth();
+            height = ClickGo.getHeight() / 2;
+            left = ClickGo.getLeft();
+            top = ClickGo.getTop() + ClickGo.getHeight() / 2;
+            break;
+        }
+        case "bl": {
+            width = ClickGo.getWidth() / 2;
+            height = ClickGo.getHeight() / 2;
+            left = ClickGo.getLeft();
+            top = ClickGo.getTop() + ClickGo.getHeight() / 2;
+            break;
+        }
+        case "l": {
+            width = ClickGo.getWidth() / 2;
+            height = ClickGo.getHeight();
+            left = ClickGo.getLeft();
+            top = ClickGo.getTop();
+            break;
+        }
     }
-    // --- 隐藏并卸载加载条 ---
-    (<HTMLElement>document.getElementById("el-progress")).style.opacity = "0";
-    setTimeout(function() {
-        (<HTMLElement>document.getElementById("el-progress")).remove();
-    }, 1000);
-    // --- 将 Frame 插入 HTML ---
-    _bodyElement.insertAdjacentHTML("afterbegin", `<div id="el-frame">` +
-        `<el-container>` +
-            `<el-aside :width="__asideWidth" :class="{'el--show': $data.__asideShow}">` +
-                `<el-logo${config.logo ? ` style="background-image: url(${config.pre + config.logo});"` : ""}></el-logo>` +
-                `<el-menu @select="__onSelect" :default-active="__path">${elMenuHtml}</el-menu>` +
-            `</el-aside>` +
-            `<el-container>` +
-                `<el-header>` +
-                    `<div class="el-header-left">` +
-                        `<el-header-item @click="$data.__asideShow=true"><i class="el-icon-d-liebiaoshitucaidan"></i></el-header-item>` +
-                    `</div>` +
-                    elHeaderHtml +
-                `</el-header>` +
-                `<el-main id="el-main"></el-main>` +
-            `</el-container>` +
-        `</el-container>` +
-        `<div id="el-aside-mask" :class="{'el--show':$data.__asideShow}" @click="$data.__asideShow=false"></div>` +
-    `</div>`);
-    // --- 点击左侧菜单产生的回调 ---
-    let onSelect = (index: string) => {
-        window.location.hash = "#" + index;
+    return {
+        "width": width,
+        "height": height,
+        "left": left,
+        "top": top
     };
-    // --- frameVue 创建 ---
-    if (js !== undefined) {
-        // --- 有 js ---
-        let methods = js.methods || {};
-        methods.__onSelect = onSelect;
-        let computed = js.computed || {};
-        computed.__asideWidth = function() {
-            return _vuex.state.asideWidth;
-        };
-        computed.__path = function() {
-            return _vuex.state.path;
-        };
-        computed.$locale = function() {
-            return _vuex.state.locale;
-        };
-        let data = js.data || {};
-        data.__asideShow = false;
-        _frameVue = new Vue({
-            el: "#el-frame",
-            data: data,
-            methods: methods,
-            computed: computed
-        });
-    } else {
-        _frameVue = new Vue({
-            el: "#el-frame",
-            data: {
-                __asideShow: false
-            },
-            methods: {
-                __onSelect: onSelect
-            },
-            computed: {
-                __asideWidth: function() {
-                    return _vuex.state.asideWidth;
-                },
-                __path: function() {
-                    return _vuex.state.path;
-                },
-                $locale: function() {
-                    return _vuex.state.locale;
-                }
-            }
-        });
-    }
-    DeskRT.__setFrameVue(_frameVue);
-    // --- 赋值 ---
-    _mainElement = <HTMLElement>document.getElementById("el-main");
-    DeskRT.__setMainElement(_mainElement);
-    // --- 加载主页 ---
-    if (window.location.hash === "") {
-        window.location.hash = "#" + config.main;
-    } else {
-        await onHashChange();
-    }
 }
 
-/**
- * --- 当 Hash 发生改变时则执行 ---
- */
-async function onHashChange() {
-    let hash: string = window.location.hash;
-    if (hash !== "") {
-        hash = hash.slice(1);
-        await openPage(hash);
-    }
-}
+/** --- clickgo 已经加载的文件列表 --- */
+let clickgoFiles: IFileList = {};
 
-/** --- 所有页面对象列表 --- */
-let pageData: any = {};
 /**
- * --- 打开/跳转一个页面（URL 处 hash 地址不变，仅仅打开） ---
- * @param path 要打开的页面地址
+ * --- 触发系统级事件 ---
  */
-async function openPage(path: string) {
-    // --- 判断有没有问号 ---
-    let queryIndex = path.indexOf("?");
-    let query: any = {};
-    if (queryIndex !== -1) {
-        let queryArray = path.slice(queryIndex + 1).split("&");
-        path = path.slice(0, queryIndex);
-        for (let i = 0; i < queryArray.length; ++i) {
-            let tmp = queryArray[i].split("=");
-            query[tmp[0]] = decodeURIComponent(tmp[1]);
-        }
-    }
-    // --- 判断 path 有没有被加载 ---
-    if (pageData[path]) {
-        // --- 已经加载过 ---
-        pageData[path].query = query;
-        // --- 手机端隐藏左侧菜单 ---
-        _frameVue.$data.__asideShow = false;
-        // --- 设置 path ---
-        _vuex.commit("setPath", path);
-        // --- onOpen 要在所有加载完毕后执行（页面显示之后） ---
-        if (pageData[path].onOpen) {
-            await DeskRT.sleep(1); // 加入延时防止一些因异步导致的异常问题
-            await pageData[path].onOpen();
-        }
-        // --- 执行用户方法 ---
-        await DeskRT.goCallback(pageData[path]);
-        DeskRT.__setGoCallback(function() {});
-    } else {
-        // --- 未加载，加载 HTML 和 JS ---
-        DeskRT.showMask(true);
-        let res = await fetch(_config.pre + path + ".html?" + _config.end);
-        let text = "";
-        if (res.status === 404) {
-            alert(`[Error] 404 not found.`);
-            return;
-        } else {
-            text = await res.text();
-        }
-        text = DeskRT.purify(text);
-        if (text === "") {
-            alert(`[Error] Page is empty.`);
-            return;
-        }
-        let df = document.createElement("div");
-        df.innerHTML = text;
-        let elPage = df.children[0];
-        // --- 初始化要插入 page 的 dom ---
-        let pageRandom = "page" + (Math.random() * 1000000000000).toFixed();
-        let pageEle = document.createElement("div");
-        pageEle.setAttribute(":class", "['el-page', {'el--show': $isPageShow}]");
-        pageEle.setAttribute(pageRandom, "");
-        if (elPage.getAttribute("v-loading") !== null) {
-            pageEle.setAttribute("v-loading", elPage.getAttribute("v-loading") || "");
-        }
-        // --- 检测是否有 script、link 标签 ---
-        let needLoadScript: string[] = [];
-        let needLoadLink: string[] = [];
-        let styleTxt: string = ""; // 要插入的 style 的内容
-        for (let i = 0; i < elPage.children.length; ++i) {
-            let dom = elPage.children[i];
-            let tagName = dom.tagName.toLowerCase();
-            if (tagName === "script") {
-                let outPath;
-                if (outPath = dom.getAttribute("src")) {
-                    needLoadScript.push(outPath);
-                    dom.remove();
-                    --i;
-                }
-            } else if (tagName === "link") {
-                let outPath;
-                if (outPath = dom.getAttribute("href")) {
-                    needLoadLink.push(outPath);
-                    dom.remove();
-                    --i;
-                }
-            } else if (tagName === "style") {
-                styleTxt += dom.innerHTML.replace(/([\s\S]+?){([\s\S]+?)}/g, (t: string, $1: string, $2: string): string => {
-                    return "[" + pageRandom + "] " + $1.replace(/, */g, ",[" + pageRandom + "] ") + "{" + $2 + "}";
-                });
-                dom.remove();
-                --i;
+export function trigger(name: TSystemEvent, taskId: number = 0, formId: number = 0, opt: { "title"?: string; "state"?: boolean; } = {}): void {
+    switch (name) {
+        case "screenResize": {
+            if (ClickGo[name + "Handler"]) {
+                ClickGo[name + "Handler"]();
             }
-        }
-        // --- 加载 i18n （前提是开启了 i18n） ---
-        if (_config.localePath !== "") {
-            let pkg = elPage.getAttribute("locale-pkg") || "";
-            pageEle.setAttribute("locale-pkg", pkg);
-            await DeskRT.__loadLocale(_vuex.state.locale, pkg);
-        }
-        // --- 加载外部文件 ---
-        await DeskRT.loadScript(needLoadScript);
-        await DeskRT.loadResource(needLoadLink);
-        // --- 页面配套 js、css 加载完后 ---
-        // --- 检测是否要加载 js ---
-        let js = undefined;
-        if (elPage.getAttribute("load-script") !== null) {
-            pageEle.setAttribute("load-script", "");
-            try {
-                js = await System.import(_config.pre + path);
-            } catch (e) {
-                console.log(e);
-                alert("[Error] Page script not found.");
-                return;
-            }
-        }
-        // --- 加载 HTML 到页面 ---
-        pageEle.innerHTML = elPage.innerHTML;
-        _mainElement.appendChild(pageEle);
-        // --- 追加 style ---
-        if (styleTxt !== "") {
-            _headElement.insertAdjacentHTML("beforeend", `<style>${styleTxt}</style>`);
-        }
-        let opt: any;
-        if (js !== undefined) {
-            opt = {
-                el: pageEle,
-                data: js.data ? DeskRT.clone(js.data) : {},
-                methods: js.methods,
-                computed: js.computed,
-                watch: js.watch ? DeskRT.clone(js.watch) : {}
-            };
-        } else {
-            opt = {
-                el: pageEle
-            };
-        }
-        if (!opt.methods) {
-            opt.methods = {};
-        }
-        if (!opt.computed) {
-            opt.computed = {};
-        }
-        if (!opt.data) {
-            opt.data = {};
-        }
-        opt.data.pagePath = path;
-        opt.data.query = query;
-        opt.computed.$isPageShow = function(this: any) {
-            return this.pagePath === _vuex.state.path;
-        };
-        opt.computed.$locale = function() {
-            return _vuex.state.locale;
-        };
-        // --- page vue 完全挂载完后执行的 ---
-        opt.mounted = function () {
-            this.$nextTick(async function () {
-                // --- 接着执行的代码在这里 ---
-                if (vm.onReady !== undefined) {
-                    await vm.onReady();
-                }
-                // --- 判断是否要加载高亮代码着色库（要在页面 VUE 完全初始化完成后再进行，因为 code 的内容有可能是动态插值插入的） ---
-                // --- onOpen 不应该在此处执行，onOpen 会在完全准备好后执行（加载界面消失之后） ---
-                let codeList = vm.$el.querySelectorAll("code");
-                if (codeList.length > 0) {
-                    if (_highlightjs === undefined) {
-                        // --- 加载 highlightjs 的 js 和 css 库 ---
-                        try {
-                            await DeskRT.loadResource([_tpLibs["highlightjs-css"]]);
-                            _highlightjs = await System.import(_tpLibs.highlightjs);
-                            // --- 进行染色 ---
-                            for (let i = 0; i < codeList.length; ++i) {
-                                _highlightjs.highlightBlock(codeList[i]);
-                            }
-                            DeskRT.__setHighlightjs(_highlightjs);
-                        } catch (e) {
-                            alert("[Error] " + e.getMessage());
-                            return;
-                        }
-                    } else {
-                        // --- 进行染色 ---
-                        for (let i = 0; i < codeList.length; ++i) {
-                            _highlightjs.highlightBlock(codeList[i]);
-                        }
+            for (let tTaskId in ClickGo.taskList) {
+                for (let tFormId in ClickGo.taskList[tTaskId].formList) {
+                    if (ClickGo.taskList[tTaskId].formList[tFormId].vue.eventList[name]) {
+                        ClickGo.taskList[tTaskId].formList[tFormId].vue.eventList[name]();
                     }
                 }
-                // --- 加载完毕隐藏 loading 框 ---
-                DeskRT.hideMask();
-                // --- 处理完后，进行统一的界面设定 ---
-                // --- 手机端隐藏左侧菜单（开启页面意味着左侧菜单点击了，也就是在开启状态，此步骤有助于关闭） ---
-                _frameVue.$data.__asideShow = false;
-                // --- 设置 path，用于切换页面显示 ---
-                _vuex.commit("setPath", path);
-                // --- onOpen 要在所有加载完毕后执行（页面显示之后） ---
-                if (vm.onOpen !== undefined) {
-                    await DeskRT.sleep(1);
-                    await vm.onOpen();
+            }
+            break;
+        }
+        case "formCreated":
+        case "formRemoved":
+        case "formTitleChanged": {
+            if (ClickGo[name + "Handler"]) {
+                ClickGo[name + "Handler"](taskId, formId, opt.title);
+            }
+            for (let tTaskId in ClickGo.taskList) {
+                for (let tFormId in ClickGo.taskList[tTaskId].formList) {
+                    if (ClickGo.taskList[tTaskId].formList[tFormId].vue.eventList[name]) {
+                        ClickGo.taskList[tTaskId].formList[tFormId].vue.eventList[name](taskId, formId, opt.title);
+                    }
                 }
-                // --- 执行用户方法 ---
-                await DeskRT.goCallback(pageData[path]);
-                DeskRT.__setGoCallback(function() {});
-            });
-        };
-        let vm: any = new Vue(opt);
-        pageData[path] = vm;
+            }
+            break;
+        }
+        case "formStateMinChanged":
+        case "formStateMaxChanged": {
+            if (ClickGo[name + "Handler"]) {
+                ClickGo[name + "Handler"](taskId, formId, opt.state);
+            }
+            for (let tTaskId in ClickGo.taskList) {
+                for (let tFormId in ClickGo.taskList[tTaskId].formList) {
+                    if (ClickGo.taskList[tTaskId].formList[tFormId].vue.eventList[name]) {
+                        ClickGo.taskList[tTaskId].formList[tFormId].vue.eventList[name](taskId, formId, opt.state);
+                    }
+                }
+            }
+            break;
+        }
+        case "formFocused":
+        case "formBlurred": {
+            if (ClickGo[name + "Handler"]) {
+                ClickGo[name + "Handler"](taskId, formId);
+            }
+            for (let tTaskId in ClickGo.taskList) {
+                for (let tFormId in ClickGo.taskList[tTaskId].formList) {
+                    if (ClickGo.taskList[tTaskId].formList[tFormId].vue.eventList[name]) {
+                        ClickGo.taskList[tTaskId].formList[tFormId].vue.eventList[name](taskId, formId);
+                    }
+                }
+            }
+            break;
+        }
+        case "taskStarted":
+        case "taskEnded": {
+            if (ClickGo[name + "Handler"]) {
+                ClickGo[name + "Handler"](taskId);
+            }
+            for (let tTaskId in ClickGo.taskList) {
+                for (let tFormId in ClickGo.taskList[tTaskId].formList) {
+                    if (ClickGo.taskList[tTaskId].formList[tFormId].vue.eventList[name]) {
+                        ClickGo.taskList[tTaskId].formList[tFormId].vue.eventList[name](taskId);
+                    }
+                }
+            }
+            break;
+        }
     }
 }
 
 /**
- * 内部控件初始化
+ * --- 从 cg 目录加载控件（若是已经加载的控件不会再次加载，若不是 cg 控件则直接成功） ---
+ * @param path cg 路径，cgc 文件或以 / 结尾的目录 ---
  */
-function controlsInit() {
-    // --- 头部 ---
-    Vue.component("el-header-item", {
-        template: `<div class="el-header-item" @click="$emit('click')"><slot></div>`
-    });
-    Vue.component("el-logo", {
-        template: `<div class="el-logo"></div>`
-    });
-    // --- 信息表格 ---
-    Vue.component("el-table-info", {
-        template: `<table class="el-table-info">` +
-            `<tbody><slot></tbody>` +
-        `</table>`
-    });
-    Vue.component("el-tr", {
-        template: `<tr>` +
-            `<slot>` +
-        `</tr>`
-    });
-    Vue.component("el-th", {
-        template: `<th>` +
-            `<slot>` +
-        `</th>`
-    });
-    Vue.component("el-td", {
-        template: `<td>` +
-            `<slot>` +
-        `</td>`
-    });
-    // --- 居中上间距 ---
-    Vue.component("el-center", {
-        template: `<div class="el-center">` +
-            `<slot>` +
-        `</div>`
-    });
-    // --- 嵌入提示 ---
-    Vue.component("el-tip", {
-        template: `<div class="el-tip">` +
-            `<slot>` +
-        `</div>`
-    });
-    // --- 表单下方小描述 ---
-    Vue.component("el-exp", {
-        template: `<div class="el-exp">` +
-            `<slot>` +
-        `</div>`
-    });
-    // --- 照片墙 --- 扩展于 el-upload ---
-    Vue.component("el-pictureswall", {
-        props: {
-            value: {
-                default: []
-            },
-            pre: {
-                default: ""
-            },
-            end: {
-                default: ""
-            },
-            endPreview: {
-                default: ""
-            }
-        },
-        data: function() {
-            return {
-                dialogVisible: false,
-                dialogImageUrl: ""
-            };
-        },
-        methods: {
-            preview: function(this: any, url: string) {
-                this.dialogImageUrl = this.pre + url + this.endPreview;
-                this.dialogVisible = true;
-            },
-            click: function(this: any) {
-                this.$emit("select");
-            }
-        },
-        template: `<div class="el-pictureswall">` +
-            `<div>` +
-                `<ul class="el-upload-list el-upload-list--picture-card">` +
-                    `<li v-for="(url, index) of value" tabindex="0" class="el-upload-list__item is-success">` +
-                        `<img :src="pre + url + end" alt="" class="el-upload-list__item-thumbnail">` +
-                        `<a class="el-upload-list__item-name">` +
-                            `<i class="el-icon-document"></i>` +
-                        `</a>` +
-                        `<i class="el-icon-close"></i>` +
-                        `<span class="el-upload-list__item-actions">` +
-                            `<span class="el-upload-list__item-preview" @click="preview(url)">` +
-                                `<i class="el-icon-zoom-in"></i>` +
-                            `</span>` +
-                            `<span class="el-upload-list__item-delete" @click="value.splice(index, 1);$emit('remove', index);$emit('input', value);">` +
-                                `<i class="el-icon-delete"></i>` +
-                            `</span>` +
-                        `</span>` +
-                    `</li>` +
-                `</ul>` +
-                `<div tabindex="0" class="el-upload el-upload--picture-card" @click="click">` +
-                    `<i class="el-icon-plus"></i>` +
-                    `<input name="file" class="el-upload__input" type="file">` +
-                `</div>` +
-            `</div>` +
-            `<el-dialog :visible.sync="dialogVisible" size="tiny">` +
-                `<img width="100%" :src="dialogImageUrl" alt="">` +
-            `</el-dialog>` +
-        `</div>`
-    });
-    // --- 手机样式 ---
-    Vue.component("el-phone", {
-        props: {
-            padding: {
-                default: "0"
-            }
-        },
-        template: `<div class="el-phone">` +
-            `<div class="el-phone--inner" :style="{padding: padding}"><slot></div>` +
-        `</div>`
-    });
-    Vue.component("el-phone-line", {
-        props: {
-            controls: {
-                default: []
-            }
-        },
-        template: `<div class="el-phone-line">` +
-            `<template>` +
-                `<slot>` +
-            `</template>` +
-            `<el-button-group v-if="controls !== []">` +
-                `<el-button v-for="control of controls" @click="$emit('action', control.name)" type="primary" :icon="control.icon" size="small">{{control.name}}</el-button>` +
-            `</el-button-group>` +
-        `</div>`
-    });
-    // --- DataButton ---
-    Vue.component("el-data-button-group", {
-        props: {
-            delimiter: {
-                default: undefined
-            }
-        },
-        template: `<div class="el-data-button-group" :class="[delimiter !== undefined && 'el--delimiter']">` +
-            `<slot>` +
-        `</div>`
-    });
-    Vue.component("el-data-button", {
-        template: `<div class="el-data-button">` +
-            `<slot>` +
-        `</div>`
-    });
-    // --- TileButton ---
-    Vue.component("el-tile-button", {
-        props: {
-            href: {
-                default: undefined
-            },
-            background: {
-                default: undefined
-            }
-        },
-        template: `<a class="el-tile-button" :class="[background && 'el--background', $slots.icon && 'el--icon']" :href="href" :style="{'background': background}">` +
-            `<div v-if="$slots.icon" class="el-tile-button__icon">` +
-                `<slot name="icon">` +
-            `</div>` +
-            `<div class="el-tile-button__body">` +
-                `<slot>` +
-            `</div>` +
-        `</a>`
-    });
-    // --- Resp 响应式布局 ---
-    Vue.component("el-resp", {
-        props: {
-            gutter: {
-                default: undefined
-            }
-        },
-        data: function() {
-            return {
-                unique: "resp_" + (Math.random() * 100000000000000000)
-            };
-        },
-        template: `<div class="el-resp" :data-unique="unique">` +
-            `<slot>` +
-        `</div>`,
-        mounted: function (this: Vue) {
-            let style = document.createElement("style");
-            _headElement.insertAdjacentElement("beforeend", style);
-            this.$watch("gutter", () => {
-                let gutter = this.$props.gutter !== undefined ? parseInt(this.$props.gutter) : undefined;
-                if (gutter !== undefined && gutter !== 0) {
-                    style.innerHTML = `.el-resp[data-unique="${this.$data.unique}"] > :not(:last-child) {margin: 0 ${gutter}px 0 0;}` +
-                    `@media(min-width: 780px) {` +
-                        `.el-resp[data-unique="${this.$data.unique}"] > * {width: 0;}` +
-                    `}` +
-                    `@media(max-width: 780px) {` +
-                        `.el-resp[data-unique="${this.$data.unique}"] > :not(:last-child) {margin: 0 0 ${gutter}px 0;}` +
-                    `}`;
-                } else {
-                    style.innerHTML = ``;
-                }
-            }, {
-                immediate: true
-            });
+export async function fetchClickGoControl(path: string): Promise<boolean> {
+    if (path[0] === "/") {
+        path = path.slice(1);
+    }
+    if (path.slice(0, 8) !== "clickgo/") {
+        return true;
+    }
+    path = path.slice(8);
+    // --- 判断是否加载过 ---
+    if (clickgoFiles["/" + path]) {
+        return true;
+    }
+    // --- 加载控件文件：cgc ---
+    try {
+        clickgoFiles["/" + path] = await (await fetch(ClickGo.cgRootPath + path + "?" + Math.random())).blob();
+        return true;
+    } catch {
+        return false;
+    }
+}
+
+/**
+ * --- 从网络加载应用（不能加载 capp 文件） ---
+ * @param path 相对、绝对或 cg 路径，以 / 结尾的目录 ---
+ */
+export async function fetchApp(path: string): Promise<null | IAppPkg> {
+    if (path.slice(-1) !== "/") {
+        return null;
+    }
+    let realPath = Tool.parsePath(path);
+    // --- 加载 json 文件，并创建 control 信息对象 ---
+    let config: IAppConfig;
+    // --- 已加载的 files ---
+    let files: IFileList = {};
+    try {
+        config = await (await fetch(realPath + "config.json?" + Math.random())).json();
+        // --- 将预加载文件进行加载 ---
+        for (let file of config.files) {
+            let resp: Response = await fetch(realPath + file + "?" + Math.random());
+            files[file] = await resp.blob();
         }
-    });
-    Vue.component("el-resp-row", {
-        props: {
-            gutter: {
-                default: undefined,
-                type: Number
-            },
-            flex: {
-                default: undefined,
-                type: Number
+        // --- 将控件文件进行加载 ---
+        for (let control of config.controls) {
+            if (!await fetchClickGoControl(control)) {
+                return null;
             }
-        },
-        data: function() {
-            return {
-                unique: "resp_row_" + (Math.random() * 100000000000000000)
-            };
-        },
-        template: `<div class="el-resp-row" :data-unique="unique" :style="{'flex': flex}">` +
-            `<slot>` +
-        `</div>`,
-        mounted: function (this: Vue) {
-            let style = document.createElement("style");
-            _headElement.insertAdjacentElement("beforeend", style);
-            this.$watch("gutter", () => {
-                let gutter = this.$props.gutter !== undefined ? parseInt(this.$props.gutter) : undefined;
-                if (gutter !== undefined && gutter !== 0) {
-                    style.innerHTML = `.el-resp-row[data-unique="${this.$data.unique}"] > :not(:last-child) {margin-right: ${gutter}px;}`;
-                } else {
-                    style.innerHTML = ``;
-                }
-            }, {
-                immediate: true
-            });
         }
+    } catch {
+        return null;
+    }
+    return {
+        "type": "app",
+        "config": config,
+        "files": files
+    };
+}
+
+/**
+ * --- 运行一个应用 ---
+ * @param runtime 运行时要注入的文件列表（cg 文件默认被注入） ---
+ */
+export async function runApp(path: string | IAppPkg, opt?: {
+    "runtime"?: IFileList;
+    "onEnd"?: () => void;
+}): Promise<false | number> {
+    opt = opt ?? {};
+    opt.runtime = opt.runtime ?? {};
+
+    let appPkg: IAppPkg | null;
+    if (typeof path === "string") {
+        if (!(appPkg = await fetchApp(path))) {
+            return false;
+        }
+    } else {
+        appPkg = path;
+    }
+    // --- app 的内置文件以及运行时文件 ---
+    let files: IFileList = {};
+    for (let fpath in appPkg.files) {
+        files[fpath] = appPkg.files[fpath];
+    }
+    for (let fpath in opt.runtime) {
+        files["/runtime" + fpath] = opt.runtime[fpath];
+    }
+    for (let fpath in clickgoFiles) {
+        files["/clickgo" + fpath] = clickgoFiles[fpath];
+    }
+    appPkg.files = files;
+    // --- 创建任务对象 ---
+    let taskId = ++ClickGo.taskId;
+    ClickGo.taskList[taskId] = {
+        "taskId": taskId,
+        "appPkg": appPkg,
+        "formList": {}
+    };
+    let task: ITask = ClickGo.taskList[taskId];
+    // --- 创建 form ---
+    let form = await createForm({
+        "file": appPkg.config.mainLayout,
+        "taskId": task.taskId
     });
-    Vue.component("el-resp-col", {
-        props: {
-            flex: {
-                default: undefined
+    if (!form) {
+        delete(ClickGo.taskList[taskId]);
+        return false;
+    }
+    // --- 创建全局 style（如果 form 创建失败，就不用创建全局 style 了） ---
+    if (appPkg.config.styleGlobal && appPkg.files[appPkg.config.styleGlobal + ".css"]) {
+        let style = await Tool.blob2Text(appPkg.files[appPkg.config.styleGlobal + ".css"]);
+        let r = Tool.stylePrepend(style, "cg-task" + task.taskId + "_");
+        Tool.pushStyle(await Tool.styleUrl2DataUrl(appPkg.config.styleGlobal, r.style, files), task.taskId);
+    }
+    return task.taskId;
+}
+
+/**
+ * --- 直接创建一个窗体 ---
+ * @param opt 创建窗体的配置对象
+ */
+export async function createForm(opt: ICreateFormOptions): Promise<false | IForm> {
+    /** --- 当前的 APP PKG --- */
+    let appPkg: IAppPkg = ClickGo.taskList[opt.taskId].appPkg;
+    // ---  申请 formId ---
+    let formId = ++ClickGo.formId;
+    /** --- 要 push 的本 form 的样式内容 --- */
+    let formStyle: string = "";
+    // --- 获取要定义的控件列表 ---
+    let components: any = {};
+    for (let controlPath of appPkg.config.controls) {
+        let controlBlob = appPkg.files[controlPath];
+        if (!controlBlob) {
+            return false;
+        }
+        let controlPkg = await Tool.ControlBlob2Pkg(controlBlob);
+        if (!controlPkg) {
+            return false;
+        }
+        // --- 遍历控件包中的每一个控件 ---
+        for (let name in controlPkg) {
+            let item: IControl = controlPkg[name];
+            // --- 准备相关变量 ---
+            let props = {};
+            let data: any = {};
+            let methods: any = {};
+            let computed = {};
+            let watch = {};
+            let mounted: (() => void) | null = null;
+            // --- 检测是否有 js ---
+            if (item.files[item.config.code + ".js"]) {
+                let [expo] = await loader.requireMemory(item.config.code, item.files, {
+                    "after": "?" + Math.random()
+                }) ?? [];
+                if (expo) {
+                    props = expo.props || {};
+                    data = expo.data || {};
+                    methods = expo.methods || {};
+                    computed = expo.computed || {};
+                    watch = expo.watch || {};
+                    mounted = expo.mounted || null;
+                }
             }
-        },
-        template: `<div class="el-resp-col" :style="{flex: flex}">` +
-            `<slot>` +
-        `</div>`
+            // --- 控件样式表 ---
+            let rand = "";
+            let styleBlob = item.files[item.config.style + ".css"];
+            if (styleBlob) {
+                let r = Tool.stylePrepend(await Tool.blob2Text(styleBlob));
+                rand = r.rand;
+                formStyle += await Tool.styleUrl2DataUrl(item.config.style, r.style, item.files);
+            }
+            // --- 要创建的 control 的 layout ---
+            let layoutBlob = item.files[item.config.layout + ".html"];
+            if (!layoutBlob) {
+                return false;
+            }
+            // --- 给 layout 的 class 增加前置 ---
+            let randList = [
+                "cg-task" + opt.taskId + "_",
+                "cg-theme-task" + opt.taskId + "-" + name + "_",
+                "cg-theme-global-" + name + "_"
+            ];
+            if (rand !== "") {
+                randList.push(rand);
+            }
+            let r = Tool.layoutClassPrepend(await Tool.blob2Text(layoutBlob), randList);
+            let layout = Tool.purify(r.layout);
+            // --- 预设 methods ---
+            methods.down = function(this: IVue, e: MouseEvent | TouchEvent) {
+                if (e instanceof MouseEvent && ClickGo.hasTouch) {
+                    // --- 不能直接粗暴的 preventDefault，会导致无法获得焦点，也被禁止了 ---
+                    e.preventDefault();
+                    return;
+                }
+                e.stopPropagation();
+                Tool.changeFormFocus(formId);
+                this.$emit("down", event);
+            };
+            methods.tap = function(this: IVue, e: MouseEvent | TouchEvent) {
+                e.stopPropagation();
+                if (this.disabled === true) {
+                    return;
+                }
+                this.$emit("tap");
+            };
+            // --- 获取文件 blob 对象 ---
+            methods.getBlob = function(this: IVue, file: string): Blob | null {
+                return ClickGo.taskList[this.taskId].appPkg.files[file] ?? null;
+            };
+            methods.getDataUrl = async function(this: IVue, file: string): Promise<string | null> {
+                let f = ClickGo.taskList[this.taskId].appPkg.files[file];
+                return f ? await Tool.blob2DataUrl(f) : null;
+            };
+            // --- 组成 component ---
+            components["cg-" + name] = {
+                "template": layout,
+                "props": props,
+                "data": function() {
+                    data.taskId = opt.taskId;
+                    data.formId = formId;
+                    data.scope = data.scope || rand;
+                    return data;
+                },
+                "methods": methods,
+                "computed": computed,
+                "watch": watch,
+                "mounted": function() {
+                    this.$nextTick(function(this: IVue) {
+                        if (mounted) {
+                            mounted.call(this);
+                        }
+                    });
+                }
+            };
+        }
+    }
+    // --- 获取 style、layout ---
+    let style = opt.style;
+    let layout = opt.layout;
+    if (opt.file) {
+        let layoutBlob = appPkg.files[opt.file + ".xml"];
+        if (layoutBlob) {
+            layout = await Tool.blob2Text(layoutBlob);
+        }
+        let styleBlob = appPkg.files[opt.file + ".css"];
+        if (styleBlob) {
+            style = await Tool.blob2Text(styleBlob);
+        }
+    }
+    if (!layout) {
+        return false;
+    }
+    // --- 准备相关变量 ---
+    let data: Record<string, any> = {};
+    let methods: any = {};
+    let computed = {};
+    let watch = {};
+    let mounted: (() => void) | null = null;
+    // --- 检测是否有 js ---
+    if (appPkg.files[opt.file + ".js"]) {
+        let [expo] = await loader.requireMemory(opt.file ?? "", appPkg.files, {
+            "after": "?" + Math.random()
+        }) ?? [];
+        if (expo) {
+            data = expo.data || {};
+            methods = expo.methods || {};
+            computed = expo.computed || {};
+            watch = expo.watch || {};
+            mounted = expo.mounted || null;
+        }
+    }
+    // --- 应用样式表 ---
+    let rand = "";
+    if (style) {
+        let r = Tool.stylePrepend(style);
+        rand = r.rand;
+        style = await Tool.styleUrl2DataUrl("/", r.style, appPkg.files);
+    }
+    // --- 要创建的 form 的 layout ---
+    layout = Tool.purify(layout.replace(/<(\/{0,1})(.+?)>/g, function(t, t1, t2): string {
+        if (t2 === "template") {
+            return t;
+        } else {
+            return "<" + t1 + "cg-" + t2 + ">";
+        }
+    }));
+    // --- 给 layout 的 class 增加前置 ---
+    let randList = ["cg-task" + opt.taskId + "_"];
+    if (rand !== "") {
+        randList.push(rand);
+    }
+    let r = Tool.layoutClassPrepend(layout, randList);
+    formListElement.insertAdjacentHTML("beforeend", r.layout);
+    // --- 获取刚才的 form 对象 ---
+    let el: HTMLElement = formListElement.children.item(formListElement.children.length - 1) as HTMLElement;
+    el.classList.add("cg-form-wrap");
+    el.setAttribute("data-form-id", formId.toString());
+    el.setAttribute("data-task-id", opt.taskId.toString());
+    // --- 创建窗体对象 ---
+    // --- 初始化系统初始 data ---
+    data.taskId = opt.taskId;
+    data.formId = formId;
+    data.scope = data.scope || rand;
+    data.focus = false;
+    data.customZIndex = false;
+    // --- 初始化系统方法 ---
+    methods.createForm = async function(this: IVue, paramOpt: string | { "code"?: string; "layout": string; "style"?: string; }): Promise<void> {
+        let inOpt: any = {
+            "taskId": opt.taskId
+        };
+        if (typeof paramOpt === "string") {
+            inOpt.file = paramOpt;
+        } else {
+            if (paramOpt.code) {
+                inOpt.code = paramOpt.code;
+            }
+            if (paramOpt.layout) {
+                inOpt.layout = paramOpt.layout;
+            }
+            if (paramOpt.style) {
+                inOpt.style = paramOpt.style;
+            }
+        }
+        await createForm(inOpt);
+    };
+    methods.closeForm = function(this: IVue): void {
+        removeForm(this.formId);
+    };
+    methods.bindMove = function(this: IVue, e: MouseEvent | TouchEvent): void {
+        this.$children[0].moveMethod(e);
+    };
+    methods.setSystemEventListener = function(this: IVue, name: TSystemEvent, func: any): void {
+        this.eventList[name] = func;
+    };
+    methods.removeSystemEventListener = function(this: IVue, name: TSystemEvent): void {
+        delete(this.eventList[name]);
+    };
+    // --- 获取文件 blob 对象 ---
+    methods.getBlob = function(this: IVue, file: string): Blob | null {
+        return ClickGo.taskList[this.taskId].appPkg.files[file] ?? null;
+    };
+    methods.getDataUrl = async function(this: IVue, file: string): Promise<string | null> {
+        let f = ClickGo.taskList[this.taskId].appPkg.files[file];
+        return f ? await Tool.blob2DataUrl(f) : null;
+    };
+    let $vm: IVue | false = await new Promise(function(resolve) {
+        new Vue({
+            "el": el,
+            "data": data,
+            "methods": methods,
+            "computed": computed,
+            "watch": watch,
+            "components": components,
+
+            "mounted": function() {
+                this.$nextTick(function(this: IVue) {
+                    if (this.$el.getAttribute !== undefined) {
+                        resolve(this);
+                    } else {
+                        if (this.$el.parentNode) {
+                            formListElement.removeChild(this.$el);
+                        }
+                        resolve(false);
+                    }
+                });
+            }
+        });
     });
+    if (!$vm) {
+        return false;
+    }
+    // --- 全局事件来遍历执行的响应 ---
+    $vm.eventList = {};
+    // --- 部署 css ---
+    if (formStyle !== "") {
+        // --- 将这些窗体的样式追加到网页 ---
+        Tool.pushStyle(formStyle, opt.taskId, formId);
+    }
+    if (style) {
+        // --- 窗体的 style ---
+        Tool.pushStyle(style, opt.taskId, formId);
+    }
+    // --- 将窗体居中 ---]
+    if (!$vm.$children[0].stateMaxData) {
+        if ($vm.$children[0].left === -1) {
+            $vm.$children[0].setPropData("left", (ClickGo.getWidth() - $vm.$el.offsetWidth) / 2);
+        }
+        if ($vm.$children[0].top === -1) {
+            $vm.$children[0].setPropData("top", (ClickGo.getHeight() - $vm.$el.offsetHeight) / 2);
+        }
+    }
+    if ($vm.$children[0].zIndex !== -1) {
+        $vm.customZIndex = true;
+    }
+    // --- 执行 mounted ---
+    if (mounted) {
+        try {
+            mounted.call($vm);
+        } catch(err) {
+            formListElement.removeChild($vm.$el);
+            Tool.removeStyle($vm.taskId, $vm.formId);
+            if (ClickGo.errorHandler) {
+                ClickGo.errorHandler($vm.taskId, $vm.formId, err, "Create form mounted error.");
+            } else {
+                console.log(err);
+            }
+            return false;
+        }
+    }
+    // --- 绑定获取焦点事件 ---
+    Tool.changeFormFocus(formId, $vm);
+    let getFocusEvent = function(): void {
+        Tool.changeFormFocus(formId);
+    };
+    if ("ontouchstart" in document.documentElement) {
+        $vm.$el.addEventListener("touchstart", getFocusEvent);
+    } else {
+        $vm.$el.addEventListener("mousedown", getFocusEvent);
+    }
+    // --- 将 form 挂载到 task 当中 ---
+    let form: IForm = {
+        "formId": formId,
+        "vue": $vm
+    };
+    // --- 挂载 form ---
+    ClickGo.taskList[opt.taskId].formList[formId] = form;
+    // --- 触发 formCreated 事件 ---
+    trigger("formCreated", opt.taskId, formId, {"title": $vm.$children[0].title});
+    return form;
+}
+
+/**
+ * --- 移除一个 form ---
+ * @param formId 要移除的 form id
+ */
+export function removeForm(formId: number): boolean {
+    // --- 获取要移除的窗体 element ---
+    let formElement = formListElement.querySelector(`[data-form-id="${formId}"]`);
+    if (!formElement) {
+        return false;
+    }
+    // --- 获取 task id ---
+    let taskIdAttr = formElement.getAttribute("data-task-id");
+    if (!taskIdAttr) {
+        return false;
+    }
+    let taskId: number = parseInt(taskIdAttr);
+    // --- 移除 formList 中的相关 form 对象 ---
+    if (Object.keys(ClickGo.taskList[taskId].formList).length === 1) {
+        // --- 就一个窗体，那肯定就是自己，直接结束 task ---
+        return endTask(taskId);
+    }
+    // --- 多个窗体 ---
+    let title = "";
+    for (let oFormId in ClickGo.taskList[taskId].formList) {
+        if (parseInt(oFormId) !== formId) {
+            continue;
+        }
+        title = ClickGo.taskList[taskId].formList[oFormId].vue.$children[0].title;
+        delete(ClickGo.taskList[taskId].formList[oFormId]);
+        break;
+    }
+    // --- 移除 form 的 style ---
+    Tool.removeStyle(taskId, formId);
+    // --- 移除 element ---
+    formListElement.removeChild(formElement);
+    // --- 触发 formRemoved 事件 ---
+    trigger("formRemoved", taskId, formId, {"title": title});
+    return true;
+}
+
+/**
+ * --- 完全结束任务 ---
+ * @param taskId 任务 id
+ */
+export function endTask(taskId: number): boolean {
+    if (!ClickGo.taskList[taskId]) {
+        return true;
+    }
+    // --- 移除窗体 list ---
+    let flElement = formListElement.querySelectorAll(`[data-task-id="${taskId}"]`);
+    if (flElement.length > 0) {
+        for (let i = 0; i < flElement.length; ++i) {
+            let el = flElement.item(i);
+            let formId = parseInt(el.getAttribute("data-form-id") ?? "");
+            formListElement.removeChild(el);
+            if (ClickGo.taskList[taskId].formList[formId]) {
+                let title = ClickGo.taskList[taskId].formList[formId].vue.$children[0].title;
+                // --- 触发 formRemoved 事件 ---
+                ClickGo.trigger("formRemoved", taskId, formId, {"title": title});
+            }
+        }
+    }
+    // --- 移除 style ---
+    Tool.removeStyle(taskId);
+    // --- 移除 task ---
+    delete(ClickGo.taskList[taskId]);
+    // --- 触发 taskEnded 事件 ---
+    trigger("taskEnded", taskId);
+    return true;
+}
+
+/**
+ * --- 绑定拖动事件 ---
+ * @param e mousedown 或 touchstart 的 event
+ * @param moveCb 拖动时的回调
+ * @param endCb 结束时的回调
+ */
+export function bindMove(e: MouseEvent | TouchEvent, opt: { "left"?: number; "top"?: number; "right"?: number; "bottom"?: number; "offsetLeft"?: number; "offsetTop"?: number; "offsetRight"?: number; "offsetBottom"?: number; "objectLeft"?: number; "objectTop"?: number; "objectWidth"?: number; "objectHeight"?: number; "object"?: HTMLElement; "offsetObject"?: HTMLElement; "start"?: (x: number, y: number) => void | Promise<void> | boolean | Promise<boolean>; "move"?: (ox: number, oy: number, x: number, y: number, border: TBorderDir) => void; "end"?: () => void; "borderIn"?: (x: number, y: number, border: TBorderDir) => void; "borderOut"?: () => void; }): void {
+    setGlobalCursor(getComputedStyle(e.target as Element).cursor);
+    /** --- 上一次的坐标 --- */
+    let tx: number, ty: number;
+    if (e instanceof MouseEvent) {
+        tx = e.clientX * ClickGo.rzoom;
+        ty = e.clientY * ClickGo.rzoom;
+    } else {
+        tx = e.touches[0].clientX * ClickGo.rzoom;
+        ty = e.touches[0].clientY * ClickGo.rzoom;
+    }
+
+    // --- 限定拖动区域 ---
+    let left: number, top: number, right: number, bottom: number;
+    if (opt.offsetObject) {
+        left = opt.offsetObject.offsetLeft + opt.offsetObject.clientLeft;
+        top = opt.offsetObject.offsetTop + opt.offsetObject.clientTop;
+        right = opt.offsetObject.offsetLeft + opt.offsetObject.offsetWidth;
+        bottom = opt.offsetObject.offsetTop + opt.offsetObject.offsetHeight;
+    } else {
+        left = ClickGo.getLeft();
+        top = ClickGo.getTop();
+        right = ClickGo.getWidth();
+        bottom = ClickGo.getHeight();
+    }
+    // --- 用户定义的拖动区域不能大于限定的拖动区域 ---
+    if (opt.left && opt.left > left) {
+        left = opt.left;
+    }
+    if (opt.top && opt.top > top) {
+        top = opt.top;
+    }
+    if (opt.right && opt.right < right) {
+        right = opt.right;
+    }
+    if (opt.bottom && opt.bottom < bottom) {
+        bottom = opt.bottom;
+    }
+    // --- 限定拖动区域额外补偿（拖动对象和实际对象有一定偏差，超出时使用） ---
+    if (opt.offsetLeft) {
+        left += opt.offsetLeft;
+    }
+    if (opt.offsetTop) {
+        top += opt.offsetTop;
+    }
+    if (opt.offsetRight) {
+        right += opt.offsetRight;
+    }
+    if (opt.offsetBottom) {
+        bottom += opt.offsetBottom;
+    }
+
+    /** --- 判断是否已经到达了边界 --- */
+    let isBorder: boolean = false;
+    /** --- 是否是第一次执行 move --- */
+    let isStart: boolean = false;
+
+    // --- 限定拖动对象，限定后整体对象将无法拖动出边界 ---
+    let objectLeft: number, objectTop: number, objectWidth: number, objectHeight: number;
+    // --- 限定边界的偏移，如果限定了拖动对象，则需要根据偏移来判断边界，毕竟拖动点不可能刚好是边界 ---
+    let offsetLeft = 0;
+    let offsetTop = 0;
+    let offsetRight = 0;
+    let offsetBottom = 0;
+
+    // --- 事件 ---
+    let end: (e: MouseEvent | TouchEvent) => void;
+    let move = async function(e: MouseEvent | TouchEvent): Promise<void> {
+        /** --- 本次 x 坐标 --- */
+        let x: number, y: number;
+        x = (e instanceof MouseEvent ? e.clientX : e.touches[0].clientX) * ClickGo.rzoom;
+        y = (e instanceof MouseEvent ? e.clientY : e.touches[0].clientY) * ClickGo.rzoom;
+        if (x === tx && y === ty) {
+            return;
+        }
+
+        if (!isStart) {
+            isStart = true;
+            // --- 执行 start ---
+            if (opt.start) {
+                let rtn = await opt.start(tx, ty);
+                if (rtn === false) {
+                    setGlobalCursor();
+                    if (e instanceof MouseEvent) {
+                        window.removeEventListener("mousemove", move);
+                        window.removeEventListener("mouseup", end);
+                    } else {
+                        window.removeEventListener("touchmove", move);
+                        window.removeEventListener("touchend", end);
+                    }
+                    return;
+                }
+            }
+            // --- 限定拖动对象，限定后整体对象将无法拖动出边界 ---
+            if (opt.object) {
+                objectLeft = opt.object.offsetLeft;
+                objectTop = opt.object.offsetTop;
+                objectWidth = opt.object.offsetWidth;
+                objectHeight = opt.object.offsetHeight;
+            } else {
+                objectLeft = opt.objectLeft ?? 0;
+                objectTop = opt.objectTop ?? 0;
+                objectWidth = opt.objectWidth ?? 0;
+                objectHeight = opt.objectHeight ?? 0;
+            }
+
+            // --- 限定边界的偏移，如果限定了拖动对象，则需要根据偏移来判断边界，毕竟拖动点不可能刚好是边界 ---
+            if (objectWidth > 0) {
+                offsetLeft = tx - objectLeft;
+            }
+            if (objectHeight > 0) {
+                offsetTop = ty - objectTop;
+            }
+            offsetRight = objectWidth - offsetLeft;
+            offsetBottom = objectHeight - offsetTop;
+        }
+
+        /** --- 当前是否在边界线上 --- */
+        let inBorderTop: boolean = false, inBorderRight: boolean = false, inBorderBottom: boolean = false, inBorderLeft: boolean = false;
+
+        let xol = x - offsetLeft;
+        let xor = x + offsetRight;
+        if (xol <= left) {
+            if (xol < left && x < tx) {
+                // --- 当前 x 超越了 left 界限，还在向左移动 ---
+                if (tx - offsetLeft > left) {
+                    // --- 如果刚刚还没超过，则设定为界限值 ---
+                    x = left + offsetLeft;
+                } else {
+                    // --- 如果刚刚就已经超过了，则恢复成刚刚 ---
+                    x = tx;
+                }
+            }
+            inBorderLeft = true;
+        } else if (offsetRight > 0) {
+            if (xor >= right) {
+                if (xor > right && x > tx) {
+                    if (tx + offsetRight < right) {
+                        x = right - offsetRight;
+                    } else {
+                        x = tx;
+                    }
+                }
+                inBorderRight = true;
+            }
+        } else if (offsetRight === 0) {
+            let rs1 = right - 1;
+            if (x >= rs1) {
+                if (x > rs1 && x > tx) {
+                    if (tx < rs1) {
+                        x = rs1;
+                    } else {
+                        x = tx;
+                    }
+                }
+                inBorderRight = true;
+            }
+        }
+        let yot = y - offsetTop;
+        let yob = y + offsetBottom;
+        if (yot <= top) {
+            if (yot < top && y < ty) {
+                if (ty - offsetTop > top) {
+                    y = top + offsetTop;
+                } else {
+                    y = ty;
+                }
+            }
+            inBorderTop = true;
+        } else if (offsetBottom > 0) {
+            if (yob >= bottom) {
+                if (yob > bottom && y > ty) {
+                    if (ty + offsetBottom < bottom) {
+                        y = bottom - offsetBottom;
+                    } else {
+                        y = ty;
+                    }
+                }
+                inBorderBottom = true;
+            }
+        } else if (offsetBottom === 0) {
+            let bs1 = bottom - 1;
+            if (y >= bs1) {
+                if (y > bs1 && y > ty) {
+                    if (ty < bs1) {
+                        y = bs1;
+                    } else {
+                        y = ty;
+                    }
+                }
+                inBorderBottom = true;
+            }
+        }
+
+        // --- 检测是否执行 borderIn 事件（是否正在边界上） ---
+        let border: TBorderDir = "";
+        if (inBorderTop || inBorderRight || inBorderBottom || inBorderLeft) {
+            if (inBorderTop) {
+                if (x - left <= 20) {
+                    border = "lt";
+                } else if (right - x <= 20) {
+                    border = "tr";
+                } else {
+                    border = "t";
+                }
+            } else if (inBorderRight) {
+                if (y - top <= 20) {
+                    border = "tr";
+                } else if (bottom - y <= 20) {
+                    border = "rb";
+                } else {
+                    border = "r";
+                }
+            } else if (inBorderBottom) {
+                if (right - x <= 20) {
+                    border = "rb";
+                } else if (x - left <= 20) {
+                    border = "bl";
+                } else {
+                    border = "b";
+                }
+            } else if (inBorderLeft) {
+                if (y - top <= 20) {
+                    border = "lt";
+                } else if (bottom - y <= 20) {
+                    border = "bl";
+                } else {
+                    border = "l";
+                }
+            }
+
+            if (!isBorder) {
+                isBorder = true;
+                opt.borderIn && opt.borderIn(x, y, border);
+            }
+        } else {
+            // --- 不在边界 ---
+            if (isBorder) {
+                isBorder = false;
+                opt.borderOut && opt.borderOut();
+            }
+        }
+
+        opt.move && opt.move(x - tx, y - ty, x, y, border);
+        tx = x;
+        ty = y;
+    };
+
+    if (e instanceof MouseEvent) {
+        end = function(e: MouseEvent | TouchEvent): void {
+            setGlobalCursor();
+            window.removeEventListener("mousemove", move);
+            window.removeEventListener("mouseup", end);
+            if (isStart) {
+                opt.end && opt.end();
+            }
+        };
+        // --- 绑定事件 ---
+        window.addEventListener("mousemove", move);
+        window.addEventListener("mouseup", end);
+    } else {
+        end = function(e: MouseEvent | TouchEvent): void {
+            setGlobalCursor();
+            window.removeEventListener("touchmove", move);
+            window.removeEventListener("touchend", end);
+            if (isStart) {
+                opt.end && opt.end();
+            }
+        };
+        // --- 绑定事件 ---
+        window.addEventListener("touchmove", move);
+        window.addEventListener("touchend", end);
+    }
+}
+
+/**
+ * --- 绑定拖动改变大小事件 ---
+ * @param e mousedown 或 touchstart 的 event
+ * @param opt 选项
+ * @param moveCb 拖动时的回调
+ * @param endCb 结束时的回调
+ */
+export function bindResize(e: MouseEvent | TouchEvent, opt: { "left": number; "top": number; "width": number; "height": number; "minWidth"?: number; "minHeight"?: number; "offsetObject"?: HTMLElement; "dir": TBorderDir; "move"?: (left: number, top: number, width: number, height: number) => void; "end"?: () => void; }): void {
+    opt.minWidth = opt.minWidth ?? 0;
+    opt.minHeight = opt.minHeight ?? 0;
+    /** --- 当前鼠标位置 x --- */
+    let x: number = (e instanceof MouseEvent ? e.clientX : e.touches[0].clientX) * ClickGo.rzoom;
+    /** --- 当前鼠标位置 y --- */
+    let y: number = (e instanceof MouseEvent ? e.clientY : e.touches[0].clientY) * ClickGo.rzoom;
+    // --- 获取偏差补偿 ---
+    let offsetLeft!: number, offsetTop!: number, offsetRight!: number, offsetBottom!: number;
+    /** --- 上下左右界限 --- */
+    let left!: number, top!: number, right!: number, bottom!: number;
+    if (opt.dir === "tr" || opt.dir === "r" || opt.dir === "rb") {
+        left = opt.left + opt.minWidth;
+        offsetLeft = x - (opt.left + opt.width);
+        offsetRight = offsetLeft;
+    } else if (opt.dir === "bl" || opt.dir === "l" || opt.dir === "lt") {
+        right = opt.left + opt.width - opt.minWidth;
+        offsetLeft = x - opt.left;
+        offsetRight = offsetLeft;
+    }
+    if (opt.dir === "rb" || opt.dir === "b" || opt.dir === "bl") {
+        top = opt.top + opt.minHeight;
+        offsetTop = y - (opt.top + opt.height);
+        offsetBottom = offsetTop;
+    } else if (opt.dir === "lt" || opt.dir === "t" || opt.dir === "tr") {
+        bottom = opt.top + opt.height - opt.minHeight;
+        offsetTop = y - opt.top;
+        offsetBottom = offsetTop;
+    }
+    bindMove(e, {
+        "left": left,
+        "top": top,
+        "right": right,
+        "bottom": bottom,
+        "offsetLeft": offsetLeft,
+        "offsetTop": offsetTop,
+        "offsetRight": offsetRight,
+        "offsetBottom": offsetBottom,
+        "move": async function(ox, oy): Promise<void> {
+            if (opt.dir === "tr" || opt.dir === "r" || opt.dir === "rb") {
+                opt.width += ox;
+            } else if (opt.dir === "bl" || opt.dir === "l" || opt.dir === "lt") {
+                opt.width -= ox;
+                opt.left += ox;
+            }
+            if (opt.dir === "rb" || opt.dir === "b" || opt.dir === "bl") {
+                opt.height += oy;
+            } else if (opt.dir === "lt" || opt.dir === "t" || opt.dir === "tr") {
+                opt.height -= oy;
+                opt.top += oy;
+            }
+            opt.move && opt.move(opt.left, opt.top, opt.width, opt.height);
+        },
+        "end": opt.end
+    });
+}
+
+/** --- 全局 cursor 设置的 style 标签 */
+let globalCursorStyle: HTMLStyleElement;
+/**
+ * --- 设置全局鼠标样式 ---
+ * @param type 样式或留空，留空代表取消
+ */
+export function setGlobalCursor(type?: string): void {
+    if (!globalCursorStyle) {
+        globalCursorStyle = document.getElementById("cg-global-cursor") as HTMLStyleElement;
+    }
+    if (type) {
+        globalCursorStyle.innerHTML = "* {cursor: " + type + " !important;}";
+    } else {
+        globalCursorStyle.innerHTML = "";
+    }
 }
