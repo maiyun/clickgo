@@ -65,14 +65,7 @@ var ClickGo = {
     "_loaderConfig": {},
     "_config": {},
     showCircular: function (x, y) {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0: return [4, this._core.showCircular(x, y)];
-                    case 1: return [2, _a.sent()];
-                }
-            });
-        });
+        this._core.showCircular(x, y);
     },
     showRectangle: function (x, y, pos) {
         return __awaiter(this, void 0, void 0, function () {

@@ -276,36 +276,34 @@ exports.methods = {
                             this.$emit("update:left", this.leftData);
                             this.topData += oy;
                             this.$emit("update:top", this.topData);
-                            if (!(border !== "")) return [3, 7];
-                            if (!((border === "t" && this.max) || (border !== "t" && this.resize))) return [3, 5];
-                            if (!(isBorder === "")) return [3, 3];
-                            return [4, ClickGo.showCircular(x, y)];
+                            if (!(border !== "")) return [3, 6];
+                            if (!((border === "t" && this.max) || (border !== "t" && this.resize))) return [3, 4];
+                            if (!(isBorder === "")) return [3, 2];
+                            isBorder = border;
+                            ClickGo.showCircular(x, y);
+                            return [4, ClickGo.showRectangle(x, y, border)];
                         case 1:
                             _a.sent();
-                            return [4, ClickGo.showRectangle(x, y, border)];
+                            return [3, 3];
                         case 2:
-                            _a.sent();
-                            return [3, 4];
-                        case 3:
-                            ClickGo.moveRectangle(border);
-                            _a.label = 4;
-                        case 4:
                             isBorder = border;
-                            return [3, 6];
-                        case 5:
+                            ClickGo.moveRectangle(border);
+                            _a.label = 3;
+                        case 3: return [3, 5];
+                        case 4:
                             if (isBorder !== "") {
                                 isBorder = "";
                                 ClickGo.hideRectangle();
                             }
-                            _a.label = 6;
-                        case 6: return [3, 8];
-                        case 7:
+                            _a.label = 5;
+                        case 5: return [3, 7];
+                        case 6:
                             if (isBorder !== "") {
                                 isBorder = "";
                                 ClickGo.hideRectangle();
                             }
-                            _a.label = 8;
-                        case 8: return [2];
+                            _a.label = 7;
+                        case 7: return [2];
                     }
                 });
             }); },
@@ -577,6 +575,7 @@ exports.methods = {
                             if (!(((dir === "lt" || dir === "t" || dir === "tr") && (border === "lt" || border === "t" || border === "tr")) ||
                                 ((dir === "bl" || dir === "b" || dir === "rb") && (border === "bl" || border === "b" || border === "rb")))) return [3, 5];
                             if (!(isBorder === "")) return [3, 3];
+                            isBorder = border;
                             return [4, ClickGo.showCircular(x, y)];
                         case 1:
                             _a.sent();
@@ -588,14 +587,13 @@ exports.methods = {
                             _a.sent();
                             return [3, 4];
                         case 3:
+                            isBorder = border;
                             ClickGo.moveRectangle({
                                 "left": left,
                                 "width": width
                             });
                             _a.label = 4;
-                        case 4:
-                            isBorder = border;
-                            return [3, 6];
+                        case 4: return [3, 6];
                         case 5:
                             if (isBorder !== "") {
                                 isBorder = "";

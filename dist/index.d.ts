@@ -33,7 +33,7 @@ declare const ClickGo: {
         "paths"?: IPaths;
     };
     "_config": ICgConfig;
-    showCircular: (x: number, y: number) => Promise<void>;
+    showCircular: (x: number, y: number) => void;
     showRectangle: (x: number, y: number, pos: TBorderDir) => Promise<void>;
     moveRectangle: (dir: TBorderDir) => void;
     hideRectangle: () => void;

@@ -91,7 +91,7 @@ const ClickGo: {
      * @param x X 坐标
      * @param y Y 坐标
      */
-    showCircular: (x: number, y: number) => Promise<void>;
+    showCircular: (x: number, y: number) => void;
 
     /**
      * --- 显示从小到大的矩形动画特效对象 ---
@@ -263,8 +263,8 @@ const ClickGo: {
     "_loaderConfig": {},
     "_config": {},
 
-    showCircular: async function(x: number, y: number): Promise<void> {
-        return await this._core.showCircular(x, y);
+    showCircular: function(x: number, y: number): void {
+        this._core.showCircular(x, y);
     },
 
     showRectangle: async function(x: number, y: number, pos: TBorderDir): Promise<void> {

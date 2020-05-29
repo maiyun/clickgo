@@ -145,6 +145,8 @@ function showRectangle(x, y, pos) {
                     rectangleElement.style.left = x - 10 + "px";
                     rectangleElement.style.top = y - 10 + "px";
                     rectangleElement.style.opacity = "1";
+                    rectangleElement.setAttribute("data-ready", "0");
+                    rectangleElement.setAttribute("data-dir", "");
                     return [4, new Promise(function (resove) {
                             setTimeout(function () {
                                 resove();
@@ -153,7 +155,7 @@ function showRectangle(x, y, pos) {
                 case 1:
                     _a.sent();
                     rectangleElement.style.transition = "all .2s ease-out";
-                    rectangleElement.setAttribute("data-dir", "");
+                    rectangleElement.setAttribute("data-ready", "1");
                     moveRectangle(pos);
                     return [2];
             }
@@ -162,12 +164,17 @@ function showRectangle(x, y, pos) {
 }
 exports.showRectangle = showRectangle;
 function moveRectangle(dir) {
-    var _a;
-    var dataDir = (_a = rectangleElement.getAttribute("data-dir")) !== null && _a !== void 0 ? _a : "";
-    if (dataDir === dir) {
+    var _a, _b, _c, _d;
+    var dataReady = (_a = rectangleElement.getAttribute("data-ready")) !== null && _a !== void 0 ? _a : "0";
+    if (dataReady === "0") {
         return;
     }
-    rectangleElement.setAttribute("data-dir", typeof dir === "string" ? dir : "o");
+    var dataDir = (_b = rectangleElement.getAttribute("data-dir")) !== null && _b !== void 0 ? _b : "";
+    var setDataDir = typeof dir === "string" ? dir : "o-" + dir.left + "-" + ((_c = dir.top) !== null && _c !== void 0 ? _c : "n") + "-" + dir.width + "-" + ((_d = dir.height) !== null && _d !== void 0 ? _d : "n");
+    if (dataDir === setDataDir) {
+        return;
+    }
+    rectangleElement.setAttribute("data-dir", setDataDir);
     var pos = getPositionByBorderDir(dir);
     var width = pos.width - 20;
     var height = pos.height - 20;

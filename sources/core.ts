@@ -123,13 +123,15 @@ export async function showRectangle(x: number, y: number, pos: TBorderDir): Prom
     rectangleElement.style.left = x - 10 + "px";
     rectangleElement.style.top = y - 10 + "px";
     rectangleElement.style.opacity = "1";
+    rectangleElement.setAttribute("data-ready", "0");
+    rectangleElement.setAttribute("data-dir", "");
     await new Promise(function(resove) {
         setTimeout(function() {
             resove();
         }, 10);
     });
     rectangleElement.style.transition = "all .2s ease-out";
-    rectangleElement.setAttribute("data-dir", "");
+    rectangleElement.setAttribute("data-ready", "1");
     moveRectangle(pos);
 }
 
@@ -138,11 +140,16 @@ export async function showRectangle(x: number, y: number, pos: TBorderDir): Prom
  * @param dir 显示的位置代号
  */
 export function moveRectangle(dir: TBorderDir): void {
-    let dataDir = rectangleElement.getAttribute("data-dir") ?? "";
-    if (dataDir === dir) {
+    let dataReady = rectangleElement.getAttribute("data-ready") ?? "0";
+    if (dataReady === "0") {
         return;
     }
-    rectangleElement.setAttribute("data-dir", typeof dir === "string" ? dir : "o");
+    let dataDir = rectangleElement.getAttribute("data-dir") ?? "";
+    let setDataDir = typeof dir === "string" ? dir : "o-" + dir.left + "-" + (dir.top ?? "n") + "-" + dir.width + "-" + (dir.height ?? "n");
+    if (dataDir === setDataDir) {
+        return;
+    }
+    rectangleElement.setAttribute("data-dir", setDataDir);
     let pos = getPositionByBorderDir(dir);
     let width = pos.width - 20;
     let height = pos.height - 20;

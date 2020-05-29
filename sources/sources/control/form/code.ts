@@ -233,12 +233,13 @@ export let methods = {
                 if (border !== "") {
                     if ((border === "t" && this.max) || (border !== "t" && this.resize)) {
                         if (isBorder === "") {
-                            await ClickGo.showCircular(x, y);
+                            isBorder = border;
+                            ClickGo.showCircular(x, y);
                             await ClickGo.showRectangle(x, y, border);
                         } else {
+                            isBorder = border;
                             ClickGo.moveRectangle(border);
                         }
-                        isBorder = border;
                     } else {
                         if (isBorder !== "") {
                             isBorder = "";
@@ -352,7 +353,7 @@ export let methods = {
         return true;
     },
     // --- 竖版扩大 ---
-    maxVMethod: function(this: IVue) {
+    maxVMethod: function(this: IVue): void {
         if (this.stateAbs) {
             this.stateAbs = false;
             this.topData = this.historyLocationMove.top;
@@ -522,18 +523,19 @@ export let methods = {
                         ((dir === "bl" || dir === "b" || dir === "rb") && (border === "bl" || border === "b" || border === "rb"))
                     ) {
                         if (isBorder === "") {
+                            isBorder = border;
                             await ClickGo.showCircular(x, y);
                             await ClickGo.showRectangle(x, y, {
                                 "left": left,
                                 "width": width
                             });
                         } else {
+                            isBorder = border;
                             ClickGo.moveRectangle({
                                 "left": left,
                                 "width": width
                             });
                         }
-                        isBorder = border;
                     } else {
                         if (isBorder !== "") {
                             isBorder = "";
