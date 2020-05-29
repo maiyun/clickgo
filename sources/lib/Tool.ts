@@ -15,6 +15,15 @@ styleListElement.insertAdjacentHTML("beforeend", `<style class="cg-global">
 .cg-rectangle {box-sizing: border-box; position: fixed; z-index: 20020001; border: solid 1px rgba(118, 185, 237, .7); box-shadow: 0 0 10px rgba(0, 0, 0, .3); background: rgba(118, 185, 237, .1); pointer-events: none; opacity: 0;}
 </style>`);
 
+let globalThemeStyle: HTMLStyleElement = document.getElementById("cg-global-theme") as HTMLStyleElement;
+/**
+ * --- 将 CSS 写入全局 ---
+ * @param style 要写入的样式
+ */
+export function setGlobalTheme(style: string = ""): void {
+    globalThemeStyle.innerHTML = style;
+}
+
 /**
  * --- 将 style 内容写入 dom ---
  * @param style 样式内容

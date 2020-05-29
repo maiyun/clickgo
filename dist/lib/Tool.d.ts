@@ -1,3 +1,4 @@
+export declare function setGlobalTheme(style?: string): void;
 export declare function pushStyle(style: string, taskId: number, formId?: number): void;
 export declare function removeStyle(taskId: number, formId?: number): void;
 export declare function purify(text: string): string;

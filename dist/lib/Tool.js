@@ -42,6 +42,12 @@ document.getElementsByTagName("body")[0].appendChild(styleListElement);
 styleListElement.insertAdjacentHTML("beforeend", "<style id=\"cg-global-cursor\"></style>");
 styleListElement.insertAdjacentHTML("beforeend", "<style id=\"cg-global-theme\"></style>");
 styleListElement.insertAdjacentHTML("beforeend", "<style class=\"cg-global\">\n.cg-form-list {position: fixed; left: 0; top: 0; z-index: 20020000; width: 0; height: 0;}\n\n.cg-form-wrap {cursor: default;}\n.cg-form-wrap, .cg-form-wrap * {box-sizing: border-box !important; -webkit-tap-highlight-color: rgba(0, 0, 0, 0);}\n.cg-form-wrap, .cg-form-wrap input, .cg-form-wrap textarea {font-family: -apple-system,BlinkMacSystemFont,opensans,Optima,\"Microsoft Yahei\",sans-serif; font-size: 12px; line-height: 1;}\n\n.cg-circular {box-sizing: border-box; position: fixed; z-index: 20020002; border: solid 3px #76b9ed; border-radius: 50%; filter: drop-shadow(0 0 7px #76b9ed); pointer-events: none; opacity: 0;}\n.cg-rectangle {box-sizing: border-box; position: fixed; z-index: 20020001; border: solid 1px rgba(118, 185, 237, .7); box-shadow: 0 0 10px rgba(0, 0, 0, .3); background: rgba(118, 185, 237, .1); pointer-events: none; opacity: 0;}\n</style>");
+var globalThemeStyle = document.getElementById("cg-global-theme");
+function setGlobalTheme(style) {
+    if (style === void 0) { style = ""; }
+    globalThemeStyle.innerHTML = style;
+}
+exports.setGlobalTheme = setGlobalTheme;
 function pushStyle(style, taskId, formId) {
     if (formId === void 0) { formId = 0; }
     styleListElement.insertAdjacentHTML("beforeend", "<style class=\"cg-task" + taskId + (formId > 0 ? " cg-form" + formId : "") + "\">" + style + "</style>");
