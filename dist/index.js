@@ -49,6 +49,7 @@ var ClickGo = {
     "formCreatedHandler": null,
     "formRemovedHandler": null,
     "formTitleChangedHandler": null,
+    "formIconChangedHandler": null,
     "formStateMinChangedHandler": null,
     "formStateMaxChangedHandler": null,
     "formFocusedHandler": null,

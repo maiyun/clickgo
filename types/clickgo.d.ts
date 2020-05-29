@@ -86,8 +86,8 @@ interface ICreateFormOptions {
 }
 
 /** --- 系统事件类型 --- */
-type TSystemEvent = "screenResize" | "formCreated" | "formRemoved" | "formTitleChanged" | "formStateMinChanged" | "formStateMaxChanged" | "formFocused" | "formBlurred" | "taskStarted" | "taskEnded";
+type TSystemEvent = "screenResize" | "formCreated" | "formRemoved" | "formIconChanged" | "formTitleChanged" | "formStateMinChanged" | "formStateMaxChanged" | "formFocused" | "formBlurred" | "taskStarted" | "taskEnded";
 
 /** --- 方向类型，从左上开始 --- */
-type TBorderDir = "lt" | "t" | "tr" | "r" | "rb" | "b" | "bl" | "l" | "";
+type TBorderDir = "lt" | "t" | "tr" | "r" | "rb" | "b" | "bl" | "l" | "" | { "left": number; "top"?: number; "width": number; "height"?: number; };
 

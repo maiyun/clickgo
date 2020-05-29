@@ -12,9 +12,10 @@ declare const ClickGo: {
     "rzoom": number;
     "errorHandler": ((taskId: number, formId: number, error: any, info: string) => void) | null;
     "screenResizeHandler": (() => void | Promise<void>) | null;
-    "formCreatedHandler": ((taskId: number, formId: number, title: string) => void | Promise<void>) | null;
-    "formRemovedHandler": ((taskId: number, formId: number, title: string) => void | Promise<void>) | null;
+    "formCreatedHandler": ((taskId: number, formId: number, title: string, icon: string) => void | Promise<void>) | null;
+    "formRemovedHandler": ((taskId: number, formId: number, title: string, icno: string) => void | Promise<void>) | null;
     "formTitleChangedHandler": ((taskId: number, formId: number, title: string) => void | Promise<void>) | null;
+    "formIconChangedHandler": ((taskId: number, formId: number, icon: string) => void | Promise<void>) | null;
     "formStateMinChangedHandler": ((taskId: number, formId: number, state: boolean) => void | Promise<void>) | null;
     "formStateMaxChangedHandler": ((taskId: number, formId: number, state: boolean) => void | Promise<void>) | null;
     "formFocusedHandler": ((taskId: number, formId: number) => void | Promise<void>) | null;
@@ -45,6 +46,7 @@ declare const ClickGo: {
     trigger: (name: TSystemEvent, taskId?: number, formId?: number, opt?: {
         "title"?: string;
         "state"?: boolean;
+        "icon"?: string;
     }) => void;
     loaderConfig: (config: {
         "after"?: string;
@@ -95,7 +97,8 @@ declare const ClickGo: {
         "minHeight"?: number;
         "offsetObject"?: HTMLElement;
         "dir": TBorderDir;
-        "move"?: (left: number, top: number, width: number, height: number) => void;
+        "start"?: (x: number, y: number) => void | Promise<void> | boolean | Promise<boolean>;
+        "move"?: (left: number, top: number, width: number, height: number, x: number, y: number, border: TBorderDir) => void;
         "end"?: () => void;
     }) => void;
     setGlobalCursor: (type?: string) => void;

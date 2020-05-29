@@ -45,11 +45,13 @@ const ClickGo: {
     /** --- 当屏幕大小改变时触发的事件 --- */
     "screenResizeHandler": (() => void | Promise<void>) | null;
     /** --- 窗体被创建后触发 --- */
-    "formCreatedHandler": ((taskId: number, formId: number, title: string) => void | Promise<void>) | null;
+    "formCreatedHandler": ((taskId: number, formId: number, title: string, icon: string) => void | Promise<void>) | null;
     /** --- 窗体被移除后触发 --- */
-    "formRemovedHandler": ((taskId: number, formId: number, title: string) => void | Promise<void>) | null;
+    "formRemovedHandler": ((taskId: number, formId: number, title: string, icno: string) => void | Promise<void>) | null;
     /** --- 窗体标题被改变后触发 --- */
     "formTitleChangedHandler": ((taskId: number, formId: number, title: string) => void | Promise<void>) | null;
+    /** --- 窗体图标被改变后触发 --- */
+    "formIconChangedHandler": ((taskId: number, formId: number, icon: string) => void | Promise<void>) | null;
     /** --- 窗体最小化状态改变后触发 --- */
     "formStateMinChangedHandler": ((taskId: number, formId: number, state: boolean) => void | Promise<void>) | null;
     /** --- 窗体最大化状态改变后触发 --- */
@@ -119,7 +121,7 @@ const ClickGo: {
     /**
      * --- 触发系统级事件 ---
      */
-    trigger: (name: TSystemEvent, taskId?: number, formId?: number, opt?: { "title"?: string; "state"?: boolean; }) => void;
+    trigger: (name: TSystemEvent, taskId?: number, formId?: number, opt?: { "title"?: string; "state"?: boolean; "icon"?: string; }) => void;
 
     /**
      * --- 设置 loader 的配置项 ---
@@ -222,7 +224,7 @@ const ClickGo: {
      * @param moveCb 拖动时的回调
      * @param endCb 结束时的回调
      */
-    bindResize: (e: MouseEvent | TouchEvent, opt: { "left": number; "top": number; "width": number; "height": number; "minWidth"?: number; "minHeight"?: number; "offsetObject"?: HTMLElement; "dir": TBorderDir; "move"?: (left: number, top: number, width: number, height: number) => void; "end"?: () => void; }) => void;
+    bindResize: (e: MouseEvent | TouchEvent, opt: { "left": number; "top": number; "width": number; "height": number; "minWidth"?: number; "minHeight"?: number; "offsetObject"?: HTMLElement; "dir": TBorderDir; "start"?: (x: number, y: number) => void | Promise<void> | boolean | Promise<boolean>; "move"?: (left: number, top: number, width: number, height: number, x: number, y: number, border: TBorderDir) => void; "end"?: () => void; }) => void;
 
     /**
      * --- 设置全局鼠标样式 ---
@@ -243,6 +245,7 @@ const ClickGo: {
     "formCreatedHandler": null,
     "formRemovedHandler": null,
     "formTitleChangedHandler": null,
+    "formIconChangedHandler": null,
     "formStateMinChangedHandler": null,
     "formStateMaxChangedHandler": null,
     "formFocusedHandler": null,
@@ -280,7 +283,7 @@ const ClickGo: {
         return this._core.getPositionByBorderDir(dir);
     },
 
-    trigger: async function(name: TSystemEvent, taskId?: number, formId?: number, opt: { "title"?: string; "state"?: boolean; } = {}): Promise<void> {
+    trigger: async function(name: TSystemEvent, taskId?: number, formId?: number, opt: { "title"?: string; "state"?: boolean; "icon"?: string; } = {}): Promise<void> {
         return await this._core.trigger(name, taskId, formId, opt);
     },
 
@@ -366,7 +369,7 @@ const ClickGo: {
         return this._core.bindMove(e, opt);
     },
 
-    bindResize: function(e: MouseEvent | TouchEvent, opt: { "left": number; "top": number; "width": number; "height": number; "minWidth"?: number; "minHeight"?: number; "offsetObject"?: HTMLElement; "dir": TBorderDir; "move"?: (left: number, top: number, width: number, height: number) => void; "end"?: () => void; }): void {
+    bindResize: function(e: MouseEvent | TouchEvent, opt: { "left": number; "top": number; "width": number; "height": number; "minWidth"?: number; "minHeight"?: number; "offsetObject"?: HTMLElement; "dir": TBorderDir; "start"?: (x: number, y: number) => void | Promise<void> | boolean | Promise<boolean>; "move"?: (left: number, top: number, width: number, height: number, x: number, y: number, border: TBorderDir) => void; "end"?: () => void; }): void {
         return this._core.bindResize(e, opt);
     },
 

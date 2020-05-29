@@ -55,7 +55,7 @@ export declare let data: {
     stateMaxData: boolean;
     stateMinData: boolean;
     stateAbs: boolean;
-    iconData: string;
+    iconData: null;
     widthData: number;
     heightData: number;
     leftData: number;
@@ -97,6 +97,7 @@ export declare let watch: {
 export declare let methods: {
     moveMethod: (this: IVue, e: MouseEvent | TouchEvent) => void;
     minMethod: (this: IVue) => boolean;
+    maxVMethod: (this: IVue) => void;
     maxMethod: (this: IVue) => boolean;
     closeMethod: (this: IVue) => void;
     resizeMethod: (this: IVue, e: MouseEvent | TouchEvent, dir: TBorderDir) => void;

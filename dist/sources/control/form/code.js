@@ -93,7 +93,7 @@ exports.data = {
     "stateMaxData": false,
     "stateMinData": false,
     "stateAbs": false,
-    "iconData": "",
+    "iconData": null,
     "widthData": 300,
     "heightData": 200,
     "leftData": 0,
@@ -123,18 +123,27 @@ exports.watch = {
         handler: function () {
             var _a;
             return __awaiter(this, void 0, void 0, function () {
-                var _b;
+                var first, _b;
                 return __generator(this, function (_c) {
                     switch (_c.label) {
                         case 0:
-                            if (this.icon === "") {
-                                this.iconData = "";
-                                return [2];
+                            first = false;
+                            if (this.iconData === null) {
+                                first = true;
                             }
+                            if (!(this.icon === "")) return [3, 1];
+                            this.iconData = "";
+                            return [3, 3];
+                        case 1:
                             _b = this;
                             return [4, this.getDataUrl(this.icon)];
-                        case 1:
+                        case 2:
                             _b.iconData = (_a = _c.sent()) !== null && _a !== void 0 ? _a : "";
+                            _c.label = 3;
+                        case 3:
+                            if (!first) {
+                                ClickGo.trigger("formIconChanged", this.taskId, this.formId, { "icon": this.iconData });
+                            }
                             return [2];
                     }
                 });
@@ -397,6 +406,28 @@ exports.methods = {
         ClickGo.trigger("formStateMinChanged", this.taskId, this.formId, { "state": this.stateMinData });
         return true;
     },
+    maxVMethod: function () {
+        if (this.stateAbs) {
+            this.stateAbs = false;
+            this.topData = this.historyLocationMove.top;
+            this.$emit("update:top", this.topData);
+            this.heightData = this.historyLocationMove.height;
+            this.$emit("update:height", this.heightData);
+        }
+        else {
+            this.stateAbs = true;
+            this.historyLocationMove = {
+                "width": this.widthData,
+                "height": this.heightData,
+                "left": this.leftData,
+                "top": this.topData
+            };
+            this.topData = ClickGo.getTop();
+            this.$emit("update:top", this.topData);
+            this.heightData = ClickGo.getHeight();
+            this.$emit("update:height", this.heightData);
+        }
+    },
     maxMethod: function () {
         if (this.stateMinData) {
             if (this.minMethod() === false) {
@@ -490,26 +521,109 @@ exports.methods = {
     resizeMethod: function (e, dir) {
         var _this = this;
         if (e instanceof MouseEvent && ClickGo.hasTouch) {
-            e.preventDefault();
             return;
+        }
+        var isBorder = "";
+        var top = this.topData;
+        var height = this.heightData;
+        if (dir !== "l" && dir !== "r") {
+            if (this.stateAbs) {
+                if (dir === "lt" || dir === "t" || dir === "tr") {
+                    height = this.historyLocationMove.top + this.historyLocationMove.height;
+                }
+                else {
+                    top = this.historyLocationMove.top;
+                    height = ClickGo.getHeight() - top;
+                }
+            }
+            else {
+                this.historyLocationMove = {
+                    "width": this.widthData,
+                    "height": this.heightData,
+                    "left": this.leftData,
+                    "top": this.topData
+                };
+            }
         }
         ClickGo.bindResize(e, {
             "left": this.leftData,
-            "top": this.topData,
+            "top": top,
             "width": this.widthData,
-            "height": this.heightData,
+            "height": height,
             "minWidth": parseInt(this.minWidth),
             "minHeight": parseInt(this.minHeight),
             "dir": dir,
-            "move": function (left, top, width, height) {
-                _this.leftData = left;
-                _this.$emit("update:left", left);
-                _this.topData = top;
-                _this.$emit("update:top", top);
-                _this.widthData = width;
-                _this.$emit("update:width", width);
-                _this.heightData = height;
-                _this.$emit("update:height", height);
+            "start": function () {
+                if (dir === "l" || dir === "r") {
+                    return;
+                }
+                if (_this.stateAbs) {
+                    _this.stateAbs = false;
+                }
+            },
+            "move": function (left, top, width, height, x, y, border) { return __awaiter(_this, void 0, void 0, function () {
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0:
+                            this.leftData = left;
+                            this.$emit("update:left", left);
+                            this.topData = top;
+                            this.$emit("update:top", top);
+                            this.widthData = width;
+                            this.$emit("update:width", width);
+                            this.heightData = height;
+                            this.$emit("update:height", height);
+                            if (!(border !== "")) return [3, 7];
+                            if (!(((dir === "lt" || dir === "t" || dir === "tr") && (border === "lt" || border === "t" || border === "tr")) ||
+                                ((dir === "bl" || dir === "b" || dir === "rb") && (border === "bl" || border === "b" || border === "rb")))) return [3, 5];
+                            if (!(isBorder === "")) return [3, 3];
+                            return [4, ClickGo.showCircular(x, y)];
+                        case 1:
+                            _a.sent();
+                            return [4, ClickGo.showRectangle(x, y, {
+                                    "left": left,
+                                    "width": width
+                                })];
+                        case 2:
+                            _a.sent();
+                            return [3, 4];
+                        case 3:
+                            ClickGo.moveRectangle({
+                                "left": left,
+                                "width": width
+                            });
+                            _a.label = 4;
+                        case 4:
+                            isBorder = border;
+                            return [3, 6];
+                        case 5:
+                            if (isBorder !== "") {
+                                isBorder = "";
+                                ClickGo.hideRectangle();
+                            }
+                            _a.label = 6;
+                        case 6: return [3, 8];
+                        case 7:
+                            if (isBorder !== "") {
+                                isBorder = "";
+                                ClickGo.hideRectangle();
+                            }
+                            _a.label = 8;
+                        case 8: return [2];
+                    }
+                });
+            }); },
+            "end": function () {
+                if (isBorder !== "") {
+                    if (isBorder !== "l" && isBorder !== "r") {
+                        _this.stateAbs = true;
+                        _this.heightData = ClickGo.getHeight();
+                        _this.$emit("update:height", _this.heightData);
+                        _this.topData = ClickGo.getTop();
+                        _this.$emit("update:top", _this.topData);
+                    }
+                    ClickGo.hideRectangle();
+                }
             }
         });
     },

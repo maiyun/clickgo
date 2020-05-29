@@ -167,7 +167,7 @@ function moveRectangle(dir) {
     if (dataDir === dir) {
         return;
     }
-    rectangleElement.setAttribute("data-dir", dir);
+    rectangleElement.setAttribute("data-dir", typeof dir === "string" ? dir : "o");
     var pos = getPositionByBorderDir(dir);
     var width = pos.width - 20;
     var height = pos.height - 20;
@@ -186,64 +186,73 @@ function hideRectangle() {
 }
 exports.hideRectangle = hideRectangle;
 function getPositionByBorderDir(dir) {
+    var _a, _b;
     var width, height, left, top;
-    switch (dir) {
-        case "lt": {
-            width = ClickGo.getWidth() / 2;
-            height = ClickGo.getHeight() / 2;
-            left = ClickGo.getLeft();
-            top = ClickGo.getTop();
-            break;
+    if (typeof dir === "string") {
+        switch (dir) {
+            case "lt": {
+                width = ClickGo.getWidth() / 2;
+                height = ClickGo.getHeight() / 2;
+                left = ClickGo.getLeft();
+                top = ClickGo.getTop();
+                break;
+            }
+            case "t": {
+                width = ClickGo.getWidth();
+                height = ClickGo.getHeight();
+                left = ClickGo.getLeft();
+                top = ClickGo.getTop();
+                break;
+            }
+            case "tr": {
+                width = ClickGo.getWidth() / 2;
+                height = ClickGo.getHeight() / 2;
+                left = ClickGo.getLeft() + ClickGo.getWidth() / 2;
+                top = ClickGo.getTop();
+                break;
+            }
+            case "r": {
+                width = ClickGo.getWidth() / 2;
+                height = ClickGo.getHeight();
+                left = ClickGo.getLeft() + ClickGo.getWidth() / 2;
+                top = ClickGo.getTop();
+                break;
+            }
+            case "rb": {
+                width = ClickGo.getWidth() / 2;
+                height = ClickGo.getHeight() / 2;
+                left = ClickGo.getLeft() + ClickGo.getWidth() / 2;
+                top = ClickGo.getTop() + ClickGo.getHeight() / 2;
+                break;
+            }
+            case "b": {
+                width = ClickGo.getWidth();
+                height = ClickGo.getHeight() / 2;
+                left = ClickGo.getLeft();
+                top = ClickGo.getTop() + ClickGo.getHeight() / 2;
+                break;
+            }
+            case "bl": {
+                width = ClickGo.getWidth() / 2;
+                height = ClickGo.getHeight() / 2;
+                left = ClickGo.getLeft();
+                top = ClickGo.getTop() + ClickGo.getHeight() / 2;
+                break;
+            }
+            case "l": {
+                width = ClickGo.getWidth() / 2;
+                height = ClickGo.getHeight();
+                left = ClickGo.getLeft();
+                top = ClickGo.getTop();
+                break;
+            }
         }
-        case "t": {
-            width = ClickGo.getWidth();
-            height = ClickGo.getHeight();
-            left = ClickGo.getLeft();
-            top = ClickGo.getTop();
-            break;
-        }
-        case "tr": {
-            width = ClickGo.getWidth() / 2;
-            height = ClickGo.getHeight() / 2;
-            left = ClickGo.getLeft() + ClickGo.getWidth() / 2;
-            top = ClickGo.getTop();
-            break;
-        }
-        case "r": {
-            width = ClickGo.getWidth() / 2;
-            height = ClickGo.getHeight();
-            left = ClickGo.getLeft() + ClickGo.getWidth() / 2;
-            top = ClickGo.getTop();
-            break;
-        }
-        case "rb": {
-            width = ClickGo.getWidth() / 2;
-            height = ClickGo.getHeight() / 2;
-            left = ClickGo.getLeft() + ClickGo.getWidth() / 2;
-            top = ClickGo.getTop() + ClickGo.getHeight() / 2;
-            break;
-        }
-        case "b": {
-            width = ClickGo.getWidth();
-            height = ClickGo.getHeight() / 2;
-            left = ClickGo.getLeft();
-            top = ClickGo.getTop() + ClickGo.getHeight() / 2;
-            break;
-        }
-        case "bl": {
-            width = ClickGo.getWidth() / 2;
-            height = ClickGo.getHeight() / 2;
-            left = ClickGo.getLeft();
-            top = ClickGo.getTop() + ClickGo.getHeight() / 2;
-            break;
-        }
-        case "l": {
-            width = ClickGo.getWidth() / 2;
-            height = ClickGo.getHeight();
-            left = ClickGo.getLeft();
-            top = ClickGo.getTop();
-            break;
-        }
+    }
+    else {
+        width = dir.width;
+        height = (_a = dir.height) !== null && _a !== void 0 ? _a : ClickGo.getHeight();
+        left = dir.left;
+        top = (_b = dir.top) !== null && _b !== void 0 ? _b : ClickGo.getTop();
     }
     return {
         "width": width,
@@ -273,7 +282,19 @@ function trigger(name, taskId, formId, opt) {
             break;
         }
         case "formCreated":
-        case "formRemoved":
+        case "formRemoved": {
+            if (ClickGo[name + "Handler"]) {
+                ClickGo[name + "Handler"](taskId, formId, opt.title, opt.icon);
+            }
+            for (var tTaskId in ClickGo.taskList) {
+                for (var tFormId in ClickGo.taskList[tTaskId].formList) {
+                    if (ClickGo.taskList[tTaskId].formList[tFormId].vue.eventList[name]) {
+                        ClickGo.taskList[tTaskId].formList[tFormId].vue.eventList[name](taskId, formId, opt.title, opt.icon);
+                    }
+                }
+            }
+            break;
+        }
         case "formTitleChanged": {
             if (ClickGo[name + "Handler"]) {
                 ClickGo[name + "Handler"](taskId, formId, opt.title);
@@ -282,6 +303,19 @@ function trigger(name, taskId, formId, opt) {
                 for (var tFormId in ClickGo.taskList[tTaskId].formList) {
                     if (ClickGo.taskList[tTaskId].formList[tFormId].vue.eventList[name]) {
                         ClickGo.taskList[tTaskId].formList[tFormId].vue.eventList[name](taskId, formId, opt.title);
+                    }
+                }
+            }
+            break;
+        }
+        case "formIconChanged": {
+            if (ClickGo[name + "Handler"]) {
+                ClickGo[name + "Handler"](taskId, formId, opt.icon);
+            }
+            for (var tTaskId in ClickGo.taskList) {
+                for (var tFormId in ClickGo.taskList[tTaskId].formList) {
+                    if (ClickGo.taskList[tTaskId].formList[tFormId].vue.eventList[name]) {
+                        ClickGo.taskList[tTaskId].formList[tFormId].vue.eventList[name](taskId, formId, opt.icon);
                     }
                 }
             }
@@ -569,8 +603,8 @@ function createForm(opt) {
                                     }
                                     randList_1 = [
                                         "cg-task" + opt.taskId + "_",
-                                        "cg-theme-task" + opt.taskId + "-" + name_1 + "_",
-                                        "cg-theme-global-" + name_1 + "_"
+                                        "cg-theme-global-" + name_1 + "_",
+                                        "cg-theme-task" + opt.taskId + "-" + name_1 + "_"
                                     ];
                                     if (rand_1 !== "") {
                                         randList_1.push(rand_1);
@@ -881,7 +915,7 @@ function createForm(opt) {
                         "vue": $vm
                     };
                     ClickGo.taskList[opt.taskId].formList[formId] = form;
-                    trigger("formCreated", opt.taskId, formId, { "title": $vm.$children[0].title });
+                    trigger("formCreated", opt.taskId, formId, { "title": $vm.$children[0].title, "icon": $vm.$children[0].iconData });
                     return [2, form];
             }
         });
@@ -1258,7 +1292,8 @@ function bindResize(e, opt) {
         "offsetTop": offsetTop,
         "offsetRight": offsetRight,
         "offsetBottom": offsetBottom,
-        "move": function (ox, oy) {
+        "start": opt.start,
+        "move": function (ox, oy, x, y, border) {
             return __awaiter(this, void 0, void 0, function () {
                 return __generator(this, function (_a) {
                     if (opt.dir === "tr" || opt.dir === "r" || opt.dir === "rb") {
@@ -1275,7 +1310,7 @@ function bindResize(e, opt) {
                         opt.height -= oy;
                         opt.top += oy;
                     }
-                    opt.move && opt.move(opt.left, opt.top, opt.width, opt.height);
+                    opt.move && opt.move(opt.left, opt.top, opt.width, opt.height, x, y, border);
                     return [2];
                 });
             });

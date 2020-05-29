@@ -59,7 +59,7 @@ export let data = {
     "stateMinData": false,
     "stateAbs": false,
 
-    "iconData": "",
+    "iconData": null,
 
     "widthData": 300,
     "heightData": 200,
@@ -90,11 +90,19 @@ export let data = {
 export let watch = {
     "icon": {
         handler: async function(this: IVue): Promise<void> {
+            let first: boolean = false;
+            if (this.iconData === null) {
+                first = true;
+            }
             if (this.icon === "") {
                 this.iconData = "";
-                return;
+            } else {
+                this.iconData = await this.getDataUrl(this.icon) ?? "";
             }
-            this.iconData = await this.getDataUrl(this.icon) ?? "";
+            if (!first) {
+                // --- 触发 formIconChanged 事件 ---
+                ClickGo.trigger("formIconChanged", this.taskId, this.formId, {"icon": this.iconData});
+            }
         },
         "immediate": true
     },
@@ -343,6 +351,28 @@ export let methods = {
         ClickGo.trigger("formStateMinChanged", this.taskId, this.formId, {"state": this.stateMinData});
         return true;
     },
+    // --- 竖版扩大 ---
+    maxVMethod: function(this: IVue) {
+        if (this.stateAbs) {
+            this.stateAbs = false;
+            this.topData = this.historyLocationMove.top;
+            this.$emit("update:top", this.topData);
+            this.heightData = this.historyLocationMove.height;
+            this.$emit("update:height", this.heightData);
+        } else {
+            this.stateAbs = true;
+            this.historyLocationMove = {
+                "width": this.widthData,
+                "height": this.heightData,
+                "left": this.leftData,
+                "top": this.topData
+            };
+            this.topData = ClickGo.getTop();
+            this.$emit("update:top", this.topData);
+            this.heightData = ClickGo.getHeight();
+            this.$emit("update:height", this.heightData);
+        }
+    },
     // --- 最大化 ---
     maxMethod: function(this: IVue): boolean {
         if (this.stateMinData) {
@@ -437,18 +467,47 @@ export let methods = {
     // --- 改变窗体大小 ---
     resizeMethod: function(this: IVue, e: MouseEvent | TouchEvent, dir: TBorderDir): void {
         if (e instanceof MouseEvent && ClickGo.hasTouch) {
-            e.preventDefault();
             return;
+        }
+        let isBorder: TBorderDir = "";
+        let top = this.topData;
+        let height = this.heightData;
+        if (dir !== "l" && dir !== "r") {
+            if (this.stateAbs) {
+                // --- 进行高度还原 ---
+                if (dir === "lt" || dir === "t" || dir === "tr") {
+                    height = this.historyLocationMove.top + this.historyLocationMove.height;
+                } else {
+                    top = this.historyLocationMove.top;
+                    height = ClickGo.getHeight() - top;
+                }
+            } else {
+                this.historyLocationMove = {
+                    "width": this.widthData,
+                    "height": this.heightData,
+                    "left": this.leftData,
+                    "top": this.topData
+                };
+            }
         }
         ClickGo.bindResize(e, {
             "left": this.leftData,
-            "top": this.topData,
+            "top": top,
             "width": this.widthData,
-            "height": this.heightData,
+            "height": height,
             "minWidth": parseInt(this.minWidth),
             "minHeight": parseInt(this.minHeight),
             "dir": dir,
-            "move": (left, top, width, height): void => {
+            "start": () => {
+                if (dir === "l" || dir === "r") {
+                    return;
+                }
+                if (this.stateAbs) {
+                    // --- 吸附拖动还原 ---
+                    this.stateAbs = false;
+                }
+            },
+            "move": async (left, top, width, height, x, y, border) => {
                 this.leftData = left;
                 this.$emit("update:left", left);
                 this.topData = top;
@@ -457,6 +516,48 @@ export let methods = {
                 this.$emit("update:width", width);
                 this.heightData = height;
                 this.$emit("update:height", height);
+                if (border !== "") {
+                    if (
+                        ((dir === "lt" || dir === "t" || dir === "tr") && (border === "lt" || border === "t" || border === "tr")) ||
+                        ((dir === "bl" || dir === "b" || dir === "rb") && (border === "bl" || border === "b" || border === "rb"))
+                    ) {
+                        if (isBorder === "") {
+                            await ClickGo.showCircular(x, y);
+                            await ClickGo.showRectangle(x, y, {
+                                "left": left,
+                                "width": width
+                            });
+                        } else {
+                            ClickGo.moveRectangle({
+                                "left": left,
+                                "width": width
+                            });
+                        }
+                        isBorder = border;
+                    } else {
+                        if (isBorder !== "") {
+                            isBorder = "";
+                            ClickGo.hideRectangle();
+                        }
+                    }
+                } else {
+                    if (isBorder !== "") {
+                        isBorder = "";
+                        ClickGo.hideRectangle();
+                    }
+                }
+            },
+            "end": () => {
+                if (isBorder !== "") {
+                    if (isBorder !== "l" && isBorder !== "r") {
+                        this.stateAbs = true;
+                        this.heightData = ClickGo.getHeight();
+                        this.$emit("update:height", this.heightData);
+                        this.topData = ClickGo.getTop();
+                        this.$emit("update:top", this.topData);
+                    }
+                    ClickGo.hideRectangle();
+                }
             }
         });
     },

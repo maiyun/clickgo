@@ -39,16 +39,16 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var fs = require("fs");
 function run() {
     return __awaiter(this, void 0, void 0, function () {
-        var list, _i, list_1, item, base, config, configJson, configBuffer, controlBufferArray, _a, _b, fpath, content, nameBuffer_1, controlBuffer, nameBuffer, fileBuffer;
-        return __generator(this, function (_c) {
-            switch (_c.label) {
+        var list, _i, list_1, item, base, config, configJson, configBuffer, controlBufferArray, _a, _b, fpath, content, nameBuffer_1, controlBuffer, nameBuffer, fileBuffer, _c, list_2, item, base, config, configJson, configBuffer, fileBufferArray, _d, _e, fpath, content, nameBuffer;
+        return __generator(this, function (_f) {
+            switch (_f.label) {
                 case 0: return [4, fs.promises.readdir("dist/sources/control/", {
                         "withFileTypes": true
                     })];
                 case 1:
-                    list = _c.sent();
+                    list = _f.sent();
                     _i = 0, list_1 = list;
-                    _c.label = 2;
+                    _f.label = 2;
                 case 2:
                     if (!(_i < list_1.length)) return [3, 10];
                     item = list_1[_i];
@@ -60,36 +60,91 @@ function run() {
                             "encoding": "utf-8"
                         })];
                 case 3:
-                    config = _c.sent();
+                    config = _f.sent();
                     configJson = JSON.parse(config);
                     configBuffer = Buffer.from(config);
-                    controlBufferArray = [new Uint8Array([12]), Buffer.from("/config.json"), Buffer.from(Uint32Array.from([configBuffer.byteLength]).buffer), configBuffer];
+                    controlBufferArray = [Uint8Array.from([12]), Buffer.from("/config.json"), Buffer.from(Uint32Array.from([configBuffer.byteLength]).buffer), configBuffer];
                     _a = 0, _b = configJson.files;
-                    _c.label = 4;
+                    _f.label = 4;
                 case 4:
                     if (!(_a < _b.length)) return [3, 7];
                     fpath = _b[_a];
                     return [4, fs.promises.readFile(base + fpath)];
                 case 5:
-                    content = _c.sent();
+                    content = _f.sent();
                     nameBuffer_1 = Buffer.from(fpath);
                     controlBufferArray.push(Uint8Array.from([nameBuffer_1.byteLength]), nameBuffer_1, Buffer.from(Uint32Array.from([content.byteLength]).buffer), content);
-                    _c.label = 6;
+                    _f.label = 6;
                 case 6:
                     _a++;
                     return [3, 4];
                 case 7:
                     controlBuffer = Buffer.concat(controlBufferArray);
                     nameBuffer = Buffer.from(configJson.name);
-                    fileBuffer = Buffer.concat([Buffer.from([192, 1]), Uint8Array.from([nameBuffer.byteLength]), nameBuffer, Buffer.from(Uint32Array.from([controlBuffer.byteLength]).buffer), controlBuffer]);
+                    fileBuffer = Buffer.concat([
+                        Uint8Array.from([192, 1]),
+                        Uint8Array.from([nameBuffer.byteLength]),
+                        nameBuffer,
+                        Buffer.from(Uint32Array.from([controlBuffer.byteLength]).buffer),
+                        controlBuffer
+                    ]);
                     return [4, fs.promises.writeFile("dist/control/" + configJson.name + ".cgc", fileBuffer)];
                 case 8:
-                    _c.sent();
-                    _c.label = 9;
+                    _f.sent();
+                    _f.label = 9;
                 case 9:
                     _i++;
                     return [3, 2];
-                case 10: return [2];
+                case 10: return [4, fs.promises.readdir("dist/sources/theme/", {
+                        "withFileTypes": true
+                    })];
+                case 11:
+                    list = _f.sent();
+                    _c = 0, list_2 = list;
+                    _f.label = 12;
+                case 12:
+                    if (!(_c < list_2.length)) return [3, 20];
+                    item = list_2[_c];
+                    if (item.isFile()) {
+                        return [3, 19];
+                    }
+                    base = "dist/sources/theme/" + item.name;
+                    return [4, fs.promises.readFile(base + "/config.json", {
+                            "encoding": "utf-8"
+                        })];
+                case 13:
+                    config = _f.sent();
+                    configJson = JSON.parse(config);
+                    configBuffer = Buffer.from(config);
+                    fileBufferArray = [
+                        Uint8Array.from([192, 2]),
+                        Uint8Array.from([12]),
+                        Buffer.from("/config.json"),
+                        Buffer.from(Uint32Array.from([configBuffer.byteLength]).buffer),
+                        configBuffer
+                    ];
+                    _d = 0, _e = configJson.files;
+                    _f.label = 14;
+                case 14:
+                    if (!(_d < _e.length)) return [3, 17];
+                    fpath = _e[_d];
+                    return [4, fs.promises.readFile(base + fpath)];
+                case 15:
+                    content = _f.sent();
+                    nameBuffer = Buffer.from(fpath);
+                    fileBufferArray.push(Uint8Array.from([nameBuffer.byteLength]), nameBuffer, Buffer.from(Uint32Array.from([content.byteLength]).buffer), content);
+                    _f.label = 16;
+                case 16:
+                    _d++;
+                    return [3, 14];
+                case 17: return [4, fs.promises.writeFile("dist/theme/" + configJson.name + ".cgt", Buffer.concat(fileBufferArray))];
+                case 18:
+                    _f.sent();
+                    _f.label = 19;
+                case 19:
+                    _c++;
+                    return [3, 12];
+                case 20: return [2];
             }
         });
     });

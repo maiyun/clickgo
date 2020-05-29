@@ -142,7 +142,7 @@ export function moveRectangle(dir: TBorderDir): void {
     if (dataDir === dir) {
         return;
     }
-    rectangleElement.setAttribute("data-dir", dir);
+    rectangleElement.setAttribute("data-dir", typeof dir === "string" ? dir : "o");
     let pos = getPositionByBorderDir(dir);
     let width = pos.width - 20;
     let height = pos.height - 20;
@@ -169,63 +169,70 @@ export function hideRectangle(): void {
  */
 export function getPositionByBorderDir(dir: TBorderDir): { "width": number; "height": number; "left": number; "top": number; } {
     let width!: number, height!: number, left!: number, top!: number;
-    switch (dir) {
-        case "lt": {
-            width = ClickGo.getWidth() / 2;
-            height = ClickGo.getHeight() / 2;
-            left = ClickGo.getLeft();
-            top = ClickGo.getTop();
-            break;
+    if (typeof dir === "string") {
+        switch (dir) {
+            case "lt": {
+                width = ClickGo.getWidth() / 2;
+                height = ClickGo.getHeight() / 2;
+                left = ClickGo.getLeft();
+                top = ClickGo.getTop();
+                break;
+            }
+            case "t": {
+                width = ClickGo.getWidth();
+                height = ClickGo.getHeight();
+                left = ClickGo.getLeft();
+                top = ClickGo.getTop();
+                break;
+            }
+            case "tr": {
+                width = ClickGo.getWidth() / 2;
+                height = ClickGo.getHeight() / 2;
+                left = ClickGo.getLeft() + ClickGo.getWidth() / 2;
+                top = ClickGo.getTop();
+                break;
+            }
+            case "r": {
+                width = ClickGo.getWidth() / 2;
+                height = ClickGo.getHeight();
+                left = ClickGo.getLeft() + ClickGo.getWidth() / 2;
+                top = ClickGo.getTop();
+                break;
+            }
+            case "rb": {
+                width = ClickGo.getWidth() / 2;
+                height = ClickGo.getHeight() / 2;
+                left = ClickGo.getLeft() + ClickGo.getWidth() / 2;
+                top = ClickGo.getTop() + ClickGo.getHeight() / 2;
+                break;
+            }
+            case "b": {
+                width = ClickGo.getWidth();
+                height = ClickGo.getHeight() / 2;
+                left = ClickGo.getLeft();
+                top = ClickGo.getTop() + ClickGo.getHeight() / 2;
+                break;
+            }
+            case "bl": {
+                width = ClickGo.getWidth() / 2;
+                height = ClickGo.getHeight() / 2;
+                left = ClickGo.getLeft();
+                top = ClickGo.getTop() + ClickGo.getHeight() / 2;
+                break;
+            }
+            case "l": {
+                width = ClickGo.getWidth() / 2;
+                height = ClickGo.getHeight();
+                left = ClickGo.getLeft();
+                top = ClickGo.getTop();
+                break;
+            }
         }
-        case "t": {
-            width = ClickGo.getWidth();
-            height = ClickGo.getHeight();
-            left = ClickGo.getLeft();
-            top = ClickGo.getTop();
-            break;
-        }
-        case "tr": {
-            width = ClickGo.getWidth() / 2;
-            height = ClickGo.getHeight() / 2;
-            left = ClickGo.getLeft() + ClickGo.getWidth() / 2;
-            top = ClickGo.getTop();
-            break;
-        }
-        case "r": {
-            width = ClickGo.getWidth() / 2;
-            height = ClickGo.getHeight();
-            left = ClickGo.getLeft() + ClickGo.getWidth() / 2;
-            top = ClickGo.getTop();
-            break;
-        }
-        case "rb": {
-            width = ClickGo.getWidth() / 2;
-            height = ClickGo.getHeight() / 2;
-            left = ClickGo.getLeft() + ClickGo.getWidth() / 2;
-            top = ClickGo.getTop() + ClickGo.getHeight() / 2;
-            break;
-        }
-        case "b": {
-            width = ClickGo.getWidth();
-            height = ClickGo.getHeight() / 2;
-            left = ClickGo.getLeft();
-            top = ClickGo.getTop() + ClickGo.getHeight() / 2;
-            break;
-        }
-        case "bl": {
-            width = ClickGo.getWidth() / 2;
-            height = ClickGo.getHeight() / 2;
-            left = ClickGo.getLeft();
-            top = ClickGo.getTop() + ClickGo.getHeight() / 2;
-            break;
-        }
-        case "l": {
-            width = ClickGo.getWidth() / 2;
-            height = ClickGo.getHeight();
-            left = ClickGo.getLeft();
-            top = ClickGo.getTop();
-            break;
-        }
+    } else {
+        width = dir.width;
+        height = dir.height ?? ClickGo.getHeight();
+        left = dir.left;
+        top = dir.top ?? ClickGo.getTop();
     }
     return {
         "width": width,
@@ -241,7 +248,7 @@ let clickgoFiles: IFileList = {};
 /**
  * --- 触发系统级事件 ---
  */
-export function trigger(name: TSystemEvent, taskId: number = 0, formId: number = 0, opt: { "title"?: string; "state"?: boolean; } = {}): void {
+export function trigger(name: TSystemEvent, taskId: number = 0, formId: number = 0, opt: { "title"?: string; "state"?: boolean; "icon"?: string; } = {}): void {
     switch (name) {
         case "screenResize": {
             if (ClickGo[name + "Handler"]) {
@@ -257,7 +264,19 @@ export function trigger(name: TSystemEvent, taskId: number = 0, formId: number =
             break;
         }
         case "formCreated":
-        case "formRemoved":
+        case "formRemoved": {
+            if (ClickGo[name + "Handler"]) {
+                ClickGo[name + "Handler"](taskId, formId, opt.title, opt.icon);
+            }
+            for (let tTaskId in ClickGo.taskList) {
+                for (let tFormId in ClickGo.taskList[tTaskId].formList) {
+                    if (ClickGo.taskList[tTaskId].formList[tFormId].vue.eventList[name]) {
+                        ClickGo.taskList[tTaskId].formList[tFormId].vue.eventList[name](taskId, formId, opt.title, opt.icon);
+                    }
+                }
+            }
+            break;
+        }
         case "formTitleChanged": {
             if (ClickGo[name + "Handler"]) {
                 ClickGo[name + "Handler"](taskId, formId, opt.title);
@@ -266,6 +285,19 @@ export function trigger(name: TSystemEvent, taskId: number = 0, formId: number =
                 for (let tFormId in ClickGo.taskList[tTaskId].formList) {
                     if (ClickGo.taskList[tTaskId].formList[tFormId].vue.eventList[name]) {
                         ClickGo.taskList[tTaskId].formList[tFormId].vue.eventList[name](taskId, formId, opt.title);
+                    }
+                }
+            }
+            break;
+        }
+        case "formIconChanged": {
+            if (ClickGo[name + "Handler"]) {
+                ClickGo[name + "Handler"](taskId, formId, opt.icon);
+            }
+            for (let tTaskId in ClickGo.taskList) {
+                for (let tFormId in ClickGo.taskList[tTaskId].formList) {
+                    if (ClickGo.taskList[tTaskId].formList[tFormId].vue.eventList[name]) {
+                        ClickGo.taskList[tTaskId].formList[tFormId].vue.eventList[name](taskId, formId, opt.icon);
                     }
                 }
             }
@@ -496,8 +528,8 @@ export async function createForm(opt: ICreateFormOptions): Promise<false | IForm
             // --- 给 layout 的 class 增加前置 ---
             let randList = [
                 "cg-task" + opt.taskId + "_",
-                "cg-theme-task" + opt.taskId + "-" + name + "_",
-                "cg-theme-global-" + name + "_"
+                "cg-theme-global-" + name + "_",
+                "cg-theme-task" + opt.taskId + "-" + name + "_"
             ];
             if (rand !== "") {
                 randList.push(rand);
@@ -744,7 +776,7 @@ export async function createForm(opt: ICreateFormOptions): Promise<false | IForm
     // --- 挂载 form ---
     ClickGo.taskList[opt.taskId].formList[formId] = form;
     // --- 触发 formCreated 事件 ---
-    trigger("formCreated", opt.taskId, formId, {"title": $vm.$children[0].title});
+    trigger("formCreated", opt.taskId, formId, {"title": $vm.$children[0].title, "icon": $vm.$children[0].iconData});
     return form;
 }
 
@@ -1107,7 +1139,7 @@ export function bindMove(e: MouseEvent | TouchEvent, opt: { "left"?: number; "to
  * @param moveCb 拖动时的回调
  * @param endCb 结束时的回调
  */
-export function bindResize(e: MouseEvent | TouchEvent, opt: { "left": number; "top": number; "width": number; "height": number; "minWidth"?: number; "minHeight"?: number; "offsetObject"?: HTMLElement; "dir": TBorderDir; "move"?: (left: number, top: number, width: number, height: number) => void; "end"?: () => void; }): void {
+export function bindResize(e: MouseEvent | TouchEvent, opt: { "left": number; "top": number; "width": number; "height": number; "minWidth"?: number; "minHeight"?: number; "offsetObject"?: HTMLElement; "dir": TBorderDir; "start"?: (x: number, y: number) => void | Promise<void> | boolean | Promise<boolean>; "move"?: (left: number, top: number, width: number, height: number, x: number, y: number, border: TBorderDir) => void; "end"?: () => void; }): void {
     opt.minWidth = opt.minWidth ?? 0;
     opt.minHeight = opt.minHeight ?? 0;
     /** --- 当前鼠标位置 x --- */
@@ -1145,7 +1177,8 @@ export function bindResize(e: MouseEvent | TouchEvent, opt: { "left": number; "t
         "offsetTop": offsetTop,
         "offsetRight": offsetRight,
         "offsetBottom": offsetBottom,
-        "move": async function(ox, oy): Promise<void> {
+        "start": opt.start,
+        "move": async function(ox, oy, x, y, border): Promise<void> {
             if (opt.dir === "tr" || opt.dir === "r" || opt.dir === "rb") {
                 opt.width += ox;
             } else if (opt.dir === "bl" || opt.dir === "l" || opt.dir === "lt") {
@@ -1158,7 +1191,7 @@ export function bindResize(e: MouseEvent | TouchEvent, opt: { "left": number; "t
                 opt.height -= oy;
                 opt.top += oy;
             }
-            opt.move && opt.move(opt.left, opt.top, opt.width, opt.height);
+            opt.move && opt.move(opt.left, opt.top, opt.width, opt.height, x, y, border);
         },
         "end": opt.end
     });

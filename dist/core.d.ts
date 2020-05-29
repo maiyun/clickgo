@@ -11,6 +11,7 @@ export declare function getPositionByBorderDir(dir: TBorderDir): {
 export declare function trigger(name: TSystemEvent, taskId?: number, formId?: number, opt?: {
     "title"?: string;
     "state"?: boolean;
+    "icon"?: string;
 }): void;
 export declare function fetchClickGoControl(path: string): Promise<boolean>;
 export declare function fetchApp(path: string): Promise<null | IAppPkg>;
@@ -51,7 +52,8 @@ export declare function bindResize(e: MouseEvent | TouchEvent, opt: {
     "minHeight"?: number;
     "offsetObject"?: HTMLElement;
     "dir": TBorderDir;
-    "move"?: (left: number, top: number, width: number, height: number) => void;
+    "start"?: (x: number, y: number) => void | Promise<void> | boolean | Promise<boolean>;
+    "move"?: (left: number, top: number, width: number, height: number, x: number, y: number, border: TBorderDir) => void;
     "end"?: () => void;
 }): void;
 export declare function setGlobalCursor(type?: string): void;
