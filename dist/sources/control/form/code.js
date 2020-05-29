@@ -571,43 +571,41 @@ exports.methods = {
                             this.$emit("update:width", width);
                             this.heightData = height;
                             this.$emit("update:height", height);
-                            if (!(border !== "")) return [3, 7];
+                            if (!(border !== "")) return [3, 6];
                             if (!(((dir === "lt" || dir === "t" || dir === "tr") && (border === "lt" || border === "t" || border === "tr")) ||
-                                ((dir === "bl" || dir === "b" || dir === "rb") && (border === "bl" || border === "b" || border === "rb")))) return [3, 5];
-                            if (!(isBorder === "")) return [3, 3];
+                                ((dir === "bl" || dir === "b" || dir === "rb") && (border === "bl" || border === "b" || border === "rb")))) return [3, 4];
+                            if (!(isBorder === "")) return [3, 2];
                             isBorder = border;
-                            return [4, ClickGo.showCircular(x, y)];
-                        case 1:
-                            _a.sent();
+                            ClickGo.showCircular(x, y);
                             return [4, ClickGo.showRectangle(x, y, {
                                     "left": left,
                                     "width": width
                                 })];
-                        case 2:
+                        case 1:
                             _a.sent();
-                            return [3, 4];
-                        case 3:
+                            return [3, 3];
+                        case 2:
                             isBorder = border;
                             ClickGo.moveRectangle({
                                 "left": left,
                                 "width": width
                             });
-                            _a.label = 4;
-                        case 4: return [3, 6];
-                        case 5:
+                            _a.label = 3;
+                        case 3: return [3, 5];
+                        case 4:
                             if (isBorder !== "") {
                                 isBorder = "";
                                 ClickGo.hideRectangle();
                             }
-                            _a.label = 6;
-                        case 6: return [3, 8];
-                        case 7:
+                            _a.label = 5;
+                        case 5: return [3, 7];
+                        case 6:
                             if (isBorder !== "") {
                                 isBorder = "";
                                 ClickGo.hideRectangle();
                             }
-                            _a.label = 8;
-                        case 8: return [2];
+                            _a.label = 7;
+                        case 7: return [2];
                     }
                 });
             }); },

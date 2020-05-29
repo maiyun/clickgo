@@ -524,7 +524,7 @@ export let methods = {
                     ) {
                         if (isBorder === "") {
                             isBorder = border;
-                            await ClickGo.showCircular(x, y);
+                            ClickGo.showCircular(x, y);
                             await ClickGo.showRectangle(x, y, {
                                 "left": left,
                                 "width": width
