@@ -556,7 +556,7 @@ function createForm(opt) {
                     if (!controlBlob) {
                         return [2, false];
                     }
-                    return [4, Tool.ControlBlob2Pkg(controlBlob)];
+                    return [4, Tool.controlBlob2Pkg(controlBlob)];
                 case 2:
                     controlPkg = _h.sent();
                     if (!controlPkg) {
@@ -844,6 +844,8 @@ function createForm(opt) {
                                 }
                             });
                         });
+                    };
+                    methods.setTheme = function (path) {
                     };
                     return [4, new Promise(function (resolve) {
                             new Vue({

@@ -15,13 +15,74 @@ styleListElement.insertAdjacentHTML("beforeend", `<style class="cg-global">
 .cg-rectangle {box-sizing: border-box; position: fixed; z-index: 20020001; border: solid 1px rgba(118, 185, 237, .7); box-shadow: 0 0 10px rgba(0, 0, 0, .3); background: rgba(118, 185, 237, .1); pointer-events: none; opacity: 0;}
 </style>`);
 
+async function themeBlob2Theme(blob: Blob): Promise<false | ITheme> {
+    // --- 判断是否是 cgt 文件 ---
+    let begin = blob.slice(0, 2);
+    let beginUint = new Uint8Array(await blob2ArrayBuffer(begin));
+    if (beginUint[0] !== 192 || beginUint[1] !== 2) {
+        // --- 不是 cgt 文件 ---
+        return false;
+    }
+    // --- 开始读取文件 ---
+    let files: IFileList = {};
+    /** --- 配置文件 --- */
+    let config!: IThemeConfig;
+    /** --- 当前游标 --- */
+    let cursor: number = 2;
+    while (cursor < blob.size) {
+        let pathSize = new Uint8Array(await blob2ArrayBuffer(blob.slice(cursor, ++cursor)));
+        let path = await blob2Text(blob.slice(cursor, cursor += pathSize[0]));
+
+        let contentSize = new Uint32Array(await blob2ArrayBuffer(blob.slice(cursor, cursor += 4)));
+        let contentBolb = blob.slice(cursor, cursor += contentSize[0]);
+
+        if (path === "/config.json") {
+            config = JSON.parse(await blob2Text(contentBolb));
+        } else {
+            files[path] = contentBolb;
+        }
+    }
+    if (!config) {
+        return false;
+    }
+
+    return {
+        "type": "theme",
+        "config": config,
+        "files": files
+    };
+}
+
 let globalThemeStyle: HTMLStyleElement = document.getElementById("cg-global-theme") as HTMLStyleElement;
 /**
  * --- 将 CSS 写入全局 ---
  * @param style 要写入的样式
  */
-export function setGlobalTheme(style: string = ""): void {
-    globalThemeStyle.innerHTML = style;
+export function setGlobalTheme(file: Buffer): void {
+    
+}
+
+/**
+ * --- 单任务加载 theme ---
+ * @param style theme 样式
+ * @param taskId 任务 ID
+ */
+export function loadTaskTheme(style: string, taskId: number): void {
+    styleListElement.insertAdjacentHTML("beforeend", `<style class="cg-task${taskId} cg-theme">${style}</style>`);
+}
+
+/**
+ * --- 清除一个 task 中所有加载的 theme
+ * @param taskId task id
+ */
+export function clearTaskTheme(taskId: number): void {
+    for (let i = 0; i < styleListElement.children.length; ++i) {
+        let styleElement = styleListElement.children.item(i) as HTMLStyleElement;
+        if (styleElement.className.indexOf("cg-task" + taskId) === -1) {
+            return;
+        }
+        styleListElement.removeChild(styleElement);
+    }
 }
 
 /**
@@ -125,7 +186,7 @@ export function isAppPkg(o: string | object): o is IAppPkg {
  * --- 将 cgc 文件转换为 pkg 对象 ---
  * @param blob 文件 blob
  */
-export async function ControlBlob2Pkg(blob: Blob): Promise<false | IControlPkg> {
+export async function controlBlob2Pkg(blob: Blob): Promise<false | IControlPkg> {
     // --- 判断是否是 cgc 文件 ---
     let begin = blob.slice(0, 2);
     let beginUint = new Uint8Array(await blob2ArrayBuffer(begin));
@@ -134,7 +195,7 @@ export async function ControlBlob2Pkg(blob: Blob): Promise<false | IControlPkg> 
         return false;
     }
     // --- 创建空白 pkg 对象 ---
-    let contrpPkg: IControlPkg = {};
+    let controlPkg: IControlPkg = {};
     /** --- 当前游标 --- */
     let cursor: number = 2;
     while (cursor < blob.size) {
@@ -167,13 +228,13 @@ export async function ControlBlob2Pkg(blob: Blob): Promise<false | IControlPkg> 
             return false;
         }
 
-        contrpPkg[name] = {
+        controlPkg[name] = {
             "type": "control",
             "config": config,
             "files": files
         };
     }
-    return contrpPkg;
+    return controlPkg;
 }
 
 /**

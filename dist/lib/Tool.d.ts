@@ -1,11 +1,14 @@
-export declare function setGlobalTheme(style?: string): void;
+/// <reference types="node" />
+export declare function setGlobalTheme(file: Buffer): void;
+export declare function loadTaskTheme(style: string, taskId: number): void;
+export declare function clearTaskTheme(taskId: number): void;
 export declare function pushStyle(style: string, taskId: number, formId?: number): void;
 export declare function removeStyle(taskId: number, formId?: number): void;
 export declare function purify(text: string): string;
 export declare function parsePath(path: string): string;
 export declare function isControlPkg(o: string | object): o is IControlPkg;
 export declare function isAppPkg(o: string | object): o is IAppPkg;
-export declare function ControlBlob2Pkg(blob: Blob): Promise<false | IControlPkg>;
+export declare function controlBlob2Pkg(blob: Blob): Promise<false | IControlPkg>;
 export declare function stylePrepend(style: string, rand?: string): {
     "rand": string;
     "style": string;

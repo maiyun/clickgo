@@ -42,12 +42,78 @@ document.getElementsByTagName("body")[0].appendChild(styleListElement);
 styleListElement.insertAdjacentHTML("beforeend", "<style id=\"cg-global-cursor\"></style>");
 styleListElement.insertAdjacentHTML("beforeend", "<style id=\"cg-global-theme\"></style>");
 styleListElement.insertAdjacentHTML("beforeend", "<style class=\"cg-global\">\n.cg-form-list {position: fixed; left: 0; top: 0; z-index: 20020000; width: 0; height: 0;}\n\n.cg-form-wrap {cursor: default;}\n.cg-form-wrap, .cg-form-wrap * {box-sizing: border-box !important; -webkit-tap-highlight-color: rgba(0, 0, 0, 0);}\n.cg-form-wrap, .cg-form-wrap input, .cg-form-wrap textarea {font-family: -apple-system,BlinkMacSystemFont,opensans,Optima,\"Microsoft Yahei\",sans-serif; font-size: 12px; line-height: 1;}\n\n.cg-circular {box-sizing: border-box; position: fixed; z-index: 20020002; border: solid 3px #76b9ed; border-radius: 50%; filter: drop-shadow(0 0 7px #76b9ed); pointer-events: none; opacity: 0;}\n.cg-rectangle {box-sizing: border-box; position: fixed; z-index: 20020001; border: solid 1px rgba(118, 185, 237, .7); box-shadow: 0 0 10px rgba(0, 0, 0, .3); background: rgba(118, 185, 237, .1); pointer-events: none; opacity: 0;}\n</style>");
+function themeBlob2Theme(blob) {
+    return __awaiter(this, void 0, void 0, function () {
+        var begin, beginUint, _a, files, config, cursor, pathSize, _b, path, contentSize, _c, contentBolb, _d, _e;
+        return __generator(this, function (_f) {
+            switch (_f.label) {
+                case 0:
+                    begin = blob.slice(0, 2);
+                    _a = Uint8Array.bind;
+                    return [4, blob2ArrayBuffer(begin)];
+                case 1:
+                    beginUint = new (_a.apply(Uint8Array, [void 0, _f.sent()]))();
+                    if (beginUint[0] !== 192 || beginUint[1] !== 2) {
+                        return [2, false];
+                    }
+                    files = {};
+                    cursor = 2;
+                    _f.label = 2;
+                case 2:
+                    if (!(cursor < blob.size)) return [3, 9];
+                    _b = Uint8Array.bind;
+                    return [4, blob2ArrayBuffer(blob.slice(cursor, ++cursor))];
+                case 3:
+                    pathSize = new (_b.apply(Uint8Array, [void 0, _f.sent()]))();
+                    return [4, blob2Text(blob.slice(cursor, cursor += pathSize[0]))];
+                case 4:
+                    path = _f.sent();
+                    _c = Uint32Array.bind;
+                    return [4, blob2ArrayBuffer(blob.slice(cursor, cursor += 4))];
+                case 5:
+                    contentSize = new (_c.apply(Uint32Array, [void 0, _f.sent()]))();
+                    contentBolb = blob.slice(cursor, cursor += contentSize[0]);
+                    if (!(path === "/config.json")) return [3, 7];
+                    _e = (_d = JSON).parse;
+                    return [4, blob2Text(contentBolb)];
+                case 6:
+                    config = _e.apply(_d, [_f.sent()]);
+                    return [3, 8];
+                case 7:
+                    files[path] = contentBolb;
+                    _f.label = 8;
+                case 8: return [3, 2];
+                case 9:
+                    if (!config) {
+                        return [2, false];
+                    }
+                    return [2, {
+                            "type": "theme",
+                            "config": config,
+                            "files": files
+                        }];
+            }
+        });
+    });
+}
 var globalThemeStyle = document.getElementById("cg-global-theme");
-function setGlobalTheme(style) {
-    if (style === void 0) { style = ""; }
-    globalThemeStyle.innerHTML = style;
+function setGlobalTheme(file) {
 }
 exports.setGlobalTheme = setGlobalTheme;
+function loadTaskTheme(style, taskId) {
+    styleListElement.insertAdjacentHTML("beforeend", "<style class=\"cg-task" + taskId + " cg-theme\">" + style + "</style>");
+}
+exports.loadTaskTheme = loadTaskTheme;
+function clearTaskTheme(taskId) {
+    for (var i = 0; i < styleListElement.children.length; ++i) {
+        var styleElement = styleListElement.children.item(i);
+        if (styleElement.className.indexOf("cg-task" + taskId) === -1) {
+            return;
+        }
+        styleListElement.removeChild(styleElement);
+    }
+}
+exports.clearTaskTheme = clearTaskTheme;
 function pushStyle(style, taskId, formId) {
     if (formId === void 0) { formId = 0; }
     styleListElement.insertAdjacentHTML("beforeend", "<style class=\"cg-task" + taskId + (formId > 0 ? " cg-form" + formId : "") + "\">" + style + "</style>");
@@ -119,9 +185,9 @@ function isAppPkg(o) {
     return false;
 }
 exports.isAppPkg = isAppPkg;
-function ControlBlob2Pkg(blob) {
+function controlBlob2Pkg(blob) {
     return __awaiter(this, void 0, void 0, function () {
-        var begin, beginUint, _a, contrpPkg, cursor, nameSize, _b, name_1, bodySize, _c, bodyBlob, files, config, bodyCursor, pathSize, _d, path, contentSize, _e, contentBolb, _f, _g;
+        var begin, beginUint, _a, controlPkg, cursor, nameSize, _b, name_1, bodySize, _c, bodyBlob, files, config, bodyCursor, pathSize, _d, path, contentSize, _e, contentBolb, _f, _g;
         return __generator(this, function (_h) {
             switch (_h.label) {
                 case 0:
@@ -133,7 +199,7 @@ function ControlBlob2Pkg(blob) {
                     if (beginUint[0] !== 192 || beginUint[1] !== 1) {
                         return [2, false];
                     }
-                    contrpPkg = {};
+                    controlPkg = {};
                     cursor = 2;
                     _h.label = 2;
                 case 2:
@@ -182,18 +248,18 @@ function ControlBlob2Pkg(blob) {
                     if (!config) {
                         return [2, false];
                     }
-                    contrpPkg[name_1] = {
+                    controlPkg[name_1] = {
                         "type": "control",
                         "config": config,
                         "files": files
                     };
                     return [3, 2];
-                case 14: return [2, contrpPkg];
+                case 14: return [2, controlPkg];
             }
         });
     });
 }
-exports.ControlBlob2Pkg = ControlBlob2Pkg;
+exports.controlBlob2Pkg = controlBlob2Pkg;
 function stylePrepend(style, rand) {
     if (rand === void 0) { rand = ""; }
     if (rand === "") {

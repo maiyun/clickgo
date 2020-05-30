@@ -353,13 +353,19 @@ export let methods = {
         return true;
     },
     // --- 竖版扩大 ---
-    maxVMethod: function(this: IVue): void {
+    maxVMethod: function(this: IVue, dbl: boolean): void {
         if (this.stateAbs) {
             this.stateAbs = false;
             this.topData = this.historyLocationMove.top;
             this.$emit("update:top", this.topData);
             this.heightData = this.historyLocationMove.height;
             this.$emit("update:height", this.heightData);
+            if (dbl) {
+                this.leftData = this.historyLocationMove.left;
+                this.$emit("update:top", this.leftData);
+                this.widthData = this.historyLocationMove.width;
+                this.$emit("update:width", this.widthData);
+            }
         } else {
             this.stateAbs = true;
             this.historyLocationMove = {

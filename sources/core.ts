@@ -491,7 +491,7 @@ export async function createForm(opt: ICreateFormOptions): Promise<false | IForm
         if (!controlBlob) {
             return false;
         }
-        let controlPkg = await Tool.ControlBlob2Pkg(controlBlob);
+        let controlPkg = await Tool.controlBlob2Pkg(controlBlob);
         if (!controlPkg) {
             return false;
         }
@@ -700,6 +700,10 @@ export async function createForm(opt: ICreateFormOptions): Promise<false | IForm
     methods.getDataUrl = async function(this: IVue, file: string): Promise<string | null> {
         let f = ClickGo.taskList[this.taskId].appPkg.files[file];
         return f ? await Tool.blob2DataUrl(f) : null;
+    };
+    // --- 设置主题 ---
+    methods.setTheme = function(this: IVue, path: string): void {
+
     };
     let $vm: IVue | false = await new Promise(function(resolve) {
         new Vue({
