@@ -542,7 +542,7 @@ function runApp(path, opt) {
                 case 8:
                     if (!(_i < _d.length)) return [3, 11];
                     theme = _d[_i];
-                    blob = appPkg.files[theme];
+                    blob = appPkg.files[theme + ".cgt"];
                     if (!blob) {
                         return [3, 10];
                     }
@@ -835,7 +835,7 @@ function createForm(opt) {
                     methods.closeForm = function () {
                         removeForm(this.formId);
                     };
-                    methods.bindMove = function (e) {
+                    methods.bindFormDrag = function (e) {
                         this.$children[0].moveMethod(e);
                     };
                     methods.setSystemEventListener = function (name, func) {
@@ -1295,6 +1295,7 @@ function bindMove(e, opt) {
             setGlobalCursor();
             window.removeEventListener("mousemove", move);
             window.removeEventListener("mouseup", end);
+            opt.up && opt.up();
             if (isStart) {
                 opt.end && opt.end();
             }
@@ -1307,6 +1308,7 @@ function bindMove(e, opt) {
             setGlobalCursor();
             window.removeEventListener("touchmove", move);
             window.removeEventListener("touchend", end);
+            opt.up && opt.up();
             if (isStart) {
                 opt.end && opt.end();
             }

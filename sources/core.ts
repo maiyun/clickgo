@@ -484,7 +484,7 @@ export async function runApp(path: string | IAppPkg, opt?: {
     // --- 是否要加载特立独行的 theme ---
     if (appPkg.config.theme) {
         for (let theme of appPkg.config.theme) {
-            let blob = appPkg.files[theme];
+            let blob = appPkg.files[theme + ".cgt"];
             if (!blob) {
                 continue;
             }
@@ -705,7 +705,7 @@ export async function createForm(opt: ICreateFormOptions): Promise<false | IForm
     methods.closeForm = function(this: IVue): void {
         removeForm(this.formId);
     };
-    methods.bindMove = function(this: IVue, e: MouseEvent | TouchEvent): void {
+    methods.bindFormDrag = function(this: IVue, e: MouseEvent | TouchEvent): void {
         this.$children[0].moveMethod(e);
     };
     methods.setSystemEventListener = function(this: IVue, name: TSystemEvent, func: any): void {
@@ -900,7 +900,7 @@ export function endTask(taskId: number): boolean {
  * @param moveCb 拖动时的回调
  * @param endCb 结束时的回调
  */
-export function bindMove(e: MouseEvent | TouchEvent, opt: { "left"?: number; "top"?: number; "right"?: number; "bottom"?: number; "offsetLeft"?: number; "offsetTop"?: number; "offsetRight"?: number; "offsetBottom"?: number; "objectLeft"?: number; "objectTop"?: number; "objectWidth"?: number; "objectHeight"?: number; "object"?: HTMLElement; "offsetObject"?: HTMLElement; "start"?: (x: number, y: number) => void | Promise<void> | boolean | Promise<boolean>; "move"?: (ox: number, oy: number, x: number, y: number, border: TBorderDir) => void; "end"?: () => void; "borderIn"?: (x: number, y: number, border: TBorderDir) => void; "borderOut"?: () => void; }): void {
+export function bindMove(e: MouseEvent | TouchEvent, opt: { "left"?: number; "top"?: number; "right"?: number; "bottom"?: number; "offsetLeft"?: number; "offsetTop"?: number; "offsetRight"?: number; "offsetBottom"?: number; "objectLeft"?: number; "objectTop"?: number; "objectWidth"?: number; "objectHeight"?: number; "object"?: HTMLElement; "offsetObject"?: HTMLElement; "start"?: (x: number, y: number) => void | Promise<void> | boolean | Promise<boolean>; "move"?: (ox: number, oy: number, x: number, y: number, border: TBorderDir) => void; "end"?: () => void; "up"?: () => void; "borderIn"?: (x: number, y: number, border: TBorderDir) => void; "borderOut"?: () => void; }): void {
     setGlobalCursor(getComputedStyle(e.target as Element).cursor);
     /** --- 上一次的坐标 --- */
     let tx: number, ty: number;
@@ -1153,6 +1153,7 @@ export function bindMove(e: MouseEvent | TouchEvent, opt: { "left"?: number; "to
             setGlobalCursor();
             window.removeEventListener("mousemove", move);
             window.removeEventListener("mouseup", end);
+            opt.up && opt.up();
             if (isStart) {
                 opt.end && opt.end();
             }
@@ -1165,6 +1166,7 @@ export function bindMove(e: MouseEvent | TouchEvent, opt: { "left"?: number; "to
             setGlobalCursor();
             window.removeEventListener("touchmove", move);
             window.removeEventListener("touchend", end);
+            opt.up && opt.up();
             if (isStart) {
                 opt.end && opt.end();
             }

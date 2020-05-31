@@ -140,6 +140,20 @@ export let methods = {
         if (e instanceof MouseEvent && ClickGo.hasTouch) {
             return;
         }
+        // --- 绑定双击事件 ---
+        let el = e.currentTarget as HTMLElement;
+        let dataHasDbl = el.getAttribute("data-has-dbl");
+        if (!dataHasDbl) {
+            el.setAttribute("data-has-dbl", "yes");
+            el.addEventListener("dblclick", () => {
+                if (this.stateAbs) {
+                    this.maxVMethod(true);
+                } else {
+                    this.maxMethod();
+                }
+            });
+        }
+        /** --- 当前所处边框 --- */
         let isBorder: TBorderDir = "";
         ClickGo.bindMove(e, {
             "start": (x, y) => {
@@ -288,6 +302,9 @@ export let methods = {
                     }
                     ClickGo.hideRectangle();
                 }
+            },
+            "up": () => {
+                
             }
         });
     },

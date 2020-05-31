@@ -87,6 +87,7 @@ declare const ClickGo: {
         "start"?: (x: number, y: number) => void | Promise<void> | boolean | Promise<boolean>;
         "move"?: (ox: number, oy: number, x: number, y: number, border: TBorderDir) => void;
         "end"?: () => void;
+        "up"?: () => void;
         "borderIn"?: (x: number, y: number, border: TBorderDir) => void;
         "borderOut"?: () => void;
     }) => void;

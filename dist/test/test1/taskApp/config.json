@@ -1,5 +1,5 @@
 {
-    "name": "Clickgo Test",
+    "name": "Clickgo Task Viewer",
     "ver": 1,
     "version": "0.1",
     "author": "clickgo",
@@ -10,7 +10,9 @@
         "/clickgo/control/label",
         "/clickgo/control/layout"
     ],
-    "styleGlobal": "/global",
+    "theme": [
+        "/clickgo/theme/W10A"
+    ],
     "mainLayout": "/form/main",
 
     "files": [
@@ -18,18 +20,9 @@
         "/clickgo/control/button.cgc",
         "/clickgo/control/label.cgc",
         "/clickgo/control/layout.cgc",
+        "/clickgo/theme/W10A.cgt",
 
-        "/form/aero.js",
-        "/form/aero.xml",
-        "/form/borderNone.xml",
-        "/form/error.xml",
-        "/form/main.css",
         "/form/main.js",
-        "/form/main.xml",
-        "/form/max.xml",
-        "/form/onlyClose.xml",
-        "/form/thin.xml",
-        "/res/icon.svg",
-        "/global.css"
+        "/form/main.xml"
     ]
 }

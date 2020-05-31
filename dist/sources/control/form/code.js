@@ -182,6 +182,19 @@ exports.methods = {
         if (e instanceof MouseEvent && ClickGo.hasTouch) {
             return;
         }
+        var el = e.currentTarget;
+        var dataHasDbl = el.getAttribute("data-has-dbl");
+        if (!dataHasDbl) {
+            el.setAttribute("data-has-dbl", "yes");
+            el.addEventListener("dblclick", function () {
+                if (_this.stateAbs) {
+                    _this.maxVMethod(true);
+                }
+                else {
+                    _this.maxMethod();
+                }
+            });
+        }
         var isBorder = "";
         ClickGo.bindMove(e, {
             "start": function (x, y) {
@@ -340,6 +353,8 @@ exports.methods = {
                     }
                     ClickGo.hideRectangle();
                 }
+            },
+            "up": function () {
             }
         });
     },
