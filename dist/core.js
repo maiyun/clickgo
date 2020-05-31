@@ -865,6 +865,20 @@ function createForm(opt) {
                     methods.clearTheme = function () {
                         Tool.clearTaskTheme(this.taskId);
                     };
+                    methods.setTheme = function (path) {
+                        return __awaiter(this, void 0, void 0, function () {
+                            return __generator(this, function (_a) {
+                                switch (_a.label) {
+                                    case 0:
+                                        Tool.clearTaskTheme(this.taskId);
+                                        return [4, Tool.loadTaskTheme(path, this.taskId)];
+                                    case 1:
+                                        _a.sent();
+                                        return [2];
+                                }
+                            });
+                        });
+                    };
                     return [4, new Promise(function (resolve) {
                             new Vue({
                                 "el": el,

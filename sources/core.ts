@@ -720,6 +720,11 @@ export async function createForm(opt: ICreateFormOptions): Promise<false | IForm
     methods.clearTheme = function(this: IVue): void {
         Tool.clearTaskTheme(this.taskId);
     };
+    // --- 加载全新主题（老主题会被清除） ---
+    methods.setTheme = async function(this: IVue, path: string | Blob): Promise<void> {
+        Tool.clearTaskTheme(this.taskId);
+        await Tool.loadTaskTheme(path, this.taskId);
+    };
     let $vm: IVue | false = await new Promise(function(resolve) {
         new Vue({
             "el": el,
