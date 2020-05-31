@@ -119,6 +119,17 @@ const ClickGo: {
     getPositionByBorderDir: (dir: TBorderDir) => { "width": number; "height": number; "left": number; "top": number; };
 
     /**
+     * --- 将 cgt 主题设置到全局
+     * @param file cgt 文件的 blob
+     */
+    setTheme: (file: Blob) => Promise<void>;
+
+    /**
+     * --- 清除全局主题 ---
+     */
+    clearTheme: () => void;
+
+    /**
      * --- 触发系统级事件 ---
      */
     trigger: (name: TSystemEvent, taskId?: number, formId?: number, opt?: { "title"?: string; "state"?: boolean; "icon"?: string; }) => void;
@@ -281,6 +292,14 @@ const ClickGo: {
 
     getPositionByBorderDir: function(dir: TBorderDir): { "width": number; "height": number; "left": number; "top": number; } {
         return this._core.getPositionByBorderDir(dir);
+    },
+
+    setTheme: async function(file: Blob): Promise<void> {
+        await this._core.setTheme(file);
+    },
+
+    clearTheme: function(): void {
+        this._core.clearTheme();
     },
 
     trigger: async function(name: TSystemEvent, taskId?: number, formId?: number, opt: { "title"?: string; "state"?: boolean; "icon"?: string; } = {}): Promise<void> {

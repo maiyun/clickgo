@@ -98,19 +98,89 @@ function themeBlob2Theme(blob) {
 }
 var globalThemeStyle = document.getElementById("cg-global-theme");
 function setGlobalTheme(file) {
+    return __awaiter(this, void 0, void 0, function () {
+        var theme, styleBlob, style;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4, themeBlob2Theme(file)];
+                case 1:
+                    theme = _a.sent();
+                    if (!theme) {
+                        return [2];
+                    }
+                    styleBlob = theme.files[theme.config.style + ".css"];
+                    if (!styleBlob) {
+                        return [2];
+                    }
+                    return [4, blob2Text(styleBlob)];
+                case 2:
+                    style = _a.sent();
+                    style = stylePrepend(style, "cg-theme-gloabl-").style;
+                    return [4, styleUrl2DataUrl(theme.config.style, style, theme.files)];
+                case 3:
+                    style = _a.sent();
+                    globalThemeStyle.innerHTML = style;
+                    return [2];
+            }
+        });
+    });
 }
 exports.setGlobalTheme = setGlobalTheme;
-function loadTaskTheme(style, taskId) {
-    styleListElement.insertAdjacentHTML("beforeend", "<style class=\"cg-task" + taskId + " cg-theme\">" + style + "</style>");
+function clearGlobalTheme() {
+    globalThemeStyle.innerHTML = "";
+}
+exports.clearGlobalTheme = clearGlobalTheme;
+function loadTaskTheme(file, taskId) {
+    return __awaiter(this, void 0, void 0, function () {
+        var blob, theme, styleBlob, style;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    if (!ClickGo.taskList[taskId]) {
+                        return [2];
+                    }
+                    if (typeof file === "string") {
+                        blob = ClickGo.taskList[taskId].appPkg.files[file];
+                        if (!blob) {
+                            return [2];
+                        }
+                        file = blob;
+                    }
+                    return [4, themeBlob2Theme(file)];
+                case 1:
+                    theme = _a.sent();
+                    if (!theme) {
+                        return [2];
+                    }
+                    styleBlob = theme.files[theme.config.style + ".css"];
+                    if (!styleBlob) {
+                        return [2];
+                    }
+                    return [4, blob2Text(styleBlob)];
+                case 2:
+                    style = _a.sent();
+                    style = stylePrepend(style, "cg-theme-task" + taskId + "-").style;
+                    return [4, styleUrl2DataUrl(theme.config.style, style, theme.files)];
+                case 3:
+                    style = _a.sent();
+                    styleListElement.insertAdjacentHTML("beforeend", "<style class=\"cg-task" + taskId + " cg-theme\">" + style + "</style>");
+                    return [2];
+            }
+        });
+    });
 }
 exports.loadTaskTheme = loadTaskTheme;
 function clearTaskTheme(taskId) {
     for (var i = 0; i < styleListElement.children.length; ++i) {
         var styleElement = styleListElement.children.item(i);
+        if (styleElement.className.indexOf("cg-theme") === -1) {
+            return;
+        }
         if (styleElement.className.indexOf("cg-task" + taskId) === -1) {
             return;
         }
         styleListElement.removeChild(styleElement);
+        --i;
     }
 }
 exports.clearTaskTheme = clearTaskTheme;

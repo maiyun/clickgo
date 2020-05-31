@@ -71,6 +71,8 @@ interface IAppConfig {
 
     /** --- 将要加载的控件 --- */
     "controls": string[];
+    /** --- 将自动加载的主题 --- */
+    "theme"?: string[];
     /** --- 不带扩展名，系统会在末尾添加 .css --- */
     "styleGlobal"?: string;
     /** --- 不带扩展名，系统会在末尾添加 .xml --- */

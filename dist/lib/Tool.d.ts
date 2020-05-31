@@ -1,6 +1,6 @@
-/// <reference types="node" />
-export declare function setGlobalTheme(file: Buffer): void;
-export declare function loadTaskTheme(style: string, taskId: number): void;
+export declare function setGlobalTheme(file: Blob): Promise<void>;
+export declare function clearGlobalTheme(): void;
+export declare function loadTaskTheme(file: string | Blob, taskId: number): Promise<void>;
 export declare function clearTaskTheme(taskId: number): void;
 export declare function pushStyle(style: string, taskId: number, formId?: number): void;
 export declare function removeStyle(taskId: number, formId?: number): void;

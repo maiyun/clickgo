@@ -249,6 +249,21 @@ export function getPositionByBorderDir(dir: TBorderDir): { "width": number; "hei
     };
 }
 
+/**
+ * --- 将 cgt 主题设置到全局
+ * @param file cgt 文件的 blob
+ */
+export async function setTheme(file: Blob): Promise<void> {
+    await Tool.setGlobalTheme(file);
+}
+
+/**
+ * --- 清除全局主题 ---
+ */
+export function clearTheme(): void {
+    Tool.clearGlobalTheme();
+}
+
 /** --- clickgo 已经加载的文件列表 --- */
 let clickgoFiles: IFileList = {};
 
@@ -359,24 +374,21 @@ export function trigger(name: TSystemEvent, taskId: number = 0, formId: number =
  * --- 从 cg 目录加载控件（若是已经加载的控件不会再次加载，若不是 cg 控件则直接成功） ---
  * @param path cg 路径，cgc 文件或以 / 结尾的目录 ---
  */
-export async function fetchClickGoControl(path: string): Promise<boolean> {
-    if (path[0] === "/") {
-        path = path.slice(1);
-    }
-    if (path.slice(0, 8) !== "clickgo/") {
-        return true;
+export async function fetchClickGoFile(path: string): Promise<null | Blob> {
+    if (path.slice(0, 9) !== "/clickgo/") {
+        return null;
     }
     path = path.slice(8);
     // --- 判断是否加载过 ---
-    if (clickgoFiles["/" + path]) {
-        return true;
+    if (clickgoFiles[path]) {
+        return clickgoFiles[path];
     }
-    // --- 加载控件文件：cgc ---
+    // --- 加载 clickgo 文件 ---
     try {
-        clickgoFiles["/" + path] = await (await fetch(ClickGo.cgRootPath + path + "?" + Math.random())).blob();
-        return true;
+        clickgoFiles[path] = await (await fetch(ClickGo.cgRootPath + path.slice(1) + "?" + Math.random())).blob();
+        return clickgoFiles[path];
     } catch {
-        return false;
+        return null;
     }
 }
 
@@ -397,13 +409,15 @@ export async function fetchApp(path: string): Promise<null | IAppPkg> {
         config = await (await fetch(realPath + "config.json?" + Math.random())).json();
         // --- 将预加载文件进行加载 ---
         for (let file of config.files) {
-            let resp: Response = await fetch(realPath + file + "?" + Math.random());
-            files[file] = await resp.blob();
-        }
-        // --- 将控件文件进行加载 ---
-        for (let control of config.controls) {
-            if (!await fetchClickGoControl(control)) {
-                return null;
+            if (file.slice(0, 9) === "/clickgo/") {
+                let blob = await fetchClickGoFile(file);
+                if (!blob) {
+                    return null;
+                }
+                files[file] = blob;
+            } else {
+                let resp: Response = await fetch(realPath + file + "?" + Math.random());
+                files[file] = await resp.blob();
             }
         }
     } catch {
@@ -442,9 +456,6 @@ export async function runApp(path: string | IAppPkg, opt?: {
     }
     for (let fpath in opt.runtime) {
         files["/runtime" + fpath] = opt.runtime[fpath];
-    }
-    for (let fpath in clickgoFiles) {
-        files["/clickgo" + fpath] = clickgoFiles[fpath];
     }
     appPkg.files = files;
     // --- 创建任务对象 ---
@@ -487,7 +498,7 @@ export async function createForm(opt: ICreateFormOptions): Promise<false | IForm
     // --- 获取要定义的控件列表 ---
     let components: any = {};
     for (let controlPath of appPkg.config.controls) {
-        let controlBlob = appPkg.files[controlPath];
+        let controlBlob = appPkg.files[controlPath + ".cgc"];
         if (!controlBlob) {
             return false;
         }
@@ -701,9 +712,13 @@ export async function createForm(opt: ICreateFormOptions): Promise<false | IForm
         let f = ClickGo.taskList[this.taskId].appPkg.files[file];
         return f ? await Tool.blob2DataUrl(f) : null;
     };
-    // --- 设置主题 ---
-    methods.setTheme = function(this: IVue, path: string): void {
-
+    // --- 加载主题 ---
+    methods.loadTheme = async function(this: IVue, path: string | Blob): Promise<void> {
+        await Tool.loadTaskTheme(path, this.taskId);
+    };
+    // --- 清除主题 ---
+    methods.clearTheme = function(this: IVue): void {
+        Tool.clearTaskTheme(this.taskId);
     };
     let $vm: IVue | false = await new Promise(function(resolve) {
         new Vue({
@@ -840,17 +855,19 @@ export function endTask(taskId: number): boolean {
         return true;
     }
     // --- 移除窗体 list ---
-    let flElement = formListElement.querySelectorAll(`[data-task-id="${taskId}"]`);
-    if (flElement.length > 0) {
-        for (let i = 0; i < flElement.length; ++i) {
-            let el = flElement.item(i);
-            let formId = parseInt(el.getAttribute("data-form-id") ?? "");
-            formListElement.removeChild(el);
-            if (ClickGo.taskList[taskId].formList[formId]) {
-                let title = ClickGo.taskList[taskId].formList[formId].vue.$children[0].title;
-                // --- 触发 formRemoved 事件 ---
-                ClickGo.trigger("formRemoved", taskId, formId, {"title": title});
-            }
+    for (let i = 0; i < formListElement.children.length; ++i) {
+        let el = formListElement.children.item(i) as HTMLElement;
+        let dataTaskId = parseInt(el.getAttribute("data-task-id") ?? "0");
+        if (dataTaskId !== taskId) {
+            continue;
+        }
+        let formId = parseInt(el.getAttribute("data-form-id") ?? "0");
+        formListElement.removeChild(el);
+        --i;
+        if (ClickGo.taskList[taskId].formList[formId]) {
+            let title = ClickGo.taskList[taskId].formList[formId].vue.$children[0].title;
+            // --- 触发 formRemoved 事件 ---
+            ClickGo.trigger("formRemoved", taskId, formId, {"title": title});
         }
     }
     // --- 移除 style ---

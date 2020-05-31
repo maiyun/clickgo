@@ -269,6 +269,23 @@ function getPositionByBorderDir(dir) {
     };
 }
 exports.getPositionByBorderDir = getPositionByBorderDir;
+function setTheme(file) {
+    return __awaiter(this, void 0, void 0, function () {
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4, Tool.setGlobalTheme(file)];
+                case 1:
+                    _a.sent();
+                    return [2];
+            }
+        });
+    });
+}
+exports.setTheme = setTheme;
+function clearTheme() {
+    Tool.clearGlobalTheme();
+}
+exports.clearTheme = clearTheme;
 var clickgoFiles = {};
 function trigger(name, taskId, formId, opt) {
     if (taskId === void 0) { taskId = 0; }
@@ -373,96 +390,87 @@ function trigger(name, taskId, formId, opt) {
     }
 }
 exports.trigger = trigger;
-function fetchClickGoControl(path) {
+function fetchClickGoFile(path) {
     return __awaiter(this, void 0, void 0, function () {
         var _a, _b, _c;
         return __generator(this, function (_d) {
             switch (_d.label) {
                 case 0:
-                    if (path[0] === "/") {
-                        path = path.slice(1);
-                    }
-                    if (path.slice(0, 8) !== "clickgo/") {
-                        return [2, true];
+                    if (path.slice(0, 9) !== "/clickgo/") {
+                        return [2, null];
                     }
                     path = path.slice(8);
-                    if (clickgoFiles["/" + path]) {
-                        return [2, true];
+                    if (clickgoFiles[path]) {
+                        return [2, clickgoFiles[path]];
                     }
                     _d.label = 1;
                 case 1:
                     _d.trys.push([1, 4, , 5]);
                     _a = clickgoFiles;
-                    _b = "/" + path;
-                    return [4, fetch(ClickGo.cgRootPath + path + "?" + Math.random())];
+                    _b = path;
+                    return [4, fetch(ClickGo.cgRootPath + path.slice(1) + "?" + Math.random())];
                 case 2: return [4, (_d.sent()).blob()];
                 case 3:
                     _a[_b] = _d.sent();
-                    return [2, true];
+                    return [2, clickgoFiles[path]];
                 case 4:
                     _c = _d.sent();
-                    return [2, false];
+                    return [2, null];
                 case 5: return [2];
             }
         });
     });
 }
-exports.fetchClickGoControl = fetchClickGoControl;
+exports.fetchClickGoFile = fetchClickGoFile;
 function fetchApp(path) {
     return __awaiter(this, void 0, void 0, function () {
-        var realPath, config, files, _i, _a, file, resp, _b, _c, _d, _e, control, _f;
-        return __generator(this, function (_g) {
-            switch (_g.label) {
+        var realPath, config, files, _i, _a, file, blob, resp, _b, _c, _d;
+        return __generator(this, function (_e) {
+            switch (_e.label) {
                 case 0:
                     if (path.slice(-1) !== "/") {
                         return [2, null];
                     }
                     realPath = Tool.parsePath(path);
                     files = {};
-                    _g.label = 1;
+                    _e.label = 1;
                 case 1:
-                    _g.trys.push([1, 13, , 14]);
+                    _e.trys.push([1, 11, , 12]);
                     return [4, fetch(realPath + "config.json?" + Math.random())];
-                case 2: return [4, (_g.sent()).json()];
+                case 2: return [4, (_e.sent()).json()];
                 case 3:
-                    config = _g.sent();
+                    config = _e.sent();
                     _i = 0, _a = config.files;
-                    _g.label = 4;
+                    _e.label = 4;
                 case 4:
-                    if (!(_i < _a.length)) return [3, 8];
+                    if (!(_i < _a.length)) return [3, 10];
                     file = _a[_i];
-                    return [4, fetch(realPath + file + "?" + Math.random())];
+                    if (!(file.slice(0, 9) === "/clickgo/")) return [3, 6];
+                    return [4, fetchClickGoFile(file)];
                 case 5:
-                    resp = _g.sent();
+                    blob = _e.sent();
+                    if (!blob) {
+                        return [2, null];
+                    }
+                    files[file] = blob;
+                    return [3, 9];
+                case 6: return [4, fetch(realPath + file + "?" + Math.random())];
+                case 7:
+                    resp = _e.sent();
                     _b = files;
                     _c = file;
                     return [4, resp.blob()];
-                case 6:
-                    _b[_c] = _g.sent();
-                    _g.label = 7;
-                case 7:
+                case 8:
+                    _b[_c] = _e.sent();
+                    _e.label = 9;
+                case 9:
                     _i++;
                     return [3, 4];
-                case 8:
-                    _d = 0, _e = config.controls;
-                    _g.label = 9;
-                case 9:
-                    if (!(_d < _e.length)) return [3, 12];
-                    control = _e[_d];
-                    return [4, fetchClickGoControl(control)];
-                case 10:
-                    if (!(_g.sent())) {
-                        return [2, null];
-                    }
-                    _g.label = 11;
+                case 10: return [3, 12];
                 case 11:
-                    _d++;
-                    return [3, 9];
-                case 12: return [3, 14];
-                case 13:
-                    _f = _g.sent();
+                    _d = _e.sent();
                     return [2, null];
-                case 14: return [2, {
+                case 12: return [2, {
                         "type": "app",
                         "config": config,
                         "files": files
@@ -475,7 +483,7 @@ exports.fetchApp = fetchApp;
 function runApp(path, opt) {
     var _a;
     return __awaiter(this, void 0, void 0, function () {
-        var appPkg, files, fpath, fpath, fpath, taskId, task, form, style, r, _b, _c;
+        var appPkg, files, fpath, fpath, taskId, task, form, style, r, _b, _c;
         return __generator(this, function (_d) {
             switch (_d.label) {
                 case 0:
@@ -498,9 +506,6 @@ function runApp(path, opt) {
                     }
                     for (fpath in opt.runtime) {
                         files["/runtime" + fpath] = opt.runtime[fpath];
-                    }
-                    for (fpath in clickgoFiles) {
-                        files["/clickgo" + fpath] = clickgoFiles[fpath];
                     }
                     appPkg.files = files;
                     taskId = ++ClickGo.taskId;
@@ -552,7 +557,7 @@ function createForm(opt) {
                 case 1:
                     if (!(_i < _d.length)) return [3, 7];
                     controlPath = _d[_i];
-                    controlBlob = appPkg.files[controlPath];
+                    controlBlob = appPkg.files[controlPath + ".cgc"];
                     if (!controlBlob) {
                         return [2, false];
                     }
@@ -845,7 +850,20 @@ function createForm(opt) {
                             });
                         });
                     };
-                    methods.setTheme = function (path) {
+                    methods.loadTheme = function (path) {
+                        return __awaiter(this, void 0, void 0, function () {
+                            return __generator(this, function (_a) {
+                                switch (_a.label) {
+                                    case 0: return [4, Tool.loadTaskTheme(path, this.taskId)];
+                                    case 1:
+                                        _a.sent();
+                                        return [2];
+                                }
+                            });
+                        });
+                    };
+                    methods.clearTheme = function () {
+                        Tool.clearTaskTheme(this.taskId);
                     };
                     return [4, new Promise(function (resolve) {
                             new Vue({
@@ -960,20 +978,22 @@ function removeForm(formId) {
 }
 exports.removeForm = removeForm;
 function endTask(taskId) {
-    var _a;
+    var _a, _b;
     if (!ClickGo.taskList[taskId]) {
         return true;
     }
-    var flElement = formListElement.querySelectorAll("[data-task-id=\"" + taskId + "\"]");
-    if (flElement.length > 0) {
-        for (var i = 0; i < flElement.length; ++i) {
-            var el = flElement.item(i);
-            var formId = parseInt((_a = el.getAttribute("data-form-id")) !== null && _a !== void 0 ? _a : "");
-            formListElement.removeChild(el);
-            if (ClickGo.taskList[taskId].formList[formId]) {
-                var title = ClickGo.taskList[taskId].formList[formId].vue.$children[0].title;
-                ClickGo.trigger("formRemoved", taskId, formId, { "title": title });
-            }
+    for (var i = 0; i < formListElement.children.length; ++i) {
+        var el = formListElement.children.item(i);
+        var dataTaskId = parseInt((_a = el.getAttribute("data-task-id")) !== null && _a !== void 0 ? _a : "0");
+        if (dataTaskId !== taskId) {
+            continue;
+        }
+        var formId = parseInt((_b = el.getAttribute("data-form-id")) !== null && _b !== void 0 ? _b : "0");
+        formListElement.removeChild(el);
+        --i;
+        if (ClickGo.taskList[taskId].formList[formId]) {
+            var title = ClickGo.taskList[taskId].formList[formId].vue.$children[0].title;
+            ClickGo.trigger("formRemoved", taskId, formId, { "title": title });
         }
     }
     Tool.removeStyle(taskId);

@@ -5,12 +5,14 @@
     "author": "clickgo",
 
     "controls": [
-        "/clickgo/control/form.cgc",
-        "/clickgo/control/layout.cgc"
+        "/clickgo/control/form",
+        "/clickgo/control/layout"
     ],
     "mainLayout": "/form/task",
 
     "files": [
+        "/clickgo/control/form.cgc",
+        "/clickgo/control/layout.cgc",
         "/form/task.css",
         "/form/task.js",
         "/form/task.xml"

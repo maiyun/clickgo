@@ -8,12 +8,14 @@ export declare function getPositionByBorderDir(dir: TBorderDir): {
     "left": number;
     "top": number;
 };
+export declare function setTheme(file: Blob): Promise<void>;
+export declare function clearTheme(): void;
 export declare function trigger(name: TSystemEvent, taskId?: number, formId?: number, opt?: {
     "title"?: string;
     "state"?: boolean;
     "icon"?: string;
 }): void;
-export declare function fetchClickGoControl(path: string): Promise<boolean>;
+export declare function fetchClickGoFile(path: string): Promise<null | Blob>;
 export declare function fetchApp(path: string): Promise<null | IAppPkg>;
 export declare function runApp(path: string | IAppPkg, opt?: {
     "runtime"?: IFileList;

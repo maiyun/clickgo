@@ -55,11 +55,29 @@ async function themeBlob2Theme(blob: Blob): Promise<false | ITheme> {
 
 let globalThemeStyle: HTMLStyleElement = document.getElementById("cg-global-theme") as HTMLStyleElement;
 /**
- * --- 将 CSS 写入全局 ---
+ * --- 将 theme 设为全局主题 ---
  * @param style 要写入的样式
  */
-export function setGlobalTheme(file: Buffer): void {
-    
+export async function setGlobalTheme(file: Blob): Promise<void> {
+    let theme = await themeBlob2Theme(file);
+    if (!theme) {
+        return;
+    }
+    let styleBlob = theme.files[theme.config.style + ".css"];
+    if (!styleBlob) {
+        return;
+    }
+    let style = await blob2Text(styleBlob);
+    style = stylePrepend(style, "cg-theme-gloabl-").style;
+    style = await styleUrl2DataUrl(theme.config.style, style, theme.files);
+    globalThemeStyle.innerHTML = style;
+}
+
+/**
+ * --- 清除全局主题 ---
+ */
+export function clearGlobalTheme(): void {
+    globalThemeStyle.innerHTML = "";
 }
 
 /**
@@ -67,7 +85,28 @@ export function setGlobalTheme(file: Buffer): void {
  * @param style theme 样式
  * @param taskId 任务 ID
  */
-export function loadTaskTheme(style: string, taskId: number): void {
+export async function loadTaskTheme(file: string | Blob, taskId: number): Promise<void> {
+    if (!ClickGo.taskList[taskId]) {
+        return;
+    }
+    if (typeof file === "string") {
+        let blob = ClickGo.taskList[taskId].appPkg.files[file];
+        if (!blob) {
+            return;
+        }
+        file = blob;
+    }
+    let theme = await themeBlob2Theme(file);
+    if (!theme) {
+        return;
+    }
+    let styleBlob = theme.files[theme.config.style + ".css"];
+    if (!styleBlob) {
+        return;
+    }
+    let style = await blob2Text(styleBlob);
+    style = stylePrepend(style, `cg-theme-task${taskId}-`).style;
+    style = await styleUrl2DataUrl(theme.config.style, style, theme.files);
     styleListElement.insertAdjacentHTML("beforeend", `<style class="cg-task${taskId} cg-theme">${style}</style>`);
 }
 
@@ -78,10 +117,14 @@ export function loadTaskTheme(style: string, taskId: number): void {
 export function clearTaskTheme(taskId: number): void {
     for (let i = 0; i < styleListElement.children.length; ++i) {
         let styleElement = styleListElement.children.item(i) as HTMLStyleElement;
+        if (styleElement.className.indexOf("cg-theme") === -1) {
+            return;
+        }
         if (styleElement.className.indexOf("cg-task" + taskId) === -1) {
             return;
         }
         styleListElement.removeChild(styleElement);
+        --i;
     }
 }
 

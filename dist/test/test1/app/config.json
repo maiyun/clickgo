@@ -5,15 +5,19 @@
     "author": "clickgo",
 
     "controls": [
-        "/clickgo/control/form.cgc",
-        "/clickgo/control/button.cgc",
-        "/clickgo/control/label.cgc",
-        "/clickgo/control/layout.cgc"
+        "/clickgo/control/form",
+        "/clickgo/control/button",
+        "/clickgo/control/label",
+        "/clickgo/control/layout"
     ],
     "styleGlobal": "/global",
     "mainLayout": "/form/main",
 
     "files": [
+        "/clickgo/control/form.cgc",
+        "/clickgo/control/button.cgc",
+        "/clickgo/control/label.cgc",
+        "/clickgo/control/layout.cgc",
         "/form/aero.js",
         "/form/aero.xml",
         "/form/borderNone.xml",

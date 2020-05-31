@@ -86,6 +86,21 @@ var ClickGo = {
     getPositionByBorderDir: function (dir) {
         return this._core.getPositionByBorderDir(dir);
     },
+    setTheme: function (file) {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4, this._core.setTheme(file)];
+                    case 1:
+                        _a.sent();
+                        return [2];
+                }
+            });
+        });
+    },
+    clearTheme: function () {
+        this._core.clearTheme();
+    },
     trigger: function (name, taskId, formId, opt) {
         if (opt === void 0) { opt = {}; }
         return __awaiter(this, void 0, void 0, function () {
