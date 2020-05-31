@@ -481,6 +481,16 @@ export async function runApp(path: string | IAppPkg, opt?: {
         let r = Tool.stylePrepend(style, "cg-task" + task.taskId + "_");
         Tool.pushStyle(await Tool.styleUrl2DataUrl(appPkg.config.styleGlobal, r.style, files), task.taskId);
     }
+    // --- 是否要加载特立独行的 theme ---
+    if (appPkg.config.theme) {
+        for (let theme of appPkg.config.theme) {
+            let blob = appPkg.files[theme];
+            if (!blob) {
+                continue;
+            }
+            await Tool.loadTaskTheme(blob, task.taskId);
+        }
+    }
     return task.taskId;
 }
 

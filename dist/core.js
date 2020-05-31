@@ -483,22 +483,22 @@ exports.fetchApp = fetchApp;
 function runApp(path, opt) {
     var _a;
     return __awaiter(this, void 0, void 0, function () {
-        var appPkg, files, fpath, fpath, taskId, task, form, style, r, _b, _c;
-        return __generator(this, function (_d) {
-            switch (_d.label) {
+        var appPkg, files, fpath, fpath, taskId, task, form, style, r, _b, _c, _i, _d, theme, blob;
+        return __generator(this, function (_e) {
+            switch (_e.label) {
                 case 0:
                     opt = opt !== null && opt !== void 0 ? opt : {};
                     opt.runtime = (_a = opt.runtime) !== null && _a !== void 0 ? _a : {};
                     if (!(typeof path === "string")) return [3, 2];
                     return [4, fetchApp(path)];
                 case 1:
-                    if (!(appPkg = _d.sent())) {
+                    if (!(appPkg = _e.sent())) {
                         return [2, false];
                     }
                     return [3, 3];
                 case 2:
                     appPkg = path;
-                    _d.label = 3;
+                    _e.label = 3;
                 case 3:
                     files = {};
                     for (fpath in appPkg.files) {
@@ -520,7 +520,7 @@ function runApp(path, opt) {
                             "taskId": task.taskId
                         })];
                 case 4:
-                    form = _d.sent();
+                    form = _e.sent();
                     if (!form) {
                         delete (ClickGo.taskList[taskId]);
                         return [2, false];
@@ -528,14 +528,32 @@ function runApp(path, opt) {
                     if (!(appPkg.config.styleGlobal && appPkg.files[appPkg.config.styleGlobal + ".css"])) return [3, 7];
                     return [4, Tool.blob2Text(appPkg.files[appPkg.config.styleGlobal + ".css"])];
                 case 5:
-                    style = _d.sent();
+                    style = _e.sent();
                     r = Tool.stylePrepend(style, "cg-task" + task.taskId + "_");
                     _c = (_b = Tool).pushStyle;
                     return [4, Tool.styleUrl2DataUrl(appPkg.config.styleGlobal, r.style, files)];
                 case 6:
-                    _c.apply(_b, [_d.sent(), task.taskId]);
-                    _d.label = 7;
-                case 7: return [2, task.taskId];
+                    _c.apply(_b, [_e.sent(), task.taskId]);
+                    _e.label = 7;
+                case 7:
+                    if (!appPkg.config.theme) return [3, 11];
+                    _i = 0, _d = appPkg.config.theme;
+                    _e.label = 8;
+                case 8:
+                    if (!(_i < _d.length)) return [3, 11];
+                    theme = _d[_i];
+                    blob = appPkg.files[theme];
+                    if (!blob) {
+                        return [3, 10];
+                    }
+                    return [4, Tool.loadTaskTheme(blob, task.taskId)];
+                case 9:
+                    _e.sent();
+                    _e.label = 10;
+                case 10:
+                    _i++;
+                    return [3, 8];
+                case 11: return [2, task.taskId];
             }
         });
     });
