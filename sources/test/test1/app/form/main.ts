@@ -21,6 +21,9 @@ export let methods = {
     },
     openMax: function(this: IVue): void {
         this.createForm("/form/max");
+    },
+    runTaskmgr: async function(this: IVue): Promise<void> {
+        await ClickGo.runApp("taskApp/");
     }
 };
 

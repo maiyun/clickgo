@@ -8,21 +8,24 @@
         "/clickgo/control/form",
         "/clickgo/control/button",
         "/clickgo/control/label",
-        "/clickgo/control/layout"
+        "/clickgo/control/layout",
+        "/clickgo/control/menu"
     ],
     "theme": [
         "/clickgo/theme/W10A"
     ],
-    "mainLayout": "/form/main",
+    "mainLayout": "/main",
 
     "files": [
         "/clickgo/control/form.cgc",
         "/clickgo/control/button.cgc",
         "/clickgo/control/label.cgc",
         "/clickgo/control/layout.cgc",
+        "/clickgo/control/menu.cgc",
         "/clickgo/theme/W10A.cgt",
 
-        "/form/main.js",
-        "/form/main.xml"
+        "/icon.svg",
+        "/main.js",
+        "/main.xml"
     ]
 }

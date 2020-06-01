@@ -1,0 +1,14 @@
+<form title="Task manager" icon="/icon.svg">
+    <menu>
+        <menu-item alt="F" text="File">
+            <menu-pop>
+            </menu-pop>
+        </menu-item>
+        <menu-item alt="O" text="Option">
+            
+        </menu-item>
+        <menu-item alt="V" text="View">
+            
+        </menu-item>
+    </menu>
+</form>

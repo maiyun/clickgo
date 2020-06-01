@@ -7,6 +7,7 @@
         <button :focus="focus" @tap="openBorderNone">Open border none form</button>
         <button :focus="focus" @tap="openAero">Open Aero form (CSS)</button>
         <button :focus="focus" @tap="openMax">Open default max form</button>
+        <button :focus="focus" @tap="runTaskmgr">Run "Task manager" app</button>
         <button :focus="focus" @tap="openError">Open has an error form</button>
     </layout>
 </form>

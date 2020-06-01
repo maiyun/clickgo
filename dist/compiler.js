@@ -37,83 +37,110 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var fs = require("fs");
-function run() {
+function getSingleControlBlob(base) {
     return __awaiter(this, void 0, void 0, function () {
-        var list, _i, list_1, item, base, config, configJson, configBuffer, controlBufferArray, _a, _b, fpath, content, nameBuffer_1, controlBuffer, nameBuffer, fileBuffer, _c, list_2, item, base, config, configJson, configBuffer, fileBufferArray, _d, _e, fpath, content, nameBuffer;
-        return __generator(this, function (_f) {
-            switch (_f.label) {
-                case 0: return [4, fs.promises.readdir("dist/sources/control/", {
-                        "withFileTypes": true
+        var config, configJson, configBuffer, controlBufferArray, _i, _a, fpath, content, nameBuffer_1, controlBuffer, nameBuffer;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
+                case 0: return [4, fs.promises.readFile(base + "/config.json", {
+                        "encoding": "utf-8"
                     })];
                 case 1:
-                    list = _f.sent();
-                    _i = 0, list_1 = list;
-                    _f.label = 2;
-                case 2:
-                    if (!(_i < list_1.length)) return [3, 10];
-                    item = list_1[_i];
-                    if (item.isFile()) {
-                        return [3, 9];
-                    }
-                    base = "dist/sources/control/" + item.name;
-                    return [4, fs.promises.readFile(base + "/config.json", {
-                            "encoding": "utf-8"
-                        })];
-                case 3:
-                    config = _f.sent();
+                    config = _b.sent();
                     configJson = JSON.parse(config);
                     configBuffer = Buffer.from(config);
                     controlBufferArray = [Uint8Array.from([12]), Buffer.from("/config.json"), Buffer.from(Uint32Array.from([configBuffer.byteLength]).buffer), configBuffer];
-                    _a = 0, _b = configJson.files;
-                    _f.label = 4;
-                case 4:
-                    if (!(_a < _b.length)) return [3, 7];
-                    fpath = _b[_a];
+                    _i = 0, _a = configJson.files;
+                    _b.label = 2;
+                case 2:
+                    if (!(_i < _a.length)) return [3, 5];
+                    fpath = _a[_i];
                     return [4, fs.promises.readFile(base + fpath)];
-                case 5:
-                    content = _f.sent();
+                case 3:
+                    content = _b.sent();
                     nameBuffer_1 = Buffer.from(fpath);
                     controlBufferArray.push(Uint8Array.from([nameBuffer_1.byteLength]), nameBuffer_1, Buffer.from(Uint32Array.from([content.byteLength]).buffer), content);
-                    _f.label = 6;
-                case 6:
-                    _a++;
-                    return [3, 4];
-                case 7:
+                    _b.label = 4;
+                case 4:
+                    _i++;
+                    return [3, 2];
+                case 5:
                     controlBuffer = Buffer.concat(controlBufferArray);
                     nameBuffer = Buffer.from(configJson.name);
-                    fileBuffer = Buffer.concat([
-                        Uint8Array.from([192, 1]),
+                    controlBuffer = Buffer.concat([
                         Uint8Array.from([nameBuffer.byteLength]),
                         nameBuffer,
                         Buffer.from(Uint32Array.from([controlBuffer.byteLength]).buffer),
                         controlBuffer
                     ]);
-                    return [4, fs.promises.writeFile("dist/control/" + configJson.name + ".cgc", fileBuffer)];
-                case 8:
-                    _f.sent();
-                    _f.label = 9;
-                case 9:
-                    _i++;
-                    return [3, 2];
-                case 10: return [4, fs.promises.readdir("dist/sources/theme/", {
+                    return [2, controlBuffer];
+            }
+        });
+    });
+}
+function run() {
+    return __awaiter(this, void 0, void 0, function () {
+        var list, _i, list_1, item, base, controlBuffer, _a, _b, _c, fileBuffer, _d, list_2, item, base, config, configJson, configBuffer, fileBufferArray, _e, _f, fpath, content, nameBuffer;
+        return __generator(this, function (_g) {
+            switch (_g.label) {
+                case 0: return [4, fs.promises.readdir("dist/sources/control/", {
                         "withFileTypes": true
                     })];
-                case 11:
-                    list = _f.sent();
-                    _c = 0, list_2 = list;
-                    _f.label = 12;
-                case 12:
-                    if (!(_c < list_2.length)) return [3, 20];
-                    item = list_2[_c];
+                case 1:
+                    list = _g.sent();
+                    _i = 0, list_1 = list;
+                    _g.label = 2;
+                case 2:
+                    if (!(_i < list_1.length)) return [3, 8];
+                    item = list_1[_i];
                     if (item.isFile()) {
-                        return [3, 19];
+                        return [3, 7];
+                    }
+                    if (["menu-item"].includes(item.name)) {
+                        return [3, 7];
+                    }
+                    base = "dist/sources/control/" + item.name;
+                    return [4, getSingleControlBlob(base)];
+                case 3:
+                    controlBuffer = _g.sent();
+                    if (!(item.name === "menu")) return [3, 5];
+                    _b = (_a = Buffer).concat;
+                    _c = [controlBuffer];
+                    return [4, getSingleControlBlob("dist/sources/control/menu-item")];
+                case 4:
+                    controlBuffer = _b.apply(_a, [_c.concat([_g.sent()])]);
+                    _g.label = 5;
+                case 5:
+                    fileBuffer = Buffer.concat([
+                        Uint8Array.from([192, 1]),
+                        controlBuffer
+                    ]);
+                    return [4, fs.promises.writeFile("dist/control/" + item.name + ".cgc", fileBuffer)];
+                case 6:
+                    _g.sent();
+                    _g.label = 7;
+                case 7:
+                    _i++;
+                    return [3, 2];
+                case 8: return [4, fs.promises.readdir("dist/sources/theme/", {
+                        "withFileTypes": true
+                    })];
+                case 9:
+                    list = _g.sent();
+                    _d = 0, list_2 = list;
+                    _g.label = 10;
+                case 10:
+                    if (!(_d < list_2.length)) return [3, 18];
+                    item = list_2[_d];
+                    if (item.isFile()) {
+                        return [3, 17];
                     }
                     base = "dist/sources/theme/" + item.name;
                     return [4, fs.promises.readFile(base + "/config.json", {
                             "encoding": "utf-8"
                         })];
-                case 13:
-                    config = _f.sent();
+                case 11:
+                    config = _g.sent();
                     configJson = JSON.parse(config);
                     configBuffer = Buffer.from(config);
                     fileBufferArray = [
@@ -123,28 +150,28 @@ function run() {
                         Buffer.from(Uint32Array.from([configBuffer.byteLength]).buffer),
                         configBuffer
                     ];
-                    _d = 0, _e = configJson.files;
-                    _f.label = 14;
-                case 14:
-                    if (!(_d < _e.length)) return [3, 17];
-                    fpath = _e[_d];
+                    _e = 0, _f = configJson.files;
+                    _g.label = 12;
+                case 12:
+                    if (!(_e < _f.length)) return [3, 15];
+                    fpath = _f[_e];
                     return [4, fs.promises.readFile(base + fpath)];
-                case 15:
-                    content = _f.sent();
+                case 13:
+                    content = _g.sent();
                     nameBuffer = Buffer.from(fpath);
                     fileBufferArray.push(Uint8Array.from([nameBuffer.byteLength]), nameBuffer, Buffer.from(Uint32Array.from([content.byteLength]).buffer), content);
-                    _f.label = 16;
-                case 16:
-                    _d++;
-                    return [3, 14];
-                case 17: return [4, fs.promises.writeFile("dist/theme/" + configJson.name + ".cgt", Buffer.concat(fileBufferArray))];
-                case 18:
-                    _f.sent();
-                    _f.label = 19;
-                case 19:
-                    _c++;
+                    _g.label = 14;
+                case 14:
+                    _e++;
                     return [3, 12];
-                case 20: return [2];
+                case 15: return [4, fs.promises.writeFile("dist/theme/" + configJson.name + ".cgt", Buffer.concat(fileBufferArray))];
+                case 16:
+                    _g.sent();
+                    _g.label = 17;
+                case 17:
+                    _d++;
+                    return [3, 10];
+                case 18: return [2];
             }
         });
     });
