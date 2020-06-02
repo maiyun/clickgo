@@ -15,3 +15,6 @@ export declare let props: {
         default: number;
     };
 };
+export declare let data: {
+    focus: boolean;
+};

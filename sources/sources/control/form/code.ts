@@ -55,6 +55,8 @@ export let props = {
 };
 
 export let data = {
+    "controlName": "form",
+
     "stateMaxData": false,
     "stateMinData": false,
     "stateAbs": false,
@@ -302,9 +304,6 @@ export let methods = {
                     }
                     ClickGo.hideRectangle();
                 }
-            },
-            "up": () => {
-                
             }
         });
     },

@@ -5,14 +5,14 @@ document.getElementsByTagName("body")[0].appendChild(styleListElement);
 styleListElement.insertAdjacentHTML("beforeend", "<style id=\"cg-global-cursor\"></style>");
 styleListElement.insertAdjacentHTML("beforeend", "<style id=\"cg-global-theme\"></style>");
 styleListElement.insertAdjacentHTML("beforeend", `<style class="cg-global">
-.cg-form-list {position: fixed; left: 0; top: 0; z-index: 20020000; width: 0; height: 0;}
+.cg-form-list {position: fixed; left: 0; top: 0; z-index: 20020000; width: 0; height: 0; cursor: default;}
+.cg-pop-list {position: fixed; left: 0; top: 0; z-index: 20020001; width: 0; height: 0; cursor: default;}
 
-.cg-form-wrap {cursor: default;}
-.cg-form-wrap, .cg-form-wrap * {box-sizing: border-box !important; -webkit-tap-highlight-color: rgba(0, 0, 0, 0);}
-.cg-form-wrap, .cg-form-wrap input, .cg-form-wrap textarea {font-family: -apple-system,BlinkMacSystemFont,opensans,Optima,"Microsoft Yahei",sans-serif; font-size: 12px; line-height: 1;}
+.cg-form-list *, .cg-pop-list * {box-sizing: border-box !important; -webkit-tap-highlight-color: rgba(0, 0, 0, 0);}
+.cg-form-list, .cg-form-list input, .cg-form-list textarea, .cg-pop-list, .cg-pop-list input, .cg-pop-list textarea {font-family: -apple-system,BlinkMacSystemFont,opensans,Optima,"Microsoft Yahei",sans-serif; font-size: 12px; line-height: 1;}
 
-.cg-circular {box-sizing: border-box; position: fixed; z-index: 20020002; border: solid 3px #76b9ed; border-radius: 50%; filter: drop-shadow(0 0 7px #76b9ed); pointer-events: none; opacity: 0;}
-.cg-rectangle {box-sizing: border-box; position: fixed; z-index: 20020001; border: solid 1px rgba(118, 185, 237, .7); box-shadow: 0 0 10px rgba(0, 0, 0, .3); background: rgba(118, 185, 237, .1); pointer-events: none; opacity: 0;}
+.cg-circular {box-sizing: border-box; position: fixed; z-index: 20020003; border: solid 3px #76b9ed; border-radius: 50%; filter: drop-shadow(0 0 7px #76b9ed); pointer-events: none; opacity: 0;}
+.cg-rectangle {box-sizing: border-box; position: fixed; z-index: 20020002; border: solid 1px rgba(118, 185, 237, .7); box-shadow: 0 0 10px rgba(0, 0, 0, .3); background: rgba(118, 185, 237, .1); pointer-events: none; opacity: 0;}
 </style>`);
 
 async function themeBlob2Theme(blob: Blob): Promise<false | ITheme> {
@@ -295,7 +295,7 @@ export function stylePrepend(style: string, rand: string = ""): {
     // --- 给 style 的 class 前添加 scope ---
     style = style.replace(/([\s\S]+?){([\s\S]+?)}/g, function(t, t1, t2) {
         return t1.replace(/\.([a-zA-Z0-9-_]+)/g, function(t: string, t1: string) {
-            if (t1 === "cg-focus" || t1 === "cg-state-max" || t1 === "cg-state-min") {
+            if (t1 === "cg-focus" || t1 === "cg-state-max" || t1 === "cg-state-min" || t1 === "cg-disabled") {
                 return t;
             }
             return "." + rand + t1;
@@ -489,5 +489,24 @@ export function blob2Text(blob: Blob): Promise<string> {
         });
         fr.readAsText(blob);
     });
+}
+
+/**
+ * --- 完整的克隆一份数组/对象 ---
+ * @param obj 要克隆的对象
+ */
+export function clone(obj: Record<string, any> | any[]): object {
+    let newObj: any = {};
+    if (obj instanceof Array) {
+        newObj = [];
+        for (let i = 0; i < obj.length; ++i) {
+            newObj[i] = typeof obj[i] === "object" ? clone(obj[i]) : obj[i];
+        }
+    } else {
+        for (let key in obj) {
+            newObj[key] = typeof obj[key] === "object" ? clone(obj[key]) : obj[key];
+        }
+    }
+    return newObj;
 }
 

@@ -43,6 +43,8 @@ declare const ClickGo: {
         "left": number;
         "top": number;
     };
+    appendToPop: (el: HTMLElement) => void;
+    removeFromPop: (el: HTMLElement) => void;
     setTheme: (file: Blob) => Promise<void>;
     clearTheme: () => void;
     trigger: (name: TSystemEvent, taskId?: number, formId?: number, opt?: {

@@ -90,6 +90,7 @@ exports.props = {
     }
 };
 exports.data = {
+    "controlName": "form",
     "stateMaxData": false,
     "stateMinData": false,
     "stateAbs": false,
@@ -353,8 +354,6 @@ exports.methods = {
                     }
                     ClickGo.hideRectangle();
                 }
-            },
-            "up": function () {
             }
         });
     },

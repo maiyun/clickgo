@@ -1,4 +1,4 @@
-<div class="wrap" :class="[border !== 'normal' && scope + 'border-' + border]" :style="{'width': widthData + 'px', 'height': heightData + 'px', 'left': leftData + 'px', 'top': topData + 'px', 'z-index': zIndexData}">
+<div class="wrap" :class="[border !== 'normal' && scope + 'border-' + border]" :style="{'width': widthData + 'px', 'height': heightData + 'px', 'left': leftData + 'px', 'top': topData + 'px', 'z-index': zIndexData}" @contextmenu="event.preventDefault()">
     <template v-if="!stateMaxData && !stateMinData && resize">
         <div class="pop-resize-lt" @mousedown="resizeMethod($event, 'lt')" @touchstart="resizeMethod($event, 'lt')"></div>
         <div class="pop-resize-t" @mousedown="resizeMethod($event, 't')" @touchstart="resizeMethod($event, 't')" @dblclick="maxVMethod"></div>
@@ -9,18 +9,16 @@
         <div class="pop-resize-bl" @mousedown="resizeMethod($event, 'bl')" @touchstart="resizeMethod($event, 'bl')"></div>
         <div class="pop-resize-l" @mousedown="resizeMethod($event, 'l')" @touchstart="resizeMethod($event, 'l')"></div>
     </template>
-    <slot name="pop"></slot>
     <div class="inner">
         <div class="header" v-if="border !== 'none'">
             <div class="icon"><img v-if="border !== 'thin' && iconData !== ''" :src="iconData" width="16" height="16" @dragstart="event.preventDefault();"></div>
-            <div class="titile" @mousedown="moveMethod" @touchstart="moveMethod">{{title}}</div>
+            <div class="title" @mousedown="moveMethod" @touchstart="moveMethod">{{title}}</div>
             <div class="controls">
                 <div v-if="min" class="min" @click="minMethod">{{!stateMinData ? '&#xeb9f;' : '&#xeba1;'}}</div>
                 <div v-if="max" class="max" @click="maxMethod">{{!stateMaxData ? '&#xeb9e;' : '&#xeba1;'}}</div>
                 <div v-if="close" class="close" @click="closeMethod">&#xeb9c;</div>
             </div>
         </div>
-        <div class="menu"></div>
         <div class="content" :style="{'background': background}">
             <slot>
         </div>

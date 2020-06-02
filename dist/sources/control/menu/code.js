@@ -17,3 +17,6 @@ exports.props = {
         "default": 0
     }
 };
+exports.data = {
+    "focus": false
+};

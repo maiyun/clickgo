@@ -25,6 +25,11 @@ if (window.devicePixelRatio < 2) {
 formListElement.classList.add("cg-form-list");
 document.getElementsByTagName("body")[0].appendChild(formListElement);
 
+/** --- pop list 的 div --- */
+let popListElement: HTMLDivElement = document.createElement("div");
+popListElement.classList.add("cg-pop-list");
+document.getElementsByTagName("body")[0].appendChild(popListElement);
+
 // --- 绑定 resize 事件 ---
 window.addEventListener("resize", async function() {
     // --- 将所有已经最大化的窗体的大小重置 ---
@@ -62,7 +67,7 @@ let lostFocusEvent = function(e: MouseEvent | TouchEvent): void {
         if (!cla) {
             continue;
         }
-        if (cla.indexOf("cg-form-list") !== -1) {
+        if (cla.indexOf("cg-form-list") !== -1 || cla.indexOf("cg-pop-list") !== -1) {
             return;
         }
     }
@@ -250,7 +255,23 @@ export function getPositionByBorderDir(dir: TBorderDir): { "width": number; "hei
 }
 
 /**
- * --- 将 cgt 主题设置到全局
+ * --- 将标签追加到 pop 层 ---
+ * @param el 要追加的标签
+ */
+export function appendToPop(el: HTMLElement): void {
+    popListElement.appendChild(el);
+}
+
+/**
+ * --- 将标签从 pop 层移除 ---
+ * @param el 要移除的标签
+ */
+export function removeFromPop(el: HTMLElement): void {
+    popListElement.removeChild(el);
+}
+
+/**
+ * --- 将 cgt 主题设置到全局，之前的主题失效 ---
  * @param file cgt 文件的 blob
  */
 export async function setTheme(file: Blob): Promise<void> {
@@ -526,6 +547,7 @@ export async function createForm(opt: ICreateFormOptions): Promise<false | IForm
             let computed = {};
             let watch = {};
             let mounted: (() => void) | null = null;
+            let destroyed: (() => void) | undefined = undefined;
             // --- 检测是否有 js ---
             if (item.files[item.config.code + ".js"]) {
                 let [expo] = await loader.requireMemory(item.config.code, item.files, {
@@ -538,6 +560,7 @@ export async function createForm(opt: ICreateFormOptions): Promise<false | IForm
                     computed = expo.computed || {};
                     watch = expo.watch || {};
                     mounted = expo.mounted || null;
+                    destroyed = expo.destroyed;
                 }
             }
             // --- 控件样式表 ---
@@ -564,6 +587,10 @@ export async function createForm(opt: ICreateFormOptions): Promise<false | IForm
             }
             let r = Tool.layoutClassPrepend(await Tool.blob2Text(layoutBlob), randList);
             let layout = Tool.purify(r.layout);
+            // --- 组成 data ---
+            data.taskId = opt.taskId;
+            data.formId = formId;
+            data.scope = data.scope || rand;
             // --- 预设 methods ---
             methods.down = function(this: IVue, e: MouseEvent | TouchEvent) {
                 if (e instanceof MouseEvent && ClickGo.hasTouch) {
@@ -577,7 +604,7 @@ export async function createForm(opt: ICreateFormOptions): Promise<false | IForm
             };
             methods.tap = function(this: IVue, e: MouseEvent | TouchEvent) {
                 e.stopPropagation();
-                if (this.disabled === true) {
+                if (this.$el.className.indexOf("cg-disabled") !== -1) {
                     return;
                 }
                 this.$emit("tap");
@@ -590,15 +617,24 @@ export async function createForm(opt: ICreateFormOptions): Promise<false | IForm
                 let f = ClickGo.taskList[this.taskId].appPkg.files[file];
                 return f ? await Tool.blob2DataUrl(f) : null;
             };
+            // --- 获取 form 控件的 vue 对象 ---
+            methods.getFormObject = function(this: IVue): IVue {
+                let par = this.$parent;
+                while (par) {
+                    if (par.controlName === "form") {
+                        return par;
+                    } else {
+                        par = par.$parent;
+                    }
+                }
+                return this;
+            };
             // --- 组成 component ---
             components["cg-" + name] = {
                 "template": layout,
                 "props": props,
                 "data": function() {
-                    data.taskId = opt.taskId;
-                    data.formId = formId;
-                    data.scope = data.scope || rand;
-                    return data;
+                    return Tool.clone(data);
                 },
                 "methods": methods,
                 "computed": computed,
@@ -609,7 +645,8 @@ export async function createForm(opt: ICreateFormOptions): Promise<false | IForm
                             mounted.call(this);
                         }
                     });
-                }
+                },
+                "destroyed": destroyed
             };
         }
     }
@@ -635,6 +672,7 @@ export async function createForm(opt: ICreateFormOptions): Promise<false | IForm
     let computed = {};
     let watch = {};
     let mounted: (() => void) | null = null;
+    let destroyed: (() => void) | undefined = undefined;
     // --- 检测是否有 js ---
     if (appPkg.files[opt.file + ".js"]) {
         let [expo] = await loader.requireMemory(opt.file ?? "", appPkg.files, {
@@ -646,6 +684,7 @@ export async function createForm(opt: ICreateFormOptions): Promise<false | IForm
             computed = expo.computed || {};
             watch = expo.watch || {};
             mounted = expo.mounted || null;
+            destroyed = expo.destroyed;
         }
     }
     // --- 应用样式表 ---
@@ -755,7 +794,8 @@ export async function createForm(opt: ICreateFormOptions): Promise<false | IForm
                         resolve(false);
                     }
                 });
-            }
+            },
+            "destroyed": destroyed
         });
     });
     if (!$vm) {
@@ -849,6 +889,7 @@ export function removeForm(formId: number): boolean {
             continue;
         }
         title = ClickGo.taskList[taskId].formList[oFormId].vue.$children[0].title;
+        ClickGo.taskList[taskId].formList[oFormId].vue.$destroy();
         delete(ClickGo.taskList[taskId].formList[oFormId]);
         break;
     }
@@ -877,13 +918,14 @@ export function endTask(taskId: number): boolean {
             continue;
         }
         let formId = parseInt(el.getAttribute("data-form-id") ?? "0");
-        formListElement.removeChild(el);
-        --i;
         if (ClickGo.taskList[taskId].formList[formId]) {
+            ClickGo.taskList[taskId].formList[formId].vue.$destroy();
             let title = ClickGo.taskList[taskId].formList[formId].vue.$children[0].title;
             // --- 触发 formRemoved 事件 ---
             ClickGo.trigger("formRemoved", taskId, formId, {"title": title});
         }
+        formListElement.removeChild(el);
+        --i;
     }
     // --- 移除 style ---
     Tool.removeStyle(taskId);

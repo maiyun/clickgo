@@ -41,7 +41,7 @@ styleListElement.style.display = "none";
 document.getElementsByTagName("body")[0].appendChild(styleListElement);
 styleListElement.insertAdjacentHTML("beforeend", "<style id=\"cg-global-cursor\"></style>");
 styleListElement.insertAdjacentHTML("beforeend", "<style id=\"cg-global-theme\"></style>");
-styleListElement.insertAdjacentHTML("beforeend", "<style class=\"cg-global\">\n.cg-form-list {position: fixed; left: 0; top: 0; z-index: 20020000; width: 0; height: 0;}\n\n.cg-form-wrap {cursor: default;}\n.cg-form-wrap, .cg-form-wrap * {box-sizing: border-box !important; -webkit-tap-highlight-color: rgba(0, 0, 0, 0);}\n.cg-form-wrap, .cg-form-wrap input, .cg-form-wrap textarea {font-family: -apple-system,BlinkMacSystemFont,opensans,Optima,\"Microsoft Yahei\",sans-serif; font-size: 12px; line-height: 1;}\n\n.cg-circular {box-sizing: border-box; position: fixed; z-index: 20020002; border: solid 3px #76b9ed; border-radius: 50%; filter: drop-shadow(0 0 7px #76b9ed); pointer-events: none; opacity: 0;}\n.cg-rectangle {box-sizing: border-box; position: fixed; z-index: 20020001; border: solid 1px rgba(118, 185, 237, .7); box-shadow: 0 0 10px rgba(0, 0, 0, .3); background: rgba(118, 185, 237, .1); pointer-events: none; opacity: 0;}\n</style>");
+styleListElement.insertAdjacentHTML("beforeend", "<style class=\"cg-global\">\n.cg-form-list {position: fixed; left: 0; top: 0; z-index: 20020000; width: 0; height: 0; cursor: default;}\n.cg-pop-list {position: fixed; left: 0; top: 0; z-index: 20020001; width: 0; height: 0; cursor: default;}\n\n.cg-form-list *, .cg-pop-list * {box-sizing: border-box !important; -webkit-tap-highlight-color: rgba(0, 0, 0, 0);}\n.cg-form-list, .cg-form-list input, .cg-form-list textarea, .cg-pop-list, .cg-pop-list input, .cg-pop-list textarea {font-family: -apple-system,BlinkMacSystemFont,opensans,Optima,\"Microsoft Yahei\",sans-serif; font-size: 12px; line-height: 1;}\n\n.cg-circular {box-sizing: border-box; position: fixed; z-index: 20020003; border: solid 3px #76b9ed; border-radius: 50%; filter: drop-shadow(0 0 7px #76b9ed); pointer-events: none; opacity: 0;}\n.cg-rectangle {box-sizing: border-box; position: fixed; z-index: 20020002; border: solid 1px rgba(118, 185, 237, .7); box-shadow: 0 0 10px rgba(0, 0, 0, .3); background: rgba(118, 185, 237, .1); pointer-events: none; opacity: 0;}\n</style>");
 function themeBlob2Theme(blob) {
     return __awaiter(this, void 0, void 0, function () {
         var begin, beginUint, _a, files, config, cursor, pathSize, _b, path, contentSize, _c, contentBolb, _d, _e;
@@ -337,7 +337,7 @@ function stylePrepend(style, rand) {
     }
     style = style.replace(/([\s\S]+?){([\s\S]+?)}/g, function (t, t1, t2) {
         return t1.replace(/\.([a-zA-Z0-9-_]+)/g, function (t, t1) {
-            if (t1 === "cg-focus" || t1 === "cg-state-max" || t1 === "cg-state-min") {
+            if (t1 === "cg-focus" || t1 === "cg-state-max" || t1 === "cg-state-min" || t1 === "cg-disabled") {
                 return t;
             }
             return "." + rand + t1;
@@ -524,3 +524,19 @@ function blob2Text(blob) {
     });
 }
 exports.blob2Text = blob2Text;
+function clone(obj) {
+    var newObj = {};
+    if (obj instanceof Array) {
+        newObj = [];
+        for (var i = 0; i < obj.length; ++i) {
+            newObj[i] = typeof obj[i] === "object" ? clone(obj[i]) : obj[i];
+        }
+    }
+    else {
+        for (var key in obj) {
+            newObj[key] = typeof obj[key] === "object" ? clone(obj[key]) : obj[key];
+        }
+    }
+    return newObj;
+}
+exports.clone = clone;

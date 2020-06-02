@@ -15,11 +15,11 @@ declare var Vue: {
 
 interface IVue {
     $el: HTMLElement;
-    $refs: any;
+    $refs: Record<string, HTMLElement>;
     $data: any;
     $props: any;
     $slots: any;
-    $parent: any;
+    $parent: IVue;
     $children: IVue[];
     $watch: any;
 
@@ -27,6 +27,7 @@ interface IVue {
     $nextTick(callback: (this: this) => void): this;
     $nextTick(): Promise<void>;
     $mount(c: string): any;
+    $destroy(): void;
 
     [key: string]: any;
 }

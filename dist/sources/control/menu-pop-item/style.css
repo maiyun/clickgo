@@ -1,0 +1,6 @@
+.wrap {
+    padding: 6px 10px; position: relative;
+}
+.wrap:hover {
+    background: rgba(118, 185, 237, .5);
+}

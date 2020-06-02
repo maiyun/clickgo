@@ -61,14 +61,11 @@
 }
 
 .inner {
-    overflow: hidden; flex: 1; display: flex; flex-direction: column;
+    flex: 1; display: flex; flex-direction: column;
 }
 
 .header {
     display: flex; background: #FFF;
-}
-.menu {
-    background: #FFF;
 }
 
 .icon {
@@ -81,10 +78,10 @@
     display: none;
 }
 
-.titile {
+.title {
     padding: 10px 10px 10px 0; flex: 1; text-overflow: ellipsis; white-space: nowrap; overflow: hidden;
 }
-.wrap.border-thin .titile {
+.wrap.border-thin .title {
     padding: 5px;
 }
 
@@ -116,7 +113,7 @@
 }
 
 .content {
-    flex: 1; background: #f0f0f0; display: flex; flex-direction: column;
+    overflow: hidden; flex: 1; background: #f0f0f0; display: flex; flex-direction: column;
 }
 .wrap.cg-state-min .content {
     display: none;

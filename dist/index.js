@@ -86,6 +86,12 @@ var ClickGo = {
     getPositionByBorderDir: function (dir) {
         return this._core.getPositionByBorderDir(dir);
     },
+    appendToPop: function (el) {
+        this._core.appendToPop(el);
+    },
+    removeFromPop: function (el) {
+        this._core.removeFromPop(el);
+    },
     setTheme: function (file) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {

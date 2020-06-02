@@ -42,14 +42,19 @@ async function run(): Promise<void> {
         if (item.isFile()) {
             continue;
         }
-        if (["menu-item"].includes(item.name)) {
+        if (["menu-item", "menu-pop", "menu-pop-item"].includes(item.name)) {
             continue;
         }
         let base = "dist/sources/control/" + item.name;
 
         let controlBuffer = await getSingleControlBlob(base);
         if (item.name === "menu") {
-            controlBuffer = Buffer.concat([controlBuffer, await getSingleControlBlob("dist/sources/control/menu-item")]);
+            controlBuffer = Buffer.concat([
+                controlBuffer,
+                await getSingleControlBlob("dist/sources/control/menu-item"),
+                await getSingleControlBlob("dist/sources/control/menu-pop"),
+                await getSingleControlBlob("dist/sources/control/menu-pop-item")
+            ]);
         }
 
         // --- 组成 cgc 文件 ---

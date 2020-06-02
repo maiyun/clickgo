@@ -16,3 +16,7 @@ export let props = {
     }
 };
 
+export let data = {
+    "focus": false
+};
+

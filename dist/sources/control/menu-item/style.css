@@ -1,9 +1,9 @@
 .wrap {
-    border: solid 1px transparent; display: inline-block; padding: 6px;
+    border: solid 1px transparent; display: inline-block; padding: 6px; position: relative;
 }
 .wrap:hover {
     border-color: rgba(118, 185, 237, .6); background: rgba(118, 185, 237, .2);
 }
-.wrap:active {
-    border-color: rgba(118, 185, 237, .9); background: rgba(118, 185, 237, .5);
+.wrap:focus {
+    border-color: rgba(118, 185, 237, .9); background: rgba(118, 185, 237, .5); outline: none;
 }

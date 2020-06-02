@@ -119,7 +119,19 @@ const ClickGo: {
     getPositionByBorderDir: (dir: TBorderDir) => { "width": number; "height": number; "left": number; "top": number; };
 
     /**
-     * --- 将 cgt 主题设置到全局
+     * --- 将标签追加到 pop 层 ---
+     * @param el 要追加的标签
+     */
+    appendToPop: (el: HTMLElement) => void;
+
+    /**
+     * --- 将标签从 pop 层移除 ---
+     * @param el 要移除的标签
+     */
+    removeFromPop: (el: HTMLElement) => void;
+
+    /**
+     * --- 将 cgt 主题设置到全局，之前的主题失效 ---
      * @param file cgt 文件的 blob
      */
     setTheme: (file: Blob) => Promise<void>;
@@ -292,6 +304,14 @@ const ClickGo: {
 
     getPositionByBorderDir: function(dir: TBorderDir): { "width": number; "height": number; "left": number; "top": number; } {
         return this._core.getPositionByBorderDir(dir);
+    },
+
+    appendToPop: function(el: HTMLElement): void {
+        this._core.appendToPop(el);
+    },
+
+    removeFromPop: function(el: HTMLElement): void {
+        this._core.removeFromPop(el);
     },
 
     setTheme: async function(file: Blob): Promise<void> {

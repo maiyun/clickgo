@@ -1,14 +1,21 @@
 <form title="Task manager" icon="/icon.svg">
     <menu>
-        <menu-item alt="F" text="File">
+        <menu-item :focus="focus" alt="F" text="File">
             <menu-pop>
+                <menu-pop-item alt="N" text="New task"></menu-pop-item>
+                <menu-pop-item alt="X" text="Exit"></menu-pop-item>
             </menu-pop>
         </menu-item>
-        <menu-item alt="O" text="Option">
-            
+        <menu-item :focus="focus" alt="O" text="Option">
+            <menu-pop>
+                <menu-pop-item alt="A" text="Always on top"></menu-pop-item>
+            </menu-pop>
         </menu-item>
-        <menu-item alt="V" text="View">
-            
+        <menu-item :focus="focus" alt="V" text="View">
+            <menu-pop>
+                <menu-pop-item alt="R" text="Refresh now"></menu-pop-item>
+                <menu-pop-item alt="U" text="Update speed"></menu-pop-item>
+            </menu-pop>
         </menu-item>
     </menu>
 </form>

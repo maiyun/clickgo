@@ -1,13 +1,13 @@
 .wrap {
     border: solid 1px #adadad; background: #e1e1e1; color: #000; display: flex; outline: none; position: relative; padding: 1px;
 }
-.wrap.disabled {
+.wrap.cg-disabled {
     border: solid 1px #bfbfbf; background: #cccccc; color: #838383;
 }
-.wrap:hover:not(.disabled) {
+.wrap:hover:not(.cg-disabled) {
     border: solid 1px #0078d7; background: #e5f1fb; padding: 1px;
 }
-.wrap:active:not(.disabled) {
+.wrap:active:not(.cg-disabled) {
     border: solid 1px #005499; background: #cce4f7; padding: 1px;
 }
 .wrap:focus {

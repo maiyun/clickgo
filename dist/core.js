@@ -45,6 +45,9 @@ if (window.devicePixelRatio < 2) {
 }
 formListElement.classList.add("cg-form-list");
 document.getElementsByTagName("body")[0].appendChild(formListElement);
+var popListElement = document.createElement("div");
+popListElement.classList.add("cg-pop-list");
+document.getElementsByTagName("body")[0].appendChild(popListElement);
 window.addEventListener("resize", function () {
     return __awaiter(this, void 0, void 0, function () {
         var i, el, taskId, formId, $vm;
@@ -83,7 +86,7 @@ var lostFocusEvent = function (e) {
         if (!cla) {
             continue;
         }
-        if (cla.indexOf("cg-form-list") !== -1) {
+        if (cla.indexOf("cg-form-list") !== -1 || cla.indexOf("cg-pop-list") !== -1) {
             return;
         }
     }
@@ -269,6 +272,14 @@ function getPositionByBorderDir(dir) {
     };
 }
 exports.getPositionByBorderDir = getPositionByBorderDir;
+function appendToPop(el) {
+    popListElement.appendChild(el);
+}
+exports.appendToPop = appendToPop;
+function removeFromPop(el) {
+    popListElement.removeChild(el);
+}
+exports.removeFromPop = removeFromPop;
 function setTheme(file) {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
@@ -562,7 +573,7 @@ exports.runApp = runApp;
 function createForm(opt) {
     var _a, _b, _c;
     return __awaiter(this, void 0, void 0, function () {
-        var appPkg, formId, formStyle, components, _i, _d, controlPath, controlBlob, controlPkg, _loop_1, _e, _f, _g, name_1, state_1, style, layout, layoutBlob, styleBlob, data, methods, computed, watch, mounted, expo, rand, r_1, randList, r, el, $vm, getFocusEvent, form;
+        var appPkg, formId, formStyle, components, _i, _d, controlPath, controlBlob, controlPkg, _loop_1, _e, _f, _g, name_1, state_1, style, layout, layoutBlob, styleBlob, data, methods, computed, watch, mounted, destroyed, expo, rand, r_1, randList, r, el, $vm, getFocusEvent, form;
         return __generator(this, function (_h) {
             switch (_h.label) {
                 case 0:
@@ -586,7 +597,7 @@ function createForm(opt) {
                         return [2, false];
                     }
                     _loop_1 = function (name_1) {
-                        var item, props, data_1, methods_1, computed_1, watch_1, mounted_1, expo, rand_1, styleBlob, r_2, _a, _b, _c, layoutBlob, randList_1, r_3, _d, _e, layout_1;
+                        var item, props, data_1, methods_1, computed_1, watch_1, mounted_1, destroyed_1, expo, rand_1, styleBlob, r_2, _a, _b, _c, layoutBlob, randList_1, r_3, _d, _e, layout_1;
                         return __generator(this, function (_f) {
                             switch (_f.label) {
                                 case 0:
@@ -597,6 +608,7 @@ function createForm(opt) {
                                     computed_1 = {};
                                     watch_1 = {};
                                     mounted_1 = null;
+                                    destroyed_1 = undefined;
                                     if (!item.files[item.config.code + ".js"]) return [3, 2];
                                     return [4, loader.requireMemory(item.config.code, item.files, {
                                             "after": "?" + Math.random()
@@ -610,6 +622,7 @@ function createForm(opt) {
                                         computed_1 = expo.computed || {};
                                         watch_1 = expo.watch || {};
                                         mounted_1 = expo.mounted || null;
+                                        destroyed_1 = expo.destroyed;
                                     }
                                     _f.label = 2;
                                 case 2:
@@ -644,6 +657,9 @@ function createForm(opt) {
                                 case 6:
                                     r_3 = _e.apply(_d, [_f.sent(), randList_1]);
                                     layout_1 = Tool.purify(r_3.layout);
+                                    data_1.taskId = opt.taskId;
+                                    data_1.formId = formId;
+                                    data_1.scope = data_1.scope || rand_1;
                                     methods_1.down = function (e) {
                                         if (e instanceof MouseEvent && ClickGo.hasTouch) {
                                             e.preventDefault();
@@ -655,7 +671,7 @@ function createForm(opt) {
                                     };
                                     methods_1.tap = function (e) {
                                         e.stopPropagation();
-                                        if (this.disabled === true) {
+                                        if (this.$el.className.indexOf("cg-disabled") !== -1) {
                                             return;
                                         }
                                         this.$emit("tap");
@@ -684,14 +700,23 @@ function createForm(opt) {
                                             });
                                         });
                                     };
+                                    methods_1.getFormObject = function () {
+                                        var par = this.$parent;
+                                        while (par) {
+                                            if (par.controlName === "form") {
+                                                return par;
+                                            }
+                                            else {
+                                                par = par.$parent;
+                                            }
+                                        }
+                                        return this;
+                                    };
                                     components["cg-" + name_1] = {
                                         "template": layout_1,
                                         "props": props,
                                         "data": function () {
-                                            data_1.taskId = opt.taskId;
-                                            data_1.formId = formId;
-                                            data_1.scope = data_1.scope || rand_1;
-                                            return data_1;
+                                            return Tool.clone(data_1);
                                         },
                                         "methods": methods_1,
                                         "computed": computed_1,
@@ -702,7 +727,8 @@ function createForm(opt) {
                                                     mounted_1.call(this);
                                                 }
                                             });
-                                        }
+                                        },
+                                        "destroyed": destroyed_1
                                     };
                                     return [2];
                             }
@@ -754,6 +780,7 @@ function createForm(opt) {
                     computed = {};
                     watch = {};
                     mounted = null;
+                    destroyed = undefined;
                     if (!appPkg.files[opt.file + ".js"]) return [3, 13];
                     return [4, loader.requireMemory((_b = opt.file) !== null && _b !== void 0 ? _b : "", appPkg.files, {
                             "after": "?" + Math.random()
@@ -766,6 +793,7 @@ function createForm(opt) {
                         computed = expo.computed || {};
                         watch = expo.watch || {};
                         mounted = expo.mounted || null;
+                        destroyed = expo.destroyed;
                     }
                     _h.label = 13;
                 case 13:
@@ -917,7 +945,8 @@ function createForm(opt) {
                                             resolve(false);
                                         }
                                     });
-                                }
+                                },
+                                "destroyed": destroyed
                             });
                         })];
                 case 16:
@@ -1000,6 +1029,7 @@ function removeForm(formId) {
             continue;
         }
         title = ClickGo.taskList[taskId].formList[oFormId].vue.$children[0].title;
+        ClickGo.taskList[taskId].formList[oFormId].vue.$destroy();
         delete (ClickGo.taskList[taskId].formList[oFormId]);
         break;
     }
@@ -1021,12 +1051,13 @@ function endTask(taskId) {
             continue;
         }
         var formId = parseInt((_b = el.getAttribute("data-form-id")) !== null && _b !== void 0 ? _b : "0");
-        formListElement.removeChild(el);
-        --i;
         if (ClickGo.taskList[taskId].formList[formId]) {
+            ClickGo.taskList[taskId].formList[formId].vue.$destroy();
             var title = ClickGo.taskList[taskId].formList[formId].vue.$children[0].title;
             ClickGo.trigger("formRemoved", taskId, formId, { "title": title });
         }
+        formListElement.removeChild(el);
+        --i;
     }
     Tool.removeStyle(taskId);
     delete (ClickGo.taskList[taskId]);
