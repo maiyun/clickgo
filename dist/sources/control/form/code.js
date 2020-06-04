@@ -94,7 +94,7 @@ exports.data = {
     "stateMaxData": false,
     "stateMinData": false,
     "stateAbs": false,
-    "iconData": null,
+    "iconData": undefined,
     "widthData": 300,
     "heightData": 200,
     "leftData": 0,
@@ -129,7 +129,7 @@ exports.watch = {
                     switch (_c.label) {
                         case 0:
                             first = false;
-                            if (this.iconData === null) {
+                            if (this.iconData === undefined) {
                                 first = true;
                             }
                             if (!(this.icon === "")) return [3, 1];

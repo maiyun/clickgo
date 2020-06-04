@@ -4,6 +4,6 @@
 .wrap:hover {
     border-color: rgba(118, 185, 237, .6); background: rgba(118, 185, 237, .2);
 }
-.wrap:focus {
+.wrap.cg-pop-open {
     border-color: rgba(118, 185, 237, .9); background: rgba(118, 185, 237, .5); outline: none;
 }

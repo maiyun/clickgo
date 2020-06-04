@@ -337,7 +337,7 @@ function stylePrepend(style, rand) {
     }
     style = style.replace(/([\s\S]+?){([\s\S]+?)}/g, function (t, t1, t2) {
         return t1.replace(/\.([a-zA-Z0-9-_]+)/g, function (t, t1) {
-            if (t1 === "cg-focus" || t1 === "cg-state-max" || t1 === "cg-state-min" || t1 === "cg-disabled") {
+            if (t1.slice(0, 3) === "cg-") {
                 return t;
             }
             return "." + rand + t1;

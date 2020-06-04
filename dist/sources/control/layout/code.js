@@ -32,3 +32,6 @@ exports.props = {
         "default": undefined
     }
 };
+exports.data = {
+    "controlName": "layout"
+};

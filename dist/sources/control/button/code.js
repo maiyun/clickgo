@@ -26,7 +26,9 @@ exports.props = {
         "default": undefined
     }
 };
-exports.data = {};
+exports.data = {
+    "controlName": "button"
+};
 exports.methods = {
     keydown: function (e) {
         if (e.keyCode !== 13) {

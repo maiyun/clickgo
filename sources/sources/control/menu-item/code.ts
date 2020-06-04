@@ -2,9 +2,6 @@ export let props = {
     "disabled": {
         "default": false
     },
-    "focus": {
-        "default": false
-    },
 
     "text": {
         "default": ""
@@ -14,29 +11,24 @@ export let props = {
     }
 };
 
+export let data = {
+    "controlName": "menu-item",
+    "popOpen": false
+};
+
 export let methods = {
-    showPop: function(this: IVue): void {
-        this.$parent.focus = true;
-        if (!this.$children[0] || !this.$children[0].setPropData) {
+    showPop: function(this: IVue, event: MouseEvent): void {
+        if (this.popShow) {
             return;
         }
         let r = this.$el.getBoundingClientRect();
-        this.$children[0].setPropData("left", r.left);
-        this.$children[0].setPropData("top", r.top + r.height);
-        this.$children[0].$el.style.display = "block";
+        ClickGo.showPop(this.$children[0], r.left, r.top + r.height);
+        this.tap(event);
     },
-    hidePop: function(this: IVue): void {
-        /*
-        this.$parent.focus = false;
-        if (!this.$children[0] || !this.$children[0].setPropData) {
-            return;
-        }
-        this.$children[0].$el.style.display = "";
-        */
-    },
-    mousein: function(this: IVue): void {
-        if (this.$parent.focus) {
-            this.$el.focus();
+    mousein: function(this: IVue, event: MouseEvent): void {
+        if (ClickGo.siblings(this.$el, "cg-pop-open")) {
+            ClickGo.hidePop();
+            this.showPop(event);
         }
     }
 };

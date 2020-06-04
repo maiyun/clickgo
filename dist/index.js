@@ -61,9 +61,10 @@ var ClickGo = {
     "formId": 0,
     "zIndex": 999,
     "_readyList": [],
-    "_core": undefined,
+    "_core": null,
     "_loaderConfig": {},
     "_config": {},
+    "_pop": null,
     showCircular: function (x, y) {
         this._core.showCircular(x, y);
     },
@@ -91,6 +92,16 @@ var ClickGo = {
     },
     removeFromPop: function (el) {
         this._core.removeFromPop(el);
+    },
+    showPop: function (pop, x, y) {
+        this._core.showPop(pop, x, y);
+    },
+    hidePop: function (pop) {
+        if (pop === void 0) { pop = null; }
+        this._core.hidePop(pop);
+    },
+    siblings: function (e, cn) {
+        return this._core.siblings(e, cn);
     },
     setTheme: function (file) {
         return __awaiter(this, void 0, void 0, function () {

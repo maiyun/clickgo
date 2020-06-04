@@ -85,6 +85,8 @@ const ClickGo: {
     };
     /** --- 配置项 --- */
     "_config": ICgConfig;
+    /** --- 当前 pop 的 vue 对象 --- */
+    "_pop": IVue | null;
 
     /**
      * --- 显示从小到大的圆圈动画特效对象 ---
@@ -129,6 +131,26 @@ const ClickGo: {
      * @param el 要移除的标签
      */
     removeFromPop: (el: HTMLElement) => void;
+
+    /**
+     * --- 将 pop 显示出来 ---
+     * @param el 要显示的 pop
+     * @param left 要显示的 left
+     * @param top 要显示的 top
+     */
+    showPop: (pop: IVue, x: number, y: number) => void;
+
+    /**
+     * --- 隐藏正在显示中的 pop ---
+     */
+    hidePop: (pop?: IVue | null) => void;
+
+    /**
+     * --- 查找指定 el 的同级 className ---
+     * @param e 基准
+     * @param cn 同级 classname
+     */
+    siblings: (e: HTMLElement, cn: string) => HTMLElement | null;
 
     /**
      * --- 将 cgt 主题设置到全局，之前的主题失效 ---
@@ -282,9 +304,10 @@ const ClickGo: {
     "zIndex": 999,
 
     "_readyList": [],
-    "_core": undefined,
+    "_core": null,
     "_loaderConfig": {},
     "_config": {},
+    "_pop": null,
 
     showCircular: function(x: number, y: number): void {
         this._core.showCircular(x, y);
@@ -312,6 +335,18 @@ const ClickGo: {
 
     removeFromPop: function(el: HTMLElement): void {
         this._core.removeFromPop(el);
+    },
+
+    showPop: function(pop: IVue, x: number, y: number): void  {
+        this._core.showPop(pop, x, y);
+    },
+
+    hidePop: function(pop: IVue | null = null): void {
+        this._core.hidePop(pop);
+    },
+
+    siblings: function(e: HTMLElement, cn: string): HTMLElement | null {
+        return this._core.siblings(e, cn);
     },
 
     setTheme: async function(file: Blob): Promise<void> {

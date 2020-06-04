@@ -67,10 +67,15 @@ let lostFocusEvent = function(e: MouseEvent | TouchEvent): void {
         if (!cla) {
             continue;
         }
-        if (cla.indexOf("cg-form-list") !== -1 || cla.indexOf("cg-pop-list") !== -1) {
+        if (cla.indexOf("cg-form-list") !== -1) {
+            hidePop();
+            return;
+        }
+        if (cla.indexOf("cg-pop-list") !== -1) {
             return;
         }
     }
+    hidePop();
     Tool.changeFormFocus();
 };
 if ("ontouchstart" in document.documentElement) {
@@ -268,6 +273,58 @@ export function appendToPop(el: HTMLElement): void {
  */
 export function removeFromPop(el: HTMLElement): void {
     popListElement.removeChild(el);
+}
+
+/**
+ * --- 将 pop 显示出来 ---
+ * @param el 要显示的 pop
+ * @param x 要显示的 left
+ * @param y 要显示的 top
+ */
+export function showPop(pop: IVue, x: number, y: number): void {
+    if (pop.$parent.controlName !== "menu-pop-item") {
+        ClickGo._pop = pop;
+    }
+    pop.$parent.popOpen = true;
+    pop.open = true;
+    pop.$el.style.left = x + "px";
+    pop.$el.style.top = y + "px";
+}
+
+/**
+ * --- 隐藏正在显示中的 pop，或指定 pop ---
+ */
+export function hidePop(pop: IVue | null = null): void {
+    if (!pop) {
+        pop = ClickGo._pop;
+        if (!pop) {
+            return;
+        }
+        ClickGo._pop = null;
+    }
+    pop.$parent.popOpen = false;
+    pop.open = false;
+}
+
+/**
+ * --- 查找指定 el 的同级 className ---
+ * @param e 基准
+ * @param cn 同级 classname
+ */
+export function siblings(e: HTMLElement, cn: string): HTMLElement | null {
+    if (!e.parentElement) {
+        return null;
+    }
+    for (let i = 0; i < e.parentElement.children.length; ++i) {
+        let el = e.parentElement.children.item(i) as HTMLElement;
+        if (el === e) {
+            continue;
+        }
+        if (el.classList.contains(cn)) {
+            return el;
+        }
+    }
+    return null;
 }
 
 /**

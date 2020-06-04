@@ -1,4 +1,4 @@
-<div class="wrap" @focus="showPop" @blur="hidePop" @mouseenter="mousein" @click="tap" @mousedown="down" @touchstart="down" :tabindex="!disabled && focus && '0'" :class="[disabled && 'cg-disabled']">
+<div class="wrap" :class="[disabled && 'cg-disabled', popOpen && 'cg-pop-open']" @click="showPop" @mouseenter="mousein" @mousedown="down" @touchstart="down">
     <div class="inner">{{text}}</div>
     <slot>
 </div>

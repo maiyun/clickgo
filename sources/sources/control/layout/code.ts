@@ -31,3 +31,7 @@ export let props = {
     }
 };
 
+export let data = {
+    "controlName": "layout"
+};
+

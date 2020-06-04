@@ -4,9 +4,6 @@ exports.props = {
     "disabled": {
         "default": false
     },
-    "focus": {
-        "default": false
-    },
     "text": {
         "default": ""
     },
@@ -14,22 +11,23 @@ exports.props = {
         "default": undefined
     }
 };
+exports.data = {
+    "controlName": "menu-item",
+    "popOpen": false
+};
 exports.methods = {
-    showPop: function () {
-        this.$parent.focus = true;
-        if (!this.$children[0] || !this.$children[0].setPropData) {
+    showPop: function (event) {
+        if (this.popShow) {
             return;
         }
         var r = this.$el.getBoundingClientRect();
-        this.$children[0].setPropData("left", r.left);
-        this.$children[0].setPropData("top", r.top + r.height);
-        this.$children[0].$el.style.display = "block";
+        ClickGo.showPop(this.$children[0], r.left, r.top + r.height);
+        this.tap(event);
     },
-    hidePop: function () {
-    },
-    mousein: function () {
-        if (this.$parent.focus) {
-            this.$el.focus();
+    mousein: function (event) {
+        if (ClickGo.siblings(this.$el, "cg-pop-open")) {
+            ClickGo.hidePop();
+            this.showPop(event);
         }
     }
 };

@@ -33,6 +33,7 @@ declare const ClickGo: {
         "paths"?: IPaths;
     };
     "_config": ICgConfig;
+    "_pop": IVue | null;
     showCircular: (x: number, y: number) => void;
     showRectangle: (x: number, y: number, pos: TBorderDir) => Promise<void>;
     moveRectangle: (dir: TBorderDir) => void;
@@ -45,6 +46,9 @@ declare const ClickGo: {
     };
     appendToPop: (el: HTMLElement) => void;
     removeFromPop: (el: HTMLElement) => void;
+    showPop: (pop: IVue, x: number, y: number) => void;
+    hidePop: (pop?: IVue | null) => void;
+    siblings: (e: HTMLElement, cn: string) => HTMLElement | null;
     setTheme: (file: Blob) => Promise<void>;
     clearTheme: () => void;
     trigger: (name: TSystemEvent, taskId?: number, formId?: number, opt?: {

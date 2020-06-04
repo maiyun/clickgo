@@ -61,7 +61,7 @@
 }
 
 .inner {
-    flex: 1; display: flex; flex-direction: column;
+    flex: 1; display: flex; flex-direction: column; overflow: hidden;
 }
 
 .header {
@@ -113,7 +113,7 @@
 }
 
 .content {
-    overflow: hidden; flex: 1; background: #f0f0f0; display: flex; flex-direction: column;
+    flex: 1; background: #f0f0f0; display: flex; flex-direction: column;
 }
 .wrap.cg-state-min .content {
     display: none;

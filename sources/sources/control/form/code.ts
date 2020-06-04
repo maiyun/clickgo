@@ -61,7 +61,7 @@ export let data = {
     "stateMinData": false,
     "stateAbs": false,
 
-    "iconData": null,
+    "iconData": undefined,
 
     "widthData": 300,
     "heightData": 200,
@@ -93,7 +93,7 @@ export let watch = {
     "icon": {
         handler: async function(this: IVue): Promise<void> {
             let first: boolean = false;
-            if (this.iconData === null) {
+            if (this.iconData === undefined) {
                 first = true;
             }
             if (this.icon === "") {

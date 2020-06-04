@@ -30,3 +30,6 @@ export declare let props: {
         default: undefined;
     };
 };
+export declare let data: {
+    controlName: string;
+};

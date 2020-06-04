@@ -2,9 +2,6 @@ export declare let props: {
     disabled: {
         default: boolean;
     };
-    focus: {
-        default: boolean;
-    };
     text: {
         default: string;
     };
@@ -12,10 +9,13 @@ export declare let props: {
         default: undefined;
     };
 };
+export declare let data: {
+    controlName: string;
+    popOpen: boolean;
+};
 export declare let methods: {
-    showPop: (this: IVue) => void;
-    hidePop: (this: IVue) => void;
-    mousein: (this: IVue) => void;
+    showPop: (this: IVue, event: MouseEvent) => void;
+    mousein: (this: IVue, event: MouseEvent) => void;
 };
 export declare let mounted: (this: IVue) => void;
 export declare let destroyed: (this: IVue) => void;

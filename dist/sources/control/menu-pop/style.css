@@ -1,3 +1,6 @@
 .wrap {
     border: solid 1px #cccccc; padding: 2px; background: #f0f0f0; position: absolute; box-shadow: 1px 1px 5px rgba(0, 0, 0, .2); white-space: nowrap; z-index: 1; display: none;
 }
+.wrap.cg-open {
+    display: block;
+}

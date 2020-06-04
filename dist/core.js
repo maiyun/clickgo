@@ -86,10 +86,15 @@ var lostFocusEvent = function (e) {
         if (!cla) {
             continue;
         }
-        if (cla.indexOf("cg-form-list") !== -1 || cla.indexOf("cg-pop-list") !== -1) {
+        if (cla.indexOf("cg-form-list") !== -1) {
+            hidePop();
+            return;
+        }
+        if (cla.indexOf("cg-pop-list") !== -1) {
             return;
         }
     }
+    hidePop();
     Tool.changeFormFocus();
 };
 if ("ontouchstart" in document.documentElement) {
@@ -280,6 +285,45 @@ function removeFromPop(el) {
     popListElement.removeChild(el);
 }
 exports.removeFromPop = removeFromPop;
+function showPop(pop, x, y) {
+    if (pop.$parent.controlName !== "menu-pop-item") {
+        ClickGo._pop = pop;
+    }
+    pop.$parent.popOpen = true;
+    pop.open = true;
+    pop.$el.style.left = x + "px";
+    pop.$el.style.top = y + "px";
+}
+exports.showPop = showPop;
+function hidePop(pop) {
+    if (pop === void 0) { pop = null; }
+    if (!pop) {
+        pop = ClickGo._pop;
+        if (!pop) {
+            return;
+        }
+        ClickGo._pop = null;
+    }
+    pop.$parent.popOpen = false;
+    pop.open = false;
+}
+exports.hidePop = hidePop;
+function siblings(e, cn) {
+    if (!e.parentElement) {
+        return null;
+    }
+    for (var i = 0; i < e.parentElement.children.length; ++i) {
+        var el = e.parentElement.children.item(i);
+        if (el === e) {
+            continue;
+        }
+        if (el.classList.contains(cn)) {
+            return el;
+        }
+    }
+    return null;
+}
+exports.siblings = siblings;
 function setTheme(file) {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {

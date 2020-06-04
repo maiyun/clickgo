@@ -16,5 +16,5 @@ export declare let props: {
     };
 };
 export declare let data: {
-    focus: boolean;
+    controlName: string;
 };

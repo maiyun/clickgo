@@ -24,7 +24,9 @@ export declare let props: {
         default: undefined;
     };
 };
-export declare let data: {};
+export declare let data: {
+    controlName: string;
+};
 export declare let methods: {
     keydown: (this: IVue, e: KeyboardEvent) => void;
 };

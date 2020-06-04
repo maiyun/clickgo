@@ -56,7 +56,7 @@ export declare let data: {
     stateMaxData: boolean;
     stateMinData: boolean;
     stateAbs: boolean;
-    iconData: null;
+    iconData: undefined;
     widthData: number;
     heightData: number;
     leftData: number;

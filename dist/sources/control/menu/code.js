@@ -18,5 +18,5 @@ exports.props = {
     }
 };
 exports.data = {
-    "focus": false
+    "controlName": "menu"
 };

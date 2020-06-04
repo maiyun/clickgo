@@ -8,3 +8,6 @@ exports.props = {
         "default": undefined
     }
 };
+exports.data = {
+    "controlName": "menu-pop-item"
+};

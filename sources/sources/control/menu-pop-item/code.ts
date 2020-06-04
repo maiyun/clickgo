@@ -7,3 +7,6 @@ export let props = {
     }
 };
 
+export let data = {
+    "controlName": "menu-pop-item"
+};

@@ -10,6 +10,9 @@ export declare function getPositionByBorderDir(dir: TBorderDir): {
 };
 export declare function appendToPop(el: HTMLElement): void;
 export declare function removeFromPop(el: HTMLElement): void;
+export declare function showPop(pop: IVue, x: number, y: number): void;
+export declare function hidePop(pop?: IVue | null): void;
+export declare function siblings(e: HTMLElement, cn: string): HTMLElement | null;
 export declare function setTheme(file: Blob): Promise<void>;
 export declare function clearTheme(): void;
 export declare function trigger(name: TSystemEvent, taskId?: number, formId?: number, opt?: {
