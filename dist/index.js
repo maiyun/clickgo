@@ -60,6 +60,7 @@ var ClickGo = {
     "taskList": {},
     "formId": 0,
     "zIndex": 999,
+    "topZIndex": 9999999,
     "popZIndex": 0,
     "_readyList": [],
     "_core": null,

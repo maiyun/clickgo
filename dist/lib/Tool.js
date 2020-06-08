@@ -517,7 +517,12 @@ function changeFormFocus(formId, vm) {
             var taskId = void 0;
             if (vm) {
                 if (!vm.$data._customZIndex) {
-                    vm.$children[0].setPropData("zIndex", ++ClickGo.zIndex);
+                    if (vm.$data._topMost) {
+                        vm.$children[0].setPropData("zIndex", ++ClickGo.topZIndex);
+                    }
+                    else {
+                        vm.$children[0].setPropData("zIndex", ++ClickGo.zIndex);
+                    }
                 }
                 vm.focus = true;
                 taskId = vm.taskId;
@@ -526,7 +531,12 @@ function changeFormFocus(formId, vm) {
                 taskId = parseInt((_b = el.getAttribute("data-task-id")) !== null && _b !== void 0 ? _b : "0");
                 var task = ClickGo.taskList[taskId];
                 if (!task.formList[formId].vue.$data._customZIndex) {
-                    task.formList[formId].vue.$children[0].setPropData("zIndex", ++ClickGo.zIndex);
+                    if (task.formList[formId].vue.$data._topMost) {
+                        task.formList[formId].vue.$children[0].setPropData("zIndex", ++ClickGo.topZIndex);
+                    }
+                    else {
+                        task.formList[formId].vue.$children[0].setPropData("zIndex", ++ClickGo.zIndex);
+                    }
                 }
                 task.formList[formId].vue.focus = true;
             }

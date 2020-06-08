@@ -65,10 +65,10 @@ exports.methods = {
             return;
         }
         if (this.type === undefined) {
-            this._tap(event);
             if (!this.showArrow) {
                 ClickGo.hidePop();
             }
+            this._tap(event);
             return;
         }
         if (this.type === "radio") {
@@ -78,6 +78,7 @@ exports.methods = {
             this.$emit("input", this.value ? false : true);
         }
         ClickGo.hidePop();
+        this._tap(event);
     }
 };
 exports.mounted = function () {

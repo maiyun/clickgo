@@ -26,6 +26,7 @@ declare const ClickGo: {
     "taskList": Record<number, ITask>;
     "formId": number;
     "zIndex": number;
+    "topZIndex": number;
     "popZIndex": number;
     "_readyList": Array<() => void | Promise<void>>;
     "_core": any;

@@ -73,6 +73,8 @@ const ClickGo: {
     "formId": number;
     /** --- 最后一个层级 --- */
     "zIndex": number;
+    /** --- top 的最后一个层级 --- */
+    "topZIndex": number;
     /** --- pop 最后一个层级 --- */
     "popZIndex": number;
 
@@ -304,6 +306,7 @@ const ClickGo: {
     "taskList": {},
     "formId": 0,
     "zIndex": 999,
+    "topZIndex": 9999999,
     "popZIndex": 0,
 
     "_readyList": [],

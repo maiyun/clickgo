@@ -8,7 +8,7 @@
         </menu-item>
         <menu-item alt="O" text="Options">
             <menu-pop>
-                <menu-pop-item alt="A" text="Always on top" type="check" v-model="alwaysOnTop"></menu-pop-item>
+                <menu-pop-item alt="A" text="Always on top" type="check" v-model="alwaysOnTop" @tap="setTopMost(alwaysOnTop)"></menu-pop-item>
                 <menu-pop-split></menu-pop-split>
                 <menu-pop-item alt="S" text="Show full account name" :disabled="true"></menu-pop-item>
             </menu-pop>

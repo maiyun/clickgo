@@ -472,7 +472,11 @@ export function changeFormFocus(formId: number = 0, vm?: IVue): void {
             let taskId: number;
             if (vm) {
                 if (!vm.$data._customZIndex) {
-                    vm.$children[0].setPropData("zIndex", ++ClickGo.zIndex);
+                    if (vm.$data._topMost) {
+                        vm.$children[0].setPropData("zIndex", ++ClickGo.topZIndex);
+                    } else {
+                        vm.$children[0].setPropData("zIndex", ++ClickGo.zIndex);
+                    }
                 }
                 vm.focus = true;
                 taskId = vm.taskId;
@@ -480,7 +484,11 @@ export function changeFormFocus(formId: number = 0, vm?: IVue): void {
                 taskId = parseInt(el.getAttribute("data-task-id") ?? "0");
                 let task = ClickGo.taskList[taskId];
                 if (!task.formList[formId].vue.$data._customZIndex) {
-                    task.formList[formId].vue.$children[0].setPropData("zIndex", ++ClickGo.zIndex);
+                    if (task.formList[formId].vue.$data._topMost) {
+                        task.formList[formId].vue.$children[0].setPropData("zIndex", ++ClickGo.topZIndex);
+                    } else {
+                        task.formList[formId].vue.$children[0].setPropData("zIndex", ++ClickGo.zIndex);
+                    }
                 }
                 task.formList[formId].vue.focus = true;
             }

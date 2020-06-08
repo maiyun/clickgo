@@ -34,5 +34,6 @@ export let mounted = function(this: IVue): void {
             }
         }
     });
+    this.setTopMost(true);
 };
 

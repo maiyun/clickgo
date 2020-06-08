@@ -877,6 +877,23 @@ export async function createForm(opt: ICreateFormOptions): Promise<number | IFor
         Tool.clearTaskTheme(this.taskId);
         await Tool.loadTaskTheme(path, this.taskId);
     };
+    // --- 设置窗体置顶/取消置顶 ---
+    methods.setTopMost = function(this: IVue, top: boolean): void {
+        this.$data._customZIndex = false;
+        if (top) {
+            // --- 要置顶 ---
+            this.$data._topMost = true;
+            if (!this.focus) {
+                Tool.changeFormFocus(this.formId, this);
+            } else {
+                this.$children[0].setPropData("zIndex", ++ClickGo.topZIndex);
+            }
+        } else {
+            // --- 取消置顶 ---
+            this.$data._topMost = false;
+            this.$children[0].setPropData("zIndex", ++ClickGo.zIndex);
+        }
+    };
     // --- layout 中 :class 的转义 ---
     methods._classPrepend = function(this: IVue, cla: any): string {
         if (typeof cla !== "string") {

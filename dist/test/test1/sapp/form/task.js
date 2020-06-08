@@ -32,4 +32,5 @@ exports.mounted = function () {
             }
         }
     });
+    this.setTopMost(true);
 };

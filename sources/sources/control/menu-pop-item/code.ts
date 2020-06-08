@@ -65,10 +65,10 @@ export let methods = {
             return;
         }
         if (this.type === undefined) {
-            this._tap(event);
             if (!this.showArrow) {
                 ClickGo.hidePop();
             }
+            this._tap(event);
             return;
         }
         // --- 有 type ---
@@ -78,6 +78,7 @@ export let methods = {
             this.$emit("input", this.value ? false : true);
         }
         ClickGo.hidePop();
+        this._tap(event);
     }
 };
 

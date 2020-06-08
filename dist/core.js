@@ -1014,6 +1014,22 @@ function createForm(opt) {
                             });
                         });
                     };
+                    methods.setTopMost = function (top) {
+                        this.$data._customZIndex = false;
+                        if (top) {
+                            this.$data._topMost = true;
+                            if (!this.focus) {
+                                Tool.changeFormFocus(this.formId, this);
+                            }
+                            else {
+                                this.$children[0].setPropData("zIndex", ++ClickGo.topZIndex);
+                            }
+                        }
+                        else {
+                            this.$data._topMost = false;
+                            this.$children[0].setPropData("zIndex", ++ClickGo.zIndex);
+                        }
+                    };
                     methods._classPrepend = function (cla) {
                         if (typeof cla !== "string") {
                             return cla;
