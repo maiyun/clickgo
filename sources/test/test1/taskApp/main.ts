@@ -1,8 +1,8 @@
 export let data = {
-    
+    "alwaysOnTop": false,
+    "speed": "N"
 };
 
-let i = 0;
 export let methods = {
     
 };

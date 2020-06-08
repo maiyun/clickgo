@@ -26,15 +26,15 @@ ClickGo.onReady(async function() {
     };
     // --- 启动 sapp ---
     let sTaskId = await ClickGo.runApp("sapp/");
-    if (!sTaskId) {
-        el.innerHTML = "Start failed.";
+    if (sTaskId <= 0) {
+        el.innerHTML = "Start failed(" + sTaskId.toString() + ").";
         return;
     }
     // --- sapp 启动成功 ---
     el.innerHTML = "Starting app...";
     let taskId = await ClickGo.runApp("app/");
-    if (!taskId) {
-        el.innerHTML = "Start failed.";
+    if (taskId <= 0) {
+        el.innerHTML = "Start failed(" + taskId.toString() + ").";
         return;
     }
     el.innerHTML = "Running...";

@@ -5,6 +5,7 @@ export declare function clearTaskTheme(taskId: number): void;
 export declare function pushStyle(style: string, taskId: number, formId?: number): void;
 export declare function removeStyle(taskId: number, formId?: number): void;
 export declare function purify(text: string): string;
+export declare function trim(text: string): string;
 export declare function parsePath(path: string): string;
 export declare function isControlPkg(o: string | object): o is IControlPkg;
 export declare function isAppPkg(o: string | object): o is IAppPkg;

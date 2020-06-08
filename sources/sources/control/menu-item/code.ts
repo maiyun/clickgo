@@ -12,18 +12,17 @@ export let props = {
 };
 
 export let data = {
-    "controlName": "menu-item",
     "popOpen": false
 };
 
 export let methods = {
     showPop: function(this: IVue, event: MouseEvent): void {
-        if (this.popShow) {
+        if (this.popOpen) {
+            ClickGo.hidePop();
             return;
         }
-        let r = this.$el.getBoundingClientRect();
-        ClickGo.showPop(this.$children[0], r.left, r.top + r.height);
-        this.tap(event);
+        ClickGo.showPop(this.$children[0], this.$el);
+        this._tap(event);
     },
     mousein: function(this: IVue, event: MouseEvent): void {
         if (ClickGo.siblings(this.$el, "cg-pop-open")) {
@@ -31,13 +30,5 @@ export let methods = {
             this.showPop(event);
         }
     }
-};
-
-export let mounted = function(this: IVue): void {
-    ClickGo.appendToPop(this.$children[0].$el);
-};
-
-export let destroyed = function(this: IVue): void {
-    ClickGo.removeFromPop(this.$children[0].$el);
 };
 

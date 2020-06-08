@@ -76,23 +76,13 @@ var lostFocusEvent = function (e) {
     if (!target) {
         return;
     }
-    var element = target;
+    var element = target.parentElement;
     while (element) {
-        element = element.parentElement;
-        if (!element) {
-            break;
-        }
-        var cla = element.getAttribute("class");
-        if (!cla) {
-            continue;
-        }
-        if (cla.indexOf("cg-form-list") !== -1) {
+        if (element.classList.contains("cg-form-list")) {
             hidePop();
             return;
         }
-        if (cla.indexOf("cg-pop-list") !== -1) {
-            return;
-        }
+        element = element.parentElement;
     }
     hidePop();
     Tool.changeFormFocus();
@@ -286,13 +276,49 @@ function removeFromPop(el) {
 }
 exports.removeFromPop = removeFromPop;
 function showPop(pop, x, y) {
-    if (pop.$parent.controlName !== "menu-pop-item") {
+    if (y === void 0) { y = 0; }
+    if (pop.$parent.$data._controlName !== "menu-pop-item") {
         ClickGo._pop = pop;
     }
     pop.$parent.popOpen = true;
     pop.open = true;
-    pop.$el.style.left = x + "px";
-    pop.$el.style.top = y + "px";
+    var left, top;
+    if (x instanceof HTMLElement) {
+        var bcr_1 = x.getBoundingClientRect();
+        if (y === 0) {
+            left = bcr_1.left;
+            top = bcr_1.top + bcr_1.height;
+        }
+        else {
+            left = bcr_1.left + bcr_1.width - 2;
+            top = bcr_1.top - 2;
+        }
+        setTimeout(function () {
+            if (pop.$el.offsetWidth + left > ClickGo.getWidth()) {
+                if (y === 0) {
+                    pop.$el.style.left = ClickGo.getWidth() - pop.$el.offsetWidth + "px";
+                }
+                else {
+                    pop.$el.style.left = bcr_1.left - pop.$el.offsetWidth + 2 + "px";
+                }
+            }
+            pop.$el.style.visibility = "";
+        });
+    }
+    else {
+        left = x;
+        top = y;
+        setTimeout(function () {
+            if (pop.$el.offsetWidth + left > ClickGo.getWidth()) {
+                pop.$el.style.left = x - pop.$el.offsetWidth + "px";
+            }
+            pop.$el.style.visibility = "";
+        });
+    }
+    pop.$el.style.left = left + "px";
+    pop.$el.style.top = top + "px";
+    pop.$el.style.visibility = "hidden";
+    pop.$el.style.zIndex = (++ClickGo.popZIndex).toString();
 }
 exports.showPop = showPop;
 function hidePop(pop) {
@@ -306,6 +332,7 @@ function hidePop(pop) {
     }
     pop.$parent.popOpen = false;
     pop.open = false;
+    pop.onHide && pop.onHide();
 }
 exports.hidePop = hidePop;
 function siblings(e, cn) {
@@ -548,7 +575,7 @@ function runApp(path, opt) {
                     return [4, fetchApp(path)];
                 case 1:
                     if (!(appPkg = _e.sent())) {
-                        return [2, false];
+                        return [2, -1];
                     }
                     return [3, 3];
                 case 2:
@@ -576,9 +603,9 @@ function runApp(path, opt) {
                         })];
                 case 4:
                     form = _e.sent();
-                    if (!form) {
+                    if (typeof form === "number") {
                         delete (ClickGo.taskList[taskId]);
-                        return [2, false];
+                        return [2, form];
                     }
                     if (!(appPkg.config.styleGlobal && appPkg.files[appPkg.config.styleGlobal + ".css"])) return [3, 7];
                     return [4, Tool.blob2Text(appPkg.files[appPkg.config.styleGlobal + ".css"])];
@@ -632,13 +659,13 @@ function createForm(opt) {
                     controlPath = _d[_i];
                     controlBlob = appPkg.files[controlPath + ".cgc"];
                     if (!controlBlob) {
-                        return [2, false];
+                        return [2, -101];
                     }
                     return [4, Tool.controlBlob2Pkg(controlBlob)];
                 case 2:
                     controlPkg = _h.sent();
                     if (!controlPkg) {
-                        return [2, false];
+                        return [2, -102];
                     }
                     _loop_1 = function (name_1) {
                         var item, props, data_1, methods_1, computed_1, watch_1, mounted_1, destroyed_1, expo, rand_1, styleBlob, r_2, _a, _b, _c, layoutBlob, randList_1, r_3, _d, _e, layout_1;
@@ -686,10 +713,9 @@ function createForm(opt) {
                                 case 5:
                                     layoutBlob = item.files[item.config.layout + ".html"];
                                     if (!layoutBlob) {
-                                        return [2, { value: false }];
+                                        return [2, { value: -103 }];
                                     }
                                     randList_1 = [
-                                        "cg-task" + opt.taskId + "_",
                                         "cg-theme-global-" + name_1 + "_",
                                         "cg-theme-task" + opt.taskId + "-" + name_1 + "_"
                                     ];
@@ -703,17 +729,38 @@ function createForm(opt) {
                                     layout_1 = Tool.purify(r_3.layout);
                                     data_1.taskId = opt.taskId;
                                     data_1.formId = formId;
-                                    data_1.scope = data_1.scope || rand_1;
-                                    methods_1.down = function (e) {
+                                    data_1._scope = rand_1;
+                                    data_1._controlName = name_1;
+                                    methods_1._down = function (e) {
                                         if (e instanceof MouseEvent && ClickGo.hasTouch) {
                                             e.preventDefault();
                                             return;
                                         }
                                         e.stopPropagation();
+                                        var noHidePop = false;
+                                        if (this.$el.classList.contains("cg-pop-open")) {
+                                            noHidePop = true;
+                                        }
+                                        else {
+                                            var element = this.$el.parentElement;
+                                            while (element) {
+                                                if (element.classList.contains("cg-form-list")) {
+                                                    break;
+                                                }
+                                                if (element.classList.contains("cg-pop-list")) {
+                                                    noHidePop = true;
+                                                    break;
+                                                }
+                                                element = element.parentElement;
+                                            }
+                                        }
+                                        if (!noHidePop) {
+                                            hidePop();
+                                        }
                                         Tool.changeFormFocus(formId);
                                         this.$emit("down", event);
                                     };
-                                    methods_1.tap = function (e) {
+                                    methods_1._tap = function (e) {
                                         e.stopPropagation();
                                         if (this.$el.className.indexOf("cg-disabled") !== -1) {
                                             return;
@@ -744,17 +791,14 @@ function createForm(opt) {
                                             });
                                         });
                                     };
-                                    methods_1.getFormObject = function () {
-                                        var par = this.$parent;
-                                        while (par) {
-                                            if (par.controlName === "form") {
-                                                return par;
-                                            }
-                                            else {
-                                                par = par.$parent;
-                                            }
+                                    methods_1._classPrepend = function (cla) {
+                                        if (typeof cla !== "string") {
+                                            return cla;
                                         }
-                                        return this;
+                                        if (cla.slice(0, 3) === "cg-") {
+                                            return cla;
+                                        }
+                                        return "cg-theme-global-" + this.$data._controlName + "_" + cla + " cg-theme-task" + this.taskId + "-" + this.$data._controlName + "_" + cla + " " + this.$data._scope + cla;
                                     };
                                     components["cg-" + name_1] = {
                                         "template": layout_1,
@@ -817,7 +861,7 @@ function createForm(opt) {
                     _h.label = 11;
                 case 11:
                     if (!layout) {
-                        return [2, false];
+                        return [2, -104];
                     }
                     data = {};
                     methods = {};
@@ -870,9 +914,10 @@ function createForm(opt) {
                     el.setAttribute("data-task-id", opt.taskId.toString());
                     data.taskId = opt.taskId;
                     data.formId = formId;
-                    data.scope = data.scope || rand;
+                    data._scope = rand;
                     data.focus = false;
-                    data.customZIndex = false;
+                    data._customZIndex = false;
+                    data._topMost = false;
                     methods.createForm = function (paramOpt) {
                         return __awaiter(this, void 0, void 0, function () {
                             var inOpt;
@@ -969,6 +1014,15 @@ function createForm(opt) {
                             });
                         });
                     };
+                    methods._classPrepend = function (cla) {
+                        if (typeof cla !== "string") {
+                            return cla;
+                        }
+                        if (cla.slice(0, 3) === "cg-") {
+                            return cla;
+                        }
+                        return "cg-task" + this.taskId + "_" + cla + " " + this.$data._scope + cla;
+                    };
                     return [4, new Promise(function (resolve) {
                             new Vue({
                                 "el": el,
@@ -996,7 +1050,7 @@ function createForm(opt) {
                 case 16:
                     $vm = _h.sent();
                     if (!$vm) {
-                        return [2, false];
+                        return [2, -105];
                     }
                     $vm.eventList = {};
                     if (formStyle !== "") {
@@ -1014,7 +1068,7 @@ function createForm(opt) {
                         }
                     }
                     if ($vm.$children[0].zIndex !== -1) {
-                        $vm.customZIndex = true;
+                        $vm.$data._customZIndex = true;
                     }
                     if (mounted) {
                         try {
@@ -1029,7 +1083,7 @@ function createForm(opt) {
                             else {
                                 console.log(err);
                             }
-                            return [2, false];
+                            return [2, -105];
                         }
                     }
                     Tool.changeFormFocus(formId, $vm);

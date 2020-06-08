@@ -21,7 +21,7 @@ export let props = {
         "default": 1
     },
     "gutter": {
-        "default": 0
+        "default": undefined
     },
     "align-h": {
         "default": undefined
@@ -29,9 +29,5 @@ export let props = {
     "align-v": {
         "default": undefined
     }
-};
-
-export let data = {
-    "controlName": "layout"
 };
 

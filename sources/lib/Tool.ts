@@ -172,6 +172,14 @@ export function purify(text: string): string {
 }
 
 /**
+ * --- trim ---
+ * @param text 要 trim 的文本
+ */
+export function trim(text: string): string {
+    return text.replace(/^\s+|\s+$/, "");
+}
+
+/**
  * --- 将相对或绝对路径转换为绝对路径 ---
  * @param path 相对/绝对路径
  * @param base cg 基路径
@@ -258,8 +266,11 @@ export async function controlBlob2Pkg(blob: Blob): Promise<false | IControlPkg> 
             let pathSize = new Uint8Array(await blob2ArrayBuffer(bodyBlob.slice(bodyCursor, ++bodyCursor)));
             let path = await blob2Text(bodyBlob.slice(bodyCursor, bodyCursor += pathSize[0]));
 
+            let mimeSize = new Uint8Array(await blob2ArrayBuffer(bodyBlob.slice(bodyCursor, ++bodyCursor)));
+            let mime = await blob2Text(bodyBlob.slice(bodyCursor, bodyCursor += mimeSize[0]));
+
             let contentSize = new Uint32Array(await blob2ArrayBuffer(bodyBlob.slice(bodyCursor, bodyCursor += 4)));
-            let contentBolb = bodyBlob.slice(bodyCursor, bodyCursor += contentSize[0]);
+            let contentBolb = bodyBlob.slice(bodyCursor, bodyCursor += contentSize[0], mime);
 
             if (path === "/config.json") {
                 config = JSON.parse(await blob2Text(contentBolb));
@@ -388,8 +399,46 @@ export function layoutClassPrepend(layout: string, rand: string[] = []): {
                 }
             }
             return ` class="${rtn.join(" ")}"`;
+        }).replace(/ :class=(['"]).+?>/gi, function(t, sp) {
+            return t.replace(new RegExp(` :class=${sp}(.+?)${sp}`, "gi"), function(t, t1: string) {
+                t1 = trim(t1);
+                if (t1[0] === "[") {
+                    t1 = t1.slice(1, -1);
+                    let t1a = t1.split(",");
+                    for (let i = 0; i < t1a.length; ++i) {
+                        t1a[i] = trim(t1a[i]);
+                        if (t1a[i][0] === "{") {
+                            t1a[i] = layoutClassPrependObject(t1a[i]);
+                        } else {
+                            t1a[i] = "_classPrepend(" + t1a[i] + ")";
+                        }
+                    }
+                    t1 = "[" + t1a.join(",") + "]";
+                } else {
+                    t1 = layoutClassPrependObject(t1);
+                }
+                return ` :class="${t1}"`;
+            });
         })
     };
+}
+function layoutClassPrependObject(os: string): string {
+    os = trim(os.slice(1, -1));
+    return "{" + os.replace(/(.+?):(.+?)(,|$)/g, function(t, t1, t2, t3) {
+        // --- t1 是 class 的头头 ---
+        t1 = trim(t1);
+        if (t1[0] === "[") {
+            t1 = "[_classPrepend(" + t1.slice(1, -1) + ")]";
+        } else {
+            let sp = "";
+            if (t1[0] === "'" || t1[0] === "\"") {
+                sp = t1[0];
+                t1 = t1.slice(1, -1);
+            }
+            t1 = `[_classPrepend(${sp}${t1}${sp})]`;
+        }
+        return t1 + ":" + t2 + t3;
+    }) + "}";
 }
 
 /**
@@ -422,7 +471,7 @@ export function changeFormFocus(formId: number = 0, vm?: IVue): void {
             el.classList.add("cg-focus");
             let taskId: number;
             if (vm) {
-                if (!vm.customZIndex) {
+                if (!vm.$data._customZIndex) {
                     vm.$children[0].setPropData("zIndex", ++ClickGo.zIndex);
                 }
                 vm.focus = true;
@@ -430,7 +479,7 @@ export function changeFormFocus(formId: number = 0, vm?: IVue): void {
             } else {
                 taskId = parseInt(el.getAttribute("data-task-id") ?? "0");
                 let task = ClickGo.taskList[taskId];
-                if (!task.formList[formId].vue.customZIndex) {
+                if (!task.formList[formId].vue.$data._customZIndex) {
                     task.formList[formId].vue.$children[0].setPropData("zIndex", ++ClickGo.zIndex);
                 }
                 task.formList[formId].vue.focus = true;

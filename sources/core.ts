@@ -57,24 +57,16 @@ let lostFocusEvent = function(e: MouseEvent | TouchEvent): void {
     if (!target) {
         return;
     }
-    let element: HTMLElement | null = target as HTMLElement;
+    let element: HTMLElement | null = (target as HTMLElement).parentElement;
     while (element) {
-        element = element.parentElement;
-        if (!element) {
-            break;
-        }
-        let cla = element.getAttribute("class");
-        if (!cla) {
-            continue;
-        }
-        if (cla.indexOf("cg-form-list") !== -1) {
+        if (element.classList.contains("cg-form-list")) {
+            // --- 窗体内部点击，不触发丢失焦点，但触发隐藏 pop ---
             hidePop();
             return;
         }
-        if (cla.indexOf("cg-pop-list") !== -1) {
-            return;
-        }
+        element = element.parentElement;
     }
+    // --- 肯定不可能是 pop，因为 pop 的事件都 stopPropagation 了，所以就是普罗大众的状态，要隐藏 menu，并且丢失窗体焦点 ---
     hidePop();
     Tool.changeFormFocus();
 };
@@ -278,17 +270,49 @@ export function removeFromPop(el: HTMLElement): void {
 /**
  * --- 将 pop 显示出来 ---
  * @param el 要显示的 pop
- * @param x 要显示的 left
- * @param y 要显示的 top
+ * @param x 要显示的 left，或 htmlelement 对象
+ * @param y 要显示的 top，或 element 方向，0 为垂直，1 为水平
  */
-export function showPop(pop: IVue, x: number, y: number): void {
-    if (pop.$parent.controlName !== "menu-pop-item") {
+export function showPop(pop: IVue, x: number | HTMLElement, y: number = 0): void {
+    if (pop.$parent.$data._controlName !== "menu-pop-item") {
         ClickGo._pop = pop;
     }
     pop.$parent.popOpen = true;
     pop.open = true;
-    pop.$el.style.left = x + "px";
-    pop.$el.style.top = y + "px";
+    let left: number, top: number;
+    if (x instanceof HTMLElement) {
+        let bcr = x.getBoundingClientRect();
+        if (y === 0) {
+            left = bcr.left;
+            top = bcr.top + bcr.height;
+        } else {
+            left = bcr.left + bcr.width - 2;
+            top = bcr.top - 2;
+        }
+        setTimeout(function() {
+            if (pop.$el.offsetWidth + left > ClickGo.getWidth()) {
+                if (y === 0) {
+                    pop.$el.style.left = ClickGo.getWidth() - pop.$el.offsetWidth + "px";
+                } else {
+                    pop.$el.style.left = bcr.left - pop.$el.offsetWidth + 2 + "px";
+                }
+            }
+            pop.$el.style.visibility = "";
+        });
+    } else {
+        left = x;
+        top = y;
+        setTimeout(function() {
+            if (pop.$el.offsetWidth + left > ClickGo.getWidth()) {
+                pop.$el.style.left = x - pop.$el.offsetWidth + "px";
+            }
+            pop.$el.style.visibility = "";
+        });
+    }
+    pop.$el.style.left = left + "px";
+    pop.$el.style.top = top + "px";
+    pop.$el.style.visibility = "hidden";
+    pop.$el.style.zIndex = (++ClickGo.popZIndex).toString();
 }
 
 /**
@@ -304,6 +328,7 @@ export function hidePop(pop: IVue | null = null): void {
     }
     pop.$parent.popOpen = false;
     pop.open = false;
+    pop.onHide && pop.onHide();
 }
 
 /**
@@ -515,14 +540,14 @@ export async function fetchApp(path: string): Promise<null | IAppPkg> {
 export async function runApp(path: string | IAppPkg, opt?: {
     "runtime"?: IFileList;
     "onEnd"?: () => void;
-}): Promise<false | number> {
+}): Promise<number> {
     opt = opt ?? {};
     opt.runtime = opt.runtime ?? {};
 
     let appPkg: IAppPkg | null;
     if (typeof path === "string") {
         if (!(appPkg = await fetchApp(path))) {
-            return false;
+            return -1;
         }
     } else {
         appPkg = path;
@@ -549,9 +574,9 @@ export async function runApp(path: string | IAppPkg, opt?: {
         "file": appPkg.config.mainLayout,
         "taskId": task.taskId
     });
-    if (!form) {
+    if (typeof form === "number") {
         delete(ClickGo.taskList[taskId]);
-        return false;
+        return form;
     }
     // --- 创建全局 style（如果 form 创建失败，就不用创建全局 style 了） ---
     if (appPkg.config.styleGlobal && appPkg.files[appPkg.config.styleGlobal + ".css"]) {
@@ -576,7 +601,7 @@ export async function runApp(path: string | IAppPkg, opt?: {
  * --- 直接创建一个窗体 ---
  * @param opt 创建窗体的配置对象
  */
-export async function createForm(opt: ICreateFormOptions): Promise<false | IForm> {
+export async function createForm(opt: ICreateFormOptions): Promise<number | IForm> {
     /** --- 当前的 APP PKG --- */
     let appPkg: IAppPkg = ClickGo.taskList[opt.taskId].appPkg;
     // ---  申请 formId ---
@@ -588,11 +613,11 @@ export async function createForm(opt: ICreateFormOptions): Promise<false | IForm
     for (let controlPath of appPkg.config.controls) {
         let controlBlob = appPkg.files[controlPath + ".cgc"];
         if (!controlBlob) {
-            return false;
+            return -101;
         }
         let controlPkg = await Tool.controlBlob2Pkg(controlBlob);
         if (!controlPkg) {
-            return false;
+            return -102;
         }
         // --- 遍历控件包中的每一个控件 ---
         for (let name in controlPkg) {
@@ -631,11 +656,10 @@ export async function createForm(opt: ICreateFormOptions): Promise<false | IForm
             // --- 要创建的 control 的 layout ---
             let layoutBlob = item.files[item.config.layout + ".html"];
             if (!layoutBlob) {
-                return false;
+                return -103;
             }
-            // --- 给 layout 的 class 增加前置 ---
+            // --- 给控件的 layout 的 class 增加前置 ---
             let randList = [
-                "cg-task" + opt.taskId + "_",
                 "cg-theme-global-" + name + "_",
                 "cg-theme-task" + opt.taskId + "-" + name + "_"
             ];
@@ -647,19 +671,42 @@ export async function createForm(opt: ICreateFormOptions): Promise<false | IForm
             // --- 组成 data ---
             data.taskId = opt.taskId;
             data.formId = formId;
-            data.scope = data.scope || rand;
+            data._scope = rand;
+            data._controlName = name;
             // --- 预设 methods ---
-            methods.down = function(this: IVue, e: MouseEvent | TouchEvent) {
+            methods._down = function(this: IVue, e: MouseEvent | TouchEvent) {
                 if (e instanceof MouseEvent && ClickGo.hasTouch) {
                     // --- 不能直接粗暴的 preventDefault，会导致无法获得焦点，也被禁止了 ---
                     e.preventDefault();
                     return;
                 }
                 e.stopPropagation();
+                // --- 控制 pop 隐藏 ---
+                let noHidePop = false;
+                if (this.$el.classList.contains("cg-pop-open")) {
+                    noHidePop = true;
+                } else {
+                    let element: HTMLElement | null = this.$el.parentElement;
+                    while (element) {
+                        if (element.classList.contains("cg-form-list")) {
+                            break;
+                        }
+                        if (element.classList.contains("cg-pop-list")) {
+                            noHidePop = true;
+                            break;
+                        }
+                        element = element.parentElement;
+                    }
+                }
+                if (!noHidePop) {
+                    hidePop();
+                }
+                // --- 控制窗体焦点 ---
                 Tool.changeFormFocus(formId);
+                // --- 触发自定义 down 事件 ---
                 this.$emit("down", event);
             };
-            methods.tap = function(this: IVue, e: MouseEvent | TouchEvent) {
+            methods._tap = function(this: IVue, e: MouseEvent | TouchEvent) {
                 e.stopPropagation();
                 if (this.$el.className.indexOf("cg-disabled") !== -1) {
                     return;
@@ -674,17 +721,15 @@ export async function createForm(opt: ICreateFormOptions): Promise<false | IForm
                 let f = ClickGo.taskList[this.taskId].appPkg.files[file];
                 return f ? await Tool.blob2DataUrl(f) : null;
             };
-            // --- 获取 form 控件的 vue 对象 ---
-            methods.getFormObject = function(this: IVue): IVue {
-                let par = this.$parent;
-                while (par) {
-                    if (par.controlName === "form") {
-                        return par;
-                    } else {
-                        par = par.$parent;
-                    }
+            // --- layout 中 :class 的转义 ---
+            methods._classPrepend = function(this: IVue, cla: any): string {
+                if (typeof cla !== "string") {
+                    return cla;
                 }
-                return this;
+                if (cla.slice(0, 3) === "cg-") {
+                    return cla;
+                }
+                return `cg-theme-global-${this.$data._controlName}_${cla} cg-theme-task${this.taskId}-${this.$data._controlName}_${cla} ${this.$data._scope}${cla}`;
             };
             // --- 组成 component ---
             components["cg-" + name] = {
@@ -721,7 +766,7 @@ export async function createForm(opt: ICreateFormOptions): Promise<false | IForm
         }
     }
     if (!layout) {
-        return false;
+        return -104;
     }
     // --- 准备相关变量 ---
     let data: Record<string, any> = {};
@@ -775,9 +820,10 @@ export async function createForm(opt: ICreateFormOptions): Promise<false | IForm
     // --- 初始化系统初始 data ---
     data.taskId = opt.taskId;
     data.formId = formId;
-    data.scope = data.scope || rand;
+    data._scope = rand;
     data.focus = false;
-    data.customZIndex = false;
+    data._customZIndex = false;
+    data._topMost = false;
     // --- 初始化系统方法 ---
     methods.createForm = async function(this: IVue, paramOpt: string | { "code"?: string; "layout": string; "style"?: string; }): Promise<void> {
         let inOpt: any = {
@@ -831,6 +877,16 @@ export async function createForm(opt: ICreateFormOptions): Promise<false | IForm
         Tool.clearTaskTheme(this.taskId);
         await Tool.loadTaskTheme(path, this.taskId);
     };
+    // --- layout 中 :class 的转义 ---
+    methods._classPrepend = function(this: IVue, cla: any): string {
+        if (typeof cla !== "string") {
+            return cla;
+        }
+        if (cla.slice(0, 3) === "cg-") {
+            return cla;
+        }
+        return `cg-task${this.taskId}_${cla} ${this.$data._scope}${cla}`;
+    };
     let $vm: IVue | false = await new Promise(function(resolve) {
         new Vue({
             "el": el,
@@ -856,7 +912,7 @@ export async function createForm(opt: ICreateFormOptions): Promise<false | IForm
         });
     });
     if (!$vm) {
-        return false;
+        return -105;
     }
     // --- 全局事件来遍历执行的响应 ---
     $vm.eventList = {};
@@ -879,7 +935,7 @@ export async function createForm(opt: ICreateFormOptions): Promise<false | IForm
         }
     }
     if ($vm.$children[0].zIndex !== -1) {
-        $vm.customZIndex = true;
+        $vm.$data._customZIndex = true;
     }
     // --- 执行 mounted ---
     if (mounted) {
@@ -893,7 +949,7 @@ export async function createForm(opt: ICreateFormOptions): Promise<false | IForm
             } else {
                 console.log(err);
             }
-            return false;
+            return -105;
         }
     }
     // --- 绑定获取焦点事件 ---

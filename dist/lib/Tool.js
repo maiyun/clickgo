@@ -215,6 +215,10 @@ function purify(text) {
     return text.slice(1, -1);
 }
 exports.purify = purify;
+function trim(text) {
+    return text.replace(/^\s+|\s+$/, "");
+}
+exports.trim = trim;
 function parsePath(path) {
     if (path.slice(0, 2) === "//") {
         path = ClickGo.rootPath.slice(0, ClickGo.rootPath.indexOf("//")) + path;
@@ -257,64 +261,71 @@ function isAppPkg(o) {
 exports.isAppPkg = isAppPkg;
 function controlBlob2Pkg(blob) {
     return __awaiter(this, void 0, void 0, function () {
-        var begin, beginUint, _a, controlPkg, cursor, nameSize, _b, name_1, bodySize, _c, bodyBlob, files, config, bodyCursor, pathSize, _d, path, contentSize, _e, contentBolb, _f, _g;
-        return __generator(this, function (_h) {
-            switch (_h.label) {
+        var begin, beginUint, _a, controlPkg, cursor, nameSize, _b, name_1, bodySize, _c, bodyBlob, files, config, bodyCursor, pathSize, _d, path, mimeSize, _e, mime, contentSize, _f, contentBolb, _g, _h;
+        return __generator(this, function (_j) {
+            switch (_j.label) {
                 case 0:
                     begin = blob.slice(0, 2);
                     _a = Uint8Array.bind;
                     return [4, blob2ArrayBuffer(begin)];
                 case 1:
-                    beginUint = new (_a.apply(Uint8Array, [void 0, _h.sent()]))();
+                    beginUint = new (_a.apply(Uint8Array, [void 0, _j.sent()]))();
                     if (beginUint[0] !== 192 || beginUint[1] !== 1) {
                         return [2, false];
                     }
                     controlPkg = {};
                     cursor = 2;
-                    _h.label = 2;
+                    _j.label = 2;
                 case 2:
-                    if (!(cursor < blob.size)) return [3, 14];
+                    if (!(cursor < blob.size)) return [3, 16];
                     _b = Uint8Array.bind;
                     return [4, blob2ArrayBuffer(blob.slice(cursor, ++cursor))];
                 case 3:
-                    nameSize = new (_b.apply(Uint8Array, [void 0, _h.sent()]))();
+                    nameSize = new (_b.apply(Uint8Array, [void 0, _j.sent()]))();
                     return [4, blob2Text(blob.slice(cursor, cursor += nameSize[0]))];
                 case 4:
-                    name_1 = _h.sent();
+                    name_1 = _j.sent();
                     _c = Uint32Array.bind;
                     return [4, blob2ArrayBuffer(blob.slice(cursor, cursor += 4))];
                 case 5:
-                    bodySize = new (_c.apply(Uint32Array, [void 0, _h.sent()]))();
+                    bodySize = new (_c.apply(Uint32Array, [void 0, _j.sent()]))();
                     bodyBlob = blob.slice(cursor, cursor += bodySize[0]);
                     files = {};
                     config = void 0;
                     bodyCursor = 0;
-                    _h.label = 6;
+                    _j.label = 6;
                 case 6:
-                    if (!(bodyCursor < bodyBlob.size)) return [3, 13];
+                    if (!(bodyCursor < bodyBlob.size)) return [3, 15];
                     _d = Uint8Array.bind;
                     return [4, blob2ArrayBuffer(bodyBlob.slice(bodyCursor, ++bodyCursor))];
                 case 7:
-                    pathSize = new (_d.apply(Uint8Array, [void 0, _h.sent()]))();
+                    pathSize = new (_d.apply(Uint8Array, [void 0, _j.sent()]))();
                     return [4, blob2Text(bodyBlob.slice(bodyCursor, bodyCursor += pathSize[0]))];
                 case 8:
-                    path = _h.sent();
-                    _e = Uint32Array.bind;
-                    return [4, blob2ArrayBuffer(bodyBlob.slice(bodyCursor, bodyCursor += 4))];
+                    path = _j.sent();
+                    _e = Uint8Array.bind;
+                    return [4, blob2ArrayBuffer(bodyBlob.slice(bodyCursor, ++bodyCursor))];
                 case 9:
-                    contentSize = new (_e.apply(Uint32Array, [void 0, _h.sent()]))();
-                    contentBolb = bodyBlob.slice(bodyCursor, bodyCursor += contentSize[0]);
-                    if (!(path === "/config.json")) return [3, 11];
-                    _g = (_f = JSON).parse;
-                    return [4, blob2Text(contentBolb)];
+                    mimeSize = new (_e.apply(Uint8Array, [void 0, _j.sent()]))();
+                    return [4, blob2Text(bodyBlob.slice(bodyCursor, bodyCursor += mimeSize[0]))];
                 case 10:
-                    config = _g.apply(_f, [_h.sent()]);
-                    return [3, 12];
+                    mime = _j.sent();
+                    _f = Uint32Array.bind;
+                    return [4, blob2ArrayBuffer(bodyBlob.slice(bodyCursor, bodyCursor += 4))];
                 case 11:
-                    files[path] = contentBolb;
-                    _h.label = 12;
-                case 12: return [3, 6];
+                    contentSize = new (_f.apply(Uint32Array, [void 0, _j.sent()]))();
+                    contentBolb = bodyBlob.slice(bodyCursor, bodyCursor += contentSize[0], mime);
+                    if (!(path === "/config.json")) return [3, 13];
+                    _h = (_g = JSON).parse;
+                    return [4, blob2Text(contentBolb)];
+                case 12:
+                    config = _h.apply(_g, [_j.sent()]);
+                    return [3, 14];
                 case 13:
+                    files[path] = contentBolb;
+                    _j.label = 14;
+                case 14: return [3, 6];
+                case 15:
                     if (!config) {
                         return [2, false];
                     }
@@ -324,7 +335,7 @@ function controlBlob2Pkg(blob) {
                         "files": files
                     };
                     return [3, 2];
-                case 14: return [2, controlPkg];
+                case 16: return [2, controlPkg];
             }
         });
     });
@@ -432,10 +443,50 @@ function layoutClassPrepend(layout, rand) {
                 }
             }
             return " class=\"" + rtn.join(" ") + "\"";
+        }).replace(/ :class=(['"]).+?>/gi, function (t, sp) {
+            return t.replace(new RegExp(" :class=" + sp + "(.+?)" + sp, "gi"), function (t, t1) {
+                t1 = trim(t1);
+                if (t1[0] === "[") {
+                    t1 = t1.slice(1, -1);
+                    var t1a = t1.split(",");
+                    for (var i = 0; i < t1a.length; ++i) {
+                        t1a[i] = trim(t1a[i]);
+                        if (t1a[i][0] === "{") {
+                            t1a[i] = layoutClassPrependObject(t1a[i]);
+                        }
+                        else {
+                            t1a[i] = "_classPrepend(" + t1a[i] + ")";
+                        }
+                    }
+                    t1 = "[" + t1a.join(",") + "]";
+                }
+                else {
+                    t1 = layoutClassPrependObject(t1);
+                }
+                return " :class=\"" + t1 + "\"";
+            });
         })
     };
 }
 exports.layoutClassPrepend = layoutClassPrepend;
+function layoutClassPrependObject(os) {
+    os = trim(os.slice(1, -1));
+    return "{" + os.replace(/(.+?):(.+?)(,|$)/g, function (t, t1, t2, t3) {
+        t1 = trim(t1);
+        if (t1[0] === "[") {
+            t1 = "[_classPrepend(" + t1.slice(1, -1) + ")]";
+        }
+        else {
+            var sp = "";
+            if (t1[0] === "'" || t1[0] === "\"") {
+                sp = t1[0];
+                t1 = t1.slice(1, -1);
+            }
+            t1 = "[_classPrepend(" + sp + t1 + sp + ")]";
+        }
+        return t1 + ":" + t2 + t3;
+    }) + "}";
+}
 function changeFormFocus(formId, vm) {
     if (formId === void 0) { formId = 0; }
     var _a, _b;
@@ -465,7 +516,7 @@ function changeFormFocus(formId, vm) {
             el.classList.add("cg-focus");
             var taskId = void 0;
             if (vm) {
-                if (!vm.customZIndex) {
+                if (!vm.$data._customZIndex) {
                     vm.$children[0].setPropData("zIndex", ++ClickGo.zIndex);
                 }
                 vm.focus = true;
@@ -474,7 +525,7 @@ function changeFormFocus(formId, vm) {
             else {
                 taskId = parseInt((_b = el.getAttribute("data-task-id")) !== null && _b !== void 0 ? _b : "0");
                 var task = ClickGo.taskList[taskId];
-                if (!task.formList[formId].vue.customZIndex) {
+                if (!task.formList[formId].vue.$data._customZIndex) {
                     task.formList[formId].vue.$children[0].setPropData("zIndex", ++ClickGo.zIndex);
                 }
                 task.formList[formId].vue.focus = true;

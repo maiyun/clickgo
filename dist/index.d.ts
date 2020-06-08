@@ -26,6 +26,7 @@ declare const ClickGo: {
     "taskList": Record<number, ITask>;
     "formId": number;
     "zIndex": number;
+    "popZIndex": number;
     "_readyList": Array<() => void | Promise<void>>;
     "_core": any;
     "_loaderConfig": {
@@ -46,7 +47,7 @@ declare const ClickGo: {
     };
     appendToPop: (el: HTMLElement) => void;
     removeFromPop: (el: HTMLElement) => void;
-    showPop: (pop: IVue, x: number, y: number) => void;
+    showPop: (pop: IVue, x: number | HTMLElement, y?: number) => void;
     hidePop: (pop?: IVue | null) => void;
     siblings: (e: HTMLElement, cn: string) => HTMLElement | null;
     setTheme: (file: Blob) => Promise<void>;
@@ -71,8 +72,8 @@ declare const ClickGo: {
     fetchApp: (path: string) => Promise<null | IAppPkg>;
     runApp: (path: string | IAppPkg, opt?: {
         "runtime"?: IFileList;
-    }) => Promise<false | number>;
-    createForm: (opt: ICreateFormOptions) => Promise<false | IForm>;
+    }) => Promise<number>;
+    createForm: (opt: ICreateFormOptions) => Promise<number | IForm>;
     removeForm: (formId: number) => boolean;
     endTask: (taskId: number) => boolean;
     bindMove: (e: MouseEvent | TouchEvent, opt: {

@@ -1,6 +1,31 @@
 .wrap {
-    padding: 6px 10px; position: relative;
+    position: relative; display: flex; align-items: center;
 }
-.wrap:hover {
+.wrap.cg-disabled {
+    color: #838383;
+}
+
+.wrap:hover, .wrap.cg-pop-open {
     background: rgba(118, 185, 237, .5);
+}
+.wrap.cg-disabled:hover {
+    background: rgba(0, 0, 0, .05);
+}
+
+.check {
+    background-image: url(check.svg); background-color: rgba(118, 185, 237, .5); background-size: 12px 12px; background-position: center center; background-repeat: no-repeat; width: 24px; height: 24px; visibility: hidden;
+}
+.radio {
+    background-color: rgba(118, 185, 237, .5); display: flex; align-items: center; justify-content: center; width: 24px; height: 24px; visibility: hidden;
+}
+.radio::before {
+    content: ''; width: 6px; height: 6px; border-radius: 50%; background-color: #000;
+}
+
+.text {
+    padding: 6px 35px 6px 10px; flex: 1;
+}
+
+.arrow {
+    border: solid 1px #000; border-width: 1px 1px 0 0; width: 6px; height: 6px; margin: 0 10px; -webkit-transform: rotate(45deg); transform: rotate(45deg); visibility: hidden;
 }

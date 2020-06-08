@@ -12,17 +12,16 @@ exports.props = {
     }
 };
 exports.data = {
-    "controlName": "menu-item",
     "popOpen": false
 };
 exports.methods = {
     showPop: function (event) {
-        if (this.popShow) {
+        if (this.popOpen) {
+            ClickGo.hidePop();
             return;
         }
-        var r = this.$el.getBoundingClientRect();
-        ClickGo.showPop(this.$children[0], r.left, r.top + r.height);
-        this.tap(event);
+        ClickGo.showPop(this.$children[0], this.$el);
+        this._tap(event);
     },
     mousein: function (event) {
         if (ClickGo.siblings(this.$el, "cg-pop-open")) {
@@ -30,10 +29,4 @@ exports.methods = {
             this.showPop(event);
         }
     }
-};
-exports.mounted = function () {
-    ClickGo.appendToPop(this.$children[0].$el);
-};
-exports.destroyed = function () {
-    ClickGo.removeFromPop(this.$children[0].$el);
 };

@@ -1,4 +1,5 @@
 import * as fs from "fs";
+import * as mime from "@litert/mime";
 
 async function getSingleControlBlob(base: string): Promise<Buffer> {
     // --- 读取 config 文件 ---
@@ -9,14 +10,22 @@ async function getSingleControlBlob(base: string): Promise<Buffer> {
     let configJson = JSON.parse(config);
     let configBuffer = Buffer.from(config);
     // --- 单控件主体 ---
-    let controlBufferArray: Uint8Array[] = [Uint8Array.from([12]), Buffer.from("/config.json"), Buffer.from(Uint32Array.from([configBuffer.byteLength]).buffer), configBuffer];
+    let m = mime.getMime("json");
+    let mb = Buffer.from(m);
+    let controlBufferArray: Uint8Array[] = [Uint8Array.from([12]), Buffer.from("/config.json"), Uint8Array.from([mb.byteLength]), mb, Buffer.from(Uint32Array.from([configBuffer.byteLength]).buffer), configBuffer];
 
     for (let fpath of configJson.files) {
         let content = await fs.promises.readFile(base + fpath);
         let nameBuffer = Buffer.from(fpath);
+
+        let m = mime.getMime(fpath);
+        let mb = Buffer.from(m);
+
         controlBufferArray.push(
             Uint8Array.from([nameBuffer.byteLength]),
             nameBuffer,
+            Uint8Array.from([mb.byteLength]),
+            mb,
             Buffer.from(Uint32Array.from([content.byteLength]).buffer),
             content
         );
@@ -53,7 +62,8 @@ async function run(): Promise<void> {
                 controlBuffer,
                 await getSingleControlBlob("dist/sources/control/menu-item"),
                 await getSingleControlBlob("dist/sources/control/menu-pop"),
-                await getSingleControlBlob("dist/sources/control/menu-pop-item")
+                await getSingleControlBlob("dist/sources/control/menu-pop-item"),
+                await getSingleControlBlob("dist/sources/control/menu-pop-split")
             ]);
         }
 

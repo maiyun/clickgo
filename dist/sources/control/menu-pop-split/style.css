@@ -1,0 +1,11 @@
+.wrap {
+    margin: 3px 0;
+}
+
+.type {
+    width: 24px;
+}
+
+.line {
+    background: rgba(0, 0, 0, .1); height: 1px; margin-left: 5px;
+}

@@ -10,7 +10,7 @@ export declare function getPositionByBorderDir(dir: TBorderDir): {
 };
 export declare function appendToPop(el: HTMLElement): void;
 export declare function removeFromPop(el: HTMLElement): void;
-export declare function showPop(pop: IVue, x: number, y: number): void;
+export declare function showPop(pop: IVue, x: number | HTMLElement, y?: number): void;
 export declare function hidePop(pop?: IVue | null): void;
 export declare function siblings(e: HTMLElement, cn: string): HTMLElement | null;
 export declare function setTheme(file: Blob): Promise<void>;
@@ -25,8 +25,8 @@ export declare function fetchApp(path: string): Promise<null | IAppPkg>;
 export declare function runApp(path: string | IAppPkg, opt?: {
     "runtime"?: IFileList;
     "onEnd"?: () => void;
-}): Promise<false | number>;
-export declare function createForm(opt: ICreateFormOptions): Promise<false | IForm>;
+}): Promise<number>;
+export declare function createForm(opt: ICreateFormOptions): Promise<number | IForm>;
 export declare function removeForm(formId: number): boolean;
 export declare function endTask(taskId: number): boolean;
 export declare function bindMove(e: MouseEvent | TouchEvent, opt: {

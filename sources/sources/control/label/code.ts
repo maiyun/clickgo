@@ -16,7 +16,3 @@ export let props = {
     }
 };
 
-export let data = {
-    "controlName": "label"
-};
-

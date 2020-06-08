@@ -23,7 +23,7 @@ exports.props = {
         "default": 1
     },
     "gutter": {
-        "default": 0
+        "default": undefined
     },
     "align-h": {
         "default": undefined
@@ -31,7 +31,4 @@ exports.props = {
     "align-v": {
         "default": undefined
     }
-};
-exports.data = {
-    "controlName": "layout"
 };

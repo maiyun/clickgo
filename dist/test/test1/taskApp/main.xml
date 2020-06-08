@@ -6,15 +6,24 @@
                 <menu-pop-item alt="X" text="Exit"></menu-pop-item>
             </menu-pop>
         </menu-item>
-        <menu-item alt="O" text="Option">
+        <menu-item alt="O" text="Options">
             <menu-pop>
-                <menu-pop-item alt="A" text="Always on top"></menu-pop-item>
+                <menu-pop-item alt="A" text="Always on top" type="check" v-model="alwaysOnTop"></menu-pop-item>
+                <menu-pop-split></menu-pop-split>
+                <menu-pop-item alt="S" text="Show full account name" :disabled="true"></menu-pop-item>
             </menu-pop>
         </menu-item>
         <menu-item alt="V" text="View">
             <menu-pop>
                 <menu-pop-item alt="R" text="Refresh now"></menu-pop-item>
-                <menu-pop-item alt="U" text="Update speed"></menu-pop-item>
+                <menu-pop-item alt="U" text="Update speed">
+                    <menu-pop>
+                        <menu-pop-item alt="H" text="High" type="radio" label="H" v-model="speed"></menu-pop-item>
+                        <menu-pop-item alt="N" text="Normal" type="radio" label="N" v-model="speed"></menu-pop-item>
+                        <menu-pop-item alt="L" text="Low" type="radio" label="L" v-model="speed"></menu-pop-item>
+                        <menu-pop-item alt="P" text="Paused" type="radio" label="P" v-model="speed"></menu-pop-item>
+                    </menu-pop>
+                </menu-pop-item>
             </menu-pop>
         </menu-item>
     </menu>

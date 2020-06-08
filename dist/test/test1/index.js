@@ -67,16 +67,16 @@ ClickGo.onReady(function () {
                     return [4, ClickGo.runApp("sapp/")];
                 case 1:
                     sTaskId = _a.sent();
-                    if (!sTaskId) {
-                        el.innerHTML = "Start failed.";
+                    if (sTaskId <= 0) {
+                        el.innerHTML = "Start failed(" + sTaskId.toString() + ").";
                         return [2];
                     }
                     el.innerHTML = "Starting app...";
                     return [4, ClickGo.runApp("app/")];
                 case 2:
                     taskId = _a.sent();
-                    if (!taskId) {
-                        el.innerHTML = "Start failed.";
+                    if (taskId <= 0) {
+                        el.innerHTML = "Start failed(" + taskId.toString() + ").";
                         return [2];
                     }
                     el.innerHTML = "Running...";

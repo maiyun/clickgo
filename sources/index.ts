@@ -73,6 +73,8 @@ const ClickGo: {
     "formId": number;
     /** --- 最后一个层级 --- */
     "zIndex": number;
+    /** --- pop 最后一个层级 --- */
+    "popZIndex": number;
 
     /** --- 要执行的 ready 列表 --- */
     "_readyList": Array<() => void | Promise<void>>;
@@ -138,7 +140,7 @@ const ClickGo: {
      * @param left 要显示的 left
      * @param top 要显示的 top
      */
-    showPop: (pop: IVue, x: number, y: number) => void;
+    showPop: (pop: IVue, x: number | HTMLElement, y?: number) => void;
 
     /**
      * --- 隐藏正在显示中的 pop ---
@@ -234,13 +236,13 @@ const ClickGo: {
      */
     runApp: (path: string | IAppPkg, opt?: {
         "runtime"?: IFileList;
-    }) => Promise<false | number>;
+    }) => Promise<number>;
 
     /**
      * --- 直接创建一个窗体 ---
      * @param opt 创建窗体的配置对象
      */
-    createForm: (opt: ICreateFormOptions) => Promise<false | IForm>;
+    createForm: (opt: ICreateFormOptions) => Promise<number | IForm>;
 
     /**
      * --- 移除一个 form ---
@@ -302,6 +304,7 @@ const ClickGo: {
     "taskList": {},
     "formId": 0,
     "zIndex": 999,
+    "popZIndex": 0,
 
     "_readyList": [],
     "_core": null,
@@ -337,7 +340,7 @@ const ClickGo: {
         this._core.removeFromPop(el);
     },
 
-    showPop: function(pop: IVue, x: number, y: number): void  {
+    showPop: function(pop: IVue, x: number | HTMLElement, y: number = 0): void {
         this._core.showPop(pop, x, y);
     },
 
@@ -423,11 +426,11 @@ const ClickGo: {
     runApp: async function(path: string | IAppPkg, opt?: {
         "runtime"?: IFileList;
         "onEnd"?: () => void;
-    }): Promise<false | number> {
+    }): Promise<number> {
         return await this._core.runApp(path, opt);
     },
 
-    createForm: async function(opt: ICreateFormOptions): Promise<false | IForm> {
+    createForm: async function(opt: ICreateFormOptions): Promise<number | IForm> {
         return await this._core.createForm(opt);
     },
 

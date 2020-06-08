@@ -17,6 +17,3 @@ exports.props = {
         "default": 0
     }
 };
-exports.data = {
-    "controlName": "menu"
-};

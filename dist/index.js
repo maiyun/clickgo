@@ -60,6 +60,7 @@ var ClickGo = {
     "taskList": {},
     "formId": 0,
     "zIndex": 999,
+    "popZIndex": 0,
     "_readyList": [],
     "_core": null,
     "_loaderConfig": {},
@@ -94,6 +95,7 @@ var ClickGo = {
         this._core.removeFromPop(el);
     },
     showPop: function (pop, x, y) {
+        if (y === void 0) { y = 0; }
         this._core.showPop(pop, x, y);
     },
     hidePop: function (pop) {

@@ -21,7 +21,7 @@ export declare let props: {
         default: number;
     };
     gutter: {
-        default: number;
+        default: undefined;
     };
     "align-h": {
         default: undefined;
@@ -29,7 +29,4 @@ export declare let props: {
     "align-v": {
         default: undefined;
     };
-};
-export declare let data: {
-    controlName: string;
 };

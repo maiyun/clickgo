@@ -1,4 +1,4 @@
-<div class="wrap" :tabindex="!disabled && focus && '0'" :style="{'width': width + 'px', 'height': height + 'px', 'left': left + 'px', 'top': top + 'px', 'z-index': zIndex}" :class="[disabled && 'cg-disabled']" @click="tap" @mousedown="down" @touchstart="down" @keydown="keydown">
+<div class="wrap" :tabindex="!disabled && focus && '0'" :style="{'width': width + 'px', 'height': height + 'px', 'left': left + 'px', 'top': top + 'px', 'z-index': zIndex}" :class="[disabled && 'cg-disabled']" @click="_tap" @mousedown="_down" @touchstart="_down" @keydown="keydown">
     <div class="inner" :style="{'padding': padding && padding.replace(/([0-9]+)($| )/g, '$1px$2')}">
         <slot>
     </div>

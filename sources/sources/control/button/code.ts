@@ -26,10 +26,6 @@ export let props = {
     }
 };
 
-export let data = {
-    "controlName": "button"
-};
-
 export let methods = {
     keydown: function(this: IVue, e: KeyboardEvent): void {
         if (e.keyCode !== 13) {
