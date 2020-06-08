@@ -1140,6 +1140,7 @@ export function bindMove(e: MouseEvent | TouchEvent, opt: { "left"?: number; "to
     // --- 事件 ---
     let end: (e: MouseEvent | TouchEvent) => void;
     let move = async function(e: MouseEvent | TouchEvent): Promise<void> {
+        e.preventDefault();
         /** --- 本次 x 坐标 --- */
         let x: number, y: number;
         x = (e instanceof MouseEvent ? e.clientX : e.touches[0].clientX) * ClickGo.rzoom;
@@ -1344,7 +1345,7 @@ export function bindMove(e: MouseEvent | TouchEvent, opt: { "left"?: number; "to
             }
         };
         // --- 绑定事件 ---
-        window.addEventListener("touchmove", move);
+        window.addEventListener("touchmove", move, {passive: false});
         window.addEventListener("touchend", end);
     }
 }
