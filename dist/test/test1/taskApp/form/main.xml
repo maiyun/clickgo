@@ -1,9 +1,9 @@
-<form title="Task manager" icon="/icon.svg">
+<form title="Task manager" icon="/icon.svg" width="350" height="520">
     <menu>
         <menu-item alt="F" text="File">
             <menu-pop>
-                <menu-pop-item alt="N" text="New task"></menu-pop-item>
-                <menu-pop-item alt="X" text="Exit"></menu-pop-item>
+                <menu-pop-item alt="N" text="New task" @tap="newTask"></menu-pop-item>
+                <menu-pop-item alt="X" text="Exit" @tap="exit"></menu-pop-item>
             </menu-pop>
         </menu-item>
         <menu-item alt="O" text="Options">

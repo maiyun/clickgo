@@ -443,7 +443,8 @@ export function trigger(name: TSystemEvent, taskId: number = 0, formId: number =
             break;
         }
         case "formFocused":
-        case "formBlurred": {
+        case "formBlurred":
+        case "formFlash": {
             if (ClickGo[name + "Handler"]) {
                 ClickGo[name + "Handler"](taskId, formId);
             }
@@ -797,6 +798,9 @@ export async function createForm(opt: ICreateFormOptions): Promise<number | IFor
         style = await Tool.styleUrl2DataUrl("/", r.style, appPkg.files);
     }
     // --- 要创建的 form 的 layout ---
+    layout = Tool.layoutInsertAttr(layout, ":focus=\"focus\"", {
+        "ignore": ["form"]
+    });
     layout = Tool.purify(layout.replace(/<(\/{0,1})(.+?)>/g, function(t, t1, t2): string {
         if (t2 === "template") {
             return t;
@@ -825,7 +829,7 @@ export async function createForm(opt: ICreateFormOptions): Promise<number | IFor
     data._customZIndex = false;
     data._topMost = false;
     // --- 初始化系统方法 ---
-    methods.createForm = async function(this: IVue, paramOpt: string | { "code"?: string; "layout": string; "style"?: string; }): Promise<void> {
+    methods.createForm = async function(this: IVue, paramOpt: string | { "code"?: string; "layout": string; "style"?: string; "mask"?: boolean; }): Promise<void> {
         let inOpt: any = {
             "taskId": opt.taskId
         };
@@ -840,6 +844,9 @@ export async function createForm(opt: ICreateFormOptions): Promise<number | IFor
             }
             if (paramOpt.style) {
                 inOpt.style = paramOpt.style;
+            }
+            if (paramOpt.mask) {
+                this.maskFor = true;
             }
         }
         await createForm(inOpt);
@@ -893,6 +900,18 @@ export async function createForm(opt: ICreateFormOptions): Promise<number | IFor
             this.$data._topMost = false;
             this.$children[0].setPropData("zIndex", ++ClickGo.zIndex);
         }
+    };
+    // --- 让窗体闪烁 ---
+    methods.flash = function(this: IVue): void {
+        if (this.flashTimer) {
+            clearTimeout(this.flashTimer);
+            this.flashTimer = undefined;
+        }
+        this.flashTimer = setTimeout(() => {
+            this.flashTimer = undefined;
+        }, 1000);
+        // --- 触发 formFlash 事件 ---
+        trigger("formFlash", opt.taskId, formId);
     };
     // --- layout 中 :class 的转义 ---
     methods._classPrepend = function(this: IVue, cla: any): string {

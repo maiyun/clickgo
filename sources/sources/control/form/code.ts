@@ -84,7 +84,9 @@ export let data = {
         "height": 0,
         "left": 0,
         "top": 0
-    }
+    },
+    "maskFor": undefined,
+    "flashTimer": undefined
 };
 
 export let watch = {

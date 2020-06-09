@@ -14,7 +14,16 @@ export declare let props: {
     zIndex: {
         default: number;
     };
-    flex: {
+    src: {
         default: string;
+    };
+};
+export declare let data: {
+    iconData: string;
+};
+export declare let watch: {
+    icon: {
+        handler: (this: IVue) => Promise<void>;
+        immediate: boolean;
     };
 };

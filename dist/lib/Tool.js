@@ -41,7 +41,7 @@ styleListElement.style.display = "none";
 document.getElementsByTagName("body")[0].appendChild(styleListElement);
 styleListElement.insertAdjacentHTML("beforeend", "<style id=\"cg-global-cursor\"></style>");
 styleListElement.insertAdjacentHTML("beforeend", "<style id=\"cg-global-theme\"></style>");
-styleListElement.insertAdjacentHTML("beforeend", "<style class=\"cg-global\">\n.cg-form-list {position: fixed; left: 0; top: 0; z-index: 20020000; width: 0; height: 0; cursor: default;}\n.cg-pop-list {position: fixed; left: 0; top: 0; z-index: 20020001; width: 0; height: 0; cursor: default;}\n\n.cg-form-list *, .cg-pop-list * {box-sizing: border-box !important; -webkit-tap-highlight-color: rgba(0, 0, 0, 0);}\n.cg-form-list, .cg-form-list input, .cg-form-list textarea, .cg-pop-list, .cg-pop-list input, .cg-pop-list textarea {font-family: -apple-system,BlinkMacSystemFont,opensans,Optima,\"Microsoft Yahei\",sans-serif; font-size: 12px; line-height: 1;}\n\n.cg-circular {box-sizing: border-box; position: fixed; z-index: 20020003; border: solid 3px #76b9ed; border-radius: 50%; filter: drop-shadow(0 0 7px #76b9ed); pointer-events: none; opacity: 0;}\n.cg-rectangle {box-sizing: border-box; position: fixed; z-index: 20020002; border: solid 1px rgba(118, 185, 237, .7); box-shadow: 0 0 10px rgba(0, 0, 0, .3); background: rgba(118, 185, 237, .1); pointer-events: none; opacity: 0;}\n</style>");
+styleListElement.insertAdjacentHTML("beforeend", "<style class=\"cg-global\">\n.cg-form-list {position: fixed; left: 0; top: 0; z-index: 20020000; width: 0; height: 0; cursor: default;}\n.cg-pop-list {position: fixed; left: 0; top: 0; z-index: 20020001; width: 0; height: 0; cursor: default;}\n.cg-form-list img, .cg-pop-list img {vertical-align: bottom;}\n\n.cg-form-list *, .cg-pop-list * {box-sizing: border-box !important; -webkit-tap-highlight-color: rgba(0, 0, 0, 0);}\n.cg-form-list, .cg-form-list input, .cg-form-list textarea, .cg-pop-list, .cg-pop-list input, .cg-pop-list textarea {font-family: -apple-system,BlinkMacSystemFont,opensans,Optima,\"Microsoft Yahei\",sans-serif; font-size: 12px; line-height: 1;}\n\n.cg-circular {box-sizing: border-box; position: fixed; z-index: 20020003; border: solid 3px #76b9ed; border-radius: 50%; filter: drop-shadow(0 0 7px #76b9ed); pointer-events: none; opacity: 0;}\n.cg-rectangle {box-sizing: border-box; position: fixed; z-index: 20020002; border: solid 1px rgba(118, 185, 237, .7); box-shadow: 0 0 10px rgba(0, 0, 0, .3); background: rgba(118, 185, 237, .1); pointer-events: none; opacity: 0;}\n</style>");
 function themeBlob2Theme(blob) {
     return __awaiter(this, void 0, void 0, function () {
         var begin, beginUint, _a, files, config, cursor, pathSize, _b, path, contentSize, _c, contentBolb, _d, _e;
@@ -367,7 +367,7 @@ function stylePrepend(style, rand) {
         });
     }
     var keyframeList = [];
-    style = style.replace(/[-@]keyframes *['"]{0,1}([\w-]+)['"]{0,1}.*?\{/gi, function (t, t1, t2, t3) {
+    style = style.replace(/([-@]keyframes *['"]{0,1})([\w-]+)(['"]{0,1}\s*?\{)/gi, function (t, t1, t2, t3) {
         if (keyframeList.indexOf(t2) === -1) {
             keyframeList.push(t2);
         }
@@ -425,6 +425,21 @@ function styleUrl2DataUrl(dirname, style, files) {
     });
 }
 exports.styleUrl2DataUrl = styleUrl2DataUrl;
+function layoutInsertAttr(layout, insert, opt) {
+    if (opt === void 0) { opt = {}; }
+    return layout.replace(/<([\w-]+)[\s\S]*?>/g, function (t, t1) {
+        if (opt.ignore && opt.ignore.indexOf(t1) !== -1) {
+            return t;
+        }
+        if (opt.include && opt.include.indexOf(t1) === -1) {
+            return t;
+        }
+        return t.replace(/<[\w-]+/, function (t) {
+            return t + " " + insert;
+        });
+    });
+}
+exports.layoutInsertAttr = layoutInsertAttr;
 function layoutClassPrepend(layout, rand) {
     if (rand === void 0) { rand = []; }
     if (rand.length === 0) {

@@ -1,13 +1,13 @@
 <form :width.sync="width" :height.sync="height" title="Test program" icon="/res/icon.svg">
     <layout class="layout" direction="v" gutter="10">
         <label>focus: {{focus}}</label>
-        <button :focus="focus" :disabled="true">Disabled button</button>
-        <button :focus="focus" @tap="openOnlyClose">Open only close button form</button>
-        <button :focus="focus" @tap="openThin">Open thin form</button>
-        <button :focus="focus" @tap="openBorderNone">Open border none form</button>
-        <button :focus="focus" @tap="openAero">Open Aero form (CSS)</button>
-        <button :focus="focus" @tap="openMax">Open default max form</button>
-        <button :focus="focus" @tap="runTaskmgr">Run "Task manager" app</button>
-        <button :focus="focus" @tap="openError">Open has an error form</button>
+        <button :disabled="true">Disabled button</button>
+        <button @tap="openOnlyClose">Open only close button form</button>
+        <button @tap="openThin">Open thin form</button>
+        <button @tap="openBorderNone">Open border none form</button>
+        <button @tap="openAero">Open Aero form (CSS)</button>
+        <button @tap="openMax">Open default max form</button>
+        <button @tap="runTaskmgr">Run "Task manager" app</button>
+        <button @tap="openError">Open has an error form</button>
     </layout>
 </form>

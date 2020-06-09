@@ -20,6 +20,7 @@ declare const ClickGo: {
     "formStateMaxChangedHandler": ((taskId: number, formId: number, state: boolean) => void | Promise<void>) | null;
     "formFocusedHandler": ((taskId: number, formId: number) => void | Promise<void>) | null;
     "formBlurredHandler": ((taskId: number, formId: number) => void | Promise<void>) | null;
+    "formFlashHandler": ((taskId: number, formId: number) => void | Promise<void>) | null;
     "taskStartedHandler": ((taskId: number) => void | Promise<void>) | null;
     "taskEndedHandler": ((taskId: number) => void | Promise<void>) | null;
     "taskId": number;

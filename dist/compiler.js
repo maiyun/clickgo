@@ -101,7 +101,7 @@ function run() {
                     if (item.isFile()) {
                         return [3, 10];
                     }
-                    if (["menu-item", "menu-pop", "menu-pop-item"].includes(item.name)) {
+                    if (["menu-item", "menu-pop", "menu-pop-item", "menu-pop-split"].includes(item.name)) {
                         return [3, 10];
                     }
                     base = "dist/sources/control/" + item.name;

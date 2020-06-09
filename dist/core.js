@@ -442,7 +442,8 @@ function trigger(name, taskId, formId, opt) {
             break;
         }
         case "formFocused":
-        case "formBlurred": {
+        case "formBlurred":
+        case "formFlash": {
             if (ClickGo[name + "Handler"]) {
                 ClickGo[name + "Handler"](taskId, formId);
             }
@@ -894,6 +895,9 @@ function createForm(opt) {
                     style = _h.sent();
                     _h.label = 15;
                 case 15:
+                    layout = Tool.layoutInsertAttr(layout, ":focus=\"focus\"", {
+                        "ignore": ["form"]
+                    });
                     layout = Tool.purify(layout.replace(/<(\/{0,1})(.+?)>/g, function (t, t1, t2) {
                         if (t2 === "template") {
                             return t;
@@ -939,6 +943,9 @@ function createForm(opt) {
                                             }
                                             if (paramOpt.style) {
                                                 inOpt.style = paramOpt.style;
+                                            }
+                                            if (paramOpt.mask) {
+                                                this.maskFor = true;
                                             }
                                         }
                                         return [4, createForm(inOpt)];
@@ -1029,6 +1036,17 @@ function createForm(opt) {
                             this.$data._topMost = false;
                             this.$children[0].setPropData("zIndex", ++ClickGo.zIndex);
                         }
+                    };
+                    methods.flash = function () {
+                        var _this = this;
+                        if (this.flashTimer) {
+                            clearTimeout(this.flashTimer);
+                            this.flashTimer = undefined;
+                        }
+                        this.flashTimer = setTimeout(function () {
+                            _this.flashTimer = undefined;
+                        }, 1000);
+                        trigger("formFlash", opt.taskId, formId);
                     };
                     methods._classPrepend = function (cla) {
                         if (typeof cla !== "string") {

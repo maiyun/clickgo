@@ -20,7 +20,7 @@ exports.props = {
         "default": "h"
     },
     "flex": {
-        "default": 1
+        "default": "1"
     },
     "gutter": {
         "default": undefined

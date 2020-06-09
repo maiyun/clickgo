@@ -51,7 +51,7 @@ async function run(): Promise<void> {
         if (item.isFile()) {
             continue;
         }
-        if (["menu-item", "menu-pop", "menu-pop-item"].includes(item.name)) {
+        if (["menu-item", "menu-pop", "menu-pop-item",  "menu-pop-split"].includes(item.name)) {
             continue;
         }
         let base = "dist/sources/control/" + item.name;

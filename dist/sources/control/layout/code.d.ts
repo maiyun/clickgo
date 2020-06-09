@@ -18,7 +18,7 @@ export declare let props: {
         default: string;
     };
     flex: {
-        default: number;
+        default: string;
     };
     gutter: {
         default: undefined;

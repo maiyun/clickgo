@@ -1,5 +1,5 @@
-<div class="wrap" :class="[border !== 'normal' && 'border-' + border]" :style="{'width': widthData + 'px', 'height': heightData + 'px', 'left': leftData + 'px', 'top': topData + 'px', 'z-index': zIndexData}" @contextmenu="event.preventDefault()">
-    <template v-if="!stateMaxData && !stateMinData && resize">
+<div class="wrap" :class="[border !== 'normal' && 'border-' + border, flashTimer !== undefined ? 'flash' : undefined]" :style="{'width': widthData + 'px', 'height': heightData + 'px', 'left': leftData + 'px', 'top': topData + 'px', 'z-index': zIndexData}" @contextmenu="event.preventDefault()">
+    <template v-if="!stateMaxData && !stateMinData && maskFor === undefined && resize">
         <div class="pop-resize-lt" @mousedown="resizeMethod($event, 'lt')" @touchstart="resizeMethod($event, 'lt')"></div>
         <div class="pop-resize-t" @mousedown="resizeMethod($event, 't')" @touchstart="resizeMethod($event, 't')" @dblclick="maxVMethod"></div>
         <div class="pop-resize-tr" @mousedown="resizeMethod($event, 'tr')" @touchstart="resizeMethod($event, 'tr')"></div>

@@ -60,6 +60,8 @@ const ClickGo: {
     "formFocusedHandler": ((taskId: number, formId: number) => void | Promise<void>) | null;
     /** --- 窗体丢失焦点后触发 --- */
     "formBlurredHandler": ((taskId: number, formId: number) => void | Promise<void>) | null;
+    /** --- 窗体闪烁时触发 --- */
+    "formFlashHandler": ((taskId: number, formId: number) => void | Promise<void>) | null;
     /** --- 任务开始后触发 --- */
     "taskStartedHandler": ((taskId: number) => void | Promise<void>) | null;
     /** --- 任务结束后触发 --- */
@@ -299,6 +301,7 @@ const ClickGo: {
     "formStateMaxChangedHandler": null,
     "formFocusedHandler": null,
     "formBlurredHandler": null,
+    "formFlashHandler": null,
     "taskStartedHandler": null,
     "taskEndedHandler": null,
 

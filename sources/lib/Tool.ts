@@ -7,6 +7,7 @@ styleListElement.insertAdjacentHTML("beforeend", "<style id=\"cg-global-theme\">
 styleListElement.insertAdjacentHTML("beforeend", `<style class="cg-global">
 .cg-form-list {position: fixed; left: 0; top: 0; z-index: 20020000; width: 0; height: 0; cursor: default;}
 .cg-pop-list {position: fixed; left: 0; top: 0; z-index: 20020001; width: 0; height: 0; cursor: default;}
+.cg-form-list img, .cg-pop-list img {vertical-align: bottom;}
 
 .cg-form-list *, .cg-pop-list * {box-sizing: border-box !important; -webkit-tap-highlight-color: rgba(0, 0, 0, 0);}
 .cg-form-list, .cg-form-list input, .cg-form-list textarea, .cg-pop-list, .cg-pop-list input, .cg-pop-list textarea {font-family: -apple-system,BlinkMacSystemFont,opensans,Optima,"Microsoft Yahei",sans-serif; font-size: 12px; line-height: 1;}
@@ -327,7 +328,7 @@ export function stylePrepend(style: string, rand: string = ""): {
     }
     // --- keyframes ---
     let keyframeList: string[] = [];
-    style = style.replace(/[-@]keyframes *['"]{0,1}([\w-]+)['"]{0,1}.*?\{/gi, function(t, t1, t2, t3) {
+    style = style.replace(/([-@]keyframes *['"]{0,1})([\w-]+)(['"]{0,1}\s*?\{)/gi, function(t, t1, t2, t3) {
         if (keyframeList.indexOf(t2) === -1) {
             keyframeList.push(t2);
         }
@@ -374,6 +375,26 @@ export async function styleUrl2DataUrl(dirname: string, style: string, files: IF
         rtn = rtn.replace(match[0], `url('${await blob2DataUrl(files[path])}')`);
     }
     return rtn;
+}
+
+/**
+ * --- 将系统默认的 attr 追加到标签 ---
+ * @param layout 被追加
+ * @param insert 要追加
+ * @param opt 选项
+ */
+export function layoutInsertAttr(layout: string, insert: string, opt: { "ignore"?: string[]; "include"?: string[]; } = {}): string {
+    return layout.replace(/<([\w-]+)[\s\S]*?>/g, function(t, t1): string {
+        if (opt.ignore && opt.ignore.indexOf(t1) !== -1) {
+            return t;
+        }
+        if (opt.include && opt.include.indexOf(t1) === -1) {
+            return t;
+        }
+        return t.replace(/<[\w-]+/, function(t) {
+            return t + " " + insert;
+        });
+    });
 }
 
 /**

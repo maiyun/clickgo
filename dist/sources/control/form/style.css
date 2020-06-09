@@ -12,6 +12,34 @@
 .wrap.cg-state-max {
     border: none; box-shadow: none;
 }
+.wrap.flash {
+    animation: flash .2s linear infinite;
+}
+
+@-webkit-keyframes flash {
+    0%, 50% {
+        border-color: rgba(0, 0, 0, .3);
+        box-shadow: 0 0 15px rgba(0, 0, 0, .5);
+        color: #999;
+    }
+    51%, 100% {
+        border-color: rgba(0, 0, 0, .7);
+        box-shadow: 0 0 10px rgba(0, 0, 0, .5);
+        color: #000;
+    }
+}
+@keyframes flash {
+    0%, 50% {
+        border-color: rgba(0, 0, 0, .3);
+        box-shadow: 0 0 15px rgba(0, 0, 0, .5);
+        color: #999;
+    }
+    51%, 100% {
+        border-color: rgba(0, 0, 0, .7);
+        box-shadow: 0 0 10px rgba(0, 0, 0, .5);
+        color: #000;
+    }
+}
 
 /* --- 改变大小 --- */
 .pop-resize-lt, .pop-resize-t, .pop-resize-tr, .pop-resize-r, .pop-resize-rb, .pop-resize-b, .pop-resize-bl, .pop-resize-l {

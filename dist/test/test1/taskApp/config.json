@@ -5,8 +5,9 @@
     "author": "clickgo",
 
     "controls": [
-        "/clickgo/control/form",
         "/clickgo/control/button",
+        "/clickgo/control/form",
+        "/clickgo/control/img",
         "/clickgo/control/label",
         "/clickgo/control/layout",
         "/clickgo/control/menu"
@@ -14,18 +15,22 @@
     "theme": [
         "/clickgo/theme/W10A"
     ],
-    "mainLayout": "/main",
+    "mainLayout": "/form/main",
 
     "files": [
-        "/clickgo/control/form.cgc",
         "/clickgo/control/button.cgc",
+        "/clickgo/control/form.cgc",
+        "/clickgo/control/img.cgc",
         "/clickgo/control/label.cgc",
         "/clickgo/control/layout.cgc",
         "/clickgo/control/menu.cgc",
         "/clickgo/theme/W10A.cgt",
 
+        "/form/main.js",
+        "/form/main.xml",
+        "/form/new.js",
+        "/form/new.xml",
         "/icon.svg",
-        "/main.js",
-        "/main.xml"
+        "/new.svg"
     ]
 }

@@ -15,6 +15,10 @@ export declare function stylePrepend(style: string, rand?: string): {
     "style": string;
 };
 export declare function styleUrl2DataUrl(dirname: string, style: string, files: IFileList): Promise<string>;
+export declare function layoutInsertAttr(layout: string, insert: string, opt?: {
+    "ignore"?: string[];
+    "include"?: string[];
+}): string;
 export declare function layoutClassPrepend(layout: string, rand?: string[]): {
     "rand": string[];
     "layout": string;

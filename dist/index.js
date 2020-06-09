@@ -54,6 +54,7 @@ var ClickGo = {
     "formStateMaxChangedHandler": null,
     "formFocusedHandler": null,
     "formBlurredHandler": null,
+    "formFlashHandler": null,
     "taskStartedHandler": null,
     "taskEndedHandler": null,
     "taskId": 0,

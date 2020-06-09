@@ -116,7 +116,9 @@ exports.data = {
         "height": 0,
         "left": 0,
         "top": 0
-    }
+    },
+    "maskFor": undefined,
+    "flashTimer": undefined
 };
 exports.watch = {
     "icon": {

@@ -79,6 +79,8 @@ export declare let data: {
         left: number;
         top: number;
     };
+    maskFor: undefined;
+    flashTimer: undefined;
 };
 export declare let watch: {
     icon: {
