@@ -1,4 +1,4 @@
-<form width="500" height="500" title="Scroll Bar Test">
+<form width="400" height="400" title="Scroll Bar Test">
     <layout align-h="end" gutter="20" style="padding: 20px 20px 0 20px;">
         <scroll width="30" scroll-offset="200"></scroll>
         <scroll width="30"></scroll>

@@ -68,7 +68,9 @@ export let methods = {
             "offsetObject": this.$refs.bar,
             "move": (ox, oy, x, y) => {
                 this.scrollOffsetDataO += this.direction === "v" ? oy : ox;
-                this.scrollOffsetData = this.scrollOffsetDataO / (this.direction === "v" ? rectHeight : rectWidth) * 100;
+                let p = this.scrollOffsetDataO / (this.direction === "v" ? rectHeight : rectWidth);
+                this.scrollOffsetData = p * 100;
+                this.$emit("update:scrollOffset", this.length * p);
             }
         });
         rectWidth = rect.right - rect.left;
