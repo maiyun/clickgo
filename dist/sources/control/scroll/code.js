@@ -42,7 +42,7 @@ exports.data = {
 exports.watch = {
     "scrollOffset": {
         handler: function () {
-            this.scrollOffsetData = this.scrollOffset;
+            this.scrollOffsetData = this.scrollOffset / this.length * 100;
         },
         "immediate": true
     }
@@ -66,7 +66,6 @@ exports.methods = {
             "move": function (ox, oy, x, y) {
                 _this.scrollOffsetDataO += _this.direction === "v" ? oy : ox;
                 _this.scrollOffsetData = _this.scrollOffsetDataO / (_this.direction === "v" ? rectHeight : rectWidth) * 100;
-                console.log(_this.scrollOffsetData);
             }
         });
         rectWidth = rect.right - rect.left;

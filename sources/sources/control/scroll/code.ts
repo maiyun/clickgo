@@ -44,7 +44,7 @@ export let data = {
 export let watch = {
     "scrollOffset": {
         handler: function(this: IVue): void {
-            this.scrollOffsetData = this.scrollOffset;
+            this.scrollOffsetData = this.scrollOffset / this.length * 100;
         },
         "immediate": true
     }
@@ -69,7 +69,6 @@ export let methods = {
             "move": (ox, oy, x, y) => {
                 this.scrollOffsetDataO += this.direction === "v" ? oy : ox;
                 this.scrollOffsetData = this.scrollOffsetDataO / (this.direction === "v" ? rectHeight : rectWidth) * 100;
-                console.log(this.scrollOffsetData);
             }
         });
         rectWidth = rect.right - rect.left;
