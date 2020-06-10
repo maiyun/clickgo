@@ -8,6 +8,9 @@ styleListElement.insertAdjacentHTML("beforeend", `<style class="cg-global">
 .cg-form-list {position: fixed; left: 0; top: 0; z-index: 20020000; width: 0; height: 0; cursor: default;}
 .cg-pop-list {position: fixed; left: 0; top: 0; z-index: 20020001; width: 0; height: 0; cursor: default;}
 .cg-form-list img, .cg-pop-list img {vertical-align: bottom;}
+.cg-form-list ::selection {
+    background-color: rgba(0, 120, 215, .3);
+}
 
 .cg-form-list *, .cg-pop-list * {box-sizing: border-box !important; -webkit-tap-highlight-color: rgba(0, 0, 0, 0);}
 .cg-form-list, .cg-form-list input, .cg-form-list textarea, .cg-pop-list, .cg-pop-list input, .cg-pop-list textarea {font-family: -apple-system,BlinkMacSystemFont,opensans,Optima,"Microsoft Yahei",sans-serif; font-size: 12px; line-height: 1;}
@@ -478,7 +481,6 @@ export function changeFormFocus(formId: number = 0, vm?: IVue): void {
                 let taskId = parseInt(focusElement.getAttribute("data-task-id") ?? "0");
                 let task = ClickGo.taskList[taskId];
                 task.formList[dataFormIdNumber].vue.focus = false;
-                focusElement.classList.remove("cg-focus");
                 // --- 触发 formBlurred 事件 ---
                 ClickGo.trigger("formBlurred", taskId, dataFormIdNumber);
             }
@@ -489,7 +491,6 @@ export function changeFormFocus(formId: number = 0, vm?: IVue): void {
     if (formId !== 0) {
         let el = document.querySelector(".cg-form-list > [data-form-id='" + formId + "']");
         if (el) {
-            el.classList.add("cg-focus");
             let taskId: number;
             if (vm) {
                 if (!vm.$data._customZIndex) {

@@ -1,4 +1,4 @@
-<div class="wrap" :class="[border !== 'normal' && 'border-' + border, flashTimer !== undefined ? 'flash' : undefined]" :style="{'width': widthData + 'px', 'height': heightData + 'px', 'left': leftData + 'px', 'top': topData + 'px', 'z-index': zIndexData}" @contextmenu="event.preventDefault()">
+<div class="wrap" :class="[border !== 'normal' && 'border-' + border, flashTimer !== undefined ? 'flash' : undefined, focus ? 'cg-focus' : undefined]" :style="{'width': widthData + 'px', 'height': heightData + 'px', 'left': leftData + 'px', 'top': topData + 'px', 'z-index': zIndexData}" @contextmenu="event.preventDefault()">
     <template v-if="!stateMaxData && !stateMinData && maskFor === undefined && resize">
         <div class="pop-resize-lt" @mousedown="resizeMethod($event, 'lt')" @touchstart="resizeMethod($event, 'lt')"></div>
         <div class="pop-resize-t" @mousedown="resizeMethod($event, 't')" @touchstart="resizeMethod($event, 't')" @dblclick="maxVMethod"></div>
@@ -9,6 +9,7 @@
         <div class="pop-resize-bl" @mousedown="resizeMethod($event, 'bl')" @touchstart="resizeMethod($event, 'bl')"></div>
         <div class="pop-resize-l" @mousedown="resizeMethod($event, 'l')" @touchstart="resizeMethod($event, 'l')"></div>
     </template>
+    <div v-if="maskFor !== undefined" class="mask" @touchstart="maskDown" @mousedown="maskDown"></div>
     <div class="inner">
         <div class="header" v-if="border !== 'none'">
             <div class="icon"><img v-if="border !== 'thin' && iconData !== ''" :src="iconData" width="16" height="16" @dragstart="event.preventDefault();"></div>

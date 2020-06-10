@@ -96,13 +96,13 @@ function run() {
                     _i = 0, list_1 = list;
                     _g.label = 2;
                 case 2:
-                    if (!(_i < list_1.length)) return [3, 11];
+                    if (!(_i < list_1.length)) return [3, 12];
                     item = list_1[_i];
                     if (item.isFile()) {
-                        return [3, 10];
+                        return [3, 11];
                     }
-                    if (["menu-item", "menu-pop", "menu-pop-item", "menu-pop-split"].includes(item.name)) {
-                        return [3, 10];
+                    if (["menu-item", "menu-pop", "menu-pop-item", "menu-pop-split", "select-pop"].includes(item.name)) {
+                        return [3, 11];
                     }
                     base = "dist/sources/control/" + item.name;
                     return [4, getSingleControlBlob(base)];
@@ -131,37 +131,41 @@ function run() {
                     controlBuffer = _b.apply(_a, [_c.concat([
                             _g.sent()
                         ])]);
-                    _g.label = 8;
+                    return [3, 9];
                 case 8:
+                    if (item.name === "select") {
+                    }
+                    _g.label = 9;
+                case 9:
                     fileBuffer = Buffer.concat([
                         Uint8Array.from([192, 1]),
                         controlBuffer
                     ]);
                     return [4, fs.promises.writeFile("dist/control/" + item.name + ".cgc", fileBuffer)];
-                case 9:
-                    _g.sent();
-                    _g.label = 10;
                 case 10:
+                    _g.sent();
+                    _g.label = 11;
+                case 11:
                     _i++;
                     return [3, 2];
-                case 11: return [4, fs.promises.readdir("dist/sources/theme/", {
+                case 12: return [4, fs.promises.readdir("dist/sources/theme/", {
                         "withFileTypes": true
                     })];
-                case 12:
+                case 13:
                     list = _g.sent();
                     _d = 0, list_2 = list;
-                    _g.label = 13;
-                case 13:
-                    if (!(_d < list_2.length)) return [3, 21];
+                    _g.label = 14;
+                case 14:
+                    if (!(_d < list_2.length)) return [3, 22];
                     item = list_2[_d];
                     if (item.isFile()) {
-                        return [3, 20];
+                        return [3, 21];
                     }
                     base = "dist/sources/theme/" + item.name;
                     return [4, fs.promises.readFile(base + "/config.json", {
                             "encoding": "utf-8"
                         })];
-                case 14:
+                case 15:
                     config = _g.sent();
                     configJson = JSON.parse(config);
                     configBuffer = Buffer.from(config);
@@ -173,27 +177,27 @@ function run() {
                         configBuffer
                     ];
                     _e = 0, _f = configJson.files;
-                    _g.label = 15;
-                case 15:
-                    if (!(_e < _f.length)) return [3, 18];
+                    _g.label = 16;
+                case 16:
+                    if (!(_e < _f.length)) return [3, 19];
                     fpath = _f[_e];
                     return [4, fs.promises.readFile(base + fpath)];
-                case 16:
+                case 17:
                     content = _g.sent();
                     nameBuffer = Buffer.from(fpath);
                     fileBufferArray.push(Uint8Array.from([nameBuffer.byteLength]), nameBuffer, Buffer.from(Uint32Array.from([content.byteLength]).buffer), content);
-                    _g.label = 17;
-                case 17:
+                    _g.label = 18;
+                case 18:
                     _e++;
-                    return [3, 15];
-                case 18: return [4, fs.promises.writeFile("dist/theme/" + configJson.name + ".cgt", Buffer.concat(fileBufferArray))];
-                case 19:
-                    _g.sent();
-                    _g.label = 20;
+                    return [3, 16];
+                case 19: return [4, fs.promises.writeFile("dist/theme/" + configJson.name + ".cgt", Buffer.concat(fileBufferArray))];
                 case 20:
+                    _g.sent();
+                    _g.label = 21;
+                case 21:
                     _d++;
-                    return [3, 13];
-                case 21: return [2];
+                    return [3, 14];
+                case 22: return [2];
             }
         });
     });

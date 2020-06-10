@@ -91,15 +91,20 @@ declare const ClickGo: {
         "objectTop"?: number;
         "objectWidth"?: number;
         "objectHeight"?: number;
-        "object"?: HTMLElement;
-        "offsetObject"?: HTMLElement;
+        "object"?: HTMLElement | IVue;
+        "offsetObject"?: HTMLElement | IVue;
         "start"?: (x: number, y: number) => void | Promise<void> | boolean | Promise<boolean>;
         "move"?: (ox: number, oy: number, x: number, y: number, border: TBorderDir) => void;
         "end"?: () => void;
         "up"?: () => void;
         "borderIn"?: (x: number, y: number, border: TBorderDir) => void;
         "borderOut"?: () => void;
-    }) => void;
+    }) => {
+        "left": number;
+        "top": number;
+        "right": number;
+        "bottom": number;
+    };
     bindResize: (e: MouseEvent | TouchEvent, opt: {
         "left": number;
         "top": number;

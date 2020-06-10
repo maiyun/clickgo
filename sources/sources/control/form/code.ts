@@ -21,6 +21,9 @@ export let props = {
     "stateMin": {
         "default": false
     },
+    "focus": {
+        "default": false
+    },
 
     "width": {
         "default": 300
@@ -86,6 +89,7 @@ export let data = {
         "top": 0
     },
     "maskFor": undefined,
+    "maskFrom": undefined,
     "flashTimer": undefined
 };
 
@@ -584,6 +588,20 @@ export let methods = {
                 }
             }
         });
+    },
+    // --- 遮罩层被点击时 ---
+    maskDown: function(this: IVue, e: MouseEvent | TouchEvent): void {
+        if (e instanceof MouseEvent && ClickGo.hasTouch) {
+            return;
+        }
+        if (typeof this.maskFor !== "number") {
+            return;
+        }
+        if (!ClickGo.taskList[this.taskId].formList[this.maskFor]) {
+            return;
+        }
+        e.stopPropagation();
+        ClickGo.taskList[this.taskId].formList[this.maskFor].vue.flash();
     },
     // --- 设置 left, width, zIndex 等 ---
     setPropData: function(this: IVue, name: string, val: number, mode: string = ""): void {

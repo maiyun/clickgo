@@ -59,6 +59,12 @@ exports.methods = {
     openMax: function () {
         this.createForm("/form/max");
     },
+    openMove: function () {
+        this.createForm("/form/move");
+    },
+    openScroll: function () {
+        this.createForm("/form/scroll");
+    },
     runTaskmgr: function () {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {

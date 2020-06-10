@@ -58,6 +58,9 @@ exports.props = {
     "stateMin": {
         "default": false
     },
+    "focus": {
+        "default": false
+    },
     "width": {
         "default": 300
     },
@@ -118,6 +121,7 @@ exports.data = {
         "top": 0
     },
     "maskFor": undefined,
+    "maskFrom": undefined,
     "flashTimer": undefined
 };
 exports.watch = {
@@ -643,6 +647,19 @@ exports.methods = {
                 }
             }
         });
+    },
+    maskDown: function (e) {
+        if (e instanceof MouseEvent && ClickGo.hasTouch) {
+            return;
+        }
+        if (typeof this.maskFor !== "number") {
+            return;
+        }
+        if (!ClickGo.taskList[this.taskId].formList[this.maskFor]) {
+            return;
+        }
+        e.stopPropagation();
+        ClickGo.taskList[this.taskId].formList[this.maskFor].vue.flash();
     },
     setPropData: function (name, val, mode) {
         if (mode === void 0) { mode = ""; }

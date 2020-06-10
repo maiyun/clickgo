@@ -5,19 +5,21 @@
     "author": "clickgo",
 
     "controls": [
-        "/clickgo/control/form",
         "/clickgo/control/button",
+        "/clickgo/control/form",
         "/clickgo/control/label",
-        "/clickgo/control/layout"
+        "/clickgo/control/layout",
+        "/clickgo/control/scroll"
     ],
     "styleGlobal": "/global",
     "mainLayout": "/form/main",
 
     "files": [
-        "/clickgo/control/form.cgc",
         "/clickgo/control/button.cgc",
+        "/clickgo/control/form.cgc",
         "/clickgo/control/label.cgc",
         "/clickgo/control/layout.cgc",
+        "/clickgo/control/scroll.cgc",
 
         "/form/aero.js",
         "/form/aero.xml",
@@ -27,7 +29,11 @@
         "/form/main.js",
         "/form/main.xml",
         "/form/max.xml",
+        "/form/move.css",
+        "/form/move.js",
+        "/form/move.xml",
         "/form/onlyClose.xml",
+        "/form/scroll.xml",
         "/form/thin.xml",
         "/res/icon.svg",
         "/global.css"

@@ -7,6 +7,8 @@
         <button @tap="openBorderNone">Open border none form</button>
         <button @tap="openAero">Open Aero form (CSS)</button>
         <button @tap="openMax">Open default max form</button>
+        <button @tap="openMove">Open test bindMove form</button>
+        <button @tap="openScroll">Open ScrollBar form</button>
         <button @tap="runTaskmgr">Run "Task manager" app</button>
         <button @tap="openError">Open has an error form</button>
     </layout>

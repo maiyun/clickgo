@@ -22,6 +22,12 @@ export let methods = {
     openMax: function(this: IVue): void {
         this.createForm("/form/max");
     },
+    openMove: function(this: IVue): void {
+        this.createForm("/form/move");
+    },
+    openScroll: function(this: IVue): void {
+        this.createForm("/form/scroll");
+    },
     runTaskmgr: async function(this: IVue): Promise<void> {
         await ClickGo.runApp("taskApp/");
     }

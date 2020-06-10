@@ -1,0 +1,6 @@
+<form width="500" height="500" title="Scroll Bar Test">
+    <layout align-h="end" style="padding: 20px 20px 0 20px;">
+        <scroll width="30"></scroll>
+    </layout>
+    <scroll direction="h" height="30" style="margin: 20px;"></scroll>
+</form>

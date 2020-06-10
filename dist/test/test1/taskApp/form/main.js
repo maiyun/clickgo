@@ -6,7 +6,9 @@ exports.data = {
 };
 exports.methods = {
     newTask: function () {
-        this.createForm("/form/new");
+        this.createForm("/form/new", {
+            "mask": true
+        });
     },
     exit: function () {
         ClickGo.endTask(this.taskId);

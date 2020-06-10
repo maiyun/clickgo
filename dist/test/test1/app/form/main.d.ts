@@ -9,5 +9,7 @@ export declare let methods: {
     openBorderNone: (this: IVue) => void;
     openAero: (this: IVue) => void;
     openMax: (this: IVue) => void;
+    openMove: (this: IVue) => void;
+    openScroll: (this: IVue) => void;
     runTaskmgr: (this: IVue) => Promise<void>;
 };

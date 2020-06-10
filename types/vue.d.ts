@@ -15,7 +15,7 @@ declare var Vue: {
 
 interface IVue {
     $el: HTMLElement;
-    $refs: Record<string, HTMLElement>;
+    $refs: Record<string, HTMLElement & IVue>;
     $data: any;
     $props: any;
     $slots: any;
@@ -28,6 +28,8 @@ interface IVue {
     $nextTick(): Promise<void>;
     $mount(c: string): any;
     $destroy(): void;
+
+    _isVue: boolean;
 
     [key: string]: any;
 }

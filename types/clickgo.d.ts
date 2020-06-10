@@ -107,6 +107,7 @@ interface ICreateFormOptions {
     "layout"?: string;
     "style"?: string;
 
+    "topMost"?: boolean;
     "taskId": number;
 }
 

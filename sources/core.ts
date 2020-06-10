@@ -798,9 +798,7 @@ export async function createForm(opt: ICreateFormOptions): Promise<number | IFor
         style = await Tool.styleUrl2DataUrl("/", r.style, appPkg.files);
     }
     // --- 要创建的 form 的 layout ---
-    layout = Tool.layoutInsertAttr(layout, ":focus=\"focus\"", {
-        "ignore": ["form"]
-    });
+    layout = Tool.layoutInsertAttr(layout, ":focus=\"focus\"");
     layout = Tool.purify(layout.replace(/<(\/{0,1})(.+?)>/g, function(t, t1, t2): string {
         if (t2 === "template") {
             return t;
@@ -827,10 +825,14 @@ export async function createForm(opt: ICreateFormOptions): Promise<number | IFor
     data._scope = rand;
     data.focus = false;
     data._customZIndex = false;
-    data._topMost = false;
+    if (opt.topMost) {
+        data._topMost = true;
+    } else {
+        data._topMost = false;
+    }
     // --- 初始化系统方法 ---
-    methods.createForm = async function(this: IVue, paramOpt: string | { "code"?: string; "layout": string; "style"?: string; "mask"?: boolean; }): Promise<void> {
-        let inOpt: any = {
+    methods.createForm = async function(this: IVue, paramOpt: string | { "code"?: string; "layout": string; "style"?: string; }, cfOpt: { "mask"?: boolean; } = {}): Promise<void> {
+        let inOpt: ICreateFormOptions = {
             "taskId": opt.taskId
         };
         if (typeof paramOpt === "string") {
@@ -845,11 +847,22 @@ export async function createForm(opt: ICreateFormOptions): Promise<number | IFor
             if (paramOpt.style) {
                 inOpt.style = paramOpt.style;
             }
-            if (paramOpt.mask) {
-                this.maskFor = true;
+        }
+        if (cfOpt.mask) {
+            this.$children[0].maskFor = true;
+        }
+        if (this.$data._topMost) {
+            inOpt.topMost = true;
+        }
+        let form = await createForm(inOpt);
+        if (typeof form === "number") {
+            this.$children[0].maskFor = undefined;
+        } else {
+            if (this.$children[0].maskFor) {
+                this.$children[0].maskFor = form.formId;
+                form.vue.$children[0].maskFrom = this.formId;
             }
         }
-        await createForm(inOpt);
     };
     methods.closeForm = function(this: IVue): void {
         removeForm(this.formId);
@@ -903,12 +916,15 @@ export async function createForm(opt: ICreateFormOptions): Promise<number | IFor
     };
     // --- 让窗体闪烁 ---
     methods.flash = function(this: IVue): void {
-        if (this.flashTimer) {
-            clearTimeout(this.flashTimer);
-            this.flashTimer = undefined;
+        if (!this.focus) {
+            Tool.changeFormFocus(this.formId);
         }
-        this.flashTimer = setTimeout(() => {
-            this.flashTimer = undefined;
+        if (this.$children[0].flashTimer) {
+            clearTimeout(this.$children[0].flashTimer);
+            this.$children[0].flashTimer = undefined;
+        }
+        this.$children[0].flashTimer = setTimeout(() => {
+            this.$children[0].flashTimer = undefined;
         }, 1000);
         // --- 触发 formFlash 事件 ---
         trigger("formFlash", opt.taskId, formId);
@@ -1039,6 +1055,10 @@ export function removeForm(formId: number): boolean {
         }
         title = ClickGo.taskList[taskId].formList[oFormId].vue.$children[0].title;
         ClickGo.taskList[taskId].formList[oFormId].vue.$destroy();
+        if (ClickGo.taskList[taskId].formList[oFormId].vue.$children[0].maskFrom !== undefined) {
+            let fid = ClickGo.taskList[taskId].formList[oFormId].vue.$children[0].maskFrom;
+            ClickGo.taskList[taskId].formList[fid].vue.$children[0].maskFor = undefined;
+        }
         delete(ClickGo.taskList[taskId].formList[oFormId]);
         break;
     }
@@ -1091,7 +1111,7 @@ export function endTask(taskId: number): boolean {
  * @param moveCb 拖动时的回调
  * @param endCb 结束时的回调
  */
-export function bindMove(e: MouseEvent | TouchEvent, opt: { "left"?: number; "top"?: number; "right"?: number; "bottom"?: number; "offsetLeft"?: number; "offsetTop"?: number; "offsetRight"?: number; "offsetBottom"?: number; "objectLeft"?: number; "objectTop"?: number; "objectWidth"?: number; "objectHeight"?: number; "object"?: HTMLElement; "offsetObject"?: HTMLElement; "start"?: (x: number, y: number) => void | Promise<void> | boolean | Promise<boolean>; "move"?: (ox: number, oy: number, x: number, y: number, border: TBorderDir) => void; "end"?: () => void; "up"?: () => void; "borderIn"?: (x: number, y: number, border: TBorderDir) => void; "borderOut"?: () => void; }): void {
+export function bindMove(e: MouseEvent | TouchEvent, opt: { "left"?: number; "top"?: number; "right"?: number; "bottom"?: number; "offsetLeft"?: number; "offsetTop"?: number; "offsetRight"?: number; "offsetBottom"?: number; "objectLeft"?: number; "objectTop"?: number; "objectWidth"?: number; "objectHeight"?: number; "object"?: HTMLElement | IVue; "offsetObject"?: HTMLElement | IVue; "start"?: (x: number, y: number) => void | Promise<void> | boolean | Promise<boolean>; "move"?: (ox: number, oy: number, x: number, y: number, border: TBorderDir) => void; "end"?: () => void; "up"?: () => void; "borderIn"?: (x: number, y: number, border: TBorderDir) => void; "borderOut"?: () => void; }): { "left": number; "top": number; "right": number; "bottom": number; } {
     setGlobalCursor(getComputedStyle(e.target as Element).cursor);
     /** --- 上一次的坐标 --- */
     let tx: number, ty: number;
@@ -1106,10 +1126,16 @@ export function bindMove(e: MouseEvent | TouchEvent, opt: { "left"?: number; "to
     // --- 限定拖动区域 ---
     let left: number, top: number, right: number, bottom: number;
     if (opt.offsetObject) {
-        left = opt.offsetObject.offsetLeft + opt.offsetObject.clientLeft;
-        top = opt.offsetObject.offsetTop + opt.offsetObject.clientTop;
-        right = opt.offsetObject.offsetLeft + opt.offsetObject.offsetWidth;
-        bottom = opt.offsetObject.offsetTop + opt.offsetObject.offsetHeight;
+        if (!(opt.offsetObject instanceof HTMLElement)) {
+            opt.offsetObject = opt.offsetObject.$el;
+        }
+        let rect = opt.offsetObject.getBoundingClientRect();
+        let sd = getComputedStyle(opt.offsetObject);
+        left = rect.left + opt.offsetObject.clientLeft + parseFloat(sd.paddingLeft);
+        top = rect.top + opt.offsetObject.clientTop + parseFloat(sd.paddingTop);
+        right = rect.left + rect.width - (parseFloat(sd.borderRightWidth) + parseFloat(sd.paddingRight));
+        bottom = rect.top + rect.height - (parseFloat(sd.borderRightWidth) + parseFloat(sd.paddingRight));
+        // document.getElementsByTagName("body")[0].insertAdjacentHTML("beforeend", `<div style="position: fixed; background-color: red; z-index: 9999999999; left: ${left}px; top: ${top}px; width: ${right - left}px; height: ${bottom - top}px;"></div>`);
     } else {
         left = ClickGo.getLeft();
         top = ClickGo.getTop();
@@ -1187,10 +1213,14 @@ export function bindMove(e: MouseEvent | TouchEvent, opt: { "left"?: number; "to
             }
             // --- 限定拖动对象，限定后整体对象将无法拖动出边界 ---
             if (opt.object) {
-                objectLeft = opt.object.offsetLeft;
-                objectTop = opt.object.offsetTop;
-                objectWidth = opt.object.offsetWidth;
-                objectHeight = opt.object.offsetHeight;
+                if (!(opt.object instanceof HTMLElement)) {
+                    opt.object = opt.object.$el;
+                }
+                let rect = opt.object.getBoundingClientRect();
+                objectLeft = rect.left;
+                objectTop = rect.top;
+                objectWidth = rect.width;
+                objectHeight = rect.height;
             } else {
                 objectLeft = opt.objectLeft ?? 0;
                 objectTop = opt.objectTop ?? 0;
@@ -1367,6 +1397,13 @@ export function bindMove(e: MouseEvent | TouchEvent, opt: { "left"?: number; "to
         window.addEventListener("touchmove", move, {passive: false});
         window.addEventListener("touchend", end);
     }
+
+    return {
+        "left": left,
+        "top": top,
+        "right": right,
+        "bottom": bottom
+    };
 }
 
 /**

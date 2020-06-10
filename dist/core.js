@@ -895,9 +895,7 @@ function createForm(opt) {
                     style = _h.sent();
                     _h.label = 15;
                 case 15:
-                    layout = Tool.layoutInsertAttr(layout, ":focus=\"focus\"", {
-                        "ignore": ["form"]
-                    });
+                    layout = Tool.layoutInsertAttr(layout, ":focus=\"focus\"");
                     layout = Tool.purify(layout.replace(/<(\/{0,1})(.+?)>/g, function (t, t1, t2) {
                         if (t2 === "template") {
                             return t;
@@ -921,10 +919,16 @@ function createForm(opt) {
                     data._scope = rand;
                     data.focus = false;
                     data._customZIndex = false;
-                    data._topMost = false;
-                    methods.createForm = function (paramOpt) {
+                    if (opt.topMost) {
+                        data._topMost = true;
+                    }
+                    else {
+                        data._topMost = false;
+                    }
+                    methods.createForm = function (paramOpt, cfOpt) {
+                        if (cfOpt === void 0) { cfOpt = {}; }
                         return __awaiter(this, void 0, void 0, function () {
-                            var inOpt;
+                            var inOpt, form;
                             return __generator(this, function (_a) {
                                 switch (_a.label) {
                                     case 0:
@@ -944,13 +948,25 @@ function createForm(opt) {
                                             if (paramOpt.style) {
                                                 inOpt.style = paramOpt.style;
                                             }
-                                            if (paramOpt.mask) {
-                                                this.maskFor = true;
-                                            }
+                                        }
+                                        if (cfOpt.mask) {
+                                            this.$children[0].maskFor = true;
+                                        }
+                                        if (this.$data._topMost) {
+                                            inOpt.topMost = true;
                                         }
                                         return [4, createForm(inOpt)];
                                     case 1:
-                                        _a.sent();
+                                        form = _a.sent();
+                                        if (typeof form === "number") {
+                                            this.$children[0].maskFor = undefined;
+                                        }
+                                        else {
+                                            if (this.$children[0].maskFor) {
+                                                this.$children[0].maskFor = form.formId;
+                                                form.vue.$children[0].maskFrom = this.formId;
+                                            }
+                                        }
                                         return [2];
                                 }
                             });
@@ -1039,12 +1055,15 @@ function createForm(opt) {
                     };
                     methods.flash = function () {
                         var _this = this;
-                        if (this.flashTimer) {
-                            clearTimeout(this.flashTimer);
-                            this.flashTimer = undefined;
+                        if (!this.focus) {
+                            Tool.changeFormFocus(this.formId);
                         }
-                        this.flashTimer = setTimeout(function () {
-                            _this.flashTimer = undefined;
+                        if (this.$children[0].flashTimer) {
+                            clearTimeout(this.$children[0].flashTimer);
+                            this.$children[0].flashTimer = undefined;
+                        }
+                        this.$children[0].flashTimer = setTimeout(function () {
+                            _this.$children[0].flashTimer = undefined;
                         }, 1000);
                         trigger("formFlash", opt.taskId, formId);
                     };
@@ -1162,6 +1181,10 @@ function removeForm(formId) {
         }
         title = ClickGo.taskList[taskId].formList[oFormId].vue.$children[0].title;
         ClickGo.taskList[taskId].formList[oFormId].vue.$destroy();
+        if (ClickGo.taskList[taskId].formList[oFormId].vue.$children[0].maskFrom !== undefined) {
+            var fid = ClickGo.taskList[taskId].formList[oFormId].vue.$children[0].maskFrom;
+            ClickGo.taskList[taskId].formList[fid].vue.$children[0].maskFor = undefined;
+        }
         delete (ClickGo.taskList[taskId].formList[oFormId]);
         break;
     }
@@ -1210,10 +1233,15 @@ function bindMove(e, opt) {
     }
     var left, top, right, bottom;
     if (opt.offsetObject) {
-        left = opt.offsetObject.offsetLeft + opt.offsetObject.clientLeft;
-        top = opt.offsetObject.offsetTop + opt.offsetObject.clientTop;
-        right = opt.offsetObject.offsetLeft + opt.offsetObject.offsetWidth;
-        bottom = opt.offsetObject.offsetTop + opt.offsetObject.offsetHeight;
+        if (!(opt.offsetObject instanceof HTMLElement)) {
+            opt.offsetObject = opt.offsetObject.$el;
+        }
+        var rect = opt.offsetObject.getBoundingClientRect();
+        var sd = getComputedStyle(opt.offsetObject);
+        left = rect.left + opt.offsetObject.clientLeft + parseFloat(sd.paddingLeft);
+        top = rect.top + opt.offsetObject.clientTop + parseFloat(sd.paddingTop);
+        right = rect.left + rect.width - (parseFloat(sd.borderRightWidth) + parseFloat(sd.paddingRight));
+        bottom = rect.top + rect.height - (parseFloat(sd.borderRightWidth) + parseFloat(sd.paddingRight));
     }
     else {
         left = ClickGo.getLeft();
@@ -1256,7 +1284,7 @@ function bindMove(e, opt) {
     var move = function (e) {
         var _a, _b, _c, _d;
         return __awaiter(this, void 0, void 0, function () {
-            var x, y, rtn, inBorderTop, inBorderRight, inBorderBottom, inBorderLeft, xol, xor, rs1, yot, yob, bs1, border;
+            var x, y, rtn, rect, inBorderTop, inBorderRight, inBorderBottom, inBorderLeft, xol, xor, rs1, yot, yob, bs1, border;
             return __generator(this, function (_e) {
                 switch (_e.label) {
                     case 0:
@@ -1287,10 +1315,14 @@ function bindMove(e, opt) {
                         _e.label = 2;
                     case 2:
                         if (opt.object) {
-                            objectLeft = opt.object.offsetLeft;
-                            objectTop = opt.object.offsetTop;
-                            objectWidth = opt.object.offsetWidth;
-                            objectHeight = opt.object.offsetHeight;
+                            if (!(opt.object instanceof HTMLElement)) {
+                                opt.object = opt.object.$el;
+                            }
+                            rect = opt.object.getBoundingClientRect();
+                            objectLeft = rect.left;
+                            objectTop = rect.top;
+                            objectWidth = rect.width;
+                            objectHeight = rect.height;
                         }
                         else {
                             objectLeft = (_a = opt.objectLeft) !== null && _a !== void 0 ? _a : 0;
@@ -1480,6 +1512,12 @@ function bindMove(e, opt) {
         window.addEventListener("touchmove", move, { passive: false });
         window.addEventListener("touchend", end);
     }
+    return {
+        "left": left,
+        "top": top,
+        "right": right,
+        "bottom": bottom
+    };
 }
 exports.bindMove = bindMove;
 function bindResize(e, opt) {
