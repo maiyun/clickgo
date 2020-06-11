@@ -5,6 +5,7 @@
     "author": "clickgo",
 
     "controls": [
+        "/clickgo/control/block",
         "/clickgo/control/button",
         "/clickgo/control/form",
         "/clickgo/control/label",
@@ -15,6 +16,7 @@
     "mainLayout": "/form/main",
 
     "files": [
+        "/clickgo/control/block.cgc",
         "/clickgo/control/button.cgc",
         "/clickgo/control/form.cgc",
         "/clickgo/control/label.cgc",

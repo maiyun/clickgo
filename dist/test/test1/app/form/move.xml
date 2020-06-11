@@ -1,10 +1,10 @@
-<form width="600" height="600" title="Test bindMove">
+<form width="400" height="400" title="Test bindMove">
     <layout class="big" gutter="10" direction="v">
         <layout ref="o1" class="o1">
-            <layout flex="" ref="b1" class="b1" @down="b1Down" :style="{'margin-left': b1p.left + 'px', 'margin-top': b1p.top + 'px'}"></layout>
+            <block ref="b1" class="b1" @down="b1Down" :style="{'margin-left': b1p.left + 'px', 'margin-top': b1p.top + 'px'}"></block>
         </layout>
         <layout flex="" ref="o2" class="o2" height="32">
-            <layout flex="" ref="b2" class="b2" @down="b2Down" :style="{'margin-left': b2p.left + '%', 'margin-top': b2p.top + '%'}"></layout>
+            <block ref="b2" class="b2" @down="b2Down" :style="{'margin-left': b2p.left + '%', 'margin-top': b2p.top + '%'}"></block>
         </layout>
     </layout>
 </form>

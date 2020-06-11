@@ -954,6 +954,8 @@ export async function createForm(opt: ICreateFormOptions): Promise<number | IFor
                         resolve(this);
                     } else {
                         if (this.$el.parentNode) {
+                            this.$destroy();
+                            Tool.removeStyle(this.taskId, this.formId);
                             formListElement.removeChild(this.$el);
                         }
                         resolve(false);
@@ -1020,6 +1022,12 @@ export async function createForm(opt: ICreateFormOptions): Promise<number | IFor
         "vue": $vm
     };
     // --- 挂载 form ---
+    if (!ClickGo.taskList[opt.taskId]) {
+        $vm.$destroy();
+        Tool.removeStyle(opt.taskId, formId);
+        formListElement.removeChild($vm.$el);
+        return -106;
+    }
     ClickGo.taskList[opt.taskId].formList[formId] = form;
     // --- 触发 formCreated 事件 ---
     trigger("formCreated", opt.taskId, formId, {"title": $vm.$children[0].title, "icon": $vm.$children[0].iconData});
@@ -1049,18 +1057,14 @@ export function removeForm(formId: number): boolean {
     }
     // --- 多个窗体 ---
     let title = "";
-    for (let oFormId in ClickGo.taskList[taskId].formList) {
-        if (parseInt(oFormId) !== formId) {
-            continue;
-        }
-        title = ClickGo.taskList[taskId].formList[oFormId].vue.$children[0].title;
-        ClickGo.taskList[taskId].formList[oFormId].vue.$destroy();
-        if (ClickGo.taskList[taskId].formList[oFormId].vue.$children[0].maskFrom !== undefined) {
-            let fid = ClickGo.taskList[taskId].formList[oFormId].vue.$children[0].maskFrom;
+    if (ClickGo.taskList[taskId].formList[formId]) {
+        title = ClickGo.taskList[taskId].formList[formId].vue.$children[0].title;
+        ClickGo.taskList[taskId].formList[formId].vue.$destroy();
+        if (ClickGo.taskList[taskId].formList[formId].vue.$children[0].maskFrom !== undefined) {
+            let fid = ClickGo.taskList[taskId].formList[formId].vue.$children[0].maskFrom;
             ClickGo.taskList[taskId].formList[fid].vue.$children[0].maskFor = undefined;
         }
-        delete(ClickGo.taskList[taskId].formList[oFormId]);
-        break;
+        delete(ClickGo.taskList[taskId].formList[formId]);
     }
     // --- 移除 form 的 style ---
     Tool.removeStyle(taskId, formId);

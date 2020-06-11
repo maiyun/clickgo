@@ -1091,6 +1091,8 @@ function createForm(opt) {
                                         }
                                         else {
                                             if (this.$el.parentNode) {
+                                                this.$destroy();
+                                                Tool.removeStyle(this.taskId, this.formId);
                                                 formListElement.removeChild(this.$el);
                                             }
                                             resolve(false);
@@ -1153,6 +1155,12 @@ function createForm(opt) {
                         "formId": formId,
                         "vue": $vm
                     };
+                    if (!ClickGo.taskList[opt.taskId]) {
+                        $vm.$destroy();
+                        Tool.removeStyle(opt.taskId, formId);
+                        formListElement.removeChild($vm.$el);
+                        return [2, -106];
+                    }
                     ClickGo.taskList[opt.taskId].formList[formId] = form;
                     trigger("formCreated", opt.taskId, formId, { "title": $vm.$children[0].title, "icon": $vm.$children[0].iconData });
                     return [2, form];
@@ -1175,18 +1183,14 @@ function removeForm(formId) {
         return endTask(taskId);
     }
     var title = "";
-    for (var oFormId in ClickGo.taskList[taskId].formList) {
-        if (parseInt(oFormId) !== formId) {
-            continue;
-        }
-        title = ClickGo.taskList[taskId].formList[oFormId].vue.$children[0].title;
-        ClickGo.taskList[taskId].formList[oFormId].vue.$destroy();
-        if (ClickGo.taskList[taskId].formList[oFormId].vue.$children[0].maskFrom !== undefined) {
-            var fid = ClickGo.taskList[taskId].formList[oFormId].vue.$children[0].maskFrom;
+    if (ClickGo.taskList[taskId].formList[formId]) {
+        title = ClickGo.taskList[taskId].formList[formId].vue.$children[0].title;
+        ClickGo.taskList[taskId].formList[formId].vue.$destroy();
+        if (ClickGo.taskList[taskId].formList[formId].vue.$children[0].maskFrom !== undefined) {
+            var fid = ClickGo.taskList[taskId].formList[formId].vue.$children[0].maskFrom;
             ClickGo.taskList[taskId].formList[fid].vue.$children[0].maskFor = undefined;
         }
-        delete (ClickGo.taskList[taskId].formList[oFormId]);
-        break;
+        delete (ClickGo.taskList[taskId].formList[formId]);
     }
     Tool.removeStyle(taskId, formId);
     formListElement.removeChild(formElement);

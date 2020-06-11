@@ -15,5 +15,5 @@
 }
 
 .b2 {
-    background-color: rgba(0, 0, 0, .1); width: 30px; height: 30px; border: solid 1px rgba(0, 0, 0, .3); cursor: ew-resize;
+    background-color: rgba(0, 0, 0, .1); width: 10%; height: 30px; border: solid 1px rgba(0, 0, 0, .3); cursor: ew-resize;
 }
