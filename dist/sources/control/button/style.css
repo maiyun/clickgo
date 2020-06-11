@@ -15,7 +15,7 @@
 }
 
 .inner {
-    display: flex; align-items: center; justify-content: center; flex: 1; border: solid 1px transparent;
+    display: flex; align-items: center; justify-content: center; flex: 1; border: solid 1px transparent; overflow: hidden;
 }
 .wrap:focus .inner {
     border: dotted 1px #15010b;

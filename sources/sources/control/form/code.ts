@@ -245,7 +245,7 @@ export let methods = {
                     };
                 }
             },
-            "move": async (ox, oy, x, y, border) => {
+            "move": (ox, oy, x, y, border) => {
                 this.leftData += ox;
                 this.$emit("update:left", this.leftData);
                 this.topData += oy;
@@ -255,7 +255,7 @@ export let methods = {
                         if (isBorder === "") {
                             isBorder = border;
                             ClickGo.showCircular(x, y);
-                            await ClickGo.showRectangle(x, y, border);
+                            ClickGo.showRectangle(x, y, border);
                         } else {
                             isBorder = border;
                             ClickGo.moveRectangle(border);
@@ -534,7 +534,7 @@ export let methods = {
                     this.stateAbs = false;
                 }
             },
-            "move": async (left, top, width, height, x, y, border) => {
+            "move": (left, top, width, height, x, y, border) => {
                 this.leftData = left;
                 this.$emit("update:left", left);
                 this.topData = top;
@@ -551,7 +551,7 @@ export let methods = {
                         if (isBorder === "") {
                             isBorder = border;
                             ClickGo.showCircular(x, y);
-                            await ClickGo.showRectangle(x, y, {
+                            ClickGo.showRectangle(x, y, {
                                 "left": left,
                                 "width": width
                             });

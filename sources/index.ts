@@ -107,7 +107,7 @@ const ClickGo: {
      * @param y 起始位置
      * @param pos 最大时位置代号
      */
-    showRectangle: (x: number, y: number, pos: TBorderDir) => Promise<void>;
+    showRectangle: (x: number, y: number, pos: TBorderDir) => void;
 
     /**
      * --- 移动矩形到新位置 ---
@@ -261,12 +261,19 @@ const ClickGo: {
     endTask: (taskId: number) => boolean;
 
     /**
+     * --- 绑定按下以及弹起事件 ---
+     * @param e MouseEvent | TouchEvent
+     * @param opt 回调选项
+     */
+    bindDown: (oe: MouseEvent | TouchEvent, opt: { "down"?: (e: MouseEvent | TouchEvent) => void; "start"?: (e: MouseEvent | TouchEvent) => void | boolean; "move"?: (e: MouseEvent | TouchEvent) => void | boolean; "up"?: (e: MouseEvent | TouchEvent) => void; "end"?: (e: MouseEvent | TouchEvent) => void; }) => void;
+
+    /**
      * --- 绑定拖动事件 ---
      * @param e mousedown 或 touchstart 的 event
      * @param moveCb 拖动时的回调
      * @param endCb 结束时的回调
      */
-    bindMove: (e: MouseEvent | TouchEvent, opt: { "left"?: number; "top"?: number; "right"?: number; "bottom"?: number; "offsetLeft"?: number; "offsetTop"?: number; "offsetRight"?: number; "offsetBottom"?: number; "objectLeft"?: number; "objectTop"?: number; "objectWidth"?: number; "objectHeight"?: number; "object"?: HTMLElement | IVue; "offsetObject"?: HTMLElement | IVue; "start"?: (x: number, y: number) => void | Promise<void> | boolean | Promise<boolean>; "move"?: (ox: number, oy: number, x: number, y: number, border: TBorderDir) => void; "end"?: () => void; "up"?: () => void; "borderIn"?: (x: number, y: number, border: TBorderDir) => void; "borderOut"?: () => void; }) => { "left": number; "top": number; "right": number; "bottom": number; };
+    bindMove: (e: MouseEvent | TouchEvent, opt: { "left"?: number; "top"?: number; "right"?: number; "bottom"?: number; "offsetLeft"?: number; "offsetTop"?: number; "offsetRight"?: number; "offsetBottom"?: number; "objectLeft"?: number; "objectTop"?: number; "objectWidth"?: number; "objectHeight"?: number; "object"?: HTMLElement | IVue; "offsetObject"?: HTMLElement | IVue; "start"?: (x: number, y: number) => void | boolean; "move"?: (ox: number, oy: number, x: number, y: number, border: TBorderDir) => void; "up"?: () => void; "end"?: () => void; "borderIn"?: (x: number, y: number, border: TBorderDir) => void; "borderOut"?: () => void; }) => { "left": number; "top": number; "right": number; "bottom": number; };
 
     /**
      * --- 绑定拖动改变大小事件 ---
@@ -275,7 +282,7 @@ const ClickGo: {
      * @param moveCb 拖动时的回调
      * @param endCb 结束时的回调
      */
-    bindResize: (e: MouseEvent | TouchEvent, opt: { "left": number; "top": number; "width": number; "height": number; "minWidth"?: number; "minHeight"?: number; "offsetObject"?: HTMLElement; "dir": TBorderDir; "start"?: (x: number, y: number) => void | Promise<void> | boolean | Promise<boolean>; "move"?: (left: number, top: number, width: number, height: number, x: number, y: number, border: TBorderDir) => void; "end"?: () => void; }) => void;
+    bindResize: (e: MouseEvent | TouchEvent, opt: { "left": number; "top": number; "width": number; "height": number; "minWidth"?: number; "minHeight"?: number; "offsetObject"?: HTMLElement; "dir": TBorderDir; "start"?: (x: number, y: number) => void | boolean; "move"?: (left: number, top: number, width: number, height: number, x: number, y: number, border: TBorderDir) => void; "end"?: () => void; }) => void;
 
     /**
      * --- 设置全局鼠标样式 ---
@@ -322,8 +329,8 @@ const ClickGo: {
         this._core.showCircular(x, y);
     },
 
-    showRectangle: async function(x: number, y: number, pos: TBorderDir): Promise<void> {
-        return await this._core.showRectangle(x, y, pos);
+    showRectangle: function(x: number, y: number, pos: TBorderDir): void {
+        return this._core.showRectangle(x, y, pos);
     },
 
     moveRectangle: function(dir: TBorderDir): void {
@@ -446,6 +453,10 @@ const ClickGo: {
 
     endTask: function(taskId: number): boolean {
         return this._core.endTask(taskId);
+    },
+
+    bindDown: function(oe: MouseEvent | TouchEvent, opt: { "down"?: (e: MouseEvent | TouchEvent) => void; "start"?: (e: MouseEvent | TouchEvent) => void | boolean; "move"?: (e: MouseEvent | TouchEvent) => void | boolean; "up"?: (e: MouseEvent | TouchEvent) => void; "end"?: (e: MouseEvent | TouchEvent) => void; }): void {
+        return this._core.bindDown(oe, opt);
     },
 
     bindMove: function(e: MouseEvent | TouchEvent, opt: { "left"?: number; "top"?: number; "right"?: number; "bottom"?: number; "offsetLeft"?: number; "offsetTop"?: number; "offsetRight"?: number; "offsetBottom"?: number; "objectLeft"?: number; "objectTop"?: number; "objectWidth"?: number; "objectHeight"?: number; "object"?: HTMLElement | IVue; "offsetObject"?: HTMLElement | IVue; "start"?: (x: number, y: number) => void | Promise<void> | boolean | Promise<boolean>; "move"?: (ox: number, oy: number, x: number, y: number, border: TBorderDir) => void; "end"?: () => void; "up"?: () => void; "borderIn"?: (x: number, y: number, border: TBorderDir) => void; "borderOut"?: () => void; }): { "left": number; "top": number; "right": number; "bottom": number; } {

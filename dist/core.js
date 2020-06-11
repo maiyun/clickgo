@@ -98,33 +98,20 @@ circularElement.style.zoom = ClickGo.zoom.toString();
 circularElement.classList.add("cg-circular");
 document.getElementsByTagName("body")[0].appendChild(circularElement);
 function showCircular(x, y) {
-    return __awaiter(this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0:
-                    circularElement.style.transition = "none";
-                    circularElement.style.width = "6px";
-                    circularElement.style.height = "6px";
-                    circularElement.style.left = x - 3 + "px";
-                    circularElement.style.top = y - 3 + "px";
-                    circularElement.style.opacity = "1";
-                    return [4, new Promise(function (resove) {
-                            setTimeout(function () {
-                                resove();
-                            }, 10);
-                        })];
-                case 1:
-                    _a.sent();
-                    circularElement.style.transition = "all .3s ease-out";
-                    circularElement.style.width = "60px";
-                    circularElement.style.height = "60px";
-                    circularElement.style.left = x - 30 + "px";
-                    circularElement.style.top = y - 30 + "px";
-                    circularElement.style.opacity = "0";
-                    return [2];
-            }
-        });
-    });
+    circularElement.style.transition = "none";
+    circularElement.style.width = "6px";
+    circularElement.style.height = "6px";
+    circularElement.style.left = x - 3 + "px";
+    circularElement.style.top = y - 3 + "px";
+    circularElement.style.opacity = "1";
+    setTimeout(function () {
+        circularElement.style.transition = "all .3s ease-out";
+        circularElement.style.width = "60px";
+        circularElement.style.height = "60px";
+        circularElement.style.left = x - 30 + "px";
+        circularElement.style.top = y - 30 + "px";
+        circularElement.style.opacity = "0";
+    }, 10);
 }
 exports.showCircular = showCircular;
 var rectangleElement = document.createElement("div");
@@ -133,32 +120,19 @@ rectangleElement.setAttribute("data-pos", "");
 rectangleElement.classList.add("cg-rectangle");
 document.getElementsByTagName("body")[0].appendChild(rectangleElement);
 function showRectangle(x, y, pos) {
-    return __awaiter(this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0:
-                    rectangleElement.style.transition = "none";
-                    rectangleElement.style.width = "20px";
-                    rectangleElement.style.height = "20px";
-                    rectangleElement.style.left = x - 10 + "px";
-                    rectangleElement.style.top = y - 10 + "px";
-                    rectangleElement.style.opacity = "1";
-                    rectangleElement.setAttribute("data-ready", "0");
-                    rectangleElement.setAttribute("data-dir", "");
-                    return [4, new Promise(function (resove) {
-                            setTimeout(function () {
-                                resove();
-                            }, 10);
-                        })];
-                case 1:
-                    _a.sent();
-                    rectangleElement.style.transition = "all .2s ease-out";
-                    rectangleElement.setAttribute("data-ready", "1");
-                    moveRectangle(pos);
-                    return [2];
-            }
-        });
-    });
+    rectangleElement.style.transition = "none";
+    rectangleElement.style.width = "20px";
+    rectangleElement.style.height = "20px";
+    rectangleElement.style.left = x - 10 + "px";
+    rectangleElement.style.top = y - 10 + "px";
+    rectangleElement.style.opacity = "1";
+    rectangleElement.setAttribute("data-ready", "0");
+    rectangleElement.setAttribute("data-dir", "");
+    setTimeout(function () {
+        rectangleElement.style.transition = "all .2s ease-out";
+        rectangleElement.setAttribute("data-ready", "1");
+        moveRectangle(pos);
+    }, 10);
 }
 exports.showRectangle = showRectangle;
 function moveRectangle(dir) {
@@ -1224,6 +1198,79 @@ function endTask(taskId) {
     return true;
 }
 exports.endTask = endTask;
+function bindDown(oe, opt) {
+    if (oe instanceof MouseEvent && ClickGo.hasTouch) {
+        return;
+    }
+    var ox, oy;
+    if (oe instanceof MouseEvent) {
+        ox = oe.clientX;
+        oy = oe.clientY;
+    }
+    else {
+        ox = oe.touches[0].clientX;
+        oy = oe.touches[0].clientY;
+    }
+    var isStart = false;
+    var end;
+    var move = function (e) {
+        e.preventDefault();
+        var x = e instanceof MouseEvent ? e.clientX : e.touches[0].clientX;
+        var y = e instanceof MouseEvent ? e.clientY : e.touches[0].clientY;
+        if (x === ox && y === oy) {
+            return;
+        }
+        if (!isStart) {
+            isStart = true;
+            if (opt.start && (opt.start(e) === false)) {
+                if (e instanceof MouseEvent) {
+                    window.removeEventListener("mousemove", move);
+                    window.removeEventListener("mouseup", end);
+                }
+                else {
+                    window.removeEventListener("touchmove", move);
+                    window.removeEventListener("touchend", end);
+                }
+                return;
+            }
+        }
+        if (opt.move && (opt.move(e) === false)) {
+            if (e instanceof MouseEvent) {
+                window.removeEventListener("mousemove", move);
+                window.removeEventListener("mouseup", end);
+            }
+            else {
+                window.removeEventListener("touchmove", move);
+                window.removeEventListener("touchend", end);
+            }
+            return;
+        }
+    };
+    end = function (e) {
+        if (e instanceof MouseEvent) {
+            window.removeEventListener("mousemove", move);
+            window.removeEventListener("mouseup", end);
+        }
+        else {
+            window.removeEventListener("touchmove", move);
+            window.removeEventListener("touchend", end);
+        }
+        opt.up && opt.up(e);
+        if (isStart) {
+            opt.end && opt.end(e);
+        }
+    };
+    if (oe instanceof MouseEvent) {
+        window.addEventListener("mousemove", move);
+        window.addEventListener("mouseup", end);
+    }
+    else {
+        window.addEventListener("touchmove", move, { passive: false });
+        window.addEventListener("touchend", end);
+    }
+    opt.down && opt.down(oe);
+}
+exports.bindDown = bindDown;
 function bindMove(e, opt) {
     setGlobalCursor(getComputedStyle(e.target).cursor);
     var tx, ty;
@@ -1278,244 +1325,200 @@ function bindMove(e, opt) {
         bottom += opt.offsetBottom;
     }
     var isBorder = false;
-    var isStart = false;
     var objectLeft, objectTop, objectWidth, objectHeight;
     var offsetLeft = 0;
     var offsetTop = 0;
     var offsetRight = 0;
     var offsetBottom = 0;
-    var end;
-    var move = function (e) {
-        var _a, _b, _c, _d;
-        return __awaiter(this, void 0, void 0, function () {
-            var x, y, rtn, rect, inBorderTop, inBorderRight, inBorderBottom, inBorderLeft, xol, xor, rs1, yot, yob, bs1, border;
-            return __generator(this, function (_e) {
-                switch (_e.label) {
-                    case 0:
-                        e.preventDefault();
-                        x = (e instanceof MouseEvent ? e.clientX : e.touches[0].clientX) * ClickGo.rzoom;
-                        y = (e instanceof MouseEvent ? e.clientY : e.touches[0].clientY) * ClickGo.rzoom;
-                        if (x === tx && y === ty) {
-                            return [2];
-                        }
-                        if (!!isStart) return [3, 3];
-                        isStart = true;
-                        if (!opt.start) return [3, 2];
-                        return [4, opt.start(tx, ty)];
-                    case 1:
-                        rtn = _e.sent();
-                        if (rtn === false) {
-                            setGlobalCursor();
-                            if (e instanceof MouseEvent) {
-                                window.removeEventListener("mousemove", move);
-                                window.removeEventListener("mouseup", end);
-                            }
-                            else {
-                                window.removeEventListener("touchmove", move);
-                                window.removeEventListener("touchend", end);
-                            }
-                            return [2];
-                        }
-                        _e.label = 2;
-                    case 2:
-                        if (opt.object) {
-                            if (!(opt.object instanceof HTMLElement)) {
-                                opt.object = opt.object.$el;
-                            }
-                            rect = opt.object.getBoundingClientRect();
-                            objectLeft = rect.left;
-                            objectTop = rect.top;
-                            objectWidth = rect.width;
-                            objectHeight = rect.height;
-                        }
-                        else {
-                            objectLeft = (_a = opt.objectLeft) !== null && _a !== void 0 ? _a : 0;
-                            objectTop = (_b = opt.objectTop) !== null && _b !== void 0 ? _b : 0;
-                            objectWidth = (_c = opt.objectWidth) !== null && _c !== void 0 ? _c : 0;
-                            objectHeight = (_d = opt.objectHeight) !== null && _d !== void 0 ? _d : 0;
-                        }
-                        if (objectWidth > 0) {
-                            offsetLeft = tx - objectLeft;
-                        }
-                        if (objectHeight > 0) {
-                            offsetTop = ty - objectTop;
-                        }
-                        offsetRight = objectWidth - offsetLeft;
-                        offsetBottom = objectHeight - offsetTop;
-                        _e.label = 3;
-                    case 3:
-                        inBorderTop = false, inBorderRight = false, inBorderBottom = false, inBorderLeft = false;
-                        xol = x - offsetLeft;
-                        xor = x + offsetRight;
-                        if (xol <= left) {
-                            if (xol < left && x < tx) {
-                                if (tx - offsetLeft > left) {
-                                    x = left + offsetLeft;
-                                }
-                                else {
-                                    x = tx;
-                                }
-                            }
-                            inBorderLeft = true;
-                        }
-                        else if (offsetRight > 0) {
-                            if (xor >= right) {
-                                if (xor > right && x > tx) {
-                                    if (tx + offsetRight < right) {
-                                        x = right - offsetRight;
-                                    }
-                                    else {
-                                        x = tx;
-                                    }
-                                }
-                                inBorderRight = true;
-                            }
-                        }
-                        else if (offsetRight === 0) {
-                            rs1 = right - 1;
-                            if (x >= rs1) {
-                                if (x > rs1 && x > tx) {
-                                    if (tx < rs1) {
-                                        x = rs1;
-                                    }
-                                    else {
-                                        x = tx;
-                                    }
-                                }
-                                inBorderRight = true;
-                            }
-                        }
-                        yot = y - offsetTop;
-                        yob = y + offsetBottom;
-                        if (yot <= top) {
-                            if (yot < top && y < ty) {
-                                if (ty - offsetTop > top) {
-                                    y = top + offsetTop;
-                                }
-                                else {
-                                    y = ty;
-                                }
-                            }
-                            inBorderTop = true;
-                        }
-                        else if (offsetBottom > 0) {
-                            if (yob >= bottom) {
-                                if (yob > bottom && y > ty) {
-                                    if (ty + offsetBottom < bottom) {
-                                        y = bottom - offsetBottom;
-                                    }
-                                    else {
-                                        y = ty;
-                                    }
-                                }
-                                inBorderBottom = true;
-                            }
-                        }
-                        else if (offsetBottom === 0) {
-                            bs1 = bottom - 1;
-                            if (y >= bs1) {
-                                if (y > bs1 && y > ty) {
-                                    if (ty < bs1) {
-                                        y = bs1;
-                                    }
-                                    else {
-                                        y = ty;
-                                    }
-                                }
-                                inBorderBottom = true;
-                            }
-                        }
-                        border = "";
-                        if (inBorderTop || inBorderRight || inBorderBottom || inBorderLeft) {
-                            if (inBorderTop) {
-                                if (x - left <= 20) {
-                                    border = "lt";
-                                }
-                                else if (right - x <= 20) {
-                                    border = "tr";
-                                }
-                                else {
-                                    border = "t";
-                                }
-                            }
-                            else if (inBorderRight) {
-                                if (y - top <= 20) {
-                                    border = "tr";
-                                }
-                                else if (bottom - y <= 20) {
-                                    border = "rb";
-                                }
-                                else {
-                                    border = "r";
-                                }
-                            }
-                            else if (inBorderBottom) {
-                                if (right - x <= 20) {
-                                    border = "rb";
-                                }
-                                else if (x - left <= 20) {
-                                    border = "bl";
-                                }
-                                else {
-                                    border = "b";
-                                }
-                            }
-                            else if (inBorderLeft) {
-                                if (y - top <= 20) {
-                                    border = "lt";
-                                }
-                                else if (bottom - y <= 20) {
-                                    border = "bl";
-                                }
-                                else {
-                                    border = "l";
-                                }
-                            }
-                            if (!isBorder) {
-                                isBorder = true;
-                                opt.borderIn && opt.borderIn(x, y, border);
-                            }
-                        }
-                        else {
-                            if (isBorder) {
-                                isBorder = false;
-                                opt.borderOut && opt.borderOut();
-                            }
-                        }
-                        opt.move && opt.move(x - tx, y - ty, x, y, border);
-                        tx = x;
-                        ty = y;
-                        return [2];
+    ClickGo.bindDown(e, {
+        start: function () {
+            var _a, _b, _c, _d;
+            if (opt.start) {
+                if (opt.start(tx, ty) === false) {
+                    setGlobalCursor();
+                    return false;
                 }
-            });
-        });
-    };
-    if (e instanceof MouseEvent) {
-        end = function (e) {
-            setGlobalCursor();
-            window.removeEventListener("mousemove", move);
-            window.removeEventListener("mouseup", end);
-            opt.up && opt.up();
-            if (isStart) {
-                opt.end && opt.end();
             }
-        };
-        window.addEventListener("mousemove", move);
-        window.addEventListener("mouseup", end);
-    }
-    else {
-        end = function (e) {
-            setGlobalCursor();
-            window.removeEventListener("touchmove", move);
-            window.removeEventListener("touchend", end);
-            opt.up && opt.up();
-            if (isStart) {
-                opt.end && opt.end();
+            if (opt.object) {
+                if (!(opt.object instanceof HTMLElement)) {
+                    opt.object = opt.object.$el;
+                }
+                var rect = opt.object.getBoundingClientRect();
+                objectLeft = rect.left;
+                objectTop = rect.top;
+                objectWidth = rect.width;
+                objectHeight = rect.height;
             }
-        };
-        window.addEventListener("touchmove", move, { passive: false });
-        window.addEventListener("touchend", end);
-    }
+            else {
+                objectLeft = (_a = opt.objectLeft) !== null && _a !== void 0 ? _a : 0;
+                objectTop = (_b = opt.objectTop) !== null && _b !== void 0 ? _b : 0;
+                objectWidth = (_c = opt.objectWidth) !== null && _c !== void 0 ? _c : 0;
+                objectHeight = (_d = opt.objectHeight) !== null && _d !== void 0 ? _d : 0;
+            }
+            if (objectWidth > 0) {
+                offsetLeft = tx - objectLeft;
+            }
+            if (objectHeight > 0) {
+                offsetTop = ty - objectTop;
+            }
+            offsetRight = objectWidth - offsetLeft;
+            offsetBottom = objectHeight - offsetTop;
+        },
+        move: function (e) {
+            var x, y;
+            x = (e instanceof MouseEvent ? e.clientX : e.touches[0].clientX) * ClickGo.rzoom;
+            y = (e instanceof MouseEvent ? e.clientY : e.touches[0].clientY) * ClickGo.rzoom;
+            if (x === tx && y === ty) {
+                return;
+            }
+            var inBorderTop = false, inBorderRight = false, inBorderBottom = false, inBorderLeft = false;
+            var xol = x - offsetLeft;
+            var xor = x + offsetRight;
+            if (xol <= left) {
+                if (xol < left && x < tx) {
+                    if (tx - offsetLeft > left) {
+                        x = left + offsetLeft;
+                    }
+                    else {
+                        x = tx;
+                    }
+                }
+                inBorderLeft = true;
+            }
+            else if (offsetRight > 0) {
+                if (xor >= right) {
+                    if (xor > right && x > tx) {
+                        if (tx + offsetRight < right) {
+                            x = right - offsetRight;
+                        }
+                        else {
+                            x = tx;
+                        }
+                    }
+                    inBorderRight = true;
+                }
+            }
+            else if (offsetRight === 0) {
+                var rs1 = right - 1;
+                if (x >= rs1) {
+                    if (x > rs1 && x > tx) {
+                        if (tx < rs1) {
+                            x = rs1;
+                        }
+                        else {
+                            x = tx;
+                        }
+                    }
+                    inBorderRight = true;
+                }
+            }
+            var yot = y - offsetTop;
+            var yob = y + offsetBottom;
+            if (yot <= top) {
+                if (yot < top && y < ty) {
+                    if (ty - offsetTop > top) {
+                        y = top + offsetTop;
+                    }
+                    else {
+                        y = ty;
+                    }
+                }
+                inBorderTop = true;
+            }
+            else if (offsetBottom > 0) {
+                if (yob >= bottom) {
+                    if (yob > bottom && y > ty) {
+                        if (ty + offsetBottom < bottom) {
+                            y = bottom - offsetBottom;
+                        }
+                        else {
+                            y = ty;
+                        }
+                    }
+                    inBorderBottom = true;
+                }
+            }
+            else if (offsetBottom === 0) {
+                var bs1 = bottom - 1;
+                if (y >= bs1) {
+                    if (y > bs1 && y > ty) {
+                        if (ty < bs1) {
+                            y = bs1;
+                        }
+                        else {
+                            y = ty;
+                        }
+                    }
+                    inBorderBottom = true;
+                }
+            }
+            var border = "";
+            if (inBorderTop || inBorderRight || inBorderBottom || inBorderLeft) {
+                if (inBorderTop) {
+                    if (x - left <= 20) {
+                        border = "lt";
+                    }
+                    else if (right - x <= 20) {
+                        border = "tr";
+                    }
+                    else {
+                        border = "t";
+                    }
+                }
+                else if (inBorderRight) {
+                    if (y - top <= 20) {
+                        border = "tr";
+                    }
+                    else if (bottom - y <= 20) {
+                        border = "rb";
+                    }
+                    else {
+                        border = "r";
+                    }
+                }
+                else if (inBorderBottom) {
+                    if (right - x <= 20) {
+                        border = "rb";
+                    }
+                    else if (x - left <= 20) {
+                        border = "bl";
+                    }
+                    else {
+                        border = "b";
+                    }
+                }
+                else if (inBorderLeft) {
+                    if (y - top <= 20) {
+                        border = "lt";
+                    }
+                    else if (bottom - y <= 20) {
+                        border = "bl";
+                    }
+                    else {
+                        border = "l";
+                    }
+                }
+                if (!isBorder) {
+                    isBorder = true;
+                    opt.borderIn && opt.borderIn(x, y, border);
+                }
+            }
+            else {
+                if (isBorder) {
+                    isBorder = false;
+                    opt.borderOut && opt.borderOut();
+                }
+            }
+            opt.move && opt.move(x - tx, y - ty, x, y, border);
+            tx = x;
+            ty = y;
+        },
+        up: opt.up,
+        end: function () {
+            setGlobalCursor();
+            opt.end && opt.end();
+        }
+    });
     return {
         "left": left,
         "top": top,
@@ -1563,26 +1566,21 @@ function bindResize(e, opt) {
         "offsetBottom": offsetBottom,
         "start": opt.start,
         "move": function (ox, oy, x, y, border) {
-            return __awaiter(this, void 0, void 0, function () {
-                return __generator(this, function (_a) {
-                    if (opt.dir === "tr" || opt.dir === "r" || opt.dir === "rb") {
-                        opt.width += ox;
-                    }
-                    else if (opt.dir === "bl" || opt.dir === "l" || opt.dir === "lt") {
-                        opt.width -= ox;
-                        opt.left += ox;
-                    }
-                    if (opt.dir === "rb" || opt.dir === "b" || opt.dir === "bl") {
-                        opt.height += oy;
-                    }
-                    else if (opt.dir === "lt" || opt.dir === "t" || opt.dir === "tr") {
-                        opt.height -= oy;
-                        opt.top += oy;
-                    }
-                    opt.move && opt.move(opt.left, opt.top, opt.width, opt.height, x, y, border);
-                    return [2];
-                });
-            });
+            if (opt.dir === "tr" || opt.dir === "r" || opt.dir === "rb") {
+                opt.width += ox;
+            }
+            else if (opt.dir === "bl" || opt.dir === "l" || opt.dir === "lt") {
+                opt.width -= ox;
+                opt.left += ox;
+            }
+            if (opt.dir === "rb" || opt.dir === "b" || opt.dir === "bl") {
+                opt.height += oy;
+            }
+            else if (opt.dir === "lt" || opt.dir === "t" || opt.dir === "tr") {
+                opt.height -= oy;
+                opt.top += oy;
+            }
+            opt.move && opt.move(opt.left, opt.top, opt.width, opt.height, x, y, border);
         },
         "end": opt.end
     });

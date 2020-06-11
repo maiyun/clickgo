@@ -35,6 +35,7 @@
         "/form/move.js",
         "/form/move.xml",
         "/form/onlyClose.xml",
+        "/form/scroll.js",
         "/form/scroll.xml",
         "/form/thin.xml",
         "/res/icon.svg",

@@ -1,13 +1,13 @@
 <div class="wrap" :class="[direction]" :style="{'width': width + 'px', 'height': height + 'px', 'left': left + 'px', 'top': top + 'px', 'z-index': zIndex, 'flex': flex}" @click="_tap" @mousedown="_down" @touchstart="_down">
-    <div class="start-wrap" :style="{'height': direction === 'v' ? width + 'px' : undefined, 'width': direction === 'h' ? height + 'px' : undefined}">
+    <div class="start-wrap" @mousedown="longDown(event, 'start')" @touchstart="longDown(event, 'start')" :style="{'height': direction === 'v' ? width + 'px' : undefined, 'width': direction === 'h' ? height + 'px' : undefined}">
         <div class="start-inner"></div>
     </div>
     <div ref="bar" class="scroll-bar">
-        <div ref="block" class="block-wrap" @touchstart="down" @mousedown="down" :style="{'height': direction === 'v' ? size : undefined, 'width': direction === 'h' ? size : undefined, 'margin-top': direction === 'v' ? scrollOffsetData + '%' : undefined, 'margin-left': direction === 'h' ? scrollOffsetData + '%' : undefined}">
+        <div ref="block" class="block-wrap" :class="{'tran': tran}" @touchstart="down" @mousedown="down" :style="{'height': direction === 'v' ? size : undefined, 'width': direction === 'h' ? size : undefined, 'margin-top': direction === 'v' ? scrollOffsetPer + '%' : undefined, 'margin-left': direction === 'h' ? scrollOffsetPer + '%' : undefined}">
             <div class="block-inner"></div>
         </div>
     </div>
-    <div class="end-wrap" :style="{'height': direction === 'v' ? width + 'px' : undefined, 'width': direction === 'h' ? height + 'px' : undefined}">
+    <div class="end-wrap" @mousedown="longDown(event, 'end')" @touchstart="longDown(event, 'end')" :style="{'height': direction === 'v' ? width + 'px' : undefined, 'width': direction === 'h' ? height + 'px' : undefined}">
         <div class="end-inner"></div>
     </div>
 </div>

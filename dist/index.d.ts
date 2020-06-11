@@ -38,7 +38,7 @@ declare const ClickGo: {
     "_config": ICgConfig;
     "_pop": IVue | null;
     showCircular: (x: number, y: number) => void;
-    showRectangle: (x: number, y: number, pos: TBorderDir) => Promise<void>;
+    showRectangle: (x: number, y: number, pos: TBorderDir) => void;
     moveRectangle: (dir: TBorderDir) => void;
     hideRectangle: () => void;
     getPositionByBorderDir: (dir: TBorderDir) => {
@@ -78,6 +78,13 @@ declare const ClickGo: {
     createForm: (opt: ICreateFormOptions) => Promise<number | IForm>;
     removeForm: (formId: number) => boolean;
     endTask: (taskId: number) => boolean;
+    bindDown: (oe: MouseEvent | TouchEvent, opt: {
+        "down"?: (e: MouseEvent | TouchEvent) => void;
+        "start"?: (e: MouseEvent | TouchEvent) => void | boolean;
+        "move"?: (e: MouseEvent | TouchEvent) => void | boolean;
+        "up"?: (e: MouseEvent | TouchEvent) => void;
+        "end"?: (e: MouseEvent | TouchEvent) => void;
+    }) => void;
     bindMove: (e: MouseEvent | TouchEvent, opt: {
         "left"?: number;
         "top"?: number;
@@ -93,10 +100,10 @@ declare const ClickGo: {
         "objectHeight"?: number;
         "object"?: HTMLElement | IVue;
         "offsetObject"?: HTMLElement | IVue;
-        "start"?: (x: number, y: number) => void | Promise<void> | boolean | Promise<boolean>;
+        "start"?: (x: number, y: number) => void | boolean;
         "move"?: (ox: number, oy: number, x: number, y: number, border: TBorderDir) => void;
-        "end"?: () => void;
         "up"?: () => void;
+        "end"?: () => void;
         "borderIn"?: (x: number, y: number, border: TBorderDir) => void;
         "borderOut"?: () => void;
     }) => {
@@ -114,7 +121,7 @@ declare const ClickGo: {
         "minHeight"?: number;
         "offsetObject"?: HTMLElement;
         "dir": TBorderDir;
-        "start"?: (x: number, y: number) => void | Promise<void> | boolean | Promise<boolean>;
+        "start"?: (x: number, y: number) => void | boolean;
         "move"?: (left: number, top: number, width: number, height: number, x: number, y: number, border: TBorderDir) => void;
         "end"?: () => void;
     }) => void;

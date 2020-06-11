@@ -47,16 +47,19 @@
 }
 
 .block-wrap {
-    background-color: rgba(0, 0, 0, .1); display: flex;
+    background-color: rgba(0, 0, 0, .1); display: flex; 
 }
 .block-wrap:hover {
     background-color: rgba(0, 0, 0, .3);
 }
 .block-wrap:active {
-    background-color: rgba(0, 0, 0, .5);
+    background-color: rgba(0, 0, 0, 0.5);
 }
 .wrap.v .block-wrap {
     width: 100%;
+}
+.block-wrap.tran {
+    transition: margin .03s linear;
 }
 
 .block-inner {

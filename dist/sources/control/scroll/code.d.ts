@@ -34,8 +34,10 @@ export declare let props: {
     };
 };
 export declare let data: {
+    scrollOffsetPx: number;
     scrollOffsetData: number;
-    scrollOffsetDataO: number;
+    timer: undefined;
+    tran: boolean;
 };
 export declare let watch: {
     scrollOffset: {
@@ -45,7 +47,10 @@ export declare let watch: {
 };
 export declare let computed: {
     size: (this: IVue) => string;
+    scrollOffsetPer: (this: IVue) => number;
 };
 export declare let methods: {
-    down: (this: IVue, e: MouseEvent | TouchEvent) => void;
+    down: (this: IVue, e: TouchEvent | MouseEvent) => void;
+    longDown: (this: IVue, e: TouchEvent | MouseEvent, type: "start" | "end") => void;
 };
+export declare let destroyed: (this: IVue) => void;

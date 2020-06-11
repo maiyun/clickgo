@@ -1,5 +1,5 @@
-export declare function showCircular(x: number, y: number): Promise<void>;
-export declare function showRectangle(x: number, y: number, pos: TBorderDir): Promise<void>;
+export declare function showCircular(x: number, y: number): void;
+export declare function showRectangle(x: number, y: number, pos: TBorderDir): void;
 export declare function moveRectangle(dir: TBorderDir): void;
 export declare function hideRectangle(): void;
 export declare function getPositionByBorderDir(dir: TBorderDir): {
@@ -29,6 +29,13 @@ export declare function runApp(path: string | IAppPkg, opt?: {
 export declare function createForm(opt: ICreateFormOptions): Promise<number | IForm>;
 export declare function removeForm(formId: number): boolean;
 export declare function endTask(taskId: number): boolean;
+export declare function bindDown(oe: MouseEvent | TouchEvent, opt: {
+    "down"?: (e: MouseEvent | TouchEvent) => void;
+    "start"?: (e: MouseEvent | TouchEvent) => void | boolean;
+    "move"?: (e: MouseEvent | TouchEvent) => void | boolean;
+    "up"?: (e: MouseEvent | TouchEvent) => void;
+    "end"?: (e: MouseEvent | TouchEvent) => void;
+}): void;
 export declare function bindMove(e: MouseEvent | TouchEvent, opt: {
     "left"?: number;
     "top"?: number;
@@ -44,10 +51,10 @@ export declare function bindMove(e: MouseEvent | TouchEvent, opt: {
     "objectHeight"?: number;
     "object"?: HTMLElement | IVue;
     "offsetObject"?: HTMLElement | IVue;
-    "start"?: (x: number, y: number) => void | Promise<void> | boolean | Promise<boolean>;
+    "start"?: (x: number, y: number) => void | boolean;
     "move"?: (ox: number, oy: number, x: number, y: number, border: TBorderDir) => void;
-    "end"?: () => void;
     "up"?: () => void;
+    "end"?: () => void;
     "borderIn"?: (x: number, y: number, border: TBorderDir) => void;
     "borderOut"?: () => void;
 }): {
@@ -65,7 +72,7 @@ export declare function bindResize(e: MouseEvent | TouchEvent, opt: {
     "minHeight"?: number;
     "offsetObject"?: HTMLElement;
     "dir": TBorderDir;
-    "start"?: (x: number, y: number) => void | Promise<void> | boolean | Promise<boolean>;
+    "start"?: (x: number, y: number) => void | boolean;
     "move"?: (left: number, top: number, width: number, height: number, x: number, y: number, border: TBorderDir) => void;
     "end"?: () => void;
 }): void;

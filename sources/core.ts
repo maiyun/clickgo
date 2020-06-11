@@ -86,24 +86,21 @@ document.getElementsByTagName("body")[0].appendChild(circularElement);
  * @param x X 坐标
  * @param y Y 坐标
  */
-export async function showCircular(x: number, y: number): Promise<void> {
+export function showCircular(x: number, y: number): void {
     circularElement.style.transition = "none";
     circularElement.style.width = "6px";
     circularElement.style.height = "6px";
     circularElement.style.left = x - 3 + "px";
     circularElement.style.top = y - 3 + "px";
     circularElement.style.opacity = "1";
-    await new Promise(function(resove) {
-        setTimeout(function() {
-            resove();
-        }, 10);
-    });
-    circularElement.style.transition = "all .3s ease-out";
-    circularElement.style.width = "60px";
-    circularElement.style.height = "60px";
-    circularElement.style.left = x - 30 + "px";
-    circularElement.style.top = y - 30 + "px";
-    circularElement.style.opacity = "0";
+    setTimeout(function() {
+        circularElement.style.transition = "all .3s ease-out";
+        circularElement.style.width = "60px";
+        circularElement.style.height = "60px";
+        circularElement.style.left = x - 30 + "px";
+        circularElement.style.top = y - 30 + "px";
+        circularElement.style.opacity = "0";
+    }, 10);
 }
 
 // --- 从鼠标指针处开始从小到大缩放并铺满屏幕（或半个屏幕）的对象 ---
@@ -118,7 +115,7 @@ document.getElementsByTagName("body")[0].appendChild(rectangleElement);
  * @param y 起始位置
  * @param pos 最大时位置代号
  */
-export async function showRectangle(x: number, y: number, pos: TBorderDir): Promise<void> {
+export function showRectangle(x: number, y: number, pos: TBorderDir): void {
     rectangleElement.style.transition = "none";
     rectangleElement.style.width = "20px";
     rectangleElement.style.height = "20px";
@@ -127,14 +124,11 @@ export async function showRectangle(x: number, y: number, pos: TBorderDir): Prom
     rectangleElement.style.opacity = "1";
     rectangleElement.setAttribute("data-ready", "0");
     rectangleElement.setAttribute("data-dir", "");
-    await new Promise(function(resove) {
-        setTimeout(function() {
-            resove();
-        }, 10);
-    });
-    rectangleElement.style.transition = "all .2s ease-out";
-    rectangleElement.setAttribute("data-ready", "1");
-    moveRectangle(pos);
+    setTimeout(function() {
+        rectangleElement.style.transition = "all .2s ease-out";
+        rectangleElement.setAttribute("data-ready", "1");
+        moveRectangle(pos);
+    }, 10);
 }
 
 /**
@@ -1110,12 +1104,90 @@ export function endTask(taskId: number): boolean {
 }
 
 /**
+ * --- 绑定按下以及弹起事件 ---
+ * @param e MouseEvent | TouchEvent
+ * @param opt 回调选项
+ */
+export function bindDown(oe: MouseEvent | TouchEvent, opt: { "down"?: (e: MouseEvent | TouchEvent) => void; "start"?: (e: MouseEvent | TouchEvent) => void | boolean; "move"?: (e: MouseEvent | TouchEvent) => void | boolean; "up"?: (e: MouseEvent | TouchEvent) => void; "end"?: (e: MouseEvent | TouchEvent) => void; }): void {
+    if (oe instanceof MouseEvent && ClickGo.hasTouch) {
+        return;
+    }
+    /** --- 上一次的坐标 --- */
+    let ox: number, oy: number;
+    if (oe instanceof MouseEvent) {
+        ox = oe.clientX;
+        oy = oe.clientY;
+    } else {
+        ox = oe.touches[0].clientX;
+        oy = oe.touches[0].clientY;
+    }
+
+    /** --- 是否是第一次执行 move --- */
+    let isStart: boolean = false;
+
+    let end: (e: MouseEvent | TouchEvent) => void;
+    let move = function(e: MouseEvent | TouchEvent): void {
+        // --- 防止拖动时整个网页跟着动 ---
+        e.preventDefault();
+        let x: number = e instanceof MouseEvent ? e.clientX : e.touches[0].clientX;
+        let y: number = e instanceof MouseEvent ? e.clientY : e.touches[0].clientY;
+        if (x === ox && y === oy) {
+            return;
+        }
+
+        if (!isStart) {
+            isStart = true;
+            if (opt.start && (opt.start(e) === false)) {
+                if (e instanceof MouseEvent) {
+                    window.removeEventListener("mousemove", move);
+                    window.removeEventListener("mouseup", end);
+                } else {
+                    window.removeEventListener("touchmove", move);
+                    window.removeEventListener("touchend", end);
+                }
+                return;
+            }
+        }
+        if (opt.move && (opt.move(e) === false)) {
+            if (e instanceof MouseEvent) {
+                window.removeEventListener("mousemove", move);
+                window.removeEventListener("mouseup", end);
+            } else {
+                window.removeEventListener("touchmove", move);
+                window.removeEventListener("touchend", end);
+            }
+            return;
+        }
+    };
+    end = function(e: MouseEvent | TouchEvent): void {
+        if (e instanceof MouseEvent) {
+            window.removeEventListener("mousemove", move);
+            window.removeEventListener("mouseup", end);
+        } else {
+            window.removeEventListener("touchmove", move);
+            window.removeEventListener("touchend", end);
+        }
+        opt.up && opt.up(e);
+        if (isStart) {
+            opt.end && opt.end(e);
+        }
+    };
+    if (oe instanceof MouseEvent) {
+        window.addEventListener("mousemove", move);
+        window.addEventListener("mouseup", end);
+    } else {
+        window.addEventListener("touchmove", move, {passive: false});
+        window.addEventListener("touchend", end);
+    }
+    opt.down && opt.down(oe);
+}
+
+/**
  * --- 绑定拖动事件 ---
  * @param e mousedown 或 touchstart 的 event
- * @param moveCb 拖动时的回调
- * @param endCb 结束时的回调
+ * @param opt 回调选项
  */
-export function bindMove(e: MouseEvent | TouchEvent, opt: { "left"?: number; "top"?: number; "right"?: number; "bottom"?: number; "offsetLeft"?: number; "offsetTop"?: number; "offsetRight"?: number; "offsetBottom"?: number; "objectLeft"?: number; "objectTop"?: number; "objectWidth"?: number; "objectHeight"?: number; "object"?: HTMLElement | IVue; "offsetObject"?: HTMLElement | IVue; "start"?: (x: number, y: number) => void | Promise<void> | boolean | Promise<boolean>; "move"?: (ox: number, oy: number, x: number, y: number, border: TBorderDir) => void; "end"?: () => void; "up"?: () => void; "borderIn"?: (x: number, y: number, border: TBorderDir) => void; "borderOut"?: () => void; }): { "left": number; "top": number; "right": number; "bottom": number; } {
+export function bindMove(e: MouseEvent | TouchEvent, opt: { "left"?: number; "top"?: number; "right"?: number; "bottom"?: number; "offsetLeft"?: number; "offsetTop"?: number; "offsetRight"?: number; "offsetBottom"?: number; "objectLeft"?: number; "objectTop"?: number; "objectWidth"?: number; "objectHeight"?: number; "object"?: HTMLElement | IVue; "offsetObject"?: HTMLElement | IVue; "start"?: (x: number, y: number) => void | boolean; "move"?: (ox: number, oy: number, x: number, y: number, border: TBorderDir) => void; "up"?: () => void; "end"?: () => void; "borderIn"?: (x: number, y: number, border: TBorderDir) => void; "borderOut"?: () => void; }): { "left": number; "top": number; "right": number; "bottom": number; } {
     setGlobalCursor(getComputedStyle(e.target as Element).cursor);
     /** --- 上一次的坐标 --- */
     let tx: number, ty: number;
@@ -1175,44 +1247,20 @@ export function bindMove(e: MouseEvent | TouchEvent, opt: { "left"?: number; "to
 
     /** --- 判断是否已经到达了边界 --- */
     let isBorder: boolean = false;
-    /** --- 是否是第一次执行 move --- */
-    let isStart: boolean = false;
 
     // --- 限定拖动对象，限定后整体对象将无法拖动出边界 ---
     let objectLeft: number, objectTop: number, objectWidth: number, objectHeight: number;
-    // --- 限定边界的偏移，如果限定了拖动对象，则需要根据偏移来判断边界，毕竟拖动点不可能刚好是边界 ---
     let offsetLeft = 0;
     let offsetTop = 0;
     let offsetRight = 0;
     let offsetBottom = 0;
 
-    // --- 事件 ---
-    let end: (e: MouseEvent | TouchEvent) => void;
-    let move = async function(e: MouseEvent | TouchEvent): Promise<void> {
-        e.preventDefault();
-        /** --- 本次 x 坐标 --- */
-        let x: number, y: number;
-        x = (e instanceof MouseEvent ? e.clientX : e.touches[0].clientX) * ClickGo.rzoom;
-        y = (e instanceof MouseEvent ? e.clientY : e.touches[0].clientY) * ClickGo.rzoom;
-        if (x === tx && y === ty) {
-            return;
-        }
-
-        if (!isStart) {
-            isStart = true;
-            // --- 执行 start ---
+    ClickGo.bindDown(e, {
+        start: () => {
             if (opt.start) {
-                let rtn = await opt.start(tx, ty);
-                if (rtn === false) {
+                if (opt.start(tx, ty) === false) {
                     setGlobalCursor();
-                    if (e instanceof MouseEvent) {
-                        window.removeEventListener("mousemove", move);
-                        window.removeEventListener("mouseup", end);
-                    } else {
-                        window.removeEventListener("touchmove", move);
-                        window.removeEventListener("touchend", end);
-                    }
-                    return;
+                    return false;
                 }
             }
             // --- 限定拖动对象，限定后整体对象将无法拖动出边界 ---
@@ -1232,7 +1280,7 @@ export function bindMove(e: MouseEvent | TouchEvent, opt: { "left"?: number; "to
                 objectHeight = opt.objectHeight ?? 0;
             }
 
-            // --- 限定边界的偏移，如果限定了拖动对象，则需要根据偏移来判断边界，毕竟拖动点不可能刚好是边界 ---
+            // --- 限定边界的偏移，如果限定了拖动对象，则需要根据偏移来判断边界，毕竟拖动点不可能每次都刚好是边界 ---
             if (objectWidth > 0) {
                 offsetLeft = tx - objectLeft;
             }
@@ -1241,166 +1289,152 @@ export function bindMove(e: MouseEvent | TouchEvent, opt: { "left"?: number; "to
             }
             offsetRight = objectWidth - offsetLeft;
             offsetBottom = objectHeight - offsetTop;
-        }
-
-        /** --- 当前是否在边界线上 --- */
-        let inBorderTop: boolean = false, inBorderRight: boolean = false, inBorderBottom: boolean = false, inBorderLeft: boolean = false;
-
-        let xol = x - offsetLeft;
-        let xor = x + offsetRight;
-        if (xol <= left) {
-            if (xol < left && x < tx) {
-                // --- 当前 x 超越了 left 界限，还在向左移动 ---
-                if (tx - offsetLeft > left) {
-                    // --- 如果刚刚还没超过，则设定为界限值 ---
-                    x = left + offsetLeft;
-                } else {
-                    // --- 如果刚刚就已经超过了，则恢复成刚刚 ---
-                    x = tx;
-                }
+        },
+        move: (e: MouseEvent | TouchEvent) => {
+            /** --- 本次 x 坐标 --- */
+            let x: number, y: number;
+            x = (e instanceof MouseEvent ? e.clientX : e.touches[0].clientX) * ClickGo.rzoom;
+            y = (e instanceof MouseEvent ? e.clientY : e.touches[0].clientY) * ClickGo.rzoom;
+            if (x === tx && y === ty) {
+                return;
             }
-            inBorderLeft = true;
-        } else if (offsetRight > 0) {
-            if (xor >= right) {
-                if (xor > right && x > tx) {
-                    if (tx + offsetRight < right) {
-                        x = right - offsetRight;
+
+            /** --- 当前是否在边界线上 --- */
+            let inBorderTop: boolean = false, inBorderRight: boolean = false, inBorderBottom: boolean = false, inBorderLeft: boolean = false;
+
+            let xol = x - offsetLeft;
+            let xor = x + offsetRight;
+            if (xol <= left) {
+                if (xol < left && x < tx) {
+                    // --- 当前 x 超越了 left 界限，还在向左移动 ---
+                    if (tx - offsetLeft > left) {
+                        // --- 如果刚刚还没超过，则设定为界限值 ---
+                        x = left + offsetLeft;
                     } else {
+                        // --- 如果刚刚就已经超过了，则恢复成刚刚 ---
                         x = tx;
                     }
                 }
-                inBorderRight = true;
-            }
-        } else if (offsetRight === 0) {
-            let rs1 = right - 1;
-            if (x >= rs1) {
-                if (x > rs1 && x > tx) {
-                    if (tx < rs1) {
-                        x = rs1;
-                    } else {
-                        x = tx;
+                inBorderLeft = true;
+            } else if (offsetRight > 0) {
+                if (xor >= right) {
+                    if (xor > right && x > tx) {
+                        if (tx + offsetRight < right) {
+                            x = right - offsetRight;
+                        } else {
+                            x = tx;
+                        }
                     }
+                    inBorderRight = true;
                 }
-                inBorderRight = true;
-            }
-        }
-        let yot = y - offsetTop;
-        let yob = y + offsetBottom;
-        if (yot <= top) {
-            if (yot < top && y < ty) {
-                if (ty - offsetTop > top) {
-                    y = top + offsetTop;
-                } else {
-                    y = ty;
+            } else if (offsetRight === 0) {
+                let rs1 = right - 1;
+                if (x >= rs1) {
+                    if (x > rs1 && x > tx) {
+                        if (tx < rs1) {
+                            x = rs1;
+                        } else {
+                            x = tx;
+                        }
+                    }
+                    inBorderRight = true;
                 }
             }
-            inBorderTop = true;
-        } else if (offsetBottom > 0) {
-            if (yob >= bottom) {
-                if (yob > bottom && y > ty) {
-                    if (ty + offsetBottom < bottom) {
-                        y = bottom - offsetBottom;
+            let yot = y - offsetTop;
+            let yob = y + offsetBottom;
+            if (yot <= top) {
+                if (yot < top && y < ty) {
+                    if (ty - offsetTop > top) {
+                        y = top + offsetTop;
                     } else {
                         y = ty;
                     }
                 }
-                inBorderBottom = true;
+                inBorderTop = true;
+            } else if (offsetBottom > 0) {
+                if (yob >= bottom) {
+                    if (yob > bottom && y > ty) {
+                        if (ty + offsetBottom < bottom) {
+                            y = bottom - offsetBottom;
+                        } else {
+                            y = ty;
+                        }
+                    }
+                    inBorderBottom = true;
+                }
+            } else if (offsetBottom === 0) {
+                let bs1 = bottom - 1;
+                if (y >= bs1) {
+                    if (y > bs1 && y > ty) {
+                        if (ty < bs1) {
+                            y = bs1;
+                        } else {
+                            y = ty;
+                        }
+                    }
+                    inBorderBottom = true;
+                }
             }
-        } else if (offsetBottom === 0) {
-            let bs1 = bottom - 1;
-            if (y >= bs1) {
-                if (y > bs1 && y > ty) {
-                    if (ty < bs1) {
-                        y = bs1;
+
+            // --- 检测是否执行 borderIn 事件（是否正在边界上） ---
+            let border: TBorderDir = "";
+            if (inBorderTop || inBorderRight || inBorderBottom || inBorderLeft) {
+                if (inBorderTop) {
+                    if (x - left <= 20) {
+                        border = "lt";
+                    } else if (right - x <= 20) {
+                        border = "tr";
                     } else {
-                        y = ty;
+                        border = "t";
+                    }
+                } else if (inBorderRight) {
+                    if (y - top <= 20) {
+                        border = "tr";
+                    } else if (bottom - y <= 20) {
+                        border = "rb";
+                    } else {
+                        border = "r";
+                    }
+                } else if (inBorderBottom) {
+                    if (right - x <= 20) {
+                        border = "rb";
+                    } else if (x - left <= 20) {
+                        border = "bl";
+                    } else {
+                        border = "b";
+                    }
+                } else if (inBorderLeft) {
+                    if (y - top <= 20) {
+                        border = "lt";
+                    } else if (bottom - y <= 20) {
+                        border = "bl";
+                    } else {
+                        border = "l";
                     }
                 }
-                inBorderBottom = true;
-            }
-        }
 
-        // --- 检测是否执行 borderIn 事件（是否正在边界上） ---
-        let border: TBorderDir = "";
-        if (inBorderTop || inBorderRight || inBorderBottom || inBorderLeft) {
-            if (inBorderTop) {
-                if (x - left <= 20) {
-                    border = "lt";
-                } else if (right - x <= 20) {
-                    border = "tr";
-                } else {
-                    border = "t";
+                if (!isBorder) {
+                    isBorder = true;
+                    opt.borderIn && opt.borderIn(x, y, border);
                 }
-            } else if (inBorderRight) {
-                if (y - top <= 20) {
-                    border = "tr";
-                } else if (bottom - y <= 20) {
-                    border = "rb";
-                } else {
-                    border = "r";
-                }
-            } else if (inBorderBottom) {
-                if (right - x <= 20) {
-                    border = "rb";
-                } else if (x - left <= 20) {
-                    border = "bl";
-                } else {
-                    border = "b";
-                }
-            } else if (inBorderLeft) {
-                if (y - top <= 20) {
-                    border = "lt";
-                } else if (bottom - y <= 20) {
-                    border = "bl";
-                } else {
-                    border = "l";
+            } else {
+                // --- 不在边界 ---
+                if (isBorder) {
+                    isBorder = false;
+                    opt.borderOut && opt.borderOut();
                 }
             }
 
-            if (!isBorder) {
-                isBorder = true;
-                opt.borderIn && opt.borderIn(x, y, border);
-            }
-        } else {
-            // --- 不在边界 ---
-            if (isBorder) {
-                isBorder = false;
-                opt.borderOut && opt.borderOut();
-            }
-        }
-
-        opt.move && opt.move(x - tx, y - ty, x, y, border);
-        tx = x;
-        ty = y;
-    };
-
-    if (e instanceof MouseEvent) {
-        end = function(e: MouseEvent | TouchEvent): void {
+            opt.move && opt.move(x - tx, y - ty, x, y, border);
+            tx = x;
+            ty = y;
+        },
+        up: opt.up,
+        end: () => {
             setGlobalCursor();
-            window.removeEventListener("mousemove", move);
-            window.removeEventListener("mouseup", end);
-            opt.up && opt.up();
-            if (isStart) {
-                opt.end && opt.end();
-            }
-        };
-        // --- 绑定事件 ---
-        window.addEventListener("mousemove", move);
-        window.addEventListener("mouseup", end);
-    } else {
-        end = function(e: MouseEvent | TouchEvent): void {
-            setGlobalCursor();
-            window.removeEventListener("touchmove", move);
-            window.removeEventListener("touchend", end);
-            opt.up && opt.up();
-            if (isStart) {
-                opt.end && opt.end();
-            }
-        };
-        // --- 绑定事件 ---
-        window.addEventListener("touchmove", move, {passive: false});
-        window.addEventListener("touchend", end);
-    }
+            opt.end && opt.end();
+        }
+    });
 
     return {
         "left": left,
@@ -1417,7 +1451,7 @@ export function bindMove(e: MouseEvent | TouchEvent, opt: { "left"?: number; "to
  * @param moveCb 拖动时的回调
  * @param endCb 结束时的回调
  */
-export function bindResize(e: MouseEvent | TouchEvent, opt: { "left": number; "top": number; "width": number; "height": number; "minWidth"?: number; "minHeight"?: number; "offsetObject"?: HTMLElement; "dir": TBorderDir; "start"?: (x: number, y: number) => void | Promise<void> | boolean | Promise<boolean>; "move"?: (left: number, top: number, width: number, height: number, x: number, y: number, border: TBorderDir) => void; "end"?: () => void; }): void {
+export function bindResize(e: MouseEvent | TouchEvent, opt: { "left": number; "top": number; "width": number; "height": number; "minWidth"?: number; "minHeight"?: number; "offsetObject"?: HTMLElement; "dir": TBorderDir; "start"?: (x: number, y: number) => void | boolean; "move"?: (left: number, top: number, width: number, height: number, x: number, y: number, border: TBorderDir) => void; "end"?: () => void; }): void {
     opt.minWidth = opt.minWidth ?? 0;
     opt.minHeight = opt.minHeight ?? 0;
     /** --- 当前鼠标位置 x --- */
@@ -1456,7 +1490,7 @@ export function bindResize(e: MouseEvent | TouchEvent, opt: { "left": number; "t
         "offsetRight": offsetRight,
         "offsetBottom": offsetBottom,
         "start": opt.start,
-        "move": async function(ox, oy, x, y, border): Promise<void> {
+        "move": function(ox, oy, x, y, border) {
             if (opt.dir === "tr" || opt.dir === "r" || opt.dir === "rb") {
                 opt.width += ox;
             } else if (opt.dir === "bl" || opt.dir === "l" || opt.dir === "lt") {

@@ -287,45 +287,37 @@ exports.methods = {
                     };
                 }
             },
-            "move": function (ox, oy, x, y, border) { return __awaiter(_this, void 0, void 0, function () {
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
-                        case 0:
-                            this.leftData += ox;
-                            this.$emit("update:left", this.leftData);
-                            this.topData += oy;
-                            this.$emit("update:top", this.topData);
-                            if (!(border !== "")) return [3, 6];
-                            if (!((border === "t" && this.max) || (border !== "t" && this.resize))) return [3, 4];
-                            if (!(isBorder === "")) return [3, 2];
+            "move": function (ox, oy, x, y, border) {
+                _this.leftData += ox;
+                _this.$emit("update:left", _this.leftData);
+                _this.topData += oy;
+                _this.$emit("update:top", _this.topData);
+                if (border !== "") {
+                    if ((border === "t" && _this.max) || (border !== "t" && _this.resize)) {
+                        if (isBorder === "") {
                             isBorder = border;
                             ClickGo.showCircular(x, y);
-                            return [4, ClickGo.showRectangle(x, y, border)];
-                        case 1:
-                            _a.sent();
-                            return [3, 3];
-                        case 2:
+                            ClickGo.showRectangle(x, y, border);
+                        }
+                        else {
                             isBorder = border;
                             ClickGo.moveRectangle(border);
-                            _a.label = 3;
-                        case 3: return [3, 5];
-                        case 4:
-                            if (isBorder !== "") {
-                                isBorder = "";
-                                ClickGo.hideRectangle();
-                            }
-                            _a.label = 5;
-                        case 5: return [3, 7];
-                        case 6:
-                            if (isBorder !== "") {
-                                isBorder = "";
-                                ClickGo.hideRectangle();
-                            }
-                            _a.label = 7;
-                        case 7: return [2];
+                        }
                     }
-                });
-            }); },
+                    else {
+                        if (isBorder !== "") {
+                            isBorder = "";
+                            ClickGo.hideRectangle();
+                        }
+                    }
+                }
+                else {
+                    if (isBorder !== "") {
+                        isBorder = "";
+                        ClickGo.hideRectangle();
+                    }
+                }
+            },
             "end": function () {
                 if (isBorder !== "") {
                     if (isBorder === "t") {
@@ -584,56 +576,48 @@ exports.methods = {
                     _this.stateAbs = false;
                 }
             },
-            "move": function (left, top, width, height, x, y, border) { return __awaiter(_this, void 0, void 0, function () {
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
-                        case 0:
-                            this.leftData = left;
-                            this.$emit("update:left", left);
-                            this.topData = top;
-                            this.$emit("update:top", top);
-                            this.widthData = width;
-                            this.$emit("update:width", width);
-                            this.heightData = height;
-                            this.$emit("update:height", height);
-                            if (!(border !== "")) return [3, 6];
-                            if (!(((dir === "lt" || dir === "t" || dir === "tr") && (border === "lt" || border === "t" || border === "tr")) ||
-                                ((dir === "bl" || dir === "b" || dir === "rb") && (border === "bl" || border === "b" || border === "rb")))) return [3, 4];
-                            if (!(isBorder === "")) return [3, 2];
+            "move": function (left, top, width, height, x, y, border) {
+                _this.leftData = left;
+                _this.$emit("update:left", left);
+                _this.topData = top;
+                _this.$emit("update:top", top);
+                _this.widthData = width;
+                _this.$emit("update:width", width);
+                _this.heightData = height;
+                _this.$emit("update:height", height);
+                if (border !== "") {
+                    if (((dir === "lt" || dir === "t" || dir === "tr") && (border === "lt" || border === "t" || border === "tr")) ||
+                        ((dir === "bl" || dir === "b" || dir === "rb") && (border === "bl" || border === "b" || border === "rb"))) {
+                        if (isBorder === "") {
                             isBorder = border;
                             ClickGo.showCircular(x, y);
-                            return [4, ClickGo.showRectangle(x, y, {
-                                    "left": left,
-                                    "width": width
-                                })];
-                        case 1:
-                            _a.sent();
-                            return [3, 3];
-                        case 2:
+                            ClickGo.showRectangle(x, y, {
+                                "left": left,
+                                "width": width
+                            });
+                        }
+                        else {
                             isBorder = border;
                             ClickGo.moveRectangle({
                                 "left": left,
                                 "width": width
                             });
-                            _a.label = 3;
-                        case 3: return [3, 5];
-                        case 4:
-                            if (isBorder !== "") {
-                                isBorder = "";
-                                ClickGo.hideRectangle();
-                            }
-                            _a.label = 5;
-                        case 5: return [3, 7];
-                        case 6:
-                            if (isBorder !== "") {
-                                isBorder = "";
-                                ClickGo.hideRectangle();
-                            }
-                            _a.label = 7;
-                        case 7: return [2];
+                        }
                     }
-                });
-            }); },
+                    else {
+                        if (isBorder !== "") {
+                            isBorder = "";
+                            ClickGo.hideRectangle();
+                        }
+                    }
+                }
+                else {
+                    if (isBorder !== "") {
+                        isBorder = "";
+                        ClickGo.hideRectangle();
+                    }
+                }
+            },
             "end": function () {
                 if (isBorder !== "") {
                     if (isBorder !== "l" && isBorder !== "r") {

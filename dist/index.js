@@ -72,14 +72,7 @@ var ClickGo = {
         this._core.showCircular(x, y);
     },
     showRectangle: function (x, y, pos) {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0: return [4, this._core.showRectangle(x, y, pos)];
-                    case 1: return [2, _a.sent()];
-                }
-            });
-        });
+        return this._core.showRectangle(x, y, pos);
     },
     moveRectangle: function (dir) {
         return this._core.moveRectangle(dir);
@@ -220,6 +213,9 @@ var ClickGo = {
     },
     endTask: function (taskId) {
         return this._core.endTask(taskId);
+    },
+    bindDown: function (oe, opt) {
+        return this._core.bindDown(oe, opt);
     },
     bindMove: function (e, opt) {
         return this._core.bindMove(e, opt);

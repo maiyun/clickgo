@@ -36,13 +36,15 @@ exports.props = {
     }
 };
 exports.data = {
+    "scrollOffsetPx": 0,
     "scrollOffsetData": 0,
-    "scrollOffsetDataO": 0
+    "timer": undefined,
+    "tran": false
 };
 exports.watch = {
     "scrollOffset": {
         handler: function () {
-            this.scrollOffsetData = this.scrollOffset / this.length * 100;
+            this.scrollOffsetData = parseInt(this.scrollOffset);
         },
         "immediate": true
     }
@@ -50,6 +52,14 @@ exports.watch = {
 exports.computed = {
     "size": function () {
         return this.client / this.length * 100 + "%";
+    },
+    "scrollOffsetPer": function () {
+        var maxOffset = this.length - this.client;
+        if (this.scrollOffsetData > maxOffset) {
+            this.scrollOffsetData = maxOffset;
+            this.$emit("update:scrollOffset", this.scrollOffsetData);
+        }
+        return this.scrollOffsetData / this.length * 100;
     }
 };
 exports.methods = {
@@ -64,14 +74,56 @@ exports.methods = {
             "object": this.$refs.block,
             "offsetObject": this.$refs.bar,
             "move": function (ox, oy, x, y) {
-                _this.scrollOffsetDataO += _this.direction === "v" ? oy : ox;
-                var p = _this.scrollOffsetDataO / (_this.direction === "v" ? rectHeight : rectWidth);
-                _this.scrollOffsetData = p * 100;
-                _this.$emit("update:scrollOffset", _this.length * p);
+                _this.scrollOffsetPx += _this.direction === "v" ? oy : ox;
+                _this.scrollOffsetData = Math.round(_this.length * _this.scrollOffsetPx / (_this.direction === "v" ? rectHeight : rectWidth));
+                _this.$emit("update:scrollOffset", _this.scrollOffsetData);
             }
         });
         rectWidth = rect.right - rect.left;
         rectHeight = rect.bottom - rect.top;
-        this.scrollOffsetDataO = this.direction === "v" ? r.top - rect.top : r.left - rect.left;
+        this.scrollOffsetPx = this.direction === "v" ? r.top - rect.top : r.left - rect.left;
+    },
+    longDown: function (e, type) {
+        var _this = this;
+        ClickGo.bindDown(e, {
+            down: function () {
+                if (_this.timer !== undefined) {
+                    clearInterval(_this.timer);
+                }
+                _this.tran = true;
+                _this.timer = setInterval(function () {
+                    if (type === "start") {
+                        if (_this.scrollOffsetData - 20 < 0) {
+                            _this.scrollOffsetData = 0;
+                        }
+                        else {
+                            _this.scrollOffsetData -= 20;
+                        }
+                    }
+                    else {
+                        var maxOffset = _this.length - _this.client;
+                        if (_this.scrollOffsetData + 20 > maxOffset) {
+                            _this.scrollOffsetData = maxOffset;
+                        }
+                        else {
+                            _this.scrollOffsetData += 20;
+                        }
+                    }
+                    _this.$emit("update:scrollOffset", _this.scrollOffsetData);
+                }, 50);
+            },
+            up: function () {
+                _this.tran = false;
+                if (_this.timer !== undefined) {
+                    clearInterval(_this.timer);
+                    _this.timer = undefined;
+                }
+            }
+        });
+    }
+};
+exports.destroyed = function () {
+    if (this.timer !== undefined) {
+        clearInterval(this.timer);
     }
 };
