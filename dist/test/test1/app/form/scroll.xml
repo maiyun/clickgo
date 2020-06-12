@@ -20,5 +20,6 @@
             </layout>
             <scroll width="20" :length="bl" :client="bc" :scroll-offset.sync="bso"></scroll>
         </layout>
+        <label>It's just a demo of scroll, so you can change the position of the text on the left only by dragging scroll.</label>
     </layout>
 </form>

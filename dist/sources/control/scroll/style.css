@@ -52,7 +52,7 @@
 .block-wrap:hover {
     background-color: rgba(0, 0, 0, .3);
 }
-.block-wrap:active {
+.scroll-bar:active > .block-wrap {
     background-color: rgba(0, 0, 0, 0.5);
 }
 .wrap.v .block-wrap {

@@ -75,13 +75,50 @@ exports.methods = {
             "offsetObject": this.$refs.bar,
             "move": function (ox, oy, x, y) {
                 _this.scrollOffsetPx += _this.direction === "v" ? oy : ox;
-                _this.scrollOffsetData = Math.round(_this.length * _this.scrollOffsetPx / (_this.direction === "v" ? rectHeight : rectWidth));
+                _this.scrollOffsetData = Math.round(_this.length * (_this.scrollOffsetPx / (_this.direction === "v" ? rectHeight : rectWidth)));
                 _this.$emit("update:scrollOffset", _this.scrollOffsetData);
             }
         });
         rectWidth = rect.right - rect.left;
         rectHeight = rect.bottom - rect.top;
         this.scrollOffsetPx = this.direction === "v" ? r.top - rect.top : r.left - rect.left;
+    },
+    bardown: function (e) {
+        if (e instanceof MouseEvent && ClickGo.hasTouch) {
+            return;
+        }
+        if (e.currentTarget !== e.target) {
+            return;
+        }
+        var offset = (this.direction === "v" ? (e instanceof MouseEvent ? e.clientY : e.touches[0].clientY) : (e instanceof MouseEvent ? e.clientX : e.touches[0].clientX)) * ClickGo.rzoom;
+        var barR = this.$refs.bar.getBoundingClientRect();
+        var blockR = this.$refs.block.getBoundingClientRect();
+        if (this.direction === "v") {
+            var offsetTop = offset - blockR.height / 2;
+            if (offsetTop < barR.top) {
+                offsetTop = barR.top;
+            }
+            if (offsetTop + blockR.height > barR.top + barR.height) {
+                offsetTop = barR.top + barR.height - blockR.height;
+            }
+            var marginTop = offsetTop - barR.top;
+            this.$refs.block.style.marginTop = marginTop + "px";
+            this.scrollOffsetData = Math.round(this.length * ((offsetTop - barR.top) / barR.height));
+        }
+        else {
+            var offsetLeft = offset - blockR.width / 2;
+            if (offsetLeft < barR.left) {
+                offsetLeft = barR.left;
+            }
+            if (offsetLeft + blockR.width > barR.left + barR.width) {
+                offsetLeft = barR.left + barR.width - blockR.width;
+            }
+            var marginLeft = offsetLeft - barR.left;
+            this.$refs.block.style.marginLeft = marginLeft + "px";
+            this.scrollOffsetData = Math.round(this.length * ((offsetLeft - barR.left) / barR.width));
+        }
+        this.$emit("update:scrollOffset", this.scrollOffsetData);
+        this.down(e);
     },
     longDown: function (e, type) {
         var _this = this;

@@ -46,6 +46,7 @@ if (window.devicePixelRatio < 2) {
 formListElement.classList.add("cg-form-list");
 document.getElementsByTagName("body")[0].appendChild(formListElement);
 var popListElement = document.createElement("div");
+popListElement.style.zoom = ClickGo.zoom.toString();
 popListElement.classList.add("cg-pop-list");
 document.getElementsByTagName("body")[0].appendChild(popListElement);
 window.addEventListener("resize", function () {

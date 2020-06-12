@@ -27,6 +27,7 @@ document.getElementsByTagName("body")[0].appendChild(formListElement);
 
 /** --- pop list 的 div --- */
 let popListElement: HTMLDivElement = document.createElement("div");
+popListElement.style.zoom = ClickGo.zoom.toString();
 popListElement.classList.add("cg-pop-list");
 document.getElementsByTagName("body")[0].appendChild(popListElement);
 
