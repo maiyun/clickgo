@@ -742,6 +742,13 @@ function createForm(opt) {
                                         }
                                         this.$emit("tap");
                                     };
+                                    methods_1._dblclick = function (e) {
+                                        e.stopPropagation();
+                                        if (this.$el.className.indexOf("cg-disabled") !== -1) {
+                                            return;
+                                        }
+                                        this.$emit("dblclick");
+                                    };
                                     methods_1.getBlob = function (file) {
                                         var _a;
                                         return (_a = ClickGo.taskList[this.taskId].appPkg.files[file]) !== null && _a !== void 0 ? _a : null;

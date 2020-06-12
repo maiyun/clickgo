@@ -1,4 +1,4 @@
-<div class="wrap" :class="[direction]" :style="{'width': width + 'px', 'height': height + 'px', 'left': left + 'px', 'top': top + 'px', 'z-index': zIndex, 'flex': flex}" @click="_tap" @mousedown="_down" @touchstart="_down">
+<div class="wrap" :class="[direction]" :style="{'width': width + 'px', 'height': height + 'px', 'left': left + 'px', 'top': top + 'px', 'z-index': zIndex, 'flex': flex}" @click="_tap" @mousedown="_down" @touchstart="_down" @dblclick="_dblclick">
     <div class="start-wrap" @mousedown="longDown(event, 'start')" @touchstart="longDown(event, 'start')" :style="{'height': direction === 'v' ? width + 'px' : undefined, 'width': direction === 'h' ? height + 'px' : undefined}">
         <div class="start-inner"></div>
     </div>

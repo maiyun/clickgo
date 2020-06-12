@@ -1,4 +1,4 @@
-<div class="wrap" :style="{'width': width + 'px', 'height': height + 'px', 'left': left + 'px', 'top': top + 'px', 'z-index': zIndex, 'flex': flex}" :class="[disabled && 'cg-disabled']" @click="_tap" @mousedown="_down" @touchstart="_down">
+<div class="wrap" :style="{'width': width + 'px', 'height': height + 'px', 'left': left + 'px', 'top': top + 'px', 'z-index': zIndex, 'flex': flex}" :class="[disabled && 'cg-disabled']" @click="_tap" @mousedown="_down" @touchstart="_down" @dblclick="_dblclick">
     <input v-if="focus && !disabled" class="input" type="text" :style="{'padding': padding && padding.replace(/([0-9]+)($| )/g, '$1px$2')}" v-model="valueData" @input="input">
     <div v-else class="input" :style="{'padding': padding && padding.replace(/([0-9]+)($| )/g, '$1px$2')}" style="display: flex; align-items: center;">{{valueData}}</div>
     <div class="arrow"></div>

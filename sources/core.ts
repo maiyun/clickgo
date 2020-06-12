@@ -708,6 +708,13 @@ export async function createForm(opt: ICreateFormOptions): Promise<number | IFor
                 }
                 this.$emit("tap");
             };
+            methods._dblclick = function(this: IVue, e: MouseEvent) {
+                e.stopPropagation();
+                if (this.$el.className.indexOf("cg-disabled") !== -1) {
+                    return;
+                }
+                this.$emit("dblclick");
+            };
             // --- 获取文件 blob 对象 ---
             methods.getBlob = function(this: IVue, file: string): Blob | null {
                 return ClickGo.taskList[this.taskId].appPkg.files[file] ?? null;
