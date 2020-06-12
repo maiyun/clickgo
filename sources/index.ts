@@ -93,6 +93,8 @@ const ClickGo: {
     "_config": ICgConfig;
     /** --- 当前 pop 的 vue 对象 --- */
     "_pop": IVue | null;
+    /** --- 正在被监视大小的对象 --- */
+    "_watchSize": Array<{ "el": HTMLElement; "rect": DOMRect; "cb": (rect: DOMRect) => void; }>;
 
     /**
      * --- 显示从小到大的圆圈动画特效对象 ---
@@ -261,6 +263,13 @@ const ClickGo: {
     endTask: (taskId: number) => boolean;
 
     /**
+     * --- 添加监视 Element 对象大小
+     * @param el 要监视的大小
+     * @param cb 回调函数
+     */
+    watchSize: (el: HTMLElement, cb: (rect: DOMRect) => void) => DOMRect;
+
+    /**
      * --- 绑定按下以及弹起事件 ---
      * @param e MouseEvent | TouchEvent
      * @param opt 回调选项
@@ -324,6 +333,7 @@ const ClickGo: {
     "_loaderConfig": {},
     "_config": {},
     "_pop": null,
+    "_watchSize": [],
 
     showCircular: function(x: number, y: number): void {
         this._core.showCircular(x, y);
@@ -453,6 +463,10 @@ const ClickGo: {
 
     endTask: function(taskId: number): boolean {
         return this._core.endTask(taskId);
+    },
+
+    watchSize: function(el: HTMLElement, cb: (rect: DOMRect) => void): DOMRect {
+        return this._core.watchSize(el, cb);
     },
 
     bindDown: function(oe: MouseEvent | TouchEvent, opt: { "down"?: (e: MouseEvent | TouchEvent) => void; "start"?: (e: MouseEvent | TouchEvent) => void | boolean; "move"?: (e: MouseEvent | TouchEvent) => void | boolean; "up"?: (e: MouseEvent | TouchEvent) => void; "end"?: (e: MouseEvent | TouchEvent) => void; }): void {

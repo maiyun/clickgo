@@ -1,5 +1,5 @@
 .wrap {
-    display: flex;
+    display: flex; position: relative;
 }
 .wrap.v {
     flex-direction: column;

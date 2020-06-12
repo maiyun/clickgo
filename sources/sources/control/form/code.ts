@@ -54,6 +54,9 @@ export let props = {
     },
     "background": {
         "default": undefined
+    },
+    "padding": {
+        "default": undefined
     }
 };
 

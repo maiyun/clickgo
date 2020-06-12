@@ -68,6 +68,7 @@ var ClickGo = {
     "_loaderConfig": {},
     "_config": {},
     "_pop": null,
+    "_watchSize": [],
     showCircular: function (x, y) {
         this._core.showCircular(x, y);
     },
@@ -213,6 +214,9 @@ var ClickGo = {
     },
     endTask: function (taskId) {
         return this._core.endTask(taskId);
+    },
+    watchSize: function (el, cb) {
+        return this._core.watchSize(el, cb);
     },
     bindDown: function (oe, opt) {
         return this._core.bindDown(oe, opt);

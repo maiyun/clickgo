@@ -1,13 +1,24 @@
-<form width="400" height="400" title="Scroll Bar Test">
-    <layout gutter="20" style="padding: 20px 20px 0 20px;">
-        <layout gutter="10" direction="v">
-            <label>Scroll offset: {{so}}</label>
-            <button @tap="l = (l === 1000 ? 2000 : 1000)">Set length = {{l === 1000 ? '2000' : '1000'}}</button>
-            <button @tap="c = (c === 100 ? 200 : 100)">Set client = {{c === 100 ? '200' : '100'}}</button>
+<form width="400" height="400" title="Scroll Bar Test" padding="20">
+    <layout gutter="20" direction="v">
+        <layout gutter="20">
+            <layout gutter="10" direction="v">
+                <label>Scroll offset: {{so}}</label>
+                <button @tap="l = (l === 1000 ? 2000 : 1000)">Set length = {{l === 1000 ? '2000' : '1000'}}</button>
+                <button @tap="c = (c === 100 ? 200 : 100)">Set client = {{c === 100 ? '200' : '100'}}</button>
+            </layout>
+            <scroll width="20" :length="l" :client="c" :scroll-offset.sync="so"></scroll>
+            <scroll width="30" scroll-offset="200"></scroll>
+            <scroll width="30"></scroll>
         </layout>
-        <scroll width="20" :length="l" :client="c" :scroll-offset.sync="so"></scroll>
-        <scroll width="30" scroll-offset="200"></scroll>
-        <scroll width="30"></scroll>
+        <scroll direction="h" height="30"></scroll>
+        <layout style="border: solid 1px rgba(0, 0, 0, .3); color: #000; background: #FFF;">
+            <layout ref="scrollLayout" style="overflow: hidden;">
+                <block ref="bodyLayout" style="padding: 10px; line-height: 1.5; position: absolute; top: 0;" :style="{'top': -bso + 'px'}">
+                    <block v-for="line of 50">Line {{line}}.</block>
+                    <block>Length: {{bl}}, Client: {{bc}}.</block>
+                </block>
+            </layout>
+            <scroll width="20" :length="bl" :client="bc" :scroll-offset.sync="bso"></scroll>
+        </layout>
     </layout>
-    <scroll direction="h" height="30" style="margin: 20px;"></scroll>
 </form>

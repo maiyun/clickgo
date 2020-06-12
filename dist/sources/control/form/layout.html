@@ -20,7 +20,7 @@
                 <div v-if="close" class="close" @click="closeMethod">&#xeb9c;</div>
             </div>
         </div>
-        <div class="content" :style="{'background': background}">
+        <div class="content" :style="{'background': background, 'padding': padding ? padding.replace(/([0-9]+)($| )/g, '$1px$2') : undefined}">
             <slot>
         </div>
     </div>

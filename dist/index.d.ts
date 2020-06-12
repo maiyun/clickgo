@@ -37,6 +37,11 @@ declare const ClickGo: {
     };
     "_config": ICgConfig;
     "_pop": IVue | null;
+    "_watchSize": Array<{
+        "el": HTMLElement;
+        "rect": DOMRect;
+        "cb": (rect: DOMRect) => void;
+    }>;
     showCircular: (x: number, y: number) => void;
     showRectangle: (x: number, y: number, pos: TBorderDir) => void;
     moveRectangle: (dir: TBorderDir) => void;
@@ -78,6 +83,7 @@ declare const ClickGo: {
     createForm: (opt: ICreateFormOptions) => Promise<number | IForm>;
     removeForm: (formId: number) => boolean;
     endTask: (taskId: number) => boolean;
+    watchSize: (el: HTMLElement, cb: (rect: DOMRect) => void) => DOMRect;
     bindDown: (oe: MouseEvent | TouchEvent, opt: {
         "down"?: (e: MouseEvent | TouchEvent) => void;
         "start"?: (e: MouseEvent | TouchEvent) => void | boolean;

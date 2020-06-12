@@ -1104,6 +1104,26 @@ export function endTask(taskId: number): boolean {
 }
 
 /**
+ * --- 添加监视 Element 对象大小
+ * @param el 要监视的大小
+ * @param cb 回调函数
+ */
+export function watchSize(el: HTMLElement, cb: (rect: DOMRect) => void): DOMRect {
+    let rect = el.getBoundingClientRect();
+    for (let item of ClickGo._watchSize) {
+        if (item.el === el) {
+            return rect;
+        }
+    }
+    ClickGo._watchSize.push({
+        "el": el,
+        "rect": rect,
+        "cb": cb
+    });
+    return rect;
+}
+
+/**
  * --- 绑定按下以及弹起事件 ---
  * @param e MouseEvent | TouchEvent
  * @param opt 回调选项

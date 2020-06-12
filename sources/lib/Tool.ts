@@ -19,6 +19,34 @@ styleListElement.insertAdjacentHTML("beforeend", `<style class="cg-global">
 .cg-rectangle {box-sizing: border-box; position: fixed; z-index: 20020002; border: solid 1px rgba(118, 185, 237, .7); box-shadow: 0 0 10px rgba(0, 0, 0, .3); background: rgba(118, 185, 237, .1); pointer-events: none; opacity: 0;}
 </style>`);
 
+/**
+ * --- 根据刷新频率检测 dom 大小是否改变 ---
+ */
+function requestAnimationFrameCb(): void {
+    // --- 被添加的监听的 el 对象触发其 resize 回调 ---
+    for (let i = 0; i < ClickGo._watchSize.length; ++i) {
+        let item = ClickGo._watchSize[i];
+        let rect = item.el.getBoundingClientRect();
+        if (rect.left === 0 && rect.top === 0 && rect.width === 0 && rect.height === 0) {
+            // --- 元素已被移除 ---
+            ClickGo._watchSize.splice(i, 1);
+            --i;
+            continue;
+        }
+        if (rect.width !== item.rect.width || rect.height !== item.rect.height) {
+            item.cb(rect);
+            item.rect = rect;
+        }
+    }
+    // --- 等待下一个 ---
+    requestAnimationFrame(requestAnimationFrameCb);
+}
+requestAnimationFrame(requestAnimationFrameCb);
+
+/**
+ * --- cgt 文件 blob 转 ITheme 对象 ---
+ * @param blob blob 对象
+ */
 async function themeBlob2Theme(blob: Blob): Promise<false | ITheme> {
     // --- 判断是否是 cgt 文件 ---
     let begin = blob.slice(0, 2);

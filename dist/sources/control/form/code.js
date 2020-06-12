@@ -90,6 +90,9 @@ exports.props = {
     },
     "background": {
         "default": undefined
+    },
+    "padding": {
+        "default": undefined
     }
 };
 exports.data = {

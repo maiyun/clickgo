@@ -1198,6 +1198,22 @@ function endTask(taskId) {
     return true;
 }
 exports.endTask = endTask;
+function watchSize(el, cb) {
+    var rect = el.getBoundingClientRect();
+    for (var _i = 0, _a = ClickGo._watchSize; _i < _a.length; _i++) {
+        var item = _a[_i];
+        if (item.el === el) {
+            return rect;
+        }
+    }
+    ClickGo._watchSize.push({
+        "el": el,
+        "rect": rect,
+        "cb": cb
+    });
+    return rect;
+}
+exports.watchSize = watchSize;
 function bindDown(oe, opt) {
     if (oe instanceof MouseEvent && ClickGo.hasTouch) {
         return;
