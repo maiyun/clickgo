@@ -5,7 +5,8 @@ export let data = {
 
     "bl": 0,
     "bc": 0,
-    "bso": 0
+    "bso": 0,
+    "lcount": 3
 };
 
 export let mounted = function(this: IVue): void {

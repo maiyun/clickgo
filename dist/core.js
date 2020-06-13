@@ -709,7 +709,6 @@ function createForm(opt) {
                                     data_1._controlName = name_1;
                                     methods_1._down = function (e) {
                                         if (e instanceof MouseEvent && ClickGo.hasTouch) {
-                                            e.preventDefault();
                                             return;
                                         }
                                         e.stopPropagation();
@@ -1537,9 +1536,11 @@ function bindMove(e, opt) {
             tx = x;
             ty = y;
         },
-        up: opt.up,
-        end: function () {
+        up: function () {
             setGlobalCursor();
+            opt.up && opt.up();
+        },
+        end: function () {
             opt.end && opt.end();
         }
     });

@@ -45,9 +45,29 @@ export let data = {
 };
 
 export let watch = {
+    "length": {
+        handler: function(this: IVue): void {
+            if (this.scrollOffsetData > this.maxScroll) {
+                this.scrollOffsetData = this.maxScroll;
+                this.$emit("update:scrollOffset", this.scrollOffsetData);
+            }
+        }
+    },
+    "client": {
+        handler: function(this: IVue): void {
+            if (this.scrollOffsetData > this.maxScroll) {
+                this.scrollOffsetData = this.maxScroll;
+                this.$emit("update:scrollOffset", this.scrollOffsetData);
+            }
+        }
+    },
     "scrollOffset": {
         handler: function(this: IVue): void {
             this.scrollOffsetData = parseInt(this.scrollOffset);
+            if (this.scrollOffsetData > this.maxScroll) {
+                this.scrollOffsetData = this.maxScroll;
+                this.$emit("update:scrollOffset", this.scrollOffsetData);
+            }
         },
         "immediate": true
     }
@@ -56,16 +76,22 @@ export let watch = {
 export let computed = {
     // --- 滑块长度 ---
     "size": function(this: IVue): string {
+        if (this.client >= this.length) {
+            return "100%";
+        }
         return this.client / this.length * 100 + "%";
     },
     // --- 滑块距离起始位置的百分比 ---
     "scrollOffsetPer": function(this: IVue): number {
-        let maxOffset = this.length - this.client;
-        if (this.scrollOffsetData > maxOffset) {
-            this.scrollOffsetData = maxOffset;
-            this.$emit("update:scrollOffset", this.scrollOffsetData);
-        }
         return this.scrollOffsetData / this.length * 100;
+    },
+    // --- 最大可拖动的 scroll 位置 ---
+    "maxScroll": function(this: IVue): number {
+        let maxScroll = 0;
+        if (this.length > this.client) {
+            maxScroll = this.length - this.client;
+        }
+        return maxScroll;
     }
 };
 
@@ -126,6 +152,9 @@ export let methods = {
         this.down(e);
     },
     longDown: function(this: IVue, e: MouseEvent | TouchEvent, type: "start" | "end"): void {
+        if (this.client >= this.length) {
+            return;
+        }
         ClickGo.bindDown(e, {
             down: () => {
                 if (this.timer !== undefined) {

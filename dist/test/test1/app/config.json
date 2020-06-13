@@ -10,7 +10,8 @@
         "/clickgo/control/form",
         "/clickgo/control/label",
         "/clickgo/control/layout",
-        "/clickgo/control/scroll"
+        "/clickgo/control/scroll",
+        "/clickgo/control/view"
     ],
     "styleGlobal": "/global",
     "mainLayout": "/form/main",
@@ -22,6 +23,7 @@
         "/clickgo/control/label.cgc",
         "/clickgo/control/layout.cgc",
         "/clickgo/control/scroll.cgc",
+        "/clickgo/control/view.cgc",
 
         "/form/aero.js",
         "/form/aero.xml",

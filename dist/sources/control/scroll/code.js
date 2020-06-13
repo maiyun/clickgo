@@ -42,24 +42,49 @@ exports.data = {
     "tran": false
 };
 exports.watch = {
+    "length": {
+        handler: function () {
+            if (this.scrollOffsetData > this.maxScroll) {
+                this.scrollOffsetData = this.maxScroll;
+                this.$emit("update:scrollOffset", this.scrollOffsetData);
+            }
+        }
+    },
+    "client": {
+        handler: function () {
+            if (this.scrollOffsetData > this.maxScroll) {
+                this.scrollOffsetData = this.maxScroll;
+                this.$emit("update:scrollOffset", this.scrollOffsetData);
+            }
+        }
+    },
     "scrollOffset": {
         handler: function () {
             this.scrollOffsetData = parseInt(this.scrollOffset);
+            if (this.scrollOffsetData > this.maxScroll) {
+                this.scrollOffsetData = this.maxScroll;
+                this.$emit("update:scrollOffset", this.scrollOffsetData);
+            }
         },
         "immediate": true
     }
 };
 exports.computed = {
     "size": function () {
+        if (this.client >= this.length) {
+            return "100%";
+        }
         return this.client / this.length * 100 + "%";
     },
     "scrollOffsetPer": function () {
-        var maxOffset = this.length - this.client;
-        if (this.scrollOffsetData > maxOffset) {
-            this.scrollOffsetData = maxOffset;
-            this.$emit("update:scrollOffset", this.scrollOffsetData);
-        }
         return this.scrollOffsetData / this.length * 100;
+    },
+    "maxScroll": function () {
+        var maxScroll = 0;
+        if (this.length > this.client) {
+            maxScroll = this.length - this.client;
+        }
+        return maxScroll;
     }
 };
 exports.methods = {
@@ -122,6 +147,9 @@ exports.methods = {
     },
     longDown: function (e, type) {
         var _this = this;
+        if (this.client >= this.length) {
+            return;
+        }
         ClickGo.bindDown(e, {
             down: function () {
                 if (_this.timer !== undefined) {

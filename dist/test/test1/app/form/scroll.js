@@ -6,7 +6,8 @@ exports.data = {
     "so": 500,
     "bl": 0,
     "bc": 0,
-    "bso": 0
+    "bso": 0,
+    "lcount": 3
 };
 exports.mounted = function () {
     var _this = this;

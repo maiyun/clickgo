@@ -672,8 +672,6 @@ export async function createForm(opt: ICreateFormOptions): Promise<number | IFor
             // --- 预设 methods ---
             methods._down = function(this: IVue, e: MouseEvent | TouchEvent) {
                 if (e instanceof MouseEvent && ClickGo.hasTouch) {
-                    // --- 不能直接粗暴的 preventDefault，会导致无法获得焦点，也被禁止了 ---
-                    e.preventDefault();
                     return;
                 }
                 e.stopPropagation();
@@ -1457,9 +1455,11 @@ export function bindMove(e: MouseEvent | TouchEvent, opt: { "left"?: number; "to
             tx = x;
             ty = y;
         },
-        up: opt.up,
-        end: () => {
+        up: () => {
             setGlobalCursor();
+            opt.up && opt.up();
+        },
+        end: () => {
             opt.end && opt.end();
         }
     });

@@ -1,4 +1,4 @@
-<form width="400" height="400" title="Scroll Bar Test" padding="20">
+<form width="400" min-width="300" height="400" min-height="390" title="Scroll Bar Test" padding="20">
     <layout gutter="20" direction="v">
         <layout gutter="20">
             <layout gutter="10" direction="v">
@@ -14,12 +14,15 @@
         <layout style="border: solid 1px rgba(0, 0, 0, .3); color: #000; background: #FFF;">
             <layout ref="scrollLayout" style="overflow: hidden;">
                 <block ref="bodyLayout" style="padding: 10px; line-height: 1.5; position: absolute; top: 0;" :style="{'top': -bso + 'px'}">
-                    <block v-for="line of 50">Line {{line}}.</block>
+                    <block v-for="line of lcount">Line {{line}}.</block>
                     <block>Length: {{bl}}, Client: {{bc}}.</block>
                 </block>
             </layout>
             <scroll width="20" :length="bl" :client="bc" :scroll-offset.sync="bso"></scroll>
         </layout>
-        <label>It's just a demo of scroll, so you can change the position of the text on the left only by dragging scroll.</label>
+        <layout flex="" gutter="20" align-v="center">
+            <label flex="1">It's just a demo of scroll bar, so you just can dragging scroll bar.</label>
+            <button @tap="lcount += 10" padding="0 10">Add 10 lines</button>
+        </layout>
     </layout>
 </form>

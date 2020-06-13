@@ -40,6 +40,12 @@ export declare let data: {
     tran: boolean;
 };
 export declare let watch: {
+    length: {
+        handler: (this: IVue) => void;
+    };
+    client: {
+        handler: (this: IVue) => void;
+    };
     scrollOffset: {
         handler: (this: IVue) => void;
         immediate: boolean;
@@ -48,6 +54,7 @@ export declare let watch: {
 export declare let computed: {
     size: (this: IVue) => string;
     scrollOffsetPer: (this: IVue) => number;
+    maxScroll: (this: IVue) => number;
 };
 export declare let methods: {
     down: (this: IVue, e: MouseEvent | TouchEvent) => void;
