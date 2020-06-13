@@ -11,5 +11,6 @@ export declare let methods: {
     openMax: (this: IVue) => void;
     openMove: (this: IVue) => void;
     openScroll: (this: IVue) => void;
+    openView: (this: IVue) => void;
     runTaskmgr: (this: IVue) => Promise<void>;
 };

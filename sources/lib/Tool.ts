@@ -28,9 +28,11 @@ function requestAnimationFrameCb(): void {
         let item = ClickGo._watchSize[i];
         let rect = item.el.getBoundingClientRect();
         if (rect.left === 0 && rect.top === 0 && rect.width === 0 && rect.height === 0) {
-            // --- 元素已被移除 ---
-            ClickGo._watchSize.splice(i, 1);
-            --i;
+            if (getComputedStyle(item.el).display === "") {
+                // --- 元素已被移除 ---
+                ClickGo._watchSize.splice(i, 1);
+                --i;
+            }
             continue;
         }
         if (rect.width !== item.rect.width || rect.height !== item.rect.height) {

@@ -1,0 +1,7 @@
+<form width="400" min-width="300" height="400" min-height="400" title="Scroll View Test" padding="20">
+    <layout gutter="20" direction="v">
+        <view>
+            
+        </view>
+    </layout>
+</form>

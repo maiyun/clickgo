@@ -47,8 +47,10 @@ function requestAnimationFrameCb() {
         var item = ClickGo._watchSize[i];
         var rect = item.el.getBoundingClientRect();
         if (rect.left === 0 && rect.top === 0 && rect.width === 0 && rect.height === 0) {
-            ClickGo._watchSize.splice(i, 1);
-            --i;
+            if (getComputedStyle(item.el).display === "") {
+                ClickGo._watchSize.splice(i, 1);
+                --i;
+            }
             continue;
         }
         if (rect.width !== item.rect.width || rect.height !== item.rect.height) {

@@ -40,6 +40,8 @@
         "/form/scroll.js",
         "/form/scroll.xml",
         "/form/thin.xml",
+        "/form/view.js",
+        "/form/view.xml",
         "/res/icon.svg",
         "/global.css"
     ]

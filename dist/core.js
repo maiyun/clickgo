@@ -1221,6 +1221,18 @@ function watchSize(el, cb) {
     return rect;
 }
 exports.watchSize = watchSize;
+function watchElement(el, cb) {
+    var mo = new MutationObserver(cb);
+    mo.observe(el, {
+        "attributeFilter": ["style", "class"],
+        "attributes": true,
+        "characterData": true,
+        "childList": true,
+        "subtree": true
+    });
+    return mo;
+}
+exports.watchElement = watchElement;
 function bindDown(oe, opt) {
     if (oe instanceof MouseEvent && ClickGo.hasTouch) {
         return;

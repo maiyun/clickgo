@@ -38,7 +38,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.data = {
     "width": 300,
-    "height": 500
+    "height": 505
 };
 exports.methods = {
     openOnlyClose: function () {
@@ -64,6 +64,9 @@ exports.methods = {
     },
     openScroll: function () {
         this.createForm("/form/scroll");
+    },
+    openView: function () {
+        this.createForm("/form/view");
     },
     runTaskmgr: function () {
         return __awaiter(this, void 0, void 0, function () {

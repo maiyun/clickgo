@@ -30,6 +30,7 @@ export declare function createForm(opt: ICreateFormOptions): Promise<number | IF
 export declare function removeForm(formId: number): boolean;
 export declare function endTask(taskId: number): boolean;
 export declare function watchSize(el: HTMLElement, cb: (rect: DOMRect) => void): DOMRect;
+export declare function watchElement(el: HTMLElement, cb: MutationCallback): MutationObserver;
 export declare function bindDown(oe: MouseEvent | TouchEvent, opt: {
     "down"?: (e: MouseEvent | TouchEvent) => void;
     "start"?: (e: MouseEvent | TouchEvent) => void | boolean;

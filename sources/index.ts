@@ -270,6 +270,13 @@ const ClickGo: {
     watchSize: (el: HTMLElement, cb: (rect: DOMRect) => void) => DOMRect;
 
     /**
+     * --- 添加 DOM 内容变化监视 ---
+     * @param el dom 对象
+     * @param cb 回调
+     */
+    watchElement: (el: HTMLElement, cb: MutationCallback) => MutationObserver;
+
+    /**
      * --- 绑定按下以及弹起事件 ---
      * @param e MouseEvent | TouchEvent
      * @param opt 回调选项
@@ -467,6 +474,10 @@ const ClickGo: {
 
     watchSize: function(el: HTMLElement, cb: (rect: DOMRect) => void): DOMRect {
         return this._core.watchSize(el, cb);
+    },
+
+    watchElement: function(el: HTMLElement, cb: MutationCallback): MutationObserver {
+        return this._core.watchElement(el, cb);
     },
 
     bindDown: function(oe: MouseEvent | TouchEvent, opt: { "down"?: (e: MouseEvent | TouchEvent) => void; "start"?: (e: MouseEvent | TouchEvent) => void | boolean; "move"?: (e: MouseEvent | TouchEvent) => void | boolean; "up"?: (e: MouseEvent | TouchEvent) => void; "end"?: (e: MouseEvent | TouchEvent) => void; }): void {

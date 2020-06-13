@@ -1130,6 +1130,23 @@ export function watchSize(el: HTMLElement, cb: (rect: DOMRect) => void): DOMRect
 }
 
 /**
+ * --- 添加 DOM 内容变化监视 ---
+ * @param el dom 对象
+ * @param cb 回调
+ */
+export function watchElement(el: HTMLElement, cb: MutationCallback): MutationObserver {
+    let mo = new MutationObserver(cb);
+    mo.observe(el, {
+        "attributeFilter": ["style", "class"],
+        "attributes": true,
+        "characterData": true,
+        "childList": true,
+        "subtree": true
+    });
+    return mo;
+}
+
+/**
  * --- 绑定按下以及弹起事件 ---
  * @param e MouseEvent | TouchEvent
  * @param opt 回调选项

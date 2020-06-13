@@ -84,6 +84,7 @@ declare const ClickGo: {
     removeForm: (formId: number) => boolean;
     endTask: (taskId: number) => boolean;
     watchSize: (el: HTMLElement, cb: (rect: DOMRect) => void) => DOMRect;
+    watchElement: (el: HTMLElement, cb: MutationCallback) => MutationObserver;
     bindDown: (oe: MouseEvent | TouchEvent, opt: {
         "down"?: (e: MouseEvent | TouchEvent) => void;
         "start"?: (e: MouseEvent | TouchEvent) => void | boolean;

@@ -1,6 +1,6 @@
 export let data = {
     "width": 300,
-    "height": 500
+    "height": 505
 };
 
 export let methods = {
@@ -27,6 +27,9 @@ export let methods = {
     },
     openScroll: function(this: IVue): void {
         this.createForm("/form/scroll");
+    },
+    openView: function(this: IVue): void {
+        this.createForm("/form/view");
     },
     runTaskmgr: async function(this: IVue): Promise<void> {
         await ClickGo.runApp("taskApp/");
