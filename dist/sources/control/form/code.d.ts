@@ -73,12 +73,6 @@ export declare let data: {
         left: number;
         top: number;
     };
-    historyLocationMin: {
-        width: number;
-        height: number;
-        left: number;
-        top: number;
-    };
     maskFor: undefined;
     maskFrom: undefined;
     flashTimer: undefined;

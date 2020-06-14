@@ -79,12 +79,6 @@ export let data = {
         "left": 0,
         "top": 0
     },
-    "historyLocationMin": {
-        "width": 0,
-        "height": 0,
-        "left": 0,
-        "top": 0
-    },
     "maskFor": undefined,
     "maskFrom": undefined,
     "flashTimer": undefined
@@ -319,11 +313,21 @@ export let methods = {
                 return false;
             }
         }
+        // --- 当前是吸附状态 ---
+        if (this.stateAbs) {
+            this.stateAbs = false;
+            this.widthData = this.historyLocation.width;
+            this.heightData = this.historyLocation.height;
+            this.leftData = this.historyLocation.left;
+            this.$emit("update:left", this.leftData);
+            this.topData = this.historyLocation.top;
+            this.$emit("update:top", this.topData);
+        }
         if (!this.stateMinData) {
             // --- 当前是正常状态，需要变成最小化 ---
             this.$emit("min", event, 1, {});
             if (event.go) {
-                this.historyLocationMin = {
+                this.historyLocation = {
                     "width": this.widthData,
                     "height": this.heightData,
                     "left": this.leftData,
@@ -349,16 +353,16 @@ export let methods = {
             }
         } else {
             // --- 需要变正常 ---
-            this.$emit("min", event, 0, this.historyLocationMin);
+            this.$emit("min", event, 0, this.historyLocation);
             if (event.go) {
                 this.stateMinData = false;
                 this.$emit("update:stateMin", false);
                 this.$el.classList.remove("cg-state-min");
                 if (!event.ds) {
-                    this.heightData = this.historyLocationMin.height;
-                    this.$emit("update:height", this.historyLocationMin.height);
-                    this.widthData = this.historyLocationMin.width;
-                    this.$emit("update:width", this.historyLocationMin.width);
+                    this.heightData = this.historyLocation.height;
+                    this.$emit("update:height", this.historyLocation.height);
+                    this.widthData = this.historyLocation.width;
+                    this.$emit("update:width", this.historyLocation.width);
                 }
             } else {
                 return false;
@@ -419,12 +423,6 @@ export let methods = {
             if (event.go) {
                 if (this.stateAbs) {
                     this.stateAbs = false;
-                    this.historyLocation = {
-                        "width": this.historyLocation.width,
-                        "height": this.historyLocation.height,
-                        "left": this.historyLocation.left,
-                        "top": this.historyLocation.top
-                    };
                 } else {
                     this.historyLocation = {
                         "width": this.widthData,
