@@ -1,3 +1,7 @@
 .wrap {
-    
+    position: relative; overflow: hidden;
+}
+
+.inner {
+    position: absolute; min-height: 100%; min-width: 100%;
 }

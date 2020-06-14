@@ -17,13 +17,20 @@ export declare let props: {
     flex: {
         default: string;
     };
-    length: {
-        default: number;
+    direction: {
+        default: string;
     };
-    scrollLeft: {
-        default: number;
-    };
-    scrollTop: {
+    scrolOffset: {
         default: number;
     };
 };
+export declare let data: {
+    length: number;
+    innerTop: number;
+    innerLeft: number;
+};
+export declare let methods: {
+    wheel: (this: IVue, e: WheelEvent) => void;
+    down: (this: IVue, e: MouseEvent | TouchEvent) => void;
+};
+export declare let mounted: (this: IVue) => void;

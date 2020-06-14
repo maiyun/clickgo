@@ -238,7 +238,8 @@ const ClickGo: {
 
     /**
      * --- 运行一个应用 ---
-     * @param runtime 运行时要注入的文件列表（cg 文件默认被注入） ---
+     * @param path app 路径
+     * @param opt runtime 运行时要注入的文件列表（cg 文件默认被注入） ---
      */
     runApp: (path: string | IAppPkg, opt?: {
         "runtime"?: IFileList;

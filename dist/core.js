@@ -512,7 +512,7 @@ function fetchApp(path) {
                     }
                     files[file] = blob;
                     return [3, 9];
-                case 6: return [4, fetch(realPath + file + "?" + Math.random())];
+                case 6: return [4, fetch(realPath + file.slice(1) + "?" + Math.random())];
                 case 7:
                     resp = _e.sent();
                     _b = files;
@@ -707,11 +707,14 @@ function createForm(opt) {
                                     data_1.formId = formId;
                                     data_1._scope = rand_1;
                                     data_1._controlName = name_1;
+                                    data_1._downStop = true;
                                     methods_1._down = function (e) {
                                         if (e instanceof MouseEvent && ClickGo.hasTouch) {
                                             return;
                                         }
-                                        e.stopPropagation();
+                                        if (this.$data._downStop) {
+                                            e.stopPropagation();
+                                        }
                                         var noHidePop = false;
                                         if (this.$el.classList.contains("cg-pop-open")) {
                                             noHidePop = true;
@@ -781,6 +784,14 @@ function createForm(opt) {
                                             return cla;
                                         }
                                         return "cg-theme-global-" + this.$data._controlName + "_" + cla + " cg-theme-task" + this.taskId + "-" + this.$data._controlName + "_" + cla + " " + this.$data._scope + cla;
+                                    };
+                                    methods_1._subDownStop = function (b) {
+                                        if (b === void 0) { b = false; }
+                                        for (var _i = 0, _a = this.$children; _i < _a.length; _i++) {
+                                            var sub = _a[_i];
+                                            sub.$data._downStop = false;
+                                            sub._subDownStop(b);
+                                        }
                                     };
                                     components["cg-" + name_1] = {
                                         "template": layout_1,

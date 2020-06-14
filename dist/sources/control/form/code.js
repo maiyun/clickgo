@@ -208,15 +208,9 @@ exports.methods = {
         ClickGo.bindMove(e, {
             "start": function (x, y) {
                 if (_this.stateMaxData) {
-                    if (_this.stateMinData) {
-                        if (_this.minMethod() === false) {
-                            return false;
-                        }
-                    }
                     _this.$emit("max", event, 0, _this.historyLocationMax);
                     _this.stateMaxData = false;
                     _this.$emit("update:stateMax", false);
-                    _this.$el.classList.remove("cg-state-max");
                     var olx = x - _this.leftData;
                     var orx = _this.leftData + _this.widthData - x;
                     var w2 = _this.historyLocationMax.width / 2;
@@ -368,6 +362,11 @@ exports.methods = {
                 this.ds = false;
             }
         };
+        if (this.stateMaxData) {
+            if (this.maxMethod() === false) {
+                return false;
+            }
+        }
         if (!this.stateMinData) {
             this.$emit("min", event, 1, {});
             if (event.go) {
@@ -484,7 +483,6 @@ exports.methods = {
                 }
                 this.stateMaxData = true;
                 this.$emit("update:stateMax", true);
-                this.$el.classList.add("cg-state-max");
                 if (!event.ds) {
                     this.leftData = ClickGo.getLeft();
                     this.$emit("update:left", this.leftData);
@@ -505,7 +503,6 @@ exports.methods = {
             if (event.go) {
                 this.stateMaxData = false;
                 this.$emit("update:stateMax", false);
-                this.$el.classList.remove("cg-state-max");
                 if (!event.ds) {
                     this.leftData = this.historyLocationMax.left;
                     this.$emit("update:left", this.historyLocationMax.left);

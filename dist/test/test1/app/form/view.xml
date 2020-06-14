@@ -1,7 +1,12 @@
 <form width="400" min-width="300" height="400" min-height="400" title="Scroll View Test" padding="20">
     <layout gutter="20" direction="v">
-        <view>
-            
+        <view scroll-offset.sync="so" style="background: #FFF;" flex="1">
+            <block v-for="line of lineCount">Line {{line}}.</block>
+            <block>Scroll offset: {{so}}.</block>
         </view>
+        <layout gutter="10" flex="">
+            <button @tap="lineCount += 5" padding="0 10" flex="1">Add 5 lines</button>
+            <button @tap="lineCount += 10" padding="0 10" flex="1">Add 10 lines</button>
+        </layout>
     </layout>
 </form>

@@ -167,17 +167,10 @@ export let methods = {
         ClickGo.bindMove(e, {
             "start": (x, y) => {
                 if (this.stateMaxData) {
-                    // --- 如果是最大化状态 ---
-                    if (this.stateMinData) {
-                        if (this.minMethod() === false) {
-                            return false;
-                        }
-                    }
                     // --- 不能用 maxMethod 方法，因为那个获得的形状不能满足拖动还原的形状 ---
                     this.$emit("max", event, 0, this.historyLocationMax);
                     this.stateMaxData = false;
                     this.$emit("update:stateMax", false);
-                    this.$el.classList.remove("cg-state-max");
                     // --- 进行位置设定 ---
                     let olx = x - this.leftData;
                     let orx = this.leftData + this.widthData - x;
@@ -326,6 +319,12 @@ export let methods = {
                 this.ds = false;
             }
         };
+        // --- 如果当前是最大化状态，要先还原 ---
+        if (this.stateMaxData) {
+            if (this.maxMethod() === false) {
+                return false;
+            }
+        }
         if (!this.stateMinData) {
             // --- 当前是正常状态，需要变成最小化 ---
             this.$emit("min", event, 1, {});
@@ -442,7 +441,6 @@ export let methods = {
                 }
                 this.stateMaxData = true;
                 this.$emit("update:stateMax", true);
-                this.$el.classList.add("cg-state-max");
                 if (!event.ds) {
                     this.leftData = ClickGo.getLeft();
                     this.$emit("update:left", this.leftData);
@@ -462,7 +460,6 @@ export let methods = {
             if (event.go) {
                 this.stateMaxData = false;
                 this.$emit("update:stateMax", false);
-                this.$el.classList.remove("cg-state-max");
                 if (!event.ds) {
                     this.leftData = this.historyLocationMax.left;
                     this.$emit("update:left", this.historyLocationMax.left);

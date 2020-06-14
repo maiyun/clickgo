@@ -515,7 +515,7 @@ export async function fetchApp(path: string): Promise<null | IAppPkg> {
                 }
                 files[file] = blob;
             } else {
-                let resp: Response = await fetch(realPath + file + "?" + Math.random());
+                let resp: Response = await fetch(realPath + file.slice(1) + "?" + Math.random());
                 files[file] = await resp.blob();
             }
         }
@@ -531,11 +531,11 @@ export async function fetchApp(path: string): Promise<null | IAppPkg> {
 
 /**
  * --- 运行一个应用 ---
- * @param runtime 运行时要注入的文件列表（cg 文件默认被注入） ---
+ * @param path app 路径
+ * @param opt runtime 运行时要注入的文件列表（cg 文件默认被注入） ---
  */
 export async function runApp(path: string | IAppPkg, opt?: {
     "runtime"?: IFileList;
-    "onEnd"?: () => void;
 }): Promise<number> {
     opt = opt ?? {};
     opt.runtime = opt.runtime ?? {};
@@ -669,12 +669,15 @@ export async function createForm(opt: ICreateFormOptions): Promise<number | IFor
             data.formId = formId;
             data._scope = rand;
             data._controlName = name;
+            data._downStop = true;
             // --- 预设 methods ---
             methods._down = function(this: IVue, e: MouseEvent | TouchEvent) {
                 if (e instanceof MouseEvent && ClickGo.hasTouch) {
                     return;
                 }
-                e.stopPropagation();
+                if (this.$data._downStop) {
+                    e.stopPropagation();
+                }
                 // --- 控制 pop 隐藏 ---
                 let noHidePop = false;
                 if (this.$el.classList.contains("cg-pop-open")) {
@@ -731,6 +734,13 @@ export async function createForm(opt: ICreateFormOptions): Promise<number | IFor
                     return cla;
                 }
                 return `cg-theme-global-${this.$data._controlName}_${cla} cg-theme-task${this.taskId}-${this.$data._controlName}_${cla} ${this.$data._scope}${cla}`;
+            };
+            // --- 对子空间的 down 事件进行索取 ---
+            methods._subDownStop = function(this: IVue, b: boolean = false): void {
+                for (let sub of this.$children) {
+                    sub.$data._downStop = false;
+                    sub._subDownStop(b);
+                }
             };
             // --- 组成 component ---
             components["cg-" + name] = {

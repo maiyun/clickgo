@@ -1,3 +1,5 @@
-<div class="wrap" :style="{'width': width && (width + 'px'), 'height': height && (height + 'px'), 'left': left + 'px', 'top': top + 'px', 'z-index': zIndex, 'flex': flex}" @click="_tap" @mousedown="_down" @touchstart="_down" @dblclick="_dblclick">
-    <slot>
+<div ref="wrap" class="wrap" :style="{'width': width && (width + 'px'), 'height': height && (height + 'px'), 'left': left + 'px', 'top': top + 'px', 'z-index': zIndex, 'flex': flex}" @click="_tap" @mousedown="down" @touchstart="down" @dblclick="_dblclick" @wheel="wheel">
+    <div ref="inner" class="inner" :style="{'width': direction === 'v' ? '100%' : undefined, 'height': direction === 'h' ? '100%' : undefined, 'left':  innerLeft + 'px', 'top': innerTop + 'px'}">
+        <slot>
+    </div>
 </div>
