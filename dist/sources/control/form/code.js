@@ -105,13 +105,7 @@ exports.data = {
     "leftData": 0,
     "topData": 0,
     "zIndexData": 0,
-    "historyLocationMove": {
-        "width": 0,
-        "height": 0,
-        "left": 0,
-        "top": 0
-    },
-    "historyLocationMax": {
+    "historyLocation": {
         "width": 0,
         "height": 0,
         "left": 0,
@@ -208,17 +202,17 @@ exports.methods = {
         ClickGo.bindMove(e, {
             "start": function (x, y) {
                 if (_this.stateMaxData) {
-                    _this.$emit("max", event, 0, _this.historyLocationMax);
+                    _this.$emit("max", event, 0, _this.historyLocation);
                     _this.stateMaxData = false;
                     _this.$emit("update:stateMax", false);
                     var olx = x - _this.leftData;
                     var orx = _this.leftData + _this.widthData - x;
-                    var w2 = _this.historyLocationMax.width / 2;
+                    var w2 = _this.historyLocation.width / 2;
                     if (olx <= w2) {
                         _this.leftData = x - olx;
                     }
                     else if (orx <= w2) {
-                        _this.leftData = x - (_this.historyLocationMax.width - orx);
+                        _this.leftData = x - (_this.historyLocation.width - orx);
                     }
                     else {
                         _this.leftData = x - w2;
@@ -226,32 +220,32 @@ exports.methods = {
                     _this.$emit("update:left", _this.leftData);
                     var oty = y - _this.topData;
                     var oby = _this.topData + _this.heightData - y;
-                    var h2 = _this.historyLocationMax.height / 2;
+                    var h2 = _this.historyLocation.height / 2;
                     if (oty <= h2) {
                         _this.topData = y - oty;
                     }
                     else if (oby <= h2) {
-                        _this.topData = y - (_this.historyLocationMax.height - oby);
+                        _this.topData = y - (_this.historyLocation.height - oby);
                     }
                     else {
                         _this.topData = y - h2;
                     }
                     _this.$emit("update:top", _this.topData);
-                    _this.widthData = _this.historyLocationMax.width;
-                    _this.$emit("update:width", _this.historyLocationMax.width);
-                    _this.heightData = _this.historyLocationMax.height;
-                    _this.$emit("update:height", _this.historyLocationMax.height);
+                    _this.widthData = _this.historyLocation.width;
+                    _this.$emit("update:width", _this.historyLocation.width);
+                    _this.heightData = _this.historyLocation.height;
+                    _this.$emit("update:height", _this.historyLocation.height);
                 }
                 else if (_this.stateAbs) {
                     _this.stateAbs = false;
                     var olx = x - _this.leftData;
                     var orx = _this.leftData + _this.widthData - x;
-                    var w2 = _this.historyLocationMove.width / 2;
+                    var w2 = _this.historyLocation.width / 2;
                     if (olx <= w2) {
                         _this.leftData = x - olx;
                     }
                     else if (orx <= w2) {
-                        _this.leftData = x - (_this.historyLocationMove.width - orx);
+                        _this.leftData = x - (_this.historyLocation.width - orx);
                     }
                     else {
                         _this.leftData = x - w2;
@@ -259,24 +253,24 @@ exports.methods = {
                     _this.$emit("update:left", _this.leftData);
                     var oty = y - _this.topData;
                     var oby = _this.topData + _this.heightData - y;
-                    var h2 = _this.historyLocationMove.height / 2;
+                    var h2 = _this.historyLocation.height / 2;
                     if (oty <= h2) {
                         _this.topData = y - oty;
                     }
                     else if (oby <= h2) {
-                        _this.topData = y - (_this.historyLocationMove.height - oby);
+                        _this.topData = y - (_this.historyLocation.height - oby);
                     }
                     else {
                         _this.topData = y - h2;
                     }
                     _this.$emit("update:top", _this.topData);
-                    _this.widthData = _this.historyLocationMove.width;
-                    _this.$emit("update:width", _this.historyLocationMove.width);
-                    _this.heightData = _this.historyLocationMove.height;
-                    _this.$emit("update:height", _this.historyLocationMove.height);
+                    _this.widthData = _this.historyLocation.width;
+                    _this.$emit("update:width", _this.historyLocation.width);
+                    _this.heightData = _this.historyLocation.height;
+                    _this.$emit("update:height", _this.historyLocation.height);
                 }
                 else if (!_this.stateMinData) {
-                    _this.historyLocationMove = {
+                    _this.historyLocation = {
                         "width": _this.widthData,
                         "height": _this.heightData,
                         "left": _this.leftData,
@@ -319,10 +313,10 @@ exports.methods = {
                 if (isBorder !== "") {
                     if (isBorder === "t") {
                         if (_this.max) {
-                            _this.widthData = _this.historyLocationMove.width;
-                            _this.heightData = _this.historyLocationMove.height;
-                            _this.leftData = _this.historyLocationMove.left;
-                            _this.topData = _this.historyLocationMove.top;
+                            _this.widthData = _this.historyLocation.width;
+                            _this.heightData = _this.historyLocation.height;
+                            _this.leftData = _this.historyLocation.left;
+                            _this.topData = _this.historyLocation.top;
                             _this.maxMethod();
                         }
                     }
@@ -420,20 +414,20 @@ exports.methods = {
     maxVMethod: function (dbl) {
         if (this.stateAbs) {
             this.stateAbs = false;
-            this.topData = this.historyLocationMove.top;
+            this.topData = this.historyLocation.top;
             this.$emit("update:top", this.topData);
-            this.heightData = this.historyLocationMove.height;
+            this.heightData = this.historyLocation.height;
             this.$emit("update:height", this.heightData);
             if (dbl) {
-                this.leftData = this.historyLocationMove.left;
+                this.leftData = this.historyLocation.left;
                 this.$emit("update:top", this.leftData);
-                this.widthData = this.historyLocationMove.width;
+                this.widthData = this.historyLocation.width;
                 this.$emit("update:width", this.widthData);
             }
         }
         else {
             this.stateAbs = true;
-            this.historyLocationMove = {
+            this.historyLocation = {
                 "width": this.widthData,
                 "height": this.heightData,
                 "left": this.leftData,
@@ -466,15 +460,15 @@ exports.methods = {
             if (event.go) {
                 if (this.stateAbs) {
                     this.stateAbs = false;
-                    this.historyLocationMax = {
-                        "width": this.historyLocationMove.width,
-                        "height": this.historyLocationMove.height,
-                        "left": this.historyLocationMove.left,
-                        "top": this.historyLocationMove.top
+                    this.historyLocation = {
+                        "width": this.historyLocation.width,
+                        "height": this.historyLocation.height,
+                        "left": this.historyLocation.left,
+                        "top": this.historyLocation.top
                     };
                 }
                 else {
-                    this.historyLocationMax = {
+                    this.historyLocation = {
                         "width": this.widthData,
                         "height": this.heightData,
                         "left": this.leftData,
@@ -499,19 +493,19 @@ exports.methods = {
             }
         }
         else {
-            this.$emit("max", event, 0, this.historyLocationMax);
+            this.$emit("max", event, 0, this.historyLocation);
             if (event.go) {
                 this.stateMaxData = false;
                 this.$emit("update:stateMax", false);
                 if (!event.ds) {
-                    this.leftData = this.historyLocationMax.left;
-                    this.$emit("update:left", this.historyLocationMax.left);
-                    this.topData = this.historyLocationMax.top;
-                    this.$emit("update:top", this.historyLocationMax.top);
-                    this.widthData = this.historyLocationMax.width;
-                    this.$emit("update:width", this.historyLocationMax.width);
-                    this.heightData = this.historyLocationMax.height;
-                    this.$emit("update:height", this.historyLocationMax.height);
+                    this.leftData = this.historyLocation.left;
+                    this.$emit("update:left", this.historyLocation.left);
+                    this.topData = this.historyLocation.top;
+                    this.$emit("update:top", this.historyLocation.top);
+                    this.widthData = this.historyLocation.width;
+                    this.$emit("update:width", this.historyLocation.width);
+                    this.heightData = this.historyLocation.height;
+                    this.$emit("update:height", this.historyLocation.height);
                 }
             }
             else {
@@ -544,15 +538,15 @@ exports.methods = {
         if (dir !== "l" && dir !== "r") {
             if (this.stateAbs) {
                 if (dir === "lt" || dir === "t" || dir === "tr") {
-                    height = this.historyLocationMove.top + this.historyLocationMove.height;
+                    height = this.historyLocation.top + this.historyLocation.height;
                 }
                 else {
-                    top = this.historyLocationMove.top;
+                    top = this.historyLocation.top;
                     height = ClickGo.getHeight() - top;
                 }
             }
             else {
-                this.historyLocationMove = {
+                this.historyLocation = {
                     "width": this.widthData,
                     "height": this.heightData,
                     "left": this.leftData,

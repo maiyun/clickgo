@@ -67,13 +67,7 @@ export declare let data: {
     leftData: number;
     topData: number;
     zIndexData: number;
-    historyLocationMove: {
-        width: number;
-        height: number;
-        left: number;
-        top: number;
-    };
-    historyLocationMax: {
+    historyLocation: {
         width: number;
         height: number;
         left: number;

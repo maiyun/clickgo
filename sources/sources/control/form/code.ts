@@ -73,13 +73,7 @@ export let data = {
     "topData": 0,
     "zIndexData": 0,
 
-    "historyLocationMove": {
-        "width": 0,
-        "height": 0,
-        "left": 0,
-        "top": 0
-    },
-    "historyLocationMax": {
+    "historyLocation": {
         "width": 0,
         "height": 0,
         "left": 0,
@@ -168,17 +162,17 @@ export let methods = {
             "start": (x, y) => {
                 if (this.stateMaxData) {
                     // --- 不能用 maxMethod 方法，因为那个获得的形状不能满足拖动还原的形状 ---
-                    this.$emit("max", event, 0, this.historyLocationMax);
+                    this.$emit("max", event, 0, this.historyLocation);
                     this.stateMaxData = false;
                     this.$emit("update:stateMax", false);
                     // --- 进行位置设定 ---
                     let olx = x - this.leftData;
                     let orx = this.leftData + this.widthData - x;
-                    let w2 = this.historyLocationMax.width / 2;
+                    let w2 = this.historyLocation.width / 2;
                     if (olx <= w2) {
                         this.leftData = x - olx;
                     } else if (orx <= w2) {
-                        this.leftData = x - (this.historyLocationMax.width - orx);
+                        this.leftData = x - (this.historyLocation.width - orx);
                     } else {
                         this.leftData = x - w2;
                     }
@@ -186,31 +180,31 @@ export let methods = {
                     // --- 高 ---
                     let oty = y - this.topData;
                     let oby = this.topData + this.heightData - y;
-                    let h2 = this.historyLocationMax.height / 2;
+                    let h2 = this.historyLocation.height / 2;
                     if (oty <= h2) {
                         this.topData = y - oty;
                     } else if (oby <= h2) {
-                        this.topData = y - (this.historyLocationMax.height - oby);
+                        this.topData = y - (this.historyLocation.height - oby);
                     } else {
                         this.topData = y - h2;
                     }
                     this.$emit("update:top", this.topData);
                     // --- 还原宽高 ---
-                    this.widthData = this.historyLocationMax.width;
-                    this.$emit("update:width", this.historyLocationMax.width);
-                    this.heightData = this.historyLocationMax.height;
-                    this.$emit("update:height", this.historyLocationMax.height);
+                    this.widthData = this.historyLocation.width;
+                    this.$emit("update:width", this.historyLocation.width);
+                    this.heightData = this.historyLocation.height;
+                    this.$emit("update:height", this.historyLocation.height);
                 } else if (this.stateAbs) {
                     // --- 吸附拖动还原 ---
                     this.stateAbs = false;
                     // --- 进行位置设定 ---
                     let olx = x - this.leftData;
                     let orx = this.leftData + this.widthData - x;
-                    let w2 = this.historyLocationMove.width / 2;
+                    let w2 = this.historyLocation.width / 2;
                     if (olx <= w2) {
                         this.leftData = x - olx;
                     } else if (orx <= w2) {
-                        this.leftData = x - (this.historyLocationMove.width - orx);
+                        this.leftData = x - (this.historyLocation.width - orx);
                     } else {
                         this.leftData = x - w2;
                     }
@@ -218,22 +212,22 @@ export let methods = {
                     // --- 高 ---
                     let oty = y - this.topData;
                     let oby = this.topData + this.heightData - y;
-                    let h2 = this.historyLocationMove.height / 2;
+                    let h2 = this.historyLocation.height / 2;
                     if (oty <= h2) {
                         this.topData = y - oty;
                     } else if (oby <= h2) {
-                        this.topData = y - (this.historyLocationMove.height - oby);
+                        this.topData = y - (this.historyLocation.height - oby);
                     } else {
                         this.topData = y - h2;
                     }
                     this.$emit("update:top", this.topData);
                     // --- 还原宽高 ---
-                    this.widthData = this.historyLocationMove.width;
-                    this.$emit("update:width", this.historyLocationMove.width);
-                    this.heightData = this.historyLocationMove.height;
-                    this.$emit("update:height", this.historyLocationMove.height);
+                    this.widthData = this.historyLocation.width;
+                    this.$emit("update:width", this.historyLocation.width);
+                    this.heightData = this.historyLocation.height;
+                    this.$emit("update:height", this.historyLocation.height);
                 } else if (!this.stateMinData) {
-                    this.historyLocationMove = {
+                    this.historyLocation = {
                         "width": this.widthData,
                         "height": this.heightData,
                         "left": this.leftData,
@@ -275,10 +269,10 @@ export let methods = {
                         // --- 要最大化 ---
                         if (this.max) {
                             // --- 不要使用 emit，只是模拟原大小，马上值就又被改变了 ---
-                            this.widthData = this.historyLocationMove.width;
-                            this.heightData = this.historyLocationMove.height;
-                            this.leftData = this.historyLocationMove.left;
-                            this.topData = this.historyLocationMove.top;
+                            this.widthData = this.historyLocation.width;
+                            this.heightData = this.historyLocation.height;
+                            this.leftData = this.historyLocation.left;
+                            this.topData = this.historyLocation.top;
                             this.maxMethod();
                         }
                     } else {
@@ -378,19 +372,19 @@ export let methods = {
     maxVMethod: function(this: IVue, dbl: boolean): void {
         if (this.stateAbs) {
             this.stateAbs = false;
-            this.topData = this.historyLocationMove.top;
+            this.topData = this.historyLocation.top;
             this.$emit("update:top", this.topData);
-            this.heightData = this.historyLocationMove.height;
+            this.heightData = this.historyLocation.height;
             this.$emit("update:height", this.heightData);
             if (dbl) {
-                this.leftData = this.historyLocationMove.left;
+                this.leftData = this.historyLocation.left;
                 this.$emit("update:top", this.leftData);
-                this.widthData = this.historyLocationMove.width;
+                this.widthData = this.historyLocation.width;
                 this.$emit("update:width", this.widthData);
             }
         } else {
             this.stateAbs = true;
-            this.historyLocationMove = {
+            this.historyLocation = {
                 "width": this.widthData,
                 "height": this.heightData,
                 "left": this.leftData,
@@ -425,14 +419,14 @@ export let methods = {
             if (event.go) {
                 if (this.stateAbs) {
                     this.stateAbs = false;
-                    this.historyLocationMax = {
-                        "width": this.historyLocationMove.width,
-                        "height": this.historyLocationMove.height,
-                        "left": this.historyLocationMove.left,
-                        "top": this.historyLocationMove.top
+                    this.historyLocation = {
+                        "width": this.historyLocation.width,
+                        "height": this.historyLocation.height,
+                        "left": this.historyLocation.left,
+                        "top": this.historyLocation.top
                     };
                 } else {
-                    this.historyLocationMax = {
+                    this.historyLocation = {
                         "width": this.widthData,
                         "height": this.heightData,
                         "left": this.leftData,
@@ -456,19 +450,19 @@ export let methods = {
             }
         } else {
             // --- 需要变正常 ---
-            this.$emit("max", event, 0, this.historyLocationMax);
+            this.$emit("max", event, 0, this.historyLocation);
             if (event.go) {
                 this.stateMaxData = false;
                 this.$emit("update:stateMax", false);
                 if (!event.ds) {
-                    this.leftData = this.historyLocationMax.left;
-                    this.$emit("update:left", this.historyLocationMax.left);
-                    this.topData = this.historyLocationMax.top;
-                    this.$emit("update:top", this.historyLocationMax.top);
-                    this.widthData = this.historyLocationMax.width;
-                    this.$emit("update:width", this.historyLocationMax.width);
-                    this.heightData = this.historyLocationMax.height;
-                    this.$emit("update:height", this.historyLocationMax.height);
+                    this.leftData = this.historyLocation.left;
+                    this.$emit("update:left", this.historyLocation.left);
+                    this.topData = this.historyLocation.top;
+                    this.$emit("update:top", this.historyLocation.top);
+                    this.widthData = this.historyLocation.width;
+                    this.$emit("update:width", this.historyLocation.width);
+                    this.heightData = this.historyLocation.height;
+                    this.$emit("update:height", this.historyLocation.height);
                 }
             } else {
                 return false;
@@ -503,13 +497,13 @@ export let methods = {
             if (this.stateAbs) {
                 // --- 进行高度还原 ---
                 if (dir === "lt" || dir === "t" || dir === "tr") {
-                    height = this.historyLocationMove.top + this.historyLocationMove.height;
+                    height = this.historyLocation.top + this.historyLocation.height;
                 } else {
-                    top = this.historyLocationMove.top;
+                    top = this.historyLocation.top;
                     height = ClickGo.getHeight() - top;
                 }
             } else {
-                this.historyLocationMove = {
+                this.historyLocation = {
                     "width": this.widthData,
                     "height": this.heightData,
                     "left": this.leftData,
