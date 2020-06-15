@@ -20,6 +20,9 @@ export declare let props: {
     zIndex: {
         default: number;
     };
+    flex: {
+        default: string;
+    };
     padding: {
         default: undefined;
     };

@@ -52,10 +52,11 @@ export declare function bindMove(e: MouseEvent | TouchEvent, opt: {
     "objectHeight"?: number;
     "object"?: HTMLElement | IVue;
     "offsetObject"?: HTMLElement | IVue;
+    "showRect"?: boolean;
     "start"?: (x: number, y: number) => void | boolean;
     "move"?: (ox: number, oy: number, x: number, y: number, border: TBorderDir) => void;
     "up"?: () => void;
-    "end"?: () => void;
+    "end"?: (time: number) => void;
     "borderIn"?: (x: number, y: number, border: TBorderDir) => void;
     "borderOut"?: () => void;
 }): {

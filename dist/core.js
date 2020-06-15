@@ -708,6 +708,7 @@ function createForm(opt) {
                                     data_1._scope = rand_1;
                                     data_1._controlName = name_1;
                                     data_1._downStop = true;
+                                    data_1._needDown = data_1._needDown === undefined ? false : data_1._needDown;
                                     methods_1._down = function (e) {
                                         if (e instanceof MouseEvent && ClickGo.hasTouch) {
                                             return;
@@ -804,6 +805,14 @@ function createForm(opt) {
                                         "watch": watch_1,
                                         "mounted": function () {
                                             this.$nextTick(function () {
+                                                while (this.$parent) {
+                                                    if (this.$parent.$data._needDown !== true) {
+                                                        this.$parent = this.$parent.$parent;
+                                                        continue;
+                                                    }
+                                                    this.$data._downStop = false;
+                                                    break;
+                                                }
                                                 if (mounted_1) {
                                                     mounted_1.call(this);
                                                 }
@@ -1318,6 +1327,7 @@ function bindDown(oe, opt) {
 }
 exports.bindDown = bindDown;
 function bindMove(e, opt) {
+    var _a, _b, _c, _d;
     setGlobalCursor(getComputedStyle(e.target).cursor);
     var tx, ty;
     if (e instanceof MouseEvent) {
@@ -1341,22 +1351,10 @@ function bindMove(e, opt) {
         bottom = rect.top + rect.height - (parseFloat(sd.borderRightWidth) + parseFloat(sd.paddingRight));
     }
     else {
-        left = ClickGo.getLeft();
-        top = ClickGo.getTop();
-        right = ClickGo.getWidth();
-        bottom = ClickGo.getHeight();
-    }
-    if (opt.left && opt.left > left) {
-        left = opt.left;
-    }
-    if (opt.top && opt.top > top) {
-        top = opt.top;
-    }
-    if (opt.right && opt.right < right) {
-        right = opt.right;
-    }
-    if (opt.bottom && opt.bottom < bottom) {
-        bottom = opt.bottom;
+        left = (_a = opt.left) !== null && _a !== void 0 ? _a : ClickGo.getLeft();
+        top = (_b = opt.top) !== null && _b !== void 0 ? _b : ClickGo.getTop();
+        right = (_c = opt.right) !== null && _c !== void 0 ? _c : ClickGo.getWidth();
+        bottom = (_d = opt.bottom) !== null && _d !== void 0 ? _d : ClickGo.getHeight();
     }
     if (opt.offsetLeft) {
         left += opt.offsetLeft;
@@ -1376,6 +1374,7 @@ function bindMove(e, opt) {
     var offsetTop = 0;
     var offsetRight = 0;
     var offsetBottom = 0;
+    var moveTime = [];
     ClickGo.bindDown(e, {
         start: function () {
             var _a, _b, _c, _d;
@@ -1555,6 +1554,10 @@ function bindMove(e, opt) {
                     opt.borderOut && opt.borderOut();
                 }
             }
+            moveTime.push(Date.now());
+            if (moveTime.length > 2) {
+                moveTime.splice(0, 1);
+            }
             opt.move && opt.move(x - tx, y - ty, x, y, border);
             tx = x;
             ty = y;
@@ -1564,9 +1567,20 @@ function bindMove(e, opt) {
             opt.up && opt.up();
         },
         end: function () {
-            opt.end && opt.end();
+            opt.end && opt.end(moveTime[0] || 0);
         }
     });
+    if (opt.showRect) {
+        showRectangle(tx, ty, {
+            "left": left,
+            "top": top,
+            "width": right - left,
+            "height": bottom - top
+        });
+        setTimeout(function () {
+            hideRectangle();
+        }, 500);
+    }
     return {
         "left": left,
         "top": top,

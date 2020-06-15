@@ -290,7 +290,7 @@ const ClickGo: {
      * @param moveCb 拖动时的回调
      * @param endCb 结束时的回调
      */
-    bindMove: (e: MouseEvent | TouchEvent, opt: { "left"?: number; "top"?: number; "right"?: number; "bottom"?: number; "offsetLeft"?: number; "offsetTop"?: number; "offsetRight"?: number; "offsetBottom"?: number; "objectLeft"?: number; "objectTop"?: number; "objectWidth"?: number; "objectHeight"?: number; "object"?: HTMLElement | IVue; "offsetObject"?: HTMLElement | IVue; "start"?: (x: number, y: number) => void | boolean; "move"?: (ox: number, oy: number, x: number, y: number, border: TBorderDir) => void; "up"?: () => void; "end"?: () => void; "borderIn"?: (x: number, y: number, border: TBorderDir) => void; "borderOut"?: () => void; }) => { "left": number; "top": number; "right": number; "bottom": number; };
+    bindMove: (e: MouseEvent | TouchEvent, opt: { "left"?: number; "top"?: number; "right"?: number; "bottom"?: number; "offsetLeft"?: number; "offsetTop"?: number; "offsetRight"?: number; "offsetBottom"?: number; "objectLeft"?: number; "objectTop"?: number; "objectWidth"?: number; "objectHeight"?: number; "object"?: HTMLElement | IVue; "offsetObject"?: HTMLElement | IVue; "showRect"?: boolean; "start"?: (x: number, y: number) => void | boolean; "move"?: (ox: number, oy: number, x: number, y: number, border: TBorderDir) => void; "up"?: () => void; "end"?: (time: number) => void; "borderIn"?: (x: number, y: number, border: TBorderDir) => void; "borderOut"?: () => void; }) => { "left": number; "top": number; "right": number; "bottom": number; };
 
     /**
      * --- 绑定拖动改变大小事件 ---
@@ -485,7 +485,7 @@ const ClickGo: {
         return this._core.bindDown(oe, opt);
     },
 
-    bindMove: function(e: MouseEvent | TouchEvent, opt: { "left"?: number; "top"?: number; "right"?: number; "bottom"?: number; "offsetLeft"?: number; "offsetTop"?: number; "offsetRight"?: number; "offsetBottom"?: number; "objectLeft"?: number; "objectTop"?: number; "objectWidth"?: number; "objectHeight"?: number; "object"?: HTMLElement | IVue; "offsetObject"?: HTMLElement | IVue; "start"?: (x: number, y: number) => void | Promise<void> | boolean | Promise<boolean>; "move"?: (ox: number, oy: number, x: number, y: number, border: TBorderDir) => void; "end"?: () => void; "up"?: () => void; "borderIn"?: (x: number, y: number, border: TBorderDir) => void; "borderOut"?: () => void; }): { "left": number; "top": number; "right": number; "bottom": number; } {
+    bindMove: function(e: MouseEvent | TouchEvent, opt: { "left"?: number; "top"?: number; "right"?: number; "bottom"?: number; "offsetLeft"?: number; "offsetTop"?: number; "offsetRight"?: number; "offsetBottom"?: number; "objectLeft"?: number; "objectTop"?: number; "objectWidth"?: number; "objectHeight"?: number; "object"?: HTMLElement | IVue; "offsetObject"?: HTMLElement | IVue; "showRect"?: boolean; "start"?: (x: number, y: number) => void | boolean; "move"?: (ox: number, oy: number, x: number, y: number, border: TBorderDir) => void; "up"?: () => void; "end"?: (time: number) => void; "borderIn"?: (x: number, y: number, border: TBorderDir) => void; "borderOut"?: () => void; }): { "left": number; "top": number; "right": number; "bottom": number; } {
         return this._core.bindMove(e, opt);
     },
 

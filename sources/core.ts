@@ -670,6 +670,7 @@ export async function createForm(opt: ICreateFormOptions): Promise<number | IFor
             data._scope = rand;
             data._controlName = name;
             data._downStop = true;
+            data._needDown = data._needDown === undefined ? false : data._needDown;
             // --- 预设 methods ---
             methods._down = function(this: IVue, e: MouseEvent | TouchEvent) {
                 if (e instanceof MouseEvent && ClickGo.hasTouch) {
@@ -754,6 +755,14 @@ export async function createForm(opt: ICreateFormOptions): Promise<number | IFor
                 "watch": watch,
                 "mounted": function() {
                     this.$nextTick(function(this: IVue) {
+                        while (this.$parent) {
+                            if (this.$parent.$data._needDown !== true) {
+                                this.$parent = this.$parent.$parent;
+                                continue;
+                            }
+                            this.$data._downStop = false;
+                            break;
+                        }
                         if (mounted) {
                             mounted.call(this);
                         }
@@ -1240,7 +1249,7 @@ export function bindDown(oe: MouseEvent | TouchEvent, opt: { "down"?: (e: MouseE
  * @param e mousedown 或 touchstart 的 event
  * @param opt 回调选项
  */
-export function bindMove(e: MouseEvent | TouchEvent, opt: { "left"?: number; "top"?: number; "right"?: number; "bottom"?: number; "offsetLeft"?: number; "offsetTop"?: number; "offsetRight"?: number; "offsetBottom"?: number; "objectLeft"?: number; "objectTop"?: number; "objectWidth"?: number; "objectHeight"?: number; "object"?: HTMLElement | IVue; "offsetObject"?: HTMLElement | IVue; "start"?: (x: number, y: number) => void | boolean; "move"?: (ox: number, oy: number, x: number, y: number, border: TBorderDir) => void; "up"?: () => void; "end"?: () => void; "borderIn"?: (x: number, y: number, border: TBorderDir) => void; "borderOut"?: () => void; }): { "left": number; "top": number; "right": number; "bottom": number; } {
+export function bindMove(e: MouseEvent | TouchEvent, opt: { "left"?: number; "top"?: number; "right"?: number; "bottom"?: number; "offsetLeft"?: number; "offsetTop"?: number; "offsetRight"?: number; "offsetBottom"?: number; "objectLeft"?: number; "objectTop"?: number; "objectWidth"?: number; "objectHeight"?: number; "object"?: HTMLElement | IVue; "offsetObject"?: HTMLElement | IVue; "showRect"?: boolean; "start"?: (x: number, y: number) => void | boolean; "move"?: (ox: number, oy: number, x: number, y: number, border: TBorderDir) => void; "up"?: () => void; "end"?: (time: number) => void; "borderIn"?: (x: number, y: number, border: TBorderDir) => void; "borderOut"?: () => void; }): { "left": number; "top": number; "right": number; "bottom": number; } {
     setGlobalCursor(getComputedStyle(e.target as Element).cursor);
     /** --- 上一次的坐标 --- */
     let tx: number, ty: number;
@@ -1266,23 +1275,10 @@ export function bindMove(e: MouseEvent | TouchEvent, opt: { "left"?: number; "to
         bottom = rect.top + rect.height - (parseFloat(sd.borderRightWidth) + parseFloat(sd.paddingRight));
         // document.getElementsByTagName("body")[0].insertAdjacentHTML("beforeend", `<div style="position: fixed; background-color: red; z-index: 9999999999; left: ${left}px; top: ${top}px; width: ${right - left}px; height: ${bottom - top}px;"></div>`);
     } else {
-        left = ClickGo.getLeft();
-        top = ClickGo.getTop();
-        right = ClickGo.getWidth();
-        bottom = ClickGo.getHeight();
-    }
-    // --- 用户定义的拖动区域不能大于限定的拖动区域 ---
-    if (opt.left && opt.left > left) {
-        left = opt.left;
-    }
-    if (opt.top && opt.top > top) {
-        top = opt.top;
-    }
-    if (opt.right && opt.right < right) {
-        right = opt.right;
-    }
-    if (opt.bottom && opt.bottom < bottom) {
-        bottom = opt.bottom;
+        left = opt.left ?? ClickGo.getLeft();
+        top = opt.top ?? ClickGo.getTop();
+        right = opt.right ?? ClickGo.getWidth();
+        bottom = opt.bottom ?? ClickGo.getHeight();
     }
     // --- 限定拖动区域额外补偿（拖动对象和实际对象有一定偏差，超出时使用） ---
     if (opt.offsetLeft) {
@@ -1307,6 +1303,9 @@ export function bindMove(e: MouseEvent | TouchEvent, opt: { "left"?: number; "to
     let offsetTop = 0;
     let offsetRight = 0;
     let offsetBottom = 0;
+
+    /** --- 上一次的 move 事件触发时间 --- */
+    let moveTime: number[] = [];
 
     ClickGo.bindDown(e, {
         start: () => {
@@ -1478,6 +1477,11 @@ export function bindMove(e: MouseEvent | TouchEvent, opt: { "left"?: number; "to
                 }
             }
 
+            moveTime.push(Date.now());
+            if (moveTime.length > 2) {
+                moveTime.splice(0, 1);
+            }
+
             opt.move && opt.move(x - tx, y - ty, x, y, border);
             tx = x;
             ty = y;
@@ -1487,9 +1491,21 @@ export function bindMove(e: MouseEvent | TouchEvent, opt: { "left"?: number; "to
             opt.up && opt.up();
         },
         end: () => {
-            opt.end && opt.end();
+            opt.end && opt.end(moveTime[0] || 0);
         }
     });
+
+    if (opt.showRect) {
+        showRectangle(tx, ty, {
+            "left": left,
+            "top": top,
+            "width": right - left,
+            "height": bottom - top
+        });
+        setTimeout(() => {
+            hideRectangle();
+        }, 500);
+    }
 
     return {
         "left": left,
