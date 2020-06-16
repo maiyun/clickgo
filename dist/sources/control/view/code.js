@@ -42,7 +42,12 @@ exports.watch = {
     },
     "scrollOffset": {
         handler: function () {
-            this.scrollOffsetData = parseInt(this.scrollOffset);
+            var so = parseInt(this.scrollOffset);
+            var x = so - this.scrollOffsetData;
+            if (x < 0.5 && x > -0.5) {
+                return;
+            }
+            this.scrollOffsetData = so;
             this.refreshView();
         },
         "immediate": true
@@ -131,7 +136,7 @@ exports.methods = {
         else if (this.scrollOffsetData < 0) {
             this.scrollOffsetData = 0;
         }
-        this.$emit("update:scrollOffset", this.scrollOffsetData);
+        this.$emit("update:scrollOffset", Math.round(this.scrollOffsetData));
     }
 };
 exports.mounted = function () {

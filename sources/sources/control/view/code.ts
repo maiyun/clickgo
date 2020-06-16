@@ -46,7 +46,12 @@ export let watch = {
     },
     "scrollOffset": {
         handler: function(this: IVue): void {
-            this.scrollOffsetData = parseInt(this.scrollOffset);
+            let so = parseInt(this.scrollOffset);
+            let x = so - this.scrollOffsetData;
+            if (x < 0.5 && x > -0.5) {
+                return;
+            }
+            this.scrollOffsetData = so;
             this.refreshView();
         },
         "immediate": true
@@ -143,7 +148,7 @@ export let methods = {
         } else if (this.scrollOffsetData < 0) {
             this.scrollOffsetData = 0;
         }
-        this.$emit("update:scrollOffset", this.scrollOffsetData);
+        this.$emit("update:scrollOffset", Math.round(this.scrollOffsetData));
     }
 };
 
