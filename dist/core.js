@@ -572,6 +572,7 @@ function runApp(path, opt) {
                         "appPkg": appPkg,
                         "formList": {}
                     };
+                    Tool.createTaskStyle(taskId);
                     task = ClickGo.taskList[taskId];
                     return [4, createForm({
                             "file": appPkg.config.mainLayout,
@@ -581,6 +582,7 @@ function runApp(path, opt) {
                     form = _e.sent();
                     if (typeof form === "number") {
                         delete (ClickGo.taskList[taskId]);
+                        Tool.removeTaskStyle(taskId);
                         return [2, form];
                     }
                     if (!(appPkg.config.styleGlobal && appPkg.files[appPkg.config.styleGlobal + ".css"])) return [3, 7];
@@ -620,13 +622,13 @@ exports.runApp = runApp;
 function createForm(opt) {
     var _a, _b, _c;
     return __awaiter(this, void 0, void 0, function () {
-        var appPkg, formId, formStyle, components, _i, _d, controlPath, controlBlob, controlPkg, _loop_1, _e, _f, _g, name_1, state_1, style, layout, layoutBlob, styleBlob, data, methods, computed, watch, mounted, destroyed, expo, rand, r_1, randList, r, el, $vm, getFocusEvent, form;
+        var appPkg, formId, controlsStyle, components, _i, _d, controlPath, controlBlob, controlPkg, _loop_1, _e, _f, _g, name_1, state_1, style, layout, layoutBlob, styleBlob, data, methods, computed, watch, mounted, destroyed, expo, rand, r_1, randList, r, el, $vm, getFocusEvent, form;
         return __generator(this, function (_h) {
             switch (_h.label) {
                 case 0:
                     appPkg = ClickGo.taskList[opt.taskId].appPkg;
                     formId = ++ClickGo.formId;
-                    formStyle = "";
+                    controlsStyle = "";
                     components = {};
                     _i = 0, _d = appPkg.config.controls;
                     _h.label = 1;
@@ -681,10 +683,10 @@ function createForm(opt) {
                                 case 3:
                                     r_2 = _b.apply(_a, [_f.sent()]);
                                     rand_1 = r_2.rand;
-                                    _c = formStyle;
+                                    _c = controlsStyle;
                                     return [4, Tool.styleUrl2DataUrl(item.config.style, r_2.style, item.files)];
                                 case 4:
-                                    formStyle = _c + _f.sent();
+                                    controlsStyle = _c + _f.sent();
                                     _f.label = 5;
                                 case 5:
                                     layoutBlob = item.files[item.config.layout + ".html"];
@@ -1108,11 +1110,11 @@ function createForm(opt) {
                         return [2, -106];
                     }
                     $vm.eventList = {};
-                    if (formStyle !== "") {
-                        Tool.pushStyle(formStyle, opt.taskId, formId);
+                    if (controlsStyle !== "") {
+                        Tool.pushStyle(controlsStyle, opt.taskId, "controls", formId);
                     }
                     if (style) {
-                        Tool.pushStyle(style, opt.taskId, formId);
+                        Tool.pushStyle(style, opt.taskId, "forms", formId);
                     }
                     if (!$vm.$children[0].stateMaxData) {
                         if ($vm.$children[0].left === -1) {

@@ -1,8 +1,10 @@
 export declare function setGlobalTheme(file: Blob): Promise<void>;
 export declare function clearGlobalTheme(): void;
+export declare function createTaskStyle(taskId: number): void;
+export declare function removeTaskStyle(taskId: number): void;
 export declare function loadTaskTheme(file: string | Blob, taskId: number): Promise<void>;
 export declare function clearTaskTheme(taskId: number): void;
-export declare function pushStyle(style: string, taskId: number, formId?: number): void;
+export declare function pushStyle(style: string, taskId: number, type?: "controls" | "global" | "forms", formId?: number): void;
 export declare function removeStyle(taskId: number, formId?: number): void;
 export declare function purify(text: string): string;
 export declare function trim(text: string): string;

@@ -149,11 +149,21 @@ function clearGlobalTheme() {
     globalThemeStyle.innerHTML = "";
 }
 exports.clearGlobalTheme = clearGlobalTheme;
+function createTaskStyle(taskId) {
+    styleListElement.insertAdjacentHTML("beforeend", "<div id=\"cg-style-task" + taskId + "\"><div class=\"cg-style-controls\"></div><div class=\"cg-style-themes\"></div><style class=\"cg-style-global\"></style><div class=\"cg-style-forms\"></div></div>");
+}
+exports.createTaskStyle = createTaskStyle;
+function removeTaskStyle(taskId) {
+    var _a;
+    (_a = document.getElementById("cg-style-task" + taskId)) === null || _a === void 0 ? void 0 : _a.remove();
+}
+exports.removeTaskStyle = removeTaskStyle;
 function loadTaskTheme(file, taskId) {
+    var _a;
     return __awaiter(this, void 0, void 0, function () {
         var blob, theme, styleBlob, style;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
+        return __generator(this, function (_b) {
+            switch (_b.label) {
                 case 0:
                     if (!ClickGo.taskList[taskId]) {
                         return [2];
@@ -167,7 +177,7 @@ function loadTaskTheme(file, taskId) {
                     }
                     return [4, themeBlob2Theme(file)];
                 case 1:
-                    theme = _a.sent();
+                    theme = _b.sent();
                     if (!theme) {
                         return [2];
                     }
@@ -177,12 +187,12 @@ function loadTaskTheme(file, taskId) {
                     }
                     return [4, blob2Text(styleBlob)];
                 case 2:
-                    style = _a.sent();
+                    style = _b.sent();
                     style = stylePrepend(style, "cg-theme-task" + taskId + "-").style;
                     return [4, styleUrl2DataUrl(theme.config.style, style, theme.files)];
                 case 3:
-                    style = _a.sent();
-                    styleListElement.insertAdjacentHTML("beforeend", "<style class=\"cg-task" + taskId + " cg-theme\">" + style + "</style>");
+                    style = _b.sent();
+                    (_a = document.querySelector("#cg-style-task" + taskId + " > .cg-style-themes")) === null || _a === void 0 ? void 0 : _a.insertAdjacentHTML("beforeend", "<style>" + style + "</style>");
                     return [2];
             }
         });
@@ -190,39 +200,42 @@ function loadTaskTheme(file, taskId) {
 }
 exports.loadTaskTheme = loadTaskTheme;
 function clearTaskTheme(taskId) {
-    for (var i = 0; i < styleListElement.children.length; ++i) {
-        var styleElement = styleListElement.children.item(i);
-        if (styleElement.className.indexOf("cg-theme") === -1) {
-            return;
-        }
-        if (styleElement.className.indexOf("cg-task" + taskId) === -1) {
-            return;
-        }
-        styleListElement.removeChild(styleElement);
-        --i;
+    var el = document.querySelector("#cg-style-task" + taskId + " > .cg-style-themes");
+    if (!el) {
+        return;
     }
+    el.innerHTML = "";
 }
 exports.clearTaskTheme = clearTaskTheme;
-function pushStyle(style, taskId, formId) {
+function pushStyle(style, taskId, type, formId) {
+    if (type === void 0) { type = "global"; }
     if (formId === void 0) { formId = 0; }
-    styleListElement.insertAdjacentHTML("beforeend", "<style class=\"cg-task" + taskId + (formId > 0 ? " cg-form" + formId : "") + "\">" + style + "</style>");
+    var el = document.querySelector("#cg-style-task" + taskId + " > .cg-style-" + type);
+    if (!el) {
+        return;
+    }
+    if (type === "global") {
+        el.innerHTML = style;
+    }
+    else {
+        el.insertAdjacentHTML("beforeend", "<style class=\"cg-style-form" + formId + "\">" + style + "</style>");
+    }
 }
 exports.pushStyle = pushStyle;
 function removeStyle(taskId, formId) {
     if (formId === void 0) { formId = 0; }
-    var s;
-    if (formId > 0) {
-        s = document.getElementsByClassName("cg-form" + formId);
+    var styleTask = document.getElementById("cg-style-task" + taskId);
+    if (!styleTask) {
+        return;
+    }
+    if (formId === 0) {
+        styleTask.remove();
     }
     else {
-        s = document.getElementsByClassName("cg-task" + taskId);
-    }
-    while (true) {
-        var e = s.item(0);
-        if (!e) {
-            break;
+        var elist = styleTask.querySelectorAll(".cg-style-form" + formId);
+        for (var i = 0; i < elist.length; ++i) {
+            elist.item(i).remove();
         }
-        styleListElement.removeChild(e);
     }
 }
 exports.removeStyle = removeStyle;

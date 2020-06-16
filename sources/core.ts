@@ -564,6 +564,7 @@ export async function runApp(path: string | IAppPkg, opt?: {
         "appPkg": appPkg,
         "formList": {}
     };
+    Tool.createTaskStyle(taskId);
     let task: ITask = ClickGo.taskList[taskId];
     // --- 创建 form ---
     let form = await createForm({
@@ -572,9 +573,10 @@ export async function runApp(path: string | IAppPkg, opt?: {
     });
     if (typeof form === "number") {
         delete(ClickGo.taskList[taskId]);
+        Tool.removeTaskStyle(taskId);
         return form;
     }
-    // --- 创建全局 style（如果 form 创建失败，就不用创建全局 style 了） ---
+    // --- 设置 global style（如果 form 创建失败，就不设置 global style 了） ---
     if (appPkg.config.styleGlobal && appPkg.files[appPkg.config.styleGlobal + ".css"]) {
         let style = await Tool.blob2Text(appPkg.files[appPkg.config.styleGlobal + ".css"]);
         let r = Tool.stylePrepend(style, "cg-task" + task.taskId + "_");
@@ -603,7 +605,7 @@ export async function createForm(opt: ICreateFormOptions): Promise<number | IFor
     // ---  申请 formId ---
     let formId = ++ClickGo.formId;
     /** --- 要 push 的本 form 的样式内容 --- */
-    let formStyle: string = "";
+    let controlsStyle: string = "";
     // --- 获取要定义的控件列表 ---
     let components: any = {};
     for (let controlPath of appPkg.config.controls) {
@@ -647,7 +649,7 @@ export async function createForm(opt: ICreateFormOptions): Promise<number | IFor
             if (styleBlob) {
                 let r = Tool.stylePrepend(await Tool.blob2Text(styleBlob));
                 rand = r.rand;
-                formStyle += await Tool.styleUrl2DataUrl(item.config.style, r.style, item.files);
+                controlsStyle += await Tool.styleUrl2DataUrl(item.config.style, r.style, item.files);
             }
             // --- 要创建的 control 的 layout ---
             let layoutBlob = item.files[item.config.layout + ".html"];
@@ -988,14 +990,14 @@ export async function createForm(opt: ICreateFormOptions): Promise<number | IFor
     }
     // --- 全局事件来遍历执行的响应 ---
     $vm.eventList = {};
-    // --- 部署 css ---
-    if (formStyle !== "") {
-        // --- 将这些窗体的样式追加到网页 ---
-        Tool.pushStyle(formStyle, opt.taskId, formId);
+    // --- 部署本窗体控件 css ---
+    if (controlsStyle !== "") {
+        // --- 将这些窗体的控件样式追加到网页 ---
+        Tool.pushStyle(controlsStyle, opt.taskId, "controls", formId);
     }
     if (style) {
         // --- 窗体的 style ---
-        Tool.pushStyle(style, opt.taskId, formId);
+        Tool.pushStyle(style, opt.taskId, "forms", formId);
     }
     // --- 将窗体居中 ---
     if (!$vm.$children[0].stateMaxData) {

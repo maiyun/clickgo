@@ -115,6 +115,22 @@ export function clearGlobalTheme(): void {
 }
 
 /**
+ * --- 创建任务时连同一起创建的 style 标签 ---
+ * @param taskId 任务 id
+ */
+export function createTaskStyle(taskId: number): void {
+    styleListElement.insertAdjacentHTML("beforeend", `<div id="cg-style-task${taskId}"><div class="cg-style-controls"></div><div class="cg-style-themes"></div><style class="cg-style-global"></style><div class="cg-style-forms"></div></div>`);
+}
+
+/**
+ * --- 任务结束时需要移除 task 的所有 style ---
+ * @param taskId 任务 id
+ */
+export function removeTaskStyle(taskId: number): void {
+    document.getElementById("cg-style-task" + taskId)?.remove();
+}
+
+/**
  * --- 单任务加载 theme ---
  * @param style theme 样式
  * @param taskId 任务 ID
@@ -141,7 +157,7 @@ export async function loadTaskTheme(file: string | Blob, taskId: number): Promis
     let style = await blob2Text(styleBlob);
     style = stylePrepend(style, `cg-theme-task${taskId}-`).style;
     style = await styleUrl2DataUrl(theme.config.style, style, theme.files);
-    styleListElement.insertAdjacentHTML("beforeend", `<style class="cg-task${taskId} cg-theme">${style}</style>`);
+    document.querySelector(`#cg-style-task${taskId} > .cg-style-themes`)?.insertAdjacentHTML("beforeend", `<style>${style}</style>`);
 }
 
 /**
@@ -149,27 +165,30 @@ export async function loadTaskTheme(file: string | Blob, taskId: number): Promis
  * @param taskId task id
  */
 export function clearTaskTheme(taskId: number): void {
-    for (let i = 0; i < styleListElement.children.length; ++i) {
-        let styleElement = styleListElement.children.item(i) as HTMLStyleElement;
-        if (styleElement.className.indexOf("cg-theme") === -1) {
-            return;
-        }
-        if (styleElement.className.indexOf("cg-task" + taskId) === -1) {
-            return;
-        }
-        styleListElement.removeChild(styleElement);
-        --i;
+    let el = document.querySelector(`#cg-style-task${taskId} > .cg-style-themes`);
+    if (!el) {
+        return;
     }
+    el.innerHTML = "";
 }
 
 /**
  * --- 将 style 内容写入 dom ---
  * @param style 样式内容
  * @param taskId 当前任务 ID
+ * @param type 插入的类型
  * @param formId 当前窗体 ID（可空）
  */
-export function pushStyle(style: string, taskId: number, formId: number = 0): void {
-    styleListElement.insertAdjacentHTML("beforeend", `<style class="cg-task${taskId}${formId > 0 ? " cg-form" + formId : ""}">${style}</style>`);
+export function pushStyle(style: string, taskId: number, type: "controls" | "global" | "forms" = "global", formId: number = 0): void {
+    let el = document.querySelector(`#cg-style-task${taskId} > .cg-style-${type}`);
+    if (!el) {
+        return;
+    }
+    if (type === "global") {
+        el.innerHTML = style;
+    } else {
+        el.insertAdjacentHTML("beforeend", `<style class="cg-style-form${formId}">${style}</style>`);
+    }
 }
 
 /**
@@ -178,18 +197,17 @@ export function pushStyle(style: string, taskId: number, formId: number = 0): vo
  * @param formId 要移除的窗体 ID（空的话当前任务样式都会被移除）
  */
 export function removeStyle(taskId: number, formId: number = 0): void {
-    let s: HTMLCollectionOf<Element>;
-    if (formId > 0) {
-        s = document.getElementsByClassName("cg-form" + formId);
-    } else {
-        s = document.getElementsByClassName("cg-task" + taskId);
+    let styleTask = document.getElementById("cg-style-task" + taskId);
+    if (!styleTask) {
+        return;
     }
-    while (true) {
-        let e = s.item(0);
-        if (!e) {
-            break;
+    if (formId === 0) {
+        styleTask.remove();
+    } else {
+        let elist = styleTask.querySelectorAll(".cg-style-form" + formId);
+        for (let i = 0; i < elist.length; ++i) {
+            elist.item(i).remove();
         }
-        styleListElement.removeChild(e);
     }
 }
 
