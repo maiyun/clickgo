@@ -763,9 +763,7 @@ export async function createForm(opt: ICreateFormOptions): Promise<number | IFor
                             this.$data._downStop = false;
                             break;
                         }
-                        if (mounted) {
-                            mounted.call(this);
-                        }
+                        mounted?.call(this);
                     });
                 },
                 "destroyed": destroyed

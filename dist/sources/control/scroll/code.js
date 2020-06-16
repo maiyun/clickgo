@@ -65,6 +65,10 @@ exports.watch = {
                 this.scrollOffsetData = this.maxScroll;
                 this.$emit("update:scrollOffset", this.scrollOffsetData);
             }
+            else if (this.scrollOffsetData < 0) {
+                this.scrollOffsetData = 0;
+                this.$emit("update:scrollOffset", this.scrollOffsetData);
+            }
         },
         "immediate": true
     }
@@ -80,11 +84,7 @@ exports.computed = {
         return this.scrollOffsetData / this.length * 100;
     },
     "maxScroll": function () {
-        var maxScroll = 0;
-        if (this.length > this.client) {
-            maxScroll = this.length - this.client;
-        }
-        return maxScroll;
+        return (this.length > this.client) ? (this.length - this.client) : 0;
     }
 };
 exports.methods = {

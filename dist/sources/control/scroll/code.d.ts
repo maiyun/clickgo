@@ -57,8 +57,8 @@ export declare let computed: {
     maxScroll: (this: IVue) => number;
 };
 export declare let methods: {
-    down: (this: IVue, e: TouchEvent | MouseEvent) => void;
-    bardown: (this: IVue, e: TouchEvent | MouseEvent) => void;
-    longDown: (this: IVue, e: TouchEvent | MouseEvent, type: "start" | "end") => void;
+    down: (this: IVue, e: MouseEvent | TouchEvent) => void;
+    bardown: (this: IVue, e: MouseEvent | TouchEvent) => void;
+    longDown: (this: IVue, e: MouseEvent | TouchEvent, type: "start" | "end") => void;
 };
 export declare let destroyed: (this: IVue) => void;

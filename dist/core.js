@@ -813,9 +813,7 @@ function createForm(opt) {
                                                     this.$data._downStop = false;
                                                     break;
                                                 }
-                                                if (mounted_1) {
-                                                    mounted_1.call(this);
-                                                }
+                                                mounted_1 === null || mounted_1 === void 0 ? void 0 : mounted_1.call(this);
                                             });
                                         },
                                         "destroyed": destroyed_1

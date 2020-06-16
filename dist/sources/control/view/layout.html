@@ -1,5 +1,5 @@
 <div ref="wrap" class="wrap" :style="{'width': width && (width + 'px'), 'height': height && (height + 'px'), 'left': left + 'px', 'top': top + 'px', 'z-index': zIndex, 'flex': flex}" @click="_tap" @mousedown="down" @touchstart="down" @dblclick="_dblclick" @wheel="wheel">
-    <div ref="inner" class="inner" :style="{'width': direction === 'v' ? '100%' : undefined, 'height': direction === 'h' ? '100%' : undefined, 'left': this.direction === 'h' ? scrollOffsetData + 'px' : undefined, 'top': this.direction === 'v' ? scrollOffsetData + 'px' : undefined}">
+    <div ref="inner" class="inner" :style="{'width': direction === 'v' ? '100%' : undefined, 'height': direction === 'h' ? '100%' : undefined, 'left': this.direction === 'h' ? -scrollOffsetData + 'px' : undefined, 'top': this.direction === 'v' ? -scrollOffsetData + 'px' : undefined}">
         <slot>
     </div>
 </div>

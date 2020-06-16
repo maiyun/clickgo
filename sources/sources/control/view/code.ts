@@ -30,8 +30,34 @@ export let data = {
     "_needDown": true,
 
     "scrollOffsetData": 0,
+    "length": 0,
+    "client": 0,
 
+    // --- 惯性 ---
     "timer": false
+};
+
+export let watch = {
+    "direction": function(this: IVue): void {
+        let wrapRect = this.$refs.wrap.getBoundingClientRect();
+        let innerRect = this.$refs.inner.getBoundingClientRect();
+        this.client = this.direction === "v" ? wrapRect.height : wrapRect.width;
+        this.length = this.direction === "v" ? innerRect.height : innerRect.width;
+    },
+    "scrollOffset": {
+        handler: function(this: IVue): void {
+            this.scrollOffsetData = parseInt(this.scrollOffset);
+            this.refreshView();
+        },
+        "immediate": true
+    }
+};
+
+export let computed = {
+    // --- 最大可拖动的 scroll 位置 ---
+    "maxScroll": function(this: IVue): number {
+        return (this.length > this.client) ? Math.round(this.length - this.client) : 0;
+    }
 };
 
 export let methods = {
@@ -41,21 +67,12 @@ export let methods = {
         // --- 屏蔽 touch 时的惯性动画 ---
         this.timer = false;
 
-        let wrapRect = this.$refs.wrap.getBoundingClientRect();
-        let innerRect = this.$refs.inner.getBoundingClientRect();
-        let max = this.direction === "v" ? -innerRect.height + wrapRect.height : -innerRect.width + wrapRect.width;
-
         if (this.direction === "v") {
-            this.scrollOffsetData -= e.deltaY === 0 ? e.deltaX : e.deltaY;
+            this.scrollOffsetData += Math.round(e.deltaY === 0 ? e.deltaX : e.deltaY);
         } else {
-            this.scrollOffsetData -= e.deltaX === 0 ? e.deltaY : e.deltaX;
+            this.scrollOffsetData += Math.round(e.deltaX === 0 ? e.deltaY : e.deltaX);
         }
-        if (this.scrollOffsetData > 0) {
-            this.scrollOffsetData = 0;
-        } else if (this.scrollOffsetData < max) {
-            this.scrollOffsetData = max;
-        }
-        this.$emit("update:scrollOffset", Math.round(Math.abs(this.scrollOffsetData)));
+        this.refreshView();
     },
     down: function(this: IVue, e: MouseEvent | TouchEvent): void {
         if (e instanceof MouseEvent && ClickGo.hasTouch) {
@@ -64,22 +81,19 @@ export let methods = {
         this.timer = false;
 
         let wrapRect = this.$refs.wrap.getBoundingClientRect();
-        let innerRect = this.$refs.inner.getBoundingClientRect();
         /** --- 内容超出像素 --- */
-        let over = this.direction === "v" ? innerRect.height - wrapRect.height : innerRect.width - wrapRect.width;
-        // --- 最大边缘 ---
-        let maxOffset = this.direction === "v" ? -innerRect.height + wrapRect.height : -innerRect.width + wrapRect.width;
+        let over = (this.length > this.client) ? (this.length - this.client) : 0;
         /** --- 最后一次偏移的像素 --- */
         let lastO = 0;
         ClickGo.bindMove(e, {
             "object": this.$refs.inner,
-            "left": this.direction === "v" ? wrapRect.left : wrapRect.left - over,
-            "right": this.direction === "v" ? wrapRect.right : wrapRect.right + over,
-            "top": this.direction === "h" ? wrapRect.top : wrapRect.top - over,
-            "bottom": this.direction === "h" ? wrapRect.top : wrapRect.bottom + over,
+            "left": this.direction === "v" ? wrapRect.left : Math.round(wrapRect.left) - over,
+            "right": this.direction === "v" ? wrapRect.right : Math.round(wrapRect.right) + over,
+            "top": this.direction === "h" ? wrapRect.top : Math.round(wrapRect.top) - over,
+            "bottom": this.direction === "h" ? wrapRect.top : Math.round(wrapRect.bottom) + over,
             "move": (ox, oy) => {
-                this.scrollOffsetData += this.direction === "v" ? oy : ox;
-                this.$emit("update:scrollOffset", Math.round(Math.abs(this.scrollOffsetData)));
+                this.scrollOffsetData -= Math.round(this.direction === "v" ? oy : ox);
+                this.$emit("update:scrollOffset", this.scrollOffsetData);
                 lastO = this.direction === "v" ? oy : ox;
             },
             "end": (time) => {
@@ -102,26 +116,53 @@ export let methods = {
                         this.timer = false;
                         return;
                     }
-                    this.scrollOffsetData += speed;
-                    if (this.scrollOffsetData > 0) {
+                    this.scrollOffsetData -= Math.round(speed);
+                    if (this.scrollOffsetData > this.maxScroll) {
+                        this.timer = false;
+                        this.scrollOffsetData = this.maxScroll;
+                        this.$emit("update:scrollOffset", this.scrollOffsetData);
+                        return;
+                    } else if (this.scrollOffsetData < 0) {
                         this.timer = false;
                         this.scrollOffsetData = 0;
-                        this.$emit("update:scrollOffset", Math.round(Math.abs(this.scrollOffsetData)));
-                        return;
-                    } else if (this.scrollOffsetData < maxOffset) {
-                        this.timer = false;
-                        this.scrollOffsetData = maxOffset;
-                        this.$emit("update:scrollOffset", Math.round(Math.abs(this.scrollOffsetData)));
+                        this.$emit("update:scrollOffset", this.scrollOffsetData);
                         return;
                     }
-                    this.$emit("update:scrollOffset", Math.round(Math.abs(this.scrollOffsetData)));
+                    this.$emit("update:scrollOffset", this.scrollOffsetData);
 
                     this.timer && requestAnimationFrame(animation);
                 };
                 animation();
             }
         });
+    },
+    // --- 重置视图 scrollOffset ---
+    "refreshView": function(this: IVue): void {
+        if (this.scrollOffsetData > this.maxScroll) {
+            this.scrollOffsetData = this.maxScroll;
+        } else if (this.scrollOffsetData < 0) {
+            this.scrollOffsetData = 0;
+        }
+        this.$emit("update:scrollOffset", this.scrollOffsetData);
     }
+};
+
+export let mounted = function(this: IVue): void {
+    let rect = ClickGo.watchSize(this.$refs.wrap, (rect) => {
+        this.client = Math.round(this.direction === "v" ? rect.height : rect.width);
+        this.$emit("resize", this.client);
+        this.refreshView();
+    });
+    this.client = Math.round(this.direction === "v" ? rect.height : rect.width);
+    this.$emit("resize", this.client);
+
+    ClickGo.watchElement(this.$refs.inner, (e) => {
+        this.length = Math.round(this.direction === "v" ? this.$refs.inner.getBoundingClientRect().height : this.$refs.inner.getBoundingClientRect().width);
+        this.$emit("change", this.length);
+        this.refreshView();
+    });
+    this.length = Math.round(this.direction === "v" ? this.$refs.inner.getBoundingClientRect().height : this.$refs.inner.getBoundingClientRect().width);
+    this.$emit("change", this.length);
 };
 
 export let destroyed = function(this: IVue): void {

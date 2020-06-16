@@ -67,6 +67,9 @@ export let watch = {
             if (this.scrollOffsetData > this.maxScroll) {
                 this.scrollOffsetData = this.maxScroll;
                 this.$emit("update:scrollOffset", this.scrollOffsetData);
+            } else if (this.scrollOffsetData < 0) {
+                this.scrollOffsetData = 0;
+                this.$emit("update:scrollOffset", this.scrollOffsetData);
             }
         },
         "immediate": true
@@ -87,11 +90,7 @@ export let computed = {
     },
     // --- 最大可拖动的 scroll 位置 ---
     "maxScroll": function(this: IVue): number {
-        let maxScroll = 0;
-        if (this.length > this.client) {
-            maxScroll = this.length - this.client;
-        }
-        return maxScroll;
+        return (this.length > this.client) ? (this.length - this.client) : 0;
     }
 };
 

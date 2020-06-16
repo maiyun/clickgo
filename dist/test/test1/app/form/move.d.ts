@@ -13,6 +13,6 @@ export declare let data: {
     };
 };
 export declare let methods: {
-    b1Down: (this: IVue, e: TouchEvent | MouseEvent) => void;
-    b2Down: (this: IVue, e: TouchEvent | MouseEvent) => void;
+    b1Down: (this: IVue, e: MouseEvent | TouchEvent) => void;
+    b2Down: (this: IVue, e: MouseEvent | TouchEvent) => void;
 };
