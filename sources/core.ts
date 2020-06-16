@@ -753,11 +753,12 @@ export async function createForm(opt: ICreateFormOptions): Promise<number | IFor
                 "methods": methods,
                 "computed": computed,
                 "watch": watch,
-                "mounted": function() {
+                "mounted": function(this: IVue): void {
                     this.$nextTick(function(this: IVue) {
-                        while (this.$parent) {
-                            if (this.$parent.$data._needDown !== true) {
-                                this.$parent = this.$parent.$parent;
+                        let parent = this.$parent;
+                        while (parent) {
+                            if (parent.$data._needDown !== true) {
+                                parent = parent.$parent;
                                 continue;
                             }
                             this.$data._downStop = false;
@@ -983,7 +984,7 @@ export async function createForm(opt: ICreateFormOptions): Promise<number | IFor
         });
     });
     if (!$vm) {
-        return -105;
+        return -106;
     }
     // --- 全局事件来遍历执行的响应 ---
     $vm.eventList = {};
@@ -996,7 +997,7 @@ export async function createForm(opt: ICreateFormOptions): Promise<number | IFor
         // --- 窗体的 style ---
         Tool.pushStyle(style, opt.taskId, formId);
     }
-    // --- 将窗体居中 ---]
+    // --- 将窗体居中 ---
     if (!$vm.$children[0].stateMaxData) {
         if ($vm.$children[0].left === -1) {
             $vm.$children[0].setPropData("left", (ClickGo.getWidth() - $vm.$el.offsetWidth) / 2);
@@ -1012,7 +1013,7 @@ export async function createForm(opt: ICreateFormOptions): Promise<number | IFor
     if (mounted) {
         try {
             mounted.call($vm);
-        } catch(err) {
+        } catch (err) {
             formListElement.removeChild($vm.$el);
             Tool.removeStyle($vm.taskId, $vm.formId);
             if (ClickGo.errorHandler) {
@@ -1043,7 +1044,7 @@ export async function createForm(opt: ICreateFormOptions): Promise<number | IFor
         $vm.$destroy();
         Tool.removeStyle(opt.taskId, formId);
         formListElement.removeChild($vm.$el);
-        return -106;
+        return -107;
     }
     ClickGo.taskList[opt.taskId].formList[formId] = form;
     // --- 触发 formCreated 事件 ---

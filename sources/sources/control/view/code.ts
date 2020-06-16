@@ -68,9 +68,9 @@ export let methods = {
         this.timer = false;
 
         if (this.direction === "v") {
-            this.scrollOffsetData += Math.round(e.deltaY === 0 ? e.deltaX : e.deltaY);
+            this.scrollOffsetData += e.deltaY === 0 ? e.deltaX : e.deltaY;
         } else {
-            this.scrollOffsetData += Math.round(e.deltaX === 0 ? e.deltaY : e.deltaX);
+            this.scrollOffsetData += e.deltaX === 0 ? e.deltaY : e.deltaX;
         }
         this.refreshView();
     },
@@ -87,13 +87,13 @@ export let methods = {
         let lastO = 0;
         ClickGo.bindMove(e, {
             "object": this.$refs.inner,
-            "left": this.direction === "v" ? wrapRect.left : Math.round(wrapRect.left) - over,
-            "right": this.direction === "v" ? wrapRect.right : Math.round(wrapRect.right) + over,
-            "top": this.direction === "h" ? wrapRect.top : Math.round(wrapRect.top) - over,
-            "bottom": this.direction === "h" ? wrapRect.top : Math.round(wrapRect.bottom) + over,
+            "left": this.direction === "v" ? wrapRect.left : wrapRect.left - over,
+            "right": this.direction === "v" ? wrapRect.right : wrapRect.right + over,
+            "top": this.direction === "h" ? wrapRect.top : wrapRect.top - over,
+            "bottom": this.direction === "h" ? wrapRect.top : wrapRect.bottom + over,
             "move": (ox, oy) => {
-                this.scrollOffsetData -= Math.round(this.direction === "v" ? oy : ox);
-                this.$emit("update:scrollOffset", this.scrollOffsetData);
+                this.scrollOffsetData -= this.direction === "v" ? oy : ox;
+                this.$emit("update:scrollOffset", Math.round(this.scrollOffsetData));
                 lastO = this.direction === "v" ? oy : ox;
             },
             "end": (time) => {
@@ -116,19 +116,19 @@ export let methods = {
                         this.timer = false;
                         return;
                     }
-                    this.scrollOffsetData -= Math.round(speed);
+                    this.scrollOffsetData -= speed;
                     if (this.scrollOffsetData > this.maxScroll) {
                         this.timer = false;
                         this.scrollOffsetData = this.maxScroll;
-                        this.$emit("update:scrollOffset", this.scrollOffsetData);
+                        this.$emit("update:scrollOffset", Math.round(this.scrollOffsetData));
                         return;
                     } else if (this.scrollOffsetData < 0) {
                         this.timer = false;
                         this.scrollOffsetData = 0;
-                        this.$emit("update:scrollOffset", this.scrollOffsetData);
+                        this.$emit("update:scrollOffset", Math.round(this.scrollOffsetData));
                         return;
                     }
-                    this.$emit("update:scrollOffset", this.scrollOffsetData);
+                    this.$emit("update:scrollOffset", Math.round(this.scrollOffsetData));
 
                     this.timer && requestAnimationFrame(animation);
                 };
@@ -149,20 +149,20 @@ export let methods = {
 
 export let mounted = function(this: IVue): void {
     let rect = ClickGo.watchSize(this.$refs.wrap, (rect) => {
-        this.client = Math.round(this.direction === "v" ? rect.height : rect.width);
-        this.$emit("resize", this.client);
+        this.client = this.direction === "v" ? rect.height : rect.width;
+        this.$emit("resize", Math.round(this.client));
         this.refreshView();
     });
-    this.client = Math.round(this.direction === "v" ? rect.height : rect.width);
-    this.$emit("resize", this.client);
+    this.client = this.direction === "v" ? rect.height : rect.width;
+    this.$emit("resize", Math.round(this.client));
 
     ClickGo.watchElement(this.$refs.inner, (e) => {
-        this.length = Math.round(this.direction === "v" ? this.$refs.inner.getBoundingClientRect().height : this.$refs.inner.getBoundingClientRect().width);
-        this.$emit("change", this.length);
+        this.length = this.direction === "v" ? this.$refs.inner.getBoundingClientRect().height : this.$refs.inner.getBoundingClientRect().width;
+        this.$emit("change", Math.round(this.length));
         this.refreshView();
     });
-    this.length = Math.round(this.direction === "v" ? this.$refs.inner.getBoundingClientRect().height : this.$refs.inner.getBoundingClientRect().width);
-    this.$emit("change", this.length);
+    this.length = this.direction === "v" ? this.$refs.inner.getBoundingClientRect().height : this.$refs.inner.getBoundingClientRect().width;
+    this.$emit("change", Math.round(this.length));
 };
 
 export let destroyed = function(this: IVue): void {

@@ -15,6 +15,7 @@ ClickGo.onReady(async function() {
         if (!el) {
             return;
         }
+        console.log(info, error);
         let err = document.getElementById("err") as HTMLElement;
         err.style.display = "block";
         err.innerHTML = "Error, Task ID: " + taskId + ", Form ID: " + formId + "<br>" + error.stack.replace(/\n/g, "<br>");

@@ -805,9 +805,10 @@ function createForm(opt) {
                                         "watch": watch_1,
                                         "mounted": function () {
                                             this.$nextTick(function () {
-                                                while (this.$parent) {
-                                                    if (this.$parent.$data._needDown !== true) {
-                                                        this.$parent = this.$parent.$parent;
+                                                var parent = this.$parent;
+                                                while (parent) {
+                                                    if (parent.$data._needDown !== true) {
+                                                        parent = parent.$parent;
                                                         continue;
                                                     }
                                                     this.$data._downStop = false;
@@ -1104,7 +1105,7 @@ function createForm(opt) {
                 case 16:
                     $vm = _h.sent();
                     if (!$vm) {
-                        return [2, -105];
+                        return [2, -106];
                     }
                     $vm.eventList = {};
                     if (formStyle !== "") {
@@ -1158,7 +1159,7 @@ function createForm(opt) {
                         $vm.$destroy();
                         Tool.removeStyle(opt.taskId, formId);
                         formListElement.removeChild($vm.$el);
-                        return [2, -106];
+                        return [2, -107];
                     }
                     ClickGo.taskList[opt.taskId].formList[formId] = form;
                     trigger("formCreated", opt.taskId, formId, { "title": $vm.$children[0].title, "icon": $vm.$children[0].iconData });

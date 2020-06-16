@@ -56,6 +56,7 @@ ClickGo.onReady(function () {
                         if (!el) {
                             return;
                         }
+                        console.log(info, error);
                         var err = document.getElementById("err");
                         err.style.display = "block";
                         err.innerHTML = "Error, Task ID: " + taskId + ", Form ID: " + formId + "<br>" + error.stack.replace(/\n/g, "<br>");
