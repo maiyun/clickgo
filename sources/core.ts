@@ -65,9 +65,13 @@ let lostFocusEvent = function(e: MouseEvent | TouchEvent): void {
             hidePop();
             return;
         }
+        if (element.classList.contains("cg-pop-list") || element.classList.contains("cg-pop-open")) {
+            // --- 弹出层点击，不触发丢失焦点，也不触发隐藏 pop，是否隐藏请自行处理 ---
+            return;
+        }
         element = element.parentElement;
     }
-    // --- 肯定不可能是 pop，因为 pop 的事件都 stopPropagation 了，所以就是普罗大众的状态，要隐藏 menu，并且丢失窗体焦点 ---
+    // --- 普罗大众的状态，要隐藏 menu，并且丢失窗体焦点 ---
     hidePop();
     Tool.changeFormFocus();
 };
@@ -671,38 +675,18 @@ export async function createForm(opt: ICreateFormOptions): Promise<number | IFor
             data.formId = formId;
             data._scope = rand;
             data._controlName = name;
-            data._downStop = true;
-            data._needDown = data._needDown === undefined ? false : data._needDown;
             // --- 预设 methods ---
+            methods.stopPropagation = function(this: IVue, e: MouseEvent | TouchEvent) {
+                if (e instanceof MouseEvent && ClickGo.hasTouch) {
+                    return;
+                }
+                e.stopPropagation();
+                Tool.changeFormFocus(this.formId);
+            },
             methods._down = function(this: IVue, e: MouseEvent | TouchEvent) {
                 if (e instanceof MouseEvent && ClickGo.hasTouch) {
                     return;
                 }
-                if (this.$data._downStop) {
-                    e.stopPropagation();
-                }
-                // --- 控制 pop 隐藏 ---
-                let noHidePop = false;
-                if (this.$el.classList.contains("cg-pop-open")) {
-                    noHidePop = true;
-                } else {
-                    let element: HTMLElement | null = this.$el.parentElement;
-                    while (element) {
-                        if (element.classList.contains("cg-form-list")) {
-                            break;
-                        }
-                        if (element.classList.contains("cg-pop-list")) {
-                            noHidePop = true;
-                            break;
-                        }
-                        element = element.parentElement;
-                    }
-                }
-                if (!noHidePop) {
-                    hidePop();
-                }
-                // --- 控制窗体焦点 ---
-                Tool.changeFormFocus(formId);
                 // --- 触发自定义 down 事件 ---
                 this.$emit("down", event);
             };
@@ -738,13 +722,6 @@ export async function createForm(opt: ICreateFormOptions): Promise<number | IFor
                 }
                 return `cg-theme-global-${this.$data._controlName}_${cla} cg-theme-task${this.taskId}-${this.$data._controlName}_${cla} ${this.$data._scope}${cla}`;
             };
-            // --- 对子空间的 down 事件进行索取 ---
-            methods._subDownStop = function(this: IVue, b: boolean = false): void {
-                for (let sub of this.$children) {
-                    sub.$data._downStop = false;
-                    sub._subDownStop(b);
-                }
-            };
             // --- 组成 component ---
             components["cg-" + name] = {
                 "template": layout,
@@ -757,15 +734,6 @@ export async function createForm(opt: ICreateFormOptions): Promise<number | IFor
                 "watch": watch,
                 "mounted": function(this: IVue): void {
                     this.$nextTick(function(this: IVue) {
-                        let parent = this.$parent;
-                        while (parent) {
-                            if (parent.$data._needDown !== true) {
-                                parent = parent.$parent;
-                                continue;
-                            }
-                            this.$data._downStop = false;
-                            break;
-                        }
                         mounted?.call(this);
                     });
                 },

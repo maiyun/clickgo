@@ -83,6 +83,9 @@ var lostFocusEvent = function (e) {
             hidePop();
             return;
         }
+        if (element.classList.contains("cg-pop-list") || element.classList.contains("cg-pop-open")) {
+            return;
+        }
         element = element.parentElement;
     }
     hidePop();
@@ -709,38 +712,19 @@ function createForm(opt) {
                                     data_1.formId = formId;
                                     data_1._scope = rand_1;
                                     data_1._controlName = name_1;
-                                    data_1._downStop = true;
-                                    data_1._needDown = data_1._needDown === undefined ? false : data_1._needDown;
-                                    methods_1._down = function (e) {
+                                    methods_1.stopPropagation = function (e) {
                                         if (e instanceof MouseEvent && ClickGo.hasTouch) {
                                             return;
                                         }
-                                        if (this.$data._downStop) {
-                                            e.stopPropagation();
-                                        }
-                                        var noHidePop = false;
-                                        if (this.$el.classList.contains("cg-pop-open")) {
-                                            noHidePop = true;
-                                        }
-                                        else {
-                                            var element = this.$el.parentElement;
-                                            while (element) {
-                                                if (element.classList.contains("cg-form-list")) {
-                                                    break;
-                                                }
-                                                if (element.classList.contains("cg-pop-list")) {
-                                                    noHidePop = true;
-                                                    break;
-                                                }
-                                                element = element.parentElement;
+                                        e.stopPropagation();
+                                        Tool.changeFormFocus(this.formId);
+                                    },
+                                        methods_1._down = function (e) {
+                                            if (e instanceof MouseEvent && ClickGo.hasTouch) {
+                                                return;
                                             }
-                                        }
-                                        if (!noHidePop) {
-                                            hidePop();
-                                        }
-                                        Tool.changeFormFocus(formId);
-                                        this.$emit("down", event);
-                                    };
+                                            this.$emit("down", event);
+                                        };
                                     methods_1._tap = function (e) {
                                         e.stopPropagation();
                                         if (this.$el.className.indexOf("cg-disabled") !== -1) {
@@ -788,14 +772,6 @@ function createForm(opt) {
                                         }
                                         return "cg-theme-global-" + this.$data._controlName + "_" + cla + " cg-theme-task" + this.taskId + "-" + this.$data._controlName + "_" + cla + " " + this.$data._scope + cla;
                                     };
-                                    methods_1._subDownStop = function (b) {
-                                        if (b === void 0) { b = false; }
-                                        for (var _i = 0, _a = this.$children; _i < _a.length; _i++) {
-                                            var sub = _a[_i];
-                                            sub.$data._downStop = false;
-                                            sub._subDownStop(b);
-                                        }
-                                    };
                                     components["cg-" + name_1] = {
                                         "template": layout_1,
                                         "props": props,
@@ -807,15 +783,6 @@ function createForm(opt) {
                                         "watch": watch_1,
                                         "mounted": function () {
                                             this.$nextTick(function () {
-                                                var parent = this.$parent;
-                                                while (parent) {
-                                                    if (parent.$data._needDown !== true) {
-                                                        parent = parent.$parent;
-                                                        continue;
-                                                    }
-                                                    this.$data._downStop = false;
-                                                    break;
-                                                }
                                                 mounted_1 === null || mounted_1 === void 0 ? void 0 : mounted_1.call(this);
                                             });
                                         },

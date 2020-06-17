@@ -35,5 +35,12 @@ exports.methods = {
             return;
         }
         this.$emit("tap");
+    },
+    down: function (e) {
+        if (e instanceof MouseEvent && ClickGo.hasTouch) {
+            return;
+        }
+        this.stopPropagation(e);
+        this._down();
     }
 };

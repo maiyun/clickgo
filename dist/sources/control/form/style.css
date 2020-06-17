@@ -4,7 +4,7 @@
 }
 
 .wrap {
-    position: absolute; border: solid 1px rgba(0, 0, 0, .3); box-shadow: 0 0 10px rgba(0, 0, 0, .5); color: #999; display: flex;
+    position: absolute; border: solid 1px rgba(0, 0, 0, .3); box-shadow: 0 0 10px rgba(0, 0, 0, .5); color: #999; display: flex; left: 0; top: 0;
 }
 .wrap.cg-focus {
     border: solid 1px rgba(0, 0, 0, .7); box-shadow: 0 0 15px rgba(0, 0, 0, .5); color: #000;

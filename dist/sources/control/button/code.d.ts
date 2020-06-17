@@ -29,4 +29,5 @@ export declare let props: {
 };
 export declare let methods: {
     keydown: (this: IVue, e: KeyboardEvent) => void;
+    down: (this: IVue, e: MouseEvent | TouchEvent) => void;
 };
