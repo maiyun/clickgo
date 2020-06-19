@@ -1,15 +1,9 @@
 export declare let props: {
-    disabled: {
-        default: boolean;
-    };
-    focus: {
-        default: boolean;
-    };
     width: {
         default: undefined;
     };
     height: {
-        default: number;
+        default: undefined;
     };
     left: {
         default: number;
@@ -23,8 +17,11 @@ export declare let props: {
     flex: {
         default: string;
     };
-    padding: {
-        default: undefined;
+    direction: {
+        default: string;
+    };
+    scrollOffset: {
+        default: number;
     };
 };
 export declare let data: {
@@ -34,7 +31,13 @@ export declare let computed: {
     widthPx: (this: IVue) => string | undefined;
     heightPx: (this: IVue) => string | undefined;
 };
-export declare let methods: {
-    keydown: (this: IVue, e: KeyboardEvent) => void;
-    down: (this: IVue, e: TouchEvent | MouseEvent) => void;
+export declare let watch: {
+    scrollOffset: {
+        handler: (this: IVue) => void;
+    };
 };
+export declare let methods: {
+    scroll: (this: IVue) => void;
+    wheel: (this: IVue, e: WheelEvent) => void;
+};
+export declare let mounted: (this: IVue) => void;

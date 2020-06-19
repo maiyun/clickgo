@@ -37,7 +37,9 @@ export let props = {
 };
 
 export let data = {
-    "valueData": ""
+    "valueData": "",
+
+    "_direction": undefined
 };
 
 export let watch = {
@@ -46,6 +48,25 @@ export let watch = {
             this.valueData = this.value ?? "";
         },
         "immediate": true
+    }
+};
+
+export let computed = {
+    "widthPx": function(this: IVue): string | undefined {
+        if (this.width !== undefined) {
+            return this.width + "px";
+        }
+        if (this.flex !== "") {
+            return this.$data._direction ? (this.$data._direction === "v" ? undefined : "0") : undefined;
+        }
+    },
+    "heightPx": function(this: IVue): string | undefined {
+        if (this.height !== undefined) {
+            return this.height + "px";
+        }
+        if (this.flex !== "") {
+            return this.$data._direction ? (this.$data._direction === "v" ? "0" : undefined) : undefined;
+        }
     }
 };
 

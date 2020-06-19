@@ -58,7 +58,12 @@ let lostFocusEvent = function(e: MouseEvent | TouchEvent): void {
     if (!target) {
         return;
     }
-    let element: HTMLElement | null = (target as HTMLElement).parentElement;
+    let element: HTMLElement | null = target as HTMLElement;
+    if (element.classList.contains("cg-pop-open")) {
+        // --- 被夸嚓打开的父组件，也不做处理 ---
+        return;
+    }
+    element = element.parentElement;
     while (element) {
         if (element.classList.contains("cg-form-list")) {
             // --- 窗体内部点击，不触发丢失焦点，但触发隐藏 pop ---
@@ -98,14 +103,14 @@ export function showCircular(x: number, y: number): void {
     circularElement.style.left = x - 3 + "px";
     circularElement.style.top = y - 3 + "px";
     circularElement.style.opacity = "1";
-    setTimeout(function() {
+    requestAnimationFrame(function() {
         circularElement.style.transition = "all .3s ease-out";
         circularElement.style.width = "60px";
         circularElement.style.height = "60px";
         circularElement.style.left = x - 30 + "px";
         circularElement.style.top = y - 30 + "px";
         circularElement.style.opacity = "0";
-    }, 10);
+    });
 }
 
 // --- 从鼠标指针处开始从小到大缩放并铺满屏幕（或半个屏幕）的对象 ---
@@ -129,11 +134,11 @@ export function showRectangle(x: number, y: number, pos: TBorderDir): void {
     rectangleElement.style.opacity = "1";
     rectangleElement.setAttribute("data-ready", "0");
     rectangleElement.setAttribute("data-dir", "");
-    setTimeout(function() {
+    requestAnimationFrame(function() {
         rectangleElement.style.transition = "all .2s ease-out";
         rectangleElement.setAttribute("data-ready", "1");
         moveRectangle(pos);
-    }, 10);
+    });
 }
 
 /**
@@ -682,6 +687,7 @@ export async function createForm(opt: ICreateFormOptions): Promise<number | IFor
                 }
                 e.stopPropagation();
                 Tool.changeFormFocus(this.formId);
+                lostFocusEvent(e);
             },
             methods._down = function(this: IVue, e: MouseEvent | TouchEvent) {
                 if (e instanceof MouseEvent && ClickGo.hasTouch) {
@@ -1102,7 +1108,7 @@ export function endTask(taskId: number): boolean {
  * @param el 要监视的大小
  * @param cb 回调函数
  */
-export function watchSize(el: HTMLElement, cb: (rect: DOMRect) => void): DOMRect {
+export function watchSize(el: HTMLElement, cb: (rect: IDomRect) => void): IDomRect {
     let rect = el.getBoundingClientRect();
     for (let item of ClickGo._watchSize) {
         if (item.el === el) {
@@ -1218,7 +1224,7 @@ export function bindDown(oe: MouseEvent | TouchEvent, opt: { "down"?: (e: MouseE
  * @param e mousedown 或 touchstart 的 event
  * @param opt 回调选项
  */
-export function bindMove(e: MouseEvent | TouchEvent, opt: { "left"?: number; "top"?: number; "right"?: number; "bottom"?: number; "offsetLeft"?: number; "offsetTop"?: number; "offsetRight"?: number; "offsetBottom"?: number; "objectLeft"?: number; "objectTop"?: number; "objectWidth"?: number; "objectHeight"?: number; "object"?: HTMLElement | IVue; "offsetObject"?: HTMLElement | IVue; "showRect"?: boolean; "start"?: (x: number, y: number) => void | boolean; "move"?: (ox: number, oy: number, x: number, y: number, border: TBorderDir) => void; "up"?: () => void; "end"?: (time: number) => void; "borderIn"?: (x: number, y: number, border: TBorderDir) => void; "borderOut"?: () => void; }): { "left": number; "top": number; "right": number; "bottom": number; } {
+export function bindMove(e: MouseEvent | TouchEvent, opt: { "left"?: number; "top"?: number; "right"?: number; "bottom"?: number; "offsetLeft"?: number; "offsetTop"?: number; "offsetRight"?: number; "offsetBottom"?: number; "objectLeft"?: number; "objectTop"?: number; "objectWidth"?: number; "objectHeight"?: number; "object"?: HTMLElement | IVue; "offsetObject"?: HTMLElement | IVue; "showRect"?: boolean; "start"?: (x: number, y: number) => void | boolean; "move"?: (ox: number, oy: number, x: number, y: number, border: TBorderDir) => void; "up"?: () => void; "end"?: (moveTimes: Array<Record<number, [number, number]>>) => void; "borderIn"?: (x: number, y: number, border: TBorderDir) => void; "borderOut"?: () => void; }): { "left": number; "top": number; "right": number; "bottom": number; } {
     setGlobalCursor(getComputedStyle(e.target as Element).cursor);
     /** --- 上一次的坐标 --- */
     let tx: number, ty: number;
@@ -1242,7 +1248,6 @@ export function bindMove(e: MouseEvent | TouchEvent, opt: { "left"?: number; "to
         top = rect.top + opt.offsetObject.clientTop + parseFloat(sd.paddingTop);
         right = rect.left + rect.width - (parseFloat(sd.borderRightWidth) + parseFloat(sd.paddingRight));
         bottom = rect.top + rect.height - (parseFloat(sd.borderRightWidth) + parseFloat(sd.paddingRight));
-        // document.getElementsByTagName("body")[0].insertAdjacentHTML("beforeend", `<div style="position: fixed; background-color: red; z-index: 9999999999; left: ${left}px; top: ${top}px; width: ${right - left}px; height: ${bottom - top}px;"></div>`);
     } else {
         left = opt.left ?? ClickGo.getLeft();
         top = opt.top ?? ClickGo.getTop();
@@ -1273,8 +1278,8 @@ export function bindMove(e: MouseEvent | TouchEvent, opt: { "left"?: number; "to
     let offsetRight = 0;
     let offsetBottom = 0;
 
-    /** --- 上一次的 move 事件触发时间 --- */
-    let moveTime: number[] = [];
+    /** --- 每次拖动时的时间以及偏移 --- */
+    let moveTime: Array<{ "time": number; "ox": number; "oy": number; }> = [];
 
     ClickGo.bindDown(e, {
         start: () => {
@@ -1446,12 +1451,15 @@ export function bindMove(e: MouseEvent | TouchEvent, opt: { "left"?: number; "to
                 }
             }
 
-            moveTime.push(Date.now());
-            if (moveTime.length > 2) {
-                moveTime.splice(0, 1);
-            }
+            let ox = x - tx;
+            let oy = y - ty;
+            moveTime.push({
+                "time": Date.now(),
+                "ox": ox,
+                "oy": oy
+            });
 
-            opt.move && opt.move(x - tx, y - ty, x, y, border);
+            opt.move && opt.move(ox, oy, x, y, border);
             tx = x;
             ty = y;
         },
@@ -1460,7 +1468,7 @@ export function bindMove(e: MouseEvent | TouchEvent, opt: { "left"?: number; "to
             opt.up && opt.up();
         },
         end: () => {
-            opt.end && opt.end(moveTime[0] || 0);
+            opt.end && opt.end(moveTime);
         }
     });
 

@@ -15,9 +15,9 @@ export let mounted = function(this: IVue): void {
     });
     this.bc = scrollRect.height;
 
-    ClickGo.watchElement(this.$refs.bodyLayout.$el, (e) => {
-        this.bl = this.$refs.bodyLayout.$el.getBoundingClientRect().height;
+    let bodyRect = ClickGo.watchSize(this.$refs.bodyLayout.$el, (rect) => {
+        this.bl = rect.height;
     });
-    this.bl = this.$refs.bodyLayout.$el.getBoundingClientRect().height;
+    this.bl = bodyRect.height;
 };
 

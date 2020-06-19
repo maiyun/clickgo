@@ -1,20 +1,20 @@
-<form width="400" min-width="300" height="400" min-height="400" title="View Test" padding="20">
+<form width="400" min-width="300" height="400" min-height="400" title="Overflow Test" padding="20">
     <layout gutter="10" direction="v">
         <layout gutter="10">
-            <view :scroll-offset.sync="so" style="background: #FFF;" flex="1" @resize="c = arguments[0]" @change="l = arguments[0]" :style="{'line-height': style ? '1.5' : undefined}" :padding="style ? '10' : undefined">
+            <overflow :scroll-offset.sync="so" style="background: #FFF;" flex="1" @resize="c = arguments[0]" @change="l = arguments[0]" :style="{'padding': style ? '10px' : undefined, 'line-height': style ? '1.5' : undefined}">
                 <block v-for="line of lineCount" style="padding: 2px 0;">Line {{line}}.</block>
-            </view>
+            </overflow>
             <layout style="background: #FFF;">
-                <view :scroll-offset.sync="so3" flex="1" @resize="c3 = arguments[0]" @change="l3 = arguments[0]" :style="{'line-height': style ? '1.5' : undefined}" :padding="style ? '10' : undefined">
+                <overflow :scroll-offset.sync="so3" flex="1" @resize="c3 = arguments[0]" @change="l3 = arguments[0]" :style="{'padding': style ? '10px' : undefined, 'line-height': style ? '1.5' : undefined}">
                     <block v-for="line of lineCount" style="padding: 2px 0;">Line {{line}}.</block>
-                </view>
+                </overflow>
                 <scroll width="20" :length="l3" :client="c3" :scroll-offset.sync="so3"></scroll>
             </layout>
         </layout>
         <label>Scroll offset: {{so}}, Length: {{l}}, Client: {{c}}.</label>
-        <view :scroll-offset.sync="so2" style="background: #FFF;" flex="1" direction="h" @resize="c2 = arguments[0]" @change="l2 = arguments[0]" :style="{'line-height': style ? '1.5' : undefined}" :padding="style ? '10' : undefined">
+        <overflow :scroll-offset.sync="so2" style="background: #FFF;" flex="1" direction="h" @resize="c2 = arguments[0]" @change="l2 = arguments[0]" :style="{'padding': style ? '10px' : undefined, 'line-height': style ? '1.5' : undefined}">
             <layout v-for="line of lineCount" flex="" align-v="center" style="padding: 0 5px; border-right: 1px solid rgba(0, 0, 0, .1); display: inline-block; height: 100%;">Col {{line}}.</layout>
-        </view>
+        </overflow>
         <label>Scroll offset: {{so2}}, Length: {{l2}}, Client: {{c2}}.</label>
         <layout gutter="10" flex="">
             <button @tap="lineCount += 10" padding="0 10" flex="1">Add 10 lines</button>

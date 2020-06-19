@@ -46,16 +46,24 @@ function requestAnimationFrameCb() {
     for (var i = 0; i < ClickGo._watchSize.length; ++i) {
         var item = ClickGo._watchSize[i];
         var rect = item.el.getBoundingClientRect();
-        if (rect.left === 0 && rect.top === 0 && rect.width === 0 && rect.height === 0) {
+        var trect = {
+            "bottom": Math.round(rect.bottom),
+            "height": Math.round(rect.height),
+            "left": Math.round(rect.left),
+            "right": Math.round(rect.right),
+            "top": Math.round(rect.top),
+            "width": Math.round(rect.width)
+        };
+        if (trect.left === 0 && trect.top === 0 && trect.width === 0 && trect.height === 0) {
             if (getComputedStyle(item.el).display === "") {
                 ClickGo._watchSize.splice(i, 1);
                 --i;
             }
             continue;
         }
-        if (rect.width !== item.rect.width || rect.height !== item.rect.height) {
-            item.cb(rect);
-            item.rect = rect;
+        if (trect.width !== item.rect.width || trect.height !== item.rect.height) {
+            item.cb(trect);
+            item.rect = trect;
         }
     }
     requestAnimationFrame(requestAnimationFrameCb);

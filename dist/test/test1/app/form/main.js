@@ -68,6 +68,9 @@ exports.methods = {
     openView: function () {
         this.createForm("/form/view");
     },
+    openOverflow: function () {
+        this.createForm("/form/overflow");
+    },
     runTaskmgr: function () {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {

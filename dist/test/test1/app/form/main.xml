@@ -1,16 +1,19 @@
 <form :width.sync="width" :height.sync="height" title="Test program" icon="/res/icon.svg">
-    <layout class="layout" direction="v" gutter="10">
-        <label>focus: {{focus}}</label>
-        <button :disabled="true">Disabled button</button>
-        <button @tap="openOnlyClose">Open only close button form</button>
-        <button @tap="openThin">Open thin form</button>
-        <button @tap="openBorderNone">Open border none form</button>
-        <button @tap="openAero">Open Aero form (CSS)</button>
-        <button @tap="openMax">Open default max form</button>
-        <button @tap="openMove">Open test bindMove form</button>
-        <button @tap="openScroll">Open ScrollBar form</button>
-        <button @tap="openView">Open View form</button>
-        <button @tap="runTaskmgr">Run "Task manager" app</button>
-        <button @tap="openError">Open has an error form</button>
-    </layout>
+    <overflow>
+        <layout class="layout" direction="v" gutter="10">
+            <label>focus: {{focus}}</label>
+            <button :disabled="true">Disabled button</button>
+            <button @tap="openOnlyClose">Open only close button form</button>
+            <button @tap="openThin">Open thin form</button>
+            <button @tap="openBorderNone">Open border none form</button>
+            <button @tap="openAero">Open Aero form (CSS)</button>
+            <button @tap="openMax">Open default max form</button>
+            <button @tap="openMove">Open test bindMove form</button>
+            <button @tap="openScroll">Open ScrollBar form</button>
+            <button @tap="openView">Open View form</button>
+             <button @tap="openOverflow">Open Overflow form</button>
+            <button @tap="runTaskmgr">Run "Task manager" app</button>
+            <button @tap="openError">Open has an error form</button>
+        </layout>
+    </overflow>
 </form>

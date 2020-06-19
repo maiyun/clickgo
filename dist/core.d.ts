@@ -28,7 +28,7 @@ export declare function runApp(path: string | IAppPkg, opt?: {
 export declare function createForm(opt: ICreateFormOptions): Promise<number | IForm>;
 export declare function removeForm(formId: number): boolean;
 export declare function endTask(taskId: number): boolean;
-export declare function watchSize(el: HTMLElement, cb: (rect: DOMRect) => void): DOMRect;
+export declare function watchSize(el: HTMLElement, cb: (rect: IDomRect) => void): IDomRect;
 export declare function watchElement(el: HTMLElement, cb: MutationCallback): MutationObserver;
 export declare function bindDown(oe: MouseEvent | TouchEvent, opt: {
     "down"?: (e: MouseEvent | TouchEvent) => void;
@@ -56,7 +56,7 @@ export declare function bindMove(e: MouseEvent | TouchEvent, opt: {
     "start"?: (x: number, y: number) => void | boolean;
     "move"?: (ox: number, oy: number, x: number, y: number, border: TBorderDir) => void;
     "up"?: () => void;
-    "end"?: (time: number) => void;
+    "end"?: (moveTimes: Array<Record<number, [number, number]>>) => void;
     "borderIn"?: (x: number, y: number, border: TBorderDir) => void;
     "borderOut"?: () => void;
 }): {

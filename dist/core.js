@@ -77,7 +77,11 @@ var lostFocusEvent = function (e) {
     if (!target) {
         return;
     }
-    var element = target.parentElement;
+    var element = target;
+    if (element.classList.contains("cg-pop-open")) {
+        return;
+    }
+    element = element.parentElement;
     while (element) {
         if (element.classList.contains("cg-form-list")) {
             hidePop();
@@ -108,14 +112,14 @@ function showCircular(x, y) {
     circularElement.style.left = x - 3 + "px";
     circularElement.style.top = y - 3 + "px";
     circularElement.style.opacity = "1";
-    setTimeout(function () {
+    requestAnimationFrame(function () {
         circularElement.style.transition = "all .3s ease-out";
         circularElement.style.width = "60px";
         circularElement.style.height = "60px";
         circularElement.style.left = x - 30 + "px";
         circularElement.style.top = y - 30 + "px";
         circularElement.style.opacity = "0";
-    }, 10);
+    });
 }
 exports.showCircular = showCircular;
 var rectangleElement = document.createElement("div");
@@ -132,11 +136,11 @@ function showRectangle(x, y, pos) {
     rectangleElement.style.opacity = "1";
     rectangleElement.setAttribute("data-ready", "0");
     rectangleElement.setAttribute("data-dir", "");
-    setTimeout(function () {
+    requestAnimationFrame(function () {
         rectangleElement.style.transition = "all .2s ease-out";
         rectangleElement.setAttribute("data-ready", "1");
         moveRectangle(pos);
-    }, 10);
+    });
 }
 exports.showRectangle = showRectangle;
 function moveRectangle(dir) {
@@ -718,6 +722,7 @@ function createForm(opt) {
                                         }
                                         e.stopPropagation();
                                         Tool.changeFormFocus(this.formId);
+                                        lostFocusEvent(e);
                                     },
                                         methods_1._down = function (e) {
                                             if (e instanceof MouseEvent && ClickGo.hasTouch) {
@@ -1522,11 +1527,14 @@ function bindMove(e, opt) {
                     opt.borderOut && opt.borderOut();
                 }
             }
-            moveTime.push(Date.now());
-            if (moveTime.length > 2) {
-                moveTime.splice(0, 1);
-            }
-            opt.move && opt.move(x - tx, y - ty, x, y, border);
+            var ox = x - tx;
+            var oy = y - ty;
+            moveTime.push({
+                "time": Date.now(),
+                "ox": ox,
+                "oy": oy
+            });
+            opt.move && opt.move(ox, oy, x, y, border);
             tx = x;
             ty = y;
         },
@@ -1535,7 +1543,7 @@ function bindMove(e, opt) {
             opt.up && opt.up();
         },
         end: function () {
-            opt.end && opt.end(moveTime[0] || 0);
+            opt.end && opt.end(moveTime);
         }
     });
     if (opt.showRect) {

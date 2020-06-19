@@ -15,8 +15,8 @@ exports.mounted = function () {
         _this.bc = rect.height;
     });
     this.bc = scrollRect.height;
-    ClickGo.watchElement(this.$refs.bodyLayout.$el, function (e) {
-        _this.bl = _this.$refs.bodyLayout.$el.getBoundingClientRect().height;
+    var bodyRect = ClickGo.watchSize(this.$refs.bodyLayout.$el, function (rect) {
+        _this.bl = rect.height;
     });
-    this.bl = this.$refs.bodyLayout.$el.getBoundingClientRect().height;
+    this.bl = bodyRect.height;
 };

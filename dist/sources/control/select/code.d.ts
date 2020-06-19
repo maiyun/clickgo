@@ -35,12 +35,17 @@ export declare let props: {
 };
 export declare let data: {
     valueData: string;
+    _direction: undefined;
 };
 export declare let watch: {
     value: {
         handler: (this: IVue) => void;
         immediate: boolean;
     };
+};
+export declare let computed: {
+    widthPx: (this: IVue) => string | undefined;
+    heightPx: (this: IVue) => string | undefined;
 };
 export declare let methods: {
     input: (this: IVue) => void;

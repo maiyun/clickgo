@@ -41,7 +41,9 @@ export let data = {
     "scrollOffsetData": 0,
 
     "timer": undefined,
-    "tran": false
+    "tran": false,
+
+    "_direction": undefined
 };
 
 export let watch = {
@@ -91,6 +93,23 @@ export let computed = {
     // --- 最大可拖动的 scroll 位置 ---
     "maxScroll": function(this: IVue): number {
         return (this.length > this.client) ? (this.length - this.client) : 0;
+    },
+
+    "widthPx": function(this: IVue): string | undefined {
+        if (this.width !== undefined) {
+            return this.width + "px";
+        }
+        if (this.flex !== "") {
+            return this.$data._direction ? (this.$data._direction === "v" ? undefined : "0") : undefined;
+        }
+    },
+    "heightPx": function(this: IVue): string | undefined {
+        if (this.height !== undefined) {
+            return this.height + "px";
+        }
+        if (this.flex !== "") {
+            return this.$data._direction ? (this.$data._direction === "v" ? "0" : undefined) : undefined;
+        }
     }
 };
 

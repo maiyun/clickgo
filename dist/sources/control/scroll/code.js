@@ -39,7 +39,8 @@ exports.data = {
     "scrollOffsetPx": 0,
     "scrollOffsetData": 0,
     "timer": undefined,
-    "tran": false
+    "tran": false,
+    "_direction": undefined
 };
 exports.watch = {
     "length": {
@@ -85,6 +86,22 @@ exports.computed = {
     },
     "maxScroll": function () {
         return (this.length > this.client) ? (this.length - this.client) : 0;
+    },
+    "widthPx": function () {
+        if (this.width !== undefined) {
+            return this.width + "px";
+        }
+        if (this.flex !== "") {
+            return this.$data._direction ? (this.$data._direction === "v" ? undefined : "0") : undefined;
+        }
+    },
+    "heightPx": function () {
+        if (this.height !== undefined) {
+            return this.height + "px";
+        }
+        if (this.flex !== "") {
+            return this.$data._direction ? (this.$data._direction === "v" ? "0" : undefined) : undefined;
+        }
     }
 };
 exports.methods = {

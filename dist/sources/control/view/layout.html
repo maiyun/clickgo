@@ -1,5 +1,5 @@
-<div ref="wrap" class="wrap" :style="{'width': width && (width + 'px'), 'height': height && (height + 'px'), 'left': left + 'px', 'top': top + 'px', 'z-index': zIndex, 'flex': flex}" @click="_tap" @mousedown="down" @touchstart="down" @dblclick="_dblclick" @wheel="wheel">
-    <div ref="inner" class="inner" :style="{'width': direction === 'v' ? '100%' : undefined, 'height': direction === 'h' ? '100%' : undefined, 'left': this.direction === 'h' ? -scrollOffsetData + 'px' : undefined, 'top': this.direction === 'v' ? -scrollOffsetData + 'px' : undefined}">
+<div ref="wrap" class="wrap" :style="{'width': widthPx, 'height': heightPx, 'left': left + 'px', 'top': top + 'px', 'z-index': zIndex, 'flex-grow': flex}" @click="_tap" @mousedown="down" @touchstart="down" @dblclick="_dblclick" @wheel="wheel">
+    <div ref="inner" class="inner" :style="{'width': direction === 'v' ? '100%' : undefined, 'height': direction === 'h' ? '100%' : undefined, 'transform': 'translate3d(' + (this.direction === 'h' ? -scrollOffsetData : '0') + 'px, ' + (this.direction === 'v' ? -scrollOffsetData : '0') + 'px, 0)', 'transition-duration': tran + 'ms', 'transition-property': tran > 0 ? 'all' : undefined, 'padding': padding && padding.replace(/([0-9]+)($| )/g, '$1px$2')}">
         <slot>
     </div>
 </div>

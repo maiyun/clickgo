@@ -20,3 +20,24 @@ exports.props = {
         "default": ""
     }
 };
+exports.data = {
+    "_direction": undefined
+};
+exports.computed = {
+    "widthPx": function () {
+        if (this.width !== undefined) {
+            return this.width + "px";
+        }
+        if (this.flex !== "") {
+            return this.$data._direction ? (this.$data._direction === "v" ? undefined : "0") : undefined;
+        }
+    },
+    "heightPx": function () {
+        if (this.height !== undefined) {
+            return this.height + "px";
+        }
+        if (this.flex !== "") {
+            return this.$data._direction ? (this.$data._direction === "v" ? "0" : undefined) : undefined;
+        }
+    }
+};

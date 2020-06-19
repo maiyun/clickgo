@@ -20,16 +20,21 @@ export declare let props: {
     direction: {
         default: string;
     };
+    padding: {
+        default: undefined;
+    };
     scrollOffset: {
         default: number;
     };
 };
 export declare let data: {
-    _needDown: boolean;
     scrollOffsetData: number;
+    scrollOffsetEmit: number;
     length: number;
     client: number;
-    timer: boolean;
+    tran: number;
+    timer: undefined;
+    _direction: undefined;
 };
 export declare let watch: {
     direction: (this: IVue) => void;
@@ -40,6 +45,8 @@ export declare let watch: {
 };
 export declare let computed: {
     maxScroll: (this: IVue) => number;
+    widthPx: (this: IVue) => string | undefined;
+    heightPx: (this: IVue) => string | undefined;
 };
 export declare let methods: {
     wheel: (this: IVue, e: WheelEvent) => void;

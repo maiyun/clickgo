@@ -1,0 +1,12 @@
+.wrap {
+    -webkit-overflow-scrolling: touch;
+}
+.wrap::-webkit-scrollbar {
+    
+}
+.wrap.v {
+    overflow-y: scroll;
+}
+.wrap.h {
+    display: flex; overflow-x: scroll; white-space: nowrap;
+}

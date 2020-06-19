@@ -31,6 +31,9 @@ export let methods = {
     openView: function(this: IVue): void {
         this.createForm("/form/view");
     },
+    openOverflow: function(this: IVue): void {
+        this.createForm("/form/overflow");
+    },
     runTaskmgr: async function(this: IVue): Promise<void> {
         await ClickGo.runApp("taskApp/");
     }

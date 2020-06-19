@@ -39,8 +39,8 @@ declare const ClickGo: {
     "_pop": IVue | null;
     "_watchSize": Array<{
         "el": HTMLElement;
-        "rect": DOMRect;
-        "cb": (rect: DOMRect) => void;
+        "rect": IDomRect;
+        "cb": (rect: IDomRect) => void;
     }>;
     showCircular: (x: number, y: number) => void;
     showRectangle: (x: number, y: number, pos: TBorderDir) => void;
@@ -83,7 +83,7 @@ declare const ClickGo: {
     createForm: (opt: ICreateFormOptions) => Promise<number | IForm>;
     removeForm: (formId: number) => boolean;
     endTask: (taskId: number) => boolean;
-    watchSize: (el: HTMLElement, cb: (rect: DOMRect) => void) => DOMRect;
+    watchSize: (el: HTMLElement, cb: (rect: IDomRect) => void) => IDomRect;
     watchElement: (el: HTMLElement, cb: MutationCallback) => MutationObserver;
     bindDown: (oe: MouseEvent | TouchEvent, opt: {
         "down"?: (e: MouseEvent | TouchEvent) => void;
@@ -111,7 +111,11 @@ declare const ClickGo: {
         "start"?: (x: number, y: number) => void | boolean;
         "move"?: (ox: number, oy: number, x: number, y: number, border: TBorderDir) => void;
         "up"?: () => void;
-        "end"?: (time: number) => void;
+        "end"?: (moveTimes: Array<{
+            "time": number;
+            "ox": number;
+            "oy": number;
+        }>) => void;
         "borderIn"?: (x: number, y: number, border: TBorderDir) => void;
         "borderOut"?: () => void;
     }) => {

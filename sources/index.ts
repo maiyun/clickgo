@@ -94,7 +94,7 @@ const ClickGo: {
     /** --- 当前 pop 的 vue 对象 --- */
     "_pop": IVue | null;
     /** --- 正在被监视大小的对象 --- */
-    "_watchSize": Array<{ "el": HTMLElement; "rect": DOMRect; "cb": (rect: DOMRect) => void; }>;
+    "_watchSize": Array<{ "el": HTMLElement; "rect": IDomRect; "cb": (rect: IDomRect) => void; }>;
 
     /**
      * --- 显示从小到大的圆圈动画特效对象 ---
@@ -268,7 +268,7 @@ const ClickGo: {
      * @param el 要监视的大小
      * @param cb 回调函数
      */
-    watchSize: (el: HTMLElement, cb: (rect: DOMRect) => void) => DOMRect;
+    watchSize: (el: HTMLElement, cb: (rect: IDomRect) => void) => IDomRect;
 
     /**
      * --- 添加 DOM 内容变化监视 ---
@@ -290,7 +290,7 @@ const ClickGo: {
      * @param moveCb 拖动时的回调
      * @param endCb 结束时的回调
      */
-    bindMove: (e: MouseEvent | TouchEvent, opt: { "left"?: number; "top"?: number; "right"?: number; "bottom"?: number; "offsetLeft"?: number; "offsetTop"?: number; "offsetRight"?: number; "offsetBottom"?: number; "objectLeft"?: number; "objectTop"?: number; "objectWidth"?: number; "objectHeight"?: number; "object"?: HTMLElement | IVue; "offsetObject"?: HTMLElement | IVue; "showRect"?: boolean; "start"?: (x: number, y: number) => void | boolean; "move"?: (ox: number, oy: number, x: number, y: number, border: TBorderDir) => void; "up"?: () => void; "end"?: (time: number) => void; "borderIn"?: (x: number, y: number, border: TBorderDir) => void; "borderOut"?: () => void; }) => { "left": number; "top": number; "right": number; "bottom": number; };
+    bindMove: (e: MouseEvent | TouchEvent, opt: { "left"?: number; "top"?: number; "right"?: number; "bottom"?: number; "offsetLeft"?: number; "offsetTop"?: number; "offsetRight"?: number; "offsetBottom"?: number; "objectLeft"?: number; "objectTop"?: number; "objectWidth"?: number; "objectHeight"?: number; "object"?: HTMLElement | IVue; "offsetObject"?: HTMLElement | IVue; "showRect"?: boolean; "start"?: (x: number, y: number) => void | boolean; "move"?: (ox: number, oy: number, x: number, y: number, border: TBorderDir) => void; "up"?: () => void; "end"?: (moveTimes: Array<{ "time": number; "ox": number; "oy": number; }>) => void; "borderIn"?: (x: number, y: number, border: TBorderDir) => void; "borderOut"?: () => void; }) => { "left": number; "top": number; "right": number; "bottom": number; };
 
     /**
      * --- 绑定拖动改变大小事件 ---
@@ -473,7 +473,7 @@ const ClickGo: {
         return this._core.endTask(taskId);
     },
 
-    watchSize: function(el: HTMLElement, cb: (rect: DOMRect) => void): DOMRect {
+    watchSize: function(el: HTMLElement, cb: (rect: IDomRect) => void): IDomRect {
         return this._core.watchSize(el, cb);
     },
 
@@ -485,7 +485,7 @@ const ClickGo: {
         return this._core.bindDown(oe, opt);
     },
 
-    bindMove: function(e: MouseEvent | TouchEvent, opt: { "left"?: number; "top"?: number; "right"?: number; "bottom"?: number; "offsetLeft"?: number; "offsetTop"?: number; "offsetRight"?: number; "offsetBottom"?: number; "objectLeft"?: number; "objectTop"?: number; "objectWidth"?: number; "objectHeight"?: number; "object"?: HTMLElement | IVue; "offsetObject"?: HTMLElement | IVue; "showRect"?: boolean; "start"?: (x: number, y: number) => void | boolean; "move"?: (ox: number, oy: number, x: number, y: number, border: TBorderDir) => void; "up"?: () => void; "end"?: (time: number) => void; "borderIn"?: (x: number, y: number, border: TBorderDir) => void; "borderOut"?: () => void; }): { "left": number; "top": number; "right": number; "bottom": number; } {
+    bindMove: function(e: MouseEvent | TouchEvent, opt: { "left"?: number; "top"?: number; "right"?: number; "bottom"?: number; "offsetLeft"?: number; "offsetTop"?: number; "offsetRight"?: number; "offsetBottom"?: number; "objectLeft"?: number; "objectTop"?: number; "objectWidth"?: number; "objectHeight"?: number; "object"?: HTMLElement | IVue; "offsetObject"?: HTMLElement | IVue; "showRect"?: boolean; "start"?: (x: number, y: number) => void | boolean; "move"?: (ox: number, oy: number, x: number, y: number, border: TBorderDir) => void; "up"?: () => void; "end"?: (moveTimes: Array<{ "time": number; "ox": number; "oy": number; }>) => void; "borderIn"?: (x: number, y: number, border: TBorderDir) => void; "borderOut"?: () => void; }): { "left": number; "top": number; "right": number; "bottom": number; } {
         return this._core.bindMove(e, opt);
     },
 

@@ -10,6 +10,7 @@
         "/clickgo/control/form",
         "/clickgo/control/label",
         "/clickgo/control/layout",
+        "/clickgo/control/overflow",
         "/clickgo/control/scroll",
         "/clickgo/control/view"
     ],
@@ -22,6 +23,7 @@
         "/clickgo/control/form.cgc",
         "/clickgo/control/label.cgc",
         "/clickgo/control/layout.cgc",
+        "/clickgo/control/overflow.cgc",
         "/clickgo/control/scroll.cgc",
         "/clickgo/control/view.cgc",
 
@@ -37,6 +39,8 @@
         "/form/move.js",
         "/form/move.xml",
         "/form/onlyClose.xml",
+        "/form/overflow.js",
+        "/form/overflow.xml",
         "/form/scroll.js",
         "/form/scroll.xml",
         "/form/thin.xml",
