@@ -25,6 +25,7 @@ export declare let props: {
     };
 };
 export declare let data: {
+    scrollOffsetEmit: number;
     _direction: undefined;
 };
 export declare let computed: {

@@ -27,6 +27,7 @@ exports.props = {
     }
 };
 exports.data = {
+    "scrollOffsetEmit": 0,
     "_direction": undefined
 };
 exports.computed = {
@@ -50,6 +51,10 @@ exports.computed = {
 exports.watch = {
     "scrollOffset": {
         handler: function () {
+            var so = parseInt(this.scrollOffset);
+            if (so === this.scrollOffsetEmit) {
+                return;
+            }
             if (this.direction === "v") {
                 this.$refs.wrap.scrollTop = this.scrollOffset;
             }
@@ -61,7 +66,15 @@ exports.watch = {
 };
 exports.methods = {
     scroll: function () {
-        this.$emit("update:scrollOffset", this.direction === "v" ? this.$refs.wrap.scrollTop : this.$refs.wrap.scrollLeft);
+        var scroll = this.direction === "v" ? this.$refs.wrap.scrollTop : this.$refs.wrap.scrollLeft;
+        if (scroll < 0) {
+            return;
+        }
+        if (scroll > (this.direction === "v" ? (this.$refs.wrap.scrollHeight - this.$refs.wrap.clientHeight) : (this.$refs.wrap.scrollWidth - this.$refs.wrap.clientWidth))) {
+            return;
+        }
+        this.scrollOffsetEmit = scroll;
+        this.$emit("update:scrollOffset", this.scrollOffsetEmit);
     },
     wheel: function (e) {
         if (this.direction === "v") {

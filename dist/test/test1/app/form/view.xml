@@ -13,7 +13,7 @@
         </layout>
         <label>Scroll offset: {{so}}, Length: {{l}}, Client: {{c}}.</label>
         <view :scroll-offset.sync="so2" style="background: #FFF;" flex="1" direction="h" @resize="c2 = arguments[0]" @change="l2 = arguments[0]" :style="{'line-height': style ? '1.5' : undefined}" :padding="style ? '10' : undefined">
-            <layout v-for="line of lineCount" flex="" align-v="center" style="padding: 0 5px; border-right: 1px solid rgba(0, 0, 0, .1); display: inline-block; height: 100%;">Col {{line}}.</layout>
+            <layout v-for="line of lineCount" flex="" align-v="center" style="padding: 0 5px; border-right: 1px solid rgba(0, 0, 0, .1);">Col {{line}}.</layout>
         </view>
         <label>Scroll offset: {{so2}}, Length: {{l2}}, Client: {{c2}}.</label>
         <layout gutter="10" flex="">

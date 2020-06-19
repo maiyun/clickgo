@@ -27,6 +27,8 @@ export let props = {
 };
 
 export let data = {
+    "scrollOffsetEmit": 0,
+
     "_direction": undefined
 };
 
@@ -52,6 +54,10 @@ export let computed = {
 export let watch = {
     "scrollOffset": {
         handler: function(this: IVue): void {
+            let so = parseInt(this.scrollOffset);
+            if (so === this.scrollOffsetEmit) {
+                return;
+            }
             if (this.direction === "v") {
                 this.$refs.wrap.scrollTop = this.scrollOffset;
             } else {
@@ -63,7 +69,15 @@ export let watch = {
 
 export let methods = {
     scroll: function(this: IVue): void {
-        this.$emit("update:scrollOffset", this.direction === "v" ? this.$refs.wrap.scrollTop : this.$refs.wrap.scrollLeft);
+        let scroll = this.direction === "v" ? this.$refs.wrap.scrollTop : this.$refs.wrap.scrollLeft;
+        if (scroll < 0) {
+            return;
+        }
+        if (scroll > (this.direction === "v" ? (this.$refs.wrap.scrollHeight - this.$refs.wrap.clientHeight) : (this.$refs.wrap.scrollWidth - this.$refs.wrap.clientWidth))) {
+            return;
+        }
+        this.scrollOffsetEmit = scroll;
+        this.$emit("update:scrollOffset", this.scrollOffsetEmit);
     },
     wheel: function(this: IVue, e: WheelEvent): void {
         // --- 用来屏蔽不小心触发前进、后退的浏览器事件 ---
