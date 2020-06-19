@@ -307,6 +307,11 @@ const ClickGo: {
      */
     setGlobalCursor: (type?: string) => void;
 
+    /**
+     * --- promise 等待一帧 ---
+     */
+    requestAnimationFrame: () => Promise<number>;
+
     [name: string]: any;
 } = {
     "rootPath": "",
@@ -495,6 +500,14 @@ const ClickGo: {
 
     setGlobalCursor: function(type?: string): void {
         return this._core.setGlobalCursor(type);
+    },
+
+    requestAnimationFrame: function(): Promise<number> {
+        return new Promise(function(resolve) {
+            let num = requestAnimationFrame(function() {
+                resolve(num);
+            });
+        });
     }
 };
 ClickGo.initRootPath();

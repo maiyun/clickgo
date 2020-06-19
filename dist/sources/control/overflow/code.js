@@ -66,12 +66,16 @@ exports.watch = {
 };
 exports.methods = {
     scroll: function () {
-        var scroll = this.direction === "v" ? this.$refs.wrap.scrollTop : this.$refs.wrap.scrollLeft;
-        if (scroll < 0) {
+        if (!this.$refs.wrap) {
             return;
         }
-        if (scroll > (this.direction === "v" ? (this.$refs.wrap.scrollHeight - this.$refs.wrap.clientHeight) : (this.$refs.wrap.scrollWidth - this.$refs.wrap.clientWidth))) {
-            return;
+        var scroll = this.direction === "v" ? this.$refs.wrap.scrollTop : this.$refs.wrap.scrollLeft;
+        if (scroll < 0) {
+            scroll = 0;
+        }
+        var maxScroll = (this.direction === "v" ? (this.$refs.wrap.scrollHeight - this.$refs.wrap.clientHeight) : (this.$refs.wrap.scrollWidth - this.$refs.wrap.clientWidth));
+        if (scroll > maxScroll) {
+            scroll = maxScroll;
         }
         this.scrollOffsetEmit = scroll;
         this.$emit("update:scrollOffset", this.scrollOffsetEmit);
@@ -95,6 +99,7 @@ exports.mounted = function () {
     this.$emit("resize", this.direction === "v" ? this.$refs.wrap.clientHeight : this.$refs.wrap.clientWidth);
     ClickGo.watchElement(this.$refs.wrap, function () {
         _this.$emit("change", _this.direction === "v" ? _this.$refs.wrap.scrollHeight : _this.$refs.wrap.scrollWidth);
+        _this.scroll();
     });
     this.$emit("change", this.direction === "v" ? this.$refs.wrap.scrollHeight : this.$refs.wrap.scrollWidth);
     if (this.direction === "v") {

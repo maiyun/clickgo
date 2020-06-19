@@ -335,7 +335,7 @@ export let methods = {
                 };
                 this.stateMinData = true;
                 this.$emit("update:stateMin", true);
-                this.$el.classList.add("cg-state-min");
+                this.$el.classList.add("cg-state-min"); // 这个只是用来快速的让 dom 更新，下面就能获取新 dom height，很快这个就会被 vue 的响应式 class 替代
                 if (!event.ds) {
                     this.$el.style.height = "auto";
                     this.heightData = this.$el.offsetHeight;

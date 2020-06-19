@@ -69,12 +69,16 @@ export let watch = {
 
 export let methods = {
     scroll: function(this: IVue): void {
-        let scroll = this.direction === "v" ? this.$refs.wrap.scrollTop : this.$refs.wrap.scrollLeft;
-        if (scroll < 0) {
+        if (!this.$refs.wrap) {
             return;
         }
-        if (scroll > (this.direction === "v" ? (this.$refs.wrap.scrollHeight - this.$refs.wrap.clientHeight) : (this.$refs.wrap.scrollWidth - this.$refs.wrap.clientWidth))) {
-            return;
+        let scroll = this.direction === "v" ? this.$refs.wrap.scrollTop : this.$refs.wrap.scrollLeft;
+        if (scroll < 0) {
+            scroll = 0;
+        }
+        let maxScroll = (this.direction === "v" ? (this.$refs.wrap.scrollHeight - this.$refs.wrap.clientHeight) : (this.$refs.wrap.scrollWidth - this.$refs.wrap.clientWidth));
+        if (scroll > maxScroll) {
+            scroll = maxScroll;
         }
         this.scrollOffsetEmit = scroll;
         this.$emit("update:scrollOffset", this.scrollOffsetEmit);
@@ -100,6 +104,7 @@ export let mounted = function(this: IVue): void {
 
     ClickGo.watchElement(this.$refs.wrap, () => {
         this.$emit("change", this.direction === "v" ? this.$refs.wrap.scrollHeight : this.$refs.wrap.scrollWidth);
+        this.scroll();
     });
     this.$emit("change", this.direction === "v" ? this.$refs.wrap.scrollHeight : this.$refs.wrap.scrollWidth);
 

@@ -232,6 +232,13 @@ var ClickGo = {
     },
     setGlobalCursor: function (type) {
         return this._core.setGlobalCursor(type);
+    },
+    requestAnimationFrame: function () {
+        return new Promise(function (resolve) {
+            var num = requestAnimationFrame(function () {
+                resolve(num);
+            });
+        });
     }
 };
 ClickGo.initRootPath();

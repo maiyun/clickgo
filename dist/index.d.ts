@@ -138,5 +138,6 @@ declare const ClickGo: {
         "end"?: () => void;
     }) => void;
     setGlobalCursor: (type?: string) => void;
+    requestAnimationFrame: () => Promise<number>;
     [name: string]: any;
 };

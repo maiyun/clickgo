@@ -5,10 +5,6 @@
     flex-direction: column;
 }
 
-.wrap > * {
-    flex-shrink: 0;
-}
-
 .wrap.h.gutter5 > :not(:first-child) {
     margin-left: 5px;
 }
