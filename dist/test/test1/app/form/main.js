@@ -68,6 +68,9 @@ exports.methods = {
     openView: function () {
         this.createForm("/form/view");
     },
+    openGreatView: function () {
+        this.createForm("/form/greatview");
+    },
     openOverflow: function () {
         this.createForm("/form/overflow");
     },

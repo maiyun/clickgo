@@ -1,0 +1,28 @@
+<form width="400" min-width="300" height="400" min-height="400" title="GreatView Test" padding="20">
+    <layout gutter="10" direction="v">
+        <layout gutter="10">
+            <greatview :data="lineCount" :scroll-offset.sync="so" style="background: #FFF;" flex="1" @resize="c = arguments[0]" @change="l = arguments[0]" :style="{'line-height': style ? '1.5' : undefined}" :padding="style ? '10' : undefined" v-slot="data">
+                <block style="padding: 2px 0;">Line {{data.row}}.</block>
+            </greatview>
+            <layout style="background: #FFF;">
+                <greatview :data="lineCount" :scroll-offset.sync="so3" flex="1" @resize="c3 = arguments[0]" @change="l3 = arguments[0]" :style="{'line-height': style ? '1.5' : undefined}" :padding="style ? '10' : undefined" v-slot="data">
+                    <block style="padding: 2px 0;">Line {{data.row}}.</block>
+                </greatview>
+                <scroll width="20" :length="l3" :client="c3" :scroll-offset.sync="so3"></scroll>
+            </layout>
+        </layout>
+        <label>Scroll offset: {{so}}, Length: {{l}}, Client: {{c}}.</label>
+        <greatview :data="lineCount" :scroll-offset.sync="so2" style="background: #FFF;" flex="1" direction="h" @resize="c2 = arguments[0]" @change="l2 = arguments[0]" :style="{'line-height': style ? '1.5' : undefined}" :padding="style ? '10' : undefined" v-slot="data">
+            <layout flex="" align-v="center" style="padding: 0 5px; border-right: 1px solid rgba(0, 0, 0, .1);">Col {{data.row}}.</layout>
+        </greatview>
+        <label>Scroll offset: {{so2}}, Length: {{l2}}, Client: {{c2}}.</label>
+        <layout gutter="10" flex="">
+            <button @tap="lineCount += 100" padding="0 10" flex="1">Add 100 lines</button>
+            <button @tap="lineCount += 1000" padding="0 10" flex="1">Add 1000 lines</button>
+        </layout>
+        <layout gutter="10" flex="">
+            <button @tap="lineCount -= 1000;if(lineCount < 0) {lineCount = 0;}" padding="0 10" flex="1">Remove 1000 lines</button>
+            <button @tap="style = !style" padding="0 10" flex="1">Change style</button>
+        </layout>
+    </layout>
+</form>

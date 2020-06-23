@@ -11,7 +11,8 @@
             <button @tap="openMove">Open test bindMove form</button>
             <button @tap="openScroll">Open ScrollBar form</button>
             <button @tap="openView">Open View form</button>
-             <button @tap="openOverflow">Open Overflow form</button>
+            <button @tap="openGreatView">Open GreatView form</button>
+            <button @tap="openOverflow">Open Overflow form</button>
             <button @tap="runTaskmgr">Run "Task manager" app</button>
             <button @tap="openError">Open has an error form</button>
         </layout>

@@ -31,6 +31,9 @@ export let methods = {
     openView: function(this: IVue): void {
         this.createForm("/form/view");
     },
+    openGreatView: function(this: IVue): void {
+        this.createForm("/form/greatview");
+    },
     openOverflow: function(this: IVue): void {
         this.createForm("/form/overflow");
     },

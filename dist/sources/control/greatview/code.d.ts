@@ -6,16 +6,16 @@ export declare let props: {
         default: undefined;
     };
     left: {
-        default: number;
+        default: undefined;
     };
     top: {
-        default: number;
+        default: undefined;
     };
     zIndex: {
-        default: number;
+        default: undefined;
     };
     flex: {
-        default: string;
+        default: undefined;
     };
     direction: {
         default: string;
@@ -24,34 +24,37 @@ export declare let props: {
         default: undefined;
     };
     scrollOffset: {
-        default: number;
+        default: undefined;
+    };
+    data: {
+        default: never[];
     };
 };
 export declare let data: {
-    scrollOffsetData: number;
-    scrollOffsetEmit: number;
     length: number;
+    dataInner: never[];
+    dataShow: never[];
+    dataHeight: never[];
+    scrollOffsetData: number;
     client: number;
-    tran: number;
-    timer: undefined;
+    refreshCount: number;
     _direction: undefined;
 };
 export declare let watch: {
-    direction: (this: IVue) => void;
-    scrollOffset: {
+    data: {
         handler: (this: IVue) => void;
-        immediate: boolean;
+    };
+    direction: (this: IVue) => void;
+    _direction: {
+        handler: (this: IVue) => void;
     };
 };
 export declare let computed: {
-    maxScroll: (this: IVue) => number;
-    widthPx: (this: IVue) => string | undefined;
-    heightPx: (this: IVue) => string | undefined;
+    dataComp: (this: IVue) => any[];
+    paddingComp: (this: IVue) => any;
 };
 export declare let methods: {
-    wheel: (this: IVue, e: WheelEvent) => void;
-    down: (this: IVue, e: MouseEvent | TouchEvent) => void;
-    refreshView: (this: IVue) => void;
+    refreshView: (this: IVue) => Promise<void>;
+    reShow: (this: IVue) => Promise<void>;
 };
 export declare let mounted: (this: IVue) => void;
-export declare let destroyed: (this: IVue) => void;

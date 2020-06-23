@@ -71,6 +71,9 @@ export let watch = {
 export let computed = {
     // --- 最大可拖动的 scroll 位置 ---
     "maxScroll": function(this: IVue): number {
+        if (this.length < this.client) {
+            return 0;
+        }
         return Math.round(this.length - this.client);
     },
     "widthPx": function(this: IVue): string | undefined {
@@ -99,19 +102,13 @@ export let methods = {
         if (this.timer) {
             clearTimeout(this.timer);
             this.timer = undefined;
-            let wrapRect = this.$refs.wrap.getBoundingClientRect();
-            if (this.direction === "v") {
-                this.scrollOffsetData = Math.round(wrapRect.top - this.$refs.inner.getBoundingClientRect().top);
-            } else {
-                this.scrollOffsetData = Math.round(wrapRect.left - this.$refs.inner.getBoundingClientRect().left);
-            }
             this.tran = 0;
         }
 
         if (this.direction === "v") {
-            this.scrollOffsetData += e.deltaY === 0 ? e.deltaX : e.deltaY;
+            this.scrollOffsetData += Math.round(e.deltaY === 0 ? e.deltaX : e.deltaY);
         } else {
-            this.scrollOffsetData += e.deltaX === 0 ? e.deltaY : e.deltaX;
+            this.scrollOffsetData += Math.round(e.deltaX === 0 ? e.deltaY : e.deltaX);
         }
         this.refreshView();
     },
@@ -167,16 +164,16 @@ export let methods = {
                 if (speed <= 0.1) {
                     return;
                 }
-                this.tran = speed * 3000;
+                this.tran = speed * 2000;
                 this.$nextTick(function(this: IVue) {
                     this.timer = setTimeout(() => {
                         this.timer = undefined;
                         this.tran = 0;
                     }, this.tran);
                     if (movePos > 0) {
-                        this.scrollOffsetData -= Math.round(speed * 600);
+                        this.scrollOffsetData -= Math.round(speed * 700);
                     } else {
-                        this.scrollOffsetData += Math.round(speed * 600);
+                        this.scrollOffsetData += Math.round(speed * 700);
                     }
 
                     /** --- 滑动动画向上传递 scrollOffset --- */
@@ -267,7 +264,12 @@ export let methods = {
 
 export let mounted = function(this: IVue): void {
     let rect = ClickGo.watchSize(this.$refs.wrap, (rect) => {
-        this.client = Math.round(this.direction === "v" ? rect.height : rect.width);
+        let client = Math.round(this.direction === "v" ? rect.height : rect.width);
+        if (client === this.client) {
+            this.$emit("resizen");
+            return;
+        }
+        this.client = client;
         this.$emit("resize", this.client);
         this.refreshView();
     });
@@ -275,7 +277,11 @@ export let mounted = function(this: IVue): void {
     this.$emit("resize", this.client);
 
     rect = ClickGo.watchSize(this.$refs.inner, (rect) => {
-        this.length = Math.round(this.direction === "v" ? rect.height : rect.width);
+        let length = Math.round(this.direction === "v" ? rect.height : rect.width);
+        if (length === this.length) {
+            return;
+        }
+        this.length = length;
         this.$emit("change", this.length);
         this.refreshView();
     });

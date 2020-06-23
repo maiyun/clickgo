@@ -312,6 +312,11 @@ const ClickGo: {
      */
     requestAnimationFrame: () => Promise<number>;
 
+    /**
+     * --- 等待毫秒 ---
+     */
+    sleep: (ms?: number) => Promise<void>;
+
     [name: string]: any;
 } = {
     "rootPath": "",
@@ -507,6 +512,14 @@ const ClickGo: {
             let num = requestAnimationFrame(function() {
                 resolve(num);
             });
+        });
+    },
+
+    sleep: function(ms: number = 0): Promise<void> {
+        return new Promise(function(resolve) {
+            setTimeout(function() {
+                resolve();
+            }, ms);
         });
     }
 };

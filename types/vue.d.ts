@@ -24,7 +24,7 @@ interface IVue {
     $watch: any;
 
     $emit(event: string, ...args: any[]): IVue;
-    $nextTick(callback: (this: this) => void): this;
+    $nextTick(callback: (this: IVue) => void): void;
     $nextTick(): Promise<void>;
     $mount(c: string): any;
     $destroy(): void;

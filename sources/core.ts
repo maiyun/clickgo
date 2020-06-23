@@ -694,21 +694,21 @@ export async function createForm(opt: ICreateFormOptions): Promise<number | IFor
                     return;
                 }
                 // --- 触发自定义 down 事件 ---
-                this.$emit("down", event);
+                this.$emit("down", e);
             };
             methods._tap = function(this: IVue, e: MouseEvent | TouchEvent) {
                 e.stopPropagation();
                 if (this.$el.className.indexOf("cg-disabled") !== -1) {
                     return;
                 }
-                this.$emit("tap");
+                this.$emit("tap", e);
             };
             methods._dblclick = function(this: IVue, e: MouseEvent) {
                 e.stopPropagation();
                 if (this.$el.className.indexOf("cg-disabled") !== -1) {
                     return;
                 }
-                this.$emit("dblclick");
+                this.$emit("dblclick", e);
             };
             // --- 获取文件 blob 对象 ---
             methods.getBlob = function(this: IVue, file: string): Blob | null {
@@ -743,8 +743,21 @@ export async function createForm(opt: ICreateFormOptions): Promise<number | IFor
                         mounted?.call(this);
                     });
                 },
-                "destroyed": destroyed
+                "destroyed": destroyed,
+
+                "components": {}
             };
+        }
+    }
+    // --- 处理控件中包含的子组件 ---
+    for (let name in components) {
+        let reg = /<cg-(.+?)[ >]/g;
+        let match: RegExpExecArray | null;
+        while ((match = reg.exec(components[name].template))) {
+            if (!components["cg-" + match[1]]) {
+                continue;
+            }
+            components[name].components["cg-" + match[1]] = components["cg-" + match[1]];
         }
     }
     // --- 获取 style、layout ---

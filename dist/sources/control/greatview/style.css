@@ -1,0 +1,16 @@
+.inner {
+    min-width: 100%; min-height: 100%; visibility: hidden;
+}
+.inner.h {
+    display: flex;
+}
+
+.item {
+    position: absolute;
+}
+.item.v {
+    width: 100%;
+}
+.item.h {
+    height: 100%; display: flex;
+}

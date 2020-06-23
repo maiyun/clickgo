@@ -1,0 +1,10 @@
+<cg-view ref="view" @tap="_tap" @down="_down" @dblclick="_dblclick" :width="width" :height="height" :left="left" :top="top" :z-index="zIndex" :flex="flex" :direction="direction" :scroll-offset="scrollOffset" @update:scrollOffset="scrollOffsetData = arguments[0];$emit('update:scrollOffset', arguments[0]);reShow()" @resize="client = arguments[0];$emit('resize', arguments[0])" @resizen="refreshView" @change="$emit('change', arguments[0])">
+    <div ref="inner" class="inner" :class="[direction]" :style="{'height': direction === 'v' ? (length > 0 ? length + 'px' : undefined) : undefined, 'width': direction === 'v' ? undefined : (length > 0 ? length + 'px' : undefined)}">
+        <div v-for="item of dataInner" class="item" :class="[direction]" :style="{'left': 0, 'top': 0, 'width': direction === 'v' ? '-webkit-calc(100% - ' + (paddingComp.left + paddingComp.right) + 'px)' : undefined, 'height': direction === 'v' ? undefined : '-webkit-calc(100% - ' + (paddingComp.top + paddingComp.bottom) + 'px)'}">
+            <slot :row="item.item" :index="item.index"></slot>
+        </div>
+    </div>
+    <div v-for="item of dataShow" class="item" :class="[direction]" :style="{'left': (direction === 'v' ? paddingComp.left : (dataHeight[item.index] ? dataHeight[item.index].start : '0')) + 'px', 'top': (direction === 'v' ? (dataHeight[item.index] ? dataHeight[item.index].start : '0') : paddingComp.top) + 'px', 'width': direction === 'v' ? '-webkit-calc(100% - ' + (paddingComp.left + paddingComp.right) + 'px)' : undefined, 'height': direction === 'v' ? undefined : '-webkit-calc(100% - ' + (paddingComp.top + paddingComp.bottom) + 'px)'}">
+        <slot :row="item.item" :index="item.index"></slot>
+    </div>
+</cg-view>

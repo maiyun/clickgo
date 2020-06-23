@@ -239,6 +239,14 @@ var ClickGo = {
                 resolve(num);
             });
         });
+    },
+    sleep: function (ms) {
+        if (ms === void 0) { ms = 0; }
+        return new Promise(function (resolve) {
+            setTimeout(function () {
+                resolve();
+            }, ms);
+        });
     }
 };
 ClickGo.initRootPath();

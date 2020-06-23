@@ -629,7 +629,7 @@ exports.runApp = runApp;
 function createForm(opt) {
     var _a, _b, _c;
     return __awaiter(this, void 0, void 0, function () {
-        var appPkg, formId, controlsStyle, components, _i, _d, controlPath, controlBlob, controlPkg, _loop_1, _e, _f, _g, name_1, state_1, style, layout, layoutBlob, styleBlob, data, methods, computed, watch, mounted, destroyed, expo, rand, r_1, randList, r, el, $vm, getFocusEvent, form;
+        var appPkg, formId, controlsStyle, components, _i, _d, controlPath, controlBlob, controlPkg, _loop_1, _e, _f, _g, name_1, state_1, name_2, reg, match, style, layout, layoutBlob, styleBlob, data, methods, computed, watch, mounted, destroyed, expo, rand, r_1, randList, r, el, $vm, getFocusEvent, form;
         return __generator(this, function (_h) {
             switch (_h.label) {
                 case 0:
@@ -728,21 +728,21 @@ function createForm(opt) {
                                             if (e instanceof MouseEvent && ClickGo.hasTouch) {
                                                 return;
                                             }
-                                            this.$emit("down", event);
+                                            this.$emit("down", e);
                                         };
                                     methods_1._tap = function (e) {
                                         e.stopPropagation();
                                         if (this.$el.className.indexOf("cg-disabled") !== -1) {
                                             return;
                                         }
-                                        this.$emit("tap");
+                                        this.$emit("tap", e);
                                     };
                                     methods_1._dblclick = function (e) {
                                         e.stopPropagation();
                                         if (this.$el.className.indexOf("cg-disabled") !== -1) {
                                             return;
                                         }
-                                        this.$emit("dblclick");
+                                        this.$emit("dblclick", e);
                                     };
                                     methods_1.getBlob = function (file) {
                                         var _a;
@@ -791,7 +791,8 @@ function createForm(opt) {
                                                 mounted_1 === null || mounted_1 === void 0 ? void 0 : mounted_1.call(this);
                                             });
                                         },
-                                        "destroyed": destroyed_1
+                                        "destroyed": destroyed_1,
+                                        "components": {}
                                     };
                                     return [2];
                             }
@@ -818,6 +819,16 @@ function createForm(opt) {
                     _i++;
                     return [3, 1];
                 case 7:
+                    for (name_2 in components) {
+                        reg = /<cg-(.+?)[ >]/g;
+                        match = void 0;
+                        while ((match = reg.exec(components[name_2].template))) {
+                            if (!components["cg-" + match[1]]) {
+                                continue;
+                            }
+                            components[name_2].components["cg-" + match[1]] = components["cg-" + match[1]];
+                        }
+                    }
                     style = opt.style;
                     layout = opt.layout;
                     if (!opt.file) return [3, 11];
