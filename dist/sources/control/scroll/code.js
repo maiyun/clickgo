@@ -38,6 +38,7 @@ exports.props = {
 exports.data = {
     "scrollOffsetData": 0,
     "barLengthPx": 0,
+    "barLengthSizePx": 0,
     "timer": undefined,
     "tran": false,
     "_direction": undefined
@@ -79,10 +80,18 @@ exports.computed = {
         if (this.client >= this.length) {
             return this.barLengthPx;
         }
-        return this.client / this.length * this.barLengthPx;
+        var size = this.client / this.length * (this.barLengthPx - this.barLengthSizePx);
+        if (size < 5) {
+            this.barLengthSizePx = 5 - size;
+            size = 5;
+        }
+        else {
+            this.barLengthSizePx = 0;
+        }
+        return size;
     },
     "scrollOffsetPx": function () {
-        return this.scrollOffsetData / this.length * this.barLengthPx;
+        return this.scrollOffsetData / this.length * (this.barLengthPx - this.barLengthSizePx);
     },
     "maxScroll": function () {
         return (this.length > this.client) ? Math.round(this.length - this.client) : 0;
@@ -116,7 +125,7 @@ exports.methods = {
             "offsetObject": this.$refs.bar,
             "move": function (ox, oy, x, y) {
                 px += _this.direction === "v" ? oy : ox;
-                _this.scrollOffsetData = Math.round(px / _this.barLengthPx * _this.length);
+                _this.scrollOffsetData = Math.round(px / (_this.barLengthPx - _this.barLengthSizePx) * _this.length);
                 _this.$emit("update:scrollOffset", _this.scrollOffsetData);
             }
         });
@@ -136,11 +145,10 @@ exports.methods = {
         if (px < 0) {
             px = 0;
         }
-        console.log(px + this.size, this.barLengthPx);
-        if (px + this.size > this.barLengthPx) {
-            px = this.barLengthPx - this.size;
+        if (px + this.size > (this.barLengthPx - this.barLengthSizePx)) {
+            px = this.barLengthPx - this.barLengthSizePx - this.size;
         }
-        this.scrollOffsetData = Math.round(px / this.barLengthPx * this.length);
+        this.scrollOffsetData = Math.round(px / (this.barLengthPx - this.barLengthSizePx) * this.length);
         this.$emit("update:scrollOffset", this.scrollOffsetData);
         this.down(e);
     },

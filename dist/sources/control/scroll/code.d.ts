@@ -36,6 +36,7 @@ export declare let props: {
 export declare let data: {
     scrollOffsetData: number;
     barLengthPx: number;
+    barLengthSizePx: number;
     timer: undefined;
     tran: boolean;
     _direction: undefined;

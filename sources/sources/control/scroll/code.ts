@@ -39,6 +39,7 @@ export let props = {
 export let data = {
     "scrollOffsetData": 0,
     "barLengthPx": 0,
+    "barLengthSizePx": 0,
 
     "timer": undefined,
     "tran": false,
@@ -84,11 +85,18 @@ export let computed = {
         if (this.client >= this.length) {
             return this.barLengthPx;
         }
-        return this.client / this.length * this.barLengthPx;
+        let size = this.client / this.length * (this.barLengthPx - this.barLengthSizePx);
+        if (size < 5) {
+            this.barLengthSizePx = 5 - size;
+            size = 5;
+        } else {
+            this.barLengthSizePx = 0;
+        }
+        return size;
     },
-    // --- 滑块已经滚动的百分比位置 ---
+    // --- 滑块已经滚动的位置 ---
     "scrollOffsetPx": function(this: IVue): number {
-        return this.scrollOffsetData / this.length * this.barLengthPx;
+        return this.scrollOffsetData / this.length * (this.barLengthPx - this.barLengthSizePx);
     },
     // --- 最大可拖动的 scroll 位置 ---
     "maxScroll": function(this: IVue): number {
@@ -124,7 +132,7 @@ export let methods = {
             "offsetObject": this.$refs.bar,
             "move": (ox, oy, x, y) => {
                 px += this.direction === "v" ? oy : ox;
-                this.scrollOffsetData = Math.round(px / this.barLengthPx * this.length);
+                this.scrollOffsetData = Math.round(px / (this.barLengthPx - this.barLengthSizePx) * this.length);
                 this.$emit("update:scrollOffset", this.scrollOffsetData);
             }
         });
@@ -146,11 +154,10 @@ export let methods = {
         if (px < 0) {
             px = 0;
         }
-        console.log(px + this.size, this.barLengthPx);
-        if (px + this.size > this.barLengthPx) {
-            px = this.barLengthPx - this.size;
+        if (px + this.size > (this.barLengthPx - this.barLengthSizePx)) {
+            px = this.barLengthPx - this.barLengthSizePx - this.size;
         }
-        this.scrollOffsetData = Math.round(px / this.barLengthPx * this.length);
+        this.scrollOffsetData = Math.round(px / (this.barLengthPx - this.barLengthSizePx) * this.length);
         this.$emit("update:scrollOffset", this.scrollOffsetData);
         this.down(e);
     },
