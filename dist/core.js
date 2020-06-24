@@ -1210,30 +1210,48 @@ function endTask(taskId) {
 }
 exports.endTask = endTask;
 function watchSize(el, cb) {
-    var rect = el.getBoundingClientRect();
-    for (var _i = 0, _a = ClickGo._watchSize; _i < _a.length; _i++) {
-        var item = _a[_i];
-        if (item.el === el) {
-            return rect;
-        }
-    }
+    var size = {
+        "width": el.offsetWidth,
+        "height": el.offsetHeight
+    };
     ClickGo._watchSize.push({
         "el": el,
-        "rect": rect,
+        "size": size,
         "cb": cb
     });
-    return rect;
+    return size;
 }
 exports.watchSize = watchSize;
-function watchElement(el, cb) {
+function watchElement(el, cb, mode) {
+    if (mode === void 0) { mode = "style"; }
+    var moi;
+    switch (mode) {
+        case "child": {
+            moi = {
+                "childList": true
+            };
+            break;
+        }
+        case "childsub": {
+            moi = {
+                "childList": true,
+                "subtree": true
+            };
+            break;
+        }
+        case "style": {
+            moi = {
+                "attributeFilter": ["style", "class"],
+                "attributes": true
+            };
+            break;
+        }
+        default: {
+            moi = mode;
+        }
+    }
     var mo = new MutationObserver(cb);
-    mo.observe(el, {
-        "attributeFilter": ["style", "class"],
-        "attributes": true,
-        "characterData": true,
-        "childList": true,
-        "subtree": true
-    });
+    mo.observe(el, moi);
     return mo;
 }
 exports.watchElement = watchElement;

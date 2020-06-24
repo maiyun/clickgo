@@ -13,7 +13,7 @@ styleListElement.insertAdjacentHTML("beforeend", `<style class="cg-global">
 }
 
 .cg-form-list *, .cg-pop-list * {box-sizing: border-box !important; -webkit-tap-highlight-color: rgba(0, 0, 0, 0);}
-.cg-form-list, .cg-form-list input, .cg-form-list textarea, .cg-pop-list, .cg-pop-list input, .cg-pop-list textarea {font-family: -apple-system,BlinkMacSystemFont,opensans,Optima,"Microsoft Yahei",sans-serif; font-size: 12px; line-height: 1;}
+.cg-form-list, .cg-form-list input, .cg-form-list textarea, .cg-pop-list, .cg-pop-list input, .cg-pop-list textarea {font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen,Ubuntu,Cantarell,"Fira Sans","Droid Sans","Helvetica Neue",sans-serif; font-size: 12px; line-height: 1;}
 
 .cg-circular {box-sizing: border-box; position: fixed; z-index: 20020003; border: solid 3px #76b9ed; border-radius: 50%; filter: drop-shadow(0 0 7px #76b9ed); pointer-events: none; opacity: 0;}
 .cg-rectangle {box-sizing: border-box; position: fixed; z-index: 20020002; border: solid 1px rgba(118, 185, 237, .7); box-shadow: 0 0 10px rgba(0, 0, 0, .3); background: rgba(118, 185, 237, .1); pointer-events: none; opacity: 0;}
@@ -26,16 +26,11 @@ function requestAnimationFrameCb(): void {
     // --- 被添加的监听的 el 对象触发其 resize 回调 ---
     for (let i = 0; i < ClickGo._watchSize.length; ++i) {
         let item = ClickGo._watchSize[i];
-        let rect = item.el.getBoundingClientRect();
-        let trect: IDomRect = {
-            "bottom": Math.round(rect.bottom),
-            "height": Math.round(rect.height),
-            "left": Math.round(rect.left),
-            "right": Math.round(rect.right),
-            "top": Math.round(rect.top),
-            "width": Math.round(rect.width)
+        let trect: IDomSize = {
+            "height": Math.round(item.el.offsetHeight),
+            "width": Math.round(item.el.offsetWidth)
         };
-        if (trect.left === 0 && trect.top === 0 && trect.width === 0 && trect.height === 0) {
+        if (trect.width === 0 && trect.height === 0) {
             if (getComputedStyle(item.el).display === "") {
                 // --- 元素已被移除 ---
                 ClickGo._watchSize.splice(i, 1);
@@ -43,9 +38,9 @@ function requestAnimationFrameCb(): void {
             }
             continue;
         }
-        if (trect.width !== item.rect.width || trect.height !== item.rect.height) {
+        if (trect.width !== item.size.width || trect.height !== item.size.height) {
             item.cb(trect);
-            item.rect = trect;
+            item.size = trect;
         }
     }
     // --- 等待下一个 ---

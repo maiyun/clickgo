@@ -37,8 +37,8 @@ export let props = {
 };
 
 export let data = {
-    "scrollOffsetPx": 0,
     "scrollOffsetData": 0,
+    "barLengthPx": 0,
 
     "timer": undefined,
     "tran": false,
@@ -65,7 +65,7 @@ export let watch = {
     },
     "scrollOffset": {
         handler: function(this: IVue): void {
-            this.scrollOffsetData = parseInt(this.scrollOffset);
+            this.scrollOffsetData = Math.round(this.scrollOffset);
             if (this.scrollOffsetData > this.maxScroll) {
                 this.scrollOffsetData = this.maxScroll;
                 this.$emit("update:scrollOffset", this.scrollOffsetData);
@@ -80,19 +80,19 @@ export let watch = {
 
 export let computed = {
     // --- 滑块长度 ---
-    "size": function(this: IVue): string {
+    "size": function(this: IVue): number {
         if (this.client >= this.length) {
-            return "100%";
+            return this.barLengthPx;
         }
-        return this.client / this.length * 100 + "%";
+        return this.client / this.length * this.barLengthPx;
     },
-    // --- 滑块距离起始位置的百分比 ---
-    "scrollOffsetPer": function(this: IVue): number {
-        return this.scrollOffsetData / this.length * 100;
+    // --- 滑块已经滚动的百分比位置 ---
+    "scrollOffsetPx": function(this: IVue): number {
+        return this.scrollOffsetData / this.length * this.barLengthPx;
     },
     // --- 最大可拖动的 scroll 位置 ---
     "maxScroll": function(this: IVue): number {
-        return (this.length > this.client) ? (this.length - this.client) : 0;
+        return (this.length > this.client) ? Math.round(this.length - this.client) : 0;
     },
 
     "widthPx": function(this: IVue): string | undefined {
@@ -118,20 +118,16 @@ export let methods = {
         if (e instanceof MouseEvent && ClickGo.hasTouch) {
             return;
         }
-        let r = this.$refs.block.getBoundingClientRect();
-        let rectWidth = 0, rectHeight = 0;
-        let rect = ClickGo.bindMove(e, {
+        let px = this.scrollOffsetPx;
+        ClickGo.bindMove(e, {
             "object": this.$refs.block,
             "offsetObject": this.$refs.bar,
             "move": (ox, oy, x, y) => {
-                this.scrollOffsetPx += this.direction === "v" ? oy : ox;
-                this.scrollOffsetData = Math.round(this.length * (this.scrollOffsetPx / (this.direction === "v" ? rectHeight : rectWidth)));
+                px += this.direction === "v" ? oy : ox;
+                this.scrollOffsetData = Math.round(px / this.barLengthPx * this.length);
                 this.$emit("update:scrollOffset", this.scrollOffsetData);
             }
         });
-        rectWidth = rect.right - rect.left;
-        rectHeight = rect.bottom - rect.top;
-        this.scrollOffsetPx = this.direction === "v" ? r.top - rect.top : r.left - rect.left;
     },
     bardown: function(this: IVue, e: MouseEvent | TouchEvent): void {
         if (e instanceof MouseEvent && ClickGo.hasTouch) {
@@ -140,32 +136,21 @@ export let methods = {
         if (e.currentTarget !== e.target) {
             return;
         }
-        let offset = (this.direction === "v" ? (e instanceof MouseEvent ? e.clientY : e.touches[0].clientY) : (e instanceof MouseEvent ? e.clientX : e.touches[0].clientX)) * ClickGo.rzoom;
-        let barR = this.$refs.bar.getBoundingClientRect();
-        let blockR = this.$refs.block.getBoundingClientRect();
-        if (this.direction === "v") {
-            let offsetTop = offset - blockR.height / 2;
-            if (offsetTop < barR.top) {
-                offsetTop = barR.top;
-            }
-            if (offsetTop + blockR.height > barR.top + barR.height) {
-                offsetTop = barR.top + barR.height - blockR.height;
-            }
-            let marginTop = offsetTop - barR.top;
-            this.$refs.block.style.marginTop = marginTop + "px";
-            this.scrollOffsetData = Math.round(this.length * ((offsetTop - barR.top) / barR.height));
-        } else {
-            let offsetLeft = offset - blockR.width / 2;
-            if (offsetLeft < barR.left) {
-                offsetLeft = barR.left;
-            }
-            if (offsetLeft + blockR.width > barR.left + barR.width) {
-                offsetLeft = barR.left + barR.width - blockR.width;
-            }
-            let marginLeft = offsetLeft - barR.left;
-            this.$refs.block.style.marginLeft = marginLeft + "px";
-            this.scrollOffsetData = Math.round(this.length * ((offsetLeft - barR.left) / barR.width));
+        let barRect = this.$refs.bar.getBoundingClientRect();
+        let barOffset = this.direction === "v" ? barRect.top : barRect.left;
+        /** --- 鼠标点击在 bar 中的位置 --- */
+        let eOffset = (this.direction === "v" ? (e instanceof MouseEvent ? e.clientY : e.touches[0].clientY) : (e instanceof MouseEvent ? e.clientX : e.touches[0].clientX)) * ClickGo.rzoom;
+        eOffset = eOffset - barOffset;
+
+        let px = eOffset - this.size / 2;
+        if (px < 0) {
+            px = 0;
         }
+        console.log(px + this.size, this.barLengthPx);
+        if (px + this.size > this.barLengthPx) {
+            px = this.barLengthPx - this.size;
+        }
+        this.scrollOffsetData = Math.round(px / this.barLengthPx * this.length);
         this.$emit("update:scrollOffset", this.scrollOffsetData);
         this.down(e);
     },
@@ -206,6 +191,13 @@ export let methods = {
             }
         });
     }
+};
+
+export let mounted = function(this: IVue): void {
+    ClickGo.watchSize(this.$refs.bar, (size) => {
+        this.barLengthPx = this.direction === "v" ? this.$refs.bar.offsetHeight : this.$refs.bar.offsetWidth;
+    });
+    this.barLengthPx = this.direction === "v" ? this.$refs.bar.offsetHeight : this.$refs.bar.offsetWidth;
 };
 
 export let destroyed = function(this: IVue): void {

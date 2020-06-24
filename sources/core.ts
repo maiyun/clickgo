@@ -1121,35 +1121,63 @@ export function endTask(taskId: number): boolean {
  * @param el 要监视的大小
  * @param cb 回调函数
  */
-export function watchSize(el: HTMLElement, cb: (rect: IDomRect) => void): IDomRect {
-    let rect = el.getBoundingClientRect();
-    for (let item of ClickGo._watchSize) {
-        if (item.el === el) {
-            return rect;
-        }
-    }
+export function watchSize(el: HTMLElement, cb: (size: IDomSize) => void): IDomSize {
+    let size = {
+        "width": el.offsetWidth,
+        "height": el.offsetHeight
+    };
     ClickGo._watchSize.push({
         "el": el,
-        "rect": rect,
+        "size": size,
         "cb": cb
     });
-    return rect;
+    return size;
 }
 
 /**
  * --- 添加 DOM 内容变化监视 ---
  * @param el dom 对象
  * @param cb 回调
+ * @param mode 监听模式
  */
-export function watchElement(el: HTMLElement, cb: MutationCallback): MutationObserver {
+export function watchElement(el: HTMLElement, cb: MutationCallback, mode: "child" | "childsub" | "style" | MutationObserverInit = "style"): MutationObserver {
+    let moi: MutationObserverInit;
+    switch (mode) {
+        case "child": {
+            moi = {
+                "childList": true
+            };
+            break;
+        }
+        case "childsub": {
+            moi = {
+                "childList": true,
+                "subtree": true
+            };
+            break;
+        }
+        case "style": {
+            moi = {
+                "attributeFilter": ["style", "class"],
+                "attributes": true
+            };
+            break;
+        }
+        default: {
+            moi = mode;
+        }
+    }
     let mo = new MutationObserver(cb);
-    mo.observe(el, {
+    mo.observe(el, moi);
+    /*
+    {
         "attributeFilter": ["style", "class"],
         "attributes": true,
         "characterData": true,
         "childList": true,
         "subtree": true
-    });
+    }
+    */
     return mo;
 }
 

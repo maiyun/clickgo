@@ -36,8 +36,8 @@ exports.props = {
     }
 };
 exports.data = {
-    "scrollOffsetPx": 0,
     "scrollOffsetData": 0,
+    "barLengthPx": 0,
     "timer": undefined,
     "tran": false,
     "_direction": undefined
@@ -61,7 +61,7 @@ exports.watch = {
     },
     "scrollOffset": {
         handler: function () {
-            this.scrollOffsetData = parseInt(this.scrollOffset);
+            this.scrollOffsetData = Math.round(this.scrollOffset);
             if (this.scrollOffsetData > this.maxScroll) {
                 this.scrollOffsetData = this.maxScroll;
                 this.$emit("update:scrollOffset", this.scrollOffsetData);
@@ -77,15 +77,15 @@ exports.watch = {
 exports.computed = {
     "size": function () {
         if (this.client >= this.length) {
-            return "100%";
+            return this.barLengthPx;
         }
-        return this.client / this.length * 100 + "%";
+        return this.client / this.length * this.barLengthPx;
     },
-    "scrollOffsetPer": function () {
-        return this.scrollOffsetData / this.length * 100;
+    "scrollOffsetPx": function () {
+        return this.scrollOffsetData / this.length * this.barLengthPx;
     },
     "maxScroll": function () {
-        return (this.length > this.client) ? (this.length - this.client) : 0;
+        return (this.length > this.client) ? Math.round(this.length - this.client) : 0;
     },
     "widthPx": function () {
         if (this.width !== undefined) {
@@ -110,20 +110,16 @@ exports.methods = {
         if (e instanceof MouseEvent && ClickGo.hasTouch) {
             return;
         }
-        var r = this.$refs.block.getBoundingClientRect();
-        var rectWidth = 0, rectHeight = 0;
-        var rect = ClickGo.bindMove(e, {
+        var px = this.scrollOffsetPx;
+        ClickGo.bindMove(e, {
             "object": this.$refs.block,
             "offsetObject": this.$refs.bar,
             "move": function (ox, oy, x, y) {
-                _this.scrollOffsetPx += _this.direction === "v" ? oy : ox;
-                _this.scrollOffsetData = Math.round(_this.length * (_this.scrollOffsetPx / (_this.direction === "v" ? rectHeight : rectWidth)));
+                px += _this.direction === "v" ? oy : ox;
+                _this.scrollOffsetData = Math.round(px / _this.barLengthPx * _this.length);
                 _this.$emit("update:scrollOffset", _this.scrollOffsetData);
             }
         });
-        rectWidth = rect.right - rect.left;
-        rectHeight = rect.bottom - rect.top;
-        this.scrollOffsetPx = this.direction === "v" ? r.top - rect.top : r.left - rect.left;
     },
     bardown: function (e) {
         if (e instanceof MouseEvent && ClickGo.hasTouch) {
@@ -132,33 +128,19 @@ exports.methods = {
         if (e.currentTarget !== e.target) {
             return;
         }
-        var offset = (this.direction === "v" ? (e instanceof MouseEvent ? e.clientY : e.touches[0].clientY) : (e instanceof MouseEvent ? e.clientX : e.touches[0].clientX)) * ClickGo.rzoom;
-        var barR = this.$refs.bar.getBoundingClientRect();
-        var blockR = this.$refs.block.getBoundingClientRect();
-        if (this.direction === "v") {
-            var offsetTop = offset - blockR.height / 2;
-            if (offsetTop < barR.top) {
-                offsetTop = barR.top;
-            }
-            if (offsetTop + blockR.height > barR.top + barR.height) {
-                offsetTop = barR.top + barR.height - blockR.height;
-            }
-            var marginTop = offsetTop - barR.top;
-            this.$refs.block.style.marginTop = marginTop + "px";
-            this.scrollOffsetData = Math.round(this.length * ((offsetTop - barR.top) / barR.height));
+        var barRect = this.$refs.bar.getBoundingClientRect();
+        var barOffset = this.direction === "v" ? barRect.top : barRect.left;
+        var eOffset = (this.direction === "v" ? (e instanceof MouseEvent ? e.clientY : e.touches[0].clientY) : (e instanceof MouseEvent ? e.clientX : e.touches[0].clientX)) * ClickGo.rzoom;
+        eOffset = eOffset - barOffset;
+        var px = eOffset - this.size / 2;
+        if (px < 0) {
+            px = 0;
         }
-        else {
-            var offsetLeft = offset - blockR.width / 2;
-            if (offsetLeft < barR.left) {
-                offsetLeft = barR.left;
-            }
-            if (offsetLeft + blockR.width > barR.left + barR.width) {
-                offsetLeft = barR.left + barR.width - blockR.width;
-            }
-            var marginLeft = offsetLeft - barR.left;
-            this.$refs.block.style.marginLeft = marginLeft + "px";
-            this.scrollOffsetData = Math.round(this.length * ((offsetLeft - barR.left) / barR.width));
+        console.log(px + this.size, this.barLengthPx);
+        if (px + this.size > this.barLengthPx) {
+            px = this.barLengthPx - this.size;
         }
+        this.scrollOffsetData = Math.round(px / this.barLengthPx * this.length);
         this.$emit("update:scrollOffset", this.scrollOffsetData);
         this.down(e);
     },
@@ -203,6 +185,13 @@ exports.methods = {
             }
         });
     }
+};
+exports.mounted = function () {
+    var _this = this;
+    ClickGo.watchSize(this.$refs.bar, function (size) {
+        _this.barLengthPx = _this.direction === "v" ? _this.$refs.bar.offsetHeight : _this.$refs.bar.offsetWidth;
+    });
+    this.barLengthPx = this.direction === "v" ? this.$refs.bar.offsetHeight : this.$refs.bar.offsetWidth;
 };
 exports.destroyed = function () {
     if (this.timer !== undefined) {

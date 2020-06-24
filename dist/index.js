@@ -218,8 +218,9 @@ var ClickGo = {
     watchSize: function (el, cb) {
         return this._core.watchSize(el, cb);
     },
-    watchElement: function (el, cb) {
-        return this._core.watchElement(el, cb);
+    watchElement: function (el, cb, mode) {
+        if (mode === void 0) { mode = "style"; }
+        return this._core.watchElement(el, cb, mode);
     },
     bindDown: function (oe, opt) {
         return this._core.bindDown(oe, opt);

@@ -39,27 +39,31 @@
     border-width: 1px 1px 0 0; margin-left: -12%;
 }
 
-.scroll-bar {
+.scroll-bar-wrap {
     flex: 1; display: flex;
 }
-.wrap.v .scroll-bar {
-    flex-direction: column; -webkit-writing-mode: vertical-lr; writing-mode: vertical-lr;
+
+.scroll-bar-inner {
+    flex: 1; position: relative;
 }
 
 .block-wrap {
-    background-color: rgba(0, 0, 0, .1); display: flex; 
+    background-color: rgba(0, 0, 0, .1); display: flex; position: absolute; left: 0; top: 0;
 }
 .block-wrap:hover {
     background-color: rgba(0, 0, 0, .3);
 }
-.scroll-bar:active > .block-wrap {
+.scroll-bar-inner:active > .block-wrap {
     background-color: rgba(0, 0, 0, 0.5);
 }
 .wrap.v .block-wrap {
     width: 100%;
 }
+.wrap.h .block-wrap {
+    height: 100%;
+}
 .block-wrap.tran {
-    transition: margin .03s linear;
+    transition: transform .03s linear;
 }
 
 .block-inner {

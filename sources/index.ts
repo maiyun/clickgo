@@ -94,7 +94,7 @@ const ClickGo: {
     /** --- 当前 pop 的 vue 对象 --- */
     "_pop": IVue | null;
     /** --- 正在被监视大小的对象 --- */
-    "_watchSize": Array<{ "el": HTMLElement; "rect": IDomRect; "cb": (rect: IDomRect) => void; }>;
+    "_watchSize": Array<{ "el": HTMLElement; "size": IDomSize; "cb": (size: IDomSize) => void; }>;
 
     /**
      * --- 显示从小到大的圆圈动画特效对象 ---
@@ -268,14 +268,15 @@ const ClickGo: {
      * @param el 要监视的大小
      * @param cb 回调函数
      */
-    watchSize: (el: HTMLElement, cb: (rect: IDomRect) => void) => IDomRect;
+    watchSize: (el: HTMLElement, cb: (size: IDomSize) => void) => IDomSize;
 
     /**
      * --- 添加 DOM 内容变化监视 ---
      * @param el dom 对象
      * @param cb 回调
+     * @param mode 监听模式
      */
-    watchElement: (el: HTMLElement, cb: MutationCallback) => MutationObserver;
+    watchElement: (el: HTMLElement, cb: MutationCallback, mode?: "child" | "childsub" | "style" | MutationObserverInit) => MutationObserver;
 
     /**
      * --- 绑定按下以及弹起事件 ---
@@ -483,12 +484,12 @@ const ClickGo: {
         return this._core.endTask(taskId);
     },
 
-    watchSize: function(el: HTMLElement, cb: (rect: IDomRect) => void): IDomRect {
+    watchSize: function(el: HTMLElement, cb: (size: IDomSize) => void): IDomSize {
         return this._core.watchSize(el, cb);
     },
 
-    watchElement: function(el: HTMLElement, cb: MutationCallback): MutationObserver {
-        return this._core.watchElement(el, cb);
+    watchElement: function(el: HTMLElement, cb: MutationCallback, mode: "child" | "childsub" | "style" | MutationObserverInit = "style"): MutationObserver {
+        return this._core.watchElement(el, cb, mode);
     },
 
     bindDown: function(oe: MouseEvent | TouchEvent, opt: { "down"?: (e: MouseEvent | TouchEvent) => void; "start"?: (e: MouseEvent | TouchEvent) => void | boolean; "move"?: (e: MouseEvent | TouchEvent) => void | boolean; "up"?: (e: MouseEvent | TouchEvent) => void; "end"?: (e: MouseEvent | TouchEvent) => void; }): void {

@@ -41,29 +41,24 @@ styleListElement.style.display = "none";
 document.getElementsByTagName("body")[0].appendChild(styleListElement);
 styleListElement.insertAdjacentHTML("beforeend", "<style id=\"cg-global-cursor\"></style>");
 styleListElement.insertAdjacentHTML("beforeend", "<style id=\"cg-global-theme\"></style>");
-styleListElement.insertAdjacentHTML("beforeend", "<style class=\"cg-global\">\n.cg-form-list {position: fixed; left: 0; top: 0; z-index: 20020000; width: 0; height: 0; cursor: default;}\n.cg-pop-list {position: fixed; left: 0; top: 0; z-index: 20020001; width: 0; height: 0; cursor: default;}\n.cg-form-list img, .cg-pop-list img {vertical-align: bottom;}\n.cg-form-list ::selection {\n    background-color: rgba(0, 120, 215, .3);\n}\n\n.cg-form-list *, .cg-pop-list * {box-sizing: border-box !important; -webkit-tap-highlight-color: rgba(0, 0, 0, 0);}\n.cg-form-list, .cg-form-list input, .cg-form-list textarea, .cg-pop-list, .cg-pop-list input, .cg-pop-list textarea {font-family: -apple-system,BlinkMacSystemFont,opensans,Optima,\"Microsoft Yahei\",sans-serif; font-size: 12px; line-height: 1;}\n\n.cg-circular {box-sizing: border-box; position: fixed; z-index: 20020003; border: solid 3px #76b9ed; border-radius: 50%; filter: drop-shadow(0 0 7px #76b9ed); pointer-events: none; opacity: 0;}\n.cg-rectangle {box-sizing: border-box; position: fixed; z-index: 20020002; border: solid 1px rgba(118, 185, 237, .7); box-shadow: 0 0 10px rgba(0, 0, 0, .3); background: rgba(118, 185, 237, .1); pointer-events: none; opacity: 0;}\n</style>");
+styleListElement.insertAdjacentHTML("beforeend", "<style class=\"cg-global\">\n.cg-form-list {position: fixed; left: 0; top: 0; z-index: 20020000; width: 0; height: 0; cursor: default;}\n.cg-pop-list {position: fixed; left: 0; top: 0; z-index: 20020001; width: 0; height: 0; cursor: default;}\n.cg-form-list img, .cg-pop-list img {vertical-align: bottom;}\n.cg-form-list ::selection {\n    background-color: rgba(0, 120, 215, .3);\n}\n\n.cg-form-list *, .cg-pop-list * {box-sizing: border-box !important; -webkit-tap-highlight-color: rgba(0, 0, 0, 0);}\n.cg-form-list, .cg-form-list input, .cg-form-list textarea, .cg-pop-list, .cg-pop-list input, .cg-pop-list textarea {font-family: -apple-system,BlinkMacSystemFont,\"Segoe UI\",Roboto,Oxygen,Ubuntu,Cantarell,\"Fira Sans\",\"Droid Sans\",\"Helvetica Neue\",sans-serif; font-size: 12px; line-height: 1;}\n\n.cg-circular {box-sizing: border-box; position: fixed; z-index: 20020003; border: solid 3px #76b9ed; border-radius: 50%; filter: drop-shadow(0 0 7px #76b9ed); pointer-events: none; opacity: 0;}\n.cg-rectangle {box-sizing: border-box; position: fixed; z-index: 20020002; border: solid 1px rgba(118, 185, 237, .7); box-shadow: 0 0 10px rgba(0, 0, 0, .3); background: rgba(118, 185, 237, .1); pointer-events: none; opacity: 0;}\n</style>");
 function requestAnimationFrameCb() {
     for (var i = 0; i < ClickGo._watchSize.length; ++i) {
         var item = ClickGo._watchSize[i];
-        var rect = item.el.getBoundingClientRect();
         var trect = {
-            "bottom": Math.round(rect.bottom),
-            "height": Math.round(rect.height),
-            "left": Math.round(rect.left),
-            "right": Math.round(rect.right),
-            "top": Math.round(rect.top),
-            "width": Math.round(rect.width)
+            "height": Math.round(item.el.offsetHeight),
+            "width": Math.round(item.el.offsetWidth)
         };
-        if (trect.left === 0 && trect.top === 0 && trect.width === 0 && trect.height === 0) {
+        if (trect.width === 0 && trect.height === 0) {
             if (getComputedStyle(item.el).display === "") {
                 ClickGo._watchSize.splice(i, 1);
                 --i;
             }
             continue;
         }
-        if (trect.width !== item.rect.width || trect.height !== item.rect.height) {
+        if (trect.width !== item.size.width || trect.height !== item.size.height) {
             item.cb(trect);
-            item.rect = trect;
+            item.size = trect;
         }
     }
     requestAnimationFrame(requestAnimationFrameCb);

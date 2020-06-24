@@ -105,7 +105,7 @@ export let mounted = function(this: IVue): void {
     ClickGo.watchElement(this.$refs.wrap, () => {
         this.$emit("change", this.direction === "v" ? this.$refs.wrap.scrollHeight : this.$refs.wrap.scrollWidth);
         this.scroll();
-    });
+    }, "childsub");
     this.$emit("change", this.direction === "v" ? this.$refs.wrap.scrollHeight : this.$refs.wrap.scrollWidth);
 
     if (this.direction === "v") {

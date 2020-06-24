@@ -117,13 +117,9 @@ type TSystemEvent = "screenResize" | "formCreated" | "formRemoved" | "formIconCh
 /** --- 方向类型，从左上开始 --- */
 type TBorderDir = "lt" | "t" | "tr" | "r" | "rb" | "b" | "bl" | "l" | "" | { "left": number; "top"?: number; "width": number; "height"?: number; };
 
-/** --- DOM 的位置 --- */
-interface IDomRect {
-    "bottom": number;
+/** --- DOM 的大小 --- */
+interface IDomSize {
     "height": number;
-    "left": number;
-    "right": number;
-    "top": number;
     "width": number;
 }
 

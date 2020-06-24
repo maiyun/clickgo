@@ -100,7 +100,7 @@ exports.mounted = function () {
     ClickGo.watchElement(this.$refs.wrap, function () {
         _this.$emit("change", _this.direction === "v" ? _this.$refs.wrap.scrollHeight : _this.$refs.wrap.scrollWidth);
         _this.scroll();
-    });
+    }, "childsub");
     this.$emit("change", this.direction === "v" ? this.$refs.wrap.scrollHeight : this.$refs.wrap.scrollWidth);
     if (this.direction === "v") {
         this.$refs.wrap.scrollTop = this.scrollOffset;
