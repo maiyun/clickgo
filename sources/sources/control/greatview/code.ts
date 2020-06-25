@@ -27,6 +27,9 @@ export let props = {
     "scrollOffset": {
         "default": undefined
     },
+    "line": {
+        "default": undefined
+    },
 
     "data": {
         "default": []
@@ -34,13 +37,21 @@ export let props = {
 };
 
 export let data = {
-    "length": 0,
-    "dataInner": [],
-    "dataShow": [],
+    "innerPos": {
+        "start": 0,
+        "end": 0
+    },
+    "showPos": {
+        "start": 0,
+        "end": 0
+    },
+
     "dataHeight": [],
+    "lineHeight": 0,
 
     "scrollOffsetData": 0,
     "client": 0,
+    "length": 0,
 
     "refreshCount": 0,
 
@@ -56,6 +67,7 @@ export let watch = {
     "direction": function(this: IVue): void {
         this.refreshView();
     },
+
     "_direction": {
         handler: function(this: IVue): void {
             this.$children[0].$data._direction = this.$data._direction;
@@ -107,75 +119,92 @@ export let methods = {
 
         let length: number = this.direction === "v" ? this.paddingComp.top : this.paddingComp.left;
         if (this.dataComp.length === 0) {
+            this.dataHeight = [];
+            this.lineHeight = 0;
+            this.length = length + (this.direction === "v" ? this.paddingComp.bottom : this.paddingComp.right);
             return;
         }
 
-        let maxCursor = this.dataComp.length;
-        let cursor = 0;
+        if (this.line === undefined) {
+            let maxCursor = this.dataComp.length;
+            let cursor = 0;
 
-        while (true) {
-            if (nowCount !== this.refreshCount) {
-                return;
-            }
+            /** --- 这个在最后应用，要不然可能出现白屏，因为 reShow 还没没执行，正在显示的被移走了，但没移动的意义 --- */
+            let dataHeight = [];
+            while (true) {
+                if (nowCount !== this.refreshCount) {
+                    return;
+                }
 
-            let theCursor = cursor + 50;
-            if (theCursor > maxCursor) {
-                theCursor = maxCursor;
+                let theCursor = cursor + 100;
+                if (theCursor > maxCursor) {
+                    theCursor = maxCursor;
+                }
+                this.innerPos.start = cursor;
+                this.innerPos.end = theCursor;
+                await this.$nextTick();
+                await ClickGo.sleep(0);
+                if (nowCount !== this.refreshCount) {
+                    return;
+                }
+                // --- 遍历 inner items ---
+                if (!this.$refs.inner) {
+                    return;
+                }
+                for (let i = 0; i < this.$refs.inner.children.length; ++i) {
+                    let item = this.$refs.inner.children.item(i) as HTMLElement;
+                    let start = length;
+                    length += this.direction === "v" ? item.offsetHeight : item.offsetWidth;
+                    dataHeight[cursor + i] = {
+                        "start": start,
+                        "end": length
+                    };
+                }
+                if (theCursor === maxCursor) {
+                    break;
+                }
+                cursor = theCursor;
             }
-            this.dataInner = [];
-            for (let i = cursor; i < theCursor; ++i) {
-                this.dataInner.push({
-                    "index": i,
-                    "item": this.dataComp[i]
-                });
-            }
+            this.dataHeight = dataHeight;
+        } else {
+            // --- single ---
+            this.innerPos.start = 0;
+            this.innerPos.end = 1;
             await this.$nextTick();
-            await ClickGo.sleep(0);
-            if (nowCount !== this.refreshCount) {
-                return;
-            }
-            // --- 遍历 inner items ---
-            if (!this.$refs.inner) {
-                return;
-            }
-            for (let i = 0; i < this.$refs.inner.children.length; ++i) {
-                let item = this.$refs.inner.children.item(i) as HTMLElement;
-                let start = length;
-                length += (this.direction === "v" ? item.offsetHeight : item.offsetWidth);
-                this.dataHeight[cursor + i] = {
-                    "start": start,
-                    "end": length
-                };
-            }
-            if (theCursor === maxCursor) {
-                this.dataHeight.splice(maxCursor);
-                break;
-            }
-            cursor = theCursor;
+            let item = this.$refs.inner.children.item(0) as HTMLElement;
+            this.lineHeight = this.direction === "v" ? item.offsetHeight : item.offsetWidth;
+            length += this.lineHeight * this.dataComp.length;
         }
-        this.dataInner = [];
-
-        this.length = length + (this.direction === "v" ? this.paddingComp.top : this.paddingComp.left);
+        this.innerPos.start = 0;
+        this.innerPos.end = 0;
+        length += this.direction === "v" ? this.paddingComp.bottom : this.paddingComp.right;
+        this.length = length;
 
         this.reShow();
     },
     // --- 控制显示和隐藏 ---
     reShow: async function(this: IVue): Promise<void> {
-        let list = [];
+        let overShow = false;
         for (let i = 0; i < this.dataComp.length; ++i) {
-            let item = this.dataComp[i];
             let pos = this.dataHeight[i];
             if (!pos) {
                 return;
             }
             if ((pos.end > this.scrollOffsetData - 10) && (pos.start < this.scrollOffsetData + this.client + 10)) {
-                list.push({
-                    "index": i,
-                    "item": item
-                });
+                if (!overShow) {
+                    overShow = true;
+                    this.showPos.start = i;
+                }
+                if (!this.dataComp[i + 1]) {
+                    this.showPos.end = i + 1;
+                }
+                continue;
+            }
+            if (overShow) {
+                this.showPos.end = i;
+                break;
             }
         }
-        this.dataShow = list;
     }
 };
 

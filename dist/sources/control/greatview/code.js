@@ -64,17 +64,27 @@ exports.props = {
     "scrollOffset": {
         "default": undefined
     },
+    "line": {
+        "default": undefined
+    },
     "data": {
         "default": []
     }
 };
 exports.data = {
-    "length": 0,
-    "dataInner": [],
-    "dataShow": [],
+    "innerPos": {
+        "start": 0,
+        "end": 0
+    },
+    "showPos": {
+        "start": 0,
+        "end": 0
+    },
     "dataHeight": [],
+    "lineHeight": 0,
     "scrollOffsetData": 0,
     "client": 0,
+    "length": 0,
     "refreshCount": 0,
     "_direction": undefined
 };
@@ -131,34 +141,34 @@ exports.computed = {
 exports.methods = {
     refreshView: function () {
         return __awaiter(this, void 0, void 0, function () {
-            var nowCount, length, maxCursor, cursor, theCursor, i, i, item, start;
+            var nowCount, length, maxCursor, cursor, dataHeight, theCursor, i, item, start, item;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         nowCount = ++this.refreshCount;
                         length = this.direction === "v" ? this.paddingComp.top : this.paddingComp.left;
                         if (this.dataComp.length === 0) {
+                            this.dataHeight = [];
+                            this.lineHeight = 0;
+                            this.length = length + (this.direction === "v" ? this.paddingComp.bottom : this.paddingComp.right);
                             return [2];
                         }
+                        if (!(this.line === undefined)) return [3, 5];
                         maxCursor = this.dataComp.length;
                         cursor = 0;
+                        dataHeight = [];
                         _a.label = 1;
                     case 1:
                         if (!true) return [3, 4];
                         if (nowCount !== this.refreshCount) {
                             return [2];
                         }
-                        theCursor = cursor + 50;
+                        theCursor = cursor + 100;
                         if (theCursor > maxCursor) {
                             theCursor = maxCursor;
                         }
-                        this.dataInner = [];
-                        for (i = cursor; i < theCursor; ++i) {
-                            this.dataInner.push({
-                                "index": i,
-                                "item": this.dataComp[i]
-                            });
-                        }
+                        this.innerPos.start = cursor;
+                        this.innerPos.end = theCursor;
                         return [4, this.$nextTick()];
                     case 2:
                         _a.sent();
@@ -174,21 +184,35 @@ exports.methods = {
                         for (i = 0; i < this.$refs.inner.children.length; ++i) {
                             item = this.$refs.inner.children.item(i);
                             start = length;
-                            length += (this.direction === "v" ? item.offsetHeight : item.offsetWidth);
-                            this.dataHeight[cursor + i] = {
+                            length += this.direction === "v" ? item.offsetHeight : item.offsetWidth;
+                            dataHeight[cursor + i] = {
                                 "start": start,
                                 "end": length
                             };
                         }
                         if (theCursor === maxCursor) {
-                            this.dataHeight.splice(maxCursor);
                             return [3, 4];
                         }
                         cursor = theCursor;
                         return [3, 1];
                     case 4:
-                        this.dataInner = [];
-                        this.length = length + (this.direction === "v" ? this.paddingComp.top : this.paddingComp.left);
+                        this.dataHeight = dataHeight;
+                        return [3, 7];
+                    case 5:
+                        this.innerPos.start = 0;
+                        this.innerPos.end = 1;
+                        return [4, this.$nextTick()];
+                    case 6:
+                        _a.sent();
+                        item = this.$refs.inner.children.item(0);
+                        this.lineHeight = this.direction === "v" ? item.offsetHeight : item.offsetWidth;
+                        length += this.lineHeight * this.dataComp.length;
+                        _a.label = 7;
+                    case 7:
+                        this.innerPos.start = 0;
+                        this.innerPos.end = 0;
+                        length += this.direction === "v" ? this.paddingComp.bottom : this.paddingComp.right;
+                        this.length = length;
                         this.reShow();
                         return [2];
                 }
@@ -197,23 +221,29 @@ exports.methods = {
     },
     reShow: function () {
         return __awaiter(this, void 0, void 0, function () {
-            var list, i, item, pos;
+            var overShow, i, pos;
             return __generator(this, function (_a) {
-                list = [];
+                overShow = false;
                 for (i = 0; i < this.dataComp.length; ++i) {
-                    item = this.dataComp[i];
                     pos = this.dataHeight[i];
                     if (!pos) {
                         return [2];
                     }
                     if ((pos.end > this.scrollOffsetData - 10) && (pos.start < this.scrollOffsetData + this.client + 10)) {
-                        list.push({
-                            "index": i,
-                            "item": item
-                        });
+                        if (!overShow) {
+                            overShow = true;
+                            this.showPos.start = i;
+                        }
+                        if (!this.dataComp[i + 1]) {
+                            this.showPos.end = i + 1;
+                        }
+                        continue;
+                    }
+                    if (overShow) {
+                        this.showPos.end = i;
+                        break;
                     }
                 }
-                this.dataShow = list;
                 return [2];
             });
         });

@@ -26,17 +26,27 @@ export declare let props: {
     scrollOffset: {
         default: undefined;
     };
+    line: {
+        default: undefined;
+    };
     data: {
         default: never[];
     };
 };
 export declare let data: {
-    length: number;
-    dataInner: never[];
-    dataShow: never[];
+    innerPos: {
+        start: number;
+        end: number;
+    };
+    showPos: {
+        start: number;
+        end: number;
+    };
     dataHeight: never[];
+    lineHeight: number;
     scrollOffsetData: number;
     client: number;
+    length: number;
     refreshCount: number;
     _direction: undefined;
 };
