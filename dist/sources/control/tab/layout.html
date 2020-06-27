@@ -1,0 +1,8 @@
+<div class="wrap" :class="[direction]" ref="wrap" :style="{'width': widthPx, 'height': heightPx, 'left': left + 'px', 'top': top + 'px', 'z-index': zIndex, 'flex-grow': flex}" @click="_tap" @mousedown="_down" @touchstart="_down" @dblclick="_dblclick">
+    <div class="tabs">
+        <div class="tab" v-for="(item, index) of tabs">{{item.label}}</div>
+    </div>
+    <div ref="panels" class="panels">
+        <slot>
+    </div>
+</div>

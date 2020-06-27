@@ -25,3 +25,4 @@ export declare let computed: {
     widthPx: (this: IVue) => string | undefined;
     heightPx: (this: IVue) => string | undefined;
 };
+export declare let mounted: (this: IVue) => void;

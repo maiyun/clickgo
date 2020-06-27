@@ -36,9 +36,11 @@ export declare let watch: {
     scrollOffset: {
         handler: (this: IVue) => void;
     };
+    direction: (this: IVue) => void;
 };
 export declare let methods: {
     scroll: (this: IVue) => void;
     wheel: (this: IVue, e: WheelEvent) => void;
+    touchmove: (this: IVue, e: TouchEvent) => void;
 };
 export declare let mounted: (this: IVue) => void;

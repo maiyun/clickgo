@@ -84,7 +84,7 @@ declare const ClickGo: {
     removeForm: (formId: number) => boolean;
     endTask: (taskId: number) => boolean;
     watchSize: (el: HTMLElement, cb: (size: IDomSize) => void) => IDomSize;
-    watchElement: (el: HTMLElement, cb: MutationCallback, mode?: "child" | "childsub" | "style" | MutationObserverInit) => MutationObserver;
+    watchElement: (el: HTMLElement, cb: MutationCallback, mode?: "child" | "childsub" | "style" | "default" | MutationObserverInit) => MutationObserver;
     bindDown: (oe: MouseEvent | TouchEvent, opt: {
         "down"?: (e: MouseEvent | TouchEvent) => void;
         "start"?: (e: MouseEvent | TouchEvent) => void | boolean;
@@ -140,5 +140,6 @@ declare const ClickGo: {
     setGlobalCursor: (type?: string) => void;
     requestAnimationFrame: () => Promise<number>;
     sleep: (ms?: number) => Promise<void>;
+    getIndex: (el: HTMLElement) => number;
     [name: string]: any;
 };

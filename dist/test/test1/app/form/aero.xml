@@ -1,5 +1,5 @@
 <form width="300" height="300" min-height="250" :resize="resize" :state-max="max" title="Aero" border="none" background="transparent">
-    <layout align-h="center" align-v="center" direction="v" @down="bindFormDrag" class="aero">
+    <layout flex="1" align-h="center" align-v="center" direction="v" @down="bindFormDrag" class="aero">
         <button @tap="closeForm" padding="0 15">Close</button>
         <button @tap="resizeMethod" padding="0 15" style="margin-top: 15px;">{{resize ? 'Disable' : 'Enable'}} resize{{resizeButtonClickCount > 0 ? ' (' + resizeButtonClickCount + ')' : ''}}</button>
         <button @tap="maxMethod" padding="0 15" style="margin-top: 15px;">{{max ? 'Restore' : 'Max'}}</button>

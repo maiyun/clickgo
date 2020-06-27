@@ -1,12 +1,12 @@
 .wrap {
-    -webkit-overflow-scrolling: touch;
+    display: flex; -webkit-overflow-scrolling: touch;
 }
 .wrap::-webkit-scrollbar {
     display: none;
 }
 .wrap.v {
-    overflow-y: scroll;
+    overflow-y: scroll; flex-direction: column;
 }
 .wrap.h {
-    display: flex; overflow-x: scroll; white-space: nowrap;
+    overflow-x: scroll; white-space: nowrap;
 }

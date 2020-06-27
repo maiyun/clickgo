@@ -1,5 +1,5 @@
 <form :width.sync="width" :height.sync="height" title="Test program" icon="/res/icon.svg">
-    <overflow>
+    <overflow flex="1">
         <layout class="layout" direction="v" gutter="10">
             <label>focus: {{focus}}</label>
             <button :disabled="true">Disabled button</button>

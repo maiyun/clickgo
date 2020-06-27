@@ -237,6 +237,9 @@ exports.mounted = function () {
     });
     this.length = Math.round(this.direction === "v" ? rect.height : rect.width);
     this.$emit("change", this.length);
+    if (this.$parent.direction !== undefined) {
+        this.$data._direction = this.$parent.direction;
+    }
 };
 exports.destroyed = function () {
     if (this.timer) {

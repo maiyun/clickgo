@@ -205,6 +205,10 @@ export let mounted = function(this: IVue): void {
         this.barLengthPx = this.direction === "v" ? this.$refs.bar.offsetHeight : this.$refs.bar.offsetWidth;
     });
     this.barLengthPx = this.direction === "v" ? this.$refs.bar.offsetHeight : this.$refs.bar.offsetWidth;
+
+    if (this.$parent.direction !== undefined) {
+        this.$data._direction = this.$parent.direction;
+    }
 };
 
 export let destroyed = function(this: IVue): void {

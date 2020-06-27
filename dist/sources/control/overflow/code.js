@@ -62,6 +62,12 @@ exports.watch = {
                 this.$refs.wrap.scrollLeft = this.scrollOffset;
             }
         }
+    },
+    "direction": function () {
+        for (var _i = 0, _a = this.$children; _i < _a.length; _i++) {
+            var item = _a[_i];
+            item.$data._direction = this.direction;
+        }
     }
 };
 exports.methods = {
@@ -90,6 +96,9 @@ exports.methods = {
         e.preventDefault();
         this.$refs.wrap.scrollLeft += e.deltaY;
     },
+    touchmove: function (e) {
+        e.stopPropagation();
+    }
 };
 exports.mounted = function () {
     var _this = this;
@@ -100,12 +109,15 @@ exports.mounted = function () {
     ClickGo.watchElement(this.$refs.wrap, function () {
         _this.$emit("change", _this.direction === "v" ? _this.$refs.wrap.scrollHeight : _this.$refs.wrap.scrollWidth);
         _this.scroll();
-    }, "childsub");
+    });
     this.$emit("change", this.direction === "v" ? this.$refs.wrap.scrollHeight : this.$refs.wrap.scrollWidth);
     if (this.direction === "v") {
         this.$refs.wrap.scrollTop = this.scrollOffset;
     }
     else {
         this.$refs.wrap.scrollLeft = this.scrollOffset;
+    }
+    if (this.$parent.direction !== undefined) {
+        this.$data._direction = this.$parent.direction;
     }
 };

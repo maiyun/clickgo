@@ -42,3 +42,9 @@ export let computed = {
     }
 };
 
+export let mounted = function(this: IVue): void {
+    if (this.$parent.direction !== undefined) {
+        this.$data._direction = this.$parent.direction;
+    }
+};
+

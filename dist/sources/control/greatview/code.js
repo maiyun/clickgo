@@ -163,7 +163,7 @@ exports.methods = {
                         if (nowCount !== this.refreshCount) {
                             return [2];
                         }
-                        theCursor = cursor + 100;
+                        theCursor = cursor + 50;
                         if (theCursor > maxCursor) {
                             theCursor = maxCursor;
                         }

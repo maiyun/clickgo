@@ -1,0 +1,18 @@
+.wrap {
+    display: flex;
+}
+.wrap.h {
+    flex-direction: column;
+}
+
+.tab {
+    border: solid 1px #d9d9d9;
+}
+
+.tab.selected {
+    background-color: #FFF;
+}
+
+.panels {
+    flex: 1; display: flex; flex-direction: column; border: solid 1px #d9d9d9;
+}

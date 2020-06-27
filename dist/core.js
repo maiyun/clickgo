@@ -45,10 +45,20 @@ if (window.devicePixelRatio < 2) {
 }
 formListElement.classList.add("cg-form-list");
 document.getElementsByTagName("body")[0].appendChild(formListElement);
+formListElement.addEventListener("touchmove", function (e) {
+    e.preventDefault();
+}, {
+    "passive": false
+});
 var popListElement = document.createElement("div");
 popListElement.style.zoom = ClickGo.zoom.toString();
 popListElement.classList.add("cg-pop-list");
 document.getElementsByTagName("body")[0].appendChild(popListElement);
+popListElement.addEventListener("touchmove", function (e) {
+    e.preventDefault();
+}, {
+    "passive": false
+});
 window.addEventListener("resize", function () {
     return __awaiter(this, void 0, void 0, function () {
         var i, el, taskId, formId, $vm;
@@ -629,7 +639,7 @@ exports.runApp = runApp;
 function createForm(opt) {
     var _a, _b, _c;
     return __awaiter(this, void 0, void 0, function () {
-        var appPkg, formId, controlsStyle, components, _i, _d, controlPath, controlBlob, controlPkg, _loop_1, _e, _f, _g, name_1, state_1, name_2, reg, match, style, layout, layoutBlob, styleBlob, data, methods, computed, watch, mounted, destroyed, expo, rand, r_1, randList, r, el, $vm, getFocusEvent, form;
+        var appPkg, formId, controlsStyle, components, _i, _d, controlPath, controlBlob, controlPkg, _loop_1, _e, _f, _g, name_1, state_1, name_2, reg, match, style, layout, layoutBlob, styleBlob, data, methods, computed, watch, mounted, beforeDestroy, destroyed, expo, rand, r_1, randList, r, el, $vm, getFocusEvent, form;
         return __generator(this, function (_h) {
             switch (_h.label) {
                 case 0:
@@ -653,7 +663,7 @@ function createForm(opt) {
                         return [2, -102];
                     }
                     _loop_1 = function (name_1) {
-                        var item, props, data_1, methods_1, computed_1, watch_1, mounted_1, destroyed_1, expo, rand_1, styleBlob, r_2, _a, _b, _c, layoutBlob, randList_1, r_3, _d, _e, layout_1;
+                        var item, props, data_1, methods_1, computed_1, watch_1, mounted_1, beforeDestroy_1, destroyed_1, expo, rand_1, styleBlob, r_2, _a, _b, _c, layoutBlob, randList_1, r_3, _d, _e, layout_1;
                         return __generator(this, function (_f) {
                             switch (_f.label) {
                                 case 0:
@@ -663,7 +673,8 @@ function createForm(opt) {
                                     methods_1 = {};
                                     computed_1 = {};
                                     watch_1 = {};
-                                    mounted_1 = null;
+                                    mounted_1 = undefined;
+                                    beforeDestroy_1 = undefined;
                                     destroyed_1 = undefined;
                                     if (!item.files[item.config.code + ".js"]) return [3, 2];
                                     return [4, loader.requireMemory(item.config.code, item.files, {
@@ -677,7 +688,8 @@ function createForm(opt) {
                                         methods_1 = expo.methods || {};
                                         computed_1 = expo.computed || {};
                                         watch_1 = expo.watch || {};
-                                        mounted_1 = expo.mounted || null;
+                                        mounted_1 = expo.mounted;
+                                        beforeDestroy_1 = expo.beforeDestroy;
                                         destroyed_1 = expo.destroyed;
                                     }
                                     _f.label = 2;
@@ -791,6 +803,7 @@ function createForm(opt) {
                                                 mounted_1 === null || mounted_1 === void 0 ? void 0 : mounted_1.call(this);
                                             });
                                         },
+                                        "beforeDestroy": beforeDestroy_1,
                                         "destroyed": destroyed_1,
                                         "components": {}
                                     };
@@ -853,7 +866,8 @@ function createForm(opt) {
                     methods = {};
                     computed = {};
                     watch = {};
-                    mounted = null;
+                    mounted = undefined;
+                    beforeDestroy = undefined;
                     destroyed = undefined;
                     if (!appPkg.files[opt.file + ".js"]) return [3, 13];
                     return [4, loader.requireMemory((_b = opt.file) !== null && _b !== void 0 ? _b : "", appPkg.files, {
@@ -866,7 +880,8 @@ function createForm(opt) {
                         methods = expo.methods || {};
                         computed = expo.computed || {};
                         watch = expo.watch || {};
-                        mounted = expo.mounted || null;
+                        mounted = expo.mounted;
+                        beforeDestroy = expo.beforeDestroy;
                         destroyed = expo.destroyed;
                     }
                     _h.label = 13;
@@ -1084,6 +1099,7 @@ function createForm(opt) {
                                         }
                                     });
                                 },
+                                "beforeDestroy": beforeDestroy,
                                 "destroyed": destroyed
                             });
                         })];
@@ -1223,7 +1239,7 @@ function watchSize(el, cb) {
 }
 exports.watchSize = watchSize;
 function watchElement(el, cb, mode) {
-    if (mode === void 0) { mode = "style"; }
+    if (mode === void 0) { mode = "default"; }
     var moi;
     switch (mode) {
         case "child": {
@@ -1243,6 +1259,16 @@ function watchElement(el, cb, mode) {
             moi = {
                 "attributeFilter": ["style", "class"],
                 "attributes": true
+            };
+            break;
+        }
+        case "default": {
+            moi = {
+                "attributeFilter": ["style", "class"],
+                "attributes": true,
+                "characterData": true,
+                "childList": true,
+                "subtree": true
             };
             break;
         }

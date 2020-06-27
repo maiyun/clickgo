@@ -12,6 +12,7 @@
         "/clickgo/control/layout",
         "/clickgo/control/overflow",
         "/clickgo/control/scroll",
+        "/clickgo/control/tab",
         "/clickgo/control/view"
     ],
     "styleGlobal": "/global",
@@ -25,6 +26,7 @@
         "/clickgo/control/layout.cgc",
         "/clickgo/control/overflow.cgc",
         "/clickgo/control/scroll.cgc",
+        "/clickgo/control/tab.cgc",
         "/clickgo/control/view.cgc",
 
         "/form/aero.js",

@@ -41,3 +41,8 @@ exports.computed = {
         }
     }
 };
+exports.mounted = function () {
+    if (this.$parent.direction !== undefined) {
+        this.$data._direction = this.$parent.direction;
+    }
+};

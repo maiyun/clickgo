@@ -20,7 +20,7 @@ exports.props = {
         "default": "h"
     },
     "flex": {
-        "default": "1"
+        "default": ""
     },
     "gutter": {
         "default": undefined
@@ -62,8 +62,7 @@ exports.computed = {
     }
 };
 exports.mounted = function () {
-    for (var _i = 0, _a = this.$children; _i < _a.length; _i++) {
-        var item = _a[_i];
-        item.$data._direction = this.direction;
+    if (this.$parent.direction !== undefined) {
+        this.$data._direction = this.$parent.direction;
     }
 };

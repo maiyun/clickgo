@@ -93,6 +93,9 @@ exports.props = {
     },
     "padding": {
         "default": undefined
+    },
+    "direction": {
+        "default": "v"
     }
 };
 exports.data = {

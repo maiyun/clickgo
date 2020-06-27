@@ -38,3 +38,4 @@ export declare let methods: {
     keydown: (this: IVue, e: KeyboardEvent) => void;
     down: (this: IVue, e: TouchEvent | MouseEvent) => void;
 };
+export declare let mounted: (this: IVue) => void;

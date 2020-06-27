@@ -1,5 +1,5 @@
 <form width="300" height="300" title="Border none" border="none">
-    <layout align-h="center" align-v="center" @down="bindFormDrag">
+    <layout flex="1" align-h="center" align-v="center" @down="bindFormDrag">
         <button @tap="closeForm" padding="0 15">Close</button>
     </layout>
 </form>

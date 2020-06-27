@@ -1,15 +1,15 @@
 <form title="Create new task" icon="/new.svg" width="320" height="230" :min="false" :max="false" :resize="false">
-    <layout direction="v" gutter="20" style="padding: 20px; background: #FFF;">
-        <layout align-v="center" flex="">
+    <layout flex="1" direction="v" gutter="20" style="padding: 20px; background: #FFF;">
+        <layout align-v="center">
             <img src="/icon.svg" width="32" height="32"></img>
             <label flex="1" style="margin-left: 20px;">Enter the CGA's URL and the program will try to run.</label>
         </layout>
-        <layout align-v="center" flex="">
+        <layout align-v="center">
             <label width="52">Open:</label>
             <select flex="1" v-model="path"></select>
         </layout>
     </layout>
-    <layout flex="" align-h="end" gutter="10" style="padding: 20px;">
+    <layout align-h="end" gutter="10" style="padding: 20px;">
         <button width="80" :disabled="path === '' ? true : false">OK</button>
         <button width="80" @tap="closeForm">Cancel</button>
     </layout>

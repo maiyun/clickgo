@@ -200,6 +200,9 @@ exports.mounted = function () {
         _this.barLengthPx = _this.direction === "v" ? _this.$refs.bar.offsetHeight : _this.$refs.bar.offsetWidth;
     });
     this.barLengthPx = this.direction === "v" ? this.$refs.bar.offsetHeight : this.$refs.bar.offsetWidth;
+    if (this.$parent.direction !== undefined) {
+        this.$data._direction = this.$parent.direction;
+    }
 };
 exports.destroyed = function () {
     if (this.timer !== undefined) {

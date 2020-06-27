@@ -51,7 +51,7 @@ async function run(): Promise<void> {
         if (item.isFile()) {
             continue;
         }
-        if (["menu-item", "menu-pop", "menu-pop-item", "menu-pop-split", "greatview", "select-pop"].includes(item.name)) {
+        if (["menu-item", "menu-pop", "menu-pop-item", "menu-pop-split", "greatview", "tab-panel", "select-pop"].includes(item.name)) {
             continue;
         }
         let base = "dist/sources/control/" + item.name;
@@ -69,6 +69,11 @@ async function run(): Promise<void> {
             controlBuffer = Buffer.concat([
                 controlBuffer,
                 await getSingleControlBlob("dist/sources/control/greatview")
+            ]);
+        } else if (item.name === "tab") {
+            controlBuffer = Buffer.concat([
+                controlBuffer,
+                await getSingleControlBlob("dist/sources/control/tab-panel")
             ]);
         } else if (item.name === "select") {
             /*

@@ -64,6 +64,11 @@ export let watch = {
                 this.$refs.wrap.scrollLeft = this.scrollOffset;
             }
         }
+    },
+    "direction": function(this: IVue): void {
+        for (let item of this.$children) {
+            item.$data._direction = this.direction;
+        }
     }
 };
 
@@ -94,6 +99,9 @@ export let methods = {
         e.preventDefault();
         this.$refs.wrap.scrollLeft += e.deltaY;
     },
+    touchmove: function(this: IVue, e: TouchEvent): void {
+        e.stopPropagation();
+    }
 };
 
 export let mounted = function(this: IVue): void {
@@ -105,13 +113,17 @@ export let mounted = function(this: IVue): void {
     ClickGo.watchElement(this.$refs.wrap, () => {
         this.$emit("change", this.direction === "v" ? this.$refs.wrap.scrollHeight : this.$refs.wrap.scrollWidth);
         this.scroll();
-    }, "childsub");
+    });
     this.$emit("change", this.direction === "v" ? this.$refs.wrap.scrollHeight : this.$refs.wrap.scrollWidth);
 
     if (this.direction === "v") {
         this.$refs.wrap.scrollTop = this.scrollOffset;
     } else {
         this.$refs.wrap.scrollLeft = this.scrollOffset;
+    }
+
+    if (this.$parent.direction !== undefined) {
+        this.$data._direction = this.$parent.direction;
     }
 };
 

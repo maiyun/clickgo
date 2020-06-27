@@ -50,3 +50,4 @@ export declare let computed: {
 export declare let methods: {
     input: (this: IVue) => void;
 };
+export declare let mounted: (this: IVue) => void;

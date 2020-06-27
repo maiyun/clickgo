@@ -276,7 +276,7 @@ const ClickGo: {
      * @param cb 回调
      * @param mode 监听模式
      */
-    watchElement: (el: HTMLElement, cb: MutationCallback, mode?: "child" | "childsub" | "style" | MutationObserverInit) => MutationObserver;
+    watchElement: (el: HTMLElement, cb: MutationCallback, mode?: "child" | "childsub" | "style" | "default" | MutationObserverInit) => MutationObserver;
 
     /**
      * --- 绑定按下以及弹起事件 ---
@@ -315,8 +315,15 @@ const ClickGo: {
 
     /**
      * --- 等待毫秒 ---
+     * @param ms 等待的毫秒，默认 0
      */
     sleep: (ms?: number) => Promise<void>;
+
+    /**
+     * --- 获取一个元素在父元素中第几个子元素 ---
+     * @param el 要获取的元素
+     */
+    getIndex: (el: HTMLElement) => number;
 
     [name: string]: any;
 } = {
@@ -488,7 +495,7 @@ const ClickGo: {
         return this._core.watchSize(el, cb);
     },
 
-    watchElement: function(el: HTMLElement, cb: MutationCallback, mode: "child" | "childsub" | "style" | MutationObserverInit = "style"): MutationObserver {
+    watchElement: function(el: HTMLElement, cb: MutationCallback, mode: "child" | "childsub" | "style" | "default" | MutationObserverInit = "default"): MutationObserver {
         return this._core.watchElement(el, cb, mode);
     },
 
@@ -522,6 +529,15 @@ const ClickGo: {
                 resolve();
             }, ms);
         });
+    },
+
+    getIndex(el: HTMLElement): number {
+        let i = 0;
+        let child: ChildNode | null = el;
+        while((child = child.previousSibling) !== null) {
+            ++i;
+        }
+        return i;
     }
 };
 ClickGo.initRootPath();

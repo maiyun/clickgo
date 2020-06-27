@@ -287,6 +287,10 @@ export let mounted = function(this: IVue): void {
     });
     this.length = Math.round(this.direction === "v" ? rect.height : rect.width);
     this.$emit("change", this.length);
+
+    if (this.$parent.direction !== undefined) {
+        this.$data._direction = this.$parent.direction;
+    }
 };
 
 export let destroyed = function(this: IVue): void {

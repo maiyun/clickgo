@@ -136,7 +136,7 @@ export let methods = {
                     return;
                 }
 
-                let theCursor = cursor + 100;
+                let theCursor = cursor + 50;
                 if (theCursor > maxCursor) {
                     theCursor = maxCursor;
                 }

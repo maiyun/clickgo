@@ -18,7 +18,7 @@ export let props = {
         "default": "h"
     },
     "flex": {
-        "default": "1"
+        "default": ""
     },
     "gutter": {
         "default": undefined
@@ -63,8 +63,8 @@ export let computed = {
 };
 
 export let mounted = function(this: IVue): void {
-    for (let item of this.$children) {
-        item.$data._direction = this.direction;
+    if (this.$parent.direction !== undefined) {
+        this.$data._direction = this.$parent.direction;
     }
 };
 

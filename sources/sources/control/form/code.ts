@@ -57,6 +57,9 @@ export let props = {
     },
     "padding": {
         "default": undefined
+    },
+    "direction": {
+        "default": "v"
     }
 };
 

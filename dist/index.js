@@ -219,7 +219,7 @@ var ClickGo = {
         return this._core.watchSize(el, cb);
     },
     watchElement: function (el, cb, mode) {
-        if (mode === void 0) { mode = "style"; }
+        if (mode === void 0) { mode = "default"; }
         return this._core.watchElement(el, cb, mode);
     },
     bindDown: function (oe, opt) {
@@ -248,6 +248,14 @@ var ClickGo = {
                 resolve();
             }, ms);
         });
+    },
+    getIndex: function (el) {
+        var i = 0;
+        var child = el;
+        while ((child = child.previousSibling) !== null) {
+            ++i;
+        }
+        return i;
     }
 };
 ClickGo.initRootPath();

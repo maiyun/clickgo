@@ -24,12 +24,25 @@ if (window.devicePixelRatio < 2) {
 }
 formListElement.classList.add("cg-form-list");
 document.getElementsByTagName("body")[0].appendChild(formListElement);
+formListElement.addEventListener("touchmove", function(e): void {
+    // --- 防止拖动时整个网页跟着动 ---
+    e.preventDefault();
+    // --- 为啥要在这加，因为有些设备性能不行，在 touchstart 之时添加的 touchmove 不能立马响应，导致网页还是跟着动，所以增加此函数 ---
+}, {
+    "passive": false
+});
 
 /** --- pop list 的 div --- */
 let popListElement: HTMLDivElement = document.createElement("div");
 popListElement.style.zoom = ClickGo.zoom.toString();
 popListElement.classList.add("cg-pop-list");
 document.getElementsByTagName("body")[0].appendChild(popListElement);
+popListElement.addEventListener("touchmove", function(e): void {
+    // --- 防止拖动时整个网页跟着动 ---
+    e.preventDefault();
+}, {
+    "passive": false
+});
 
 // --- 绑定 resize 事件 ---
 window.addEventListener("resize", async function() {
@@ -635,7 +648,8 @@ export async function createForm(opt: ICreateFormOptions): Promise<number | IFor
             let methods: any = {};
             let computed = {};
             let watch = {};
-            let mounted: (() => void) | null = null;
+            let mounted: (() => void) | undefined = undefined;
+            let beforeDestroy: (() => void) | undefined = undefined;
             let destroyed: (() => void) | undefined = undefined;
             // --- 检测是否有 js ---
             if (item.files[item.config.code + ".js"]) {
@@ -648,7 +662,8 @@ export async function createForm(opt: ICreateFormOptions): Promise<number | IFor
                     methods = expo.methods || {};
                     computed = expo.computed || {};
                     watch = expo.watch || {};
-                    mounted = expo.mounted || null;
+                    mounted = expo.mounted;
+                    beforeDestroy = expo.beforeDestroy;
                     destroyed = expo.destroyed;
                 }
             }
@@ -743,6 +758,7 @@ export async function createForm(opt: ICreateFormOptions): Promise<number | IFor
                         mounted?.call(this);
                     });
                 },
+                "beforeDestroy": beforeDestroy,
                 "destroyed": destroyed,
 
                 "components": {}
@@ -781,7 +797,8 @@ export async function createForm(opt: ICreateFormOptions): Promise<number | IFor
     let methods: any = {};
     let computed = {};
     let watch = {};
-    let mounted: (() => void) | null = null;
+    let mounted: (() => void) | undefined = undefined;
+    let beforeDestroy: (() => void) | undefined = undefined;
     let destroyed: (() => void) | undefined = undefined;
     // --- 检测是否有 js ---
     if (appPkg.files[opt.file + ".js"]) {
@@ -793,7 +810,8 @@ export async function createForm(opt: ICreateFormOptions): Promise<number | IFor
             methods = expo.methods || {};
             computed = expo.computed || {};
             watch = expo.watch || {};
-            mounted = expo.mounted || null;
+            mounted = expo.mounted;
+            beforeDestroy = expo.beforeDestroy;
             destroyed = expo.destroyed;
         }
     }
@@ -969,6 +987,7 @@ export async function createForm(opt: ICreateFormOptions): Promise<number | IFor
                     }
                 });
             },
+            "beforeDestroy": beforeDestroy,
             "destroyed": destroyed
         });
     });
@@ -1140,7 +1159,7 @@ export function watchSize(el: HTMLElement, cb: (size: IDomSize) => void): IDomSi
  * @param cb 回调
  * @param mode 监听模式
  */
-export function watchElement(el: HTMLElement, cb: MutationCallback, mode: "child" | "childsub" | "style" | MutationObserverInit = "style"): MutationObserver {
+export function watchElement(el: HTMLElement, cb: MutationCallback, mode: "child" | "childsub" | "style" | "default" | MutationObserverInit = "default"): MutationObserver {
     let moi: MutationObserverInit;
     switch (mode) {
         case "child": {
@@ -1160,6 +1179,16 @@ export function watchElement(el: HTMLElement, cb: MutationCallback, mode: "child
             moi = {
                 "attributeFilter": ["style", "class"],
                 "attributes": true
+            };
+            break;
+        }
+        case "default": {
+            moi = {
+                "attributeFilter": ["style", "class"],
+                "attributes": true,
+                "characterData": true,
+                "childList": true,
+                "subtree": true
             };
             break;
         }
