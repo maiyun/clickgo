@@ -19,11 +19,16 @@ export let props = {
     },
     "direction": {
         "default": "h"
+    },
+
+    "value": {
+        "default": 0
     }
 };
 
 export let data = {
     "tabs": [],
+    "selectedIndex": 0,
 
     "_direction": undefined
 };
@@ -50,6 +55,20 @@ export let computed = {
 export let watch = {
     "tabs": function(this: IVue): void {
         this.tabs.splice(this.$refs.panels.children.length);
+    },
+    "value": {
+        handler: function(this: IVue): void {
+            this.selectedIndex = this.value;
+        },
+        "immediate": true
+    },
+    "selectedIndex": {
+        handler: function(this: IVue): void {
+            for (let item of this.$children) {
+                item.selectedIndex = this.selectedIndex;
+            }
+        },
+        "immediate": true
     }
 };
 

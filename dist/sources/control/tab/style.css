@@ -6,11 +6,19 @@
 }
 
 .tab {
-    border: solid 1px #d9d9d9;
+    border: solid 1px #d9d9d9; padding: 6px 10px; display: inline-block; border-width: 1px 0 1px 1px; -webkit-transform: translateY(1px); transform: translateY(1px); vertical-align: bottom;
 }
-
+.tab:not(.selected):hover {
+    background-color: #d8eaf9;
+}
 .tab.selected {
-    background-color: #FFF;
+    background-color: #FFF; padding-bottom: 9px; border-bottom-color: #FFF;
+}
+.tab.selected + * {
+    border-left-width: 0;
+}
+.tab.selected, .tabs > .tab:last-child {
+    border-right-width: 1px;
 }
 
 .panels {

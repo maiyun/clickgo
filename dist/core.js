@@ -1311,8 +1311,8 @@ function bindDown(oe, opt) {
                     window.removeEventListener("mouseup", end);
                 }
                 else {
-                    window.removeEventListener("touchmove", move);
-                    window.removeEventListener("touchend", end);
+                    oe.target.removeEventListener("touchmove", move);
+                    oe.target.removeEventListener("touchend", end);
                 }
                 return;
             }
@@ -1323,8 +1323,8 @@ function bindDown(oe, opt) {
                 window.removeEventListener("mouseup", end);
             }
             else {
-                window.removeEventListener("touchmove", move);
-                window.removeEventListener("touchend", end);
+                oe.target.removeEventListener("touchmove", move);
+                oe.target.removeEventListener("touchend", end);
             }
             return;
         }
@@ -1335,8 +1335,8 @@ function bindDown(oe, opt) {
             window.removeEventListener("mouseup", end);
         }
         else {
-            window.removeEventListener("touchmove", move);
-            window.removeEventListener("touchend", end);
+            oe.target.removeEventListener("touchmove", move);
+            oe.target.removeEventListener("touchend", end);
         }
         opt.up && opt.up(e);
         if (isStart) {
@@ -1348,8 +1348,8 @@ function bindDown(oe, opt) {
         window.addEventListener("mouseup", end);
     }
     else {
-        window.addEventListener("touchmove", move, { passive: false });
-        window.addEventListener("touchend", end);
+        oe.target.addEventListener("touchmove", move, { passive: false });
+        oe.target.addEventListener("touchend", end);
     }
     opt.down && opt.down(oe);
 }

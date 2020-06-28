@@ -148,7 +148,7 @@ export let methods = {
                 let topTime = 0;
                 let nowDate = Date.now();
                 for (let item of moveTimes) {
-                    if (nowDate - item.time > 300) {
+                    if (nowDate - item.time > 100) {
                         continue;
                     }
                     movePos += this.direction === "v" ? item.oy : item.ox;
@@ -171,9 +171,9 @@ export let methods = {
                         this.tran = 0;
                     }, this.tran);
                     if (movePos > 0) {
-                        this.scrollOffsetData -= Math.round(speed * 700);
+                        this.scrollOffsetData -= Math.round(speed * 800);
                     } else {
-                        this.scrollOffsetData += Math.round(speed * 700);
+                        this.scrollOffsetData += Math.round(speed * 800);
                     }
 
                     /** --- 滑动动画向上传递 scrollOffset --- */

@@ -1249,8 +1249,8 @@ export function bindDown(oe: MouseEvent | TouchEvent, opt: { "down"?: (e: MouseE
                     window.removeEventListener("mousemove", move);
                     window.removeEventListener("mouseup", end);
                 } else {
-                    window.removeEventListener("touchmove", move);
-                    window.removeEventListener("touchend", end);
+                    (oe.target as HTMLElement).removeEventListener("touchmove", move);
+                    (oe.target as HTMLElement).removeEventListener("touchend", end);
                 }
                 return;
             }
@@ -1260,8 +1260,8 @@ export function bindDown(oe: MouseEvent | TouchEvent, opt: { "down"?: (e: MouseE
                 window.removeEventListener("mousemove", move);
                 window.removeEventListener("mouseup", end);
             } else {
-                window.removeEventListener("touchmove", move);
-                window.removeEventListener("touchend", end);
+                (oe.target as HTMLElement).removeEventListener("touchmove", move);
+                (oe.target as HTMLElement).removeEventListener("touchend", end);
             }
             return;
         }
@@ -1271,8 +1271,8 @@ export function bindDown(oe: MouseEvent | TouchEvent, opt: { "down"?: (e: MouseE
             window.removeEventListener("mousemove", move);
             window.removeEventListener("mouseup", end);
         } else {
-            window.removeEventListener("touchmove", move);
-            window.removeEventListener("touchend", end);
+            (oe.target as HTMLElement).removeEventListener("touchmove", move);
+            (oe.target as HTMLElement).removeEventListener("touchend", end);
         }
         opt.up && opt.up(e);
         if (isStart) {
@@ -1283,8 +1283,8 @@ export function bindDown(oe: MouseEvent | TouchEvent, opt: { "down"?: (e: MouseE
         window.addEventListener("mousemove", move);
         window.addEventListener("mouseup", end);
     } else {
-        window.addEventListener("touchmove", move, {passive: false});
-        window.addEventListener("touchend", end);
+        (oe.target as HTMLElement).addEventListener("touchmove", move, {passive: false});
+        (oe.target as HTMLElement).addEventListener("touchend", end);
     }
     opt.down && opt.down(oe);
 }

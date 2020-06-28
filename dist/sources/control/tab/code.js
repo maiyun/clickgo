@@ -21,10 +21,14 @@ exports.props = {
     },
     "direction": {
         "default": "h"
+    },
+    "value": {
+        "default": 0
     }
 };
 exports.data = {
     "tabs": [],
+    "selectedIndex": 0,
     "_direction": undefined
 };
 exports.computed = {
@@ -48,6 +52,21 @@ exports.computed = {
 exports.watch = {
     "tabs": function () {
         this.tabs.splice(this.$refs.panels.children.length);
+    },
+    "value": {
+        handler: function () {
+            this.selectedIndex = this.value;
+        },
+        "immediate": true
+    },
+    "selectedIndex": {
+        handler: function () {
+            for (var _i = 0, _a = this.$children; _i < _a.length; _i++) {
+                var item = _a[_i];
+                item.selectedIndex = this.selectedIndex;
+            }
+        },
+        "immediate": true
     }
 };
 exports.mounted = function () {

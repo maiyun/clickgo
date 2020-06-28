@@ -3,6 +3,10 @@ export declare let props: {
         default: string;
     };
 };
+export declare let data: {
+    index: number;
+    selectedIndex: number;
+};
 export declare let watch: {
     label: {
         handler: (this: IVue) => void;

@@ -138,7 +138,7 @@ exports.methods = {
                 var nowDate = Date.now();
                 for (var _i = 0, moveTimes_1 = moveTimes; _i < moveTimes_1.length; _i++) {
                     var item = moveTimes_1[_i];
-                    if (nowDate - item.time > 300) {
+                    if (nowDate - item.time > 100) {
                         continue;
                     }
                     movePos += _this.direction === "v" ? item.oy : item.ox;
@@ -161,10 +161,10 @@ exports.methods = {
                         _this.tran = 0;
                     }, this.tran);
                     if (movePos > 0) {
-                        this.scrollOffsetData -= Math.round(speed * 700);
+                        this.scrollOffsetData -= Math.round(speed * 800);
                     }
                     else {
-                        this.scrollOffsetData += Math.round(speed * 700);
+                        this.scrollOffsetData += Math.round(speed * 800);
                     }
                     var animation = function () {
                         if (!_this.timer) {

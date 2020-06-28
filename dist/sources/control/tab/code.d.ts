@@ -20,9 +20,13 @@ export declare let props: {
     direction: {
         default: string;
     };
+    value: {
+        default: number;
+    };
 };
 export declare let data: {
     tabs: never[];
+    selectedIndex: number;
     _direction: undefined;
 };
 export declare let computed: {
@@ -31,5 +35,13 @@ export declare let computed: {
 };
 export declare let watch: {
     tabs: (this: IVue) => void;
+    value: {
+        handler: (this: IVue) => void;
+        immediate: boolean;
+    };
+    selectedIndex: {
+        handler: (this: IVue) => void;
+        immediate: boolean;
+    };
 };
 export declare let mounted: (this: IVue) => void;

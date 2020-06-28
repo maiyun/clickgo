@@ -1,7 +1,14 @@
+import { throws } from "assert";
+
 export let props = {
     "label": {
         "default": ""
     }
+};
+
+export let data = {
+    "index": 0,
+    "selectedIndex": 0
 };
 
 export let watch = {
@@ -16,10 +23,14 @@ export let watch = {
 };
 
 export let mounted = function(this: IVue): void {
-    this.$parent.tabs[ClickGo.getIndex(this.$el)] = {
+    this.index = ClickGo.getIndex(this.$el);
+    this.$parent.tabs[this.index] = {
         "label": this.label,
         "name": this.name
     };
+    if (this.$parent.selectedIndex !== undefined) {
+        this.selectedIndex = this.$parent.selectedIndex;
+    }
 };
 
 export let beforeDestroy = function(this: IVue): void {
