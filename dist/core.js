@@ -1226,9 +1226,10 @@ function endTask(taskId) {
 }
 exports.endTask = endTask;
 function watchSize(el, cb) {
+    var rect = el.getBoundingClientRect();
     var size = {
-        "width": el.offsetWidth,
-        "height": el.offsetHeight
+        "width": rect.width,
+        "height": rect.height
     };
     ClickGo._watchSize.push({
         "el": el,

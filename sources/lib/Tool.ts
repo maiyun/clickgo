@@ -26,9 +26,10 @@ function requestAnimationFrameCb(): void {
     // --- 被添加的监听的 el 对象触发其 resize 回调 ---
     for (let i = 0; i < ClickGo._watchSize.length; ++i) {
         let item = ClickGo._watchSize[i];
+        let rect = item.el.getBoundingClientRect();
         let trect: IDomSize = {
-            "height": Math.round(item.el.offsetHeight),
-            "width": Math.round(item.el.offsetWidth)
+            "width": rect.width,
+            "height": rect.height
         };
         if (trect.width === 0 && trect.height === 0) {
             if (getComputedStyle(item.el).display === "") {

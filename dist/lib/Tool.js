@@ -45,9 +45,10 @@ styleListElement.insertAdjacentHTML("beforeend", "<style class=\"cg-global\">\n.
 function requestAnimationFrameCb() {
     for (var i = 0; i < ClickGo._watchSize.length; ++i) {
         var item = ClickGo._watchSize[i];
+        var rect = item.el.getBoundingClientRect();
         var trect = {
-            "height": Math.round(item.el.offsetHeight),
-            "width": Math.round(item.el.offsetWidth)
+            "width": rect.width,
+            "height": rect.height
         };
         if (trect.width === 0 && trect.height === 0) {
             if (getComputedStyle(item.el).display === "") {

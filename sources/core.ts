@@ -1141,9 +1141,10 @@ export function endTask(taskId: number): boolean {
  * @param cb 回调函数
  */
 export function watchSize(el: HTMLElement, cb: (size: IDomSize) => void): IDomSize {
+    let rect = el.getBoundingClientRect();
     let size = {
-        "width": el.offsetWidth,
-        "height": el.offsetHeight
+        "width": rect.width,
+        "height": rect.height
     };
     ClickGo._watchSize.push({
         "el": el,

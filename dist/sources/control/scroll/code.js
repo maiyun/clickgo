@@ -38,7 +38,6 @@ exports.props = {
 exports.data = {
     "scrollOffsetData": 0,
     "barLengthPx": 0,
-    "barLengthSizePx": 0,
     "timer": undefined,
     "tran": false,
     "_direction": undefined
@@ -76,25 +75,26 @@ exports.watch = {
     }
 };
 exports.computed = {
-    "size": function () {
+    "realSize": function () {
         if (this.client >= this.length) {
             return this.barLengthPx;
         }
-        var size = this.client / this.length * (this.barLengthPx - this.barLengthSizePx);
-        if (size < 5) {
-            this.barLengthSizePx = 5 - size;
-            size = 5;
+        return this.client / this.length * this.barLengthPx;
+    },
+    "size": function () {
+        if (this.realSize < 5) {
+            return 5;
         }
-        else {
-            this.barLengthSizePx = 0;
-        }
-        return size;
+        return this.realSize;
+    },
+    "sizeOut": function () {
+        return this.size - this.realSize;
     },
     "scrollOffsetPx": function () {
-        return this.scrollOffsetData / this.length * (this.barLengthPx - this.barLengthSizePx);
+        return this.scrollOffsetData / this.length * (this.barLengthPx - this.sizeOut);
     },
     "maxScroll": function () {
-        return (this.length > this.client) ? Math.round(this.length - this.client) : 0;
+        return (this.length > this.client) ? this.length - this.client : 0;
     },
     "widthPx": function () {
         if (this.width !== undefined) {
@@ -125,7 +125,8 @@ exports.methods = {
             "offsetObject": this.$refs.bar,
             "move": function (ox, oy, x, y) {
                 px += _this.direction === "v" ? oy : ox;
-                _this.scrollOffsetData = Math.round(px / (_this.barLengthPx - _this.barLengthSizePx) * _this.length);
+                var opx = px + (px / (_this.barLengthPx - _this.size) * _this.sizeOut);
+                _this.scrollOffsetData = Math.round(opx / _this.barLengthPx * _this.length);
                 _this.$emit("update:scrollOffset", _this.scrollOffsetData);
             }
         });
@@ -145,10 +146,10 @@ exports.methods = {
         if (px < 0) {
             px = 0;
         }
-        if (px + this.size > (this.barLengthPx - this.barLengthSizePx)) {
-            px = this.barLengthPx - this.barLengthSizePx - this.size;
+        if (px + this.size > this.barLengthPx) {
+            px = this.barLengthPx - this.size;
         }
-        this.scrollOffsetData = Math.round(px / (this.barLengthPx - this.barLengthSizePx) * this.length);
+        this.scrollOffsetData = Math.round(px / (this.barLengthPx - this.sizeOut) * this.length);
         this.$emit("update:scrollOffset", this.scrollOffsetData);
         this.down(e);
     },
@@ -197,7 +198,7 @@ exports.methods = {
 exports.mounted = function () {
     var _this = this;
     ClickGo.watchSize(this.$refs.bar, function (size) {
-        _this.barLengthPx = _this.direction === "v" ? _this.$refs.bar.offsetHeight : _this.$refs.bar.offsetWidth;
+        _this.barLengthPx = _this.direction === "v" ? size.height : size.width;
     });
     this.barLengthPx = this.direction === "v" ? this.$refs.bar.offsetHeight : this.$refs.bar.offsetWidth;
     if (this.$parent.direction !== undefined) {

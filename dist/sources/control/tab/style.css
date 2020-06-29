@@ -6,7 +6,7 @@
 }
 
 .tab {
-    border: solid 1px #d9d9d9; padding: 6px 10px; display: inline-block; border-width: 1px 0 1px 1px; -webkit-transform: translateY(1px); transform: translateY(1px); vertical-align: bottom;
+    background-color: #f0f0f0; border: solid 1px #d9d9d9; padding: 6px 10px; display: inline-block; border-width: 1px 0 1px 1px; -webkit-transform: translateY(1px); transform: translateY(1px); vertical-align: bottom;
 }
 .tab:not(.selected):hover {
     background-color: #d8eaf9;

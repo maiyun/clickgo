@@ -39,7 +39,6 @@ export let props = {
 export let data = {
     "scrollOffsetData": 0,
     "barLengthPx": 0,
-    "barLengthSizePx": 0,
 
     "timer": undefined,
     "tran": false,
@@ -81,26 +80,28 @@ export let watch = {
 
 export let computed = {
     // --- 滑块长度 ---
-    "size": function(this: IVue): number {
+    "realSize": function(this: IVue): number {
         if (this.client >= this.length) {
             return this.barLengthPx;
         }
-        let size = this.client / this.length * (this.barLengthPx - this.barLengthSizePx);
-        if (size < 5) {
-            this.barLengthSizePx = 5 - size;
-            size = 5;
-        } else {
-            this.barLengthSizePx = 0;
+        return this.client / this.length * this.barLengthPx;
+    },
+    "size": function(this: IVue): number {
+        if (this.realSize < 5) {
+            return 5;
         }
-        return size;
+        return this.realSize;
+    },
+    "sizeOut": function(this: IVue): number {
+        return this.size - this.realSize;
     },
     // --- 滑块已经滚动的位置 ---
     "scrollOffsetPx": function(this: IVue): number {
-        return this.scrollOffsetData / this.length * (this.barLengthPx - this.barLengthSizePx);
+        return this.scrollOffsetData / this.length * (this.barLengthPx - this.sizeOut);
     },
     // --- 最大可拖动的 scroll 位置 ---
     "maxScroll": function(this: IVue): number {
-        return (this.length > this.client) ? Math.round(this.length - this.client) : 0;
+        return (this.length > this.client) ? this.length - this.client : 0;
     },
 
     "widthPx": function(this: IVue): string | undefined {
@@ -132,7 +133,10 @@ export let methods = {
             "offsetObject": this.$refs.bar,
             "move": (ox, oy, x, y) => {
                 px += this.direction === "v" ? oy : ox;
-                this.scrollOffsetData = Math.round(px / (this.barLengthPx - this.barLengthSizePx) * this.length);
+                // console.log("px", px, "bar", this.barLengthPx, "out", this.sizeOut, "%", (px / (this.barLengthPx - this.sizeOut)));
+                // console.log(px / (this.barLengthPx - this.size));
+                let opx = px + (px / (this.barLengthPx - this.size) * this.sizeOut);
+                this.scrollOffsetData = Math.round(opx / this.barLengthPx * this.length);
                 this.$emit("update:scrollOffset", this.scrollOffsetData);
             }
         });
@@ -154,10 +158,10 @@ export let methods = {
         if (px < 0) {
             px = 0;
         }
-        if (px + this.size > (this.barLengthPx - this.barLengthSizePx)) {
-            px = this.barLengthPx - this.barLengthSizePx - this.size;
+        if (px + this.size > this.barLengthPx) {
+            px = this.barLengthPx - this.size;
         }
-        this.scrollOffsetData = Math.round(px / (this.barLengthPx - this.barLengthSizePx) * this.length);
+        this.scrollOffsetData = Math.round(px / (this.barLengthPx - this.sizeOut) * this.length);
         this.$emit("update:scrollOffset", this.scrollOffsetData);
         this.down(e);
     },
@@ -202,7 +206,7 @@ export let methods = {
 
 export let mounted = function(this: IVue): void {
     ClickGo.watchSize(this.$refs.bar, (size) => {
-        this.barLengthPx = this.direction === "v" ? this.$refs.bar.offsetHeight : this.$refs.bar.offsetWidth;
+        this.barLengthPx = this.direction === "v" ? size.height : size.width;
     });
     this.barLengthPx = this.direction === "v" ? this.$refs.bar.offsetHeight : this.$refs.bar.offsetWidth;
 

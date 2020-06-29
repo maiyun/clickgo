@@ -1,5 +1,3 @@
-import { throws } from "assert";
-
 export let props = {
     "label": {
         "default": ""
