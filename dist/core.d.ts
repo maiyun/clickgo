@@ -28,6 +28,7 @@ export declare function runApp(path: string | IAppPkg, opt?: {
 export declare function createForm(opt: ICreateFormOptions): Promise<number | IForm>;
 export declare function removeForm(formId: number): boolean;
 export declare function endTask(taskId: number): boolean;
+export declare function getWatchSize(el: HTMLElement): IDomSize;
 export declare function watchSize(el: HTMLElement, cb: (size: IDomSize) => void): IDomSize;
 export declare function watchElement(el: HTMLElement, cb: MutationCallback, mode?: "child" | "childsub" | "style" | "default" | MutationObserverInit): MutationObserver;
 export declare function bindDown(oe: MouseEvent | TouchEvent, opt: {

@@ -215,6 +215,9 @@ var ClickGo = {
     endTask: function (taskId) {
         return this._core.endTask(taskId);
     },
+    getWatchSize: function (el) {
+        return this._core.getWatchSize(el);
+    },
     watchSize: function (el, cb) {
         return this._core.watchSize(el, cb);
     },

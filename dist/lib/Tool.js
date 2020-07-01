@@ -42,22 +42,72 @@ document.getElementsByTagName("body")[0].appendChild(styleListElement);
 styleListElement.insertAdjacentHTML("beforeend", "<style id=\"cg-global-cursor\"></style>");
 styleListElement.insertAdjacentHTML("beforeend", "<style id=\"cg-global-theme\"></style>");
 styleListElement.insertAdjacentHTML("beforeend", "<style class=\"cg-global\">\n.cg-form-list {position: fixed; left: 0; top: 0; z-index: 20020000; width: 0; height: 0; cursor: default;}\n.cg-pop-list {position: fixed; left: 0; top: 0; z-index: 20020001; width: 0; height: 0; cursor: default;}\n.cg-form-list img, .cg-pop-list img {vertical-align: bottom;}\n.cg-form-list ::selection {\n    background-color: rgba(0, 120, 215, .3);\n}\n\n.cg-form-list *, .cg-pop-list * {box-sizing: border-box !important; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); flex-shrink: 0;}\n.cg-form-list, .cg-form-list input, .cg-form-list textarea, .cg-pop-list, .cg-pop-list input, .cg-pop-list textarea {font-family: 'Microsoft YaHei',Arial,Helvetica,Sans-Serif; font-size: 12px; line-height: 1; -webkit-font-smoothing: antialiased; font-weight: 400;}\n\n.cg-circular {box-sizing: border-box; position: fixed; z-index: 20020003; border: solid 3px #76b9ed; border-radius: 50%; filter: drop-shadow(0 0 7px #76b9ed); pointer-events: none; opacity: 0;}\n.cg-rectangle {box-sizing: border-box; position: fixed; z-index: 20020002; border: solid 1px rgba(118, 185, 237, .7); box-shadow: 0 0 10px rgba(0, 0, 0, .3); background: rgba(118, 185, 237, .1); pointer-events: none; opacity: 0;}\n</style>");
+function getDomSize(el) {
+    var rect = el.getBoundingClientRect();
+    var cs = getComputedStyle(el);
+    var border = {
+        "top": parseFloat(cs.borderTopWidth),
+        "right": parseFloat(cs.borderRightWidth),
+        "bottom": parseFloat(cs.borderBottomWidth),
+        "left": parseFloat(cs.borderLeftWidth)
+    };
+    var padding = {
+        "top": parseFloat(cs.paddingTop),
+        "right": parseFloat(cs.paddingRight),
+        "bottom": parseFloat(cs.paddingBottom),
+        "left": parseFloat(cs.paddingLeft)
+    };
+    return {
+        "top": rect.top,
+        "right": rect.right,
+        "bottom": rect.bottom,
+        "left": rect.left,
+        "width": rect.width,
+        "height": rect.height,
+        "padding": padding,
+        "border": border,
+        "clientWidth": rect.width - border.left - border.right - padding.left - padding.right,
+        "clientHeight": rect.height - border.top - border.bottom - padding.top - padding.bottom
+    };
+}
+exports.getDomSize = getDomSize;
 function requestAnimationFrameCb() {
     for (var i = 0; i < ClickGo._watchSize.length; ++i) {
         var item = ClickGo._watchSize[i];
         var rect = item.el.getBoundingClientRect();
-        var trect = {
-            "width": rect.width,
-            "height": rect.height
-        };
-        if (trect.width === 0 && trect.height === 0) {
-            if (getComputedStyle(item.el).display === "") {
+        var cs = getComputedStyle(item.el);
+        if (rect.width === 0 && rect.height === 0) {
+            if (cs.display === "") {
                 ClickGo._watchSize.splice(i, 1);
                 --i;
             }
             continue;
         }
-        if (trect.width !== item.size.width || trect.height !== item.size.height) {
+        var border = {
+            "top": parseFloat(cs.borderTopWidth),
+            "right": parseFloat(cs.borderRightWidth),
+            "bottom": parseFloat(cs.borderBottomWidth),
+            "left": parseFloat(cs.borderLeftWidth)
+        };
+        var padding = {
+            "top": parseFloat(cs.paddingTop),
+            "right": parseFloat(cs.paddingRight),
+            "bottom": parseFloat(cs.paddingBottom),
+            "left": parseFloat(cs.paddingLeft)
+        };
+        var trect = {
+            "top": rect.top,
+            "right": rect.right,
+            "bottom": rect.bottom,
+            "left": rect.left,
+            "width": rect.width,
+            "height": rect.height,
+            "padding": padding,
+            "border": border,
+            "clientWidth": rect.width - border.left - border.right - padding.left - padding.right,
+            "clientHeight": rect.height - border.top - border.bottom - padding.top - padding.bottom
+        };
+        if (trect.width !== item.size.width || trect.height !== item.size.height || trect.clientWidth !== item.size.clientWidth || trect.clientHeight !== item.size.clientHeight) {
             item.cb(trect);
             item.size = trect;
         }

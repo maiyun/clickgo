@@ -1,3 +1,4 @@
+export declare function getDomSize(el: HTMLElement): IDomSize;
 export declare function setGlobalTheme(file: Blob): Promise<void>;
 export declare function clearGlobalTheme(): void;
 export declare function createTaskStyle(taskId: number): void;

@@ -44,9 +44,9 @@ export let data = {
 
 export let watch = {
     "direction": function(this: IVue): void {
-        let wrapRect = this.$refs.wrap.getBoundingClientRect();
+        let size = ClickGo.getWatchSize(this.$refs.wrap);
+        this.client = this.direction === "v" ? size.clientHeight : size.clientWidth;
         let innerRect = this.$refs.inner.getBoundingClientRect();
-        this.client = this.direction === "v" ? wrapRect.height : wrapRect.width;
         this.length = this.direction === "v" ? innerRect.height : innerRect.width;
     },
     "scrollOffset": {
@@ -117,14 +117,18 @@ export let methods = {
             return;
         }
 
-        let wrapRect = this.$refs.wrap.getBoundingClientRect();
+        let wrapSize = ClickGo.getWatchSize(this.$refs.wrap);
+        let top = wrapSize.top + wrapSize.border.top + wrapSize.padding.top;
+        let right = wrapSize.right - wrapSize.border.right - wrapSize.padding.right;
+        let bottom = wrapSize.bottom - wrapSize.border.bottom - wrapSize.padding.bottom;
+        let left = wrapSize.left + wrapSize.border.left + wrapSize.padding.left;
         if (this.timer) {
             clearTimeout(this.timer);
             this.timer = undefined;
             if (this.direction === "v") {
-                this.scrollOffsetData = Math.round(wrapRect.top - this.$refs.inner.getBoundingClientRect().top);
+                this.scrollOffsetData = Math.round(top - this.$refs.inner.getBoundingClientRect().top);
             } else {
-                this.scrollOffsetData = Math.round(wrapRect.left - this.$refs.inner.getBoundingClientRect().left);
+                this.scrollOffsetData = Math.round(left - this.$refs.inner.getBoundingClientRect().left);
             }
             this.tran = 0;
         }
@@ -133,10 +137,10 @@ export let methods = {
         let over = (this.length > this.client) ? (this.length - this.client) : 0;
         ClickGo.bindMove(e, {
             "object": this.$refs.inner,
-            "left": this.direction === "v" ? wrapRect.left : wrapRect.left - over,
-            "right": this.direction === "v" ? wrapRect.right : wrapRect.right + over,
-            "top": this.direction === "h" ? wrapRect.top : wrapRect.top - over,
-            "bottom": this.direction === "h" ? wrapRect.top : wrapRect.bottom + over,
+            "left": this.direction === "v" ? left : left - over,
+            "right": this.direction === "v" ? right : right + over,
+            "top": this.direction === "h" ? top : top - over,
+            "bottom": this.direction === "h" ? bottom : bottom + over,
             "move": (ox, oy) => {
                 this.scrollOffsetData -= Math.round(this.direction === "v" ? oy : ox);
                 this.scrollOffsetEmit = this.scrollOffsetData;
@@ -182,10 +186,11 @@ export let methods = {
                             return;
                         }
                         let offset = 0;
+                        let wrapSize = ClickGo.getWatchSize(this.$refs.wrap);
                         if (this.direction === "v") {
-                            offset = Math.round(this.$refs.wrap.getBoundingClientRect().top - this.$refs.inner.getBoundingClientRect().top);
+                            offset = Math.round(wrapSize.top + wrapSize.border.top + wrapSize.padding.top - this.$refs.inner.getBoundingClientRect().top);
                         } else {
-                            offset = Math.round(this.$refs.wrap.getBoundingClientRect().left - this.$refs.inner.getBoundingClientRect().left);
+                            offset = Math.round(wrapSize.left + wrapSize.border.left + wrapSize.padding.left - this.$refs.inner.getBoundingClientRect().left);
                         }
                         if (offset > this.maxScroll) {
                             offset = this.maxScroll;
@@ -263,8 +268,8 @@ export let methods = {
 };
 
 export let mounted = function(this: IVue): void {
-    let rect = ClickGo.watchSize(this.$refs.wrap, (rect) => {
-        let client = Math.round(this.direction === "v" ? rect.height : rect.width);
+    let size = ClickGo.watchSize(this.$refs.wrap, (size) => {
+        let client = Math.round(this.direction === "v" ? size.clientHeight : size.clientWidth);
         if (client === this.client) {
             this.$emit("resizen");
             return;
@@ -273,11 +278,11 @@ export let mounted = function(this: IVue): void {
         this.$emit("resize", this.client);
         this.refreshView();
     });
-    this.client = Math.round(this.direction === "v" ? rect.height : rect.width);
+    this.client = Math.round(this.direction === "v" ? size.clientHeight : size.clientWidth);
     this.$emit("resize", this.client);
 
-    rect = ClickGo.watchSize(this.$refs.inner, (rect) => {
-        let length = Math.round(this.direction === "v" ? rect.height : rect.width);
+    size = ClickGo.watchSize(this.$refs.inner, (size) => {
+        let length = Math.round(this.direction === "v" ? size.height : size.width);
         if (length === this.length) {
             return;
         }
@@ -285,7 +290,7 @@ export let mounted = function(this: IVue): void {
         this.$emit("change", this.length);
         this.refreshView();
     });
-    this.length = Math.round(this.direction === "v" ? rect.height : rect.width);
+    this.length = Math.round(this.direction === "v" ? size.height : size.width);
     this.$emit("change", this.length);
 
     if (this.$parent.direction !== undefined) {

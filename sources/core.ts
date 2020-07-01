@@ -1136,16 +1136,49 @@ export function endTask(taskId: number): boolean {
 }
 
 /**
+ * --- 根据 el 获取 watch 中的 el 的 size ---
+ * @param el 要获取的 el
+ */
+export function getWatchSize(el: HTMLElement): IDomSize {
+    for (let item of ClickGo._watchSize) {
+        if (item.el !== el) {
+            continue;
+        }
+        let size = Tool.getDomSize(el);
+        item.size = size;
+        return size;
+    }
+    return {
+        "top": 0,
+        "right": 0,
+        "bottom": 0,
+        "left": 0,
+        "width": 0,
+        "height": 0,
+        "padding": {
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "left": 0,
+        },
+        "border": {
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "left": 0,
+        },
+        "clientWidth": 0,
+        "clientHeight": 0
+    };
+}
+
+/**
  * --- 添加监视 Element 对象大小
  * @param el 要监视的大小
  * @param cb 回调函数
  */
 export function watchSize(el: HTMLElement, cb: (size: IDomSize) => void): IDomSize {
-    let rect = el.getBoundingClientRect();
-    let size = {
-        "width": rect.width,
-        "height": rect.height
-    };
+    let size = Tool.getDomSize(el);
     ClickGo._watchSize.push({
         "el": el,
         "size": size,

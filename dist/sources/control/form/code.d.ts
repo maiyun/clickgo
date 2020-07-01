@@ -95,13 +95,13 @@ export declare let watch: {
     zIndex: (this: IVue) => void;
 };
 export declare let methods: {
-    moveMethod: (this: IVue, e: MouseEvent | TouchEvent) => void;
+    moveMethod: (this: IVue, e: TouchEvent | MouseEvent) => void;
     minMethod: (this: IVue) => boolean;
     maxVMethod: (this: IVue, dbl: boolean) => void;
     maxMethod: (this: IVue) => boolean;
     closeMethod: (this: IVue) => void;
-    resizeMethod: (this: IVue, e: MouseEvent | TouchEvent, dir: TBorderDir) => void;
-    maskDown: (this: IVue, e: MouseEvent | TouchEvent) => void;
+    resizeMethod: (this: IVue, e: TouchEvent | MouseEvent, dir: TBorderDir) => void;
+    maskDown: (this: IVue, e: TouchEvent | MouseEvent) => void;
     setPropData: (this: IVue, name: string, val: number, mode?: string) => void;
 };
 export declare let mounted: (this: IVue) => void;

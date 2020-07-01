@@ -83,6 +83,7 @@ declare const ClickGo: {
     createForm: (opt: ICreateFormOptions) => Promise<number | IForm>;
     removeForm: (formId: number) => boolean;
     endTask: (taskId: number) => boolean;
+    getWatchSize: (el: HTMLElement) => IDomSize;
     watchSize: (el: HTMLElement, cb: (size: IDomSize) => void) => IDomSize;
     watchElement: (el: HTMLElement, cb: MutationCallback, mode?: "child" | "childsub" | "style" | "default" | MutationObserverInit) => MutationObserver;
     bindDown: (oe: MouseEvent | TouchEvent, opt: {

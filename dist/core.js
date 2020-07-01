@@ -1225,12 +1225,42 @@ function endTask(taskId) {
     return true;
 }
 exports.endTask = endTask;
-function watchSize(el, cb) {
-    var rect = el.getBoundingClientRect();
-    var size = {
-        "width": rect.width,
-        "height": rect.height
+function getWatchSize(el) {
+    for (var _i = 0, _a = ClickGo._watchSize; _i < _a.length; _i++) {
+        var item = _a[_i];
+        if (item.el !== el) {
+            continue;
+        }
+        var size = Tool.getDomSize(el);
+        item.size = size;
+        return size;
+    }
+    return {
+        "top": 0,
+        "right": 0,
+        "bottom": 0,
+        "left": 0,
+        "width": 0,
+        "height": 0,
+        "padding": {
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "left": 0,
+        },
+        "border": {
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "left": 0,
+        },
+        "clientWidth": 0,
+        "clientHeight": 0
     };
+}
+exports.getWatchSize = getWatchSize;
+function watchSize(el, cb) {
+    var size = Tool.getDomSize(el);
     ClickGo._watchSize.push({
         "el": el,
         "size": size,

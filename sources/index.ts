@@ -264,6 +264,12 @@ const ClickGo: {
     endTask: (taskId: number) => boolean;
 
     /**
+     * --- 根据 el 获取 watch 中的 el 的 size ---
+     * @param el 要获取的 el
+     */
+    getWatchSize: (el: HTMLElement) => IDomSize;
+
+    /**
      * --- 添加监视 Element 对象大小
      * @param el 要监视的大小
      * @param cb 回调函数
@@ -489,6 +495,10 @@ const ClickGo: {
 
     endTask: function(taskId: number): boolean {
         return this._core.endTask(taskId);
+    },
+
+    getWatchSize: function(el: HTMLElement): IDomSize {
+        return this._core.getWatchSize(el);
     },
 
     watchSize: function(el: HTMLElement, cb: (size: IDomSize) => void): IDomSize {

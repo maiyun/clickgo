@@ -20,6 +20,39 @@ styleListElement.insertAdjacentHTML("beforeend", `<style class="cg-global">
 </style>`);
 
 /**
+ * --- 获取实时的 DOM SIZE ---
+ * @param el 要获取的 dom
+ */
+export function getDomSize(el: HTMLElement): IDomSize {
+    let rect = el.getBoundingClientRect();
+    let cs = getComputedStyle(el);
+    let border = {
+        "top": parseFloat(cs.borderTopWidth),
+        "right": parseFloat(cs.borderRightWidth),
+        "bottom": parseFloat(cs.borderBottomWidth),
+        "left": parseFloat(cs.borderLeftWidth)
+    };
+    let padding = {
+        "top": parseFloat(cs.paddingTop),
+        "right": parseFloat(cs.paddingRight),
+        "bottom": parseFloat(cs.paddingBottom),
+        "left": parseFloat(cs.paddingLeft)
+    };
+    return {
+        "top": rect.top,
+        "right": rect.right,
+        "bottom": rect.bottom,
+        "left": rect.left,
+        "width": rect.width,
+        "height": rect.height,
+        "padding": padding,
+        "border": border,
+        "clientWidth": rect.width - border.left - border.right - padding.left - padding.right,
+        "clientHeight": rect.height - border.top - border.bottom - padding.top - padding.bottom
+    };
+}
+
+/**
  * --- 根据刷新频率检测 dom 大小是否改变 ---
  */
 function requestAnimationFrameCb(): void {
@@ -27,19 +60,40 @@ function requestAnimationFrameCb(): void {
     for (let i = 0; i < ClickGo._watchSize.length; ++i) {
         let item = ClickGo._watchSize[i];
         let rect = item.el.getBoundingClientRect();
-        let trect: IDomSize = {
-            "width": rect.width,
-            "height": rect.height
-        };
-        if (trect.width === 0 && trect.height === 0) {
-            if (getComputedStyle(item.el).display === "") {
+        let cs = getComputedStyle(item.el);
+        if (rect.width === 0 && rect.height === 0) {
+            if (cs.display === "") {
                 // --- 元素已被移除 ---
                 ClickGo._watchSize.splice(i, 1);
                 --i;
             }
             continue;
         }
-        if (trect.width !== item.size.width || trect.height !== item.size.height) {
+        let border = {
+            "top": parseFloat(cs.borderTopWidth),
+            "right": parseFloat(cs.borderRightWidth),
+            "bottom": parseFloat(cs.borderBottomWidth),
+            "left": parseFloat(cs.borderLeftWidth)
+        };
+        let padding = {
+            "top": parseFloat(cs.paddingTop),
+            "right": parseFloat(cs.paddingRight),
+            "bottom": parseFloat(cs.paddingBottom),
+            "left": parseFloat(cs.paddingLeft)
+        };
+        let trect: IDomSize = {
+            "top": rect.top,
+            "right": rect.right,
+            "bottom": rect.bottom,
+            "left": rect.left,
+            "width": rect.width,
+            "height": rect.height,
+            "padding": padding,
+            "border": border,
+            "clientWidth": rect.width - border.left - border.right - padding.left - padding.right,
+            "clientHeight": rect.height - border.top - border.bottom - padding.top - padding.bottom
+        };
+        if (trect.width !== item.size.width || trect.height !== item.size.height || trect.clientWidth !== item.size.clientWidth || trect.clientHeight !== item.size.clientHeight) {
             item.cb(trect);
             item.size = trect;
         }

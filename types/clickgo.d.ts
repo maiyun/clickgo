@@ -119,7 +119,25 @@ type TBorderDir = "lt" | "t" | "tr" | "r" | "rb" | "b" | "bl" | "l" | "" | { "le
 
 /** --- DOM 的大小 --- */
 interface IDomSize {
-    "height": number;
+    "top": number;
+    "right": number;
+    "bottom": number;
+    "left": number;
     "width": number;
+    "height": number;
+    "padding": {
+        "top": number;
+        "right": number;
+        "bottom": number;
+        "left": number;
+    };
+    "border": {
+        "top": number;
+        "right": number;
+        "bottom": number;
+        "left": number;
+    };
+    "clientHeight": number;
+    "clientWidth": number;
 }
 
