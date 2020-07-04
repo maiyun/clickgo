@@ -48,6 +48,8 @@ export declare let data: {
     client: number;
     length: number;
     refreshCount: number;
+    lengthInit: boolean;
+    initFirst: boolean;
     _direction: undefined;
 };
 export declare let watch: {
@@ -65,6 +67,7 @@ export declare let computed: {
 };
 export declare let methods: {
     refreshView: (this: IVue) => Promise<void>;
-    reShow: (this: IVue) => Promise<void>;
+    reShow: (this: IVue) => void;
+    updateScrollOffset: (this: IVue, val: number) => void;
 };
 export declare let mounted: (this: IVue) => void;

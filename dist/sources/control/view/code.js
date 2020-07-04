@@ -47,18 +47,7 @@ exports.watch = {
     },
     "scrollOffset": {
         handler: function () {
-            var so = parseInt(this.scrollOffset);
-            if (so === this.scrollOffsetEmit) {
-                return;
-            }
-            this.scrollOffsetData = so;
-            this.scrollOffsetEmit = so;
-            if (this.timer) {
-                clearTimeout(this.timer);
-                this.timer = undefined;
-                this.tran = 0;
-            }
-            this.refreshView();
+            this.goScroll(this.scrollOffset);
         },
         "immediate": true
     }
@@ -215,6 +204,20 @@ exports.methods = {
         }
         this.scrollOffsetEmit = this.scrollOffsetData;
         this.$emit("update:scrollOffset", this.scrollOffsetData);
+    },
+    "goScroll": function (scrollOffset) {
+        var so = typeof scrollOffset === "number" ? scrollOffset : parseInt(scrollOffset);
+        if (so === this.scrollOffsetEmit) {
+            return;
+        }
+        this.scrollOffsetData = so;
+        this.scrollOffsetEmit = so;
+        if (this.timer) {
+            clearTimeout(this.timer);
+            this.timer = undefined;
+            this.tran = 0;
+        }
+        this.refreshView();
     }
 };
 exports.mounted = function () {

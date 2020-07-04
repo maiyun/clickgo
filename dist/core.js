@@ -1231,9 +1231,7 @@ function getWatchSize(el) {
         if (item.el !== el) {
             continue;
         }
-        var size = Tool.getDomSize(el);
-        item.size = size;
-        return size;
+        return item.size;
     }
     return {
         "top": 0,

@@ -50,8 +50,9 @@ export declare let computed: {
 };
 export declare let methods: {
     wheel: (this: IVue, e: WheelEvent) => void;
-    down: (this: IVue, e: TouchEvent | MouseEvent) => void;
+    down: (this: IVue, e: MouseEvent | TouchEvent) => void;
     refreshView: (this: IVue) => void;
+    goScroll: (this: IVue, scrollOffset: string | number) => void;
 };
 export declare let mounted: (this: IVue) => void;
 export declare let destroyed: (this: IVue) => void;

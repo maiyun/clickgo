@@ -109,8 +109,8 @@ function requestAnimationFrameCb() {
         };
         if (trect.width !== item.size.width || trect.height !== item.size.height || trect.clientWidth !== item.size.clientWidth || trect.clientHeight !== item.size.clientHeight) {
             item.cb(trect);
-            item.size = trect;
         }
+        item.size = trect;
     }
     requestAnimationFrame(requestAnimationFrameCb);
 }

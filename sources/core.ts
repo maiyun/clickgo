@@ -1144,9 +1144,7 @@ export function getWatchSize(el: HTMLElement): IDomSize {
         if (item.el !== el) {
             continue;
         }
-        let size = Tool.getDomSize(el);
-        item.size = size;
-        return size;
+        return item.size;
     }
     return {
         "top": 0,

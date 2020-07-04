@@ -86,6 +86,8 @@ exports.data = {
     "client": 0,
     "length": 0,
     "refreshCount": 0,
+    "lengthInit": false,
+    "initFirst": true,
     "_direction": undefined
 };
 exports.watch = {
@@ -213,6 +215,7 @@ exports.methods = {
                         this.innerPos.end = 0;
                         length += this.direction === "v" ? this.paddingComp.bottom : this.paddingComp.right;
                         this.length = length;
+                        this.lengthInit = true;
                         this.reShow();
                         return [2];
                 }
@@ -220,33 +223,41 @@ exports.methods = {
         });
     },
     reShow: function () {
-        return __awaiter(this, void 0, void 0, function () {
-            var overShow, i, pos;
-            return __generator(this, function (_a) {
-                overShow = false;
-                for (i = 0; i < this.dataComp.length; ++i) {
-                    pos = this.dataHeight[i];
-                    if (!pos) {
-                        return [2];
-                    }
-                    if ((pos.end > this.scrollOffsetData - 10) && (pos.start < this.scrollOffsetData + this.client + 10)) {
-                        if (!overShow) {
-                            overShow = true;
-                            this.showPos.start = i;
-                        }
-                        if (!this.dataComp[i + 1]) {
-                            this.showPos.end = i + 1;
-                        }
-                        continue;
-                    }
-                    if (overShow) {
-                        this.showPos.end = i;
-                        break;
-                    }
+        var overShow = false;
+        for (var i = 0; i < this.dataComp.length; ++i) {
+            var pos = this.dataHeight[i];
+            if (!pos) {
+                return;
+            }
+            if ((pos.end > this.scrollOffsetData - 10) && (pos.start < this.scrollOffsetData + this.client + 10)) {
+                if (!overShow) {
+                    overShow = true;
+                    this.showPos.start = i;
                 }
-                return [2];
-            });
-        });
+                if (!this.dataComp[i + 1]) {
+                    this.showPos.end = i + 1;
+                }
+                continue;
+            }
+            if (overShow) {
+                this.showPos.end = i;
+                break;
+            }
+        }
+    },
+    updateScrollOffset: function (val) {
+        if (!this.lengthInit) {
+            return;
+        }
+        console.log("abc", this.initFirst);
+        if (this.initFirst) {
+            this.initFirst = false;
+            this.$refs.view.goScroll(this.scrollOffset);
+            return;
+        }
+        this.scrollOffsetData = val;
+        this.$emit("update:scrollOffset", val);
+        this.reShow();
     }
 };
 exports.mounted = function () {

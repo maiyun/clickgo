@@ -51,18 +51,7 @@ export let watch = {
     },
     "scrollOffset": {
         handler: function(this: IVue): void {
-            let so = parseInt(this.scrollOffset);
-            if (so === this.scrollOffsetEmit) {
-                return;
-            }
-            this.scrollOffsetData = so;
-            this.scrollOffsetEmit = so;
-            if (this.timer) {
-                clearTimeout(this.timer);
-                this.timer = undefined;
-                this.tran = 0;
-            }
-            this.refreshView();
+            this.goScroll(this.scrollOffset);
         },
         "immediate": true
     }
@@ -264,6 +253,21 @@ export let methods = {
         }
         this.scrollOffsetEmit = this.scrollOffsetData;
         this.$emit("update:scrollOffset", this.scrollOffsetData);
+    },
+    // --- 设定滚动位置 ---
+    "goScroll": function(this: IVue, scrollOffset: number | string): void {
+        let so = typeof scrollOffset === "number" ? scrollOffset : parseInt(scrollOffset);
+        if (so === this.scrollOffsetEmit) {
+            return;
+        }
+        this.scrollOffsetData = so;
+        this.scrollOffsetEmit = so;
+        if (this.timer) {
+            clearTimeout(this.timer);
+            this.timer = undefined;
+            this.tran = 0;
+        }
+        this.refreshView();
     }
 };
 

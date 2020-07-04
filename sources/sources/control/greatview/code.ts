@@ -54,6 +54,8 @@ export let data = {
     "length": 0,
 
     "refreshCount": 0,
+    "lengthInit": false,
+    "initFirst": true,
 
     "_direction": undefined
 };
@@ -179,11 +181,12 @@ export let methods = {
         this.innerPos.end = 0;
         length += this.direction === "v" ? this.paddingComp.bottom : this.paddingComp.right;
         this.length = length;
+        this.lengthInit = true;
 
         this.reShow();
     },
     // --- 控制显示和隐藏 ---
-    reShow: async function(this: IVue): Promise<void> {
+    reShow: function(this: IVue): void {
         let overShow = false;
         for (let i = 0; i < this.dataComp.length; ++i) {
             let pos = this.dataHeight[i];
@@ -205,6 +208,20 @@ export let methods = {
                 break;
             }
         }
+    },
+    updateScrollOffset: function(this: IVue, val: number): void {
+        if (!this.lengthInit) {
+            return;
+        }
+        console.log("abc", this.initFirst);
+        if (this.initFirst) {
+            this.initFirst = false;
+            this.$refs.view.goScroll(this.scrollOffset);
+            return;
+        }
+        this.scrollOffsetData = val;
+        this.$emit("update:scrollOffset", val);
+        this.reShow();
     }
 };
 
