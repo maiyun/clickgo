@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.methods = exports.data = void 0;
 var count = 0;
 exports.data = {
     "resize": true,

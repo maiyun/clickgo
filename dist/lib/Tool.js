@@ -36,6 +36,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.clone = exports.blob2Text = exports.blob2ArrayBuffer = exports.blob2DataUrl = exports.changeFormFocus = exports.layoutClassPrepend = exports.layoutInsertAttr = exports.styleUrl2DataUrl = exports.stylePrepend = exports.controlBlob2Pkg = exports.isAppPkg = exports.isControlPkg = exports.parsePath = exports.trim = exports.purify = exports.removeStyle = exports.pushStyle = exports.clearTaskTheme = exports.loadTaskTheme = exports.removeTaskStyle = exports.createTaskStyle = exports.clearGlobalTheme = exports.setGlobalTheme = exports.getDomSize = void 0;
 var styleListElement = document.createElement("div");
 styleListElement.style.display = "none";
 document.getElementsByTagName("body")[0].appendChild(styleListElement);
@@ -589,8 +590,8 @@ function layoutClassPrependObject(os) {
     }) + "}";
 }
 function changeFormFocus(formId, vm) {
-    if (formId === void 0) { formId = 0; }
     var _a, _b;
+    if (formId === void 0) { formId = 0; }
     var focusElement = document.querySelector(".cg-form-list > .cg-focus");
     if (focusElement) {
         var dataFormId = focusElement.getAttribute("data-form-id");

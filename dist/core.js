@@ -36,6 +36,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.setGlobalCursor = exports.bindResize = exports.bindMove = exports.bindDown = exports.watchElement = exports.watchSize = exports.getWatchSize = exports.endTask = exports.removeForm = exports.createForm = exports.runApp = exports.fetchApp = exports.fetchClickGoFile = exports.trigger = exports.clearTheme = exports.setTheme = exports.siblings = exports.hidePop = exports.showPop = exports.removeFromPop = exports.appendToPop = exports.getPositionByBorderDir = exports.hideRectangle = exports.moveRectangle = exports.showRectangle = exports.showCircular = void 0;
 var Tool = require("./lib/Tool");
 var formListElement = document.createElement("div");
 if (window.devicePixelRatio < 2) {

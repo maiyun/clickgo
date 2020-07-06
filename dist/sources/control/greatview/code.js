@@ -64,8 +64,8 @@ exports.props = {
     "scrollOffset": {
         "default": undefined
     },
-    "line": {
-        "default": undefined
+    "same": {
+        "default": false
     },
     "data": {
         "default": []
@@ -116,6 +116,12 @@ exports.computed = {
         }
         return list;
     },
+    "sameComp": function () {
+        if (typeof this.same === "boolean") {
+            return this.same;
+        }
+        return this.same === "true" ? true : false;
+    },
     "paddingComp": function () {
         if (!this.padding) {
             return { "top": 0, "right": 0, "bottom": 0, "left": 0 };
@@ -143,7 +149,7 @@ exports.computed = {
 exports.methods = {
     refreshView: function () {
         return __awaiter(this, void 0, void 0, function () {
-            var nowCount, length, maxCursor, cursor, dataHeight, theCursor, i, item, start, item;
+            var nowCount, length, maxCursor, cursor, dataHeight, theCursor, i, item, start, rect, item, rect;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -155,7 +161,7 @@ exports.methods = {
                             this.length = length + (this.direction === "v" ? this.paddingComp.bottom : this.paddingComp.right);
                             return [2];
                         }
-                        if (!(this.line === undefined)) return [3, 5];
+                        if (!!this.sameComp) return [3, 5];
                         maxCursor = this.dataComp.length;
                         cursor = 0;
                         dataHeight = [];
@@ -186,7 +192,8 @@ exports.methods = {
                         for (i = 0; i < this.$refs.inner.children.length; ++i) {
                             item = this.$refs.inner.children.item(i);
                             start = length;
-                            length += this.direction === "v" ? item.offsetHeight : item.offsetWidth;
+                            rect = item.getBoundingClientRect();
+                            length += this.direction === "v" ? rect.height : rect.width;
                             dataHeight[cursor + i] = {
                                 "start": start,
                                 "end": length
@@ -199,18 +206,30 @@ exports.methods = {
                         return [3, 1];
                     case 4:
                         this.dataHeight = dataHeight;
-                        return [3, 7];
+                        return [3, 8];
                     case 5:
                         this.innerPos.start = 0;
                         this.innerPos.end = 1;
                         return [4, this.$nextTick()];
                     case 6:
                         _a.sent();
-                        item = this.$refs.inner.children.item(0);
-                        this.lineHeight = this.direction === "v" ? item.offsetHeight : item.offsetWidth;
-                        length += this.lineHeight * this.dataComp.length;
-                        _a.label = 7;
+                        return [4, ClickGo.sleep(0)];
                     case 7:
+                        _a.sent();
+                        if (nowCount !== this.refreshCount) {
+                            return [2];
+                        }
+                        item = this.$refs.inner.children.item(0);
+                        if (item) {
+                            rect = item.getBoundingClientRect();
+                            this.lineHeight = this.direction === "v" ? rect.height : rect.width;
+                        }
+                        else {
+                            this.lineHeight = 0;
+                        }
+                        length += this.lineHeight * this.dataComp.length;
+                        _a.label = 8;
+                    case 8:
                         this.innerPos.start = 0;
                         this.innerPos.end = 0;
                         length += this.direction === "v" ? this.paddingComp.bottom : this.paddingComp.right;
@@ -223,33 +242,50 @@ exports.methods = {
         });
     },
     reShow: function () {
-        var overShow = false;
-        for (var i = 0; i < this.dataComp.length; ++i) {
-            var pos = this.dataHeight[i];
-            if (!pos) {
+        if (!this.sameComp) {
+            var overShow = false;
+            for (var i = 0; i < this.dataComp.length; ++i) {
+                var pos = this.dataHeight[i];
+                if (!pos) {
+                    return;
+                }
+                if ((pos.end > this.scrollOffsetData - 10) && (pos.start < this.scrollOffsetData + this.client + 10)) {
+                    if (!overShow) {
+                        overShow = true;
+                        this.showPos.start = i;
+                    }
+                    if (!this.dataComp[i + 1]) {
+                        this.showPos.end = i + 1;
+                    }
+                    continue;
+                }
+                if (overShow) {
+                    this.showPos.end = i;
+                    break;
+                }
+            }
+        }
+        else {
+            if (this.lineHeight === 0) {
+                this.showPos.start = this.showPos.end = 0;
                 return;
             }
-            if ((pos.end > this.scrollOffsetData - 10) && (pos.start < this.scrollOffsetData + this.client + 10)) {
-                if (!overShow) {
-                    overShow = true;
-                    this.showPos.start = i;
-                }
-                if (!this.dataComp[i + 1]) {
-                    this.showPos.end = i + 1;
-                }
-                continue;
+            var start = Math.floor((this.scrollOffsetData - 10) / this.lineHeight);
+            var end = Math.ceil((this.scrollOffsetData + this.client + 10) / this.lineHeight);
+            if (start < 0) {
+                start = 0;
             }
-            if (overShow) {
-                this.showPos.end = i;
-                break;
+            if (end > this.dataComp.length) {
+                end = this.dataComp.length;
             }
+            this.showPos.start = start;
+            this.showPos.end = end;
         }
     },
     updateScrollOffset: function (val) {
         if (!this.lengthInit) {
             return;
         }
-        console.log("abc", this.initFirst);
         if (this.initFirst) {
             this.initFirst = false;
             this.$refs.view.goScroll(this.scrollOffset);

@@ -12,7 +12,10 @@
             <layout flex="1" style="background: #FFF;">
                 <overflow :scroll-offset.sync="so3" flex="1" @resize="c3 = arguments[0]" @change="l3 = arguments[0]" :style="{'line-height': style ? '1.5' : undefined}">
                     <block :style="{'padding': style ? '10px' : undefined}">
-                        <block v-for="(line, index) of lineCount">Line {{line}}, index: {{index}}.</block>
+                        <block v-for="(line, index) of lineCount">
+                            <block v-if="index > 0 && index % 10 === 0" style="margin: auto; background: red; width: 60%; height: 30px; color: #FFF; text-align: center; line-height: 30px;">Custom</block>
+                            <block v-else>Line {{line}}, index: {{index}}.</block>
+                        </block>
                     </block>
                 </overflow>
                 <scroll width="20" :length="l3" :client="c3" :scroll-offset.sync="so3"></scroll>

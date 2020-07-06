@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.mounted = exports.computed = exports.data = exports.props = void 0;
 exports.props = {
     "width": {
         "default": undefined

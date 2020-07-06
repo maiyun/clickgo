@@ -36,6 +36,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.methods = exports.data = void 0;
 exports.data = {
     "width": 300,
     "height": 505

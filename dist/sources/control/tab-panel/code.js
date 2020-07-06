@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.beforeDestroy = exports.mounted = exports.watch = exports.data = exports.props = void 0;
 exports.props = {
     "label": {
         "default": ""

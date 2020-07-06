@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.mounted = exports.methods = exports.data = void 0;
 exports.data = {
     "left": 0,
     "top": 0,

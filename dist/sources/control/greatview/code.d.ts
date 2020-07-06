@@ -26,8 +26,8 @@ export declare let props: {
     scrollOffset: {
         default: undefined;
     };
-    line: {
-        default: undefined;
+    same: {
+        default: boolean;
     };
     data: {
         default: never[];
@@ -63,6 +63,7 @@ export declare let watch: {
 };
 export declare let computed: {
     dataComp: (this: IVue) => any[];
+    sameComp: (this: IVue) => boolean;
     paddingComp: (this: IVue) => any;
 };
 export declare let methods: {
