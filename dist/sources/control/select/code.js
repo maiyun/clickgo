@@ -1,6 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.mounted = exports.methods = exports.computed = exports.watch = exports.data = exports.props = void 0;
 exports.props = {
     "disabled": {
         "default": false
@@ -32,12 +31,17 @@ exports.props = {
     "value": {
         "default": undefined
     },
-    "list": {
+    "editable": {
+        "default": true
+    },
+    "data": {
         "default": []
     }
 };
 exports.data = {
     "valueData": "",
+    "wrapFocus": false,
+    "inputFocus": false,
     "_direction": undefined
 };
 exports.watch = {
@@ -65,15 +69,32 @@ exports.computed = {
         if (this.flex !== "") {
             return this.$data._direction ? (this.$data._direction === "v" ? "0" : undefined) : undefined;
         }
+    },
+    "editableComp": function () {
+        if (typeof this.editable === "boolean") {
+            return this.editable;
+        }
+        return this.editable === "true" ? true : false;
     }
 };
 exports.methods = {
     input: function () {
         this.$emit("input", this.valueData);
+    },
+    down: function (e) {
+        if (e instanceof MouseEvent && ClickGo.hasTouch) {
+            return;
+        }
+        this.stopPropagation(e);
+        this._down();
     }
 };
 exports.mounted = function () {
     if (this.$parent.direction !== undefined) {
         this.$data._direction = this.$parent.direction;
     }
+    ClickGo.appendToPop(this.$refs.pop);
+};
+exports.destroyed = function () {
+    ClickGo.removeFromPop(this.$refs.pop);
 };

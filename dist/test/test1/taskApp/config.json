@@ -10,8 +10,7 @@
         "/clickgo/control/img",
         "/clickgo/control/label",
         "/clickgo/control/layout",
-        "/clickgo/control/menu",
-        "/clickgo/control/select"
+        "/clickgo/control/menu"
     ],
     "theme": [
         "/clickgo/theme/W10A"
@@ -25,7 +24,6 @@
         "/clickgo/control/label.cgc",
         "/clickgo/control/layout.cgc",
         "/clickgo/control/menu.cgc",
-        "/clickgo/control/select.cgc",
         "/clickgo/theme/W10A.cgt",
 
         "/form/main.js",

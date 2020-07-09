@@ -36,7 +36,6 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.setGlobalCursor = exports.bindResize = exports.bindMove = exports.bindDown = exports.watchElement = exports.watchSize = exports.getWatchSize = exports.endTask = exports.removeForm = exports.createForm = exports.runApp = exports.fetchApp = exports.fetchClickGoFile = exports.trigger = exports.clearTheme = exports.setTheme = exports.siblings = exports.hidePop = exports.showPop = exports.removeFromPop = exports.appendToPop = exports.getPositionByBorderDir = exports.hideRectangle = exports.moveRectangle = exports.showRectangle = exports.showCircular = void 0;
 var Tool = require("./lib/Tool");
 var formListElement = document.createElement("div");
 if (window.devicePixelRatio < 2) {
@@ -92,8 +91,11 @@ var lostFocusEvent = function (e) {
     if (element.classList.contains("cg-pop-open")) {
         return;
     }
-    element = element.parentElement;
+    element = element.parentNode;
     while (element) {
+        if (!element.classList) {
+            break;
+        }
         if (element.classList.contains("cg-form-list")) {
             hidePop();
             return;
@@ -101,7 +103,7 @@ var lostFocusEvent = function (e) {
         if (element.classList.contains("cg-pop-list") || element.classList.contains("cg-pop-open")) {
             return;
         }
-        element = element.parentElement;
+        element = element.parentNode;
     }
     hidePop();
     Tool.changeFormFocus();
@@ -329,11 +331,11 @@ function hidePop(pop) {
 }
 exports.hidePop = hidePop;
 function siblings(e, cn) {
-    if (!e.parentElement) {
+    if (!e.parentNode) {
         return null;
     }
-    for (var i = 0; i < e.parentElement.children.length; ++i) {
-        var el = e.parentElement.children.item(i);
+    for (var i = 0; i < e.parentNode.children.length; ++i) {
+        var el = e.parentNode.children.item(i);
         if (el === e) {
             continue;
         }

@@ -31,13 +31,18 @@ export let props = {
     "value": {
         "default": undefined
     },
-    "list": {
+    "editable": {
+        "default": true
+    },
+    "data": {
         "default": []
     }
 };
 
 export let data = {
     "valueData": "",
+    "wrapFocus": false,
+    "inputFocus": false,
 
     "_direction": undefined
 };
@@ -67,12 +72,26 @@ export let computed = {
         if (this.flex !== "") {
             return this.$data._direction ? (this.$data._direction === "v" ? "0" : undefined) : undefined;
         }
+    },
+
+    "editableComp": function(this: IVue): boolean {
+        if (typeof this.editable === "boolean") {
+            return this.editable;
+        }
+        return this.editable === "true" ? true : false;
     }
 };
 
 export let methods = {
     input: function(this: IVue): void {
         this.$emit("input", this.valueData);
+    },
+    down: function(this: IVue, e: MouseEvent | TouchEvent): void {
+        if (e instanceof MouseEvent && ClickGo.hasTouch) {
+            return;
+        }
+        this.stopPropagation(e);
+        this._down();
     }
 };
 
@@ -80,5 +99,11 @@ export let mounted = function(this: IVue): void {
     if (this.$parent.direction !== undefined) {
         this.$data._direction = this.$parent.direction;
     }
+
+    ClickGo.appendToPop(this.$refs.pop);
+};
+
+export let destroyed = function(this: IVue): void {
+    ClickGo.removeFromPop(this.$refs.pop);
 };
 

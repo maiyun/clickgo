@@ -29,12 +29,17 @@ export declare let props: {
     value: {
         default: undefined;
     };
-    list: {
+    editable: {
+        default: boolean;
+    };
+    data: {
         default: never[];
     };
 };
 export declare let data: {
     valueData: string;
+    wrapFocus: boolean;
+    inputFocus: boolean;
     _direction: undefined;
 };
 export declare let watch: {
@@ -46,8 +51,11 @@ export declare let watch: {
 export declare let computed: {
     widthPx: (this: IVue) => string | undefined;
     heightPx: (this: IVue) => string | undefined;
+    editableComp: (this: IVue) => boolean;
 };
 export declare let methods: {
     input: (this: IVue) => void;
+    down: (this: IVue, e: MouseEvent | TouchEvent) => void;
 };
 export declare let mounted: (this: IVue) => void;
+export declare let destroyed: (this: IVue) => void;

@@ -76,8 +76,11 @@ let lostFocusEvent = function(e: MouseEvent | TouchEvent): void {
         // --- 被夸嚓打开的父组件，也不做处理 ---
         return;
     }
-    element = element.parentElement;
+    element = element.parentNode as HTMLElement | null;
     while (element) {
+        if (!element.classList) {
+            break;
+        }
         if (element.classList.contains("cg-form-list")) {
             // --- 窗体内部点击，不触发丢失焦点，但触发隐藏 pop ---
             hidePop();
@@ -87,7 +90,7 @@ let lostFocusEvent = function(e: MouseEvent | TouchEvent): void {
             // --- 弹出层点击，不触发丢失焦点，也不触发隐藏 pop，是否隐藏请自行处理 ---
             return;
         }
-        element = element.parentElement;
+        element = element.parentNode as HTMLElement | null;
     }
     // --- 普罗大众的状态，要隐藏 menu，并且丢失窗体焦点 ---
     hidePop();
@@ -354,11 +357,11 @@ export function hidePop(pop: IVue | null = null): void {
  * @param cn 同级 classname
  */
 export function siblings(e: HTMLElement, cn: string): HTMLElement | null {
-    if (!e.parentElement) {
+    if (!e.parentNode) {
         return null;
     }
-    for (let i = 0; i < e.parentElement.children.length; ++i) {
-        let el = e.parentElement.children.item(i) as HTMLElement;
+    for (let i = 0; i < e.parentNode.children.length; ++i) {
+        let el = e.parentNode.children.item(i) as HTMLElement;
         if (el === e) {
             continue;
         }

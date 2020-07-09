@@ -51,7 +51,7 @@ async function run(): Promise<void> {
         if (item.isFile()) {
             continue;
         }
-        if (["menu-item", "menu-pop", "menu-pop-item", "menu-pop-split", "greatview", "tab-panel", "select-pop"].includes(item.name)) {
+        if (["menu-item", "menu-pop", "menu-pop-item", "menu-pop-split", "greatview", "select", "tab-panel"].includes(item.name)) {
             continue;
         }
         let base = "dist/sources/control/" + item.name;
@@ -68,20 +68,14 @@ async function run(): Promise<void> {
         } else if (item.name === "view") {
             controlBuffer = Buffer.concat([
                 controlBuffer,
-                await getSingleControlBlob("dist/sources/control/greatview")
+                await getSingleControlBlob("dist/sources/control/greatview"),
+                await getSingleControlBlob("dist/sources/control/select")
             ]);
         } else if (item.name === "tab") {
             controlBuffer = Buffer.concat([
                 controlBuffer,
                 await getSingleControlBlob("dist/sources/control/tab-panel")
             ]);
-        } else if (item.name === "select") {
-            /*
-            controlBuffer = Buffer.concat([
-                controlBuffer,
-                await getSingleControlBlob("dist/sources/control/select-pop")
-            ]);
-            */
         }
 
         // --- 组成 cgc 文件 ---

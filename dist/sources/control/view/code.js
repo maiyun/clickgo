@@ -1,6 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.destroyed = exports.mounted = exports.methods = exports.computed = exports.watch = exports.data = exports.props = void 0;
 exports.props = {
     "width": {
         "default": undefined
@@ -198,9 +197,19 @@ exports.methods = {
     },
     "refreshView": function () {
         if (this.scrollOffsetData > this.maxScroll) {
+            if (this.timer) {
+                clearTimeout(this.timer);
+                this.timer = undefined;
+                this.tran = 0;
+            }
             this.scrollOffsetData = this.maxScroll;
         }
         else if (this.scrollOffsetData < 0) {
+            if (this.timer) {
+                clearTimeout(this.timer);
+                this.timer = undefined;
+                this.tran = 0;
+            }
             this.scrollOffsetData = 0;
         }
         this.scrollOffsetEmit = this.scrollOffsetData;

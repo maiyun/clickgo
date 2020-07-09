@@ -247,8 +247,18 @@ export let methods = {
     // --- 重置视图 scrollOffset ---
     "refreshView": function(this: IVue): void {
         if (this.scrollOffsetData > this.maxScroll) {
+            if (this.timer) {
+                clearTimeout(this.timer);
+                this.timer = undefined;
+                this.tran = 0;
+            }
             this.scrollOffsetData = this.maxScroll;
         } else if (this.scrollOffsetData < 0) {
+            if (this.timer) {
+                clearTimeout(this.timer);
+                this.timer = undefined;
+                this.tran = 0;
+            }
             this.scrollOffsetData = 0;
         }
         this.scrollOffsetEmit = this.scrollOffsetData;

@@ -101,7 +101,7 @@ function run() {
                     if (item.isFile()) {
                         return [3, 15];
                     }
-                    if (["menu-item", "menu-pop", "menu-pop-item", "menu-pop-split", "greatview", "tab-panel", "select-pop"].includes(item.name)) {
+                    if (["menu-item", "menu-pop", "menu-pop-item", "menu-pop-split", "greatview", "select", "tab-panel"].includes(item.name)) {
                         return [3, 15];
                     }
                     base = "dist/sources/control/" + item.name;
@@ -133,28 +133,29 @@ function run() {
                         ])]);
                     return [3, 13];
                 case 8:
-                    if (!(item.name === "view")) return [3, 10];
+                    if (!(item.name === "view")) return [3, 11];
                     _e = (_d = Buffer).concat;
                     _f = [controlBuffer];
                     return [4, getSingleControlBlob("dist/sources/control/greatview")];
                 case 9:
+                    _f = _f.concat([
+                        _o.sent()
+                    ]);
+                    return [4, getSingleControlBlob("dist/sources/control/select")];
+                case 10:
                     controlBuffer = _e.apply(_d, [_f.concat([
                             _o.sent()
                         ])]);
                     return [3, 13];
-                case 10:
-                    if (!(item.name === "tab")) return [3, 12];
+                case 11:
+                    if (!(item.name === "tab")) return [3, 13];
                     _h = (_g = Buffer).concat;
                     _j = [controlBuffer];
                     return [4, getSingleControlBlob("dist/sources/control/tab-panel")];
-                case 11:
+                case 12:
                     controlBuffer = _h.apply(_g, [_j.concat([
                             _o.sent()
                         ])]);
-                    return [3, 13];
-                case 12:
-                    if (item.name === "select") {
-                    }
                     _o.label = 13;
                 case 13:
                     fileBuffer = Buffer.concat([
