@@ -40,6 +40,7 @@ declare const ClickGo: {
     "_watchSize": Array<{
         "el": HTMLElement;
         "size": IDomSize;
+        "scroll": boolean;
         "cb": (size: IDomSize) => void;
     }>;
     showCircular: (x: number, y: number) => void;
@@ -84,7 +85,7 @@ declare const ClickGo: {
     removeForm: (formId: number) => boolean;
     endTask: (taskId: number) => boolean;
     getWatchSize: (el: HTMLElement) => IDomSize;
-    watchSize: (el: HTMLElement, cb: (size: IDomSize) => void) => IDomSize;
+    watchSize: (el: HTMLElement, cb: (size: IDomSize) => void, scroll?: boolean) => IDomSize;
     watchElement: (el: HTMLElement, cb: MutationCallback, mode?: "child" | "childsub" | "style" | "default" | MutationObserverInit) => MutationObserver;
     bindDown: (oe: MouseEvent | TouchEvent, opt: {
         "down"?: (e: MouseEvent | TouchEvent) => void;

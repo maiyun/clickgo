@@ -218,8 +218,9 @@ var ClickGo = {
     getWatchSize: function (el) {
         return this._core.getWatchSize(el);
     },
-    watchSize: function (el, cb) {
-        return this._core.watchSize(el, cb);
+    watchSize: function (el, cb, scroll) {
+        if (scroll === void 0) { scroll = false; }
+        return this._core.watchSize(el, cb, scroll);
     },
     watchElement: function (el, cb, mode) {
         if (mode === void 0) { mode = "default"; }

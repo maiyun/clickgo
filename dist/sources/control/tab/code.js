@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.mounted = exports.watch = exports.computed = exports.data = exports.props = void 0;
+exports.updated = exports.watch = exports.computed = exports.data = exports.props = void 0;
 exports.props = {
     "width": {
         "default": undefined
@@ -20,17 +20,19 @@ exports.props = {
     "flex": {
         "default": ""
     },
-    "direction": {
-        "default": "h"
+    "tabPosition": {
+        "default": "top"
     },
     "value": {
         "default": 0
+    },
+    "name": {
+        "default": undefined
     }
 };
 exports.data = {
     "tabs": [],
-    "selectedIndex": 0,
-    "_direction": undefined
+    "selectedIndex": 0
 };
 exports.computed = {
     "widthPx": function () {
@@ -38,7 +40,7 @@ exports.computed = {
             return this.width + "px";
         }
         if (this.flex !== "") {
-            return this.$data._direction ? (this.$data._direction === "v" ? undefined : "0") : undefined;
+            return this.$parent.direction ? (this.$parent.direction === "v" ? undefined : "0") : undefined;
         }
     },
     "heightPx": function () {
@@ -46,32 +48,45 @@ exports.computed = {
             return this.height + "px";
         }
         if (this.flex !== "") {
-            return this.$data._direction ? (this.$data._direction === "v" ? "0" : undefined) : undefined;
+            return this.$parent.direction ? (this.$parent.direction === "v" ? "0" : undefined) : undefined;
         }
     }
 };
 exports.watch = {
-    "tabs": function () {
-        this.tabs.splice(this.$refs.panels.children.length);
-    },
     "value": {
         handler: function () {
             this.selectedIndex = this.value;
         },
         "immediate": true
-    },
-    "selectedIndex": {
-        handler: function () {
-            for (var _i = 0, _a = this.$children; _i < _a.length; _i++) {
-                var item = _a[_i];
-                item.selectedIndex = this.selectedIndex;
-            }
-        },
-        "immediate": true
     }
 };
-exports.mounted = function () {
-    if (this.$parent.direction !== undefined) {
-        this.$data._direction = this.$parent.direction;
+exports.updated = function () {
+    var i;
+    for (i = 0; i < this.$slots.default.length; ++i) {
+        var item = this.$slots.default[i];
+        if (this.tabs[i]) {
+            if (this.tabs[i].label !== item.componentInstance.label) {
+                this.tabs[i].label = item.componentInstance.label;
+            }
+            if (this.tabs[i].name !== item.componentInstance.name) {
+                this.tabs[i].name = item.componentInstance.name;
+            }
+            if (this.$slots.default[i].componentInstance.index !== i) {
+                item.componentInstance.index = i;
+            }
+        }
+        else {
+            this.tabs.push({
+                "label": item.componentInstance.label,
+                "name": item.componentInstance.name
+            });
+            item.componentInstance.index = i;
+        }
+    }
+    if (i < this.tabs.length) {
+        this.tabs.splice(i);
+        if (this.selectedIndex >= this.tabs.length) {
+            this.selectedIndex = this.tabs.length - 1;
+        }
     }
 };

@@ -29,7 +29,7 @@ export declare function createForm(opt: ICreateFormOptions): Promise<number | IF
 export declare function removeForm(formId: number): boolean;
 export declare function endTask(taskId: number): boolean;
 export declare function getWatchSize(el: HTMLElement): IDomSize;
-export declare function watchSize(el: HTMLElement, cb: (size: IDomSize) => void): IDomSize;
+export declare function watchSize(el: HTMLElement, cb: (size: IDomSize) => void, scroll?: boolean): IDomSize;
 export declare function watchElement(el: HTMLElement, cb: MutationCallback, mode?: "child" | "childsub" | "style" | "default" | MutationObserverInit): MutationObserver;
 export declare function bindDown(oe: MouseEvent | TouchEvent, opt: {
     "down"?: (e: MouseEvent | TouchEvent) => void;

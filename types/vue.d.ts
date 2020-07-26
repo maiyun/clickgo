@@ -18,7 +18,16 @@ interface IVue {
     $refs: Record<string, HTMLElement & IVue>;
     $data: any;
     $props: any;
-    $slots: any;
+    $slots: {
+        [name: string]: Array<{
+            "componentInstance": IVue;
+            "componentOptions": {
+                "tag": string;
+                [name: string]: any;
+            };
+            [name: string]: any;
+        }>;
+    };
     $parent: IVue;
     $children: IVue[];
     $watch: any;

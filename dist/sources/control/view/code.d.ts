@@ -52,7 +52,7 @@ export declare let methods: {
     wheel: (this: IVue, e: WheelEvent) => void;
     down: (this: IVue, e: MouseEvent | TouchEvent) => void;
     refreshView: (this: IVue) => void;
-    goScroll: (this: IVue, scrollOffset: string | number) => void;
+    goScroll: (this: IVue, scrollOffset: number | string) => void;
 };
 export declare let mounted: (this: IVue) => void;
 export declare let destroyed: (this: IVue) => void;

@@ -94,7 +94,7 @@ const ClickGo: {
     /** --- 当前 pop 的 vue 对象 --- */
     "_pop": IVue | null;
     /** --- 正在被监视大小的对象 --- */
-    "_watchSize": Array<{ "el": HTMLElement; "size": IDomSize; "cb": (size: IDomSize) => void; }>;
+    "_watchSize": Array<{ "el": HTMLElement; "size": IDomSize; "scroll": boolean; "cb": (size: IDomSize) => void; }>;
 
     /**
      * --- 显示从小到大的圆圈动画特效对象 ---
@@ -274,7 +274,7 @@ const ClickGo: {
      * @param el 要监视的大小
      * @param cb 回调函数
      */
-    watchSize: (el: HTMLElement, cb: (size: IDomSize) => void) => IDomSize;
+    watchSize: (el: HTMLElement, cb: (size: IDomSize) => void, scroll?: boolean) => IDomSize;
 
     /**
      * --- 添加 DOM 内容变化监视 ---
@@ -501,8 +501,8 @@ const ClickGo: {
         return this._core.getWatchSize(el);
     },
 
-    watchSize: function(el: HTMLElement, cb: (size: IDomSize) => void): IDomSize {
-        return this._core.watchSize(el, cb);
+    watchSize: function(el: HTMLElement, cb: (size: IDomSize) => void, scroll: boolean = false): IDomSize {
+        return this._core.watchSize(el, cb, scroll);
     },
 
     watchElement: function(el: HTMLElement, cb: MutationCallback, mode: "child" | "childsub" | "style" | "default" | MutationObserverInit = "default"): MutationObserver {

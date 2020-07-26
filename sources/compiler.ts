@@ -1,6 +1,18 @@
 import * as fs from "fs";
 import * as mime from "@litert/mime";
 
+/**
+ * --- 去除 html 的空白符、换行 ---
+ * @param text 要纯净的字符串
+ */
+function purify(text: string): string {
+    text = ">" + text + "<";
+    text = text.replace(/>([\s\S]*?)</g, function(t: string, t1: string) {
+        return ">" + t1.replace(/\t|\r\n| {2}/g, "").replace(/\n|\r/g, "") + "<";
+    });
+    return text.slice(1, -1);
+}
+
 async function getSingleControlBlob(base: string): Promise<Buffer> {
     // --- 读取 config 文件 ---
     let config = await fs.promises.readFile(base + "/config.json", {
@@ -18,8 +30,11 @@ async function getSingleControlBlob(base: string): Promise<Buffer> {
         let content = await fs.promises.readFile(base + fpath);
         let nameBuffer = Buffer.from(fpath);
 
-        let m = mime.getMime(fpath);
-        let mb = Buffer.from(m);
+        let m = mime.getData(fpath);
+        let mb = Buffer.from(m.mime);
+        if (m.extension === "html") {
+            content = Buffer.from(purify(content.toString()));
+        }
 
         controlBufferArray.push(
             Uint8Array.from([nameBuffer.byteLength]),
@@ -51,7 +66,7 @@ async function run(): Promise<void> {
         if (item.isFile()) {
             continue;
         }
-        if (["menu-item", "menu-pop", "menu-pop-item", "menu-pop-split", "greatview", "select", "tab-panel"].includes(item.name)) {
+        if (["menu-item", "menu-pop", "menu-pop-item", "menu-pop-split", "greatview", "select", "tab-panel", "tab-nav"].includes(item.name)) {
             continue;
         }
         let base = "dist/sources/control/" + item.name;
@@ -74,7 +89,8 @@ async function run(): Promise<void> {
         } else if (item.name === "tab") {
             controlBuffer = Buffer.concat([
                 controlBuffer,
-                await getSingleControlBlob("dist/sources/control/tab-panel")
+                await getSingleControlBlob("dist/sources/control/tab-panel"),
+                await getSingleControlBlob("dist/sources/control/tab-nav")
             ]);
         }
 

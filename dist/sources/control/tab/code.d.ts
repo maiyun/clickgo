@@ -17,31 +17,28 @@ export declare let props: {
     flex: {
         default: string;
     };
-    direction: {
+    tabPosition: {
         default: string;
     };
     value: {
         default: number;
     };
+    name: {
+        default: undefined;
+    };
 };
 export declare let data: {
     tabs: never[];
     selectedIndex: number;
-    _direction: undefined;
 };
 export declare let computed: {
     widthPx: (this: IVue) => string | undefined;
     heightPx: (this: IVue) => string | undefined;
 };
 export declare let watch: {
-    tabs: (this: IVue) => void;
     value: {
         handler: (this: IVue) => void;
         immediate: boolean;
     };
-    selectedIndex: {
-        handler: (this: IVue) => void;
-        immediate: boolean;
-    };
 };
-export declare let mounted: (this: IVue) => void;
+export declare let updated: (this: IVue) => void;

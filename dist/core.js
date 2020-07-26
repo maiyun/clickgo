@@ -36,6 +36,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.setGlobalCursor = exports.bindResize = exports.bindMove = exports.bindDown = exports.watchElement = exports.watchSize = exports.getWatchSize = exports.endTask = exports.removeForm = exports.createForm = exports.runApp = exports.fetchApp = exports.fetchClickGoFile = exports.trigger = exports.clearTheme = exports.setTheme = exports.siblings = exports.hidePop = exports.showPop = exports.removeFromPop = exports.appendToPop = exports.getPositionByBorderDir = exports.hideRectangle = exports.moveRectangle = exports.showRectangle = exports.showCircular = void 0;
 var Tool = require("./lib/Tool");
 var formListElement = document.createElement("div");
 if (window.devicePixelRatio < 2) {
@@ -642,7 +643,7 @@ exports.runApp = runApp;
 function createForm(opt) {
     var _a, _b, _c;
     return __awaiter(this, void 0, void 0, function () {
-        var appPkg, formId, controlsStyle, components, _i, _d, controlPath, controlBlob, controlPkg, _loop_1, _e, _f, _g, name_1, state_1, name_2, reg, match, style, layout, layoutBlob, styleBlob, data, methods, computed, watch, mounted, beforeDestroy, destroyed, expo, rand, r_1, randList, r, el, $vm, getFocusEvent, form;
+        var appPkg, formId, controlsStyle, components, _i, _d, controlPath, controlBlob, controlPkg, _loop_1, _e, _f, _g, name_1, state_1, name_2, reg, match, style, layout, layoutBlob, styleBlob, data, methods, computed, watch, beforeCreate, created, beforeMount, mounted, beforeUpdate, updated, beforeDestroy, destroyed, expo, rand, r_1, randList, r, el, $vm, getFocusEvent, form;
         return __generator(this, function (_h) {
             switch (_h.label) {
                 case 0:
@@ -666,7 +667,7 @@ function createForm(opt) {
                         return [2, -102];
                     }
                     _loop_1 = function (name_1) {
-                        var item, props, data_1, methods_1, computed_1, watch_1, mounted_1, beforeDestroy_1, destroyed_1, expo, rand_1, styleBlob, r_2, _a, _b, _c, layoutBlob, randList_1, r_3, _d, _e, layout_1;
+                        var item, props, data_1, methods_1, computed_1, watch_1, beforeCreate_1, created_1, beforeMount_1, mounted_1, beforeUpdate_1, updated_1, beforeDestroy_1, destroyed_1, expo, rand_1, styleBlob, r_2, _a, _b, _c, layoutBlob, randList_1, r_3, _d, _e, layout_1;
                         return __generator(this, function (_f) {
                             switch (_f.label) {
                                 case 0:
@@ -676,7 +677,12 @@ function createForm(opt) {
                                     methods_1 = {};
                                     computed_1 = {};
                                     watch_1 = {};
+                                    beforeCreate_1 = undefined;
+                                    created_1 = undefined;
+                                    beforeMount_1 = undefined;
                                     mounted_1 = undefined;
+                                    beforeUpdate_1 = undefined;
+                                    updated_1 = undefined;
                                     beforeDestroy_1 = undefined;
                                     destroyed_1 = undefined;
                                     if (!item.files[item.config.code + ".js"]) return [3, 2];
@@ -691,7 +697,12 @@ function createForm(opt) {
                                         methods_1 = expo.methods || {};
                                         computed_1 = expo.computed || {};
                                         watch_1 = expo.watch || {};
+                                        beforeCreate_1 = expo.beforeCreate;
+                                        created_1 = expo.created;
+                                        beforeMount_1 = expo.beforeMount;
                                         mounted_1 = expo.mounted;
+                                        beforeUpdate_1 = expo.beforeUpdate;
+                                        updated_1 = expo.updated;
                                         beforeDestroy_1 = expo.beforeDestroy;
                                         destroyed_1 = expo.destroyed;
                                     }
@@ -726,7 +737,7 @@ function createForm(opt) {
                                     return [4, Tool.blob2Text(layoutBlob)];
                                 case 6:
                                     r_3 = _e.apply(_d, [_f.sent(), randList_1]);
-                                    layout_1 = Tool.purify(r_3.layout);
+                                    layout_1 = r_3.layout;
                                     data_1.taskId = opt.taskId;
                                     data_1.formId = formId;
                                     data_1._scope = rand_1;
@@ -801,9 +812,18 @@ function createForm(opt) {
                                         "methods": methods_1,
                                         "computed": computed_1,
                                         "watch": watch_1,
+                                        "beforeCreate": beforeCreate_1,
+                                        "created": created_1,
+                                        "beforeMount": beforeMount_1,
                                         "mounted": function () {
                                             this.$nextTick(function () {
                                                 mounted_1 === null || mounted_1 === void 0 ? void 0 : mounted_1.call(this);
+                                            });
+                                        },
+                                        "beforeUpdate": beforeUpdate_1,
+                                        "updated": function () {
+                                            this.$nextTick(function () {
+                                                updated_1 === null || updated_1 === void 0 ? void 0 : updated_1.call(this);
                                             });
                                         },
                                         "beforeDestroy": beforeDestroy_1,
@@ -869,7 +889,12 @@ function createForm(opt) {
                     methods = {};
                     computed = {};
                     watch = {};
+                    beforeCreate = undefined;
+                    created = undefined;
+                    beforeMount = undefined;
                     mounted = undefined;
+                    beforeUpdate = undefined;
+                    updated = undefined;
                     beforeDestroy = undefined;
                     destroyed = undefined;
                     if (!appPkg.files[opt.file + ".js"]) return [3, 13];
@@ -883,7 +908,12 @@ function createForm(opt) {
                         methods = expo.methods || {};
                         computed = expo.computed || {};
                         watch = expo.watch || {};
+                        beforeCreate = expo.beforeCreate;
+                        created = expo.created;
+                        beforeMount = expo.beforeMount;
                         mounted = expo.mounted;
+                        beforeUpdate = expo.beforeUpdate;
+                        updated = expo.updated;
                         beforeDestroy = expo.beforeDestroy;
                         destroyed = expo.destroyed;
                     }
@@ -1087,6 +1117,9 @@ function createForm(opt) {
                                 "computed": computed,
                                 "watch": watch,
                                 "components": components,
+                                "beforeCreate": beforeCreate,
+                                "created": created,
+                                "beforeMount": beforeMount,
                                 "mounted": function () {
                                     this.$nextTick(function () {
                                         if (this.$el.getAttribute !== undefined) {
@@ -1102,8 +1135,14 @@ function createForm(opt) {
                                         }
                                     });
                                 },
+                                "beforeUpdate": beforeUpdate,
+                                "updated": function () {
+                                    this.$nextTick(function () {
+                                        updated === null || updated === void 0 ? void 0 : updated.call(this);
+                                    });
+                                },
                                 "beforeDestroy": beforeDestroy,
-                                "destroyed": destroyed
+                                "destroyed": destroyed,
                             });
                         })];
                 case 16:
@@ -1256,15 +1295,21 @@ function getWatchSize(el) {
             "left": 0,
         },
         "clientWidth": 0,
-        "clientHeight": 0
+        "clientHeight": 0,
+        "innerWidth": 0,
+        "innerHeight": 0,
+        "scrollWidth": 0,
+        "scrollHeight": 0
     };
 }
 exports.getWatchSize = getWatchSize;
-function watchSize(el, cb) {
+function watchSize(el, cb, scroll) {
+    if (scroll === void 0) { scroll = false; }
     var size = Tool.getDomSize(el);
     ClickGo._watchSize.push({
         "el": el,
         "size": size,
+        "scroll": scroll,
         "cb": cb
     });
     return size;

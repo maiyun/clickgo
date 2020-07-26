@@ -1,8 +1,7 @@
-<div class="wrap" :class="[direction]" ref="wrap" :style="{'width': widthPx, 'height': heightPx, 'left': left + 'px', 'top': top + 'px', 'z-index': zIndex, 'flex-grow': flex}" @click="_tap" @mousedown="_down" @touchstart="_down" @dblclick="_dblclick">
-    <div class="tabs">
-        <div v-for="(item, index) of tabs" class="tab" :class="[selectedIndex === index ? 'selected' : undefined]" @click="selectedIndex = index;$emit('input', index);">{{item.label}}</div>
-    </div>
-    <div ref="panels" class="panels">
+<div class="wrap" :class="[tabPosition]" ref="wrap" :style="{'width': widthPx, 'height': heightPx, 'left': left + 'px', 'top': top + 'px', 'z-index': zIndex, 'flex-grow': flex}" @click="_tap" @mousedown="_down" @touchstart="_down" @dblclick="_dblclick">
+    <cg-tab-nav v-if="tabPosition==='top'||tabPosition==='left'"></cg-tab-nav>
+    <div class="panels">
         <slot>
     </div>
+    <cg-tab-nav v-if="tabPosition==='right'||tabPosition==='bottom'"></cg-tab-nav>
 </div>

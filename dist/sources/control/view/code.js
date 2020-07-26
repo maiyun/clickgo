@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.destroyed = exports.mounted = exports.methods = exports.computed = exports.watch = exports.data = exports.props = void 0;
 exports.props = {
     "width": {
         "default": undefined
@@ -41,7 +42,7 @@ exports.data = {
 exports.watch = {
     "direction": function () {
         var size = ClickGo.getWatchSize(this.$refs.wrap);
-        this.client = this.direction === "v" ? size.clientHeight : size.clientWidth;
+        this.client = this.direction === "v" ? size.innerHeight : size.innerWidth;
         var innerRect = this.$refs.inner.getBoundingClientRect();
         this.length = this.direction === "v" ? innerRect.height : innerRect.width;
     },
@@ -233,7 +234,7 @@ exports.methods = {
 exports.mounted = function () {
     var _this = this;
     var size = ClickGo.watchSize(this.$refs.wrap, function (size) {
-        var client = Math.round(_this.direction === "v" ? size.clientHeight : size.clientWidth);
+        var client = Math.round(_this.direction === "v" ? size.innerHeight : size.innerWidth);
         if (client === _this.client) {
             _this.$emit("resizen");
             return;
@@ -242,7 +243,7 @@ exports.mounted = function () {
         _this.$emit("resize", _this.client);
         _this.refreshView();
     });
-    this.client = Math.round(this.direction === "v" ? size.clientHeight : size.clientWidth);
+    this.client = Math.round(this.direction === "v" ? size.innerHeight : size.innerWidth);
     this.$emit("resize", this.client);
     size = ClickGo.watchSize(this.$refs.inner, function (size) {
         var length = Math.round(_this.direction === "v" ? size.height : size.width);

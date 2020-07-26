@@ -67,8 +67,12 @@ function getDomSize(el) {
         "height": rect.height,
         "padding": padding,
         "border": border,
-        "clientWidth": rect.width - border.left - border.right - padding.left - padding.right,
-        "clientHeight": rect.height - border.top - border.bottom - padding.top - padding.bottom
+        "clientWidth": rect.width - border.left - border.right,
+        "clientHeight": rect.height - border.top - border.bottom,
+        "innerWidth": rect.width - border.left - border.right - padding.left - padding.right,
+        "innerHeight": rect.height - border.top - border.bottom - padding.top - padding.bottom,
+        "scrollWidth": el.scrollWidth,
+        "scrollHeight": el.scrollHeight
     };
 }
 exports.getDomSize = getDomSize;
@@ -105,10 +109,17 @@ function requestAnimationFrameCb() {
             "height": rect.height,
             "padding": padding,
             "border": border,
-            "clientWidth": rect.width - border.left - border.right - padding.left - padding.right,
-            "clientHeight": rect.height - border.top - border.bottom - padding.top - padding.bottom
+            "clientWidth": rect.width - border.left - border.right,
+            "clientHeight": rect.height - border.top - border.bottom,
+            "innerWidth": rect.width - border.left - border.right - padding.left - padding.right,
+            "innerHeight": rect.height - border.top - border.bottom - padding.top - padding.bottom,
+            "scrollWidth": item.el.scrollWidth,
+            "scrollHeight": item.el.scrollHeight
         };
-        if (trect.width !== item.size.width || trect.height !== item.size.height || trect.clientWidth !== item.size.clientWidth || trect.clientHeight !== item.size.clientHeight) {
+        if (trect.width !== item.size.width || trect.height !== item.size.height || trect.clientWidth !== item.size.clientWidth || trect.clientHeight !== item.size.clientHeight || trect.innerWidth !== item.size.innerWidth || trect.innerHeight !== item.size.innerHeight) {
+            item.cb(trect);
+        }
+        else if (item.scroll && (item.el.scrollWidth !== item.size.scrollWidth || item.el.scrollHeight !== item.size.scrollHeight)) {
             item.cb(trect);
         }
         item.size = trect;

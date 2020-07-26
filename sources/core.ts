@@ -651,7 +651,12 @@ export async function createForm(opt: ICreateFormOptions): Promise<number | IFor
             let methods: any = {};
             let computed = {};
             let watch = {};
+            let beforeCreate: (() => void) | undefined = undefined;
+            let created: (() => void) | undefined = undefined;
+            let beforeMount: (() => void) | undefined = undefined;
             let mounted: (() => void) | undefined = undefined;
+            let beforeUpdate: (() => void) | undefined = undefined;
+            let updated: (() => void) | undefined = undefined;
             let beforeDestroy: (() => void) | undefined = undefined;
             let destroyed: (() => void) | undefined = undefined;
             // --- 检测是否有 js ---
@@ -665,7 +670,12 @@ export async function createForm(opt: ICreateFormOptions): Promise<number | IFor
                     methods = expo.methods || {};
                     computed = expo.computed || {};
                     watch = expo.watch || {};
+                    beforeCreate = expo.beforeCreate;
+                    created = expo.created;
+                    beforeMount = expo.beforeMount;
                     mounted = expo.mounted;
+                    beforeUpdate = expo.beforeUpdate;
+                    updated = expo.updated;
                     beforeDestroy = expo.beforeDestroy;
                     destroyed = expo.destroyed;
                 }
@@ -692,7 +702,7 @@ export async function createForm(opt: ICreateFormOptions): Promise<number | IFor
                 randList.push(rand);
             }
             let r = Tool.layoutClassPrepend(await Tool.blob2Text(layoutBlob), randList);
-            let layout = Tool.purify(r.layout);
+            let layout = r.layout;
             // --- 组成 data ---
             data.taskId = opt.taskId;
             data.formId = formId;
@@ -756,9 +766,19 @@ export async function createForm(opt: ICreateFormOptions): Promise<number | IFor
                 "methods": methods,
                 "computed": computed,
                 "watch": watch,
+
+                "beforeCreate": beforeCreate,
+                "created": created,
+                "beforeMount": beforeMount,
                 "mounted": function(this: IVue): void {
                     this.$nextTick(function(this: IVue) {
                         mounted?.call(this);
+                    });
+                },
+                "beforeUpdate": beforeUpdate,
+                "updated": function(this: IVue): void {
+                    this.$nextTick(function(this: IVue) {
+                        updated?.call(this);
                     });
                 },
                 "beforeDestroy": beforeDestroy,
@@ -800,7 +820,12 @@ export async function createForm(opt: ICreateFormOptions): Promise<number | IFor
     let methods: any = {};
     let computed = {};
     let watch = {};
+    let beforeCreate: (() => void) | undefined = undefined;
+    let created: (() => void) | undefined = undefined;
+    let beforeMount: (() => void) | undefined = undefined;
     let mounted: (() => void) | undefined = undefined;
+    let beforeUpdate: (() => void) | undefined = undefined;
+    let updated: (() => void) | undefined = undefined;
     let beforeDestroy: (() => void) | undefined = undefined;
     let destroyed: (() => void) | undefined = undefined;
     // --- 检测是否有 js ---
@@ -813,7 +838,12 @@ export async function createForm(opt: ICreateFormOptions): Promise<number | IFor
             methods = expo.methods || {};
             computed = expo.computed || {};
             watch = expo.watch || {};
+            beforeCreate = expo.beforeCreate;
+            created = expo.created;
+            beforeMount = expo.beforeMount;
             mounted = expo.mounted;
+            beforeUpdate = expo.beforeUpdate;
+            updated = expo.updated;
             beforeDestroy = expo.beforeDestroy;
             destroyed = expo.destroyed;
         }
@@ -976,6 +1006,9 @@ export async function createForm(opt: ICreateFormOptions): Promise<number | IFor
             "watch": watch,
             "components": components,
 
+            "beforeCreate": beforeCreate,
+            "created": created,
+            "beforeMount": beforeMount,
             "mounted": function() {
                 this.$nextTick(function(this: IVue) {
                     if (this.$el.getAttribute !== undefined) {
@@ -990,8 +1023,14 @@ export async function createForm(opt: ICreateFormOptions): Promise<number | IFor
                     }
                 });
             },
+            "beforeUpdate": beforeUpdate,
+            "updated": function(this: IVue): void {
+                this.$nextTick(function(this: IVue) {
+                    updated?.call(this);
+                });
+            },
             "beforeDestroy": beforeDestroy,
-            "destroyed": destroyed
+            "destroyed": destroyed,
         });
     });
     if (!$vm) {
@@ -1169,7 +1208,11 @@ export function getWatchSize(el: HTMLElement): IDomSize {
             "left": 0,
         },
         "clientWidth": 0,
-        "clientHeight": 0
+        "clientHeight": 0,
+        "innerWidth": 0,
+        "innerHeight": 0,
+        "scrollWidth": 0,
+        "scrollHeight": 0
     };
 }
 
@@ -1178,11 +1221,12 @@ export function getWatchSize(el: HTMLElement): IDomSize {
  * @param el 要监视的大小
  * @param cb 回调函数
  */
-export function watchSize(el: HTMLElement, cb: (size: IDomSize) => void): IDomSize {
+export function watchSize(el: HTMLElement, cb: (size: IDomSize) => void, scroll: boolean = false): IDomSize {
     let size = Tool.getDomSize(el);
     ClickGo._watchSize.push({
         "el": el,
         "size": size,
+        "scroll": scroll,
         "cb": cb
     });
     return size;

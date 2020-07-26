@@ -139,5 +139,9 @@ interface IDomSize {
     };
     "clientHeight": number;
     "clientWidth": number;
+    "innerWidth": number;
+    "innerHeight": number;
+    "scrollWidth": number;
+    "scrollHeight": number;
 }
 

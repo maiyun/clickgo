@@ -1,0 +1,103 @@
+.wrap {
+    display: flex; position: relative;
+}
+.wrap.left, .wrap.right {
+    flex-direction: column;
+}
+
+.arrow {
+    display: flex; justify-content: center; align-items: center;
+}
+.arrow::before {
+    content: ''; border: solid 1px #000; width: 6px; height: 6px; -webkit-transform: rotate(45deg); transform: rotate(45deg); box-sizing:  border-box;
+}
+.arrow:hover::before {
+    border-color: #0078d7;
+}
+.arrow:active::before {
+    border-color: #005499;
+}
+.wrap.top .arrow, .wrap.bottom .arrow {
+    width: 20px;
+}
+.wrap.left .arrow, .wrap.right .arrow {
+    height: 20px;
+}
+
+.wrap.top .arrow.start::before, .wrap.bottom .arrow.start::before {
+    border-width: 0 0 1px 1px; margin-left: 3px;
+}
+.wrap.top .arrow.end::before, .wrap.bottom .arrow.end::before {
+    border-width: 1px 1px 0 0; margin-right: 3px;
+}
+.wrap.left .arrow.start::before, .wrap.right .arrow.start::before {
+    border-width: 1px 0 0 1px; margin-top: 3px;
+}
+.wrap.left .arrow.end::before, .wrap.right .arrow.end::before {
+    border-width: 0 1px 1px 0; margin-bottom: 3px;
+}
+
+.tabs {
+    flex-grow: 1; display: flex; -webkit-overflow-scrolling: touch;
+}
+.tabs::-webkit-scrollbar {
+    display: none;
+}
+.wrap.top .tabs, .wrap.bottom .tabs {
+    width: 0; overflow-x: auto;
+}
+.wrap.top .tabs {
+    align-items: flex-end; -webkit-transform: translateY(1px); transform: translateY(1px);
+}
+.wrap.bottom .tabs {
+    align-items: flex-start; -webkit-transform: translateY(-1px); transform: translateY(-1px);
+}
+.wrap.left .tabs, .wrap.right .tabs {
+    height: 0; flex-direction: column; overflow-y: auto;
+}
+.wrap.left .tabs {
+    -webkit-transform: translateX(1px); transform: translateX(1px);
+}
+.wrap.right .tabs {
+    -webkit-transform: translateX(-1px); transform: translateX(-1px);
+}
+
+.tab {
+    background-color: #f0f0f0; border: solid 1px #d9d9d9; display: inline-block;
+}
+.wrap.top .tab, .wrap.bottom .tab {
+    border-width: 1px 0 1px 1px; padding: 6px 10px;
+}
+.wrap.left .tab, .wrap.right .tab {
+    border-width: 1px 1px 0 1px; padding: 10px 6px;
+}
+.tab:not(.selected):hover {
+    background-color: #d8eaf9;
+}
+.tab.selected {
+    background-color: #FFF;
+}
+.wrap.top .tab.selected {
+    padding-bottom: 9px; border-bottom-color: #FFF;
+}
+.wrap.bottom .tab.selected {
+    padding-top: 9px; border-top-color: #FFF;
+}
+.wrap.left .tab.selected {
+    border-right-color: #FFF;
+}
+.wrap.right .tab.selected {
+    border-left-color: #FFF;
+}
+.wrap.top .tab.selected + *, .wrap.bottom .tab.selected + * {
+    border-left-width: 0;
+}
+.wrap.left .tab.selected + *, .wrap.right .tab.selected + * {
+    border-top-width: 0;
+}
+.wrap.top .tab.selected, .wrap.bottom .tab.selected, .wrap.top .tabs > .tab:last-child, .wrap.bottom .tabs > .tab:last-child {
+    border-right-width: 1px;
+}
+.wrap.left .tab.selected, .wrap.right .tab.selected, .wrap.left .tabs > .tab:last-child, .wrap.right .tabs > .tab:last-child {
+    border-bottom-width: 1px;
+}

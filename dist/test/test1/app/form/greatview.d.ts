@@ -9,5 +9,18 @@ export declare let data: {
     so3: number;
     l3: number;
     c3: number;
+    lineCount_2: number;
+    so_2: number;
+    l_2: number;
+    c_2: number;
+    so2_2: number;
+    l2_2: number;
+    c2_2: number;
+    so3_2: number;
+    l3_2: number;
+    c3_2: number;
     style: boolean;
+    tabs: never[];
+    tabsi: number;
+    tabPosition: string;
 };

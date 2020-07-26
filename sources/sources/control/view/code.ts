@@ -45,7 +45,7 @@ export let data = {
 export let watch = {
     "direction": function(this: IVue): void {
         let size = ClickGo.getWatchSize(this.$refs.wrap);
-        this.client = this.direction === "v" ? size.clientHeight : size.clientWidth;
+        this.client = this.direction === "v" ? size.innerHeight : size.innerWidth;
         let innerRect = this.$refs.inner.getBoundingClientRect();
         this.length = this.direction === "v" ? innerRect.height : innerRect.width;
     },
@@ -283,7 +283,7 @@ export let methods = {
 
 export let mounted = function(this: IVue): void {
     let size = ClickGo.watchSize(this.$refs.wrap, (size) => {
-        let client = Math.round(this.direction === "v" ? size.clientHeight : size.clientWidth);
+        let client = Math.round(this.direction === "v" ? size.innerHeight : size.innerWidth);
         if (client === this.client) {
             this.$emit("resizen");
             return;
@@ -292,7 +292,7 @@ export let mounted = function(this: IVue): void {
         this.$emit("resize", this.client);
         this.refreshView();
     });
-    this.client = Math.round(this.direction === "v" ? size.clientHeight : size.clientWidth);
+    this.client = Math.round(this.direction === "v" ? size.innerHeight : size.innerWidth);
     this.$emit("resize", this.client);
 
     size = ClickGo.watchSize(this.$refs.inner, (size) => {
