@@ -65,6 +65,34 @@
                     </layout>
                 </layout>
             </tab-panel>
+            <tab-panel label="select" style="padding: 10px;">
+                <layout flex="1" gutter="10" direction="v">
+                    <block>greatselect:</block>
+                    <greatselect>
+                        <layout flex="1" align-v="center" gutter="5" style="padding: 5px;">
+                            <img width="32" height="32" src="/res/r-1.svg"></img>
+                            <block>
+                                <block>Appraise</block>
+                                <block style="opacity:.7;">Bob &gt;&gt; folder &gt;&gt; Appraise</block>
+                            </block>
+                        </layout>
+                        <greatselect-pop>
+                            <greatselect-pop-item v-for="item of slist" :disabled="item.disabled">
+                                <layout flex="1" align-v="center" gutter="5" style="padding: 5px;">
+                                    <img width="32" height="32" :src="item.src"></img>
+                                    <block>
+                                        <block>{{item.name}}</block>
+                                        <block style="opacity:.7;">{{item.path}}</block>
+                                    </block>
+                                </layout>
+                            </greatselect-pop-item>
+                            <greatselect-pop-item>
+                                <block style="padding: 5px;">Other</block>
+                            </greatselect-pop-item>
+                        </greatselect-pop>
+                    </greatselect>
+                </layout>
+            </tab-panel>
             <tab-panel v-for="item of tabs" :label="item.label" :name="item.name" style="padding: 10px;">
                 <label>The tab's label is {{item.label}}, name is {{item.name}}.</label>
             </tab-panel>

@@ -65,15 +65,21 @@ window.addEventListener("resize", async function() {
     trigger("screenResize");
 });
 
-// --- 绑定使焦点丢失的事件 ---
-let lostFocusEvent = function(e: MouseEvent | TouchEvent): void {
+/**
+ * --- 点下(mousedown/touchstart)屏幕任意一位置时根据点击处处理隐藏 pop 和焦点丢失事件，鼠标和 touch 只会响应一个 ---
+ * @param e 事件对象
+ */
+let DoFocusAndPopEvent = function(e: MouseEvent | TouchEvent): void {
+    if (e instanceof MouseEvent && ClickGo.hasTouch) {
+        return;
+    }
     let target = e.target;
     if (!target) {
         return;
     }
     let element: HTMLElement | null = target as HTMLElement;
     if (element.classList.contains("cg-pop-open")) {
-        // --- 被夸嚓打开的父组件，也不做处理 ---
+        // --- 此对象为要打开 pop 的组件，不做处理，因为 down 时不能处理隐藏等情况 ---
         return;
     }
     element = element.parentNode as HTMLElement | null;
@@ -81,8 +87,10 @@ let lostFocusEvent = function(e: MouseEvent | TouchEvent): void {
         if (!element.classList) {
             break;
         }
-        if (element.classList.contains("cg-form-list")) {
-            // --- 窗体内部点击，不触发丢失焦点，但触发隐藏 pop ---
+        if (element.classList.contains("cg-form-wrap")) {
+            // --- 窗体内部点击，转换焦点到当前窗体，但触发隐藏 pop ---
+            let formId = parseInt(element.getAttribute("data-form-id") || "0");
+            Tool.changeFormFocus(formId);
             hidePop();
             return;
         }
@@ -97,9 +105,9 @@ let lostFocusEvent = function(e: MouseEvent | TouchEvent): void {
     Tool.changeFormFocus();
 };
 if ("ontouchstart" in document.documentElement) {
-    window.addEventListener("touchstart", lostFocusEvent);
+    window.addEventListener("touchstart", DoFocusAndPopEvent);
 } else {
-    window.addEventListener("mousedown", lostFocusEvent);
+    window.addEventListener("mousedown", DoFocusAndPopEvent);
 }
 
 // --- 从鼠标指针处从小到大缩放然后淡化的圆圈动画特效对象 ---
@@ -294,7 +302,7 @@ export function removeFromPop(el: HTMLElement): void {
  * @param y 要显示的 top，或 element 方向，0 为垂直，1 为水平
  */
 export function showPop(pop: IVue, x: number | HTMLElement, y: number = 0): void {
-    if (pop.$parent.$data._controlName !== "menu-pop-item") {
+    if (pop.$parent.$data._controlName !== "menu-pop-item" || pop.$parent.$data._controlName !== "greatselect-pop-item") {
         ClickGo._pop = pop;
     }
     pop.$parent.popOpen = true;
@@ -714,8 +722,7 @@ export async function createForm(opt: ICreateFormOptions): Promise<number | IFor
                     return;
                 }
                 e.stopPropagation();
-                Tool.changeFormFocus(this.formId);
-                lostFocusEvent(e);
+                DoFocusAndPopEvent(e);
             },
             methods._down = function(this: IVue, e: MouseEvent | TouchEvent) {
                 if (e instanceof MouseEvent && ClickGo.hasTouch) {
@@ -725,14 +732,12 @@ export async function createForm(opt: ICreateFormOptions): Promise<number | IFor
                 this.$emit("down", e);
             };
             methods._tap = function(this: IVue, e: MouseEvent | TouchEvent) {
-                e.stopPropagation();
                 if (this.$el.className.indexOf("cg-disabled") !== -1) {
                     return;
                 }
                 this.$emit("tap", e);
             };
             methods._dblclick = function(this: IVue, e: MouseEvent) {
-                e.stopPropagation();
                 if (this.$el.className.indexOf("cg-disabled") !== -1) {
                     return;
                 }
@@ -1076,14 +1081,6 @@ export async function createForm(opt: ICreateFormOptions): Promise<number | IFor
     }
     // --- 绑定获取焦点事件 ---
     Tool.changeFormFocus(formId, $vm);
-    let getFocusEvent = function(): void {
-        Tool.changeFormFocus(formId);
-    };
-    if ("ontouchstart" in document.documentElement) {
-        $vm.$el.addEventListener("touchstart", getFocusEvent);
-    } else {
-        $vm.$el.addEventListener("mousedown", getFocusEvent);
-    }
     // --- 将 form 挂载到 task 当中 ---
     let form: IForm = {
         "formId": formId,

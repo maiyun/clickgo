@@ -1,4 +1,4 @@
-<form title="Task manager" icon="/icon.svg" width="350" height="520">
+<form title="Task manager" icon="/icon.svg" width="350" height="520" background="#FFF">
     <menu>
         <menu-item alt="F" text="File">
             <menu-pop>

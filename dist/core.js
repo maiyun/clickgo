@@ -83,7 +83,10 @@ window.addEventListener("resize", function () {
         });
     });
 });
-var lostFocusEvent = function (e) {
+var DoFocusAndPopEvent = function (e) {
+    if (e instanceof MouseEvent && ClickGo.hasTouch) {
+        return;
+    }
     var target = e.target;
     if (!target) {
         return;
@@ -97,7 +100,9 @@ var lostFocusEvent = function (e) {
         if (!element.classList) {
             break;
         }
-        if (element.classList.contains("cg-form-list")) {
+        if (element.classList.contains("cg-form-wrap")) {
+            var formId = parseInt(element.getAttribute("data-form-id") || "0");
+            Tool.changeFormFocus(formId);
             hidePop();
             return;
         }
@@ -110,10 +115,10 @@ var lostFocusEvent = function (e) {
     Tool.changeFormFocus();
 };
 if ("ontouchstart" in document.documentElement) {
-    window.addEventListener("touchstart", lostFocusEvent);
+    window.addEventListener("touchstart", DoFocusAndPopEvent);
 }
 else {
-    window.addEventListener("mousedown", lostFocusEvent);
+    window.addEventListener("mousedown", DoFocusAndPopEvent);
 }
 var circularElement = document.createElement("div");
 circularElement.style.zoom = ClickGo.zoom.toString();
@@ -273,7 +278,7 @@ function removeFromPop(el) {
 exports.removeFromPop = removeFromPop;
 function showPop(pop, x, y) {
     if (y === void 0) { y = 0; }
-    if (pop.$parent.$data._controlName !== "menu-pop-item") {
+    if (pop.$parent.$data._controlName !== "menu-pop-item" || pop.$parent.$data._controlName !== "greatselect-pop-item") {
         ClickGo._pop = pop;
     }
     pop.$parent.popOpen = true;
@@ -643,7 +648,7 @@ exports.runApp = runApp;
 function createForm(opt) {
     var _a, _b, _c;
     return __awaiter(this, void 0, void 0, function () {
-        var appPkg, formId, controlsStyle, components, _i, _d, controlPath, controlBlob, controlPkg, _loop_1, _e, _f, _g, name_1, state_1, name_2, reg, match, style, layout, layoutBlob, styleBlob, data, methods, computed, watch, beforeCreate, created, beforeMount, mounted, beforeUpdate, updated, beforeDestroy, destroyed, expo, rand, r_1, randList, r, el, $vm, getFocusEvent, form;
+        var appPkg, formId, controlsStyle, components, _i, _d, controlPath, controlBlob, controlPkg, _loop_1, _e, _f, _g, name_1, state_1, name_2, reg, match, style, layout, layoutBlob, styleBlob, data, methods, computed, watch, beforeCreate, created, beforeMount, mounted, beforeUpdate, updated, beforeDestroy, destroyed, expo, rand, r_1, randList, r, el, $vm, form;
         return __generator(this, function (_h) {
             switch (_h.label) {
                 case 0:
@@ -747,8 +752,7 @@ function createForm(opt) {
                                             return;
                                         }
                                         e.stopPropagation();
-                                        Tool.changeFormFocus(this.formId);
-                                        lostFocusEvent(e);
+                                        DoFocusAndPopEvent(e);
                                     },
                                         methods_1._down = function (e) {
                                             if (e instanceof MouseEvent && ClickGo.hasTouch) {
@@ -757,14 +761,12 @@ function createForm(opt) {
                                             this.$emit("down", e);
                                         };
                                     methods_1._tap = function (e) {
-                                        e.stopPropagation();
                                         if (this.$el.className.indexOf("cg-disabled") !== -1) {
                                             return;
                                         }
                                         this.$emit("tap", e);
                                     };
                                     methods_1._dblclick = function (e) {
-                                        e.stopPropagation();
                                         if (this.$el.className.indexOf("cg-disabled") !== -1) {
                                             return;
                                         }
@@ -1185,15 +1187,6 @@ function createForm(opt) {
                         }
                     }
                     Tool.changeFormFocus(formId, $vm);
-                    getFocusEvent = function () {
-                        Tool.changeFormFocus(formId);
-                    };
-                    if ("ontouchstart" in document.documentElement) {
-                        $vm.$el.addEventListener("touchstart", getFocusEvent);
-                    }
-                    else {
-                        $vm.$el.addEventListener("mousedown", getFocusEvent);
-                    }
                     form = {
                         "formId": formId,
                         "vue": $vm

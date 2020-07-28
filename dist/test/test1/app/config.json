@@ -8,6 +8,7 @@
         "/clickgo/control/block",
         "/clickgo/control/button",
         "/clickgo/control/form",
+        "/clickgo/control/img",
         "/clickgo/control/label",
         "/clickgo/control/layout",
         "/clickgo/control/overflow",
@@ -22,6 +23,7 @@
         "/clickgo/control/block.cgc",
         "/clickgo/control/button.cgc",
         "/clickgo/control/form.cgc",
+        "/clickgo/control/img.cgc",
         "/clickgo/control/label.cgc",
         "/clickgo/control/layout.cgc",
         "/clickgo/control/overflow.cgc",
@@ -51,6 +53,8 @@
         "/form/view.js",
         "/form/view.xml",
         "/res/icon.svg",
+        "/res/r-1.svg",
+        "/res/r-2.svg",
         "/global.css"
     ]
 }

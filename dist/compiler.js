@@ -106,13 +106,13 @@ function run() {
                     _i = 0, list_1 = list;
                     _o.label = 2;
                 case 2:
-                    if (!(_i < list_1.length)) return [3, 17];
+                    if (!(_i < list_1.length)) return [3, 20];
                     item = list_1[_i];
                     if (item.isFile()) {
-                        return [3, 16];
+                        return [3, 19];
                     }
-                    if (["menu-item", "menu-pop", "menu-pop-item", "menu-pop-split", "greatview", "select", "tab-panel", "tab-nav"].includes(item.name)) {
-                        return [3, 16];
+                    if (["menu-item", "menu-pop", "menu-pop-item", "menu-pop-split", "greatview", "greatselect", "greatselect-pop", "greatselect-pop-item", "greatselect-pop-split", "select", "tab-panel", "tab-nav"].includes(item.name)) {
+                        return [3, 19];
                     }
                     base = "dist/sources/control/" + item.name;
                     return [4, getSingleControlBlob(base)];
@@ -141,9 +141,9 @@ function run() {
                     controlBuffer = _b.apply(_a, [_c.concat([
                             _o.sent()
                         ])]);
-                    return [3, 14];
+                    return [3, 17];
                 case 8:
-                    if (!(item.name === "view")) return [3, 11];
+                    if (!(item.name === "view")) return [3, 14];
                     _e = (_d = Buffer).concat;
                     _f = [controlBuffer];
                     return [4, getSingleControlBlob("dist/sources/control/greatview")];
@@ -151,57 +151,72 @@ function run() {
                     _f = _f.concat([
                         _o.sent()
                     ]);
-                    return [4, getSingleControlBlob("dist/sources/control/select")];
+                    return [4, getSingleControlBlob("dist/sources/control/greatselect")];
                 case 10:
+                    _f = _f.concat([
+                        _o.sent()
+                    ]);
+                    return [4, getSingleControlBlob("dist/sources/control/greatselect-pop")];
+                case 11:
+                    _f = _f.concat([
+                        _o.sent()
+                    ]);
+                    return [4, getSingleControlBlob("dist/sources/control/greatselect-pop-item")];
+                case 12:
+                    _f = _f.concat([
+                        _o.sent()
+                    ]);
+                    return [4, getSingleControlBlob("dist/sources/control/select")];
+                case 13:
                     controlBuffer = _e.apply(_d, [_f.concat([
                             _o.sent()
                         ])]);
-                    return [3, 14];
-                case 11:
-                    if (!(item.name === "tab")) return [3, 14];
+                    return [3, 17];
+                case 14:
+                    if (!(item.name === "tab")) return [3, 17];
                     _h = (_g = Buffer).concat;
                     _j = [controlBuffer];
                     return [4, getSingleControlBlob("dist/sources/control/tab-panel")];
-                case 12:
+                case 15:
                     _j = _j.concat([
                         _o.sent()
                     ]);
                     return [4, getSingleControlBlob("dist/sources/control/tab-nav")];
-                case 13:
+                case 16:
                     controlBuffer = _h.apply(_g, [_j.concat([
                             _o.sent()
                         ])]);
-                    _o.label = 14;
-                case 14:
+                    _o.label = 17;
+                case 17:
                     fileBuffer = Buffer.concat([
                         Uint8Array.from([192, 1]),
                         controlBuffer
                     ]);
                     return [4, fs.promises.writeFile("dist/control/" + item.name + ".cgc", fileBuffer)];
-                case 15:
-                    _o.sent();
-                    _o.label = 16;
-                case 16:
-                    _i++;
-                    return [3, 2];
-                case 17: return [4, fs.promises.readdir("dist/sources/theme/", {
-                        "withFileTypes": true
-                    })];
                 case 18:
-                    list = _o.sent();
-                    _k = 0, list_2 = list;
+                    _o.sent();
                     _o.label = 19;
                 case 19:
-                    if (!(_k < list_2.length)) return [3, 27];
+                    _i++;
+                    return [3, 2];
+                case 20: return [4, fs.promises.readdir("dist/sources/theme/", {
+                        "withFileTypes": true
+                    })];
+                case 21:
+                    list = _o.sent();
+                    _k = 0, list_2 = list;
+                    _o.label = 22;
+                case 22:
+                    if (!(_k < list_2.length)) return [3, 30];
                     item = list_2[_k];
                     if (item.isFile()) {
-                        return [3, 26];
+                        return [3, 29];
                     }
                     base = "dist/sources/theme/" + item.name;
                     return [4, fs.promises.readFile(base + "/config.json", {
                             "encoding": "utf-8"
                         })];
-                case 20:
+                case 23:
                     config = _o.sent();
                     configJson = JSON.parse(config);
                     configBuffer = Buffer.from(config);
@@ -213,27 +228,27 @@ function run() {
                         configBuffer
                     ];
                     _l = 0, _m = configJson.files;
-                    _o.label = 21;
-                case 21:
-                    if (!(_l < _m.length)) return [3, 24];
+                    _o.label = 24;
+                case 24:
+                    if (!(_l < _m.length)) return [3, 27];
                     fpath = _m[_l];
                     return [4, fs.promises.readFile(base + fpath)];
-                case 22:
+                case 25:
                     content = _o.sent();
                     nameBuffer = Buffer.from(fpath);
                     fileBufferArray.push(Uint8Array.from([nameBuffer.byteLength]), nameBuffer, Buffer.from(Uint32Array.from([content.byteLength]).buffer), content);
-                    _o.label = 23;
-                case 23:
-                    _l++;
-                    return [3, 21];
-                case 24: return [4, fs.promises.writeFile("dist/theme/" + configJson.name + ".cgt", Buffer.concat(fileBufferArray))];
-                case 25:
-                    _o.sent();
                     _o.label = 26;
                 case 26:
+                    _l++;
+                    return [3, 24];
+                case 27: return [4, fs.promises.writeFile("dist/theme/" + configJson.name + ".cgt", Buffer.concat(fileBufferArray))];
+                case 28:
+                    _o.sent();
+                    _o.label = 29;
+                case 29:
                     _k++;
-                    return [3, 19];
-                case 27: return [2];
+                    return [3, 22];
+                case 30: return [2];
             }
         });
     });

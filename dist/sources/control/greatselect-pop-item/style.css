@@ -1,0 +1,14 @@
+.wrap {
+    display: flex; align-items: center;
+}
+.wrap.cg-disabled {
+    color: #838383;
+}
+
+.wrap:hover, .wrap.cg-pop-open {
+    background: rgba(118, 185, 237, .2);
+}
+.wrap.cg-disabled:hover {
+    background: rgba(0, 0, 0, .05);
+}
+

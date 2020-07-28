@@ -1,0 +1,6 @@
+<div class="wrap" :tabindex="(!disabled && focus) ? '0' : undefined" :style="{'width': widthPx, 'height': heightPx, 'left': left + 'px', 'top': top + 'px', 'z-index': zIndex, 'flex-grow': flex}" :class="[disabled ? 'cg-disabled' : undefined, popOpen && 'cg-pop-open', area]" @click="showPop" @mousedown="_down" @touchstart="_down" @dblclick="_dblclick">
+    <div class="inner" :class="[direction]">
+        <slot>
+    </div>
+    <div class="arrow"></div>
+</div>

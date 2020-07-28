@@ -22,6 +22,26 @@ exports.data = {
     "so3_2": 0,
     "l3_2": 0,
     "c3_2": 0,
+    "slist": [
+        {
+            "name": "Appraise",
+            "path": "Bob >> folder >> Appraise",
+            "src": "/res/r-1.svg",
+            "disabled": undefined
+        },
+        {
+            "name": "Card",
+            "path": "Bob >> folder >> Card",
+            "src": "/res/r-2.svg",
+            "disabled": undefined
+        },
+        {
+            "name": "Appraise2",
+            "path": "Bob >> folder >> Appraise2",
+            "src": "/res/r-1.svg",
+            "disabled": true
+        }
+    ],
     "style": false,
     "tabs": [],
     "tabsi": 0,

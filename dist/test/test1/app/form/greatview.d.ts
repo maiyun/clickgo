@@ -19,6 +19,17 @@ export declare let data: {
     so3_2: number;
     l3_2: number;
     c3_2: number;
+    slist: ({
+        name: string;
+        path: string;
+        src: string;
+        disabled: undefined;
+    } | {
+        name: string;
+        path: string;
+        src: string;
+        disabled: boolean;
+    })[];
     style: boolean;
     tabs: never[];
     tabsi: number;
