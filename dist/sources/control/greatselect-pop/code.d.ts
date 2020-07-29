@@ -2,6 +2,12 @@ export declare let props: {
     height: {
         default: undefined;
     };
+    same: {
+        default: boolean;
+    };
+    data: {
+        default: never[];
+    };
 };
 export declare let data: {
     widthData: undefined;

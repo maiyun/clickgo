@@ -35,6 +35,7 @@ exports.data = {
     "scrollOffsetEmit": 0,
     "length": 0,
     "client": 0,
+    "contentLength": 0,
     "tran": 0,
     "timer": undefined,
     "_direction": undefined
@@ -234,7 +235,7 @@ exports.methods = {
 exports.mounted = function () {
     var _this = this;
     var size = ClickGo.watchSize(this.$refs.wrap, function (size) {
-        var client = Math.round(_this.direction === "v" ? size.innerHeight : size.innerWidth);
+        var client = Math.round(_this.direction === "v" ? size.clientHeight : size.clientWidth);
         if (client === _this.client) {
             _this.$emit("resizen");
             return;
@@ -247,6 +248,8 @@ exports.mounted = function () {
     this.$emit("resize", this.client);
     size = ClickGo.watchSize(this.$refs.inner, function (size) {
         var length = Math.round(_this.direction === "v" ? size.height : size.width);
+        _this.contentLength = length;
+        length = length < _this.client ? _this.client : length;
         if (length === _this.length) {
             return;
         }
@@ -254,7 +257,9 @@ exports.mounted = function () {
         _this.$emit("change", _this.length);
         _this.refreshView();
     });
-    this.length = Math.round(this.direction === "v" ? size.height : size.width);
+    var length = Math.round(this.direction === "v" ? size.height : size.width);
+    this.contentLength = length;
+    this.length = length < this.client ? this.client : length;
     this.$emit("change", this.length);
     if (this.$parent.direction !== undefined) {
         this.$data._direction = this.$parent.direction;

@@ -4,6 +4,12 @@ exports.destroyed = exports.mounted = exports.methods = exports.data = exports.p
 exports.props = {
     "height": {
         "default": undefined
+    },
+    "same": {
+        "default": false
+    },
+    "data": {
+        "default": []
     }
 };
 exports.data = {

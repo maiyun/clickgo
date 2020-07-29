@@ -34,6 +34,7 @@ export let data = {
     "scrollOffsetEmit": 0,
     "length": 0,
     "client": 0,
+    "contentLength": 0,
 
     // --- 惯性 ---
     "tran": 0,
@@ -283,7 +284,7 @@ export let methods = {
 
 export let mounted = function(this: IVue): void {
     let size = ClickGo.watchSize(this.$refs.wrap, (size) => {
-        let client = Math.round(this.direction === "v" ? size.innerHeight : size.innerWidth);
+        let client = Math.round(this.direction === "v" ? size.clientHeight : size.clientWidth);
         if (client === this.client) {
             this.$emit("resizen");
             return;
@@ -297,6 +298,8 @@ export let mounted = function(this: IVue): void {
 
     size = ClickGo.watchSize(this.$refs.inner, (size) => {
         let length = Math.round(this.direction === "v" ? size.height : size.width);
+        this.contentLength = length;
+        length = length < this.client ? this.client : length;
         if (length === this.length) {
             return;
         }
@@ -304,7 +307,9 @@ export let mounted = function(this: IVue): void {
         this.$emit("change", this.length);
         this.refreshView();
     });
-    this.length = Math.round(this.direction === "v" ? size.height : size.width);
+    let length = Math.round(this.direction === "v" ? size.height : size.width);
+    this.contentLength = length;
+    this.length = length < this.client ? this.client : length;
     this.$emit("change", this.length);
 
     if (this.$parent.direction !== undefined) {

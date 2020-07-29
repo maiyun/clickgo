@@ -32,6 +32,7 @@ export declare let data: {
     scrollOffsetEmit: number;
     length: number;
     client: number;
+    contentLength: number;
     tran: number;
     timer: undefined;
     _direction: undefined;

@@ -20,15 +20,23 @@ export declare let data: {
     l3_2: number;
     c3_2: number;
     slist: ({
+        type: number;
         name: string;
         path: string;
         src: string;
         disabled: undefined;
     } | {
+        type: number;
         name: string;
         path: string;
         src: string;
         disabled: boolean;
+    } | {
+        type: number;
+        name?: undefined;
+        path?: undefined;
+        src?: undefined;
+        disabled?: undefined;
     })[];
     style: boolean;
     tabs: never[];

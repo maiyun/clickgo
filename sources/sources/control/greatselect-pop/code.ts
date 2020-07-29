@@ -1,6 +1,14 @@
 export let props = {
     "height": {
         "default": undefined
+    },
+
+    "same": {
+        "default": false
+    },
+
+    "data": {
+        "default": []
     }
 };
 

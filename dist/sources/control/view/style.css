@@ -3,7 +3,7 @@
 }
 
 .inner {
-    position: absolute; min-width: 100%; min-height: 100%; width: intrinsic; width: max-content; left: 0; top: 0; transition-timing-function: cubic-bezier(0.23, 1, 0.68, 1);
+    position: absolute; width: intrinsic; width: max-content; left: 0; top: 0; transition-timing-function: cubic-bezier(0.23, 1, 0.68, 1);
 }
 .wrap.h > .inner {
     display: flex;

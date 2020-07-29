@@ -69,28 +69,34 @@
                 <layout flex="1" gutter="10" direction="v">
                     <block>greatselect:</block>
                     <greatselect>
-                        <layout flex="1" align-v="center" gutter="5" style="padding: 5px;">
+                        <layout flex="1" align-v="center" gutter="5" style="padding: 7px;">
                             <img width="32" height="32" src="/res/r-1.svg"></img>
                             <block>
                                 <block>Appraise</block>
                                 <block style="opacity:.7;">Bob &gt;&gt; folder &gt;&gt; Appraise</block>
                             </block>
                         </layout>
-                        <greatselect-pop>
-                            <greatselect-pop-item v-for="item of slist" :disabled="item.disabled">
-                                <layout flex="1" align-v="center" gutter="5" style="padding: 5px;">
-                                    <img width="32" height="32" :src="item.src"></img>
+                        <greatselect-pop :data="slist" v-slot="data">
+                            <greatselect-pop-item v-if="data.row.type===0" :disabled="data.row.disabled">
+                                <layout flex="1" align-v="center" gutter="5" style="padding: 7px;">
+                                    <img width="32" height="32" :src="data.row.src"></img>
                                     <block>
-                                        <block>{{item.name}}</block>
-                                        <block style="opacity:.7;">{{item.path}}</block>
+                                        <block>{{data.row.name}}</block>
+                                        <block style="opacity:.7;">{{data.row.path}}</block>
                                     </block>
                                 </layout>
                             </greatselect-pop-item>
-                            <greatselect-pop-item>
-                                <block style="padding: 5px;">Other</block>
+                            <greatselect-pop-item v-else-if="data.row.type===1">
+                                <block style="padding: 7px;">---</block>
+                            </greatselect-pop-item>
+                            <greatselect-pop-item v-else>
+                                <block style="padding: 7px;">Other</block>
                             </greatselect-pop-item>
                         </greatselect-pop>
                     </greatselect>
+                    <layout gutter="10">
+                        <button @tap="slist.splice(-2, 0, {'type':0,'name':'Card'+slist.length,'path':'Bob >> folder >> Card','src': '/res/r-2.svg','disabled':undefined})">Add item</button><button @tap="slist.splice(-3, 1)">Remove item</button>
+                    </layout>
                 </layout>
             </tab-panel>
             <tab-panel v-for="item of tabs" :label="item.label" :name="item.name" style="padding: 10px;">

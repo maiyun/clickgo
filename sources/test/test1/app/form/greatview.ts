@@ -31,22 +31,31 @@ export let data = {
 
     "slist": [
         {
+            "type": 0,
             "name": "Appraise",
             "path": "Bob >> folder >> Appraise",
             "src": "/res/r-1.svg",
             "disabled": undefined
         },
         {
+            "type": 0,
             "name": "Card",
             "path": "Bob >> folder >> Card",
             "src": "/res/r-2.svg",
             "disabled": undefined
         },
         {
+            "type": 0,
             "name": "Appraise2",
             "path": "Bob >> folder >> Appraise2",
             "src": "/res/r-1.svg",
             "disabled": true
+        },
+        {
+            "type": 1
+        },
+        {
+            "type": 2
         }
     ],
 
