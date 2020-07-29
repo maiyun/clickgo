@@ -32,7 +32,6 @@ export let props = {
 export let data = {
     "scrollOffsetData": 0,
     "scrollOffsetEmit": 0,
-    "length": 0,
     "client": 0,
     "contentLength": 0,
 
@@ -55,6 +54,11 @@ export let watch = {
             this.goScroll(this.scrollOffset);
         },
         "immediate": true
+    },
+    "length": {
+        handler: function(this: IVue): void {
+            this.$emit("change", this.length);
+        }
     }
 };
 
@@ -81,6 +85,9 @@ export let computed = {
         if (this.flex !== "") {
             return this.$data._direction ? (this.$data._direction === "v" ? "0" : undefined) : undefined;
         }
+    },
+    "length": function(this: IVue): number {
+        return this.contentLength < this.client ? this.client : this.contentLength;
     }
 };
 
@@ -297,20 +304,10 @@ export let mounted = function(this: IVue): void {
     this.$emit("resize", this.client);
 
     size = ClickGo.watchSize(this.$refs.inner, (size) => {
-        let length = Math.round(this.direction === "v" ? size.height : size.width);
-        this.contentLength = length;
-        length = length < this.client ? this.client : length;
-        if (length === this.length) {
-            return;
-        }
-        this.length = length;
-        this.$emit("change", this.length);
+        this.contentLength = Math.round(this.direction === "v" ? size.height : size.width);
         this.refreshView();
     });
-    let length = Math.round(this.direction === "v" ? size.height : size.width);
-    this.contentLength = length;
-    this.length = length < this.client ? this.client : length;
-    this.$emit("change", this.length);
+    this.contentLength = Math.round(this.direction === "v" ? size.height : size.width);
 
     if (this.$parent.direction !== undefined) {
         this.$data._direction = this.$parent.direction;

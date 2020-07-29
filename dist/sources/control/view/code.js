@@ -33,7 +33,6 @@ exports.props = {
 exports.data = {
     "scrollOffsetData": 0,
     "scrollOffsetEmit": 0,
-    "length": 0,
     "client": 0,
     "contentLength": 0,
     "tran": 0,
@@ -52,6 +51,11 @@ exports.watch = {
             this.goScroll(this.scrollOffset);
         },
         "immediate": true
+    },
+    "length": {
+        handler: function () {
+            this.$emit("change", this.length);
+        }
     }
 };
 exports.computed = {
@@ -76,6 +80,9 @@ exports.computed = {
         if (this.flex !== "") {
             return this.$data._direction ? (this.$data._direction === "v" ? "0" : undefined) : undefined;
         }
+    },
+    "length": function () {
+        return this.contentLength < this.client ? this.client : this.contentLength;
     }
 };
 exports.methods = {
@@ -247,20 +254,10 @@ exports.mounted = function () {
     this.client = Math.round(this.direction === "v" ? size.innerHeight : size.innerWidth);
     this.$emit("resize", this.client);
     size = ClickGo.watchSize(this.$refs.inner, function (size) {
-        var length = Math.round(_this.direction === "v" ? size.height : size.width);
-        _this.contentLength = length;
-        length = length < _this.client ? _this.client : length;
-        if (length === _this.length) {
-            return;
-        }
-        _this.length = length;
-        _this.$emit("change", _this.length);
+        _this.contentLength = Math.round(_this.direction === "v" ? size.height : size.width);
         _this.refreshView();
     });
-    var length = Math.round(this.direction === "v" ? size.height : size.width);
-    this.contentLength = length;
-    this.length = length < this.client ? this.client : length;
-    this.$emit("change", this.length);
+    this.contentLength = Math.round(this.direction === "v" ? size.height : size.width);
     if (this.$parent.direction !== undefined) {
         this.$data._direction = this.$parent.direction;
     }

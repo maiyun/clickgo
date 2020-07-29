@@ -30,7 +30,6 @@ export declare let props: {
 export declare let data: {
     scrollOffsetData: number;
     scrollOffsetEmit: number;
-    length: number;
     client: number;
     contentLength: number;
     tran: number;
@@ -43,11 +42,15 @@ export declare let watch: {
         handler: (this: IVue) => void;
         immediate: boolean;
     };
+    length: {
+        handler: (this: IVue) => void;
+    };
 };
 export declare let computed: {
     maxScroll: (this: IVue) => number;
     widthPx: (this: IVue) => string | undefined;
     heightPx: (this: IVue) => string | undefined;
+    length: (this: IVue) => number;
 };
 export declare let methods: {
     wheel: (this: IVue, e: WheelEvent) => void;
