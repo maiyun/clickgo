@@ -5,10 +5,7 @@
     color: #838383;
 }
 
-.wrap:hover, .wrap.cg-pop-open {
-    background: rgba(118, 185, 237, .2);
-}
-.wrap.cg-disabled:hover {
+.wrap:not(.cg-disabled):hover, .wrap.cg-pop-open {
     background: rgba(0, 0, 0, .05);
 }
 

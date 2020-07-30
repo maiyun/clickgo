@@ -41,9 +41,7 @@ export let data = {
     "barLengthPx": 0,
 
     "timer": undefined,
-    "tran": false,
-
-    "_direction": undefined
+    "tran": false
 };
 
 export let watch = {
@@ -109,7 +107,7 @@ export let computed = {
             return this.width + "px";
         }
         if (this.flex !== "") {
-            return this.$data._direction ? (this.$data._direction === "v" ? undefined : "0") : undefined;
+            return this.$parent.direction ? (this.$parent.direction === "v" ? undefined : "0") : undefined;
         }
     },
     "heightPx": function(this: IVue): string | undefined {
@@ -117,7 +115,7 @@ export let computed = {
             return this.height + "px";
         }
         if (this.flex !== "") {
-            return this.$data._direction ? (this.$data._direction === "v" ? "0" : undefined) : undefined;
+            return this.$parent.direction ? (this.$parent.direction === "v" ? "0" : undefined) : undefined;
         }
     }
 };
@@ -209,10 +207,6 @@ export let mounted = function(this: IVue): void {
         this.barLengthPx = this.direction === "v" ? size.height : size.width;
     });
     this.barLengthPx = this.direction === "v" ? this.$refs.bar.offsetHeight : this.$refs.bar.offsetWidth;
-
-    if (this.$parent.direction !== undefined) {
-        this.$data._direction = this.$parent.direction;
-    }
 };
 
 export let destroyed = function(this: IVue): void {

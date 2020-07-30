@@ -26,7 +26,6 @@ export declare let props: {
 };
 export declare let data: {
     scrollOffsetEmit: number;
-    _direction: undefined;
 };
 export declare let computed: {
     widthPx: (this: IVue) => string | undefined;
@@ -36,7 +35,6 @@ export declare let watch: {
     scrollOffset: {
         handler: (this: IVue) => void;
     };
-    direction: (this: IVue) => void;
 };
 export declare let methods: {
     scroll: (this: IVue) => void;

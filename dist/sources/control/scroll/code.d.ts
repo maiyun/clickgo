@@ -38,7 +38,6 @@ export declare let data: {
     barLengthPx: number;
     timer: undefined;
     tran: boolean;
-    _direction: undefined;
 };
 export declare let watch: {
     length: {

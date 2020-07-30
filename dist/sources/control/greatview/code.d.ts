@@ -50,16 +50,12 @@ export declare let data: {
     refreshCount: number;
     lengthInit: boolean;
     initFirst: boolean;
-    _direction: undefined;
 };
 export declare let watch: {
     data: {
         handler: (this: IVue) => void;
     };
     direction: (this: IVue) => void;
-    _direction: {
-        handler: (this: IVue) => void;
-    };
 };
 export declare let computed: {
     dataComp: (this: IVue) => any[];

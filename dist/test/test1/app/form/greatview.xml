@@ -95,7 +95,8 @@
                         </greatselect-pop>
                     </greatselect>
                     <layout gutter="10">
-                        <button @tap="slist.splice(-2, 0, {'type':0,'name':'Card'+slist.length,'path':'Bob >> folder >> Card','src': '/res/r-2.svg','disabled':undefined})">Add item</button><button @tap="slist.splice(-3, 1)">Remove item</button>
+                        <button flex="1" @tap="slist.splice(-2, 0, {'type':0,'name':'Card'+slist.length,'path':'Bob >> folder >> Card','src': '/res/r-2.svg','disabled':undefined})">Add item</button>
+                        <button flex="1" @tap="slist.splice(-3, 1)">Remove item</button>
                     </layout>
                 </layout>
             </tab-panel>

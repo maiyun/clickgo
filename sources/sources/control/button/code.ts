@@ -29,17 +29,13 @@ export let props = {
     }
 };
 
-export let data = {
-    "_direction": undefined
-};
-
 export let computed = {
     "widthPx": function(this: IVue): string | undefined {
         if (this.width !== undefined) {
             return this.width + "px";
         }
         if (this.flex !== "") {
-            return this.$data._direction ? (this.$data._direction === "v" ? undefined : "0") : undefined;
+            return this.$parent.direction ? (this.$parent.direction === "v" ? undefined : "0") : undefined;
         }
     },
     "heightPx": function(this: IVue): string | undefined {
@@ -47,7 +43,7 @@ export let computed = {
             return this.height + "px";
         }
         if (this.flex !== "") {
-            return this.$data._direction ? (this.$data._direction === "v" ? "0" : undefined) : undefined;
+            return this.$parent.direction ? (this.$parent.direction === "v" ? "0" : undefined) : undefined;
         }
     }
 };
@@ -65,12 +61,6 @@ export let methods = {
         }
         this.stopPropagation(e);
         this._down();
-    }
-};
-
-export let mounted = function(this: IVue): void {
-    if (this.$parent.direction !== undefined) {
-        this.$data._direction = this.$parent.direction;
     }
 };
 

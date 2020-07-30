@@ -42,9 +42,7 @@ export let props = {
 export let data = {
     "valueData": "",
     "wrapFocus": false,
-    "inputFocus": false,
-
-    "_direction": undefined
+    "inputFocus": false
 };
 
 export let watch = {
@@ -62,7 +60,7 @@ export let computed = {
             return this.width + "px";
         }
         if (this.flex !== "") {
-            return this.$data._direction ? (this.$data._direction === "v" ? undefined : "0") : undefined;
+            return this.$parent.direction ? (this.$parent.direction === "v" ? undefined : "0") : undefined;
         }
     },
     "heightPx": function(this: IVue): string | undefined {
@@ -70,7 +68,7 @@ export let computed = {
             return this.height + "px";
         }
         if (this.flex !== "") {
-            return this.$data._direction ? (this.$data._direction === "v" ? "0" : undefined) : undefined;
+            return this.$parent.direction ? (this.$parent.direction === "v" ? "0" : undefined) : undefined;
         }
     },
 
@@ -96,10 +94,6 @@ export let methods = {
 };
 
 export let mounted = function(this: IVue): void {
-    if (this.$parent.direction !== undefined) {
-        this.$data._direction = this.$parent.direction;
-    }
-
     ClickGo.appendToPop(this.$refs.pop);
 };
 

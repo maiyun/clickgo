@@ -28,8 +28,7 @@ exports.props = {
     }
 };
 exports.data = {
-    "scrollOffsetEmit": 0,
-    "_direction": undefined
+    "scrollOffsetEmit": 0
 };
 exports.computed = {
     "widthPx": function () {
@@ -37,7 +36,7 @@ exports.computed = {
             return this.width + "px";
         }
         if (this.flex !== "") {
-            return this.$data._direction ? (this.$data._direction === "v" ? undefined : "0") : undefined;
+            return this.$parent.direction ? (this.$parent.direction === "v" ? undefined : "0") : undefined;
         }
     },
     "heightPx": function () {
@@ -45,7 +44,7 @@ exports.computed = {
             return this.height + "px";
         }
         if (this.flex !== "") {
-            return this.$data._direction ? (this.$data._direction === "v" ? "0" : undefined) : undefined;
+            return this.$parent.direction ? (this.$parent.direction === "v" ? "0" : undefined) : undefined;
         }
     }
 };
@@ -62,12 +61,6 @@ exports.watch = {
             else {
                 this.$refs.wrap.scrollLeft = this.scrollOffset;
             }
-        }
-    },
-    "direction": function () {
-        for (var _i = 0, _a = this.$children; _i < _a.length; _i++) {
-            var item = _a[_i];
-            item.$data._direction = this.direction;
         }
     }
 };
@@ -117,8 +110,5 @@ exports.mounted = function () {
     }
     else {
         this.$refs.wrap.scrollLeft = this.scrollOffset;
-    }
-    if (this.$parent.direction !== undefined) {
-        this.$data._direction = this.$parent.direction;
     }
 };

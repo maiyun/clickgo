@@ -36,8 +36,7 @@ exports.data = {
     "client": 0,
     "contentLength": 0,
     "tran": 0,
-    "timer": undefined,
-    "_direction": undefined
+    "timer": undefined
 };
 exports.watch = {
     "direction": function () {
@@ -70,7 +69,11 @@ exports.computed = {
             return this.width + "px";
         }
         if (this.flex !== "") {
-            return this.$data._direction ? (this.$data._direction === "v" ? undefined : "0") : undefined;
+            var parent_1 = this.$parent;
+            if (parent_1.$data._controlName === "greatview") {
+                parent_1 = parent_1.$parent;
+            }
+            return parent_1.direction ? (parent_1.direction === "v" ? undefined : "0") : undefined;
         }
     },
     "heightPx": function () {
@@ -78,7 +81,11 @@ exports.computed = {
             return this.height + "px";
         }
         if (this.flex !== "") {
-            return this.$data._direction ? (this.$data._direction === "v" ? "0" : undefined) : undefined;
+            var parent_2 = this.$parent;
+            if (parent_2.$data._controlName === "greatview") {
+                parent_2 = parent_2.$parent;
+            }
+            return parent_2.direction ? (parent_2.direction === "v" ? "0" : undefined) : undefined;
         }
     },
     "length": function () {
@@ -258,9 +265,6 @@ exports.mounted = function () {
         _this.refreshView();
     });
     this.contentLength = Math.round(this.direction === "v" ? size.height : size.width);
-    if (this.$parent.direction !== undefined) {
-        this.$data._direction = this.$parent.direction;
-    }
 };
 exports.destroyed = function () {
     if (this.timer) {

@@ -27,9 +27,6 @@ export declare let props: {
         default: undefined;
     };
 };
-export declare let data: {
-    _direction: undefined;
-};
 export declare let computed: {
     widthPx: (this: IVue) => string | undefined;
     heightPx: (this: IVue) => string | undefined;
@@ -38,4 +35,3 @@ export declare let methods: {
     keydown: (this: IVue, e: KeyboardEvent) => void;
     down: (this: IVue, e: MouseEvent | TouchEvent) => void;
 };
-export declare let mounted: (this: IVue) => void;

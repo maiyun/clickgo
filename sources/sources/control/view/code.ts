@@ -37,9 +37,7 @@ export let data = {
 
     // --- 惯性 ---
     "tran": 0,
-    "timer": undefined,
-
-    "_direction": undefined
+    "timer": undefined
 };
 
 export let watch = {
@@ -75,7 +73,11 @@ export let computed = {
             return this.width + "px";
         }
         if (this.flex !== "") {
-            return this.$data._direction ? (this.$data._direction === "v" ? undefined : "0") : undefined;
+            let parent = this.$parent;
+            if (parent.$data._controlName === "greatview") {
+                parent = parent.$parent;
+            }
+            return parent.direction ? (parent.direction === "v" ? undefined : "0") : undefined;
         }
     },
     "heightPx": function(this: IVue): string | undefined {
@@ -83,7 +85,11 @@ export let computed = {
             return this.height + "px";
         }
         if (this.flex !== "") {
-            return this.$data._direction ? (this.$data._direction === "v" ? "0" : undefined) : undefined;
+            let parent = this.$parent;
+            if (parent.$data._controlName === "greatview") {
+                parent = parent.$parent;
+            }
+            return parent.direction ? (parent.direction === "v" ? "0" : undefined) : undefined;
         }
     },
     "length": function(this: IVue): number {
@@ -308,10 +314,6 @@ export let mounted = function(this: IVue): void {
         this.refreshView();
     });
     this.contentLength = Math.round(this.direction === "v" ? size.height : size.width);
-
-    if (this.$parent.direction !== undefined) {
-        this.$data._direction = this.$parent.direction;
-    }
 };
 
 export let destroyed = function(this: IVue): void {

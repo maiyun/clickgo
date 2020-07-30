@@ -88,8 +88,7 @@ exports.data = {
     "length": 0,
     "refreshCount": 0,
     "lengthInit": false,
-    "initFirst": true,
-    "_direction": undefined
+    "initFirst": true
 };
 exports.watch = {
     "data": {
@@ -99,11 +98,6 @@ exports.watch = {
     },
     "direction": function () {
         this.refreshView();
-    },
-    "_direction": {
-        handler: function () {
-            this.$children[0].$data._direction = this.$data._direction;
-        }
     }
 };
 exports.computed = {
@@ -299,12 +293,8 @@ exports.methods = {
 };
 exports.mounted = function () {
     var _this = this;
-    if (this.$parent.direction !== undefined) {
-        this.$data._direction = this.$parent.direction;
-    }
-    this.$children[0].$data._direction = this.$data._direction;
     this.refreshView();
-    var mo = new MutationObserver(function (ms) {
+    var mo = new MutationObserver(function () {
         _this.refreshView();
     });
     mo.observe(this.$children[0].$el, {

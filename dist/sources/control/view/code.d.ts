@@ -34,7 +34,6 @@ export declare let data: {
     contentLength: number;
     tran: number;
     timer: undefined;
-    _direction: undefined;
 };
 export declare let watch: {
     direction: (this: IVue) => void;

@@ -55,9 +55,7 @@ export let data = {
 
     "refreshCount": 0,
     "lengthInit": false,
-    "initFirst": true,
-
-    "_direction": undefined
+    "initFirst": true
 };
 
 export let watch = {
@@ -68,12 +66,6 @@ export let watch = {
     },
     "direction": function(this: IVue): void {
         this.refreshView();
-    },
-
-    "_direction": {
-        handler: function(this: IVue): void {
-            this.$children[0].$data._direction = this.$data._direction;
-        }
     }
 };
 
@@ -258,14 +250,9 @@ export let methods = {
 };
 
 export let mounted = function(this: IVue): void {
-    if (this.$parent.direction !== undefined) {
-        this.$data._direction = this.$parent.direction;
-    }
-    this.$children[0].$data._direction = this.$data._direction;
-
     this.refreshView();
 
-    let mo = new MutationObserver((ms) => {
+    let mo = new MutationObserver(() => {
         this.refreshView();
     });
     mo.observe(this.$children[0].$el, {

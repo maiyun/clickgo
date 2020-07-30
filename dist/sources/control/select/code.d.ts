@@ -40,7 +40,6 @@ export declare let data: {
     valueData: string;
     wrapFocus: boolean;
     inputFocus: boolean;
-    _direction: undefined;
 };
 export declare let watch: {
     value: {

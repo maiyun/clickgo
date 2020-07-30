@@ -42,8 +42,7 @@ exports.props = {
 exports.data = {
     "valueData": "",
     "wrapFocus": false,
-    "inputFocus": false,
-    "_direction": undefined
+    "inputFocus": false
 };
 exports.watch = {
     "value": {
@@ -60,7 +59,7 @@ exports.computed = {
             return this.width + "px";
         }
         if (this.flex !== "") {
-            return this.$data._direction ? (this.$data._direction === "v" ? undefined : "0") : undefined;
+            return this.$parent.direction ? (this.$parent.direction === "v" ? undefined : "0") : undefined;
         }
     },
     "heightPx": function () {
@@ -68,7 +67,7 @@ exports.computed = {
             return this.height + "px";
         }
         if (this.flex !== "") {
-            return this.$data._direction ? (this.$data._direction === "v" ? "0" : undefined) : undefined;
+            return this.$parent.direction ? (this.$parent.direction === "v" ? "0" : undefined) : undefined;
         }
     },
     "editableComp": function () {
@@ -91,9 +90,6 @@ exports.methods = {
     }
 };
 exports.mounted = function () {
-    if (this.$parent.direction !== undefined) {
-        this.$data._direction = this.$parent.direction;
-    }
     ClickGo.appendToPop(this.$refs.pop);
 };
 exports.destroyed = function () {

@@ -40,8 +40,7 @@ exports.data = {
     "scrollOffsetData": 0,
     "barLengthPx": 0,
     "timer": undefined,
-    "tran": false,
-    "_direction": undefined
+    "tran": false
 };
 exports.watch = {
     "length": {
@@ -102,7 +101,7 @@ exports.computed = {
             return this.width + "px";
         }
         if (this.flex !== "") {
-            return this.$data._direction ? (this.$data._direction === "v" ? undefined : "0") : undefined;
+            return this.$parent.direction ? (this.$parent.direction === "v" ? undefined : "0") : undefined;
         }
     },
     "heightPx": function () {
@@ -110,7 +109,7 @@ exports.computed = {
             return this.height + "px";
         }
         if (this.flex !== "") {
-            return this.$data._direction ? (this.$data._direction === "v" ? "0" : undefined) : undefined;
+            return this.$parent.direction ? (this.$parent.direction === "v" ? "0" : undefined) : undefined;
         }
     }
 };
@@ -202,9 +201,6 @@ exports.mounted = function () {
         _this.barLengthPx = _this.direction === "v" ? size.height : size.width;
     });
     this.barLengthPx = this.direction === "v" ? this.$refs.bar.offsetHeight : this.$refs.bar.offsetWidth;
-    if (this.$parent.direction !== undefined) {
-        this.$data._direction = this.$parent.direction;
-    }
 };
 exports.destroyed = function () {
     if (this.timer !== undefined) {
