@@ -349,6 +349,12 @@ export function showPop(pop: IVue, x: number | HTMLElement, y: number = 0): void
             top = y - pop.$el.offsetHeight;
         }
     }
+    if (left < 0) {
+        left = 0;
+    }
+    if (top < 0) {
+        top = 0;
+    }
     pop.leftData = left;
     pop.topData = top;
     pop.zIndexData = (++ClickGo.popZIndex).toString();

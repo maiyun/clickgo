@@ -322,6 +322,12 @@ function showPop(pop, x, y) {
             top = y - pop.$el.offsetHeight;
         }
     }
+    if (left < 0) {
+        left = 0;
+    }
+    if (top < 0) {
+        top = 0;
+    }
     pop.leftData = left;
     pop.topData = top;
     pop.zIndexData = (++ClickGo.popZIndex).toString();
