@@ -29,6 +29,9 @@ export declare let props: {
     area: {
         default: string;
     };
+    value: {
+        default: number;
+    };
 };
 export declare let computed: {
     widthPx: (this: IVue) => string | undefined;

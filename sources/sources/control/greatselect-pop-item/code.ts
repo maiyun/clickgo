@@ -15,7 +15,7 @@ export let methods = {
             return;
         }
         ClickGo.hidePop();
-        this.$parent.$parent.$emit("select", this.index);
+        this.$parent.$parent.$parent.$parent.$emit("select", this.index);
         this._tap(event);
     }
 };

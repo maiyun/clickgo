@@ -19,15 +19,7 @@ interface IVue {
     $data: any;
     $props: any;
     $slots: {
-        [name: string]: Array<{
-            "componentInstance": IVue;
-            "componentOptions": {
-                "tag": string;
-                [name: string]: any;
-            };
-            [name: string]: any;
-            "context": IVue;
-        }>;
+        [name: string]: IVNode[];
     };
     $parent: IVue;
     $children: IVue[];
@@ -40,6 +32,18 @@ interface IVue {
     $destroy(): void;
 
     _isVue: boolean;
+
+    [key: string]: any;
+}
+
+interface IVNode {
+    "children": IVNode[];
+    "componentInstance": IVue;
+    "componentOptions": {
+        "tag": string;
+        [name: string]: any;
+    };
+    "context": IVue;
 
     [key: string]: any;
 }

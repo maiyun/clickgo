@@ -65,24 +65,23 @@ export let watch = {
 export let updated = function(this: IVue): void {
     let i;
     for (i = 0; i < this.$slots.default.length; ++i) {
-        let item = this.$slots.default[i];
-        let v: IVue = item.componentInstance || item.context;
+        let item: IVue = this.$slots.default[i].componentInstance;
         if (this.tabs[i]) {
-            if (this.tabs[i].label !== v.label) {
-                this.tabs[i].label = v.label;
+            if (this.tabs[i].label !== item.label) {
+                this.tabs[i].label = item.label;
             }
-            if (this.tabs[i].name !== v.name) {
-                this.tabs[i].name = v.name;
+            if (this.tabs[i].name !== item.name) {
+                this.tabs[i].name = item.name;
             }
-            if (v.index !== i) {
-                v.index = i;
+            if (item.index !== i) {
+                item.index = i;
             }
         } else {
             this.tabs.push({
-                "label": v.label,
-                "name": v.name
+                "label": item.label,
+                "name": item.name
             });
-            v.index = i;
+            item.index = i;
         }
     }
     if (i < this.tabs.length) {

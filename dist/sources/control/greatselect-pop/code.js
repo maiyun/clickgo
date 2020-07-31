@@ -32,11 +32,10 @@ exports.methods = {
 };
 exports.updated = function () {
     var i;
-    for (i = 0; i < this.$children[0].$children[0].$slots.default.length; ++i) {
-        var item = this.$children[0].$children[0].$slots.default[i];
-        var v = item.componentInstance || item.context;
-        if (v.index !== i) {
-            v.index = i;
+    for (i = 1; i < this.$children[0].$children[0].$slots.default.length; ++i) {
+        var item = this.$children[0].$children[0].$slots.default[i].children[0].componentInstance;
+        if (item.index !== i - 1) {
+            item.index = i - 1;
         }
     }
 };

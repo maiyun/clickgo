@@ -34,11 +34,10 @@ export let methods = {
 
 export let updated = function(this: IVue): void {
     let i;
-    for (i = 0; i < this.$children[0].$children[0].$slots.default.length; ++i) {
-        let item = this.$children[0].$children[0].$slots.default[i];
-        let v: IVue = item.componentInstance || item.context;
-        if (v.index !== i) {
-            v.index = i;
+    for (i = 1; i < this.$children[0].$children[0].$slots.default.length; ++i) {
+        let item: IVue = this.$children[0].$children[0].$slots.default[i].children[0].componentInstance;
+        if (item.index !== i - 1) {
+            item.index = i - 1;
         }
     }
 };
