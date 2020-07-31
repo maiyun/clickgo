@@ -54,6 +54,9 @@ formListElement.addEventListener("touchmove", function (e) {
 var popListElement = document.createElement("div");
 popListElement.style.zoom = ClickGo.zoom.toString();
 popListElement.classList.add("cg-pop-list");
+popListElement.addEventListener("contextmenu", function (e) {
+    e.preventDefault();
+});
 document.getElementsByTagName("body")[0].appendChild(popListElement);
 popListElement.addEventListener("touchmove", function (e) {
     e.preventDefault();

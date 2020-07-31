@@ -5,12 +5,14 @@ document.getElementsByTagName("body")[0].appendChild(styleListElement);
 styleListElement.insertAdjacentHTML("beforeend", "<style id=\"cg-global-cursor\"></style>");
 styleListElement.insertAdjacentHTML("beforeend", "<style id=\"cg-global-theme\"></style>");
 styleListElement.insertAdjacentHTML("beforeend", `<style class="cg-global">
-.cg-form-list {position: fixed; left: 0; top: 0; z-index: 20020000; width: 0; height: 0; cursor: default;}
-.cg-pop-list {position: fixed; left: 0; top: 0; z-index: 20020001; width: 0; height: 0; cursor: default;}
+.cg-form-list, .cg-pop-list {-webkit-user-select: none; user-select: none; position: fixed; left: 0; top: 0; width: 0; height: 0; cursor: default;}
+.cg-form-list {z-index: 20020000;}
+.cg-pop-list {z-index: 20020001;}
 .cg-form-list img, .cg-pop-list img {vertical-align: bottom;}
 .cg-form-list ::selection {
     background-color: rgba(0, 120, 215, .3);
 }
+.cg-form-list, .cg-pop-list {-webkit-user-select: none; user-select: none;}
 
 .cg-form-list *, .cg-pop-list * {box-sizing: border-box !important; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); flex-shrink: 0;}
 .cg-form-list, .cg-form-list input, .cg-form-list textarea, .cg-pop-list, .cg-pop-list input, .cg-pop-list textarea {font-family: 'Microsoft YaHei',Arial,Helvetica,Sans-Serif; font-size: 12px; line-height: 1; -webkit-font-smoothing: antialiased; font-weight: 400;}

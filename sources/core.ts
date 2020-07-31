@@ -36,6 +36,9 @@ formListElement.addEventListener("touchmove", function(e): void {
 let popListElement: HTMLDivElement = document.createElement("div");
 popListElement.style.zoom = ClickGo.zoom.toString();
 popListElement.classList.add("cg-pop-list");
+popListElement.addEventListener("contextmenu", function(e): void {
+    e.preventDefault();
+});
 document.getElementsByTagName("body")[0].appendChild(popListElement);
 popListElement.addEventListener("touchmove", function(e): void {
     // --- 防止拖动时整个网页跟着动 ---
