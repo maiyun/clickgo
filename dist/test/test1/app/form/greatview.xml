@@ -86,9 +86,7 @@
                                     </block>
                                 </layout>
                             </greatselect-pop-item>
-                            <greatselect-pop-item v-else-if="data.row.type===1">
-                                <block style="padding: 7px;">---</block>
-                            </greatselect-pop-item>
+                            <greatselect-pop-split v-else-if="data.row.type===1"></greatselect-pop-split>
                             <greatselect-pop-item v-else>
                                 <block style="padding: 7px;">Other</block>
                             </greatselect-pop-item>

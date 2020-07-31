@@ -87,7 +87,7 @@ async function run(): Promise<void> {
                 await getSingleControlBlob("dist/sources/control/greatselect"),
                 await getSingleControlBlob("dist/sources/control/greatselect-pop"),
                 await getSingleControlBlob("dist/sources/control/greatselect-pop-item"),
-                // await getSingleControlBlob("dist/sources/control/greatselect-pop-split"),
+                await getSingleControlBlob("dist/sources/control/greatselect-pop-split"),
                 await getSingleControlBlob("dist/sources/control/select")
             ]);
         } else if (item.name === "tab") {
