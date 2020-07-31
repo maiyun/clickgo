@@ -8,6 +8,9 @@ export let props = {
 };
 
 export let data = {
+    "leftData": -20070831,
+    "topData": -20070831,
+    "zIndexData": 0,
     "open": false
 };
 

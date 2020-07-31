@@ -7,6 +7,9 @@ export declare let props: {
     };
 };
 export declare let data: {
+    leftData: number;
+    topData: number;
+    zIndexData: number;
     open: boolean;
 };
 export declare let methods: {

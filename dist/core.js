@@ -84,6 +84,7 @@ window.addEventListener("resize", function () {
     });
 });
 var DoFocusAndPopEvent = function (e) {
+    var _a;
     if (e instanceof MouseEvent && ClickGo.hasTouch) {
         return;
     }
@@ -101,7 +102,7 @@ var DoFocusAndPopEvent = function (e) {
             break;
         }
         if (element.classList.contains("cg-form-wrap")) {
-            var formId = parseInt(element.getAttribute("data-form-id") || "0");
+            var formId = parseInt((_a = element.getAttribute("data-form-id")) !== null && _a !== void 0 ? _a : "0");
             Tool.changeFormFocus(formId);
             hidePop();
             return;
@@ -278,7 +279,7 @@ function removeFromPop(el) {
 exports.removeFromPop = removeFromPop;
 function showPop(pop, x, y) {
     if (y === void 0) { y = 0; }
-    if (pop.$parent.$data._controlName !== "menu-pop-item" || pop.$parent.$data._controlName !== "greatselect-pop-item") {
+    if (pop.$parent.$data._controlName !== "menu-pop-item" && pop.$parent.$data._controlName !== "popmenu") {
         ClickGo._pop = pop;
     }
     pop.$parent.popOpen = true;
@@ -337,8 +338,13 @@ function hidePop(pop) {
     }
     pop.$parent.popOpen = false;
     pop.open = false;
-    pop.leftData = -20070831;
-    pop.topData = -20070831;
+    setTimeout(function () {
+        if (!pop) {
+            return;
+        }
+        pop.leftData = -20070831;
+        pop.topData = -20070831;
+    }, 100);
     pop.onHide && pop.onHide();
 }
 exports.hidePop = hidePop;

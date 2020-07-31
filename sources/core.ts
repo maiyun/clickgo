@@ -89,7 +89,7 @@ let DoFocusAndPopEvent = function(e: MouseEvent | TouchEvent): void {
         }
         if (element.classList.contains("cg-form-wrap")) {
             // --- 窗体内部点击，转换焦点到当前窗体，但触发隐藏 pop ---
-            let formId = parseInt(element.getAttribute("data-form-id") || "0");
+            let formId = parseInt(element.getAttribute("data-form-id") ?? "0");
             Tool.changeFormFocus(formId);
             hidePop();
             return;
@@ -302,7 +302,7 @@ export function removeFromPop(el: HTMLElement): void {
  * @param y 要显示的 top，或 element 方向，0 为垂直，1 为水平
  */
 export function showPop(pop: IVue, x: number | HTMLElement, y: number = 0): void {
-    if (pop.$parent.$data._controlName !== "menu-pop-item" || pop.$parent.$data._controlName !== "greatselect-pop-item") {
+    if (pop.$parent.$data._controlName !== "menu-pop-item" && pop.$parent.$data._controlName !== "popmenu") {
         ClickGo._pop = pop;
     }
     pop.$parent.popOpen = true;
@@ -367,8 +367,13 @@ export function hidePop(pop: IVue | null = null): void {
     }
     pop.$parent.popOpen = false;
     pop.open = false;
-    pop.leftData = -20070831;
-    pop.topData = -20070831;
+    setTimeout(() => {
+        if (!pop) {
+            return;
+        }
+        pop.leftData = -20070831;
+        pop.topData = -20070831;
+    }, 100);
     pop.onHide && pop.onHide();
 }
 
