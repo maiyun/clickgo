@@ -1,5 +1,5 @@
 <div class="wrap" :class="{'cg-open': open}" :style="{'width': widthData && (widthData + 'px'), 'height': height && (height + 'px'), 'max-height': height ? undefined : '300px', 'left': leftData + 'px', top: topData + 'px', 'z-index': zIndexData}" @click="_tap" @mousedown="_down" @touchstart="_down" @dblclick="_dblclick">
-    <cg-greatview :same="same" :data="data" v-slot="data">
+    <cg-greatview :same="same" :data="data" v-slot="data" flex="1" style="flex-shrink: 1;">
         <slot :row="data.row" :index="data.index"></slot>
     </cg-greatview>
 </div>

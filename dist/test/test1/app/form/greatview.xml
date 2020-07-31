@@ -81,7 +81,7 @@
                                 <layout flex="1" align-v="center" gutter="5" style="padding: 7px; line-height: 1.2;">
                                     <img width="32" height="32" :src="data.row.src"></img>
                                     <block>
-                                        <block>{{data.row.name}}</block>
+                                        <block>{{data.row.name}}|{{data.row.src}}</block>
                                         <block style="opacity:.7;">{{data.row.path}}</block>
                                     </block>
                                 </layout>
