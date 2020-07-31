@@ -55,7 +55,7 @@ export let data = {
 
     "refreshCount": 0,
     "lengthInit": false,
-    "initFirst": true
+    "initFirst": false
 };
 
 export let watch = {
@@ -235,12 +235,17 @@ export let methods = {
         }
     },
     updateScrollOffset: function(this: IVue, val: number): void {
+        // --- 接收 view 组件传递的 scroll-offset 更改事件 ---
         if (!this.lengthInit) {
+            // --- length 还没初始化成功，不更新 scroll offset ---
             return;
         }
-        if (this.initFirst) {
-            this.initFirst = false;
-            this.$refs.view.goScroll(this.scrollOffset);
+        if (!this.initFirst) {
+            // --- length 更新后首次执行，将 scroll offset 更改为用户设定值 ---
+            this.initFirst = true;
+            if (this.scrollOffset) {
+                this.$refs.view.goScroll(this.scrollOffset);
+            }
             return;
         }
         this.scrollOffsetData = val;

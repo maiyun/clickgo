@@ -4,6 +4,7 @@ export declare let props: {
     };
 };
 export declare let data: {
+    index: number;
     popOpen: boolean;
 };
 export declare let methods: {

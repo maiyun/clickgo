@@ -285,41 +285,45 @@ function showPop(pop, x, y) {
     pop.open = true;
     var left, top;
     if (x instanceof HTMLElement) {
-        var bcr_1 = x.getBoundingClientRect();
+        var bcr = x.getBoundingClientRect();
         if (y === 0) {
-            left = bcr_1.left;
-            top = bcr_1.top + bcr_1.height;
+            left = bcr.left;
+            top = bcr.top + bcr.height;
         }
         else {
-            left = bcr_1.left + bcr_1.width - 2;
-            top = bcr_1.top - 2;
+            left = bcr.left + bcr.width - 2;
+            top = bcr.top - 2;
         }
-        setTimeout(function () {
-            if (pop.$el.offsetWidth + left > ClickGo.getWidth()) {
-                if (y === 0) {
-                    pop.$el.style.left = ClickGo.getWidth() - pop.$el.offsetWidth + "px";
-                }
-                else {
-                    pop.$el.style.left = bcr_1.left - pop.$el.offsetWidth + 2 + "px";
-                }
+        if (pop.$el.offsetWidth + left > ClickGo.getWidth()) {
+            if (y === 0) {
+                left = ClickGo.getWidth() - pop.$el.offsetWidth;
             }
-            pop.$el.style.visibility = "";
-        });
+            else {
+                left = bcr.left - pop.$el.offsetWidth + 2;
+            }
+        }
+        if (pop.$el.offsetHeight + top > ClickGo.getHeight()) {
+            if (y === 0) {
+                top = bcr.top - pop.$el.offsetHeight;
+            }
+            else {
+                top = ClickGo.getHeight() - pop.$el.offsetHeight;
+            }
+        }
     }
     else {
         left = x;
         top = y;
-        setTimeout(function () {
-            if (pop.$el.offsetWidth + left > ClickGo.getWidth()) {
-                pop.$el.style.left = x - pop.$el.offsetWidth + "px";
-            }
-            pop.$el.style.visibility = "";
-        });
+        if (pop.$el.offsetWidth + left > ClickGo.getWidth()) {
+            left = x - pop.$el.offsetWidth;
+        }
+        if (pop.$el.offsetHeight + top > ClickGo.getHeight()) {
+            top = y - pop.$el.offsetHeight;
+        }
     }
-    pop.$el.style.left = left + "px";
-    pop.$el.style.top = top + "px";
-    pop.$el.style.visibility = "hidden";
-    pop.$el.style.zIndex = (++ClickGo.popZIndex).toString();
+    pop.leftData = left;
+    pop.topData = top;
+    pop.zIndexData = (++ClickGo.popZIndex).toString();
 }
 exports.showPop = showPop;
 function hidePop(pop) {
@@ -333,6 +337,8 @@ function hidePop(pop) {
     }
     pop.$parent.popOpen = false;
     pop.open = false;
+    pop.leftData = -20070831;
+    pop.topData = -20070831;
     pop.onHide && pop.onHide();
 }
 exports.hidePop = hidePop;

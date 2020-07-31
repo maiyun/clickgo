@@ -26,6 +26,7 @@ interface IVue {
                 [name: string]: any;
             };
             [name: string]: any;
+            "context": IVue;
         }>;
     };
     $parent: IVue;

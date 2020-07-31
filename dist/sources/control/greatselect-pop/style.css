@@ -1,6 +1,6 @@
 .wrap {
-    border: solid 1px #ababab; background: #FFF; position: absolute; box-shadow: 1px 1px 5px rgba(0, 0, 0, .2); z-index: 1; display: none;
+    border: solid 1px #ababab; background: #FFF; position: absolute; box-shadow: 1px 1px 5px rgba(0, 0, 0, .2); z-index: 1; transition: -webkit-transform, transform, opacity .1s ease-out;
 }
 .wrap.cg-open {
-    display: block;
+    -webkit-transform: translateY(0px); transform: translateY(0px); opacity: 1;
 }

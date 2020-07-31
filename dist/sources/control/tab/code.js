@@ -64,23 +64,24 @@ exports.updated = function () {
     var i;
     for (i = 0; i < this.$slots.default.length; ++i) {
         var item = this.$slots.default[i];
+        var v = item.componentInstance || item.context;
         if (this.tabs[i]) {
-            if (this.tabs[i].label !== item.componentInstance.label) {
-                this.tabs[i].label = item.componentInstance.label;
+            if (this.tabs[i].label !== v.label) {
+                this.tabs[i].label = v.label;
             }
-            if (this.tabs[i].name !== item.componentInstance.name) {
-                this.tabs[i].name = item.componentInstance.name;
+            if (this.tabs[i].name !== v.name) {
+                this.tabs[i].name = v.name;
             }
-            if (this.$slots.default[i].componentInstance.index !== i) {
-                item.componentInstance.index = i;
+            if (v.index !== i) {
+                v.index = i;
             }
         }
         else {
             this.tabs.push({
-                "label": item.componentInstance.label,
-                "name": item.componentInstance.name
+                "label": v.label,
+                "name": v.name
             });
-            item.componentInstance.index = i;
+            v.index = i;
         }
     }
     if (i < this.tabs.length) {

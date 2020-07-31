@@ -69,7 +69,7 @@
                 <layout flex="1" gutter="10" direction="v">
                     <block>greatselect:</block>
                     <greatselect>
-                        <layout flex="1" align-v="center" gutter="5" style="padding: 7px;">
+                        <layout flex="1" align-v="center" gutter="5" style="padding: 7px; line-height: 1.2;">
                             <img width="32" height="32" src="/res/r-1.svg"></img>
                             <block>
                                 <block>Appraise</block>
@@ -78,7 +78,7 @@
                         </layout>
                         <greatselect-pop :data="slist" v-slot="data">
                             <greatselect-pop-item v-if="data.row.type===0" :disabled="data.row.disabled">
-                                <layout flex="1" align-v="center" gutter="5" style="padding: 7px;">
+                                <layout flex="1" align-v="center" gutter="5" style="padding: 7px; line-height: 1.2;">
                                     <img width="32" height="32" :src="data.row.src"></img>
                                     <block>
                                         <block>{{data.row.name}}</block>

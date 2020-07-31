@@ -311,36 +311,47 @@ export function showPop(pop: IVue, x: number | HTMLElement, y: number = 0): void
     if (x instanceof HTMLElement) {
         let bcr = x.getBoundingClientRect();
         if (y === 0) {
+            // --- 垂直弹出 ---
             left = bcr.left;
             top = bcr.top + bcr.height;
         } else {
+            // --- 水平弹出 ---
             left = bcr.left + bcr.width - 2;
             top = bcr.top - 2;
         }
-        setTimeout(function() {
-            if (pop.$el.offsetWidth + left > ClickGo.getWidth()) {
-                if (y === 0) {
-                    pop.$el.style.left = ClickGo.getWidth() - pop.$el.offsetWidth + "px";
-                } else {
-                    pop.$el.style.left = bcr.left - pop.$el.offsetWidth + 2 + "px";
-                }
+        // --- 检查水平是否出框 ---
+        if (pop.$el.offsetWidth + left > ClickGo.getWidth()) {
+            if (y === 0) {
+                // --- 垂直弹出 ---
+                left = ClickGo.getWidth() - pop.$el.offsetWidth;
+            } else {
+                // --- 水平弹出，右边位置不够弹到左边 ---
+                left = bcr.left - pop.$el.offsetWidth + 2;
             }
-            pop.$el.style.visibility = "";
-        });
+        }
+        // --- 检测垂直是否出框 ---
+        if (pop.$el.offsetHeight + top > ClickGo.getHeight()) {
+            if (y === 0) {
+                top = bcr.top - pop.$el.offsetHeight;
+            } else {
+                top = ClickGo.getHeight() - pop.$el.offsetHeight;
+            }
+        }
     } else {
         left = x;
         top = y;
-        setTimeout(function() {
-            if (pop.$el.offsetWidth + left > ClickGo.getWidth()) {
-                pop.$el.style.left = x - pop.$el.offsetWidth + "px";
-            }
-            pop.$el.style.visibility = "";
-        });
+        // --- 水平 ---
+        if (pop.$el.offsetWidth + left > ClickGo.getWidth()) {
+            left = x - pop.$el.offsetWidth;
+        }
+        // --- 垂直 ---
+        if (pop.$el.offsetHeight + top > ClickGo.getHeight()) {
+            top = y - pop.$el.offsetHeight;
+        }
     }
-    pop.$el.style.left = left + "px";
-    pop.$el.style.top = top + "px";
-    pop.$el.style.visibility = "hidden";
-    pop.$el.style.zIndex = (++ClickGo.popZIndex).toString();
+    pop.leftData = left;
+    pop.topData = top;
+    pop.zIndexData = (++ClickGo.popZIndex).toString();
 }
 
 /**
@@ -356,6 +367,8 @@ export function hidePop(pop: IVue | null = null): void {
     }
     pop.$parent.popOpen = false;
     pop.open = false;
+    pop.leftData = -20070831;
+    pop.topData = -20070831;
     pop.onHide && pop.onHide();
 }
 

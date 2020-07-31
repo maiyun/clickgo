@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.destroyed = exports.mounted = exports.methods = exports.data = exports.props = void 0;
+exports.destroyed = exports.mounted = exports.updated = exports.methods = exports.data = exports.props = void 0;
 exports.props = {
     "height": {
         "default": undefined
@@ -14,6 +14,9 @@ exports.props = {
 };
 exports.data = {
     "widthData": undefined,
+    "leftData": -20070831,
+    "topData": -20070831,
+    "zIndexData": 0,
     "open": false
 };
 exports.methods = {
@@ -24,6 +27,16 @@ exports.methods = {
                 continue;
             }
             ClickGo.hidePop(item.$children[0]);
+        }
+    }
+};
+exports.updated = function () {
+    var i;
+    for (i = 0; i < this.$children[0].$children[0].$slots.default.length; ++i) {
+        var item = this.$children[0].$children[0].$slots.default[i];
+        var v = item.componentInstance || item.context;
+        if (v.index !== i) {
+            v.index = i;
         }
     }
 };

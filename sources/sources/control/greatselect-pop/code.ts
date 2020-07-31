@@ -14,6 +14,9 @@ export let props = {
 
 export let data = {
     "widthData": undefined,
+    "leftData": -20070831,
+    "topData": -20070831,
+    "zIndexData": 0,
     "open": false
 };
 
@@ -25,6 +28,17 @@ export let methods = {
                 continue;
             }
             ClickGo.hidePop(item.$children[0]);
+        }
+    }
+};
+
+export let updated = function(this: IVue): void {
+    let i;
+    for (i = 0; i < this.$children[0].$children[0].$slots.default.length; ++i) {
+        let item = this.$children[0].$children[0].$slots.default[i];
+        let v: IVue = item.componentInstance || item.context;
+        if (v.index !== i) {
+            v.index = i;
         }
     }
 };

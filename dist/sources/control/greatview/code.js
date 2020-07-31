@@ -88,7 +88,7 @@ exports.data = {
     "length": 0,
     "refreshCount": 0,
     "lengthInit": false,
-    "initFirst": true
+    "initFirst": false
 };
 exports.watch = {
     "data": {
@@ -281,9 +281,11 @@ exports.methods = {
         if (!this.lengthInit) {
             return;
         }
-        if (this.initFirst) {
-            this.initFirst = false;
-            this.$refs.view.goScroll(this.scrollOffset);
+        if (!this.initFirst) {
+            this.initFirst = true;
+            if (this.scrollOffset) {
+                this.$refs.view.goScroll(this.scrollOffset);
+            }
             return;
         }
         this.scrollOffsetData = val;
