@@ -61,7 +61,7 @@ exports.data = {
     "iconData": ""
 };
 exports.watch = {
-    "icon": {
+    "src": {
         handler: function () {
             var _a;
             return __awaiter(this, void 0, void 0, function () {

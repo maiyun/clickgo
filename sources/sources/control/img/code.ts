@@ -25,7 +25,7 @@ export let data = {
 };
 
 export let watch = {
-    "icon": {
+    "src": {
         handler: async function(this: IVue): Promise<void> {
             if (this.src === "") {
                 this.iconData = "";

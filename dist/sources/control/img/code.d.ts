@@ -22,7 +22,7 @@ export declare let data: {
     iconData: string;
 };
 export declare let watch: {
-    icon: {
+    src: {
         handler: (this: IVue) => Promise<void>;
         immediate: boolean;
     };
