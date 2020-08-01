@@ -38,6 +38,7 @@ export declare let data: {
         src?: undefined;
         disabled?: undefined;
     })[];
+    select: number;
     style: boolean;
     tabs: never[];
     tabsi: number;

@@ -70,13 +70,13 @@
                     <block>greatselect:</block>
                     <greatselect>
                         <layout flex="1" align-v="center" gutter="5" style="padding: 7px; line-height: 1.2;">
-                            <img width="32" height="32" src="/res/r-1.svg"></img>
+                            <img width="32" height="32" :src="slist[select].src"></img>
                             <block>
-                                <block>Appraise</block>
-                                <block style="opacity:.7;">Bob &gt;&gt; folder &gt;&gt; Appraise</block>
+                                <block>{{slist[select].name}}</block>
+                                <block style="opacity:.7;">{{slist[select].path}}</block>
                             </block>
                         </layout>
-                        <greatselect-pop :data="slist" v-slot="data">
+                        <greatselect-pop :value="select" @input="if(slist[arguments[0]].type===0){select=arguments[0];}" :data="slist" v-slot="data">
                             <greatselect-pop-item v-if="data.row.type===0" :disabled="data.row.disabled">
                                 <layout flex="1" align-v="center" gutter="5" style="padding: 7px; line-height: 1.2;">
                                     <img width="32" height="32" :src="data.row.src"></img>

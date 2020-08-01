@@ -9,6 +9,9 @@ export let props = {
 
     "data": {
         "default": []
+    },
+    "value": {
+        "default": 0
     }
 };
 
@@ -29,6 +32,9 @@ export let methods = {
             }
             ClickGo.hidePop(item.$children[0]);
         }
+    },
+    select: function(this: IVue, index: number): void {
+        this.$emit("input", index);
     }
 };
 

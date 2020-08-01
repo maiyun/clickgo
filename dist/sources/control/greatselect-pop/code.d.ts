@@ -8,6 +8,9 @@ export declare let props: {
     data: {
         default: never[];
     };
+    value: {
+        default: number;
+    };
 };
 export declare let data: {
     widthData: undefined;
@@ -18,6 +21,7 @@ export declare let data: {
 };
 export declare let methods: {
     onHide: (this: IVue) => void;
+    select: (this: IVue, index: number) => void;
 };
 export declare let updated: (this: IVue) => void;
 export declare let mounted: (this: IVue) => void;

@@ -30,9 +30,6 @@ export let props = {
 
     "area": {
         "default": "all"
-    },
-    "value": {
-        "default": 0
     }
 };
 

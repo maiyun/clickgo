@@ -10,6 +10,9 @@ exports.props = {
     },
     "data": {
         "default": []
+    },
+    "value": {
+        "default": 0
     }
 };
 exports.data = {
@@ -28,6 +31,9 @@ exports.methods = {
             }
             ClickGo.hidePop(item.$children[0]);
         }
+    },
+    select: function (index) {
+        this.$emit("input", index);
     }
 };
 exports.updated = function () {

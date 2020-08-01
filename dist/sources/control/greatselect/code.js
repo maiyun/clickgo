@@ -31,9 +31,6 @@ exports.props = {
     },
     "area": {
         "default": "all"
-    },
-    "value": {
-        "default": 0
     }
 };
 exports.computed = {

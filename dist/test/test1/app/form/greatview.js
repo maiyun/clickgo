@@ -51,6 +51,7 @@ exports.data = {
             "type": 2
         }
     ],
+    "select": 0,
     "style": false,
     "tabs": [],
     "tabsi": 0,

@@ -58,6 +58,7 @@ export let data = {
             "type": 2
         }
     ],
+    "select": 0,
 
     "style": false,
 
