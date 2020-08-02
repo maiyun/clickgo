@@ -23,6 +23,5 @@ export declare let methods: {
     onHide: (this: IVue) => void;
     select: (this: IVue, index: number) => void;
 };
-export declare let updated: (this: IVue) => void;
 export declare let mounted: (this: IVue) => void;
 export declare let destroyed: (this: IVue) => void;

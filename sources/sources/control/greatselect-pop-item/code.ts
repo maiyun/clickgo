@@ -1,11 +1,13 @@
 export let props = {
     "disabled": {
         "default": false
+    },
+    "value": {
+        "default": ""
     }
 };
 
 export let data = {
-    "index": 0,
     "popOpen": false
 };
 
@@ -15,7 +17,7 @@ export let methods = {
             return;
         }
         ClickGo.hidePop();
-        this.$parent.$parent.$parent.select(this.index);
+        this.$parent.$parent.$parent.select(this.value);
         this._tap(event);
     }
 };

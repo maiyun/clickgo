@@ -2,9 +2,11 @@ export declare let props: {
     disabled: {
         default: boolean;
     };
+    value: {
+        default: string;
+    };
 };
 export declare let data: {
-    index: number;
     popOpen: boolean;
 };
 export declare let methods: {

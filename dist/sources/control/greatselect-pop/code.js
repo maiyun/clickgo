@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.destroyed = exports.mounted = exports.updated = exports.methods = exports.data = exports.props = void 0;
+exports.destroyed = exports.mounted = exports.methods = exports.data = exports.props = void 0;
 exports.props = {
     "height": {
         "default": undefined
@@ -34,15 +34,6 @@ exports.methods = {
     },
     select: function (index) {
         this.$emit("input", index);
-    }
-};
-exports.updated = function () {
-    var i;
-    for (i = 1; i < this.$children[0].$children[0].$slots.default.length; ++i) {
-        var item = this.$children[0].$children[0].$slots.default[i].children[0].componentInstance;
-        if (item.index !== i - 1) {
-            item.index = i - 1;
-        }
     }
 };
 exports.mounted = function () {

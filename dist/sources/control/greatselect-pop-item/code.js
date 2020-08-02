@@ -4,10 +4,12 @@ exports.methods = exports.data = exports.props = void 0;
 exports.props = {
     "disabled": {
         "default": false
+    },
+    "value": {
+        "default": ""
     }
 };
 exports.data = {
-    "index": 0,
     "popOpen": false
 };
 exports.methods = {
@@ -16,7 +18,7 @@ exports.methods = {
             return;
         }
         ClickGo.hidePop();
-        this.$parent.$parent.$parent.select(this.index);
+        this.$parent.$parent.$parent.select(this.value);
         this._tap(event);
     }
 };
