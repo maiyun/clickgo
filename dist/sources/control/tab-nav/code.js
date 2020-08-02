@@ -29,27 +29,40 @@ exports.mounted = function () {
 exports.methods = {
     longDown: function (e, type) {
         var _this = this;
-        var num = type === "start" ? -20 : 20;
+        var num = type === "start" ? -5 : 5;
         ClickGo.bindDown(e, {
             down: function () {
                 if (_this.timer !== undefined) {
-                    clearInterval(_this.timer);
+                    _this.timer = undefined;
                 }
-                _this.timer = setInterval(function () {
+                var cb = function () {
                     if (_this.$parent.tabPosition === "top" || _this.$parent.tabPosition === "bottom") {
                         _this.$refs.tabs.scrollLeft += num;
                     }
                     else {
                         _this.$refs.tabs.scrollTop += num;
                     }
-                }, 50);
+                    if (_this.timer !== undefined) {
+                        requestAnimationFrame(cb);
+                    }
+                };
+                _this.timer = requestAnimationFrame(cb);
             },
             up: function () {
                 if (_this.timer !== undefined) {
-                    clearInterval(_this.timer);
                     _this.timer = undefined;
                 }
             }
         });
+    },
+    wheel: function (e) {
+        if (this.$parent.tabPosition === "left" || this.$parent.tabPosition === "right") {
+            return;
+        }
+        if (e.deltaX !== 0) {
+            return;
+        }
+        e.preventDefault();
+        this.$refs.tabs.scrollLeft += e.deltaY;
     }
 };

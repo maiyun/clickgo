@@ -82,13 +82,13 @@ export let methods = {
         this.$emit("update:scrollOffset", this.scrollOffsetEmit);
     },
     wheel: function(this: IVue, e: WheelEvent): void {
-        // --- 用来屏蔽不小心触发前进、后退的浏览器事件 ---
         if (this.direction === "v") {
             return;
         }
         if (e.deltaX !== 0) {
             return;
         }
+        // --- 用来屏蔽不小心触发前进、后退的浏览器事件 ---
         e.preventDefault();
         this.$refs.wrap.scrollLeft += e.deltaY;
     },

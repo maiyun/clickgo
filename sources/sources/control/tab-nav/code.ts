@@ -24,27 +24,41 @@ export let mounted = function(this: IVue): void {
 
 export let methods = {
     longDown: function(this: IVue, e: MouseEvent | TouchEvent, type: "start" | "end"): void {
-        let num = type === "start" ? -20 : 20;
+        let num = type === "start" ? -5 : 5;
         ClickGo.bindDown(e, {
             down: () => {
                 if (this.timer !== undefined) {
-                    clearInterval(this.timer);
+                    this.timer = undefined;
                 }
-                this.timer = setInterval(() => {
+                let cb = (): void => {
                     if (this.$parent.tabPosition === "top" || this.$parent.tabPosition === "bottom") {
                         this.$refs.tabs.scrollLeft += num;
                     } else {
                         this.$refs.tabs.scrollTop += num;
                     }
-                }, 50);
+                    if (this.timer !== undefined) {
+                        requestAnimationFrame(cb);
+                    }
+                };
+                this.timer = requestAnimationFrame(cb);
             },
             up: () => {
                 if (this.timer !== undefined) {
-                    clearInterval(this.timer);
                     this.timer = undefined;
                 }
             }
         });
+    },
+    wheel: function(this: IVue, e: WheelEvent): void {
+        if (this.$parent.tabPosition === "left" || this.$parent.tabPosition === "right") {
+            return;
+        }
+        if (e.deltaX !== 0) {
+            return;
+        }
+        // --- 用来屏蔽不小心触发前进、后退的浏览器事件 ---
+        e.preventDefault();
+        this.$refs.tabs.scrollLeft += e.deltaY;
     }
 };
 
