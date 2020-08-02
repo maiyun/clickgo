@@ -30,13 +30,9 @@ export let data = {
 export let watch = {
     "type": function(this: IVue): void {
         if (this.type) {
-            for (let item of this.$parent.$children) {
-                ++item.thePopHasTypeCount;
-            }
+            ++this.$parent.hasTypeItemsCount;
         } else {
-            for (let item of this.$parent.$children) {
-                --item.thePopHasTypeCount;
-            }
+            --this.$parent.hasTypeItemsCount;
         }
     }
 };
@@ -86,36 +82,22 @@ export let mounted = function(this: IVue): void {
     // --- 子 pop ---
     if (this.$children.length > 0) {
         this.showArrow = true;
-        for (let item of this.$parent.$children) {
-            ++item.thePopHasSubCount;
-        }
+        ++this.$parent.hasSubItemsCount;
     }
     // --- type ---
     if (this.type) {
-        for (let item of this.$parent.$children) {
-            ++item.thePopHasTypeCount;
-        }
+        ++this.$parent.hasTypeItemsCount;
     }
 };
 
 export let destroyed = function(this: IVue): void {
     // --- 子 pop ---
     if (this.showArrow) {
-        for (let item of this.$parent.$children) {
-            if (item.$data._controlName.split(0, 9) !== "menu-pop-") {
-                continue;
-            }
-            --item.thePopHasSubCount;
-        }
+        --this.$parent.hasSubItemsCount;
     }
     // --- type ---
     if (this.type) {
-        for (let item of this.$parent.$children) {
-            if (item.$data._controlName.split(0, 9) !== "menu-pop-") {
-                continue;
-            }
-            --item.thePopHasTypeCount;
-        }
+        --this.$parent.hasTypeItemsCount;
     }
 };
 

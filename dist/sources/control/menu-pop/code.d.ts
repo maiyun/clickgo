@@ -11,6 +11,8 @@ export declare let data: {
     topData: number;
     zIndexData: number;
     open: boolean;
+    hasSubItemsCount: number;
+    hasTypeItemsCount: number;
 };
 export declare let methods: {
     onHide: (this: IVue) => void;

@@ -30,16 +30,10 @@ exports.data = {
 exports.watch = {
     "type": function () {
         if (this.type) {
-            for (var _i = 0, _a = this.$parent.$children; _i < _a.length; _i++) {
-                var item = _a[_i];
-                ++item.thePopHasTypeCount;
-            }
+            ++this.$parent.hasTypeItemsCount;
         }
         else {
-            for (var _b = 0, _c = this.$parent.$children; _b < _c.length; _b++) {
-                var item = _c[_b];
-                --item.thePopHasTypeCount;
-            }
+            --this.$parent.hasTypeItemsCount;
         }
     }
 };
@@ -85,35 +79,17 @@ exports.methods = {
 exports.mounted = function () {
     if (this.$children.length > 0) {
         this.showArrow = true;
-        for (var _i = 0, _a = this.$parent.$children; _i < _a.length; _i++) {
-            var item = _a[_i];
-            ++item.thePopHasSubCount;
-        }
+        ++this.$parent.hasSubItemsCount;
     }
     if (this.type) {
-        for (var _b = 0, _c = this.$parent.$children; _b < _c.length; _b++) {
-            var item = _c[_b];
-            ++item.thePopHasTypeCount;
-        }
+        ++this.$parent.hasTypeItemsCount;
     }
 };
 exports.destroyed = function () {
     if (this.showArrow) {
-        for (var _i = 0, _a = this.$parent.$children; _i < _a.length; _i++) {
-            var item = _a[_i];
-            if (item.$data._controlName.split(0, 9) !== "menu-pop-") {
-                continue;
-            }
-            --item.thePopHasSubCount;
-        }
+        --this.$parent.hasSubItemsCount;
     }
     if (this.type) {
-        for (var _b = 0, _c = this.$parent.$children; _b < _c.length; _b++) {
-            var item = _c[_b];
-            if (item.$data._controlName.split(0, 9) !== "menu-pop-") {
-                continue;
-            }
-            --item.thePopHasTypeCount;
-        }
+        --this.$parent.hasTypeItemsCount;
     }
 };

@@ -11,7 +11,10 @@ export let data = {
     "leftData": -20070831,
     "topData": -20070831,
     "zIndexData": 0,
-    "open": false
+    "open": false,
+
+    "hasSubItemsCount": 0,
+    "hasTypeItemsCount": 0
 };
 
 export let methods = {
