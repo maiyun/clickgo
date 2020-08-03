@@ -22,9 +22,7 @@ export let props = {
 
 export let data = {
     "popOpen": false,
-    "showArrow": false,
-    "thePopHasSubCount": 0,
-    "thePopHasTypeCount": 0
+    "showArrow": false
 };
 
 export let watch = {

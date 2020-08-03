@@ -1,5 +1,5 @@
 .wrap {
-    margin: 3px 0;
+    margin: 3px 0; display: flex;
 }
 
 .type {
@@ -7,5 +7,5 @@
 }
 
 .line {
-    background: rgba(0, 0, 0, .1); height: 1px; margin-left: 5px;
+    background: rgba(0, 0, 0, .1); height: 1px; margin-left: 5px; flex-grow: 1;
 }

@@ -6,9 +6,11 @@
 
     "code": "/code",
     "layout": "/layout",
+    "style": "/style",
 
     "files": [
         "/code.js",
-        "/layout.html"
+        "/layout.html",
+        "/style.css"
     ]
 }

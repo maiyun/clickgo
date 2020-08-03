@@ -21,8 +21,6 @@ export declare let props: {
 export declare let data: {
     popOpen: boolean;
     showArrow: boolean;
-    thePopHasSubCount: number;
-    thePopHasTypeCount: number;
 };
 export declare let watch: {
     type: (this: IVue) => void;

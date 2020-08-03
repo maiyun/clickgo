@@ -23,9 +23,7 @@ exports.props = {
 };
 exports.data = {
     "popOpen": false,
-    "showArrow": false,
-    "thePopHasSubCount": 0,
-    "thePopHasTypeCount": 0
+    "showArrow": false
 };
 exports.watch = {
     "type": function () {
