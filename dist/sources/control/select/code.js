@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.destroyed = exports.mounted = exports.methods = exports.computed = exports.watch = exports.data = exports.props = void 0;
+exports.methods = exports.computed = exports.data = exports.props = void 0;
 exports.props = {
     "disabled": {
         "default": false
@@ -23,75 +23,49 @@ exports.props = {
     "zIndex": {
         "default": 0
     },
-    "padding": {
-        "default": undefined
-    },
     "flex": {
         "default": ""
+    },
+    "padding": {
+        "default": "7"
     },
     "value": {
         "default": undefined
     },
     "editable": {
-        "default": true
+        "default": false
     },
     "data": {
         "default": []
     }
 };
 exports.data = {
-    "valueData": "",
-    "wrapFocus": false,
-    "inputFocus": false
-};
-exports.watch = {
-    "value": {
-        handler: function () {
-            var _a;
-            this.valueData = (_a = this.value) !== null && _a !== void 0 ? _a : "";
-        },
-        "immediate": true
-    }
+    "valueData": 0
 };
 exports.computed = {
-    "widthPx": function () {
-        if (this.width !== undefined) {
-            return this.width + "px";
-        }
-        if (this.flex !== "") {
-            return this.$parent.direction ? (this.$parent.direction === "v" ? undefined : "0") : undefined;
-        }
-    },
-    "heightPx": function () {
-        if (this.height !== undefined) {
-            return this.height + "px";
-        }
-        if (this.flex !== "") {
-            return this.$parent.direction ? (this.$parent.direction === "v" ? "0" : undefined) : undefined;
-        }
-    },
     "editableComp": function () {
         if (typeof this.editable === "boolean") {
             return this.editable;
         }
         return this.editable === "true" ? true : false;
+    },
+    "dataComp": function () {
+        var data = [];
+        for (var i = 0; i < this.data.length; ++i) {
+            if (this.data[i].value) {
+                data[i] = this.data[i];
+                continue;
+            }
+            data[i] = {
+                "value": this.data[i]
+            };
+        }
+        return data;
     }
 };
 exports.methods = {
-    input: function () {
-        this.$emit("input", this.valueData);
-    },
-    down: function (e) {
-        if (e instanceof MouseEvent && ClickGo.hasTouch) {
-            return;
-        }
-        this.stopPropagation(e);
-        this._down();
+    input: function (index) {
+        this.valueData = index;
+        this.$emit("input", this.dataComp[index].value);
     }
-};
-exports.mounted = function () {
-    ClickGo.appendToPop(this.$refs.pop);
-};
-exports.destroyed = function () {
-    ClickGo.removeFromPop(this.$refs.pop);
 };

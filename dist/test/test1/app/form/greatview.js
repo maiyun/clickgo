@@ -52,6 +52,10 @@ exports.data = {
         }
     ],
     "select": 0,
+    "slist2": [
+        "haha1", "haha2", "haha3", "haha4"
+    ],
+    "select2": "haha1",
     "style": false,
     "tabs": [],
     "tabsi": 0,

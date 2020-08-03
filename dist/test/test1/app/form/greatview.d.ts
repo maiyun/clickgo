@@ -39,6 +39,8 @@ export declare let data: {
         disabled?: undefined;
     })[];
     select: number;
+    slist2: string[];
+    select2: string;
     style: boolean;
     tabs: never[];
     tabsi: number;

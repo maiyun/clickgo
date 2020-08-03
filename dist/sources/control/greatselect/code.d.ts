@@ -26,6 +26,9 @@ export declare let props: {
     flex: {
         default: string;
     };
+    padding: {
+        default: undefined;
+    };
     area: {
         default: string;
     };
@@ -39,4 +42,5 @@ export declare let data: {
 };
 export declare let methods: {
     showPop: (this: IVue, event: MouseEvent) => void;
+    down: (this: IVue, e: MouseEvent | TouchEvent) => void;
 };

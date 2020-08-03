@@ -27,6 +27,9 @@ export let props = {
     "flex": {
         "default": ""
     },
+    "padding": {
+        "default": undefined
+    },
 
     "area": {
         "default": "all"
@@ -75,6 +78,13 @@ export let methods = {
             ClickGo.showPop(pop, this.$el);
         }
         this._tap(event);
+    },
+    down: function(this: IVue, e: MouseEvent | TouchEvent): void {
+        if (e instanceof MouseEvent && ClickGo.hasTouch) {
+            return;
+        }
+        this.stopPropagation(e);
+        this._down();
     }
 };
 

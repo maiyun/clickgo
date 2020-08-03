@@ -21,18 +21,18 @@ export let props = {
     "zIndex": {
         "default": 0
     },
-    "padding": {
-        "default": undefined
-    },
     "flex": {
         "default": ""
+    },
+    "padding": {
+        "default": "7"
     },
 
     "value": {
         "default": undefined
     },
     "editable": {
-        "default": true
+        "default": false
     },
     "data": {
         "default": []
@@ -40,64 +40,35 @@ export let props = {
 };
 
 export let data = {
-    "valueData": "",
-    "wrapFocus": false,
-    "inputFocus": false
-};
-
-export let watch = {
-    "value": {
-        handler: function(this: IVue): void {
-            this.valueData = this.value ?? "";
-        },
-        "immediate": true
-    }
+    "valueData": 0
 };
 
 export let computed = {
-    "widthPx": function(this: IVue): string | undefined {
-        if (this.width !== undefined) {
-            return this.width + "px";
-        }
-        if (this.flex !== "") {
-            return this.$parent.direction ? (this.$parent.direction === "v" ? undefined : "0") : undefined;
-        }
-    },
-    "heightPx": function(this: IVue): string | undefined {
-        if (this.height !== undefined) {
-            return this.height + "px";
-        }
-        if (this.flex !== "") {
-            return this.$parent.direction ? (this.$parent.direction === "v" ? "0" : undefined) : undefined;
-        }
-    },
-
     "editableComp": function(this: IVue): boolean {
         if (typeof this.editable === "boolean") {
             return this.editable;
         }
         return this.editable === "true" ? true : false;
+    },
+    "dataComp": function(this: IVue): any {
+        let data = [];
+        for (let i = 0; i < this.data.length; ++i) {
+            if (this.data[i].value) {
+                data[i] = this.data[i];
+                continue;
+            }
+            data[i] = {
+                "value": this.data[i]
+            };
+        }
+        return data;
     }
 };
 
 export let methods = {
-    input: function(this: IVue): void {
-        this.$emit("input", this.valueData);
-    },
-    down: function(this: IVue, e: MouseEvent | TouchEvent): void {
-        if (e instanceof MouseEvent && ClickGo.hasTouch) {
-            return;
-        }
-        this.stopPropagation(e);
-        this._down();
+    input: function(this: IVue, index: number): void {
+        this.valueData = index;
+        this.$emit("input", this.dataComp[index].value);
     }
-};
-
-export let mounted = function(this: IVue): void {
-    ClickGo.appendToPop(this.$refs.pop);
-};
-
-export let destroyed = function(this: IVue): void {
-    ClickGo.removeFromPop(this.$refs.pop);
 };
 

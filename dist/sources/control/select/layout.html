@@ -1,10 +1,6 @@
-<div class="wrap" :tabindex="(!disabled && focus) ? '0' : undefined" :style="{'width': widthPx, 'height': heightPx, 'left': left + 'px', 'top': top + 'px', 'z-index': zIndex, 'flex-grow': flex}" :class="[disabled ? 'cg-disabled' : undefined, (inputFocus || wrapFocus) ? 'focus' : undefined]" @click="_tap" @mousedown="down" @touchstart="down" @dblclick="_dblclick" @focus="wrapFocus=true" @blur="wrapFocus=false">
-    <input ref="input" v-if="focus && !disabled && editableComp" class="input" type="text" :style="{'padding': padding && padding.replace(/([0-9]+)($| )/g, '$1px$2')}" v-model="valueData" @input="input" @focus="inputFocus=true" @blur="inputFocus=false">
-    <div v-else class="input" :style="{'padding': padding && padding.replace(/([0-9]+)($| )/g, '$1px$2')}" style="display: flex; align-items: center;">{{valueData}}</div>
-    <div class="arrow"></div>
-    <div ref="pop" class="pop">
-        <greatview same="true" :data="data" v-slot="row">
-            
-        </greatview>
-    </div>
-</div>
+<cg-greatselect @tap="_tap" @down="_down" @dblclick="_dblclick" :disabled="disabled" :focus="focus" :width="width" :height="height" :left="left" :top="top" :z-index="zIndex" :flex="flex" :padding="padding">
+    {{dataComp[valueData] ? (dataComp[valueData].label || dataComp[valueData].value) : ''}}
+    <cg-greatselect-pop :value="valueData" @input="input" :data="dataComp" v-slot="data">
+        <cg-greatselect-pop-item :value="data.index" style="padding: 7px;">{{data.row.label || data.row.value}}</cg-greatselect-pop-item>
+    </cg-greatselect-pop>
+</cg-greatselect>

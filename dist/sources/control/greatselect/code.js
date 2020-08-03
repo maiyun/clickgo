@@ -29,6 +29,9 @@ exports.props = {
     "flex": {
         "default": ""
     },
+    "padding": {
+        "default": undefined
+    },
     "area": {
         "default": "all"
     }
@@ -74,5 +77,12 @@ exports.methods = {
             ClickGo.showPop(pop, this.$el);
         }
         this._tap(event);
+    },
+    down: function (e) {
+        if (e instanceof MouseEvent && ClickGo.hasTouch) {
+            return;
+        }
+        this.stopPropagation(e);
+        this._down();
     }
 };

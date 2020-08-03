@@ -96,6 +96,8 @@
                         <button flex="1" @tap="slist.splice(-2, 0, {'type':0,'name':'Card'+slist.length,'path':'Bob >> folder >> Card','src': '/res/r-2.svg','disabled':undefined})">Add item</button>
                         <button flex="1" @tap="slist.splice(-3, 1)">Remove item</button>
                     </layout>
+                    <block>select:</block>
+                    <select v-model="select2" :data="slist2"></select>
                 </layout>
             </tab-panel>
             <tab-panel v-for="item of tabs" :label="item.label" :name="item.name" style="padding: 10px;">

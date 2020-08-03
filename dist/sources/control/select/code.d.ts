@@ -20,10 +20,10 @@ export declare let props: {
     zIndex: {
         default: number;
     };
-    padding: {
-        default: undefined;
-    };
     flex: {
+        default: string;
+    };
+    padding: {
         default: string;
     };
     value: {
@@ -37,24 +37,12 @@ export declare let props: {
     };
 };
 export declare let data: {
-    valueData: string;
-    wrapFocus: boolean;
-    inputFocus: boolean;
-};
-export declare let watch: {
-    value: {
-        handler: (this: IVue) => void;
-        immediate: boolean;
-    };
+    valueData: number;
 };
 export declare let computed: {
-    widthPx: (this: IVue) => string | undefined;
-    heightPx: (this: IVue) => string | undefined;
     editableComp: (this: IVue) => boolean;
+    dataComp: (this: IVue) => any;
 };
 export declare let methods: {
-    input: (this: IVue) => void;
-    down: (this: IVue, e: MouseEvent | TouchEvent) => void;
+    input: (this: IVue, index: number) => void;
 };
-export declare let mounted: (this: IVue) => void;
-export declare let destroyed: (this: IVue) => void;
