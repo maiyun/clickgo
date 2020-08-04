@@ -29,7 +29,7 @@ export let props = {
     },
 
     "value": {
-        "default": undefined
+        "default": ""
     },
     "editable": {
         "default": false
@@ -40,7 +40,41 @@ export let props = {
 };
 
 export let data = {
-    "valueData": 0
+    "valueData": 0,
+    "valueIndex": 0
+};
+
+export let watch = {
+    "data": {
+        handler: function(this: IVue): void {
+            if (this.dataComp[this.valueIndex]) {
+                return;
+            }
+            this.valueIndex = this.dataComp.length - 1;
+            this.valueData = this.valueIndex >= 0 ? this.dataComp[this.valueIndex].value : "";
+            this.$emit("input", this.valueData);
+        }
+    },
+    "value": {
+        handler: function(this: IVue): void {
+            console.log("change");
+            if (this.valueData === this.value) {
+                return;
+            }
+            console.log("change2");
+            for (let i = 0; i < this.dataComp.length; ++i) {
+                if (this.dataComp[i].value !== this.value) {
+                    continue;
+                }
+                this.valueIndex = i;
+                return;
+            }
+            this.valueIndex = 0;
+            this.valueData = this.dataComp[0] ? this.dataComp[0].value : "";
+            this.$emit("input", this.valueData);
+        },
+        "immediate": true
+    }
 };
 
 export let computed = {
@@ -67,8 +101,9 @@ export let computed = {
 
 export let methods = {
     input: function(this: IVue, index: number): void {
-        this.valueData = index;
-        this.$emit("input", this.dataComp[index].value);
+        this.valueIndex = index;
+        this.valueData = this.dataComp[index] ? this.dataComp[index].value : "";
+        this.$emit("input", this.valueData);
     }
 };
 

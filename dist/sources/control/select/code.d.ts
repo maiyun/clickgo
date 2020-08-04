@@ -27,7 +27,7 @@ export declare let props: {
         default: string;
     };
     value: {
-        default: undefined;
+        default: string;
     };
     editable: {
         default: boolean;
@@ -38,6 +38,16 @@ export declare let props: {
 };
 export declare let data: {
     valueData: number;
+    valueIndex: number;
+};
+export declare let watch: {
+    data: {
+        handler: (this: IVue) => void;
+    };
+    value: {
+        handler: (this: IVue) => void;
+        immediate: boolean;
+    };
 };
 export declare let computed: {
     editableComp: (this: IVue) => boolean;

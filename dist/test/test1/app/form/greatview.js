@@ -53,7 +53,14 @@ exports.data = {
     ],
     "select": 0,
     "slist2": [
-        "haha1", "haha2", "haha3", "haha4"
+        "haha1", "haha2", "haha3", "haha4", {
+            "value": "ha5",
+            "label": "The value is ha5"
+        }, {
+            "value": "ha6",
+            "label": "Can not be selected",
+            "disabled": true
+        }
     ],
     "select2": "haha1",
     "style": false,

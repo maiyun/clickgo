@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.methods = exports.computed = exports.data = exports.props = void 0;
+exports.methods = exports.computed = exports.watch = exports.data = exports.props = void 0;
 exports.props = {
     "disabled": {
         "default": false
@@ -30,7 +30,7 @@ exports.props = {
         "default": "7"
     },
     "value": {
-        "default": undefined
+        "default": ""
     },
     "editable": {
         "default": false
@@ -40,7 +40,40 @@ exports.props = {
     }
 };
 exports.data = {
-    "valueData": 0
+    "valueData": 0,
+    "valueIndex": 0
+};
+exports.watch = {
+    "data": {
+        handler: function () {
+            if (this.dataComp[this.valueIndex]) {
+                return;
+            }
+            this.valueIndex = this.dataComp.length - 1;
+            this.valueData = this.valueIndex >= 0 ? this.dataComp[this.valueIndex].value : "";
+            this.$emit("input", this.valueData);
+        }
+    },
+    "value": {
+        handler: function () {
+            console.log("change");
+            if (this.valueData === this.value) {
+                return;
+            }
+            console.log("change2");
+            for (var i = 0; i < this.dataComp.length; ++i) {
+                if (this.dataComp[i].value !== this.value) {
+                    continue;
+                }
+                this.valueIndex = i;
+                return;
+            }
+            this.valueIndex = 0;
+            this.valueData = this.dataComp[0] ? this.dataComp[0].value : "";
+            this.$emit("input", this.valueData);
+        },
+        "immediate": true
+    }
 };
 exports.computed = {
     "editableComp": function () {
@@ -65,7 +98,8 @@ exports.computed = {
 };
 exports.methods = {
     input: function (index) {
-        this.valueData = index;
-        this.$emit("input", this.dataComp[index].value);
+        this.valueIndex = index;
+        this.valueData = this.dataComp[index] ? this.dataComp[index].value : "";
+        this.$emit("input", this.valueData);
     }
 };

@@ -39,7 +39,15 @@ export declare let data: {
         disabled?: undefined;
     })[];
     select: number;
-    slist2: string[];
+    slist2: (string | {
+        value: string;
+        label: string;
+        disabled?: undefined;
+    } | {
+        value: string;
+        label: string;
+        disabled: boolean;
+    })[];
     select2: string;
     style: boolean;
     tabs: never[];

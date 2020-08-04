@@ -1,6 +1,6 @@
 <cg-greatselect @tap="_tap" @down="_down" @dblclick="_dblclick" :disabled="disabled" :focus="focus" :width="width" :height="height" :left="left" :top="top" :z-index="zIndex" :flex="flex" :padding="padding">
-    {{dataComp[valueData] ? (dataComp[valueData].label || dataComp[valueData].value) : ''}}
-    <cg-greatselect-pop :value="valueData" @input="input" :data="dataComp" v-slot="data">
-        <cg-greatselect-pop-item :value="data.index" class="item">{{data.row.label || data.row.value}}</cg-greatselect-pop-item>
+    {{dataComp[valueIndex] ? (dataComp[valueIndex].label || dataComp[valueIndex].value) : ''}}
+    <cg-greatselect-pop :value="valueIndex" @input="input" :data="dataComp" v-slot="data">
+        <cg-greatselect-pop-item :value="data.index" :disabled="data.row.disabled" class="item">{{data.row.label || data.row.value}}</cg-greatselect-pop-item>
     </cg-greatselect-pop>
 </cg-greatselect>
