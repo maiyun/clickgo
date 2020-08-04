@@ -57,11 +57,9 @@ export let watch = {
     },
     "value": {
         handler: function(this: IVue): void {
-            console.log("change");
             if (this.valueData === this.value) {
                 return;
             }
-            console.log("change2");
             for (let i = 0; i < this.dataComp.length; ++i) {
                 if (this.dataComp[i].value !== this.value) {
                     continue;

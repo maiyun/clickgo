@@ -56,11 +56,9 @@ exports.watch = {
     },
     "value": {
         handler: function () {
-            console.log("change");
             if (this.valueData === this.value) {
                 return;
             }
-            console.log("change2");
             for (var i = 0; i < this.dataComp.length; ++i) {
                 if (this.dataComp[i].value !== this.value) {
                     continue;
