@@ -119,6 +119,9 @@ export let methods = {
         if (e instanceof MouseEvent && ClickGo.hasTouch) {
             return;
         }
+        if (this.contentLength < this.client) {
+            return;
+        }
 
         let wrapSize = ClickGo.getWatchSize(this.$refs.wrap);
         let top = wrapSize.top + wrapSize.border.top + wrapSize.padding.top;
@@ -137,15 +140,16 @@ export let methods = {
         }
 
         /** --- 内容超出像素 --- */
-        let over = (this.length > this.client) ? (this.length - this.client) : 0;
+        let over = this.length - this.client;
         ClickGo.bindMove(e, {
+            // "showRect": true,
             "object": this.$refs.inner,
             "left": this.direction === "v" ? left : left - over,
             "right": this.direction === "v" ? right : right + over,
             "top": this.direction === "h" ? top : top - over,
             "bottom": this.direction === "h" ? bottom : bottom + over,
             "move": (ox, oy) => {
-                this.scrollOffsetData -= Math.round(this.direction === "v" ? oy : ox);
+                this.scrollOffsetData -= this.direction === "v" ? oy : ox;
                 this.scrollOffsetEmit = this.scrollOffsetData;
                 this.$emit("update:scrollOffset", this.scrollOffsetData);
             },

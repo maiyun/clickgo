@@ -22,6 +22,7 @@ exports.data = {
     "so3_2": 0,
     "l3_2": 0,
     "c3_2": 0,
+    "area": "all",
     "slist": [
         {
             "type": 0,
@@ -63,6 +64,7 @@ exports.data = {
         }
     ],
     "select2": "haha1",
+    "select3": "some text",
     "style": false,
     "tabs": [],
     "tabsi": 0,

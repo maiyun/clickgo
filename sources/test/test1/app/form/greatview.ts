@@ -29,6 +29,7 @@ export let data = {
 
     // --- 3 ---
 
+    "area": "all",
     "slist": [
         {
             "type": 0,
@@ -71,6 +72,7 @@ export let data = {
         }
     ],
     "select2": "haha1",
+    "select3": "some text",
 
     "style": false,
 

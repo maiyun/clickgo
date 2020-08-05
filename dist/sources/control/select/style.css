@@ -1,3 +1,7 @@
+.input {
+    -webkit-appearance: none; border: none; margin: 0; display: flex; flex-grow: 1; width: 0; height: 100%; outline: none;
+}
+
 .item {
     padding: 7px;
 }

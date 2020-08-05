@@ -42,7 +42,8 @@ exports.computed = {
             return this.width + "px";
         }
         if (this.flex !== "") {
-            return this.$parent.direction ? (this.$parent.direction === "v" ? undefined : "0") : undefined;
+            var dir = this.$parent.$data._controlName === "select" ? this.$parent.$parent.direction : this.$parent.direction;
+            return dir ? (dir === "v" ? undefined : "0") : undefined;
         }
     },
     "heightPx": function () {
@@ -50,7 +51,8 @@ exports.computed = {
             return this.height + "px";
         }
         if (this.flex !== "") {
-            return this.$parent.direction ? (this.$parent.direction === "v" ? "0" : undefined) : undefined;
+            var dir = this.$parent.$data._controlName === "select" ? this.$parent.$parent.direction : this.$parent.direction;
+            return dir.direction ? (dir.direction === "v" ? "0" : undefined) : undefined;
         }
     }
 };
@@ -58,7 +60,12 @@ exports.data = {
     "popOpen": false
 };
 exports.methods = {
-    showPop: function (event) {
+    showPop: function (event, area) {
+        if (this.area === "arrow" && area === "all") {
+            console.log(this.area, area);
+            this._tap(event);
+            return;
+        }
         if (this.popOpen) {
             ClickGo.hidePop();
             return;

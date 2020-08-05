@@ -41,6 +41,6 @@ export declare let data: {
     popOpen: boolean;
 };
 export declare let methods: {
-    showPop: (this: IVue, event: MouseEvent) => void;
+    showPop: (this: IVue, event: MouseEvent, area: "all" | "arrow") => void;
     down: (this: IVue, e: MouseEvent | TouchEvent) => void;
 };

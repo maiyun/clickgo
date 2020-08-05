@@ -59,12 +59,12 @@ function getDomSize(el) {
         "left": parseFloat(cs.paddingLeft)
     };
     return {
-        "top": rect.top,
-        "right": rect.right,
-        "bottom": rect.bottom,
-        "left": rect.left,
-        "width": rect.width,
-        "height": rect.height,
+        "top": Math.round(rect.top),
+        "right": Math.round(rect.right),
+        "bottom": Math.round(rect.bottom),
+        "left": Math.round(rect.left),
+        "width": Math.round(rect.width),
+        "height": Math.round(rect.height),
         "padding": padding,
         "border": border,
         "clientWidth": rect.width - border.left - border.right,
@@ -101,12 +101,12 @@ function requestAnimationFrameCb() {
             "left": parseFloat(cs.paddingLeft)
         };
         var trect = {
-            "top": rect.top,
-            "right": rect.right,
-            "bottom": rect.bottom,
-            "left": rect.left,
-            "width": rect.width,
-            "height": rect.height,
+            "top": Math.round(rect.top),
+            "right": Math.round(rect.right),
+            "bottom": Math.round(rect.bottom),
+            "left": Math.round(rect.left),
+            "width": Math.round(rect.width),
+            "height": Math.round(rect.height),
             "padding": padding,
             "border": border,
             "clientWidth": rect.width - border.left - border.right,

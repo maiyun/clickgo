@@ -42,7 +42,8 @@ export let computed = {
             return this.width + "px";
         }
         if (this.flex !== "") {
-            return this.$parent.direction ? (this.$parent.direction === "v" ? undefined : "0") : undefined;
+            let dir = this.$parent.$data._controlName === "select" ? this.$parent.$parent.direction : this.$parent.direction;
+            return dir ? (dir === "v" ? undefined : "0") : undefined;
         }
     },
     "heightPx": function(this: IVue): string | undefined {
@@ -50,7 +51,8 @@ export let computed = {
             return this.height + "px";
         }
         if (this.flex !== "") {
-            return this.$parent.direction ? (this.$parent.direction === "v" ? "0" : undefined) : undefined;
+            let dir = this.$parent.$data._controlName === "select" ? this.$parent.$parent.direction : this.$parent.direction;
+            return dir.direction ? (dir.direction === "v" ? "0" : undefined) : undefined;
         }
     }
 };
@@ -60,7 +62,12 @@ export let data = {
 };
 
 export let methods = {
-    showPop: function(this: IVue, event: MouseEvent): void {
+    showPop: function(this: IVue, event: MouseEvent, area: "all" | "arrow"): void {
+        if (this.area === "arrow" && area === "all") {
+            console.log(this.area, area);
+            this._tap(event);
+            return;
+        }
         if (this.popOpen) {
             ClickGo.hidePop();
             return;

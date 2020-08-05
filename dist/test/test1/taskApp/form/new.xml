@@ -6,11 +6,7 @@
         </layout>
         <layout align-v="center">
             <label width="52">Open:</label>
-            <greatselect flex="1" v-model="path">
-                <greatselect-pop>
-                    <greatselect-pop-item></greatselect-pop-item>
-                </greatselect-pop>
-            </greatselect>
+            <select flex="1" v-model="path" :editable="true"></select>
         </layout>
     </layout>
     <layout align-h="end" gutter="10" style="padding: 20px;">

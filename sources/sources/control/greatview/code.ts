@@ -148,9 +148,6 @@ export let methods = {
                     return;
                 }
                 // --- 遍历 inner items ---
-                if (!this.$refs.inner) {
-                    return;
-                }
                 for (let i = 0; i < this.$refs.inner.children.length; ++i) {
                     let item = this.$refs.inner.children.item(i) as HTMLElement;
                     let start = length;
@@ -172,7 +169,7 @@ export let methods = {
             this.innerPos.start = 0;
             this.innerPos.end = 1;
             await this.$nextTick();
-            await ClickGo.sleep(0);
+            await ClickGo.sleep(100);
             if (nowCount !== this.refreshCount) {
                 return;
             }

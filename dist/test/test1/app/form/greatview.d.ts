@@ -19,6 +19,7 @@ export declare let data: {
     so3_2: number;
     l3_2: number;
     c3_2: number;
+    area: string;
     slist: ({
         type: number;
         name: string;
@@ -49,6 +50,7 @@ export declare let data: {
         disabled: boolean;
     })[];
     select2: string;
+    select3: string;
     style: boolean;
     tabs: never[];
     tabsi: number;

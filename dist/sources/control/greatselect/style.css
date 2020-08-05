@@ -27,10 +27,10 @@
 .arrow::before {
     content: ''; border: solid 1px #000; border-width: 0 1px 1px 0; width: 6px; height: 6px; -webkit-transform: rotate(45deg); transform: rotate(45deg); margin-top: -3px;
 }
-.wrap.all:not(.cg-disabled):not(.cg-pop-open):hover > .arrow, .wrap.arrow:not(.cg-disabled):not(.cg-pop-open) > .arrow:hover {
+.wrap.area-all:not(.cg-disabled):not(.cg-pop-open):hover > .arrow, .wrap.area-arrow:not(.cg-disabled):not(.cg-pop-open) > .arrow:hover {
     border-left-color: #0078d7; background-color: rgba(0, 120, 215, .05);
 }
-.wrap.all:not(.cg-disabled):not(.cg-pop-open):active > .arrow, .wrap.arrow:not(.cg-disabled):not(.cg-pop-open) > .arrow:active, .wrap.cg-pop-open > .arrow {
+.wrap.area-all:not(.cg-disabled):not(.cg-pop-open):active > .arrow, .wrap.area-arrow:not(.cg-disabled):not(.cg-pop-open) > .arrow:active, .wrap.cg-pop-open > .arrow {
     border-left-color: #005499; background-color: rgba(0, 120, 215, .2);
 }
 

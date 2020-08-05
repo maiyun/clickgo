@@ -181,9 +181,6 @@ exports.methods = {
                         if (nowCount !== this.refreshCount) {
                             return [2];
                         }
-                        if (!this.$refs.inner) {
-                            return [2];
-                        }
                         for (i = 0; i < this.$refs.inner.children.length; ++i) {
                             item = this.$refs.inner.children.item(i);
                             start = length;
@@ -208,7 +205,7 @@ exports.methods = {
                         return [4, this.$nextTick()];
                     case 6:
                         _a.sent();
-                        return [4, ClickGo.sleep(0)];
+                        return [4, ClickGo.sleep(100)];
                     case 7:
                         _a.sent();
                         if (nowCount !== this.refreshCount) {
