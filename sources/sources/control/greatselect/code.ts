@@ -65,7 +65,12 @@ export let methods = {
     showPop: function(this: IVue, event: MouseEvent, area: "all" | "arrow"): void {
         if (this.area === "arrow") {
             if (area === "all") {
+                if (this.popOpen) {
+                    ClickGo.hidePop();
+                }
                 return;
+            } else {
+                event.stopPropagation();
             }
         } else {
             if (area === "arrow") {

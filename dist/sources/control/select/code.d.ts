@@ -55,4 +55,5 @@ export declare let computed: {
 };
 export declare let methods: {
     input: (this: IVue, index: number) => void;
+    tinput: (this: IVue) => void;
 };

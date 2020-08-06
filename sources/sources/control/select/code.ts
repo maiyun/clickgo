@@ -50,9 +50,12 @@ export let watch = {
             if (this.dataComp[this.valueIndex]) {
                 return;
             }
+            // --- 没找到 ---
             this.valueIndex = this.dataComp.length - 1;
-            this.valueData = this.valueIndex >= 0 ? this.dataComp[this.valueIndex].value : "";
-            this.$emit("input", this.valueData);
+            if (!this.editable) {
+                this.valueData = this.valueIndex >= 0 ? this.dataComp[this.valueIndex].value : "";
+                this.$emit("input", this.valueData);
+            }
         }
     },
     "value": {
@@ -60,6 +63,7 @@ export let watch = {
             if (this.valueData === this.value) {
                 return;
             }
+            this.valueData = this.value;
             for (let i = 0; i < this.dataComp.length; ++i) {
                 if (this.dataComp[i].value !== this.value) {
                     continue;
@@ -67,9 +71,12 @@ export let watch = {
                 this.valueIndex = i;
                 return;
             }
+            // --- 没找到 ---
             this.valueIndex = 0;
-            this.valueData = this.dataComp[0] ? this.dataComp[0].value : "";
-            this.$emit("input", this.valueData);
+            if (!this.editable) {
+                this.valueData = this.dataComp[0] ? this.dataComp[0].value : "";
+                this.$emit("input", this.valueData);
+            }
         },
         "immediate": true
     }
@@ -102,6 +109,19 @@ export let methods = {
         this.valueIndex = index;
         this.valueData = this.dataComp[index] ? this.dataComp[index].value : "";
         this.$emit("input", this.valueData);
+    },
+    tinput: function(this: IVue): void {
+        this.valueData = this.$refs.input.value;
+        this.$emit("input", this.valueData);
+        for (let i = 0; i < this.dataComp.length; ++i) {
+            if (this.dataComp[i].value !== this.valueData) {
+                continue;
+            }
+            this.valueIndex = i;
+            return;
+        }
+        // --- 没找到 ---
+        this.valueIndex = 0;
     }
 };
 

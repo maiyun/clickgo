@@ -1,5 +1,5 @@
 <cg-greatselect @tap="_tap" @down="_down" @dblclick="_dblclick" :disabled="disabled" :focus="focus" :area="editable ? 'arrow' : 'all'" :width="width" :height="height" :left="left" :top="top" :z-index="zIndex" :flex="flex">
-    <input v-if="editable" type="text" class="input" :style="{'padding': padding && padding.replace(/([0-9]+)($| )/g, '$1px$2')}" :value="dataComp[valueIndex] ? dataComp[valueIndex].value : ''">
+    <input ref="input" v-if="editable" type="text" class="input" :style="{'padding': padding && padding.replace(/([0-9]+)($| )/g, '$1px$2')}" :value="valueData" @input="tinput">
     <div v-else :style="{'padding': padding && padding.replace(/([0-9]+)($| )/g, '$1px$2')}">{{dataComp[valueIndex] ? (dataComp[valueIndex].label || dataComp[valueIndex].value) : ''}}</div>
     <cg-greatselect-pop :value="valueIndex" @input="input" :data="dataComp" :same="true" v-slot="data">
         <cg-greatselect-pop-item :value="data.index" :disabled="data.row.disabled" class="item">{{data.row.label || data.row.value}}</cg-greatselect-pop-item>
