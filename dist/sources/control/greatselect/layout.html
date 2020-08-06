@@ -1,6 +1,6 @@
 <div class="wrap" :tabindex="(!disabled && focus) ? '0' : undefined" :style="{'width': widthPx, 'height': heightPx, 'left': left + 'px', 'top': top + 'px', 'z-index': zIndex, 'flex-grow': flex}" :class="[disabled ? 'cg-disabled' : undefined, popOpen && 'cg-pop-open', 'area-' + area]" @click="showPop(event, 'all')" @mousedown="down" @touchstart="down" @dblclick="_dblclick">
-    <div class="inner" :class="[direction]" :style="{'padding': padding && padding.replace(/([0-9]+)($| )/g, '$1px$2')}" @click="showPop(event, 'arrow')">
+    <div class="inner" :class="[direction]" :style="{'padding': padding && padding.replace(/([0-9]+)($| )/g, '$1px$2')}">
         <slot>
     </div>
-    <div class="arrow"></div>
+    <div class="arrow" @click="showPop(event, 'arrow')"></div>
 </div>

@@ -63,10 +63,14 @@ export let data = {
 
 export let methods = {
     showPop: function(this: IVue, event: MouseEvent, area: "all" | "arrow"): void {
-        if (this.area === "arrow" && area === "all") {
-            console.log(this.area, area);
-            this._tap(event);
-            return;
+        if (this.area === "arrow") {
+            if (area === "all") {
+                return;
+            }
+        } else {
+            if (area === "arrow") {
+                return;
+            }
         }
         if (this.popOpen) {
             ClickGo.hidePop();

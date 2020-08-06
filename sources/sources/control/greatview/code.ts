@@ -147,6 +147,10 @@ export let methods = {
                 if (nowCount !== this.refreshCount) {
                     return;
                 }
+                if (!this.$refs.inner) {
+                    // --- 当前又被卸载了 ---
+                    return;
+                }
                 // --- 遍历 inner items ---
                 for (let i = 0; i < this.$refs.inner.children.length; ++i) {
                     let item = this.$refs.inner.children.item(i) as HTMLElement;
@@ -169,8 +173,12 @@ export let methods = {
             this.innerPos.start = 0;
             this.innerPos.end = 1;
             await this.$nextTick();
-            await ClickGo.sleep(100);
+            await ClickGo.sleep(0);
             if (nowCount !== this.refreshCount) {
+                return;
+            }
+            if (!this.$refs.inner) {
+                // --- 当前又被卸载了 ---
                 return;
             }
             let item = this.$refs.inner.children.item(0) as HTMLElement;
