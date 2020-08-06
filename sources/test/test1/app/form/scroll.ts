@@ -9,15 +9,3 @@ export let data = {
     "lcount": 3
 };
 
-export let mounted = function(this: IVue): void {
-    let scrollRect = ClickGo.watchSize(this.$refs.scrollLayout.$el, (rect) => {
-        this.bc = rect.height;
-    });
-    this.bc = scrollRect.height;
-
-    let bodyRect = ClickGo.watchSize(this.$refs.bodyLayout.$el, (rect) => {
-        this.bl = rect.height;
-    });
-    this.bl = bodyRect.height;
-};
-

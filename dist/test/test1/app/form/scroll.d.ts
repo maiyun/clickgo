@@ -7,4 +7,3 @@ export declare let data: {
     bso: number;
     lcount: number;
 };
-export declare let mounted: (this: IVue) => void;
