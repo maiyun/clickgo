@@ -69,7 +69,7 @@
                 <layout flex="1" gutter="10" direction="v">
                     <block>greatselect:</block>
                     <greatselect :area="area">
-                        <layout flex="1" align-v="center" gutter="5" style="padding: 7px; line-height: 1.2;">
+                        <layout flex="1" align-v="center" gutter="5" style="line-height: 1.2;">
                             <img width="32" height="32" :src="slist[select].src"></img>
                             <block>
                                 <block>{{slist[select].name}}</block>
@@ -78,7 +78,7 @@
                         </layout>
                         <greatselect-pop :value="select" @input="if(slist[arguments[0]].type===0){select=arguments[0];}" :data="slist" v-slot="data">
                             <greatselect-pop-item v-if="data.row.type===0" :disabled="data.row.disabled" :value="data.index">
-                                <layout flex="1" align-v="center" gutter="5" style="padding: 7px; line-height: 1.2;">
+                                <layout flex="1" align-v="center" gutter="5" style="line-height: 1.2;">
                                     <img width="32" height="32" :src="data.row.src"></img>
                                     <block flex="1">
                                         <block>{{data.row.name}}</block>
@@ -91,9 +91,7 @@
                                 </menu-pop>
                             </greatselect-pop-item>
                             <greatselect-pop-split v-else-if="data.row.type===1"></greatselect-pop-split>
-                            <greatselect-pop-item v-else :value="data.index">
-                                <block style="padding: 7px;">Other</block>
-                            </greatselect-pop-item>
+                            <greatselect-pop-item v-else :value="data.index">Other</greatselect-pop-item>
                         </greatselect-pop>
                     </greatselect>
                     <layout gutter="10">

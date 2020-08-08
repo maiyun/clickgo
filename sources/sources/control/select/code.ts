@@ -25,7 +25,7 @@ export let props = {
         "default": ""
     },
     "padding": {
-        "default": "7"
+        "default": undefined
     },
 
     "value": {

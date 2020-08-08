@@ -9,7 +9,7 @@
 }
 
 .inner {
-    display: flex; align-items: center; flex-grow: 1; width: 0;
+    display: flex; align-items: center; flex-grow: 1; width: 0; padding: 7px;
 }
 
 .control {

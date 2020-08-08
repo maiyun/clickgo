@@ -1,4 +1,4 @@
-<form title="Task manager" icon="/icon.svg" width="350" height="520" background="#FFF">
+<form title="Task manager" icon="/icon.svg" width="400" height="550" background="#FFF">
     <menu>
         <menu-item alt="F" text="File">
             <menu-pop>
@@ -27,4 +27,12 @@
             </menu-pop>
         </menu-item>
     </menu>
+    <tab flex="1">
+        <tab-panel label="Process" style="padding: 10px;">
+            1
+        </tab-panel>
+        <tab-panel label="Details" style="padding: 10px;">
+            2
+        </tab-panel>
+    </tab>
 </form>

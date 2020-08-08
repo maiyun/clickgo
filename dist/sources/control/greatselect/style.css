@@ -12,7 +12,7 @@
 }
 
 .inner {
-    display: flex; flex-grow: 1;
+    display: flex; flex-grow: 1; padding: 7px;
 }
 .inner.h {
     align-items: center;

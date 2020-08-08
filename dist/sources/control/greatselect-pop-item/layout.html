@@ -1,5 +1,5 @@
 <div class="wrap" :class="[disabled && 'cg-disabled', popOpen && 'cg-pop-open', $parent.$parent.$parent.value === value ? 'selected' : undefined]" @mousedown="_down" @touchstart="_down">
-    <div class="inner" @click="click">
+    <div class="inner" @click="click" :style="{'padding': padding && padding.replace(/([0-9]+)($| )/g, '$1px$2')}">
         <slot>
     </div>
     <div v-if="hasMenuPop && !disabled" class="control" @click="controlClick"></div>

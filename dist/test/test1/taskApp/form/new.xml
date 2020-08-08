@@ -6,11 +6,11 @@
         </layout>
         <layout align-v="center">
             <label width="52">Open:</label>
-            <select flex="1" v-model="path" :editable="true"></select>
+            <select flex="1" v-model="path" :editable="true" :data="['app/', 'taskApp/']"></select>
         </layout>
     </layout>
     <layout align-h="end" gutter="10" style="padding: 20px;">
-        <button width="80" :disabled="path === '' ? true : false">OK</button>
+        <button width="80" :disabled="path === '' ? true : false" @tap="runApp">OK</button>
         <button width="80" @tap="closeForm">Cancel</button>
     </layout>
 </form>

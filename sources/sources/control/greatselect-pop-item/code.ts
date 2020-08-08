@@ -2,6 +2,11 @@ export let props = {
     "disabled": {
         "default": false
     },
+
+    "padding": {
+        "default": undefined
+    },
+
     "value": {
         "default": ""
     }

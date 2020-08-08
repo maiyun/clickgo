@@ -24,7 +24,7 @@ export declare let props: {
         default: string;
     };
     padding: {
-        default: string;
+        default: undefined;
     };
     value: {
         default: string;
