@@ -1,33 +1,15 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.methods = exports.computed = exports.props = void 0;
+exports.computed = exports.props = void 0;
 exports.props = {
-    "disabled": {
-        "default": false
-    },
-    "focus": {
-        "default": false
-    },
     "width": {
         "default": undefined
     },
     "height": {
-        "default": 30
-    },
-    "left": {
-        "default": 0
-    },
-    "top": {
-        "default": 0
-    },
-    "zIndex": {
-        "default": 0
+        "default": undefined
     },
     "flex": {
         "default": ""
-    },
-    "padding": {
-        "default": undefined
     }
 };
 exports.computed = {
@@ -46,20 +28,5 @@ exports.computed = {
         if (this.flex !== "") {
             return this.$parent.direction ? (this.$parent.direction === "v" ? "0" : undefined) : undefined;
         }
-    }
-};
-exports.methods = {
-    keydown: function (e) {
-        if (e.keyCode !== 13) {
-            return;
-        }
-        this._tap(e);
-    },
-    down: function (e) {
-        if (e instanceof MouseEvent && ClickGo.hasTouch) {
-            return;
-        }
-        this.stopPropagation(e);
-        this._down();
     }
 };

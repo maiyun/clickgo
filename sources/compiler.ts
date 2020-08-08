@@ -66,35 +66,42 @@ async function run(): Promise<void> {
         if (item.isFile()) {
             continue;
         }
-        if (["menu-item", "menu-pop", "menu-pop-item", "menu-pop-split", "greatview", "greatselect", "greatselect-pop", "greatselect-pop-item", "greatselect-pop-split", "select", "tab-panel", "tab-nav"].includes(item.name)) {
+        if (["button", "form", "greatselect", "greatselect-pop", "greatselect-pop-item", "greatselect-pop-split", "greatview", "img", "label", "layout", "menu", "menu-item", "menu-pop", "menu-pop-item", "menu-pop-split", "overflow", "scroll", "select", "tab-nav", "tab-panel", "view"].includes(item.name)) {
             continue;
         }
         let base = "dist/sources/control/" + item.name;
+        let name = item.name;
 
         let controlBuffer = await getSingleControlBlob(base);
-        if (item.name === "menu") {
+        if (item.name === "block") {
+            name = "common";
             controlBuffer = Buffer.concat([
                 controlBuffer,
-                await getSingleControlBlob("dist/sources/control/menu-item"),
-                await getSingleControlBlob("dist/sources/control/menu-pop"),
-                await getSingleControlBlob("dist/sources/control/menu-pop-item"),
-                await getSingleControlBlob("dist/sources/control/menu-pop-split")
-            ]);
-        } else if (item.name === "view") {
-            controlBuffer = Buffer.concat([
-                controlBuffer,
-                await getSingleControlBlob("dist/sources/control/greatview"),
+                await getSingleControlBlob("dist/sources/control/button"),
+                await getSingleControlBlob("dist/sources/control/form"),
                 await getSingleControlBlob("dist/sources/control/greatselect"),
                 await getSingleControlBlob("dist/sources/control/greatselect-pop"),
                 await getSingleControlBlob("dist/sources/control/greatselect-pop-item"),
                 await getSingleControlBlob("dist/sources/control/greatselect-pop-split"),
-                await getSingleControlBlob("dist/sources/control/select")
+                await getSingleControlBlob("dist/sources/control/greatview"),
+                await getSingleControlBlob("dist/sources/control/img"),
+                await getSingleControlBlob("dist/sources/control/label"),
+                await getSingleControlBlob("dist/sources/control/layout"),
+                await getSingleControlBlob("dist/sources/control/menu"),
+                await getSingleControlBlob("dist/sources/control/menu-item"),
+                await getSingleControlBlob("dist/sources/control/menu-pop"),
+                await getSingleControlBlob("dist/sources/control/menu-pop-item"),
+                await getSingleControlBlob("dist/sources/control/menu-pop-split"),
+                await getSingleControlBlob("dist/sources/control/overflow"),
+                await getSingleControlBlob("dist/sources/control/scroll"),
+                await getSingleControlBlob("dist/sources/control/select"),
+                await getSingleControlBlob("dist/sources/control/view")
             ]);
         } else if (item.name === "tab") {
             controlBuffer = Buffer.concat([
                 controlBuffer,
-                await getSingleControlBlob("dist/sources/control/tab-panel"),
-                await getSingleControlBlob("dist/sources/control/tab-nav")
+                await getSingleControlBlob("dist/sources/control/tab-nav"),
+                await getSingleControlBlob("dist/sources/control/tab-panel")
             ]);
         }
 
@@ -103,7 +110,7 @@ async function run(): Promise<void> {
             Uint8Array.from([192, 1]),
             controlBuffer
         ]);
-        await fs.promises.writeFile("dist/control/" + item.name + ".cgc", fileBuffer);
+        await fs.promises.writeFile("dist/control/" + name + ".cgc", fileBuffer);
     }
     // --- theme to cgt ---
     list = await fs.promises.readdir("dist/sources/theme/", {

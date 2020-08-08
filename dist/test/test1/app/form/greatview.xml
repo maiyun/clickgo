@@ -80,11 +80,15 @@
                             <greatselect-pop-item v-if="data.row.type===0" :disabled="data.row.disabled" :value="data.index">
                                 <layout flex="1" align-v="center" gutter="5" style="padding: 7px; line-height: 1.2;">
                                     <img width="32" height="32" :src="data.row.src"></img>
-                                    <block>
+                                    <block flex="1">
                                         <block>{{data.row.name}}</block>
                                         <block style="opacity:.7;">{{data.row.path}}</block>
                                     </block>
+                                    <block class="select-button" width="30" height="30"></block>
                                 </layout>
+                                <menu-pop v-if="data.row.menu">
+                                    <menu-pop-item alt="S" text="Set the default"></menu-pop-item>
+                                </menu-pop>
                             </greatselect-pop-item>
                             <greatselect-pop-split v-else-if="data.row.type===1"></greatselect-pop-split>
                             <greatselect-pop-item v-else :value="data.index">

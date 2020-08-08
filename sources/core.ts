@@ -305,7 +305,7 @@ export function removeFromPop(el: HTMLElement): void {
  * @param y 要显示的 top，或 element 方向，0 为垂直，1 为水平
  */
 export function showPop(pop: IVue, x: number | HTMLElement, y: number = 0): void {
-    if (pop.$parent.$data._controlName !== "menu-pop-item" && pop.$parent.$data._controlName !== "popmenu") {
+    if (pop.$parent.$data._controlName !== "menu-pop-item" && pop.$parent.$data._controlName !== "greatselect-pop-item") {
         ClickGo._pop = pop;
     }
     pop.$parent.popOpen = true;
@@ -341,15 +341,15 @@ export function showPop(pop: IVue, x: number | HTMLElement, y: number = 0): void
             }
         }
     } else {
-        left = x;
-        top = y;
+        left = x + 5;
+        top = y + 7;
         // --- 水平 ---
         if (pop.$el.offsetWidth + left > ClickGo.getWidth()) {
-            left = x - pop.$el.offsetWidth;
+            left = x - pop.$el.offsetWidth - 5;
         }
         // --- 垂直 ---
         if (pop.$el.offsetHeight + top > ClickGo.getHeight()) {
-            top = y - pop.$el.offsetHeight;
+            top = y - pop.$el.offsetHeight - 5;
         }
     }
     if (left < 0) {
@@ -758,7 +758,7 @@ export async function createForm(opt: ICreateFormOptions): Promise<number | IFor
                 // --- 触发自定义 down 事件 ---
                 this.$emit("down", e);
             };
-            methods._tap = function(this: IVue, e: MouseEvent | TouchEvent) {
+            methods._tap = function(this: IVue, e: MouseEvent | TouchEvent | KeyboardEvent) {
                 if (this.$el.className.indexOf("cg-disabled") !== -1) {
                     return;
                 }

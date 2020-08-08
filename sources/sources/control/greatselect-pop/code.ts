@@ -26,11 +26,17 @@ export let data = {
 export let methods = {
     onHide: function(this: IVue): void {
         // --- 检测是否有打开的子 pop 统一关掉 ---
-        for (let item of this.$children) {
+        for (let item of this.$children[0].$children[0].$children) {
             if (!item.popOpen) {
                 continue;
             }
-            ClickGo.hidePop(item.$children[0]);
+            for (let maybeMenu of item.$children) {
+                if (maybeMenu.$data._controlName !== "menu-pop") {
+                    continue;
+                }
+                ClickGo.hidePop(maybeMenu);
+                break;
+            }
         }
     },
     select: function(this: IVue, index: number): void {

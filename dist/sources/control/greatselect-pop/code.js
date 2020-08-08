@@ -24,12 +24,19 @@ exports.data = {
 };
 exports.methods = {
     onHide: function () {
-        for (var _i = 0, _a = this.$children; _i < _a.length; _i++) {
+        for (var _i = 0, _a = this.$children[0].$children[0].$children; _i < _a.length; _i++) {
             var item = _a[_i];
             if (!item.popOpen) {
                 continue;
             }
-            ClickGo.hidePop(item.$children[0]);
+            for (var _b = 0, _c = item.$children; _b < _c.length; _b++) {
+                var maybeMenu = _c[_b];
+                if (maybeMenu.$data._controlName !== "menu-pop") {
+                    continue;
+                }
+                ClickGo.hidePop(maybeMenu);
+                break;
+            }
         }
     },
     select: function (index) {

@@ -25,18 +25,28 @@ export declare let data: {
         name: string;
         path: string;
         src: string;
-        disabled: undefined;
+        menu?: undefined;
+        disabled?: undefined;
+    } | {
+        type: number;
+        name: string;
+        path: string;
+        src: string;
+        menu: boolean;
+        disabled?: undefined;
     } | {
         type: number;
         name: string;
         path: string;
         src: string;
         disabled: boolean;
+        menu?: undefined;
     } | {
         type: number;
         name?: undefined;
         path?: undefined;
         src?: undefined;
+        menu?: undefined;
         disabled?: undefined;
     })[];
     select: number;

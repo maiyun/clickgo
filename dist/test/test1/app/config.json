@@ -5,31 +5,15 @@
     "author": "clickgo",
 
     "controls": [
-        "/clickgo/control/block",
-        "/clickgo/control/button",
-        "/clickgo/control/form",
-        "/clickgo/control/img",
-        "/clickgo/control/label",
-        "/clickgo/control/layout",
-        "/clickgo/control/overflow",
-        "/clickgo/control/scroll",
-        "/clickgo/control/tab",
-        "/clickgo/control/view"
+        "/clickgo/control/common",
+        "/clickgo/control/tab"
     ],
     "styleGlobal": "/global",
     "mainLayout": "/form/main",
 
     "files": [
-        "/clickgo/control/block.cgc",
-        "/clickgo/control/button.cgc",
-        "/clickgo/control/form.cgc",
-        "/clickgo/control/img.cgc",
-        "/clickgo/control/label.cgc",
-        "/clickgo/control/layout.cgc",
-        "/clickgo/control/overflow.cgc",
-        "/clickgo/control/scroll.cgc",
+        "/clickgo/control/common.cgc",
         "/clickgo/control/tab.cgc",
-        "/clickgo/control/view.cgc",
 
         "/form/aero.js",
         "/form/aero.xml",

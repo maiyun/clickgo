@@ -62,7 +62,7 @@ export let data = {
 };
 
 export let methods = {
-    showPop: function(this: IVue, event: MouseEvent, area: "all" | "arrow"): void {
+    showPop: function(this: IVue, event: MouseEvent | KeyboardEvent, area: "all" | "arrow"): void {
         if (this.area === "arrow") {
             if (area === "all") {
                 if (this.popOpen) {
@@ -101,6 +101,12 @@ export let methods = {
         }
         this.stopPropagation(e);
         this._down();
+    },
+    keydown: function(this: IVue, e: KeyboardEvent): void {
+        if (e.keyCode !== 13) {
+            return;
+        }
+        this.showPop(e, this.area);
     }
 };
 

@@ -102,5 +102,11 @@ exports.methods = {
         }
         this.stopPropagation(e);
         this._down();
+    },
+    keydown: function (e) {
+        if (e.keyCode !== 13) {
+            return;
+        }
+        this.showPop(e, this.area);
     }
 };

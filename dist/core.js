@@ -282,7 +282,7 @@ function removeFromPop(el) {
 exports.removeFromPop = removeFromPop;
 function showPop(pop, x, y) {
     if (y === void 0) { y = 0; }
-    if (pop.$parent.$data._controlName !== "menu-pop-item" && pop.$parent.$data._controlName !== "popmenu") {
+    if (pop.$parent.$data._controlName !== "menu-pop-item" && pop.$parent.$data._controlName !== "greatselect-pop-item") {
         ClickGo._pop = pop;
     }
     pop.$parent.popOpen = true;
@@ -316,13 +316,13 @@ function showPop(pop, x, y) {
         }
     }
     else {
-        left = x;
-        top = y;
+        left = x + 5;
+        top = y + 7;
         if (pop.$el.offsetWidth + left > ClickGo.getWidth()) {
-            left = x - pop.$el.offsetWidth;
+            left = x - pop.$el.offsetWidth - 5;
         }
         if (pop.$el.offsetHeight + top > ClickGo.getHeight()) {
-            top = y - pop.$el.offsetHeight;
+            top = y - pop.$el.offsetHeight - 5;
         }
     }
     if (left < 0) {

@@ -4,7 +4,7 @@
 .wrap.cg-disabled {
     border: solid 1px #bfbfbf; background: #cccccc; color: #838383;
 }
-.wrap:not(.cg-disabled):not(.cg-pop-open):hover {
+.wrap:not(.cg-disabled):not(.cg-pop-open):hover, .wrap:not(.cg-disabled):not(.cg-pop-open):focus {
     border: solid 1px #0078d7;
 }
 .wrap:not(.cg-disabled):not(.cg-pop-open):active, .wrap.cg-pop-open {

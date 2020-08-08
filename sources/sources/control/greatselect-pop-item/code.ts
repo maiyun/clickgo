@@ -8,7 +8,8 @@ export let props = {
 };
 
 export let data = {
-    "popOpen": false
+    "popOpen": false,
+    "hasMenuPop": false
 };
 
 export let methods = {
@@ -19,6 +20,35 @@ export let methods = {
         ClickGo.hidePop();
         this.$parent.$parent.$parent.select(this.value);
         this._tap(event);
+    },
+    controlClick: function(this: IVue, e: MouseEvent): void {
+        if (this.disabled) {
+            return;
+        }
+        let menuPopVue: IVue | null = null;
+        for (let item of this.$children) {
+            if (item.$data._controlName !== "menu-pop") {
+                continue;
+            }
+            menuPopVue = item;
+        }
+        if (menuPopVue) {
+            ClickGo.showPop(menuPopVue, e.pageX, e.pageY);
+        }
+    }
+};
+
+export let updated = function(this: IVue): void {
+    let hasMenuPop = false;
+    for (let item of this.$children) {
+        if (item.$data._controlName !== "menu-pop") {
+            continue;
+        }
+        hasMenuPop = true;
+        break;
+    }
+    if (this.hasMenuPop !== hasMenuPop) {
+        this.hasMenuPop = hasMenuPop;
     }
 };
 
