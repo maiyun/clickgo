@@ -66,7 +66,7 @@ async function run(): Promise<void> {
         if (item.isFile()) {
             continue;
         }
-        if (["button", "form", "greatselect", "greatselect-pop", "greatselect-pop-item", "greatselect-pop-split", "greatview", "img", "label", "layout", "menu", "menu-item", "menu-pop", "menu-pop-item", "menu-pop-split", "overflow", "scroll", "select", "tab-nav", "tab-panel", "view"].includes(item.name)) {
+        if (["button", "dataview", "form", "greatselect", "greatselect-pop", "greatselect-pop-item", "greatselect-pop-split", "greatview", "img", "label", "layout", "menu", "menu-item", "menu-pop", "menu-pop-item", "menu-pop-split", "overflow", "scroll", "select", "tab-nav", "tab-panel", "view"].includes(item.name)) {
             continue;
         }
         let base = "dist/sources/control/" + item.name;
@@ -78,6 +78,7 @@ async function run(): Promise<void> {
             controlBuffer = Buffer.concat([
                 controlBuffer,
                 await getSingleControlBlob("dist/sources/control/button"),
+                await getSingleControlBlob("dist/sources/control/dataview"),
                 await getSingleControlBlob("dist/sources/control/form"),
                 await getSingleControlBlob("dist/sources/control/greatselect"),
                 await getSingleControlBlob("dist/sources/control/greatselect-pop"),

@@ -1508,10 +1508,10 @@ function bindMove(e, opt) {
                     opt.object = opt.object.$el;
                 }
                 var rect = opt.object.getBoundingClientRect();
-                objectLeft = Math.round(rect.left);
-                objectTop = Math.round(rect.top);
-                objectWidth = Math.round(rect.width);
-                objectHeight = Math.round(rect.height);
+                objectLeft = rect.left;
+                objectTop = rect.top;
+                objectWidth = rect.width;
+                objectHeight = rect.height;
             }
             else {
                 objectLeft = (_a = opt.objectLeft) !== null && _a !== void 0 ? _a : 0;
@@ -1701,7 +1701,7 @@ function bindMove(e, opt) {
         });
         setTimeout(function () {
             hideRectangle();
-        }, 500);
+        }, 1000);
     }
     return {
         "left": left,

@@ -38,6 +38,7 @@ exports.props = {
 };
 exports.data = {
     "scrollOffsetData": 0,
+    "scrollOffsetPx": 0,
     "barLengthPx": 0,
     "timer": undefined,
     "tran": false
@@ -49,6 +50,7 @@ exports.watch = {
                 this.scrollOffsetData = this.maxScroll;
                 this.$emit("update:scrollOffset", this.scrollOffsetData);
             }
+            this.scrollOffsetPx = this.barOutSize * (this.scrollOffsetData / this.maxScroll);
         }
     },
     "client": {
@@ -57,21 +59,17 @@ exports.watch = {
                 this.scrollOffsetData = this.maxScroll;
                 this.$emit("update:scrollOffset", this.scrollOffsetData);
             }
+            this.scrollOffsetPx = this.barOutSize * (this.scrollOffsetData / this.maxScroll);
         }
     },
     "scrollOffset": {
         handler: function () {
-            this.scrollOffsetData = Math.round(this.scrollOffset);
-            if (this.scrollOffsetData > this.maxScroll) {
-                this.scrollOffsetData = this.maxScroll;
-                this.$emit("update:scrollOffset", this.scrollOffsetData);
+            var scrollOffsetData = Math.round(parseFloat(this.scrollOffset));
+            if (this.scrollOffsetData === scrollOffsetData) {
+                return;
             }
-            else if (this.scrollOffsetData < 0) {
-                this.scrollOffsetData = 0;
-                this.$emit("update:scrollOffset", this.scrollOffsetData);
-            }
-        },
-        "immediate": true
+            this.resizePxOfScrollOffsetData(scrollOffsetData);
+        }
     }
 };
 exports.computed = {
@@ -90,8 +88,8 @@ exports.computed = {
     "sizeOut": function () {
         return this.size - this.realSize;
     },
-    "scrollOffsetPx": function () {
-        return this.scrollOffsetData / this.length * (this.barLengthPx - this.sizeOut);
+    "barOutSize": function () {
+        return this.barLengthPx - this.size;
     },
     "maxScroll": function () {
         return (this.length > this.client) ? this.length - this.client : 0;
@@ -119,14 +117,13 @@ exports.methods = {
         if (e instanceof MouseEvent && ClickGo.hasTouch) {
             return;
         }
-        var px = this.scrollOffsetPx;
         ClickGo.bindMove(e, {
             "object": this.$refs.block,
             "offsetObject": this.$refs.bar,
-            "move": function (ox, oy, x, y) {
-                px += _this.direction === "v" ? oy : ox;
-                var opx = px + (px / (_this.barLengthPx - _this.size) * _this.sizeOut);
-                _this.scrollOffsetData = Math.round(opx / _this.barLengthPx * _this.length);
+            "move": function (ox, oy) {
+                _this.scrollOffsetPx += _this.direction === "v" ? oy : ox;
+                var scrollPer = _this.scrollOffsetPx / _this.barOutSize;
+                _this.scrollOffsetData = Math.round(scrollPer * _this.maxScroll);
                 _this.$emit("update:scrollOffset", _this.scrollOffsetData);
             }
         });
@@ -142,14 +139,16 @@ exports.methods = {
         var barOffset = this.direction === "v" ? barRect.top : barRect.left;
         var eOffset = (this.direction === "v" ? (e instanceof MouseEvent ? e.clientY : e.touches[0].clientY) : (e instanceof MouseEvent ? e.clientX : e.touches[0].clientX)) * ClickGo.rzoom;
         eOffset = eOffset - barOffset;
-        var px = eOffset - this.size / 2;
-        if (px < 0) {
-            px = 0;
+        var scrollOffsetPx = eOffset - this.size / 2;
+        if (scrollOffsetPx < 0) {
+            scrollOffsetPx = 0;
         }
-        if (px + this.size > this.barLengthPx) {
-            px = this.barLengthPx - this.size;
+        if (scrollOffsetPx + this.size > this.barLengthPx) {
+            scrollOffsetPx = this.barLengthPx - this.size;
         }
-        this.scrollOffsetData = Math.round(px / (this.barLengthPx - this.sizeOut) * this.length);
+        this.scrollOffsetPx = scrollOffsetPx;
+        var scrollPer = this.scrollOffsetPx / this.barOutSize;
+        this.scrollOffsetData = Math.round(scrollPer * this.maxScroll);
         this.$emit("update:scrollOffset", this.scrollOffsetData);
         this.down(e);
     },
@@ -164,43 +163,79 @@ exports.methods = {
                     clearInterval(_this.timer);
                 }
                 _this.tran = true;
-                _this.timer = setInterval(function () {
+                var cb = function () {
                     if (type === "start") {
-                        if (_this.scrollOffsetData - 20 < 0) {
-                            _this.scrollOffsetData = 0;
+                        if (_this.scrollOffsetData - 10 < 0) {
+                            if (_this.scrollOffsetData !== 0) {
+                                _this.scrollOffsetData = 0;
+                                _this.scrollOffsetPx = 0;
+                                _this.$emit("update:scrollOffset", _this.scrollOffsetData);
+                            }
                         }
                         else {
-                            _this.scrollOffsetData -= 20;
+                            _this.scrollOffsetData -= 10;
+                            _this.scrollOffsetPx = _this.barOutSize * (_this.scrollOffsetData / _this.maxScroll);
+                            _this.$emit("update:scrollOffset", _this.scrollOffsetData);
                         }
                     }
                     else {
-                        var maxOffset = _this.length - _this.client;
-                        if (_this.scrollOffsetData + 20 > maxOffset) {
-                            _this.scrollOffsetData = maxOffset;
+                        if (_this.scrollOffsetData + 10 > _this.maxScroll) {
+                            if (_this.scrollOffsetData !== _this.maxScroll) {
+                                _this.scrollOffsetData = _this.maxScroll;
+                                _this.scrollOffsetPx = _this.barOutSize;
+                                _this.$emit("update:scrollOffset", _this.scrollOffsetData);
+                            }
                         }
                         else {
-                            _this.scrollOffsetData += 20;
+                            _this.scrollOffsetData += 10;
+                            _this.scrollOffsetPx = _this.barOutSize * (_this.scrollOffsetData / _this.maxScroll);
+                            _this.$emit("update:scrollOffset", _this.scrollOffsetData);
                         }
                     }
-                    _this.$emit("update:scrollOffset", _this.scrollOffsetData);
-                }, 50);
+                    if (_this.timer !== undefined) {
+                        requestAnimationFrame(cb);
+                    }
+                };
+                _this.timer = requestAnimationFrame(cb);
             },
             up: function () {
                 _this.tran = false;
                 if (_this.timer !== undefined) {
-                    clearInterval(_this.timer);
                     _this.timer = undefined;
                 }
             }
         });
+    },
+    resizePxOfScrollOffsetData: function (scrollOffsetData) {
+        if (scrollOffsetData > this.maxScroll) {
+            this.scrollOffsetData = this.maxScroll;
+            this.scrollOffsetPx = this.barOutSize;
+            this.$emit("update:scrollOffset", this.scrollOffsetData);
+        }
+        else if (scrollOffsetData < 0) {
+            this.scrollOffsetData = 0;
+            this.scrollOffsetPx = 0;
+            this.$emit("update:scrollOffset", this.scrollOffsetData);
+        }
+        else {
+            this.scrollOffsetData = scrollOffsetData;
+            this.scrollOffsetPx = this.barOutSize * (this.scrollOffsetData / this.maxScroll);
+            this.$emit("update:scrollOffset", this.scrollOffsetData);
+        }
     }
 };
 exports.mounted = function () {
     var _this = this;
-    ClickGo.watchSize(this.$refs.bar, function (size) {
+    var size = ClickGo.watchSize(this.$refs.bar, function (size) {
         _this.barLengthPx = _this.direction === "v" ? size.height : size.width;
+        _this.scrollOffsetPx = _this.barOutSize * (_this.scrollOffsetData / _this.maxScroll);
     });
-    this.barLengthPx = this.direction === "v" ? this.$refs.bar.offsetHeight : this.$refs.bar.offsetWidth;
+    this.barLengthPx = this.direction === "v" ? size.height : size.width;
+    var scrollOffsetData = Math.round(parseFloat(this.scrollOffset));
+    if (this.scrollOffsetData === scrollOffsetData) {
+        return;
+    }
+    this.resizePxOfScrollOffsetData(scrollOffsetData);
 };
 exports.destroyed = function () {
     if (this.timer !== undefined) {

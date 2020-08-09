@@ -41,12 +41,12 @@ export function getDomSize(el: HTMLElement): IDomSize {
         "left": parseFloat(cs.paddingLeft)
     };
     return {
-        "top": Math.round(rect.top),
-        "right": Math.round(rect.right),
-        "bottom": Math.round(rect.bottom),
-        "left": Math.round(rect.left),
-        "width": Math.round(rect.width),
-        "height": Math.round(rect.height),
+        "top": rect.top,
+        "right": rect.right,
+        "bottom": rect.bottom,
+        "left": rect.left,
+        "width": rect.width,
+        "height": rect.height,
         "padding": padding,
         "border": border,
         "clientWidth": rect.width - border.left - border.right,
@@ -88,12 +88,12 @@ function requestAnimationFrameCb(): void {
             "left": parseFloat(cs.paddingLeft)
         };
         let trect: IDomSize = {
-            "top": Math.round(rect.top),
-            "right": Math.round(rect.right),
-            "bottom": Math.round(rect.bottom),
-            "left": Math.round(rect.left),
-            "width": Math.round(rect.width),
-            "height": Math.round(rect.height),
+            "top": rect.top,
+            "right": rect.right,
+            "bottom": rect.bottom,
+            "left": rect.left,
+            "width": rect.width,
+            "height": rect.height,
             "padding": padding,
             "border": border,
             "clientWidth": rect.width - border.left - border.right,

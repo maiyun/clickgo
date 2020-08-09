@@ -1468,10 +1468,10 @@ export function bindMove(e: MouseEvent | TouchEvent, opt: { "left"?: number; "to
                     opt.object = opt.object.$el;
                 }
                 let rect = opt.object.getBoundingClientRect();
-                objectLeft = Math.round(rect.left);
-                objectTop = Math.round(rect.top);
-                objectWidth = Math.round(rect.width);
-                objectHeight = Math.round(rect.height);
+                objectLeft = rect.left;
+                objectTop = rect.top;
+                objectWidth = rect.width;
+                objectHeight = rect.height;
             } else {
                 objectLeft = opt.objectLeft ?? 0;
                 objectTop = opt.objectTop ?? 0;
@@ -1654,7 +1654,7 @@ export function bindMove(e: MouseEvent | TouchEvent, opt: { "left"?: number; "to
         });
         setTimeout(() => {
             hideRectangle();
-        }, 500);
+        }, 1000);
     }
 
     return {
