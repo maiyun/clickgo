@@ -622,6 +622,7 @@ export async function runApp(path: string | IAppPkg, opt?: {
     ClickGo.taskList[taskId] = {
         "taskId": taskId,
         "appPkg": appPkg,
+        "controlPkgs": {},
         "formList": {}
     };
     Tool.createTaskStyle(taskId);
@@ -669,13 +670,19 @@ export async function createForm(opt: ICreateFormOptions): Promise<number | IFor
     // --- 获取要定义的控件列表 ---
     let components: any = {};
     for (let controlPath of appPkg.config.controls) {
-        let controlBlob = appPkg.files[controlPath + ".cgc"];
-        if (!controlBlob) {
-            return -101;
-        }
-        let controlPkg = await Tool.controlBlob2Pkg(controlBlob);
-        if (!controlPkg) {
-            return -102;
+        let controlPkg: false | IControlPkg;
+        if (ClickGo.taskList[opt.taskId].controlPkgs[controlPath + ".cgc"]) {
+            controlPkg = ClickGo.taskList[opt.taskId].controlPkgs[controlPath + ".cgc"];
+        } else {
+            let controlBlob = appPkg.files[controlPath + ".cgc"];
+            if (!controlBlob) {
+                return -101;
+            }
+            controlPkg = await Tool.controlBlob2Pkg(controlBlob);
+            if (!controlPkg) {
+                return -102;
+            }
+            ClickGo.taskList[opt.taskId].controlPkgs[controlPath + ".cgc"] = controlPkg;
         }
         // --- 遍历控件包中的每一个控件 ---
         for (let name in controlPkg) {

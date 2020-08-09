@@ -97,6 +97,7 @@ interface IForm {
 interface ITask {
     "taskId": number;
     "appPkg": IAppPkg;
+    "controlPkgs": Record<string, IControlPkg>;
     "formList": Record<number, IForm>;
 }
 

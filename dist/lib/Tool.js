@@ -359,16 +359,15 @@ function isAppPkg(o) {
 exports.isAppPkg = isAppPkg;
 function controlBlob2Pkg(blob) {
     return __awaiter(this, void 0, void 0, function () {
-        var begin, beginUint, _a, controlPkg, cursor, nameSize, _b, name_1, bodySize, _c, bodyBlob, files, config, bodyCursor, pathSize, _d, path, mimeSize, _e, mime, contentSize, _f, contentBolb, _g, _h;
+        var dataView, _a, controlPkg, cursor, nameSize, _b, name_1, bodySize, _c, bodyBlob, files, config, bodyCursor, pathSize, _d, path, mimeSize, _e, mime, contentSize, _f, contentBolb, _g, _h;
         return __generator(this, function (_j) {
             switch (_j.label) {
                 case 0:
-                    begin = blob.slice(0, 2);
-                    _a = Uint8Array.bind;
-                    return [4, blob2ArrayBuffer(begin)];
+                    _a = DataView.bind;
+                    return [4, blob2ArrayBuffer(blob)];
                 case 1:
-                    beginUint = new (_a.apply(Uint8Array, [void 0, _j.sent()]))();
-                    if (beginUint[0] !== 192 || beginUint[1] !== 1) {
+                    dataView = new (_a.apply(DataView, [void 0, _j.sent()]))();
+                    if (dataView.getUint8(0) !== 192 || dataView.getUint8(1) !== 1) {
                         return [2, false];
                     }
                     controlPkg = {};

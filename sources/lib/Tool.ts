@@ -361,9 +361,8 @@ export function isAppPkg(o: string | object): o is IAppPkg {
  */
 export async function controlBlob2Pkg(blob: Blob): Promise<false | IControlPkg> {
     // --- 判断是否是 cgc 文件 ---
-    let begin = blob.slice(0, 2);
-    let beginUint = new Uint8Array(await blob2ArrayBuffer(begin));
-    if (beginUint[0] !== 192 || beginUint[1] !== 1) {
+    let dataView = new DataView(await blob2ArrayBuffer(blob));
+    if (dataView.getUint8(0) !== 192 || dataView.getUint8(1) !== 1) {
         // --- 不是 cgc 文件 ---
         return false;
     }
