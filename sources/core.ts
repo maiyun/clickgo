@@ -772,6 +772,7 @@ export async function createForm(opt: ICreateFormOptions): Promise<number | IFor
                 this.$emit("tap", e);
             };
             methods._dblclick = function(this: IVue, e: MouseEvent) {
+                e.stopPropagation();
                 if (this.$el.className.indexOf("cg-disabled") !== -1) {
                     return;
                 }

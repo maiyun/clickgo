@@ -797,6 +797,7 @@ function createForm(opt) {
                                         this.$emit("tap", e);
                                     };
                                     methods_1._dblclick = function (e) {
+                                        e.stopPropagation();
                                         if (this.$el.className.indexOf("cg-disabled") !== -1) {
                                             return;
                                         }
