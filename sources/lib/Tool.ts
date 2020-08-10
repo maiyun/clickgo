@@ -128,7 +128,7 @@ async function themeBlob2Theme(blob: Blob): Promise<false | ITheme> {
         return false;
     }
     // --- 开始读取文件 ---
-    let files: IFileList = {};
+    let files: Record<string, Blob> = {};
     /** --- 配置文件 --- */
     let config!: IThemeConfig;
     /** --- 当前游标 --- */
@@ -378,7 +378,7 @@ export async function controlBlob2Pkg(blob: Blob): Promise<false | IControlPkg> 
         let bodyBlob = blob.slice(cursor, cursor += bodySize[0]);
 
         // --- 开始读取文件 ---
-        let files: IFileList = {};
+        let files: Record<string, Blob> = {};
         /** --- 配置文件 --- */
         let config!: IControlConfig;
         /** --- 当前 body 游标 --- */
@@ -473,7 +473,7 @@ export function stylePrepend(style: string, rand: string = ""): {
  * @param style 样式表
  * @param files 文件熟
  */
-export async function styleUrl2DataUrl(dirname: string, style: string, files: IFileList): Promise<string> {
+export async function styleUrl2DataUrl(dirname: string, style: string, files: Record<string, Blob>): Promise<string> {
     if (dirname.slice(-1) !== "/") {
         dirname = dirname.slice(0, dirname.lastIndexOf("/") + 1);
     }

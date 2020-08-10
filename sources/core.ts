@@ -47,6 +47,11 @@ popListElement.addEventListener("touchmove", function(e): void {
     "passive": false
 });
 
+/** --- clickgo 已经加载的文件列表 --- */
+let clickgoFiles: Record<string, Blob> = {};
+/** --- clickgo 中的 cgc 文件编译后的 pkg 对象 --- */
+let clickgoControlPkgs: Record<string, IControlPkg> = {};
+
 // --- 绑定 resize 事件 ---
 window.addEventListener("resize", async function() {
     // --- 将所有已经最大化的窗体的大小重置 ---
@@ -422,9 +427,6 @@ export function clearTheme(): void {
     Tool.clearGlobalTheme();
 }
 
-/** --- clickgo 已经加载的文件列表 --- */
-let clickgoFiles: IFileList = {};
-
 /**
  * --- 触发系统级事件 ---
  */
@@ -530,7 +532,7 @@ export function trigger(name: TSystemEvent, taskId: number = 0, formId: number =
 }
 
 /**
- * --- 从 cg 目录加载控件（若是已经加载的控件不会再次加载，若不是 cg 控件则直接成功） ---
+ * --- 从 cg 目录加载文件（若是已经加载的控件不会再次加载） ---
  * @param path cg 路径，cgc 文件或以 / 结尾的目录 ---
  */
 export async function fetchClickGoFile(path: string): Promise<null | Blob> {
@@ -544,7 +546,20 @@ export async function fetchClickGoFile(path: string): Promise<null | Blob> {
     }
     // --- 加载 clickgo 文件 ---
     try {
-        clickgoFiles[path] = await (await fetch(ClickGo.cgRootPath + path.slice(1) + "?" + Math.random())).blob();
+        let blob = await (await fetch(ClickGo.cgRootPath + path.slice(1) + "?" + Math.random())).blob();
+        let lio = path.lastIndexOf(".");
+        let ext = lio === -1 ? "" : path.slice(lio + 1).toLowerCase();
+        switch (ext) {
+            case "cgc": {
+                let pkg = await Tool.controlBlob2Pkg(blob);
+                if (!pkg) {
+                    return null;
+                }
+                clickgoControlPkgs[path] = pkg;
+                break;
+            }
+        }
+        clickgoFiles[path] = blob;
         return clickgoFiles[path];
     } catch {
         return null;
@@ -563,7 +578,7 @@ export async function fetchApp(path: string): Promise<null | IAppPkg> {
     // --- 加载 json 文件，并创建 control 信息对象 ---
     let config: IAppConfig;
     // --- 已加载的 files ---
-    let files: IFileList = {};
+    let files: Record<string, Blob> = {};
     try {
         config = await (await fetch(realPath + "config.json?" + Math.random())).json();
         // --- 将预加载文件进行加载 ---
@@ -595,7 +610,7 @@ export async function fetchApp(path: string): Promise<null | IAppPkg> {
  * @param opt runtime 运行时要注入的文件列表（cg 文件默认被注入） ---
  */
 export async function runApp(path: string | IAppPkg, opt?: {
-    "runtime"?: IFileList;
+    "runtime"?: Record<string, Blob>;
 }): Promise<number> {
     opt = opt ?? {};
     opt.runtime = opt.runtime ?? {};
@@ -609,7 +624,7 @@ export async function runApp(path: string | IAppPkg, opt?: {
         appPkg = path;
     }
     // --- app 的内置文件以及运行时文件 ---
-    let files: IFileList = {};
+    let files: Record<string, Blob> = {};
     for (let fpath in appPkg.files) {
         files[fpath] = appPkg.files[fpath];
     }
@@ -671,7 +686,14 @@ export async function createForm(opt: ICreateFormOptions): Promise<number | IFor
     let components: any = {};
     for (let controlPath of appPkg.config.controls) {
         let controlPkg: false | IControlPkg;
-        if (ClickGo.taskList[opt.taskId].controlPkgs[controlPath + ".cgc"]) {
+        if (controlPath.slice(0, 9) === "/clickgo/") {
+            let path = controlPath.slice(8);
+            if (clickgoControlPkgs[path + ".cgc"]) {
+                controlPkg = clickgoControlPkgs[path + ".cgc"];
+            } else {
+                return -108;
+            }
+        } else if (ClickGo.taskList[opt.taskId].controlPkgs[controlPath + ".cgc"]) {
             controlPkg = ClickGo.taskList[opt.taskId].controlPkgs[controlPath + ".cgc"];
         } else {
             let controlBlob = appPkg.files[controlPath + ".cgc"];

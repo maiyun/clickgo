@@ -59,7 +59,7 @@ interface IAppPkg {
     /** --- 应用对象配置文件 --- */
     "config": IAppConfig;
     /** --- 所有已加载的文件内容 --- */
-    "files": IFileList;
+    "files": Record<string, Blob>;
 }
 
 /** --- 应用文件包 config --- */
@@ -80,11 +80,6 @@ interface IAppConfig {
 
     /** --- 将要加载的文件列表 --- */
     "files": string[];
-}
-
-/** --- 已加载文件列表 --- */
-interface IFileList {
-    [path: string]: Blob;
 }
 
 /** --- 窗体对象 --- */

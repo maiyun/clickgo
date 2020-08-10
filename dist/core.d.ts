@@ -23,7 +23,7 @@ export declare function trigger(name: TSystemEvent, taskId?: number, formId?: nu
 export declare function fetchClickGoFile(path: string): Promise<null | Blob>;
 export declare function fetchApp(path: string): Promise<null | IAppPkg>;
 export declare function runApp(path: string | IAppPkg, opt?: {
-    "runtime"?: IFileList;
+    "runtime"?: Record<string, Blob>;
 }): Promise<number>;
 export declare function createForm(opt: ICreateFormOptions): Promise<number | IForm>;
 export declare function removeForm(formId: number): boolean;
