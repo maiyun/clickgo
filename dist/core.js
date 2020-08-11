@@ -684,21 +684,27 @@ function runApp(path, opt) {
 }
 exports.runApp = runApp;
 function createForm(opt) {
-    var _a, _b, _c;
+    var _a, _b, _c, _d, _e, _f;
     return __awaiter(this, void 0, void 0, function () {
-        var appPkg, formId, controlsStyle, components, _i, _d, controlPath, controlPkg, path, controlBlob, _loop_1, _e, _f, _g, name_1, state_1, name_2, reg, match, style, layout, layoutBlob, styleBlob, data, methods, computed, watch, beforeCreate, created, beforeMount, mounted, beforeUpdate, updated, beforeDestroy, destroyed, expo, rand, r_1, randList, r, el, $vm, form;
-        return __generator(this, function (_h) {
-            switch (_h.label) {
+        var appPkg, formId, controlsStyle, components, _i, _g, controlPath, controlPkg, path, controlBlob, _loop_1, _h, _j, _k, name_1, state_1, name_2, reg, match, style, layout, layoutBlob, styleBlob, data, methods, computed, watch, beforeCreate, created, beforeMount, mounted, beforeUpdate, updated, beforeDestroy, destroyed, expo, rand, r_1, randList, r, el, $vm, form;
+        return __generator(this, function (_l) {
+            switch (_l.label) {
                 case 0:
+                    if (!opt.taskId) {
+                        return [2, -109];
+                    }
+                    if (!opt.dir) {
+                        opt.dir = opt.file;
+                    }
                     appPkg = ClickGo.taskList[opt.taskId].appPkg;
                     formId = ++ClickGo.formId;
                     controlsStyle = "";
                     components = {};
-                    _i = 0, _d = appPkg.config.controls;
-                    _h.label = 1;
+                    _i = 0, _g = appPkg.config.controls;
+                    _l.label = 1;
                 case 1:
-                    if (!(_i < _d.length)) return [3, 10];
-                    controlPath = _d[_i];
+                    if (!(_i < _g.length)) return [3, 10];
+                    controlPath = _g[_i];
                     controlPkg = void 0;
                     if (!(controlPath.slice(0, 9) === "/clickgo/")) return [3, 2];
                     path = controlPath.slice(8);
@@ -720,12 +726,12 @@ function createForm(opt) {
                     }
                     return [4, Tool.controlBlob2Pkg(controlBlob)];
                 case 4:
-                    controlPkg = _h.sent();
+                    controlPkg = _l.sent();
                     if (!controlPkg) {
                         return [2, -102];
                     }
                     ClickGo.taskList[opt.taskId].controlPkgs[controlPath + ".cgc"] = controlPkg;
-                    _h.label = 5;
+                    _l.label = 5;
                 case 5:
                     _loop_1 = function (name_1) {
                         var item, props, data_1, methods_1, computed_1, watch_1, beforeCreate_1, created_1, beforeMount_1, mounted_1, beforeUpdate_1, updated_1, beforeDestroy_1, destroyed_1, expo, rand_1, styleBlob, r_2, _a, _b, _c, layoutBlob, randList_1, r_3, _d, _e, layout_1;
@@ -801,6 +807,7 @@ function createForm(opt) {
                                     layout_1 = r_3.layout;
                                     data_1.taskId = opt.taskId;
                                     data_1.formId = formId;
+                                    data_1._dir = (_b = opt.dir) !== null && _b !== void 0 ? _b : "/";
                                     data_1._scope = rand_1;
                                     data_1._controlName = name_1;
                                     methods_1.stopPropagation = function (e) {
@@ -831,6 +838,7 @@ function createForm(opt) {
                                     };
                                     methods_1.getBlob = function (file) {
                                         var _a;
+                                        file = Tool.pathResolve(this.$data._dir, file);
                                         return (_a = ClickGo.taskList[this.taskId].appPkg.files[file]) !== null && _a !== void 0 ? _a : null;
                                     };
                                     methods_1.getDataUrl = function (file) {
@@ -839,7 +847,7 @@ function createForm(opt) {
                                             return __generator(this, function (_b) {
                                                 switch (_b.label) {
                                                     case 0:
-                                                        f = ClickGo.taskList[this.taskId].appPkg.files[file];
+                                                        f = this.getBlob(file);
                                                         if (!f) return [3, 2];
                                                         return [4, Tool.blob2DataUrl(f)];
                                                     case 1:
@@ -893,22 +901,22 @@ function createForm(opt) {
                             }
                         });
                     };
-                    _e = [];
-                    for (_f in controlPkg)
-                        _e.push(_f);
-                    _g = 0;
-                    _h.label = 6;
+                    _h = [];
+                    for (_j in controlPkg)
+                        _h.push(_j);
+                    _k = 0;
+                    _l.label = 6;
                 case 6:
-                    if (!(_g < _e.length)) return [3, 9];
-                    name_1 = _e[_g];
+                    if (!(_k < _h.length)) return [3, 9];
+                    name_1 = _h[_k];
                     return [5, _loop_1(name_1)];
                 case 7:
-                    state_1 = _h.sent();
+                    state_1 = _l.sent();
                     if (typeof state_1 === "object")
                         return [2, state_1.value];
-                    _h.label = 8;
+                    _l.label = 8;
                 case 8:
-                    _g++;
+                    _k++;
                     return [3, 6];
                 case 9:
                     _i++;
@@ -931,15 +939,15 @@ function createForm(opt) {
                     if (!layoutBlob) return [3, 12];
                     return [4, Tool.blob2Text(layoutBlob)];
                 case 11:
-                    layout = _h.sent();
-                    _h.label = 12;
+                    layout = _l.sent();
+                    _l.label = 12;
                 case 12:
                     styleBlob = appPkg.files[opt.file + ".css"];
                     if (!styleBlob) return [3, 14];
                     return [4, Tool.blob2Text(styleBlob)];
                 case 13:
-                    style = _h.sent();
-                    _h.label = 14;
+                    style = _l.sent();
+                    _l.label = 14;
                 case 14:
                     if (!layout) {
                         return [2, -104];
@@ -957,11 +965,11 @@ function createForm(opt) {
                     beforeDestroy = undefined;
                     destroyed = undefined;
                     if (!appPkg.files[opt.file + ".js"]) return [3, 16];
-                    return [4, loader.requireMemory((_b = opt.file) !== null && _b !== void 0 ? _b : "", appPkg.files, {
+                    return [4, loader.requireMemory((_c = opt.file) !== null && _c !== void 0 ? _c : "", appPkg.files, {
                             "after": "?" + Math.random()
                         })];
                 case 15:
-                    expo = ((_c = _h.sent()) !== null && _c !== void 0 ? _c : [])[0];
+                    expo = ((_d = _l.sent()) !== null && _d !== void 0 ? _d : [])[0];
                     if (expo) {
                         data = expo.data || {};
                         methods = expo.methods || {};
@@ -976,16 +984,16 @@ function createForm(opt) {
                         beforeDestroy = expo.beforeDestroy;
                         destroyed = expo.destroyed;
                     }
-                    _h.label = 16;
+                    _l.label = 16;
                 case 16:
                     rand = "";
                     if (!style) return [3, 18];
                     r_1 = Tool.stylePrepend(style);
                     rand = r_1.rand;
-                    return [4, Tool.styleUrl2DataUrl("/", r_1.style, appPkg.files)];
+                    return [4, Tool.styleUrl2DataUrl((_e = opt.dir) !== null && _e !== void 0 ? _e : "/", r_1.style, appPkg.files)];
                 case 17:
-                    style = _h.sent();
-                    _h.label = 18;
+                    style = _l.sent();
+                    _l.label = 18;
                 case 18:
                     layout = Tool.layoutInsertAttr(layout, ":focus=\"focus\"");
                     layout = Tool.purify(layout.replace(/<(\/{0,1})(.+?)>/g, function (t, t1, t2) {
@@ -1008,6 +1016,7 @@ function createForm(opt) {
                     el.setAttribute("data-task-id", opt.taskId.toString());
                     data.taskId = opt.taskId;
                     data.formId = formId;
+                    data._dir = (_f = opt.dir) !== null && _f !== void 0 ? _f : "/";
                     data._scope = rand;
                     data.focus = false;
                     data._customZIndex = false;
@@ -1031,6 +1040,12 @@ function createForm(opt) {
                                             inOpt.file = paramOpt;
                                         }
                                         else {
+                                            if (paramOpt.dir) {
+                                                inOpt.dir = paramOpt.dir;
+                                            }
+                                            if (paramOpt.file) {
+                                                inOpt.file = paramOpt.file;
+                                            }
                                             if (paramOpt.code) {
                                                 inOpt.code = paramOpt.code;
                                             }
@@ -1078,6 +1093,7 @@ function createForm(opt) {
                     };
                     methods.getBlob = function (file) {
                         var _a;
+                        file = Tool.pathResolve(this.$data._dir, file);
                         return (_a = ClickGo.taskList[this.taskId].appPkg.files[file]) !== null && _a !== void 0 ? _a : null;
                     };
                     methods.getDataUrl = function (file) {
@@ -1086,7 +1102,7 @@ function createForm(opt) {
                             return __generator(this, function (_b) {
                                 switch (_b.label) {
                                     case 0:
-                                        f = ClickGo.taskList[this.taskId].appPkg.files[file];
+                                        f = this.getBlob(file);
                                         if (!f) return [3, 2];
                                         return [4, Tool.blob2DataUrl(f)];
                                     case 1:
@@ -1205,7 +1221,7 @@ function createForm(opt) {
                             });
                         })];
                 case 19:
-                    $vm = _h.sent();
+                    $vm = _l.sent();
                     if (!$vm) {
                         return [2, -106];
                     }

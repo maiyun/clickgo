@@ -36,7 +36,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.clone = exports.blob2Text = exports.blob2ArrayBuffer = exports.blob2DataUrl = exports.changeFormFocus = exports.layoutClassPrepend = exports.layoutInsertAttr = exports.styleUrl2DataUrl = exports.stylePrepend = exports.controlBlob2Pkg = exports.isAppPkg = exports.isControlPkg = exports.parsePath = exports.trim = exports.purify = exports.removeStyle = exports.pushStyle = exports.clearTaskTheme = exports.loadTaskTheme = exports.removeTaskStyle = exports.createTaskStyle = exports.clearGlobalTheme = exports.setGlobalTheme = exports.getDomSize = void 0;
+exports.clone = exports.blob2Text = exports.blob2ArrayBuffer = exports.blob2DataUrl = exports.changeFormFocus = exports.layoutClassPrepend = exports.layoutInsertAttr = exports.pathResolve = exports.styleUrl2DataUrl = exports.stylePrepend = exports.controlBlob2Pkg = exports.isAppPkg = exports.isControlPkg = exports.parsePath = exports.trim = exports.purify = exports.removeStyle = exports.pushStyle = exports.clearTaskTheme = exports.loadTaskTheme = exports.removeTaskStyle = exports.createTaskStyle = exports.clearGlobalTheme = exports.setGlobalTheme = exports.getDomSize = void 0;
 var styleListElement = document.createElement("div");
 styleListElement.style.display = "none";
 document.getElementsByTagName("body")[0].appendChild(styleListElement);
@@ -483,29 +483,19 @@ function stylePrepend(style, rand) {
     };
 }
 exports.stylePrepend = stylePrepend;
-function styleUrl2DataUrl(dirname, style, files) {
+function styleUrl2DataUrl(dir, style, files) {
     return __awaiter(this, void 0, void 0, function () {
         var reg, match, rtn, path, _a, _b, _c, _d;
         return __generator(this, function (_e) {
             switch (_e.label) {
                 case 0:
-                    if (dirname.slice(-1) !== "/") {
-                        dirname = dirname.slice(0, dirname.lastIndexOf("/") + 1);
-                    }
                     reg = /url\(['"]{0,1}(.+?)['"]{0,1}\)/ig;
                     match = null;
                     rtn = style;
                     _e.label = 1;
                 case 1:
                     if (!(match = reg.exec(style))) return [3, 3];
-                    path = match[1];
-                    if (path[0] !== "/") {
-                        path = dirname + path;
-                    }
-                    path = path.replace(/\/\.\//g, "/");
-                    while (/\/(?!\.\.)[^/]+\/\.\.\//.test(path)) {
-                        path = path.replace(/\/(?!\.\.)[^/]+\/\.\.\//g, "/");
-                    }
+                    path = pathResolve(dir, match[1]);
                     if (!files[path]) {
                         return [3, 1];
                     }
@@ -522,6 +512,27 @@ function styleUrl2DataUrl(dirname, style, files) {
     });
 }
 exports.styleUrl2DataUrl = styleUrl2DataUrl;
+function pathResolve(dir, path) {
+    if (path[0] === "/") {
+        return path;
+    }
+    if (dir[dir.length - 1] !== "/") {
+        var lio = dir.slice(0, -1).lastIndexOf("/");
+        if (lio === -1) {
+            dir = "/";
+        }
+        else {
+            dir = dir.slice(0, lio + 1);
+        }
+    }
+    path = dir + path;
+    path = path.replace(/\/\.\//g, "/");
+    while (/\/(?!\.\.)[^/]+\/\.\.\//.test(path)) {
+        path = path.replace(/\/(?!\.\.)[^/]+\/\.\.\//g, "/");
+    }
+    return path.replace(/\.\.\//g, "");
+}
+exports.pathResolve = pathResolve;
 function layoutInsertAttr(layout, insert, opt) {
     if (opt === void 0) { opt = {}; }
     return layout.replace(/<([\w-]+)[\s\S]*?>/g, function (t, t1) {

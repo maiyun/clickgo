@@ -469,32 +469,47 @@ export function stylePrepend(style: string, rand: string = ""): {
 
 /**
  * --- 将 style 中的 url 转换成 base64 data url ---
- * @param dirname 文件基准路径，或文件路径
+ * @param dir 路径基准或以文件的路径为基准
  * @param style 样式表
  * @param files 文件熟
  */
-export async function styleUrl2DataUrl(dirname: string, style: string, files: Record<string, Blob>): Promise<string> {
-    if (dirname.slice(-1) !== "/") {
-        dirname = dirname.slice(0, dirname.lastIndexOf("/") + 1);
-    }
+export async function styleUrl2DataUrl(dir: string, style: string, files: Record<string, Blob>): Promise<string> {
     let reg = /url\(['"]{0,1}(.+?)['"]{0,1}\)/ig;
     let match: RegExpExecArray | null = null;
     let rtn = style;
     while ((match = reg.exec(style))) {
-        let path = match[1];
-        if (path[0] !== "/") {
-            path = dirname + path;
-        }
-        path = path.replace(/\/\.\//g, "/");
-        while (/\/(?!\.\.)[^/]+\/\.\.\//.test(path)) {
-            path = path.replace(/\/(?!\.\.)[^/]+\/\.\.\//g, "/");
-        }
+        let path = pathResolve(dir, match[1]);
         if (!files[path]) {
             continue;
         }
         rtn = rtn.replace(match[0], `url('${await blob2DataUrl(files[path])}')`);
     }
     return rtn;
+}
+
+/**
+ * --- 将相对路径转换为绝对路径 ---
+ * @param dir 路径基准或以文件的路径为基准
+ * @param path 原路径
+ */
+export function pathResolve(dir: string, path: string): string {
+    if (path[0] === "/") {
+        return path;
+    }
+    if (dir[dir.length - 1] !== "/") {
+        let lio = dir.slice(0, -1).lastIndexOf("/");
+        if (lio === -1) {
+            dir = "/";
+        } else {
+            dir = dir.slice(0, lio + 1);
+        }
+    }
+    path = dir + path;
+    path = path.replace(/\/\.\//g, "/");
+    while (/\/(?!\.\.)[^/]+\/\.\.\//.test(path)) {
+        path = path.replace(/\/(?!\.\.)[^/]+\/\.\.\//g, "/");
+    }
+    return path.replace(/\.\.\//g, "");
 }
 
 /**

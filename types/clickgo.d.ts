@@ -4,7 +4,7 @@ interface ITheme {
     /** --- 主题对象配置文件 --- */
     "config": IThemeConfig;
     /** --- 所有已加载的文件内容 --- */
-    "files": IFileList;
+    "files": Record<string, Blob>;
 }
 
 /** --- 主题文件包的 config --- */
@@ -32,7 +32,7 @@ interface IControl {
     /** --- 控件对象配置文件 --- */
     "config": IControlConfig;
     /** --- 所有已加载的文件内容 --- */
-    "files": IFileList;
+    "files": Record<string, Blob>;
 }
 
 /** --- 控件文件包的 config --- */
@@ -98,13 +98,15 @@ interface ITask {
 
 /** --- 窗体创建选项 --- */
 interface ICreateFormOptions {
+    "dir"?: string;
     "file"?: string;
-    "code"?: string;
+
+    "code"?: Record<string, any>;
     "layout"?: string;
     "style"?: string;
 
     "topMost"?: boolean;
-    "taskId": number;
+    "taskId"?: number;
 }
 
 /** --- 系统事件类型 --- */

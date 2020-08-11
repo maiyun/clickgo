@@ -242,7 +242,7 @@ const ClickGo: {
      * @param opt runtime 运行时要注入的文件列表（cg 文件默认被注入） ---
      */
     runApp: (path: string | IAppPkg, opt?: {
-        "runtime"?: IFileList;
+        "runtime"?: Record<string, Blob>;
     }) => Promise<number>;
 
     /**
@@ -479,7 +479,7 @@ const ClickGo: {
     },
 
     runApp: async function(path: string | IAppPkg, opt?: {
-        "runtime"?: IFileList;
+        "runtime"?: Record<string, Blob>;
         "onEnd"?: () => void;
     }): Promise<number> {
         return await this._core.runApp(path, opt);

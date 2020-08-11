@@ -63,22 +63,29 @@ exports.data = {
 exports.watch = {
     "src": {
         handler: function () {
-            var _a;
             return __awaiter(this, void 0, void 0, function () {
-                var _b;
-                return __generator(this, function (_c) {
-                    switch (_c.label) {
+                var pre, t;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
                         case 0:
-                            if (!(this.src === "")) return [3, 1];
-                            this.iconData = "";
-                            return [3, 3];
-                        case 1:
-                            _b = this;
+                            if (this.src === "") {
+                                this.iconData = undefined;
+                                return [2];
+                            }
+                            pre = this.src.slice(0, 5).toLowerCase();
+                            if (pre === "http:") {
+                                this.iconData = this.src;
+                                return [2];
+                            }
                             return [4, this.getDataUrl(this.src)];
-                        case 2:
-                            _b.iconData = (_a = _c.sent()) !== null && _a !== void 0 ? _a : "";
-                            _c.label = 3;
-                        case 3: return [2];
+                        case 1:
+                            t = _a.sent();
+                            if (t) {
+                                this.iconData = "url(" + t + ")";
+                                return [2];
+                            }
+                            this.iconData = undefined;
+                            return [2];
                     }
                 });
             });

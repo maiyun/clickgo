@@ -17,7 +17,8 @@ export declare function stylePrepend(style: string, rand?: string): {
     "rand": string;
     "style": string;
 };
-export declare function styleUrl2DataUrl(dirname: string, style: string, files: Record<string, Blob>): Promise<string>;
+export declare function styleUrl2DataUrl(dir: string, style: string, files: Record<string, Blob>): Promise<string>;
+export declare function pathResolve(dir: string, path: string): string;
 export declare function layoutInsertAttr(layout: string, insert: string, opt?: {
     "ignore"?: string[];
     "include"?: string[];

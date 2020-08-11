@@ -79,7 +79,7 @@ declare const ClickGo: {
     fetchClickGoControl: (path: string) => Promise<boolean>;
     fetchApp: (path: string) => Promise<null | IAppPkg>;
     runApp: (path: string | IAppPkg, opt?: {
-        "runtime"?: IFileList;
+        "runtime"?: Record<string, Blob>;
     }) => Promise<number>;
     createForm: (opt: ICreateFormOptions) => Promise<number | IForm>;
     removeForm: (formId: number) => boolean;

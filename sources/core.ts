@@ -676,6 +676,12 @@ export async function runApp(path: string | IAppPkg, opt?: {
  * @param opt 创建窗体的配置对象
  */
 export async function createForm(opt: ICreateFormOptions): Promise<number | IForm> {
+    if (!opt.taskId) {
+        return - 109;
+    }
+    if (!opt.dir) {
+        opt.dir = opt.file;
+    }
     /** --- 当前的 APP PKG --- */
     let appPkg: IAppPkg = ClickGo.taskList[opt.taskId].appPkg;
     // ---  申请 formId ---
@@ -770,6 +776,7 @@ export async function createForm(opt: ICreateFormOptions): Promise<number | IFor
             // --- 组成 data ---
             data.taskId = opt.taskId;
             data.formId = formId;
+            data._dir = opt.dir ?? "/";
             data._scope = rand;
             data._controlName = name;
             // --- 预设 methods ---
@@ -802,10 +809,11 @@ export async function createForm(opt: ICreateFormOptions): Promise<number | IFor
             };
             // --- 获取文件 blob 对象 ---
             methods.getBlob = function(this: IVue, file: string): Blob | null {
+                file = Tool.pathResolve(this.$data._dir, file);
                 return ClickGo.taskList[this.taskId].appPkg.files[file] ?? null;
             };
             methods.getDataUrl = async function(this: IVue, file: string): Promise<string | null> {
-                let f = ClickGo.taskList[this.taskId].appPkg.files[file];
+                let f = this.getBlob(file);
                 return f ? await Tool.blob2DataUrl(f) : null;
             };
             // --- layout 中 :class 的转义 ---
@@ -915,7 +923,7 @@ export async function createForm(opt: ICreateFormOptions): Promise<number | IFor
     if (style) {
         let r = Tool.stylePrepend(style);
         rand = r.rand;
-        style = await Tool.styleUrl2DataUrl("/", r.style, appPkg.files);
+        style = await Tool.styleUrl2DataUrl(opt.dir ?? "/", r.style, appPkg.files);
     }
     // --- 要创建的 form 的 layout ---
     layout = Tool.layoutInsertAttr(layout, ":focus=\"focus\"");
@@ -942,6 +950,7 @@ export async function createForm(opt: ICreateFormOptions): Promise<number | IFor
     // --- 初始化系统初始 data ---
     data.taskId = opt.taskId;
     data.formId = formId;
+    data._dir = opt.dir ?? "/";
     data._scope = rand;
     data.focus = false;
     data._customZIndex = false;
@@ -951,13 +960,19 @@ export async function createForm(opt: ICreateFormOptions): Promise<number | IFor
         data._topMost = false;
     }
     // --- 初始化系统方法 ---
-    methods.createForm = async function(this: IVue, paramOpt: string | { "code"?: string; "layout": string; "style"?: string; }, cfOpt: { "mask"?: boolean; } = {}): Promise<void> {
+    methods.createForm = async function(this: IVue, paramOpt: string | ICreateFormOptions, cfOpt: { "mask"?: boolean; } = {}): Promise<void> {
         let inOpt: ICreateFormOptions = {
             "taskId": opt.taskId
         };
         if (typeof paramOpt === "string") {
             inOpt.file = paramOpt;
         } else {
+            if (paramOpt.dir) {
+                inOpt.dir = paramOpt.dir;
+            }
+            if (paramOpt.file) {
+                inOpt.file = paramOpt.file;
+            }
             if (paramOpt.code) {
                 inOpt.code = paramOpt.code;
             }
@@ -998,10 +1013,11 @@ export async function createForm(opt: ICreateFormOptions): Promise<number | IFor
     };
     // --- 获取文件 blob 对象 ---
     methods.getBlob = function(this: IVue, file: string): Blob | null {
+        file = Tool.pathResolve(this.$data._dir, file);
         return ClickGo.taskList[this.taskId].appPkg.files[file] ?? null;
     };
     methods.getDataUrl = async function(this: IVue, file: string): Promise<string | null> {
-        let f = ClickGo.taskList[this.taskId].appPkg.files[file];
+        let f = this.getBlob(file);
         return f ? await Tool.blob2DataUrl(f) : null;
     };
     // --- 加载主题 ---
