@@ -23,9 +23,6 @@ export declare let props: {
     flex: {
         default: string;
     };
-    padding: {
-        default: undefined;
-    };
 };
 export declare let computed: {
     widthPx: (this: IVue) => string | undefined;

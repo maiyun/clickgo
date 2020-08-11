@@ -23,9 +23,6 @@ export let props = {
     },
     "flex": {
         "default": ""
-    },
-    "padding": {
-        "default": undefined
     }
 };
 

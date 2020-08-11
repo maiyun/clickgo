@@ -1,5 +1,3 @@
 <div class="wrap" :tabindex="!disabled && focus && '0'" :style="{'width': widthPx, 'height': heightPx, 'left': left + 'px', 'top': top + 'px', 'z-index': zIndex, 'flex-grow': flex}" :class="[disabled && 'cg-disabled']" @click="_tap" @mousedown="down" @touchstart="down" @keydown="keydown" @dblclick="_dblclick">
-    <div class="inner" :style="{'padding': padding && padding.replace(/([0-9]+)($| )/g, '$1px$2')}">
-        <slot>
-    </div>
+    <slot>
 </div>

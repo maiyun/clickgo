@@ -25,9 +25,6 @@ exports.props = {
     },
     "flex": {
         "default": ""
-    },
-    "padding": {
-        "default": undefined
     }
 };
 exports.computed = {

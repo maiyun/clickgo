@@ -9,14 +9,14 @@
         "/clickgo/control/tab"
     ],
     "theme": [
-        "/clickgo/theme/W10A"
+        "/clickgo/theme/transition"
     ],
     "mainLayout": "/form/main",
 
     "files": [
         "/clickgo/control/common.cgc",
         "/clickgo/control/tab.cgc",
-        "/clickgo/theme/W10A.cgt",
+        "/clickgo/theme/transition.cgt",
 
         "/form/main.js",
         "/form/main.xml",

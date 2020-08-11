@@ -58,10 +58,10 @@
     left: -5px; width: 10px;
 }
 .pop-resize-t, .pop-resize-b {
-    left: 5px; width: -webkit-calc(100% - 10px);
+    left: 5px; width: calc(100% - 10px);
 }
 .pop-resize-l, .pop-resize-r {
-    top: 5px; height: -webkit-calc(100% - 10px);
+    top: 5px; height: calc(100% - 10px);
 }
 .pop-resize-lt {
     cursor: nw-resize;

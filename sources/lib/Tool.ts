@@ -14,7 +14,7 @@ styleListElement.insertAdjacentHTML("beforeend", `<style class="cg-global">
 }
 .cg-form-list, .cg-pop-list {-webkit-user-select: none; user-select: none;}
 
-.cg-form-list *, .cg-pop-list * {box-sizing: border-box !important; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); flex-shrink: 0;}
+.cg-form-list *, .cg-pop-list *, .cg-form-list *::after, .cg-pop-list *::after, .cg-form-list *::before, .cg-pop-list *::before {box-sizing: border-box !important; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); flex-shrink: 0;}
 .cg-form-list, .cg-form-list input, .cg-form-list textarea, .cg-pop-list, .cg-pop-list input, .cg-pop-list textarea {font-family: 'Microsoft YaHei',Arial,Helvetica,Sans-Serif; font-size: 12px; line-height: 1; -webkit-font-smoothing: antialiased; font-weight: 400;}
 
 .cg-circular {box-sizing: border-box; position: fixed; z-index: 20020003; border: solid 3px #76b9ed; border-radius: 50%; filter: drop-shadow(0 0 7px #76b9ed); pointer-events: none; opacity: 0;}

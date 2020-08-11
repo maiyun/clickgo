@@ -1,23 +1,32 @@
 .wrap {
-    border: solid 1px #adadad; background: #e1e1e1; color: #000; display: flex; outline: none; position: relative; padding: 1px;
+    display: flex; align-items: center; justify-content: center; outline: none; position: relative; overflow: hidden; background-color: #e1e1e1; color: #000;
+}
+.wrap::before {
+    content: ''; position: absolute; left: 0; top: 0; width: 100%; height: 100%; border: solid 1px #adadad;
 }
 .wrap.cg-disabled {
-    border: solid 1px #bfbfbf; background: #cccccc; color: #838383;
+    background-color: #cccccc;
+}
+.wrap.cg-disabled::before {
+    border: solid 1px #bfbfbf; color: #838383;
 }
 .wrap:hover:not(.cg-disabled) {
-    border: solid 1px #0078d7; background: #e5f1fb; padding: 1px;
+    background-color: #e5f1fb;
+}
+.wrap:hover:not(.cg-disabled)::before {
+    border: solid 1px #0078d7;
 }
 .wrap:active:not(.cg-disabled) {
-    border: solid 1px #005499; background: #cce4f7; padding: 1px;
+    background-color: #cce4f7;
 }
-.wrap:focus {
+.wrap:active:not(.cg-disabled)::before {
+    border: solid 1px #005499;
+}
+.wrap:focus::before {
     border: solid 2px #0078d7; padding: 0;
 }
 
-.inner {
-    display: flex; align-items: center; justify-content: center; flex: 1; border: solid 1px transparent; overflow: hidden;
-}
-.wrap:focus .inner {
-    border: dotted 1px #15010b;
+.wrap:focus::after {
+    content: ''; border: dotted 1px #15010b; position: absolute; left: 2px; top: 2px; width: calc(100% - 4px); height: calc(100% - 4px);
 }
 
