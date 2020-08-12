@@ -14,7 +14,10 @@
             <button @tap="openGreatView">Open GreatView &amp; Select form</button>
             <button @tap="openOverflow">Open Overflow form</button>
             <button @tap="runTaskmgr">Run "Task manager" app</button>
-            <button @tap="openError">Open has an error form</button>
+            <layout gutter="10">
+                <button @tap="changeTheme" flex="1">Theme</button>
+                <button @tap="openError" flex="1">Error</button>
+            </layout>
         </layout>
     </overflow>
 </form>

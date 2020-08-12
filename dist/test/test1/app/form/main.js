@@ -39,7 +39,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.methods = exports.data = void 0;
 exports.data = {
     "width": 300,
-    "height": 505
+    "height": 505,
+    "theme": ""
 };
 exports.methods = {
     openOnlyClose: function () {
@@ -47,9 +48,6 @@ exports.methods = {
     },
     openThin: function () {
         this.createForm("/form/thin");
-    },
-    openError: function () {
-        this.createForm("/form/error");
     },
     openBorderNone: function () {
         this.createForm("/form/borderNone");
@@ -86,5 +84,21 @@ exports.methods = {
                 }
             });
         });
+    },
+    changeTheme: function () {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                if (this.theme === "") {
+                    this.theme = "once";
+                }
+                else {
+                    this.theme = "once";
+                }
+                return [2];
+            });
+        });
+    },
+    openError: function () {
+        this.createForm("/form/error");
     }
 };

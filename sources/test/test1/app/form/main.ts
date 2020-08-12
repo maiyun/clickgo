@@ -1,6 +1,8 @@
 export let data = {
     "width": 300,
-    "height": 505
+    "height": 505,
+
+    "theme": ""
 };
 
 export let methods = {
@@ -9,9 +11,6 @@ export let methods = {
     },
     openThin: function(this: IVue): void {
         this.createForm("/form/thin");
-    },
-    openError: function(this: IVue): void {
-        this.createForm("/form/error");
     },
     openBorderNone: function(this: IVue): void {
         this.createForm("/form/borderNone");
@@ -39,6 +38,16 @@ export let methods = {
     },
     runTaskmgr: async function(this: IVue): Promise<void> {
         await ClickGo.runApp("taskApp/");
+    },
+    changeTheme: async function(this: IVue): Promise<void> {
+        if (this.theme === "") {
+            this.theme = "once";
+        } else{
+            this.theme = "once";
+        }
+    },
+    openError: function(this: IVue): void {
+        this.createForm("/form/error");
     }
 };
 

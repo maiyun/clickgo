@@ -5,10 +5,10 @@
     content: ''; position: absolute; left: 0; top: 0; width: 100%; height: 100%; border: solid 1px #adadad;
 }
 .wrap.cg-disabled {
-    background-color: #cccccc;
+    background-color: #cccccc; color: #838383;
 }
 .wrap.cg-disabled::before {
-    border: solid 1px #bfbfbf; color: #838383;
+    border: solid 1px #bfbfbf;
 }
 .wrap:hover:not(.cg-disabled) {
     background-color: #e5f1fb;

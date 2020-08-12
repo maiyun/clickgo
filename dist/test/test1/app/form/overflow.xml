@@ -32,12 +32,12 @@
         </overflow>
         <label>Scroll offset: {{so2}}, Length: {{l2}}, Client: {{c2}}.</label>
         <layout gutter="10">
-            <button @tap="lineCount += 10" padding="0 10" flex="1">Add 10 lines</button>
-            <button @tap="lineCount += 50" padding="0 10" flex="1">Add 50 lines</button>
+            <button @tap="lineCount += 10" flex="1" style="padding: 0 10px;">Add 10 lines</button>
+            <button @tap="lineCount += 50" flex="1" style="padding: 0 10px;">Add 50 lines</button>
         </layout>
         <layout gutter="10">
-            <button @tap="lineCount -= 10;if(lineCount < 0) {lineCount = 0;}" padding="0 10" flex="1">Remove 10 lines</button>
-            <button @tap="style = !style" padding="0 10" flex="1">Change style</button>
+            <button @tap="lineCount -= 10;if(lineCount < 0) {lineCount = 0;}" flex="1" style="padding: 0 10px;">Remove 10 lines</button>
+            <button @tap="style = !style" flex="1" style="padding: 0 10px;">Change style</button>
         </layout>
     </layout>
 </form>

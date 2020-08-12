@@ -23,12 +23,12 @@
                     </greatview>
                     <label>Scroll offset: {{so2}}, Length: {{l2}}, Client: {{c2}}.</label>
                     <layout gutter="10">
-                        <button @tap="lineCount += 100" padding="0 10" flex="1">Add 100 lines</button>
-                        <button @tap="lineCount += 1000" padding="0 10" flex="1">Add 1000 lines</button>
+                        <button @tap="lineCount += 100" flex="1" style="padding: 0 10px;">Add 100 lines</button>
+                        <button @tap="lineCount += 1000" flex="1" style="padding: 0 10px;">Add 1000 lines</button>
                     </layout>
                     <layout gutter="10">
-                        <button @tap="lineCount -= 100;if(lineCount < 0) {lineCount = 0;}" padding="0 10" flex="1">Remove 100 lines</button>
-                        <button @tap="lineCount -= 1000;if(lineCount < 0) {lineCount = 0;}" padding="0 10" flex="1">Remove 1000 lines</button>
+                        <button @tap="lineCount -= 100;if(lineCount < 0) {lineCount = 0;}" flex="1" style="padding: 0 10px;">Remove 100 lines</button>
+                        <button @tap="lineCount -= 1000;if(lineCount < 0) {lineCount = 0;}" flex="1" style="padding: 0 10px;">Remove 1000 lines</button>
                     </layout>
                 </layout>
             </tab-panel>
@@ -56,12 +56,12 @@
                     </greatview>
                     <label>Scroll offset: {{so2_2}}, Length: {{l2_2}}, Client: {{c2_2}}.</label>
                     <layout gutter="10">
-                        <button @tap="lineCount_2 += 10" padding="0 10" flex="1">Add 10 lines</button>
-                        <button @tap="lineCount_2 += 50" padding="0 10" flex="1">Add 50 lines</button>
+                        <button @tap="lineCount_2 += 10" flex="1" style="padding: 0 10px;">Add 10 lines</button>
+                        <button @tap="lineCount_2 += 50" flex="1" style="padding: 0 10px;">Add 50 lines</button>
                     </layout>
                     <layout gutter="10">
-                        <button @tap="lineCount_2 -= 10;if(lineCount_2 < 0) {lineCount_2 = 0;}" padding="0 10" flex="1">Remove 10 lines</button>
-                        <button @tap="lineCount_2 -= 50;if(lineCount_2 < 0) {lineCount_2 = 0;}" padding="0 10" flex="1">Remove 50 lines</button>
+                        <button @tap="lineCount_2 -= 10;if(lineCount_2 < 0) {lineCount_2 = 0;}" flex="1" style="padding: 0 10px;">Remove 10 lines</button>
+                        <button @tap="lineCount_2 -= 50;if(lineCount_2 < 0) {lineCount_2 = 0;}" flex="1" style="padding: 0 10px;">Remove 50 lines</button>
                     </layout>
                 </layout>
             </tab-panel>
@@ -121,13 +121,13 @@
             </tab-panel>
         </tab>
         <layout gutter="10">
-            <button @tap="style = !style" padding="0 10" flex="1">Change style</button>
-            <button @tap="if(tabs[0]){tabs[0].label='changed';}" padding="0 10" flex="1">Change custom tab 1</button>
+            <button @tap="style = !style" flex="1" style="padding: 0 10px;">Change style</button>
+            <button @tap="if(tabs[0]){tabs[0].label='changed';}" flex="1" style="padding: 0 10px;">Change custom tab 1</button>
         </layout>
         <layout gutter="10">
-            <button @tap="tabs.push({label:'tab'+(++tabsi),name:'tab'+tabsi})" padding="0 10" flex="1">Add</button>
-            <button @tap="if(tabs.length>0){tabs.splice(tabs.length-1);}" padding="0 10" flex="1">Remove</button>
-            <button @tap="if(tabPosition==='top'){tabPosition='right';}else if(tabPosition==='right'){tabPosition='bottom';}else if(tabPosition==='bottom'){tabPosition='left';}else{tabPosition='top';}" padding="0 10" flex="1">Position</button>
+            <button @tap="tabs.push({label:'tab'+(++tabsi),name:'tab'+tabsi})" flex="1" style="padding: 0 10px;">Add</button>
+            <button @tap="if(tabs.length>0){tabs.splice(tabs.length-1);}" flex="1" style="padding: 0 10px;">Remove</button>
+            <button @tap="if(tabPosition==='top'){tabPosition='right';}else if(tabPosition==='right'){tabPosition='bottom';}else if(tabPosition==='bottom'){tabPosition='left';}else{tabPosition='top';}" flex="1" style="padding: 0 10px;">Position</button>
         </layout>
     </layout>
 </form>

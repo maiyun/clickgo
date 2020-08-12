@@ -22,7 +22,7 @@
         </layout>
         <layout gutter="20" align-v="center">
             <label flex="1">On the left is the overflow control.</label>
-            <button @tap="lcount += 10" padding="0 10">Add 10 lines</button>
+            <button @tap="lcount += 10" style="padding: 0 10px;">Add 10 lines</button>
         </layout>
     </layout>
 </form>

@@ -5,64 +5,52 @@
     flex-direction: column;
 }
 
-.start-wrap, .end-wrap {
-    display: flex;
+.start, .end {
+    display: flex; justify-content: center; align-items: center;
 }
-.start-wrap:hover, .end-wrap:hover {
+.start::before, .end::before {
+    content: ''; border: solid 1px #000; width: 24%; height: 24%; -webkit-transform: rotate(45deg); transform: rotate(45deg);
+}
+.start:hover, .end:hover {
     background-color: rgba(0, 0, 0, .1);
 }
-.start-wrap:active, .end-wrap:active {
+.start:active, .end:active {
     background-color: rgba(0, 0, 0, .5);
 }
-.start-wrap:active .start-inner::before, .end-wrap:active .end-inner::before {
+.start:active::before, .end:active::before {
     border-color: #FFF;
 }
 
-.start-inner, .end-inner {
-    flex: 1; display: flex; justify-content: center; align-items: center;
-}
-
-.start-inner::before, .end-inner::before {
-    content: ''; border: solid 1px #000; width: 24%; height: 24%; -webkit-transform: rotate(45deg); transform: rotate(45deg);
-}
-
-.wrap.v .start-inner::before {
+.wrap.v .start::before {
     border-width: 1px 0 0 1px; margin-bottom: -12%;
 }
-.wrap.v .end-inner::before {
+.wrap.v .end::before {
     border-width: 0 1px 1px 0; margin-top: -12%;
 }
-.wrap.h .start-inner::before {
+.wrap.h .start::before {
     border-width: 0 0 1px 1px; margin-right: -12%;
 }
-.wrap.h .end-inner::before {
+.wrap.h .end::before {
     border-width: 1px 1px 0 0; margin-left: -12%;
 }
 
-.scroll-bar-wrap {
-    flex: 1; display: flex;
+.scroll-bar {
+    flex: 1;
 }
 
-.scroll-bar-inner {
-    flex: 1; position: relative;
+.block {
+    background-color: rgba(0, 0, 0, .1); display: flex;
 }
-
-.block-wrap {
-    background-color: rgba(0, 0, 0, .1); display: flex; position: absolute; left: 0; top: 0;
-}
-.block-wrap:hover {
+.block:hover {
     background-color: rgba(0, 0, 0, .3);
 }
-.scroll-bar-inner:active > .block-wrap {
+.scroll-bar:active > .block {
     background-color: rgba(0, 0, 0, 0.5);
 }
-.wrap.v .block-wrap {
-    width: 100%;
-}
-.wrap.h .block-wrap {
+.wrap.h .block {
     height: 100%;
 }
-.block-wrap.tran {
+.block.tran {
     transition: transform .03s linear;
 }
 
