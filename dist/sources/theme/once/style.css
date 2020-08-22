@@ -1,7 +1,35 @@
+/* --- button --- */
+
 .button_wrap {
-    background-image: linear-gradient(to top, #d6d0c5, #e2dfd6 1px, #ecebe6 2px, #FFF); border: solid 1px #003c74; border-radius: 2px;
+    background: linear-gradient(to top, #f0f0ea, #FFF); border: solid 1px #003c74; border-radius: 3px; box-shadow: #d6d0c5 -1px -1px 3px inset, rgba(255, 255, 255, .7) 1px 1px;
 }
-.wrap::before {
+.button_wrap::before {
     border: none;
 }
+.button_wrap.cg-disabled {
+    background: #f5f4ea; color: #a1a192; border: solid 1px #c9c7ba; box-shadow: none;
+}
+.button_wrap.cg-disabled::before {
+    border: none;
+}
+.button_wrap:hover:not(.cg-disabled) {
+    background: linear-gradient(to top, #f0f0ea, #FFF);
+}
+.button_wrap:hover:not(.cg-disabled)::before {
+    border-style: solid; border-width: 2px; border-image: linear-gradient(to top, #e59700, #fff0cf) 2 2 2 2 round;
+}
+.button_wrap:active:not(.cg-disabled) {
+    background: linear-gradient(to top, #f2f1ee, #e2e2da 2px, #e2e1da); box-shadow: #d1ccc1 1px 1px 3px inset;
+}
+.button_wrap:active:not(.cg-disabled)::before {
+    border: none;
+}
+.button_wrap:focus::before {
+    border-style: solid; border-width: 2px; border-image: linear-gradient(to top, #6982ee, #cee7ff) 2 2 2 2 round;
+}
 
+/* --- form --- */
+
+.form_content {
+    background: #ece9d8;
+}

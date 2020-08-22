@@ -17,7 +17,7 @@ interface IClickGo {
     /** --- ClickGo 响应位置 --- */
     'position': IClickGoPosition;
     /** --- 获取 ClickGo 响应区域计算后的值 --- */
-    getPosition: () => IClickGoPositionResult;
+    getPosition(): IClickGoPositionResult;
 
     /** --- 是否已加载完成 --- */
     'isReady': boolean;
@@ -27,7 +27,7 @@ interface IClickGo {
      * --- 注册页面装载成功回调 ---
      * @param callback 回调函数
      */
-    ready: (callback: () => void | Promise<void>) => void;
+    ready(callback: () => void | Promise<void>): void;
 
     'core': ICoreLib;
     'element': IElementLib;
@@ -64,19 +64,19 @@ interface ICoreLib {
     'tasks': Record<number, ITask>;
     'lastTaskId': number;
     'globalEvents': IGlobalEvents;
-    trigger: (name: TGlobalEvent, taskId?: number, formId?: number, opt?: {
+    trigger(name: TGlobalEvent, taskId?: number, formId?: number, opt?: {
         'title'?: string;
         'state'?: boolean;
         'icon'?: string;
-    }) => void;
-    fetchClickGoFile: (path: string) => Promise<null | Blob>;
-    fetchClickGoControlPkg: (path: string) => Promise<null | IControlPkg>;
-    fetchApp: (path: string) => Promise<null | IAppPkg>;
-    runApp: (path: string | IAppPkg, opt?: {
+    }): void;
+    fetchClickGoFile(path: string): Promise<null | Blob>;
+    fetchClickGoControlPkg(path: string): Promise<null | IControlPkg>;
+    fetchApp(path: string): Promise<null | IAppPkg>;
+    runApp(path: string | IAppPkg, opt?: {
         'runtime'?: Record<string, Blob>;
-    }) => Promise<number>;
-    endTask: (taskId: number) => boolean;
-    setGlobalCursor: (type?: string) => void;
+    }): Promise<number>;
+    endTask(taskId: number): boolean;
+    setGlobalCursor(type?: string): void;
 }
 
 /** --- 全局事件 --- */
@@ -189,18 +189,18 @@ interface ITask {
  */
 
 interface IElementLib {
-    getWatchSize: (el: HTMLElement) => IElementSize;
-    getSize: (el: HTMLElement) => IElementSize;
-    watchSize: (el: HTMLElement, cb: (size: IElementSize) => void, scroll?: boolean) => IElementSize;
-    watchElement: (el: HTMLElement, cb: MutationCallback, mode?: 'child' | 'childsub' | 'style' | 'default' | MutationObserverInit) => MutationObserver;
-    bindDown: (oe: MouseEvent | TouchEvent, opt: {
+    getWatchSize(el: HTMLElement): IElementSize;
+    getSize(el: HTMLElement): IElementSize;
+    watchSize(el: HTMLElement, cb: (size: IElementSize) => void, scroll?: boolean): IElementSize;
+    watchElement(el: HTMLElement, cb: MutationCallback, mode?: 'child' | 'childsub' | 'style' | 'default' | MutationObserverInit): MutationObserver;
+    bindDown(oe: MouseEvent | TouchEvent, opt: {
         'down'?: (e: MouseEvent | TouchEvent) => void;
         'start'?: (e: MouseEvent | TouchEvent) => void | boolean;
         'move'?: (e: MouseEvent | TouchEvent) => void | boolean;
         'up'?: (e: MouseEvent | TouchEvent) => void;
         'end'?: (e: MouseEvent | TouchEvent) => void;
-    }) => void;
-    bindMove: (e: MouseEvent | TouchEvent, opt: {
+    }): void;
+    bindMove(e: MouseEvent | TouchEvent, opt: {
         'left'?: number;
         'top'?: number;
         'right'?: number;
@@ -222,13 +222,13 @@ interface IElementLib {
         'end'?: (moveTimes: Array<{ 'time': number; 'ox': number; 'oy': number; }>) => void;
         'borderIn'?: (x: number, y: number, border: TBorderDir) => void;
         'borderOut'?: () => void;
-    }) => {
+    }): {
         'left': number;
         'top': number;
         'right': number;
         'bottom': number;
     };
-    bindResize: (e: MouseEvent | TouchEvent, opt: {
+    bindResize(e: MouseEvent | TouchEvent, opt: {
         'left': number;
         'top': number;
         'width': number;
@@ -240,7 +240,7 @@ interface IElementLib {
         'start'?: (x: number, y: number) => void | boolean;
         'move'?: (left: number, top: number, width: number, height: number, x: number, y: number, border: TBorderDir) => void;
         'end'?: () => void;
-    }) => void;
+    }): void;
 }
 
 /** --- 方向类型，从左上开始 --- */
@@ -284,24 +284,24 @@ interface IFormLib {
     'lastZIndex': number;
     'lastTopZIndex': number;
     'lastPopZIndex': number;
-    changeFocus: (formId?: number, vm?: IVue) => void;
-    getRectByDir: (dir: TBorderDir) => {
+    changeFocus(formId?: number, vm?: IVue): void;
+    getRectByDir(dir: TBorderDir): {
         'width': number;
         'height': number;
         'left': number;
         'top': number;
     };
-    showCircular: (x: number, y: number) => void;
-    moveRectangle: (dir: TBorderDir) => void;
-    showRectangle: (x: number, y: number, pos: TBorderDir) => void;
-    hideRectangle: () => void;
-    appendToPop: (el: HTMLElement) => void;
-    removeFromPop: (el: HTMLElement) => void;
-    showPop: (pop: IVue, x: number | HTMLElement, y?: number) => void;
-    hidePop: (pop?: IVue | null) => void;
-    doFocusAndPopEvent: (e: MouseEvent | TouchEvent) => void;
-    remove: (formId: number) => boolean;
-    create: (opt: ICreateFormOptions) => Promise<number | IForm>;
+    showCircular(x: number, y: number): void;
+    moveRectangle(dir: TBorderDir): void;
+    showRectangle(x: number, y: number, pos: TBorderDir): void;
+    hideRectangle(): void;
+    appendToPop(el: HTMLElement): void;
+    removeFromPop(el: HTMLElement): void;
+    showPop(pop: IVue, x: number | HTMLElement, y?: number): void;
+    hidePop(pop?: IVue | null): void;
+    doFocusAndPopEvent(e: MouseEvent | TouchEvent): void;
+    remove(formId: number): boolean;
+    create(opt: ICreateFormOptions): Promise<number | IForm>;
 }
 
 /** --- 窗体对象 --- */
@@ -331,13 +331,13 @@ interface ICreateFormOptions {
 interface IThemeLib {
     'global': ITheme | null;
     'clickgoThemes': Record<string, ITheme>;
-    readBlob: (blob: Blob) => Promise<false | ITheme>;
-    fetchClickGo: (path: string) => Promise<null | ITheme>;
-    load: (path: string | ITheme, taskId: number, custom?: boolean) => Promise<boolean>;
-    remove: (path: string, taskId: number) => Promise<void>;
-    clear: (taskId: number, custom?: boolean) => Promise<void>;
-    loadGlobal: (file: string | ITheme) => Promise<void>;
-    clearGlobal: () => Promise<void>;
+    readBlob(blob: Blob): Promise<false | ITheme>;
+    fetchClickGo(path: string): Promise<null | ITheme>;
+    load(path: string | ITheme, taskId: number, custom?: boolean): Promise<boolean>;
+    remove(path: string, taskId: number): Promise<void>;
+    clear(taskId: number, custom?: boolean): Promise<void>;
+    setGlobal(file: string | ITheme): Promise<void>;
+    clearGlobal(): Promise<void>;
 }
 
 /** --- 主题对象 --- */
@@ -368,33 +368,33 @@ interface IThemeConfig {
  */
 
 interface IToolLib {
-    blob2DataUrl: (blob: Blob) => Promise<string>;
-    blob2ArrayBuffer: (blob: Blob) => Promise<ArrayBuffer>;
-    blob2Text: (blob: Blob) => Promise<string>;
-    clone: (obj: Record<string, any> | any[]) => object;
-    siblings: (e: HTMLElement, cn: string) => HTMLElement | null;
-    sleep: (ms?: number) => Promise<void>;
-    createTaskStyleElement: (taskId: number) => void;
-    removeTaskStyleElement: (taskId: number) => void;
-    pushStyle: (style: string, taskId: number, type?: 'controls' | 'global' | 'forms', formId?: number) => void;
-    removeStyle: (taskId: number, formId?: number) => void;
-    purify: (text: string) => string;
-    trim: (text: string) => string;
-    parsePath: (path: string) => string;
-    isControlPkg: (o: string | object) => o is IControlPkg;
-    isAppPkg: (o: string | object) => o is IAppPkg;
-    controlBlob2Pkg: (blob: Blob) => Promise<false | IControlPkg>;
-    stylePrepend: (style: string, rand?: string) => {
+    blob2DataUrl(blob: Blob): Promise<string>;
+    blob2ArrayBuffer(blob: Blob): Promise<ArrayBuffer>;
+    blob2Text(blob: Blob): Promise<string>;
+    clone(obj: Record<string, any> | any[]): object;
+    siblings(e: HTMLElement, cn: string): HTMLElement | null;
+    sleep(ms?: number): Promise<void>;
+    createTaskStyleElement(taskId: number): void;
+    removeTaskStyleElement(taskId: number): void;
+    pushStyle(style: string, taskId: number, type?: 'controls' | 'global' | 'forms', formId?: number): void;
+    removeStyle(taskId: number, formId?: number): void;
+    purify(text: string): string;
+    trim(text: string): string;
+    parsePath(path: string): string;
+    isControlPkg(o: string | object): o is IControlPkg;
+    isAppPkg(o: string | object): o is IAppPkg;
+    controlBlob2Pkg(blob: Blob): Promise<false | IControlPkg>;
+    stylePrepend(style: string, rand?: string): {
         'rand': string;
         'style': string;
     };
-    pathResolve: (dir: string, path: string) => string;
-    styleUrl2DataUrl: (dir: string, style: string, files: Record<string, Blob>) => Promise<string>;
-    layoutInsertAttr: (layout: string, insert: string, opt?: {
+    pathResolve(dir: string, path: string): string;
+    styleUrl2DataUrl(dir: string, style: string, files: Record<string, Blob>): Promise<string>;
+    layoutInsertAttr(layout: string, insert: string, opt?: {
         'ignore'?: string[];
         'include'?: string[];
-    }) => string;
-    layoutClassPrepend: (layout: string, rand?: string[]) => {
+    }): string;
+    layoutClassPrepend(layout: string, rand?: string[]): {
         'rand': string[];
         'layout': string;
     };

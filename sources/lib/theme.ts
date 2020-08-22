@@ -132,6 +132,10 @@ export async function load(path: string | ITheme, taskId: number, custom = true)
         task.customTheme = true;
         document.querySelector(`#cg-style-task${taskId} > .cg-style-themes`)!.innerHTML = '';
     }
+    // --- 如果当前是全局，设置的也是全局，也要清除之前的样式 ---
+    if (!task.customTheme && !custom) {
+        document.querySelector(`#cg-style-task${taskId} > .cg-style-themes`)!.innerHTML = '';
+    }
     document.querySelector(`#cg-style-task${taskId} > .cg-style-themes`)!.insertAdjacentHTML('beforeend', `<style data-path="${typeof path === 'string' ? path : path.config.name}">${style}</style>`);
     // --- 检查是否是设定为全局 ---
     if (!custom && !global) {
@@ -193,7 +197,7 @@ export async function clear(taskId: number, custom = true): Promise<void> {
  * --- 将 cgt 主题设置到全局所有任务 ---
  * @param file cgt 文件的 blob 或 ITheme 对象
  */
-export async function loadGlobal(file: string | ITheme): Promise<void> {
+export async function setGlobal(file: string | ITheme): Promise<void> {
     for (let tid in clickgo.core.tasks) {
         let task = clickgo.core.tasks[tid];
         if (task.customTheme) {

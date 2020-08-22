@@ -42,9 +42,11 @@ export let methods = {
     changeTheme: async function(this: IVue): Promise<void> {
         if (this.theme === '') {
             this.theme = 'once';
+            await clickgo.theme.setGlobal('/clickgo/theme/once.cgt');
         }
         else {
-            this.theme = 'once';
+            this.theme = '';
+            await clickgo.theme.clearGlobal();
         }
     },
     openError: function(this: IVue): void {

@@ -23,7 +23,7 @@
     border: solid 1px #005499;
 }
 .wrap:focus::before {
-    border: solid 2px #0078d7; padding: 0;
+    border: solid 2px #0078d7;
 }
 
 .wrap:focus::after {

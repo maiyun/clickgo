@@ -88,13 +88,22 @@ exports.methods = {
     changeTheme: function () {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
-                if (this.theme === '') {
-                    this.theme = 'once';
+                switch (_a.label) {
+                    case 0:
+                        if (!(this.theme === '')) return [3, 2];
+                        this.theme = 'once';
+                        return [4, clickgo.theme.setGlobal('/clickgo/theme/once.cgt')];
+                    case 1:
+                        _a.sent();
+                        return [3, 4];
+                    case 2:
+                        this.theme = '';
+                        return [4, clickgo.theme.clearGlobal()];
+                    case 3:
+                        _a.sent();
+                        _a.label = 4;
+                    case 4: return [2];
                 }
-                else {
-                    this.theme = 'once';
-                }
-                return [2];
             });
         });
     },

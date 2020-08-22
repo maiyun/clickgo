@@ -36,7 +36,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.clearGlobal = exports.loadGlobal = exports.clear = exports.remove = exports.load = exports.fetchClickGo = exports.readBlob = exports.clickgoThemes = exports.global = void 0;
+exports.clearGlobal = exports.setGlobal = exports.clear = exports.remove = exports.load = exports.fetchClickGo = exports.readBlob = exports.clickgoThemes = exports.global = void 0;
 exports.global = null;
 exports.clickgoThemes = {};
 function readBlob(blob) {
@@ -174,6 +174,9 @@ function load(path, taskId, custom) {
                         task.customTheme = true;
                         document.querySelector("#cg-style-task" + taskId + " > .cg-style-themes").innerHTML = '';
                     }
+                    if (!task.customTheme && !custom) {
+                        document.querySelector("#cg-style-task" + taskId + " > .cg-style-themes").innerHTML = '';
+                    }
                     document.querySelector("#cg-style-task" + taskId + " > .cg-style-themes").insertAdjacentHTML('beforeend', "<style data-path=\"" + (typeof path === 'string' ? path : path.config.name) + "\">" + style + "</style>");
                     if (!custom && !exports.global) {
                         exports.global = theme;
@@ -240,7 +243,7 @@ function clear(taskId, custom) {
     });
 }
 exports.clear = clear;
-function loadGlobal(file) {
+function setGlobal(file) {
     return __awaiter(this, void 0, void 0, function () {
         var _a, _b, _i, tid, task;
         return __generator(this, function (_c) {
@@ -270,7 +273,7 @@ function loadGlobal(file) {
         });
     });
 }
-exports.loadGlobal = loadGlobal;
+exports.setGlobal = setGlobal;
 function clearGlobal() {
     return __awaiter(this, void 0, void 0, function () {
         var _a, _b, _i, tid, task;
