@@ -283,6 +283,10 @@ function bindMove(e, opt) {
         right = (_c = opt.right) !== null && _c !== void 0 ? _c : position.width;
         bottom = (_d = opt.bottom) !== null && _d !== void 0 ? _d : position.height;
     }
+    left = Math.round(left);
+    top = Math.round(top);
+    right = Math.round(right);
+    bottom = Math.round(bottom);
     if (opt.offsetLeft) {
         left += opt.offsetLeft;
     }

@@ -346,6 +346,11 @@ export function bindMove(e: MouseEvent | TouchEvent, opt: { 'left'?: number; 'to
         right = opt.right ?? position.width;
         bottom = opt.bottom ?? position.height;
     }
+    // --- 不允许出现小数点 ---
+    left = Math.round(left);
+    top = Math.round(top);
+    right = Math.round(right);
+    bottom = Math.round(bottom);
     // --- 限定拖动区域额外补偿（拖动对象和实际对象有一定偏差，超出时使用） ---
     if (opt.offsetLeft) {
         left += opt.offsetLeft;
