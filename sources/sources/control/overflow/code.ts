@@ -1,64 +1,65 @@
 export let props = {
-    "width": {
-        "default": undefined
+    'width': {
+        'default': undefined
     },
-    "height": {
-        "default": undefined
+    'height': {
+        'default': undefined
     },
-    "left": {
-        "default": 0
+    'left': {
+        'default': 0
     },
-    "top": {
-        "default": 0
+    'top': {
+        'default': 0
     },
-    "zIndex": {
-        "default": 0
+    'zIndex': {
+        'default': 0
     },
-    "flex": {
-        "default": ""
+    'flex': {
+        'default': ''
     },
-    "direction": {
-        "default": "v"
+    'direction': {
+        'default': 'v'
     },
 
-    "scrollOffset": {
-        "default": 0
+    'scrollOffset': {
+        'default': 0
     }
 };
 
 export let data = {
-    "scrollOffsetEmit": 0
+    'scrollOffsetEmit': 0
 };
 
 export let computed = {
-    "widthPx": function(this: IVue): string | undefined {
+    'widthPx': function(this: IVue): string | undefined {
         if (this.width !== undefined) {
-            return this.width + "px";
+            return this.width + 'px';
         }
-        if (this.flex !== "") {
-            return this.$parent.direction ? (this.$parent.direction === "v" ? undefined : "0") : undefined;
+        if (this.flex !== '') {
+            return this.$parent.direction ? (this.$parent.direction === 'v' ? undefined : '0') : undefined;
         }
     },
-    "heightPx": function(this: IVue): string | undefined {
+    'heightPx': function(this: IVue): string | undefined {
         if (this.height !== undefined) {
-            return this.height + "px";
+            return this.height + 'px';
         }
-        if (this.flex !== "") {
-            return this.$parent.direction ? (this.$parent.direction === "v" ? "0" : undefined) : undefined;
+        if (this.flex !== '') {
+            return this.$parent.direction ? (this.$parent.direction === 'v' ? '0' : undefined) : undefined;
         }
     }
 };
 
 export let watch = {
-    "scrollOffset": {
+    'scrollOffset': {
         handler: function(this: IVue): void {
             let so = parseInt(this.scrollOffset);
             if (so === this.scrollOffsetEmit) {
                 return;
             }
-            if (this.direction === "v") {
+            if (this.direction === 'v') {
                 this.$refs.wrap.scrollTop = this.scrollOffset;
-            } else {
+            }
+            else {
                 this.$refs.wrap.scrollLeft = this.scrollOffset;
             }
         }
@@ -70,19 +71,19 @@ export let methods = {
         if (!this.$refs.wrap) {
             return;
         }
-        let scroll = this.direction === "v" ? this.$refs.wrap.scrollTop : this.$refs.wrap.scrollLeft;
+        let scroll = this.direction === 'v' ? this.$refs.wrap.scrollTop : this.$refs.wrap.scrollLeft;
         if (scroll < 0) {
             scroll = 0;
         }
-        let maxScroll = (this.direction === "v" ? (this.$refs.wrap.scrollHeight - this.$refs.wrap.clientHeight) : (this.$refs.wrap.scrollWidth - this.$refs.wrap.clientWidth));
+        let maxScroll = (this.direction === 'v' ? (this.$refs.wrap.scrollHeight - this.$refs.wrap.clientHeight) : (this.$refs.wrap.scrollWidth - this.$refs.wrap.clientWidth));
         if (scroll > maxScroll) {
             scroll = maxScroll;
         }
         this.scrollOffsetEmit = scroll;
-        this.$emit("update:scrollOffset", this.scrollOffsetEmit);
+        this.$emit('update:scrollOffset', this.scrollOffsetEmit);
     },
     wheel: function(this: IVue, e: WheelEvent): void {
-        if (this.direction === "v") {
+        if (this.direction === 'v') {
             return;
         }
         if (e.deltaX !== 0) {
@@ -98,21 +99,21 @@ export let methods = {
 };
 
 export let mounted = function(this: IVue): void {
-    ClickGo.watchSize(this.$refs.wrap, () => {
-        this.$emit("resize", this.direction === "v" ? this.$refs.wrap.clientHeight : this.$refs.wrap.clientWidth);
+    clickgo.element.watchSize(this.$refs.wrap, () => {
+        this.$emit('resize', this.direction === 'v' ? this.$refs.wrap.clientHeight : this.$refs.wrap.clientWidth);
     });
-    this.$emit("resize", this.direction === "v" ? this.$refs.wrap.clientHeight : this.$refs.wrap.clientWidth);
+    this.$emit('resize', this.direction === 'v' ? this.$refs.wrap.clientHeight : this.$refs.wrap.clientWidth);
 
-    ClickGo.watchElement(this.$refs.wrap, () => {
-        this.$emit("change", this.direction === "v" ? this.$refs.wrap.scrollHeight : this.$refs.wrap.scrollWidth);
+    clickgo.element.watchElement(this.$refs.wrap, () => {
+        this.$emit('change', this.direction === 'v' ? this.$refs.wrap.scrollHeight : this.$refs.wrap.scrollWidth);
         this.scroll();
     });
-    this.$emit("change", this.direction === "v" ? this.$refs.wrap.scrollHeight : this.$refs.wrap.scrollWidth);
+    this.$emit('change', this.direction === 'v' ? this.$refs.wrap.scrollHeight : this.$refs.wrap.scrollWidth);
 
-    if (this.direction === "v") {
+    if (this.direction === 'v') {
         this.$refs.wrap.scrollTop = this.scrollOffset;
-    } else {
+    }
+    else {
         this.$refs.wrap.scrollLeft = this.scrollOffset;
     }
 };
-

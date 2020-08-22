@@ -1,11 +1,10 @@
 export let data = {
-    "path": ""
+    'path': ''
 };
 
 export let methods = {
-    "runApp": async function(this: IVue): Promise<void> {
+    'runApp': async function(this: IVue): Promise<void> {
         this.closeForm();
-        await ClickGo.runApp(this.path);
+        await clickgo.core.runApp(this.path);
     }
 };
-

@@ -1,89 +1,91 @@
 export let props = {
-    "disabled": {
-        "default": false
+    'disabled': {
+        'default': false
     },
-    "focus": {
-        "default": false
-    },
-
-    "width": {
-        "default": undefined
-    },
-    "height": {
-        "default": undefined
-    },
-    "left": {
-        "default": 0
-    },
-    "top": {
-        "default": 0
-    },
-    "zIndex": {
-        "default": 0
-    },
-    "direction": {
-        "default": "h"
-    },
-    "flex": {
-        "default": ""
-    },
-    "padding": {
-        "default": undefined
+    'focus': {
+        'default': false
     },
 
-    "area": {
-        "default": "all"
+    'width': {
+        'default': undefined
+    },
+    'height': {
+        'default': undefined
+    },
+    'left': {
+        'default': 0
+    },
+    'top': {
+        'default': 0
+    },
+    'zIndex': {
+        'default': 0
+    },
+    'direction': {
+        'default': 'h'
+    },
+    'flex': {
+        'default': ''
+    },
+    'padding': {
+        'default': undefined
+    },
+
+    'area': {
+        'default': 'all'
     }
 };
 
 export let computed = {
-    "widthPx": function(this: IVue): string | undefined {
+    'widthPx': function(this: IVue): string | undefined {
         if (this.width !== undefined) {
-            return this.width + "px";
+            return this.width + 'px';
         }
-        if (this.flex !== "") {
-            let dir = this.$parent.$data._controlName === "select" ? this.$parent.$parent.direction : this.$parent.direction;
-            return dir ? (dir === "v" ? undefined : "0") : undefined;
+        if (this.flex !== '') {
+            let dir = this.$parent.$data._controlName === 'select' ? this.$parent.$parent.direction : this.$parent.direction;
+            return dir ? (dir === 'v' ? undefined : '0') : undefined;
         }
     },
-    "heightPx": function(this: IVue): string | undefined {
+    'heightPx': function(this: IVue): string | undefined {
         if (this.height !== undefined) {
-            return this.height + "px";
+            return this.height + 'px';
         }
-        if (this.flex !== "") {
-            let dir = this.$parent.$data._controlName === "select" ? this.$parent.$parent.direction : this.$parent.direction;
-            return dir.direction ? (dir.direction === "v" ? "0" : undefined) : undefined;
+        if (this.flex !== '') {
+            let dir = this.$parent.$data._controlName === 'select' ? this.$parent.$parent.direction : this.$parent.direction;
+            return dir.direction ? (dir.direction === 'v' ? '0' : undefined) : undefined;
         }
     }
 };
 
 export let data = {
-    "popOpen": false
+    'popOpen': false
 };
 
 export let methods = {
-    showPop: function(this: IVue, event: MouseEvent | KeyboardEvent, area: "all" | "arrow"): void {
-        if (this.area === "arrow") {
-            if (area === "all") {
+    showPop: function(this: IVue, event: MouseEvent | KeyboardEvent, area: 'all' | 'arrow'): void {
+        if (this.area === 'arrow') {
+            if (area === 'all') {
                 if (this.popOpen) {
-                    ClickGo.hidePop();
+                    clickgo.form.hidePop();
                 }
                 return;
-            } else {
+            }
+            else {
                 event.stopPropagation();
             }
-        } else {
-            if (area === "arrow") {
+        }
+        else {
+            if (area === 'arrow') {
                 return;
             }
         }
         if (this.popOpen) {
-            ClickGo.hidePop();
+            clickgo.form.hidePop();
             return;
         }
         let pop: IVue | null = null;
         for (let item of this.$children) {
-            if (item.$data._controlName !== "greatselect-pop") {
+            if (item.$data._controlName !== 'greatselect-pop') {
                 continue;
             }
             pop = item;
@@ -91,12 +93,12 @@ export let methods = {
         }
         if (pop) {
             pop.widthData = this.$el.offsetWidth;
-            ClickGo.showPop(pop, this.$el);
+            clickgo.form.showPop(pop, this.$el);
         }
         this._tap(event);
     },
     down: function(this: IVue, e: MouseEvent | TouchEvent): void {
-        if (e instanceof MouseEvent && ClickGo.hasTouch) {
+        if (e instanceof MouseEvent && clickgo.hasTouch) {
             return;
         }
         this.stopPropagation(e);
@@ -109,4 +111,3 @@ export let methods = {
         this.showPop(e, this.area);
     }
 };
-

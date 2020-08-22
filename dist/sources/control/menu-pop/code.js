@@ -2,20 +2,20 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.destroyed = exports.mounted = exports.methods = exports.data = exports.props = void 0;
 exports.props = {
-    "width": {
-        "default": undefined
+    'width': {
+        'default': undefined
     },
-    "height": {
-        "default": undefined
+    'height': {
+        'default': undefined
     }
 };
 exports.data = {
-    "leftData": -20070831,
-    "topData": -20070831,
-    "zIndexData": 0,
-    "open": false,
-    "hasSubItemsCount": 0,
-    "hasTypeItemsCount": 0
+    'leftData': -20070831,
+    'topData': -20070831,
+    'zIndexData': 0,
+    'open': false,
+    'hasSubItemsCount': 0,
+    'hasTypeItemsCount': 0
 };
 exports.methods = {
     onHide: function () {
@@ -24,13 +24,13 @@ exports.methods = {
             if (!item.popOpen) {
                 continue;
             }
-            ClickGo.hidePop(item.$children[0]);
+            clickgo.form.hidePop(item.$children[0]);
         }
     }
 };
 exports.mounted = function () {
-    ClickGo.appendToPop(this.$el);
+    clickgo.form.appendToPop(this.$el);
 };
 exports.destroyed = function () {
-    ClickGo.removeFromPop(this.$el);
+    clickgo.form.removeFromPop(this.$el);
 };

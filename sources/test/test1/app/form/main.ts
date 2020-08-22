@@ -1,53 +1,53 @@
 export let data = {
-    "width": 300,
-    "height": 505,
+    'width': 300,
+    'height': 505,
 
-    "theme": ""
+    'theme': ''
 };
 
 export let methods = {
     openOnlyClose: function(this: IVue): void {
-        this.createForm("/form/onlyClose");
+        this.createForm('/form/onlyClose');
     },
     openThin: function(this: IVue): void {
-        this.createForm("/form/thin");
+        this.createForm('/form/thin');
     },
     openBorderNone: function(this: IVue): void {
-        this.createForm("/form/borderNone");
+        this.createForm('/form/borderNone');
     },
     openAero: function(this: IVue): void {
-        this.createForm("/form/aero");
+        this.createForm('/form/aero');
     },
     openMax: function(this: IVue): void {
-        this.createForm("/form/max");
+        this.createForm('/form/max');
     },
     openMove: function(this: IVue): void {
-        this.createForm("/form/move");
+        this.createForm('/form/move');
     },
     openScroll: function(this: IVue): void {
-        this.createForm("/form/scroll");
+        this.createForm('/form/scroll');
     },
     openView: function(this: IVue): void {
-        this.createForm("/form/view");
+        this.createForm('/form/view');
     },
     openGreatView: function(this: IVue): void {
-        this.createForm("/form/greatview");
+        this.createForm('/form/greatview');
     },
     openOverflow: function(this: IVue): void {
-        this.createForm("/form/overflow");
+        this.createForm('/form/overflow');
     },
     runTaskmgr: async function(this: IVue): Promise<void> {
-        await ClickGo.runApp("taskApp/");
+        await clickgo.core.runApp('taskApp/');
     },
     changeTheme: async function(this: IVue): Promise<void> {
-        if (this.theme === "") {
-            this.theme = "once";
-        } else{
-            this.theme = "once";
+        if (this.theme === '') {
+            this.theme = 'once';
+        }
+        else {
+            this.theme = 'once';
         }
     },
     openError: function(this: IVue): void {
-        this.createForm("/form/error");
+        this.createForm('/form/error');
     }
 };
-

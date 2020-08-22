@@ -2,6 +2,7 @@
 
 [![npm version](https://img.shields.io/npm/v/clickgo.svg?colorB=brightgreen)](https://www.npmjs.com/package/clickgo "Stable Version")
 [![npm version](https://img.shields.io/npm/v/clickgo/dev.svg)](https://www.npmjs.com/package/clickgo "Development Version")
+[![npm version](https://img.shields.io/npm/v/clickgo/beta.svg)](https://www.npmjs.com/package/clickgo "Beta Version")
 [![License](https://img.shields.io/github/license/MaiyunNET/ClickGo.svg)](https://github.com/MaiyunNET/ClickGo/blob/master/LICENSE)
 [![GitHub issues](https://img.shields.io/github/issues/MaiyunNET/ClickGo.svg)](https://github.com/MaiyunNET/ClickGo/issues)
 [![GitHub Releases](https://img.shields.io/github/release/MaiyunNET/ClickGo.svg)](https://github.com/MaiyunNET/ClickGo/releases "Stable Release")
@@ -13,7 +14,7 @@ Quickly and easily create a beautiful console interface.
 
 Simply download and include with a script tag. ClickGo will be registered as a global variable.
 
-> Don’t use the minified version during development. You will miss out on all the nice warnings for common mistakes!
+> Don't use the minified version during development. You will miss out on all the nice warnings for common mistakes!
 
 **Development Version**
 

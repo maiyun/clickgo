@@ -1,77 +1,77 @@
 export let props = {
-    "width": {
-        "default": undefined
+    'width': {
+        'default': undefined
     },
-    "height": {
-        "default": undefined
+    'height': {
+        'default': undefined
     },
-    "left": {
-        "default": undefined
+    'left': {
+        'default': undefined
     },
-    "top": {
-        "default": undefined
+    'top': {
+        'default': undefined
     },
-    "zIndex": {
-        "default": undefined
+    'zIndex': {
+        'default': undefined
     },
-    "flex": {
-        "default": undefined
+    'flex': {
+        'default': undefined
     },
-    "direction": {
-        "default": "v"
+    'direction': {
+        'default': 'v'
     },
-    "padding": {
-        "default": undefined
-    },
-
-    "scrollOffset": {
-        "default": undefined
-    },
-    "same": {
-        "default": false
+    'padding': {
+        'default': undefined
     },
 
-    "data": {
-        "default": []
+    'scrollOffset': {
+        'default': undefined
+    },
+    'same': {
+        'default': false
+    },
+
+    'data': {
+        'default': []
     }
 };
 
 export let data = {
-    "innerPos": {
-        "start": 0,
-        "end": 0
+    'innerPos': {
+        'start': 0,
+        'end': 0
     },
-    "showPos": {
-        "start": 0,
-        "end": 0
+    'showPos': {
+        'start': 0,
+        'end': 0
     },
 
-    "dataHeight": [],
-    "lineHeight": 0,
+    'dataHeight': [],
+    'lineHeight': 0,
 
-    "scrollOffsetData": 0,
-    "client": 0,
-    "length": 0,
+    'scrollOffsetData': 0,
+    'client': 0,
+    'length': 0,
 
-    "refreshCount": 0,
-    "lengthInit": false,
-    "initFirst": false
+    'refreshCount': 0,
+    'lengthInit': false,
+    'initFirst': false
 };
 
 export let watch = {
-    "data": {
+    'data': {
         handler: function(this: IVue): void {
             this.refreshView();
         }
     },
-    "direction": function(this: IVue): void {
+    'direction': function(this: IVue): void {
         this.refreshView();
     }
 };
 
 export let computed = {
-    "dataComp": function(this: IVue): any[] {
-        if (typeof this.data !== "number") {
+    'dataComp': function(this: IVue): any[] {
+        if (typeof this.data !== 'number') {
             return this.data;
         }
         let list: any[] = [];
@@ -80,33 +80,33 @@ export let computed = {
         }
         return list;
     },
-    "sameComp": function(this: IVue): boolean {
-        if (typeof this.same === "boolean") {
+    'sameComp': function(this: IVue): boolean {
+        if (typeof this.same === 'boolean') {
             return this.same;
         }
-        return this.same === "true" ? true : false;
+        return this.same === 'true' ? true : false;
     },
 
-    "paddingComp": function(this: IVue): any {
+    'paddingComp': function(this: IVue): any {
         if (!this.padding) {
-            return {"top": 0, "right": 0, "bottom": 0, "left": 0};
+            return {'top': 0, 'right': 0, 'bottom': 0, 'left': 0};
         }
-        let arr = this.padding.split(" ");
+        let arr = this.padding.split(' ');
         for (let i = 0; i < arr.length; ++i) {
             arr[i] = Math.round(arr[i]);
         }
         switch (arr.length) {
             case 1: {
-                return {"top": arr[0], "right": arr[0], "bottom": arr[0], "left": arr[0]};
+                return {'top': arr[0], 'right': arr[0], 'bottom': arr[0], 'left': arr[0]};
             }
             case 2: {
-                return {"top": arr[0], "right": arr[1], "bottom": arr[0], "left": arr[1]};
+                return {'top': arr[0], 'right': arr[1], 'bottom': arr[0], 'left': arr[1]};
             }
             case 3: {
-                return {"top": arr[0], "right": arr[1], "bottom": arr[2], "left": arr[1]};
+                return {'top': arr[0], 'right': arr[1], 'bottom': arr[2], 'left': arr[1]};
             }
             default: {
-                return {"top": arr[0], "right": arr[1], "bottom": arr[2], "left": arr[3]};
+                return {'top': arr[0], 'right': arr[1], 'bottom': arr[2], 'left': arr[3]};
             }
         }
     }
@@ -117,11 +117,11 @@ export let methods = {
     refreshView: async function(this: IVue): Promise<void> {
         let nowCount = ++this.refreshCount;
 
-        let length: number = this.direction === "v" ? this.paddingComp.top : this.paddingComp.left;
+        let length: number = this.direction === 'v' ? this.paddingComp.top : this.paddingComp.left;
         if (this.dataComp.length === 0) {
             this.dataHeight = [];
             this.lineHeight = 0;
-            this.length = length + (this.direction === "v" ? this.paddingComp.bottom : this.paddingComp.right);
+            this.length = length + (this.direction === 'v' ? this.paddingComp.bottom : this.paddingComp.right);
             return;
         }
 
@@ -143,7 +143,7 @@ export let methods = {
                 this.innerPos.start = cursor;
                 this.innerPos.end = theCursor;
                 await this.$nextTick();
-                await ClickGo.sleep(0);
+                await clickgo.tool.sleep(0);
                 if (nowCount !== this.refreshCount) {
                     return;
                 }
@@ -156,10 +156,10 @@ export let methods = {
                     let item = this.$refs.inner.children.item(i) as HTMLElement;
                     let start = length;
                     let rect = item.getBoundingClientRect();
-                    length += this.direction === "v" ? rect.height : rect.width;
+                    length += this.direction === 'v' ? rect.height : rect.width;
                     dataHeight[cursor + i] = {
-                        "start": start,
-                        "end": length
+                        'start': start,
+                        'end': length
                     };
                 }
                 if (theCursor === maxCursor) {
@@ -168,12 +168,13 @@ export let methods = {
                 cursor = theCursor;
             }
             this.dataHeight = dataHeight;
-        } else {
+        }
+        else {
             // --- same true 模式 ---
             this.innerPos.start = 0;
             this.innerPos.end = 1;
             await this.$nextTick();
-            await ClickGo.sleep(0);
+            await clickgo.tool.sleep(0);
             if (nowCount !== this.refreshCount) {
                 return;
             }
@@ -184,15 +185,16 @@ export let methods = {
             let item = this.$refs.inner.children.item(0) as HTMLElement;
             if (item) {
                 let rect = item.getBoundingClientRect();
-                this.lineHeight = this.direction === "v" ? rect.height : rect.width;
-            } else {
+                this.lineHeight = this.direction === 'v' ? rect.height : rect.width;
+            }
+            else {
                 this.lineHeight = 0;
             }
             length += this.lineHeight * this.dataComp.length;
         }
         this.innerPos.start = 0;
         this.innerPos.end = 0;
-        length += this.direction === "v" ? this.paddingComp.bottom : this.paddingComp.right;
+        length += this.direction === 'v' ? this.paddingComp.bottom : this.paddingComp.right;
         this.length = length;
         this.lengthInit = true;
 
@@ -222,7 +224,8 @@ export let methods = {
                     break;
                 }
             }
-        } else {
+        }
+        else {
             if (this.lineHeight === 0) {
                 this.showPos.start = this.showPos.end = 0;
                 return;
@@ -254,7 +257,7 @@ export let methods = {
             return;
         }
         this.scrollOffsetData = val;
-        this.$emit("update:scrollOffset", val);
+        this.$emit('update:scrollOffset', val);
         this.reShow();
     }
 };
@@ -266,8 +269,7 @@ export let mounted = function(this: IVue): void {
         this.refreshView();
     });
     mo.observe(this.$children[0].$el, {
-        "attributeFilter": ["style", "class"],
-        "attributes": true
+        'attributeFilter': ['style', 'class'],
+        'attributes': true
     });
 };
-

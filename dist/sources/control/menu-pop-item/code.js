@@ -2,31 +2,31 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.destroyed = exports.mounted = exports.methods = exports.watch = exports.data = exports.props = void 0;
 exports.props = {
-    "disabled": {
-        "default": false
+    'disabled': {
+        'default': false
     },
-    "text": {
-        "default": ""
+    'text': {
+        'default': ''
     },
-    "alt": {
-        "default": undefined
+    'alt': {
+        'default': undefined
     },
-    "type": {
-        "default": undefined
+    'type': {
+        'default': undefined
     },
-    "label": {
-        "default": undefined
+    'label': {
+        'default': undefined
     },
-    "value": {
-        "default": undefined
+    'value': {
+        'default': undefined
     }
 };
 exports.data = {
-    "popOpen": false,
-    "showArrow": false
+    'popOpen': false,
+    'showArrow': false
 };
 exports.watch = {
-    "type": function () {
+    'type': function () {
         if (this.type) {
             ++this.$parent.hasTypeItemsCount;
         }
@@ -36,7 +36,7 @@ exports.watch = {
     }
 };
 exports.methods = {
-    mousein: function (event) {
+    mousein: function () {
         if (this.popOpen) {
             return;
         }
@@ -45,13 +45,13 @@ exports.methods = {
             if (!item.popOpen) {
                 continue;
             }
-            ClickGo.hidePop(item.$children[0]);
+            clickgo.form.hidePop(item.$children[0]);
             break;
         }
         if (this.$children.length === 0) {
             return;
         }
-        ClickGo.showPop(this.$children[0], this.$el, 1);
+        clickgo.form.showPop(this.$children[0], this.$el, 1);
     },
     click: function (event) {
         if (this.disabled) {
@@ -59,18 +59,18 @@ exports.methods = {
         }
         if (this.type === undefined) {
             if (!this.showArrow) {
-                ClickGo.hidePop();
+                clickgo.form.hidePop();
             }
             this._tap(event);
             return;
         }
-        if (this.type === "radio") {
-            this.$emit("input", this.label);
+        if (this.type === 'radio') {
+            this.$emit('input', this.label);
         }
-        else if (this.type === "check") {
-            this.$emit("input", this.value ? false : true);
+        else if (this.type === 'check') {
+            this.$emit('input', this.value ? false : true);
         }
-        ClickGo.hidePop();
+        clickgo.form.hidePop();
         this._tap(event);
     }
 };

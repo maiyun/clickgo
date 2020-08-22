@@ -1,34 +1,33 @@
 export let props = {
-    "disabled": {
-        "default": false
+    'disabled': {
+        'default': false
     },
 
-    "text": {
-        "default": ""
+    'text': {
+        'default': ''
     },
-    "alt": {
-        "default": undefined
+    'alt': {
+        'default': undefined
     }
 };
 
 export let data = {
-    "popOpen": false
+    'popOpen': false
 };
 
 export let methods = {
     showPop: function(this: IVue, event: MouseEvent): void {
         if (this.popOpen) {
-            ClickGo.hidePop();
+            clickgo.form.hidePop();
             return;
         }
-        ClickGo.showPop(this.$children[0], this.$el);
+        clickgo.form.showPop(this.$children[0], this.$el);
         this._tap(event);
     },
     mousein: function(this: IVue, event: MouseEvent): void {
-        if (ClickGo.siblings(this.$el, "cg-pop-open")) {
-            ClickGo.hidePop();
+        if (clickgo.tool.siblings(this.$el, 'cg-pop-open')) {
+            clickgo.form.hidePop();
             this.showPop(event);
         }
     }
 };
-

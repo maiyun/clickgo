@@ -1,21 +1,24 @@
 export let data = {
-    "arrow": false,
-    "timer": undefined
+    'arrow': false,
+    'timer': undefined
 };
 
 export let mounted = function(this: IVue): void {
     // --- 检测是否显示箭头 ---
-    ClickGo.watchSize(this.$refs.tabs, (size) => {
-        if (this.$parent.tabPosition === "top" || this.$parent.tabPosition === "bottom") {
+    clickgo.element.watchSize(this.$refs.tabs, (size) => {
+        if (this.$parent.tabPosition === 'top' || this.$parent.tabPosition === 'bottom') {
             if (size.scrollWidth > size.clientWidth) {
                 this.arrow = true;
-            } else {
+            }
+            else {
                 this.arrow = false;
             }
-        } else {
+        }
+        else {
             if (size.scrollHeight > size.clientHeight) {
                 this.arrow = true;
-            } else {
+            }
+            else {
                 this.arrow = false;
             }
         }
@@ -23,17 +26,18 @@ export let mounted = function(this: IVue): void {
 };
 
 export let methods = {
-    longDown: function(this: IVue, e: MouseEvent | TouchEvent, type: "start" | "end"): void {
-        let num = type === "start" ? -5 : 5;
-        ClickGo.bindDown(e, {
+    longDown: function(this: IVue, e: MouseEvent | TouchEvent, type: 'start' | 'end'): void {
+        let num = type === 'start' ? -5 : 5;
+        clickgo.element.bindDown(e, {
             down: () => {
                 if (this.timer !== undefined) {
                     this.timer = undefined;
                 }
                 let cb = (): void => {
-                    if (this.$parent.tabPosition === "top" || this.$parent.tabPosition === "bottom") {
+                    if (this.$parent.tabPosition === 'top' || this.$parent.tabPosition === 'bottom') {
                         this.$refs.tabs.scrollLeft += num;
-                    } else {
+                    }
+                    else {
                         this.$refs.tabs.scrollTop += num;
                     }
                     if (this.timer !== undefined) {
@@ -50,7 +54,7 @@ export let methods = {
         });
     },
     wheel: function(this: IVue, e: WheelEvent): void {
-        if (this.$parent.tabPosition === "left" || this.$parent.tabPosition === "right") {
+        if (this.$parent.tabPosition === 'left' || this.$parent.tabPosition === 'right') {
             return;
         }
         if (e.deltaX !== 0) {
@@ -61,4 +65,3 @@ export let methods = {
         this.$refs.tabs.scrollLeft += e.deltaY;
     }
 };
-

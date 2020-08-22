@@ -38,16 +38,16 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.methods = exports.data = void 0;
 exports.data = {
-    "path": ""
+    'path': ''
 };
 exports.methods = {
-    "runApp": function () {
+    'runApp': function () {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         this.closeForm();
-                        return [4, ClickGo.runApp(this.path)];
+                        return [4, clickgo.core.runApp(this.path)];
                     case 1:
                         _a.sent();
                         return [2];

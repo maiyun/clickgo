@@ -2,31 +2,31 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.methods = exports.data = exports.props = void 0;
 exports.props = {
-    "disabled": {
-        "default": false
+    'disabled': {
+        'default': false
     },
-    "text": {
-        "default": ""
+    'text': {
+        'default': ''
     },
-    "alt": {
-        "default": undefined
+    'alt': {
+        'default': undefined
     }
 };
 exports.data = {
-    "popOpen": false
+    'popOpen': false
 };
 exports.methods = {
     showPop: function (event) {
         if (this.popOpen) {
-            ClickGo.hidePop();
+            clickgo.form.hidePop();
             return;
         }
-        ClickGo.showPop(this.$children[0], this.$el);
+        clickgo.form.showPop(this.$children[0], this.$el);
         this._tap(event);
     },
     mousein: function (event) {
-        if (ClickGo.siblings(this.$el, "cg-pop-open")) {
-            ClickGo.hidePop();
+        if (clickgo.tool.siblings(this.$el, 'cg-pop-open')) {
+            clickgo.form.hidePop();
             this.showPop(event);
         }
     }

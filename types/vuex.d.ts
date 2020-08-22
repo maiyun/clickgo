@@ -5,4 +5,3 @@ declare namespace Vuex {
         public state: any;
     }
 }
-

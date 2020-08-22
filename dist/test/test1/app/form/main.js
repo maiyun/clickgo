@@ -38,46 +38,46 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.methods = exports.data = void 0;
 exports.data = {
-    "width": 300,
-    "height": 505,
-    "theme": ""
+    'width': 300,
+    'height': 505,
+    'theme': ''
 };
 exports.methods = {
     openOnlyClose: function () {
-        this.createForm("/form/onlyClose");
+        this.createForm('/form/onlyClose');
     },
     openThin: function () {
-        this.createForm("/form/thin");
+        this.createForm('/form/thin');
     },
     openBorderNone: function () {
-        this.createForm("/form/borderNone");
+        this.createForm('/form/borderNone');
     },
     openAero: function () {
-        this.createForm("/form/aero");
+        this.createForm('/form/aero');
     },
     openMax: function () {
-        this.createForm("/form/max");
+        this.createForm('/form/max');
     },
     openMove: function () {
-        this.createForm("/form/move");
+        this.createForm('/form/move');
     },
     openScroll: function () {
-        this.createForm("/form/scroll");
+        this.createForm('/form/scroll');
     },
     openView: function () {
-        this.createForm("/form/view");
+        this.createForm('/form/view');
     },
     openGreatView: function () {
-        this.createForm("/form/greatview");
+        this.createForm('/form/greatview');
     },
     openOverflow: function () {
-        this.createForm("/form/overflow");
+        this.createForm('/form/overflow');
     },
     runTaskmgr: function () {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4, ClickGo.runApp("taskApp/")];
+                    case 0: return [4, clickgo.core.runApp('taskApp/')];
                     case 1:
                         _a.sent();
                         return [2];
@@ -88,17 +88,17 @@ exports.methods = {
     changeTheme: function () {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
-                if (this.theme === "") {
-                    this.theme = "once";
+                if (this.theme === '') {
+                    this.theme = 'once';
                 }
                 else {
-                    this.theme = "once";
+                    this.theme = 'once';
                 }
                 return [2];
             });
         });
     },
     openError: function () {
-        this.createForm("/form/error");
+        this.createForm('/form/error');
     }
 };

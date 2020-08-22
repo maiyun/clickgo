@@ -4,6 +4,6 @@ export declare let data: {
 };
 export declare let mounted: (this: IVue) => void;
 export declare let methods: {
-    longDown: (this: IVue, e: MouseEvent | TouchEvent, type: "start" | "end") => void;
+    longDown: (this: IVue, e: MouseEvent | TouchEvent, type: 'start' | 'end') => void;
     wheel: (this: IVue, e: WheelEvent) => void;
 };

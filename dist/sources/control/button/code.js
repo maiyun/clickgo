@@ -2,46 +2,46 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.methods = exports.computed = exports.props = void 0;
 exports.props = {
-    "disabled": {
-        "default": false
+    'disabled': {
+        'default': false
     },
-    "focus": {
-        "default": false
+    'focus': {
+        'default': false
     },
-    "width": {
-        "default": undefined
+    'width': {
+        'default': undefined
     },
-    "height": {
-        "default": 30
+    'height': {
+        'default': 30
     },
-    "left": {
-        "default": 0
+    'left': {
+        'default': 0
     },
-    "top": {
-        "default": 0
+    'top': {
+        'default': 0
     },
-    "zIndex": {
-        "default": 0
+    'zIndex': {
+        'default': 0
     },
-    "flex": {
-        "default": ""
+    'flex': {
+        'default': ''
     }
 };
 exports.computed = {
-    "widthPx": function () {
+    'widthPx': function () {
         if (this.width !== undefined) {
-            return this.width + "px";
+            return this.width + 'px';
         }
-        if (this.flex !== "") {
-            return this.$parent.direction ? (this.$parent.direction === "v" ? undefined : "0") : undefined;
+        if (this.flex !== '') {
+            return this.$parent.direction ? (this.$parent.direction === 'v' ? undefined : '0') : undefined;
         }
     },
-    "heightPx": function () {
+    'heightPx': function () {
         if (this.height !== undefined) {
-            return this.height + "px";
+            return this.height + 'px';
         }
-        if (this.flex !== "") {
-            return this.$parent.direction ? (this.$parent.direction === "v" ? "0" : undefined) : undefined;
+        if (this.flex !== '') {
+            return this.$parent.direction ? (this.$parent.direction === 'v' ? '0' : undefined) : undefined;
         }
     }
 };
@@ -53,7 +53,7 @@ exports.methods = {
         this._tap(e);
     },
     down: function (e) {
-        if (e instanceof MouseEvent && ClickGo.hasTouch) {
+        if (e instanceof MouseEvent && clickgo.hasTouch) {
             return;
         }
         this.stopPropagation(e);

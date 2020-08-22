@@ -35,291 +35,119 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-document.addEventListener("touchstart", function () {
-    return;
-});
-var ClickGo = {
-    "rootPath": "",
-    "cgRootPath": "",
-    "hasTouch": "ontouchstart" in document.documentElement ? true : false,
-    "zoom": 1,
-    "rzoom": 1,
-    "errorHandler": null,
-    "screenResizeHandler": null,
-    "formCreatedHandler": null,
-    "formRemovedHandler": null,
-    "formTitleChangedHandler": null,
-    "formIconChangedHandler": null,
-    "formStateMinChangedHandler": null,
-    "formStateMaxChangedHandler": null,
-    "formFocusedHandler": null,
-    "formBlurredHandler": null,
-    "formFlashHandler": null,
-    "taskStartedHandler": null,
-    "taskEndedHandler": null,
-    "taskId": 0,
-    "taskList": {},
-    "formId": 0,
-    "zIndex": 999,
-    "topZIndex": 9999999,
-    "popZIndex": 0,
-    "_readyList": [],
-    "_core": null,
-    "_loaderConfig": {},
-    "_config": {},
-    "_pop": null,
-    "_watchSize": [],
-    showCircular: function (x, y) {
-        this._core.showCircular(x, y);
+var tmpCgRootPath = '';
+(function () {
+    var temp = document.querySelectorAll('head > script');
+    var scriptEle = temp[temp.length - 1];
+    tmpCgRootPath = scriptEle.src.slice(0, scriptEle.src.lastIndexOf('/') + 1);
+})();
+var tmpZoom = 1;
+if (window.devicePixelRatio < 2) {
+    tmpZoom = 1 / window.devicePixelRatio;
+}
+var clickgo = {
+    'rootPath': window.location.href.slice(0, window.location.href.lastIndexOf('/') + 1),
+    'cgRootPath': tmpCgRootPath,
+    'hasTouch': ('ontouchstart' in document.documentElement) ? true : false,
+    'zoom': tmpZoom,
+    'rzoom': 1 / tmpZoom,
+    'position': {
+        'left': null,
+        'top': null,
+        'width': null,
+        'height': null,
+        'offsetWidth': null,
+        'offsetHeight': null
     },
-    showRectangle: function (x, y, pos) {
-        return this._core.showRectangle(x, y, pos);
+    getPosition: function () {
+        var _a, _b, _c, _d, _e, _f;
+        return {
+            'left': (_a = this.position.left) !== null && _a !== void 0 ? _a : 0,
+            'top': (_b = this.position.top) !== null && _b !== void 0 ? _b : 0,
+            'width': window.innerWidth * this.rzoom + ((_c = this.position.offsetWidth) !== null && _c !== void 0 ? _c : 0),
+            'height': window.innerHeight * this.rzoom + ((_d = this.position.offsetHeight) !== null && _d !== void 0 ? _d : 0),
+            'offsetWidth': (_e = this.position.offsetWidth) !== null && _e !== void 0 ? _e : 0,
+            'offsetHeight': (_f = this.position.offsetHeight) !== null && _f !== void 0 ? _f : 0
+        };
     },
-    moveRectangle: function (dir) {
-        return this._core.moveRectangle(dir);
-    },
-    hideRectangle: function () {
-        return this._core.hideRectangle();
-    },
-    getPositionByBorderDir: function (dir) {
-        return this._core.getPositionByBorderDir(dir);
-    },
-    appendToPop: function (el) {
-        this._core.appendToPop(el);
-    },
-    removeFromPop: function (el) {
-        this._core.removeFromPop(el);
-    },
-    showPop: function (pop, x, y) {
-        if (y === void 0) { y = 0; }
-        this._core.showPop(pop, x, y);
-    },
-    hidePop: function (pop) {
-        if (pop === void 0) { pop = null; }
-        this._core.hidePop(pop);
-    },
-    siblings: function (e, cn) {
-        return this._core.siblings(e, cn);
-    },
-    setTheme: function (file) {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0: return [4, this._core.setTheme(file)];
-                    case 1:
-                        _a.sent();
-                        return [2];
-                }
-            });
-        });
-    },
-    clearTheme: function () {
-        this._core.clearTheme();
-    },
-    trigger: function (name, taskId, formId, opt) {
-        if (opt === void 0) { opt = {}; }
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0: return [4, this._core.trigger(name, taskId, formId, opt)];
-                    case 1: return [2, _a.sent()];
-                }
-            });
-        });
-    },
-    loaderConfig: function (config) {
-        this._loaderConfig = config;
-    },
-    config: function (config) {
-        if (config.left) {
-            this._config.left = config.left;
+    'isReady': false,
+    'readys': [],
+    ready: function (callback) {
+        if (this.isReady) {
+            var rtn = callback();
+            if (rtn instanceof Promise) {
+                rtn.catch(function (e) {
+                    throw e;
+                });
+            }
         }
-        if (config.top) {
-            this._config.top = config.top;
-        }
-        if (config.offsetWidth) {
-            this._config.offsetWidth = config.offsetWidth;
-        }
-        if (config.offsetHeight) {
-            this._config.offsetHeight = config.offsetHeight;
+        else {
+            this.readys.push(callback);
         }
     },
-    getLeft: function () {
-        var _a;
-        return (_a = this._config.left) !== null && _a !== void 0 ? _a : 0;
-    },
-    getTop: function () {
-        var _a;
-        return (_a = this._config.top) !== null && _a !== void 0 ? _a : 0;
-    },
-    getWidth: function () {
-        var _a;
-        return window.innerWidth * ClickGo.rzoom + ((_a = this._config.offsetWidth) !== null && _a !== void 0 ? _a : 0);
-    },
-    getHeight: function () {
-        var _a;
-        return window.innerHeight * ClickGo.rzoom + ((_a = this._config.offsetHeight) !== null && _a !== void 0 ? _a : 0);
-    },
-    initRootPath: function () {
-        var temp = document.querySelectorAll("head > script");
-        var scriptEle = temp[temp.length - 1];
-        this.rootPath = window.location.href.slice(0, window.location.href.lastIndexOf("/") + 1);
-        this.cgRootPath = scriptEle.src.slice(0, scriptEle.src.lastIndexOf("/") + 1);
-    },
-    onReady: function (cb) {
-        this._readyList.push(cb);
-    },
-    fetchClickGoControl: function (path) {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0: return [4, this._core.fetchClickGoControl(path)];
-                    case 1: return [2, _a.sent()];
-                }
-            });
-        });
-    },
-    fetchApp: function (path) {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0: return [4, this._core.fetchApp(path)];
-                    case 1: return [2, _a.sent()];
-                }
-            });
-        });
-    },
-    runApp: function (path, opt) {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0: return [4, this._core.runApp(path, opt)];
-                    case 1: return [2, _a.sent()];
-                }
-            });
-        });
-    },
-    createForm: function (opt) {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0: return [4, this._core.createForm(opt)];
-                    case 1: return [2, _a.sent()];
-                }
-            });
-        });
-    },
-    removeForm: function (formId) {
-        return this._core.removeForm(formId);
-    },
-    endTask: function (taskId) {
-        return this._core.endTask(taskId);
-    },
-    getWatchSize: function (el) {
-        return this._core.getWatchSize(el);
-    },
-    watchSize: function (el, cb, scroll) {
-        if (scroll === void 0) { scroll = false; }
-        return this._core.watchSize(el, cb, scroll);
-    },
-    watchElement: function (el, cb, mode) {
-        if (mode === void 0) { mode = "default"; }
-        return this._core.watchElement(el, cb, mode);
-    },
-    bindDown: function (oe, opt) {
-        return this._core.bindDown(oe, opt);
-    },
-    bindMove: function (e, opt) {
-        return this._core.bindMove(e, opt);
-    },
-    bindResize: function (e, opt) {
-        return this._core.bindResize(e, opt);
-    },
-    setGlobalCursor: function (type) {
-        return this._core.setGlobalCursor(type);
-    },
-    requestAnimationFrame: function () {
-        return new Promise(function (resolve) {
-            var num = requestAnimationFrame(function () {
-                resolve(num);
-            });
-        });
-    },
-    sleep: function (ms) {
-        if (ms === void 0) { ms = 0; }
-        return new Promise(function (resolve) {
-            setTimeout(function () {
-                resolve();
-            }, ms);
-        });
-    },
-    getIndex: function (el) {
-        var i = 0;
-        var child = el;
-        while ((child = child.previousSibling) !== null) {
-            ++i;
-        }
-        return i;
-    }
+    'core': {},
+    'element': {},
+    'form': {},
+    'theme': {},
+    'tool': {}
 };
-ClickGo.initRootPath();
-loader.ready(function () {
-    var _a;
-    return __awaiter(this, void 0, void 0, function () {
-        var paths, _i, paths_1, path, core, _b, _c, func;
+var tmpScript = document.createElement('script');
+tmpScript.src = 'https://cdn.jsdelivr.net/npm/@litert/loader@1.0.0-beta/dist/index.min.js';
+tmpScript.addEventListener('load', function () {
+    var _this = this;
+    loader.ready(function () { return __awaiter(_this, void 0, void 0, function () {
+        var paths, _i, paths_1, path, cg, _a, _b, func, rtn;
+        var _c;
         return __generator(this, function (_d) {
             switch (_d.label) {
                 case 0:
-                    loader.config(ClickGo._loaderConfig);
+                    loader.setAfter('?' + Math.random());
                     paths = [
-                        "https://cdn.jsdelivr.net/npm/vue@2.6.11/dist/vue.min.js"
+                        'https://cdn.jsdelivr.net/npm/vue@2.6.11/dist/vue.min.js'
                     ];
                     _i = 0, paths_1 = paths;
                     _d.label = 1;
                 case 1:
                     if (!(_i < paths_1.length)) return [3, 4];
                     path = paths_1[_i];
-                    return [4, loader.loadScript(document.getElementsByTagName("head")[0], path)];
+                    return [4, loader.loadScript(document.getElementsByTagName('head')[0], path)];
                 case 2:
                     if (!(_d.sent())) {
-                        alert("Librarys load failed.");
+                        alert('Librarys load failed.');
                         return [2];
                     }
                     _d.label = 3;
                 case 3:
                     _i++;
                     return [3, 1];
-                case 4:
-                    Vue.config.errorHandler = function (err, vm, info) {
-                        if (ClickGo.errorHandler) {
-                            ClickGo.errorHandler(vm.taskId, vm.formId, err, info);
-                        }
-                        else {
-                            throw err;
-                        }
-                    };
-                    return [4, loader.require(ClickGo.cgRootPath + "core")];
+                case 4: return [4, loader.require(clickgo.cgRootPath + 'clickgo')];
                 case 5:
-                    core = ((_a = _d.sent()) !== null && _a !== void 0 ? _a : [])[0];
-                    if (!core) {
-                        alert("Core load failed.");
+                    cg = ((_c = _d.sent()) !== null && _c !== void 0 ? _c : [])[0];
+                    if (!clickgo) {
+                        alert('Clickgo load failed.');
                         return [2];
                     }
-                    ClickGo._core = core;
-                    _b = 0, _c = ClickGo._readyList;
-                    _d.label = 6;
-                case 6:
-                    if (!(_b < _c.length)) return [3, 9];
-                    func = _c[_b];
-                    return [4, func()];
-                case 7:
-                    _d.sent();
-                    _d.label = 8;
-                case 8:
-                    _b++;
-                    return [3, 6];
-                case 9: return [2];
+                    clickgo.core = cg.core;
+                    clickgo.element = cg.element;
+                    clickgo.form = cg.form;
+                    clickgo.theme = cg.theme;
+                    clickgo.tool = cg.tool;
+                    clickgo.isReady = true;
+                    for (_a = 0, _b = clickgo.readys; _a < _b.length; _a++) {
+                        func = _b[_a];
+                        rtn = func();
+                        if (rtn instanceof Promise) {
+                            rtn.catch(function (e) {
+                                throw e;
+                            });
+                        }
+                    }
+                    return [2];
             }
         });
-    });
+    }); });
+});
+document.getElementsByTagName('head')[0].insertAdjacentElement('afterend', tmpScript);
+document.addEventListener('touchstart', function () {
+    return;
 });

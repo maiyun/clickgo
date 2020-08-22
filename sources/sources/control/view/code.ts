@@ -1,98 +1,98 @@
 export let props = {
-    "width": {
-        "default": undefined
+    'width': {
+        'default': undefined
     },
-    "height": {
-        "default": undefined
+    'height': {
+        'default': undefined
     },
-    "left": {
-        "default": 0
+    'left': {
+        'default': 0
     },
-    "top": {
-        "default": 0
+    'top': {
+        'default': 0
     },
-    "zIndex": {
-        "default": 0
+    'zIndex': {
+        'default': 0
     },
-    "flex": {
-        "default": ""
+    'flex': {
+        'default': ''
     },
-    "direction": {
-        "default": "v"
+    'direction': {
+        'default': 'v'
     },
-    "padding": {
-        "default": undefined
+    'padding': {
+        'default': undefined
     },
 
-    "scrollOffset": {
-        "default": 0
+    'scrollOffset': {
+        'default': 0
     }
 };
 
 export let data = {
-    "scrollOffsetData": 0,
-    "scrollOffsetEmit": 0,
-    "client": 0,
-    "contentLength": 0,
+    'scrollOffsetData': 0,
+    'scrollOffsetEmit': 0,
+    'client': 0,
+    'contentLength': 0,
 
     // --- 惯性 ---
-    "tran": 0,
-    "timer": undefined
+    'tran': 0,
+    'timer': undefined
 };
 
 export let watch = {
-    "direction": function(this: IVue): void {
-        let size = ClickGo.getWatchSize(this.$refs.wrap);
-        this.client = this.direction === "v" ? size.innerHeight : size.innerWidth;
+    'direction': function(this: IVue): void {
+        let size = clickgo.element.getWatchSize(this.$refs.wrap);
+        this.client = this.direction === 'v' ? size.innerHeight : size.innerWidth;
         let innerRect = this.$refs.inner.getBoundingClientRect();
-        this.length = this.direction === "v" ? innerRect.height : innerRect.width;
+        this.length = this.direction === 'v' ? innerRect.height : innerRect.width;
     },
-    "scrollOffset": {
+    'scrollOffset': {
         handler: function(this: IVue): void {
             this.goScroll(this.scrollOffset);
         },
-        "immediate": true
+        'immediate': true
     },
-    "length": {
+    'length': {
         handler: function(this: IVue): void {
-            this.$emit("change", this.length);
+            this.$emit('change', this.length);
         }
     }
 };
 
 export let computed = {
     // --- 最大可拖动的 scroll 位置 ---
-    "maxScroll": function(this: IVue): number {
+    'maxScroll': function(this: IVue): number {
         if (this.length < this.client) {
             return 0;
         }
         return Math.round(this.length - this.client);
     },
-    "widthPx": function(this: IVue): string | undefined {
+    'widthPx': function(this: IVue): string | undefined {
         if (this.width !== undefined) {
-            return this.width + "px";
+            return this.width + 'px';
         }
-        if (this.flex !== "") {
+        if (this.flex !== '') {
             let parent = this.$parent;
-            if (parent.$data._controlName === "greatview") {
+            if (parent.$data._controlName === 'greatview') {
                 parent = parent.$parent;
             }
-            return parent.direction ? (parent.direction === "v" ? undefined : "0") : undefined;
+            return parent.direction ? (parent.direction === 'v' ? undefined : '0') : undefined;
         }
     },
-    "heightPx": function(this: IVue): string | undefined {
+    'heightPx': function(this: IVue): string | undefined {
         if (this.height !== undefined) {
-            return this.height + "px";
+            return this.height + 'px';
         }
-        if (this.flex !== "") {
+        if (this.flex !== '') {
             let parent = this.$parent;
-            if (parent.$data._controlName === "greatview") {
+            if (parent.$data._controlName === 'greatview') {
                 parent = parent.$parent;
             }
-            return parent.direction ? (parent.direction === "v" ? "0" : undefined) : undefined;
+            return parent.direction ? (parent.direction === 'v' ? '0' : undefined) : undefined;
         }
     },
-    "length": function(this: IVue): number {
+    'length': function(this: IVue): number {
         return this.contentLength < this.client ? this.client : this.contentLength;
     }
 };
@@ -108,22 +108,23 @@ export let methods = {
             this.tran = 0;
         }
 
-        if (this.direction === "v") {
+        if (this.direction === 'v') {
             this.scrollOffsetData += Math.round(e.deltaY === 0 ? e.deltaX : e.deltaY);
-        } else {
+        }
+        else {
             this.scrollOffsetData += Math.round(e.deltaX === 0 ? e.deltaY : e.deltaX);
         }
         this.refreshView();
     },
     down: function(this: IVue, e: MouseEvent | TouchEvent): void {
-        if (e instanceof MouseEvent && ClickGo.hasTouch) {
+        if (e instanceof MouseEvent && clickgo.hasTouch) {
             return;
         }
         if (this.contentLength < this.client) {
             return;
         }
 
-        let wrapSize = ClickGo.getWatchSize(this.$refs.wrap);
+        let wrapSize = clickgo.element.getWatchSize(this.$refs.wrap);
         let top = wrapSize.top + wrapSize.border.top + wrapSize.padding.top;
         let right = wrapSize.right - wrapSize.border.right - wrapSize.padding.right;
         let bottom = wrapSize.bottom - wrapSize.border.bottom - wrapSize.padding.bottom;
@@ -131,9 +132,10 @@ export let methods = {
         if (this.timer) {
             clearTimeout(this.timer);
             this.timer = undefined;
-            if (this.direction === "v") {
+            if (this.direction === 'v') {
                 this.scrollOffsetData = Math.round(top - this.$refs.inner.getBoundingClientRect().top);
-            } else {
+            }
+            else {
                 this.scrollOffsetData = Math.round(left - this.$refs.inner.getBoundingClientRect().left);
             }
             this.tran = 0;
@@ -141,19 +143,19 @@ export let methods = {
 
         /** --- 内容超出像素 --- */
         let over = this.length - this.client;
-        ClickGo.bindMove(e, {
-            // "showRect": true,
-            "object": this.$refs.inner,
-            "left": this.direction === "v" ? left : left - over,
-            "right": this.direction === "v" ? right : right + over,
-            "top": this.direction === "h" ? top : top - over,
-            "bottom": this.direction === "h" ? bottom : bottom + over,
-            "move": (ox, oy) => {
-                this.scrollOffsetData -= this.direction === "v" ? oy : ox;
+        clickgo.element.bindMove(e, {
+            // 'showRect': true,
+            'object': this.$refs.inner,
+            'left': this.direction === 'v' ? left : left - over,
+            'right': this.direction === 'v' ? right : right + over,
+            'top': this.direction === 'h' ? top : top - over,
+            'bottom': this.direction === 'h' ? bottom : bottom + over,
+            'move': (ox, oy) => {
+                this.scrollOffsetData -= this.direction === 'v' ? oy : ox;
                 this.scrollOffsetEmit = this.scrollOffsetData;
-                this.$emit("update:scrollOffset", this.scrollOffsetData);
+                this.$emit('update:scrollOffset', this.scrollOffsetData);
             },
-            "end": (moveTimes) => {
+            'end': (moveTimes) => {
                 // --- 获取 200 毫秒内的偏移 ---
                 let movePos = 0;
                 let topTime = 0;
@@ -162,7 +164,7 @@ export let methods = {
                     if (nowDate - item.time > 100) {
                         continue;
                     }
-                    movePos += this.direction === "v" ? item.oy : item.ox;
+                    movePos += this.direction === 'v' ? item.oy : item.ox;
                     if (topTime === 0 || topTime > item.time) {
                         topTime = item.time;
                     }
@@ -183,7 +185,8 @@ export let methods = {
                     }, this.tran);
                     if (movePos > 0) {
                         this.scrollOffsetData -= Math.round(speed * 800);
-                    } else {
+                    }
+                    else {
                         this.scrollOffsetData += Math.round(speed * 800);
                     }
 
@@ -193,10 +196,11 @@ export let methods = {
                             return;
                         }
                         let offset = 0;
-                        let wrapSize = ClickGo.getWatchSize(this.$refs.wrap);
-                        if (this.direction === "v") {
+                        let wrapSize = clickgo.element.getWatchSize(this.$refs.wrap);
+                        if (this.direction === 'v') {
                             offset = Math.round(wrapSize.top + wrapSize.border.top + wrapSize.padding.top - this.$refs.inner.getBoundingClientRect().top);
-                        } else {
+                        }
+                        else {
                             offset = Math.round(wrapSize.left + wrapSize.border.left + wrapSize.padding.left - this.$refs.inner.getBoundingClientRect().left);
                         }
                         if (offset > this.maxScroll) {
@@ -205,7 +209,8 @@ export let methods = {
                             this.timer = undefined;
                             this.scrollOffsetData = offset;
                             this.tran = 0;
-                        } else if (offset < 0) {
+                        }
+                        else if (offset < 0) {
                             offset = 0;
                             clearTimeout(this.timer);
                             this.timer = undefined;
@@ -213,7 +218,7 @@ export let methods = {
                             this.tran = 0;
                         }
                         this.scrollOffsetEmit = offset;
-                        this.$emit("update:scrollOffset", offset);
+                        this.$emit('update:scrollOffset', offset);
                         requestAnimationFrame(animation);
                     };
                     animation();
@@ -243,15 +248,15 @@ export let methods = {
                     if (this.scrollOffsetData > this.maxScroll) {
                         this.timer = false;
                         this.scrollOffsetData = this.maxScroll;
-                        this.$emit("update:scrollOffset", Math.round(this.scrollOffsetData));
+                        this.$emit('update:scrollOffset', Math.round(this.scrollOffsetData));
                         return;
                     } else if (this.scrollOffsetData < 0) {
                         this.timer = false;
                         this.scrollOffsetData = 0;
-                        this.$emit("update:scrollOffset", Math.round(this.scrollOffsetData));
+                        this.$emit('update:scrollOffset', Math.round(this.scrollOffsetData));
                         return;
                     }
-                    this.$emit("update:scrollOffset", Math.round(this.scrollOffsetData));
+                    this.$emit('update:scrollOffset', Math.round(this.scrollOffsetData));
 
                     this.timer && requestAnimationFrame(animation);
                 };
@@ -263,7 +268,7 @@ export let methods = {
         this._down();
     },
     // --- 重置视图 scrollOffset ---
-    "refreshView": function(this: IVue): void {
+    'refreshView': function(this: IVue): void {
         if (this.scrollOffsetData > this.maxScroll) {
             if (this.timer) {
                 clearTimeout(this.timer);
@@ -271,7 +276,8 @@ export let methods = {
                 this.tran = 0;
             }
             this.scrollOffsetData = this.maxScroll;
-        } else if (this.scrollOffsetData < 0) {
+        }
+        else if (this.scrollOffsetData < 0) {
             if (this.timer) {
                 clearTimeout(this.timer);
                 this.timer = undefined;
@@ -280,11 +286,11 @@ export let methods = {
             this.scrollOffsetData = 0;
         }
         this.scrollOffsetEmit = this.scrollOffsetData;
-        this.$emit("update:scrollOffset", this.scrollOffsetData);
+        this.$emit('update:scrollOffset', this.scrollOffsetData);
     },
     // --- 设定滚动位置 ---
-    "goScroll": function(this: IVue, scrollOffset: number | string): void {
-        let so = typeof scrollOffset === "number" ? scrollOffset : parseInt(scrollOffset);
+    'goScroll': function(this: IVue, scrollOffset: number | string): void {
+        let so = typeof scrollOffset === 'number' ? scrollOffset : parseInt(scrollOffset);
         if (so === this.scrollOffsetEmit) {
             return;
         }
@@ -300,24 +306,24 @@ export let methods = {
 };
 
 export let mounted = function(this: IVue): void {
-    let size = ClickGo.watchSize(this.$refs.wrap, (size) => {
-        let client = Math.round(this.direction === "v" ? size.clientHeight : size.clientWidth);
+    let size = clickgo.element.watchSize(this.$refs.wrap, (size) => {
+        let client = Math.round(this.direction === 'v' ? size.clientHeight : size.clientWidth);
         if (client === this.client) {
-            this.$emit("resizen");
+            this.$emit('resizen');
             return;
         }
         this.client = client;
-        this.$emit("resize", this.client);
+        this.$emit('resize', this.client);
         this.refreshView();
     });
-    this.client = Math.round(this.direction === "v" ? size.innerHeight : size.innerWidth);
-    this.$emit("resize", this.client);
+    this.client = Math.round(this.direction === 'v' ? size.innerHeight : size.innerWidth);
+    this.$emit('resize', this.client);
 
-    size = ClickGo.watchSize(this.$refs.inner, (size) => {
-        this.contentLength = Math.round(this.direction === "v" ? size.height : size.width);
+    size = clickgo.element.watchSize(this.$refs.inner, (size) => {
+        this.contentLength = Math.round(this.direction === 'v' ? size.height : size.width);
         this.refreshView();
     });
-    this.contentLength = Math.round(this.direction === "v" ? size.height : size.width);
+    this.contentLength = Math.round(this.direction === 'v' ? size.height : size.width);
 };
 
 export let destroyed = function(this: IVue): void {
@@ -326,4 +332,3 @@ export let destroyed = function(this: IVue): void {
         this.timer = undefined;
     }
 };
-

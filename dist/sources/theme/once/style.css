@@ -1,0 +1,7 @@
+.button_wrap {
+    background-image: linear-gradient(to top, #d6d0c5, #e2dfd6 1px, #ecebe6 2px, #FFF); border: solid 1px #003c74; border-radius: 2px;
+}
+.wrap::before {
+    border: none;
+}
+

@@ -1,42 +1,43 @@
 export let props = {
-    "disabled": {
-        "default": false
+    'disabled': {
+        'default': false
     },
 
-    "text": {
-        "default": ""
+    'text': {
+        'default': ''
     },
-    "alt": {
-        "default": undefined
+    'alt': {
+        'default': undefined
     },
-    "type": {
-        "default": undefined
+    'type': {
+        'default': undefined
     },
-    "label": {
-        "default": undefined
+    'label': {
+        'default': undefined
     },
-    "value": {
-        "default": undefined
+    'value': {
+        'default': undefined
     }
 };
 
 export let data = {
-    "popOpen": false,
-    "showArrow": false
+    'popOpen': false,
+    'showArrow': false
 };
 
 export let watch = {
-    "type": function(this: IVue): void {
+    'type': function(this: IVue): void {
         if (this.type) {
             ++this.$parent.hasTypeItemsCount;
-        } else {
+        }
+        else {
             --this.$parent.hasTypeItemsCount;
         }
     }
 };
 
 export let methods = {
-    mousein: function(this: IVue, event: MouseEvent): void {
+    mousein: function(this: IVue): void {
         if (this.popOpen) {
             return;
         }
@@ -45,14 +46,14 @@ export let methods = {
             if (!item.popOpen) {
                 continue;
             }
-            ClickGo.hidePop(item.$children[0]);
+            clickgo.form.hidePop(item.$children[0]);
             break;
         }
         // --- 如果本 item 没有子 pop，则不展开 ---
         if (this.$children.length === 0) {
             return;
         }
-        ClickGo.showPop(this.$children[0], this.$el, 1);
+        clickgo.form.showPop(this.$children[0], this.$el, 1);
     },
     click: function(this: IVue, event: MouseEvent): void {
         if (this.disabled) {
@@ -60,18 +61,19 @@ export let methods = {
         }
         if (this.type === undefined) {
             if (!this.showArrow) {
-                ClickGo.hidePop();
+                clickgo.form.hidePop();
             }
             this._tap(event);
             return;
         }
         // --- 有 type ---
-        if (this.type === "radio") {
-            this.$emit("input", this.label);
-        } else if (this.type === "check") {
-            this.$emit("input", this.value ? false : true);
+        if (this.type === 'radio') {
+            this.$emit('input', this.label);
         }
-        ClickGo.hidePop();
+        else if (this.type === 'check') {
+            this.$emit('input', this.value ? false : true);
+        }
+        clickgo.form.hidePop();
         this._tap(event);
     }
 };
@@ -98,4 +100,3 @@ export let destroyed = function(this: IVue): void {
         --this.$parent.hasTypeItemsCount;
     }
 };
-

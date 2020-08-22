@@ -35,53 +35,48 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-ClickGo.loaderConfig({
-    "after": "?" + Math.random().toString()
-});
-ClickGo.config({
-    "offsetHeight": -40
-});
-ClickGo.onReady(function () {
+clickgo.ready(function () {
     return __awaiter(this, void 0, void 0, function () {
         var el, sTaskId, taskId;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    el = document.getElementById("tip");
+                    clickgo.position.offsetHeight = -40;
+                    el = document.getElementById('tip');
                     if (!el) {
                         return [2];
                     }
-                    el.innerHTML = "Starting system app...";
-                    ClickGo.errorHandler = function (taskId, formId, error, info) {
+                    el.innerHTML = 'Starting system app...';
+                    clickgo.core.globalEvents.errorHandler = function (taskId, formId, error, info) {
                         if (!el) {
                             return;
                         }
                         console.log(info, error);
-                        var err = document.getElementById("err");
-                        err.style.display = "block";
-                        err.innerHTML = "Error, Task ID: " + taskId + ", Form ID: " + formId + "<br>" + error.stack.replace(/\n/g, "<br>");
-                        ClickGo.endTask(taskId);
+                        var err = document.getElementById('err');
+                        err.style.display = 'block';
+                        err.innerHTML = 'Error, Task ID: ' + taskId + ', Form ID: ' + formId + '<br>' + error.stack.replace(/\n/g, '<br>');
+                        clickgo.core.endTask(taskId);
                     };
-                    ClickGo.taskEndedHandler = function (taskId) {
-                        el.innerHTML = "Task ended.";
+                    clickgo.core.globalEvents.taskEndedHandler = function (taskId) {
+                        el.innerHTML = 'Task(' + taskId + ') ended.';
                     };
-                    return [4, ClickGo.runApp("sapp/")];
+                    return [4, clickgo.core.runApp('sapp/')];
                 case 1:
                     sTaskId = _a.sent();
                     if (sTaskId <= 0) {
                         el.innerHTML = "Start failed(" + sTaskId.toString() + ").";
                         return [2];
                     }
-                    el.innerHTML = "Starting app...";
-                    return [4, ClickGo.runApp("app/")];
+                    el.innerHTML = 'Starting app...';
+                    return [4, clickgo.core.runApp('app/')];
                 case 2:
                     taskId = _a.sent();
                     if (taskId <= 0) {
                         el.innerHTML = "Start failed(" + taskId.toString() + ").";
                         return [2];
                     }
-                    el.innerHTML = "Running...";
-                    document.getElementsByTagName("body")[0].classList.add("running");
+                    el.innerHTML = 'Running...';
+                    document.getElementsByTagName('body')[0].classList.add('running');
                     return [2];
             }
         });

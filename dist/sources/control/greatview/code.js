@@ -38,71 +38,71 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.mounted = exports.methods = exports.computed = exports.watch = exports.data = exports.props = void 0;
 exports.props = {
-    "width": {
-        "default": undefined
+    'width': {
+        'default': undefined
     },
-    "height": {
-        "default": undefined
+    'height': {
+        'default': undefined
     },
-    "left": {
-        "default": undefined
+    'left': {
+        'default': undefined
     },
-    "top": {
-        "default": undefined
+    'top': {
+        'default': undefined
     },
-    "zIndex": {
-        "default": undefined
+    'zIndex': {
+        'default': undefined
     },
-    "flex": {
-        "default": undefined
+    'flex': {
+        'default': undefined
     },
-    "direction": {
-        "default": "v"
+    'direction': {
+        'default': 'v'
     },
-    "padding": {
-        "default": undefined
+    'padding': {
+        'default': undefined
     },
-    "scrollOffset": {
-        "default": undefined
+    'scrollOffset': {
+        'default': undefined
     },
-    "same": {
-        "default": false
+    'same': {
+        'default': false
     },
-    "data": {
-        "default": []
+    'data': {
+        'default': []
     }
 };
 exports.data = {
-    "innerPos": {
-        "start": 0,
-        "end": 0
+    'innerPos': {
+        'start': 0,
+        'end': 0
     },
-    "showPos": {
-        "start": 0,
-        "end": 0
+    'showPos': {
+        'start': 0,
+        'end': 0
     },
-    "dataHeight": [],
-    "lineHeight": 0,
-    "scrollOffsetData": 0,
-    "client": 0,
-    "length": 0,
-    "refreshCount": 0,
-    "lengthInit": false,
-    "initFirst": false
+    'dataHeight': [],
+    'lineHeight': 0,
+    'scrollOffsetData': 0,
+    'client': 0,
+    'length': 0,
+    'refreshCount': 0,
+    'lengthInit': false,
+    'initFirst': false
 };
 exports.watch = {
-    "data": {
+    'data': {
         handler: function () {
             this.refreshView();
         }
     },
-    "direction": function () {
+    'direction': function () {
         this.refreshView();
     }
 };
 exports.computed = {
-    "dataComp": function () {
-        if (typeof this.data !== "number") {
+    'dataComp': function () {
+        if (typeof this.data !== 'number') {
             return this.data;
         }
         var list = [];
@@ -111,32 +111,32 @@ exports.computed = {
         }
         return list;
     },
-    "sameComp": function () {
-        if (typeof this.same === "boolean") {
+    'sameComp': function () {
+        if (typeof this.same === 'boolean') {
             return this.same;
         }
-        return this.same === "true" ? true : false;
+        return this.same === 'true' ? true : false;
     },
-    "paddingComp": function () {
+    'paddingComp': function () {
         if (!this.padding) {
-            return { "top": 0, "right": 0, "bottom": 0, "left": 0 };
+            return { 'top': 0, 'right': 0, 'bottom': 0, 'left': 0 };
         }
-        var arr = this.padding.split(" ");
+        var arr = this.padding.split(' ');
         for (var i = 0; i < arr.length; ++i) {
             arr[i] = Math.round(arr[i]);
         }
         switch (arr.length) {
             case 1: {
-                return { "top": arr[0], "right": arr[0], "bottom": arr[0], "left": arr[0] };
+                return { 'top': arr[0], 'right': arr[0], 'bottom': arr[0], 'left': arr[0] };
             }
             case 2: {
-                return { "top": arr[0], "right": arr[1], "bottom": arr[0], "left": arr[1] };
+                return { 'top': arr[0], 'right': arr[1], 'bottom': arr[0], 'left': arr[1] };
             }
             case 3: {
-                return { "top": arr[0], "right": arr[1], "bottom": arr[2], "left": arr[1] };
+                return { 'top': arr[0], 'right': arr[1], 'bottom': arr[2], 'left': arr[1] };
             }
             default: {
-                return { "top": arr[0], "right": arr[1], "bottom": arr[2], "left": arr[3] };
+                return { 'top': arr[0], 'right': arr[1], 'bottom': arr[2], 'left': arr[3] };
             }
         }
     }
@@ -149,11 +149,11 @@ exports.methods = {
                 switch (_a.label) {
                     case 0:
                         nowCount = ++this.refreshCount;
-                        length = this.direction === "v" ? this.paddingComp.top : this.paddingComp.left;
+                        length = this.direction === 'v' ? this.paddingComp.top : this.paddingComp.left;
                         if (this.dataComp.length === 0) {
                             this.dataHeight = [];
                             this.lineHeight = 0;
-                            this.length = length + (this.direction === "v" ? this.paddingComp.bottom : this.paddingComp.right);
+                            this.length = length + (this.direction === 'v' ? this.paddingComp.bottom : this.paddingComp.right);
                             return [2];
                         }
                         if (!!this.sameComp) return [3, 5];
@@ -175,7 +175,7 @@ exports.methods = {
                         return [4, this.$nextTick()];
                     case 2:
                         _a.sent();
-                        return [4, ClickGo.sleep(0)];
+                        return [4, clickgo.tool.sleep(0)];
                     case 3:
                         _a.sent();
                         if (nowCount !== this.refreshCount) {
@@ -188,10 +188,10 @@ exports.methods = {
                             item = this.$refs.inner.children.item(i);
                             start = length;
                             rect = item.getBoundingClientRect();
-                            length += this.direction === "v" ? rect.height : rect.width;
+                            length += this.direction === 'v' ? rect.height : rect.width;
                             dataHeight[cursor + i] = {
-                                "start": start,
-                                "end": length
+                                'start': start,
+                                'end': length
                             };
                         }
                         if (theCursor === maxCursor) {
@@ -208,7 +208,7 @@ exports.methods = {
                         return [4, this.$nextTick()];
                     case 6:
                         _a.sent();
-                        return [4, ClickGo.sleep(0)];
+                        return [4, clickgo.tool.sleep(0)];
                     case 7:
                         _a.sent();
                         if (nowCount !== this.refreshCount) {
@@ -220,7 +220,7 @@ exports.methods = {
                         item = this.$refs.inner.children.item(0);
                         if (item) {
                             rect = item.getBoundingClientRect();
-                            this.lineHeight = this.direction === "v" ? rect.height : rect.width;
+                            this.lineHeight = this.direction === 'v' ? rect.height : rect.width;
                         }
                         else {
                             this.lineHeight = 0;
@@ -230,7 +230,7 @@ exports.methods = {
                     case 8:
                         this.innerPos.start = 0;
                         this.innerPos.end = 0;
-                        length += this.direction === "v" ? this.paddingComp.bottom : this.paddingComp.right;
+                        length += this.direction === 'v' ? this.paddingComp.bottom : this.paddingComp.right;
                         this.length = length;
                         this.lengthInit = true;
                         this.reShow();
@@ -292,7 +292,7 @@ exports.methods = {
             return;
         }
         this.scrollOffsetData = val;
-        this.$emit("update:scrollOffset", val);
+        this.$emit('update:scrollOffset', val);
         this.reShow();
     }
 };
@@ -303,7 +303,7 @@ exports.mounted = function () {
         _this.refreshView();
     });
     mo.observe(this.$children[0].$el, {
-        "attributeFilter": ["style", "class"],
-        "attributes": true
+        'attributeFilter': ['style', 'class'],
+        'attributes': true
     });
 };

@@ -8,16 +8,12 @@
         "/clickgo/control/common",
         "/clickgo/control/tab"
     ],
-    "theme": [
+    "themes": [
         "/clickgo/theme/transition"
     ],
-    "mainLayout": "/form/main",
+    "main": "/form/main",
 
     "files": [
-        "/clickgo/control/common.cgc",
-        "/clickgo/control/tab.cgc",
-        "/clickgo/theme/transition.cgt",
-
         "/form/main.js",
         "/form/main.xml",
         "/form/new.js",

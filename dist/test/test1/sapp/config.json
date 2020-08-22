@@ -7,10 +7,9 @@
     "controls": [
         "/clickgo/control/common"
     ],
-    "mainLayout": "/form/task",
+    "main": "/form/task",
 
     "files": [
-        "/clickgo/control/common.cgc",
         "/form/task.css",
         "/form/task.js",
         "/form/task.xml"

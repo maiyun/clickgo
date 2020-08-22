@@ -1,20 +1,20 @@
 export let props = {
-    "width": {
-        "default": undefined
+    'width': {
+        'default': undefined
     },
-    "height": {
-        "default": undefined
+    'height': {
+        'default': undefined
     }
 };
 
 export let data = {
-    "leftData": -20070831,
-    "topData": -20070831,
-    "zIndexData": 0,
-    "open": false,
+    'leftData': -20070831,
+    'topData': -20070831,
+    'zIndexData': 0,
+    'open': false,
 
-    "hasSubItemsCount": 0,
-    "hasTypeItemsCount": 0
+    'hasSubItemsCount': 0,
+    'hasTypeItemsCount': 0
 };
 
 export let methods = {
@@ -24,16 +24,15 @@ export let methods = {
             if (!item.popOpen) {
                 continue;
             }
-            ClickGo.hidePop(item.$children[0]);
+            clickgo.form.hidePop(item.$children[0]);
         }
     }
 };
 
 export let mounted = function(this: IVue): void {
-    ClickGo.appendToPop(this.$el);
+    clickgo.form.appendToPop(this.$el);
 };
 
 export let destroyed = function(this: IVue): void {
-    ClickGo.removeFromPop(this.$el);
+    clickgo.form.removeFromPop(this.$el);
 };
-

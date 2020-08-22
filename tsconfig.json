@@ -8,6 +8,7 @@
         "target": "ES5",
         "strict": true,             // 严格模式
         "declaration": true,        // d.ts
+        "declarationMap": false,
         "newLine": "LF",
         "lib": ["DOM", "ES5", "ES2015.Iterable", "ScriptHost", "ES2015.Promise"]
     }

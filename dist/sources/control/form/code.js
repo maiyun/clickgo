@@ -38,89 +38,89 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.mounted = exports.methods = exports.watch = exports.data = exports.props = void 0;
 exports.props = {
-    "icon": {
-        "default": "",
+    'icon': {
+        'default': '',
     },
-    "title": {
-        "default": "title"
+    'title': {
+        'default': 'title'
     },
-    "min": {
-        "default": true
+    'min': {
+        'default': true
     },
-    "max": {
-        "default": true
+    'max': {
+        'default': true
     },
-    "close": {
-        "default": true
+    'close': {
+        'default': true
     },
-    "stateMax": {
-        "default": false
+    'stateMax': {
+        'default': false
     },
-    "stateMin": {
-        "default": false
+    'stateMin': {
+        'default': false
     },
-    "focus": {
-        "default": false
+    'focus': {
+        'default': false
     },
-    "width": {
-        "default": 300
+    'width': {
+        'default': 300
     },
-    "height": {
-        "default": 200
+    'height': {
+        'default': 200
     },
-    "left": {
-        "default": -1
+    'left': {
+        'default': -1
     },
-    "top": {
-        "default": -1
+    'top': {
+        'default': -1
     },
-    "zIndex": {
-        "default": -1
+    'zIndex': {
+        'default': -1
     },
-    "minWidth": {
-        "default": 200
+    'minWidth': {
+        'default': 200
     },
-    "minHeight": {
-        "default": 100
+    'minHeight': {
+        'default': 100
     },
-    "resize": {
-        "default": true
+    'resize': {
+        'default': true
     },
-    "border": {
-        "default": "normal"
+    'border': {
+        'default': 'normal'
     },
-    "background": {
-        "default": undefined
+    'background': {
+        'default': undefined
     },
-    "padding": {
-        "default": undefined
+    'padding': {
+        'default': undefined
     },
-    "direction": {
-        "default": "v"
+    'direction': {
+        'default': 'v'
     }
 };
 exports.data = {
-    "stateMaxData": false,
-    "stateMinData": false,
-    "stateAbs": false,
-    "iconData": undefined,
-    "widthData": 300,
-    "heightData": 200,
-    "leftData": 0,
-    "topData": 0,
-    "zIndexData": 0,
-    "historyLocation": {
-        "width": 0,
-        "height": 0,
-        "left": 0,
-        "top": 0
+    'stateMaxData': false,
+    'stateMinData': false,
+    'stateAbs': false,
+    'iconData': undefined,
+    'widthData': 300,
+    'heightData': 200,
+    'leftData': 0,
+    'topData': 0,
+    'zIndexData': 0,
+    'historyLocation': {
+        'width': 0,
+        'height': 0,
+        'left': 0,
+        'top': 0
     },
-    "maskFor": undefined,
-    "maskFrom": undefined,
-    "flashTimer": undefined
+    'maskFor': undefined,
+    'maskFrom': undefined,
+    'flashTimer': undefined
 };
 exports.watch = {
-    "icon": {
+    'icon': {
         handler: function () {
             var _a;
             return __awaiter(this, void 0, void 0, function () {
@@ -132,62 +132,62 @@ exports.watch = {
                             if (this.iconData === undefined) {
                                 first = true;
                             }
-                            if (!(this.icon === "")) return [3, 1];
-                            this.iconData = "";
+                            if (!(this.icon === '')) return [3, 1];
+                            this.iconData = '';
                             return [3, 3];
                         case 1:
                             _b = this;
                             return [4, this.getDataUrl(this.icon)];
                         case 2:
-                            _b.iconData = (_a = _c.sent()) !== null && _a !== void 0 ? _a : "";
+                            _b.iconData = (_a = _c.sent()) !== null && _a !== void 0 ? _a : '';
                             _c.label = 3;
                         case 3:
                             if (!first) {
-                                ClickGo.trigger("formIconChanged", this.taskId, this.formId, { "icon": this.iconData });
+                                clickgo.core.trigger('formIconChanged', this.taskId, this.formId, { 'icon': this.iconData });
                             }
                             return [2];
                     }
                 });
             });
         },
-        "immediate": true
+        'immediate': true
     },
-    "title": function () {
-        ClickGo.trigger("formTitleChanged", this.taskId, this.formId, { "title": this.title });
+    'title': function () {
+        clickgo.core.trigger('formTitleChanged', this.taskId, this.formId, { 'title': this.title });
     },
-    "stateMin": function () {
+    'stateMin': function () {
         this.minMethod();
     },
-    "stateMax": function () {
+    'stateMax': function () {
         this.maxMethod();
     },
-    "width": function () {
+    'width': function () {
         this.widthData = parseInt(this.width);
     },
-    "height": function () {
+    'height': function () {
         this.heightData = parseInt(this.height);
     },
-    "left": function () {
+    'left': function () {
         this.leftData = parseInt(this.left);
     },
-    "top": function () {
+    'top': function () {
         this.topData = parseInt(this.top);
     },
-    "zIndex": function () {
+    'zIndex': function () {
         this.zIndexData = parseInt(this.zIndex);
     }
 };
 exports.methods = {
     moveMethod: function (e) {
         var _this = this;
-        if (e instanceof MouseEvent && ClickGo.hasTouch) {
+        if (e instanceof MouseEvent && clickgo.hasTouch) {
             return;
         }
         var el = e.currentTarget;
-        var dataHasDbl = el.getAttribute("data-has-dbl");
+        var dataHasDbl = el.getAttribute('data-has-dbl');
         if (!dataHasDbl) {
-            el.setAttribute("data-has-dbl", "yes");
-            el.addEventListener("dblclick", function () {
+            el.setAttribute('data-has-dbl', 'yes');
+            el.addEventListener('dblclick', function () {
                 if (_this.stateAbs) {
                     _this.maxVMethod(true);
                 }
@@ -196,13 +196,13 @@ exports.methods = {
                 }
             });
         }
-        var isBorder = "";
-        ClickGo.bindMove(e, {
-            "start": function (x, y) {
+        var isBorder = '';
+        clickgo.element.bindMove(e, {
+            'start': function (x, y) {
                 if (_this.stateMaxData) {
-                    _this.$emit("max", event, 0, _this.historyLocation);
+                    _this.$emit('max', event, 0, _this.historyLocation);
                     _this.stateMaxData = false;
-                    _this.$emit("update:stateMax", false);
+                    _this.$emit('update:stateMax', false);
                     var olx = x - _this.leftData;
                     var orx = _this.leftData + _this.widthData - x;
                     var w2 = _this.historyLocation.width / 2;
@@ -215,7 +215,7 @@ exports.methods = {
                     else {
                         _this.leftData = x - w2;
                     }
-                    _this.$emit("update:left", _this.leftData);
+                    _this.$emit('update:left', _this.leftData);
                     var oty = y - _this.topData;
                     var oby = _this.topData + _this.heightData - y;
                     var h2 = _this.historyLocation.height / 2;
@@ -228,11 +228,11 @@ exports.methods = {
                     else {
                         _this.topData = y - h2;
                     }
-                    _this.$emit("update:top", _this.topData);
+                    _this.$emit('update:top', _this.topData);
                     _this.widthData = _this.historyLocation.width;
-                    _this.$emit("update:width", _this.historyLocation.width);
+                    _this.$emit('update:width', _this.historyLocation.width);
                     _this.heightData = _this.historyLocation.height;
-                    _this.$emit("update:height", _this.historyLocation.height);
+                    _this.$emit('update:height', _this.historyLocation.height);
                 }
                 else if (_this.stateAbs) {
                     _this.stateAbs = false;
@@ -248,7 +248,7 @@ exports.methods = {
                     else {
                         _this.leftData = x - w2;
                     }
-                    _this.$emit("update:left", _this.leftData);
+                    _this.$emit('update:left', _this.leftData);
                     var oty = y - _this.topData;
                     var oby = _this.topData + _this.heightData - y;
                     var h2 = _this.historyLocation.height / 2;
@@ -261,55 +261,55 @@ exports.methods = {
                     else {
                         _this.topData = y - h2;
                     }
-                    _this.$emit("update:top", _this.topData);
+                    _this.$emit('update:top', _this.topData);
                     _this.widthData = _this.historyLocation.width;
-                    _this.$emit("update:width", _this.historyLocation.width);
+                    _this.$emit('update:width', _this.historyLocation.width);
                     _this.heightData = _this.historyLocation.height;
-                    _this.$emit("update:height", _this.historyLocation.height);
+                    _this.$emit('update:height', _this.historyLocation.height);
                 }
                 else if (!_this.stateMinData) {
                     _this.historyLocation = {
-                        "width": _this.widthData,
-                        "height": _this.heightData,
-                        "left": _this.leftData,
-                        "top": _this.topData
+                        'width': _this.widthData,
+                        'height': _this.heightData,
+                        'left': _this.leftData,
+                        'top': _this.topData
                     };
                 }
             },
-            "move": function (ox, oy, x, y, border) {
+            'move': function (ox, oy, x, y, border) {
                 _this.leftData += ox;
-                _this.$emit("update:left", _this.leftData);
+                _this.$emit('update:left', _this.leftData);
                 _this.topData += oy;
-                _this.$emit("update:top", _this.topData);
-                if (border !== "") {
-                    if ((border === "t" && _this.max) || (border !== "t" && _this.resize)) {
-                        if (isBorder === "") {
+                _this.$emit('update:top', _this.topData);
+                if (border !== '') {
+                    if ((border === 't' && _this.max) || (border !== 't' && _this.resize)) {
+                        if (isBorder === '') {
                             isBorder = border;
-                            ClickGo.showCircular(x, y);
-                            ClickGo.showRectangle(x, y, border);
+                            clickgo.form.showCircular(x, y);
+                            clickgo.form.showRectangle(x, y, border);
                         }
                         else {
                             isBorder = border;
-                            ClickGo.moveRectangle(border);
+                            clickgo.form.moveRectangle(border);
                         }
                     }
                     else {
-                        if (isBorder !== "") {
-                            isBorder = "";
-                            ClickGo.hideRectangle();
+                        if (isBorder !== '') {
+                            isBorder = '';
+                            clickgo.form.hideRectangle();
                         }
                     }
                 }
                 else {
-                    if (isBorder !== "") {
-                        isBorder = "";
-                        ClickGo.hideRectangle();
+                    if (isBorder !== '') {
+                        isBorder = '';
+                        clickgo.form.hideRectangle();
                     }
                 }
             },
-            "end": function () {
-                if (isBorder !== "") {
-                    if (isBorder === "t") {
+            'end': function () {
+                if (isBorder !== '') {
+                    if (isBorder === 't') {
                         if (_this.max) {
                             _this.widthData = _this.historyLocation.width;
                             _this.heightData = _this.historyLocation.height;
@@ -322,34 +322,34 @@ exports.methods = {
                         if (_this.resize) {
                             if (_this.stateMinData) {
                                 if (!_this.minMethod()) {
-                                    ClickGo.hideRectangle();
+                                    clickgo.form.hideRectangle();
                                     return;
                                 }
                             }
                             _this.stateAbs = true;
-                            var pos = ClickGo.getPositionByBorderDir(isBorder);
+                            var pos = clickgo.form.getRectByDir(isBorder);
                             _this.widthData = pos.width;
-                            _this.$emit("update:width", _this.widthData);
+                            _this.$emit('update:width', _this.widthData);
                             _this.heightData = pos.height;
-                            _this.$emit("update:height", _this.heightData);
+                            _this.$emit('update:height', _this.heightData);
                             _this.leftData = pos.left;
-                            _this.$emit("update:left", _this.leftData);
+                            _this.$emit('update:left', _this.leftData);
                             _this.topData = pos.top;
-                            _this.$emit("update:top", _this.topData);
+                            _this.$emit('update:top', _this.topData);
                         }
                     }
-                    ClickGo.hideRectangle();
+                    clickgo.form.hideRectangle();
                 }
             }
         });
     },
     minMethod: function () {
         var event = {
-            "go": true,
+            'go': true,
             preventDefault: function () {
                 this.go = false;
             },
-            "ds": false,
+            'ds': false,
             disableShape: function () {
                 this.ds = false;
             }
@@ -364,33 +364,33 @@ exports.methods = {
             this.widthData = this.historyLocation.width;
             this.heightData = this.historyLocation.height;
             this.leftData = this.historyLocation.left;
-            this.$emit("update:left", this.leftData);
+            this.$emit('update:left', this.leftData);
             this.topData = this.historyLocation.top;
-            this.$emit("update:top", this.topData);
+            this.$emit('update:top', this.topData);
         }
         if (!this.stateMinData) {
-            this.$emit("min", event, 1, {});
+            this.$emit('min', event, 1, {});
             if (event.go) {
                 this.historyLocation = {
-                    "width": this.widthData,
-                    "height": this.heightData,
-                    "left": this.leftData,
-                    "top": this.topData
+                    'width': this.widthData,
+                    'height': this.heightData,
+                    'left': this.leftData,
+                    'top': this.topData
                 };
                 this.stateMinData = true;
-                this.$emit("update:stateMin", true);
-                this.$el.classList.add("cg-state-min");
+                this.$emit('update:stateMin', true);
+                this.$el.classList.add('cg-state-min');
                 if (!event.ds) {
-                    this.$el.style.height = "auto";
+                    this.$el.style.height = 'auto';
                     this.heightData = this.$el.offsetHeight;
-                    this.$emit("update:height", this.$el.offsetHeight);
-                    if (this.border !== "thin") {
+                    this.$emit('update:height', this.$el.offsetHeight);
+                    if (this.border !== 'thin') {
                         this.widthData = 200;
-                        this.$emit("update:width", 200);
+                        this.$emit('update:width', 200);
                     }
                     else {
                         this.widthData = 150;
-                        this.$emit("update:width", 150);
+                        this.$emit('update:width', 150);
                     }
                 }
             }
@@ -399,51 +399,52 @@ exports.methods = {
             }
         }
         else {
-            this.$emit("min", event, 0, this.historyLocation);
+            this.$emit('min', event, 0, this.historyLocation);
             if (event.go) {
                 this.stateMinData = false;
-                this.$emit("update:stateMin", false);
-                this.$el.classList.remove("cg-state-min");
+                this.$emit('update:stateMin', false);
+                this.$el.classList.remove('cg-state-min');
                 if (!event.ds) {
                     this.heightData = this.historyLocation.height;
-                    this.$emit("update:height", this.historyLocation.height);
+                    this.$emit('update:height', this.historyLocation.height);
                     this.widthData = this.historyLocation.width;
-                    this.$emit("update:width", this.historyLocation.width);
+                    this.$emit('update:width', this.historyLocation.width);
                 }
             }
             else {
                 return false;
             }
         }
-        ClickGo.trigger("formStateMinChanged", this.taskId, this.formId, { "state": this.stateMinData });
+        clickgo.core.trigger('formStateMinChanged', this.taskId, this.formId, { 'state': this.stateMinData });
         return true;
     },
     maxVMethod: function (dbl) {
         if (this.stateAbs) {
             this.stateAbs = false;
             this.topData = this.historyLocation.top;
-            this.$emit("update:top", this.topData);
+            this.$emit('update:top', this.topData);
             this.heightData = this.historyLocation.height;
-            this.$emit("update:height", this.heightData);
+            this.$emit('update:height', this.heightData);
             if (dbl) {
                 this.leftData = this.historyLocation.left;
-                this.$emit("update:top", this.leftData);
+                this.$emit('update:top', this.leftData);
                 this.widthData = this.historyLocation.width;
-                this.$emit("update:width", this.widthData);
+                this.$emit('update:width', this.widthData);
             }
         }
         else {
             this.stateAbs = true;
             this.historyLocation = {
-                "width": this.widthData,
-                "height": this.heightData,
-                "left": this.leftData,
-                "top": this.topData
+                'width': this.widthData,
+                'height': this.heightData,
+                'left': this.leftData,
+                'top': this.topData
             };
-            this.topData = ClickGo.getTop();
-            this.$emit("update:top", this.topData);
-            this.heightData = ClickGo.getHeight();
-            this.$emit("update:height", this.heightData);
+            var pos = clickgo.getPosition();
+            this.topData = pos.top;
+            this.$emit('update:top', this.topData);
+            this.heightData = pos.height;
+            this.$emit('update:height', this.heightData);
         }
     },
     maxMethod: function () {
@@ -453,40 +454,41 @@ exports.methods = {
             }
         }
         var event = {
-            "go": true,
+            'go': true,
             preventDefault: function () {
                 this.go = false;
             },
-            "ds": false,
+            'ds': false,
             disableShape: function () {
                 this.ds = false;
             }
         };
         if (!this.stateMaxData) {
-            this.$emit("max", event, 1, {});
+            this.$emit('max', event, 1, {});
             if (event.go) {
                 if (this.stateAbs) {
                     this.stateAbs = false;
                 }
                 else {
                     this.historyLocation = {
-                        "width": this.widthData,
-                        "height": this.heightData,
-                        "left": this.leftData,
-                        "top": this.topData
+                        'width': this.widthData,
+                        'height': this.heightData,
+                        'left': this.leftData,
+                        'top': this.topData
                     };
                 }
                 this.stateMaxData = true;
-                this.$emit("update:stateMax", true);
+                this.$emit('update:stateMax', true);
                 if (!event.ds) {
-                    this.leftData = ClickGo.getLeft();
-                    this.$emit("update:left", this.leftData);
-                    this.topData = ClickGo.getTop();
-                    this.$emit("update:top", this.topData);
-                    this.widthData = ClickGo.getWidth();
-                    this.$emit("update:width", this.widthData);
-                    this.heightData = ClickGo.getHeight();
-                    this.$emit("update:height", this.heightData);
+                    var pos = clickgo.getPosition();
+                    this.leftData = pos.left;
+                    this.$emit('update:left', this.leftData);
+                    this.topData = pos.top;
+                    this.$emit('update:top', this.topData);
+                    this.widthData = pos.width;
+                    this.$emit('update:width', this.widthData);
+                    this.heightData = pos.height;
+                    this.$emit('update:height', this.heightData);
                 }
             }
             else {
@@ -494,26 +496,26 @@ exports.methods = {
             }
         }
         else {
-            this.$emit("max", event, 0, this.historyLocation);
+            this.$emit('max', event, 0, this.historyLocation);
             if (event.go) {
                 this.stateMaxData = false;
-                this.$emit("update:stateMax", false);
+                this.$emit('update:stateMax', false);
                 if (!event.ds) {
                     this.leftData = this.historyLocation.left;
-                    this.$emit("update:left", this.historyLocation.left);
+                    this.$emit('update:left', this.historyLocation.left);
                     this.topData = this.historyLocation.top;
-                    this.$emit("update:top", this.historyLocation.top);
+                    this.$emit('update:top', this.historyLocation.top);
                     this.widthData = this.historyLocation.width;
-                    this.$emit("update:width", this.historyLocation.width);
+                    this.$emit('update:width', this.historyLocation.width);
                     this.heightData = this.historyLocation.height;
-                    this.$emit("update:height", this.historyLocation.height);
+                    this.$emit('update:height', this.historyLocation.height);
                 }
             }
             else {
                 return false;
             }
         }
-        ClickGo.trigger("formStateMaxChanged", this.taskId, this.formId, { "state": this.stateMaxData });
+        clickgo.core.trigger('formStateMaxChanged', this.taskId, this.formId, { 'state': this.stateMaxData });
         return true;
     },
     closeMethod: function () {
@@ -523,148 +525,150 @@ exports.methods = {
                 this.go = false;
             }
         };
-        this.$emit("close", event);
+        this.$emit('close', event);
         if (event.go) {
-            ClickGo.removeForm(this.formId);
+            clickgo.form.remove(this.formId);
         }
     },
     resizeMethod: function (e, dir) {
         var _this = this;
-        if (e instanceof MouseEvent && ClickGo.hasTouch) {
+        if (e instanceof MouseEvent && clickgo.hasTouch) {
             return;
         }
-        var isBorder = "";
+        var isBorder = '';
         var top = this.topData;
         var height = this.heightData;
-        if (dir !== "l" && dir !== "r") {
+        if (dir !== 'l' && dir !== 'r') {
             if (this.stateAbs) {
-                if (dir === "lt" || dir === "t" || dir === "tr") {
+                if (dir === 'lt' || dir === 't' || dir === 'tr') {
                     height = this.historyLocation.top + this.historyLocation.height;
                 }
                 else {
                     top = this.historyLocation.top;
-                    height = ClickGo.getHeight() - top;
+                    height = clickgo.getPosition().height - top;
                 }
             }
             else {
                 this.historyLocation = {
-                    "width": this.widthData,
-                    "height": this.heightData,
-                    "left": this.leftData,
-                    "top": this.topData
+                    'width': this.widthData,
+                    'height': this.heightData,
+                    'left': this.leftData,
+                    'top': this.topData
                 };
             }
         }
-        ClickGo.bindResize(e, {
-            "left": this.leftData,
-            "top": top,
-            "width": this.widthData,
-            "height": height,
-            "minWidth": parseInt(this.minWidth),
-            "minHeight": parseInt(this.minHeight),
-            "dir": dir,
-            "start": function () {
-                if (dir === "l" || dir === "r") {
+        clickgo.element.bindResize(e, {
+            'left': this.leftData,
+            'top': top,
+            'width': this.widthData,
+            'height': height,
+            'minWidth': parseInt(this.minWidth),
+            'minHeight': parseInt(this.minHeight),
+            'dir': dir,
+            'start': function () {
+                if (dir === 'l' || dir === 'r') {
                     return;
                 }
                 if (_this.stateAbs) {
                     _this.stateAbs = false;
                 }
             },
-            "move": function (left, top, width, height, x, y, border) {
+            'move': function (left, top, width, height, x, y, border) {
                 _this.leftData = left;
-                _this.$emit("update:left", left);
+                _this.$emit('update:left', left);
                 _this.topData = top;
-                _this.$emit("update:top", top);
+                _this.$emit('update:top', top);
                 _this.widthData = width;
-                _this.$emit("update:width", width);
+                _this.$emit('update:width', width);
                 _this.heightData = height;
-                _this.$emit("update:height", height);
-                if (border !== "") {
-                    if (((dir === "lt" || dir === "t" || dir === "tr") && (border === "lt" || border === "t" || border === "tr")) ||
-                        ((dir === "bl" || dir === "b" || dir === "rb") && (border === "bl" || border === "b" || border === "rb"))) {
-                        if (isBorder === "") {
+                _this.$emit('update:height', height);
+                if (border !== '') {
+                    if (((dir === 'lt' || dir === 't' || dir === 'tr') && (border === 'lt' || border === 't' || border === 'tr')) ||
+                        ((dir === 'bl' || dir === 'b' || dir === 'rb') && (border === 'bl' || border === 'b' || border === 'rb'))) {
+                        if (isBorder === '') {
                             isBorder = border;
-                            ClickGo.showCircular(x, y);
-                            ClickGo.showRectangle(x, y, {
-                                "left": left,
-                                "width": width
+                            clickgo.form.showCircular(x, y);
+                            clickgo.form.showRectangle(x, y, {
+                                'left': left,
+                                'width': width
                             });
                         }
                         else {
                             isBorder = border;
-                            ClickGo.moveRectangle({
-                                "left": left,
-                                "width": width
+                            clickgo.form.moveRectangle({
+                                'left': left,
+                                'width': width
                             });
                         }
                     }
                     else {
-                        if (isBorder !== "") {
-                            isBorder = "";
-                            ClickGo.hideRectangle();
+                        if (isBorder !== '') {
+                            isBorder = '';
+                            clickgo.form.hideRectangle();
                         }
                     }
                 }
                 else {
-                    if (isBorder !== "") {
-                        isBorder = "";
-                        ClickGo.hideRectangle();
+                    if (isBorder !== '') {
+                        isBorder = '';
+                        clickgo.form.hideRectangle();
                     }
                 }
             },
-            "end": function () {
-                if (isBorder !== "") {
-                    if (isBorder !== "l" && isBorder !== "r") {
+            'end': function () {
+                if (isBorder !== '') {
+                    if (isBorder !== 'l' && isBorder !== 'r') {
+                        var pos = clickgo.getPosition();
                         _this.stateAbs = true;
-                        _this.heightData = ClickGo.getHeight();
-                        _this.$emit("update:height", _this.heightData);
-                        _this.topData = ClickGo.getTop();
-                        _this.$emit("update:top", _this.topData);
+                        _this.heightData = pos.height;
+                        _this.$emit('update:height', _this.heightData);
+                        _this.topData = pos.top;
+                        _this.$emit('update:top', _this.topData);
                     }
-                    ClickGo.hideRectangle();
+                    clickgo.form.hideRectangle();
                 }
             }
         });
     },
     maskDown: function (e) {
-        if (e instanceof MouseEvent && ClickGo.hasTouch) {
+        if (e instanceof MouseEvent && clickgo.hasTouch) {
             return;
         }
-        if (typeof this.maskFor !== "number") {
+        if (typeof this.maskFor !== 'number') {
             return;
         }
-        if (!ClickGo.taskList[this.taskId].formList[this.maskFor]) {
+        if (!clickgo.core.tasks[this.taskId].forms[this.maskFor]) {
             return;
         }
         e.stopPropagation();
-        ClickGo.taskList[this.taskId].formList[this.maskFor].vue.flash();
+        clickgo.core.tasks[this.taskId].forms[this.maskFor].vue.flash();
     },
     setPropData: function (name, val, mode) {
-        if (mode === void 0) { mode = ""; }
-        if (this[name + "Data"] === undefined || this[name] === undefined) {
+        if (mode === void 0) { mode = ''; }
+        if (this[name + 'Data'] === undefined || this[name] === undefined) {
             return;
         }
-        if (mode === "") {
-            this[name + "Data"] = val;
+        if (mode === '') {
+            this[name + 'Data'] = val;
         }
-        else if (mode === "+") {
-            this[name + "Data"] += val;
+        else if (mode === '+') {
+            this[name + 'Data'] += val;
         }
         else {
-            this[name + "Data"] -= val;
+            this[name + 'Data'] -= val;
         }
-        this.$emit("update:" + name, this[name + "Data"]);
+        this.$emit('update:' + name, this[name + 'Data']);
     }
 };
 exports.mounted = function () {
     this.widthData = parseInt(this.width);
     this.heightData = parseInt(this.height);
     this.zIndexData = parseInt(this.zIndex);
-    var stateMax = (typeof this.stateMax === "string") ? ((this.stateMax === "true") ? true : false) : this.stateMax;
+    var stateMax = (typeof this.stateMax === 'string') ? ((this.stateMax === 'true') ? true : false) : this.stateMax;
     if (stateMax) {
-        this.leftData = (ClickGo.getWidth() - this.widthData) / 2;
-        this.topData = (ClickGo.getHeight() - this.heightData) / 2;
+        var pos = clickgo.getPosition();
+        this.leftData = (pos.width - this.widthData) / 2;
+        this.topData = (pos.height - this.heightData) / 2;
         this.maxMethod();
     }
 };

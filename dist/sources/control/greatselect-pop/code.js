@@ -2,25 +2,25 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.destroyed = exports.mounted = exports.methods = exports.data = exports.props = void 0;
 exports.props = {
-    "height": {
-        "default": undefined
+    'height': {
+        'default': undefined
     },
-    "same": {
-        "default": false
+    'same': {
+        'default': false
     },
-    "data": {
-        "default": []
+    'data': {
+        'default': []
     },
-    "value": {
-        "default": 0
+    'value': {
+        'default': 0
     }
 };
 exports.data = {
-    "widthData": undefined,
-    "leftData": -20070831,
-    "topData": -20070831,
-    "zIndexData": 0,
-    "open": false
+    'widthData': undefined,
+    'leftData': -20070831,
+    'topData': -20070831,
+    'zIndexData': 0,
+    'open': false
 };
 exports.methods = {
     onHide: function () {
@@ -31,21 +31,21 @@ exports.methods = {
             }
             for (var _b = 0, _c = item.$children; _b < _c.length; _b++) {
                 var maybeMenu = _c[_b];
-                if (maybeMenu.$data._controlName !== "menu-pop") {
+                if (maybeMenu.$data._controlName !== 'menu-pop') {
                     continue;
                 }
-                ClickGo.hidePop(maybeMenu);
+                clickgo.form.hidePop(maybeMenu);
                 break;
             }
         }
     },
     select: function (index) {
-        this.$emit("input", index);
+        this.$emit('input', index);
     }
 };
 exports.mounted = function () {
-    ClickGo.appendToPop(this.$el);
+    clickgo.form.appendToPop(this.$el);
 };
 exports.destroyed = function () {
-    ClickGo.removeFromPop(this.$el);
+    clickgo.form.removeFromPop(this.$el);
 };

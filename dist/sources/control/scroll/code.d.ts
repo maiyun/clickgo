@@ -63,7 +63,7 @@ export declare let computed: {
 export declare let methods: {
     down: (this: IVue, e: MouseEvent | TouchEvent) => void;
     bardown: (this: IVue, e: MouseEvent | TouchEvent) => void;
-    longDown: (this: IVue, e: MouseEvent | TouchEvent, type: "start" | "end") => void;
+    longDown: (this: IVue, e: MouseEvent | TouchEvent, type: 'start' | 'end') => void;
     resizePxOfScrollOffsetData: (this: IVue, scrollOffsetData: number) => void;
 };
 export declare let mounted: (this: IVue) => void;

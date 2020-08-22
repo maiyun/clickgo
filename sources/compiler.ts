@@ -1,30 +1,30 @@
-import * as fs from "fs";
-import * as mime from "@litert/mime";
+import * as fs from 'fs';
+import * as mime from '@litert/mime';
 
 /**
  * --- 去除 html 的空白符、换行 ---
  * @param text 要纯净的字符串
  */
 function purify(text: string): string {
-    text = ">" + text + "<";
+    text = '>' + text + '<';
     text = text.replace(/>([\s\S]*?)</g, function(t: string, t1: string) {
-        return ">" + t1.replace(/\t|\r\n| {2}/g, "").replace(/\n|\r/g, "") + "<";
+        return '>' + t1.replace(/\t|\r\n| {2}/g, '').replace(/\n|\r/g, '') + '<';
     });
     return text.slice(1, -1);
 }
 
 async function getSingleControlBlob(base: string): Promise<Buffer> {
     // --- 读取 config 文件 ---
-    let config = await fs.promises.readFile(base + "/config.json", {
-        "encoding": "utf-8"
+    let config = await fs.promises.readFile(base + '/config.json', {
+        'encoding': 'utf-8'
     });
     /** --- config 对象 --- */
     let configJson = JSON.parse(config);
     let configBuffer = Buffer.from(config);
     // --- 单控件主体 ---
-    let m = mime.getMime("json");
+    let m = mime.getMime('json');
     let mb = Buffer.from(m);
-    let controlBufferArray: Uint8Array[] = [Uint8Array.from([12]), Buffer.from("/config.json"), Uint8Array.from([mb.byteLength]), mb, Buffer.from(Uint32Array.from([configBuffer.byteLength]).buffer), configBuffer];
+    let controlBufferArray: Uint8Array[] = [Uint8Array.from([12]), Buffer.from('/config.json'), Uint8Array.from([mb.byteLength]), mb, Buffer.from(Uint32Array.from([configBuffer.byteLength]).buffer), configBuffer];
 
     for (let fpath of configJson.files) {
         let content = await fs.promises.readFile(base + fpath);
@@ -32,7 +32,7 @@ async function getSingleControlBlob(base: string): Promise<Buffer> {
 
         let m = mime.getData(fpath);
         let mb = Buffer.from(m.mime);
-        if (m.extension === "html") {
+        if (m.extension === 'html') {
             content = Buffer.from(purify(content.toString()));
         }
 
@@ -59,50 +59,51 @@ async function getSingleControlBlob(base: string): Promise<Buffer> {
 
 async function run(): Promise<void> {
     // --- control to cgc ---
-    let list = await fs.promises.readdir("dist/sources/control/", {
-        "withFileTypes": true
+    let list = await fs.promises.readdir('dist/sources/control/', {
+        'withFileTypes': true
     });
     for (let item of list) {
         if (item.isFile()) {
             continue;
         }
-        if (["button", "dataview", "form", "greatselect", "greatselect-pop", "greatselect-pop-item", "greatselect-pop-split", "greatview", "img", "label", "layout", "menu", "menu-item", "menu-pop", "menu-pop-item", "menu-pop-split", "overflow", "scroll", "select", "tab-nav", "tab-panel", "view"].includes(item.name)) {
+        if (['button', 'dataview', 'form', 'greatselect', 'greatselect-pop', 'greatselect-pop-item', 'greatselect-pop-split', 'greatview', 'img', 'label', 'layout', 'menu', 'menu-item', 'menu-pop', 'menu-pop-item', 'menu-pop-split', 'overflow', 'scroll', 'select', 'tab-nav', 'tab-panel', 'view'].includes(item.name)) {
             continue;
         }
-        let base = "dist/sources/control/" + item.name;
+        let base = 'dist/sources/control/' + item.name;
         let name = item.name;
 
         let controlBuffer = await getSingleControlBlob(base);
-        if (item.name === "block") {
-            name = "common";
+        if (item.name === 'block') {
+            name = 'common';
             controlBuffer = Buffer.concat([
                 controlBuffer,
-                await getSingleControlBlob("dist/sources/control/button"),
-                await getSingleControlBlob("dist/sources/control/dataview"),
-                await getSingleControlBlob("dist/sources/control/form"),
-                await getSingleControlBlob("dist/sources/control/greatselect"),
-                await getSingleControlBlob("dist/sources/control/greatselect-pop"),
-                await getSingleControlBlob("dist/sources/control/greatselect-pop-item"),
-                await getSingleControlBlob("dist/sources/control/greatselect-pop-split"),
-                await getSingleControlBlob("dist/sources/control/greatview"),
-                await getSingleControlBlob("dist/sources/control/img"),
-                await getSingleControlBlob("dist/sources/control/label"),
-                await getSingleControlBlob("dist/sources/control/layout"),
-                await getSingleControlBlob("dist/sources/control/menu"),
-                await getSingleControlBlob("dist/sources/control/menu-item"),
-                await getSingleControlBlob("dist/sources/control/menu-pop"),
-                await getSingleControlBlob("dist/sources/control/menu-pop-item"),
-                await getSingleControlBlob("dist/sources/control/menu-pop-split"),
-                await getSingleControlBlob("dist/sources/control/overflow"),
-                await getSingleControlBlob("dist/sources/control/scroll"),
-                await getSingleControlBlob("dist/sources/control/select"),
-                await getSingleControlBlob("dist/sources/control/view")
+                await getSingleControlBlob('dist/sources/control/button'),
+                await getSingleControlBlob('dist/sources/control/dataview'),
+                await getSingleControlBlob('dist/sources/control/form'),
+                await getSingleControlBlob('dist/sources/control/greatselect'),
+                await getSingleControlBlob('dist/sources/control/greatselect-pop'),
+                await getSingleControlBlob('dist/sources/control/greatselect-pop-item'),
+                await getSingleControlBlob('dist/sources/control/greatselect-pop-split'),
+                await getSingleControlBlob('dist/sources/control/greatview'),
+                await getSingleControlBlob('dist/sources/control/img'),
+                await getSingleControlBlob('dist/sources/control/label'),
+                await getSingleControlBlob('dist/sources/control/layout'),
+                await getSingleControlBlob('dist/sources/control/menu'),
+                await getSingleControlBlob('dist/sources/control/menu-item'),
+                await getSingleControlBlob('dist/sources/control/menu-pop'),
+                await getSingleControlBlob('dist/sources/control/menu-pop-item'),
+                await getSingleControlBlob('dist/sources/control/menu-pop-split'),
+                await getSingleControlBlob('dist/sources/control/overflow'),
+                await getSingleControlBlob('dist/sources/control/scroll'),
+                await getSingleControlBlob('dist/sources/control/select'),
+                await getSingleControlBlob('dist/sources/control/view')
             ]);
-        } else if (item.name === "tab") {
+        }
+        else if (item.name === 'tab') {
             controlBuffer = Buffer.concat([
                 controlBuffer,
-                await getSingleControlBlob("dist/sources/control/tab-nav"),
-                await getSingleControlBlob("dist/sources/control/tab-panel")
+                await getSingleControlBlob('dist/sources/control/tab-nav'),
+                await getSingleControlBlob('dist/sources/control/tab-panel')
             ]);
         }
 
@@ -111,21 +112,21 @@ async function run(): Promise<void> {
             Uint8Array.from([192, 1]),
             controlBuffer
         ]);
-        await fs.promises.writeFile("dist/control/" + name + ".cgc", fileBuffer);
+        await fs.promises.writeFile('dist/control/' + name + '.cgc', fileBuffer);
     }
     // --- theme to cgt ---
-    list = await fs.promises.readdir("dist/sources/theme/", {
-        "withFileTypes": true
+    list = await fs.promises.readdir('dist/sources/theme/', {
+        'withFileTypes': true
     });
     for (let item of list) {
         if (item.isFile()) {
             continue;
         }
-        let base = "dist/sources/theme/" + item.name;
+        let base = 'dist/sources/theme/' + item.name;
 
         // --- 读取 config 文件 ---
-        let config = await fs.promises.readFile(base + "/config.json", {
-            "encoding": "utf-8"
+        let config = await fs.promises.readFile(base + '/config.json', {
+            'encoding': 'utf-8'
         });
         /** --- config 对象 --- */
         let configJson = JSON.parse(config);
@@ -134,7 +135,7 @@ async function run(): Promise<void> {
         let fileBufferArray: Uint8Array[] = [
             Uint8Array.from([192, 2]),
             Uint8Array.from([12]),
-            Buffer.from("/config.json"),
+            Buffer.from('/config.json'),
             Buffer.from(Uint32Array.from([configBuffer.byteLength]).buffer),
             configBuffer
         ];
@@ -150,10 +151,9 @@ async function run(): Promise<void> {
         }
 
         // --- 组成 cgt 文件 ---
-        await fs.promises.writeFile("dist/theme/" + configJson.name + ".cgt", Buffer.concat(fileBufferArray));
+        await fs.promises.writeFile('dist/theme/' + configJson.name + '.cgt', Buffer.concat(fileBufferArray));
     }
 }
 run().catch(function(e) {
     console.log(e);
 });
-

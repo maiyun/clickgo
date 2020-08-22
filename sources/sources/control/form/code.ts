@@ -1,135 +1,136 @@
 export let props = {
-    "icon": {
-        "default": "",
+    'icon': {
+        'default': '',
     },
-    "title": {
-        "default": "title"
+    'title': {
+        'default': 'title'
     },
-    "min": {
-        "default": true
+    'min': {
+        'default': true
     },
-    "max": {
-        "default": true
+    'max': {
+        'default': true
     },
-    "close": {
-        "default": true
-    },
-
-    "stateMax": {
-        "default": false
-    },
-    "stateMin": {
-        "default": false
-    },
-    "focus": {
-        "default": false
+    'close': {
+        'default': true
     },
 
-    "width": {
-        "default": 300
+    'stateMax': {
+        'default': false
     },
-    "height": {
-        "default": 200
+    'stateMin': {
+        'default': false
     },
-    "left": {
-        "default": -1
+    'focus': {
+        'default': false
     },
-    "top": {
-        "default": -1
+
+    'width': {
+        'default': 300
     },
-    "zIndex": {
-        "default": -1
+    'height': {
+        'default': 200
     },
-    "minWidth": {
-        "default": 200
+    'left': {
+        'default': -1
     },
-    "minHeight": {
-        "default": 100
+    'top': {
+        'default': -1
     },
-    "resize": {
-        "default": true
+    'zIndex': {
+        'default': -1
     },
-    "border": {
-        "default": "normal"
+    'minWidth': {
+        'default': 200
     },
-    "background": {
-        "default": undefined
+    'minHeight': {
+        'default': 100
     },
-    "padding": {
-        "default": undefined
+    'resize': {
+        'default': true
     },
-    "direction": {
-        "default": "v"
+    'border': {
+        'default': 'normal'
+    },
+    'background': {
+        'default': undefined
+    },
+    'padding': {
+        'default': undefined
+    },
+    'direction': {
+        'default': 'v'
     }
 };
 
 export let data = {
-    "stateMaxData": false,
-    "stateMinData": false,
-    "stateAbs": false,
+    'stateMaxData': false,
+    'stateMinData': false,
+    'stateAbs': false,
 
-    "iconData": undefined,
+    'iconData': undefined,
 
-    "widthData": 300,
-    "heightData": 200,
-    "leftData": 0,
-    "topData": 0,
-    "zIndexData": 0,
+    'widthData': 300,
+    'heightData': 200,
+    'leftData': 0,
+    'topData': 0,
+    'zIndexData': 0,
 
-    "historyLocation": {
-        "width": 0,
-        "height": 0,
-        "left": 0,
-        "top": 0
+    'historyLocation': {
+        'width': 0,
+        'height': 0,
+        'left': 0,
+        'top': 0
     },
-    "maskFor": undefined,
-    "maskFrom": undefined,
-    "flashTimer": undefined
+    'maskFor': undefined,
+    'maskFrom': undefined,
+    'flashTimer': undefined
 };
 
 export let watch = {
-    "icon": {
+    'icon': {
         handler: async function(this: IVue): Promise<void> {
             let first: boolean = false;
             if (this.iconData === undefined) {
                 first = true;
             }
-            if (this.icon === "") {
-                this.iconData = "";
-            } else {
-                this.iconData = await this.getDataUrl(this.icon) ?? "";
+            if (this.icon === '') {
+                this.iconData = '';
+            }
+            else {
+                this.iconData = await this.getDataUrl(this.icon) ?? '';
             }
             if (!first) {
                 // --- 触发 formIconChanged 事件 ---
-                ClickGo.trigger("formIconChanged", this.taskId, this.formId, {"icon": this.iconData});
+                clickgo.core.trigger('formIconChanged', this.taskId, this.formId, {'icon': this.iconData});
             }
         },
-        "immediate": true
+        'immediate': true
     },
-    "title": function(this: IVue): void {
+    'title': function(this: IVue): void {
         // --- 触发 formTitleChanged 事件 ---
-        ClickGo.trigger("formTitleChanged", this.taskId, this.formId, {"title": this.title});
+        clickgo.core.trigger('formTitleChanged', this.taskId, this.formId, {'title': this.title});
     },
-    "stateMin": function(this: IVue): void {
+    'stateMin': function(this: IVue): void {
         this.minMethod();
     },
-    "stateMax": function(this: IVue): void {
+    'stateMax': function(this: IVue): void {
         this.maxMethod();
     },
 
-    "width": function(this: IVue): void {
+    'width': function(this: IVue): void {
         this.widthData = parseInt(this.width);
     },
-    "height": function(this: IVue): void {
+    'height': function(this: IVue): void {
         this.heightData = parseInt(this.height);
     },
-    "left": function(this: IVue): void {
+    'left': function(this: IVue): void {
         this.leftData = parseInt(this.left);
     },
-    "top": function(this: IVue): void {
+    'top': function(this: IVue): void {
         this.topData = parseInt(this.top);
     },
-    "zIndex": function(this: IVue): void {
+    'zIndex': function(this: IVue): void {
         this.zIndexData = parseInt(this.zIndex);
     }
 };
@@ -137,61 +138,67 @@ export let watch = {
 export let methods = {
     // --- 拖动 ---
     moveMethod: function(this: IVue, e: MouseEvent | TouchEvent): void {
-        if (e instanceof MouseEvent && ClickGo.hasTouch) {
+        if (e instanceof MouseEvent && clickgo.hasTouch) {
             return;
         }
         // --- 绑定双击事件 ---
         let el = e.currentTarget as HTMLElement;
-        let dataHasDbl = el.getAttribute("data-has-dbl");
+        let dataHasDbl = el.getAttribute('data-has-dbl');
         if (!dataHasDbl) {
-            el.setAttribute("data-has-dbl", "yes");
-            el.addEventListener("dblclick", () => {
+            el.setAttribute('data-has-dbl', 'yes');
+            el.addEventListener('dblclick', () => {
                 if (this.stateAbs) {
                     this.maxVMethod(true);
-                } else {
+                }
+                else {
                     this.maxMethod();
                 }
             });
         }
         /** --- 当前所处边框 --- */
-        let isBorder: TBorderDir = "";
-        ClickGo.bindMove(e, {
-            "start": (x, y) => {
+        let isBorder: TBorderDir = '';
+        clickgo.element.bindMove(e, {
+            'start': (x, y) => {
                 if (this.stateMaxData) {
                     // --- 不能用 maxMethod 方法，因为那个获得的形状不能满足拖动还原的形状 ---
-                    this.$emit("max", event, 0, this.historyLocation);
+                    this.$emit('max', event, 0, this.historyLocation);
                     this.stateMaxData = false;
-                    this.$emit("update:stateMax", false);
+                    this.$emit('update:stateMax', false);
                     // --- 进行位置设定 ---
                     let olx = x - this.leftData;
                     let orx = this.leftData + this.widthData - x;
                     let w2 = this.historyLocation.width / 2;
                     if (olx <= w2) {
                         this.leftData = x - olx;
-                    } else if (orx <= w2) {
+                    }
+                    else if (orx <= w2) {
                         this.leftData = x - (this.historyLocation.width - orx);
-                    } else {
+                    }
+                    else {
                         this.leftData = x - w2;
                     }
-                    this.$emit("update:left", this.leftData);
+                    this.$emit('update:left', this.leftData);
                     // --- 高 ---
                     let oty = y - this.topData;
                     let oby = this.topData + this.heightData - y;
                     let h2 = this.historyLocation.height / 2;
                     if (oty <= h2) {
                         this.topData = y - oty;
-                    } else if (oby <= h2) {
+                    }
+                    else if (oby <= h2) {
                         this.topData = y - (this.historyLocation.height - oby);
-                    } else {
+                    }
+                    else {
                         this.topData = y - h2;
                     }
-                    this.$emit("update:top", this.topData);
+                    this.$emit('update:top', this.topData);
                     // --- 还原宽高 ---
                     this.widthData = this.historyLocation.width;
-                    this.$emit("update:width", this.historyLocation.width);
+                    this.$emit('update:width', this.historyLocation.width);
                     this.heightData = this.historyLocation.height;
-                    this.$emit("update:height", this.historyLocation.height);
-                } else if (this.stateAbs) {
+                    this.$emit('update:height', this.historyLocation.height);
+                }
+                else if (this.stateAbs) {
                     // --- 吸附拖动还原 ---
                     this.stateAbs = false;
                     // --- 进行位置设定 ---
@@ -200,69 +207,77 @@ export let methods = {
                     let w2 = this.historyLocation.width / 2;
                     if (olx <= w2) {
                         this.leftData = x - olx;
-                    } else if (orx <= w2) {
+                    }
+                    else if (orx <= w2) {
                         this.leftData = x - (this.historyLocation.width - orx);
-                    } else {
+                    }
+                    else {
                         this.leftData = x - w2;
                     }
-                    this.$emit("update:left", this.leftData);
+                    this.$emit('update:left', this.leftData);
                     // --- 高 ---
                     let oty = y - this.topData;
                     let oby = this.topData + this.heightData - y;
                     let h2 = this.historyLocation.height / 2;
                     if (oty <= h2) {
                         this.topData = y - oty;
-                    } else if (oby <= h2) {
+                    }
+                    else if (oby <= h2) {
                         this.topData = y - (this.historyLocation.height - oby);
-                    } else {
+                    }
+                    else {
                         this.topData = y - h2;
                     }
-                    this.$emit("update:top", this.topData);
+                    this.$emit('update:top', this.topData);
                     // --- 还原宽高 ---
                     this.widthData = this.historyLocation.width;
-                    this.$emit("update:width", this.historyLocation.width);
+                    this.$emit('update:width', this.historyLocation.width);
                     this.heightData = this.historyLocation.height;
-                    this.$emit("update:height", this.historyLocation.height);
-                } else if (!this.stateMinData) {
+                    this.$emit('update:height', this.historyLocation.height);
+                }
+                else if (!this.stateMinData) {
                     this.historyLocation = {
-                        "width": this.widthData,
-                        "height": this.heightData,
-                        "left": this.leftData,
-                        "top": this.topData
+                        'width': this.widthData,
+                        'height': this.heightData,
+                        'left': this.leftData,
+                        'top': this.topData
                     };
                 }
             },
-            "move": (ox, oy, x, y, border) => {
+            'move': (ox, oy, x, y, border) => {
                 this.leftData += ox;
-                this.$emit("update:left", this.leftData);
+                this.$emit('update:left', this.leftData);
                 this.topData += oy;
-                this.$emit("update:top", this.topData);
-                if (border !== "") {
-                    if ((border === "t" && this.max) || (border !== "t" && this.resize)) {
-                        if (isBorder === "") {
+                this.$emit('update:top', this.topData);
+                if (border !== '') {
+                    if ((border === 't' && this.max) || (border !== 't' && this.resize)) {
+                        if (isBorder === '') {
                             isBorder = border;
-                            ClickGo.showCircular(x, y);
-                            ClickGo.showRectangle(x, y, border);
-                        } else {
-                            isBorder = border;
-                            ClickGo.moveRectangle(border);
+                            clickgo.form.showCircular(x, y);
+                            clickgo.form.showRectangle(x, y, border);
                         }
-                    } else {
-                        if (isBorder !== "") {
-                            isBorder = "";
-                            ClickGo.hideRectangle();
+                        else {
+                            isBorder = border;
+                            clickgo.form.moveRectangle(border);
                         }
                     }
-                } else {
-                    if (isBorder !== "") {
-                        isBorder = "";
-                        ClickGo.hideRectangle();
+                    else {
+                        if (isBorder !== '') {
+                            isBorder = '';
+                            clickgo.form.hideRectangle();
+                        }
+                    }
+                }
+                else {
+                    if (isBorder !== '') {
+                        isBorder = '';
+                        clickgo.form.hideRectangle();
                     }
                 }
             },
-            "end": () => {
-                if (isBorder !== "") {
-                    if (isBorder === "t") {
+            'end': () => {
+                if (isBorder !== '') {
+                    if (isBorder === 't') {
                         // --- 要最大化 ---
                         if (this.max) {
                             // --- 不要使用 emit，只是模拟原大小，马上值就又被改变了 ---
@@ -272,28 +287,29 @@ export let methods = {
                             this.topData = this.historyLocation.top;
                             this.maxMethod();
                         }
-                    } else {
+                    }
+                    else {
                         // --- 要做大小调整 ---
                         if (this.resize) {
                             if (this.stateMinData) {
                                 if (!this.minMethod()) {
-                                    ClickGo.hideRectangle();
+                                    clickgo.form.hideRectangle();
                                     return;
                                 }
                             }
                             this.stateAbs = true;
-                            let pos = ClickGo.getPositionByBorderDir(isBorder);
+                            let pos = clickgo.form.getRectByDir(isBorder);
                             this.widthData = pos.width;
-                            this.$emit("update:width", this.widthData);
+                            this.$emit('update:width', this.widthData);
                             this.heightData = pos.height;
-                            this.$emit("update:height", this.heightData);
+                            this.$emit('update:height', this.heightData);
                             this.leftData = pos.left;
-                            this.$emit("update:left", this.leftData);
+                            this.$emit('update:left', this.leftData);
                             this.topData = pos.top;
-                            this.$emit("update:top", this.topData);
+                            this.$emit('update:top', this.topData);
                         }
                     }
-                    ClickGo.hideRectangle();
+                    clickgo.form.hideRectangle();
                 }
             }
         });
@@ -301,11 +317,11 @@ export let methods = {
     // --- 最小化 ---
     minMethod: function(this: IVue): boolean {
         let event = {
-            "go": true,
+            'go': true,
             preventDefault: function() {
                 this.go = false;
             },
-            "ds": false,
+            'ds': false,
             disableShape: function() {
                 this.ds = false;
             }
@@ -322,57 +338,61 @@ export let methods = {
             this.widthData = this.historyLocation.width;
             this.heightData = this.historyLocation.height;
             this.leftData = this.historyLocation.left;
-            this.$emit("update:left", this.leftData);
+            this.$emit('update:left', this.leftData);
             this.topData = this.historyLocation.top;
-            this.$emit("update:top", this.topData);
+            this.$emit('update:top', this.topData);
         }
         if (!this.stateMinData) {
             // --- 当前是正常状态，需要变成最小化 ---
-            this.$emit("min", event, 1, {});
+            this.$emit('min', event, 1, {});
             if (event.go) {
                 this.historyLocation = {
-                    "width": this.widthData,
-                    "height": this.heightData,
-                    "left": this.leftData,
-                    "top": this.topData
+                    'width': this.widthData,
+                    'height': this.heightData,
+                    'left': this.leftData,
+                    'top': this.topData
                 };
                 this.stateMinData = true;
-                this.$emit("update:stateMin", true);
-                this.$el.classList.add("cg-state-min"); // 这个只是用来快速的让 dom 更新，下面就能获取新 dom height，很快这个就会被 vue 的响应式 class 替代
+                this.$emit('update:stateMin', true);
+                this.$el.classList.add('cg-state-min'); // 这个只是用来快速的让 dom 更新，下面就能获取新 dom height，很快这个就会被 vue 的响应式 class 替代
                 if (!event.ds) {
-                    this.$el.style.height = "auto";
+                    this.$el.style.height = 'auto';
                     this.heightData = this.$el.offsetHeight;
-                    this.$emit("update:height", this.$el.offsetHeight);
-                    if (this.border !== "thin") {
+                    this.$emit('update:height', this.$el.offsetHeight);
+                    if (this.border !== 'thin') {
                         this.widthData = 200;
-                        this.$emit("update:width", 200);
-                    } else {
+                        this.$emit('update:width', 200);
+                    }
+                    else {
                         this.widthData = 150;
-                        this.$emit("update:width", 150);
+                        this.$emit('update:width', 150);
                     }
                 }
-            } else {
+            }
+            else {
                 return false;
             }
-        } else {
+        }
+        else {
             // --- 需要变正常 ---
-            this.$emit("min", event, 0, this.historyLocation);
+            this.$emit('min', event, 0, this.historyLocation);
             if (event.go) {
                 this.stateMinData = false;
-                this.$emit("update:stateMin", false);
-                this.$el.classList.remove("cg-state-min");
+                this.$emit('update:stateMin', false);
+                this.$el.classList.remove('cg-state-min');
                 if (!event.ds) {
                     this.heightData = this.historyLocation.height;
-                    this.$emit("update:height", this.historyLocation.height);
+                    this.$emit('update:height', this.historyLocation.height);
                     this.widthData = this.historyLocation.width;
-                    this.$emit("update:width", this.historyLocation.width);
+                    this.$emit('update:width', this.historyLocation.width);
                 }
-            } else {
+            }
+            else {
                 return false;
             }
         }
         // --- 触发 formRemoved 事件 ---
-        ClickGo.trigger("formStateMinChanged", this.taskId, this.formId, {"state": this.stateMinData});
+        clickgo.core.trigger('formStateMinChanged', this.taskId, this.formId, {'state': this.stateMinData});
         return true;
     },
     // --- 竖版扩大 ---
@@ -380,27 +400,29 @@ export let methods = {
         if (this.stateAbs) {
             this.stateAbs = false;
             this.topData = this.historyLocation.top;
-            this.$emit("update:top", this.topData);
+            this.$emit('update:top', this.topData);
             this.heightData = this.historyLocation.height;
-            this.$emit("update:height", this.heightData);
+            this.$emit('update:height', this.heightData);
             if (dbl) {
                 this.leftData = this.historyLocation.left;
-                this.$emit("update:top", this.leftData);
+                this.$emit('update:top', this.leftData);
                 this.widthData = this.historyLocation.width;
-                this.$emit("update:width", this.widthData);
+                this.$emit('update:width', this.widthData);
             }
-        } else {
+        }
+        else {
             this.stateAbs = true;
             this.historyLocation = {
-                "width": this.widthData,
-                "height": this.heightData,
-                "left": this.leftData,
-                "top": this.topData
+                'width': this.widthData,
+                'height': this.heightData,
+                'left': this.leftData,
+                'top': this.topData
             };
-            this.topData = ClickGo.getTop();
-            this.$emit("update:top", this.topData);
-            this.heightData = ClickGo.getHeight();
-            this.$emit("update:height", this.heightData);
+            let pos = clickgo.getPosition();
+            this.topData = pos.top;
+            this.$emit('update:top', this.topData);
+            this.heightData = pos.height;
+            this.$emit('update:height', this.heightData);
         }
     },
     // --- 最大化 ---
@@ -411,66 +433,71 @@ export let methods = {
             }
         }
         let event = {
-            "go": true,
+            'go': true,
             preventDefault: function() {
                 this.go = false;
             },
-            "ds": false,
+            'ds': false,
             disableShape: function() {
                 this.ds = false;
             }
         };
         if (!this.stateMaxData) {
             // --- 当前是正常状态，需要变成最大化 ---
-            this.$emit("max", event, 1, {});
+            this.$emit('max', event, 1, {});
             if (event.go) {
                 if (this.stateAbs) {
                     this.stateAbs = false;
-                } else {
+                }
+                else {
                     this.historyLocation = {
-                        "width": this.widthData,
-                        "height": this.heightData,
-                        "left": this.leftData,
-                        "top": this.topData
+                        'width': this.widthData,
+                        'height': this.heightData,
+                        'left': this.leftData,
+                        'top': this.topData
                     };
                 }
                 this.stateMaxData = true;
-                this.$emit("update:stateMax", true);
+                this.$emit('update:stateMax', true);
                 if (!event.ds) {
-                    this.leftData = ClickGo.getLeft();
-                    this.$emit("update:left", this.leftData);
-                    this.topData = ClickGo.getTop();
-                    this.$emit("update:top", this.topData);
-                    this.widthData = ClickGo.getWidth();
-                    this.$emit("update:width", this.widthData);
-                    this.heightData = ClickGo.getHeight();
-                    this.$emit("update:height", this.heightData);
+                    let pos = clickgo.getPosition();
+                    this.leftData = pos.left;
+                    this.$emit('update:left', this.leftData);
+                    this.topData = pos.top;
+                    this.$emit('update:top', this.topData);
+                    this.widthData = pos.width;
+                    this.$emit('update:width', this.widthData);
+                    this.heightData = pos.height;
+                    this.$emit('update:height', this.heightData);
                 }
-            } else {
+            }
+            else {
                 return false;
             }
-        } else {
+        }
+        else {
             // --- 需要变正常 ---
-            this.$emit("max", event, 0, this.historyLocation);
+            this.$emit('max', event, 0, this.historyLocation);
             if (event.go) {
                 this.stateMaxData = false;
-                this.$emit("update:stateMax", false);
+                this.$emit('update:stateMax', false);
                 if (!event.ds) {
                     this.leftData = this.historyLocation.left;
-                    this.$emit("update:left", this.historyLocation.left);
+                    this.$emit('update:left', this.historyLocation.left);
                     this.topData = this.historyLocation.top;
-                    this.$emit("update:top", this.historyLocation.top);
+                    this.$emit('update:top', this.historyLocation.top);
                     this.widthData = this.historyLocation.width;
-                    this.$emit("update:width", this.historyLocation.width);
+                    this.$emit('update:width', this.historyLocation.width);
                     this.heightData = this.historyLocation.height;
-                    this.$emit("update:height", this.historyLocation.height);
+                    this.$emit('update:height', this.historyLocation.height);
                 }
-            } else {
+            }
+            else {
                 return false;
             }
         }
         // --- 触发 formRemoved 事件 ---
-        ClickGo.trigger("formStateMaxChanged", this.taskId, this.formId, {"state": this.stateMaxData});
+        clickgo.core.trigger('formStateMaxChanged', this.taskId, this.formId, {'state': this.stateMaxData});
         return true;
     },
     // --- 关闭窗体 ---
@@ -481,47 +508,49 @@ export let methods = {
                 this.go = false;
             }
         };
-        this.$emit("close", event);
+        this.$emit('close', event);
         if (event.go) {
-            ClickGo.removeForm(this.formId);
+            clickgo.form.remove(this.formId);
         }
     },
     // --- 改变窗体大小 ---
     resizeMethod: function(this: IVue, e: MouseEvent | TouchEvent, dir: TBorderDir): void {
-        if (e instanceof MouseEvent && ClickGo.hasTouch) {
+        if (e instanceof MouseEvent && clickgo.hasTouch) {
             return;
         }
-        let isBorder: TBorderDir = "";
+        let isBorder: TBorderDir = '';
         let top = this.topData;
         let height = this.heightData;
-        if (dir !== "l" && dir !== "r") {
+        if (dir !== 'l' && dir !== 'r') {
             if (this.stateAbs) {
                 // --- 进行高度还原 ---
-                if (dir === "lt" || dir === "t" || dir === "tr") {
+                if (dir === 'lt' || dir === 't' || dir === 'tr') {
                     height = this.historyLocation.top + this.historyLocation.height;
-                } else {
-                    top = this.historyLocation.top;
-                    height = ClickGo.getHeight() - top;
                 }
-            } else {
+                else {
+                    top = this.historyLocation.top;
+                    height = clickgo.getPosition().height - top;
+                }
+            }
+            else {
                 this.historyLocation = {
-                    "width": this.widthData,
-                    "height": this.heightData,
-                    "left": this.leftData,
-                    "top": this.topData
+                    'width': this.widthData,
+                    'height': this.heightData,
+                    'left': this.leftData,
+                    'top': this.topData
                 };
             }
         }
-        ClickGo.bindResize(e, {
-            "left": this.leftData,
-            "top": top,
-            "width": this.widthData,
-            "height": height,
-            "minWidth": parseInt(this.minWidth),
-            "minHeight": parseInt(this.minHeight),
-            "dir": dir,
-            "start": () => {
-                if (dir === "l" || dir === "r") {
+        clickgo.element.bindResize(e, {
+            'left': this.leftData,
+            'top': top,
+            'width': this.widthData,
+            'height': height,
+            'minWidth': parseInt(this.minWidth),
+            'minHeight': parseInt(this.minHeight),
+            'dir': dir,
+            'start': () => {
+                if (dir === 'l' || dir === 'r') {
                     return;
                 }
                 if (this.stateAbs) {
@@ -529,88 +558,94 @@ export let methods = {
                     this.stateAbs = false;
                 }
             },
-            "move": (left, top, width, height, x, y, border) => {
+            'move': (left, top, width, height, x, y, border) => {
                 this.leftData = left;
-                this.$emit("update:left", left);
+                this.$emit('update:left', left);
                 this.topData = top;
-                this.$emit("update:top", top);
+                this.$emit('update:top', top);
                 this.widthData = width;
-                this.$emit("update:width", width);
+                this.$emit('update:width', width);
                 this.heightData = height;
-                this.$emit("update:height", height);
-                if (border !== "") {
+                this.$emit('update:height', height);
+                if (border !== '') {
                     if (
-                        ((dir === "lt" || dir === "t" || dir === "tr") && (border === "lt" || border === "t" || border === "tr")) ||
-                        ((dir === "bl" || dir === "b" || dir === "rb") && (border === "bl" || border === "b" || border === "rb"))
+                        ((dir === 'lt' || dir === 't' || dir === 'tr') && (border === 'lt' || border === 't' || border === 'tr')) ||
+                        ((dir === 'bl' || dir === 'b' || dir === 'rb') && (border === 'bl' || border === 'b' || border === 'rb'))
                     ) {
-                        if (isBorder === "") {
+                        if (isBorder === '') {
                             isBorder = border;
-                            ClickGo.showCircular(x, y);
-                            ClickGo.showRectangle(x, y, {
-                                "left": left,
-                                "width": width
-                            });
-                        } else {
-                            isBorder = border;
-                            ClickGo.moveRectangle({
-                                "left": left,
-                                "width": width
+                            clickgo.form.showCircular(x, y);
+                            clickgo.form.showRectangle(x, y, {
+                                'left': left,
+                                'width': width
                             });
                         }
-                    } else {
-                        if (isBorder !== "") {
-                            isBorder = "";
-                            ClickGo.hideRectangle();
+                        else {
+                            isBorder = border;
+                            clickgo.form.moveRectangle({
+                                'left': left,
+                                'width': width
+                            });
                         }
                     }
-                } else {
-                    if (isBorder !== "") {
-                        isBorder = "";
-                        ClickGo.hideRectangle();
+                    else {
+                        if (isBorder !== '') {
+                            isBorder = '';
+                            clickgo.form.hideRectangle();
+                        }
+                    }
+                }
+                else {
+                    if (isBorder !== '') {
+                        isBorder = '';
+                        clickgo.form.hideRectangle();
                     }
                 }
             },
-            "end": () => {
-                if (isBorder !== "") {
-                    if (isBorder !== "l" && isBorder !== "r") {
+            'end': () => {
+                if (isBorder !== '') {
+                    if (isBorder !== 'l' && isBorder !== 'r') {
+                        let pos = clickgo.getPosition();
                         this.stateAbs = true;
-                        this.heightData = ClickGo.getHeight();
-                        this.$emit("update:height", this.heightData);
-                        this.topData = ClickGo.getTop();
-                        this.$emit("update:top", this.topData);
+                        this.heightData = pos.height;
+                        this.$emit('update:height', this.heightData);
+                        this.topData = pos.top;
+                        this.$emit('update:top', this.topData);
                     }
-                    ClickGo.hideRectangle();
+                    clickgo.form.hideRectangle();
                 }
             }
         });
     },
     // --- 遮罩层被点击时 ---
     maskDown: function(this: IVue, e: MouseEvent | TouchEvent): void {
-        if (e instanceof MouseEvent && ClickGo.hasTouch) {
+        if (e instanceof MouseEvent && clickgo.hasTouch) {
             return;
         }
-        if (typeof this.maskFor !== "number") {
+        if (typeof this.maskFor !== 'number') {
             return;
         }
-        if (!ClickGo.taskList[this.taskId].formList[this.maskFor]) {
+        if (!clickgo.core.tasks[this.taskId].forms[this.maskFor]) {
             return;
         }
         e.stopPropagation();
-        ClickGo.taskList[this.taskId].formList[this.maskFor].vue.flash();
+        clickgo.core.tasks[this.taskId].forms[this.maskFor].vue.flash();
     },
     // --- 设置 left, width, zIndex 等 ---
-    setPropData: function(this: IVue, name: string, val: number, mode: string = ""): void {
-        if (this[name + "Data"] === undefined || this[name] === undefined) {
+    setPropData: function(this: IVue, name: string, val: number, mode: string = ''): void {
+        if (this[name + 'Data'] === undefined || this[name] === undefined) {
             return;
         }
-        if (mode === "") {
-            this[name + "Data"] = val;
-        } else if (mode === "+") {
-            this[name + "Data"] += val;
-        } else {
-            this[name + "Data"] -= val;
+        if (mode === '') {
+            this[name + 'Data'] = val;
         }
-        this.$emit("update:" + name, this[name + "Data"]);
+        else if (mode === '+') {
+            this[name + 'Data'] += val;
+        }
+        else {
+            this[name + 'Data'] -= val;
+        }
+        this.$emit('update:' + name, this[name + 'Data']);
     }
 };
 
@@ -618,11 +653,11 @@ export let mounted = function(this: IVue): void {
     this.widthData = parseInt(this.width);
     this.heightData = parseInt(this.height);
     this.zIndexData = parseInt(this.zIndex);
-    let stateMax = (typeof this.stateMax === "string") ? ((this.stateMax === "true") ? true : false) : this.stateMax;
+    let stateMax = (typeof this.stateMax === 'string') ? ((this.stateMax === 'true') ? true : false) : this.stateMax;
     if (stateMax) {
-        this.leftData = (ClickGo.getWidth() - this.widthData) / 2;
-        this.topData = (ClickGo.getHeight() - this.heightData) / 2;
+        let pos = clickgo.getPosition();
+        this.leftData = (pos.width - this.widthData) / 2;
+        this.topData = (pos.height - this.heightData) / 2;
         this.maxMethod();
     }
 };
-

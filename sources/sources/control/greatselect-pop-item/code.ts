@@ -1,20 +1,20 @@
 export let props = {
-    "disabled": {
-        "default": false
+    'disabled': {
+        'default': false
     },
 
-    "padding": {
-        "default": undefined
+    'padding': {
+        'default': undefined
     },
 
-    "value": {
-        "default": ""
+    'value': {
+        'default': ''
     }
 };
 
 export let data = {
-    "popOpen": false,
-    "hasMenuPop": false
+    'popOpen': false,
+    'hasMenuPop': false
 };
 
 export let methods = {
@@ -22,7 +22,7 @@ export let methods = {
         if (this.disabled) {
             return;
         }
-        ClickGo.hidePop();
+        clickgo.form.hidePop();
         this.$parent.$parent.$parent.select(this.value);
         this._tap(event);
     },
@@ -32,13 +32,13 @@ export let methods = {
         }
         let menuPopVue: IVue | null = null;
         for (let item of this.$children) {
-            if (item.$data._controlName !== "menu-pop") {
+            if (item.$data._controlName !== 'menu-pop') {
                 continue;
             }
             menuPopVue = item;
         }
         if (menuPopVue) {
-            ClickGo.showPop(menuPopVue, e.pageX, e.pageY);
+            clickgo.form.showPop(menuPopVue, e.pageX, e.pageY);
         }
     }
 };
@@ -46,7 +46,7 @@ export let methods = {
 export let updated = function(this: IVue): void {
     let hasMenuPop = false;
     for (let item of this.$children) {
-        if (item.$data._controlName !== "menu-pop") {
+        if (item.$data._controlName !== 'menu-pop') {
             continue;
         }
         hasMenuPop = true;
@@ -56,4 +56,3 @@ export let updated = function(this: IVue): void {
         this.hasMenuPop = hasMenuPop;
     }
 };
-

@@ -8,13 +8,10 @@
         "/clickgo/control/common",
         "/clickgo/control/tab"
     ],
-    "styleGlobal": "/global",
-    "mainLayout": "/form/main",
+    "style": "/global",
+    "main": "/form/main",
 
     "files": [
-        "/clickgo/control/common.cgc",
-        "/clickgo/control/tab.cgc",
-
         "/form/aero.js",
         "/form/aero.xml",
         "/form/borderNone.xml",

@@ -2,69 +2,69 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.methods = exports.data = exports.computed = exports.props = void 0;
 exports.props = {
-    "disabled": {
-        "default": false
+    'disabled': {
+        'default': false
     },
-    "focus": {
-        "default": false
+    'focus': {
+        'default': false
     },
-    "width": {
-        "default": undefined
+    'width': {
+        'default': undefined
     },
-    "height": {
-        "default": undefined
+    'height': {
+        'default': undefined
     },
-    "left": {
-        "default": 0
+    'left': {
+        'default': 0
     },
-    "top": {
-        "default": 0
+    'top': {
+        'default': 0
     },
-    "zIndex": {
-        "default": 0
+    'zIndex': {
+        'default': 0
     },
-    "direction": {
-        "default": "h"
+    'direction': {
+        'default': 'h'
     },
-    "flex": {
-        "default": ""
+    'flex': {
+        'default': ''
     },
-    "padding": {
-        "default": undefined
+    'padding': {
+        'default': undefined
     },
-    "area": {
-        "default": "all"
+    'area': {
+        'default': 'all'
     }
 };
 exports.computed = {
-    "widthPx": function () {
+    'widthPx': function () {
         if (this.width !== undefined) {
-            return this.width + "px";
+            return this.width + 'px';
         }
-        if (this.flex !== "") {
-            var dir = this.$parent.$data._controlName === "select" ? this.$parent.$parent.direction : this.$parent.direction;
-            return dir ? (dir === "v" ? undefined : "0") : undefined;
+        if (this.flex !== '') {
+            var dir = this.$parent.$data._controlName === 'select' ? this.$parent.$parent.direction : this.$parent.direction;
+            return dir ? (dir === 'v' ? undefined : '0') : undefined;
         }
     },
-    "heightPx": function () {
+    'heightPx': function () {
         if (this.height !== undefined) {
-            return this.height + "px";
+            return this.height + 'px';
         }
-        if (this.flex !== "") {
-            var dir = this.$parent.$data._controlName === "select" ? this.$parent.$parent.direction : this.$parent.direction;
-            return dir.direction ? (dir.direction === "v" ? "0" : undefined) : undefined;
+        if (this.flex !== '') {
+            var dir = this.$parent.$data._controlName === 'select' ? this.$parent.$parent.direction : this.$parent.direction;
+            return dir.direction ? (dir.direction === 'v' ? '0' : undefined) : undefined;
         }
     }
 };
 exports.data = {
-    "popOpen": false
+    'popOpen': false
 };
 exports.methods = {
     showPop: function (event, area) {
-        if (this.area === "arrow") {
-            if (area === "all") {
+        if (this.area === 'arrow') {
+            if (area === 'all') {
                 if (this.popOpen) {
-                    ClickGo.hidePop();
+                    clickgo.form.hidePop();
                 }
                 return;
             }
@@ -73,18 +73,18 @@ exports.methods = {
             }
         }
         else {
-            if (area === "arrow") {
+            if (area === 'arrow') {
                 return;
             }
         }
         if (this.popOpen) {
-            ClickGo.hidePop();
+            clickgo.form.hidePop();
             return;
         }
         var pop = null;
         for (var _i = 0, _a = this.$children; _i < _a.length; _i++) {
             var item = _a[_i];
-            if (item.$data._controlName !== "greatselect-pop") {
+            if (item.$data._controlName !== 'greatselect-pop') {
                 continue;
             }
             pop = item;
@@ -92,12 +92,12 @@ exports.methods = {
         }
         if (pop) {
             pop.widthData = this.$el.offsetWidth;
-            ClickGo.showPop(pop, this.$el);
+            clickgo.form.showPop(pop, this.$el);
         }
         this._tap(event);
     },
     down: function (e) {
-        if (e instanceof MouseEvent && ClickGo.hasTouch) {
+        if (e instanceof MouseEvent && clickgo.hasTouch) {
             return;
         }
         this.stopPropagation(e);
