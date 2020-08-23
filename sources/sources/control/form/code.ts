@@ -89,7 +89,7 @@ export let data = {
 
 export let watch = {
     'icon': {
-        handler: async function(this: IVue): Promise<void> {
+        handler: async function(this: IVueControl): Promise<void> {
             let first: boolean = false;
             if (this.iconData === undefined) {
                 first = true;
@@ -98,7 +98,7 @@ export let watch = {
                 this.iconData = '';
             }
             else {
-                this.iconData = await this.getDataUrl(this.icon) ?? '';
+                this.iconData = await this.cgGetDataUrl(this.icon) ?? '';
             }
             if (!first) {
                 // --- 触发 formIconChanged 事件 ---

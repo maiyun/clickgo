@@ -27,7 +27,7 @@ export declare let watch: {
 };
 export declare let methods: {
     mousein: (this: IVue) => void;
-    click: (this: IVue, event: MouseEvent) => void;
+    click: (this: IVueControl, event: MouseEvent) => void;
 };
 export declare let mounted: (this: IVue) => void;
 export declare let destroyed: (this: IVue) => void;

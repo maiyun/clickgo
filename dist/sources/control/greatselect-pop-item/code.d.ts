@@ -14,7 +14,7 @@ export declare let data: {
     hasMenuPop: boolean;
 };
 export declare let methods: {
-    click: (this: IVue, event: MouseEvent) => void;
+    click: (this: IVueControl, event: MouseEvent) => void;
     controlClick: (this: IVue, e: MouseEvent) => void;
 };
 export declare let updated: (this: IVue) => void;

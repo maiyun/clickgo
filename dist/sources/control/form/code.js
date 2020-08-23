@@ -137,7 +137,7 @@ exports.watch = {
                             return [3, 3];
                         case 1:
                             _b = this;
-                            return [4, this.getDataUrl(this.icon)];
+                            return [4, this.cgGetDataUrl(this.icon)];
                         case 2:
                             _b.iconData = (_a = _c.sent()) !== null && _a !== void 0 ? _a : '';
                             _c.label = 3;

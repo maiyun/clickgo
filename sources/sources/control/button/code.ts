@@ -46,17 +46,17 @@ export let computed = {
 };
 
 export let methods = {
-    keydown: function(this: IVue, e: KeyboardEvent): void {
+    keydown: function(this: IVueControl, e: KeyboardEvent): void {
         if (e.keyCode !== 13) {
             return;
         }
-        this._tap(e);
+        this.cgTap(e);
     },
-    down: function(this: IVue, e: MouseEvent | TouchEvent): void {
+    down: function(this: IVueControl, e: MouseEvent | TouchEvent): void {
         if (e instanceof MouseEvent && clickgo.hasTouch) {
             return;
         }
-        this.stopPropagation(e);
-        this._down();
+        this.cgStopPropagation(e);
+        this.cgDown(e);
     }
 };

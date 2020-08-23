@@ -50,13 +50,13 @@ exports.methods = {
         if (e.keyCode !== 13) {
             return;
         }
-        this._tap(e);
+        this.cgTap(e);
     },
     down: function (e) {
         if (e instanceof MouseEvent && clickgo.hasTouch) {
             return;
         }
-        this.stopPropagation(e);
-        this._down();
+        this.cgStopPropagation(e);
+        this.cgDown(e);
     }
 };

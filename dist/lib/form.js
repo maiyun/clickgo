@@ -547,44 +547,44 @@ function create(opt) {
                                     data_1._dir = (_b = opt.dir) !== null && _b !== void 0 ? _b : '/';
                                     data_1._scope = rand_1;
                                     data_1._controlName = name_1;
-                                    methods_1.stopPropagation = function (e) {
+                                    methods_1.cgStopPropagation = function (e) {
                                         if (e instanceof MouseEvent && clickgo.hasTouch) {
                                             return;
                                         }
                                         e.stopPropagation();
                                         doFocusAndPopEvent(e);
                                     };
-                                    methods_1._down = function (e) {
+                                    methods_1.cgDown = function (e) {
                                         if (e instanceof MouseEvent && clickgo.hasTouch) {
                                             return;
                                         }
                                         this.$emit('down', e);
                                     };
-                                    methods_1._tap = function (e) {
+                                    methods_1.cgTap = function (e) {
                                         if (this.$el.className.indexOf('cg-disabled') !== -1) {
                                             return;
                                         }
                                         this.$emit('tap', e);
                                     };
-                                    methods_1._dblclick = function (e) {
+                                    methods_1.cgDblclick = function (e) {
                                         e.stopPropagation();
                                         if (this.$el.className.indexOf('cg-disabled') !== -1) {
                                             return;
                                         }
                                         this.$emit('dblclick', e);
                                     };
-                                    methods_1.getBlob = function (file) {
+                                    methods_1.cgGetBlob = function (file) {
                                         var _a;
                                         file = clickgo.tool.pathResolve(this.$data._dir, file);
                                         return (_a = clickgo.core.tasks[this.taskId].appPkg.files[file]) !== null && _a !== void 0 ? _a : null;
                                     };
-                                    methods_1.getDataUrl = function (file) {
+                                    methods_1.cgGetDataUrl = function (file) {
                                         return __awaiter(this, void 0, void 0, function () {
                                             var f, _a;
                                             return __generator(this, function (_b) {
                                                 switch (_b.label) {
                                                     case 0:
-                                                        f = this.getBlob(file);
+                                                        f = this.cgGetBlob(file);
                                                         if (!f) return [3, 2];
                                                         return [4, clickgo.tool.blob2DataUrl(f)];
                                                     case 1:
@@ -837,7 +837,7 @@ function create(opt) {
                             return __generator(this, function (_b) {
                                 switch (_b.label) {
                                     case 0:
-                                        f = this.getBlob(file);
+                                        f = this.cgGetBlob(file);
                                         if (!f) return [3, 2];
                                         return [4, clickgo.tool.blob2DataUrl(f)];
                                     case 1:
@@ -1009,6 +1009,7 @@ function create(opt) {
                     form = {
                         'id': formId,
                         'vue': $vm,
+                        'win': null,
                         'events': {}
                     };
                     if (!clickgo.core.tasks[opt.taskId]) {

@@ -55,7 +55,7 @@ export let methods = {
         }
         clickgo.form.showPop(this.$children[0], this.$el, 1);
     },
-    click: function(this: IVue, event: MouseEvent): void {
+    click: function(this: IVueControl, event: MouseEvent): void {
         if (this.disabled) {
             return;
         }
@@ -63,7 +63,7 @@ export let methods = {
             if (!this.showArrow) {
                 clickgo.form.hidePop();
             }
-            this._tap(event);
+            this.cgTap(event);
             return;
         }
         // --- 有 type ---
@@ -74,7 +74,7 @@ export let methods = {
             this.$emit('input', this.value ? false : true);
         }
         clickgo.form.hidePop();
-        this._tap(event);
+        this.cgTap(event);
     }
 };
 

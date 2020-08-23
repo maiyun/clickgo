@@ -94,14 +94,14 @@ exports.methods = {
             pop.widthData = this.$el.offsetWidth;
             clickgo.form.showPop(pop, this.$el);
         }
-        this._tap(event);
+        this.cgTap(event);
     },
     down: function (e) {
         if (e instanceof MouseEvent && clickgo.hasTouch) {
             return;
         }
-        this.stopPropagation(e);
-        this._down();
+        this.cgStopPropagation(e);
+        this.cgDown(e);
     },
     keydown: function (e) {
         if (e.keyCode !== 13) {

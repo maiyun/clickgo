@@ -1,0 +1,6 @@
+body, html {margin: 0; padding: 0; height: 100%;}
+body {background: #24292e; -webkit-user-select: none;}
+
+#main {display: flex; justify-content: center; align-items: center; height: 100%; color: #FFF; font-size: 24px;}
+#tip, #err {position: fixed; right: 10px; bottom: 10px; color: rgba(255, 255, 255, .5); font-size: 12px;}
+#err {display: none;}

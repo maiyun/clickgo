@@ -116,7 +116,7 @@ export let methods = {
         }
         this.refreshView();
     },
-    down: function(this: IVue, e: MouseEvent | TouchEvent): void {
+    down: function(this: IVueControl, e: MouseEvent | TouchEvent): void {
         if (e instanceof MouseEvent && clickgo.hasTouch) {
             return;
         }
@@ -265,7 +265,7 @@ export let methods = {
                 */
             }
         });
-        this._down();
+        this.cgDown();
     },
     // --- 重置视图 scrollOffset ---
     'refreshView': function(this: IVue): void {

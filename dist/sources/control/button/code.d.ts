@@ -29,6 +29,6 @@ export declare let computed: {
     heightPx: (this: IVue) => string | undefined;
 };
 export declare let methods: {
-    keydown: (this: IVue, e: KeyboardEvent) => void;
-    down: (this: IVue, e: MouseEvent | TouchEvent) => void;
+    keydown: (this: IVueControl, e: KeyboardEvent) => void;
+    down: (this: IVueControl, e: MouseEvent | TouchEvent) => void;
 };

@@ -38,50 +38,50 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.watch = exports.data = exports.props = void 0;
 exports.props = {
-    "width": {
-        "default": undefined
+    'width': {
+        'default': undefined
     },
-    "height": {
-        "default": undefined
+    'height': {
+        'default': undefined
     },
-    "left": {
-        "default": 0
+    'left': {
+        'default': 0
     },
-    "top": {
-        "default": 0
+    'top': {
+        'default': 0
     },
-    "zIndex": {
-        "default": 0
+    'zIndex': {
+        'default': 0
     },
-    "src": {
-        "default": ""
+    'src': {
+        'default': ''
     }
 };
 exports.data = {
-    "iconData": ""
+    'iconData': ''
 };
 exports.watch = {
-    "src": {
+    'src': {
         handler: function () {
             return __awaiter(this, void 0, void 0, function () {
                 var pre, t;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
                         case 0:
-                            if (this.src === "") {
+                            if (this.src === '') {
                                 this.iconData = undefined;
                                 return [2];
                             }
                             pre = this.src.slice(0, 5).toLowerCase();
-                            if (pre === "http:") {
+                            if (pre === 'http:') {
                                 this.iconData = this.src;
                                 return [2];
                             }
-                            return [4, this.getDataUrl(this.src)];
+                            return [4, this.cgGetDataUrl(this.src)];
                         case 1:
                             t = _a.sent();
                             if (t) {
-                                this.iconData = "url(" + t + ")";
+                                this.iconData = 'url(' + t + ')';
                                 return [2];
                             }
                             this.iconData = undefined;
@@ -90,6 +90,6 @@ exports.watch = {
                 });
             });
         },
-        "immediate": true
+        'immediate': true
     }
 };

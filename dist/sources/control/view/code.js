@@ -212,7 +212,7 @@ exports.methods = {
                 });
             }
         });
-        this._down();
+        this.cgDown();
     },
     'refreshView': function () {
         if (this.scrollOffsetData > this.maxScroll) {

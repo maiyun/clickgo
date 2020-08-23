@@ -1,5 +1,5 @@
 body, html {margin: 0; padding: 0; height: 100%;}
-body {background: #000; -webkit-user-select: none;}
+body {background: #24292e; -webkit-user-select: none;}
 body.running {background: #0063b1;}
 
 #main {display: flex; justify-content: center; align-items: center; height: 100%; color: #FFF;}

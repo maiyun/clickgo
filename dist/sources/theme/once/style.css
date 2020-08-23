@@ -28,6 +28,10 @@
     border-style: solid; border-width: 2px; border-image: linear-gradient(to top, #6982ee, #cee7ff) 2 2 2 2 round;
 }
 
+.button_wrap:focus::after {
+    left: 1px; top: 1px; width: calc(100% - 2px); height: calc(100% - 2px);
+}
+
 /* --- form --- */
 
 .form_content {

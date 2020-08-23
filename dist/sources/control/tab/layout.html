@@ -1,4 +1,4 @@
-<div class="wrap" :class="[tabPosition]" ref="wrap" :style="{'width': widthPx, 'height': heightPx, 'left': left + 'px', 'top': top + 'px', 'z-index': zIndex, 'flex-grow': flex}" @click="_tap" @mousedown="_down" @touchstart="_down" @dblclick="_dblclick">
+<div class="wrap" :class="[tabPosition]" ref="wrap" :style="{'width': widthPx, 'height': heightPx, 'left': left + 'px', 'top': top + 'px', 'z-index': zIndex, 'flex-grow': flex}" @click="cgTap" @mousedown="cgDown" @touchstart="cgDown" @dblclick="cgDblclick">
     <cg-tab-nav v-if="tabPosition==='top'||tabPosition==='left'"></cg-tab-nav>
     <div class="panels">
         <slot>

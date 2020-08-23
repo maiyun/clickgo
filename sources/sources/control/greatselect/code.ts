@@ -62,7 +62,7 @@ export let data = {
 };
 
 export let methods = {
-    showPop: function(this: IVue, event: MouseEvent | KeyboardEvent, area: 'all' | 'arrow'): void {
+    showPop: function(this: IVueControl, event: MouseEvent | KeyboardEvent, area: 'all' | 'arrow'): void {
         if (this.area === 'arrow') {
             if (area === 'all') {
                 if (this.popOpen) {
@@ -95,14 +95,14 @@ export let methods = {
             pop.widthData = this.$el.offsetWidth;
             clickgo.form.showPop(pop, this.$el);
         }
-        this._tap(event);
+        this.cgTap(event);
     },
-    down: function(this: IVue, e: MouseEvent | TouchEvent): void {
+    down: function(this: IVueControl, e: MouseEvent | TouchEvent): void {
         if (e instanceof MouseEvent && clickgo.hasTouch) {
             return;
         }
-        this.stopPropagation(e);
-        this._down();
+        this.cgStopPropagation(e);
+        this.cgDown(e);
     },
     keydown: function(this: IVue, e: KeyboardEvent): void {
         if (e.keyCode !== 13) {

@@ -53,7 +53,7 @@ export declare let computed: {
 };
 export declare let methods: {
     wheel: (this: IVue, e: WheelEvent) => void;
-    down: (this: IVue, e: MouseEvent | TouchEvent) => void;
+    down: (this: IVueControl, e: MouseEvent | TouchEvent) => void;
     refreshView: (this: IVue) => void;
     goScroll: (this: IVue, scrollOffset: number | string) => void;
 };

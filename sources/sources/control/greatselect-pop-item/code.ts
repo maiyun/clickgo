@@ -18,13 +18,13 @@ export let data = {
 };
 
 export let methods = {
-    click: function(this: IVue, event: MouseEvent): void {
+    click: function(this: IVueControl, event: MouseEvent): void {
         if (this.disabled) {
             return;
         }
         clickgo.form.hidePop();
         this.$parent.$parent.$parent.select(this.value);
-        this._tap(event);
+        this.cgTap(event);
     },
     controlClick: function(this: IVue, e: MouseEvent): void {
         if (this.disabled) {

@@ -594,27 +594,27 @@ export async function create(opt: ICreateFormOptions): Promise<number | IForm> {
             data._scope = rand;
             data._controlName = name;
             // --- 预设 methods ---
-            methods.stopPropagation = function(this: IVue, e: MouseEvent | TouchEvent) {
+            methods.cgStopPropagation = function(this: IVue, e: MouseEvent | TouchEvent) {
                 if (e instanceof MouseEvent && clickgo.hasTouch) {
                     return;
                 }
                 e.stopPropagation();
                 doFocusAndPopEvent(e);
             };
-            methods._down = function(this: IVue, e: MouseEvent | TouchEvent) {
+            methods.cgDown = function(this: IVue, e?: MouseEvent | TouchEvent) {
                 if (e instanceof MouseEvent && clickgo.hasTouch) {
                     return;
                 }
                 // --- 触发自定义 down 事件 ---
                 this.$emit('down', e);
             };
-            methods._tap = function(this: IVue, e: MouseEvent | TouchEvent | KeyboardEvent) {
+            methods.cgTap = function(this: IVue, e: MouseEvent | TouchEvent | KeyboardEvent) {
                 if (this.$el.className.indexOf('cg-disabled') !== -1) {
                     return;
                 }
                 this.$emit('tap', e);
             };
-            methods._dblclick = function(this: IVue, e: MouseEvent) {
+            methods.cgDblclick = function(this: IVue, e: MouseEvent) {
                 e.stopPropagation();
                 if (this.$el.className.indexOf('cg-disabled') !== -1) {
                     return;
@@ -622,12 +622,12 @@ export async function create(opt: ICreateFormOptions): Promise<number | IForm> {
                 this.$emit('dblclick', e);
             };
             // --- 获取文件 blob 对象 ---
-            methods.getBlob = function(this: IVue, file: string): Blob | null {
+            methods.cgGetBlob = function(this: IVue, file: string): Blob | null {
                 file = clickgo.tool.pathResolve(this.$data._dir, file);
                 return clickgo.core.tasks[this.taskId].appPkg.files[file] ?? null;
             };
-            methods.getDataUrl = async function(this: IVue, file: string): Promise<string | null> {
-                let f = this.getBlob(file);
+            methods.cgGetDataUrl = async function(this: IVueControl, file: string): Promise<string | null> {
+                let f = this.cgGetBlob(file);
                 return f ? await clickgo.tool.blob2DataUrl(f) : null;
             };
             // --- layout 中 :class 的转义 ---
@@ -832,8 +832,8 @@ export async function create(opt: ICreateFormOptions): Promise<number | IForm> {
         file = clickgo.tool.pathResolve(this.$data._dir, file);
         return clickgo.core.tasks[this.taskId].appPkg.files[file] ?? null;
     };
-    methods.getDataUrl = async function(this: IVue, file: string): Promise<string | null> {
-        let f = this.getBlob(file);
+    methods.getDataUrl = async function(this: IVueControl, file: string): Promise<string | null> {
+        let f = this.cgGetBlob(file);
         return f ? await clickgo.tool.blob2DataUrl(f) : null;
     };
     // --- 加载主题 ---
@@ -980,6 +980,7 @@ export async function create(opt: ICreateFormOptions): Promise<number | IForm> {
     let form: IForm = {
         'id': formId,
         'vue': $vm,
+        'win': null,
         'events': {}
     };
     // --- 挂载 form ---

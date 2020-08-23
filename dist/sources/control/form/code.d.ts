@@ -82,7 +82,7 @@ export declare let data: {
 };
 export declare let watch: {
     icon: {
-        handler: (this: IVue) => Promise<void>;
+        handler: (this: IVueControl) => Promise<void>;
         immediate: boolean;
     };
     title: (this: IVue) => void;

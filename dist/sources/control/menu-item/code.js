@@ -22,7 +22,7 @@ exports.methods = {
             return;
         }
         clickgo.form.showPop(this.$children[0], this.$el);
-        this._tap(event);
+        this.cgTap(event);
     },
     mousein: function (event) {
         if (clickgo.tool.siblings(this.$el, 'cg-pop-open')) {

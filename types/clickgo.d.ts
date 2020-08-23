@@ -10,6 +10,8 @@ interface IClickGo {
     'cgRootPath': string;
     /** --- 是否有 touch 环境 --- */
     'hasTouch': boolean;
+    /** --- 是否是桌面环境 --- */
+    'isNative': boolean;
     /** --- 当前缩放情况 --- */
     'zoom': number;
     /** --- 需要扩大的像素，1 / zoom --- */
@@ -308,6 +310,7 @@ interface IFormLib {
 interface IForm {
     'id': number;
     'vue': IVue;
+    'win': Electron.BrowserWindow | null;
     'events': Record<string, (...any: any) => void | Promise<void>>;
 }
 

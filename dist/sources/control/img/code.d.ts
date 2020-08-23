@@ -23,7 +23,7 @@ export declare let data: {
 };
 export declare let watch: {
     src: {
-        handler: (this: IVue) => Promise<void>;
+        handler: (this: IVueControl) => Promise<void>;
         immediate: boolean;
     };
 };

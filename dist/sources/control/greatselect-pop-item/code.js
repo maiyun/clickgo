@@ -23,7 +23,7 @@ exports.methods = {
         }
         clickgo.form.hidePop();
         this.$parent.$parent.$parent.select(this.value);
-        this._tap(event);
+        this.cgTap(event);
     },
     controlClick: function (e) {
         if (this.disabled) {

@@ -1,4 +1,4 @@
-declare var Vue: {
+declare let Vue: {
     new(opt: any): IVue;
 
     /** --- 注册或获取全局组件 --- */
@@ -8,7 +8,7 @@ declare var Vue: {
     /** --- 使用基础 Vue 构造器，创建一个“子类”。 --- */
     extend(opt: any): any;
 
-    "config": any;
+    'config': any;
 
     [key: string]: any;
 };
@@ -37,14 +37,50 @@ interface IVue {
 }
 
 interface IVNode {
-    "children": IVNode[];
-    "componentInstance": IVue;
-    "componentOptions": {
-        "tag": string;
+    'children': IVNode[];
+    'componentInstance': IVue;
+    'componentOptions': {
+        'tag': string;
         [name: string]: any;
     };
-    "context": IVue;
+    'context': IVue;
 
     [key: string]: any;
 }
 
+interface IVueControl extends IVue {
+    /** --- 当前任务 id --- */
+    'taskId': number;
+    /** --- 当前窗体 id --- */
+    'formId': number;
+    /**
+     * --- 阻止当前事件冒泡 ---
+     * @param e 鼠标或触摸事件对象
+     */
+    cgStopPropagation(this: IVue, e: MouseEvent | TouchEvent): void;
+    /**
+     * --- 控件默认的 down 事件绑定 ---
+     * @param e 鼠标或触摸事件对象
+     */
+    cgDown(this: IVue, e?: MouseEvent | TouchEvent): void;
+    /**
+     * --- 控件默认的 tap 事件绑定 ---
+     * @param e 鼠标、触摸或键盘事件对象
+     */
+    cgTap(this: IVue, e: MouseEvent | TouchEvent | KeyboardEvent): void;
+    /**
+     * --- 控件默认的 dblclick 事件绑定 ---
+     * @param e 鼠标事件对象
+     */
+    cgDblclick(this: IVue, e: MouseEvent): void;
+    /**
+     * --- 根据路径获取当前应用的文件 blob 对象 ---
+     * @param file 文件路径
+     */
+    cgGetBlob(this: IVue, file: string): Blob | null;
+    /**
+     * --- 根据路径获取当前应用的文件 dataurl 字符串 ---
+     * @param file  文件路径
+     */
+    cgGetDataUrl(this: IVueControl, file: string): Promise<string | null>;
+}

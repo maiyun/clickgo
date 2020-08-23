@@ -1,3 +1,3 @@
-<div class="wrap" :class="{'cg-open': open}" :style="{'width': width && (width + 'px'), 'height': height && (height + 'px'), 'left': leftData + 'px', top: topData + 'px', 'z-index': zIndexData}" @click="_tap" @mousedown="_down" @touchstart="_down" @dblclick="_dblclick">
+<div class="wrap" :class="{'cg-open': open}" :style="{'width': width && (width + 'px'), 'height': height && (height + 'px'), 'left': leftData + 'px', top: topData + 'px', 'z-index': zIndexData}" @click="cgTap" @mousedown="cgDown" @touchstart="cgDown" @dblclick="cgDblclick">
     <slot>
 </div>

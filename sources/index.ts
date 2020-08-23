@@ -33,6 +33,7 @@ const clickgo: IClickGo = {
     'rootPath': window.location.href.slice(0, window.location.href.lastIndexOf('/') + 1),
     'cgRootPath': tmpCgRootPath,
     'hasTouch': ('ontouchstart' in document.documentElement) ? true : false,
+    'isNative': navigator.userAgent.toLowerCase().indexOf('electron') === -1 ? false : true,
     'zoom': tmpZoom,
     'rzoom': 1 / tmpZoom,
     'position': {

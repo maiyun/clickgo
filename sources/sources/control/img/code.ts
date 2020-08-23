@@ -1,49 +1,48 @@
 export let props = {
-    "width": {
-        "default": undefined
+    'width': {
+        'default': undefined
     },
-    "height": {
-        "default": undefined
+    'height': {
+        'default': undefined
     },
-    "left": {
-        "default": 0
+    'left': {
+        'default': 0
     },
-    "top": {
-        "default": 0
+    'top': {
+        'default': 0
     },
-    "zIndex": {
-        "default": 0
+    'zIndex': {
+        'default': 0
     },
 
-    "src": {
-        "default": ""
+    'src': {
+        'default': ''
     }
 };
 
 export let data = {
-    "iconData": ""
+    'iconData': ''
 };
 
 export let watch = {
-    "src": {
-        handler: async function(this: IVue): Promise<void> {
-            if (this.src === "") {
+    'src': {
+        handler: async function(this: IVueControl): Promise<void> {
+            if (this.src === '') {
                 this.iconData = undefined;
                 return;
             }
             let pre = this.src.slice(0, 5).toLowerCase();
-            if (pre === "http:") {
+            if (pre === 'http:') {
                 this.iconData = this.src;
                 return;
             }
-            let t = await this.getDataUrl(this.src);
+            let t = await this.cgGetDataUrl(this.src);
             if (t) {
-                this.iconData = "url(" + t + ")";
+                this.iconData = 'url(' + t + ')';
                 return;
             }
             this.iconData = undefined;
         },
-        "immediate": true
+        'immediate': true
     }
 };
-

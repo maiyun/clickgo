@@ -13,6 +13,6 @@ export declare let data: {
     popOpen: boolean;
 };
 export declare let methods: {
-    showPop: (this: IVue, event: MouseEvent) => void;
+    showPop: (this: IVueControl, event: MouseEvent) => void;
     mousein: (this: IVue, event: MouseEvent) => void;
 };
