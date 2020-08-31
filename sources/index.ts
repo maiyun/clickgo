@@ -80,7 +80,7 @@ const clickgo: IClickGo = {
 
 // --- 加载 loader ---
 let tmpScript = document.createElement('script');
-tmpScript.src = 'https://cdn.jsdelivr.net/npm/@litert/loader@1.0.0-beta/dist/index.min.js';
+tmpScript.src = 'https://cdn.jsdelivr.net/npm/@litert/loader@1.1.0/dist/index.min.js';
 tmpScript.addEventListener('load', function(): void {
     loader.ready(async () => {
         // --- 设置 loader 库配置 ---
@@ -89,12 +89,26 @@ tmpScript.addEventListener('load', function(): void {
         let paths: string[] = [
             'https://cdn.jsdelivr.net/npm/vue@2.6.11/dist/vue.min.js'
         ];
+        // --- 判断 ResizeObserver 是否存在 ---
+        let ro = true;
+        // ResizeObserver = undefined;
+        if (!((window as any).ResizeObserver)) {
+            ro = false;
+            paths.push('https://cdn.jsdelivr.net/npm/@juggle/resize-observer@3.2.0/lib/exports/resize-observer.umd.min.js');
+        }
+        // --- 加载 vue 以及必要库 ---
         for (let path of paths) {
             if (!await loader.loadScript(document.getElementsByTagName('head')[0], path)) {
                 alert('Librarys load failed.');
                 return;
             }
         }
+        // --- 处理 ResizeObserver ---
+        if (!ro) {
+            (window as any).ResizeObserverEntry = (window as any).ResizeObserver.ResizeObserverEntry;
+            (window as any).ResizeObserver = (window as any).ResizeObserver.ResizeObserver;
+        }
+        // --- 加载 clickgo 主程序 ---
         let [cg] = await loader.require(clickgo.cgRootPath + 'clickgo') ?? [];
         if (!clickgo) {
             alert('Clickgo load failed.');

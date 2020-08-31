@@ -8,33 +8,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __generator = (this && this.__generator) || function (thisArg, body) {
-    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
-    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
-    function verb(n) { return function (v) { return step([n, v]); }; }
-    function step(op) {
-        if (f) throw new TypeError("Generator is already executing.");
-        while (_) try {
-            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
-            if (y = 0, t) op = [op[0] & 2, t.value];
-            switch (op[0]) {
-                case 0: case 1: t = op; break;
-                case 4: _.label++; return { value: op[1], done: false };
-                case 5: _.label++; y = op[1]; op = [0]; continue;
-                case 7: op = _.ops.pop(); _.trys.pop(); continue;
-                default:
-                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
-                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
-                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
-                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
-                    if (t[2]) _.ops.pop();
-                    _.trys.pop(); continue;
-            }
-            op = body.call(thisArg, _);
-        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
-        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
-    }
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.mounted = exports.methods = exports.watch = exports.data = exports.props = void 0;
 exports.props = {
@@ -123,31 +96,20 @@ exports.watch = {
     'icon': {
         handler: function () {
             var _a;
-            return __awaiter(this, void 0, void 0, function () {
-                var first, _b;
-                return __generator(this, function (_c) {
-                    switch (_c.label) {
-                        case 0:
-                            first = false;
-                            if (this.iconData === undefined) {
-                                first = true;
-                            }
-                            if (!(this.icon === '')) return [3, 1];
-                            this.iconData = '';
-                            return [3, 3];
-                        case 1:
-                            _b = this;
-                            return [4, this.cgGetDataUrl(this.icon)];
-                        case 2:
-                            _b.iconData = (_a = _c.sent()) !== null && _a !== void 0 ? _a : '';
-                            _c.label = 3;
-                        case 3:
-                            if (!first) {
-                                clickgo.core.trigger('formIconChanged', this.taskId, this.formId, { 'icon': this.iconData });
-                            }
-                            return [2];
-                    }
-                });
+            return __awaiter(this, void 0, void 0, function* () {
+                let first = false;
+                if (this.iconData === undefined) {
+                    first = true;
+                }
+                if (this.icon === '') {
+                    this.iconData = '';
+                }
+                else {
+                    this.iconData = (_a = yield this.cgGetDataUrl(this.icon)) !== null && _a !== void 0 ? _a : '';
+                }
+                if (!first) {
+                    clickgo.core.trigger('formIconChanged', this.taskId, this.formId, { 'icon': this.iconData });
+                }
             });
         },
         'immediate': true
@@ -179,110 +141,109 @@ exports.watch = {
 };
 exports.methods = {
     moveMethod: function (e) {
-        var _this = this;
         if (e instanceof MouseEvent && clickgo.hasTouch) {
             return;
         }
-        var el = e.currentTarget;
-        var dataHasDbl = el.getAttribute('data-has-dbl');
+        let el = e.currentTarget;
+        let dataHasDbl = el.getAttribute('data-has-dbl');
         if (!dataHasDbl) {
             el.setAttribute('data-has-dbl', 'yes');
-            el.addEventListener('dblclick', function () {
-                if (_this.stateAbs) {
-                    _this.maxVMethod(true);
+            el.addEventListener('dblclick', () => {
+                if (this.stateAbs) {
+                    this.maxVMethod(true);
                 }
                 else {
-                    _this.maxMethod();
+                    this.maxMethod();
                 }
             });
         }
-        var isBorder = '';
+        let isBorder = '';
         clickgo.element.bindMove(e, {
-            'start': function (x, y) {
-                if (_this.stateMaxData) {
-                    _this.$emit('max', event, 0, _this.historyLocation);
-                    _this.stateMaxData = false;
-                    _this.$emit('update:stateMax', false);
-                    var olx = x - _this.leftData;
-                    var orx = _this.leftData + _this.widthData - x;
-                    var w2 = _this.historyLocation.width / 2;
+            'start': (x, y) => {
+                if (this.stateMaxData) {
+                    this.$emit('max', event, 0, this.historyLocation);
+                    this.stateMaxData = false;
+                    this.$emit('update:stateMax', false);
+                    let olx = x - this.leftData;
+                    let orx = this.leftData + this.widthData - x;
+                    let w2 = this.historyLocation.width / 2;
                     if (olx <= w2) {
-                        _this.leftData = x - olx;
+                        this.leftData = x - olx;
                     }
                     else if (orx <= w2) {
-                        _this.leftData = x - (_this.historyLocation.width - orx);
+                        this.leftData = x - (this.historyLocation.width - orx);
                     }
                     else {
-                        _this.leftData = x - w2;
+                        this.leftData = x - w2;
                     }
-                    _this.$emit('update:left', _this.leftData);
-                    var oty = y - _this.topData;
-                    var oby = _this.topData + _this.heightData - y;
-                    var h2 = _this.historyLocation.height / 2;
+                    this.$emit('update:left', this.leftData);
+                    let oty = y - this.topData;
+                    let oby = this.topData + this.heightData - y;
+                    let h2 = this.historyLocation.height / 2;
                     if (oty <= h2) {
-                        _this.topData = y - oty;
+                        this.topData = y - oty;
                     }
                     else if (oby <= h2) {
-                        _this.topData = y - (_this.historyLocation.height - oby);
+                        this.topData = y - (this.historyLocation.height - oby);
                     }
                     else {
-                        _this.topData = y - h2;
+                        this.topData = y - h2;
                     }
-                    _this.$emit('update:top', _this.topData);
-                    _this.widthData = _this.historyLocation.width;
-                    _this.$emit('update:width', _this.historyLocation.width);
-                    _this.heightData = _this.historyLocation.height;
-                    _this.$emit('update:height', _this.historyLocation.height);
+                    this.$emit('update:top', this.topData);
+                    this.widthData = this.historyLocation.width;
+                    this.$emit('update:width', this.historyLocation.width);
+                    this.heightData = this.historyLocation.height;
+                    this.$emit('update:height', this.historyLocation.height);
                 }
-                else if (_this.stateAbs) {
-                    _this.stateAbs = false;
-                    var olx = x - _this.leftData;
-                    var orx = _this.leftData + _this.widthData - x;
-                    var w2 = _this.historyLocation.width / 2;
+                else if (this.stateAbs) {
+                    this.stateAbs = false;
+                    let olx = x - this.leftData;
+                    let orx = this.leftData + this.widthData - x;
+                    let w2 = this.historyLocation.width / 2;
                     if (olx <= w2) {
-                        _this.leftData = x - olx;
+                        this.leftData = x - olx;
                     }
                     else if (orx <= w2) {
-                        _this.leftData = x - (_this.historyLocation.width - orx);
+                        this.leftData = x - (this.historyLocation.width - orx);
                     }
                     else {
-                        _this.leftData = x - w2;
+                        this.leftData = x - w2;
                     }
-                    _this.$emit('update:left', _this.leftData);
-                    var oty = y - _this.topData;
-                    var oby = _this.topData + _this.heightData - y;
-                    var h2 = _this.historyLocation.height / 2;
+                    this.$emit('update:left', this.leftData);
+                    let oty = y - this.topData;
+                    let oby = this.topData + this.heightData - y;
+                    let h2 = this.historyLocation.height / 2;
                     if (oty <= h2) {
-                        _this.topData = y - oty;
+                        this.topData = y - oty;
                     }
                     else if (oby <= h2) {
-                        _this.topData = y - (_this.historyLocation.height - oby);
+                        this.topData = y - (this.historyLocation.height - oby);
                     }
                     else {
-                        _this.topData = y - h2;
+                        this.topData = y - h2;
                     }
-                    _this.$emit('update:top', _this.topData);
-                    _this.widthData = _this.historyLocation.width;
-                    _this.$emit('update:width', _this.historyLocation.width);
-                    _this.heightData = _this.historyLocation.height;
-                    _this.$emit('update:height', _this.historyLocation.height);
+                    this.$emit('update:top', this.topData);
+                    this.widthData = this.historyLocation.width;
+                    this.$emit('update:width', this.historyLocation.width);
+                    this.heightData = this.historyLocation.height;
+                    this.$emit('update:height', this.historyLocation.height);
                 }
-                else if (!_this.stateMinData) {
-                    _this.historyLocation = {
-                        'width': _this.widthData,
-                        'height': _this.heightData,
-                        'left': _this.leftData,
-                        'top': _this.topData
+                else if (!this.stateMinData) {
+                    this.historyLocation = {
+                        'width': this.widthData,
+                        'height': this.heightData,
+                        'left': this.leftData,
+                        'top': this.topData
                     };
                 }
             },
-            'move': function (ox, oy, x, y, border) {
-                _this.leftData += ox;
-                _this.$emit('update:left', _this.leftData);
-                _this.topData += oy;
-                _this.$emit('update:top', _this.topData);
+            'move': (ox, oy, x, y, border) => {
+                this.leftData += ox;
+                this.$emit('update:left', this.leftData);
+                this.topData += oy;
+                this.$emit('update:top', this.topData);
                 if (border !== '') {
-                    if ((border === 't' && _this.max) || (border !== 't' && _this.resize)) {
+                    if ((border === 't' && this.max) || (border !== 't' && this.resize)) {
                         if (isBorder === '') {
                             isBorder = border;
                             clickgo.form.showCircular(x, y);
@@ -307,35 +268,35 @@ exports.methods = {
                     }
                 }
             },
-            'end': function () {
+            'end': () => {
                 if (isBorder !== '') {
                     if (isBorder === 't') {
-                        if (_this.max) {
-                            _this.widthData = _this.historyLocation.width;
-                            _this.heightData = _this.historyLocation.height;
-                            _this.leftData = _this.historyLocation.left;
-                            _this.topData = _this.historyLocation.top;
-                            _this.maxMethod();
+                        if (this.max) {
+                            this.widthData = this.historyLocation.width;
+                            this.heightData = this.historyLocation.height;
+                            this.leftData = this.historyLocation.left;
+                            this.topData = this.historyLocation.top;
+                            this.maxMethod();
                         }
                     }
                     else {
-                        if (_this.resize) {
-                            if (_this.stateMinData) {
-                                if (!_this.minMethod()) {
+                        if (this.resize) {
+                            if (this.stateMinData) {
+                                if (!this.minMethod()) {
                                     clickgo.form.hideRectangle();
                                     return;
                                 }
                             }
-                            _this.stateAbs = true;
-                            var pos = clickgo.form.getRectByDir(isBorder);
-                            _this.widthData = pos.width;
-                            _this.$emit('update:width', _this.widthData);
-                            _this.heightData = pos.height;
-                            _this.$emit('update:height', _this.heightData);
-                            _this.leftData = pos.left;
-                            _this.$emit('update:left', _this.leftData);
-                            _this.topData = pos.top;
-                            _this.$emit('update:top', _this.topData);
+                            this.stateAbs = true;
+                            let pos = clickgo.form.getRectByDir(isBorder);
+                            this.widthData = pos.width;
+                            this.$emit('update:width', this.widthData);
+                            this.heightData = pos.height;
+                            this.$emit('update:height', this.heightData);
+                            this.leftData = pos.left;
+                            this.$emit('update:left', this.leftData);
+                            this.topData = pos.top;
+                            this.$emit('update:top', this.topData);
                         }
                     }
                     clickgo.form.hideRectangle();
@@ -344,7 +305,7 @@ exports.methods = {
         });
     },
     minMethod: function () {
-        var event = {
+        let event = {
             'go': true,
             preventDefault: function () {
                 this.go = false;
@@ -440,7 +401,7 @@ exports.methods = {
                 'left': this.leftData,
                 'top': this.topData
             };
-            var pos = clickgo.getPosition();
+            let pos = clickgo.getPosition();
             this.topData = pos.top;
             this.$emit('update:top', this.topData);
             this.heightData = pos.height;
@@ -453,7 +414,7 @@ exports.methods = {
                 return false;
             }
         }
-        var event = {
+        let event = {
             'go': true,
             preventDefault: function () {
                 this.go = false;
@@ -480,7 +441,7 @@ exports.methods = {
                 this.stateMaxData = true;
                 this.$emit('update:stateMax', true);
                 if (!event.ds) {
-                    var pos = clickgo.getPosition();
+                    let pos = clickgo.getPosition();
                     this.leftData = pos.left;
                     this.$emit('update:left', this.leftData);
                     this.topData = pos.top;
@@ -519,7 +480,7 @@ exports.methods = {
         return true;
     },
     closeMethod: function () {
-        var event = {
+        let event = {
             go: true,
             preventDefault: function () {
                 this.go = false;
@@ -531,13 +492,12 @@ exports.methods = {
         }
     },
     resizeMethod: function (e, dir) {
-        var _this = this;
         if (e instanceof MouseEvent && clickgo.hasTouch) {
             return;
         }
-        var isBorder = '';
-        var top = this.topData;
-        var height = this.heightData;
+        let isBorder = '';
+        let top = this.topData;
+        let height = this.heightData;
         if (dir !== 'l' && dir !== 'r') {
             if (this.stateAbs) {
                 if (dir === 'lt' || dir === 't' || dir === 'tr') {
@@ -565,23 +525,23 @@ exports.methods = {
             'minWidth': parseInt(this.minWidth),
             'minHeight': parseInt(this.minHeight),
             'dir': dir,
-            'start': function () {
+            'start': () => {
                 if (dir === 'l' || dir === 'r') {
                     return;
                 }
-                if (_this.stateAbs) {
-                    _this.stateAbs = false;
+                if (this.stateAbs) {
+                    this.stateAbs = false;
                 }
             },
-            'move': function (left, top, width, height, x, y, border) {
-                _this.leftData = left;
-                _this.$emit('update:left', left);
-                _this.topData = top;
-                _this.$emit('update:top', top);
-                _this.widthData = width;
-                _this.$emit('update:width', width);
-                _this.heightData = height;
-                _this.$emit('update:height', height);
+            'move': (left, top, width, height, x, y, border) => {
+                this.leftData = left;
+                this.$emit('update:left', left);
+                this.topData = top;
+                this.$emit('update:top', top);
+                this.widthData = width;
+                this.$emit('update:width', width);
+                this.heightData = height;
+                this.$emit('update:height', height);
                 if (border !== '') {
                     if (((dir === 'lt' || dir === 't' || dir === 'tr') && (border === 'lt' || border === 't' || border === 'tr')) ||
                         ((dir === 'bl' || dir === 'b' || dir === 'rb') && (border === 'bl' || border === 'b' || border === 'rb'))) {
@@ -615,15 +575,15 @@ exports.methods = {
                     }
                 }
             },
-            'end': function () {
+            'end': () => {
                 if (isBorder !== '') {
                     if (isBorder !== 'l' && isBorder !== 'r') {
-                        var pos = clickgo.getPosition();
-                        _this.stateAbs = true;
-                        _this.heightData = pos.height;
-                        _this.$emit('update:height', _this.heightData);
-                        _this.topData = pos.top;
-                        _this.$emit('update:top', _this.topData);
+                        let pos = clickgo.getPosition();
+                        this.stateAbs = true;
+                        this.heightData = pos.height;
+                        this.$emit('update:height', this.heightData);
+                        this.topData = pos.top;
+                        this.$emit('update:top', this.topData);
                     }
                     clickgo.form.hideRectangle();
                 }
@@ -643,8 +603,7 @@ exports.methods = {
         e.stopPropagation();
         clickgo.core.tasks[this.taskId].forms[this.maskFor].vue.flash();
     },
-    setPropData: function (name, val, mode) {
-        if (mode === void 0) { mode = ''; }
+    setPropData: function (name, val, mode = '') {
         if (this[name + 'Data'] === undefined || this[name] === undefined) {
             return;
         }
@@ -664,9 +623,9 @@ exports.mounted = function () {
     this.widthData = parseInt(this.width);
     this.heightData = parseInt(this.height);
     this.zIndexData = parseInt(this.zIndex);
-    var stateMax = (typeof this.stateMax === 'string') ? ((this.stateMax === 'true') ? true : false) : this.stateMax;
+    let stateMax = (typeof this.stateMax === 'string') ? ((this.stateMax === 'true') ? true : false) : this.stateMax;
     if (stateMax) {
-        var pos = clickgo.getPosition();
+        let pos = clickgo.getPosition();
         this.leftData = (pos.width - this.widthData) / 2;
         this.topData = (pos.height - this.heightData) / 2;
         this.maxMethod();

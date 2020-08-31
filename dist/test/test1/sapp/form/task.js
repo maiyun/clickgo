@@ -9,27 +9,26 @@ exports.data = {
 };
 exports.methods = {
     resizeTaskBar: function () {
-        var pos = clickgo.getPosition();
+        let pos = clickgo.getPosition();
         this.top = pos.height;
         this.width = pos.width;
     }
 };
 exports.mounted = function () {
-    var _this = this;
     this.resizeTaskBar();
-    this.setSystemEventListener('screenResize', function () {
-        _this.resizeTaskBar();
+    this.setSystemEventListener('screenResize', () => {
+        this.resizeTaskBar();
     });
-    this.setSystemEventListener('formCreated', function (taskId, formId, title) {
+    this.setSystemEventListener('formCreated', (taskId, formId, title) => {
         if (taskId === 1) {
             return;
         }
-        _this.list.push({ 'taskId': taskId, 'formId': formId, 'title': title });
+        this.list.push({ 'taskId': taskId, 'formId': formId, 'title': title });
     });
-    this.setSystemEventListener('formRemoved', function (taskId, formId, title) {
-        for (var i = 0; i < _this.list.length; ++i) {
-            if (_this.list[i].formId === formId) {
-                _this.list.splice(i, 1);
+    this.setSystemEventListener('formRemoved', (taskId, formId, title) => {
+        for (let i = 0; i < this.list.length; ++i) {
+            if (this.list[i].formId === formId) {
+                this.list.splice(i, 1);
                 break;
             }
         }

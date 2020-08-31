@@ -19,8 +19,7 @@ exports.data = {
 };
 exports.methods = {
     onHide: function () {
-        for (var _i = 0, _a = this.$children; _i < _a.length; _i++) {
-            var item = _a[_i];
+        for (let item of this.$children) {
             if (!item.popOpen) {
                 continue;
             }

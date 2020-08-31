@@ -64,7 +64,7 @@ exports.watch = {
     },
     'scrollOffset': {
         handler: function () {
-            var scrollOffsetData = Math.round(parseFloat(this.scrollOffset));
+            let scrollOffsetData = Math.round(parseFloat(this.scrollOffset));
             if (this.scrollOffsetData === scrollOffsetData) {
                 return;
             }
@@ -113,18 +113,17 @@ exports.computed = {
 };
 exports.methods = {
     down: function (e) {
-        var _this = this;
         if (e instanceof MouseEvent && clickgo.hasTouch) {
             return;
         }
         clickgo.element.bindMove(e, {
             'object': this.$refs.block,
             'offsetObject': this.$refs.bar,
-            'move': function (ox, oy) {
-                _this.scrollOffsetPx += _this.direction === 'v' ? oy : ox;
-                var scrollPer = _this.scrollOffsetPx / _this.barOutSize;
-                _this.scrollOffsetData = Math.round(scrollPer * _this.maxScroll);
-                _this.$emit('update:scrollOffset', _this.scrollOffsetData);
+            'move': (ox, oy) => {
+                this.scrollOffsetPx += this.direction === 'v' ? oy : ox;
+                let scrollPer = this.scrollOffsetPx / this.barOutSize;
+                this.scrollOffsetData = Math.round(scrollPer * this.maxScroll);
+                this.$emit('update:scrollOffset', this.scrollOffsetData);
             }
         });
     },
@@ -135,11 +134,11 @@ exports.methods = {
         if (e.currentTarget !== e.target) {
             return;
         }
-        var barRect = this.$refs.bar.getBoundingClientRect();
-        var barOffset = this.direction === 'v' ? barRect.top : barRect.left;
-        var eOffset = (this.direction === 'v' ? (e instanceof MouseEvent ? e.clientY : e.touches[0].clientY) : (e instanceof MouseEvent ? e.clientX : e.touches[0].clientX)) * clickgo.rzoom;
+        let barRect = this.$refs.bar.getBoundingClientRect();
+        let barOffset = this.direction === 'v' ? barRect.top : barRect.left;
+        let eOffset = (this.direction === 'v' ? (e instanceof MouseEvent ? e.clientY : e.touches[0].clientY) : (e instanceof MouseEvent ? e.clientX : e.touches[0].clientX)) * clickgo.rzoom;
         eOffset = eOffset - barOffset;
-        var scrollOffsetPx = eOffset - this.size / 2;
+        let scrollOffsetPx = eOffset - this.size / 2;
         if (scrollOffsetPx < 0) {
             scrollOffsetPx = 0;
         }
@@ -147,61 +146,60 @@ exports.methods = {
             scrollOffsetPx = this.barLengthPx - this.size;
         }
         this.scrollOffsetPx = scrollOffsetPx;
-        var scrollPer = this.scrollOffsetPx / this.barOutSize;
+        let scrollPer = this.scrollOffsetPx / this.barOutSize;
         this.scrollOffsetData = Math.round(scrollPer * this.maxScroll);
         this.$emit('update:scrollOffset', this.scrollOffsetData);
         this.down(e);
     },
     longDown: function (e, type) {
-        var _this = this;
         if (this.client >= this.length) {
             return;
         }
         clickgo.element.bindDown(e, {
-            down: function () {
-                if (_this.timer !== undefined) {
-                    clearInterval(_this.timer);
+            down: () => {
+                if (this.timer !== undefined) {
+                    clearInterval(this.timer);
                 }
-                _this.tran = true;
-                var cb = function () {
+                this.tran = true;
+                let cb = () => {
                     if (type === 'start') {
-                        if (_this.scrollOffsetData - 10 < 0) {
-                            if (_this.scrollOffsetData !== 0) {
-                                _this.scrollOffsetData = 0;
-                                _this.scrollOffsetPx = 0;
-                                _this.$emit('update:scrollOffset', _this.scrollOffsetData);
+                        if (this.scrollOffsetData - 10 < 0) {
+                            if (this.scrollOffsetData !== 0) {
+                                this.scrollOffsetData = 0;
+                                this.scrollOffsetPx = 0;
+                                this.$emit('update:scrollOffset', this.scrollOffsetData);
                             }
                         }
                         else {
-                            _this.scrollOffsetData -= 10;
-                            _this.scrollOffsetPx = _this.barOutSize * (_this.scrollOffsetData / _this.maxScroll);
-                            _this.$emit('update:scrollOffset', _this.scrollOffsetData);
+                            this.scrollOffsetData -= 10;
+                            this.scrollOffsetPx = this.barOutSize * (this.scrollOffsetData / this.maxScroll);
+                            this.$emit('update:scrollOffset', this.scrollOffsetData);
                         }
                     }
                     else {
-                        if (_this.scrollOffsetData + 10 > _this.maxScroll) {
-                            if (_this.scrollOffsetData !== _this.maxScroll) {
-                                _this.scrollOffsetData = _this.maxScroll;
-                                _this.scrollOffsetPx = _this.barOutSize;
-                                _this.$emit('update:scrollOffset', _this.scrollOffsetData);
+                        if (this.scrollOffsetData + 10 > this.maxScroll) {
+                            if (this.scrollOffsetData !== this.maxScroll) {
+                                this.scrollOffsetData = this.maxScroll;
+                                this.scrollOffsetPx = this.barOutSize;
+                                this.$emit('update:scrollOffset', this.scrollOffsetData);
                             }
                         }
                         else {
-                            _this.scrollOffsetData += 10;
-                            _this.scrollOffsetPx = _this.barOutSize * (_this.scrollOffsetData / _this.maxScroll);
-                            _this.$emit('update:scrollOffset', _this.scrollOffsetData);
+                            this.scrollOffsetData += 10;
+                            this.scrollOffsetPx = this.barOutSize * (this.scrollOffsetData / this.maxScroll);
+                            this.$emit('update:scrollOffset', this.scrollOffsetData);
                         }
                     }
-                    if (_this.timer !== undefined) {
+                    if (this.timer !== undefined) {
                         requestAnimationFrame(cb);
                     }
                 };
-                _this.timer = requestAnimationFrame(cb);
+                this.timer = requestAnimationFrame(cb);
             },
-            up: function () {
-                _this.tran = false;
-                if (_this.timer !== undefined) {
-                    _this.timer = undefined;
+            up: () => {
+                this.tran = false;
+                if (this.timer !== undefined) {
+                    this.timer = undefined;
                 }
             }
         });
@@ -225,13 +223,12 @@ exports.methods = {
     }
 };
 exports.mounted = function () {
-    var _this = this;
-    var size = clickgo.element.watchSize(this.$refs.bar, function (size) {
-        _this.barLengthPx = _this.direction === 'v' ? size.height : size.width;
-        _this.scrollOffsetPx = _this.barOutSize * (_this.scrollOffsetData / _this.maxScroll);
+    let size = clickgo.element.watchSize(this.$refs.bar, (size) => {
+        this.barLengthPx = this.direction === 'v' ? size.height : size.width;
+        this.scrollOffsetPx = this.barOutSize * (this.scrollOffsetData / this.maxScroll);
     });
     this.barLengthPx = this.direction === 'v' ? size.height : size.width;
-    var scrollOffsetData = Math.round(parseFloat(this.scrollOffset));
+    let scrollOffsetData = Math.round(parseFloat(this.scrollOffset));
     if (this.scrollOffsetData === scrollOffsetData) {
         return;
     }

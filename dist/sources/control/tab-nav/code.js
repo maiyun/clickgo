@@ -6,51 +6,49 @@ exports.data = {
     'timer': undefined
 };
 exports.mounted = function () {
-    var _this = this;
-    clickgo.element.watchSize(this.$refs.tabs, function (size) {
-        if (_this.$parent.tabPosition === 'top' || _this.$parent.tabPosition === 'bottom') {
+    clickgo.element.watchSize(this.$refs.tabs, (size) => {
+        if (this.$parent.tabPosition === 'top' || this.$parent.tabPosition === 'bottom') {
             if (size.scrollWidth > size.clientWidth) {
-                _this.arrow = true;
+                this.arrow = true;
             }
             else {
-                _this.arrow = false;
+                this.arrow = false;
             }
         }
         else {
             if (size.scrollHeight > size.clientHeight) {
-                _this.arrow = true;
+                this.arrow = true;
             }
             else {
-                _this.arrow = false;
+                this.arrow = false;
             }
         }
     }, true);
 };
 exports.methods = {
     longDown: function (e, type) {
-        var _this = this;
-        var num = type === 'start' ? -5 : 5;
+        let num = type === 'start' ? -5 : 5;
         clickgo.element.bindDown(e, {
-            down: function () {
-                if (_this.timer !== undefined) {
-                    _this.timer = undefined;
+            down: () => {
+                if (this.timer !== undefined) {
+                    this.timer = undefined;
                 }
-                var cb = function () {
-                    if (_this.$parent.tabPosition === 'top' || _this.$parent.tabPosition === 'bottom') {
-                        _this.$refs.tabs.scrollLeft += num;
+                let cb = () => {
+                    if (this.$parent.tabPosition === 'top' || this.$parent.tabPosition === 'bottom') {
+                        this.$refs.tabs.scrollLeft += num;
                     }
                     else {
-                        _this.$refs.tabs.scrollTop += num;
+                        this.$refs.tabs.scrollTop += num;
                     }
-                    if (_this.timer !== undefined) {
+                    if (this.timer !== undefined) {
                         requestAnimationFrame(cb);
                     }
                 };
-                _this.timer = requestAnimationFrame(cb);
+                this.timer = requestAnimationFrame(cb);
             },
-            up: function () {
-                if (_this.timer !== undefined) {
-                    _this.timer = undefined;
+            up: () => {
+                if (this.timer !== undefined) {
+                    this.timer = undefined;
                 }
             }
         });

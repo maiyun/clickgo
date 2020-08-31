@@ -1,12 +1,12 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.bindResize = exports.bindMove = exports.bindDown = exports.watchElement = exports.watchSize = exports.getSize = exports.getWatchSize = void 0;
-var watchSizes = [];
+let watchSizes = [];
 function requestAnimationFrameCb() {
-    for (var i = 0; i < watchSizes.length; ++i) {
-        var item = watchSizes[i];
-        var rect = item.el.getBoundingClientRect();
-        var cs = getComputedStyle(item.el);
+    for (let i = 0; i < watchSizes.length; ++i) {
+        let item = watchSizes[i];
+        let rect = item.el.getBoundingClientRect();
+        let cs = getComputedStyle(item.el);
         if (rect.width === 0 && rect.height === 0) {
             if (cs.display === '') {
                 watchSizes.splice(i, 1);
@@ -14,19 +14,19 @@ function requestAnimationFrameCb() {
             }
             continue;
         }
-        var border = {
+        let border = {
             'top': parseFloat(cs.borderTopWidth),
             'right': parseFloat(cs.borderRightWidth),
             'bottom': parseFloat(cs.borderBottomWidth),
             'left': parseFloat(cs.borderLeftWidth)
         };
-        var padding = {
+        let padding = {
             'top': parseFloat(cs.paddingTop),
             'right': parseFloat(cs.paddingRight),
             'bottom': parseFloat(cs.paddingBottom),
             'left': parseFloat(cs.paddingLeft)
         };
-        var trect = {
+        let trect = {
             'top': rect.top,
             'right': rect.right,
             'bottom': rect.bottom,
@@ -54,8 +54,7 @@ function requestAnimationFrameCb() {
 }
 requestAnimationFrame(requestAnimationFrameCb);
 function getWatchSize(el) {
-    for (var _i = 0, watchSizes_1 = watchSizes; _i < watchSizes_1.length; _i++) {
-        var item = watchSizes_1[_i];
+    for (let item of watchSizes) {
         if (item.el !== el) {
             continue;
         }
@@ -90,15 +89,15 @@ function getWatchSize(el) {
 }
 exports.getWatchSize = getWatchSize;
 function getSize(el) {
-    var rect = el.getBoundingClientRect();
-    var cs = getComputedStyle(el);
-    var border = {
+    let rect = el.getBoundingClientRect();
+    let cs = getComputedStyle(el);
+    let border = {
         'top': parseFloat(cs.borderTopWidth),
         'right': parseFloat(cs.borderRightWidth),
         'bottom': parseFloat(cs.borderBottomWidth),
         'left': parseFloat(cs.borderLeftWidth)
     };
-    var padding = {
+    let padding = {
         'top': parseFloat(cs.paddingTop),
         'right': parseFloat(cs.paddingRight),
         'bottom': parseFloat(cs.paddingBottom),
@@ -122,9 +121,8 @@ function getSize(el) {
     };
 }
 exports.getSize = getSize;
-function watchSize(el, cb, scroll) {
-    if (scroll === void 0) { scroll = false; }
-    var size = getSize(el);
+function watchSize(el, cb, scroll = false) {
+    let size = getSize(el);
     watchSizes.push({
         'el': el,
         'size': size,
@@ -134,9 +132,8 @@ function watchSize(el, cb, scroll) {
     return size;
 }
 exports.watchSize = watchSize;
-function watchElement(el, cb, mode) {
-    if (mode === void 0) { mode = 'default'; }
-    var moi;
+function watchElement(el, cb, mode = 'default') {
+    let moi;
     switch (mode) {
         case 'child': {
             moi = {
@@ -172,7 +169,7 @@ function watchElement(el, cb, mode) {
             moi = mode;
         }
     }
-    var mo = new MutationObserver(cb);
+    let mo = new MutationObserver(cb);
     mo.observe(el, moi);
     return mo;
 }
@@ -182,7 +179,7 @@ function bindDown(oe, opt) {
     if (oe instanceof MouseEvent && clickgo.hasTouch) {
         return;
     }
-    var ox, oy;
+    let ox, oy;
     if (oe instanceof MouseEvent) {
         ox = oe.clientX;
         oy = oe.clientY;
@@ -191,12 +188,12 @@ function bindDown(oe, opt) {
         ox = oe.touches[0].clientX;
         oy = oe.touches[0].clientY;
     }
-    var isStart = false;
-    var end;
-    var move = function (e) {
+    let isStart = false;
+    let end;
+    let move = function (e) {
         e.preventDefault();
-        var x = e instanceof MouseEvent ? e.clientX : e.touches[0].clientX;
-        var y = e instanceof MouseEvent ? e.clientY : e.touches[0].clientY;
+        let x = e instanceof MouseEvent ? e.clientX : e.touches[0].clientX;
+        let y = e instanceof MouseEvent ? e.clientY : e.touches[0].clientY;
         if (x === ox && y === oy) {
             return;
         }
@@ -255,7 +252,7 @@ exports.bindDown = bindDown;
 function bindMove(e, opt) {
     var _a, _b, _c, _d;
     clickgo.core.setGlobalCursor(getComputedStyle(e.target).cursor);
-    var tx, ty;
+    let tx, ty;
     if (e instanceof MouseEvent) {
         tx = e.clientX * clickgo.rzoom;
         ty = e.clientY * clickgo.rzoom;
@@ -264,20 +261,20 @@ function bindMove(e, opt) {
         tx = e.touches[0].clientX * clickgo.rzoom;
         ty = e.touches[0].clientY * clickgo.rzoom;
     }
-    var left, top, right, bottom;
+    let left, top, right, bottom;
     if (opt.offsetObject) {
         if (!(opt.offsetObject instanceof HTMLElement)) {
             opt.offsetObject = opt.offsetObject.$el;
         }
-        var rect = opt.offsetObject.getBoundingClientRect();
-        var sd = getComputedStyle(opt.offsetObject);
+        let rect = opt.offsetObject.getBoundingClientRect();
+        let sd = getComputedStyle(opt.offsetObject);
         left = rect.left + opt.offsetObject.clientLeft + parseFloat(sd.paddingLeft);
         top = rect.top + opt.offsetObject.clientTop + parseFloat(sd.paddingTop);
         right = rect.left + rect.width - (parseFloat(sd.borderRightWidth) + parseFloat(sd.paddingRight));
         bottom = rect.top + rect.height - (parseFloat(sd.borderRightWidth) + parseFloat(sd.paddingRight));
     }
     else {
-        var position = clickgo.getPosition();
+        let position = clickgo.getPosition();
         left = (_a = opt.left) !== null && _a !== void 0 ? _a : position.left;
         top = (_b = opt.top) !== null && _b !== void 0 ? _b : position.top;
         right = (_c = opt.right) !== null && _c !== void 0 ? _c : position.width;
@@ -299,15 +296,15 @@ function bindMove(e, opt) {
     if (opt.offsetBottom) {
         bottom += opt.offsetBottom;
     }
-    var isBorder = false;
-    var objectLeft, objectTop, objectWidth, objectHeight;
-    var offsetLeft = 0;
-    var offsetTop = 0;
-    var offsetRight = 0;
-    var offsetBottom = 0;
-    var moveTime = [];
+    let isBorder = false;
+    let objectLeft, objectTop, objectWidth, objectHeight;
+    let offsetLeft = 0;
+    let offsetTop = 0;
+    let offsetRight = 0;
+    let offsetBottom = 0;
+    let moveTime = [];
     bindDown(e, {
-        start: function () {
+        start: () => {
             var _a, _b, _c, _d;
             if (opt.start) {
                 if (opt.start(tx, ty) === false) {
@@ -319,7 +316,7 @@ function bindMove(e, opt) {
                 if (!(opt.object instanceof HTMLElement)) {
                     opt.object = opt.object.$el;
                 }
-                var rect = opt.object.getBoundingClientRect();
+                let rect = opt.object.getBoundingClientRect();
                 objectLeft = rect.left;
                 objectTop = rect.top;
                 objectWidth = rect.width;
@@ -340,17 +337,17 @@ function bindMove(e, opt) {
             offsetRight = objectWidth - offsetLeft;
             offsetBottom = objectHeight - offsetTop;
         },
-        move: function (e) {
+        move: (e) => {
             var _a, _b, _c;
-            var x, y;
+            let x, y;
             x = (e instanceof MouseEvent ? e.clientX : e.touches[0].clientX) * clickgo.rzoom;
             y = (e instanceof MouseEvent ? e.clientY : e.touches[0].clientY) * clickgo.rzoom;
             if (x === tx && y === ty) {
                 return;
             }
-            var inBorderTop = false, inBorderRight = false, inBorderBottom = false, inBorderLeft = false;
-            var xol = x - offsetLeft;
-            var xor = x + offsetRight;
+            let inBorderTop = false, inBorderRight = false, inBorderBottom = false, inBorderLeft = false;
+            let xol = x - offsetLeft;
+            let xor = x + offsetRight;
             if (xol <= left) {
                 if (xol < left && x < tx) {
                     if (tx - offsetLeft > left) {
@@ -376,7 +373,7 @@ function bindMove(e, opt) {
                 }
             }
             else if (offsetRight === 0) {
-                var rs1 = right - 1;
+                let rs1 = right - 1;
                 if (x >= rs1) {
                     if (x > rs1 && x > tx) {
                         if (tx < rs1) {
@@ -389,8 +386,8 @@ function bindMove(e, opt) {
                     inBorderRight = true;
                 }
             }
-            var yot = y - offsetTop;
-            var yob = y + offsetBottom;
+            let yot = y - offsetTop;
+            let yob = y + offsetBottom;
             if (yot <= top) {
                 if (yot < top && y < ty) {
                     if (ty - offsetTop > top) {
@@ -416,7 +413,7 @@ function bindMove(e, opt) {
                 }
             }
             else if (offsetBottom === 0) {
-                var bs1 = bottom - 1;
+                let bs1 = bottom - 1;
                 if (y >= bs1) {
                     if (y > bs1 && y > ty) {
                         if (ty < bs1) {
@@ -429,7 +426,7 @@ function bindMove(e, opt) {
                     inBorderBottom = true;
                 }
             }
-            var border = '';
+            let border = '';
             if (inBorderTop || inBorderRight || inBorderBottom || inBorderLeft) {
                 if (inBorderTop) {
                     if (x - left <= 20) {
@@ -486,8 +483,8 @@ function bindMove(e, opt) {
                     (_b = opt.borderOut) === null || _b === void 0 ? void 0 : _b.call(opt);
                 }
             }
-            var ox = x - tx;
-            var oy = y - ty;
+            let ox = x - tx;
+            let oy = y - ty;
             moveTime.push({
                 'time': Date.now(),
                 'ox': ox,
@@ -497,12 +494,12 @@ function bindMove(e, opt) {
             tx = x;
             ty = y;
         },
-        up: function () {
+        up: () => {
             var _a;
             clickgo.core.setGlobalCursor();
             (_a = opt.up) === null || _a === void 0 ? void 0 : _a.call(opt);
         },
-        end: function () {
+        end: () => {
             var _a;
             (_a = opt.end) === null || _a === void 0 ? void 0 : _a.call(opt, moveTime);
         }
@@ -514,7 +511,7 @@ function bindMove(e, opt) {
             'width': right - left,
             'height': bottom - top
         });
-        setTimeout(function () {
+        setTimeout(() => {
             clickgo.form.hideRectangle();
         }, 1000);
     }
@@ -530,10 +527,10 @@ function bindResize(e, opt) {
     var _a, _b;
     opt.minWidth = (_a = opt.minWidth) !== null && _a !== void 0 ? _a : 0;
     opt.minHeight = (_b = opt.minHeight) !== null && _b !== void 0 ? _b : 0;
-    var x = (e instanceof MouseEvent ? e.clientX : e.touches[0].clientX) * clickgo.rzoom;
-    var y = (e instanceof MouseEvent ? e.clientY : e.touches[0].clientY) * clickgo.rzoom;
-    var offsetLeft, offsetTop, offsetRight, offsetBottom;
-    var left, top, right, bottom;
+    let x = (e instanceof MouseEvent ? e.clientX : e.touches[0].clientX) * clickgo.rzoom;
+    let y = (e instanceof MouseEvent ? e.clientY : e.touches[0].clientY) * clickgo.rzoom;
+    let offsetLeft, offsetTop, offsetRight, offsetBottom;
+    let left, top, right, bottom;
     if (opt.dir === 'tr' || opt.dir === 'r' || opt.dir === 'rb') {
         left = opt.left + opt.minWidth;
         offsetLeft = x - (opt.left + opt.width);

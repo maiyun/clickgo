@@ -24,13 +24,11 @@ exports.data = {
 };
 exports.methods = {
     onHide: function () {
-        for (var _i = 0, _a = this.$children[0].$children[0].$children; _i < _a.length; _i++) {
-            var item = _a[_i];
+        for (let item of this.$children[0].$children[0].$children) {
             if (!item.popOpen) {
                 continue;
             }
-            for (var _b = 0, _c = item.$children; _b < _c.length; _b++) {
-                var maybeMenu = _c[_b];
+            for (let maybeMenu of item.$children) {
                 if (maybeMenu.$data._controlName !== 'menu-pop') {
                     continue;
                 }

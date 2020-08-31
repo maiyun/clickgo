@@ -12,7 +12,7 @@ function createWindow(): void {
     win.once('ready-to-show', function(): void {
         win.show();
     });
-    win.loadFile('index.html').catch(function(e): void {
+    win.loadFile('../test1/native.html').catch(function(e): void {
         throw e;
     });
 }

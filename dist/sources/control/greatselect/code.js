@@ -42,7 +42,7 @@ exports.computed = {
             return this.width + 'px';
         }
         if (this.flex !== '') {
-            var dir = this.$parent.$data._controlName === 'select' ? this.$parent.$parent.direction : this.$parent.direction;
+            let dir = this.$parent.$data._controlName === 'select' ? this.$parent.$parent.direction : this.$parent.direction;
             return dir ? (dir === 'v' ? undefined : '0') : undefined;
         }
     },
@@ -51,7 +51,7 @@ exports.computed = {
             return this.height + 'px';
         }
         if (this.flex !== '') {
-            var dir = this.$parent.$data._controlName === 'select' ? this.$parent.$parent.direction : this.$parent.direction;
+            let dir = this.$parent.$data._controlName === 'select' ? this.$parent.$parent.direction : this.$parent.direction;
             return dir.direction ? (dir.direction === 'v' ? '0' : undefined) : undefined;
         }
     }
@@ -81,9 +81,8 @@ exports.methods = {
             clickgo.form.hidePop();
             return;
         }
-        var pop = null;
-        for (var _i = 0, _a = this.$children; _i < _a.length; _i++) {
-            var item = _a[_i];
+        let pop = null;
+        for (let item of this.$children) {
             if (item.$data._controlName !== 'greatselect-pop') {
                 continue;
             }

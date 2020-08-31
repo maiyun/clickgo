@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var electron = require("electron");
+const electron = require("electron");
 function createWindow() {
-    var win = new electron.BrowserWindow({
+    const win = new electron.BrowserWindow({
         'width': 400,
         'height': 250,
         'frame': false,
@@ -13,7 +13,7 @@ function createWindow() {
     win.once('ready-to-show', function () {
         win.show();
     });
-    win.loadFile('index.html').catch(function (e) {
+    win.loadFile('../test1/native.html').catch(function (e) {
         throw e;
     });
 }

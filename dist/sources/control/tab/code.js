@@ -61,9 +61,9 @@ exports.watch = {
     }
 };
 exports.updated = function () {
-    var i;
+    let i;
     for (i = 0; i < this.$slots.default.length; ++i) {
-        var item = this.$slots.default[i].componentInstance;
+        let item = this.$slots.default[i].componentInstance;
         if (this.tabs[i]) {
             if (this.tabs[i].label !== item.label) {
                 this.tabs[i].label = item.label;

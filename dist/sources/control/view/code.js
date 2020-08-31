@@ -40,9 +40,9 @@ exports.data = {
 };
 exports.watch = {
     'direction': function () {
-        var size = clickgo.element.getWatchSize(this.$refs.wrap);
+        let size = clickgo.element.getWatchSize(this.$refs.wrap);
         this.client = this.direction === 'v' ? size.innerHeight : size.innerWidth;
-        var innerRect = this.$refs.inner.getBoundingClientRect();
+        let innerRect = this.$refs.inner.getBoundingClientRect();
         this.length = this.direction === 'v' ? innerRect.height : innerRect.width;
     },
     'scrollOffset': {
@@ -69,11 +69,11 @@ exports.computed = {
             return this.width + 'px';
         }
         if (this.flex !== '') {
-            var parent_1 = this.$parent;
-            if (parent_1.$data._controlName === 'greatview') {
-                parent_1 = parent_1.$parent;
+            let parent = this.$parent;
+            if (parent.$data._controlName === 'greatview') {
+                parent = parent.$parent;
             }
-            return parent_1.direction ? (parent_1.direction === 'v' ? undefined : '0') : undefined;
+            return parent.direction ? (parent.direction === 'v' ? undefined : '0') : undefined;
         }
     },
     'heightPx': function () {
@@ -81,11 +81,11 @@ exports.computed = {
             return this.height + 'px';
         }
         if (this.flex !== '') {
-            var parent_2 = this.$parent;
-            if (parent_2.$data._controlName === 'greatview') {
-                parent_2 = parent_2.$parent;
+            let parent = this.$parent;
+            if (parent.$data._controlName === 'greatview') {
+                parent = parent.$parent;
             }
-            return parent_2.direction ? (parent_2.direction === 'v' ? '0' : undefined) : undefined;
+            return parent.direction ? (parent.direction === 'v' ? '0' : undefined) : undefined;
         }
     },
     'length': function () {
@@ -109,18 +109,17 @@ exports.methods = {
         this.refreshView();
     },
     down: function (e) {
-        var _this = this;
         if (e instanceof MouseEvent && clickgo.hasTouch) {
             return;
         }
         if (this.contentLength < this.client) {
             return;
         }
-        var wrapSize = clickgo.element.getWatchSize(this.$refs.wrap);
-        var top = wrapSize.top + wrapSize.border.top + wrapSize.padding.top;
-        var right = wrapSize.right - wrapSize.border.right - wrapSize.padding.right;
-        var bottom = wrapSize.bottom - wrapSize.border.bottom - wrapSize.padding.bottom;
-        var left = wrapSize.left + wrapSize.border.left + wrapSize.padding.left;
+        let wrapSize = clickgo.element.getWatchSize(this.$refs.wrap);
+        let top = wrapSize.top + wrapSize.border.top + wrapSize.padding.top;
+        let right = wrapSize.right - wrapSize.border.right - wrapSize.padding.right;
+        let bottom = wrapSize.bottom - wrapSize.border.bottom - wrapSize.padding.bottom;
+        let left = wrapSize.left + wrapSize.border.left + wrapSize.padding.left;
         if (this.timer) {
             clearTimeout(this.timer);
             this.timer = undefined;
@@ -132,28 +131,27 @@ exports.methods = {
             }
             this.tran = 0;
         }
-        var over = this.length - this.client;
+        let over = this.length - this.client;
         clickgo.element.bindMove(e, {
             'object': this.$refs.inner,
             'left': this.direction === 'v' ? left : left - over,
             'right': this.direction === 'v' ? right : right + over,
             'top': this.direction === 'h' ? top : top - over,
             'bottom': this.direction === 'h' ? bottom : bottom + over,
-            'move': function (ox, oy) {
-                _this.scrollOffsetData -= _this.direction === 'v' ? oy : ox;
-                _this.scrollOffsetEmit = _this.scrollOffsetData;
-                _this.$emit('update:scrollOffset', _this.scrollOffsetData);
+            'move': (ox, oy) => {
+                this.scrollOffsetData -= this.direction === 'v' ? oy : ox;
+                this.scrollOffsetEmit = this.scrollOffsetData;
+                this.$emit('update:scrollOffset', this.scrollOffsetData);
             },
-            'end': function (moveTimes) {
-                var movePos = 0;
-                var topTime = 0;
-                var nowDate = Date.now();
-                for (var _i = 0, moveTimes_1 = moveTimes; _i < moveTimes_1.length; _i++) {
-                    var item = moveTimes_1[_i];
+            'end': (moveTimes) => {
+                let movePos = 0;
+                let topTime = 0;
+                let nowDate = Date.now();
+                for (let item of moveTimes) {
                     if (nowDate - item.time > 100) {
                         continue;
                     }
-                    movePos += _this.direction === 'v' ? item.oy : item.ox;
+                    movePos += this.direction === 'v' ? item.oy : item.ox;
                     if (topTime === 0 || topTime > item.time) {
                         topTime = item.time;
                     }
@@ -161,16 +159,15 @@ exports.methods = {
                 if (topTime === 0) {
                     return;
                 }
-                var speed = Math.abs(movePos / (Date.now() - topTime));
+                let speed = Math.abs(movePos / (Date.now() - topTime));
                 if (speed <= 0.1) {
                     return;
                 }
-                _this.tran = speed * 2000;
-                _this.$nextTick(function () {
-                    var _this = this;
-                    this.timer = setTimeout(function () {
-                        _this.timer = undefined;
-                        _this.tran = 0;
+                this.tran = speed * 2000;
+                this.$nextTick(function () {
+                    this.timer = setTimeout(() => {
+                        this.timer = undefined;
+                        this.tran = 0;
                     }, this.tran);
                     if (movePos > 0) {
                         this.scrollOffsetData -= Math.round(speed * 800);
@@ -178,34 +175,34 @@ exports.methods = {
                     else {
                         this.scrollOffsetData += Math.round(speed * 800);
                     }
-                    var animation = function () {
-                        if (!_this.timer) {
+                    let animation = () => {
+                        if (!this.timer) {
                             return;
                         }
-                        var offset = 0;
-                        var wrapSize = clickgo.element.getWatchSize(_this.$refs.wrap);
-                        if (_this.direction === 'v') {
-                            offset = Math.round(wrapSize.top + wrapSize.border.top + wrapSize.padding.top - _this.$refs.inner.getBoundingClientRect().top);
+                        let offset = 0;
+                        let wrapSize = clickgo.element.getWatchSize(this.$refs.wrap);
+                        if (this.direction === 'v') {
+                            offset = Math.round(wrapSize.top + wrapSize.border.top + wrapSize.padding.top - this.$refs.inner.getBoundingClientRect().top);
                         }
                         else {
-                            offset = Math.round(wrapSize.left + wrapSize.border.left + wrapSize.padding.left - _this.$refs.inner.getBoundingClientRect().left);
+                            offset = Math.round(wrapSize.left + wrapSize.border.left + wrapSize.padding.left - this.$refs.inner.getBoundingClientRect().left);
                         }
-                        if (offset > _this.maxScroll) {
-                            offset = _this.maxScroll;
-                            clearTimeout(_this.timer);
-                            _this.timer = undefined;
-                            _this.scrollOffsetData = offset;
-                            _this.tran = 0;
+                        if (offset > this.maxScroll) {
+                            offset = this.maxScroll;
+                            clearTimeout(this.timer);
+                            this.timer = undefined;
+                            this.scrollOffsetData = offset;
+                            this.tran = 0;
                         }
                         else if (offset < 0) {
                             offset = 0;
-                            clearTimeout(_this.timer);
-                            _this.timer = undefined;
-                            _this.scrollOffsetData = offset;
-                            _this.tran = 0;
+                            clearTimeout(this.timer);
+                            this.timer = undefined;
+                            this.scrollOffsetData = offset;
+                            this.tran = 0;
                         }
-                        _this.scrollOffsetEmit = offset;
-                        _this.$emit('update:scrollOffset', offset);
+                        this.scrollOffsetEmit = offset;
+                        this.$emit('update:scrollOffset', offset);
                         requestAnimationFrame(animation);
                     };
                     animation();
@@ -235,7 +232,7 @@ exports.methods = {
         this.$emit('update:scrollOffset', this.scrollOffsetData);
     },
     'goScroll': function (scrollOffset) {
-        var so = typeof scrollOffset === 'number' ? scrollOffset : parseInt(scrollOffset);
+        let so = typeof scrollOffset === 'number' ? scrollOffset : parseInt(scrollOffset);
         if (so === this.scrollOffsetEmit) {
             return;
         }
@@ -250,22 +247,21 @@ exports.methods = {
     }
 };
 exports.mounted = function () {
-    var _this = this;
-    var size = clickgo.element.watchSize(this.$refs.wrap, function (size) {
-        var client = Math.round(_this.direction === 'v' ? size.clientHeight : size.clientWidth);
-        if (client === _this.client) {
-            _this.$emit('resizen');
+    let size = clickgo.element.watchSize(this.$refs.wrap, (size) => {
+        let client = Math.round(this.direction === 'v' ? size.clientHeight : size.clientWidth);
+        if (client === this.client) {
+            this.$emit('resizen');
             return;
         }
-        _this.client = client;
-        _this.$emit('resize', _this.client);
-        _this.refreshView();
+        this.client = client;
+        this.$emit('resize', this.client);
+        this.refreshView();
     });
     this.client = Math.round(this.direction === 'v' ? size.innerHeight : size.innerWidth);
     this.$emit('resize', this.client);
-    size = clickgo.element.watchSize(this.$refs.inner, function (size) {
-        _this.contentLength = Math.round(_this.direction === 'v' ? size.height : size.width);
-        _this.refreshView();
+    size = clickgo.element.watchSize(this.$refs.inner, (size) => {
+        this.contentLength = Math.round(this.direction === 'v' ? size.height : size.width);
+        this.refreshView();
     });
     this.contentLength = Math.round(this.direction === 'v' ? size.height : size.width);
 };

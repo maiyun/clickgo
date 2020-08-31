@@ -51,7 +51,7 @@ exports.computed = {
 exports.watch = {
     'scrollOffset': {
         handler: function () {
-            var so = parseInt(this.scrollOffset);
+            let so = parseInt(this.scrollOffset);
             if (so === this.scrollOffsetEmit) {
                 return;
             }
@@ -69,11 +69,11 @@ exports.methods = {
         if (!this.$refs.wrap) {
             return;
         }
-        var scroll = this.direction === 'v' ? this.$refs.wrap.scrollTop : this.$refs.wrap.scrollLeft;
+        let scroll = this.direction === 'v' ? this.$refs.wrap.scrollTop : this.$refs.wrap.scrollLeft;
         if (scroll < 0) {
             scroll = 0;
         }
-        var maxScroll = (this.direction === 'v' ? (this.$refs.wrap.scrollHeight - this.$refs.wrap.clientHeight) : (this.$refs.wrap.scrollWidth - this.$refs.wrap.clientWidth));
+        let maxScroll = (this.direction === 'v' ? (this.$refs.wrap.scrollHeight - this.$refs.wrap.clientHeight) : (this.$refs.wrap.scrollWidth - this.$refs.wrap.clientWidth));
         if (scroll > maxScroll) {
             scroll = maxScroll;
         }
@@ -95,14 +95,13 @@ exports.methods = {
     }
 };
 exports.mounted = function () {
-    var _this = this;
-    clickgo.element.watchSize(this.$refs.wrap, function () {
-        _this.$emit('resize', _this.direction === 'v' ? _this.$refs.wrap.clientHeight : _this.$refs.wrap.clientWidth);
+    clickgo.element.watchSize(this.$refs.wrap, () => {
+        this.$emit('resize', this.direction === 'v' ? this.$refs.wrap.clientHeight : this.$refs.wrap.clientWidth);
     });
     this.$emit('resize', this.direction === 'v' ? this.$refs.wrap.clientHeight : this.$refs.wrap.clientWidth);
-    clickgo.element.watchElement(this.$refs.wrap, function () {
-        _this.$emit('change', _this.direction === 'v' ? _this.$refs.wrap.scrollHeight : _this.$refs.wrap.scrollWidth);
-        _this.scroll();
+    clickgo.element.watchElement(this.$refs.wrap, () => {
+        this.$emit('change', this.direction === 'v' ? this.$refs.wrap.scrollHeight : this.$refs.wrap.scrollWidth);
+        this.scroll();
     });
     this.$emit('change', this.direction === 'v' ? this.$refs.wrap.scrollHeight : this.$refs.wrap.scrollWidth);
     if (this.direction === 'v') {

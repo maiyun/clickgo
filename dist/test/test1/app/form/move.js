@@ -17,28 +17,26 @@ exports.data = {
 };
 exports.methods = {
     b1Down: function (e) {
-        var _this = this;
         clickgo.element.bindMove(e, {
             'object': this.$refs.b1,
             'offsetObject': this.$refs.o1,
-            'move': function (ox, oy) {
-                _this.b1p.left += ox;
-                _this.b1p.top += oy;
+            'move': (ox, oy) => {
+                this.b1p.left += ox;
+                this.b1p.top += oy;
             }
         });
     },
     b2Down: function (e) {
-        var _this = this;
-        var r = this.$refs.b2.$el.getBoundingClientRect();
-        var rectWidth = 0, rectHeight = 0;
-        var rect = clickgo.element.bindMove(e, {
+        let r = this.$refs.b2.$el.getBoundingClientRect();
+        let rectWidth = 0, rectHeight = 0;
+        let rect = clickgo.element.bindMove(e, {
             'object': this.$refs.b2,
             'offsetObject': this.$refs.o2,
-            'move': function (ox, oy) {
-                _this.b2po.left += ox;
-                _this.b2po.top += oy;
-                _this.b2p.left = _this.b2po.left / rectWidth * 100;
-                _this.b2p.top = _this.b2po.top / rectHeight * 100;
+            'move': (ox, oy) => {
+                this.b2po.left += ox;
+                this.b2po.top += oy;
+                this.b2p.left = this.b2po.left / rectWidth * 100;
+                this.b2p.top = this.b2po.top / rectHeight * 100;
             }
         });
         rectWidth = rect.right - rect.left;

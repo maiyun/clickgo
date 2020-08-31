@@ -5,11 +5,10 @@
         "preserveConstEnums": true, // 保留 const 和 enum 声明
         "outDir": "dist/",
         "sourceMap": false,
-        "target": "ES5",
+        "target": "ES2015",
         "strict": true,             // 严格模式
         "declaration": true,        // d.ts
         "declarationMap": false,
-        "newLine": "LF",
-        "lib": ["DOM", "ES5", "ES2015.Iterable", "ScriptHost", "ES2015.Promise"]
+        "newLine": "LF"
     }
 }

@@ -62,7 +62,7 @@ exports.watch = {
                 return;
             }
             this.valueData = this.value;
-            for (var i = 0; i < this.dataComp.length; ++i) {
+            for (let i = 0; i < this.dataComp.length; ++i) {
                 if (this.dataComp[i].value !== this.value) {
                     continue;
                 }
@@ -86,8 +86,8 @@ exports.computed = {
         return this.editable === "true" ? true : false;
     },
     "dataComp": function () {
-        var data = [];
-        for (var i = 0; i < this.data.length; ++i) {
+        let data = [];
+        for (let i = 0; i < this.data.length; ++i) {
             if (this.data[i].value) {
                 data[i] = this.data[i];
                 continue;
@@ -108,7 +108,7 @@ exports.methods = {
     tinput: function () {
         this.valueData = this.$refs.input.value;
         this.$emit("input", this.valueData);
-        for (var i = 0; i < this.dataComp.length; ++i) {
+        for (let i = 0; i < this.dataComp.length; ++i) {
             if (this.dataComp[i].value !== this.valueData) {
                 continue;
             }

@@ -29,9 +29,8 @@ exports.methods = {
         if (this.disabled) {
             return;
         }
-        var menuPopVue = null;
-        for (var _i = 0, _a = this.$children; _i < _a.length; _i++) {
-            var item = _a[_i];
+        let menuPopVue = null;
+        for (let item of this.$children) {
             if (item.$data._controlName !== 'menu-pop') {
                 continue;
             }
@@ -43,9 +42,8 @@ exports.methods = {
     }
 };
 exports.updated = function () {
-    var hasMenuPop = false;
-    for (var _i = 0, _a = this.$children; _i < _a.length; _i++) {
-        var item = _a[_i];
+    let hasMenuPop = false;
+    for (let item of this.$children) {
         if (item.$data._controlName !== 'menu-pop') {
             continue;
         }

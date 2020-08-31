@@ -40,8 +40,7 @@ exports.methods = {
         if (this.popOpen) {
             return;
         }
-        for (var _i = 0, _a = this.$parent.$children; _i < _a.length; _i++) {
-            var item = _a[_i];
+        for (let item of this.$parent.$children) {
             if (!item.popOpen) {
                 continue;
             }

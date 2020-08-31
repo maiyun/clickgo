@@ -21,10 +21,12 @@ clickgo.ready(async function() {
         el!.innerHTML = 'Task(' + taskId + ') ended.';
     };
     // --- 启动 sapp ---
-    let sTaskId = await clickgo.core.runApp('sapp/');
-    if (sTaskId <= 0) {
-        el.innerHTML = `Start failed(${sTaskId.toString()}).`;
-        return;
+    if (!clickgo.isNative) {
+        let sTaskId = await clickgo.core.runApp('sapp/');
+        if (sTaskId <= 0) {
+            el.innerHTML = `Start failed(${sTaskId.toString()}).`;
+            return;
+        }
     }
     // --- sapp 启动成功 ---
     el.innerHTML = 'Starting app...';
