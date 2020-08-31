@@ -1,93 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.bindResize = exports.bindMove = exports.bindDown = exports.watchElement = exports.watchSize = exports.getSize = exports.getWatchSize = void 0;
-let watchSizes = [];
-function requestAnimationFrameCb() {
-    for (let i = 0; i < watchSizes.length; ++i) {
-        let item = watchSizes[i];
-        let rect = item.el.getBoundingClientRect();
-        let cs = getComputedStyle(item.el);
-        if (rect.width === 0 && rect.height === 0) {
-            if (cs.display === '') {
-                watchSizes.splice(i, 1);
-                --i;
-            }
-            continue;
-        }
-        let border = {
-            'top': parseFloat(cs.borderTopWidth),
-            'right': parseFloat(cs.borderRightWidth),
-            'bottom': parseFloat(cs.borderBottomWidth),
-            'left': parseFloat(cs.borderLeftWidth)
-        };
-        let padding = {
-            'top': parseFloat(cs.paddingTop),
-            'right': parseFloat(cs.paddingRight),
-            'bottom': parseFloat(cs.paddingBottom),
-            'left': parseFloat(cs.paddingLeft)
-        };
-        let trect = {
-            'top': rect.top,
-            'right': rect.right,
-            'bottom': rect.bottom,
-            'left': rect.left,
-            'width': rect.width,
-            'height': rect.height,
-            'padding': padding,
-            'border': border,
-            'clientWidth': rect.width - border.left - border.right,
-            'clientHeight': rect.height - border.top - border.bottom,
-            'innerWidth': rect.width - border.left - border.right - padding.left - padding.right,
-            'innerHeight': rect.height - border.top - border.bottom - padding.top - padding.bottom,
-            'scrollWidth': item.el.scrollWidth,
-            'scrollHeight': item.el.scrollHeight
-        };
-        if (trect.width !== item.size.width || trect.height !== item.size.height || trect.clientWidth !== item.size.clientWidth || trect.clientHeight !== item.size.clientHeight || trect.innerWidth !== item.size.innerWidth || trect.innerHeight !== item.size.innerHeight) {
-            item.cb(trect);
-        }
-        else if (item.scroll && (item.el.scrollWidth !== item.size.scrollWidth || item.el.scrollHeight !== item.size.scrollHeight)) {
-            item.cb(trect);
-        }
-        item.size = trect;
-    }
-    requestAnimationFrame(requestAnimationFrameCb);
-}
-requestAnimationFrame(requestAnimationFrameCb);
-function getWatchSize(el) {
-    for (let item of watchSizes) {
-        if (item.el !== el) {
-            continue;
-        }
-        return item.size;
-    }
-    return {
-        'top': 0,
-        'right': 0,
-        'bottom': 0,
-        'left': 0,
-        'width': 0,
-        'height': 0,
-        'padding': {
-            'top': 0,
-            'right': 0,
-            'bottom': 0,
-            'left': 0,
-        },
-        'border': {
-            'top': 0,
-            'right': 0,
-            'bottom': 0,
-            'left': 0,
-        },
-        'clientWidth': 0,
-        'clientHeight': 0,
-        'innerWidth': 0,
-        'innerHeight': 0,
-        'scrollWidth': 0,
-        'scrollHeight': 0
-    };
-}
-exports.getWatchSize = getWatchSize;
+exports.bindResize = exports.bindMove = exports.bindDown = exports.watchElement = exports.watchSize = exports.getSize = void 0;
 function getSize(el) {
     let rect = el.getBoundingClientRect();
     let cs = getComputedStyle(el);
@@ -121,15 +34,12 @@ function getSize(el) {
     };
 }
 exports.getSize = getSize;
-function watchSize(el, cb, scroll = false) {
-    let size = getSize(el);
-    watchSizes.push({
-        'el': el,
-        'size': size,
-        'scroll': scroll,
-        'cb': cb
+function watchSize(el, cb) {
+    const resizeObserver = new window.ResizeObserver(function () {
+        cb(getSize(el));
     });
-    return size;
+    resizeObserver.observe(el);
+    return getSize(el);
 }
 exports.watchSize = watchSize;
 function watchElement(el, cb, mode = 'default') {

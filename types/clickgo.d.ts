@@ -191,9 +191,8 @@ interface ITask {
  */
 
 interface IElementLib {
-    getWatchSize(el: HTMLElement): IElementSize;
     getSize(el: HTMLElement): IElementSize;
-    watchSize(el: HTMLElement, cb: (size: IElementSize) => void, scroll?: boolean): IElementSize;
+    watchSize(el: HTMLElement, cb: (size: IElementSize) => void): IElementSize;
     watchElement(el: HTMLElement, cb: MutationCallback, mode?: 'child' | 'childsub' | 'style' | 'default' | MutationObserverInit): MutationObserver;
     bindDown(oe: MouseEvent | TouchEvent, opt: {
         'down'?: (e: MouseEvent | TouchEvent) => void;

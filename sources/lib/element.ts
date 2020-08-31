@@ -14,106 +14,6 @@
  * limitations under the License.
  */
 
-/** --- 监视的大小 --- */
-let watchSizes: Array<{ 'el': HTMLElement; 'size': IElementSize; 'scroll': boolean; 'cb': (size: IElementSize) => void; }> = [];
-
-/**
- * --- 根据刷新频率检测 dom 大小是否改变 ---
- */
-function requestAnimationFrameCb(): void {
-    // --- 被添加的监听的 el 对象触发其 resize 回调 ---
-    for (let i = 0; i < watchSizes.length; ++i) {
-        let item = watchSizes[i];
-        let rect = item.el.getBoundingClientRect();
-        let cs = getComputedStyle(item.el);
-        if (rect.width === 0 && rect.height === 0) {
-            if (cs.display === '') {
-                // --- 元素已被移除 ---
-                watchSizes.splice(i, 1);
-                --i;
-            }
-            continue;
-        }
-        let border = {
-            'top': parseFloat(cs.borderTopWidth),
-            'right': parseFloat(cs.borderRightWidth),
-            'bottom': parseFloat(cs.borderBottomWidth),
-            'left': parseFloat(cs.borderLeftWidth)
-        };
-        let padding = {
-            'top': parseFloat(cs.paddingTop),
-            'right': parseFloat(cs.paddingRight),
-            'bottom': parseFloat(cs.paddingBottom),
-            'left': parseFloat(cs.paddingLeft)
-        };
-        let trect: IElementSize = {
-            'top': rect.top,
-            'right': rect.right,
-            'bottom': rect.bottom,
-            'left': rect.left,
-            'width': rect.width,
-            'height': rect.height,
-            'padding': padding,
-            'border': border,
-            'clientWidth': rect.width - border.left - border.right,
-            'clientHeight': rect.height - border.top - border.bottom,
-            'innerWidth': rect.width - border.left - border.right - padding.left - padding.right,
-            'innerHeight': rect.height - border.top - border.bottom - padding.top - padding.bottom,
-            'scrollWidth': item.el.scrollWidth,
-            'scrollHeight': item.el.scrollHeight
-        };
-        if (trect.width !== item.size.width || trect.height !== item.size.height || trect.clientWidth !== item.size.clientWidth || trect.clientHeight !== item.size.clientHeight || trect.innerWidth !== item.size.innerWidth || trect.innerHeight !== item.size.innerHeight) {
-            item.cb(trect);
-        }
-        else if (item.scroll && (item.el.scrollWidth !== item.size.scrollWidth || item.el.scrollHeight !== item.size.scrollHeight)) {
-            item.cb(trect);
-        }
-        item.size = trect;
-    }
-    // --- 等待下一个 ---
-    requestAnimationFrame(requestAnimationFrameCb);
-}
-requestAnimationFrame(requestAnimationFrameCb);
-
-/**
- * --- 根据 el 获取 watch 中的 el 的 size ---
- * @param el 要获取的 el
- */
-export function getWatchSize(el: HTMLElement): IElementSize {
-    for (let item of watchSizes) {
-        if (item.el !== el) {
-            continue;
-        }
-        return item.size;
-    }
-    return {
-        'top': 0,
-        'right': 0,
-        'bottom': 0,
-        'left': 0,
-        'width': 0,
-        'height': 0,
-        'padding': {
-            'top': 0,
-            'right': 0,
-            'bottom': 0,
-            'left': 0,
-        },
-        'border': {
-            'top': 0,
-            'right': 0,
-            'bottom': 0,
-            'left': 0,
-        },
-        'clientWidth': 0,
-        'clientHeight': 0,
-        'innerWidth': 0,
-        'innerHeight': 0,
-        'scrollWidth': 0,
-        'scrollHeight': 0
-    };
-}
-
 /**
  * --- 获取实时的 DOM SIZE ---
  * @param el 要获取的 dom
@@ -156,15 +56,12 @@ export function getSize(el: HTMLElement): IElementSize {
  * @param el 要监视的大小
  * @param cb 回调函数
  */
-export function watchSize(el: HTMLElement, cb: (size: IElementSize) => void, scroll: boolean = false): IElementSize {
-    let size = getSize(el);
-    watchSizes.push({
-        'el': el,
-        'size': size,
-        'scroll': scroll,
-        'cb': cb
+export function watchSize(el: HTMLElement, cb: (size: IElementSize) => void): IElementSize {
+    const resizeObserver = new (window as any).ResizeObserver(function(): void {
+        cb(getSize(el));
     });
-    return size;
+    resizeObserver.observe(el);
+    return getSize(el);
 }
 
 /**

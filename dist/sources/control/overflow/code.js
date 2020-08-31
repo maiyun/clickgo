@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.mounted = exports.methods = exports.watch = exports.computed = exports.data = exports.props = void 0;
+exports.updated = exports.mounted = exports.methods = exports.watch = exports.computed = exports.data = exports.props = void 0;
 exports.props = {
     'width': {
         'default': undefined
@@ -28,7 +28,9 @@ exports.props = {
     }
 };
 exports.data = {
-    'scrollOffsetEmit': 0
+    'scrollOffsetEmit': 0,
+    'resizeEmit': 0,
+    'changeEmit': 0
 };
 exports.computed = {
     'widthPx': function () {
@@ -96,18 +98,27 @@ exports.methods = {
 };
 exports.mounted = function () {
     clickgo.element.watchSize(this.$refs.wrap, () => {
+        let resize = this.direction === 'v' ? this.$refs.wrap.clientHeight : this.$refs.wrap.clientWidth;
+        if (this.resizeEmit !== resize) {
+            this.resizeEmit = resize;
+            this.$emit('resize', resize);
+        }
         this.$emit('resize', this.direction === 'v' ? this.$refs.wrap.clientHeight : this.$refs.wrap.clientWidth);
     });
+    let resize = this.direction === 'v' ? this.$refs.wrap.clientHeight : this.$refs.wrap.clientWidth;
+    this.resizeEmit = resize;
     this.$emit('resize', this.direction === 'v' ? this.$refs.wrap.clientHeight : this.$refs.wrap.clientWidth);
-    clickgo.element.watchElement(this.$refs.wrap, () => {
-        this.$emit('change', this.direction === 'v' ? this.$refs.wrap.scrollHeight : this.$refs.wrap.scrollWidth);
-        this.scroll();
-    });
-    this.$emit('change', this.direction === 'v' ? this.$refs.wrap.scrollHeight : this.$refs.wrap.scrollWidth);
     if (this.direction === 'v') {
         this.$refs.wrap.scrollTop = this.scrollOffset;
     }
     else {
         this.$refs.wrap.scrollLeft = this.scrollOffset;
+    }
+};
+exports.updated = function () {
+    let change = this.direction === 'v' ? this.$refs.wrap.scrollHeight : this.$refs.wrap.scrollWidth;
+    if (this.changeEmit !== change) {
+        this.changeEmit = change;
+        this.$emit('change', change);
     }
 };

@@ -22,7 +22,7 @@ export let mounted = function(this: IVue): void {
                 this.arrow = false;
             }
         }
-    }, true);
+    });
 };
 
 export let methods = {

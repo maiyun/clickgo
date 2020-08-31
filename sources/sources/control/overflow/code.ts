@@ -27,7 +27,9 @@ export let props = {
 };
 
 export let data = {
-    'scrollOffsetEmit': 0
+    'scrollOffsetEmit': 0,
+    'resizeEmit': 0,
+    'changeEmit': 0
 };
 
 export let computed = {
@@ -100,20 +102,29 @@ export let methods = {
 
 export let mounted = function(this: IVue): void {
     clickgo.element.watchSize(this.$refs.wrap, () => {
+        let resize = this.direction === 'v' ? this.$refs.wrap.clientHeight : this.$refs.wrap.clientWidth;
+        if (this.resizeEmit !== resize) {
+            this.resizeEmit = resize;
+            this.$emit('resize', resize);
+        }
         this.$emit('resize', this.direction === 'v' ? this.$refs.wrap.clientHeight : this.$refs.wrap.clientWidth);
     });
+    let resize = this.direction === 'v' ? this.$refs.wrap.clientHeight : this.$refs.wrap.clientWidth;
+    this.resizeEmit = resize;
     this.$emit('resize', this.direction === 'v' ? this.$refs.wrap.clientHeight : this.$refs.wrap.clientWidth);
-
-    clickgo.element.watchElement(this.$refs.wrap, () => {
-        this.$emit('change', this.direction === 'v' ? this.$refs.wrap.scrollHeight : this.$refs.wrap.scrollWidth);
-        this.scroll();
-    });
-    this.$emit('change', this.direction === 'v' ? this.$refs.wrap.scrollHeight : this.$refs.wrap.scrollWidth);
 
     if (this.direction === 'v') {
         this.$refs.wrap.scrollTop = this.scrollOffset;
     }
     else {
         this.$refs.wrap.scrollLeft = this.scrollOffset;
+    }
+};
+
+export let updated = function(this: IVue): void {
+    let change = this.direction === 'v' ? this.$refs.wrap.scrollHeight : this.$refs.wrap.scrollWidth;
+    if (this.changeEmit !== change) {
+        this.changeEmit = change;
+        this.$emit('change', change);
     }
 };

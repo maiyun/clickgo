@@ -42,7 +42,7 @@ export let data = {
 
 export let watch = {
     'direction': function(this: IVue): void {
-        let size = clickgo.element.getWatchSize(this.$refs.wrap);
+        let size = clickgo.element.getSize(this.$refs.wrap);
         this.client = this.direction === 'v' ? size.innerHeight : size.innerWidth;
         let innerRect = this.$refs.inner.getBoundingClientRect();
         this.length = this.direction === 'v' ? innerRect.height : innerRect.width;
@@ -124,7 +124,7 @@ export let methods = {
             return;
         }
 
-        let wrapSize = clickgo.element.getWatchSize(this.$refs.wrap);
+        let wrapSize = clickgo.element.getSize(this.$refs.wrap);
         let top = wrapSize.top + wrapSize.border.top + wrapSize.padding.top;
         let right = wrapSize.right - wrapSize.border.right - wrapSize.padding.right;
         let bottom = wrapSize.bottom - wrapSize.border.bottom - wrapSize.padding.bottom;
@@ -196,7 +196,7 @@ export let methods = {
                             return;
                         }
                         let offset = 0;
-                        let wrapSize = clickgo.element.getWatchSize(this.$refs.wrap);
+                        let wrapSize = clickgo.element.getSize(this.$refs.wrap);
                         if (this.direction === 'v') {
                             offset = Math.round(wrapSize.top + wrapSize.border.top + wrapSize.padding.top - this.$refs.inner.getBoundingClientRect().top);
                         }

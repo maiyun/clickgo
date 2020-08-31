@@ -23,7 +23,7 @@ exports.mounted = function () {
                 this.arrow = false;
             }
         }
-    }, true);
+    });
 };
 exports.methods = {
     longDown: function (e, type) {
