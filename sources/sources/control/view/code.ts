@@ -320,8 +320,11 @@ export let mounted = function(this: IVue): void {
     this.$emit('resize', this.client);
 
     size = clickgo.element.watchSize(this.$refs.inner, (size) => {
-        this.contentLength = Math.round(this.direction === 'v' ? size.height : size.width);
-        this.refreshView();
+        let contentLengh = Math.round(this.direction === 'v' ? size.height : size.width);
+        if (contentLengh !== this.contentLength) {
+            this.contentLength = contentLengh;
+            this.refreshView();
+        }
     });
     this.contentLength = Math.round(this.direction === 'v' ? size.height : size.width);
 };

@@ -35,7 +35,7 @@
 }
 
 .scroll-bar {
-    flex: 1;
+    flex: 1; overflow: hidden;
 }
 
 .block {
