@@ -36,6 +36,10 @@ function getSize(el) {
 exports.getSize = getSize;
 function watchSize(el, cb) {
     const resizeObserver = new window.ResizeObserver(function () {
+        let size = getSize(el);
+        if (Number.isNaN(size.clientWidth)) {
+            return;
+        }
         cb(getSize(el));
     });
     resizeObserver.observe(el);

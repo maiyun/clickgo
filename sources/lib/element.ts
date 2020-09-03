@@ -58,6 +58,10 @@ export function getSize(el: HTMLElement): IElementSize {
  */
 export function watchSize(el: HTMLElement, cb: (size: IElementSize) => void): IElementSize {
     const resizeObserver = new (window as any).ResizeObserver(function(): void {
+        let size = getSize(el);
+        if (Number.isNaN(size.clientWidth)) {
+            return;
+        }
         cb(getSize(el));
     });
     resizeObserver.observe(el);
