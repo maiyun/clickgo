@@ -23,10 +23,10 @@ export declare let props: {
     gutter: {
         default: undefined;
     };
-    "align-h": {
+    'align-h': {
         default: undefined;
     };
-    "align-v": {
+    'align-v': {
         default: undefined;
     };
 };

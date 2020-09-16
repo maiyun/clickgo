@@ -30,4 +30,4 @@ export declare let methods: {
     click: (this: IVueControl, event: MouseEvent) => void;
 };
 export declare let mounted: (this: IVue) => void;
-export declare let destroyed: (this: IVue) => void;
+export declare let unmounted: (this: IVue) => void;

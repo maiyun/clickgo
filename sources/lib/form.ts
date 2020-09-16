@@ -98,10 +98,10 @@ export function changeFocus(formId: number = 0, vm?: IVue): void {
             if (vm) {
                 if (!vm.$data._customZIndex) {
                     if (vm.$data._topMost) {
-                        vm.$children[0].setPropData('zIndex', ++lastTopZIndex);
+                        vm.$refs.form.setPropData('zIndex', ++lastTopZIndex);
                     }
                     else {
-                        vm.$children[0].setPropData('zIndex', ++lastZIndex);
+                        vm.$refs.form.setPropData('zIndex', ++lastZIndex);
                     }
                 }
                 vm.focus = true;
@@ -112,10 +112,10 @@ export function changeFocus(formId: number = 0, vm?: IVue): void {
                 let task = clickgo.core.tasks[taskId];
                 if (!task.forms[formId].vue.$data._customZIndex) {
                     if (task.forms[formId].vue.$data._topMost) {
-                        task.forms[formId].vue.$children[0].setPropData('zIndex', ++lastTopZIndex);
+                        task.forms[formId].vue.$refs.form.setPropData('zIndex', ++lastTopZIndex);
                     }
                     else {
-                        task.forms[formId].vue.$children[0].setPropData('zIndex', ++lastZIndex);
+                        task.forms[formId].vue.$refs.form.setPropData('zIndex', ++lastZIndex);
                     }
                 }
                 task.forms[formId].vue.focus = true;
@@ -467,11 +467,11 @@ export function remove(formId: number): boolean {
     // --- 多个窗体 ---
     let title = '';
     if (clickgo.core.tasks[taskId].forms[formId]) {
-        title = clickgo.core.tasks[taskId].forms[formId].vue.$children[0].title;
-        clickgo.core.tasks[taskId].forms[formId].vue.$destroy();
-        if (clickgo.core.tasks[taskId].forms[formId].vue.$children[0].maskFrom !== undefined) {
-            let fid = clickgo.core.tasks[taskId].forms[formId].vue.$children[0].maskFrom;
-            clickgo.core.tasks[taskId].forms[fid].vue.$children[0].maskFor = undefined;
+        title = clickgo.core.tasks[taskId].forms[formId].vue.$refs.form.title;
+        clickgo.core.tasks[taskId].forms[formId].vue.unmount(clickgo.core.tasks[taskId].forms[formId].vue.$el.parentNode);
+        if (clickgo.core.tasks[taskId].forms[formId].vue.$refs.form.maskFrom !== undefined) {
+            let fid = clickgo.core.tasks[taskId].forms[formId].vue.$refs.form.maskFrom;
+            clickgo.core.tasks[taskId].forms[fid].vue.$refs.form.maskFor = undefined;
         }
         delete(clickgo.core.tasks[taskId].forms[formId]);
     }
@@ -543,8 +543,8 @@ export async function create(opt: ICreateFormOptions): Promise<number | IForm> {
             let mounted: (() => void) | undefined = undefined;
             let beforeUpdate: (() => void) | undefined = undefined;
             let updated: (() => void) | undefined = undefined;
-            let beforeDestroy: (() => void) | undefined = undefined;
-            let destroyed: (() => void) | undefined = undefined;
+            let beforeUnmount: (() => void) | undefined = undefined;
+            let unmounted: (() => void) | undefined = undefined;
             // --- 检测是否有 js ---
             if (item.files[item.config.code + '.js']) {
                 let [expo] = await loader.requireMemory(item.config.code, item.files) ?? [];
@@ -560,8 +560,8 @@ export async function create(opt: ICreateFormOptions): Promise<number | IForm> {
                     mounted = expo.mounted;
                     beforeUpdate = expo.beforeUpdate;
                     updated = expo.updated;
-                    beforeDestroy = expo.beforeDestroy;
-                    destroyed = expo.destroyed;
+                    beforeUnmount = expo.beforeUnmount;
+                    unmounted = expo.unmounted;
                 }
             }
             // --- 控件样式表 ---
@@ -631,7 +631,7 @@ export async function create(opt: ICreateFormOptions): Promise<number | IForm> {
                 return f ? await clickgo.tool.blob2DataUrl(f) : null;
             };
             // --- layout 中 :class 的转义 ---
-            methods._classPrepend = function(this: IVue, cla: any): string {
+            methods.cgClassPrepend = function(this: IVue, cla: any): string {
                 if (typeof cla !== 'string') {
                     return cla;
                 }
@@ -654,19 +654,17 @@ export async function create(opt: ICreateFormOptions): Promise<number | IForm> {
                 'beforeCreate': beforeCreate,
                 'created': created,
                 'beforeMount': beforeMount,
-                'mounted': function(this: IVue): void {
-                    this.$nextTick(function(this: IVue) {
-                        mounted?.call(this);
-                    });
+                'mounted': async function(this: IVue) {
+                    await this.$nextTick();
+                    mounted?.call(this);
                 },
                 'beforeUpdate': beforeUpdate,
-                'updated': function(this: IVue): void {
-                    this.$nextTick(function(this: IVue) {
-                        updated?.call(this);
-                    });
+                'updated': async function(this: IVue) {
+                    await this.$nextTick();
+                    updated?.call(this);
                 },
-                'beforeDestroy': beforeDestroy,
-                'destroyed': destroyed,
+                'beforeUnmount': beforeUnmount,
+                'unmounted': unmounted,
 
                 'components': {}
             };
@@ -710,8 +708,8 @@ export async function create(opt: ICreateFormOptions): Promise<number | IForm> {
     let mounted: (() => void) | undefined = undefined;
     let beforeUpdate: (() => void) | undefined = undefined;
     let updated: (() => void) | undefined = undefined;
-    let beforeDestroy: (() => void) | undefined = undefined;
-    let destroyed: (() => void) | undefined = undefined;
+    let beforeUnmount: (() => void) | undefined = undefined;
+    let unmounted: (() => void) | undefined = undefined;
     // --- 检测是否有 js ---
     if (appPkg.files[opt.file + '.js']) {
         let [expo] = await loader.requireMemory(opt.file ?? '', appPkg.files) ?? [];
@@ -726,8 +724,8 @@ export async function create(opt: ICreateFormOptions): Promise<number | IForm> {
             mounted = expo.mounted;
             beforeUpdate = expo.beforeUpdate;
             updated = expo.updated;
-            beforeDestroy = expo.beforeDestroy;
-            destroyed = expo.destroyed;
+            beforeUnmount = expo.beforeUnmount;
+            unmounted = expo.unmounted;
         }
     }
     // --- 应用样式表 ---
@@ -753,12 +751,10 @@ export async function create(opt: ICreateFormOptions): Promise<number | IForm> {
         randList.push(rand);
     }
     let r = clickgo.tool.layoutClassPrepend(layout, randList);
-    formListElement.insertAdjacentHTML('beforeend', r.layout);
-    // --- 获取刚才的 form 对象 ---
+    formListElement.insertAdjacentHTML('beforeend', `<div class="cg-form-wrap" data-form-id="${formId.toString()}" data-task-id="${opt.taskId.toString()}">${r.layout}</div>`);
+    // --- 获取刚才的 form wrap element 对象 ---
     let el: HTMLElement = formListElement.children.item(formListElement.children.length - 1) as HTMLElement;
-    el.classList.add('cg-form-wrap');
-    el.setAttribute('data-form-id', formId.toString());
-    el.setAttribute('data-task-id', opt.taskId.toString());
+    el.children.item(0)?.setAttribute('ref', 'form');
     // --- 创建窗体对象 ---
     // --- 初始化系统初始 data ---
     data.taskId = opt.taskId;
@@ -799,19 +795,19 @@ export async function create(opt: ICreateFormOptions): Promise<number | IForm> {
             }
         }
         if (cfOpt.mask) {
-            this.$children[0].maskFor = true;
+            this.$refs.form.maskFor = true;
         }
         if (this.$data._topMost) {
             inOpt.topMost = true;
         }
         let form = await create(inOpt);
         if (typeof form === 'number') {
-            this.$children[0].maskFor = undefined;
+            this.$refs.form.maskFor = undefined;
         }
         else {
-            if (this.$children[0].maskFor) {
-                this.$children[0].maskFor = form.id;
-                form.vue.$children[0].maskFrom = this.formId;
+            if (this.$refs.form.maskFor) {
+                this.$refs.form.maskFor = form.id;
+                form.vue.$refs.form.maskFrom = this.formId;
             }
         }
     };
@@ -819,7 +815,7 @@ export async function create(opt: ICreateFormOptions): Promise<number | IForm> {
         remove(this.formId);
     };
     methods.bindFormDrag = function(this: IVue, e: MouseEvent | TouchEvent): void {
-        this.$children[0].moveMethod(e);
+        this.$refs.form.moveMethod(e);
     };
     methods.setSystemEventListener = function(this: IVue, name: TGlobalEvent, func: any): void {
         this.eventList[name] = func;
@@ -859,13 +855,13 @@ export async function create(opt: ICreateFormOptions): Promise<number | IForm> {
                 changeFocus(this.formId, this);
             }
             else {
-                this.$children[0].setPropData('zIndex', ++lastTopZIndex);
+                this.$refs.form.setPropData('zIndex', ++lastTopZIndex);
             }
         }
         else {
             // --- 取消置顶 ---
             this.$data._topMost = false;
-            this.$children[0].setPropData('zIndex', ++lastZIndex);
+            this.$refs.form.setPropData('zIndex', ++lastZIndex);
         }
     };
     // --- 让窗体闪烁 ---
@@ -873,18 +869,18 @@ export async function create(opt: ICreateFormOptions): Promise<number | IForm> {
         if (!this.focus) {
             changeFocus(this.formId);
         }
-        if (this.$children[0].flashTimer) {
-            clearTimeout(this.$children[0].flashTimer);
-            this.$children[0].flashTimer = undefined;
+        if (this.$refs.form.flashTimer) {
+            clearTimeout(this.$refs.form.flashTimer);
+            this.$refs.form.flashTimer = undefined;
         }
-        this.$children[0].flashTimer = setTimeout(() => {
-            this.$children[0].flashTimer = undefined;
+        this.$refs.form.flashTimer = setTimeout(() => {
+            this.$refs.form.flashTimer = undefined;
         }, 1000);
         // --- 触发 formFlash 事件 ---
         clickgo.core.trigger('formFlash', opt.taskId, formId);
     };
     // --- layout 中 :class 的转义 ---
-    methods._classPrepend = function(this: IVue, cla: any): string {
+    methods.cgClassPrepend = function(this: IVue, cla: any): string {
         if (typeof cla !== 'string') {
             return cla;
         }
@@ -894,9 +890,10 @@ export async function create(opt: ICreateFormOptions): Promise<number | IForm> {
         return `cg-task${this.taskId}_${cla} ${this.$data._scope}${cla}`;
     };
     let $vm: IVue | false = await new Promise(function(resolve) {
-        new Vue({
-            'el': el,
-            'data': data,
+        Vue.createApp({
+            'data': function() {
+                return clickgo.tool.clone(data);
+            },
             'methods': methods,
             'computed': computed,
             'watch': watch,
@@ -905,30 +902,28 @@ export async function create(opt: ICreateFormOptions): Promise<number | IForm> {
             'beforeCreate': beforeCreate,
             'created': created,
             'beforeMount': beforeMount,
-            'mounted': function() {
-                this.$nextTick(function(this: IVue) {
-                    if (this.$el.getAttribute !== undefined) {
-                        resolve(this);
+            'mounted': async function() {
+                await this.$nextTick();
+                if (this.$el.getAttribute !== undefined) {
+                    resolve(this);
+                }
+                else {
+                    if (this.$el.parentNode) {
+                        this.unmount(el);
+                        clickgo.tool.removeStyle(this.taskId, this.formId);
+                        formListElement.removeChild(this.$el);
                     }
-                    else {
-                        if (this.$el.parentNode) {
-                            this.$destroy();
-                            clickgo.tool.removeStyle(this.taskId, this.formId);
-                            formListElement.removeChild(this.$el);
-                        }
-                        resolve(false);
-                    }
-                });
+                    resolve(false);
+                }
             },
             'beforeUpdate': beforeUpdate,
-            'updated': function(this: IVue): void {
-                this.$nextTick(function(this: IVue) {
-                    updated?.call(this);
-                });
+            'updated': async function(this: IVue) {
+                await this.$nextTick();
+                updated?.call(this);
             },
-            'beforeDestroy': beforeDestroy,
-            'destroyed': destroyed,
-        });
+            'beforeUnmount': beforeUnmount,
+            'unmounted': unmounted,
+        }).mount(el);
     });
     if (!$vm) {
         return -106;
@@ -946,15 +941,15 @@ export async function create(opt: ICreateFormOptions): Promise<number | IForm> {
     }
     // --- 将窗体居中 ---
     let position = clickgo.getPosition();
-    if (!$vm.$children[0].stateMaxData) {
-        if ($vm.$children[0].left === -1) {
-            $vm.$children[0].setPropData('left', (position.width - $vm.$el.offsetWidth) / 2);
+    if (!$vm.$refs.form.stateMaxData) {
+        if ($vm.$refs.form.left === -1) {
+            $vm.$refs.form.setPropData('left', (position.width - $vm.$el.offsetWidth) / 2);
         }
-        if ($vm.$children[0].top === -1) {
-            $vm.$children[0].setPropData('top', (position.height - $vm.$el.offsetHeight) / 2);
+        if ($vm.$refs.form.top === -1) {
+            $vm.$refs.form.setPropData('top', (position.height - $vm.$el.offsetHeight) / 2);
         }
     }
-    if ($vm.$children[0].zIndex !== -1) {
+    if ($vm.$refs.form.zIndex !== -1) {
         $vm.$data._customZIndex = true;
     }
     // --- 执行 mounted ---
@@ -985,14 +980,14 @@ export async function create(opt: ICreateFormOptions): Promise<number | IForm> {
     };
     // --- 挂载 form ---
     if (!clickgo.core.tasks[opt.taskId]) {
-        $vm.$destroy();
+        $vm.unmount(el);
         clickgo.tool.removeStyle(opt.taskId, formId);
         formListElement.removeChild($vm.$el);
         return -107;
     }
     clickgo.core.tasks[opt.taskId].forms[formId] = form;
     // --- 触发 formCreated 事件 ---
-    clickgo.core.trigger('formCreated', opt.taskId, formId, {'title': $vm.$children[0].title, 'icon': $vm.$children[0].iconData});
+    clickgo.core.trigger('formCreated', opt.taskId, formId, {'title': $vm.$refs.form.title, 'icon': $vm.$refs.form.iconData});
     return form;
 }
 
@@ -1011,8 +1006,8 @@ window.addEventListener('resize', function(): void {
         }
         let $vm = clickgo.core.tasks[taskId].forms[formId].vue;
         let position = clickgo.getPosition();
-        $vm.$children[0].setPropData('width', position.width);
-        $vm.$children[0].setPropData('height', position.height);
+        $vm.$refs.form.setPropData('width', position.width);
+        $vm.$refs.form.setPropData('height', position.height);
     }
     // --- 触发 screenResize 事件 ---
     clickgo.core.trigger('screenResize');

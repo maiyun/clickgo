@@ -72,10 +72,10 @@ function changeFocus(formId = 0, vm) {
             if (vm) {
                 if (!vm.$data._customZIndex) {
                     if (vm.$data._topMost) {
-                        vm.$children[0].setPropData('zIndex', ++exports.lastTopZIndex);
+                        vm.$refs.form.setPropData('zIndex', ++exports.lastTopZIndex);
                     }
                     else {
-                        vm.$children[0].setPropData('zIndex', ++exports.lastZIndex);
+                        vm.$refs.form.setPropData('zIndex', ++exports.lastZIndex);
                     }
                 }
                 vm.focus = true;
@@ -86,10 +86,10 @@ function changeFocus(formId = 0, vm) {
                 let task = clickgo.core.tasks[taskId];
                 if (!task.forms[formId].vue.$data._customZIndex) {
                     if (task.forms[formId].vue.$data._topMost) {
-                        task.forms[formId].vue.$children[0].setPropData('zIndex', ++exports.lastTopZIndex);
+                        task.forms[formId].vue.$refs.form.setPropData('zIndex', ++exports.lastTopZIndex);
                     }
                     else {
-                        task.forms[formId].vue.$children[0].setPropData('zIndex', ++exports.lastZIndex);
+                        task.forms[formId].vue.$refs.form.setPropData('zIndex', ++exports.lastZIndex);
                     }
                 }
                 task.forms[formId].vue.focus = true;
@@ -378,11 +378,11 @@ function remove(formId) {
     }
     let title = '';
     if (clickgo.core.tasks[taskId].forms[formId]) {
-        title = clickgo.core.tasks[taskId].forms[formId].vue.$children[0].title;
-        clickgo.core.tasks[taskId].forms[formId].vue.$destroy();
-        if (clickgo.core.tasks[taskId].forms[formId].vue.$children[0].maskFrom !== undefined) {
-            let fid = clickgo.core.tasks[taskId].forms[formId].vue.$children[0].maskFrom;
-            clickgo.core.tasks[taskId].forms[fid].vue.$children[0].maskFor = undefined;
+        title = clickgo.core.tasks[taskId].forms[formId].vue.$refs.form.title;
+        clickgo.core.tasks[taskId].forms[formId].vue.unmount(clickgo.core.tasks[taskId].forms[formId].vue.$el.parentNode);
+        if (clickgo.core.tasks[taskId].forms[formId].vue.$refs.form.maskFrom !== undefined) {
+            let fid = clickgo.core.tasks[taskId].forms[formId].vue.$refs.form.maskFrom;
+            clickgo.core.tasks[taskId].forms[fid].vue.$refs.form.maskFor = undefined;
         }
         delete (clickgo.core.tasks[taskId].forms[formId]);
     }
@@ -393,7 +393,7 @@ function remove(formId) {
 }
 exports.remove = remove;
 function create(opt) {
-    var _a, _b, _c, _d, _e, _f;
+    var _a, _b, _c, _d, _e, _f, _g;
     return __awaiter(this, void 0, void 0, function* () {
         if (!opt.taskId) {
             return -109;
@@ -443,8 +443,8 @@ function create(opt) {
                 let mounted = undefined;
                 let beforeUpdate = undefined;
                 let updated = undefined;
-                let beforeDestroy = undefined;
-                let destroyed = undefined;
+                let beforeUnmount = undefined;
+                let unmounted = undefined;
                 if (item.files[item.config.code + '.js']) {
                     let [expo] = (_a = yield loader.requireMemory(item.config.code, item.files)) !== null && _a !== void 0 ? _a : [];
                     if (expo) {
@@ -459,8 +459,8 @@ function create(opt) {
                         mounted = expo.mounted;
                         beforeUpdate = expo.beforeUpdate;
                         updated = expo.updated;
-                        beforeDestroy = expo.beforeDestroy;
-                        destroyed = expo.destroyed;
+                        beforeUnmount = expo.beforeUnmount;
+                        unmounted = expo.unmounted;
                     }
                 }
                 let rand = '';
@@ -525,7 +525,7 @@ function create(opt) {
                         return f ? yield clickgo.tool.blob2DataUrl(f) : null;
                     });
                 };
-                methods._classPrepend = function (cla) {
+                methods.cgClassPrepend = function (cla) {
                     if (typeof cla !== 'string') {
                         return cla;
                     }
@@ -547,18 +547,20 @@ function create(opt) {
                     'created': created,
                     'beforeMount': beforeMount,
                     'mounted': function () {
-                        this.$nextTick(function () {
+                        return __awaiter(this, void 0, void 0, function* () {
+                            yield this.$nextTick();
                             mounted === null || mounted === void 0 ? void 0 : mounted.call(this);
                         });
                     },
                     'beforeUpdate': beforeUpdate,
                     'updated': function () {
-                        this.$nextTick(function () {
+                        return __awaiter(this, void 0, void 0, function* () {
+                            yield this.$nextTick();
                             updated === null || updated === void 0 ? void 0 : updated.call(this);
                         });
                     },
-                    'beforeDestroy': beforeDestroy,
-                    'destroyed': destroyed,
+                    'beforeUnmount': beforeUnmount,
+                    'unmounted': unmounted,
                     'components': {}
                 };
             }
@@ -598,8 +600,8 @@ function create(opt) {
         let mounted = undefined;
         let beforeUpdate = undefined;
         let updated = undefined;
-        let beforeDestroy = undefined;
-        let destroyed = undefined;
+        let beforeUnmount = undefined;
+        let unmounted = undefined;
         if (appPkg.files[opt.file + '.js']) {
             let [expo] = (_d = yield loader.requireMemory((_c = opt.file) !== null && _c !== void 0 ? _c : '', appPkg.files)) !== null && _d !== void 0 ? _d : [];
             if (expo) {
@@ -613,8 +615,8 @@ function create(opt) {
                 mounted = expo.mounted;
                 beforeUpdate = expo.beforeUpdate;
                 updated = expo.updated;
-                beforeDestroy = expo.beforeDestroy;
-                destroyed = expo.destroyed;
+                beforeUnmount = expo.beforeUnmount;
+                unmounted = expo.unmounted;
             }
         }
         let rand = '';
@@ -637,14 +639,12 @@ function create(opt) {
             randList.push(rand);
         }
         let r = clickgo.tool.layoutClassPrepend(layout, randList);
-        formListElement.insertAdjacentHTML('beforeend', r.layout);
+        formListElement.insertAdjacentHTML('beforeend', `<div class="cg-form-wrap" data-form-id="${formId.toString()}" data-task-id="${opt.taskId.toString()}">${r.layout}</div>`);
         let el = formListElement.children.item(formListElement.children.length - 1);
-        el.classList.add('cg-form-wrap');
-        el.setAttribute('data-form-id', formId.toString());
-        el.setAttribute('data-task-id', opt.taskId.toString());
+        (_f = el.children.item(0)) === null || _f === void 0 ? void 0 : _f.setAttribute('ref', 'form');
         data.taskId = opt.taskId;
         data.formId = formId;
-        data._dir = (_f = opt.dir) !== null && _f !== void 0 ? _f : '/';
+        data._dir = (_g = opt.dir) !== null && _g !== void 0 ? _g : '/';
         data._scope = rand;
         data.focus = false;
         data._customZIndex = false;
@@ -680,19 +680,19 @@ function create(opt) {
                     }
                 }
                 if (cfOpt.mask) {
-                    this.$children[0].maskFor = true;
+                    this.$refs.form.maskFor = true;
                 }
                 if (this.$data._topMost) {
                     inOpt.topMost = true;
                 }
                 let form = yield create(inOpt);
                 if (typeof form === 'number') {
-                    this.$children[0].maskFor = undefined;
+                    this.$refs.form.maskFor = undefined;
                 }
                 else {
-                    if (this.$children[0].maskFor) {
-                        this.$children[0].maskFor = form.id;
-                        form.vue.$children[0].maskFrom = this.formId;
+                    if (this.$refs.form.maskFor) {
+                        this.$refs.form.maskFor = form.id;
+                        form.vue.$refs.form.maskFrom = this.formId;
                     }
                 }
             });
@@ -701,7 +701,7 @@ function create(opt) {
             remove(this.formId);
         };
         methods.bindFormDrag = function (e) {
-            this.$children[0].moveMethod(e);
+            this.$refs.form.moveMethod(e);
         };
         methods.setSystemEventListener = function (name, func) {
             this.eventList[name] = func;
@@ -744,28 +744,28 @@ function create(opt) {
                     changeFocus(this.formId, this);
                 }
                 else {
-                    this.$children[0].setPropData('zIndex', ++exports.lastTopZIndex);
+                    this.$refs.form.setPropData('zIndex', ++exports.lastTopZIndex);
                 }
             }
             else {
                 this.$data._topMost = false;
-                this.$children[0].setPropData('zIndex', ++exports.lastZIndex);
+                this.$refs.form.setPropData('zIndex', ++exports.lastZIndex);
             }
         };
         methods.flash = function () {
             if (!this.focus) {
                 changeFocus(this.formId);
             }
-            if (this.$children[0].flashTimer) {
-                clearTimeout(this.$children[0].flashTimer);
-                this.$children[0].flashTimer = undefined;
+            if (this.$refs.form.flashTimer) {
+                clearTimeout(this.$refs.form.flashTimer);
+                this.$refs.form.flashTimer = undefined;
             }
-            this.$children[0].flashTimer = setTimeout(() => {
-                this.$children[0].flashTimer = undefined;
+            this.$refs.form.flashTimer = setTimeout(() => {
+                this.$refs.form.flashTimer = undefined;
             }, 1000);
             clickgo.core.trigger('formFlash', opt.taskId, formId);
         };
-        methods._classPrepend = function (cla) {
+        methods.cgClassPrepend = function (cla) {
             if (typeof cla !== 'string') {
                 return cla;
             }
@@ -775,9 +775,10 @@ function create(opt) {
             return `cg-task${this.taskId}_${cla} ${this.$data._scope}${cla}`;
         };
         let $vm = yield new Promise(function (resolve) {
-            new Vue({
-                'el': el,
-                'data': data,
+            Vue.createApp({
+                'data': function () {
+                    return clickgo.tool.clone(data);
+                },
                 'methods': methods,
                 'computed': computed,
                 'watch': watch,
@@ -786,13 +787,14 @@ function create(opt) {
                 'created': created,
                 'beforeMount': beforeMount,
                 'mounted': function () {
-                    this.$nextTick(function () {
+                    return __awaiter(this, void 0, void 0, function* () {
+                        yield this.$nextTick();
                         if (this.$el.getAttribute !== undefined) {
                             resolve(this);
                         }
                         else {
                             if (this.$el.parentNode) {
-                                this.$destroy();
+                                this.unmount(el);
                                 clickgo.tool.removeStyle(this.taskId, this.formId);
                                 formListElement.removeChild(this.$el);
                             }
@@ -802,13 +804,14 @@ function create(opt) {
                 },
                 'beforeUpdate': beforeUpdate,
                 'updated': function () {
-                    this.$nextTick(function () {
+                    return __awaiter(this, void 0, void 0, function* () {
+                        yield this.$nextTick();
                         updated === null || updated === void 0 ? void 0 : updated.call(this);
                     });
                 },
-                'beforeDestroy': beforeDestroy,
-                'destroyed': destroyed,
-            });
+                'beforeUnmount': beforeUnmount,
+                'unmounted': unmounted,
+            }).mount(el);
         });
         if (!$vm) {
             return -106;
@@ -821,15 +824,15 @@ function create(opt) {
             clickgo.tool.pushStyle(style, opt.taskId, 'forms', formId);
         }
         let position = clickgo.getPosition();
-        if (!$vm.$children[0].stateMaxData) {
-            if ($vm.$children[0].left === -1) {
-                $vm.$children[0].setPropData('left', (position.width - $vm.$el.offsetWidth) / 2);
+        if (!$vm.$refs.form.stateMaxData) {
+            if ($vm.$refs.form.left === -1) {
+                $vm.$refs.form.setPropData('left', (position.width - $vm.$el.offsetWidth) / 2);
             }
-            if ($vm.$children[0].top === -1) {
-                $vm.$children[0].setPropData('top', (position.height - $vm.$el.offsetHeight) / 2);
+            if ($vm.$refs.form.top === -1) {
+                $vm.$refs.form.setPropData('top', (position.height - $vm.$el.offsetHeight) / 2);
             }
         }
-        if ($vm.$children[0].zIndex !== -1) {
+        if ($vm.$refs.form.zIndex !== -1) {
             $vm.$data._customZIndex = true;
         }
         if (mounted) {
@@ -856,13 +859,13 @@ function create(opt) {
             'events': {}
         };
         if (!clickgo.core.tasks[opt.taskId]) {
-            $vm.$destroy();
+            $vm.unmount(el);
             clickgo.tool.removeStyle(opt.taskId, formId);
             formListElement.removeChild($vm.$el);
             return -107;
         }
         clickgo.core.tasks[opt.taskId].forms[formId] = form;
-        clickgo.core.trigger('formCreated', opt.taskId, formId, { 'title': $vm.$children[0].title, 'icon': $vm.$children[0].iconData });
+        clickgo.core.trigger('formCreated', opt.taskId, formId, { 'title': $vm.$refs.form.title, 'icon': $vm.$refs.form.iconData });
         return form;
     });
 }
@@ -880,8 +883,8 @@ window.addEventListener('resize', function () {
         }
         let $vm = clickgo.core.tasks[taskId].forms[formId].vue;
         let position = clickgo.getPosition();
-        $vm.$children[0].setPropData('width', position.width);
-        $vm.$children[0].setPropData('height', position.height);
+        $vm.$refs.form.setPropData('width', position.width);
+        $vm.$refs.form.setPropData('height', position.height);
     }
     clickgo.core.trigger('screenResize');
 });

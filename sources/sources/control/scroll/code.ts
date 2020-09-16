@@ -252,7 +252,7 @@ export let mounted = function(this: IVue): void {
     this.resizePxOfScrollOffsetData(scrollOffsetData);
 };
 
-export let destroyed = function(this: IVue): void {
+export let unmounted = function(this: IVue): void {
     if (this.timer !== undefined) {
         clearInterval(this.timer);
     }

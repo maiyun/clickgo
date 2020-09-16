@@ -30,7 +30,7 @@ styleListElement.insertAdjacentHTML('beforeend', `<style class='cg-global'>
 .cg-form-list, .cg-pop-list {-webkit-user-select: none; user-select: none;}
 
 .cg-form-list *, .cg-pop-list *, .cg-form-list *::after, .cg-pop-list *::after, .cg-form-list *::before, .cg-pop-list *::before {box-sizing: border-box !important; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); flex-shrink: 0;}
-.cg-form-list, .cg-form-list input, .cg-form-list textarea, .cg-pop-list, .cg-pop-list input, .cg-pop-list textarea {font-family: 'Microsoft YaHei',Arial,Helvetica,Sans-Serif; font-size: 12px; line-height: 1; -webkit-font-smoothing: antialiased; font-weight: 400;}
+.cg-form-list, .cg-form-list input, .cg-form-list textarea, .cg-pop-list, .cg-pop-list input, .cg-pop-list textarea {font-family: Roboto,-apple-system,BlinkMacSystemFont,"Helvetica Neue","Segoe UI","Oxygen","Ubuntu","Cantarell","Open Sans",sans-serif; font-size: 12px; line-height: 1; -webkit-font-smoothing: antialiased; font-weight: 300;}
 
 .cg-circular {box-sizing: border-box; position: fixed; z-index: 20020003; border: solid 3px #76b9ed; border-radius: 50%; filter: drop-shadow(0 0 7px #76b9ed); pointer-events: none; opacity: 0;}
 .cg-rectangle {box-sizing: border-box; position: fixed; z-index: 20020002; border: solid 1px rgba(118, 185, 237, .7); box-shadow: 0 0 10px rgba(0, 0, 0, .3); background: rgba(118, 185, 237, .1); pointer-events: none; opacity: 0;}
@@ -92,7 +92,7 @@ export function blob2Text(blob: Blob): Promise<string> {
  * --- 完整的克隆一份数组/对象 ---
  * @param obj 要克隆的对象
  */
-export function clone(obj: Record<string, any> | any[]): object {
+export function clone(obj: Record<string, any> | any[]): any[] | any {
     let newObj: any = {};
     if (obj instanceof Array) {
         newObj = [];
@@ -250,12 +250,12 @@ export function parsePath(path: string): string {
  * --- 判断是否是 ControlPkg 对象 ---
  * @param o 要判断的对象
  */
-export function isControlPkg(o: string | object): o is IControlPkg {
+export function isControlPkg(o: string | any): o is IControlPkg {
     if (typeof o !== 'object') {
         return false;
     }
     for (let k in o) {
-        return (o as any)[k].type === 'control' ? true : false;
+        return o[k].type === 'control' ? true : false;
     }
     return false;
 }
@@ -264,12 +264,12 @@ export function isControlPkg(o: string | object): o is IControlPkg {
  * --- 判断是否是 AppPkg 对象 ---
  * @param o 要判断的对象
  */
-export function isAppPkg(o: string | object): o is IAppPkg {
+export function isAppPkg(o: string | any): o is IAppPkg {
     if (typeof o !== 'object') {
         return false;
     }
     for (let k in o) {
-        return (o as any)[k].type === 'control' ? true : false;
+        return o[k].type === 'control' ? true : false;
     }
     return false;
 }
@@ -463,7 +463,7 @@ function layoutClassPrependObject(os: string): string {
         // --- t1 是 class 的头头 ---
         t1 = trim(t1);
         if (t1[0] === '[') {
-            t1 = '[_classPrepend(' + t1.slice(1, -1) + ')]';
+            t1 = '[cgClassPrepend(' + t1.slice(1, -1) + ')]';
         }
         else {
             let sp = '';
@@ -471,7 +471,7 @@ function layoutClassPrependObject(os: string): string {
                 sp = t1[0];
                 t1 = t1.slice(1, -1);
             }
-            t1 = `[_classPrepend(${sp}${t1}${sp})]`;
+            t1 = `[cgClassPrepend(${sp}${t1}${sp})]`;
         }
         return t1 + ':' + t2 + t3;
     }) + '}';
@@ -511,7 +511,7 @@ export function layoutClassPrepend(layout: string, rand: string[] = []): {
                             t1a[i] = layoutClassPrependObject(t1a[i]);
                         }
                         else {
-                            t1a[i] = '_classPrepend(' + t1a[i] + ')';
+                            t1a[i] = 'cgClassPrepend(' + t1a[i] + ')';
                         }
                     }
                     t1 = '[' + t1a.join(',') + ']';

@@ -90,7 +90,7 @@ export let mounted = function(this: IVue): void {
     }
 };
 
-export let destroyed = function(this: IVue): void {
+export let unmounted = function(this: IVue): void {
     // --- 子 pop ---
     if (this.showArrow) {
         --this.$parent.hasSubItemsCount;

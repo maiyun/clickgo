@@ -67,4 +67,4 @@ export declare let methods: {
     resizePxOfScrollOffsetData: (this: IVue, scrollOffsetData: number) => void;
 };
 export declare let mounted: (this: IVue) => void;
-export declare let destroyed: (this: IVue) => void;
+export declare let unmounted: (this: IVue) => void;

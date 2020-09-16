@@ -1,6 +1,15 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.destroyed = exports.mounted = exports.methods = exports.computed = exports.watch = exports.data = exports.props = void 0;
+exports.unmounted = exports.mounted = exports.methods = exports.computed = exports.watch = exports.data = exports.props = void 0;
 exports.props = {
     'width': {
         'default': undefined
@@ -143,7 +152,7 @@ exports.methods = {
                 this.scrollOffsetEmit = this.scrollOffsetData;
                 this.$emit('update:scrollOffset', this.scrollOffsetData);
             },
-            'end': (moveTimes) => {
+            'end': (moveTimes) => __awaiter(this, void 0, void 0, function* () {
                 let movePos = 0;
                 let topTime = 0;
                 let nowDate = Date.now();
@@ -164,50 +173,49 @@ exports.methods = {
                     return;
                 }
                 this.tran = speed * 2000;
-                this.$nextTick(function () {
-                    this.timer = setTimeout(() => {
-                        this.timer = undefined;
-                        this.tran = 0;
-                    }, this.tran);
-                    if (movePos > 0) {
-                        this.scrollOffsetData -= Math.round(speed * 800);
+                yield this.$nextTick();
+                this.timer = setTimeout(() => {
+                    this.timer = undefined;
+                    this.tran = 0;
+                }, this.tran);
+                if (movePos > 0) {
+                    this.scrollOffsetData -= Math.round(speed * 800);
+                }
+                else {
+                    this.scrollOffsetData += Math.round(speed * 800);
+                }
+                let animation = () => {
+                    if (!this.timer) {
+                        return;
+                    }
+                    let offset = 0;
+                    let wrapSize = clickgo.element.getSize(this.$refs.wrap);
+                    if (this.direction === 'v') {
+                        offset = Math.round(wrapSize.top + wrapSize.border.top + wrapSize.padding.top - this.$refs.inner.getBoundingClientRect().top);
                     }
                     else {
-                        this.scrollOffsetData += Math.round(speed * 800);
+                        offset = Math.round(wrapSize.left + wrapSize.border.left + wrapSize.padding.left - this.$refs.inner.getBoundingClientRect().left);
                     }
-                    let animation = () => {
-                        if (!this.timer) {
-                            return;
-                        }
-                        let offset = 0;
-                        let wrapSize = clickgo.element.getSize(this.$refs.wrap);
-                        if (this.direction === 'v') {
-                            offset = Math.round(wrapSize.top + wrapSize.border.top + wrapSize.padding.top - this.$refs.inner.getBoundingClientRect().top);
-                        }
-                        else {
-                            offset = Math.round(wrapSize.left + wrapSize.border.left + wrapSize.padding.left - this.$refs.inner.getBoundingClientRect().left);
-                        }
-                        if (offset > this.maxScroll) {
-                            offset = this.maxScroll;
-                            clearTimeout(this.timer);
-                            this.timer = undefined;
-                            this.scrollOffsetData = offset;
-                            this.tran = 0;
-                        }
-                        else if (offset < 0) {
-                            offset = 0;
-                            clearTimeout(this.timer);
-                            this.timer = undefined;
-                            this.scrollOffsetData = offset;
-                            this.tran = 0;
-                        }
-                        this.scrollOffsetEmit = offset;
-                        this.$emit('update:scrollOffset', offset);
-                        requestAnimationFrame(animation);
-                    };
-                    animation();
-                });
-            }
+                    if (offset > this.maxScroll) {
+                        offset = this.maxScroll;
+                        clearTimeout(this.timer);
+                        this.timer = undefined;
+                        this.scrollOffsetData = offset;
+                        this.tran = 0;
+                    }
+                    else if (offset < 0) {
+                        offset = 0;
+                        clearTimeout(this.timer);
+                        this.timer = undefined;
+                        this.scrollOffsetData = offset;
+                        this.tran = 0;
+                    }
+                    this.scrollOffsetEmit = offset;
+                    this.$emit('update:scrollOffset', offset);
+                    requestAnimationFrame(animation);
+                };
+                animation();
+            })
         });
         this.cgDown();
     },
@@ -268,7 +276,7 @@ exports.mounted = function () {
     });
     this.contentLength = Math.round(this.direction === 'v' ? size.height : size.width);
 };
-exports.destroyed = function () {
+exports.unmounted = function () {
     if (this.timer) {
         clearTimeout(this.timer);
         this.timer = undefined;

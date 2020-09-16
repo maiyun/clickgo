@@ -29,7 +29,6 @@ interface IVue {
     $nextTick(callback: (this: IVue) => void): void;
     $nextTick(): Promise<void>;
     $mount(c: string): any;
-    $destroy(): void;
 
     _isVue: boolean;
 
@@ -46,6 +45,14 @@ interface IVNode {
     'context': IVue;
 
     [key: string]: any;
+}
+
+interface IVueForm extends IVue {
+    /**
+     * --- layout 中 :class 的转义 ---
+     * @param cla class 内容对象
+     */
+    cgClassPrepend(this: IVueControl, cla: any): string;
 }
 
 interface IVueControl extends IVue {
@@ -83,4 +90,9 @@ interface IVueControl extends IVue {
      * @param file  文件路径
      */
     cgGetDataUrl(this: IVueControl, file: string): Promise<string | null>;
+    /**
+     * --- layout 中 :class 的转义 ---
+     * @param cla class 内容对象
+     */
+    cgClassPrepend(this: IVueControl, cla: any): string;
 }

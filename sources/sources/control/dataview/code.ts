@@ -1,40 +1,39 @@
 export let props = {
-    "width": {
-        "default": undefined
+    'width': {
+        'default': undefined
     },
-    "height": {
-        "default": undefined
+    'height': {
+        'default': undefined
     },
-    "left": {
-        "default": 0
+    'left': {
+        'default': 0
     },
-    "top": {
-        "default": 0
+    'top': {
+        'default': 0
     },
-    "zIndex": {
-        "default": 0
+    'zIndex': {
+        'default': 0
     },
-    "flex": {
-        "default": ""
+    'flex': {
+        'default': ''
     }
 };
 
 export let computed = {
-    "widthPx": function(this: IVue): string | undefined {
+    'widthPx': function(this: IVue): string | undefined {
         if (this.width !== undefined) {
-            return this.width + "px";
+            return this.width + 'px';
         }
-        if (this.flex !== "") {
-            return this.$parent.direction ? (this.$parent.direction === "v" ? undefined : "0") : undefined;
+        if (this.flex !== '') {
+            return this.$parent.direction ? (this.$parent.direction === 'v' ? undefined : '0') : undefined;
         }
     },
-    "heightPx": function(this: IVue): string | undefined {
+    'heightPx': function(this: IVue): string | undefined {
         if (this.height !== undefined) {
-            return this.height + "px";
+            return this.height + 'px';
         }
-        if (this.flex !== "") {
-            return this.$parent.direction ? (this.$parent.direction === "v" ? "0" : undefined) : undefined;
+        if (this.flex !== '') {
+            return this.$parent.direction ? (this.$parent.direction === 'v' ? '0' : undefined) : undefined;
         }
     }
 };
-

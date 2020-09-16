@@ -24,4 +24,4 @@ export declare let methods: {
     select: (this: IVue, index: number) => void;
 };
 export declare let mounted: (this: IVue) => void;
-export declare let destroyed: (this: IVue) => void;
+export declare let unmounted: (this: IVue) => void;

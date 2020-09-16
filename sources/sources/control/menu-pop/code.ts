@@ -33,6 +33,6 @@ export let mounted = function(this: IVue): void {
     clickgo.form.appendToPop(this.$el);
 };
 
-export let destroyed = function(this: IVue): void {
+export let unmounted = function(this: IVue): void {
     clickgo.form.removeFromPop(this.$el);
 };

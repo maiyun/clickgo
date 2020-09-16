@@ -1,51 +1,51 @@
 export let props = {
-    "disabled": {
-        "default": false
+    'disabled': {
+        'default': false
     },
-    "focus": {
-        "default": false
-    },
-
-    "width": {
-        "default": undefined
-    },
-    "height": {
-        "default": 30
-    },
-    "left": {
-        "default": 0
-    },
-    "top": {
-        "default": 0
-    },
-    "zIndex": {
-        "default": 0
-    },
-    "flex": {
-        "default": ""
-    },
-    "padding": {
-        "default": undefined
+    'focus': {
+        'default': false
     },
 
-    "value": {
-        "default": ""
+    'width': {
+        'default': undefined
     },
-    "editable": {
-        "default": false
+    'height': {
+        'default': 30
     },
-    "data": {
-        "default": []
+    'left': {
+        'default': 0
+    },
+    'top': {
+        'default': 0
+    },
+    'zIndex': {
+        'default': 0
+    },
+    'flex': {
+        'default': ''
+    },
+    'padding': {
+        'default': undefined
+    },
+
+    'value': {
+        'default': ''
+    },
+    'editable': {
+        'default': false
+    },
+    'data': {
+        'default': []
     }
 };
 
 export let data = {
-    "valueData": 0,
-    "valueIndex": 0
+    'valueData': 0,
+    'valueIndex': 0
 };
 
 export let watch = {
-    "data": {
+    'data': {
         handler: function(this: IVue): void {
             if (this.dataComp[this.valueIndex]) {
                 return;
@@ -53,12 +53,12 @@ export let watch = {
             // --- 没找到 ---
             this.valueIndex = this.dataComp.length - 1;
             if (!this.editable) {
-                this.valueData = this.valueIndex >= 0 ? this.dataComp[this.valueIndex].value : "";
-                this.$emit("input", this.valueData);
+                this.valueData = this.valueIndex >= 0 ? this.dataComp[this.valueIndex].value : '';
+                this.$emit('input', this.valueData);
             }
         }
     },
-    "value": {
+    'value': {
         handler: function(this: IVue): void {
             if (this.valueData === this.value) {
                 return;
@@ -74,22 +74,22 @@ export let watch = {
             // --- 没找到 ---
             this.valueIndex = 0;
             if (!this.editable) {
-                this.valueData = this.dataComp[0] ? this.dataComp[0].value : "";
-                this.$emit("input", this.valueData);
+                this.valueData = this.dataComp[0] ? this.dataComp[0].value : '';
+                this.$emit('input', this.valueData);
             }
         },
-        "immediate": true
+        'immediate': true
     }
 };
 
 export let computed = {
-    "editableComp": function(this: IVue): boolean {
-        if (typeof this.editable === "boolean") {
+    'editableComp': function(this: IVue): boolean {
+        if (typeof this.editable === 'boolean') {
             return this.editable;
         }
-        return this.editable === "true" ? true : false;
+        return this.editable === 'true' ? true : false;
     },
-    "dataComp": function(this: IVue): any {
+    'dataComp': function(this: IVue): any {
         let data = [];
         for (let i = 0; i < this.data.length; ++i) {
             if (this.data[i].value) {
@@ -97,7 +97,7 @@ export let computed = {
                 continue;
             }
             data[i] = {
-                "value": this.data[i]
+                'value': this.data[i]
             };
         }
         return data;
@@ -107,12 +107,12 @@ export let computed = {
 export let methods = {
     input: function(this: IVue, index: number): void {
         this.valueIndex = index;
-        this.valueData = this.dataComp[index] ? this.dataComp[index].value : "";
-        this.$emit("input", this.valueData);
+        this.valueData = this.dataComp[index] ? this.dataComp[index].value : '';
+        this.$emit('input', this.valueData);
     },
     tinput: function(this: IVue): void {
         this.valueData = this.$refs.input.value;
-        this.$emit("input", this.valueData);
+        this.$emit('input', this.valueData);
         for (let i = 0; i < this.dataComp.length; ++i) {
             if (this.dataComp[i].value !== this.valueData) {
                 continue;
@@ -124,4 +124,3 @@ export let methods = {
         this.valueIndex = 0;
     }
 };
-

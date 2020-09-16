@@ -324,7 +324,7 @@ function endTask(taskId) {
         let form = task.forms[fid];
         let el = form.vue.$el;
         let title = form.vue.$children[0].title;
-        form.vue.$destroy();
+        form.vue.unmount(form.vue.$el.parentNode);
         el.remove();
         trigger('formRemoved', taskId, form.id, { 'title': title });
     }

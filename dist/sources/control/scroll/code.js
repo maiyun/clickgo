@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.destroyed = exports.mounted = exports.methods = exports.computed = exports.watch = exports.data = exports.props = void 0;
+exports.unmounted = exports.mounted = exports.methods = exports.computed = exports.watch = exports.data = exports.props = void 0;
 exports.props = {
     'disabled': {
         'default': false
@@ -234,7 +234,7 @@ exports.mounted = function () {
     }
     this.resizePxOfScrollOffsetData(scrollOffsetData);
 };
-exports.destroyed = function () {
+exports.unmounted = function () {
     if (this.timer !== undefined) {
         clearInterval(this.timer);
     }

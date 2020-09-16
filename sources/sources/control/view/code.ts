@@ -155,7 +155,7 @@ export let methods = {
                 this.scrollOffsetEmit = this.scrollOffsetData;
                 this.$emit('update:scrollOffset', this.scrollOffsetData);
             },
-            'end': (moveTimes) => {
+            'end': async (moveTimes) => {
                 // --- 获取 200 毫秒内的偏移 ---
                 let movePos = 0;
                 let topTime = 0;
@@ -178,51 +178,50 @@ export let methods = {
                     return;
                 }
                 this.tran = speed * 2000;
-                this.$nextTick(function(this: IVue) {
-                    this.timer = setTimeout(() => {
-                        this.timer = undefined;
-                        this.tran = 0;
-                    }, this.tran);
-                    if (movePos > 0) {
-                        this.scrollOffsetData -= Math.round(speed * 800);
+                await this.$nextTick();
+                this.timer = setTimeout(() => {
+                    this.timer = undefined;
+                    this.tran = 0;
+                }, this.tran);
+                if (movePos > 0) {
+                    this.scrollOffsetData -= Math.round(speed * 800);
+                }
+                else {
+                    this.scrollOffsetData += Math.round(speed * 800);
+                }
+
+                /** --- 滑动动画向上传递 scrollOffset --- */
+                let animation = (): void => {
+                    if (!this.timer) {
+                        return;
+                    }
+                    let offset = 0;
+                    let wrapSize = clickgo.element.getSize(this.$refs.wrap);
+                    if (this.direction === 'v') {
+                        offset = Math.round(wrapSize.top + wrapSize.border.top + wrapSize.padding.top - this.$refs.inner.getBoundingClientRect().top);
                     }
                     else {
-                        this.scrollOffsetData += Math.round(speed * 800);
+                        offset = Math.round(wrapSize.left + wrapSize.border.left + wrapSize.padding.left - this.$refs.inner.getBoundingClientRect().left);
                     }
-
-                    /** --- 滑动动画向上传递 scrollOffset --- */
-                    let animation = (): void => {
-                        if (!this.timer) {
-                            return;
-                        }
-                        let offset = 0;
-                        let wrapSize = clickgo.element.getSize(this.$refs.wrap);
-                        if (this.direction === 'v') {
-                            offset = Math.round(wrapSize.top + wrapSize.border.top + wrapSize.padding.top - this.$refs.inner.getBoundingClientRect().top);
-                        }
-                        else {
-                            offset = Math.round(wrapSize.left + wrapSize.border.left + wrapSize.padding.left - this.$refs.inner.getBoundingClientRect().left);
-                        }
-                        if (offset > this.maxScroll) {
-                            offset = this.maxScroll;
-                            clearTimeout(this.timer);
-                            this.timer = undefined;
-                            this.scrollOffsetData = offset;
-                            this.tran = 0;
-                        }
-                        else if (offset < 0) {
-                            offset = 0;
-                            clearTimeout(this.timer);
-                            this.timer = undefined;
-                            this.scrollOffsetData = offset;
-                            this.tran = 0;
-                        }
-                        this.scrollOffsetEmit = offset;
-                        this.$emit('update:scrollOffset', offset);
-                        requestAnimationFrame(animation);
-                    };
-                    animation();
-                });
+                    if (offset > this.maxScroll) {
+                        offset = this.maxScroll;
+                        clearTimeout(this.timer);
+                        this.timer = undefined;
+                        this.scrollOffsetData = offset;
+                        this.tran = 0;
+                    }
+                    else if (offset < 0) {
+                        offset = 0;
+                        clearTimeout(this.timer);
+                        this.timer = undefined;
+                        this.scrollOffsetData = offset;
+                        this.tran = 0;
+                    }
+                    this.scrollOffsetEmit = offset;
+                    this.$emit('update:scrollOffset', offset);
+                    requestAnimationFrame(animation);
+                };
+                animation();
 
                 /*
 
@@ -329,7 +328,7 @@ export let mounted = function(this: IVue): void {
     this.contentLength = Math.round(this.direction === 'v' ? size.height : size.width);
 };
 
-export let destroyed = function(this: IVue): void {
+export let unmounted = function(this: IVue): void {
     if (this.timer) {
         clearTimeout(this.timer);
         this.timer = undefined;

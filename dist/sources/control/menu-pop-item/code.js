@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.destroyed = exports.mounted = exports.methods = exports.watch = exports.data = exports.props = void 0;
+exports.unmounted = exports.mounted = exports.methods = exports.watch = exports.data = exports.props = void 0;
 exports.props = {
     'disabled': {
         'default': false
@@ -82,7 +82,7 @@ exports.mounted = function () {
         ++this.$parent.hasTypeItemsCount;
     }
 };
-exports.destroyed = function () {
+exports.unmounted = function () {
     if (this.showArrow) {
         --this.$parent.hasSubItemsCount;
     }

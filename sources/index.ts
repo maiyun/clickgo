@@ -87,7 +87,7 @@ tmpScript.addEventListener('load', function(): void {
         loader.setAfter('?' + Math.random());
         // --- 加载库 ---
         let paths: string[] = [
-            'https://cdn.jsdelivr.net/npm/vue@2.6.11/dist/vue.min.js'
+            'https://cdn.jsdelivr.net/npm/vue@3.0.0-rc.11/dist/vue.global.min.js'
         ];
         // --- 判断 ResizeObserver 是否存在 ---
         let ro = true;

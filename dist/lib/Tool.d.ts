@@ -1,7 +1,7 @@
 export declare function blob2DataUrl(blob: Blob): Promise<string>;
 export declare function blob2ArrayBuffer(blob: Blob): Promise<ArrayBuffer>;
 export declare function blob2Text(blob: Blob): Promise<string>;
-export declare function clone(obj: Record<string, any> | any[]): object;
+export declare function clone(obj: Record<string, any> | any[]): any[] | any;
 export declare function siblings(e: HTMLElement, cn: string): HTMLElement | null;
 export declare function sleep(ms?: number): Promise<void>;
 export declare function createTaskStyleElement(taskId: number): void;
@@ -11,8 +11,8 @@ export declare function removeStyle(taskId: number, formId?: number): void;
 export declare function purify(text: string): string;
 export declare function trim(text: string): string;
 export declare function parsePath(path: string): string;
-export declare function isControlPkg(o: string | object): o is IControlPkg;
-export declare function isAppPkg(o: string | object): o is IAppPkg;
+export declare function isControlPkg(o: string | any): o is IControlPkg;
+export declare function isAppPkg(o: string | any): o is IAppPkg;
 export declare function controlBlob2Pkg(blob: Blob): Promise<false | IControlPkg>;
 export declare function stylePrepend(style: string, rand?: string): {
     'rand': string;
