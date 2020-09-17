@@ -30,7 +30,7 @@ styleListElement.insertAdjacentHTML('beforeend', `<style class='cg-global'>
 .cg-form-list, .cg-pop-list {-webkit-user-select: none; user-select: none;}
 
 .cg-form-list *, .cg-pop-list *, .cg-form-list *::after, .cg-pop-list *::after, .cg-form-list *::before, .cg-pop-list *::before {box-sizing: border-box !important; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); flex-shrink: 0;}
-.cg-form-list, .cg-form-list input, .cg-form-list textarea, .cg-pop-list, .cg-pop-list input, .cg-pop-list textarea {font-family: Roboto,-apple-system,BlinkMacSystemFont,"Helvetica Neue","Segoe UI","Oxygen","Ubuntu","Cantarell","Open Sans",sans-serif; font-size: 12px; line-height: 1; -webkit-font-smoothing: antialiased; font-weight: 300;}
+.cg-form-list, .cg-form-list input, .cg-form-list textarea, .cg-pop-list, .cg-pop-list input, .cg-pop-list textarea {font-family: Roboto,-apple-system,BlinkMacSystemFont,"Helvetica Neue","Segoe UI","Oxygen","Ubuntu","Cantarell","Open Sans",sans-serif; font-size: 12px; line-height: 1; -webkit-font-smoothing: antialiased;}
 
 .cg-circular {box-sizing: border-box; position: fixed; z-index: 20020003; border: solid 3px #76b9ed; border-radius: 50%; filter: drop-shadow(0 0 7px #76b9ed); pointer-events: none; opacity: 0;}
 .cg-rectangle {box-sizing: border-box; position: fixed; z-index: 20020002; border: solid 1px rgba(118, 185, 237, .7); box-shadow: 0 0 10px rgba(0, 0, 0, .3); background: rgba(118, 185, 237, .1); pointer-events: none; opacity: 0;}
