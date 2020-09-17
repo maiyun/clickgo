@@ -11,7 +11,8 @@ exports.data = {
 };
 exports.computed = {
     'showTab': function () {
-        return this.$parent.selectedIndex === this.index;
+        var _a;
+        return ((_a = this.$parent) === null || _a === void 0 ? void 0 : _a.selectedIndex) === this.index;
     }
 };
 exports.watch = {

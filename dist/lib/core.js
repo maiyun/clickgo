@@ -322,9 +322,9 @@ function endTask(taskId) {
     }
     for (let fid in task.forms) {
         let form = task.forms[fid];
-        let el = form.vue.$el;
-        let title = form.vue.$children[0].title;
-        form.vue.unmount(form.vue.$el.parentNode);
+        let el = form.vapp._container;
+        let title = form.vroot.$refs.form.title;
+        form.vapp.unmount();
         el.remove();
         trigger('formRemoved', taskId, form.id, { 'title': title });
     }

@@ -308,7 +308,8 @@ interface IFormLib {
 /** --- 窗体对象 --- */
 interface IForm {
     'id': number;
-    'vue': IVue;
+    'vapp': IVueApp;
+    'vroot': IVue;
     'win': Electron.BrowserWindow | null;
     'events': Record<string, (...any: any) => void | Promise<void>>;
 }
@@ -373,7 +374,7 @@ interface IToolLib {
     blob2DataUrl(blob: Blob): Promise<string>;
     blob2ArrayBuffer(blob: Blob): Promise<ArrayBuffer>;
     blob2Text(blob: Blob): Promise<string>;
-    clone(obj: Record<string, any> | any[]): object;
+    clone(obj: Record<string, any> | any[]): any[] | any;
     siblings(e: HTMLElement, cn: string): HTMLElement | null;
     sleep(ms?: number): Promise<void>;
     createTaskStyleElement(taskId: number): void;
@@ -383,8 +384,8 @@ interface IToolLib {
     purify(text: string): string;
     trim(text: string): string;
     parsePath(path: string): string;
-    isControlPkg(o: string | object): o is IControlPkg;
-    isAppPkg(o: string | object): o is IAppPkg;
+    isControlPkg(o: string | any): o is IControlPkg;
+    isAppPkg(o: string | any): o is IAppPkg;
     controlBlob2Pkg(blob: Blob): Promise<false | IControlPkg>;
     stylePrepend(style: string, rand?: string): {
         'rand': string;

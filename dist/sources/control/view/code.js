@@ -79,10 +79,10 @@ exports.computed = {
         }
         if (this.flex !== '') {
             let parent = this.$parent;
-            if (parent.$data._controlName === 'greatview') {
+            if ((parent === null || parent === void 0 ? void 0 : parent.$data._controlName) === 'greatview') {
                 parent = parent.$parent;
             }
-            return parent.direction ? (parent.direction === 'v' ? undefined : '0') : undefined;
+            return (parent === null || parent === void 0 ? void 0 : parent.direction) ? (parent.direction === 'v' ? undefined : '0') : undefined;
         }
     },
     'heightPx': function () {
@@ -91,10 +91,10 @@ exports.computed = {
         }
         if (this.flex !== '') {
             let parent = this.$parent;
-            if (parent.$data._controlName === 'greatview') {
+            if ((parent === null || parent === void 0 ? void 0 : parent.$data._controlName) === 'greatview') {
                 parent = parent.$parent;
             }
-            return parent.direction ? (parent.direction === 'v' ? '0' : undefined) : undefined;
+            return (parent === null || parent === void 0 ? void 0 : parent.direction) ? (parent.direction === 'v' ? '0' : undefined) : undefined;
         }
     },
     'length': function () {

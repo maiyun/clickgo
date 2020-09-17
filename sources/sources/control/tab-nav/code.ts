@@ -4,9 +4,12 @@ export let data = {
 };
 
 export let mounted = function(this: IVue): void {
+    if (!this.$parent) {
+        return;
+    }
     // --- 检测是否显示箭头 ---
     clickgo.element.watchSize(this.$refs.tabs, (size) => {
-        if (this.$parent.tabPosition === 'top' || this.$parent.tabPosition === 'bottom') {
+        if (this.$parent!.tabPosition === 'top' || this.$parent!.tabPosition === 'bottom') {
             if (size.scrollWidth > size.clientWidth) {
                 this.arrow = true;
             }
@@ -27,6 +30,9 @@ export let mounted = function(this: IVue): void {
 
 export let methods = {
     longDown: function(this: IVue, e: MouseEvent | TouchEvent, type: 'start' | 'end'): void {
+        if (!this.$parent) {
+            return;
+        }
         let num = type === 'start' ? -5 : 5;
         clickgo.element.bindDown(e, {
             down: () => {
@@ -34,7 +40,7 @@ export let methods = {
                     this.timer = undefined;
                 }
                 let cb = (): void => {
-                    if (this.$parent.tabPosition === 'top' || this.$parent.tabPosition === 'bottom') {
+                    if (this.$parent!.tabPosition === 'top' || this.$parent!.tabPosition === 'bottom') {
                         this.$refs.tabs.scrollLeft += num;
                     }
                     else {
@@ -54,6 +60,9 @@ export let methods = {
         });
     },
     wheel: function(this: IVue, e: WheelEvent): void {
+        if (!this.$parent) {
+            return;
+        }
         if (this.$parent.tabPosition === 'left' || this.$parent.tabPosition === 'right') {
             return;
         }

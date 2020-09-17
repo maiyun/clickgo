@@ -18,11 +18,12 @@ exports.data = {
 };
 exports.methods = {
     click: function (event) {
+        var _a, _b, _c;
         if (this.disabled) {
             return;
         }
         clickgo.form.hidePop();
-        this.$parent.$parent.$parent.select(this.value);
+        (_c = (_b = (_a = this.$parent) === null || _a === void 0 ? void 0 : _a.$parent) === null || _b === void 0 ? void 0 : _b.$parent) === null || _c === void 0 ? void 0 : _c.select(this.value);
         this.cgTap(event);
     },
     controlClick: function (e) {

@@ -27,6 +27,9 @@ exports.data = {
 };
 exports.watch = {
     'type': function () {
+        if (!this.$parent) {
+            return;
+        }
         if (this.type) {
             ++this.$parent.hasTypeItemsCount;
         }
@@ -38,6 +41,9 @@ exports.watch = {
 exports.methods = {
     mousein: function () {
         if (this.popOpen) {
+            return;
+        }
+        if (!this.$parent) {
             return;
         }
         for (let item of this.$parent.$children) {
@@ -74,6 +80,9 @@ exports.methods = {
     }
 };
 exports.mounted = function () {
+    if (!this.$parent) {
+        return;
+    }
     if (this.$children.length > 0) {
         this.showArrow = true;
         ++this.$parent.hasSubItemsCount;
@@ -83,6 +92,9 @@ exports.mounted = function () {
     }
 };
 exports.unmounted = function () {
+    if (!this.$parent) {
+        return;
+    }
     if (this.showArrow) {
         --this.$parent.hasSubItemsCount;
     }

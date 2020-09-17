@@ -23,19 +23,21 @@ exports.props = {
 };
 exports.computed = {
     'widthPx': function () {
+        var _a;
         if (this.width !== undefined) {
             return this.width + 'px';
         }
         if (this.flex !== '') {
-            return this.$parent.direction ? (this.$parent.direction === 'v' ? undefined : '0') : undefined;
+            return ((_a = this.$parent) === null || _a === void 0 ? void 0 : _a.direction) ? (this.$parent.direction === 'v' ? undefined : '0') : undefined;
         }
     },
     'heightPx': function () {
+        var _a;
         if (this.height !== undefined) {
             return this.height + 'px';
         }
         if (this.flex !== '') {
-            return this.$parent.direction ? (this.$parent.direction === 'v' ? '0' : undefined) : undefined;
+            return ((_a = this.$parent) === null || _a === void 0 ? void 0 : _a.direction) ? (this.$parent.direction === 'v' ? '0' : undefined) : undefined;
         }
     }
 };

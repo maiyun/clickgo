@@ -629,7 +629,7 @@ export let methods = {
             return;
         }
         e.stopPropagation();
-        clickgo.core.tasks[this.taskId].forms[this.maskFor].vue.flash();
+        clickgo.core.tasks[this.taskId].forms[this.maskFor].vroot.flash();
     },
     // --- 设置 left, width, zIndex 等 ---
     setPropData: function(this: IVue, name: string, val: number, mode: string = ''): void {

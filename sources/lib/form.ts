@@ -82,7 +82,8 @@ export function changeFocus(formId: number = 0, vm?: IVue): void {
             else {
                 let taskId = parseInt(focusElement.getAttribute('data-task-id') ?? '0');
                 let task = clickgo.core.tasks[taskId];
-                task.forms[dataFormIdNumber].vue.focus = false;
+                task.forms[dataFormIdNumber].vapp._container.classList.remove('cg-focus');
+                task.forms[dataFormIdNumber].vroot.focus = false;
                 // --- 触发 formBlurred 事件 ---
                 clickgo.core.trigger('formBlurred', taskId, dataFormIdNumber);
             }
@@ -104,21 +105,23 @@ export function changeFocus(formId: number = 0, vm?: IVue): void {
                         vm.$refs.form.setPropData('zIndex', ++lastZIndex);
                     }
                 }
+                (vm.$el.parentNode as HTMLDivElement).classList.add('cg-focus');
                 vm.focus = true;
                 taskId = vm.taskId;
             }
             else {
                 taskId = parseInt(el.getAttribute('data-task-id') ?? '0');
                 let task = clickgo.core.tasks[taskId];
-                if (!task.forms[formId].vue.$data._customZIndex) {
-                    if (task.forms[formId].vue.$data._topMost) {
-                        task.forms[formId].vue.$refs.form.setPropData('zIndex', ++lastTopZIndex);
+                if (!task.forms[formId].vroot.$data._customZIndex) {
+                    if (task.forms[formId].vroot.$data._topMost) {
+                        task.forms[formId].vroot.$refs.form.setPropData('zIndex', ++lastTopZIndex);
                     }
                     else {
-                        task.forms[formId].vue.$refs.form.setPropData('zIndex', ++lastZIndex);
+                        task.forms[formId].vroot.$refs.form.setPropData('zIndex', ++lastZIndex);
                     }
                 }
-                task.forms[formId].vue.focus = true;
+                task.forms[formId].vapp._container.classList.add('cg-focus');
+                task.forms[formId].vroot.focus = true;
             }
             // --- 触发 formFocused 事件 ---
             clickgo.core.trigger('formFocused', taskId, formId);
@@ -312,6 +315,9 @@ export function showPop(pop: IVue, x: number | HTMLElement, y: number = 0): void
     if (!currentPop) {
         currentPop = pop;
     }
+    if (!pop.$parent) {
+        return;
+    }
     pop.$parent.popOpen = true;
     pop.open = true;
     // --- 获取限定区域 ---
@@ -384,6 +390,9 @@ export function hidePop(pop: IVue | null = null): void {
             return;
         }
         currentPop = null;
+    }
+    if (!pop.$parent) {
+        return;
     }
     pop.$parent.popOpen = false;
     pop.open = false;
@@ -467,11 +476,11 @@ export function remove(formId: number): boolean {
     // --- 多个窗体 ---
     let title = '';
     if (clickgo.core.tasks[taskId].forms[formId]) {
-        title = clickgo.core.tasks[taskId].forms[formId].vue.$refs.form.title;
-        clickgo.core.tasks[taskId].forms[formId].vue.unmount(clickgo.core.tasks[taskId].forms[formId].vue.$el.parentNode);
-        if (clickgo.core.tasks[taskId].forms[formId].vue.$refs.form.maskFrom !== undefined) {
-            let fid = clickgo.core.tasks[taskId].forms[formId].vue.$refs.form.maskFrom;
-            clickgo.core.tasks[taskId].forms[fid].vue.$refs.form.maskFor = undefined;
+        title = clickgo.core.tasks[taskId].forms[formId].vroot.$refs.form.title;
+        clickgo.core.tasks[taskId].forms[formId].vapp.unmount();
+        if (clickgo.core.tasks[taskId].forms[formId].vroot.$refs.form.maskFrom !== undefined) {
+            let fid = clickgo.core.tasks[taskId].forms[formId].vroot.$refs.form.maskFrom;
+            clickgo.core.tasks[taskId].forms[fid].vroot.$refs.form.maskFor = undefined;
         }
         delete(clickgo.core.tasks[taskId].forms[formId]);
     }
@@ -807,7 +816,7 @@ export async function create(opt: ICreateFormOptions): Promise<number | IForm> {
         else {
             if (this.$refs.form.maskFor) {
                 this.$refs.form.maskFor = form.id;
-                form.vue.$refs.form.maskFrom = this.formId;
+                form.vroot.$refs.form.maskFrom = this.formId;
             }
         }
     };
@@ -818,10 +827,10 @@ export async function create(opt: ICreateFormOptions): Promise<number | IForm> {
         this.$refs.form.moveMethod(e);
     };
     methods.setSystemEventListener = function(this: IVue, name: TGlobalEvent, func: any): void {
-        this.eventList[name] = func;
+        this.cgEventList[name] = func;
     };
     methods.removeSystemEventListener = function(this: IVue, name: TGlobalEvent): void {
-        delete(this.eventList[name]);
+        delete(this.cgEventList[name]);
     };
     // --- 获取文件 blob 对象 ---
     methods.getBlob = function(this: IVue, file: string): Blob | null {
@@ -889,8 +898,11 @@ export async function create(opt: ICreateFormOptions): Promise<number | IForm> {
         }
         return `cg-task${this.taskId}_${cla} ${this.$data._scope}${cla}`;
     };
-    let $vm: IVue | false = await new Promise(function(resolve) {
-        Vue.createApp({
+    let rtn: {
+        'vapp': IVueApp;
+        'vroot': IVue;
+    } | null = await new Promise(function(resolve) {
+        const vapp = Vue.createApp({
             'data': function() {
                 return clickgo.tool.clone(data);
             },
@@ -902,10 +914,13 @@ export async function create(opt: ICreateFormOptions): Promise<number | IForm> {
             'beforeCreate': beforeCreate,
             'created': created,
             'beforeMount': beforeMount,
-            'mounted': async function() {
+            'mounted': async function(this: IVue) {
                 await this.$nextTick();
                 if (this.$el.getAttribute !== undefined) {
-                    resolve(this);
+                    resolve({
+                        'vapp': vapp,
+                        'vroot': this
+                    });
                 }
                 else {
                     if (this.$el.parentNode) {
@@ -913,7 +928,7 @@ export async function create(opt: ICreateFormOptions): Promise<number | IForm> {
                         clickgo.tool.removeStyle(this.taskId, this.formId);
                         formListElement.removeChild(this.$el);
                     }
-                    resolve(false);
+                    resolve(null);
                 }
             },
             'beforeUpdate': beforeUpdate,
@@ -923,13 +938,14 @@ export async function create(opt: ICreateFormOptions): Promise<number | IForm> {
             },
             'beforeUnmount': beforeUnmount,
             'unmounted': unmounted,
-        }).mount(el);
+        });
+        vapp.mount(el);
     });
-    if (!$vm) {
+    if (!rtn) {
         return -106;
     }
     // --- 全局事件来遍历执行的响应 ---
-    $vm.eventList = {};
+    rtn.vapp.config.globalProperties.cgEventList = {};
     // --- 部署本窗体控件 css ---
     if (controlsStyle !== '') {
         // --- 将这些窗体的控件样式追加到网页 ---
@@ -941,27 +957,27 @@ export async function create(opt: ICreateFormOptions): Promise<number | IForm> {
     }
     // --- 将窗体居中 ---
     let position = clickgo.getPosition();
-    if (!$vm.$refs.form.stateMaxData) {
-        if ($vm.$refs.form.left === -1) {
-            $vm.$refs.form.setPropData('left', (position.width - $vm.$el.offsetWidth) / 2);
+    if (!rtn.vroot.$refs.form.stateMaxData) {
+        if (rtn.vroot.$refs.form.left === -1) {
+            rtn.vroot.$refs.form.setPropData('left', (position.width - rtn.vroot.$el.offsetWidth) / 2);
         }
-        if ($vm.$refs.form.top === -1) {
-            $vm.$refs.form.setPropData('top', (position.height - $vm.$el.offsetHeight) / 2);
+        if (rtn.vroot.$refs.form.top === -1) {
+            rtn.vroot.$refs.form.setPropData('top', (position.height - rtn.vroot.$el.offsetHeight) / 2);
         }
     }
-    if ($vm.$refs.form.zIndex !== -1) {
-        $vm.$data._customZIndex = true;
+    if (rtn.vroot.$refs.form.zIndex !== -1) {
+        rtn.vroot.$data._customZIndex = true;
     }
     // --- 执行 mounted ---
     if (mounted) {
         try {
-            mounted.call($vm);
+            mounted.call(rtn.vroot);
         }
         catch (err) {
-            formListElement.removeChild($vm.$el);
-            clickgo.tool.removeStyle($vm.taskId, $vm.formId);
+            formListElement.removeChild(rtn.vroot.$el);
+            clickgo.tool.removeStyle(rtn.vroot.taskId, rtn.vroot.formId);
             if (clickgo.core.globalEvents.errorHandler) {
-                clickgo.core.globalEvents.errorHandler($vm.taskId, $vm.formId, err, 'Create form mounted error.');
+                clickgo.core.globalEvents.errorHandler(rtn.vroot.taskId, rtn.vroot.formId, err, 'Create form mounted error.');
             }
             else {
                 console.log(err);
@@ -970,24 +986,25 @@ export async function create(opt: ICreateFormOptions): Promise<number | IForm> {
         }
     }
     // --- 绑定获取焦点事件 ---
-    changeFocus(formId, $vm);
+    changeFocus(formId, rtn.vroot);
     // --- 将 form 挂载到 task 当中 ---
     let form: IForm = {
         'id': formId,
-        'vue': $vm,
+        'vapp': rtn.vapp,
+        'vroot': rtn.vroot,
         'win': null,
         'events': {}
     };
     // --- 挂载 form ---
     if (!clickgo.core.tasks[opt.taskId]) {
-        $vm.unmount(el);
+        rtn.vapp.unmount();
         clickgo.tool.removeStyle(opt.taskId, formId);
-        formListElement.removeChild($vm.$el);
+        formListElement.removeChild(rtn.vapp._container);
         return -107;
     }
     clickgo.core.tasks[opt.taskId].forms[formId] = form;
     // --- 触发 formCreated 事件 ---
-    clickgo.core.trigger('formCreated', opt.taskId, formId, {'title': $vm.$refs.form.title, 'icon': $vm.$refs.form.iconData});
+    clickgo.core.trigger('formCreated', opt.taskId, formId, {'title': rtn.vroot.$refs.form.title, 'icon': rtn.vroot.$refs.form.iconData});
     return form;
 }
 
@@ -996,7 +1013,8 @@ window.addEventListener('resize', function(): void {
     // --- 将所有已经最大化的窗体的大小重置 ---
     for (let i = 0; i < formListElement.children.length; ++i) {
         let el = formListElement.children.item(i) as HTMLElement;
-        if (el.className.indexOf('cg-state-max') === -1) {
+        let ef = el.children.item(0) as HTMLElement;
+        if (ef.className.indexOf('cg-state-max') === -1) {
             continue;
         }
         let taskId = parseInt(el.getAttribute('data-task-id') as string);
@@ -1004,10 +1022,10 @@ window.addEventListener('resize', function(): void {
         if (!clickgo.core.tasks[taskId]) {
             continue;
         }
-        let $vm = clickgo.core.tasks[taskId].forms[formId].vue;
+        let vroot = clickgo.core.tasks[taskId].forms[formId].vroot;
         let position = clickgo.getPosition();
-        $vm.$refs.form.setPropData('width', position.width);
-        $vm.$refs.form.setPropData('height', position.height);
+        vroot.$refs.form.setPropData('width', position.width);
+        vroot.$refs.form.setPropData('height', position.height);
     }
     // --- 触发 screenResize 事件 ---
     clickgo.core.trigger('screenResize');

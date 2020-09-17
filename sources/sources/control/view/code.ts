@@ -74,10 +74,10 @@ export let computed = {
         }
         if (this.flex !== '') {
             let parent = this.$parent;
-            if (parent.$data._controlName === 'greatview') {
+            if (parent?.$data._controlName === 'greatview') {
                 parent = parent.$parent;
             }
-            return parent.direction ? (parent.direction === 'v' ? undefined : '0') : undefined;
+            return parent?.direction ? (parent.direction === 'v' ? undefined : '0') : undefined;
         }
     },
     'heightPx': function(this: IVue): string | undefined {
@@ -86,10 +86,10 @@ export let computed = {
         }
         if (this.flex !== '') {
             let parent = this.$parent;
-            if (parent.$data._controlName === 'greatview') {
+            if (parent?.$data._controlName === 'greatview') {
                 parent = parent.$parent;
             }
-            return parent.direction ? (parent.direction === 'v' ? '0' : undefined) : undefined;
+            return parent?.direction ? (parent.direction === 'v' ? '0' : undefined) : undefined;
         }
     },
     'length': function(this: IVue): number {

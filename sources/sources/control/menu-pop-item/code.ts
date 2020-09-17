@@ -27,6 +27,9 @@ export let data = {
 
 export let watch = {
     'type': function(this: IVue): void {
+        if (!this.$parent) {
+            return;
+        }
         if (this.type) {
             ++this.$parent.hasTypeItemsCount;
         }
@@ -39,6 +42,9 @@ export let watch = {
 export let methods = {
     mousein: function(this: IVue): void {
         if (this.popOpen) {
+            return;
+        }
+        if (!this.$parent) {
             return;
         }
         // --- 判断别的是否有展开 ---
@@ -79,6 +85,9 @@ export let methods = {
 };
 
 export let mounted = function(this: IVue): void {
+    if (!this.$parent) {
+        return;
+    }
     // --- 子 pop ---
     if (this.$children.length > 0) {
         this.showArrow = true;
@@ -91,6 +100,9 @@ export let mounted = function(this: IVue): void {
 };
 
 export let unmounted = function(this: IVue): void {
+    if (!this.$parent) {
+        return;
+    }
     // --- 子 pop ---
     if (this.showArrow) {
         --this.$parent.hasSubItemsCount;

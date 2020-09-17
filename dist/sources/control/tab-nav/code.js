@@ -6,6 +6,9 @@ exports.data = {
     'timer': undefined
 };
 exports.mounted = function () {
+    if (!this.$parent) {
+        return;
+    }
     clickgo.element.watchSize(this.$refs.tabs, (size) => {
         if (this.$parent.tabPosition === 'top' || this.$parent.tabPosition === 'bottom') {
             if (size.scrollWidth > size.clientWidth) {
@@ -27,6 +30,9 @@ exports.mounted = function () {
 };
 exports.methods = {
     longDown: function (e, type) {
+        if (!this.$parent) {
+            return;
+        }
         let num = type === 'start' ? -5 : 5;
         clickgo.element.bindDown(e, {
             down: () => {
@@ -54,6 +60,9 @@ exports.methods = {
         });
     },
     wheel: function (e) {
+        if (!this.$parent) {
+            return;
+        }
         if (this.$parent.tabPosition === 'left' || this.$parent.tabPosition === 'right') {
             return;
         }

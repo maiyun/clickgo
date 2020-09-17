@@ -23,7 +23,7 @@ export let methods = {
             return;
         }
         clickgo.form.hidePop();
-        this.$parent.$parent.$parent.select(this.value);
+        this.$parent?.$parent?.$parent?.select(this.value);
         this.cgTap(event);
     },
     controlClick: function(this: IVue, e: MouseEvent): void {

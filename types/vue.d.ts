@@ -1,42 +1,55 @@
 declare let Vue: {
-    new(opt: any): IVue;
-
-    /** --- 注册或获取全局组件 --- */
-    component(name: string, opt?: any): any;
-    /** --- 安装 Vue.js 插件 --- */
-    use(obj: any): any;
-    /** --- 使用基础 Vue 构造器，创建一个“子类”。 --- */
-    extend(opt: any): any;
-
-    'config': any;
-
-    [key: string]: any;
+    createApp(opt: any): IVueApp;
 };
 
+type IVueOptionMergeFunction = (to: unknown, from: unknown, instance: IVue) => any;
+
+interface IVueConfig {
+    errorHandler?(err: unknown, instance: IVue | null, info: string): void;
+    'globalProperties': Record<string, any>;
+    isCustomElement(tag: string): boolean;
+    isNativeTag?(tag: string): boolean;
+    'optionMergeStrategies': Record<string, IVueOptionMergeFunction>;
+    'performance': boolean;
+    warnHandler?(msg: string, instance: IVue | null, trace: string): void;
+}
+
+interface IVueApp {
+    component(name: string): any | undefined;
+    component(name: string, config: any): this;
+    'config': IVueConfig;
+    directive(name: string): any | undefined;
+    directive(name: string, config: any): this;
+    mixin(mixin: any): this;
+    mount(rootContainer: HTMLElement | string): IVue;
+    provide<T>(key: string, value: T): this;
+    unmount(): void;
+    use(plugin: Plugin, ...options: any[]): this;
+    'version': string;
+
+    '_container': HTMLElement;
+}
+
 interface IVue {
-    $el: HTMLElement;
-    $refs: Record<string, HTMLElement & IVue>;
-    $data: any;
-    $props: any;
-    $slots: {
-        [name: string]: IVNode[];
-    };
-    $parent: IVue;
-    $children: IVue[];
-    $watch: any;
-
-    $emit(event: string, ...args: any[]): IVue;
-    $nextTick(callback: (this: IVue) => void): void;
+    '$attrs': Record<string, string>;
+    '$data': Record<string, any>;
+    '$el': HTMLElement;
+    $emit(name: string, ...arg: any): void;
+    $forceUpdate(): void;
     $nextTick(): Promise<void>;
-    $mount(c: string): any;
-
-    _isVue: boolean;
+    '$options': Record<string, any>;
+    '$parent': IVue | null;
+    '$props': Record<string, any>;
+    '$refs': Record<string, HTMLElement & IVue>;
+    '$root': IVue;
+    '$slots': Record<string, IVueVNode[]>;
+    '$watch': (o: any, cb: (n: any, o: any) => void) => void;
 
     [key: string]: any;
 }
 
-interface IVNode {
-    'children': IVNode[];
+interface IVueVNode {
+    'children': IVueVNode[];
     'componentInstance': IVue;
     'componentOptions': {
         'tag': string;

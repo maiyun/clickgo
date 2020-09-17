@@ -32,7 +32,7 @@ export let computed = {
             return this.width + 'px';
         }
         if (this.flex !== '') {
-            return this.$parent.direction ? (this.$parent.direction === 'v' ? undefined : '0') : undefined;
+            return this.$parent?.direction ? (this.$parent.direction === 'v' ? undefined : '0') : undefined;
         }
     },
     'heightPx': function(this: IVue): string | undefined {
@@ -40,7 +40,7 @@ export let computed = {
             return this.height + 'px';
         }
         if (this.flex !== '') {
-            return this.$parent.direction ? (this.$parent.direction === 'v' ? '0' : undefined) : undefined;
+            return this.$parent?.direction ? (this.$parent.direction === 'v' ? '0' : undefined) : undefined;
         }
     }
 };

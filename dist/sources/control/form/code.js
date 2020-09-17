@@ -601,7 +601,7 @@ exports.methods = {
             return;
         }
         e.stopPropagation();
-        clickgo.core.tasks[this.taskId].forms[this.maskFor].vue.flash();
+        clickgo.core.tasks[this.taskId].forms[this.maskFor].vroot.flash();
     },
     setPropData: function (name, val, mode = '') {
         if (this[name + 'Data'] === undefined || this[name] === undefined) {

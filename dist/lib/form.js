@@ -57,7 +57,8 @@ function changeFocus(formId = 0, vm) {
             else {
                 let taskId = parseInt((_a = focusElement.getAttribute('data-task-id')) !== null && _a !== void 0 ? _a : '0');
                 let task = clickgo.core.tasks[taskId];
-                task.forms[dataFormIdNumber].vue.focus = false;
+                task.forms[dataFormIdNumber].vapp._container.classList.remove('cg-focus');
+                task.forms[dataFormIdNumber].vroot.focus = false;
                 clickgo.core.trigger('formBlurred', taskId, dataFormIdNumber);
             }
         }
@@ -78,21 +79,23 @@ function changeFocus(formId = 0, vm) {
                         vm.$refs.form.setPropData('zIndex', ++exports.lastZIndex);
                     }
                 }
+                vm.$el.parentNode.classList.add('cg-focus');
                 vm.focus = true;
                 taskId = vm.taskId;
             }
             else {
                 taskId = parseInt((_b = el.getAttribute('data-task-id')) !== null && _b !== void 0 ? _b : '0');
                 let task = clickgo.core.tasks[taskId];
-                if (!task.forms[formId].vue.$data._customZIndex) {
-                    if (task.forms[formId].vue.$data._topMost) {
-                        task.forms[formId].vue.$refs.form.setPropData('zIndex', ++exports.lastTopZIndex);
+                if (!task.forms[formId].vroot.$data._customZIndex) {
+                    if (task.forms[formId].vroot.$data._topMost) {
+                        task.forms[formId].vroot.$refs.form.setPropData('zIndex', ++exports.lastTopZIndex);
                     }
                     else {
-                        task.forms[formId].vue.$refs.form.setPropData('zIndex', ++exports.lastZIndex);
+                        task.forms[formId].vroot.$refs.form.setPropData('zIndex', ++exports.lastZIndex);
                     }
                 }
-                task.forms[formId].vue.focus = true;
+                task.forms[formId].vapp._container.classList.add('cg-focus');
+                task.forms[formId].vroot.focus = true;
             }
             clickgo.core.trigger('formFocused', taskId, formId);
         }
@@ -251,6 +254,9 @@ function showPop(pop, x, y = 0) {
     if (!exports.currentPop) {
         exports.currentPop = pop;
     }
+    if (!pop.$parent) {
+        return;
+    }
     pop.$parent.popOpen = true;
     pop.open = true;
     let position = clickgo.getPosition();
@@ -311,6 +317,9 @@ function hidePop(pop = null) {
             return;
         }
         exports.currentPop = null;
+    }
+    if (!pop.$parent) {
+        return;
     }
     pop.$parent.popOpen = false;
     pop.open = false;
@@ -378,11 +387,11 @@ function remove(formId) {
     }
     let title = '';
     if (clickgo.core.tasks[taskId].forms[formId]) {
-        title = clickgo.core.tasks[taskId].forms[formId].vue.$refs.form.title;
-        clickgo.core.tasks[taskId].forms[formId].vue.unmount(clickgo.core.tasks[taskId].forms[formId].vue.$el.parentNode);
-        if (clickgo.core.tasks[taskId].forms[formId].vue.$refs.form.maskFrom !== undefined) {
-            let fid = clickgo.core.tasks[taskId].forms[formId].vue.$refs.form.maskFrom;
-            clickgo.core.tasks[taskId].forms[fid].vue.$refs.form.maskFor = undefined;
+        title = clickgo.core.tasks[taskId].forms[formId].vroot.$refs.form.title;
+        clickgo.core.tasks[taskId].forms[formId].vapp.unmount();
+        if (clickgo.core.tasks[taskId].forms[formId].vroot.$refs.form.maskFrom !== undefined) {
+            let fid = clickgo.core.tasks[taskId].forms[formId].vroot.$refs.form.maskFrom;
+            clickgo.core.tasks[taskId].forms[fid].vroot.$refs.form.maskFor = undefined;
         }
         delete (clickgo.core.tasks[taskId].forms[formId]);
     }
@@ -692,7 +701,7 @@ function create(opt) {
                 else {
                     if (this.$refs.form.maskFor) {
                         this.$refs.form.maskFor = form.id;
-                        form.vue.$refs.form.maskFrom = this.formId;
+                        form.vroot.$refs.form.maskFrom = this.formId;
                     }
                 }
             });
@@ -704,10 +713,10 @@ function create(opt) {
             this.$refs.form.moveMethod(e);
         };
         methods.setSystemEventListener = function (name, func) {
-            this.eventList[name] = func;
+            this.cgEventList[name] = func;
         };
         methods.removeSystemEventListener = function (name) {
-            delete (this.eventList[name]);
+            delete (this.cgEventList[name]);
         };
         methods.getBlob = function (file) {
             var _a;
@@ -774,8 +783,8 @@ function create(opt) {
             }
             return `cg-task${this.taskId}_${cla} ${this.$data._scope}${cla}`;
         };
-        let $vm = yield new Promise(function (resolve) {
-            Vue.createApp({
+        let rtn = yield new Promise(function (resolve) {
+            const vapp = Vue.createApp({
                 'data': function () {
                     return clickgo.tool.clone(data);
                 },
@@ -790,7 +799,10 @@ function create(opt) {
                     return __awaiter(this, void 0, void 0, function* () {
                         yield this.$nextTick();
                         if (this.$el.getAttribute !== undefined) {
-                            resolve(this);
+                            resolve({
+                                'vapp': vapp,
+                                'vroot': this
+                            });
                         }
                         else {
                             if (this.$el.parentNode) {
@@ -798,7 +810,7 @@ function create(opt) {
                                 clickgo.tool.removeStyle(this.taskId, this.formId);
                                 formListElement.removeChild(this.$el);
                             }
-                            resolve(false);
+                            resolve(null);
                         }
                     });
                 },
@@ -811,12 +823,13 @@ function create(opt) {
                 },
                 'beforeUnmount': beforeUnmount,
                 'unmounted': unmounted,
-            }).mount(el);
+            });
+            vapp.mount(el);
         });
-        if (!$vm) {
+        if (!rtn) {
             return -106;
         }
-        $vm.eventList = {};
+        rtn.vapp.config.globalProperties.cgEventList = {};
         if (controlsStyle !== '') {
             clickgo.tool.pushStyle(controlsStyle, opt.taskId, 'controls', formId);
         }
@@ -824,26 +837,26 @@ function create(opt) {
             clickgo.tool.pushStyle(style, opt.taskId, 'forms', formId);
         }
         let position = clickgo.getPosition();
-        if (!$vm.$refs.form.stateMaxData) {
-            if ($vm.$refs.form.left === -1) {
-                $vm.$refs.form.setPropData('left', (position.width - $vm.$el.offsetWidth) / 2);
+        if (!rtn.vroot.$refs.form.stateMaxData) {
+            if (rtn.vroot.$refs.form.left === -1) {
+                rtn.vroot.$refs.form.setPropData('left', (position.width - rtn.vroot.$el.offsetWidth) / 2);
             }
-            if ($vm.$refs.form.top === -1) {
-                $vm.$refs.form.setPropData('top', (position.height - $vm.$el.offsetHeight) / 2);
+            if (rtn.vroot.$refs.form.top === -1) {
+                rtn.vroot.$refs.form.setPropData('top', (position.height - rtn.vroot.$el.offsetHeight) / 2);
             }
         }
-        if ($vm.$refs.form.zIndex !== -1) {
-            $vm.$data._customZIndex = true;
+        if (rtn.vroot.$refs.form.zIndex !== -1) {
+            rtn.vroot.$data._customZIndex = true;
         }
         if (mounted) {
             try {
-                mounted.call($vm);
+                mounted.call(rtn.vroot);
             }
             catch (err) {
-                formListElement.removeChild($vm.$el);
-                clickgo.tool.removeStyle($vm.taskId, $vm.formId);
+                formListElement.removeChild(rtn.vroot.$el);
+                clickgo.tool.removeStyle(rtn.vroot.taskId, rtn.vroot.formId);
                 if (clickgo.core.globalEvents.errorHandler) {
-                    clickgo.core.globalEvents.errorHandler($vm.taskId, $vm.formId, err, 'Create form mounted error.');
+                    clickgo.core.globalEvents.errorHandler(rtn.vroot.taskId, rtn.vroot.formId, err, 'Create form mounted error.');
                 }
                 else {
                     console.log(err);
@@ -851,21 +864,22 @@ function create(opt) {
                 return -105;
             }
         }
-        changeFocus(formId, $vm);
+        changeFocus(formId, rtn.vroot);
         let form = {
             'id': formId,
-            'vue': $vm,
+            'vapp': rtn.vapp,
+            'vroot': rtn.vroot,
             'win': null,
             'events': {}
         };
         if (!clickgo.core.tasks[opt.taskId]) {
-            $vm.unmount(el);
+            rtn.vapp.unmount();
             clickgo.tool.removeStyle(opt.taskId, formId);
-            formListElement.removeChild($vm.$el);
+            formListElement.removeChild(rtn.vapp._container);
             return -107;
         }
         clickgo.core.tasks[opt.taskId].forms[formId] = form;
-        clickgo.core.trigger('formCreated', opt.taskId, formId, { 'title': $vm.$refs.form.title, 'icon': $vm.$refs.form.iconData });
+        clickgo.core.trigger('formCreated', opt.taskId, formId, { 'title': rtn.vroot.$refs.form.title, 'icon': rtn.vroot.$refs.form.iconData });
         return form;
     });
 }
@@ -873,7 +887,8 @@ exports.create = create;
 window.addEventListener('resize', function () {
     for (let i = 0; i < formListElement.children.length; ++i) {
         let el = formListElement.children.item(i);
-        if (el.className.indexOf('cg-state-max') === -1) {
+        let ef = el.children.item(0);
+        if (ef.className.indexOf('cg-state-max') === -1) {
             continue;
         }
         let taskId = parseInt(el.getAttribute('data-task-id'));
@@ -881,10 +896,10 @@ window.addEventListener('resize', function () {
         if (!clickgo.core.tasks[taskId]) {
             continue;
         }
-        let $vm = clickgo.core.tasks[taskId].forms[formId].vue;
+        let vroot = clickgo.core.tasks[taskId].forms[formId].vroot;
         let position = clickgo.getPosition();
-        $vm.$refs.form.setPropData('width', position.width);
-        $vm.$refs.form.setPropData('height', position.height);
+        vroot.$refs.form.setPropData('width', position.width);
+        vroot.$refs.form.setPropData('height', position.height);
     }
     clickgo.core.trigger('screenResize');
 });

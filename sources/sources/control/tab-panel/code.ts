@@ -10,7 +10,7 @@ export let data = {
 
 export let computed = {
     'showTab': function(this: IVue): boolean {
-        return this.$parent.selectedIndex === this.index;
+        return this.$parent?.selectedIndex === this.index;
     }
 };
 
