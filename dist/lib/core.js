@@ -322,10 +322,9 @@ function endTask(taskId) {
     }
     for (let fid in task.forms) {
         let form = task.forms[fid];
-        let el = form.vapp._container;
         let title = form.vroot.$refs.form.title;
         form.vapp.unmount();
-        el.remove();
+        form.vapp._container.remove();
         trigger('formRemoved', taskId, form.id, { 'title': title });
     }
     clickgo.tool.removeStyle(taskId);

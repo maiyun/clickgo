@@ -453,7 +453,7 @@ else {
 }
 
 /**
- * --- 移除一个 form ---
+ * --- 移除一个 form（关闭窗口） ---
  * @param formId 要移除的 form id
  */
 export function remove(formId: number): boolean {
@@ -477,16 +477,16 @@ export function remove(formId: number): boolean {
     let title = '';
     if (clickgo.core.tasks[taskId].forms[formId]) {
         title = clickgo.core.tasks[taskId].forms[formId].vroot.$refs.form.title;
-        clickgo.core.tasks[taskId].forms[formId].vapp.unmount();
         if (clickgo.core.tasks[taskId].forms[formId].vroot.$refs.form.maskFrom !== undefined) {
             let fid = clickgo.core.tasks[taskId].forms[formId].vroot.$refs.form.maskFrom;
             clickgo.core.tasks[taskId].forms[fid].vroot.$refs.form.maskFor = undefined;
         }
+        clickgo.core.tasks[taskId].forms[formId].vapp.unmount();
         delete(clickgo.core.tasks[taskId].forms[formId]);
     }
     // --- 移除 form 的 style ---
     clickgo.tool.removeStyle(taskId, formId);
-    // --- 移除 element ---
+    // --- 移除 element wrap ---
     formListElement.removeChild(formElement);
     // --- 触发 formRemoved 事件 ---
     clickgo.core.trigger('formRemoved', taskId, formId, {'title': title});
@@ -924,9 +924,9 @@ export async function create(opt: ICreateFormOptions): Promise<number | IForm> {
                 }
                 else {
                     if (this.$el.parentNode) {
-                        this.unmount(el);
+                        vapp.unmount();
                         clickgo.tool.removeStyle(this.taskId, this.formId);
-                        formListElement.removeChild(this.$el);
+                        formListElement.removeChild(vapp._container);
                     }
                     resolve(null);
                 }

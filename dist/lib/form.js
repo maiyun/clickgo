@@ -388,11 +388,11 @@ function remove(formId) {
     let title = '';
     if (clickgo.core.tasks[taskId].forms[formId]) {
         title = clickgo.core.tasks[taskId].forms[formId].vroot.$refs.form.title;
-        clickgo.core.tasks[taskId].forms[formId].vapp.unmount();
         if (clickgo.core.tasks[taskId].forms[formId].vroot.$refs.form.maskFrom !== undefined) {
             let fid = clickgo.core.tasks[taskId].forms[formId].vroot.$refs.form.maskFrom;
             clickgo.core.tasks[taskId].forms[fid].vroot.$refs.form.maskFor = undefined;
         }
+        clickgo.core.tasks[taskId].forms[formId].vapp.unmount();
         delete (clickgo.core.tasks[taskId].forms[formId]);
     }
     clickgo.tool.removeStyle(taskId, formId);
@@ -806,9 +806,9 @@ function create(opt) {
                         }
                         else {
                             if (this.$el.parentNode) {
-                                this.unmount(el);
+                                vapp.unmount();
                                 clickgo.tool.removeStyle(this.taskId, this.formId);
-                                formListElement.removeChild(this.$el);
+                                formListElement.removeChild(vapp._container);
                             }
                             resolve(null);
                         }
