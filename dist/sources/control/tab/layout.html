@@ -1,7 +1,7 @@
 <div class="wrap" :class="[tabPosition]" ref="wrap" :style="{'width': widthPx, 'height': heightPx, 'left': left + 'px', 'top': top + 'px', 'z-index': zIndex, 'flex-grow': flex}" @click="cgTap" @mousedown="cgDown" @touchstart="cgDown" @dblclick="cgDblclick">
-    <cg-tab-nav v-if="tabPosition==='top'||tabPosition==='left'"></cg-tab-nav>
+    <cg-tab-nav v-if="tabPosition==='top'||tabPosition==='left'" :tabs="tabs"></cg-tab-nav>
     <div class="panels">
         <slot></slot>
     </div>
-    <cg-tab-nav v-if="tabPosition==='right'||tabPosition==='bottom'"></cg-tab-nav>
+    <cg-tab-nav v-if="tabPosition==='right'||tabPosition==='bottom'" :tabs="tabs"></cg-tab-nav>
 </div>

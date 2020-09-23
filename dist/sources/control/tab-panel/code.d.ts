@@ -2,9 +2,9 @@ export declare let props: {
     label: {
         default: string;
     };
-};
-export declare let data: {
-    index: number;
+    name: {
+        default: undefined;
+    };
 };
 export declare let computed: {
     showTab: (this: IVue) => boolean;

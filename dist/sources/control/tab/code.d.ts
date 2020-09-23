@@ -28,12 +28,13 @@ export declare let props: {
     };
 };
 export declare let data: {
-    tabs: never[];
-    selectedIndex: number;
+    selected: string;
 };
 export declare let computed: {
     widthPx: (this: IVue) => string | undefined;
     heightPx: (this: IVue) => string | undefined;
+    tabs: (this: IVue) => any[];
+    names: (this: IVue) => string[];
 };
 export declare let watch: {
     value: {

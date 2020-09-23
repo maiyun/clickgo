@@ -42,20 +42,22 @@ interface IVue {
     '$props': Record<string, any>;
     '$refs': Record<string, HTMLElement & IVue>;
     '$root': IVue;
-    '$slots': Record<string, IVueVNode[]>;
+    '$slots': {
+        'default': undefined | (() => IVueVNode[]);
+        [key: string]: undefined | (() => IVueVNode[]);
+    };
     '$watch': (o: any, cb: (n: any, o: any) => void) => void;
 
     [key: string]: any;
 }
 
 interface IVueVNode {
-    'children': IVueVNode[];
-    'componentInstance': IVue;
-    'componentOptions': {
-        'tag': string;
-        [name: string]: any;
-    };
-    'context': IVue;
+    'children': {
+        'default': undefined | (() => IVueVNode[]);
+        [key: string]: undefined | (() => IVueVNode[]);
+    } & IVueVNode[];
+    'props': Record<string, any>;
+    'type': symbol | Record<string, any>;
 
     [key: string]: any;
 }

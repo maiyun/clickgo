@@ -30,8 +30,7 @@ export let props = {
 };
 
 export let data = {
-    'tabs': [],
-    'selectedIndex': 0
+    'selected': ''
 };
 
 export let computed = {
@@ -50,6 +49,37 @@ export let computed = {
         if (this.flex !== '') {
             return this.$parent?.direction ? (this.$parent.direction === 'v' ? '0' : undefined) : undefined;
         }
+    },
+    'tabs': function(this: IVue): any[] {
+        if (!this.$slots.default) {
+            return [];
+        }
+        let tabs = [];
+        let list = this.$slots.default();
+        for (let item of list) {
+            if (typeof item.type === 'symbol') {
+                for (let item2 of item.children) {
+                    tabs.push({
+                        'label': item2.props.label,
+                        'name': item2.props.name || item2.props.label
+                    });
+                }
+            }
+            else {
+                tabs.push({
+                    'label': item.props.label,
+                    'name': item.props.name || item.props.label
+                });
+            }
+        }
+        return tabs;
+    },
+    'names': function(this: IVue): string[] {
+        let list = [];
+        for (let item of this.tabs) {
+            list.push(item.name);
+        }
+        return list;
     }
 };
 
@@ -63,32 +93,10 @@ export let watch = {
 };
 
 export let updated = function(this: IVue): void {
-    let i;
-    for (i = 0; i < this.$slots.default.length; ++i) {
-        let item: IVue = this.$slots.default[i].componentInstance;
-        if (this.tabs[i]) {
-            if (this.tabs[i].label !== item.label) {
-                this.tabs[i].label = item.label;
-            }
-            if (this.tabs[i].name !== item.name) {
-                this.tabs[i].name = item.name;
-            }
-            if (item.index !== i) {
-                item.index = i;
-            }
-        }
-        else {
-            this.tabs.push({
-                'label': item.label,
-                'name': item.name
-            });
-            item.index = i;
-        }
+    if (this.selected === '') {
+        this.selected = this.names[0] ? this.names[0] : '';
     }
-    if (i < this.tabs.length) {
-        this.tabs.splice(i);
-        if (this.selectedIndex >= this.tabs.length) {
-            this.selectedIndex = this.tabs.length - 1;
-        }
+    else if (this.names.indexOf(this.selected) === -1) {
+        this.selected = this.names[this.names.length - 1] ? this.names[this.names.length - 1] : '';
     }
 };

@@ -21,6 +21,7 @@ export let methods = {
             clickgo.form.hidePop();
             return;
         }
+        console.log('xx', this);
         clickgo.form.showPop(this.$children[0], this.$el);
         this.cgTap(event);
     },

@@ -24,6 +24,7 @@ formListElement.addEventListener('touchmove', function (e) {
     'passive': false
 });
 let popListElement = document.createElement('div');
+popListElement.id = 'cg-pop-list';
 popListElement.style.zoom = clickgo.zoom.toString();
 popListElement.classList.add('cg-pop-list');
 popListElement.addEventListener('contextmenu', function (e) {
@@ -492,6 +493,11 @@ function create(opt) {
                 }
                 let r = clickgo.tool.layoutClassPrepend(yield clickgo.tool.blob2Text(layoutBlob), randList);
                 let layout = r.layout;
+                props.focus = {
+                    'focus': {
+                        'default': false
+                    }
+                };
                 data.taskId = opt.taskId;
                 data.formId = formId;
                 data._dir = (_b = opt.dir) !== null && _b !== void 0 ? _b : '/';

@@ -17,5 +17,3 @@ export declare let data: {
 export declare let methods: {
     onHide: (this: IVue) => void;
 };
-export declare let mounted: (this: IVue) => void;
-export declare let unmounted: (this: IVue) => void;

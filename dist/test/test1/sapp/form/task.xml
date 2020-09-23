@@ -1,4 +1,4 @@
-<form :width.sync="width" height="40" title="Taskbar" border="none" background="rgba(0, 0, 0, .5)" class="form" :resize="false" :left.sync="left" :top.sync="top">
+<form v-model:width="width" height="40" title="Taskbar" border="none" background="rgba(0, 0, 0, .5)" class="form" :resize="false" v-model:left="left" v-model:top="top">
     <layout flex="1" direction="h">
         <layout class="item" v-for="item of list" width="80" align-v="center" align-h="center" style="margin-left: 1px; overflow: hidden; padding: 5px; text-align: center;">{{item.title}}</layout>
         <layout flex="1" align-v="center" align-h="end" style="margin: 0 10px; color: rgba(255, 255, 255, .5);">This taskbar is a demonstration of event mechanisms only, not standard controls.</layout>

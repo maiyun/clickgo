@@ -28,11 +28,3 @@ export let methods = {
         }
     }
 };
-
-export let mounted = function(this: IVue): void {
-    clickgo.form.appendToPop(this.$el);
-};
-
-export let unmounted = function(this: IVue): void {
-    clickgo.form.removeFromPop(this.$el);
-};

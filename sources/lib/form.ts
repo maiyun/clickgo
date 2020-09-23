@@ -40,6 +40,7 @@ formListElement.addEventListener('touchmove', function(e): void {
 
 /** --- pop list 的 div --- */
 let popListElement: HTMLDivElement = document.createElement('div');
+popListElement.id = 'cg-pop-list';
 popListElement.style.zoom = clickgo.zoom.toString();
 popListElement.classList.add('cg-pop-list');
 popListElement.addEventListener('contextmenu', function(e): void {
@@ -541,7 +542,7 @@ export async function create(opt: ICreateFormOptions): Promise<number | IForm> {
         for (let name in controlPkg) {
             let item: IControl = controlPkg[name];
             // --- 准备相关变量 ---
-            let props = {};
+            let props: any = {};
             let data: any = {};
             let methods: any = {};
             let computed = {};
@@ -596,6 +597,12 @@ export async function create(opt: ICreateFormOptions): Promise<number | IForm> {
             }
             let r = clickgo.tool.layoutClassPrepend(await clickgo.tool.blob2Text(layoutBlob), randList);
             let layout = r.layout;
+            // --- 组成 props ---
+            props.focus = {
+                'focus': {
+                    'default': false
+                }
+            };
             // --- 组成 data ---
             data.taskId = opt.taskId;
             data.formId = formId;

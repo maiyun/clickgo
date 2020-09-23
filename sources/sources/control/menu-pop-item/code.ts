@@ -48,7 +48,9 @@ export let methods = {
             return;
         }
         // --- 判断别的是否有展开 ---
-        for (let item of this.$parent.$children) {
+        let psd = this.$parent.$slots.default();
+        for (let item of psd) {
+            console.log(item);
             if (!item.popOpen) {
                 continue;
             }
@@ -88,8 +90,11 @@ export let mounted = function(this: IVue): void {
     if (!this.$parent) {
         return;
     }
+    if (!this.$slots.default) {
+        return;
+    }
     // --- 子 pop ---
-    if (this.$children.length > 0) {
+    if (this.$slots.default().length > 0) {
         this.showArrow = true;
         ++this.$parent.hasSubItemsCount;
     }

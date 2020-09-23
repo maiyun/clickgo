@@ -46,7 +46,9 @@ exports.methods = {
         if (!this.$parent) {
             return;
         }
-        for (let item of this.$parent.$children) {
+        let psd = this.$parent.$slots.default();
+        for (let item of psd) {
+            console.log(item);
             if (!item.popOpen) {
                 continue;
             }
@@ -83,7 +85,10 @@ exports.mounted = function () {
     if (!this.$parent) {
         return;
     }
-    if (this.$children.length > 0) {
+    if (!this.$slots.default) {
+        return;
+    }
+    if (this.$slots.default().length > 0) {
         this.showArrow = true;
         ++this.$parent.hasSubItemsCount;
     }

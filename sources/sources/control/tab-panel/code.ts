@@ -1,16 +1,15 @@
 export let props = {
     'label': {
         'default': ''
+    },
+    'name': {
+        'default': undefined
     }
-};
-
-export let data = {
-    'index': -1
 };
 
 export let computed = {
     'showTab': function(this: IVue): boolean {
-        return this.$parent?.selectedIndex === this.index;
+        return this.$parent ? this.$parent.selected === (this.name || this.label) : false;
     }
 };
 

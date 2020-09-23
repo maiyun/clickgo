@@ -21,9 +21,6 @@ export let props = {
     'stateMin': {
         'default': false
     },
-    'focus': {
-        'default': false
-    },
 
     'width': {
         'default': 300

@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.unmounted = exports.mounted = exports.methods = exports.data = exports.props = void 0;
+exports.methods = exports.data = exports.props = void 0;
 exports.props = {
     'width': {
         'default': undefined
@@ -26,10 +26,4 @@ exports.methods = {
             clickgo.form.hidePop(item.$children[0]);
         }
     }
-};
-exports.mounted = function () {
-    clickgo.form.appendToPop(this.$el);
-};
-exports.unmounted = function () {
-    clickgo.form.removeFromPop(this.$el);
 };

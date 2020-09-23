@@ -1,31 +1,19 @@
+export let props = {
+    'tabs': {
+        'default': []
+    }
+};
+
 export let data = {
     'arrow': false,
     'timer': undefined
 };
 
-export let mounted = function(this: IVue): void {
-    if (!this.$parent) {
-        return;
+export let watch = {
+    'tabs': async function(this: IVue): Promise<void> {
+        await this.$nextTick();
+        this.onResize(clickgo.element.getSize(this.$refs.tabs));
     }
-    // --- 检测是否显示箭头 ---
-    clickgo.element.watchSize(this.$refs.tabs, (size) => {
-        if (this.$parent!.tabPosition === 'top' || this.$parent!.tabPosition === 'bottom') {
-            if (size.scrollWidth > size.clientWidth) {
-                this.arrow = true;
-            }
-            else {
-                this.arrow = false;
-            }
-        }
-        else {
-            if (size.scrollHeight > size.clientHeight) {
-                this.arrow = true;
-            }
-            else {
-                this.arrow = false;
-            }
-        }
-    });
 };
 
 export let methods = {
@@ -72,5 +60,34 @@ export let methods = {
         // --- 用来屏蔽不小心触发前进、后退的浏览器事件 ---
         e.preventDefault();
         this.$refs.tabs.scrollLeft += e.deltaY;
+    },
+    // --- 检测是否显示箭头 ---
+    onResize: function(this: IVue, size: IElementSize): void {
+        if (this.$parent!.tabPosition === 'top' || this.$parent!.tabPosition === 'bottom') {
+            if (size.scrollWidth > size.clientWidth) {
+                this.arrow = true;
+            }
+            else {
+                this.arrow = false;
+            }
+        }
+        else {
+            if (size.scrollHeight > size.clientHeight) {
+                this.arrow = true;
+            }
+            else {
+                this.arrow = false;
+            }
+        }
     }
+};
+
+export let mounted = function(this: IVue): void {
+    if (!this.$parent) {
+        return;
+    }
+    // --- 检测是否显示箭头 ---
+    clickgo.element.watchSize(this.$refs.tabs, (size) => {
+        this.onResize(size);
+    });
 };

@@ -2,9 +2,6 @@ export let props = {
     'disabled': {
         'default': false
     },
-    'focus': {
-        'default': false
-    },
 
     'width': {
         'default': undefined

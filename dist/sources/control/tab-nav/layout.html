@@ -1,7 +1,7 @@
 <div class="wrap" :class="[$parent.tabPosition]" @click="cgTap" @mousedown="cgDown" @touchstart="cgDown" @dblclick="cgDblclick">
-    <div v-show="arrow" class="arrow start" @mousedown="longDown(event, 'start')" @touchstart="longDown(event, 'start')"></div>
+    <div v-show="arrow" class="arrow start" @mousedown="longDown($event, 'start')" @touchstart="longDown($event, 'start')"></div>
     <div ref="tabs" class="tabs" @wheel="wheel">
-        <div v-for="(item, index) of $parent.tabs" class="tab" :class="[$parent.selectedIndex === index ? 'selected' : undefined]" @click="$parent.selectedIndex=index;$parent.$emit('input', index);">{{item.label}}</div>
+        <div v-for="item of tabs" class="tab" :class="[$parent.selected === item.name ? 'selected' : undefined]" @click="$parent.selected=item.name;$parent.$emit('input', item.name);">{{item.label}}</div>
     </div>
-    <div v-show="arrow" class="arrow end" @mousedown="longDown(event, 'end')" @touchstart="longDown(event, 'end')"></div>
+    <div v-show="arrow" class="arrow end" @mousedown="longDown($event, 'end')" @touchstart="longDown($event, 'end')"></div>
 </div>

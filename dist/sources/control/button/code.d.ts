@@ -2,9 +2,6 @@ export declare let props: {
     disabled: {
         default: boolean;
     };
-    focus: {
-        default: boolean;
-    };
     width: {
         default: undefined;
     };

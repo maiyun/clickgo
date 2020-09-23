@@ -1,18 +1,17 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.watch = exports.computed = exports.data = exports.props = void 0;
+exports.watch = exports.computed = exports.props = void 0;
 exports.props = {
     'label': {
         'default': ''
+    },
+    'name': {
+        'default': undefined
     }
-};
-exports.data = {
-    'index': -1
 };
 exports.computed = {
     'showTab': function () {
-        var _a;
-        return ((_a = this.$parent) === null || _a === void 0 ? void 0 : _a.selectedIndex) === this.index;
+        return this.$parent ? this.$parent.selected === (this.name || this.label) : false;
     }
 };
 exports.watch = {

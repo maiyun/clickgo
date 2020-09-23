@@ -20,9 +20,6 @@ export declare let props: {
     stateMin: {
         default: boolean;
     };
-    focus: {
-        default: boolean;
-    };
     width: {
         default: number;
     };
