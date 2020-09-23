@@ -1,4 +1,7 @@
 export declare let props: {
+    direction: {
+        default: string;
+    };
     label: {
         default: string;
     };

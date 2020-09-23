@@ -1,3 +1,6 @@
 .wrap {
-    background-color: #FFF; display: flex; flex-direction: column; height: 0; flex: 1; height: 0;
+    background-color: #FFF; display: flex; height: 0; flex: 1; height: 0;
+}
+.wrap.v {
+    flex-direction: column;
 }

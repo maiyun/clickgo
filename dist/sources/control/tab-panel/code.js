@@ -2,6 +2,9 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.watch = exports.computed = exports.props = void 0;
 exports.props = {
+    'direction': {
+        'default': 'h'
+    },
     'label': {
         'default': ''
     },

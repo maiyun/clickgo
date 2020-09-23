@@ -1,4 +1,8 @@
 export let props = {
+    'direction': {
+        'default': 'h'
+    },
+
     'label': {
         'default': ''
     },

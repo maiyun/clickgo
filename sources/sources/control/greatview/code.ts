@@ -268,7 +268,7 @@ export let mounted = function(this: IVue): void {
     let mo = new MutationObserver(() => {
         this.refreshView();
     });
-    mo.observe(this.$children[0].$el, {
+    mo.observe(this.$refs.view.$el, {
         'attributeFilter': ['style', 'class'],
         'attributes': true
     });
