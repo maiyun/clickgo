@@ -53,3 +53,5 @@ export declare function bindResize(e: MouseEvent | TouchEvent, opt: {
     'move'?: (left: number, top: number, width: number, height: number, x: number, y: number, border: TBorderDir) => void;
     'end'?: () => void;
 }): void;
+export declare function findParentByClass(el: HTMLElement, cn: string | string[]): HTMLElement | null;
+export declare function siblings(e: HTMLElement, cn: string): HTMLElement | null;

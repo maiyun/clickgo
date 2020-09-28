@@ -30,6 +30,9 @@ export let methods = {
     openView: function(this: IVue): void {
         this.createForm('/form/view');
     },
+    openMenu: function(this: IVue): void {
+        this.createForm('/form/menu');
+    },
     openGreatView: function(this: IVue): void {
         this.createForm('/form/greatview');
     },

@@ -109,27 +109,6 @@ export function clone(obj: Record<string, any> | any[]): any[] | any {
 }
 
 /**
- * --- 查找指定 el 的同级 className ---
- * @param e 基准
- * @param cn 同级 classname
- */
-export function siblings(e: HTMLElement, cn: string): HTMLElement | null {
-    if (!e.parentNode) {
-        return null;
-    }
-    for (let i = 0; i < e.parentNode.children.length; ++i) {
-        let el = e.parentNode.children.item(i) as HTMLElement;
-        if (el === e) {
-            continue;
-        }
-        if (el.classList.contains(cn)) {
-            return el;
-        }
-    }
-    return null;
-}
-
-/**
  * --- 等待毫秒 ---
  * @param ms 等待的毫秒，默认 0
  */

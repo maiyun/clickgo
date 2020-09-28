@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.layoutClassPrepend = exports.layoutInsertAttr = exports.styleUrl2DataUrl = exports.pathResolve = exports.stylePrepend = exports.controlBlob2Pkg = exports.isAppPkg = exports.isControlPkg = exports.parsePath = exports.trim = exports.purify = exports.removeStyle = exports.pushStyle = exports.removeTaskStyleElement = exports.createTaskStyleElement = exports.sleep = exports.siblings = exports.clone = exports.blob2Text = exports.blob2ArrayBuffer = exports.blob2DataUrl = void 0;
+exports.layoutClassPrepend = exports.layoutInsertAttr = exports.styleUrl2DataUrl = exports.pathResolve = exports.stylePrepend = exports.controlBlob2Pkg = exports.isAppPkg = exports.isControlPkg = exports.parsePath = exports.trim = exports.purify = exports.removeStyle = exports.pushStyle = exports.removeTaskStyleElement = exports.createTaskStyleElement = exports.sleep = exports.clone = exports.blob2Text = exports.blob2ArrayBuffer = exports.blob2DataUrl = void 0;
 let styleListElement = document.createElement('div');
 styleListElement.style.display = 'none';
 document.getElementsByTagName('body')[0].appendChild(styleListElement);
@@ -86,22 +86,6 @@ function clone(obj) {
     return newObj;
 }
 exports.clone = clone;
-function siblings(e, cn) {
-    if (!e.parentNode) {
-        return null;
-    }
-    for (let i = 0; i < e.parentNode.children.length; ++i) {
-        let el = e.parentNode.children.item(i);
-        if (el === e) {
-            continue;
-        }
-        if (el.classList.contains(cn)) {
-            return el;
-        }
-    }
-    return null;
-}
-exports.siblings = siblings;
 function sleep(ms = 0) {
     return new Promise(function (resolve) {
         setTimeout(function () {

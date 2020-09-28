@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.create = exports.remove = exports.doFocusAndPopEvent = exports.hidePop = exports.showPop = exports.removeFromPop = exports.appendToPop = exports.hideRectangle = exports.showRectangle = exports.moveRectangle = exports.showCircular = exports.getRectByDir = exports.changeFocus = exports.lastPopZIndex = exports.lastTopZIndex = exports.lastZIndex = exports.lastFormId = exports.currentPop = void 0;
+exports.create = exports.remove = exports.doFocusAndPopEvent = exports.hidePop = exports.showPop = exports.removeFromPop = exports.appendToPop = exports.hideRectangle = exports.showRectangle = exports.moveRectangle = exports.showCircular = exports.getRectByDir = exports.changeFocus = exports.lastPopZIndex = exports.lastTopZIndex = exports.lastZIndex = exports.lastFormId = exports.popShowing = void 0;
 exports.lastFormId = 0;
 exports.lastZIndex = 999;
 exports.lastTopZIndex = 9999999;
@@ -252,19 +252,17 @@ function removeFromPop(el) {
 }
 exports.removeFromPop = removeFromPop;
 function showPop(pop, x, y = 0) {
-    if (!exports.currentPop) {
-        exports.currentPop = pop;
+    if (!clickgo.element.findParentByClass(pop.$el, 'cg-pop-list')) {
+        if (exports.popShowing) {
+            exports.popShowing.hidePop();
+        }
+        exports.popShowing = pop;
     }
-    if (!pop.$parent) {
-        return;
-    }
-    pop.$parent.popOpen = true;
-    pop.open = true;
     let position = clickgo.getPosition();
     let left, top;
-    if (x instanceof HTMLElement) {
-        let bcr = x.getBoundingClientRect();
-        if (y === 0) {
+    if (typeof x === 'string') {
+        let bcr = pop.$el.getBoundingClientRect();
+        if (x === 'v') {
             left = bcr.left;
             top = bcr.top + bcr.height;
         }
@@ -305,33 +303,25 @@ function showPop(pop, x, y = 0) {
     if (top < 0) {
         top = 0;
     }
-    pop.leftData = left;
-    pop.topData = top;
-    pop.zIndexData = (++exports.lastPopZIndex).toString();
+    return {
+        'left': left + 'px',
+        'top': top + 'px',
+        'zIndex': (++exports.lastPopZIndex).toString()
+    };
 }
 exports.showPop = showPop;
 function hidePop(pop = null) {
-    var _a;
     if (!pop) {
-        pop = exports.currentPop;
-        if (!pop) {
+        if (!exports.popShowing) {
             return;
         }
-        exports.currentPop = null;
+        pop = exports.popShowing;
+        exports.popShowing = null;
     }
-    if (!pop.$parent) {
-        return;
+    else if (pop === exports.popShowing) {
+        exports.popShowing = null;
     }
-    pop.$parent.popOpen = false;
-    pop.open = false;
-    setTimeout(() => {
-        if (!pop) {
-            return;
-        }
-        pop.leftData = -20070831;
-        pop.topData = -20070831;
-    }, 100);
-    (_a = pop.onHide) === null || _a === void 0 ? void 0 : _a.call(pop);
+    pop.hidePop();
 }
 exports.hidePop = hidePop;
 function doFocusAndPopEvent(e) {
@@ -548,6 +538,25 @@ function create(opt) {
                         return cla;
                     }
                     return `cg-theme-global-${this.$data._controlName}_${cla} cg-theme-task${this.taskId}-${this.$data._controlName}_${cla} ${this.$data._scope}${cla}`;
+                };
+                methods.cgSlos = function (name = 'default') {
+                    let d = this.$slots[name];
+                    if (!d) {
+                        return [];
+                    }
+                    let slots = [];
+                    let list = d();
+                    for (let item of list) {
+                        if (typeof item.type === 'symbol') {
+                            for (let item2 of item.children) {
+                                slots.push(item2);
+                            }
+                        }
+                        else {
+                            slots.push(item);
+                        }
+                    }
+                    return slots;
                 };
                 components['cg-' + name] = {
                     'template': layout,

@@ -58,7 +58,7 @@ function run() {
             if (item.isFile()) {
                 continue;
             }
-            if (['button', 'dataview', 'form', 'greatselect', 'greatselect-pop', 'greatselect-pop-item', 'greatselect-pop-split', 'greatview', 'img', 'label', 'layout', 'menu', 'menu-item', 'menu-pop', 'menu-pop-item', 'menu-pop-split', 'overflow', 'scroll', 'select', 'tab-nav', 'tab-panel', 'view'].includes(item.name)) {
+            if (['button', 'dataview', 'form', 'greatselect', 'greatselect-pop', 'greatselect-pop-item', 'greatselect-pop-split', 'greatview', 'img', 'label', 'layout', 'menu', 'menu-item', 'menu-list', 'menu-list-item', 'menu-list-split', 'overflow', 'scroll', 'select', 'tab-nav', 'tab-panel', 'view'].includes(item.name)) {
                 continue;
             }
             let base = 'dist/sources/control/' + item.name;
@@ -81,9 +81,9 @@ function run() {
                     yield getSingleControlBlob('dist/sources/control/layout'),
                     yield getSingleControlBlob('dist/sources/control/menu'),
                     yield getSingleControlBlob('dist/sources/control/menu-item'),
-                    yield getSingleControlBlob('dist/sources/control/menu-pop'),
-                    yield getSingleControlBlob('dist/sources/control/menu-pop-item'),
-                    yield getSingleControlBlob('dist/sources/control/menu-pop-split'),
+                    yield getSingleControlBlob('dist/sources/control/menu-list'),
+                    yield getSingleControlBlob('dist/sources/control/menu-list-item'),
+                    yield getSingleControlBlob('dist/sources/control/menu-list-split'),
                     yield getSingleControlBlob('dist/sources/control/overflow'),
                     yield getSingleControlBlob('dist/sources/control/scroll'),
                     yield getSingleControlBlob('dist/sources/control/select'),

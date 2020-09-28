@@ -50,27 +50,17 @@ export let computed = {
             return this.$parent?.direction ? (this.$parent.direction === 'v' ? '0' : undefined) : undefined;
         }
     },
-    'tabs': function(this: IVue): any[] {
+    'tabs': function(this: IVueControl): any[] {
         if (!this.$slots.default) {
             return [];
         }
         let tabs = [];
-        let list = this.$slots.default();
+        let list = this.cgSlos();
         for (let item of list) {
-            if (typeof item.type === 'symbol') {
-                for (let item2 of item.children) {
-                    tabs.push({
-                        'label': item2.props.label,
-                        'name': item2.props.name || item2.props.label
-                    });
-                }
-            }
-            else {
-                tabs.push({
-                    'label': item.props.label,
-                    'name': item.props.name || item.props.label
-                });
-            }
+            tabs.push({
+                'label': item.props.label,
+                'name': item.props.name || item.props.label
+            });
         }
         return tabs;
     },

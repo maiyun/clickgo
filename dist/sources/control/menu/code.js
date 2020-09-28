@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.props = void 0;
+exports.data = exports.props = void 0;
 exports.props = {
     'width': {
         'default': undefined
@@ -17,4 +17,7 @@ exports.props = {
     'zIndex': {
         'default': 0
     }
+};
+exports.data = {
+    'itemPopShowing': undefined
 };

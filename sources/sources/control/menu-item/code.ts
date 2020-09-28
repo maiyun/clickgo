@@ -12,23 +12,78 @@ export let props = {
 };
 
 export let data = {
-    'popOpen': false
+    'popOpen': false,
+    'subPop': undefined,
+
+    'popOptions': {
+        'left': '0px',
+        'top': '0px',
+        'zIndex': '0'
+    }
 };
 
 export let methods = {
-    showPop: function(this: IVueControl, event: MouseEvent): void {
-        if (this.popOpen) {
-            clickgo.form.hidePop();
+    mousein: function(this: IVue): void {
+        if (this.disabled) {
+            // --- 如果当前是者禁用状态，不管 ---
             return;
         }
-        console.log('xx', this);
-        clickgo.form.showPop(this.$children[0], this.$el);
+        if (!this.$parent?.itemPopShowing) {
+            // --- 别的没有展开，则不管 ---
+            return;
+        }
+        this.showPop();
+    },
+    click: function(this: IVueControl, event: MouseEvent): void {
+        if (this.disabled) {
+            return;
+        }
+        if (this.popOpen) {
+            // --- 本来是展开状态，就隐藏起来 ---
+            clickgo.form.hidePop(this);
+            return;
+        }
+        this.showPop();
         this.cgTap(event);
     },
-    mousein: function(this: IVue, event: MouseEvent): void {
-        if (clickgo.tool.siblings(this.$el, 'cg-pop-open')) {
-            clickgo.form.hidePop();
-            this.showPop(event);
+
+    showPop: function(this: IVueControl): void {
+        if (this.popOpen) {
+            // --- 本来就是展开状态，不做处理 ---
+            return;
+        }
+        if (!this.$parent) {
+            return;
+        }
+        // --- 判断别的 item 是否有展开（parent 是 menu） ---
+        // --- click 状态当然不可能别的有展开，但 mousein 状态就有可能了 ---
+        if (this.$parent.itemPopShowing) {
+            clickgo.form.hidePop(this.$parent.itemPopShowing);
+        }
+        // --- 所以直接显示本 pop  ---
+        this.$parent.itemPopShowing = this;
+        this.popOpen = true;
+        this.popOptions = clickgo.form.showPop(this, 'v');
+    },
+    hidePop: function(this: IVueControl): void {
+        if (!this.popOpen) {
+            return;
+        }
+        this.popOpen = false;
+        if (this.$parent?.itemPopShowing === this) {
+            this.$parent.itemPopShowing = undefined;
+        }
+        if (this.subPop?.itemPopShowing) {
+            this.subPop.itemPopShowing.hidePop();
+        }
+    }
+};
+
+export let unmounted = function(this: IVue): void {
+    if (this.$parent) {
+        // --- 如果自己还在上层显示，则取消 ---
+        if (this === this.$parent.itemPopShowing) {
+            clickgo.form.hidePop(this.itemPopShowing);
         }
     }
 };

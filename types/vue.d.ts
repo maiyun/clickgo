@@ -110,4 +110,9 @@ interface IVueControl extends IVue {
      * @param cla class 内容对象
      */
     cgClassPrepend(this: IVueControl, cla: any): string;
+    /**
+     * --- 获取目前现存的子 slots ---
+     * @param name 默认 default
+     */
+    cgSlos(this: IVue, name?: string): IVueVNode[];
 }

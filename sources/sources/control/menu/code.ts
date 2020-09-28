@@ -15,3 +15,7 @@ export let props = {
         'default': 0
     }
 };
+
+export let data = {
+    'itemPopShowing': undefined
+};

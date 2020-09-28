@@ -11,8 +11,17 @@ export declare let props: {
 };
 export declare let data: {
     popOpen: boolean;
+    subPop: undefined;
+    popOptions: {
+        left: string;
+        top: string;
+        zIndex: string;
+    };
 };
 export declare let methods: {
-    showPop: (this: IVueControl, event: MouseEvent) => void;
-    mousein: (this: IVue, event: MouseEvent) => void;
+    mousein: (this: IVue) => void;
+    click: (this: IVueControl, event: MouseEvent) => void;
+    showPop: (this: IVueControl) => void;
+    hidePop: (this: IVueControl) => void;
 };
+export declare let unmounted: (this: IVue) => void;

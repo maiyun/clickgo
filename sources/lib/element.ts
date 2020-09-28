@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import { type } from "os";
+
 /**
  * --- 获取实时的 DOM SIZE ---
  * @param el 要获取的 dom
@@ -580,4 +582,49 @@ export function bindResize(e: MouseEvent | TouchEvent, opt: { 'left': number; 't
         },
         'end': opt.end
     });
+}
+
+/**
+ * --- 通过 class 名查找上层所有标签是否有匹配的 ---
+ * @param el 当前标签
+ * @param cn 要查找的 class 名/列表
+ */
+export function findParentByClass(el: HTMLElement, cn: string | string[]): HTMLElement | null {
+    if (typeof cn === 'string') {
+        cn = [cn];
+    }
+    let parent = el.parentNode as HTMLElement;
+    while (parent) {
+        if (parent.tagName.toLowerCase() === 'body') {
+            break;
+        }
+        for (let it of cn) {
+            if (parent.classList?.contains(it)) {
+                return parent;
+            }
+        }
+        parent = parent.parentNode as HTMLElement;
+    }
+    return null;
+}
+
+/**
+ * --- 查找指定 el 的同级 className ---
+ * @param e 基准
+ * @param cn 同级 classname
+ */
+export function siblings(e: HTMLElement, cn: string): HTMLElement | null {
+    if (!e.parentNode) {
+        return null;
+    }
+    for (let i = 0; i < e.parentNode.children.length; ++i) {
+        let el = e.parentNode.children.item(i) as HTMLElement;
+        if (el === e) {
+            continue;
+        }
+        if (el.classList.contains(cn)) {
+            return el;
+        }
+    }
+    return null;
 }

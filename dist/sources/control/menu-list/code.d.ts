@@ -17,29 +17,15 @@ export declare let props: {
     flex: {
         default: string;
     };
-    tabPosition: {
-        default: string;
-    };
-    value: {
-        default: number;
-    };
-    name: {
-        default: undefined;
-    };
 };
 export declare let data: {
-    selected: string;
+    hasSubItemsCount: number;
+    hasTypeItemsCount: number;
+    itemPopShowing: undefined;
 };
 export declare let computed: {
     widthPx: (this: IVue) => string | undefined;
     heightPx: (this: IVue) => string | undefined;
-    tabs: (this: IVueControl) => any[];
-    names: (this: IVue) => string[];
 };
-export declare let watch: {
-    value: {
-        handler: (this: IVue) => void;
-        immediate: boolean;
-    };
-};
-export declare let updated: (this: IVue) => void;
+export declare let mounted: (this: IVueControl) => void;
+export declare let unmounted: (this: IVueControl) => void;

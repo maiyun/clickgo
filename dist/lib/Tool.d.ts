@@ -2,7 +2,6 @@ export declare function blob2DataUrl(blob: Blob): Promise<string>;
 export declare function blob2ArrayBuffer(blob: Blob): Promise<ArrayBuffer>;
 export declare function blob2Text(blob: Blob): Promise<string>;
 export declare function clone(obj: Record<string, any> | any[]): any[] | any;
-export declare function siblings(e: HTMLElement, cn: string): HTMLElement | null;
 export declare function sleep(ms?: number): Promise<void>;
 export declare function createTaskStyleElement(taskId: number): void;
 export declare function removeTaskStyleElement(taskId: number): void;

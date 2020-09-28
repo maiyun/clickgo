@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-/** --- 当前 pop 的 vue 对象 --- */
-export let currentPop: null | IVue;
+/** --- 当前显示的总 pop 母级的 vue 对象 --- */
+export let popShowing: null | IVueControl;
 /** --- 最后一个窗体 id --- */
 export let lastFormId: number = 0;
 /** --- 最后一个层级 --- */
@@ -307,27 +307,30 @@ export function removeFromPop(el: HTMLElement): void {
 }
 
 /**
- * --- 将 pop 显示出来 ---
- * @param el 要显示的 pop
- * @param x 要显示的 left，或 htmlelement 对象
- * @param y 要显示的 top，或 element 方向，0 为垂直，1 为水平
+ * --- 获取 pop 显示出来的坐标并报系统全局记录 ---
+ * @param pop 要显示 pop 的母层对象
+ * @param x 要显示的 left，或根据 $el 的方向，h 为水平，v 为垂直
+ * @param y 要显示的 top
  */
-export function showPop(pop: IVue, x: number | HTMLElement, y: number = 0): void {
-    if (!currentPop) {
-        currentPop = pop;
+export function showPop(pop: IVueControl, x: number | 'h' | 'v', y: number = 0): {
+    'left': string;
+    'top': string;
+    'zIndex': string;
+} {
+    if (!clickgo.element.findParentByClass(pop.$el, 'cg-pop-list')) {
+        // --- 本层不是 pop，因此要弹出 current pop ---
+        if (popShowing) {
+            popShowing.hidePop();
+        }
+        popShowing = pop;
     }
-    if (!pop.$parent) {
-        return;
-    }
-    pop.$parent.popOpen = true;
-    pop.open = true;
     // --- 获取限定区域 ---
     let position = clickgo.getPosition();
     // --- 最终显示位置 ---
     let left: number, top: number;
-    if (x instanceof HTMLElement) {
-        let bcr = x.getBoundingClientRect();
-        if (y === 0) {
+    if (typeof x === 'string') {
+        let bcr = pop.$el.getBoundingClientRect();
+        if (x === 'v') {
             // --- 垂直弹出 ---
             left = bcr.left;
             top = bcr.top + bcr.height;
@@ -376,35 +379,28 @@ export function showPop(pop: IVue, x: number | HTMLElement, y: number = 0): void
     if (top < 0) {
         top = 0;
     }
-    pop.leftData = left;
-    pop.topData = top;
-    pop.zIndexData = (++lastPopZIndex).toString();
+    return {
+        'left': left + 'px',
+        'top': top + 'px',
+        'zIndex': (++lastPopZIndex).toString()
+    };
 }
 
 /**
- * --- 隐藏正在显示中的 pop，或指定 pop ---
+ * --- 隐藏正在显示中的顶级 pop 母层，或指定 pop 母层 ---
  */
 export function hidePop(pop: IVue | null = null): void {
     if (!pop) {
-        pop = currentPop;
-        if (!pop) {
+        if (!popShowing) {
             return;
         }
-        currentPop = null;
+        pop = popShowing;
+        popShowing = null;
     }
-    if (!pop.$parent) {
-        return;
+    else if (pop === popShowing) {
+        popShowing = null;
     }
-    pop.$parent.popOpen = false;
-    pop.open = false;
-    setTimeout(() => {
-        if (!pop) {
-            return;
-        }
-        pop.leftData = -20070831;
-        pop.topData = -20070831;
-    }, 100);
-    pop.onHide?.();
+    pop.hidePop();
 }
 
 /**
@@ -421,7 +417,7 @@ export function doFocusAndPopEvent(e: MouseEvent | TouchEvent): void {
     }
     let element: HTMLElement | null = target as HTMLElement;
     if (element.classList.contains('cg-pop-open')) {
-        // --- 此对象为要打开 pop 的组件，不做处理，因为 down 时不能处理隐藏等情况 ---
+        // --- 此对象为已打开 pop 的组件，不做处理，因为 down 时不能处理隐藏等情况 ---
         return;
     }
     element = element.parentNode as HTMLElement | null;
@@ -655,6 +651,26 @@ export async function create(opt: ICreateFormOptions): Promise<number | IForm> {
                     return cla;
                 }
                 return `cg-theme-global-${this.$data._controlName}_${cla} cg-theme-task${this.taskId}-${this.$data._controlName}_${cla} ${this.$data._scope}${cla}`;
+            };
+            // --- 获取目前现存的子 slots ---
+            methods.cgSlos = function(this: IVue, name: string = 'default'): IVueVNode[] {
+                let d = this.$slots[name];
+                if (!d) {
+                    return [];
+                }
+                let slots = [];
+                let list = d();
+                for (let item of list) {
+                    if (typeof item.type === 'symbol') {
+                        for (let item2 of item.children) {
+                            slots.push(item2);
+                        }
+                    }
+                    else {
+                        slots.push(item);
+                    }
+                }
+                return slots;
             };
             // --- 组成 component ---
             components['cg-' + name] = {

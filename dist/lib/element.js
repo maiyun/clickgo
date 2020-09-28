@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.bindResize = exports.bindMove = exports.bindDown = exports.watchElement = exports.watchSize = exports.getSize = void 0;
+exports.siblings = exports.findParentByClass = exports.bindResize = exports.bindMove = exports.bindDown = exports.watchElement = exports.watchSize = exports.getSize = void 0;
 function getSize(el) {
     let rect = el.getBoundingClientRect();
     let cs = getComputedStyle(el);
@@ -497,3 +497,39 @@ function bindResize(e, opt) {
     });
 }
 exports.bindResize = bindResize;
+function findParentByClass(el, cn) {
+    var _a;
+    if (typeof cn === 'string') {
+        cn = [cn];
+    }
+    let parent = el.parentNode;
+    while (parent) {
+        if (parent.tagName.toLowerCase() === 'body') {
+            break;
+        }
+        for (let it of cn) {
+            if ((_a = parent.classList) === null || _a === void 0 ? void 0 : _a.contains(it)) {
+                return parent;
+            }
+        }
+        parent = parent.parentNode;
+    }
+    return null;
+}
+exports.findParentByClass = findParentByClass;
+function siblings(e, cn) {
+    if (!e.parentNode) {
+        return null;
+    }
+    for (let i = 0; i < e.parentNode.children.length; ++i) {
+        let el = e.parentNode.children.item(i);
+        if (el === e) {
+            continue;
+        }
+        if (el.classList.contains(cn)) {
+            return el;
+        }
+    }
+    return null;
+}
+exports.siblings = siblings;

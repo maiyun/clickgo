@@ -1,0 +1,3 @@
+<div class="wrap" :style="{'width': widthPx, 'height': heightPx, 'left': left + 'px', 'top': top + 'px', 'z-index': zIndex, 'flex-grow': flex}" @click="cgTap" @mousedown="cgDown" @touchstart="cgDown" @dblclick="cgDblclick">
+    <slot></slot>
+</div>

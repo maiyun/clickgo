@@ -66,7 +66,7 @@ async function run(): Promise<void> {
         if (item.isFile()) {
             continue;
         }
-        if (['button', 'dataview', 'form', 'greatselect', 'greatselect-pop', 'greatselect-pop-item', 'greatselect-pop-split', 'greatview', 'img', 'label', 'layout', 'menu', 'menu-item', 'menu-pop', 'menu-pop-item', 'menu-pop-split', 'overflow', 'scroll', 'select', 'tab-nav', 'tab-panel', 'view'].includes(item.name)) {
+        if (['button', 'dataview', 'form', 'greatselect', 'greatselect-pop', 'greatselect-pop-item', 'greatselect-pop-split', 'greatview', 'img', 'label', 'layout', 'menu', 'menu-item', 'menu-list', 'menu-list-item', 'menu-list-split', 'overflow', 'scroll', 'select', 'tab-nav', 'tab-panel', 'view'].includes(item.name)) {
             continue;
         }
         let base = 'dist/sources/control/' + item.name;
@@ -90,9 +90,9 @@ async function run(): Promise<void> {
                 await getSingleControlBlob('dist/sources/control/layout'),
                 await getSingleControlBlob('dist/sources/control/menu'),
                 await getSingleControlBlob('dist/sources/control/menu-item'),
-                await getSingleControlBlob('dist/sources/control/menu-pop'),
-                await getSingleControlBlob('dist/sources/control/menu-pop-item'),
-                await getSingleControlBlob('dist/sources/control/menu-pop-split'),
+                await getSingleControlBlob('dist/sources/control/menu-list'),
+                await getSingleControlBlob('dist/sources/control/menu-list-item'),
+                await getSingleControlBlob('dist/sources/control/menu-list-split'),
                 await getSingleControlBlob('dist/sources/control/overflow'),
                 await getSingleControlBlob('dist/sources/control/scroll'),
                 await getSingleControlBlob('dist/sources/control/select'),

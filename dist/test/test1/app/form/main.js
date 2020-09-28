@@ -40,6 +40,9 @@ exports.methods = {
     openView: function () {
         this.createForm('/form/view');
     },
+    openMenu: function () {
+        this.createForm('/form/menu');
+    },
     openGreatView: function () {
         this.createForm('/form/greatview');
     },

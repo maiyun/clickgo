@@ -1,9 +1,26 @@
 .wrap {
     border: solid 1px transparent; display: inline-block; padding: 6px; position: relative;
 }
-.wrap:hover {
+.wrap.cg-disabled {
+    color: #838383;
+}
+
+.wrap:not(.cg-disabled):hover {
     border-color: rgba(118, 185, 237, .6); background: rgba(118, 185, 237, .2);
 }
-.wrap:active, .wrap.cg-pop-open {
+.wrap:not(.cg-disabled):active, .wrap:not(.cg-disabled).cg-pop-open {
     border-color: rgba(118, 185, 237, .9); background: rgba(118, 185, 237, .5); outline: none;
+}
+.wrap.cg-disabled:hover {
+    background: rgba(0, 0, 0, .05);
+}
+
+.pop {
+    position: absolute; box-shadow: 1px 1px 5px rgba(0, 0, 0, .2); transition: .1s ease-out; transition-property: transform, opacity; transform: translateY(-10px); opacity: 0;
+}
+.pop:not(.open) {
+    pointer-events: none;
+}
+.pop.open {
+    transform: translateY(0px); opacity: 1;
 }

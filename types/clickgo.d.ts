@@ -242,6 +242,8 @@ interface IElementLib {
         'move'?: (left: number, top: number, width: number, height: number, x: number, y: number, border: TBorderDir) => void;
         'end'?: () => void;
     }): void;
+    findParentByClass(el: HTMLElement, cn: string): HTMLElement | null;
+    siblings(e: HTMLElement, cn: string): HTMLElement | null;
 }
 
 /** --- 方向类型，从左上开始 --- */
@@ -298,7 +300,11 @@ interface IFormLib {
     hideRectangle(): void;
     appendToPop(el: HTMLElement): void;
     removeFromPop(el: HTMLElement): void;
-    showPop(pop: IVue, x: number | HTMLElement, y?: number): void;
+    showPop(pop: IVueControl, x: number | 'h' | 'v', y?: number): {
+        'left': string;
+        'top': string;
+        'zIndex': string;
+    };
     hidePop(pop?: IVue | null): void;
     doFocusAndPopEvent(e: MouseEvent | TouchEvent): void;
     remove(formId: number): boolean;
@@ -375,7 +381,6 @@ interface IToolLib {
     blob2ArrayBuffer(blob: Blob): Promise<ArrayBuffer>;
     blob2Text(blob: Blob): Promise<string>;
     clone(obj: Record<string, any> | any[]): any[] | any;
-    siblings(e: HTMLElement, cn: string): HTMLElement | null;
     sleep(ms?: number): Promise<void>;
     createTaskStyleElement(taskId: number): void;
     removeTaskStyleElement(taskId: number): void;
