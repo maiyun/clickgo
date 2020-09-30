@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.unmounted = exports.methods = exports.updated = exports.watch = exports.data = exports.props = void 0;
+exports.unmounted = exports.mounted = exports.methods = exports.updated = exports.watch = exports.data = exports.props = void 0;
 exports.props = {
     'disabled': {
         'default': false
@@ -17,7 +17,7 @@ exports.props = {
     'label': {
         'default': undefined
     },
-    'value': {
+    'modelValue': {
         'default': undefined
     }
 };
@@ -44,7 +44,7 @@ exports.watch = {
                 --this.$parent.hasTypeItemsCount;
             }
         },
-        'immediate': true
+        'immediate': false
     }
 };
 exports.updated = function () {
@@ -76,10 +76,10 @@ exports.methods = {
             return;
         }
         if (this.type === 'radio') {
-            this.$emit('input', this.label);
+            this.$emit('update:modelValue', this.label);
         }
         else if (this.type === 'check') {
-            this.$emit('input', this.value ? false : true);
+            this.$emit('update:modelValue', this.modelValue ? false : true);
         }
         clickgo.form.hidePop();
         this.cgTap(event);
@@ -119,6 +119,13 @@ exports.methods = {
         }
         if ((_b = this.subPop) === null || _b === void 0 ? void 0 : _b.itemPopShowing) {
             this.subPop.itemPopShowing.hidePop();
+        }
+    }
+};
+exports.mounted = function () {
+    if (this.$parent) {
+        if (this.type) {
+            ++this.$parent.hasTypeItemsCount;
         }
     }
 };

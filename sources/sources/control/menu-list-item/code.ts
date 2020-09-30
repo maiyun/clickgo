@@ -15,7 +15,7 @@ export let props = {
     'label': {
         'default': undefined
     },
-    'value': {
+    'modelValue': {
         'default': undefined
     }
 };
@@ -45,7 +45,7 @@ export let watch = {
                 --this.$parent.hasTypeItemsCount;
             }
         },
-        'immediate': true
+        'immediate': false
     }
 };
 
@@ -81,10 +81,10 @@ export let methods = {
         }
         // --- 有 type ---
         if (this.type === 'radio') {
-            this.$emit('input', this.label);
+            this.$emit('update:modelValue', this.label);
         }
         else if (this.type === 'check') {
-            this.$emit('input', this.value ? false : true);
+            this.$emit('update:modelValue', this.modelValue ? false : true);
         }
         clickgo.form.hidePop();
         this.cgTap(event);
@@ -128,6 +128,14 @@ export let methods = {
         }
         if (this.subPop?.itemPopShowing) {
             this.subPop.itemPopShowing.hidePop();
+        }
+    }
+};
+
+export let mounted = function(this: IVue): void {
+    if (this.$parent) {
+        if (this.type) {
+            ++this.$parent.hasTypeItemsCount;
         }
     }
 };

@@ -420,23 +420,17 @@ export function doFocusAndPopEvent(e: MouseEvent | TouchEvent): void {
         // --- 此对象为已打开 pop 的组件，不做处理，因为 down 时不能处理隐藏等情况 ---
         return;
     }
-    element = element.parentNode as HTMLElement | null;
-    while (element) {
-        if (!element.classList) {
-            break;
-        }
-        if (element.classList.contains('cg-form-wrap')) {
-            // --- 窗体内部点击，转换焦点到当前窗体，但触发隐藏 pop ---
-            let formId = parseInt(element.getAttribute('data-form-id') ?? '0');
-            changeFocus(formId);
-            hidePop();
-            return;
-        }
-        if (element.classList.contains('cg-pop-list') || element.classList.contains('cg-pop-open')) {
-            // --- 弹出层点击，不触发丢失焦点，也不触发隐藏 pop，是否隐藏请自行处理 ---
-            return;
-        }
-        element = element.parentNode as HTMLElement | null;
+    let parent: HTMLElement | null;
+    if (clickgo.element.findParentByClass(element, ['cg-pop-list', 'cg-pop-open'])) {
+        // --- 弹出层点击，不触发丢失焦点，也不触发隐藏 pop，是否隐藏请自行处理 ---
+        return;
+    }
+    if ((parent = clickgo.element.findParentByClass(element, 'cg-form-wrap'))) {
+        // --- 窗体内部点击，转换焦点到当前窗体，但触发隐藏 pop ---
+        let formId = parseInt(parent.getAttribute('data-form-id') ?? '0');
+        changeFocus(formId);
+        hidePop();
+        return;
     }
     // --- 普罗大众的状态，要隐藏 menu，并且丢失窗体焦点 ---
     hidePop();

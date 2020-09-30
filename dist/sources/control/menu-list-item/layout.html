@@ -1,5 +1,5 @@
 <div class="wrap" :class="[disabled && 'cg-disabled', popOpen && 'cg-pop-open']" @click="click" @mouseenter="mousein" @mousedown="cgDown" @touchstart="cgDown">
-    <div v-if="$parent.hasTypeItemsCount > 0" :class="[type ? type : 'check']" :style="{'visibility': type !== undefined ? ((type === 'check' ? value : label === value) ? 'inherit' : undefined) : undefined}"></div>
+    <div v-if="$parent.hasTypeItemsCount > 0" :class="[type ? type : 'check']" :style="{'visibility': type !== undefined ? ((type === 'check' ? modelValue : label === modelValue) ? 'inherit' : undefined) : undefined}"></div>
     <div class="text">{{text}}</div>
     <div v-if="$parent.hasSubItemsCount > 0" class="arrow" :style="{'visibility': showArrow && 'inherit'}"></div>
     <teleport to="#cg-pop-list">

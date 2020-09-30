@@ -14,7 +14,7 @@ export declare let props: {
     label: {
         default: undefined;
     };
-    value: {
+    modelValue: {
         default: undefined;
     };
 };
@@ -41,4 +41,5 @@ export declare let methods: {
     showPop: (this: IVueControl) => void;
     hidePop: (this: IVueControl) => void;
 };
+export declare let mounted: (this: IVue) => void;
 export declare let unmounted: (this: IVue) => void;

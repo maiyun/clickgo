@@ -337,21 +337,15 @@ function doFocusAndPopEvent(e) {
     if (element.classList.contains('cg-pop-open')) {
         return;
     }
-    element = element.parentNode;
-    while (element) {
-        if (!element.classList) {
-            break;
-        }
-        if (element.classList.contains('cg-form-wrap')) {
-            let formId = parseInt((_a = element.getAttribute('data-form-id')) !== null && _a !== void 0 ? _a : '0');
-            changeFocus(formId);
-            hidePop();
-            return;
-        }
-        if (element.classList.contains('cg-pop-list') || element.classList.contains('cg-pop-open')) {
-            return;
-        }
-        element = element.parentNode;
+    let parent;
+    if (clickgo.element.findParentByClass(element, ['cg-pop-list', 'cg-pop-open'])) {
+        return;
+    }
+    if ((parent = clickgo.element.findParentByClass(element, 'cg-form-wrap'))) {
+        let formId = parseInt((_a = parent.getAttribute('data-form-id')) !== null && _a !== void 0 ? _a : '0');
+        changeFocus(formId);
+        hidePop();
+        return;
     }
     hidePop();
     changeFocus();

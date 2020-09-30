@@ -242,7 +242,7 @@ interface IElementLib {
         'move'?: (left: number, top: number, width: number, height: number, x: number, y: number, border: TBorderDir) => void;
         'end'?: () => void;
     }): void;
-    findParentByClass(el: HTMLElement, cn: string): HTMLElement | null;
+    findParentByClass(el: HTMLElement, cn: string | string[]): HTMLElement | null;
     siblings(e: HTMLElement, cn: string): HTMLElement | null;
 }
 
