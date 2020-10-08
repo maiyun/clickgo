@@ -66,3 +66,6 @@ export declare let data: {
     tabsi: number;
     tabPosition: string;
 };
+export declare let watch: {
+    select: (this: IVueControl, n: number, o: number) => void;
+};

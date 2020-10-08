@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.data = void 0;
+exports.watch = exports.data = void 0;
 exports.data = {
     'lineCount': 2,
     'so': 0,
@@ -68,4 +68,11 @@ exports.data = {
     'tabs': [],
     'tabsi': 0,
     'tabPosition': 'top'
+};
+exports.watch = {
+    select: function (n, o) {
+        if (!this.slist[n].name) {
+            this.select = o;
+        }
+    }
 };

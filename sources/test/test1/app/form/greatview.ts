@@ -79,3 +79,11 @@ export let data = {
     'tabsi': 0,
     'tabPosition': 'top'
 };
+
+export let watch = {
+    select: function(this: IVueControl, n: number, o: number): void {
+        if (!this.slist[n].name) {
+            this.select = o;
+        }
+    }
+};
