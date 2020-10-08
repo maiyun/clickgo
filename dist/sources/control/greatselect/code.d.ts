@@ -49,4 +49,5 @@ export declare let methods: {
     keydown: (this: IVue, e: KeyboardEvent) => void;
     click: (this: IVueControl, event: MouseEvent, area: 'all' | 'arrow') => void;
     showPop: (this: IVueControl) => void;
+    hidePop: (this: IVueControl) => void;
 };

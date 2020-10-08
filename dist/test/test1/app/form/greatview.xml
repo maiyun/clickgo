@@ -69,17 +69,16 @@
                 <layout flex="1" gutter="10" direction="v">
                     <block>greatselect:</block>
                     <greatselect :area="area">
-                        <!--<layout flex="1" align-v="center" gutter="5" style="line-height: 1.2;">
+                        <layout flex="1" align-v="center" gutter="5" style="line-height: 1.2;">
                             <img width="32" height="32" :src="slist[select].src"></img>
                             <block>
                                 <block>{{slist[select].name}}</block>
                                 <block style="opacity:.7;">{{slist[select].path}}</block>
                             </block>
-                        </layout>-->
-                        Other
+                        </layout>
                         <template v-slot:pop>
                             <greatselect-list v-model="select" :data="slist" v-slot="data">
-                                <!--<greatselect-list-item v-if="data.row.type===0" :disabled="data.row.disabled" :value="data.index">
+                                <greatselect-list-item v-if="data.row.type===0" :disabled="data.row.disabled" :value="data.index">
                                     <layout flex="1" align-v="center" gutter="5" style="line-height: 1.2;">
                                         <img width="32" height="32" :src="data.row.src"></img>
                                         <block flex="1">
@@ -88,13 +87,14 @@
                                         </block>
                                         <block class="select-button" width="30" height="30"></block>
                                     </layout>
-                                    <menu-list v-if="data.row.menu" v-slot:pop>
-                                        <menu-list-item alt="S" text="Set the default"></menu-list-item>
-                                    </menu-list>
+                                    <template v-if="data.row.menu" v-slot:pop>
+                                        <menu-list>
+                                            <menu-list-item alt="S" text="Set the default"></menu-list-item>
+                                        </menu-list>
+                                    </template>
                                 </greatselect-list-item>
                                 <greatselect-list-split v-else-if="data.row.type===1"></greatselect-list-split>
-                                <greatselect-list-item v-else :value="data.index">Other</greatselect-list-item>-->
-                                <greatselect-list-item>Other</greatselect-list-item>
+                                <greatselect-list-item v-else :value="data.index">Other</greatselect-list-item>
                             </greatselect-list>
                         </template>
                     </greatselect>

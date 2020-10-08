@@ -138,7 +138,7 @@ exports.unmounted = function () {
             --this.$parent.hasTypeItemsCount;
         }
         if (this === this.$parent.itemPopShowing) {
-            clickgo.form.hidePop(this.itemPopShowing);
+            clickgo.form.hidePop(this);
         }
     }
 };

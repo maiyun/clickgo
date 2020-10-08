@@ -2,6 +2,9 @@ export declare let props: {
     disabled: {
         default: boolean;
     };
+    direction: {
+        default: string;
+    };
     padding: {
         default: undefined;
     };

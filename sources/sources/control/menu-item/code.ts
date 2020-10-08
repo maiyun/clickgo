@@ -84,7 +84,7 @@ export let unmounted = function(this: IVue): void {
     if (this.$parent) {
         // --- 如果自己还在上层显示，则取消 ---
         if (this === this.$parent.itemPopShowing) {
-            clickgo.form.hidePop(this.itemPopShowing);
+            clickgo.form.hidePop(this);
         }
     }
 };

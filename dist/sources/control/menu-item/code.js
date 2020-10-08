@@ -75,7 +75,7 @@ exports.methods = {
 exports.unmounted = function () {
     if (this.$parent) {
         if (this === this.$parent.itemPopShowing) {
-            clickgo.form.hidePop(this.itemPopShowing);
+            clickgo.form.hidePop(this);
         }
     }
 };

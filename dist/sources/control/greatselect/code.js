@@ -120,5 +120,15 @@ exports.methods = {
         this.popOpen = true;
         this.popOptions = clickgo.form.showPop(this, 'v');
         this.popOptions.width = this.$el.offsetWidth + 'px';
+    },
+    hidePop: function () {
+        var _a;
+        if (!this.popOpen) {
+            return;
+        }
+        this.popOpen = false;
+        if ((_a = this.subPop) === null || _a === void 0 ? void 0 : _a.itemPopShowing) {
+            this.subPop.itemPopShowing.hidePop();
+        }
     }
 };

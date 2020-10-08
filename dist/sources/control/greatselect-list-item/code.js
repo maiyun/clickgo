@@ -5,6 +5,9 @@ exports.props = {
     'disabled': {
         'default': false
     },
+    'direction': {
+        'default': 'h'
+    },
     'padding': {
         'default': undefined
     },
@@ -27,8 +30,8 @@ exports.methods = {
         if (this.disabled) {
             return;
         }
-        clickgo.form.hidePop(this);
         (_c = (_b = (_a = this.$parent) === null || _a === void 0 ? void 0 : _a.$parent) === null || _b === void 0 ? void 0 : _b.$parent) === null || _c === void 0 ? void 0 : _c.select(this.value);
+        clickgo.form.hidePop();
         this.cgTap(event);
     },
     controlClick: function (e) {
@@ -38,37 +41,39 @@ exports.methods = {
         this.showPop(e);
     },
     showPop: function (e) {
+        var _a, _b;
         if (this.popOpen) {
             return;
         }
-        if (!this.$parent) {
+        if (!((_b = (_a = this.$parent) === null || _a === void 0 ? void 0 : _a.$parent) === null || _b === void 0 ? void 0 : _b.$parent) || this.$parent.$parent.$parent.$data._controlName !== 'greatselect-list') {
             return;
         }
-        if (this.$parent.itemPopShowing) {
-            clickgo.form.hidePop(this.$parent.itemPopShowing);
+        if (this.$parent.$parent.$parent.itemPopShowing) {
+            clickgo.form.hidePop(this.$parent.$parent.$parent.itemPopShowing);
         }
-        this.$parent.itemPopShowing = this;
+        this.$parent.$parent.$parent.itemPopShowing = this;
         this.popOpen = true;
         this.popOptions = clickgo.form.showPop(this, e.pageX, e.pageY);
     },
     hidePop: function () {
-        var _a, _b;
+        var _a, _b, _c, _d;
         if (!this.popOpen) {
             return;
         }
         this.popOpen = false;
-        if (((_a = this.$parent) === null || _a === void 0 ? void 0 : _a.itemPopShowing) === this) {
-            this.$parent.itemPopShowing = undefined;
+        if (((_c = (_b = (_a = this.$parent) === null || _a === void 0 ? void 0 : _a.$parent) === null || _b === void 0 ? void 0 : _b.$parent) === null || _c === void 0 ? void 0 : _c.itemPopShowing) === this) {
+            this.$parent.$parent.$parent.itemPopShowing = undefined;
         }
-        if ((_b = this.subPop) === null || _b === void 0 ? void 0 : _b.itemPopShowing) {
+        if ((_d = this.subPop) === null || _d === void 0 ? void 0 : _d.itemPopShowing) {
             this.subPop.itemPopShowing.hidePop();
         }
     }
 };
 exports.unmounted = function () {
-    if (this.$parent) {
-        if (this === this.$parent.itemPopShowing) {
-            clickgo.form.hidePop(this.itemPopShowing);
+    var _a, _b;
+    if ((_b = (_a = this.$parent) === null || _a === void 0 ? void 0 : _a.$parent) === null || _b === void 0 ? void 0 : _b.$parent) {
+        if (this === this.$parent.$parent.$parent.itemPopShowing) {
+            clickgo.form.hidePop(this);
         }
     }
 };

@@ -125,5 +125,14 @@ export let methods = {
         this.popOpen = true;
         this.popOptions = clickgo.form.showPop(this, 'v');
         this.popOptions.width = this.$el.offsetWidth + 'px';
+    },
+    hidePop: function(this: IVueControl): void {
+        if (!this.popOpen) {
+            return;
+        }
+        this.popOpen = false;
+        if (this.subPop?.itemPopShowing) {
+            this.subPop.itemPopShowing.hidePop();
+        }
     }
 };
