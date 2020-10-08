@@ -36,9 +36,17 @@ export declare let computed: {
 };
 export declare let data: {
     popOpen: boolean;
+    subPop: undefined;
+    popOptions: {
+        left: string;
+        top: string;
+        width: string;
+        zIndex: string;
+    };
 };
 export declare let methods: {
-    showPop: (this: IVueControl, event: MouseEvent | KeyboardEvent, area: 'all' | 'arrow') => void;
     down: (this: IVueControl, e: MouseEvent | TouchEvent) => void;
     keydown: (this: IVue, e: KeyboardEvent) => void;
+    click: (this: IVueControl, event: MouseEvent, area: 'all' | 'arrow') => void;
+    showPop: (this: IVueControl) => void;
 };

@@ -55,45 +55,18 @@ export let computed = {
 };
 
 export let data = {
-    'popOpen': false
+    'popOpen': false,
+    'subPop': undefined,
+
+    'popOptions': {
+        'left': '0px',
+        'top': '0px',
+        'width': '0px',
+        'zIndex': '0'
+    }
 };
 
 export let methods = {
-    showPop: function(this: IVueControl, event: MouseEvent | KeyboardEvent, area: 'all' | 'arrow'): void {
-        if (this.area === 'arrow') {
-            if (area === 'all') {
-                if (this.popOpen) {
-                    clickgo.form.hidePop();
-                }
-                return;
-            }
-            else {
-                event.stopPropagation();
-            }
-        }
-        else {
-            if (area === 'arrow') {
-                return;
-            }
-        }
-        if (this.popOpen) {
-            clickgo.form.hidePop();
-            return;
-        }
-        let pop: IVue | null = null;
-        for (let item of this.$children) {
-            if (item.$data._controlName !== 'greatselect-pop') {
-                continue;
-            }
-            pop = item;
-            break;
-        }
-        if (pop) {
-            pop.widthData = this.$el.offsetWidth;
-            clickgo.form.showPop(pop, this.$el);
-        }
-        this.cgTap(event);
-    },
     down: function(this: IVueControl, e: MouseEvent | TouchEvent): void {
         if (e instanceof MouseEvent && clickgo.hasTouch) {
             return;
@@ -105,6 +78,52 @@ export let methods = {
         if (e.keyCode !== 13) {
             return;
         }
+        if (this.popOpen) {
+            clickgo.form.hidePop(this);
+            return;
+        }
         this.showPop(e, this.area);
+    },
+    click: function(this: IVueControl, event: MouseEvent, area: 'all' | 'arrow'): void {
+        if (this.disabled) {
+            return;
+        }
+        if (this.area === 'arrow') {
+            if (area === 'all') {
+                if (this.popOpen) {
+                    clickgo.form.hidePop(this);
+                }
+                this.cgTap(event);
+                return;
+            }
+            else {
+                event.stopPropagation();
+            }
+        }
+        else {
+            // --- all ---
+            if (area === 'arrow') {
+                return;
+            }
+        }
+        if (this.popOpen) {
+            clickgo.form.hidePop(this);
+            this.cgTap(event);
+            return;
+        }
+        this.showPop();
+        this.cgTap(event);
+    },
+
+    showPop: function(this: IVueControl): void {
+        if (this.popOpen) {
+            // --- 本来就是展开状态，隐藏起来 ---
+            clickgo.form.hidePop(this);
+            return;
+        }
+        // --- 显示本 pop  ---
+        this.popOpen = true;
+        this.popOptions = clickgo.form.showPop(this, 'v');
+        this.popOptions.width = this.$el.offsetWidth + 'px';
     }
 };

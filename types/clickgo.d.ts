@@ -398,10 +398,7 @@ interface IToolLib {
     };
     pathResolve(dir: string, path: string): string;
     styleUrl2DataUrl(dir: string, style: string, files: Record<string, Blob>): Promise<string>;
-    layoutInsertAttr(layout: string, insert: string, opt?: {
-        'ignore'?: string[];
-        'include'?: string[];
-    }): string;
+    layoutInsertAttr(layout: string, insert: string, opt?: { 'ignore'?: RegExp[]; 'include'?: RegExp[]; }): string;
     layoutClassPrepend(layout: string, rand?: string[]): {
         'rand': string[];
         'layout': string;

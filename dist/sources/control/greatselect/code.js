@@ -56,15 +56,43 @@ exports.computed = {
     }
 };
 exports.data = {
-    'popOpen': false
+    'popOpen': false,
+    'subPop': undefined,
+    'popOptions': {
+        'left': '0px',
+        'top': '0px',
+        'width': '0px',
+        'zIndex': '0'
+    }
 };
 exports.methods = {
-    showPop: function (event, area) {
+    down: function (e) {
+        if (e instanceof MouseEvent && clickgo.hasTouch) {
+            return;
+        }
+        this.cgStopPropagation(e);
+        this.cgDown(e);
+    },
+    keydown: function (e) {
+        if (e.keyCode !== 13) {
+            return;
+        }
+        if (this.popOpen) {
+            clickgo.form.hidePop(this);
+            return;
+        }
+        this.showPop(e, this.area);
+    },
+    click: function (event, area) {
+        if (this.disabled) {
+            return;
+        }
         if (this.area === 'arrow') {
             if (area === 'all') {
                 if (this.popOpen) {
-                    clickgo.form.hidePop();
+                    clickgo.form.hidePop(this);
                 }
+                this.cgTap(event);
                 return;
             }
             else {
@@ -77,34 +105,20 @@ exports.methods = {
             }
         }
         if (this.popOpen) {
-            clickgo.form.hidePop();
+            clickgo.form.hidePop(this);
+            this.cgTap(event);
             return;
         }
-        let pop = null;
-        for (let item of this.$children) {
-            if (item.$data._controlName !== 'greatselect-pop') {
-                continue;
-            }
-            pop = item;
-            break;
-        }
-        if (pop) {
-            pop.widthData = this.$el.offsetWidth;
-            clickgo.form.showPop(pop, this.$el);
-        }
+        this.showPop();
         this.cgTap(event);
     },
-    down: function (e) {
-        if (e instanceof MouseEvent && clickgo.hasTouch) {
+    showPop: function () {
+        if (this.popOpen) {
+            clickgo.form.hidePop(this);
             return;
         }
-        this.cgStopPropagation(e);
-        this.cgDown(e);
-    },
-    keydown: function (e) {
-        if (e.keyCode !== 13) {
-            return;
-        }
-        this.showPop(e, this.area);
+        this.popOpen = true;
+        this.popOptions = clickgo.form.showPop(this, 'v');
+        this.popOptions.width = this.$el.offsetWidth + 'px';
     }
 };

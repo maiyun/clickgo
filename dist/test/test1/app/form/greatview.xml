@@ -15,7 +15,7 @@
                         </layout>
                     </layout>
                     <label>Scroll offset: {{so}}, Length: {{l}}, Client: {{c}}.</label>
-                    <greatview same="true" :data="lineCount" v-model:scroll-offset="so2" style="border: 1px solid rgba(0, 0, 0, .1);" flex="1" direction="h" @resize="c2 = $event" @change="l2 = $event" :style="{'line-height': style ? '1.5' : undefined}" :padding="style ? '10' : undefined" v-slot="data" style="">
+                    <greatview same="true" :data="lineCount" v-model:scroll-offset="so2" style="border: 1px solid rgba(0, 0, 0, .1);" flex="1" direction="h" @resize="c2 = $event" @change="l2 = $event" :style="{'line-height': style ? '1.5' : undefined}" :padding="style ? '10' : undefined" v-slot="data">
                         <layout align-v="center" align-h="center" direction="v" style="border-right: 1px solid rgba(0, 0, 0, .1); width: 80px;">
                             <label>Col {{data.row}}.</label>
                             <label>index: {{data.index}}.</label>
@@ -69,30 +69,34 @@
                 <layout flex="1" gutter="10" direction="v">
                     <block>greatselect:</block>
                     <greatselect :area="area">
-                        <layout flex="1" align-v="center" gutter="5" style="line-height: 1.2;">
+                        <!--<layout flex="1" align-v="center" gutter="5" style="line-height: 1.2;">
                             <img width="32" height="32" :src="slist[select].src"></img>
                             <block>
                                 <block>{{slist[select].name}}</block>
                                 <block style="opacity:.7;">{{slist[select].path}}</block>
                             </block>
-                        </layout>
-                        <greatselect-pop :value="select" @input="if(slist[$event].type===0){select=$event;}" :data="slist" v-slot="data">
-                            <greatselect-pop-item v-if="data.row.type===0" :disabled="data.row.disabled" :value="data.index">
-                                <layout flex="1" align-v="center" gutter="5" style="line-height: 1.2;">
-                                    <img width="32" height="32" :src="data.row.src"></img>
-                                    <block flex="1">
-                                        <block>{{data.row.name}}</block>
-                                        <block style="opacity:.7;">{{data.row.path}}</block>
-                                    </block>
-                                    <block class="select-button" width="30" height="30"></block>
-                                </layout>
-                                <menu-pop v-if="data.row.menu">
-                                    <menu-pop-item alt="S" text="Set the default"></menu-pop-item>
-                                </menu-pop>
-                            </greatselect-pop-item>
-                            <greatselect-pop-split v-else-if="data.row.type===1"></greatselect-pop-split>
-                            <greatselect-pop-item v-else :value="data.index">Other</greatselect-pop-item>
-                        </greatselect-pop>
+                        </layout>-->
+                        Other
+                        <template v-slot:pop>
+                            <greatselect-list v-model="select" :data="slist" v-slot="data">
+                                <!--<greatselect-list-item v-if="data.row.type===0" :disabled="data.row.disabled" :value="data.index">
+                                    <layout flex="1" align-v="center" gutter="5" style="line-height: 1.2;">
+                                        <img width="32" height="32" :src="data.row.src"></img>
+                                        <block flex="1">
+                                            <block>{{data.row.name}}</block>
+                                            <block style="opacity:.7;">{{data.row.path}}</block>
+                                        </block>
+                                        <block class="select-button" width="30" height="30"></block>
+                                    </layout>
+                                    <menu-list v-if="data.row.menu" v-slot:pop>
+                                        <menu-list-item alt="S" text="Set the default"></menu-list-item>
+                                    </menu-list>
+                                </greatselect-list-item>
+                                <greatselect-list-split v-else-if="data.row.type===1"></greatselect-list-split>
+                                <greatselect-list-item v-else :value="data.index">Other</greatselect-list-item>-->
+                                <greatselect-list-item>Other</greatselect-list-item>
+                            </greatselect-list>
+                        </template>
                     </greatselect>
                     <layout gutter="10">
                         <button flex="1" @tap="slist.splice(-2, 0, {'type':0,'name':'Card'+slist.length,'path':'Bob >> folder >> Card','src': '/res/r-2.svg','disabled':undefined})">Add item</button>
@@ -101,12 +105,12 @@
                     </layout>
                     <layout align-v="center">
                         <block style="flex-grow: 1; width: 0;">select:</block>
-                        <select flex="2" v-model="select2" :data="slist2"></select>
+                        <!--<select flex="2" v-model="select2" :data="slist2"></select>-->
                         <block style="flex-grow: 1; width: 0; padding-left: 10px;">{{select2}}</block>
                     </layout>
                     <layout align-v="center">
                         <block style="flex-grow: 1; width: 0;">editable:</block>
-                        <select flex="2" v-model="select3" :data="slist2" :editable="true"></select>
+                        <!--<select flex="2" v-model="select3" :data="slist2" :editable="true"></select>-->
                         <block style="flex-grow: 1; width: 0; padding-left: 10px;">{{select3}}</block>
                     </layout>
                     <layout gutter="10" align-v="center">

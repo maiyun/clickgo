@@ -23,8 +23,8 @@ exports.props = {
     'tabPosition': {
         'default': 'top'
     },
-    'value': {
-        'default': 0
+    'modelValue': {
+        'default': ''
     },
     'name': {
         'default': undefined
@@ -75,18 +75,26 @@ exports.computed = {
     }
 };
 exports.watch = {
-    'value': {
+    'modelValue': {
         handler: function () {
-            this.selectedIndex = this.value;
+            if (this.selected !== this.modelValue) {
+                this.selected = this.modelValue;
+            }
         },
         'immediate': true
     }
 };
 exports.updated = function () {
     if (this.selected === '') {
-        this.selected = this.names[0] ? this.names[0] : '';
+        let s = this.names[0] ? this.names[0] : '';
+        if (this.selected !== s) {
+            this.selected = s;
+        }
     }
     else if (this.names.indexOf(this.selected) === -1) {
-        this.selected = this.names[this.names.length - 1] ? this.names[this.names.length - 1] : '';
+        let s = this.names[this.names.length - 1] ? this.names[this.names.length - 1] : '';
+        if (this.selected !== s) {
+            this.selected = s;
+        }
     }
 };

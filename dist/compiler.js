@@ -58,7 +58,7 @@ function run() {
             if (item.isFile()) {
                 continue;
             }
-            if (['button', 'dataview', 'form', 'greatselect', 'greatselect-pop', 'greatselect-pop-item', 'greatselect-pop-split', 'greatview', 'img', 'label', 'layout', 'menu', 'menu-item', 'menu-list', 'menu-list-item', 'menu-list-split', 'overflow', 'scroll', 'select', 'tab-nav', 'tab-panel', 'view'].includes(item.name)) {
+            if (['button', 'dataview', 'form', 'greatselect', 'greatselect-list', 'greatselect-list-item', 'greatselect-list-split', 'greatview', 'img', 'label', 'layout', 'menu', 'menu-item', 'menu-list', 'menu-list-item', 'menu-list-split', 'overflow', 'scroll', 'select', 'tab-nav', 'tab-panel', 'view'].includes(item.name)) {
                 continue;
             }
             let base = 'dist/sources/control/' + item.name;
@@ -72,9 +72,9 @@ function run() {
                     yield getSingleControlBlob('dist/sources/control/dataview'),
                     yield getSingleControlBlob('dist/sources/control/form'),
                     yield getSingleControlBlob('dist/sources/control/greatselect'),
-                    yield getSingleControlBlob('dist/sources/control/greatselect-pop'),
-                    yield getSingleControlBlob('dist/sources/control/greatselect-pop-item'),
-                    yield getSingleControlBlob('dist/sources/control/greatselect-pop-split'),
+                    yield getSingleControlBlob('dist/sources/control/greatselect-list'),
+                    yield getSingleControlBlob('dist/sources/control/greatselect-list-item'),
+                    yield getSingleControlBlob('dist/sources/control/greatselect-list-split'),
                     yield getSingleControlBlob('dist/sources/control/greatview'),
                     yield getSingleControlBlob('dist/sources/control/img'),
                     yield getSingleControlBlob('dist/sources/control/label'),

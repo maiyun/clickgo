@@ -134,7 +134,7 @@ function removeStyle(taskId, formId = 0) {
 exports.removeStyle = removeStyle;
 function purify(text) {
     text = '>' + text + '<';
-    text = text.replace(/>([\s\S]*?)</g, function (t, t1) {
+    text = text.replace(/<!--([\s\S]*?)-->/g, '').replace(/>([\s\S]*?)</g, function (t, t1) {
         return '>' + t1.replace(/\t|\r\n| {2}/g, '').replace(/\n|\r/g, '') + '<';
     });
     return text.slice(1, -1);
@@ -308,11 +308,23 @@ function styleUrl2DataUrl(dir, style, files) {
 exports.styleUrl2DataUrl = styleUrl2DataUrl;
 function layoutInsertAttr(layout, insert, opt = {}) {
     return layout.replace(/<([\w-]+)[\s\S]*?>/g, function (t, t1) {
-        if (opt.ignore && opt.ignore.indexOf(t1) !== -1) {
-            return t;
+        if (opt.ignore) {
+            for (let item of opt.ignore) {
+                if (item.test(t1)) {
+                    return t;
+                }
+            }
         }
-        if (opt.include && opt.include.indexOf(t1) === -1) {
-            return t;
+        if (opt.include) {
+            let found = false;
+            for (let item of opt.include) {
+                if (item.test(t1)) {
+                    found = true;
+                }
+            }
+            if (!found) {
+                return t;
+            }
         }
         return t.replace(/<[\w-]+/, function (t) {
             return t + ' ' + insert;

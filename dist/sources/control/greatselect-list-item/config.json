@@ -1,14 +1,17 @@
 {
-    "name": "greatselect-pop-split",
+    "name": "greatselect-list-item",
     "ver": 1,
     "version": "0.1",
     "author": "clickgo",
 
+    "code": "/code",
     "layout": "/layout",
     "style": "/style",
 
     "files": [
+        "/code.js",
         "/layout.html",
+        "/more.svg",
         "/style.css"
     ]
 }

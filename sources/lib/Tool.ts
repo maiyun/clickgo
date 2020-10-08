@@ -178,12 +178,12 @@ export function removeStyle(taskId: number, formId: number = 0): void {
 }
 
 /**
- * --- 去除 html 的空白符、换行 ---
+ * --- 去除 html 的空白符、换行以及注释 ---
  * @param text 要纯净的字符串
  */
 export function purify(text: string): string {
     text = '>' + text + '<';
-    text = text.replace(/>([\s\S]*?)</g, function(t: string, t1: string) {
+    text = text.replace(/<!--([\s\S]*?)-->/g, '').replace(/>([\s\S]*?)</g, function(t: string, t1: string) {
         return '>' + t1.replace(/\t|\r\n| {2}/g, '').replace(/\n|\r/g, '') + '<';
     });
     return text.slice(1, -1);
@@ -416,15 +416,27 @@ export async function styleUrl2DataUrl(dir: string, style: string, files: Record
  * --- 将系统默认的 attr 追加到标签 ---
  * @param layout 被追加
  * @param insert 要追加
- * @param opt 选项
+ * @param opt 选项, ignore 忽略的标签，include 包含的标签
  */
-export function layoutInsertAttr(layout: string, insert: string, opt: { 'ignore'?: string[]; 'include'?: string[]; } = {}): string {
+export function layoutInsertAttr(layout: string, insert: string, opt: { 'ignore'?: RegExp[]; 'include'?: RegExp[]; } = {}): string {
     return layout.replace(/<([\w-]+)[\s\S]*?>/g, function(t, t1): string {
-        if (opt.ignore && opt.ignore.indexOf(t1) !== -1) {
-            return t;
+        if (opt.ignore) {
+            for (let item of opt.ignore) {
+                if (item.test(t1)) {
+                    return t;
+                }
+            }
         }
-        if (opt.include && opt.include.indexOf(t1) === -1) {
-            return t;
+        if (opt.include) {
+            let found = false;
+            for (let item of opt.include) {
+                if (item.test(t1)) {
+                    found = true;
+                }
+            }
+            if (!found) {
+                return t;
+            }
         }
         return t.replace(/<[\w-]+/, function(t) {
             return t + ' ' + insert;

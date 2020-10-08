@@ -1,9 +1,0 @@
-.wrap {
-    border: solid 1px #ababab; background: #FFF; position: absolute; box-shadow: 1px 1px 5px rgba(0, 0, 0, .2); display: flex; flex-direction: column; transition: .1s ease-out; transition-property: -webkit-transform, transform, opacity; -webkit-transform: translateY(-10px); transform: translateY(-10px); opacity: 0;
-}
-.wrap:not(.cg-open) {
-    pointer-events: none;
-}
-.wrap.cg-open {
-    -webkit-transform: translateY(0px); transform: translateY(0px); opacity: 1;
-}

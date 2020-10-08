@@ -41,6 +41,7 @@ export let methods = {
         if (this.popOpen) {
             // --- 本来是展开状态，就隐藏起来 ---
             clickgo.form.hidePop(this);
+            this.cgTap(event);
             return;
         }
         this.showPop();

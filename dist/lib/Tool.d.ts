@@ -20,8 +20,8 @@ export declare function stylePrepend(style: string, rand?: string): {
 export declare function pathResolve(dir: string, path: string): string;
 export declare function styleUrl2DataUrl(dir: string, style: string, files: Record<string, Blob>): Promise<string>;
 export declare function layoutInsertAttr(layout: string, insert: string, opt?: {
-    'ignore'?: string[];
-    'include'?: string[];
+    'ignore'?: RegExp[];
+    'include'?: RegExp[];
 }): string;
 export declare function layoutClassPrepend(layout: string, rand?: string[]): {
     'rand': string[];

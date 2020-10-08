@@ -762,15 +762,18 @@ export async function create(opt: ICreateFormOptions): Promise<number | IForm> {
         style = await clickgo.tool.styleUrl2DataUrl(opt.dir ?? '/', r.style, appPkg.files);
     }
     // --- 要创建的 form 的 layout ---
-    layout = clickgo.tool.layoutInsertAttr(layout, ':focus=\'focus\'');
-    layout = clickgo.tool.purify(layout.replace(/<(\/{0,1})(.+?)>/g, function(t, t1, t2): string {
+    layout = clickgo.tool.purify(layout);
+    layout = layout.replace(/<(\/{0,1})([\w-]+)([\s\S]*?>)/g, function(t, t1, t2, t3): string {
         if (t2 === 'template') {
             return t;
         }
         else {
-            return '<' + t1 + 'cg-' + t2 + '>';
+            return '<' + t1 + 'cg-' + t2 + t3;
         }
-    }));
+    });
+    layout = clickgo.tool.layoutInsertAttr(layout, ':focus=\'focus\'', {
+        'include': [/^cg-.+/]
+    });
     // --- 给 layout 的 class 增加前置 ---
     let randList = ['cg-task' + opt.taskId + '_'];
     if (rand !== '') {

@@ -643,15 +643,18 @@ function create(opt) {
             rand = r.rand;
             style = yield clickgo.tool.styleUrl2DataUrl((_e = opt.dir) !== null && _e !== void 0 ? _e : '/', r.style, appPkg.files);
         }
-        layout = clickgo.tool.layoutInsertAttr(layout, ':focus=\'focus\'');
-        layout = clickgo.tool.purify(layout.replace(/<(\/{0,1})(.+?)>/g, function (t, t1, t2) {
+        layout = clickgo.tool.purify(layout);
+        layout = layout.replace(/<(\/{0,1})([\w-]+)([\s\S]*?>)/g, function (t, t1, t2, t3) {
             if (t2 === 'template') {
                 return t;
             }
             else {
-                return '<' + t1 + 'cg-' + t2 + '>';
+                return '<' + t1 + 'cg-' + t2 + t3;
             }
-        }));
+        });
+        layout = clickgo.tool.layoutInsertAttr(layout, ':focus=\'focus\'', {
+            'include': [/^cg-.+/]
+        });
         let randList = ['cg-task' + opt.taskId + '_'];
         if (rand !== '') {
             randList.push(rand);

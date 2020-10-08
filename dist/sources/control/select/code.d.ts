@@ -23,7 +23,7 @@ export declare let props: {
     padding: {
         default: undefined;
     };
-    value: {
+    modelValue: {
         default: string;
     };
     editable: {
@@ -41,7 +41,7 @@ export declare let watch: {
     data: {
         handler: (this: IVue) => void;
     };
-    value: {
+    modelValue: {
         handler: (this: IVue) => void;
         immediate: boolean;
     };

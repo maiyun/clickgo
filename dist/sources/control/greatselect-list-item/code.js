@@ -5,11 +5,11 @@ exports.props = {
     'disabled': {
         'default': false
     },
-    'text': {
-        'default': ''
-    },
-    'alt': {
+    'padding': {
         'default': undefined
+    },
+    'value': {
+        'default': ''
     }
 };
 exports.data = {
@@ -22,29 +22,22 @@ exports.data = {
     }
 };
 exports.methods = {
-    mousein: function () {
-        var _a;
-        if (this.disabled) {
-            return;
-        }
-        if (!((_a = this.$parent) === null || _a === void 0 ? void 0 : _a.itemPopShowing)) {
-            return;
-        }
-        this.showPop();
-    },
     click: function (event) {
+        var _a, _b, _c;
         if (this.disabled) {
             return;
         }
-        if (this.popOpen) {
-            clickgo.form.hidePop(this);
-            this.cgTap(event);
-            return;
-        }
-        this.showPop();
+        clickgo.form.hidePop(this);
+        (_c = (_b = (_a = this.$parent) === null || _a === void 0 ? void 0 : _a.$parent) === null || _b === void 0 ? void 0 : _b.$parent) === null || _c === void 0 ? void 0 : _c.select(this.value);
         this.cgTap(event);
     },
-    showPop: function () {
+    controlClick: function (e) {
+        if (this.disabled) {
+            return;
+        }
+        this.showPop(e);
+    },
+    showPop: function (e) {
         if (this.popOpen) {
             return;
         }
@@ -56,7 +49,7 @@ exports.methods = {
         }
         this.$parent.itemPopShowing = this;
         this.popOpen = true;
-        this.popOptions = clickgo.form.showPop(this, 'v');
+        this.popOptions = clickgo.form.showPop(this, e.pageX, e.pageY);
     },
     hidePop: function () {
         var _a, _b;

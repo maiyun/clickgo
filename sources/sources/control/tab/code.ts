@@ -21,8 +21,8 @@ export let props = {
         'default': 'top'
     },
 
-    'value': {
-        'default': 0
+    'modelValue': {
+        'default': ''
     },
     'name': {
         'default': undefined
@@ -74,9 +74,11 @@ export let computed = {
 };
 
 export let watch = {
-    'value': {
+    'modelValue': {
         handler: function(this: IVue): void {
-            this.selectedIndex = this.value;
+            if (this.selected !== this.modelValue) {
+                this.selected = this.modelValue;
+            }
         },
         'immediate': true
     }
@@ -84,9 +86,15 @@ export let watch = {
 
 export let updated = function(this: IVue): void {
     if (this.selected === '') {
-        this.selected = this.names[0] ? this.names[0] : '';
+        let s = this.names[0] ? this.names[0] : '';
+        if (this.selected !== s) {
+            this.selected = s;
+        }
     }
     else if (this.names.indexOf(this.selected) === -1) {
-        this.selected = this.names[this.names.length - 1] ? this.names[this.names.length - 1] : '';
+        let s = this.names[this.names.length - 1] ? this.names[this.names.length - 1] : '';
+        if (this.selected !== s) {
+            this.selected = s;
+        }
     }
 };

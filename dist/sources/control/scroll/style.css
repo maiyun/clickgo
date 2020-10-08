@@ -9,7 +9,7 @@
     display: flex; justify-content: center; align-items: center;
 }
 .start::before, .end::before {
-    content: ''; border: solid 1px #000; width: 24%; height: 24%; -webkit-transform: rotate(45deg); transform: rotate(45deg);
+    content: ''; border: solid 1px #000; width: 24%; height: 24%; transform: rotate(45deg);
 }
 .start:hover, .end:hover {
     background-color: rgba(0, 0, 0, .1);

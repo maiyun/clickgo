@@ -25,7 +25,7 @@ export let props = {
         'default': undefined
     },
 
-    'value': {
+    'modelValue': {
         'default': ''
     },
     'editable': {
@@ -51,11 +51,11 @@ export let watch = {
             this.valueIndex = this.dataComp.length - 1;
             if (!this.editable) {
                 this.valueData = this.valueIndex >= 0 ? this.dataComp[this.valueIndex].value : '';
-                this.$emit('input', this.valueData);
+                this.$emit('update:modelValue', this.valueData);
             }
         }
     },
-    'value': {
+    'modelValue': {
         handler: function(this: IVue): void {
             if (this.valueData === this.value) {
                 return;
@@ -72,7 +72,7 @@ export let watch = {
             this.valueIndex = 0;
             if (!this.editable) {
                 this.valueData = this.dataComp[0] ? this.dataComp[0].value : '';
-                this.$emit('input', this.valueData);
+                this.$emit('update:modelValue', this.valueData);
             }
         },
         'immediate': true
@@ -105,11 +105,11 @@ export let methods = {
     input: function(this: IVue, index: number): void {
         this.valueIndex = index;
         this.valueData = this.dataComp[index] ? this.dataComp[index].value : '';
-        this.$emit('input', this.valueData);
+        this.$emit('update:modelValue', this.valueData);
     },
     tinput: function(this: IVue): void {
         this.valueData = this.$refs.input.value;
-        this.$emit('input', this.valueData);
+        this.$emit('update:modelValue', this.valueData);
         for (let i = 0; i < this.dataComp.length; ++i) {
             if (this.dataComp[i].value !== this.valueData) {
                 continue;
