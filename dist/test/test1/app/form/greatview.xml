@@ -35,33 +35,33 @@
             <tab-panel label="different" style="padding: 10px;">
                 <layout flex="1" gutter="10" direction="v">
                     <layout flex="1" gutter="10">
-                        <greatview :data="lineCount_2" v-model:scroll-offset="so_2" style="border: 1px solid rgba(0, 0, 0, .1);" flex="1" @resize="c_2 = $event" @change="l_2 = $event" :style="{'line-height': style ? '1.5' : undefined}" :padding="style ? '10' : undefined" v-slot="data">
+                        <greatview :data="lineCountC2" v-model:scroll-offset="soC2" style="border: 1px solid rgba(0, 0, 0, .1);" flex="1" @resize="cC2 = $event" @change="lC2 = $event" :style="{'line-height': style ? '1.5' : undefined}" :padding="style ? '10' : undefined" v-slot="data">
                             <button v-if="data.index > 0 && data.index % 10 === 0">test</button>
                             <block v-else>Line {{data.row}}, index: {{data.index}}.</block>
                         </greatview>
                         <layout flex="1" style="border: 1px solid rgba(0, 0, 0, .1);">
-                            <greatview :data="lineCount_2" v-model:scroll-offset="so3_2" flex="1" @resize="c3_2 = $event" @change="l3_2 = $event" :style="{'line-height': style ? '1.5' : undefined}" :padding="style ? '10' : undefined" v-slot="data">
+                            <greatview :data="lineCountC2" v-model:scroll-offset="so3C2" flex="1" @resize="c3C2 = $event" @change="l3C2 = $event" :style="{'line-height': style ? '1.5' : undefined}" :padding="style ? '10' : undefined" v-slot="data">
                                 <block v-if="data.index > 0 && data.index % 10 === 0" style="margin: auto; background: red; width: 60%; height: 30px; color: #FFF; text-align: center; line-height: 30px;">Custom</block>
                                 <block v-else>Line {{data.row}}, index: {{data.index}}.</block>
                             </greatview>
-                            <scroll width="20" :length="l3_2" :client="c3_2" v-model:scroll-offset="so3_2"></scroll>
+                            <scroll width="20" :length="l3C2" :client="c3C2" v-model:scroll-offset="so3C2"></scroll>
                         </layout>
                     </layout>
-                    <label>Scroll offset: {{so_2}}, Length: {{l_2}}, Client: {{c_2}}.</label>
-                    <greatview :data="lineCount_2" v-model:scroll-offset="so2_2" style="border: 1px solid rgba(0, 0, 0, .1);" flex="1" direction="h" @resize="c2_2 = $event" @change="l2_2 = $event" :style="{'line-height': style ? '1.5' : undefined}" :padding="style ? '10' : undefined" v-slot="data">
+                    <label>Scroll offset: {{soC2}}, Length: {{lC2}}, Client: {{cC2}}.</label>
+                    <greatview :data="lineCountC2" v-model:scroll-offset="so2C2" style="border: 1px solid rgba(0, 0, 0, .1);" flex="1" direction="h" @resize="c2C2 = $event" @change="l2C2 = $event" :style="{'line-height': style ? '1.5' : undefined}" :padding="style ? '10' : undefined" v-slot="data">
                         <layout align-v="center" align-h="center" direction="v" style="border-right: 1px solid rgba(0, 0, 0, .1); width: 80px;">
                             <label>Col {{data.row}}.</label>
                             <label>index: {{data.index}}.</label>
                         </layout>
                     </greatview>
-                    <label>Scroll offset: {{so2_2}}, Length: {{l2_2}}, Client: {{c2_2}}.</label>
+                    <label>Scroll offset: {{so2C2}}, Length: {{l2C2}}, Client: {{c2C2}}.</label>
                     <layout gutter="10">
-                        <button @tap="lineCount_2 += 10" flex="1" style="padding: 0 10px;">Add 10 lines</button>
-                        <button @tap="lineCount_2 += 50" flex="1" style="padding: 0 10px;">Add 50 lines</button>
+                        <button @tap="lineCountC2 += 10" flex="1" style="padding: 0 10px;">Add 10 lines</button>
+                        <button @tap="lineCountC2 += 50" flex="1" style="padding: 0 10px;">Add 50 lines</button>
                     </layout>
                     <layout gutter="10">
-                        <button @tap="lineCount_2 -= 10;if(lineCount_2 < 0) {lineCount_2 = 0;}" flex="1" style="padding: 0 10px;">Remove 10 lines</button>
-                        <button @tap="lineCount_2 -= 50;if(lineCount_2 < 0) {lineCount_2 = 0;}" flex="1" style="padding: 0 10px;">Remove 50 lines</button>
+                        <button @tap="lineCountC2 -= 10;if(lineCountC2 < 0) {lineCountC2 = 0;}" flex="1" style="padding: 0 10px;">Remove 10 lines</button>
+                        <button @tap="lineCountC2 -= 50;if(lineCountC2 < 0) {lineCountC2 = 0;}" flex="1" style="padding: 0 10px;">Remove 50 lines</button>
                     </layout>
                 </layout>
             </tab-panel>

@@ -28,6 +28,9 @@ export let data = {
 
 export let methods = {
     click: function(this: IVueControl, event: MouseEvent): void {
+        if (this.$parent?.$parent?.$parent?.itemPopShowing) {
+            clickgo.form.hidePop(this.$parent.$parent.$parent.itemPopShowing);
+        }
         if (this.disabled) {
             return;
         }
@@ -37,6 +40,11 @@ export let methods = {
     },
     controlClick: function(this: IVue, e: MouseEvent): void {
         if (this.disabled) {
+            return;
+        }
+        if (this.popOpen) {
+            // --- 本来是展开状态，就隐藏起来 ---
+            clickgo.form.hidePop(this);
             return;
         }
         this.showPop(e);
