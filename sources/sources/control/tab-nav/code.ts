@@ -10,9 +10,12 @@ export let data = {
 };
 
 export let watch = {
-    'tabs': async function(this: IVue): Promise<void> {
-        await this.$nextTick();
-        this.onResize(clickgo.element.getSize(this.$refs.tabs));
+    'tabs': {
+        handler: async function(this: IVue): Promise<void> {
+            await this.$nextTick();
+            this.onResize(clickgo.element.getSize(this.$refs.tabs));
+        },
+        'deep': true
     }
 };
 

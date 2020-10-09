@@ -8,7 +8,10 @@ export declare let data: {
     timer: undefined;
 };
 export declare let watch: {
-    tabs: (this: IVue) => Promise<void>;
+    tabs: {
+        handler: (this: IVue) => Promise<void>;
+        deep: boolean;
+    };
 };
 export declare let methods: {
     longDown: (this: IVue, e: MouseEvent | TouchEvent, type: 'start' | 'end') => void;

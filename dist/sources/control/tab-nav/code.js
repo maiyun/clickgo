@@ -20,11 +20,14 @@ exports.data = {
     'timer': undefined
 };
 exports.watch = {
-    'tabs': function () {
-        return __awaiter(this, void 0, void 0, function* () {
-            yield this.$nextTick();
-            this.onResize(clickgo.element.getSize(this.$refs.tabs));
-        });
+    'tabs': {
+        handler: function () {
+            return __awaiter(this, void 0, void 0, function* () {
+                yield this.$nextTick();
+                this.onResize(clickgo.element.getSize(this.$refs.tabs));
+            });
+        },
+        'deep': true
     }
 };
 exports.methods = {

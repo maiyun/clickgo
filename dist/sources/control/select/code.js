@@ -51,7 +51,8 @@ exports.watch = {
                 this.valueData = this.valueIndex >= 0 ? this.dataComp[this.valueIndex].value : '';
                 this.$emit('update:modelValue', this.valueData);
             }
-        }
+        },
+        'deep': true
     },
     'modelValue': {
         handler: function () {
