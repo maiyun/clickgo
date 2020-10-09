@@ -35,8 +35,14 @@ export declare let computed: {
     widthPx: (this: IVue) => string | undefined;
     heightPx: (this: IVue) => string | undefined;
 };
+export declare let watch: {
+    data: {
+        handler: (this: IVueControl) => void;
+        deep: boolean;
+    };
+};
 export declare let methods: {
-    select: (this: IVue, index: number) => void;
+    select: (this: IVue, value?: string | number | undefined) => void;
 };
 export declare let mounted: (this: IVueControl) => void;
 export declare let unmounted: (this: IVueControl) => void;

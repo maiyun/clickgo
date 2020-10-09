@@ -67,7 +67,7 @@
             </tab-panel>
             <tab-panel label="select" style="padding: 10px;">
                 <layout flex="1" gutter="10" direction="v">
-                    <block>greatselect:</block>
+                    <block>greatselect (Now select value is {{select}}):</block>
                     <greatselect :area="area">
                         <layout flex="1" align-v="center" gutter="5" style="line-height: 1.2;">
                             <img width="32" height="32" :src="slist[select].src"></img>

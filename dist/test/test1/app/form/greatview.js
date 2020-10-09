@@ -74,5 +74,13 @@ exports.watch = {
         if (!this.slist[n].name) {
             this.select = o;
         }
+    },
+    'slist': {
+        handler: function () {
+            if (!this.slist[this.select].name) {
+                this.select = 0;
+            }
+        },
+        'deep': true
     }
 };

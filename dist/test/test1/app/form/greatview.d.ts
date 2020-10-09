@@ -68,4 +68,8 @@ export declare let data: {
 };
 export declare let watch: {
     select: (this: IVueControl, n: number, o: number) => void;
+    slist: {
+        handler: (this: IVueControl) => void;
+        deep: boolean;
+    };
 };

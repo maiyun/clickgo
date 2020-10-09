@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.unmounted = exports.mounted = exports.methods = exports.computed = exports.data = exports.props = void 0;
+exports.unmounted = exports.mounted = exports.methods = exports.watch = exports.computed = exports.data = exports.props = void 0;
 exports.props = {
     'width': {
         'default': undefined
@@ -54,9 +54,32 @@ exports.computed = {
         }
     }
 };
+exports.watch = {
+    'data': {
+        handler: function () {
+            if (this.data[this.modelValue] !== undefined) {
+                return;
+            }
+            this.select();
+        },
+        'deep': true
+    }
+};
 exports.methods = {
-    select: function (index) {
-        this.$emit('update:modelValue', index);
+    select: function (value) {
+        if (value && this.data[value]) {
+            this.$emit('update:modelValue', value);
+            return;
+        }
+        if (Array.isArray(this.data)) {
+            this.$emit('update:modelValue', 0);
+        }
+        else {
+            for (let k in this.data) {
+                this.$emit('update:modelValue', k);
+                break;
+            }
+        }
     }
 };
 exports.mounted = function () {

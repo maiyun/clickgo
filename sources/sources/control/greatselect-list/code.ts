@@ -54,9 +54,35 @@ export let computed = {
     }
 };
 
+export let watch = {
+    'data': {
+        handler: function(this: IVueControl): void {
+            if (this.data[this.modelValue] !== undefined) {
+                return;
+            }
+            this.select();
+        },
+        'deep': true
+    }
+};
+
 export let methods = {
-    select: function(this: IVue, index: number): void {
-        this.$emit('update:modelValue', index);
+    select: function(this: IVue, value?: string | number): void {
+        // --- 检查 value 是否合法 ---
+        if (value && this.data[value]) {
+            this.$emit('update:modelValue', value);
+            return;
+        }
+        // --- 选择第一个 ---
+        if (Array.isArray(this.data)) {
+            this.$emit('update:modelValue', 0);
+        }
+        else {
+            for (let k in this.data) {
+                this.$emit('update:modelValue', k);
+                break;
+            }
+        }
     }
 };
 

@@ -85,5 +85,13 @@ export let watch = {
         if (!this.slist[n].name) {
             this.select = o;
         }
+    },
+    'slist': {
+        handler: function(this: IVueControl): void {
+            if (!this.slist[this.select].name) {
+                this.select = 0;
+            }
+        },
+        'deep': true
     }
 };
