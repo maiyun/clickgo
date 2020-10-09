@@ -67,7 +67,8 @@ exports.watch = {
     'data': {
         handler: function () {
             this.refreshView();
-        }
+        },
+        'deep': true
     },
     'direction': function () {
         this.refreshView();

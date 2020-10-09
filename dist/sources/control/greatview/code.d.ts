@@ -54,6 +54,7 @@ export declare let data: {
 export declare let watch: {
     data: {
         handler: (this: IVue) => void;
+        deep: boolean;
     };
     direction: (this: IVue) => void;
 };

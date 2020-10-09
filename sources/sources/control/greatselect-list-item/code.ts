@@ -28,10 +28,10 @@ export let data = {
 
 export let methods = {
     click: function(this: IVueControl, event: MouseEvent): void {
-        if (this.$parent?.$parent?.$parent?.itemPopShowing) {
-            clickgo.form.hidePop(this.$parent.$parent.$parent.itemPopShowing);
-        }
         if (this.disabled) {
+            if (this.$parent?.$parent?.$parent?.itemPopShowing) {
+                clickgo.form.hidePop(this.$parent.$parent.$parent.itemPopShowing);
+            }
             return;
         }
         this.$parent?.$parent?.$parent?.select(this.value);

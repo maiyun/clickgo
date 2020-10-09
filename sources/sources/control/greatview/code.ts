@@ -62,7 +62,8 @@ export let watch = {
     'data': {
         handler: function(this: IVue): void {
             this.refreshView();
-        }
+        },
+        'deep': true
     },
     'direction': function(this: IVue): void {
         this.refreshView();
