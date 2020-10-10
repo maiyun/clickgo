@@ -105,12 +105,12 @@
                     </layout>
                     <layout align-v="center">
                         <block style="flex-grow: 1; width: 0;">select:</block>
-                        <!--<select flex="2" v-model="select2" :data="slist2"></select>-->
+                        <select flex="2" v-model="select2" :data="slist2"></select>
                         <block style="flex-grow: 1; width: 0; padding-left: 10px;">{{select2}}</block>
                     </layout>
                     <layout align-v="center">
                         <block style="flex-grow: 1; width: 0;">editable:</block>
-                        <!--<select flex="2" v-model="select3" :data="slist2" :editable="true"></select>-->
+                        <select flex="2" v-model="select3" :data="slist2" :editable="true"></select>
                         <block style="flex-grow: 1; width: 0; padding-left: 10px;">{{select3}}</block>
                     </layout>
                     <layout gutter="10" align-v="center">

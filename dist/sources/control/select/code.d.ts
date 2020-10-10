@@ -52,6 +52,6 @@ export declare let computed: {
     dataComp: (this: IVue) => any;
 };
 export declare let methods: {
-    input: (this: IVue, index: number) => void;
+    updateValue: (this: IVue, index: number) => void;
     tinput: (this: IVue) => void;
 };

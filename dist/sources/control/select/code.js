@@ -56,12 +56,12 @@ exports.watch = {
     },
     'modelValue': {
         handler: function () {
-            if (this.valueData === this.value) {
+            if (this.valueData === this.modelValue) {
                 return;
             }
-            this.valueData = this.value;
+            this.valueData = this.modelValue;
             for (let i = 0; i < this.dataComp.length; ++i) {
-                if (this.dataComp[i].value !== this.value) {
+                if (this.dataComp[i].value !== this.modelValue) {
                     continue;
                 }
                 this.valueIndex = i;
@@ -85,20 +85,32 @@ exports.computed = {
     },
     'dataComp': function () {
         let data = [];
-        for (let i = 0; i < this.data.length; ++i) {
-            if (this.data[i].value) {
-                data[i] = this.data[i];
-                continue;
+        if (Array.isArray(this.data)) {
+            for (let i = 0; i < this.data.length; ++i) {
+                if (this.data[i].value) {
+                    data[i] = this.data[i];
+                    continue;
+                }
+                data[i] = {
+                    'value': this.data[i]
+                };
             }
-            data[i] = {
-                'value': this.data[i]
-            };
+            return data;
+        }
+        else {
+            for (let k in this.data) {
+                let item = clickgo.tool.clone(this.data[k]);
+                if (!item.value) {
+                    item.value = k;
+                }
+                data.push(item);
+            }
         }
         return data;
     }
 };
 exports.methods = {
-    input: function (index) {
+    updateValue: function (index) {
         this.valueIndex = index;
         this.valueData = this.dataComp[index] ? this.dataComp[index].value : '';
         this.$emit('update:modelValue', this.valueData);
