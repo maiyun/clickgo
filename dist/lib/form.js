@@ -258,6 +258,13 @@ function showPop(pop, x, y = 0) {
         }
         exports.popShowing = pop;
     }
+    if (pop.subPop === undefined) {
+        return {
+            'left': '-5000px',
+            'top': '0px',
+            'zIndex': '0'
+        };
+    }
     let position = clickgo.getPosition();
     let left, top;
     if (typeof x === 'string') {
@@ -270,31 +277,31 @@ function showPop(pop, x, y = 0) {
             left = bcr.left + bcr.width - 2;
             top = bcr.top - 2;
         }
-        if (pop.$el.offsetWidth + left > position.width) {
-            if (y === 0) {
-                left = position.width - pop.$el.offsetWidth;
+        if (pop.subPop.$el.offsetWidth + left > position.width) {
+            if (x === 'v') {
+                left = position.width - pop.subPop.$el.offsetWidth;
             }
             else {
-                left = bcr.left - pop.$el.offsetWidth + 2;
+                left = bcr.left - pop.subPop.$el.offsetWidth + 2;
             }
         }
-        if (pop.$el.offsetHeight + top > position.height) {
-            if (y === 0) {
-                top = bcr.top - pop.$el.offsetHeight;
+        if (pop.subPop.$el.offsetHeight + top > position.height) {
+            if (x === 'v') {
+                top = bcr.top - pop.subPop.$el.offsetHeight;
             }
             else {
-                top = position.height - pop.$el.offsetHeight;
+                top = position.height - pop.subPop.$el.offsetHeight;
             }
         }
     }
     else {
         left = x + 5;
         top = y + 7;
-        if (pop.$el.offsetWidth + left > position.width) {
-            left = x - pop.$el.offsetWidth - 5;
+        if (pop.subPop.$el.offsetWidth + left > position.width) {
+            left = x - pop.subPop.$el.offsetWidth - 5;
         }
-        if (pop.$el.offsetHeight + top > position.height) {
-            top = y - pop.$el.offsetHeight - 5;
+        if (pop.subPop.$el.offsetHeight + top > position.height) {
+            top = y - pop.subPop.$el.offsetHeight - 5;
         }
     }
     if (left < 0) {

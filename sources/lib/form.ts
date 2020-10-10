@@ -324,6 +324,14 @@ export function showPop(pop: IVueControl, x: number | 'h' | 'v', y: number = 0):
         }
         popShowing = pop;
     }
+    // --- 没有子层直接返回 ---
+    if (pop.subPop === undefined) {
+        return {
+            'left': '-5000px',
+            'top': '0px',
+            'zIndex': '0'
+        };
+    }
     // --- 获取限定区域 ---
     let position = clickgo.getPosition();
     // --- 最终显示位置 ---
@@ -341,23 +349,23 @@ export function showPop(pop: IVueControl, x: number | 'h' | 'v', y: number = 0):
             top = bcr.top - 2;
         }
         // --- 检查水平是否出框 ---
-        if (pop.$el.offsetWidth + left > position.width) {
-            if (y === 0) {
+        if (pop.subPop.$el.offsetWidth + left > position.width) {
+            if (x === 'v') {
                 // --- 垂直弹出 ---
-                left = position.width - pop.$el.offsetWidth;
+                left = position.width - pop.subPop.$el.offsetWidth;
             }
             else {
                 // --- 水平弹出，右边位置不够弹到左边 ---
-                left = bcr.left - pop.$el.offsetWidth + 2;
+                left = bcr.left - pop.subPop.$el.offsetWidth + 2;
             }
         }
         // --- 检测垂直是否出框 ---
-        if (pop.$el.offsetHeight + top > position.height) {
-            if (y === 0) {
-                top = bcr.top - pop.$el.offsetHeight;
+        if (pop.subPop.$el.offsetHeight + top > position.height) {
+            if (x === 'v') {
+                top = bcr.top - pop.subPop.$el.offsetHeight;
             }
             else {
-                top = position.height - pop.$el.offsetHeight;
+                top = position.height - pop.subPop.$el.offsetHeight;
             }
         }
     }
@@ -365,12 +373,12 @@ export function showPop(pop: IVueControl, x: number | 'h' | 'v', y: number = 0):
         left = x + 5;
         top = y + 7;
         // --- 水平 ---
-        if (pop.$el.offsetWidth + left > position.width) {
-            left = x - pop.$el.offsetWidth - 5;
+        if (pop.subPop.$el.offsetWidth + left > position.width) {
+            left = x - pop.subPop.$el.offsetWidth - 5;
         }
         // --- 垂直 ---
-        if (pop.$el.offsetHeight + top > position.height) {
-            top = y - pop.$el.offsetHeight - 5;
+        if (pop.subPop.$el.offsetHeight + top > position.height) {
+            top = y - pop.subPop.$el.offsetHeight - 5;
         }
     }
     if (left < 0) {
