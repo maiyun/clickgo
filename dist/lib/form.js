@@ -476,7 +476,6 @@ function create(opt) {
                     return -103;
                 }
                 let randList = [
-                    'cg-theme-global-' + name + '_',
                     'cg-theme-task' + opt.taskId + '-' + name + '_'
                 ];
                 if (rand !== '') {
@@ -538,7 +537,7 @@ function create(opt) {
                     if (cla.slice(0, 3) === 'cg-') {
                         return cla;
                     }
-                    return `cg-theme-global-${this.$data._controlName}_${cla} cg-theme-task${this.taskId}-${this.$data._controlName}_${cla} ${this.$data._scope}${cla}`;
+                    return `cg-theme-task${this.taskId}-${this.$data._controlName}_${cla} ${this.$data._scope}${cla}`;
                 };
                 methods.cgSlos = function (name = 'default') {
                     let d = this.$slots[name];

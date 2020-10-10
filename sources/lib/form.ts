@@ -587,7 +587,6 @@ export async function create(opt: ICreateFormOptions): Promise<number | IForm> {
             }
             // --- 给控件的 layout 的 class 增加前置 ---
             let randList = [
-                'cg-theme-global-' + name + '_',
                 'cg-theme-task' + opt.taskId + '-' + name + '_'
             ];
             if (rand !== '') {
@@ -652,7 +651,7 @@ export async function create(opt: ICreateFormOptions): Promise<number | IForm> {
                 if (cla.slice(0, 3) === 'cg-') {
                     return cla;
                 }
-                return `cg-theme-global-${this.$data._controlName}_${cla} cg-theme-task${this.taskId}-${this.$data._controlName}_${cla} ${this.$data._scope}${cla}`;
+                return `cg-theme-task${this.taskId}-${this.$data._controlName}_${cla} ${this.$data._scope}${cla}`;
             };
             // --- 获取目前现存的子 slots ---
             methods.cgSlos = function(this: IVue, name: string = 'default'): IVueVNode[] {
