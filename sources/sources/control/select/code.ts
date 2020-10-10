@@ -80,6 +80,48 @@ export let watch = {
     }
 };
 
+function listToData(o: any, child: boolean = false): any[] {
+    let data: any[] = [];
+    if (Array.isArray(o)) {
+        for (let item of o) {
+            if (typeof item === 'string') {
+                data.push({
+                    'label': item,
+                    'value': item,
+                    'child': child
+                });
+            }
+            else {
+                data.push({
+                    'label': item.label ?? item.value ?? '',
+                    'value': item.value ?? item.label ?? '',
+                    'disabled': item.disabled,
+                    'title': item.children ? true : false,
+                    'child': child
+                });
+                if (item.children) {
+                    data = data.concat(listToData(item.children, true));
+                }
+            }
+        }
+    }
+    else {
+        for (let k in o) {
+            let item = o[k];
+            data.push({
+                'label': item.label ?? item.value ?? k,
+                'value': item.value ?? k,
+                'disabled': item.disabled,
+                'title': item.children ? true : false,
+                'child': child
+            });
+            if (item.children) {
+                data = data.concat(listToData(item.children, true));
+            }
+        }
+    }
+    return data;
+}
 export let computed = {
     'editableComp': function(this: IVue): boolean {
         if (typeof this.editable === 'boolean') {
@@ -88,29 +130,8 @@ export let computed = {
         return this.editable === 'true' ? true : false;
     },
     'dataComp': function(this: IVue): any {
-        let data = [];
-        if (Array.isArray(this.data)) {
-            for (let i = 0; i < this.data.length; ++i) {
-                if (this.data[i].value) {
-                    data[i] = this.data[i];
-                    continue;
-                }
-                data[i] = {
-                    'value': this.data[i]
-                };
-            }
-            return data;
-        }
-        else {
-            for (let k in this.data) {
-                let item = clickgo.tool.clone(this.data[k]);
-                if (!item.value) {
-                    item.value = k;
-                }
-                data.push(item);
-            }
-        }
-        return data;
+        console.log('xx', listToData(this.data));
+        return listToData(this.data);
     }
 };
 

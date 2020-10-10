@@ -54,10 +54,29 @@ export declare let data: {
         value: string;
         label: string;
         disabled?: undefined;
+        children?: undefined;
     } | {
         value: string;
         label: string;
         disabled: boolean;
+        children?: undefined;
+    } | {
+        value: string;
+        children: {
+            sub1: {
+                label: string;
+            };
+            sub2: {
+                label: string;
+            };
+        };
+        label?: undefined;
+        disabled?: undefined;
+    } | {
+        label: string;
+        children: string[];
+        value?: undefined;
+        disabled?: undefined;
     })[];
     select2: string;
     select3: string;

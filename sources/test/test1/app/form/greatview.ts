@@ -68,6 +68,19 @@ export let data = {
             'value': 'ha6',
             'label': 'Can not be selected',
             'disabled': true
+        }, {
+            'value': 'title',
+            'children': {
+                'sub1': {
+                    'label': 'sub1label'
+                },
+                'sub2': {
+                    'label': 'sub2'
+                }
+            }
+        }, {
+            'label': 'happy',
+            'children': ['xixi', 'xixida', 'gogogo']
         }
     ],
     'select2': 'haha1',
