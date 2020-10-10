@@ -26,7 +26,7 @@ exports.data = {
     'subPop': undefined,
     'showArrow': false,
     'popOptions': {
-        'left': '0px',
+        'left': '-5000px',
         'top': '0px',
         'zIndex': '0'
     }

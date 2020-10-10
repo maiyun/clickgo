@@ -780,10 +780,9 @@ export async function create(opt: ICreateFormOptions): Promise<number | IForm> {
         randList.push(rand);
     }
     let r = clickgo.tool.layoutClassPrepend(layout, randList);
-    formListElement.insertAdjacentHTML('beforeend', `<div class="cg-form-wrap" data-form-id="${formId.toString()}" data-task-id="${opt.taskId.toString()}">${r.layout}</div>`);
+    formListElement.insertAdjacentHTML('beforeend', `<div class="cg-form-wrap" data-form-id="${formId.toString()}" data-task-id="${opt.taskId.toString()}"></div>`);
     // --- 获取刚才的 form wrap element 对象 ---
     let el: HTMLElement = formListElement.children.item(formListElement.children.length - 1) as HTMLElement;
-    el.children.item(0)?.setAttribute('ref', 'form');
     // --- 创建窗体对象 ---
     // --- 初始化系统初始 data ---
     data.taskId = opt.taskId;
@@ -923,6 +922,7 @@ export async function create(opt: ICreateFormOptions): Promise<number | IForm> {
         'vroot': IVue;
     } | null = await new Promise(function(resolve) {
         const vapp = Vue.createApp({
+            'template': r.layout.replace(/^<cg-form/, '<cg-form ref="form"'),
             'data': function() {
                 return clickgo.tool.clone(data);
             },

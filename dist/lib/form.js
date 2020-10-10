@@ -387,7 +387,7 @@ function remove(formId) {
 }
 exports.remove = remove;
 function create(opt) {
-    var _a, _b, _c, _d, _e, _f, _g;
+    var _a, _b, _c, _d, _e, _f;
     return __awaiter(this, void 0, void 0, function* () {
         if (!opt.taskId) {
             return -109;
@@ -660,12 +660,11 @@ function create(opt) {
             randList.push(rand);
         }
         let r = clickgo.tool.layoutClassPrepend(layout, randList);
-        formListElement.insertAdjacentHTML('beforeend', `<div class="cg-form-wrap" data-form-id="${formId.toString()}" data-task-id="${opt.taskId.toString()}">${r.layout}</div>`);
+        formListElement.insertAdjacentHTML('beforeend', `<div class="cg-form-wrap" data-form-id="${formId.toString()}" data-task-id="${opt.taskId.toString()}"></div>`);
         let el = formListElement.children.item(formListElement.children.length - 1);
-        (_f = el.children.item(0)) === null || _f === void 0 ? void 0 : _f.setAttribute('ref', 'form');
         data.taskId = opt.taskId;
         data.formId = formId;
-        data._dir = (_g = opt.dir) !== null && _g !== void 0 ? _g : '/';
+        data._dir = (_f = opt.dir) !== null && _f !== void 0 ? _f : '/';
         data._scope = rand;
         data.focus = false;
         data._customZIndex = false;
@@ -797,6 +796,7 @@ function create(opt) {
         };
         let rtn = yield new Promise(function (resolve) {
             const vapp = Vue.createApp({
+                'template': r.layout.replace(/^<cg-form/, '<cg-form ref="form"'),
                 'data': function () {
                     return clickgo.tool.clone(data);
                 },

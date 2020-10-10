@@ -130,7 +130,6 @@ export let computed = {
         return this.editable === 'true' ? true : false;
     },
     'dataComp': function(this: IVue): any {
-        console.log('xx', listToData(this.data));
         return listToData(this.data);
     }
 };

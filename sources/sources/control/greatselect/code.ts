@@ -59,7 +59,7 @@ export let data = {
     'subPop': undefined,
 
     'popOptions': {
-        'left': '0px',
+        'left': '-5000px',
         'top': '0px',
         'width': '0px',
         'zIndex': '0'

@@ -127,7 +127,6 @@ exports.computed = {
         return this.editable === 'true' ? true : false;
     },
     'dataComp': function () {
-        console.log('xx', listToData(this.data));
         return listToData(this.data);
     }
 };
