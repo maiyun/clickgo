@@ -26,8 +26,8 @@ export declare let props: {
 };
 export declare let data: {
     scrollOffsetEmit: number;
-    resizeEmit: number;
-    changeEmit: number;
+    clientEmit: number;
+    lengthEmit: number;
 };
 export declare let computed: {
     widthPx: (this: IVue) => string | undefined;
@@ -44,4 +44,3 @@ export declare let methods: {
     touchmove: (this: IVue, e: TouchEvent) => void;
 };
 export declare let mounted: (this: IVue) => void;
-export declare let updated: (this: IVue) => void;

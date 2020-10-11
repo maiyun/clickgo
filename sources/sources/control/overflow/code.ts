@@ -28,8 +28,8 @@ export let props = {
 
 export let data = {
     'scrollOffsetEmit': 0,
-    'resizeEmit': 0,
-    'changeEmit': 0
+    'clientEmit': 0,
+    'lengthEmit': 0
 };
 
 export let computed = {
@@ -101,30 +101,36 @@ export let methods = {
 };
 
 export let mounted = function(this: IVue): void {
+    // --- 大小改变，会影响 scroll offset、client，不会影响 length ---
     clickgo.element.watchSize(this.$refs.wrap, () => {
-        let resize = this.direction === 'v' ? this.$refs.wrap.clientHeight : this.$refs.wrap.clientWidth;
-        if (this.resizeEmit !== resize) {
-            this.resizeEmit = resize;
-            this.$emit('resize', resize);
+        let client = this.direction === 'v' ? this.$refs.wrap.clientHeight : this.$refs.wrap.clientWidth;
+        if (this.clientEmit !== client) {
+            this.clientEmit = client;
+            this.$emit('resize', client);
         }
-        this.$emit('resize', this.direction === 'v' ? this.$refs.wrap.clientHeight : this.$refs.wrap.clientWidth);
     });
-    let resize = this.direction === 'v' ? this.$refs.wrap.clientHeight : this.$refs.wrap.clientWidth;
-    this.resizeEmit = resize;
-    this.$emit('resize', this.direction === 'v' ? this.$refs.wrap.clientHeight : this.$refs.wrap.clientWidth);
+    let client = this.direction === 'v' ? this.$refs.wrap.clientHeight : this.$refs.wrap.clientWidth;
+    this.clientEmit = client;
+    this.$emit('resize', client);
+    // --- 内容改变 ---
+    clickgo.element.watchElement(this.$refs.wrap, () => {
+        let length = this.direction === 'v' ? this.$refs.wrap.scrollHeight : this.$refs.wrap.scrollWidth;
+        if (this.lengthEmit !== length) {
+            this.lengthEmit = length;
+            this.$emit('change', length);
+        }
+    });
+    let length = this.direction === 'v' ? this.$refs.wrap.scrollHeight : this.$refs.wrap.scrollWidth;
+    if (this.lengthEmit !== length) {
+        this.lengthEmit = length;
+        this.$emit('change', length);
+    }
 
+    // --- 对 scroll 位置进行归位 ---
     if (this.direction === 'v') {
         this.$refs.wrap.scrollTop = this.scrollOffset;
     }
     else {
         this.$refs.wrap.scrollLeft = this.scrollOffset;
-    }
-};
-
-export let updated = function(this: IVue): void {
-    let change = this.direction === 'v' ? this.$refs.wrap.scrollHeight : this.$refs.wrap.scrollWidth;
-    if (this.changeEmit !== change) {
-        this.changeEmit = change;
-        this.$emit('change', change);
     }
 };
