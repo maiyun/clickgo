@@ -65,9 +65,9 @@ export let methods = {
         this.$refs.tabs.scrollLeft += e.deltaY;
     },
     // --- 检测是否显示箭头 ---
-    onResize: function(this: IVue, size: IElementSize): void {
+    onResize: function(this: IVueControl, size: IElementSize): void {
         if (this.$parent!.tabPosition === 'top' || this.$parent!.tabPosition === 'bottom') {
-            if (size.scrollWidth > size.clientWidth) {
+            if (size.scrollWidth > Math.round(size.clientWidth)) {
                 this.arrow = true;
             }
             else {
@@ -75,7 +75,7 @@ export let methods = {
             }
         }
         else {
-            if (size.scrollHeight > size.clientHeight) {
+            if (size.scrollHeight > Math.round(size.clientHeight)) {
                 this.arrow = true;
             }
             else {

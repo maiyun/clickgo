@@ -76,7 +76,7 @@ exports.methods = {
     },
     onResize: function (size) {
         if (this.$parent.tabPosition === 'top' || this.$parent.tabPosition === 'bottom') {
-            if (size.scrollWidth > size.clientWidth) {
+            if (size.scrollWidth > Math.round(size.clientWidth)) {
                 this.arrow = true;
             }
             else {
@@ -84,7 +84,7 @@ exports.methods = {
             }
         }
         else {
-            if (size.scrollHeight > size.clientHeight) {
+            if (size.scrollHeight > Math.round(size.clientHeight)) {
                 this.arrow = true;
             }
             else {
