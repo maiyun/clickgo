@@ -52,6 +52,6 @@
                     <button @tap="lineCount -= 10;if(lineCount < 0) {lineCount = 0;}" flex="1" style="padding: 0 10px;">Remove 10 lines</button>
                 </layout>
             </layout>
-        </tab>
+        </tab-panel>
     </tab>
 </form>
