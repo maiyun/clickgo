@@ -124,7 +124,7 @@ exports.mounted = function () {
                     --this.$parent.hasSubItemsCount;
                 }
             }
-        });
+        }, 'default', true);
     }
 };
 exports.unmounted = function () {

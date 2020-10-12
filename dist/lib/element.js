@@ -35,8 +35,9 @@ function getSize(el) {
 }
 exports.getSize = getSize;
 function watchSize(el, cb, immediate = false) {
+    let fsize = getSize(el);
     if (immediate) {
-        cb(getSize(el));
+        cb(fsize);
     }
     const resizeObserver = new window.ResizeObserver(function () {
         let size = getSize(el);
@@ -46,7 +47,7 @@ function watchSize(el, cb, immediate = false) {
         cb(getSize(el));
     });
     resizeObserver.observe(el);
-    return getSize(el);
+    return fsize;
 }
 exports.watchSize = watchSize;
 function watchElement(el, cb, mode = 'default', immediate = false) {

@@ -275,6 +275,7 @@ exports.mounted = function () {
         }
     });
     this.contentLength = Math.round(this.direction === 'v' ? size.height : size.width);
+    this.refreshView();
 };
 exports.unmounted = function () {
     if (this.timer) {

@@ -115,12 +115,7 @@ exports.mounted = function () {
             this.lengthEmit = length;
             this.$emit('change', length);
         }
-    });
-    let length = this.direction === 'v' ? this.$refs.wrap.scrollHeight : this.$refs.wrap.scrollWidth;
-    if (this.lengthEmit !== length) {
-        this.lengthEmit = length;
-        this.$emit('change', length);
-    }
+    }, 'default', true);
     if (this.direction === 'v') {
         this.$refs.wrap.scrollTop = this.scrollOffset;
     }

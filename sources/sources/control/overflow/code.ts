@@ -119,12 +119,7 @@ export let mounted = function(this: IVue): void {
             this.lengthEmit = length;
             this.$emit('change', length);
         }
-    });
-    let length = this.direction === 'v' ? this.$refs.wrap.scrollHeight : this.$refs.wrap.scrollWidth;
-    if (this.lengthEmit !== length) {
-        this.lengthEmit = length;
-        this.$emit('change', length);
-    }
+    }, 'default', true);
 
     // --- 对 scroll 位置进行归位 ---
     if (this.direction === 'v') {

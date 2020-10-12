@@ -57,8 +57,9 @@ export function getSize(el: HTMLElement): IElementSize {
  * @param cb 回调函数
  */
 export function watchSize(el: HTMLElement, cb: (size: IElementSize) => void, immediate: boolean = false): IElementSize {
+    let fsize = getSize(el);
     if (immediate) {
-        cb(getSize(el));
+        cb(fsize);
     }
     const resizeObserver = new (window as any).ResizeObserver(function(): void {
         let size = getSize(el);
@@ -68,7 +69,7 @@ export function watchSize(el: HTMLElement, cb: (size: IElementSize) => void, imm
         cb(getSize(el));
     });
     resizeObserver.observe(el);
-    return getSize(el);
+    return fsize;
 }
 
 /**

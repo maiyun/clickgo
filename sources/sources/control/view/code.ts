@@ -326,6 +326,8 @@ export let mounted = function(this: IVue): void {
         }
     });
     this.contentLength = Math.round(this.direction === 'v' ? size.height : size.width);
+
+    this.refreshView();
 };
 
 export let unmounted = function(this: IVue): void {

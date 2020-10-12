@@ -133,7 +133,7 @@ export let mounted = function(this: IVue): void {
                     --this.$parent!.hasSubItemsCount;
                 }
             }
-        });
+        }, 'default', true);
     }
 };
 
