@@ -34,7 +34,6 @@ export declare let watch: {
         immediate: boolean;
     };
 };
-export declare let updated: (this: IVueControl) => void;
 export declare let methods: {
     click: (this: IVueControl, event: MouseEvent) => void;
     mousein: (this: IVueControl) => void;

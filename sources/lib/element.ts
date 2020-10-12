@@ -56,7 +56,10 @@ export function getSize(el: HTMLElement): IElementSize {
  * @param el 要监视的大小
  * @param cb 回调函数
  */
-export function watchSize(el: HTMLElement, cb: (size: IElementSize) => void): IElementSize {
+export function watchSize(el: HTMLElement, cb: (size: IElementSize) => void, immediate: boolean = false): IElementSize {
+    if (immediate) {
+        cb(getSize(el));
+    }
     const resizeObserver = new (window as any).ResizeObserver(function(): void {
         let size = getSize(el);
         if (Number.isNaN(size.clientWidth)) {
@@ -74,7 +77,10 @@ export function watchSize(el: HTMLElement, cb: (size: IElementSize) => void): IE
  * @param cb 回调
  * @param mode 监听模式
  */
-export function watchElement(el: HTMLElement, cb: MutationCallback, mode: 'child' | 'childsub' | 'style' | 'default' | MutationObserverInit = 'default'): MutationObserver {
+export function watchElement(el: HTMLElement, cb: () => void, mode: 'child' | 'childsub' | 'style' | 'default' | MutationObserverInit = 'default', immediate: boolean = false): MutationObserver {
+    if (immediate) {
+        cb();
+    }
     let moi: MutationObserverInit;
     switch (mode) {
         case 'child': {

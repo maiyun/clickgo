@@ -1,6 +1,6 @@
 export declare function getSize(el: HTMLElement): IElementSize;
-export declare function watchSize(el: HTMLElement, cb: (size: IElementSize) => void): IElementSize;
-export declare function watchElement(el: HTMLElement, cb: MutationCallback, mode?: 'child' | 'childsub' | 'style' | 'default' | MutationObserverInit): MutationObserver;
+export declare function watchSize(el: HTMLElement, cb: (size: IElementSize) => void, immediate?: boolean): IElementSize;
+export declare function watchElement(el: HTMLElement, cb: () => void, mode?: 'child' | 'childsub' | 'style' | 'default' | MutationObserverInit, immediate?: boolean): MutationObserver;
 export declare function bindDown(oe: MouseEvent | TouchEvent, opt: {
     'down'?: (e: MouseEvent | TouchEvent) => void;
     'start'?: (e: MouseEvent | TouchEvent) => void | boolean;

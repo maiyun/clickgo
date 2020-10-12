@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updated = exports.watch = exports.computed = exports.data = exports.props = void 0;
+exports.mounted = exports.watch = exports.computed = exports.data = exports.props = void 0;
 exports.props = {
     'width': {
         'default': undefined
@@ -25,9 +25,6 @@ exports.props = {
     },
     'modelValue': {
         'default': ''
-    },
-    'name': {
-        'default': undefined
     }
 };
 exports.data = {
@@ -84,17 +81,19 @@ exports.watch = {
         'immediate': true
     }
 };
-exports.updated = function () {
-    if (this.selected === '') {
-        let s = this.names[0] ? this.names[0] : '';
-        if (this.selected !== s) {
-            this.selected = s;
+exports.mounted = function () {
+    clickgo.element.watchElement(this.$el, () => {
+        if (this.selected === '') {
+            let s = this.names[0] ? this.names[0] : '';
+            if (this.selected !== s) {
+                this.selected = s;
+            }
         }
-    }
-    else if (this.names.indexOf(this.selected) === -1) {
-        let s = this.names[this.names.length - 1] ? this.names[this.names.length - 1] : '';
-        if (this.selected !== s) {
-            this.selected = s;
+        else if (this.names.indexOf(this.selected) === -1) {
+            let s = this.names[this.names.length - 1] ? this.names[this.names.length - 1] : '';
+            if (this.selected !== s) {
+                this.selected = s;
+            }
         }
-    }
+    }, 'default', true);
 };

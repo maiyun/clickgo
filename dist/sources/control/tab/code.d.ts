@@ -23,9 +23,6 @@ export declare let props: {
     modelValue: {
         default: string;
     };
-    name: {
-        default: undefined;
-    };
 };
 export declare let data: {
     selected: string;
@@ -42,4 +39,4 @@ export declare let watch: {
         immediate: boolean;
     };
 };
-export declare let updated: (this: IVue) => void;
+export declare let mounted: (this: IVueControl) => void;

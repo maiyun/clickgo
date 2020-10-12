@@ -23,9 +23,6 @@ export let props = {
 
     'modelValue': {
         'default': ''
-    },
-    'name': {
-        'default': undefined
     }
 };
 
@@ -84,17 +81,19 @@ export let watch = {
     }
 };
 
-export let updated = function(this: IVue): void {
-    if (this.selected === '') {
-        let s = this.names[0] ? this.names[0] : '';
-        if (this.selected !== s) {
-            this.selected = s;
+export let mounted = function(this: IVueControl): void {
+    clickgo.element.watchElement(this.$el, () => {
+        if (this.selected === '') {
+            let s = this.names[0] ? this.names[0] : '';
+            if (this.selected !== s) {
+                this.selected = s;
+            }
         }
-    }
-    else if (this.names.indexOf(this.selected) === -1) {
-        let s = this.names[this.names.length - 1] ? this.names[this.names.length - 1] : '';
-        if (this.selected !== s) {
-            this.selected = s;
+        else if (this.names.indexOf(this.selected) === -1) {
+            let s = this.names[this.names.length - 1] ? this.names[this.names.length - 1] : '';
+            if (this.selected !== s) {
+                this.selected = s;
+            }
         }
-    }
+    }, 'default', true);
 };

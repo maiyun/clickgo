@@ -34,7 +34,10 @@ function getSize(el) {
     };
 }
 exports.getSize = getSize;
-function watchSize(el, cb) {
+function watchSize(el, cb, immediate = false) {
+    if (immediate) {
+        cb(getSize(el));
+    }
     const resizeObserver = new window.ResizeObserver(function () {
         let size = getSize(el);
         if (Number.isNaN(size.clientWidth)) {
@@ -46,7 +49,10 @@ function watchSize(el, cb) {
     return getSize(el);
 }
 exports.watchSize = watchSize;
-function watchElement(el, cb, mode = 'default') {
+function watchElement(el, cb, mode = 'default', immediate = false) {
+    if (immediate) {
+        cb();
+    }
     let moi;
     switch (mode) {
         case 'child': {

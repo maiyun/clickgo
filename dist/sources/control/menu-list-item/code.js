@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.unmounted = exports.mounted = exports.methods = exports.updated = exports.watch = exports.data = exports.props = void 0;
+exports.unmounted = exports.mounted = exports.methods = exports.watch = exports.data = exports.props = void 0;
 exports.props = {
     'disabled': {
         'default': false
@@ -45,22 +45,6 @@ exports.watch = {
             }
         },
         'immediate': false
-    }
-};
-exports.updated = function () {
-    if (this.$parent) {
-        if (this.cgSlos().length > 0) {
-            if (!this.showArrow) {
-                this.showArrow = true;
-                ++this.$parent.hasSubItemsCount;
-            }
-        }
-        else {
-            if (this.showArrow) {
-                this.showArrow = false;
-                --this.$parent.hasSubItemsCount;
-            }
-        }
     }
 };
 exports.methods = {
@@ -127,6 +111,20 @@ exports.mounted = function () {
         if (this.type) {
             ++this.$parent.hasTypeItemsCount;
         }
+        clickgo.element.watchElement(this.$el, () => {
+            if (this.cgSlos().length > 0) {
+                if (!this.showArrow) {
+                    this.showArrow = true;
+                    ++this.$parent.hasSubItemsCount;
+                }
+            }
+            else {
+                if (this.showArrow) {
+                    this.showArrow = false;
+                    --this.$parent.hasSubItemsCount;
+                }
+            }
+        });
     }
 };
 exports.unmounted = function () {

@@ -192,8 +192,8 @@ interface ITask {
 
 interface IElementLib {
     getSize(el: HTMLElement): IElementSize;
-    watchSize(el: HTMLElement, cb: (size: IElementSize) => void): IElementSize;
-    watchElement(el: HTMLElement, cb: MutationCallback, mode?: 'child' | 'childsub' | 'style' | 'default' | MutationObserverInit): MutationObserver;
+    watchSize(el: HTMLElement, cb: (size: IElementSize) => void, immediate?: boolean): IElementSize;
+    watchElement(el: HTMLElement, cb: () => void, mode?: 'child' | 'childsub' | 'style' | 'default' | MutationObserverInit, immediate?: boolean): MutationObserver;
     bindDown(oe: MouseEvent | TouchEvent, opt: {
         'down'?: (e: MouseEvent | TouchEvent) => void;
         'start'?: (e: MouseEvent | TouchEvent) => void | boolean;

@@ -49,24 +49,6 @@ export let watch = {
     }
 };
 
-export let updated = function(this: IVueControl): void {
-    if (this.$parent) {
-        // --- 检测是否显示箭头（是否有子 pop） ---
-        if (this.cgSlos().length > 0) {
-            if (!this.showArrow) {
-                this.showArrow = true;
-                ++this.$parent.hasSubItemsCount;
-            }
-        }
-        else {
-            if (this.showArrow) {
-                this.showArrow = false;
-                --this.$parent.hasSubItemsCount;
-            }
-        }
-    }
-};
-
 export let methods = {
     click: function(this: IVueControl, event: MouseEvent): void {
         if (this.disabled) {
@@ -137,6 +119,21 @@ export let mounted = function(this: IVue): void {
         if (this.type) {
             ++this.$parent.hasTypeItemsCount;
         }
+        // --- 检测是否显示箭头（是否有子 pop） ---
+        clickgo.element.watchElement(this.$el, () => {
+            if (this.cgSlos().length > 0) {
+                if (!this.showArrow) {
+                    this.showArrow = true;
+                    ++this.$parent!.hasSubItemsCount;
+                }
+            }
+            else {
+                if (this.showArrow) {
+                    this.showArrow = false;
+                    --this.$parent!.hasSubItemsCount;
+                }
+            }
+        });
     }
 };
 
