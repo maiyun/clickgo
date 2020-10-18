@@ -183,18 +183,22 @@ function getRectByDir(dir) {
 exports.getRectByDir = getRectByDir;
 function showCircular(x, y) {
     circularElement.style.transition = 'none';
-    circularElement.style.width = '6px';
-    circularElement.style.height = '6px';
-    circularElement.style.left = x - 3 + 'px';
-    circularElement.style.top = y - 3 + 'px';
-    circularElement.style.opacity = '1';
     requestAnimationFrame(function () {
-        circularElement.style.transition = 'all .3s ease-out';
-        circularElement.style.width = '60px';
-        circularElement.style.height = '60px';
-        circularElement.style.left = x - 30 + 'px';
-        circularElement.style.top = y - 30 + 'px';
-        circularElement.style.opacity = '0';
+        circularElement.style.width = '6px';
+        circularElement.style.height = '6px';
+        circularElement.style.left = x - 3 + 'px';
+        circularElement.style.top = y - 3 + 'px';
+        circularElement.style.opacity = '1';
+        requestAnimationFrame(function () {
+            circularElement.style.transition = 'all .3s ease-out';
+            requestAnimationFrame(function () {
+                circularElement.style.width = '60px';
+                circularElement.style.height = '60px';
+                circularElement.style.left = x - 30 + 'px';
+                circularElement.style.top = y - 30 + 'px';
+                circularElement.style.opacity = '0';
+            });
+        });
     });
 }
 exports.showCircular = showCircular;
@@ -225,17 +229,21 @@ function moveRectangle(dir) {
 exports.moveRectangle = moveRectangle;
 function showRectangle(x, y, pos) {
     rectangleElement.style.transition = 'none';
-    rectangleElement.style.width = '20px';
-    rectangleElement.style.height = '20px';
-    rectangleElement.style.left = x - 10 + 'px';
-    rectangleElement.style.top = y - 10 + 'px';
-    rectangleElement.style.opacity = '1';
-    rectangleElement.setAttribute('data-ready', '0');
-    rectangleElement.setAttribute('data-dir', '');
     requestAnimationFrame(function () {
-        rectangleElement.style.transition = 'all .2s ease-out';
-        rectangleElement.setAttribute('data-ready', '1');
-        moveRectangle(pos);
+        rectangleElement.style.width = '20px';
+        rectangleElement.style.height = '20px';
+        rectangleElement.style.left = x - 10 + 'px';
+        rectangleElement.style.top = y - 10 + 'px';
+        rectangleElement.style.opacity = '1';
+        rectangleElement.setAttribute('data-ready', '0');
+        rectangleElement.setAttribute('data-dir', '');
+        requestAnimationFrame(function () {
+            rectangleElement.style.transition = 'all .2s ease-out';
+            requestAnimationFrame(function () {
+                rectangleElement.setAttribute('data-ready', '1');
+                moveRectangle(pos);
+            });
+        });
     });
 }
 exports.showRectangle = showRectangle;

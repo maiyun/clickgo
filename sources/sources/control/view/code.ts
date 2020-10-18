@@ -24,16 +24,25 @@ export let props = {
         'default': undefined
     },
 
-    'scrollOffset': {
+    'scrollLeft': {
+        'default': 0
+    },
+    'scrollTop': {
         'default': 0
     }
 };
 
 export let data = {
-    'scrollOffsetData': 0,
-    'scrollOffsetEmit': 0,
-    'client': 0,
-    'contentLength': 0,
+    'scrollLeftData': 0,
+    'scrollTopData': 0,
+    'scrollLeftEmit': 0,
+    'scrollTopEmit': 0,
+
+    'clientWidth': 0,
+    'clientHeight': 0,
+
+    'lengthWidth': 0,
+    'lengthHeight': 0,
 
     // --- 惯性 ---
     'tran': 0,
@@ -43,30 +52,39 @@ export let data = {
 export let watch = {
     'direction': function(this: IVue): void {
         let size = clickgo.element.getSize(this.$refs.wrap);
-        this.client = this.direction === 'v' ? size.innerHeight : size.innerWidth;
+        this.clientWidth = size.innerWidth;
+        this.clientHeight = size.innerHeight;
         let innerRect = this.$refs.inner.getBoundingClientRect();
-        this.length = this.direction === 'v' ? innerRect.height : innerRect.width;
+        this.lengthWidth = innerRect.width;
+        this.lengthHeight = innerRect.height;
     },
-    'scrollOffset': {
+    'scrollLeft': {
         handler: function(this: IVue): void {
-            this.goScroll(this.scrollOffset);
+            this.goScroll(this.scrollLeft, 'left');
         },
         'immediate': true
     },
-    'length': {
+    'scrollTop': {
         handler: function(this: IVue): void {
-            this.$emit('change', this.length);
-        }
+            this.goScroll(this.scrollTop, 'top');
+        },
+        'immediate': true
     }
 };
 
 export let computed = {
     // --- 最大可拖动的 scroll 位置 ---
-    'maxScroll': function(this: IVue): number {
-        if (this.length < this.client) {
+    'maxScrollLeft': function(this: IVueControl): number {
+        if (this.lengthWidth <= this.clientWidth) {
             return 0;
         }
-        return Math.round(this.length - this.client);
+        return Math.round(this.lengthWidth - this.clientWidth);
+    },
+    'maxScrollTop': function(this: IVueControl): number {
+        if (this.lengthHeight <= this.clientHeight) {
+            return 0;
+        }
+        return Math.round(this.lengthHeight - this.clientHeight);
     },
     'widthPx': function(this: IVue): string | undefined {
         if (this.width !== undefined) {
@@ -91,9 +109,6 @@ export let computed = {
             }
             return parent?.direction ? (parent.direction === 'v' ? '0' : undefined) : undefined;
         }
-    },
-    'length': function(this: IVue): number {
-        return this.contentLength < this.client ? this.client : this.contentLength;
     }
 };
 
@@ -109,18 +124,27 @@ export let methods = {
         }
 
         if (this.direction === 'v') {
-            this.scrollOffsetData += Math.round(e.deltaY === 0 ? e.deltaX : e.deltaY);
+            if (this.lengthWidth <= this.clientWidth) {
+                this.scrollTopData += Math.round(e.deltaY === 0 ? e.deltaX : e.deltaY);
+            }
+            else {
+                this.scrollTopData += e.deltaY;
+                this.scrollLeftData += e.deltaX;
+            }
         }
         else {
-            this.scrollOffsetData += Math.round(e.deltaX === 0 ? e.deltaY : e.deltaX);
+            if (this.lengthHeight <= this.clientHeight) {
+                this.scrollLeftData += Math.round(e.deltaX === 0 ? e.deltaY : e.deltaX);
+            }
+            else {
+                this.scrollTopData += e.deltaY;
+                this.scrollLeftData += e.deltaX;
+            }
         }
         this.refreshView();
     },
     down: function(this: IVueControl, e: MouseEvent | TouchEvent): void {
         if (e instanceof MouseEvent && clickgo.hasTouch) {
-            return;
-        }
-        if (this.contentLength < this.client) {
             return;
         }
 
@@ -132,39 +156,45 @@ export let methods = {
         if (this.timer) {
             clearTimeout(this.timer);
             this.timer = undefined;
-            if (this.direction === 'v') {
-                this.scrollOffsetData = Math.round(top - this.$refs.inner.getBoundingClientRect().top);
-            }
-            else {
-                this.scrollOffsetData = Math.round(left - this.$refs.inner.getBoundingClientRect().left);
-            }
             this.tran = 0;
+            this.scrollTopData = Math.round(top - this.$refs.inner.getBoundingClientRect().top);
+            this.scrollLeftData = Math.round(left - this.$refs.inner.getBoundingClientRect().left);
         }
 
         /** --- 内容超出像素 --- */
-        let over = this.length - this.client;
+        let overWidth = this.lengthWidth - this.clientWidth;
+        let overHeight = this.lengthHeight - this.clientHeight;
         clickgo.element.bindMove(e, {
             // 'showRect': true,
             'object': this.$refs.inner,
-            'left': this.direction === 'v' ? left : left - over,
-            'right': this.direction === 'v' ? right : right + over,
-            'top': this.direction === 'h' ? top : top - over,
-            'bottom': this.direction === 'h' ? bottom : bottom + over,
+            'left': left - (overWidth < 0 ? 0 : overWidth),
+            'right': right + overWidth,
+            'top': top - (overHeight < 0 ? 0 : overHeight),
+            'bottom': bottom + overHeight,
             'move': (ox, oy) => {
-                this.scrollOffsetData -= this.direction === 'v' ? oy : ox;
-                this.scrollOffsetEmit = this.scrollOffsetData;
-                this.$emit('update:scrollOffset', this.scrollOffsetData);
+                this.scrollLeftData -= ox;
+                this.scrollTopData -= oy;
+                if (this.scrollLeftEmit !== this.scrollLeftData) {
+                    this.scrollLeftEmit = this.scrollLeftData;
+                    this.$emit('update:scrollLeft', this.scrollLeftData);
+                }
+                if (this.scrollTopEmit !== this.scrollTopData) {
+                    this.scrollTopEmit = this.scrollTopData;
+                    this.$emit('update:scrollTop', this.scrollTopData);
+                }
             },
             'end': async (moveTimes) => {
                 // --- 获取 200 毫秒内的偏移 ---
-                let movePos = 0;
+                let moveLeftPos = 0;
+                let moveTopPos = 0;
                 let topTime = 0;
                 let nowDate = Date.now();
                 for (let item of moveTimes) {
                     if (nowDate - item.time > 100) {
                         continue;
                     }
-                    movePos += this.direction === 'v' ? item.oy : item.ox;
+                    moveLeftPos += item.ox;
+                    moveTopPos += item.oy;
                     if (topTime === 0 || topTime > item.time) {
                         topTime = item.time;
                     }
@@ -173,7 +203,7 @@ export let methods = {
                     return;
                 }
 
-                let speed = Math.abs(movePos / (Date.now() - topTime));
+                let speed = Math.abs((moveLeftPos > moveTopPos ? moveLeftPos : moveTopPos) / (Date.now() - topTime));
                 if (speed <= 0.1) {
                     return;
                 }
@@ -183,42 +213,74 @@ export let methods = {
                     this.timer = undefined;
                     this.tran = 0;
                 }, this.tran);
-                if (movePos > 0) {
-                    this.scrollOffsetData -= Math.round(speed * 800);
+                if (moveLeftPos > 0) {
+                    this.offsetLeftData -= Math.round(speed * 800);
                 }
                 else {
-                    this.scrollOffsetData += Math.round(speed * 800);
+                    this.offsetLeftData += Math.round(speed * 800);
+                }
+                if (moveTopPos > 0) {
+                    this.scrollToptData -= Math.round(speed * 800);
+                }
+                else {
+                    this.scrollTopData += Math.round(speed * 800);
                 }
 
-                /** --- 滑动动画向上传递 scrollOffset --- */
+                /** --- 滑动动画向上传递 scroll --- */
                 let animation = (): void => {
                     if (!this.timer) {
                         return;
                     }
-                    let offset = 0;
                     let wrapSize = clickgo.element.getSize(this.$refs.wrap);
-                    if (this.direction === 'v') {
-                        offset = Math.round(wrapSize.top + wrapSize.border.top + wrapSize.padding.top - this.$refs.inner.getBoundingClientRect().top);
+                    let offsetLeft = Math.round(wrapSize.left + wrapSize.border.left + wrapSize.padding.left - this.$refs.inner.getBoundingClientRect().left);
+                    let offsetTop = Math.round(wrapSize.top + wrapSize.border.top + wrapSize.padding.top - this.$refs.inner.getBoundingClientRect().top);
+
+                    let leftEnd = false, topEnd = false;
+                    if (offsetLeft > this.maxScrollLeft) {
+                        leftEnd = true;
+                        offsetLeft = this.maxScrollLeft;
+                        this.scrollLeftData = offsetLeft;
                     }
-                    else {
-                        offset = Math.round(wrapSize.left + wrapSize.border.left + wrapSize.padding.left - this.$refs.inner.getBoundingClientRect().left);
+                    else if (offsetLeft === this.maxScrollLeft) {
+                        leftEnd = true;
+                        if (this.scrollLeftData !== offsetLeft) {
+                            this.scrollLeftData = offsetLeft;
+                        }
                     }
-                    if (offset > this.maxScroll) {
-                        offset = this.maxScroll;
+                    else if (offsetLeft < 0) {
+                        leftEnd = true;
+                        offsetLeft = 0;
+                        this.scrollLeftData = 0;
+                    }
+                    if (offsetTop > this.maxScrollTop) {
+                        topEnd = true;
+                        offsetTop = this.maxScrollTop;
+                        this.scrollTopData = offsetTop;
+                    }
+                    else if (offsetTop === this.maxScrollTop) {
+                        topEnd = true;
+                        if (this.scrollTopData !== offsetTop) {
+                            this.scrollTopData = offsetTop;
+                        }
+                    }
+                    else if (offsetTop < 0) {
+                        topEnd = true;
+                        offsetTop = 0;
+                        this.scrollTopData = 0;
+                    }
+
+                    // --- 检测是否终止滚动 ---
+                    if (leftEnd && topEnd) {
                         clearTimeout(this.timer);
                         this.timer = undefined;
-                        this.scrollOffsetData = offset;
                         this.tran = 0;
                     }
-                    else if (offset < 0) {
-                        offset = 0;
-                        clearTimeout(this.timer);
-                        this.timer = undefined;
-                        this.scrollOffsetData = offset;
-                        this.tran = 0;
-                    }
-                    this.scrollOffsetEmit = offset;
-                    this.$emit('update:scrollOffset', offset);
+
+                    this.scrollLeftEmit = offsetLeft;
+                    this.$emit('update:scrollLeft', offsetLeft);
+                    this.scrollTopEmit = offsetTop;
+                    this.$emit('update:scrollTop', offsetTop);
+
                     requestAnimationFrame(animation);
                 };
                 animation();
@@ -266,30 +328,47 @@ export let methods = {
         });
         this.cgDown();
     },
-    // --- 重置视图 scrollOffset ---
+    // --- 重置视图 scroll ---
     'refreshView': function(this: IVue): void {
-        if (this.scrollOffsetData > this.maxScroll) {
-            if (this.timer) {
-                clearTimeout(this.timer);
-                this.timer = undefined;
-                this.tran = 0;
-            }
-            this.scrollOffsetData = this.maxScroll;
+        let leftEnd = false, topEnd = false;
+        if (this.scrollLeftData > this.maxScrollLeft) {
+            leftEnd = true;
+            this.scrollLeftData = this.maxScrollLeft;
         }
-        else if (this.scrollOffsetData < 0) {
-            if (this.timer) {
-                clearTimeout(this.timer);
-                this.timer = undefined;
-                this.tran = 0;
-            }
-            this.scrollOffsetData = 0;
+        else if (this.scrollLeftData === this.maxScrollLeft) {
+            leftEnd = true;
         }
-        this.scrollOffsetEmit = this.scrollOffsetData;
-        this.$emit('update:scrollOffset', this.scrollOffsetData);
+        else if (this.scrollLeftData < 0) {
+            leftEnd = true;
+            this.scrollLeftData = 0;
+        }
+        if (this.scrollTopData > this.maxScrollTop) {
+            topEnd = true;
+            this.scrollTopData = this.maxScrollTop;
+        }
+        else if (this.scrollTopData === this.maxScrollTop) {
+            topEnd = true;
+        }
+        else if (this.scrollTopData < 0) {
+            topEnd = true;
+            this.scrollTopData = 0;
+        }
+
+        // --- 检测是否终止滚动 ---
+        if (leftEnd && topEnd) {
+            clearTimeout(this.timer);
+            this.timer = undefined;
+            this.tran = 0;
+        }
+
+        this.scrollLeftEmit = this.scrollLeftData;
+        this.$emit('update:scrollLeft', this.scrollLeftData);
+        this.scrollTopEmit = this.scrollTopData;
+        this.$emit('update:scrollTop', this.scrollTopData);
     },
     // --- 设定滚动位置 ---
-    'goScroll': function(this: IVue, scrollOffset: number | string): void {
-        let so = typeof scrollOffset === 'number' ? scrollOffset : parseInt(scrollOffset);
+    'goScroll': function(this: IVueControl, scroll: number | string, pos: 'left' | 'top'): void {
+        let so = typeof scroll === 'number' ? scroll : parseInt(scroll);
         if (so === this.scrollOffsetEmit) {
             return;
         }
@@ -326,8 +405,6 @@ export let mounted = function(this: IVue): void {
         }
     });
     this.contentLength = Math.round(this.direction === 'v' ? size.height : size.width);
-
-    this.refreshView();
 };
 
 export let unmounted = function(this: IVue): void {

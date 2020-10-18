@@ -218,18 +218,22 @@ export function getRectByDir(dir: TBorderDir): { 'width': number; 'height': numb
  */
 export function showCircular(x: number, y: number): void {
     circularElement.style.transition = 'none';
-    circularElement.style.width = '6px';
-    circularElement.style.height = '6px';
-    circularElement.style.left = x - 3 + 'px';
-    circularElement.style.top = y - 3 + 'px';
-    circularElement.style.opacity = '1';
     requestAnimationFrame(function() {
-        circularElement.style.transition = 'all .3s ease-out';
-        circularElement.style.width = '60px';
-        circularElement.style.height = '60px';
-        circularElement.style.left = x - 30 + 'px';
-        circularElement.style.top = y - 30 + 'px';
-        circularElement.style.opacity = '0';
+        circularElement.style.width = '6px';
+        circularElement.style.height = '6px';
+        circularElement.style.left = x - 3 + 'px';
+        circularElement.style.top = y - 3 + 'px';
+        circularElement.style.opacity = '1';
+        requestAnimationFrame(function() {
+            circularElement.style.transition = 'all .3s ease-out';
+            requestAnimationFrame(function() {
+                circularElement.style.width = '60px';
+                circularElement.style.height = '60px';
+                circularElement.style.left = x - 30 + 'px';
+                circularElement.style.top = y - 30 + 'px';
+                circularElement.style.opacity = '0';
+            });
+        });
     });
 }
 
@@ -269,17 +273,21 @@ export function moveRectangle(dir: TBorderDir): void {
  */
 export function showRectangle(x: number, y: number, pos: TBorderDir): void {
     rectangleElement.style.transition = 'none';
-    rectangleElement.style.width = '20px';
-    rectangleElement.style.height = '20px';
-    rectangleElement.style.left = x - 10 + 'px';
-    rectangleElement.style.top = y - 10 + 'px';
-    rectangleElement.style.opacity = '1';
-    rectangleElement.setAttribute('data-ready', '0');
-    rectangleElement.setAttribute('data-dir', '');
     requestAnimationFrame(function() {
-        rectangleElement.style.transition = 'all .2s ease-out';
-        rectangleElement.setAttribute('data-ready', '1');
-        moveRectangle(pos);
+        rectangleElement.style.width = '20px';
+        rectangleElement.style.height = '20px';
+        rectangleElement.style.left = x - 10 + 'px';
+        rectangleElement.style.top = y - 10 + 'px';
+        rectangleElement.style.opacity = '1';
+        rectangleElement.setAttribute('data-ready', '0');
+        rectangleElement.setAttribute('data-dir', '');
+        requestAnimationFrame(function() {
+            rectangleElement.style.transition = 'all .2s ease-out';
+            requestAnimationFrame(function() {
+                rectangleElement.setAttribute('data-ready', '1');
+                moveRectangle(pos);
+            });
+        });
     });
 }
 
