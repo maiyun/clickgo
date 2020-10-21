@@ -1,6 +1,6 @@
 <div ref="wrap" class="wrap" :class="[direction]" :style="{'width': widthPx, 'height': heightPx, 'left': left + 'px', 'top': top + 'px', 'z-index': zIndex, 'flex-grow': flex}" @click="cgTap" @mousedown="down" @touchstart="down" @dblclick="cgDblclick" @wheel="wheel">
-    <div class="place" :style="{'width': direction === 'v' ? undefined : contentLength + 'px', 'height': direction === 'h' ? undefined : contentLength + 'px'}"></div>
-    <div ref="inner" class="inner" :style="{'min-width': direction === 'v' ? '100%' : undefined, 'min-height': direction === 'h' ? '100%' : undefined, 'transform': 'translate3d(' + -scrollLeftData + 'px, ' + -scrollTopData + 'px, 0)', 'transition-duration': tran + 'ms', 'transition-property': tran > 0 ? 'transform' : undefined, 'padding': padding && padding.replace(/([0-9]+)($| )/g, '$1px$2')}">
+    <div class="place" :style="{'width': lengthWidth + 'px', 'height': lengthHeight + 'px'}"></div>
+    <div ref="inner" class="inner" :style="{'min-width': direction === 'v' ? '100%' : undefined, 'min-height': direction === 'h' ? '100%' : undefined, 'transform': 'translate3d(' + -scrollLeftData + 'px, ' + -scrollTopData + 'px, 0)', 'padding': padding && padding.replace(/([0-9]+)($| )/g, '$1px$2')}">
         <slot></slot>
     </div>
 </div>

@@ -3,30 +3,30 @@
         <tab-panel label="normal" style="padding: 10px;">
             <layout flex="1" gutter="10" direction="v">
                 <layout flex="1" gutter="10">
-                    <view v-model:scroll-offset="so" style="border: 1px solid rgba(0, 0, 0, .1);" flex="1" @resize="c = $event" @change="l = $event" :style="{'line-height': style ? '1.5' : undefined}" :padding="style ? '10' : undefined">
+                    <view v-model:scroll-left="soLeft" v-model:scroll-top="soTop" style="border: 1px solid rgba(0, 0, 0, .1);" flex="1" @resize="c = $event" @change="l = $event" :style="{'line-height': style ? '1.5' : undefined}" :padding="style ? '10' : undefined">
                         <block v-for="(line, index) of lineCount">
                             <button v-if="index > 0 && index % 10 === 0">test</button>
                             <block v-else>Line {{line}}, index: {{index}}.</block>
                         </block>
                     </view>
                     <layout flex="1" style="border: 1px solid rgba(0, 0, 0, .1);">
-                        <view v-model:scroll-offset="so3" flex="1" @resize="c3 = $event" @change="l3 = $event" :style="{'line-height': style ? '1.5' : undefined}" :padding="style ? '10' : undefined">
+                        <view v-model:scroll-left="soLeft3" v-model:scroll-top="soTop3" flex="1" @resize="c3 = $event" @change="l3 = $event" :style="{'line-height': style ? '1.5' : undefined}" :padding="style ? '10' : undefined">
                             <block v-for="(line, index) of lineCount">
                                 <block v-if="index > 0 && index % 10 === 0" style="margin: auto; background: red; width: 60%; height: 30px; color: #FFF; text-align: center; line-height: 30px;">Custom</block>
                                 <block v-else>Line {{line}}, index: {{index}}.</block>
                             </block>
                         </view>
-                        <scroll width="20" :length="l3" :client="c3" v-model:scroll-offset="so3"></scroll>
+                        <scroll width="20" :length="l3" :client="c3" v-model:scroll-offset="soTop3"></scroll>
                     </layout>
                 </layout>
-                <label>Scroll offset: {{so}}, Length: {{l}}, Client: {{c}}.</label>
-                <view v-model:scroll-offset="so2" style="border: 1px solid rgba(0, 0, 0, .1);" flex="1" direction="h" @resize="c2 = $event" @change="l2 = $event" :style="{'line-height': style ? '1.5' : undefined}" :padding="style ? '10' : undefined">
+                <label>Scroll Left: {{soLeft}}, Scroll Top: {{soTop}}, Length: {{l}}, Client: {{c}}.</label>
+                <view v-model:scroll-left="soLeft2" v-model:scroll-top="soTop2" style="border: 1px solid rgba(0, 0, 0, .1);" flex="1" direction="h" @resize="c2 = $event" @change="l2 = $event" :style="{'line-height': style ? '1.5' : undefined}" :padding="style ? '10' : undefined">
                     <layout v-for="(line, index) of lineCount" align-v="center" direction="v" style="padding: 0 5px; border-right: 1px solid rgba(0, 0, 0, .1);">
                         <label>Col {{line}}.</label>
                         <label>index: {{index}}.</label>
                     </layout>
                 </view>
-                <label>Scroll offset: {{so2}}, Length: {{l2}}, Client: {{c2}}.</label>
+                <label>Scroll Left: {{soLeft2}}, Scroll Top: {{soTop2}}, Length: {{l2}}, Client: {{c2}}.</label>
                 <layout gutter="10">
                     <button @tap="lineCount += 10" flex="1" style="padding: 0 10px;">Add 10 lines</button>
                     <button @tap="lineCount += 50" flex="1" style="padding: 0 10px;">Add 50 lines</button>

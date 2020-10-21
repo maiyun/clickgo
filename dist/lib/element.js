@@ -223,7 +223,7 @@ function bindMove(e, opt) {
     let offsetTop = 0;
     let offsetRight = 0;
     let offsetBottom = 0;
-    let moveTime = [];
+    let moveTimes = [];
     bindDown(e, {
         start: () => {
             var _a, _b, _c, _d;
@@ -406,7 +406,7 @@ function bindMove(e, opt) {
             }
             let ox = x - tx;
             let oy = y - ty;
-            moveTime.push({
+            moveTimes.push({
                 'time': Date.now(),
                 'ox': ox,
                 'oy': oy
@@ -422,7 +422,7 @@ function bindMove(e, opt) {
         },
         end: () => {
             var _a;
-            (_a = opt.end) === null || _a === void 0 ? void 0 : _a.call(opt, moveTime);
+            (_a = opt.end) === null || _a === void 0 ? void 0 : _a.call(opt, moveTimes);
         }
     });
     if (opt.showRect) {

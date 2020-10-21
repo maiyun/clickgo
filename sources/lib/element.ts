@@ -284,7 +284,7 @@ export function bindMove(e: MouseEvent | TouchEvent, opt: { 'left'?: number; 'to
     let offsetBottom = 0;
 
     /** --- 每次拖动时的时间以及偏移 --- */
-    let moveTime: Array<{ 'time': number; 'ox': number; 'oy': number; }> = [];
+    let moveTimes: Array<{ 'time': number; 'ox': number; 'oy': number; }> = [];
 
     bindDown(e, {
         start: () => {
@@ -481,7 +481,7 @@ export function bindMove(e: MouseEvent | TouchEvent, opt: { 'left'?: number; 'to
 
             let ox = x - tx;
             let oy = y - ty;
-            moveTime.push({
+            moveTimes.push({
                 'time': Date.now(),
                 'ox': ox,
                 'oy': oy
@@ -496,7 +496,7 @@ export function bindMove(e: MouseEvent | TouchEvent, opt: { 'left'?: number; 'to
             opt.up?.();
         },
         end: () => {
-            opt.end?.(moveTime);
+            opt.end?.(moveTimes);
         }
     });
 

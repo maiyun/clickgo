@@ -1,17 +1,19 @@
 export let data = {
-    "lineCount": 2,
-    "so": 0,
-    "l": 0,
-    "c": 0,
+    'lineCount': 2,
+    'soLeft': 0,
+    'soTop': 0,
+    'l': 0,
+    'c': 0,
 
-    "so2": 0,
-    "l2": 0,
-    "c2": 0,
+    'soLeft2': 0,
+    'soTop2': 0,
+    'l2': 0,
+    'c2': 0,
 
-    "so3": 0,
-    "l3": 0,
-    "c3": 0,
+    'soLeft3': 0,
+    'soTop3': 0,
+    'l3': 0,
+    'c3': 0,
 
-    "style": false
+    'style': false
 };
-

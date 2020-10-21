@@ -39,8 +39,7 @@ export declare let data: {
     clientHeight: number;
     lengthWidth: number;
     lengthHeight: number;
-    tran: number;
-    timer: undefined;
+    timer: boolean;
 };
 export declare let watch: {
     direction: (this: IVue) => void;
