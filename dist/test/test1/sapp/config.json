@@ -5,7 +5,8 @@
     "author": "clickgo",
 
     "controls": [
-        "/clickgo/control/common"
+        "/clickgo/control/common",
+        "/clickgo/control/form"
     ],
     "main": "/form/task",
 

@@ -66,7 +66,7 @@ async function run(): Promise<void> {
         if (item.isFile()) {
             continue;
         }
-        if (['button', 'dataview', 'form', 'greatselect', 'greatselect-list', 'greatselect-list-item', 'greatselect-list-split', 'greatview', 'img', 'label', 'layout', 'menu', 'menu-item', 'menu-list', 'menu-list-item', 'menu-list-split', 'overflow', 'scroll', 'select', 'tab-nav', 'tab-panel', 'view'].includes(item.name)) {
+        if (['greatselect-list', 'greatselect-list-item', 'greatselect-list-split', 'img', 'label', 'layout', 'menu-item', 'menu-list-item', 'menu-list-split', 'overflow', 'tab-nav', 'tab-panel'].includes(item.name)) {
             continue;
         }
         let base = 'dist/sources/control/' + item.name;
@@ -77,26 +77,31 @@ async function run(): Promise<void> {
             name = 'common';
             controlBuffer = Buffer.concat([
                 controlBuffer,
-                await getSingleControlBlob('dist/sources/control/button'),
-                await getSingleControlBlob('dist/sources/control/dataview'),
-                await getSingleControlBlob('dist/sources/control/form'),
-                await getSingleControlBlob('dist/sources/control/greatselect'),
-                await getSingleControlBlob('dist/sources/control/greatselect-list'),
-                await getSingleControlBlob('dist/sources/control/greatselect-list-item'),
-                await getSingleControlBlob('dist/sources/control/greatselect-list-split'),
-                await getSingleControlBlob('dist/sources/control/greatview'),
                 await getSingleControlBlob('dist/sources/control/img'),
                 await getSingleControlBlob('dist/sources/control/label'),
                 await getSingleControlBlob('dist/sources/control/layout'),
-                await getSingleControlBlob('dist/sources/control/menu'),
+                await getSingleControlBlob('dist/sources/control/overflow')
+            ]);
+        }
+        else if (item.name === 'greatselect') {
+            controlBuffer = Buffer.concat([
+                controlBuffer,
+                await getSingleControlBlob('dist/sources/control/greatselect-list'),
+                await getSingleControlBlob('dist/sources/control/greatselect-list-item'),
+                await getSingleControlBlob('dist/sources/control/greatselect-list-split')
+            ]);
+        }
+        else if (item.name === 'menu') {
+            controlBuffer = Buffer.concat([
+                controlBuffer,
                 await getSingleControlBlob('dist/sources/control/menu-item'),
-                await getSingleControlBlob('dist/sources/control/menu-list'),
+            ]);
+        }
+        else if (item.name === 'menu-list') {
+            controlBuffer = Buffer.concat([
+                controlBuffer,
                 await getSingleControlBlob('dist/sources/control/menu-list-item'),
-                await getSingleControlBlob('dist/sources/control/menu-list-split'),
-                await getSingleControlBlob('dist/sources/control/overflow'),
-                await getSingleControlBlob('dist/sources/control/scroll'),
-                await getSingleControlBlob('dist/sources/control/select'),
-                await getSingleControlBlob('dist/sources/control/view')
+                await getSingleControlBlob('dist/sources/control/menu-list-split')
             ]);
         }
         else if (item.name === 'tab') {
