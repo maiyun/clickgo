@@ -115,10 +115,7 @@ export let methods = {
     wheel: function(this: IVue, e: WheelEvent): void {
         // --- 用来屏蔽不小心触发前进、后退的浏览器事件 ---
         e.preventDefault();
-        // --- 屏蔽惯性动画 ---
-        if (this.timer) {
-            this.timer = false;
-        }
+        this.stopAnimation();
 
         if (this.direction === 'v') {
             if (this.lengthWidth <= this.clientWidth) {
@@ -150,9 +147,7 @@ export let methods = {
         let right = wrapSize.right - wrapSize.border.right - wrapSize.padding.right;
         let bottom = wrapSize.bottom - wrapSize.border.bottom - wrapSize.padding.bottom;
         let left = wrapSize.left + wrapSize.border.left + wrapSize.padding.left;
-        if (this.timer) {
-            this.timer = false;
-        }
+        this.stopAnimation();
 
         /** --- 内容超出像素 --- */
         let overWidth = this.lengthWidth - this.clientWidth;
@@ -238,6 +233,8 @@ export let methods = {
                     // --- 检测是否终止滚动，本轮就未发生移动，无需 emit ---
                     if (leftEnd && topEnd) {
                         this.timer = false;
+                        this.scrollLeftData = Math.round(this.scrollLeftData);
+                        this.scrollTopData = Math.round(this.scrollTopData);
                         return;
                     }
 
@@ -276,6 +273,10 @@ export let methods = {
 
                     if (this.timer) {
                         requestAnimationFrame(animation);
+                    }
+                    else {
+                        this.scrollLeftData = Math.round(this.scrollLeftData);
+                        this.scrollTopData = Math.round(this.scrollTopData);
                     }
                 };
                 animation();
@@ -431,6 +432,12 @@ export let methods = {
             this.timer = false;
         }
         this.refreshView();
+    },
+    // --- 如果当前正在运行动画，则终止他 ---
+    stopAnimation: function(this: IVue): void {
+        if (this.timer) {
+            this.timer = false;
+        }
     }
 };
 

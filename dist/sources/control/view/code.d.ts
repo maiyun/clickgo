@@ -63,6 +63,7 @@ export declare let methods: {
     down: (this: IVueControl, e: MouseEvent | TouchEvent) => void;
     refreshView: (this: IVue) => void;
     goScroll: (this: IVueControl, scroll: number | string, pos: 'left' | 'top') => void;
+    stopAnimation: (this: IVue) => void;
 };
 export declare let mounted: (this: IVue) => void;
 export declare let unmounted: (this: IVue) => void;

@@ -116,9 +116,7 @@ exports.computed = {
 exports.methods = {
     wheel: function (e) {
         e.preventDefault();
-        if (this.timer) {
-            this.timer = false;
-        }
+        this.stopAnimation();
         if (this.direction === 'v') {
             if (this.lengthWidth <= this.clientWidth) {
                 this.scrollTopData += Math.round(e.deltaY === 0 ? e.deltaX : e.deltaY);
@@ -148,9 +146,7 @@ exports.methods = {
         let right = wrapSize.right - wrapSize.border.right - wrapSize.padding.right;
         let bottom = wrapSize.bottom - wrapSize.border.bottom - wrapSize.padding.bottom;
         let left = wrapSize.left + wrapSize.border.left + wrapSize.padding.left;
-        if (this.timer) {
-            this.timer = false;
-        }
+        this.stopAnimation();
         let overWidth = this.lengthWidth - this.clientWidth;
         let overHeight = this.lengthHeight - this.clientHeight;
         clickgo.element.bindMove(e, {
@@ -227,6 +223,8 @@ exports.methods = {
                     }
                     if (leftEnd && topEnd) {
                         this.timer = false;
+                        this.scrollLeftData = Math.round(this.scrollLeftData);
+                        this.scrollTopData = Math.round(this.scrollTopData);
                         return;
                     }
                     if (this.scrollLeftData > this.maxScrollLeft) {
@@ -261,6 +259,10 @@ exports.methods = {
                     }
                     if (this.timer) {
                         requestAnimationFrame(animation);
+                    }
+                    else {
+                        this.scrollLeftData = Math.round(this.scrollLeftData);
+                        this.scrollTopData = Math.round(this.scrollTopData);
                     }
                 };
                 animation();
@@ -324,6 +326,11 @@ exports.methods = {
             this.timer = false;
         }
         this.refreshView();
+    },
+    stopAnimation: function () {
+        if (this.timer) {
+            this.timer = false;
+        }
     }
 };
 exports.mounted = function () {
