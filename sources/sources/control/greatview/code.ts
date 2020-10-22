@@ -258,7 +258,7 @@ export let methods = {
             return;
         }
         this.scrollOffsetData = val;
-        this.$emit('update:scrollOffset', val);
+        this.$emit('update:scroll-offset', val);
         this.reShow();
     }
 };

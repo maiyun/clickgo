@@ -271,36 +271,26 @@ exports.methods = {
         this.cgDown();
     },
     'refreshView': function () {
-        let leftEnd = false, topEnd = false;
         if (this.scrollLeftData > this.maxScrollLeft) {
-            leftEnd = true;
             this.scrollLeftData = this.maxScrollLeft;
         }
-        else if (this.scrollLeftData === this.maxScrollLeft) {
-            leftEnd = true;
-        }
         else if (this.scrollLeftData < 0) {
-            leftEnd = true;
             this.scrollLeftData = 0;
         }
         if (this.scrollTopData > this.maxScrollTop) {
-            topEnd = true;
             this.scrollTopData = this.maxScrollTop;
         }
-        else if (this.scrollTopData === this.maxScrollTop) {
-            topEnd = true;
-        }
         else if (this.scrollTopData < 0) {
-            topEnd = true;
             this.scrollTopData = 0;
         }
-        if (leftEnd && topEnd) {
-            this.timer = false;
+        if (this.scrollLeftEmit !== this.scrollLeftData) {
+            this.scrollLeftEmit = this.scrollLeftData;
+            this.$emit('update:scrollLeft', this.scrollLeftData);
         }
-        this.scrollLeftEmit = this.scrollLeftData;
-        this.$emit('update:scrollLeft', this.scrollLeftData);
-        this.scrollTopEmit = this.scrollTopData;
-        this.$emit('update:scrollTop', this.scrollTopData);
+        if (this.scrollTopEmitt !== this.scrollTopData) {
+            this.scrollTopEmit = this.scrollTopData;
+            this.$emit('update:scrollTop', this.scrollTopData);
+        }
     },
     'goScroll': function (scroll, pos) {
         scroll = typeof scroll === 'number' ? scroll : parseInt(scroll);
