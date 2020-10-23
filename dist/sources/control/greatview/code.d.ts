@@ -23,7 +23,10 @@ export declare let props: {
     padding: {
         default: undefined;
     };
-    scrollOffset: {
+    scrollLeft: {
+        default: undefined;
+    };
+    scrollTop: {
         default: undefined;
     };
     same: {
@@ -44,7 +47,8 @@ export declare let data: {
     };
     dataHeight: never[];
     lineHeight: number;
-    scrollOffsetData: number;
+    scrollLeftData: number;
+    scrollTopData: number;
     client: number;
     length: number;
     refreshCount: number;
@@ -66,6 +70,6 @@ export declare let computed: {
 export declare let methods: {
     refreshView: (this: IVue) => Promise<void>;
     reShow: (this: IVue) => void;
-    updateScrollOffset: (this: IVue, val: number) => void;
+    updateScrollOffset: (this: IVue, val: number, pos: 'left' | 'top') => void;
 };
 export declare let mounted: (this: IVue) => void;

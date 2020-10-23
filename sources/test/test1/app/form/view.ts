@@ -15,5 +15,8 @@ export let data = {
     'l3': 0,
     'c3': 0,
 
+    'soLeft4': 0,
+    'soTop4': 0,
+
     'style': false
 };

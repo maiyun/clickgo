@@ -24,7 +24,10 @@ export let props = {
         'default': undefined
     },
 
-    'scrollOffset': {
+    'scrollLeft': {
+        'default': undefined
+    },
+    'scrollTop': {
         'default': undefined
     },
     'same': {
@@ -49,7 +52,8 @@ export let data = {
     'dataHeight': [],
     'lineHeight': 0,
 
-    'scrollOffsetData': 0,
+    'scrollLeftData': 0,
+    'scrollTopData': 0,
     'client': 0,
     'length': 0,
 
@@ -203,6 +207,7 @@ export let methods = {
     },
     // --- 控制显示和隐藏 ---
     reShow: function(this: IVue): void {
+        let scrollOffset = this.direction === 'v' ? this.scrollTopData : this.scrollLeftData;
         if (!this.sameComp) {
             let overShow = false;
             for (let i = 0; i < this.dataComp.length; ++i) {
@@ -210,7 +215,7 @@ export let methods = {
                 if (!pos) {
                     return;
                 }
-                if ((pos.end > this.scrollOffsetData - 10) && (pos.start < this.scrollOffsetData + this.client + 10)) {
+                if ((pos.end > scrollOffset - 10) && (pos.start < scrollOffset + this.client + 10)) {
                     if (!overShow) {
                         overShow = true;
                         this.showPos.start = i;
@@ -231,8 +236,8 @@ export let methods = {
                 this.showPos.start = this.showPos.end = 0;
                 return;
             }
-            let start = Math.floor((this.scrollOffsetData - 10) / this.lineHeight);
-            let end = Math.ceil((this.scrollOffsetData + this.client + 10) / this.lineHeight);
+            let start = Math.floor((scrollOffset - 10) / this.lineHeight);
+            let end = Math.ceil((scrollOffset + this.client + 10) / this.lineHeight);
             if (start < 0) {
                 start = 0;
             }
@@ -243,22 +248,32 @@ export let methods = {
             this.showPos.end = end;
         }
     },
-    updateScrollOffset: function(this: IVue, val: number): void {
+    updateScrollOffset: function(this: IVue, val: number, pos: 'left' | 'top'): void {
         // --- 接收 view 组件传递的 scroll-offset 更改事件 ---
         if (!this.lengthInit) {
             // --- length 还没初始化成功，不更新 scroll offset ---
             return;
         }
+        // --- 初始后必定再次触发 view 的 change 事件，导致触发本方法 ---
         if (!this.initFirst) {
             // --- length 更新后首次执行，将 scroll offset 更改为用户设定值 ---
             this.initFirst = true;
-            if (this.scrollOffset) {
-                this.$refs.view.goScroll(this.scrollOffset);
+            if (this.scrollLeft) {
+                this.$refs.view.goScroll(this.scrollLeft, 'left');
+            }
+            if (this.scrollTop) {
+                this.$refs.view.goScroll(this.scrollTop, 'top');
             }
             return;
         }
-        this.scrollOffsetData = val;
-        this.$emit('update:scroll-offset', val);
+        if (pos === 'left') {
+            this.scrollLeftData = val;
+            this.$emit('update:scrollLeft', val);
+        }
+        else {
+            this.scrollTopData = val;
+            this.$emit('update:scrollTop', val);
+        }
         this.reShow();
     }
 };

@@ -35,7 +35,10 @@ exports.props = {
     'padding': {
         'default': undefined
     },
-    'scrollOffset': {
+    'scrollLeft': {
+        'default': undefined
+    },
+    'scrollTop': {
         'default': undefined
     },
     'same': {
@@ -56,7 +59,8 @@ exports.data = {
     },
     'dataHeight': [],
     'lineHeight': 0,
-    'scrollOffsetData': 0,
+    'scrollLeftData': 0,
+    'scrollTopData': 0,
     'client': 0,
     'length': 0,
     'refreshCount': 0,
@@ -195,6 +199,7 @@ exports.methods = {
         });
     },
     reShow: function () {
+        let scrollOffset = this.direction === 'v' ? this.scrollTopData : this.scrollLeftData;
         if (!this.sameComp) {
             let overShow = false;
             for (let i = 0; i < this.dataComp.length; ++i) {
@@ -202,7 +207,7 @@ exports.methods = {
                 if (!pos) {
                     return;
                 }
-                if ((pos.end > this.scrollOffsetData - 10) && (pos.start < this.scrollOffsetData + this.client + 10)) {
+                if ((pos.end > scrollOffset - 10) && (pos.start < scrollOffset + this.client + 10)) {
                     if (!overShow) {
                         overShow = true;
                         this.showPos.start = i;
@@ -223,8 +228,8 @@ exports.methods = {
                 this.showPos.start = this.showPos.end = 0;
                 return;
             }
-            let start = Math.floor((this.scrollOffsetData - 10) / this.lineHeight);
-            let end = Math.ceil((this.scrollOffsetData + this.client + 10) / this.lineHeight);
+            let start = Math.floor((scrollOffset - 10) / this.lineHeight);
+            let end = Math.ceil((scrollOffset + this.client + 10) / this.lineHeight);
             if (start < 0) {
                 start = 0;
             }
@@ -235,19 +240,28 @@ exports.methods = {
             this.showPos.end = end;
         }
     },
-    updateScrollOffset: function (val) {
+    updateScrollOffset: function (val, pos) {
         if (!this.lengthInit) {
             return;
         }
         if (!this.initFirst) {
             this.initFirst = true;
-            if (this.scrollOffset) {
-                this.$refs.view.goScroll(this.scrollOffset);
+            if (this.scrollLeft) {
+                this.$refs.view.goScroll(this.scrollLeft, 'left');
+            }
+            if (this.scrollTop) {
+                this.$refs.view.goScroll(this.scrollTop, 'top');
             }
             return;
         }
-        this.scrollOffsetData = val;
-        this.$emit('update:scroll-offset', val);
+        if (pos === 'left') {
+            this.scrollLeftData = val;
+            this.$emit('update:scrollLeft', val);
+        }
+        else {
+            this.scrollTopData = val;
+            this.$emit('update:scrollTop', val);
+        }
         this.reShow();
     }
 };

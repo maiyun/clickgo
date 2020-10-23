@@ -53,24 +53,13 @@
                 </layout>
             </layout>
         </tab-panel>
-        <tab-panel label="beyond" style="padding: 10px;">
-            <view flex="1" style="border: 1px solid rgba(0, 0, 0, .1);">
-                <layout style="margin: 10px 0 10px 10px;">
-                    <block style="width: 200px; height: 200px; margin: 0 10px 0 0; background: red;"></block>
-                    <block style="width: 200px; height: 200px; margin: 0 10px 0 0; background: red;"></block>
-                    <block style="width: 200px; height: 200px; margin: 0 10px 0 0; background: red;"></block>
-                </layout>
-                <layout style="margin: 0 0 10px 10px;">
-                    <block style="width: 200px; height: 200px; margin: 0 10px 0 0; background: red;"></block>
-                    <block style="width: 200px; height: 200px; margin: 0 10px 0 0; background: red;"></block>
-                    <block style="width: 200px; height: 200px; margin: 0 10px 0 0; background: red;"></block>
-                </layout>
-                <layout style="margin: 0 0 10px 10px;">
-                    <block style="width: 200px; height: 200px; margin: 0 10px 0 0; background: red;"></block>
-                    <block style="width: 200px; height: 200px; margin: 0 10px 0 0; background: red;"></block>
-                    <block style="width: 200px; height: 200px; margin: 0 10px 0 0; background: red;"></block>
+        <tab-panel label="beyond" direction="v" style="padding: 10px;">
+            <view v-model:scroll-left="soLeft4" v-model:scroll-top="soTop4" flex="1" style="border: 1px solid rgba(0, 0, 0, .1);" padding="10px 0 0 0">
+                <layout v-for="i of 10" style="margin: 0 0 10px 10px;">
+                    <block v-for="j of 10" style="width: 200px; height: 200px; margin: 0 10px 0 0; background: red;"></block>
                 </layout>
             </view>
+            <label style="margin-top: 10px;">Scroll Left: {{soLeft4}}, Scroll Top: {{soTop4}}.</label>
         </tab-panel>
     </tab>
 </form>

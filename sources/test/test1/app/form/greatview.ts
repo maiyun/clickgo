@@ -1,6 +1,7 @@
 export let data = {
     'lineCount': 2,
-    'so': 0,
+    'soLeft': 0,
+    'soTop': 0,
     'l': 0,
     'c': 0,
 

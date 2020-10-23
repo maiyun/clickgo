@@ -12,5 +12,7 @@ export declare let data: {
     soTop3: number;
     l3: number;
     c3: number;
+    soLeft4: number;
+    soTop4: number;
     style: boolean;
 };

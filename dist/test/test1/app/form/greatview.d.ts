@@ -1,6 +1,7 @@
 export declare let data: {
     lineCount: number;
-    so: number;
+    soLeft: number;
+    soTop: number;
     l: number;
     c: number;
     so2: number;

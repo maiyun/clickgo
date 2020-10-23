@@ -3,7 +3,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.watch = exports.data = void 0;
 exports.data = {
     'lineCount': 2,
-    'so': 0,
+    'soLeft': 0,
+    'soTop': 0,
     'l': 0,
     'c': 0,
     'so2': 0,
