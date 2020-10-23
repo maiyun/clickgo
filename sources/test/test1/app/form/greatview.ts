@@ -5,28 +5,33 @@ export let data = {
     'l': 0,
     'c': 0,
 
-    'so2': 0,
+    'soLeft2': 0,
+    'soTop2': 0,
     'l2': 0,
     'c2': 0,
 
-    'so3': 0,
+    'soLeft3': 0,
+    'soTop3': 0,
     'l3': 0,
     'c3': 0,
 
     // --- 2 ---
 
-    'lineCountC2': 2,
-    'soC2': 0,
-    'lC2': 0,
-    'cC2': 0,
+    'lineCountD': 2,
+    'soLeftD': 0,
+    'soTopD': 0,
+    'lD': 0,
+    'cD': 0,
 
-    'so2C2': 0,
-    'l2C2': 0,
-    'c2C2': 0,
+    'soLeft2D': 0,
+    'soTop2D': 0,
+    'l2D': 0,
+    'c2D': 0,
 
-    'so3C2': 0,
-    'l3C2': 0,
-    'c3C2': 0,
+    'soLeft3D': 0,
+    'soTop3D': 0,
+    'l3D': 0,
+    'c3D': 0,
 
     // --- 3 ---
 

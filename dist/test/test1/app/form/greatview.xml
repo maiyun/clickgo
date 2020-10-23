@@ -8,20 +8,20 @@
                             <block style="white-space: nowrap;">Line {{data.row}}, index: {{data.index}}.</block>
                         </greatview>
                         <layout flex="1" style="border: 1px solid rgba(0, 0, 0, .1);">
-                            <greatview same="true" :data="lineCount" v-model:scroll-offset="so3" flex="1" @resize="c3 = $event" @change="l3 = $event" :style="{'line-height': style ? '1.5' : undefined}" :padding="style ? '10' : undefined" v-slot="data">
+                            <greatview same="true" :data="lineCount" v-model:scroll-left="soLeft3" v-model:scroll-top="soTop3" flex="1" @resize="c3 = $event" @change="l3 = $event" :style="{'line-height': style ? '1.5' : undefined}" :padding="style ? '10' : undefined" v-slot="data">
                                 <block style="white-space: nowrap;">Line {{data.row}}, index: {{data.index}}.</block>
                             </greatview>
-                            <scroll width="20" :length="l3" :client="c3" v-model:scroll-offset="so3"></scroll>
+                            <scroll width="20" :length="l3" :client="c3" v-model:scroll-offset="soTop3"></scroll>
                         </layout>
                     </layout>
                     <label>Scroll Left: {{soLeft}}, Scroll Top: {{soTop}}, Length: {{l}}, Client: {{c}}.</label>
-                    <greatview same="true" :data="lineCount" v-model:scroll-offset="so2" style="border: 1px solid rgba(0, 0, 0, .1);" flex="1" direction="h" @resize="c2 = $event" @change="l2 = $event" :style="{'line-height': style ? '1.5' : undefined}" :padding="style ? '10' : undefined" v-slot="data">
+                    <greatview same="true" :data="lineCount" v-model:scroll-left="soLeft2" v-model:scroll-top="soTop2" style="border: 1px solid rgba(0, 0, 0, .1);" flex="1" direction="h" @resize="c2 = $event" @change="l2 = $event" :style="{'line-height': style ? '1.5' : undefined}" :padding="style ? '10' : undefined" v-slot="data">
                         <layout align-v="center" align-h="center" direction="v" style="border-right: 1px solid rgba(0, 0, 0, .1); width: 80px;">
                             <label>Col {{data.row}}.</label>
                             <label>index: {{data.index}}.</label>
                         </layout>
                     </greatview>
-                    <label>Scroll offset: {{so2}}, Length: {{l2}}, Client: {{c2}}.</label>
+                    <label>Scroll Left: {{soLeft2}}, Scroll Top: {{soTop2}}, Length: {{l2}}, Client: {{c2}}.</label>
                     <layout gutter="10">
                         <button @tap="lineCount += 100" flex="1" style="padding: 0 10px;">Add 100 lines</button>
                         <button @tap="lineCount += 1000" flex="1" style="padding: 0 10px;">Add 1000 lines</button>
@@ -35,33 +35,33 @@
             <tab-panel label="different" style="padding: 10px;">
                 <layout flex="1" gutter="10" direction="v">
                     <layout flex="1" gutter="10">
-                        <greatview :data="lineCountC2" v-model:scroll-offset="soC2" style="border: 1px solid rgba(0, 0, 0, .1);" flex="1" @resize="cC2 = $event" @change="lC2 = $event" :style="{'line-height': style ? '1.5' : undefined}" :padding="style ? '10' : undefined" v-slot="data">
+                        <greatview :data="lineCountD" v-model:scroll-left="soLeftD" v-model:scroll-top="soTopD" style="border: 1px solid rgba(0, 0, 0, .1);" flex="1" @resize="cD = $event" @change="lD = $event" :style="{'line-height': style ? '1.5' : undefined}" :padding="style ? '10' : undefined" v-slot="data">
                             <button v-if="data.index > 0 && data.index % 10 === 0">test</button>
                             <block v-else>Line {{data.row}}, index: {{data.index}}.</block>
                         </greatview>
                         <layout flex="1" style="border: 1px solid rgba(0, 0, 0, .1);">
-                            <greatview :data="lineCountC2" v-model:scroll-offset="so3C2" flex="1" @resize="c3C2 = $event" @change="l3C2 = $event" :style="{'line-height': style ? '1.5' : undefined}" :padding="style ? '10' : undefined" v-slot="data">
+                            <greatview :data="lineCountD" v-model:scroll-left="soLeft3D" v-model:scroll-top="soTop3D" flex="1" @resize="c3D = $event" @change="l3D = $event" :style="{'line-height': style ? '1.5' : undefined}" :padding="style ? '10' : undefined" v-slot="data">
                                 <block v-if="data.index > 0 && data.index % 10 === 0" style="margin: auto; background: red; width: 60%; height: 30px; color: #FFF; text-align: center; line-height: 30px;">Custom</block>
                                 <block v-else>Line {{data.row}}, index: {{data.index}}.</block>
                             </greatview>
-                            <scroll width="20" :length="l3C2" :client="c3C2" v-model:scroll-offset="so3C2"></scroll>
+                            <scroll width="20" :length="l3D" :client="c3D" v-model:scroll-offset="soTop3D"></scroll>
                         </layout>
                     </layout>
-                    <label>Scroll offset: {{soC2}}, Length: {{lC2}}, Client: {{cC2}}.</label>
-                    <greatview :data="lineCountC2" v-model:scroll-offset="so2C2" style="border: 1px solid rgba(0, 0, 0, .1);" flex="1" direction="h" @resize="c2C2 = $event" @change="l2C2 = $event" :style="{'line-height': style ? '1.5' : undefined}" :padding="style ? '10' : undefined" v-slot="data">
+                    <label>Scroll Left: {{soLeftD}}, Scroll Top: {{soTopD}}, Length: {{lD}}, Client: {{cD}}.</label>
+                    <greatview :data="lineCountD" v-model:scroll-left="soLeft2D" v-model:scroll-top="soTop2D" style="border: 1px solid rgba(0, 0, 0, .1);" flex="1" direction="h" @resize="c2D = $event" @change="l2D = $event" :style="{'line-height': style ? '1.5' : undefined}" :padding="style ? '10' : undefined" v-slot="data">
                         <layout align-v="center" align-h="center" direction="v" style="border-right: 1px solid rgba(0, 0, 0, .1); width: 80px;">
                             <label>Col {{data.row}}.</label>
                             <label>index: {{data.index}}.</label>
                         </layout>
                     </greatview>
-                    <label>Scroll offset: {{so2C2}}, Length: {{l2C2}}, Client: {{c2C2}}.</label>
+                    <label>Scroll Left: {{soLeft2D}}, Scroll Top: {{soTop2D}}, Length: {{l2D}}, Client: {{c2D}}.</label>
                     <layout gutter="10">
-                        <button @tap="lineCountC2 += 10" flex="1" style="padding: 0 10px;">Add 10 lines</button>
-                        <button @tap="lineCountC2 += 50" flex="1" style="padding: 0 10px;">Add 50 lines</button>
+                        <button @tap="lineCountD += 10" flex="1" style="padding: 0 10px;">Add 10 lines</button>
+                        <button @tap="lineCountD += 50" flex="1" style="padding: 0 10px;">Add 50 lines</button>
                     </layout>
                     <layout gutter="10">
-                        <button @tap="lineCountC2 -= 10;if(lineCountC2 < 0) {lineCountC2 = 0;}" flex="1" style="padding: 0 10px;">Remove 10 lines</button>
-                        <button @tap="lineCountC2 -= 50;if(lineCountC2 < 0) {lineCountC2 = 0;}" flex="1" style="padding: 0 10px;">Remove 50 lines</button>
+                        <button @tap="lineCountD -= 10;if(lineCountD < 0) {lineCountD = 0;}" flex="1" style="padding: 0 10px;">Remove 10 lines</button>
+                        <button @tap="lineCountD -= 50;if(lineCountD < 0) {lineCountD = 0;}" flex="1" style="padding: 0 10px;">Remove 50 lines</button>
                     </layout>
                 </layout>
             </tab-panel>
