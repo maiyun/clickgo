@@ -35,6 +35,11 @@ export let data = {
 
     // --- 3 ---
 
+    'soLeft4': 0,
+    'soTop4': 0,
+
+    // --- 4 ---
+
     'area': 'all',
     'slist': [
         {

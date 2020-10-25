@@ -138,7 +138,7 @@ exports.methods = {
         }
         let barRect = this.$refs.bar.getBoundingClientRect();
         let barOffset = this.direction === 'v' ? barRect.top : barRect.left;
-        let eOffset = (this.direction === 'v' ? (e instanceof MouseEvent ? e.clientY : e.touches[0].clientY) : (e instanceof MouseEvent ? e.clientX : e.touches[0].clientX)) * clickgo.rzoom;
+        let eOffset = this.direction === 'v' ? (e instanceof MouseEvent ? e.clientY : e.touches[0].clientY) : (e instanceof MouseEvent ? e.clientX : e.touches[0].clientX);
         eOffset = eOffset - barOffset;
         let scrollOffsetPx = eOffset - this.size / 2;
         if (scrollOffsetPx < 0) {

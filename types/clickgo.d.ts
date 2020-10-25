@@ -12,10 +12,6 @@ interface IClickGo {
     'hasTouch': boolean;
     /** --- 是否是桌面环境 --- */
     'isNative': boolean;
-    /** --- 当前缩放情况 --- */
-    'zoom': number;
-    /** --- 需要扩大的像素，1 / zoom --- */
-    'rzoom': number;
     /** --- ClickGo 响应位置 --- */
     'position': IClickGoPosition;
     /** --- 获取 ClickGo 响应区域计算后的值 --- */

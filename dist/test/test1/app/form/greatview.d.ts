@@ -25,6 +25,8 @@ export declare let data: {
     soTop3D: number;
     l3D: number;
     c3D: number;
+    soLeft4: number;
+    soTop4: number;
     area: string;
     slist: ({
         type: number;

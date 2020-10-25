@@ -56,11 +56,11 @@ exports.data = {
 exports.watch = {
     'direction': function () {
         let size = clickgo.element.getSize(this.$refs.wrap);
-        this.clientWidth = Math.round(size.innerWidth);
-        this.clientHeight = Math.round(size.innerHeight);
+        this.clientWidth = size.innerWidth;
+        this.clientHeight = size.innerHeight;
         let innerRect = this.$refs.inner.getBoundingClientRect();
-        this.lengthWidth = Math.round(innerRect.width);
-        this.lengthHeight = Math.round(innerRect.height);
+        this.lengthWidth = innerRect.width;
+        this.lengthHeight = innerRect.height;
     },
     'scrollLeft': {
         handler: function () {
@@ -80,13 +80,13 @@ exports.computed = {
         if (this.lengthWidth <= this.clientWidth) {
             return 0;
         }
-        return Math.round(this.lengthWidth - this.clientWidth);
+        return this.lengthWidth - this.clientWidth;
     },
     'maxScrollTop': function () {
         if (this.lengthHeight <= this.clientHeight) {
             return 0;
         }
-        return Math.round(this.lengthHeight - this.clientHeight);
+        return this.lengthHeight - this.clientHeight;
     },
     'widthPx': function () {
         if (this.width !== undefined) {
@@ -158,13 +158,13 @@ exports.methods = {
             'move': (ox, oy) => {
                 this.scrollLeftData -= ox;
                 this.scrollTopData -= oy;
-                if (this.scrollLeftEmit !== this.scrollLeftData) {
-                    this.scrollLeftEmit = this.scrollLeftData;
-                    this.$emit('update:scrollLeft', this.scrollLeftData);
+                if (this.scrollLeftEmit !== Math.round(this.scrollLeftData)) {
+                    this.scrollLeftEmit = Math.round(this.scrollLeftData);
+                    this.$emit('update:scrollLeft', this.scrollLeftEmit);
                 }
-                if (this.scrollTopEmit !== this.scrollTopData) {
-                    this.scrollTopEmit = this.scrollTopData;
-                    this.$emit('update:scrollTop', this.scrollTopData);
+                if (this.scrollTopEmit !== Math.round(this.scrollTopData)) {
+                    this.scrollTopEmit = Math.round(this.scrollTopData);
+                    this.$emit('update:scrollTop', this.scrollTopEmit);
                 }
             },
             'end': (moveTimes) => __awaiter(this, void 0, void 0, function* () {
@@ -283,13 +283,13 @@ exports.methods = {
         else if (this.scrollTopData < 0) {
             this.scrollTopData = 0;
         }
-        if (this.scrollLeftEmit !== this.scrollLeftData) {
-            this.scrollLeftEmit = this.scrollLeftData;
-            this.$emit('update:scrollLeft', this.scrollLeftData);
+        if (this.scrollLeftEmit !== Math.round(this.scrollLeftData)) {
+            this.scrollLeftEmit = Math.round(this.scrollLeftData);
+            this.$emit('update:scrollLeft', this.scrollLeftEmit);
         }
-        if (this.scrollTopEmitt !== this.scrollTopData) {
-            this.scrollTopEmit = this.scrollTopData;
-            this.$emit('update:scrollTop', this.scrollTopData);
+        if (this.scrollTopEmitt !== Math.round(this.scrollTopData)) {
+            this.scrollTopEmit = Math.round(this.scrollTopData);
+            this.$emit('update:scrollTop', this.scrollTopEmit);
         }
     },
     'goScroll': function (scroll, pos) {
@@ -325,50 +325,50 @@ exports.methods = {
 };
 exports.mounted = function () {
     let size = clickgo.element.watchSize(this.$refs.wrap, (size) => {
-        let clientWidth = Math.round(size.innerWidth);
-        let clientHeight = Math.round(size.innerHeight);
+        let clientWidth = size.innerWidth;
+        let clientHeight = size.innerHeight;
         if (this.direction === 'v') {
             if (clientWidth !== this.clientWidth) {
                 this.clientWidth = clientWidth;
-                this.$emit('resizen', this.clientWidth);
+                this.$emit('resizen', Math.round(this.clientWidth));
             }
             if (clientHeight === this.clientHeight) {
                 return;
             }
             this.clientHeight = clientHeight;
-            this.$emit('resize', this.clientHeight);
+            this.$emit('resize', Math.round(this.clientHeight));
         }
         else {
             if (clientHeight !== this.clientHeight) {
                 this.clientHeight = clientHeight;
-                this.$emit('resizen', this.clientHeight);
+                this.$emit('resizen', Math.round(this.clientHeight));
             }
             if (clientWidth === this.clientWidth) {
                 return;
             }
             this.clientWidth = clientWidth;
-            this.$emit('resize', this.clientWidth);
+            this.$emit('resize', Math.round(this.clientWidth));
         }
         this.refreshView();
     });
-    this.client = Math.round(this.direction === 'v' ? size.innerHeight : size.innerWidth);
-    this.$emit('resize', this.client);
+    this.client = this.direction === 'v' ? size.innerHeight : size.innerWidth;
+    this.$emit('resize', Math.round(this.client));
     size = clickgo.element.watchSize(this.$refs.inner, (size) => {
-        let lengthWidth = Math.round(size.width);
-        let lengthHeight = Math.round(size.height);
+        let lengthWidth = size.width;
+        let lengthHeight = size.height;
         let change = false;
         if (lengthWidth !== this.lengthWidth) {
             this.lengthWidth = lengthWidth;
             change = true;
             if (this.direction === 'h') {
-                this.$emit('change', this.lengthWidth);
+                this.$emit('change', Math.round(this.lengthWidth));
             }
         }
         if (lengthHeight !== this.lengthHeight) {
             this.lengthHeight = lengthHeight;
             change = true;
             if (this.direction === 'v') {
-                this.$emit('change', this.lengthHeight);
+                this.$emit('change', Math.round(this.lengthHeight));
             }
         }
         if (change) {
@@ -378,10 +378,10 @@ exports.mounted = function () {
     this.lengthWidth = Math.round(size.width);
     this.lengthHeight = Math.round(size.height);
     if (this.direction === 'h') {
-        this.$emit('change', this.lengthWidth);
+        this.$emit('change', Math.round(this.lengthWidth));
     }
     else {
-        this.$emit('change', this.lengthHeight);
+        this.$emit('change', Math.round(this.lengthHeight));
     }
 };
 exports.unmounted = function () {

@@ -27,7 +27,6 @@ export let lastPopZIndex: number = 0;
 
 /** --- form list 的 div --- */
 let formListElement: HTMLDivElement = document.createElement('div');
-formListElement.style.zoom = clickgo.zoom.toString();
 formListElement.classList.add('cg-form-list');
 document.getElementsByTagName('body')[0].appendChild(formListElement);
 formListElement.addEventListener('touchmove', function(e): void {
@@ -41,7 +40,6 @@ formListElement.addEventListener('touchmove', function(e): void {
 /** --- pop list 的 div --- */
 let popListElement: HTMLDivElement = document.createElement('div');
 popListElement.id = 'cg-pop-list';
-popListElement.style.zoom = clickgo.zoom.toString();
 popListElement.classList.add('cg-pop-list');
 popListElement.addEventListener('contextmenu', function(e): void {
     e.preventDefault();
@@ -56,13 +54,11 @@ popListElement.addEventListener('touchmove', function(e): void {
 
 // --- 从鼠标指针处从小到大缩放然后淡化的圆圈动画特效对象 ---
 let circularElement: HTMLDivElement = document.createElement('div');
-circularElement.style.zoom = clickgo.zoom.toString();
 circularElement.classList.add('cg-circular');
 document.getElementsByTagName('body')[0].appendChild(circularElement);
 
 // --- 从鼠标指针处开始从小到大缩放并铺满屏幕（或任意矩形）的对象 ---
 let rectangleElement: HTMLDivElement = document.createElement('div');
-rectangleElement.style.zoom = clickgo.zoom.toString();
 rectangleElement.setAttribute('data-pos', '');
 rectangleElement.classList.add('cg-rectangle');
 document.getElementsByTagName('body')[0].appendChild(rectangleElement);

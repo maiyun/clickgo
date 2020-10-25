@@ -175,12 +175,12 @@ function bindMove(e, opt) {
     clickgo.core.setGlobalCursor(getComputedStyle(e.target).cursor);
     let tx, ty;
     if (e instanceof MouseEvent) {
-        tx = e.clientX * clickgo.rzoom;
-        ty = e.clientY * clickgo.rzoom;
+        tx = e.clientX;
+        ty = e.clientY;
     }
     else {
-        tx = e.touches[0].clientX * clickgo.rzoom;
-        ty = e.touches[0].clientY * clickgo.rzoom;
+        tx = e.touches[0].clientX;
+        ty = e.touches[0].clientY;
     }
     let left, top, right, bottom;
     if (opt.offsetObject) {
@@ -261,8 +261,8 @@ function bindMove(e, opt) {
         move: (e) => {
             var _a, _b, _c;
             let x, y;
-            x = (e instanceof MouseEvent ? e.clientX : e.touches[0].clientX) * clickgo.rzoom;
-            y = (e instanceof MouseEvent ? e.clientY : e.touches[0].clientY) * clickgo.rzoom;
+            x = e instanceof MouseEvent ? e.clientX : e.touches[0].clientX;
+            y = e instanceof MouseEvent ? e.clientY : e.touches[0].clientY;
             if (x === tx && y === ty) {
                 return;
             }
@@ -448,8 +448,8 @@ function bindResize(e, opt) {
     var _a, _b;
     opt.minWidth = (_a = opt.minWidth) !== null && _a !== void 0 ? _a : 0;
     opt.minHeight = (_b = opt.minHeight) !== null && _b !== void 0 ? _b : 0;
-    let x = (e instanceof MouseEvent ? e.clientX : e.touches[0].clientX) * clickgo.rzoom;
-    let y = (e instanceof MouseEvent ? e.clientY : e.touches[0].clientY) * clickgo.rzoom;
+    let x = e instanceof MouseEvent ? e.clientX : e.touches[0].clientX;
+    let y = e instanceof MouseEvent ? e.clientY : e.touches[0].clientY;
     let offsetLeft, offsetTop, offsetRight, offsetBottom;
     let left, top, right, bottom;
     if (opt.dir === 'tr' || opt.dir === 'r' || opt.dir === 'rb') {

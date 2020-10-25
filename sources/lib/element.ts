@@ -226,12 +226,12 @@ export function bindMove(e: MouseEvent | TouchEvent, opt: { 'left'?: number; 'to
     /** --- 上一次的坐标 --- */
     let tx: number, ty: number;
     if (e instanceof MouseEvent) {
-        tx = e.clientX * clickgo.rzoom;
-        ty = e.clientY * clickgo.rzoom;
+        tx = e.clientX;
+        ty = e.clientY;
     }
     else {
-        tx = e.touches[0].clientX * clickgo.rzoom;
-        ty = e.touches[0].clientY * clickgo.rzoom;
+        tx = e.touches[0].clientX;
+        ty = e.touches[0].clientY;
     }
 
     // --- 限定拖动区域 ---
@@ -325,8 +325,8 @@ export function bindMove(e: MouseEvent | TouchEvent, opt: { 'left'?: number; 'to
         move: (e: MouseEvent | TouchEvent) => {
             /** --- 本次 x 坐标 --- */
             let x: number, y: number;
-            x = (e instanceof MouseEvent ? e.clientX : e.touches[0].clientX) * clickgo.rzoom;
-            y = (e instanceof MouseEvent ? e.clientY : e.touches[0].clientY) * clickgo.rzoom;
+            x = e instanceof MouseEvent ? e.clientX : e.touches[0].clientX;
+            y = e instanceof MouseEvent ? e.clientY : e.touches[0].clientY;
             if (x === tx && y === ty) {
                 return;
             }
@@ -531,9 +531,9 @@ export function bindResize(e: MouseEvent | TouchEvent, opt: { 'left': number; 't
     opt.minWidth = opt.minWidth ?? 0;
     opt.minHeight = opt.minHeight ?? 0;
     /** --- 当前鼠标位置 x --- */
-    let x: number = (e instanceof MouseEvent ? e.clientX : e.touches[0].clientX) * clickgo.rzoom;
+    let x: number = e instanceof MouseEvent ? e.clientX : e.touches[0].clientX;
     /** --- 当前鼠标位置 y --- */
-    let y: number = (e instanceof MouseEvent ? e.clientY : e.touches[0].clientY) * clickgo.rzoom;
+    let y: number = e instanceof MouseEvent ? e.clientY : e.touches[0].clientY;
     // --- 获取偏差补偿 ---
     let offsetLeft!: number, offsetTop!: number, offsetRight!: number, offsetBottom!: number;
     /** --- 上下左右界限 --- */

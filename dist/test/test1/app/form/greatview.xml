@@ -65,6 +65,14 @@
                     </layout>
                 </layout>
             </tab-panel>
+            <tab-panel label="beyond" direction="v" style="padding: 10px;">
+                <greatview same="true" :data="10" v-model:scroll-left="soLeft4" v-model:scroll-top="soTop4" flex="1" style="border: 1px solid rgba(0, 0, 0, .1);" padding="10 0 0 0" v-slot="data">
+                    <layout style="margin: 0 0 10px 10px;">
+                        <block v-for="j of 10" style="width: 200px; height: 200px; margin: 0 10px 0 0; background: red;"></block>
+                    </layout>
+                </greatview>
+                <label style="margin-top: 10px;">Scroll Left: {{soLeft4}}, Scroll Top: {{soTop4}}.</label>
+            </tab-panel>
             <tab-panel label="select" style="padding: 10px;">
                 <layout flex="1" gutter="10" direction="v">
                     <block>greatselect (Now select value is {{select}}):</block>

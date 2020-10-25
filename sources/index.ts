@@ -22,20 +22,12 @@ let tmpCgRootPath: string = '';
     tmpCgRootPath = scriptEle.src.slice(0, scriptEle.src.lastIndexOf('/') + 1);
 })();
 
-/** --- 当前缩放情况 --- */
-let tmpZoom = 1;
-if (window.devicePixelRatio < 2) {
-    tmpZoom = 1 / window.devicePixelRatio;
-}
-
 /** --- ClickGo 对象 --- */
 const clickgo: IClickGo = {
     'rootPath': window.location.href.slice(0, window.location.href.lastIndexOf('/') + 1),
     'cgRootPath': tmpCgRootPath,
     'hasTouch': ('ontouchstart' in document.documentElement) ? true : false,
     'isNative': navigator.userAgent.toLowerCase().indexOf('electron') === -1 ? false : true,
-    'zoom': tmpZoom,
-    'rzoom': 1 / tmpZoom,
     'position': {
         'left': null,
         'top': null,
@@ -48,8 +40,8 @@ const clickgo: IClickGo = {
         return {
             'left': this.position.left ?? 0,
             'top': this.position.top ?? 0,
-            'width': window.innerWidth * this.rzoom + (this.position.offsetWidth ?? 0),
-            'height': window.innerHeight * this.rzoom + (this.position.offsetHeight ?? 0),
+            'width': window.innerWidth + (this.position.offsetWidth ?? 0),
+            'height': window.innerHeight + (this.position.offsetHeight ?? 0),
             'offsetWidth': this.position.offsetWidth ?? 0,
             'offsetHeight': this.position.offsetHeight ?? 0
         };

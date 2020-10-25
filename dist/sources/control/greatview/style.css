@@ -8,9 +8,6 @@
 .item {
     position: absolute;
 }
-.item.v {
-    width: 100%;
-}
 .item.h {
-    height: 100%; display: flex;
+    display: flex;
 }

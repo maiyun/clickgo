@@ -150,7 +150,7 @@ export let methods = {
         /** --- bar inner 对应的 left 或 top 位置 --- */
         let barOffset = this.direction === 'v' ? barRect.top : barRect.left;
         /** --- 鼠标点击在 bar 中的位置 --- */
-        let eOffset = (this.direction === 'v' ? (e instanceof MouseEvent ? e.clientY : e.touches[0].clientY) : (e instanceof MouseEvent ? e.clientX : e.touches[0].clientX)) * clickgo.rzoom;
+        let eOffset = this.direction === 'v' ? (e instanceof MouseEvent ? e.clientY : e.touches[0].clientY) : (e instanceof MouseEvent ? e.clientX : e.touches[0].clientX);
         eOffset = eOffset - barOffset;
 
         let scrollOffsetPx = eOffset - this.size / 2;

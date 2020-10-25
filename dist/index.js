@@ -14,17 +14,11 @@ let tmpCgRootPath = '';
     let scriptEle = temp[temp.length - 1];
     tmpCgRootPath = scriptEle.src.slice(0, scriptEle.src.lastIndexOf('/') + 1);
 })();
-let tmpZoom = 1;
-if (window.devicePixelRatio < 2) {
-    tmpZoom = 1 / window.devicePixelRatio;
-}
 const clickgo = {
     'rootPath': window.location.href.slice(0, window.location.href.lastIndexOf('/') + 1),
     'cgRootPath': tmpCgRootPath,
     'hasTouch': ('ontouchstart' in document.documentElement) ? true : false,
     'isNative': navigator.userAgent.toLowerCase().indexOf('electron') === -1 ? false : true,
-    'zoom': tmpZoom,
-    'rzoom': 1 / tmpZoom,
     'position': {
         'left': null,
         'top': null,
@@ -38,8 +32,8 @@ const clickgo = {
         return {
             'left': (_a = this.position.left) !== null && _a !== void 0 ? _a : 0,
             'top': (_b = this.position.top) !== null && _b !== void 0 ? _b : 0,
-            'width': window.innerWidth * this.rzoom + ((_c = this.position.offsetWidth) !== null && _c !== void 0 ? _c : 0),
-            'height': window.innerHeight * this.rzoom + ((_d = this.position.offsetHeight) !== null && _d !== void 0 ? _d : 0),
+            'width': window.innerWidth + ((_c = this.position.offsetWidth) !== null && _c !== void 0 ? _c : 0),
+            'height': window.innerHeight + ((_d = this.position.offsetHeight) !== null && _d !== void 0 ? _d : 0),
             'offsetWidth': (_e = this.position.offsetWidth) !== null && _e !== void 0 ? _e : 0,
             'offsetHeight': (_f = this.position.offsetHeight) !== null && _f !== void 0 ? _f : 0
         };

@@ -3,8 +3,8 @@
 }
 
 .inner {
-    position: absolute; width: intrinsic; width: max-content; left: 0; top: 0; transition-timing-function: cubic-bezier(0.23, 1, 0.68, 1);
+    position: absolute; left: 0; top: 0; transition-timing-function: cubic-bezier(0.23, 1, 0.68, 1); display: flex; min-width: 100%; min-height: 100%;
 }
-.wrap.h > .inner {
-    display: flex;
+.wrap.v > .inner {
+    flex-direction: column;
 }

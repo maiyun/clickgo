@@ -28,6 +28,8 @@ exports.data = {
     'soTop3D': 0,
     'l3D': 0,
     'c3D': 0,
+    'soLeft4': 0,
+    'soTop4': 0,
     'area': 'all',
     'slist': [
         {

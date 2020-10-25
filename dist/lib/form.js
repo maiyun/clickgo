@@ -15,7 +15,6 @@ exports.lastZIndex = 999;
 exports.lastTopZIndex = 9999999;
 exports.lastPopZIndex = 0;
 let formListElement = document.createElement('div');
-formListElement.style.zoom = clickgo.zoom.toString();
 formListElement.classList.add('cg-form-list');
 document.getElementsByTagName('body')[0].appendChild(formListElement);
 formListElement.addEventListener('touchmove', function (e) {
@@ -25,7 +24,6 @@ formListElement.addEventListener('touchmove', function (e) {
 });
 let popListElement = document.createElement('div');
 popListElement.id = 'cg-pop-list';
-popListElement.style.zoom = clickgo.zoom.toString();
 popListElement.classList.add('cg-pop-list');
 popListElement.addEventListener('contextmenu', function (e) {
     e.preventDefault();
@@ -37,11 +35,9 @@ popListElement.addEventListener('touchmove', function (e) {
     'passive': false
 });
 let circularElement = document.createElement('div');
-circularElement.style.zoom = clickgo.zoom.toString();
 circularElement.classList.add('cg-circular');
 document.getElementsByTagName('body')[0].appendChild(circularElement);
 let rectangleElement = document.createElement('div');
-rectangleElement.style.zoom = clickgo.zoom.toString();
 rectangleElement.setAttribute('data-pos', '');
 rectangleElement.classList.add('cg-rectangle');
 document.getElementsByTagName('body')[0].appendChild(rectangleElement);
