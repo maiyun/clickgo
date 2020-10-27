@@ -77,13 +77,19 @@ export let computed = {
         if (this.lengthWidth <= this.clientWidth) {
             return 0;
         }
-        return this.lengthWidth - this.clientWidth;
+        return Math.floor(this.lengthWidth - this.clientWidth);
     },
     'maxScrollTop': function(this: IVueControl): number {
         if (this.lengthHeight <= this.clientHeight) {
             return 0;
         }
-        return this.lengthHeight - this.clientHeight;
+        return Math.floor(this.lengthHeight - this.clientHeight);
+    },
+    'maxLengthWidth': function(this: IVueControl): number {
+        return parseInt(this.lengthWidth);
+    },
+    'maxLengthHeight': function(this: IVueControl): number {
+        return parseInt(this.lengthHeight);
     },
     'widthPx': function(this: IVue): string | undefined {
         if (this.width !== undefined) {
@@ -162,12 +168,21 @@ export let methods = {
             'move': (ox, oy) => {
                 this.scrollLeftData -= ox;
                 this.scrollTopData -= oy;
-                if (this.scrollLeftEmit !== Math.round(this.scrollLeftData)) {
-                    this.scrollLeftEmit = Math.round(this.scrollLeftData);
+                let sleft = Math.round(this.scrollLeftData);
+                if (sleft > this.maxScrollLeft) {
+                    sleft = this.maxScrollLeft;
+                }
+                if (this.scrollLeftEmit !== sleft) {
+                    this.scrollLeftEmit = sleft;
                     this.$emit('update:scrollLeft', this.scrollLeftEmit);
                 }
-                if (this.scrollTopEmit !==  Math.round(this.scrollTopData)) {
-                    this.scrollTopEmit =  Math.round(this.scrollTopData);
+
+                let stop = Math.round(this.scrollTopData);
+                if (stop > this.maxScrollTop) {
+                    stop = this.maxScrollTop;
+                }
+                if (this.scrollTopEmit !==  stop) {
+                    this.scrollTopEmit =  stop;
                     this.$emit('update:scrollTop', this.scrollTopEmit);
                 }
             },
@@ -188,6 +203,14 @@ export let methods = {
                     }
                 }
                 if (topTime === 0) {
+                    this.scrollLeftData = Math.round(this.scrollLeftData);
+                    if (this.scrollLeftData > this.maxScrollLeft) {
+                        this.scrollLeftData = this.maxScrollLeft;
+                    }
+                    this.scrollTopData = Math.round(this.scrollTopData);
+                    if (this.scrollTopData > this.maxScrollTop) {
+                        this.scrollTopData = this.maxScrollTop;
+                    }
                     return;
                 }
 
@@ -234,7 +257,13 @@ export let methods = {
                     if (leftEnd && topEnd) {
                         this.timer = false;
                         this.scrollLeftData = Math.round(this.scrollLeftData);
+                        if (this.scrollLeftData > this.maxScrollLeft) {
+                            this.scrollLeftData = this.maxScrollLeft;
+                        }
                         this.scrollTopData = Math.round(this.scrollTopData);
+                        if (this.scrollTopData > this.maxScrollTop) {
+                            this.scrollTopData = this.maxScrollTop;
+                        }
                         return;
                     }
 
@@ -276,7 +305,13 @@ export let methods = {
                     }
                     else {
                         this.scrollLeftData = Math.round(this.scrollLeftData);
+                        if (this.scrollLeftData > this.maxScrollLeft) {
+                            this.scrollLeftData = this.maxScrollLeft;
+                        }
                         this.scrollTopData = Math.round(this.scrollTopData);
+                        if (this.scrollTopData > this.maxScrollTop) {
+                            this.scrollTopData = this.maxScrollTop;
+                        }
                     }
                 };
                 animation();

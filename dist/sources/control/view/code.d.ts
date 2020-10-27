@@ -55,6 +55,8 @@ export declare let watch: {
 export declare let computed: {
     maxScrollLeft: (this: IVueControl) => number;
     maxScrollTop: (this: IVueControl) => number;
+    maxLengthWidth: (this: IVueControl) => number;
+    maxLengthHeight: (this: IVueControl) => number;
     widthPx: (this: IVue) => string | undefined;
     heightPx: (this: IVue) => string | undefined;
 };

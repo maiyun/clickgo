@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-import { O_TRUNC } from "constants";
-
 /**
  * --- 获取实时的 DOM SIZE ---
  * @param el 要获取的 dom
