@@ -10,14 +10,18 @@ export let data = {
     'b2po': {
         'left': 0,
         'top': 0
-    }
+    },
+    'b3p': {
+        'left': 0,
+        'top': 0
+    },
 };
 
 export let methods = {
     b1Down: function(this: IVue, e: MouseEvent | TouchEvent): void {
         clickgo.element.bindMove(e, {
+            'areaObject': this.$refs.o1,
             'object': this.$refs.b1,
-            'offsetObject': this.$refs.o1,
             'move': (ox, oy): void => {
                 this.b1p.left += ox;
                 this.b1p.top += oy;
@@ -28,8 +32,8 @@ export let methods = {
         let r = this.$refs.b2.$el.getBoundingClientRect();
         let rectWidth = 0, rectHeight = 0;
         let rect = clickgo.element.bindMove(e, {
+            'areaObject': this.$refs.o2,
             'object': this.$refs.b2,
-            'offsetObject': this.$refs.o2,
             'move': (ox, oy): void => {
                 this.b2po.left += ox;
                 this.b2po.top += oy;
@@ -42,4 +46,14 @@ export let methods = {
         this.b2po.left = r.left - rect.left;
         this.b2po.top = r.top - rect.top;
     },
+    b3Down: function(this: IVue, e: MouseEvent | TouchEvent): void {
+        clickgo.element.bindMove(e, {
+            'areaObject': this.$refs.o3,
+            'object': this.$refs.b3,
+            'move': (ox, oy): void => {
+                this.b3p.left += ox;
+                this.b3p.top += oy;
+            }
+        });
+    }
 };

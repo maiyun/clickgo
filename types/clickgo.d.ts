@@ -198,6 +198,7 @@ interface IElementLib {
         'end'?: (e: MouseEvent | TouchEvent) => void;
     }): void;
     bindMove(e: MouseEvent | TouchEvent, opt: {
+        'areaObject'?: HTMLElement | IVue;
         'left'?: number;
         'top'?: number;
         'right'?: number;
@@ -211,7 +212,6 @@ interface IElementLib {
         'objectWidth'?: number;
         'objectHeight'?: number;
         'object'?: HTMLElement | IVue;
-        'offsetObject'?: HTMLElement | IVue;
         'showRect'?: boolean;
         'start'?: (x: number, y: number) => void | boolean;
         'move'?: (ox: number, oy: number, x: number, y: number, border: TBorderDir) => void;
@@ -226,13 +226,15 @@ interface IElementLib {
         'bottom': number;
     };
     bindResize(e: MouseEvent | TouchEvent, opt: {
-        'left': number;
-        'top': number;
-        'width': number;
-        'height': number;
+        'objectLeft'?: number;
+        'objectTop'?: number;
+        'objectWidth'?: number;
+        'objectHeight'?: number;
+        'object'?: HTMLElement | IVue;
         'minWidth'?: number;
         'minHeight'?: number;
-        'offsetObject'?: HTMLElement;
+        'maxWidth'?: number;
+        'maxHeight'?: number;
         'dir': TBorderDir;
         'start'?: (x: number, y: number) => void | boolean;
         'move'?: (left: number, top: number, width: number, height: number, x: number, y: number, border: TBorderDir) => void;

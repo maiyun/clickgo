@@ -127,8 +127,8 @@ export let methods = {
             return;
         }
         clickgo.element.bindMove(e, {
+            'areaObject': this.$refs.bar,
             'object': this.$refs.block,
-            'offsetObject': this.$refs.bar,
             'move': (ox, oy) => {
                 this.scrollOffsetPx += this.direction === 'v' ? oy : ox;
                 /** --- 滚动百分比 --- */

@@ -183,16 +183,16 @@ function bindMove(e, opt) {
         ty = e.touches[0].clientY;
     }
     let left, top, right, bottom;
-    if (opt.offsetObject) {
-        if (!(opt.offsetObject instanceof HTMLElement)) {
-            opt.offsetObject = opt.offsetObject.$el;
+    if (opt.areaObject) {
+        if (!(opt.areaObject instanceof HTMLElement)) {
+            opt.areaObject = opt.areaObject.$el;
         }
-        let rect = opt.offsetObject.getBoundingClientRect();
-        let sd = getComputedStyle(opt.offsetObject);
-        left = rect.left + opt.offsetObject.clientLeft + parseFloat(sd.paddingLeft);
-        top = rect.top + opt.offsetObject.clientTop + parseFloat(sd.paddingTop);
-        right = rect.left + rect.width - (parseFloat(sd.borderRightWidth) + parseFloat(sd.paddingRight));
-        bottom = rect.top + rect.height - (parseFloat(sd.borderRightWidth) + parseFloat(sd.paddingRight));
+        let areaRect = opt.areaObject.getBoundingClientRect();
+        let areaStyle = getComputedStyle(opt.areaObject);
+        left = areaRect.left + parseFloat(areaStyle.borderLeftWidth) + parseFloat(areaStyle.paddingLeft);
+        top = areaRect.top + parseFloat(areaStyle.borderTopWidth) + parseFloat(areaStyle.paddingTop);
+        right = areaRect.left + areaRect.width - (parseFloat(areaStyle.borderRightWidth) + parseFloat(areaStyle.paddingRight));
+        bottom = areaRect.top + areaRect.height - (parseFloat(areaStyle.borderRightWidth) + parseFloat(areaStyle.paddingRight));
     }
     else {
         let position = clickgo.getPosition();
@@ -201,10 +201,6 @@ function bindMove(e, opt) {
         right = (_c = opt.right) !== null && _c !== void 0 ? _c : position.width;
         bottom = (_d = opt.bottom) !== null && _d !== void 0 ? _d : position.height;
     }
-    left = Math.round(left);
-    top = Math.round(top);
-    right = Math.round(right);
-    bottom = Math.round(bottom);
     if (opt.offsetLeft) {
         left += opt.offsetLeft;
     }
@@ -452,25 +448,50 @@ function bindResize(e, opt) {
     let y = e instanceof MouseEvent ? e.clientY : e.touches[0].clientY;
     let offsetLeft, offsetTop, offsetRight, offsetBottom;
     let left, top, right, bottom;
+    if (!opt.objectLeft || !opt.objectTop || !opt.objectWidth || !opt.objectHeight) {
+        if (!opt.object) {
+            return;
+        }
+        if (!(opt.object instanceof HTMLElement)) {
+            opt.object = opt.object.$el;
+        }
+        let objectRect = opt.object.getBoundingClientRect();
+        opt.objectLeft = objectRect.left;
+        opt.objectTop = objectRect.top;
+        opt.objectWidth = objectRect.width;
+        opt.objectHeight = objectRect.height;
+    }
     if (opt.dir === 'tr' || opt.dir === 'r' || opt.dir === 'rb') {
-        left = opt.left + opt.minWidth;
-        offsetLeft = x - (opt.left + opt.width);
+        left = opt.objectLeft + opt.minWidth;
+        offsetLeft = x - (opt.objectLeft + opt.objectWidth);
         offsetRight = offsetLeft;
+        if (opt.maxWidth) {
+            right = opt.objectLeft + opt.maxWidth;
+        }
     }
     else if (opt.dir === 'bl' || opt.dir === 'l' || opt.dir === 'lt') {
-        right = opt.left + opt.width - opt.minWidth;
-        offsetLeft = x - opt.left;
+        right = opt.objectLeft + opt.objectWidth - opt.minWidth;
+        offsetLeft = x - opt.objectLeft;
         offsetRight = offsetLeft;
+        if (opt.maxWidth) {
+            left = opt.objectLeft + opt.objectWidth - opt.maxWidth;
+        }
     }
     if (opt.dir === 'rb' || opt.dir === 'b' || opt.dir === 'bl') {
-        top = opt.top + opt.minHeight;
-        offsetTop = y - (opt.top + opt.height);
+        top = opt.objectTop + opt.minHeight;
+        offsetTop = y - (opt.objectTop + opt.objectHeight);
         offsetBottom = offsetTop;
+        if (opt.maxHeight) {
+            bottom = opt.objectTop + opt.maxHeight;
+        }
     }
     else if (opt.dir === 'lt' || opt.dir === 't' || opt.dir === 'tr') {
-        bottom = opt.top + opt.height - opt.minHeight;
-        offsetTop = y - opt.top;
+        bottom = opt.objectTop + opt.objectHeight - opt.minHeight;
+        offsetTop = y - opt.objectTop;
         offsetBottom = offsetTop;
+        if (opt.maxHeight) {
+            top = opt.objectTop + opt.objectHeight - opt.maxHeight;
+        }
     }
     bindMove(e, {
         'left': left,
@@ -485,20 +506,20 @@ function bindResize(e, opt) {
         'move': function (ox, oy, x, y, border) {
             var _a;
             if (opt.dir === 'tr' || opt.dir === 'r' || opt.dir === 'rb') {
-                opt.width += ox;
+                opt.objectWidth += ox;
             }
             else if (opt.dir === 'bl' || opt.dir === 'l' || opt.dir === 'lt') {
-                opt.width -= ox;
-                opt.left += ox;
+                opt.objectWidth -= ox;
+                opt.objectLeft += ox;
             }
             if (opt.dir === 'rb' || opt.dir === 'b' || opt.dir === 'bl') {
-                opt.height += oy;
+                opt.objectHeight += oy;
             }
             else if (opt.dir === 'lt' || opt.dir === 't' || opt.dir === 'tr') {
-                opt.height -= oy;
-                opt.top += oy;
+                opt.objectHeight -= oy;
+                opt.objectTop += oy;
             }
-            (_a = opt.move) === null || _a === void 0 ? void 0 : _a.call(opt, opt.left, opt.top, opt.width, opt.height, x, y, border);
+            (_a = opt.move) === null || _a === void 0 ? void 0 : _a.call(opt, opt.objectLeft, opt.objectTop, opt.objectWidth, opt.objectHeight, x, y, border);
         },
         'end': opt.end
     });

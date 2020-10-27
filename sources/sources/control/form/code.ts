@@ -522,9 +522,11 @@ export let methods = {
             if (this.stateAbs) {
                 // --- 进行高度还原 ---
                 if (dir === 'lt' || dir === 't' || dir === 'tr') {
+                    // --- 左上、上、右上 ---
                     height = this.historyLocation.top + this.historyLocation.height;
                 }
                 else {
+                    // --- 左下、下、右下 ---
                     top = this.historyLocation.top;
                     height = clickgo.getPosition().height - top;
                 }
@@ -539,10 +541,10 @@ export let methods = {
             }
         }
         clickgo.element.bindResize(e, {
-            'left': this.leftData,
-            'top': top,
-            'width': this.widthData,
-            'height': height,
+            'objectLeft': this.leftData,
+            'objectTop': top,
+            'objectWidth': this.widthData,
+            'objectHeight': height,
             'minWidth': parseInt(this.minWidth),
             'minHeight': parseInt(this.minHeight),
             'dir': dir,

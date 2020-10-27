@@ -515,10 +515,10 @@ exports.methods = {
             }
         }
         clickgo.element.bindResize(e, {
-            'left': this.leftData,
-            'top': top,
-            'width': this.widthData,
-            'height': height,
+            'objectLeft': this.leftData,
+            'objectTop': top,
+            'objectWidth': this.widthData,
+            'objectHeight': height,
             'minWidth': parseInt(this.minWidth),
             'minHeight': parseInt(this.minHeight),
             'dir': dir,

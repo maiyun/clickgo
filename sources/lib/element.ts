@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import { O_TRUNC } from "constants";
+
 /**
  * --- 获取实时的 DOM SIZE ---
  * @param el 要获取的 dom
@@ -221,7 +223,7 @@ export function bindDown(oe: MouseEvent | TouchEvent, opt: { 'down'?: (e: MouseE
  * @param e mousedown 或 touchstart 的 event
  * @param opt 回调选项
  */
-export function bindMove(e: MouseEvent | TouchEvent, opt: { 'left'?: number; 'top'?: number; 'right'?: number; 'bottom'?: number; 'offsetLeft'?: number; 'offsetTop'?: number; 'offsetRight'?: number; 'offsetBottom'?: number; 'objectLeft'?: number; 'objectTop'?: number; 'objectWidth'?: number; 'objectHeight'?: number; 'object'?: HTMLElement | IVue; 'offsetObject'?: HTMLElement | IVue; 'showRect'?: boolean; 'start'?: (x: number, y: number) => void | boolean; 'move'?: (ox: number, oy: number, x: number, y: number, border: TBorderDir) => void; 'up'?: () => void; 'end'?: (moveTimes: Array<{ 'time': number; 'ox': number; 'oy': number; }>) => void; 'borderIn'?: (x: number, y: number, border: TBorderDir) => void; 'borderOut'?: () => void; }): { 'left': number; 'top': number; 'right': number; 'bottom': number; } {
+export function bindMove(e: MouseEvent | TouchEvent, opt: { 'areaObject'?: HTMLElement | IVue; 'left'?: number; 'top'?: number; 'right'?: number; 'bottom'?: number; 'offsetLeft'?: number; 'offsetTop'?: number; 'offsetRight'?: number; 'offsetBottom'?: number; 'objectLeft'?: number; 'objectTop'?: number; 'objectWidth'?: number; 'objectHeight'?: number; 'object'?: HTMLElement | IVue; 'showRect'?: boolean; 'start'?: (x: number, y: number) => void | boolean; 'move'?: (ox: number, oy: number, x: number, y: number, border: TBorderDir) => void; 'up'?: () => void; 'end'?: (moveTimes: Array<{ 'time': number; 'ox': number; 'oy': number; }>) => void; 'borderIn'?: (x: number, y: number, border: TBorderDir) => void; 'borderOut'?: () => void; }): { 'left': number; 'top': number; 'right': number; 'bottom': number; } {
     clickgo.core.setGlobalCursor(getComputedStyle(e.target as Element).cursor);
     /** --- 上一次的坐标 --- */
     let tx: number, ty: number;
@@ -236,16 +238,16 @@ export function bindMove(e: MouseEvent | TouchEvent, opt: { 'left'?: number; 'to
 
     // --- 限定拖动区域 ---
     let left: number, top: number, right: number, bottom: number;
-    if (opt.offsetObject) {
-        if (!(opt.offsetObject instanceof HTMLElement)) {
-            opt.offsetObject = opt.offsetObject.$el;
+    if (opt.areaObject) {
+        if (!(opt.areaObject instanceof HTMLElement)) {
+            opt.areaObject = opt.areaObject.$el;
         }
-        let rect = opt.offsetObject.getBoundingClientRect();
-        let sd = getComputedStyle(opt.offsetObject);
-        left = rect.left + opt.offsetObject.clientLeft + parseFloat(sd.paddingLeft);
-        top = rect.top + opt.offsetObject.clientTop + parseFloat(sd.paddingTop);
-        right = rect.left + rect.width - (parseFloat(sd.borderRightWidth) + parseFloat(sd.paddingRight));
-        bottom = rect.top + rect.height - (parseFloat(sd.borderRightWidth) + parseFloat(sd.paddingRight));
+        let areaRect = opt.areaObject.getBoundingClientRect();
+        let areaStyle = getComputedStyle(opt.areaObject);
+        left = areaRect.left + parseFloat(areaStyle.borderLeftWidth) + parseFloat(areaStyle.paddingLeft);
+        top = areaRect.top + parseFloat(areaStyle.borderTopWidth) + parseFloat(areaStyle.paddingTop);
+        right = areaRect.left + areaRect.width - (parseFloat(areaStyle.borderRightWidth) + parseFloat(areaStyle.paddingRight));
+        bottom = areaRect.top + areaRect.height - (parseFloat(areaStyle.borderRightWidth) + parseFloat(areaStyle.paddingRight));
     }
     else {
         let position = clickgo.getPosition();
@@ -254,12 +256,7 @@ export function bindMove(e: MouseEvent | TouchEvent, opt: { 'left'?: number; 'to
         right = opt.right ?? position.width;
         bottom = opt.bottom ?? position.height;
     }
-    // --- 不允许出现小数点 ---
-    left = Math.round(left);
-    top = Math.round(top);
-    right = Math.round(right);
-    bottom = Math.round(bottom);
-    // --- 限定拖动区域额外补偿（拖动对象和实际对象有一定偏差，超出时使用） ---
+    // --- 限定拖动区域额外补偿（拖动对象和实际对象有一定偏差时使用） ---
     if (opt.offsetLeft) {
         left += opt.offsetLeft;
     }
@@ -523,11 +520,11 @@ export function bindMove(e: MouseEvent | TouchEvent, opt: { 'left'?: number; 'to
 /**
  * --- 绑定拖动改变大小事件 ---
  * @param e mousedown 或 touchstart 的 event
- * @param opt 选项
+ * @param opt 选项，width, height 当前对象宽高
  * @param moveCb 拖动时的回调
  * @param endCb 结束时的回调
  */
-export function bindResize(e: MouseEvent | TouchEvent, opt: { 'left': number; 'top': number; 'width': number; 'height': number; 'minWidth'?: number; 'minHeight'?: number; 'offsetObject'?: HTMLElement; 'dir': TBorderDir; 'start'?: (x: number, y: number) => void | boolean; 'move'?: (left: number, top: number, width: number, height: number, x: number, y: number, border: TBorderDir) => void; 'end'?: () => void; }): void {
+export function bindResize(e: MouseEvent | TouchEvent, opt: { 'objectLeft'?: number; 'objectTop'?: number; 'objectWidth'?: number; 'objectHeight'?: number; 'object'?: HTMLElement | IVue; 'minWidth'?: number; 'minHeight'?: number; 'maxWidth'?: number; 'maxHeight'?: number; 'dir': TBorderDir; 'start'?: (x: number, y: number) => void | boolean; 'move'?: (left: number, top: number, width: number, height: number, x: number, y: number, border: TBorderDir) => void; 'end'?: () => void; }): void {
     opt.minWidth = opt.minWidth ?? 0;
     opt.minHeight = opt.minHeight ?? 0;
     /** --- 当前鼠标位置 x --- */
@@ -538,25 +535,56 @@ export function bindResize(e: MouseEvent | TouchEvent, opt: { 'left': number; 't
     let offsetLeft!: number, offsetTop!: number, offsetRight!: number, offsetBottom!: number;
     /** --- 上下左右界限 --- */
     let left!: number, top!: number, right!: number, bottom!: number;
+
+    // --- 获取 object 的 x,y 和 w,h 信息 ---
+    if (!opt.objectLeft || !opt.objectTop || !opt.objectWidth || !opt.objectHeight) {
+        if (!opt.object) {
+            return;
+        }
+        if (!(opt.object instanceof HTMLElement)) {
+            opt.object = opt.object.$el;
+        }
+        let objectRect = opt.object.getBoundingClientRect();
+        opt.objectLeft = objectRect.left;
+        opt.objectTop = objectRect.top;
+        opt.objectWidth = objectRect.width;
+        opt.objectHeight = objectRect.height;
+    }
+
     if (opt.dir === 'tr' || opt.dir === 'r' || opt.dir === 'rb') {
-        left = opt.left + opt.minWidth;
-        offsetLeft = x - (opt.left + opt.width);
+        // --- ↗、→、↘ ---
+        left = opt.objectLeft + opt.minWidth;
+        offsetLeft = x - (opt.objectLeft + opt.objectWidth);
         offsetRight = offsetLeft;
+        if (opt.maxWidth) {
+            right = opt.objectLeft + opt.maxWidth;
+        }
     }
     else if (opt.dir === 'bl' || opt.dir === 'l' || opt.dir === 'lt') {
-        right = opt.left + opt.width - opt.minWidth;
-        offsetLeft = x - opt.left;
+        // --- ↙、←、↖ ---
+        right = opt.objectLeft + opt.objectWidth - opt.minWidth;
+        offsetLeft = x - opt.objectLeft;
         offsetRight = offsetLeft;
+        if (opt.maxWidth) {
+            left = opt.objectLeft + opt.objectWidth - opt.maxWidth;
+        }
     }
     if (opt.dir === 'rb' || opt.dir === 'b' || opt.dir === 'bl') {
-        top = opt.top + opt.minHeight;
-        offsetTop = y - (opt.top + opt.height);
+        // --- ↘、↓、↙ ---
+        top = opt.objectTop + opt.minHeight;
+        offsetTop = y - (opt.objectTop + opt.objectHeight);
         offsetBottom = offsetTop;
+        if (opt.maxHeight) {
+            bottom = opt.objectTop + opt.maxHeight;
+        }
     }
     else if (opt.dir === 'lt' || opt.dir === 't' || opt.dir === 'tr') {
-        bottom = opt.top + opt.height - opt.minHeight;
-        offsetTop = y - opt.top;
+        bottom = opt.objectTop + opt.objectHeight - opt.minHeight;
+        offsetTop = y - opt.objectTop;
         offsetBottom = offsetTop;
+        if (opt.maxHeight) {
+            top = opt.objectTop + opt.objectHeight - opt.maxHeight;
+        }
     }
     bindMove(e, {
         'left': left,
@@ -570,20 +598,20 @@ export function bindResize(e: MouseEvent | TouchEvent, opt: { 'left': number; 't
         'start': opt.start,
         'move': function(ox, oy, x, y, border) {
             if (opt.dir === 'tr' || opt.dir === 'r' || opt.dir === 'rb') {
-                opt.width += ox;
+                opt.objectWidth! += ox;
             }
             else if (opt.dir === 'bl' || opt.dir === 'l' || opt.dir === 'lt') {
-                opt.width -= ox;
-                opt.left += ox;
+                opt.objectWidth! -= ox;
+                opt.objectLeft! += ox;
             }
             if (opt.dir === 'rb' || opt.dir === 'b' || opt.dir === 'bl') {
-                opt.height += oy;
+                opt.objectHeight! += oy;
             }
             else if (opt.dir === 'lt' || opt.dir === 't' || opt.dir === 'tr') {
-                opt.height -= oy;
-                opt.top += oy;
+                opt.objectHeight! -= oy;
+                opt.objectTop! += oy;
             }
-            opt.move?.(opt.left, opt.top, opt.width, opt.height, x, y, border);
+            opt.move?.(opt.objectLeft!, opt.objectTop!, opt.objectWidth!, opt.objectHeight!, x, y, border);
         },
         'end': opt.end
     });

@@ -11,8 +11,13 @@ export declare let data: {
         left: number;
         top: number;
     };
+    b3p: {
+        left: number;
+        top: number;
+    };
 };
 export declare let methods: {
     b1Down: (this: IVue, e: MouseEvent | TouchEvent) => void;
     b2Down: (this: IVue, e: MouseEvent | TouchEvent) => void;
+    b3Down: (this: IVue, e: MouseEvent | TouchEvent) => void;
 };
