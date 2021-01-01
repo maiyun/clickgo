@@ -46,7 +46,6 @@
             }
         }],
         "no-extra-semi": "off",
-        "prefer-const": "off",
         "@typescript-eslint/no-extra-semi": ["error"],
         "@typescript-eslint/no-base-to-string": ["warn"],
         "@typescript-eslint/await-thenable": ["error"],
@@ -60,8 +59,8 @@
         "@typescript-eslint/prefer-for-of": "error",
         "@typescript-eslint/prefer-nullish-coalescing": "error",
         "@typescript-eslint/prefer-function-type": "error",
-        "@typescript-eslint/prefer-includes": "off",
-        "@typescript-eslint/prefer-string-starts-ends-with": "off",
+        "@typescript-eslint/prefer-includes": "error",
+        "@typescript-eslint/prefer-string-starts-ends-with": "error",
         "@typescript-eslint/prefer-regexp-exec": "error",
         "@typescript-eslint/prefer-optional-chain": "error",
         "@typescript-eslint/no-extra-parens": "off",
@@ -80,11 +79,7 @@
         "@typescript-eslint/consistent-type-definitions": ["error", "interface"],
         "func-call-spacing": "off",
         "@typescript-eslint/func-call-spacing": ["error", "never"],
-        "@typescript-eslint/no-namespace": ["error", {
-
-            "allowDeclarations": true,
-            "allowDefinitionFiles": true
-        }],
+        "@typescript-eslint/no-namespace": "off",
         "@typescript-eslint/consistent-type-assertions": ["error", {
             "assertionStyle": "as"
         }],
@@ -96,6 +91,7 @@
             "caughtErrors": "all"
         }],
         "no-unused-expressions": "off",
+        "no-use-before-define": "off",
         "@typescript-eslint/no-unused-expressions": ["error"],
         "no-useless-constructor": "off",
         "@typescript-eslint/no-useless-constructor": ["error"],
@@ -104,8 +100,9 @@
         "@typescript-eslint/comma-spacing": ["error"],
         "@typescript-eslint/unified-signatures": ["error"],
         "semi": "off",
+        "prefer-const": "off",
         "@typescript-eslint/semi": ["error"],
-        "@typescript-eslint/no-use-before-define": ["error"],
+        "@typescript-eslint/no-use-before-define": "off",
         "@typescript-eslint/no-unnecessary-type-assertion": ["error"],
         "@typescript-eslint/no-unnecessary-type-arguments": ["error"],
         "@typescript-eslint/unbound-method": ["error"],
@@ -150,6 +147,24 @@
             {
                 "selector": "parameter",
                 "format": ["camelCase"]
+            },
+            {
+              "selector": "property",
+              "format": ["snake_case"],
+              "filter": {
+                // you can expand this regex to add more allowed names
+                "regex": "^(target_id|target_type|payer_account|date_type|date_start|date_end|page_type|max_id|min_id|sort_order|sort_by|filter_by|filter_id|http_status_code|http_status_msg|redirect_uri|expires_in|input_token|access_token|refresh_token|grant_type|token_type|client_id|client_secret)$",
+                "match": true
+              }
+            },
+            {
+              "selector": "property",
+              "format": ["snake_case", "camelCase"],
+              "filter": {
+                // you can expand this regex as you find more cases that require quoting that you want to allow
+                "regex": "\\?$",
+                "match": true
+              }
             },
             {
                 "selector": "memberLike",

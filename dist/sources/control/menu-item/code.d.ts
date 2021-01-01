@@ -24,4 +24,4 @@ export declare let methods: {
     showPop: (this: IVueControl) => void;
     hidePop: (this: IVueControl) => void;
 };
-export declare let unmounted: (this: IVue) => void;
+export declare let unmounted: (this: IVueControl) => void;

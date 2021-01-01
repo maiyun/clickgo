@@ -13,7 +13,7 @@ export let watch = {
     'tabs': {
         handler: async function(this: IVue): Promise<void> {
             await this.$nextTick();
-            this.onResize(clickgo.element.getSize(this.$refs.tabs));
+            this.onResize(clickgo.dom.getSize(this.$refs.tabs));
         },
         'deep': true
     }
@@ -25,7 +25,7 @@ export let methods = {
             return;
         }
         let num = type === 'start' ? -5 : 5;
-        clickgo.element.bindDown(e, {
+        clickgo.dom.bindDown(e, {
             down: () => {
                 if (this.timer !== undefined) {
                     this.timer = undefined;
@@ -65,7 +65,7 @@ export let methods = {
         this.$refs.tabs.scrollLeft += e.deltaY;
     },
     // --- 检测是否显示箭头 ---
-    onResize: function(this: IVueControl, size: IElementSize): void {
+    onResize: function(this: IVueControl, size: ICGDomSize): void {
         if (this.$parent!.tabPosition === 'top' || this.$parent!.tabPosition === 'bottom') {
             if (size.scrollWidth > Math.round(size.clientWidth)) {
                 this.arrow = true;
@@ -90,7 +90,7 @@ export let mounted = function(this: IVue): void {
         return;
     }
     // --- 检测是否显示箭头 ---
-    clickgo.element.watchSize(this.$refs.tabs, (size) => {
+    clickgo.dom.watchSize(this.$refs.tabs, (size) => {
         this.onResize(size);
     });
 };

@@ -111,7 +111,7 @@ exports.mounted = function () {
         if (this.type) {
             ++this.$parent.hasTypeItemsCount;
         }
-        clickgo.element.watchElement(this.$el, () => {
+        clickgo.dom.watchDom(this.$el, () => {
             if (this.cgSlos().length > 0) {
                 if (!this.showArrow) {
                     this.showArrow = true;

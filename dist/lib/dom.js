@@ -1,6 +1,104 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.siblings = exports.findParentByClass = exports.bindResize = exports.bindMove = exports.bindDown = exports.watchElement = exports.watchSize = exports.getSize = void 0;
+exports.siblings = exports.findParentByClass = exports.bindResize = exports.bindMove = exports.bindDown = exports.watchDom = exports.watchSize = exports.getSize = exports.getStyleCount = exports.removeStyle = exports.pushStyle = exports.removeFromStyleList = exports.createToStyleList = exports.setGlobalCursor = void 0;
+let styleList = document.createElement('div');
+styleList.style.display = 'none';
+document.getElementsByTagName('body')[0].appendChild(styleList);
+styleList.insertAdjacentHTML('beforeend', '<style id=\'cg-global-cursor\'></style>');
+styleList.insertAdjacentHTML('beforeend', `<style class='cg-global'>
+.cg-form-list, .cg-pop-list {-webkit-user-select: none; user-select: none; position: fixed; left: 0; top: 0; width: 0; height: 0; cursor: default;}
+.cg-form-list {z-index: 20020000;}
+.cg-pop-list {z-index: 20020001;}
+.cg-form-list img, .cg-pop-list img {vertical-align: bottom;}
+.cg-form-list ::selection {
+    background-color: rgba(0, 120, 215, .3);
+}
+.cg-form-list, .cg-pop-list {-webkit-user-select: none; user-select: none;}
+
+.cg-form-list *, .cg-pop-list *, .cg-form-list *::after, .cg-pop-list *::after, .cg-form-list *::before, .cg-pop-list *::before {box-sizing: border-box; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); flex-shrink: 0;}
+.cg-form-list, .cg-form-list input, .cg-form-list textarea, .cg-pop-list, .cg-pop-list input, .cg-pop-list textarea {font-family: Roboto,-apple-system,BlinkMacSystemFont,"Helvetica Neue","Segoe UI","Oxygen","Ubuntu","Cantarell","Open Sans",sans-serif; font-size: 12px; line-height: 1; -webkit-font-smoothing: antialiased;}
+
+.cg-circular {box-sizing: border-box; position: fixed; z-index: 20020003; border: solid 3px #76b9ed; border-radius: 50%; filter: drop-shadow(0 0 7px #76b9ed); pointer-events: none; opacity: 0;}
+.cg-rectangle {box-sizing: border-box; position: fixed; z-index: 20020002; border: solid 1px rgba(118, 185, 237, .7); box-shadow: 0 0 10px rgba(0, 0, 0, .3); background: rgba(118, 185, 237, .1); pointer-events: none; opacity: 0;}
+</style>`);
+let globalCursorStyle;
+function setGlobalCursor(type) {
+    if (!globalCursorStyle) {
+        globalCursorStyle = document.getElementById('cg-global-cursor');
+    }
+    if (type) {
+        globalCursorStyle.innerHTML = `* {cursor: ${type} !important;}`;
+    }
+    else {
+        globalCursorStyle.innerHTML = '';
+    }
+}
+exports.setGlobalCursor = setGlobalCursor;
+function createToStyleList(taskId) {
+    styleList.insertAdjacentHTML('beforeend', `<div id="cg-style-task${taskId}"><style class="cg-style-global"></style><div class="cg-style-theme"></div><div class="cg-style-control"></div><div class="cg-style-form"></div></div>`);
+}
+exports.createToStyleList = createToStyleList;
+function removeFromStyleList(taskId) {
+    var _a;
+    (_a = document.getElementById('cg-style-task' + taskId)) === null || _a === void 0 ? void 0 : _a.remove();
+}
+exports.removeFromStyleList = removeFromStyleList;
+function pushStyle(taskId, style, type = 'global', formId = 0) {
+    let el = document.querySelector(`#cg-style-task${taskId} > .cg-style-${type}`);
+    if (!el) {
+        return;
+    }
+    if (type === 'global') {
+        el.innerHTML = style;
+    }
+    else if (type === 'theme' || type === 'control') {
+        el.insertAdjacentHTML('beforeend', `<style data-name="${formId}">${style}</style>`);
+    }
+    else {
+        el.insertAdjacentHTML('beforeend', `<style class="cg-style-form${formId}">${style}</style>`);
+    }
+}
+exports.pushStyle = pushStyle;
+function removeStyle(taskId, type = 'global', formId = 0) {
+    let styleTask = document.getElementById('cg-style-task' + taskId);
+    if (!styleTask) {
+        return;
+    }
+    if (type === 'global') {
+        let el = document.querySelector(`#cg-style-task${taskId} > .cg-style-global`);
+        if (!el) {
+            return;
+        }
+        el.innerHTML = '';
+    }
+    else if (type === 'theme' || type === 'control') {
+        if (formId === 0) {
+            let el = document.querySelector(`#cg-style-task${taskId} > .cg-style-${type}`);
+            if (!el) {
+                return;
+            }
+            el.innerHTML = '';
+        }
+        else {
+            let el = document.querySelector(`#cg-style-task${taskId} > .cg-style-${type} > [data-name='${formId}']`);
+            if (!el) {
+                return;
+            }
+            el.remove();
+        }
+    }
+    else {
+        let elist = styleTask.querySelectorAll('.cg-style-form' + formId);
+        for (let i = 0; i < elist.length; ++i) {
+            elist.item(i).remove();
+        }
+    }
+}
+exports.removeStyle = removeStyle;
+function getStyleCount(taskId, type) {
+    return document.querySelectorAll(`#cg-style-task${taskId} > .cg-style-${type} > style`).length;
+}
+exports.getStyleCount = getStyleCount;
 function getSize(el) {
     let rect = el.getBoundingClientRect();
     let cs = getComputedStyle(el);
@@ -50,7 +148,7 @@ function watchSize(el, cb, immediate = false) {
     return fsize;
 }
 exports.watchSize = watchSize;
-function watchElement(el, cb, mode = 'default', immediate = false) {
+function watchDom(el, cb, mode = 'default', immediate = false) {
     if (immediate) {
         cb();
     }
@@ -94,7 +192,7 @@ function watchElement(el, cb, mode = 'default', immediate = false) {
     mo.observe(el, moi);
     return mo;
 }
-exports.watchElement = watchElement;
+exports.watchDom = watchDom;
 function bindDown(oe, opt) {
     var _a;
     if (oe instanceof MouseEvent && clickgo.hasTouch) {
@@ -172,7 +270,7 @@ function bindDown(oe, opt) {
 exports.bindDown = bindDown;
 function bindMove(e, opt) {
     var _a, _b, _c, _d;
-    clickgo.core.setGlobalCursor(getComputedStyle(e.target).cursor);
+    setGlobalCursor(getComputedStyle(e.target).cursor);
     let tx, ty;
     if (e instanceof MouseEvent) {
         tx = e.clientX;
@@ -225,7 +323,7 @@ function bindMove(e, opt) {
             var _a, _b, _c, _d;
             if (opt.start) {
                 if (opt.start(tx, ty) === false) {
-                    clickgo.core.setGlobalCursor();
+                    clickgo.dom.setGlobalCursor();
                     return false;
                 }
             }
@@ -413,7 +511,7 @@ function bindMove(e, opt) {
         },
         up: () => {
             var _a;
-            clickgo.core.setGlobalCursor();
+            setGlobalCursor();
             (_a = opt.up) === null || _a === void 0 ? void 0 : _a.call(opt);
         },
         end: () => {
@@ -461,7 +559,7 @@ function bindResize(e, opt) {
         opt.objectWidth = objectRect.width;
         opt.objectHeight = objectRect.height;
     }
-    if (opt.dir === 'tr' || opt.dir === 'r' || opt.dir === 'rb') {
+    if (opt.border === 'tr' || opt.border === 'r' || opt.border === 'rb') {
         left = opt.objectLeft + opt.minWidth;
         offsetLeft = x - (opt.objectLeft + opt.objectWidth);
         offsetRight = offsetLeft;
@@ -469,7 +567,7 @@ function bindResize(e, opt) {
             right = opt.objectLeft + opt.maxWidth;
         }
     }
-    else if (opt.dir === 'bl' || opt.dir === 'l' || opt.dir === 'lt') {
+    else if (opt.border === 'bl' || opt.border === 'l' || opt.border === 'lt') {
         right = opt.objectLeft + opt.objectWidth - opt.minWidth;
         offsetLeft = x - opt.objectLeft;
         offsetRight = offsetLeft;
@@ -477,7 +575,7 @@ function bindResize(e, opt) {
             left = opt.objectLeft + opt.objectWidth - opt.maxWidth;
         }
     }
-    if (opt.dir === 'rb' || opt.dir === 'b' || opt.dir === 'bl') {
+    if (opt.border === 'rb' || opt.border === 'b' || opt.border === 'bl') {
         top = opt.objectTop + opt.minHeight;
         offsetTop = y - (opt.objectTop + opt.objectHeight);
         offsetBottom = offsetTop;
@@ -485,7 +583,7 @@ function bindResize(e, opt) {
             bottom = opt.objectTop + opt.maxHeight;
         }
     }
-    else if (opt.dir === 'lt' || opt.dir === 't' || opt.dir === 'tr') {
+    else if (opt.border === 'lt' || opt.border === 't' || opt.border === 'tr') {
         bottom = opt.objectTop + opt.objectHeight - opt.minHeight;
         offsetTop = y - opt.objectTop;
         offsetBottom = offsetTop;
@@ -505,17 +603,17 @@ function bindResize(e, opt) {
         'start': opt.start,
         'move': function (ox, oy, x, y, border) {
             var _a;
-            if (opt.dir === 'tr' || opt.dir === 'r' || opt.dir === 'rb') {
+            if (opt.border === 'tr' || opt.border === 'r' || opt.border === 'rb') {
                 opt.objectWidth += ox;
             }
-            else if (opt.dir === 'bl' || opt.dir === 'l' || opt.dir === 'lt') {
+            else if (opt.border === 'bl' || opt.border === 'l' || opt.border === 'lt') {
                 opt.objectWidth -= ox;
                 opt.objectLeft += ox;
             }
-            if (opt.dir === 'rb' || opt.dir === 'b' || opt.dir === 'bl') {
+            if (opt.border === 'rb' || opt.border === 'b' || opt.border === 'bl') {
                 opt.objectHeight += oy;
             }
-            else if (opt.dir === 'lt' || opt.dir === 't' || opt.dir === 'tr') {
+            else if (opt.border === 'lt' || opt.border === 't' || opt.border === 'tr') {
                 opt.objectHeight -= oy;
                 opt.objectTop += oy;
             }
@@ -545,17 +643,17 @@ function findParentByClass(el, cn) {
     return null;
 }
 exports.findParentByClass = findParentByClass;
-function siblings(e, cn) {
-    if (!e.parentNode) {
+function siblings(el, cn) {
+    if (!el.parentNode) {
         return null;
     }
-    for (let i = 0; i < e.parentNode.children.length; ++i) {
-        let el = e.parentNode.children.item(i);
-        if (el === e) {
+    for (let i = 0; i < el.parentNode.children.length; ++i) {
+        let e = el.parentNode.children.item(i);
+        if (e === el) {
             continue;
         }
-        if (el.classList.contains(cn)) {
-            return el;
+        if (e.classList.contains(cn)) {
+            return e;
         }
     }
     return null;

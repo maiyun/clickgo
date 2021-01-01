@@ -9,9 +9,9 @@
     "style": "/style",
 
     "files": [
+        "res/more.svg",
         "/code.js",
         "/layout.html",
-        "/more.svg",
         "/style.css"
     ]
 }

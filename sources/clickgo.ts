@@ -1,5 +1,5 @@
 /**
- * Copyright 2020 Han Guoshuai <zohegs@gmail.com>
+ * Copyright 2021 Han Guoshuai <zohegs@gmail.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,14 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import * as co from './lib/core';
-import * as el from './lib/element';
-import * as fo from './lib/form';
-import * as th from './lib/theme';
-import * as to from './lib/tool';
-
-export let core = co;
-export let element = el;
-export let form = fo;
-export let theme = th;
-export let tool = to;
+export * as control from './lib/control';
+export * as core from './lib/core';
+export * as dom from './lib/dom';
+export * as form from './lib/form';
+export * as task from './lib/task';
+export * as theme from './lib/theme';
+export * as tool from './lib/tool';
+export * as zip from './lib/zip';

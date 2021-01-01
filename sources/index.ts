@@ -1,5 +1,5 @@
 /**
- * Copyright 2020 Han Guoshuai <zohegs@gmail.com>
+ * Copyright 2021 Han Guoshuai <zohegs@gmail.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ const clickgo: IClickGo = {
     'rootPath': window.location.href.slice(0, window.location.href.lastIndexOf('/') + 1),
     'cgRootPath': tmpCgRootPath,
     'hasTouch': ('ontouchstart' in document.documentElement) ? true : false,
-    'isNative': navigator.userAgent.toLowerCase().indexOf('electron') === -1 ? false : true,
+    'isNative': navigator.userAgent.toLowerCase().includes('electron') ? true : false,
     'position': {
         'left': null,
         'top': null,
@@ -36,7 +36,7 @@ const clickgo: IClickGo = {
         'offsetWidth': null,
         'offsetHeight': null
     },
-    getPosition: function(): IClickGoPositionResult {
+    getPosition: function(): ICGPositionResult {
         return {
             'left': this.position.left ?? 0,
             'top': this.position.top ?? 0,
@@ -63,11 +63,14 @@ const clickgo: IClickGo = {
         }
     },
 
-    'core': {} as ICoreLib,
-    'element': {} as IElementLib,
-    'form': {} as IFormLib,
-    'theme': {} as IThemeLib,
-    'tool': {} as IToolLib
+    'control': {} as ICGControlLib,
+    'core': {} as ICGCoreLib,
+    'dom': {} as ICGDomLib,
+    'form': {} as ICGFormLib,
+    'task': {} as ICGTaskLib,
+    'theme': {} as ICGThemeLib,
+    'tool': {} as ICGToolLib,
+    'zip': {} as ICGZipLib
 };
 
 // --- 加载 loader ---
@@ -79,7 +82,8 @@ tmpScript.addEventListener('load', function(): void {
         loader.setAfter('?' + Math.random());
         // --- 加载库 ---
         let paths: string[] = [
-            'https://cdn.jsdelivr.net/npm/vue@3.0.0/dist/vue.global.min.js'
+            'https://cdn.jsdelivr.net/npm/vue@3.0.5/dist/vue.global.min.js',
+            'https://cdn.jsdelivr.net/npm/jszip@3.5.0/dist/jszip.min.js'
         ];
         // --- 判断 ResizeObserver 是否存在 ---
         let ro = true;
@@ -106,11 +110,14 @@ tmpScript.addEventListener('load', function(): void {
             alert('Clickgo load failed.');
             return;
         }
+        clickgo.control = cg.control;
         clickgo.core = cg.core;
-        clickgo.element = cg.element;
+        clickgo.dom = cg.dom;
         clickgo.form = cg.form;
+        clickgo.task = cg.task;
         clickgo.theme = cg.theme;
         clickgo.tool = cg.tool;
+        clickgo.zip = cg.zip;
         // --- 执行 ready ---
         clickgo.isReady = true;
         for (let func of clickgo.readys) {

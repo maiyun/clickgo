@@ -18,8 +18,8 @@ export let data = {
 };
 
 export let methods = {
-    b1Down: function(this: IVue, e: MouseEvent | TouchEvent): void {
-        clickgo.element.bindMove(e, {
+    b1Down: function(this: IVueForm, e: MouseEvent | TouchEvent): void {
+        clickgo.dom.bindMove(e, {
             'areaObject': this.$refs.o1,
             'object': this.$refs.b1,
             'move': (ox, oy): void => {
@@ -28,10 +28,10 @@ export let methods = {
             }
         });
     },
-    b2Down: function(this: IVue, e: MouseEvent | TouchEvent): void {
+    b2Down: function(this: IVueForm, e: MouseEvent | TouchEvent): void {
         let r = this.$refs.b2.$el.getBoundingClientRect();
         let rectWidth = 0, rectHeight = 0;
-        let rect = clickgo.element.bindMove(e, {
+        let rect = clickgo.dom.bindMove(e, {
             'areaObject': this.$refs.o2,
             'object': this.$refs.b2,
             'move': (ox, oy): void => {
@@ -46,8 +46,8 @@ export let methods = {
         this.b2po.left = r.left - rect.left;
         this.b2po.top = r.top - rect.top;
     },
-    b3Down: function(this: IVue, e: MouseEvent | TouchEvent): void {
-        clickgo.element.bindMove(e, {
+    b3Down: function(this: IVueForm, e: MouseEvent | TouchEvent): void {
+        clickgo.dom.bindMove(e, {
             'areaObject': this.$refs.o3,
             'object': this.$refs.b3,
             'move': (ox, oy): void => {

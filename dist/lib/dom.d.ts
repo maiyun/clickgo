@@ -1,6 +1,12 @@
-export declare function getSize(el: HTMLElement): IElementSize;
-export declare function watchSize(el: HTMLElement, cb: (size: IElementSize) => void, immediate?: boolean): IElementSize;
-export declare function watchElement(el: HTMLElement, cb: () => void, mode?: 'child' | 'childsub' | 'style' | 'default' | MutationObserverInit, immediate?: boolean): MutationObserver;
+export declare function setGlobalCursor(type?: string): void;
+export declare function createToStyleList(taskId: number): void;
+export declare function removeFromStyleList(taskId: number): void;
+export declare function pushStyle(taskId: number, style: string, type?: 'global' | 'theme' | 'control' | 'form', formId?: number | string): void;
+export declare function removeStyle(taskId: number, type?: 'global' | 'theme' | 'control' | 'form', formId?: number | string): void;
+export declare function getStyleCount(taskId: number, type: 'theme' | 'control' | 'form'): number;
+export declare function getSize(el: HTMLElement): ICGDomSize;
+export declare function watchSize(el: HTMLElement, cb: (size: ICGDomSize) => void, immediate?: boolean): ICGDomSize;
+export declare function watchDom(el: HTMLElement, cb: () => void, mode?: 'child' | 'childsub' | 'style' | 'default' | MutationObserverInit, immediate?: boolean): MutationObserver;
 export declare function bindDown(oe: MouseEvent | TouchEvent, opt: {
     'down'?: (e: MouseEvent | TouchEvent) => void;
     'start'?: (e: MouseEvent | TouchEvent) => void | boolean;
@@ -25,14 +31,14 @@ export declare function bindMove(e: MouseEvent | TouchEvent, opt: {
     'object'?: HTMLElement | IVue;
     'showRect'?: boolean;
     'start'?: (x: number, y: number) => void | boolean;
-    'move'?: (ox: number, oy: number, x: number, y: number, border: TBorderDir) => void;
+    'move'?: (ox: number, oy: number, x: number, y: number, border: TCGBorder) => void;
     'up'?: () => void;
     'end'?: (moveTimes: Array<{
         'time': number;
         'ox': number;
         'oy': number;
     }>) => void;
-    'borderIn'?: (x: number, y: number, border: TBorderDir) => void;
+    'borderIn'?: (x: number, y: number, border: TCGBorder) => void;
     'borderOut'?: () => void;
 }): {
     'left': number;
@@ -50,10 +56,10 @@ export declare function bindResize(e: MouseEvent | TouchEvent, opt: {
     'minHeight'?: number;
     'maxWidth'?: number;
     'maxHeight'?: number;
-    'dir': TBorderDir;
+    'border': TCGBorder;
     'start'?: (x: number, y: number) => void | boolean;
-    'move'?: (left: number, top: number, width: number, height: number, x: number, y: number, border: TBorderDir) => void;
+    'move'?: (left: number, top: number, width: number, height: number, x: number, y: number, border: TCGBorder) => void;
     'end'?: () => void;
 }): void;
 export declare function findParentByClass(el: HTMLElement, cn: string | string[]): HTMLElement | null;
-export declare function siblings(e: HTMLElement, cn: string): HTMLElement | null;
+export declare function siblings(el: HTMLElement, cn: string): HTMLElement | null;

@@ -1,5 +1,5 @@
 <form width="300" height="300" title="Border none" border="none">
-    <layout flex="1" align-h="center" align-v="center" @down="bindFormDrag">
-        <button @tap="closeForm" style="padding: 0 15px;">Close</button>
+    <layout flex="1" align-h="center" align-v="center" @down="cgBindFormDrag">
+        <button @tap="cgCloseForm" style="padding: 0 15px;">Close</button>
     </layout>
 </form>

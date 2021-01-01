@@ -24,7 +24,7 @@ exports.watch = {
         handler: function () {
             return __awaiter(this, void 0, void 0, function* () {
                 yield this.$nextTick();
-                this.onResize(clickgo.element.getSize(this.$refs.tabs));
+                this.onResize(clickgo.dom.getSize(this.$refs.tabs));
             });
         },
         'deep': true
@@ -36,7 +36,7 @@ exports.methods = {
             return;
         }
         let num = type === 'start' ? -5 : 5;
-        clickgo.element.bindDown(e, {
+        clickgo.dom.bindDown(e, {
             down: () => {
                 if (this.timer !== undefined) {
                     this.timer = undefined;
@@ -97,7 +97,7 @@ exports.mounted = function () {
     if (!this.$parent) {
         return;
     }
-    clickgo.element.watchSize(this.$refs.tabs, (size) => {
+    clickgo.dom.watchSize(this.$refs.tabs, (size) => {
         this.onResize(size);
     });
 };

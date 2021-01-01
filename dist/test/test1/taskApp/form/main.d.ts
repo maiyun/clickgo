@@ -3,6 +3,6 @@ export declare let data: {
     speed: string;
 };
 export declare let methods: {
-    newTask: (this: IVue) => void;
-    exit: (this: IVue) => void;
+    newTask: (this: IVueForm) => Promise<void>;
+    exit: (this: IVueForm) => void;
 };

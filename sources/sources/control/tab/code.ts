@@ -82,7 +82,7 @@ export let watch = {
 };
 
 export let mounted = function(this: IVueControl): void {
-    clickgo.element.watchElement(this.$el, () => {
+    clickgo.dom.watchDom(this.$el, () => {
         if (this.selected === '') {
             let s = this.names[0] ? this.names[0] : '';
             if (this.selected !== s) {

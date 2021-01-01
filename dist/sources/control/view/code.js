@@ -55,7 +55,7 @@ exports.data = {
 };
 exports.watch = {
     'direction': function () {
-        let size = clickgo.element.getSize(this.$refs.wrap);
+        let size = clickgo.dom.getSize(this.$refs.wrap);
         this.clientWidth = size.innerWidth;
         this.clientHeight = size.innerHeight;
         let innerRect = this.$refs.inner.getBoundingClientRect();
@@ -147,7 +147,7 @@ exports.methods = {
         if (e instanceof MouseEvent && clickgo.hasTouch) {
             return;
         }
-        let wrapSize = clickgo.element.getSize(this.$refs.wrap);
+        let wrapSize = clickgo.dom.getSize(this.$refs.wrap);
         let top = wrapSize.top + wrapSize.border.top + wrapSize.padding.top;
         let right = wrapSize.right - wrapSize.border.right - wrapSize.padding.right;
         let bottom = wrapSize.bottom - wrapSize.border.bottom - wrapSize.padding.bottom;
@@ -155,7 +155,7 @@ exports.methods = {
         this.stopAnimation();
         let overWidth = this.lengthWidth - this.clientWidth;
         let overHeight = this.lengthHeight - this.clientHeight;
-        clickgo.element.bindMove(e, {
+        clickgo.dom.bindMove(e, {
             'object': this.$refs.inner,
             'left': left - (overWidth < 0 ? 0 : overWidth),
             'right': right + overWidth,
@@ -358,7 +358,7 @@ exports.methods = {
     }
 };
 exports.mounted = function () {
-    let size = clickgo.element.watchSize(this.$refs.wrap, (size) => {
+    let size = clickgo.dom.watchSize(this.$refs.wrap, (size) => {
         let clientWidth = size.innerWidth;
         let clientHeight = size.innerHeight;
         if (this.direction === 'v') {
@@ -387,7 +387,7 @@ exports.mounted = function () {
     });
     this.client = this.direction === 'v' ? size.innerHeight : size.innerWidth;
     this.$emit('resize', Math.round(this.client));
-    size = clickgo.element.watchSize(this.$refs.inner, (size) => {
+    size = clickgo.dom.watchSize(this.$refs.inner, (size) => {
         let lengthWidth = size.width;
         let lengthHeight = size.height;
         let change = false;

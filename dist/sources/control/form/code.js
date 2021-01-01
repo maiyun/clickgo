@@ -155,7 +155,7 @@ exports.methods = {
             });
         }
         let isBorder = '';
-        clickgo.element.bindMove(e, {
+        clickgo.dom.bindMove(e, {
             'start': (x, y) => {
                 if (this.stateMaxData) {
                     this.$emit('max', event, 0, this.historyLocation);
@@ -285,7 +285,7 @@ exports.methods = {
                                 }
                             }
                             this.stateAbs = true;
-                            let pos = clickgo.form.getRectByDir(isBorder);
+                            let pos = clickgo.form.getRectByBorder(isBorder);
                             this.widthData = pos.width;
                             this.$emit('update:width', this.widthData);
                             this.heightData = pos.height;
@@ -488,16 +488,16 @@ exports.methods = {
             clickgo.form.remove(this.formId);
         }
     },
-    resizeMethod: function (e, dir) {
+    resizeMethod: function (e, border) {
         if (e instanceof MouseEvent && clickgo.hasTouch) {
             return;
         }
         let isBorder = '';
         let top = this.topData;
         let height = this.heightData;
-        if (dir !== 'l' && dir !== 'r') {
+        if (border !== 'l' && border !== 'r') {
             if (this.stateAbs) {
-                if (dir === 'lt' || dir === 't' || dir === 'tr') {
+                if (border === 'lt' || border === 't' || border === 'tr') {
                     height = this.historyLocation.top + this.historyLocation.height;
                 }
                 else {
@@ -514,23 +514,23 @@ exports.methods = {
                 };
             }
         }
-        clickgo.element.bindResize(e, {
+        clickgo.dom.bindResize(e, {
             'objectLeft': this.leftData,
             'objectTop': top,
             'objectWidth': this.widthData,
             'objectHeight': height,
             'minWidth': parseInt(this.minWidth),
             'minHeight': parseInt(this.minHeight),
-            'dir': dir,
+            'border': border,
             'start': () => {
-                if (dir === 'l' || dir === 'r') {
+                if (border === 'l' || border === 'r') {
                     return;
                 }
                 if (this.stateAbs) {
                     this.stateAbs = false;
                 }
             },
-            'move': (left, top, width, height, x, y, border) => {
+            'move': (left, top, width, height, x, y, nborder) => {
                 this.leftData = left;
                 this.$emit('update:left', left);
                 this.topData = top;
@@ -539,11 +539,11 @@ exports.methods = {
                 this.$emit('update:width', width);
                 this.heightData = height;
                 this.$emit('update:height', height);
-                if (border !== '') {
-                    if (((dir === 'lt' || dir === 't' || dir === 'tr') && (border === 'lt' || border === 't' || border === 'tr')) ||
-                        ((dir === 'bl' || dir === 'b' || dir === 'rb') && (border === 'bl' || border === 'b' || border === 'rb'))) {
+                if (nborder !== '') {
+                    if (((border === 'lt' || border === 't' || border === 'tr') && (nborder === 'lt' || nborder === 't' || nborder === 'tr')) ||
+                        ((border === 'bl' || border === 'b' || border === 'rb') && (nborder === 'bl' || nborder === 'b' || nborder === 'rb'))) {
                         if (isBorder === '') {
-                            isBorder = border;
+                            isBorder = nborder;
                             clickgo.form.showCircular(x, y);
                             clickgo.form.showRectangle(x, y, {
                                 'left': left,
@@ -551,7 +551,7 @@ exports.methods = {
                             });
                         }
                         else {
-                            isBorder = border;
+                            isBorder = nborder;
                             clickgo.form.moveRectangle({
                                 'left': left,
                                 'width': width
@@ -594,11 +594,11 @@ exports.methods = {
         if (typeof this.maskFor !== 'number') {
             return;
         }
-        if (!clickgo.core.tasks[this.taskId].forms[this.maskFor]) {
+        if (!clickgo.task.list[this.taskId].forms[this.maskFor]) {
             return;
         }
         e.stopPropagation();
-        clickgo.core.tasks[this.taskId].forms[this.maskFor].vroot.flash();
+        clickgo.task.list[this.taskId].forms[this.maskFor].vroot.cgFlash();
     },
     setPropData: function (name, val, mode = '') {
         if (this[name + 'Data'] === undefined || this[name] === undefined) {

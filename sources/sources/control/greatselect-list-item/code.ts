@@ -38,7 +38,7 @@ export let methods = {
         clickgo.form.hidePop();
         this.cgTap(event);
     },
-    controlClick: function(this: IVue, e: MouseEvent): void {
+    controlClick: function(this: IVueControl, e: MouseEvent): void {
         if (this.disabled) {
             return;
         }
@@ -81,7 +81,7 @@ export let methods = {
     }
 };
 
-export let unmounted = function(this: IVue): void {
+export let unmounted = function(this: IVueControl): void {
     if (this.$parent?.$parent?.$parent) {
         // --- 如果自己还在上层显示，则取消 ---
         if (this === this.$parent.$parent.$parent.itemPopShowing) {

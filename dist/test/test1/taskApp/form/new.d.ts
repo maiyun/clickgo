@@ -2,5 +2,5 @@ export declare let data: {
     path: string;
 };
 export declare let methods: {
-    runApp: (this: IVue) => Promise<void>;
+    runApp: (this: IVueForm) => Promise<void>;
 };

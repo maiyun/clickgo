@@ -24,20 +24,20 @@ clickgo.ready(function () {
             let err = document.getElementById('err');
             err.style.display = 'block';
             err.innerHTML = 'Error, Task ID: ' + taskId + ', Form ID: ' + formId + '<br>' + error.stack.replace(/\n/g, '<br>');
-            clickgo.core.endTask(taskId);
+            clickgo.task.end(taskId);
         };
         clickgo.core.globalEvents.taskEndedHandler = function (taskId) {
             el.innerHTML = 'Task(' + taskId + ') ended.';
         };
         if (!clickgo.isNative) {
-            let sTaskId = yield clickgo.core.runApp('sapp/');
+            let sTaskId = yield clickgo.task.run('sapp/');
             if (sTaskId <= 0) {
                 el.innerHTML = `Start failed(${sTaskId.toString()}).`;
                 return;
             }
         }
         el.innerHTML = 'Starting app...';
-        let taskId = yield clickgo.core.runApp('app/');
+        let taskId = yield clickgo.task.run('app/');
         if (taskId <= 0) {
             el.innerHTML = `Start failed(${taskId.toString()}).`;
             return;

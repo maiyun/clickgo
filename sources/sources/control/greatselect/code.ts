@@ -74,7 +74,7 @@ export let methods = {
         this.cgStopPropagation(e);
         this.cgDown(e);
     },
-    keydown: function(this: IVue, e: KeyboardEvent): void {
+    keydown: function(this: IVueControl, e: KeyboardEvent): void {
         if (e.keyCode !== 13) {
             return;
         }

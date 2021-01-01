@@ -16,8 +16,8 @@ exports.data = {
 exports.methods = {
     'runApp': function () {
         return __awaiter(this, void 0, void 0, function* () {
-            this.closeForm();
-            yield clickgo.core.runApp(this.path);
+            this.cgCloseForm();
+            yield clickgo.task.run(this.path);
         });
     }
 };

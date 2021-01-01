@@ -10,7 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const fs = require("fs");
-const mime = require("@litert/mime");
+const zip = require("jszip");
 function purify(text) {
     text = '>' + text + '<';
     text = text.replace(/>([\s\S]*?)</g, function (t, t1) {
@@ -18,35 +18,29 @@ function purify(text) {
     });
     return text.slice(1, -1);
 }
-function getSingleControlBlob(base) {
+function addFile(zipo, base = '', path = '') {
     return __awaiter(this, void 0, void 0, function* () {
-        let config = yield fs.promises.readFile(base + '/config.json', {
-            'encoding': 'utf-8'
+        let list = yield fs.promises.readdir(base + path, {
+            'withFileTypes': true
         });
-        let configJson = JSON.parse(config);
-        let configBuffer = Buffer.from(config);
-        let m = mime.getMime('json');
-        let mb = Buffer.from(m);
-        let controlBufferArray = [Uint8Array.from([12]), Buffer.from('/config.json'), Uint8Array.from([mb.byteLength]), mb, Buffer.from(Uint32Array.from([configBuffer.byteLength]).buffer), configBuffer];
-        for (let fpath of configJson.files) {
-            let content = yield fs.promises.readFile(base + fpath);
-            let nameBuffer = Buffer.from(fpath);
-            let m = mime.getData(fpath);
-            let mb = Buffer.from(m.mime);
-            if (m.extension === 'html') {
-                content = Buffer.from(purify(content.toString()));
+        for (let item of list) {
+            let p = base + path + item.name;
+            if (item.isFile()) {
+                if (item.name.endsWith('.d.ts')) {
+                    continue;
+                }
+                let file = yield fs.promises.readFile(p);
+                if (item.name.endsWith('.html')) {
+                    zipo.file(path + item.name, purify(file.toString()));
+                }
+                else {
+                    zipo.file(path + item.name, file);
+                }
             }
-            controlBufferArray.push(Uint8Array.from([nameBuffer.byteLength]), nameBuffer, Uint8Array.from([mb.byteLength]), mb, Buffer.from(Uint32Array.from([content.byteLength]).buffer), content);
+            else if (item.isDirectory()) {
+                yield addFile(zipo, base, path + item.name + '/');
+            }
         }
-        let controlBuffer = Buffer.concat(controlBufferArray);
-        let nameBuffer = Buffer.from(configJson.name);
-        controlBuffer = Buffer.concat([
-            Uint8Array.from([nameBuffer.byteLength]),
-            nameBuffer,
-            Buffer.from(Uint32Array.from([controlBuffer.byteLength]).buffer),
-            controlBuffer
-        ]);
-        return controlBuffer;
     });
 }
 function run() {
@@ -61,53 +55,42 @@ function run() {
             if (['greatselect-list', 'greatselect-list-item', 'greatselect-list-split', 'img', 'label', 'layout', 'menu-item', 'menu-list-item', 'menu-list-split', 'overflow', 'tab-nav', 'tab-panel'].includes(item.name)) {
                 continue;
             }
-            let base = 'dist/sources/control/' + item.name;
+            let zipo = new zip();
+            let base = 'dist/sources/control/';
             let name = item.name;
-            let controlBuffer = yield getSingleControlBlob(base);
+            yield addFile(zipo, base, item.name + '/');
             if (item.name === 'block') {
                 name = 'common';
-                controlBuffer = Buffer.concat([
-                    controlBuffer,
-                    yield getSingleControlBlob('dist/sources/control/img'),
-                    yield getSingleControlBlob('dist/sources/control/label'),
-                    yield getSingleControlBlob('dist/sources/control/layout'),
-                    yield getSingleControlBlob('dist/sources/control/overflow')
-                ]);
+                yield addFile(zipo, base, 'img/');
+                yield addFile(zipo, base, 'label/');
+                yield addFile(zipo, base, 'layout/');
+                yield addFile(zipo, base, 'overflow/');
             }
             else if (item.name === 'greatselect') {
-                controlBuffer = Buffer.concat([
-                    controlBuffer,
-                    yield getSingleControlBlob('dist/sources/control/greatselect-list'),
-                    yield getSingleControlBlob('dist/sources/control/greatselect-list-item'),
-                    yield getSingleControlBlob('dist/sources/control/greatselect-list-split')
-                ]);
+                yield addFile(zipo, base, 'greatselect-list/');
+                yield addFile(zipo, base, 'greatselect-list-item/');
+                yield addFile(zipo, base, 'greatselect-list-split/');
             }
             else if (item.name === 'menu') {
-                controlBuffer = Buffer.concat([
-                    controlBuffer,
-                    yield getSingleControlBlob('dist/sources/control/menu-item'),
-                ]);
+                yield addFile(zipo, base, 'menu-item/');
             }
             else if (item.name === 'menu-list') {
-                controlBuffer = Buffer.concat([
-                    controlBuffer,
-                    yield getSingleControlBlob('dist/sources/control/menu-list-item'),
-                    yield getSingleControlBlob('dist/sources/control/menu-list-split')
-                ]);
+                yield addFile(zipo, base, 'menu-list-item/');
+                yield addFile(zipo, base, 'menu-list-split/');
             }
             else if (item.name === 'tab') {
-                controlBuffer = Buffer.concat([
-                    controlBuffer,
-                    yield getSingleControlBlob('dist/sources/control/tab-nav'),
-                    yield getSingleControlBlob('dist/sources/control/tab-panel')
-                ]);
+                yield addFile(zipo, base, 'tab-nav/');
+                yield addFile(zipo, base, 'tab-panel/');
             }
-            let fileBuffer = Buffer.concat([
-                Uint8Array.from([192, 1]),
-                controlBuffer
-            ]);
-            yield fs.promises.writeFile('dist/control/' + name + '.cgc', fileBuffer);
+            yield fs.promises.writeFile('dist/control/' + name + '.cgc', yield zipo.generateAsync({
+                type: 'nodebuffer',
+                compression: 'DEFLATE',
+                compressionOptions: {
+                    level: 9
+                }
+            }));
         }
+        let base = 'dist/sources/theme/';
         list = yield fs.promises.readdir('dist/sources/theme/', {
             'withFileTypes': true
         });
@@ -115,25 +98,15 @@ function run() {
             if (item.isFile()) {
                 continue;
             }
-            let base = 'dist/sources/theme/' + item.name;
-            let config = yield fs.promises.readFile(base + '/config.json', {
-                'encoding': 'utf-8'
-            });
-            let configJson = JSON.parse(config);
-            let configBuffer = Buffer.from(config);
-            let fileBufferArray = [
-                Uint8Array.from([192, 2]),
-                Uint8Array.from([12]),
-                Buffer.from('/config.json'),
-                Buffer.from(Uint32Array.from([configBuffer.byteLength]).buffer),
-                configBuffer
-            ];
-            for (let fpath of configJson.files) {
-                let content = yield fs.promises.readFile(base + fpath);
-                let nameBuffer = Buffer.from(fpath);
-                fileBufferArray.push(Uint8Array.from([nameBuffer.byteLength]), nameBuffer, Buffer.from(Uint32Array.from([content.byteLength]).buffer), content);
-            }
-            yield fs.promises.writeFile('dist/theme/' + configJson.name + '.cgt', Buffer.concat(fileBufferArray));
+            let zipo = new zip();
+            yield addFile(zipo, base + item.name + '/');
+            yield fs.promises.writeFile('dist/theme/' + item.name + '.cgt', yield zipo.generateAsync({
+                type: 'nodebuffer',
+                compression: 'DEFLATE',
+                compressionOptions: {
+                    level: 9
+                }
+            }));
         }
     });
 }

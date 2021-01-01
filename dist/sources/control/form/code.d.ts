@@ -97,7 +97,7 @@ export declare let methods: {
     maxVMethod: (this: IVue, dbl: boolean) => void;
     maxMethod: (this: IVue) => boolean;
     closeMethod: (this: IVue) => void;
-    resizeMethod: (this: IVue, e: MouseEvent | TouchEvent, dir: TBorderDir) => void;
+    resizeMethod: (this: IVue, e: MouseEvent | TouchEvent, border: TCGBorder) => void;
     maskDown: (this: IVue, e: MouseEvent | TouchEvent) => void;
     setPropData: (this: IVue, name: string, val: number, mode?: string) => void;
 };

@@ -1,6 +1,6 @@
 @font-face {
     font-family: 'ifont';
-    src: url('font.woff') format('woff');
+    src: url('res/font.woff') format('woff');
 }
 
 .wrap {

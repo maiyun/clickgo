@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.create = exports.remove = exports.doFocusAndPopEvent = exports.hidePop = exports.showPop = exports.removeFromPop = exports.appendToPop = exports.hideRectangle = exports.showRectangle = exports.moveRectangle = exports.showCircular = exports.getRectByDir = exports.changeFocus = exports.lastPopZIndex = exports.lastTopZIndex = exports.lastZIndex = exports.lastFormId = exports.popShowing = void 0;
+exports.create = exports.remove = exports.doFocusAndPopEvent = exports.hidePop = exports.showPop = exports.removeFromPop = exports.appendToPop = exports.hideRectangle = exports.showRectangle = exports.moveRectangle = exports.showCircular = exports.getRectByBorder = exports.changeFocus = exports.lastPopZIndex = exports.lastTopZIndex = exports.lastZIndex = exports.lastFormId = exports.popShowing = void 0;
 exports.lastFormId = 0;
 exports.lastZIndex = 999;
 exports.lastTopZIndex = 9999999;
@@ -53,7 +53,7 @@ function changeFocus(formId = 0, vm) {
             }
             else {
                 let taskId = parseInt((_a = focusElement.getAttribute('data-task-id')) !== null && _a !== void 0 ? _a : '0');
-                let task = clickgo.core.tasks[taskId];
+                let task = clickgo.task.list[taskId];
                 task.forms[dataFormIdNumber].vapp._container.classList.remove('cg-focus');
                 task.forms[dataFormIdNumber].vroot.focus = false;
                 clickgo.core.trigger('formBlurred', taskId, dataFormIdNumber);
@@ -82,7 +82,7 @@ function changeFocus(formId = 0, vm) {
             }
             else {
                 taskId = parseInt((_b = el.getAttribute('data-task-id')) !== null && _b !== void 0 ? _b : '0');
-                let task = clickgo.core.tasks[taskId];
+                let task = clickgo.task.list[taskId];
                 if (!task.forms[formId].vroot.$data._customZIndex) {
                     if (task.forms[formId].vroot.$data._topMost) {
                         task.forms[formId].vroot.$refs.form.setPropData('zIndex', ++exports.lastTopZIndex);
@@ -99,12 +99,12 @@ function changeFocus(formId = 0, vm) {
     }
 }
 exports.changeFocus = changeFocus;
-function getRectByDir(dir) {
+function getRectByBorder(border) {
     var _a, _b, _c, _d;
     let position = clickgo.getPosition();
     let width, height, left, top;
-    if (typeof dir === 'string') {
-        switch (dir) {
+    if (typeof border === 'string') {
+        switch (border) {
             case 'lt': {
                 width = position.width / 2;
                 height = position.height / 2;
@@ -164,10 +164,10 @@ function getRectByDir(dir) {
         }
     }
     else {
-        width = (_a = dir.width) !== null && _a !== void 0 ? _a : position.width;
-        height = (_b = dir.height) !== null && _b !== void 0 ? _b : position.height;
-        left = (_c = dir.left) !== null && _c !== void 0 ? _c : position.left;
-        top = (_d = dir.top) !== null && _d !== void 0 ? _d : position.top;
+        width = (_a = border.width) !== null && _a !== void 0 ? _a : position.width;
+        height = (_b = border.height) !== null && _b !== void 0 ? _b : position.height;
+        left = (_c = border.left) !== null && _c !== void 0 ? _c : position.left;
+        top = (_d = border.top) !== null && _d !== void 0 ? _d : position.top;
     }
     return {
         'width': width,
@@ -176,7 +176,7 @@ function getRectByDir(dir) {
         'top': top
     };
 }
-exports.getRectByDir = getRectByDir;
+exports.getRectByBorder = getRectByBorder;
 function showCircular(x, y) {
     circularElement.style.transition = 'none';
     requestAnimationFrame(function () {
@@ -198,19 +198,19 @@ function showCircular(x, y) {
     });
 }
 exports.showCircular = showCircular;
-function moveRectangle(dir) {
+function moveRectangle(border) {
     var _a, _b, _c, _d;
     let dataReady = (_a = rectangleElement.getAttribute('data-ready')) !== null && _a !== void 0 ? _a : '0';
     if (dataReady === '0') {
         return;
     }
-    let dataDir = (_b = rectangleElement.getAttribute('data-dir')) !== null && _b !== void 0 ? _b : '';
-    let setDataDir = typeof dir === 'string' ? dir : 'o-' + dir.left + '-' + ((_c = dir.top) !== null && _c !== void 0 ? _c : 'n') + '-' + dir.width + '-' + ((_d = dir.height) !== null && _d !== void 0 ? _d : 'n');
-    if (dataDir === setDataDir) {
+    let dataBorder = (_b = rectangleElement.getAttribute('data-border')) !== null && _b !== void 0 ? _b : '';
+    let setDataBorder = typeof border === 'string' ? border : 'o-' + border.left + '-' + ((_c = border.top) !== null && _c !== void 0 ? _c : 'n') + '-' + border.width + '-' + ((_d = border.height) !== null && _d !== void 0 ? _d : 'n');
+    if (dataBorder === setDataBorder) {
         return;
     }
-    rectangleElement.setAttribute('data-dir', setDataDir);
-    let pos = getRectByDir(dir);
+    rectangleElement.setAttribute('data-dir', setDataBorder);
+    let pos = getRectByBorder(border);
     let width = pos.width - 20;
     let height = pos.height - 20;
     let left = pos.left + 10;
@@ -223,7 +223,7 @@ function moveRectangle(dir) {
     }
 }
 exports.moveRectangle = moveRectangle;
-function showRectangle(x, y, pos) {
+function showRectangle(x, y, border) {
     rectangleElement.style.transition = 'none';
     requestAnimationFrame(function () {
         rectangleElement.style.width = '20px';
@@ -237,7 +237,7 @@ function showRectangle(x, y, pos) {
             rectangleElement.style.transition = 'all .2s ease-out';
             requestAnimationFrame(function () {
                 rectangleElement.setAttribute('data-ready', '1');
-                moveRectangle(pos);
+                moveRectangle(border);
             });
         });
     });
@@ -256,7 +256,7 @@ function removeFromPop(el) {
 }
 exports.removeFromPop = removeFromPop;
 function showPop(pop, x, y = 0) {
-    if (!clickgo.element.findParentByClass(pop.$el, 'cg-pop-list')) {
+    if (!clickgo.dom.findParentByClass(pop.$el, 'cg-pop-list')) {
         if (exports.popShowing) {
             exports.popShowing.hidePop();
         }
@@ -349,10 +349,10 @@ function doFocusAndPopEvent(e) {
         return;
     }
     let parent;
-    if (clickgo.element.findParentByClass(element, ['cg-pop-list', 'cg-pop-open'])) {
+    if (clickgo.dom.findParentByClass(element, ['cg-pop-list', 'cg-pop-open'])) {
         return;
     }
-    if ((parent = clickgo.element.findParentByClass(element, 'cg-form-wrap'))) {
+    if ((parent = clickgo.dom.findParentByClass(element, 'cg-form-wrap'))) {
         let formId = parseInt((_a = parent.getAttribute('data-form-id')) !== null && _a !== void 0 ? _a : '0');
         changeFocus(formId);
         hidePop();
@@ -378,62 +378,51 @@ function remove(formId) {
         return false;
     }
     let taskId = parseInt(taskIdAttr);
-    if (Object.keys(clickgo.core.tasks[taskId].forms).length === 1) {
-        return clickgo.core.endTask(taskId);
+    if (Object.keys(clickgo.task.list[taskId].forms).length === 1) {
+        return clickgo.task.end(taskId);
     }
     let title = '';
-    if (clickgo.core.tasks[taskId].forms[formId]) {
-        title = clickgo.core.tasks[taskId].forms[formId].vroot.$refs.form.title;
-        if (clickgo.core.tasks[taskId].forms[formId].vroot.$refs.form.maskFrom !== undefined) {
-            let fid = clickgo.core.tasks[taskId].forms[formId].vroot.$refs.form.maskFrom;
-            clickgo.core.tasks[taskId].forms[fid].vroot.$refs.form.maskFor = undefined;
+    if (clickgo.task.list[taskId].forms[formId]) {
+        title = clickgo.task.list[taskId].forms[formId].vroot.$refs.form.title;
+        if (clickgo.task.list[taskId].forms[formId].vroot.$refs.form.maskFrom !== undefined) {
+            let fid = clickgo.task.list[taskId].forms[formId].vroot.$refs.form.maskFrom;
+            clickgo.task.list[taskId].forms[fid].vroot.$refs.form.maskFor = undefined;
         }
-        clickgo.core.tasks[taskId].forms[formId].vapp.unmount();
-        delete (clickgo.core.tasks[taskId].forms[formId]);
+        clickgo.task.list[taskId].forms[formId].vapp.unmount();
+        delete (clickgo.task.list[taskId].forms[formId]);
     }
-    clickgo.tool.removeStyle(taskId, formId);
+    clickgo.dom.removeStyle(taskId, 'form', formId);
     formListElement.removeChild(formElement);
     clickgo.core.trigger('formRemoved', taskId, formId, { 'title': title });
     return true;
 }
 exports.remove = remove;
-function create(opt) {
-    var _a, _b, _c, _d, _e, _f;
+function create(taskId, opt) {
+    var _a, _b, _c, _d, _e, _f, _g, _h, _j;
     return __awaiter(this, void 0, void 0, function* () {
-        if (!opt.taskId) {
-            return -109;
+        let task = clickgo.task.list[taskId];
+        if (!task) {
+            return -1;
         }
-        if (!opt.dir) {
-            opt.dir = opt.file;
-        }
-        let appPkg = clickgo.core.tasks[opt.taskId].appPkg;
+        let appPkg = task.appPkg;
         let formId = ++exports.lastFormId;
-        let controlsStyle = '';
         let components = {};
         for (let controlPath of appPkg.config.controls) {
             let controlPkg;
-            if (controlPath.slice(0, 9) === '/clickgo/') {
+            if (controlPath.startsWith('/clickgo/')) {
                 let path = controlPath.slice(8);
-                if (clickgo.core.clickgoControlPkgs[path + '.cgc']) {
-                    controlPkg = clickgo.core.clickgoControlPkgs[path + '.cgc'];
+                if (clickgo.control.clickgoControlPkgs[path + '.cgc']) {
+                    controlPkg = clickgo.control.clickgoControlPkgs[path + '.cgc'];
                 }
                 else {
-                    return -108;
+                    return -2;
                 }
             }
-            else if (clickgo.core.tasks[opt.taskId].controlPkgs[controlPath + '.cgc']) {
-                controlPkg = clickgo.core.tasks[opt.taskId].controlPkgs[controlPath + '.cgc'];
+            else if (task.controlPkgs[controlPath + '.cgc']) {
+                controlPkg = task.controlPkgs[controlPath + '.cgc'];
             }
             else {
-                let controlBlob = appPkg.files[controlPath + '.cgc'];
-                if (!controlBlob) {
-                    return -101;
-                }
-                controlPkg = yield clickgo.tool.controlBlob2Pkg(controlBlob);
-                if (!controlPkg) {
-                    return -102;
-                }
-                clickgo.core.tasks[opt.taskId].controlPkgs[controlPath + '.cgc'] = controlPkg;
+                return -3;
             }
             for (let name in controlPkg) {
                 let item = controlPkg[name];
@@ -468,33 +457,44 @@ function create(opt) {
                         unmounted = expo.unmounted;
                     }
                 }
+                let layout = '';
                 let rand = '';
-                let styleBlob = item.files[item.config.style + '.css'];
-                if (styleBlob) {
-                    let r = clickgo.tool.stylePrepend(yield clickgo.tool.blob2Text(styleBlob));
-                    rand = r.rand;
-                    controlsStyle += yield clickgo.tool.styleUrl2DataUrl(item.config.style, r.style, item.files);
+                if (task.initControls[name]) {
+                    layout = task.initControls[name].layout;
+                    rand = task.initControls[name].rand;
                 }
-                let layoutBlob = item.files[item.config.layout + '.html'];
-                if (!layoutBlob) {
-                    return -103;
+                else {
+                    let styleBlob = item.files[item.config.style + '.css'];
+                    if (styleBlob) {
+                        let r = clickgo.tool.stylePrepend(yield clickgo.tool.blob2Text(styleBlob));
+                        rand = r.rand;
+                        clickgo.dom.pushStyle(task.id, yield clickgo.tool.styleUrl2ObjectOrDataUrl(item.config.style, r.style, item), 'control', name);
+                    }
+                    let layoutBlob = item.files[item.config.layout + '.html'];
+                    if (!layoutBlob) {
+                        return -4;
+                    }
+                    let randList = [
+                        'cg-theme-task' + taskId + '-' + name + '_'
+                    ];
+                    if (rand !== '') {
+                        randList.push(rand);
+                    }
+                    let r = clickgo.tool.layoutClassPrepend(yield clickgo.tool.blob2Text(layoutBlob), randList);
+                    layout = r.layout;
+                    task.initControls[name] = {
+                        'layout': layout,
+                        'rand': rand
+                    };
                 }
-                let randList = [
-                    'cg-theme-task' + opt.taskId + '-' + name + '_'
-                ];
-                if (rand !== '') {
-                    randList.push(rand);
-                }
-                let r = clickgo.tool.layoutClassPrepend(yield clickgo.tool.blob2Text(layoutBlob), randList);
-                let layout = r.layout;
                 props.focus = {
                     'focus': {
                         'default': false
                     }
                 };
-                data.taskId = opt.taskId;
+                data.taskId = taskId;
                 data.formId = formId;
-                data._dir = (_b = opt.dir) !== null && _b !== void 0 ? _b : '/';
+                data._path = (_c = (_b = opt.file) !== null && _b !== void 0 ? _b : opt.path) !== null && _c !== void 0 ? _c : '/';
                 data._scope = rand;
                 data._controlName = name;
                 methods.cgStopPropagation = function (e) {
@@ -511,26 +511,33 @@ function create(opt) {
                     this.$emit('down', e);
                 };
                 methods.cgTap = function (e) {
-                    if (this.$el.className.indexOf('cg-disabled') !== -1) {
+                    if (this.$el.className.includes('cg-disabled')) {
                         return;
                     }
                     this.$emit('tap', e);
                 };
                 methods.cgDblclick = function (e) {
                     e.stopPropagation();
-                    if (this.$el.className.indexOf('cg-disabled') !== -1) {
+                    if (this.$el.className.includes('cg-disabled')) {
                         return;
                     }
                     this.$emit('dblclick', e);
                 };
-                methods.cgGetBlob = function (file) {
+                methods.cgGetBlob = function (path) {
                     var _a;
-                    file = clickgo.tool.pathResolve(this.$data._dir, file);
-                    return (_a = clickgo.core.tasks[this.taskId].appPkg.files[file]) !== null && _a !== void 0 ? _a : null;
+                    return __awaiter(this, void 0, void 0, function* () {
+                        if (path.startsWith('/clickgo/')) {
+                            return yield clickgo.core.fetchClickGoFile(path.slice(8));
+                        }
+                        else {
+                            path = clickgo.tool.urlResolve(this.$data._path, path);
+                            return (_a = task.appPkg.files[path]) !== null && _a !== void 0 ? _a : null;
+                        }
+                    });
                 };
                 methods.cgGetDataUrl = function (file) {
                     return __awaiter(this, void 0, void 0, function* () {
-                        let f = this.cgGetBlob(file);
+                        let f = yield this.cgGetBlob(file);
                         return f ? yield clickgo.tool.blob2DataUrl(f) : null;
                     });
                 };
@@ -538,7 +545,7 @@ function create(opt) {
                     if (typeof cla !== 'string') {
                         return cla;
                     }
-                    if (cla.slice(0, 3) === 'cg-') {
+                    if (cla.startsWith('cg-')) {
                         return cla;
                     }
                     return `cg-theme-task${this.taskId}-${this.$data._controlName}_${cla} ${this.$data._scope}${cla}`;
@@ -588,19 +595,8 @@ function create(opt) {
                         });
                     },
                     'beforeUnmount': beforeUnmount,
-                    'unmounted': unmounted,
-                    'components': {}
+                    'unmounted': unmounted
                 };
-            }
-        }
-        for (let name in components) {
-            let reg = /<cg-(.+?)[ >]/g;
-            let match;
-            while ((match = reg.exec(components[name].template))) {
-                if (!components['cg-' + match[1]]) {
-                    continue;
-                }
-                components[name].components['cg-' + match[1]] = components['cg-' + match[1]];
             }
         }
         let style = opt.style;
@@ -616,7 +612,7 @@ function create(opt) {
             }
         }
         if (!layout) {
-            return -104;
+            return -5;
         }
         let data = {};
         let methods = {};
@@ -631,7 +627,7 @@ function create(opt) {
         let beforeUnmount = undefined;
         let unmounted = undefined;
         if (appPkg.files[opt.file + '.js']) {
-            let [expo] = (_d = yield loader.requireMemory((_c = opt.file) !== null && _c !== void 0 ? _c : '', appPkg.files)) !== null && _d !== void 0 ? _d : [];
+            let [expo] = (_e = yield loader.requireMemory((_d = opt.file) !== null && _d !== void 0 ? _d : '', appPkg.files)) !== null && _e !== void 0 ? _e : [];
             if (expo) {
                 data = expo.data || {};
                 methods = expo.methods || {};
@@ -651,7 +647,7 @@ function create(opt) {
         if (style) {
             let r = clickgo.tool.stylePrepend(style);
             rand = r.rand;
-            style = yield clickgo.tool.styleUrl2DataUrl((_e = opt.dir) !== null && _e !== void 0 ? _e : '/', r.style, appPkg.files);
+            style = yield clickgo.tool.styleUrl2ObjectOrDataUrl((_g = (_f = opt.file) !== null && _f !== void 0 ? _f : opt.path) !== null && _g !== void 0 ? _g : '/', r.style, task);
         }
         layout = clickgo.tool.purify(layout);
         layout = layout.replace(/<(\/{0,1})([\w-]+)([\s\S]*?>)/g, function (t, t1, t2, t3) {
@@ -665,18 +661,18 @@ function create(opt) {
         layout = clickgo.tool.layoutInsertAttr(layout, ':focus=\'focus\'', {
             'include': [/^cg-.+/]
         });
-        let randList = ['cg-task' + opt.taskId + '_'];
+        let randList = ['cg-task' + taskId + '_'];
         if (rand !== '') {
             randList.push(rand);
         }
         let r = clickgo.tool.layoutClassPrepend(layout, randList);
-        formListElement.insertAdjacentHTML('beforeend', `<div class="cg-form-wrap" data-form-id="${formId.toString()}" data-task-id="${opt.taskId.toString()}"></div>`);
+        formListElement.insertAdjacentHTML('beforeend', `<div class="cg-form-wrap" data-form-id="${formId.toString()}" data-task-id="${taskId.toString()}"></div>`);
         let el = formListElement.children.item(formListElement.children.length - 1);
-        data.taskId = opt.taskId;
+        data.taskId = taskId;
         data.formId = formId;
-        data._dir = (_f = opt.dir) !== null && _f !== void 0 ? _f : '/';
-        data._scope = rand;
         data.focus = false;
+        data._path = (_j = (_h = opt.file) !== null && _h !== void 0 ? _h : opt.path) !== null && _j !== void 0 ? _j : '/';
+        data._scope = rand;
         data._customZIndex = false;
         if (opt.topMost) {
             data._topMost = true;
@@ -684,20 +680,18 @@ function create(opt) {
         else {
             data._topMost = false;
         }
-        methods.createForm = function (paramOpt, cfOpt = {}) {
+        methods.cgCreateForm = function (paramOpt = {}) {
             return __awaiter(this, void 0, void 0, function* () {
-                let inOpt = {
-                    'taskId': opt.taskId
-                };
+                let inOpt = {};
                 if (typeof paramOpt === 'string') {
                     inOpt.file = paramOpt;
                 }
                 else {
-                    if (paramOpt.dir) {
-                        inOpt.dir = paramOpt.dir;
-                    }
                     if (paramOpt.file) {
                         inOpt.file = paramOpt.file;
+                    }
+                    if (paramOpt.path) {
+                        inOpt.path = paramOpt.path;
                     }
                     if (paramOpt.code) {
                         inOpt.code = paramOpt.code;
@@ -708,14 +702,14 @@ function create(opt) {
                     if (paramOpt.style) {
                         inOpt.style = paramOpt.style;
                     }
-                }
-                if (cfOpt.mask) {
-                    this.$refs.form.maskFor = true;
+                    if (paramOpt.mask) {
+                        this.$refs.form.maskFor = true;
+                    }
                 }
                 if (this.$data._topMost) {
                     inOpt.topMost = true;
                 }
-                let form = yield create(inOpt);
+                let form = yield create(taskId, inOpt);
                 if (typeof form === 'number') {
                     this.$refs.form.maskFor = undefined;
                 }
@@ -727,46 +721,76 @@ function create(opt) {
                 }
             });
         };
-        methods.closeForm = function () {
+        methods.cgCloseForm = function () {
             remove(this.formId);
         };
-        methods.bindFormDrag = function (e) {
+        methods.cgBindFormDrag = function (e) {
             this.$refs.form.moveMethod(e);
         };
-        methods.setSystemEventListener = function (name, func) {
+        methods.cgSetSystemEventListener = function (name, func) {
             this.cgEventList[name] = func;
         };
-        methods.removeSystemEventListener = function (name) {
+        methods.cgRemoveSystemEventListener = function (name) {
             delete (this.cgEventList[name]);
         };
-        methods.getBlob = function (file) {
+        methods.cgGetBlob = function (path) {
             var _a;
-            file = clickgo.tool.pathResolve(this.$data._dir, file);
-            return (_a = clickgo.core.tasks[this.taskId].appPkg.files[file]) !== null && _a !== void 0 ? _a : null;
-        };
-        methods.getDataUrl = function (file) {
             return __awaiter(this, void 0, void 0, function* () {
-                let f = this.cgGetBlob(file);
+                if (path.startsWith('/clickgo/')) {
+                    return yield clickgo.core.fetchClickGoFile(path.slice(8));
+                }
+                else {
+                    path = clickgo.tool.urlResolve(this.$data._path, path);
+                    return (_a = task.appPkg.files[path]) !== null && _a !== void 0 ? _a : null;
+                }
+            });
+        };
+        methods.cgGetDataUrl = function (file) {
+            return __awaiter(this, void 0, void 0, function* () {
+                let f = yield this.cgGetBlob(file);
                 return f ? yield clickgo.tool.blob2DataUrl(f) : null;
             });
         };
-        methods.loadTheme = function (path) {
+        methods.cgLoadTheme = function (path) {
             return __awaiter(this, void 0, void 0, function* () {
-                yield clickgo.theme.load(path, this.taskId);
+                yield clickgo.theme.load(this.taskId, path);
             });
         };
-        methods.clearTheme = function () {
+        methods.cgRemoveTheme = function (path) {
+            return __awaiter(this, void 0, void 0, function* () {
+                yield clickgo.theme.remove(this.taskId, path);
+            });
+        };
+        methods.cgSetTheme = function (path) {
+            return __awaiter(this, void 0, void 0, function* () {
+                yield clickgo.theme.clear(this.taskId);
+                yield clickgo.theme.load(this.taskId, path);
+            });
+        };
+        methods.cgClearTheme = function () {
             return __awaiter(this, void 0, void 0, function* () {
                 yield clickgo.theme.clear(this.taskId);
             });
         };
-        methods.setTheme = function (path) {
+        methods.cgSetGlobalTheme = function (path) {
             return __awaiter(this, void 0, void 0, function* () {
-                yield clickgo.theme.clear(this.taskId);
-                yield clickgo.theme.load(path, this.taskId);
+                if (typeof path === 'string') {
+                    let blob = yield this.cgGetBlob(path);
+                    if (blob) {
+                        yield clickgo.theme.setGlobal(blob);
+                    }
+                }
+                else {
+                    yield clickgo.theme.setGlobal(path);
+                }
             });
         };
-        methods.setTopMost = function (top) {
+        methods.cgClearGlobalTheme = function () {
+            return __awaiter(this, void 0, void 0, function* () {
+                yield clickgo.theme.clearGlobal();
+            });
+        };
+        methods.cgSetTopMost = function (top) {
             this.$data._customZIndex = false;
             if (top) {
                 this.$data._topMost = true;
@@ -782,7 +806,7 @@ function create(opt) {
                 this.$refs.form.setPropData('zIndex', ++exports.lastZIndex);
             }
         };
-        methods.flash = function () {
+        methods.cgFlash = function () {
             if (!this.focus) {
                 changeFocus(this.formId);
             }
@@ -793,13 +817,13 @@ function create(opt) {
             this.$refs.form.flashTimer = setTimeout(() => {
                 this.$refs.form.flashTimer = undefined;
             }, 1000);
-            clickgo.core.trigger('formFlash', opt.taskId, formId);
+            clickgo.core.trigger('formFlash', taskId, formId);
         };
         methods.cgClassPrepend = function (cla) {
             if (typeof cla !== 'string') {
                 return cla;
             }
-            if (cla.slice(0, 3) === 'cg-') {
+            if (cla.startsWith('cg-')) {
                 return cla;
             }
             return `cg-task${this.taskId}_${cla} ${this.$data._scope}${cla}`;
@@ -820,20 +844,10 @@ function create(opt) {
                 'mounted': function () {
                     return __awaiter(this, void 0, void 0, function* () {
                         yield this.$nextTick();
-                        if (this.$el.getAttribute !== undefined) {
-                            resolve({
-                                'vapp': vapp,
-                                'vroot': this
-                            });
-                        }
-                        else {
-                            if (this.$el.parentNode) {
-                                vapp.unmount();
-                                clickgo.tool.removeStyle(this.taskId, this.formId);
-                                formListElement.removeChild(vapp._container);
-                            }
-                            resolve(null);
-                        }
+                        resolve({
+                            'vapp': vapp,
+                            'vroot': this
+                        });
                     });
                 },
                 'beforeUpdate': beforeUpdate,
@@ -846,17 +860,14 @@ function create(opt) {
                 'beforeUnmount': beforeUnmount,
                 'unmounted': unmounted,
             });
+            for (let key in components) {
+                vapp.component(key, components[key]);
+            }
             vapp.mount(el);
         });
-        if (!rtn) {
-            return -106;
-        }
         rtn.vapp.config.globalProperties.cgEventList = {};
-        if (controlsStyle !== '') {
-            clickgo.tool.pushStyle(controlsStyle, opt.taskId, 'controls', formId);
-        }
         if (style) {
-            clickgo.tool.pushStyle(style, opt.taskId, 'forms', formId);
+            clickgo.dom.pushStyle(taskId, style, 'form', formId);
         }
         let position = clickgo.getPosition();
         if (!rtn.vroot.$refs.form.stateMaxData) {
@@ -875,15 +886,15 @@ function create(opt) {
                 mounted.call(rtn.vroot);
             }
             catch (err) {
-                formListElement.removeChild(rtn.vroot.$el);
-                clickgo.tool.removeStyle(rtn.vroot.taskId, rtn.vroot.formId);
                 if (clickgo.core.globalEvents.errorHandler) {
                     clickgo.core.globalEvents.errorHandler(rtn.vroot.taskId, rtn.vroot.formId, err, 'Create form mounted error.');
                 }
                 else {
                     console.log(err);
                 }
-                return -105;
+                formListElement.removeChild(rtn.vroot.$el);
+                clickgo.dom.removeStyle(rtn.vroot.taskId, rtn.vroot.formId);
+                return -6;
             }
         }
         changeFocus(formId, rtn.vroot);
@@ -894,14 +905,8 @@ function create(opt) {
             'win': null,
             'events': {}
         };
-        if (!clickgo.core.tasks[opt.taskId]) {
-            rtn.vapp.unmount();
-            clickgo.tool.removeStyle(opt.taskId, formId);
-            formListElement.removeChild(rtn.vapp._container);
-            return -107;
-        }
-        clickgo.core.tasks[opt.taskId].forms[formId] = form;
-        clickgo.core.trigger('formCreated', opt.taskId, formId, { 'title': rtn.vroot.$refs.form.title, 'icon': rtn.vroot.$refs.form.iconData });
+        task.forms[formId] = form;
+        clickgo.core.trigger('formCreated', taskId, formId, { 'title': rtn.vroot.$refs.form.title, 'icon': rtn.vroot.$refs.form.iconData });
         return form;
     });
 }
@@ -910,15 +915,15 @@ window.addEventListener('resize', function () {
     for (let i = 0; i < formListElement.children.length; ++i) {
         let el = formListElement.children.item(i);
         let ef = el.children.item(0);
-        if (ef.className.indexOf('cg-state-max') === -1) {
+        if (!ef.className.includes('cg-state-max')) {
             continue;
         }
         let taskId = parseInt(el.getAttribute('data-task-id'));
         let formId = parseInt(el.getAttribute('data-form-id'));
-        if (!clickgo.core.tasks[taskId]) {
+        if (!clickgo.task.list[taskId]) {
             continue;
         }
-        let vroot = clickgo.core.tasks[taskId].forms[formId].vroot;
+        let vroot = clickgo.task.list[taskId].forms[formId].vroot;
         let position = clickgo.getPosition();
         vroot.$refs.form.setPropData('width', position.width);
         vroot.$refs.form.setPropData('height', position.height);

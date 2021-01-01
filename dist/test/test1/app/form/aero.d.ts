@@ -4,6 +4,6 @@ export declare let data: {
     resizeButtonClickCount: number;
 };
 export declare let methods: {
-    resizeMethod: (this: IVue) => void;
-    maxMethod: (this: IVue) => void;
+    resizeMethod: (this: IVueForm) => void;
+    maxMethod: (this: IVueForm) => void;
 };

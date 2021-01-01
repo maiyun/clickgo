@@ -5,6 +5,6 @@ export declare let data: {
     list: never[];
 };
 export declare let methods: {
-    resizeTaskBar: (this: IVue) => void;
+    resizeTaskBar: (this: IVueForm) => void;
 };
-export declare let mounted: (this: IVue) => void;
+export declare let mounted: (this: IVueForm) => void;

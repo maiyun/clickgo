@@ -23,8 +23,8 @@ export declare let data: {
 };
 export declare let methods: {
     click: (this: IVueControl, event: MouseEvent) => void;
-    controlClick: (this: IVue, e: MouseEvent) => void;
+    controlClick: (this: IVueControl, e: MouseEvent) => void;
     showPop: (this: IVueControl, e: MouseEvent) => void;
     hidePop: (this: IVueControl) => void;
 };
-export declare let unmounted: (this: IVue) => void;
+export declare let unmounted: (this: IVueControl) => void;

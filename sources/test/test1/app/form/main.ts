@@ -6,53 +6,53 @@ export let data = {
 };
 
 export let methods = {
-    openOnlyClose: function(this: IVue): void {
-        this.createForm('/form/onlyClose');
+    openOnlyClose: async function(this: IVueForm): Promise<void> {
+        await this.cgCreateForm('/form/onlyClose');
     },
-    openThin: function(this: IVue): void {
-        this.createForm('/form/thin');
+    openThin: async function(this: IVueForm): Promise<void> {
+        await this.cgCreateForm('/form/thin');
     },
-    openBorderNone: function(this: IVue): void {
-        this.createForm('/form/borderNone');
+    openBorderNone: async function(this: IVueForm): Promise<void> {
+        await this.cgCreateForm('/form/borderNone');
     },
-    openAero: function(this: IVue): void {
-        this.createForm('/form/aero');
+    openAero: async function(this: IVueForm): Promise<void> {
+        await this.cgCreateForm('/form/aero');
     },
-    openMax: function(this: IVue): void {
-        this.createForm('/form/max');
+    openMax: async function(this: IVueForm): Promise<void> {
+        await this.cgCreateForm('/form/max');
     },
-    openMove: function(this: IVue): void {
-        this.createForm('/form/move');
+    openMove: async function(this: IVueForm): Promise<void> {
+        await this.cgCreateForm('/form/move');
     },
-    openScroll: function(this: IVue): void {
-        this.createForm('/form/scroll');
+    openScroll: async function(this: IVueForm): Promise<void> {
+        await this.cgCreateForm('/form/scroll');
     },
-    openView: function(this: IVue): void {
-        this.createForm('/form/view');
+    openView: async function(this: IVueForm): Promise<void> {
+        await this.cgCreateForm('/form/view');
     },
-    openMenu: function(this: IVue): void {
-        this.createForm('/form/menu');
+    openMenu: async function(this: IVueForm): Promise<void> {
+        await this.cgCreateForm('/form/menu');
     },
-    openGreatView: function(this: IVue): void {
-        this.createForm('/form/greatview');
+    openGreatView: async function(this: IVueForm): Promise<void> {
+        await this.cgCreateForm('/form/greatview');
     },
-    openOverflow: function(this: IVue): void {
-        this.createForm('/form/overflow');
+    openOverflow: async function(this: IVueForm): Promise<void> {
+        await this.cgCreateForm('/form/overflow');
     },
-    runTaskmgr: async function(this: IVue): Promise<void> {
-        await clickgo.core.runApp('taskApp/');
+    runTaskmgr: async function(this: IVueForm): Promise<void> {
+        await clickgo.task.run('taskApp/');
     },
-    changeTheme: async function(this: IVue): Promise<void> {
+    changeTheme: async function(this: IVueForm): Promise<void> {
         if (this.theme === '') {
             this.theme = 'once';
-            await clickgo.theme.setGlobal('/clickgo/theme/once.cgt');
+            await this.cgSetTheme('/clickgo/theme/once.cgt');
         }
         else {
             this.theme = '';
-            await clickgo.theme.clearGlobal();
+            await this.cgClearTheme();
         }
     },
-    openError: function(this: IVue): void {
-        this.createForm('/form/error');
+    openError: async function(this: IVueForm): Promise<void> {
+        await this.cgCreateForm('/form/error');
     }
 };

@@ -94,9 +94,9 @@ export declare let data: {
     tabPosition: string;
 };
 export declare let watch: {
-    select: (this: IVueControl, n: number, o: number) => void;
+    select: (this: IVueForm, n: number, o: number) => void;
     slist: {
-        handler: (this: IVueControl) => void;
+        handler: (this: IVueForm) => void;
         deep: boolean;
     };
 };

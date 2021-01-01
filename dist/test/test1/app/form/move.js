@@ -21,7 +21,7 @@ exports.data = {
 };
 exports.methods = {
     b1Down: function (e) {
-        clickgo.element.bindMove(e, {
+        clickgo.dom.bindMove(e, {
             'areaObject': this.$refs.o1,
             'object': this.$refs.b1,
             'move': (ox, oy) => {
@@ -33,7 +33,7 @@ exports.methods = {
     b2Down: function (e) {
         let r = this.$refs.b2.$el.getBoundingClientRect();
         let rectWidth = 0, rectHeight = 0;
-        let rect = clickgo.element.bindMove(e, {
+        let rect = clickgo.dom.bindMove(e, {
             'areaObject': this.$refs.o2,
             'object': this.$refs.b2,
             'move': (ox, oy) => {
@@ -49,7 +49,7 @@ exports.methods = {
         this.b2po.top = r.top - rect.top;
     },
     b3Down: function (e) {
-        clickgo.element.bindMove(e, {
+        clickgo.dom.bindMove(e, {
             'areaObject': this.$refs.o3,
             'object': this.$refs.b3,
             'move': (ox, oy) => {

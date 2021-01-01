@@ -118,7 +118,7 @@ exports.methods = {
         if (e instanceof MouseEvent && clickgo.hasTouch) {
             return;
         }
-        clickgo.element.bindMove(e, {
+        clickgo.dom.bindMove(e, {
             'areaObject': this.$refs.bar,
             'object': this.$refs.block,
             'move': (ox, oy) => {
@@ -157,7 +157,7 @@ exports.methods = {
         if (this.client >= this.length) {
             return;
         }
-        clickgo.element.bindDown(e, {
+        clickgo.dom.bindDown(e, {
             down: () => {
                 if (this.timer !== undefined) {
                     clearInterval(this.timer);
@@ -225,7 +225,7 @@ exports.methods = {
     }
 };
 exports.mounted = function () {
-    let size = clickgo.element.watchSize(this.$refs.bar, (size) => {
+    let size = clickgo.dom.watchSize(this.$refs.bar, (size) => {
         this.barLengthPx = this.direction === 'v' ? size.height : size.width;
         this.scrollOffsetPx = this.barOutSize * (this.scrollOffsetData / this.maxScroll);
     });

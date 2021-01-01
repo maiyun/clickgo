@@ -1,5 +1,5 @@
 /**
- * Copyright 2020 Han Guoshuai <zohegs@gmail.com>
+ * Copyright 2021 Han Guoshuai <zohegs@gmail.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,11 +14,141 @@
  * limitations under the License.
  */
 
+/** --- style list 的 div --- */
+let styleList: HTMLDivElement = document.createElement('div');
+styleList.style.display = 'none';
+document.getElementsByTagName('body')[0].appendChild(styleList);
+styleList.insertAdjacentHTML('beforeend', '<style id=\'cg-global-cursor\'></style>');
+styleList.insertAdjacentHTML('beforeend', `<style class='cg-global'>
+.cg-form-list, .cg-pop-list {-webkit-user-select: none; user-select: none; position: fixed; left: 0; top: 0; width: 0; height: 0; cursor: default;}
+.cg-form-list {z-index: 20020000;}
+.cg-pop-list {z-index: 20020001;}
+.cg-form-list img, .cg-pop-list img {vertical-align: bottom;}
+.cg-form-list ::selection {
+    background-color: rgba(0, 120, 215, .3);
+}
+.cg-form-list, .cg-pop-list {-webkit-user-select: none; user-select: none;}
+
+.cg-form-list *, .cg-pop-list *, .cg-form-list *::after, .cg-pop-list *::after, .cg-form-list *::before, .cg-pop-list *::before {box-sizing: border-box; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); flex-shrink: 0;}
+.cg-form-list, .cg-form-list input, .cg-form-list textarea, .cg-pop-list, .cg-pop-list input, .cg-pop-list textarea {font-family: Roboto,-apple-system,BlinkMacSystemFont,"Helvetica Neue","Segoe UI","Oxygen","Ubuntu","Cantarell","Open Sans",sans-serif; font-size: 12px; line-height: 1; -webkit-font-smoothing: antialiased;}
+
+.cg-circular {box-sizing: border-box; position: fixed; z-index: 20020003; border: solid 3px #76b9ed; border-radius: 50%; filter: drop-shadow(0 0 7px #76b9ed); pointer-events: none; opacity: 0;}
+.cg-rectangle {box-sizing: border-box; position: fixed; z-index: 20020002; border: solid 1px rgba(118, 185, 237, .7); box-shadow: 0 0 10px rgba(0, 0, 0, .3); background: rgba(118, 185, 237, .1); pointer-events: none; opacity: 0;}
+</style>`);
+
+/** --- 全局 cursor 设置的 style 标签 --- */
+let globalCursorStyle: HTMLStyleElement;
+/**
+ * --- 设置全局鼠标样式 ---
+ * @param type 样式或留空，留空代表取消
+ */
+export function setGlobalCursor(type?: string): void {
+    if (!globalCursorStyle) {
+        globalCursorStyle = document.getElementById('cg-global-cursor') as HTMLStyleElement;
+    }
+    if (type) {
+        globalCursorStyle.innerHTML = `* {cursor: ${type} !important;}`;
+    }
+    else {
+        globalCursorStyle.innerHTML = '';
+    }
+}
+
+/**
+ * --- 创建任务时连同一起创建的 style 标签 ---
+ * @param taskId 任务 id
+ */
+export function createToStyleList(taskId: number): void {
+    styleList.insertAdjacentHTML('beforeend', `<div id="cg-style-task${taskId}"><style class="cg-style-global"></style><div class="cg-style-theme"></div><div class="cg-style-control"></div><div class="cg-style-form"></div></div>`);
+}
+
+/**
+ * --- 任务结束时需要移除 task 的所有 style ---
+ * @param taskId 任务 id
+ */
+export function removeFromStyleList(taskId: number): void {
+    document.getElementById('cg-style-task' + taskId)?.remove();
+}
+
+/**
+ * --- 将 style 内容写入 dom ---
+ * @param taskId 当前任务 ID
+ * @param style 样式内容
+ * @param type 插入的类型
+ * @param formId 当前窗体 ID（global 下可空，theme 下为主题唯一标识符）
+ */
+export function pushStyle(taskId: number, style: string, type: 'global' | 'theme' | 'control' | 'form' = 'global', formId: number | string = 0): void {
+    let el = document.querySelector(`#cg-style-task${taskId} > .cg-style-${type}`);
+    if (!el) {
+        return;
+    }
+    if (type === 'global') {
+        el.innerHTML = style;
+    }
+    else if (type === 'theme' || type === 'control') {
+        el.insertAdjacentHTML('beforeend', `<style data-name="${formId}">${style}</style>`);
+    }
+    else {
+        el.insertAdjacentHTML('beforeend', `<style class="cg-style-form${formId}">${style}</style>`);
+    }
+}
+
+/**
+ * --- 移除 style 样式 dom ---
+ * @param taskId 要移除的任务 ID
+ * @param type 移除的类型
+ * @param formId 要移除的窗体 ID
+ */
+export function removeStyle(taskId: number, type: 'global' | 'theme' | 'control' | 'form' = 'global', formId: number | string = 0): void {
+    let styleTask = document.getElementById('cg-style-task' + taskId);
+    if (!styleTask) {
+        return;
+    }
+    if (type === 'global') {
+        let el = document.querySelector(`#cg-style-task${taskId} > .cg-style-global`);
+        if (!el) {
+            return;
+        }
+        el.innerHTML = '';
+    }
+    else if (type === 'theme' || type === 'control') {
+        if (formId === 0) {
+            let el = document.querySelector(`#cg-style-task${taskId} > .cg-style-${type}`);
+            if (!el) {
+                return;
+            }
+            el.innerHTML = '';
+        }
+        else {
+            let el = document.querySelector(`#cg-style-task${taskId} > .cg-style-${type} > [data-name='${formId}']`);
+            if (!el) {
+                return;
+            }
+            el.remove();
+        }
+    }
+    else {
+        let elist = styleTask.querySelectorAll('.cg-style-form' + formId);
+        for (let i = 0; i < elist.length; ++i) {
+            elist.item(i).remove();
+        }
+    }
+}
+
+/**
+ * --- 获取当前任务中子类有几个子元素 ---
+ * @param taskId 任务 ID
+ * @param type 类型
+ */
+export function getStyleCount(taskId: number, type: 'theme' | 'control' | 'form'): number {
+    return document.querySelectorAll(`#cg-style-task${taskId} > .cg-style-${type} > style`).length;
+}
+
 /**
  * --- 获取实时的 DOM SIZE ---
  * @param el 要获取的 dom
  */
-export function getSize(el: HTMLElement): IElementSize {
+export function getSize(el: HTMLElement): ICGDomSize {
     let rect = el.getBoundingClientRect();
     let cs = getComputedStyle(el);
     let border = {
@@ -56,7 +186,7 @@ export function getSize(el: HTMLElement): IElementSize {
  * @param el 要监视的大小
  * @param cb 回调函数
  */
-export function watchSize(el: HTMLElement, cb: (size: IElementSize) => void, immediate: boolean = false): IElementSize {
+export function watchSize(el: HTMLElement, cb: (size: ICGDomSize) => void, immediate: boolean = false): ICGDomSize {
     let fsize = getSize(el);
     if (immediate) {
         cb(fsize);
@@ -78,7 +208,7 @@ export function watchSize(el: HTMLElement, cb: (size: IElementSize) => void, imm
  * @param cb 回调
  * @param mode 监听模式
  */
-export function watchElement(el: HTMLElement, cb: () => void, mode: 'child' | 'childsub' | 'style' | 'default' | MutationObserverInit = 'default', immediate: boolean = false): MutationObserver {
+export function watchDom(el: HTMLElement, cb: () => void, mode: 'child' | 'childsub' | 'style' | 'default' | MutationObserverInit = 'default', immediate: boolean = false): MutationObserver {
     if (immediate) {
         cb();
     }
@@ -221,8 +351,8 @@ export function bindDown(oe: MouseEvent | TouchEvent, opt: { 'down'?: (e: MouseE
  * @param e mousedown 或 touchstart 的 event
  * @param opt 回调选项
  */
-export function bindMove(e: MouseEvent | TouchEvent, opt: { 'areaObject'?: HTMLElement | IVue; 'left'?: number; 'top'?: number; 'right'?: number; 'bottom'?: number; 'offsetLeft'?: number; 'offsetTop'?: number; 'offsetRight'?: number; 'offsetBottom'?: number; 'objectLeft'?: number; 'objectTop'?: number; 'objectWidth'?: number; 'objectHeight'?: number; 'object'?: HTMLElement | IVue; 'showRect'?: boolean; 'start'?: (x: number, y: number) => void | boolean; 'move'?: (ox: number, oy: number, x: number, y: number, border: TBorderDir) => void; 'up'?: () => void; 'end'?: (moveTimes: Array<{ 'time': number; 'ox': number; 'oy': number; }>) => void; 'borderIn'?: (x: number, y: number, border: TBorderDir) => void; 'borderOut'?: () => void; }): { 'left': number; 'top': number; 'right': number; 'bottom': number; } {
-    clickgo.core.setGlobalCursor(getComputedStyle(e.target as Element).cursor);
+export function bindMove(e: MouseEvent | TouchEvent, opt: { 'areaObject'?: HTMLElement | IVue; 'left'?: number; 'top'?: number; 'right'?: number; 'bottom'?: number; 'offsetLeft'?: number; 'offsetTop'?: number; 'offsetRight'?: number; 'offsetBottom'?: number; 'objectLeft'?: number; 'objectTop'?: number; 'objectWidth'?: number; 'objectHeight'?: number; 'object'?: HTMLElement | IVue; 'showRect'?: boolean; 'start'?: (x: number, y: number) => void | boolean; 'move'?: (ox: number, oy: number, x: number, y: number, border: TCGBorder) => void; 'up'?: () => void; 'end'?: (moveTimes: Array<{ 'time': number; 'ox': number; 'oy': number; }>) => void; 'borderIn'?: (x: number, y: number, border: TCGBorder) => void; 'borderOut'?: () => void; }): { 'left': number; 'top': number; 'right': number; 'bottom': number; } {
+    setGlobalCursor(getComputedStyle(e.target as Element).cursor);
     /** --- 上一次的坐标 --- */
     let tx: number, ty: number;
     if (e instanceof MouseEvent) {
@@ -285,7 +415,7 @@ export function bindMove(e: MouseEvent | TouchEvent, opt: { 'areaObject'?: HTMLE
         start: () => {
             if (opt.start) {
                 if (opt.start(tx, ty) === false) {
-                    clickgo.core.setGlobalCursor();
+                    clickgo.dom.setGlobalCursor();
                     return false;
                 }
             }
@@ -414,7 +544,7 @@ export function bindMove(e: MouseEvent | TouchEvent, opt: { 'areaObject'?: HTMLE
             }
 
             // --- 检测是否执行 borderIn 事件（是否正在边界上） ---
-            let border: TBorderDir = '';
+            let border: TCGBorder = '';
             if (inBorderTop || inBorderRight || inBorderBottom || inBorderLeft) {
                 if (inBorderTop) {
                     if (x - left <= 20) {
@@ -487,7 +617,7 @@ export function bindMove(e: MouseEvent | TouchEvent, opt: { 'areaObject'?: HTMLE
             ty = y;
         },
         up: () => {
-            clickgo.core.setGlobalCursor();
+            setGlobalCursor();
             opt.up?.();
         },
         end: () => {
@@ -522,7 +652,7 @@ export function bindMove(e: MouseEvent | TouchEvent, opt: { 'areaObject'?: HTMLE
  * @param moveCb 拖动时的回调
  * @param endCb 结束时的回调
  */
-export function bindResize(e: MouseEvent | TouchEvent, opt: { 'objectLeft'?: number; 'objectTop'?: number; 'objectWidth'?: number; 'objectHeight'?: number; 'object'?: HTMLElement | IVue; 'minWidth'?: number; 'minHeight'?: number; 'maxWidth'?: number; 'maxHeight'?: number; 'dir': TBorderDir; 'start'?: (x: number, y: number) => void | boolean; 'move'?: (left: number, top: number, width: number, height: number, x: number, y: number, border: TBorderDir) => void; 'end'?: () => void; }): void {
+export function bindResize(e: MouseEvent | TouchEvent, opt: { 'objectLeft'?: number; 'objectTop'?: number; 'objectWidth'?: number; 'objectHeight'?: number; 'object'?: HTMLElement | IVue; 'minWidth'?: number; 'minHeight'?: number; 'maxWidth'?: number; 'maxHeight'?: number; 'border': TCGBorder; 'start'?: (x: number, y: number) => void | boolean; 'move'?: (left: number, top: number, width: number, height: number, x: number, y: number, border: TCGBorder) => void; 'end'?: () => void; }): void {
     opt.minWidth = opt.minWidth ?? 0;
     opt.minHeight = opt.minHeight ?? 0;
     /** --- 当前鼠标位置 x --- */
@@ -549,7 +679,7 @@ export function bindResize(e: MouseEvent | TouchEvent, opt: { 'objectLeft'?: num
         opt.objectHeight = objectRect.height;
     }
 
-    if (opt.dir === 'tr' || opt.dir === 'r' || opt.dir === 'rb') {
+    if (opt.border === 'tr' || opt.border === 'r' || opt.border === 'rb') {
         // --- ↗、→、↘ ---
         left = opt.objectLeft + opt.minWidth;
         offsetLeft = x - (opt.objectLeft + opt.objectWidth);
@@ -558,7 +688,7 @@ export function bindResize(e: MouseEvent | TouchEvent, opt: { 'objectLeft'?: num
             right = opt.objectLeft + opt.maxWidth;
         }
     }
-    else if (opt.dir === 'bl' || opt.dir === 'l' || opt.dir === 'lt') {
+    else if (opt.border === 'bl' || opt.border === 'l' || opt.border === 'lt') {
         // --- ↙、←、↖ ---
         right = opt.objectLeft + opt.objectWidth - opt.minWidth;
         offsetLeft = x - opt.objectLeft;
@@ -567,7 +697,7 @@ export function bindResize(e: MouseEvent | TouchEvent, opt: { 'objectLeft'?: num
             left = opt.objectLeft + opt.objectWidth - opt.maxWidth;
         }
     }
-    if (opt.dir === 'rb' || opt.dir === 'b' || opt.dir === 'bl') {
+    if (opt.border === 'rb' || opt.border === 'b' || opt.border === 'bl') {
         // --- ↘、↓、↙ ---
         top = opt.objectTop + opt.minHeight;
         offsetTop = y - (opt.objectTop + opt.objectHeight);
@@ -576,7 +706,7 @@ export function bindResize(e: MouseEvent | TouchEvent, opt: { 'objectLeft'?: num
             bottom = opt.objectTop + opt.maxHeight;
         }
     }
-    else if (opt.dir === 'lt' || opt.dir === 't' || opt.dir === 'tr') {
+    else if (opt.border === 'lt' || opt.border === 't' || opt.border === 'tr') {
         bottom = opt.objectTop + opt.objectHeight - opt.minHeight;
         offsetTop = y - opt.objectTop;
         offsetBottom = offsetTop;
@@ -595,17 +725,17 @@ export function bindResize(e: MouseEvent | TouchEvent, opt: { 'objectLeft'?: num
         'offsetBottom': offsetBottom,
         'start': opt.start,
         'move': function(ox, oy, x, y, border) {
-            if (opt.dir === 'tr' || opt.dir === 'r' || opt.dir === 'rb') {
+            if (opt.border === 'tr' || opt.border === 'r' || opt.border === 'rb') {
                 opt.objectWidth! += ox;
             }
-            else if (opt.dir === 'bl' || opt.dir === 'l' || opt.dir === 'lt') {
+            else if (opt.border === 'bl' || opt.border === 'l' || opt.border === 'lt') {
                 opt.objectWidth! -= ox;
                 opt.objectLeft! += ox;
             }
-            if (opt.dir === 'rb' || opt.dir === 'b' || opt.dir === 'bl') {
+            if (opt.border === 'rb' || opt.border === 'b' || opt.border === 'bl') {
                 opt.objectHeight! += oy;
             }
-            else if (opt.dir === 'lt' || opt.dir === 't' || opt.dir === 'tr') {
+            else if (opt.border === 'lt' || opt.border === 't' || opt.border === 'tr') {
                 opt.objectHeight! -= oy;
                 opt.objectTop! += oy;
             }
@@ -641,20 +771,20 @@ export function findParentByClass(el: HTMLElement, cn: string | string[]): HTMLE
 
 /**
  * --- 查找指定 el 的同级 className ---
- * @param e 基准
+ * @param el 基准
  * @param cn 同级 classname
  */
-export function siblings(e: HTMLElement, cn: string): HTMLElement | null {
-    if (!e.parentNode) {
+export function siblings(el: HTMLElement, cn: string): HTMLElement | null {
+    if (!el.parentNode) {
         return null;
     }
-    for (let i = 0; i < e.parentNode.children.length; ++i) {
-        let el = e.parentNode.children.item(i) as HTMLElement;
-        if (el === e) {
+    for (let i = 0; i < el.parentNode.children.length; ++i) {
+        let e = el.parentNode.children.item(i) as HTMLElement;
+        if (e === el) {
             continue;
         }
-        if (el.classList.contains(cn)) {
-            return el;
+        if (e.classList.contains(cn)) {
+            return e;
         }
     }
     return null;

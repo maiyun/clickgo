@@ -9,8 +9,8 @@
     "style": "/style",
 
     "files": [
+        "/res/font.woff",
         "/code.js",
-        "/font.woff",
         "/layout.html",
         "/style.css"
     ]

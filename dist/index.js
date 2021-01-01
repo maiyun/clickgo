@@ -18,7 +18,7 @@ const clickgo = {
     'rootPath': window.location.href.slice(0, window.location.href.lastIndexOf('/') + 1),
     'cgRootPath': tmpCgRootPath,
     'hasTouch': ('ontouchstart' in document.documentElement) ? true : false,
-    'isNative': navigator.userAgent.toLowerCase().indexOf('electron') === -1 ? false : true,
+    'isNative': navigator.userAgent.toLowerCase().includes('electron') ? true : false,
     'position': {
         'left': null,
         'top': null,
@@ -53,11 +53,14 @@ const clickgo = {
             this.readys.push(callback);
         }
     },
+    'control': {},
     'core': {},
-    'element': {},
+    'dom': {},
     'form': {},
+    'task': {},
     'theme': {},
-    'tool': {}
+    'tool': {},
+    'zip': {}
 };
 let tmpScript = document.createElement('script');
 tmpScript.src = 'https://cdn.jsdelivr.net/npm/@litert/loader@1.1.0/dist/index.min.js';
@@ -66,7 +69,8 @@ tmpScript.addEventListener('load', function () {
         var _a;
         loader.setAfter('?' + Math.random());
         let paths = [
-            'https://cdn.jsdelivr.net/npm/vue@3.0.0/dist/vue.global.min.js'
+            'https://cdn.jsdelivr.net/npm/vue@3.0.5/dist/vue.global.min.js',
+            'https://cdn.jsdelivr.net/npm/jszip@3.5.0/dist/jszip.min.js'
         ];
         let ro = true;
         if (!(window.ResizeObserver)) {
@@ -88,11 +92,14 @@ tmpScript.addEventListener('load', function () {
             alert('Clickgo load failed.');
             return;
         }
+        clickgo.control = cg.control;
         clickgo.core = cg.core;
-        clickgo.element = cg.element;
+        clickgo.dom = cg.dom;
         clickgo.form = cg.form;
+        clickgo.task = cg.task;
         clickgo.theme = cg.theme;
         clickgo.tool = cg.tool;
+        clickgo.zip = cg.zip;
         clickgo.isReady = true;
         for (let func of clickgo.readys) {
             const rtn = func();

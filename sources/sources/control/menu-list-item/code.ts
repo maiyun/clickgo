@@ -120,7 +120,7 @@ export let mounted = function(this: IVue): void {
             ++this.$parent.hasTypeItemsCount;
         }
         // --- 检测是否显示箭头（是否有子 pop） ---
-        clickgo.element.watchElement(this.$el, () => {
+        clickgo.dom.watchDom(this.$el, () => {
             if (this.cgSlos().length > 0) {
                 if (!this.showArrow) {
                     this.showArrow = true;
@@ -137,7 +137,7 @@ export let mounted = function(this: IVue): void {
     }
 };
 
-export let unmounted = function(this: IVue): void {
+export let unmounted = function(this: IVueControl): void {
     if (this.$parent) {
         // --- 子 pop ---
         if (this.showArrow) {

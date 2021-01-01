@@ -105,13 +105,13 @@ export let data = {
 };
 
 export let watch = {
-    select: function(this: IVueControl, n: number, o: number): void {
+    select: function(this: IVueForm, n: number, o: number): void {
         if (!this.slist[n].name) {
             this.select = o;
         }
     },
     'slist': {
-        handler: function(this: IVueControl): void {
+        handler: function(this: IVueForm): void {
             if (!this.slist[this.select].name) {
                 this.select = 0;
             }

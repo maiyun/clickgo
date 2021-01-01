@@ -99,7 +99,7 @@ exports.methods = {
     }
 };
 exports.mounted = function () {
-    clickgo.element.watchSize(this.$refs.wrap, () => {
+    clickgo.dom.watchSize(this.$refs.wrap, () => {
         let client = this.direction === 'v' ? this.$refs.wrap.clientHeight : this.$refs.wrap.clientWidth;
         if (this.clientEmit !== client) {
             this.clientEmit = client;
@@ -109,7 +109,7 @@ exports.mounted = function () {
     let client = this.direction === 'v' ? this.$refs.wrap.clientHeight : this.$refs.wrap.clientWidth;
     this.clientEmit = client;
     this.$emit('resize', client);
-    clickgo.element.watchElement(this.$refs.wrap, () => {
+    clickgo.dom.watchDom(this.$refs.wrap, () => {
         let length = this.direction === 'v' ? this.$refs.wrap.scrollHeight : this.$refs.wrap.scrollWidth;
         if (this.lengthEmit !== length) {
             this.lengthEmit = length;

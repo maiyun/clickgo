@@ -17,56 +17,80 @@ exports.data = {
 };
 exports.methods = {
     openOnlyClose: function () {
-        this.createForm('/form/onlyClose');
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.cgCreateForm('/form/onlyClose');
+        });
     },
     openThin: function () {
-        this.createForm('/form/thin');
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.cgCreateForm('/form/thin');
+        });
     },
     openBorderNone: function () {
-        this.createForm('/form/borderNone');
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.cgCreateForm('/form/borderNone');
+        });
     },
     openAero: function () {
-        this.createForm('/form/aero');
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.cgCreateForm('/form/aero');
+        });
     },
     openMax: function () {
-        this.createForm('/form/max');
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.cgCreateForm('/form/max');
+        });
     },
     openMove: function () {
-        this.createForm('/form/move');
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.cgCreateForm('/form/move');
+        });
     },
     openScroll: function () {
-        this.createForm('/form/scroll');
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.cgCreateForm('/form/scroll');
+        });
     },
     openView: function () {
-        this.createForm('/form/view');
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.cgCreateForm('/form/view');
+        });
     },
     openMenu: function () {
-        this.createForm('/form/menu');
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.cgCreateForm('/form/menu');
+        });
     },
     openGreatView: function () {
-        this.createForm('/form/greatview');
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.cgCreateForm('/form/greatview');
+        });
     },
     openOverflow: function () {
-        this.createForm('/form/overflow');
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.cgCreateForm('/form/overflow');
+        });
     },
     runTaskmgr: function () {
         return __awaiter(this, void 0, void 0, function* () {
-            yield clickgo.core.runApp('taskApp/');
+            yield clickgo.task.run('taskApp/');
         });
     },
     changeTheme: function () {
         return __awaiter(this, void 0, void 0, function* () {
             if (this.theme === '') {
                 this.theme = 'once';
-                yield clickgo.theme.setGlobal('/clickgo/theme/once.cgt');
+                yield this.cgSetTheme('/clickgo/theme/once.cgt');
             }
             else {
                 this.theme = '';
-                yield clickgo.theme.clearGlobal();
+                yield this.cgClearTheme();
             }
         });
     },
     openError: function () {
-        this.createForm('/form/error');
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.cgCreateForm('/form/error');
+        });
     }
 };

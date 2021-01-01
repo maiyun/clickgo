@@ -16,16 +16,16 @@ exports.methods = {
 };
 exports.mounted = function () {
     this.resizeTaskBar();
-    this.setSystemEventListener('screenResize', () => {
+    this.cgSetSystemEventListener('screenResize', () => {
         this.resizeTaskBar();
     });
-    this.setSystemEventListener('formCreated', (taskId, formId, title) => {
+    this.cgSetSystemEventListener('formCreated', (taskId, formId, title) => {
         if (taskId === 1) {
             return;
         }
         this.list.push({ 'taskId': taskId, 'formId': formId, 'title': title });
     });
-    this.setSystemEventListener('formRemoved', (taskId, formId, title) => {
+    this.cgSetSystemEventListener('formRemoved', (taskId, formId) => {
         for (let i = 0; i < this.list.length; ++i) {
             if (this.list[i].formId === formId) {
                 this.list.splice(i, 1);
@@ -33,5 +33,5 @@ exports.mounted = function () {
             }
         }
     });
-    this.setTopMost(true);
+    this.cgSetTopMost(true);
 };

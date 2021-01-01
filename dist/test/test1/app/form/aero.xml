@@ -1,7 +1,7 @@
 <form width="300" height="300" min-height="250" :resize="resize" :state-max="max" title="Aero" border="none" background="transparent">
-    <layout flex="1" align-h="center" align-v="center" direction="v" @down="bindFormDrag" class="aero" gutter="15">
-        <button @tap="closeForm" style="padding: 0 15px;">Close</button>
+    <layout flex="1" align-h="center" align-v="center" direction="v" @down="cgBindFormDrag" class="aero" gutter="15">
+        <button @tap="cgCloseForm" style="padding: 0 15px;">Close</button>
         <button @tap="resizeMethod" style="padding: 0 15px;">{{resize ? 'Disable' : 'Enable'}} resize{{resizeButtonClickCount > 0 ? ' (' + resizeButtonClickCount + ')' : ''}}</button>
-        <button @tap="maxMethod" style="padding: 0 15px;;">{{max ? 'Restore' : 'Max'}}</button>
+        <button @tap="maxMethod" style="padding: 0 15px;">{{max ? 'Restore' : 'Max'}}</button>
     </layout>
 </form>

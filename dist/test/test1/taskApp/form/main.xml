@@ -8,7 +8,7 @@
         </menu-item>
         <menu-item alt="O" text="Options">
             <menu-list>
-                <menu-list-item alt="A" text="Always on top" type="check" v-model="alwaysOnTop" @tap="setTopMost(alwaysOnTop)"></menu-list-item>
+                <menu-list-item alt="A" text="Always on top" type="check" v-model="alwaysOnTop" @tap="cgSetTopMost(alwaysOnTop)"></menu-list-item>
                 <menu-list-split></menu-list-split>
                 <menu-list-item alt="S" text="Show full account name" :disabled="true"></menu-list-item>
             </menu-list>

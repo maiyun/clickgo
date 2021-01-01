@@ -16,6 +16,6 @@ export declare let watch: {
 export declare let methods: {
     longDown: (this: IVue, e: MouseEvent | TouchEvent, type: 'start' | 'end') => void;
     wheel: (this: IVue, e: WheelEvent) => void;
-    onResize: (this: IVueControl, size: IElementSize) => void;
+    onResize: (this: IVueControl, size: ICGDomSize) => void;
 };
 export declare let mounted: (this: IVue) => void;

@@ -50,7 +50,7 @@ export let data = {
 
 export let watch = {
     'direction': function(this: IVue): void {
-        let size = clickgo.element.getSize(this.$refs.wrap);
+        let size = clickgo.dom.getSize(this.$refs.wrap);
         this.clientWidth = size.innerWidth;
         this.clientHeight = size.innerHeight;
         let innerRect = this.$refs.inner.getBoundingClientRect();
@@ -148,7 +148,7 @@ export let methods = {
             return;
         }
 
-        let wrapSize = clickgo.element.getSize(this.$refs.wrap);
+        let wrapSize = clickgo.dom.getSize(this.$refs.wrap);
         let top = wrapSize.top + wrapSize.border.top + wrapSize.padding.top;
         let right = wrapSize.right - wrapSize.border.right - wrapSize.padding.right;
         let bottom = wrapSize.bottom - wrapSize.border.bottom - wrapSize.padding.bottom;
@@ -158,7 +158,7 @@ export let methods = {
         /** --- 内容超出像素 --- */
         let overWidth = this.lengthWidth - this.clientWidth;
         let overHeight = this.lengthHeight - this.clientHeight;
-        clickgo.element.bindMove(e, {
+        clickgo.dom.bindMove(e, {
             // 'showRect': true,
             'object': this.$refs.inner,
             'left': left - (overWidth < 0 ? 0 : overWidth),
@@ -466,7 +466,7 @@ export let methods = {
 
 export let mounted = function(this: IVue): void {
     // --- 外部包裹的改变 ---
-    let size = clickgo.element.watchSize(this.$refs.wrap, (size) => {
+    let size = clickgo.dom.watchSize(this.$refs.wrap, (size) => {
         let clientWidth = size.innerWidth;
         let clientHeight = size.innerHeight;
         if (this.direction === 'v') {
@@ -497,7 +497,7 @@ export let mounted = function(this: IVue): void {
     this.$emit('resize', Math.round(this.client));
 
     // --- 内部内容的改变 ---
-    size = clickgo.element.watchSize(this.$refs.inner, (size) => {
+    size = clickgo.dom.watchSize(this.$refs.inner, (size) => {
         let lengthWidth = size.width;
         let lengthHeight = size.height;
         let change = false;

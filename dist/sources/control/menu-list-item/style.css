@@ -13,7 +13,7 @@
 }
 
 .check {
-    background-image: url(check.svg); background-color: rgba(118, 185, 237, .5); background-size: 12px 12px; background-position: center center; background-repeat: no-repeat; width: 24px; height: 24px; visibility: hidden;
+    background-image: url(res/check.svg); background-color: rgba(118, 185, 237, .5); background-size: 12px 12px; background-position: center center; background-repeat: no-repeat; width: 24px; height: 24px; visibility: hidden;
 }
 .radio {
     background-color: rgba(118, 185, 237, .5); display: flex; align-items: center; justify-content: center; width: 24px; height: 24px; visibility: hidden;

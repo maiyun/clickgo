@@ -3,8 +3,8 @@ export let data = {
 };
 
 export let methods = {
-    'runApp': async function(this: IVue): Promise<void> {
-        this.closeForm();
-        await clickgo.core.runApp(this.path);
+    'runApp': async function(this: IVueForm): Promise<void> {
+        this.cgCloseForm();
+        await clickgo.task.run(this.path);
     }
 };

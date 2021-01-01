@@ -3,9 +3,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.methods = exports.data = void 0;
 let count = 0;
 exports.data = {
-    "resize": true,
-    "max": false,
-    "resizeButtonClickCount": 0
+    'resize': true,
+    'max': false,
+    'resizeButtonClickCount': 0
 };
 exports.methods = {
     resizeMethod: function () {

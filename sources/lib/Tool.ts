@@ -1,5 +1,5 @@
 /**
- * Copyright 2020 Han Guoshuai <zohegs@gmail.com>
+ * Copyright 2021 Han Guoshuai <zohegs@gmail.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,28 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-/** --- style list 的 div --- */
-let styleListElement: HTMLDivElement = document.createElement('div');
-styleListElement.style.display = 'none';
-document.getElementsByTagName('body')[0].appendChild(styleListElement);
-styleListElement.insertAdjacentHTML('beforeend', '<style id=\'cg-global-cursor\'></style>');
-styleListElement.insertAdjacentHTML('beforeend', `<style class='cg-global'>
-.cg-form-list, .cg-pop-list {-webkit-user-select: none; user-select: none; position: fixed; left: 0; top: 0; width: 0; height: 0; cursor: default;}
-.cg-form-list {z-index: 20020000;}
-.cg-pop-list {z-index: 20020001;}
-.cg-form-list img, .cg-pop-list img {vertical-align: bottom;}
-.cg-form-list ::selection {
-    background-color: rgba(0, 120, 215, .3);
-}
-.cg-form-list, .cg-pop-list {-webkit-user-select: none; user-select: none;}
-
-.cg-form-list *, .cg-pop-list *, .cg-form-list *::after, .cg-pop-list *::after, .cg-form-list *::before, .cg-pop-list *::before {box-sizing: border-box !important; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); flex-shrink: 0;}
-.cg-form-list, .cg-form-list input, .cg-form-list textarea, .cg-pop-list, .cg-pop-list input, .cg-pop-list textarea {font-family: Roboto,-apple-system,BlinkMacSystemFont,"Helvetica Neue","Segoe UI","Oxygen","Ubuntu","Cantarell","Open Sans",sans-serif; font-size: 12px; line-height: 1; -webkit-font-smoothing: antialiased;}
-
-.cg-circular {box-sizing: border-box; position: fixed; z-index: 20020003; border: solid 3px #76b9ed; border-radius: 50%; filter: drop-shadow(0 0 7px #76b9ed); pointer-events: none; opacity: 0;}
-.cg-rectangle {box-sizing: border-box; position: fixed; z-index: 20020002; border: solid 1px rgba(118, 185, 237, .7); box-shadow: 0 0 10px rgba(0, 0, 0, .3); background: rgba(118, 185, 237, .1); pointer-events: none; opacity: 0;}
-</style>`);
 
 /**
  * --- 将 blob 对象转换为 base64 url ---
@@ -121,63 +99,6 @@ export function sleep(ms: number = 0): Promise<void> {
 }
 
 /**
- * --- 创建任务时连同一起创建的 style 标签 ---
- * @param taskId 任务 id
- */
-export function createTaskStyleElement(taskId: number): void {
-    styleListElement.insertAdjacentHTML('beforeend', `<div id='cg-style-task${taskId}'><div class='cg-style-controls'></div><div class='cg-style-themes'></div><style class='cg-style-global'></style><div class='cg-style-forms'></div></div>`);
-}
-
-/**
- * --- 任务结束时需要移除 task 的所有 style ---
- * @param taskId 任务 id
- */
-export function removeTaskStyleElement(taskId: number): void {
-    document.getElementById('cg-style-task' + taskId)?.remove();
-}
-
-/**
- * --- 将 style 内容写入 dom ---
- * @param style 样式内容
- * @param taskId 当前任务 ID
- * @param type 插入的类型
- * @param formId 当前窗体 ID（可空）
- */
-export function pushStyle(style: string, taskId: number, type: 'controls' | 'global' | 'forms' = 'global', formId: number = 0): void {
-    let el = document.querySelector(`#cg-style-task${taskId} > .cg-style-${type}`);
-    if (!el) {
-        return;
-    }
-    if (type === 'global') {
-        el.innerHTML = style;
-    }
-    else {
-        el.insertAdjacentHTML('beforeend', `<style class='cg-style-form${formId}'>${style}</style>`);
-    }
-}
-
-/**
- * --- 移除 style 样式 dom ---
- * @param taskId 要移除的任务 ID
- * @param formId 要移除的窗体 ID（空的话当前任务样式都会被移除）
- */
-export function removeStyle(taskId: number, formId: number = 0): void {
-    let styleTask = document.getElementById('cg-style-task' + taskId);
-    if (!styleTask) {
-        return;
-    }
-    if (formId === 0) {
-        styleTask.remove();
-    }
-    else {
-        let elist = styleTask.querySelectorAll('.cg-style-form' + formId);
-        for (let i = 0; i < elist.length; ++i) {
-            elist.item(i).remove();
-        }
-    }
-}
-
-/**
  * --- 去除 html 的空白符、换行以及注释 ---
  * @param text 要纯净的字符串
  */
@@ -190,46 +111,10 @@ export function purify(text: string): string {
 }
 
 /**
- * --- trim ---
- * @param text 要 trim 的文本
- */
-export function trim(text: string): string {
-    return text.replace(/^\s+|\s+$/, '');
-}
-
-/**
- * --- 将相对或绝对路径转换为绝对路径 ---
- * @param path 相对/绝对路径
- */
-export function parsePath(path: string): string {
-    if (path.slice(0, 2) === '//') {
-        // --- //xxx/xxx
-        path = clickgo.rootPath.slice(0, clickgo.rootPath.indexOf('//')) + path;
-    }
-    else if (path[0] === '/') {
-        // --- /xxx ---
-        path = clickgo.rootPath.replace(/^(http.+?\/\/.+?)\/.*$/, function(t, t1) {
-            return t1 + path;
-        });
-    }
-    else if (!/^(.+?):\/\//.test(path)) {
-        // --- xxx/xxx ---
-        if (path.slice(0, 8) === 'clickgo/') {
-            // --- clickgo/xxx ---
-            path = clickgo.cgRootPath + path.slice(8);
-        }
-        else {
-            path = clickgo.rootPath + path;
-        }
-    }
-    return path;
-}
-
-/**
  * --- 判断是否是 ControlPkg 对象 ---
  * @param o 要判断的对象
  */
-export function isControlPkg(o: string | any): o is IControlPkg {
+export function isControlPkg(o: string | any): o is ICGControlPkg {
     if (typeof o !== 'object') {
         return false;
     }
@@ -243,7 +128,7 @@ export function isControlPkg(o: string | any): o is IControlPkg {
  * --- 判断是否是 AppPkg 对象 ---
  * @param o 要判断的对象
  */
-export function isAppPkg(o: string | any): o is IAppPkg {
+export function isAppPkg(o: string | any): o is ICGAppPkg {
     if (typeof o !== 'object') {
         return false;
     }
@@ -254,166 +139,189 @@ export function isAppPkg(o: string | any): o is IAppPkg {
 }
 
 /**
- * --- 将 cgc 文件转换为 pkg 对象 ---
- * @param blob 文件 blob
+ * --- 传输 url 并解析为 IUrl 对象 ---
+ * @param url url 字符串
  */
-export async function controlBlob2Pkg(blob: Blob): Promise<false | IControlPkg> {
-    // --- 判断是否是 cgc 文件 ---
-    let dataView = new DataView(await blob2ArrayBuffer(blob));
-    if (dataView.getUint8(0) !== 192 || dataView.getUint8(1) !== 1) {
-        // --- 不是 cgc 文件 ---
-        return false;
-    }
-    // --- 创建空白 pkg 对象 ---
-    let controlPkg: IControlPkg = {};
-    /** --- 当前游标 --- */
-    let cursor: number = 2;
-    while (cursor < blob.size) {
-        let nameSize = new Uint8Array(await blob2ArrayBuffer(blob.slice(cursor, ++cursor)));
-        let name = await blob2Text(blob.slice(cursor, cursor += nameSize[0]));
-
-        let bodySize = new Uint32Array(await blob2ArrayBuffer(blob.slice(cursor, cursor += 4)));
-        let bodyBlob = blob.slice(cursor, cursor += bodySize[0]);
-
-        // --- 开始读取文件 ---
-        let files: Record<string, Blob> = {};
-        /** --- 配置文件 --- */
-        let config!: IControlConfig;
-        /** --- 当前 body 游标 --- */
-        let bodyCursor: number = 0;
-        while (bodyCursor < bodyBlob.size) {
-            let pathSize = new Uint8Array(await blob2ArrayBuffer(bodyBlob.slice(bodyCursor, ++bodyCursor)));
-            let path = await blob2Text(bodyBlob.slice(bodyCursor, bodyCursor += pathSize[0]));
-
-            let mimeSize = new Uint8Array(await blob2ArrayBuffer(bodyBlob.slice(bodyCursor, ++bodyCursor)));
-            let mime = await blob2Text(bodyBlob.slice(bodyCursor, bodyCursor += mimeSize[0]));
-
-            let contentSize = new Uint32Array(await blob2ArrayBuffer(bodyBlob.slice(bodyCursor, bodyCursor += 4)));
-            let contentBolb = bodyBlob.slice(bodyCursor, bodyCursor += contentSize[0], mime);
-
-            if (path === '/config.json') {
-                config = JSON.parse(await blob2Text(contentBolb));
-            }
-            else {
-                files[path] = contentBolb;
-            }
-        }
-        if (!config) {
-            return false;
-        }
-
-        controlPkg[name] = {
-            'type': 'control',
-            'config': config,
-            'files': files
-        };
-    }
-    return controlPkg;
-}
-
-/**
- * --- 给 class 前部增加唯一标识符 ---
- * @param style 样式内容
- * @param rand 唯一标识符可空
- */
-export function stylePrepend(style: string, rand: string = ''): {
-    'rand': string;
-    'style': string;
-} {
-    if (rand === '') {
-        rand = 'cg-scope' + Math.round(Math.random() * 1000000000000000) + '_';
-    }
-    // --- 给 style 的 class 前添加 scope ---
-    style = style.replace(/([\s\S]+?){([\s\S]+?)}/g, function(t, t1, t2) {
-        return t1.replace(/\.([a-zA-Z0-9-_]+)/g, function(t: string, t1: string) {
-            if (t1.slice(0, 3) === 'cg-') {
-                return t;
-            }
-            return '.' + rand + t1;
-        }) + '{' + t2 + '}';
-    });
-    // --- 自定义 font 名添加 scope ---
-    let fontList: string[] = [];
-    style = style.replace(/(@font-face[\s\S]+?font-family\s*:\s*["']{0,1})(.+?)(["']{0,1}\s*[;\r\n }])/gi, function(t, t1, t2, t3) {
-        fontList.push(t2);
-        return t1 + rand + t2 + t3;
-    });
-    // --- 对自定义 font 进行更名 ---
-    for (let font of fontList) {
-        let reg = new RegExp(`(font.+?[: "'])(${font})`, 'gi');
-        style = style.replace(reg, function(t, t1, t2) {
-            return t1 + rand + t2;
-        });
-    }
-    // --- keyframes ---
-    let keyframeList: string[] = [];
-    style = style.replace(/([-@]keyframes *["']{0,1})([\w-]+)(["']{0,1}\s*?\{)/gi, function(t, t1, t2, t3) {
-        if (keyframeList.indexOf(t2) === -1) {
-            keyframeList.push(t2);
-        }
-        return t1 + rand + t2 + t3;
-    });
-    // --- 对自定义 keyframe 进行更名 ---
-    for (let keyframe of keyframeList) {
-        let reg = new RegExp(`(animation.+?)(${keyframe})`, 'gi');
-        style = style.replace(reg, function(t, t1, t2) {
-            return t1 + rand + t2;
-        });
-    }
-    return {
-        'rand': rand,
-        'style': style
+export function parseUrl(url: string): ICGUrl {
+    // --- test: https://ab-3dc:aak9()$@github.com:80/nodejs/node/blob/master/lib/url.js?mail=abc@def.com#223 ---
+    let u: ICGUrl = {
+        'auth': null,
+        'hash': null,
+        'host': null,
+        'hostname': null,
+        'pass': null,
+        'path': null,
+        'pathname': '/',
+        'protocol': null,
+        'port': null,
+        'query': null,
+        'user': null
     };
+    // --- http:, https: ---
+    let protocol = /^(.+?)\/\//.exec(url);
+    if (protocol) {
+        u.protocol = protocol[1].toLowerCase();
+        url = url.slice(protocol[0].length);
+    }
+    // --- 获取 path 开头的 / 的位置 ---
+    let hostSp = url.indexOf('/');
+    let left = url;
+    if (hostSp !== -1) {
+        left = url.slice(0, hostSp);
+        url = url.slice(hostSp);
+    }
+    // --- auth: abc:def, abc ---
+    if (left) {
+        let leftArray = left.split('@');
+        let host = left;
+        if (leftArray[1]) {
+            let auth = leftArray[0].split(':');
+            u.user = auth[0];
+            if (auth[1]) {
+                u.pass = auth[1];
+            }
+            u.auth = u.user + (u.pass ? ':' + u.pass : '');
+            host = leftArray[1];
+        }
+        // --- host: www.host.com, host.com ---
+        let hostArray = host.split(':');
+        u.hostname = hostArray[0].toLowerCase();
+        if (hostArray[1]) {
+            u.port = hostArray[1];
+        }
+        u.host = u.hostname + (u.port ? ':' + u.port : '');
+    }
+    // --- 是否有后面 ---
+    if (hostSp === -1) {
+        return u;
+    }
+    // --- path and query ---
+    let paqArray = url.split('?');
+    u.pathname = paqArray[0];
+    if (paqArray[1]) {
+        // --- query and hash ---
+        let qahArray = paqArray[1].split('#');
+        u.query = qahArray[0];
+        if (qahArray[1]) {
+            u.hash = qahArray[1];
+        }
+    }
+    u.path = u.pathname + (u.query ? '?' + u.query : '');
+    return u;
 }
 
 /**
- * --- 将相对路径转换为绝对路径 ---
- * @param dir 路径基准或以文件的路径为基准
- * @param path 原路径
+ * --- 将相对路径根据基准路径进行转换 ---
+ * @param from 基准路径
+ * @param to 相对路径
  */
-export function pathResolve(dir: string, path: string): string {
-    if (path[0] === '/') {
-        return path;
+export function urlResolve(from: string, to: string): string {
+    from = from.replace(/\\/g, '/');
+    to = to.replace(/\\/g, '/');
+    // --- to 为空，直接返回 form ---
+    if (to === '') {
+        return from;
     }
-    if (dir[dir.length - 1] !== '/') {
-        let lio = dir.slice(0, -1).lastIndexOf('/');
-        if (lio === -1) {
-            dir = '/';
+    // --- 获取 from 的 scheme, host, path ---
+    let f = parseUrl(from);
+    // --- 以 // 开头的，加上 from 的 protocol 返回 ---
+    if (to.startsWith('//')) {
+        return f.protocol ? f.protocol + to : to;
+    }
+    if (f.protocol) {
+        // --- 获取小写的 protocol ---
+        from = f.protocol + from.slice(f.protocol.length);
+    }
+    // --- 获取 to 的 scheme, host, path ---
+    let t = parseUrl(to);
+    // --- 已经是绝对路径，直接返回 ---
+    if (t.protocol) {
+        // --- 获取小写的 protocol ---
+        return t.protocol + to.slice(t.protocol.length);
+    }
+    // --- # 或 ? 替换后返回 ---
+    if (to.startsWith('#') || to.startsWith('?')) {
+        let sp = from.indexOf(to[0]);
+        if (sp !== -1) {
+            return from.slice(0, sp) + to;
         }
         else {
-            dir = dir.slice(0, lio + 1);
+            return from + to;
         }
     }
-    path = dir + path;
-    path = path.replace(/\/\.\//g, '/');
-    while (/\/(?!\.\.)[^/]+\/\.\.\//.test(path)) {
-        path = path.replace(/\/(?!\.\.)[^/]+\/\.\.\//g, '/');
+    // --- 处理后面的尾随路径 ---
+    let abs = (f.auth ? f.auth + '@' : '') + (f.host ? f.host : '');
+    if (to.startsWith('/')) {
+        // -- abs 类似是 /xx/xx ---
+        abs += to;
     }
-    return path.replace(/\.\.\//g, '');
+    else {
+        // --- to 是 xx/xx 这样的 ---
+        // --- 移除基准 path 不是路径的部分，如 /ab/c 变成了 /ab，/ab 变成了 空 ---
+        let path = f.pathname.replace(/\/[^/]*$/g, '');
+        // --- abs 是 /xx/xx 了，因为如果 path 是空，则跟上了 /，如果 path 不为空，也是 / 开头 ---
+        abs += path + '/' + to;
+    }
+    // --- 删掉 ./ ---
+    abs = abs.replace(/\/\.\//g, '/');
+    // --- 删掉 ../ ---
+    while (true) {
+        let count = 0;
+        // --- 用循环法把 /xx/../ 变成 / 进行返回上级目录 ---
+        abs = abs.replace(/\/(?!\.\.)[^/]+\/\.\.\//g, function() {
+            ++count;
+            return '/';
+        });
+        if (count === 0) {
+            break;
+        }
+    }
+    // --- 剩下的 ../ 就是无效的直接替换为空 ---
+    abs = abs.replace(/\.\.\//g, '');
+    // --- 返回最终结果 ---
+    if (f.protocol && !f.host) {
+        // --- 类似 c:/ ---
+        return f.protocol + abs;
+    }
+    else {
+        // --- 类似 http:// ---
+        return (f.protocol ? f.protocol + '//' : '') + abs;
+    }
 }
 
 /**
- * --- 将 style 中的 url 转换成 base64 data url ---
- * @param dir 路径基准或以文件的路径为基准
+ * --- 将 style 中的 url 转换成 object 或 base64 data url(不存在会自动创建 object url) ---
+ * @param path 路径基准或以文件的路径为基准
  * @param style 样式表
- * @param files 文件熟
+ * @param obj 包含 files 属性的对象
+ * @param mode object/data
  */
-export async function styleUrl2DataUrl(dir: string, style: string, files: Record<string, Blob>): Promise<string> {
+export async function styleUrl2ObjectOrDataUrl(path: string, style: string, obj: ICGTask | ICGControl | ICGThemePkg, mode: 'object' | 'data' = 'object'): Promise<string> {
     let reg = /url\(["']{0,1}(.+?)["']{0,1}\)/ig;
     let match: RegExpExecArray | null = null;
     let rtn = style;
     while ((match = reg.exec(style))) {
-        let path = pathResolve(dir, match[1]);
-        if (!files[path]) {
+        let realPath = urlResolve(path, match[1]);
+        if (!obj.files[realPath]) {
             continue;
         }
-        rtn = rtn.replace(match[0], `url('${await blob2DataUrl(files[path])}')`);
+        if (mode === 'data') {
+            rtn = rtn.replace(match[0], `url('${await blob2DataUrl(obj.files[realPath])}')`);
+        }
+        else {
+            let ourl = obj.objectURLs[realPath];
+            if (!ourl) {
+                ourl = createObjectURL(obj.files[realPath]);
+                obj.objectURLs[realPath] = ourl;
+            }
+            rtn = rtn.replace(match[0], `url('${ourl}')`);
+        }
     }
     return rtn;
 }
 
 /**
- * --- 将系统默认的 attr 追加到标签 ---
+ * --- 给标签追加 attr（非真实 DOM 操作，仅仅是对字符串进行处理） ---
  * @param layout 被追加
  * @param insert 要追加
  * @param opt 选项, ignore 忽略的标签，include 包含的标签
@@ -449,10 +357,10 @@ export function layoutInsertAttr(layout: string, insert: string, opt: { 'ignore'
  * @param os :class 中的字符串
  */
 function layoutClassPrependObject(os: string): string {
-    os = trim(os.slice(1, -1));
+    os = os.slice(1, -1).trim();
     return '{' + os.replace(/(.+?):(.+?)(,|$)/g, function(t, t1, t2, t3) {
         // --- t1 是 class 的头头 ---
-        t1 = trim(t1);
+        t1 = t1.trim();
         if (t1[0] === '[') {
             t1 = '[cgClassPrepend(' + t1.slice(1, -1) + ')]';
         }
@@ -472,10 +380,7 @@ function layoutClassPrependObject(os: string): string {
  * @param layout 框架
  * @param rand 唯一标识符列表
  */
-export function layoutClassPrepend(layout: string, rand: string[] = []): {
-    'rand': string[];
-    'layout': string;
-} {
+export function layoutClassPrepend(layout: string, rand: string[] = []): { 'rand': string[]; 'layout': string; } {
     if (rand.length === 0) {
         rand.push('cg-scope' + Math.round(Math.random() * 1000000000000000) + '_');
     }
@@ -492,13 +397,13 @@ export function layoutClassPrepend(layout: string, rand: string[] = []): {
             return ` class='${rtn.join(' ')}'`;
         }).replace(/ :class=(["']).+?>/gi, function(t, sp) {
             return t.replace(new RegExp(` :class=${sp}(.+?)${sp}`, 'gi'), function(t, t1: string) {
-                t1 = trim(t1);
-                if (t1[0] === '[') {
+                t1 = t1.trim();
+                if (t1.startsWith('[')) {
                     t1 = t1.slice(1, -1);
                     let t1a = t1.split(',');
                     for (let i = 0; i < t1a.length; ++i) {
-                        t1a[i] = trim(t1a[i]);
-                        if (t1a[i][0] === '{') {
+                        t1a[i] = t1a[i].trim();
+                        if (t1a[i].startsWith('{')) {
                             t1a[i] = layoutClassPrependObject(t1a[i]);
                         }
                         else {
@@ -514,4 +419,120 @@ export function layoutClassPrepend(layout: string, rand: string[] = []): {
             });
         })
     };
+}
+
+/**
+ * --- 给 class 前部增加唯一标识符 ---
+ * @param style 样式内容
+ * @param rand 唯一标识符可空
+ */
+export function stylePrepend(style: string, rand: string = ''): { 'style': string; 'rand': string; } {
+    if (rand === '') {
+        rand = 'cg-scope' + Math.round(Math.random() * 1000000000000000) + '_';
+    }
+    // --- 给 style 的 class 前添加 scope ---
+    style = style.replace(/([\s\S]+?){([\s\S]+?)}/g, function(t, t1, t2) {
+        return t1.replace(/\.([a-zA-Z0-9-_]+)/g, function(t: string, t1: string) {
+            if (t1.startsWith('cg-')) {
+                return t;
+            }
+            return '.' + rand + t1;
+        }) + '{' + t2 + '}';
+    });
+    // --- 自定义 font 名添加 scope ---
+    let fontList: string[] = [];
+    style = style.replace(/(@font-face[\s\S]+?font-family\s*:\s*["']{0,1})(.+?)(["']{0,1}\s*[;\r\n }])/gi, function(t, t1, t2, t3) {
+        fontList.push(t2);
+        return t1 + rand + t2 + t3;
+    });
+    // --- 对自定义 font 进行更名 ---
+    for (let font of fontList) {
+        let reg = new RegExp(`(font.+?[: "'])(${font})`, 'gi');
+        style = style.replace(reg, function(t, t1, t2) {
+            return t1 + rand + t2;
+        });
+    }
+    // --- keyframes ---
+    let keyframeList: string[] = [];
+    style = style.replace(/([-@]keyframes *["']{0,1})([\w-]+)(["']{0,1}\s*?\{)/gi, function(t, t1, t2, t3) {
+        if (!keyframeList.includes(t2)) {
+            keyframeList.push(t2);
+        }
+        return t1 + rand + t2 + t3;
+    });
+    // --- 对自定义 keyframe 进行更名 ---
+    for (let keyframe of keyframeList) {
+        let reg = new RegExp(`(animation.+?)(${keyframe})`, 'gi');
+        style = style.replace(reg, function(t, t1, t2) {
+            return t1 + rand + t2;
+        });
+    }
+    return {
+        'rand': rand,
+        'style': style
+    };
+}
+
+/**
+ * --- 根据后缀、文件名或路径获取 mime 类型（简单版，完整版请使用 @litert/mime.js） ---
+ * @param path 后缀、文件名或路径
+ */
+export function getMimeByPath(path: string): { 'mime': string; 'ext': string; } {
+    let lio = path.lastIndexOf('.');
+    let ext: string = (lio === -1 ? path : path.slice(lio + 1)).toLowerCase();
+    let exts: Record<string, string> = {
+        'eot': 'application/vnd.ms-fontobject',
+        'woff': 'font/woff',
+        'ttf': 'font/ttf',
+        'svg': 'image/svg+xml',
+        'jpg': 'image/jpeg',
+        'jpeg': 'image/jpeg',
+        'gif': 'image/gif',
+        'png': 'image/png'
+    };
+    let mime: string = exts[ext] ?? 'application/octet-stream';
+    return {
+        'mime': mime,
+        'ext': ext
+    };
+}
+
+/** --- 已创建的 object url 列表 --- */
+let objectURLList: string[] = [];
+
+/**
+ * --- 通过 blob 创建 object url ---
+ * @param object blob 对象
+ */
+export function createObjectURL(object: Blob): string {
+    let url = URL.createObjectURL(object);
+    objectURLList.push(url);
+    return url;
+}
+
+/**
+ * --- 移除已创建的 object url ---
+ * @param url 已创建的 url
+ */
+export function revokeObjectURL(url: string): void {
+    URL.revokeObjectURL(url);
+}
+
+/**
+ * --- 获取已创建的 object url 列表 ---
+ */
+export function getObjectURLList(): string[] {
+    return objectURLList;
+}
+
+/**
+ * --- 生成范围内的随机数 ---
+ * @param min 最新范围
+ * @param max 最大范围
+ */
+export function rand(min: number, max: number): number {
+    if (min > max) {
+        [min, max] = [max, min];
+    }
+    return min + Math.round(Math.random() * (max - min));
 }

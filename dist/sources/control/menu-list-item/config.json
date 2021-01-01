@@ -9,7 +9,7 @@
     "style": "/style",
 
     "files": [
-        "/check.svg",
+        "/res/check.svg",
         "/code.js",
         "/layout.html",
         "/style.css"

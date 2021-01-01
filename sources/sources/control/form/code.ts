@@ -153,8 +153,8 @@ export let methods = {
             });
         }
         /** --- 当前所处边框 --- */
-        let isBorder: TBorderDir = '';
-        clickgo.element.bindMove(e, {
+        let isBorder: TCGBorder = '';
+        clickgo.dom.bindMove(e, {
             'start': (x, y) => {
                 if (this.stateMaxData) {
                     // --- 不能用 maxMethod 方法，因为那个获得的形状不能满足拖动还原的形状 ---
@@ -295,7 +295,7 @@ export let methods = {
                                 }
                             }
                             this.stateAbs = true;
-                            let pos = clickgo.form.getRectByDir(isBorder);
+                            let pos = clickgo.form.getRectByBorder(isBorder);
                             this.widthData = pos.width;
                             this.$emit('update:width', this.widthData);
                             this.heightData = pos.height;
@@ -511,17 +511,17 @@ export let methods = {
         }
     },
     // --- 改变窗体大小 ---
-    resizeMethod: function(this: IVue, e: MouseEvent | TouchEvent, dir: TBorderDir): void {
+    resizeMethod: function(this: IVue, e: MouseEvent | TouchEvent, border: TCGBorder): void {
         if (e instanceof MouseEvent && clickgo.hasTouch) {
             return;
         }
-        let isBorder: TBorderDir = '';
+        let isBorder: TCGBorder = '';
         let top = this.topData;
         let height = this.heightData;
-        if (dir !== 'l' && dir !== 'r') {
+        if (border !== 'l' && border !== 'r') {
             if (this.stateAbs) {
                 // --- 进行高度还原 ---
-                if (dir === 'lt' || dir === 't' || dir === 'tr') {
+                if (border === 'lt' || border === 't' || border === 'tr') {
                     // --- 左上、上、右上 ---
                     height = this.historyLocation.top + this.historyLocation.height;
                 }
@@ -540,16 +540,16 @@ export let methods = {
                 };
             }
         }
-        clickgo.element.bindResize(e, {
+        clickgo.dom.bindResize(e, {
             'objectLeft': this.leftData,
             'objectTop': top,
             'objectWidth': this.widthData,
             'objectHeight': height,
             'minWidth': parseInt(this.minWidth),
             'minHeight': parseInt(this.minHeight),
-            'dir': dir,
+            'border': border,
             'start': () => {
-                if (dir === 'l' || dir === 'r') {
+                if (border === 'l' || border === 'r') {
                     return;
                 }
                 if (this.stateAbs) {
@@ -557,7 +557,7 @@ export let methods = {
                     this.stateAbs = false;
                 }
             },
-            'move': (left, top, width, height, x, y, border) => {
+            'move': (left, top, width, height, x, y, nborder) => {
                 this.leftData = left;
                 this.$emit('update:left', left);
                 this.topData = top;
@@ -566,13 +566,13 @@ export let methods = {
                 this.$emit('update:width', width);
                 this.heightData = height;
                 this.$emit('update:height', height);
-                if (border !== '') {
+                if (nborder !== '') {
                     if (
-                        ((dir === 'lt' || dir === 't' || dir === 'tr') && (border === 'lt' || border === 't' || border === 'tr')) ||
-                        ((dir === 'bl' || dir === 'b' || dir === 'rb') && (border === 'bl' || border === 'b' || border === 'rb'))
+                        ((border === 'lt' || border === 't' || border === 'tr') && (nborder === 'lt' || nborder === 't' || nborder === 'tr')) ||
+                        ((border === 'bl' || border === 'b' || border === 'rb') && (nborder === 'bl' || nborder === 'b' || nborder === 'rb'))
                     ) {
                         if (isBorder === '') {
-                            isBorder = border;
+                            isBorder = nborder;
                             clickgo.form.showCircular(x, y);
                             clickgo.form.showRectangle(x, y, {
                                 'left': left,
@@ -580,7 +580,7 @@ export let methods = {
                             });
                         }
                         else {
-                            isBorder = border;
+                            isBorder = nborder;
                             clickgo.form.moveRectangle({
                                 'left': left,
                                 'width': width
@@ -624,11 +624,11 @@ export let methods = {
         if (typeof this.maskFor !== 'number') {
             return;
         }
-        if (!clickgo.core.tasks[this.taskId].forms[this.maskFor]) {
+        if (!clickgo.task.list[this.taskId].forms[this.maskFor]) {
             return;
         }
         e.stopPropagation();
-        clickgo.core.tasks[this.taskId].forms[this.maskFor].vroot.flash();
+        clickgo.task.list[this.taskId].forms[this.maskFor].vroot.cgFlash();
     },
     // --- 设置 left, width, zIndex 等 ---
     setPropData: function(this: IVue, name: string, val: number, mode: string = ''): void {

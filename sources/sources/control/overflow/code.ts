@@ -102,7 +102,7 @@ export let methods = {
 
 export let mounted = function(this: IVue): void {
     // --- 大小改变，会影响 scroll offset、client，不会影响 length ---
-    clickgo.element.watchSize(this.$refs.wrap, () => {
+    clickgo.dom.watchSize(this.$refs.wrap, () => {
         let client = this.direction === 'v' ? this.$refs.wrap.clientHeight : this.$refs.wrap.clientWidth;
         if (this.clientEmit !== client) {
             this.clientEmit = client;
@@ -113,7 +113,7 @@ export let mounted = function(this: IVue): void {
     this.clientEmit = client;
     this.$emit('resize', client);
     // --- 内容改变 ---
-    clickgo.element.watchElement(this.$refs.wrap, () => {
+    clickgo.dom.watchDom(this.$refs.wrap, () => {
         let length = this.direction === 'v' ? this.$refs.wrap.scrollHeight : this.$refs.wrap.scrollWidth;
         if (this.lengthEmit !== length) {
             this.lengthEmit = length;

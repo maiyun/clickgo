@@ -17,7 +17,7 @@ export declare let data: {
     };
 };
 export declare let methods: {
-    b1Down: (this: IVue, e: MouseEvent | TouchEvent) => void;
-    b2Down: (this: IVue, e: MouseEvent | TouchEvent) => void;
-    b3Down: (this: IVue, e: MouseEvent | TouchEvent) => void;
+    b1Down: (this: IVueForm, e: MouseEvent | TouchEvent) => void;
+    b2Down: (this: IVueForm, e: MouseEvent | TouchEvent) => void;
+    b3Down: (this: IVueForm, e: MouseEvent | TouchEvent) => void;
 };
