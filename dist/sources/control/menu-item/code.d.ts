@@ -19,7 +19,7 @@ export declare let data: {
     };
 };
 export declare let methods: {
-    mousein: (this: IVue) => void;
+    mousein: (this: IVueControl) => void;
     click: (this: IVueControl, event: MouseEvent) => void;
     showPop: (this: IVueControl) => void;
     hidePop: (this: IVueControl) => void;

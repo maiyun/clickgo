@@ -39,19 +39,19 @@ export declare let data: {
 };
 export declare let watch: {
     data: {
-        handler: (this: IVue) => void;
+        handler: (this: IVueControl) => void;
         deep: boolean;
     };
     modelValue: {
-        handler: (this: IVue) => void;
+        handler: (this: IVueControl) => void;
         immediate: boolean;
     };
 };
 export declare let computed: {
-    editableComp: (this: IVue) => boolean;
-    dataComp: (this: IVue) => any;
+    editableComp: (this: IVueControl) => boolean;
+    dataComp: (this: IVueControl) => any;
 };
 export declare let methods: {
-    updateValue: (this: IVue, index: number) => void;
-    tinput: (this: IVue) => void;
+    updateValue: (this: IVueControl, index: number) => void;
+    tinput: (this: IVueControl) => void;
 };

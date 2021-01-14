@@ -37,7 +37,7 @@ export declare let props: {
     };
 };
 export declare let data: {
-    innerPos: {
+    placePos: {
         start: number;
         end: number;
     };
@@ -49,27 +49,29 @@ export declare let data: {
     lineHeight: number;
     scrollLeftData: number;
     scrollTopData: number;
+    lengthWidth: number;
+    lengthHeight: number;
     client: number;
-    length: number;
     refreshCount: number;
     lengthInit: boolean;
     initFirst: boolean;
 };
 export declare let watch: {
     data: {
-        handler: (this: IVue) => void;
+        handler: (this: IVueControl) => void;
         deep: boolean;
     };
-    direction: (this: IVue) => void;
+    direction: (this: IVueControl) => void;
 };
 export declare let computed: {
-    dataComp: (this: IVue) => any[];
-    sameComp: (this: IVue) => boolean;
-    paddingComp: (this: IVue) => any;
+    dataComp: (this: IVueControl) => any[];
+    sameComp: (this: IVueControl) => boolean;
+    paddingComp: (this: IVueControl) => any;
 };
 export declare let methods: {
-    refreshView: (this: IVue) => Promise<void>;
-    reShow: (this: IVue) => void;
-    updateScrollOffset: (this: IVue, val: number, pos: 'left' | 'top') => void;
+    refreshView: (this: IVueControl) => Promise<void>;
+    reShow: (this: IVueControl) => void;
+    updateScrollOffset: (this: IVueControl, val: number, pos: 'left' | 'top') => void;
+    onResize: (this: IVueControl, val: number) => void;
 };
-export declare let mounted: (this: IVue) => void;
+export declare let mounted: (this: IVueControl) => void;

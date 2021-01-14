@@ -40,7 +40,7 @@
         <tab-panel label="adaptation" style="padding: 10px;">
             <layout flex="1" gutter="10" direction="v">
                 <layout flex="1" direction="v">
-                    <view style="border: 1px solid rgba(0, 0, 0, .1); max-height: 100%;">
+                    <view adaptation="true" style="border: 1px solid rgba(0, 0, 0, .1); max-height: 100%;">
                         <block v-for="(line, index) of lineCount">
                             <button v-if="index > 0 && index % 10 === 0">test</button>
                             <block v-else>Line {{line}}, index: {{index}}.</block>
@@ -56,7 +56,7 @@
         <tab-panel label="beyond" direction="v" style="padding: 10px;">
             <view v-model:scroll-left="soLeft4" v-model:scroll-top="soTop4" flex="1" style="border: 1px solid rgba(0, 0, 0, .1);" padding="10px 0 0 0">
                 <layout v-for="i of 10" style="margin: 0 0 10px 10px;">
-                    <block v-for="j of 10" style="width: 200px; height: 200px; margin: 0 10px 0 0; background: red;"></block>
+                    <block v-for="j of 10" style="width: 200px; height: 200px; margin: 0 10px 0 0; background: red; color: #FFF; display: flex;align-items: center; justify-content: center;">{{i}}-{{j}}</block>
                 </layout>
             </view>
             <label style="margin-top: 10px;">Scroll Left: {{soLeft4}}, Scroll Top: {{soTop4}}.</label>

@@ -32,8 +32,8 @@ export declare let data: {
     direction: string;
 };
 export declare let computed: {
-    widthPx: (this: IVue) => string | undefined;
-    heightPx: (this: IVue) => string | undefined;
+    widthPx: (this: IVueControl) => string | undefined;
+    heightPx: (this: IVueControl) => string | undefined;
 };
 export declare let watch: {
     data: {
@@ -42,7 +42,7 @@ export declare let watch: {
     };
 };
 export declare let methods: {
-    select: (this: IVue, value?: string | number | undefined) => void;
+    select: (this: IVueControl, value?: string | number | undefined) => void;
 };
 export declare let mounted: (this: IVueControl) => void;
 export declare let unmounted: (this: IVueControl) => void;

@@ -10,8 +10,8 @@ export declare let props: {
     };
 };
 export declare let computed: {
-    showTab: (this: IVue) => boolean;
+    showTab: (this: IVueControl) => boolean;
 };
 export declare let watch: {
-    showTab: (this: IVue) => void;
+    showTab: (this: IVueControl) => void;
 };

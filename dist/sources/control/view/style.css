@@ -3,7 +3,19 @@
 }
 
 .inner {
-    position: absolute; left: 0; top: 0; transition-timing-function: cubic-bezier(0.23, 1, 0.68, 1); display: flex; min-width: 100%; min-height: 100%;
+    position: absolute; left: 0; top: 0; display: flex; width: -webkit-max-content; width: max-content; height: -webkit-max-content; height: max-content;
+}
+.wrap.v > .inner {
+    min-width: 100%;
+}
+.wrap.v:not(.adaptation) > .inner {
+    min-height: 100%;
+}
+.wrap.h > .inner {
+    min-height: 100%;
+}
+.wrap.h:not(.adaptation) > .inner {
+    min-width: 100%;
 }
 .wrap.v > .inner {
     flex-direction: column;

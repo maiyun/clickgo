@@ -9,13 +9,13 @@ export declare let data: {
 };
 export declare let watch: {
     tabs: {
-        handler: (this: IVue) => Promise<void>;
+        handler: (this: IVueControl) => Promise<void>;
         deep: boolean;
     };
 };
 export declare let methods: {
-    longDown: (this: IVue, e: MouseEvent | TouchEvent, type: 'start' | 'end') => void;
-    wheel: (this: IVue, e: WheelEvent) => void;
+    longDown: (this: IVueControl, e: MouseEvent | TouchEvent, type: 'start' | 'end') => void;
+    wheel: (this: IVueControl, e: WheelEvent) => void;
     onResize: (this: IVueControl, size: ICGDomSize) => void;
 };
-export declare let mounted: (this: IVue) => void;
+export declare let mounted: (this: IVueControl) => void;

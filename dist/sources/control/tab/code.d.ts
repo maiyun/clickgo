@@ -28,14 +28,14 @@ export declare let data: {
     selected: string;
 };
 export declare let computed: {
-    widthPx: (this: IVue) => string | undefined;
-    heightPx: (this: IVue) => string | undefined;
+    widthPx: (this: IVueControl) => string | undefined;
+    heightPx: (this: IVueControl) => string | undefined;
     tabs: (this: IVueControl) => any[];
-    names: (this: IVue) => string[];
+    names: (this: IVueControl) => string[];
 };
 export declare let watch: {
     modelValue: {
-        handler: (this: IVue) => void;
+        handler: (this: IVueControl) => void;
         immediate: boolean;
     };
 };

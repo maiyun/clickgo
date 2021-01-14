@@ -30,7 +30,7 @@ export declare let data: {
 };
 export declare let watch: {
     type: {
-        handler: (this: IVue) => void;
+        handler: (this: IVueControl) => void;
         immediate: boolean;
     };
 };
@@ -40,5 +40,5 @@ export declare let methods: {
     showPop: (this: IVueControl) => void;
     hidePop: (this: IVueControl) => void;
 };
-export declare let mounted: (this: IVue) => void;
+export declare let mounted: (this: IVueControl) => void;
 export declare let unmounted: (this: IVueControl) => void;

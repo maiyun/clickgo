@@ -5,8 +5,8 @@ export declare function pushStyle(taskId: number, style: string, type?: 'global'
 export declare function removeStyle(taskId: number, type?: 'global' | 'theme' | 'control' | 'form', formId?: number | string): void;
 export declare function getStyleCount(taskId: number, type: 'theme' | 'control' | 'form'): number;
 export declare function getSize(el: HTMLElement): ICGDomSize;
-export declare function watchSize(el: HTMLElement, cb: (size: ICGDomSize) => void, immediate?: boolean): ICGDomSize;
-export declare function watchDom(el: HTMLElement, cb: () => void, mode?: 'child' | 'childsub' | 'style' | 'default' | MutationObserverInit, immediate?: boolean): MutationObserver;
+export declare function watchSize(el: HTMLElement, cb: (size: ICGDomSize) => void, immediate?: boolean): ICGDomWatchDom;
+export declare function watchDom(el: HTMLElement, cb: (mutations: MutationRecord[], observer?: MutationObserver) => void, mode?: 'child' | 'childsub' | 'style' | 'default' | MutationObserverInit, immediate?: boolean): MutationObserver;
 export declare function bindDown(oe: MouseEvent | TouchEvent, opt: {
     'down'?: (e: MouseEvent | TouchEvent) => void;
     'start'?: (e: MouseEvent | TouchEvent) => void | boolean;

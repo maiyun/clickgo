@@ -30,17 +30,17 @@ export declare let data: {
     lengthEmit: number;
 };
 export declare let computed: {
-    widthPx: (this: IVue) => string | undefined;
-    heightPx: (this: IVue) => string | undefined;
+    widthPx: (this: IVueControl) => string | undefined;
+    heightPx: (this: IVueControl) => string | undefined;
 };
 export declare let watch: {
     scrollOffset: {
-        handler: (this: IVue) => void;
+        handler: (this: IVueControl) => void;
     };
 };
 export declare let methods: {
-    scroll: (this: IVue) => void;
-    wheel: (this: IVue, e: WheelEvent) => void;
-    touchmove: (this: IVue, e: TouchEvent) => void;
+    scroll: (this: IVueControl) => void;
+    wheel: (this: IVueControl, e: WheelEvent) => void;
+    touchmove: (this: IVueControl, e: TouchEvent) => void;
 };
-export declare let mounted: (this: IVue) => void;
+export declare let mounted: (this: IVueControl) => void;

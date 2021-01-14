@@ -104,37 +104,37 @@ export let watch = {
         },
         'immediate': true
     },
-    'title': function(this: IVue): void {
+    'title': function(this: IVueControl): void {
         // --- 触发 formTitleChanged 事件 ---
         clickgo.core.trigger('formTitleChanged', this.taskId, this.formId, {'title': this.title});
     },
-    'stateMin': function(this: IVue): void {
+    'stateMin': function(this: IVueControl): void {
         this.minMethod();
     },
-    'stateMax': function(this: IVue): void {
+    'stateMax': function(this: IVueControl): void {
         this.maxMethod();
     },
 
-    'width': function(this: IVue): void {
+    'width': function(this: IVueControl): void {
         this.widthData = parseInt(this.width);
     },
-    'height': function(this: IVue): void {
+    'height': function(this: IVueControl): void {
         this.heightData = parseInt(this.height);
     },
-    'left': function(this: IVue): void {
+    'left': function(this: IVueControl): void {
         this.leftData = parseInt(this.left);
     },
-    'top': function(this: IVue): void {
+    'top': function(this: IVueControl): void {
         this.topData = parseInt(this.top);
     },
-    'zIndex': function(this: IVue): void {
+    'zIndex': function(this: IVueControl): void {
         this.zIndexData = parseInt(this.zIndex);
     }
 };
 
 export let methods = {
     // --- 拖动 ---
-    moveMethod: function(this: IVue, e: MouseEvent | TouchEvent): void {
+    moveMethod: function(this: IVueControl, e: MouseEvent | TouchEvent): void {
         if (e instanceof MouseEvent && clickgo.hasTouch) {
             return;
         }
@@ -312,7 +312,7 @@ export let methods = {
         });
     },
     // --- 最小化 ---
-    minMethod: function(this: IVue): boolean {
+    minMethod: function(this: IVueControl): boolean {
         let event = {
             'go': true,
             preventDefault: function() {
@@ -393,7 +393,7 @@ export let methods = {
         return true;
     },
     // --- 竖版扩大 ---
-    maxVMethod: function(this: IVue, dbl: boolean): void {
+    maxVMethod: function(this: IVueControl, dbl: boolean): void {
         if (this.stateAbs) {
             this.stateAbs = false;
             this.topData = this.historyLocation.top;
@@ -423,7 +423,7 @@ export let methods = {
         }
     },
     // --- 最大化 ---
-    maxMethod: function(this: IVue): boolean {
+    maxMethod: function(this: IVueControl): boolean {
         if (this.stateMinData) {
             if (this.minMethod() === false) {
                 return false;
@@ -498,7 +498,7 @@ export let methods = {
         return true;
     },
     // --- 关闭窗体 ---
-    closeMethod: function(this: IVue): void {
+    closeMethod: function(this: IVueControl): void {
         let event = {
             go: true,
             preventDefault: function() {
@@ -511,7 +511,7 @@ export let methods = {
         }
     },
     // --- 改变窗体大小 ---
-    resizeMethod: function(this: IVue, e: MouseEvent | TouchEvent, border: TCGBorder): void {
+    resizeMethod: function(this: IVueControl, e: MouseEvent | TouchEvent, border: TCGBorder): void {
         if (e instanceof MouseEvent && clickgo.hasTouch) {
             return;
         }
@@ -617,7 +617,7 @@ export let methods = {
         });
     },
     // --- 遮罩层被点击时 ---
-    maskDown: function(this: IVue, e: MouseEvent | TouchEvent): void {
+    maskDown: function(this: IVueControl, e: MouseEvent | TouchEvent): void {
         if (e instanceof MouseEvent && clickgo.hasTouch) {
             return;
         }
@@ -631,7 +631,7 @@ export let methods = {
         clickgo.task.list[this.taskId].forms[this.maskFor].vroot.cgFlash();
     },
     // --- 设置 left, width, zIndex 等 ---
-    setPropData: function(this: IVue, name: string, val: number, mode: string = ''): void {
+    setPropData: function(this: IVueControl, name: string, val: number, mode: string = ''): void {
         if (this[name + 'Data'] === undefined || this[name] === undefined) {
             return;
         }
@@ -648,7 +648,7 @@ export let methods = {
     }
 };
 
-export let mounted = function(this: IVue): void {
+export let mounted = function(this: IVueControl): void {
     this.widthData = parseInt(this.width);
     this.heightData = parseInt(this.height);
     this.zIndexData = parseInt(this.zIndex);

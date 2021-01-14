@@ -11,7 +11,7 @@ export let data = {
 
 export let watch = {
     'tabs': {
-        handler: async function(this: IVue): Promise<void> {
+        handler: async function(this: IVueControl): Promise<void> {
             await this.$nextTick();
             this.onResize(clickgo.dom.getSize(this.$refs.tabs));
         },
@@ -20,7 +20,7 @@ export let watch = {
 };
 
 export let methods = {
-    longDown: function(this: IVue, e: MouseEvent | TouchEvent, type: 'start' | 'end'): void {
+    longDown: function(this: IVueControl, e: MouseEvent | TouchEvent, type: 'start' | 'end'): void {
         if (!this.$parent) {
             return;
         }
@@ -50,7 +50,7 @@ export let methods = {
             }
         });
     },
-    wheel: function(this: IVue, e: WheelEvent): void {
+    wheel: function(this: IVueControl, e: WheelEvent): void {
         if (!this.$parent) {
             return;
         }
@@ -85,7 +85,7 @@ export let methods = {
     }
 };
 
-export let mounted = function(this: IVue): void {
+export let mounted = function(this: IVueControl): void {
     if (!this.$parent) {
         return;
     }

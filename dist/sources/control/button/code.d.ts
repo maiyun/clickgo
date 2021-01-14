@@ -22,8 +22,8 @@ export declare let props: {
     };
 };
 export declare let computed: {
-    widthPx: (this: IVue) => string | undefined;
-    heightPx: (this: IVue) => string | undefined;
+    widthPx: (this: IVueControl) => string | undefined;
+    heightPx: (this: IVueControl) => string | undefined;
 };
 export declare let methods: {
     keydown: (this: IVueControl, e: KeyboardEvent) => void;

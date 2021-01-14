@@ -34,7 +34,7 @@ export let data = {
 
 export let watch = {
     'type': {
-        handler: function(this: IVue): void {
+        handler: function(this: IVueControl): void {
             if (!this.$parent) {
                 return;
             }
@@ -114,7 +114,7 @@ export let methods = {
     }
 };
 
-export let mounted = function(this: IVue): void {
+export let mounted = function(this: IVueControl): void {
     if (this.$parent) {
         if (this.type) {
             ++this.$parent.hasTypeItemsCount;

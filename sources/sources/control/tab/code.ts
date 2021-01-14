@@ -31,7 +31,7 @@ export let data = {
 };
 
 export let computed = {
-    'widthPx': function(this: IVue): string | undefined {
+    'widthPx': function(this: IVueControl): string | undefined {
         if (this.width !== undefined) {
             return this.width + 'px';
         }
@@ -39,7 +39,7 @@ export let computed = {
             return this.$parent?.direction ? (this.$parent.direction === 'v' ? undefined : '0') : undefined;
         }
     },
-    'heightPx': function(this: IVue): string | undefined {
+    'heightPx': function(this: IVueControl): string | undefined {
         if (this.height !== undefined) {
             return this.height + 'px';
         }
@@ -61,7 +61,7 @@ export let computed = {
         }
         return tabs;
     },
-    'names': function(this: IVue): string[] {
+    'names': function(this: IVueControl): string[] {
         let list = [];
         for (let item of this.tabs) {
             list.push(item.name);
@@ -72,7 +72,7 @@ export let computed = {
 
 export let watch = {
     'modelValue': {
-        handler: function(this: IVue): void {
+        handler: function(this: IVueControl): void {
             if (this.selected !== this.modelValue) {
                 this.selected = this.modelValue;
             }

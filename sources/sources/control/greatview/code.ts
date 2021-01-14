@@ -40,7 +40,7 @@ export let props = {
 };
 
 export let data = {
-    'innerPos': {
+    'placePos': {
         'start': 0,
         'end': 0
     },
@@ -54,8 +54,9 @@ export let data = {
 
     'scrollLeftData': 0,
     'scrollTopData': 0,
+    'lengthWidth': 0,
+    'lengthHeight': 0,
     'client': 0,
-    'length': 0,
 
     'refreshCount': 0,
     'lengthInit': false,
@@ -64,18 +65,18 @@ export let data = {
 
 export let watch = {
     'data': {
-        handler: function(this: IVue): void {
+        handler: function(this: IVueControl): void {
             this.refreshView();
         },
         'deep': true
     },
-    'direction': function(this: IVue): void {
+    'direction': function(this: IVueControl): void {
         this.refreshView();
     }
 };
 
 export let computed = {
-    'dataComp': function(this: IVue): any[] {
+    'dataComp': function(this: IVueControl): any[] {
         if (typeof this.data !== 'number') {
             return this.data;
         }
@@ -85,14 +86,14 @@ export let computed = {
         }
         return list;
     },
-    'sameComp': function(this: IVue): boolean {
+    'sameComp': function(this: IVueControl): boolean {
         if (typeof this.same === 'boolean') {
             return this.same;
         }
         return this.same === 'true' ? true : false;
     },
 
-    'paddingComp': function(this: IVue): any {
+    'paddingComp': function(this: IVueControl): any {
         if (!this.padding) {
             return {'top': 0, 'right': 0, 'bottom': 0, 'left': 0};
         }
@@ -119,25 +120,29 @@ export let computed = {
 
 export let methods = {
     // --- 重新获取高度 ---
-    refreshView: async function(this: IVue): Promise<void> {
+    refreshView: async function(this: IVueControl): Promise<void> {
         let nowCount = ++this.refreshCount;
 
-        let length: number = this.direction === 'v' ? this.paddingComp.top : this.paddingComp.left;
+        let lengthWidth: number = this.paddingComp.left;
+        let lengthHeight: number = this.paddingComp.top;
         if (this.dataComp.length === 0) {
             this.dataHeight = [];
             this.lineHeight = 0;
-            this.length = length + (this.direction === 'v' ? this.paddingComp.bottom : this.paddingComp.right);
+            this.lengthWidth = lengthWidth + this.paddingComp.right;
+            this.lengthHeight = lengthHeight + this.paddingComp.bottom;
             return;
         }
 
         if (!this.sameComp) {
             let maxCursor = this.dataComp.length;
             let cursor = 0;
+            let anotherWOH: number = 0;
 
             /** --- 这个在最后应用，要不然可能出现白屏，因为 reShow 还没没执行，正在显示的被移走了，但没移动的意义 --- */
             let dataHeight = [];
             while (true) {
                 if (nowCount !== this.refreshCount) {
+                    // --- 重复执行，以最后一次执行为准 ---
                     return;
                 }
 
@@ -145,26 +150,38 @@ export let methods = {
                 if (theCursor > maxCursor) {
                     theCursor = maxCursor;
                 }
-                this.innerPos.start = cursor;
-                this.innerPos.end = theCursor;
+                this.placePos.start = cursor;
+                this.placePos.end = theCursor;
                 await this.$nextTick();
                 await clickgo.tool.sleep(0);
                 if (nowCount !== this.refreshCount) {
+                    // --- 重复执行，以最后一次执行为准 ---
                     return;
                 }
-                if (!this.$refs.inner) {
-                    // --- 当前又被卸载了 ---
+                if (!this.$refs.place) {
+                    // --- 当前被卸载了 ---
                     return;
                 }
-                // --- 遍历 inner items ---
-                for (let i = 0; i < this.$refs.inner.children.length; ++i) {
-                    let item = this.$refs.inner.children.item(i) as HTMLElement;
-                    let start = length;
+                // --- 遍历 place items ---
+                for (let i = 0; i < this.$refs.place.children.length; ++i) {
+                    let item = this.$refs.place.children.item(i) as HTMLElement;
+                    let start = this.direction === 'v' ? lengthHeight : lengthWidth;
                     let rect = item.getBoundingClientRect();
-                    length += this.direction === 'v' ? rect.height : rect.width;
+                    if (this.direction === 'v') {
+                        lengthHeight += rect.height;
+                        if (anotherWOH < rect.width) {
+                            anotherWOH = rect.width;
+                        }
+                    }
+                    else {
+                        lengthWidth += rect.width;
+                        if (anotherWOH < rect.height) {
+                            anotherWOH = rect.height;
+                        }
+                    }
                     dataHeight[cursor + i] = {
                         'start': start,
-                        'end': length
+                        'end': this.direction === 'v' ? lengthHeight : lengthWidth
                     };
                 }
                 if (theCursor === maxCursor) {
@@ -176,37 +193,48 @@ export let methods = {
         }
         else {
             // --- same true 模式 ---
-            this.innerPos.start = 0;
-            this.innerPos.end = 1;
+            this.placePos.start = 0;
+            this.placePos.end = 1;
             await this.$nextTick();
             await clickgo.tool.sleep(0);
             if (nowCount !== this.refreshCount) {
+                // --- 重复执行，以最后一次执行为准 ---
                 return;
             }
-            if (!this.$refs.inner) {
-                // --- 当前又被卸载了 ---
+            if (!this.$refs.place) {
+                // --- 当前被卸载了 ---
                 return;
             }
-            let item = this.$refs.inner.children.item(0) as HTMLElement;
+            let item = this.$refs.place.children.item(0) as HTMLElement;
             if (item) {
                 let rect = item.getBoundingClientRect();
-                this.lineHeight = this.direction === 'v' ? rect.height : rect.width;
+                if (this.direction === 'v') {
+                    this.lineHeight = rect.height;
+                    lengthHeight += this.lineHeight * this.dataComp.length;
+                    lengthWidth += rect.width;
+                }
+                else {
+                    this.lineHeight = rect.width;
+                    lengthWidth += this.lineHeight * this.dataComp.length;
+                    lengthHeight += rect.height;
+                }
             }
             else {
                 this.lineHeight = 0;
             }
-            length += this.lineHeight * this.dataComp.length;
         }
-        this.innerPos.start = 0;
-        this.innerPos.end = 0;
-        length += this.direction === 'v' ? this.paddingComp.bottom : this.paddingComp.right;
-        this.length = length;
+        this.placePos.start = 0;
+        this.placePos.end = 0;
+        lengthWidth += this.paddingComp.right;
+        lengthHeight += this.paddingComp.bottom;
+        this.lengthWidth = lengthWidth;
+        this.lengthHeight = lengthHeight;
         this.lengthInit = true;
 
         this.reShow();
     },
     // --- 控制显示和隐藏 ---
-    reShow: function(this: IVue): void {
+    reShow: function(this: IVueControl): void {
         let scrollOffset = this.direction === 'v' ? this.scrollTopData : this.scrollLeftData;
         if (!this.sameComp) {
             let overShow = false;
@@ -248,7 +276,8 @@ export let methods = {
             this.showPos.end = end;
         }
     },
-    updateScrollOffset: function(this: IVue, val: number, pos: 'left' | 'top'): void {
+
+    updateScrollOffset: function(this: IVueControl, val: number, pos: 'left' | 'top'): void {
         // --- 接收 view 组件传递的 scroll-offset 更改事件 ---
         if (!this.lengthInit) {
             // --- length 还没初始化成功，不更新 scroll offset ---
@@ -275,10 +304,14 @@ export let methods = {
             this.$emit('update:scrollTop', val);
         }
         this.reShow();
+    },
+    onResize: function(this: IVueControl, val: number): void {
+        this.client = val;
+        this.$emit('resize', val);
     }
 };
 
-export let mounted = function(this: IVue): void {
+export let mounted = function(this: IVueControl): void {
     this.refreshView();
 
     let mo = new MutationObserver(() => {

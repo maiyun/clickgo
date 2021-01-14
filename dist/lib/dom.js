@@ -10,9 +10,7 @@ styleList.insertAdjacentHTML('beforeend', `<style class='cg-global'>
 .cg-form-list {z-index: 20020000;}
 .cg-pop-list {z-index: 20020001;}
 .cg-form-list img, .cg-pop-list img {vertical-align: bottom;}
-.cg-form-list ::selection {
-    background-color: rgba(0, 120, 215, .3);
-}
+.cg-form-list ::selection {background-color: rgba(0, 120, 215, .3);}
 .cg-form-list, .cg-pop-list {-webkit-user-select: none; user-select: none;}
 
 .cg-form-list *, .cg-pop-list *, .cg-form-list *::after, .cg-pop-list *::after, .cg-form-list *::before, .cg-pop-list *::before {box-sizing: border-box; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); flex-shrink: 0;}
@@ -142,15 +140,18 @@ function watchSize(el, cb, immediate = false) {
         if (Number.isNaN(size.clientWidth)) {
             return;
         }
-        cb(getSize(el));
+        cb(size);
     });
     resizeObserver.observe(el);
-    return fsize;
+    return {
+        'observer': resizeObserver,
+        'size': fsize
+    };
 }
 exports.watchSize = watchSize;
 function watchDom(el, cb, mode = 'default', immediate = false) {
     if (immediate) {
-        cb();
+        cb([]);
     }
     let moi;
     switch (mode) {
@@ -170,6 +171,7 @@ function watchDom(el, cb, mode = 'default', immediate = false) {
         case 'style': {
             moi = {
                 'attributeFilter': ['style', 'class'],
+                'attributeOldValue': true,
                 'attributes': true
             };
             break;
@@ -177,6 +179,7 @@ function watchDom(el, cb, mode = 'default', immediate = false) {
         case 'default': {
             moi = {
                 'attributeFilter': ['style', 'class'],
+                'attributeOldValue': true,
                 'attributes': true,
                 'characterData': true,
                 'childList': true,

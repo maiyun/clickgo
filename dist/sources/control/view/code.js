@@ -35,6 +35,9 @@ exports.props = {
     'padding': {
         'default': undefined
     },
+    'adaptation': {
+        'dafault': false
+    },
     'scrollLeft': {
         'default': 0
     },
@@ -80,19 +83,19 @@ exports.computed = {
         if (this.lengthWidth <= this.clientWidth) {
             return 0;
         }
-        return Math.floor(this.lengthWidth - this.clientWidth);
+        return Math.round(this.lengthWidth) - Math.round(this.clientWidth);
     },
     'maxScrollTop': function () {
         if (this.lengthHeight <= this.clientHeight) {
             return 0;
         }
-        return Math.floor(this.lengthHeight - this.clientHeight);
+        return Math.round(this.lengthHeight) - Math.round(this.clientHeight);
     },
     'maxLengthWidth': function () {
-        return parseInt(this.lengthWidth);
+        return Math.round(this.lengthWidth);
     },
     'maxLengthHeight': function () {
-        return parseInt(this.lengthHeight);
+        return Math.round(this.lengthHeight);
     },
     'widthPx': function () {
         if (this.width !== undefined) {
@@ -124,22 +127,12 @@ exports.methods = {
         e.preventDefault();
         this.stopAnimation();
         if (this.direction === 'v') {
-            if (this.lengthWidth <= this.clientWidth) {
-                this.scrollTopData += Math.round(e.deltaY === 0 ? e.deltaX : e.deltaY);
-            }
-            else {
-                this.scrollTopData += e.deltaY;
-                this.scrollLeftData += e.deltaX;
-            }
+            this.scrollTopData += e.deltaY;
+            this.scrollLeftData += e.deltaX;
         }
         else {
-            if (this.lengthHeight <= this.clientHeight) {
-                this.scrollLeftData += Math.round(e.deltaX === 0 ? e.deltaY : e.deltaX);
-            }
-            else {
-                this.scrollTopData += e.deltaY;
-                this.scrollLeftData += e.deltaX;
-            }
+            this.scrollTopData += e.deltaY;
+            this.scrollLeftData += e.deltaX;
         }
         this.refreshView();
     },
@@ -147,12 +140,12 @@ exports.methods = {
         if (e instanceof MouseEvent && clickgo.hasTouch) {
             return;
         }
+        this.stopAnimation();
         let wrapSize = clickgo.dom.getSize(this.$refs.wrap);
         let top = wrapSize.top + wrapSize.border.top + wrapSize.padding.top;
         let right = wrapSize.right - wrapSize.border.right - wrapSize.padding.right;
         let bottom = wrapSize.bottom - wrapSize.border.bottom - wrapSize.padding.bottom;
         let left = wrapSize.left + wrapSize.border.left + wrapSize.padding.left;
-        this.stopAnimation();
         let overWidth = this.lengthWidth - this.clientWidth;
         let overHeight = this.lengthHeight - this.clientHeight;
         clickgo.dom.bindMove(e, {
@@ -358,7 +351,7 @@ exports.methods = {
     }
 };
 exports.mounted = function () {
-    let size = clickgo.dom.watchSize(this.$refs.wrap, (size) => {
+    clickgo.dom.watchSize(this.$refs.wrap, (size) => {
         let clientWidth = size.innerWidth;
         let clientHeight = size.innerHeight;
         if (this.direction === 'v') {
@@ -384,10 +377,8 @@ exports.mounted = function () {
             this.$emit('resize', Math.round(this.clientWidth));
         }
         this.refreshView();
-    });
-    this.client = this.direction === 'v' ? size.innerHeight : size.innerWidth;
-    this.$emit('resize', Math.round(this.client));
-    size = clickgo.dom.watchSize(this.$refs.inner, (size) => {
+    }, true);
+    clickgo.dom.watchSize(this.$refs.inner, (size) => {
         let lengthWidth = size.width;
         let lengthHeight = size.height;
         let change = false;
@@ -408,15 +399,7 @@ exports.mounted = function () {
         if (change) {
             this.refreshView();
         }
-    });
-    this.lengthWidth = Math.round(size.width);
-    this.lengthHeight = Math.round(size.height);
-    if (this.direction === 'h') {
-        this.$emit('change', Math.round(this.lengthWidth));
-    }
-    else {
-        this.$emit('change', Math.round(this.lengthHeight));
-    }
+    }, true);
 };
 exports.unmounted = function () {
     if (this.timer) {

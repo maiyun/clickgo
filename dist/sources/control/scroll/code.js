@@ -225,11 +225,11 @@ exports.methods = {
     }
 };
 exports.mounted = function () {
-    let size = clickgo.dom.watchSize(this.$refs.bar, (size) => {
+    let dwd = clickgo.dom.watchSize(this.$refs.bar, (size) => {
         this.barLengthPx = this.direction === 'v' ? size.height : size.width;
         this.scrollOffsetPx = this.barOutSize * (this.scrollOffsetData / this.maxScroll);
     });
-    this.barLengthPx = this.direction === 'v' ? size.height : size.width;
+    this.barLengthPx = this.direction === 'v' ? dwd.size.height : dwd.size.width;
     let scrollOffsetData = Math.round(parseFloat(this.scrollOffset));
     if (this.scrollOffsetData === scrollOffsetData) {
         return;

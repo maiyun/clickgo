@@ -23,7 +23,7 @@ export let data = {
 };
 
 export let methods = {
-    mousein: function(this: IVue): void {
+    mousein: function(this: IVueControl): void {
         if (this.disabled) {
             // --- 如果当前是者禁用状态，不管 ---
             return;

@@ -49,7 +49,7 @@ exports.props = {
     }
 };
 exports.data = {
-    'innerPos': {
+    'placePos': {
         'start': 0,
         'end': 0
     },
@@ -61,8 +61,9 @@ exports.data = {
     'lineHeight': 0,
     'scrollLeftData': 0,
     'scrollTopData': 0,
+    'lengthWidth': 0,
+    'lengthHeight': 0,
     'client': 0,
-    'length': 0,
     'refreshCount': 0,
     'lengthInit': false,
     'initFirst': false
@@ -123,16 +124,19 @@ exports.methods = {
     refreshView: function () {
         return __awaiter(this, void 0, void 0, function* () {
             let nowCount = ++this.refreshCount;
-            let length = this.direction === 'v' ? this.paddingComp.top : this.paddingComp.left;
+            let lengthWidth = this.paddingComp.left;
+            let lengthHeight = this.paddingComp.top;
             if (this.dataComp.length === 0) {
                 this.dataHeight = [];
                 this.lineHeight = 0;
-                this.length = length + (this.direction === 'v' ? this.paddingComp.bottom : this.paddingComp.right);
+                this.lengthWidth = lengthWidth + this.paddingComp.right;
+                this.lengthHeight = lengthHeight + this.paddingComp.bottom;
                 return;
             }
             if (!this.sameComp) {
                 let maxCursor = this.dataComp.length;
                 let cursor = 0;
+                let anotherWOH = 0;
                 let dataHeight = [];
                 while (true) {
                     if (nowCount !== this.refreshCount) {
@@ -142,24 +146,35 @@ exports.methods = {
                     if (theCursor > maxCursor) {
                         theCursor = maxCursor;
                     }
-                    this.innerPos.start = cursor;
-                    this.innerPos.end = theCursor;
+                    this.placePos.start = cursor;
+                    this.placePos.end = theCursor;
                     yield this.$nextTick();
                     yield clickgo.tool.sleep(0);
                     if (nowCount !== this.refreshCount) {
                         return;
                     }
-                    if (!this.$refs.inner) {
+                    if (!this.$refs.place) {
                         return;
                     }
-                    for (let i = 0; i < this.$refs.inner.children.length; ++i) {
-                        let item = this.$refs.inner.children.item(i);
-                        let start = length;
+                    for (let i = 0; i < this.$refs.place.children.length; ++i) {
+                        let item = this.$refs.place.children.item(i);
+                        let start = this.direction === 'v' ? lengthHeight : lengthWidth;
                         let rect = item.getBoundingClientRect();
-                        length += this.direction === 'v' ? rect.height : rect.width;
+                        if (this.direction === 'v') {
+                            lengthHeight += rect.height;
+                            if (anotherWOH < rect.width) {
+                                anotherWOH = rect.width;
+                            }
+                        }
+                        else {
+                            lengthWidth += rect.width;
+                            if (anotherWOH < rect.height) {
+                                anotherWOH = rect.height;
+                            }
+                        }
                         dataHeight[cursor + i] = {
                             'start': start,
-                            'end': length
+                            'end': this.direction === 'v' ? lengthHeight : lengthWidth
                         };
                     }
                     if (theCursor === maxCursor) {
@@ -170,30 +185,40 @@ exports.methods = {
                 this.dataHeight = dataHeight;
             }
             else {
-                this.innerPos.start = 0;
-                this.innerPos.end = 1;
+                this.placePos.start = 0;
+                this.placePos.end = 1;
                 yield this.$nextTick();
                 yield clickgo.tool.sleep(0);
                 if (nowCount !== this.refreshCount) {
                     return;
                 }
-                if (!this.$refs.inner) {
+                if (!this.$refs.place) {
                     return;
                 }
-                let item = this.$refs.inner.children.item(0);
+                let item = this.$refs.place.children.item(0);
                 if (item) {
                     let rect = item.getBoundingClientRect();
-                    this.lineHeight = this.direction === 'v' ? rect.height : rect.width;
+                    if (this.direction === 'v') {
+                        this.lineHeight = rect.height;
+                        lengthHeight += this.lineHeight * this.dataComp.length;
+                        lengthWidth += rect.width;
+                    }
+                    else {
+                        this.lineHeight = rect.width;
+                        lengthWidth += this.lineHeight * this.dataComp.length;
+                        lengthHeight += rect.height;
+                    }
                 }
                 else {
                     this.lineHeight = 0;
                 }
-                length += this.lineHeight * this.dataComp.length;
             }
-            this.innerPos.start = 0;
-            this.innerPos.end = 0;
-            length += this.direction === 'v' ? this.paddingComp.bottom : this.paddingComp.right;
-            this.length = length;
+            this.placePos.start = 0;
+            this.placePos.end = 0;
+            lengthWidth += this.paddingComp.right;
+            lengthHeight += this.paddingComp.bottom;
+            this.lengthWidth = lengthWidth;
+            this.lengthHeight = lengthHeight;
             this.lengthInit = true;
             this.reShow();
         });
@@ -263,6 +288,10 @@ exports.methods = {
             this.$emit('update:scrollTop', val);
         }
         this.reShow();
+    },
+    onResize: function (val) {
+        this.client = val;
+        this.$emit('resize', val);
     }
 };
 exports.mounted = function () {

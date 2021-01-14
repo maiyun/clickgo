@@ -24,6 +24,9 @@ export let props = {
         'default': undefined
     },
 
+    'adaptation': {
+        'dafault': false
+    },
     'scrollLeft': {
         'default': 0
     },
@@ -49,7 +52,7 @@ export let data = {
 };
 
 export let watch = {
-    'direction': function(this: IVue): void {
+    'direction': function(this: IVueControl): void {
         let size = clickgo.dom.getSize(this.$refs.wrap);
         this.clientWidth = size.innerWidth;
         this.clientHeight = size.innerHeight;
@@ -58,13 +61,13 @@ export let watch = {
         this.lengthHeight = innerRect.height;
     },
     'scrollLeft': {
-        handler: function(this: IVue): void {
+        handler: function(this: IVueControl): void {
             this.goScroll(this.scrollLeft, 'left');
         },
         'immediate': true
     },
     'scrollTop': {
-        handler: function(this: IVue): void {
+        handler: function(this: IVueControl): void {
             this.goScroll(this.scrollTop, 'top');
         },
         'immediate': true
@@ -77,21 +80,21 @@ export let computed = {
         if (this.lengthWidth <= this.clientWidth) {
             return 0;
         }
-        return Math.floor(this.lengthWidth - this.clientWidth);
+        return Math.round(this.lengthWidth) - Math.round(this.clientWidth);
     },
     'maxScrollTop': function(this: IVueControl): number {
         if (this.lengthHeight <= this.clientHeight) {
             return 0;
         }
-        return Math.floor(this.lengthHeight - this.clientHeight);
+        return Math.round(this.lengthHeight) - Math.round(this.clientHeight);
     },
     'maxLengthWidth': function(this: IVueControl): number {
-        return parseInt(this.lengthWidth);
+        return Math.round(this.lengthWidth);
     },
     'maxLengthHeight': function(this: IVueControl): number {
-        return parseInt(this.lengthHeight);
+        return Math.round(this.lengthHeight);
     },
-    'widthPx': function(this: IVue): string | undefined {
+    'widthPx': function(this: IVueControl): string | undefined {
         if (this.width !== undefined) {
             return this.width + 'px';
         }
@@ -103,7 +106,7 @@ export let computed = {
             return parent?.direction ? (parent.direction === 'v' ? undefined : '0') : undefined;
         }
     },
-    'heightPx': function(this: IVue): string | undefined {
+    'heightPx': function(this: IVueControl): string | undefined {
         if (this.height !== undefined) {
             return this.height + 'px';
         }
@@ -118,28 +121,18 @@ export let computed = {
 };
 
 export let methods = {
-    wheel: function(this: IVue, e: WheelEvent): void {
+    wheel: function(this: IVueControl, e: WheelEvent): void {
         // --- 用来屏蔽不小心触发前进、后退的浏览器事件 ---
         e.preventDefault();
         this.stopAnimation();
 
         if (this.direction === 'v') {
-            if (this.lengthWidth <= this.clientWidth) {
-                this.scrollTopData += Math.round(e.deltaY === 0 ? e.deltaX : e.deltaY);
-            }
-            else {
-                this.scrollTopData += e.deltaY;
-                this.scrollLeftData += e.deltaX;
-            }
+            this.scrollTopData += e.deltaY;
+            this.scrollLeftData += e.deltaX;
         }
         else {
-            if (this.lengthHeight <= this.clientHeight) {
-                this.scrollLeftData += Math.round(e.deltaX === 0 ? e.deltaY : e.deltaX);
-            }
-            else {
-                this.scrollTopData += e.deltaY;
-                this.scrollLeftData += e.deltaX;
-            }
+            this.scrollTopData += e.deltaY;
+            this.scrollLeftData += e.deltaX;
         }
         this.refreshView();
     },
@@ -147,13 +140,13 @@ export let methods = {
         if (e instanceof MouseEvent && clickgo.hasTouch) {
             return;
         }
+        this.stopAnimation();
 
         let wrapSize = clickgo.dom.getSize(this.$refs.wrap);
         let top = wrapSize.top + wrapSize.border.top + wrapSize.padding.top;
         let right = wrapSize.right - wrapSize.border.right - wrapSize.padding.right;
         let bottom = wrapSize.bottom - wrapSize.border.bottom - wrapSize.padding.bottom;
         let left = wrapSize.left + wrapSize.border.left + wrapSize.padding.left;
-        this.stopAnimation();
 
         /** --- 内容超出像素 --- */
         let overWidth = this.lengthWidth - this.clientWidth;
@@ -203,6 +196,7 @@ export let methods = {
                     }
                 }
                 if (topTime === 0) {
+                    // --- 无需缓动 ---
                     this.scrollLeftData = Math.round(this.scrollLeftData);
                     if (this.scrollLeftData > this.maxScrollLeft) {
                         this.scrollLeftData = this.maxScrollLeft;
@@ -407,7 +401,7 @@ export let methods = {
         this.cgDown();
     },
     // --- 重置视图 scroll ---
-    'refreshView': function(this: IVue): void {
+    'refreshView': function(this: IVueControl): void {
         if (this.scrollLeftData > this.maxScrollLeft) {
             this.scrollLeftData = this.maxScrollLeft;
         }
@@ -457,19 +451,20 @@ export let methods = {
         this.refreshView();
     },
     // --- 如果当前正在运行动画，则终止他 ---
-    stopAnimation: function(this: IVue): void {
+    stopAnimation: function(this: IVueControl): void {
         if (this.timer) {
             this.timer = false;
         }
     }
 };
 
-export let mounted = function(this: IVue): void {
+export let mounted = function(this: IVueControl): void {
     // --- 外部包裹的改变 ---
-    let size = clickgo.dom.watchSize(this.$refs.wrap, (size) => {
+    clickgo.dom.watchSize(this.$refs.wrap, (size) => {
         let clientWidth = size.innerWidth;
         let clientHeight = size.innerHeight;
         if (this.direction === 'v') {
+            // --- 垂直 ---
             if (clientWidth !== this.clientWidth) {
                 this.clientWidth = clientWidth;
                 this.$emit('resizen', Math.round(this.clientWidth));
@@ -481,6 +476,7 @@ export let mounted = function(this: IVue): void {
             this.$emit('resize', Math.round(this.clientHeight));
         }
         else {
+            // --- 水平 ---
             if (clientHeight !== this.clientHeight) {
                 this.clientHeight = clientHeight;
                 this.$emit('resizen', Math.round(this.clientHeight));
@@ -492,12 +488,10 @@ export let mounted = function(this: IVue): void {
             this.$emit('resize', Math.round(this.clientWidth));
         }
         this.refreshView();
-    });
-    this.client = this.direction === 'v' ? size.innerHeight : size.innerWidth;
-    this.$emit('resize', Math.round(this.client));
+    }, true);
 
     // --- 内部内容的改变 ---
-    size = clickgo.dom.watchSize(this.$refs.inner, (size) => {
+    clickgo.dom.watchSize(this.$refs.inner, (size) => {
         let lengthWidth = size.width;
         let lengthHeight = size.height;
         let change = false;
@@ -518,18 +512,10 @@ export let mounted = function(this: IVue): void {
         if (change) {
             this.refreshView();
         }
-    });
-    this.lengthWidth = Math.round(size.width);
-    this.lengthHeight = Math.round(size.height);
-    if (this.direction === 'h') {
-        this.$emit('change', Math.round(this.lengthWidth));
-    }
-    else {
-        this.$emit('change', Math.round(this.lengthHeight));
-    }
+    }, true);
 };
 
-export let unmounted = function(this: IVue): void {
+export let unmounted = function(this: IVueControl): void {
     if (this.timer) {
         this.timer = false;
     }

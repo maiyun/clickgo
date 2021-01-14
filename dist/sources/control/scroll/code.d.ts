@@ -42,29 +42,29 @@ export declare let data: {
 };
 export declare let watch: {
     length: {
-        handler: (this: IVue) => void;
+        handler: (this: IVueControl) => void;
     };
     client: {
-        handler: (this: IVue) => void;
+        handler: (this: IVueControl) => void;
     };
     scrollOffset: {
-        handler: (this: IVue) => void;
+        handler: (this: IVueControl) => void;
     };
 };
 export declare let computed: {
-    realSize: (this: IVue) => number;
-    size: (this: IVue) => number;
-    sizeOut: (this: IVue) => number;
-    barOutSize: (this: IVue) => number;
-    maxScroll: (this: IVue) => number;
-    widthPx: (this: IVue) => string | undefined;
-    heightPx: (this: IVue) => string | undefined;
+    realSize: (this: IVueControl) => number;
+    size: (this: IVueControl) => number;
+    sizeOut: (this: IVueControl) => number;
+    barOutSize: (this: IVueControl) => number;
+    maxScroll: (this: IVueControl) => number;
+    widthPx: (this: IVueControl) => string | undefined;
+    heightPx: (this: IVueControl) => string | undefined;
 };
 export declare let methods: {
-    down: (this: IVue, e: MouseEvent | TouchEvent) => void;
-    bardown: (this: IVue, e: MouseEvent | TouchEvent) => void;
-    longDown: (this: IVue, e: MouseEvent | TouchEvent, type: 'start' | 'end') => void;
-    resizePxOfScrollOffsetData: (this: IVue, scrollOffsetData: number) => void;
+    down: (this: IVueControl, e: MouseEvent | TouchEvent) => void;
+    bardown: (this: IVueControl, e: MouseEvent | TouchEvent) => void;
+    longDown: (this: IVueControl, e: MouseEvent | TouchEvent, type: 'start' | 'end') => void;
+    resizePxOfScrollOffsetData: (this: IVueControl, scrollOffsetData: number) => void;
 };
-export declare let mounted: (this: IVue) => void;
-export declare let unmounted: (this: IVue) => void;
+export declare let mounted: (this: IVueControl) => void;
+export declare let unmounted: (this: IVueControl) => void;

@@ -36,7 +36,7 @@ export let data = {
 };
 
 export let computed = {
-    'widthPx': function(this: IVue): string | undefined {
+    'widthPx': function(this: IVueControl): string | undefined {
         if (this.width !== undefined) {
             return this.width + 'px';
         }
@@ -44,7 +44,7 @@ export let computed = {
             return this.$parent?.direction ? (this.$parent.direction === 'v' ? undefined : '0') : undefined;
         }
     },
-    'heightPx': function(this: IVue): string | undefined {
+    'heightPx': function(this: IVueControl): string | undefined {
         if (this.height !== undefined) {
             return this.height + 'px';
         }
@@ -67,7 +67,7 @@ export let watch = {
 };
 
 export let methods = {
-    select: function(this: IVue, value?: string | number): void {
+    select: function(this: IVueControl, value?: string | number): void {
         // --- 检查 value 是否合法 ---
         if (value && this.data[value]) {
             this.$emit('update:modelValue', value);

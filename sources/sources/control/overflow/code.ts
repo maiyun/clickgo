@@ -33,7 +33,7 @@ export let data = {
 };
 
 export let computed = {
-    'widthPx': function(this: IVue): string | undefined {
+    'widthPx': function(this: IVueControl): string | undefined {
         if (this.width !== undefined) {
             return this.width + 'px';
         }
@@ -41,7 +41,7 @@ export let computed = {
             return this.$parent?.direction ? (this.$parent.direction === 'v' ? undefined : '0') : undefined;
         }
     },
-    'heightPx': function(this: IVue): string | undefined {
+    'heightPx': function(this: IVueControl): string | undefined {
         if (this.height !== undefined) {
             return this.height + 'px';
         }
@@ -53,7 +53,7 @@ export let computed = {
 
 export let watch = {
     'scrollOffset': {
-        handler: function(this: IVue): void {
+        handler: function(this: IVueControl): void {
             let so = parseInt(this.scrollOffset);
             if (so === this.scrollOffsetEmit) {
                 return;
@@ -69,7 +69,7 @@ export let watch = {
 };
 
 export let methods = {
-    scroll: function(this: IVue): void {
+    scroll: function(this: IVueControl): void {
         if (!this.$refs.wrap) {
             return;
         }
@@ -84,7 +84,7 @@ export let methods = {
         this.scrollOffsetEmit = scroll;
         this.$emit('update:scrollOffset', this.scrollOffsetEmit);
     },
-    wheel: function(this: IVue, e: WheelEvent): void {
+    wheel: function(this: IVueControl, e: WheelEvent): void {
         if (this.direction === 'v') {
             return;
         }
@@ -95,12 +95,12 @@ export let methods = {
         e.preventDefault();
         this.$refs.wrap.scrollLeft += e.deltaY;
     },
-    touchmove: function(this: IVue, e: TouchEvent): void {
+    touchmove: function(this: IVueControl, e: TouchEvent): void {
         e.stopPropagation();
     }
 };
 
-export let mounted = function(this: IVue): void {
+export let mounted = function(this: IVueControl): void {
     // --- 大小改变，会影响 scroll offset、client，不会影响 length ---
     clickgo.dom.watchSize(this.$refs.wrap, () => {
         let client = this.direction === 'v' ? this.$refs.wrap.clientHeight : this.$refs.wrap.clientWidth;

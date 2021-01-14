@@ -1,7 +1,7 @@
-.inner {
+.place {
     min-width: 100%; min-height: 100%; visibility: hidden;
 }
-.inner.h {
+.place.h {
     display: flex;
 }
 

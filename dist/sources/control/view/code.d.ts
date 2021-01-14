@@ -23,6 +23,9 @@ export declare let props: {
     padding: {
         default: undefined;
     };
+    adaptation: {
+        dafault: boolean;
+    };
     scrollLeft: {
         default: number;
     };
@@ -42,13 +45,13 @@ export declare let data: {
     timer: boolean;
 };
 export declare let watch: {
-    direction: (this: IVue) => void;
+    direction: (this: IVueControl) => void;
     scrollLeft: {
-        handler: (this: IVue) => void;
+        handler: (this: IVueControl) => void;
         immediate: boolean;
     };
     scrollTop: {
-        handler: (this: IVue) => void;
+        handler: (this: IVueControl) => void;
         immediate: boolean;
     };
 };
@@ -57,15 +60,15 @@ export declare let computed: {
     maxScrollTop: (this: IVueControl) => number;
     maxLengthWidth: (this: IVueControl) => number;
     maxLengthHeight: (this: IVueControl) => number;
-    widthPx: (this: IVue) => string | undefined;
-    heightPx: (this: IVue) => string | undefined;
+    widthPx: (this: IVueControl) => string | undefined;
+    heightPx: (this: IVueControl) => string | undefined;
 };
 export declare let methods: {
-    wheel: (this: IVue, e: WheelEvent) => void;
+    wheel: (this: IVueControl, e: WheelEvent) => void;
     down: (this: IVueControl, e: MouseEvent | TouchEvent) => void;
-    refreshView: (this: IVue) => void;
+    refreshView: (this: IVueControl) => void;
     goScroll: (this: IVueControl, scroll: number | string, pos: 'left' | 'top') => void;
-    stopAnimation: (this: IVue) => void;
+    stopAnimation: (this: IVueControl) => void;
 };
-export declare let mounted: (this: IVue) => void;
-export declare let unmounted: (this: IVue) => void;
+export declare let mounted: (this: IVueControl) => void;
+export declare let unmounted: (this: IVueControl) => void;

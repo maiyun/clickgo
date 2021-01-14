@@ -24,9 +24,7 @@ styleList.insertAdjacentHTML('beforeend', `<style class='cg-global'>
 .cg-form-list {z-index: 20020000;}
 .cg-pop-list {z-index: 20020001;}
 .cg-form-list img, .cg-pop-list img {vertical-align: bottom;}
-.cg-form-list ::selection {
-    background-color: rgba(0, 120, 215, .3);
-}
+.cg-form-list ::selection {background-color: rgba(0, 120, 215, .3);}
 .cg-form-list, .cg-pop-list {-webkit-user-select: none; user-select: none;}
 
 .cg-form-list *, .cg-pop-list *, .cg-form-list *::after, .cg-pop-list *::after, .cg-form-list *::before, .cg-pop-list *::before {box-sizing: border-box; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); flex-shrink: 0;}
@@ -186,7 +184,7 @@ export function getSize(el: HTMLElement): ICGDomSize {
  * @param el 要监视的大小
  * @param cb 回调函数
  */
-export function watchSize(el: HTMLElement, cb: (size: ICGDomSize) => void, immediate: boolean = false): ICGDomSize {
+export function watchSize(el: HTMLElement, cb: (size: ICGDomSize) => void, immediate: boolean = false): ICGDomWatchDom {
     let fsize = getSize(el);
     if (immediate) {
         cb(fsize);
@@ -196,10 +194,13 @@ export function watchSize(el: HTMLElement, cb: (size: ICGDomSize) => void, immed
         if (Number.isNaN(size.clientWidth)) {
             return;
         }
-        cb(getSize(el));
+        cb(size);
     });
     resizeObserver.observe(el);
-    return fsize;
+    return {
+        'observer': resizeObserver,
+        'size': fsize
+    };
 }
 
 /**
@@ -208,9 +209,9 @@ export function watchSize(el: HTMLElement, cb: (size: ICGDomSize) => void, immed
  * @param cb 回调
  * @param mode 监听模式
  */
-export function watchDom(el: HTMLElement, cb: () => void, mode: 'child' | 'childsub' | 'style' | 'default' | MutationObserverInit = 'default', immediate: boolean = false): MutationObserver {
+export function watchDom(el: HTMLElement, cb: (mutations: MutationRecord[], observer?: MutationObserver) => void, mode: 'child' | 'childsub' | 'style' | 'default' | MutationObserverInit = 'default', immediate: boolean = false): MutationObserver {
     if (immediate) {
-        cb();
+        cb([]);
     }
     let moi: MutationObserverInit;
     switch (mode) {
@@ -230,6 +231,7 @@ export function watchDom(el: HTMLElement, cb: () => void, mode: 'child' | 'child
         case 'style': {
             moi = {
                 'attributeFilter': ['style', 'class'],
+                'attributeOldValue': true,
                 'attributes': true
             };
             break;
@@ -237,6 +239,7 @@ export function watchDom(el: HTMLElement, cb: () => void, mode: 'child' | 'child
         case 'default': {
             moi = {
                 'attributeFilter': ['style', 'class'],
+                'attributeOldValue': true,
                 'attributes': true,
                 'characterData': true,
                 'childList': true,

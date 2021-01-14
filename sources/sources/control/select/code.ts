@@ -43,7 +43,7 @@ export let data = {
 
 export let watch = {
     'data': {
-        handler: function(this: IVue): void {
+        handler: function(this: IVueControl): void {
             if (this.dataComp[this.valueIndex]) {
                 return;
             }
@@ -57,7 +57,7 @@ export let watch = {
         'deep': true
     },
     'modelValue': {
-        handler: function(this: IVue): void {
+        handler: function(this: IVueControl): void {
             if (this.valueData === this.modelValue) {
                 return;
             }
@@ -123,24 +123,24 @@ function listToData(o: any, child: boolean = false): any[] {
     return data;
 }
 export let computed = {
-    'editableComp': function(this: IVue): boolean {
+    'editableComp': function(this: IVueControl): boolean {
         if (typeof this.editable === 'boolean') {
             return this.editable;
         }
         return this.editable === 'true' ? true : false;
     },
-    'dataComp': function(this: IVue): any {
+    'dataComp': function(this: IVueControl): any {
         return listToData(this.data);
     }
 };
 
 export let methods = {
-    updateValue: function(this: IVue, index: number): void {
+    updateValue: function(this: IVueControl, index: number): void {
         this.valueIndex = index;
         this.valueData = this.dataComp[index] ? this.dataComp[index].value : '';
         this.$emit('update:modelValue', this.valueData);
     },
-    tinput: function(this: IVue): void {
+    tinput: function(this: IVueControl): void {
         this.valueData = this.$refs.input.value;
         this.$emit('update:modelValue', this.valueData);
         for (let i = 0; i < this.dataComp.length; ++i) {
