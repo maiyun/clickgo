@@ -3,6 +3,7 @@ export declare function blob2ArrayBuffer(blob: Blob): Promise<ArrayBuffer>;
 export declare function blob2Text(blob: Blob): Promise<string>;
 export declare function clone(obj: Record<string, any> | any[]): any[] | any;
 export declare function sleep(ms?: number): Promise<void>;
+export declare function requestAnimationFrame(): Promise<void>;
 export declare function purify(text: string): string;
 export declare function isControlPkg(o: string | any): o is ICGControlPkg;
 export declare function isAppPkg(o: string | any): o is ICGAppPkg;

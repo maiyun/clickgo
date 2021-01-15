@@ -424,7 +424,7 @@ export let methods = {
             this.$emit('update:scrollLeft', this.scrollLeftEmit);
         }
         let stop = Math.round(this.scrollTopData);
-        if (this.scrollTopEmitt !== stop) {
+        if (this.scrollTopEmit !== stop) {
             this.scrollTopEmit = stop;
             this.$emit('update:scrollTop', this.scrollTopEmit);
         }

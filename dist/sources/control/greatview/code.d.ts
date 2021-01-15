@@ -47,14 +47,13 @@ export declare let data: {
     };
     dataHeight: never[];
     lineHeight: number;
-    scrollLeftData: number;
-    scrollTopData: number;
+    scrollLeftEmit: number;
+    scrollTopEmit: number;
     lengthWidth: number;
     lengthHeight: number;
     client: number;
     refreshCount: number;
     lengthInit: boolean;
-    initFirst: boolean;
 };
 export declare let watch: {
     data: {

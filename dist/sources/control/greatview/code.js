@@ -59,14 +59,13 @@ exports.data = {
     },
     'dataHeight': [],
     'lineHeight': 0,
-    'scrollLeftData': 0,
-    'scrollTopData': 0,
+    'scrollLeftEmit': 0,
+    'scrollTopEmit': 0,
     'lengthWidth': 0,
     'lengthHeight': 0,
     'client': 0,
     'refreshCount': 0,
-    'lengthInit': false,
-    'initFirst': false
+    'lengthInit': false
 };
 exports.watch = {
     'data': {
@@ -219,12 +218,23 @@ exports.methods = {
             lengthHeight += this.paddingComp.bottom;
             this.lengthWidth = lengthWidth;
             this.lengthHeight = lengthHeight;
-            this.lengthInit = true;
+            if (!this.lengthInit) {
+                this.lengthInit = true;
+                yield clickgo.tool.sleep(34);
+                if (this.scrollLeft) {
+                    this.scrollLeftEmit = this.scrollLeft;
+                    this.$refs.view.goScroll(this.scrollLeft, 'left');
+                }
+                if (this.scrollTop) {
+                    this.scrollTopEmit = this.scrollTop;
+                    this.$refs.view.goScroll(this.scrollTop, 'top');
+                }
+            }
             this.reShow();
         });
     },
     reShow: function () {
-        let scrollOffset = this.direction === 'v' ? this.scrollTopData : this.scrollLeftData;
+        let scrollOffset = this.direction === 'v' ? this.scrollTopEmit : this.scrollLeftEmit;
         if (!this.sameComp) {
             let overShow = false;
             for (let i = 0; i < this.dataComp.length; ++i) {
@@ -269,22 +279,12 @@ exports.methods = {
         if (!this.lengthInit) {
             return;
         }
-        if (!this.initFirst) {
-            this.initFirst = true;
-            if (this.scrollLeft) {
-                this.$refs.view.goScroll(this.scrollLeft, 'left');
-            }
-            if (this.scrollTop) {
-                this.$refs.view.goScroll(this.scrollTop, 'top');
-            }
-            return;
-        }
         if (pos === 'left') {
-            this.scrollLeftData = val;
+            this.scrollLeftEmit = val;
             this.$emit('update:scrollLeft', val);
         }
         else {
-            this.scrollTopData = val;
+            this.scrollTopEmit = val;
             this.$emit('update:scrollTop', val);
         }
         this.reShow();
@@ -292,6 +292,10 @@ exports.methods = {
     onResize: function (val) {
         this.client = val;
         this.$emit('resize', val);
+        if (!this.lengthInit) {
+            return;
+        }
+        this.reShow();
     }
 };
 exports.mounted = function () {

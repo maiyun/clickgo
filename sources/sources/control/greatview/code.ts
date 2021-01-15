@@ -52,15 +52,14 @@ export let data = {
     'dataHeight': [],
     'lineHeight': 0,
 
-    'scrollLeftData': 0,
-    'scrollTopData': 0,
+    'scrollLeftEmit': 0,
+    'scrollTopEmit': 0,
     'lengthWidth': 0,
     'lengthHeight': 0,
     'client': 0,
 
     'refreshCount': 0,
-    'lengthInit': false,
-    'initFirst': false
+    'lengthInit': false
 };
 
 export let watch = {
@@ -229,13 +228,25 @@ export let methods = {
         lengthHeight += this.paddingComp.bottom;
         this.lengthWidth = lengthWidth;
         this.lengthHeight = lengthHeight;
-        this.lengthInit = true;
-
+        if (!this.lengthInit) {
+            this.lengthInit = true;
+            // --- 延迟让 length 的变更生效，让 view 可以监测到并重置他的 lengthWidth 逻辑 ---
+            await clickgo.tool.sleep(34);
+            // --- length 计算完毕后初次进行上层设定值的传导 ---
+            if (this.scrollLeft) {
+                this.scrollLeftEmit = this.scrollLeft;
+                this.$refs.view.goScroll(this.scrollLeft, 'left');
+            }
+            if (this.scrollTop) {
+                this.scrollTopEmit = this.scrollTop;
+                this.$refs.view.goScroll(this.scrollTop, 'top');
+            }
+        }
         this.reShow();
     },
     // --- 控制显示和隐藏 ---
     reShow: function(this: IVueControl): void {
-        let scrollOffset = this.direction === 'v' ? this.scrollTopData : this.scrollLeftData;
+        let scrollOffset = this.direction === 'v' ? this.scrollTopEmit : this.scrollLeftEmit;
         if (!this.sameComp) {
             let overShow = false;
             for (let i = 0; i < this.dataComp.length; ++i) {
@@ -283,24 +294,12 @@ export let methods = {
             // --- length 还没初始化成功，不更新 scroll offset ---
             return;
         }
-        // --- 初始后必定再次触发 view 的 @update 事件，导致触发本方法 ---
-        if (!this.initFirst) {
-            // --- length 更新后首次执行，将 scroll offset 更改为用户设定值 ---
-            this.initFirst = true;
-            if (this.scrollLeft) {
-                this.$refs.view.goScroll(this.scrollLeft, 'left');
-            }
-            if (this.scrollTop) {
-                this.$refs.view.goScroll(this.scrollTop, 'top');
-            }
-            return;
-        }
         if (pos === 'left') {
-            this.scrollLeftData = val;
+            this.scrollLeftEmit = val;
             this.$emit('update:scrollLeft', val);
         }
         else {
-            this.scrollTopData = val;
+            this.scrollTopEmit = val;
             this.$emit('update:scrollTop', val);
         }
         this.reShow();
@@ -308,6 +307,10 @@ export let methods = {
     onResize: function(this: IVueControl, val: number): void {
         this.client = val;
         this.$emit('resize', val);
+        if (!this.lengthInit) {
+            return;
+        }
+        this.reShow();
     }
 };
 
