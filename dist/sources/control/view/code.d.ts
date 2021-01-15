@@ -40,8 +40,10 @@ export declare let data: {
     scrollTopEmit: number;
     clientWidth: number;
     clientHeight: number;
+    clientInit: boolean;
     lengthWidth: number;
     lengthHeight: number;
+    lengthInit: boolean;
     timer: boolean;
 };
 export declare let watch: {

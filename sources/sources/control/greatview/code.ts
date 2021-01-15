@@ -283,7 +283,7 @@ export let methods = {
             // --- length 还没初始化成功，不更新 scroll offset ---
             return;
         }
-        // --- 初始后必定再次触发 view 的 change 事件，导致触发本方法 ---
+        // --- 初始后必定再次触发 view 的 @update 事件，导致触发本方法 ---
         if (!this.initFirst) {
             // --- length 更新后首次执行，将 scroll offset 更改为用户设定值 ---
             this.initFirst = true;

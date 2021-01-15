@@ -52,8 +52,10 @@ exports.data = {
     'scrollTopEmit': 0,
     'clientWidth': 0,
     'clientHeight': 0,
+    'clientInit': false,
     'lengthWidth': 0,
     'lengthHeight': 0,
+    'lengthInit': false,
     'timer': false
 };
 exports.watch = {
@@ -150,9 +152,9 @@ exports.methods = {
         let overHeight = this.lengthHeight - this.clientHeight;
         clickgo.dom.bindMove(e, {
             'object': this.$refs.inner,
-            'left': left - (overWidth < 0 ? 0 : overWidth),
+            'left': left - overWidth,
             'right': right + overWidth,
-            'top': top - (overHeight < 0 ? 0 : overHeight),
+            'top': top - overHeight,
             'bottom': bottom + overHeight,
             'move': (ox, oy) => {
                 this.scrollLeftData -= ox;
@@ -282,11 +284,9 @@ exports.methods = {
                         requestAnimationFrame(animation);
                     }
                     else {
-                        this.scrollLeftData = Math.round(this.scrollLeftData);
                         if (this.scrollLeftData > this.maxScrollLeft) {
                             this.scrollLeftData = this.maxScrollLeft;
                         }
-                        this.scrollTopData = Math.round(this.scrollTopData);
                         if (this.scrollTopData > this.maxScrollTop) {
                             this.scrollTopData = this.maxScrollTop;
                         }
@@ -298,6 +298,9 @@ exports.methods = {
         this.cgDown();
     },
     'refreshView': function () {
+        if (!this.lengthInit || !this.clientInit) {
+            return;
+        }
         if (this.scrollLeftData > this.maxScrollLeft) {
             this.scrollLeftData = this.maxScrollLeft;
         }
@@ -310,12 +313,14 @@ exports.methods = {
         else if (this.scrollTopData < 0) {
             this.scrollTopData = 0;
         }
-        if (this.scrollLeftEmit !== Math.round(this.scrollLeftData)) {
-            this.scrollLeftEmit = Math.round(this.scrollLeftData);
+        let sleft = Math.round(this.scrollLeftData);
+        if (this.scrollLeftEmit !== sleft) {
+            this.scrollLeftEmit = sleft;
             this.$emit('update:scrollLeft', this.scrollLeftEmit);
         }
-        if (this.scrollTopEmitt !== Math.round(this.scrollTopData)) {
-            this.scrollTopEmit = Math.round(this.scrollTopData);
+        let stop = Math.round(this.scrollTopData);
+        if (this.scrollTopEmitt !== stop) {
+            this.scrollTopEmit = stop;
             this.$emit('update:scrollTop', this.scrollTopEmit);
         }
     },
@@ -376,29 +381,30 @@ exports.mounted = function () {
             this.clientWidth = clientWidth;
             this.$emit('resize', Math.round(this.clientWidth));
         }
+        if (!this.clientInit) {
+            this.clientInit = true;
+        }
         this.refreshView();
     }, true);
     clickgo.dom.watchSize(this.$refs.inner, (size) => {
         let lengthWidth = size.width;
         let lengthHeight = size.height;
-        let change = false;
         if (lengthWidth !== this.lengthWidth) {
             this.lengthWidth = lengthWidth;
-            change = true;
             if (this.direction === 'h') {
                 this.$emit('change', Math.round(this.lengthWidth));
             }
         }
         if (lengthHeight !== this.lengthHeight) {
             this.lengthHeight = lengthHeight;
-            change = true;
             if (this.direction === 'v') {
                 this.$emit('change', Math.round(this.lengthHeight));
             }
         }
-        if (change) {
-            this.refreshView();
+        if (!this.lengthInit) {
+            this.lengthInit = true;
         }
+        this.refreshView();
     }, true);
 };
 exports.unmounted = function () {

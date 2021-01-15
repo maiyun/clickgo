@@ -1,6 +1,6 @@
 <form width="400" min-width="300" height="400" min-height="400" title="View Test" padding="10">
     <tab flex="1">
-        <tab-panel label="normal" style="padding: 10px;">
+        <tab-panel label="normal" name="normal" style="padding: 10px;">
             <layout flex="1" gutter="10" direction="v">
                 <layout flex="1" gutter="10">
                     <view v-model:scroll-left="soLeft" v-model:scroll-top="soTop" style="border: 1px solid rgba(0, 0, 0, .1);" flex="1" @resize="c = $event" @change="l = $event" :style="{'line-height': style ? '1.5' : undefined}" :padding="style ? '10' : undefined">

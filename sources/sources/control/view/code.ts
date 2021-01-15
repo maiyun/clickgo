@@ -43,9 +43,11 @@ export let data = {
 
     'clientWidth': 0,
     'clientHeight': 0,
+    'clientInit': false,
 
     'lengthWidth': 0,
     'lengthHeight': 0,
+    'lengthInit': false,
 
     // --- 惯性 ---
     'timer': false
@@ -154,9 +156,9 @@ export let methods = {
         clickgo.dom.bindMove(e, {
             // 'showRect': true,
             'object': this.$refs.inner,
-            'left': left - (overWidth < 0 ? 0 : overWidth),
+            'left': left - overWidth,
             'right': right + overWidth,
-            'top': top - (overHeight < 0 ? 0 : overHeight),
+            'top': top - overHeight,
             'bottom': bottom + overHeight,
             'move': (ox, oy) => {
                 this.scrollLeftData -= ox;
@@ -180,7 +182,7 @@ export let methods = {
                 }
             },
             'end': async (moveTimes) => {
-                // --- 获取 200 毫秒内的偏移 ---
+                // --- 获取 100 毫秒内的偏移 ---
                 let moveLeftPos = 0;
                 let moveTopPos = 0;
                 let topTime = 0;
@@ -298,11 +300,9 @@ export let methods = {
                         requestAnimationFrame(animation);
                     }
                     else {
-                        this.scrollLeftData = Math.round(this.scrollLeftData);
                         if (this.scrollLeftData > this.maxScrollLeft) {
                             this.scrollLeftData = this.maxScrollLeft;
                         }
-                        this.scrollTopData = Math.round(this.scrollTopData);
                         if (this.scrollTopData > this.maxScrollTop) {
                             this.scrollTopData = this.maxScrollTop;
                         }
@@ -402,6 +402,9 @@ export let methods = {
     },
     // --- 重置视图 scroll ---
     'refreshView': function(this: IVueControl): void {
+        if (!this.lengthInit || !this.clientInit) {
+            return;
+        }
         if (this.scrollLeftData > this.maxScrollLeft) {
             this.scrollLeftData = this.maxScrollLeft;
         }
@@ -415,16 +418,18 @@ export let methods = {
             this.scrollTopData = 0;
         }
 
-        if (this.scrollLeftEmit !== Math.round(this.scrollLeftData)) {
-            this.scrollLeftEmit = Math.round(this.scrollLeftData);
+        let sleft = Math.round(this.scrollLeftData);
+        if (this.scrollLeftEmit !== sleft) {
+            this.scrollLeftEmit = sleft;
             this.$emit('update:scrollLeft', this.scrollLeftEmit);
         }
-        if (this.scrollTopEmitt !== Math.round(this.scrollTopData)) {
-            this.scrollTopEmit = Math.round(this.scrollTopData);
+        let stop = Math.round(this.scrollTopData);
+        if (this.scrollTopEmitt !== stop) {
+            this.scrollTopEmit = stop;
             this.$emit('update:scrollTop', this.scrollTopEmit);
         }
     },
-    // --- 设定滚动位置 ---
+    // --- 设定滚动位置，但不执行任何 emit 方法，仅仅应用位置，位置既为上级传来来的合理值 ---
     'goScroll': function(this: IVueControl, scroll: number | string, pos: 'left' | 'top'): void {
         scroll = typeof scroll === 'number' ? scroll : parseInt(scroll);
         if (pos === 'left') {
@@ -487,6 +492,9 @@ export let mounted = function(this: IVueControl): void {
             this.clientWidth = clientWidth;
             this.$emit('resize', Math.round(this.clientWidth));
         }
+        if (!this.clientInit) {
+            this.clientInit = true;
+        }
         this.refreshView();
     }, true);
 
@@ -494,24 +502,22 @@ export let mounted = function(this: IVueControl): void {
     clickgo.dom.watchSize(this.$refs.inner, (size) => {
         let lengthWidth = size.width;
         let lengthHeight = size.height;
-        let change = false;
         if (lengthWidth !== this.lengthWidth) {
             this.lengthWidth = lengthWidth;
-            change = true;
             if (this.direction === 'h') {
                 this.$emit('change', Math.round(this.lengthWidth));
             }
         }
         if (lengthHeight !== this.lengthHeight) {
             this.lengthHeight = lengthHeight;
-            change = true;
             if (this.direction === 'v') {
                 this.$emit('change', Math.round(this.lengthHeight));
             }
         }
-        if (change) {
-            this.refreshView();
+        if (!this.lengthInit) {
+            this.lengthInit = true;
         }
+        this.refreshView();
     }, true);
 };
 
