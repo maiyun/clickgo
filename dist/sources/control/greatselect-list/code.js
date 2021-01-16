@@ -20,6 +20,9 @@ exports.props = {
     'flex': {
         'default': ''
     },
+    'adaptation': {
+        'dafault': false
+    },
     'same': {
         'default': false
     },

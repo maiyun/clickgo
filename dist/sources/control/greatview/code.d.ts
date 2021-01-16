@@ -23,6 +23,9 @@ export declare let props: {
     padding: {
         default: undefined;
     };
+    adaptation: {
+        dafault: boolean;
+    };
     scrollLeft: {
         default: undefined;
     };
@@ -54,6 +57,7 @@ export declare let data: {
     client: number;
     refreshCount: number;
     lengthInit: boolean;
+    cgNest: boolean;
 };
 export declare let watch: {
     data: {

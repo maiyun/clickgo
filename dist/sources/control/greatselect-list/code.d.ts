@@ -17,6 +17,9 @@ export declare let props: {
     flex: {
         default: string;
     };
+    adaptation: {
+        dafault: boolean;
+    };
     same: {
         default: boolean;
     };

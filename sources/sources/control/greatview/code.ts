@@ -24,6 +24,9 @@ export let props = {
         'default': undefined
     },
 
+    'adaptation': {
+        'dafault': false
+    },
     'scrollLeft': {
         'default': undefined
     },
@@ -59,7 +62,9 @@ export let data = {
     'client': 0,
 
     'refreshCount': 0,
-    'lengthInit': false
+    'lengthInit': false,
+
+    'cgNest': true
 };
 
 export let watch = {

@@ -39,7 +39,7 @@ export let computed = {
             return this.width + 'px';
         }
         if (this.flex !== '') {
-            let dir = this.$parent?.$data._controlName === 'select' ? this.$parent.$parent?.direction : this.$parent?.direction;
+            let dir = this.$parent?.$data.controlName === 'select' ? this.$parent.$parent?.direction : this.$parent?.direction;
             return dir ? (dir === 'v' ? undefined : '0') : undefined;
         }
     },
@@ -48,7 +48,7 @@ export let computed = {
             return this.height + 'px';
         }
         if (this.flex !== '') {
-            let dir = this.$parent?.$data._controlName === 'select' ? this.$parent.$parent?.direction : this.$parent?.direction;
+            let dir = this.$parent?.$data.controlName === 'select' ? this.$parent.$parent?.direction : this.$parent?.direction;
             return dir.direction ? (dir.direction === 'v' ? '0' : undefined) : undefined;
         }
     }

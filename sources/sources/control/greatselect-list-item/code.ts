@@ -55,7 +55,7 @@ export let methods = {
             // --- 本来就是展开状态，不做处理 ---
             return;
         }
-        if (!this.$parent?.$parent?.$parent || this.$parent.$parent.$parent.$data._controlName !== 'greatselect-list') {
+        if (!this.$parent?.$parent?.$parent || this.$parent.$parent.$parent.$data.controlName !== 'greatselect-list') {
             return;
         }
         // --- 判断别的 item 是否有展开（parent 分别是 view、greatview、greatselect-list） ---

@@ -101,11 +101,8 @@ export let computed = {
             return this.width + 'px';
         }
         if (this.flex !== '') {
-            let parent = this.$parent;
-            if (parent?.$data._controlName === 'greatview') {
-                parent = parent.$parent;
-            }
-            return parent?.direction ? (parent.direction === 'v' ? undefined : '0') : undefined;
+            let dir = this.cgParentDirection();
+            return dir ? (dir === 'v' ? undefined : '0') : undefined;
         }
     },
     'heightPx': function(this: IVueControl): string | undefined {
@@ -113,11 +110,8 @@ export let computed = {
             return this.height + 'px';
         }
         if (this.flex !== '') {
-            let parent = this.$parent;
-            if (parent?.$data._controlName === 'greatview') {
-                parent = parent.$parent;
-            }
-            return parent?.direction ? (parent.direction === 'v' ? '0' : undefined) : undefined;
+            let dir = this.cgParentDirection();
+            return dir ? (dir === 'v' ? '0' : undefined) : undefined;
         }
     }
 };
@@ -188,7 +182,7 @@ export let methods = {
                 let topTime = 0;
                 let nowDate = Date.now();
                 for (let item of moveTimes) {
-                    if (nowDate - item.time > 100) {
+                    if (nowDate - item.time > 150) {
                         continue;
                     }
                     moveLeftPos += item.ox;

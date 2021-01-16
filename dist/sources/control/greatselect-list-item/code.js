@@ -52,7 +52,7 @@ exports.methods = {
         if (this.popOpen) {
             return;
         }
-        if (!((_b = (_a = this.$parent) === null || _a === void 0 ? void 0 : _a.$parent) === null || _b === void 0 ? void 0 : _b.$parent) || this.$parent.$parent.$parent.$data._controlName !== 'greatselect-list') {
+        if (!((_b = (_a = this.$parent) === null || _a === void 0 ? void 0 : _a.$parent) === null || _b === void 0 ? void 0 : _b.$parent) || this.$parent.$parent.$parent.$data.controlName !== 'greatselect-list') {
             return;
         }
         if (this.$parent.$parent.$parent.itemPopShowing) {

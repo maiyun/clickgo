@@ -18,6 +18,9 @@ export let props = {
         'default': ''
     },
 
+    'adaptation': {
+        'dafault': false
+    },
     'same': {
         'default': false
     },

@@ -603,9 +603,12 @@ export async function create(taskId: number, opt: ICGCreateFormOptions): Promise
             // --- 组成 data ---
             data.taskId = taskId;
             data.formId = formId;
+            data.controlName = name;
             data._path = opt.file ?? opt.path ?? '/';
             data._scope = rand;
-            data._controlName = name;
+            if (data.cgNest === undefined) {
+                data.cgNest = false;
+            }
             // --- 预设 methods ---
             methods.cgStopPropagation = function(this: IVueControl, e: MouseEvent | TouchEvent) {
                 if (e instanceof MouseEvent && clickgo.hasTouch) {
@@ -656,7 +659,7 @@ export async function create(taskId: number, opt: ICGCreateFormOptions): Promise
                 if (cla.startsWith('cg-')) {
                     return cla;
                 }
-                return `cg-theme-task${this.taskId}-${this.$data._controlName}_${cla} ${this.$data._scope}${cla}`;
+                return `cg-theme-task${this.taskId}-${this.$data.controlName}_${cla} ${this.$data._scope}${cla}`;
             };
             // --- 获取目前现存的子 slots ---
             methods.cgSlos = function(this: IVueControl, name: string = 'default'): IVueVNode[] {
@@ -677,6 +680,20 @@ export async function create(taskId: number, opt: ICGCreateFormOptions): Promise
                     }
                 }
                 return slots;
+            };
+            // --- 获取上级的 direction ---
+            methods.cgParentDirection = function(this: IVueControl): string | undefined {
+                let parent = this.$parent;
+                while (true) {
+                    if (!parent) {
+                        return undefined;
+                    }
+                    if (parent.cgNest) {
+                        parent = parent.$parent;
+                        continue;
+                    }
+                    return parent.direction;
+                }
             };
             // --- 组成 component ---
             components['cg-' + name] = {

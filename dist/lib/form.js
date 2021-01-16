@@ -494,9 +494,12 @@ function create(taskId, opt) {
                 };
                 data.taskId = taskId;
                 data.formId = formId;
+                data.controlName = name;
                 data._path = (_c = (_b = opt.file) !== null && _b !== void 0 ? _b : opt.path) !== null && _c !== void 0 ? _c : '/';
                 data._scope = rand;
-                data._controlName = name;
+                if (data.cgNest === undefined) {
+                    data.cgNest = false;
+                }
                 methods.cgStopPropagation = function (e) {
                     if (e instanceof MouseEvent && clickgo.hasTouch) {
                         return;
@@ -548,7 +551,7 @@ function create(taskId, opt) {
                     if (cla.startsWith('cg-')) {
                         return cla;
                     }
-                    return `cg-theme-task${this.taskId}-${this.$data._controlName}_${cla} ${this.$data._scope}${cla}`;
+                    return `cg-theme-task${this.taskId}-${this.$data.controlName}_${cla} ${this.$data._scope}${cla}`;
                 };
                 methods.cgSlos = function (name = 'default') {
                     let d = this.$slots[name];
@@ -568,6 +571,19 @@ function create(taskId, opt) {
                         }
                     }
                     return slots;
+                };
+                methods.cgParentDirection = function () {
+                    let parent = this.$parent;
+                    while (true) {
+                        if (!parent) {
+                            return undefined;
+                        }
+                        if (parent.cgNest) {
+                            parent = parent.$parent;
+                            continue;
+                        }
+                        return parent.direction;
+                    }
                 };
                 components['cg-' + name] = {
                     'template': layout,

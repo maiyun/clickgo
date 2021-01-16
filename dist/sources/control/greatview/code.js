@@ -35,6 +35,9 @@ exports.props = {
     'padding': {
         'default': undefined
     },
+    'adaptation': {
+        'dafault': false
+    },
     'scrollLeft': {
         'default': undefined
     },
@@ -65,7 +68,8 @@ exports.data = {
     'lengthHeight': 0,
     'client': 0,
     'refreshCount': 0,
-    'lengthInit': false
+    'lengthInit': false,
+    'cgNest': true
 };
 exports.watch = {
     'data': {

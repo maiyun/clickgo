@@ -40,7 +40,7 @@ exports.computed = {
             return this.width + 'px';
         }
         if (this.flex !== '') {
-            let dir = ((_a = this.$parent) === null || _a === void 0 ? void 0 : _a.$data._controlName) === 'select' ? (_b = this.$parent.$parent) === null || _b === void 0 ? void 0 : _b.direction : (_c = this.$parent) === null || _c === void 0 ? void 0 : _c.direction;
+            let dir = ((_a = this.$parent) === null || _a === void 0 ? void 0 : _a.$data.controlName) === 'select' ? (_b = this.$parent.$parent) === null || _b === void 0 ? void 0 : _b.direction : (_c = this.$parent) === null || _c === void 0 ? void 0 : _c.direction;
             return dir ? (dir === 'v' ? undefined : '0') : undefined;
         }
     },
@@ -50,7 +50,7 @@ exports.computed = {
             return this.height + 'px';
         }
         if (this.flex !== '') {
-            let dir = ((_a = this.$parent) === null || _a === void 0 ? void 0 : _a.$data._controlName) === 'select' ? (_b = this.$parent.$parent) === null || _b === void 0 ? void 0 : _b.direction : (_c = this.$parent) === null || _c === void 0 ? void 0 : _c.direction;
+            let dir = ((_a = this.$parent) === null || _a === void 0 ? void 0 : _a.$data.controlName) === 'select' ? (_b = this.$parent.$parent) === null || _b === void 0 ? void 0 : _b.direction : (_c = this.$parent) === null || _c === void 0 ? void 0 : _c.direction;
             return dir.direction ? (dir.direction === 'v' ? '0' : undefined) : undefined;
         }
     }
