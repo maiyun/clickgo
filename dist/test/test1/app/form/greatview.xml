@@ -86,7 +86,7 @@
                             </block>
                         </layout>
                         <template v-slot:pop>
-                            <greatselect-list v-model="select" :data="slist" :adaptation="true" v-slot="data">
+                            <greatselect-list v-model="select" :data="slist" v-slot="data">
                                 <greatselect-list-item v-if="data.row.type===0" :disabled="data.row.disabled" :value="data.index">
                                     <layout flex="1" align-v="center" gutter="5" style="line-height: 1.2;">
                                         <img width="32" height="32" :src="data.row.src"></img>
