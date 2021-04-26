@@ -1,11 +1,12 @@
 interface ICGCoreLib {
     'clickgoFiles': Record<string, Blob>;
     'globalEvents': ICGGlobalEvents;
-    trigger(name: TCGGlobalEvent, taskId?: number, formId?: number, opt?: {
-        'title'?: string;
-        'state'?: boolean;
-        'icon'?: string;
-    }): void;
+    trigger(name: 'screenResize'): void;
+    trigger(name: 'formCreated' | 'formRemoved', taskId: number, formId: number, title: string, icon: string): void;
+    trigger(name: 'formTitleChanged' | 'formIconChanged', taskId: number, formId: number, text: string): void;
+    trigger(name: 'formStateMinChanged' | 'formStateMaxChanged' | 'formShowChanged', taskId: number, formId: number, state: boolean): void;
+    trigger(name: 'formFocused' | 'formBlurred' | 'formFlash', taskId: number, formId: number): void;
+    trigger(name: 'taskStarted' | 'taskEnded', taskId: number): void;
     fetchClickGoFile(path: string): Promise<null | Blob>;
     readApp(blob: Blob): Promise<false | ICGAppPkg>;
     fetchApp(url: string): Promise<null | ICGAppPkg>;
@@ -20,15 +21,17 @@ interface ICGGlobalEvents {
     /** --- 窗体被创建后触发 --- */
     formCreatedHandler: null | ((taskId: number, formId: number, title: string, icon: string) => void | Promise<void>);
     /** --- 窗体被移除后触发 --- */
-    formRemovedHandler: null | ((taskId: number, formId: number, title: string, icno: string) => void | Promise<void>);
+    formRemovedHandler: null | ((taskId: number, formId: number, title: string, icon: string) => void | Promise<void>);
     /** --- 窗体标题被改变后触发 --- */
-    formTitleChangedHandler: null | ((taskId: number, formId: number, title: string) => void | Promise<void>);
+    formTitleChangedHandler: null | ((taskId: number, formId: number, text: string) => void | Promise<void>);
     /** --- 窗体图标被改变后触发 --- */
-    formIconChangedHandler: null | ((taskId: number, formId: number, icon: string) => void | Promise<void>);
+    formIconChangedHandler: null | ((taskId: number, formId: number, text: string) => void | Promise<void>);
     /** --- 窗体最小化状态改变后触发 --- */
     formStateMinChangedHandler: null | ((taskId: number, formId: number, state: boolean) => void | Promise<void>);
     /** --- 窗体最大化状态改变后触发 --- */
     formStateMaxChangedHandler: null | ((taskId: number, formId: number, state: boolean) => void | Promise<void>);
+    /** --- 窗体显示状态改变后触发 */
+    formShowChangedHandler: null | ((taskId: number, formId: number, state: boolean) => void | Promise<void>);
     /** --- 窗体获得焦点后触发 --- */
     formFocusedHandler: null | ((taskId: number, formId: number) => void | Promise<void>);
     /** --- 窗体丢失焦点后触发 --- */
@@ -42,7 +45,7 @@ interface ICGGlobalEvents {
 }
 
 /** --- 全局事件类型 --- */
-type TCGGlobalEvent = 'screenResize' | 'formCreated' | 'formRemoved' | 'formTitleChanged' | 'formIconChanged' | 'formStateMinChanged' | 'formStateMaxChanged' | 'formFocused' | 'formBlurred' | 'formFlash' | 'taskStarted' | 'taskEnded';
+type TCGGlobalEvent = 'screenResize' | 'formCreated' | 'formRemoved' | 'formTitleChanged' | 'formIconChanged' | 'formStateMinChanged' | 'formStateMaxChanged' | 'formShowChanged' | 'formFocused' | 'formBlurred' | 'formFlash' | 'taskStarted' | 'taskEnded';
 
 /** --- 应用文件包 --- */
 interface ICGAppPkg {

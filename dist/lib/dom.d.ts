@@ -14,6 +14,10 @@ export declare function bindDown(oe: MouseEvent | TouchEvent, opt: {
     'up'?: (e: MouseEvent | TouchEvent) => void;
     'end'?: (e: MouseEvent | TouchEvent) => void;
 }): void;
+export declare function bindLong(e: MouseEvent | TouchEvent, long: (e: MouseEvent | TouchEvent) => void): void;
+export declare let is: {
+    move: boolean;
+};
 export declare function bindMove(e: MouseEvent | TouchEvent, opt: {
     'areaObject'?: HTMLElement | IVue;
     'left'?: number;

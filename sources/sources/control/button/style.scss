@@ -1,0 +1,160 @@
+.wrap {
+    display: flex; align-items: center; justify-content: center; outline: none; position: relative;
+    &::before {
+        content: ''; pointer-events: none; position: absolute; left: 0; top: 0; width: 200%; height: 200%; transform-origin: 0 0; transform: scale(.5);
+    }
+    &::after {
+        content: ''; pointer-events: none; position: absolute; left: 2px; top: 2px; width: calc(200% - 8px); height: calc(200% - 8px); transform-origin: 0 0; transform: scale(.5); display: none;
+    }
+    &:focus::after {
+        display: block;
+    }
+
+    // --- not plain ---
+    &:not(.plain) {
+        // --- default ---
+        &.default {
+            &::after {
+                border: dotted 1px hsl(205, 0%, 10%);
+            }
+            &:not(.cg-disabled) {
+                background: hsl(205, 0%, 90%);
+                &::before {
+                    border: solid 1px hsl(205, 0%, 70%);
+                }
+                &:focus {
+                    &::before {
+                        border: solid 2px hsl(205, 100%, 40%);
+                    }
+                }
+                &.hover {
+                    background: hsl(205, 100%, 95%);
+                    &::before {
+                        border: solid 1px hsl(205, 100%, 50%);
+                    }
+                }
+                &.active {
+                    background: hsl(205, 100%, 90%);
+                    &::before {
+                        border: solid 1px hsl(205, 100%, 30%);
+                    }
+                }
+            }
+            &.cg-disabled {
+                background: hsl(205, 0%, 80%);
+                color: hsl(205, 0%, 50%);
+                &::before {
+                    border: solid 1px hsl(205, 0%, 60%);
+                }
+            }
+        }
+        // --- not default ---
+        &.primary {
+            background: #07c160;
+        }
+        &.info {
+            background: #1989fa;
+        }
+        &.warning {
+            background: #ff976a;
+        }
+        &.danger {
+            background: #ee0a24;
+        }
+        &:not(.default) {
+            color: #FFF;
+            &::after {
+                border: dotted 1px hsl(0, 0%, 100%);
+            }
+            &:not(.cg-disabled) {
+                &.hover, &:focus {
+                    filter: brightness(1.1);
+                }
+                &.active {
+                    filter: brightness(.9);
+                }
+            }
+            &.cg-disabled {
+                filter: grayscale(1);
+            }
+        }
+    }
+    // --- plain ---
+    &.plain {
+        background: #FFF;
+        &::after {
+            border: dotted 1px hsl(0, 0%, 50%);
+        }
+        // --- default ---
+        &.default {
+            &::before {
+                border: solid 1px hsl(205, 0%, 70%);
+            }
+            &:not(.cg-disabled) {
+                &:focus {
+                    color: hsl(205, 100%, 40%);
+                    &::before {
+                        border: solid 1px hsl(205, 100%, 40%);
+                    }
+                }
+                &.hover {
+                    color: hsl(205, 100%, 50%);
+                    &::before {
+                        border: solid 1px hsl(205, 100%, 50%);
+                    }
+                }
+                &.active {
+                    filter: brightness(.9);
+                    color: hsl(205, 100%, 50%);
+                    &::before {
+                        border: solid 1px hsl(205, 100%, 50%);
+                    }
+                }
+            }
+            &.cg-disabled {
+                background: hsl(0, 0%, 90%);
+                color: hsl(205, 0%, 50%);
+            }
+        }
+        // --- not default ---
+        &.primary {
+            color: #07c160;
+            &::before {
+                border: solid 1px #07c160;
+            }
+        }
+        &.info {
+            color: #1989fa;
+            &::before {
+                border: solid 1px #1989fa;
+            }
+        }
+        &.warning {
+            color: #ff976a;
+            &::before {
+                border: solid 1px #ff976a;
+            }
+        }
+        &.danger {
+            color: #ee0a24;
+            &::before {
+                border: solid 1px #ee0a24;
+            }
+        }
+        &:not(.default) {
+            &:not(.cg-disabled) {
+                &:focus, &.hover {
+                    filter: brightness(1.1);
+                }
+                &.active {
+                    filter: brightness(.9);
+                }
+            }
+            // --- disabled ---
+            &.cg-disabled {
+                background: hsl(0, 0%, 90%);
+                filter: grayscale(1);
+            }
+        }
+    }
+}

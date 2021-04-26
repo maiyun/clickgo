@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.watch = exports.data = exports.props = void 0;
+exports.watch = exports.computed = exports.data = exports.props = void 0;
 exports.props = {
     'width': {
         'default': undefined
@@ -28,10 +28,26 @@ exports.props = {
     },
     'src': {
         'default': ''
+    },
+    'mode': {
+        'default': 'default'
     }
 };
 exports.data = {
     'iconData': ''
+};
+exports.computed = {
+    'backgroundSize': function () {
+        if (this.mode === 'default') {
+            if ((this.width !== undefined) && (this.height !== undefined)) {
+                return this.width + 'px ' + this.height + 'px';
+            }
+            return undefined;
+        }
+        else {
+            return this.mode;
+        }
+    }
 };
 exports.watch = {
     'src': {
@@ -41,12 +57,12 @@ exports.watch = {
                     this.iconData = undefined;
                     return;
                 }
-                let pre = this.src.slice(0, 5).toLowerCase();
-                if (pre === 'http:') {
-                    this.iconData = this.src;
+                let pre = this.src.slice(0, 6).toLowerCase();
+                if (pre === 'http:/' || pre === 'https:' || pre === 'data:i') {
+                    this.iconData = 'url(' + this.src + ')';
                     return;
                 }
-                let t = yield this.cgGetDataUrl(this.src);
+                let t = this.cgGetObjectUrl(this.src);
                 if (t) {
                     this.iconData = 'url(' + t + ')';
                     return;

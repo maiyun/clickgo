@@ -20,6 +20,9 @@ export declare let props: {
     stateMin: {
         default: boolean;
     };
+    show: {
+        default: undefined;
+    };
     width: {
         default: number;
     };
@@ -44,6 +47,9 @@ export declare let props: {
     resize: {
         default: boolean;
     };
+    move: {
+        default: boolean;
+    };
     border: {
         default: string;
     };
@@ -61,9 +67,10 @@ export declare let data: {
     stateMaxData: boolean;
     stateMinData: boolean;
     stateAbs: boolean;
+    showData: boolean;
     iconData: undefined;
-    widthData: number;
-    heightData: number;
+    widthData: undefined;
+    heightData: undefined;
     leftData: number;
     topData: number;
     zIndexData: number;
@@ -76,6 +83,7 @@ export declare let data: {
     maskFor: undefined;
     maskFrom: undefined;
     flashTimer: undefined;
+    isInside: boolean;
 };
 export declare let watch: {
     icon: {
@@ -85,14 +93,16 @@ export declare let watch: {
     title: (this: IVueControl) => void;
     stateMin: (this: IVueControl) => void;
     stateMax: (this: IVueControl) => void;
-    width: (this: IVueControl) => void;
-    height: (this: IVueControl) => void;
+    show: (this: IVueControl) => void;
+    showData: (this: IVueControl) => void;
+    width: (this: IVueControl) => Promise<void>;
+    height: (this: IVueControl) => Promise<void>;
     left: (this: IVueControl) => void;
     top: (this: IVueControl) => void;
     zIndex: (this: IVueControl) => void;
 };
 export declare let methods: {
-    moveMethod: (this: IVueControl, e: MouseEvent | TouchEvent) => void;
+    moveMethod: (this: IVueControl, e: MouseEvent | TouchEvent, custom?: boolean) => void;
     minMethod: (this: IVueControl) => boolean;
     maxVMethod: (this: IVueControl, dbl: boolean) => void;
     maxMethod: (this: IVueControl) => boolean;
@@ -101,4 +111,4 @@ export declare let methods: {
     maskDown: (this: IVueControl, e: MouseEvent | TouchEvent) => void;
     setPropData: (this: IVueControl, name: string, val: number, mode?: string) => void;
 };
-export declare let mounted: (this: IVueControl) => void;
+export declare let mounted: (this: IVueControl) => Promise<void>;

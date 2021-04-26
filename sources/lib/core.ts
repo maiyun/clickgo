@@ -27,6 +27,7 @@ export let globalEvents: ICGGlobalEvents = {
     formIconChangedHandler: null,
     formStateMinChangedHandler: null,
     formStateMaxChangedHandler: null,
+    formShowChangedHandler: null,
     formFocusedHandler: null,
     formBlurredHandler: null,
     formFlashHandler: null,
@@ -37,7 +38,7 @@ export let globalEvents: ICGGlobalEvents = {
 /**
  * --- 主动触发系统级事件 ---
  */
-export function trigger(name: TCGGlobalEvent, taskId: number = 0, formId: number = 0, opt: { 'title'?: string; 'state'?: boolean; 'icon'?: string; } = {}): void {
+export function trigger(name: TCGGlobalEvent, taskId: number = 0, formId: number = 0, param1: boolean | string = '', param2: string = ''): void {
     switch (name) {
         case 'screenResize': {
             const rtn = globalEvents.screenResizeHandler?.();
@@ -62,12 +63,12 @@ export function trigger(name: TCGGlobalEvent, taskId: number = 0, formId: number
         case 'formCreated':
         case 'formRemoved': {
             if ((globalEvents as any)[name + 'Handler']) {
-                (globalEvents as any)[name + 'Handler'](taskId, formId, opt.title, opt.icon);
+                (globalEvents as any)[name + 'Handler'](taskId, formId, param1, param2);
             }
             for (let tid in clickgo.task.list) {
                 let task = clickgo.task.list[tid];
                 for (let fid in task.forms) {
-                    const rtn = task.forms[fid].events[name]?.(taskId, formId, opt.title, opt.icon);
+                    const rtn = task.forms[fid].events[name]?.(taskId, formId, param1, param2);
                     if (rtn instanceof Promise) {
                         rtn.catch((e) => {
                             throw e;
@@ -78,7 +79,7 @@ export function trigger(name: TCGGlobalEvent, taskId: number = 0, formId: number
             break;
         }
         case 'formTitleChanged': {
-            const rtn = globalEvents.formTitleChangedHandler?.(taskId, formId, opt.title ?? '');
+            const rtn = globalEvents.formTitleChangedHandler?.(taskId, formId, param1 as string);
             if (rtn instanceof Promise) {
                 rtn.catch((e) => {
                     throw e;
@@ -87,7 +88,7 @@ export function trigger(name: TCGGlobalEvent, taskId: number = 0, formId: number
             for (let tid in clickgo.task.list) {
                 let task = clickgo.task.list[tid];
                 for (let fid in task.forms) {
-                    const rtn = task.forms[fid].events[name]?.(taskId, formId, opt.title);
+                    const rtn = task.forms[fid].events[name]?.(taskId, formId, param1);
                     if (rtn instanceof Promise) {
                         rtn.catch((e) => {
                             throw e;
@@ -98,7 +99,7 @@ export function trigger(name: TCGGlobalEvent, taskId: number = 0, formId: number
             break;
         }
         case 'formIconChanged': {
-            const rtn = globalEvents.formIconChangedHandler?.(taskId, formId, opt.icon ?? '');
+            const rtn = globalEvents.formIconChangedHandler?.(taskId, formId, param1 as string);
             if (rtn instanceof Promise) {
                 rtn.catch((e) => {
                     throw e;
@@ -107,7 +108,7 @@ export function trigger(name: TCGGlobalEvent, taskId: number = 0, formId: number
             for (let tid in clickgo.task.list) {
                 let task = clickgo.task.list[tid];
                 for (let fid in task.forms) {
-                    const rtn = task.forms[fid].events[name]?.(taskId, formId, opt.icon);
+                    const rtn = task.forms[fid].events[name]?.(taskId, formId, param1);
                     if (rtn instanceof Promise) {
                         rtn.catch((e) => {
                             throw e;
@@ -118,12 +119,13 @@ export function trigger(name: TCGGlobalEvent, taskId: number = 0, formId: number
             break;
         }
         case 'formStateMinChanged':
-        case 'formStateMaxChanged': {
-            (globalEvents as any)[name + 'Handler']?.(taskId, formId, opt.state);
+        case 'formStateMaxChanged':
+        case 'formShowChanged': {
+            (globalEvents as any)[name + 'Handler']?.(taskId, formId, param1);
             for (let tid in clickgo.task.list) {
                 let task = clickgo.task.list[tid];
                 for (let fid in task.forms) {
-                    const rtn = task.forms[fid].events[name]?.(taskId, formId, opt.state);
+                    const rtn = task.forms[fid].events[name]?.(taskId, formId, param1);
                     if (rtn instanceof Promise) {
                         rtn.catch((e) => {
                             throw e;

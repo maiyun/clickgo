@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.siblings = exports.findParentByClass = exports.bindResize = exports.bindMove = exports.bindDown = exports.watchDom = exports.watchSize = exports.getSize = exports.getStyleCount = exports.removeStyle = exports.pushStyle = exports.removeFromStyleList = exports.createToStyleList = exports.setGlobalCursor = void 0;
+exports.siblings = exports.findParentByClass = exports.bindResize = exports.bindMove = exports.is = exports.bindLong = exports.bindDown = exports.watchDom = exports.watchSize = exports.getSize = exports.getStyleCount = exports.removeStyle = exports.pushStyle = exports.removeFromStyleList = exports.createToStyleList = exports.setGlobalCursor = void 0;
 let styleList = document.createElement('div');
 styleList.style.display = 'none';
 document.getElementsByTagName('body')[0].appendChild(styleList);
@@ -14,7 +14,7 @@ styleList.insertAdjacentHTML('beforeend', `<style class='cg-global'>
 .cg-form-list, .cg-pop-list {-webkit-user-select: none; user-select: none;}
 
 .cg-form-list *, .cg-pop-list *, .cg-form-list *::after, .cg-pop-list *::after, .cg-form-list *::before, .cg-pop-list *::before {box-sizing: border-box; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); flex-shrink: 0;}
-.cg-form-list, .cg-form-list input, .cg-form-list textarea, .cg-pop-list, .cg-pop-list input, .cg-pop-list textarea {font-family: Roboto,-apple-system,BlinkMacSystemFont,"Helvetica Neue","Segoe UI","Oxygen","Ubuntu","Cantarell","Open Sans",sans-serif; font-size: 12px; line-height: 1; -webkit-font-smoothing: antialiased;}
+.cg-form-list, .cg-form-list input, .cg-form-list textarea, .cg-pop-list, .cg-pop-list input, .cg-pop-list textarea {font-family: 'PingFangSC-Regular', 'helvetica neue', tahoma, 'PingFang SC', 'microsoft yahei', arial, 'hiragino sans gb', sans-serif; font-size: 12px; line-height: 1; -webkit-font-smoothing: antialiased;}
 
 .cg-circular {box-sizing: border-box; position: fixed; z-index: 20020003; border: solid 3px #76b9ed; border-radius: 50%; filter: drop-shadow(0 0 7px #76b9ed); pointer-events: none; opacity: 0;}
 .cg-rectangle {box-sizing: border-box; position: fixed; z-index: 20020002; border: solid 1px rgba(118, 185, 237, .7); box-shadow: 0 0 10px rgba(0, 0, 0, .3); background: rgba(118, 185, 237, .1); pointer-events: none; opacity: 0;}
@@ -213,7 +213,6 @@ function bindDown(oe, opt) {
     let isStart = false;
     let end;
     let move = function (e) {
-        e.preventDefault();
         let x = e instanceof MouseEvent ? e.clientX : e.touches[0].clientX;
         let y = e instanceof MouseEvent ? e.clientY : e.touches[0].clientY;
         if (x === ox && y === oy) {
@@ -254,6 +253,7 @@ function bindDown(oe, opt) {
         else {
             oe.target.removeEventListener('touchmove', move);
             oe.target.removeEventListener('touchend', end);
+            oe.target.removeEventListener('touchcancel', end);
         }
         (_a = opt.up) === null || _a === void 0 ? void 0 : _a.call(opt, e);
         if (isStart) {
@@ -267,12 +267,45 @@ function bindDown(oe, opt) {
     else {
         oe.target.addEventListener('touchmove', move, { passive: false });
         oe.target.addEventListener('touchend', end);
+        oe.target.addEventListener('touchcancel', end);
     }
     (_a = opt.down) === null || _a === void 0 ? void 0 : _a.call(opt, oe);
 }
 exports.bindDown = bindDown;
+function bindLong(e, long) {
+    let tx = e instanceof MouseEvent ? e.clientX : e.touches[0].clientX;
+    let ty = e instanceof MouseEvent ? e.clientY : e.touches[0].clientY;
+    let ox = 0;
+    let oy = 0;
+    let timer = window.setTimeout(() => {
+        clearTimeout(timer);
+        timer = undefined;
+        if (ox <= 1 && oy <= 1) {
+            long(e);
+        }
+    }, 500);
+    bindDown(e, {
+        move: (e) => {
+            let x = e instanceof MouseEvent ? e.clientX : e.touches[0].clientX;
+            let y = e instanceof MouseEvent ? e.clientY : e.touches[0].clientY;
+            ox = Math.abs(x - tx);
+            oy = Math.abs(y - ty);
+        },
+        up: () => {
+            if (timer !== undefined) {
+                clearTimeout(timer);
+                timer = undefined;
+            }
+        }
+    });
+}
+exports.bindLong = bindLong;
+exports.is = Vue.reactive({
+    'move': false
+});
 function bindMove(e, opt) {
     var _a, _b, _c, _d;
+    exports.is.move = true;
     setGlobalCursor(getComputedStyle(e.target).cursor);
     let tx, ty;
     if (e instanceof MouseEvent) {
@@ -514,6 +547,7 @@ function bindMove(e, opt) {
         },
         up: () => {
             var _a;
+            exports.is.move = false;
             setGlobalCursor();
             (_a = opt.up) === null || _a === void 0 ? void 0 : _a.call(opt);
         },
@@ -549,7 +583,7 @@ function bindResize(e, opt) {
     let y = e instanceof MouseEvent ? e.clientY : e.touches[0].clientY;
     let offsetLeft, offsetTop, offsetRight, offsetBottom;
     let left, top, right, bottom;
-    if (!opt.objectLeft || !opt.objectTop || !opt.objectWidth || !opt.objectHeight) {
+    if (opt.objectLeft === undefined || opt.objectTop === undefined || opt.objectWidth === undefined || opt.objectHeight === undefined) {
         if (!opt.object) {
             return;
         }

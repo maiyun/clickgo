@@ -25,7 +25,7 @@ export let props = {
         'default': ''
     },
     'padding': {
-        'default': undefined
+        'default': '7'
     },
 
     'area': {
@@ -39,8 +39,8 @@ export let computed = {
             return this.width + 'px';
         }
         if (this.flex !== '') {
-            let dir = this.$parent?.$data.controlName === 'select' ? this.$parent.$parent?.direction : this.$parent?.direction;
-            return dir ? (dir === 'v' ? undefined : '0') : undefined;
+            let parent = this.cgParent();
+            return parent ? (parent.direction === 'v' ? undefined : '0') : undefined;
         }
     },
     'heightPx': function(this: IVueControl): string | undefined {
@@ -48,32 +48,25 @@ export let computed = {
             return this.height + 'px';
         }
         if (this.flex !== '') {
-            let dir = this.$parent?.$data.controlName === 'select' ? this.$parent.$parent?.direction : this.$parent?.direction;
-            return dir.direction ? (dir.direction === 'v' ? '0' : undefined) : undefined;
+            let parent = this.cgParent();
+            return parent ? (parent.direction === 'v' ? '0' : undefined) : undefined;
         }
     }
 };
 
 export let data = {
     'popOpen': false,
-    'subPop': undefined,
+    'selfPop': undefined,
 
     'popOptions': {
         'left': '-5000px',
         'top': '0px',
-        'width': '0px',
+        'width': '500px',
         'zIndex': '0'
     }
 };
 
 export let methods = {
-    down: function(this: IVueControl, e: MouseEvent | TouchEvent): void {
-        if (e instanceof MouseEvent && clickgo.hasTouch) {
-            return;
-        }
-        this.cgStopPropagation(e);
-        this.cgDown(e);
-    },
     keydown: function(this: IVueControl, e: KeyboardEvent): void {
         if (e.keyCode !== 13) {
             return;
@@ -84,35 +77,20 @@ export let methods = {
         }
         this.showPop(e, this.area);
     },
-    click: function(this: IVueControl, event: MouseEvent, area: 'all' | 'arrow'): void {
+    click: function(this: IVueControl, e: MouseEvent, area: 'left' | 'arrow'): void {
         if (this.disabled) {
             return;
         }
-        if (this.area === 'arrow') {
-            if (area === 'all') {
-                if (this.popOpen) {
-                    clickgo.form.hidePop(this);
-                }
-                this.cgTap(event);
-                return;
+        if (this.area === 'arrow' && area === 'left') {
+            // --- 当前只能箭头展开，并且点击的还是不能展开的左侧 ---
+            if (this.popOpen) {
+                clickgo.form.hidePop(this);
             }
-            else {
-                event.stopPropagation();
-            }
-        }
-        else {
-            // --- all ---
-            if (area === 'arrow') {
-                return;
-            }
-        }
-        if (this.popOpen) {
-            clickgo.form.hidePop(this);
-            this.cgTap(event);
+            this.cgTap(e);
             return;
         }
         this.showPop();
-        this.cgTap(event);
+        this.cgTap(e);
     },
 
     showPop: function(this: IVueControl): void {
@@ -131,8 +109,8 @@ export let methods = {
             return;
         }
         this.popOpen = false;
-        if (this.subPop?.itemPopShowing) {
-            this.subPop.itemPopShowing.hidePop();
+        if (this.selfPop?.itemPopShowing) {
+            this.selfPop.itemPopShowing.hidePop();
         }
     }
 };

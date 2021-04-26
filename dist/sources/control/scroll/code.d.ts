@@ -9,13 +9,13 @@ export declare let props: {
         default: undefined;
     };
     left: {
-        default: number;
+        default: undefined;
     };
     top: {
-        default: number;
+        default: undefined;
     };
     zIndex: {
-        default: number;
+        default: undefined;
     };
     flex: {
         default: string;
@@ -31,6 +31,9 @@ export declare let props: {
     };
     scrollOffset: {
         default: number;
+    };
+    float: {
+        default: boolean;
     };
 };
 export declare let data: {
@@ -59,12 +62,13 @@ export declare let computed: {
     maxScroll: (this: IVueControl) => number;
     widthPx: (this: IVueControl) => string | undefined;
     heightPx: (this: IVueControl) => string | undefined;
+    floatComp: (this: IVueControl) => boolean;
 };
 export declare let methods: {
     down: (this: IVueControl, e: MouseEvent | TouchEvent) => void;
     bardown: (this: IVueControl, e: MouseEvent | TouchEvent) => void;
     longDown: (this: IVueControl, e: MouseEvent | TouchEvent, type: 'start' | 'end') => void;
-    resizePxOfScrollOffsetData: (this: IVueControl, scrollOffsetData: number) => void;
+    resizePx: (this: IVueControl) => void;
 };
 export declare let mounted: (this: IVueControl) => void;
 export declare let unmounted: (this: IVueControl) => void;

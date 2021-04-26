@@ -4,6 +4,7 @@ export declare let lastZIndex: number;
 export declare let lastTopZIndex: number;
 export declare let lastPopZIndex: number;
 export declare function changeFocus(formId?: number, vm?: IVue): void;
+export declare function getMaxZIndexFormID(): number | null;
 export declare function getRectByBorder(border: TCGBorder): {
     'width': number;
     'height': number;
@@ -24,4 +25,4 @@ export declare function showPop(pop: IVueControl, x: number | 'h' | 'v', y?: num
 export declare function hidePop(pop?: IVueControl | null): void;
 export declare function doFocusAndPopEvent(e: MouseEvent | TouchEvent): void;
 export declare function remove(formId: number): boolean;
-export declare function create(taskId: number, opt: ICGCreateFormOptions): Promise<number | ICGForm>;
+export declare function create(taskId: number, opt: ICGFormCreateOptions): Promise<number | ICGForm>;

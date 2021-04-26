@@ -1,0 +1,11 @@
+<form width="300" height="300" title="Label">
+    <layout direction="v" gutter="10" style="padding: 10px;">
+        <label>You can use CSS to customize the label:</label>
+        <label>Normal</label>
+        <label style="text-align: center;">Center</label>
+        <label style="color: red;">Color</label>
+        <label style="background: rgba(0, 0, 0, .1);">Background</label>
+        <label style="background: rgba(0, 0, 0, .1); padding: 10px;">Padding</label>
+        <label style="font-size: 36px;">Font size</label>
+    </layout>
+</form>

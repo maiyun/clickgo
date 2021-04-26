@@ -1,0 +1,24 @@
+<form width="400" height="550" title="ClickGo demo" icon="/res/icon.svg">
+    <tab flex="1" style="margin: 10px;">
+        <tab-panel label="control">
+            <overflow class="inner" flex="1" direction="v">
+                <layout gutter="10" direction="v">
+                    <button @tap="openForm('control', 'form')">Form</button>
+                    <button @tap="openForm('control', 'img')">Img</button>
+                    <button @tap="openForm('control', 'button')">Button</button>
+                    <button @tap="openForm('control', 'tab')">Tab</button>
+                    <button @tap="openForm('control', 'label')">Label</button>
+                    <button @tap="openForm('control', 'dialog')">Dialog</button>
+                    <button @tap="openForm('control', 'block')">Block</button>
+                    <button @tap="openForm('control', 'overflow')">Overflow</button>
+                    <button @tap="openForm('control', 'view')">View</button>
+                    <button @tap="openForm('control', 'greatview')">Greatview</button>
+                    <button @tap="openForm('control', 'scroll')">Scroll</button>
+                    <button @tap="openForm('control', 'menu')">Menu</button>
+                    <button @tap="openForm('control', 'list')">List</button>
+                    <button @tap="openForm('control', 'select')">Select</button>
+                </layout>
+            </overflow>
+        </tab-panel>
+    </tab>
+</form>

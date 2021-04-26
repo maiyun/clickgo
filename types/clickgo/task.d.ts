@@ -18,5 +18,5 @@ interface ICGTask {
     'forms': Record<number, ICGForm>;
     'files': Record<string, Blob>;
     'objectURLs': Record<string, string>;
-    'initControls': Record<string, { 'layout': string; 'rand': string; }>;
+    'initControls': Record<string, { 'layout': string; 'prep': string; }>;
 }

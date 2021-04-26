@@ -69,13 +69,13 @@ tmpScript.addEventListener('load', function () {
         var _a;
         loader.setAfter('?' + Math.random());
         let paths = [
-            'https://cdn.jsdelivr.net/npm/vue@3.0.5/dist/vue.global.min.js',
-            'https://cdn.jsdelivr.net/npm/jszip@3.5.0/dist/jszip.min.js'
+            'https://cdn.jsdelivr.net/npm/vue@3.0.11/dist/vue.global.min.js',
+            'https://cdn.jsdelivr.net/npm/jszip@3.6.0/dist/jszip.min.js'
         ];
         let ro = true;
         if (!(window.ResizeObserver)) {
             ro = false;
-            paths.push('https://cdn.jsdelivr.net/npm/@juggle/resize-observer@3.2.0/lib/exports/resize-observer.umd.min.js');
+            paths.push('https://cdn.jsdelivr.net/npm/@juggle/resize-observer@3.3.0/lib/exports/resize-observer.umd.min.js');
         }
         for (let path of paths) {
             if (!(yield loader.loadScript(document.getElementsByTagName('head')[0], path))) {

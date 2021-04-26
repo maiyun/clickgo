@@ -10,13 +10,13 @@ export let props = {
         'default': undefined
     },
     'left': {
-        'default': 0
+        'default': undefined
     },
     'top': {
-        'default': 0
+        'default': undefined
     },
     'zIndex': {
-        'default': 0
+        'default': undefined
     },
     'flex': {
         'default': ''
@@ -33,6 +33,9 @@ export let props = {
     },
     'scrollOffset': {
         'default': 0
+    },
+    'float': {
+        'default': false
     }
 };
 
@@ -48,20 +51,12 @@ export let data = {
 export let watch = {
     'length': {
         handler: function(this: IVueControl): void {
-            if (this.scrollOffsetData > this.maxScroll) {
-                this.scrollOffsetData = this.maxScroll;
-                this.$emit('update:scrollOffset', this.scrollOffsetData);
-            }
-            this.scrollOffsetPx = this.barOutSize * (this.scrollOffsetData / this.maxScroll);
+            this.resizePx();
         }
     },
     'client': {
         handler: function(this: IVueControl): void {
-            if (this.scrollOffsetData > this.maxScroll) {
-                this.scrollOffsetData = this.maxScroll;
-                this.$emit('update:scrollOffset', this.scrollOffsetData);
-            }
-            this.scrollOffsetPx = this.barOutSize * (this.scrollOffsetData / this.maxScroll);
+            this.resizePx();
         }
     },
     'scrollOffset': {
@@ -70,13 +65,14 @@ export let watch = {
             if (this.scrollOffsetData === scrollOffsetData) {
                 return;
             }
-            this.resizePxOfScrollOffsetData(scrollOffsetData);
+            this.scrollOffsetData = scrollOffsetData;
+            this.resizePx();
         }
     }
 };
 
 export let computed = {
-    // --- 滑块真实应该长度 ---
+    // --- 滑块真实应该长度 px ---
     'realSize': function(this: IVueControl): number {
         if (this.client >= this.length) {
             return this.barLengthPx;
@@ -86,6 +82,9 @@ export let computed = {
     // --- 滑块目前显示长度 ---
     'size': function(this: IVueControl): number {
         if (this.realSize < 5) {
+            if (5 > this.barLengthPx) {
+                return this.barLengthPx;
+            }
             return 5;
         }
         return this.realSize;
@@ -108,7 +107,8 @@ export let computed = {
             return this.width + 'px';
         }
         if (this.flex !== '') {
-            return this.$parent?.direction ? (this.$parent.direction === 'v' ? undefined : '0') : undefined;
+            let parent = this.cgParent();
+            return parent ? (parent.direction === 'v' ? undefined : '0') : undefined;
         }
     },
     'heightPx': function(this: IVueControl): string | undefined {
@@ -116,8 +116,18 @@ export let computed = {
             return this.height + 'px';
         }
         if (this.flex !== '') {
-            return this.$parent?.direction ? (this.$parent.direction === 'v' ? '0' : undefined) : undefined;
+            let parent = this.cgParent();
+            return parent ? (parent.direction === 'v' ? '0' : undefined) : undefined;
         }
+    },
+    'floatComp': function(this: IVueControl): boolean {
+        if (typeof this.float === 'string') {
+            if (this.float === 'false') {
+                return false;
+            }
+            return true;
+        }
+        return this.float ? true : false;
     }
 };
 
@@ -132,7 +142,7 @@ export let methods = {
             'move': (ox, oy) => {
                 this.scrollOffsetPx += this.direction === 'v' ? oy : ox;
                 /** --- 滚动百分比 --- */
-                let scrollPer = this.scrollOffsetPx / this.barOutSize;
+                let scrollPer = (this.barOutSize > 0) ? (this.scrollOffsetPx / this.barOutSize) : 0;
                 this.scrollOffsetData = Math.round(scrollPer * this.maxScroll);
                 this.$emit('update:scrollOffset', this.scrollOffsetData);
             }
@@ -188,7 +198,7 @@ export let methods = {
                         }
                         else {
                             this.scrollOffsetData -= 10;
-                            this.scrollOffsetPx = this.barOutSize * (this.scrollOffsetData / this.maxScroll);
+                            this.scrollOffsetPx = (this.maxScroll > 0) ? (this.barOutSize * (this.scrollOffsetData / this.maxScroll)) : 0;
                             this.$emit('update:scrollOffset', this.scrollOffsetData);
                         }
                     }
@@ -202,7 +212,7 @@ export let methods = {
                         }
                         else {
                             this.scrollOffsetData += 10;
-                            this.scrollOffsetPx = this.barOutSize * (this.scrollOffsetData / this.maxScroll);
+                            this.scrollOffsetPx = (this.maxScroll > 0) ? (this.barOutSize * (this.scrollOffsetData / this.maxScroll)) : 0;
                             this.$emit('update:scrollOffset', this.scrollOffsetData);
                         }
                     }
@@ -220,36 +230,35 @@ export let methods = {
             }
         });
     },
-    resizePxOfScrollOffsetData: function(this: IVueControl, scrollOffsetData: number): void {
-        if (scrollOffsetData > this.maxScroll) {
+    // --- 根据 this.scrollOffsetData 值，来设定 px 位置的值 ---
+    resizePx: function(this: IVueControl): void {
+        if (this.scrollOffsetData > this.maxScroll) {
             this.scrollOffsetData = this.maxScroll;
             this.scrollOffsetPx = this.barOutSize;
             this.$emit('update:scrollOffset', this.scrollOffsetData);
         }
-        else if (scrollOffsetData < 0) {
+        else if (this.scrollOffsetData < 0) {
             this.scrollOffsetData = 0;
             this.scrollOffsetPx = 0;
             this.$emit('update:scrollOffset', this.scrollOffsetData);
         }
         else {
-            this.scrollOffsetData = scrollOffsetData;
             this.scrollOffsetPx = this.barOutSize * (this.scrollOffsetData / this.maxScroll);
-            this.$emit('update:scrollOffset', this.scrollOffsetData);
         }
     }
 };
 
 export let mounted = function(this: IVueControl): void {
-    let dwd = clickgo.dom.watchSize(this.$refs.bar, (size) => {
+    clickgo.dom.watchSize(this.$refs.bar, (size) => {
         this.barLengthPx = this.direction === 'v' ? size.height : size.width;
-        this.scrollOffsetPx = this.barOutSize * (this.scrollOffsetData / this.maxScroll);
+        this.scrollOffsetPx =  this.barOutSize * (this.scrollOffsetData / this.maxScroll);
     });
-    this.barLengthPx = this.direction === 'v' ? dwd.size.height : dwd.size.width;
     let scrollOffsetData = Math.round(parseFloat(this.scrollOffset));
     if (this.scrollOffsetData === scrollOffsetData) {
         return;
     }
-    this.resizePxOfScrollOffsetData(scrollOffsetData);
+    this.scrollOffsetData = scrollOffsetData;
+    this.resizePx();
 };
 
 export let unmounted = function(this: IVueControl): void {

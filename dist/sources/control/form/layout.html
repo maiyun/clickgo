@@ -1,4 +1,4 @@
-<div class="wrap" :class="[border !== 'normal' && 'border-' + border, flashTimer !== undefined ? 'flash' : undefined, focus ? 'cg-focus' : undefined, stateMaxData ? 'cg-state-max' : undefined, stateMinData ? 'cg-state-min' : undefined]" :style="{'width': widthData + 'px', 'height': heightData + 'px', 'transform': 'translate3d(' + Math.round(leftData) + 'px, ' + Math.round(topData) + 'px, 0)', 'z-index': zIndexData}" @contextmenu="$event.preventDefault()">
+<div class="wrap" :class="[border !== 'normal' && 'border-' + border, flashTimer !== undefined ? 'flash' : undefined, focus ? 'cg-focus' : undefined, stateMaxData ? 'cg-state-max' : undefined, stateMinData ? 'cg-state-min' : undefined, showData && 'show', isInside && 'inside', !heightData && 'height-auto', !widthData && 'width-auto']" :style="{'width': widthData && widthData + 'px', 'height': heightData && heightData + 'px', 'transform': 'translate3d(' + Math.round(leftData) + 'px, ' + Math.round(topData) + 'px, 0) translateZ(0px)', 'z-index': zIndexData}" @contextmenu="$event.preventDefault()">
     <template v-if="!stateMaxData && !stateMinData && maskFor === undefined && resize">
         <div class="pop-resize-lt" @mousedown="resizeMethod($event, 'lt')" @touchstart="resizeMethod($event, 'lt')"></div>
         <div class="pop-resize-t" @mousedown="resizeMethod($event, 't')" @touchstart="resizeMethod($event, 't')" @dblclick="maxVMethod"></div>
@@ -13,7 +13,7 @@
     <div class="inner">
         <div class="header" v-if="border !== 'none'">
             <div class="icon"><img v-if="border !== 'thin' && iconData !== ''" :src="iconData" width="16" height="16" @dragstart="$event.preventDefault();"></div>
-            <div class="title" @mousedown="moveMethod" @touchstart="moveMethod">{{title}}</div>
+            <div class="title" @mousedown="moveMethod($event)" @touchstart="moveMethod($event)">{{title}}</div>
             <div class="controls">
                 <div v-if="min" class="min" @click="minMethod">{{!stateMinData ? '&#xeb9f;' : '&#xeba1;'}}</div>
                 <div v-if="max" class="max" @click="maxMethod">{{!stateMaxData ? '&#xeb9e;' : '&#xeba1;'}}</div>

@@ -37,7 +37,7 @@ clickgo.ready(function () {
             }
         }
         el.innerHTML = 'Starting app...';
-        let taskId = yield clickgo.task.run('app/');
+        let taskId = yield clickgo.task.run('clickgo/app/demo/');
         if (taskId <= 0) {
             el.innerHTML = `Start failed(${taskId.toString()}).`;
             return;

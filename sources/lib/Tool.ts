@@ -34,6 +34,23 @@ export function blob2DataUrl(blob: Blob): Promise<string> {
 }
 
 /**
+ * --- 将 obj 中的一个文件路径转换成 object url，已经转换的直接返回 ---
+ * @param file 要转换的文件绝对路径（不能用 clickgo 路径）
+ * @param obj 包含 files 属性的对象
+ */
+export function file2ObjectUrl(file: string, obj: ICGTask | ICGControl | ICGThemePkg): string | null {
+    let ourl = obj.objectURLs[file];
+    if (!ourl) {
+        if (!obj.files[file]) {
+            return null;
+        }
+        ourl = createObjectURL(obj.files[file]);
+        obj.objectURLs[file] = ourl;
+    }
+    return ourl;
+}
+
+/**
  * --- 将 blob 对象转换为 ArrayBuffer ---
  * @param blob 对象
  */
@@ -320,12 +337,7 @@ export async function styleUrl2ObjectOrDataUrl(path: string, style: string, obj:
             rtn = rtn.replace(match[0], `url('${await blob2DataUrl(obj.files[realPath])}')`);
         }
         else {
-            let ourl = obj.objectURLs[realPath];
-            if (!ourl) {
-                ourl = createObjectURL(obj.files[realPath]);
-                obj.objectURLs[realPath] = ourl;
-            }
-            rtn = rtn.replace(match[0], `url('${ourl}')`);
+            rtn = rtn.replace(match[0], `url('${file2ObjectUrl(realPath, obj)}')`);
         }
     }
     return rtn;
@@ -365,12 +377,12 @@ export function layoutInsertAttr(layout: string, insert: string, opt: { 'ignore'
 
 /**
  * --- 对 :class 的对象增加实时 css 的前缀 ---
- * @param os :class 中的字符串
+ * @param object :class 中的 {'xxx': xxx, [yyy]: yyy} 字符串
  */
-function layoutClassPrependObject(os: string): string {
-    os = os.slice(1, -1).trim();
-    return '{' + os.replace(/(.+?):(.+?)(,|$)/g, function(t, t1, t2, t3) {
-        // --- t1 是 class 的头头 ---
+function layoutClassPrependObject(object: string): string {
+    object = object.slice(1, -1).trim();
+    return '{' + object.replace(/(.+?):(.+?)(,|$)/g, function(t, t1, t2, t3) {
+        // --- t1 是 'xxx', t2 是 xxx，t3 是结尾或者 , 分隔符 ---
         t1 = t1.trim();
         if (t1[0] === '[') {
             t1 = '[cgClassPrepend(' + t1.slice(1, -1) + ')]';
@@ -387,30 +399,37 @@ function layoutClassPrependObject(os: string): string {
     }) + '}';
 }
 /**
- * --- 给 class 前部增加唯一标识符 ---
- * @param layout 框架
- * @param rand 唯一标识符列表
+ * --- 给 class 增加 scope 的随机前缀 ---
+ * @param layout layout
+ * @param preps 前置标识符列表，特殊字符串 scope 会被替换为随机前缀
  */
-export function layoutClassPrepend(layout: string, rand: string[] = []): { 'rand': string[]; 'layout': string; } {
-    if (rand.length === 0) {
-        rand.push('cg-scope' + Math.round(Math.random() * 1000000000000000) + '_');
+export function layoutClassPrepend(layout: string, preps: string[] = []): { 'preps': string[]; 'layout': string; } {
+    for (let i = 0; i < preps.length; ++i) {
+        if (preps[i] === 'scope') {
+            preps[i] = 'cg-scope' + Math.round(Math.random() * 1000000000000000) + '_';
+        }
     }
     return {
-        'rand': rand,
+        'preps': preps,
         'layout': layout.replace(/ class=["'](.+?)["']/gi, function(t, t1: string) {
-            let clist = t1.split(' ');
-            let rtn: string[] = [];
-            for (let item of clist) {
-                for (let r of rand) {
-                    rtn.push(r + item);
+            // --- t1 为 xxx yyy zzz 这样的 ----
+            t1 = t1.trim();
+            let classList = t1.split(' ');
+            let resultList: string[] = [];
+            for (let item of classList) {
+                for (let prep of preps) {
+                    resultList.push(prep + item);
                 }
             }
-            return ` class='${rtn.join(' ')}'`;
+            return ` class='${resultList.join(' ')}'`;
         }).replace(/ :class=(["']).+?>/gi, function(t, sp) {
             return t.replace(new RegExp(` :class=${sp}(.+?)${sp}`, 'gi'), function(t, t1: string) {
+                // --- t1 为 [] 或 {} ---
                 t1 = t1.trim();
                 if (t1.startsWith('[')) {
+                    // --- ['xxx', yyy && 'yyy'] ---
                     t1 = t1.slice(1, -1);
+                    /** --- 'xxx', yyy && 'yyy' 的数组 --- */
                     let t1a = t1.split(',');
                     for (let i = 0; i < t1a.length; ++i) {
                         t1a[i] = t1a[i].trim();
@@ -435,32 +454,33 @@ export function layoutClassPrepend(layout: string, rand: string[] = []): { 'rand
 /**
  * --- 给 class 前部增加唯一标识符 ---
  * @param style 样式内容
- * @param rand 唯一标识符可空
+ * @param prep 给 class、font 等增加前置
  */
-export function stylePrepend(style: string, rand: string = ''): { 'style': string; 'rand': string; } {
-    if (rand === '') {
-        rand = 'cg-scope' + Math.round(Math.random() * 1000000000000000) + '_';
+export function stylePrepend(style: string, prep: string = ''): { 'style': string; 'prep': string; } {
+    if (prep === '') {
+        prep = 'cg-scope' + Math.round(Math.random() * 1000000000000000) + '_';
     }
     // --- 给 style 的 class 前添加 scope ---
     style = style.replace(/([\s\S]+?){([\s\S]+?)}/g, function(t, t1, t2) {
-        return t1.replace(/\.([a-zA-Z0-9-_]+)/g, function(t: string, t1: string) {
-            if (t1.startsWith('cg-')) {
+        // --- xxx { xxx; } ---
+        return t1.replace(/([.#])([a-zA-Z0-9-_]+)/g, function(t: string, t1: string, t2: string) {
+            if (t2.startsWith('cg-')) {
                 return t;
             }
-            return '.' + rand + t1;
+            return t1 + prep + t2;
         }) + '{' + t2 + '}';
     });
     // --- 自定义 font 名添加 scope ---
     let fontList: string[] = [];
     style = style.replace(/(@font-face[\s\S]+?font-family\s*:\s*["']{0,1})(.+?)(["']{0,1}\s*[;\r\n }])/gi, function(t, t1, t2, t3) {
         fontList.push(t2);
-        return t1 + rand + t2 + t3;
+        return t1 + prep + t2 + t3;
     });
     // --- 对自定义 font 进行更名 ---
     for (let font of fontList) {
         let reg = new RegExp(`(font.+?[: "'])(${font})`, 'gi');
         style = style.replace(reg, function(t, t1, t2) {
-            return t1 + rand + t2;
+            return t1 + prep + t2;
         });
     }
     // --- keyframes ---
@@ -469,17 +489,17 @@ export function stylePrepend(style: string, rand: string = ''): { 'style': strin
         if (!keyframeList.includes(t2)) {
             keyframeList.push(t2);
         }
-        return t1 + rand + t2 + t3;
+        return t1 + prep + t2 + t3;
     });
     // --- 对自定义 keyframe 进行更名 ---
     for (let keyframe of keyframeList) {
         let reg = new RegExp(`(animation.+?)(${keyframe})`, 'gi');
         style = style.replace(reg, function(t, t1, t2) {
-            return t1 + rand + t2;
+            return t1 + prep + t2;
         });
     }
     return {
-        'rand': rand,
+        'prep': prep,
         'style': style
     };
 }
@@ -546,4 +566,21 @@ export function rand(min: number, max: number): number {
         [min, max] = [max, min];
     }
     return min + Math.round(Math.random() * (max - min));
+}
+
+/**
+ * --- 根据参数获取最终的布尔值 ---
+ * @param param 参数
+ */
+export function getBoolean(param: boolean | string | number): boolean {
+    let t = typeof param;
+    if (t === 'boolean') {
+        return param as boolean;
+    }
+    else if (t === 'string') {
+        return param === 'false' ? false : true;
+    }
+    else {
+        return param ? true : false;
+    }
 }

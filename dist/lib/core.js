@@ -20,14 +20,15 @@ exports.globalEvents = {
     formIconChangedHandler: null,
     formStateMinChangedHandler: null,
     formStateMaxChangedHandler: null,
+    formShowChangedHandler: null,
     formFocusedHandler: null,
     formBlurredHandler: null,
     formFlashHandler: null,
     taskStartedHandler: null,
     taskEndedHandler: null
 };
-function trigger(name, taskId = 0, formId = 0, opt = {}) {
-    var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y;
+function trigger(name, taskId = 0, formId = 0, param1 = '', param2 = '') {
+    var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v, _w;
     switch (name) {
         case 'screenResize': {
             const rtn = (_a = exports.globalEvents.screenResizeHandler) === null || _a === void 0 ? void 0 : _a.call(exports.globalEvents);
@@ -52,12 +53,12 @@ function trigger(name, taskId = 0, formId = 0, opt = {}) {
         case 'formCreated':
         case 'formRemoved': {
             if (exports.globalEvents[name + 'Handler']) {
-                exports.globalEvents[name + 'Handler'](taskId, formId, opt.title, opt.icon);
+                exports.globalEvents[name + 'Handler'](taskId, formId, param1, param2);
             }
             for (let tid in clickgo.task.list) {
                 let task = clickgo.task.list[tid];
                 for (let fid in task.forms) {
-                    const rtn = (_e = (_d = task.forms[fid].events)[name]) === null || _e === void 0 ? void 0 : _e.call(_d, taskId, formId, opt.title, opt.icon);
+                    const rtn = (_e = (_d = task.forms[fid].events)[name]) === null || _e === void 0 ? void 0 : _e.call(_d, taskId, formId, param1, param2);
                     if (rtn instanceof Promise) {
                         rtn.catch((e) => {
                             throw e;
@@ -68,7 +69,7 @@ function trigger(name, taskId = 0, formId = 0, opt = {}) {
             break;
         }
         case 'formTitleChanged': {
-            const rtn = (_f = exports.globalEvents.formTitleChangedHandler) === null || _f === void 0 ? void 0 : _f.call(exports.globalEvents, taskId, formId, (_g = opt.title) !== null && _g !== void 0 ? _g : '');
+            const rtn = (_f = exports.globalEvents.formTitleChangedHandler) === null || _f === void 0 ? void 0 : _f.call(exports.globalEvents, taskId, formId, param1);
             if (rtn instanceof Promise) {
                 rtn.catch((e) => {
                     throw e;
@@ -77,7 +78,7 @@ function trigger(name, taskId = 0, formId = 0, opt = {}) {
             for (let tid in clickgo.task.list) {
                 let task = clickgo.task.list[tid];
                 for (let fid in task.forms) {
-                    const rtn = (_j = (_h = task.forms[fid].events)[name]) === null || _j === void 0 ? void 0 : _j.call(_h, taskId, formId, opt.title);
+                    const rtn = (_h = (_g = task.forms[fid].events)[name]) === null || _h === void 0 ? void 0 : _h.call(_g, taskId, formId, param1);
                     if (rtn instanceof Promise) {
                         rtn.catch((e) => {
                             throw e;
@@ -88,7 +89,7 @@ function trigger(name, taskId = 0, formId = 0, opt = {}) {
             break;
         }
         case 'formIconChanged': {
-            const rtn = (_k = exports.globalEvents.formIconChangedHandler) === null || _k === void 0 ? void 0 : _k.call(exports.globalEvents, taskId, formId, (_l = opt.icon) !== null && _l !== void 0 ? _l : '');
+            const rtn = (_j = exports.globalEvents.formIconChangedHandler) === null || _j === void 0 ? void 0 : _j.call(exports.globalEvents, taskId, formId, param1);
             if (rtn instanceof Promise) {
                 rtn.catch((e) => {
                     throw e;
@@ -97,7 +98,7 @@ function trigger(name, taskId = 0, formId = 0, opt = {}) {
             for (let tid in clickgo.task.list) {
                 let task = clickgo.task.list[tid];
                 for (let fid in task.forms) {
-                    const rtn = (_o = (_m = task.forms[fid].events)[name]) === null || _o === void 0 ? void 0 : _o.call(_m, taskId, formId, opt.icon);
+                    const rtn = (_l = (_k = task.forms[fid].events)[name]) === null || _l === void 0 ? void 0 : _l.call(_k, taskId, formId, param1);
                     if (rtn instanceof Promise) {
                         rtn.catch((e) => {
                             throw e;
@@ -108,12 +109,13 @@ function trigger(name, taskId = 0, formId = 0, opt = {}) {
             break;
         }
         case 'formStateMinChanged':
-        case 'formStateMaxChanged': {
-            (_q = (_p = exports.globalEvents)[name + 'Handler']) === null || _q === void 0 ? void 0 : _q.call(_p, taskId, formId, opt.state);
+        case 'formStateMaxChanged':
+        case 'formShowChanged': {
+            (_o = (_m = exports.globalEvents)[name + 'Handler']) === null || _o === void 0 ? void 0 : _o.call(_m, taskId, formId, param1);
             for (let tid in clickgo.task.list) {
                 let task = clickgo.task.list[tid];
                 for (let fid in task.forms) {
-                    const rtn = (_s = (_r = task.forms[fid].events)[name]) === null || _s === void 0 ? void 0 : _s.call(_r, taskId, formId, opt.state);
+                    const rtn = (_q = (_p = task.forms[fid].events)[name]) === null || _q === void 0 ? void 0 : _q.call(_p, taskId, formId, param1);
                     if (rtn instanceof Promise) {
                         rtn.catch((e) => {
                             throw e;
@@ -126,11 +128,11 @@ function trigger(name, taskId = 0, formId = 0, opt = {}) {
         case 'formFocused':
         case 'formBlurred':
         case 'formFlash': {
-            (_u = (_t = exports.globalEvents)[name + 'Handler']) === null || _u === void 0 ? void 0 : _u.call(_t, taskId, formId);
+            (_s = (_r = exports.globalEvents)[name + 'Handler']) === null || _s === void 0 ? void 0 : _s.call(_r, taskId, formId);
             for (let tid in clickgo.task.list) {
                 let task = clickgo.task.list[tid];
                 for (let fid in task.forms) {
-                    const rtn = (_w = (_v = task.forms[fid].events)[name]) === null || _w === void 0 ? void 0 : _w.call(_v, taskId, formId);
+                    const rtn = (_u = (_t = task.forms[fid].events)[name]) === null || _u === void 0 ? void 0 : _u.call(_t, taskId, formId);
                     if (rtn instanceof Promise) {
                         rtn.catch((e) => {
                             throw e;
@@ -148,7 +150,7 @@ function trigger(name, taskId = 0, formId = 0, opt = {}) {
             for (let tid in clickgo.task.list) {
                 let task = clickgo.task.list[tid];
                 for (let fid in task.forms) {
-                    const rtn = (_y = (_x = task.forms[fid].events)[name]) === null || _y === void 0 ? void 0 : _y.call(_x, taskId);
+                    const rtn = (_w = (_v = task.forms[fid].events)[name]) === null || _w === void 0 ? void 0 : _w.call(_v, taskId);
                     if (rtn instanceof Promise) {
                         rtn.catch((e) => {
                             throw e;

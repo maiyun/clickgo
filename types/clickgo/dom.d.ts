@@ -19,6 +19,10 @@ interface ICGDomLib {
         'up'?: (e: MouseEvent | TouchEvent) => void;
         'end'?: (e: MouseEvent | TouchEvent) => void;
     }): void;
+    bindLong(e: MouseEvent | TouchEvent, long: (e: MouseEvent | TouchEvent) => void): void;
+    'is': {
+        'move': boolean;
+    };
     bindMove(e: MouseEvent | TouchEvent, opt: {
         'areaObject'?: HTMLElement | IVue;
         'left'?: number;

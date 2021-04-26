@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.rand = exports.getObjectURLList = exports.revokeObjectURL = exports.createObjectURL = exports.getMimeByPath = exports.stylePrepend = exports.layoutClassPrepend = exports.layoutInsertAttr = exports.styleUrl2ObjectOrDataUrl = exports.urlResolve = exports.parseUrl = exports.isAppPkg = exports.isControlPkg = exports.purify = exports.requestAnimationFrame = exports.sleep = exports.clone = exports.blob2Text = exports.blob2ArrayBuffer = exports.blob2DataUrl = void 0;
+exports.getBoolean = exports.rand = exports.getObjectURLList = exports.revokeObjectURL = exports.createObjectURL = exports.getMimeByPath = exports.stylePrepend = exports.layoutClassPrepend = exports.layoutInsertAttr = exports.styleUrl2ObjectOrDataUrl = exports.urlResolve = exports.parseUrl = exports.isAppPkg = exports.isControlPkg = exports.purify = exports.requestAnimationFrame = exports.sleep = exports.clone = exports.blob2Text = exports.blob2ArrayBuffer = exports.file2ObjectUrl = exports.blob2DataUrl = void 0;
 function blob2DataUrl(blob) {
     return new Promise(function (resove) {
         let fr = new FileReader();
@@ -25,6 +25,18 @@ function blob2DataUrl(blob) {
     });
 }
 exports.blob2DataUrl = blob2DataUrl;
+function file2ObjectUrl(file, obj) {
+    let ourl = obj.objectURLs[file];
+    if (!ourl) {
+        if (!obj.files[file]) {
+            return null;
+        }
+        ourl = createObjectURL(obj.files[file]);
+        obj.objectURLs[file] = ourl;
+    }
+    return ourl;
+}
+exports.file2ObjectUrl = file2ObjectUrl;
 function blob2ArrayBuffer(blob) {
     return new Promise(function (resove) {
         let fr = new FileReader();
@@ -238,12 +250,7 @@ function styleUrl2ObjectOrDataUrl(path, style, obj, mode = 'object') {
                 rtn = rtn.replace(match[0], `url('${yield blob2DataUrl(obj.files[realPath])}')`);
             }
             else {
-                let ourl = obj.objectURLs[realPath];
-                if (!ourl) {
-                    ourl = createObjectURL(obj.files[realPath]);
-                    obj.objectURLs[realPath] = ourl;
-                }
-                rtn = rtn.replace(match[0], `url('${ourl}')`);
+                rtn = rtn.replace(match[0], `url('${file2ObjectUrl(realPath, obj)}')`);
             }
         }
         return rtn;
@@ -276,9 +283,9 @@ function layoutInsertAttr(layout, insert, opt = {}) {
     });
 }
 exports.layoutInsertAttr = layoutInsertAttr;
-function layoutClassPrependObject(os) {
-    os = os.slice(1, -1).trim();
-    return '{' + os.replace(/(.+?):(.+?)(,|$)/g, function (t, t1, t2, t3) {
+function layoutClassPrependObject(object) {
+    object = object.slice(1, -1).trim();
+    return '{' + object.replace(/(.+?):(.+?)(,|$)/g, function (t, t1, t2, t3) {
         t1 = t1.trim();
         if (t1[0] === '[') {
             t1 = '[cgClassPrepend(' + t1.slice(1, -1) + ')]';
@@ -294,21 +301,24 @@ function layoutClassPrependObject(os) {
         return t1 + ':' + t2 + t3;
     }) + '}';
 }
-function layoutClassPrepend(layout, rand = []) {
-    if (rand.length === 0) {
-        rand.push('cg-scope' + Math.round(Math.random() * 1000000000000000) + '_');
+function layoutClassPrepend(layout, preps = []) {
+    for (let i = 0; i < preps.length; ++i) {
+        if (preps[i] === 'scope') {
+            preps[i] = 'cg-scope' + Math.round(Math.random() * 1000000000000000) + '_';
+        }
     }
     return {
-        'rand': rand,
+        'preps': preps,
         'layout': layout.replace(/ class=["'](.+?)["']/gi, function (t, t1) {
-            let clist = t1.split(' ');
-            let rtn = [];
-            for (let item of clist) {
-                for (let r of rand) {
-                    rtn.push(r + item);
+            t1 = t1.trim();
+            let classList = t1.split(' ');
+            let resultList = [];
+            for (let item of classList) {
+                for (let prep of preps) {
+                    resultList.push(prep + item);
                 }
             }
-            return ` class='${rtn.join(' ')}'`;
+            return ` class='${resultList.join(' ')}'`;
         }).replace(/ :class=(["']).+?>/gi, function (t, sp) {
             return t.replace(new RegExp(` :class=${sp}(.+?)${sp}`, 'gi'), function (t, t1) {
                 t1 = t1.trim();
@@ -335,27 +345,27 @@ function layoutClassPrepend(layout, rand = []) {
     };
 }
 exports.layoutClassPrepend = layoutClassPrepend;
-function stylePrepend(style, rand = '') {
-    if (rand === '') {
-        rand = 'cg-scope' + Math.round(Math.random() * 1000000000000000) + '_';
+function stylePrepend(style, prep = '') {
+    if (prep === '') {
+        prep = 'cg-scope' + Math.round(Math.random() * 1000000000000000) + '_';
     }
     style = style.replace(/([\s\S]+?){([\s\S]+?)}/g, function (t, t1, t2) {
-        return t1.replace(/\.([a-zA-Z0-9-_]+)/g, function (t, t1) {
-            if (t1.startsWith('cg-')) {
+        return t1.replace(/([.#])([a-zA-Z0-9-_]+)/g, function (t, t1, t2) {
+            if (t2.startsWith('cg-')) {
                 return t;
             }
-            return '.' + rand + t1;
+            return t1 + prep + t2;
         }) + '{' + t2 + '}';
     });
     let fontList = [];
     style = style.replace(/(@font-face[\s\S]+?font-family\s*:\s*["']{0,1})(.+?)(["']{0,1}\s*[;\r\n }])/gi, function (t, t1, t2, t3) {
         fontList.push(t2);
-        return t1 + rand + t2 + t3;
+        return t1 + prep + t2 + t3;
     });
     for (let font of fontList) {
         let reg = new RegExp(`(font.+?[: "'])(${font})`, 'gi');
         style = style.replace(reg, function (t, t1, t2) {
-            return t1 + rand + t2;
+            return t1 + prep + t2;
         });
     }
     let keyframeList = [];
@@ -363,16 +373,16 @@ function stylePrepend(style, rand = '') {
         if (!keyframeList.includes(t2)) {
             keyframeList.push(t2);
         }
-        return t1 + rand + t2 + t3;
+        return t1 + prep + t2 + t3;
     });
     for (let keyframe of keyframeList) {
         let reg = new RegExp(`(animation.+?)(${keyframe})`, 'gi');
         style = style.replace(reg, function (t, t1, t2) {
-            return t1 + rand + t2;
+            return t1 + prep + t2;
         });
     }
     return {
-        'rand': rand,
+        'prep': prep,
         'style': style
     };
 }
@@ -420,3 +430,16 @@ function rand(min, max) {
     return min + Math.round(Math.random() * (max - min));
 }
 exports.rand = rand;
+function getBoolean(param) {
+    let t = typeof param;
+    if (t === 'boolean') {
+        return param;
+    }
+    else if (t === 'string') {
+        return param === 'false' ? false : true;
+    }
+    else {
+        return param ? true : false;
+    }
+}
+exports.getBoolean = getBoolean;

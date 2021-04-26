@@ -24,7 +24,7 @@ export declare let props: {
         default: string;
     };
     padding: {
-        default: undefined;
+        default: string;
     };
     area: {
         default: string;
@@ -36,7 +36,7 @@ export declare let computed: {
 };
 export declare let data: {
     popOpen: boolean;
-    subPop: undefined;
+    selfPop: undefined;
     popOptions: {
         left: string;
         top: string;
@@ -45,9 +45,8 @@ export declare let data: {
     };
 };
 export declare let methods: {
-    down: (this: IVueControl, e: MouseEvent | TouchEvent) => void;
     keydown: (this: IVueControl, e: KeyboardEvent) => void;
-    click: (this: IVueControl, event: MouseEvent, area: 'all' | 'arrow') => void;
+    click: (this: IVueControl, e: MouseEvent, area: 'left' | 'arrow') => void;
     showPop: (this: IVueControl) => void;
     hidePop: (this: IVueControl) => void;
 };

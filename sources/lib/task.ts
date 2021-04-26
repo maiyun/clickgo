@@ -130,10 +130,9 @@ export function end(taskId: number): boolean {
     // --- 移除窗体 list ---
     for (let fid in task.forms) {
         let form = task.forms[fid];
-        let title = form.vroot.$refs.form.title;
         form.vapp.unmount();
         form.vapp._container.remove();
-        clickgo.core.trigger('formRemoved', taskId, form.id, {'title': title});
+        clickgo.core.trigger('formRemoved', taskId, form.id, form.vroot.$refs.form.title, form.vroot.$refs.form.iconData);
     }
     // --- 移除 style ---
     clickgo.dom.removeFromStyleList(taskId);
@@ -149,5 +148,10 @@ export function end(taskId: number): boolean {
     delete(list[taskId]);
     // --- 触发 taskEnded 事件 ---
     clickgo.core.trigger('taskEnded', taskId);
+    // --- 获取最大的 z index 窗体，并让他获取焦点 ---
+    let fid = clickgo.form.getMaxZIndexFormID();
+    if (fid) {
+        clickgo.form.changeFocus(fid);
+    }
     return true;
 }

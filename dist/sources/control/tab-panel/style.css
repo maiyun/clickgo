@@ -1,6 +1,1 @@
-.wrap {
-    background-color: #FFF; display: flex; height: 0; flex: 1; height: 0; overflow: hidden;
-}
-.wrap.v {
-    flex-direction: column;
-}
+.wrap{background-color:#fff;display:flex;flex:1;overflow:hidden;position:relative}.wrap.v{flex-direction:column}.wrap.top,.wrap.bottom{height:0}.wrap.left,.wrap.right{width:0}.wrap::before{content:"";pointer-events:none;position:absolute;left:0;top:0;width:200%;height:200%;transform-origin:0 0;transform:scale(0.5);border:solid 1px #b3b3b3}

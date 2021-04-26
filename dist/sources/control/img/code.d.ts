@@ -17,9 +17,15 @@ export declare let props: {
     src: {
         default: string;
     };
+    mode: {
+        default: string;
+    };
 };
 export declare let data: {
     iconData: string;
+};
+export declare let computed: {
+    backgroundSize: (this: IVueControl) => string | undefined;
 };
 export declare let watch: {
     src: {

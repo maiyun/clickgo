@@ -1,0 +1,40 @@
+.inner {
+    display: flex; align-items: center;
+}
+
+.wrap {
+    display: inline-block; padding: 6px; position: relative;
+    &::before {
+        content: ' '; position: absolute; left: 0; top: 0; width: 200%; height: 200%; transform-origin: 0 0; transform: scale(.5);
+    }
+    &:not(.cg-disabled) {
+        &.hover {
+            background: hsl(205, 100%, 95%);
+            &::before {
+                border: solid 1px hsl(205, 100%, 50%);
+            }
+        }
+        &.active, &.cg-pop-open {
+            background: hsl(205, 100%, 90%);
+            &::before {
+                border: solid 1px hsl(205, 100%, 30%);
+            }
+        }
+    }
+    &.cg-disabled {
+        color: hsl(205, 0%, 50%);
+        &.hover {
+            background: hsl(205, 0%, 90%);
+        }
+    }
+}
+
+.pop {
+    position: absolute; box-shadow: 1px 1px 5px rgba(0, 0, 0, .2); transition: .1s ease-out; transition-property: transform, opacity; transform: translateY(-10px); opacity: 0;
+    &:not(.open) {
+        pointer-events: none;
+    }
+    &.open {
+        transform: translateY(0px); opacity: 1;
+    }
+}

@@ -1,7 +1,14 @@
 <div class="wrap" :class="[tabPosition]" :style="{'width': widthPx, 'height': heightPx, 'left': left + 'px', 'top': top + 'px', 'z-index': zIndex, 'flex-grow': flex}" @click="cgTap" @mousedown="cgDown" @touchstart="cgDown" @dblclick="cgDblclick">
-    <cg-tab-nav v-if="tabPosition==='top'||tabPosition==='left'" :tabs="tabs"></cg-tab-nav>
-    <div class="panels">
-        <slot></slot>
-    </div>
-    <cg-tab-nav v-if="tabPosition==='right'||tabPosition==='bottom'" :tabs="tabs"></cg-tab-nav>
+    <template v-for="i of 2">
+        <div v-if="(i === 1 && (tabPosition === 'top' || tabPosition === 'left')) || (i === 2 && (tabPosition === 'right' || tabPosition === 'bottom'))" class="tabs-wrap">
+            <div v-show="arrow" class="arrow start" @mousedown="longDown($event, 'start')" @touchstart="longDown($event, 'start')"></div>
+            <div ref="tabs" class="tabs" @wheel="wheel">
+                <div v-for="item of tabs" class="tab" :class="[selected === item.value ? 'selected' : undefined]" @click="selected = item.value; $emit('update:modelValue', item.value);">{{item.label}}</div>
+            </div>
+            <div v-show="arrow" class="arrow end" @mousedown="longDown($event, 'end')" @touchstart="longDown($event, 'end')"></div>
+        </div>
+        <template v-else>
+            <slot></slot>
+        </template>
+    </template>
 </div>

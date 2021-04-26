@@ -18,7 +18,7 @@ export let props = {
         'default': undefined
     },
     'direction': {
-        'default': 'v'
+        'default': 'h'
     },
     'padding': {
         'default': undefined
@@ -33,6 +33,9 @@ export let props = {
     'scrollTop': {
         'default': undefined
     },
+    'content': {
+        'default': undefined,
+    },
     'same': {
         'default': false
     },
@@ -43,7 +46,7 @@ export let props = {
 };
 
 export let data = {
-    'placePos': {
+    'compPos': {
         'start': 0,
         'end': 0
     },
@@ -60,6 +63,8 @@ export let data = {
     'lengthWidth': 0,
     'lengthHeight': 0,
     'client': 0,
+    'clientWidth': 0,
+    'clientHeight': 0,
 
     'refreshCount': 0,
     'lengthInit': false,
@@ -76,6 +81,18 @@ export let watch = {
     },
     'direction': function(this: IVueControl): void {
         this.refreshView();
+    },
+    'scrollLeft': function(this: IVueControl): void {
+        if (this.direction === 'h' && this.scrollLeftEmit !== this.scrollLeft) {
+            this.scrollLeftEmit = this.scrollLeft;
+            this.reShow();
+        }
+    },
+    'scrollTop': function(this: IVueControl): void {
+        if (this.direction === 'v' && this.scrollTopEmit !== this.scrollTop) {
+            this.scrollTopEmit = this.scrollTop;
+            this.reShow();
+        }
     }
 };
 
@@ -91,10 +108,13 @@ export let computed = {
         return list;
     },
     'sameComp': function(this: IVueControl): boolean {
-        if (typeof this.same === 'boolean') {
-            return this.same;
+        if (typeof this.same === 'string') {
+            if (this.same === 'false') {
+                return false;
+            }
+            return true;
         }
-        return this.same === 'true' ? true : false;
+        return this.same ? true : false;
     },
 
     'paddingComp': function(this: IVueControl): any {
@@ -123,10 +143,12 @@ export let computed = {
 };
 
 export let methods = {
-    // --- 重新获取高度 ---
+    // --- 重新获取宽度高度 ---
     refreshView: async function(this: IVueControl): Promise<void> {
         let nowCount = ++this.refreshCount;
 
+        // this.lengthWidth = undefined;
+        // this.lengthHeight = undefined;
         let lengthWidth: number = this.paddingComp.left;
         let lengthHeight: number = this.paddingComp.top;
         if (this.dataComp.length === 0) {
@@ -140,6 +162,7 @@ export let methods = {
         if (!this.sameComp) {
             let maxCursor = this.dataComp.length;
             let cursor = 0;
+            /** --- 另一边的最大值 --- */
             let anotherWOH: number = 0;
 
             /** --- 这个在最后应用，要不然可能出现白屏，因为 reShow 还没没执行，正在显示的被移走了，但没移动的意义 --- */
@@ -154,21 +177,21 @@ export let methods = {
                 if (theCursor > maxCursor) {
                     theCursor = maxCursor;
                 }
-                this.placePos.start = cursor;
-                this.placePos.end = theCursor;
+                this.compPos.start = cursor;
+                this.compPos.end = theCursor;
                 await this.$nextTick();
-                await clickgo.tool.sleep(0);
+                await clickgo.tool.sleep(34);
                 if (nowCount !== this.refreshCount) {
                     // --- 重复执行，以最后一次执行为准 ---
                     return;
                 }
-                if (!this.$refs.place) {
+                if (!this.$refs.comp) {
                     // --- 当前被卸载了 ---
                     return;
                 }
-                // --- 遍历 place items ---
-                for (let i = 0; i < this.$refs.place.children.length; ++i) {
-                    let item = this.$refs.place.children.item(i) as HTMLElement;
+                // --- 遍历 comp items ---
+                for (let i = 0; i < this.$refs.comp.children.length; ++i) {
+                    let item = this.$refs.comp.children.item(i) as HTMLElement;
                     let start = this.direction === 'v' ? lengthHeight : lengthWidth;
                     let rect = item.getBoundingClientRect();
                     if (this.direction === 'v') {
@@ -194,22 +217,29 @@ export let methods = {
                 cursor = theCursor;
             }
             this.dataHeight = dataHeight;
+            if (this.direction === 'v') {
+                lengthWidth += anotherWOH;
+            }
+            else {
+                lengthHeight += anotherWOH;
+            }
         }
         else {
             // --- same true 模式 ---
-            this.placePos.start = 0;
-            this.placePos.end = 1;
+            this.compPos.start = 0;
+            this.compPos.end = 1;
             await this.$nextTick();
             await clickgo.tool.sleep(0);
             if (nowCount !== this.refreshCount) {
                 // --- 重复执行，以最后一次执行为准 ---
                 return;
             }
-            if (!this.$refs.place) {
+            if (!this.$refs.comp) {
                 // --- 当前被卸载了 ---
                 return;
             }
-            let item = this.$refs.place.children.item(0) as HTMLElement;
+            let item = this.$refs.comp.children.item(0) as HTMLElement;
+            // await clickgo.tool.sleep(10000);
             if (item) {
                 let rect = item.getBoundingClientRect();
                 if (this.direction === 'v') {
@@ -227,8 +257,8 @@ export let methods = {
                 this.lineHeight = 0;
             }
         }
-        this.placePos.start = 0;
-        this.placePos.end = 0;
+        // this.compPos.start = 0;
+        // this.compPos.end = 0;
         lengthWidth += this.paddingComp.right;
         lengthHeight += this.paddingComp.bottom;
         this.lengthWidth = lengthWidth;
@@ -302,24 +332,49 @@ export let methods = {
         if (pos === 'left') {
             this.scrollLeftEmit = val;
             this.$emit('update:scrollLeft', val);
+            if (this.direction === 'h') {
+                this.reShow();
+            }
         }
         else {
             this.scrollTopEmit = val;
             this.$emit('update:scrollTop', val);
+            if (this.direction === 'v') {
+                this.reShow();
+            }
         }
-        this.reShow();
     },
     onResize: function(this: IVueControl, val: number): void {
         this.client = val;
         this.$emit('resize', val);
+        if (this.direction === 'v') {
+            this.clientHeight = val;
+        }
+        else {
+            this.clientWidth = val;
+        }
         if (!this.lengthInit) {
             return;
         }
-        this.reShow();
+        this.refreshView();
+    },
+    onResizen: function(this: IVueControl, val: number): void {
+        this.refreshView();
+        this.$emit('resizen', val);
+        if (this.direction === 'h') {
+            this.clientHeight = val;
+        }
+        else {
+            this.clientWidth = val;
+        }
+    },
+    onChange: function(this: IVueControl, val: number): void {
+        this.$emit('change', val);
     }
 };
 
 export let mounted = function(this: IVueControl): void {
+    // --- nest 内嵌闪烁是 mounted 导致 ---
     this.refreshView();
 
     let mo = new MutationObserver(() => {

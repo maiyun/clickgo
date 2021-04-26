@@ -18,7 +18,7 @@ export let props = {
         'default': ''
     },
     'direction': {
-        'default': 'v'
+        'default': 'h'
     },
     'padding': {
         'default': undefined
@@ -32,6 +32,9 @@ export let props = {
     },
     'scrollTop': {
         'default': 0
+    },
+    'content': {
+        'default': 'max'
     }
 };
 
@@ -56,27 +59,43 @@ export let data = {
 export let watch = {
     'direction': function(this: IVueControl): void {
         let size = clickgo.dom.getSize(this.$refs.wrap);
-        this.clientWidth = size.innerWidth;
-        this.clientHeight = size.innerHeight;
+        if (this.clientWidth !== size.innerWidth) {
+            this.clientWidth = size.innerWidth;
+        }
+        if (this.clientHeight !== size.innerHeight) {
+            this.clientHeight = size.innerHeight;
+        }
+        this.$emit('resize', this.direction === 'v' ? Math.round(this.clientHeight) : Math.round(this.clientWidth));
+        this.$emit('resizen', this.direction === 'h' ? Math.round(this.clientHeight) : Math.round(this.clientWidth));
+
+        /*
         let innerRect = this.$refs.inner.getBoundingClientRect();
         this.lengthWidth = innerRect.width;
         this.lengthHeight = innerRect.height;
+        */
     },
     'scrollLeft': {
         handler: function(this: IVueControl): void {
             this.goScroll(this.scrollLeft, 'left');
-        },
-        'immediate': true
+        }
     },
     'scrollTop': {
         handler: function(this: IVueControl): void {
             this.goScroll(this.scrollTop, 'top');
-        },
-        'immediate': true
+        }
     }
 };
 
 export let computed = {
+    'adaptationComp': function(this: IVueControl): boolean {
+        if (typeof this.adaptation === 'string') {
+            if (this.adaptation === 'false') {
+                return false;
+            }
+            return true;
+        }
+        return this.adaptation ? true : false;
+    },
     // --- 最大可拖动的 scroll 位置 ---
     'maxScrollLeft': function(this: IVueControl): number {
         if (this.lengthWidth <= this.clientWidth) {
@@ -90,19 +109,13 @@ export let computed = {
         }
         return Math.round(this.lengthHeight) - Math.round(this.clientHeight);
     },
-    'maxLengthWidth': function(this: IVueControl): number {
-        return Math.round(this.lengthWidth);
-    },
-    'maxLengthHeight': function(this: IVueControl): number {
-        return Math.round(this.lengthHeight);
-    },
     'widthPx': function(this: IVueControl): string | undefined {
         if (this.width !== undefined) {
             return this.width + 'px';
         }
         if (this.flex !== '') {
-            let dir = this.cgParentDirection();
-            return dir ? (dir === 'v' ? undefined : '0') : undefined;
+            let parent = this.cgParent();
+            return parent ? (parent.direction === 'v' ? undefined : '0') : undefined;
         }
     },
     'heightPx': function(this: IVueControl): string | undefined {
@@ -110,142 +123,159 @@ export let computed = {
             return this.height + 'px';
         }
         if (this.flex !== '') {
-            let dir = this.cgParentDirection();
-            return dir ? (dir === 'v' ? '0' : undefined) : undefined;
+            let parent = this.cgParent();
+            return parent ? (parent.direction === 'v' ? '0' : undefined) : undefined;
         }
     }
 };
 
 export let methods = {
     wheel: function(this: IVueControl, e: WheelEvent): void {
-        // --- 用来屏蔽不小心触发前进、后退的浏览器事件 ---
-        e.preventDefault();
-        this.stopAnimation();
-
-        if (this.direction === 'v') {
-            this.scrollTopData += e.deltaY;
-            this.scrollLeftData += e.deltaX;
+        if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
+            // --- 竖向滚动 ---
+            if (e.deltaY < 0) {
+                // --- 向上滚 ---
+                if (this.scrollTopData > 0) {
+                    // --- 可以滚动 ---
+                    this.stopAnimation();
+                    e.stopPropagation();
+                    e.preventDefault();
+                    this.scrollTopData += e.deltaY;
+                    this.refreshView();
+                }
+                else if (this.scrollLeftData > 0 && this.lengthHeight === this.clientHeight) {
+                    // --- 上面不能滚但左边可以 ---
+                    this.stopAnimation();
+                    e.stopPropagation();
+                    e.preventDefault();
+                    this.scrollLeftData += e.deltaY;
+                    this.refreshView();
+                }
+            }
+            else {
+                // --- 向下滚 ---
+                if (this.scrollTopData < this.maxScrollTop) {
+                    this.stopAnimation();
+                    e.stopPropagation();
+                    e.preventDefault();
+                    this.scrollTopData += e.deltaY;
+                    this.refreshView();
+                }
+                else if (this.scrollLeftData < this.maxScrollLeft && this.lengthHeight === this.clientHeight) {
+                    this.stopAnimation();
+                    e.stopPropagation();
+                    e.preventDefault();
+                    this.scrollLeftData += e.deltaY;
+                    this.refreshView();
+                }
+            }
         }
         else {
-            this.scrollTopData += e.deltaY;
-            this.scrollLeftData += e.deltaX;
+            // --- 横向滚动 ---
+            if (e.deltaX < 0) {
+                // --- 向左滚 ---
+                if (this.scrollLeftData > 0) {
+                    // --- 可以滚动 ---
+                    this.stopAnimation();
+                    e.stopPropagation();
+                    e.preventDefault();
+                    this.scrollLeftData += e.deltaX;
+                    this.refreshView();
+
+                }
+                else if (this.scrollTopData > 0 && this.lengthWidth === this.clientWidth) {
+                    // --- 左面不能滚但上边可以 ---
+                    this.stopAnimation();
+                    e.stopPropagation();
+                    e.preventDefault();
+                    this.scrollTopData += e.deltaX;
+                    this.refreshView();
+                }
+            }
+            else {
+                // --- 向右滚 ---
+                if (this.scrollLeftData < this.maxScrollLeft) {
+                    this.stopAnimation();
+                    e.stopPropagation();
+                    e.preventDefault();
+                    this.scrollLeftData += e.deltaX;
+                    this.refreshView();
+                }
+                else if (this.scrollTopData < this.maxScrollTop && this.lengthWidth === this.clientWidth) {
+                    this.stopAnimation();
+                    e.stopPropagation();
+                    e.preventDefault();
+                    this.scrollTopData += e.deltaX;
+                    this.refreshView();
+                }
+            }
         }
-        this.refreshView();
     },
     down: function(this: IVueControl, e: MouseEvent | TouchEvent): void {
         if (e instanceof MouseEvent && clickgo.hasTouch) {
             return;
         }
+        /*
+        clickgo.form.changeFocus(this.formId);
+        e.stopPropagation();
+        */
         this.stopAnimation();
 
-        let wrapSize = clickgo.dom.getSize(this.$refs.wrap);
-        let top = wrapSize.top + wrapSize.border.top + wrapSize.padding.top;
-        let right = wrapSize.right - wrapSize.border.right - wrapSize.padding.right;
-        let bottom = wrapSize.bottom - wrapSize.border.bottom - wrapSize.padding.bottom;
-        let left = wrapSize.left + wrapSize.border.left + wrapSize.padding.left;
+        let bindMove = (e: MouseEvent | TouchEvent): void => {
+            let wrapSize = clickgo.dom.getSize(this.$refs.wrap);
+            let top = wrapSize.top + wrapSize.border.top + wrapSize.padding.top;
+            let right = wrapSize.right - wrapSize.border.right - wrapSize.padding.right;
+            let bottom = wrapSize.bottom - wrapSize.border.bottom - wrapSize.padding.bottom;
+            let left = wrapSize.left + wrapSize.border.left + wrapSize.padding.left;
 
-        /** --- 内容超出像素 --- */
-        let overWidth = this.lengthWidth - this.clientWidth;
-        let overHeight = this.lengthHeight - this.clientHeight;
-        clickgo.dom.bindMove(e, {
-            // 'showRect': true,
-            'object': this.$refs.inner,
-            'left': left - overWidth,
-            'right': right + overWidth,
-            'top': top - overHeight,
-            'bottom': bottom + overHeight,
-            'move': (ox, oy) => {
-                this.scrollLeftData -= ox;
-                this.scrollTopData -= oy;
-                let sleft = Math.round(this.scrollLeftData);
-                if (sleft > this.maxScrollLeft) {
-                    sleft = this.maxScrollLeft;
-                }
-                if (this.scrollLeftEmit !== sleft) {
-                    this.scrollLeftEmit = sleft;
-                    this.$emit('update:scrollLeft', this.scrollLeftEmit);
-                }
-
-                let stop = Math.round(this.scrollTopData);
-                if (stop > this.maxScrollTop) {
-                    stop = this.maxScrollTop;
-                }
-                if (this.scrollTopEmit !==  stop) {
-                    this.scrollTopEmit =  stop;
-                    this.$emit('update:scrollTop', this.scrollTopEmit);
-                }
-            },
-            'end': async (moveTimes) => {
-                // --- 获取 100 毫秒内的偏移 ---
-                let moveLeftPos = 0;
-                let moveTopPos = 0;
-                let topTime = 0;
-                let nowDate = Date.now();
-                for (let item of moveTimes) {
-                    if (nowDate - item.time > 150) {
-                        continue;
+            /** --- 内容超出像素 --- */
+            let overWidth = this.lengthWidth - this.clientWidth;
+            let overHeight = this.lengthHeight - this.clientHeight;
+            clickgo.dom.bindMove(e, {
+                // 'showRect': true,
+                'object': this.$refs.inner,
+                'left': left - overWidth,
+                'right': right + overWidth,
+                'top': top - overHeight,
+                'bottom': bottom + overHeight,
+                'move': (ox: number, oy: number): void => {
+                    this.scrollLeftData -= ox;
+                    this.scrollTopData -= oy;
+                    let sleft = Math.round(this.scrollLeftData);
+                    if (sleft > this.maxScrollLeft) {
+                        sleft = this.maxScrollLeft;
                     }
-                    moveLeftPos += item.ox;
-                    moveTopPos += item.oy;
-                    if (topTime === 0 || topTime > item.time) {
-                        topTime = item.time;
+                    if (this.scrollLeftEmit !== sleft) {
+                        this.scrollLeftEmit = sleft;
+                        this.$emit('update:scrollLeft', this.scrollLeftEmit);
                     }
-                }
-                if (topTime === 0) {
-                    // --- 无需缓动 ---
-                    this.scrollLeftData = Math.round(this.scrollLeftData);
-                    if (this.scrollLeftData > this.maxScrollLeft) {
-                        this.scrollLeftData = this.maxScrollLeft;
+                    let stop = Math.round(this.scrollTopData);
+                    if (stop > this.maxScrollTop) {
+                        stop = this.maxScrollTop;
                     }
-                    this.scrollTopData = Math.round(this.scrollTopData);
-                    if (this.scrollTopData > this.maxScrollTop) {
-                        this.scrollTopData = this.maxScrollTop;
+                    if (this.scrollTopEmit !== stop) {
+                        this.scrollTopEmit = stop;
+                        this.$emit('update:scrollTop', this.scrollTopEmit);
                     }
-                    return;
-                }
-
-                let speedLeft = (moveLeftPos / (Date.now() - topTime)) * 16;
-                let speedTop = (moveTopPos / (Date.now() - topTime)) * 16;
-
-                let fleft = 0;
-                let ftop = 0;
-                this.timer = true;
-
-                let leftEnd = false;
-                let topEnd = false;
-                let animation = (): void => {
-                    if (!leftEnd) {
-                        fleft = Math.min(Math.abs(speedLeft) / 32, 0.5);
-                        if (speedLeft > 0.2) {
-                            speedLeft -= fleft;
-                            this.scrollLeftData -= speedLeft;
+                },
+                'end': async (moveTimes) => {
+                    // --- 获取 100 毫秒内的偏移 ---
+                    let moveLeftPos = 0;
+                    let moveTopPos = 0;
+                    let topTime = 0;
+                    let nowDate = Date.now();
+                    for (let item of moveTimes) {
+                        if (nowDate - item.time > 150) {
+                            continue;
                         }
-                        else if (speedLeft < -0.2) {
-                            speedLeft += fleft;
-                            this.scrollLeftData -= speedLeft;
-                        }
-                        else {
-                            leftEnd = true;
+                        moveLeftPos += item.ox;
+                        moveTopPos += item.oy;
+                        if (topTime === 0 || topTime > item.time) {
+                            topTime = item.time;
                         }
                     }
-                    if (!topEnd) {
-                        ftop = Math.min(Math.abs(speedTop) / 32, 0.5);
-                        if (speedTop > 0.2) {
-                            speedTop -= ftop;
-                            this.scrollTopData -= speedTop;
-                        }
-                        else if (speedTop < -0.2) {
-                            speedTop += ftop;
-                            this.scrollTopData -= speedTop;
-                        }
-                        else {
-                            topEnd = true;
-                        }
-                    }
-
-                    // --- 检测是否终止滚动，本轮就未发生移动，无需 emit ---
-                    if (leftEnd && topEnd) {
-                        this.timer = false;
+                    if (topTime === 0) {
+                        // --- 无需缓动 ---
                         this.scrollLeftData = Math.round(this.scrollLeftData);
                         if (this.scrollLeftData > this.maxScrollLeft) {
                             this.scrollLeftData = this.maxScrollLeft;
@@ -257,142 +287,264 @@ export let methods = {
                         return;
                     }
 
-                    if (this.scrollLeftData > this.maxScrollLeft) {
-                        leftEnd = true;
-                        this.scrollLeftData = this.maxScrollLeft;
-                    }
-                    else if (this.scrollLeftData < 0) {
-                        leftEnd = true;
-                        this.scrollLeftData = 0;
-                    }
-                    else if (this.scrollLeftData === this.maxScrollLeft) {
-                        leftEnd = true;
-                    }
-                    if (this.scrollTopData > this.maxScrollTop) {
-                        topEnd = true;
-                        this.scrollTopData = this.maxScrollTop;
-                    }
-                    else if (this.scrollTopData < 0) {
-                        topEnd = true;
-                        this.scrollTopData = 0;
-                    }
-                    else if (this.scrollTopData === this.maxScrollTop) {
-                        topEnd = true;
-                    }
+                    let speedLeft = (moveLeftPos / (Date.now() - topTime)) * 16;
+                    let speedTop = (moveTopPos / (Date.now() - topTime)) * 16;
 
-                    this.scrollLeftEmit = Math.round(this.scrollLeftData);
-                    this.$emit('update:scrollLeft', this.scrollLeftEmit);
-                    this.scrollTopEmit = Math.round(this.scrollTopData);
-                    this.$emit('update:scrollTop', this.scrollTopEmit);
+                    let fleft = 0;
+                    let ftop = 0;
+                    this.timer = true;
 
-                    if (leftEnd && topEnd) {
-                        this.timer = false;
-                        return;
-                    }
+                    let leftEnd = false;
+                    let topEnd = false;
+                    let animation = (): void => {
+                        if (!leftEnd) {
+                            fleft = Math.min(Math.abs(speedLeft) / 32, 0.5);
+                            if (speedLeft > 0.2) {
+                                speedLeft -= fleft;
+                                this.scrollLeftData -= speedLeft;
+                            }
+                            else if (speedLeft < -0.2) {
+                                speedLeft += fleft;
+                                this.scrollLeftData -= speedLeft;
+                            }
+                            else {
+                                leftEnd = true;
+                            }
+                        }
+                        if (!topEnd) {
+                            ftop = Math.min(Math.abs(speedTop) / 32, 0.5);
+                            if (speedTop > 0.2) {
+                                speedTop -= ftop;
+                                this.scrollTopData -= speedTop;
+                            }
+                            else if (speedTop < -0.2) {
+                                speedTop += ftop;
+                                this.scrollTopData -= speedTop;
+                            }
+                            else {
+                                topEnd = true;
+                            }
+                        }
 
-                    if (this.timer) {
-                        requestAnimationFrame(animation);
-                    }
-                    else {
+                        // --- 检测是否终止滚动，本轮就未发生移动，无需 emit ---
+                        if (leftEnd && topEnd) {
+                            this.timer = false;
+                            this.scrollLeftData = Math.round(this.scrollLeftData);
+                            if (this.scrollLeftData > this.maxScrollLeft) {
+                                this.scrollLeftData = this.maxScrollLeft;
+                            }
+                            this.scrollTopData = Math.round(this.scrollTopData);
+                            if (this.scrollTopData > this.maxScrollTop) {
+                                this.scrollTopData = this.maxScrollTop;
+                            }
+                            return;
+                        }
+
                         if (this.scrollLeftData > this.maxScrollLeft) {
+                            leftEnd = true;
                             this.scrollLeftData = this.maxScrollLeft;
                         }
+                        else if (this.scrollLeftData < 0) {
+                            leftEnd = true;
+                            this.scrollLeftData = 0;
+                        }
+                        else if (this.scrollLeftData === this.maxScrollLeft) {
+                            leftEnd = true;
+                        }
                         if (this.scrollTopData > this.maxScrollTop) {
+                            topEnd = true;
                             this.scrollTopData = this.maxScrollTop;
                         }
-                    }
-                };
-                animation();
+                        else if (this.scrollTopData < 0) {
+                            topEnd = true;
+                            this.scrollTopData = 0;
+                        }
+                        else if (this.scrollTopData === this.maxScrollTop) {
+                            topEnd = true;
+                        }
 
-                /*
+                        this.scrollLeftEmit = Math.round(this.scrollLeftData);
+                        this.$emit('update:scrollLeft', this.scrollLeftEmit);
+                        this.scrollTopEmit = Math.round(this.scrollTopData);
+                        this.$emit('update:scrollTop', this.scrollTopEmit);
 
-                // --- 以下为浏览器惯性，目前自己写，因为浏览器惯性无法有效的随时终止 ---
+                        if (leftEnd && topEnd) {
+                            this.timer = false;
+                            return;
+                        }
 
-                let speedLeft = Math.abs(moveLeftPos / (Date.now() - topTime));
-                let speedTop = Math.abs(moveTopPos / (Date.now() - topTime));
-                if (speedLeft <= 0.1 && speedTop <= 0.1) {
-                    return;
-                }
-                this.tran = (speedLeft > speedTop ? speedLeft : speedTop) * 2000;
-                await this.$nextTick();
-                this.timer = setTimeout(() => {
-                    this.timer = undefined;
-                    this.tran = 0;
-                }, this.tran);
-                if (moveLeftPos > 0) {
-                    this.scrollLeftData -= Math.round(speedLeft * 800);
-                }
-                else {
-                    this.scrollLeftData += Math.round(speedLeft * 800);
-                }
-                if (moveTopPos > 0) {
-                    this.scrollTopData -= Math.round(speedTop * 800);
-                }
-                else {
-                    this.scrollTopData += Math.round(speedTop * 800);
-                }
-                let animation = (): void => {
-                    if (!this.timer) {
+                        if (this.timer) {
+                            requestAnimationFrame(animation);
+                        }
+                        else {
+                            if (this.scrollLeftData > this.maxScrollLeft) {
+                                this.scrollLeftData = this.maxScrollLeft;
+                            }
+                            if (this.scrollTopData > this.maxScrollTop) {
+                                this.scrollTopData = this.maxScrollTop;
+                            }
+                        }
+                    };
+                    animation();
+
+                    /*
+
+                    // --- 以下为浏览器惯性，目前自己写，因为浏览器惯性无法有效的随时终止 ---
+
+                    let speedLeft = Math.abs(moveLeftPos / (Date.now() - topTime));
+                    let speedTop = Math.abs(moveTopPos / (Date.now() - topTime));
+                    if (speedLeft <= 0.1 && speedTop <= 0.1) {
                         return;
                     }
-                    let wrapSize = clickgo.element.getSize(this.$refs.wrap);
-                    let offsetLeft = Math.round(wrapSize.left + wrapSize.border.left + wrapSize.padding.left - this.$refs.inner.getBoundingClientRect().left);
-                    let offsetTop = Math.round(wrapSize.top + wrapSize.border.top + wrapSize.padding.top - this.$refs.inner.getBoundingClientRect().top);
-
-                    let leftEnd = false, topEnd = false;
-                    if (offsetLeft > this.maxScrollLeft) {
-                        leftEnd = true;
-                        offsetLeft = this.maxScrollLeft;
-                        this.scrollLeftData = offsetLeft;
-                    }
-                    else if (offsetLeft === this.maxScrollLeft) {
-                        leftEnd = true;
-                        if (this.scrollLeftData !== offsetLeft) {
-                            this.scrollLeftData = offsetLeft;
-                        }
-                    }
-                    else if (offsetLeft < 0) {
-                        leftEnd = true;
-                        offsetLeft = 0;
-                        this.scrollLeftData = 0;
-                    }
-                    if (offsetTop > this.maxScrollTop) {
-                        topEnd = true;
-                        offsetTop = this.maxScrollTop;
-                        this.scrollTopData = offsetTop;
-                    }
-                    else if (offsetTop === this.maxScrollTop) {
-                        topEnd = true;
-                        if (this.scrollTopData !== offsetTop) {
-                            this.scrollTopData = offsetTop;
-                        }
-                    }
-                    else if (offsetTop < 0) {
-                        topEnd = true;
-                        offsetTop = 0;
-                        this.scrollTopData = 0;
-                    }
-
-                    // --- 检测是否终止滚动 ---
-                    if (leftEnd && topEnd) {
-                        clearTimeout(this.timer);
+                    this.tran = (speedLeft > speedTop ? speedLeft : speedTop) * 2000;
+                    await this.$nextTick();
+                    this.timer = setTimeout(() => {
                         this.timer = undefined;
                         this.tran = 0;
+                    }, this.tran);
+                    if (moveLeftPos > 0) {
+                        this.scrollLeftData -= Math.round(speedLeft * 800);
                     }
+                    else {
+                        this.scrollLeftData += Math.round(speedLeft * 800);
+                    }
+                    if (moveTopPos > 0) {
+                        this.scrollTopData -= Math.round(speedTop * 800);
+                    }
+                    else {
+                        this.scrollTopData += Math.round(speedTop * 800);
+                    }
+                    let animation = (): void => {
+                        if (!this.timer) {
+                            return;
+                        }
+                        let wrapSize = clickgo.element.getSize(this.$refs.wrap);
+                        let offsetLeft = Math.round(wrapSize.left + wrapSize.border.left + wrapSize.padding.left - this.$refs.inner.getBoundingClientRect().left);
+                        let offsetTop = Math.round(wrapSize.top + wrapSize.border.top + wrapSize.padding.top - this.$refs.inner.getBoundingClientRect().top);
 
-                    this.scrollLeftEmit = offsetLeft;
-                    this.$emit('update:scrollLeft', offsetLeft);
-                    this.scrollTopEmit = offsetTop;
-                    this.$emit('update:scrollTop', offsetTop);
+                        let leftEnd = false, topEnd = false;
+                        if (offsetLeft > this.maxScrollLeft) {
+                            leftEnd = true;
+                            offsetLeft = this.maxScrollLeft;
+                            this.scrollLeftData = offsetLeft;
+                        }
+                        else if (offsetLeft === this.maxScrollLeft) {
+                            leftEnd = true;
+                            if (this.scrollLeftData !== offsetLeft) {
+                                this.scrollLeftData = offsetLeft;
+                            }
+                        }
+                        else if (offsetLeft < 0) {
+                            leftEnd = true;
+                            offsetLeft = 0;
+                            this.scrollLeftData = 0;
+                        }
+                        if (offsetTop > this.maxScrollTop) {
+                            topEnd = true;
+                            offsetTop = this.maxScrollTop;
+                            this.scrollTopData = offsetTop;
+                        }
+                        else if (offsetTop === this.maxScrollTop) {
+                            topEnd = true;
+                            if (this.scrollTopData !== offsetTop) {
+                                this.scrollTopData = offsetTop;
+                            }
+                        }
+                        else if (offsetTop < 0) {
+                            topEnd = true;
+                            offsetTop = 0;
+                            this.scrollTopData = 0;
+                        }
 
-                    requestAnimationFrame(animation);
-                };
-                animation();
+                        // --- 检测是否终止滚动 ---
+                        if (leftEnd && topEnd) {
+                            clearTimeout(this.timer);
+                            this.timer = undefined;
+                            this.tran = 0;
+                        }
 
-                */
+                        this.scrollLeftEmit = offsetLeft;
+                        this.$emit('update:scrollLeft', offsetLeft);
+                        this.scrollTopEmit = offsetTop;
+                        this.$emit('update:scrollTop', offsetTop);
+
+                        requestAnimationFrame(animation);
+                    };
+                    animation();
+
+                    */
+                }
+            });
+        };
+        let cancel = (e: MouseEvent | TouchEvent): void => {
+            this.$el.removeEventListener(e instanceof MouseEvent ? 'mousemove' : 'touchmove', move);
+            this.$el.removeEventListener(e instanceof MouseEvent ? 'mouseup' : 'touchend', cancel);
+            if (e instanceof TouchEvent) {
+                this.$el.removeEventListener('touchcancel', cancel);
             }
-        });
-        this.cgDown();
+        };
+        let x: number = (e instanceof MouseEvent) ? e.clientX : e.touches[0].clientX;
+        let y: number = (e instanceof MouseEvent) ? e.clientY : e.touches[0].clientY;
+        let count: number = 0;
+        let move = (e: MouseEvent | TouchEvent): void => {
+            ++count;
+            if (clickgo.dom.is.move) {
+                cancel(e);
+                return;
+            }
+            if(count < 3) {
+                return;
+            }
+            let deltaX: number = x - ((e instanceof MouseEvent) ? e.clientX : e.touches[0].clientX);
+            let deltaY: number = y - ((e instanceof MouseEvent) ? e.clientY : e.touches[0].clientY);
+            if (deltaX === 0 && deltaY === 0) {
+                return;
+            }
+            let isWheel: boolean = false;
+            if (Math.abs(deltaY) > Math.abs(deltaX)) {
+                // --- 竖向滚动 ---
+                if (deltaY < 0) {
+                    // --- 向上滚 ---
+                    if (this.scrollTopData > 0) {
+                        // --- 可以滚动 ---
+                        isWheel = true;
+                    }
+                }
+                else if (deltaY > 0) {
+                    // --- 向下滚 ---
+                    if (this.scrollTopData < this.maxScrollTop) {
+                        isWheel = true;
+                    }
+                }
+            }
+            else {
+                // --- 横向滚动 ---
+                if (deltaX < 0) {
+                    // --- 向左滚 ---
+                    if (this.scrollLeftData > 0) {
+                        // --- 可以滚动 ---
+                        isWheel = true;
+                    }
+                }
+                else if (deltaX > 0) {
+                    // --- 向右滚 ---
+                    if (this.scrollLeftData < this.maxScrollLeft) {
+                        isWheel = true;
+                    }
+                }
+            }
+            if (isWheel) {
+                e.stopPropagation();
+                bindMove(e);
+            }
+            cancel(e);
+        };
+        this.$el.addEventListener(e instanceof MouseEvent ? 'mousemove' : 'touchmove', move);
+        this.$el.addEventListener(e instanceof MouseEvent ? 'mouseup' : 'touchend', cancel);
+        if (e instanceof TouchEvent) {
+            this.$el.addEventListener('touchcancel', cancel);
+        }
+        this.cgDown(e);
     },
     // --- 重置视图 scroll ---
     'refreshView': function(this: IVueControl): void {
@@ -464,27 +616,25 @@ export let mounted = function(this: IVueControl): void {
         let clientHeight = size.innerHeight;
         if (this.direction === 'v') {
             // --- 垂直 ---
-            if (clientWidth !== this.clientWidth) {
+            if (this.clientWidth !== clientWidth) {
                 this.clientWidth = clientWidth;
                 this.$emit('resizen', Math.round(this.clientWidth));
             }
-            if (clientHeight === this.clientHeight) {
-                return;
+            if (clientHeight !== this.clientHeight) {
+                this.clientHeight = clientHeight;
+                this.$emit('resize', Math.round(this.clientHeight));
             }
-            this.clientHeight = clientHeight;
-            this.$emit('resize', Math.round(this.clientHeight));
         }
         else {
             // --- 水平 ---
-            if (clientHeight !== this.clientHeight) {
+            if (this.clientHeight !== clientHeight) {
                 this.clientHeight = clientHeight;
                 this.$emit('resizen', Math.round(this.clientHeight));
             }
-            if (clientWidth === this.clientWidth) {
-                return;
+            if (clientWidth !== this.clientWidth) {
+                this.clientWidth = clientWidth;
+                this.$emit('resize', Math.round(this.clientWidth));
             }
-            this.clientWidth = clientWidth;
-            this.$emit('resize', Math.round(this.clientWidth));
         }
         if (!this.clientInit) {
             this.clientInit = true;
@@ -513,6 +663,10 @@ export let mounted = function(this: IVueControl): void {
         }
         this.refreshView();
     }, true);
+
+    // --- 对 scroll 位置进行归位 ---
+    this.goScroll(this.scrollLeft, 'left');
+    this.goScroll(this.scrollTop, 'top');
 };
 
 export let unmounted = function(this: IVueControl): void {

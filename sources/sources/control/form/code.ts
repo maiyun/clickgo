@@ -21,6 +21,9 @@ export let props = {
     'stateMin': {
         'default': false
     },
+    'show': {
+        'default': undefined
+    },
 
     'width': {
         'default': 300
@@ -46,6 +49,9 @@ export let props = {
     'resize': {
         'default': true
     },
+    'move': {
+        'default': true
+    },
     'border': {
         'default': 'normal'
     },
@@ -64,11 +70,12 @@ export let data = {
     'stateMaxData': false,
     'stateMinData': false,
     'stateAbs': false,
+    'showData': false,
 
     'iconData': undefined,
 
-    'widthData': 300,
-    'heightData': 200,
+    'widthData': undefined,
+    'heightData': undefined,
     'leftData': 0,
     'topData': 0,
     'zIndexData': 0,
@@ -81,7 +88,8 @@ export let data = {
     },
     'maskFor': undefined,
     'maskFrom': undefined,
-    'flashTimer': undefined
+    'flashTimer': undefined,
+    'isInside': false
 };
 
 export let watch = {
@@ -99,27 +107,55 @@ export let watch = {
             }
             if (!first) {
                 // --- 触发 formIconChanged 事件 ---
-                clickgo.core.trigger('formIconChanged', this.taskId, this.formId, {'icon': this.iconData});
+                clickgo.core.trigger('formIconChanged', this.taskId, this.formId, this.iconData);
             }
         },
         'immediate': true
     },
     'title': function(this: IVueControl): void {
         // --- 触发 formTitleChanged 事件 ---
-        clickgo.core.trigger('formTitleChanged', this.taskId, this.formId, {'title': this.title});
+        clickgo.core.trigger('formTitleChanged', this.taskId, this.formId, this.title);
     },
     'stateMin': function(this: IVueControl): void {
+        if (this.stateMin === this.stateMinData) {
+            return;
+        }
         this.minMethod();
     },
     'stateMax': function(this: IVueControl): void {
+        if (this.stateMax === this.stateMaxData) {
+            return;
+        }
         this.maxMethod();
     },
-
-    'width': function(this: IVueControl): void {
-        this.widthData = parseInt(this.width);
+    'show': function(this: IVueControl): void {
+        if (this.showData !== this.show) {
+            this.showData = this.show;
+        }
     },
-    'height': function(this: IVueControl): void {
-        this.heightData = parseInt(this.height);
+    'showData': function(this: IVueControl): void {
+        clickgo.core.trigger('formShowChanged', this.taskId, this.formId, this.showData);
+    },
+
+    'width': async function(this: IVueControl): Promise<void> {
+        if (this.width === 'auto') {
+            if (this.widthData !== undefined) {
+                this.widthData = undefined;
+            }
+        }
+        else {
+            this.widthData = parseInt(this.width);
+        }
+    },
+    'height': async function(this: IVueControl): Promise<void> {
+        if (this.height === 'auto') {
+            if (this.heightData !== undefined) {
+                this.heightData = undefined;
+            }
+        }
+        else {
+            this.heightData = parseInt(this.height);
+        }
     },
     'left': function(this: IVueControl): void {
         this.leftData = parseInt(this.left);
@@ -134,8 +170,14 @@ export let watch = {
 
 export let methods = {
     // --- 拖动 ---
-    moveMethod: function(this: IVueControl, e: MouseEvent | TouchEvent): void {
+    moveMethod: function(this: IVueControl, e: MouseEvent | TouchEvent, custom: boolean = false): void {
         if (e instanceof MouseEvent && clickgo.hasTouch) {
+            return;
+        }
+        if (!this.move && !custom) {
+            return;
+        }
+        if (this.isInside) {
             return;
         }
         // --- 绑定双击事件 ---
@@ -158,7 +200,7 @@ export let methods = {
             'start': (x, y) => {
                 if (this.stateMaxData) {
                     // --- 不能用 maxMethod 方法，因为那个获得的形状不能满足拖动还原的形状 ---
-                    this.$emit('max', event, 0, this.historyLocation);
+                    this.$emit('max', e, 0, this.historyLocation);
                     this.stateMaxData = false;
                     this.$emit('update:stateMax', false);
                     // --- 进行位置设定 ---
@@ -190,10 +232,20 @@ export let methods = {
                     }
                     this.$emit('update:top', this.topData);
                     // --- 还原宽高 ---
-                    this.widthData = this.historyLocation.width;
-                    this.$emit('update:width', this.historyLocation.width);
-                    this.heightData = this.historyLocation.height;
-                    this.$emit('update:height', this.historyLocation.height);
+                    if (this.width === 'auto') {
+                        this.widthData = undefined;
+                    }
+                    else {
+                        this.widthData = this.historyLocation.width;
+                        this.$emit('update:width', this.historyLocation.width);
+                    }
+                    if (this.height === 'auto') {
+                        this.heightData = undefined;
+                    }
+                    else {
+                        this.heightData = this.historyLocation.height;
+                        this.$emit('update:height', this.historyLocation.height);
+                    }
                 }
                 else if (this.stateAbs) {
                     // --- 吸附拖动还原 ---
@@ -227,15 +279,25 @@ export let methods = {
                     }
                     this.$emit('update:top', this.topData);
                     // --- 还原宽高 ---
-                    this.widthData = this.historyLocation.width;
-                    this.$emit('update:width', this.historyLocation.width);
-                    this.heightData = this.historyLocation.height;
-                    this.$emit('update:height', this.historyLocation.height);
+                    if (this.width === 'auto') {
+                        this.widthData = undefined;
+                    }
+                    else {
+                        this.widthData = this.historyLocation.width;
+                        this.$emit('update:width', this.historyLocation.width);
+                    }
+                    if (this.height === 'auto') {
+                        this.heightData = undefined;
+                    }
+                    else {
+                        this.heightData = this.historyLocation.height;
+                        this.$emit('update:height', this.historyLocation.height);
+                    }
                 }
                 else if (!this.stateMinData) {
                     this.historyLocation = {
-                        'width': this.widthData,
-                        'height': this.heightData,
+                        'width': this.widthData ?? this.$el.offsetWidth,
+                        'height': this.heightData ?? this.$el.offsetHeight,
                         'left': this.leftData,
                         'top': this.topData
                     };
@@ -278,8 +340,8 @@ export let methods = {
                         // --- 要最大化 ---
                         if (this.max) {
                             // --- 不要使用 emit，只是模拟原大小，马上值就又被改变了 ---
-                            this.widthData = this.historyLocation.width;
-                            this.heightData = this.historyLocation.height;
+                            this.widthData = this.width === 'auto' ? undefined : this.historyLocation.width;
+                            this.heightData = this.height === 'auto' ? undefined : this.historyLocation.height;
                             this.leftData = this.historyLocation.left;
                             this.topData = this.historyLocation.top;
                             this.maxMethod();
@@ -297,9 +359,13 @@ export let methods = {
                             this.stateAbs = true;
                             let pos = clickgo.form.getRectByBorder(isBorder);
                             this.widthData = pos.width;
-                            this.$emit('update:width', this.widthData);
+                            if (this.width !== 'auto') {
+                                this.$emit('update:width', this.widthData);
+                            }
                             this.heightData = pos.height;
-                            this.$emit('update:height', this.heightData);
+                            if (this.height !== 'auto') {
+                                this.$emit('update:height', this.heightData);
+                            }
                             this.leftData = pos.left;
                             this.$emit('update:left', this.leftData);
                             this.topData = pos.top;
@@ -313,6 +379,9 @@ export let methods = {
     },
     // --- 最小化 ---
     minMethod: function(this: IVueControl): boolean {
+        if (this.isInside) {
+            return true;
+        }
         let event = {
             'go': true,
             preventDefault: function() {
@@ -332,8 +401,8 @@ export let methods = {
         // --- 当前是吸附状态 ---
         if (this.stateAbs) {
             this.stateAbs = false;
-            this.widthData = this.historyLocation.width;
-            this.heightData = this.historyLocation.height;
+            this.widthData = this.width === 'auto' ? undefined : this.historyLocation.width;
+            this.heightData = this.height === 'auto' ? undefined : this.historyLocation.height;
             this.leftData = this.historyLocation.left;
             this.$emit('update:left', this.leftData);
             this.topData = this.historyLocation.top;
@@ -344,8 +413,8 @@ export let methods = {
             this.$emit('min', event, 1, {});
             if (event.go) {
                 this.historyLocation = {
-                    'width': this.widthData,
-                    'height': this.heightData,
+                    'width': this.widthData ?? this.$el.offsetWidth,
+                    'height': this.heightData ?? this.$el.offsetHeight,
                     'left': this.leftData,
                     'top': this.topData
                 };
@@ -355,14 +424,20 @@ export let methods = {
                 if (!event.ds) {
                     this.$el.style.height = 'auto';
                     this.heightData = this.$el.offsetHeight;
-                    this.$emit('update:height', this.$el.offsetHeight);
+                    if (this.height !== 'auto') {
+                        this.$emit('update:height', this.heightData);
+                    }
                     if (this.border !== 'thin') {
                         this.widthData = 200;
-                        this.$emit('update:width', 200);
+                        if (this.width !== 'auto') {
+                            this.$emit('update:width', 200);
+                        }
                     }
                     else {
                         this.widthData = 150;
-                        this.$emit('update:width', 150);
+                        if (this.width !== 'auto') {
+                            this.$emit('update:width', 150);
+                        }
                     }
                 }
             }
@@ -378,10 +453,20 @@ export let methods = {
                 this.$emit('update:stateMin', false);
                 this.$el.classList.remove('cg-state-min');
                 if (!event.ds) {
-                    this.heightData = this.historyLocation.height;
-                    this.$emit('update:height', this.historyLocation.height);
-                    this.widthData = this.historyLocation.width;
-                    this.$emit('update:width', this.historyLocation.width);
+                    if (this.height === 'auto') {
+                        this.heightData = undefined;
+                    }
+                    else {
+                        this.heightData = this.historyLocation.height;
+                        this.$emit('update:height', this.historyLocation.height);
+                    }
+                    if (this.width === 'auto') {
+                        this.widthData = undefined;
+                    }
+                    else {
+                        this.widthData = this.historyLocation.width;
+                        this.$emit('update:width', this.historyLocation.width);
+                    }
                 }
             }
             else {
@@ -389,29 +474,42 @@ export let methods = {
             }
         }
         // --- 触发 formRemoved 事件 ---
-        clickgo.core.trigger('formStateMinChanged', this.taskId, this.formId, {'state': this.stateMinData});
+        clickgo.core.trigger('formStateMinChanged', this.taskId, this.formId, this.stateMinData);
         return true;
     },
     // --- 竖版扩大 ---
     maxVMethod: function(this: IVueControl, dbl: boolean): void {
+        if (this.isInside) {
+            return;
+        }
         if (this.stateAbs) {
             this.stateAbs = false;
             this.topData = this.historyLocation.top;
             this.$emit('update:top', this.topData);
-            this.heightData = this.historyLocation.height;
-            this.$emit('update:height', this.heightData);
+            if (this.height === 'auto') {
+                this.heightData = undefined;
+            }
+            else {
+                this.heightData = this.historyLocation.height;
+                this.$emit('update:height', this.heightData);
+            }
             if (dbl) {
                 this.leftData = this.historyLocation.left;
                 this.$emit('update:top', this.leftData);
-                this.widthData = this.historyLocation.width;
-                this.$emit('update:width', this.widthData);
+                if (this.width === 'auto') {
+                    this.widthData = undefined;
+                }
+                else {
+                    this.widthData = this.historyLocation.width;
+                    this.$emit('update:width', this.widthData);
+                }
             }
         }
         else {
             this.stateAbs = true;
             this.historyLocation = {
-                'width': this.widthData,
-                'height': this.heightData,
+                'width': this.widthData ?? this.$el.offsetWidth,
+                'height': this.heightData ?? this.$el.offsetHeight,
                 'left': this.leftData,
                 'top': this.topData
             };
@@ -419,11 +517,16 @@ export let methods = {
             this.topData = pos.top;
             this.$emit('update:top', this.topData);
             this.heightData = pos.height;
-            this.$emit('update:height', this.heightData);
+            if (this.height !== 'auto') {
+                this.$emit('update:height', this.heightData);
+            }
         }
     },
     // --- 最大化 ---
     maxMethod: function(this: IVueControl): boolean {
+        if (this.isInside) {
+            return true;
+        }
         if (this.stateMinData) {
             if (this.minMethod() === false) {
                 return false;
@@ -448,8 +551,8 @@ export let methods = {
                 }
                 else {
                     this.historyLocation = {
-                        'width': this.widthData,
-                        'height': this.heightData,
+                        'width': this.widthData ?? this.$el.offsetWidth,
+                        'height': this.heightData ?? this.$el.offsetHeight,
                         'left': this.leftData,
                         'top': this.topData
                     };
@@ -463,9 +566,13 @@ export let methods = {
                     this.topData = pos.top;
                     this.$emit('update:top', this.topData);
                     this.widthData = pos.width;
-                    this.$emit('update:width', this.widthData);
+                    if (this.width !== 'auto') {
+                        this.$emit('update:width', this.widthData);
+                    }
                     this.heightData = pos.height;
-                    this.$emit('update:height', this.heightData);
+                    if (this.height !== 'auto') {
+                        this.$emit('update:height', this.heightData);
+                    }
                 }
             }
             else {
@@ -483,10 +590,20 @@ export let methods = {
                     this.$emit('update:left', this.historyLocation.left);
                     this.topData = this.historyLocation.top;
                     this.$emit('update:top', this.historyLocation.top);
-                    this.widthData = this.historyLocation.width;
-                    this.$emit('update:width', this.historyLocation.width);
-                    this.heightData = this.historyLocation.height;
-                    this.$emit('update:height', this.historyLocation.height);
+                    if (this.width === 'auto') {
+                        this.widthData = undefined;
+                    }
+                    else {
+                        this.widthData = this.historyLocation.width;
+                        this.$emit('update:width', this.historyLocation.width);
+                    }
+                    if (this.height === 'auto') {
+                        this.heightData = undefined;
+                    }
+                    else {
+                        this.heightData = this.historyLocation.height;
+                        this.$emit('update:height', this.historyLocation.height);
+                    }
                 }
             }
             else {
@@ -494,11 +611,14 @@ export let methods = {
             }
         }
         // --- 触发 formRemoved 事件 ---
-        clickgo.core.trigger('formStateMaxChanged', this.taskId, this.formId, {'state': this.stateMaxData});
+        clickgo.core.trigger('formStateMaxChanged', this.taskId, this.formId, this.stateMaxData);
         return true;
     },
     // --- 关闭窗体 ---
     closeMethod: function(this: IVueControl): void {
+        if (this.isInside) {
+            return;
+        }
         let event = {
             go: true,
             preventDefault: function() {
@@ -517,7 +637,7 @@ export let methods = {
         }
         let isBorder: TCGBorder = '';
         let top = this.topData;
-        let height = this.heightData;
+        let height = this.heightData ?? this.$el.offsetHeight;
         if (border !== 'l' && border !== 'r') {
             if (this.stateAbs) {
                 // --- 进行高度还原 ---
@@ -533,8 +653,8 @@ export let methods = {
             }
             else {
                 this.historyLocation = {
-                    'width': this.widthData,
-                    'height': this.heightData,
+                    'width': this.widthData ?? this.$el.offsetWidth,
+                    'height': this.heightData ?? this.$el.offsetHeight,
                     'left': this.leftData,
                     'top': this.topData
                 };
@@ -543,7 +663,7 @@ export let methods = {
         clickgo.dom.bindResize(e, {
             'objectLeft': this.leftData,
             'objectTop': top,
-            'objectWidth': this.widthData,
+            'objectWidth': this.widthData ?? this.$el.offsetWidth,
             'objectHeight': height,
             'minWidth': parseInt(this.minWidth),
             'minHeight': parseInt(this.minHeight),
@@ -566,25 +686,33 @@ export let methods = {
                 this.$emit('update:width', width);
                 this.heightData = height;
                 this.$emit('update:height', height);
-                if (nborder !== '') {
-                    if (
-                        ((border === 'lt' || border === 't' || border === 'tr') && (nborder === 'lt' || nborder === 't' || nborder === 'tr')) ||
-                        ((border === 'bl' || border === 'b' || border === 'rb') && (nborder === 'bl' || nborder === 'b' || nborder === 'rb'))
-                    ) {
-                        if (isBorder === '') {
-                            isBorder = nborder;
-                            clickgo.form.showCircular(x, y);
-                            clickgo.form.showRectangle(x, y, {
-                                'left': left,
-                                'width': width
-                            });
+                if (!this.isInside) {
+                    if (nborder !== '') {
+                        if (
+                            ((border === 'lt' || border === 't' || border === 'tr') && (nborder === 'lt' || nborder === 't' || nborder === 'tr')) ||
+                            ((border === 'bl' || border === 'b' || border === 'rb') && (nborder === 'bl' || nborder === 'b' || nborder === 'rb'))
+                        ) {
+                            if (isBorder === '') {
+                                isBorder = nborder;
+                                clickgo.form.showCircular(x, y);
+                                clickgo.form.showRectangle(x, y, {
+                                    'left': left,
+                                    'width': width
+                                });
+                            }
+                            else {
+                                isBorder = nborder;
+                                clickgo.form.moveRectangle({
+                                    'left': left,
+                                    'width': width
+                                });
+                            }
                         }
                         else {
-                            isBorder = nborder;
-                            clickgo.form.moveRectangle({
-                                'left': left,
-                                'width': width
-                            });
+                            if (isBorder !== '') {
+                                isBorder = '';
+                                clickgo.form.hideRectangle();
+                            }
                         }
                     }
                     else {
@@ -592,12 +720,6 @@ export let methods = {
                             isBorder = '';
                             clickgo.form.hideRectangle();
                         }
-                    }
-                }
-                else {
-                    if (isBorder !== '') {
-                        isBorder = '';
-                        clickgo.form.hideRectangle();
                     }
                 }
             },
@@ -648,9 +770,27 @@ export let methods = {
     }
 };
 
-export let mounted = function(this: IVueControl): void {
-    this.widthData = parseInt(this.width);
-    this.heightData = parseInt(this.height);
+export let mounted = async function(this: IVueControl): Promise<void> {
+    await this.$nextTick();
+    await clickgo.tool.sleep(0);
+    if (this.$parent!.controlName !== 'root') {
+        this.isInside = true;
+        this.showData = true;
+    }
+    if (this.width !== 'auto') {
+        this.widthData = parseInt(this.width);
+        if (this.widthData < this.minWidth) {
+            this.widthData = this.minWidth;
+            this.$emit('update:width', this.widthData);
+        }
+    }
+    if (this.height !== 'auto') {
+        this.heightData = parseInt(this.height);
+        if (this.heightData < this.minHeight) {
+            this.heightData = this.minHeight;
+            this.$emit('update:height', this.heightData);
+        }
+    }
     this.zIndexData = parseInt(this.zIndex);
     let stateMax = (typeof this.stateMax === 'string') ? ((this.stateMax === 'true') ? true : false) : this.stateMax;
     if (stateMax) {

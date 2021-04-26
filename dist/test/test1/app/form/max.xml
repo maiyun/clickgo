@@ -1,5 +1,0 @@
-<form width="300" height="300" title="Default max" :state-max="true">
-    <layout flex="1" align-h="center" style="padding: 10px 0 0 0;">
-        <label>Hello world!</label>
-    </layout>
-</form>

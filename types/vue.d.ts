@@ -1,5 +1,7 @@
 declare let Vue: {
     createApp(opt: any): IVueApp;
+    ref<T extends number | string>(obj: T): { 'value': T; };
+    reactive<T>(obj: T): T;
 };
 
 type IVueOptionMergeFunction = (to: unknown, from: unknown, instance: IVue) => any;
@@ -63,15 +65,24 @@ interface IVueVNode {
 }
 
 interface IVueForm extends IVue {
+    /** --- 当前任务 id --- */
     'taskId': number;
+    /** --- 当前窗体 id --- */
     'formId': number;
+    /** --- 当前窗体是否有焦点 --- */
     'focus': boolean;
-    cgCreateForm(paramOpt?: string | ICGCreateFormOptions & { 'mask'?: boolean; }): Promise<void>;
+    /** --- 当前窗体的路径 --- */
+    '_path': string;
+    /** --- 当前环境是否有 touch 事件 --- */
+    'cgHasTouch': boolean;
+    cgCreateForm(paramOpt?: string | ICGFormCreateOptions & { 'mask'?: boolean; }): Promise<void>;
     cgCloseForm(): void;
     cgBindFormDrag(e: MouseEvent | TouchEvent): void;
     cgSetSystemEventListener(name: TCGGlobalEvent, func: any): void;
     cgRemoveSystemEventListener(name: TCGGlobalEvent): void;
+    cgDialog(opt: string | ICGFormDialog): Promise<string>;
     cgGetBlob(path: string): Promise<Blob | null>;
+    cgGetObjectUrl(file: string): string | null;
     cgGetDataUrl(file: string): Promise<string | null>;
     cgLoadTheme(path: string): Promise<void>;
     cgRemoveTheme(path: string): Promise<void>;
@@ -81,6 +92,8 @@ interface IVueForm extends IVue {
     cgClearGlobalTheme(): Promise<void>;
     cgSetTopMost(top: boolean): void;
     cgFlash(): void;
+    cgShow(): void;
+    cgHide(): void;
     /**
      * --- layout 中 :class 的转义 ---
      * @param cla class 内容对象
@@ -89,20 +102,49 @@ interface IVueForm extends IVue {
 }
 
 interface IVueControl extends IVue {
+    '$parent': IVueControl | null;
+
+    /** --- 当前窗体是否有焦点 --- */
+    'focus': boolean;
     /** --- 当前任务 id --- */
     'taskId': number;
     /** --- 当前窗体 id --- */
     'formId': number;
-    /**
-     * --- 阻止当前事件冒泡 ---
-     * @param e 鼠标或触摸事件对象
-     */
-    cgStopPropagation(e: MouseEvent | TouchEvent): void;
+    /** --- 控件名 --- */
+    'controlName': string;
+    /** --- 当前环境是否有 touch 事件 --- */
+    'cgHasTouch': boolean;
+    /** --- 当前是否是 hover 状态（move 模式下一定返回 false） --- */
+    'cgHover': boolean;
+    /** --- 当前是否是真实 hover 状态 --- */
+    'cgRealHover': boolean;
+    /** --- 当前是否是 active 状态 --- */
+    'cgActive': boolean;
     /**
      * --- 控件默认的 down 事件绑定 ---
      * @param e 鼠标或触摸事件对象
      */
-    cgDown(e?: MouseEvent | TouchEvent): void;
+    cgDown(e: MouseEvent | TouchEvent): void;
+    /**
+     * --- 控件默认的 up 事件绑定 ---
+     * @param e 鼠标或触摸事件对象
+     */
+    cgUp(e: MouseEvent | TouchEvent): void;
+    /**
+     * --- 控件默认的 cancel（up） 事件绑定 ---
+     * @param e 触摸事件对象
+     */
+    cgCancel(e: TouchEvent): void;
+    /**
+     * --- 鼠标移入事件绑定，有 touch 事件的则不会触发 emit ---
+     * @param e 鼠标事件对象
+     */
+    cgEnter(e: MouseEvent): void;
+    /**
+     * --- 鼠标移出事件绑定，有 touch 事件的则不会触发 emit ---
+     * @param e 鼠标事件对象
+     */
+    cgLeave(e: MouseEvent): void;
     /**
      * --- 控件默认的 tap 事件绑定 ---
      * @param e 鼠标、触摸或键盘事件对象
@@ -119,6 +161,11 @@ interface IVueControl extends IVue {
      */
     cgGetBlob(this: IVue, path: string): Promise<Blob | null>;
     /**
+     * --- 根据文件路径获取 object url，不支持 /clickgo/ 路径 ---
+     * @param file 当前 task 文件路径
+     */
+    cgGetObjectUrl(file: string): string | null;
+    /**
      * --- 根据路径获取当前应用的文件 dataurl 字符串 ---
      * @param file  文件路径
      */
@@ -133,4 +180,13 @@ interface IVueControl extends IVue {
      * @param name 默认 default
      */
     cgSlos(name?: string): IVueVNode[];
+    /**
+     * --- 获取正常非 nest 上级 ---
+     */
+    cgParent(): IVueControl | null;
+    /**
+     * 根据 control name 查询上级序列 ---
+     * @param controlName 控件名称
+     */
+    cgFindParent(controlName: string): IVueControl | null;
 }

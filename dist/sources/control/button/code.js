@@ -22,25 +22,47 @@ exports.props = {
     },
     'flex': {
         'default': ''
+    },
+    'type': {
+        'default': 'default'
+    },
+    'plain': {
+        'default': false
     }
 };
 exports.computed = {
     'widthPx': function () {
-        var _a;
         if (this.width !== undefined) {
             return this.width + 'px';
         }
         if (this.flex !== '') {
-            return ((_a = this.$parent) === null || _a === void 0 ? void 0 : _a.direction) ? (this.$parent.direction === 'v' ? undefined : '0') : undefined;
+            let parent = this.cgParent();
+            return parent ? (parent.direction === 'v' ? undefined : '0') : undefined;
         }
     },
     'heightPx': function () {
-        var _a;
         if (this.height !== undefined) {
             return this.height + 'px';
         }
         if (this.flex !== '') {
-            return ((_a = this.$parent) === null || _a === void 0 ? void 0 : _a.direction) ? (this.$parent.direction === 'v' ? '0' : undefined) : undefined;
+            let parent = this.cgParent();
+            return parent ? (parent.direction === 'v' ? '0' : undefined) : undefined;
+        }
+    },
+    'isDisabled': function () {
+        if (typeof this.disabled === 'boolean') {
+            return this.disabled;
+        }
+        else {
+            return (this.disabled === '' || this.disabled === 'true') ? true : false;
+        }
+    },
+    'isPlain': function () {
+        if (typeof this.plain === 'boolean') {
+            return this.plain;
+        }
+        else {
+            return (this.plain === '' || this.plain === 'true') ? true : false;
         }
     }
 };
@@ -50,12 +72,5 @@ exports.methods = {
             return;
         }
         this.cgTap(e);
-    },
-    down: function (e) {
-        if (e instanceof MouseEvent && clickgo.hasTouch) {
-            return;
-        }
-        this.cgStopPropagation(e);
-        this.cgDown(e);
     }
 };

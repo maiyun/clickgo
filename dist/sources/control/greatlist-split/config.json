@@ -1,0 +1,14 @@
+{
+    "name": "greatlist-split",
+    "ver": 1,
+    "version": "0.1",
+    "author": "clickgo",
+
+    "layout": "/layout",
+    "style": "/style",
+
+    "files": [
+        "/layout.html",
+        "/style.css"
+    ]
+}

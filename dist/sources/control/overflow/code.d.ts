@@ -20,27 +20,44 @@ export declare let props: {
     direction: {
         default: string;
     };
-    scrollOffset: {
+    scrollLeft: {
+        default: number;
+    };
+    scrollTop: {
         default: number;
     };
 };
 export declare let data: {
-    scrollOffsetEmit: number;
-    clientEmit: number;
-    lengthEmit: number;
+    scrollLeftEmit: number;
+    scrollTopEmit: number;
+    clientWidth: number;
+    clientHeight: number;
+    lengthWidth: number;
+    lengthHeight: number;
+    touchPos: {
+        x: number;
+        y: number;
+    };
+    canTouch: number;
 };
 export declare let computed: {
+    maxScrollLeft: (this: IVueControl) => number;
+    maxScrollTop: (this: IVueControl) => number;
     widthPx: (this: IVueControl) => string | undefined;
     heightPx: (this: IVueControl) => string | undefined;
 };
 export declare let watch: {
-    scrollOffset: {
+    scrollLeft: {
+        handler: (this: IVueControl) => void;
+    };
+    scrollTop: {
         handler: (this: IVueControl) => void;
     };
 };
 export declare let methods: {
     scroll: (this: IVueControl) => void;
     wheel: (this: IVueControl, e: WheelEvent) => void;
-    touchmove: (this: IVueControl, e: TouchEvent) => void;
+    down: (this: IVueControl, e: TouchEvent) => void;
+    move: (this: IVueControl, e: TouchEvent) => void;
 };
 export declare let mounted: (this: IVueControl) => void;

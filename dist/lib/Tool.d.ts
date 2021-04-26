@@ -1,4 +1,5 @@
 export declare function blob2DataUrl(blob: Blob): Promise<string>;
+export declare function file2ObjectUrl(file: string, obj: ICGTask | ICGControl | ICGThemePkg): string | null;
 export declare function blob2ArrayBuffer(blob: Blob): Promise<ArrayBuffer>;
 export declare function blob2Text(blob: Blob): Promise<string>;
 export declare function clone(obj: Record<string, any> | any[]): any[] | any;
@@ -14,13 +15,13 @@ export declare function layoutInsertAttr(layout: string, insert: string, opt?: {
     'ignore'?: RegExp[];
     'include'?: RegExp[];
 }): string;
-export declare function layoutClassPrepend(layout: string, rand?: string[]): {
-    'rand': string[];
+export declare function layoutClassPrepend(layout: string, preps?: string[]): {
+    'preps': string[];
     'layout': string;
 };
-export declare function stylePrepend(style: string, rand?: string): {
+export declare function stylePrepend(style: string, prep?: string): {
     'style': string;
-    'rand': string;
+    'prep': string;
 };
 export declare function getMimeByPath(path: string): {
     'mime': string;
@@ -30,3 +31,4 @@ export declare function createObjectURL(object: Blob): string;
 export declare function revokeObjectURL(url: string): void;
 export declare function getObjectURLList(): string[];
 export declare function rand(min: number, max: number): number;
+export declare function getBoolean(param: boolean | string | number): boolean;

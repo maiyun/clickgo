@@ -1,6 +1,8 @@
 import * as fs from 'fs';
 import * as zip from 'jszip';
 
+// --- sass --watch sources/:dist/ --style compressed --no-source-map ---
+
 /**
  * --- 去除 html 的空白符、换行 ---
  * @param text 要纯净的字符串
@@ -46,7 +48,7 @@ async function run(): Promise<void> {
         if (item.isFile()) {
             continue;
         }
-        if (['greatselect-list', 'greatselect-list-item', 'greatselect-list-split', 'img', 'label', 'layout', 'menu-item', 'menu-list-item', 'menu-list-split', 'overflow', 'tab-nav', 'tab-panel'].includes(item.name)) {
+        if (['greatlist-item', 'greatlist-split', 'img', 'label', 'layout', 'menu-item', 'menulist-item', 'menulist-split', 'overflow', 'tab-panel'].includes(item.name)) {
             continue;
         }
 
@@ -63,20 +65,18 @@ async function run(): Promise<void> {
             await addFile(zipo, base, 'layout/');
             await addFile(zipo, base, 'overflow/');
         }
-        else if (item.name === 'greatselect') {
-            await addFile(zipo, base, 'greatselect-list/');
-            await addFile(zipo, base, 'greatselect-list-item/');
-            await addFile(zipo, base, 'greatselect-list-split/');
+        else if (item.name === 'greatlist') {
+            await addFile(zipo, base, 'greatlist-item/');
+            await addFile(zipo, base, 'greatlist-split/');
         }
         else if (item.name === 'menu') {
             await addFile(zipo, base, 'menu-item/');
         }
-        else if (item.name === 'menu-list') {
-            await addFile(zipo, base, 'menu-list-item/');
-            await addFile(zipo, base, 'menu-list-split/');
+        else if (item.name === 'menulist') {
+            await addFile(zipo, base, 'menulist-item/');
+            await addFile(zipo, base, 'menulist-split/');
         }
         else if (item.name === 'tab') {
-            await addFile(zipo, base, 'tab-nav/');
             await addFile(zipo, base, 'tab-panel/');
         }
 

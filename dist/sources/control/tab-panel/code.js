@@ -8,17 +8,18 @@ exports.props = {
     'label': {
         'default': ''
     },
-    'name': {
+    'value': {
         'default': undefined
     }
 };
 exports.computed = {
-    'showTab': function () {
-        return this.$parent ? this.$parent.selected === (this.name || this.label) : false;
+    'show': function () {
+        var _a;
+        return this.$parent ? this.$parent.selected === ((_a = this.value) !== null && _a !== void 0 ? _a : this.label) : false;
     }
 };
 exports.watch = {
-    'showTab': function () {
+    'show': function () {
         if (this.showTab) {
             this.$emit('show');
         }

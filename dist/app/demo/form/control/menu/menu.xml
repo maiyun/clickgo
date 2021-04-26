@@ -1,0 +1,112 @@
+<form title="Menu" width="300" height="500" min-width="300" min-height="400" padding="10">
+    <layout flex="1" direction="v" gutter="10">
+        <label>Radio, Check, Split, Custom:</label>
+        <menulist>
+            <menulist-item alt="A">Item1</menulist-item>
+            <menulist-item alt="B">Item2</menulist-item>
+            <menulist-item alt="C">
+                <template v-slot>Radio</template>
+                <template v-slot:pop>
+                    <menulist>
+                        <menulist-item type="radio" alt="A" v-model="radio" label="radio1">Radio1</menulist-item>
+                        <menulist-item type="radio" alt="B" v-model="radio" label="radio2">Radio2</menulist-item>
+                        <menulist-split></menulist-split>
+                        <menulist-item alt="C">
+                            <template v-slot>Check</template>
+                            <template v-slot:pop>
+                                <menulist>
+                                    <menulist-item type="check" alt="A" v-model="check1">Check1</menulist-item>
+                                    <menulist-item type="check" alt="B" v-model="check2">Check2</menulist-item>
+                                </menulist>
+                            </template>
+                        </menulist-item>
+                    </menulist>
+                </template>
+            </menulist-item>
+            <menulist-item alt="D">
+                <template v-slot>Custom</template>
+                <template v-slot:pop>
+                    <menulist>
+                        <menulist-item alt="A">
+                            <template v-slot>Icon</template>
+                            <template v-slot:pop>
+                                <menulist>
+                                    <menulist-item alt="A"><img src="../../../res/txt.svg" width="16" height="16" /><label style="margin-left: 5px;">Txt</label></menulist-item>
+                                    <menulist-item alt="B"><img src="../../../res/sql.svg" width="16" height="16" /><label style="margin-left: 5px;">Sql</label></menulist-item>
+                                    <menulist-item alt="C"><img src="../../../res/zip.svg" width="16" height="16" /><label style="margin-left: 5px;">Zip</label></menulist-item>
+                                </menulist>
+                            </template>
+                        </menulist-item>
+                        <menulist-item alt="B">
+                            <template v-slot>Control</template>
+                            <template v-slot:pop>
+                                <menulist>
+                                    <menulist-item alt="A">
+                                        <button flex="1" @tap="$event.stopPropagation()">Button</button>
+                                    </menulist-item>
+                                    <menulist-item alt="B">
+                                        <scroll direction="h" height="30" width="150" @tap="$event.stopPropagation()"></scroll>
+                                    </menulist-item>
+                                </menulist>
+                            </template>
+                        </menulist-item>
+                        <menulist-item alt="C">
+                            <template v-slot>Free</template>
+                            <template v-slot:pop>
+                                <menulist>
+                                    <layout>
+                                        <menulist-item alt="A" padding="20">Box 1</menulist-item>
+                                        <menulist-item alt="B" padding="20">Box 2</menulist-item>
+                                    </layout>
+                                    <menulist-item alt="C">Other item</menulist-item>
+                                </menulist>
+                            </template>
+                        </menulist-item>
+                    </menulist>
+                </template>
+            </menulist-item>
+        </menulist>
+        <label>Basic:</label>
+        <menulist>
+            <menulist-item alt="E">Item1</menulist-item>
+            <menulist-item alt="F">
+                <template v-slot>Item2</template>
+                <template v-slot:pop>
+                    <menulist>
+                        <menulist-item alt="A">Item3</menulist-item>
+                        <menulist-item alt="B">Item4</menulist-item>
+                        <menulist-item alt="C" :disabled="true">Item5</menulist-item>
+                    </menulist>
+                </template>
+            </menulist-item>
+        </menulist>
+        <label>Bar:</label>
+        <menu>
+            <menu-item alt="G">
+                <template v-slot>Item1</template>
+                <template v-slot:pop>
+                    <menulist>
+                        <menulist-item alt="A">Item4</menulist-item>
+                    </menulist>
+                </template>
+            </menu-item>
+            <menu-item alt="H">
+                <template v-slot>Item2</template>
+                <template v-slot:pop>
+                    <menulist>
+                        <menulist-item alt="A">Item6</menulist-item>
+                    </menulist>
+                </template>
+            </menu-item>
+            <menu-item alt="I" :disabled="true">
+                <template v-slot>Item3</template>
+                <template v-slot:pop>
+                    <menulist>
+                        <menulist-item alt="A">Item5</menulist-item>
+                    </menulist>
+                </template>
+            </menu-item>
+            <menu-item alt="J">Item7</menu-item>
+        </menu>
+    </layout>
+</form>

@@ -1,9 +1,7 @@
-<cg-greatselect @tap="cgTap" @down="cgDown" @dblclick="cgDblclick" :disabled="disabled" :focus="focus" :area="editable ? 'arrow' : 'all'" :width="width" :height="height" :left="left" :top="top" :z-index="zIndex" :flex="flex" :padding="editable ? '0' : padding">
-    <input ref="input" v-if="editable" type="text" class="input" :style="{'padding': padding && padding.replace(/([0-9]+)($| )/g, '$1px$2')}" :value="valueData" @input="tinput">
-    <template v-else>{{dataComp[valueIndex] ? dataComp[valueIndex].label : ''}}</template>
+<cg-greatselect @tap="cgTap" @down="cgDown" @dblclick="cgDblclick" :disabled="disabled" :focus="focus" :area="editableComp ? 'arrow' : 'all'" :width="width" :height="height" :left="left" :top="top" :z-index="zIndex" :flex="flex" :padding="editableComp ? '0' : padding">
+    <input v-if="editableComp" type="text" class="input" v-model="inputValue" :style="{'padding': padding && padding.replace(/([0-9]+)($| )/g, '$1px$2')}">
+    <template v-else>{{label}}</template>
     <template v-slot:pop>
-        <cg-greatselect-list :modelValue="valueIndex" @update:modelValue="updateValue" :data="dataComp" :same="true" v-slot="data">
-            <cg-greatselect-list-item :value="data.index" :disabled="data.row.title || data.row.disabled" :class="[data.row.title && 'title', data.row.child && 'child']">{{data.row.label}}</cg-greatselect-list-item>
-        </cg-greatselect-list>
+        <cg-list :modelValue="value" @update:modelValue="updateModelValue" @label="label = $event" :data="data" :same="true" :adaptation="true" :padding="padding"></cg-list>
     </template>
 </cg-greatselect>

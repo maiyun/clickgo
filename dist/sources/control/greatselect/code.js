@@ -27,7 +27,7 @@ exports.props = {
         'default': ''
     },
     'padding': {
-        'default': undefined
+        'default': '7'
     },
     'area': {
         'default': 'all'
@@ -35,44 +35,35 @@ exports.props = {
 };
 exports.computed = {
     'widthPx': function () {
-        var _a, _b, _c;
         if (this.width !== undefined) {
             return this.width + 'px';
         }
         if (this.flex !== '') {
-            let dir = ((_a = this.$parent) === null || _a === void 0 ? void 0 : _a.$data.controlName) === 'select' ? (_b = this.$parent.$parent) === null || _b === void 0 ? void 0 : _b.direction : (_c = this.$parent) === null || _c === void 0 ? void 0 : _c.direction;
-            return dir ? (dir === 'v' ? undefined : '0') : undefined;
+            let parent = this.cgParent();
+            return parent ? (parent.direction === 'v' ? undefined : '0') : undefined;
         }
     },
     'heightPx': function () {
-        var _a, _b, _c;
         if (this.height !== undefined) {
             return this.height + 'px';
         }
         if (this.flex !== '') {
-            let dir = ((_a = this.$parent) === null || _a === void 0 ? void 0 : _a.$data.controlName) === 'select' ? (_b = this.$parent.$parent) === null || _b === void 0 ? void 0 : _b.direction : (_c = this.$parent) === null || _c === void 0 ? void 0 : _c.direction;
-            return dir.direction ? (dir.direction === 'v' ? '0' : undefined) : undefined;
+            let parent = this.cgParent();
+            return parent ? (parent.direction === 'v' ? '0' : undefined) : undefined;
         }
     }
 };
 exports.data = {
     'popOpen': false,
-    'subPop': undefined,
+    'selfPop': undefined,
     'popOptions': {
         'left': '-5000px',
         'top': '0px',
-        'width': '0px',
+        'width': '500px',
         'zIndex': '0'
     }
 };
 exports.methods = {
-    down: function (e) {
-        if (e instanceof MouseEvent && clickgo.hasTouch) {
-            return;
-        }
-        this.cgStopPropagation(e);
-        this.cgDown(e);
-    },
     keydown: function (e) {
         if (e.keyCode !== 13) {
             return;
@@ -83,34 +74,19 @@ exports.methods = {
         }
         this.showPop(e, this.area);
     },
-    click: function (event, area) {
+    click: function (e, area) {
         if (this.disabled) {
             return;
         }
-        if (this.area === 'arrow') {
-            if (area === 'all') {
-                if (this.popOpen) {
-                    clickgo.form.hidePop(this);
-                }
-                this.cgTap(event);
-                return;
+        if (this.area === 'arrow' && area === 'left') {
+            if (this.popOpen) {
+                clickgo.form.hidePop(this);
             }
-            else {
-                event.stopPropagation();
-            }
-        }
-        else {
-            if (area === 'arrow') {
-                return;
-            }
-        }
-        if (this.popOpen) {
-            clickgo.form.hidePop(this);
-            this.cgTap(event);
+            this.cgTap(e);
             return;
         }
         this.showPop();
-        this.cgTap(event);
+        this.cgTap(e);
     },
     showPop: function () {
         if (this.popOpen) {
@@ -127,8 +103,8 @@ exports.methods = {
             return;
         }
         this.popOpen = false;
-        if ((_a = this.subPop) === null || _a === void 0 ? void 0 : _a.itemPopShowing) {
-            this.subPop.itemPopShowing.hidePop();
+        if ((_a = this.selfPop) === null || _a === void 0 ? void 0 : _a.itemPopShowing) {
+            this.selfPop.itemPopShowing.hidePop();
         }
     }
 };

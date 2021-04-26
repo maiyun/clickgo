@@ -5,8 +5,8 @@
     display: none;
 }
 .wrap.v {
-    overflow-y: scroll; flex-direction: column;
+    overflow: scroll; flex-direction: column;
 }
 .wrap.h {
-    overflow-x: scroll; white-space: nowrap;
+    overflow: scroll; white-space: nowrap;
 }

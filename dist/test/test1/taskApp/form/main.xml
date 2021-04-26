@@ -1,30 +1,30 @@
 <form title="Task manager" icon="/icon.svg" width="400" height="550" background="#FFF">
     <menu>
         <menu-item alt="F" text="File">
-            <menu-list>
-                <menu-list-item alt="N" text="New task" @tap="newTask"></menu-list-item>
-                <menu-list-item alt="X" text="Exit" @tap="exit"></menu-list-item>
-            </menu-list>
+            <menulist>
+                <menulist-item alt="N" text="New task" @tap="newTask"></menulist-item>
+                <menulist-item alt="X" text="Exit" @tap="exit"></menulist-item>
+            </menulist>
         </menu-item>
         <menu-item alt="O" text="Options">
-            <menu-list>
-                <menu-list-item alt="A" text="Always on top" type="check" v-model="alwaysOnTop" @tap="cgSetTopMost(alwaysOnTop)"></menu-list-item>
-                <menu-list-split></menu-list-split>
-                <menu-list-item alt="S" text="Show full account name" :disabled="true"></menu-list-item>
-            </menu-list>
+            <menulist>
+                <menulist-item alt="A" text="Always on top" type="check" v-model="alwaysOnTop" @tap="cgSetTopMost(alwaysOnTop)"></menulist-item>
+                <menulist-split></menulist-split>
+                <menulist-item alt="S" text="Show full account name" :disabled="true"></menulist-item>
+            </menulist>
         </menu-item>
         <menu-item alt="V" text="View">
-            <menu-list>
-                <menu-list-item alt="R" text="Refresh now"></menu-list-item>
-                <menu-list-item alt="U" text="Update speed">
-                    <menu-list>
-                        <menu-list-item alt="H" text="High" type="radio" label="H" v-model="speed"></menu-list-item>
-                        <menu-list-item alt="N" text="Normal" type="radio" label="N" v-model="speed"></menu-list-item>
-                        <menu-list-item alt="L" text="Low" type="radio" label="L" v-model="speed"></menu-list-item>
-                        <menu-list-item alt="P" text="Paused" type="radio" label="P" v-model="speed"></menu-list-item>
-                    </menu-list>
-                </menu-list-item>
-            </menu-list>
+            <menulist>
+                <menulist-item alt="R" text="Refresh now"></menulist-item>
+                <menulist-item alt="U" text="Update speed">
+                    <menulist>
+                        <menulist-item alt="H" text="High" type="radio" label="H" v-model="speed"></menulist-item>
+                        <menulist-item alt="N" text="Normal" type="radio" label="N" v-model="speed"></menulist-item>
+                        <menulist-item alt="L" text="Low" type="radio" label="L" v-model="speed"></menulist-item>
+                        <menulist-item alt="P" text="Paused" type="radio" label="P" v-model="speed"></menulist-item>
+                    </menulist>
+                </menulist-item>
+            </menulist>
         </menu-item>
     </menu>
     <tab flex="1">

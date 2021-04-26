@@ -1,8 +1,10 @@
-<div class="wrap" :class="[disabled && 'cg-disabled', popOpen && 'cg-pop-open']" @click="click" @mouseenter="mousein" @mousedown="cgDown" @touchstart="cgDown">
-    <div class="inner">{{text}}</div>
+<div class="wrap" :class="[disabled && 'cg-disabled', popOpen && 'cg-pop-open', cgHover && 'hover', cgActive && 'active']" @click="click"  @mousedown="cgDown" @mouseup="cgUp" @mouseenter="enter" @mouseleave="cgLeave" @touchstart="cgDown" @touchend="cgUp" @touchcancel="cgCancel" @dblclick="cgDblclick">
+    <div class="inner">
+        <slot></slot>
+    </div>
     <teleport to="#cg-pop-list">
         <div class="pop" :class="[popOpen && 'open']" :style="popOptions">
-            <slot></slot>
+            <slot name="pop"></slot>
         </div>
     </teleport>
 </div>

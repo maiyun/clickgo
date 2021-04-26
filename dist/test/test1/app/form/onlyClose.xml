@@ -1,5 +1,0 @@
-<form width="250" height="250" title="Only close" :max="false" :min="false">
-    <layout flex="1" direction="h" align-h="center" align-v="center" style="padding: 10px;">
-        <label>The form only has close button.</label>
-    </layout>
-</form>

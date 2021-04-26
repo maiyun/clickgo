@@ -20,6 +20,13 @@ export let props = {
     },
     'flex': {
         'default': ''
+    },
+
+    'type': {
+        'default': 'default'
+    },
+    'plain': {
+        'default': false
     }
 };
 
@@ -29,7 +36,8 @@ export let computed = {
             return this.width + 'px';
         }
         if (this.flex !== '') {
-            return this.$parent?.direction ? (this.$parent.direction === 'v' ? undefined : '0') : undefined;
+            let parent = this.cgParent();
+            return parent ? (parent.direction === 'v' ? undefined : '0') : undefined;
         }
     },
     'heightPx': function(this: IVueControl): string | undefined {
@@ -37,7 +45,25 @@ export let computed = {
             return this.height + 'px';
         }
         if (this.flex !== '') {
-            return this.$parent?.direction ? (this.$parent.direction === 'v' ? '0' : undefined) : undefined;
+            let parent = this.cgParent();
+            return parent ? (parent.direction === 'v' ? '0' : undefined) : undefined;
+        }
+    },
+
+    'isDisabled': function(this: IVueControl): boolean {
+        if (typeof this.disabled === 'boolean') {
+            return this.disabled;
+        }
+        else {
+            return (this.disabled === '' || this.disabled === 'true') ? true : false;
+        }
+    },
+    'isPlain': function(this: IVueControl): boolean {
+        if (typeof this.plain === 'boolean') {
+            return this.plain;
+        }
+        else {
+            return (this.plain === '' || this.plain === 'true') ? true : false;
         }
     }
 };
@@ -48,12 +74,5 @@ export let methods = {
             return;
         }
         this.cgTap(e);
-    },
-    down: function(this: IVueControl, e: MouseEvent | TouchEvent): void {
-        if (e instanceof MouseEvent && clickgo.hasTouch) {
-            return;
-        }
-        this.cgStopPropagation(e);
-        this.cgDown(e);
     }
 };

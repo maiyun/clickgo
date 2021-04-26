@@ -30,7 +30,7 @@ clickgo.ready(async function() {
     }
     // --- sapp 启动成功 ---
     el.innerHTML = 'Starting app...';
-    let taskId = await clickgo.task.run('app/');
+    let taskId = await clickgo.task.run('clickgo/app/demo/');
     if (taskId <= 0) {
         el.innerHTML = `Start failed(${taskId.toString()}).`;
         return;

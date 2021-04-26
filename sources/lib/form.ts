@@ -31,8 +31,16 @@ formListElement.classList.add('cg-form-list');
 document.getElementsByTagName('body')[0].appendChild(formListElement);
 formListElement.addEventListener('touchmove', function(e): void {
     // --- 防止拖动时整个网页跟着动 ---
-    e.preventDefault();
+    if (e.cancelable) {
+        e.preventDefault();
+    }
     // --- 为啥要在这加，因为有些设备性能不行，在 touchstart 之时添加的 touchmove 不能立马响应，导致网页还是跟着动，所以增加此函数 ---
+}, {
+    'passive': false
+});
+formListElement.addEventListener('wheel', function(e): void {
+    // --- 防止不小心前进后退，或上下缓动滚动（Mac） ---
+    e.preventDefault();
 }, {
     'passive': false
 });
@@ -124,6 +132,28 @@ export function changeFocus(formId: number = 0, vm?: IVue): void {
             clickgo.core.trigger('formFocused', taskId, formId);
         }
     }
+}
+
+/**
+ * --- 获取当前 z-index 值最大的 form id（除了 top 模式的窗体） ---
+ */
+export function getMaxZIndexFormID(): number | null {
+    let zIndex: number = 0;
+    let formId: number | null = null;
+    let fl = document.querySelector('.cg-form-list') as HTMLDivElement;
+    for (let i = 0; i < fl.children.length; ++i) {
+        let root = fl.children.item(i) as HTMLDivElement;
+        let formWrap = root.children.item(0) as HTMLDivElement;
+        let z = parseInt(formWrap.style.zIndex);
+        if (z > 9999999) {
+            continue;
+        }
+        if (z > zIndex) {
+            zIndex = z;
+            formId = parseInt(root.getAttribute('data-form-id')!);
+        }
+    }
+    return formId;
 }
 
 /**
@@ -325,7 +355,7 @@ export function showPop(pop: IVueControl, x: number | 'h' | 'v', y: number = 0):
         popShowing = pop;
     }
     // --- 没有子层直接返回 ---
-    if (pop.subPop === undefined) {
+    if (pop.selfPop === undefined) {
         return {
             'left': '-5000px',
             'top': '0px',
@@ -349,23 +379,23 @@ export function showPop(pop: IVueControl, x: number | 'h' | 'v', y: number = 0):
             top = bcr.top - 2;
         }
         // --- 检查水平是否出框 ---
-        if (pop.subPop.$el.offsetWidth + left > position.width) {
+        if (pop.selfPop.$el.offsetWidth + left > position.width) {
             if (x === 'v') {
                 // --- 垂直弹出 ---
-                left = position.width - pop.subPop.$el.offsetWidth;
+                left = position.width - pop.selfPop.$el.offsetWidth;
             }
             else {
                 // --- 水平弹出，右边位置不够弹到左边 ---
-                left = bcr.left - pop.subPop.$el.offsetWidth + 2;
+                left = bcr.left - pop.selfPop.$el.offsetWidth + 2;
             }
         }
         // --- 检测垂直是否出框 ---
-        if (pop.subPop.$el.offsetHeight + top > position.height) {
+        if (pop.selfPop.$el.offsetHeight + top > position.height) {
             if (x === 'v') {
-                top = bcr.top - pop.subPop.$el.offsetHeight;
+                top = bcr.top - pop.selfPop.$el.offsetHeight;
             }
             else {
-                top = position.height - pop.subPop.$el.offsetHeight;
+                top = position.height - pop.selfPop.$el.offsetHeight;
             }
         }
     }
@@ -373,12 +403,12 @@ export function showPop(pop: IVueControl, x: number | 'h' | 'v', y: number = 0):
         left = x + 5;
         top = y + 7;
         // --- 水平 ---
-        if (pop.subPop.$el.offsetWidth + left > position.width) {
-            left = x - pop.subPop.$el.offsetWidth - 5;
+        if (pop.selfPop.$el.offsetWidth + left > position.width) {
+            left = x - pop.selfPop.$el.offsetWidth - 5;
         }
         // --- 垂直 ---
-        if (pop.subPop.$el.offsetHeight + top > position.height) {
-            top = y - pop.subPop.$el.offsetHeight - 5;
+        if (pop.selfPop.$el.offsetHeight + top > position.height) {
+            top = y - pop.selfPop.$el.offsetHeight - 5;
         }
     }
     if (left < 0) {
@@ -474,21 +504,27 @@ export function remove(formId: number): boolean {
     }
     // --- 多个窗体 ---
     let title = '';
+    let icon = '';
     if (clickgo.task.list[taskId].forms[formId]) {
         title = clickgo.task.list[taskId].forms[formId].vroot.$refs.form.title;
+        icon = clickgo.task.list[taskId].forms[formId].vroot.$refs.form.iconData;
         if (clickgo.task.list[taskId].forms[formId].vroot.$refs.form.maskFrom !== undefined) {
             let fid = clickgo.task.list[taskId].forms[formId].vroot.$refs.form.maskFrom;
             clickgo.task.list[taskId].forms[fid].vroot.$refs.form.maskFor = undefined;
         }
         clickgo.task.list[taskId].forms[formId].vapp.unmount();
+        clickgo.task.list[taskId].forms[formId].vapp._container.remove();
         delete(clickgo.task.list[taskId].forms[formId]);
     }
     // --- 移除 form 的 style ---
     clickgo.dom.removeStyle(taskId, 'form', formId);
-    // --- 移除 element wrap ---
-    formListElement.removeChild(formElement);
     // --- 触发 formRemoved 事件 ---
-    clickgo.core.trigger('formRemoved', taskId, formId, {'title': title});
+    clickgo.core.trigger('formRemoved', taskId, formId, title, icon);
+    // --- 获取最大的 z index 窗体，并让他获取焦点 ---
+    let fid = getMaxZIndexFormID();
+    if (fid) {
+        changeFocus(fid);
+    }
     return true;
 }
 
@@ -496,7 +532,7 @@ export function remove(formId: number): boolean {
  * --- 直接创建一个窗体(需要验证传入 code、layout 等是否能成功创建) ---
  * @param opt 创建窗体的配置对象
  */
-export async function create(taskId: number, opt: ICGCreateFormOptions): Promise<number | ICGForm> {
+export async function create(taskId: number, opt: ICGFormCreateOptions): Promise<number | ICGForm> {
     /** --- 当前的 Task 对象 --- */
     let task = clickgo.task.list[taskId];
     if (!task) {
@@ -532,7 +568,7 @@ export async function create(taskId: number, opt: ICGCreateFormOptions): Promise
             let props: any = {};
             let data: any = {};
             let methods: any = {};
-            let computed = {};
+            let computed: any = {};
             let watch = {};
             let beforeCreate: (() => void) | undefined = undefined;
             let created: (() => void) | undefined = undefined;
@@ -563,16 +599,16 @@ export async function create(taskId: number, opt: ICGCreateFormOptions): Promise
             }
             // --- 控件样式表以及布局文件 ---
             let layout = '';
-            let rand = '';
+            let prep = '';
             if (task.initControls[name]) {
                 layout = task.initControls[name].layout;
-                rand = task.initControls[name].rand;
+                prep = task.initControls[name].prep;
             }
             else {
                 let styleBlob = item.files[item.config.style + '.css'];
                 if (styleBlob) {
                     let r = clickgo.tool.stylePrepend(await clickgo.tool.blob2Text(styleBlob));
-                    rand = r.rand;
+                    prep = r.prep;
                     clickgo.dom.pushStyle(task.id, await clickgo.tool.styleUrl2ObjectOrDataUrl(item.config.style, r.style, item), 'control', name);
                 }
                 // --- 要创建的 control 的 layout ---
@@ -581,17 +617,17 @@ export async function create(taskId: number, opt: ICGCreateFormOptions): Promise
                     return -4;
                 }
                 // --- 给控件的 layout 的 class 增加前置 ---
-                let randList = [
+                let prepList = [
                     'cg-theme-task' + taskId + '-' + name + '_'
                 ];
-                if (rand !== '') {
-                    randList.push(rand);
+                if (prep !== '') {
+                    prepList.push(prep);
                 }
-                let r = clickgo.tool.layoutClassPrepend(await clickgo.tool.blob2Text(layoutBlob), randList);
-                layout = r.layout;
+                layout = await clickgo.tool.blob2Text(layoutBlob);
+                layout = clickgo.tool.layoutClassPrepend(layout, prepList).layout;
                 task.initControls[name] = {
                     'layout': layout,
-                    'rand': rand
+                    'prep': prep
                 };
             }
             // --- 组成 props ---
@@ -605,24 +641,69 @@ export async function create(taskId: number, opt: ICGCreateFormOptions): Promise
             data.formId = formId;
             data.controlName = name;
             data._path = opt.file ?? opt.path ?? '/';
-            data._scope = rand;
+            data._prep = prep;
             if (data.cgNest === undefined) {
                 data.cgNest = false;
             }
+            data.cgHasTouch = clickgo.hasTouch;
+            data.cgRealHover = false;
+            data.cgActive = false;
+            // --- 预设 computed ---
+            computed.cgHover = function(this: IVueControl): boolean {
+                if (clickgo.dom.is.move) {
+                    return false;
+                }
+                return this.cgRealHover;
+            };
             // --- 预设 methods ---
-            methods.cgStopPropagation = function(this: IVueControl, e: MouseEvent | TouchEvent) {
+            methods.cgDown = function(this: IVueControl, e: MouseEvent | TouchEvent) {
                 if (e instanceof MouseEvent && clickgo.hasTouch) {
                     return;
                 }
-                e.stopPropagation();
-                doFocusAndPopEvent(e);
-            };
-            methods.cgDown = function(this: IVueControl, e?: MouseEvent | TouchEvent) {
-                if (e instanceof MouseEvent && clickgo.hasTouch) {
-                    return;
+                if (e instanceof TouchEvent) {
+                    this.cgRealHover = true;
+                    this.$emit('enter', e);
+                }
+                else {
+                    let up = (): void => {
+                        window.removeEventListener('mouseup', up);
+                        this.cgActive = false;
+                        this.$emit('up', e);
+                    };
+                    window.addEventListener('mouseup', up);
                 }
                 // --- 触发自定义 down 事件 ---
+                this.cgActive = true;
                 this.$emit('down', e);
+            };
+            methods.cgUp = function(this: IVueControl, e: MouseEvent | TouchEvent) {
+                if (e instanceof MouseEvent) {
+                    return;
+                }
+                this.cgRealHover = false;
+                this.$emit('leave', e);
+                this.cgActive = false;
+                this.$emit('up', e);
+            };
+            methods.cgCancel = function(this: IVueControl, e: TouchEvent) {
+                this.cgRealHover = false;
+                this.cgActive = false;
+                this.$emit('leave', e);
+                this.$emit('up', e);
+            };
+            methods.cgEnter = function(this: IVueControl, e: MouseEvent) {
+                if (this.cgHasTouch) {
+                    return;
+                }
+                this.cgRealHover = true;
+                this.$emit('enter', e);
+            };
+            methods.cgLeave = function(this: IVueControl, e: MouseEvent) {
+                if (this.cgHasTouch) {
+                    return;
+                }
+                this.cgRealHover = false;
+                this.$emit('leave', e);
             };
             methods.cgTap = function(this: IVueControl, e: MouseEvent | TouchEvent | KeyboardEvent) {
                 if (this.$el.className.includes('cg-disabled')) {
@@ -647,6 +728,11 @@ export async function create(taskId: number, opt: ICGCreateFormOptions): Promise
                     return task.appPkg.files[path] ?? null;
                 }
             };
+            // --- 获取本 task 的 object url ---
+            methods.cgGetObjectUrl = function(this: IVueControl, file: string): string | null {
+                file = clickgo.tool.urlResolve(this.$data._path, file);
+                return clickgo.tool.file2ObjectUrl(file, clickgo.task.list[this.taskId]);
+            };
             methods.cgGetDataUrl = async function(this: IVueControl, file: string): Promise<string | null> {
                 let f = await this.cgGetBlob(file);
                 return f ? await clickgo.tool.blob2DataUrl(f) : null;
@@ -659,7 +745,7 @@ export async function create(taskId: number, opt: ICGCreateFormOptions): Promise
                 if (cla.startsWith('cg-')) {
                     return cla;
                 }
-                return `cg-theme-task${this.taskId}-${this.$data.controlName}_${cla} ${this.$data._scope}${cla}`;
+                return `cg-theme-task${this.taskId}-${this.$data.controlName}_${cla} ${this.$data._prep}${cla}`;
             };
             // --- 获取目前现存的子 slots ---
             methods.cgSlos = function(this: IVueControl, name: string = 'default'): IVueVNode[] {
@@ -681,18 +767,31 @@ export async function create(taskId: number, opt: ICGCreateFormOptions): Promise
                 }
                 return slots;
             };
-            // --- 获取上级的 direction ---
-            methods.cgParentDirection = function(this: IVueControl): string | undefined {
+            // --- 获取正常非 nest 上级 ---
+            methods.cgParent = function(this: IVueControl): IVueControl | null {
                 let parent = this.$parent;
                 while (true) {
                     if (!parent) {
-                        return undefined;
+                        return null;
                     }
                     if (parent.cgNest) {
                         parent = parent.$parent;
                         continue;
                     }
-                    return parent.direction;
+                    return parent;
+                }
+            };
+            // --- 根据 control name 查询上级序列 ---
+            methods.cgFindParent = function(this: IVueControl, controlName: string): IVueControl | null {
+                let parent = this.$parent;
+                while (true) {
+                    if (!parent) {
+                        return null;
+                    }
+                    if (parent.controlName === controlName) {
+                        return parent;
+                    }
+                    parent = parent.$parent;
                 }
             };
             // --- 组成 component ---
@@ -747,55 +846,96 @@ export async function create(taskId: number, opt: ICGCreateFormOptions): Promise
     let beforeCreate: (() => void) | undefined = undefined;
     let created: (() => void) | undefined = undefined;
     let beforeMount: (() => void) | undefined = undefined;
-    let mounted: (() => void) | undefined = undefined;
+    let mounted: (() => void | Promise<void>) | undefined = undefined;
     let beforeUpdate: (() => void) | undefined = undefined;
     let updated: (() => void) | undefined = undefined;
     let beforeUnmount: (() => void) | undefined = undefined;
     let unmounted: (() => void) | undefined = undefined;
     // --- 检测是否有 js ---
+    let expo = undefined;
     if (appPkg.files[opt.file + '.js']) {
-        let [expo] = await loader.requireMemory(opt.file ?? '', appPkg.files) ?? [];
-        if (expo) {
-            data = expo.data || {};
-            methods = expo.methods || {};
-            computed = expo.computed || {};
-            watch = expo.watch || {};
-            beforeCreate = expo.beforeCreate;
-            created = expo.created;
-            beforeMount = expo.beforeMount;
-            mounted = expo.mounted;
-            beforeUpdate = expo.beforeUpdate;
-            updated = expo.updated;
-            beforeUnmount = expo.beforeUnmount;
-            unmounted = expo.unmounted;
-        }
+        [expo] = await loader.requireMemory(opt.file ?? '', appPkg.files) ?? [];
+    }
+    else if (opt.code) {
+        expo = opt.code;
+    }
+    if (expo) {
+        data = expo.data || {};
+        methods = expo.methods || {};
+        computed = expo.computed || {};
+        watch = expo.watch || {};
+        beforeCreate = expo.beforeCreate;
+        created = expo.created;
+        beforeMount = expo.beforeMount;
+        mounted = expo.mounted;
+        beforeUpdate = expo.beforeUpdate;
+        updated = expo.updated;
+        beforeUnmount = expo.beforeUnmount;
+        unmounted = expo.unmounted;
     }
     // --- 应用样式表 ---
-    let rand = '';
+    let prep = '';
     if (style) {
+        // --- 先将 style 中的 tag 标签转换为 class，如 button 变为 .tag-button ---
+        style = style.replace(/([\s\S]+?){([\s\S]+?)}/g, function(t, t1, t2) {
+            // --- xxx { xxx; } ---
+            return t1.replace(/(^|[ >,\r\n])([a-zA-Z0-9-_]+)/g, function(t: string, t1: string, t2: string) {
+                return t1 + '.tag-' + t2;
+            }) + '{' + t2 + '}';
+        });
+        // --- 然后将 class 进行标准程序，添加 prep 进行区分隔离 ---
         let r = clickgo.tool.stylePrepend(style);
-        rand = r.rand;
+        prep = r.prep;
         style = await clickgo.tool.styleUrl2ObjectOrDataUrl(opt.file ?? opt.path ?? '/', r.style, task);
     }
-    // --- 要创建的 form 的 layout ---
+    // --- 要创建的 form 的 layout 所有标签增加 cg 前缀，并增加新的 class 为 tag-xxx ---
     layout = clickgo.tool.purify(layout);
+    // --- "" '' 引号中的内容先排除掉干扰 ---
+    let tmpStr: string[] = [];
+    layout = layout.replace(/(\S+)=(".+?"|'.+?')/g, function(t, t1): string {
+        if (t1.toLowerCase() === 'class') {
+            return t;
+        }
+        tmpStr.push(t);
+        return '"CG-PLACEHOLDER"';
+    });
+    // --- 开始添加 class 的 attr ---
     layout = layout.replace(/<(\/{0,1})([\w-]+)([\s\S]*?>)/g, function(t, t1, t2, t3): string {
+        // --- t1 是 /，t2 是 tagname，t3 是标签其他内容 ---
         if (t2 === 'template') {
             return t;
         }
         else {
-            return '<' + t1 + 'cg-' + t2 + t3;
+            // --- 需要给 class 添加 cg-xxx ---
+            if (t1 === '/') {
+                return '<' + t1 + 'cg-' + t2 + t3;
+            }
+            if (t3.toLowerCase().includes(' class')) {
+                // --- 有 class，前置增加 ---
+                t3 = t3.replace(/ class=(["']{0,1})/i, ' class=$1tag-' + t2 + ' ');
+            }
+            else {
+                // --- 无 class 的 attr，增加 attr ---
+                t2 = t2 + ` class="tag-${t2}"`;
+            }
+            return '<cg-' + t2 + t3;
         }
     });
+    // --- 恢复 placeholder ---
+    let i = -1;
+    layout = layout.replace(/"CG-PLACEHOLDER"/g, function() {
+        return tmpStr[++i];
+    });
+    // --- 给所有控件传递窗体的 focus 信息 ---
     layout = clickgo.tool.layoutInsertAttr(layout, ':focus=\'focus\'', {
         'include': [/^cg-.+/]
     });
     // --- 给 layout 的 class 增加前置 ---
-    let randList = ['cg-task' + taskId + '_'];
-    if (rand !== '') {
-        randList.push(rand);
+    let prepList = ['cg-task' + taskId + '_'];
+    if (prep !== '') {
+        prepList.push(prep);
     }
-    let r = clickgo.tool.layoutClassPrepend(layout, randList);
+    let r = clickgo.tool.layoutClassPrepend(layout, prepList);
     formListElement.insertAdjacentHTML('beforeend', `<div class="cg-form-wrap" data-form-id="${formId.toString()}" data-task-id="${taskId.toString()}"></div>`);
     // --- 获取刚才的 form wrap element 对象 ---
     let el: HTMLElement = formListElement.children.item(formListElement.children.length - 1) as HTMLElement;
@@ -803,10 +943,12 @@ export async function create(taskId: number, opt: ICGCreateFormOptions): Promise
     // --- 初始化系统初始 data ---
     data.taskId = taskId;
     data.formId = formId;
+    data.controlName = 'root';
     data.focus = false;
     data._path = opt.file ?? opt.path ?? '/';
-    data._scope = rand;
+    data._prep = prep;
     data._customZIndex = false;
+    data.cgHasTouch = clickgo.hasTouch;
     if (opt.topMost) {
         data._topMost = true;
     }
@@ -814,8 +956,10 @@ export async function create(taskId: number, opt: ICGCreateFormOptions): Promise
         data._topMost = false;
     }
     // --- 初始化系统方法 ---
-    methods.cgCreateForm = async function(this: IVueForm, paramOpt: string | ICGCreateFormOptions & { 'mask'?: boolean; } = {}): Promise<void> {
-        let inOpt: ICGCreateFormOptions = {};
+    methods.cgCreateForm = async function(this: IVueForm, paramOpt: string | ICGFormCreateOptions & { 'mask'?: boolean; } = {}): Promise<void> {
+        let inOpt: ICGFormCreateOptions = {
+            'path': this._path
+        };
         if (typeof paramOpt === 'string') {
             inOpt.file = paramOpt;
         }
@@ -858,13 +1002,42 @@ export async function create(taskId: number, opt: ICGCreateFormOptions): Promise
         remove(this.formId);
     };
     methods.cgBindFormDrag = function(this: IVueForm, e: MouseEvent | TouchEvent): void {
-        this.$refs.form.moveMethod(e);
+        this.$refs.form.moveMethod(e, true);
     };
     methods.cgSetSystemEventListener = function(this: IVueForm, name: TCGGlobalEvent, func: any): void {
         this.cgEventList[name] = func;
     };
     methods.cgRemoveSystemEventListener = function(this: IVueForm, name: TCGGlobalEvent): void {
         delete(this.cgEventList[name]);
+    };
+    methods.cgDialog = function(this: IVueForm, opt: string | ICGFormDialog): Promise<string> {
+        return new Promise((resolve) => {
+            if (typeof opt === 'string' || typeof opt === 'number') {
+                opt = {
+                    'content': opt
+                };
+            }
+            if (opt.buttons === undefined) {
+                opt.buttons = ['OK'];
+            }
+            this.cgCreateForm({
+                'layout': `<form title="${opt.title}" width="auto" height="auto" :min="false" :max="false" :resize="false" :min-height="50" border="${!opt.title ? 'none' : 'normal'}"><dialog :buttons="buttons" @select="select">${opt.content}</dialog></form>`,
+                'code': {
+                    data: {
+                        'buttons': opt.buttons
+                    },
+                    methods: {
+                        select: function(this: IVueForm, button: string) {
+                            this.cgCloseForm();
+                            resolve(button);
+                        }
+                    }
+                },
+                'mask': true
+            }).catch((e) => {
+                throw e;
+            });
+        });
     };
     // --- 获取文件 blob 对象 ---
     methods.cgGetBlob = async function(this: IVueForm, path: string): Promise<Blob | null> {
@@ -875,6 +1048,11 @@ export async function create(taskId: number, opt: ICGCreateFormOptions): Promise
             path = clickgo.tool.urlResolve(this.$data._path, path);
             return task.appPkg.files[path] ?? null;
         }
+    };
+    // --- 获取本 task 的 object url ---
+    methods.cgGetObjectUrl = function(this: IVueForm, file: string): string | null {
+        file = clickgo.tool.urlResolve(this.$data._path, file);
+        return clickgo.tool.file2ObjectUrl(file, clickgo.task.list[this.taskId]);
     };
     methods.cgGetDataUrl = async function(this: IVueForm, file: string): Promise<string | null> {
         let f = await this.cgGetBlob(file);
@@ -947,6 +1125,14 @@ export async function create(taskId: number, opt: ICGCreateFormOptions): Promise
         // --- 触发 formFlash 事件 ---
         clickgo.core.trigger('formFlash', taskId, formId);
     };
+    // --- 让窗体显示出来 ---
+    methods.cgShow = function(this: IVueForm): void {
+        this.$refs.form.$data.showData = true;
+    };
+    // --- 让窗体隐藏 ---
+    methods.cgHide = function(this: IVueForm): void {
+        this.$refs.form.$data.showData = false;
+    };
     // --- layout 中 :class 的转义 ---
     methods.cgClassPrepend = function(this: IVueForm, cla: any): string {
         if (typeof cla !== 'string') {
@@ -955,11 +1141,17 @@ export async function create(taskId: number, opt: ICGCreateFormOptions): Promise
         if (cla.startsWith('cg-')) {
             return cla;
         }
-        return `cg-task${this.taskId}_${cla} ${this.$data._scope}${cla}`;
+        return `cg-task${this.taskId}_${cla} ${this.$data._prep}${cla}`;
     };
+    // --- 挂载 style ---
+    if (style) {
+        // --- 窗体的 style ---
+        clickgo.dom.pushStyle(taskId, style, 'form', formId);
+    }
+    // --- 创建 app 对象 ---
     let rtn: {
         'vapp': IVueApp;
-        'vroot': IVue;
+        'vroot': IVueForm;
     } = await new Promise(function(resolve) {
         const vapp = Vue.createApp({
             'template': r.layout.replace(/^<cg-form/, '<cg-form ref="form"'),
@@ -974,7 +1166,7 @@ export async function create(taskId: number, opt: ICGCreateFormOptions): Promise
             'beforeCreate': beforeCreate,
             'created': created,
             'beforeMount': beforeMount,
-            'mounted': async function(this: IVue) {
+            'mounted': async function(this: IVueForm) {
                 await this.$nextTick();
                 resolve({
                     'vapp': vapp,
@@ -997,9 +1189,23 @@ export async function create(taskId: number, opt: ICGCreateFormOptions): Promise
     });
     // --- 全局事件来遍历执行的响应 ---
     rtn.vapp.config.globalProperties.cgEventList = {};
-    if (style) {
-        // --- 窗体的 style ---
-        clickgo.dom.pushStyle(taskId, style, 'form', formId);
+    // --- 执行 mounted ---
+    await clickgo.tool.sleep(5);
+    if (mounted) {
+        try {
+            await mounted.call(rtn.vroot);
+        }
+        catch (err) {
+            if (clickgo.core.globalEvents.errorHandler) {
+                clickgo.core.globalEvents.errorHandler(rtn.vroot.taskId, rtn.vroot.formId, err, 'Create form mounted error.');
+            }
+            else {
+                console.log(err);
+            }
+            formListElement.removeChild(rtn.vroot.$el);
+            clickgo.dom.removeStyle(rtn.vroot.taskId, 'form', rtn.vroot.formId);
+            return -6;
+        }
     }
     // --- 将窗体居中 ---
     let position = clickgo.getPosition();
@@ -1014,22 +1220,8 @@ export async function create(taskId: number, opt: ICGCreateFormOptions): Promise
     if (rtn.vroot.$refs.form.zIndex !== -1) {
         rtn.vroot.$data._customZIndex = true;
     }
-    // --- 执行 mounted ---
-    if (mounted) {
-        try {
-            mounted.call(rtn.vroot);
-        }
-        catch (err) {
-            if (clickgo.core.globalEvents.errorHandler) {
-                clickgo.core.globalEvents.errorHandler(rtn.vroot.taskId, rtn.vroot.formId, err, 'Create form mounted error.');
-            }
-            else {
-                console.log(err);
-            }
-            formListElement.removeChild(rtn.vroot.$el);
-            clickgo.dom.removeStyle(rtn.vroot.taskId, rtn.vroot.formId);
-            return -6;
-        }
+    if (rtn.vroot.$refs.form.$data.show !== false) {
+        rtn.vroot.cgShow();
     }
     // --- 绑定获取焦点事件 ---
     changeFocus(formId, rtn.vroot);
@@ -1044,7 +1236,7 @@ export async function create(taskId: number, opt: ICGCreateFormOptions): Promise
     // --- 挂载 form ---
     task.forms[formId] = form;
     // --- 触发 formCreated 事件 ---
-    clickgo.core.trigger('formCreated', taskId, formId, {'title': rtn.vroot.$refs.form.title, 'icon': rtn.vroot.$refs.form.iconData});
+    clickgo.core.trigger('formCreated', taskId, formId, rtn.vroot.$refs.form.title, rtn.vroot.$refs.form.iconData);
     return form;
 }
 

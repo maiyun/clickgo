@@ -1,7 +1,7 @@
-<div class="wrap" :class="[direction]" :style="{'width': widthPx, 'height': heightPx, 'left': left + 'px', 'top': top + 'px', 'z-index': zIndex, 'flex-grow': flex}" @click="cgTap" @mousedown="cgDown" @touchstart="cgDown" @dblclick="cgDblclick">
+<div class="wrap" :class="[direction, float ? 'float' : undefined]" :style="{'width': widthPx, 'height': heightPx, 'left': left !== undefined ? left + 'px' : undefined, 'top': top !== undefined ? top + 'px' : undefined, 'z-index': zIndex !== undefined ? zIndex : undefined, 'flex-grow': flex}" @click="cgTap" @mousedown="cgDown" @touchstart="cgDown" @dblclick="cgDblclick">
     <div class="start" @mousedown="longDown($event, 'start')" @touchstart="longDown($event, 'start')" :style="{'height': direction === 'v' ? width + 'px' : undefined, 'width': direction === 'h' ? height + 'px' : undefined}"></div>
     <div ref="bar" class="scroll-bar" @mousedown="bardown" @touchstart="bardown">
-        <div ref="block" class="block" :class="{'tran': tran}" @touchstart="down" @mousedown="down" :style="{'height': direction === 'v' ? size + 'px' : undefined, 'width': direction === 'h' ? size + 'px' : undefined, 'transform': direction === 'v' ? 'translate3d(0, ' + scrollOffsetPx + 'px, 0)' : 'translate3d(' + scrollOffsetPx + 'px, 0, 0)'}"></div>
+        <div ref="block" class="block" :class="{'tran': tran}" @touchstart="down" @mousedown="down" :style="{'height': direction === 'v' ? (client === length ? '100%' : size + 'px') : undefined, 'width': direction === 'h' ? size + 'px' : undefined, 'transform': (direction === 'v' ? 'translate3d(0, ' + scrollOffsetPx + 'px, 0)' : 'translate3d(' + scrollOffsetPx + 'px, 0, 0)') + ' translateZ(0px)'}"></div>
     </div>
     <div class="end" @mousedown="longDown($event, 'end')" @touchstart="longDown($event, 'end')" :style="{'height': direction === 'v' ? width + 'px' : undefined, 'width': direction === 'h' ? height + 'px' : undefined}"></div>
 </div>

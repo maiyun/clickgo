@@ -1,0 +1,24 @@
+<form title="Dialog" width="400" height="400" min-width="400" min-height="400" padding="10">
+    <layout direction="v" gutter="10" flex="1">
+        <layout align-h="center" align-v="center" flex="1">
+            <form title="Title" :min="false" :max="false" :resize="false" width="auto" height="auto">
+                <dialog @select="btn = $event" :buttons="buttons" :direction="message === 'lines' ? 'v' : 'h'">
+                    <template v-if="message === 'message'">Message</template>
+                    <template v-else-if="message === 'buttons'"><button flex="1">Button1</button><button flex="1" style="margin-left: 10px;">Button2</button></template>
+                    <template v-else><block v-for="i of 5">Line {{i}}.</block></template>
+                </dialog>
+            </form>
+        </layout>
+        <layout gutter="10">
+            <button flex="1" @tap="buttons = ['A', 'B', 'C']">['A', 'B', 'C']</button>
+            <button flex="1" @tap="buttons = ['Cancel', 'OK']">['Cancel', 'OK']</button>
+            <button flex="1" @tap="buttons = ['OK']">['OK']</button>
+        </layout>
+        <layout gutter="10">
+            <button flex="1" @tap="message = 'message'">Message</button>
+            <button flex="1" @tap="message = 'buttons'">Two buttons</button>
+            <button flex="1" @tap="message = 'lines'">Multiple lines</button>
+        </layout>
+        <label>You click: {{btn}}.</label>
+    </layout>
+</form>

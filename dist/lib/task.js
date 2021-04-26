@@ -118,10 +118,9 @@ function end(taskId) {
     }
     for (let fid in task.forms) {
         let form = task.forms[fid];
-        let title = form.vroot.$refs.form.title;
         form.vapp.unmount();
         form.vapp._container.remove();
-        clickgo.core.trigger('formRemoved', taskId, form.id, { 'title': title });
+        clickgo.core.trigger('formRemoved', taskId, form.id, form.vroot.$refs.form.title, form.vroot.$refs.form.iconData);
     }
     clickgo.dom.removeFromStyleList(taskId);
     for (let path in task.objectURLs) {
@@ -133,6 +132,10 @@ function end(taskId) {
     }
     delete (exports.list[taskId]);
     clickgo.core.trigger('taskEnded', taskId);
+    let fid = clickgo.form.getMaxZIndexFormID();
+    if (fid) {
+        clickgo.form.changeFocus(fid);
+    }
     return true;
 }
 exports.end = end;

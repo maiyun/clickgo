@@ -1,0 +1,29 @@
+.inner {
+    position: absolute; left: 0; top: 0; display: flex;
+    &.content-max {
+        width: -webkit-max-content; width: max-content; height: -webkit-max-content; height: max-content;
+    }
+}
+
+.wrap {
+    position: relative; overflow: hidden; max-width: 100%; max-height: 100%;
+    &.v {
+        > .inner {
+            min-width: 100%;
+            flex-direction: column;
+        }
+        &:not(.adaptation) {
+            > .inner {
+                min-height: 100%;
+            }
+        }
+    }
+    &.h {
+        > .inner {
+            min-height: 100%;
+        }
+        &:not(.adaptation) > .inner {
+            min-width: 100%;
+        }
+    }
+}

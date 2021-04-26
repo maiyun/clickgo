@@ -1,0 +1,17 @@
+.block, .block2 {
+    width: 150px; height: 100px; display: flex; justify-content: center; align-items: center;
+}
+
+.block {
+    background: #FFF; box-shadow: 0 0 20px rgba(0, 0, 0, .5) inset;
+}
+.block:hover {
+    box-shadow: 0 0 20px rgba(0, 0, 0, .4) inset;
+}
+.block:active {
+    box-shadow: 0 0 40px rgba(0, 0, 0, .5) inset;
+}
+
+.block2 {
+    background: linear-gradient(to right, rgb(255, 96, 52), rgb(238, 10, 36)); color: #FFF;
+}

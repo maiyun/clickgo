@@ -5,13 +5,13 @@ export declare let props: {
     label: {
         default: string;
     };
-    name: {
+    value: {
         default: undefined;
     };
 };
 export declare let computed: {
-    showTab: (this: IVueControl) => boolean;
+    show: (this: IVueControl) => boolean;
 };
 export declare let watch: {
-    showTab: (this: IVueControl) => void;
+    show: (this: IVueControl) => void;
 };

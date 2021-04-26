@@ -1,0 +1,52 @@
+<form width="400" height="300" title="Button">
+    <overflow flex="1" direction="v">
+        <layout direction="v" gutter="10" style="padding: 10px;">
+            <label>Type:</label>
+            <layout gutter="10">
+                <button flex="1">Default</button>
+                <button flex="1" type="primary">Primary</button>
+                <button flex="1" type="info">Info</button>
+                <button flex="1" type="warning">Warning</button>
+                <button flex="1" type="danger">Danger</button>
+            </layout>
+            <label>Plain:</label>
+            <layout gutter="10">
+                <button flex="1" plain>Default</button>
+                <button flex="1" type="primary" plain>Primary</button>
+                <button flex="1" type="info" plain>Info</button>
+                <button flex="1" type="warning" plain>Warning</button>
+                <button flex="1" type="danger" plain>Danger</button>
+            </layout>
+            <label>Disabled:</label>
+            <layout gutter="10">
+                <button flex="1" disabled>Default</button>
+                <button flex="1" type="primary" disabled>Primary</button>
+                <button flex="1" type="info" disabled>Info</button>
+                <button flex="1" type="warning" disabled>Warning</button>
+                <button flex="1" type="danger" disabled>Danger</button>
+            </layout>
+            <layout gutter="10">
+                <button flex="1" plain disabled>Default</button>
+                <button flex="1" type="primary" plain disabled>Primary</button>
+                <button flex="1" type="info" plain disabled>Info</button>
+                <button flex="1" type="warning" plain disabled>Warning</button>
+                <button flex="1" type="danger" plain disabled>Danger</button>
+            </layout>
+            <label>Image:</label>
+            <layout gutter="10">
+                <button flex="1">
+                    <img width="16" height="16" src="../../../res/icon.svg" /><label style="padding-left: 5px;">Default</label>
+                </button>
+                <button flex="1" disabled>
+                    <img width="16" height="16" src="../../../res/icon.svg" /><label style="padding-left: 5px;">Disabled</label>
+                </button>
+                <button flex="1" type="primary" plain>
+                    <img width="16" height="16" src="../../../res/icon.svg" /><label style="padding-left: 5px;">Default</label>
+                </button>
+                <button flex="1" type="primary" plain disabled>
+                    <img width="16" height="16" src="../../../res/icon.svg" /><label style="padding-left: 5px;">Disabled</label>
+                </button>
+            </layout>
+        </layout>
+    </overflow>
+</form>

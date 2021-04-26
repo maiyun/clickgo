@@ -5,6 +5,7 @@ interface ICGFormLib {
     'lastTopZIndex': number;
     'lastPopZIndex': number;
     changeFocus(formId?: number, vm?: IVue): void;
+    getMaxZIndexFormID(): number | null;
     getRectByBorder(border: TCGBorder): {
         'width': number;
         'height': number;
@@ -25,7 +26,7 @@ interface ICGFormLib {
     hidePop(pop?: IVueControl | null): void;
     doFocusAndPopEvent(e: MouseEvent | TouchEvent): void;
     remove(formId: number): boolean;
-    create(taskId: number, opt: ICGCreateFormOptions): Promise<number | ICGForm>;
+    create(taskId: number, opt: ICGFormCreateOptions): Promise<number | ICGForm>;
 }
 
 /** --- 窗体对象 --- */
@@ -38,7 +39,7 @@ interface ICGForm {
 }
 
 /** --- 窗体创建选项 --- */
-interface ICGCreateFormOptions {
+interface ICGFormCreateOptions {
     'file'?: string;
 
     'path'?: string; // --- 相当于 base dir，有 file 以 file 为准，没有则以 path 为准，用于定义当前 form 中文件所在的基准路径 ---
@@ -47,4 +48,11 @@ interface ICGCreateFormOptions {
     'style'?: string;
 
     'topMost'?: boolean;
+}
+
+/** --- Dialog 选项 --- */
+interface ICGFormDialog {
+    'title'?: string;
+    'content': string;
+    'buttons'?: string[];
 }

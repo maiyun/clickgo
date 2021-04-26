@@ -30,7 +30,7 @@ exports.props = {
         'default': undefined
     },
     'direction': {
-        'default': 'v'
+        'default': 'h'
     },
     'padding': {
         'default': undefined
@@ -44,6 +44,9 @@ exports.props = {
     'scrollTop': {
         'default': undefined
     },
+    'content': {
+        'default': undefined,
+    },
     'same': {
         'default': false
     },
@@ -52,7 +55,7 @@ exports.props = {
     }
 };
 exports.data = {
-    'placePos': {
+    'compPos': {
         'start': 0,
         'end': 0
     },
@@ -67,6 +70,8 @@ exports.data = {
     'lengthWidth': 0,
     'lengthHeight': 0,
     'client': 0,
+    'clientWidth': 0,
+    'clientHeight': 0,
     'refreshCount': 0,
     'lengthInit': false,
     'cgNest': true
@@ -80,6 +85,18 @@ exports.watch = {
     },
     'direction': function () {
         this.refreshView();
+    },
+    'scrollLeft': function () {
+        if (this.direction === 'h' && this.scrollLeftEmit !== this.scrollLeft) {
+            this.scrollLeftEmit = this.scrollLeft;
+            this.reShow();
+        }
+    },
+    'scrollTop': function () {
+        if (this.direction === 'v' && this.scrollTopEmit !== this.scrollTop) {
+            this.scrollTopEmit = this.scrollTop;
+            this.reShow();
+        }
     }
 };
 exports.computed = {
@@ -94,10 +111,13 @@ exports.computed = {
         return list;
     },
     'sameComp': function () {
-        if (typeof this.same === 'boolean') {
-            return this.same;
+        if (typeof this.same === 'string') {
+            if (this.same === 'false') {
+                return false;
+            }
+            return true;
         }
-        return this.same === 'true' ? true : false;
+        return this.same ? true : false;
     },
     'paddingComp': function () {
         if (!this.padding) {
@@ -149,18 +169,18 @@ exports.methods = {
                     if (theCursor > maxCursor) {
                         theCursor = maxCursor;
                     }
-                    this.placePos.start = cursor;
-                    this.placePos.end = theCursor;
+                    this.compPos.start = cursor;
+                    this.compPos.end = theCursor;
                     yield this.$nextTick();
-                    yield clickgo.tool.sleep(0);
+                    yield clickgo.tool.sleep(34);
                     if (nowCount !== this.refreshCount) {
                         return;
                     }
-                    if (!this.$refs.place) {
+                    if (!this.$refs.comp) {
                         return;
                     }
-                    for (let i = 0; i < this.$refs.place.children.length; ++i) {
-                        let item = this.$refs.place.children.item(i);
+                    for (let i = 0; i < this.$refs.comp.children.length; ++i) {
+                        let item = this.$refs.comp.children.item(i);
                         let start = this.direction === 'v' ? lengthHeight : lengthWidth;
                         let rect = item.getBoundingClientRect();
                         if (this.direction === 'v') {
@@ -186,19 +206,25 @@ exports.methods = {
                     cursor = theCursor;
                 }
                 this.dataHeight = dataHeight;
+                if (this.direction === 'v') {
+                    lengthWidth += anotherWOH;
+                }
+                else {
+                    lengthHeight += anotherWOH;
+                }
             }
             else {
-                this.placePos.start = 0;
-                this.placePos.end = 1;
+                this.compPos.start = 0;
+                this.compPos.end = 1;
                 yield this.$nextTick();
                 yield clickgo.tool.sleep(0);
                 if (nowCount !== this.refreshCount) {
                     return;
                 }
-                if (!this.$refs.place) {
+                if (!this.$refs.comp) {
                     return;
                 }
-                let item = this.$refs.place.children.item(0);
+                let item = this.$refs.comp.children.item(0);
                 if (item) {
                     let rect = item.getBoundingClientRect();
                     if (this.direction === 'v') {
@@ -216,8 +242,6 @@ exports.methods = {
                     this.lineHeight = 0;
                 }
             }
-            this.placePos.start = 0;
-            this.placePos.end = 0;
             lengthWidth += this.paddingComp.right;
             lengthHeight += this.paddingComp.bottom;
             this.lengthWidth = lengthWidth;
@@ -286,20 +310,44 @@ exports.methods = {
         if (pos === 'left') {
             this.scrollLeftEmit = val;
             this.$emit('update:scrollLeft', val);
+            if (this.direction === 'h') {
+                this.reShow();
+            }
         }
         else {
             this.scrollTopEmit = val;
             this.$emit('update:scrollTop', val);
+            if (this.direction === 'v') {
+                this.reShow();
+            }
         }
-        this.reShow();
     },
     onResize: function (val) {
         this.client = val;
         this.$emit('resize', val);
+        if (this.direction === 'v') {
+            this.clientHeight = val;
+        }
+        else {
+            this.clientWidth = val;
+        }
         if (!this.lengthInit) {
             return;
         }
-        this.reShow();
+        this.refreshView();
+    },
+    onResizen: function (val) {
+        this.refreshView();
+        this.$emit('resizen', val);
+        if (this.direction === 'h') {
+            this.clientHeight = val;
+        }
+        else {
+            this.clientWidth = val;
+        }
+    },
+    onChange: function (val) {
+        this.$emit('change', val);
     }
 };
 exports.mounted = function () {

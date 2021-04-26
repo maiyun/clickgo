@@ -1,0 +1,6 @@
+<div class="wrap" :style="{'width': widthPx, 'height': heightPx, 'left': left + 'px', 'top': top + 'px', 'z-index': zIndex, 'flex-grow': flex}" @click="cgTap" @mousedown="cgDown" @touchstart="cgDown" @dblclick="cgDblclick">
+    <cg-layout class="content" :direction="direction" :gutter="gutter"><slot></slot></cg-layout>
+    <cg-layout align-h="end" class="controls" gutter="10">
+        <cg-button v-for="item of buttons" @tap="click(item)" width="80" :focus="focus">{{item}}</cg-button>
+    </cg-layout>
+</div>

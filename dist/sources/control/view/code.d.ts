@@ -32,6 +32,9 @@ export declare let props: {
     scrollTop: {
         default: number;
     };
+    content: {
+        default: string;
+    };
 };
 export declare let data: {
     scrollLeftData: number;
@@ -50,18 +53,15 @@ export declare let watch: {
     direction: (this: IVueControl) => void;
     scrollLeft: {
         handler: (this: IVueControl) => void;
-        immediate: boolean;
     };
     scrollTop: {
         handler: (this: IVueControl) => void;
-        immediate: boolean;
     };
 };
 export declare let computed: {
+    adaptationComp: (this: IVueControl) => boolean;
     maxScrollLeft: (this: IVueControl) => number;
     maxScrollTop: (this: IVueControl) => number;
-    maxLengthWidth: (this: IVueControl) => number;
-    maxLengthHeight: (this: IVueControl) => number;
     widthPx: (this: IVueControl) => string | undefined;
     heightPx: (this: IVueControl) => string | undefined;
 };

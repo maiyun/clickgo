@@ -1,0 +1,57 @@
+<form title="Select" width="400" height="450" min-width="300" min-height="400" padding="10">
+    <tab flex="1">
+        <!-- greatselect -->
+        <tab-panel label="greatselect" style="padding: 10px;">
+            <layout flex="1" gutter="10" direction="v">
+                <block>greatselect (Now select value is {{select}}):</block>
+                <greatselect :area="area" :disabled="disabled">
+                    <layout flex="1" align-v="center" gutter="5" style="line-height: 1.2;">
+                        <img width="32" height="32" :src="slist[select].src"></img>
+                        <block>
+                            <block>{{slist[select].name}}</block>
+                            <block style="opacity:.7;">{{slist[select].path}}</block>
+                        </block>
+                    </layout>
+                    <template v-slot:pop>
+                        <greatlist v-model="select" :data="slist" v-slot="data" :adaptation="true" style="line-height: 1.3;">
+                            <greatlist-item v-if="data.row.type === 0" :disabled="data.row.disabled" :value="data.index">
+                                <layout align-v="center" gutter="5" flex="1">
+                                    <img width="32" height="32" :src="data.row.src"></img>
+                                    <block flex="1">
+                                        <block>{{data.row.name}}</block>
+                                        <block style="opacity:.7;">{{data.row.path}}</block>
+                                    </block>
+                                </layout>
+                                <template v-if="data.row.menu" v-slot:pop>
+                                    <menulist>
+                                        <menulist-item alt="S">Set the default</menulist-item>
+                                    </menulist>
+                                </template>
+                            </greatlist-item>
+                            <greatlist-split v-else-if="data.row.type === 1"></greatlist-split>
+                            <greatlist-item v-else :value="data.index">Other</greatlist-item>
+                        </greatlist>
+                    </template>
+                </greatselect>
+                <layout gutter="10">
+                    <button flex="1" @tap="slist.splice(-2, 0, {'type': 0, 'name': 'Card' + slist.length, 'path': 'Bob >> folder >> Card', 'src': '/res/r-2.svg','disabled': false})">Add item</button>
+                    <button flex="1" @tap="slist.splice(-3, 1)">Remove item</button>
+                </layout>
+                <layout gutter="10">
+                    <button flex="1" @tap="disabled = !disabled">Disabled: {{disabled}}</button>
+                    <button flex="1" @tap="area = area === 'all' ? 'arrow' : 'all'">Area: {{area}}</button>
+                </layout>
+            </layout>
+        </tab-panel>
+        <!-- select -->
+        <tab-panel label="select" style="padding: 10px;">
+            <layout flex="1" gutter="10" direction="v">
+                <select v-model="select2" :data="slist2" :disabled="disabled" :editable="editable"></select>
+                <layout gutter="10">
+                    <button flex="1" @tap="disabled = !disabled">Disabled: {{disabled}}</button>
+                    <button flex="1" @tap="editable = !editable">Editable: {{editable}}</button>
+                </layout>
+            </layout>
+        </tab-panel>
+    </tab>
+</form>

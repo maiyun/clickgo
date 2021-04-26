@@ -1,0 +1,104 @@
+<form title="Overflow" width="400" height="450" min-width="300" min-height="400" padding="10">
+    <tab flex="1">
+        <!-- 默认 -->
+        <tab-panel label="normal" name="normal">
+            <layout flex="1" gutter="10" direction="v">
+                <!-- v -->
+                <label>Direction: v</label>
+                <layout flex="1" gutter="10">
+                    <overflow v-model:scroll-left="sLeft" v-model:scroll-top="sTop" flex="1" direction="v" @resize="c = $event" @change="l = $event" :style="{'line-height': style ? '1.5' : undefined}" class="border">
+                        <block :style="{'padding': style ? '10px' : undefined}">
+                            <block v-for="(line, index) of lineCount">
+                                <button v-if="index > 0 && index % 10 === 0">test</button>
+                                <block v-else>Line {{line}}, index: {{index}}.</block>
+                            </block>
+                        </block>
+                    </overflow>
+                    <layout flex="1" class="border">
+                        <overflow v-model:scroll-left="sLeft2" v-model:scroll-top="sTop2" flex="1" direction="v" @resize="c2 = $event" @change="l2 = $event" :style="{'line-height': style ? '1.5' : undefined}">
+                            <block :style="{'padding': style ? '10px' : undefined}">
+                                <block v-for="(line, index) of lineCount">
+                                    <block v-if="index > 0 && index % 10 === 0" class="custom">Custom</block>
+                                    <block v-else>Line {{line}}, index: {{index}}.</block>
+                                </block>
+                            </block>
+                        </overflow>
+                        <scroll width="20" :length="l2" :client="c2" v-model:scroll-offset="sTop2"></scroll>
+                    </layout>
+                </layout>
+                <label>Scroll Left: {{sLeft}}, Scroll Top: {{sTop}}, Length: {{l}}, Client: {{c}}.</label>
+                <label>Scroll Left: {{sLeft2}}, Scroll Top: {{sTop2}}, Length: {{l2}}, Client: {{c2}}.</label>
+                <!-- h -->
+                <label>Direction: h</label>
+                <overflow v-model:scroll-left="sLeft3" v-model:scroll-top="sTop3" flex="1" @resize="c3 = $event" @change="l3 = $event" :style="{'line-height': style ? '1.5' : undefined}" class="border">
+                    <layout flex="1" :style="{'padding': style ? '10px' : undefined}">
+                        <layout v-for="(line, index) of lineCount" align-v="center" align-h="center" direction="v" class="vborder">
+                            <label>Col {{line}}.</label>
+                            <label>index: {{index}}.</label>
+                        </layout>
+                    </layout>
+                </overflow>
+                <label>Scroll Left: {{sLeft3}}, Scroll Top: {{sTop3}}, Length: {{l3}}, Client: {{c3}}.</label>
+                <!-- button list -->
+                <layout gutter="10">
+                    <button @tap="lineCount += 10" flex="1">Add 10 lines</button>
+                    <button @tap="lineCount += 50" flex="1">Add 50 lines</button>
+                </layout>
+                <layout gutter="10">
+                    <button @tap="lineCount -= 10;if(lineCount < 0) {lineCount = 0;}" flex="1">Remove 10 lines</button>
+                    <button @tap="style = !style" flex="1">Change style</button>
+                </layout>
+            </layout>
+        </tab-panel>
+        <!-- 自适应 -->
+        <tab-panel label="adaptation">
+            <layout flex="1" gutter="10" direction="v">
+                <layout flex="1" direction="v">
+                    <overflow class="border" v-model:scroll-left="sLeft4" v-model:scroll-top="sTop4" direction="v" @resize="c4 = $event" @change="l4 = $event" style="max-height: 100%;">
+                        <block v-for="(line, index) of lineCount">
+                            <button v-if="index > 0 && index % 10 === 0">test</button>
+                            <block v-else>Line {{line}}, index: {{index}}.</block>
+                        </block>
+                    </overflow>
+                </layout>
+                <label>Scroll Left: {{sLeft4}}, Scroll Top: {{sTop4}}, Length: {{l4}}, Client: {{c4}}.</label>
+                <layout gutter="10">
+                    <button @tap="lineCount += 10" flex="1">Add 10 lines</button>
+                    <button @tap="lineCount -= 10;if(lineCount < 0) {lineCount = 0;}" flex="1">Remove 10 lines</button>
+                </layout>
+            </layout>
+        </tab-panel>
+        <!-- 内容超出 -->
+        <tab-panel label="beyond">
+            <layout flex="1" gutter="10" direction="v">
+                <layout gutter="10" align-v="center">
+                    <button flex="1" @tap="dir5 = (dir5 === 'h' ? 'v' : 'h')">Change direction</button>
+                    <button flex="1" @tap="line5 = (line5 === 10 ? 1 : 10)">Change data</button>
+                    <label>Direction: {{dir5}}</label>
+                </layout>
+                <overflow v-model:scroll-left="sLeft5" v-model:scroll-top="sTop5" @resize="c5 = $event" @change="l5 = $event" :direction="dir5" flex="1" class="border" style="padding: 10px 0 0 10px;">
+                    <layout v-for="i of line5" :direction="dir5 === 'h' ? 'v' : 'h'">
+                        <layout v-for="j of 10" class="block">
+                            <block>{{i}}-{{j}}</block>
+                        </layout>
+                    </layout>
+                </overflow>
+                <label>Scroll Left: {{sLeft5}}, Scroll Top: {{sTop5}}, Length: {{l5}}, Client: {{c5}}.</label>
+            </layout>
+        </tab-panel>
+        <!-- 嵌套 -->
+        <tab-panel label="nest">
+            <overflow flex="1" class="border" direction="v">
+                <template v-for="i of 100">
+                    <overflow v-if="i === 30" class="border" direction="v" style="height: 50px;">
+                        <label v-for="k of 50">Line {{k}}</label>
+                    </overflow>
+                    <overflow v-else-if="i === 40" class="border" style="height: 50px;">
+                        <label v-for="k of 50" class="vborder">Line {{k}}</label>
+                    </overflow>
+                    <label v-else>Line {{i}}</label>
+                </template>
+            </overflow>
+        </tab-panel>
+    </tab>
+</form>

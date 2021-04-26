@@ -1,5 +1,0 @@
-<form width="150" height="100" min-width="150" title="thin" border="thin">
-    <layout flex="1" align-h="center" align-v="end" style="padding: 0 0 10px 0;">
-        <label>I'm so thin!</label>
-    </layout>
-</form>

@@ -32,6 +32,9 @@ export declare let props: {
     scrollTop: {
         default: undefined;
     };
+    content: {
+        default: undefined;
+    };
     same: {
         default: boolean;
     };
@@ -40,7 +43,7 @@ export declare let props: {
     };
 };
 export declare let data: {
-    placePos: {
+    compPos: {
         start: number;
         end: number;
     };
@@ -55,6 +58,8 @@ export declare let data: {
     lengthWidth: number;
     lengthHeight: number;
     client: number;
+    clientWidth: number;
+    clientHeight: number;
     refreshCount: number;
     lengthInit: boolean;
     cgNest: boolean;
@@ -65,6 +70,8 @@ export declare let watch: {
         deep: boolean;
     };
     direction: (this: IVueControl) => void;
+    scrollLeft: (this: IVueControl) => void;
+    scrollTop: (this: IVueControl) => void;
 };
 export declare let computed: {
     dataComp: (this: IVueControl) => any[];
@@ -76,5 +83,7 @@ export declare let methods: {
     reShow: (this: IVueControl) => void;
     updateScrollOffset: (this: IVueControl, val: number, pos: 'left' | 'top') => void;
     onResize: (this: IVueControl, val: number) => void;
+    onResizen: (this: IVueControl, val: number) => void;
+    onChange: (this: IVueControl, val: number) => void;
 };
 export declare let mounted: (this: IVueControl) => void;

@@ -82,15 +82,15 @@ tmpScript.addEventListener('load', function(): void {
         loader.setAfter('?' + Math.random());
         // --- 加载库 ---
         let paths: string[] = [
-            'https://cdn.jsdelivr.net/npm/vue@3.0.5/dist/vue.global.min.js',
-            'https://cdn.jsdelivr.net/npm/jszip@3.5.0/dist/jszip.min.js'
+            'https://cdn.jsdelivr.net/npm/vue@3.0.11/dist/vue.global.min.js',
+            'https://cdn.jsdelivr.net/npm/jszip@3.6.0/dist/jszip.min.js'
         ];
         // --- 判断 ResizeObserver 是否存在 ---
         let ro = true;
         // ResizeObserver = undefined;
         if (!((window as any).ResizeObserver)) {
             ro = false;
-            paths.push('https://cdn.jsdelivr.net/npm/@juggle/resize-observer@3.2.0/lib/exports/resize-observer.umd.min.js');
+            paths.push('https://cdn.jsdelivr.net/npm/@juggle/resize-observer@3.3.0/lib/exports/resize-observer.umd.min.js');
         }
         // --- 加载 vue 以及必要库 ---
         for (let path of paths) {

@@ -1,0 +1,189 @@
+.wrap {
+    display: flex;
+    &.top, &.bottom {
+        flex-direction: column;
+    }
+
+    .tabs-wrap {
+        display: flex; position: relative; z-index: 1;
+    }
+    &.left, &.right {
+        .tabs-wrap {
+            flex-direction: column;
+        }
+    }
+
+    .arrow {
+        display: flex; justify-content: center; align-items: center;
+        &::before {
+            content: ''; pointer-events: none; border: solid 1px #000; width: 6px; height: 6px; transform: rotate(45deg);
+        }
+        &:hover::before {
+            border-color: hsl(205, 100%, 50%);
+        }
+        &:active::before {
+            border-color: hsl(205, 100%, 30%);
+        }
+    }
+    &.top, &.bottom {
+        .arrow {
+            width: 20px;
+            &.start::before {
+                border-width: 0 0 1px 1px; margin-left: 3px;
+            }
+            &.end::before {
+                border-width: 1px 1px 0 0; margin-right: 3px;
+            }
+        }
+    }
+    &.left, &.right {
+        .arrow {
+            height: 20px;
+            &.start::before {
+                border-width: 1px 0 0 1px; margin-top: 3px;
+            }
+            &.end::before {
+                border-width: 0 1px 1px 0; margin-bottom: 3px;
+            }
+        }
+    }
+
+    .tabs {
+        flex-grow: 1; flex-basis: 0; display: flex; -webkit-overflow-scrolling: touch;
+        &::-webkit-scrollbar {
+            display: none;
+        }
+    }
+    &.top, &.bottom {
+        .tabs {
+            width: 0; overflow-x: auto;
+        }
+    }
+    &.top .tabs {
+        align-items: flex-end; transform: translateY(1px); padding-bottom: 1px;
+    }
+    &.bottom .tabs {
+        align-items: flex-start; transform: translateY(-1px); padding-top: 1px;
+    }
+    &.left, &.right {
+        .tabs {
+            height: 0; flex-direction: column; overflow-y: auto;
+        }
+    }
+    &.left .tabs {
+        transform: translateX(1px); padding-right: 1px;
+    }
+    &.right .tabs {
+        transform: translateX(-1px); padding-left: 1px;
+    }
+
+    .tab {
+        background-color: hsl(205, 0%, 95%); display: inline-block; position: relative;
+        &::before {
+            content: ''; pointer-events: none; position: absolute; left: 0; top: 0; width: 200%; height: 200%; transform-origin: 0 0; transform: scale(.5); border: solid 1px hsl(205, 0%, 70%); z-index: 1;
+        }
+        &::after {
+            content: ' '; pointer-events: none; position: absolute; transform: scale(.5); background: #FFF; display: none;
+        }
+        &:not(.selected):hover {
+            background-color: hsl(205, 100%, 95%);
+        }
+        &.selected {
+            background-color: #FFF;
+        }
+    }
+    &.top, &.bottom {
+        .tabs {
+            .tab {
+                padding: 6px 10px;
+                &.selected {
+                    &::before {
+                        border-right-width: 1px;
+                    }
+                    + * {
+                        &::before {
+                            border-left-width: 0;
+                        }
+                    }
+                }
+            }
+            > .tab:last-child {
+                &::before {
+                    border-right-width: 1px;
+                }
+            }
+        }
+    }
+    &.top {
+        .tab {
+            &::before {
+                border-width: 1px 0 0 1px;
+            }
+            &.selected {
+                padding-bottom: 9px;
+                &::after {
+                    display: block; left: 0; top: calc(100% - 2px); width: calc(200% - 2px); height: 4px; transform-origin: 1px 50%;
+                }
+            }
+        }
+    }
+    &.bottom {
+        .tab {
+            &::before {
+                border-width: 0 0 1px 1px;
+            }
+            &.selected {
+                padding-top: 9px;
+                &::after {
+                    display: block; left: 0; top: -2px; width: calc(200% - 2px); height: 4px; transform-origin: 1px 50%;
+                }
+            }
+        }
+    }
+    &.left, &.right {
+        .tabs {
+            .tab {
+                padding: 10px 6px;
+                &.selected {
+                    &::before {
+                        border-bottom-width: 1px;
+                    }
+                    + * {
+                        &::before {
+                            border-top-width: 0;
+                        }
+                    }
+                }
+            }
+            > .tab:last-child {
+                &::before {
+                    border-bottom-width: 1px;
+                }
+            }
+        }
+    }
+    &.left {
+        .tab {
+            &::before {
+                border-width: 1px 0 0 1px;
+            }
+            &.selected {
+                &::after {
+                    display: block; left: calc(100% - 2px); top: 0; width: 4px; height: calc(200% - 2px); transform-origin: 50% 1px;
+                }
+            }
+        }
+    }
+    &.right {
+        .tab {
+            &::before {
+                border-width: 1px 1px 0 0;
+            }
+            &.selected {
+                &::after {
+                    display: block; left: -2px; top: 0; width: 4px; height: calc(200% - 2px); transform-origin: 50% 1px;
+                }
+            }
+        }
+    } 
+}

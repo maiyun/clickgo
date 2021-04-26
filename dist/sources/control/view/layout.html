@@ -1,6 +1,6 @@
-<div ref="wrap" class="wrap" :class="[direction, (adaptation === true || adaptation === 'true') ? 'adaptation': undefined]" :style="{'width': widthPx, 'height': heightPx, 'left': left + 'px', 'top': top + 'px', 'z-index': zIndex, 'flex-grow': flex}" @click="cgTap" @mousedown="down" @touchstart="down" @dblclick="cgDblclick" @wheel="wheel">
-    <div class="place" :style="{'width': lengthWidth + 'px', 'height': lengthHeight + 'px'}"></div>
-    <div ref="inner" class="inner" :style="{'transform': 'translate3d(' + -scrollLeftData + 'px, ' + -scrollTopData + 'px, 0)', 'padding': padding && padding.replace(/([0-9]+)($| )/g, '$1px$2')}">
+<div ref="wrap" class="wrap" :class="[direction, adaptationComp ? 'adaptation': undefined, 'content-' + content]" :style="{'width': widthPx, 'height': heightPx, 'left': left + 'px', 'top': top + 'px', 'z-index': zIndex, 'flex-grow': flex}" @click="cgTap" @mousedown="down" @touchstart="down" @dblclick="cgDblclick" @wheel="wheel">
+    <div class="place" :style="{'width': direction === 'h' ? lengthWidth + 'px': undefined, 'height': direction === 'v' ? lengthHeight + 'px' : undefined}"></div>
+    <div ref="inner" class="inner" :style="{'transform': 'translate3d(' + -scrollLeftData + 'px, ' + -scrollTopData + 'px, 0) translateZ(0px)', 'padding': padding && padding.replace(/([0-9]+)($| )/g, '$1px$2')}">
         <slot></slot>
     </div>
 </div>

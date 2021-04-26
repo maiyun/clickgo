@@ -5,16 +5,13 @@ exports.props = {
     'disabled': {
         'default': false
     },
-    'text': {
-        'default': ''
-    },
     'alt': {
         'default': undefined
     }
 };
 exports.data = {
     'popOpen': false,
-    'subPop': undefined,
+    'selfPop': undefined,
     'popOptions': {
         'left': '-5000px',
         'top': '0px',
@@ -22,8 +19,12 @@ exports.data = {
     }
 };
 exports.methods = {
-    mousein: function () {
+    enter: function (e) {
         var _a;
+        this.cgEnter(e);
+        if (this.cgHasTouch) {
+            return;
+        }
         if (this.disabled) {
             return;
         }
@@ -67,15 +68,13 @@ exports.methods = {
         if (((_a = this.$parent) === null || _a === void 0 ? void 0 : _a.itemPopShowing) === this) {
             this.$parent.itemPopShowing = undefined;
         }
-        if ((_b = this.subPop) === null || _b === void 0 ? void 0 : _b.itemPopShowing) {
-            this.subPop.itemPopShowing.hidePop();
+        if ((_b = this.selfPop) === null || _b === void 0 ? void 0 : _b.itemPopShowing) {
+            this.selfPop.itemPopShowing.hidePop();
         }
     }
 };
 exports.unmounted = function () {
-    if (this.$parent) {
-        if (this === this.$parent.itemPopShowing) {
-            clickgo.form.hidePop(this);
-        }
+    if (this.$parent && (this === this.$parent.itemPopShowing)) {
+        clickgo.form.hidePop(this);
     }
 };

@@ -12,13 +12,13 @@ exports.props = {
         'default': undefined
     },
     'left': {
-        'default': 0
+        'default': undefined
     },
     'top': {
-        'default': 0
+        'default': undefined
     },
     'zIndex': {
-        'default': 0
+        'default': undefined
     },
     'flex': {
         'default': ''
@@ -34,6 +34,9 @@ exports.props = {
     },
     'scrollOffset': {
         'default': 0
+    },
+    'float': {
+        'default': false
     }
 };
 exports.data = {
@@ -46,20 +49,12 @@ exports.data = {
 exports.watch = {
     'length': {
         handler: function () {
-            if (this.scrollOffsetData > this.maxScroll) {
-                this.scrollOffsetData = this.maxScroll;
-                this.$emit('update:scrollOffset', this.scrollOffsetData);
-            }
-            this.scrollOffsetPx = this.barOutSize * (this.scrollOffsetData / this.maxScroll);
+            this.resizePx();
         }
     },
     'client': {
         handler: function () {
-            if (this.scrollOffsetData > this.maxScroll) {
-                this.scrollOffsetData = this.maxScroll;
-                this.$emit('update:scrollOffset', this.scrollOffsetData);
-            }
-            this.scrollOffsetPx = this.barOutSize * (this.scrollOffsetData / this.maxScroll);
+            this.resizePx();
         }
     },
     'scrollOffset': {
@@ -68,7 +63,8 @@ exports.watch = {
             if (this.scrollOffsetData === scrollOffsetData) {
                 return;
             }
-            this.resizePxOfScrollOffsetData(scrollOffsetData);
+            this.scrollOffsetData = scrollOffsetData;
+            this.resizePx();
         }
     }
 };
@@ -81,6 +77,9 @@ exports.computed = {
     },
     'size': function () {
         if (this.realSize < 5) {
+            if (5 > this.barLengthPx) {
+                return this.barLengthPx;
+            }
             return 5;
         }
         return this.realSize;
@@ -95,22 +94,31 @@ exports.computed = {
         return (this.length > this.client) ? this.length - this.client : 0;
     },
     'widthPx': function () {
-        var _a;
         if (this.width !== undefined) {
             return this.width + 'px';
         }
         if (this.flex !== '') {
-            return ((_a = this.$parent) === null || _a === void 0 ? void 0 : _a.direction) ? (this.$parent.direction === 'v' ? undefined : '0') : undefined;
+            let parent = this.cgParent();
+            return parent ? (parent.direction === 'v' ? undefined : '0') : undefined;
         }
     },
     'heightPx': function () {
-        var _a;
         if (this.height !== undefined) {
             return this.height + 'px';
         }
         if (this.flex !== '') {
-            return ((_a = this.$parent) === null || _a === void 0 ? void 0 : _a.direction) ? (this.$parent.direction === 'v' ? '0' : undefined) : undefined;
+            let parent = this.cgParent();
+            return parent ? (parent.direction === 'v' ? '0' : undefined) : undefined;
         }
+    },
+    'floatComp': function () {
+        if (typeof this.float === 'string') {
+            if (this.float === 'false') {
+                return false;
+            }
+            return true;
+        }
+        return this.float ? true : false;
     }
 };
 exports.methods = {
@@ -123,7 +131,7 @@ exports.methods = {
             'object': this.$refs.block,
             'move': (ox, oy) => {
                 this.scrollOffsetPx += this.direction === 'v' ? oy : ox;
-                let scrollPer = this.scrollOffsetPx / this.barOutSize;
+                let scrollPer = (this.barOutSize > 0) ? (this.scrollOffsetPx / this.barOutSize) : 0;
                 this.scrollOffsetData = Math.round(scrollPer * this.maxScroll);
                 this.$emit('update:scrollOffset', this.scrollOffsetData);
             }
@@ -174,7 +182,7 @@ exports.methods = {
                         }
                         else {
                             this.scrollOffsetData -= 10;
-                            this.scrollOffsetPx = this.barOutSize * (this.scrollOffsetData / this.maxScroll);
+                            this.scrollOffsetPx = (this.maxScroll > 0) ? (this.barOutSize * (this.scrollOffsetData / this.maxScroll)) : 0;
                             this.$emit('update:scrollOffset', this.scrollOffsetData);
                         }
                     }
@@ -188,7 +196,7 @@ exports.methods = {
                         }
                         else {
                             this.scrollOffsetData += 10;
-                            this.scrollOffsetPx = this.barOutSize * (this.scrollOffsetData / this.maxScroll);
+                            this.scrollOffsetPx = (this.maxScroll > 0) ? (this.barOutSize * (this.scrollOffsetData / this.maxScroll)) : 0;
                             this.$emit('update:scrollOffset', this.scrollOffsetData);
                         }
                     }
@@ -206,35 +214,33 @@ exports.methods = {
             }
         });
     },
-    resizePxOfScrollOffsetData: function (scrollOffsetData) {
-        if (scrollOffsetData > this.maxScroll) {
+    resizePx: function () {
+        if (this.scrollOffsetData > this.maxScroll) {
             this.scrollOffsetData = this.maxScroll;
             this.scrollOffsetPx = this.barOutSize;
             this.$emit('update:scrollOffset', this.scrollOffsetData);
         }
-        else if (scrollOffsetData < 0) {
+        else if (this.scrollOffsetData < 0) {
             this.scrollOffsetData = 0;
             this.scrollOffsetPx = 0;
             this.$emit('update:scrollOffset', this.scrollOffsetData);
         }
         else {
-            this.scrollOffsetData = scrollOffsetData;
             this.scrollOffsetPx = this.barOutSize * (this.scrollOffsetData / this.maxScroll);
-            this.$emit('update:scrollOffset', this.scrollOffsetData);
         }
     }
 };
 exports.mounted = function () {
-    let dwd = clickgo.dom.watchSize(this.$refs.bar, (size) => {
+    clickgo.dom.watchSize(this.$refs.bar, (size) => {
         this.barLengthPx = this.direction === 'v' ? size.height : size.width;
         this.scrollOffsetPx = this.barOutSize * (this.scrollOffsetData / this.maxScroll);
     });
-    this.barLengthPx = this.direction === 'v' ? dwd.size.height : dwd.size.width;
     let scrollOffsetData = Math.round(parseFloat(this.scrollOffset));
     if (this.scrollOffsetData === scrollOffsetData) {
         return;
     }
-    this.resizePxOfScrollOffsetData(scrollOffsetData);
+    this.scrollOffsetData = scrollOffsetData;
+    this.resizePx();
 };
 exports.unmounted = function () {
     if (this.timer !== undefined) {

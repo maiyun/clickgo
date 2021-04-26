@@ -37,7 +37,8 @@ export let computed = {
             return this.width + 'px';
         }
         if (this.flex !== '') {
-            return this.$parent?.direction ? (this.$parent.direction === 'v' ? undefined : '0') : undefined;
+            let parent = this.cgParent();
+            return parent ? (parent.direction === 'v' ? undefined : '0') : undefined;
         }
     },
     'heightPx': function(this: IVueControl): string | undefined {
@@ -45,7 +46,8 @@ export let computed = {
             return this.height + 'px';
         }
         if (this.flex !== '') {
-            return this.$parent?.direction ? (this.$parent.direction === 'v' ? '0' : undefined) : undefined;
+            let parent = this.cgParent();
+            return parent ? (parent.direction === 'v' ? '0' : undefined) : undefined;
         }
     }
 };

@@ -2,16 +2,13 @@ export declare let props: {
     disabled: {
         default: boolean;
     };
-    text: {
-        default: string;
-    };
     alt: {
         default: undefined;
     };
 };
 export declare let data: {
     popOpen: boolean;
-    subPop: undefined;
+    selfPop: undefined;
     popOptions: {
         left: string;
         top: string;
@@ -19,7 +16,7 @@ export declare let data: {
     };
 };
 export declare let methods: {
-    mousein: (this: IVueControl) => void;
+    enter: (this: IVueControl, e: MouseEvent) => void;
     click: (this: IVueControl, event: MouseEvent) => void;
     showPop: (this: IVueControl) => void;
     hidePop: (this: IVueControl) => void;

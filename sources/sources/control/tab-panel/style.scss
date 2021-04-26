@@ -1,0 +1,15 @@
+.wrap {
+    background-color: #FFF; display: flex; flex: 1; overflow: hidden; position: relative;
+    &.v {
+        flex-direction: column;
+    }
+    &.top, &.bottom {
+        height: 0;
+    }
+    &.left, &.right {
+        width: 0;
+    }
+    &::before {
+        content: ''; pointer-events: none; position: absolute; left: 0; top: 0; width: 200%; height: 200%; transform-origin: 0 0; transform: scale(.5); border: solid 1px hsl(205, 0%, 70%);
+    }
+}

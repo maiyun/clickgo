@@ -6,19 +6,19 @@ export let props = {
     'label': {
         'default': ''
     },
-    'name': {
+    'value': {
         'default': undefined
     }
 };
 
 export let computed = {
-    'showTab': function(this: IVueControl): boolean {
-        return this.$parent ? this.$parent.selected === (this.name || this.label) : false;
+    'show': function(this: IVueControl): boolean {
+        return this.$parent ? this.$parent.selected === (this.value ?? this.label) : false;
     }
 };
 
 export let watch = {
-    'showTab': function(this: IVueControl): void {
+    'show': function(this: IVueControl): void {
         if (this.showTab) {
             this.$emit('show');
         }
