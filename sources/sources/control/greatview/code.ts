@@ -97,6 +97,13 @@ export let watch = {
 };
 
 export let computed = {
+    'isSame': function(this: IVueControl): boolean {
+        return clickgo.tool.getBoolean(this.same);
+    },
+    'isAdaptation': function(this: IVueControl): boolean {
+        return clickgo.tool.getBoolean(this.adaptation);
+    },
+
     'dataComp': function(this: IVueControl): any[] {
         if (typeof this.data !== 'number') {
             return this.data;
@@ -107,16 +114,6 @@ export let computed = {
         }
         return list;
     },
-    'sameComp': function(this: IVueControl): boolean {
-        if (typeof this.same === 'string') {
-            if (this.same === 'false') {
-                return false;
-            }
-            return true;
-        }
-        return this.same ? true : false;
-    },
-
     'paddingComp': function(this: IVueControl): any {
         if (!this.padding) {
             return {'top': 0, 'right': 0, 'bottom': 0, 'left': 0};
@@ -159,7 +156,7 @@ export let methods = {
             return;
         }
 
-        if (!this.sameComp) {
+        if (!this.isSame) {
             let maxCursor = this.dataComp.length;
             let cursor = 0;
             /** --- 另一边的最大值 --- */
@@ -282,7 +279,7 @@ export let methods = {
     // --- 控制显示和隐藏 ---
     reShow: function(this: IVueControl): void {
         let scrollOffset = this.direction === 'v' ? this.scrollTopEmit : this.scrollLeftEmit;
-        if (!this.sameComp) {
+        if (!this.isSame) {
             let overShow = false;
             for (let i = 0; i < this.dataComp.length; ++i) {
                 let pos = this.dataHeight[i];

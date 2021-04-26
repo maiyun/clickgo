@@ -1,4 +1,4 @@
-<div class="wrap" :class="[disabled && 'cg-disabled', popOpen && 'cg-pop-open', cgHover && 'hover', cgActive && 'active']" @click="click"  @mousedown="cgDown" @mouseup="cgUp" @mouseenter="enter" @mouseleave="cgLeave" @touchstart="cgDown" @touchend="cgUp" @touchcancel="cgCancel" @dblclick="cgDblclick">
+<div class="wrap" :class="[isDisabled && 'cg-disabled', popOpen && 'cg-pop-open', cgHover && 'hover', cgActive && 'active']" @click="click"  @mousedown="cgDown" @mouseup="cgUp" @mouseenter="enter" @mouseleave="cgLeave" @touchstart="cgDown" @touchend="cgUp" @touchcancel="cgCancel" @dblclick="cgDblclick">
     <div class="inner">
         <slot></slot>
     </div>

@@ -51,6 +51,10 @@ export let computed = {
             let parent = this.cgParent();
             return parent ? (parent.direction === 'v' ? '0' : undefined) : undefined;
         }
+    },
+
+    'isDisabled': function(this: IVueControl): boolean {
+        return clickgo.tool.getBoolean(this.disabled);
     }
 };
 

@@ -27,6 +27,12 @@ export let data = {
     }
 };
 
+export let computed = {
+    'isDisabled': function(this: IVueControl): boolean {
+        return clickgo.tool.getBoolean(this.disabled);
+    }
+};
+
 export let methods = {
     click: function(this: IVueControl, e: MouseEvent): void {
         if (this.disabled) {

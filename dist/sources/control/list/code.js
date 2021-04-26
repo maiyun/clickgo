@@ -77,6 +77,12 @@ function formatData(inData, level = 0) {
     return data;
 }
 exports.computed = {
+    'isMust': function () {
+        return clickgo.tool.getBoolean(this.must);
+    },
+    'isMulti': function () {
+        return clickgo.tool.getBoolean(this.multi);
+    },
     'dataComp': function () {
         return formatData(this.data);
     },
@@ -85,18 +91,18 @@ exports.computed = {
         let change = false;
         let modelValue = this.modelValue;
         if (typeof modelValue === 'object') {
-            if (!this.multi) {
+            if (!this.isMulti) {
                 modelValue = (_a = modelValue[0]) !== null && _a !== void 0 ? _a : '';
                 change = true;
             }
         }
         else {
-            if (this.multi) {
+            if (this.isMulti) {
                 modelValue = modelValue === '' ? [] : [modelValue];
                 change = true;
             }
         }
-        if (this.must) {
+        if (this.isMust) {
             if (typeof modelValue === 'object') {
                 if (modelValue.length === []) {
                     return [];

@@ -33,6 +33,12 @@ export let data = {
     }
 };
 
+export let computed = {
+    'isDisabled': function(this: IVueControl): boolean {
+        return clickgo.tool.getBoolean(this.disabled);
+    }
+};
+
 export let watch = {
     'type': {
         handler: function(this: IVueControl): void {
@@ -53,7 +59,7 @@ export let watch = {
 
 export let methods = {
     click: function(this: IVueControl, e: MouseEvent): void {
-        if (this.disabled) {
+        if (this.isDisabled) {
             return;
         }
         if (!this.type) {
@@ -79,14 +85,14 @@ export let methods = {
         if (this.cgHasTouch) {
             return;
         }
-        if (this.disabled) {
+        if (this.isDisabled) {
             return;
         }
         this.showPop();
     },
     down: function(this: IVueControl, e: TouchEvent): void {
         this.cgDown(e);
-        if (this.disabled) {
+        if (this.isDisabled) {
             return;
         }
         this.showPop();

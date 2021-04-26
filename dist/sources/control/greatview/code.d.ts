@@ -74,8 +74,9 @@ export declare let watch: {
     scrollTop: (this: IVueControl) => void;
 };
 export declare let computed: {
+    isSame: (this: IVueControl) => boolean;
+    isAdaptation: (this: IVueControl) => boolean;
     dataComp: (this: IVueControl) => any[];
-    sameComp: (this: IVueControl) => boolean;
     paddingComp: (this: IVueControl) => any;
 };
 export declare let methods: {

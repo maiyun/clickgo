@@ -1,42 +1,3 @@
-// --- 上下两个滑块 ---
-.start, .end {
-    display: flex; justify-content: center; align-items: center;
-    &::before {
-        content: ''; border-style: solid; border-color: #000; width: 24%; height: 24%; transform: rotate(45deg);
-    }
-    &:hover {
-        background-color: rgba(0, 0, 0, .1);
-    }
-    &:active {
-        background-color: rgba(0, 0, 0, .5);
-        &::before {
-            border-color: #FFF;
-        }
-    }
-}
-
-// --- 滚动块 ---
-.block {
-    background-color: rgba(0, 0, 0, .1); display: flex;
-    &:hover {
-        background-color: rgba(0, 0, 0, .3);
-    }
-    &.tran {
-        transition: transform .03s linear;
-    }
-}
-
-// --- bar 滚动部分 ---
-.scroll-bar {
-    flex: 1; overflow: hidden;
-    &:active {
-        > .block {
-            background-color: rgba(0, 0, 0, 0.5);
-        }
-    }
-}
-
-// --- wrap 部分 ---
 .wrap {
     background-color: rgba(0, 0, 0, .05); display: flex;
     &.v {
@@ -59,16 +20,64 @@
             height: 100%;
         }
     }
-    &.float {
-        background-color: transparent; position: absolute; right: 0; top: 0; height: 100%;
-        .start {
+    &.plain {
+        background-color: transparent;
+    }
+
+    // --- 上下两个滑块 ---
+    .start, .end {
+        display: flex; justify-content: center; align-items: center;
+        &::before {
+            content: ''; border-style: solid; border-color: #000; width: 24%; height: 24%; transform: rotate(45deg);
+        }
+    }
+    &:not(.cg-disabled) {
+        .start, .end {
+            &:hover {
+                background-color: rgba(0, 0, 0, .1);
+            }
+            &:active {
+                background-color: rgba(0, 0, 0, .5);
+                &::before {
+                    border-color: #FFF;
+                }
+            }
+        }
+    }
+    &.cg-disabled {
+        .start, .end {
+            &::before {
+                border-color: hsl(205, 0%, 50%);
+            }
+        }
+    }
+    &.plain {
+        .start, .end {
             display: none;
         }
-        .end {
-            display: none;
+    }
+
+    // --- 滚动块 ---
+    .block {
+        background-color: rgba(0, 0, 0, .1); display: flex;
+        &:hover {
+            background-color: rgba(0, 0, 0, .3);
         }
-        .scroll-bar {
-            width: 50%; margin-left: 50%;
+        &.tran {
+            transition: transform .03s linear;
         }
+    }
+
+    // --- bar 滚动部分 ---
+    .scroll-bar {
+        flex: 1; overflow: hidden;
+        &:active {
+            > .block {
+                background-color: rgba(0, 0, 0, 0.5);
+            }
+        }
+    }
+    &.cg-disabled .scroll-bar {
+        visibility: hidden; pointer-events: none;
     }
 }

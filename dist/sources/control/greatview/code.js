@@ -100,6 +100,12 @@ exports.watch = {
     }
 };
 exports.computed = {
+    'isSame': function () {
+        return clickgo.tool.getBoolean(this.same);
+    },
+    'isAdaptation': function () {
+        return clickgo.tool.getBoolean(this.adaptation);
+    },
     'dataComp': function () {
         if (typeof this.data !== 'number') {
             return this.data;
@@ -109,15 +115,6 @@ exports.computed = {
             list.push(i);
         }
         return list;
-    },
-    'sameComp': function () {
-        if (typeof this.same === 'string') {
-            if (this.same === 'false') {
-                return false;
-            }
-            return true;
-        }
-        return this.same ? true : false;
     },
     'paddingComp': function () {
         if (!this.padding) {
@@ -156,7 +153,7 @@ exports.methods = {
                 this.lengthHeight = lengthHeight + this.paddingComp.bottom;
                 return;
             }
-            if (!this.sameComp) {
+            if (!this.isSame) {
                 let maxCursor = this.dataComp.length;
                 let cursor = 0;
                 let anotherWOH = 0;
@@ -263,7 +260,7 @@ exports.methods = {
     },
     reShow: function () {
         let scrollOffset = this.direction === 'v' ? this.scrollTopEmit : this.scrollLeftEmit;
-        if (!this.sameComp) {
+        if (!this.isSame) {
             let overShow = false;
             for (let i = 0; i < this.dataComp.length; ++i) {
                 let pos = this.dataHeight[i];

@@ -43,6 +43,8 @@ export declare let data: {
     cgNest: boolean;
 };
 export declare let computed: {
+    isMust: (this: IVueControl) => boolean;
+    isMulti: (this: IVueControl) => boolean;
     dataComp: (this: IVueControl) => any[];
     value: (this: IVueControl) => number | number[];
 };

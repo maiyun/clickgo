@@ -19,13 +19,19 @@ export let data = {
     }
 };
 
+export let computed = {
+    'isDisabled': function(this: IVueControl): boolean {
+        return clickgo.tool.getBoolean(this.disabled);
+    }
+};
+
 export let methods = {
     enter: function(this: IVueControl, e: MouseEvent): void {
         this.cgEnter(e);
         if (this.cgHasTouch) {
             return;
         }
-        if (this.disabled) {
+        if (this.isDisabled) {
             // --- 如果当前是者禁用状态，不管 ---
             return;
         }
@@ -36,7 +42,7 @@ export let methods = {
         this.showPop();
     },
     click: function(this: IVueControl, event: MouseEvent): void {
-        if (this.disabled) {
+        if (this.isDisabled) {
             return;
         }
         if (this.popOpen) {

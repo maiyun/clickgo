@@ -8,5 +8,6 @@ export let data = {
     'so2': 0,
     'count': 3,
 
-    'float': false
+    'plain': false,
+    'disabled': false
 };

@@ -35,7 +35,7 @@ exports.props = {
     'scrollOffset': {
         'default': 0
     },
-    'float': {
+    'plain': {
         'default': false
     }
 };
@@ -111,14 +111,11 @@ exports.computed = {
             return parent ? (parent.direction === 'v' ? '0' : undefined) : undefined;
         }
     },
-    'floatComp': function () {
-        if (typeof this.float === 'string') {
-            if (this.float === 'false') {
-                return false;
-            }
-            return true;
-        }
-        return this.float ? true : false;
+    'isDisabled': function () {
+        return clickgo.tool.getBoolean(this.disabled);
+    },
+    'isPlain': function () {
+        return clickgo.tool.getBoolean(this.plain);
     }
 };
 exports.methods = {
@@ -162,6 +159,9 @@ exports.methods = {
         this.down(e);
     },
     longDown: function (e, type) {
+        if (this.isDisabled) {
+            return;
+        }
         if (this.client >= this.length) {
             return;
         }

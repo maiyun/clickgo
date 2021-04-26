@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.mounted = exports.methods = exports.watch = exports.data = exports.props = void 0;
+exports.mounted = exports.methods = exports.watch = exports.computed = exports.data = exports.props = void 0;
 exports.props = {
     'icon': {
         'default': '',
@@ -97,6 +97,29 @@ exports.data = {
     'flashTimer': undefined,
     'isInside': false
 };
+exports.computed = {
+    'isMin': function () {
+        return clickgo.tool.getBoolean(this.min);
+    },
+    'isMax': function () {
+        return clickgo.tool.getBoolean(this.max);
+    },
+    'isClose': function () {
+        return clickgo.tool.getBoolean(this.close);
+    },
+    'isStateMax': function () {
+        return clickgo.tool.getBoolean(this.stateMax);
+    },
+    'isStateMin': function () {
+        return clickgo.tool.getBoolean(this.stateMin);
+    },
+    'isResize': function () {
+        return clickgo.tool.getBoolean(this.resize);
+    },
+    'isMove': function () {
+        return clickgo.tool.getBoolean(this.move);
+    }
+};
 exports.watch = {
     'icon': {
         handler: function () {
@@ -122,13 +145,13 @@ exports.watch = {
     'title': function () {
         clickgo.core.trigger('formTitleChanged', this.taskId, this.formId, this.title);
     },
-    'stateMin': function () {
+    'isStateMin': function () {
         if (this.stateMin === this.stateMinData) {
             return;
         }
         this.minMethod();
     },
-    'stateMax': function () {
+    'isStateMax': function () {
         if (this.stateMax === this.stateMaxData) {
             return;
         }
@@ -181,7 +204,7 @@ exports.methods = {
         if (e instanceof MouseEvent && clickgo.hasTouch) {
             return;
         }
-        if (!this.move && !custom) {
+        if (!this.isMove && !custom) {
             return;
         }
         if (this.isInside) {
@@ -307,7 +330,7 @@ exports.methods = {
                 this.topData += oy;
                 this.$emit('update:top', this.topData);
                 if (border !== '') {
-                    if ((border === 't' && this.max) || (border !== 't' && this.resize)) {
+                    if ((border === 't' && this.max) || (border !== 't' && this.isResize)) {
                         if (isBorder === '') {
                             isBorder = border;
                             clickgo.form.showCircular(x, y);
@@ -344,7 +367,7 @@ exports.methods = {
                         }
                     }
                     else {
-                        if (this.resize) {
+                        if (this.isResize) {
                             if (this.stateMinData) {
                                 if (!this.minMethod()) {
                                     clickgo.form.hideRectangle();
@@ -770,8 +793,7 @@ exports.mounted = function () {
             }
         }
         this.zIndexData = parseInt(this.zIndex);
-        let stateMax = (typeof this.stateMax === 'string') ? ((this.stateMax === 'true') ? true : false) : this.stateMax;
-        if (stateMax) {
+        if (this.isStateMax) {
             let pos = clickgo.getPosition();
             this.leftData = (pos.width - this.widthData) / 2;
             this.topData = (pos.height - this.heightData) / 2;

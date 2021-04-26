@@ -29,6 +29,9 @@ export declare let data: {
         zIndex: string;
     };
 };
+export declare let computed: {
+    isDisabled: (this: IVueControl) => boolean;
+};
 export declare let watch: {
     type: {
         handler: (this: IVueControl) => void;

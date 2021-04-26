@@ -60,6 +60,11 @@ export declare let data: {
 export declare let computed: {
     widthPx: (this: IVueControl) => string | undefined;
     heightPx: (this: IVueControl) => string | undefined;
+    isAdaptation: (this: IVueControl) => boolean;
+    isSame: (this: IVueControl) => boolean;
+    isDisabled: (this: IVueControl) => boolean;
+    isMust: (this: IVueControl) => boolean;
+    isMulti: (this: IVueControl) => boolean;
 };
 export declare let watch: {
     data: {

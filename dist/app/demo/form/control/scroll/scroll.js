@@ -9,5 +9,6 @@ exports.data = {
     'c2': 0,
     'so2': 0,
     'count': 3,
-    'float': false
+    'plain': false,
+    'disabled': false
 };

@@ -1,4 +1,4 @@
-<cg-greatlist :model-value="value" @update:model-value="updateModelValue" :data="dataComp" :adaptation="adaptation" :same="true" :disabled="disabled" :must="must" :multi="multi" :width="width" :height="height" :left="left" :top="top" :z-index="zIndex" :flex="flex" @tap="cgTap" @down="cgDown" @dblclick="cgDblclick">
+<cg-greatlist :model-value="value" @update:model-value="updateModelValue" :data="dataComp" :adaptation="adaptation" :same="true" :disabled="disabled" :must="isMust" :multi="isMulti" :width="width" :height="height" :left="left" :top="top" :z-index="zIndex" :flex="flex" @tap="cgTap" @down="cgDown" @dblclick="cgDblclick">
     <template v-slot="data">
         <cg-greatlist-item :class="[data.row.title && 'title']" :value="data.index" :disabled="data.row.title || data.row.disabled" :padding="padding"><div :style="{'padding-left': data.row.level * 14 + 'px'}">{{data.row.label}}</div></cg-greatlist-item>
     </template>

@@ -51,20 +51,10 @@ export let computed = {
     },
 
     'isDisabled': function(this: IVueControl): boolean {
-        if (typeof this.disabled === 'boolean') {
-            return this.disabled;
-        }
-        else {
-            return (this.disabled === '' || this.disabled === 'true') ? true : false;
-        }
+        return clickgo.tool.getBoolean(this.disabled);
     },
     'isPlain': function(this: IVueControl): boolean {
-        if (typeof this.plain === 'boolean') {
-            return this.plain;
-        }
-        else {
-            return (this.plain === '' || this.plain === 'true') ? true : false;
-        }
+        return clickgo.tool.getBoolean(this.plain);
     }
 };
 

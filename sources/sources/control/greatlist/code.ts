@@ -82,6 +82,22 @@ export let computed = {
             let parent = this.cgParent();
             return parent ? (parent.direction === 'v' ? '0' : undefined) : undefined;
         }
+    },
+
+    'isAdaptation': function(this: IVueControl): boolean {
+        return clickgo.tool.getBoolean(this.adaptation);
+    },
+    'isSame': function(this: IVueControl): boolean {
+        return clickgo.tool.getBoolean(this.same);
+    },
+    'isDisabled': function(this: IVueControl): boolean {
+        return clickgo.tool.getBoolean(this.disabled);
+    },
+    'isMust': function(this: IVueControl): boolean {
+        return clickgo.tool.getBoolean(this.must);
+    },
+    'isMulti': function(this: IVueControl): boolean {
+        return clickgo.tool.getBoolean(this.multi);
     }
 };
 
@@ -120,9 +136,9 @@ export let methods = {
         let change: boolean = false;
         // --- 处理选中数据（多行模式但单选、单行模式所有情况） ---
         if (value !== undefined) {
-            if (this.multi) {
+            if (this.isMulti) {
                 if (!shift && !ctrl) {
-                    this.valueData = this.multi ? [value] : value;
+                    this.valueData = this.isMulti ? [value] : value;
                     this.shiftStart = value;
                     this.$emit('update:modelValue', this.valueData);
                     // --- 排除: 有 value，多行，没有 shift，没有 ctrl ---
@@ -144,11 +160,11 @@ export let methods = {
         // --- 检测过去 value 的数据格式是否正确（多行为数组、单行为值，以及必须状态下是否未选择） ---
         if (typeof this.valueData === 'object') {
             // --- 当前是数组 ---
-            if (this.must && (this.valueData.length === 0)) {
+            if (this.isMust && (this.valueData.length === 0)) {
                 this.valueData = [0];
                 change = true;
             }
-            if (!this.multi) {
+            if (!this.isMulti) {
                 // --- 但是不等于多行 ---
                 this.valueData = this.valueData[0] ?? -1;
                 change = true;
@@ -156,17 +172,17 @@ export let methods = {
         }
         else {
             // --- 当前是值 ---
-            if (this.must && (this.valueData === -1)) {
+            if (this.isMust && (this.valueData === -1)) {
                 this.valueData = 0;
                 change = true;
             }
-            if (this.multi) {
+            if (this.isMulti) {
                 this.valueData = this.valueData === -1 ? [] : [this.valueData];
                 change = true;
             }
         }
         // --- 判断历史的 value 的数据内容是否合规 ---
-        if (this.multi) {
+        if (this.isMulti) {
             if (this.valueData.length > 0) {
                 for (let k = 0; k < this.valueData.length; ++k) {
                     if (!this.data[this.valueData[k]]) {
@@ -180,7 +196,7 @@ export let methods = {
         else {
             if (this.valueData > -1) {
                 if (!this.data[this.valueData]) {
-                    this.valueData = this.must ? 0 : -1;
+                    this.valueData = this.isMust ? 0 : -1;
                     change = true;
                 }
             }
@@ -218,7 +234,7 @@ export let methods = {
         else {
             // --- ctrl ---
             if (this.valueData.includes(value)) {
-                if (this.must && this.valueData.length === 1) {
+                if (this.isMust && this.valueData.length === 1) {
                     // --- 必须有至少 1 个选定，移除当前的就没选定了，所以不能移除 ---
                     if (change) {
                         this.$emit('update:modelValue', this.valueData);
@@ -267,8 +283,8 @@ export let methods = {
         }
         if (e instanceof MouseEvent) {
             // --- 电脑 ---
-            if (!this.must) {
-                this.valueData = this.multi ? [] : -1;
+            if (!this.isMust) {
+                this.valueData = this.isMulti ? [] : -1;
                 this.$emit('update:modelValue', this.valueData);
             }
         }
@@ -276,8 +292,8 @@ export let methods = {
             // --- 手机 ---
             // --- 长按触发 contextmenu ---
             clickgo.dom.bindLong(e, () => {
-                if (!this.must) {
-                    this.valueData = this.multi ? [] : -1;
+                if (!this.isMust) {
+                    this.valueData = this.isMulti ? [] : -1;
                     this.$emit('update:modelValue', this.valueData);
                 }
                 this.showPop(e);
@@ -291,8 +307,8 @@ export let methods = {
         }
         // --- 手机 ---
         if (!this.itemClick) {
-            if (!this.must) {
-                this.valueData = this.multi ? [] : -1;
+            if (!this.isMust) {
+                this.valueData = this.isMulti ? [] : -1;
                 this.$emit('update:modelValue', this.valueData);
             }
         }

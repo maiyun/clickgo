@@ -78,6 +78,21 @@ exports.computed = {
             let parent = this.cgParent();
             return parent ? (parent.direction === 'v' ? '0' : undefined) : undefined;
         }
+    },
+    'isAdaptation': function () {
+        return clickgo.tool.getBoolean(this.adaptation);
+    },
+    'isSame': function () {
+        return clickgo.tool.getBoolean(this.same);
+    },
+    'isDisabled': function () {
+        return clickgo.tool.getBoolean(this.disabled);
+    },
+    'isMust': function () {
+        return clickgo.tool.getBoolean(this.must);
+    },
+    'isMulti': function () {
+        return clickgo.tool.getBoolean(this.multi);
     }
 };
 exports.watch = {
@@ -114,9 +129,9 @@ exports.methods = {
         var _a;
         let change = false;
         if (value !== undefined) {
-            if (this.multi) {
+            if (this.isMulti) {
                 if (!shift && !ctrl) {
-                    this.valueData = this.multi ? [value] : value;
+                    this.valueData = this.isMulti ? [value] : value;
                     this.shiftStart = value;
                     this.$emit('update:modelValue', this.valueData);
                     return true;
@@ -133,26 +148,26 @@ exports.methods = {
             }
         }
         if (typeof this.valueData === 'object') {
-            if (this.must && (this.valueData.length === 0)) {
+            if (this.isMust && (this.valueData.length === 0)) {
                 this.valueData = [0];
                 change = true;
             }
-            if (!this.multi) {
+            if (!this.isMulti) {
                 this.valueData = (_a = this.valueData[0]) !== null && _a !== void 0 ? _a : -1;
                 change = true;
             }
         }
         else {
-            if (this.must && (this.valueData === -1)) {
+            if (this.isMust && (this.valueData === -1)) {
                 this.valueData = 0;
                 change = true;
             }
-            if (this.multi) {
+            if (this.isMulti) {
                 this.valueData = this.valueData === -1 ? [] : [this.valueData];
                 change = true;
             }
         }
-        if (this.multi) {
+        if (this.isMulti) {
             if (this.valueData.length > 0) {
                 for (let k = 0; k < this.valueData.length; ++k) {
                     if (!this.data[this.valueData[k]]) {
@@ -166,7 +181,7 @@ exports.methods = {
         else {
             if (this.valueData > -1) {
                 if (!this.data[this.valueData]) {
-                    this.valueData = this.must ? 0 : -1;
+                    this.valueData = this.isMust ? 0 : -1;
                     change = true;
                 }
             }
@@ -200,7 +215,7 @@ exports.methods = {
         }
         else {
             if (this.valueData.includes(value)) {
-                if (this.must && this.valueData.length === 1) {
+                if (this.isMust && this.valueData.length === 1) {
                     if (change) {
                         this.$emit('update:modelValue', this.valueData);
                         return true;
@@ -246,15 +261,15 @@ exports.methods = {
             return;
         }
         if (e instanceof MouseEvent) {
-            if (!this.must) {
-                this.valueData = this.multi ? [] : -1;
+            if (!this.isMust) {
+                this.valueData = this.isMulti ? [] : -1;
                 this.$emit('update:modelValue', this.valueData);
             }
         }
         else {
             clickgo.dom.bindLong(e, () => {
-                if (!this.must) {
-                    this.valueData = this.multi ? [] : -1;
+                if (!this.isMust) {
+                    this.valueData = this.isMulti ? [] : -1;
                     this.$emit('update:modelValue', this.valueData);
                 }
                 this.showPop(e);
@@ -266,8 +281,8 @@ exports.methods = {
             return;
         }
         if (!this.itemClick) {
-            if (!this.must) {
-                this.valueData = this.multi ? [] : -1;
+            if (!this.isMust) {
+                this.valueData = this.isMulti ? [] : -1;
                 this.$emit('update:modelValue', this.valueData);
             }
         }

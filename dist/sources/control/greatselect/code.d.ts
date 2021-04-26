@@ -33,6 +33,7 @@ export declare let props: {
 export declare let computed: {
     widthPx: (this: IVueControl) => string | undefined;
     heightPx: (this: IVueControl) => string | undefined;
+    isDisabled: (this: IVueControl) => boolean;
 };
 export declare let data: {
     popOpen: boolean;

@@ -34,7 +34,7 @@ export let props = {
     'scrollOffset': {
         'default': 0
     },
-    'float': {
+    'plain': {
         'default': false
     }
 };
@@ -120,14 +120,11 @@ export let computed = {
             return parent ? (parent.direction === 'v' ? '0' : undefined) : undefined;
         }
     },
-    'floatComp': function(this: IVueControl): boolean {
-        if (typeof this.float === 'string') {
-            if (this.float === 'false') {
-                return false;
-            }
-            return true;
-        }
-        return this.float ? true : false;
+    'isDisabled': function(this: IVueControl): boolean {
+        return clickgo.tool.getBoolean(this.disabled);
+    },
+    'isPlain': function(this: IVueControl): boolean {
+        return clickgo.tool.getBoolean(this.plain);
     }
 };
 
@@ -178,6 +175,9 @@ export let methods = {
         this.down(e);
     },
     longDown: function(this: IVueControl, e: MouseEvent | TouchEvent, type: 'start' | 'end'): void {
+        if (this.isDisabled) {
+            return;
+        }
         if (this.client >= this.length) {
             return;
         }

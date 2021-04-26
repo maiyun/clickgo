@@ -92,6 +92,30 @@ export let data = {
     'isInside': false
 };
 
+export let computed = {
+    'isMin': function(this: IVueControl): boolean {
+        return clickgo.tool.getBoolean(this.min);
+    },
+    'isMax': function(this: IVueControl): boolean {
+        return clickgo.tool.getBoolean(this.max);
+    },
+    'isClose': function(this: IVueControl): boolean {
+        return clickgo.tool.getBoolean(this.close);
+    },
+    'isStateMax': function(this: IVueControl): boolean {
+        return clickgo.tool.getBoolean(this.stateMax);
+    },
+    'isStateMin': function(this: IVueControl): boolean {
+        return clickgo.tool.getBoolean(this.stateMin);
+    },
+    'isResize': function(this: IVueControl): boolean {
+        return clickgo.tool.getBoolean(this.resize);
+    },
+    'isMove': function(this: IVueControl): boolean {
+        return clickgo.tool.getBoolean(this.move);
+    }
+};
+
 export let watch = {
     'icon': {
         handler: async function(this: IVueControl): Promise<void> {
@@ -116,13 +140,13 @@ export let watch = {
         // --- 触发 formTitleChanged 事件 ---
         clickgo.core.trigger('formTitleChanged', this.taskId, this.formId, this.title);
     },
-    'stateMin': function(this: IVueControl): void {
+    'isStateMin': function(this: IVueControl): void {
         if (this.stateMin === this.stateMinData) {
             return;
         }
         this.minMethod();
     },
-    'stateMax': function(this: IVueControl): void {
+    'isStateMax': function(this: IVueControl): void {
         if (this.stateMax === this.stateMaxData) {
             return;
         }
@@ -174,7 +198,7 @@ export let methods = {
         if (e instanceof MouseEvent && clickgo.hasTouch) {
             return;
         }
-        if (!this.move && !custom) {
+        if (!this.isMove && !custom) {
             return;
         }
         if (this.isInside) {
@@ -309,7 +333,7 @@ export let methods = {
                 this.topData += oy;
                 this.$emit('update:top', this.topData);
                 if (border !== '') {
-                    if ((border === 't' && this.max) || (border !== 't' && this.resize)) {
+                    if ((border === 't' && this.max) || (border !== 't' && this.isResize)) {
                         if (isBorder === '') {
                             isBorder = border;
                             clickgo.form.showCircular(x, y);
@@ -349,7 +373,7 @@ export let methods = {
                     }
                     else {
                         // --- 要做大小调整 ---
-                        if (this.resize) {
+                        if (this.isResize) {
                             if (this.stateMinData) {
                                 if (!this.minMethod()) {
                                     clickgo.form.hideRectangle();
@@ -792,8 +816,7 @@ export let mounted = async function(this: IVueControl): Promise<void> {
         }
     }
     this.zIndexData = parseInt(this.zIndex);
-    let stateMax = (typeof this.stateMax === 'string') ? ((this.stateMax === 'true') ? true : false) : this.stateMax;
-    if (stateMax) {
+    if (this.isStateMax) {
         let pos = clickgo.getPosition();
         this.leftData = (pos.width - this.widthData) / 2;
         this.topData = (pos.height - this.heightData) / 2;

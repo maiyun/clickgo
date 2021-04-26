@@ -6,5 +6,6 @@ export declare let data: {
     c2: number;
     so2: number;
     count: number;
-    float: boolean;
+    plain: boolean;
+    disabled: boolean;
 };

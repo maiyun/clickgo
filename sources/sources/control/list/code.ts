@@ -82,6 +82,13 @@ function formatData(inData: any[], level: number = 0): any[] {
 }
 
 export let computed = {
+    'isMust': function(this: IVueControl): boolean {
+        return clickgo.tool.getBoolean(this.must);
+    },
+    'isMulti': function(this: IVueControl): boolean {
+        return clickgo.tool.getBoolean(this.multi);
+    },
+
     'dataComp': function(this: IVueControl): any[] {
         return formatData(this.data);
     },
@@ -91,21 +98,21 @@ export let computed = {
         let modelValue = this.modelValue;
         if (typeof modelValue === 'object') {
             // --- 当前是数组 ---
-            if (!this.multi) {
+            if (!this.isMulti) {
                 // --- 但是不应该是数组 ---
                 modelValue = modelValue[0] ?? '';
                 change = true;
             }
         }
         else {
-            if (this.multi) {
+            if (this.isMulti) {
                 // --- 但是应该是数组 ---
                 modelValue = modelValue === '' ? [] : [modelValue];
                 change = true;
             }
         }
         // --- 这样 modelValue 的格式就是正确的了，但是不知道是否 must 正确 ---
-        if (this.must) {
+        if (this.isMust) {
             if (typeof modelValue === 'object') {
                 if (modelValue.length === []) {
                     return [];

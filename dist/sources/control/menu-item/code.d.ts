@@ -15,6 +15,9 @@ export declare let data: {
         zIndex: string;
     };
 };
+export declare let computed: {
+    isDisabled: (this: IVueControl) => boolean;
+};
 export declare let methods: {
     enter: (this: IVueControl, e: MouseEvent) => void;
     click: (this: IVueControl, event: MouseEvent) => void;

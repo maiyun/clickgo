@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.unmounted = exports.mounted = exports.methods = exports.data = exports.props = void 0;
+exports.unmounted = exports.mounted = exports.methods = exports.computed = exports.data = exports.props = void 0;
 exports.props = {
     'disabled': {
         'default': false
@@ -23,6 +23,11 @@ exports.data = {
         'left': '-5000px',
         'top': '0px',
         'zIndex': '0'
+    }
+};
+exports.computed = {
+    'isDisabled': function () {
+        return clickgo.tool.getBoolean(this.disabled);
     }
 };
 exports.methods = {

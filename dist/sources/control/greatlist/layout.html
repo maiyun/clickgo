@@ -1,6 +1,6 @@
-<div class="wrap" :class="[popOpen && 'cg-pop-open', disabled && 'cg-disabled']" :style="{'width': widthPx, 'height': heightPx, 'left': left + 'px', 'top': top + 'px', 'z-index': zIndex, 'flex-grow': flex}" @click="cgTap" @mousedown="down" @touchstart="down" @dblclick="cgDblclick">
+<div class="wrap" :class="[popOpen && 'cg-pop-open', isDisabled && 'cg-disabled']" :style="{'width': widthPx, 'height': heightPx, 'left': left + 'px', 'top': top + 'px', 'z-index': zIndex, 'flex-grow': flex}" @click="cgTap" @mousedown="down" @touchstart="down" @dblclick="cgDblclick">
     <div class="inner" @click="click" @contextmenu="contextmenu" @mousedown="innerDown" @touchstart="innerDown">
-        <cg-greatview :same="same" :data="data" :adaptation="adaptation" v-slot="d" direction="v" v-model:scroll-top="offset" :flex="adaptation ? undefined : 1" @resize="client = $event" @change="length = $event">
+        <cg-greatview :same="isSame" :data="data" :adaptation="isAdaptation" v-slot="d" direction="v" v-model:scroll-top="offset" :flex="isAdaptation ? undefined : 1" @resize="client = $event" @change="length = $event">
             <slot :row="d.row" :index="d.index"></slot>
         </cg-greatview>
     </div>

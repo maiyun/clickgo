@@ -32,7 +32,7 @@ export declare let props: {
     scrollOffset: {
         default: number;
     };
-    float: {
+    plain: {
         default: boolean;
     };
 };
@@ -62,7 +62,8 @@ export declare let computed: {
     maxScroll: (this: IVueControl) => number;
     widthPx: (this: IVueControl) => string | undefined;
     heightPx: (this: IVueControl) => string | undefined;
-    floatComp: (this: IVueControl) => boolean;
+    isDisabled: (this: IVueControl) => boolean;
+    isPlain: (this: IVueControl) => boolean;
 };
 export declare let methods: {
     down: (this: IVueControl, e: MouseEvent | TouchEvent) => void;

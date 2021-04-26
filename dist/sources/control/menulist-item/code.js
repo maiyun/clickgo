@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.unmounted = exports.mounted = exports.methods = exports.watch = exports.data = exports.props = void 0;
+exports.unmounted = exports.mounted = exports.methods = exports.watch = exports.computed = exports.data = exports.props = void 0;
 exports.props = {
     'disabled': {
         'default': false
@@ -32,6 +32,11 @@ exports.data = {
         'zIndex': '0'
     }
 };
+exports.computed = {
+    'isDisabled': function () {
+        return clickgo.tool.getBoolean(this.disabled);
+    }
+};
 exports.watch = {
     'type': {
         handler: function () {
@@ -52,7 +57,7 @@ exports.watch = {
 };
 exports.methods = {
     click: function (e) {
-        if (this.disabled) {
+        if (this.isDisabled) {
             return;
         }
         if (!this.type) {
@@ -76,14 +81,14 @@ exports.methods = {
         if (this.cgHasTouch) {
             return;
         }
-        if (this.disabled) {
+        if (this.isDisabled) {
             return;
         }
         this.showPop();
     },
     down: function (e) {
         this.cgDown(e);
-        if (this.disabled) {
+        if (this.isDisabled) {
             return;
         }
         this.showPop();

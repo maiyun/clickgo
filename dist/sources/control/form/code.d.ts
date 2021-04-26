@@ -85,14 +85,23 @@ export declare let data: {
     flashTimer: undefined;
     isInside: boolean;
 };
+export declare let computed: {
+    isMin: (this: IVueControl) => boolean;
+    isMax: (this: IVueControl) => boolean;
+    isClose: (this: IVueControl) => boolean;
+    isStateMax: (this: IVueControl) => boolean;
+    isStateMin: (this: IVueControl) => boolean;
+    isResize: (this: IVueControl) => boolean;
+    isMove: (this: IVueControl) => boolean;
+};
 export declare let watch: {
     icon: {
         handler: (this: IVueControl) => Promise<void>;
         immediate: boolean;
     };
     title: (this: IVueControl) => void;
-    stateMin: (this: IVueControl) => void;
-    stateMax: (this: IVueControl) => void;
+    isStateMin: (this: IVueControl) => void;
+    isStateMax: (this: IVueControl) => void;
     show: (this: IVueControl) => void;
     showData: (this: IVueControl) => void;
     width: (this: IVueControl) => Promise<void>;
