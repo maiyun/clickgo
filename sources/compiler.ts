@@ -2,6 +2,7 @@ import * as fs from 'fs';
 import * as zip from 'jszip';
 
 // --- sass --watch sources/:dist/ --style compressed --no-source-map ---
+// --- git config core.ignorecase false ---
 
 /**
  * --- 去除 html 的空白符、换行 ---
