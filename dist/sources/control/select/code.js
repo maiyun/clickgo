@@ -9,7 +9,7 @@ exports.props = {
         'default': undefined
     },
     'height': {
-        'default': undefined
+        'default': 30
     },
     'left': {
         'default': undefined
@@ -43,7 +43,7 @@ exports.watch = {
         },
         'immediate': true
     },
-    'editableComp': {
+    'isEditable': {
         'handler': function (editable) {
             if (editable) {
                 this.inputValue = this.value;
@@ -56,17 +56,30 @@ exports.data = {
     'cgNest': true,
     'value': '',
     'label': '',
-    'inputValue': ''
+    'inputValue': '',
+    'doInput': false
 };
 exports.computed = {
-    'editableComp': function () {
+    'isDisabled': function () {
+        return clickgo.tool.getBoolean(this.disabled);
+    },
+    'isEditable': function () {
         return clickgo.tool.getBoolean(this.editable);
     }
 };
 exports.methods = {
     updateModelValue: function (value) {
-        this.value = value;
-        this.inputValue = value;
-        this.$emit('update:modelValue', value);
+        if (!this.doInput) {
+            this.inputValue = value;
+            this.value = value;
+            this.$emit('update:modelValue', value);
+            return;
+        }
+        this.doInput = false;
+    },
+    input: function () {
+        this.doInput = true;
+        this.value = this.inputValue;
+        this.$emit('update:modelValue', this.value);
     }
 };

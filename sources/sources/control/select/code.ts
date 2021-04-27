@@ -7,7 +7,7 @@ export let props = {
         'default': undefined
     },
     'height': {
-        'default': undefined
+        'default': 30
     },
     'left': {
         'default': undefined
@@ -43,7 +43,7 @@ export let watch = {
         },
         'immediate': true
     },
-    'editableComp': {
+    'isEditable': {
         'handler': function(this: IVueControl, editable: boolean): void {
             if (editable) {
                 this.inputValue = this.value;
@@ -58,19 +58,32 @@ export let data = {
 
     'value': '',
     'label': '',
-    'inputValue': ''
+    'inputValue': '',
+    'doInput': false
 };
 
 export let computed = {
-    'editableComp': function(this: IVueControl): boolean {
+    'isDisabled': function(this: IVueControl): boolean {
+        return clickgo.tool.getBoolean(this.disabled);
+    },
+    'isEditable': function(this: IVueControl): boolean {
         return clickgo.tool.getBoolean(this.editable);
     }
 };
 
 export let methods = {
     updateModelValue: function(this: IVueControl, value: string): void {
-        this.value = value;
-        this.inputValue = value;
-        this.$emit('update:modelValue', value);
+        if (!this.doInput) {
+            this.inputValue = value;
+            this.value = value;
+            this.$emit('update:modelValue', value);
+            return;
+        }
+        this.doInput = false;
+    },
+    input: function(this: IVueControl): void {
+        this.doInput = true;
+        this.value = this.inputValue;
+        this.$emit('update:modelValue', this.value);
     }
 };

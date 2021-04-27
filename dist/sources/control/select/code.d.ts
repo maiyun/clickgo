@@ -6,7 +6,7 @@ export declare let props: {
         default: undefined;
     };
     height: {
-        default: undefined;
+        default: number;
     };
     left: {
         default: undefined;
@@ -38,7 +38,7 @@ export declare let watch: {
         handler: (this: IVueControl) => void;
         immediate: boolean;
     };
-    editableComp: {
+    isEditable: {
         handler: (this: IVueControl, editable: boolean) => void;
         immediate: boolean;
     };
@@ -48,10 +48,13 @@ export declare let data: {
     value: string;
     label: string;
     inputValue: string;
+    doInput: boolean;
 };
 export declare let computed: {
-    editableComp: (this: IVueControl) => boolean;
+    isDisabled: (this: IVueControl) => boolean;
+    isEditable: (this: IVueControl) => boolean;
 };
 export declare let methods: {
     updateModelValue: (this: IVueControl, value: string) => void;
+    input: (this: IVueControl) => void;
 };

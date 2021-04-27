@@ -3,7 +3,7 @@
         <!-- greatselect -->
         <tab-panel label="greatselect" style="padding: 10px;">
             <layout flex="1" gutter="10" direction="v">
-                <block>greatselect (Now select value is {{select}}):</block>
+                <label>Now select value is {{select}}:</label>
                 <greatselect :area="area" :disabled="disabled">
                     <layout flex="1" align-v="center" gutter="5" style="line-height: 1.2;">
                         <img width="32" height="32" :src="slist[select].src"></img>
@@ -46,7 +46,12 @@
         <!-- select -->
         <tab-panel label="select" style="padding: 10px;">
             <layout flex="1" gutter="10" direction="v">
+                <label>Now select value is {{select2}}:</label>
                 <select v-model="select2" :data="slist2" :disabled="disabled" :editable="editable"></select>
+                <label>Custom height:</label>
+                <select :data="['1','2','3','4','5']" :disabled="disabled" :editable="editable" height="60"></select>
+                <label>Always editable:</label>
+                <select :data="['1','2','3','4','5']" :disabled="disabled" editable></select>
                 <layout gutter="10">
                     <button flex="1" @tap="disabled = !disabled">Disabled: {{disabled}}</button>
                     <button flex="1" @tap="editable = !editable">Editable: {{editable}}</button>

@@ -43,9 +43,13 @@ export declare let data: {
         children?: undefined;
     } | {
         value: string;
-        children: {
+        children: ({
             label: string;
-        }[];
+            children?: undefined;
+        } | {
+            label: string;
+            children: string[];
+        })[];
         label?: undefined;
         disabled?: undefined;
     } | {

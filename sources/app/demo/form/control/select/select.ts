@@ -46,6 +46,9 @@ export let data = {
                     'label': 'sub1label'
                 }, {
                     'label': 'sub2'
+                }, {
+                    'label': 'Sub title',
+                    'children': ['1', '2']
                 }
             ]
         }, {
@@ -53,8 +56,8 @@ export let data = {
             'children': ['xixi', 'xixida', 'gogogo']
         }
     ],
-    'select2': 'haha1',
-    'editable': true
+    'select2': 'haha2',
+    'editable': false
 };
 
 export let watch = {
