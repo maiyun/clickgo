@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getBoolean = exports.rand = exports.getObjectURLList = exports.revokeObjectURL = exports.createObjectURL = exports.getMimeByPath = exports.stylePrepend = exports.layoutClassPrepend = exports.layoutInsertAttr = exports.styleUrl2ObjectOrDataUrl = exports.urlResolve = exports.parseUrl = exports.isAppPkg = exports.isControlPkg = exports.purify = exports.requestAnimationFrame = exports.sleep = exports.clone = exports.blob2Text = exports.blob2ArrayBuffer = exports.file2ObjectUrl = exports.blob2DataUrl = void 0;
+exports.getBoolean = exports.rand = exports.getObjectURLList = exports.revokeObjectURL = exports.createObjectURL = exports.getMimeByPath = exports.stylePrepend = exports.layoutClassPrepend = exports.layoutInsertAttr = exports.layoutAddTagClassAndReTagName = exports.styleUrl2ObjectOrDataUrl = exports.urlResolve = exports.parseUrl = exports.isAppPkg = exports.isControlPkg = exports.purify = exports.requestAnimationFrame = exports.sleep = exports.clone = exports.blob2Text = exports.blob2ArrayBuffer = exports.file2ObjectUrl = exports.blob2DataUrl = void 0;
 function blob2DataUrl(blob) {
     return new Promise(function (resove) {
         let fr = new FileReader();
@@ -257,6 +257,38 @@ function styleUrl2ObjectOrDataUrl(path, style, obj, mode = 'object') {
     });
 }
 exports.styleUrl2ObjectOrDataUrl = styleUrl2ObjectOrDataUrl;
+function layoutAddTagClassAndReTagName(layout, retagname) {
+    let list = [];
+    layout = layout.replace(/(\S+)=(".+?"|'.+?')/g, function (t, t1) {
+        if (t1 === 'class') {
+            return t;
+        }
+        list.push(t);
+        return '"CG-PLACEHOLDER"';
+    });
+    layout = layout.replace(/<(\/{0,1})([\w-]+)([\s\S]*?>)/g, function (t, t1, t2, t3) {
+        if (t2 === 'template') {
+            return t;
+        }
+        else {
+            if (t1 === '/') {
+                return retagname ? ('<' + t1 + 'cg-' + t2 + t3) : t;
+            }
+            if (t3.toLowerCase().includes(' class')) {
+                t3 = t3.replace(/ class=(["']{0,1})/i, ' class=$1tag-' + t2 + ' ');
+            }
+            else {
+                t2 = t2 + ` class="tag-${t2}"`;
+            }
+            return retagname ? ('<cg-' + t2 + t3) : ('<' + t2 + t3);
+        }
+    });
+    let i = -1;
+    return layout.replace(/"CG-PLACEHOLDER"/g, function () {
+        return list[++i];
+    });
+}
+exports.layoutAddTagClassAndReTagName = layoutAddTagClassAndReTagName;
 function layoutInsertAttr(layout, insert, opt = {}) {
     return layout.replace(/<([\w-]+)[\s\S]*?>/g, function (t, t1) {
         if (opt.ignore) {
@@ -271,6 +303,7 @@ function layoutInsertAttr(layout, insert, opt = {}) {
             for (let item of opt.include) {
                 if (item.test(t1)) {
                     found = true;
+                    break;
                 }
             }
             if (!found) {
@@ -301,48 +334,40 @@ function layoutClassPrependObject(object) {
         return t1 + ':' + t2 + t3;
     }) + '}';
 }
-function layoutClassPrepend(layout, preps = []) {
-    for (let i = 0; i < preps.length; ++i) {
-        if (preps[i] === 'scope') {
-            preps[i] = 'cg-scope' + Math.round(Math.random() * 1000000000000000) + '_';
-        }
-    }
-    return {
-        'preps': preps,
-        'layout': layout.replace(/ class=["'](.+?)["']/gi, function (t, t1) {
-            t1 = t1.trim();
-            let classList = t1.split(' ');
-            let resultList = [];
-            for (let item of classList) {
-                for (let prep of preps) {
-                    resultList.push(prep + item);
-                }
+function layoutClassPrepend(layout, preps) {
+    return layout.replace(/ class=["'](.+?)["']/gi, function (t, t1) {
+        t1 = t1.trim();
+        let classList = t1.split(' ');
+        let resultList = [];
+        for (let item of classList) {
+            for (let prep of preps) {
+                resultList.push(prep + item);
             }
-            return ` class='${resultList.join(' ')}'`;
-        }).replace(/ :class=(["']).+?>/gi, function (t, sp) {
-            return t.replace(new RegExp(` :class=${sp}(.+?)${sp}`, 'gi'), function (t, t1) {
-                t1 = t1.trim();
-                if (t1.startsWith('[')) {
-                    t1 = t1.slice(1, -1);
-                    let t1a = t1.split(',');
-                    for (let i = 0; i < t1a.length; ++i) {
-                        t1a[i] = t1a[i].trim();
-                        if (t1a[i].startsWith('{')) {
-                            t1a[i] = layoutClassPrependObject(t1a[i]);
-                        }
-                        else {
-                            t1a[i] = 'cgClassPrepend(' + t1a[i] + ')';
-                        }
+        }
+        return ` class='${resultList.join(' ')}'`;
+    }).replace(/ :class=(["']).+?>/gi, function (t, sp) {
+        return t.replace(new RegExp(` :class=${sp}(.+?)${sp}`, 'gi'), function (t, t1) {
+            t1 = t1.trim();
+            if (t1.startsWith('[')) {
+                t1 = t1.slice(1, -1);
+                let t1a = t1.split(',');
+                for (let i = 0; i < t1a.length; ++i) {
+                    t1a[i] = t1a[i].trim();
+                    if (t1a[i].startsWith('{')) {
+                        t1a[i] = layoutClassPrependObject(t1a[i]);
                     }
-                    t1 = '[' + t1a.join(',') + ']';
+                    else {
+                        t1a[i] = 'cgClassPrepend(' + t1a[i] + ')';
+                    }
                 }
-                else {
-                    t1 = layoutClassPrependObject(t1);
-                }
-                return ` :class="${t1}"`;
-            });
-        })
-    };
+                t1 = '[' + t1a.join(',') + ']';
+            }
+            else {
+                t1 = layoutClassPrependObject(t1);
+            }
+            return ` :class="${t1}"`;
+        });
+    });
 }
 exports.layoutClassPrepend = layoutClassPrepend;
 function stylePrepend(style, prep = '') {
@@ -350,6 +375,9 @@ function stylePrepend(style, prep = '') {
         prep = 'cg-scope' + Math.round(Math.random() * 1000000000000000) + '_';
     }
     style = style.replace(/([\s\S]+?){([\s\S]+?)}/g, function (t, t1, t2) {
+        t1 = t1.replace(/(^|[ >,\r\n])([a-zA-Z0-9-_]+)/g, function (t, t1, t2) {
+            return t1 + '.tag-' + t2;
+        });
         return t1.replace(/([.#])([a-zA-Z0-9-_]+)/g, function (t, t1, t2) {
             if (t2.startsWith('cg-')) {
                 return t;

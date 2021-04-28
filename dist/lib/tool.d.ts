@@ -11,6 +11,7 @@ export declare function isAppPkg(o: string | any): o is ICGAppPkg;
 export declare function parseUrl(url: string): ICGUrl;
 export declare function urlResolve(from: string, to: string): string;
 export declare function styleUrl2ObjectOrDataUrl(path: string, style: string, obj: ICGTask | ICGControl | ICGThemePkg, mode?: 'object' | 'data'): Promise<string>;
+export declare function layoutAddTagClassAndReTagName(layout: string, retagname: boolean): string;
 export declare function layoutInsertAttr(layout: string, insert: string, opt?: {
     'ignore'?: RegExp[];
     'include'?: RegExp[];

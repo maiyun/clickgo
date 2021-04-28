@@ -513,7 +513,8 @@ function create(taskId, opt) {
                         prepList.push(prep);
                     }
                     layout = yield clickgo.tool.blob2Text(layoutBlob);
-                    layout = clickgo.tool.layoutClassPrepend(layout, prepList).layout;
+                    layout = clickgo.tool.layoutAddTagClassAndReTagName(layout, false);
+                    layout = clickgo.tool.layoutClassPrepend(layout, prepList);
                     task.initControls[name] = {
                         'layout': layout,
                         'prep': prep
@@ -719,7 +720,7 @@ function create(taskId, opt) {
                 style = yield clickgo.tool.blob2Text(styleBlob);
             }
         }
-        if (!layout) {
+        if (layout === undefined) {
             return -5;
         }
         let data = {};
@@ -757,45 +758,12 @@ function create(taskId, opt) {
         }
         let prep = '';
         if (style) {
-            style = style.replace(/([\s\S]+?){([\s\S]+?)}/g, function (t, t1, t2) {
-                return t1.replace(/(^|[ >,\r\n])([a-zA-Z0-9-_]+)/g, function (t, t1, t2) {
-                    return t1 + '.tag-' + t2;
-                }) + '{' + t2 + '}';
-            });
             let r = clickgo.tool.stylePrepend(style);
             prep = r.prep;
             style = yield clickgo.tool.styleUrl2ObjectOrDataUrl((_g = (_f = opt.file) !== null && _f !== void 0 ? _f : opt.path) !== null && _g !== void 0 ? _g : '/', r.style, task);
         }
         layout = clickgo.tool.purify(layout);
-        let tmpStr = [];
-        layout = layout.replace(/(\S+)=(".+?"|'.+?')/g, function (t, t1) {
-            if (t1.toLowerCase() === 'class') {
-                return t;
-            }
-            tmpStr.push(t);
-            return '"CG-PLACEHOLDER"';
-        });
-        layout = layout.replace(/<(\/{0,1})([\w-]+)([\s\S]*?>)/g, function (t, t1, t2, t3) {
-            if (t2 === 'template') {
-                return t;
-            }
-            else {
-                if (t1 === '/') {
-                    return '<' + t1 + 'cg-' + t2 + t3;
-                }
-                if (t3.toLowerCase().includes(' class')) {
-                    t3 = t3.replace(/ class=(["']{0,1})/i, ' class=$1tag-' + t2 + ' ');
-                }
-                else {
-                    t2 = t2 + ` class="tag-${t2}"`;
-                }
-                return '<cg-' + t2 + t3;
-            }
-        });
-        let i = -1;
-        layout = layout.replace(/"CG-PLACEHOLDER"/g, function () {
-            return tmpStr[++i];
-        });
+        layout = clickgo.tool.layoutAddTagClassAndReTagName(layout, true);
         layout = clickgo.tool.layoutInsertAttr(layout, ':focus=\'focus\'', {
             'include': [/^cg-.+/]
         });
@@ -803,7 +771,7 @@ function create(taskId, opt) {
         if (prep !== '') {
             prepList.push(prep);
         }
-        let r = clickgo.tool.layoutClassPrepend(layout, prepList);
+        layout = clickgo.tool.layoutClassPrepend(layout, prepList);
         formListElement.insertAdjacentHTML('beforeend', `<div class="cg-form-wrap" data-form-id="${formId.toString()}" data-task-id="${taskId.toString()}"></div>`);
         let el = formListElement.children.item(formListElement.children.length - 1);
         data.taskId = taskId;
@@ -1014,7 +982,7 @@ function create(taskId, opt) {
         }
         let rtn = yield new Promise(function (resolve) {
             const vapp = Vue.createApp({
-                'template': r.layout.replace(/^<cg-form/, '<cg-form ref="form"'),
+                'template': layout.replace(/^<cg-form/, '<cg-form ref="form"'),
                 'data': function () {
                     return clickgo.tool.clone(data);
                 },

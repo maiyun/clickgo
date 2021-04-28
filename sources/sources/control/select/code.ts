@@ -7,7 +7,7 @@ export let props = {
         'default': undefined
     },
     'height': {
-        'default': 30
+        'default': undefined
     },
     'left': {
         'default': undefined

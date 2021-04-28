@@ -10,7 +10,7 @@ import * as zip from 'jszip';
  */
 function purify(text: string): string {
     text = '>' + text + '<';
-    text = text.replace(/>([\s\S]*?)</g, function(t: string, t1: string) {
+    text = text.replace(/<!--([\s\S]*?)-->/g, '').replace(/>([\s\S]*?)</g, function(t: string, t1: string) {
         return '>' + t1.replace(/\t|\r\n| {2}/g, '').replace(/\n|\r/g, '') + '<';
     });
     return text.slice(1, -1);

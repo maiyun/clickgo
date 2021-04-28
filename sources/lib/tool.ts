@@ -344,7 +344,52 @@ export async function styleUrl2ObjectOrDataUrl(path: string, style: string, obj:
 }
 
 /**
- * --- 给标签追加 attr（非真实 DOM 操作，仅仅是对字符串进行处理） ---
+ * --- 给标签增加 tag-tagname 的 class，同时给标签增加 cg- 前导（仅字符串，不是操作真实 dom） ---
+ * @param layout layout
+ * @param retagname 是否更改 tagname 为 cg-tagname
+ */
+export function layoutAddTagClassAndReTagName(layout: string, retagname: boolean): string {
+    // --- "" '' 引号中的内容先替换为 placeholder 排除掉干扰 ---
+    let list: string[] = [];
+    layout = layout.replace(/(\S+)=(".+?"|'.+?')/g, function(t, t1): string {
+        // --- t1 不是标签名，而是 attr 名，例如 class="xxx"、style="xxx" ---
+        if (t1 === 'class') {
+            return t;
+        }
+        list.push(t);
+        return '"CG-PLACEHOLDER"';
+    });
+    // --- 开始添加 class tag ---
+    layout = layout.replace(/<(\/{0,1})([\w-]+)([\s\S]*?>)/g, function(t, t1, t2, t3): string {
+        // --- t1 是 /，t2 是 tagname，t3 是标签其他内容 ---
+        if (t2 === 'template') {
+            return t;
+        }
+        else {
+            // --- 需要给 class 添加 cg-xxx ---
+            if (t1 === '/') {
+                return retagname ? ('<' + t1 + 'cg-' + t2 + t3) : t;
+            }
+            if (t3.toLowerCase().includes(' class')) {
+                // --- 有 class，前置增加 ---
+                t3 = t3.replace(/ class=(["']{0,1})/i, ' class=$1tag-' + t2 + ' ');
+            }
+            else {
+                // --- 无 class 的 attr，增加 attr ---
+                t2 = t2 + ` class="tag-${t2}"`;
+            }
+            return retagname ? ('<cg-' + t2 + t3) : ('<' + t2 + t3);
+        }
+    });
+    // --- 恢复 placeholder ---
+    let i = -1;
+    return layout.replace(/"CG-PLACEHOLDER"/g, function() {
+        return list[++i];
+    });
+}
+
+/**
+ * --- 给标签追加 attr，即使 attr 存在也会追加上一个新的（非真实 DOM 操作，仅仅是对字符串进行处理） ---
  * @param layout 被追加
  * @param insert 要追加
  * @param opt 选项, ignore 忽略的标签，include 包含的标签
@@ -363,6 +408,7 @@ export function layoutInsertAttr(layout: string, insert: string, opt: { 'ignore'
             for (let item of opt.include) {
                 if (item.test(t1)) {
                     found = true;
+                    break;
                 }
             }
             if (!found) {
@@ -403,52 +449,44 @@ function layoutClassPrependObject(object: string): string {
  * @param layout layout
  * @param preps 前置标识符列表，特殊字符串 scope 会被替换为随机前缀
  */
-export function layoutClassPrepend(layout: string, preps: string[] = []): { 'preps': string[]; 'layout': string; } {
-    for (let i = 0; i < preps.length; ++i) {
-        if (preps[i] === 'scope') {
-            preps[i] = 'cg-scope' + Math.round(Math.random() * 1000000000000000) + '_';
-        }
-    }
-    return {
-        'preps': preps,
-        'layout': layout.replace(/ class=["'](.+?)["']/gi, function(t, t1: string) {
-            // --- t1 为 xxx yyy zzz 这样的 ----
-            t1 = t1.trim();
-            let classList = t1.split(' ');
-            let resultList: string[] = [];
-            for (let item of classList) {
-                for (let prep of preps) {
-                    resultList.push(prep + item);
-                }
+export function layoutClassPrepend(layout: string, preps: string[]): string {
+    return layout.replace(/ class=["'](.+?)["']/gi, function(t, t1: string) {
+        // --- t1 为 xxx yyy zzz 这样的 ----
+        t1 = t1.trim();
+        let classList = t1.split(' ');
+        let resultList: string[] = [];
+        for (let item of classList) {
+            for (let prep of preps) {
+                resultList.push(prep + item);
             }
-            return ` class='${resultList.join(' ')}'`;
-        }).replace(/ :class=(["']).+?>/gi, function(t, sp) {
-            return t.replace(new RegExp(` :class=${sp}(.+?)${sp}`, 'gi'), function(t, t1: string) {
-                // --- t1 为 [] 或 {} ---
-                t1 = t1.trim();
-                if (t1.startsWith('[')) {
-                    // --- ['xxx', yyy && 'yyy'] ---
-                    t1 = t1.slice(1, -1);
-                    /** --- 'xxx', yyy && 'yyy' 的数组 --- */
-                    let t1a = t1.split(',');
-                    for (let i = 0; i < t1a.length; ++i) {
-                        t1a[i] = t1a[i].trim();
-                        if (t1a[i].startsWith('{')) {
-                            t1a[i] = layoutClassPrependObject(t1a[i]);
-                        }
-                        else {
-                            t1a[i] = 'cgClassPrepend(' + t1a[i] + ')';
-                        }
+        }
+        return ` class='${resultList.join(' ')}'`;
+    }).replace(/ :class=(["']).+?>/gi, function(t, sp) {
+        return t.replace(new RegExp(` :class=${sp}(.+?)${sp}`, 'gi'), function(t, t1: string) {
+            // --- t1 为 [] 或 {} ---
+            t1 = t1.trim();
+            if (t1.startsWith('[')) {
+                // --- ['xxx', yyy && 'yyy'] ---
+                t1 = t1.slice(1, -1);
+                /** --- 'xxx', yyy && 'yyy' 的数组 --- */
+                let t1a = t1.split(',');
+                for (let i = 0; i < t1a.length; ++i) {
+                    t1a[i] = t1a[i].trim();
+                    if (t1a[i].startsWith('{')) {
+                        t1a[i] = layoutClassPrependObject(t1a[i]);
                     }
-                    t1 = '[' + t1a.join(',') + ']';
+                    else {
+                        t1a[i] = 'cgClassPrepend(' + t1a[i] + ')';
+                    }
                 }
-                else {
-                    t1 = layoutClassPrependObject(t1);
-                }
-                return ` :class="${t1}"`;
-            });
-        })
-    };
+                t1 = '[' + t1a.join(',') + ']';
+            }
+            else {
+                t1 = layoutClassPrependObject(t1);
+            }
+            return ` :class="${t1}"`;
+        });
+    });
 }
 
 /**
@@ -460,9 +498,13 @@ export function stylePrepend(style: string, prep: string = ''): { 'style': strin
     if (prep === '') {
         prep = 'cg-scope' + Math.round(Math.random() * 1000000000000000) + '_';
     }
-    // --- 给 style 的 class 前添加 scope ---
     style = style.replace(/([\s\S]+?){([\s\S]+?)}/g, function(t, t1, t2) {
         // --- xxx { xxx; } ---
+        // --- 将 element 模式的 css 变为 class 模式，如 div 变为 .tag-div ---
+        t1 = t1.replace(/(^|[ >,\r\n])([a-zA-Z0-9-_]+)/g, function(t: string, t1: string, t2: string) {
+            return t1 + '.tag-' + t2;
+        });
+        // --- 给 style 的 class 前添加 scope ---
         return t1.replace(/([.#])([a-zA-Z0-9-_]+)/g, function(t: string, t1: string, t2: string) {
             if (t2.startsWith('cg-')) {
                 return t;

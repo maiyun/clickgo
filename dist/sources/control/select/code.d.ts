@@ -6,7 +6,7 @@ export declare let props: {
         default: undefined;
     };
     height: {
-        default: number;
+        default: undefined;
     };
     left: {
         default: undefined;

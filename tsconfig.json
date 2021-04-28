@@ -7,7 +7,7 @@
         "sourceMap": false,
         "target": "ES2015",
         "strict": true,             // 严格模式
-        "declaration": true,        // d.ts
+        "declaration": false,        // d.ts
         "declarationMap": false,
         "newLine": "LF"
     }

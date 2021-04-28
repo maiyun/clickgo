@@ -12,8 +12,9 @@ interface ICGToolLib {
     parseUrl(url: string): ICGUrl;
     urlResolve(from: string, to: string): string;
     styleUrl2ObjectOrDataUrl(path: string, style: string, obj: ICGTask | ICGControl | ICGThemePkg, mode?: 'object' | 'data'): Promise<string>;
+    layoutAddTagClassAndReTagName(layout: string, retagname: boolean): string;
     layoutInsertAttr(layout: string, insert: string, opt?: { 'ignore'?: RegExp[]; 'include'?: RegExp[]; }): string;
-    layoutClassPrepend(layout: string, preps?: string[]): { 'preps': string[]; 'layout': string; };
+    layoutClassPrepend(layout: string, preps: string[]): string;
     stylePrepend(style: string, prep?: string): { 'style': string; 'prep': string; };
     getMimeByPath(path: string): { 'mime': string; 'ext': string; };
     createObjectURL(object: Blob): string;

@@ -13,7 +13,7 @@ const fs = require("fs");
 const zip = require("jszip");
 function purify(text) {
     text = '>' + text + '<';
-    text = text.replace(/>([\s\S]*?)</g, function (t, t1) {
+    text = text.replace(/<!--([\s\S]*?)-->/g, '').replace(/>([\s\S]*?)</g, function (t, t1) {
         return '>' + t1.replace(/\t|\r\n| {2}/g, '').replace(/\n|\r/g, '') + '<';
     });
     return text.slice(1, -1);

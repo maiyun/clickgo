@@ -624,7 +624,10 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
                     prepList.push(prep);
                 }
                 layout = await clickgo.tool.blob2Text(layoutBlob);
-                layout = clickgo.tool.layoutClassPrepend(layout, prepList).layout;
+                // --- 增加 class 为 tag-xxx ---
+                layout = clickgo.tool.layoutAddTagClassAndReTagName(layout, false);
+                // --- 给 layout 的 class 增加前置 ---
+                layout = clickgo.tool.layoutClassPrepend(layout, prepList);
                 task.initControls[name] = {
                     'layout': layout,
                     'prep': prep
@@ -824,7 +827,7 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
     }
     // --- 获取 style、layout ---
     let style = opt.style;
-    let layout = opt.layout;
+    let layout: string | undefined = opt.layout;
     if (opt.file) {
         let layoutBlob = appPkg.files[opt.file + '.xml'];
         if (layoutBlob) {
@@ -835,7 +838,7 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
             style = await clickgo.tool.blob2Text(styleBlob);
         }
     }
-    if (!layout) {
+    if (layout === undefined) {
         return -5;
     }
     // --- 准备相关变量 ---
@@ -876,56 +879,15 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
     // --- 应用样式表 ---
     let prep = '';
     if (style) {
-        // --- 先将 style 中的 tag 标签转换为 class，如 button 变为 .tag-button ---
-        style = style.replace(/([\s\S]+?){([\s\S]+?)}/g, function(t, t1, t2) {
-            // --- xxx { xxx; } ---
-            return t1.replace(/(^|[ >,\r\n])([a-zA-Z0-9-_]+)/g, function(t: string, t1: string, t2: string) {
-                return t1 + '.tag-' + t2;
-            }) + '{' + t2 + '}';
-        });
-        // --- 然后将 class 进行标准程序，添加 prep 进行区分隔离 ---
+        // --- 将 style 中的 tag 标签转换为 class，如 button 变为 .tag-button，然后将 class 进行标准程序，添加 prep 进行区分隔离 ---
         let r = clickgo.tool.stylePrepend(style);
         prep = r.prep;
         style = await clickgo.tool.styleUrl2ObjectOrDataUrl(opt.file ?? opt.path ?? '/', r.style, task);
     }
     // --- 要创建的 form 的 layout 所有标签增加 cg 前缀，并增加新的 class 为 tag-xxx ---
     layout = clickgo.tool.purify(layout);
-    // --- "" '' 引号中的内容先排除掉干扰 ---
-    let tmpStr: string[] = [];
-    layout = layout.replace(/(\S+)=(".+?"|'.+?')/g, function(t, t1): string {
-        if (t1.toLowerCase() === 'class') {
-            return t;
-        }
-        tmpStr.push(t);
-        return '"CG-PLACEHOLDER"';
-    });
-    // --- 开始添加 class 的 attr ---
-    layout = layout.replace(/<(\/{0,1})([\w-]+)([\s\S]*?>)/g, function(t, t1, t2, t3): string {
-        // --- t1 是 /，t2 是 tagname，t3 是标签其他内容 ---
-        if (t2 === 'template') {
-            return t;
-        }
-        else {
-            // --- 需要给 class 添加 cg-xxx ---
-            if (t1 === '/') {
-                return '<' + t1 + 'cg-' + t2 + t3;
-            }
-            if (t3.toLowerCase().includes(' class')) {
-                // --- 有 class，前置增加 ---
-                t3 = t3.replace(/ class=(["']{0,1})/i, ' class=$1tag-' + t2 + ' ');
-            }
-            else {
-                // --- 无 class 的 attr，增加 attr ---
-                t2 = t2 + ` class="tag-${t2}"`;
-            }
-            return '<cg-' + t2 + t3;
-        }
-    });
-    // --- 恢复 placeholder ---
-    let i = -1;
-    layout = layout.replace(/"CG-PLACEHOLDER"/g, function() {
-        return tmpStr[++i];
-    });
+    // --- 标签增加 cg- 前缀，增加 class 为 tag-xxx ---
+    layout = clickgo.tool.layoutAddTagClassAndReTagName(layout, true);
     // --- 给所有控件传递窗体的 focus 信息 ---
     layout = clickgo.tool.layoutInsertAttr(layout, ':focus=\'focus\'', {
         'include': [/^cg-.+/]
@@ -935,7 +897,7 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
     if (prep !== '') {
         prepList.push(prep);
     }
-    let r = clickgo.tool.layoutClassPrepend(layout, prepList);
+    layout = clickgo.tool.layoutClassPrepend(layout, prepList);
     formListElement.insertAdjacentHTML('beforeend', `<div class="cg-form-wrap" data-form-id="${formId.toString()}" data-task-id="${taskId.toString()}"></div>`);
     // --- 获取刚才的 form wrap element 对象 ---
     let el: HTMLElement = formListElement.children.item(formListElement.children.length - 1) as HTMLElement;
@@ -1154,7 +1116,7 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
         'vroot': IVueForm;
     } = await new Promise(function(resolve) {
         const vapp = Vue.createApp({
-            'template': r.layout.replace(/^<cg-form/, '<cg-form ref="form"'),
+            'template': (layout as string).replace(/^<cg-form/, '<cg-form ref="form"'),
             'data': function() {
                 return clickgo.tool.clone(data);
             },
