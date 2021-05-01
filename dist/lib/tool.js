@@ -267,7 +267,7 @@ function layoutAddTagClassAndReTagName(layout, retagname) {
         return '"CG-PLACEHOLDER"';
     });
     layout = layout.replace(/<(\/{0,1})([\w-]+)([\s\S]*?>)/g, function (t, t1, t2, t3) {
-        if (t2 === 'template') {
+        if (['template', 'slot', 'teleport'].includes(t2)) {
             return t;
         }
         else {

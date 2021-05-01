@@ -542,6 +542,16 @@ function create(taskId, opt) {
                     }
                     return this.cgRealHover;
                 };
+                computed.cgSlots = function () {
+                    let slots = {};
+                    for (let name in this.$slots) {
+                        let list = this.$slots[name]({});
+                        if (list.length > 0) {
+                            slots[name] = list;
+                        }
+                    }
+                    return slots;
+                };
                 methods.cgDown = function (e) {
                     if (e instanceof MouseEvent && clickgo.hasTouch) {
                         return;
@@ -633,25 +643,6 @@ function create(taskId, opt) {
                         return cla;
                     }
                     return `cg-theme-task${this.taskId}-${this.$data.controlName}_${cla} ${this.$data._prep}${cla}`;
-                };
-                methods.cgSlos = function (name = 'default') {
-                    let d = this.$slots[name];
-                    if (!d) {
-                        return [];
-                    }
-                    let slots = [];
-                    let list = d();
-                    for (let item of list) {
-                        if (typeof item.type === 'symbol') {
-                            for (let item2 of item.children) {
-                                slots.push(item2);
-                            }
-                        }
-                        else {
-                            slots.push(item);
-                        }
-                    }
-                    return slots;
                 };
                 methods.cgParent = function () {
                     let parent = this.$parent;

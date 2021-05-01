@@ -3,7 +3,7 @@
         <slot></slot>
     </div>
     <div v-if="selfPop && !isDisabled" class="control" @click="controlClick" @contextmenu="controlContextmenu" @mousedown="controlDown" @touchstart="controlDown"></div>
-    <teleport to="#cg-pop-list">
+    <teleport v-if="$slots.pop" to="#cg-pop-list">
         <div class="pop" :class="[popOpen && 'open']" :style="popOptions">
             <slot name="pop"></slot>
         </div>

@@ -45,8 +45,8 @@ interface IVue {
     '$refs': Record<string, HTMLElement & IVue>;
     '$root': IVue;
     '$slots': {
-        'default': undefined | (() => IVueVNode[]);
-        [key: string]: undefined | (() => IVueVNode[]);
+        'default': undefined | ((o: any) => IVueVNode[]);
+        [key: string]: undefined | ((o: any) => IVueVNode[]);
     };
     '$watch': (o: any, cb: (n: any, o: any) => void) => void;
 
@@ -120,6 +120,8 @@ interface IVueControl extends IVue {
     'cgRealHover': boolean;
     /** --- 当前是否是 active 状态 --- */
     'cgActive': boolean;
+    /** --- 当前的所有子 slots --- */
+    'cgSlots': Record<string, IVueVNode[]>;
     /**
      * --- 控件默认的 down 事件绑定 ---
      * @param e 鼠标或触摸事件对象
@@ -175,11 +177,6 @@ interface IVueControl extends IVue {
      * @param cla class 内容对象
      */
     cgClassPrepend(cla: any): string;
-    /**
-     * --- 获取目前现存的子 slots ---
-     * @param name 默认 default
-     */
-    cgSlos(name?: string): IVueVNode[];
     /**
      * --- 获取正常非 nest 上级 ---
      */

@@ -2,7 +2,7 @@
     <div class="inner">
         <slot></slot>
     </div>
-    <teleport to="#cg-pop-list">
+    <teleport v-if="$slots.pop" to="#cg-pop-list">
         <div class="pop" :class="[popOpen && 'open']" :style="popOptions">
             <slot name="pop"></slot>
         </div>

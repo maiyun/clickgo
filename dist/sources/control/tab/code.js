@@ -62,15 +62,16 @@ exports.computed = {
         }
     },
     'tabs': function () {
+        var _a;
         if (!this.$slots.default) {
             return [];
         }
         let tabs = [];
-        let list = this.cgSlos();
+        let list = this.cgSlots.default;
         for (let item of list) {
             tabs.push({
                 'label': item.props.label,
-                'value': item.props.value || item.props.label
+                'value': (_a = item.props.value) !== null && _a !== void 0 ? _a : item.props.label
             });
         }
         return tabs;

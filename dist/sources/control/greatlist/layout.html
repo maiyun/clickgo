@@ -5,7 +5,7 @@
         </cg-greatview>
     </div>
     <cg-scroll v-show="length > client" :width="16" :length="length" :client="client" v-model:scroll-offset="offset" :float="cgHasTouch"></cg-scroll>
-    <teleport to="#cg-pop-list">
+    <teleport v-if="$slots.pop" to="#cg-pop-list">
         <div class="pop" :class="[popOpen && 'open']" :style="popOptions">
             <slot name="pop"></slot>
         </div>

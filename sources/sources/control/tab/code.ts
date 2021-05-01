@@ -59,11 +59,11 @@ export let computed = {
             return [];
         }
         let tabs = [];
-        let list = this.cgSlos();
+        let list = this.cgSlots.default;
         for (let item of list) {
             tabs.push({
                 'label': item.props.label,
-                'value': item.props.value || item.props.label
+                'value': item.props.value ?? item.props.label
             });
         }
         return tabs;
