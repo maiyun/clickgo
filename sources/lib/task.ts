@@ -49,14 +49,14 @@ export async function run(url: string | Blob | ICGAppPkg, opt: { 'runtime'?: Rec
         'objectURLs': {},
         'initControls': {}
     };
-    clickgo.dom.createToStyleList(taskId);
     let task: ICGTask = list[taskId];
-    // --- 读取 config，对 control 和 theme 进行 pkg 化 ---
+    // --- 读取 config，对 control 和 theme 进行 pkg 化（clickgo 的话要运行一遍 fetch 保证已经完成加载） ---
+    let clickgoFileList: string[] = [];
     // --- control ---
     for (let path of appPkg.config.controls) {
         path += '.cgc';
         if (path.startsWith('/clickgo/')) {
-            await clickgo.core.fetchClickGoFile(path.slice(8));
+            clickgoFileList.push(path.slice(8));
         }
         else if (task.files[path]) {
             let pkg = await clickgo.control.read(task.files[path]);
@@ -70,7 +70,7 @@ export async function run(url: string | Blob | ICGAppPkg, opt: { 'runtime'?: Rec
         for (let path of appPkg.config.themes) {
             path += '.cgt';
             if (path.startsWith('/clickgo/')) {
-                await clickgo.core.fetchClickGoFile(path.slice(8));
+                clickgoFileList.push(path.slice(8));
             }
             else if (task.files[path]) {
                 let pkg = await clickgo.theme.read(task.files[path]);
@@ -80,7 +80,33 @@ export async function run(url: string | Blob | ICGAppPkg, opt: { 'runtime'?: Rec
             }
         }
     }
+    // --- 然后 fetch clickgo 文件 ---
+    if (clickgoFileList.length > 0) {
+        try {
+            await new Promise<void>(function(resolve, reject) {
+                let count = 0;
+                for (let file of clickgoFileList) {
+                    clickgo.core.fetchClickGoFile(file).then(function(blob: Blob | null) {
+                        if (blob === null) {
+                            reject();
+                            return;
+                        }
+                        ++count;
+                        if (count === clickgoFileList.length) {
+                            resolve();
+                        }
+                    }).catch(function() {
+                        reject();
+                    });
+                }
+            });
+        }
+        catch {
+            return -2;
+        }
+    }
     // --- 创建 form ---
+    clickgo.dom.createToStyleList(taskId);
     let form = await clickgo.form.create(task.id, {
         'file': appPkg.config.main
     });

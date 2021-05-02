@@ -49,12 +49,12 @@ function run(url, opt = {}) {
             'objectURLs': {},
             'initControls': {}
         };
-        clickgo.dom.createToStyleList(taskId);
         let task = exports.list[taskId];
+        let clickgoFileList = [];
         for (let path of appPkg.config.controls) {
             path += '.cgc';
             if (path.startsWith('/clickgo/')) {
-                yield clickgo.core.fetchClickGoFile(path.slice(8));
+                clickgoFileList.push(path.slice(8));
             }
             else if (task.files[path]) {
                 let pkg = yield clickgo.control.read(task.files[path]);
@@ -67,7 +67,7 @@ function run(url, opt = {}) {
             for (let path of appPkg.config.themes) {
                 path += '.cgt';
                 if (path.startsWith('/clickgo/')) {
-                    yield clickgo.core.fetchClickGoFile(path.slice(8));
+                    clickgoFileList.push(path.slice(8));
                 }
                 else if (task.files[path]) {
                     let pkg = yield clickgo.theme.read(task.files[path]);
@@ -77,6 +77,31 @@ function run(url, opt = {}) {
                 }
             }
         }
+        if (clickgoFileList.length > 0) {
+            try {
+                yield new Promise(function (resolve, reject) {
+                    let count = 0;
+                    for (let file of clickgoFileList) {
+                        clickgo.core.fetchClickGoFile(file).then(function (blob) {
+                            if (blob === null) {
+                                reject();
+                                return;
+                            }
+                            ++count;
+                            if (count === clickgoFileList.length) {
+                                resolve();
+                            }
+                        }).catch(function () {
+                            reject();
+                        });
+                    }
+                });
+            }
+            catch (_a) {
+                return -2;
+            }
+        }
+        clickgo.dom.createToStyleList(taskId);
         let form = yield clickgo.form.create(task.id, {
             'file': appPkg.config.main
         });

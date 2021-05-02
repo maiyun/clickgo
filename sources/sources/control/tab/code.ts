@@ -59,7 +59,7 @@ export let computed = {
             return [];
         }
         let tabs = [];
-        let list = this.cgSlots.default;
+        let list = this.cgSlots();
         for (let item of list) {
             tabs.push({
                 'label': item.props.label,

@@ -658,17 +658,6 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
                 }
                 return this.cgRealHover;
             };
-            // --- 当前的所有子 slots ---
-            computed.cgSlots = function(this: IVueControl): Record<string, IVueVNode[]> {
-                let slots: Record<string, IVueVNode[]> = {};
-                for (let name in this.$slots) {
-                    let list = this.$slots[name]!({});
-                    if (list.length > 0) {
-                        slots[name] = list;
-                    }
-                }
-                return slots;
-            };
             // --- 预设 methods ---
             methods.cgDown = function(this: IVueControl, e: MouseEvent | TouchEvent) {
                 if (e instanceof MouseEvent && clickgo.hasTouch) {
@@ -760,6 +749,27 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
                     return cla;
                 }
                 return `cg-theme-task${this.taskId}-${this.$data.controlName}_${cla} ${this.$data._prep}${cla}`;
+            };
+            // --- 获取目前现存的子 slots ---
+            methods.cgSlots = function(this: IVueControl, name: string = 'default'): IVueVNode[] {
+                let d = this.$slots[name];
+                if (!d) {
+                    return [];
+                }
+                let slots = [];
+                let list = d();
+                for (let item of list) {
+                    if (typeof item.type === 'symbol') {
+                        // --- 动态的 slot，例如 v-for 产生的 slot ---
+                        for (let item2 of item.children) {
+                            slots.push(item2);
+                        }
+                    }
+                    else {
+                        slots.push(item);
+                    }
+                }
+                return slots;
             };
             // --- 获取正常非 nest 上级 ---
             methods.cgParent = function(this: IVueControl): IVueControl | null {

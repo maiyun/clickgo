@@ -263,12 +263,26 @@ function fetchApp(url) {
         let files = {};
         try {
             config = yield (yield fetch(realUrl + 'config.json?' + Math.random())).json();
-            for (let file of config.files) {
-                if (file.startsWith('/clickgo/')) {
-                    continue;
+            yield new Promise(function (resolve, reject) {
+                let count = 0;
+                for (let file of config.files) {
+                    if (file.startsWith('/clickgo/')) {
+                        ++count;
+                        continue;
+                    }
+                    fetch(realUrl + file.slice(1) + '?' + Math.random()).then(function (res) {
+                        return res.blob();
+                    }).then(function (blob) {
+                        files[file] = blob;
+                        ++count;
+                        if (count === config.files.length) {
+                            resolve();
+                        }
+                    }).catch(function () {
+                        reject();
+                    });
                 }
-                files[file] = yield (yield fetch(realUrl + file.slice(1) + '?' + Math.random())).blob();
-            }
+            });
         }
         catch (_b) {
             return null;

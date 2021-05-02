@@ -269,7 +269,7 @@ export async function fetchApp(url: string): Promise<null | ICGAppPkg> {
     }
 
     // --- 获取绝对路径 ---
-    let realUrl;
+    let realUrl: string;
     if (url.startsWith('clickgo/')) {
         realUrl = clickgo.tool.urlResolve(clickgo.cgRootPath, url.slice(8));
     }
@@ -296,12 +296,26 @@ export async function fetchApp(url: string): Promise<null | ICGAppPkg> {
     try {
         config = await (await fetch(realUrl + 'config.json?' + Math.random())).json();
         // --- 将预加载文件进行加载 ---
-        for (let file of config.files) {
-            if (file.startsWith('/clickgo/')) {
-                continue;
+        await new Promise<void>(function(resolve, reject) {
+            let count = 0;
+            for (let file of config.files) {
+                if (file.startsWith('/clickgo/')) {
+                    ++count;
+                    continue;
+                }
+                fetch(realUrl + file.slice(1) + '?' + Math.random()).then(function(res: Response) {
+                    return res.blob();
+                }).then(function(blob: Blob) {
+                    files[file] = blob;
+                    ++count;
+                    if (count === config.files.length) {
+                        resolve();
+                    }
+                }).catch(function() {
+                    reject();
+                });
             }
-            files[file] = await (await fetch(realUrl + file.slice(1) + '?' + Math.random())).blob();
-        }
+        });
     }
     catch {
         return null;
