@@ -20,6 +20,9 @@ export let props = {
     'flex': {
         'default': ''
     },
+    'padding': {
+        'default': undefined
+    },
     'gutter': {
         'default': undefined
     },

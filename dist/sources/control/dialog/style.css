@@ -1,10 +1,1 @@
-.content {
-    padding: 15px; background: #FFF;
-}
-
-.controls {
-    padding: 10px 10px 10px 70px; position: relative;
-}
-.controls::before {
-    content: ' '; position: absolute; left: 0; top: 0; width: 200%; height: 200%; transform-origin: 0 0; transform: scale(.5); border-top: solid 1px hsl(205,0%,70%);
-}
+.content{padding:15px;background:#fff}.controls{padding:10px 10px 10px 70px;position:relative}.controls::before{content:" ";position:absolute;left:0;top:0;width:200%;height:200%;transform-origin:0 0;transform:scale(0.5);border-top:solid 1px #b3b3b3}

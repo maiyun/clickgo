@@ -16,6 +16,9 @@ exports.props = {
     },
     'zIndex': {
         'default': 0
+    },
+    'flex': {
+        'default': ''
     }
 };
 exports.data = {

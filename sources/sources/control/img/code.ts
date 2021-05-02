@@ -14,6 +14,9 @@ export let props = {
     'zIndex': {
         'default': 0
     },
+    'flex': {
+        'default': ''
+    },
 
     'src': {
         'default': ''
