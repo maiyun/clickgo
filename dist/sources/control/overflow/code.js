@@ -49,24 +49,6 @@ exports.computed = {
     },
     'maxScrollTop': function () {
         return Math.round(this.lengthHeight) - Math.round(this.clientHeight);
-    },
-    'widthPx': function () {
-        if (this.width !== undefined) {
-            return this.width + 'px';
-        }
-        if (this.flex !== '') {
-            let parent = this.cgParent();
-            return parent ? (parent.direction === 'v' ? undefined : '0') : undefined;
-        }
-    },
-    'heightPx': function () {
-        if (this.height !== undefined) {
-            return this.height + 'px';
-        }
-        if (this.flex !== '') {
-            let parent = this.cgParent();
-            return parent ? (parent.direction === 'v' ? '0' : undefined) : undefined;
-        }
     }
 };
 exports.watch = {

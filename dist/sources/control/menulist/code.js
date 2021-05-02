@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.unmounted = exports.mounted = exports.computed = exports.data = exports.props = void 0;
+exports.unmounted = exports.mounted = exports.data = exports.props = void 0;
 exports.props = {
     'width': {
         'default': undefined
@@ -26,26 +26,6 @@ exports.data = {
     'hasTypeItemsCount': 0,
     'itemPopShowing': undefined,
     'menulist': undefined
-};
-exports.computed = {
-    'widthPx': function () {
-        if (this.width !== undefined) {
-            return this.width + 'px';
-        }
-        if (this.flex !== '') {
-            let parent = this.cgParent();
-            return parent ? (parent.direction === 'v' ? undefined : '0') : undefined;
-        }
-    },
-    'heightPx': function () {
-        if (this.height !== undefined) {
-            return this.height + 'px';
-        }
-        if (this.flex !== '') {
-            let parent = this.cgParent();
-            return parent ? (parent.direction === 'v' ? '0' : undefined) : undefined;
-        }
-    }
 };
 exports.mounted = function () {
     var _a;

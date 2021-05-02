@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.computed = exports.props = void 0;
+exports.props = void 0;
 exports.props = {
     'width': {
         'default': undefined
@@ -31,25 +31,5 @@ exports.props = {
     },
     'align-v': {
         'default': undefined
-    }
-};
-exports.computed = {
-    'widthPx': function () {
-        if (this.width !== undefined) {
-            return this.width + 'px';
-        }
-        if (this.flex !== '') {
-            let parent = this.cgParent();
-            return parent ? (parent.direction === 'v' ? undefined : '0') : undefined;
-        }
-    },
-    'heightPx': function () {
-        if (this.height !== undefined) {
-            return this.height + 'px';
-        }
-        if (this.flex !== '') {
-            let parent = this.cgParent();
-            return parent ? (parent.direction === 'v' ? '0' : undefined) : undefined;
-        }
     }
 };

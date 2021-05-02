@@ -542,6 +542,24 @@ function create(taskId, opt) {
                     }
                     return this.cgRealHover;
                 };
+                computed.cgWidthPx = function () {
+                    if (this.width !== undefined) {
+                        return this.width + 'px';
+                    }
+                    if (this.flex !== '') {
+                        let parent = this.cgParent();
+                        return parent ? (parent.direction === 'v' ? undefined : '0') : undefined;
+                    }
+                };
+                computed.cgHeightPx = function () {
+                    if (this.height !== undefined) {
+                        return this.height + 'px';
+                    }
+                    if (this.flex !== '') {
+                        let parent = this.cgParent();
+                        return parent ? (parent.direction === 'v' ? '0' : undefined) : undefined;
+                    }
+                };
                 methods.cgDown = function (e) {
                     if (e instanceof MouseEvent && clickgo.hasTouch) {
                         return;

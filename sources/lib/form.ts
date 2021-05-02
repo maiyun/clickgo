@@ -658,6 +658,24 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
                 }
                 return this.cgRealHover;
             };
+            computed.cgWidthPx = function(this: IVueControl): string | undefined {
+                if (this.width !== undefined) {
+                    return this.width + 'px';
+                }
+                if (this.flex !== '') {
+                    let parent = this.cgParent();
+                    return parent ? (parent.direction === 'v' ? undefined : '0') : undefined;
+                }
+            };
+            computed.cgHeightPx = function(this: IVueControl): string | undefined {
+                if (this.height !== undefined) {
+                    return this.height + 'px';
+                }
+                if (this.flex !== '') {
+                    let parent = this.cgParent();
+                    return parent ? (parent.direction === 'v' ? '0' : undefined) : undefined;
+                }
+            };
             // --- 预设 methods ---
             methods.cgDown = function(this: IVueControl, e: MouseEvent | TouchEvent) {
                 if (e instanceof MouseEvent && clickgo.hasTouch) {

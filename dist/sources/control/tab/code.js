@@ -43,24 +43,6 @@ exports.data = {
     'selected': ''
 };
 exports.computed = {
-    'widthPx': function () {
-        if (this.width !== undefined) {
-            return this.width + 'px';
-        }
-        if (this.flex !== '') {
-            let parent = this.cgParent();
-            return parent ? (parent.direction === 'v' ? undefined : '0') : undefined;
-        }
-    },
-    'heightPx': function () {
-        if (this.height !== undefined) {
-            return this.height + 'px';
-        }
-        if (this.flex !== '') {
-            let parent = this.cgParent();
-            return parent ? (parent.direction === 'v' ? '0' : undefined) : undefined;
-        }
-    },
     'tabs': function () {
         var _a;
         if (!this.$slots.default) {
