@@ -1,4 +1,4 @@
-<cg-greatselect @tap="cgTap" @down="cgDown" @dblclick="cgDblclick" :disabled="isDisabled" :focus="focus" :area="isEditable ? 'arrow' : 'all'" :width="width" :height="height" :left="left" :top="top" :z-index="zIndex" :flex="flex" :padding="isEditable ? '0' : padding">
+<cg-greatselect @tap="cgTap" @down="cgDown" @up="cgUp" @enter="cgEnter" @leave="cgLeave" @cancel="cgCancel" @dblclick="cgDblclick" :disabled="isDisabled" :focus="focus" :area="isEditable ? 'arrow' : 'all'" :width="width" :height="height" :left="left" :top="top" :z-index="zIndex" :flex="flex" :padding="isEditable ? '0' : padding">
     <input v-if="isEditable" type="text" class="input" v-model="inputValue" @input="input" :style="{'padding': padding && padding.replace(/([0-9]+)($| )/g, '$1px$2')}">
     <template v-else>{{label}}</template>
     <template v-slot:pop>

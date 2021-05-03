@@ -1,4 +1,4 @@
-<div class="wrap" :class="[tabPosition]" :style="{'width': cgWidthPx, 'height': cgHeightPx, 'left': left + 'px', 'top': top + 'px', 'z-index': zIndex, 'flex-grow': flex}" @click="cgTap" @mousedown="cgDown" @touchstart="cgDown" @dblclick="cgDblclick">
+<div class="wrap" :class="[tabPosition, cgHover && 'hover', cgActive && 'active']" :style="{'width': cgWidthPx, 'height': cgHeightPx, 'left': left + 'px', 'top': top + 'px', 'z-index': zIndex, 'flex-grow': flex}" @click="cgTap" @mousedown="cgDown" @mouseup="cgUp" @mouseenter="cgEnter" @mouseleave="cgLeave" @touchstart="cgDown" @touchend="cgUp" @touchcancel="cgCancel" @dblclick="cgDblclick">
     <template v-for="i of 2">
         <div v-if="(i === 1 && (tabPosition === 'top' || tabPosition === 'left')) || (i === 2 && (tabPosition === 'right' || tabPosition === 'bottom'))" class="tabs-wrap">
             <div v-show="arrow" class="arrow start" @mousedown="longDown($event, 'start')" @touchstart="longDown($event, 'start')"></div>

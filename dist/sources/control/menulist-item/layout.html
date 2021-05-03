@@ -1,4 +1,4 @@
-<div class="wrap" :class="[isDisabled && 'cg-disabled', popOpen && 'cg-pop-open', cgHover && 'hover', cgActive && 'active']" @click="click" @mouseenter="enter" @mouseleave="cgLeave" @mousedown="cgDown" @mouseup="cgUp" @touchstart="down" @touchend="cgUp" @touchcancel="cgCancel">
+<div class="wrap" :class="[isDisabled && 'cg-disabled', popOpen && 'cg-pop-open', cgHover && 'hover', cgActive && 'active']" @click="click" @mouseenter="enter" @mouseleave="cgLeave" @mousedown="cgDown" @mouseup="cgUp" @touchstart="down" @touchend="cgUp" @touchcancel="cgCancel" @dblclick="cgDblclick">
     <div v-if="menulist && menulist.hasTypeItemsCount > 0" :class="[type ? type : 'check']" :style="{'visibility': type !== undefined ? ((type === 'check' ? modelValue : label === modelValue) ? 'inherit' : undefined) : undefined}"></div>
     <div class="inner" :style="{'padding': padding && padding.replace(/([0-9]+)($| )/g, '$1px$2')}">
         <slot></slot>
