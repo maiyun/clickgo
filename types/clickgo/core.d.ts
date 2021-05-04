@@ -15,7 +15,7 @@ interface ICGCoreLib {
 /** --- 全局事件 --- */
 interface ICGGlobalEvents {
     /** --- 配置捕获 Vue 错误 --- */
-    errorHandler: null | ((taskId: number, formId: number, error: any, info: string) => void);
+    errorHandler: null | ((taskId: number, formId: number, error: any, info: string) => void | Promise<void>);
     /** --- 当屏幕大小改变时触发的事件 --- */
     screenResizeHandler: null | (() => void | Promise<void>);
     /** --- 窗体被创建后触发 --- */

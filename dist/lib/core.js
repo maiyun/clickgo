@@ -28,82 +28,36 @@ exports.globalEvents = {
     taskEndedHandler: null
 };
 function trigger(name, taskId = 0, formId = 0, param1 = '', param2 = '') {
-    var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v, _w;
+    var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y;
     switch (name) {
         case 'screenResize': {
-            const rtn = (_a = exports.globalEvents.screenResizeHandler) === null || _a === void 0 ? void 0 : _a.call(exports.globalEvents);
-            if (rtn instanceof Promise) {
-                rtn.catch((e) => {
-                    throw e;
-                });
-            }
+            (_a = exports.globalEvents.screenResizeHandler) === null || _a === void 0 ? void 0 : _a.call(exports.globalEvents);
             for (let tid in clickgo.task.list) {
                 let task = clickgo.task.list[tid];
                 for (let fid in task.forms) {
-                    const rtn = (_c = (_b = task.forms[fid].events)[name]) === null || _c === void 0 ? void 0 : _c.call(_b);
-                    if (rtn instanceof Promise) {
-                        rtn.catch((e) => {
-                            throw e;
-                        });
-                    }
+                    (_c = (_b = task.forms[fid].events)[name]) === null || _c === void 0 ? void 0 : _c.call(_b);
                 }
             }
             break;
         }
         case 'formCreated':
         case 'formRemoved': {
-            if (exports.globalEvents[name + 'Handler']) {
-                exports.globalEvents[name + 'Handler'](taskId, formId, param1, param2);
-            }
+            (_e = (_d = exports.globalEvents)[name + 'Handler']) === null || _e === void 0 ? void 0 : _e.call(_d, taskId, formId, param1, param2);
             for (let tid in clickgo.task.list) {
                 let task = clickgo.task.list[tid];
                 for (let fid in task.forms) {
-                    const rtn = (_e = (_d = task.forms[fid].events)[name]) === null || _e === void 0 ? void 0 : _e.call(_d, taskId, formId, param1, param2);
-                    if (rtn instanceof Promise) {
-                        rtn.catch((e) => {
-                            throw e;
-                        });
-                    }
+                    (_g = (_f = task.forms[fid].events)[name]) === null || _g === void 0 ? void 0 : _g.call(_f, taskId, formId, param1, param2);
                 }
             }
             break;
         }
-        case 'formTitleChanged': {
-            const rtn = (_f = exports.globalEvents.formTitleChangedHandler) === null || _f === void 0 ? void 0 : _f.call(exports.globalEvents, taskId, formId, param1);
-            if (rtn instanceof Promise) {
-                rtn.catch((e) => {
-                    throw e;
-                });
-            }
-            for (let tid in clickgo.task.list) {
-                let task = clickgo.task.list[tid];
-                for (let fid in task.forms) {
-                    const rtn = (_h = (_g = task.forms[fid].events)[name]) === null || _h === void 0 ? void 0 : _h.call(_g, taskId, formId, param1);
-                    if (rtn instanceof Promise) {
-                        rtn.catch((e) => {
-                            throw e;
-                        });
-                    }
-                }
-            }
-            break;
-        }
+        case 'formTitleChanged':
         case 'formIconChanged': {
-            const rtn = (_j = exports.globalEvents.formIconChangedHandler) === null || _j === void 0 ? void 0 : _j.call(exports.globalEvents, taskId, formId, param1);
-            if (rtn instanceof Promise) {
-                rtn.catch((e) => {
-                    throw e;
-                });
-            }
+            (_j = (_h = exports.globalEvents)[name + 'Handler']) === null || _j === void 0 ? void 0 : _j.call(_h, taskId, formId, param1);
             for (let tid in clickgo.task.list) {
                 let task = clickgo.task.list[tid];
                 for (let fid in task.forms) {
-                    const rtn = (_l = (_k = task.forms[fid].events)[name]) === null || _l === void 0 ? void 0 : _l.call(_k, taskId, formId, param1);
-                    if (rtn instanceof Promise) {
-                        rtn.catch((e) => {
-                            throw e;
-                        });
-                    }
+                    (_l = (_k = task.forms[fid].events)[name]) === null || _l === void 0 ? void 0 : _l.call(_k, taskId, formId, param1);
                 }
             }
             break;
@@ -115,12 +69,7 @@ function trigger(name, taskId = 0, formId = 0, param1 = '', param2 = '') {
             for (let tid in clickgo.task.list) {
                 let task = clickgo.task.list[tid];
                 for (let fid in task.forms) {
-                    const rtn = (_q = (_p = task.forms[fid].events)[name]) === null || _q === void 0 ? void 0 : _q.call(_p, taskId, formId, param1);
-                    if (rtn instanceof Promise) {
-                        rtn.catch((e) => {
-                            throw e;
-                        });
-                    }
+                    (_q = (_p = task.forms[fid].events)[name]) === null || _q === void 0 ? void 0 : _q.call(_p, taskId, formId, param1);
                 }
             }
             break;
@@ -132,30 +81,18 @@ function trigger(name, taskId = 0, formId = 0, param1 = '', param2 = '') {
             for (let tid in clickgo.task.list) {
                 let task = clickgo.task.list[tid];
                 for (let fid in task.forms) {
-                    const rtn = (_u = (_t = task.forms[fid].events)[name]) === null || _u === void 0 ? void 0 : _u.call(_t, taskId, formId);
-                    if (rtn instanceof Promise) {
-                        rtn.catch((e) => {
-                            throw e;
-                        });
-                    }
+                    (_u = (_t = task.forms[fid].events)[name]) === null || _u === void 0 ? void 0 : _u.call(_t, taskId, formId);
                 }
             }
             break;
         }
         case 'taskStarted':
         case 'taskEnded': {
-            if (exports.globalEvents[name + 'Handler']) {
-                exports.globalEvents[name + 'Handler'](taskId, formId);
-            }
+            (_w = (_v = exports.globalEvents)[name + 'Handler']) === null || _w === void 0 ? void 0 : _w.call(_v, taskId, formId);
             for (let tid in clickgo.task.list) {
                 let task = clickgo.task.list[tid];
                 for (let fid in task.forms) {
-                    const rtn = (_w = (_v = task.forms[fid].events)[name]) === null || _w === void 0 ? void 0 : _w.call(_v, taskId);
-                    if (rtn instanceof Promise) {
-                        rtn.catch((e) => {
-                            throw e;
-                        });
-                    }
+                    (_y = (_x = task.forms[fid].events)[name]) === null || _y === void 0 ? void 0 : _y.call(_x, taskId);
                 }
             }
             break;

@@ -41,79 +41,33 @@ export let globalEvents: ICGGlobalEvents = {
 export function trigger(name: TCGGlobalEvent, taskId: number = 0, formId: number = 0, param1: boolean | string = '', param2: string = ''): void {
     switch (name) {
         case 'screenResize': {
-            const rtn = globalEvents.screenResizeHandler?.();
-            if (rtn instanceof Promise) {
-                rtn.catch((e) => {
-                    throw e;
-                });
-            }
+            globalEvents.screenResizeHandler?.() as void;
             for (let tid in clickgo.task.list) {
                 let task = clickgo.task.list[tid];
                 for (let fid in task.forms) {
-                    const rtn = task.forms[fid].events[name]?.();
-                    if (rtn instanceof Promise) {
-                        rtn.catch((e) => {
-                            throw e;
-                        });
-                    }
+                    task.forms[fid].events[name]?.() as void;
                 }
             }
             break;
         }
         case 'formCreated':
         case 'formRemoved': {
-            if ((globalEvents as any)[name + 'Handler']) {
-                (globalEvents as any)[name + 'Handler'](taskId, formId, param1, param2);
-            }
+            (globalEvents as any)[name + 'Handler']?.(taskId, formId, param1, param2);
             for (let tid in clickgo.task.list) {
                 let task = clickgo.task.list[tid];
                 for (let fid in task.forms) {
-                    const rtn = task.forms[fid].events[name]?.(taskId, formId, param1, param2);
-                    if (rtn instanceof Promise) {
-                        rtn.catch((e) => {
-                            throw e;
-                        });
-                    }
+                    task.forms[fid].events[name]?.(taskId, formId, param1, param2) as void;
                 }
             }
             break;
         }
-        case 'formTitleChanged': {
-            const rtn = globalEvents.formTitleChangedHandler?.(taskId, formId, param1 as string);
-            if (rtn instanceof Promise) {
-                rtn.catch((e) => {
-                    throw e;
-                });
-            }
-            for (let tid in clickgo.task.list) {
-                let task = clickgo.task.list[tid];
-                for (let fid in task.forms) {
-                    const rtn = task.forms[fid].events[name]?.(taskId, formId, param1);
-                    if (rtn instanceof Promise) {
-                        rtn.catch((e) => {
-                            throw e;
-                        });
-                    }
-                }
-            }
-            break;
-        }
+        case 'formTitleChanged':
         case 'formIconChanged': {
-            const rtn = globalEvents.formIconChangedHandler?.(taskId, formId, param1 as string);
-            if (rtn instanceof Promise) {
-                rtn.catch((e) => {
-                    throw e;
-                });
-            }
+            (globalEvents as any)[name + 'Handler']?.(taskId, formId, param1);
             for (let tid in clickgo.task.list) {
                 let task = clickgo.task.list[tid];
                 for (let fid in task.forms) {
-                    const rtn = task.forms[fid].events[name]?.(taskId, formId, param1);
-                    if (rtn instanceof Promise) {
-                        rtn.catch((e) => {
-                            throw e;
-                        });
-                    }
+                    task.forms[fid].events[name]?.(taskId, formId, param1) as void;
                 }
             }
             break;
@@ -125,12 +79,7 @@ export function trigger(name: TCGGlobalEvent, taskId: number = 0, formId: number
             for (let tid in clickgo.task.list) {
                 let task = clickgo.task.list[tid];
                 for (let fid in task.forms) {
-                    const rtn = task.forms[fid].events[name]?.(taskId, formId, param1);
-                    if (rtn instanceof Promise) {
-                        rtn.catch((e) => {
-                            throw e;
-                        });
-                    }
+                    task.forms[fid].events[name]?.(taskId, formId, param1) as void;
                 }
             }
             break;
@@ -142,30 +91,18 @@ export function trigger(name: TCGGlobalEvent, taskId: number = 0, formId: number
             for (let tid in clickgo.task.list) {
                 let task = clickgo.task.list[tid];
                 for (let fid in task.forms) {
-                    const rtn = task.forms[fid].events[name]?.(taskId, formId);
-                    if (rtn instanceof Promise) {
-                        rtn.catch((e) => {
-                            throw e;
-                        });
-                    }
+                    task.forms[fid].events[name]?.(taskId, formId) as void;
                 }
             }
             break;
         }
         case 'taskStarted':
         case 'taskEnded': {
-            if ((globalEvents as any)[name + 'Handler']) {
-                (globalEvents as any)[name + 'Handler'](taskId, formId);
-            }
+            (globalEvents as any)[name + 'Handler']?.(taskId, formId);
             for (let tid in clickgo.task.list) {
                 let task = clickgo.task.list[tid];
                 for (let fid in task.forms) {
-                    const rtn = task.forms[fid].events[name]?.(taskId);
-                    if (rtn instanceof Promise) {
-                        rtn.catch((e) => {
-                            throw e;
-                        });
-                    }
+                    task.forms[fid].events[name]?.(taskId) as void;
                 }
             }
             break;

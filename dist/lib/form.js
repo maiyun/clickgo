@@ -856,10 +856,10 @@ function create(taskId, opt) {
             this.$refs.form.moveMethod(e, true);
         };
         methods.cgSetSystemEventListener = function (name, func) {
-            this.cgEventList[name] = func;
+            clickgo.task.list[this.taskId].forms[this.formId].events[name] = func;
         };
         methods.cgRemoveSystemEventListener = function (name) {
-            delete (this.cgEventList[name]);
+            delete (clickgo.task.list[this.taskId].forms[this.formId].events[name]);
         };
         methods.cgDialog = function (opt) {
             return new Promise((resolve) => {
@@ -1035,7 +1035,14 @@ function create(taskId, opt) {
             }
             vapp.mount(el);
         });
-        rtn.vapp.config.globalProperties.cgEventList = {};
+        let form = {
+            'id': formId,
+            'vapp': rtn.vapp,
+            'vroot': rtn.vroot,
+            'win': null,
+            'events': {}
+        };
+        task.forms[formId] = form;
         yield clickgo.tool.sleep(5);
         if (mounted) {
             try {
@@ -1048,7 +1055,10 @@ function create(taskId, opt) {
                 else {
                     console.log(err);
                 }
-                formListElement.removeChild(rtn.vroot.$el);
+                task.forms[formId] = undefined;
+                delete (task.forms[formId]);
+                rtn.vapp.unmount();
+                rtn.vapp._container.remove();
                 clickgo.dom.removeStyle(rtn.vroot.taskId, 'form', rtn.vroot.formId);
                 return -6;
             }
@@ -1069,14 +1079,6 @@ function create(taskId, opt) {
             rtn.vroot.cgShow();
         }
         changeFocus(formId, rtn.vroot);
-        let form = {
-            'id': formId,
-            'vapp': rtn.vapp,
-            'vroot': rtn.vroot,
-            'win': null,
-            'events': {}
-        };
-        task.forms[formId] = form;
         clickgo.core.trigger('formCreated', taskId, formId, rtn.vroot.$refs.form.title, rtn.vroot.$refs.form.iconData);
         return form;
     });

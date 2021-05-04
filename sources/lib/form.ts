@@ -985,11 +985,11 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
     methods.cgBindFormDrag = function(this: IVueForm, e: MouseEvent | TouchEvent): void {
         this.$refs.form.moveMethod(e, true);
     };
-    methods.cgSetSystemEventListener = function(this: IVueForm, name: TCGGlobalEvent, func: any): void {
-        this.cgEventList[name] = func;
+    methods.cgSetSystemEventListener = function(this: IVueForm, name: TCGGlobalEvent, func: (...any: any) => void | Promise<void>): void {
+        clickgo.task.list[this.taskId].forms[this.formId].events[name]  = func;
     };
     methods.cgRemoveSystemEventListener = function(this: IVueForm, name: TCGGlobalEvent): void {
-        delete(this.cgEventList[name]);
+        delete(clickgo.task.list[this.taskId].forms[this.formId].events[name]);
     };
     methods.cgDialog = function(this: IVueForm, opt: string | ICGFormDialog): Promise<string> {
         return new Promise((resolve) => {
@@ -1168,8 +1168,16 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
         }
         vapp.mount(el);
     });
-    // --- 全局事件来遍历执行的响应 ---
-    rtn.vapp.config.globalProperties.cgEventList = {};
+    // --- 创建 form 信息对象 ---
+    let form: ICGForm = {
+        'id': formId,
+        'vapp': rtn.vapp,
+        'vroot': rtn.vroot,
+        'win': null,
+        'events': {}
+    };
+    // --- 挂载 form ---
+    task.forms[formId] = form;
     // --- 执行 mounted ---
     await clickgo.tool.sleep(5);
     if (mounted) {
@@ -1178,12 +1186,15 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
         }
         catch (err) {
             if (clickgo.core.globalEvents.errorHandler) {
-                clickgo.core.globalEvents.errorHandler(rtn.vroot.taskId, rtn.vroot.formId, err, 'Create form mounted error.');
+                clickgo.core.globalEvents.errorHandler(rtn.vroot.taskId, rtn.vroot.formId, err, 'Create form mounted error.') as void;
             }
             else {
                 console.log(err);
             }
-            formListElement.removeChild(rtn.vroot.$el);
+            task.forms[formId] = undefined as any;
+            delete(task.forms[formId]);
+            rtn.vapp.unmount();
+            rtn.vapp._container.remove();
             clickgo.dom.removeStyle(rtn.vroot.taskId, 'form', rtn.vroot.formId);
             return -6;
         }
@@ -1206,16 +1217,6 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
     }
     // --- 绑定获取焦点事件 ---
     changeFocus(formId, rtn.vroot);
-    // --- 将 form 挂载到 task 当中 ---
-    let form: ICGForm = {
-        'id': formId,
-        'vapp': rtn.vapp,
-        'vroot': rtn.vroot,
-        'win': null,
-        'events': {}
-    };
-    // --- 挂载 form ---
-    task.forms[formId] = form;
     // --- 触发 formCreated 事件 ---
     clickgo.core.trigger('formCreated', taskId, formId, rtn.vroot.$refs.form.title, rtn.vroot.$refs.form.iconData);
     return form;
