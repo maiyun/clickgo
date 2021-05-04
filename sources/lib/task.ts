@@ -156,9 +156,9 @@ export function end(taskId: number): boolean {
     // --- 移除窗体 list ---
     for (let fid in task.forms) {
         let form = task.forms[fid];
+        clickgo.core.trigger('formRemoved', taskId, form.id, form.vroot.$refs.form.title, form.vroot.$refs.form.iconData);
         form.vapp.unmount();
         form.vapp._container.remove();
-        clickgo.core.trigger('formRemoved', taskId, form.id, form.vroot.$refs.form.title, form.vroot.$refs.form.iconData);
     }
     // --- 移除 style ---
     clickgo.dom.removeFromStyleList(taskId);

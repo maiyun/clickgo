@@ -1,0 +1,17 @@
+.place {
+    visibility: hidden;
+}
+
+.comp {
+    visibility: hidden; position: absolute; left: 0; top: 0;
+    &.h {
+        display: flex;
+    }
+}
+
+.item {
+    position: absolute;
+    &.h {
+        display: flex;
+    }
+}

@@ -1,0 +1,12 @@
+.wrap {
+    display: flex; -webkit-overflow-scrolling: touch;
+    &::-webkit-scrollbar {
+        display: none;
+    }
+    &.v {
+        overflow: scroll; flex-direction: column;
+    }
+    &.h {
+        overflow: scroll; white-space: nowrap;
+    }
+}
