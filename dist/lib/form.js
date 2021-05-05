@@ -416,17 +416,23 @@ function remove(formId) {
             let fid = clickgo.task.list[taskId].forms[formId].vroot.$refs.form.maskFrom;
             clickgo.task.list[taskId].forms[fid].vroot.$refs.form.maskFor = undefined;
         }
-        clickgo.task.list[taskId].forms[formId].vapp.unmount();
-        clickgo.task.list[taskId].forms[formId].vapp._container.remove();
-        delete (clickgo.task.list[taskId].forms[formId]);
+        clickgo.task.list[taskId].forms[formId].vroot.$refs.form.$data.showData = false;
+        setTimeout(function () {
+            clickgo.task.list[taskId].forms[formId].vapp.unmount();
+            clickgo.task.list[taskId].forms[formId].vapp._container.remove();
+            delete (clickgo.task.list[taskId].forms[formId]);
+            clickgo.dom.removeStyle(taskId, 'form', formId);
+            clickgo.core.trigger('formRemoved', taskId, formId, title, icon);
+            let fid = getMaxZIndexFormID();
+            if (fid) {
+                changeFocus(fid);
+            }
+        }, 100);
+        return true;
     }
-    clickgo.dom.removeStyle(taskId, 'form', formId);
-    clickgo.core.trigger('formRemoved', taskId, formId, title, icon);
-    let fid = getMaxZIndexFormID();
-    if (fid) {
-        changeFocus(fid);
+    else {
+        return false;
     }
-    return true;
 }
 exports.remove = remove;
 function create(taskId, opt) {

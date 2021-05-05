@@ -512,20 +512,26 @@ export function remove(formId: number): boolean {
             let fid = clickgo.task.list[taskId].forms[formId].vroot.$refs.form.maskFrom;
             clickgo.task.list[taskId].forms[fid].vroot.$refs.form.maskFor = undefined;
         }
-        clickgo.task.list[taskId].forms[formId].vapp.unmount();
-        clickgo.task.list[taskId].forms[formId].vapp._container.remove();
-        delete(clickgo.task.list[taskId].forms[formId]);
+        clickgo.task.list[taskId].forms[formId].vroot.$refs.form.$data.showData = false;
+        setTimeout(function() {
+            clickgo.task.list[taskId].forms[formId].vapp.unmount();
+            clickgo.task.list[taskId].forms[formId].vapp._container.remove();
+            delete(clickgo.task.list[taskId].forms[formId]);
+            // --- 移除 form 的 style ---
+            clickgo.dom.removeStyle(taskId, 'form', formId);
+            // --- 触发 formRemoved 事件 ---
+            clickgo.core.trigger('formRemoved', taskId, formId, title, icon);
+            // --- 获取最大的 z index 窗体，并让他获取焦点 ---
+            let fid = getMaxZIndexFormID();
+            if (fid) {
+                changeFocus(fid);
+            }
+        }, 100);
+        return true;
     }
-    // --- 移除 form 的 style ---
-    clickgo.dom.removeStyle(taskId, 'form', formId);
-    // --- 触发 formRemoved 事件 ---
-    clickgo.core.trigger('formRemoved', taskId, formId, title, icon);
-    // --- 获取最大的 z index 窗体，并让他获取焦点 ---
-    let fid = getMaxZIndexFormID();
-    if (fid) {
-        changeFocus(fid);
+    else {
+        return false;
     }
-    return true;
 }
 
 /**
