@@ -51,31 +51,10 @@
     &.flash {
         animation: flash .2s linear infinite;
     }
-    &.border-thin {
-        .icon {
-            display: none;
-        }
-        .title {
-            padding: 5px;
-        }
-        .min, .max, .close {
-            padding: 0 5px;
-        }
-    }
     &.cg-state-max {
         box-shadow: none;
         &::after {
             border: none;
-        }
-    }
-    &.cg-state-min {
-        .content {
-            display: none;
-        }
-    }
-    &.height-auto {
-        > .inner > .content {
-            flex: initial; height: initial;
         }
     }
 
@@ -173,6 +152,33 @@
         // --- 主体内容 ---
         .content {
             flex: 1; background: hsl(205, 0%, 95%); display: flex; flex-direction: column; height: 0; position: relative;
+        }
+    }
+    &.border-thin {
+        .inner {
+            .header {
+                .icon {
+                    display: none;
+                }
+                .title {
+                    padding: 5px;
+                }
+                .controls {
+                    .min, .max, .close {
+                        padding: 0 5px;
+                    }
+                }
+            }
+        }
+    }
+    &.cg-state-min {
+        > .inner > .content {
+            display: none;
+        }
+    }
+    &.height-auto {
+        > .inner > .content {
+            flex: initial; height: initial;
         }
     }
 }
