@@ -1,5 +1,5 @@
 <div ref="wrap" class="wrap" :class="[direction, adaptationComp ? 'adaptation': undefined, 'content-' + content, cgHover && 'hover', cgActive && 'active']" :style="{'width': cgWidthPx, 'height': cgHeightPx, 'left': left + 'px', 'top': top + 'px', 'z-index': zIndex, 'flex-grow': flex}" @click="cgTap" @mousedown="down" @mouseup="cgUp" @mouseenter="cgEnter" @mouseleave="cgLeave" @touchstart="down" @touchend="cgUp" @touchcancel="cgCancel" @dblclick="cgDblclick" @wheel="wheel">
-    <div class="place" :style="{'width': direction === 'h' ? lengthWidth + 'px': undefined, 'height': direction === 'v' ? lengthHeight + 'px' : undefined}"></div>
+    <div :style="{'width': direction === 'h' ? lengthWidth + 'px': undefined, 'height': direction === 'v' ? lengthHeight + 'px' : undefined}"></div>
     <div ref="inner" class="inner" :style="{'transform': 'translate3d(' + -scrollLeftData + 'px, ' + -scrollTopData + 'px, 0) translateZ(0px)', 'padding': padding && padding.replace(/([0-9]+)($| )/g, '$1px$2')}">
         <slot></slot>
     </div>

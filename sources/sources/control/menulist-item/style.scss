@@ -1,21 +1,3 @@
-.check {
-    background-image: url(res/check.svg); background-color: hsl(205, 100%, 80%); background-size: 12px 12px; background-position: center center; background-repeat: no-repeat; width: 24px; height: 24px; visibility: hidden;
-}
-.radio {
-    background-color:  hsl(205, 100%, 80%); display: flex; align-items: center; justify-content: center; width: 24px; height: 24px; visibility: hidden;
-    &::before {
-        content: ''; width: 6px; height: 6px; border-radius: 50%; background-color: #000;
-    }
-}
-
-.inner {
-    padding: 6px 35px 6px 10px; flex: 1; display: flex; align-items: center;
-}
-
-.arrow {
-    border: solid 1px #000; border-width: 1px 1px 0 0; width: 6px; height: 6px; margin: 0 10px; transform: rotate(45deg); visibility: hidden;
-}
-
 .wrap {
     display: flex; align-items: center;
     &:not(.cg-disabled) {
@@ -34,6 +16,24 @@
     }
     &.cg-pop-open {
         background: hsl(205, 100%, 80%);
+    }
+
+    .check {
+        background-image: url(res/check.svg); background-color: hsl(205, 100%, 80%); background-size: 12px 12px; background-position: center center; background-repeat: no-repeat; width: 24px; height: 24px; visibility: hidden;
+    }
+    .radio {
+        background-color:  hsl(205, 100%, 80%); display: flex; align-items: center; justify-content: center; width: 24px; height: 24px; visibility: hidden;
+        &::before {
+            content: ''; width: 6px; height: 6px; border-radius: 50%; background-color: #000;
+        }
+    }
+    
+    .inner {
+        padding: 6px 35px 6px 10px; flex: 1; display: flex; align-items: center;
+    }
+    
+    .arrow {
+        border: solid 1px #000; border-width: 1px 1px 0 0; width: 6px; height: 6px; margin: 0 10px; transform: rotate(45deg); visibility: hidden;
     }
 }
 

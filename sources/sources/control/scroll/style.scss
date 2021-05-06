@@ -57,22 +57,22 @@
         }
     }
 
-    // --- 滚动块 ---
-    .block {
-        background-color: rgba(0, 0, 0, .1); display: flex;
-        &:hover {
-            background-color: rgba(0, 0, 0, .3);
-        }
-        &.tran {
-            transition: transform .03s linear;
-        }
-    }
-
     // --- bar 滚动部分 ---
     .scroll-bar {
         flex: 1; overflow: hidden;
+    
+        // --- 滚动块 ---
+        .block {
+            background-color: rgba(0, 0, 0, .1); display: flex;
+            &:hover {
+                background-color: rgba(0, 0, 0, .3);
+            }
+            &.tran {
+                transition: transform .03s linear;
+            }
+        }
         &:active {
-            > .block {
+            .block {
                 background-color: rgba(0, 0, 0, 0.5);
             }
         }
