@@ -1,0 +1,18 @@
+<form width="350" height="350" title="Textbox">
+    <layout direction="v" gutter="10" flex="1" style="padding: 10px;">
+        <label>Scroll Left: {{scrollLeft}}, Scroll Top: {{scrollTop}}, Length: {{length}}, Client: {{client}}</label>
+        <textbox :multi="multi" :disabled="disabled" :readonly="readonly" :password="password" :wrap="wrap" :line-height="lineHeight" :flex="multi ? 1 : undefined" v-model:scroll-left="scrollLeft" v-model:scroll-top="scrollTop" @resize="client = $event" @change="length = $event"></textbox>
+        <layout gutter="10">
+            <button flex="1" @tap="multi = !multi">{{multi ? 'Remove' : 'Set'}} multi</button>
+            <button flex="1" @tap="disabled = !disabled">{{disabled ? 'Remove' : 'Set'}} disabled</button>
+        </layout>
+        <layout gutter="10">
+            <button flex="1" @tap="readonly = !readonly">{{readonly ? 'Remove' : 'Set'}} readonly</button>
+            <button flex="1" @tap="password = !password">{{password ? 'Remove' : 'Set'}} password</button>
+        </layout>
+        <layout gutter="10">
+            <button flex="1" @tap="wrap = !wrap">{{wrap ? 'Remove' : 'Set'}} wrap</button>
+            <button flex="1" @tap="lineHeight = lineHeight === 1 ? 2 : 1">Set line-height {{lineHeight === 1 ? 2 : 1}}</button>
+        </layout>
+    </layout>
+</form>

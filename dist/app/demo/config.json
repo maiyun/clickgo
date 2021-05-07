@@ -18,6 +18,7 @@
         "/clickgo/control/scroll",
         "/clickgo/control/select",
         "/clickgo/control/tab",
+        "/clickgo/control/textbox",
         "/clickgo/control/view"
     ],
     "style": "/global",
@@ -50,6 +51,8 @@
         "/form/control/select/select.xml",
         "/form/control/tab/tab.js",
         "/form/control/tab/tab.xml",
+        "/form/control/textbox/textbox.js",
+        "/form/control/textbox/textbox.xml",
         "/form/control/view/view.css",
         "/form/control/view/view.js",
         "/form/control/view/view.xml",

@@ -62,7 +62,7 @@ function changeFocus(formId = 0, vm) {
                 let taskId = parseInt((_a = focusElement.getAttribute('data-task-id')) !== null && _a !== void 0 ? _a : '0');
                 let task = clickgo.task.list[taskId];
                 task.forms[dataFormIdNumber].vapp._container.classList.remove('cg-focus');
-                task.forms[dataFormIdNumber].vroot.focus = false;
+                task.forms[dataFormIdNumber].vroot.cgFocus = false;
                 clickgo.core.trigger('formBlurred', taskId, dataFormIdNumber);
             }
         }
@@ -84,7 +84,7 @@ function changeFocus(formId = 0, vm) {
                     }
                 }
                 vm.$el.parentNode.classList.add('cg-focus');
-                vm.focus = true;
+                vm.cgFocus = true;
                 taskId = vm.taskId;
             }
             else {
@@ -99,7 +99,7 @@ function changeFocus(formId = 0, vm) {
                     }
                 }
                 task.forms[formId].vapp._container.classList.add('cg-focus');
-                task.forms[formId].vroot.focus = true;
+                task.forms[formId].vroot.cgFocus = true;
             }
             clickgo.core.trigger('formFocused', taskId, formId);
         }
@@ -526,15 +526,13 @@ function create(taskId, opt) {
                         'prep': prep
                     };
                 }
-                props.focus = {
-                    'focus': {
-                        'default': false
-                    }
+                props.cgFocus = {
+                    'default': false
                 };
                 data.taskId = taskId;
                 data.formId = formId;
                 data.controlName = name;
-                data._path = (_c = (_b = opt.file) !== null && _b !== void 0 ? _b : opt.path) !== null && _c !== void 0 ? _c : '/';
+                data.cgPath = (_c = (_b = opt.file) !== null && _b !== void 0 ? _b : opt.path) !== null && _c !== void 0 ? _c : '/';
                 data._prep = prep;
                 if (data.cgNest === undefined) {
                     data.cgNest = false;
@@ -634,13 +632,13 @@ function create(taskId, opt) {
                             return yield clickgo.core.fetchClickGoFile(path.slice(8));
                         }
                         else {
-                            path = clickgo.tool.urlResolve(this.$data._path, path);
+                            path = clickgo.tool.urlResolve(this.$data.cgPath, path);
                             return (_a = task.appPkg.files[path]) !== null && _a !== void 0 ? _a : null;
                         }
                     });
                 };
                 methods.cgGetObjectUrl = function (file) {
-                    file = clickgo.tool.urlResolve(this.$data._path, file);
+                    file = clickgo.tool.urlResolve(this.$data.cgPath, file);
                     return clickgo.tool.file2ObjectUrl(file, clickgo.task.list[this.taskId]);
                 };
                 methods.cgGetDataUrl = function (file) {
@@ -788,7 +786,7 @@ function create(taskId, opt) {
         }
         layout = clickgo.tool.purify(layout);
         layout = clickgo.tool.layoutAddTagClassAndReTagName(layout, true);
-        layout = clickgo.tool.layoutInsertAttr(layout, ':focus=\'focus\'', {
+        layout = clickgo.tool.layoutInsertAttr(layout, ':cg-focus=\'cgFocus\'', {
             'include': [/^cg-.+/]
         });
         let prepList = ['cg-task' + taskId + '_'];
@@ -801,8 +799,8 @@ function create(taskId, opt) {
         data.taskId = taskId;
         data.formId = formId;
         data.controlName = 'root';
-        data.focus = false;
-        data._path = (_j = (_h = opt.file) !== null && _h !== void 0 ? _h : opt.path) !== null && _j !== void 0 ? _j : '/';
+        data.cgFocus = false;
+        data.cgPath = (_j = (_h = opt.file) !== null && _h !== void 0 ? _h : opt.path) !== null && _j !== void 0 ? _j : '/';
         data._prep = prep;
         data._customZIndex = false;
         data.cgHasTouch = clickgo.hasTouch;
@@ -815,7 +813,7 @@ function create(taskId, opt) {
         methods.cgCreateForm = function (paramOpt = {}) {
             return __awaiter(this, void 0, void 0, function* () {
                 let inOpt = {
-                    'path': this._path
+                    'path': this.cgPath
                 };
                 if (typeof paramOpt === 'string') {
                     inOpt.file = paramOpt;
@@ -903,13 +901,13 @@ function create(taskId, opt) {
                     return yield clickgo.core.fetchClickGoFile(path.slice(8));
                 }
                 else {
-                    path = clickgo.tool.urlResolve(this.$data._path, path);
+                    path = clickgo.tool.urlResolve(this.$data.cgPath, path);
                     return (_a = task.appPkg.files[path]) !== null && _a !== void 0 ? _a : null;
                 }
             });
         };
         methods.cgGetObjectUrl = function (file) {
-            file = clickgo.tool.urlResolve(this.$data._path, file);
+            file = clickgo.tool.urlResolve(this.$data.cgPath, file);
             return clickgo.tool.file2ObjectUrl(file, clickgo.task.list[this.taskId]);
         };
         methods.cgGetDataUrl = function (file) {
@@ -961,7 +959,7 @@ function create(taskId, opt) {
             this.$data._customZIndex = false;
             if (top) {
                 this.$data._topMost = true;
-                if (!this.focus) {
+                if (!this.cgFocus) {
                     changeFocus(this.formId, this);
                 }
                 else {
@@ -974,7 +972,7 @@ function create(taskId, opt) {
             }
         };
         methods.cgFlash = function () {
-            if (!this.focus) {
+            if (!this.cgFocus) {
                 changeFocus(this.formId);
             }
             if (this.$refs.form.flashTimer) {

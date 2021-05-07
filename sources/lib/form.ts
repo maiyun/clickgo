@@ -88,7 +88,7 @@ export function changeFocus(formId: number = 0, vm?: IVue): void {
                 let taskId = parseInt(focusElement.getAttribute('data-task-id') ?? '0');
                 let task = clickgo.task.list[taskId];
                 task.forms[dataFormIdNumber].vapp._container.classList.remove('cg-focus');
-                task.forms[dataFormIdNumber].vroot.focus = false;
+                task.forms[dataFormIdNumber].vroot.cgFocus = false;
                 // --- 触发 formBlurred 事件 ---
                 clickgo.core.trigger('formBlurred', taskId, dataFormIdNumber);
             }
@@ -111,7 +111,7 @@ export function changeFocus(formId: number = 0, vm?: IVue): void {
                     }
                 }
                 (vm.$el.parentNode as HTMLDivElement).classList.add('cg-focus');
-                vm.focus = true;
+                vm.cgFocus = true;
                 taskId = vm.taskId;
             }
             else {
@@ -126,7 +126,7 @@ export function changeFocus(formId: number = 0, vm?: IVue): void {
                     }
                 }
                 task.forms[formId].vapp._container.classList.add('cg-focus');
-                task.forms[formId].vroot.focus = true;
+                task.forms[formId].vroot.cgFocus = true;
             }
             // --- 触发 formFocused 事件 ---
             clickgo.core.trigger('formFocused', taskId, formId);
@@ -640,16 +640,14 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
                 };
             }
             // --- 组成 props ---
-            props.focus = {
-                'focus': {
-                    'default': false
-                }
+            props.cgFocus = {
+                'default': false
             };
             // --- 组成 data ---
             data.taskId = taskId;
             data.formId = formId;
             data.controlName = name;
-            data._path = opt.file ?? opt.path ?? '/';
+            data.cgPath = opt.file ?? opt.path ?? '/';
             data._prep = prep;
             if (data.cgNest === undefined) {
                 data.cgNest = false;
@@ -751,13 +749,13 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
                     return await clickgo.core.fetchClickGoFile(path.slice(8));
                 }
                 else {
-                    path = clickgo.tool.urlResolve(this.$data._path, path);
+                    path = clickgo.tool.urlResolve(this.$data.cgPath, path);
                     return task.appPkg.files[path] ?? null;
                 }
             };
             // --- 获取本 task 的 object url ---
             methods.cgGetObjectUrl = function(this: IVueControl, file: string): string | null {
-                file = clickgo.tool.urlResolve(this.$data._path, file);
+                file = clickgo.tool.urlResolve(this.$data.cgPath, file);
                 return clickgo.tool.file2ObjectUrl(file, clickgo.task.list[this.taskId]);
             };
             methods.cgGetDataUrl = async function(this: IVueControl, file: string): Promise<string | null> {
@@ -914,7 +912,7 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
     // --- 标签增加 cg- 前缀，增加 class 为 tag-xxx ---
     layout = clickgo.tool.layoutAddTagClassAndReTagName(layout, true);
     // --- 给所有控件传递窗体的 focus 信息 ---
-    layout = clickgo.tool.layoutInsertAttr(layout, ':focus=\'focus\'', {
+    layout = clickgo.tool.layoutInsertAttr(layout, ':cg-focus=\'cgFocus\'', {
         'include': [/^cg-.+/]
     });
     // --- 给 layout 的 class 增加前置 ---
@@ -931,8 +929,8 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
     data.taskId = taskId;
     data.formId = formId;
     data.controlName = 'root';
-    data.focus = false;
-    data._path = opt.file ?? opt.path ?? '/';
+    data.cgFocus = false;
+    data.cgPath = opt.file ?? opt.path ?? '/';
     data._prep = prep;
     data._customZIndex = false;
     data.cgHasTouch = clickgo.hasTouch;
@@ -945,7 +943,7 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
     // --- 初始化系统方法 ---
     methods.cgCreateForm = async function(this: IVueForm, paramOpt: string | ICGFormCreateOptions & { 'mask'?: boolean; } = {}): Promise<void> {
         let inOpt: ICGFormCreateOptions = {
-            'path': this._path
+            'path': this.cgPath
         };
         if (typeof paramOpt === 'string') {
             inOpt.file = paramOpt;
@@ -1032,13 +1030,13 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
             return await clickgo.core.fetchClickGoFile(path.slice(8));
         }
         else {
-            path = clickgo.tool.urlResolve(this.$data._path, path);
+            path = clickgo.tool.urlResolve(this.$data.cgPath, path);
             return task.appPkg.files[path] ?? null;
         }
     };
     // --- 获取本 task 的 object url ---
     methods.cgGetObjectUrl = function(this: IVueForm, file: string): string | null {
-        file = clickgo.tool.urlResolve(this.$data._path, file);
+        file = clickgo.tool.urlResolve(this.$data.cgPath, file);
         return clickgo.tool.file2ObjectUrl(file, clickgo.task.list[this.taskId]);
     };
     methods.cgGetDataUrl = async function(this: IVueForm, file: string): Promise<string | null> {
@@ -1084,7 +1082,7 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
         if (top) {
             // --- 要置顶 ---
             this.$data._topMost = true;
-            if (!this.focus) {
+            if (!this.cgFocus) {
                 changeFocus(this.formId, this);
             }
             else {
@@ -1099,7 +1097,7 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
     };
     // --- 让窗体闪烁 ---
     methods.cgFlash = function(this: IVueForm): void {
-        if (!this.focus) {
+        if (!this.cgFocus) {
             changeFocus(this.formId);
         }
         if (this.$refs.form.flashTimer) {

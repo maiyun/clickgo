@@ -1,7 +1,7 @@
 <form v-model:width="width" v-model:height="height" :icon="icon" :title="title" :min="min" :max="max" :close="close" v-model:state-max="stateMax" v-model:state-min="stateMin" :min-width="minWidth" :min-height="minHeight" :resize="resize" :border="border">
     <overflow :flex="flex" direction="v">
         <layout direction="v" gutter="10" style="padding: 10px;">
-            <label>focus: {{focus}}, width: {{width}}, height: {{height}}, state-max: {{stateMax}}, state-min: {{stateMin}}.</label>
+            <label>focus: {{cgFocus}}, width: {{width}}, height: {{height}}, state-max: {{stateMax}}, state-min: {{stateMin}}.</label>
             <button @tap="icon = icon ? '' : '/res/icon.svg'" style="padding: 0 15px;">Set icon</button>
             <button @tap="title = (title === 'Form') ? 'Changed' : 'Form'" style="padding: 0 15px;">Set title</button>
             <button @tap="min = min ? false : true" style="padding: 0 15px;">{{min ? 'Hide' : 'Show'}} min button</button>

@@ -70,9 +70,9 @@ interface IVueForm extends IVue {
     /** --- 当前窗体 id --- */
     'formId': number;
     /** --- 当前窗体是否有焦点 --- */
-    'focus': boolean;
+    'cgFocus': boolean;
     /** --- 当前窗体的路径 --- */
-    '_path': string;
+    'cgPath': string;
     /** --- 当前环境是否有 touch 事件 --- */
     'cgHasTouch': boolean;
     cgCreateForm(paramOpt?: string | ICGFormCreateOptions & { 'mask'?: boolean; }): Promise<void>;
@@ -104,14 +104,14 @@ interface IVueForm extends IVue {
 interface IVueControl extends IVue {
     '$parent': IVueControl | null;
 
-    /** --- 当前窗体是否有焦点 --- */
-    'focus': boolean;
     /** --- 当前任务 id --- */
     'taskId': number;
     /** --- 当前窗体 id --- */
     'formId': number;
     /** --- 控件名 --- */
     'controlName': string;
+    /** --- 当前窗体是否有焦点 --- */
+    'cgFocus': boolean;
     /** --- 当前环境是否有 touch 事件 --- */
     'cgHasTouch': boolean;
     /** --- 当前是否是 hover 状态（move 模式下一定返回 false） --- */

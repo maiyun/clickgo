@@ -79,15 +79,6 @@ export let watch = {
 
 export let methods = {
     scroll: function(this: IVueControl): void {
-        /*
-        if (scroll < 0) {
-            scroll = 0;
-        }
-        let maxScroll = (this.direction === 'v' ? (this.$refs.wrap.scrollHeight - this.$refs.wrap.clientHeight) : (this.$refs.wrap.scrollWidth - this.$refs.wrap.clientWidth));
-        if (scroll > maxScroll) {
-            scroll = maxScroll;
-        }
-        */
         let sl = Math.round(this.$refs.wrap.scrollLeft);
         if (this.scrollLeftEmit !== sl) {
             this.scrollLeftEmit = sl;
