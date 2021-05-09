@@ -5,6 +5,7 @@ export let data = {
     'password': false,
     'wrap': true,
     'lineHeight': 1,
+    'fontSize': 12,
 
     'scrollLeft': 0,
     'scrollTop': 0,

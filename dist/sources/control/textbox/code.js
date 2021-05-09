@@ -35,8 +35,11 @@ exports.props = {
     'padding': {
         'default': undefined
     },
-    'line-height': {
-        'default': 1
+    'lineHeight': {
+        'default': undefined
+    },
+    'fontSize': {
+        'default': undefined
     },
     'multi': {
         'default': false,
@@ -91,6 +94,22 @@ exports.watch = {
                 this.refreshLength();
                 this.refreshClient();
                 this.refreshScroll();
+            });
+        }
+    },
+    'lineHeight': {
+        handler: function () {
+            return __awaiter(this, void 0, void 0, function* () {
+                yield this.$nextTick();
+                this.refreshLength();
+            });
+        }
+    },
+    'fontSize': {
+        handler: function () {
+            return __awaiter(this, void 0, void 0, function* () {
+                yield this.$nextTick();
+                this.refreshLength();
             });
         }
     },

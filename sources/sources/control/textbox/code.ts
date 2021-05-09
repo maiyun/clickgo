@@ -24,8 +24,11 @@ export let props = {
     'padding': {
         'default': undefined
     },
-    'line-height': {
-        'default': 1
+    'lineHeight': {
+        'default': undefined
+    },
+    'fontSize': {
+        'default': undefined
     },
 
     'multi': {
@@ -84,6 +87,18 @@ export let watch = {
             this.refreshLength();
             this.refreshClient();
             this.refreshScroll();
+        }
+    },
+    'lineHeight': {
+        handler: async function(this: IVueControl): Promise<void> {
+            await this.$nextTick();
+            this.refreshLength();
+        }
+    },
+    'fontSize': {
+        handler: async function(this: IVueControl): Promise<void> {
+            await this.$nextTick();
+            this.refreshLength();
         }
     },
     'scrollLeft': {
