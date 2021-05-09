@@ -1,5 +1,5 @@
 .wrap {
-    background-color: rgba(0, 0, 0, .05); display: flex;
+    background-color: hsl(205, 0%, 90%); display: flex;
     &.v {
         flex-direction: column;
         .start::before {
@@ -34,10 +34,10 @@
     &:not(.cg-disabled) {
         .start, .end {
             &:hover {
-                background-color: rgba(0, 0, 0, .1);
+                background-color: hsl(205, 0%, 85%);
             }
             &:active {
-                background-color: rgba(0, 0, 0, .5);
+                background-color: hsl(205, 0%, 30%);
                 &::before {
                     border-color: #FFF;
                 }
@@ -63,9 +63,9 @@
     
         // --- 滚动块 ---
         .block {
-            background-color: rgba(0, 0, 0, .1); display: flex;
+            background-color: hsl(205, 0%, 80%); display: flex;
             &:hover {
-                background-color: rgba(0, 0, 0, .3);
+                background-color: hsl(205, 0%, 60%);
             }
             &.tran {
                 transition: transform .03s linear;
@@ -73,7 +73,7 @@
         }
         &:active {
             .block {
-                background-color: rgba(0, 0, 0, 0.5);
+                background-color: hsl(205, 0%, 30%);
             }
         }
     }
