@@ -151,7 +151,7 @@
         }
         // --- 主体内容 ---
         .content {
-            flex: 1; background: hsl(205, 0%, 95%); display: flex; flex-direction: column; height: 0; position: relative;
+            flex: 1; background-color: hsl(205, 0%, 95%); display: flex; flex-direction: column; height: 0; position: relative;
         }
     }
     &.border-thin {

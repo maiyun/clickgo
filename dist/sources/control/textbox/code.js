@@ -113,6 +113,14 @@ exports.watch = {
             });
         }
     },
+    'wrap': {
+        handler: function () {
+            return __awaiter(this, void 0, void 0, function* () {
+                yield this.$nextTick();
+                this.refreshLength();
+            });
+        }
+    },
     'scrollLeft': {
         handler: function () {
             let sl = typeof this.scrollLeft === 'number' ? this.scrollLeft : parseInt(this.scrollLeft);

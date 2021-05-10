@@ -101,6 +101,12 @@ export let watch = {
             this.refreshLength();
         }
     },
+    'wrap': {
+        handler: async function(this: IVueControl): Promise<void> {
+            await this.$nextTick();
+            this.refreshLength();
+        }
+    },
     'scrollLeft': {
         handler: function(this: IVueControl): void {
             let sl = typeof this.scrollLeft === 'number' ? this.scrollLeft : parseInt(this.scrollLeft);

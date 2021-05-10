@@ -1,4 +1,4 @@
-<form title="Scroll" width="400" min-width="300" height="400" min-height="390" padding="10">
+<form title="Scroll" width="400" min-width="300" height="400" min-height="390" padding="10" background="#FFF">
     <layout flex="1" gutter="10" direction="v">
         <layout flex="1" gutter="10">
             <layout flex="1" gutter="10" direction="v">
@@ -26,7 +26,7 @@
             </layout>
             <layout>
                 <scroll direction="h" height="20" length="100" client="100" :plain="plain" :disabled="disabled" flex="1"></scroll>
-                <block :style="{'width': (plain ? '10' : '20') + 'px'}"></block>
+                <block :style="{'width': (plain ? '10' : '20') + 'px'}" style="background: hsl(205, 0%, 95%);"></block>
             </layout>
         </layout>
         <layout gutter="10" align-v="center">
