@@ -37,11 +37,9 @@ exports.data = {
     'clientHeight': 0,
     'lengthWidth': 0,
     'lengthHeight': 0,
-    'touchPos': {
-        'x': 0,
-        'y': 0
-    },
-    'canTouch': 0
+    'touchX': 0,
+    'touchY': 0,
+    'canTouch': false
 };
 exports.computed = {
     'maxScrollLeft': function () {
@@ -131,32 +129,28 @@ exports.methods = {
         }
     },
     down: function (e) {
-        this.touchPos.x = e.touches[0].clientX;
-        this.touchPos.y = e.touches[0].clientY;
-        this.firstTouch = true;
+        this.touchX = e.touches[0].clientX;
+        this.touchY = e.touches[0].clientY;
+        this.canTouch = false;
         this.cgDown(e);
     },
     move: function (e) {
-        let deltaX = this.touchPos.x - e.touches[0].clientX;
-        let deltaY = this.touchPos.y - e.touches[0].clientY;
-        if (this.canTouch !== 0) {
-            if (this.firstTouch === 1) {
-                e.stopPropagation();
-            }
+        let deltaX = this.touchX - e.touches[0].clientX;
+        let deltaY = this.touchY - e.touches[0].clientY;
+        if (this.canTouch) {
             return;
         }
-        this.firstTouch = -1;
         if (Math.abs(deltaY) > Math.abs(deltaX)) {
             if (deltaY < 0) {
                 if (this.$refs.wrap.scrollTop > 0) {
                     e.stopPropagation();
-                    this.firstTouch = 1;
+                    this.canTouch = true;
                 }
             }
             else {
                 if (this.$refs.wrap.scrollTop < this.maxScrollTop) {
                     e.stopPropagation();
-                    this.firstTouch = 1;
+                    this.canTouch = true;
                 }
             }
         }
@@ -164,18 +158,18 @@ exports.methods = {
             if (deltaX < 0) {
                 if (this.$refs.wrap.scrollLeft > 0) {
                     e.stopPropagation();
-                    this.firstTouch = 1;
+                    this.canTouch = true;
                 }
             }
             else {
                 if (this.$refs.wrap.scrollLeft < this.maxScrollLeft) {
                     e.stopPropagation();
-                    this.firstTouch = 1;
+                    this.canTouch = true;
                 }
             }
         }
-        this.touchPos.x = e.touches[0].clientX;
-        this.touchPos.y = e.touches[0].clientY;
+        this.touchX = e.touches[0].clientX;
+        this.touchY = e.touches[0].clientY;
     }
 };
 exports.mounted = function () {

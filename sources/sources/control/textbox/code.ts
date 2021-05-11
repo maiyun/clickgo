@@ -138,7 +138,11 @@ export let data = {
     'clientHeight': 0,
 
     'lengthWidth': 0,
-    'lengthHeight': 0
+    'lengthHeight': 0,
+
+    'touchX': 0,
+    'touchY': 0,
+    'canTouch': false // --- 按下后第一次的拖动判断可拖动后，则后面此次都可拖动（交由浏览器可自行处理） ---
 };
 
 export let methods = {
@@ -216,6 +220,57 @@ export let methods = {
                 }
             }
         }
+    },
+    down: function(this: IVueControl, e: TouchEvent): void {
+        this.touchX = e.touches[0].clientX;
+        this.touchY = e.touches[0].clientY;
+        this.canTouch = false;
+    },
+    move: function(this: IVueControl, e: TouchEvent): void {
+        // --- 必须有这个，要不然被上层的 e.preventDefault(); 给屏蔽不能拖动，可拖时必须 stopPropagation ---
+        let deltaX = this.touchX - e.touches[0].clientX;
+        let deltaY = this.touchY - e.touches[0].clientY;
+        if (this.canTouch) {
+            return;
+        }
+        if (Math.abs(deltaY) > Math.abs(deltaX)) {
+            // --- 竖向滚动 ---
+            if (deltaY < 0) {
+                // --- 向上滚 ---
+                if (this.$refs.text.scrollTop > 0) {
+                    // --- 可以滚动 ---
+                    e.stopPropagation();
+                    this.canTouch = true;
+                }
+            }
+            else {
+                // --- 向下滚 ---
+                if (this.$refs.text.scrollTop < this.maxScrollTop) {
+                    e.stopPropagation();
+                    this.canTouch = true;
+                }
+            }
+        }
+        else {
+            // --- 横向滚动 ---
+            if (deltaX < 0) {
+                // --- 向左滚 ---
+                if (this.$refs.text.scrollLeft > 0) {
+                    // --- 可以滚动 ---
+                    e.stopPropagation();
+                    this.canTouch = true;
+                }
+            }
+            else {
+                // --- 向右滚 ---
+                if (this.$refs.text.scrollLeft < this.maxScrollLeft) {
+                    e.stopPropagation();
+                    this.canTouch = true;
+                }
+            }
+        }
+        this.touchX = e.touches[0].clientX;
+        this.touchY = e.touches[0].clientY;
     },
 
     refreshLength: function(this: IVueControl): void {

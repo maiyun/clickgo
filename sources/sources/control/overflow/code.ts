@@ -39,11 +39,9 @@ export let data = {
     'lengthWidth': 0,
     'lengthHeight': 0,
 
-    'touchPos': {
-        'x': 0,
-        'y': 0
-    },
-    'canTouch': 0 // --- 按下后第一次的拖动，用来判断是否 stop 冒泡 ---
+    'touchX': 0,
+    'touchY': 0,
+    'canTouch': false // --- 按下后第一次的拖动判断可拖动后，则后面此次都可拖动（交由浏览器可自行处理） ---
 };
 
 export let computed = {
@@ -147,22 +145,18 @@ export let methods = {
         }
     },
     down: function(this: IVueControl, e: TouchEvent): void {
-        this.touchPos.x = e.touches[0].clientX;
-        this.touchPos.y = e.touches[0].clientY;
-        this.firstTouch = true;
+        this.touchX = e.touches[0].clientX;
+        this.touchY = e.touches[0].clientY;
+        this.canTouch = false;
         this.cgDown(e);
     },
     move: function(this: IVueControl, e: TouchEvent): void {
         // --- 必须有这个，要不然被上层的 e.preventDefault(); 给屏蔽不能拖动，可拖时必须 stopPropagation ---
-        let deltaX = this.touchPos.x - e.touches[0].clientX;
-        let deltaY = this.touchPos.y - e.touches[0].clientY;
-        if (this.canTouch !== 0) {
-            if (this.firstTouch === 1) {
-                e.stopPropagation();
-            }
+        let deltaX = this.touchX - e.touches[0].clientX;
+        let deltaY = this.touchY - e.touches[0].clientY;
+        if (this.canTouch) {
             return;
         }
-        this.firstTouch = -1;
         if (Math.abs(deltaY) > Math.abs(deltaX)) {
             // --- 竖向滚动 ---
             if (deltaY < 0) {
@@ -170,14 +164,14 @@ export let methods = {
                 if (this.$refs.wrap.scrollTop > 0) {
                     // --- 可以滚动 ---
                     e.stopPropagation();
-                    this.firstTouch = 1;
+                    this.canTouch = true;
                 }
             }
             else {
                 // --- 向下滚 ---
                 if (this.$refs.wrap.scrollTop < this.maxScrollTop) {
                     e.stopPropagation();
-                    this.firstTouch = 1;
+                    this.canTouch = true;
                 }
             }
         }
@@ -188,19 +182,19 @@ export let methods = {
                 if (this.$refs.wrap.scrollLeft > 0) {
                     // --- 可以滚动 ---
                     e.stopPropagation();
-                    this.firstTouch = 1;
+                    this.canTouch = true;
                 }
             }
             else {
                 // --- 向右滚 ---
                 if (this.$refs.wrap.scrollLeft < this.maxScrollLeft) {
                     e.stopPropagation();
-                    this.firstTouch = 1;
+                    this.canTouch = true;
                 }
             }
         }
-        this.touchPos.x = e.touches[0].clientX;
-        this.touchPos.y = e.touches[0].clientY;
+        this.touchX = e.touches[0].clientX;
+        this.touchY = e.touches[0].clientY;
     }
 };
 

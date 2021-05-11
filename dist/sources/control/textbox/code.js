@@ -148,7 +148,10 @@ exports.data = {
     'clientWidth': 0,
     'clientHeight': 0,
     'lengthWidth': 0,
-    'lengthHeight': 0
+    'lengthHeight': 0,
+    'touchX': 0,
+    'touchY': 0,
+    'canTouch': false
 };
 exports.methods = {
     focus: function () {
@@ -213,6 +216,48 @@ exports.methods = {
                 }
             }
         }
+    },
+    down: function (e) {
+        this.touchX = e.touches[0].clientX;
+        this.touchY = e.touches[0].clientY;
+        this.canTouch = false;
+    },
+    move: function (e) {
+        let deltaX = this.touchX - e.touches[0].clientX;
+        let deltaY = this.touchY - e.touches[0].clientY;
+        if (this.canTouch) {
+            return;
+        }
+        if (Math.abs(deltaY) > Math.abs(deltaX)) {
+            if (deltaY < 0) {
+                if (this.$refs.text.scrollTop > 0) {
+                    e.stopPropagation();
+                    this.canTouch = true;
+                }
+            }
+            else {
+                if (this.$refs.text.scrollTop < this.maxScrollTop) {
+                    e.stopPropagation();
+                    this.canTouch = true;
+                }
+            }
+        }
+        else {
+            if (deltaX < 0) {
+                if (this.$refs.text.scrollLeft > 0) {
+                    e.stopPropagation();
+                    this.canTouch = true;
+                }
+            }
+            else {
+                if (this.$refs.text.scrollLeft < this.maxScrollLeft) {
+                    e.stopPropagation();
+                    this.canTouch = true;
+                }
+            }
+        }
+        this.touchX = e.touches[0].clientX;
+        this.touchY = e.touches[0].clientY;
     },
     refreshLength: function () {
         let lengthWidth = this.$refs.text.scrollWidth;

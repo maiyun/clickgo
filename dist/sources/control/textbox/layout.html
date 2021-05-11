@@ -1,7 +1,7 @@
 <div class="wrap" :class="[isDisabled && 'cg-disabled', cgHover && 'hover', cgActive && 'active', isFocus && 'focus']" :tabindex="!isDisabled && focus && '0'" :style="{'width': cgWidthPx, 'height': cgHeightPx, 'left': left + 'px', 'top': top + 'px', 'z-index': zIndex, 'flex-grow': flex}" @click="cgTap" @mousedown="cgDown" @mouseup="cgUp" @mouseenter="cgEnter" @mouseleave="cgLeave" @touchstart="cgDown" @touchend="cgUp" @touchcancel="cgCancel" @dblclick="cgDblclick" @focus="focus">
     <template v-if="isMulti">
         <div class="multi-t">
-            <textarea ref="text" class="text" :value="value" :style="{'padding': padding && padding.replace(/([0-9]+)($| )/g, '$1px$2'), '-webkit-text-security': isPassword ? 'disc' : undefined, 'white-space': isWrap ? undefined : 'nowrap', 'line-height': lineHeight, 'font-size': fontSize ? parseInt(fontSize) + 'px' : undefined}" :readonly="isReadonly" :disabled="isDisabled" @focus="tfocus" @blur="tblur" @input="input" @wheel="wheel" @scroll="scroll" @change="$event.stopPropagation()"></textarea>
+            <textarea ref="text" class="text" :value="value" :style="{'padding': padding && padding.replace(/([0-9]+)($| )/g, '$1px$2'), '-webkit-text-security': isPassword ? 'disc' : undefined, 'white-space': isWrap ? undefined : 'nowrap', 'line-height': lineHeight, 'font-size': fontSize ? parseInt(fontSize) + 'px' : undefined}" :readonly="isReadonly" :disabled="isDisabled" @focus="tfocus" @blur="tblur" @input="input" @wheel="wheel" @scroll="scroll" @touchstart="down"  @touchmove="move" @change="$event.stopPropagation()"></textarea>
             <cg-scroll width="16" :disabled="lengthHeight <= clientHeight" :length="lengthHeight" :client="clientHeight" :scroll-offset="scrollTopEmit" @update:scroll-offset="$refs.text.scrollTop = $event" :plain="cgHasTouch"></cg-scroll>
         </div>
         <div v-if="lengthWidth > clientWidth" class="multi-b">
@@ -9,5 +9,5 @@
             <div class="multi-rb"></div>
         </div>
     </template>
-    <input v-else ref="text" class="text" type="text" :value="value" :style="{'padding': padding && padding.replace(/([0-9]+)($| )/g, '$1px$2'), '-webkit-text-security': isPassword ? 'disc' : undefined, 'line-height': lineHeight, 'font-size': fontSize ? parseInt(fontSize) + 'px' : undefined}" :readonly="isReadonly" :disabled="isDisabled" @focus="tfocus" @blur="tblur" @input="input" @wheel="wheel" @scroll="scroll" @change="$event.stopPropagation()">
+    <input v-else ref="text" class="text" type="text" :value="value" :style="{'padding': padding && padding.replace(/([0-9]+)($| )/g, '$1px$2'), '-webkit-text-security': isPassword ? 'disc' : undefined, 'line-height': lineHeight, 'font-size': fontSize ? parseInt(fontSize) + 'px' : undefined}" :readonly="isReadonly" :disabled="isDisabled" @focus="tfocus" @blur="tblur" @input="input" @wheel="wheel" @scroll="scroll" @touchstart="down"  @touchmove="move" @change="$event.stopPropagation()">
 </div>
