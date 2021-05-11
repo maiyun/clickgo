@@ -151,7 +151,14 @@ exports.data = {
     'lengthHeight': 0,
     'touchX': 0,
     'touchY': 0,
-    'canTouch': false
+    'canTouch': false,
+    'popOpen': false,
+    'selfPop': undefined,
+    'popOptions': {
+        'left': '-5000px',
+        'top': '0px',
+        'zIndex': '0'
+    }
 };
 exports.methods = {
     focus: function () {
@@ -258,6 +265,35 @@ exports.methods = {
         }
         this.touchX = e.touches[0].clientX;
         this.touchY = e.touches[0].clientY;
+    },
+    showPop: function (e) {
+        if (this.popOpen) {
+            return;
+        }
+        if (this.selfPop) {
+            this.popOpen = true;
+            this.popOptions = clickgo.form.showPop(this, e instanceof MouseEvent ? e.clientX : e.touches[0].clientX, e instanceof MouseEvent ? e.clientY : e.touches[0].clientY);
+        }
+    },
+    hidePop: function () {
+        var _a;
+        if (!this.popOpen) {
+            return;
+        }
+        this.popOpen = false;
+        if ((_a = this.selfPop) === null || _a === void 0 ? void 0 : _a.itemPopShowing) {
+            this.selfPop.itemPopShowing.hidePop();
+        }
+    },
+    contextmenu: function (e) {
+        if (this.cgHasTouch) {
+            return;
+        }
+        this.showPop(e);
+    },
+    execCmd: function (ac) {
+        this.$refs.text.focus();
+        document.execCommand(ac);
     },
     refreshLength: function () {
         let lengthWidth = this.$refs.text.scrollWidth;

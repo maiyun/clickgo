@@ -142,7 +142,16 @@ export let data = {
 
     'touchX': 0,
     'touchY': 0,
-    'canTouch': false // --- 按下后第一次的拖动判断可拖动后，则后面此次都可拖动（交由浏览器可自行处理） ---
+    'canTouch': false, // --- 按下后第一次的拖动判断可拖动后，则后面此次都可拖动（交由浏览器可自行处理） ---
+
+    'popOpen': false,
+    'selfPop': undefined,
+
+    'popOptions': {
+        'left': '-5000px',
+        'top': '0px',
+        'zIndex': '0'
+    }
 };
 
 export let methods = {
@@ -271,6 +280,37 @@ export let methods = {
         }
         this.touchX = e.touches[0].clientX;
         this.touchY = e.touches[0].clientY;
+    },
+
+    showPop: function(this: IVueControl, e: MouseEvent | TouchEvent): void {
+        if (this.popOpen) {
+            // --- 本来就是展开状态，不做处理 ---
+            return;
+        }
+        // --- 显示本 pop ---
+        if (this.selfPop) {
+            this.popOpen = true;
+            this.popOptions = clickgo.form.showPop(this, e instanceof MouseEvent ? e.clientX : e.touches[0].clientX, e instanceof MouseEvent ? e.clientY : e.touches[0].clientY);
+        }
+    },
+    hidePop: function(this: IVueControl): void {
+        if (!this.popOpen) {
+            return;
+        }
+        this.popOpen = false;
+        if (this.selfPop?.itemPopShowing) {
+            this.selfPop.itemPopShowing.hidePop();
+        }
+    },
+    contextmenu: function(this: IVueControl, e: MouseEvent): void {
+        if (this.cgHasTouch) {
+            return;
+        }
+        this.showPop(e);
+    },
+    execCmd: function(this: IVueControl, ac: string): void {
+        this.$refs.text.focus();
+        document.execCommand(ac);
     },
 
     refreshLength: function(this: IVueControl): void {

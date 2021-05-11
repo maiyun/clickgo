@@ -306,8 +306,10 @@ export let methods = {
     },
 
     showPop: function(this: IVueControl, e: MouseEvent | TouchEvent): void {
-        this.popOpen = true;
-        this.popOptions = clickgo.form.showPop(this, e instanceof MouseEvent ? e.clientX : e.touches[0].clientX, e instanceof MouseEvent ? e.clientY : e.touches[0].clientY);
+        if (this.selfPop) {
+            this.popOpen = true;
+            this.popOptions = clickgo.form.showPop(this, e instanceof MouseEvent ? e.clientX : e.touches[0].clientX, e instanceof MouseEvent ? e.clientY : e.touches[0].clientY);
+        }
     },
     hidePop: function(this: IVueControl): void {
         if (!this.popOpen) {

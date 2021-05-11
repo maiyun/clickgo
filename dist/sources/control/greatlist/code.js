@@ -279,8 +279,10 @@ exports.methods = {
         this.showPop(e);
     },
     showPop: function (e) {
-        this.popOpen = true;
-        this.popOptions = clickgo.form.showPop(this, e instanceof MouseEvent ? e.clientX : e.touches[0].clientX, e instanceof MouseEvent ? e.clientY : e.touches[0].clientY);
+        if (this.selfPop) {
+            this.popOpen = true;
+            this.popOptions = clickgo.form.showPop(this, e instanceof MouseEvent ? e.clientX : e.touches[0].clientX, e instanceof MouseEvent ? e.clientY : e.touches[0].clientY);
+        }
     },
     hidePop: function () {
         var _a;
