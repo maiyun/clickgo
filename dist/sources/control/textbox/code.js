@@ -55,6 +55,18 @@ exports.props = {
     },
     'modelValue': {
         'default': ''
+    },
+    'selectionStart': {
+        'default': 0
+    },
+    'selectionEnd': {
+        'default': 0
+    },
+    'scrollLeft': {
+        'default': 0
+    },
+    'scrollTop': {
+        'default': 0
     }
 };
 exports.computed = {
@@ -87,6 +99,12 @@ exports.watch = {
         },
         'immediate': true
     },
+    'value': {
+        handler: function () {
+            this.$emit('update:modelValue', this.value);
+            this.refreshLength();
+        }
+    },
     'multi': {
         handler: function () {
             return __awaiter(this, void 0, void 0, function* () {
@@ -94,6 +112,7 @@ exports.watch = {
                 this.refreshLength();
                 this.refreshClient();
                 this.refreshScroll();
+                this.select();
             });
         }
     },
@@ -138,11 +157,25 @@ exports.watch = {
             }
             this.$refs.text.scrollTop = this.scrollTop;
         }
+    },
+    'selectionStart': {
+        handler: function () {
+            this.selectionStartEmit = this.selectionStart;
+            this.$refs.text.selectionStart = this.selectionStartEmit;
+        }
+    },
+    'selectionEnd': {
+        handler: function () {
+            this.selectionEndEmit = this.selectionEnd;
+            this.$refs.text.selectionEnd = this.selectionEndEmit;
+        }
     }
 };
 exports.data = {
     'isFocus': false,
     'value': '',
+    'selectionStartEmit': 0,
+    'selectionEndEmit': 0,
     'scrollLeftEmit': 0,
     'scrollTopEmit': 0,
     'clientWidth': 0,
@@ -172,8 +205,6 @@ exports.methods = {
     },
     input: function (e) {
         this.value = e.target.value;
-        this.$emit('modelvalue', this.value);
-        this.refreshLength();
     },
     scroll: function () {
         this.refreshScroll();
@@ -291,9 +322,48 @@ exports.methods = {
         }
         this.showPop(e);
     },
+    select: function () {
+        let selectionStart = this.$refs.text.selectionStart;
+        let selectionEnd = this.$refs.text.selectionEnd;
+        if (selectionStart !== this.selectionStartEmit) {
+            this.selectionStartEmit = selectionStart;
+            this.$emit('update:selectionStart', this.selectionStartEmit);
+        }
+        if (selectionEnd !== this.selectionEndEmit) {
+            this.selectionEndEmit = selectionEnd;
+            this.$emit('update:selectionEnd', this.selectionEndEmit);
+        }
+    },
+    reselect: function () {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield clickgo.tool.sleep(0);
+            this.select();
+        });
+    },
     execCmd: function (ac) {
-        this.$refs.text.focus();
-        document.execCommand(ac);
+        return __awaiter(this, void 0, void 0, function* () {
+            this.$refs.text.focus();
+            if (ac === 'paste') {
+                let str = yield navigator.clipboard.readText();
+                this.value = this.value.slice(0, this.selectionStartEmit) + str + this.value.slice(this.selectionEndEmit);
+                yield this.$nextTick();
+                let selectionStart = this.selectionStartEmit + str.length;
+                let selectionEnd = selectionStart;
+                this.$refs.text.selectionStart = selectionStart;
+                if (selectionStart !== this.selectionStartEmit) {
+                    this.selectionStartEmit = selectionStart;
+                    this.$emit('update:selectionStart', this.selectionStartEmit);
+                }
+                this.$refs.text.selectionEnd = selectionEnd;
+                if (selectionEnd !== this.selectionEndEmit) {
+                    this.selectionEndEmit = selectionEnd;
+                    this.$emit('update:selectionEnd', this.selectionEndEmit);
+                }
+            }
+            else {
+                document.execCommand(ac);
+            }
+        });
     },
     refreshLength: function () {
         let lengthWidth = this.$refs.text.scrollWidth;

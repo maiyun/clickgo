@@ -1,7 +1,8 @@
 <form width="350" height="350" title="Textbox">
     <layout direction="v" gutter="10" flex="1" style="padding: 10px;">
+        <label>Text Length: {{value.length}}, Selection Start: {{selectionStart}}, Selection End: {{selectionEnd}}</label>
         <label>Scroll Left: {{scrollLeft}}, Scroll Top: {{scrollTop}}, Length: {{length}}, Client: {{client}}</label>
-        <textbox :multi="multi" :disabled="disabled" :readonly="readonly" :password="password" :wrap="wrap" :line-height="lineHeight" :font-size="fontSize" :flex="multi ? 1 : undefined" v-model:scroll-left="scrollLeft" v-model:scroll-top="scrollTop" @resize="client = $event" @change="length = $event"></textbox>
+        <textbox v-model="value" :multi="multi" :disabled="disabled" :readonly="readonly" :password="password" :wrap="wrap" :line-height="lineHeight" :font-size="fontSize" :flex="multi ? 1 : undefined" v-model:scroll-left="scrollLeft" v-model:scroll-top="scrollTop" v-model:selection-start="selectionStart" v-model:selection-end="selectionEnd" @resize="client = $event" @change="length = $event"></textbox>
         <layout gutter="10">
             <button flex="1" @tap="multi = !multi">{{multi ? 'Remove' : 'Set'}} multi</button>
             <button flex="1" @tap="disabled = !disabled">{{disabled ? 'Remove' : 'Set'}} disabled</button>

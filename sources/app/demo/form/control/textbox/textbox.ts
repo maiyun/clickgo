@@ -1,4 +1,7 @@
 export let data = {
+    'value': '',
+    'selectionStart': 0,
+    'selectionEnd': 0,
     'multi': false,
     'disabled': false,
     'readonly': false,

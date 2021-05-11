@@ -45,6 +45,18 @@ export let props = {
     },
     'modelValue': {
         'default': ''
+    },
+    'selectionStart': {
+        'default': 0
+    },
+    'selectionEnd': {
+        'default': 0
+    },
+    'scrollLeft': {
+        'default': 0
+    },
+    'scrollTop': {
+        'default': 0
     }
 };
 
@@ -81,12 +93,20 @@ export let watch = {
         },
         'immediate': true
     },
+    'value': {
+        handler: function(this: IVueControl): void {
+            this.$emit('update:modelValue', this.value);
+            // --- 内容变更，更新 length ---
+            this.refreshLength();
+        }
+    },
     'multi': {
         handler: async function(this: IVueControl): Promise<void> {
             await this.$nextTick();
             this.refreshLength();
             this.refreshClient();
             this.refreshScroll();
+            this.select();
         }
     },
     'lineHeight': {
@@ -124,12 +144,26 @@ export let watch = {
             }
             this.$refs.text.scrollTop = this.scrollTop;
         }
+    },
+    'selectionStart': {
+        handler: function(this: IVueControl): void {
+            this.selectionStartEmit = this.selectionStart;
+            (this.$refs.text as unknown as HTMLTextAreaElement).selectionStart = this.selectionStartEmit;
+        }
+    },
+    'selectionEnd': {
+        handler: function(this: IVueControl): void {
+            this.selectionEndEmit = this.selectionEnd;
+            (this.$refs.text as unknown as HTMLTextAreaElement).selectionEnd = this.selectionEndEmit;
+        }
     }
 };
 
 export let data = {
     'isFocus': false,
     'value': '',
+    'selectionStartEmit': 0,
+    'selectionEndEmit': 0,
 
     'scrollLeftEmit': 0,
     'scrollTopEmit': 0,
@@ -166,9 +200,6 @@ export let methods = {
     },
     input: function(this: IVueControl, e: InputEvent): void {
         this.value = (e.target as HTMLInputElement).value;
-        this.$emit('modelvalue', this.value);
-        // --- 内容变更，更新 length ---
-        this.refreshLength();
     },
 
     scroll: function(this: IVueControl): void {
@@ -308,9 +339,44 @@ export let methods = {
         }
         this.showPop(e);
     },
-    execCmd: function(this: IVueControl, ac: string): void {
+    select: function(this: IVueControl): void {
+        let selectionStart = (this.$refs.text as unknown as HTMLTextAreaElement).selectionStart;
+        let selectionEnd = (this.$refs.text as unknown as HTMLTextAreaElement).selectionEnd;
+        if (selectionStart !== this.selectionStartEmit) {
+            this.selectionStartEmit = selectionStart;
+            this.$emit('update:selectionStart', this.selectionStartEmit);
+        }
+        if (selectionEnd !== this.selectionEndEmit) {
+            this.selectionEndEmit = selectionEnd;
+            this.$emit('update:selectionEnd', this.selectionEndEmit);
+        }
+    },
+    reselect: async function(this: IVueControl): Promise<void> {
+        await clickgo.tool.sleep(0);
+        this.select();
+    },
+    execCmd: async function(this: IVueControl, ac: string): Promise<void> {
         this.$refs.text.focus();
-        document.execCommand(ac);
+        if (ac === 'paste') {
+            let str = await navigator.clipboard.readText();
+            this.value = this.value.slice(0, this.selectionStartEmit) + str + this.value.slice(this.selectionEndEmit);
+            await this.$nextTick();
+            let selectionStart = this.selectionStartEmit + str.length;
+            let selectionEnd = selectionStart;
+            (this.$refs.text as unknown as HTMLTextAreaElement).selectionStart = selectionStart;
+            if (selectionStart !== this.selectionStartEmit) {
+                this.selectionStartEmit = selectionStart;
+                this.$emit('update:selectionStart', this.selectionStartEmit);
+            }
+            (this.$refs.text as unknown as HTMLTextAreaElement).selectionEnd = selectionEnd;
+            if (selectionEnd !== this.selectionEndEmit) {
+                this.selectionEndEmit = selectionEnd;
+                this.$emit('update:selectionEnd', this.selectionEndEmit);
+            }
+        }
+        else {
+            document.execCommand(ac);
+        }
     },
 
     refreshLength: function(this: IVueControl): void {
