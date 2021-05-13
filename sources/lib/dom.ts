@@ -369,10 +369,13 @@ export function bindLong(e: MouseEvent | TouchEvent, long: (e: MouseEvent | Touc
             ox = Math.abs(x - tx);
             oy = Math.abs(y - ty);
         },
-        up: () => {
+        up: (e) => {
             if (timer !== undefined) {
                 clearTimeout(timer);
                 timer = undefined;
+            }
+            if (e.type === 'touchcancel') {
+                long(e);
             }
         }
     });

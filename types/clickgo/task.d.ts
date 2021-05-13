@@ -11,6 +11,10 @@ interface ICGTask {
     'id': number;
     'appPkg': ICGAppPkg;
     'customTheme': boolean;
+    'local': {
+        'name': string;
+        'data': Record<string, Record<string, string>>;
+    };
 
     'controlPkgs': Record<string, ICGControlPkg>;
     'themePkgs': Record<string, ICGThemePkg>;

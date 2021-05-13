@@ -680,7 +680,25 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
                     return parent ? (parent.direction === 'v' ? '0' : undefined) : undefined;
                 }
             };
+            computed.cgLocal = function(this: IVueForm): string {
+                if (clickgo.task.list[this.taskId].local.name === '') {
+                    return clickgo.core.config.local;
+                }
+                return clickgo.task.list[this.taskId].local.name;
+            };
             // --- 预设 methods ---
+            // --- 获取语言 ---
+            methods.l = function(this: IVueForm, key: string, data?: Record<string, Record<string, string>>): string {
+                if (data) {
+                    return data[this.cgLocal]?.[key] ?? 'LocaleError';
+                }
+                else if (this.localData) {
+                    return this.localData[this.cgLocal]?.[key] ?? 'LocaleError';
+                }
+                else {
+                    return 'LocaleError';
+                }
+            };
             methods.cgDown = function(this: IVueControl, e: MouseEvent | TouchEvent) {
                 if (e instanceof MouseEvent && clickgo.hasTouch) {
                     return;
@@ -867,7 +885,7 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
     // --- 准备相关变量 ---
     let data: Record<string, any> = {};
     let methods: any = {};
-    let computed = {};
+    let computed: any = {};
     let watch = {};
     let beforeCreate: (() => void) | undefined = undefined;
     let created: (() => void) | undefined = undefined;
@@ -940,6 +958,17 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
     else {
         data._topMost = false;
     }
+    // --- 预设 computed ---
+    computed.cgLocal = function(this: IVueForm): string {
+        if (clickgo.task.list[this.taskId].local.name === '') {
+            return clickgo.core.config.local;
+        }
+        return clickgo.task.list[this.taskId].local.name;
+    };
+    // --- 获取语言 ---
+    methods.l = function(this: IVueForm, key: string): string {
+        return clickgo.task.list[this.taskId].local.data[this.cgLocal]?.[key] ?? 'LocaleError';
+    };
     // --- 初始化系统方法 ---
     methods.cgCreateForm = async function(this: IVueForm, paramOpt: string | ICGFormCreateOptions & { 'mask'?: boolean; } = {}): Promise<void> {
         let inOpt: ICGFormCreateOptions = {
@@ -1044,8 +1073,8 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
         return f ? await clickgo.tool.blob2DataUrl(f) : null;
     };
     // --- 加载主题 ---
-    methods.cgLoadTheme = async function(this: IVueForm, path: string): Promise<void> {
-        await clickgo.theme.load(this.taskId, path);
+    methods.cgLoadTheme = async function(this: IVueForm, path: string): Promise<boolean> {
+        return await clickgo.theme.load(this.taskId, path);
     };
     // --- 卸载主题 ---
     methods.cgRemoveTheme = async function(this: IVueForm, path: string): Promise<void> {
@@ -1117,6 +1146,42 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
     // --- 让窗体隐藏 ---
     methods.cgHide = function(this: IVueForm): void {
         this.$refs.form.$data.showData = false;
+    };
+    // --- 加载 local 文件 json ---
+    methods.cgLoadLocal = async function(this: IVueForm, name: string, path: string): Promise<boolean> {
+        if (!task.files[path]) {
+            return false;
+        }
+        let local = await clickgo.tool.blob2Text(task.files[path]);
+        try {
+            let data = JSON.parse(local);
+            this.cgLoadLocalData(name, data);
+            return true;
+        }
+        catch {
+            return false;
+        }
+    };
+    // --- 加载全新 local（老 local 的缓存会被卸载） ---
+    methods.cgSetLocal = async function(this: IVueForm, name: string, path: string): Promise<boolean> {
+        this.cgClearLocal();
+        return await this.cgLoadLocal(name, path);
+    };
+    // --- 清除所有语言文件 ---
+    methods.cgClearLocal = function(this: IVueForm): void {
+        clickgo.task.list[this.taskId].local.data = {};
+    };
+    // --- 加载 local data 对象到 task ---
+    methods.cgLoadLocalData = function(this: IVueForm, name: string, data: Record<string, any>, pre: string = ''): void {
+        for (let k in data) {
+            let v = data[k];
+            if (typeof v === 'object') {
+                this.cgLoadLocalData(name, v, pre + k + '.');
+            }
+            else {
+                clickgo.task.list[this.taskId].local.data[name][pre + k] = v;
+            }
+        }
     };
     // --- layout 中 :class 的转义 ---
     methods.cgClassPrepend = function(this: IVueForm, cla: any): string {

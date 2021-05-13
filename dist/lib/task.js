@@ -42,6 +42,10 @@ function run(url, opt = {}) {
             'id': taskId,
             'appPkg': appPkg,
             'customTheme': false,
+            'local': Vue.reactive({
+                'name': '',
+                'data': {}
+            }),
             'controlPkgs': {},
             'themePkgs': {},
             'files': files,

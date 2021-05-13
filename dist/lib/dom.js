@@ -291,10 +291,13 @@ function bindLong(e, long) {
             ox = Math.abs(x - tx);
             oy = Math.abs(y - ty);
         },
-        up: () => {
+        up: (e) => {
             if (timer !== undefined) {
                 clearTimeout(timer);
                 timer = undefined;
+            }
+            if (e.type === 'touchcancel') {
+                long(e);
             }
         }
     });

@@ -191,6 +191,28 @@ exports.data = {
         'left': '-5000px',
         'top': '0px',
         'zIndex': '0'
+    },
+    'localData': {
+        'en-us': {
+            'copy': 'Copy',
+            'cut': 'Cut',
+            'paste': 'Paste'
+        },
+        'zh-cn': {
+            'copy': '复制',
+            'cut': '剪下',
+            'paste': '粘上'
+        },
+        'zh-tw': {
+            'copy': '複製',
+            'cut': '剪貼',
+            'paste': '貼上'
+        },
+        'ja-jp': {
+            'copy': 'コピー',
+            'cut': '切り取り',
+            'paste': '貼り付け'
+        }
     }
 };
 exports.methods = {
@@ -259,6 +281,11 @@ exports.methods = {
         this.touchX = e.touches[0].clientX;
         this.touchY = e.touches[0].clientY;
         this.canTouch = false;
+        if (navigator.clipboard) {
+            clickgo.dom.bindLong(e, () => {
+                this.showPop(e);
+            });
+        }
     },
     move: function (e) {
         let deltaX = this.touchX - e.touches[0].clientX;
@@ -317,6 +344,10 @@ exports.methods = {
         }
     },
     contextmenu: function (e) {
+        if (!navigator.clipboard) {
+            e.stopPropagation();
+            return;
+        }
         if (this.cgHasTouch) {
             return;
         }
@@ -362,6 +393,7 @@ exports.methods = {
             }
             else {
                 document.execCommand(ac);
+                this.reselect();
             }
         });
     },

@@ -7,6 +7,7 @@ export let data = {
     'readonly': false,
     'password': false,
     'wrap': true,
+    'menu': false,
     'lineHeight': 1,
     'fontSize': 12,
 

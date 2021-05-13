@@ -1,4 +1,7 @@
 interface ICGCoreLib {
+    'config': {
+        'local': string;
+    };
     'clickgoFiles': Record<string, Blob>;
     'globalEvents': ICGGlobalEvents;
     trigger(name: 'screenResize'): void;

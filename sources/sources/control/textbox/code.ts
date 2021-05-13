@@ -185,6 +185,28 @@ export let data = {
         'left': '-5000px',
         'top': '0px',
         'zIndex': '0'
+    },
+    'localData': {
+        'en-us': {
+            'copy': 'Copy',
+            'cut': 'Cut',
+            'paste': 'Paste'
+        },
+        'zh-cn': {
+            'copy': '复制',
+            'cut': '剪下',
+            'paste': '粘上'
+        },
+        'zh-tw': {
+            'copy': '複製',
+            'cut': '剪貼',
+            'paste': '貼上'
+        },
+        'ja-jp': {
+            'copy': 'コピー',
+            'cut': '切り取り',
+            'paste': '貼り付け'
+        }
     }
 };
 
@@ -265,6 +287,12 @@ export let methods = {
         this.touchX = e.touches[0].clientX;
         this.touchY = e.touches[0].clientY;
         this.canTouch = false;
+        // --- 长按触发 contextmenu ---
+        if (navigator.clipboard) {
+            clickgo.dom.bindLong(e, () => {
+                this.showPop(e);
+            });
+        }
     },
     move: function(this: IVueControl, e: TouchEvent): void {
         // --- 必须有这个，要不然被上层的 e.preventDefault(); 给屏蔽不能拖动，可拖时必须 stopPropagation ---
@@ -334,6 +362,10 @@ export let methods = {
         }
     },
     contextmenu: function(this: IVueControl, e: MouseEvent): void {
+        if (!navigator.clipboard) {
+            e.stopPropagation();
+            return;
+        }
         if (this.cgHasTouch) {
             return;
         }
@@ -376,6 +408,7 @@ export let methods = {
         }
         else {
             document.execCommand(ac);
+            this.reselect();
         }
     },
 

@@ -564,6 +564,24 @@ function create(taskId, opt) {
                         return parent ? (parent.direction === 'v' ? '0' : undefined) : undefined;
                     }
                 };
+                computed.cgLocal = function () {
+                    if (clickgo.task.list[this.taskId].local.name === '') {
+                        return clickgo.core.config.local;
+                    }
+                    return clickgo.task.list[this.taskId].local.name;
+                };
+                methods.l = function (key, data) {
+                    var _a, _b, _c, _d;
+                    if (data) {
+                        return (_b = (_a = data[this.cgLocal]) === null || _a === void 0 ? void 0 : _a[key]) !== null && _b !== void 0 ? _b : 'LocaleError';
+                    }
+                    else if (this.localData) {
+                        return (_d = (_c = this.localData[this.cgLocal]) === null || _c === void 0 ? void 0 : _c[key]) !== null && _d !== void 0 ? _d : 'LocaleError';
+                    }
+                    else {
+                        return 'LocaleError';
+                    }
+                };
                 methods.cgDown = function (e) {
                     if (e instanceof MouseEvent && clickgo.hasTouch) {
                         return;
@@ -810,6 +828,16 @@ function create(taskId, opt) {
         else {
             data._topMost = false;
         }
+        computed.cgLocal = function () {
+            if (clickgo.task.list[this.taskId].local.name === '') {
+                return clickgo.core.config.local;
+            }
+            return clickgo.task.list[this.taskId].local.name;
+        };
+        methods.l = function (key) {
+            var _a, _b;
+            return (_b = (_a = clickgo.task.list[this.taskId].local.data[this.cgLocal]) === null || _a === void 0 ? void 0 : _a[key]) !== null && _b !== void 0 ? _b : 'LocaleError';
+        };
         methods.cgCreateForm = function (paramOpt = {}) {
             return __awaiter(this, void 0, void 0, function* () {
                 let inOpt = {
@@ -918,7 +946,7 @@ function create(taskId, opt) {
         };
         methods.cgLoadTheme = function (path) {
             return __awaiter(this, void 0, void 0, function* () {
-                yield clickgo.theme.load(this.taskId, path);
+                return yield clickgo.theme.load(this.taskId, path);
             });
         };
         methods.cgRemoveTheme = function (path) {
@@ -989,6 +1017,42 @@ function create(taskId, opt) {
         };
         methods.cgHide = function () {
             this.$refs.form.$data.showData = false;
+        };
+        methods.cgLoadLocal = function (name, path) {
+            return __awaiter(this, void 0, void 0, function* () {
+                if (!task.files[path]) {
+                    return false;
+                }
+                let local = yield clickgo.tool.blob2Text(task.files[path]);
+                try {
+                    let data = JSON.parse(local);
+                    this.cgLoadLocalData(name, data);
+                    return true;
+                }
+                catch (_a) {
+                    return false;
+                }
+            });
+        };
+        methods.cgSetLocal = function (name, path) {
+            return __awaiter(this, void 0, void 0, function* () {
+                this.cgClearLocal();
+                return yield this.cgLoadLocal(name, path);
+            });
+        };
+        methods.cgClearLocal = function () {
+            clickgo.task.list[this.taskId].local.data = {};
+        };
+        methods.cgLoadLocalData = function (name, data, pre = '') {
+            for (let k in data) {
+                let v = data[k];
+                if (typeof v === 'object') {
+                    this.cgLoadLocalData(name, v, pre + k + '.');
+                }
+                else {
+                    clickgo.task.list[this.taskId].local.data[name][pre + k] = v;
+                }
+            }
         };
         methods.cgClassPrepend = function (cla) {
             if (typeof cla !== 'string') {

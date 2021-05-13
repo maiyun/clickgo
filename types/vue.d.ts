@@ -75,6 +75,9 @@ interface IVueForm extends IVue {
     'cgPath': string;
     /** --- 当前环境是否有 touch 事件 --- */
     'cgHasTouch': boolean;
+    /** --- 当前的 local name --- */
+    'cgLocal': string;
+    l(key: string): string;
     cgCreateForm(paramOpt?: string | ICGFormCreateOptions & { 'mask'?: boolean; }): Promise<void>;
     cgCloseForm(): void;
     cgBindFormDrag(e: MouseEvent | TouchEvent): void;
@@ -84,7 +87,7 @@ interface IVueForm extends IVue {
     cgGetBlob(path: string): Promise<Blob | null>;
     cgGetObjectUrl(file: string): string | null;
     cgGetDataUrl(file: string): Promise<string | null>;
-    cgLoadTheme(path: string): Promise<void>;
+    cgLoadTheme(path: string): Promise<boolean>;
     cgRemoveTheme(path: string): Promise<void>;
     cgSetTheme(path: string): Promise<void>;
     cgClearTheme(): Promise<void>;
@@ -94,6 +97,10 @@ interface IVueForm extends IVue {
     cgFlash(): void;
     cgShow(): void;
     cgHide(): void;
+    cgLoadLocal(name: string, path: string): Promise<boolean>;
+    cgSetLocal(name: string, path: string): Promise<boolean>;
+    cgClearLocal(): void;
+    cgLoadLocalData(name: string, data: Record<string, any>, pre?: string): void;
     /**
      * --- layout 中 :class 的转义 ---
      * @param cla class 内容对象
@@ -104,22 +111,34 @@ interface IVueForm extends IVue {
 interface IVueControl extends IVue {
     '$parent': IVueControl | null;
 
+    /** --- 当前窗体是否有焦点 --- */
+    'cgFocus': boolean;
     /** --- 当前任务 id --- */
     'taskId': number;
     /** --- 当前窗体 id --- */
     'formId': number;
     /** --- 控件名 --- */
     'controlName': string;
-    /** --- 当前窗体是否有焦点 --- */
-    'cgFocus': boolean;
+    /** --- 窗体基目录 --- */
+    'cgPath': string;
+    /** --- 是否是嵌套组件 --- */
+    'cgNest': boolean;
     /** --- 当前环境是否有 touch 事件 --- */
     'cgHasTouch': boolean;
-    /** --- 当前是否是 hover 状态（move 模式下一定返回 false） --- */
-    'cgHover': boolean;
     /** --- 当前是否是真实 hover 状态 --- */
     'cgRealHover': boolean;
     /** --- 当前是否是 active 状态 --- */
     'cgActive': boolean;
+    /** --- 当前是否是 hover 状态（move 模式下一定返回 false） --- */
+    'cgHover': boolean;
+    /** --- 组件宽度 --- */
+    'cgWidthPx': string | undefined;
+    /** ---组件高度 --- */
+    'cgHeightPx': string | undefined;
+    /** --- 当前 task 的 local 值 --- */
+    'cgLocal': string;
+    /** --- 获取语言内容 --- */
+    l(key: string, data?: Record<string, Record<string, string>>): string;
     /**
      * --- 控件默认的 down 事件绑定 ---
      * @param e 鼠标或触摸事件对象

@@ -14,6 +14,10 @@
  * limitations under the License.
  */
 
+export let config = Vue.reactive({
+    'local': 'en-us'
+});
+
 /** --- clickgo 已经加载的文件列表 --- */
 export let clickgoFiles: Record<string, Blob> = {};
 

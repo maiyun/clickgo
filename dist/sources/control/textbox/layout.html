@@ -14,9 +14,9 @@
         <div class="pop" :class="[popOpen && 'open']" :style="popOptions">
             <slot>
                 <cg-menulist>
-                    <cg-menulist-item alt="C" @tap="execCmd('cut')">Cut</cg-menulist-item>
-                    <cg-menulist-item alt="C" @tap="execCmd('copy')">Copy</cg-menulist-item>
-                    <cg-menulist-item alt="C" @tap="execCmd('paste')">Paste</cg-menulist-item>
+                    <cg-menulist-item alt="C" @tap="execCmd('cut')">{{l('cut')}}</cg-menulist-item>
+                    <cg-menulist-item alt="C" @tap="execCmd('copy')">{{l('copy')}}</cg-menulist-item>
+                    <cg-menulist-item alt="C" @tap="execCmd('paste')">{{l('paste')}}</cg-menulist-item>
                 </cg-menulist>
             </slot>
         </div>

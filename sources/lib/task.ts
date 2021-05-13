@@ -40,6 +40,10 @@ export async function run(url: string | Blob | ICGAppPkg, opt: { 'runtime'?: Rec
         'id': taskId,
         'appPkg': appPkg,
         'customTheme': false,
+        'local': Vue.reactive({
+            'name': '',
+            'data': {}
+        }),
 
         'controlPkgs': {},
         'themePkgs': {},
