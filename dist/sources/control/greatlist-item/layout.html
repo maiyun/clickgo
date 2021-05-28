@@ -1,10 +1,10 @@
-<div class="wrap" :class="[isDisabled && 'cg-disabled', ((greatlist && greatlist.multi) ? greatlist.valueData.includes(value) : greatlist && greatlist.valueData === value ) ? 'selected' : undefined, popOpen && 'cg-pop-open', cgHover && 'hover', cgActive && 'active', ((greatlist && greatlist.shiftStart) === value) && 'shift']" @click="cgTap" @mousedown="cgDown" @mouseup="cgUp" @mouseenter="cgEnter" @mouseleave="cgLeave" @touchstart="cgDown" @touchend="cgUp" @touchcancel="cgCancel" @dblclick="cgDblclick">
+<div class="wrap" :class="[isDisabled && 'cg-disabled', ((greatlist && greatlist.multi) ? greatlist.valueData.includes(value) : greatlist && greatlist.valueData === value ) ? 'selected' : undefined, cgSelfPopOpen && 'cg-pop-open', cgHover && 'hover', cgActive && 'active', ((greatlist && greatlist.shiftStart) === value) && 'shift']" @click="cgTap" @mousedown="cgDown" @mouseup="cgUp" @mouseenter="cgEnter" @mouseleave="cgLeave" @touchstart="cgDown" @touchend="cgUp" @touchcancel="cgCancel" @dblclick="cgDblclick">
     <div class="inner" :class="[direction]" @click="click" @contextmenu="contextmenu" @mousedown="down" @touchstart="down" :style="{'padding': padding && padding.replace(/([0-9]+)($| )/g, '$1px$2')}">
         <slot></slot>
     </div>
-    <div v-if="selfPop && !isDisabled" class="control" @click="controlClick" @contextmenu="controlContextmenu" @mousedown="controlDown" @touchstart="controlDown"></div>
+    <div v-if="cgSelfPop && !isDisabled" class="control" @click="controlClick" @contextmenu="controlContextmenu" @mousedown="controlDown" @touchstart="controlDown"></div>
     <teleport v-if="$slots.pop" to="#cg-pop-list">
-        <div class="pop" :class="[popOpen && 'open']" :style="popOptions">
+        <div class="pop" :class="[cgSelfPopOpen && 'open']" :style="cgPopPosition">
             <slot name="pop"></slot>
         </div>
     </teleport>

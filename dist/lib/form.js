@@ -281,25 +281,35 @@ function removeFromPop(el) {
     popListElement.removeChild(el);
 }
 exports.removeFromPop = removeFromPop;
-function showPop(pop, x, y = 0) {
+function showPop(pop, direction, size = {}) {
+    var _a, _b, _c;
+    if (pop.cgSelfPopOpen) {
+        return;
+    }
     if (!clickgo.dom.findParentByClass(pop.$el, 'cg-pop-list')) {
         if (exports.popShowing) {
-            exports.popShowing.hidePop();
+            exports.popShowing.cgHidePop();
         }
         exports.popShowing = pop;
     }
-    if (pop.selfPop === undefined) {
-        return {
+    pop.cgSelfPopOpen = true;
+    (_a = pop.cgParentPopLayer.cgChildPopItemShowing) === null || _a === void 0 ? void 0 : _a.cgHidePop();
+    pop.cgParentPopLayer.cgChildPopItemShowing = pop;
+    if (pop.cgSelfPop === undefined) {
+        pop.cgPopPosition = {
             'left': '-5000px',
             'top': '0px',
             'zIndex': '0'
         };
+        return;
     }
     let position = clickgo.getPosition();
+    let width = (_b = size.width) !== null && _b !== void 0 ? _b : pop.cgSelfPop.$el.offsetWidth;
+    let height = (_c = size.height) !== null && _c !== void 0 ? _c : pop.cgSelfPop.$el.offsetHeight;
     let left, top;
-    if (typeof x === 'string') {
+    if (typeof direction === 'string') {
         let bcr = pop.$el.getBoundingClientRect();
-        if (x === 'v') {
+        if (direction === 'v') {
             left = bcr.left;
             top = bcr.top + bcr.height;
         }
@@ -307,31 +317,45 @@ function showPop(pop, x, y = 0) {
             left = bcr.left + bcr.width - 2;
             top = bcr.top - 2;
         }
-        if (pop.selfPop.$el.offsetWidth + left > position.width) {
-            if (x === 'v') {
-                left = position.width - pop.selfPop.$el.offsetWidth;
+        if (width + left > position.width) {
+            if (direction === 'v') {
+                left = position.width - width;
             }
             else {
-                left = bcr.left - pop.selfPop.$el.offsetWidth + 2;
+                left = bcr.left - width + 2;
             }
         }
-        if (pop.selfPop.$el.offsetHeight + top > position.height) {
-            if (x === 'v') {
-                top = bcr.top - pop.selfPop.$el.offsetHeight;
+        if (height + top > position.height) {
+            if (direction === 'v') {
+                top = bcr.top - height;
             }
             else {
-                top = position.height - pop.selfPop.$el.offsetHeight;
+                top = position.height - height;
             }
         }
     }
     else {
+        let x;
+        let y;
+        if (direction instanceof MouseEvent) {
+            x = direction.clientX;
+            y = direction.clientY;
+        }
+        else if (direction instanceof TouchEvent) {
+            x = direction.touches[0].clientX;
+            y = direction.touches[0].clientY;
+        }
+        else {
+            x = direction.x;
+            y = direction.y;
+        }
         left = x + 5;
         top = y + 7;
-        if (pop.selfPop.$el.offsetWidth + left > position.width) {
-            left = x - pop.selfPop.$el.offsetWidth - 5;
+        if (width + left > position.width) {
+            left = x - width - 5;
         }
-        if (pop.selfPop.$el.offsetHeight + top > position.height) {
-            top = y - pop.selfPop.$el.offsetHeight - 5;
+        if (height + top > position.height) {
+            top = y - height - 5;
         }
     }
     if (left < 0) {
@@ -340,30 +364,49 @@ function showPop(pop, x, y = 0) {
     if (top < 0) {
         top = 0;
     }
-    return {
+    pop.cgPopPosition = {
         'left': left + 'px',
         'top': top + 'px',
         'zIndex': (++exports.lastPopZIndex).toString()
     };
+    if (size.width) {
+        pop.cgPopPosition.width = size.width + 'px';
+    }
+    if (size.height) {
+        pop.cgPopPosition.width = size.height + 'px';
+    }
 }
 exports.showPop = showPop;
 function hidePop(pop = null) {
+    var _a;
     if (!pop) {
         if (!exports.popShowing) {
             return;
         }
-        pop = exports.popShowing;
+        if (!exports.popShowing.cgSelfPopOpen) {
+            return;
+        }
+        exports.popShowing.cgHidePop();
+        return;
+    }
+    if (!pop.cgSelfPopOpen) {
+        return;
+    }
+    pop.cgSelfPopOpen = false;
+    if (pop.cgParentPopLayer.cgChildPopItemShowing === pop) {
+        pop.cgParentPopLayer.cgChildPopItemShowing = undefined;
+    }
+    if ((_a = pop.cgSelfPop) === null || _a === void 0 ? void 0 : _a.cgChildPopItemShowing) {
+        pop.cgSelfPop.cgChildPopItemShowing.cgHidePop();
+    }
+    if (pop === exports.popShowing) {
         exports.popShowing = null;
     }
-    else if (pop === exports.popShowing) {
-        exports.popShowing = null;
-    }
-    pop.hidePop();
 }
 exports.hidePop = hidePop;
 function doFocusAndPopEvent(e) {
     var _a;
-    if (e instanceof MouseEvent && clickgo.hasTouch) {
+    if (clickgo.dom.isMouseAlsoTouchEvent(e)) {
         return;
     }
     let target = e.target;
@@ -388,12 +431,8 @@ function doFocusAndPopEvent(e) {
     changeFocus();
 }
 exports.doFocusAndPopEvent = doFocusAndPopEvent;
-if ('ontouchstart' in document.documentElement) {
-    window.addEventListener('touchstart', doFocusAndPopEvent);
-}
-else {
-    window.addEventListener('mousedown', doFocusAndPopEvent);
-}
+document.addEventListener('touchstart', doFocusAndPopEvent);
+document.addEventListener('mousedown', doFocusAndPopEvent);
 function remove(formId) {
     let formElement = formListElement.querySelector(`[data-form-id='${formId}']`);
     if (!formElement) {
@@ -537,7 +576,17 @@ function create(taskId, opt) {
                 if (data.cgNest === undefined) {
                     data.cgNest = false;
                 }
-                data.cgHasTouch = clickgo.hasTouch;
+                if (data.cgSelfIsPopLayer === undefined) {
+                    data.cgSelfIsPopLayer = false;
+                }
+                data.cgChildPopItemShowing = undefined;
+                data.cgSelfPop = undefined;
+                data.cgSelfPopOpen = false;
+                data.cgPopPosition = {
+                    'left': '-5000px',
+                    'top': '0px',
+                    'zIndex': '0'
+                };
                 data.cgRealHover = false;
                 data.cgActive = false;
                 computed.cgHover = function () {
@@ -570,6 +619,21 @@ function create(taskId, opt) {
                     }
                     return clickgo.task.list[this.taskId].local.name;
                 };
+                computed.cgParentPopLayer = function () {
+                    let parent = this.$parent;
+                    while (true) {
+                        if (!parent) {
+                            return this;
+                        }
+                        if (parent.controlName === 'form') {
+                            return parent;
+                        }
+                        if (parent.cgSelfIsPopLayer) {
+                            return parent;
+                        }
+                        parent = parent.$parent;
+                    }
+                };
                 methods.l = function (key, data) {
                     var _a, _b, _c, _d;
                     if (data) {
@@ -582,8 +646,11 @@ function create(taskId, opt) {
                         return 'LocaleError';
                     }
                 };
+                methods.cgIsMouseAlsoTouchEvent = function (e) {
+                    return clickgo.dom.isMouseAlsoTouchEvent(e);
+                };
                 methods.cgDown = function (e) {
-                    if (e instanceof MouseEvent && clickgo.hasTouch) {
+                    if (this.cgIsMouseAlsoTouchEvent(e)) {
                         return;
                     }
                     if (e instanceof TouchEvent) {
@@ -617,14 +684,14 @@ function create(taskId, opt) {
                     this.$emit('up', e);
                 };
                 methods.cgEnter = function (e) {
-                    if (this.cgHasTouch) {
+                    if (this.cgIsMouseAlsoTouchEvent(e)) {
                         return;
                     }
                     this.cgRealHover = true;
                     this.$emit('enter', e);
                 };
                 methods.cgLeave = function (e) {
-                    if (this.cgHasTouch) {
+                    if (!this.cgRealHover) {
                         return;
                     }
                     this.cgRealHover = false;
@@ -718,6 +785,16 @@ function create(taskId, opt) {
                         parent = parent.$parent;
                     }
                 };
+                if (!methods.cgShowPop) {
+                    methods.cgShowPop = function (direction, size) {
+                        clickgo.form.showPop(this, direction, size);
+                    };
+                }
+                if (!methods.cgHidePop) {
+                    methods.cgHidePop = function () {
+                        clickgo.form.hidePop(this);
+                    };
+                }
                 components['cg-' + name] = {
                     'template': layout,
                     'props': props,
@@ -731,8 +808,15 @@ function create(taskId, opt) {
                     'created': created,
                     'beforeMount': beforeMount,
                     'mounted': function () {
+                        var _a, _b;
                         return __awaiter(this, void 0, void 0, function* () {
                             yield this.$nextTick();
+                            if (((_b = (_a = this.$el.parentNode) === null || _a === void 0 ? void 0 : _a.parentNode) === null || _b === void 0 ? void 0 : _b.id) === 'cg-pop-list') {
+                                this.cgSelfIsPopLayer = true;
+                                if (this.$parent) {
+                                    this.$parent.cgSelfPop = this;
+                                }
+                            }
                             mounted === null || mounted === void 0 ? void 0 : mounted.call(this);
                         });
                     },
@@ -743,8 +827,21 @@ function create(taskId, opt) {
                             updated === null || updated === void 0 ? void 0 : updated.call(this);
                         });
                     },
-                    'beforeUnmount': beforeUnmount,
-                    'unmounted': unmounted
+                    'beforeUnmount': function () {
+                        beforeUnmount === null || beforeUnmount === void 0 ? void 0 : beforeUnmount.call(this);
+                        if (this.cgSelfIsPopLayer && this.$parent) {
+                            this.$parent.cgSelfPop = undefined;
+                        }
+                        if (this.cgParentPopLayer.cgChildPopItemShowing === this) {
+                            this.cgHidePop();
+                        }
+                    },
+                    'unmounted': function () {
+                        return __awaiter(this, void 0, void 0, function* () {
+                            yield this.$nextTick();
+                            unmounted === null || unmounted === void 0 ? void 0 : unmounted.call(this);
+                        });
+                    }
                 };
             }
         }
@@ -821,7 +918,6 @@ function create(taskId, opt) {
         data.cgPath = (_j = (_h = opt.file) !== null && _h !== void 0 ? _h : opt.path) !== null && _j !== void 0 ? _j : '/';
         data._prep = prep;
         data._customZIndex = false;
-        data.cgHasTouch = clickgo.hasTouch;
         if (opt.topMost) {
             data._topMost = true;
         }

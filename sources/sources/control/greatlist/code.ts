@@ -44,15 +44,7 @@ export let props = {
 
 export let data = {
     'direction': 'v',
-    'itemPopShowing': undefined,
-    'popOpen': false,
-    'selfPop': undefined,
 
-    'popOptions': {
-        'left': '-5000px',
-        'top': '0px',
-        'zIndex': '0'
-    },
     'client': 0,
     'length': 0,
     'offset': 0,
@@ -239,16 +231,16 @@ export let methods = {
     },
 
     down: function(this: IVueControl, e: MouseEvent | TouchEvent): void {
-        if (e instanceof MouseEvent && this.cgHasTouch) {
+        if (this.cgIsMouseAlsoTouchEvent(e)) {
             return;
         }
         this.cgDown(e);
-        if (this.popOpen) {
-            clickgo.form.hidePop(this);
+        if (this.cgSelfPopOpen) {
+            this.cgHidePop();
         }
         if (!this.itemDown) {
-            if (this.itemPopShowing) {
-                clickgo.form.hidePop(this.itemPopShowing);
+            if (this.cgChildPopItemShowing) {
+                this.cgChildPopItemShowing.cgHidePop();
             }
         }
         else {
@@ -256,7 +248,7 @@ export let methods = {
         }
     },
     innerDown: function(this: IVueControl, e: MouseEvent | TouchEvent): void {
-        if (e instanceof MouseEvent && this.cgHasTouch) {
+        if (this.cgIsMouseAlsoTouchEvent(e)) {
             return;
         }
         if (this.itemDown) {
@@ -277,12 +269,12 @@ export let methods = {
                     this.valueData = this.isMulti ? [] : -1;
                     this.$emit('update:modelValue', this.valueData);
                 }
-                this.showPop(e);
+                this.cgShowPop(e);
             });
         }
     },
-    click: function(this: IVueControl): void {
-        if (!this.cgHasTouch) {
+    click: function(this: IVueControl, e: MouseEvent): void {
+        if (!this.cgIsMouseAlsoTouchEvent(e)) {
             // --- 电脑不响应本事件 ---
             return;
         }
@@ -299,39 +291,9 @@ export let methods = {
     },
     // --- 以下为空白处右键菜单 ---
     contextmenu: function(this: IVueControl, e: MouseEvent): void {
-        if (this.cgHasTouch) {
+        if (this.cgIsMouseAlsoTouchEvent(e)) {
             return;
         }
-        this.showPop(e);
-    },
-
-    showPop: function(this: IVueControl, e: MouseEvent | TouchEvent): void {
-        if (this.selfPop) {
-            this.popOpen = true;
-            this.popOptions = clickgo.form.showPop(this, e instanceof MouseEvent ? e.clientX : e.touches[0].clientX, e instanceof MouseEvent ? e.clientY : e.touches[0].clientY);
-        }
-    },
-    hidePop: function(this: IVueControl): void {
-        if (!this.popOpen) {
-            return;
-        }
-        this.popOpen = false;
-        if (this.selfPop?.itemPopShowing) {
-            this.selfPop.itemPopShowing.hidePop();
-        }
-    }
-};
-
-export let mounted = function(this: IVueControl): void {
-    let parent = this.cgParent();
-    if (parent?.popOpen !== undefined) {
-        parent.selfPop = this;
-    }
-};
-
-export let unmounted = function(this: IVueControl): void {
-    let parent = this.cgParent();
-    if (parent?.selfPop === this) {
-        parent.selfPop = null;
+        this.cgShowPop(e);
     }
 };

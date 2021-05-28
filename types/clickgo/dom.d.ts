@@ -1,5 +1,6 @@
 interface ICGDomLib {
     setGlobalCursor(type?: string): void;
+    isMouseAlsoTouchEvent(e: MouseEvent | TouchEvent): boolean;
     createToStyleList(taskId: number): void;
     removeFromStyleList(taskId: number): void;
     pushStyle(taskId: number, style: string, type?: 'global'): void;
@@ -10,7 +11,7 @@ interface ICGDomLib {
     removeStyle(taskId: number, type: 'form', formId: number): void;
     getStyleCount(taskId: number, type: 'theme' | 'control' | 'form'): number;
     getSize(el: HTMLElement): ICGDomSize;
-    watchSize(el: HTMLElement, cb: (size: ICGDomSize) => void, immediate?: boolean): ICGDomWatchDom;
+    watchSize(el: HTMLElement, cb: (size: ICGDomSize) => Promise<void> | void, immediate?: boolean): ICGDomWatchDom;
     watchDom(el: HTMLElement, cb: (mutations: MutationRecord[], observer?: MutationObserver) => void, mode?: 'child' | 'childsub' | 'style' | 'default' | MutationObserverInit, immediate?: boolean): MutationObserver;
     bindDown(oe: MouseEvent | TouchEvent, opt: {
         'down'?: (e: MouseEvent | TouchEvent) => void;
@@ -66,7 +67,7 @@ interface ICGDomLib {
         'move'?: (left: number, top: number, width: number, height: number, x: number, y: number, border: TCGBorder) => void;
         'end'?: () => void;
     }): void;
-    findParentByClass(el: HTMLElement, cn: string | string[]): HTMLElement | null;
+    findParentByClass(el: HTMLElement, cn: string | RegExp | Array<string | RegExp>): HTMLElement | null;
     siblings(e: HTMLElement, cn: string): HTMLElement | null;
 }
 

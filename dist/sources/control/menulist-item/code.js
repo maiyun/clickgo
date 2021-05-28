@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.unmounted = exports.mounted = exports.methods = exports.watch = exports.computed = exports.data = exports.props = void 0;
+exports.beforeUnmounted = exports.mounted = exports.methods = exports.watch = exports.computed = exports.data = exports.props = void 0;
 exports.props = {
     'disabled': {
         'default': false
@@ -22,15 +22,8 @@ exports.props = {
     }
 };
 exports.data = {
-    'popOpen': false,
-    'selfPop': undefined,
     'direction': 'h',
-    'menulist': undefined,
-    'popOptions': {
-        'left': '-5000px',
-        'top': '0px',
-        'zIndex': '0'
-    }
+    'menulist': undefined
 };
 exports.computed = {
     'isDisabled': function () {
@@ -61,7 +54,7 @@ exports.methods = {
             return;
         }
         if (!this.type) {
-            if (!this.selfPop) {
+            if (!this.cgSelfPop) {
                 clickgo.form.hidePop();
             }
             this.cgTap(e);
@@ -78,52 +71,20 @@ exports.methods = {
     },
     enter: function (e) {
         this.cgEnter(e);
-        if (this.cgHasTouch) {
+        if (this.cgIsMouseAlsoTouchEvent(e)) {
             return;
         }
         if (this.isDisabled) {
             return;
         }
-        this.showPop();
+        this.cgShowPop('h');
     },
     down: function (e) {
         this.cgDown(e);
         if (this.isDisabled) {
             return;
         }
-        this.showPop();
-    },
-    showPop: function () {
-        if (this.popOpen) {
-            return;
-        }
-        if (!this.menulist) {
-            return;
-        }
-        if (this.menulist.itemPopShowing) {
-            clickgo.form.hidePop(this.menulist.itemPopShowing);
-        }
-        if (this.selfPop) {
-            this.menulist.itemPopShowing = this;
-            this.popOpen = true;
-            this.popOptions = clickgo.form.showPop(this, 'h');
-        }
-    },
-    hidePop: function () {
-        var _a;
-        if (!this.popOpen) {
-            return;
-        }
-        this.popOpen = false;
-        if (!this.menulist) {
-            return;
-        }
-        if (this.menulist.itemPopShowing === this) {
-            this.menulist.itemPopShowing = undefined;
-        }
-        if ((_a = this.selfPop) === null || _a === void 0 ? void 0 : _a.itemPopShowing) {
-            this.selfPop.itemPopShowing.hidePop();
-        }
+        this.cgShowPop('h');
     }
 };
 exports.mounted = function () {
@@ -136,14 +97,11 @@ exports.mounted = function () {
         ++menulist.hasTypeItemsCount;
     }
 };
-exports.unmounted = function () {
+exports.beforeUnmounted = function () {
     if (!this.menulist) {
         return;
     }
     if (this.type) {
         --this.menulist.hasTypeItemsCount;
-    }
-    if (this === this.menulist.itemPopShowing) {
-        clickgo.form.hidePop(this);
     }
 };

@@ -195,7 +195,7 @@ export let watch = {
 export let methods = {
     // --- 拖动 ---
     moveMethod: function(this: IVueControl, e: MouseEvent | TouchEvent, custom: boolean = false): void {
-        if (e instanceof MouseEvent && clickgo.hasTouch) {
+        if (this.cgIsMouseAlsoTouchEvent(e)) {
             return;
         }
         if (!this.isMove && !custom) {
@@ -656,7 +656,7 @@ export let methods = {
     },
     // --- 改变窗体大小 ---
     resizeMethod: function(this: IVueControl, e: MouseEvent | TouchEvent, border: TCGBorder): void {
-        if (e instanceof MouseEvent && clickgo.hasTouch) {
+        if (this.cgIsMouseAlsoTouchEvent(e)) {
             return;
         }
         let isBorder: TCGBorder = '';
@@ -764,7 +764,7 @@ export let methods = {
     },
     // --- 遮罩层被点击时 ---
     maskDown: function(this: IVueControl, e: MouseEvent | TouchEvent): void {
-        if (e instanceof MouseEvent && clickgo.hasTouch) {
+        if (clickgo.dom.isMouseAlsoTouchEvent(e)) {
             return;
         }
         if (typeof this.maskFor !== 'number') {

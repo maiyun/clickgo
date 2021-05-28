@@ -103,6 +103,11 @@ export let watch = {
     'multi': {
         handler: async function(this: IVueControl): Promise<void> {
             await this.$nextTick();
+            // --- 大小改变，会影响 scroll offset、client，也会影响 length ---
+            clickgo.dom.watchSize(this.$refs.text, async (): Promise<void> => {
+                this.refreshLength();
+                this.refreshClient();
+            }, true);
             this.refreshLength();
             this.refreshClient();
             this.refreshScroll();
@@ -178,14 +183,6 @@ export let data = {
     'touchY': 0,
     'canTouch': false, // --- 按下后第一次的拖动判断可拖动后，则后面此次都可拖动（交由浏览器可自行处理） ---
 
-    'popOpen': false,
-    'selfPop': undefined,
-
-    'popOptions': {
-        'left': '-5000px',
-        'top': '0px',
-        'zIndex': '0'
-    },
     'localData': {
         'en-us': {
             'copy': 'Copy',
@@ -222,6 +219,15 @@ export let methods = {
     },
     input: function(this: IVueControl, e: InputEvent): void {
         this.value = (e.target as HTMLInputElement).value;
+    },
+    down: function(this: IVueControl, e: MouseEvent | TouchEvent): void {
+        this.cgDown(e);
+        if (this.cgIsMouseAlsoTouchEvent(e)) {
+            return;
+        }
+        if (this.cgSelfPopOpen) {
+            this.cgHidePop();
+        }
     },
 
     scroll: function(this: IVueControl): void {
@@ -283,7 +289,7 @@ export let methods = {
             }
         }
     },
-    down: function(this: IVueControl, e: TouchEvent): void {
+    inputDown: function(this: IVueControl, e: TouchEvent): void {
         this.touchX = e.touches[0].clientX;
         this.touchY = e.touches[0].clientY;
         this.canTouch = false;
@@ -341,35 +347,15 @@ export let methods = {
         this.touchY = e.touches[0].clientY;
     },
 
-    showPop: function(this: IVueControl, e: MouseEvent | TouchEvent): void {
-        if (this.popOpen) {
-            // --- 本来就是展开状态，不做处理 ---
-            return;
-        }
-        // --- 显示本 pop ---
-        if (this.selfPop) {
-            this.popOpen = true;
-            this.popOptions = clickgo.form.showPop(this, e instanceof MouseEvent ? e.clientX : e.touches[0].clientX, e instanceof MouseEvent ? e.clientY : e.touches[0].clientY);
-        }
-    },
-    hidePop: function(this: IVueControl): void {
-        if (!this.popOpen) {
-            return;
-        }
-        this.popOpen = false;
-        if (this.selfPop?.itemPopShowing) {
-            this.selfPop.itemPopShowing.hidePop();
-        }
-    },
     contextmenu: function(this: IVueControl, e: MouseEvent): void {
         if (!navigator.clipboard) {
             e.stopPropagation();
             return;
         }
-        if (this.cgHasTouch) {
+        if (this.cgIsMouseAlsoTouchEvent(e)) {
             return;
         }
-        this.showPop(e);
+        this.cgShowPop(e);
     },
     select: function(this: IVueControl): void {
         let selectionStart = (this.$refs.text as unknown as HTMLTextAreaElement).selectionStart;
@@ -384,7 +370,7 @@ export let methods = {
         }
     },
     reselect: async function(this: IVueControl): Promise<void> {
-        await clickgo.tool.sleep(0);
+        await clickgo.tool.sleep(100);
         this.select();
     },
     execCmd: async function(this: IVueControl, ac: string): Promise<void> {
@@ -450,8 +436,7 @@ export let methods = {
 };
 
 export let mounted = function(this: IVueControl): void {
-    // --- 大小改变，会影响 scroll offset、client，不会影响 length ---
-    clickgo.dom.watchSize(this.$el, () => {
+    clickgo.dom.watchSize(this.$refs.text, async (): Promise<void> => {
         this.refreshClient();
     }, true);
     // --- 更新 length ---

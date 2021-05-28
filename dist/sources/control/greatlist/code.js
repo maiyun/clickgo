@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.unmounted = exports.mounted = exports.methods = exports.watch = exports.computed = exports.data = exports.props = void 0;
+exports.methods = exports.watch = exports.computed = exports.data = exports.props = void 0;
 exports.props = {
     'width': {
         'default': undefined
@@ -44,14 +44,6 @@ exports.props = {
 };
 exports.data = {
     'direction': 'v',
-    'itemPopShowing': undefined,
-    'popOpen': false,
-    'selfPop': undefined,
-    'popOptions': {
-        'left': '-5000px',
-        'top': '0px',
-        'zIndex': '0'
-    },
     'client': 0,
     'length': 0,
     'offset': 0,
@@ -219,16 +211,16 @@ exports.methods = {
         }
     },
     down: function (e) {
-        if (e instanceof MouseEvent && this.cgHasTouch) {
+        if (this.cgIsMouseAlsoTouchEvent(e)) {
             return;
         }
         this.cgDown(e);
-        if (this.popOpen) {
-            clickgo.form.hidePop(this);
+        if (this.cgSelfPopOpen) {
+            this.cgHidePop();
         }
         if (!this.itemDown) {
-            if (this.itemPopShowing) {
-                clickgo.form.hidePop(this.itemPopShowing);
+            if (this.cgChildPopItemShowing) {
+                this.cgChildPopItemShowing.cgHidePop();
             }
         }
         else {
@@ -236,7 +228,7 @@ exports.methods = {
         }
     },
     innerDown: function (e) {
-        if (e instanceof MouseEvent && this.cgHasTouch) {
+        if (this.cgIsMouseAlsoTouchEvent(e)) {
             return;
         }
         if (this.itemDown) {
@@ -254,12 +246,12 @@ exports.methods = {
                     this.valueData = this.isMulti ? [] : -1;
                     this.$emit('update:modelValue', this.valueData);
                 }
-                this.showPop(e);
+                this.cgShowPop(e);
             });
         }
     },
-    click: function () {
-        if (!this.cgHasTouch) {
+    click: function (e) {
+        if (!this.cgIsMouseAlsoTouchEvent(e)) {
             return;
         }
         if (!this.itemClick) {
@@ -273,37 +265,9 @@ exports.methods = {
         }
     },
     contextmenu: function (e) {
-        if (this.cgHasTouch) {
+        if (this.cgIsMouseAlsoTouchEvent(e)) {
             return;
         }
-        this.showPop(e);
-    },
-    showPop: function (e) {
-        if (this.selfPop) {
-            this.popOpen = true;
-            this.popOptions = clickgo.form.showPop(this, e instanceof MouseEvent ? e.clientX : e.touches[0].clientX, e instanceof MouseEvent ? e.clientY : e.touches[0].clientY);
-        }
-    },
-    hidePop: function () {
-        var _a;
-        if (!this.popOpen) {
-            return;
-        }
-        this.popOpen = false;
-        if ((_a = this.selfPop) === null || _a === void 0 ? void 0 : _a.itemPopShowing) {
-            this.selfPop.itemPopShowing.hidePop();
-        }
-    }
-};
-exports.mounted = function () {
-    let parent = this.cgParent();
-    if ((parent === null || parent === void 0 ? void 0 : parent.popOpen) !== undefined) {
-        parent.selfPop = this;
-    }
-};
-exports.unmounted = function () {
-    let parent = this.cgParent();
-    if ((parent === null || parent === void 0 ? void 0 : parent.selfPop) === this) {
-        parent.selfPop = null;
+        this.cgShowPop(e);
     }
 };

@@ -4,8 +4,6 @@ interface IClickGo {
     'rootPath': string;
     /** --- 当前 JS 文件的基路径 --- */
     'cgRootPath': string;
-    /** --- 是否有 touch 环境 --- */
-    'hasTouch': boolean;
     /** --- 是否是桌面环境 --- */
     'isNative': boolean;
     /** --- ClickGo 响应位置 --- */

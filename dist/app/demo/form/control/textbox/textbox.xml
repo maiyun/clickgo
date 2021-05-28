@@ -1,8 +1,8 @@
 <form width="350" height="350" title="Textbox">
     <layout direction="v" gutter="10" flex="1" style="padding: 10px;">
         <label>Text Length: {{value.length}}, Selection Start: {{selectionStart}}, Selection End: {{selectionEnd}}</label>
-        <label>Scroll Left: {{scrollLeft}}, Scroll Top: {{scrollTop}}, Length: {{length}}, Client: {{client}}</label>
-        <textbox v-model="value" :multi="multi" :disabled="disabled" :readonly="readonly" :password="password" :wrap="wrap" :line-height="lineHeight" :font-size="fontSize" :flex="multi ? 1 : undefined" v-model:scroll-left="scrollLeft" v-model:scroll-top="scrollTop" v-model:selection-start="selectionStart" v-model:selection-end="selectionEnd" @resize="client = $event" @change="length = $event">
+        <label>Scroll Left: {{scrollLeft}}, Scroll Top: {{scrollTop}}, Length: {{length}}, Client Height: {{clientHeight}}, Client Width: {{clientWidth}}</label>
+        <textbox v-model="value" :multi="multi" :disabled="disabled" :readonly="readonly" :password="password" :wrap="wrap" :line-height="lineHeight" :font-size="fontSize" :flex="multi ? 1 : undefined" v-model:scroll-left="scrollLeft" v-model:scroll-top="scrollTop" v-model:selection-start="selectionStart" v-model:selection-end="selectionEnd" @resize="clientHeight = $event" @resizen="clientWidth = $event" @change="length = $event">
             <menulist v-if="menu">
                 <menulist-item>Custom</menulist-item>
             </menulist>

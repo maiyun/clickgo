@@ -22,5 +22,5 @@ exports.props = {
     }
 };
 exports.data = {
-    'itemPopShowing': undefined
+    'cgSelfIsPopLayer': true
 };

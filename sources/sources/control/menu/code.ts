@@ -20,5 +20,5 @@ export let props = {
 };
 
 export let data = {
-    'itemPopShowing': undefined
+    'cgSelfIsPopLayer': true
 };

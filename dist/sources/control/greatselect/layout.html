@@ -1,10 +1,10 @@
-<div class="wrap" :tabindex="(!isDisabled && cgFocus) ? '0' : undefined" :style="{'width': cgWidthPx, 'height': cgHeightPx, 'left': left + 'px', 'top': top + 'px', 'z-index': zIndex, 'flex-grow': flex}" :class="[isDisabled ? 'cg-disabled' : undefined, popOpen && 'cg-pop-open', 'area-' + area, cgHover && 'hover', cgActive && 'active']" @click="cgTap" @mousedown="cgDown" @mouseup="cgUp" @mouseenter="cgEnter" @mouseleave="cgLeave" @touchstart="cgDown" @touchend="cgUp" @touchcancel="cgCancel" @dblclick="cgDblclick" @keydown="keydown">
+<div class="wrap" :tabindex="(!isDisabled && cgFocus) ? '0' : undefined" :style="{'width': cgWidthPx, 'height': cgHeightPx, 'left': left + 'px', 'top': top + 'px', 'z-index': zIndex, 'flex-grow': flex}" :class="[isDisabled ? 'cg-disabled' : undefined, cgSelfPopOpen && 'cg-pop-open', 'area-' + area, cgHover && 'hover', cgActive && 'active']" @click="cgTap" @mousedown="cgDown" @mouseup="cgUp" @mouseenter="cgEnter" @mouseleave="cgLeave" @touchstart="cgDown" @touchend="cgUp" @touchcancel="cgCancel" @dblclick="cgDblclick" @keydown="keydown">
     <div class="inner" @click="click($event, 'left')" :class="[direction]" :style="{'padding': padding && padding.replace(/([0-9]+)($| )/g, '$1px$2')}">
         <slot></slot>
     </div>
     <div class="arrow" @click="click($event, 'arrow')"></div>
     <teleport v-if="$slots.pop" to="#cg-pop-list">
-        <div class="pop" :class="[popOpen && 'open']" :style="popOptions">
+        <div class="pop" :class="[cgSelfPopOpen && 'open']" :style="cgPopPosition">
             <slot name="pop"></slot>
         </div>
     </teleport>

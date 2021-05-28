@@ -16,15 +16,7 @@ export let props = {
 };
 
 export let data = {
-    'popOpen': false,
-    'selfPop': undefined,
-    'greatlist': undefined,
-
-    'popOptions': {
-        'left': '-5000px',
-        'top': '0px',
-        'zIndex': '0'
-    }
+    'greatlist': undefined
 };
 
 export let computed = {
@@ -38,22 +30,23 @@ export let methods = {
         if (this.disabled) {
             return;
         }
-        clickgo.form.hidePop();
-        if (!this.cgHasTouch) {
-            // --- 电脑不响应本事件 ---
+        clickgo.form.hidePop(); // --- 此条主要用于 greatlist 的 pop 里，选定了就要隐藏 pop ---
+        if (!this.cgIsMouseAlsoTouchEvent(e)) {
+            // --- 本身 touch、或没发生 touch ---
+            // --- 也就是纯鼠标事件不响应（电脑模式不响应） ---
             return;
         }
-        // --- 手机 ---
         this.greatlist.itemClick = true;
-        if (this.greatlist.multi) {
-            this.greatlist.select(this.value, e.shiftKey, true);
+        // --- 手机 ---
+        if (this.greatlist?.multi) {
+            this.greatlist?.select(this.value, e.shiftKey, true);
         }
         else {
-            this.greatlist.select(this.value, e.shiftKey, e.ctrlKey);
+            this.greatlist?.select(this.value, e.shiftKey, e.ctrlKey);
         }
     },
     contextmenu: function(this: IVueControl, e: MouseEvent): void {
-        if (this.cgHasTouch) {
+        if (this.cgIsMouseAlsoTouchEvent(e)) {
             return;
         }
         if (this.disabled) {
@@ -61,32 +54,32 @@ export let methods = {
         }
         e.stopPropagation();
         e.preventDefault();
-        this.greatlist.showPop(e);
+        this.greatlist?.cgShowPop(e);
     },
     down: function(this: IVueControl, e: TouchEvent | MouseEvent): void {
-        if (e instanceof MouseEvent && this.cgHasTouch) {
+        if (this.cgIsMouseAlsoTouchEvent(e)) {
             return;
         }
         if (this.disabled) {
             return;
         }
         this.greatlist.itemDown = true;
-        if (this.popOpen) {
-            clickgo.form.hidePop(this);
+        if (this.cgSelfPopOpen) {
+            this.cgHidePop();
         }
-        else if (this.greatlist.itemPopShowing) {
+        else if (this.cgParentPopLayer.cgChildPopItemShowing) {
             // --- 判断别的 item 是否有展开 ---
-            clickgo.form.hidePop(this.greatlist.itemPopShowing);
+            this.cgParentPopLayer.cgChildPopItemShowing.cgHidePop();
         }
         if (e instanceof MouseEvent) {
             // --- 选择 ---
-            this.greatlist.select(this.value, e.shiftKey, e.ctrlKey);
+            this.greatlist?.select(this.value, e.shiftKey, e.ctrlKey);
         }
         else {
             // --- 长按触发 contextmenu ---
             clickgo.dom.bindLong(e, () => {
-                this.greatlist.select(this.value, e.shiftKey, e.ctrlKey);
-                this.greatlist.showPop(e);
+                this.greatlist?.select(this.value, e.shiftKey, e.ctrlKey);
+                this.greatlist?.showPop(e);
             });
         }
     },
@@ -96,16 +89,16 @@ export let methods = {
             return;
         }
         this.greatlist.itemClick = true;
-        if (this.cgHasTouch) {
+        if (this.cgIsMouseAlsoTouchEvent(e)) {
             // --- 手机的话选择（电脑已经在 down 事件中选择过了） ---
-            this.greatlist.select(this.value, e.shiftKey, e.ctrlKey);
+            this.greatlist?.select(this.value, e.shiftKey, e.ctrlKey);
         }
-        if (this.popOpen) {
+        if (this.cgSelfPopOpen) {
             // --- 本来是展开状态，就隐藏起来 ---
-            clickgo.form.hidePop(this);
+            this.cgHidePop();
             return;
         }
-        this.showPop(e);
+        this.cgShowPop(e);
     },
     controlContextmenu: function(this: IVueControl, e: MouseEvent): void {
         // --- 用于屏蔽 greatlist 的 pop ---
@@ -113,42 +106,17 @@ export let methods = {
         e.preventDefault();
     },
     controlDown: function(this: IVueControl, e: TouchEvent | MouseEvent): void {
-        if (e instanceof MouseEvent && this.cgHasTouch) {
+        if (this.cgIsMouseAlsoTouchEvent(e)) {
             return;
         }
         if (this.disabled) {
             return;
         }
-        this.greatlist.itemDown = true;
+        if (this.greatlist) {
+            this.greatlist.itemDown = true;
+        }
         if (e instanceof MouseEvent) {
-            this.greatlist.select(this.value, e.shiftKey, e.ctrlKey);
-        }
-    },
-
-    showPop: function(this: IVueControl, e: MouseEvent | TouchEvent): void {
-        if (this.popOpen) {
-            // --- 本来就是展开状态，不做处理 ---
-            return;
-        }
-        // --- 判断别的 item 是否有展开 ---
-        if (this.greatlist.itemPopShowing) {
-            clickgo.form.hidePop(this.greatlist.itemPopShowing);
-        }
-        // --- 所以直接显示本 pop  ---
-        this.greatlist.itemPopShowing = this;
-        this.popOpen = true;
-        this.popOptions = clickgo.form.showPop(this, e instanceof MouseEvent ? e.clientX : e.touches[0].clientX, e instanceof MouseEvent ? e.clientY : e.touches[0].clientY);
-    },
-    hidePop: function(this: IVueControl): void {
-        if (!this.popOpen) {
-            return;
-        }
-        this.popOpen = false;
-        if (this.greatlist.itemPopShowing === this) {
-            this.greatlist.itemPopShowing = undefined;
-        }
-        if (this.selfPop?.itemPopShowing) {
-            this.selfPop.itemPopShowing.hidePop();
+            this.greatlist?.select(this.value, e.shiftKey, e.ctrlKey);
         }
     }
 };
@@ -159,11 +127,4 @@ export let mounted = function(this: IVueControl): void {
         return;
     }
     this.greatlist = greatlist;
-};
-
-export let unmounted = function(this: IVueControl): void {
-    // --- 如果自己还在上层显示，则取消 ---
-    if (this === this.greatlist.itemPopShowing) {
-        clickgo.form.hidePop(this);
-    }
 };

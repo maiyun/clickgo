@@ -26,7 +26,6 @@ let tmpCgRootPath: string = '';
 const clickgo: IClickGo = {
     'rootPath': window.location.href.slice(0, window.location.href.lastIndexOf('/') + 1),
     'cgRootPath': tmpCgRootPath,
-    'hasTouch': ('ontouchstart' in document.documentElement) ? true : false,
     'isNative': navigator.userAgent.toLowerCase().includes('electron') ? true : false,
     'position': {
         'left': null,
@@ -131,8 +130,3 @@ tmpScript.addEventListener('load', function(): void {
     });
 });
 document.getElementsByTagName('head')[0].insertAdjacentElement('afterend', tmpScript);
-
-// --- 优化手机点击行为 ---
-document.addEventListener('touchstart', function() {
-    return;
-});

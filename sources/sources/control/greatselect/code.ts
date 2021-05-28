@@ -39,63 +39,34 @@ export let computed = {
     }
 };
 
-export let data = {
-    'popOpen': false,
-    'selfPop': undefined,
-
-    'popOptions': {
-        'left': '-5000px',
-        'top': '0px',
-        'width': '500px',
-        'zIndex': '0'
-    }
-};
-
 export let methods = {
     keydown: function(this: IVueControl, e: KeyboardEvent): void {
         if (e.keyCode !== 13) {
             return;
         }
-        if (this.popOpen) {
-            clickgo.form.hidePop(this);
+        if (this.cgSelfPopOpen) {
+            this.cgHidePop();
             return;
         }
-        this.showPop(e, this.area);
+        this.cgShowPop('v', { width: this.$el.offsetWidth });
     },
     click: function(this: IVueControl, e: MouseEvent, area: 'left' | 'arrow'): void {
         if (this.disabled) {
             return;
         }
+        this.cgTap(e);
+        if (this.cgSelfPopOpen) {
+            this.cgHidePop();
+            return;
+        }
         if (this.area === 'arrow' && area === 'left') {
             // --- 当前只能箭头展开，并且点击的还是不能展开的左侧 ---
-            if (this.popOpen) {
-                clickgo.form.hidePop(this);
-            }
-            this.cgTap(e);
             return;
         }
-        this.showPop();
-        this.cgTap(e);
-    },
-
-    showPop: function(this: IVueControl): void {
-        if (this.popOpen) {
-            // --- 本来就是展开状态，隐藏起来 ---
-            clickgo.form.hidePop(this);
-            return;
-        }
-        // --- 显示本 pop  ---
-        this.popOpen = true;
-        this.popOptions = clickgo.form.showPop(this, 'v');
-        this.popOptions.width = this.$el.offsetWidth + 'px';
-    },
-    hidePop: function(this: IVueControl): void {
-        if (!this.popOpen) {
-            return;
-        }
-        this.popOpen = false;
-        if (this.selfPop?.itemPopShowing) {
-            this.selfPop.itemPopShowing.hidePop();
-        }
+        this.cgShowPop('v', { width: this.$el.offsetWidth });
     }
+};
+
+export let mounted = function(this: IVueControl): void {
+    this.cgPopPosition.width = '800px';
 };

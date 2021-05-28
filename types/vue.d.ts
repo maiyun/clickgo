@@ -73,8 +73,6 @@ interface IVueForm extends IVue {
     'cgFocus': boolean;
     /** --- 当前窗体的路径 --- */
     'cgPath': string;
-    /** --- 当前环境是否有 touch 事件 --- */
-    'cgHasTouch': boolean;
     /** --- 当前的 local name --- */
     'cgLocal': string;
     l(key: string): string;
@@ -123,8 +121,21 @@ interface IVueControl extends IVue {
     'cgPath': string;
     /** --- 是否是嵌套组件 --- */
     'cgNest': boolean;
-    /** --- 当前环境是否有 touch 事件 --- */
-    'cgHasTouch': boolean;
+    /** --- 自己是不是就是 pop 层 --- */
+    'cgSelfIsPopLayer': boolean;
+    /** --- 自己下面的正在显示的含有 pop 层的 control --- */
+    'cgChildPopItemShowing': IVueControl | undefined;
+    /** --- 自己的 pop 层的对象 --- */
+    'cgSelfPop': IVueControl | undefined;
+    /** --- 当前的 selfPop 是否显示 --- */
+    'cgSelfPopOpen': boolean;
+    /** --- pop 最终的显示位置 --- */
+    'cgPopPosition': {
+        'left': string;
+        'top': string;
+        'zIndex': string;
+        [key: string]: string;
+    };
     /** --- 当前是否是真实 hover 状态 --- */
     'cgRealHover': boolean;
     /** --- 当前是否是 active 状态 --- */
@@ -137,8 +148,15 @@ interface IVueControl extends IVue {
     'cgHeightPx': string | undefined;
     /** --- 当前 task 的 local 值 --- */
     'cgLocal': string;
+    /** --- 上级最近的一层的 pop layer 组件 --- */
+    'cgParentPopLayer': IVueControl;
     /** --- 获取语言内容 --- */
     l(key: string, data?: Record<string, Record<string, string>>): string;
+    /**
+     * --- 判断当前的 mosedown、click 事件是否是 touch 触发的，如果当前就是 touch 则直接返回 false ---
+     * @param e 鼠标或触摸事件对象
+     */
+    cgIsMouseAlsoTouchEvent(e: MouseEvent | TouchEvent): boolean;
     /**
      * --- 控件默认的 down 事件绑定 ---
      * @param e 鼠标或触摸事件对象
@@ -204,8 +222,18 @@ interface IVueControl extends IVue {
      */
     cgParent(): IVueControl | null;
     /**
-     * 根据 control name 查询上级序列 ---
+     * --- 根据 control name 查询上级序列 ---
      * @param controlName 控件名称
      */
     cgFindParent(controlName: string): IVueControl | null;
+    /**
+     * --- 显示 pop ---
+     * @param direction 要显示方向（以 $el 为准的 h 水平和 v 垂直）或坐标
+     * @param size 显示的 pop 定义自定义宽度，可省略
+     */
+    cgShowPop(direction: 'h' | 'v' | MouseEvent | TouchEvent | { x: number; y: number; }, size?: { width?: number; height?: number; }): void;
+    /**
+     * --- 隐藏 pop ---
+     */
+    cgHidePop(): void;
 }

@@ -194,7 +194,7 @@ export let methods = {
         }
     },
     down: function(this: IVueControl, e: MouseEvent | TouchEvent): void {
-        if (e instanceof MouseEvent && clickgo.hasTouch) {
+        if (this.cgIsMouseAlsoTouchEvent(e)) {
             return;
         }
         /*

@@ -1,12 +1,12 @@
-<div class="wrap" :class="[popOpen && 'cg-pop-open', isDisabled && 'cg-disabled', cgHover && 'hover', cgActive && 'active']" :style="{'width': cgWidthPx, 'height': cgHeightPx, 'left': left + 'px', 'top': top + 'px', 'z-index': zIndex, 'flex-grow': flex}" @click="cgTap" @mousedown="down" @mouseup="cgUp" @mouseenter="cgEnter" @mouseleave="cgLeave" @touchstart="down" @touchend="cgUp" @touchcancel="cgCancel" @dblclick="cgDblclick">
+<div class="wrap" :class="[cgSelfPopOpen && 'cg-pop-open', isDisabled && 'cg-disabled', cgHover && 'hover', cgActive && 'active']" :style="{'width': cgWidthPx, 'height': cgHeightPx, 'left': left + 'px', 'top': top + 'px', 'z-index': zIndex, 'flex-grow': flex}" @click="cgTap" @mousedown="down" @mouseup="cgUp" @mouseenter="cgEnter" @mouseleave="cgLeave" @touchstart="down" @touchend="cgUp" @touchcancel="cgCancel" @dblclick="cgDblclick">
     <div class="inner" @click="click" @contextmenu="contextmenu" @mousedown="innerDown" @touchstart="innerDown">
         <cg-greatview :same="isSame" :data="data" :adaptation="isAdaptation" v-slot="d" direction="v" v-model:scroll-top="offset" :flex="isAdaptation ? undefined : 1" @resize="client = $event" @change="length = $event">
             <slot :row="d.row" :index="d.index"></slot>
         </cg-greatview>
     </div>
-    <cg-scroll v-show="length > client" :width="16" :length="length" :client="client" v-model:scroll-offset="offset" :plain="cgHasTouch"></cg-scroll>
+    <cg-scroll v-show="length > client" :width="16" :length="length" :client="client" v-model:scroll-offset="offset" float></cg-scroll>
     <teleport v-if="$slots.pop" to="#cg-pop-list">
-        <div class="pop" :class="[popOpen && 'open']" :style="popOptions">
+        <div class="pop" :class="[cgSelfPopOpen && 'open']" :style="cgPopPosition">
             <slot name="pop"></slot>
         </div>
     </teleport>

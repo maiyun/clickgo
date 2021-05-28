@@ -52,6 +52,28 @@ export function setGlobalCursor(type?: string): void {
     }
 }
 
+/** --- 最后一次 touchstart 的时间戳 */
+let lastTouchTime: number = 0;
+// --- 添加 touchstart 事件，既优化了点击行为，也记录了 touch 的时间戳信息 ---
+document.addEventListener('touchstart', function() {
+    lastTouchTime = Date.now();
+    return;
+});
+
+/**
+ * --- 判断当前的 mosedown、click 事件是否是 touch 触发的，如果当前就是 touch 则直接返回 false ---
+ */
+export function isMouseAlsoTouchEvent(e: MouseEvent | TouchEvent): boolean {
+    if (e instanceof TouchEvent) {
+        return false;
+    }
+    let now = Date.now();
+    if (now - lastTouchTime < 500) {
+        return true;
+    }
+    return false;
+}
+
 /**
  * --- 创建任务时连同一起创建的 style 标签 ---
  * @param taskId 任务 id
@@ -184,17 +206,17 @@ export function getSize(el: HTMLElement): ICGDomSize {
  * @param el 要监视的大小
  * @param cb 回调函数
  */
-export function watchSize(el: HTMLElement, cb: (size: ICGDomSize) => void, immediate: boolean = false): ICGDomWatchDom {
+export function watchSize(el: HTMLElement, cb: (size: ICGDomSize) => Promise<void> | void, immediate: boolean = false): ICGDomWatchDom {
     let fsize = getSize(el);
     if (immediate) {
-        cb(fsize);
+        cb(fsize) as void;
     }
     const resizeObserver = new (window as any).ResizeObserver(function(): void {
         let size = getSize(el);
         if (Number.isNaN(size.clientWidth)) {
             return;
         }
-        cb(size);
+        cb(size) as void;
     });
     resizeObserver.observe(el);
     return {
@@ -271,7 +293,7 @@ export function watchDom(el: HTMLElement, cb: (mutations: MutationRecord[], obse
  * @param opt 回调选项
  */
 export function bindDown(oe: MouseEvent | TouchEvent, opt: { 'down'?: (e: MouseEvent | TouchEvent) => void; 'start'?: (e: MouseEvent | TouchEvent) => void | boolean; 'move'?: (e: MouseEvent | TouchEvent) => void | boolean; 'up'?: (e: MouseEvent | TouchEvent) => void; 'end'?: (e: MouseEvent | TouchEvent) => void; }): void {
-    if (oe instanceof MouseEvent && clickgo.hasTouch) {
+    if (isMouseAlsoTouchEvent(oe)) {
         return;
     }
     /** --- 上一次的坐标 --- */
@@ -350,6 +372,9 @@ export function bindDown(oe: MouseEvent | TouchEvent, opt: { 'down'?: (e: MouseE
 }
 
 export function bindLong(e: MouseEvent | TouchEvent, long: (e: MouseEvent | TouchEvent) => void): void {
+    if (isMouseAlsoTouchEvent(e)) {
+        return;
+    }
     /** --- 上一次的坐标 --- */
     let tx: number = e instanceof MouseEvent ? e.clientX : e.touches[0].clientX;
     let ty: number = e instanceof MouseEvent ? e.clientY : e.touches[0].clientY;
@@ -391,6 +416,14 @@ export let is = Vue.reactive({
  * @param opt 回调选项
  */
 export function bindMove(e: MouseEvent | TouchEvent, opt: { 'areaObject'?: HTMLElement | IVue; 'left'?: number; 'top'?: number; 'right'?: number; 'bottom'?: number; 'offsetLeft'?: number; 'offsetTop'?: number; 'offsetRight'?: number; 'offsetBottom'?: number; 'objectLeft'?: number; 'objectTop'?: number; 'objectWidth'?: number; 'objectHeight'?: number; 'object'?: HTMLElement | IVue; 'showRect'?: boolean; 'start'?: (x: number, y: number) => void | boolean; 'move'?: (ox: number, oy: number, x: number, y: number, border: TCGBorder) => void; 'up'?: () => void; 'end'?: (moveTimes: Array<{ 'time': number; 'ox': number; 'oy': number; }>) => void; 'borderIn'?: (x: number, y: number, border: TCGBorder) => void; 'borderOut'?: () => void; }): { 'left': number; 'top': number; 'right': number; 'bottom': number; } {
+    if (isMouseAlsoTouchEvent(e)) {
+        return {
+            'left': 0,
+            'top': 0,
+            'right': 0,
+            'bottom': 0
+        };
+    }
     is.move = true;
     setGlobalCursor(getComputedStyle(e.target as Element).cursor);
     /** --- 上一次的坐标 --- */
@@ -694,6 +727,9 @@ export function bindMove(e: MouseEvent | TouchEvent, opt: { 'areaObject'?: HTMLE
  * @param endCb 结束时的回调
  */
 export function bindResize(e: MouseEvent | TouchEvent, opt: { 'objectLeft'?: number; 'objectTop'?: number; 'objectWidth'?: number; 'objectHeight'?: number; 'object'?: HTMLElement | IVue; 'minWidth'?: number; 'minHeight'?: number; 'maxWidth'?: number; 'maxHeight'?: number; 'border': TCGBorder; 'start'?: (x: number, y: number) => void | boolean; 'move'?: (left: number, top: number, width: number, height: number, x: number, y: number, border: TCGBorder) => void; 'end'?: () => void; }): void {
+    if (isMouseAlsoTouchEvent(e)) {
+        return;
+    }
     opt.minWidth = opt.minWidth ?? 0;
     opt.minHeight = opt.minHeight ?? 0;
     /** --- 当前鼠标位置 x --- */
@@ -791,8 +827,8 @@ export function bindResize(e: MouseEvent | TouchEvent, opt: { 'objectLeft'?: num
  * @param el 当前标签
  * @param cn 要查找的 class 名/列表
  */
-export function findParentByClass(el: HTMLElement, cn: string | string[]): HTMLElement | null {
-    if (typeof cn === 'string') {
+export function findParentByClass(el: HTMLElement, cn: string | RegExp | Array<string | RegExp>): HTMLElement | null {
+    if (!Array.isArray(cn)) {
         cn = [cn];
     }
     let parent = el.parentNode as HTMLElement;
@@ -801,8 +837,17 @@ export function findParentByClass(el: HTMLElement, cn: string | string[]): HTMLE
             break;
         }
         for (let it of cn) {
-            if (parent.classList?.contains(it)) {
-                return parent;
+            if (typeof it === 'string') {
+                if (parent.classList.contains(it)) {
+                    return parent;
+                }
+            }
+            else {
+                for (let cl of parent.classList) {
+                    if (it.test(cl)) {
+                        return parent;
+                    }
+                }
             }
         }
         parent = parent.parentNode as HTMLElement;

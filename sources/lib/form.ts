@@ -343,32 +343,45 @@ export function removeFromPop(el: HTMLElement): void {
 /**
  * --- 获取 pop 显示出来的坐标并报系统全局记录 ---
  * @param pop 要显示 pop 的母层对象
- * @param x 要显示的 left，或根据 $el 的方向，h 为水平，v 为垂直
- * @param y 要显示的 top
+ * @param direction 要显示方向（以 $el 为准的 h 水平和 v 垂直）或坐标
+ * @param size 显示的 pop 定义自定义宽度，可省略
  */
-export function showPop(pop: IVueControl, x: number | 'h' | 'v', y: number = 0): { 'left': string; 'top': string; 'zIndex': string; } {
+export function showPop(pop: IVueControl, direction: 'h' | 'v' | MouseEvent | TouchEvent | { x: number; y: number; }, size: { width?: number; height?: number; } = {}): void {
+    if (pop.cgSelfPopOpen) {
+        return;
+    }
     if (!clickgo.dom.findParentByClass(pop.$el, 'cg-pop-list')) {
         // --- 本层不是 pop，因此要弹出 current pop ---
         if (popShowing) {
-            popShowing.hidePop();
+            popShowing.cgHidePop();
         }
         popShowing = pop;
     }
+    // --- 显示前一些变量的处理 ---
+    pop.cgSelfPopOpen = true;
+    // --- 有本 layer 的其他子层显示的话则隐藏 ---
+    pop.cgParentPopLayer.cgChildPopItemShowing?.cgHidePop();
+    // --- 然后将本 layer 的子层显示设置为自己 ---
+    pop.cgParentPopLayer.cgChildPopItemShowing = pop;
     // --- 没有子层直接返回 ---
-    if (pop.selfPop === undefined) {
-        return {
+    if (pop.cgSelfPop === undefined) {
+        pop.cgPopPosition = {
             'left': '-5000px',
             'top': '0px',
             'zIndex': '0'
         };
+        return;
     }
     // --- 获取限定区域 ---
     let position = clickgo.getPosition();
+    // --- 最终 pop 的大小 ---
+    let width = size.width ?? pop.cgSelfPop.$el.offsetWidth;
+    let height = size.height ?? pop.cgSelfPop.$el.offsetHeight;
     // --- 最终显示位置 ---
     let left: number, top: number;
-    if (typeof x === 'string') {
+    if (typeof direction === 'string') {
         let bcr = pop.$el.getBoundingClientRect();
-        if (x === 'v') {
+        if (direction === 'v') {
             // --- 垂直弹出 ---
             left = bcr.left;
             top = bcr.top + bcr.height;
@@ -379,36 +392,50 @@ export function showPop(pop: IVueControl, x: number | 'h' | 'v', y: number = 0):
             top = bcr.top - 2;
         }
         // --- 检查水平是否出框 ---
-        if (pop.selfPop.$el.offsetWidth + left > position.width) {
-            if (x === 'v') {
+        if (width + left > position.width) {
+            if (direction === 'v') {
                 // --- 垂直弹出 ---
-                left = position.width - pop.selfPop.$el.offsetWidth;
+                left = position.width - width;
             }
             else {
                 // --- 水平弹出，右边位置不够弹到左边 ---
-                left = bcr.left - pop.selfPop.$el.offsetWidth + 2;
+                left = bcr.left - width + 2;
             }
         }
         // --- 检测垂直是否出框 ---
-        if (pop.selfPop.$el.offsetHeight + top > position.height) {
-            if (x === 'v') {
-                top = bcr.top - pop.selfPop.$el.offsetHeight;
+        if (height + top > position.height) {
+            if (direction === 'v') {
+                top = bcr.top - height;
             }
             else {
-                top = position.height - pop.selfPop.$el.offsetHeight;
+                top = position.height - height;
             }
         }
     }
     else {
+        let x: number;
+        let y: number;
+        if (direction instanceof MouseEvent) {
+            x = direction.clientX;
+            y = direction.clientY;
+        }
+        else if (direction instanceof TouchEvent) {
+            x = direction.touches[0].clientX;
+            y = direction.touches[0].clientY;
+        }
+        else {
+            x = direction.x;
+            y = direction.y;
+        }
         left = x + 5;
         top = y + 7;
         // --- 水平 ---
-        if (pop.selfPop.$el.offsetWidth + left > position.width) {
-            left = x - pop.selfPop.$el.offsetWidth - 5;
+        if (width + left > position.width) {
+            left = x - width - 5;
         }
         // --- 垂直 ---
-        if (pop.selfPop.$el.offsetHeight + top > position.height) {
-            top = y - pop.selfPop.$el.offsetHeight - 5;
+        if (height + top > position.height) {
+            top = y - height - 5;
         }
     }
     if (left < 0) {
@@ -417,11 +444,17 @@ export function showPop(pop: IVueControl, x: number | 'h' | 'v', y: number = 0):
     if (top < 0) {
         top = 0;
     }
-    return {
+    pop.cgPopPosition = {
         'left': left + 'px',
         'top': top + 'px',
         'zIndex': (++lastPopZIndex).toString()
     };
+    if (size.width) {
+        pop.cgPopPosition.width = size.width + 'px';
+    }
+    if (size.height) {
+        pop.cgPopPosition.width = size.height + 'px';
+    }
 }
 
 /**
@@ -432,13 +465,28 @@ export function hidePop(pop: IVueControl | null = null): void {
         if (!popShowing) {
             return;
         }
-        pop = popShowing;
+        if (!popShowing.cgSelfPopOpen) {
+            return;
+        }
+        popShowing.cgHidePop();
+        // --- cgHidePop 中会自动执行下面的（会被执行 hidePop(pop)） ---
+        return;
+    }
+    if (!pop.cgSelfPopOpen) {
+        return;
+    }
+    pop.cgSelfPopOpen = false;
+    if (pop.cgParentPopLayer.cgChildPopItemShowing === pop) {
+    // --- 如果在母层上还显示着的 pop 层是自己，则注销他，因为自己已经隐藏 ---
+        pop.cgParentPopLayer.cgChildPopItemShowing = undefined;
+    }
+    if (pop.cgSelfPop?.cgChildPopItemShowing) {
+        // --- 如果自己的 pop 还显示着 pop，也要一并 hidePop ---
+        pop.cgSelfPop.cgChildPopItemShowing.cgHidePop();
+    }
+    if (pop === popShowing) {
         popShowing = null;
     }
-    else if (pop === popShowing) {
-        popShowing = null;
-    }
-    pop.hidePop();
 }
 
 /**
@@ -446,7 +494,7 @@ export function hidePop(pop: IVueControl | null = null): void {
  * @param e 事件对象
  */
 export function doFocusAndPopEvent(e: MouseEvent | TouchEvent): void {
-    if (e instanceof MouseEvent && clickgo.hasTouch) {
+    if (clickgo.dom.isMouseAlsoTouchEvent(e)) {
         return;
     }
     let target = e.target;
@@ -474,12 +522,8 @@ export function doFocusAndPopEvent(e: MouseEvent | TouchEvent): void {
     hidePop();
     changeFocus();
 }
-if ('ontouchstart' in document.documentElement) {
-    window.addEventListener('touchstart', doFocusAndPopEvent);
-}
-else {
-    window.addEventListener('mousedown', doFocusAndPopEvent);
-}
+document.addEventListener('touchstart', doFocusAndPopEvent);
+document.addEventListener('mousedown', doFocusAndPopEvent);
 
 /**
  * --- 移除一个 form（关闭窗口） ---
@@ -652,7 +696,19 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
             if (data.cgNest === undefined) {
                 data.cgNest = false;
             }
-            data.cgHasTouch = clickgo.hasTouch;
+            // --- pop start ---
+            if (data.cgSelfIsPopLayer === undefined) {
+                data.cgSelfIsPopLayer = false;
+            }
+            data.cgChildPopItemShowing = undefined;
+            data.cgSelfPop = undefined;
+            data.cgSelfPopOpen = false;
+            data.cgPopPosition = {
+                'left': '-5000px',
+                'top': '0px',
+                'zIndex': '0'
+            };
+            // --- pop end ---
             data.cgRealHover = false;
             data.cgActive = false;
             // --- 预设 computed ---
@@ -680,11 +736,27 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
                     return parent ? (parent.direction === 'v' ? '0' : undefined) : undefined;
                 }
             };
-            computed.cgLocal = function(this: IVueForm): string {
+            computed.cgLocal = function(this: IVueControl): string {
                 if (clickgo.task.list[this.taskId].local.name === '') {
                     return clickgo.core.config.local;
                 }
                 return clickgo.task.list[this.taskId].local.name;
+            };
+            // --- 上级最近的一层的 pop layer 组件 ---
+            computed.cgParentPopLayer = function(this: IVueControl): IVueControl {
+                let parent = this.$parent;
+                while (true) {
+                    if (!parent) {
+                        return this;
+                    }
+                    if (parent.controlName === 'form') {
+                        return parent;
+                    }
+                    if (parent.cgSelfIsPopLayer) {
+                        return parent;
+                    }
+                    parent = parent.$parent;
+                }
             };
             // --- 预设 methods ---
             // --- 获取语言 ---
@@ -699,8 +771,11 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
                     return 'LocaleError';
                 }
             };
+            methods.cgIsMouseAlsoTouchEvent = function(e: MouseEvent | TouchEvent): boolean {
+                return clickgo.dom.isMouseAlsoTouchEvent(e);
+            };
             methods.cgDown = function(this: IVueControl, e: MouseEvent | TouchEvent) {
-                if (e instanceof MouseEvent && clickgo.hasTouch) {
+                if (this.cgIsMouseAlsoTouchEvent(e)) {
                     return;
                 }
                 if (e instanceof TouchEvent) {
@@ -735,14 +810,14 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
                 this.$emit('up', e);
             };
             methods.cgEnter = function(this: IVueControl, e: MouseEvent) {
-                if (this.cgHasTouch) {
+                if (this.cgIsMouseAlsoTouchEvent(e)) {
                     return;
                 }
                 this.cgRealHover = true;
                 this.$emit('enter', e);
             };
             methods.cgLeave = function(this: IVueControl, e: MouseEvent) {
-                if (this.cgHasTouch) {
+                if (!this.cgRealHover) {
                     return;
                 }
                 this.cgRealHover = false;
@@ -838,6 +913,17 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
                     parent = parent.$parent;
                 }
             };
+            // --- pop 相关操作 ---
+            if (!methods.cgShowPop) {
+                methods.cgShowPop = function(this: IVueControl, direction: 'h' | 'v' | MouseEvent | TouchEvent | { x: number; y: number; }, size?: { width?: number; height?: number; }): void {
+                    clickgo.form.showPop(this, direction, size);
+                };
+            }
+            if (!methods.cgHidePop) {
+                methods.cgHidePop = function(this: IVueControl): void {
+                    clickgo.form.hidePop(this);
+                };
+            }
             // --- 组成 component ---
             components['cg-' + name] = {
                 'template': layout,
@@ -852,8 +938,15 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
                 'beforeCreate': beforeCreate,
                 'created': created,
                 'beforeMount': beforeMount,
-                'mounted': async function(this: IVue) {
+                'mounted': async function(this: IVueControl) {
                     await this.$nextTick();
+                    // --- 检测本控件是否是 pop 层的控件 ---
+                    if ((this.$el.parentNode?.parentNode as HTMLDivElement | undefined)?.id === 'cg-pop-list') {
+                        this.cgSelfIsPopLayer = true;
+                        if (this.$parent) {
+                            this.$parent.cgSelfPop = this;
+                        }
+                    }
                     mounted?.call(this);
                 },
                 'beforeUpdate': beforeUpdate,
@@ -861,8 +954,22 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
                     await this.$nextTick();
                     updated?.call(this);
                 },
-                'beforeUnmount': beforeUnmount,
-                'unmounted': unmounted
+                'beforeUnmount': function(this: IVueControl) {
+                    beforeUnmount?.call(this);
+                    // --- before 不能 nextTick ---
+                    // --- 如果自己是 pop 层并且有上层，则吧上层的 cgSelfPop 注销 ---
+                    if (this.cgSelfIsPopLayer && this.$parent) {
+                        this.$parent.cgSelfPop = undefined;
+                    }
+                    // --- 如果自己还在上层显示，则取消 ---
+                    if (this.cgParentPopLayer.cgChildPopItemShowing === this) {
+                        this.cgHidePop();
+                    }
+                },
+                'unmounted': async function(this: IVueControl) {
+                    await this.$nextTick();
+                    unmounted?.call(this);
+                }
             };
         }
     }
@@ -951,7 +1058,6 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
     data.cgPath = opt.file ?? opt.path ?? '/';
     data._prep = prep;
     data._customZIndex = false;
-    data.cgHasTouch = clickgo.hasTouch;
     if (opt.topMost) {
         data._topMost = true;
     }

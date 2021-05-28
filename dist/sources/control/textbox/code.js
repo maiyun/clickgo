@@ -109,6 +109,10 @@ exports.watch = {
         handler: function () {
             return __awaiter(this, void 0, void 0, function* () {
                 yield this.$nextTick();
+                clickgo.dom.watchSize(this.$refs.text, () => __awaiter(this, void 0, void 0, function* () {
+                    this.refreshLength();
+                    this.refreshClient();
+                }), true);
                 this.refreshLength();
                 this.refreshClient();
                 this.refreshScroll();
@@ -185,13 +189,6 @@ exports.data = {
     'touchX': 0,
     'touchY': 0,
     'canTouch': false,
-    'popOpen': false,
-    'selfPop': undefined,
-    'popOptions': {
-        'left': '-5000px',
-        'top': '0px',
-        'zIndex': '0'
-    },
     'localData': {
         'en-us': {
             'copy': 'Copy',
@@ -227,6 +224,15 @@ exports.methods = {
     },
     input: function (e) {
         this.value = e.target.value;
+    },
+    down: function (e) {
+        this.cgDown(e);
+        if (this.cgIsMouseAlsoTouchEvent(e)) {
+            return;
+        }
+        if (this.cgSelfPopOpen) {
+            this.cgHidePop();
+        }
     },
     scroll: function () {
         this.refreshScroll();
@@ -277,7 +283,7 @@ exports.methods = {
             }
         }
     },
-    down: function (e) {
+    inputDown: function (e) {
         this.touchX = e.touches[0].clientX;
         this.touchY = e.touches[0].clientY;
         this.canTouch = false;
@@ -324,34 +330,15 @@ exports.methods = {
         this.touchX = e.touches[0].clientX;
         this.touchY = e.touches[0].clientY;
     },
-    showPop: function (e) {
-        if (this.popOpen) {
-            return;
-        }
-        if (this.selfPop) {
-            this.popOpen = true;
-            this.popOptions = clickgo.form.showPop(this, e instanceof MouseEvent ? e.clientX : e.touches[0].clientX, e instanceof MouseEvent ? e.clientY : e.touches[0].clientY);
-        }
-    },
-    hidePop: function () {
-        var _a;
-        if (!this.popOpen) {
-            return;
-        }
-        this.popOpen = false;
-        if ((_a = this.selfPop) === null || _a === void 0 ? void 0 : _a.itemPopShowing) {
-            this.selfPop.itemPopShowing.hidePop();
-        }
-    },
     contextmenu: function (e) {
         if (!navigator.clipboard) {
             e.stopPropagation();
             return;
         }
-        if (this.cgHasTouch) {
+        if (this.cgIsMouseAlsoTouchEvent(e)) {
             return;
         }
-        this.showPop(e);
+        this.cgShowPop(e);
     },
     select: function () {
         let selectionStart = this.$refs.text.selectionStart;
@@ -367,7 +354,7 @@ exports.methods = {
     },
     reselect: function () {
         return __awaiter(this, void 0, void 0, function* () {
-            yield clickgo.tool.sleep(0);
+            yield clickgo.tool.sleep(100);
             this.select();
         });
     },
@@ -434,9 +421,9 @@ exports.methods = {
     }
 };
 exports.mounted = function () {
-    clickgo.dom.watchSize(this.$el, () => {
+    clickgo.dom.watchSize(this.$refs.text, () => __awaiter(this, void 0, void 0, function* () {
         this.refreshClient();
-    }, true);
+    }), true);
     this.refreshLength();
     this.$refs.text.scrollTop = this.scrollTop;
     this.$refs.text.scrollLeft = this.scrollLeft;

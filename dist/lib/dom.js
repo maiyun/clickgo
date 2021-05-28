@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.siblings = exports.findParentByClass = exports.bindResize = exports.bindMove = exports.is = exports.bindLong = exports.bindDown = exports.watchDom = exports.watchSize = exports.getSize = exports.getStyleCount = exports.removeStyle = exports.pushStyle = exports.removeFromStyleList = exports.createToStyleList = exports.setGlobalCursor = void 0;
+exports.siblings = exports.findParentByClass = exports.bindResize = exports.bindMove = exports.is = exports.bindLong = exports.bindDown = exports.watchDom = exports.watchSize = exports.getSize = exports.getStyleCount = exports.removeStyle = exports.pushStyle = exports.removeFromStyleList = exports.createToStyleList = exports.isMouseAlsoTouchEvent = exports.setGlobalCursor = void 0;
 let styleList = document.createElement('div');
 styleList.style.display = 'none';
 document.getElementsByTagName('body')[0].appendChild(styleList);
@@ -32,6 +32,22 @@ function setGlobalCursor(type) {
     }
 }
 exports.setGlobalCursor = setGlobalCursor;
+let lastTouchTime = 0;
+document.addEventListener('touchstart', function () {
+    lastTouchTime = Date.now();
+    return;
+});
+function isMouseAlsoTouchEvent(e) {
+    if (e instanceof TouchEvent) {
+        return false;
+    }
+    let now = Date.now();
+    if (now - lastTouchTime < 500) {
+        return true;
+    }
+    return false;
+}
+exports.isMouseAlsoTouchEvent = isMouseAlsoTouchEvent;
 function createToStyleList(taskId) {
     styleList.insertAdjacentHTML('beforeend', `<div id="cg-style-task${taskId}"><style class="cg-style-global"></style><div class="cg-style-theme"></div><div class="cg-style-control"></div><div class="cg-style-form"></div></div>`);
 }
@@ -198,7 +214,7 @@ function watchDom(el, cb, mode = 'default', immediate = false) {
 exports.watchDom = watchDom;
 function bindDown(oe, opt) {
     var _a;
-    if (oe instanceof MouseEvent && clickgo.hasTouch) {
+    if (isMouseAlsoTouchEvent(oe)) {
         return;
     }
     let ox, oy;
@@ -273,6 +289,9 @@ function bindDown(oe, opt) {
 }
 exports.bindDown = bindDown;
 function bindLong(e, long) {
+    if (isMouseAlsoTouchEvent(e)) {
+        return;
+    }
     let tx = e instanceof MouseEvent ? e.clientX : e.touches[0].clientX;
     let ty = e instanceof MouseEvent ? e.clientY : e.touches[0].clientY;
     let ox = 0;
@@ -308,6 +327,14 @@ exports.is = Vue.reactive({
 });
 function bindMove(e, opt) {
     var _a, _b, _c, _d;
+    if (isMouseAlsoTouchEvent(e)) {
+        return {
+            'left': 0,
+            'top': 0,
+            'right': 0,
+            'bottom': 0
+        };
+    }
     exports.is.move = true;
     setGlobalCursor(getComputedStyle(e.target).cursor);
     let tx, ty;
@@ -580,6 +607,9 @@ function bindMove(e, opt) {
 exports.bindMove = bindMove;
 function bindResize(e, opt) {
     var _a, _b;
+    if (isMouseAlsoTouchEvent(e)) {
+        return;
+    }
     opt.minWidth = (_a = opt.minWidth) !== null && _a !== void 0 ? _a : 0;
     opt.minHeight = (_b = opt.minHeight) !== null && _b !== void 0 ? _b : 0;
     let x = e instanceof MouseEvent ? e.clientX : e.touches[0].clientX;
@@ -664,8 +694,7 @@ function bindResize(e, opt) {
 }
 exports.bindResize = bindResize;
 function findParentByClass(el, cn) {
-    var _a;
-    if (typeof cn === 'string') {
+    if (!Array.isArray(cn)) {
         cn = [cn];
     }
     let parent = el.parentNode;
@@ -674,8 +703,17 @@ function findParentByClass(el, cn) {
             break;
         }
         for (let it of cn) {
-            if ((_a = parent.classList) === null || _a === void 0 ? void 0 : _a.contains(it)) {
-                return parent;
+            if (typeof it === 'string') {
+                if (parent.classList.contains(it)) {
+                    return parent;
+                }
+            }
+            else {
+                for (let cl of parent.classList) {
+                    if (it.test(cl)) {
+                        return parent;
+                    }
+                }
             }
         }
         parent = parent.parentNode;

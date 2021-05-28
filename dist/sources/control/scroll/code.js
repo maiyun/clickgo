@@ -35,7 +35,7 @@ exports.props = {
     'scrollOffset': {
         'default': 0
     },
-    'plain': {
+    'float': {
         'default': false
     }
 };
@@ -44,7 +44,10 @@ exports.data = {
     'scrollOffsetPx': 0,
     'barLengthPx': 0,
     'timer': undefined,
-    'tran': false
+    'tran': false,
+    'opacity': '1',
+    'opacityTimer': undefined,
+    'isEnter': false
 };
 exports.watch = {
     'length': {
@@ -65,6 +68,38 @@ exports.watch = {
             }
             this.scrollOffsetData = scrollOffsetData;
             this.resizePx();
+        }
+    },
+    'scrollOffsetData': {
+        handler: function () {
+            if (!this.isFloat) {
+                return;
+            }
+            if (this.isEnter) {
+                return;
+            }
+            if (this.opacityTimer) {
+                clearTimeout(this.opacityTimer);
+                this.opacityTimer = undefined;
+            }
+            this.opacityTimer = setTimeout(() => {
+                this.opacity = '0';
+            }, 800);
+            this.opacity = '1';
+        }
+    },
+    'float': function () {
+        if (this.isFloat) {
+            this.opacityTimer = setTimeout(() => {
+                this.opacity = '0';
+            }, 800);
+        }
+        else {
+            if (this.opacityTimer) {
+                clearTimeout(this.opacityTimer);
+                this.opacityTimer = undefined;
+            }
+            this.opacity = '1';
         }
     }
 };
@@ -96,13 +131,13 @@ exports.computed = {
     'isDisabled': function () {
         return clickgo.tool.getBoolean(this.disabled);
     },
-    'isPlain': function () {
-        return clickgo.tool.getBoolean(this.plain);
+    'isFloat': function () {
+        return clickgo.tool.getBoolean(this.float);
     }
 };
 exports.methods = {
     down: function (e) {
-        if (e instanceof MouseEvent && clickgo.hasTouch) {
+        if (this.cgIsMouseAlsoTouchEvent(e)) {
             return;
         }
         clickgo.dom.bindMove(e, {
@@ -117,7 +152,7 @@ exports.methods = {
         });
     },
     bardown: function (e) {
-        if (e instanceof MouseEvent && clickgo.hasTouch) {
+        if (this.cgIsMouseAlsoTouchEvent(e)) {
             return;
         }
         if (e.currentTarget !== e.target) {
@@ -192,6 +227,55 @@ exports.methods = {
                 this.tran = false;
                 if (this.timer !== undefined) {
                     this.timer = undefined;
+                }
+            }
+        });
+    },
+    enter: function (e) {
+        if (this.cgIsMouseAlsoTouchEvent(e)) {
+            return;
+        }
+        this.cgEnter(e);
+        this.isEnter = true;
+        if (this.isFloat) {
+            this.opacity = '1';
+            if (this.opacityTimer) {
+                clearTimeout(this.opacityTimer);
+                this.opacityTimer = undefined;
+            }
+        }
+    },
+    leave: function (e) {
+        if (this.cgIsMouseAlsoTouchEvent(e)) {
+            return;
+        }
+        this.cgLeave(e);
+        this.isEnter = false;
+        if (this.isFloat) {
+            this.opacityTimer = setTimeout(() => {
+                this.opacity = '0';
+            }, 800);
+        }
+    },
+    wrapDown: function (e) {
+        this.cgDown(e);
+        clickgo.dom.bindDown(e, {
+            down: () => {
+                this.isEnter = true;
+                if (this.isFloat) {
+                    this.opacity = '1';
+                    if (this.opacityTimer) {
+                        clearTimeout(this.opacityTimer);
+                        this.opacityTimer = undefined;
+                    }
+                }
+            },
+            up: () => {
+                this.isEnter = false;
+                if (this.isFloat) {
+                    this.opacityTimer = setTimeout(() => {
+                        this.opacity = '0';
+                    }, 800);
                 }
             }
         });

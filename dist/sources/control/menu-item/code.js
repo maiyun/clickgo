@@ -1,21 +1,12 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.unmounted = exports.methods = exports.computed = exports.data = exports.props = void 0;
+exports.methods = exports.computed = exports.props = void 0;
 exports.props = {
     'disabled': {
         'default': false
     },
     'alt': {
         'default': undefined
-    }
-};
-exports.data = {
-    'popOpen': false,
-    'selfPop': undefined,
-    'popOptions': {
-        'left': '-5000px',
-        'top': '0px',
-        'zIndex': '0'
     }
 };
 exports.computed = {
@@ -25,61 +16,27 @@ exports.computed = {
 };
 exports.methods = {
     enter: function (e) {
-        var _a;
         this.cgEnter(e);
-        if (this.cgHasTouch) {
-            return;
-        }
         if (this.isDisabled) {
             return;
         }
-        if (!((_a = this.$parent) === null || _a === void 0 ? void 0 : _a.itemPopShowing)) {
+        if (this.cgIsMouseAlsoTouchEvent(e)) {
             return;
         }
-        this.showPop();
+        if (!this.cgParentPopLayer.cgChildPopItemShowing) {
+            return;
+        }
+        this.cgShowPop('v');
     },
-    click: function (event) {
+    click: function (e) {
         if (this.isDisabled) {
             return;
         }
-        if (this.popOpen) {
-            clickgo.form.hidePop(this);
-            this.cgTap(event);
+        this.cgTap(e);
+        if (this.cgSelfPopOpen) {
+            this.cgHidePop();
             return;
         }
-        this.showPop();
-        this.cgTap(event);
-    },
-    showPop: function () {
-        if (this.popOpen) {
-            return;
-        }
-        if (!this.$parent) {
-            return;
-        }
-        if (this.$parent.itemPopShowing) {
-            clickgo.form.hidePop(this.$parent.itemPopShowing);
-        }
-        this.$parent.itemPopShowing = this;
-        this.popOpen = true;
-        this.popOptions = clickgo.form.showPop(this, 'v');
-    },
-    hidePop: function () {
-        var _a, _b;
-        if (!this.popOpen) {
-            return;
-        }
-        this.popOpen = false;
-        if (((_a = this.$parent) === null || _a === void 0 ? void 0 : _a.itemPopShowing) === this) {
-            this.$parent.itemPopShowing = undefined;
-        }
-        if ((_b = this.selfPop) === null || _b === void 0 ? void 0 : _b.itemPopShowing) {
-            this.selfPop.itemPopShowing.hidePop();
-        }
-    }
-};
-exports.unmounted = function () {
-    if (this.$parent && (this === this.$parent.itemPopShowing)) {
-        clickgo.form.hidePop(this);
+        this.cgShowPop('v');
     }
 };

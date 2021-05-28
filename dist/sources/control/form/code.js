@@ -201,7 +201,7 @@ exports.watch = {
 };
 exports.methods = {
     moveMethod: function (e, custom = false) {
-        if (e instanceof MouseEvent && clickgo.hasTouch) {
+        if (this.cgIsMouseAlsoTouchEvent(e)) {
             return;
         }
         if (!this.isMove && !custom) {
@@ -641,7 +641,7 @@ exports.methods = {
     },
     resizeMethod: function (e, border) {
         var _a, _b, _c, _d;
-        if (e instanceof MouseEvent && clickgo.hasTouch) {
+        if (this.cgIsMouseAlsoTouchEvent(e)) {
             return;
         }
         let isBorder = '';
@@ -742,7 +742,7 @@ exports.methods = {
         });
     },
     maskDown: function (e) {
-        if (e instanceof MouseEvent && clickgo.hasTouch) {
+        if (clickgo.dom.isMouseAlsoTouchEvent(e)) {
             return;
         }
         if (typeof this.maskFor !== 'number') {

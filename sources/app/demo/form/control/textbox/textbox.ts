@@ -14,5 +14,6 @@ export let data = {
     'scrollLeft': 0,
     'scrollTop': 0,
     'length': 0,
-    'client': 0
+    'clientHeight': 0,
+    'clientWidth': 0
 };

@@ -21,16 +21,8 @@ export let props = {
 };
 
 export let data = {
-    'popOpen': false,
-    'selfPop': undefined,
     'direction': 'h',
-    'menulist': undefined,
-
-    'popOptions': {
-        'left': '-5000px',
-        'top': '0px',
-        'zIndex': '0'
-    }
+    'menulist': undefined
 };
 
 export let computed = {
@@ -63,7 +55,7 @@ export let methods = {
             return;
         }
         if (!this.type) {
-            if (!this.selfPop) {
+            if (!this.cgSelfPop) {
                 // --- 没有下层，则隐藏所有 pop ---
                 clickgo.form.hidePop();
             }
@@ -82,55 +74,20 @@ export let methods = {
     },
     enter: function(this: IVueControl, e: MouseEvent): void {
         this.cgEnter(e);
-        if (this.cgHasTouch) {
+        if (this.cgIsMouseAlsoTouchEvent(e)) {
             return;
         }
         if (this.isDisabled) {
             return;
         }
-        this.showPop();
+        this.cgShowPop('h');
     },
     down: function(this: IVueControl, e: TouchEvent): void {
         this.cgDown(e);
         if (this.isDisabled) {
             return;
         }
-        this.showPop();
-    },
-
-    showPop: function(this: IVueControl): void {
-        if (this.popOpen) {
-            // --- 本来就是展开状态，不做处理 ---
-            return;
-        }
-        if (!this.menulist) {
-            return;
-        }
-        // --- 判断别的 item 是否有展开 ---
-        if (this.menulist.itemPopShowing) {
-            clickgo.form.hidePop(this.menulist.itemPopShowing);
-        }
-        // --- 显示本 pop ---
-        if (this.selfPop) {
-            this.menulist.itemPopShowing = this;
-            this.popOpen = true;
-            this.popOptions = clickgo.form.showPop(this, 'h');
-        }
-    },
-    hidePop: function(this: IVueControl): void {
-        if (!this.popOpen) {
-            return;
-        }
-        this.popOpen = false;
-        if (!this.menulist) {
-            return;
-        }
-        if (this.menulist.itemPopShowing === this) {
-            this.menulist.itemPopShowing = undefined;
-        }
-        if (this.selfPop?.itemPopShowing) {
-            this.selfPop.itemPopShowing.hidePop();
-        }
+        this.cgShowPop('h');
     }
 };
 
@@ -145,16 +102,12 @@ export let mounted = function(this: IVueControl): void {
     }
 };
 
-export let unmounted = function(this: IVueControl): void {
+export let beforeUnmounted = function(this: IVueControl): void {
     if (!this.menulist) {
         return;
     }
     // --- type ---
     if (this.type) {
         --this.menulist.hasTypeItemsCount;
-    }
-    // --- 如果自己还在上层显示，则取消 ---
-    if (this === this.menulist.itemPopShowing) {
-        clickgo.form.hidePop(this);
     }
 };

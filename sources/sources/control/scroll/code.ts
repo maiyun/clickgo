@@ -34,7 +34,7 @@ export let props = {
     'scrollOffset': {
         'default': 0
     },
-    'plain': {
+    'float': {
         'default': false
     }
 };
@@ -45,7 +45,11 @@ export let data = {
     'barLengthPx': 0,
 
     'timer': undefined,
-    'tran': false
+    'tran': false,
+
+    'opacity': '1',
+    'opacityTimer': undefined,
+    'isEnter': false
 };
 
 export let watch = {
@@ -67,6 +71,38 @@ export let watch = {
             }
             this.scrollOffsetData = scrollOffsetData;
             this.resizePx();
+        }
+    },
+    'scrollOffsetData': {
+        handler: function(this: IVueControl): void {
+            if (!this.isFloat) {
+                return;
+            }
+            if (this.isEnter) {
+                return;
+            }
+            if (this.opacityTimer) {
+                clearTimeout(this.opacityTimer);
+                this.opacityTimer = undefined;
+            }
+            this.opacityTimer = setTimeout(() => {
+                this.opacity = '0';
+            }, 800);
+            this.opacity = '1';
+        }
+    },
+    'float': function(this: IVueControl): void {
+        if (this.isFloat) {
+            this.opacityTimer = setTimeout(() => {
+                this.opacity = '0';
+            }, 800);
+        }
+        else {
+            if (this.opacityTimer) {
+                clearTimeout(this.opacityTimer);
+                this.opacityTimer = undefined;
+            }
+            this.opacity = '1';
         }
     }
 };
@@ -105,14 +141,14 @@ export let computed = {
     'isDisabled': function(this: IVueControl): boolean {
         return clickgo.tool.getBoolean(this.disabled);
     },
-    'isPlain': function(this: IVueControl): boolean {
-        return clickgo.tool.getBoolean(this.plain);
+    'isFloat': function(this: IVueControl): boolean {
+        return clickgo.tool.getBoolean(this.float);
     }
 };
 
 export let methods = {
     down: function(this: IVueControl, e: MouseEvent | TouchEvent): void {
-        if (e instanceof MouseEvent && clickgo.hasTouch) {
+        if (this.cgIsMouseAlsoTouchEvent(e)) {
             return;
         }
         clickgo.dom.bindMove(e, {
@@ -128,7 +164,7 @@ export let methods = {
         });
     },
     bardown: function(this: IVueControl, e: MouseEvent | TouchEvent): void {
-        if (e instanceof MouseEvent && clickgo.hasTouch) {
+        if (this.cgIsMouseAlsoTouchEvent(e)) {
             return;
         }
         if (e.currentTarget !== e.target) {
@@ -208,6 +244,56 @@ export let methods = {
                 this.tran = false;
                 if (this.timer !== undefined) {
                     this.timer = undefined;
+                }
+            }
+        });
+    },
+    // --- 进入时保持滚动条常亮 ---
+    enter: function(this: IVueControl, e: MouseEvent): void {
+        if (this.cgIsMouseAlsoTouchEvent(e)) {
+            return;
+        }
+        this.cgEnter(e);
+        this.isEnter = true;
+        if (this.isFloat) {
+            this.opacity = '1';
+            if (this.opacityTimer) {
+                clearTimeout(this.opacityTimer);
+                this.opacityTimer = undefined;
+            }
+        }
+    },
+    leave: function(this: IVueControl, e: MouseEvent): void {
+        if (this.cgIsMouseAlsoTouchEvent(e)) {
+            return;
+        }
+        this.cgLeave(e);
+        this.isEnter = false;
+        if (this.isFloat) {
+            this.opacityTimer = setTimeout(() => {
+                this.opacity = '0';
+            }, 800);
+        }
+    },
+    wrapDown: function(this: IVueControl, e: TouchEvent): void {
+        this.cgDown(e);
+        clickgo.dom.bindDown(e, {
+            down: () => {
+                this.isEnter = true;
+                if (this.isFloat) {
+                    this.opacity = '1';
+                    if (this.opacityTimer) {
+                        clearTimeout(this.opacityTimer);
+                        this.opacityTimer = undefined;
+                    }
+                }
+            },
+            up: () => {
+                this.isEnter = false;
+                if (this.isFloat) {
+                    this.opacityTimer = setTimeout(() => {
+                        this.opacity = '0';
+                    }, 800);
                 }
             }
         });

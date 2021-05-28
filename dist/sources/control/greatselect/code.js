@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.methods = exports.data = exports.computed = exports.props = void 0;
+exports.mounted = exports.methods = exports.computed = exports.props = void 0;
 exports.props = {
     'disabled': {
         'default': false
@@ -38,58 +38,32 @@ exports.computed = {
         return clickgo.tool.getBoolean(this.disabled);
     }
 };
-exports.data = {
-    'popOpen': false,
-    'selfPop': undefined,
-    'popOptions': {
-        'left': '-5000px',
-        'top': '0px',
-        'width': '500px',
-        'zIndex': '0'
-    }
-};
 exports.methods = {
     keydown: function (e) {
         if (e.keyCode !== 13) {
             return;
         }
-        if (this.popOpen) {
-            clickgo.form.hidePop(this);
+        if (this.cgSelfPopOpen) {
+            this.cgHidePop();
             return;
         }
-        this.showPop(e, this.area);
+        this.cgShowPop('v', { width: this.$el.offsetWidth });
     },
     click: function (e, area) {
         if (this.disabled) {
             return;
         }
-        if (this.area === 'arrow' && area === 'left') {
-            if (this.popOpen) {
-                clickgo.form.hidePop(this);
-            }
-            this.cgTap(e);
-            return;
-        }
-        this.showPop();
         this.cgTap(e);
-    },
-    showPop: function () {
-        if (this.popOpen) {
-            clickgo.form.hidePop(this);
+        if (this.cgSelfPopOpen) {
+            this.cgHidePop();
             return;
         }
-        this.popOpen = true;
-        this.popOptions = clickgo.form.showPop(this, 'v');
-        this.popOptions.width = this.$el.offsetWidth + 'px';
-    },
-    hidePop: function () {
-        var _a;
-        if (!this.popOpen) {
+        if (this.area === 'arrow' && area === 'left') {
             return;
         }
-        this.popOpen = false;
-        if ((_a = this.selfPop) === null || _a === void 0 ? void 0 : _a.itemPopShowing) {
-            this.selfPop.itemPopShowing.hidePop();
-        }
+        this.cgShowPop('v', { width: this.$el.offsetWidth });
     }
+};
+exports.mounted = function () {
+    this.cgPopPosition.width = '800px';
 };

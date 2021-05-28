@@ -17,7 +17,6 @@ let tmpCgRootPath = '';
 const clickgo = {
     'rootPath': window.location.href.slice(0, window.location.href.lastIndexOf('/') + 1),
     'cgRootPath': tmpCgRootPath,
-    'hasTouch': ('ontouchstart' in document.documentElement) ? true : false,
     'isNative': navigator.userAgent.toLowerCase().includes('electron') ? true : false,
     'position': {
         'left': null,
@@ -112,6 +111,3 @@ tmpScript.addEventListener('load', function () {
     }));
 });
 document.getElementsByTagName('head')[0].insertAdjacentElement('afterend', tmpScript);
-document.addEventListener('touchstart', function () {
-    return;
-});
