@@ -68,7 +68,7 @@ tmpScript.addEventListener('load', function () {
         var _a;
         loader.setAfter('?' + Math.random());
         let paths = [
-            'https://cdn.jsdelivr.net/npm/vue@3.0.11/dist/vue.global.min.js',
+            'https://cdn.jsdelivr.net/npm/vue@3.1.0-beta.6/dist/vue.global.min.js',
             'https://cdn.jsdelivr.net/npm/jszip@3.6.0/dist/jszip.min.js'
         ];
         let ro = true;

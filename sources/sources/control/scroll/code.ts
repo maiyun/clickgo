@@ -317,6 +317,13 @@ export let methods = {
 };
 
 export let mounted = function(this: IVueControl): void {
+    // --- 是否自动隐藏 scroll ---
+    if (this.isFloat) {
+        this.opacityTimer = setTimeout(() => {
+            this.opacity = '0';
+        }, 800);
+    }
+    // --- 监听 bar 的 size ---
     clickgo.dom.watchSize(this.$refs.bar, (size) => {
         this.barLengthPx = this.direction === 'v' ? size.height : size.width;
         this.scrollOffsetPx =  this.barOutSize * (this.scrollOffsetData / this.maxScroll);

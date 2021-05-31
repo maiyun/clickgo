@@ -297,6 +297,11 @@ exports.methods = {
     }
 };
 exports.mounted = function () {
+    if (this.isFloat) {
+        this.opacityTimer = setTimeout(() => {
+            this.opacity = '0';
+        }, 800);
+    }
     clickgo.dom.watchSize(this.$refs.bar, (size) => {
         this.barLengthPx = this.direction === 'v' ? size.height : size.width;
         this.scrollOffsetPx = this.barOutSize * (this.scrollOffsetData / this.maxScroll);

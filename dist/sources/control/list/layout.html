@@ -2,7 +2,7 @@
     <template v-slot="data">
         <cg-greatlist-item :class="[data.row.title && 'title']" :value="data.index" :disabled="data.row.title || data.row.disabled" :padding="padding"><div :style="{'padding-left': data.row.level * 14 + 'px'}">{{data.row.label}}</div></cg-greatlist-item>
     </template>
-    <template v-slot:pop>
+    <template v-if="$slots.default" v-slot:pop>
         <slot></slot>
     </template>
 </cg-greatlist>
