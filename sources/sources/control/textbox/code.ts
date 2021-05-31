@@ -94,9 +94,10 @@ export let watch = {
         'immediate': true
     },
     'value': {
-        handler: function(this: IVueControl): void {
+        handler: async function(this: IVueControl): Promise<void> {
             this.$emit('update:modelValue', this.value);
             // --- 内容变更，更新 length ---
+            await this.$nextTick();
             this.refreshLength();
         }
     },
@@ -181,7 +182,8 @@ export let data = {
 
     'touchX': 0,
     'touchY': 0,
-    'canTouch': false, // --- 按下后第一次的拖动判断可拖动后，则后面此次都可拖动（交由浏览器可自行处理） ---
+    'canTouch': false,      // --- 按下后第一次的拖动判断可拖动后，则后面此次都可拖动（交由浏览器可自行处理） ---
+    'lastDownTime': 0,      // --- mouse 或 touch 的时间戳 ---
 
     'localData': {
         'en-us': {
@@ -209,6 +211,12 @@ export let data = {
 
 export let methods = {
     focus: function(this: IVueControl): void {
+        let now = Date.now();
+        if (now - this.lastDownTime >= 500) {
+            this.$refs.text.focus();
+        }
+    },
+    keydown: function(this: IVueControl, e: KeyboardEvent): void {
         this.$refs.text.focus();
     },
     tfocus: function(this: IVueControl): void {
@@ -227,6 +235,11 @@ export let methods = {
         }
         if (this.cgSelfPopOpen) {
             this.cgHidePop();
+        }
+        // --- 如果是点击进入的，则不触发 input、textarea 的 focus，防止光标乱跳 ---
+        let tagName = (e.target as HTMLElement).tagName.toLowerCase();
+        if (tagName !== 'input' && tagName !== 'textarea') {
+            this.lastDownTime = Date.now();
         }
     },
 

@@ -101,8 +101,11 @@ exports.watch = {
     },
     'value': {
         handler: function () {
-            this.$emit('update:modelValue', this.value);
-            this.refreshLength();
+            return __awaiter(this, void 0, void 0, function* () {
+                this.$emit('update:modelValue', this.value);
+                yield this.$nextTick();
+                this.refreshLength();
+            });
         }
     },
     'multi': {
@@ -189,6 +192,7 @@ exports.data = {
     'touchX': 0,
     'touchY': 0,
     'canTouch': false,
+    'lastDownTime': 0,
     'localData': {
         'en-us': {
             'copy': 'Copy',
@@ -214,6 +218,12 @@ exports.data = {
 };
 exports.methods = {
     focus: function () {
+        let now = Date.now();
+        if (now - this.lastDownTime >= 500) {
+            this.$refs.text.focus();
+        }
+    },
+    keydown: function (e) {
         this.$refs.text.focus();
     },
     tfocus: function () {
@@ -232,6 +242,10 @@ exports.methods = {
         }
         if (this.cgSelfPopOpen) {
             this.cgHidePop();
+        }
+        let tagName = e.target.tagName.toLowerCase();
+        if (tagName !== 'input' && tagName !== 'textarea') {
+            this.lastDownTime = Date.now();
         }
     },
     scroll: function () {
