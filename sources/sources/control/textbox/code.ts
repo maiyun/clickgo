@@ -216,7 +216,7 @@ export let methods = {
             this.$refs.text.focus();
         }
     },
-    keydown: function(this: IVueControl, e: KeyboardEvent): void {
+    keydown: function(this: IVueControl): void {
         this.$refs.text.focus();
     },
     tfocus: function(this: IVueControl): void {

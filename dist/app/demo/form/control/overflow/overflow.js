@@ -3,10 +3,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.data = void 0;
 exports.data = {
     'lineCount': 2,
-    'sLeft': 0,
-    'sTop': 0,
-    'l': 0,
-    'c': 0,
+    'sLeft1': 0,
+    'sTop1': 0,
+    'l1': 0,
+    'c1': 0,
     'sLeft2': 0,
     'sTop2': 0,
     'l2': 0,

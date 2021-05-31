@@ -223,7 +223,7 @@ exports.methods = {
             this.$refs.text.focus();
         }
     },
-    keydown: function (e) {
+    keydown: function () {
         this.$refs.text.focus();
     },
     tfocus: function () {
