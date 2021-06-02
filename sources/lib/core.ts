@@ -45,11 +45,11 @@ export let globalEvents: ICGGlobalEvents = {
 export function trigger(name: TCGGlobalEvent, taskId: number = 0, formId: number = 0, param1: boolean | string = '', param2: string = ''): void {
     switch (name) {
         case 'screenResize': {
-            globalEvents.screenResizeHandler?.() as void;
+            globalEvents.screenResizeHandler?.(taskId, formId) as void;
             for (let tid in clickgo.task.list) {
                 let task = clickgo.task.list[tid];
                 for (let fid in task.forms) {
-                    task.forms[fid].events[name]?.() as void;
+                    task.forms[fid].events[name]?.(taskId, formId) as void;
                 }
             }
             break;

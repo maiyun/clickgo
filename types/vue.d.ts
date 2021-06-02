@@ -79,7 +79,7 @@ interface IVueForm extends IVue {
     cgCreateForm(paramOpt?: string | ICGFormCreateOptions & { 'mask'?: boolean; }): Promise<void>;
     cgCloseForm(): void;
     cgBindFormDrag(e: MouseEvent | TouchEvent): void;
-    cgSetSystemEventListener(name: TCGGlobalEvent, func: any): void;
+    cgSetSystemEventListener(name: TCGGlobalEvent, func: (...any: any) => void | Promise<void>): void;
     cgRemoveSystemEventListener(name: TCGGlobalEvent): void;
     cgDialog(opt: string | ICGFormDialog): Promise<string>;
     cgGetBlob(path: string): Promise<Blob | null>;

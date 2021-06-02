@@ -217,7 +217,7 @@ exports.methods = {
                         this.$emit('update:scrollTop', this.scrollTopEmit);
                     }
                 },
-                'end': (moveTimes) => __awaiter(this, void 0, void 0, function* () {
+                'up': (moveTimes) => __awaiter(this, void 0, void 0, function* () {
                     let moveLeftPos = 0;
                     let moveTopPos = 0;
                     let topTime = 0;
@@ -338,10 +338,14 @@ exports.methods = {
             });
         };
         let cancel = (e) => {
-            this.$el.removeEventListener(e instanceof MouseEvent ? 'mousemove' : 'touchmove', move);
-            this.$el.removeEventListener(e instanceof MouseEvent ? 'mouseup' : 'touchend', cancel);
-            if (e instanceof TouchEvent) {
-                this.$el.removeEventListener('touchcancel', cancel);
+            if (e instanceof MouseEvent) {
+                window.removeEventListener('mousemove', move);
+                window.removeEventListener('mouseup', cancel);
+            }
+            else {
+                e.target.removeEventListener('touchmove', move);
+                e.target.removeEventListener('touchend', cancel);
+                e.target.removeEventListener('touchcancel', cancel);
             }
         };
         let x = (e instanceof MouseEvent) ? e.clientX : e.touches[0].clientX;
@@ -392,10 +396,14 @@ exports.methods = {
             }
             cancel(e);
         };
-        this.$el.addEventListener(e instanceof MouseEvent ? 'mousemove' : 'touchmove', move);
-        this.$el.addEventListener(e instanceof MouseEvent ? 'mouseup' : 'touchend', cancel);
-        if (e instanceof TouchEvent) {
-            this.$el.addEventListener('touchcancel', cancel);
+        if (e instanceof MouseEvent) {
+            window.addEventListener('mousemove', move, { 'passive': false });
+            window.addEventListener('mouseup', cancel);
+        }
+        else {
+            e.target.addEventListener('touchmove', move, { 'passive': false });
+            e.target.addEventListener('touchend', cancel);
+            e.target.addEventListener('touchcancel', cancel);
         }
         this.cgDown(e);
     },

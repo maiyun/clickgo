@@ -4,11 +4,15 @@ interface ICGCoreLib {
     };
     'clickgoFiles': Record<string, Blob>;
     'globalEvents': ICGGlobalEvents;
-    trigger(name: 'screenResize'): void;
     trigger(name: 'formCreated' | 'formRemoved', taskId: number, formId: number, title: string, icon: string): void;
     trigger(name: 'formTitleChanged' | 'formIconChanged', taskId: number, formId: number, text: string): void;
     trigger(name: 'formStateMinChanged' | 'formStateMaxChanged' | 'formShowChanged', taskId: number, formId: number, state: boolean): void;
-    trigger(name: 'formFocused' | 'formBlurred' | 'formFlash', taskId: number, formId: number): void;
+    /**
+     * @param name 'screenResize' | 'formFocused' | 'formBlurred' | 'formFlash'
+     * @param taskId name 为 screenResize 时为 width
+     * @param formId name 为 screenResize 时为 height
+     */
+    trigger(name: 'screenResize' | 'formFocused' | 'formBlurred' | 'formFlash', taskId: number, formId: number): void;
     trigger(name: 'taskStarted' | 'taskEnded', taskId: number): void;
     fetchClickGoFile(path: string): Promise<null | Blob>;
     readApp(blob: Blob): Promise<false | ICGAppPkg>;
@@ -20,7 +24,7 @@ interface ICGGlobalEvents {
     /** --- 配置捕获 Vue 错误 --- */
     errorHandler: null | ((taskId: number, formId: number, error: any, info: string) => void | Promise<void>);
     /** --- 当屏幕大小改变时触发的事件 --- */
-    screenResizeHandler: null | (() => void | Promise<void>);
+    screenResizeHandler: null | ((width: number, height: number) => void | Promise<void>);
     /** --- 窗体被创建后触发 --- */
     formCreatedHandler: null | ((taskId: number, formId: number, title: string, icon: string) => void | Promise<void>);
     /** --- 窗体被移除后触发 --- */

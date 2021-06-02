@@ -202,7 +202,6 @@ export let methods = {
         e.stopPropagation();
         */
         this.stopAnimation();
-
         let bindMove = (e: MouseEvent | TouchEvent): void => {
             let wrapSize = clickgo.dom.getSize(this.$refs.wrap);
             let top = wrapSize.top + wrapSize.border.top + wrapSize.padding.top;
@@ -240,7 +239,7 @@ export let methods = {
                         this.$emit('update:scrollTop', this.scrollTopEmit);
                     }
                 },
-                'end': async (moveTimes) => {
+                'up': async (moveTimes) => {
                     // --- 获取 100 毫秒内的偏移 ---
                     let moveLeftPos = 0;
                     let moveTopPos = 0;
@@ -459,10 +458,15 @@ export let methods = {
             });
         };
         let cancel = (e: MouseEvent | TouchEvent): void => {
-            this.$el.removeEventListener(e instanceof MouseEvent ? 'mousemove' : 'touchmove', move);
-            this.$el.removeEventListener(e instanceof MouseEvent ? 'mouseup' : 'touchend', cancel);
-            if (e instanceof TouchEvent) {
-                this.$el.removeEventListener('touchcancel', cancel);
+            // --- 还没有进入 move 判断前就 mouseup 或者 touchend 则直接结束 ---
+            if (e instanceof MouseEvent) {
+                window.removeEventListener('mousemove', move);
+                window.removeEventListener('mouseup', cancel);
+            }
+            else {
+                (e.target as HTMLElement).removeEventListener('touchmove', move);
+                (e.target as HTMLElement).removeEventListener('touchend', cancel);
+                (e.target as HTMLElement).removeEventListener('touchcancel', cancel);
             }
         };
         let x: number = (e instanceof MouseEvent) ? e.clientX : e.touches[0].clientX;
@@ -521,10 +525,14 @@ export let methods = {
             }
             cancel(e);
         };
-        this.$el.addEventListener(e instanceof MouseEvent ? 'mousemove' : 'touchmove', move);
-        this.$el.addEventListener(e instanceof MouseEvent ? 'mouseup' : 'touchend', cancel);
-        if (e instanceof TouchEvent) {
-            this.$el.addEventListener('touchcancel', cancel);
+        if (e instanceof MouseEvent) {
+            window.addEventListener('mousemove', move, { 'passive': false });
+            window.addEventListener('mouseup', cancel);
+        }
+        else {
+            (e.target as HTMLElement).addEventListener('touchmove', move, { 'passive': false });
+            (e.target as HTMLElement).addEventListener('touchend', cancel);
+            (e.target as HTMLElement).addEventListener('touchcancel', cancel);
         }
         this.cgDown(e);
     },

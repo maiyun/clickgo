@@ -1249,6 +1249,7 @@ function create(taskId, opt) {
 }
 exports.create = create;
 window.addEventListener('resize', function () {
+    let position = clickgo.getPosition();
     for (let i = 0; i < formListElement.children.length; ++i) {
         let el = formListElement.children.item(i);
         let ef = el.children.item(0);
@@ -1261,9 +1262,8 @@ window.addEventListener('resize', function () {
             continue;
         }
         let vroot = clickgo.task.list[taskId].forms[formId].vroot;
-        let position = clickgo.getPosition();
         vroot.$refs.form.setPropData('width', position.width);
         vroot.$refs.form.setPropData('height', position.height);
     }
-    clickgo.core.trigger('screenResize');
+    clickgo.core.trigger('screenResize', position.width, position.height);
 });

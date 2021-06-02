@@ -244,6 +244,7 @@ function bindDown(oe, opt) {
                 else {
                     oe.target.removeEventListener('touchmove', move);
                     oe.target.removeEventListener('touchend', end);
+                    oe.target.removeEventListener('touchcancel', end);
                 }
                 return;
             }
@@ -256,6 +257,7 @@ function bindDown(oe, opt) {
             else {
                 oe.target.removeEventListener('touchmove', move);
                 oe.target.removeEventListener('touchend', end);
+                oe.target.removeEventListener('touchcancel', end);
             }
             return;
         }
@@ -277,11 +279,11 @@ function bindDown(oe, opt) {
         }
     };
     if (oe instanceof MouseEvent) {
-        window.addEventListener('mousemove', move);
+        window.addEventListener('mousemove', move, { 'passive': false });
         window.addEventListener('mouseup', end);
     }
     else {
-        oe.target.addEventListener('touchmove', move, { passive: false });
+        oe.target.addEventListener('touchmove', move, { 'passive': false });
         oe.target.addEventListener('touchend', end);
         oe.target.addEventListener('touchcancel', end);
     }
@@ -579,7 +581,7 @@ function bindMove(e, opt) {
             var _a;
             exports.is.move = false;
             setGlobalCursor();
-            (_a = opt.up) === null || _a === void 0 ? void 0 : _a.call(opt);
+            (_a = opt.up) === null || _a === void 0 ? void 0 : _a.call(opt, moveTimes);
         },
         end: () => {
             var _a;

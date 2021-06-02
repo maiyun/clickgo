@@ -42,7 +42,7 @@ interface ICGDomLib {
         'showRect'?: boolean;
         'start'?: (x: number, y: number) => void | boolean;
         'move'?: (ox: number, oy: number, x: number, y: number, border: TCGBorder) => void;
-        'up'?: () => void;
+        'up'?: (moveTimes: Array<{ 'time': number; 'ox': number; 'oy': number; }>) => void;
         'end'?: (moveTimes: Array<{ 'time': number; 'ox': number; 'oy': number; }>) => void;
         'borderIn'?: (x: number, y: number, border: TCGBorder) => void;
         'borderOut'?: () => void;

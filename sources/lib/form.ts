@@ -1400,6 +1400,7 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
 // --- 绑定 resize 事件 ---
 window.addEventListener('resize', function(): void {
     // --- 将所有已经最大化的窗体的大小重置 ---
+    let position = clickgo.getPosition();
     for (let i = 0; i < formListElement.children.length; ++i) {
         let el = formListElement.children.item(i) as HTMLElement;
         let ef = el.children.item(0) as HTMLElement;
@@ -1412,10 +1413,9 @@ window.addEventListener('resize', function(): void {
             continue;
         }
         let vroot = clickgo.task.list[taskId].forms[formId].vroot;
-        let position = clickgo.getPosition();
         vroot.$refs.form.setPropData('width', position.width);
         vroot.$refs.form.setPropData('height', position.height);
     }
     // --- 触发 screenResize 事件 ---
-    clickgo.core.trigger('screenResize');
+    clickgo.core.trigger('screenResize', position.width, position.height);
 });

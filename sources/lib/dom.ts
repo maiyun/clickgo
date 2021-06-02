@@ -328,6 +328,7 @@ export function bindDown(oe: MouseEvent | TouchEvent, opt: { 'down'?: (e: MouseE
                 else {
                     (oe.target as HTMLElement).removeEventListener('touchmove', move);
                     (oe.target as HTMLElement).removeEventListener('touchend', end);
+                    (oe.target as HTMLElement).removeEventListener('touchcancel', end);
                 }
                 return;
             }
@@ -340,6 +341,7 @@ export function bindDown(oe: MouseEvent | TouchEvent, opt: { 'down'?: (e: MouseE
             else {
                 (oe.target as HTMLElement).removeEventListener('touchmove', move);
                 (oe.target as HTMLElement).removeEventListener('touchend', end);
+                (oe.target as HTMLElement).removeEventListener('touchcancel', end);
             }
             return;
         }
@@ -360,11 +362,11 @@ export function bindDown(oe: MouseEvent | TouchEvent, opt: { 'down'?: (e: MouseE
         }
     };
     if (oe instanceof MouseEvent) {
-        window.addEventListener('mousemove', move);
+        window.addEventListener('mousemove', move, { 'passive': false });
         window.addEventListener('mouseup', end);
     }
     else {
-        (oe.target as HTMLElement).addEventListener('touchmove', move, {passive: false});
+        (oe.target as HTMLElement).addEventListener('touchmove', move, { 'passive': false });
         (oe.target as HTMLElement).addEventListener('touchend', end);
         (oe.target as HTMLElement).addEventListener('touchcancel', end);
     }
@@ -415,7 +417,7 @@ export let is = Vue.reactive({
  * @param e mousedown 或 touchstart 的 event
  * @param opt 回调选项
  */
-export function bindMove(e: MouseEvent | TouchEvent, opt: { 'areaObject'?: HTMLElement | IVue; 'left'?: number; 'top'?: number; 'right'?: number; 'bottom'?: number; 'offsetLeft'?: number; 'offsetTop'?: number; 'offsetRight'?: number; 'offsetBottom'?: number; 'objectLeft'?: number; 'objectTop'?: number; 'objectWidth'?: number; 'objectHeight'?: number; 'object'?: HTMLElement | IVue; 'showRect'?: boolean; 'start'?: (x: number, y: number) => void | boolean; 'move'?: (ox: number, oy: number, x: number, y: number, border: TCGBorder) => void; 'up'?: () => void; 'end'?: (moveTimes: Array<{ 'time': number; 'ox': number; 'oy': number; }>) => void; 'borderIn'?: (x: number, y: number, border: TCGBorder) => void; 'borderOut'?: () => void; }): { 'left': number; 'top': number; 'right': number; 'bottom': number; } {
+export function bindMove(e: MouseEvent | TouchEvent, opt: { 'areaObject'?: HTMLElement | IVue; 'left'?: number; 'top'?: number; 'right'?: number; 'bottom'?: number; 'offsetLeft'?: number; 'offsetTop'?: number; 'offsetRight'?: number; 'offsetBottom'?: number; 'objectLeft'?: number; 'objectTop'?: number; 'objectWidth'?: number; 'objectHeight'?: number; 'object'?: HTMLElement | IVue; 'showRect'?: boolean; 'start'?: (x: number, y: number) => void | boolean; 'move'?: (ox: number, oy: number, x: number, y: number, border: TCGBorder) => void; 'up'?: (moveTimes: Array<{ 'time': number; 'ox': number; 'oy': number; }>) => void; 'end'?: (moveTimes: Array<{ 'time': number; 'ox': number; 'oy': number; }>) => void; 'borderIn'?: (x: number, y: number, border: TCGBorder) => void; 'borderOut'?: () => void; }): { 'left': number; 'top': number; 'right': number; 'bottom': number; } {
     if (isMouseAlsoTouchEvent(e)) {
         return {
             'left': 0,
@@ -692,7 +694,7 @@ export function bindMove(e: MouseEvent | TouchEvent, opt: { 'areaObject'?: HTMLE
         up: () => {
             is.move = false;
             setGlobalCursor();
-            opt.up?.();
+            opt.up?.(moveTimes);
         },
         end: () => {
             opt.end?.(moveTimes);

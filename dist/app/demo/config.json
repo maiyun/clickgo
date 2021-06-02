@@ -56,6 +56,8 @@
         "/form/control/view/view.css",
         "/form/control/view/view.js",
         "/form/control/view/view.xml",
+        "/form/event/screen/screen.js",
+        "/form/event/screen/screen.xml",
         "/form/main.css",
         "/form/main.js",
         "/form/main.xml",

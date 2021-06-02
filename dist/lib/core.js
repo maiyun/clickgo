@@ -34,11 +34,11 @@ function trigger(name, taskId = 0, formId = 0, param1 = '', param2 = '') {
     var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y;
     switch (name) {
         case 'screenResize': {
-            (_a = exports.globalEvents.screenResizeHandler) === null || _a === void 0 ? void 0 : _a.call(exports.globalEvents);
+            (_a = exports.globalEvents.screenResizeHandler) === null || _a === void 0 ? void 0 : _a.call(exports.globalEvents, taskId, formId);
             for (let tid in clickgo.task.list) {
                 let task = clickgo.task.list[tid];
                 for (let fid in task.forms) {
-                    (_c = (_b = task.forms[fid].events)[name]) === null || _c === void 0 ? void 0 : _c.call(_b);
+                    (_c = (_b = task.forms[fid].events)[name]) === null || _c === void 0 ? void 0 : _c.call(_b, taskId, formId);
                 }
             }
             break;
