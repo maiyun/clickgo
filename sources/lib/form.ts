@@ -522,8 +522,8 @@ export function doFocusAndPopEvent(e: MouseEvent | TouchEvent): void {
     hidePop();
     changeFocus();
 }
-document.addEventListener('touchstart', doFocusAndPopEvent);
-document.addEventListener('mousedown', doFocusAndPopEvent);
+window.addEventListener('touchstart', doFocusAndPopEvent);
+window.addEventListener('mousedown', doFocusAndPopEvent);
 
 /**
  * --- 移除一个 form（关闭窗口） ---

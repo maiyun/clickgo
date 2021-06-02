@@ -431,8 +431,8 @@ function doFocusAndPopEvent(e) {
     changeFocus();
 }
 exports.doFocusAndPopEvent = doFocusAndPopEvent;
-document.addEventListener('touchstart', doFocusAndPopEvent);
-document.addEventListener('mousedown', doFocusAndPopEvent);
+window.addEventListener('touchstart', doFocusAndPopEvent);
+window.addEventListener('mousedown', doFocusAndPopEvent);
 function remove(formId) {
     let formElement = formListElement.querySelector(`[data-form-id='${formId}']`);
     if (!formElement) {
