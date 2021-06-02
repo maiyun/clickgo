@@ -1,0 +1,11 @@
+<form width="400" height="550" title="About form" padding="10">
+    <label>The form list:</label>
+    <layout align-h="center" align-v="center" flex="1" style="margin-top: 10px;">
+        <layout gutter="10">
+            <block v-for="form of flist" style="border: solid 1px #000;"></block>
+        </layout>
+    </layout>
+    <greatview v-slot="data" :data="list" height="80" padding="10" direction="v" style="margin-top: 10px; color: #FFF; background: #000; line-height: 1.5;" same>
+        <label>[{{data.row.time}}] {{data.row.name}}, {{data.row.text}}.</label>
+    </greatview>
+</form>

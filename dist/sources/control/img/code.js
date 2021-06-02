@@ -37,7 +37,7 @@ exports.props = {
     }
 };
 exports.data = {
-    'iconData': ''
+    'imgData': ''
 };
 exports.computed = {
     'backgroundSize': function () {
@@ -57,20 +57,20 @@ exports.watch = {
         handler: function () {
             return __awaiter(this, void 0, void 0, function* () {
                 if (this.src === '') {
-                    this.iconData = undefined;
+                    this.imgData = undefined;
                     return;
                 }
                 let pre = this.src.slice(0, 6).toLowerCase();
                 if (pre === 'http:/' || pre === 'https:' || pre === 'data:i') {
-                    this.iconData = 'url(' + this.src + ')';
+                    this.imgData = 'url(' + this.src + ')';
                     return;
                 }
                 let t = this.cgGetObjectUrl(this.src);
                 if (t) {
-                    this.iconData = 'url(' + t + ')';
+                    this.imgData = 'url(' + t + ')';
                     return;
                 }
-                this.iconData = undefined;
+                this.imgData = undefined;
             });
         },
         'immediate': true

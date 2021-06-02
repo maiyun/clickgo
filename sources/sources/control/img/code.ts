@@ -27,7 +27,7 @@ export let props = {
 };
 
 export let data = {
-    'iconData': ''
+    'imgData': ''
 };
 
 export let computed = {
@@ -48,20 +48,20 @@ export let watch = {
     'src': {
         handler: async function(this: IVueControl): Promise<void> {
             if (this.src === '') {
-                this.iconData = undefined;
+                this.imgData = undefined;
                 return;
             }
             let pre = this.src.slice(0, 6).toLowerCase();
             if (pre === 'http:/' || pre === 'https:' || pre === 'data:i') {
-                this.iconData = 'url(' + this.src + ')';
+                this.imgData = 'url(' + this.src + ')';
                 return;
             }
             let t = this.cgGetObjectUrl(this.src);
             if (t) {
-                this.iconData = 'url(' + t + ')';
+                this.imgData = 'url(' + t + ')';
                 return;
             }
-            this.iconData = undefined;
+            this.imgData = undefined;
         },
         'immediate': true
     }

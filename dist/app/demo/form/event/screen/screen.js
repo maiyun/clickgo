@@ -39,4 +39,10 @@ exports.mounted = function () {
     else {
         this.scale = 4;
     }
+    let date = new Date();
+    this.list.unshift({
+        'time': date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds(),
+        'width': this.width,
+        'height': this.height
+    });
 };
