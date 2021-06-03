@@ -45,7 +45,7 @@ exports.props = {
         'default': undefined
     },
     'content': {
-        'default': undefined,
+        'default': 'max',
     },
     'same': {
         'default': false

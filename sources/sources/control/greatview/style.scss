@@ -14,4 +14,7 @@
     &.h {
         display: flex;
     }
+    &.content-max {
+        width: -webkit-max-content; width: max-content; height: -webkit-max-content; height: max-content;
+    }
 }

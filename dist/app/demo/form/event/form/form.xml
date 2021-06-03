@@ -1,11 +1,16 @@
-<form width="400" height="550" title="About form" padding="10">
+<form width="450" height="550" title="About form" padding="10">
     <label>The form list:</label>
     <layout align-h="center" align-v="center" flex="1" style="margin-top: 10px;">
-        <layout gutter="10">
-            <block v-for="form of flist" style="border: solid 1px #000;"></block>
+        <layout gutter="10" direction="v">
+            <layout v-for="form of flist" gutter="5" style="border: solid 1px #000; padding: 5px;">
+                <img v-if="form.icon" :src="form.icon" /><label>{{form.title}}</label>
+            </layout>
         </layout>
     </layout>
-    <greatview v-slot="data" :data="list" height="80" padding="10" direction="v" style="margin-top: 10px; color: #FFF; background: #000; line-height: 1.5;" same>
-        <label>[{{data.row.time}}] {{data.row.name}}, {{data.row.text}}.</label>
-    </greatview>
+    <layout gutter="10" style="margin-top: 10px;">
+        <list :data="['formCreated', 'formRemoved', 'formTitleChanged', 'formIconChanged', 'formStateMinChanged', 'formStateMaxChanged', 'formShowChanged', 'formFocused', 'formBlurred', 'formFlash']" width="150"></list>
+        <greatview v-slot="data" :data="list" height="80" padding="10" direction="v" flex="1" style="color: #FFF; background: #000; line-height: 1.5;" same>
+            <label>[{{data.row.time}}] {{data.row.name}}, {{data.row.text}}.</label>
+        </greatview>
+    </layout>
 </form>

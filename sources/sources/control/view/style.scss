@@ -22,8 +22,8 @@
 
     .inner {
         position: absolute; left: 0; top: 0; display: flex;
-        &.content-max {
-            width: -webkit-max-content; width: max-content; height: -webkit-max-content; height: max-content;
-        }
+    }
+    &.content-max .inner {
+        width: -webkit-max-content; width: max-content; height: -webkit-max-content; height: max-content;
     }
 }

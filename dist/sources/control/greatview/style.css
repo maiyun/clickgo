@@ -1,1 +1,1 @@
-.place{visibility:hidden}.comp{visibility:hidden;position:absolute;left:0;top:0}.comp.h{display:flex}.item{position:absolute}.item.h{display:flex}
+.place{visibility:hidden}.comp{visibility:hidden;position:absolute;left:0;top:0}.comp.h{display:flex}.item{position:absolute}.item.h{display:flex}.item.content-max{width:-webkit-max-content;width:max-content;height:-webkit-max-content;height:max-content}
