@@ -991,6 +991,7 @@ function create(taskId, opt) {
         };
         methods.cgDialog = function (opt) {
             return new Promise((resolve) => {
+                var _a;
                 if (typeof opt === 'string' || typeof opt === 'number') {
                     opt = {
                         'content': opt
@@ -1000,7 +1001,7 @@ function create(taskId, opt) {
                     opt.buttons = ['OK'];
                 }
                 this.cgCreateForm({
-                    'layout': `<form title="${opt.title}" width="auto" height="auto" :min="false" :max="false" :resize="false" :min-height="50" border="${!opt.title ? 'none' : 'normal'}"><dialog :buttons="buttons" @select="select">${opt.content}</dialog></form>`,
+                    'layout': `<form title="${(_a = opt.title) !== null && _a !== void 0 ? _a : 'dialog'}" width="auto" height="auto" :min="false" :max="false" :resize="false" :min-height="50" border="${opt.title ? 'normal' : 'none'}"><dialog :buttons="buttons" @select="select">${opt.content}</dialog></form>`,
                     'code': {
                         data: {
                             'buttons': opt.buttons

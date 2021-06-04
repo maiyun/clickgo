@@ -1141,7 +1141,7 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
                 opt.buttons = ['OK'];
             }
             this.cgCreateForm({
-                'layout': `<form title="${opt.title}" width="auto" height="auto" :min="false" :max="false" :resize="false" :min-height="50" border="${!opt.title ? 'none' : 'normal'}"><dialog :buttons="buttons" @select="select">${opt.content}</dialog></form>`,
+                'layout': `<form title="${opt.title ?? 'dialog'}" width="auto" height="auto" :min="false" :max="false" :resize="false" :min-height="50" border="${opt.title ? 'normal' : 'none'}"><dialog :buttons="buttons" @select="select">${opt.content}</dialog></form>`,
                 'code': {
                     data: {
                         'buttons': opt.buttons

@@ -15,4 +15,7 @@
     &:active {
         border-color: rgba(0, 0, 0, 1); background-color: #000; color: #FFF;
     }
+    &.flash {
+        animation: flash .2s linear infinite;
+    }
 }
