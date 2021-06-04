@@ -81,7 +81,7 @@ export let mounted = function(this: IVueForm): void {
         if (!this.flist[formId]) {
             return;
         }
-        this.flist[formId].focus = true;
+        this.flist[formId].focus = false;
         this.pushConsole('formBlurred', `taskId: ${taskId}, formId: ${formId}`);
     });
     this.cgSetSystemEventListener('formFlash', (taskId: number, formId: number): void => {
