@@ -375,8 +375,11 @@ function stylePrepend(style, prep = '') {
         prep = 'cg-scope' + Math.round(Math.random() * 1000000000000000) + '_';
     }
     style = style.replace(/([\s\S]+?){([\s\S]+?)}/g, function (t, t1, t2) {
-        t1 = t1.replace(/(^|[ >,\r\n])([a-zA-Z0-9-_]+)/g, function (t, t1, t2) {
-            return t1 + '.tag-' + t2;
+        t1 = t1.replace(/(^|[ >,\r\n])([a-zA-Z-_])([a-zA-Z0-9-_]*)/g, function (t, t1, t2, t3) {
+            return t1 + '.tag-' + t2 + t3;
+        });
+        t1 = t1.replace(/keyframes \.tag-([a-zA-Z0-9-_]+)/g, function (t, t1) {
+            return 'keyframes ' + t1;
         });
         return t1.replace(/([.#])([a-zA-Z0-9-_]+)/g, function (t, t1, t2) {
             if (t2.startsWith('cg-')) {
@@ -404,9 +407,9 @@ function stylePrepend(style, prep = '') {
         return t1 + prep + t2 + t3;
     });
     for (let keyframe of keyframeList) {
-        let reg = new RegExp(`(animation.+?)(${keyframe})`, 'gi');
-        style = style.replace(reg, function (t, t1, t2) {
-            return t1 + prep + t2;
+        let reg = new RegExp(`(animation[ :\\r\\n]+)(${keyframe})([ ;}\\r\\n])`, 'gi');
+        style = style.replace(reg, function (t, t1, t2, t3) {
+            return t1 + prep + t2 + t3;
         });
     }
     return {

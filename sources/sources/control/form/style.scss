@@ -3,28 +3,22 @@
     src: url('res/font.woff') format('woff');
 }
 
-@-webkit-keyframes flash {
-    0%, 50% {
-        border-color: rgba(0, 0, 0, .3);
-        box-shadow: 0 0 15px rgba(0, 0, 0, .5);
-        color: #999;
-    }
-    51%, 100% {
-        border-color: rgba(0, 0, 0, .7);
-        box-shadow: 0 0 10px rgba(0, 0, 0, .5);
-        color: #000;
-    }
-}
 @keyframes flash {
     0%, 50% {
-        border-color: rgba(0, 0, 0, .3);
         box-shadow: 0 0 15px rgba(0, 0, 0, .5);
+        color: #2A2E2E;
+    }
+    51%, 100% {
+        box-shadow: 0 0 10px rgba(0, 0, 0, .5);
         color: #999;
+    }
+}
+@keyframes flash-after {
+    0%, 50% {
+        border-color: rgba(0, 0, 0, .3);
     }
     51%, 100% {
         border-color: rgba(0, 0, 0, .7);
-        box-shadow: 0 0 10px rgba(0, 0, 0, .5);
-        color: #000;
     }
 }
 
@@ -50,6 +44,9 @@
     }
     &.flash {
         animation: flash .2s linear infinite;
+        &::after {
+            animation: flash-after .2s linear infinite;
+        }
     }
     &.cg-state-max {
         box-shadow: none;

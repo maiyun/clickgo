@@ -1242,8 +1242,8 @@ function create(taskId, opt) {
         if (rtn.vroot.$refs.form.$data.show !== false) {
             rtn.vroot.cgShow();
         }
-        changeFocus(formId, rtn.vroot);
         clickgo.core.trigger('formCreated', taskId, formId, rtn.vroot.$refs.form.title, rtn.vroot.$refs.form.iconData);
+        changeFocus(formId, rtn.vroot);
         return form;
     });
 }

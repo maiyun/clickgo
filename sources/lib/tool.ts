@@ -501,8 +501,12 @@ export function stylePrepend(style: string, prep: string = ''): { 'style': strin
     style = style.replace(/([\s\S]+?){([\s\S]+?)}/g, function(t, t1, t2) {
         // --- xxx { xxx; } ---
         // --- 将 element 模式的 css 变为 class 模式，如 div 变为 .tag-div ---
-        t1 = t1.replace(/(^|[ >,\r\n])([a-zA-Z0-9-_]+)/g, function(t: string, t1: string, t2: string) {
-            return t1 + '.tag-' + t2;
+        // --- 这里面遇到了一个 bug， @keyframe 也被转换了，这是不对的 ---
+        t1 = t1.replace(/(^|[ >,\r\n])([a-zA-Z-_])([a-zA-Z0-9-_]*)/g, function(t: string, t1: string, t2: string, t3: string) {
+            return t1 + '.tag-' + t2 + t3;
+        });
+        t1 = t1.replace(/keyframes \.tag-([a-zA-Z0-9-_]+)/g, function(t: string, t1: string) {
+            return 'keyframes ' + t1;
         });
         // --- 给 style 的 class 前添加 scope ---
         return t1.replace(/([.#])([a-zA-Z0-9-_]+)/g, function(t: string, t1: string, t2: string) {
@@ -535,9 +539,9 @@ export function stylePrepend(style: string, prep: string = ''): { 'style': strin
     });
     // --- 对自定义 keyframe 进行更名 ---
     for (let keyframe of keyframeList) {
-        let reg = new RegExp(`(animation.+?)(${keyframe})`, 'gi');
-        style = style.replace(reg, function(t, t1, t2) {
-            return t1 + prep + t2;
+        let reg = new RegExp(`(animation[ :\\r\\n]+)(${keyframe})([ ;}\\r\\n])`, 'gi');
+        style = style.replace(reg, function(t, t1, t2, t3) {
+            return t1 + prep + t2 + t3;
         });
     }
     return {

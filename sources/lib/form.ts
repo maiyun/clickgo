@@ -1390,10 +1390,10 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
     if (rtn.vroot.$refs.form.$data.show !== false) {
         rtn.vroot.cgShow();
     }
-    // --- 绑定获取焦点事件 ---
-    changeFocus(formId, rtn.vroot);
     // --- 触发 formCreated 事件 ---
     clickgo.core.trigger('formCreated', taskId, formId, rtn.vroot.$refs.form.title, rtn.vroot.$refs.form.iconData);
+    // --- 绑定获取焦点事件 ---
+    changeFocus(formId, rtn.vroot);
     return form;
 }
 

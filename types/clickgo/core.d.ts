@@ -30,9 +30,9 @@ interface ICGGlobalEvents {
     /** --- 窗体被移除后触发 --- */
     formRemovedHandler: null | ((taskId: number, formId: number, title: string, icon: string) => void | Promise<void>);
     /** --- 窗体标题被改变后触发 --- */
-    formTitleChangedHandler: null | ((taskId: number, formId: number, text: string) => void | Promise<void>);
+    formTitleChangedHandler: null | ((taskId: number, formId: number, title: string) => void | Promise<void>);
     /** --- 窗体图标被改变后触发 --- */
-    formIconChangedHandler: null | ((taskId: number, formId: number, text: string) => void | Promise<void>);
+    formIconChangedHandler: null | ((taskId: number, formId: number, icon: string) => void | Promise<void>);
     /** --- 窗体最小化状态改变后触发 --- */
     formStateMinChangedHandler: null | ((taskId: number, formId: number, state: boolean) => void | Promise<void>);
     /** --- 窗体最大化状态改变后触发 --- */
