@@ -771,11 +771,8 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
                     return 'LocaleError';
                 }
             };
-            methods.cgIsMouseAlsoTouchEvent = function(e: MouseEvent | TouchEvent): boolean {
-                return clickgo.dom.isMouseAlsoTouchEvent(e);
-            };
             methods.cgDown = function(this: IVueControl, e: MouseEvent | TouchEvent) {
-                if (this.cgIsMouseAlsoTouchEvent(e)) {
+                if (clickgo.dom.isMouseAlsoTouchEvent(e)) {
                     return;
                 }
                 if (e instanceof TouchEvent) {
@@ -810,7 +807,7 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
                 this.$emit('up', e);
             };
             methods.cgEnter = function(this: IVueControl, e: MouseEvent) {
-                if (this.cgIsMouseAlsoTouchEvent(e)) {
+                if (clickgo.dom.isMouseAlsoTouchEvent(e)) {
                     return;
                 }
                 this.cgRealHover = true;

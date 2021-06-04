@@ -74,7 +74,7 @@ export let methods = {
     },
     enter: function(this: IVueControl, e: MouseEvent): void {
         this.cgEnter(e);
-        if (this.cgIsMouseAlsoTouchEvent(e)) {
+        if (clickgo.dom.isMouseAlsoTouchEvent(e)) {
             return;
         }
         if (this.isDisabled) {

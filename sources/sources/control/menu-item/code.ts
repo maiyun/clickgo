@@ -21,7 +21,7 @@ export let methods = {
             // --- 如果当前是者禁用状态，不管 ---
             return;
         }
-        if (this.cgIsMouseAlsoTouchEvent(e)) {
+        if (clickgo.dom.isMouseAlsoTouchEvent(e)) {
             return;
         }
         if (!this.cgParentPopLayer.cgChildPopItemShowing) {

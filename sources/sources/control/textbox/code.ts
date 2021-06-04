@@ -230,7 +230,7 @@ export let methods = {
     },
     down: function(this: IVueControl, e: MouseEvent | TouchEvent): void {
         this.cgDown(e);
-        if (this.cgIsMouseAlsoTouchEvent(e)) {
+        if (clickgo.dom.isMouseAlsoTouchEvent(e)) {
             return;
         }
         if (this.cgSelfPopOpen) {
@@ -365,7 +365,7 @@ export let methods = {
             e.stopPropagation();
             return;
         }
-        if (this.cgIsMouseAlsoTouchEvent(e)) {
+        if (clickgo.dom.isMouseAlsoTouchEvent(e)) {
             return;
         }
         this.cgShowPop(e);

@@ -21,7 +21,14 @@
                 </layout>
             </overflow>
         </tab-panel>
-        <tab-panel label="Event">
+        <tab-panel label="method">
+            <overflow class="inner" flex="1" direction="v">
+                <layout gutter="10" direction="v">
+                    <button @tap="openForm('method', 'screen')">About screen</button>
+                </layout>
+            </overflow>
+        </tab-panel>
+        <tab-panel label="event">
             <overflow class="inner" flex="1" direction="v">
                 <layout gutter="10" direction="v">
                     <button @tap="openForm('event', 'screen')">About screen</button>

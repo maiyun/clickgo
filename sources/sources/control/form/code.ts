@@ -195,7 +195,7 @@ export let watch = {
 export let methods = {
     // --- 拖动 ---
     moveMethod: function(this: IVueControl, e: MouseEvent | TouchEvent, custom: boolean = false): void {
-        if (this.cgIsMouseAlsoTouchEvent(e)) {
+        if (clickgo.dom.isMouseAlsoTouchEvent(e)) {
             return;
         }
         if (!this.isMove && !custom) {
@@ -656,7 +656,7 @@ export let methods = {
     },
     // --- 改变窗体大小 ---
     resizeMethod: function(this: IVueControl, e: MouseEvent | TouchEvent, border: TCGBorder): void {
-        if (this.cgIsMouseAlsoTouchEvent(e)) {
+        if (clickgo.dom.isMouseAlsoTouchEvent(e)) {
             return;
         }
         let isBorder: TCGBorder = '';

@@ -646,11 +646,8 @@ function create(taskId, opt) {
                         return 'LocaleError';
                     }
                 };
-                methods.cgIsMouseAlsoTouchEvent = function (e) {
-                    return clickgo.dom.isMouseAlsoTouchEvent(e);
-                };
                 methods.cgDown = function (e) {
-                    if (this.cgIsMouseAlsoTouchEvent(e)) {
+                    if (clickgo.dom.isMouseAlsoTouchEvent(e)) {
                         return;
                     }
                     if (e instanceof TouchEvent) {
@@ -684,7 +681,7 @@ function create(taskId, opt) {
                     this.$emit('up', e);
                 };
                 methods.cgEnter = function (e) {
-                    if (this.cgIsMouseAlsoTouchEvent(e)) {
+                    if (clickgo.dom.isMouseAlsoTouchEvent(e)) {
                         return;
                     }
                     this.cgRealHover = true;

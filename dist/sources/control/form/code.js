@@ -201,7 +201,7 @@ exports.watch = {
 };
 exports.methods = {
     moveMethod: function (e, custom = false) {
-        if (this.cgIsMouseAlsoTouchEvent(e)) {
+        if (clickgo.dom.isMouseAlsoTouchEvent(e)) {
             return;
         }
         if (!this.isMove && !custom) {
@@ -641,7 +641,7 @@ exports.methods = {
     },
     resizeMethod: function (e, border) {
         var _a, _b, _c, _d;
-        if (this.cgIsMouseAlsoTouchEvent(e)) {
+        if (clickgo.dom.isMouseAlsoTouchEvent(e)) {
             return;
         }
         let isBorder = '';

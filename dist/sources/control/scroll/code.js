@@ -137,7 +137,7 @@ exports.computed = {
 };
 exports.methods = {
     down: function (e) {
-        if (this.cgIsMouseAlsoTouchEvent(e)) {
+        if (clickgo.dom.isMouseAlsoTouchEvent(e)) {
             return;
         }
         clickgo.dom.bindMove(e, {
@@ -152,7 +152,7 @@ exports.methods = {
         });
     },
     bardown: function (e) {
-        if (this.cgIsMouseAlsoTouchEvent(e)) {
+        if (clickgo.dom.isMouseAlsoTouchEvent(e)) {
             return;
         }
         if (e.currentTarget !== e.target) {
@@ -232,7 +232,7 @@ exports.methods = {
         });
     },
     enter: function (e) {
-        if (this.cgIsMouseAlsoTouchEvent(e)) {
+        if (clickgo.dom.isMouseAlsoTouchEvent(e)) {
             return;
         }
         this.cgEnter(e);
@@ -246,7 +246,7 @@ exports.methods = {
         }
     },
     leave: function (e) {
-        if (this.cgIsMouseAlsoTouchEvent(e)) {
+        if (clickgo.dom.isMouseAlsoTouchEvent(e)) {
             return;
         }
         this.cgLeave(e);

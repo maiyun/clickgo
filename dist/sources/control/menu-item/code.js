@@ -20,7 +20,7 @@ exports.methods = {
         if (this.isDisabled) {
             return;
         }
-        if (this.cgIsMouseAlsoTouchEvent(e)) {
+        if (clickgo.dom.isMouseAlsoTouchEvent(e)) {
             return;
         }
         if (!this.cgParentPopLayer.cgChildPopItemShowing) {

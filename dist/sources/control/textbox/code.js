@@ -237,7 +237,7 @@ exports.methods = {
     },
     down: function (e) {
         this.cgDown(e);
-        if (this.cgIsMouseAlsoTouchEvent(e)) {
+        if (clickgo.dom.isMouseAlsoTouchEvent(e)) {
             return;
         }
         if (this.cgSelfPopOpen) {
@@ -349,7 +349,7 @@ exports.methods = {
             e.stopPropagation();
             return;
         }
-        if (this.cgIsMouseAlsoTouchEvent(e)) {
+        if (clickgo.dom.isMouseAlsoTouchEvent(e)) {
             return;
         }
         this.cgShowPop(e);

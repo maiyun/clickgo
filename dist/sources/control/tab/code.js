@@ -113,7 +113,7 @@ exports.methods = {
         this.$refs.tabs.scrollLeft += e.deltaY;
     },
     longDown: function (e, type) {
-        if (this.cgIsMouseAlsoTouchEvent(e)) {
+        if (clickgo.dom.isMouseAlsoTouchEvent(e)) {
             return;
         }
         let num = type === 'start' ? -5 : 5;

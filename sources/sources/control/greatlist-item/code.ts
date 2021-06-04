@@ -31,7 +31,7 @@ export let methods = {
             return;
         }
         clickgo.form.hidePop(); // --- 此条主要用于 greatlist 的 pop 里，选定了就要隐藏 pop ---
-        if (!this.cgIsMouseAlsoTouchEvent(e)) {
+        if (!clickgo.dom.isMouseAlsoTouchEvent(e)) {
             // --- 本身 touch、或没发生 touch ---
             // --- 也就是纯鼠标事件不响应（电脑模式不响应） ---
             return;
@@ -46,7 +46,7 @@ export let methods = {
         }
     },
     contextmenu: function(this: IVueControl, e: MouseEvent): void {
-        if (this.cgIsMouseAlsoTouchEvent(e)) {
+        if (clickgo.dom.isMouseAlsoTouchEvent(e)) {
             return;
         }
         if (this.disabled) {
@@ -57,7 +57,7 @@ export let methods = {
         this.greatlist?.cgShowPop(e);
     },
     down: function(this: IVueControl, e: TouchEvent | MouseEvent): void {
-        if (this.cgIsMouseAlsoTouchEvent(e)) {
+        if (clickgo.dom.isMouseAlsoTouchEvent(e)) {
             return;
         }
         if (this.disabled) {
@@ -89,7 +89,7 @@ export let methods = {
             return;
         }
         this.greatlist.itemClick = true;
-        if (this.cgIsMouseAlsoTouchEvent(e)) {
+        if (clickgo.dom.isMouseAlsoTouchEvent(e)) {
             // --- 手机的话选择（电脑已经在 down 事件中选择过了） ---
             this.greatlist?.select(this.value, e.shiftKey, e.ctrlKey);
         }
@@ -106,7 +106,7 @@ export let methods = {
         e.preventDefault();
     },
     controlDown: function(this: IVueControl, e: TouchEvent | MouseEvent): void {
-        if (this.cgIsMouseAlsoTouchEvent(e)) {
+        if (clickgo.dom.isMouseAlsoTouchEvent(e)) {
             return;
         }
         if (this.disabled) {

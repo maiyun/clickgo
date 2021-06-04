@@ -148,7 +148,7 @@ export let computed = {
 
 export let methods = {
     down: function(this: IVueControl, e: MouseEvent | TouchEvent): void {
-        if (this.cgIsMouseAlsoTouchEvent(e)) {
+        if (clickgo.dom.isMouseAlsoTouchEvent(e)) {
             return;
         }
         clickgo.dom.bindMove(e, {
@@ -164,7 +164,7 @@ export let methods = {
         });
     },
     bardown: function(this: IVueControl, e: MouseEvent | TouchEvent): void {
-        if (this.cgIsMouseAlsoTouchEvent(e)) {
+        if (clickgo.dom.isMouseAlsoTouchEvent(e)) {
             return;
         }
         if (e.currentTarget !== e.target) {
@@ -250,7 +250,7 @@ export let methods = {
     },
     // --- 进入时保持滚动条常亮 ---
     enter: function(this: IVueControl, e: MouseEvent): void {
-        if (this.cgIsMouseAlsoTouchEvent(e)) {
+        if (clickgo.dom.isMouseAlsoTouchEvent(e)) {
             return;
         }
         this.cgEnter(e);
@@ -264,7 +264,7 @@ export let methods = {
         }
     },
     leave: function(this: IVueControl, e: MouseEvent): void {
-        if (this.cgIsMouseAlsoTouchEvent(e)) {
+        if (clickgo.dom.isMouseAlsoTouchEvent(e)) {
             return;
         }
         this.cgLeave(e);

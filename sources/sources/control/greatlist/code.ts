@@ -231,7 +231,7 @@ export let methods = {
     },
 
     down: function(this: IVueControl, e: MouseEvent | TouchEvent): void {
-        if (this.cgIsMouseAlsoTouchEvent(e)) {
+        if (clickgo.dom.isMouseAlsoTouchEvent(e)) {
             return;
         }
         this.cgDown(e);
@@ -248,7 +248,7 @@ export let methods = {
         }
     },
     innerDown: function(this: IVueControl, e: MouseEvent | TouchEvent): void {
-        if (this.cgIsMouseAlsoTouchEvent(e)) {
+        if (clickgo.dom.isMouseAlsoTouchEvent(e)) {
             return;
         }
         if (this.itemDown) {
@@ -274,8 +274,9 @@ export let methods = {
         }
     },
     click: function(this: IVueControl, e: MouseEvent): void {
-        if (!this.cgIsMouseAlsoTouchEvent(e)) {
+        if (!clickgo.dom.isMouseAlsoTouchEvent(e)) {
             // --- 电脑不响应本事件 ---
+            // --- e 只可能是鼠标事件，但是没有监听到 touch 事件，就代表一定是鼠标事件，则直接 return ---
             return;
         }
         // --- 手机 ---
@@ -291,7 +292,7 @@ export let methods = {
     },
     // --- 以下为空白处右键菜单 ---
     contextmenu: function(this: IVueControl, e: MouseEvent): void {
-        if (this.cgIsMouseAlsoTouchEvent(e)) {
+        if (clickgo.dom.isMouseAlsoTouchEvent(e)) {
             return;
         }
         this.cgShowPop(e);

@@ -103,7 +103,7 @@ export let methods = {
         this.$refs.tabs.scrollLeft += e.deltaY;
     },
     longDown: function(this: IVueControl, e: MouseEvent | TouchEvent, type: 'start' | 'end'): void {
-        if (this.cgIsMouseAlsoTouchEvent(e)) {
+        if (clickgo.dom.isMouseAlsoTouchEvent(e)) {
             return;
         }
         let num = type === 'start' ? -5 : 5;

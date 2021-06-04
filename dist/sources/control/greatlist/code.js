@@ -211,7 +211,7 @@ exports.methods = {
         }
     },
     down: function (e) {
-        if (this.cgIsMouseAlsoTouchEvent(e)) {
+        if (clickgo.dom.isMouseAlsoTouchEvent(e)) {
             return;
         }
         this.cgDown(e);
@@ -228,7 +228,7 @@ exports.methods = {
         }
     },
     innerDown: function (e) {
-        if (this.cgIsMouseAlsoTouchEvent(e)) {
+        if (clickgo.dom.isMouseAlsoTouchEvent(e)) {
             return;
         }
         if (this.itemDown) {
@@ -251,7 +251,7 @@ exports.methods = {
         }
     },
     click: function (e) {
-        if (!this.cgIsMouseAlsoTouchEvent(e)) {
+        if (!clickgo.dom.isMouseAlsoTouchEvent(e)) {
             return;
         }
         if (!this.itemClick) {
@@ -265,7 +265,7 @@ exports.methods = {
         }
     },
     contextmenu: function (e) {
-        if (this.cgIsMouseAlsoTouchEvent(e)) {
+        if (clickgo.dom.isMouseAlsoTouchEvent(e)) {
             return;
         }
         this.cgShowPop(e);

@@ -179,7 +179,7 @@ exports.methods = {
         }
     },
     down: function (e) {
-        if (this.cgIsMouseAlsoTouchEvent(e)) {
+        if (clickgo.dom.isMouseAlsoTouchEvent(e)) {
             return;
         }
         this.stopAnimation();

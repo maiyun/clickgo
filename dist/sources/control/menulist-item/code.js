@@ -71,7 +71,7 @@ exports.methods = {
     },
     enter: function (e) {
         this.cgEnter(e);
-        if (this.cgIsMouseAlsoTouchEvent(e)) {
+        if (clickgo.dom.isMouseAlsoTouchEvent(e)) {
             return;
         }
         if (this.isDisabled) {

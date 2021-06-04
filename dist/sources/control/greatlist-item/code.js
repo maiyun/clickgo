@@ -30,7 +30,7 @@ exports.methods = {
             return;
         }
         clickgo.form.hidePop();
-        if (!this.cgIsMouseAlsoTouchEvent(e)) {
+        if (!clickgo.dom.isMouseAlsoTouchEvent(e)) {
             return;
         }
         this.greatlist.itemClick = true;
@@ -43,7 +43,7 @@ exports.methods = {
     },
     contextmenu: function (e) {
         var _a;
-        if (this.cgIsMouseAlsoTouchEvent(e)) {
+        if (clickgo.dom.isMouseAlsoTouchEvent(e)) {
             return;
         }
         if (this.disabled) {
@@ -55,7 +55,7 @@ exports.methods = {
     },
     down: function (e) {
         var _a;
-        if (this.cgIsMouseAlsoTouchEvent(e)) {
+        if (clickgo.dom.isMouseAlsoTouchEvent(e)) {
             return;
         }
         if (this.disabled) {
@@ -85,7 +85,7 @@ exports.methods = {
             return;
         }
         this.greatlist.itemClick = true;
-        if (this.cgIsMouseAlsoTouchEvent(e)) {
+        if (clickgo.dom.isMouseAlsoTouchEvent(e)) {
             (_a = this.greatlist) === null || _a === void 0 ? void 0 : _a.select(this.value, e.shiftKey, e.ctrlKey);
         }
         if (this.cgSelfPopOpen) {
@@ -100,7 +100,7 @@ exports.methods = {
     },
     controlDown: function (e) {
         var _a;
-        if (this.cgIsMouseAlsoTouchEvent(e)) {
+        if (clickgo.dom.isMouseAlsoTouchEvent(e)) {
             return;
         }
         if (this.disabled) {
