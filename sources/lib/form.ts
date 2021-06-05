@@ -1096,6 +1096,9 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
             if (paramOpt.style) {
                 inOpt.style = paramOpt.style;
             }
+            if (paramOpt.topMost) {
+                inOpt.topMost = paramOpt.topMost;
+            }
             if (paramOpt.mask) {
                 this.$refs.form.maskFor = true;
             }
@@ -1232,12 +1235,14 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
         if (!this.cgFocus) {
             changeFocus(this.formId);
         }
-        if (this.$refs.form.flashTimer) {
+        if (this.$refs.form?.flashTimer) {
             clearTimeout(this.$refs.form.flashTimer);
             this.$refs.form.flashTimer = undefined;
         }
         this.$refs.form.flashTimer = setTimeout(() => {
-            this.$refs.form.flashTimer = undefined;
+            if (this.$refs.form) {
+                this.$refs.form.flashTimer = undefined;
+            }
         }, 1000);
         // --- 触发 formFlash 事件 ---
         clickgo.core.trigger('formFlash', taskId, formId);

@@ -1,0 +1,7 @@
+<form width="400" height="450" title="cgCreateForm" padding="10">
+    <layout gutter="10" direction="v" flex="1">
+        <button @tap="cgCreateForm({ 'layout': '<form width=\'300\' height=\'300\' title=\'normal\'></form>' })">Create by param</button>
+        <button @tap="cgCreateForm({ 'layout': '<form width=\'300\' height=\'300\' title=\'normal\'></form>', 'mask': true })">Create mask form</button>
+        <button @tap="cgCreateForm({ 'layout': '<form width=\'300\' height=\'300\' title=\'normal\'></form>', 'topMost': true })">Create topMost form</button>
+    </layout>
+</form>

@@ -61,6 +61,7 @@
         "/form/event/form/form.xml",
         "/form/event/screen/screen.js",
         "/form/event/screen/screen.xml",
+        "/form/method/cgCreateForm/cgCreateForm.xml",
         "/form/main.css",
         "/form/main.js",
         "/form/main.xml",

@@ -955,6 +955,9 @@ function create(taskId, opt) {
                     if (paramOpt.style) {
                         inOpt.style = paramOpt.style;
                     }
+                    if (paramOpt.topMost) {
+                        inOpt.topMost = paramOpt.topMost;
+                    }
                     if (paramOpt.mask) {
                         this.$refs.form.maskFor = true;
                     }
@@ -1094,15 +1097,18 @@ function create(taskId, opt) {
             }
         };
         methods.cgFlash = function () {
+            var _a;
             if (!this.cgFocus) {
                 changeFocus(this.formId);
             }
-            if (this.$refs.form.flashTimer) {
+            if ((_a = this.$refs.form) === null || _a === void 0 ? void 0 : _a.flashTimer) {
                 clearTimeout(this.$refs.form.flashTimer);
                 this.$refs.form.flashTimer = undefined;
             }
             this.$refs.form.flashTimer = setTimeout(() => {
-                this.$refs.form.flashTimer = undefined;
+                if (this.$refs.form) {
+                    this.$refs.form.flashTimer = undefined;
+                }
             }, 1000);
             clickgo.core.trigger('formFlash', taskId, formId);
         };
