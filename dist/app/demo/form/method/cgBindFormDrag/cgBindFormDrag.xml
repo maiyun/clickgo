@@ -1,0 +1,5 @@
+<form width="300" height="300" title="cgBindFormDrag">
+    <layout align-v="center" align-h="center" flex="1">
+        <label @down="cgBindFormDrag" style="padding: 20px; background: rgba(0, 0, 0, .1);">Drag the window by me</label>
+    </layout>
+</form>

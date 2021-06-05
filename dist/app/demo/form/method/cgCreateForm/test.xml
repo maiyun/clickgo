@@ -1,0 +1,5 @@
+<form width="200" height="200" title="From path">
+    <layout align-v="center" align-h="center" flex="1">
+        <label>Haha!</label>
+    </layout>
+</form>

@@ -199,6 +199,7 @@ export let methods = {
             return;
         }
         if (!this.isMove && !custom) {
+            // --- !this.isMove 代表不能拖动，并且不是用户的指令 custom，那么则禁止拖动 ---
             return;
         }
         if (this.isInside) {

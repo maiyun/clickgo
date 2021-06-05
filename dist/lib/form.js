@@ -475,7 +475,7 @@ function remove(formId) {
 }
 exports.remove = remove;
 function create(taskId, opt) {
-    var _a, _b, _c, _d, _e, _f, _g, _h, _j;
+    var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k;
     return __awaiter(this, void 0, void 0, function* () {
         let task = clickgo.task.list[taskId];
         if (!task) {
@@ -869,15 +869,12 @@ function create(taskId, opt) {
         let updated = undefined;
         let beforeUnmount = undefined;
         let unmounted = undefined;
-        let expo = undefined;
+        let expo = opt.code;
         if (appPkg.files[opt.file + '.js']) {
             [expo] = (_e = yield loader.requireMemory((_d = opt.file) !== null && _d !== void 0 ? _d : '', appPkg.files)) !== null && _e !== void 0 ? _e : [];
         }
-        else if (opt.code) {
-            expo = opt.code;
-        }
         if (expo) {
-            data = expo.data || {};
+            data = (_f = expo.data) !== null && _f !== void 0 ? _f : {};
             methods = expo.methods || {};
             computed = expo.computed || {};
             watch = expo.watch || {};
@@ -894,7 +891,7 @@ function create(taskId, opt) {
         if (style) {
             let r = clickgo.tool.stylePrepend(style);
             prep = r.prep;
-            style = yield clickgo.tool.styleUrl2ObjectOrDataUrl((_g = (_f = opt.file) !== null && _f !== void 0 ? _f : opt.path) !== null && _g !== void 0 ? _g : '/', r.style, task);
+            style = yield clickgo.tool.styleUrl2ObjectOrDataUrl((_h = (_g = opt.file) !== null && _g !== void 0 ? _g : opt.path) !== null && _h !== void 0 ? _h : '/', r.style, task);
         }
         layout = clickgo.tool.purify(layout);
         layout = clickgo.tool.layoutAddTagClassAndReTagName(layout, true);
@@ -912,7 +909,7 @@ function create(taskId, opt) {
         data.formId = formId;
         data.controlName = 'root';
         data.cgFocus = false;
-        data.cgPath = (_j = (_h = opt.file) !== null && _h !== void 0 ? _h : opt.path) !== null && _j !== void 0 ? _j : '/';
+        data.cgPath = (_k = (_j = opt.file) !== null && _j !== void 0 ? _j : opt.path) !== null && _k !== void 0 ? _k : '/';
         data._prep = prep;
         data._customZIndex = false;
         if (opt.topMost) {
@@ -937,11 +934,11 @@ function create(taskId, opt) {
                     'path': this.cgPath
                 };
                 if (typeof paramOpt === 'string') {
-                    inOpt.file = paramOpt;
+                    inOpt.file = clickgo.tool.urlResolve(this.$data.cgPath, paramOpt);
                 }
                 else {
                     if (paramOpt.file) {
-                        inOpt.file = paramOpt.file;
+                        inOpt.file = clickgo.tool.urlResolve(this.$data.cgPath, paramOpt.file);
                     }
                     if (paramOpt.path) {
                         inOpt.path = paramOpt.path;

@@ -1000,15 +1000,12 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
     let beforeUnmount: (() => void) | undefined = undefined;
     let unmounted: (() => void) | undefined = undefined;
     // --- 检测是否有 js ---
-    let expo = undefined;
+    let expo = opt.code;
     if (appPkg.files[opt.file + '.js']) {
         [expo] = await loader.requireMemory(opt.file ?? '', appPkg.files) ?? [];
     }
-    else if (opt.code) {
-        expo = opt.code;
-    }
     if (expo) {
-        data = expo.data || {};
+        data = expo.data ?? {};
         methods = expo.methods || {};
         computed = expo.computed || {};
         watch = expo.watch || {};
@@ -1078,11 +1075,11 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
             'path': this.cgPath
         };
         if (typeof paramOpt === 'string') {
-            inOpt.file = paramOpt;
+            inOpt.file = clickgo.tool.urlResolve(this.$data.cgPath, paramOpt);
         }
         else {
             if (paramOpt.file) {
-                inOpt.file = paramOpt.file;
+                inOpt.file = clickgo.tool.urlResolve(this.$data.cgPath, paramOpt.file);
             }
             if (paramOpt.path) {
                 inOpt.path = paramOpt.path;
