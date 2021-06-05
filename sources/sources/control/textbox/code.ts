@@ -383,7 +383,7 @@ export let methods = {
         }
     },
     reselect: async function(this: IVueControl): Promise<void> {
-        await clickgo.tool.sleep(100);
+        await clickgo.tool.sleep(150);
         this.select();
     },
     execCmd: async function(this: IVueControl, ac: string): Promise<void> {

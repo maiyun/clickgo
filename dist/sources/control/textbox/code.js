@@ -368,7 +368,7 @@ exports.methods = {
     },
     reselect: function () {
         return __awaiter(this, void 0, void 0, function* () {
-            yield clickgo.tool.sleep(100);
+            yield clickgo.tool.sleep(150);
             this.select();
         });
     },
