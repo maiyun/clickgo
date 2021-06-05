@@ -65,6 +65,8 @@
         "/form/method/cgCloseForm/cgCloseForm.xml",
         "/form/method/cgCreateForm/cgCreateForm.xml",
         "/form/method/cgCreateForm/test.xml",
+        "/form/method/cgDialog/cgDialog.js",
+        "/form/method/cgDialog/cgDialog.xml",
         "/form/main.css",
         "/form/main.js",
         "/form/main.xml",

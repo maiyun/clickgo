@@ -51,4 +51,5 @@ interface ICGFormDialog {
     'title'?: string;
     'content': string;
     'buttons'?: string[];
+    'select'?: (e: Event, button: string) => void;
 }

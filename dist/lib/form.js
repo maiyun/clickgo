@@ -1005,7 +1005,17 @@ function create(taskId, opt) {
                         },
                         methods: {
                             select: function (button) {
-                                this.cgCloseForm();
+                                var _a, _b;
+                                let event = {
+                                    'go': true,
+                                    preventDefault: function () {
+                                        this.go = false;
+                                    }
+                                };
+                                (_b = (_a = opt).select) === null || _b === void 0 ? void 0 : _b.call(_a, event, button);
+                                if (event.go) {
+                                    this.cgCloseForm();
+                                }
                                 resolve(button);
                             }
                         }

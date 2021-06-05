@@ -1145,7 +1145,16 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
                     },
                     methods: {
                         select: function(this: IVueForm, button: string) {
-                            this.cgCloseForm();
+                            let event = {
+                                'go': true,
+                                preventDefault: function() {
+                                    this.go = false;
+                                }
+                            };
+                            (opt as ICGFormDialog).select?.(event as unknown as Event, button);
+                            if (event.go) {
+                                this.cgCloseForm();
+                            }
                             resolve(button);
                         }
                     }

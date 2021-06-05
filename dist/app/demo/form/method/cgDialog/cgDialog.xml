@@ -1,0 +1,9 @@
+<form width="400" height="450" title="cgDialog" padding="10">
+    <layout gutter="10" direction="v" flex="1">
+        <label>Result: {{result}}.</label>
+        <button @tap="dialog('Hello world!')">Normal</button>
+        <button @tap="dialog({ 'title': 'Title', 'content': 'Hello world!' })">Has title</button>
+        <button @tap="dialog({ 'content': 'Hello world!', 'buttons': ['A', 'B', 'C'] })">Custom buttons</button>
+        <button @tap="donot">Do not close</button>
+    </layout>
+</form>
