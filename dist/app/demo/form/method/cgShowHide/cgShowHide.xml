@@ -1,0 +1,5 @@
+<form width="300" height="300" title="cgShow / cgHide">
+    <layout align-v="center" align-h="center" flex="1">
+        <button @tap="cgShowHide" style="padding: 0 10px;">Show after hiding for a second</button>
+    </layout>
+</form>

@@ -1186,14 +1186,17 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
     };
     // --- 加载主题 ---
     methods.cgLoadTheme = async function(this: IVueForm, path: string): Promise<boolean> {
+        path = clickgo.tool.urlResolve(this.$data.cgPath, path);
         return await clickgo.theme.load(this.taskId, path);
     };
     // --- 卸载主题 ---
     methods.cgRemoveTheme = async function(this: IVueForm, path: string): Promise<void> {
+        path = clickgo.tool.urlResolve(this.$data.cgPath, path);
         await clickgo.theme.remove(this.taskId, path);
     };
     // --- 加载全新主题（老主题会被清除） ---
     methods.cgSetTheme = async function(this: IVueForm, path: string): Promise<void> {
+        path = clickgo.tool.urlResolve(this.$data.cgPath, path);
         await clickgo.theme.clear(this.taskId);
         await clickgo.theme.load(this.taskId, path);
     };
@@ -1263,6 +1266,7 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
     };
     // --- 加载 local 文件 json ---
     methods.cgLoadLocal = async function(this: IVueForm, name: string, path: string): Promise<boolean> {
+        path = clickgo.tool.urlResolve(this.$data.cgPath, path);
         if (!task.files[path]) {
             return false;
         }

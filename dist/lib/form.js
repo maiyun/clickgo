@@ -1050,16 +1050,19 @@ function create(taskId, opt) {
         };
         methods.cgLoadTheme = function (path) {
             return __awaiter(this, void 0, void 0, function* () {
+                path = clickgo.tool.urlResolve(this.$data.cgPath, path);
                 return yield clickgo.theme.load(this.taskId, path);
             });
         };
         methods.cgRemoveTheme = function (path) {
             return __awaiter(this, void 0, void 0, function* () {
+                path = clickgo.tool.urlResolve(this.$data.cgPath, path);
                 yield clickgo.theme.remove(this.taskId, path);
             });
         };
         methods.cgSetTheme = function (path) {
             return __awaiter(this, void 0, void 0, function* () {
+                path = clickgo.tool.urlResolve(this.$data.cgPath, path);
                 yield clickgo.theme.clear(this.taskId);
                 yield clickgo.theme.load(this.taskId, path);
             });
@@ -1127,6 +1130,7 @@ function create(taskId, opt) {
         };
         methods.cgLoadLocal = function (name, path) {
             return __awaiter(this, void 0, void 0, function* () {
+                path = clickgo.tool.urlResolve(this.$data.cgPath, path);
                 if (!task.files[path]) {
                     return false;
                 }

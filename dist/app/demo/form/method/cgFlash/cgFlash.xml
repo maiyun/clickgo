@@ -1,0 +1,5 @@
+<form width="300" height="300" title="cgFlash">
+    <layout align-v="center" align-h="center" flex="1">
+        <button @tap="cgFlash" style="padding: 0 10px;">Click me to run cgFlash</button>
+    </layout>
+</form>

@@ -28,6 +28,9 @@
                     <button @tap="openForm('method', 'cgCloseForm')">cgCloseForm</button>
                     <button @tap="openForm('method', 'cgBindFormDrag')">cgBindFormDrag</button>
                     <button @tap="openForm('method', 'cgDialog')">cgDialog</button>
+                    <button @tap="openForm('method', 'cgSetTopMost')">cgSetTopMost</button>
+                    <button @tap="openForm('method', 'cgFlash')">cgFlash</button>
+                    <button @tap="openForm('method', 'cgShowHide')">cgShow / cgHide</button>
                 </layout>
             </overflow>
         </tab-panel>
