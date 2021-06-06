@@ -924,6 +924,9 @@ function create(taskId, opt) {
             }
             return clickgo.task.list[this.taskId].local.name;
         };
+        computed.clickgo = function () {
+            return clickgo;
+        };
         methods.l = function (key) {
             var _a, _b;
             return (_b = (_a = clickgo.task.list[this.taskId].local.data[this.cgLocal]) === null || _a === void 0 ? void 0 : _a[key]) !== null && _b !== void 0 ? _b : 'LocaleError';

@@ -1065,6 +1065,9 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
         }
         return clickgo.task.list[this.taskId].local.name;
     };
+    computed.clickgo = function(): IClickGo {
+        return clickgo;
+    };
     // --- 获取语言 ---
     methods.l = function(this: IVueForm, key: string): string {
         return clickgo.task.list[this.taskId].local.data[this.cgLocal]?.[key] ?? 'LocaleError';

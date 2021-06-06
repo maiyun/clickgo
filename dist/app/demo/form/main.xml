@@ -32,6 +32,8 @@
                     <button @tap="openForm('method', 'cgFlash')">cgFlash</button>
                     <button @tap="openForm('method', 'cgShowHide')">cgShow / cgHide</button>
                     <button @tap="openForm('method', 'cgLocal')">cgLocal</button>
+                    <button @tap="openForm('method', 'dom')">Library dom</button>
+                    <button @tap="openForm('method', 'form')">Library form</button>
                 </layout>
             </overflow>
         </tab-panel>

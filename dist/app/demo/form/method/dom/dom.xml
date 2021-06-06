@@ -1,0 +1,7 @@
+<form width="400" height="450" title="Library dom" padding="10">
+    <layout gutter="10" direction="v" flex="1">
+        <button @tap="clickgo.dom.setGlobalCursor('wait')">dom.setGlobalCursor('wait')</button>
+        <button @tap="clickgo.dom.setGlobalCursor()">dom.setGlobalCursor()</button>
+        <button @tap="cgDialog(clickgo.dom.isMouseAlsoTouchEvent($event) ? 'true' : 'false')">dom.isMouseAlsoTouchEvent()</button>
+    </layout>
+</form>
