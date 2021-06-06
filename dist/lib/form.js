@@ -1130,7 +1130,7 @@ function create(taskId, opt) {
         };
         methods.cgLoadLocal = function (name, path) {
             return __awaiter(this, void 0, void 0, function* () {
-                path = clickgo.tool.urlResolve(this.$data.cgPath, path);
+                path = clickgo.tool.urlResolve(this.$data.cgPath, path + '.json');
                 if (!task.files[path]) {
                     return false;
                 }
@@ -1155,6 +1155,9 @@ function create(taskId, opt) {
             clickgo.task.list[this.taskId].local.data = {};
         };
         methods.cgLoadLocalData = function (name, data, pre = '') {
+            if (!clickgo.task.list[this.taskId].local.data[name]) {
+                clickgo.task.list[this.taskId].local.data[name] = {};
+            }
             for (let k in data) {
                 let v = data[k];
                 if (typeof v === 'object') {
@@ -1164,6 +1167,9 @@ function create(taskId, opt) {
                     clickgo.task.list[this.taskId].local.data[name][pre + k] = v;
                 }
             }
+        };
+        methods.cgSetLocalName = function (name) {
+            clickgo.task.list[this.taskId].local.name = name;
         };
         methods.cgClassPrepend = function (cla) {
             if (typeof cla !== 'string') {

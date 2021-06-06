@@ -1,6 +1,6 @@
 @keyframes flash {
     0%, 50% {
-        border: solid 1px rgba(0, 0, 0, .8); background-color: transparent; color: initial;
+        border: solid 1px rgba(0, 0, 0, .8); color: initial;
     }
     51%, 100% {
         border-color: rgba(0, 0, 0, 1); background-color: #000; color: #FFF;

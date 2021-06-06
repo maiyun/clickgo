@@ -1266,7 +1266,7 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
     };
     // --- 加载 local 文件 json ---
     methods.cgLoadLocal = async function(this: IVueForm, name: string, path: string): Promise<boolean> {
-        path = clickgo.tool.urlResolve(this.$data.cgPath, path);
+        path = clickgo.tool.urlResolve(this.$data.cgPath, path + '.json');
         if (!task.files[path]) {
             return false;
         }
@@ -1280,7 +1280,7 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
             return false;
         }
     };
-    // --- 加载全新 local（老 local 的缓存会被卸载） ---
+    // --- 加载全新 local（老 local 的所以语言的缓存会被卸载） ---
     methods.cgSetLocal = async function(this: IVueForm, name: string, path: string): Promise<boolean> {
         this.cgClearLocal();
         return await this.cgLoadLocal(name, path);
@@ -1291,6 +1291,9 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
     };
     // --- 加载 local data 对象到 task ---
     methods.cgLoadLocalData = function(this: IVueForm, name: string, data: Record<string, any>, pre: string = ''): void {
+        if (!clickgo.task.list[this.taskId].local.data[name]) {
+            clickgo.task.list[this.taskId].local.data[name] = {};
+        }
         for (let k in data) {
             let v = data[k];
             if (typeof v === 'object') {
@@ -1300,6 +1303,10 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
                 clickgo.task.list[this.taskId].local.data[name][pre + k] = v;
             }
         }
+    };
+    // --- 设置本 task 的语言 name ---
+    methods.cgSetLocalName = function(this: IVueForm, name: string): void {
+        clickgo.task.list[this.taskId].local.name = name;
     };
     // --- layout 中 :class 的转义 ---
     methods.cgClassPrepend = function(this: IVueForm, cla: any): string {

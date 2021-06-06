@@ -1,0 +1,15 @@
+<form width="400" height="450" title="cgLocal" padding="10">
+    <layout gutter="10" direction="v" flex="1">
+        <label>Now local: {{cgLocal}}</label>
+        <label>File name: {{l('File name')}}</label>
+        <label>File size: {{l('File size')}}</label>
+        <button @tap="cgLoadLocal('en-us', 'test1')">cgLoadLocal('en-us', 'test1')</button>
+        <button @tap="cgLoadLocal('zh-cn', 'test2')">cgLoadLocal('zh-cn', 'test2')</button>
+        <button @tap="cgSetLocal('zh-cn', 'test2')">cgSetLocal('zh-cn', 'test2')</button>
+        <button @tap="cgClearLocal">cgClearLocal</button>
+        <button @tap="cgLoadLocalData('en-us', { 'File size': 'File size' })">cgLoadLocalData('en-us', { 'File size': 'File size' })</button>
+        <button @tap="cgLoadLocalData('zh-cn', { 'File size': '文件大小' })">cgLoadLocalData('zh-cn', { 'File size': '文件大小' })</button>
+        <button @tap="cgSetLocalName('en-us')">cgSetLocalName('en-us')</button>
+        <button @tap="cgSetLocalName('zh-cn')">cgSetLocalName('zh-cn')</button>
+    </layout>
+</form>
