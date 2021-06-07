@@ -72,10 +72,39 @@ rectangleElement.classList.add('cg-rectangle');
 document.getElementsByTagName('body')[0].appendChild(rectangleElement);
 
 /**
+ * --- 获取 form list 的简略情况 ---
+ * @param taskId 任务 ID
+ */
+export function getList(taskId: number): Record<string, ICGFormItem> {
+    if (!clickgo.task.list[taskId]) {
+        return {};
+    }
+    let list: Record<string, ICGFormItem> = {};
+    for (let fid in clickgo.task.list[taskId].forms) {
+        let item = clickgo.task.list[taskId].forms[fid];
+        list[fid] = {
+            'title': '',
+            'icon': '',
+            'stateMax': false,
+            'stateMin': false,
+            'show': false,
+            'focus': false
+        };
+        list[fid].title = item.vroot.$refs.form.title;
+        list[fid].icon = item.vroot.$refs.form.iconData;
+        list[fid].stateMax = item.vroot.$refs.form.stateMaxData;
+        list[fid].stateMin = item.vroot.$refs.form.stateMinData;
+        list[fid].show = item.vroot.$refs.form.showData;
+        list[fid].focus = item.vroot.cgFocus;
+    }
+    return list;
+}
+
+/**
  * --- 改变 form 的焦点 class ---
  * @param formId 变更后的 form id
  */
-export function changeFocus(formId: number = 0, vm?: IVue): void {
+export function changeFocus(formId: number = 0): void {
     let focusElement = document.querySelector('.cg-form-list > .cg-focus');
     if (focusElement) {
         let dataFormId = focusElement.getAttribute('data-form-id');
@@ -100,36 +129,38 @@ export function changeFocus(formId: number = 0, vm?: IVue): void {
     if (formId !== 0) {
         let el = document.querySelector(`.cg-form-list > [data-form-id='${formId}']`);
         if (el) {
-            let taskId: number;
-            if (vm) {
-                if (!vm.$data._customZIndex) {
-                    if (vm.$data._topMost) {
-                        vm.$refs.form.setPropData('zIndex', ++lastTopZIndex);
+            let taskId: number = parseInt(el.getAttribute('data-task-id') ?? '0');
+            let task = clickgo.task.list[taskId];
+            if (!task.forms[formId].vroot.$data._customZIndex) {
+                if (task.forms[formId].vroot.$data._topMost) {
+                    task.forms[formId].vroot.$refs.form.setPropData('zIndex', ++lastTopZIndex);
+                }
+                else {
+                    task.forms[formId].vroot.$refs.form.setPropData('zIndex', ++lastZIndex);
+                }
+            }
+            // --- 检测 maskFor ---
+            let maskFor = task.forms[formId].vroot.$refs.form.maskFor;
+            if ((typeof maskFor === 'number') && (clickgo.task.list[taskId].forms[maskFor])) {
+                clickgo.task.list[taskId].forms[maskFor].vapp._container.classList.add('cg-focus');
+                clickgo.task.list[taskId].forms[maskFor].vroot.cgFocus = true;
+                clickgo.core.trigger('formFocused', taskId, maskFor);
+                if (!clickgo.task.list[taskId].forms[maskFor].vroot.$data._customZIndex) {
+                    if (clickgo.task.list[taskId].forms[maskFor].vroot.$data._topMost) {
+                        clickgo.task.list[taskId].forms[maskFor].vroot.$refs.form.setPropData('zIndex', ++lastTopZIndex);
                     }
                     else {
-                        vm.$refs.form.setPropData('zIndex', ++lastZIndex);
+                        clickgo.task.list[taskId].forms[maskFor].vroot.$refs.form.setPropData('zIndex', ++lastZIndex);
                     }
                 }
-                (vm.$el.parentNode as HTMLDivElement).classList.add('cg-focus');
-                vm.cgFocus = true;
-                taskId = vm.taskId;
+                clickgo.task.list[taskId].forms[maskFor].vroot.cgFlash();
             }
             else {
-                taskId = parseInt(el.getAttribute('data-task-id') ?? '0');
-                let task = clickgo.task.list[taskId];
-                if (!task.forms[formId].vroot.$data._customZIndex) {
-                    if (task.forms[formId].vroot.$data._topMost) {
-                        task.forms[formId].vroot.$refs.form.setPropData('zIndex', ++lastTopZIndex);
-                    }
-                    else {
-                        task.forms[formId].vroot.$refs.form.setPropData('zIndex', ++lastZIndex);
-                    }
-                }
                 task.forms[formId].vapp._container.classList.add('cg-focus');
                 task.forms[formId].vroot.cgFocus = true;
+                // --- 触发 formFocused 事件 ---
+                clickgo.core.trigger('formFocused', taskId, formId);
             }
-            // --- 触发 formFocused 事件 ---
-            clickgo.core.trigger('formFocused', taskId, formId);
         }
     }
 }
@@ -1230,7 +1261,7 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
             // --- 要置顶 ---
             this.$data._topMost = true;
             if (!this.cgFocus) {
-                changeFocus(this.formId, this);
+                changeFocus(this.formId);
             }
             else {
                 this.$refs.form.setPropData('zIndex', ++lastTopZIndex);
@@ -1415,7 +1446,7 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
     // --- 触发 formCreated 事件 ---
     clickgo.core.trigger('formCreated', taskId, formId, rtn.vroot.$refs.form.title, rtn.vroot.$refs.form.iconData);
     // --- 绑定获取焦点事件 ---
-    changeFocus(formId, rtn.vroot);
+    changeFocus(formId);
     return form;
 }
 

@@ -741,19 +741,6 @@ exports.methods = {
             }
         });
     },
-    maskDown: function (e) {
-        if (clickgo.dom.isMouseAlsoTouchEvent(e)) {
-            return;
-        }
-        if (typeof this.maskFor !== 'number') {
-            return;
-        }
-        if (!clickgo.task.list[this.taskId].forms[this.maskFor]) {
-            return;
-        }
-        e.stopPropagation();
-        clickgo.task.list[this.taskId].forms[this.maskFor].vroot.cgFlash();
-    },
     setPropData: function (name, val, mode = '') {
         if (this[name + 'Data'] === undefined || this[name] === undefined) {
             return;

@@ -9,7 +9,7 @@
         <div class="pop-resize-bl" @mousedown="resizeMethod($event, 'bl')" @touchstart="resizeMethod($event, 'bl')"></div>
         <div class="pop-resize-l" @mousedown="resizeMethod($event, 'l')" @touchstart="resizeMethod($event, 'l')"></div>
     </template>
-    <div v-if="maskFor !== undefined" class="mask" @touchstart="maskDown" @mousedown="maskDown"></div>
+    <div v-if="maskFor !== undefined" class="mask"></div>
     <div class="inner">
         <div class="header" v-if="border !== 'none'">
             <div class="icon"><img v-if="border !== 'thin' && iconData !== ''" :src="iconData" width="16" height="16" @dragstart="$event.preventDefault();"></div>

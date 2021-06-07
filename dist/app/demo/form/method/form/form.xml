@@ -5,5 +5,6 @@
             <button @tap="clickgo.form.changeFocus(fid)" width="150">form.changeFocus({{fid}})</button>
         </layout>
         <button @tap="cgDialog(clickgo.form.getMaxZIndexFormID())">form.getMaxZIndexFormID()</button>
+        <button @tap="getList">form.getList({{taskId}})</button>
     </layout>
 </form>

@@ -763,20 +763,6 @@ export let methods = {
             }
         });
     },
-    // --- 遮罩层被点击时 ---
-    maskDown: function(this: IVueControl, e: MouseEvent | TouchEvent): void {
-        if (clickgo.dom.isMouseAlsoTouchEvent(e)) {
-            return;
-        }
-        if (typeof this.maskFor !== 'number') {
-            return;
-        }
-        if (!clickgo.task.list[this.taskId].forms[this.maskFor]) {
-            return;
-        }
-        e.stopPropagation();
-        clickgo.task.list[this.taskId].forms[this.maskFor].vroot.cgFlash();
-    },
     // --- 设置 left, width, zIndex 等 ---
     setPropData: function(this: IVueControl, name: string, val: number, mode: string = ''): void {
         if (this[name + 'Data'] === undefined || this[name] === undefined) {

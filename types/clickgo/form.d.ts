@@ -4,7 +4,8 @@ interface ICGFormLib {
     'lastZIndex': number;
     'lastTopZIndex': number;
     'lastPopZIndex': number;
-    changeFocus(formId?: number, vm?: IVue): void;
+    getList(taskId: number): Record<string, ICGFormItem>;
+    changeFocus(formId?: number): void;
     getMaxZIndexFormID(): number | null;
     getRectByBorder(border: TCGBorder): {
         'width': number;
@@ -29,7 +30,7 @@ interface ICGFormLib {
 interface ICGForm {
     'id': number;
     'vapp': IVueApp;
-    'vroot': IVue;
+    'vroot': IVueForm;
     'win': Electron.BrowserWindow | null;
     'events': Record<string, (...any: any) => void | Promise<void>>;
 }
@@ -52,4 +53,14 @@ interface ICGFormDialog {
     'content': string;
     'buttons'?: string[];
     'select'?: (e: Event, button: string) => void;
+}
+
+/** --- Form Item 的简略情况，通常在 list 当中 --- */
+interface ICGFormItem {
+    'title': string;
+    'icon': string;
+    'stateMax': boolean;
+    'stateMin': boolean;
+    'show': boolean;
+    'focus': boolean;
 }

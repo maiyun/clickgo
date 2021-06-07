@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.create = exports.remove = exports.doFocusAndPopEvent = exports.hidePop = exports.showPop = exports.removeFromPop = exports.appendToPop = exports.hideRectangle = exports.showRectangle = exports.moveRectangle = exports.showCircular = exports.getRectByBorder = exports.getMaxZIndexFormID = exports.changeFocus = exports.lastPopZIndex = exports.lastTopZIndex = exports.lastZIndex = exports.lastFormId = exports.popShowing = void 0;
+exports.create = exports.remove = exports.doFocusAndPopEvent = exports.hidePop = exports.showPop = exports.removeFromPop = exports.appendToPop = exports.hideRectangle = exports.showRectangle = exports.moveRectangle = exports.showCircular = exports.getRectByBorder = exports.getMaxZIndexFormID = exports.changeFocus = exports.getList = exports.lastPopZIndex = exports.lastTopZIndex = exports.lastZIndex = exports.lastFormId = exports.popShowing = void 0;
 exports.lastFormId = 0;
 exports.lastZIndex = 999;
 exports.lastTopZIndex = 9999999;
@@ -48,7 +48,32 @@ let rectangleElement = document.createElement('div');
 rectangleElement.setAttribute('data-pos', '');
 rectangleElement.classList.add('cg-rectangle');
 document.getElementsByTagName('body')[0].appendChild(rectangleElement);
-function changeFocus(formId = 0, vm) {
+function getList(taskId) {
+    if (!clickgo.task.list[taskId]) {
+        return {};
+    }
+    let list = {};
+    for (let fid in clickgo.task.list[taskId].forms) {
+        let item = clickgo.task.list[taskId].forms[fid];
+        list[fid] = {
+            'title': '',
+            'icon': '',
+            'stateMax': false,
+            'stateMin': false,
+            'show': false,
+            'focus': false
+        };
+        list[fid].title = item.vroot.$refs.form.title;
+        list[fid].icon = item.vroot.$refs.form.iconData;
+        list[fid].stateMax = item.vroot.$refs.form.stateMaxData;
+        list[fid].stateMin = item.vroot.$refs.form.stateMinData;
+        list[fid].show = item.vroot.$refs.form.showData;
+        list[fid].focus = item.vroot.cgFocus;
+    }
+    return list;
+}
+exports.getList = getList;
+function changeFocus(formId = 0) {
     var _a, _b;
     let focusElement = document.querySelector('.cg-form-list > .cg-focus');
     if (focusElement) {
@@ -73,35 +98,36 @@ function changeFocus(formId = 0, vm) {
     if (formId !== 0) {
         let el = document.querySelector(`.cg-form-list > [data-form-id='${formId}']`);
         if (el) {
-            let taskId;
-            if (vm) {
-                if (!vm.$data._customZIndex) {
-                    if (vm.$data._topMost) {
-                        vm.$refs.form.setPropData('zIndex', ++exports.lastTopZIndex);
+            let taskId = parseInt((_b = el.getAttribute('data-task-id')) !== null && _b !== void 0 ? _b : '0');
+            let task = clickgo.task.list[taskId];
+            if (!task.forms[formId].vroot.$data._customZIndex) {
+                if (task.forms[formId].vroot.$data._topMost) {
+                    task.forms[formId].vroot.$refs.form.setPropData('zIndex', ++exports.lastTopZIndex);
+                }
+                else {
+                    task.forms[formId].vroot.$refs.form.setPropData('zIndex', ++exports.lastZIndex);
+                }
+            }
+            let maskFor = task.forms[formId].vroot.$refs.form.maskFor;
+            if ((typeof maskFor === 'number') && (clickgo.task.list[taskId].forms[maskFor])) {
+                clickgo.task.list[taskId].forms[maskFor].vapp._container.classList.add('cg-focus');
+                clickgo.task.list[taskId].forms[maskFor].vroot.cgFocus = true;
+                clickgo.core.trigger('formFocused', taskId, maskFor);
+                if (!clickgo.task.list[taskId].forms[maskFor].vroot.$data._customZIndex) {
+                    if (clickgo.task.list[taskId].forms[maskFor].vroot.$data._topMost) {
+                        clickgo.task.list[taskId].forms[maskFor].vroot.$refs.form.setPropData('zIndex', ++exports.lastTopZIndex);
                     }
                     else {
-                        vm.$refs.form.setPropData('zIndex', ++exports.lastZIndex);
+                        clickgo.task.list[taskId].forms[maskFor].vroot.$refs.form.setPropData('zIndex', ++exports.lastZIndex);
                     }
                 }
-                vm.$el.parentNode.classList.add('cg-focus');
-                vm.cgFocus = true;
-                taskId = vm.taskId;
+                clickgo.task.list[taskId].forms[maskFor].vroot.cgFlash();
             }
             else {
-                taskId = parseInt((_b = el.getAttribute('data-task-id')) !== null && _b !== void 0 ? _b : '0');
-                let task = clickgo.task.list[taskId];
-                if (!task.forms[formId].vroot.$data._customZIndex) {
-                    if (task.forms[formId].vroot.$data._topMost) {
-                        task.forms[formId].vroot.$refs.form.setPropData('zIndex', ++exports.lastTopZIndex);
-                    }
-                    else {
-                        task.forms[formId].vroot.$refs.form.setPropData('zIndex', ++exports.lastZIndex);
-                    }
-                }
                 task.forms[formId].vapp._container.classList.add('cg-focus');
                 task.forms[formId].vroot.cgFocus = true;
+                clickgo.core.trigger('formFocused', taskId, formId);
             }
-            clickgo.core.trigger('formFocused', taskId, formId);
         }
     }
 }
@@ -1098,7 +1124,7 @@ function create(taskId, opt) {
             if (top) {
                 this.$data._topMost = true;
                 if (!this.cgFocus) {
-                    changeFocus(this.formId, this);
+                    changeFocus(this.formId);
                 }
                 else {
                     this.$refs.form.setPropData('zIndex', ++exports.lastTopZIndex);
@@ -1267,7 +1293,7 @@ function create(taskId, opt) {
             rtn.vroot.cgShow();
         }
         clickgo.core.trigger('formCreated', taskId, formId, rtn.vroot.$refs.form.title, rtn.vroot.$refs.form.iconData);
-        changeFocus(formId, rtn.vroot);
+        changeFocus(formId);
         return form;
     });
 }
