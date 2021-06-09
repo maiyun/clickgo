@@ -1,0 +1,12 @@
+<form width="400" height="550" title="About task" padding="10">
+    <label>The task list:</label>
+    <layout align-h="center" align-v="center" flex="1" style="margin-top: 10px;">
+        <list :data="tlist" width="200" height="200"></list>
+    </layout>
+    <layout gutter="10" style="margin-top: 10px;">
+        <list :data="['taskStarted', 'taskEnded']" width="150"></list>
+        <greatview v-slot="data" :data="list" height="80" padding="10" direction="v" flex="1" style="color: #FFF; background: #000; line-height: 1.5;" same>
+            <label>[{{data.row.time}}] {{data.row.name}}, {{data.row.text}}.</label>
+        </greatview>
+    </layout>
+</form>

@@ -4,6 +4,22 @@ export let list: Record<number, ICGTask> = {};
 export let lastId: number = 0;
 
 /**
+ * --- 获取 task list 的简略情况 ---
+ */
+export function getList(): Record<string, ICGTaskItem> {
+    let list: Record<string, ICGTaskItem> = {};
+    for (let tid in clickgo.task.list) {
+        let item = clickgo.task.list[tid];
+        list[tid] = {
+            'customTheme': item.customTheme,
+            'localName': item.local.name,
+            'formCount': Object.keys(item.forms).length
+        };
+    }
+    return list;
+}
+
+/**
  * --- 运行一个应用 ---
  * @param url app 路径、blob 对象或 IAppPkg 对象
  * @param opt runtime 运行时要注入的文件列表（cg 文件默认被注入） ---

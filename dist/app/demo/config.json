@@ -61,6 +61,8 @@
         "/form/event/form/form.xml",
         "/form/event/screen/screen.js",
         "/form/event/screen/screen.xml",
+        "/form/event/task/task.js",
+        "/form/event/task/task.xml",
         "/form/method/cgBindFormDrag/cgBindFormDrag.xml",
         "/form/method/cgCloseForm/cgCloseForm.xml",
         "/form/method/cgCreateForm/cgCreateForm.xml",

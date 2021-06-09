@@ -9,9 +9,22 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.end = exports.run = exports.lastId = exports.list = void 0;
+exports.end = exports.run = exports.getList = exports.lastId = exports.list = void 0;
 exports.list = {};
 exports.lastId = 0;
+function getList() {
+    let list = {};
+    for (let tid in clickgo.task.list) {
+        let item = clickgo.task.list[tid];
+        list[tid] = {
+            'customTheme': item.customTheme,
+            'localName': item.local.name,
+            'formCount': Object.keys(item.forms).length
+        };
+    }
+    return list;
+}
+exports.getList = getList;
 function run(url, opt = {}) {
     return __awaiter(this, void 0, void 0, function* () {
         if (!opt.runtime) {

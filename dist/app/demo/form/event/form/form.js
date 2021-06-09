@@ -16,12 +16,26 @@ exports.methods = {
     }
 };
 exports.mounted = function () {
+    for (let taskId in clickgo.task.list) {
+        let flist = clickgo.form.getList(parseInt(taskId));
+        for (let fid in flist) {
+            this.flist[fid] = {
+                'title': flist[fid].title,
+                'icon': flist[fid].icon,
+                'stateMax': flist[fid].stateMax,
+                'stateMin': flist[fid].stateMin,
+                'show': flist[fid].show,
+                'focus': flist[fid].focus,
+                'flash': false
+            };
+        }
+    }
     this.cgSetSystemEventListener('formCreated', (taskId, formId, title, icon) => {
         this.flist[formId] = {
             'title': title,
             'icon': icon,
-            'min': false,
-            'max': false,
+            'stateMax': false,
+            'stateMin': false,
             'show': false,
             'focus': false,
             'flash': false

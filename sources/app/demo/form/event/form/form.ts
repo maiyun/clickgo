@@ -15,12 +15,26 @@ export let methods = {
 };
 
 export let mounted = function(this: IVueForm): void {
+    for (let taskId in clickgo.task.list) {
+        let flist = clickgo.form.getList(parseInt(taskId));
+        for (let fid in flist) {
+            this.flist[fid] = {
+                'title': flist[fid].title,
+                'icon': flist[fid].icon,
+                'stateMax': flist[fid].stateMax,
+                'stateMin': flist[fid].stateMin,
+                'show': flist[fid].show,
+                'focus': flist[fid].focus,
+                'flash': false
+            };
+        }
+    }
     this.cgSetSystemEventListener('formCreated', (taskId: number, formId: number, title: string, icon: string): void => {
         this.flist[formId] = {
             'title': title,
             'icon': icon,
-            'min': false,
-            'max': false,
+            'stateMax': false,
+            'stateMin': false,
             'show': false,
             'focus': false,
             'flash': false
