@@ -3,7 +3,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.mounted = exports.methods = exports.data = void 0;
 exports.data = {
     'tlist': [],
-    'list': []
+    'list': [],
+    'tid': 0
 };
 exports.methods = {
     'pushConsole': function (name, text) {

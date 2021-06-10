@@ -1,6 +1,7 @@
 export let data = {
     'tlist': [],
-    'list': []
+    'list': [],
+    'tid': 0
 };
 
 export let methods = {

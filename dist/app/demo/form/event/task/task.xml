@@ -1,7 +1,14 @@
 <form width="400" height="550" title="About task" padding="10">
     <label>The task list:</label>
     <layout align-h="center" align-v="center" flex="1" style="margin-top: 10px;">
-        <list :data="tlist" width="200" height="200"></list>
+        <layout direction="v" gutter="10">
+            <label>Select task id: {{tid}}</label>
+            <list v-model="tid" :data="tlist" width="200" height="200"></list>
+            <layout gutter="10">
+                <button flex="1">Run self</button>
+                <button flex="1">End</button>
+            </layout>
+        </layout>
     </layout>
     <layout gutter="10" style="margin-top: 10px;">
         <list :data="['taskStarted', 'taskEnded']" width="150"></list>

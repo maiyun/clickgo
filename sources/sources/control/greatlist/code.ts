@@ -133,7 +133,7 @@ export let methods = {
         // --- 检测过去 value 的数据格式是否正确（多行为数组、单行为值，以及必须状态下是否未选择） ---
         if (typeof this.valueData === 'object') {
             // --- 当前是数组 ---
-            if (this.isMust && (this.valueData.length === 0)) {
+            if (this.isMust && (this.valueData.length === 0) && (this.data.length > 0)) {
                 this.valueData = [0];
                 change = true;
             }
@@ -145,7 +145,7 @@ export let methods = {
         }
         else {
             // --- 当前是值 ---
-            if (this.isMust && (this.valueData === -1)) {
+            if (this.isMust && (this.valueData === -1) && (this.data.length > 0)) {
                 this.valueData = 0;
                 change = true;
             }

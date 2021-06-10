@@ -122,7 +122,7 @@ exports.methods = {
             }
         }
         if (typeof this.valueData === 'object') {
-            if (this.isMust && (this.valueData.length === 0)) {
+            if (this.isMust && (this.valueData.length === 0) && (this.data.length > 0)) {
                 this.valueData = [0];
                 change = true;
             }
@@ -132,7 +132,7 @@ exports.methods = {
             }
         }
         else {
-            if (this.isMust && (this.valueData === -1)) {
+            if (this.isMust && (this.valueData === -1) && (this.data.length > 0)) {
                 this.valueData = 0;
                 change = true;
             }
