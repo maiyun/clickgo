@@ -48,7 +48,7 @@ export let methods = {
             this.cgHidePop();
             return;
         }
-        this.cgShowPop('v', { width: this.$el.offsetWidth });
+        this.cgShowPop('v', { 'size': { 'width': this.$el.offsetWidth } });
     },
     click: function(this: IVueControl, e: MouseEvent, area: 'left' | 'arrow'): void {
         if (this.disabled) {
@@ -63,7 +63,7 @@ export let methods = {
             // --- 当前只能箭头展开，并且点击的还是不能展开的左侧 ---
             return;
         }
-        this.cgShowPop('v', { width: this.$el.offsetWidth });
+        this.cgShowPop('v', { 'size': { 'width': this.$el.offsetWidth } });
     }
 };
 

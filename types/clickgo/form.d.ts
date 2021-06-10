@@ -19,7 +19,7 @@ interface ICGFormLib {
     hideRectangle(): void;
     appendToPop(el: HTMLElement): void;
     removeFromPop(el: HTMLElement): void;
-    showPop(pop: IVueControl, direction: 'h' | 'v' | MouseEvent | TouchEvent | { x: number; y: number; }, size?: { width?: number; height?: number; }): void;
+    showPop(pop: IVueControl, direction: 'h' | 'v' | MouseEvent | TouchEvent | { x: number; y: number; }, opt?: { 'size'?: { width?: number; height?: number; }; 'null'?: boolean; }): void;
     hidePop(pop?: IVueControl | null): void;
     doFocusAndPopEvent(e: MouseEvent | TouchEvent): void;
     remove(formId: number): boolean;

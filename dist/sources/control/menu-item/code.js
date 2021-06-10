@@ -26,7 +26,7 @@ exports.methods = {
         if (!this.cgParentPopLayer.cgChildPopItemShowing) {
             return;
         }
-        this.cgShowPop('v');
+        this.cgShowPop('v', { 'null': true });
     },
     click: function (e) {
         if (this.isDisabled) {
@@ -37,6 +37,6 @@ exports.methods = {
             this.cgHidePop();
             return;
         }
-        this.cgShowPop('v');
+        this.cgShowPop('v', { 'null': true });
     }
 };

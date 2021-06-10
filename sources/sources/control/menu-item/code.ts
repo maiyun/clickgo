@@ -28,7 +28,7 @@ export let methods = {
             // --- 别的没有展开，则不管 ---
             return;
         }
-        this.cgShowPop('v');
+        this.cgShowPop('v', { 'null': true });
     },
     click: function(this: IVueControl, e: MouseEvent): void {
         if (this.isDisabled) {
@@ -40,6 +40,6 @@ export let methods = {
             this.cgHidePop();
             return;
         }
-        this.cgShowPop('v');
+        this.cgShowPop('v', { 'null': true });
     }
 };

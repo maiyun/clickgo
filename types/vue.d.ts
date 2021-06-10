@@ -233,7 +233,7 @@ interface IVueControl extends IVue {
      * @param direction 要显示方向（以 $el 为准的 h 水平和 v 垂直）或坐标
      * @param size 显示的 pop 定义自定义宽度，可省略
      */
-    cgShowPop(direction: 'h' | 'v' | MouseEvent | TouchEvent | { x: number; y: number; }, size?: { width?: number; height?: number; }): void;
+    cgShowPop(direction: 'h' | 'v' | MouseEvent | TouchEvent | { x: number; y: number; }, opt?: { 'size'?: { width?: number; height?: number; }; 'null'?: boolean; }): void;
     /**
      * --- 隐藏 pop ---
      */

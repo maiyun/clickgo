@@ -410,23 +410,36 @@ export function removeFromPop(el: HTMLElement): void {
  * @param direction 要显示方向（以 $el 为准的 h 水平和 v 垂直）或坐标
  * @param size 显示的 pop 定义自定义宽度，可省略
  */
-export function showPop(pop: IVueControl, direction: 'h' | 'v' | MouseEvent | TouchEvent | { x: number; y: number; }, size: { width?: number; height?: number; } = {}): void {
+export function showPop(pop: IVueControl, direction: 'h' | 'v' | MouseEvent | TouchEvent | { x: number; y: number; }, opt: { 'size'?: { width?: number; height?: number; }; 'null'?: boolean; } = {}): void {
     if (pop.cgSelfPopOpen) {
         return;
     }
+    // --- opt.null 为 true 代表可为空，为空也会被显示，默认为 false ---
+    if (opt.null === undefined) {
+        opt.null = false;
+    }
+    if (opt.size === undefined) {
+        opt.size = {};
+    }
+    /** --- 是否显示本 pop --- */
+    let doShow: boolean = (pop.cgSelfPop !== undefined) ? true : opt.null;
     if (!clickgo.dom.findParentByClass(pop.$el, 'cg-pop-list')) {
         // --- 本层不是 pop，因此要弹出 current pop ---
         if (popShowing) {
             popShowing.cgHidePop();
         }
-        popShowing = pop;
+        if (doShow) {
+            popShowing = pop;
+        }
     }
-    // --- 显示前一些变量的处理 ---
-    pop.cgSelfPopOpen = true;
     // --- 有本 layer 的其他子层显示的话则隐藏 ---
     pop.cgParentPopLayer.cgChildPopItemShowing?.cgHidePop();
-    // --- 然后将本 layer 的子层显示设置为自己 ---
-    pop.cgParentPopLayer.cgChildPopItemShowing = pop;
+    if (doShow) {
+        // --- 显示前一些变量的处理 ---
+        pop.cgSelfPopOpen = true;
+        // --- 然后将本 layer 的子层显示设置为自己 ---
+        pop.cgParentPopLayer.cgChildPopItemShowing = pop;
+    }
     // --- 没有子层直接返回 ---
     if (pop.cgSelfPop === undefined) {
         pop.cgPopPosition = {
@@ -439,8 +452,8 @@ export function showPop(pop: IVueControl, direction: 'h' | 'v' | MouseEvent | To
     // --- 获取限定区域 ---
     let position = clickgo.getPosition();
     // --- 最终 pop 的大小 ---
-    let width = size.width ?? pop.cgSelfPop.$el.offsetWidth;
-    let height = size.height ?? pop.cgSelfPop.$el.offsetHeight;
+    let width = opt.size.width ?? pop.cgSelfPop.$el.offsetWidth;
+    let height = opt.size.height ?? pop.cgSelfPop.$el.offsetHeight;
     // --- 最终显示位置 ---
     let left: number, top: number;
     if (typeof direction === 'string') {
@@ -513,11 +526,11 @@ export function showPop(pop: IVueControl, direction: 'h' | 'v' | MouseEvent | To
         'top': top + 'px',
         'zIndex': (++lastPopZIndex).toString()
     };
-    if (size.width) {
-        pop.cgPopPosition.width = size.width + 'px';
+    if (opt.size.width) {
+        pop.cgPopPosition.width = opt.size.width + 'px';
     }
-    if (size.height) {
-        pop.cgPopPosition.width = size.height + 'px';
+    if (opt.size.height) {
+        pop.cgPopPosition.width = opt.size.height + 'px';
     }
 }
 
@@ -981,8 +994,8 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
             };
             // --- pop 相关操作 ---
             if (!methods.cgShowPop) {
-                methods.cgShowPop = function(this: IVueControl, direction: 'h' | 'v' | MouseEvent | TouchEvent | { x: number; y: number; }, size?: { width?: number; height?: number; }): void {
-                    clickgo.form.showPop(this, direction, size);
+                methods.cgShowPop = function(this: IVueControl, direction: 'h' | 'v' | MouseEvent | TouchEvent | { x: number; y: number; }, opt?: { 'size'?: { width?: number; height?: number; }; 'null'?: boolean; }): void {
+                    clickgo.form.showPop(this, direction, opt);
                 };
             }
             if (!methods.cgHidePop) {

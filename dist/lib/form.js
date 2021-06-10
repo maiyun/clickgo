@@ -333,20 +333,31 @@ function removeFromPop(el) {
     popListElement.removeChild(el);
 }
 exports.removeFromPop = removeFromPop;
-function showPop(pop, direction, size = {}) {
+function showPop(pop, direction, opt = {}) {
     var _a, _b, _c;
     if (pop.cgSelfPopOpen) {
         return;
     }
+    if (opt.null === undefined) {
+        opt.null = false;
+    }
+    if (opt.size === undefined) {
+        opt.size = {};
+    }
+    let doShow = (pop.cgSelfPop !== undefined) ? true : opt.null;
     if (!clickgo.dom.findParentByClass(pop.$el, 'cg-pop-list')) {
         if (exports.popShowing) {
             exports.popShowing.cgHidePop();
         }
-        exports.popShowing = pop;
+        if (doShow) {
+            exports.popShowing = pop;
+        }
     }
-    pop.cgSelfPopOpen = true;
     (_a = pop.cgParentPopLayer.cgChildPopItemShowing) === null || _a === void 0 ? void 0 : _a.cgHidePop();
-    pop.cgParentPopLayer.cgChildPopItemShowing = pop;
+    if (doShow) {
+        pop.cgSelfPopOpen = true;
+        pop.cgParentPopLayer.cgChildPopItemShowing = pop;
+    }
     if (pop.cgSelfPop === undefined) {
         pop.cgPopPosition = {
             'left': '-5000px',
@@ -356,8 +367,8 @@ function showPop(pop, direction, size = {}) {
         return;
     }
     let position = clickgo.getPosition();
-    let width = (_b = size.width) !== null && _b !== void 0 ? _b : pop.cgSelfPop.$el.offsetWidth;
-    let height = (_c = size.height) !== null && _c !== void 0 ? _c : pop.cgSelfPop.$el.offsetHeight;
+    let width = (_b = opt.size.width) !== null && _b !== void 0 ? _b : pop.cgSelfPop.$el.offsetWidth;
+    let height = (_c = opt.size.height) !== null && _c !== void 0 ? _c : pop.cgSelfPop.$el.offsetHeight;
     let left, top;
     if (typeof direction === 'string') {
         let bcr = pop.$el.getBoundingClientRect();
@@ -421,11 +432,11 @@ function showPop(pop, direction, size = {}) {
         'top': top + 'px',
         'zIndex': (++exports.lastPopZIndex).toString()
     };
-    if (size.width) {
-        pop.cgPopPosition.width = size.width + 'px';
+    if (opt.size.width) {
+        pop.cgPopPosition.width = opt.size.width + 'px';
     }
-    if (size.height) {
-        pop.cgPopPosition.width = size.height + 'px';
+    if (opt.size.height) {
+        pop.cgPopPosition.width = opt.size.height + 'px';
     }
 }
 exports.showPop = showPop;
@@ -838,8 +849,8 @@ function create(taskId, opt) {
                     }
                 };
                 if (!methods.cgShowPop) {
-                    methods.cgShowPop = function (direction, size) {
-                        clickgo.form.showPop(this, direction, size);
+                    methods.cgShowPop = function (direction, opt) {
+                        clickgo.form.showPop(this, direction, opt);
                     };
                 }
                 if (!methods.cgHidePop) {

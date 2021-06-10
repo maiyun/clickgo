@@ -47,7 +47,7 @@ exports.methods = {
             this.cgHidePop();
             return;
         }
-        this.cgShowPop('v', { width: this.$el.offsetWidth });
+        this.cgShowPop('v', { 'size': { 'width': this.$el.offsetWidth } });
     },
     click: function (e, area) {
         if (this.disabled) {
@@ -61,7 +61,7 @@ exports.methods = {
         if (this.area === 'arrow' && area === 'left') {
             return;
         }
-        this.cgShowPop('v', { width: this.$el.offsetWidth });
+        this.cgShowPop('v', { 'size': { 'width': this.$el.offsetWidth } });
     }
 };
 exports.mounted = function () {
