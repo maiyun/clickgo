@@ -118,7 +118,7 @@ function run(url, opt = {}) {
                 return -2;
             }
         }
-        clickgo.dom.createToStyleList(taskId);
+        clickgo.dom.createToStyleList(task.id);
         let form = yield clickgo.form.create(task.id, {
             'file': appPkg.config.main
         });
@@ -129,9 +129,9 @@ function run(url, opt = {}) {
             for (let name in task.themePkgs) {
                 clickgo.theme.revokeObjectURL(task.themePkgs[name]);
             }
-            delete (exports.list[taskId]);
-            clickgo.dom.removeFromStyleList(taskId);
-            return form;
+            delete (exports.list[task.id]);
+            clickgo.dom.removeFromStyleList(task.id);
+            return form - 100;
         }
         if (appPkg.config.style && appPkg.files[appPkg.config.style + '.css']) {
             let style = yield clickgo.tool.blob2Text(appPkg.files[appPkg.config.style + '.css']);
@@ -149,6 +149,7 @@ function run(url, opt = {}) {
                 yield clickgo.theme.load(task.id);
             }
         }
+        clickgo.core.trigger('taskStarted', task.id);
         return task.id;
     });
 }

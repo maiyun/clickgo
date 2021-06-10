@@ -126,7 +126,7 @@ export async function run(url: string | Blob | ICGAppPkg, opt: { 'runtime'?: Rec
         }
     }
     // --- 创建 form ---
-    clickgo.dom.createToStyleList(taskId);
+    clickgo.dom.createToStyleList(task.id);
     let form = await clickgo.form.create(task.id, {
         'file': appPkg.config.main
     });
@@ -138,9 +138,9 @@ export async function run(url: string | Blob | ICGAppPkg, opt: { 'runtime'?: Rec
         for (let name in task.themePkgs) {
             clickgo.theme.revokeObjectURL(task.themePkgs[name]);
         }
-        delete(list[taskId]);
-        clickgo.dom.removeFromStyleList(taskId);
-        return form;
+        delete(list[task.id]);
+        clickgo.dom.removeFromStyleList(task.id);
+        return form - 100;
     }
     // --- 设置 global style（如果 form 创建失败，就不设置 global style 了） ---
     if (appPkg.config.style && appPkg.files[appPkg.config.style + '.css']) {
@@ -161,6 +161,8 @@ export async function run(url: string | Blob | ICGAppPkg, opt: { 'runtime'?: Rec
             await clickgo.theme.load(task.id);
         }
     }
+    // --- 触发 taskStarted 事件 ---
+    clickgo.core.trigger('taskStarted', task.id);
     return task.id;
 }
 

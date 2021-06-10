@@ -211,8 +211,8 @@ export async function fetchApp(url: string): Promise<null | ICGAppPkg> {
 
     // --- 获取绝对路径 ---
     let realUrl: string;
-    if (url.startsWith('clickgo/')) {
-        realUrl = clickgo.tool.urlResolve(clickgo.cgRootPath, url.slice(8));
+    if (url.startsWith('/clickgo/')) {
+        realUrl = clickgo.tool.urlResolve(clickgo.cgRootPath, url.slice(9));
     }
     else {
         realUrl = clickgo.tool.urlResolve(clickgo.rootPath, url);

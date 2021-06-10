@@ -5,7 +5,7 @@
             <label>Select task id: {{tid}}</label>
             <list v-model="tid" :data="tlist" width="200" height="200"></list>
             <layout gutter="10">
-                <button flex="1">Run self</button>
+                <button flex="1" @tap="run">Run self</button>
                 <button flex="1" @tap="end">End</button>
             </layout>
         </layout>

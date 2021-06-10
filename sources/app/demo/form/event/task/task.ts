@@ -13,6 +13,10 @@ export let methods = {
             'text': text
         });
     },
+    'run': async function(this: IVueForm): Promise<void> {
+        let taskId = await clickgo.task.run('/clickgo/app/demo/');
+        await this.cgDialog(`Successfully run, task id is: ${taskId}.`);
+    },
     'end': async function(this: IVueForm): Promise<void> {
         if (await this.cgConfirm(`Are you sure to end Task ${this.tid}?`)) {
             clickgo.task.end(this.tid);

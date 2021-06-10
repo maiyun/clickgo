@@ -24,6 +24,12 @@ exports.methods = {
             'text': text
         });
     },
+    'run': function () {
+        return __awaiter(this, void 0, void 0, function* () {
+            let taskId = yield clickgo.task.run('/clickgo/app/demo/');
+            yield this.cgDialog(`Successfully run, task id is: ${taskId}.`);
+        });
+    },
     'end': function () {
         return __awaiter(this, void 0, void 0, function* () {
             if (yield this.cgConfirm(`Are you sure to end Task ${this.tid}?`)) {

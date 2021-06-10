@@ -184,8 +184,8 @@ function fetchApp(url) {
             isCga = true;
         }
         let realUrl;
-        if (url.startsWith('clickgo/')) {
-            realUrl = clickgo.tool.urlResolve(clickgo.cgRootPath, url.slice(8));
+        if (url.startsWith('/clickgo/')) {
+            realUrl = clickgo.tool.urlResolve(clickgo.cgRootPath, url.slice(9));
         }
         else {
             realUrl = clickgo.tool.urlResolve(clickgo.rootPath, url);
