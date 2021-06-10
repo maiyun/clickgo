@@ -16,5 +16,14 @@ export let methods = {
                 }
             }
         });
+    },
+    confirm: async function(this: IVueForm, cancel: boolean = false): Promise<void> {
+        this.result = await this.cgConfirm('Hello world?', cancel);
+        if (typeof this.result === 'boolean') {
+            this.result = this.result ? 'true (boolean)' : 'false (boolean)';
+        }
+        else {
+            this.result = this.result + ' (number)';
+        }
     }
 };

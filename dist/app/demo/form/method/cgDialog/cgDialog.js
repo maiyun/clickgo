@@ -31,5 +31,16 @@ exports.methods = {
                 }
             });
         });
+    },
+    confirm: function (cancel = false) {
+        return __awaiter(this, void 0, void 0, function* () {
+            this.result = yield this.cgConfirm('Hello world?', cancel);
+            if (typeof this.result === 'boolean') {
+                this.result = this.result ? 'true (boolean)' : 'false (boolean)';
+            }
+            else {
+                this.result = this.result + ' (number)';
+            }
+        });
     }
 };
