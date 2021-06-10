@@ -25,6 +25,39 @@ export let lastTopZIndex: number = 9999999;
 /** --- pop 最后一个层级 --- */
 export let lastPopZIndex: number = 0;
 
+/** --- form lib 用到的语言包 --- */
+let localData: Record<string, {
+    'ok': string;
+    'yes': string;
+    'no': string;
+    'cancel': string;
+}> = {
+    'en-us': {
+        'ok': 'OK',
+        'yes': 'Yes',
+        'no': 'No',
+        'cancel': 'Cancel'
+    },
+    'zh-cn': {
+        'ok': '好',
+        'yes': '是',
+        'no': '否',
+        'cancel': '取消'
+    },
+    'zh-tw': {
+        'ok': '好',
+        'yes': '是',
+        'no': '否',
+        'cancel': '取消'
+    },
+    'ja-jp': {
+        'ok': '好',
+        'yes': 'はい',
+        'no': 'いいえ',
+        'cancel': 'キャンセル'
+    }
+};
+
 /** --- form list 的 div --- */
 let formListElement: HTMLDivElement = document.createElement('div');
 formListElement.classList.add('cg-form-list');
@@ -589,6 +622,11 @@ export function remove(formId: number): boolean {
         }
         clickgo.task.list[taskId].forms[formId].vroot.$refs.form.$data.showData = false;
         setTimeout(function() {
+            // --- 延长 100 秒是为了响应 100 毫秒的动画 ---
+            if (!clickgo.task.list[taskId]) {
+                // --- 可能这时候 task 已经被结束了 ---
+                return true;
+            }
             clickgo.task.list[taskId].forms[formId].vapp.unmount();
             clickgo.task.list[taskId].forms[formId].vapp._container.remove();
             delete(clickgo.task.list[taskId].forms[formId]);
@@ -1169,7 +1207,7 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
                 };
             }
             if (opt.buttons === undefined) {
-                opt.buttons = ['OK'];
+                opt.buttons = [localData[this.cgLocal].ok];
             }
             this.cgCreateForm({
                 'layout': `<form title="${opt.title ?? 'dialog'}" width="auto" height="auto" :min="false" :max="false" :resize="false" :min-height="50" border="${opt.title ? 'normal' : 'none'}"><dialog :buttons="buttons" @select="select">${opt.content}</dialog></form>`,
@@ -1188,8 +1226,8 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
                             (opt as ICGFormDialog).select?.(event as unknown as Event, button);
                             if (event.go) {
                                 this.cgCloseForm();
+                                resolve(button);
                             }
-                            resolve(button);
                         }
                     }
                 },
@@ -1198,6 +1236,23 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
                 throw e;
             });
         });
+    };
+    methods.cgConfirm = async function(this: IVueForm, content: string, cancel: boolean = false): Promise<boolean | number> {
+        let buttons = [localData[this.cgLocal].yes, localData[this.cgLocal].no];
+        if (cancel) {
+            buttons.push(localData[this.cgLocal].cancel);
+        }
+        let res = await this.cgDialog({
+            'content': content,
+            'buttons': buttons
+        });
+        if (res === localData[this.cgLocal].yes) {
+            return true;
+        }
+        if (res === localData[this.cgLocal].cancel) {
+            return 0;
+        }
+        return false;
     };
     // --- 获取文件 blob 对象 ---
     methods.cgGetBlob = async function(this: IVueForm, path: string): Promise<Blob | null> {

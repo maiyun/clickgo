@@ -12,6 +12,11 @@ export let methods = {
             'name': name,
             'text': text
         });
+    },
+    'end': async function(this: IVueForm): Promise<void> {
+        if (await this.cgConfirm(`Are you sure to end Task ${this.tid}?`)) {
+            clickgo.task.end(this.tid);
+        }
     }
 };
 

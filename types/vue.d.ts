@@ -82,6 +82,7 @@ interface IVueForm extends IVue {
     cgSetSystemEventListener(name: TCGGlobalEvent, func: (...any: any) => void | Promise<void>): void;
     cgRemoveSystemEventListener(name: TCGGlobalEvent): void;
     cgDialog(opt: string | ICGFormDialog): Promise<string>;
+    cgConfirm(content: string, cancel?: boolean): Promise<boolean | number>;
     cgGetBlob(path: string): Promise<Blob | null>;
     cgGetObjectUrl(file: string): string | null;
     cgGetDataUrl(file: string): Promise<string | null>;

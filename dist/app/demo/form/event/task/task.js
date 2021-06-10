@@ -1,4 +1,13 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.mounted = exports.methods = exports.data = void 0;
 exports.data = {
@@ -13,6 +22,13 @@ exports.methods = {
             'time': date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds(),
             'name': name,
             'text': text
+        });
+    },
+    'end': function () {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (yield this.cgConfirm(`Are you sure to end Task ${this.tid}?`)) {
+                clickgo.task.end(this.tid);
+            }
         });
     }
 };

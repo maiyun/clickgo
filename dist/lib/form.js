@@ -14,6 +14,32 @@ exports.lastFormId = 0;
 exports.lastZIndex = 999;
 exports.lastTopZIndex = 9999999;
 exports.lastPopZIndex = 0;
+let localData = {
+    'en-us': {
+        'ok': 'OK',
+        'yes': 'Yes',
+        'no': 'No',
+        'cancel': 'Cancel'
+    },
+    'zh-cn': {
+        'ok': '好',
+        'yes': '是',
+        'no': '否',
+        'cancel': '取消'
+    },
+    'zh-tw': {
+        'ok': '好',
+        'yes': '是',
+        'no': '否',
+        'cancel': '取消'
+    },
+    'ja-jp': {
+        'ok': '好',
+        'yes': 'はい',
+        'no': 'いいえ',
+        'cancel': 'キャンセル'
+    }
+};
 let formListElement = document.createElement('div');
 formListElement.classList.add('cg-form-list');
 document.getElementsByTagName('body')[0].appendChild(formListElement);
@@ -483,6 +509,9 @@ function remove(formId) {
         }
         clickgo.task.list[taskId].forms[formId].vroot.$refs.form.$data.showData = false;
         setTimeout(function () {
+            if (!clickgo.task.list[taskId]) {
+                return true;
+            }
             clickgo.task.list[taskId].forms[formId].vapp.unmount();
             clickgo.task.list[taskId].forms[formId].vapp._container.remove();
             delete (clickgo.task.list[taskId].forms[formId]);
@@ -1024,7 +1053,7 @@ function create(taskId, opt) {
                     };
                 }
                 if (opt.buttons === undefined) {
-                    opt.buttons = ['OK'];
+                    opt.buttons = [localData[this.cgLocal].ok];
                 }
                 this.cgCreateForm({
                     'layout': `<form title="${(_a = opt.title) !== null && _a !== void 0 ? _a : 'dialog'}" width="auto" height="auto" :min="false" :max="false" :resize="false" :min-height="50" border="${opt.title ? 'normal' : 'none'}"><dialog :buttons="buttons" @select="select">${opt.content}</dialog></form>`,
@@ -1044,8 +1073,8 @@ function create(taskId, opt) {
                                 (_b = (_a = opt).select) === null || _b === void 0 ? void 0 : _b.call(_a, event, button);
                                 if (event.go) {
                                     this.cgCloseForm();
+                                    resolve(button);
                                 }
-                                resolve(button);
                             }
                         }
                     },
@@ -1053,6 +1082,25 @@ function create(taskId, opt) {
                 }).catch((e) => {
                     throw e;
                 });
+            });
+        };
+        methods.cgConfirm = function (content, cancel = false) {
+            return __awaiter(this, void 0, void 0, function* () {
+                let buttons = [localData[this.cgLocal].yes, localData[this.cgLocal].no];
+                if (cancel) {
+                    buttons.push(localData[this.cgLocal].cancel);
+                }
+                let res = yield this.cgDialog({
+                    'content': content,
+                    'buttons': buttons
+                });
+                if (res === localData[this.cgLocal].yes) {
+                    return true;
+                }
+                if (res === localData[this.cgLocal].cancel) {
+                    return 0;
+                }
+                return false;
             });
         };
         methods.cgGetBlob = function (path) {
