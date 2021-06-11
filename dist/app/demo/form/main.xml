@@ -7,6 +7,7 @@
                     <button @tap="openForm('control', 'img')">Img</button>
                     <button @tap="openForm('control', 'button')">Button</button>
                     <button @tap="openForm('control', 'check')">Check</button>
+                    <button @tap="openForm('control', 'radio')">Radio</button>
                     <button @tap="openForm('control', 'text')">Text</button>
                     <button @tap="openForm('control', 'tab')">Tab</button>
                     <button @tap="openForm('control', 'label')">Label</button>

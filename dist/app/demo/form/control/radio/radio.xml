@@ -1,0 +1,12 @@
+<form title="Radio" width="300" height="300" padding="10">
+    <layout direction="v" gutter="10" flex="1">
+        <label>Selected value: {{value}}</label>
+        <layout gutter="10">
+            <radio v-model="value" :disabled="disabled" flex="1" value="radio1">radio1</radio>
+            <radio v-model="value" :disabled="disabled" flex="1" value="radio2">radio2</radio>
+            <radio v-model="value" :disabled="disabled" flex="1" value="radio3">radio3</radio>
+        </layout>
+        <button @tap="value = 'radio2'">Set value to "radio2"</button>
+        <button @tap="disabled = !disabled">{{disabled ? 'Remove' : 'Set'}} disabled</button>
+    </layout>
+</form>

@@ -1,0 +1,6 @@
+<div class="wrap" :class="[isDisabled && 'cg-disabled', cgHover && 'hover', cgActive && 'active', (value === modelValue) && 'selected']" :tabindex="!isDisabled && cgFocus && '0'" :style="{'width': cgWidthPx, 'height': cgHeightPx, 'left': left + 'px', 'top': top + 'px', 'z-index': zIndex, 'flex-grow': flex}" @click="click" @mousedown="cgDown" @mouseup="cgUp" @mouseenter="cgEnter" @mouseleave="cgLeave" @touchstart="cgDown" @touchend="cgUp" @touchcancel="cgCancel" @keydown="keydown" @dblclick="cgDblclick">
+    <div class="radio"></div>
+    <div class="label">
+        <slot></slot>
+    </div>
+</div>
