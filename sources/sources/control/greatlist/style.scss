@@ -9,7 +9,7 @@
     &.cg-disabled {
         background: hsl(205, 0%, 95%); color: hsl(205, 0%, 50%); pointer-events: none;
         &::before {
-            border: solid 1px hsl(205, 0%, 60%);
+            border-color: hsl(205, 0%, 60%);
         }
     }
 

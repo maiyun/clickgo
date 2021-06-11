@@ -48,7 +48,7 @@
                                         <scroll direction="h" height="30" width="150" @tap="$event.stopPropagation()"></scroll>
                                     </menulist-item>
                                     <menulist-item alt="A">
-                                        <textbox flex="1" @tap="$event.stopPropagation()"></textbox>
+                                        <text flex="1" @tap="$event.stopPropagation()"></text>
                                     </menulist-item>
                                 </menulist>
                             </template>

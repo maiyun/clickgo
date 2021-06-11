@@ -6,6 +6,7 @@
 
     "controls": [
         "/clickgo/control/button",
+        "/clickgo/control/check",
         "/clickgo/control/common",
         "/clickgo/control/dialog",
         "/clickgo/control/form",
@@ -18,7 +19,7 @@
         "/clickgo/control/scroll",
         "/clickgo/control/select",
         "/clickgo/control/tab",
-        "/clickgo/control/textbox",
+        "/clickgo/control/text",
         "/clickgo/control/view"
     ],
     "style": "/global",
@@ -28,6 +29,8 @@
         "/form/control/block/block.css",
         "/form/control/block/block.xml",
         "/form/control/button/button.xml",
+        "/form/control/check/check.js",
+        "/form/control/check/check.xml",
         "/form/control/dialog/dialog.js",
         "/form/control/dialog/dialog.xml",
         "/form/control/form/form.js",
@@ -51,8 +54,8 @@
         "/form/control/select/select.xml",
         "/form/control/tab/tab.js",
         "/form/control/tab/tab.xml",
-        "/form/control/textbox/textbox.js",
-        "/form/control/textbox/textbox.xml",
+        "/form/control/text/text.js",
+        "/form/control/text/text.xml",
         "/form/control/view/view.css",
         "/form/control/view/view.js",
         "/form/control/view/view.xml",

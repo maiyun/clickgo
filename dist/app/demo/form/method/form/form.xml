@@ -1,7 +1,7 @@
 <form width="300" height="350" title="Library form" padding="10">
     <layout gutter="10" direction="v" flex="1">
         <layout gutter="10">
-            <textbox v-model="fid" flex="1"></textbox>
+            <text v-model="fid" flex="1"></text>
             <button @tap="clickgo.form.changeFocus(fid)" width="150">form.changeFocus({{fid}})</button>
         </layout>
         <button @tap="cgDialog(clickgo.form.getMaxZIndexFormID())">form.getMaxZIndexFormID()</button>
