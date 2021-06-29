@@ -152,14 +152,23 @@ function readApp(blob) {
         }
         let config = JSON.parse(configContent);
         for (let file of config.files) {
-            let fab = yield zip.getContent(file, 'arraybuffer');
-            if (!fab) {
-                continue;
+            let mime = clickgo.tool.getMimeByPath(file);
+            if (['txt', 'json', 'js', 'css', 'xml', 'html'].includes(mime.ext)) {
+                let fab = yield zip.getContent(file, 'string');
+                if (!fab) {
+                    continue;
+                }
+                files[file] = fab;
             }
-            let mimeo = clickgo.tool.getMimeByPath(file);
-            files[file] = new Blob([fab], {
-                'type': mimeo.mime
-            });
+            else {
+                let fab = yield zip.getContent(file, 'arraybuffer');
+                if (!fab) {
+                    continue;
+                }
+                files[file] = new Blob([fab], {
+                    'type': mime.mime
+                });
+            }
         }
         if (!config) {
             return false;
@@ -185,10 +194,10 @@ function fetchApp(url) {
         }
         let realUrl;
         if (url.startsWith('/clickgo/')) {
-            realUrl = clickgo.tool.urlResolve(clickgo.cgRootPath, url.slice(9));
+            realUrl = loader.urlResolve(clickgo.cgRootPath, url.slice(9));
         }
         else {
-            realUrl = clickgo.tool.urlResolve(clickgo.rootPath, url);
+            realUrl = loader.urlResolve(clickgo.rootPath, url);
         }
         if (isCga) {
             try {
@@ -211,7 +220,20 @@ function fetchApp(url) {
                         continue;
                     }
                     fetch(realUrl + file.slice(1) + '?' + Math.random()).then(function (res) {
-                        return res.blob();
+                        var _a;
+                        if (res.status === 200 || res.status === 304) {
+                            let typeList = ['text/', 'javascript', 'json', 'plain', 'css', 'xml', 'html'];
+                            for (let item of typeList) {
+                                if ((_a = res.headers.get('content-type')) === null || _a === void 0 ? void 0 : _a.toLowerCase().includes(item)) {
+                                    return res.text();
+                                }
+                            }
+                            return res.blob();
+                        }
+                        else {
+                            reject();
+                            return '';
+                        }
                     }).then(function (blob) {
                         files[file] = blob;
                         ++count;

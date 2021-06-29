@@ -8,15 +8,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-let tmpCgRootPath = '';
-(function () {
-    let temp = document.querySelectorAll('head > script');
-    let scriptEle = temp[temp.length - 1];
-    tmpCgRootPath = scriptEle.src.slice(0, scriptEle.src.lastIndexOf('/') + 1);
-})();
 const clickgo = {
     'rootPath': window.location.href.slice(0, window.location.href.lastIndexOf('/') + 1),
-    'cgRootPath': tmpCgRootPath,
+    'cgRootPath': '',
     'isNative': navigator.userAgent.toLowerCase().includes('electron') ? true : false,
     'position': {
         'left': null,
@@ -61,53 +55,51 @@ const clickgo = {
     'tool': {},
     'zip': {}
 };
-let tmpScript = document.createElement('script');
-tmpScript.src = 'https://cdn.jsdelivr.net/npm/@litert/loader@1.1.0/dist/index.min.js';
-tmpScript.addEventListener('load', function () {
-    loader.ready(() => __awaiter(this, void 0, void 0, function* () {
-        var _a;
-        loader.setAfter('?' + Math.random());
-        let paths = [
-            'https://cdn.jsdelivr.net/npm/vue@3.1.0-beta.6/dist/vue.global.min.js',
-            'https://cdn.jsdelivr.net/npm/jszip@3.6.0/dist/jszip.min.js'
-        ];
-        let ro = true;
-        if (!(window.ResizeObserver)) {
-            ro = false;
-            paths.push('https://cdn.jsdelivr.net/npm/@juggle/resize-observer@3.3.0/lib/exports/resize-observer.umd.min.js');
-        }
-        for (let path of paths) {
-            if (!(yield loader.loadScript(document.getElementsByTagName('head')[0], path))) {
-                alert('Librarys load failed.');
+(function () {
+    let temp = document.querySelectorAll('script');
+    let scriptEle = temp[temp.length - 1];
+    clickgo.cgRootPath = scriptEle.src.slice(0, scriptEle.src.lastIndexOf('/') + 1);
+    let tmpScript = document.createElement('script');
+    tmpScript.src = 'https://cdn.jsdelivr.net/npm/@litert/loader@2.0.2-beta2/dist/index.min.js';
+    tmpScript.addEventListener('load', function () {
+        loader.ready(() => __awaiter(this, void 0, void 0, function* () {
+            let paths = [
+                'https://cdn.jsdelivr.net/npm/vue@3.1.0-beta.6/dist/vue.global.min.js',
+                'https://cdn.jsdelivr.net/npm/jszip@3.6.0/dist/jszip.min.js'
+            ];
+            let ro = true;
+            if (!(window.ResizeObserver)) {
+                ro = false;
+                paths.push('https://cdn.jsdelivr.net/npm/@juggle/resize-observer@3.3.0/lib/exports/resize-observer.umd.min.js');
+            }
+            yield loader.loadScripts(document.getElementsByTagName('head')[0], paths);
+            if (!ro) {
+                window.ResizeObserverEntry = window.ResizeObserver.ResizeObserverEntry;
+                window.ResizeObserver = window.ResizeObserver.ResizeObserver;
+            }
+            let files = yield loader.sniffFiles('clickgo.js', {
+                'dir': clickgo.cgRootPath
+            });
+            let cg = loader.require('clickgo', files, {
+                'dir': clickgo.cgRootPath
+            })[0];
+            if (!cg) {
+                alert('Clickgo load failed.');
                 return;
             }
-        }
-        if (!ro) {
-            window.ResizeObserverEntry = window.ResizeObserver.ResizeObserverEntry;
-            window.ResizeObserver = window.ResizeObserver.ResizeObserver;
-        }
-        let [cg] = (_a = yield loader.require(clickgo.cgRootPath + 'clickgo')) !== null && _a !== void 0 ? _a : [];
-        if (!clickgo) {
-            alert('Clickgo load failed.');
-            return;
-        }
-        clickgo.control = cg.control;
-        clickgo.core = cg.core;
-        clickgo.dom = cg.dom;
-        clickgo.form = cg.form;
-        clickgo.task = cg.task;
-        clickgo.theme = cg.theme;
-        clickgo.tool = cg.tool;
-        clickgo.zip = cg.zip;
-        clickgo.isReady = true;
-        for (let func of clickgo.readys) {
-            const rtn = func();
-            if (rtn instanceof Promise) {
-                rtn.catch((e) => {
-                    throw e;
-                });
+            clickgo.control = cg.control;
+            clickgo.core = cg.core;
+            clickgo.dom = cg.dom;
+            clickgo.form = cg.form;
+            clickgo.task = cg.task;
+            clickgo.theme = cg.theme;
+            clickgo.tool = cg.tool;
+            clickgo.zip = cg.zip;
+            clickgo.isReady = true;
+            for (let func of clickgo.readys) {
+                func();
             }
-        }
-    }));
-});
-document.getElementsByTagName('head')[0].insertAdjacentElement('afterend', tmpScript);
+        }));
+    });
+    document.getElementsByTagName('head')[0].insertAdjacentElement('afterend', tmpScript);
+})();

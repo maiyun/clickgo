@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getBoolean = exports.rand = exports.getObjectURLList = exports.revokeObjectURL = exports.createObjectURL = exports.getMimeByPath = exports.stylePrepend = exports.layoutClassPrepend = exports.layoutInsertAttr = exports.layoutAddTagClassAndReTagName = exports.styleUrl2ObjectOrDataUrl = exports.urlResolve = exports.parseUrl = exports.isAppPkg = exports.isControlPkg = exports.purify = exports.requestAnimationFrame = exports.sleep = exports.clone = exports.blob2Text = exports.blob2ArrayBuffer = exports.file2ObjectUrl = exports.blob2DataUrl = void 0;
+exports.getBoolean = exports.rand = exports.getObjectURLList = exports.revokeObjectURL = exports.createObjectURL = exports.getMimeByPath = exports.stylePrepend = exports.layoutClassPrepend = exports.layoutInsertAttr = exports.layoutAddTagClassAndReTagName = exports.styleUrl2ObjectOrDataUrl = exports.isAppPkg = exports.isControlPkg = exports.purify = exports.requestAnimationFrame = exports.sleep = exports.clone = exports.blob2Text = exports.blob2ArrayBuffer = exports.file2ObjectUrl = exports.blob2DataUrl = void 0;
 function blob2DataUrl(blob) {
     return new Promise(function (resove) {
         let fr = new FileReader();
@@ -29,6 +29,9 @@ function file2ObjectUrl(file, obj) {
     let ourl = obj.objectURLs[file];
     if (!ourl) {
         if (!obj.files[file]) {
+            return null;
+        }
+        if (typeof obj.files[file] === 'string') {
             return null;
         }
         ourl = createObjectURL(obj.files[file]);
@@ -122,138 +125,25 @@ function isAppPkg(o) {
     return false;
 }
 exports.isAppPkg = isAppPkg;
-function parseUrl(url) {
-    let u = {
-        'auth': null,
-        'hash': null,
-        'host': null,
-        'hostname': null,
-        'pass': null,
-        'path': null,
-        'pathname': '/',
-        'protocol': null,
-        'port': null,
-        'query': null,
-        'user': null
-    };
-    let protocol = /^(.+?)\/\//.exec(url);
-    if (protocol) {
-        u.protocol = protocol[1].toLowerCase();
-        url = url.slice(protocol[0].length);
-    }
-    let hostSp = url.indexOf('/');
-    let left = url;
-    if (hostSp !== -1) {
-        left = url.slice(0, hostSp);
-        url = url.slice(hostSp);
-    }
-    if (left) {
-        let leftArray = left.split('@');
-        let host = left;
-        if (leftArray[1]) {
-            let auth = leftArray[0].split(':');
-            u.user = auth[0];
-            if (auth[1]) {
-                u.pass = auth[1];
-            }
-            u.auth = u.user + (u.pass ? ':' + u.pass : '');
-            host = leftArray[1];
-        }
-        let hostArray = host.split(':');
-        u.hostname = hostArray[0].toLowerCase();
-        if (hostArray[1]) {
-            u.port = hostArray[1];
-        }
-        u.host = u.hostname + (u.port ? ':' + u.port : '');
-    }
-    if (hostSp === -1) {
-        return u;
-    }
-    let paqArray = url.split('?');
-    u.pathname = paqArray[0];
-    if (paqArray[1]) {
-        let qahArray = paqArray[1].split('#');
-        u.query = qahArray[0];
-        if (qahArray[1]) {
-            u.hash = qahArray[1];
-        }
-    }
-    u.path = u.pathname + (u.query ? '?' + u.query : '');
-    return u;
-}
-exports.parseUrl = parseUrl;
-function urlResolve(from, to) {
-    from = from.replace(/\\/g, '/');
-    to = to.replace(/\\/g, '/');
-    if (to === '') {
-        return from;
-    }
-    let f = parseUrl(from);
-    if (to.startsWith('//')) {
-        return f.protocol ? f.protocol + to : to;
-    }
-    if (f.protocol) {
-        from = f.protocol + from.slice(f.protocol.length);
-    }
-    let t = parseUrl(to);
-    if (t.protocol) {
-        return t.protocol + to.slice(t.protocol.length);
-    }
-    if (to.startsWith('#') || to.startsWith('?')) {
-        let sp = from.indexOf(to[0]);
-        if (sp !== -1) {
-            return from.slice(0, sp) + to;
-        }
-        else {
-            return from + to;
-        }
-    }
-    let abs = (f.auth ? f.auth + '@' : '') + (f.host ? f.host : '');
-    if (to.startsWith('/')) {
-        abs += to;
-    }
-    else {
-        let path = f.pathname.replace(/\/[^/]*$/g, '');
-        abs += path + '/' + to;
-    }
-    abs = abs.replace(/\/\.\//g, '/');
-    while (true) {
-        let count = 0;
-        abs = abs.replace(/\/(?!\.\.)[^/]+\/\.\.\//g, function () {
-            ++count;
-            return '/';
-        });
-        if (count === 0) {
-            break;
-        }
-    }
-    abs = abs.replace(/\.\.\//g, '');
-    if (f.protocol && !f.host) {
-        return f.protocol + abs;
-    }
-    else {
-        return (f.protocol ? f.protocol + '//' : '') + abs;
-    }
-}
-exports.urlResolve = urlResolve;
 function styleUrl2ObjectOrDataUrl(path, style, obj, mode = 'object') {
     return __awaiter(this, void 0, void 0, function* () {
         let reg = /url\(["']{0,1}(.+?)["']{0,1}\)/ig;
         let match = null;
-        let rtn = style;
         while ((match = reg.exec(style))) {
-            let realPath = urlResolve(path, match[1]);
+            let realPath = loader.urlResolve(path, match[1]);
             if (!obj.files[realPath]) {
                 continue;
             }
             if (mode === 'data') {
-                rtn = rtn.replace(match[0], `url('${yield blob2DataUrl(obj.files[realPath])}')`);
+                if (typeof obj.files[realPath] !== 'string') {
+                    style = style.replace(match[0], `url('${yield blob2DataUrl(obj.files[realPath])}')`);
+                }
             }
             else {
-                rtn = rtn.replace(match[0], `url('${file2ObjectUrl(realPath, obj)}')`);
+                style = style.replace(match[0], `url('${file2ObjectUrl(realPath, obj)}')`);
             }
         }
-        return rtn;
+        return style;
     });
 }
 exports.styleUrl2ObjectOrDataUrl = styleUrl2ObjectOrDataUrl;

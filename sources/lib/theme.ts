@@ -35,24 +35,31 @@ export async function read(blob: Blob): Promise<false | ICGThemePkg> {
     let config: ICGThemeConfig = JSON.parse(configContent);
     // --- 开始读取文件 ---
     let objectURLs: Record<string, string> = {};
-    let filesRead: Record<string, Blob> = {};
+    let files: Record<string, Blob | string> = {};
     for (let file of config.files) {
-        let fab = await zip.getContent(file, 'arraybuffer');
-        if (!fab) {
-            continue;
+        let mime = clickgo.tool.getMimeByPath(file);
+        if (['txt', 'json', 'js', 'css', 'xml', 'html'].includes(mime.ext)) {
+            let fab = await zip.getContent(file, 'string');
+            if (!fab) {
+                continue;
+            }
+            files[file] = fab;
         }
-        let mimeo = clickgo.tool.getMimeByPath(file);
-        filesRead[file] = new Blob([fab], {
-            'type': mimeo.mime
-        });
-        if (!['css'].includes(mimeo.ext)) {
-            objectURLs[file] = clickgo.tool.createObjectURL(filesRead[file]);
+        else {
+            let fab = await zip.getContent(file, 'arraybuffer');
+            if (!fab) {
+                continue;
+            }
+            files[file] = new Blob([fab], {
+                'type': mime.mime
+            });
+            objectURLs[file] = clickgo.tool.createObjectURL(files[file] as Blob);
         }
     }
     return {
         'type': 'theme',
         'config': config,
-        'files': filesRead,
+        'files': files,
         'objectURLs': objectURLs
     };
 }
@@ -106,11 +113,10 @@ export async function load(taskId: number, path: string = 'global'): Promise<boo
             return false;
         }
     }
-    let styleBlob = theme.files[theme.config.style + '.css'];
-    if (!styleBlob) {
+    let style = theme.files[theme.config.style + '.css'] as string;
+    if (!style) {
         return false;
     }
-    let style = await clickgo.tool.blob2Text(styleBlob);
     style = clickgo.tool.stylePrepend(style, `cg-theme-task${taskId}-`).style;
     style = await clickgo.tool.styleUrl2ObjectOrDataUrl(theme.config.style, style, theme);
     if (!task.customTheme) {

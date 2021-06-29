@@ -2,7 +2,7 @@ interface ICGCoreLib {
     'config': {
         'local': string;
     };
-    'clickgoFiles': Record<string, Blob>;
+    'clickgoFiles': Record<string, Blob | string>;
     'globalEvents': ICGGlobalEvents;
     trigger(name: 'formCreated' | 'formRemoved', taskId: number, formId: number, title: string, icon: string): void;
     trigger(name: 'formTitleChanged' | 'formIconChanged', taskId: number, formId: number, text: string): void;
@@ -14,7 +14,7 @@ interface ICGCoreLib {
      */
     trigger(name: 'screenResize' | 'formFocused' | 'formBlurred' | 'formFlash', taskId: number, formId: number): void;
     trigger(name: 'taskStarted' | 'taskEnded', taskId: number): void;
-    fetchClickGoFile(path: string): Promise<null | Blob>;
+    fetchClickGoFile(path: string): Promise<Blob | string | null>;
     readApp(blob: Blob): Promise<false | ICGAppPkg>;
     fetchApp(url: string): Promise<null | ICGAppPkg>;
 }
@@ -60,7 +60,7 @@ interface ICGAppPkg {
     /** --- 应用对象配置文件 --- */
     'config': ICGAppConfig;
     /** --- 所有已加载的文件内容 --- */
-    'files': Record<string, Blob>;
+    'files': Record<string, Blob | string>;
 }
 
 /** --- 应用文件包 config --- */

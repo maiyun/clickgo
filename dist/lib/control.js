@@ -29,24 +29,31 @@ function read(blob) {
             }
             let config = JSON.parse(configContent);
             let objectURLs = {};
-            let filesRead = {};
+            let files = {};
             for (let file of config.files) {
-                let fab = yield zip.getContent('/' + control.name + file, 'arraybuffer');
-                if (!fab) {
-                    continue;
+                let mime = clickgo.tool.getMimeByPath(file);
+                if (['txt', 'json', 'js', 'css', 'xml', 'html'].includes(mime.ext)) {
+                    let fab = yield zip.getContent('/' + control.name + file, 'string');
+                    if (!fab) {
+                        continue;
+                    }
+                    files[file] = fab;
                 }
-                let mimeo = clickgo.tool.getMimeByPath(file);
-                filesRead[file] = new Blob([fab], {
-                    'type': mimeo.mime
-                });
-                if (!['xml', 'css', 'js'].includes(mimeo.ext)) {
-                    objectURLs[file] = clickgo.tool.createObjectURL(filesRead[file]);
+                else {
+                    let fab = yield zip.getContent('/' + control.name + file, 'arraybuffer');
+                    if (!fab) {
+                        continue;
+                    }
+                    files[file] = new Blob([fab], {
+                        'type': mime.mime
+                    });
+                    objectURLs[file] = clickgo.tool.createObjectURL(files[file]);
                 }
             }
             controlPkg[control.name] = {
                 'type': 'control',
                 'config': config,
-                'files': filesRead,
+                'files': files,
                 'objectURLs': objectURLs
             };
         }

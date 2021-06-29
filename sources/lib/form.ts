@@ -712,7 +712,9 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
             let unmounted: (() => void) | undefined = undefined;
             // --- 检测是否有 js ---
             if (item.files[item.config.code + '.js']) {
-                let [expo] = await loader.requireMemory(item.config.code, item.files) ?? [];
+                let expo = loader.require(item.config.code, item.files, {
+                    'dir': '/'
+                })[0];
                 if (expo) {
                     props = expo.props || {};
                     data = expo.data || {};
@@ -737,15 +739,15 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
                 prep = task.initControls[name].prep;
             }
             else {
-                let styleBlob = item.files[item.config.style + '.css'];
-                if (styleBlob) {
-                    let r = clickgo.tool.stylePrepend(await clickgo.tool.blob2Text(styleBlob));
+                let style = item.files[item.config.style + '.css'] as string;
+                if (style) {
+                    let r = clickgo.tool.stylePrepend(style);
                     prep = r.prep;
                     clickgo.dom.pushStyle(task.id, await clickgo.tool.styleUrl2ObjectOrDataUrl(item.config.style, r.style, item), 'control', name);
                 }
                 // --- 要创建的 control 的 layout ---
-                let layoutBlob = item.files[item.config.layout + '.html'];
-                if (!layoutBlob) {
+                layout = item.files[item.config.layout + '.html'] as string;
+                if (!layout) {
                     return -4;
                 }
                 // --- 给控件的 layout 的 class 增加前置 ---
@@ -755,7 +757,6 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
                 if (prep !== '') {
                     prepList.push(prep);
                 }
-                layout = await clickgo.tool.blob2Text(layoutBlob);
                 // --- 增加 class 为 tag-xxx ---
                 layout = clickgo.tool.layoutAddTagClassAndReTagName(layout, false);
                 // --- 给 layout 的 class 增加前置 ---
@@ -915,24 +916,27 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
                 }
                 this.$emit('dblclick', e);
             };
-            // --- 获取文件 blob 对象 ---
-            methods.cgGetBlob = async function(this: IVueControl, path: string): Promise<Blob | null> {
+            // --- 获取文件 blob 或 string 对象 ---
+            methods.cgGetFile = async function(this: IVueControl, path: string): Promise<Blob | string | null> {
                 if (path.startsWith('/clickgo/')) {
                     return await clickgo.core.fetchClickGoFile(path.slice(8));
                 }
                 else {
-                    path = clickgo.tool.urlResolve(this.$data.cgPath, path);
+                    path = loader.urlResolve(this.$data.cgPath, path);
                     return task.appPkg.files[path] ?? null;
                 }
             };
             // --- 获取本 task 的 object url ---
             methods.cgGetObjectUrl = function(this: IVueControl, file: string): string | null {
-                file = clickgo.tool.urlResolve(this.$data.cgPath, file);
+                file = loader.urlResolve(this.$data.cgPath, file);
                 return clickgo.tool.file2ObjectUrl(file, clickgo.task.list[this.taskId]);
             };
             methods.cgGetDataUrl = async function(this: IVueControl, file: string): Promise<string | null> {
-                let f = await this.cgGetBlob(file);
-                return f ? await clickgo.tool.blob2DataUrl(f) : null;
+                let f = await this.cgGetFile(file);
+                if (!f) {
+                    return null;
+                }
+                return f && f instanceof Blob ? await clickgo.tool.blob2DataUrl(f) : null;
             };
             // --- layout 中 :class 的转义 ---
             methods.cgClassPrepend = function(this: IVueControl, cla: any): string {
@@ -1056,13 +1060,13 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
     let style = opt.style;
     let layout: string | undefined = opt.layout;
     if (opt.file) {
-        let layoutBlob = appPkg.files[opt.file + '.xml'];
-        if (layoutBlob) {
-            layout = await clickgo.tool.blob2Text(layoutBlob);
+        let layoutFile = appPkg.files[opt.file + '.xml'] as string;
+        if (layoutFile) {
+            layout = layoutFile;
         }
-        let styleBlob = appPkg.files[opt.file + '.css'];
-        if (styleBlob) {
-            style = await clickgo.tool.blob2Text(styleBlob);
+        let styleFile = appPkg.files[opt.file + '.css'] as string;
+        if (styleFile) {
+            style = styleFile;
         }
     }
     if (layout === undefined) {
@@ -1084,7 +1088,9 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
     // --- 检测是否有 js ---
     let expo = opt.code;
     if (appPkg.files[opt.file + '.js']) {
-        [expo] = await loader.requireMemory(opt.file ?? '', appPkg.files) ?? [];
+        expo = loader.require(opt.file!, appPkg.files, {
+            'dir': '/'
+        })[0];
     }
     if (expo) {
         data = expo.data ?? {};
@@ -1160,11 +1166,11 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
             'path': this.cgPath
         };
         if (typeof paramOpt === 'string') {
-            inOpt.file = clickgo.tool.urlResolve(this.$data.cgPath, paramOpt);
+            inOpt.file = loader.urlResolve(this.$data.cgPath, paramOpt);
         }
         else {
             if (paramOpt.file) {
-                inOpt.file = clickgo.tool.urlResolve(this.$data.cgPath, paramOpt.file);
+                inOpt.file = loader.urlResolve(this.$data.cgPath, paramOpt.file);
             }
             if (paramOpt.path) {
                 inOpt.path = paramOpt.path;
@@ -1268,37 +1274,40 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
         return false;
     };
     // --- 获取文件 blob 对象 ---
-    methods.cgGetBlob = async function(this: IVueForm, path: string): Promise<Blob | null> {
+    methods.cgGetFile = async function(this: IVueForm, path: string): Promise<Blob | string | null> {
         if (path.startsWith('/clickgo/')) {
             return await clickgo.core.fetchClickGoFile(path.slice(8));
         }
         else {
-            path = clickgo.tool.urlResolve(this.$data.cgPath, path);
+            path = loader.urlResolve(this.$data.cgPath, path);
             return task.appPkg.files[path] ?? null;
         }
     };
     // --- 获取本 task 的 object url ---
     methods.cgGetObjectUrl = function(this: IVueForm, file: string): string | null {
-        file = clickgo.tool.urlResolve(this.$data.cgPath, file);
+        file = loader.urlResolve(this.$data.cgPath, file);
         return clickgo.tool.file2ObjectUrl(file, clickgo.task.list[this.taskId]);
     };
     methods.cgGetDataUrl = async function(this: IVueForm, file: string): Promise<string | null> {
-        let f = await this.cgGetBlob(file);
-        return f ? await clickgo.tool.blob2DataUrl(f) : null;
+        let f = await this.cgGetFile(file);
+        if (!f) {
+            return null;
+        }
+        return f && f instanceof Blob ? await clickgo.tool.blob2DataUrl(f) : null;
     };
     // --- 加载主题 ---
     methods.cgLoadTheme = async function(this: IVueForm, path: string): Promise<boolean> {
-        path = clickgo.tool.urlResolve(this.$data.cgPath, path);
+        path = loader.urlResolve(this.$data.cgPath, path);
         return await clickgo.theme.load(this.taskId, path);
     };
     // --- 卸载主题 ---
     methods.cgRemoveTheme = async function(this: IVueForm, path: string): Promise<void> {
-        path = clickgo.tool.urlResolve(this.$data.cgPath, path);
+        path = loader.urlResolve(this.$data.cgPath, path);
         await clickgo.theme.remove(this.taskId, path);
     };
     // --- 加载全新主题（老主题会被清除） ---
     methods.cgSetTheme = async function(this: IVueForm, path: string): Promise<void> {
-        path = clickgo.tool.urlResolve(this.$data.cgPath, path);
+        path = loader.urlResolve(this.$data.cgPath, path);
         await clickgo.theme.clear(this.taskId);
         await clickgo.theme.load(this.taskId, path);
     };
@@ -1309,8 +1318,8 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
     // --- 加载全局主题 ---
     methods.cgSetGlobalTheme = async function(this: IVueForm, path: string | Blob): Promise<void> {
         if (typeof path === 'string') {
-            let blob = await this.cgGetBlob(path);
-            if (blob) {
+            let blob = await this.cgGetFile(path);
+            if (blob instanceof Blob) {
                 await clickgo.theme.setGlobal(blob);
             }
         }
@@ -1368,13 +1377,12 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
     };
     // --- 加载 local 文件 json ---
     methods.cgLoadLocal = async function(this: IVueForm, name: string, path: string): Promise<boolean> {
-        path = clickgo.tool.urlResolve(this.$data.cgPath, path + '.json');
+        path = loader.urlResolve(this.$data.cgPath, path + '.json');
         if (!task.files[path]) {
             return false;
         }
-        let local = await clickgo.tool.blob2Text(task.files[path]);
         try {
-            let data = JSON.parse(local);
+            let data = JSON.parse(task.files[path] as string);
             this.cgLoadLocalData(name, data);
             return true;
         }

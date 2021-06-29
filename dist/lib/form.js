@@ -541,7 +541,7 @@ function remove(formId) {
 }
 exports.remove = remove;
 function create(taskId, opt) {
-    var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k;
+    var _a, _b, _c, _d, _e, _f, _g;
     return __awaiter(this, void 0, void 0, function* () {
         let task = clickgo.task.list[taskId];
         if (!task) {
@@ -583,7 +583,9 @@ function create(taskId, opt) {
                 let beforeUnmount = undefined;
                 let unmounted = undefined;
                 if (item.files[item.config.code + '.js']) {
-                    let [expo] = (_a = yield loader.requireMemory(item.config.code, item.files)) !== null && _a !== void 0 ? _a : [];
+                    let expo = loader.require(item.config.code, item.files, {
+                        'dir': '/'
+                    })[0];
                     if (expo) {
                         props = expo.props || {};
                         data = expo.data || {};
@@ -607,14 +609,14 @@ function create(taskId, opt) {
                     prep = task.initControls[name].prep;
                 }
                 else {
-                    let styleBlob = item.files[item.config.style + '.css'];
-                    if (styleBlob) {
-                        let r = clickgo.tool.stylePrepend(yield clickgo.tool.blob2Text(styleBlob));
+                    let style = item.files[item.config.style + '.css'];
+                    if (style) {
+                        let r = clickgo.tool.stylePrepend(style);
                         prep = r.prep;
                         clickgo.dom.pushStyle(task.id, yield clickgo.tool.styleUrl2ObjectOrDataUrl(item.config.style, r.style, item), 'control', name);
                     }
-                    let layoutBlob = item.files[item.config.layout + '.html'];
-                    if (!layoutBlob) {
+                    layout = item.files[item.config.layout + '.html'];
+                    if (!layout) {
                         return -4;
                     }
                     let prepList = [
@@ -623,7 +625,6 @@ function create(taskId, opt) {
                     if (prep !== '') {
                         prepList.push(prep);
                     }
-                    layout = yield clickgo.tool.blob2Text(layoutBlob);
                     layout = clickgo.tool.layoutAddTagClassAndReTagName(layout, false);
                     layout = clickgo.tool.layoutClassPrepend(layout, prepList);
                     task.initControls[name] = {
@@ -637,7 +638,7 @@ function create(taskId, opt) {
                 data.taskId = taskId;
                 data.formId = formId;
                 data.controlName = name;
-                data.cgPath = (_c = (_b = opt.file) !== null && _b !== void 0 ? _b : opt.path) !== null && _c !== void 0 ? _c : '/';
+                data.cgPath = (_b = (_a = opt.file) !== null && _a !== void 0 ? _a : opt.path) !== null && _b !== void 0 ? _b : '/';
                 data._prep = prep;
                 if (data.cgNest === undefined) {
                     data.cgNest = false;
@@ -773,26 +774,29 @@ function create(taskId, opt) {
                     }
                     this.$emit('dblclick', e);
                 };
-                methods.cgGetBlob = function (path) {
+                methods.cgGetFile = function (path) {
                     var _a;
                     return __awaiter(this, void 0, void 0, function* () {
                         if (path.startsWith('/clickgo/')) {
                             return yield clickgo.core.fetchClickGoFile(path.slice(8));
                         }
                         else {
-                            path = clickgo.tool.urlResolve(this.$data.cgPath, path);
+                            path = loader.urlResolve(this.$data.cgPath, path);
                             return (_a = task.appPkg.files[path]) !== null && _a !== void 0 ? _a : null;
                         }
                     });
                 };
                 methods.cgGetObjectUrl = function (file) {
-                    file = clickgo.tool.urlResolve(this.$data.cgPath, file);
+                    file = loader.urlResolve(this.$data.cgPath, file);
                     return clickgo.tool.file2ObjectUrl(file, clickgo.task.list[this.taskId]);
                 };
                 methods.cgGetDataUrl = function (file) {
                     return __awaiter(this, void 0, void 0, function* () {
-                        let f = yield this.cgGetBlob(file);
-                        return f ? yield clickgo.tool.blob2DataUrl(f) : null;
+                        let f = yield this.cgGetFile(file);
+                        if (!f) {
+                            return null;
+                        }
+                        return f && f instanceof Blob ? yield clickgo.tool.blob2DataUrl(f) : null;
                     });
                 };
                 methods.cgClassPrepend = function (cla) {
@@ -911,13 +915,13 @@ function create(taskId, opt) {
         let style = opt.style;
         let layout = opt.layout;
         if (opt.file) {
-            let layoutBlob = appPkg.files[opt.file + '.xml'];
-            if (layoutBlob) {
-                layout = yield clickgo.tool.blob2Text(layoutBlob);
+            let layoutFile = appPkg.files[opt.file + '.xml'];
+            if (layoutFile) {
+                layout = layoutFile;
             }
-            let styleBlob = appPkg.files[opt.file + '.css'];
-            if (styleBlob) {
-                style = yield clickgo.tool.blob2Text(styleBlob);
+            let styleFile = appPkg.files[opt.file + '.css'];
+            if (styleFile) {
+                style = styleFile;
             }
         }
         if (layout === undefined) {
@@ -937,10 +941,12 @@ function create(taskId, opt) {
         let unmounted = undefined;
         let expo = opt.code;
         if (appPkg.files[opt.file + '.js']) {
-            [expo] = (_e = yield loader.requireMemory((_d = opt.file) !== null && _d !== void 0 ? _d : '', appPkg.files)) !== null && _e !== void 0 ? _e : [];
+            expo = loader.require(opt.file, appPkg.files, {
+                'dir': '/'
+            })[0];
         }
         if (expo) {
-            data = (_f = expo.data) !== null && _f !== void 0 ? _f : {};
+            data = (_c = expo.data) !== null && _c !== void 0 ? _c : {};
             methods = expo.methods || {};
             computed = expo.computed || {};
             watch = expo.watch || {};
@@ -957,7 +963,7 @@ function create(taskId, opt) {
         if (style) {
             let r = clickgo.tool.stylePrepend(style);
             prep = r.prep;
-            style = yield clickgo.tool.styleUrl2ObjectOrDataUrl((_h = (_g = opt.file) !== null && _g !== void 0 ? _g : opt.path) !== null && _h !== void 0 ? _h : '/', r.style, task);
+            style = yield clickgo.tool.styleUrl2ObjectOrDataUrl((_e = (_d = opt.file) !== null && _d !== void 0 ? _d : opt.path) !== null && _e !== void 0 ? _e : '/', r.style, task);
         }
         layout = clickgo.tool.purify(layout);
         layout = clickgo.tool.layoutAddTagClassAndReTagName(layout, true);
@@ -975,7 +981,7 @@ function create(taskId, opt) {
         data.formId = formId;
         data.controlName = 'root';
         data.cgFocus = false;
-        data.cgPath = (_k = (_j = opt.file) !== null && _j !== void 0 ? _j : opt.path) !== null && _k !== void 0 ? _k : '/';
+        data.cgPath = (_g = (_f = opt.file) !== null && _f !== void 0 ? _f : opt.path) !== null && _g !== void 0 ? _g : '/';
         data._prep = prep;
         data._customZIndex = false;
         if (opt.topMost) {
@@ -1003,11 +1009,11 @@ function create(taskId, opt) {
                     'path': this.cgPath
                 };
                 if (typeof paramOpt === 'string') {
-                    inOpt.file = clickgo.tool.urlResolve(this.$data.cgPath, paramOpt);
+                    inOpt.file = loader.urlResolve(this.$data.cgPath, paramOpt);
                 }
                 else {
                     if (paramOpt.file) {
-                        inOpt.file = clickgo.tool.urlResolve(this.$data.cgPath, paramOpt.file);
+                        inOpt.file = loader.urlResolve(this.$data.cgPath, paramOpt.file);
                     }
                     if (paramOpt.path) {
                         inOpt.path = paramOpt.path;
@@ -1114,43 +1120,46 @@ function create(taskId, opt) {
                 return false;
             });
         };
-        methods.cgGetBlob = function (path) {
+        methods.cgGetFile = function (path) {
             var _a;
             return __awaiter(this, void 0, void 0, function* () {
                 if (path.startsWith('/clickgo/')) {
                     return yield clickgo.core.fetchClickGoFile(path.slice(8));
                 }
                 else {
-                    path = clickgo.tool.urlResolve(this.$data.cgPath, path);
+                    path = loader.urlResolve(this.$data.cgPath, path);
                     return (_a = task.appPkg.files[path]) !== null && _a !== void 0 ? _a : null;
                 }
             });
         };
         methods.cgGetObjectUrl = function (file) {
-            file = clickgo.tool.urlResolve(this.$data.cgPath, file);
+            file = loader.urlResolve(this.$data.cgPath, file);
             return clickgo.tool.file2ObjectUrl(file, clickgo.task.list[this.taskId]);
         };
         methods.cgGetDataUrl = function (file) {
             return __awaiter(this, void 0, void 0, function* () {
-                let f = yield this.cgGetBlob(file);
-                return f ? yield clickgo.tool.blob2DataUrl(f) : null;
+                let f = yield this.cgGetFile(file);
+                if (!f) {
+                    return null;
+                }
+                return f && f instanceof Blob ? yield clickgo.tool.blob2DataUrl(f) : null;
             });
         };
         methods.cgLoadTheme = function (path) {
             return __awaiter(this, void 0, void 0, function* () {
-                path = clickgo.tool.urlResolve(this.$data.cgPath, path);
+                path = loader.urlResolve(this.$data.cgPath, path);
                 return yield clickgo.theme.load(this.taskId, path);
             });
         };
         methods.cgRemoveTheme = function (path) {
             return __awaiter(this, void 0, void 0, function* () {
-                path = clickgo.tool.urlResolve(this.$data.cgPath, path);
+                path = loader.urlResolve(this.$data.cgPath, path);
                 yield clickgo.theme.remove(this.taskId, path);
             });
         };
         methods.cgSetTheme = function (path) {
             return __awaiter(this, void 0, void 0, function* () {
-                path = clickgo.tool.urlResolve(this.$data.cgPath, path);
+                path = loader.urlResolve(this.$data.cgPath, path);
                 yield clickgo.theme.clear(this.taskId);
                 yield clickgo.theme.load(this.taskId, path);
             });
@@ -1163,8 +1172,8 @@ function create(taskId, opt) {
         methods.cgSetGlobalTheme = function (path) {
             return __awaiter(this, void 0, void 0, function* () {
                 if (typeof path === 'string') {
-                    let blob = yield this.cgGetBlob(path);
-                    if (blob) {
+                    let blob = yield this.cgGetFile(path);
+                    if (blob instanceof Blob) {
                         yield clickgo.theme.setGlobal(blob);
                     }
                 }
@@ -1218,13 +1227,12 @@ function create(taskId, opt) {
         };
         methods.cgLoadLocal = function (name, path) {
             return __awaiter(this, void 0, void 0, function* () {
-                path = clickgo.tool.urlResolve(this.$data.cgPath, path + '.json');
+                path = loader.urlResolve(this.$data.cgPath, path + '.json');
                 if (!task.files[path]) {
                     return false;
                 }
-                let local = yield clickgo.tool.blob2Text(task.files[path]);
                 try {
-                    let data = JSON.parse(local);
+                    let data = JSON.parse(task.files[path]);
                     this.cgLoadLocalData(name, data);
                     return true;
                 }

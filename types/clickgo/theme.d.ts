@@ -16,7 +16,7 @@ interface ICGThemePkg {
     /** --- 主题对象配置文件 --- */
     'config': ICGThemeConfig;
     /** --- 所有已加载的文件内容 --- */
-    'files': Record<string, Blob>;
+    'files': Record<string, Blob | string>;
     /** --- 已映射的 object url --- */
     'objectURLs': Record<string, string>;
 }

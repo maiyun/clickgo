@@ -24,7 +24,7 @@ export function getList(): Record<string, ICGTaskItem> {
  * @param url app 路径、blob 对象或 IAppPkg 对象
  * @param opt runtime 运行时要注入的文件列表（cg 文件默认被注入） ---
  */
-export async function run(url: string | Blob | ICGAppPkg, opt: { 'runtime'?: Record<string, Blob>; } = {}): Promise<number> {
+export async function run(url: string | Blob | ICGAppPkg, opt: { 'runtime'?: Record<string, Blob | string>; } = {}): Promise<number> {
     if (!opt.runtime) {
         opt.runtime = {};
     }
@@ -43,7 +43,7 @@ export async function run(url: string | Blob | ICGAppPkg, opt: { 'runtime'?: Rec
         return -1;
     }
     // --- app 的内置文件以及运行时文件 ---
-    let files: Record<string, Blob> = {};
+    let files: Record<string, Blob | string> = {};
     for (let fpath in appPkg.files) {
         files[fpath] = appPkg.files[fpath];
     }
@@ -79,7 +79,7 @@ export async function run(url: string | Blob | ICGAppPkg, opt: { 'runtime'?: Rec
             clickgoFileList.push(path.slice(8));
         }
         else if (task.files[path]) {
-            let pkg = await clickgo.control.read(task.files[path]);
+            let pkg = await clickgo.control.read(task.files[path] as Blob);
             if (pkg) {
                 task.controlPkgs[path] = pkg;
             }
@@ -93,7 +93,7 @@ export async function run(url: string | Blob | ICGAppPkg, opt: { 'runtime'?: Rec
                 clickgoFileList.push(path.slice(8));
             }
             else if (task.files[path]) {
-                let pkg = await clickgo.theme.read(task.files[path]);
+                let pkg = await clickgo.theme.read(task.files[path] as Blob);
                 if (pkg) {
                     task.themePkgs[path] = pkg;
                 }
@@ -106,7 +106,7 @@ export async function run(url: string | Blob | ICGAppPkg, opt: { 'runtime'?: Rec
             await new Promise<void>(function(resolve, reject) {
                 let count = 0;
                 for (let file of clickgoFileList) {
-                    clickgo.core.fetchClickGoFile(file).then(function(blob: Blob | null) {
+                    clickgo.core.fetchClickGoFile(file).then(function(blob: Blob | string | null) {
                         if (blob === null) {
                             reject();
                             return;
@@ -144,7 +144,7 @@ export async function run(url: string | Blob | ICGAppPkg, opt: { 'runtime'?: Rec
     }
     // --- 设置 global style（如果 form 创建失败，就不设置 global style 了） ---
     if (appPkg.config.style && appPkg.files[appPkg.config.style + '.css']) {
-        let style = await clickgo.tool.blob2Text(appPkg.files[appPkg.config.style + '.css']);
+        let style = appPkg.files[appPkg.config.style + '.css'] as string;
         let r = clickgo.tool.stylePrepend(style, 'cg-task' + task.id + '_');
         clickgo.dom.pushStyle(task.id, await clickgo.tool.styleUrl2ObjectOrDataUrl(appPkg.config.style, r.style, task));
     }

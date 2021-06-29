@@ -44,7 +44,10 @@ export function file2ObjectUrl(file: string, obj: ICGTask | ICGControl | ICGThem
         if (!obj.files[file]) {
             return null;
         }
-        ourl = createObjectURL(obj.files[file]);
+        if (typeof obj.files[file] === 'string') {
+            return null;
+        }
+        ourl = createObjectURL(obj.files[file] as Blob);
         obj.objectURLs[file] = ourl;
     }
     return ourl;
@@ -167,157 +170,6 @@ export function isAppPkg(o: string | any): o is ICGAppPkg {
 }
 
 /**
- * --- 传输 url 并解析为 IUrl 对象 ---
- * @param url url 字符串
- */
-export function parseUrl(url: string): ICGUrl {
-    // --- test: https://ab-3dc:aak9()$@github.com:80/nodejs/node/blob/master/lib/url.js?mail=abc@def.com#223 ---
-    let u: ICGUrl = {
-        'auth': null,
-        'hash': null,
-        'host': null,
-        'hostname': null,
-        'pass': null,
-        'path': null,
-        'pathname': '/',
-        'protocol': null,
-        'port': null,
-        'query': null,
-        'user': null
-    };
-    // --- http:, https: ---
-    let protocol = /^(.+?)\/\//.exec(url);
-    if (protocol) {
-        u.protocol = protocol[1].toLowerCase();
-        url = url.slice(protocol[0].length);
-    }
-    // --- 获取 path 开头的 / 的位置 ---
-    let hostSp = url.indexOf('/');
-    let left = url;
-    if (hostSp !== -1) {
-        left = url.slice(0, hostSp);
-        url = url.slice(hostSp);
-    }
-    // --- auth: abc:def, abc ---
-    if (left) {
-        let leftArray = left.split('@');
-        let host = left;
-        if (leftArray[1]) {
-            let auth = leftArray[0].split(':');
-            u.user = auth[0];
-            if (auth[1]) {
-                u.pass = auth[1];
-            }
-            u.auth = u.user + (u.pass ? ':' + u.pass : '');
-            host = leftArray[1];
-        }
-        // --- host: www.host.com, host.com ---
-        let hostArray = host.split(':');
-        u.hostname = hostArray[0].toLowerCase();
-        if (hostArray[1]) {
-            u.port = hostArray[1];
-        }
-        u.host = u.hostname + (u.port ? ':' + u.port : '');
-    }
-    // --- 是否有后面 ---
-    if (hostSp === -1) {
-        return u;
-    }
-    // --- path and query ---
-    let paqArray = url.split('?');
-    u.pathname = paqArray[0];
-    if (paqArray[1]) {
-        // --- query and hash ---
-        let qahArray = paqArray[1].split('#');
-        u.query = qahArray[0];
-        if (qahArray[1]) {
-            u.hash = qahArray[1];
-        }
-    }
-    u.path = u.pathname + (u.query ? '?' + u.query : '');
-    return u;
-}
-
-/**
- * --- 将相对路径根据基准路径进行转换 ---
- * @param from 基准路径
- * @param to 相对路径
- */
-export function urlResolve(from: string, to: string): string {
-    from = from.replace(/\\/g, '/');
-    to = to.replace(/\\/g, '/');
-    // --- to 为空，直接返回 form ---
-    if (to === '') {
-        return from;
-    }
-    // --- 获取 from 的 scheme, host, path ---
-    let f = parseUrl(from);
-    // --- 以 // 开头的，加上 from 的 protocol 返回 ---
-    if (to.startsWith('//')) {
-        return f.protocol ? f.protocol + to : to;
-    }
-    if (f.protocol) {
-        // --- 获取小写的 protocol ---
-        from = f.protocol + from.slice(f.protocol.length);
-    }
-    // --- 获取 to 的 scheme, host, path ---
-    let t = parseUrl(to);
-    // --- 已经是绝对路径，直接返回 ---
-    if (t.protocol) {
-        // --- 获取小写的 protocol ---
-        return t.protocol + to.slice(t.protocol.length);
-    }
-    // --- # 或 ? 替换后返回 ---
-    if (to.startsWith('#') || to.startsWith('?')) {
-        let sp = from.indexOf(to[0]);
-        if (sp !== -1) {
-            return from.slice(0, sp) + to;
-        }
-        else {
-            return from + to;
-        }
-    }
-    // --- 处理后面的尾随路径 ---
-    let abs = (f.auth ? f.auth + '@' : '') + (f.host ? f.host : '');
-    if (to.startsWith('/')) {
-        // -- abs 类似是 /xx/xx ---
-        abs += to;
-    }
-    else {
-        // --- to 是 xx/xx 这样的 ---
-        // --- 移除基准 path 不是路径的部分，如 /ab/c 变成了 /ab，/ab 变成了 空 ---
-        let path = f.pathname.replace(/\/[^/]*$/g, '');
-        // --- abs 是 /xx/xx 了，因为如果 path 是空，则跟上了 /，如果 path 不为空，也是 / 开头 ---
-        abs += path + '/' + to;
-    }
-    // --- 删掉 ./ ---
-    abs = abs.replace(/\/\.\//g, '/');
-    // --- 删掉 ../ ---
-    while (true) {
-        let count = 0;
-        // --- 用循环法把 /xx/../ 变成 / 进行返回上级目录 ---
-        abs = abs.replace(/\/(?!\.\.)[^/]+\/\.\.\//g, function() {
-            ++count;
-            return '/';
-        });
-        if (count === 0) {
-            break;
-        }
-    }
-    // --- 剩下的 ../ 就是无效的直接替换为空 ---
-    abs = abs.replace(/\.\.\//g, '');
-    // --- 返回最终结果 ---
-    if (f.protocol && !f.host) {
-        // --- 类似 c:/ ---
-        return f.protocol + abs;
-    }
-    else {
-        // --- 类似 http:// ---
-        return (f.protocol ? f.protocol + '//' : '') + abs;
-    }
-}
-
-/**
  * --- 将 style 中的 url 转换成 object 或 base64 data url(不存在会自动创建 object url) ---
  * @param path 路径基准或以文件的路径为基准
  * @param style 样式表
@@ -327,20 +179,21 @@ export function urlResolve(from: string, to: string): string {
 export async function styleUrl2ObjectOrDataUrl(path: string, style: string, obj: ICGTask | ICGControl | ICGThemePkg, mode: 'object' | 'data' = 'object'): Promise<string> {
     let reg = /url\(["']{0,1}(.+?)["']{0,1}\)/ig;
     let match: RegExpExecArray | null = null;
-    let rtn = style;
     while ((match = reg.exec(style))) {
-        let realPath = urlResolve(path, match[1]);
+        let realPath = loader.urlResolve(path, match[1]);
         if (!obj.files[realPath]) {
             continue;
         }
         if (mode === 'data') {
-            rtn = rtn.replace(match[0], `url('${await blob2DataUrl(obj.files[realPath])}')`);
+            if (typeof obj.files[realPath] !== 'string') {
+                style = style.replace(match[0], `url('${await blob2DataUrl(obj.files[realPath] as Blob)}')`);
+            }
         }
         else {
-            rtn = rtn.replace(match[0], `url('${file2ObjectUrl(realPath, obj)}')`);
+            style = style.replace(match[0], `url('${file2ObjectUrl(realPath, obj)}')`);
         }
     }
-    return rtn;
+    return style;
 }
 
 /**

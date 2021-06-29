@@ -9,8 +9,6 @@ interface ICGToolLib {
     purify(text: string): string;
     isControlPkg(o: string | any): o is ICGControlPkg;
     isAppPkg(o: string | any): o is ICGAppPkg;
-    parseUrl(url: string): ICGUrl;
-    urlResolve(from: string, to: string): string;
     styleUrl2ObjectOrDataUrl(path: string, style: string, obj: ICGTask | ICGControl | ICGThemePkg, mode?: 'object' | 'data'): Promise<string>;
     layoutAddTagClassAndReTagName(layout: string, retagname: boolean): string;
     layoutInsertAttr(layout: string, insert: string, opt?: { 'ignore'?: RegExp[]; 'include'?: RegExp[]; }): string;

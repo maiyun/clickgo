@@ -3,7 +3,7 @@ interface ICGTaskLib {
     'lastId': number;
 
     getList(): Record<string, ICGTaskItem>;
-    run(url: string | Blob | ICGAppPkg, opt?: { 'runtime'?: Record<string, Blob>; }): Promise<number>;
+    run(url: string | Blob | ICGAppPkg, opt?: { 'runtime'?: Record<string, Blob | string>; }): Promise<number>;
     end(taskId: number): boolean;
 }
 
@@ -21,7 +21,7 @@ interface ICGTask {
     'themePkgs': Record<string, ICGThemePkg>;
 
     'forms': Record<number, ICGForm>;
-    'files': Record<string, Blob>;
+    'files': Record<string, Blob | string>;
     'objectURLs': Record<string, string>;
     'initControls': Record<string, { 'layout': string; 'prep': string; }>;
 }

@@ -19,7 +19,7 @@ export let config = Vue.reactive({
 });
 
 /** --- clickgo 已经加载的文件列表 --- */
-export let clickgoFiles: Record<string, Blob> = {};
+export let clickgoFiles: Record<string, Blob | string> = {};
 
 /** --- 全局响应事件 --- */
 export let globalEvents: ICGGlobalEvents = {
@@ -118,7 +118,7 @@ export function trigger(name: TCGGlobalEvent, taskId: number = 0, formId: number
  * --- 从 cg 目录加载文件（若是已经加载的文件不会再次加载） ---
  * @param path clickgo 文件路径
  */
-export async function fetchClickGoFile(path: string): Promise<null | Blob> {
+export async function fetchClickGoFile(path: string): Promise<Blob | string | null> {
     // --- 判断是否加载过 ---
     if (clickgoFiles[path]) {
         return clickgoFiles[path];
@@ -166,7 +166,7 @@ export async function readApp(blob: Blob): Promise<false | ICGAppPkg> {
         return false;
     }
     // --- 开始读取文件 ---
-    let files: Record<string, Blob> = {};
+    let files: Record<string, Blob | string> = {};
     /** --- 配置文件 --- */
     let configContent = await zip.getContent('/config.json');
     if (!configContent) {
@@ -174,14 +174,23 @@ export async function readApp(blob: Blob): Promise<false | ICGAppPkg> {
     }
     let config: ICGAppConfig = JSON.parse(configContent);
     for (let file of config.files) {
-        let fab = await zip.getContent(file, 'arraybuffer');
-        if (!fab) {
-            continue;
+        let mime = clickgo.tool.getMimeByPath(file);
+        if (['txt', 'json', 'js', 'css', 'xml', 'html'].includes(mime.ext)) {
+            let fab = await zip.getContent(file, 'string');
+            if (!fab) {
+                continue;
+            }
+            files[file] = fab;
         }
-        let mimeo = clickgo.tool.getMimeByPath(file);
-        files[file] = new Blob([fab], {
-            'type': mimeo.mime
-        });
+        else {
+            let fab = await zip.getContent(file, 'arraybuffer');
+            if (!fab) {
+                continue;
+            }
+            files[file] = new Blob([fab], {
+                'type': mime.mime
+            });
+        }
     }
     if (!config) {
         return false;
@@ -212,10 +221,10 @@ export async function fetchApp(url: string): Promise<null | ICGAppPkg> {
     // --- 获取绝对路径 ---
     let realUrl: string;
     if (url.startsWith('/clickgo/')) {
-        realUrl = clickgo.tool.urlResolve(clickgo.cgRootPath, url.slice(9));
+        realUrl = loader.urlResolve(clickgo.cgRootPath, url.slice(9));
     }
     else {
-        realUrl = clickgo.tool.urlResolve(clickgo.rootPath, url);
+        realUrl = loader.urlResolve(clickgo.rootPath, url);
     }
 
     // --- 如果是 cga 文件，直接下载并交给 readApp 函数处理 ---
@@ -233,7 +242,7 @@ export async function fetchApp(url: string): Promise<null | ICGAppPkg> {
     // --- 加载 json 文件，并创建 control 信息对象 ---
     let config: ICGAppConfig;
     // --- 已加载的 files ---
-    let files: Record<string, Blob> = {};
+    let files: Record<string, Blob | string> = {};
     try {
         config = await (await fetch(realUrl + 'config.json?' + Math.random())).json();
         // --- 将预加载文件进行加载 ---
@@ -244,9 +253,21 @@ export async function fetchApp(url: string): Promise<null | ICGAppPkg> {
                     ++count;
                     continue;
                 }
-                fetch(realUrl + file.slice(1) + '?' + Math.random()).then(function(res: Response) {
-                    return res.blob();
-                }).then(function(blob: Blob) {
+                fetch(realUrl + file.slice(1) + '?' + Math.random()).then(function(res: Response): Promise<string | Blob> | string {
+                    if (res.status === 200 || res.status === 304) {
+                        let typeList = ['text/', 'javascript', 'json', 'plain', 'css', 'xml', 'html'];
+                        for (let item of typeList) {
+                            if (res.headers.get('content-type')?.toLowerCase().includes(item)) {
+                                return res.text();
+                            }
+                        }
+                        return res.blob();
+                    }
+                    else {
+                        reject();
+                        return '';
+                    }
+                }).then(function(blob: string | Blob) {
                     files[file] = blob;
                     ++count;
                     if (count === config.files.length) {

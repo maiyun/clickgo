@@ -14,18 +14,10 @@
  * limitations under the License.
  */
 
-/** --- 获取当前 cg index 的基路径 --- */
-let tmpCgRootPath: string = '';
-(function() {
-    let temp = document.querySelectorAll('head > script');
-    let scriptEle = temp[temp.length - 1] as HTMLScriptElement;
-    tmpCgRootPath = scriptEle.src.slice(0, scriptEle.src.lastIndexOf('/') + 1);
-})();
-
 /** --- ClickGo 对象 --- */
 const clickgo: IClickGo = {
     'rootPath': window.location.href.slice(0, window.location.href.lastIndexOf('/') + 1),
-    'cgRootPath': tmpCgRootPath,
+    'cgRootPath': '',
     'isNative': navigator.userAgent.toLowerCase().includes('electron') ? true : false,
     'position': {
         'left': null,
@@ -72,61 +64,61 @@ const clickgo: IClickGo = {
     'zip': {} as ICGZipLib
 };
 
-// --- 加载 loader ---
-let tmpScript = document.createElement('script');
-tmpScript.src = 'https://cdn.jsdelivr.net/npm/@litert/loader@1.1.0/dist/index.min.js';
-tmpScript.addEventListener('load', function(): void {
-    loader.ready(async () => {
-        // --- 设置 loader 库配置 ---
-        loader.setAfter('?' + Math.random());
-        // --- 加载库 ---
-        let paths: string[] = [
-            'https://cdn.jsdelivr.net/npm/vue@3.1.0-beta.6/dist/vue.global.min.js',
-            'https://cdn.jsdelivr.net/npm/jszip@3.6.0/dist/jszip.min.js'
-        ];
-        // --- 判断 ResizeObserver 是否存在 ---
-        let ro = true;
-        // ResizeObserver = undefined;
-        if (!((window as any).ResizeObserver)) {
-            ro = false;
-            paths.push('https://cdn.jsdelivr.net/npm/@juggle/resize-observer@3.3.0/lib/exports/resize-observer.umd.min.js');
-        }
-        // --- 加载 vue 以及必要库 ---
-        for (let path of paths) {
-            if (!await loader.loadScript(document.getElementsByTagName('head')[0], path)) {
-                alert('Librarys load failed.');
+/** --- 获取当前 cg index 的基路径 --- */
+(function() {
+    let temp = document.querySelectorAll('script');
+    let scriptEle = temp[temp.length - 1];
+    clickgo.cgRootPath = scriptEle.src.slice(0, scriptEle.src.lastIndexOf('/') + 1);
+
+    // --- 加载 loader ---
+    let tmpScript = document.createElement('script');
+    tmpScript.src = 'https://cdn.jsdelivr.net/npm/@litert/loader@2.0.2-beta2/dist/index.min.js';
+    tmpScript.addEventListener('load', function(): void {
+        loader.ready(async () => {
+            // --- 通过标签加载库 ---
+            let paths: string[] = [
+                'https://cdn.jsdelivr.net/npm/vue@3.1.0-beta.6/dist/vue.global.min.js',
+                'https://cdn.jsdelivr.net/npm/jszip@3.6.0/dist/jszip.min.js'
+            ];
+            // --- 判断 ResizeObserver 是否存在 ---
+            let ro = true;
+            // ResizeObserver = undefined;
+            if (!((window as any).ResizeObserver)) {
+                ro = false;
+                paths.push('https://cdn.jsdelivr.net/npm/@juggle/resize-observer@3.3.0/lib/exports/resize-observer.umd.min.js');
+            }
+            // --- 加载 vue 以及必要库 ---
+            await loader.loadScripts(document.getElementsByTagName('head')[0], paths);
+            // --- 处理 ResizeObserver ---
+            if (!ro) {
+                (window as any).ResizeObserverEntry = (window as any).ResizeObserver.ResizeObserverEntry;
+                (window as any).ResizeObserver = (window as any).ResizeObserver.ResizeObserver;
+            }
+            // --- 加载 clickgo 主程序 ---
+            let files = await loader.sniffFiles('clickgo.js', {
+                'dir': clickgo.cgRootPath
+            });
+            let cg = loader.require('clickgo', files, {
+                'dir': clickgo.cgRootPath
+            })[0];
+            if (!cg) {
+                alert('Clickgo load failed.');
                 return;
             }
-        }
-        // --- 处理 ResizeObserver ---
-        if (!ro) {
-            (window as any).ResizeObserverEntry = (window as any).ResizeObserver.ResizeObserverEntry;
-            (window as any).ResizeObserver = (window as any).ResizeObserver.ResizeObserver;
-        }
-        // --- 加载 clickgo 主程序 ---
-        let [cg] = await loader.require(clickgo.cgRootPath + 'clickgo') ?? [];
-        if (!clickgo) {
-            alert('Clickgo load failed.');
-            return;
-        }
-        clickgo.control = cg.control;
-        clickgo.core = cg.core;
-        clickgo.dom = cg.dom;
-        clickgo.form = cg.form;
-        clickgo.task = cg.task;
-        clickgo.theme = cg.theme;
-        clickgo.tool = cg.tool;
-        clickgo.zip = cg.zip;
-        // --- 执行 ready ---
-        clickgo.isReady = true;
-        for (let func of clickgo.readys) {
-            const rtn = func();
-            if (rtn instanceof Promise) {
-                rtn.catch((e) => {
-                    throw e;
-                });
+            clickgo.control = cg.control;
+            clickgo.core = cg.core;
+            clickgo.dom = cg.dom;
+            clickgo.form = cg.form;
+            clickgo.task = cg.task;
+            clickgo.theme = cg.theme;
+            clickgo.tool = cg.tool;
+            clickgo.zip = cg.zip;
+            // --- 执行 ready ---
+            clickgo.isReady = true;
+            for (let func of clickgo.readys) {
+                func() as void;
             }
-        }
+        });
     });
-});
-document.getElementsByTagName('head')[0].insertAdjacentElement('afterend', tmpScript);
+    document.getElementsByTagName('head')[0].insertAdjacentElement('afterend', tmpScript);
+})();

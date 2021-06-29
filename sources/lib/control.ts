@@ -24,24 +24,31 @@ export async function read(blob: Blob): Promise<false | ICGControlPkg> {
         let config: ICGControlConfig = JSON.parse(configContent);
         // --- 开始读取文件 ---
         let objectURLs: Record<string, string> = {};
-        let filesRead: Record<string, Blob> = {};
+        let files: Record<string, Blob | string> = {};
         for (let file of config.files) {
-            let fab = await zip.getContent('/' + control.name + file, 'arraybuffer');
-            if (!fab) {
-                continue;
+            let mime = clickgo.tool.getMimeByPath(file);
+            if (['txt', 'json', 'js', 'css', 'xml', 'html'].includes(mime.ext)) {
+                let fab = await zip.getContent('/' + control.name + file, 'string');
+                if (!fab) {
+                    continue;
+                }
+                files[file] = fab;
             }
-            let mimeo = clickgo.tool.getMimeByPath(file);
-            filesRead[file] = new Blob([fab], {
-                'type': mimeo.mime
-            });
-            if (!['xml', 'css', 'js'].includes(mimeo.ext)) {
-                objectURLs[file] = clickgo.tool.createObjectURL(filesRead[file]);
+            else {
+                let fab = await zip.getContent('/' + control.name + file, 'arraybuffer');
+                if (!fab) {
+                    continue;
+                }
+                files[file] = new Blob([fab], {
+                    'type': mime.mime
+                });
+                objectURLs[file] = clickgo.tool.createObjectURL(files[file] as Blob);
             }
         }
         controlPkg[control.name] = {
             'type': 'control',
             'config': config,
-            'files': filesRead,
+            'files': files,
             'objectURLs': objectURLs
         };
     }

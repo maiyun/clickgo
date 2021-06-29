@@ -83,7 +83,7 @@ interface IVueForm extends IVue {
     cgRemoveSystemEventListener(name: TCGGlobalEvent): void;
     cgDialog(opt: string | ICGFormDialog): Promise<string>;
     cgConfirm(content: string, cancel?: boolean): Promise<boolean | number>;
-    cgGetBlob(path: string): Promise<Blob | null>;
+    cgGetFile(path: string): Promise<Blob | string | null>;
     cgGetObjectUrl(file: string): string | null;
     cgGetDataUrl(file: string): Promise<string | null>;
     cgLoadTheme(path: string): Promise<boolean>;
@@ -195,10 +195,10 @@ interface IVueControl extends IVue {
      */
     cgDblclick(e: MouseEvent): void;
     /**
-     * --- 根据路径获取当前应用的文件 blob 对象 ---
+     * --- 获取文件 blob 或 string 对象 ---
      * @param file 文件路径
      */
-    cgGetBlob(this: IVue, path: string): Promise<Blob | null>;
+    cgGetFile(this: IVue, path: string): Promise<Blob | string | null>;
     /**
      * --- 根据文件路径获取 object url，不支持 /clickgo/ 路径 ---
      * @param file 当前 task 文件路径

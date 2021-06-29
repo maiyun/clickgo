@@ -24,24 +24,31 @@ function read(blob) {
         }
         let config = JSON.parse(configContent);
         let objectURLs = {};
-        let filesRead = {};
+        let files = {};
         for (let file of config.files) {
-            let fab = yield zip.getContent(file, 'arraybuffer');
-            if (!fab) {
-                continue;
+            let mime = clickgo.tool.getMimeByPath(file);
+            if (['txt', 'json', 'js', 'css', 'xml', 'html'].includes(mime.ext)) {
+                let fab = yield zip.getContent(file, 'string');
+                if (!fab) {
+                    continue;
+                }
+                files[file] = fab;
             }
-            let mimeo = clickgo.tool.getMimeByPath(file);
-            filesRead[file] = new Blob([fab], {
-                'type': mimeo.mime
-            });
-            if (!['css'].includes(mimeo.ext)) {
-                objectURLs[file] = clickgo.tool.createObjectURL(filesRead[file]);
+            else {
+                let fab = yield zip.getContent(file, 'arraybuffer');
+                if (!fab) {
+                    continue;
+                }
+                files[file] = new Blob([fab], {
+                    'type': mime.mime
+                });
+                objectURLs[file] = clickgo.tool.createObjectURL(files[file]);
             }
         }
         return {
             'type': 'theme',
             'config': config,
-            'files': filesRead,
+            'files': files,
             'objectURLs': objectURLs
         };
     });
@@ -86,11 +93,10 @@ function load(taskId, path = 'global') {
                 return false;
             }
         }
-        let styleBlob = theme.files[theme.config.style + '.css'];
-        if (!styleBlob) {
+        let style = theme.files[theme.config.style + '.css'];
+        if (!style) {
             return false;
         }
-        let style = yield clickgo.tool.blob2Text(styleBlob);
         style = clickgo.tool.stylePrepend(style, `cg-theme-task${taskId}-`).style;
         style = yield clickgo.tool.styleUrl2ObjectOrDataUrl(theme.config.style, style, theme);
         if (!task.customTheme) {

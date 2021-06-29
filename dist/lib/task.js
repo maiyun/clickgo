@@ -134,7 +134,7 @@ function run(url, opt = {}) {
             return form - 100;
         }
         if (appPkg.config.style && appPkg.files[appPkg.config.style + '.css']) {
-            let style = yield clickgo.tool.blob2Text(appPkg.files[appPkg.config.style + '.css']);
+            let style = appPkg.files[appPkg.config.style + '.css'];
             let r = clickgo.tool.stylePrepend(style, 'cg-task' + task.id + '_');
             clickgo.dom.pushStyle(task.id, yield clickgo.tool.styleUrl2ObjectOrDataUrl(appPkg.config.style, r.style, task));
         }
