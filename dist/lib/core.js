@@ -212,38 +212,11 @@ function fetchApp(url) {
         let files = {};
         try {
             config = yield (yield fetch(realUrl + 'config.json?' + Math.random())).json();
-            yield new Promise(function (resolve, reject) {
-                let count = 0;
-                for (let file of config.files) {
-                    if (file.startsWith('/clickgo/')) {
-                        ++count;
-                        continue;
-                    }
-                    fetch(realUrl + file.slice(1) + '?' + Math.random()).then(function (res) {
-                        var _a;
-                        if (res.status === 200 || res.status === 304) {
-                            let typeList = ['text/', 'javascript', 'json', 'plain', 'css', 'xml', 'html'];
-                            for (let item of typeList) {
-                                if ((_a = res.headers.get('content-type')) === null || _a === void 0 ? void 0 : _a.toLowerCase().includes(item)) {
-                                    return res.text();
-                                }
-                            }
-                            return res.blob();
-                        }
-                        else {
-                            reject();
-                            return '';
-                        }
-                    }).then(function (blob) {
-                        files[file] = blob;
-                        ++count;
-                        if (count === config.files.length) {
-                            resolve();
-                        }
-                    }).catch(function () {
-                        reject();
-                    });
-                }
+            let random = Math.random().toString();
+            files = yield loader.fetchFiles(config.files, {
+                'dir': '/',
+                'before': realUrl.slice(0, -1),
+                'after': '?' + random
             });
         }
         catch (_b) {

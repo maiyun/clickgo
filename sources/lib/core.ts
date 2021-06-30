@@ -203,7 +203,7 @@ export async function readApp(blob: Blob): Promise<false | ICGAppPkg> {
 }
 
 /**
- * --- 从网址下载应用，相应的 clickgo 依赖 control 和 theme 会被下载和初始化 ---
+ * --- 从网址下载应用 ---
  * @param url 相对、绝对或 cg 路径，以 / 结尾的目录 ---
  */
 export async function fetchApp(url: string): Promise<null | ICGAppPkg> {
@@ -237,7 +237,6 @@ export async function fetchApp(url: string): Promise<null | ICGAppPkg> {
             return null;
         }
     }
-
     // --- 加载目录 ---
     // --- 加载 json 文件，并创建 control 信息对象 ---
     let config: ICGAppConfig;
@@ -245,38 +244,11 @@ export async function fetchApp(url: string): Promise<null | ICGAppPkg> {
     let files: Record<string, Blob | string> = {};
     try {
         config = await (await fetch(realUrl + 'config.json?' + Math.random())).json();
-        // --- 将预加载文件进行加载 ---
-        await new Promise<void>(function(resolve, reject) {
-            let count = 0;
-            for (let file of config.files) {
-                if (file.startsWith('/clickgo/')) {
-                    ++count;
-                    continue;
-                }
-                fetch(realUrl + file.slice(1) + '?' + Math.random()).then(function(res: Response): Promise<string | Blob> | string {
-                    if (res.status === 200 || res.status === 304) {
-                        let typeList = ['text/', 'javascript', 'json', 'plain', 'css', 'xml', 'html'];
-                        for (let item of typeList) {
-                            if (res.headers.get('content-type')?.toLowerCase().includes(item)) {
-                                return res.text();
-                            }
-                        }
-                        return res.blob();
-                    }
-                    else {
-                        reject();
-                        return '';
-                    }
-                }).then(function(blob: string | Blob) {
-                    files[file] = blob;
-                    ++count;
-                    if (count === config.files.length) {
-                        resolve();
-                    }
-                }).catch(function() {
-                    reject();
-                });
-            }
+        let random = Math.random().toString();
+        files = await loader.fetchFiles(config.files, {
+            'dir': '/',
+            'before': realUrl.slice(0, -1),
+            'after': '?' + random
         });
     }
     catch {

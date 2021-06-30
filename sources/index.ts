@@ -72,7 +72,7 @@ const clickgo: IClickGo = {
 
     // --- 加载 loader ---
     let tmpScript = document.createElement('script');
-    tmpScript.src = 'https://cdn.jsdelivr.net/npm/@litert/loader@2.0.2-beta2/dist/index.min.js';
+    tmpScript.src = 'https://cdn.jsdelivr.net/npm/@litert/loader@2.1.1-rc2/dist/index.min.js';
     tmpScript.addEventListener('load', function(): void {
         loader.ready(async () => {
             // --- 通过标签加载库 ---
@@ -96,7 +96,8 @@ const clickgo: IClickGo = {
             }
             // --- 加载 clickgo 主程序 ---
             let files = await loader.sniffFiles('clickgo.js', {
-                'dir': clickgo.cgRootPath
+                'dir': clickgo.cgRootPath,
+                'after': '?' + Math.random().toString()
             });
             let cg = loader.require('clickgo', files, {
                 'dir': clickgo.cgRootPath
