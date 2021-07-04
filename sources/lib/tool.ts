@@ -119,17 +119,6 @@ export function sleep(ms: number = 0): Promise<void> {
 }
 
 /**
- * --- 等下一帧动画 ---
- */
-export function requestAnimationFrame(): Promise<void> {
-    return new Promise(function(resolve) {
-        window.requestAnimationFrame(function() {
-            resolve();
-        });
-    });
-}
-
-/**
  * --- 去除 html 的空白符、换行以及注释 ---
  * @param text 要纯净的字符串
  */
@@ -482,4 +471,12 @@ export function getBoolean(param: boolean | string | number): boolean {
     else {
         return param ? true : false;
     }
+}
+
+/**
+ * --- 转义 HTML ---
+ * @param html HTML 字符
+ */
+export function escapeHTML(html: string): string {
+    return html.replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }

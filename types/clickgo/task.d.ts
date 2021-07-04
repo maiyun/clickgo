@@ -3,7 +3,7 @@ interface ICGTaskLib {
     'lastId': number;
 
     getList(): Record<string, ICGTaskItem>;
-    run(url: string | Blob | ICGAppPkg, opt?: { 'runtime'?: Record<string, Blob | string>; }): Promise<number>;
+    run(url: string | Blob, opt?: { 'runtime'?: Record<string, Blob | string>; 'safe'?: boolean; }): Promise<number>;
     end(taskId: number): boolean;
 }
 
@@ -16,6 +16,8 @@ interface ICGTask {
         'name': string;
         'data': Record<string, Record<string, string>>;
     };
+    'safe': boolean;
+    'permission': Record<string, any>;
 
     'controlPkgs': Record<string, ICGControlPkg>;
     'themePkgs': Record<string, ICGThemePkg>;
@@ -31,4 +33,5 @@ interface ICGTaskItem {
     'customTheme': boolean;
     'localName': string;
     'formCount': number;
+    'safe': boolean;
 }

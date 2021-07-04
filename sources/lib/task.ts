@@ -3,6 +3,18 @@ export let list: Record<number, ICGTask> = {};
 /** --- 最后一个 task id --- */
 export let lastId: number = 0;
 
+export function get(tid: number): ICGTaskItem | null {
+    if (list[tid] === undefined) {
+        return null;
+    }
+    return {
+        'customTheme': list[tid].customTheme,
+        'localName': list[tid].local.name,
+        'formCount': Object.keys(list[tid].forms).length,
+        'safe': list[tid].safe
+    };
+}
+
 /**
  * --- 获取 task list 的简略情况 ---
  */
@@ -13,7 +25,8 @@ export function getList(): Record<string, ICGTaskItem> {
         list[tid] = {
             'customTheme': item.customTheme,
             'localName': item.local.name,
-            'formCount': Object.keys(item.forms).length
+            'formCount': Object.keys(item.forms).length,
+            'safe': item.safe
         };
     }
     return list;
@@ -21,24 +34,18 @@ export function getList(): Record<string, ICGTaskItem> {
 
 /**
  * --- 运行一个应用 ---
- * @param url app 路径、blob 对象或 IAppPkg 对象
- * @param opt runtime 运行时要注入的文件列表（cg 文件默认被注入） ---
+ * @param url app 路径
+ * @param opt runtime 运行时要注入的文件列表（cg 文件默认被注入）, safe 是否是安全的 app ---
  */
-export async function run(url: string | Blob | ICGAppPkg, opt: { 'runtime'?: Record<string, Blob | string>; } = {}): Promise<number> {
+export async function run(url: string, opt: { 'runtime'?: Record<string, Blob | string>; } = {}): Promise<number> {
     if (!opt.runtime) {
         opt.runtime = {};
     }
-    // --- 获取正常的 App Pkg 对象 ---
-    let appPkg: ICGAppPkg | null;
-    if (typeof url === 'string') {
-        appPkg = await clickgo.core.fetchApp(url);
+    let safe = false;
+    if (url.startsWith('/clickgo/')) {
+        safe = true;
     }
-    else if (url instanceof Blob) {
-        appPkg = (await clickgo.core.readApp(url)) || null;
-    }
-    else {
-        appPkg = url;
-    }
+    let appPkg: ICGAppPkg | null = await clickgo.core.fetchApp(url, safe);
     if (!appPkg) {
         return -1;
     }
@@ -60,6 +67,8 @@ export async function run(url: string | Blob | ICGAppPkg, opt: { 'runtime'?: Rec
             'name': '',
             'data': {}
         }),
+        'safe': appPkg.safe,
+        'permission': {},
 
         'controlPkgs': {},
         'themePkgs': {},
@@ -79,7 +88,7 @@ export async function run(url: string | Blob | ICGAppPkg, opt: { 'runtime'?: Rec
             clickgoFileList.push(path.slice(8));
         }
         else if (task.files[path]) {
-            let pkg = await clickgo.control.read(task.files[path] as Blob);
+            let pkg = await clickgo.control.read(task.files[path] as Blob, appPkg.safe);
             if (pkg) {
                 task.controlPkgs[path] = pkg;
             }

@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.create = exports.remove = exports.doFocusAndPopEvent = exports.hidePop = exports.showPop = exports.removeFromPop = exports.appendToPop = exports.hideRectangle = exports.showRectangle = exports.moveRectangle = exports.showCircular = exports.getRectByBorder = exports.getMaxZIndexFormID = exports.changeFocus = exports.getList = exports.lastPopZIndex = exports.lastTopZIndex = exports.lastZIndex = exports.lastFormId = exports.popShowing = void 0;
+exports.create = exports.remove = exports.doFocusAndPopEvent = exports.hidePop = exports.showPop = exports.removeFromPop = exports.appendToPop = exports.notify = exports.hideRectangle = exports.showRectangle = exports.moveRectangle = exports.showCircular = exports.getRectByBorder = exports.getMaxZIndexFormID = exports.changeFocus = exports.getList = exports.lastPopZIndex = exports.lastTopZIndex = exports.lastZIndex = exports.lastFormId = exports.popShowing = void 0;
 exports.lastFormId = 0;
 exports.lastZIndex = 999;
 exports.lastTopZIndex = 9999999;
@@ -179,7 +179,7 @@ function getMaxZIndexFormID() {
 exports.getMaxZIndexFormID = getMaxZIndexFormID;
 function getRectByBorder(border) {
     var _a, _b, _c, _d;
-    let position = clickgo.getPosition();
+    let position = clickgo.dom.getPosition();
     let width, height, left, top;
     if (typeof border === 'string') {
         switch (border) {
@@ -325,6 +325,59 @@ function hideRectangle() {
     rectangleElement.style.opacity = '0';
 }
 exports.hideRectangle = hideRectangle;
+let systemElement = document.createElement('div');
+systemElement.id = 'cg-system';
+systemElement.classList.add('cg-system');
+systemElement.addEventListener('contextmenu', function (e) {
+    e.preventDefault();
+});
+document.getElementsByTagName('body')[0].appendChild(systemElement);
+systemElement.addEventListener('touchmove', function (e) {
+    e.preventDefault();
+}, {
+    'passive': false
+});
+let notifyTop = 10;
+function notify(opt) {
+    var _a;
+    let el = document.createElement('div');
+    let y = notifyTop;
+    el.classList.add('cg-system-notify');
+    el.style.transform = `translateY(${y}px) translateX(280px)`;
+    el.style.opacity = '1';
+    el.innerHTML = `<div class="cg-system-icon cg-system-icon-${clickgo.tool.escapeHTML((_a = opt.type) !== null && _a !== void 0 ? _a : 'primary')}"></div>
+<div style="flex: 1;">
+    <div class="cg-system-notify-title">${clickgo.tool.escapeHTML(opt.title)}</div>
+    <div class="cg-system-notify-content">${clickgo.tool.escapeHTML(opt.content)}</div>
+</div>`;
+    systemElement.appendChild(el);
+    let notifyHeight = el.offsetHeight;
+    notifyTop += notifyHeight + 10;
+    requestAnimationFrame(function () {
+        el.style.transform = `translateY(${y}px) translateX(-10px)`;
+        setTimeout(function () {
+            el.style.opacity = '0';
+            setTimeout(function () {
+                notifyTop -= notifyHeight - 10;
+                let notifyElementList = document.getElementsByClassName('cg-system-notify');
+                let needSub = false;
+                for (let notifyElement of notifyElementList) {
+                    if (notifyElement === el) {
+                        needSub = true;
+                        continue;
+                    }
+                    if (needSub) {
+                        notifyElement.style.transform = notifyElement.style.transform.replace(/translateY\(([0-9]+)px\)/, function (t, t1) {
+                            return `translateY(${parseInt(t1) - notifyHeight - 10}px)`;
+                        });
+                    }
+                }
+                el.remove();
+            }, 100);
+        }, 7000);
+    });
+}
+exports.notify = notify;
 function appendToPop(el) {
     popListElement.appendChild(el);
 }
@@ -366,7 +419,7 @@ function showPop(pop, direction, opt = {}) {
         };
         return;
     }
-    let position = clickgo.getPosition();
+    let position = clickgo.dom.getPosition();
     let width = (_b = opt.size.width) !== null && _b !== void 0 ? _b : pop.cgSelfPop.$el.offsetWidth;
     let height = (_c = opt.size.height) !== null && _c !== void 0 ? _c : pop.cgSelfPop.$el.offsetHeight;
     let left, top;
@@ -549,6 +602,130 @@ function create(taskId, opt) {
         }
         let appPkg = task.appPkg;
         let formId = ++exports.lastFormId;
+        let invoke = {
+            'window': undefined,
+            'loader': undefined,
+            'clickgo': {
+                'core': {
+                    'trigger': function (o, name, taskId = 0, formId = 0, param1 = '', param2 = '') {
+                        if (o.cgSafe !== undefined) {
+                            if (o.cgSafe) {
+                                clickgo.core.trigger(name, taskId, formId, param1, param2);
+                            }
+                        }
+                        else {
+                            if (clickgo.task.list[o.taskId].safe) {
+                                clickgo.core.trigger(name, taskId, formId, param1, param2);
+                            }
+                        }
+                    }
+                },
+                'dom': {},
+                'form': {
+                    'remove': function (o, formId) {
+                        if (o.cgSafe !== undefined) {
+                            if (o.cgSafe) {
+                                return clickgo.form.remove(formId);
+                            }
+                        }
+                        else {
+                            if (clickgo.task.list[o.taskId].safe) {
+                                return clickgo.form.remove(formId);
+                            }
+                        }
+                        notify({
+                            'title': 'Failed',
+                            'content': `The "clickgo.form.remove" cannot be called, and the task id "${o.taskId}" does not have permission.`,
+                            'type': 'waring'
+                        });
+                        return false;
+                    }
+                },
+                'task': {},
+                'tool': {},
+                'zip': {}
+            }
+        };
+        for (let k in clickgo.dom) {
+            if (!['setPosition', 'getPosition', 'setGlobalCursor', 'isMouseAlsoTouchEvent', 'getStyleCount', 'getSize', 'watchSize', 'watchDom', 'bindDown', 'bindLong', 'is', 'bindMove', 'bindResize'].includes(k)) {
+                continue;
+            }
+            invoke.clickgo.dom[k] = clickgo.dom[k];
+        }
+        for (let k in clickgo.form) {
+            if (!['getList', 'changeFocus', 'getMaxZIndexFormID', 'getRectByBorder', 'showCircular', 'moveRectangle', 'showRectangle', 'hideRectangle', 'notify', 'showPop', 'hidePop'].includes(k)) {
+                continue;
+            }
+            invoke.clickgo.form[k] = clickgo.form[k];
+        }
+        for (let k in clickgo.task) {
+            if (!['getList', 'run', 'end'].includes(k)) {
+                continue;
+            }
+            invoke.clickgo.task[k] = clickgo.task[k];
+        }
+        for (let k in clickgo.tool) {
+            if (!['blob2DataUrl', 'blob2ArrayBuffer', 'blob2Text', 'clone', 'sleep', 'purify', 'getMimeByPath', 'rand', 'getBoolean'].includes(k)) {
+                continue;
+            }
+            invoke.clickgo.tool[k] = clickgo.tool[k];
+        }
+        for (let k in clickgo.zip) {
+            if (!['get'].includes(k)) {
+                continue;
+            }
+            invoke.clickgo.zip[k] = clickgo.zip[k];
+        }
+        for (let k in window) {
+            if (['__awaiter'].includes(k)) {
+                continue;
+            }
+            invoke[k] = undefined;
+        }
+        invoke.setTimeout = function (func, time) {
+            setTimeout(func, time);
+        };
+        let preprocess = function (code, path) {
+            code = code.replace(/clickgo\s*\.\s*core\s*\.\s*trigger\s*\(/g, 'clickgo.core.trigger(this, ');
+            code = code.replace(/clickgo\s*\.\s*form\s*\.\s*remove\s*\(/g, 'clickgo.form.remove(this, ');
+            let exec = /=\s*clickgo\s*([\n;]|$)/.exec(code);
+            if (exec) {
+                notify({
+                    'title': 'Error',
+                    'content': `The "clickgo" object are not allowed to be referenced on "${path}".`,
+                    'type': 'danger'
+                });
+                return '';
+            }
+            exec = /=\s*clickgo\s*[.[]['"`\s]{0,2}\s*(\w+)[\]'"`]{0,2}[\s;]/.exec(code);
+            if (exec) {
+                notify({
+                    'title': 'Error',
+                    'content': `The "clickgo.${exec[1]}" object are not allowed to be referenced on "${path}".`,
+                    'type': 'danger'
+                });
+                return '';
+            }
+            exec = /\W(innerHTML|parentNode|parentElement)\W/.exec(code);
+            if (exec) {
+                notify({
+                    'title': 'Error',
+                    'content': `The "${exec[1]}" method is prohibited.`,
+                    'type': 'danger'
+                });
+                return '';
+            }
+            exec = /(taskId|formId|cgPath|cgSafe)['"`]\s*?\]?\s*=(?!=)\W/.exec(code);
+            if (exec) {
+                notify({
+                    'title': 'Error',
+                    'content': `The key property "${exec[1]}" cannot be modified.`,
+                    'type': 'danger'
+                });
+                return '';
+            }
+            return code;
+        };
         let components = {};
         for (let controlPath of appPkg.config.controls) {
             let controlPkg;
@@ -584,7 +761,9 @@ function create(taskId, opt) {
                 let unmounted = undefined;
                 if (item.files[item.config.code + '.js']) {
                     let expo = loader.require(item.config.code, item.files, {
-                        'dir': '/'
+                        'dir': '/',
+                        'invoke': invoke,
+                        'preprocess': preprocess
                     })[0];
                     if (expo) {
                         props = expo.props || {};
@@ -639,6 +818,7 @@ function create(taskId, opt) {
                 data.formId = formId;
                 data.controlName = name;
                 data.cgPath = (_b = (_a = opt.file) !== null && _a !== void 0 ? _a : opt.path) !== null && _b !== void 0 ? _b : '/';
+                data.cgSafe = item.safe;
                 data._prep = prep;
                 if (data.cgNest === undefined) {
                     data.cgNest = false;
@@ -942,7 +1122,8 @@ function create(taskId, opt) {
         let expo = opt.code;
         if (appPkg.files[opt.file + '.js']) {
             expo = loader.require(opt.file, appPkg.files, {
-                'dir': '/'
+                'dir': '/',
+                'invoke': invoke
             })[0];
         }
         if (expo) {
@@ -995,9 +1176,6 @@ function create(taskId, opt) {
                 return clickgo.core.config.local;
             }
             return clickgo.task.list[this.taskId].local.name;
-        };
-        computed.clickgo = function () {
-            return clickgo;
         };
         methods.l = function (key) {
             var _a, _b;
@@ -1344,7 +1522,7 @@ function create(taskId, opt) {
                 return -6;
             }
         }
-        let position = clickgo.getPosition();
+        let position = clickgo.dom.getPosition();
         if (!rtn.vroot.$refs.form.stateMaxData) {
             if (rtn.vroot.$refs.form.left === -1) {
                 rtn.vroot.$refs.form.setPropData('left', (position.width - rtn.vroot.$el.offsetWidth) / 2);
@@ -1366,7 +1544,7 @@ function create(taskId, opt) {
 }
 exports.create = create;
 window.addEventListener('resize', function () {
-    let position = clickgo.getPosition();
+    let position = clickgo.dom.getPosition();
     for (let i = 0; i < formListElement.children.length; ++i) {
         let el = formListElement.children.item(i);
         let ef = el.children.item(0);

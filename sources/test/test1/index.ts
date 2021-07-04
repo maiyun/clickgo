@@ -1,5 +1,7 @@
 clickgo.ready(async function() {
-    clickgo.position.offsetHeight = -40;
+    clickgo.dom.setPosition({
+        'offsetHeight': -40
+    });
     let el = document.getElementById('tip');
     if (!el) {
         return;

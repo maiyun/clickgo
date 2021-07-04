@@ -1,4 +1,6 @@
 interface ICGDomLib {
+    setPosition(pos: ICGDomPosition): void;
+    getPosition(): ICGDomPositionResult;
     setGlobalCursor(type?: string): void;
     isMouseAlsoTouchEvent(e: MouseEvent | TouchEvent): boolean;
     createToStyleList(taskId: number): void;
@@ -108,4 +110,22 @@ interface ICGDomWatchDom {
         disconnect(): void;
     };
     'size': ICGDomSize;
+}
+
+interface ICGDomPosition {
+    'left'?: number;
+    'top'?: number;
+    'width'?: number;
+    'height'?: number;
+    'offsetWidth'?: number;
+    'offsetHeight'?: number;
+}
+
+interface ICGDomPositionResult {
+    'left': number;
+    'top': number;
+    'width': number;
+    'height': number;
+    'offsetWidth': number;
+    'offsetHeight': number;
 }

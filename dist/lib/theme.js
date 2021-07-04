@@ -14,7 +14,7 @@ exports.global = null;
 exports.clickgoThemePkgs = {};
 function read(blob) {
     return __awaiter(this, void 0, void 0, function* () {
-        let zip = yield clickgo.zip.getZip(blob);
+        let zip = yield clickgo.zip.get(blob);
         if (!zip) {
             return false;
         }

@@ -1,5 +1,5 @@
 interface ICGZipLib {
-    getZip: (data?: TCGZipInputFileFormat) => Promise<ICGZip | null>;
+    get: (data?: TCGZipInputFileFormat) => Promise<ICGZip | null>;
 }
 
 interface ICGZip {

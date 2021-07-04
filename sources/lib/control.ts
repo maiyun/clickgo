@@ -4,9 +4,10 @@ export let clickgoControlPkgs: Record<string, ICGControlPkg> = {};
 /**
  * --- 将 cgc 文件 blob 转换为 pkg 对象，会自动创建 object url，请注意释放 ---
  * @param blob 文件 blob
+ * @param salf 是否是安全的控件
  */
-export async function read(blob: Blob): Promise<false | ICGControlPkg> {
-    let zip = await clickgo.zip.getZip(blob);
+export async function read(blob: Blob, salf: boolean): Promise<false | ICGControlPkg> {
+    let zip = await clickgo.zip.get(blob);
     if (!zip) {
         return false;
     }
@@ -47,6 +48,7 @@ export async function read(blob: Blob): Promise<false | ICGControlPkg> {
         }
         controlPkg[control.name] = {
             'type': 'control',
+            'safe': salf,
             'config': config,
             'files': files,
             'objectURLs': objectURLs

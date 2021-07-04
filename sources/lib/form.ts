@@ -225,7 +225,7 @@ export function getMaxZIndexFormID(): number | null {
  * @param border 显示的位置代号
  */
 export function getRectByBorder(border: TCGBorder): { 'width': number; 'height': number; 'left': number; 'top': number; } {
-    let position = clickgo.getPosition();
+    let position = clickgo.dom.getPosition();
     let width!: number, height!: number, left!: number, top!: number;
     if (typeof border === 'string') {
         switch (border) {
@@ -388,6 +388,64 @@ export function hideRectangle(): void {
     rectangleElement.style.opacity = '0';
 }
 
+// --- 添加 cg-system 的 dom ---
+let systemElement: HTMLDivElement = document.createElement('div');
+systemElement.id = 'cg-system';
+systemElement.classList.add('cg-system');
+systemElement.addEventListener('contextmenu', function(e): void {
+    e.preventDefault();
+});
+document.getElementsByTagName('body')[0].appendChild(systemElement);
+systemElement.addEventListener('touchmove', function(e): void {
+    // --- 防止拖动时整个网页跟着动 ---
+    e.preventDefault();
+}, {
+    'passive': false
+});
+let notifyTop: number = 10;
+export function notify(opt: {
+    'title': string;
+    'content': string;
+    'type'?: 'primary' | 'info' | 'waring' | 'danger';
+}): void {
+    let el = document.createElement('div');
+    let y = notifyTop;
+    el.classList.add('cg-system-notify');
+    el.style.transform = `translateY(${y}px) translateX(280px)`;
+    el.style.opacity = '1';
+    el.innerHTML = `<div class="cg-system-icon cg-system-icon-${clickgo.tool.escapeHTML(opt.type ?? 'primary')}"></div>
+<div style="flex: 1;">
+    <div class="cg-system-notify-title">${clickgo.tool.escapeHTML(opt.title)}</div>
+    <div class="cg-system-notify-content">${clickgo.tool.escapeHTML(opt.content)}</div>
+</div>`;
+    systemElement.appendChild(el);
+    let notifyHeight = el.offsetHeight;
+    notifyTop += notifyHeight + 10;
+    requestAnimationFrame(function() {
+        el.style.transform = `translateY(${y}px) translateX(-10px)`;
+        setTimeout(function() {
+            el.style.opacity = '0';
+            setTimeout(function() {
+                notifyTop -= notifyHeight - 10;
+                let notifyElementList = document.getElementsByClassName('cg-system-notify') as HTMLCollectionOf<HTMLDivElement>;
+                let needSub = false;
+                for (let notifyElement of notifyElementList) {
+                    if (notifyElement === el) {
+                        needSub = true;
+                        continue;
+                    }
+                    if (needSub) {
+                        notifyElement.style.transform = notifyElement.style.transform.replace(/translateY\(([0-9]+)px\)/, function(t: string, t1: string): string {
+                            return `translateY(${parseInt(t1) - notifyHeight - 10}px)`;
+                        });
+                    }
+                }
+                el.remove();
+            }, 100);
+        }, 7000);
+    });
+}
+
 /**
  * --- 将标签追加到 pop 层 ---
  * @param el 要追加的标签
@@ -450,7 +508,7 @@ export function showPop(pop: IVueControl, direction: 'h' | 'v' | MouseEvent | To
         return;
     }
     // --- 获取限定区域 ---
-    let position = clickgo.getPosition();
+    let position = clickgo.dom.getPosition();
     // --- 最终 pop 的大小 ---
     let width = opt.size.width ?? pop.cgSelfPop.$el.offsetWidth;
     let height = opt.size.height ?? pop.cgSelfPop.$el.offsetHeight;
@@ -674,6 +732,135 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
     let appPkg: ICGAppPkg = task.appPkg;
     // ---  申请 formId ---
     let formId = ++lastFormId;
+    // --- 注入的参数，屏蔽浏览器全局对象，注入新的对象 ---
+    let invoke: Record<string, any> = {
+        'window': undefined,
+        'loader': undefined,
+        'clickgo': {
+            'core': {
+                'trigger': function(o: IVueControl | IVueForm, name: TCGGlobalEvent, taskId: number = 0, formId: number = 0, param1: boolean | string = '', param2: string = ''): void {
+                    if (o.cgSafe !== undefined) {
+                        // --- 控件，cg 开头的不能被预定义，cgSafe 也不能被代码修改 ---
+                        if (o.cgSafe) {
+                            (clickgo.core.trigger as any)(name, taskId, formId, param1, param2);
+                        }
+                    }
+                    else {
+                        if (clickgo.task.list[o.taskId].safe) {
+                            (clickgo.core.trigger as any)(name, taskId, formId, param1, param2);
+                        }
+                    }
+                }
+            },
+            'dom': {},
+            'form': {
+                'remove': function(o: IVueControl | IVueForm, formId: number): boolean {
+                    if (o.cgSafe !== undefined) {
+                        if (o.cgSafe) {
+                            return (clickgo.form.remove as any)(formId);
+                        }
+                    }
+                    else {
+                        if (clickgo.task.list[o.taskId].safe) {
+                            return (clickgo.form.remove as any)(formId);
+                        }
+                    }
+                    notify({
+                        'title': 'Failed',
+                        'content': `The "clickgo.form.remove" cannot be called, and the task id "${o.taskId}" does not have permission.`,
+                        'type': 'waring'
+                    });
+                    return false;
+                }
+            },
+            'task': {},
+            'tool': {},
+            'zip': {}
+        }
+    };
+    for (let k in clickgo.dom) {
+        if (!['setPosition', 'getPosition', 'setGlobalCursor', 'isMouseAlsoTouchEvent', 'getStyleCount', 'getSize', 'watchSize', 'watchDom', 'bindDown', 'bindLong', 'is', 'bindMove', 'bindResize'].includes(k)) {
+            continue;
+        }
+        invoke.clickgo.dom[k] = (clickgo.dom as any)[k];
+    }
+    for (let k in clickgo.form) {
+        if (!['getList', 'changeFocus', 'getMaxZIndexFormID', 'getRectByBorder', 'showCircular', 'moveRectangle', 'showRectangle', 'hideRectangle', 'notify', 'showPop', 'hidePop'].includes(k)) {
+            continue;
+        }
+        invoke.clickgo.form[k] = (clickgo.form as any)[k];
+    }
+    for (let k in clickgo.task) {
+        if (!['getList', 'run', 'end'].includes(k)) {
+            continue;
+        }
+        invoke.clickgo.task[k] = (clickgo.task as any)[k];
+    }
+    for (let k in clickgo.tool) {
+        if (!['blob2DataUrl', 'blob2ArrayBuffer', 'blob2Text', 'clone', 'sleep', 'purify', 'getMimeByPath', 'rand', 'getBoolean'].includes(k)) {
+            continue;
+        }
+        invoke.clickgo.tool[k] = (clickgo.tool as any)[k];
+    }
+    for (let k in clickgo.zip) {
+        if (!['get'].includes(k)) {
+            continue;
+        }
+        invoke.clickgo.zip[k] = (clickgo.zip as any)[k];
+    }
+    for (let k in window) {
+        if (['__awaiter'].includes(k)) {
+            continue;
+        }
+        invoke[k] = undefined;
+    }
+    invoke.setTimeout = function(func: () => void | Promise<void>, time?: number): void {
+        setTimeout(func as () => void, time);
+    };
+    // --- 代码预处理 ---
+    let preprocess = function(code: string, path: string): string {
+        code = code.replace(/clickgo\s*\.\s*core\s*\.\s*trigger\s*\(/g, 'clickgo.core.trigger(this, ');
+        code = code.replace(/clickgo\s*\.\s*form\s*\.\s*remove\s*\(/g, 'clickgo.form.remove(this, ');
+        // --- 检测是否有异常的设置 ---
+        let exec = /=\s*clickgo\s*([\n;]|$)/.exec(code);
+        if (exec) {
+            notify({
+                'title': 'Error',
+                'content': `The "clickgo" object are not allowed to be referenced on "${path}".`,
+                'type': 'danger'
+            });
+            return '';
+        }
+        exec = /=\s*clickgo\s*[.[]['"`\s]{0,2}\s*(\w+)[\]'"`]{0,2}[\s;]/.exec(code);
+        if (exec) {
+            notify({
+                'title': 'Error',
+                'content': `The "clickgo.${exec[1]}" object are not allowed to be referenced on "${path}".`,
+                'type': 'danger'
+            });
+            return '';
+        }
+        exec = /\W(innerHTML|parentNode|parentElement)\W/.exec(code);
+        if (exec) {
+            notify({
+                'title': 'Error',
+                'content': `The "${exec[1]}" method is prohibited.`,
+                'type': 'danger'
+            });
+            return '';
+        }
+        // --- 不能设置任何 taskId，formId，cgSafe 等关键 ---
+        exec = /(taskId|formId|cgPath|cgSafe)['"`]\s*?\]?\s*=(?!=)\W/.exec(code);
+        if (exec) {
+            notify({
+                'title': 'Error',
+                'content': `The key property "${exec[1]}" cannot be modified.`,
+                'type': 'danger'
+            });
+            return '';
+        }
+        return code;
+    };
     // --- 获取要定义的控件列表 ---
     let components: any = {};
     for (let controlPath of appPkg.config.controls) {
@@ -713,7 +900,9 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
             // --- 检测是否有 js ---
             if (item.files[item.config.code + '.js']) {
                 let expo = loader.require(item.config.code, item.files, {
-                    'dir': '/'
+                    'dir': '/',
+                    'invoke': invoke,
+                    'preprocess': preprocess
                 })[0];
                 if (expo) {
                     props = expo.props || {};
@@ -775,6 +964,7 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
             data.formId = formId;
             data.controlName = name;
             data.cgPath = opt.file ?? opt.path ?? '/';
+            data.cgSafe = item.safe;
             data._prep = prep;
             if (data.cgNest === undefined) {
                 data.cgNest = false;
@@ -1089,7 +1279,8 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
     let expo = opt.code;
     if (appPkg.files[opt.file + '.js']) {
         expo = loader.require(opt.file!, appPkg.files, {
-            'dir': '/'
+            'dir': '/',
+            'invoke': invoke
         })[0];
     }
     if (expo) {
@@ -1152,9 +1343,6 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
             return clickgo.core.config.local;
         }
         return clickgo.task.list[this.taskId].local.name;
-    };
-    computed.clickgo = function(): IClickGo {
-        return clickgo;
     };
     // --- 获取语言 ---
     methods.l = function(this: IVueForm, key: string): string {
@@ -1504,7 +1692,7 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
         }
     }
     // --- 将窗体居中 ---
-    let position = clickgo.getPosition();
+    let position = clickgo.dom.getPosition();
     if (!rtn.vroot.$refs.form.stateMaxData) {
         if (rtn.vroot.$refs.form.left === -1) {
             rtn.vroot.$refs.form.setPropData('left', (position.width - rtn.vroot.$el.offsetWidth) / 2);
@@ -1529,7 +1717,7 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
 // --- 绑定 resize 事件 ---
 window.addEventListener('resize', function(): void {
     // --- 将所有已经最大化的窗体的大小重置 ---
-    let position = clickgo.getPosition();
+    let position = clickgo.dom.getPosition();
     for (let i = 0; i < formListElement.children.length; ++i) {
         let el = formListElement.children.item(i) as HTMLElement;
         let ef = el.children.item(0) as HTMLElement;

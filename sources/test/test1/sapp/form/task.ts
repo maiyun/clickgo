@@ -8,7 +8,7 @@ export let data = {
 
 export let methods = {
     resizeTaskBar: function(this: IVueForm): void {
-        let pos = clickgo.getPosition();
+        let pos = clickgo.dom.getPosition();
         this.top = pos.height;
         this.width = pos.width;
     }

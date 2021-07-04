@@ -5,7 +5,6 @@ interface ICGToolLib {
     blob2Text(blob: Blob): Promise<string>;
     clone(obj: Record<string, any> | any[]): any[] | any;
     sleep(ms?: number): Promise<void>;
-    requestAnimationFrame(): Promise<void>;
     purify(text: string): string;
     isControlPkg(o: string | any): o is ICGControlPkg;
     isAppPkg(o: string | any): o is ICGAppPkg;
@@ -20,6 +19,7 @@ interface ICGToolLib {
     getObjectURLList(): string[];
     rand(min: number, max: number): number;
     getBoolean(param: boolean | string | number): boolean;
+    escapeHTML(html: string): string;
 }
 
 interface ICGUrl {

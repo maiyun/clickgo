@@ -17,6 +17,11 @@ interface ICGFormLib {
     moveRectangle(border: TCGBorder): void;
     showRectangle(x: number, y: number, border: TCGBorder): void;
     hideRectangle(): void;
+    notify(opt: {
+        'title': string;
+        'content': string;
+        'type'?: 'primary' | 'info' | 'waring' | 'danger';
+    }): void;
     appendToPop(el: HTMLElement): void;
     removeFromPop(el: HTMLElement): void;
     showPop(pop: IVueControl, direction: 'h' | 'v' | MouseEvent | TouchEvent | { x: number; y: number; }, opt?: { 'size'?: { width?: number; height?: number; }; 'null'?: boolean; }): void;

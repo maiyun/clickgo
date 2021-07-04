@@ -9,9 +9,21 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.end = exports.run = exports.getList = exports.lastId = exports.list = void 0;
+exports.end = exports.run = exports.getList = exports.get = exports.lastId = exports.list = void 0;
 exports.list = {};
 exports.lastId = 0;
+function get(tid) {
+    if (exports.list[tid] === undefined) {
+        return null;
+    }
+    return {
+        'customTheme': exports.list[tid].customTheme,
+        'localName': exports.list[tid].local.name,
+        'formCount': Object.keys(exports.list[tid].forms).length,
+        'safe': exports.list[tid].safe
+    };
+}
+exports.get = get;
 function getList() {
     let list = {};
     for (let tid in clickgo.task.list) {
@@ -19,7 +31,8 @@ function getList() {
         list[tid] = {
             'customTheme': item.customTheme,
             'localName': item.local.name,
-            'formCount': Object.keys(item.forms).length
+            'formCount': Object.keys(item.forms).length,
+            'safe': item.safe
         };
     }
     return list;
@@ -30,16 +43,11 @@ function run(url, opt = {}) {
         if (!opt.runtime) {
             opt.runtime = {};
         }
-        let appPkg;
-        if (typeof url === 'string') {
-            appPkg = yield clickgo.core.fetchApp(url);
+        let safe = false;
+        if (url.startsWith('/clickgo/')) {
+            safe = true;
         }
-        else if (url instanceof Blob) {
-            appPkg = (yield clickgo.core.readApp(url)) || null;
-        }
-        else {
-            appPkg = url;
-        }
+        let appPkg = yield clickgo.core.fetchApp(url, safe);
         if (!appPkg) {
             return -1;
         }
@@ -59,6 +67,8 @@ function run(url, opt = {}) {
                 'name': '',
                 'data': {}
             }),
+            'safe': appPkg.safe,
+            'permission': {},
             'controlPkgs': {},
             'themePkgs': {},
             'files': files,
@@ -74,7 +84,7 @@ function run(url, opt = {}) {
                 clickgoFileList.push(path.slice(8));
             }
             else if (task.files[path]) {
-                let pkg = yield clickgo.control.read(task.files[path]);
+                let pkg = yield clickgo.control.read(task.files[path], appPkg.safe);
                 if (pkg) {
                     task.controlPkgs[path] = pkg;
                 }

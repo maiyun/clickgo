@@ -6,10 +6,6 @@ interface IClickGo {
     'cgRootPath': string;
     /** --- 是否是桌面环境 --- */
     'isNative': boolean;
-    /** --- ClickGo 响应位置 --- */
-    'position': ICGPosition;
-    /** --- 获取 ClickGo 响应区域计算后的值 --- */
-    getPosition(): ICGPositionResult;
 
     /** --- 是否已加载完成 --- */
     'isReady': boolean;
@@ -29,24 +25,6 @@ interface IClickGo {
     'theme': ICGThemeLib;
     'tool': ICGToolLib;
     'zip': ICGZipLib;
-}
-
-/** --- ClickGo 响应区域 --- */
-interface ICGPosition {
-    'left': null | number;
-    'top': null | number;
-    'width': null | number;
-    'height': null | number;
-    'offsetWidth': null | number;
-    'offsetHeight': null | number;
-}
-interface ICGPositionResult {
-    'left': number;
-    'top': number;
-    'width': number;
-    'height': number;
-    'offsetWidth': number;
-    'offsetHeight': number;
 }
 
 // declare let clickgo: IClickGo;

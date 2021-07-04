@@ -20,19 +20,78 @@ styleList.style.display = 'none';
 document.getElementsByTagName('body')[0].appendChild(styleList);
 styleList.insertAdjacentHTML('beforeend', '<style id=\'cg-global-cursor\'></style>');
 styleList.insertAdjacentHTML('beforeend', `<style class='cg-global'>
-.cg-form-list, .cg-pop-list {-webkit-user-select: none; user-select: none; position: fixed; left: 0; top: 0; width: 0; height: 0; cursor: default;}
+.cg-form-list, .cg-pop-list, .cg-system {-webkit-user-select: none; user-select: none; position: fixed; left: 0; top: 0; width: 0; height: 0; cursor: default;}
 .cg-form-list {z-index: 20020000;}
 .cg-pop-list {z-index: 20020001;}
-.cg-form-list img, .cg-pop-list img {vertical-align: bottom;}
-.cg-form-list ::selection {background-color: rgba(0, 120, 215, .3);}
-.cg-form-list, .cg-pop-list {-webkit-user-select: none; user-select: none;}
+.cg-system {z-index: 20020002;}
+.cg-form-list img, .cg-pop-list img, .cg-system img {vertical-align: bottom;}
+.cg-form-list ::selection, .cg-pop-list ::selection, .cg-system ::selection {background-color: rgba(0, 120, 215, .3);}
+.cg-form-list, .cg-pop-list, .cg-system {-webkit-user-select: none; user-select: none;}
 
-.cg-form-list *, .cg-pop-list *, .cg-form-list *::after, .cg-pop-list *::after, .cg-form-list *::before, .cg-pop-list *::before {box-sizing: border-box; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); flex-shrink: 0;}
-.cg-form-list, .cg-form-list input, .cg-form-list textarea, .cg-pop-list, .cg-pop-list input, .cg-pop-list textarea {font-family: -apple-system,BlinkMacSystemFont,Roboto,"Segoe UI","Helvetica Neue","PingFang SC","Noto Sans","Noto Sans CJK SC","Microsoft YaHei","微软雅黑",sans-serif; font-size: 12px; line-height: 1; -webkit-font-smoothing: antialiased;}
+.cg-form-list *, .cg-pop-list *, .cg-system *, .cg-form-list *::after, .cg-pop-list *::after, .cg-system *::after, .cg-form-list *::before, .cg-pop-list *::before, .cg-system *::before {box-sizing: border-box; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); flex-shrink: 0;}
+.cg-form-list, .cg-form-list input, .cg-form-list textarea, .cg-pop-list, .cg-pop-list input, .cg-pop-list textarea, .cg-system, .cg-system input, .cg-system textarea {font-family: -apple-system,BlinkMacSystemFont,Roboto,"Segoe UI","Helvetica Neue","PingFang SC","Noto Sans","Noto Sans CJK SC","Microsoft YaHei","微软雅黑",sans-serif; font-size: 12px; line-height: 1; -webkit-font-smoothing: antialiased;}
 
 .cg-circular {box-sizing: border-box; position: fixed; z-index: 20020003; border: solid 3px #76b9ed; border-radius: 50%; filter: drop-shadow(0 0 7px #76b9ed); pointer-events: none; opacity: 0;}
 .cg-rectangle {box-sizing: border-box; position: fixed; z-index: 20020002; border: solid 1px rgba(118, 185, 237, .7); box-shadow: 0 0 10px rgba(0, 0, 0, .3); background: rgba(118, 185, 237, .1); pointer-events: none; opacity: 0;}
+
+.cg-system-notify {box-shadow: 0 0 15px rgba(0, 0, 0, .3); background: rgba(255, 255, 255, .8); position: fixed; padding: 15px; border-radius: 8px; right: 0; top: 0; width: 280px; font-size: 14px; backdrop-filter: blur(5px); display: flex; transition: .1s ease-out; transition-property: transform, opacity;}
+.cg-system-icon {margin-right: 10px; width: 16px; height: 16px; border-radius: 50%;}
+.cg-system-icon-primary {background: #07c160;}
+.cg-system-icon-info {background: #1989fa;}
+.cg-system-icon-warning {background: #ff976a;}
+.cg-system-icon-danger {background: #ee0a24;;}
+.cg-system-notify-title {font-size: 16px; font-weight: bold; padding-bottom: 10px;}
+.cg-system-notify-content {line-height: 1.5;}
 </style>`);
+
+/** --- 作用显示区域 --- */
+let position: ICGDomPosition = {
+    'left': undefined,
+    'top': undefined,
+    'width': undefined,
+    'height': undefined,
+    'offsetWidth': undefined,
+    'offsetHeight': undefined
+};
+
+/**
+ * --- 设置作用显示区域 ---
+ * @param pos 设置的区域
+ */
+export function setPosition(pos: ICGDomPosition): void {
+    if (pos.left !== undefined) {
+        position.left = pos.left;
+    }
+    if (pos.top !== undefined) {
+        position.top = pos.top;
+    }
+    if (pos.width !== undefined) {
+        position.width = pos.width;
+    }
+    if (pos.height !== undefined) {
+        position.height = pos.height;
+    }
+    if (pos.offsetWidth !== undefined) {
+        position.offsetWidth = pos.offsetWidth;
+    }
+    if (pos.offsetHeight !== undefined) {
+        position.offsetHeight = pos.offsetHeight;
+    }
+}
+
+/**
+ * --- 获取作用显示区域 ---
+ */
+export function getPosition(): ICGDomPositionResult {
+    return {
+        'left': position.left ?? 0,
+        'top': position.top ?? 0,
+        'width': window.innerWidth + (position.offsetWidth ?? 0),
+        'height': window.innerHeight + (position.offsetHeight ?? 0),
+        'offsetWidth': position.offsetWidth ?? 0,
+        'offsetHeight': position.offsetHeight ?? 0
+    };
+}
 
 /** --- 全局 cursor 设置的 style 标签 --- */
 let globalCursorStyle: HTMLStyleElement;
@@ -453,7 +512,7 @@ export function bindMove(e: MouseEvent | TouchEvent, opt: { 'areaObject'?: HTMLE
         bottom = areaRect.top + areaRect.height - (parseFloat(areaStyle.borderRightWidth) + parseFloat(areaStyle.paddingRight));
     }
     else {
-        let position = clickgo.getPosition();
+        let position = getPosition();
         left = opt.left ?? position.left;
         top = opt.top ?? position.top;
         right = opt.right ?? position.width;

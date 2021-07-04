@@ -10,7 +10,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 clickgo.ready(function () {
     return __awaiter(this, void 0, void 0, function* () {
-        clickgo.position.offsetHeight = -40;
+        clickgo.dom.setPosition({
+            'offsetHeight': -40
+        });
         let el = document.getElementById('tip');
         if (!el) {
             return;

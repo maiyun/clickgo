@@ -25,7 +25,7 @@ export let mounted = function(this: IVueForm): void {
             'height': height
         });
     });
-    let pos = clickgo.getPosition();
+    let pos = clickgo.dom.getPosition();
     this.width = pos.width;
     this.height = pos.height;
     if (this.width > 1100 || this.height > 1100) {

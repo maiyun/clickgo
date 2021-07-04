@@ -9,7 +9,7 @@ exports.data = {
 };
 exports.methods = {
     resizeTaskBar: function () {
-        let pos = clickgo.getPosition();
+        let pos = clickgo.dom.getPosition();
         this.top = pos.height;
         this.width = pos.width;
     }

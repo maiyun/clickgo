@@ -538,7 +538,7 @@ export let methods = {
                 'left': this.leftData,
                 'top': this.topData
             };
-            let pos = clickgo.getPosition();
+            let pos = clickgo.dom.getPosition();
             this.topData = pos.top;
             this.$emit('update:top', this.topData);
             this.heightData = pos.height;
@@ -585,7 +585,7 @@ export let methods = {
                 this.stateMaxData = true;
                 this.$emit('update:stateMax', true);
                 if (!event.ds) {
-                    let pos = clickgo.getPosition();
+                    let pos = clickgo.dom.getPosition();
                     this.leftData = pos.left;
                     this.$emit('update:left', this.leftData);
                     this.topData = pos.top;
@@ -673,7 +673,7 @@ export let methods = {
                 else {
                     // --- 左下、下、右下 ---
                     top = this.historyLocation.top;
-                    height = clickgo.getPosition().height - top;
+                    height = clickgo.dom.getPosition().height - top;
                 }
             }
             else {
@@ -751,7 +751,7 @@ export let methods = {
             'end': () => {
                 if (isBorder !== '') {
                     if (isBorder !== 'l' && isBorder !== 'r') {
-                        let pos = clickgo.getPosition();
+                        let pos = clickgo.dom.getPosition();
                         this.stateAbs = true;
                         this.heightData = pos.height;
                         this.$emit('update:height', this.heightData);
@@ -804,7 +804,7 @@ export let mounted = async function(this: IVueControl): Promise<void> {
     }
     this.zIndexData = parseInt(this.zIndex);
     if (this.isStateMax) {
-        let pos = clickgo.getPosition();
+        let pos = clickgo.dom.getPosition();
         this.leftData = (pos.width - this.widthData) / 2;
         this.topData = (pos.height - this.heightData) / 2;
         this.maxMethod();

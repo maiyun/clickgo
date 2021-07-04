@@ -121,6 +121,8 @@ interface IVueControl extends IVue {
     'controlName': string;
     /** --- 窗体基目录 --- */
     'cgPath': string;
+    /** --- 是否是安全控件 --- */
+    'cgSafe': boolean;
     /** --- 是否是嵌套组件 --- */
     'cgNest': boolean;
     /** --- 自己是不是就是 pop 层 --- */

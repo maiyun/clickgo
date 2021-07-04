@@ -14,6 +14,10 @@
  * limitations under the License.
  */
 
+/**
+ * /clickgo/, /runtime/, /storage/, /mounted/
+ */
+
 export let config = Vue.reactive({
     'local': 'en-us'
 });
@@ -131,7 +135,7 @@ export async function fetchClickGoFile(path: string): Promise<Blob | string | nu
         switch (ext) {
             case 'cgc': {
                 // --- 控件文件 ---
-                let pkg = await clickgo.control.read(blob);
+                let pkg = await clickgo.control.read(blob, true);
                 if (!pkg) {
                     return null;
                 }
@@ -159,9 +163,10 @@ export async function fetchClickGoFile(path: string): Promise<Blob | string | nu
 /**
  * --- cga 文件 blob 转 IAppPkg 对象 ---
  * @param blob blob 对象
+ * @param salf 是否是安全的
  */
-export async function readApp(blob: Blob): Promise<false | ICGAppPkg> {
-    let zip = await clickgo.zip.getZip(blob);
+export async function readApp(blob: Blob, salf: boolean): Promise<false | ICGAppPkg> {
+    let zip = await clickgo.zip.get(blob);
     if (!zip) {
         return false;
     }
@@ -197,6 +202,7 @@ export async function readApp(blob: Blob): Promise<false | ICGAppPkg> {
     }
     return {
         'type': 'app',
+        'safe': salf,
         'config': config,
         'files': files
     };
@@ -205,8 +211,9 @@ export async function readApp(blob: Blob): Promise<false | ICGAppPkg> {
 /**
  * --- 从网址下载应用 ---
  * @param url 相对、绝对或 cg 路径，以 / 结尾的目录 ---
+ * @param safe 是否安全
  */
-export async function fetchApp(url: string): Promise<null | ICGAppPkg> {
+export async function fetchApp(url: string, safe: boolean): Promise<null | ICGAppPkg> {
     // --- 判断是通过目录加载，还是 cga 文件 ---
     let isCga: boolean = false;
     if (!url.endsWith('/')) {
@@ -231,7 +238,7 @@ export async function fetchApp(url: string): Promise<null | ICGAppPkg> {
     if (isCga) {
         try {
             let blob = await (await fetch(realUrl + '?' + Math.random())).blob();
-            return await readApp(blob) || null;
+            return await readApp(blob, safe) || null;
         }
         catch {
             return null;
@@ -256,6 +263,7 @@ export async function fetchApp(url: string): Promise<null | ICGAppPkg> {
     }
     return {
         'type': 'app',
+        'safe': safe,
         'config': config,
         'files': files
     };

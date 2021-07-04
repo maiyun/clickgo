@@ -15,8 +15,8 @@ interface ICGCoreLib {
     trigger(name: 'screenResize' | 'formFocused' | 'formBlurred' | 'formFlash', taskId: number, formId: number): void;
     trigger(name: 'taskStarted' | 'taskEnded', taskId: number): void;
     fetchClickGoFile(path: string): Promise<Blob | string | null>;
-    readApp(blob: Blob): Promise<false | ICGAppPkg>;
-    fetchApp(url: string): Promise<null | ICGAppPkg>;
+    readApp(blob: Blob, salf: boolean): Promise<false | ICGAppPkg>;
+    fetchApp(url: string, safe: boolean): Promise<null | ICGAppPkg>;
 }
 
 /** --- 全局事件 --- */
@@ -57,6 +57,8 @@ type TCGGlobalEvent = 'screenResize' | 'formCreated' | 'formRemoved' | 'formTitl
 /** --- 应用文件包 --- */
 interface ICGAppPkg {
     'type': 'app';
+    /** --- 是否可信 --- */
+    'safe': boolean;
     /** --- 应用对象配置文件 --- */
     'config': ICGAppConfig;
     /** --- 所有已加载的文件内容 --- */

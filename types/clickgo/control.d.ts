@@ -1,6 +1,6 @@
 interface ICGControlLib {
     'clickgoControlPkgs': Record<string, ICGControlPkg>;
-    read(blob: Blob): Promise<false | ICGControlPkg>;
+    read(blob: Blob, salf: boolean): Promise<false | ICGControlPkg>;
     revokeObjectURL(pkg: ICGControlPkg): void;
 }
 
@@ -12,6 +12,8 @@ interface ICGControlPkg {
 /** --- 控件对象 --- */
 interface ICGControl {
     'type': 'control';
+    /** --- 是否可信 --- */
+    'safe': boolean;
     /** --- 控件对象配置文件 --- */
     'config': ICGControlConfig;
     /** --- 所有已加载的文件内容 --- */

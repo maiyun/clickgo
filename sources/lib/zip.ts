@@ -273,7 +273,7 @@ class Zip implements ICGZip {
  * --- 获取 zip 对象 ---
  * @param data 对象数据
  */
-export async function getZip(data?: TCGZipInputFileFormat): Promise<Zip | null> {
+export async function get(data?: TCGZipInputFileFormat): Promise<Zip | null> {
     let z = JSZip();
     try {
         if (data) {

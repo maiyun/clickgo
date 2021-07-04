@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getBoolean = exports.rand = exports.getObjectURLList = exports.revokeObjectURL = exports.createObjectURL = exports.getMimeByPath = exports.stylePrepend = exports.layoutClassPrepend = exports.layoutInsertAttr = exports.layoutAddTagClassAndReTagName = exports.styleUrl2ObjectOrDataUrl = exports.isAppPkg = exports.isControlPkg = exports.purify = exports.requestAnimationFrame = exports.sleep = exports.clone = exports.blob2Text = exports.blob2ArrayBuffer = exports.file2ObjectUrl = exports.blob2DataUrl = void 0;
+exports.escapeHTML = exports.getBoolean = exports.rand = exports.getObjectURLList = exports.revokeObjectURL = exports.createObjectURL = exports.getMimeByPath = exports.stylePrepend = exports.layoutClassPrepend = exports.layoutInsertAttr = exports.layoutAddTagClassAndReTagName = exports.styleUrl2ObjectOrDataUrl = exports.isAppPkg = exports.isControlPkg = exports.purify = exports.sleep = exports.clone = exports.blob2Text = exports.blob2ArrayBuffer = exports.file2ObjectUrl = exports.blob2DataUrl = void 0;
 function blob2DataUrl(blob) {
     return new Promise(function (resove) {
         let fr = new FileReader();
@@ -89,14 +89,6 @@ function sleep(ms = 0) {
     });
 }
 exports.sleep = sleep;
-function requestAnimationFrame() {
-    return new Promise(function (resolve) {
-        window.requestAnimationFrame(function () {
-            resolve();
-        });
-    });
-}
-exports.requestAnimationFrame = requestAnimationFrame;
 function purify(text) {
     text = '>' + text + '<';
     text = text.replace(/<!--([\s\S]*?)-->/g, '').replace(/>([\s\S]*?)</g, function (t, t1) {
@@ -364,3 +356,7 @@ function getBoolean(param) {
     }
 }
 exports.getBoolean = getBoolean;
+function escapeHTML(html) {
+    return html.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+exports.escapeHTML = escapeHTML;

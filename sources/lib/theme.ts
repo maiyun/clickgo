@@ -24,7 +24,7 @@ export let clickgoThemePkgs: Record<string, ICGThemePkg> = {};
  * @param blob blob 对象
  */
 export async function read(blob: Blob): Promise<false | ICGThemePkg> {
-    let zip = await clickgo.zip.getZip(blob);
+    let zip = await clickgo.zip.get(blob);
     if (!zip) {
         return false;
     }

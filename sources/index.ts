@@ -19,24 +19,6 @@ const clickgo: IClickGo = {
     'rootPath': window.location.href.slice(0, window.location.href.lastIndexOf('/') + 1),
     'cgRootPath': '',
     'isNative': navigator.userAgent.toLowerCase().includes('electron') ? true : false,
-    'position': {
-        'left': null,
-        'top': null,
-        'width': null,
-        'height': null,
-        'offsetWidth': null,
-        'offsetHeight': null
-    },
-    getPosition: function(): ICGPositionResult {
-        return {
-            'left': this.position.left ?? 0,
-            'top': this.position.top ?? 0,
-            'width': window.innerWidth + (this.position.offsetWidth ?? 0),
-            'height': window.innerHeight + (this.position.offsetHeight ?? 0),
-            'offsetWidth': this.position.offsetWidth ?? 0,
-            'offsetHeight': this.position.offsetHeight ?? 0
-        };
-    },
 
     'isReady': false,
     'readys': [],
@@ -72,7 +54,7 @@ const clickgo: IClickGo = {
 
     // --- 加载 loader ---
     let tmpScript = document.createElement('script');
-    tmpScript.src = 'https://cdn.jsdelivr.net/npm/@litert/loader@2.1.1-rc2/dist/index.min.js';
+    tmpScript.src = 'https://cdn.jsdelivr.net/npm/@litert/loader@2.1.3-rc4/dist/index.min.js';
     tmpScript.addEventListener('load', function(): void {
         loader.ready(async () => {
             // --- 通过标签加载库 ---

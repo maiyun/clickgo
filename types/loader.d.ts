@@ -18,13 +18,15 @@ interface ILoader {
      * --- 通过运行时文件加载模型 ---
      * @param paths 路径或模型映射名，如 ./abc，echarts，../xx/xx
      * @param files 文件 blob 列表
-     * @param opt executed: 已执行（require）的文件, map: 模型映射表, dir: 当前路径基准, style: css 文件被加载的页面唯一 name
+     * @param opt executed: 已执行（require）的文件, map: 模型映射表, dir: 当前路径基准, style: css 文件被加载的页面唯一 name, invoke 注入变量或函数
      */
     require(paths: string | string[], files: Record<string, Blob | string>, opt?: {
         'executed'?: Record<string, any>;
         'map'?: Record<string, string>;
         'dir'?: string;
         'style'?: string;
+        'invoke'?: Record<string, any>;
+        'preprocess'?: (code: string, path: string) => string;
     }): any[];
     /**
      * --- 简单 fetch 获取网络数据 ---

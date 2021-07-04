@@ -114,7 +114,7 @@ function fetchClickGoFile(path) {
             let ext = lio === -1 ? '' : path.slice(lio + 1).toLowerCase();
             switch (ext) {
                 case 'cgc': {
-                    let pkg = yield clickgo.control.read(blob);
+                    let pkg = yield clickgo.control.read(blob, true);
                     if (!pkg) {
                         return null;
                     }
@@ -139,9 +139,9 @@ function fetchClickGoFile(path) {
     });
 }
 exports.fetchClickGoFile = fetchClickGoFile;
-function readApp(blob) {
+function readApp(blob, salf) {
     return __awaiter(this, void 0, void 0, function* () {
-        let zip = yield clickgo.zip.getZip(blob);
+        let zip = yield clickgo.zip.get(blob);
         if (!zip) {
             return false;
         }
@@ -175,13 +175,14 @@ function readApp(blob) {
         }
         return {
             'type': 'app',
+            'safe': salf,
             'config': config,
             'files': files
         };
     });
 }
 exports.readApp = readApp;
-function fetchApp(url) {
+function fetchApp(url, safe) {
     return __awaiter(this, void 0, void 0, function* () {
         let isCga = false;
         if (!url.endsWith('/')) {
@@ -202,7 +203,7 @@ function fetchApp(url) {
         if (isCga) {
             try {
                 let blob = yield (yield fetch(realUrl + '?' + Math.random())).blob();
-                return (yield readApp(blob)) || null;
+                return (yield readApp(blob, safe)) || null;
             }
             catch (_a) {
                 return null;
@@ -224,6 +225,7 @@ function fetchApp(url) {
         }
         return {
             'type': 'app',
+            'safe': safe,
             'config': config,
             'files': files
         };

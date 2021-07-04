@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getZip = void 0;
+exports.get = void 0;
 class Zip {
     constructor(zip) {
         this._path = '/';
@@ -218,7 +218,7 @@ class Zip {
         });
     }
 }
-function getZip(data) {
+function get(data) {
     return __awaiter(this, void 0, void 0, function* () {
         let z = JSZip();
         try {
@@ -232,4 +232,4 @@ function getZip(data) {
         }
     });
 }
-exports.getZip = getZip;
+exports.get = get;
