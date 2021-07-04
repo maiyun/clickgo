@@ -54,7 +54,7 @@ const clickgo: IClickGo = {
 
     // --- 加载 loader ---
     let tmpScript = document.createElement('script');
-    tmpScript.src = 'https://cdn.jsdelivr.net/npm/@litert/loader@2.1.3-rc4/dist/index.min.js';
+    tmpScript.src = 'https://cdn.jsdelivr.net/npm/@litert/loader@2.1.4-rc5/dist/index.min.js';
     tmpScript.addEventListener('load', function(): void {
         loader.ready(async () => {
             // --- 通过标签加载库 ---

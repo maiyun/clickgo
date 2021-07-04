@@ -41,7 +41,7 @@ const clickgo = {
     let scriptEle = temp[temp.length - 1];
     clickgo.cgRootPath = scriptEle.src.slice(0, scriptEle.src.lastIndexOf('/') + 1);
     let tmpScript = document.createElement('script');
-    tmpScript.src = 'https://cdn.jsdelivr.net/npm/@litert/loader@2.1.3-rc4/dist/index.min.js';
+    tmpScript.src = 'https://cdn.jsdelivr.net/npm/@litert/loader@2.1.4-rc5/dist/index.min.js';
     tmpScript.addEventListener('load', function () {
         loader.ready(() => __awaiter(this, void 0, void 0, function* () {
             let paths = [
