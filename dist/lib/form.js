@@ -685,6 +685,7 @@ function create(taskId, opt) {
         invoke.setTimeout = function (func, time) {
             setTimeout(func, time);
         };
+        let isSafePreprocess = false;
         let preprocess = function (code, path) {
             let exec = /=\s*(clickgo|this)\s*([\n;})]|$)/.exec(code);
             if (exec) {
@@ -695,14 +696,16 @@ function create(taskId, opt) {
                 });
                 return '';
             }
-            exec = /\W(clickgo|this)\s*\[/.exec(code);
-            if (exec) {
-                notify({
-                    'title': 'Error',
-                    'content': `You cannot use "[]" to access the properties of "${exec[1]}".`,
-                    'type': 'danger'
-                });
-                return '';
+            if (!isSafePreprocess) {
+                exec = /\W(clickgo|this)\s*\[/.exec(code);
+                if (exec) {
+                    notify({
+                        'title': 'Error',
+                        'content': `You cannot use "[]" to access the properties of "${exec[1]}".`,
+                        'type': 'danger'
+                    });
+                    return '';
+                }
             }
             exec = /=\s*clickgo\s*\.\s*(\w+)\s*([\n;})]|$)/.exec(code);
             if (exec) {
@@ -726,7 +729,7 @@ function create(taskId, opt) {
                     return '';
                 }
             }
-            exec = /(taskId|formId|cgPath|cgSafe)\s*\W\s*(?![=><])[\s\S]/.exec(code);
+            exec = /(taskId|formId|cgPath|cgSafe)\s*[.=[]\s*(?![=><])[\s\S]/.exec(code);
             if (exec) {
                 notify({
                     'title': 'Error',
@@ -773,6 +776,7 @@ function create(taskId, opt) {
                 let beforeUnmount = undefined;
                 let unmounted = undefined;
                 if (item.files[item.config.code + '.js']) {
+                    isSafePreprocess = item.safe;
                     let expo = loader.require(item.config.code, item.files, {
                         'dir': '/',
                         'invoke': invoke,
@@ -1134,9 +1138,11 @@ function create(taskId, opt) {
         let unmounted = undefined;
         let expo = opt.code;
         if (appPkg.files[opt.file + '.js']) {
+            isSafePreprocess = clickgo.task.list[taskId].safe;
             expo = loader.require(opt.file, appPkg.files, {
                 'dir': '/',
-                'invoke': invoke
+                'invoke': invoke,
+                'preprocess': preprocess
             })[0];
         }
         if (expo) {

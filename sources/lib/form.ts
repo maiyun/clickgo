@@ -817,6 +817,8 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
     invoke.setTimeout = function(func: () => void | Promise<void>, time?: number): void {
         setTimeout(func as () => void, time);
     };
+    // --- 是否是安全的 preprocess ---
+    let isSafePreprocess: boolean = false;
     // --- 代码预处理 ---
     let preprocess = function(code: string, path: string): string {
         // --- 检测是否有异常的设置 ---
@@ -829,14 +831,16 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
             });
             return '';
         }
-        exec = /\W(clickgo|this)\s*\[/.exec(code);
-        if (exec) {
-            notify({
-                'title': 'Error',
-                'content': `You cannot use "[]" to access the properties of "${exec[1]}".`,
-                'type': 'danger'
-            });
-            return '';
+        if (!isSafePreprocess) {
+            exec = /\W(clickgo|this)\s*\[/.exec(code);
+            if (exec) {
+                notify({
+                    'title': 'Error',
+                    'content': `You cannot use "[]" to access the properties of "${exec[1]}".`,
+                    'type': 'danger'
+                });
+                return '';
+            }
         }
         exec = /=\s*clickgo\s*\.\s*(\w+)\s*([\n;})]|$)/.exec(code);
         if (exec) {
@@ -861,7 +865,7 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
             }
         }
         // --- 不能设置任何 taskId，formId，cgSafe 等关键 ---
-        exec = /(taskId|formId|cgPath|cgSafe)\s*\W\s*(?![=><])[\s\S]/.exec(code);
+        exec = /(taskId|formId|cgPath|cgSafe)\s*[.=[]\s*(?![=><])[\s\S]/.exec(code);
         if (exec) {
             notify({
                 'title': 'Error',
@@ -913,6 +917,7 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
             let unmounted: (() => void) | undefined = undefined;
             // --- 检测是否有 js ---
             if (item.files[item.config.code + '.js']) {
+                isSafePreprocess = item.safe;
                 let expo = loader.require(item.config.code, item.files, {
                     'dir': '/',
                     'invoke': invoke,
@@ -1292,9 +1297,11 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
     // --- 检测是否有 js ---
     let expo = opt.code;
     if (appPkg.files[opt.file + '.js']) {
+        isSafePreprocess = clickgo.task.list[taskId].safe;
         expo = loader.require(opt.file!, appPkg.files, {
             'dir': '/',
-            'invoke': invoke
+            'invoke': invoke,
+            'preprocess': preprocess
         })[0];
     }
     if (expo) {

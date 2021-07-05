@@ -10,5 +10,11 @@ exports.methods = {
             return `"icon":"${t1 ? (t1.slice(0, 10) + '...') : t1}"`;
         });
         this.cgDialog(`<overflow width="200" height="100" direction="v" style="word-break: break-word;">${str}</overflow>`).catch((e) => { throw e; });
+    },
+    changeFocus: function (formId) {
+        clickgo.form.changeFocus(formId);
+    },
+    getMaxZIndexFormID: function () {
+        return clickgo.form.getMaxZIndexFormID();
     }
 };
