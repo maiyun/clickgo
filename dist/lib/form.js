@@ -718,7 +718,7 @@ function create(taskId, opt) {
             }
             let bans = ['innerHTML', 'innerText', 'parentNode', 'parentElement'];
             for (let ban of bans) {
-                let reg = new RegExp(`\\W(?=[${ban}])[${ban}'"\`+\\s]{${ban.length},}\\W`);
+                let reg = new RegExp(`\\W((?=[${ban}])[${ban}'"\`+\\s]){${ban.length},}\\W`);
                 exec = reg.exec(code);
                 if (exec) {
                     notify({
@@ -729,7 +729,7 @@ function create(taskId, opt) {
                     return '';
                 }
             }
-            exec = /(taskId|formId|cgPath|cgSafe)\s*[.=[]\s*(?![=><])[\s\S]/.exec(code);
+            exec = /\.\s*(taskId|formId|cgPath|cgSafe)\s*[.=[]\s*(?![=><])[\s\S]/.exec(code);
             if (exec) {
                 notify({
                     'title': 'Error',

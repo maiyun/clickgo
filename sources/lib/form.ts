@@ -853,7 +853,7 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
         }
         let bans: string[] = ['innerHTML', 'innerText', 'parentNode', 'parentElement'];
         for (let ban of bans) {
-            let reg = new RegExp(`\\W(?=[${ban}])[${ban}'"\`+\\s]{${ban.length},}\\W`);
+            let reg = new RegExp(`\\W((?=[${ban}])[${ban}'"\`+\\s]){${ban.length},}\\W`);
             exec = reg.exec(code);
             if (exec) {
                 notify({
@@ -865,7 +865,7 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
             }
         }
         // --- 不能设置任何 taskId，formId，cgSafe 等关键 ---
-        exec = /(taskId|formId|cgPath|cgSafe)\s*[.=[]\s*(?![=><])[\s\S]/.exec(code);
+        exec = /\.\s*(taskId|formId|cgPath|cgSafe)\s*[.=[]\s*(?![=><])[\s\S]/.exec(code);
         if (exec) {
             notify({
                 'title': 'Error',
