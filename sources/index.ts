@@ -59,7 +59,7 @@ const clickgo: IClickGo = {
         loader.ready(async () => {
             // --- 通过标签加载库 ---
             let paths: string[] = [
-                'https://cdn.jsdelivr.net/npm/vue@3.1.0-beta.6/dist/vue.global.min.js',
+                'https://cdn.jsdelivr.net/npm/vue@3.1.4/dist/vue.global.min.js',
                 'https://cdn.jsdelivr.net/npm/jszip@3.6.0/dist/jszip.min.js'
             ];
             // --- 判断 ResizeObserver 是否存在 ---

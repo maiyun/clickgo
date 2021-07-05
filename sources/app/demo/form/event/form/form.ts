@@ -11,6 +11,9 @@ export let methods = {
             'name': name,
             'text': text
         });
+    },
+    'changeFocus': function(this: IVueForm, fid: number): void {
+        clickgo.form.changeFocus(fid);
     }
 };
 

@@ -13,6 +13,9 @@ exports.methods = {
             'name': name,
             'text': text
         });
+    },
+    'changeFocus': function (fid) {
+        clickgo.form.changeFocus(fid);
     }
 };
 exports.mounted = function () {

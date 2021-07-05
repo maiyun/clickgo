@@ -45,7 +45,7 @@ const clickgo = {
     tmpScript.addEventListener('load', function () {
         loader.ready(() => __awaiter(this, void 0, void 0, function* () {
             let paths = [
-                'https://cdn.jsdelivr.net/npm/vue@3.1.0-beta.6/dist/vue.global.min.js',
+                'https://cdn.jsdelivr.net/npm/vue@3.1.4/dist/vue.global.min.js',
                 'https://cdn.jsdelivr.net/npm/jszip@3.6.0/dist/jszip.min.js'
             ];
             let ro = true;

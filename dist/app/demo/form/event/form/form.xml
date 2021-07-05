@@ -2,7 +2,7 @@
     <label>The form list:</label>
     <layout align-h="center" align-v="center" flex="1" style="margin-top: 10px;">
         <layout gutter="10" direction="v">
-            <layout align-v="center" v-for="(form, fid) of flist" gutter="5" @tap="clickgo.form.changeFocus(fid)" class="item" :class="{'flash': form.flash, 'focus': form.focus}">
+            <layout align-v="center" v-for="(form, fid) of flist" gutter="5" @tap="changeFocus(fid)" class="item" :class="{'flash': form.flash, 'focus': form.focus}">
                 <img v-if="form.icon" :src="form.icon" width="16" height="16" /><label>{{form.title}}{{form.max ? ' (max)' : ''}}{{form.min ? ' (min)' : ''}}</label>
             </layout>
         </layout>

@@ -416,7 +416,7 @@ export function notify(opt: {
     el.innerHTML = `<div class="cg-system-icon cg-system-icon-${clickgo.tool.escapeHTML(opt.type ?? 'primary')}"></div>
 <div style="flex: 1;">
     <div class="cg-system-notify-title">${clickgo.tool.escapeHTML(opt.title)}</div>
-    <div class="cg-system-notify-content">${clickgo.tool.escapeHTML(opt.content)}</div>
+    <div class="cg-system-notify-content">${clickgo.tool.escapeHTML(opt.content).replace(/\r\n/g, '\n').replace(/\r/g, '\n').replace(/\n/g, '<br>')}</div>
 </div>`;
     systemElement.appendChild(el);
     let notifyHeight = el.offsetHeight;
@@ -426,7 +426,7 @@ export function notify(opt: {
         setTimeout(function() {
             el.style.opacity = '0';
             setTimeout(function() {
-                notifyTop -= notifyHeight - 10;
+                notifyTop -= notifyHeight + 10;
                 let notifyElementList = document.getElementsByClassName('cg-system-notify') as HTMLCollectionOf<HTMLDivElement>;
                 let needSub = false;
                 for (let notifyElement of notifyElementList) {
@@ -442,7 +442,7 @@ export function notify(opt: {
                 }
                 el.remove();
             }, 100);
-        }, 7000);
+        }, 6000);
     });
 }
 
@@ -819,19 +819,26 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
     };
     // --- 代码预处理 ---
     let preprocess = function(code: string, path: string): string {
-        code = code.replace(/clickgo\s*\.\s*core\s*\.\s*trigger\s*\(/g, 'clickgo.core.trigger(this, ');
-        code = code.replace(/clickgo\s*\.\s*form\s*\.\s*remove\s*\(/g, 'clickgo.form.remove(this, ');
         // --- 检测是否有异常的设置 ---
-        let exec = /=\s*clickgo\s*([\n;]|$)/.exec(code);
+        let exec = /=\s*(clickgo|this)\s*([\n;})]|$)/.exec(code);
         if (exec) {
             notify({
                 'title': 'Error',
-                'content': `The "clickgo" object are not allowed to be referenced on "${path}".`,
+                'content': `The "${exec[1]}" object are not allowed to be referenced on "${path}".`,
                 'type': 'danger'
             });
             return '';
         }
-        exec = /=\s*clickgo\s*[.[]['"`\s]{0,2}\s*(\w+)[\]'"`]{0,2}[\s;]/.exec(code);
+        exec = /\W(clickgo|this)\s*\[/.exec(code);
+        if (exec) {
+            notify({
+                'title': 'Error',
+                'content': `You cannot use "[]" to access the properties of "${exec[1]}".`,
+                'type': 'danger'
+            });
+            return '';
+        }
+        exec = /=\s*clickgo\s*\.\s*(\w+)\s*([\n;})]|$)/.exec(code);
         if (exec) {
             notify({
                 'title': 'Error',
@@ -840,17 +847,21 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
             });
             return '';
         }
-        exec = /\W(innerHTML|parentNode|parentElement)\W/.exec(code);
-        if (exec) {
-            notify({
-                'title': 'Error',
-                'content': `The "${exec[1]}" method is prohibited.`,
-                'type': 'danger'
-            });
-            return '';
+        let bans: string[] = ['innerHTML', 'innerText', 'parentNode', 'parentElement'];
+        for (let ban of bans) {
+            let reg = new RegExp(`\\W(?=[${ban}])[${ban}'"\`+\\s]{${ban.length},}\\W`);
+            exec = reg.exec(code);
+            if (exec) {
+                notify({
+                    'title': 'Error',
+                    'content': `The "${exec[1]}" method is prohibited.`,
+                    'type': 'danger'
+                });
+                return '';
+            }
         }
         // --- 不能设置任何 taskId，formId，cgSafe 等关键 ---
-        exec = /(taskId|formId|cgPath|cgSafe)['"`]\s*?\]?\s*=(?!=)\W/.exec(code);
+        exec = /(taskId|formId|cgPath|cgSafe)\s*\W\s*(?![=><])[\s\S]/.exec(code);
         if (exec) {
             notify({
                 'title': 'Error',
@@ -859,6 +870,9 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
             });
             return '';
         }
+        // --- 处理一些内容 ---
+        code = code.replace(/clickgo\s*\.\s*core\s*\.\s*trigger\s*\(/g, 'clickgo.core.trigger(this, ');
+        code = code.replace(/clickgo\s*\.\s*form\s*\.\s*remove\s*\(/g, 'clickgo.form.remove(this, ');
         return code;
     };
     // --- 获取要定义的控件列表 ---
@@ -1654,6 +1668,13 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
             'beforeUnmount': beforeUnmount,
             'unmounted': unmounted,
         });
+        vapp.config.errorHandler = function(err: Error, vm: IVueForm): void {
+            notify({
+                'title': 'Runtime Error',
+                'content': err.message + '\nTask id: ' + vm.taskId + '\nForm id: ' + vm.formId,
+                'type': 'danger'
+            });
+        };
         // --- 挂载控件对象到 vapp ---
         for (let key in components) {
             vapp.component(key, components[key]);

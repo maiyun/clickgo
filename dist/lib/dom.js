@@ -20,7 +20,7 @@ styleList.insertAdjacentHTML('beforeend', `<style class='cg-global'>
 .cg-circular {box-sizing: border-box; position: fixed; z-index: 20020003; border: solid 3px #76b9ed; border-radius: 50%; filter: drop-shadow(0 0 7px #76b9ed); pointer-events: none; opacity: 0;}
 .cg-rectangle {box-sizing: border-box; position: fixed; z-index: 20020002; border: solid 1px rgba(118, 185, 237, .7); box-shadow: 0 0 10px rgba(0, 0, 0, .3); background: rgba(118, 185, 237, .1); pointer-events: none; opacity: 0;}
 
-.cg-system-notify {box-shadow: 0 0 15px rgba(0, 0, 0, .3); background: rgba(255, 255, 255, .8); position: fixed; padding: 15px; border-radius: 8px; right: 0; top: 0; width: 280px; font-size: 14px; backdrop-filter: blur(5px); display: flex; transition: .1s ease-out; transition-property: transform, opacity;}
+.cg-system-notify {box-shadow: 0 0 20px rgba(0, 0, 0, .2); background: linear-gradient(to top, rgba(255, 255, 255, .75), rgba(255, 255, 255, .8)); position: fixed; padding: 15px; border-radius: 8px; right: 0; top: 0; width: 280px; font-size: 14px; backdrop-filter: blur(5px); display: flex; transition: .1s ease-out; transition-property: transform, opacity;}
 .cg-system-icon {margin-right: 10px; width: 16px; height: 16px; border-radius: 50%;}
 .cg-system-icon-primary {background: #07c160;}
 .cg-system-icon-info {background: #1989fa;}
