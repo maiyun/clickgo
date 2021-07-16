@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.siblings = exports.findParentByClass = exports.bindResize = exports.bindMove = exports.is = exports.bindLong = exports.bindDown = exports.watchDom = exports.watchSize = exports.getSize = exports.getStyleCount = exports.removeStyle = exports.pushStyle = exports.removeFromStyleList = exports.createToStyleList = exports.isMouseAlsoTouchEvent = exports.setGlobalCursor = exports.getPosition = exports.setPosition = void 0;
+exports.siblings = exports.findParentByClass = exports.bindResize = exports.bindMove = exports.is = exports.bindLong = exports.bindDown = exports.watch = exports.watchSize = exports.getSize = exports.getStyleCount = exports.removeStyle = exports.pushStyle = exports.removeFromStyleList = exports.createToStyleList = exports.isMouseAlsoTouchEvent = exports.setGlobalCursor = exports.getPosition = exports.setPosition = void 0;
 let styleList = document.createElement('div');
 styleList.style.display = 'none';
 document.getElementsByTagName('body')[0].appendChild(styleList);
@@ -15,7 +15,7 @@ styleList.insertAdjacentHTML('beforeend', `<style class='cg-global'>
 .cg-form-list, .cg-pop-list, .cg-system {-webkit-user-select: none; user-select: none;}
 
 .cg-form-list *, .cg-pop-list *, .cg-system *, .cg-form-list *::after, .cg-pop-list *::after, .cg-system *::after, .cg-form-list *::before, .cg-pop-list *::before, .cg-system *::before {box-sizing: border-box; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); flex-shrink: 0;}
-.cg-form-list, .cg-form-list input, .cg-form-list textarea, .cg-pop-list, .cg-pop-list input, .cg-pop-list textarea, .cg-system, .cg-system input, .cg-system textarea {font-family: -apple-system,BlinkMacSystemFont,Roboto,"Segoe UI","Helvetica Neue","PingFang SC","Noto Sans","Noto Sans CJK SC","Microsoft YaHei","微软雅黑",sans-serif; font-size: 12px; line-height: 1; -webkit-font-smoothing: antialiased;}
+.cg-form-list, .cg-form-list input, .cg-form-list textarea, .cg-pop-list, .cg-pop-list input, .cg-pop-list textarea, .cg-system, .cg-system input, .cg-system textarea {font-family: "Helvetica Neue","Helvetica","PingFang SC","Hiragino Sans GB","Noto Sans CJK SC","Noto Sans CJK","Source Han Sans","WenQuanYi Micro Hei","Microsoft YaHei",sans-serif; /* -apple-system,BlinkMacSystemFont,Roboto,"Segoe UI","Helvetica Neue","PingFang SC","Noto Sans","Noto Sans CJK SC","Microsoft YaHei","微软雅黑",sans-serif */; font-size: 12px; line-height: 1; -webkit-font-smoothing: antialiased;}
 
 .cg-circular {box-sizing: border-box; position: fixed; z-index: 20020003; border: solid 3px #76b9ed; border-radius: 50%; filter: drop-shadow(0 0 7px #76b9ed); pointer-events: none; opacity: 0;}
 .cg-rectangle {box-sizing: border-box; position: fixed; z-index: 20020002; border: solid 1px rgba(118, 185, 237, .7); box-shadow: 0 0 10px rgba(0, 0, 0, .3); background: rgba(118, 185, 237, .1); pointer-events: none; opacity: 0;}
@@ -25,7 +25,7 @@ styleList.insertAdjacentHTML('beforeend', `<style class='cg-global'>
 .cg-system-icon-primary {background: #07c160;}
 .cg-system-icon-info {background: #1989fa;}
 .cg-system-icon-warning {background: #ff976a;}
-.cg-system-icon-danger {background: #ee0a24;;}
+.cg-system-icon-danger {background: #ee0a24;}
 .cg-system-notify-title {font-size: 16px; font-weight: bold; padding-bottom: 10px;}
 .cg-system-notify-content {line-height: 1.5;}
 </style>`);
@@ -210,15 +210,12 @@ function watchSize(el, cb, immediate = false) {
         cb(size);
     });
     resizeObserver.observe(el);
-    return {
-        'observer': resizeObserver,
-        'size': fsize
-    };
+    return fsize;
 }
 exports.watchSize = watchSize;
-function watchDom(el, cb, mode = 'default', immediate = false) {
+function watch(el, cb, mode = 'default', immediate = false) {
     if (immediate) {
-        cb([]);
+        cb();
     }
     let moi;
     switch (mode) {
@@ -260,9 +257,8 @@ function watchDom(el, cb, mode = 'default', immediate = false) {
     }
     let mo = new MutationObserver(cb);
     mo.observe(el, moi);
-    return mo;
 }
-exports.watchDom = watchDom;
+exports.watch = watch;
 function bindDown(oe, opt) {
     var _a;
     if (isMouseAlsoTouchEvent(oe)) {

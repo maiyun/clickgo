@@ -29,7 +29,7 @@ styleList.insertAdjacentHTML('beforeend', `<style class='cg-global'>
 .cg-form-list, .cg-pop-list, .cg-system {-webkit-user-select: none; user-select: none;}
 
 .cg-form-list *, .cg-pop-list *, .cg-system *, .cg-form-list *::after, .cg-pop-list *::after, .cg-system *::after, .cg-form-list *::before, .cg-pop-list *::before, .cg-system *::before {box-sizing: border-box; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); flex-shrink: 0;}
-.cg-form-list, .cg-form-list input, .cg-form-list textarea, .cg-pop-list, .cg-pop-list input, .cg-pop-list textarea, .cg-system, .cg-system input, .cg-system textarea {font-family: -apple-system,BlinkMacSystemFont,Roboto,"Segoe UI","Helvetica Neue","PingFang SC","Noto Sans","Noto Sans CJK SC","Microsoft YaHei","微软雅黑",sans-serif; font-size: 12px; line-height: 1; -webkit-font-smoothing: antialiased;}
+.cg-form-list, .cg-form-list input, .cg-form-list textarea, .cg-pop-list, .cg-pop-list input, .cg-pop-list textarea, .cg-system, .cg-system input, .cg-system textarea {font-family: "Helvetica Neue","Helvetica","PingFang SC","Hiragino Sans GB","Noto Sans CJK SC","Noto Sans CJK","Source Han Sans","WenQuanYi Micro Hei","Microsoft YaHei",sans-serif; /* -apple-system,BlinkMacSystemFont,Roboto,"Segoe UI","Helvetica Neue","PingFang SC","Noto Sans","Noto Sans CJK SC","Microsoft YaHei","微软雅黑",sans-serif */; font-size: 12px; line-height: 1; -webkit-font-smoothing: antialiased;}
 
 .cg-circular {box-sizing: border-box; position: fixed; z-index: 20020003; border: solid 3px #76b9ed; border-radius: 50%; filter: drop-shadow(0 0 7px #76b9ed); pointer-events: none; opacity: 0;}
 .cg-rectangle {box-sizing: border-box; position: fixed; z-index: 20020002; border: solid 1px rgba(118, 185, 237, .7); box-shadow: 0 0 10px rgba(0, 0, 0, .3); background: rgba(118, 185, 237, .1); pointer-events: none; opacity: 0;}
@@ -39,7 +39,7 @@ styleList.insertAdjacentHTML('beforeend', `<style class='cg-global'>
 .cg-system-icon-primary {background: #07c160;}
 .cg-system-icon-info {background: #1989fa;}
 .cg-system-icon-warning {background: #ff976a;}
-.cg-system-icon-danger {background: #ee0a24;;}
+.cg-system-icon-danger {background: #ee0a24;}
 .cg-system-notify-title {font-size: 16px; font-weight: bold; padding-bottom: 10px;}
 .cg-system-notify-content {line-height: 1.5;}
 </style>`);
@@ -265,7 +265,7 @@ export function getSize(el: HTMLElement): ICGDomSize {
  * @param el 要监视的大小
  * @param cb 回调函数
  */
-export function watchSize(el: HTMLElement, cb: (size: ICGDomSize) => Promise<void> | void, immediate: boolean = false): ICGDomWatchDom {
+export function watchSize(el: HTMLElement, cb: (size: ICGDomSize) => Promise<void> | void, immediate: boolean = false): ICGDomSize {
     let fsize = getSize(el);
     if (immediate) {
         cb(fsize) as void;
@@ -278,10 +278,7 @@ export function watchSize(el: HTMLElement, cb: (size: ICGDomSize) => Promise<voi
         cb(size) as void;
     });
     resizeObserver.observe(el);
-    return {
-        'observer': resizeObserver,
-        'size': fsize
-    };
+    return fsize;
 }
 
 /**
@@ -290,9 +287,9 @@ export function watchSize(el: HTMLElement, cb: (size: ICGDomSize) => Promise<voi
  * @param cb 回调
  * @param mode 监听模式
  */
-export function watchDom(el: HTMLElement, cb: (mutations: MutationRecord[], observer?: MutationObserver) => void, mode: 'child' | 'childsub' | 'style' | 'default' | MutationObserverInit = 'default', immediate: boolean = false): MutationObserver {
+export function watch(el: HTMLElement, cb: () => void, mode: 'child' | 'childsub' | 'style' | 'default' = 'default', immediate: boolean = false): void {
     if (immediate) {
-        cb([]);
+        cb();
     }
     let moi: MutationObserverInit;
     switch (mode) {
@@ -343,7 +340,6 @@ export function watchDom(el: HTMLElement, cb: (mutations: MutationRecord[], obse
         'subtree': true
     }
     */
-    return mo;
 }
 
 /**

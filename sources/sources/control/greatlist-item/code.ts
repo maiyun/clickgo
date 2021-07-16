@@ -15,10 +15,6 @@ export let props = {
     }
 };
 
-export let data = {
-    'greatlist': undefined
-};
-
 export let computed = {
     'isDisabled': function(this: IVueControl): boolean {
         return clickgo.tool.getBoolean(this.disabled);
@@ -36,13 +32,17 @@ export let methods = {
             // --- 也就是纯鼠标事件不响应（电脑模式不响应） ---
             return;
         }
-        this.greatlist.itemClick = true;
+        let greatlist = this.cgParentByName('greatlist');
+        if (!greatlist) {
+            return;
+        }
+        greatlist.itemClick = true;
         // --- 手机 ---
-        if (this.greatlist?.multi) {
-            this.greatlist?.select(this.value, e.shiftKey, true);
+        if (greatlist.multi) {
+            greatlist.select(this.value, e.shiftKey, true);
         }
         else {
-            this.greatlist?.select(this.value, e.shiftKey, e.ctrlKey);
+            greatlist.select(this.value, e.shiftKey, e.ctrlKey);
         }
     },
     contextmenu: function(this: IVueControl, e: MouseEvent): void {
@@ -54,7 +54,7 @@ export let methods = {
         }
         e.stopPropagation();
         e.preventDefault();
-        this.greatlist?.cgShowPop(e);
+        this.cgParentByName('greatlist')?.cgShowPop(e);
     },
     down: function(this: IVueControl, e: TouchEvent | MouseEvent): void {
         if (clickgo.dom.isMouseAlsoTouchEvent(e)) {
@@ -63,7 +63,9 @@ export let methods = {
         if (this.disabled) {
             return;
         }
-        this.greatlist.itemDown = true;
+        if (this.cgParentByName('greatlist')) {
+            this.cgParentByName('greatlist').itemDown = true;
+        }
         if (this.cgSelfPopOpen) {
             this.cgHidePop();
         }
@@ -73,13 +75,13 @@ export let methods = {
         }
         if (e instanceof MouseEvent) {
             // --- 选择 ---
-            this.greatlist?.select(this.value, e.shiftKey, e.ctrlKey);
+            this.cgParentByName('greatlist')?.select(this.value, e.shiftKey, e.ctrlKey);
         }
         else {
             // --- 长按触发 contextmenu ---
             clickgo.dom.bindLong(e, () => {
-                this.greatlist?.select(this.value, e.shiftKey, e.ctrlKey);
-                this.greatlist?.showPop(e);
+                this.cgParentByName('greatlist')?.select(this.value, e.shiftKey, e.ctrlKey);
+                this.cgParentByName('greatlist')?.showPop(e);
             });
         }
     },
@@ -88,10 +90,12 @@ export let methods = {
         if (this.disabled) {
             return;
         }
-        this.greatlist.itemClick = true;
+        if (this.cgParentByName('greatlist')) {
+            this.cgParentByName('greatlist').itemClick = true;
+        }
         if (clickgo.dom.isMouseAlsoTouchEvent(e)) {
             // --- 手机的话选择（电脑已经在 down 事件中选择过了） ---
-            this.greatlist?.select(this.value, e.shiftKey, e.ctrlKey);
+            this.cgParentByName('greatlist')?.select(this.value, e.shiftKey, e.ctrlKey);
         }
         if (this.cgSelfPopOpen) {
             // --- 本来是展开状态，就隐藏起来 ---
@@ -112,19 +116,11 @@ export let methods = {
         if (this.disabled) {
             return;
         }
-        if (this.greatlist) {
-            this.greatlist.itemDown = true;
+        if (this.cgParentByName('greatlist')) {
+            this.cgParentByName('greatlist').itemDown = true;
         }
         if (e instanceof MouseEvent) {
-            this.greatlist?.select(this.value, e.shiftKey, e.ctrlKey);
+            this.cgParentByName('greatlist')?.select(this.value, e.shiftKey, e.ctrlKey);
         }
     }
-};
-
-export let mounted = function(this: IVueControl): void {
-    let greatlist = this.cgFindParent('greatlist');
-    if (!greatlist) {
-        return;
-    }
-    this.greatlist = greatlist;
 };

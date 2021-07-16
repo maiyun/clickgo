@@ -69,13 +69,22 @@ interface IVueForm extends IVue {
     'taskId': number;
     /** --- 当前窗体 id --- */
     'formId': number;
+    /** --- 控件名 --- */
+    'controlName': 'root';
     /** --- 当前窗体是否有焦点 --- */
     'cgFocus': boolean;
     /** --- 当前窗体的路径 --- */
     'cgPath': string;
+    /** --- 前导 --- */
+    'cgPrep': string;
+    /** --- 是否 form 自定义的 zindex --- */
+    'cgCustomZIndex': boolean;
+    /** --- 是否在顶层 --- */
+    'cgTopMost': boolean;
     /** --- 当前的 local name --- */
     'cgLocal': string;
-    l(key: string): string;
+    /** --- 获取语言内容 --- */
+    'l': (key: string) => string;
     cgCreateForm(paramOpt?: string | ICGFormCreateOptions & { 'mask'?: boolean; }): Promise<void>;
     cgCloseForm(): void;
     cgBindFormDrag(e: MouseEvent | TouchEvent): void;
@@ -123,6 +132,10 @@ interface IVueControl extends IVue {
     'cgPath': string;
     /** --- 是否是安全控件 --- */
     'cgSafe': boolean;
+    /** --- 控件前导 --- */
+    'cgPrep': string;
+    /** --- 获取目前现存的子 slots --- */
+    'cgSlots': (name?: string) => IVueVNode[];
     /** --- 是否是嵌套组件 --- */
     'cgNest': boolean;
     /** --- 自己是不是就是 pop 层 --- */
@@ -152,15 +165,18 @@ interface IVueControl extends IVue {
     'cgHeightPx': string | undefined;
     /** --- 当前 task 的 local 值 --- */
     'cgLocal': string;
+    /** --- 获取语言内容 --- */
+    'l': (key: string, data?: Record<string, Record<string, string>>) => string;
+    /** --- 获取正常非 nest 上级 --- */
+    'cgParent': IVueControl | null;
+    /** --- 根据 control name 来寻找上级 --- */
+    'cgParentByName': (controlName: string) => IVueControl;
     /** --- 上级最近的一层的 pop layer 组件 --- */
     'cgParentPopLayer': IVueControl;
-    /** --- 获取语言内容 --- */
-    l(key: string, data?: Record<string, Record<string, string>>): string;
     /**
-     * --- 判断当前的 mosedown、click 事件是否是 touch 触发的，如果当前就是 touch 则直接返回 false ---
-     * @param e 鼠标或触摸事件对象
+     * --- 关闭窗体 ---
      */
-    cgIsMouseAlsoTouchEvent(e: MouseEvent | TouchEvent): boolean;
+    cgCloseForm(): void;
     /**
      * --- 控件默认的 down 事件绑定 ---
      * @param e 鼠标或触摸事件对象
@@ -216,20 +232,6 @@ interface IVueControl extends IVue {
      * @param cla class 内容对象
      */
     cgClassPrepend(cla: any): string;
-    /**
-     * --- 获取 slot 的 list ---
-     * @param name slot name
-     */
-    cgSlots(name?: string): IVueVNode[];
-    /**
-     * --- 获取正常非 nest 上级 ---
-     */
-    cgParent(): IVueControl | null;
-    /**
-     * --- 根据 control name 查询上级序列 ---
-     * @param controlName 控件名称
-     */
-    cgFindParent(controlName: string): IVueControl | null;
     /**
      * --- 显示 pop ---
      * @param direction 要显示方向（以 $el 为准的 h 水平和 v 垂直）或坐标

@@ -215,7 +215,7 @@ export let mounted = function(this: IVueControl): void {
     }, true);
 
     // --- 内容改变 ---
-    clickgo.dom.watchDom(this.$refs.wrap, () => {
+    clickgo.dom.watch(this.$refs.wrap, () => {
         let lengthWidth = this.$refs.wrap.scrollWidth;
         let lengthHeight = this.$refs.wrap.scrollHeight;
 

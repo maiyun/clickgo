@@ -337,74 +337,60 @@ exports.methods = {
                 })
             });
         };
-        let cancel = (e) => {
-            if (e instanceof MouseEvent) {
-                window.removeEventListener('mousemove', move);
-                window.removeEventListener('mouseup', cancel);
-            }
-            else {
-                e.target.removeEventListener('touchmove', move);
-                e.target.removeEventListener('touchend', cancel);
-                e.target.removeEventListener('touchcancel', cancel);
-            }
-        };
         let x = (e instanceof MouseEvent) ? e.clientX : e.touches[0].clientX;
         let y = (e instanceof MouseEvent) ? e.clientY : e.touches[0].clientY;
         let count = 0;
-        let move = (e) => {
-            ++count;
-            if (clickgo.dom.is.move) {
-                cancel(e);
-                return;
-            }
-            if (count < 3) {
-                return;
-            }
-            let deltaX = x - ((e instanceof MouseEvent) ? e.clientX : e.touches[0].clientX);
-            let deltaY = y - ((e instanceof MouseEvent) ? e.clientY : e.touches[0].clientY);
-            if (deltaX === 0 && deltaY === 0) {
-                return;
-            }
-            let isWheel = false;
-            if (Math.abs(deltaY) > Math.abs(deltaX)) {
-                if (deltaY < 0) {
-                    if (this.scrollTopData > 0) {
-                        isWheel = true;
+        let cancel = false;
+        clickgo.dom.bindDown(e, {
+            'move': (e) => {
+                if (cancel) {
+                    return;
+                }
+                ++count;
+                if (clickgo.dom.is.move) {
+                    cancel = true;
+                    return;
+                }
+                if (count < 3) {
+                    return;
+                }
+                let deltaX = x - ((e instanceof MouseEvent) ? e.clientX : e.touches[0].clientX);
+                let deltaY = y - ((e instanceof MouseEvent) ? e.clientY : e.touches[0].clientY);
+                if (deltaX === 0 && deltaY === 0) {
+                    return;
+                }
+                let isWheel = false;
+                if (Math.abs(deltaY) > Math.abs(deltaX)) {
+                    if (deltaY < 0) {
+                        if (this.scrollTopData > 0) {
+                            isWheel = true;
+                        }
+                    }
+                    else if (deltaY > 0) {
+                        if (this.scrollTopData < this.maxScrollTop) {
+                            isWheel = true;
+                        }
                     }
                 }
-                else if (deltaY > 0) {
-                    if (this.scrollTopData < this.maxScrollTop) {
-                        isWheel = true;
+                else {
+                    if (deltaX < 0) {
+                        if (this.scrollLeftData > 0) {
+                            isWheel = true;
+                        }
+                    }
+                    else if (deltaX > 0) {
+                        if (this.scrollLeftData < this.maxScrollLeft) {
+                            isWheel = true;
+                        }
                     }
                 }
-            }
-            else {
-                if (deltaX < 0) {
-                    if (this.scrollLeftData > 0) {
-                        isWheel = true;
-                    }
+                if (isWheel) {
+                    e.stopPropagation();
+                    bindMove(e);
                 }
-                else if (deltaX > 0) {
-                    if (this.scrollLeftData < this.maxScrollLeft) {
-                        isWheel = true;
-                    }
-                }
+                cancel = true;
             }
-            if (isWheel) {
-                e.stopPropagation();
-                bindMove(e);
-            }
-            cancel(e);
-        };
-        if (e instanceof MouseEvent) {
-            window.addEventListener('mousemove', move, { 'passive': false });
-            window.addEventListener('mouseup', cancel);
-        }
-        else {
-            e.target.addEventListener('touchmove', move, { 'passive': false });
-            e.target.addEventListener('touchend', cancel);
-            e.target.addEventListener('touchcancel', cancel);
-        }
+        });
         this.cgDown(e);
     },
     'refreshView': function () {

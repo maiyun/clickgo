@@ -21,20 +21,18 @@ export let props = {
 
 export let data = {
     'hasSubItemsCount': 0,
-    'hasTypeItemsCount': 0,
-    'menulist': undefined
+    'hasTypeItemsCount': 0
 };
 
 export let mounted = function(this: IVueControl): void {
-    let menulist = this.cgFindParent('menulist');
+    let menulist = this.cgParentByName('menulist');
     if (menulist) {
-        this.menulist = menulist;
         ++menulist.hasSubItemsCount;
     }
 };
 
 export let unmounted = function(this: IVueControl): void {
-    if (this.menulist) {
-        --this.menulist.hasSubItemsCount;
+    if (this.cgParentByName('menulist')) {
+        --this.cgParentByName('menulist').hasSubItemsCount;
     }
 };

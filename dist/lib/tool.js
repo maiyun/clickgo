@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.escapeHTML = exports.getBoolean = exports.rand = exports.getObjectURLList = exports.revokeObjectURL = exports.createObjectURL = exports.getMimeByPath = exports.stylePrepend = exports.layoutClassPrepend = exports.layoutInsertAttr = exports.layoutAddTagClassAndReTagName = exports.styleUrl2ObjectOrDataUrl = exports.isAppPkg = exports.isControlPkg = exports.purify = exports.sleep = exports.clone = exports.blob2Text = exports.blob2ArrayBuffer = exports.file2ObjectUrl = exports.blob2DataUrl = void 0;
+exports.replace = exports.includes = exports.escapeHTML = exports.getBoolean = exports.rand = exports.getObjectURLList = exports.revokeObjectURL = exports.createObjectURL = exports.getMimeByPath = exports.stylePrepend = exports.layoutClassPrepend = exports.layoutInsertAttr = exports.layoutAddTagClassAndReTagName = exports.styleUrl2ObjectOrDataUrl = exports.isAppPkg = exports.isControlPkg = exports.purify = exports.sleep = exports.clone = exports.blob2Text = exports.blob2ArrayBuffer = exports.file2ObjectUrl = exports.blob2DataUrl = void 0;
 function blob2DataUrl(blob) {
     return new Promise(function (resove) {
         let fr = new FileReader();
@@ -360,3 +360,21 @@ function escapeHTML(html) {
     return html.replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
 exports.escapeHTML = escapeHTML;
+function includes(str, search) {
+    for (let item of search) {
+        if (!str.includes(item)) {
+            return false;
+        }
+    }
+    return true;
+}
+exports.includes = includes;
+function replace(text, search, replace) {
+    let result = text.replace(search, replace);
+    while (result !== text) {
+        text = result;
+        result = text.replace(search, replace);
+    }
+    return result;
+}
+exports.replace = replace;

@@ -22,8 +22,7 @@ exports.props = {
     }
 };
 exports.data = {
-    'direction': 'h',
-    'menulist': undefined
+    'direction': 'h'
 };
 exports.computed = {
     'isDisabled': function () {
@@ -33,8 +32,7 @@ exports.computed = {
 exports.watch = {
     'type': {
         handler: function () {
-            var _a;
-            let menulist = (_a = this.menulist) !== null && _a !== void 0 ? _a : this.cgFindParent('menulist');
+            let menulist = this.cgParentByName('menulist');
             if (!menulist) {
                 return;
             }
@@ -88,11 +86,10 @@ exports.methods = {
     }
 };
 exports.mounted = function () {
-    let menulist = this.cgFindParent('menulist');
+    let menulist = this.cgParentByName('menulist');
     if (!menulist) {
         return;
     }
-    this.menulist = menulist;
     if (this.type) {
         ++menulist.hasTypeItemsCount;
     }

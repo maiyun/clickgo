@@ -652,7 +652,7 @@ export let methods = {
         };
         this.$emit('close', event);
         if (event.go) {
-            clickgo.form.remove(this.formId);
+            this.cgCloseForm();
         }
     },
     // --- 改变窗体大小 ---
@@ -765,19 +765,93 @@ export let methods = {
     },
     // --- 设置 left, width, zIndex 等 ---
     setPropData: function(this: IVueControl, name: string, val: number, mode: string = ''): void {
-        if (this[name + 'Data'] === undefined || this[name] === undefined) {
-            return;
+        switch (name) {
+            case 'left': {
+                switch (mode) {
+                    case '': {
+                        this.leftData = val;
+                        break;
+                    }
+                    case '+': {
+                        this.leftData += val;
+                        break;
+                    }
+                    default: {
+                        this.leftData -= val;
+                    }
+                }
+                this.$emit('update:left', this.leftData);
+                break;
+            }
+            case 'top': {
+                switch (mode) {
+                    case '': {
+                        this.topData = val;
+                        break;
+                    }
+                    case '+': {
+                        this.topData += val;
+                        break;
+                    }
+                    default: {
+                        this.topData -= val;
+                    }
+                }
+                this.$emit('update:top', this.topData);
+                break;
+            }
+            case 'width': {
+                switch (mode) {
+                    case '': {
+                        this.widthData = val;
+                        break;
+                    }
+                    case '+': {
+                        this.widthData += val;
+                        break;
+                    }
+                    default: {
+                        this.widthData -= val;
+                    }
+                }
+                this.$emit('update:width', this.widthData);
+                break;
+            }
+            case 'height': {
+                switch (mode) {
+                    case '': {
+                        this.heightData = val;
+                        break;
+                    }
+                    case '+': {
+                        this.heightData += val;
+                        break;
+                    }
+                    default: {
+                        this.heightData -= val;
+                    }
+                }
+                this.$emit('update:height', this.heightData);
+                break;
+            }
+            case 'zIndex': {
+                switch (mode) {
+                    case '': {
+                        this.zIndexData = val;
+                        break;
+                    }
+                    case '+': {
+                        this.zIndexData += val;
+                        break;
+                    }
+                    default: {
+                        this.zIndexData -= val;
+                    }
+                }
+                this.$emit('update:zIndex', this.zIndexData);
+                break;
+            }
         }
-        if (mode === '') {
-            this[name + 'Data'] = val;
-        }
-        else if (mode === '+') {
-            this[name + 'Data'] += val;
-        }
-        else {
-            this[name + 'Data'] -= val;
-        }
-        this.$emit('update:' + name, this[name + 'Data']);
     }
 };
 

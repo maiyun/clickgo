@@ -20,7 +20,7 @@ interface ICGFormLib {
     notify(opt: {
         'title': string;
         'content': string;
-        'type'?: 'primary' | 'info' | 'waring' | 'danger';
+        'type'?: 'primary' | 'info' | 'warning' | 'danger';
     }): void;
     appendToPop(el: HTMLElement): void;
     removeFromPop(el: HTMLElement): void;

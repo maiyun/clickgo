@@ -138,6 +138,13 @@ export function getList(taskId: number): Record<string, ICGFormItem> {
  * @param formId 变更后的 form id
  */
 export function changeFocus(formId: number = 0): void {
+    if (typeof formId !== 'number') {
+        notify({
+            'title': 'Warning',
+            'content': 'The "formId" of "changeFocus" must be a number type.',
+            'type': 'warning'
+        });
+    }
     let focusElement = document.querySelector('.cg-form-list > .cg-focus');
     if (focusElement) {
         let dataFormId = focusElement.getAttribute('data-form-id');
@@ -150,7 +157,7 @@ export function changeFocus(formId: number = 0): void {
                 let taskId = parseInt(focusElement.getAttribute('data-task-id') ?? '0');
                 let task = clickgo.task.list[taskId];
                 task.forms[dataFormIdNumber].vapp._container.classList.remove('cg-focus');
-                task.forms[dataFormIdNumber].vroot.cgFocus = false;
+                task.forms[dataFormIdNumber].vroot._cgFocus = false;
                 // --- 触发 formBlurred 事件 ---
                 clickgo.core.trigger('formBlurred', taskId, dataFormIdNumber);
             }
@@ -164,8 +171,8 @@ export function changeFocus(formId: number = 0): void {
         if (el) {
             let taskId: number = parseInt(el.getAttribute('data-task-id') ?? '0');
             let task = clickgo.task.list[taskId];
-            if (!task.forms[formId].vroot.$data._customZIndex) {
-                if (task.forms[formId].vroot.$data._topMost) {
+            if (!task.forms[formId].vroot.cgCustomZIndex) {
+                if (task.forms[formId].vroot.cgTopMost) {
                     task.forms[formId].vroot.$refs.form.setPropData('zIndex', ++lastTopZIndex);
                 }
                 else {
@@ -176,10 +183,10 @@ export function changeFocus(formId: number = 0): void {
             let maskFor = task.forms[formId].vroot.$refs.form.maskFor;
             if ((typeof maskFor === 'number') && (clickgo.task.list[taskId].forms[maskFor])) {
                 clickgo.task.list[taskId].forms[maskFor].vapp._container.classList.add('cg-focus');
-                clickgo.task.list[taskId].forms[maskFor].vroot.cgFocus = true;
+                clickgo.task.list[taskId].forms[maskFor].vroot._cgFocus = true;
                 clickgo.core.trigger('formFocused', taskId, maskFor);
-                if (!clickgo.task.list[taskId].forms[maskFor].vroot.$data._customZIndex) {
-                    if (clickgo.task.list[taskId].forms[maskFor].vroot.$data._topMost) {
+                if (!clickgo.task.list[taskId].forms[maskFor].vroot.cgCustomZIndex) {
+                    if (clickgo.task.list[taskId].forms[maskFor].vroot.cgTopMost) {
                         clickgo.task.list[taskId].forms[maskFor].vroot.$refs.form.setPropData('zIndex', ++lastTopZIndex);
                     }
                     else {
@@ -190,7 +197,7 @@ export function changeFocus(formId: number = 0): void {
             }
             else {
                 task.forms[formId].vapp._container.classList.add('cg-focus');
-                task.forms[formId].vroot.cgFocus = true;
+                task.forms[formId].vroot._cgFocus = true;
                 // --- 触发 formFocused 事件 ---
                 clickgo.core.trigger('formFocused', taskId, formId);
             }
@@ -406,7 +413,7 @@ let notifyTop: number = 10;
 export function notify(opt: {
     'title': string;
     'content': string;
-    'type'?: 'primary' | 'info' | 'waring' | 'danger';
+    'type'?: 'primary' | 'info' | 'warning' | 'danger';
 }): void {
     let el = document.createElement('div');
     let y = notifyTop;
@@ -723,6 +730,7 @@ export function remove(formId: number): boolean {
  * @param opt 创建窗体的配置对象
  */
 export async function create(taskId: number, opt: ICGFormCreateOptions): Promise<number | ICGForm> {
+    let cgPath: string = opt.file ?? opt.path ?? '/';
     /** --- 当前的 Task 对象 --- */
     let task = clickgo.task.list[taskId];
     if (!task) {
@@ -735,51 +743,42 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
     // --- 注入的参数，屏蔽浏览器全局对象，注入新的对象 ---
     let invoke: Record<string, any> = {
         'window': undefined,
-        'loader': undefined,
-        'clickgo': {
-            'core': {
-                'trigger': function(o: IVueControl | IVueForm, name: TCGGlobalEvent, taskId: number = 0, formId: number = 0, param1: boolean | string = '', param2: string = ''): void {
-                    if (o.cgSafe !== undefined) {
-                        // --- 控件，cg 开头的不能被预定义，cgSafe 也不能被代码修改 ---
-                        if (o.cgSafe) {
-                            (clickgo.core.trigger as any)(name, taskId, formId, param1, param2);
-                        }
-                    }
-                    else {
-                        if (clickgo.task.list[o.taskId].safe) {
-                            (clickgo.core.trigger as any)(name, taskId, formId, param1, param2);
-                        }
-                    }
-                }
-            },
-            'dom': {},
-            'form': {
-                'remove': function(o: IVueControl | IVueForm, formId: number): boolean {
-                    if (o.cgSafe !== undefined) {
-                        if (o.cgSafe) {
-                            return (clickgo.form.remove as any)(formId);
-                        }
-                    }
-                    else {
-                        if (clickgo.task.list[o.taskId].safe) {
-                            return (clickgo.form.remove as any)(formId);
-                        }
-                    }
-                    notify({
-                        'title': 'Failed',
-                        'content': `The "clickgo.form.remove" cannot be called, and the task id "${o.taskId}" does not have permission.`,
-                        'type': 'waring'
-                    });
-                    return false;
-                }
-            },
-            'task': {},
-            'tool': {},
-            'zip': {}
+        'loader': undefined
+    };
+    let ks = Object.getOwnPropertyNames(window);
+    for (let k of ks) {
+        if (k.includes('Event')) {
+            continue;
         }
+        if (['__awaiter', 'requestAnimationFrame', 'eval', 'Object', 'Math', 'Array', 'Blob', 'Infinity', 'parseInt', 'parseFloat', 'Promise', 'Date', 'setTimeout'].includes(k)) {
+            continue;
+        }
+        invoke[k] = undefined;
+    }
+    invoke.clickgo = {
+        'core': {
+            'trigger': function(o: IVueControl | IVueForm, name: TCGGlobalEvent, taskId: number = 0, formId: number = 0, param1: boolean | string = '', param2: string = ''): void {
+                if (o.cgSafe !== undefined) {
+                    // --- 控件，cg 开头的不能被预定义，cgSafe 也不能被代码修改 ---
+                    if (o.cgSafe) {
+                        (clickgo.core.trigger as any)(name, taskId, formId, param1, param2);
+                    }
+                }
+                else {
+                    if (clickgo.task.list[o.taskId].safe) {
+                        (clickgo.core.trigger as any)(name, taskId, formId, param1, param2);
+                    }
+                }
+            }
+        },
+        'dom': {},
+        'form': {},
+        'task': {},
+        'tool': {},
+        'zip': {}
     };
     for (let k in clickgo.dom) {
-        if (!['setPosition', 'getPosition', 'setGlobalCursor', 'isMouseAlsoTouchEvent', 'getStyleCount', 'getSize', 'watchSize', 'watchDom', 'bindDown', 'bindLong', 'is', 'bindMove', 'bindResize'].includes(k)) {
+        if (!['setPosition', 'getPosition', 'setGlobalCursor', 'isMouseAlsoTouchEvent', 'getStyleCount', 'getSize', 'watchSize', 'watch', 'bindDown', 'bindLong', 'is', 'bindMove', 'bindResize'].includes(k)) {
             continue;
         }
         invoke.clickgo.dom[k] = (clickgo.dom as any)[k];
@@ -808,73 +807,24 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
         }
         invoke.clickgo.zip[k] = (clickgo.zip as any)[k];
     }
-    for (let k in window) {
-        if (['__awaiter'].includes(k)) {
-            continue;
+    // --- console ---
+    invoke.console = {
+        log: function(message?: any, ...optionalParams: any[]) {
+            console.log(message, optionalParams);
         }
-        invoke[k] = undefined;
-    }
-    invoke.setTimeout = function(func: () => void | Promise<void>, time?: number): void {
-        setTimeout(func as () => void, time);
     };
-    // --- 是否是安全的 preprocess ---
-    let isSafePreprocess: boolean = false;
     // --- 代码预处理 ---
     let preprocess = function(code: string, path: string): string {
-        // --- 检测是否有异常的设置 ---
-        let exec = /=\s*(clickgo|this)\s*([\n;})]|$)/.exec(code);
+        let exec = /eval\W/.exec(code);
         if (exec) {
             notify({
                 'title': 'Error',
-                'content': `The "${exec[1]}" object are not allowed to be referenced on "${path}".`,
+                'content': `The "eval" is prohibited.\nFile: "${path}".`,
                 'type': 'danger'
             });
             return '';
         }
-        if (!isSafePreprocess) {
-            exec = /\W(clickgo|this)\s*\[/.exec(code);
-            if (exec) {
-                notify({
-                    'title': 'Error',
-                    'content': `You cannot use "[]" to access the properties of "${exec[1]}".`,
-                    'type': 'danger'
-                });
-                return '';
-            }
-        }
-        exec = /=\s*clickgo\s*\.\s*(\w+)\s*([\n;})]|$)/.exec(code);
-        if (exec) {
-            notify({
-                'title': 'Error',
-                'content': `The "clickgo.${exec[1]}" object are not allowed to be referenced on "${path}".`,
-                'type': 'danger'
-            });
-            return '';
-        }
-        let bans: string[] = ['innerHTML', 'innerText', 'parentNode', 'parentElement'];
-        for (let ban of bans) {
-            let reg = new RegExp(`\\W((?=[${ban}])[${ban}'"\`+\\s]){${ban.length},}\\W`);
-            exec = reg.exec(code);
-            if (exec) {
-                notify({
-                    'title': 'Error',
-                    'content': `The "${exec[1]}" method is prohibited.`,
-                    'type': 'danger'
-                });
-                return '';
-            }
-        }
-        // --- 不能设置任何 taskId，formId，cgSafe 等关键 ---
-        exec = /\.\s*(taskId|formId|cgPath|cgSafe)\s*[.=[]\s*(?![=><])[\s\S]/.exec(code);
-        if (exec) {
-            notify({
-                'title': 'Error',
-                'content': `The key property "${exec[1]}" cannot be modified.`,
-                'type': 'danger'
-            });
-            return '';
-        }
-        // --- 处理一些内容 ---
+        // --- clickgo，传入 this ---
         code = code.replace(/clickgo\s*\.\s*core\s*\.\s*trigger\s*\(/g, 'clickgo.core.trigger(this, ');
         code = code.replace(/clickgo\s*\.\s*form\s*\.\s*remove\s*\(/g, 'clickgo.form.remove(this, ');
         return code;
@@ -917,7 +867,6 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
             let unmounted: (() => void) | undefined = undefined;
             // --- 检测是否有 js ---
             if (item.files[item.config.code + '.js']) {
-                isSafePreprocess = item.safe;
                 let expo = loader.require(item.config.code, item.files, {
                     'dir': '/',
                     'invoke': invoke,
@@ -979,12 +928,108 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
                 'default': false
             };
             // --- 组成 data ---
-            data.taskId = taskId;
-            data.formId = formId;
-            data.controlName = name;
-            data.cgPath = opt.file ?? opt.path ?? '/';
-            data.cgSafe = item.safe;
-            data._prep = prep;
+            computed.taskId = {
+                get: function(): number {
+                    return taskId;
+                },
+                set: function(): void {
+                    notify({
+                        'title': 'Error',
+                        'content': `The control tries to modify the system variable "taskId".\nPath: ${this.cgPath}\nControl: ${name}`,
+                        'type': 'danger'
+                    });
+                    return;
+                }
+            };
+            computed.formId = {
+                get: function(): number {
+                    return formId;
+                },
+                set: function(): void {
+                    notify({
+                        'title': 'Error',
+                        'content': `The control tries to modify the system variable "formId".\nPath: ${this.cgPath}\nControl: ${name}`,
+                        'type': 'danger'
+                    });
+                    return;
+                }
+            };
+            computed.controlName = {
+                get: function(): string {
+                    return name;
+                },
+                set: function(): void {
+                    notify({
+                        'title': 'Error',
+                        'content': `The control tries to modify the system variable "controlName".\nPath: ${this.cgPath}\nControl: ${name}`,
+                        'type': 'danger'
+                    });
+                    return;
+                }
+            };
+            computed.cgPath = {
+                get: function(): string {
+                    return cgPath;
+                },
+                set: function(): void {
+                    notify({
+                        'title': 'Error',
+                        'content': `The control tries to modify the system variable "cgPath".\nPath: ${this.cgPath}\nControl: ${name}`,
+                        'type': 'danger'
+                    });
+                    return;
+                }
+            };
+            computed.cgSafe = {
+                get: function(): boolean {
+                    return item.safe;
+                },
+                set: function(): void {
+                    notify({
+                        'title': 'Error',
+                        'content': `The control tries to modify the system variable "cgSafe".\nPath: ${this.cgPath}\nControl: ${name}`,
+                        'type': 'danger'
+                    });
+                    return;
+                }
+            };
+            computed.cgPrep = {
+                get: function(): string {
+                    return prep;
+                },
+                set: function(): void {
+                    notify({
+                        'title': 'Error',
+                        'content': `The control tries to modify the system variable "cgPrep".\nPath: ${this.cgPath}\nControl: ${name}`,
+                        'type': 'danger'
+                    });
+                    return;
+                }
+            };
+            // --- 获取目前现存的子 slots ---
+            computed.cgSlots = function(this: IVueControl): (name?: string) => IVueVNode[] {
+                return (name: string = 'default'): IVueVNode[] => {
+                    let d = this.$slots[name];
+                    if (!d) {
+                        return [];
+                    }
+                    let slots = [];
+                    let list = d();
+                    for (let item of list) {
+                        if (typeof item.type === 'symbol') {
+                            // --- 动态的 slot，例如 v-for 产生的 slot ---
+                            for (let item2 of item.children) {
+                                slots.push(item2);
+                            }
+                        }
+                        else {
+                            slots.push(item);
+                        }
+                    }
+                    return slots;
+                };
+            };
+            // --- data ---
             if (data.cgNest === undefined) {
                 data.cgNest = false;
             }
@@ -1015,7 +1060,7 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
                     return this.width + 'px';
                 }
                 if (this.flex !== '') {
-                    let parent = this.cgParent();
+                    let parent = this.cgParent;
                     return parent ? (parent.direction === 'v' ? undefined : '0') : undefined;
                 }
             };
@@ -1024,7 +1069,7 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
                     return this.height + 'px';
                 }
                 if (this.flex !== '') {
-                    let parent = this.cgParent();
+                    let parent = this.cgParent;
                     return parent ? (parent.direction === 'v' ? '0' : undefined) : undefined;
                 }
             };
@@ -1033,6 +1078,49 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
                     return clickgo.core.config.local;
                 }
                 return clickgo.task.list[this.taskId].local.name;
+            };
+            // --- 获取语言 ---
+            computed.l = function(this: IVueControl): (key: string, data?: Record<string, Record<string, string>>) => string {
+                return (key: string, data?: Record<string, Record<string, string>>): string => {
+                    if (data) {
+                        return data[this.cgLocal]?.[key] ?? 'LocaleError';
+                    }
+                    else if (this.localData) {
+                        return this.localData[this.cgLocal]?.[key] ?? 'LocaleError';
+                    }
+                    else {
+                        return 'LocaleError';
+                    }
+                };
+            };
+            // --- 获取正常非 nest 上级 ---
+            computed.cgParent = function(this: IVueControl): IVueControl | null {
+                let parent = this.$parent;
+                while (true) {
+                    if (!parent) {
+                        return null;
+                    }
+                    if (parent.cgNest) {
+                        parent = parent.$parent;
+                        continue;
+                    }
+                    return parent;
+                }
+            };
+            // --- 根据 control name 查询上级序列 ---
+            computed.cgParentByName = function(this: IVueControl): (controlName: string) => IVueControl | null {
+                return (controlName: string): IVueControl | null => {
+                    let parent = this.$parent;
+                    while (true) {
+                        if (!parent) {
+                            return null;
+                        }
+                        if (parent.controlName === controlName) {
+                            return parent;
+                        }
+                        parent = parent.$parent;
+                    }
+                };
             };
             // --- 上级最近的一层的 pop layer 组件 ---
             computed.cgParentPopLayer = function(this: IVueControl): IVueControl {
@@ -1050,19 +1138,10 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
                     parent = parent.$parent;
                 }
             };
-            // --- 预设 methods ---
-            // --- 获取语言 ---
-            methods.l = function(this: IVueForm, key: string, data?: Record<string, Record<string, string>>): string {
-                if (data) {
-                    return data[this.cgLocal]?.[key] ?? 'LocaleError';
-                }
-                else if (this.localData) {
-                    return this.localData[this.cgLocal]?.[key] ?? 'LocaleError';
-                }
-                else {
-                    return 'LocaleError';
-                }
+            methods.cgCloseForm = function(this: IVueControl): void {
+                remove(this.formId);
             };
+            // --- 预设 methods ---
             methods.cgDown = function(this: IVueControl, e: MouseEvent | TouchEvent) {
                 if (clickgo.dom.isMouseAlsoTouchEvent(e)) {
                     return;
@@ -1131,13 +1210,13 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
                     return await clickgo.core.fetchClickGoFile(path.slice(8));
                 }
                 else {
-                    path = loader.urlResolve(this.$data.cgPath, path);
+                    path = loader.urlResolve(this.cgPath, path);
                     return task.appPkg.files[path] ?? null;
                 }
             };
             // --- 获取本 task 的 object url ---
             methods.cgGetObjectUrl = function(this: IVueControl, file: string): string | null {
-                file = loader.urlResolve(this.$data.cgPath, file);
+                file = loader.urlResolve(this.cgPath, file);
                 return clickgo.tool.file2ObjectUrl(file, clickgo.task.list[this.taskId]);
             };
             methods.cgGetDataUrl = async function(this: IVueControl, file: string): Promise<string | null> {
@@ -1155,55 +1234,7 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
                 if (cla.startsWith('cg-')) {
                     return cla;
                 }
-                return `cg-theme-task${this.taskId}-${this.$data.controlName}_${cla} ${this.$data._prep}${cla}`;
-            };
-            // --- 获取目前现存的子 slots ---
-            methods.cgSlots = function(this: IVueControl, name: string = 'default'): IVueVNode[] {
-                let d = this.$slots[name];
-                if (!d) {
-                    return [];
-                }
-                let slots = [];
-                let list = d();
-                for (let item of list) {
-                    if (typeof item.type === 'symbol') {
-                        // --- 动态的 slot，例如 v-for 产生的 slot ---
-                        for (let item2 of item.children) {
-                            slots.push(item2);
-                        }
-                    }
-                    else {
-                        slots.push(item);
-                    }
-                }
-                return slots;
-            };
-            // --- 获取正常非 nest 上级 ---
-            methods.cgParent = function(this: IVueControl): IVueControl | null {
-                let parent = this.$parent;
-                while (true) {
-                    if (!parent) {
-                        return null;
-                    }
-                    if (parent.cgNest) {
-                        parent = parent.$parent;
-                        continue;
-                    }
-                    return parent;
-                }
-            };
-            // --- 根据 control name 查询上级序列 ---
-            methods.cgFindParent = function(this: IVueControl, controlName: string): IVueControl | null {
-                let parent = this.$parent;
-                while (true) {
-                    if (!parent) {
-                        return null;
-                    }
-                    if (parent.controlName === controlName) {
-                        return parent;
-                    }
-                    parent = parent.$parent;
-                }
+                return `cg-theme-task${this.taskId}-${this.controlName}_${cla} ${this.cgPrep}${cla}`;
             };
             // --- pop 相关操作 ---
             if (!methods.cgShowPop) {
@@ -1297,7 +1328,6 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
     // --- 检测是否有 js ---
     let expo = opt.code;
     if (appPkg.files[opt.file + '.js']) {
-        isSafePreprocess = clickgo.task.list[taskId].safe;
         expo = loader.require(opt.file!, appPkg.files, {
             'dir': '/',
             'invoke': invoke,
@@ -1345,19 +1375,118 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
     let el: HTMLElement = formListElement.children.item(formListElement.children.length - 1) as HTMLElement;
     // --- 创建窗体对象 ---
     // --- 初始化系统初始 data ---
-    data.taskId = taskId;
-    data.formId = formId;
-    data.controlName = 'root';
-    data.cgFocus = false;
-    data.cgPath = opt.file ?? opt.path ?? '/';
-    data._prep = prep;
-    data._customZIndex = false;
+    computed.taskId = {
+        get: function(): number {
+            return taskId;
+        },
+        set: function(): void {
+            notify({
+                'title': 'Error',
+                'content': `The software tries to modify the system variable "taskId".\nPath: ${this.cgPath}`,
+                'type': 'danger'
+            });
+            return;
+        }
+    };
+    computed.formId = {
+        get: function(): number {
+            return formId;
+        },
+        set: function(): void {
+            notify({
+                'title': 'Error',
+                'content': `The software tries to modify the system variable "formId".\nPath: ${this.cgPath}`,
+                'type': 'danger'
+            });
+            return;
+        }
+    };
+    computed.controlName = {
+        get: function(): string {
+            return 'root';
+        },
+        set: function(): void {
+            notify({
+                'title': 'Error',
+                'content': `The software tries to modify the system variable "controlName".\nPath: ${this.cgPath}`,
+                'type': 'danger'
+            });
+            return;
+        }
+    };
+    data._cgFocus = false;
+    computed.cgFocus = {
+        get: function(): number {
+            return this._cgFocus;
+        },
+        set: function(): void {
+            notify({
+                'title': 'Error',
+                'content': `The software tries to modify the system variable "cgFocus".\nPath: ${this.cgPath}`,
+                'type': 'danger'
+            });
+            return;
+        }
+    };
+    computed.cgPath = {
+        get: function(): string {
+            return cgPath;
+        },
+        set: function(): void {
+            notify({
+                'title': 'Error',
+                'content': `The software tries to modify the system variable "cgPath".\nPath: ${this.cgPath}`,
+                'type': 'danger'
+            });
+            return;
+        }
+    };
+    computed.cgPrep = {
+        get: function(): string {
+            return prep;
+        },
+        set: function(): void {
+            notify({
+                'title': 'Error',
+                'content': `The software tries to modify the system variable "cgPrep".\nPath: ${this._cgPath}`,
+                'type': 'danger'
+            });
+            return;
+        }
+    };
+    data._cgCustomZIndex = false;
+    computed.cgCustomZIndex = {
+        get: function(): number {
+            return this._cgCustomZIndex;
+        },
+        set: function(): void {
+            notify({
+                'title': 'Error',
+                'content': `The software tries to modify the system variable "cgCustomZIndex".\nPath: ${this.cgPath}`,
+                'type': 'danger'
+            });
+            return;
+        }
+    };
     if (opt.topMost) {
-        data._topMost = true;
+        data._cgTopMost = true;
     }
     else {
-        data._topMost = false;
+        data._cgTopMost = false;
     }
+    computed.cgTopMost = {
+        get: function(): number {
+            return this._cgTopMost;
+        },
+        set: function(): void {
+            notify({
+                'title': 'Error',
+                'content': `The software tries to modify the system variable "cgTopMost".\nPath: ${this.cgPath}`,
+                'type': 'danger'
+            });
+            return;
+        }
+    };
     // --- 预设 computed ---
     computed.cgLocal = function(this: IVueForm): string {
         if (clickgo.task.list[this.taskId].local.name === '') {
@@ -1366,8 +1495,10 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
         return clickgo.task.list[this.taskId].local.name;
     };
     // --- 获取语言 ---
-    methods.l = function(this: IVueForm, key: string): string {
-        return clickgo.task.list[this.taskId].local.data[this.cgLocal]?.[key] ?? 'LocaleError';
+    computed.l = function(this: IVueForm): (key: string) => string {
+        return (key: string): string => {
+            return clickgo.task.list[this.taskId].local.data[this.cgLocal]?.[key] ?? 'LocaleError';
+        };
     };
     // --- 初始化系统方法 ---
     methods.cgCreateForm = async function(this: IVueForm, paramOpt: string | ICGFormCreateOptions & { 'mask'?: boolean; } = {}): Promise<void> {
@@ -1375,11 +1506,11 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
             'path': this.cgPath
         };
         if (typeof paramOpt === 'string') {
-            inOpt.file = loader.urlResolve(this.$data.cgPath, paramOpt);
+            inOpt.file = loader.urlResolve(this.cgPath, paramOpt);
         }
         else {
             if (paramOpt.file) {
-                inOpt.file = loader.urlResolve(this.$data.cgPath, paramOpt.file);
+                inOpt.file = loader.urlResolve(this.cgPath, paramOpt.file);
             }
             if (paramOpt.path) {
                 inOpt.path = paramOpt.path;
@@ -1400,16 +1531,18 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
                 this.$refs.form.maskFor = true;
             }
         }
-        if (this.$data._topMost) {
+        if (this.cgTopMost) {
             inOpt.topMost = true;
         }
         /** --- 创建的新 IForm 对象 --- */
         let form = await create(taskId, inOpt);
         if (typeof form === 'number') {
-            this.$refs.form.maskFor = undefined;
+            if (this.$refs.form) {
+                this.$refs.form.maskFor = undefined;
+            }
         }
         else {
-            if (this.$refs.form.maskFor) {
+            if (this.$refs.form?.maskFor) {
                 this.$refs.form.maskFor = form.id;
                 form.vroot.$refs.form.maskFrom = this.formId;
             }
@@ -1488,13 +1621,13 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
             return await clickgo.core.fetchClickGoFile(path.slice(8));
         }
         else {
-            path = loader.urlResolve(this.$data.cgPath, path);
+            path = loader.urlResolve(this.cgPath, path);
             return task.appPkg.files[path] ?? null;
         }
     };
     // --- 获取本 task 的 object url ---
     methods.cgGetObjectUrl = function(this: IVueForm, file: string): string | null {
-        file = loader.urlResolve(this.$data.cgPath, file);
+        file = loader.urlResolve(this.cgPath, file);
         return clickgo.tool.file2ObjectUrl(file, clickgo.task.list[this.taskId]);
     };
     methods.cgGetDataUrl = async function(this: IVueForm, file: string): Promise<string | null> {
@@ -1506,17 +1639,17 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
     };
     // --- 加载主题 ---
     methods.cgLoadTheme = async function(this: IVueForm, path: string): Promise<boolean> {
-        path = loader.urlResolve(this.$data.cgPath, path);
+        path = loader.urlResolve(this.cgPath, path);
         return await clickgo.theme.load(this.taskId, path);
     };
     // --- 卸载主题 ---
     methods.cgRemoveTheme = async function(this: IVueForm, path: string): Promise<void> {
-        path = loader.urlResolve(this.$data.cgPath, path);
+        path = loader.urlResolve(this.cgPath, path);
         await clickgo.theme.remove(this.taskId, path);
     };
     // --- 加载全新主题（老主题会被清除） ---
     methods.cgSetTheme = async function(this: IVueForm, path: string): Promise<void> {
-        path = loader.urlResolve(this.$data.cgPath, path);
+        path = loader.urlResolve(this.cgPath, path);
         await clickgo.theme.clear(this.taskId);
         await clickgo.theme.load(this.taskId, path);
     };
@@ -1542,10 +1675,10 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
     };
     // --- 设置窗体置顶/取消置顶 ---
     methods.cgSetTopMost = function(this: IVueForm, top: boolean): void {
-        this.$data._customZIndex = false;
+        this.$data._cgCustomZIndex = false;
         if (top) {
             // --- 要置顶 ---
-            this.$data._topMost = true;
+            this.$data._cgTopMost = true;
             if (!this.cgFocus) {
                 changeFocus(this.formId);
             }
@@ -1555,7 +1688,7 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
         }
         else {
             // --- 取消置顶 ---
-            this.$data._topMost = false;
+            this.$data._cgTopMost = false;
             this.$refs.form.setPropData('zIndex', ++lastZIndex);
         }
     };
@@ -1586,7 +1719,7 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
     };
     // --- 加载 local 文件 json ---
     methods.cgLoadLocal = async function(this: IVueForm, name: string, path: string): Promise<boolean> {
-        path = loader.urlResolve(this.$data.cgPath, path + '.json');
+        path = loader.urlResolve(this.cgPath, path + '.json');
         if (!task.files[path]) {
             return false;
         }
@@ -1635,7 +1768,7 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
         if (cla.startsWith('cg-')) {
             return cla;
         }
-        return `cg-task${this.taskId}_${cla} ${this.$data._prep}${cla}`;
+        return `cg-task${this.taskId}_${cla} ${this.cgPrep}${cla}`;
     };
     // --- 挂载 style ---
     if (style) {
@@ -1675,10 +1808,11 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
             'beforeUnmount': beforeUnmount,
             'unmounted': unmounted,
         });
-        vapp.config.errorHandler = function(err: Error, vm: IVueForm): void {
+        vapp.config.errorHandler = function(err: Error, vm: IVueForm, info): void {
+            console.error('Stack:\n', err.stack, '\nInfo:\n', info);
             notify({
                 'title': 'Runtime Error',
-                'content': err.message + '\nTask id: ' + vm.taskId + '\nForm id: ' + vm.formId,
+                'content': `Message: ${err.message}\nTask id: ${vm.taskId}\nForm id: ${vm.formId}`,
                 'type': 'danger'
             });
         };
@@ -1730,7 +1864,7 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
         }
     }
     if (rtn.vroot.$refs.form.zIndex !== -1) {
-        rtn.vroot.$data._customZIndex = true;
+        rtn.vroot._cgCustomZIndex = true;
     }
     if (rtn.vroot.$refs.form.$data.show !== false) {
         rtn.vroot.cgShow();

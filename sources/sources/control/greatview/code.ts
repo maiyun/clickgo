@@ -372,8 +372,10 @@ export let methods = {
 
 export let mounted = function(this: IVueControl): void {
     // --- nest 内嵌闪烁是 mounted 导致 ---
-    this.refreshView();
-
+    clickgo.dom.watch(this.$refs.view.$el, () => {
+        this.refreshView();
+    }, 'style', true);
+    /*
     let mo = new MutationObserver(() => {
         this.refreshView();
     });
@@ -381,4 +383,5 @@ export let mounted = function(this: IVueControl): void {
         'attributeFilter': ['style', 'class'],
         'attributes': true
     });
+    //*/
 };

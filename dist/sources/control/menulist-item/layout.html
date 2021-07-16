@@ -1,9 +1,9 @@
 <div class="wrap" :class="[isDisabled && 'cg-disabled', cgSelfPopOpen && 'cg-pop-open', cgHover && 'hover', cgActive && 'active']" @click="click" @mouseenter="enter" @mouseleave="cgLeave" @mousedown="cgDown" @mouseup="cgUp" @touchstart="down" @touchend="cgUp" @touchcancel="cgCancel" @dblclick="cgDblclick">
-    <div v-if="menulist && menulist.hasTypeItemsCount > 0" :class="[type ? type : 'check']" :style="{'visibility': type !== undefined ? ((type === 'check' ? modelValue : label === modelValue) ? 'inherit' : undefined) : undefined}"></div>
+    <div v-if="cgParentByName('menulist') && cgParentByName('menulist').hasTypeItemsCount > 0" :class="[type ? type : 'check']" :style="{'visibility': type !== undefined ? ((type === 'check' ? modelValue : label === modelValue) ? 'inherit' : undefined) : undefined}"></div>
     <div class="inner" :style="{'padding': padding && padding.replace(/([0-9]+)($| )/g, '$1px$2')}">
         <slot></slot>
     </div>
-    <div v-if="menulist && menulist.hasSubItemsCount > 0" class="arrow" :style="{'visibility': cgSelfPop && 'inherit'}"></div>
+    <div v-if="cgParentByName('menulist') && cgParentByName('menulist').hasSubItemsCount > 0" class="arrow" :style="{'visibility': cgSelfPop && 'inherit'}"></div>
     <teleport v-if="$slots.pop" to="#cg-pop-list">
         <div class="pop" :class="[cgSelfPopOpen && 'open']" :style="cgPopPosition">
             <slot name="pop"></slot>

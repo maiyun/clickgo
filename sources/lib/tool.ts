@@ -480,3 +480,32 @@ export function getBoolean(param: boolean | string | number): boolean {
 export function escapeHTML(html: string): string {
     return html.replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
+
+/**
+ * --- 字符串必须包含后面的所有字符 ---
+ * @param str 要查找的字符串
+ * @param search 要查找的字符（char）
+ */
+export function includes(str: string, search: string | string[]): boolean {
+    for (let item of search) {
+        if (!str.includes(item)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+/**
+ * --- 完整替换字符串 ---
+ * @param text 原始字符串
+ * @param search 要替换的
+ * @param replace 替换成
+ */
+export function replace(text: string, search: string, replace: string): string {
+    let result: string = text.replace(search, replace);
+    while (result !== text) {
+        text = result;
+        result = text.replace(search, replace);
+    }
+    return result;
+}

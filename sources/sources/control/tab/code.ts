@@ -40,8 +40,7 @@ export let computed = {
             return [];
         }
         let tabs = [];
-        let list = this.cgSlots();
-        for (let item of list) {
+        for (let item of this.cgSlots()) {
             tabs.push({
                 'label': item.props.label,
                 'value': item.props.value ?? item.props.label

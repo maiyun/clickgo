@@ -12,13 +12,14 @@ export let methods = {
             'text': text
         });
     },
-    'changeFocus': function(this: IVueForm, fid: number): void {
-        clickgo.form.changeFocus(fid);
+    'changeFocus': function(this: IVueForm, fid: string): void {
+        clickgo.form.changeFocus(parseInt(fid));
     }
 };
 
 export let mounted = function(this: IVueForm): void {
-    for (let taskId in clickgo.task.list) {
+    let list = clickgo.task.getList();
+    for (let taskId in list) {
         let flist = clickgo.form.getList(parseInt(taskId));
         for (let fid in flist) {
             this.flist[fid] = {

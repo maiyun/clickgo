@@ -20,6 +20,8 @@ interface ICGToolLib {
     rand(min: number, max: number): number;
     getBoolean(param: boolean | string | number): boolean;
     escapeHTML(html: string): string;
+    includes(str: string, search: string | string[]): boolean;
+    replace(text: string, search: string, replace: string): string;
 }
 
 interface ICGUrl {

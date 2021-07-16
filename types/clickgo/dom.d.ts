@@ -13,8 +13,8 @@ interface ICGDomLib {
     removeStyle(taskId: number, type: 'form', formId: number): void;
     getStyleCount(taskId: number, type: 'theme' | 'control' | 'form'): number;
     getSize(el: HTMLElement): ICGDomSize;
-    watchSize(el: HTMLElement, cb: (size: ICGDomSize) => Promise<void> | void, immediate?: boolean): ICGDomWatchDom;
-    watchDom(el: HTMLElement, cb: (mutations: MutationRecord[], observer?: MutationObserver) => void, mode?: 'child' | 'childsub' | 'style' | 'default' | MutationObserverInit, immediate?: boolean): MutationObserver;
+    watchSize(el: HTMLElement, cb: (size: ICGDomSize) => Promise<void> | void, immediate?: boolean): ICGDomSize;
+    watch(el: HTMLElement, cb: () => void, mode?: 'child' | 'childsub' | 'style' | 'default', immediate?: boolean): void;
     bindDown(oe: MouseEvent | TouchEvent, opt: {
         'down'?: (e: MouseEvent | TouchEvent) => void;
         'start'?: (e: MouseEvent | TouchEvent) => void | boolean;

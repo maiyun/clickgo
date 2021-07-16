@@ -23,18 +23,16 @@ exports.props = {
 };
 exports.data = {
     'hasSubItemsCount': 0,
-    'hasTypeItemsCount': 0,
-    'menulist': undefined
+    'hasTypeItemsCount': 0
 };
 exports.mounted = function () {
-    let menulist = this.cgFindParent('menulist');
+    let menulist = this.cgParentByName('menulist');
     if (menulist) {
-        this.menulist = menulist;
         ++menulist.hasSubItemsCount;
     }
 };
 exports.unmounted = function () {
-    if (this.menulist) {
-        --this.menulist.hasSubItemsCount;
+    if (this.cgParentByName('menulist')) {
+        --this.cgParentByName('menulist').hasSubItemsCount;
     }
 };

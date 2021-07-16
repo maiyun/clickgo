@@ -185,7 +185,7 @@ exports.mounted = function () {
             this.$emit(this.direction === 'v' ? 'resize' : 'resizen', Math.round(this.clientHeight));
         }
     }, true);
-    clickgo.dom.watchDom(this.$refs.wrap, () => {
+    clickgo.dom.watch(this.$refs.wrap, () => {
         let lengthWidth = this.$refs.wrap.scrollWidth;
         let lengthHeight = this.$refs.wrap.scrollHeight;
         if (this.lengthWidth !== lengthWidth) {

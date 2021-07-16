@@ -348,12 +348,7 @@ exports.methods = {
     }
 };
 exports.mounted = function () {
-    this.refreshView();
-    let mo = new MutationObserver(() => {
+    clickgo.dom.watch(this.$refs.view.$el, () => {
         this.refreshView();
-    });
-    mo.observe(this.$refs.view.$el, {
-        'attributeFilter': ['style', 'class'],
-        'attributes': true
-    });
+    }, 'style', true);
 };

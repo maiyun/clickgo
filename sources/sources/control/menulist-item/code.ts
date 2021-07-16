@@ -21,8 +21,7 @@ export let props = {
 };
 
 export let data = {
-    'direction': 'h',
-    'menulist': undefined
+    'direction': 'h'
 };
 
 export let computed = {
@@ -34,7 +33,7 @@ export let computed = {
 export let watch = {
     'type': {
         handler: function(this: IVueControl): void {
-            let menulist = this.menulist ?? this.cgFindParent('menulist');
+            let menulist = this.cgParentByName('menulist');
             if (!menulist) {
                 return;
             }
@@ -92,11 +91,10 @@ export let methods = {
 };
 
 export let mounted = function(this: IVueControl): void {
-    let menulist = this.cgFindParent('menulist');
+    let menulist = this.cgParentByName('menulist');
     if (!menulist) {
         return;
     }
-    this.menulist = menulist;
     if (this.type) {
         ++menulist.hasTypeItemsCount;
     }
