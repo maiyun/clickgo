@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.create = exports.remove = exports.doFocusAndPopEvent = exports.hidePop = exports.showPop = exports.removeFromPop = exports.appendToPop = exports.notify = exports.hideRectangle = exports.showRectangle = exports.moveRectangle = exports.showCircular = exports.getRectByBorder = exports.getMaxZIndexFormID = exports.changeFocus = exports.getList = exports.lastPopZIndex = exports.lastTopZIndex = exports.lastZIndex = exports.lastFormId = exports.popShowing = void 0;
+exports.create = exports.remove = exports.doFocusAndPopEvent = exports.hidePop = exports.showPop = exports.removeFromPop = exports.appendToPop = exports.notify = exports.hideRectangle = exports.showRectangle = exports.moveRectangle = exports.showCircular = exports.getRectByBorder = exports.getMaxZIndexFormID = exports.changeFocus = exports.getList = exports.refreshMaxPosition = exports.getAvailArea = exports.refreshTaskPosition = exports.clearTask = exports.setTask = exports.lastPopZIndex = exports.lastTopZIndex = exports.lastZIndex = exports.lastFormId = exports.popShowing = void 0;
 exports.lastFormId = 0;
 exports.lastZIndex = 999;
 exports.lastTopZIndex = 9999999;
@@ -74,6 +74,169 @@ let rectangleElement = document.createElement('div');
 rectangleElement.setAttribute('data-pos', '');
 rectangleElement.classList.add('cg-rectangle');
 document.getElementsByTagName('body')[0].appendChild(rectangleElement);
+let taskInfo = {
+    'taskId': 0,
+    'formId': 0,
+    'position': 'bottom',
+    'length': 0
+};
+function setTask(taskId, formId) {
+    let task = clickgo.task.list[taskId];
+    if (!task) {
+        return false;
+    }
+    let form = task.forms[formId];
+    if (!form) {
+        return false;
+    }
+    if (form.vroot.position === undefined) {
+        notify({
+            'title': 'Warning',
+            'content': `Task id is "${taskId}" app is not an available task app, position not found.`,
+            'type': 'warning'
+        });
+        return false;
+    }
+    if (taskInfo.taskId > 0) {
+        notify({
+            'title': 'Info',
+            'content': 'More than 1 system-level task application is currently running.',
+            'type': 'info'
+        });
+    }
+    taskInfo.taskId = taskId;
+    taskInfo.formId = formId;
+    refreshTaskPosition();
+    return true;
+}
+exports.setTask = setTask;
+function clearTask(taskId) {
+    if (taskInfo.taskId !== taskId) {
+        return false;
+    }
+    taskInfo.taskId = 0;
+    taskInfo.formId = 0;
+    taskInfo.length = 0;
+    clickgo.core.trigger('screenResize');
+    return true;
+}
+exports.clearTask = clearTask;
+function refreshTaskPosition() {
+    if (taskInfo.taskId > 0) {
+        let form = clickgo.task.list[taskInfo.taskId].forms[taskInfo.formId];
+        taskInfo.position = form.vroot.position;
+        switch (taskInfo.position) {
+            case 'left':
+            case 'right': {
+                form.vroot.$refs.form.setPropData('width', 'auto');
+                form.vroot.$refs.form.setPropData('height', window.innerHeight);
+                break;
+            }
+            case 'top':
+            case 'bottom': {
+                form.vroot.$refs.form.setPropData('width', window.innerWidth);
+                form.vroot.$refs.form.setPropData('height', 'auto');
+                break;
+            }
+        }
+        setTimeout(function () {
+            switch (taskInfo.position) {
+                case 'left': {
+                    taskInfo.length = form.vroot.$el.offsetWidth;
+                    form.vroot.$refs.form.setPropData('left', 0);
+                    form.vroot.$refs.form.setPropData('top', 0);
+                    break;
+                }
+                case 'right': {
+                    taskInfo.length = form.vroot.$el.offsetWidth;
+                    form.vroot.$refs.form.setPropData('left', window.innerWidth - taskInfo.length);
+                    form.vroot.$refs.form.setPropData('top', 0);
+                    break;
+                }
+                case 'top': {
+                    taskInfo.length = form.vroot.$el.offsetHeight;
+                    form.vroot.$refs.form.setPropData('left', 0);
+                    form.vroot.$refs.form.setPropData('top', 0);
+                    break;
+                }
+                case 'bottom': {
+                    taskInfo.length = form.vroot.$el.offsetHeight;
+                    form.vroot.$refs.form.setPropData('left', 0);
+                    form.vroot.$refs.form.setPropData('top', window.innerHeight - taskInfo.length);
+                    break;
+                }
+            }
+            clickgo.core.trigger('screenResize');
+        }, 50);
+    }
+    else {
+        clickgo.core.trigger('screenResize');
+    }
+}
+exports.refreshTaskPosition = refreshTaskPosition;
+function getAvailArea() {
+    let left = 0;
+    let top = 0;
+    let width = 0;
+    let height = 0;
+    switch (taskInfo.position) {
+        case 'left': {
+            left = taskInfo.length;
+            top = 0;
+            width = window.innerWidth - taskInfo.length;
+            height = window.innerHeight;
+            break;
+        }
+        case 'right': {
+            left = 0;
+            top = 0;
+            width = window.innerWidth - taskInfo.length;
+            height = window.innerHeight;
+            break;
+        }
+        case 'top': {
+            left = 0;
+            top = taskInfo.length;
+            width = window.innerWidth;
+            height = window.innerHeight - taskInfo.length;
+            break;
+        }
+        case 'bottom': {
+            left = 0;
+            top = 0;
+            width = window.innerWidth;
+            height = window.innerHeight - taskInfo.length;
+        }
+    }
+    return {
+        'left': left,
+        'top': top,
+        'width': width,
+        'height': height
+    };
+}
+exports.getAvailArea = getAvailArea;
+function refreshMaxPosition() {
+    let area = getAvailArea();
+    for (let i = 0; i < formListElement.children.length; ++i) {
+        let el = formListElement.children.item(i);
+        let ef = el.children.item(0);
+        if (!ef.className.includes('cg-state-max')) {
+            continue;
+        }
+        let taskId = parseInt(el.getAttribute('data-task-id'));
+        let formId = parseInt(el.getAttribute('data-form-id'));
+        if (!clickgo.task.list[taskId]) {
+            continue;
+        }
+        let vroot = clickgo.task.list[taskId].forms[formId].vroot;
+        vroot.$refs.form.setPropData('left', area.left);
+        vroot.$refs.form.setPropData('top', area.top);
+        vroot.$refs.form.setPropData('width', area.width);
+        vroot.$refs.form.setPropData('height', area.height);
+    }
+}
+exports.refreshMaxPosition = refreshMaxPosition;
 function getList(taskId) {
     if (!clickgo.task.list[taskId]) {
         return {};
@@ -186,73 +349,73 @@ function getMaxZIndexFormID() {
 exports.getMaxZIndexFormID = getMaxZIndexFormID;
 function getRectByBorder(border) {
     var _a, _b, _c, _d;
-    let position = clickgo.dom.getPosition();
+    let area = getAvailArea();
     let width, height, left, top;
     if (typeof border === 'string') {
         switch (border) {
             case 'lt': {
-                width = position.width / 2;
-                height = position.height / 2;
-                left = position.left;
-                top = position.top;
+                width = area.width / 2;
+                height = area.height / 2;
+                left = area.left;
+                top = area.top;
                 break;
             }
             case 't': {
-                width = position.width;
-                height = position.height;
-                left = position.left;
-                top = position.top;
+                width = area.width;
+                height = area.height;
+                left = area.left;
+                top = area.top;
                 break;
             }
             case 'tr': {
-                width = position.width / 2;
-                height = position.height / 2;
-                left = position.left + position.width / 2;
-                top = position.top;
+                width = area.width / 2;
+                height = area.height / 2;
+                left = area.left + area.width / 2;
+                top = area.top;
                 break;
             }
             case 'r': {
-                width = position.width / 2;
-                height = position.height;
-                left = position.left + position.width / 2;
-                top = position.top;
+                width = area.width / 2;
+                height = area.height;
+                left = area.left + area.width / 2;
+                top = area.top;
                 break;
             }
             case 'rb': {
-                width = position.width / 2;
-                height = position.height / 2;
-                left = position.left + position.width / 2;
-                top = position.top + position.height / 2;
+                width = area.width / 2;
+                height = area.height / 2;
+                left = area.left + area.width / 2;
+                top = area.top + area.height / 2;
                 break;
             }
             case 'b': {
-                width = position.width;
-                height = position.height / 2;
-                left = position.left;
-                top = position.top + position.height / 2;
+                width = area.width;
+                height = area.height / 2;
+                left = area.left;
+                top = area.top + area.height / 2;
                 break;
             }
             case 'bl': {
-                width = position.width / 2;
-                height = position.height / 2;
-                left = position.left;
-                top = position.top + position.height / 2;
+                width = area.width / 2;
+                height = area.height / 2;
+                left = area.left;
+                top = area.top + area.height / 2;
                 break;
             }
             case 'l': {
-                width = position.width / 2;
-                height = position.height;
-                left = position.left;
-                top = position.top;
+                width = area.width / 2;
+                height = area.height;
+                left = area.left;
+                top = area.top;
                 break;
             }
         }
     }
     else {
-        width = (_a = border.width) !== null && _a !== void 0 ? _a : position.width;
-        height = (_b = border.height) !== null && _b !== void 0 ? _b : position.height;
-        left = (_c = border.left) !== null && _c !== void 0 ? _c : position.left;
-        top = (_d = border.top) !== null && _d !== void 0 ? _d : position.top;
+        width = (_a = border.width) !== null && _a !== void 0 ? _a : area.width;
+        height = (_b = border.height) !== null && _b !== void 0 ? _b : area.height;
+        left = (_c = border.left) !== null && _c !== void 0 ? _c : area.left;
+        top = (_d = border.top) !== null && _d !== void 0 ? _d : area.top;
     }
     return {
         'width': width,
@@ -311,8 +474,8 @@ exports.moveRectangle = moveRectangle;
 function showRectangle(x, y, border) {
     rectangleElement.style.transition = 'none';
     requestAnimationFrame(function () {
-        rectangleElement.style.width = '20px';
-        rectangleElement.style.height = '20px';
+        rectangleElement.style.width = '5px';
+        rectangleElement.style.height = '5px';
         rectangleElement.style.left = x - 10 + 'px';
         rectangleElement.style.top = y - 10 + 'px';
         rectangleElement.style.opacity = '1';
@@ -426,7 +589,6 @@ function showPop(pop, direction, opt = {}) {
         };
         return;
     }
-    let position = clickgo.dom.getPosition();
     let width = (_b = opt.size.width) !== null && _b !== void 0 ? _b : pop.cgSelfPop.$el.offsetWidth;
     let height = (_c = opt.size.height) !== null && _c !== void 0 ? _c : pop.cgSelfPop.$el.offsetHeight;
     let left, top;
@@ -440,20 +602,20 @@ function showPop(pop, direction, opt = {}) {
             left = bcr.left + bcr.width - 2;
             top = bcr.top - 2;
         }
-        if (width + left > position.width) {
+        if (width + left > window.innerWidth) {
             if (direction === 'v') {
-                left = position.width - width;
+                left = bcr.left + bcr.width - width;
             }
             else {
                 left = bcr.left - width + 2;
             }
         }
-        if (height + top > position.height) {
+        if (height + top > window.innerHeight) {
             if (direction === 'v') {
                 top = bcr.top - height;
             }
             else {
-                top = position.height - height;
+                top = bcr.top + bcr.height - height + 2;
             }
         }
     }
@@ -474,10 +636,10 @@ function showPop(pop, direction, opt = {}) {
         }
         left = x + 5;
         top = y + 7;
-        if (width + left > position.width) {
+        if (width + left > window.innerWidth) {
             left = x - width - 5;
         }
-        if (height + top > position.height) {
+        if (height + top > window.innerHeight) {
             top = y - height - 5;
         }
     }
@@ -619,52 +781,45 @@ function create(taskId, opt) {
             if (k.includes('Event')) {
                 continue;
             }
-            if (['__awaiter', 'requestAnimationFrame', 'eval', 'Object', 'Math', 'Array', 'Blob', 'Infinity', 'parseInt', 'parseFloat', 'Promise', 'Date', 'setTimeout'].includes(k)) {
+            if (['__awaiter', 'requestAnimationFrame', 'eval', 'Object', 'Math', 'Array', 'Blob', 'Infinity', 'parseInt', 'parseFloat', 'Promise', 'Date', 'JSON'].includes(k)) {
                 continue;
             }
             invoke[k] = undefined;
         }
         invoke.clickgo = {
-            'core': {
-                'trigger': function (o, name, taskId = 0, formId = 0, param1 = '', param2 = '') {
-                    if (o.cgSafe !== undefined) {
-                        if (o.cgSafe) {
-                            clickgo.core.trigger(name, taskId, formId, param1, param2);
-                        }
-                    }
-                    else {
-                        if (clickgo.task.list[o.taskId].safe) {
-                            clickgo.core.trigger(name, taskId, formId, param1, param2);
-                        }
-                    }
-                }
-            },
+            'core': {},
             'dom': {},
             'form': {},
             'task': {},
             'tool': {},
             'zip': {}
         };
+        for (let k in clickgo.core) {
+            if (!['trigger'].includes(k)) {
+                continue;
+            }
+            invoke.clickgo.core[k] = clickgo.core[k];
+        }
         for (let k in clickgo.dom) {
-            if (!['setPosition', 'getPosition', 'setGlobalCursor', 'isMouseAlsoTouchEvent', 'getStyleCount', 'getSize', 'watchSize', 'watch', 'bindDown', 'bindLong', 'is', 'bindMove', 'bindResize'].includes(k)) {
+            if (!['setGlobalCursor', 'isMouseAlsoTouchEvent', 'getStyleCount', 'getSize', 'watchSize', 'watch', 'bindDown', 'bindLong', 'is', 'bindMove', 'bindResize'].includes(k)) {
                 continue;
             }
             invoke.clickgo.dom[k] = clickgo.dom[k];
         }
         for (let k in clickgo.form) {
-            if (!['getList', 'changeFocus', 'getMaxZIndexFormID', 'getRectByBorder', 'showCircular', 'moveRectangle', 'showRectangle', 'hideRectangle', 'notify', 'showPop', 'hidePop'].includes(k)) {
+            if (!['setTask', 'clearTask', 'refreshTaskPosition', 'getAvailArea', 'refreshMaxPosition', 'getList', 'changeFocus', 'getMaxZIndexFormID', 'getRectByBorder', 'showCircular', 'moveRectangle', 'showRectangle', 'hideRectangle', 'notify', 'showPop', 'hidePop'].includes(k)) {
                 continue;
             }
             invoke.clickgo.form[k] = clickgo.form[k];
         }
         for (let k in clickgo.task) {
-            if (!['getList', 'run', 'end'].includes(k)) {
+            if (!['get', 'getList', 'run', 'end'].includes(k)) {
                 continue;
             }
             invoke.clickgo.task[k] = clickgo.task[k];
         }
         for (let k in clickgo.tool) {
-            if (!['blob2DataUrl', 'blob2ArrayBuffer', 'blob2Text', 'clone', 'sleep', 'purify', 'getMimeByPath', 'rand', 'getBoolean'].includes(k)) {
+            if (!['blob2ArrayBuffer', 'clone', 'sleep', 'purify', 'getMimeByPath', 'rand', 'getBoolean', 'escapeHTML', 'includes', 'replace', 'parseUrl', 'urlResolve', 'blob2Text', 'blob2DataUrl'].includes(k)) {
                 continue;
             }
             invoke.clickgo.tool[k] = clickgo.tool[k];
@@ -677,7 +832,7 @@ function create(taskId, opt) {
         }
         invoke.console = {
             log: function (message, ...optionalParams) {
-                console.log(message, optionalParams);
+                console.log(message, ...optionalParams);
             }
         };
         let preprocess = function (code, path) {
@@ -690,8 +845,6 @@ function create(taskId, opt) {
                 });
                 return '';
             }
-            code = code.replace(/clickgo\s*\.\s*core\s*\.\s*trigger\s*\(/g, 'clickgo.core.trigger(this, ');
-            code = code.replace(/clickgo\s*\.\s*form\s*\.\s*remove\s*\(/g, 'clickgo.form.remove(this, ');
             return code;
         };
         let components = {};
@@ -834,19 +987,6 @@ function create(taskId, opt) {
                         return;
                     }
                 };
-                computed.cgSafe = {
-                    get: function () {
-                        return item.safe;
-                    },
-                    set: function () {
-                        notify({
-                            'title': 'Error',
-                            'content': `The control tries to modify the system variable "cgSafe".\nPath: ${this.cgPath}\nControl: ${name}`,
-                            'type': 'danger'
-                        });
-                        return;
-                    }
-                };
                 computed.cgPrep = {
                     get: function () {
                         return prep;
@@ -929,12 +1069,12 @@ function create(taskId, opt) {
                 };
                 computed.l = function () {
                     return (key, data) => {
-                        var _a, _b, _c, _d;
+                        var _a, _b, _c, _d, _e, _f;
                         if (data) {
-                            return (_b = (_a = data[this.cgLocal]) === null || _a === void 0 ? void 0 : _a[key]) !== null && _b !== void 0 ? _b : 'LocaleError';
+                            return (_c = (_b = (_a = data[this.cgLocal]) === null || _a === void 0 ? void 0 : _a[key]) !== null && _b !== void 0 ? _b : data['en-us'][key]) !== null && _c !== void 0 ? _c : 'LocaleError';
                         }
                         else if (this.localData) {
-                            return (_d = (_c = this.localData[this.cgLocal]) === null || _c === void 0 ? void 0 : _c[key]) !== null && _d !== void 0 ? _d : 'LocaleError';
+                            return (_f = (_e = (_d = this.localData[this.cgLocal]) === null || _d === void 0 ? void 0 : _d[key]) !== null && _e !== void 0 ? _e : this.localData['en-us'][key]) !== null && _f !== void 0 ? _f : 'LocaleError';
                         }
                         else {
                             return 'LocaleError';
@@ -1054,13 +1194,16 @@ function create(taskId, opt) {
                             return yield clickgo.core.fetchClickGoFile(path.slice(8));
                         }
                         else {
-                            path = loader.urlResolve(this.cgPath, path);
+                            path = clickgo.tool.urlResolve(this.cgPath, path);
                             return (_a = task.appPkg.files[path]) !== null && _a !== void 0 ? _a : null;
                         }
                     });
                 };
                 methods.cgGetObjectUrl = function (file) {
-                    file = loader.urlResolve(this.cgPath, file);
+                    file = clickgo.tool.urlResolve(this.cgPath, file);
+                    if (file.startsWith('/clickgo/')) {
+                        return clickgo.cgRootPath + file.slice(9);
+                    }
                     return clickgo.tool.file2ObjectUrl(file, clickgo.task.list[this.taskId]);
                 };
                 methods.cgGetDataUrl = function (file) {
@@ -1080,6 +1223,34 @@ function create(taskId, opt) {
                         return cla;
                     }
                     return `cg-theme-task${this.taskId}-${this.controlName}_${cla} ${this.cgPrep}${cla}`;
+                };
+                methods.cgCreateTimer = function (fun, delay, interval = false) {
+                    let timer;
+                    if (interval) {
+                        timer = window.setInterval(() => {
+                            fun();
+                        }, delay);
+                    }
+                    else {
+                        timer = window.setTimeout(() => {
+                            let i = clickgo.task.list[this.taskId].timers.indexOf(timer);
+                            if (i === -1) {
+                                return;
+                            }
+                            clickgo.task.list[this.taskId].timers.splice(i, 1);
+                            fun();
+                        }, delay);
+                    }
+                    clickgo.task.list[this.taskId].timers.push(timer);
+                    return timer;
+                };
+                methods.cgRemoveTimer = function (timer) {
+                    let i = clickgo.task.list[this.taskId].timers.indexOf(timer);
+                    if (i === -1) {
+                        return;
+                    }
+                    clickgo.task.list[this.taskId].timers.splice(i, 1);
+                    clearTimeout(timer);
                 };
                 if (!methods.cgShowPop) {
                     methods.cgShowPop = function (direction, opt) {
@@ -1339,11 +1510,11 @@ function create(taskId, opt) {
                     'path': this.cgPath
                 };
                 if (typeof paramOpt === 'string') {
-                    inOpt.file = loader.urlResolve(this.cgPath, paramOpt);
+                    inOpt.file = clickgo.tool.urlResolve(this.cgPath, paramOpt);
                 }
                 else {
                     if (paramOpt.file) {
-                        inOpt.file = loader.urlResolve(this.cgPath, paramOpt.file);
+                        inOpt.file = clickgo.tool.urlResolve(this.cgPath, paramOpt.file);
                     }
                     if (paramOpt.path) {
                         inOpt.path = paramOpt.path;
@@ -1395,17 +1566,17 @@ function create(taskId, opt) {
         };
         methods.cgDialog = function (opt) {
             return new Promise((resolve) => {
-                var _a;
+                var _a, _b, _c;
                 if (typeof opt === 'string' || typeof opt === 'number') {
                     opt = {
                         'content': opt
                     };
                 }
                 if (opt.buttons === undefined) {
-                    opt.buttons = [localData[this.cgLocal].ok];
+                    opt.buttons = [(_b = (_a = localData[this.cgLocal]) === null || _a === void 0 ? void 0 : _a.ok) !== null && _b !== void 0 ? _b : localData['en-is'].ok];
                 }
                 this.cgCreateForm({
-                    'layout': `<form title="${(_a = opt.title) !== null && _a !== void 0 ? _a : 'dialog'}" width="auto" height="auto" :min="false" :max="false" :resize="false" :min-height="50" border="${opt.title ? 'normal' : 'none'}"><dialog :buttons="buttons" @select="select">${opt.content}</dialog></form>`,
+                    'layout': `<form title="${(_c = opt.title) !== null && _c !== void 0 ? _c : 'dialog'}" width="auto" height="auto" :min="false" :max="false" :resize="false" :min-height="50" border="${opt.title ? 'normal' : 'none'}"><dialog :buttons="buttons" @select="select">${opt.content}</dialog></form>`,
                     'code': {
                         data: {
                             'buttons': opt.buttons
@@ -1434,19 +1605,20 @@ function create(taskId, opt) {
             });
         };
         methods.cgConfirm = function (content, cancel = false) {
+            var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k;
             return __awaiter(this, void 0, void 0, function* () {
-                let buttons = [localData[this.cgLocal].yes, localData[this.cgLocal].no];
+                let buttons = [(_b = (_a = localData[this.cgLocal]) === null || _a === void 0 ? void 0 : _a.yes) !== null && _b !== void 0 ? _b : localData['en-us'].yes, (_d = (_c = localData[this.cgLocal]) === null || _c === void 0 ? void 0 : _c.no) !== null && _d !== void 0 ? _d : localData['en-us'].no];
                 if (cancel) {
-                    buttons.push(localData[this.cgLocal].cancel);
+                    buttons.push((_f = (_e = localData[this.cgLocal]) === null || _e === void 0 ? void 0 : _e.cancel) !== null && _f !== void 0 ? _f : localData['en-us'].cancel);
                 }
                 let res = yield this.cgDialog({
                     'content': content,
                     'buttons': buttons
                 });
-                if (res === localData[this.cgLocal].yes) {
+                if (res === ((_h = (_g = localData[this.cgLocal]) === null || _g === void 0 ? void 0 : _g.yes) !== null && _h !== void 0 ? _h : localData['en-us'].yes)) {
                     return true;
                 }
-                if (res === localData[this.cgLocal].cancel) {
+                if (res === ((_k = (_j = localData[this.cgLocal]) === null || _j === void 0 ? void 0 : _j.cancel) !== null && _k !== void 0 ? _k : localData['en-us'].cancel)) {
                     return 0;
                 }
                 return false;
@@ -1459,13 +1631,16 @@ function create(taskId, opt) {
                     return yield clickgo.core.fetchClickGoFile(path.slice(8));
                 }
                 else {
-                    path = loader.urlResolve(this.cgPath, path);
+                    path = clickgo.tool.urlResolve(this.cgPath, path);
                     return (_a = task.appPkg.files[path]) !== null && _a !== void 0 ? _a : null;
                 }
             });
         };
         methods.cgGetObjectUrl = function (file) {
-            file = loader.urlResolve(this.cgPath, file);
+            file = clickgo.tool.urlResolve(this.cgPath, file);
+            if (file.startsWith('/clickgo/')) {
+                return clickgo.cgRootPath + file.slice(9);
+            }
             return clickgo.tool.file2ObjectUrl(file, clickgo.task.list[this.taskId]);
         };
         methods.cgGetDataUrl = function (file) {
@@ -1479,19 +1654,19 @@ function create(taskId, opt) {
         };
         methods.cgLoadTheme = function (path) {
             return __awaiter(this, void 0, void 0, function* () {
-                path = loader.urlResolve(this.cgPath, path);
+                path = clickgo.tool.urlResolve(this.cgPath, path);
                 return yield clickgo.theme.load(this.taskId, path);
             });
         };
         methods.cgRemoveTheme = function (path) {
             return __awaiter(this, void 0, void 0, function* () {
-                path = loader.urlResolve(this.cgPath, path);
+                path = clickgo.tool.urlResolve(this.cgPath, path);
                 yield clickgo.theme.remove(this.taskId, path);
             });
         };
         methods.cgSetTheme = function (path) {
             return __awaiter(this, void 0, void 0, function* () {
-                path = loader.urlResolve(this.cgPath, path);
+                path = clickgo.tool.urlResolve(this.cgPath, path);
                 yield clickgo.theme.clear(this.taskId);
                 yield clickgo.theme.load(this.taskId, path);
             });
@@ -1559,7 +1734,7 @@ function create(taskId, opt) {
         };
         methods.cgLoadLocal = function (name, path) {
             return __awaiter(this, void 0, void 0, function* () {
-                path = loader.urlResolve(this.cgPath, path + '.json');
+                path = clickgo.tool.urlResolve(this.cgPath, path + '.json');
                 if (!task.files[path]) {
                     return false;
                 }
@@ -1608,6 +1783,34 @@ function create(taskId, opt) {
             }
             return `cg-task${this.taskId}_${cla} ${this.cgPrep}${cla}`;
         };
+        methods.cgCreateTimer = function (fun, delay, interval = false) {
+            let timer;
+            if (interval) {
+                timer = window.setInterval(() => {
+                    fun();
+                }, delay);
+            }
+            else {
+                timer = window.setTimeout(() => {
+                    let i = clickgo.task.list[this.taskId].timers.indexOf(timer);
+                    if (i === -1) {
+                        return;
+                    }
+                    clickgo.task.list[this.taskId].timers.splice(i, 1);
+                    fun();
+                }, delay);
+            }
+            clickgo.task.list[this.taskId].timers.push(timer);
+            return timer;
+        };
+        methods.cgRemoveTimer = function (timer) {
+            let i = clickgo.task.list[this.taskId].timers.indexOf(timer);
+            if (i === -1) {
+                return;
+            }
+            clickgo.task.list[this.taskId].timers.splice(i, 1);
+            clearTimeout(timer);
+        };
         if (style) {
             clickgo.dom.pushStyle(taskId, style, 'form', formId);
         }
@@ -1644,12 +1847,12 @@ function create(taskId, opt) {
                 'unmounted': unmounted,
             });
             vapp.config.errorHandler = function (err, vm, info) {
-                console.error('Stack:\n', err.stack, '\nInfo:\n', info);
                 notify({
                     'title': 'Runtime Error',
                     'content': `Message: ${err.message}\nTask id: ${vm.taskId}\nForm id: ${vm.formId}`,
                     'type': 'danger'
                 });
+                clickgo.core.trigger('error', vm.taskId, vm.formId, err, info);
             };
             for (let key in components) {
                 vapp.component(key, components[key]);
@@ -1670,12 +1873,7 @@ function create(taskId, opt) {
                 yield mounted.call(rtn.vroot);
             }
             catch (err) {
-                if (clickgo.core.globalEvents.errorHandler) {
-                    clickgo.core.globalEvents.errorHandler(rtn.vroot.taskId, rtn.vroot.formId, err, 'Create form mounted error.');
-                }
-                else {
-                    console.log(err);
-                }
+                clickgo.core.trigger('error', rtn.vroot.taskId, rtn.vroot.formId, err, 'Create form mounted error.');
                 task.forms[formId] = undefined;
                 delete (task.forms[formId]);
                 rtn.vapp.unmount();
@@ -1684,13 +1882,13 @@ function create(taskId, opt) {
                 return -6;
             }
         }
-        let position = clickgo.dom.getPosition();
+        let area = getAvailArea();
         if (!rtn.vroot.$refs.form.stateMaxData) {
             if (rtn.vroot.$refs.form.left === -1) {
-                rtn.vroot.$refs.form.setPropData('left', (position.width - rtn.vroot.$el.offsetWidth) / 2);
+                rtn.vroot.$refs.form.setPropData('left', (area.width - rtn.vroot.$el.offsetWidth) / 2);
             }
             if (rtn.vroot.$refs.form.top === -1) {
-                rtn.vroot.$refs.form.setPropData('top', (position.height - rtn.vroot.$el.offsetHeight) / 2);
+                rtn.vroot.$refs.form.setPropData('top', (area.height - rtn.vroot.$el.offsetHeight) / 2);
             }
         }
         if (rtn.vroot.$refs.form.zIndex !== -1) {
@@ -1706,21 +1904,5 @@ function create(taskId, opt) {
 }
 exports.create = create;
 window.addEventListener('resize', function () {
-    let position = clickgo.dom.getPosition();
-    for (let i = 0; i < formListElement.children.length; ++i) {
-        let el = formListElement.children.item(i);
-        let ef = el.children.item(0);
-        if (!ef.className.includes('cg-state-max')) {
-            continue;
-        }
-        let taskId = parseInt(el.getAttribute('data-task-id'));
-        let formId = parseInt(el.getAttribute('data-form-id'));
-        if (!clickgo.task.list[taskId]) {
-            continue;
-        }
-        let vroot = clickgo.task.list[taskId].forms[formId].vroot;
-        vroot.$refs.form.setPropData('width', position.width);
-        vroot.$refs.form.setPropData('height', position.height);
-    }
-    clickgo.core.trigger('screenResize', position.width, position.height);
+    refreshTaskPosition();
 });

@@ -1,7 +1,4 @@
 clickgo.ready(async function() {
-    clickgo.dom.setPosition({
-        'offsetHeight': -40
-    });
     let el = document.getElementById('tip');
     if (!el) {
         return;
@@ -15,20 +12,18 @@ clickgo.ready(async function() {
         console.log(info, error);
         let err = document.getElementById('err') as HTMLElement;
         err.style.display = 'block';
-        err.innerHTML = 'Error, Task ID: ' + taskId + ', Form ID: ' + formId + '<br>' + error.stack.replace(/\n/g, '<br>');
+        err.innerHTML = 'Error, Task ID: ' + taskId + ', Form ID: ' + formId + '<br>' + (error.stack ? error.stack.replace(/\n/g, '<br>') : '');
         clickgo.task.end(taskId);
     };
     // --- 监听任务关闭 ---
     clickgo.core.globalEvents.taskEndedHandler = function(taskId: number) {
         el!.innerHTML = 'Task(' + taskId + ') ended.';
     };
-    // --- 启动 sapp ---
-    if (!clickgo.isNative) {
-        let sTaskId = await clickgo.task.run('sapp/');
-        if (sTaskId <= 0) {
-            el.innerHTML = `Start failed(${sTaskId.toString()}).`;
-            return;
-        }
+    // --- 启动 task app ---
+    let sTaskId = await clickgo.task.run('/clickgo/app/task/');
+    if (sTaskId <= 0) {
+        el.innerHTML = `Start failed(${sTaskId.toString()}).`;
+        return;
     }
     // --- sapp 启动成功 ---
     el.innerHTML = 'Starting app...';

@@ -11,7 +11,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.revokeObjectURL = exports.read = exports.clickgoControlPkgs = void 0;
 exports.clickgoControlPkgs = {};
-function read(blob, salf) {
+function read(blob) {
     return __awaiter(this, void 0, void 0, function* () {
         let zip = yield clickgo.zip.get(blob);
         if (!zip) {
@@ -52,7 +52,6 @@ function read(blob, salf) {
             }
             controlPkg[control.name] = {
                 'type': 'control',
-                'safe': salf,
                 'config': config,
                 'files': files,
                 'objectURLs': objectURLs

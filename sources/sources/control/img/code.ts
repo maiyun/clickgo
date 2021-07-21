@@ -56,6 +56,7 @@ export let watch = {
                 this.imgData = 'url(' + this.src + ')';
                 return;
             }
+            // --- 本 app 包 ---
             let t = this.cgGetObjectUrl(this.src);
             if (t) {
                 this.imgData = 'url(' + t + ')';

@@ -19,7 +19,7 @@ class Zip {
     }
     getContent(path, type = 'string') {
         return __awaiter(this, void 0, void 0, function* () {
-            path = loader.urlResolve(this._path, path);
+            path = clickgo.tool.urlResolve(this._path, path);
             let f = this._zip.file(path.slice(1));
             if (!f) {
                 return null;
@@ -33,7 +33,7 @@ class Zip {
         });
     }
     putContent(path, data, options = {}) {
-        path = loader.urlResolve(this._path, path);
+        path = clickgo.tool.urlResolve(this._path, path);
         this._zip.file(path.slice(1), data, {
             'base64': options.base64,
             'binary': options.binary,
@@ -42,7 +42,7 @@ class Zip {
         this._refreshList();
     }
     unlink(path) {
-        path = loader.urlResolve(this._path, path);
+        path = clickgo.tool.urlResolve(this._path, path);
         this._zip.remove(path.slice(1));
         this._refreshList();
     }
@@ -60,7 +60,7 @@ class Zip {
             path = this._path;
         }
         else {
-            path = loader.urlResolve(this._path, path);
+            path = clickgo.tool.urlResolve(this._path, path);
         }
         if (!path.endsWith('/')) {
             path += '/';
@@ -187,7 +187,7 @@ class Zip {
         return this._path.slice(0, -1);
     }
     cd(dir) {
-        this._path = loader.urlResolve(this._path, dir);
+        this._path = clickgo.tool.urlResolve(this._path, dir);
         if (!this._path.endsWith('/')) {
             this._path += '/';
         }

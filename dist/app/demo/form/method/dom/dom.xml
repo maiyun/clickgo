@@ -3,5 +3,7 @@
         <button @tap="setGlobalCursor('wait')">dom.setGlobalCursor('wait')</button>
         <button @tap="setGlobalCursor()">dom.setGlobalCursor()</button>
         <button @tap="cgDialog(isMouseAlsoTouchEvent($event) ? 'true' : 'false')">dom.isMouseAlsoTouchEvent()</button>
+        <button @tap="getStyleCount()">dom.getStyleCount({{taskId}}, 'form')</button>
+        <label>clickgo.form.is.move: {{isMove ? 'true' : 'false'}}</label>
     </layout>
 </form>

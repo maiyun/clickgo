@@ -11,7 +11,7 @@ export function get(tid: number): ICGTaskItem | null {
         'customTheme': list[tid].customTheme,
         'localName': list[tid].local.name,
         'formCount': Object.keys(list[tid].forms).length,
-        'safe': list[tid].safe
+        'icon': list[tid].icon
     };
 }
 
@@ -26,7 +26,7 @@ export function getList(): Record<string, ICGTaskItem> {
             'customTheme': item.customTheme,
             'localName': item.local.name,
             'formCount': Object.keys(item.forms).length,
-            'safe': item.safe
+            'icon': item.icon
         };
     }
     return list;
@@ -35,17 +35,17 @@ export function getList(): Record<string, ICGTaskItem> {
 /**
  * --- 运行一个应用 ---
  * @param url app 路径
- * @param opt runtime 运行时要注入的文件列表（cg 文件默认被注入）, safe 是否是安全的 app ---
+ * @param opt runtime 运行时要注入的文件列表（cg 文件默认被注入） ---
  */
-export async function run(url: string, opt: { 'runtime'?: Record<string, Blob | string>; } = {}): Promise<number> {
+export async function run(url: string, opt: { 'runtime'?: Record<string, Blob | string>; 'icon'?: string; } = {}): Promise<number> {
+    let icon = clickgo.cgRootPath + 'icon.png';
+    if (opt.icon) {
+        icon = opt.icon;
+    }
     if (!opt.runtime) {
         opt.runtime = {};
     }
-    let safe = false;
-    if (url.startsWith('/clickgo/')) {
-        safe = true;
-    }
-    let appPkg: ICGAppPkg | null = await clickgo.core.fetchApp(url, safe);
+    let appPkg: ICGAppPkg | null = await clickgo.core.fetchApp(url);
     if (!appPkg) {
         return -1;
     }
@@ -67,7 +67,7 @@ export async function run(url: string, opt: { 'runtime'?: Record<string, Blob | 
             'name': '',
             'data': {}
         }),
-        'safe': appPkg.safe,
+        'icon': appPkg.icon ?? icon,
         'permission': {},
 
         'controlPkgs': {},
@@ -76,7 +76,8 @@ export async function run(url: string, opt: { 'runtime'?: Record<string, Blob | 
         'files': files,
         'forms': {},
         'objectURLs': {},
-        'initControls': {}
+        'initControls': {},
+        'timers': []
     };
     let task: ICGTask = list[taskId];
     // --- 读取 config，对 control 和 theme 进行 pkg 化（clickgo 的话要运行一遍 fetch 保证已经完成加载） ---
@@ -88,7 +89,7 @@ export async function run(url: string, opt: { 'runtime'?: Record<string, Blob | 
             clickgoFileList.push(path.slice(8));
         }
         else if (task.files[path]) {
-            let pkg = await clickgo.control.read(task.files[path] as Blob, appPkg.safe);
+            let pkg = await clickgo.control.read(task.files[path] as Blob);
             if (pkg) {
                 task.controlPkgs[path] = pkg;
             }
@@ -134,6 +135,8 @@ export async function run(url: string, opt: { 'runtime'?: Record<string, Blob | 
             return -2;
         }
     }
+    // --- 触发 taskStarted 事件 ---
+    clickgo.core.trigger('taskStarted', task.id);
     // --- 创建 form ---
     clickgo.dom.createToStyleList(task.id);
     let form = await clickgo.form.create(task.id, {
@@ -149,6 +152,7 @@ export async function run(url: string, opt: { 'runtime'?: Record<string, Blob | 
         }
         delete(list[task.id]);
         clickgo.dom.removeFromStyleList(task.id);
+        clickgo.core.trigger('taskEnded', task.id);
         return form - 100;
     }
     // --- 设置 global style（如果 form 创建失败，就不设置 global style 了） ---
@@ -170,8 +174,6 @@ export async function run(url: string, opt: { 'runtime'?: Record<string, Blob | 
             await clickgo.theme.load(task.id);
         }
     }
-    // --- 触发 taskStarted 事件 ---
-    clickgo.core.trigger('taskStarted', task.id);
     return task.id;
 }
 
@@ -201,6 +203,10 @@ export function end(taskId: number): boolean {
     for (let name in task.controlPkgs) {
         clickgo.control.revokeObjectURL(task.controlPkgs[name]);
     }
+    // --- 移除所有 timer ---
+    for (let timer of list[taskId].timers) {
+        clearTimeout(timer);
+    }
     // --- 移除 task ---
     delete(list[taskId]);
     // --- 触发 taskEnded 事件 ---
@@ -210,5 +216,7 @@ export function end(taskId: number): boolean {
     if (fid) {
         clickgo.form.changeFocus(fid);
     }
+    // --- 移除 task bar ---
+    clickgo.form.clearTask(taskId);
     return true;
 }

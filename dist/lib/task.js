@@ -20,7 +20,7 @@ function get(tid) {
         'customTheme': exports.list[tid].customTheme,
         'localName': exports.list[tid].local.name,
         'formCount': Object.keys(exports.list[tid].forms).length,
-        'safe': exports.list[tid].safe
+        'icon': exports.list[tid].icon
     };
 }
 exports.get = get;
@@ -32,22 +32,23 @@ function getList() {
             'customTheme': item.customTheme,
             'localName': item.local.name,
             'formCount': Object.keys(item.forms).length,
-            'safe': item.safe
+            'icon': item.icon
         };
     }
     return list;
 }
 exports.getList = getList;
 function run(url, opt = {}) {
+    var _a;
     return __awaiter(this, void 0, void 0, function* () {
+        let icon = clickgo.cgRootPath + 'icon.png';
+        if (opt.icon) {
+            icon = opt.icon;
+        }
         if (!opt.runtime) {
             opt.runtime = {};
         }
-        let safe = false;
-        if (url.startsWith('/clickgo/')) {
-            safe = true;
-        }
-        let appPkg = yield clickgo.core.fetchApp(url, safe);
+        let appPkg = yield clickgo.core.fetchApp(url);
         if (!appPkg) {
             return -1;
         }
@@ -67,14 +68,15 @@ function run(url, opt = {}) {
                 'name': '',
                 'data': {}
             }),
-            'safe': appPkg.safe,
+            'icon': (_a = appPkg.icon) !== null && _a !== void 0 ? _a : icon,
             'permission': {},
             'controlPkgs': {},
             'themePkgs': {},
             'files': files,
             'forms': {},
             'objectURLs': {},
-            'initControls': {}
+            'initControls': {},
+            'timers': []
         };
         let task = exports.list[taskId];
         let clickgoFileList = [];
@@ -84,7 +86,7 @@ function run(url, opt = {}) {
                 clickgoFileList.push(path.slice(8));
             }
             else if (task.files[path]) {
-                let pkg = yield clickgo.control.read(task.files[path], appPkg.safe);
+                let pkg = yield clickgo.control.read(task.files[path]);
                 if (pkg) {
                     task.controlPkgs[path] = pkg;
                 }
@@ -124,10 +126,11 @@ function run(url, opt = {}) {
                     }
                 });
             }
-            catch (_a) {
+            catch (_b) {
                 return -2;
             }
         }
+        clickgo.core.trigger('taskStarted', task.id);
         clickgo.dom.createToStyleList(task.id);
         let form = yield clickgo.form.create(task.id, {
             'file': appPkg.config.main
@@ -141,6 +144,7 @@ function run(url, opt = {}) {
             }
             delete (exports.list[task.id]);
             clickgo.dom.removeFromStyleList(task.id);
+            clickgo.core.trigger('taskEnded', task.id);
             return form - 100;
         }
         if (appPkg.config.style && appPkg.files[appPkg.config.style + '.css']) {
@@ -159,7 +163,6 @@ function run(url, opt = {}) {
                 yield clickgo.theme.load(task.id);
             }
         }
-        clickgo.core.trigger('taskStarted', task.id);
         return task.id;
     });
 }
@@ -183,12 +186,16 @@ function end(taskId) {
     for (let name in task.controlPkgs) {
         clickgo.control.revokeObjectURL(task.controlPkgs[name]);
     }
+    for (let timer of exports.list[taskId].timers) {
+        clearTimeout(timer);
+    }
     delete (exports.list[taskId]);
     clickgo.core.trigger('taskEnded', taskId);
     let fid = clickgo.form.getMaxZIndexFormID();
     if (fid) {
         clickgo.form.changeFocus(fid);
     }
+    clickgo.form.clearTask(taskId);
     return true;
 }
 exports.end = end;

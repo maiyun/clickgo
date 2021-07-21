@@ -31,8 +31,8 @@ styleList.insertAdjacentHTML('beforeend', `<style class='cg-global'>
 .cg-form-list *, .cg-pop-list *, .cg-system *, .cg-form-list *::after, .cg-pop-list *::after, .cg-system *::after, .cg-form-list *::before, .cg-pop-list *::before, .cg-system *::before {box-sizing: border-box; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); flex-shrink: 0;}
 .cg-form-list, .cg-form-list input, .cg-form-list textarea, .cg-pop-list, .cg-pop-list input, .cg-pop-list textarea, .cg-system, .cg-system input, .cg-system textarea {font-family: "Helvetica Neue","Helvetica","PingFang SC","Hiragino Sans GB","Noto Sans CJK SC","Noto Sans CJK","Source Han Sans","WenQuanYi Micro Hei","Microsoft YaHei",sans-serif; /* -apple-system,BlinkMacSystemFont,Roboto,"Segoe UI","Helvetica Neue","PingFang SC","Noto Sans","Noto Sans CJK SC","Microsoft YaHei","微软雅黑",sans-serif */; font-size: 12px; line-height: 1; -webkit-font-smoothing: antialiased;}
 
-.cg-circular {box-sizing: border-box; position: fixed; z-index: 20020003; border: solid 3px #76b9ed; border-radius: 50%; filter: drop-shadow(0 0 7px #76b9ed); pointer-events: none; opacity: 0;}
-.cg-rectangle {box-sizing: border-box; position: fixed; z-index: 20020002; border: solid 1px rgba(118, 185, 237, .7); box-shadow: 0 0 10px rgba(0, 0, 0, .3); background: rgba(118, 185, 237, .1); pointer-events: none; opacity: 0;}
+.cg-circular {box-sizing: border-box; position: fixed; z-index: 20020003; border: solid 3px rgba(255, 255, 255, 1); border-radius: 50%; filter: drop-shadow(0 0 3px #FFF); pointer-events: none; opacity: 0;}
+.cg-rectangle {box-sizing: border-box; position: fixed; z-index: 20020002; border: solid 1px rgba(255, 255, 255, .7); box-shadow: 0 0 10px rgba(0, 0, 0, .3); background: rgba(255, 255, 255, .1); pointer-events: none; opacity: 0;}
 
 .cg-system-notify {box-shadow: 0 0 20px rgba(0, 0, 0, .2); background: linear-gradient(to top, rgba(255, 255, 255, .75), rgba(255, 255, 255, .8)); position: fixed; padding: 15px; border-radius: 8px; right: 0; top: 0; width: 280px; font-size: 14px; backdrop-filter: blur(5px); display: flex; transition: .1s ease-out; transition-property: transform, opacity;}
 .cg-system-icon {margin-right: 10px; width: 16px; height: 16px; border-radius: 50%;}
@@ -43,55 +43,6 @@ styleList.insertAdjacentHTML('beforeend', `<style class='cg-global'>
 .cg-system-notify-title {font-size: 16px; font-weight: bold; padding-bottom: 10px;}
 .cg-system-notify-content {line-height: 1.5;}
 </style>`);
-
-/** --- 作用显示区域 --- */
-let position: ICGDomPosition = {
-    'left': undefined,
-    'top': undefined,
-    'width': undefined,
-    'height': undefined,
-    'offsetWidth': undefined,
-    'offsetHeight': undefined
-};
-
-/**
- * --- 设置作用显示区域 ---
- * @param pos 设置的区域
- */
-export function setPosition(pos: ICGDomPosition): void {
-    if (pos.left !== undefined) {
-        position.left = pos.left;
-    }
-    if (pos.top !== undefined) {
-        position.top = pos.top;
-    }
-    if (pos.width !== undefined) {
-        position.width = pos.width;
-    }
-    if (pos.height !== undefined) {
-        position.height = pos.height;
-    }
-    if (pos.offsetWidth !== undefined) {
-        position.offsetWidth = pos.offsetWidth;
-    }
-    if (pos.offsetHeight !== undefined) {
-        position.offsetHeight = pos.offsetHeight;
-    }
-}
-
-/**
- * --- 获取作用显示区域 ---
- */
-export function getPosition(): ICGDomPositionResult {
-    return {
-        'left': position.left ?? 0,
-        'top': position.top ?? 0,
-        'width': window.innerWidth + (position.offsetWidth ?? 0),
-        'height': window.innerHeight + (position.offsetHeight ?? 0),
-        'offsetWidth': position.offsetWidth ?? 0,
-        'offsetHeight': position.offsetHeight ?? 0
-    };
-}
 
 /** --- 全局 cursor 设置的 style 标签 --- */
 let globalCursorStyle: HTMLStyleElement;
@@ -508,11 +459,11 @@ export function bindMove(e: MouseEvent | TouchEvent, opt: { 'areaObject'?: HTMLE
         bottom = areaRect.top + areaRect.height - (parseFloat(areaStyle.borderRightWidth) + parseFloat(areaStyle.paddingRight));
     }
     else {
-        let position = getPosition();
-        left = opt.left ?? position.left;
-        top = opt.top ?? position.top;
-        right = opt.right ?? position.width;
-        bottom = opt.bottom ?? position.height;
+        let area = clickgo.form.getAvailArea();
+        left = opt.left ?? area.left;
+        top = opt.top ?? area.top;
+        right = opt.right ?? area.width;
+        bottom = opt.bottom ?? area.height;
     }
     // --- 限定拖动区域额外补偿（拖动对象和实际对象有一定偏差时使用） ---
     if (opt.offsetLeft) {

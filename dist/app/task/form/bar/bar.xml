@@ -1,0 +1,33 @@
+  
+<form v-model:width="width" v-model:height="height" v-model:left="left" v-model:top="top" title="Bar" border="none" :resize="false" background="transparent">
+    <task :position="position">
+        <task-item>
+            <img width="16" height="16" src="/clickgo/icon-white.png" />
+        </task-item>
+        <task-item v-for="(task, taskId) of tasks" :selected="task.selected" :opened="task.opened" @tap="itemTap(taskId)">
+            <img width="16" height="16" :src="task.icon" />
+            <template v-if="task.formCount > 1" v-slot:pop>
+                <menulist>
+                    <menulist-item v-for="(form, formId) of task.forms" @tap="changeFocus(formId)">
+                        <img :src="form.icon" width="16" height="16" /><label style="margin-left: 10px;">{{form.title}}</label>
+                    </menulist-item>
+                </menulist>
+            </template>
+        </task-item>
+        <template v-slot:pop>
+            <menulist>
+                <menulist-item alt="P">
+                    Position
+                    <template v-slot:pop>
+                        <menulist>
+                            <menulist-item alt="T" type="radio" v-model="position" label="top">Top</menulist-item>
+                            <menulist-item alt="R" type="radio" v-model="position" label="right">Right</menulist-item>
+                            <menulist-item alt="B" type="radio" v-model="position" label="bottom">Bottom</menulist-item>
+                            <menulist-item alt="L" type="radio" v-model="position" label="left">Left</menulist-item>
+                        </menulist>
+                    </template>
+                </menulist-item>
+            </menulist>
+        </template>
+    </task>
+</form>

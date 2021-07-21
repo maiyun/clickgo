@@ -1,0 +1,61 @@
+.wrap {
+    display: flex; position: relative; flex: 1; padding: 10px 12px; margin-right: 1px;
+    &.top, &.bottom {
+        display: inline-block;
+    }
+
+    &.hover {
+        background: rgba(255, 255, 255, .1);
+    }
+    &.active {
+        background: rgba(255, 255, 255, .05);
+    }
+
+    &.selected {
+        background: rgba(255, 255, 255, .2);
+        &.hover {
+            background: rgba(255, 255, 255, .3);
+        }
+        &.active {
+            background: rgba(255, 255, 255, .25);
+        }
+    }
+
+    .line {
+        position: absolute; left: 0; bottom: 0; display: flex; pointer-events: none; justify-content: center; width: 100%;
+        &::after {
+            content: ' '; height: 2px; width: 70%; display: block; transition: .1s ease-out; transition-property: width;
+        }
+    }
+    &.opened {
+        .line {
+            &::after {
+                background: hsl(205, 100%, 70%);
+            }
+        }
+        &.hover {
+            .line {
+                &::after {
+                    width: 100%;
+                }
+            }
+        }
+    }
+    &.selected {
+        .line {
+            &::after {
+                width: 100%;
+            }
+        }
+    }
+}
+
+.pop {
+    position: absolute; box-shadow: 1px 1px 5px rgba(0, 0, 0, .2); transition: .1s ease-out; transition-property: transform, opacity; transform: translateY(-10px); opacity: 0;
+    &:not(.open) {
+        pointer-events: none;
+    }
+    &.open {
+        transform: translateY(0px); opacity: 1;
+    } 
+}

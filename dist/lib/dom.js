@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.siblings = exports.findParentByClass = exports.bindResize = exports.bindMove = exports.is = exports.bindLong = exports.bindDown = exports.watch = exports.watchSize = exports.getSize = exports.getStyleCount = exports.removeStyle = exports.pushStyle = exports.removeFromStyleList = exports.createToStyleList = exports.isMouseAlsoTouchEvent = exports.setGlobalCursor = exports.getPosition = exports.setPosition = void 0;
+exports.siblings = exports.findParentByClass = exports.bindResize = exports.bindMove = exports.is = exports.bindLong = exports.bindDown = exports.watch = exports.watchSize = exports.getSize = exports.getStyleCount = exports.removeStyle = exports.pushStyle = exports.removeFromStyleList = exports.createToStyleList = exports.isMouseAlsoTouchEvent = exports.setGlobalCursor = void 0;
 let styleList = document.createElement('div');
 styleList.style.display = 'none';
 document.getElementsByTagName('body')[0].appendChild(styleList);
@@ -17,8 +17,8 @@ styleList.insertAdjacentHTML('beforeend', `<style class='cg-global'>
 .cg-form-list *, .cg-pop-list *, .cg-system *, .cg-form-list *::after, .cg-pop-list *::after, .cg-system *::after, .cg-form-list *::before, .cg-pop-list *::before, .cg-system *::before {box-sizing: border-box; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); flex-shrink: 0;}
 .cg-form-list, .cg-form-list input, .cg-form-list textarea, .cg-pop-list, .cg-pop-list input, .cg-pop-list textarea, .cg-system, .cg-system input, .cg-system textarea {font-family: "Helvetica Neue","Helvetica","PingFang SC","Hiragino Sans GB","Noto Sans CJK SC","Noto Sans CJK","Source Han Sans","WenQuanYi Micro Hei","Microsoft YaHei",sans-serif; /* -apple-system,BlinkMacSystemFont,Roboto,"Segoe UI","Helvetica Neue","PingFang SC","Noto Sans","Noto Sans CJK SC","Microsoft YaHei","微软雅黑",sans-serif */; font-size: 12px; line-height: 1; -webkit-font-smoothing: antialiased;}
 
-.cg-circular {box-sizing: border-box; position: fixed; z-index: 20020003; border: solid 3px #76b9ed; border-radius: 50%; filter: drop-shadow(0 0 7px #76b9ed); pointer-events: none; opacity: 0;}
-.cg-rectangle {box-sizing: border-box; position: fixed; z-index: 20020002; border: solid 1px rgba(118, 185, 237, .7); box-shadow: 0 0 10px rgba(0, 0, 0, .3); background: rgba(118, 185, 237, .1); pointer-events: none; opacity: 0;}
+.cg-circular {box-sizing: border-box; position: fixed; z-index: 20020003; border: solid 3px rgba(255, 255, 255, 1); border-radius: 50%; filter: drop-shadow(0 0 3px #FFF); pointer-events: none; opacity: 0;}
+.cg-rectangle {box-sizing: border-box; position: fixed; z-index: 20020002; border: solid 1px rgba(255, 255, 255, .7); box-shadow: 0 0 10px rgba(0, 0, 0, .3); background: rgba(255, 255, 255, .1); pointer-events: none; opacity: 0;}
 
 .cg-system-notify {box-shadow: 0 0 20px rgba(0, 0, 0, .2); background: linear-gradient(to top, rgba(255, 255, 255, .75), rgba(255, 255, 255, .8)); position: fixed; padding: 15px; border-radius: 8px; right: 0; top: 0; width: 280px; font-size: 14px; backdrop-filter: blur(5px); display: flex; transition: .1s ease-out; transition-property: transform, opacity;}
 .cg-system-icon {margin-right: 10px; width: 16px; height: 16px; border-radius: 50%;}
@@ -29,47 +29,6 @@ styleList.insertAdjacentHTML('beforeend', `<style class='cg-global'>
 .cg-system-notify-title {font-size: 16px; font-weight: bold; padding-bottom: 10px;}
 .cg-system-notify-content {line-height: 1.5;}
 </style>`);
-let position = {
-    'left': undefined,
-    'top': undefined,
-    'width': undefined,
-    'height': undefined,
-    'offsetWidth': undefined,
-    'offsetHeight': undefined
-};
-function setPosition(pos) {
-    if (pos.left !== undefined) {
-        position.left = pos.left;
-    }
-    if (pos.top !== undefined) {
-        position.top = pos.top;
-    }
-    if (pos.width !== undefined) {
-        position.width = pos.width;
-    }
-    if (pos.height !== undefined) {
-        position.height = pos.height;
-    }
-    if (pos.offsetWidth !== undefined) {
-        position.offsetWidth = pos.offsetWidth;
-    }
-    if (pos.offsetHeight !== undefined) {
-        position.offsetHeight = pos.offsetHeight;
-    }
-}
-exports.setPosition = setPosition;
-function getPosition() {
-    var _a, _b, _c, _d, _e, _f;
-    return {
-        'left': (_a = position.left) !== null && _a !== void 0 ? _a : 0,
-        'top': (_b = position.top) !== null && _b !== void 0 ? _b : 0,
-        'width': window.innerWidth + ((_c = position.offsetWidth) !== null && _c !== void 0 ? _c : 0),
-        'height': window.innerHeight + ((_d = position.offsetHeight) !== null && _d !== void 0 ? _d : 0),
-        'offsetWidth': (_e = position.offsetWidth) !== null && _e !== void 0 ? _e : 0,
-        'offsetHeight': (_f = position.offsetHeight) !== null && _f !== void 0 ? _f : 0
-    };
-}
-exports.getPosition = getPosition;
 let globalCursorStyle;
 function setGlobalCursor(type) {
     if (!globalCursorStyle) {
@@ -408,11 +367,11 @@ function bindMove(e, opt) {
         bottom = areaRect.top + areaRect.height - (parseFloat(areaStyle.borderRightWidth) + parseFloat(areaStyle.paddingRight));
     }
     else {
-        let position = getPosition();
-        left = (_a = opt.left) !== null && _a !== void 0 ? _a : position.left;
-        top = (_b = opt.top) !== null && _b !== void 0 ? _b : position.top;
-        right = (_c = opt.right) !== null && _c !== void 0 ? _c : position.width;
-        bottom = (_d = opt.bottom) !== null && _d !== void 0 ? _d : position.height;
+        let area = clickgo.form.getAvailArea();
+        left = (_a = opt.left) !== null && _a !== void 0 ? _a : area.left;
+        top = (_b = opt.top) !== null && _b !== void 0 ? _b : area.top;
+        right = (_c = opt.right) !== null && _c !== void 0 ? _c : area.width;
+        bottom = (_d = opt.bottom) !== null && _d !== void 0 ? _d : area.height;
     }
     if (opt.offsetLeft) {
         left += opt.offsetLeft;

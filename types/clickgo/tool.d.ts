@@ -1,8 +1,6 @@
 interface ICGToolLib {
-    blob2DataUrl(blob: Blob): Promise<string>;
     file2ObjectUrl(file: string, obj: ICGTask | ICGControl | ICGThemePkg): string | null;
     blob2ArrayBuffer(blob: Blob): Promise<ArrayBuffer>;
-    blob2Text(blob: Blob): Promise<string>;
     clone(obj: Record<string, any> | any[]): any[] | any;
     sleep(ms?: number): Promise<void>;
     purify(text: string): string;
@@ -22,6 +20,10 @@ interface ICGToolLib {
     escapeHTML(html: string): string;
     includes(str: string, search: string | string[]): boolean;
     replace(text: string, search: string, replace: string): string;
+    parseUrl(url: string): ILoaderUrl;
+    urlResolve(from: string, to: string): string;
+    blob2Text(blob: Blob): Promise<string>;
+    blob2DataUrl(blob: Blob): Promise<string>;
 }
 
 interface ICGUrl {

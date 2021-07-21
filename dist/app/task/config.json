@@ -1,0 +1,21 @@
+{
+    "name": "Clickgo Task",
+    "ver": 1,
+    "version": "0.1",
+    "author": "clickgo",
+
+    "controls": [
+        "/clickgo/control/form",
+        "/clickgo/control/common",
+        "/clickgo/control/task",
+        "/clickgo/control/menu",
+        "/clickgo/control/menulist"
+    ],
+    "main": "/form/bar/bar",
+
+    "files": [
+        "/form/bar/bar.js",
+        "/form/bar/bar.xml",
+        "/form/desktop/desktop.xml"
+    ]
+}

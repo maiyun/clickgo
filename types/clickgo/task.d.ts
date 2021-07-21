@@ -2,8 +2,9 @@ interface ICGTaskLib {
     'list': Record<number, ICGTask>;
     'lastId': number;
 
+    get(tid: number): ICGTaskItem | null;
     getList(): Record<string, ICGTaskItem>;
-    run(url: string | Blob, opt?: { 'runtime'?: Record<string, Blob | string>; 'safe'?: boolean; }): Promise<number>;
+    run(url: string | Blob, opt?: { 'runtime'?: Record<string, Blob | string>; 'icon'?: string; }): Promise<number>;
     end(taskId: number): boolean;
 }
 
@@ -16,7 +17,7 @@ interface ICGTask {
         'name': string;
         'data': Record<string, Record<string, string>>;
     };
-    'safe': boolean;
+    'icon': string;
     'permission': Record<string, any>;
 
     'controlPkgs': Record<string, ICGControlPkg>;
@@ -26,6 +27,7 @@ interface ICGTask {
     'files': Record<string, Blob | string>;
     'objectURLs': Record<string, string>;
     'initControls': Record<string, { 'layout': string; 'prep': string; }>;
+    'timers': number[];
 }
 
 /** --- Task Item 的简略情况，通常在 list 当中 --- */
@@ -33,5 +35,5 @@ interface ICGTaskItem {
     'customTheme': boolean;
     'localName': string;
     'formCount': number;
-    'safe': boolean;
+    'icon': string;
 }

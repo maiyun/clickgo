@@ -19,7 +19,7 @@ class Zip implements ICGZip {
      * @param encoding 编码或选项
      */
     public async getContent<T extends TCGZipOutputType>(path: string, type: T = 'string' as T): Promise<ICGZipOutputByType[T] | string | null> {
-        path = loader.urlResolve(this._path, path);
+        path = clickgo.tool.urlResolve(this._path, path);
         let f = this._zip.file(path.slice(1));
         if (!f) {
             return null;
@@ -39,7 +39,7 @@ class Zip implements ICGZip {
      * @param options 选项
      */
     public putContent<T extends TCGZipInputType>(path: string, data: ICGZipInputByType[T], options: { 'base64'?: boolean; 'binary'?: boolean; 'date'?: Date; } = {}): void {
-        path = loader.urlResolve(this._path, path);
+        path = clickgo.tool.urlResolve(this._path, path);
         this._zip.file(path.slice(1), data as InputByType[T], {
             'base64': options.base64,
             'binary': options.binary,
@@ -53,7 +53,7 @@ class Zip implements ICGZip {
      * @param path 要删除的文件路径
      */
     public unlink(path: string): void {
-        path = loader.urlResolve(this._path, path);
+        path = clickgo.tool.urlResolve(this._path, path);
         this._zip.remove(path.slice(1));
         this._refreshList();
     }
@@ -80,7 +80,7 @@ class Zip implements ICGZip {
             path = this._path;
         }
         else {
-            path = loader.urlResolve(this._path, path);
+            path = clickgo.tool.urlResolve(this._path, path);
         }
         if (!path.endsWith('/')) {
             path += '/';
@@ -234,7 +234,7 @@ class Zip implements ICGZip {
      * @param dir 相对路径或绝对路径
      */
     public cd(dir: string): string {
-        this._path = loader.urlResolve(this._path, dir);
+        this._path = clickgo.tool.urlResolve(this._path, dir);
         if (!this._path.endsWith('/')) {
             this._path += '/';
         }

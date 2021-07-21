@@ -15,25 +15,6 @@
  */
 
 /**
- * --- 将 blob 对象转换为 base64 url ---
- * @param blob 对象
- */
-export function blob2DataUrl(blob: Blob): Promise<string> {
-    return new Promise(function(resove) {
-        let fr = new FileReader();
-        fr.addEventListener('load', function(e) {
-            if (e.target) {
-                resove(e.target.result as string);
-            }
-            else {
-                resove('');
-            }
-        });
-        fr.readAsDataURL(blob);
-    });
-}
-
-/**
  * --- 将 obj 中的一个文件路径转换成 object url，已经转换的直接返回 ---
  * @param file 要转换的文件绝对路径（不能用 clickgo 路径）
  * @param obj 包含 files 属性的对象
@@ -64,25 +45,6 @@ export function blob2ArrayBuffer(blob: Blob): Promise<ArrayBuffer> {
             resove(fr.result as ArrayBuffer);
         });
         fr.readAsArrayBuffer(blob);
-    });
-}
-
-/**
- * --- 将 blob 对象转换为 text ---
- * @param blob 对象
- */
-export function blob2Text(blob: Blob): Promise<string> {
-    return new Promise(function(resove) {
-        let fr = new FileReader();
-        fr.addEventListener('load', function(e) {
-            if (e.target) {
-                resove(e.target.result as string);
-            }
-            else {
-                resove('');
-            }
-        });
-        fr.readAsText(blob);
     });
 }
 
@@ -169,7 +131,7 @@ export async function styleUrl2ObjectOrDataUrl(path: string, style: string, obj:
     let reg = /url\(["']{0,1}(.+?)["']{0,1}\)/ig;
     let match: RegExpExecArray | null = null;
     while ((match = reg.exec(style))) {
-        let realPath = loader.urlResolve(path, match[1]);
+        let realPath = urlResolve(path, match[1]);
         if (!obj.files[realPath]) {
             continue;
         }
@@ -508,4 +470,20 @@ export function replace(text: string, search: string, replace: string): string {
         result = text.replace(search, replace);
     }
     return result;
+}
+
+export function parseUrl(url: string): ILoaderUrl {
+    return loader.parseUrl(url);
+}
+
+export function urlResolve(from: string, to: string): string {
+    return loader.urlResolve(from, to);
+}
+
+export function blob2Text(blob: Blob): Promise<string> {
+    return loader.blob2Text(blob);
+}
+
+export function blob2DataUrl(blob: Blob): Promise<string> {
+    return loader.blob2DataUrl(blob);
 }

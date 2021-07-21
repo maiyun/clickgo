@@ -88,7 +88,13 @@ interface IVueForm extends IVue {
     cgCreateForm(paramOpt?: string | ICGFormCreateOptions & { 'mask'?: boolean; }): Promise<void>;
     cgCloseForm(): void;
     cgBindFormDrag(e: MouseEvent | TouchEvent): void;
-    cgSetSystemEventListener(name: TCGGlobalEvent, func: (...any: any) => void | Promise<void>): void;
+    cgSetSystemEventListener(name: 'screenResize', func: () => void | Promise<void>): void;
+    cgSetSystemEventListener(name: 'error', func: (taskId: number, formId: number, error: Error, info: string) => void | Promise<void>): void;
+    cgSetSystemEventListener(name: 'formCreated' | 'formRemoved', func: (taskId: number, formId: number, title: string, icon: string) => void | Promise<void>): void;
+    cgSetSystemEventListener(name: 'formTitleChanged' | 'formIconChanged', func: (taskId: number, formId: number, text: string) => void | Promise<void>): void;
+    cgSetSystemEventListener(name: 'formStateMinChanged' | 'formStateMaxChanged' | 'formShowChanged', func: (taskId: number, formId: number, state: boolean) => void | Promise<void>): void;
+    cgSetSystemEventListener(name: 'formFocused' | 'formBlurred' | 'formFlash', func: (taskId: number, formId: number) => void | Promise<void>): void;
+    cgSetSystemEventListener(name: 'taskStarted' | 'taskEnded', func: (taskId: number) => void | Promise<void>): void;
     cgRemoveSystemEventListener(name: TCGGlobalEvent): void;
     cgDialog(opt: string | ICGFormDialog): Promise<string>;
     cgConfirm(content: string, cancel?: boolean): Promise<boolean | number>;
@@ -115,6 +121,8 @@ interface IVueForm extends IVue {
      * @param cla class 内容对象
      */
     cgClassPrepend(cla: any): string;
+    cgCreateTimer(fun: () => void | Promise<void>, delay: number, interval?: boolean): number;
+    cgRemoveTimer(timer: number): void;
 }
 
 interface IVueControl extends IVue {
@@ -130,8 +138,6 @@ interface IVueControl extends IVue {
     'controlName': string;
     /** --- 窗体基目录 --- */
     'cgPath': string;
-    /** --- 是否是安全控件 --- */
-    'cgSafe': boolean;
     /** --- 控件前导 --- */
     'cgPrep': string;
     /** --- 获取目前现存的子 slots --- */
@@ -232,6 +238,18 @@ interface IVueControl extends IVue {
      * @param cla class 内容对象
      */
     cgClassPrepend(cla: any): string;
+    /**
+     * --- 创建 timer ---
+     * @param fun 执行的函数
+     * @param delay 延时
+     * @param interval 是否重复执行
+     */
+    cgCreateTimer(fun: () => void | Promise<void>, delay: number, interval?: boolean): number;
+    /**
+     * --- 删除 timer ---
+     * @param timer 要删除的 timer number ---
+     */
+    cgRemoveTimer(timer: number): void;
     /**
      * --- 显示 pop ---
      * @param direction 要显示方向（以 $el 为准的 h 水平和 v 垂直）或坐标

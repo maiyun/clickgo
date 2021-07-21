@@ -4,27 +4,24 @@ interface ICGCoreLib {
     };
     'clickgoFiles': Record<string, Blob | string>;
     'globalEvents': ICGGlobalEvents;
+    trigger(name: 'screenResize'): void;
+    trigger(name: 'error', taskId: number, formId: number, error: Error, info: string): void;
     trigger(name: 'formCreated' | 'formRemoved', taskId: number, formId: number, title: string, icon: string): void;
     trigger(name: 'formTitleChanged' | 'formIconChanged', taskId: number, formId: number, text: string): void;
     trigger(name: 'formStateMinChanged' | 'formStateMaxChanged' | 'formShowChanged', taskId: number, formId: number, state: boolean): void;
-    /**
-     * @param name 'screenResize' | 'formFocused' | 'formBlurred' | 'formFlash'
-     * @param taskId name 为 screenResize 时为 width
-     * @param formId name 为 screenResize 时为 height
-     */
-    trigger(name: 'screenResize' | 'formFocused' | 'formBlurred' | 'formFlash', taskId: number, formId: number): void;
+    trigger(name: 'formFocused' | 'formBlurred' | 'formFlash', taskId: number, formId: number): void;
     trigger(name: 'taskStarted' | 'taskEnded', taskId: number): void;
     fetchClickGoFile(path: string): Promise<Blob | string | null>;
-    readApp(blob: Blob, salf: boolean): Promise<false | ICGAppPkg>;
-    fetchApp(url: string, safe: boolean): Promise<null | ICGAppPkg>;
+    readApp(blob: Blob): Promise<false | ICGAppPkg>;
+    fetchApp(url: string): Promise<null | ICGAppPkg>;
 }
 
 /** --- 全局事件 --- */
 interface ICGGlobalEvents {
     /** --- 配置捕获 Vue 错误 --- */
-    errorHandler: null | ((taskId: number, formId: number, error: any, info: string) => void | Promise<void>);
+    errorHandler: null | ((taskId: number, formId: number, error: Error, info: string) => void | Promise<void>);
     /** --- 当屏幕大小改变时触发的事件 --- */
-    screenResizeHandler: null | ((width: number, height: number) => void | Promise<void>);
+    screenResizeHandler: null | (() => void | Promise<void>);
     /** --- 窗体被创建后触发 --- */
     formCreatedHandler: null | ((taskId: number, formId: number, title: string, icon: string) => void | Promise<void>);
     /** --- 窗体被移除后触发 --- */
@@ -52,13 +49,13 @@ interface ICGGlobalEvents {
 }
 
 /** --- 全局事件类型 --- */
-type TCGGlobalEvent = 'screenResize' | 'formCreated' | 'formRemoved' | 'formTitleChanged' | 'formIconChanged' | 'formStateMinChanged' | 'formStateMaxChanged' | 'formShowChanged' | 'formFocused' | 'formBlurred' | 'formFlash' | 'taskStarted' | 'taskEnded';
+type TCGGlobalEvent = 'error' | 'screenResize' | 'formCreated' | 'formRemoved' | 'formTitleChanged' | 'formIconChanged' | 'formStateMinChanged' | 'formStateMaxChanged' | 'formShowChanged' | 'formFocused' | 'formBlurred' | 'formFlash' | 'taskStarted' | 'taskEnded';
 
 /** --- 应用文件包 --- */
 interface ICGAppPkg {
     'type': 'app';
-    /** --- 是否可信 --- */
-    'safe': boolean;
+    /** --- 应用图标 --- */
+    'icon': string;
     /** --- 应用对象配置文件 --- */
     'config': ICGAppConfig;
     /** --- 所有已加载的文件内容 --- */
@@ -80,6 +77,8 @@ interface ICGAppConfig {
     'style'?: string;
     /** --- 不带扩展名，系统会在末尾添加 .xml --- */
     'main': string;
+    /** --- 图标路径，需包含扩张名 --- */
+    'icon': string;
 
     /** --- 将要加载的文件列表 --- */
     'files': string[];

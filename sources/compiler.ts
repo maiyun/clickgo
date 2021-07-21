@@ -49,7 +49,7 @@ async function run(): Promise<void> {
         if (item.isFile()) {
             continue;
         }
-        if (['greatlist-item', 'greatlist-split', 'img', 'label', 'layout', 'menu-item', 'menulist-item', 'menulist-split', 'overflow', 'tab-panel'].includes(item.name)) {
+        if (['greatlist-item', 'greatlist-split', 'img', 'label', 'layout', 'menu-item', 'menulist-item', 'menulist-split', 'overflow', 'tab-panel', 'task-item'].includes(item.name)) {
             continue;
         }
 
@@ -79,6 +79,9 @@ async function run(): Promise<void> {
         }
         else if (item.name === 'tab') {
             await addFile(zipo, base, 'tab-panel/');
+        }
+        else if (item.name === 'task') {
+            await addFile(zipo, base, 'task-item/');
         }
 
         await fs.promises.writeFile('dist/control/' + name + '.cgc', await zipo.generateAsync({

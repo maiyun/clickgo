@@ -11,7 +11,7 @@
     </template>
     <div v-if="maskFor !== undefined" class="mask"></div>
     <div class="inner">
-        <div class="header" v-if="border !== 'none'">
+        <div class="header" v-if="border !== 'none' && border !== 'plain'">
             <div class="icon"><img v-if="border !== 'thin' && iconData !== ''" :src="iconData" width="16" height="16" @dragstart="$event.preventDefault();"></div>
             <div class="title" @mousedown="moveMethod($event)" @touchstart="moveMethod($event)">{{title}}</div>
             <div class="controls">

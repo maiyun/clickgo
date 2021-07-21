@@ -9,22 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.replace = exports.includes = exports.escapeHTML = exports.getBoolean = exports.rand = exports.getObjectURLList = exports.revokeObjectURL = exports.createObjectURL = exports.getMimeByPath = exports.stylePrepend = exports.layoutClassPrepend = exports.layoutInsertAttr = exports.layoutAddTagClassAndReTagName = exports.styleUrl2ObjectOrDataUrl = exports.isAppPkg = exports.isControlPkg = exports.purify = exports.sleep = exports.clone = exports.blob2Text = exports.blob2ArrayBuffer = exports.file2ObjectUrl = exports.blob2DataUrl = void 0;
-function blob2DataUrl(blob) {
-    return new Promise(function (resove) {
-        let fr = new FileReader();
-        fr.addEventListener('load', function (e) {
-            if (e.target) {
-                resove(e.target.result);
-            }
-            else {
-                resove('');
-            }
-        });
-        fr.readAsDataURL(blob);
-    });
-}
-exports.blob2DataUrl = blob2DataUrl;
+exports.blob2DataUrl = exports.blob2Text = exports.urlResolve = exports.parseUrl = exports.replace = exports.includes = exports.escapeHTML = exports.getBoolean = exports.rand = exports.getObjectURLList = exports.revokeObjectURL = exports.createObjectURL = exports.getMimeByPath = exports.stylePrepend = exports.layoutClassPrepend = exports.layoutInsertAttr = exports.layoutAddTagClassAndReTagName = exports.styleUrl2ObjectOrDataUrl = exports.isAppPkg = exports.isControlPkg = exports.purify = exports.sleep = exports.clone = exports.blob2ArrayBuffer = exports.file2ObjectUrl = void 0;
 function file2ObjectUrl(file, obj) {
     let ourl = obj.objectURLs[file];
     if (!ourl) {
@@ -50,21 +35,6 @@ function blob2ArrayBuffer(blob) {
     });
 }
 exports.blob2ArrayBuffer = blob2ArrayBuffer;
-function blob2Text(blob) {
-    return new Promise(function (resove) {
-        let fr = new FileReader();
-        fr.addEventListener('load', function (e) {
-            if (e.target) {
-                resove(e.target.result);
-            }
-            else {
-                resove('');
-            }
-        });
-        fr.readAsText(blob);
-    });
-}
-exports.blob2Text = blob2Text;
 function clone(obj) {
     let newObj = {};
     if (obj instanceof Array) {
@@ -122,7 +92,7 @@ function styleUrl2ObjectOrDataUrl(path, style, obj, mode = 'object') {
         let reg = /url\(["']{0,1}(.+?)["']{0,1}\)/ig;
         let match = null;
         while ((match = reg.exec(style))) {
-            let realPath = loader.urlResolve(path, match[1]);
+            let realPath = urlResolve(path, match[1]);
             if (!obj.files[realPath]) {
                 continue;
             }
@@ -378,3 +348,19 @@ function replace(text, search, replace) {
     return result;
 }
 exports.replace = replace;
+function parseUrl(url) {
+    return loader.parseUrl(url);
+}
+exports.parseUrl = parseUrl;
+function urlResolve(from, to) {
+    return loader.urlResolve(from, to);
+}
+exports.urlResolve = urlResolve;
+function blob2Text(blob) {
+    return loader.blob2Text(blob);
+}
+exports.blob2Text = blob2Text;
+function blob2DataUrl(blob) {
+    return loader.blob2DataUrl(blob);
+}
+exports.blob2DataUrl = blob2DataUrl;

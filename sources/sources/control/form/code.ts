@@ -538,10 +538,10 @@ export let methods = {
                 'left': this.leftData,
                 'top': this.topData
             };
-            let pos = clickgo.dom.getPosition();
-            this.topData = pos.top;
+            let area = clickgo.form.getAvailArea();
+            this.topData = area.top;
             this.$emit('update:top', this.topData);
-            this.heightData = pos.height;
+            this.heightData = area.height;
             if (this.height !== 'auto') {
                 this.$emit('update:height', this.heightData);
             }
@@ -585,16 +585,16 @@ export let methods = {
                 this.stateMaxData = true;
                 this.$emit('update:stateMax', true);
                 if (!event.ds) {
-                    let pos = clickgo.dom.getPosition();
-                    this.leftData = pos.left;
+                    let area = clickgo.form.getAvailArea();
+                    this.leftData = area.left;
                     this.$emit('update:left', this.leftData);
-                    this.topData = pos.top;
+                    this.topData = area.top;
                     this.$emit('update:top', this.topData);
-                    this.widthData = pos.width;
+                    this.widthData = area.width;
                     if (this.width !== 'auto') {
                         this.$emit('update:width', this.widthData);
                     }
-                    this.heightData = pos.height;
+                    this.heightData = area.height;
                     if (this.height !== 'auto') {
                         this.$emit('update:height', this.heightData);
                     }
@@ -673,7 +673,7 @@ export let methods = {
                 else {
                     // --- 左下、下、右下 ---
                     top = this.historyLocation.top;
-                    height = clickgo.dom.getPosition().height - top;
+                    height = clickgo.form.getAvailArea().height - top;
                 }
             }
             else {
@@ -751,11 +751,11 @@ export let methods = {
             'end': () => {
                 if (isBorder !== '') {
                     if (isBorder !== 'l' && isBorder !== 'r') {
-                        let pos = clickgo.dom.getPosition();
+                        let area = clickgo.form.getAvailArea();
                         this.stateAbs = true;
-                        this.heightData = pos.height;
+                        this.heightData = area.height;
                         this.$emit('update:height', this.heightData);
-                        this.topData = pos.top;
+                        this.topData = area.top;
                         this.$emit('update:top', this.topData);
                     }
                     clickgo.form.hideRectangle();
@@ -878,9 +878,9 @@ export let mounted = async function(this: IVueControl): Promise<void> {
     }
     this.zIndexData = parseInt(this.zIndex);
     if (this.isStateMax) {
-        let pos = clickgo.dom.getPosition();
-        this.leftData = (pos.width - this.widthData) / 2;
-        this.topData = (pos.height - this.heightData) / 2;
+        let area = clickgo.form.getAvailArea();
+        this.leftData = (area.width - this.widthData) / 2;
+        this.topData = (area.height - this.heightData) / 2;
         this.maxMethod();
     }
 };

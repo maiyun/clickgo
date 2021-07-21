@@ -6,9 +6,10 @@ export let data = {
 };
 
 export let mounted = function(this: IVueForm): void {
-    this.cgSetSystemEventListener('screenResize', (width: number, height: number): void => {
-        this.width = width;
-        this.height = height;
+    this.cgSetSystemEventListener('screenResize', (): void => {
+        let area = clickgo.form.getAvailArea();
+        this.width = area.width;
+        this.height = area.height;
         if (this.width > 1100 || this.height > 1100) {
             this.scale = 5;
         }
@@ -21,13 +22,13 @@ export let mounted = function(this: IVueForm): void {
         let date = new Date();
         this.list.unshift({
             'time': date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds(),
-            'width': width,
-            'height': height
+            'width': area.width,
+            'height': area.height
         });
     });
-    let pos = clickgo.dom.getPosition();
-    this.width = pos.width;
-    this.height = pos.height;
+    let area = clickgo.form.getAvailArea();
+    this.width = area.width;
+    this.height = area.height;
     if (this.width > 1100 || this.height > 1100) {
         this.scale = 5;
     }

@@ -107,9 +107,9 @@ export let mounted = function(this: IVueForm): void {
             return;
         }
         if (this.flist[formId].flash) {
-            clearTimeout(this.flist[formId].flash);
+            this.cgRemoveTimer(this.flist[formId].flash);
         }
-        this.flist[formId].flash = setTimeout(() => {
+        this.flist[formId].flash = this.cgCreateTimer(() => {
             this.flist[formId].flash = undefined;
         }, 1000);
         this.pushConsole('formFlash', `taskId: ${taskId}, formId: ${formId}`);

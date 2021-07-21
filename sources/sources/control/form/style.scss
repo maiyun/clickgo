@@ -23,12 +23,15 @@
 }
 
 .wrap {
-    position: relative; box-shadow: 0 0 10px rgba(0, 0, 0, .5); color: #999; display: flex;
+    position: relative; color: #999; display: flex;
     &:not(.inside) {
         position: absolute; transition: .1s ease-out; transition-property: transform, opacity; transform: translateX(10px) translateZ(0); opacity: 0;
     }
-    &::after {
-        content: ' '; position: absolute; left: 0; top: 0; width: 200%; height: 200%; transform-origin: 0 0; transform: scale(.5); border: solid 1px #999; pointer-events: none;
+    &:not(.border-none) {
+        box-shadow: 0 0 10px rgba(0, 0, 0, .5);
+        &::after {
+            content: ' '; position: absolute; left: 0; top: 0; width: 200%; height: 200%; transform-origin: 0 0; transform: scale(.5); border: solid 1px #999; pointer-events: none;
+        }
     }
     &:not(.show) {
         pointer-events: none;
@@ -37,9 +40,12 @@
         transform: translateX(0px) translateZ(0); opacity: 1;
     }
     &.cg-focus {
-        box-shadow: 0 0 15px rgba(0, 0, 0, .5); color: #2A2E2E;
-        &::after {
-            border: solid 1px #000;
+        color: #2A2E2E;
+        &:not(.border-none) {
+            box-shadow: 0 0 15px rgba(0, 0, 0, .5);
+            &::after {
+                border: solid 1px #000;
+            }
         }
     }
     &.flash {

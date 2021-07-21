@@ -31,9 +31,9 @@
                             <template v-slot>Icon</template>
                             <template v-slot:pop>
                                 <menulist>
-                                    <menulist-item alt="A"><img src="../../../res/txt.svg" width="16" height="16" /><label style="margin-left: 5px;">Txt</label></menulist-item>
-                                    <menulist-item alt="B"><img src="../../../res/sql.svg" width="16" height="16" /><label style="margin-left: 5px;">Sql</label></menulist-item>
-                                    <menulist-item alt="C"><img src="../../../res/zip.svg" width="16" height="16" /><label style="margin-left: 5px;">Zip</label></menulist-item>
+                                    <menulist-item alt="A"><img src="../../../res/txt.svg" width="16" height="16" /><label style="margin-left: 10px;">Txt</label></menulist-item>
+                                    <menulist-item alt="B"><img src="../../../res/sql.svg" width="16" height="16" /><label style="margin-left: 10px;">Sql</label></menulist-item>
+                                    <menulist-item alt="C"><img src="../../../res/zip.svg" width="16" height="16" /><label style="margin-left: 10px;">Zip</label></menulist-item>
                                 </menulist>
                             </template>
                         </menulist-item>

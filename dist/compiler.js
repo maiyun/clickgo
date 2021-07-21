@@ -52,7 +52,7 @@ function run() {
             if (item.isFile()) {
                 continue;
             }
-            if (['greatlist-item', 'greatlist-split', 'img', 'label', 'layout', 'menu-item', 'menulist-item', 'menulist-split', 'overflow', 'tab-panel'].includes(item.name)) {
+            if (['greatlist-item', 'greatlist-split', 'img', 'label', 'layout', 'menu-item', 'menulist-item', 'menulist-split', 'overflow', 'tab-panel', 'task-item'].includes(item.name)) {
                 continue;
             }
             let zipo = new zip();
@@ -79,6 +79,9 @@ function run() {
             }
             else if (item.name === 'tab') {
                 yield addFile(zipo, base, 'tab-panel/');
+            }
+            else if (item.name === 'task') {
+                yield addFile(zipo, base, 'task-item/');
             }
             yield fs.promises.writeFile('dist/control/' + name + '.cgc', yield zipo.generateAsync({
                 type: 'nodebuffer',

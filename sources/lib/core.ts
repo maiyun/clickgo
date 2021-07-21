@@ -28,7 +28,9 @@ export let clickgoFiles: Record<string, Blob | string> = {};
 /** --- 全局响应事件 --- */
 export let globalEvents: ICGGlobalEvents = {
     errorHandler: null,
-    screenResizeHandler: null,
+    screenResizeHandler: function() {
+        clickgo.form.refreshMaxPosition();
+    },
     formCreatedHandler: null,
     formRemovedHandler: null,
     formTitleChangedHandler: null,
@@ -46,14 +48,24 @@ export let globalEvents: ICGGlobalEvents = {
 /**
  * --- 主动触发系统级事件 ---
  */
-export function trigger(name: TCGGlobalEvent, taskId: number = 0, formId: number = 0, param1: boolean | string = '', param2: string = ''): void {
+export function trigger(name: TCGGlobalEvent, taskId: number = 0, formId: number = 0, param1: boolean | Error | string = '', param2: string = ''): void {
     switch (name) {
-        case 'screenResize': {
-            globalEvents.screenResizeHandler?.(taskId, formId) as void;
+        case 'error': {
+            globalEvents.errorHandler?.(taskId, formId, param1 as Error, param2) as void;
             for (let tid in clickgo.task.list) {
                 let task = clickgo.task.list[tid];
                 for (let fid in task.forms) {
-                    task.forms[fid].events[name]?.(taskId, formId) as void;
+                    task.forms[fid].events[name]?.(taskId, formId, param1, param2) as void;
+                }
+            }
+            break;
+        }
+        case 'screenResize': {
+            globalEvents.screenResizeHandler?.() as void;
+            for (let tid in clickgo.task.list) {
+                let task = clickgo.task.list[tid];
+                for (let fid in task.forms) {
+                    task.forms[fid].events[name]?.() as void;
                 }
             }
             break;
@@ -135,7 +147,7 @@ export async function fetchClickGoFile(path: string): Promise<Blob | string | nu
         switch (ext) {
             case 'cgc': {
                 // --- 控件文件 ---
-                let pkg = await clickgo.control.read(blob, true);
+                let pkg = await clickgo.control.read(blob);
                 if (!pkg) {
                     return null;
                 }
@@ -163,10 +175,11 @@ export async function fetchClickGoFile(path: string): Promise<Blob | string | nu
 /**
  * --- cga 文件 blob 转 IAppPkg 对象 ---
  * @param blob blob 对象
- * @param salf 是否是安全的
  */
-export async function readApp(blob: Blob, salf: boolean): Promise<false | ICGAppPkg> {
-    let zip = await clickgo.zip.get(blob);
+export async function readApp(blob: Blob): Promise<false | ICGAppPkg> {
+    let iconLength = parseInt(await blob.slice(0, 7).text());
+    let icon = await clickgo.tool.blob2DataUrl(blob.slice(7, 7 + iconLength));
+    let zip = await clickgo.zip.get(blob.slice(7 + iconLength));
     if (!zip) {
         return false;
     }
@@ -202,7 +215,7 @@ export async function readApp(blob: Blob, salf: boolean): Promise<false | ICGApp
     }
     return {
         'type': 'app',
-        'safe': salf,
+        'icon': icon,
         'config': config,
         'files': files
     };
@@ -211,9 +224,8 @@ export async function readApp(blob: Blob, salf: boolean): Promise<false | ICGApp
 /**
  * --- 从网址下载应用 ---
  * @param url 相对、绝对或 cg 路径，以 / 结尾的目录 ---
- * @param safe 是否安全
  */
-export async function fetchApp(url: string, safe: boolean): Promise<null | ICGAppPkg> {
+export async function fetchApp(url: string): Promise<null | ICGAppPkg> {
     // --- 判断是通过目录加载，还是 cga 文件 ---
     let isCga: boolean = false;
     if (!url.endsWith('/')) {
@@ -228,17 +240,17 @@ export async function fetchApp(url: string, safe: boolean): Promise<null | ICGAp
     // --- 获取绝对路径 ---
     let realUrl: string;
     if (url.startsWith('/clickgo/')) {
-        realUrl = loader.urlResolve(clickgo.cgRootPath, url.slice(9));
+        realUrl = clickgo.tool.urlResolve(clickgo.cgRootPath, url.slice(9));
     }
     else {
-        realUrl = loader.urlResolve(clickgo.rootPath, url);
+        realUrl = clickgo.tool.urlResolve(clickgo.rootPath, url);
     }
 
     // --- 如果是 cga 文件，直接下载并交给 readApp 函数处理 ---
     if (isCga) {
         try {
             let blob = await (await fetch(realUrl + '?' + Math.random())).blob();
-            return await readApp(blob, safe) || null;
+            return await readApp(blob) || null;
         }
         catch {
             return null;
@@ -261,9 +273,13 @@ export async function fetchApp(url: string, safe: boolean): Promise<null | ICGAp
     catch {
         return null;
     }
+    let icon = clickgo.cgRootPath + 'icon.png';
+    if (config.icon && (files[config.icon] instanceof Blob)) {
+        icon = await clickgo.tool.blob2DataUrl(files[config.icon] as Blob);
+    }
     return {
         'type': 'app',
-        'safe': safe,
+        'icon': icon,
         'config': config,
         'files': files
     };

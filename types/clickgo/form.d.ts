@@ -4,6 +4,11 @@ interface ICGFormLib {
     'lastZIndex': number;
     'lastTopZIndex': number;
     'lastPopZIndex': number;
+    setTask(taskId: number, formId: number): boolean;
+    clearTask(taskId: number): boolean;
+    refreshTaskPosition(): void;
+    getAvailArea(): ICGFormAvailArea;
+    refreshMaxPosition(): void;
     getList(taskId: number): Record<string, ICGFormItem>;
     changeFocus(formId?: number): void;
     getMaxZIndexFormID(): number | null;
@@ -68,4 +73,20 @@ interface ICGFormItem {
     'stateMin': boolean;
     'show': boolean;
     'focus': boolean;
+}
+
+/** --- Task 任务条的相关信息 --- */
+interface ICGFormTaskInfo {
+    'taskId': number;
+    'formId': number;
+    'position': 'left' | 'top' | 'right' | 'bottom';
+    'length': number;
+}
+
+/** --- 屏幕可用区域 --- */
+interface ICGFormAvailArea {
+    'left': number;
+    'top': number;
+    'width': number;
+    'height': number;
 }

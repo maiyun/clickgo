@@ -4,7 +4,7 @@ exports.methods = void 0;
 exports.methods = {
     cgShowHide: function () {
         this.cgHide();
-        setTimeout(() => {
+        this.cgCreateTimer(() => {
             this.cgShow();
         }, 1000);
     }

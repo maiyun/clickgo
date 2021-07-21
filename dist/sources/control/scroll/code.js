@@ -79,10 +79,10 @@ exports.watch = {
                 return;
             }
             if (this.opacityTimer) {
-                clearTimeout(this.opacityTimer);
+                this.cgRemoveTimer(this.opacityTimer);
                 this.opacityTimer = undefined;
             }
-            this.opacityTimer = setTimeout(() => {
+            this.opacityTimer = this.cgCreateTimer(() => {
                 this.opacity = '0';
             }, 800);
             this.opacity = '1';
@@ -90,13 +90,13 @@ exports.watch = {
     },
     'float': function () {
         if (this.isFloat) {
-            this.opacityTimer = setTimeout(() => {
+            this.opacityTimer = this.cgCreateTimer(() => {
                 this.opacity = '0';
             }, 800);
         }
         else {
             if (this.opacityTimer) {
-                clearTimeout(this.opacityTimer);
+                this.cgRemoveTimer(this.opacityTimer);
                 this.opacityTimer = undefined;
             }
             this.opacity = '1';
@@ -240,7 +240,7 @@ exports.methods = {
         if (this.isFloat) {
             this.opacity = '1';
             if (this.opacityTimer) {
-                clearTimeout(this.opacityTimer);
+                this.cgRemoveTimer(this.opacityTimer);
                 this.opacityTimer = undefined;
             }
         }
@@ -252,7 +252,7 @@ exports.methods = {
         this.cgLeave(e);
         this.isEnter = false;
         if (this.isFloat) {
-            this.opacityTimer = setTimeout(() => {
+            this.opacityTimer = this.cgCreateTimer(() => {
                 this.opacity = '0';
             }, 800);
         }
@@ -265,7 +265,7 @@ exports.methods = {
                 if (this.isFloat) {
                     this.opacity = '1';
                     if (this.opacityTimer) {
-                        clearTimeout(this.opacityTimer);
+                        this.cgRemoveTimer(this.opacityTimer);
                         this.opacityTimer = undefined;
                     }
                 }
@@ -273,7 +273,7 @@ exports.methods = {
             up: () => {
                 this.isEnter = false;
                 if (this.isFloat) {
-                    this.opacityTimer = setTimeout(() => {
+                    this.opacityTimer = this.cgCreateTimer(() => {
                         this.opacity = '0';
                     }, 800);
                 }
@@ -298,7 +298,7 @@ exports.methods = {
 };
 exports.mounted = function () {
     if (this.isFloat) {
-        this.opacityTimer = setTimeout(() => {
+        this.opacityTimer = this.cgCreateTimer(() => {
             this.opacity = '0';
         }, 800);
     }

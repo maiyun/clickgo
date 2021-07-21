@@ -82,10 +82,10 @@ export let watch = {
                 return;
             }
             if (this.opacityTimer) {
-                clearTimeout(this.opacityTimer);
+                this.cgRemoveTimer(this.opacityTimer);
                 this.opacityTimer = undefined;
             }
-            this.opacityTimer = setTimeout(() => {
+            this.opacityTimer = this.cgCreateTimer(() => {
                 this.opacity = '0';
             }, 800);
             this.opacity = '1';
@@ -93,13 +93,13 @@ export let watch = {
     },
     'float': function(this: IVueControl): void {
         if (this.isFloat) {
-            this.opacityTimer = setTimeout(() => {
+            this.opacityTimer = this.cgCreateTimer(() => {
                 this.opacity = '0';
             }, 800);
         }
         else {
             if (this.opacityTimer) {
-                clearTimeout(this.opacityTimer);
+                this.cgRemoveTimer(this.opacityTimer);
                 this.opacityTimer = undefined;
             }
             this.opacity = '1';
@@ -258,7 +258,7 @@ export let methods = {
         if (this.isFloat) {
             this.opacity = '1';
             if (this.opacityTimer) {
-                clearTimeout(this.opacityTimer);
+                this.cgRemoveTimer(this.opacityTimer);
                 this.opacityTimer = undefined;
             }
         }
@@ -270,7 +270,7 @@ export let methods = {
         this.cgLeave(e);
         this.isEnter = false;
         if (this.isFloat) {
-            this.opacityTimer = setTimeout(() => {
+            this.opacityTimer = this.cgCreateTimer(() => {
                 this.opacity = '0';
             }, 800);
         }
@@ -283,7 +283,7 @@ export let methods = {
                 if (this.isFloat) {
                     this.opacity = '1';
                     if (this.opacityTimer) {
-                        clearTimeout(this.opacityTimer);
+                        this.cgRemoveTimer(this.opacityTimer);
                         this.opacityTimer = undefined;
                     }
                 }
@@ -291,7 +291,7 @@ export let methods = {
             up: () => {
                 this.isEnter = false;
                 if (this.isFloat) {
-                    this.opacityTimer = setTimeout(() => {
+                    this.opacityTimer = this.cgCreateTimer(() => {
                         this.opacity = '0';
                     }, 800);
                 }
@@ -319,7 +319,7 @@ export let methods = {
 export let mounted = function(this: IVueControl): void {
     // --- 是否自动隐藏 scroll ---
     if (this.isFloat) {
-        this.opacityTimer = setTimeout(() => {
+        this.opacityTimer = this.cgCreateTimer(() => {
             this.opacity = '0';
         }, 800);
     }
