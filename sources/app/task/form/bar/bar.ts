@@ -74,9 +74,6 @@ export let mounted = function(this: IVueForm): void {
         if (!this.tasks[taskId]) {
             return;
         }
-        if (this.tasks[taskId].forms[formId]) {
-            console.log('???', taskId, formId, icon);
-        }
         this.tasks[taskId].forms[formId] = {
             'title': title,
             'icon': icon || this.tasks[taskId].icon

@@ -25,8 +25,13 @@ interface ICGFormLib {
     notify(opt: {
         'title': string;
         'content': string;
+        'icon'?: string;
+        'timeout'?: number;
         'type'?: 'primary' | 'info' | 'warning' | 'danger';
-    }): void;
+        'progress'?: boolean;
+    }): number;
+    notifyProgress(notifyId: number, per: number): void;
+    hideNotify(notifyId: number): void;
     appendToPop(el: HTMLElement): void;
     removeFromPop(el: HTMLElement): void;
     showPop(pop: IVueControl, direction: 'h' | 'v' | MouseEvent | TouchEvent | { x: number; y: number; }, opt?: { 'size'?: { width?: number; height?: number; }; 'null'?: boolean; }): void;

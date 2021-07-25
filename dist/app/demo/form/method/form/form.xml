@@ -10,7 +10,8 @@
         <button @tap="showCircular">form.showCircular(x, y)</button>
         <button @tap="showRectangle">form.showRectangle(x, y, 't')</button>
         <layout gutter="10">
-            <select v-model="type" :data="['primary', 'info', 'warning', 'danger']" flex="1"></select>
+            <select v-model="type" :data="['primary', 'info', 'warning', 'danger']"></select>
+            <select v-model="progress" :data="['normal', 'progress + icon']" flex="1"></select>
             <button @tap="notify" style="padding: 0 10px;">notify()</button>
         </layout>
     </layout>

@@ -1,6 +1,7 @@
 export let data = {
     'fid': '',
-    'type': 'primary'
+    'type': 'primary',
+    'progress': 'noraml'
 };
 
 export let methods = {
@@ -28,11 +29,30 @@ export let methods = {
             clickgo.form.hideRectangle();
         }, 1000);
     },
-    notify: function(this: IVueForm): void {
-        clickgo.form.notify({
+    notify: async function(this: IVueForm): Promise<void> {
+        let icon = undefined;
+        if (this.progress === 'progress + icon') {
+            icon = await this.cgGetDataUrl('/res/icon.svg');
+            if (!icon) {
+                icon = undefined;
+            }
+        }
+        let nid = clickgo.form.notify({
             'title': 'Notify',
             'content': 'Content',
-            'type': this.type
+            'type': this.type,
+            'progress': (this.progress === 'progress + icon') ? true : false,
+            'icon': icon
         });
+        if (this.progress === 'progress + icon') {
+            await clickgo.tool.sleep(1000);
+            clickgo.form.notifyProgress(nid, 30);
+            await clickgo.tool.sleep(300);
+            clickgo.form.notifyProgress(nid, 50);
+            await clickgo.tool.sleep(700);
+            clickgo.form.notifyProgress(nid, 75);
+            await clickgo.tool.sleep(1000);
+            clickgo.form.notifyProgress(nid, 100);
+        }
     }
 };

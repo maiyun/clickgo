@@ -20,6 +20,7 @@
             <layout gutter="10">
                 <button @tap="border = 'normal'" flex="1">Normal</button>
                 <button @tap="border = 'thin'" flex="1">Thin</button>
+                <button @tap="border = 'plain'" flex="1">Plain</button>
                 <button @tap="border = 'none'" flex="1">none</button>
             </layout>
         </layout>

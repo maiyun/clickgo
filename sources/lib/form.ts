@@ -594,47 +594,98 @@ systemElement.addEventListener('touchmove', function(e): void {
     'passive': false
 });
 let notifyTop: number = 10;
+let notifyId: number = 0;
 export function notify(opt: {
     'title': string;
     'content': string;
+    'icon'?: string;
+    'timeout'?: number;
     'type'?: 'primary' | 'info' | 'warning' | 'danger';
-}): void {
+    'progress'?: boolean;
+}): number {
+    // --- 申请 nid ---
+    let nid = ++notifyId;
+    // --- 设置 timeout ---
+    let timeout = 5000;
+    if (opt.timeout !== undefined) {
+        if (opt.timeout <= 0 || opt.timeout > 300000) {
+            timeout = 300000;
+        }
+        else {
+            timeout = opt.timeout;
+        }
+    }
+    // --- 创建 notify element ---
     let el = document.createElement('div');
     let y = notifyTop;
     el.classList.add('cg-system-notify');
+    el.setAttribute('data-notifyid', nid.toString());
     el.style.transform = `translateY(${y}px) translateX(280px)`;
     el.style.opacity = '1';
     el.innerHTML = `<div class="cg-system-icon cg-system-icon-${clickgo.tool.escapeHTML(opt.type ?? 'primary')}"></div>
 <div style="flex: 1;">
     <div class="cg-system-notify-title">${clickgo.tool.escapeHTML(opt.title)}</div>
     <div class="cg-system-notify-content">${clickgo.tool.escapeHTML(opt.content).replace(/\r\n/g, '\n').replace(/\r/g, '\n').replace(/\n/g, '<br>')}</div>
+    ${opt.progress ? '<div class="cg-system-notify-progress"><div class="cg-system-notify-progress-block"></div></div>' : ''}
 </div>`;
+    if (opt.icon) {
+        (el.childNodes.item(0) as HTMLElement).style.background = 'url(' + opt.icon + ')';
+        (el.childNodes.item(0) as HTMLElement).style.backgroundSize = '16px';
+        console.log((el.childNodes.item(0) as HTMLElement));
+    }
     systemElement.appendChild(el);
-    let notifyHeight = el.offsetHeight;
-    notifyTop += notifyHeight + 10;
+    notifyTop += el.offsetHeight + 10;
     requestAnimationFrame(function() {
         el.style.transform = `translateY(${y}px) translateX(-10px)`;
-        setTimeout(function() {
-            el.style.opacity = '0';
-            setTimeout(function() {
-                notifyTop -= notifyHeight + 10;
-                let notifyElementList = document.getElementsByClassName('cg-system-notify') as HTMLCollectionOf<HTMLDivElement>;
-                let needSub = false;
-                for (let notifyElement of notifyElementList) {
-                    if (notifyElement === el) {
-                        needSub = true;
-                        continue;
-                    }
-                    if (needSub) {
-                        notifyElement.style.transform = notifyElement.style.transform.replace(/translateY\(([0-9]+)px\)/, function(t: string, t1: string): string {
-                            return `translateY(${parseInt(t1) - notifyHeight - 10}px)`;
-                        });
-                    }
-                }
-                el.remove();
-            }, 100);
-        }, 6000);
+        let timer = window.setTimeout(function() {
+            hideNotify(nid);
+        }, timeout);
+        el.setAttribute('data-timer', timer.toString());
     });
+    return nid;
+}
+
+export function notifyProgress(notifyId: number, per: number): void {
+    let el = systemElement.querySelector(`[data-notifyid="${notifyId}"]`) as HTMLElement;
+    if (!el) {
+        return;
+    }
+    let block = el.querySelector('.cg-system-notify-progress-block');
+    if (!block) {
+        return;
+    }
+    if (per > 100) {
+        per = 100;
+    }
+    (block as HTMLElement).style.width = (per < 0 ? per * 100 : per) + '%';
+}
+
+export function hideNotify(notifyId: number): void {
+    let el = systemElement.querySelector(`[data-notifyid="${notifyId}"]`) as HTMLElement;
+    if (!el) {
+        return;
+    }
+    clearTimeout(parseInt(el.getAttribute('data-timer')!));
+    let notifyHeight = el.offsetHeight;
+    el.style.opacity = '0';
+    setTimeout(function() {
+        notifyTop -= notifyHeight + 10;
+        let notifyElementList = document.getElementsByClassName('cg-system-notify') as HTMLCollectionOf<HTMLDivElement>;
+        let needSub = false;
+        for (let notifyElement of notifyElementList) {
+            if (notifyElement === el) {
+                // --- el 之后的 notify 都要往上移动 ---
+                needSub = true;
+                continue;
+            }
+            if (needSub) {
+                notifyElement.style.transform = notifyElement.style.transform.replace(/translateY\(([0-9]+)px\)/, function(t: string, t1: string): string {
+                    return `translateY(${parseInt(t1) - notifyHeight - 10}px)`;
+                });
+            }
+        }
+        el.remove();
+    }, 100);
 }
 
 /**
@@ -958,7 +1009,7 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
         invoke.clickgo.dom[k] = (clickgo.dom as any)[k];
     }
     for (let k in clickgo.form) {
-        if (!['setTask', 'clearTask', 'refreshTaskPosition', 'getAvailArea', 'refreshMaxPosition', 'getList', 'changeFocus', 'getMaxZIndexFormID', 'getRectByBorder', 'showCircular', 'moveRectangle', 'showRectangle', 'hideRectangle', 'notify', 'showPop', 'hidePop'].includes(k)) {
+        if (!['setTask', 'clearTask', 'refreshTaskPosition', 'getAvailArea', 'refreshMaxPosition', 'getList', 'changeFocus', 'getMaxZIndexFormID', 'getRectByBorder', 'showCircular', 'moveRectangle', 'showRectangle', 'hideRectangle', 'notify', 'notifyProgress', 'hideNotify', 'showPop', 'hidePop'].includes(k)) {
             continue;
         }
         invoke.clickgo.form[k] = (clickgo.form as any)[k];
@@ -1761,7 +1812,7 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
                 opt.buttons = [localData[this.cgLocal]?.ok ?? localData['en-is'].ok];
             }
             this.cgCreateForm({
-                'layout': `<form title="${opt.title ?? 'dialog'}" width="auto" height="auto" :min="false" :max="false" :resize="false" :min-height="50" border="${opt.title ? 'normal' : 'none'}"><dialog :buttons="buttons" @select="select">${opt.content}</dialog></form>`,
+                'layout': `<form title="${opt.title ?? 'dialog'}" width="auto" height="auto" :min="false" :max="false" :resize="false" :min-height="50" border="${opt.title ? 'normal' : 'plain'}"><dialog :buttons="buttons" @select="select">${opt.content}</dialog></form>`,
                 'code': {
                     data: {
                         'buttons': opt.buttons
