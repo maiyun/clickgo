@@ -12,6 +12,20 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.end = exports.run = exports.getList = exports.get = exports.lastId = exports.list = void 0;
 exports.list = {};
 exports.lastId = 0;
+let localData = {
+    'en-us': {
+        'loading': 'Loading...',
+    },
+    'zh-cn': {
+        'loading': '加载中……'
+    },
+    'zh-tw': {
+        'loading': '載入中……'
+    },
+    'ja-jp': {
+        'loading': '読み込み中...'
+    }
+};
 function get(tid) {
     if (exports.list[tid] === undefined) {
         return null;
@@ -39,16 +53,33 @@ function getList() {
 }
 exports.getList = getList;
 function run(url, opt = {}) {
-    var _a;
+    var _a, _b, _c;
     return __awaiter(this, void 0, void 0, function* () {
         let icon = clickgo.cgRootPath + 'icon.png';
         if (opt.icon) {
             icon = opt.icon;
         }
+        if (opt.progress === undefined) {
+            opt.progress = true;
+        }
         if (!opt.runtime) {
             opt.runtime = {};
         }
-        let appPkg = yield clickgo.core.fetchApp(url);
+        let notifyId = opt.progress ? clickgo.form.notify({
+            'title': (_b = (_a = localData[clickgo.core.config.local]) === null || _a === void 0 ? void 0 : _a.loading) !== null && _b !== void 0 ? _b : localData['en-us'].loading,
+            'content': url,
+            'icon': opt.icon,
+            'timeout': 0,
+            'progress': true
+        }) : undefined;
+        let appPkg = yield clickgo.core.fetchApp(url, {
+            'notifyId': notifyId
+        });
+        if (notifyId) {
+            setTimeout(function () {
+                clickgo.form.hideNotify(notifyId);
+            }, 2000);
+        }
         if (!appPkg) {
             return -1;
         }
@@ -68,7 +99,7 @@ function run(url, opt = {}) {
                 'name': '',
                 'data': {}
             }),
-            'icon': (_a = appPkg.icon) !== null && _a !== void 0 ? _a : icon,
+            'icon': (_c = appPkg.icon) !== null && _c !== void 0 ? _c : icon,
             'permission': {},
             'controlPkgs': {},
             'themePkgs': {},
@@ -126,7 +157,7 @@ function run(url, opt = {}) {
                     }
                 });
             }
-            catch (_b) {
+            catch (_d) {
                 return -2;
             }
         }

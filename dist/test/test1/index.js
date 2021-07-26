@@ -28,7 +28,9 @@ clickgo.ready(function () {
         clickgo.core.globalEvents.taskEndedHandler = function (taskId) {
             el.innerHTML = 'Task(' + taskId + ') ended.';
         };
-        let sTaskId = yield clickgo.task.run('/clickgo/app/task/');
+        let sTaskId = yield clickgo.task.run('/clickgo/app/task/', {
+            'progress': false
+        });
         if (sTaskId <= 0) {
             el.innerHTML = `Start failed(${sTaskId.toString()}).`;
             return;

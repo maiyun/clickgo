@@ -225,7 +225,7 @@ export async function readApp(blob: Blob): Promise<false | ICGAppPkg> {
  * --- 从网址下载应用 ---
  * @param url 相对、绝对或 cg 路径，以 / 结尾的目录 ---
  */
-export async function fetchApp(url: string): Promise<null | ICGAppPkg> {
+export async function fetchApp(url: string, opt: ICGCoreFetchAppOptions = {}): Promise<null | ICGAppPkg> {
     // --- 判断是通过目录加载，还是 cga 文件 ---
     let isCga: boolean = false;
     if (!url.endsWith('/')) {
@@ -248,12 +248,26 @@ export async function fetchApp(url: string): Promise<null | ICGAppPkg> {
 
     // --- 如果是 cga 文件，直接下载并交给 readApp 函数处理 ---
     if (isCga) {
-        try {
-            let blob = await (await fetch(realUrl + '?' + Math.random())).blob();
+        if (opt.notifyId) {
+            let blob = await clickgo.tool.request(realUrl + '?' + Math.random(), {
+                progress: (loaded, total): void => {
+                    clickgo.form.notifyProgress(opt.notifyId!, loaded / total);
+                }
+            });
+            if (blob === null) {
+                return null;
+            }
+            clickgo.form.notifyProgress(opt.notifyId, 1);
             return await readApp(blob) || null;
         }
-        catch {
-            return null;
+        else {
+            try {
+                let blob = await (await fetch(realUrl + '?' + Math.random())).blob();
+                return await readApp(blob) || null;
+            }
+            catch {
+                return null;
+            }
         }
     }
     // --- 加载目录 ---
@@ -264,11 +278,20 @@ export async function fetchApp(url: string): Promise<null | ICGAppPkg> {
     try {
         config = await (await fetch(realUrl + 'config.json?' + Math.random())).json();
         let random = Math.random().toString();
-        files = await loader.fetchFiles(config.files, {
+        let lopt: any = {
             'dir': '/',
             'before': realUrl.slice(0, -1),
             'after': '?' + random
-        });
+        };
+        if (opt.notifyId) {
+            let total = config.files.length;
+            let loaded = 0;
+            lopt.loaded = function(): void {
+                ++loaded;
+                clickgo.form.notifyProgress(opt.notifyId!, loaded / total);
+            };
+        }
+        files = await loader.fetchFiles(config.files, lopt);
     }
     catch {
         return null;

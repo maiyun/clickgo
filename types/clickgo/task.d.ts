@@ -4,7 +4,7 @@ interface ICGTaskLib {
 
     get(tid: number): ICGTaskItem | null;
     getList(): Record<string, ICGTaskItem>;
-    run(url: string | Blob, opt?: { 'runtime'?: Record<string, Blob | string>; 'icon'?: string; }): Promise<number>;
+    run(url: string | Blob, opt?: { 'runtime'?: Record<string, Blob | string>; 'icon'?: string; 'progress'?: boolean; }): Promise<number>;
     end(taskId: number): boolean;
 }
 

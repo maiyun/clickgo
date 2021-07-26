@@ -20,7 +20,9 @@ clickgo.ready(async function() {
         el!.innerHTML = 'Task(' + taskId + ') ended.';
     };
     // --- 启动 task app ---
-    let sTaskId = await clickgo.task.run('/clickgo/app/task/');
+    let sTaskId = await clickgo.task.run('/clickgo/app/task/', {
+        'progress': false
+    });
     if (sTaskId <= 0) {
         el.innerHTML = `Start failed(${sTaskId.toString()}).`;
         return;

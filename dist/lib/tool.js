@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.blob2DataUrl = exports.blob2Text = exports.urlResolve = exports.parseUrl = exports.replace = exports.includes = exports.escapeHTML = exports.getBoolean = exports.rand = exports.getObjectURLList = exports.revokeObjectURL = exports.createObjectURL = exports.getMimeByPath = exports.stylePrepend = exports.layoutClassPrepend = exports.layoutInsertAttr = exports.layoutAddTagClassAndReTagName = exports.styleUrl2ObjectOrDataUrl = exports.isAppPkg = exports.isControlPkg = exports.purify = exports.sleep = exports.clone = exports.blob2ArrayBuffer = exports.file2ObjectUrl = void 0;
+exports.blob2DataUrl = exports.blob2Text = exports.urlResolve = exports.parseUrl = exports.request = exports.replace = exports.includes = exports.escapeHTML = exports.getBoolean = exports.rand = exports.getObjectURLList = exports.revokeObjectURL = exports.createObjectURL = exports.getMimeByPath = exports.stylePrepend = exports.layoutClassPrepend = exports.layoutInsertAttr = exports.layoutAddTagClassAndReTagName = exports.styleUrl2ObjectOrDataUrl = exports.purify = exports.sleep = exports.clone = exports.blob2ArrayBuffer = exports.file2ObjectUrl = void 0;
 function file2ObjectUrl(file, obj) {
     let ourl = obj.objectURLs[file];
     if (!ourl) {
@@ -52,6 +52,9 @@ function clone(obj) {
 }
 exports.clone = clone;
 function sleep(ms = 0) {
+    if (ms > 600000) {
+        ms = 600000;
+    }
     return new Promise(function (resolve) {
         setTimeout(function () {
             resolve();
@@ -67,26 +70,6 @@ function purify(text) {
     return text.slice(1, -1);
 }
 exports.purify = purify;
-function isControlPkg(o) {
-    if (typeof o !== 'object') {
-        return false;
-    }
-    for (let k in o) {
-        return o[k].type === 'control' ? true : false;
-    }
-    return false;
-}
-exports.isControlPkg = isControlPkg;
-function isAppPkg(o) {
-    if (typeof o !== 'object') {
-        return false;
-    }
-    for (let k in o) {
-        return o[k].type === 'control' ? true : false;
-    }
-    return false;
-}
-exports.isAppPkg = isAppPkg;
 function styleUrl2ObjectOrDataUrl(path, style, obj, mode = 'object') {
     return __awaiter(this, void 0, void 0, function* () {
         let reg = /url\(["']{0,1}(.+?)["']{0,1}\)/ig;
@@ -348,6 +331,64 @@ function replace(text, search, replace) {
     return result;
 }
 exports.replace = replace;
+function request(url, opt) {
+    return new Promise(function (resove) {
+        var _a;
+        let xhr = new XMLHttpRequest();
+        xhr.upload.onloadstart = function (e) {
+            var _a;
+            (_a = opt.uploadStart) === null || _a === void 0 ? void 0 : _a.call(opt, e.total);
+        };
+        xhr.upload.onprogress = function (e) {
+            var _a;
+            (_a = opt.uploadProgress) === null || _a === void 0 ? void 0 : _a.call(opt, e.loaded, e.total);
+        };
+        xhr.upload.onloadend = function () {
+            var _a;
+            (_a = opt.uploadEnd) === null || _a === void 0 ? void 0 : _a.call(opt);
+        };
+        xhr.onloadstart = function (e) {
+            var _a;
+            (_a = opt.start) === null || _a === void 0 ? void 0 : _a.call(opt, e.total);
+        };
+        xhr.onprogress = function (e) {
+            var _a;
+            (_a = opt.progress) === null || _a === void 0 ? void 0 : _a.call(opt, e.loaded, e.total);
+        };
+        xhr.onloadend = function () {
+            var _a;
+            (_a = opt.end) === null || _a === void 0 ? void 0 : _a.call(opt);
+        };
+        xhr.onload = function () {
+            var _a, _b;
+            let res = this.response;
+            if ((_a = this.getResponseHeader('content-type')) === null || _a === void 0 ? void 0 : _a.includes('json')) {
+                try {
+                    res = JSON.parse(res);
+                }
+                catch (_c) {
+                    res = '';
+                }
+            }
+            (_b = opt.load) === null || _b === void 0 ? void 0 : _b.call(opt, res);
+            resove(res);
+        };
+        xhr.onerror = function () {
+            var _a;
+            (_a = opt.error) === null || _a === void 0 ? void 0 : _a.call(opt);
+            resove(null);
+        };
+        if (opt.responseType) {
+            xhr.responseType = opt.responseType;
+        }
+        if (opt.timeout) {
+            xhr.timeout = opt.timeout;
+        }
+        xhr.open((_a = opt.method) !== null && _a !== void 0 ? _a : 'GET', url, true);
+        xhr.send(opt.body);
+    });
+}
+exports.request = request;
 function parseUrl(url) {
     return loader.parseUrl(url);
 }

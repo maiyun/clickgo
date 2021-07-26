@@ -27,7 +27,7 @@ interface ICGFormLib {
         'content': string;
         'icon'?: string;
         'timeout'?: number;
-        'type'?: 'primary' | 'info' | 'warning' | 'danger';
+        'type'?: 'primary' | 'info' | 'warning' | 'danger' | 'progress';
         'progress'?: boolean;
     }): number;
     notifyProgress(notifyId: number, per: number): void;

@@ -13,7 +13,7 @@ interface ICGCoreLib {
     trigger(name: 'taskStarted' | 'taskEnded', taskId: number): void;
     fetchClickGoFile(path: string): Promise<Blob | string | null>;
     readApp(blob: Blob): Promise<false | ICGAppPkg>;
-    fetchApp(url: string): Promise<null | ICGAppPkg>;
+    fetchApp(url: string, opt?: ICGCoreFetchAppOptions): Promise<null | ICGAppPkg>;
 }
 
 /** --- 全局事件 --- */
@@ -82,4 +82,8 @@ interface ICGAppConfig {
 
     /** --- 将要加载的文件列表 --- */
     'files': string[];
+}
+
+interface ICGCoreFetchAppOptions {
+    'notifyId'?: number;
 }

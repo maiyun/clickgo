@@ -521,6 +521,9 @@ function notify(opt) {
             timeout = opt.timeout;
         }
     }
+    if (opt.progress && !opt.type) {
+        opt.type = 'progress';
+    }
     let el = document.createElement('div');
     let y = notifyTop;
     el.classList.add('cg-system-notify');
@@ -561,7 +564,13 @@ function notifyProgress(notifyId, per) {
     if (per > 100) {
         per = 100;
     }
-    progress.style.width = (per < 0 ? per * 100 : per) + '%';
+    if (per === 1) {
+        let o = parseFloat(progress.style.width);
+        if (o > 1) {
+            per = 100;
+        }
+    }
+    progress.style.width = (per < 1 ? per * 100 : per) + '%';
 }
 exports.notifyProgress = notifyProgress;
 function hideNotify(notifyId) {
@@ -1616,7 +1625,7 @@ function create(taskId, opt) {
                     };
                 }
                 if (opt.buttons === undefined) {
-                    opt.buttons = [(_b = (_a = localData[this.cgLocal]) === null || _a === void 0 ? void 0 : _a.ok) !== null && _b !== void 0 ? _b : localData['en-is'].ok];
+                    opt.buttons = [(_b = (_a = localData[this.cgLocal]) === null || _a === void 0 ? void 0 : _a.ok) !== null && _b !== void 0 ? _b : localData['en-us'].ok];
                 }
                 this.cgCreateForm({
                     'layout': `<form title="${(_c = opt.title) !== null && _c !== void 0 ? _c : 'dialog'}" width="auto" height="auto" :min="false" :max="false" :resize="false" :min-height="50" border="${opt.title ? 'normal' : 'plain'}"><dialog :buttons="buttons" @select="select">${opt.content}</dialog></form>`,

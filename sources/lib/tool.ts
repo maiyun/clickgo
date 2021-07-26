@@ -70,9 +70,12 @@ export function clone(obj: Record<string, any> | any[]): any[] | any {
 
 /**
  * --- 等待毫秒 ---
- * @param ms 等待的毫秒，默认 0
+ * @param ms 等待的毫秒，默认 0，最大 10 分钟
  */
 export function sleep(ms: number = 0): Promise<void> {
+    if (ms > 600000) {
+        ms = 600000;
+    }
     return new Promise(function(resolve) {
         setTimeout(function() {
             resolve();
@@ -90,34 +93,6 @@ export function purify(text: string): string {
         return '>' + t1.replace(/\t|\r\n| {2}/g, '').replace(/\n|\r/g, '') + '<';
     });
     return text.slice(1, -1);
-}
-
-/**
- * --- 判断是否是 ControlPkg 对象 ---
- * @param o 要判断的对象
- */
-export function isControlPkg(o: string | any): o is ICGControlPkg {
-    if (typeof o !== 'object') {
-        return false;
-    }
-    for (let k in o) {
-        return o[k].type === 'control' ? true : false;
-    }
-    return false;
-}
-
-/**
- * --- 判断是否是 AppPkg 对象 ---
- * @param o 要判断的对象
- */
-export function isAppPkg(o: string | any): o is ICGAppPkg {
-    if (typeof o !== 'object') {
-        return false;
-    }
-    for (let k in o) {
-        return o[k].type === 'control' ? true : false;
-    }
-    return false;
 }
 
 /**
@@ -470,6 +445,55 @@ export function replace(text: string, search: string, replace: string): string {
         result = text.replace(search, replace);
     }
     return result;
+}
+
+export function request(url: string, opt: ICGToolRequestOptions): Promise<null | any> {
+    return new Promise(function(resove) {
+        let xhr = new XMLHttpRequest();
+        xhr.upload.onloadstart = function(e: ProgressEvent): void {
+            opt.uploadStart?.(e.total) as void;
+        };
+        xhr.upload.onprogress = function(e: ProgressEvent): void {
+            opt.uploadProgress?.(e.loaded, e.total) as void;
+        };
+        xhr.upload.onloadend = function(): void {
+            opt.uploadEnd?.() as void;
+        };
+        xhr.onloadstart = function(e: ProgressEvent): void {
+            opt.start?.(e.total) as void;
+        };
+        xhr.onprogress = function(e: ProgressEvent): void {
+            opt.progress?.(e.loaded, e.total) as void;
+        };
+        xhr.onloadend = function(): void {
+            opt.end?.() as void;
+        };
+        xhr.onload = function(): void {
+            let res = this.response;
+            if (this.getResponseHeader('content-type')?.includes('json')) {
+                try {
+                    res = JSON.parse(res);
+                }
+                catch {
+                    res = '';
+                }
+            }
+            opt.load?.(res) as void;
+            resove(res);
+        };
+        xhr.onerror = function(): void {
+            opt.error?.() as void;
+            resove(null);
+        };
+        if (opt.responseType) {
+            xhr.responseType = opt.responseType;
+        }
+        if (opt.timeout) {
+            xhr.timeout = opt.timeout;
+        }
+        xhr.open(opt.method ?? 'GET', url, true);
+        xhr.send(opt.body);
+    });
 }
 
 export function parseUrl(url: string): ILoaderUrl {

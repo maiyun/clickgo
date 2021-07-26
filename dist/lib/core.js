@@ -196,7 +196,7 @@ function readApp(blob) {
     });
 }
 exports.readApp = readApp;
-function fetchApp(url) {
+function fetchApp(url, opt = {}) {
     return __awaiter(this, void 0, void 0, function* () {
         let isCga = false;
         if (!url.endsWith('/')) {
@@ -215,12 +215,26 @@ function fetchApp(url) {
             realUrl = clickgo.tool.urlResolve(clickgo.rootPath, url);
         }
         if (isCga) {
-            try {
-                let blob = yield (yield fetch(realUrl + '?' + Math.random())).blob();
+            if (opt.notifyId) {
+                let blob = yield clickgo.tool.request(realUrl + '?' + Math.random(), {
+                    progress: (loaded, total) => {
+                        clickgo.form.notifyProgress(opt.notifyId, loaded / total);
+                    }
+                });
+                if (blob === null) {
+                    return null;
+                }
+                clickgo.form.notifyProgress(opt.notifyId, 1);
                 return (yield readApp(blob)) || null;
             }
-            catch (_a) {
-                return null;
+            else {
+                try {
+                    let blob = yield (yield fetch(realUrl + '?' + Math.random())).blob();
+                    return (yield readApp(blob)) || null;
+                }
+                catch (_a) {
+                    return null;
+                }
             }
         }
         let config;
@@ -228,11 +242,20 @@ function fetchApp(url) {
         try {
             config = yield (yield fetch(realUrl + 'config.json?' + Math.random())).json();
             let random = Math.random().toString();
-            files = yield loader.fetchFiles(config.files, {
+            let lopt = {
                 'dir': '/',
                 'before': realUrl.slice(0, -1),
                 'after': '?' + random
-            });
+            };
+            if (opt.notifyId) {
+                let total = config.files.length;
+                let loaded = 0;
+                lopt.loaded = function () {
+                    ++loaded;
+                    clickgo.form.notifyProgress(opt.notifyId, loaded / total);
+                };
+            }
+            files = yield loader.fetchFiles(config.files, lopt);
         }
         catch (_b) {
             return null;

@@ -600,7 +600,7 @@ export function notify(opt: {
     'content': string;
     'icon'?: string;
     'timeout'?: number;
-    'type'?: 'primary' | 'info' | 'warning' | 'danger';
+    'type'?: 'primary' | 'info' | 'warning' | 'danger' | 'progress';
     'progress'?: boolean;
 }): number {
     // --- 申请 nid ---
@@ -614,6 +614,10 @@ export function notify(opt: {
         else {
             timeout = opt.timeout;
         }
+    }
+    // --- 设置 type ---
+    if (opt.progress && !opt.type) {
+        opt.type = 'progress';
     }
     // --- 创建 notify element ---
     let el = document.createElement('div');
@@ -649,14 +653,20 @@ export function notifyProgress(notifyId: number, per: number): void {
     if (!el) {
         return;
     }
-    let progress = el.querySelector('.cg-system-notify-progress');
+    let progress = el.querySelector('.cg-system-notify-progress') as HTMLElement;
     if (!progress) {
         return;
     }
     if (per > 100) {
         per = 100;
     }
-    (progress as HTMLElement).style.width = (per < 0 ? per * 100 : per) + '%';
+    if (per === 1) {
+        let o = parseFloat(progress.style.width);
+        if (o > 1) {
+            per = 100;
+        }
+    }
+    progress.style.width = (per < 1 ? per * 100 : per) + '%';
 }
 
 export function hideNotify(notifyId: number): void {
@@ -1808,7 +1818,7 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
                 };
             }
             if (opt.buttons === undefined) {
-                opt.buttons = [localData[this.cgLocal]?.ok ?? localData['en-is'].ok];
+                opt.buttons = [localData[this.cgLocal]?.ok ?? localData['en-us'].ok];
             }
             this.cgCreateForm({
                 'layout': `<form title="${opt.title ?? 'dialog'}" width="auto" height="auto" :min="false" :max="false" :resize="false" :min-height="50" border="${opt.title ? 'normal' : 'plain'}"><dialog :buttons="buttons" @select="select">${opt.content}</dialog></form>`,

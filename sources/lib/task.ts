@@ -3,6 +3,24 @@ export let list: Record<number, ICGTask> = {};
 /** --- 最后一个 task id --- */
 export let lastId: number = 0;
 
+/** --- task lib 用到的语言包 --- */
+let localData: Record<string, {
+    'loading': string;
+}> = {
+    'en-us': {
+        'loading': 'Loading...',
+    },
+    'zh-cn': {
+        'loading': '加载中……'
+    },
+    'zh-tw': {
+        'loading': '載入中……'
+    },
+    'ja-jp': {
+        'loading': '読み込み中...'
+    }
+};
+
 export function get(tid: number): ICGTaskItem | null {
     if (list[tid] === undefined) {
         return null;
@@ -37,15 +55,32 @@ export function getList(): Record<string, ICGTaskItem> {
  * @param url app 路径
  * @param opt runtime 运行时要注入的文件列表（cg 文件默认被注入） ---
  */
-export async function run(url: string, opt: { 'runtime'?: Record<string, Blob | string>; 'icon'?: string; } = {}): Promise<number> {
+export async function run(url: string, opt: { 'runtime'?: Record<string, Blob | string>; 'icon'?: string; 'progress'?: boolean; } = {}): Promise<number> {
     let icon = clickgo.cgRootPath + 'icon.png';
     if (opt.icon) {
         icon = opt.icon;
     }
+    if (opt.progress === undefined) {
+        opt.progress = true;
+    }
     if (!opt.runtime) {
         opt.runtime = {};
     }
-    let appPkg: ICGAppPkg | null = await clickgo.core.fetchApp(url);
+    let notifyId: number | undefined = opt.progress ? clickgo.form.notify({
+        'title': localData[clickgo.core.config.local]?.loading ?? localData['en-us'].loading,
+        'content': url,
+        'icon': opt.icon,
+        'timeout': 0,
+        'progress': true
+    }) : undefined;
+    let appPkg: ICGAppPkg | null = await clickgo.core.fetchApp(url, {
+        'notifyId': notifyId
+    });
+    if (notifyId) {
+        setTimeout(function(): void {
+            clickgo.form.hideNotify(notifyId!);
+        }, 2000);
+    }
     if (!appPkg) {
         return -1;
     }

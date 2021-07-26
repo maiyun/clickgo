@@ -40,6 +40,7 @@ styleList.insertAdjacentHTML('beforeend', `<style class='cg-global'>
 .cg-system-icon-info {background: #1989fa;}
 .cg-system-icon-warning {background: #ff976a;}
 .cg-system-icon-danger {background: #ee0a24;}
+.cg-system-icon-progress {background: #4949e7;}
 .cg-system-notify-title {font-size: 16px; font-weight: bold; padding-bottom: 10px;}
 .cg-system-notify-content {line-height: 1.5;}
 .cg-system-notify-progress {position: absolute; bottom: 0; left: 0; border-radius: 1px; background: #4949e7; transition: width 1s ease-out; width: 0%; height: 2px;}
