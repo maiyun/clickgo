@@ -12,7 +12,7 @@ export let methods = {
         let str = JSON.stringify(clickgo.form.getList(this.taskId)).replace(/"icon":"(.*?)"/g, function(t: string, t1: string): string {
             return `"icon":"${t1 ? (t1.slice(0, 10) + '...') : t1}"`;
         });
-        this.cgDialog(`<overflow width="200" height="100" direction="v" style="word-break: break-word;">${str}</overflow>`).catch((e) => { throw e; });
+        this.cgDialog(`<overflow width="200" height="80" direction="v" style="word-break: break-word;">${str}</overflow>`).catch((e) => { throw e; });
     },
     changeFocus: function(this: IVueForm, formId: string): void {
         clickgo.form.changeFocus(parseInt(formId));
@@ -45,6 +45,7 @@ export let methods = {
             'icon': icon
         });
         if (this.progress === 'progress + icon') {
+            clickgo.form.notifyProgress(nid, 12);
             await clickgo.tool.sleep(1000);
             clickgo.form.notifyProgress(nid, 30);
             await clickgo.tool.sleep(300);

@@ -531,12 +531,11 @@ function notify(opt) {
 <div style="flex: 1;">
     <div class="cg-system-notify-title">${clickgo.tool.escapeHTML(opt.title)}</div>
     <div class="cg-system-notify-content">${clickgo.tool.escapeHTML(opt.content).replace(/\r\n/g, '\n').replace(/\r/g, '\n').replace(/\n/g, '<br>')}</div>
-    ${opt.progress ? '<div class="cg-system-notify-progress"><div class="cg-system-notify-progress-block"></div></div>' : ''}
+    ${opt.progress ? '<div class="cg-system-notify-progress"></div>' : ''}
 </div>`;
     if (opt.icon) {
         el.childNodes.item(0).style.background = 'url(' + opt.icon + ')';
         el.childNodes.item(0).style.backgroundSize = '16px';
-        console.log(el.childNodes.item(0));
     }
     systemElement.appendChild(el);
     notifyTop += el.offsetHeight + 10;
@@ -555,14 +554,14 @@ function notifyProgress(notifyId, per) {
     if (!el) {
         return;
     }
-    let block = el.querySelector('.cg-system-notify-progress-block');
-    if (!block) {
+    let progress = el.querySelector('.cg-system-notify-progress');
+    if (!progress) {
         return;
     }
     if (per > 100) {
         per = 100;
     }
-    block.style.width = (per < 0 ? per * 100 : per) + '%';
+    progress.style.width = (per < 0 ? per * 100 : per) + '%';
 }
 exports.notifyProgress = notifyProgress;
 function hideNotify(notifyId) {
