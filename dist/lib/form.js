@@ -1811,18 +1811,7 @@ function create(taskId, opt) {
             clickgo.task.list[this.taskId].local.data = {};
         };
         methods.cgLoadLocalData = function (name, data, pre = '') {
-            if (!clickgo.task.list[this.taskId].local.data[name]) {
-                clickgo.task.list[this.taskId].local.data[name] = {};
-            }
-            for (let k in data) {
-                let v = data[k];
-                if (typeof v === 'object') {
-                    this.cgLoadLocalData(name, v, pre + k + '.');
-                }
-                else {
-                    clickgo.task.list[this.taskId].local.data[name][pre + k] = v;
-                }
-            }
+            clickgo.task.loadLocalData(this.taskId, name, data, pre);
         };
         methods.cgSetLocalName = function (name) {
             clickgo.task.list[this.taskId].local.name = name;

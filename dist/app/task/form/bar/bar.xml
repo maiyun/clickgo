@@ -17,13 +17,13 @@
         <template v-slot:pop>
             <menulist>
                 <menulist-item alt="P">
-                    Position
+                    {{l('position')}}
                     <template v-slot:pop>
                         <menulist>
-                            <menulist-item alt="T" type="radio" v-model="position" label="top">Top</menulist-item>
-                            <menulist-item alt="R" type="radio" v-model="position" label="right">Right</menulist-item>
-                            <menulist-item alt="B" type="radio" v-model="position" label="bottom">Bottom</menulist-item>
-                            <menulist-item alt="L" type="radio" v-model="position" label="left">Left</menulist-item>
+                            <menulist-item alt="T" type="radio" v-model="position" label="top">{{l('top')}}</menulist-item>
+                            <menulist-item alt="R" type="radio" v-model="position" label="right">{{l('right')}}</menulist-item>
+                            <menulist-item alt="B" type="radio" v-model="position" label="bottom">{{l('bottom')}}</menulist-item>
+                            <menulist-item alt="L" type="radio" v-model="position" label="left">{{l('left')}}</menulist-item>
                         </menulist>
                     </template>
                 </menulist-item>

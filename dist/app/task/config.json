@@ -11,11 +11,21 @@
         "/clickgo/control/menu",
         "/clickgo/control/menulist"
     ],
+    "locals": {
+        "/local/en-us": "en-us",
+        "/local/ja-jp": "ja-jp",
+        "/local/zh-cn": "zh-cn",
+        "/local/zh-tw": "zh-tw"
+    },
     "main": "/form/bar/bar",
 
     "files": [
         "/form/bar/bar.js",
         "/form/bar/bar.xml",
-        "/form/desktop/desktop.xml"
+        "/form/desktop/desktop.xml",
+        "/local/en-us.json",
+        "/local/ja-jp.json",
+        "/local/zh-cn.json",
+        "/local/zh-tw.json"
     ]
 }

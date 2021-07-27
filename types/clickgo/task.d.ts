@@ -6,6 +6,7 @@ interface ICGTaskLib {
     getList(): Record<string, ICGTaskItem>;
     run(url: string | Blob, opt?: { 'runtime'?: Record<string, Blob | string>; 'icon'?: string; 'progress'?: boolean; }): Promise<number>;
     end(taskId: number): boolean;
+    loadLocalData(taskId: number, name: string, data: Record<string, any>, pre?: string): void;
 }
 
 /** --- 单条任务对象 --- */

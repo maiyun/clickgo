@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.end = exports.run = exports.getList = exports.get = exports.lastId = exports.list = void 0;
+exports.loadLocalData = exports.end = exports.run = exports.getList = exports.get = exports.lastId = exports.list = void 0;
 exports.list = {};
 exports.lastId = 0;
 let localData = {
@@ -137,6 +137,20 @@ function run(url, opt = {}) {
                 }
             }
         }
+        if (appPkg.config.locals) {
+            for (let path in appPkg.config.locals) {
+                let localName = appPkg.config.locals[path];
+                path += '.json';
+                if (task.files[path]) {
+                    try {
+                        let data = JSON.parse(task.files[path]);
+                        loadLocalData(task.id, localName, data);
+                    }
+                    catch (_d) {
+                    }
+                }
+            }
+        }
         if (clickgoFileList.length > 0) {
             try {
                 yield new Promise(function (resolve, reject) {
@@ -157,7 +171,7 @@ function run(url, opt = {}) {
                     }
                 });
             }
-            catch (_d) {
+            catch (_e) {
                 return -2;
             }
         }
@@ -230,3 +244,18 @@ function end(taskId) {
     return true;
 }
 exports.end = end;
+function loadLocalData(taskId, name, data, pre = '') {
+    if (!exports.list[taskId].local.data[name]) {
+        exports.list[taskId].local.data[name] = {};
+    }
+    for (let k in data) {
+        let v = data[k];
+        if (typeof v === 'object') {
+            loadLocalData(taskId, name, v, pre + k + '.');
+        }
+        else {
+            clickgo.task.list[taskId].local.data[name][pre + k] = v;
+        }
+    }
+}
+exports.loadLocalData = loadLocalData;

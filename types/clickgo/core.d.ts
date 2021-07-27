@@ -73,6 +73,8 @@ interface ICGAppConfig {
     'controls': string[];
     /** --- 将自动加载的主题 --- */
     'themes'?: string[];
+    /** --- 将自动加载的语言包 --- */
+    'locals'?: Record<string, string>;
     /** --- 不带扩展名，系统会在末尾添加 .css --- */
     'style'?: string;
     /** --- 不带扩展名，系统会在末尾添加 .xml --- */

@@ -145,6 +145,22 @@ export async function run(url: string, opt: { 'runtime'?: Record<string, Blob | 
             }
         }
     }
+    // --- local ---
+    if (appPkg.config.locals) {
+        for (let path in appPkg.config.locals) {
+            let localName = appPkg.config.locals[path];
+            path += '.json';
+            if (task.files[path]) {
+                try {
+                    let data = JSON.parse(task.files[path] as string);
+                    loadLocalData(task.id, localName, data);
+                }
+                catch {
+                    // --- 无所谓 ---
+                }
+            }
+        }
+    }
     // --- 然后 fetch clickgo 文件 ---
     if (clickgoFileList.length > 0) {
         try {
@@ -254,4 +270,20 @@ export function end(taskId: number): boolean {
     // --- 移除 task bar ---
     clickgo.form.clearTask(taskId);
     return true;
+}
+
+// --- 加载 local data 对象到 task ---
+export function loadLocalData(taskId: number, name: string, data: Record<string, any>, pre: string = ''): void {
+    if (!list[taskId].local.data[name]) {
+        list[taskId].local.data[name] = {};
+    }
+    for (let k in data) {
+        let v = data[k];
+        if (typeof v === 'object') {
+            loadLocalData(taskId, name, v, pre + k + '.');
+        }
+        else {
+            clickgo.task.list[taskId].local.data[name][pre + k] = v;
+        }
+    }
 }

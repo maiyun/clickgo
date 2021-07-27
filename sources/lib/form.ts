@@ -1997,18 +1997,7 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
     };
     // --- 加载 local data 对象到 task ---
     methods.cgLoadLocalData = function(this: IVueForm, name: string, data: Record<string, any>, pre: string = ''): void {
-        if (!clickgo.task.list[this.taskId].local.data[name]) {
-            clickgo.task.list[this.taskId].local.data[name] = {};
-        }
-        for (let k in data) {
-            let v = data[k];
-            if (typeof v === 'object') {
-                this.cgLoadLocalData(name, v, pre + k + '.');
-            }
-            else {
-                clickgo.task.list[this.taskId].local.data[name][pre + k] = v;
-            }
-        }
+        clickgo.task.loadLocalData(this.taskId, name, data, pre);
     };
     // --- 设置本 task 的语言 name ---
     methods.cgSetLocalName = function(this: IVueForm, name: string): void {
