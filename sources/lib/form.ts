@@ -1129,7 +1129,7 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
             else {
                 let style = item.files[item.config.style + '.css'] as string;
                 if (style) {
-                    let r = clickgo.tool.stylePrepend(style);
+                    let r = clickgo.tool.stylePrepend(style.replace(/^\ufeff/, ''));
                     prep = r.prep;
                     clickgo.dom.pushStyle(task.id, await clickgo.tool.styleUrl2ObjectOrDataUrl(item.config.style, r.style, item), 'control', name);
                 }
@@ -1138,6 +1138,7 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
                 if (!layout) {
                     return -4;
                 }
+                layout = layout.replace(/^\ufeff/, '');
                 // --- 给控件的 layout 的 class 增加前置 ---
                 let prepList = [
                     'cg-theme-task' + taskId + '-' + name + '_'
@@ -1552,11 +1553,11 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
     if (opt.file) {
         let layoutFile = appPkg.files[opt.file + '.xml'] as string;
         if (layoutFile) {
-            layout = layoutFile;
+            layout = layoutFile.replace(/^\ufeff/, '');
         }
         let styleFile = appPkg.files[opt.file + '.css'] as string;
         if (styleFile) {
-            style = styleFile;
+            style = styleFile.replace(/^\ufeff/, '');
         }
     }
     if (layout === undefined) {

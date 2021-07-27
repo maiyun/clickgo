@@ -73,13 +73,15 @@ export let computed = {
 
 export let methods = {
     updateModelValue: function(this: IVueControl, value: string): void {
+        this.value = value;
         if (!this.doInput) {
             this.inputValue = value;
-            this.value = value;
             this.$emit('update:modelValue', value);
             return;
         }
-        this.doInput = false;
+        else {
+            this.doInput = false;
+        }
     },
     input: function(this: IVueControl): void {
         this.doInput = true;

@@ -69,13 +69,15 @@ exports.computed = {
 };
 exports.methods = {
     updateModelValue: function (value) {
+        this.value = value;
         if (!this.doInput) {
             this.inputValue = value;
-            this.value = value;
             this.$emit('update:modelValue', value);
             return;
         }
-        this.doInput = false;
+        else {
+            this.doInput = false;
+        }
     },
     input: function () {
         this.doInput = true;

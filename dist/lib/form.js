@@ -963,7 +963,7 @@ function create(taskId, opt) {
                 else {
                     let style = item.files[item.config.style + '.css'];
                     if (style) {
-                        let r = clickgo.tool.stylePrepend(style);
+                        let r = clickgo.tool.stylePrepend(style.replace(/^\ufeff/, ''));
                         prep = r.prep;
                         clickgo.dom.pushStyle(task.id, yield clickgo.tool.styleUrl2ObjectOrDataUrl(item.config.style, r.style, item), 'control', name);
                     }
@@ -971,6 +971,7 @@ function create(taskId, opt) {
                     if (!layout) {
                         return -4;
                     }
+                    layout = layout.replace(/^\ufeff/, '');
                     let prepList = [
                         'cg-theme-task' + taskId + '-' + name + '_'
                     ];
@@ -1369,11 +1370,11 @@ function create(taskId, opt) {
         if (opt.file) {
             let layoutFile = appPkg.files[opt.file + '.xml'];
             if (layoutFile) {
-                layout = layoutFile;
+                layout = layoutFile.replace(/^\ufeff/, '');
             }
             let styleFile = appPkg.files[opt.file + '.css'];
             if (styleFile) {
-                style = styleFile;
+                style = styleFile.replace(/^\ufeff/, '');
             }
         }
         if (layout === undefined) {
