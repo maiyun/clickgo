@@ -677,6 +677,9 @@ export function notifyProgress(notifyId: number, per: number): void {
             per = 100;
         }
     }
+    if (per === 100) {
+        progress.style.transitionDelay = '.1s';
+    }
     progress.style.width = (per < 1 ? per * 100 : per) + '%';
 }
 

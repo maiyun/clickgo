@@ -2,8 +2,8 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.mounted = exports.watch = exports.methods = exports.data = void 0;
 exports.data = {
-    'left': undefined,
-    'top': undefined,
+    'left': 0,
+    'top': 0,
     'width': undefined,
     'height': undefined,
     'position': 'bottom',
@@ -70,7 +70,6 @@ exports.mounted = function () {
         if (!this.tasks[taskId]) {
             return;
         }
-        console.log('icon', icon);
         this.tasks[taskId].forms[formId] = {
             'title': title,
             'icon': icon || this.tasks[taskId].icon
