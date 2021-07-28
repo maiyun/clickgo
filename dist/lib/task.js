@@ -217,6 +217,12 @@ function end(taskId) {
     if (!task) {
         return true;
     }
+    let fid = clickgo.form.getMaxZIndexFormID({
+        'taskIds': [task.id]
+    });
+    if (fid) {
+        clickgo.form.changeFocus(fid);
+    }
     for (let fid in task.forms) {
         let form = task.forms[fid];
         clickgo.core.trigger('formRemoved', taskId, form.id, form.vroot.$refs.form.title, form.vroot.$refs.form.iconData);
@@ -236,10 +242,6 @@ function end(taskId) {
     }
     delete (exports.list[taskId]);
     clickgo.core.trigger('taskEnded', taskId);
-    let fid = clickgo.form.getMaxZIndexFormID();
-    if (fid) {
-        clickgo.form.changeFocus(fid);
-    }
     clickgo.form.clearTask(taskId);
     return true;
 }

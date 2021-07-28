@@ -11,7 +11,10 @@ interface ICGFormLib {
     refreshMaxPosition(): void;
     getList(taskId: number): Record<string, ICGFormItem>;
     changeFocus(formId?: number): void;
-    getMaxZIndexFormID(): number | null;
+    getMaxZIndexFormID(out?: {
+        'taskIds'?: number[];
+        'formIds'?: number[];
+    }): number | null;
     getRectByBorder(border: TCGBorder): {
         'width': number;
         'height': number;

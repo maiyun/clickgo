@@ -390,22 +390,33 @@ export function changeFocus(formId: number = 0): void {
 }
 
 /**
- * --- 获取当前 z-index 值最大的 form id（除了 top 模式的窗体） ---
+ * --- 获取当前 z-index 值最大的 form id（除了 top 模式的窗体） --- TODO 排除 task 或者 form id
  */
-export function getMaxZIndexFormID(): number | null {
+export function getMaxZIndexFormID(out: {
+    'taskIds'?: number[];
+    'formIds'?: number[];
+} = {}): number | null {
     let zIndex: number = 0;
     let formId: number | null = null;
     let fl = document.querySelector('.cg-form-list') as HTMLDivElement;
     for (let i = 0; i < fl.children.length; ++i) {
         let root = fl.children.item(i) as HTMLDivElement;
         let formWrap = root.children.item(0) as HTMLDivElement;
+        let tid = parseInt(root.getAttribute('data-task-id')!);
+        if (out.taskIds?.includes(tid)) {
+            continue;
+        }
+        let fid = parseInt(root.getAttribute('data-form-id')!);
+        if (out.formIds?.includes(fid)) {
+            continue;
+        }
         let z = parseInt(formWrap.style.zIndex);
         if (z > 9999999) {
             continue;
         }
         if (z > zIndex) {
             zIndex = z;
-            formId = parseInt(root.getAttribute('data-form-id')!);
+            formId = fid;
         }
     }
     return formId;
@@ -942,6 +953,13 @@ export function remove(formId: number): boolean {
         }
         clickgo.task.list[taskId].forms[formId].vroot.$refs.form.$data.showData = false;
         setTimeout(function() {
+            // --- 获取最大的 z index 窗体，并让他获取焦点 ---
+            let fid = getMaxZIndexFormID({
+                'formIds': [formId]
+            });
+            if (fid) {
+                changeFocus(fid);
+            }
             // --- 延长 100 秒是为了响应 100 毫秒的动画 ---
             if (!clickgo.task.list[taskId]) {
                 // --- 可能这时候 task 已经被结束了 ---
@@ -954,11 +972,6 @@ export function remove(formId: number): boolean {
             clickgo.dom.removeStyle(taskId, 'form', formId);
             // --- 触发 formRemoved 事件 ---
             clickgo.core.trigger('formRemoved', taskId, formId, title, icon);
-            // --- 获取最大的 z index 窗体，并让他获取焦点 ---
-            let fid = getMaxZIndexFormID();
-            if (fid) {
-                changeFocus(fid);
-            }
         }, 100);
         return true;
     }

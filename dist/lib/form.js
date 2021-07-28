@@ -328,20 +328,29 @@ function changeFocus(formId = 0) {
     }
 }
 exports.changeFocus = changeFocus;
-function getMaxZIndexFormID() {
+function getMaxZIndexFormID(out = {}) {
+    var _a, _b;
     let zIndex = 0;
     let formId = null;
     let fl = document.querySelector('.cg-form-list');
     for (let i = 0; i < fl.children.length; ++i) {
         let root = fl.children.item(i);
         let formWrap = root.children.item(0);
+        let tid = parseInt(root.getAttribute('data-task-id'));
+        if ((_a = out.taskIds) === null || _a === void 0 ? void 0 : _a.includes(tid)) {
+            continue;
+        }
+        let fid = parseInt(root.getAttribute('data-form-id'));
+        if ((_b = out.formIds) === null || _b === void 0 ? void 0 : _b.includes(fid)) {
+            continue;
+        }
         let z = parseInt(formWrap.style.zIndex);
         if (z > 9999999) {
             continue;
         }
         if (z > zIndex) {
             zIndex = z;
-            formId = parseInt(root.getAttribute('data-form-id'));
+            formId = fid;
         }
     }
     return formId;
@@ -794,6 +803,12 @@ function remove(formId) {
         }
         clickgo.task.list[taskId].forms[formId].vroot.$refs.form.$data.showData = false;
         setTimeout(function () {
+            let fid = getMaxZIndexFormID({
+                'formIds': [formId]
+            });
+            if (fid) {
+                changeFocus(fid);
+            }
             if (!clickgo.task.list[taskId]) {
                 return true;
             }
@@ -802,10 +817,6 @@ function remove(formId) {
             delete (clickgo.task.list[taskId].forms[formId]);
             clickgo.dom.removeStyle(taskId, 'form', formId);
             clickgo.core.trigger('formRemoved', taskId, formId, title, icon);
-            let fid = getMaxZIndexFormID();
-            if (fid) {
-                changeFocus(fid);
-            }
         }, 100);
         return true;
     }

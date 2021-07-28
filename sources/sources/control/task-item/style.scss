@@ -22,11 +22,44 @@
     }
 
     .line {
-        position: absolute; left: 0; bottom: 0; display: flex; pointer-events: none; justify-content: center; width: 100%;
+        position: absolute; display: flex; pointer-events: none; justify-content: center;
         &::after {
-            content: ' '; height: 2px; width: 70%; display: block; transition: .1s ease-out; transition-property: width;
+            content: ' '; display: block; transition: .1s ease-out; transition-property: width, height;
         }
     }
+    &.left {
+        .line {
+            left: 0; top: 0; height: 100%; flex-direction: column;
+            &::after {
+                width: 2px; height: 70%;
+            }
+        }
+    }
+    &.right {
+        .line {
+            right: 0; top: 0; height: 100%; flex-direction: column;
+            &::after {
+                width: 2px; height: 70%;
+            }
+        }
+    }
+    &.top {
+        .line {
+            left: 0; top: 0; width: 100%;
+            &::after {
+                height: 2px; width: 70%;
+            }
+        }
+    }
+    &.bottom {
+        .line {
+            left: 0; bottom: 0; width: 100%;
+            &::after {
+                height: 2px; width: 70%;
+            }
+        }
+    }
+
     &.opened {
         .line {
             &::after {
@@ -34,17 +67,35 @@
             }
         }
         &.hover {
+            &.top, &.bottom {
+                .line {
+                    &::after {
+                        width: 100%;
+                    }
+                }
+            }
+            &.left, &.right {
+                .line {
+                    &::after {
+                        height: 100%;
+                    }
+                }
+            }
+        }
+    }
+    &.selected {
+        &.top, &.bottom {
             .line {
                 &::after {
                     width: 100%;
                 }
             }
         }
-    }
-    &.selected {
-        .line {
-            &::after {
-                width: 100%;
+        &.left, &.right {
+            .line {
+                &::after {
+                    height: 100%;
+                }
             }
         }
     }

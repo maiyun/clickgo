@@ -237,6 +237,13 @@ export function end(taskId: number): boolean {
     if (!task) {
         return true;
     }
+    // --- 获取最大的 z index 窗体，并让他获取焦点 ---
+    let fid = clickgo.form.getMaxZIndexFormID({
+        'taskIds': [task.id]
+    });
+    if (fid) {
+        clickgo.form.changeFocus(fid);
+    }
     // --- 移除窗体 list ---
     for (let fid in task.forms) {
         let form = task.forms[fid];
@@ -262,11 +269,6 @@ export function end(taskId: number): boolean {
     delete(list[taskId]);
     // --- 触发 taskEnded 事件 ---
     clickgo.core.trigger('taskEnded', taskId);
-    // --- 获取最大的 z index 窗体，并让他获取焦点 ---
-    let fid = clickgo.form.getMaxZIndexFormID();
-    if (fid) {
-        clickgo.form.changeFocus(fid);
-    }
     // --- 移除 task bar ---
     clickgo.form.clearTask(taskId);
     return true;
