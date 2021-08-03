@@ -1,26 +1,35 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.siblings = exports.findParentByClass = exports.bindResize = exports.bindMove = exports.is = exports.bindLong = exports.bindDown = exports.watch = exports.watchSize = exports.getSize = exports.getStyleCount = exports.removeStyle = exports.pushStyle = exports.removeFromStyleList = exports.createToStyleList = exports.isMouseAlsoTouchEvent = exports.setGlobalCursor = void 0;
+let topClass = ['cg-form-list', 'cg-pop-list', 'cg-system', 'cg-simpletask'];
+function classUnfold(after) {
+    let arr = [];
+    for (let name of topClass) {
+        arr.push('.' + name + (after ? (' ' + after) : ''));
+    }
+    return arr.join(', ');
+}
 let styleList = document.createElement('div');
 styleList.style.display = 'none';
 document.getElementsByTagName('body')[0].appendChild(styleList);
 styleList.insertAdjacentHTML('beforeend', '<style id=\'cg-global-cursor\'></style>');
 styleList.insertAdjacentHTML('beforeend', `<style class='cg-global'>
-.cg-form-list, .cg-pop-list, .cg-system {-webkit-user-select: none; user-select: none; position: fixed; left: 0; top: 0; width: 0; height: 0; cursor: default;}
+${classUnfold()} {-webkit-user-select: none; user-select: none; position: fixed; left: 0; top: 0; width: 0; height: 0; cursor: default;}
 .cg-form-list {z-index: 20020000;}
 .cg-pop-list {z-index: 20020001;}
 .cg-system {z-index: 20020002;}
+.cg-simpletask {z-index: 20020003;}
 .cg-form-list img, .cg-pop-list img, .cg-system img {vertical-align: bottom;}
 .cg-form-list ::selection, .cg-pop-list ::selection, .cg-system ::selection {background-color: rgba(0, 120, 215, .3);}
 .cg-form-list, .cg-pop-list, .cg-system {-webkit-user-select: none; user-select: none;}
 
-.cg-form-list *, .cg-pop-list *, .cg-system *, .cg-form-list *::after, .cg-pop-list *::after, .cg-system *::after, .cg-form-list *::before, .cg-pop-list *::before, .cg-system *::before {box-sizing: border-box; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); flex-shrink: 0;}
-.cg-form-list, .cg-form-list input, .cg-form-list textarea, .cg-pop-list, .cg-pop-list input, .cg-pop-list textarea, .cg-system, .cg-system input, .cg-system textarea {font-family: "Helvetica Neue","Helvetica","PingFang SC","Hiragino Sans GB","Noto Sans CJK SC","Noto Sans CJK","Source Han Sans","WenQuanYi Micro Hei","Microsoft YaHei",sans-serif; /* -apple-system,BlinkMacSystemFont,Roboto,"Segoe UI","Helvetica Neue","PingFang SC","Noto Sans","Noto Sans CJK SC","Microsoft YaHei","微软雅黑",sans-serif */; font-size: 12px; line-height: 1; -webkit-font-smoothing: antialiased;}
+${classUnfold('*')}, ${classUnfold('*::after')}, ${classUnfold('*::before')} {box-sizing: border-box; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); flex-shrink: 0;}
+${classUnfold()}, ${classUnfold('input')}, ${classUnfold('textarea')} {font-family: "Helvetica Neue","Helvetica","PingFang SC","Hiragino Sans GB","Noto Sans CJK SC","Noto Sans CJK","Source Han Sans","WenQuanYi Micro Hei","Microsoft YaHei",sans-serif; /* -apple-system,BlinkMacSystemFont,Roboto,"Segoe UI","Helvetica Neue","PingFang SC","Noto Sans","Noto Sans CJK SC","Microsoft YaHei","微软雅黑",sans-serif */; font-size: 12px; line-height: 1; -webkit-font-smoothing: antialiased;}
 
 .cg-circular {box-sizing: border-box; position: fixed; z-index: 20020003; border: solid 3px #4949e7; border-radius: 50%; filter: drop-shadow(0 0 3px rgba(0, 0, 0, .3)); pointer-events: none; opacity: 0;}
 .cg-rectangle {box-sizing: border-box; position: fixed; z-index: 20020002; border: solid 1px rgba(255, 255, 255, .7); box-shadow: 0 0 10px rgba(0, 0, 0, .3); background: rgba(255, 255, 255, .1); pointer-events: none; opacity: 0;}
 
-.cg-system-notify {box-shadow: 0 0 10px rgba(0, 0, 0, .3); background: linear-gradient(to top, rgba(255, 255, 255, .75), rgba(255, 255, 255, .7)); position: fixed; padding: 15px; border-radius: 8px; right: 0; top: 0; width: 280px; font-size: 14px; backdrop-filter: blur(5px); display: flex; transition: .1s ease-out; transition-property: transform, opacity; overflow: hidden;}
+.cg-system-notify {box-shadow: 0 0 10px rgba(0, 0, 0, .3); background: linear-gradient(to top, rgba(255, 255, 255, .75), rgba(255, 255, 255, .7)); position: fixed; padding: 15px; border-radius: 3px; right: 0; top: 0; width: 280px; font-size: 14px; backdrop-filter: blur(5px); display: flex; transition: .1s ease-out; transition-property: transform, opacity; overflow: hidden;}
 .cg-system-icon {margin-right: 10px; width: 16px; height: 16px; border-radius: 50%;}
 .cg-system-icon-primary {background: #07c160;}
 .cg-system-icon-info {background: #1989fa;}
@@ -30,6 +39,8 @@ styleList.insertAdjacentHTML('beforeend', `<style class='cg-global'>
 .cg-system-notify-title {font-size: 16px; font-weight: bold; padding-bottom: 10px;}
 .cg-system-notify-content {line-height: 1.5;}
 .cg-system-notify-progress {position: absolute; bottom: 0; left: 0; border-radius: 1px; background: #4949e7; transition: width 1s ease-out; width: 0%; height: 2px;}
+
+.cg-simpletask {bottom: 0; width: initial; height: initial; top: initial; background: #FFF;}
 </style>`);
 let globalCursorStyle;
 function setGlobalCursor(type) {

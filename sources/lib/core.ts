@@ -18,8 +18,13 @@
  * /clickgo/, /runtime/, /storage/, /mounted/
  */
 
-export let config = Vue.reactive({
-    'local': 'en-us'
+export let config: ICGCoreConfig = Vue.reactive({
+    'local': 'en-us',
+    'task.position': 'bottom',
+    'desktop.icon.storage': true,
+    'desktop.icon.recycler': true,
+    'desktop.wallpaper': null,
+    'desktop.path': null
 });
 
 /** --- clickgo 已经加载的文件列表 --- */
@@ -31,6 +36,7 @@ export let globalEvents: ICGGlobalEvents = {
     screenResizeHandler: function() {
         clickgo.form.refreshMaxPosition();
     },
+    configChangedHandler: null,
     formCreatedHandler: null,
     formRemovedHandler: null,
     formTitleChangedHandler: null,
@@ -48,9 +54,12 @@ export let globalEvents: ICGGlobalEvents = {
 /**
  * --- 主动触发系统级事件 ---
  */
-export function trigger(name: TCGGlobalEvent, taskId: number = 0, formId: number = 0, param1: boolean | Error | string = '', param2: string = ''): void {
+export function trigger(name: TCGGlobalEvent, taskId: number | string = 0, formId: number | string | boolean | null = 0, param1: boolean | Error | string = '', param2: string = ''): void {
     switch (name) {
         case 'error': {
+            if (typeof taskId !== 'number' || typeof formId !== 'number') {
+                break;
+            }
             globalEvents.errorHandler?.(taskId, formId, param1 as Error, param2) as void;
             for (let tid in clickgo.task.list) {
                 let task = clickgo.task.list[tid];
@@ -66,6 +75,19 @@ export function trigger(name: TCGGlobalEvent, taskId: number = 0, formId: number
                 let task = clickgo.task.list[tid];
                 for (let fid in task.forms) {
                     task.forms[fid].events[name]?.() as void;
+                }
+            }
+            break;
+        }
+        case 'configChanged': {
+            if ((typeof taskId !== 'string') || (typeof formId === 'number')) {
+                break;
+            }
+            globalEvents.configChangedHandler?.(taskId as TCGCoreConfigName, formId) as void;
+            for (let tid in clickgo.task.list) {
+                let task = clickgo.task.list[tid];
+                for (let fid in task.forms) {
+                    task.forms[fid].events[name]?.(taskId, formId) as void;
                 }
             }
             break;

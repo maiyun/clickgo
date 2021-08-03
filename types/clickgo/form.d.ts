@@ -87,7 +87,6 @@ interface ICGFormItem {
 interface ICGFormTaskInfo {
     'taskId': number;
     'formId': number;
-    'position': 'left' | 'top' | 'right' | 'bottom';
     'length': number;
 }
 

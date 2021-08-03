@@ -108,7 +108,6 @@ document.getElementsByTagName('body')[0].appendChild(rectangleElement);
 let taskInfo: ICGFormTaskInfo = {
     'taskId': 0,
     'formId': 0,
-    'position': 'bottom',
     'length': 0
 };
 
@@ -168,9 +167,8 @@ export function clearTask(taskId: number): boolean {
 export function refreshTaskPosition(): void {
     if (taskInfo.taskId > 0) {
         let form = clickgo.task.list[taskInfo.taskId].forms[taskInfo.formId];
-        taskInfo.position = form.vroot.position;
         // --- 更新 task bar 的位置 ---
-        switch (taskInfo.position) {
+        switch (clickgo.core.config['task.position']) {
             case 'left':
             case 'right': {
                 form.vroot.$refs.form.setPropData('width', 'auto');
@@ -185,7 +183,7 @@ export function refreshTaskPosition(): void {
             }
         }
         setTimeout(function() {
-            switch (taskInfo.position) {
+            switch (clickgo.core.config['task.position']) {
                 case 'left': {
                     taskInfo.length = form.vroot.$el.offsetWidth;
                     form.vroot.$refs.form.setPropData('left', 0);
@@ -227,7 +225,7 @@ export function getAvailArea(): ICGFormAvailArea {
     let top: number = 0;
     let width: number = 0;
     let height: number = 0;
-    switch (taskInfo.position) {
+    switch (clickgo.core.config['task.position']) {
         case 'left': {
             left = taskInfo.length;
             top = 0;
@@ -711,6 +709,21 @@ export function hideNotify(notifyId: number): void {
     }, 100);
 }
 
+// --- 添加 cg-simpletask 的 dom ---
+let simpletaskElement: HTMLDivElement = document.createElement('div');
+simpletaskElement.id = 'cg-simpletask';
+simpletaskElement.classList.add('cg-simpletask');
+simpletaskElement.addEventListener('contextmenu', function(e): void {
+    e.preventDefault();
+});
+document.getElementsByTagName('body')[0].appendChild(simpletaskElement);
+simpletaskElement.addEventListener('touchmove', function(e): void {
+    // --- 防止拖动时整个网页跟着动 ---
+    e.preventDefault();
+}, {
+    'passive': false
+});
+
 /**
  * --- 将标签追加到 pop 层 ---
  * @param el 要追加的标签
@@ -1008,7 +1021,7 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
         if (k.includes('Event')) {
             continue;
         }
-        if (['__awaiter', 'requestAnimationFrame', 'eval', 'Object', 'Math', 'Array', 'Blob', 'Infinity', 'parseInt', 'parseFloat', 'Promise', 'Date', 'JSON'].includes(k)) {
+        if (['__awaiter', 'requestAnimationFrame', 'eval', 'Math', 'Array', 'Blob', 'Infinity', 'parseInt', 'parseFloat', 'Promise', 'Date', 'JSON'].includes(k)) {
             continue;
         }
         invoke[k] = undefined;
@@ -1022,7 +1035,7 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
         'zip': {}
     };
     for (let k in clickgo.core) {
-        if (!['trigger'].includes(k)) {
+        if (!['config', 'trigger'].includes(k)) {
             continue;
         }
         invoke.clickgo.core[k] = (clickgo.core as any)[k];
@@ -1063,6 +1076,25 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
             console.log(message, ...optionalParams);
         }
     };
+    // --- Object ---
+    invoke.Object = {
+        defineProperty: function(): void {
+            return;
+        },
+        keys: function(o: any): string[] {
+            return Object.keys(o);
+        },
+        assign: function(o: any, o2: any): any {
+            if (o.controlName !== undefined) {
+                return o;
+            }
+            return Object.assign(o, o2);
+        }
+    };
+    invoke.navigator = {};
+    if (navigator.clipboard) {
+        invoke.navigator.clipboard = navigator.clipboard;
+    }
     // --- 代码预处理 ---
     let preprocess = function(code: string, path: string): string {
         let exec = /eval\W/.exec(code);

@@ -20,10 +20,10 @@
                     {{l('position')}}
                     <template v-slot:pop>
                         <menulist>
-                            <menulist-item alt="T" type="radio" v-model="position" label="top">{{l('top')}}</menulist-item>
-                            <menulist-item alt="R" type="radio" v-model="position" label="right">{{l('right')}}</menulist-item>
-                            <menulist-item alt="B" type="radio" v-model="position" label="bottom">{{l('bottom')}}</menulist-item>
-                            <menulist-item alt="L" type="radio" v-model="position" label="left">{{l('left')}}</menulist-item>
+                            <menulist-item alt="T" type="radio" :value="position" @update:modelValue="" label="top">{{l('top')}}</menulist-item>
+                            <menulist-item alt="R" type="radio" :value="position" @update:modelValue="" label="right">{{l('right')}}</menulist-item>
+                            <menulist-item alt="B" type="radio" :value="position" @update:modelValue="" label="bottom">{{l('bottom')}}</menulist-item>
+                            <menulist-item alt="L" type="radio" :value="position" @update:modelValue="" label="left">{{l('left')}}</menulist-item>
                         </menulist>
                     </template>
                 </menulist-item>

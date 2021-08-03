@@ -77,7 +77,6 @@ document.getElementsByTagName('body')[0].appendChild(rectangleElement);
 let taskInfo = {
     'taskId': 0,
     'formId': 0,
-    'position': 'bottom',
     'length': 0
 };
 function setTask(taskId, formId) {
@@ -124,8 +123,7 @@ exports.clearTask = clearTask;
 function refreshTaskPosition() {
     if (taskInfo.taskId > 0) {
         let form = clickgo.task.list[taskInfo.taskId].forms[taskInfo.formId];
-        taskInfo.position = form.vroot.position;
-        switch (taskInfo.position) {
+        switch (clickgo.core.config['task.position']) {
             case 'left':
             case 'right': {
                 form.vroot.$refs.form.setPropData('width', 'auto');
@@ -140,7 +138,7 @@ function refreshTaskPosition() {
             }
         }
         setTimeout(function () {
-            switch (taskInfo.position) {
+            switch (clickgo.core.config['task.position']) {
                 case 'left': {
                     taskInfo.length = form.vroot.$el.offsetWidth;
                     form.vroot.$refs.form.setPropData('left', 0);
@@ -179,7 +177,7 @@ function getAvailArea() {
     let top = 0;
     let width = 0;
     let height = 0;
-    switch (taskInfo.position) {
+    switch (clickgo.core.config['task.position']) {
         case 'left': {
             left = taskInfo.length;
             top = 0;
@@ -612,6 +610,18 @@ function hideNotify(notifyId) {
     }, 100);
 }
 exports.hideNotify = hideNotify;
+let simpletaskElement = document.createElement('div');
+simpletaskElement.id = 'cg-simpletask';
+simpletaskElement.classList.add('cg-simpletask');
+simpletaskElement.addEventListener('contextmenu', function (e) {
+    e.preventDefault();
+});
+document.getElementsByTagName('body')[0].appendChild(simpletaskElement);
+simpletaskElement.addEventListener('touchmove', function (e) {
+    e.preventDefault();
+}, {
+    'passive': false
+});
 function appendToPop(el) {
     popListElement.appendChild(el);
 }
@@ -847,7 +857,7 @@ function create(taskId, opt) {
             if (k.includes('Event')) {
                 continue;
             }
-            if (['__awaiter', 'requestAnimationFrame', 'eval', 'Object', 'Math', 'Array', 'Blob', 'Infinity', 'parseInt', 'parseFloat', 'Promise', 'Date', 'JSON'].includes(k)) {
+            if (['__awaiter', 'requestAnimationFrame', 'eval', 'Math', 'Array', 'Blob', 'Infinity', 'parseInt', 'parseFloat', 'Promise', 'Date', 'JSON'].includes(k)) {
                 continue;
             }
             invoke[k] = undefined;
@@ -861,7 +871,7 @@ function create(taskId, opt) {
             'zip': {}
         };
         for (let k in clickgo.core) {
-            if (!['trigger'].includes(k)) {
+            if (!['config', 'trigger'].includes(k)) {
                 continue;
             }
             invoke.clickgo.core[k] = clickgo.core[k];
@@ -901,6 +911,24 @@ function create(taskId, opt) {
                 console.log(message, ...optionalParams);
             }
         };
+        invoke.Object = {
+            defineProperty: function () {
+                return;
+            },
+            keys: function (o) {
+                return Object.keys(o);
+            },
+            assign: function (o, o2) {
+                if (o.controlName !== undefined) {
+                    return o;
+                }
+                return Object.assign(o, o2);
+            }
+        };
+        invoke.navigator = {};
+        if (navigator.clipboard) {
+            invoke.navigator.clipboard = navigator.clipboard;
+        }
         let preprocess = function (code, path) {
             let exec = /eval\W/.exec(code);
             if (exec) {

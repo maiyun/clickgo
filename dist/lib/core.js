@@ -11,7 +11,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.fetchApp = exports.readApp = exports.fetchClickGoFile = exports.trigger = exports.globalEvents = exports.clickgoFiles = exports.config = void 0;
 exports.config = Vue.reactive({
-    'local': 'en-us'
+    'local': 'en-us',
+    'task.position': 'bottom',
+    'desktop.icon.storage': true,
+    'desktop.icon.recycler': true,
+    'desktop.wallpaper': null,
+    'desktop.path': null
 });
 exports.clickgoFiles = {};
 exports.globalEvents = {
@@ -19,6 +24,7 @@ exports.globalEvents = {
     screenResizeHandler: function () {
         clickgo.form.refreshMaxPosition();
     },
+    configChangedHandler: null,
     formCreatedHandler: null,
     formRemovedHandler: null,
     formTitleChangedHandler: null,
@@ -33,9 +39,12 @@ exports.globalEvents = {
     taskEndedHandler: null
 };
 function trigger(name, taskId = 0, formId = 0, param1 = '', param2 = '') {
-    var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z, _0, _1;
+    var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z, _0, _1, _2, _3, _4;
     switch (name) {
         case 'error': {
+            if (typeof taskId !== 'number' || typeof formId !== 'number') {
+                break;
+            }
             (_a = exports.globalEvents.errorHandler) === null || _a === void 0 ? void 0 : _a.call(exports.globalEvents, taskId, formId, param1, param2);
             for (let tid in clickgo.task.list) {
                 let task = clickgo.task.list[tid];
@@ -55,24 +64,37 @@ function trigger(name, taskId = 0, formId = 0, param1 = '', param2 = '') {
             }
             break;
         }
-        case 'formCreated':
-        case 'formRemoved': {
-            (_h = (_g = exports.globalEvents)[name + 'Handler']) === null || _h === void 0 ? void 0 : _h.call(_g, taskId, formId, param1, param2);
+        case 'configChanged': {
+            if ((typeof taskId !== 'string') || (typeof formId === 'number')) {
+                break;
+            }
+            (_g = exports.globalEvents.configChangedHandler) === null || _g === void 0 ? void 0 : _g.call(exports.globalEvents, taskId, formId);
             for (let tid in clickgo.task.list) {
                 let task = clickgo.task.list[tid];
                 for (let fid in task.forms) {
-                    (_k = (_j = task.forms[fid].events)[name]) === null || _k === void 0 ? void 0 : _k.call(_j, taskId, formId, param1, param2);
+                    (_j = (_h = task.forms[fid].events)[name]) === null || _j === void 0 ? void 0 : _j.call(_h, taskId, formId);
+                }
+            }
+            break;
+        }
+        case 'formCreated':
+        case 'formRemoved': {
+            (_l = (_k = exports.globalEvents)[name + 'Handler']) === null || _l === void 0 ? void 0 : _l.call(_k, taskId, formId, param1, param2);
+            for (let tid in clickgo.task.list) {
+                let task = clickgo.task.list[tid];
+                for (let fid in task.forms) {
+                    (_o = (_m = task.forms[fid].events)[name]) === null || _o === void 0 ? void 0 : _o.call(_m, taskId, formId, param1, param2);
                 }
             }
             break;
         }
         case 'formTitleChanged':
         case 'formIconChanged': {
-            (_m = (_l = exports.globalEvents)[name + 'Handler']) === null || _m === void 0 ? void 0 : _m.call(_l, taskId, formId, param1);
+            (_q = (_p = exports.globalEvents)[name + 'Handler']) === null || _q === void 0 ? void 0 : _q.call(_p, taskId, formId, param1);
             for (let tid in clickgo.task.list) {
                 let task = clickgo.task.list[tid];
                 for (let fid in task.forms) {
-                    (_p = (_o = task.forms[fid].events)[name]) === null || _p === void 0 ? void 0 : _p.call(_o, taskId, formId, param1);
+                    (_s = (_r = task.forms[fid].events)[name]) === null || _s === void 0 ? void 0 : _s.call(_r, taskId, formId, param1);
                 }
             }
             break;
@@ -80,11 +102,11 @@ function trigger(name, taskId = 0, formId = 0, param1 = '', param2 = '') {
         case 'formStateMinChanged':
         case 'formStateMaxChanged':
         case 'formShowChanged': {
-            (_r = (_q = exports.globalEvents)[name + 'Handler']) === null || _r === void 0 ? void 0 : _r.call(_q, taskId, formId, param1);
+            (_u = (_t = exports.globalEvents)[name + 'Handler']) === null || _u === void 0 ? void 0 : _u.call(_t, taskId, formId, param1);
             for (let tid in clickgo.task.list) {
                 let task = clickgo.task.list[tid];
                 for (let fid in task.forms) {
-                    (_t = (_s = task.forms[fid].events)[name]) === null || _t === void 0 ? void 0 : _t.call(_s, taskId, formId, param1);
+                    (_w = (_v = task.forms[fid].events)[name]) === null || _w === void 0 ? void 0 : _w.call(_v, taskId, formId, param1);
                 }
             }
             break;
@@ -92,22 +114,22 @@ function trigger(name, taskId = 0, formId = 0, param1 = '', param2 = '') {
         case 'formFocused':
         case 'formBlurred':
         case 'formFlash': {
-            (_v = (_u = exports.globalEvents)[name + 'Handler']) === null || _v === void 0 ? void 0 : _v.call(_u, taskId, formId);
+            (_y = (_x = exports.globalEvents)[name + 'Handler']) === null || _y === void 0 ? void 0 : _y.call(_x, taskId, formId);
             for (let tid in clickgo.task.list) {
                 let task = clickgo.task.list[tid];
                 for (let fid in task.forms) {
-                    (_x = (_w = task.forms[fid].events)[name]) === null || _x === void 0 ? void 0 : _x.call(_w, taskId, formId);
+                    (_0 = (_z = task.forms[fid].events)[name]) === null || _0 === void 0 ? void 0 : _0.call(_z, taskId, formId);
                 }
             }
             break;
         }
         case 'taskStarted':
         case 'taskEnded': {
-            (_z = (_y = exports.globalEvents)[name + 'Handler']) === null || _z === void 0 ? void 0 : _z.call(_y, taskId, formId);
+            (_2 = (_1 = exports.globalEvents)[name + 'Handler']) === null || _2 === void 0 ? void 0 : _2.call(_1, taskId, formId);
             for (let tid in clickgo.task.list) {
                 let task = clickgo.task.list[tid];
                 for (let fid in task.forms) {
-                    (_1 = (_0 = task.forms[fid].events)[name]) === null || _1 === void 0 ? void 0 : _1.call(_0, taskId);
+                    (_4 = (_3 = task.forms[fid].events)[name]) === null || _4 === void 0 ? void 0 : _4.call(_3, taskId);
                 }
             }
             break;

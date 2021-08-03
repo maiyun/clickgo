@@ -1,10 +1,9 @@
 interface ICGCoreLib {
-    'config': {
-        'local': string;
-    };
+    'config': ICGCoreConfig;
     'clickgoFiles': Record<string, Blob | string>;
     'globalEvents': ICGGlobalEvents;
     trigger(name: 'screenResize'): void;
+    trigger(name: 'configChanged', n: TCGCoreConfigName, v: string | boolean | null): void;
     trigger(name: 'error', taskId: number, formId: number, error: Error, info: string): void;
     trigger(name: 'formCreated' | 'formRemoved', taskId: number, formId: number, title: string, icon: string): void;
     trigger(name: 'formTitleChanged' | 'formIconChanged', taskId: number, formId: number, text: string): void;
@@ -16,12 +15,25 @@ interface ICGCoreLib {
     fetchApp(url: string, opt?: ICGCoreFetchAppOptions): Promise<null | ICGAppPkg>;
 }
 
+interface ICGCoreConfig {
+    'local': string;
+    'task.position': 'left' | 'right' | 'top' | 'bottom';
+    'desktop.icon.storage': boolean;
+    'desktop.icon.recycler': boolean;
+    'desktop.wallpaper': string | null;
+    'desktop.path': string | null;
+}
+
+type TCGCoreConfigName = 'local' | 'task.position' | 'desktop.icon.storage' | 'desktop.icon.recycler' | 'desktop.wallpaper' | 'desktop.path';
+
 /** --- 全局事件 --- */
 interface ICGGlobalEvents {
     /** --- 配置捕获 Vue 错误 --- */
     errorHandler: null | ((taskId: number, formId: number, error: Error, info: string) => void | Promise<void>);
     /** --- 当屏幕大小改变时触发的事件 --- */
     screenResizeHandler: null | (() => void | Promise<void>);
+    /** --- 系统配置被更改时触发 --- */
+    configChangedHandler: null | ((n: TCGCoreConfigName, v: string | boolean | null) => void | Promise<void>);
     /** --- 窗体被创建后触发 --- */
     formCreatedHandler: null | ((taskId: number, formId: number, title: string, icon: string) => void | Promise<void>);
     /** --- 窗体被移除后触发 --- */
@@ -49,7 +61,7 @@ interface ICGGlobalEvents {
 }
 
 /** --- 全局事件类型 --- */
-type TCGGlobalEvent = 'error' | 'screenResize' | 'formCreated' | 'formRemoved' | 'formTitleChanged' | 'formIconChanged' | 'formStateMinChanged' | 'formStateMaxChanged' | 'formShowChanged' | 'formFocused' | 'formBlurred' | 'formFlash' | 'taskStarted' | 'taskEnded';
+type TCGGlobalEvent = 'error' | 'screenResize' | 'configChanged' | 'formCreated' | 'formRemoved' | 'formTitleChanged' | 'formIconChanged' | 'formStateMinChanged' | 'formStateMaxChanged' | 'formShowChanged' | 'formFocused' | 'formBlurred' | 'formFlash' | 'taskStarted' | 'taskEnded';
 
 /** --- 应用文件包 --- */
 interface ICGAppPkg {

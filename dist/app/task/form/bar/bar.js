@@ -1,13 +1,17 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.mounted = exports.watch = exports.methods = exports.data = void 0;
+exports.mounted = exports.methods = exports.computed = exports.data = void 0;
 exports.data = {
     'left': 0,
     'top': 0,
     'width': undefined,
     'height': undefined,
-    'position': 'bottom',
     'tasks': {}
+};
+exports.computed = {
+    'position': function () {
+        return clickgo.core.config['task.position'];
+    }
 };
 exports.methods = {
     itemTap: function (taskId) {
@@ -20,11 +24,6 @@ exports.methods = {
     },
     changeFocus: function (formId) {
         clickgo.form.changeFocus(parseInt(formId));
-    }
-};
-exports.watch = {
-    'position': function () {
-        clickgo.form.refreshTaskPosition();
     }
 };
 exports.mounted = function () {

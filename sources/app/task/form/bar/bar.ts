@@ -3,9 +3,14 @@ export let data = {
     'top': 0,
     'width': undefined,
     'height': undefined,
-    'position': 'bottom',
 
     'tasks': {}
+};
+
+export let computed = {
+    'position': function(this: IVueForm): string {
+        return clickgo.core.config['task.position'];
+    }
 };
 
 export let methods = {
@@ -20,12 +25,6 @@ export let methods = {
     },
     changeFocus: function(this: IVueForm, formId: string): void {
         clickgo.form.changeFocus(parseInt(formId));
-    }
-};
-
-export let watch = {
-    'position': function(this: IVueForm): void {
-        clickgo.form.refreshTaskPosition();
     }
 };
 
