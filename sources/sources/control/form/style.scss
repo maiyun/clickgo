@@ -25,7 +25,7 @@
 .wrap {
     position: relative; color: #999; display: flex;
     &:not(.inside) {
-        position: absolute; transition: .1s ease-out; transition-property: transform, opacity; transform: translateX(10px) translateZ(0); opacity: 0;
+        position: absolute; transition: .1s ease-out; transition-property: transform, opacity; transform: translateX(10px) translateY(0) translateZ(0); opacity: 0;
     }
     &:not(.border-none):not(.cg-state-max) {
         box-shadow: 0 0 10px rgba(0, 0, 0, .5);
@@ -37,7 +37,22 @@
         pointer-events: none;
     }
     &.show {
-        transform: translateX(0px) translateZ(0); opacity: 1;
+        transform: translateX(0px) translateY(0) translateZ(0); opacity: 1;
+    }
+    &.cg-state-min {
+        opacity: 0; pointer-events: none;
+    }
+    &.state-min-left {
+        transform: translateX(-50px) translateY(0) translateZ(0);
+    }
+    &.state-min-right {
+        transform: translateX(50px) translateY(0) translateZ(0);
+    }
+    &.state-min-top {
+        transform: translateX(0px) translateY(-50px) translateZ(0);
+    }
+    &.state-min-bottom {
+        transform: translateX(0px) translateY(50px) translateZ(0);
     }
     &.cg-focus {
         color: #2A2E2E;
@@ -148,7 +163,7 @@
         }
         // --- 主体内容 ---
         .content {
-            flex: 1; background-color: hsl(205, 0%, 95%); display: flex; flex-direction: column; height: 0; position: relative;
+            flex: 1; background-color: hsl(205, 0%, 95%); display: flex; flex-direction: column; height: 0; position: relative; overflow: hidden;
         }
     }
     &.border-thin {
@@ -166,11 +181,6 @@
                     }
                 }
             }
-        }
-    }
-    &.cg-state-min {
-        > .inner > .content {
-            display: none;
         }
     }
     &.height-auto {

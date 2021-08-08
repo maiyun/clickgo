@@ -10,6 +10,14 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.fetchApp = exports.readApp = exports.fetchClickGoFile = exports.trigger = exports.globalEvents = exports.clickgoFiles = exports.config = void 0;
+let cgConfig = {
+    'local': 'en-us',
+    'task.position': 'bottom',
+    'desktop.icon.storage': true,
+    'desktop.icon.recycler': true,
+    'desktop.wallpaper': null,
+    'desktop.path': null
+};
 exports.config = Vue.reactive({
     'local': 'en-us',
     'task.position': 'bottom',
@@ -17,6 +25,38 @@ exports.config = Vue.reactive({
     'desktop.icon.recycler': true,
     'desktop.wallpaper': null,
     'desktop.path': null
+});
+Vue.watch(exports.config, function () {
+    for (let key in cgConfig) {
+        if (exports.config[key] !== undefined) {
+            continue;
+        }
+        clickgo.form.notify({
+            'title': 'Warning',
+            'content': 'There is a software that maliciously removed the system config item.\nKey: ' + key,
+            'type': 'warning'
+        });
+        exports.config[key] = cgConfig[key];
+    }
+    for (let key in exports.config) {
+        if (!Object.keys(cgConfig).includes(key)) {
+            clickgo.form.notify({
+                'title': 'Warning',
+                'content': 'There is a software that maliciously modifies the system config.\nKey: ' + key,
+                'type': 'warning'
+            });
+            delete (exports.config[key]);
+            continue;
+        }
+        if (exports.config[key] === cgConfig[key]) {
+            continue;
+        }
+        cgConfig[key] = exports.config[key];
+        if (key === 'task.position') {
+            clickgo.form.refreshTaskPosition();
+        }
+        trigger('configChanged', key, exports.config[key]);
+    }
 });
 exports.clickgoFiles = {};
 exports.globalEvents = {
@@ -26,10 +66,45 @@ exports.globalEvents = {
     },
     configChangedHandler: null,
     formCreatedHandler: null,
-    formRemovedHandler: null,
-    formTitleChangedHandler: null,
-    formIconChangedHandler: null,
-    formStateMinChangedHandler: null,
+    formRemovedHandler: function (taskId, formId) {
+        if (!clickgo.form.simpletaskRoot.forms[formId]) {
+            return;
+        }
+        delete (clickgo.form.simpletaskRoot.forms[formId]);
+    },
+    formTitleChangedHandler: function (taskId, formId, title) {
+        if (!clickgo.form.simpletaskRoot.forms[formId]) {
+            return;
+        }
+        clickgo.form.simpletaskRoot.forms[formId].title = title;
+    },
+    formIconChangedHandler: function (taskId, formId, icon) {
+        if (!clickgo.form.simpletaskRoot.forms[formId]) {
+            return;
+        }
+        clickgo.form.simpletaskRoot.forms[formId].icon = icon;
+    },
+    formStateMinChangedHandler: function (taskId, formId, state) {
+        if (clickgo.form.getTask().taskId > 0) {
+            return;
+        }
+        if (state) {
+            let item = clickgo.form.get(formId);
+            if (!item) {
+                return;
+            }
+            clickgo.form.simpletaskRoot.forms[formId] = {
+                'title': item.title,
+                'icon': item.icon
+            };
+        }
+        else {
+            if (!clickgo.form.simpletaskRoot.forms[formId]) {
+                return;
+            }
+            delete (clickgo.form.simpletaskRoot.forms[formId]);
+        }
+    },
     formStateMaxChangedHandler: null,
     formShowChangedHandler: null,
     formFocusedHandler: null,

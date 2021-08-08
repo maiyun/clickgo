@@ -118,6 +118,10 @@ exports.computed = {
     },
     'isMove': function () {
         return clickgo.tool.getBoolean(this.move);
+    },
+    'taskPosition': function () {
+        let tinfo = clickgo.form.getTask();
+        return tinfo.taskId === 0 ? 'bottom' : clickgo.core.config['task.position'];
     }
 };
 exports.watch = {
@@ -396,7 +400,6 @@ exports.methods = {
         });
     },
     minMethod: function () {
-        var _a, _b;
         if (this.isInside) {
             return true;
         }
@@ -404,10 +407,6 @@ exports.methods = {
             'go': true,
             preventDefault: function () {
                 this.go = false;
-            },
-            'ds': false,
-            disableShape: function () {
-                this.ds = false;
             }
         };
         if (this.stateMaxData) {
@@ -427,33 +426,20 @@ exports.methods = {
         if (!this.stateMinData) {
             this.$emit('min', event, 1, {});
             if (event.go) {
-                this.historyLocation = {
-                    'width': (_a = this.widthData) !== null && _a !== void 0 ? _a : this.$el.offsetWidth,
-                    'height': (_b = this.heightData) !== null && _b !== void 0 ? _b : this.$el.offsetHeight,
-                    'left': this.leftData,
-                    'top': this.topData
-                };
                 this.stateMinData = true;
                 this.$emit('update:stateMin', true);
-                this.$el.classList.add('cg-state-min');
-                if (!event.ds) {
-                    this.$el.style.height = 'auto';
-                    this.heightData = this.$el.offsetHeight;
-                    if (this.height !== 'auto') {
-                        this.$emit('update:height', this.heightData);
-                    }
-                    if (this.border !== 'thin') {
-                        this.widthData = 200;
-                        if (this.width !== 'auto') {
-                            this.$emit('update:width', 200);
+                if (this.cgFocus) {
+                    let formId = clickgo.form.getMaxZIndexFormID({
+                        'formIds': [this.formId]
+                    });
+                    this.cgCreateTimer(function () {
+                        if (formId) {
+                            clickgo.form.changeFocus(formId);
                         }
-                    }
-                    else {
-                        this.widthData = 150;
-                        if (this.width !== 'auto') {
-                            this.$emit('update:width', 150);
+                        else {
+                            clickgo.form.changeFocus();
                         }
-                    }
+                    }, 100);
                 }
             }
             else {
@@ -465,23 +451,6 @@ exports.methods = {
             if (event.go) {
                 this.stateMinData = false;
                 this.$emit('update:stateMin', false);
-                this.$el.classList.remove('cg-state-min');
-                if (!event.ds) {
-                    if (this.height === 'auto') {
-                        this.heightData = undefined;
-                    }
-                    else {
-                        this.heightData = this.historyLocation.height;
-                        this.$emit('update:height', this.historyLocation.height);
-                    }
-                    if (this.width === 'auto') {
-                        this.widthData = undefined;
-                    }
-                    else {
-                        this.widthData = this.historyLocation.width;
-                        this.$emit('update:width', this.historyLocation.width);
-                    }
-                }
             }
             else {
                 return false;
@@ -549,10 +518,6 @@ exports.methods = {
             'go': true,
             preventDefault: function () {
                 this.go = false;
-            },
-            'ds': false,
-            disableShape: function () {
-                this.ds = false;
             }
         };
         if (!this.stateMaxData) {
@@ -571,20 +536,18 @@ exports.methods = {
                 }
                 this.stateMaxData = true;
                 this.$emit('update:stateMax', true);
-                if (!event.ds) {
-                    let area = clickgo.form.getAvailArea();
-                    this.leftData = area.left;
-                    this.$emit('update:left', this.leftData);
-                    this.topData = area.top;
-                    this.$emit('update:top', this.topData);
-                    this.widthData = area.width;
-                    if (this.width !== 'auto') {
-                        this.$emit('update:width', this.widthData);
-                    }
-                    this.heightData = area.height;
-                    if (this.height !== 'auto') {
-                        this.$emit('update:height', this.heightData);
-                    }
+                let area = clickgo.form.getAvailArea();
+                this.leftData = area.left;
+                this.$emit('update:left', this.leftData);
+                this.topData = area.top;
+                this.$emit('update:top', this.topData);
+                this.widthData = area.width;
+                if (this.width !== 'auto') {
+                    this.$emit('update:width', this.widthData);
+                }
+                this.heightData = area.height;
+                if (this.height !== 'auto') {
+                    this.$emit('update:height', this.heightData);
                 }
             }
             else {
@@ -596,25 +559,23 @@ exports.methods = {
             if (event.go) {
                 this.stateMaxData = false;
                 this.$emit('update:stateMax', false);
-                if (!event.ds) {
-                    this.leftData = this.historyLocation.left;
-                    this.$emit('update:left', this.historyLocation.left);
-                    this.topData = this.historyLocation.top;
-                    this.$emit('update:top', this.historyLocation.top);
-                    if (this.width === 'auto') {
-                        this.widthData = undefined;
-                    }
-                    else {
-                        this.widthData = this.historyLocation.width;
-                        this.$emit('update:width', this.historyLocation.width);
-                    }
-                    if (this.height === 'auto') {
-                        this.heightData = undefined;
-                    }
-                    else {
-                        this.heightData = this.historyLocation.height;
-                        this.$emit('update:height', this.historyLocation.height);
-                    }
+                this.leftData = this.historyLocation.left;
+                this.$emit('update:left', this.historyLocation.left);
+                this.topData = this.historyLocation.top;
+                this.$emit('update:top', this.historyLocation.top);
+                if (this.width === 'auto') {
+                    this.widthData = undefined;
+                }
+                else {
+                    this.widthData = this.historyLocation.width;
+                    this.$emit('update:width', this.historyLocation.width);
+                }
+                if (this.height === 'auto') {
+                    this.heightData = undefined;
+                }
+                else {
+                    this.heightData = this.historyLocation.height;
+                    this.$emit('update:height', this.historyLocation.height);
                 }
             }
             else {
@@ -636,11 +597,14 @@ exports.methods = {
         };
         this.$emit('close', event);
         if (event.go) {
-            this.cgCloseForm();
+            this.cgClose();
         }
     },
     resizeMethod: function (e, border) {
         var _a, _b, _c, _d;
+        if (this.stateMaxData) {
+            return;
+        }
         if (clickgo.dom.isMouseAlsoTouchEvent(e)) {
             return;
         }

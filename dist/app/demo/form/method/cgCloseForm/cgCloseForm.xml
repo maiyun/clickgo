@@ -1,5 +1,0 @@
-<form width="300" height="300" title="cgCloseForm">
-    <layout align-v="center" align-h="center" flex="1">
-        <button @tap="cgCloseForm" style="padding: 0 10px;">Click me to close the form</button>
-    </layout>
-</form>

@@ -104,12 +104,23 @@ rectangleElement.setAttribute('data-pos', '');
 rectangleElement.classList.add('cg-rectangle');
 document.getElementsByTagName('body')[0].appendChild(rectangleElement);
 
-/** --- task 的位置极 --- */
+/** --- task 的信息 --- */
 let taskInfo: ICGFormTaskInfo = {
     'taskId': 0,
     'formId': 0,
     'length': 0
 };
+
+/**
+ * --- 获取当前已设置的 task 信息 ---
+ */
+export function getTask(): ICGFormTaskInfo {
+    return {
+        'taskId': taskInfo.taskId,
+        'formId': taskInfo.formId,
+        'length': taskInfo.length
+    };
+}
 
 /**
  * --- 将任务注册为系统 task ---
@@ -286,6 +297,43 @@ export function refreshMaxPosition(): void {
     }
 }
 
+export function getTaskId(formId: number): number {
+    let formElement = formListElement.querySelector(`[data-form-id='${formId}']`);
+    if (!formElement) {
+        return 0;
+    }
+    // --- 获取 task id ---
+    let taskIdAttr = formElement.getAttribute('data-task-id');
+    if (!taskIdAttr) {
+        return 0;
+    }
+    return parseInt(taskIdAttr);
+}
+
+export function min(formId: number): boolean {
+    let taskId: number = getTaskId(formId);
+    let task = clickgo.task.list[taskId];
+    if (!task) {
+        return false;
+    }
+    task.forms[formId].vroot.cgMin();
+    return true;
+}
+
+export function get(formId: number): ICGFormItem | null {
+    let taskId: number = getTaskId(formId);
+    let item = clickgo.task.list[taskId].forms[formId];
+    return {
+        'taskId': taskId,
+        'title': item.vroot.$refs.form.title,
+        'icon': item.vroot.$refs.form.iconData,
+        'stateMax': item.vroot.$refs.form.stateMaxData,
+        'stateMin': item.vroot.$refs.form.stateMinData,
+        'show': item.vroot.$refs.form.showData,
+        'focus': item.vroot.cgFocus
+    };
+}
+
 /**
  * --- 获取 form list 的简略情况 ---
  * @param taskId 任务 ID
@@ -298,19 +346,14 @@ export function getList(taskId: number): Record<string, ICGFormItem> {
     for (let fid in clickgo.task.list[taskId].forms) {
         let item = clickgo.task.list[taskId].forms[fid];
         list[fid] = {
-            'title': '',
-            'icon': '',
-            'stateMax': false,
-            'stateMin': false,
-            'show': false,
-            'focus': false
+            'taskId': taskId,
+            'title': item.vroot.$refs.form.title,
+            'icon': item.vroot.$refs.form.iconData,
+            'stateMax': item.vroot.$refs.form.stateMaxData,
+            'stateMin': item.vroot.$refs.form.stateMinData,
+            'show': item.vroot.$refs.form.showData,
+            'focus': item.vroot.cgFocus
         };
-        list[fid].title = item.vroot.$refs.form.title;
-        list[fid].icon = item.vroot.$refs.form.iconData;
-        list[fid].stateMax = item.vroot.$refs.form.stateMaxData;
-        list[fid].stateMin = item.vroot.$refs.form.stateMinData;
-        list[fid].show = item.vroot.$refs.form.showData;
-        list[fid].focus = item.vroot.cgFocus;
     }
     return list;
 }
@@ -348,42 +391,60 @@ export function changeFocus(formId: number = 0): void {
             return;
         }
     }
-    if (formId !== 0) {
-        let el = document.querySelector(`.cg-form-list > [data-form-id='${formId}']`);
-        if (el) {
-            let taskId: number = parseInt(el.getAttribute('data-task-id') ?? '0');
-            let task = clickgo.task.list[taskId];
-            if (!task.forms[formId].vroot.cgCustomZIndex) {
-                if (task.forms[formId].vroot.cgTopMost) {
-                    task.forms[formId].vroot.$refs.form.setPropData('zIndex', ++lastTopZIndex);
-                }
-                else {
-                    task.forms[formId].vroot.$refs.form.setPropData('zIndex', ++lastZIndex);
-                }
-            }
-            // --- 检测 maskFor ---
-            let maskFor = task.forms[formId].vroot.$refs.form.maskFor;
-            if ((typeof maskFor === 'number') && (clickgo.task.list[taskId].forms[maskFor])) {
-                clickgo.task.list[taskId].forms[maskFor].vapp._container.classList.add('cg-focus');
-                clickgo.task.list[taskId].forms[maskFor].vroot._cgFocus = true;
-                clickgo.core.trigger('formFocused', taskId, maskFor);
-                if (!clickgo.task.list[taskId].forms[maskFor].vroot.cgCustomZIndex) {
-                    if (clickgo.task.list[taskId].forms[maskFor].vroot.cgTopMost) {
-                        clickgo.task.list[taskId].forms[maskFor].vroot.$refs.form.setPropData('zIndex', ++lastTopZIndex);
-                    }
-                    else {
-                        clickgo.task.list[taskId].forms[maskFor].vroot.$refs.form.setPropData('zIndex', ++lastZIndex);
-                    }
-                }
-                clickgo.task.list[taskId].forms[maskFor].vroot.cgFlash();
+    if (formId === 0) {
+        return;
+    }
+    let el = document.querySelector(`.cg-form-list > [data-form-id='${formId}']`);
+    if (!el) {
+        return;
+    }
+    // --- 如果是最小化状态的话，需要还原 ---
+    if ((el.childNodes.item(0) as HTMLElement).classList.contains('cg-state-min')) {
+        min(formId);
+    }
+    // --- 获取所属的 taskId ---
+    let taskId: number = parseInt(el.getAttribute('data-task-id') ?? '0');
+    let task = clickgo.task.list[taskId];
+    // --- 如果不是自定义的 zindex，则设置 zIndex 为最大 ---
+    if (!task.forms[formId].vroot.cgCustomZIndex) {
+        if (task.forms[formId].vroot.cgTopMost) {
+            task.forms[formId].vroot.$refs.form.setPropData('zIndex', ++lastTopZIndex);
+        }
+        else {
+            task.forms[formId].vroot.$refs.form.setPropData('zIndex', ++lastZIndex);
+        }
+    }
+    // --- 检测 maskFor ---
+    let maskFor = task.forms[formId].vroot.$refs.form.maskFor;
+    if ((typeof maskFor === 'number') && (clickgo.task.list[taskId].forms[maskFor])) {
+        // --- 有 maskFor 窗体 ---
+        // --- 如果是最小化状态的话，需要还原 ---
+        if (get(maskFor)!.stateMin) {
+            min(maskFor);
+        }
+        // --- 如果不是自定义的 zindex，则设置 zIndex 为最大 ---
+        if (!clickgo.task.list[taskId].forms[maskFor].vroot.cgCustomZIndex) {
+            if (clickgo.task.list[taskId].forms[maskFor].vroot.cgTopMost) {
+                clickgo.task.list[taskId].forms[maskFor].vroot.$refs.form.setPropData('zIndex', ++lastTopZIndex);
             }
             else {
-                task.forms[formId].vapp._container.classList.add('cg-focus');
-                task.forms[formId].vroot._cgFocus = true;
-                // --- 触发 formFocused 事件 ---
-                clickgo.core.trigger('formFocused', taskId, formId);
+                clickgo.task.list[taskId].forms[maskFor].vroot.$refs.form.setPropData('zIndex', ++lastZIndex);
             }
         }
+        // --- 开启 focus ---
+        clickgo.task.list[taskId].forms[maskFor].vapp._container.classList.add('cg-focus');
+        clickgo.task.list[taskId].forms[maskFor].vroot._cgFocus = true;
+        // --- 触发 formFocused 事件 ---
+        clickgo.core.trigger('formFocused', taskId, maskFor);
+        // --- 闪烁 ---
+        clickgo.task.list[taskId].forms[maskFor].vroot.cgFlash();
+    }
+    else {
+        // --- 正常开启 focus ---
+        task.forms[formId].vapp._container.classList.add('cg-focus');
+        task.forms[formId].vroot._cgFocus = true;
+        // --- 触发 formFocused 事件 ---
+        clickgo.core.trigger('formFocused', taskId, formId);
     }
 }
 
@@ -723,6 +784,43 @@ simpletaskElement.addEventListener('touchmove', function(e): void {
 }, {
     'passive': false
 });
+export let simpletaskRoot: IVue;
+const simpletaskApp = Vue.createApp({
+    'template': '<div v-for="(item, formId) of forms" class="cg-simpletask-item" @click="tap(parseInt(formId))"><div v-if="item.icon" class="cg-simpletask-icon" :style="{\'background-image\': \'url(\' + item.icon + \')\'}"></div><div>{{item.title}}</div></div>',
+    'data': function() {
+        return {
+            'forms': {}
+        };
+    },
+    'watch': {
+        'forms': {
+            handler: function(this: IVue) {
+                let length = Object.keys(this.forms).length;
+                if (length > 0) {
+                    if (simpletaskElement.style.bottom !== '0px') {
+                        simpletaskElement.style.bottom = '0px';
+                    }
+                }
+                else {
+                    if (simpletaskElement.style.bottom === '0px') {
+                        simpletaskElement.style.bottom = '-46px';
+                    }
+                }
+            },
+            'deep': true
+        }
+    },
+    'methods': {
+        tap: function(this: IVue, formId: number): void {
+            min(formId);
+            changeFocus(formId);
+        }
+    },
+    'mounted': function(this: IVue): void {
+        simpletaskRoot = this;
+    }
+});
+simpletaskApp.mount('#cg-simpletask');
 
 /**
  * --- 将标签追加到 pop 层 ---
@@ -941,17 +1039,7 @@ window.addEventListener('mousedown', doFocusAndPopEvent);
  * @param formId 要移除的 form id
  */
 export function remove(formId: number): boolean {
-    // --- 获取要移除的窗体 element ---
-    let formElement = formListElement.querySelector(`[data-form-id='${formId}']`);
-    if (!formElement) {
-        return false;
-    }
-    // --- 获取 task id ---
-    let taskIdAttr = formElement.getAttribute('data-task-id');
-    if (!taskIdAttr) {
-        return false;
-    }
-    let taskId: number = parseInt(taskIdAttr);
+    let taskId: number = getTaskId(formId);
     // --- 移除 formList 中的相关 form 对象 ---
     if (Object.keys(clickgo.task.list[taskId].forms).length === 1) {
         // --- 就一个窗体，那肯定就是自己，直接结束 task ---
@@ -1047,7 +1135,7 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
         invoke.clickgo.dom[k] = (clickgo.dom as any)[k];
     }
     for (let k in clickgo.form) {
-        if (!['setTask', 'clearTask', 'refreshTaskPosition', 'getAvailArea', 'refreshMaxPosition', 'getList', 'changeFocus', 'getMaxZIndexFormID', 'getRectByBorder', 'showCircular', 'moveRectangle', 'showRectangle', 'hideRectangle', 'notify', 'notifyProgress', 'hideNotify', 'showPop', 'hidePop'].includes(k)) {
+        if (!['getTask', 'setTask', 'clearTask', 'getAvailArea', 'refreshMaxPosition', 'getTaskId', 'min', 'get', 'getList', 'changeFocus', 'getMaxZIndexFormID', 'getRectByBorder', 'showCircular', 'moveRectangle', 'showRectangle', 'hideRectangle', 'notify', 'notifyProgress', 'hideNotify', 'showPop', 'hidePop'].includes(k)) {
             continue;
         }
         invoke.clickgo.form[k] = (clickgo.form as any)[k];
@@ -1405,8 +1493,11 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
                     parent = parent.$parent;
                 }
             };
-            methods.cgCloseForm = function(this: IVueControl): void {
+            methods.cgClose = function(this: IVueControl): void {
                 remove(this.formId);
+            };
+            methods.cgBindFormResize = function(this: IVueControl, e: MouseEvent | TouchEvent, border: TCGBorder): void {
+                this.cgParentByName('form').resizeMethod(e, border);
             };
             // --- 预设 methods ---
             methods.cgDown = function(this: IVueControl, e: MouseEvent | TouchEvent) {
@@ -1847,11 +1938,21 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
             }
         }
     };
-    methods.cgCloseForm = function(this: IVueForm): void {
+    methods.cgClose = function(this: IVueForm): void {
         remove(this.formId);
+    };
+    methods.cgMax = function(this: IVueForm): void {
+        // --- 平时同 state 传值，这个是外围调用的时候才会用到 ---
+        this.$refs.form.maxMethod();
+    };
+    methods.cgMin = function(this: IVueForm): void {
+        this.$refs.form.minMethod();
     };
     methods.cgBindFormDrag = function(this: IVueForm, e: MouseEvent | TouchEvent): void {
         this.$refs.form.moveMethod(e, true);
+    };
+    methods.cgBindFormResize = function(this: IVueForm, e: MouseEvent | TouchEvent, border: TCGBorder): void {
+        this.$refs.form.resizeMethod(e, border);
     };
     methods.cgSetSystemEventListener = function(this: IVueForm, name: TCGGlobalEvent, func: (...any: any) => void | Promise<void>): void {
         clickgo.task.list[this.taskId].forms[this.formId].events[name] = func;
@@ -1885,7 +1986,7 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
                             };
                             (opt as ICGFormDialog).select?.(event as unknown as Event, button);
                             if (event.go) {
-                                this.cgCloseForm();
+                                this.cgClose();
                                 resolve(button);
                             }
                         }

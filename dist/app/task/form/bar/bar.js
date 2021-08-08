@@ -17,13 +17,32 @@ exports.methods = {
     itemTap: function (taskId) {
         let formIds = Object.keys(this.tasks[taskId].forms);
         if (formIds.length === 1) {
-            clickgo.form.changeFocus(parseInt(formIds[0]));
+            let formId = parseInt(formIds[0]);
+            let form = clickgo.form.get(formId);
+            if (!form) {
+                return;
+            }
+            if (form.focus) {
+                clickgo.form.min(formId);
+            }
+            else {
+                if (form.stateMin) {
+                    clickgo.form.min(formId);
+                    clickgo.form.changeFocus(formId);
+                }
+                else {
+                    clickgo.form.changeFocus(formId);
+                }
+            }
         }
         else {
         }
     },
     changeFocus: function (formId) {
         clickgo.form.changeFocus(parseInt(formId));
+    },
+    updatePosition: function (position) {
+        clickgo.core.config['task.position'] = position;
     }
 };
 exports.mounted = function () {

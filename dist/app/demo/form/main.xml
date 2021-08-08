@@ -27,8 +27,8 @@
             <overflow class="inner" flex="1" direction="v">
                 <layout gutter="10" direction="v">
                     <button @tap="openForm('method', 'cgCreateForm')">cgCreateForm</button>
-                    <button @tap="openForm('method', 'cgCloseForm')">cgCloseForm</button>
-                    <button @tap="openForm('method', 'cgBindFormDrag')">cgBindFormDrag</button>
+                    <button @tap="openForm('method', 'cgFormState')">cgFormState</button>
+                    <button @tap="openForm('method', 'cgBindFormDragResize')">cgBindFormDrag / Resize</button>
                     <button @tap="openForm('method', 'cgDialog')">cgDialog</button>
                     <button @tap="openForm('method', 'cgSetTopMost')">cgSetTopMost</button>
                     <button @tap="openForm('method', 'cgFlash')">cgFlash</button>

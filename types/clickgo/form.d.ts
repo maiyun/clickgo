@@ -4,11 +4,15 @@ interface ICGFormLib {
     'lastZIndex': number;
     'lastTopZIndex': number;
     'lastPopZIndex': number;
+    getTask(): ICGFormTaskInfo;
     setTask(taskId: number, formId: number): boolean;
     clearTask(taskId: number): boolean;
     refreshTaskPosition(): void;
     getAvailArea(): ICGFormAvailArea;
     refreshMaxPosition(): void;
+    getTaskId(formId: number): number;
+    min(formId: number): boolean;
+    get(formId: number): ICGFormItem | null;
     getList(taskId: number): Record<string, ICGFormItem>;
     changeFocus(formId?: number): void;
     getMaxZIndexFormID(out?: {
@@ -35,6 +39,7 @@ interface ICGFormLib {
     }): number;
     notifyProgress(notifyId: number, per: number): void;
     hideNotify(notifyId: number): void;
+    'simpletaskRoot': IVue;
     appendToPop(el: HTMLElement): void;
     removeFromPop(el: HTMLElement): void;
     showPop(pop: IVueControl, direction: 'h' | 'v' | MouseEvent | TouchEvent | { x: number; y: number; }, opt?: { 'size'?: { width?: number; height?: number; }; 'null'?: boolean; }): void;
@@ -75,6 +80,7 @@ interface ICGFormDialog {
 
 /** --- Form Item 的简略情况，通常在 list 当中 --- */
 interface ICGFormItem {
+    'taskId': number;
     'title': string;
     'icon': string;
     'stateMax': boolean;

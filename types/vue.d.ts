@@ -2,6 +2,7 @@ declare let Vue: {
     createApp(opt: any): IVueApp;
     ref<T extends number | string>(obj: T): { 'value': T; };
     reactive<T>(obj: T): T;
+    watch(v: any, cb: (n: any, o: any) => void | Promise<void>): void;
 };
 
 type IVueOptionMergeFunction = (to: unknown, from: unknown, instance: IVue) => any;
@@ -86,8 +87,11 @@ interface IVueForm extends IVue {
     /** --- 获取语言内容 --- */
     'l': (key: string) => string;
     cgCreateForm(paramOpt?: string | ICGFormCreateOptions & { 'mask'?: boolean; }): Promise<void>;
-    cgCloseForm(): void;
+    cgClose(): void;
+    cgMax(): void;
+    cgMin(): void;
     cgBindFormDrag(e: MouseEvent | TouchEvent): void;
+    cgBindFormResize(e: MouseEvent | TouchEvent, border: TCGBorder): void;
     cgSetSystemEventListener(name: 'screenResize', func: () => void | Promise<void>): void;
     cgSetSystemEventListener(name: 'error', func: (taskId: number, formId: number, error: Error, info: string) => void | Promise<void>): void;
     cgSetSystemEventListener(name: 'formCreated' | 'formRemoved', func: (taskId: number, formId: number, title: string, icon: string) => void | Promise<void>): void;
@@ -182,7 +186,13 @@ interface IVueControl extends IVue {
     /**
      * --- 关闭窗体 ---
      */
-    cgCloseForm(): void;
+    cgClose(): void;
+    /**
+     * --- 改变窗体大小---
+     * @param e mouse 或者 touch
+     * @param border border 方向
+     */
+    cgBindFormResize(e: MouseEvent | TouchEvent, border: TCGBorder): void;
     /**
      * --- 控件默认的 down 事件绑定 ---
      * @param e 鼠标或触摸事件对象

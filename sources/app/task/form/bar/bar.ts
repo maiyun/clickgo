@@ -17,7 +17,26 @@ export let methods = {
     itemTap: function(this: IVueForm, taskId: string): void {
         let formIds = Object.keys(this.tasks[taskId].forms);
         if (formIds.length === 1) {
-            clickgo.form.changeFocus(parseInt(formIds[0]));
+            let formId = parseInt(formIds[0]);
+            let form = clickgo.form.get(formId);
+            if (!form) {
+                return;
+            }
+            if (form.focus) {
+                // --- 当前是焦点，则最小化 ---
+                clickgo.form.min(formId);
+            }
+            else {
+                // --- 没有焦点 ---
+                if (form.stateMin) {
+                    // --- 最小化状态，还原 ---
+                    clickgo.form.min(formId);
+                    clickgo.form.changeFocus(formId);
+                }
+                else {
+                    clickgo.form.changeFocus(formId);
+                }
+            }
         }
         else {
             // --- 多个窗体，则让用户选择显示哪个 ---
@@ -25,6 +44,9 @@ export let methods = {
     },
     changeFocus: function(this: IVueForm, formId: string): void {
         clickgo.form.changeFocus(parseInt(formId));
+    },
+    updatePosition: function(position: 'left' | 'right' | 'top' | 'bottom'): void {
+        clickgo.core.config['task.position'] = position;
     }
 };
 

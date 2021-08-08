@@ -113,6 +113,10 @@ export let computed = {
     },
     'isMove': function(this: IVueControl): boolean {
         return clickgo.tool.getBoolean(this.move);
+    },
+    'taskPosition': function(this: IVueControl): string {
+        let tinfo = clickgo.form.getTask();
+        return tinfo.taskId === 0 ? 'bottom' : clickgo.core.config['task.position'];
     }
 };
 
@@ -411,10 +415,6 @@ export let methods = {
             'go': true,
             preventDefault: function() {
                 this.go = false;
-            },
-            'ds': false,
-            disableShape: function() {
-                this.ds = false;
             }
         };
         // --- 如果当前是最大化状态，要先还原 ---
@@ -437,33 +437,21 @@ export let methods = {
             // --- 当前是正常状态，需要变成最小化 ---
             this.$emit('min', event, 1, {});
             if (event.go) {
-                this.historyLocation = {
-                    'width': this.widthData ?? this.$el.offsetWidth,
-                    'height': this.heightData ?? this.$el.offsetHeight,
-                    'left': this.leftData,
-                    'top': this.topData
-                };
                 this.stateMinData = true;
                 this.$emit('update:stateMin', true);
-                this.$el.classList.add('cg-state-min'); // 这个只是用来快速的让 dom 更新，下面就能获取新 dom height，很快这个就会被 vue 的响应式 class 替代
-                if (!event.ds) {
-                    this.$el.style.height = 'auto';
-                    this.heightData = this.$el.offsetHeight;
-                    if (this.height !== 'auto') {
-                        this.$emit('update:height', this.heightData);
-                    }
-                    if (this.border !== 'thin') {
-                        this.widthData = 200;
-                        if (this.width !== 'auto') {
-                            this.$emit('update:width', 200);
+                // --- 如果当前有焦点，则使别人获取焦点 ---
+                if (this.cgFocus) {
+                    let formId = clickgo.form.getMaxZIndexFormID({
+                        'formIds': [this.formId]
+                    });
+                    this.cgCreateTimer(function() {
+                        if (formId) {
+                            clickgo.form.changeFocus(formId);
                         }
-                    }
-                    else {
-                        this.widthData = 150;
-                        if (this.width !== 'auto') {
-                            this.$emit('update:width', 150);
+                        else {
+                            clickgo.form.changeFocus();
                         }
-                    }
+                    }, 100);
                 }
             }
             else {
@@ -476,23 +464,6 @@ export let methods = {
             if (event.go) {
                 this.stateMinData = false;
                 this.$emit('update:stateMin', false);
-                this.$el.classList.remove('cg-state-min');
-                if (!event.ds) {
-                    if (this.height === 'auto') {
-                        this.heightData = undefined;
-                    }
-                    else {
-                        this.heightData = this.historyLocation.height;
-                        this.$emit('update:height', this.historyLocation.height);
-                    }
-                    if (this.width === 'auto') {
-                        this.widthData = undefined;
-                    }
-                    else {
-                        this.widthData = this.historyLocation.width;
-                        this.$emit('update:width', this.historyLocation.width);
-                    }
-                }
             }
             else {
                 return false;
@@ -561,10 +532,6 @@ export let methods = {
             'go': true,
             preventDefault: function() {
                 this.go = false;
-            },
-            'ds': false,
-            disableShape: function() {
-                this.ds = false;
             }
         };
         if (!this.stateMaxData) {
@@ -584,20 +551,19 @@ export let methods = {
                 }
                 this.stateMaxData = true;
                 this.$emit('update:stateMax', true);
-                if (!event.ds) {
-                    let area = clickgo.form.getAvailArea();
-                    this.leftData = area.left;
-                    this.$emit('update:left', this.leftData);
-                    this.topData = area.top;
-                    this.$emit('update:top', this.topData);
-                    this.widthData = area.width;
-                    if (this.width !== 'auto') {
-                        this.$emit('update:width', this.widthData);
-                    }
-                    this.heightData = area.height;
-                    if (this.height !== 'auto') {
-                        this.$emit('update:height', this.heightData);
-                    }
+                // --- 变窗体样子 ---
+                let area = clickgo.form.getAvailArea();
+                this.leftData = area.left;
+                this.$emit('update:left', this.leftData);
+                this.topData = area.top;
+                this.$emit('update:top', this.topData);
+                this.widthData = area.width;
+                if (this.width !== 'auto') {
+                    this.$emit('update:width', this.widthData);
+                }
+                this.heightData = area.height;
+                if (this.height !== 'auto') {
+                    this.$emit('update:height', this.heightData);
                 }
             }
             else {
@@ -610,25 +576,24 @@ export let methods = {
             if (event.go) {
                 this.stateMaxData = false;
                 this.$emit('update:stateMax', false);
-                if (!event.ds) {
-                    this.leftData = this.historyLocation.left;
-                    this.$emit('update:left', this.historyLocation.left);
-                    this.topData = this.historyLocation.top;
-                    this.$emit('update:top', this.historyLocation.top);
-                    if (this.width === 'auto') {
-                        this.widthData = undefined;
-                    }
-                    else {
-                        this.widthData = this.historyLocation.width;
-                        this.$emit('update:width', this.historyLocation.width);
-                    }
-                    if (this.height === 'auto') {
-                        this.heightData = undefined;
-                    }
-                    else {
-                        this.heightData = this.historyLocation.height;
-                        this.$emit('update:height', this.historyLocation.height);
-                    }
+                // --- 变窗体样子 ---
+                this.leftData = this.historyLocation.left;
+                this.$emit('update:left', this.historyLocation.left);
+                this.topData = this.historyLocation.top;
+                this.$emit('update:top', this.historyLocation.top);
+                if (this.width === 'auto') {
+                    this.widthData = undefined;
+                }
+                else {
+                    this.widthData = this.historyLocation.width;
+                    this.$emit('update:width', this.historyLocation.width);
+                }
+                if (this.height === 'auto') {
+                    this.heightData = undefined;
+                }
+                else {
+                    this.heightData = this.historyLocation.height;
+                    this.$emit('update:height', this.historyLocation.height);
                 }
             }
             else {
@@ -652,11 +617,14 @@ export let methods = {
         };
         this.$emit('close', event);
         if (event.go) {
-            this.cgCloseForm();
+            this.cgClose();
         }
     },
     // --- 改变窗体大小 ---
     resizeMethod: function(this: IVueControl, e: MouseEvent | TouchEvent, border: TCGBorder): void {
+        if (this.stateMaxData) {
+            return;
+        }
         if (clickgo.dom.isMouseAlsoTouchEvent(e)) {
             return;
         }

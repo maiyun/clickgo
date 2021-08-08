@@ -18,6 +18,14 @@
  * /clickgo/, /runtime/, /storage/, /mounted/
  */
 
+let cgConfig: ICGCoreConfig = {
+    'local': 'en-us',
+    'task.position': 'bottom',
+    'desktop.icon.storage': true,
+    'desktop.icon.recycler': true,
+    'desktop.wallpaper': null,
+    'desktop.path': null
+};
 export let config: ICGCoreConfig = Vue.reactive({
     'local': 'en-us',
     'task.position': 'bottom',
@@ -25,6 +33,40 @@ export let config: ICGCoreConfig = Vue.reactive({
     'desktop.icon.recycler': true,
     'desktop.wallpaper': null,
     'desktop.path': null
+});
+
+Vue.watch(config, function() {
+    // --- 检测有没有缺少的 config key ---
+    for (let key in cgConfig) {
+        if ((config as any)[key] !== undefined) {
+            continue;
+        }
+        clickgo.form.notify({
+            'title': 'Warning',
+            'content': 'There is a software that maliciously removed the system config item.\nKey: ' + key,
+            'type': 'warning'
+        });
+        (config as any)[key] = (cgConfig as any)[key];
+    }
+    for (let key in config) {
+        if (!Object.keys(cgConfig).includes(key)) {
+            clickgo.form.notify({
+                'title': 'Warning',
+                'content': 'There is a software that maliciously modifies the system config.\nKey: ' + key,
+                'type': 'warning'
+            });
+            delete((config as any)[key]);
+            continue;
+        }
+        if ((config as any)[key] === (cgConfig as any)[key]) {
+            continue;
+        }
+        (cgConfig as any)[key] = (config as any)[key];
+        if (key === 'task.position') {
+            clickgo.form.refreshTaskPosition();
+        }
+        trigger('configChanged', key, (config as any)[key]);
+    }
 });
 
 /** --- clickgo 已经加载的文件列表 --- */
@@ -38,10 +80,45 @@ export let globalEvents: ICGGlobalEvents = {
     },
     configChangedHandler: null,
     formCreatedHandler: null,
-    formRemovedHandler: null,
-    formTitleChangedHandler: null,
-    formIconChangedHandler: null,
-    formStateMinChangedHandler: null,
+    formRemovedHandler: function(taskId: number, formId: number): void {
+        if (!clickgo.form.simpletaskRoot.forms[formId]) {
+            return;
+        }
+        delete(clickgo.form.simpletaskRoot.forms[formId]);
+    },
+    formTitleChangedHandler: function(taskId: number, formId: number, title: string): void {
+        if (!clickgo.form.simpletaskRoot.forms[formId]) {
+            return;
+        }
+        clickgo.form.simpletaskRoot.forms[formId].title = title;
+    },
+    formIconChangedHandler: function(taskId: number, formId: number, icon: string): void {
+        if (!clickgo.form.simpletaskRoot.forms[formId]) {
+            return;
+        }
+        clickgo.form.simpletaskRoot.forms[formId].icon = icon;
+    },
+    formStateMinChangedHandler: function(taskId: number, formId: number, state: boolean): void {
+        if (clickgo.form.getTask().taskId > 0) {
+            return;
+        }
+        if (state) {
+            let item = clickgo.form.get(formId);
+            if (!item) {
+                return;
+            }
+            clickgo.form.simpletaskRoot.forms[formId] = {
+                'title': item.title,
+                'icon': item.icon
+            };
+        }
+        else {
+            if (!clickgo.form.simpletaskRoot.forms[formId]) {
+                return;
+            }
+            delete(clickgo.form.simpletaskRoot.forms[formId]);
+        }
+    },
     formStateMaxChangedHandler: null,
     formShowChangedHandler: null,
     formFocusedHandler: null,
