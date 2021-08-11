@@ -80,7 +80,7 @@ exports.data = {
     'stateMinData': false,
     'stateAbs': false,
     'showData': false,
-    'iconData': undefined,
+    'iconData': '',
     'widthData': undefined,
     'heightData': undefined,
     'leftData': 0,
@@ -129,22 +129,16 @@ exports.watch = {
         handler: function () {
             var _a;
             return __awaiter(this, void 0, void 0, function* () {
-                let first = false;
-                if (this.iconData === undefined) {
-                    first = true;
-                }
                 if (this.icon === '') {
                     this.iconData = '';
                 }
                 else {
                     this.iconData = (_a = yield this.cgGetDataUrl(this.icon)) !== null && _a !== void 0 ? _a : '';
                 }
-                if (!first) {
-                    clickgo.core.trigger('formIconChanged', this.taskId, this.formId, this.iconData);
-                }
+                clickgo.core.trigger('formIconChanged', this.taskId, this.formId, this.iconData);
             });
         },
-        'immediate': true
+        'immediate': false
     },
     'title': function () {
         clickgo.core.trigger('formTitleChanged', this.taskId, this.formId, this.title);

@@ -2216,6 +2216,13 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
             'beforeMount': beforeMount,
             'mounted': async function(this: IVueForm) {
                 await this.$nextTick();
+                // --- 判断是否有 icon，对 icon 进行第一次读取 ---
+                // --- 为啥要在这搞，因为 form 控件中读取，将可能导致下方的 formCreate 事件获取不到 icon 图标 ---
+                // --- 而如果用延迟的方式获取，将可能导致 changeFocus 的窗体焦点事件先于 formCreate 触发 ---
+                if (this.$refs.form.icon !== '') {
+                    this.$refs.form.iconData = await this.cgGetDataUrl(this.$refs.form.icon) ?? '';
+                }
+                // --- 完成 ---
                 resolve({
                     'vapp': vapp,
                     'vroot': this
@@ -2286,6 +2293,7 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
         rtn.vroot.cgShow();
     }
     // --- 触发 formCreated 事件 ---
+    // console.log('x', rtn.vroot.$refs.form.iconData, formId);
     clickgo.core.trigger('formCreated', taskId, formId, rtn.vroot.$refs.form.title, rtn.vroot.$refs.form.iconData);
     // --- 绑定获取焦点事件 ---
     changeFocus(formId);

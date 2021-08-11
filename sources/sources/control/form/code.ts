@@ -72,7 +72,7 @@ export let data = {
     'stateAbs': false,
     'showData': false,
 
-    'iconData': undefined,
+    'iconData': '',
 
     'widthData': undefined,
     'heightData': undefined,
@@ -123,22 +123,28 @@ export let computed = {
 export let watch = {
     'icon': {
         handler: async function(this: IVueControl): Promise<void> {
+            /*
             let first: boolean = false;
             if (this.iconData === undefined) {
                 first = true;
             }
+            //*/
             if (this.icon === '') {
                 this.iconData = '';
             }
             else {
                 this.iconData = await this.cgGetDataUrl(this.icon) ?? '';
             }
+            // --- 触发 formIconChanged 事件 ---
+            clickgo.core.trigger('formIconChanged', this.taskId, this.formId, this.iconData);
+            /*
             if (!first) {
                 // --- 触发 formIconChanged 事件 ---
                 clickgo.core.trigger('formIconChanged', this.taskId, this.formId, this.iconData);
             }
+            */
         },
-        'immediate': true
+        'immediate': false
     },
     'title': function(this: IVueControl): void {
         // --- 触发 formTitleChanged 事件 ---

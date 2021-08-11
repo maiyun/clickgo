@@ -1999,8 +1999,12 @@ function create(taskId, opt) {
                 'created': created,
                 'beforeMount': beforeMount,
                 'mounted': function () {
+                    var _a;
                     return __awaiter(this, void 0, void 0, function* () {
                         yield this.$nextTick();
+                        if (this.$refs.form.icon !== '') {
+                            this.$refs.form.iconData = (_a = yield this.cgGetDataUrl(this.$refs.form.icon)) !== null && _a !== void 0 ? _a : '';
+                        }
                         resolve({
                             'vapp': vapp,
                             'vroot': this
