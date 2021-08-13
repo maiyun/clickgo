@@ -177,6 +177,21 @@ export function clearTask(taskId: number): boolean {
     taskInfo.formId = 0;
     taskInfo.length = 0;
     clickgo.core.trigger('screenResize');
+    // --- 如果此时已经有最小化的窗体，那么他将永远“不见天日”，需要将他们传递给 simpletask ---
+    let tasks = clickgo.task.getList();
+    for (let taskId in tasks) {
+        let forms = getList(parseInt(taskId));
+        for (let formId in forms) {
+            let form = forms[formId];
+            if (!form.stateMin) {
+                continue;
+            }
+            simpletaskRoot.forms[formId] = {
+                'title': form.title,
+                'icon': form.icon
+            };
+        }
+    }
     return true;
 }
 
@@ -466,9 +481,8 @@ export function getMaxZIndexFormID(out: {
 } = {}): number | null {
     let zIndex: number = 0;
     let formId: number | null = null;
-    let fl = document.querySelector('.cg-form-list') as HTMLDivElement;
-    for (let i = 0; i < fl.children.length; ++i) {
-        let root = fl.children.item(i) as HTMLDivElement;
+    for (let i = 0; i < formListElement.children.length; ++i) {
+        let root = formListElement.children.item(i) as HTMLDivElement;
         let formWrap = root.children.item(0) as HTMLDivElement;
         // --- 排除 top most 窗体 ---
         let z = parseInt(formWrap.style.zIndex);

@@ -133,6 +133,20 @@ function clearTask(taskId) {
     taskInfo.formId = 0;
     taskInfo.length = 0;
     clickgo.core.trigger('screenResize');
+    let tasks = clickgo.task.getList();
+    for (let taskId in tasks) {
+        let forms = getList(parseInt(taskId));
+        for (let formId in forms) {
+            let form = forms[formId];
+            if (!form.stateMin) {
+                continue;
+            }
+            exports.simpletaskRoot.forms[formId] = {
+                'title': form.title,
+                'icon': form.icon
+            };
+        }
+    }
     return true;
 }
 exports.clearTask = clearTask;
@@ -386,9 +400,8 @@ function getMaxZIndexFormID(out = {}) {
     var _a, _b;
     let zIndex = 0;
     let formId = null;
-    let fl = document.querySelector('.cg-form-list');
-    for (let i = 0; i < fl.children.length; ++i) {
-        let root = fl.children.item(i);
+    for (let i = 0; i < formListElement.children.length; ++i) {
+        let root = formListElement.children.item(i);
         let formWrap = root.children.item(0);
         let z = parseInt(formWrap.style.zIndex);
         if (z > 9999999) {
