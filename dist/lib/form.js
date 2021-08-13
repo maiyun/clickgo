@@ -118,6 +118,14 @@ function setTask(taskId, formId) {
 }
 exports.setTask = setTask;
 function clearTask(taskId) {
+    if (typeof taskId !== 'number') {
+        notify({
+            'title': 'Warning',
+            'content': 'The "formId" of "clearTask" must be a number type.',
+            'type': 'warning'
+        });
+        return false;
+    }
     if (taskInfo.taskId !== taskId) {
         return false;
     }
@@ -307,6 +315,7 @@ function changeFocus(formId = 0) {
             'content': 'The "formId" of "changeFocus" must be a number type.',
             'type': 'warning'
         });
+        return;
     }
     let focusElement = document.querySelector('.cg-form-list > .cg-focus');
     if (focusElement) {
@@ -381,16 +390,19 @@ function getMaxZIndexFormID(out = {}) {
     for (let i = 0; i < fl.children.length; ++i) {
         let root = fl.children.item(i);
         let formWrap = root.children.item(0);
+        let z = parseInt(formWrap.style.zIndex);
+        if (z > 9999999) {
+            continue;
+        }
+        if (formWrap.classList.contains('cg-state-min')) {
+            continue;
+        }
         let tid = parseInt(root.getAttribute('data-task-id'));
         if ((_a = out.taskIds) === null || _a === void 0 ? void 0 : _a.includes(tid)) {
             continue;
         }
         let fid = parseInt(root.getAttribute('data-form-id'));
         if ((_b = out.formIds) === null || _b === void 0 ? void 0 : _b.includes(fid)) {
-            continue;
-        }
-        let z = parseInt(formWrap.style.zIndex);
-        if (z > 9999999) {
             continue;
         }
         if (z > zIndex) {
@@ -696,7 +708,6 @@ const simpletaskApp = Vue.createApp({
     },
     'methods': {
         tap: function (formId) {
-            min(formId);
             changeFocus(formId);
         }
     },

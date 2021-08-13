@@ -28,14 +28,8 @@ export let methods = {
             }
             else {
                 // --- 没有焦点 ---
-                if (form.stateMin) {
-                    // --- 最小化状态，还原 ---
-                    clickgo.form.min(formId);
-                    clickgo.form.changeFocus(formId);
-                }
-                else {
-                    clickgo.form.changeFocus(formId);
-                }
+                // --- 让其获取焦点，如果是最小化状态，则会自动还原 ---
+                clickgo.form.changeFocus(formId);
             }
         }
         else {

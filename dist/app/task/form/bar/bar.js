@@ -26,13 +26,7 @@ exports.methods = {
                 clickgo.form.min(formId);
             }
             else {
-                if (form.stateMin) {
-                    clickgo.form.min(formId);
-                    clickgo.form.changeFocus(formId);
-                }
-                else {
-                    clickgo.form.changeFocus(formId);
-                }
+                clickgo.form.changeFocus(formId);
             }
         }
         else {

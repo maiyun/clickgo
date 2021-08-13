@@ -33,7 +33,7 @@ exports.methods = {
     'end': function () {
         return __awaiter(this, void 0, void 0, function* () {
             if (yield this.cgConfirm(`Are you sure to end Task ${this.tid}?`)) {
-                clickgo.task.end(this.tid);
+                clickgo.task.end(parseInt(this.tid));
             }
         });
     }

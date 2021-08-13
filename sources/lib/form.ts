@@ -162,6 +162,14 @@ export function setTask(taskId: number, formId: number): boolean {
  * @param taskId 清除的 taskid 为 task id 才能清除
  */
 export function clearTask(taskId: number): boolean {
+    if (typeof taskId !== 'number') {
+        notify({
+            'title': 'Warning',
+            'content': 'The "formId" of "clearTask" must be a number type.',
+            'type': 'warning'
+        });
+        return false;
+    }
     if (taskInfo.taskId !== taskId) {
         return false;
     }
@@ -369,6 +377,7 @@ export function changeFocus(formId: number = 0): void {
             'content': 'The "formId" of "changeFocus" must be a number type.',
             'type': 'warning'
         });
+        return;
     }
     let focusElement = document.querySelector('.cg-form-list > .cg-focus');
     if (focusElement) {
@@ -449,7 +458,7 @@ export function changeFocus(formId: number = 0): void {
 }
 
 /**
- * --- 获取当前 z-index 值最大的 form id（除了 top 模式的窗体） --- TODO 排除 task 或者 form id
+ * --- 获取当前 z-index 值最大的 form id（除了 top 模式的窗体和最小化的窗体） --- TODO 排除 task 或者 form id
  */
 export function getMaxZIndexFormID(out: {
     'taskIds'?: number[];
@@ -461,16 +470,23 @@ export function getMaxZIndexFormID(out: {
     for (let i = 0; i < fl.children.length; ++i) {
         let root = fl.children.item(i) as HTMLDivElement;
         let formWrap = root.children.item(0) as HTMLDivElement;
+        // --- 排除 top most 窗体 ---
+        let z = parseInt(formWrap.style.zIndex);
+        if (z > 9999999) {
+            continue;
+        }
+        // --- 排除最小化窗体 ---
+        if (formWrap.classList.contains('cg-state-min')) {
+            continue;
+        }
+        // --- 排除用户定义的 task id 窗体 ---
         let tid = parseInt(root.getAttribute('data-task-id')!);
         if (out.taskIds?.includes(tid)) {
             continue;
         }
+        // --- 排除用户定义的 form id 窗体 ---
         let fid = parseInt(root.getAttribute('data-form-id')!);
         if (out.formIds?.includes(fid)) {
-            continue;
-        }
-        let z = parseInt(formWrap.style.zIndex);
-        if (z > 9999999) {
             continue;
         }
         if (z > zIndex) {
@@ -812,7 +828,6 @@ const simpletaskApp = Vue.createApp({
     },
     'methods': {
         tap: function(this: IVue, formId: number): void {
-            min(formId);
             changeFocus(formId);
         }
     },

@@ -19,7 +19,7 @@ export let methods = {
     },
     'end': async function(this: IVueForm): Promise<void> {
         if (await this.cgConfirm(`Are you sure to end Task ${this.tid}?`)) {
-            clickgo.task.end(this.tid);
+            clickgo.task.end(parseInt(this.tid));
         }
     }
 };
