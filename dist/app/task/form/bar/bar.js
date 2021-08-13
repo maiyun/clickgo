@@ -107,4 +107,22 @@ exports.mounted = function () {
         }
         this.tasks[taskId].selected = false;
     });
+    this.cgSetSystemEventListener('formTitleChanged', (taskId, formId, title) => {
+        if (!this.tasks[taskId]) {
+            return;
+        }
+        if (!this.tasks[taskId].forms[formId]) {
+            return;
+        }
+        this.tasks[taskId].forms[formId].title = title;
+    });
+    this.cgSetSystemEventListener('formIconChanged', (taskId, formId, icon) => {
+        if (!this.tasks[taskId]) {
+            return;
+        }
+        if (!this.tasks[taskId].forms[formId]) {
+            return;
+        }
+        this.tasks[taskId].forms[formId].icon = icon || this.tasks[taskId].icon;
+    });
 };

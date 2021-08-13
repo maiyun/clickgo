@@ -114,4 +114,22 @@ export let mounted = function(this: IVueForm): void {
         }
         this.tasks[taskId].selected = false;
     });
+    this.cgSetSystemEventListener('formTitleChanged', (taskId: number, formId: number, title: string): void => {
+        if (!this.tasks[taskId]) {
+            return;
+        }
+        if (!this.tasks[taskId].forms[formId]) {
+            return;
+        }
+        this.tasks[taskId].forms[formId].title = title;
+    });
+    this.cgSetSystemEventListener('formIconChanged', (taskId: number, formId: number, icon: string): void => {
+        if (!this.tasks[taskId]) {
+            return;
+        }
+        if (!this.tasks[taskId].forms[formId]) {
+            return;
+        }
+        this.tasks[taskId].forms[formId].icon = icon || this.tasks[taskId].icon;
+    });
 };
