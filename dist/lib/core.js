@@ -13,6 +13,7 @@ exports.fetchApp = exports.readApp = exports.fetchClickGoFile = exports.trigger 
 let cgConfig = {
     'local': 'en-us',
     'task.position': 'bottom',
+    'task.pin': {},
     'desktop.icon.storage': true,
     'desktop.icon.recycler': true,
     'desktop.wallpaper': null,
@@ -21,6 +22,7 @@ let cgConfig = {
 exports.config = Vue.reactive({
     'local': 'en-us',
     'task.position': 'bottom',
+    'task.pin': {},
     'desktop.icon.storage': true,
     'desktop.icon.recycler': true,
     'desktop.wallpaper': null,

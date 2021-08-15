@@ -21,6 +21,15 @@ export let methods = {
         if (await this.cgConfirm(`Are you sure to end Task ${this.tid}?`)) {
             clickgo.task.end(parseInt(this.tid));
         }
+    },
+    'runTask': async function(this: IVueForm): Promise<void> {
+        if (clickgo.form.getTask().taskId > 0) {
+            await this.cgDialog('The Task APP is already running.');
+            return;
+        }
+        // --- 执行 ---
+        let taskId = await clickgo.task.run('/clickgo/app/task/');
+        await this.cgDialog(`Successfully run, task id is: ${taskId}.`);
     }
 };
 
@@ -29,7 +38,7 @@ export let mounted = function(this: IVueForm): void {
     for (let tid in list) {
         this.tlist.push({
             'label': 'Task ' + tid,
-            'value': tid
+            'value': parseInt(tid)
         });
     }
     this.cgSetSystemEventListener('taskStarted', (taskId: number) => {

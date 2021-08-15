@@ -19,6 +19,7 @@ interface ICGTask {
         'data': Record<string, Record<string, string>>;
     };
     'icon': string;
+    'path': string;
     'permission': Record<string, any>;
 
     'controlPkgs': Record<string, ICGControlPkg>;
@@ -37,4 +38,5 @@ interface ICGTaskItem {
     'localName': string;
     'formCount': number;
     'icon': string;
+    'path': string;
 }

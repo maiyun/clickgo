@@ -21,6 +21,7 @@
 let cgConfig: ICGCoreConfig = {
     'local': 'en-us',
     'task.position': 'bottom',
+    'task.pin': {},
     'desktop.icon.storage': true,
     'desktop.icon.recycler': true,
     'desktop.wallpaper': null,
@@ -29,6 +30,7 @@ let cgConfig: ICGCoreConfig = {
 export let config: ICGCoreConfig = Vue.reactive({
     'local': 'en-us',
     'task.position': 'bottom',
+    'task.pin': {},
     'desktop.icon.storage': true,
     'desktop.icon.recycler': true,
     'desktop.wallpaper': null,

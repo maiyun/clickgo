@@ -113,6 +113,7 @@ function setTask(taskId, formId) {
     }
     taskInfo.taskId = taskId;
     taskInfo.formId = formId;
+    exports.simpletaskRoot.forms = {};
     refreshTaskPosition();
     return true;
 }

@@ -36,6 +36,16 @@ exports.methods = {
                 clickgo.task.end(parseInt(this.tid));
             }
         });
+    },
+    'runTask': function () {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (clickgo.form.getTask().taskId > 0) {
+                yield this.cgDialog('The Task APP is already running.');
+                return;
+            }
+            let taskId = yield clickgo.task.run('/clickgo/app/task/');
+            yield this.cgDialog(`Successfully run, task id is: ${taskId}.`);
+        });
     }
 };
 exports.mounted = function () {
@@ -43,7 +53,7 @@ exports.mounted = function () {
     for (let tid in list) {
         this.tlist.push({
             'label': 'Task ' + tid,
-            'value': tid
+            'value': parseInt(tid)
         });
     }
     this.cgSetSystemEventListener('taskStarted', (taskId) => {

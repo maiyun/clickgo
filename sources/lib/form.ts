@@ -153,6 +153,7 @@ export function setTask(taskId: number, formId: number): boolean {
     }
     taskInfo.taskId = taskId;
     taskInfo.formId = formId;
+    simpletaskRoot.forms = {};
     refreshTaskPosition();
     return true;
 }

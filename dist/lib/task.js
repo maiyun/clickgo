@@ -34,7 +34,8 @@ function get(tid) {
         'customTheme': exports.list[tid].customTheme,
         'localName': exports.list[tid].local.name,
         'formCount': Object.keys(exports.list[tid].forms).length,
-        'icon': exports.list[tid].icon
+        'icon': exports.list[tid].icon,
+        'path': exports.list[tid].path
     };
 }
 exports.get = get;
@@ -46,7 +47,8 @@ function getList() {
             'customTheme': item.customTheme,
             'localName': item.local.name,
             'formCount': Object.keys(item.forms).length,
-            'icon': item.icon
+            'icon': item.icon,
+            'path': item.path
         };
     }
     return list;
@@ -100,6 +102,7 @@ function run(url, opt = {}) {
                 'data': {}
             }),
             'icon': (_c = appPkg.icon) !== null && _c !== void 0 ? _c : icon,
+            'path': url,
             'permission': {},
             'controlPkgs': {},
             'themePkgs': {},

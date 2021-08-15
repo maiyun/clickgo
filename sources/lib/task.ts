@@ -29,7 +29,8 @@ export function get(tid: number): ICGTaskItem | null {
         'customTheme': list[tid].customTheme,
         'localName': list[tid].local.name,
         'formCount': Object.keys(list[tid].forms).length,
-        'icon': list[tid].icon
+        'icon': list[tid].icon,
+        'path': list[tid].path
     };
 }
 
@@ -44,7 +45,8 @@ export function getList(): Record<string, ICGTaskItem> {
             'customTheme': item.customTheme,
             'localName': item.local.name,
             'formCount': Object.keys(item.forms).length,
-            'icon': item.icon
+            'icon': item.icon,
+            'path': item.path
         };
     }
     return list;
@@ -103,6 +105,7 @@ export async function run(url: string, opt: { 'runtime'?: Record<string, Blob | 
             'data': {}
         }),
         'icon': appPkg.icon ?? icon,
+        'path': url,
         'permission': {},
 
         'controlPkgs': {},

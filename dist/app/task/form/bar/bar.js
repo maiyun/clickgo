@@ -1,4 +1,13 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.mounted = exports.methods = exports.computed = exports.data = void 0;
 exports.data = {
@@ -6,7 +15,7 @@ exports.data = {
     'top': 0,
     'width': undefined,
     'height': undefined,
-    'tasks': {}
+    'apps': []
 };
 exports.computed = {
     'position': function () {
@@ -14,115 +23,194 @@ exports.computed = {
     }
 };
 exports.methods = {
-    itemTap: function (taskId) {
-        let formIds = Object.keys(this.tasks[taskId].forms);
-        if (formIds.length === 1) {
-            let formId = parseInt(formIds[0]);
-            let form = clickgo.form.get(formId);
-            if (!form) {
-                return;
+    itemTap: function (appIndex) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (this.apps[appIndex].formCount === 0) {
+                try {
+                    yield clickgo.task.run(this.apps[appIndex].path);
+                }
+                catch (_a) {
+                    return;
+                }
             }
-            if (form.focus) {
-                clickgo.form.min(formId);
+            else if (this.apps[appIndex].formCount === 1) {
+                let formIds = Object.keys(this.apps[appIndex].forms);
+                let formId = parseInt(formIds[0]);
+                let form = clickgo.form.get(formId);
+                if (!form) {
+                    return;
+                }
+                if (form.focus) {
+                    clickgo.form.min(formId);
+                }
+                else {
+                    clickgo.form.changeFocus(formId);
+                }
             }
             else {
-                clickgo.form.changeFocus(formId);
             }
-        }
-        else {
-        }
+        });
     },
     changeFocus: function (formId) {
         clickgo.form.changeFocus(parseInt(formId));
     },
     updatePosition: function (position) {
         clickgo.core.config['task.position'] = position;
+    },
+    getAppIndexByPath: function (path) {
+        for (let i = 0; i < this.apps.length; ++i) {
+            let app = this.apps[i];
+            if (app.path !== path) {
+                continue;
+            }
+            return i;
+        }
+        return -1;
     }
 };
 exports.mounted = function () {
     this.cgSetTopMost(true);
     clickgo.form.setTask(this.taskId, this.formId);
+    for (let path in clickgo.core.config['task.pin']) {
+        this.apps.push({
+            'path': path,
+            'icon': clickgo.core.config['task.pin'][path],
+            'selected': false,
+            'opened': false,
+            'forms': {},
+            'formCount': 0
+        });
+    }
     let tasks = clickgo.task.getList();
     for (let taskId in tasks) {
         if (parseInt(taskId) === this.taskId) {
             continue;
         }
         let task = tasks[taskId];
-        this.tasks[taskId] = {
-            'icon': task.icon,
-            'selected': false,
-            'opened': true,
-            'forms': {},
-            'formCount': 0
-        };
+        let appIndex = this.getAppIndexByPath(task.path);
+        if (appIndex >= 0) {
+            this.apps[appIndex].opened = true;
+        }
+        else {
+            this.apps.push({
+                'icon': task.icon,
+                'selected': false,
+                'opened': true,
+                'forms': {},
+                'formCount': 0,
+                'path': task.path
+            });
+            appIndex = this.apps.length - 1;
+        }
+        let forms = clickgo.form.getList(parseInt(taskId));
+        for (let formId in forms) {
+            let form = forms[formId];
+            this.apps[appIndex].forms[formId] = {
+                'title': form.title,
+                'icon': form.icon || this.apps[appIndex].icon
+            };
+        }
+        this.apps[appIndex].formCount = Object.keys(this.apps[appIndex].forms).length;
     }
-    this.cgSetSystemEventListener('taskStarted', (taskId) => {
-        if (this.tasks[taskId]) {
+    this.cgSetSystemEventListener('formCreated', (taskId, formId, title, icon) => {
+        if (taskId === this.taskId) {
             return;
         }
         let task = clickgo.task.get(taskId);
         if (!task) {
             return;
         }
-        this.tasks[taskId] = {
-            'icon': task.icon,
-            'selected': false,
-            'opened': true,
-            'forms': {},
-            'formCount': 0
-        };
-    });
-    this.cgSetSystemEventListener('taskEnded', (taskId) => {
-        if (!this.tasks[taskId]) {
-            return;
+        let appIndex = this.getAppIndexByPath(task.path);
+        if (appIndex >= 0) {
+            this.apps[appIndex].opened = true;
         }
-        delete (this.tasks[taskId]);
-    });
-    this.cgSetSystemEventListener('formCreated', (taskId, formId, title, icon) => {
-        if (!this.tasks[taskId]) {
-            return;
+        else {
+            this.apps.push({
+                'icon': task.icon,
+                'selected': false,
+                'opened': true,
+                'forms': {},
+                'formCount': 0,
+                'path': task.path
+            });
+            appIndex = this.apps.length - 1;
         }
-        this.tasks[taskId].forms[formId] = {
+        this.apps[appIndex].forms[formId] = {
             'title': title,
-            'icon': icon || this.tasks[taskId].icon
+            'icon': icon || this.apps[appIndex].icon
         };
-        ++this.tasks[taskId].formCount;
+        ++this.apps[appIndex].formCount;
     });
     this.cgSetSystemEventListener('formRemoved', (taskId, formId) => {
-        if (!this.tasks[taskId]) {
+        let task = clickgo.task.get(taskId);
+        if (!task) {
             return;
         }
-        delete (this.tasks[taskId].forms[formId]);
-        --this.tasks[taskId].formCount;
+        let appIndex = this.getAppIndexByPath(task.path);
+        if (appIndex < 0) {
+            return;
+        }
+        delete (this.apps[appIndex].forms[formId]);
+        --this.apps[appIndex].formCount;
+        if (this.apps[appIndex].formCount > 0) {
+            return;
+        }
+        let pinPaths = Object.keys(clickgo.core.config['task.pin']);
+        if (pinPaths.includes(this.apps[appIndex].path)) {
+            this.apps[appIndex].opened = false;
+        }
+        else {
+            delete (this.apps[appIndex]);
+        }
     });
     this.cgSetSystemEventListener('formFocused', (taskId) => {
-        if (!this.tasks[taskId]) {
+        let task = clickgo.task.get(taskId);
+        if (!task) {
             return;
         }
-        this.tasks[taskId].selected = true;
+        let appIndex = this.getAppIndexByPath(task.path);
+        if (appIndex < 0) {
+            return;
+        }
+        this.apps[appIndex].selected = true;
     });
     this.cgSetSystemEventListener('formBlurred', (taskId) => {
-        if (!this.tasks[taskId]) {
+        let task = clickgo.task.get(taskId);
+        if (!task) {
             return;
         }
-        this.tasks[taskId].selected = false;
+        let appIndex = this.getAppIndexByPath(task.path);
+        if (appIndex < 0) {
+            return;
+        }
+        this.apps[appIndex].selected = false;
     });
     this.cgSetSystemEventListener('formTitleChanged', (taskId, formId, title) => {
-        if (!this.tasks[taskId]) {
+        let task = clickgo.task.get(taskId);
+        if (!task) {
             return;
         }
-        if (!this.tasks[taskId].forms[formId]) {
+        let appIndex = this.getAppIndexByPath(task.path);
+        if (appIndex < 0) {
             return;
         }
-        this.tasks[taskId].forms[formId].title = title;
+        if (!this.apps[appIndex].forms[formId]) {
+            return;
+        }
+        this.apps[appIndex].forms[formId].title = title;
     });
     this.cgSetSystemEventListener('formIconChanged', (taskId, formId, icon) => {
-        if (!this.tasks[taskId]) {
+        let task = clickgo.task.get(taskId);
+        if (!task) {
             return;
         }
-        if (!this.tasks[taskId].forms[formId]) {
+        let appIndex = this.getAppIndexByPath(task.path);
+        if (appIndex < 0) {
             return;
         }
-        this.tasks[taskId].forms[formId].icon = icon || this.tasks[taskId].icon;
+        if (!this.apps[appIndex].forms[formId]) {
+            return;
+        }
+        this.apps[appIndex].forms[formId].icon = icon || this.apps[appIndex].icon;
     });
 };
