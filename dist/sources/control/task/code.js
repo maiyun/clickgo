@@ -8,6 +8,7 @@ exports.props = {
 };
 exports.methods = {
     down: function (e) {
+        this.cgDown(e);
         if (clickgo.dom.isMouseAlsoTouchEvent(e)) {
             return;
         }

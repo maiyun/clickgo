@@ -31,6 +31,7 @@ function get(tid) {
         return null;
     }
     return {
+        'name': exports.list[tid].appPkg.config.name,
         'customTheme': exports.list[tid].customTheme,
         'localName': exports.list[tid].local.name,
         'formCount': Object.keys(exports.list[tid].forms).length,
@@ -44,6 +45,7 @@ function getList() {
     for (let tid in clickgo.task.list) {
         let item = clickgo.task.list[tid];
         list[tid] = {
+            'name': item.appPkg.config.name,
             'customTheme': item.customTheme,
             'localName': item.local.name,
             'formCount': Object.keys(item.forms).length,

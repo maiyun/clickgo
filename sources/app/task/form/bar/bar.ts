@@ -45,6 +45,23 @@ export let methods = {
             // --- 多个窗体，则让用户选择显示哪个 ---
         }
     },
+    run: async function(this: IVueForm, path: string): Promise<void> {
+        try {
+            await clickgo.task.run(path);
+        }
+        catch {
+            return;
+        }
+    },
+    close: async function(this: IVueForm, index: number): Promise<void> {
+        let app = this.apps[index];
+        if (!app) {
+            return;
+        }
+        for (let formId in app.forms) {
+            clickgo.form.remove(parseInt(formId));
+        }
+    },
     changeFocus: function(this: IVueForm, formId: string): void {
         clickgo.form.changeFocus(parseInt(formId));
     },
@@ -71,12 +88,14 @@ export let mounted = function(this: IVueForm): void {
     // --- 先读取 pin 列表 ---
     for (let path in clickgo.core.config['task.pin']) {
         this.apps.push({
+            'name': clickgo.core.config['task.pin'][path].name,
             'path': path,
-            'icon': clickgo.core.config['task.pin'][path],
+            'icon': clickgo.core.config['task.pin'][path].icon,
             'selected': false,
             'opened': false,
             'forms': {},
-            'formCount': 0
+            'formCount': 0,
+            'pin': true
         });
     }
 
@@ -95,12 +114,14 @@ export let mounted = function(this: IVueForm): void {
         }
         else {
             this.apps.push({
+                'name': task.name,
+                'path': task.path,
                 'icon': task.icon,
                 'selected': false,
                 'opened': true,
                 'forms': {},
                 'formCount': 0,
-                'path': task.path
+                'pin': false
             });
             appIndex = this.apps.length - 1;
         }
@@ -129,12 +150,14 @@ export let mounted = function(this: IVueForm): void {
         }
         else {
             this.apps.push({
+                'name': task.name,
+                'path': task.path,
                 'icon': task.icon,
                 'selected': false,
                 'opened': true,
                 'forms': {},
                 'formCount': 0,
-                'path': task.path
+                'pin': false
             });
             appIndex = this.apps.length - 1;
         }
@@ -166,7 +189,7 @@ export let mounted = function(this: IVueForm): void {
         }
         else {
             // --- 直接移除 ---
-            delete(this.apps[appIndex]);
+            this.apps.splice(appIndex, 1);
         }
     });
     this.cgSetSystemEventListener('formFocused', (taskId: number): void => {

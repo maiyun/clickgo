@@ -3,5 +3,9 @@
     "left": "Left",
     "right": "Right",
     "top": "Top",
-    "bottom": "Bottom"
+    "bottom": "Bottom",
+    "close all windows": "Close all windows",
+    "close window": "Close window",
+    "pin to taskbar": "Pin to taskbar",
+    "unpin from taskbar": "Unpin from taskbar"
 }

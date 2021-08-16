@@ -51,6 +51,27 @@ exports.methods = {
             }
         });
     },
+    run: function (path) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                yield clickgo.task.run(path);
+            }
+            catch (_a) {
+                return;
+            }
+        });
+    },
+    close: function (index) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let app = this.apps[index];
+            if (!app) {
+                return;
+            }
+            for (let formId in app.forms) {
+                clickgo.form.remove(parseInt(formId));
+            }
+        });
+    },
     changeFocus: function (formId) {
         clickgo.form.changeFocus(parseInt(formId));
     },
@@ -73,12 +94,14 @@ exports.mounted = function () {
     clickgo.form.setTask(this.taskId, this.formId);
     for (let path in clickgo.core.config['task.pin']) {
         this.apps.push({
+            'name': clickgo.core.config['task.pin'][path].name,
             'path': path,
-            'icon': clickgo.core.config['task.pin'][path],
+            'icon': clickgo.core.config['task.pin'][path].icon,
             'selected': false,
             'opened': false,
             'forms': {},
-            'formCount': 0
+            'formCount': 0,
+            'pin': true
         });
     }
     let tasks = clickgo.task.getList();
@@ -93,12 +116,14 @@ exports.mounted = function () {
         }
         else {
             this.apps.push({
+                'name': task.name,
+                'path': task.path,
                 'icon': task.icon,
                 'selected': false,
                 'opened': true,
                 'forms': {},
                 'formCount': 0,
-                'path': task.path
+                'pin': false
             });
             appIndex = this.apps.length - 1;
         }
@@ -126,12 +151,14 @@ exports.mounted = function () {
         }
         else {
             this.apps.push({
+                'name': task.name,
+                'path': task.path,
                 'icon': task.icon,
                 'selected': false,
                 'opened': true,
                 'forms': {},
                 'formCount': 0,
-                'path': task.path
+                'pin': false
             });
             appIndex = this.apps.length - 1;
         }
@@ -160,7 +187,7 @@ exports.mounted = function () {
             this.apps[appIndex].opened = false;
         }
         else {
-            delete (this.apps[appIndex]);
+            this.apps.splice(appIndex, 1);
         }
     });
     this.cgSetSystemEventListener('formFocused', (taskId) => {

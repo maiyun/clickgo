@@ -26,6 +26,7 @@ export function get(tid: number): ICGTaskItem | null {
         return null;
     }
     return {
+        'name': list[tid].appPkg.config.name,
         'customTheme': list[tid].customTheme,
         'localName': list[tid].local.name,
         'formCount': Object.keys(list[tid].forms).length,
@@ -42,6 +43,7 @@ export function getList(): Record<string, ICGTaskItem> {
     for (let tid in clickgo.task.list) {
         let item = clickgo.task.list[tid];
         list[tid] = {
+            'name': item.appPkg.config.name,
             'customTheme': item.customTheme,
             'localName': item.local.name,
             'formCount': Object.keys(item.forms).length,

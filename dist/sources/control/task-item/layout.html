@@ -1,9 +1,14 @@
-<div class="wrap" :class="[position, cgHover && 'hover', cgActive && 'active', isSelected && 'selected', isOpened && 'opened']" @click="tap" @mousedown="cgDown" @mouseup="cgUp" @mouseenter="cgEnter" @mouseleave="cgLeave" @touchstart="cgDown" @touchend="cgUp" @touchcancel="cgCancel" @dblclick="cgDblclick">
+<div class="wrap" :class="[position, cgHover && 'hover', cgActive && 'active', isSelected && 'selected', isOpened && 'opened']" @click="tap" @mousedown="down" @mouseup="cgUp" @mouseenter="cgEnter" @mouseleave="cgLeave" @touchstart="cgDown" @touchend="cgUp" @touchcancel="cgCancel" @dblclick="cgDblclick" @contextmenu="contextmenu">
     <slot></slot>
     <div class="line"></div>
-    <teleport v-if="$slots.pop" to="#cg-pop-list">
+    <teleport v-if="(menu === 'left') && $slots.pop" to="#cg-pop-list">
         <div class="pop" :class="[cgSelfPopOpen && 'open']" :style="cgPopPosition">
             <slot name="pop"></slot>
+        </div>
+    </teleport>
+    <teleport v-else-if="(menu === 'right') && $slots.contextmenu" to="#cg-pop-list">
+        <div class="pop" :class="[cgSelfPopOpen && 'open']" :style="cgPopPosition">
+            <slot name="contextmenu"></slot>
         </div>
     </teleport>
 </div>

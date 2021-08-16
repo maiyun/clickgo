@@ -6,6 +6,7 @@ export let props = {
 
 export let methods = {
     down: function(this: IVueControl, e: MouseEvent | TouchEvent): void {
+        this.cgDown(e);
         if (clickgo.dom.isMouseAlsoTouchEvent(e)) {
             return;
         }

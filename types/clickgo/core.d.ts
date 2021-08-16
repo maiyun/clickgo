@@ -18,7 +18,7 @@ interface ICGCoreLib {
 interface ICGCoreConfig {
     'local': string;
     'task.position': 'left' | 'right' | 'top' | 'bottom';
-    'task.pin': Record<string, string>;
+    'task.pin': Record<string, { 'name': string; 'icon': string; }>;
     'desktop.icon.storage': boolean;
     'desktop.icon.recycler': boolean;
     'desktop.wallpaper': string | null;

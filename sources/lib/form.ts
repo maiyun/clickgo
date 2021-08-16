@@ -1070,12 +1070,6 @@ window.addEventListener('mousedown', doFocusAndPopEvent);
  */
 export function remove(formId: number): boolean {
     let taskId: number = getTaskId(formId);
-    // --- 移除 formList 中的相关 form 对象 ---
-    if (Object.keys(clickgo.task.list[taskId].forms).length === 1) {
-        // --- 就一个窗体，那肯定就是自己，直接结束 task ---
-        return clickgo.task.end(taskId);
-    }
-    // --- 多个窗体 ---
     let title = '';
     let icon = '';
     if (clickgo.task.list[taskId].forms[formId]) {
@@ -1106,6 +1100,10 @@ export function remove(formId: number): boolean {
             clickgo.dom.removeStyle(taskId, 'form', formId);
             // --- 触发 formRemoved 事件 ---
             clickgo.core.trigger('formRemoved', taskId, formId, title, icon);
+            // --- 检测是否已经没有窗体了，如果没有了的话就要结束任务了 ---
+            if (Object.keys(clickgo.task.list[taskId].forms).length === 0) {
+                clickgo.task.end(taskId);
+            }
         }, 100);
         return true;
     }
@@ -1165,7 +1163,7 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
         invoke.clickgo.dom[k] = (clickgo.dom as any)[k];
     }
     for (let k in clickgo.form) {
-        if (!['getTask', 'setTask', 'clearTask', 'getAvailArea', 'refreshMaxPosition', 'getTaskId', 'min', 'get', 'getList', 'changeFocus', 'getMaxZIndexFormID', 'getRectByBorder', 'showCircular', 'moveRectangle', 'showRectangle', 'hideRectangle', 'notify', 'notifyProgress', 'hideNotify', 'showPop', 'hidePop'].includes(k)) {
+        if (!['getTask', 'setTask', 'clearTask', 'getAvailArea', 'refreshMaxPosition', 'getTaskId', 'min', 'get', 'getList', 'changeFocus', 'getMaxZIndexFormID', 'getRectByBorder', 'showCircular', 'moveRectangle', 'showRectangle', 'hideRectangle', 'notify', 'notifyProgress', 'hideNotify', 'showPop', 'hidePop', 'remove'].includes(k)) {
             continue;
         }
         invoke.clickgo.form[k] = (clickgo.form as any)[k];

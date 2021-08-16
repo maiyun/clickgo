@@ -902,9 +902,6 @@ window.addEventListener('touchstart', doFocusAndPopEvent);
 window.addEventListener('mousedown', doFocusAndPopEvent);
 function remove(formId) {
     let taskId = getTaskId(formId);
-    if (Object.keys(clickgo.task.list[taskId].forms).length === 1) {
-        return clickgo.task.end(taskId);
-    }
     let title = '';
     let icon = '';
     if (clickgo.task.list[taskId].forms[formId]) {
@@ -930,6 +927,9 @@ function remove(formId) {
             delete (clickgo.task.list[taskId].forms[formId]);
             clickgo.dom.removeStyle(taskId, 'form', formId);
             clickgo.core.trigger('formRemoved', taskId, formId, title, icon);
+            if (Object.keys(clickgo.task.list[taskId].forms).length === 0) {
+                clickgo.task.end(taskId);
+            }
         }, 100);
         return true;
     }
@@ -983,7 +983,7 @@ function create(taskId, opt) {
             invoke.clickgo.dom[k] = clickgo.dom[k];
         }
         for (let k in clickgo.form) {
-            if (!['getTask', 'setTask', 'clearTask', 'getAvailArea', 'refreshMaxPosition', 'getTaskId', 'min', 'get', 'getList', 'changeFocus', 'getMaxZIndexFormID', 'getRectByBorder', 'showCircular', 'moveRectangle', 'showRectangle', 'hideRectangle', 'notify', 'notifyProgress', 'hideNotify', 'showPop', 'hidePop'].includes(k)) {
+            if (!['getTask', 'setTask', 'clearTask', 'getAvailArea', 'refreshMaxPosition', 'getTaskId', 'min', 'get', 'getList', 'changeFocus', 'getMaxZIndexFormID', 'getRectByBorder', 'showCircular', 'moveRectangle', 'showRectangle', 'hideRectangle', 'notify', 'notifyProgress', 'hideNotify', 'showPop', 'hidePop', 'remove'].includes(k)) {
                 continue;
             }
             invoke.clickgo.form[k] = clickgo.form[k];

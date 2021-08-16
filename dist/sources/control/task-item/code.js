@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.methods = exports.computed = exports.props = void 0;
+exports.methods = exports.computed = exports.data = exports.props = void 0;
 exports.props = {
     'selected': {
         'default': false
@@ -8,6 +8,9 @@ exports.props = {
     'opened': {
         'default': false
     }
+};
+exports.data = {
+    'menu': 'left'
 };
 exports.computed = {
     'isSelected': function () {
@@ -24,8 +27,39 @@ exports.computed = {
 exports.methods = {
     tap: function (e) {
         this.cgTap(e);
-        if (this.$slots.pop) {
-            this.cgShowPop('v');
+        this.menu = 'left';
+        if (!this.$slots.pop) {
+            return;
         }
+        this.cgCreateTimer(() => {
+            this.cgShowPop('v');
+        }, 100);
+    },
+    contextmenu: function (e) {
+        if (clickgo.dom.isMouseAlsoTouchEvent(e)) {
+            return;
+        }
+        if (!this.$slots.contextmenu) {
+            return;
+        }
+        this.menu = 'right';
+        this.cgCreateTimer(() => {
+            this.cgShowPop(e);
+        }, 100);
+    },
+    down: function (e) {
+        this.cgDown(e);
+        if (clickgo.dom.isMouseAlsoTouchEvent(e)) {
+            return;
+        }
+        if (!this.$slots.contextmenu) {
+            return;
+        }
+        clickgo.dom.bindLong(e, () => {
+            this.menu = 'right';
+            this.cgCreateTimer(() => {
+                this.cgShowPop(e);
+            }, 100);
+        });
     }
 };

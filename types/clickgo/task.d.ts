@@ -34,6 +34,7 @@ interface ICGTask {
 
 /** --- Task Item 的简略情况，通常在 list 当中 --- */
 interface ICGTaskItem {
+    'name': string;
     'customTheme': boolean;
     'localName': string;
     'formCount': number;
