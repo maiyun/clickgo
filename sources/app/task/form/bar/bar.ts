@@ -288,14 +288,20 @@ export let mounted = function(this: IVueForm): void {
             }
         }
         // --- apps 里有，但是已经被取消 pin 的 ---
-        for (let app of this.apps) {
+        for (let appIndex = 0; appIndex < this.apps.length; ++appIndex) {
+            let app = this.apps[appIndex];
             if (!app.pin) {
                 continue;
             }
             if (v[app.path]) {
                 continue;
             }
-            app.pin = false;
+            if (app.formCount === 0) {
+                this.apps.splice(appIndex, 1);
+            }
+            else {
+                app.pin = false;
+            }
         }
     });
 };
