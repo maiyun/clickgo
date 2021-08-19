@@ -3,5 +3,9 @@
     "left": "左側",
     "right": "右側",
     "top": "頂部",
-    "bottom": "底部"
+    "bottom": "底部",
+    "close all windows": "關閉所有視窗",
+    "close window": "關閉視窗",
+    "pin to taskbar": "釘在任務列",
+    "unpin from taskbar": "取消釘在任務列"
 }

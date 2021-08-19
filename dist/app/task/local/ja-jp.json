@@ -3,5 +3,9 @@
     "left": "左側",
     "right": "右側",
     "top": "頂端",
-    "bottom": "底端"
+    "bottom": "底端",
+    "close all windows": "すべてのウィンドウを閉じる",
+    "close window": "ウィンドウを閉じる",
+    "pin to taskbar": "タスク バーにピン留めする",
+    "unpin from taskbar": "タスク バーからピン留めを外す"
 }
