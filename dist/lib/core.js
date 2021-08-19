@@ -50,15 +50,31 @@ Vue.watch(exports.config, function () {
             delete (exports.config[key]);
             continue;
         }
-        if (exports.config[key] === cgConfig[key]) {
-            continue;
+        if (key === 'task.pin') {
+            let paths = Object.keys(exports.config['task.pin']).sort().toString();
+            let cgPaths = Object.keys(cgConfig['task.pin']).sort().toString();
+            if (paths === cgPaths) {
+                continue;
+            }
+            cgConfig['task.pin'] = {};
+            for (let path in exports.config['task.pin']) {
+                cgConfig['task.pin'][path] = exports.config['task.pin'][path];
+            }
+            trigger('configChanged', 'task.pin', exports.config['task.pin']);
         }
-        cgConfig[key] = exports.config[key];
-        if (key === 'task.position') {
-            clickgo.form.refreshTaskPosition();
+        else {
+            if (exports.config[key] === cgConfig[key]) {
+                continue;
+            }
+            cgConfig[key] = exports.config[key];
+            if (key === 'task.position') {
+                clickgo.form.refreshTaskPosition();
+            }
+            trigger('configChanged', key, exports.config[key]);
         }
-        trigger('configChanged', key, exports.config[key]);
     }
+}, {
+    'deep': true
 });
 exports.clickgoFiles = {};
 exports.globalEvents = {

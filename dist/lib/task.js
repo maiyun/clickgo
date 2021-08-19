@@ -228,6 +228,9 @@ function end(taskId) {
     if (fid) {
         clickgo.form.changeFocus(fid);
     }
+    else {
+        clickgo.form.changeFocus();
+    }
     for (let fid in task.forms) {
         let form = task.forms[fid];
         clickgo.core.trigger('formRemoved', taskId, form.id, form.vroot.$refs.form.title, form.vroot.$refs.form.iconData);

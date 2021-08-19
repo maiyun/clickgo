@@ -249,6 +249,9 @@ export function end(taskId: number): boolean {
     if (fid) {
         clickgo.form.changeFocus(fid);
     }
+    else {
+        clickgo.form.changeFocus();
+    }
     // --- 移除窗体 list ---
     for (let fid in task.forms) {
         let form = task.forms[fid];

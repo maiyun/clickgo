@@ -919,6 +919,9 @@ function remove(formId) {
             if (fid) {
                 changeFocus(fid);
             }
+            else {
+                changeFocus();
+            }
             if (!clickgo.task.list[taskId]) {
                 return true;
             }

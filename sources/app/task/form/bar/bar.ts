@@ -53,7 +53,25 @@ export let methods = {
             return;
         }
     },
-    close: async function(this: IVueForm, index: number): Promise<void> {
+    pin: function(this: IVueForm, index: number): void {
+        let app = this.apps[index];
+        if (!app) {
+            return;
+        }
+        let paths = Object.keys(clickgo.core.config['task.pin']);
+        if (paths.includes(app.path)) {
+            // --- 剔除 ---
+            delete(clickgo.core.config['task.pin'][app.path]);
+        }
+        else {
+            // --- 加入 ---
+            clickgo.core.config['task.pin'][app.path] = {
+                'name': app.name,
+                'icon': app.icon
+            };
+        }
+    },
+    close: function(this: IVueForm, index: number): void {
         let app = this.apps[index];
         if (!app) {
             return;
@@ -241,5 +259,43 @@ export let mounted = function(this: IVueForm): void {
             return;
         }
         this.apps[appIndex].forms[formId].icon = icon || this.apps[appIndex].icon;
+    });
+    this.cgSetSystemEventListener('configChanged', (n: TCGCoreConfigName, v: any): void => {
+        if (n !== 'task.pin') {
+            return;
+        }
+        // --- 系统设置里，已经 pin 的 path 列表 ---
+        for (let path in v) {
+            let appIndex = this.getAppIndexByPath(path) ;
+            if (appIndex < 0) {
+                // --- apps 里没有，要添加进去已 pin 的 item ---
+                this.apps.unshift({
+                    'name': v[path].name,
+                    'path': path,
+                    'icon': v[path].icon,
+                    'selected': false,
+                    'opened': false,
+                    'forms': {},
+                    'formCount': 0,
+                    'pin': true
+                });
+            }
+            else {
+                // --- apps 里有，但不是 pin，则添加 pin  ---
+                if (!this.apps[appIndex].pin) {
+                    this.apps[appIndex].pin = true;
+                }
+            }
+        }
+        // --- apps 里有，但是已经被取消 pin 的 ---
+        for (let app of this.apps) {
+            if (!app.pin) {
+                continue;
+            }
+            if (v[app.path]) {
+                continue;
+            }
+            app.pin = false;
+        }
     });
 };

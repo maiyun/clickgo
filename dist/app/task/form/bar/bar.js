@@ -61,16 +61,30 @@ exports.methods = {
             }
         });
     },
+    pin: function (index) {
+        let app = this.apps[index];
+        if (!app) {
+            return;
+        }
+        let paths = Object.keys(clickgo.core.config['task.pin']);
+        if (paths.includes(app.path)) {
+            delete (clickgo.core.config['task.pin'][app.path]);
+        }
+        else {
+            clickgo.core.config['task.pin'][app.path] = {
+                'name': app.name,
+                'icon': app.icon
+            };
+        }
+    },
     close: function (index) {
-        return __awaiter(this, void 0, void 0, function* () {
-            let app = this.apps[index];
-            if (!app) {
-                return;
-            }
-            for (let formId in app.forms) {
-                clickgo.form.remove(parseInt(formId));
-            }
-        });
+        let app = this.apps[index];
+        if (!app) {
+            return;
+        }
+        for (let formId in app.forms) {
+            clickgo.form.remove(parseInt(formId));
+        }
     },
     changeFocus: function (formId) {
         clickgo.form.changeFocus(parseInt(formId));
@@ -239,5 +253,39 @@ exports.mounted = function () {
             return;
         }
         this.apps[appIndex].forms[formId].icon = icon || this.apps[appIndex].icon;
+    });
+    this.cgSetSystemEventListener('configChanged', (n, v) => {
+        if (n !== 'task.pin') {
+            return;
+        }
+        for (let path in v) {
+            let appIndex = this.getAppIndexByPath(path);
+            if (appIndex < 0) {
+                this.apps.unshift({
+                    'name': v[path].name,
+                    'path': path,
+                    'icon': v[path].icon,
+                    'selected': false,
+                    'opened': false,
+                    'forms': {},
+                    'formCount': 0,
+                    'pin': true
+                });
+            }
+            else {
+                if (!this.apps[appIndex].pin) {
+                    this.apps[appIndex].pin = true;
+                }
+            }
+        }
+        for (let app of this.apps) {
+            if (!app.pin) {
+                continue;
+            }
+            if (v[app.path]) {
+                continue;
+            }
+            app.pin = false;
+        }
     });
 };

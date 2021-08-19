@@ -2,7 +2,7 @@ declare let Vue: {
     createApp(opt: any): IVueApp;
     ref<T extends number | string>(obj: T): { 'value': T; };
     reactive<T>(obj: T): T;
-    watch(v: any, cb: (n: any, o: any) => void | Promise<void>): void;
+    watch(v: any, cb: (n: any, o: any) => void | Promise<void>, opt: Record<string, string | boolean>): void;
 };
 
 type IVueOptionMergeFunction = (to: unknown, from: unknown, instance: IVue) => any;
@@ -93,6 +93,7 @@ interface IVueForm extends IVue {
     cgBindFormDrag(e: MouseEvent | TouchEvent): void;
     cgBindFormResize(e: MouseEvent | TouchEvent, border: TCGBorder): void;
     cgSetSystemEventListener(name: 'screenResize', func: () => void | Promise<void>): void;
+    cgSetSystemEventListener(name: 'configChanged', func: (n: TCGCoreConfigName, v: string | boolean | null) => void | Promise<void>): void;
     cgSetSystemEventListener(name: 'error', func: (taskId: number, formId: number, error: Error, info: string) => void | Promise<void>): void;
     cgSetSystemEventListener(name: 'formCreated' | 'formRemoved', func: (taskId: number, formId: number, title: string, icon: string) => void | Promise<void>): void;
     cgSetSystemEventListener(name: 'formTitleChanged' | 'formIconChanged', func: (taskId: number, formId: number, text: string) => void | Promise<void>): void;

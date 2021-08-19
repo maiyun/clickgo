@@ -18,11 +18,12 @@
                     <menulist-item @tap="run(app.path)">
                         <img :src="app.icon" width="16" height="16" /><label style="margin-left: 10px;">{{app.name}}</label>
                     </menulist-item>
-                    <menulist-item>
-                        <label style="margin-left: 26px;">{{app.pin ? l('unpin from taskbar') : l('pin to taskbar')}}</label>
+                    <menulist-split></menulist-split>
+                    <menulist-item @tap="pin(appIndex)">
+                        <block style="width: 16px; height: 16px;"></block><label style="margin-left: 10px;">{{app.pin ? l('unpin from taskbar') : l('pin to taskbar')}}</label>
                     </menulist-item>
                     <menulist-item @tap="close(appIndex)">
-                        <label style="margin-left: 26px;">{{app.formCount > 1 ? l('close all windows') : l('close window')}}</label>
+                        <block style="width: 16px; height: 16px;"></block><label style="margin-left: 10px;">{{app.formCount > 1 ? l('close all windows') : l('close window')}}</label>
                     </menulist-item>
                 </menulist>
             </template>

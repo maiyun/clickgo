@@ -60,15 +60,32 @@ Vue.watch(config, function() {
             delete((config as any)[key]);
             continue;
         }
-        if ((config as any)[key] === (cgConfig as any)[key]) {
-            continue;
+        if (key === 'task.pin') {
+            // --- 如果是 pin，要检查老的和新的的 path 是否相等 ---
+            let paths = Object.keys(config['task.pin']).sort().toString();
+            let cgPaths = Object.keys(cgConfig['task.pin']).sort().toString();
+            if (paths === cgPaths) {
+                continue;
+            }
+            cgConfig['task.pin'] = {};
+            for (let path in config['task.pin']) {
+                cgConfig['task.pin'][path] = config['task.pin'][path];
+            }
+            trigger('configChanged', 'task.pin', config['task.pin']);
         }
-        (cgConfig as any)[key] = (config as any)[key];
-        if (key === 'task.position') {
-            clickgo.form.refreshTaskPosition();
+        else {
+            if ((config as any)[key] === (cgConfig as any)[key]) {
+                continue;
+            }
+            (cgConfig as any)[key] = (config as any)[key];
+            if (key === 'task.position') {
+                clickgo.form.refreshTaskPosition();
+            }
+            trigger('configChanged', key, (config as any)[key]);
         }
-        trigger('configChanged', key, (config as any)[key]);
     }
+}, {
+    'deep': true
 });
 
 /** --- clickgo 已经加载的文件列表 --- */
@@ -133,7 +150,7 @@ export let globalEvents: ICGGlobalEvents = {
 /**
  * --- 主动触发系统级事件 ---
  */
-export function trigger(name: TCGGlobalEvent, taskId: number | string = 0, formId: number | string | boolean | null = 0, param1: boolean | Error | string = '', param2: string = ''): void {
+export function trigger(name: TCGGlobalEvent, taskId: number | string = 0, formId: number | string | boolean | Record<string, any> | null = 0, param1: boolean | Error | string = '', param2: string = ''): void {
     switch (name) {
         case 'error': {
             if (typeof taskId !== 'number' || typeof formId !== 'number') {

@@ -1088,6 +1088,9 @@ export function remove(formId: number): boolean {
             if (fid) {
                 changeFocus(fid);
             }
+            else {
+                changeFocus();
+            }
             // --- 延长 100 秒是为了响应 100 毫秒的动画 ---
             if (!clickgo.task.list[taskId]) {
                 // --- 可能这时候 task 已经被结束了 ---
