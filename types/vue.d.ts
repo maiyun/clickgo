@@ -121,6 +121,7 @@ interface IVueForm extends IVue {
     cgClearLocal(): void;
     cgLoadLocalData(name: string, data: Record<string, any>, pre?: string): void;
     cgSetLocalName(name: string): void;
+    cgClearLocalName(): void;
     /**
      * --- layout 中 :class 的转义 ---
      * @param cla class 内容对象

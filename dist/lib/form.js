@@ -1973,6 +1973,9 @@ function create(taskId, opt) {
         methods.cgSetLocalName = function (name) {
             clickgo.task.list[this.taskId].local.name = name;
         };
+        methods.cgClearLocalName = function () {
+            clickgo.task.list[this.taskId].local.name = '';
+        };
         methods.cgClassPrepend = function (cla) {
             if (typeof cla !== 'string') {
                 return cla;

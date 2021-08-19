@@ -2183,6 +2183,9 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
     methods.cgSetLocalName = function(this: IVueForm, name: string): void {
         clickgo.task.list[this.taskId].local.name = name;
     };
+    methods.cgClearLocalName = function(this: IVueForm): void {
+        clickgo.task.list[this.taskId].local.name = '';
+    };
     // --- layout 中 :class 的转义 ---
     methods.cgClassPrepend = function(this: IVueForm, cla: any): string {
         if (typeof cla !== 'string') {
