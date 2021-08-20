@@ -1918,7 +1918,7 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
     // --- 获取语言 ---
     computed.l = function(this: IVueForm): (key: string) => string {
         return (key: string): string => {
-            return clickgo.task.list[this.taskId].local.data[this.cgLocal]?.[key] ?? 'LocaleError';
+            return clickgo.task.list[this.taskId].local.data[this.cgLocal]?.[key] ?? clickgo.task.list[this.taskId].local.data['en-us']?.[key] ?? 'LocaleError';
         };
     };
     // --- 初始化系统方法 ---

@@ -1700,8 +1700,8 @@ function create(taskId, opt) {
         };
         computed.l = function () {
             return (key) => {
-                var _a, _b;
-                return (_b = (_a = clickgo.task.list[this.taskId].local.data[this.cgLocal]) === null || _a === void 0 ? void 0 : _a[key]) !== null && _b !== void 0 ? _b : 'LocaleError';
+                var _a, _b, _c, _d;
+                return (_d = (_b = (_a = clickgo.task.list[this.taskId].local.data[this.cgLocal]) === null || _a === void 0 ? void 0 : _a[key]) !== null && _b !== void 0 ? _b : (_c = clickgo.task.list[this.taskId].local.data['en-us']) === null || _c === void 0 ? void 0 : _c[key]) !== null && _d !== void 0 ? _d : 'LocaleError';
             };
         };
         methods.cgCreateForm = function (paramOpt = {}) {
