@@ -201,9 +201,11 @@ export let methods = {
 export let mounted = function(this: IVueControl): void {
     // --- 大小改变，会影响 scroll offset、client，不会影响 length ---
     clickgo.dom.watchSize(this.$refs.wrap, () => {
+        if (!this.$refs.wrap) {
+            return;
+        }
         let clientWidth = this.$refs.wrap.clientWidth;
         let clientHeight = this.$refs.wrap.clientHeight;
-
         if (this.clientWidth !== clientWidth) {
             this.clientWidth = clientWidth;
             this.$emit(this.direction === 'v' ? 'resizen' : 'resize', Math.round(this.clientWidth));
@@ -216,9 +218,11 @@ export let mounted = function(this: IVueControl): void {
 
     // --- 内容改变 ---
     clickgo.dom.watch(this.$refs.wrap, () => {
+        if (!this.$refs.wrap) {
+            return;
+        }
         let lengthWidth = this.$refs.wrap.scrollWidth;
         let lengthHeight = this.$refs.wrap.scrollHeight;
-
         if (this.lengthWidth !== lengthWidth) {
             this.lengthWidth = lengthWidth;
             if (this.direction === 'h') {

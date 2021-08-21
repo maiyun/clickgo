@@ -174,6 +174,9 @@ exports.methods = {
 };
 exports.mounted = function () {
     clickgo.dom.watchSize(this.$refs.wrap, () => {
+        if (!this.$refs.wrap) {
+            return;
+        }
         let clientWidth = this.$refs.wrap.clientWidth;
         let clientHeight = this.$refs.wrap.clientHeight;
         if (this.clientWidth !== clientWidth) {
@@ -186,6 +189,9 @@ exports.mounted = function () {
         }
     }, true);
     clickgo.dom.watch(this.$refs.wrap, () => {
+        if (!this.$refs.wrap) {
+            return;
+        }
         let lengthWidth = this.$refs.wrap.scrollWidth;
         let lengthHeight = this.$refs.wrap.scrollHeight;
         if (this.lengthWidth !== lengthWidth) {
