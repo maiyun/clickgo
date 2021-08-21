@@ -4,6 +4,8 @@ interface IClickGo {
     'rootPath': string;
     /** --- 当前 JS 文件的基路径 --- */
     'cgRootPath': string;
+    /** --- 第三方 cdn 路径 --- */
+    'cdnPath': string;
     /** --- 是否是桌面环境 --- */
     'isNative': boolean;
 

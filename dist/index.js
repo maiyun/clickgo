@@ -11,6 +11,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 const clickgo = {
     'rootPath': window.location.href.slice(0, window.location.href.lastIndexOf('/') + 1),
     'cgRootPath': '',
+    'cdnPath': 'https://cdn.jsdelivr.net',
     'isNative': navigator.userAgent.toLowerCase().includes('electron') ? true : false,
     'isReady': false,
     'readys': [],
@@ -40,18 +41,25 @@ const clickgo = {
     let temp = document.querySelectorAll('script');
     let scriptEle = temp[temp.length - 1];
     clickgo.cgRootPath = scriptEle.src.slice(0, scriptEle.src.lastIndexOf('/') + 1);
+    let lio = scriptEle.src.lastIndexOf('?');
+    if (lio !== -1) {
+        let match = /[?&]cdn=(.+?)($|&)/.exec(scriptEle.src.slice(lio));
+        if (match) {
+            clickgo.cdnPath = match[1];
+        }
+    }
     let tmpScript = document.createElement('script');
-    tmpScript.src = 'https://cdn.jsdelivr.net/npm/@litert/loader@2.1.5/dist/index.min.js';
+    tmpScript.src = clickgo.cdnPath + '/npm/@litert/loader@2.1.5/dist/index.min.js';
     tmpScript.addEventListener('load', function () {
         loader.ready(() => __awaiter(this, void 0, void 0, function* () {
             let paths = [
-                'https://cdn.jsdelivr.net/npm/vue@3.1.4/dist/vue.global.min.js',
-                'https://cdn.jsdelivr.net/npm/jszip@3.6.0/dist/jszip.min.js'
+                clickgo.cdnPath + '/npm/vue@3.1.4/dist/vue.global.min.js',
+                clickgo.cdnPath + '/npm/jszip@3.6.0/dist/jszip.min.js'
             ];
             let ro = true;
             if (!(window.ResizeObserver)) {
                 ro = false;
-                paths.push('https://cdn.jsdelivr.net/npm/@juggle/resize-observer@3.3.0/lib/exports/resize-observer.umd.min.js');
+                paths.push(clickgo.cdnPath + '/npm/@juggle/resize-observer@3.3.0/lib/exports/resize-observer.umd.min.js');
             }
             yield loader.loadScripts(document.getElementsByTagName('head')[0], paths);
             if (!ro) {

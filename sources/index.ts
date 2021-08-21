@@ -18,6 +18,7 @@
 const clickgo: IClickGo = {
     'rootPath': window.location.href.slice(0, window.location.href.lastIndexOf('/') + 1),
     'cgRootPath': '',
+    'cdnPath': 'https://cdn.jsdelivr.net',
     'isNative': navigator.userAgent.toLowerCase().includes('electron') ? true : false,
 
     'isReady': false,
@@ -50,24 +51,34 @@ const clickgo: IClickGo = {
 (function() {
     let temp = document.querySelectorAll('script');
     let scriptEle = temp[temp.length - 1];
+
+    // --- 获取 js 文件基路径，以 / 结尾 ---
     clickgo.cgRootPath = scriptEle.src.slice(0, scriptEle.src.lastIndexOf('/') + 1);
+    // --- 获取第三方库的引用路径基 ---
+    let lio = scriptEle.src.lastIndexOf('?');
+    if (lio !== -1) {
+        let match = /[?&]cdn=(.+?)($|&)/.exec(scriptEle.src.slice(lio));
+        if (match) {
+            clickgo.cdnPath = match[1];
+        }
+    }
 
     // --- 加载 loader ---
     let tmpScript = document.createElement('script');
-    tmpScript.src = 'https://cdn.jsdelivr.net/npm/@litert/loader@2.1.5/dist/index.min.js';
+    tmpScript.src = clickgo.cdnPath + '/npm/@litert/loader@2.1.5/dist/index.min.js';
     tmpScript.addEventListener('load', function(): void {
         loader.ready(async () => {
             // --- 通过标签加载库 ---
             let paths: string[] = [
-                'https://cdn.jsdelivr.net/npm/vue@3.1.4/dist/vue.global.min.js',
-                'https://cdn.jsdelivr.net/npm/jszip@3.6.0/dist/jszip.min.js'
+                clickgo.cdnPath + '/npm/vue@3.1.4/dist/vue.global.min.js',
+                clickgo.cdnPath + '/npm/jszip@3.6.0/dist/jszip.min.js'
             ];
             // --- 判断 ResizeObserver 是否存在 ---
             let ro = true;
             // ResizeObserver = undefined;
             if (!((window as any).ResizeObserver)) {
                 ro = false;
-                paths.push('https://cdn.jsdelivr.net/npm/@juggle/resize-observer@3.3.0/lib/exports/resize-observer.umd.min.js');
+                paths.push(clickgo.cdnPath + '/npm/@juggle/resize-observer@3.3.0/lib/exports/resize-observer.umd.min.js');
             }
             // --- 加载 vue 以及必要库 ---
             await loader.loadScripts(document.getElementsByTagName('head')[0], paths);
