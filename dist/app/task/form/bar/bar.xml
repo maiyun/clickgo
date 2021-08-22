@@ -4,7 +4,7 @@
         <task-item>
             <img width="16" height="16" src="/clickgo/icon-white.png" />
         </task-item>
-        <task-item v-for="(app, appIndex) of apps" :selected="app.selected" :opened="app.opened" @tap="itemTap(appIndex)">
+        <task-item v-for="(app, appIndex) of apps" :selected="app.selected" :opened="app.opened" :multi="app.formCount > 1" @tap="itemTap(appIndex)">
             <img width="16" height="16" :src="app.icon" />
             <template v-if="app.formCount > 1" v-slot:pop>
                 <menulist>

@@ -21,10 +21,14 @@
         }
     }
 
+    &.multi::after {
+        content: ''; position: absolute; transition: all .1s ease-out;
+    }
+
     .line {
         position: absolute; display: flex; pointer-events: none; justify-content: center;
         &::after {
-            content: ' '; display: block; transition: .1s ease-out; transition-property: width, height;
+            content: ''; display: block; transition: .1s ease-out; transition-property: width, height;
         }
     }
     &.left {
@@ -34,6 +38,9 @@
                 width: 2px; height: 70%;
             }
         }
+        &.multi::after {
+            box-shadow: 0 2px 2px rgba(0, 0, 0, .5) inset; height: 40%; width: 2px; left: 0; bottom: 0;
+        }
     }
     &.right {
         .line {
@@ -41,6 +48,9 @@
             &::after {
                 width: 2px; height: 70%;
             }
+        }
+        &.multi::after {
+            box-shadow: 0 2px 2px rgba(0, 0, 0, .5) inset; height: 40%; width: 2px; right: 0; bottom: 0;
         }
     }
     &.top {
@@ -50,6 +60,9 @@
                 height: 2px; width: 70%;
             }
         }
+        &.multi::after {
+            box-shadow: 2px 0 2px rgba(0, 0, 0, .5) inset; width: 40%; height: 2px; top: 0; right: 0;
+        }
     }
     &.bottom {
         .line {
@@ -58,44 +71,31 @@
                 height: 2px; width: 70%;
             }
         }
+        &.multi::after {
+            box-shadow: 2px 0 2px rgba(0, 0, 0, .5) inset; width: 40%; height: 2px; bottom: 0; right: 0;
+        }
     }
 
     &.opened {
-        .line {
-            &::after {
-                background: hsl(205, 100%, 70%);
-            }
-        }
-        &.hover {
-            &.top, &.bottom {
-                .line {
-                    &::after {
-                        width: 100%;
-                    }
-                }
-            }
-            &.left, &.right {
-                .line {
-                    &::after {
-                        height: 100%;
-                    }
-                }
-            }
+        .line::after {
+            background: hsl(205, 100%, 70%);
         }
     }
-    &.selected {
+    &.selected, &.hover {
         &.top, &.bottom {
-            .line {
-                &::after {
-                    width: 100%;
-                }
+            .line::after {
+                width: 100%;
+            }
+            &.multi::after {
+                width: 15%; height: 100%;
             }
         }
         &.left, &.right {
-            .line {
-                &::after {
-                    height: 100%;
-                }
+            .line::after {
+                height: 100%;
+            }
+            &.multi::after {
+                height: 15%; width: 100%;
             }
         }
     }

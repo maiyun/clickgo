@@ -7,6 +7,9 @@ exports.props = {
     },
     'opened': {
         'default': false
+    },
+    'multi': {
+        'default': false
     }
 };
 exports.data = {
@@ -18,6 +21,9 @@ exports.computed = {
     },
     'isOpened': function () {
         return clickgo.tool.getBoolean(this.opened);
+    },
+    'isMulti': function () {
+        return clickgo.tool.getBoolean(this.multi);
     },
     'position': function () {
         var _a, _b;

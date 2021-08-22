@@ -4,6 +4,9 @@ export let props = {
     },
     'opened': {
         'default': false
+    },
+    'multi': {
+        'default': false
     }
 };
 
@@ -17,6 +20,9 @@ export let computed = {
     },
     'isOpened': function(this: IVueControl): boolean {
         return clickgo.tool.getBoolean(this.opened);
+    },
+    'isMulti': function(this: IVueControl): boolean {
+        return clickgo.tool.getBoolean(this.multi);
     },
     'position': function(this: IVueControl): string {
         return this.cgParent?.position ?? 'bottom';
