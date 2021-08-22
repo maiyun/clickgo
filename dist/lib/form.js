@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.create = exports.remove = exports.doFocusAndPopEvent = exports.hidePop = exports.showPop = exports.removeFromPop = exports.appendToPop = exports.simpletaskRoot = exports.hideNotify = exports.notifyProgress = exports.notify = exports.hideRectangle = exports.showRectangle = exports.moveRectangle = exports.showCircular = exports.getRectByBorder = exports.getMaxZIndexFormID = exports.changeFocus = exports.getList = exports.get = exports.min = exports.getTaskId = exports.refreshMaxPosition = exports.getAvailArea = exports.refreshTaskPosition = exports.clearTask = exports.setTask = exports.getTask = exports.lastPopZIndex = exports.lastTopZIndex = exports.lastZIndex = exports.lastFormId = exports.popShowing = void 0;
+exports.create = exports.remove = exports.doFocusAndPopEvent = exports.hidePop = exports.showPop = exports.removeFromPop = exports.appendToPop = exports.simpletaskRoot = exports.hideNotify = exports.notifyProgress = exports.notify = exports.hideRectangle = exports.showRectangle = exports.moveRectangle = exports.showCircular = exports.getRectByBorder = exports.getMaxZIndexFormID = exports.changeFocus = exports.getList = exports.get = exports.min = exports.getTaskId = exports.refreshMaxPosition = exports.getAvailArea = exports.refreshTaskPosition = exports.clearTask = exports.setTask = exports.taskInfo = exports.lastPopZIndex = exports.lastTopZIndex = exports.lastZIndex = exports.lastFormId = exports.popShowing = void 0;
 exports.lastFormId = 0;
 exports.lastZIndex = 999;
 exports.lastTopZIndex = 9999999;
@@ -74,19 +74,11 @@ let rectangleElement = document.createElement('div');
 rectangleElement.setAttribute('data-pos', '');
 rectangleElement.classList.add('cg-rectangle');
 document.getElementsByTagName('body')[0].appendChild(rectangleElement);
-let taskInfo = {
+exports.taskInfo = Vue.reactive({
     'taskId': 0,
     'formId': 0,
     'length': 0
-};
-function getTask() {
-    return {
-        'taskId': taskInfo.taskId,
-        'formId': taskInfo.formId,
-        'length': taskInfo.length
-    };
-}
-exports.getTask = getTask;
+});
 function setTask(taskId, formId) {
     let task = clickgo.task.list[taskId];
     if (!task) {
@@ -104,15 +96,15 @@ function setTask(taskId, formId) {
         });
         return false;
     }
-    if (taskInfo.taskId > 0) {
+    if (exports.taskInfo.taskId > 0) {
         notify({
             'title': 'Info',
             'content': 'More than 1 system-level task application is currently running.',
             'type': 'info'
         });
     }
-    taskInfo.taskId = taskId;
-    taskInfo.formId = formId;
+    exports.taskInfo.taskId = taskId;
+    exports.taskInfo.formId = formId;
     exports.simpletaskRoot.forms = {};
     refreshTaskPosition();
     return true;
@@ -127,12 +119,12 @@ function clearTask(taskId) {
         });
         return false;
     }
-    if (taskInfo.taskId !== taskId) {
+    if (exports.taskInfo.taskId !== taskId) {
         return false;
     }
-    taskInfo.taskId = 0;
-    taskInfo.formId = 0;
-    taskInfo.length = 0;
+    exports.taskInfo.taskId = 0;
+    exports.taskInfo.formId = 0;
+    exports.taskInfo.length = 0;
     clickgo.core.trigger('screenResize');
     let tasks = clickgo.task.getList();
     for (let taskId in tasks) {
@@ -152,8 +144,8 @@ function clearTask(taskId) {
 }
 exports.clearTask = clearTask;
 function refreshTaskPosition() {
-    if (taskInfo.taskId > 0) {
-        let form = clickgo.task.list[taskInfo.taskId].forms[taskInfo.formId];
+    if (exports.taskInfo.taskId > 0) {
+        let form = clickgo.task.list[exports.taskInfo.taskId].forms[exports.taskInfo.formId];
         switch (clickgo.core.config['task.position']) {
             case 'left':
             case 'right': {
@@ -171,27 +163,27 @@ function refreshTaskPosition() {
         setTimeout(function () {
             switch (clickgo.core.config['task.position']) {
                 case 'left': {
-                    taskInfo.length = form.vroot.$el.offsetWidth;
+                    exports.taskInfo.length = form.vroot.$el.offsetWidth;
                     form.vroot.$refs.form.setPropData('left', 0);
                     form.vroot.$refs.form.setPropData('top', 0);
                     break;
                 }
                 case 'right': {
-                    taskInfo.length = form.vroot.$el.offsetWidth;
-                    form.vroot.$refs.form.setPropData('left', window.innerWidth - taskInfo.length);
+                    exports.taskInfo.length = form.vroot.$el.offsetWidth;
+                    form.vroot.$refs.form.setPropData('left', window.innerWidth - exports.taskInfo.length);
                     form.vroot.$refs.form.setPropData('top', 0);
                     break;
                 }
                 case 'top': {
-                    taskInfo.length = form.vroot.$el.offsetHeight;
+                    exports.taskInfo.length = form.vroot.$el.offsetHeight;
                     form.vroot.$refs.form.setPropData('left', 0);
                     form.vroot.$refs.form.setPropData('top', 0);
                     break;
                 }
                 case 'bottom': {
-                    taskInfo.length = form.vroot.$el.offsetHeight;
+                    exports.taskInfo.length = form.vroot.$el.offsetHeight;
                     form.vroot.$refs.form.setPropData('left', 0);
-                    form.vroot.$refs.form.setPropData('top', window.innerHeight - taskInfo.length);
+                    form.vroot.$refs.form.setPropData('top', window.innerHeight - exports.taskInfo.length);
                     break;
                 }
             }
@@ -210,31 +202,31 @@ function getAvailArea() {
     let height = 0;
     switch (clickgo.core.config['task.position']) {
         case 'left': {
-            left = taskInfo.length;
+            left = exports.taskInfo.length;
             top = 0;
-            width = window.innerWidth - taskInfo.length;
+            width = window.innerWidth - exports.taskInfo.length;
             height = window.innerHeight;
             break;
         }
         case 'right': {
             left = 0;
             top = 0;
-            width = window.innerWidth - taskInfo.length;
+            width = window.innerWidth - exports.taskInfo.length;
             height = window.innerHeight;
             break;
         }
         case 'top': {
             left = 0;
-            top = taskInfo.length;
+            top = exports.taskInfo.length;
             width = window.innerWidth;
-            height = window.innerHeight - taskInfo.length;
+            height = window.innerHeight - exports.taskInfo.length;
             break;
         }
         case 'bottom': {
             left = 0;
             top = 0;
             width = window.innerWidth;
-            height = window.innerHeight - taskInfo.length;
+            height = window.innerHeight - exports.taskInfo.length;
         }
     }
     return {
@@ -986,7 +978,7 @@ function create(taskId, opt) {
             invoke.clickgo.dom[k] = clickgo.dom[k];
         }
         for (let k in clickgo.form) {
-            if (!['getTask', 'setTask', 'clearTask', 'getAvailArea', 'refreshMaxPosition', 'getTaskId', 'min', 'get', 'getList', 'changeFocus', 'getMaxZIndexFormID', 'getRectByBorder', 'showCircular', 'moveRectangle', 'showRectangle', 'hideRectangle', 'notify', 'notifyProgress', 'hideNotify', 'showPop', 'hidePop', 'remove'].includes(k)) {
+            if (!['taskInfo', 'setTask', 'clearTask', 'getAvailArea', 'refreshMaxPosition', 'getTaskId', 'min', 'get', 'getList', 'changeFocus', 'getMaxZIndexFormID', 'getRectByBorder', 'showCircular', 'moveRectangle', 'showRectangle', 'hideRectangle', 'notify', 'notifyProgress', 'hideNotify', 'showPop', 'hidePop', 'remove'].includes(k)) {
                 continue;
             }
             invoke.clickgo.form[k] = clickgo.form[k];

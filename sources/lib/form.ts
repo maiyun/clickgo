@@ -105,22 +105,11 @@ rectangleElement.classList.add('cg-rectangle');
 document.getElementsByTagName('body')[0].appendChild(rectangleElement);
 
 /** --- task 的信息 --- */
-let taskInfo: ICGFormTaskInfo = {
+export let taskInfo: ICGFormTaskInfo = Vue.reactive({
     'taskId': 0,
     'formId': 0,
     'length': 0
-};
-
-/**
- * --- 获取当前已设置的 task 信息 ---
- */
-export function getTask(): ICGFormTaskInfo {
-    return {
-        'taskId': taskInfo.taskId,
-        'formId': taskInfo.formId,
-        'length': taskInfo.length
-    };
-}
+});
 
 /**
  * --- 将任务注册为系统 task ---
@@ -1166,7 +1155,7 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
         invoke.clickgo.dom[k] = (clickgo.dom as any)[k];
     }
     for (let k in clickgo.form) {
-        if (!['getTask', 'setTask', 'clearTask', 'getAvailArea', 'refreshMaxPosition', 'getTaskId', 'min', 'get', 'getList', 'changeFocus', 'getMaxZIndexFormID', 'getRectByBorder', 'showCircular', 'moveRectangle', 'showRectangle', 'hideRectangle', 'notify', 'notifyProgress', 'hideNotify', 'showPop', 'hidePop', 'remove'].includes(k)) {
+        if (!['taskInfo', 'setTask', 'clearTask', 'getAvailArea', 'refreshMaxPosition', 'getTaskId', 'min', 'get', 'getList', 'changeFocus', 'getMaxZIndexFormID', 'getRectByBorder', 'showCircular', 'moveRectangle', 'showRectangle', 'hideRectangle', 'notify', 'notifyProgress', 'hideNotify', 'showPop', 'hidePop', 'remove'].includes(k)) {
             continue;
         }
         invoke.clickgo.form[k] = (clickgo.form as any)[k];

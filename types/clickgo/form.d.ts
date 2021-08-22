@@ -4,7 +4,7 @@ interface ICGFormLib {
     'lastZIndex': number;
     'lastTopZIndex': number;
     'lastPopZIndex': number;
-    getTask(): ICGFormTaskInfo;
+    'taskInfo': ICGFormTaskInfo;
     setTask(taskId: number, formId: number): boolean;
     clearTask(taskId: number): boolean;
     refreshTaskPosition(): void;

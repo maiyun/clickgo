@@ -115,8 +115,7 @@ export let computed = {
         return clickgo.tool.getBoolean(this.move);
     },
     'taskPosition': function(this: IVueControl): string {
-        let tinfo = clickgo.form.getTask();
-        return tinfo.taskId === 0 ? 'bottom' : clickgo.core.config['task.position'];
+        return clickgo.form.taskInfo.taskId === 0 ? 'bottom' : clickgo.core.config['task.position'];
     }
 };
 

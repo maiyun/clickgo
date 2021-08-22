@@ -39,7 +39,7 @@ exports.methods = {
     },
     'runTask': function () {
         return __awaiter(this, void 0, void 0, function* () {
-            if (clickgo.form.getTask().taskId > 0) {
+            if (clickgo.form.taskInfo.taskId > 0) {
                 yield this.cgDialog('The Task APP is already running.');
                 return;
             }

@@ -23,7 +23,7 @@ export let methods = {
         }
     },
     'runTask': async function(this: IVueForm): Promise<void> {
-        if (clickgo.form.getTask().taskId > 0) {
+        if (clickgo.form.taskInfo.taskId > 0) {
             await this.cgDialog('The Task APP is already running.');
             return;
         }

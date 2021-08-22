@@ -118,7 +118,7 @@ export let globalEvents: ICGGlobalEvents = {
         clickgo.form.simpletaskRoot.forms[formId].icon = icon;
     },
     formStateMinChangedHandler: function(taskId: number, formId: number, state: boolean): void {
-        if (clickgo.form.getTask().taskId > 0) {
+        if (clickgo.form.taskInfo.taskId > 0) {
             return;
         }
         if (state) {
