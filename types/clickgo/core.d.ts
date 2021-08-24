@@ -1,5 +1,8 @@
 interface ICGCoreLib {
     'config': ICGCoreConfig;
+    regModule(name: string, func: () => any | Promise<any>): boolean;
+    initModules(names: string | string[]): Promise<number>;
+    getModule(name: string): null | any;
     'clickgoFiles': Record<string, Blob | string>;
     'globalEvents': ICGGlobalEvents;
     trigger(name: 'screenResize'): void;

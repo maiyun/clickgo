@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.fetchApp = exports.readApp = exports.fetchClickGoFile = exports.trigger = exports.globalEvents = exports.clickgoFiles = exports.config = void 0;
+exports.fetchApp = exports.readApp = exports.fetchClickGoFile = exports.trigger = exports.globalEvents = exports.clickgoFiles = exports.getModule = exports.initModules = exports.regModule = exports.config = void 0;
 let cgConfig = {
     'local': 'en-us',
     'task.position': 'bottom',
@@ -75,6 +75,94 @@ Vue.watch(exports.config, function () {
     }
 }, {
     'deep': true
+});
+let modules = {};
+function regModule(name, func) {
+    if (modules[name]) {
+        return false;
+    }
+    modules[name] = {
+        func: func,
+        'obj': null
+    };
+    return true;
+}
+exports.regModule = regModule;
+function initModules(names) {
+    return new Promise(function (resolve) {
+        if (typeof names === 'string') {
+            names = [names];
+        }
+        if (names.length === 0) {
+            resolve(0);
+            return;
+        }
+        let loaded = 0;
+        let successful = 0;
+        for (let name of names) {
+            if (!modules[name]) {
+                ++loaded;
+                if (loaded === names.length) {
+                    resolve(successful);
+                    return;
+                }
+                continue;
+            }
+            if (modules[name].obj) {
+                ++loaded;
+                ++successful;
+                if (loaded === names.length) {
+                    resolve(successful);
+                    return;
+                }
+                continue;
+            }
+            let rtn = modules[name].func();
+            if (rtn instanceof Promise) {
+                rtn.then(function () {
+                    ++loaded;
+                    ++successful;
+                    if (loaded === names.length) {
+                        resolve(successful);
+                    }
+                }).catch(function () {
+                    ++loaded;
+                    if (loaded === names.length) {
+                        resolve(successful);
+                    }
+                });
+            }
+            else {
+                ++loaded;
+                ++successful;
+                if (loaded === names.length) {
+                    resolve(successful);
+                }
+            }
+        }
+    });
+}
+exports.initModules = initModules;
+function getModule(name) {
+    if (!modules[name]) {
+        return null;
+    }
+    return modules[name].obj;
+}
+exports.getModule = getModule;
+regModule('monaco-edito', function () {
+    return __awaiter(this, void 0, void 0, function* () {
+        yield loader.loadScript(document.getElementsByTagName('head')[0], clickgo.cdnPath + '/npm/monaco-editor@0.27.0/min/vs/loader.js');
+        let proxy = URL.createObjectURL(new Blob([`
+        self.MonacoEnvironment = {
+            baseUrl: '${clickgo.cdnPath}/npm/monaco-editor@0.25.0/min/'
+        };
+        importScripts('${clickgo.cdnPath}/npm/monaco-editor@0.25.0/min/vs/base/worker/workerMain.js');
+    `], { type: 'text/javascript' }));
+        window.MonacoEnvironment = { getWorkerUrl: () => proxy };
+        console.log('[1]', monaco);
+        return monaco;
+    });
 });
 exports.clickgoFiles = {};
 exports.globalEvents = {

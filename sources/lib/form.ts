@@ -1143,7 +1143,7 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
         'zip': {}
     };
     for (let k in clickgo.core) {
-        if (!['config', 'trigger'].includes(k)) {
+        if (!['config', 'regModule', 'initModules', 'getModule', 'trigger'].includes(k)) {
             continue;
         }
         invoke.clickgo.core[k] = (clickgo.core as any)[k];

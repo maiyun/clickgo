@@ -88,6 +88,97 @@ Vue.watch(config, function() {
     'deep': true
 });
 
+/** --- module 列表 --- */
+let modules: Record<string, { func: () => any | Promise<any>; 'obj': null | any; }> = {};
+
+export function regModule(name: string, func: () => any | Promise<any>): boolean {
+    if (modules[name]) {
+        return false;
+    }
+    modules[name] = {
+        func: func,
+        'obj': null
+    };
+    return true;
+}
+
+export function initModules(names: string | string[]): Promise<number> {
+    return new Promise(function(resolve) {
+        if (typeof names === 'string') {
+            names = [names];
+        }
+        if (names.length === 0) {
+            resolve(0);
+            return;
+        }
+        let loaded = 0;
+        let successful = 0;
+        for (let name of names) {
+            if (!modules[name]) {
+                ++loaded;
+                if (loaded === names.length) {
+                    resolve(successful);
+                    return;
+                }
+                continue;
+            }
+            if (modules[name].obj) {
+                ++loaded;
+                ++successful;
+                if (loaded === names.length) {
+                    resolve(successful);
+                    return;
+                }
+                continue;
+            }
+            let rtn = modules[name].func();
+            if (rtn instanceof Promise) {
+                rtn.then(function() {
+                    ++loaded;
+                    ++successful;
+                    if (loaded === names.length) {
+                        resolve(successful);
+                    }
+                }).catch(function() {
+                    ++loaded;
+                    if (loaded === names.length) {
+                        resolve(successful);
+                    }
+                });
+            }
+            else {
+                ++loaded;
+                ++successful;
+                if (loaded === names.length) {
+                    resolve(successful);
+                }
+            }
+        }
+    });
+}
+
+export function getModule(name: string): null | any {
+    if (!modules[name]) {
+        return null;
+    }
+    return modules[name].obj;
+}
+
+// --- 注册系统默认的库 ---
+regModule('monaco-edito', async function() {
+    await loader.loadScript(document.getElementsByTagName('head')[0], clickgo.cdnPath + '/npm/monaco-editor@0.27.0/min/vs/loader.js');
+    // --- 初始化 Monaco ---
+    let proxy = URL.createObjectURL(new Blob([`
+        self.MonacoEnvironment = {
+            baseUrl: '${clickgo.cdnPath}/npm/monaco-editor@0.25.0/min/'
+        };
+        importScripts('${clickgo.cdnPath}/npm/monaco-editor@0.25.0/min/vs/base/worker/workerMain.js');
+    `], { type: 'text/javascript' }));
+    (window as any).MonacoEnvironment = { getWorkerUrl: () => proxy };
+    console.log('[1]', monaco);
+    return monaco;
+});
+
 /** --- clickgo 已经加载的文件列表 --- */
 export let clickgoFiles: Record<string, Blob | string> = {};
 
