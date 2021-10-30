@@ -1,14 +1,12 @@
 .git/
 .vscode/
 .vs/
+*.ts
 /dist/sources/
 /dist/test/
 /dist/compiler*
 /doc/
 /node_modules/
-/sources/sources/
-/sources/test/
-/sources/compiler*
 /types/
 .eslintrc
 .gitignore

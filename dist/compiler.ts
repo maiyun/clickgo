@@ -23,7 +23,7 @@ async function addFile(zipo: zip, base: string = '', path: string = ''): Promise
     for (let item of list) {
         let p = base + path + item.name;
         if (item.isFile()) {
-            if (item.name.endsWith('.d.ts')) {
+            if (item.name.endsWith('.ts')) {
                 continue;
             }
             let file = await fs.promises.readFile(p);

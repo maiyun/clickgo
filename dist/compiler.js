@@ -26,7 +26,7 @@ function addFile(zipo, base = '', path = '') {
         for (let item of list) {
             let p = base + path + item.name;
             if (item.isFile()) {
-                if (item.name.endsWith('.d.ts')) {
+                if (item.name.endsWith('.ts')) {
                     continue;
                 }
                 let file = yield fs.promises.readFile(p);
