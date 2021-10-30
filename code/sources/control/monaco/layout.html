@@ -1,0 +1,4 @@
+<div class="wrap" :class="[cgHover && 'hover', cgActive && 'active', notInit && 'notInit']" :style="{'width': cgWidthPx, 'height': cgHeightPx, 'left': left + 'px', 'top': top + 'px', 'z-index': zIndex, 'flex-grow': flex}" @click="cgTap" @mousedown="cgDown" @mouseup="cgUp" @mouseenter="cgEnter" @mouseleave="cgLeave" @touchstart="cgDown" @touchend="cgUp" @touchcancel="cgCancel" @dblclick="cgDblclick">
+    <div v-if="notInit" class="notInit">Monaco Editor Not Found.</div>
+    <div v-else class="monaco" ref="monaco"></div>
+</div>

@@ -11,6 +11,7 @@ interface ICGZip {
     pwd(): string;
     cd(dir: string): string;
     generate<T extends TCGZipOutputType>(options?: { 'type'?: T; 'level'?: number; 'onUpdate'?: (percent: number, currentFile: string) => void; }): Promise<ICGZipOutputByType[T]>;
+    getList(): Promise<Record<string, Blob | string>>;
 }
 
 interface ICGZipItem {

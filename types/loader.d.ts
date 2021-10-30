@@ -5,6 +5,8 @@ interface ILoader {
     readys: Array<() => void | Promise<void>>;
     /** --- 当前 js 加载的基路径，一般为当前 JS 的路径 --- */
     scriptPath: string;
+    /** --- head element --- */
+    head?: HTMLElement;
     /**
      * --- 初始化函数 ---
      */
@@ -65,18 +67,19 @@ interface ILoader {
     }): Promise<Record<string, Blob | string>>;
     /**
      * --- 加载 script 标签 ---
-     * @param el 在此标签中增加
      * @param url 增加的 js 文件地址
+     * @param el 在此标签中增加
      */
-    loadScript(el: HTMLElement, url: string): Promise<boolean>;
+    loadScript(url: string, el?: HTMLElement): Promise<boolean>;
     /**
      * --- 加载多个 script 标签 ---
      * @param el 在此标签中增加
      * @param urls 增加的 js 文件地址列表
      * @param opt loaded 回调函数
      */
-    loadScripts(el: HTMLElement, urls: string[], opt?: {
+    loadScripts(urls: string[], opt?: {
         'loaded'?: (url: string, state: number) => void;
+        'el'?: HTMLElement;
     }): Promise<void>;
     /**
      * --- 代码中异步加载文件 ---

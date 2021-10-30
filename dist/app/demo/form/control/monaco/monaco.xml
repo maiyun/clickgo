@@ -1,5 +1,0 @@
-<form title="Monaco" width="400" height="450" padding="10">
-    <layout flex="1" gutter="10">
-        <monaco flex="1"></monaco>
-    </layout>
-</form>

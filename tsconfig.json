@@ -3,7 +3,7 @@
         "module": "CommonJS",
         "removeComments": true,
         "preserveConstEnums": true, // 保留 const 和 enum 声明
-        "outDir": "dist/",
+        "outDir": "code",
         "sourceMap": false,
         "target": "ES2015",
         "strict": true,             // 严格模式

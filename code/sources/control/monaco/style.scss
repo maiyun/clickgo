@@ -1,0 +1,11 @@
+.wrap {
+    display: flex; flex-direction: column;
+
+    .notInit {
+        border: dotted 1px #000; flex: 1; display: flex; align-items: center; justify-content: center;
+    }
+
+    .monaco {
+        flex: 1; height: 0;
+    }
+}
