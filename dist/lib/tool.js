@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.blob2DataUrl = exports.blob2Text = exports.urlResolve = exports.parseUrl = exports.request = exports.replace = exports.includes = exports.escapeHTML = exports.getBoolean = exports.rand = exports.getObjectURLList = exports.revokeObjectURL = exports.createObjectURL = exports.getMimeByPath = exports.stylePrepend = exports.layoutClassPrepend = exports.layoutInsertAttr = exports.layoutAddTagClassAndReTagName = exports.styleUrl2ObjectOrDataUrl = exports.purify = exports.sleep = exports.clone = exports.blob2ArrayBuffer = exports.file2ObjectUrl = void 0;
+exports.execCommand = exports.blob2DataUrl = exports.blob2Text = exports.urlResolve = exports.parseUrl = exports.request = exports.replace = exports.includes = exports.escapeHTML = exports.getBoolean = exports.rand = exports.getObjectURLList = exports.revokeObjectURL = exports.createObjectURL = exports.getMimeByPath = exports.stylePrepend = exports.layoutClassPrepend = exports.layoutInsertAttr = exports.layoutAddTagClassAndReTagName = exports.styleUrl2ObjectOrDataUrl = exports.purify = exports.sleep = exports.clone = exports.blob2ArrayBuffer = exports.file2ObjectUrl = void 0;
 function file2ObjectUrl(file, obj) {
     let ourl = obj.objectURLs[file];
     if (!ourl) {
@@ -405,3 +405,10 @@ function blob2DataUrl(blob) {
     return loader.blob2DataUrl(blob);
 }
 exports.blob2DataUrl = blob2DataUrl;
+function execCommand(ac) {
+    if (!['copy', 'cut'].includes(ac)) {
+        return;
+    }
+    document.execCommand(ac);
+}
+exports.execCommand = execCommand;

@@ -29,6 +29,9 @@ function addFile(zipo, base = '', path = '') {
                 if (item.name.endsWith('.ts')) {
                     continue;
                 }
+                if (item.name.endsWith('.scss')) {
+                    continue;
+                }
                 let file = yield fs.promises.readFile(p);
                 if (item.name.endsWith('.html')) {
                     zipo.file(path + item.name, purify(file.toString()));

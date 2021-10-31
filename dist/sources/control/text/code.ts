@@ -406,7 +406,7 @@ export let methods = {
             }
         }
         else {
-            document.execCommand(ac);
+            clickgo.tool.execCommand(ac);
             this.reselect();
         }
     },

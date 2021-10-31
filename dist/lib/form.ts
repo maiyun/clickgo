@@ -1169,7 +1169,7 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
         invoke.clickgo.task[k] = (clickgo.task as any)[k];
     }
     for (let k in clickgo.tool) {
-        if (!['blob2ArrayBuffer', 'clone', 'sleep', 'purify', 'getMimeByPath', 'rand', 'getBoolean', 'escapeHTML', 'includes', 'replace', 'parseUrl', 'urlResolve', 'blob2Text', 'blob2DataUrl'].includes(k)) {
+        if (!['blob2ArrayBuffer', 'clone', 'sleep', 'purify', 'getMimeByPath', 'rand', 'getBoolean', 'escapeHTML', 'includes', 'replace', 'parseUrl', 'urlResolve', 'blob2Text', 'blob2DataUrl', 'execCommand'].includes(k)) {
             continue;
         }
         invoke.clickgo.tool[k] = (clickgo.tool as any)[k];

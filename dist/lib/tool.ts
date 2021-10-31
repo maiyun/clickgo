@@ -511,3 +511,10 @@ export function blob2Text(blob: Blob): Promise<string> {
 export function blob2DataUrl(blob: Blob): Promise<string> {
     return loader.blob2DataUrl(blob);
 }
+
+export function execCommand(ac: string): void {
+    if (!['copy', 'cut'].includes(ac)) {
+        return;
+    }
+    document.execCommand(ac);
+}

@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import * as zip from 'jszip';
 
-// --- sass --watch sources/:dist/ --style compressed --no-source-map ---
+// --- sass --watch dist/:dist/ --style compressed --no-source-map ---
 // --- git config core.ignorecase false ---
 
 /**
@@ -24,6 +24,9 @@ async function addFile(zipo: zip, base: string = '', path: string = ''): Promise
         let p = base + path + item.name;
         if (item.isFile()) {
             if (item.name.endsWith('.ts')) {
+                continue;
+            }
+            if (item.name.endsWith('.scss')) {
                 continue;
             }
             let file = await fs.promises.readFile(p);

@@ -23,6 +23,7 @@ interface ICGToolLib {
     urlResolve(from: string, to: string): string;
     blob2Text(blob: Blob): Promise<string>;
     blob2DataUrl(blob: Blob): Promise<string>;
+    execCommand(ac: string): void;
 }
 
 interface ICGUrl {

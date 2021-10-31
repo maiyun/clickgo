@@ -993,7 +993,7 @@ function create(taskId, opt) {
             invoke.clickgo.task[k] = clickgo.task[k];
         }
         for (let k in clickgo.tool) {
-            if (!['blob2ArrayBuffer', 'clone', 'sleep', 'purify', 'getMimeByPath', 'rand', 'getBoolean', 'escapeHTML', 'includes', 'replace', 'parseUrl', 'urlResolve', 'blob2Text', 'blob2DataUrl'].includes(k)) {
+            if (!['blob2ArrayBuffer', 'clone', 'sleep', 'purify', 'getMimeByPath', 'rand', 'getBoolean', 'escapeHTML', 'includes', 'replace', 'parseUrl', 'urlResolve', 'blob2Text', 'blob2DataUrl', 'execCommand'].includes(k)) {
                 continue;
             }
             invoke.clickgo.tool[k] = clickgo.tool[k];
