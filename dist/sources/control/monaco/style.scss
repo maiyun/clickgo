@@ -7,6 +7,16 @@
 
     .monaco {
         flex: 1; height: 0;
+        &.theme-dark {
+            filter: invert(1) hue-rotate(170deg) brightness(.8) grayscale(.3);
+        }
+        &.theme-reader {
+            filter: saturate(20) sepia(0.8);
+        }
+    }
+    
+    &.cg-disabled {
+        filter: grayscale(1); pointer-events: none;
     }
 }
 

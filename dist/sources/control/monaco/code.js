@@ -40,11 +40,30 @@ exports.props = {
     },
     'language': {
         'default': undefined
+    },
+    'theme': {
+        'default': undefined
+    },
+    'files': {
+        'default': {}
     }
 };
 exports.computed = {
     'isDisabled': function () {
         return clickgo.tool.getBoolean(this.disabled);
+    },
+    'isReadonly': function () {
+        return clickgo.tool.getBoolean(this.readonly);
+    },
+    'filesComp': function () {
+        let list = [];
+        for (let path in this.files) {
+            list.push({
+                'content': this.files[path],
+                'filePath': path
+            });
+        }
+        return list;
     }
 };
 exports.data = {
@@ -73,12 +92,20 @@ exports.data = {
     }
 };
 exports.watch = {
-    'readonly': function () {
+    'isReadonly': function () {
         if (!this.monacoInstance) {
             return;
         }
         this.monacoInstance.updateOptions({
-            'readOnly': this.readonly
+            'readOnly': this.isDisabled ? true : this.isReadonly
+        });
+    },
+    'isDisabled': function () {
+        if (!this.monacoInstance) {
+            return;
+        }
+        this.monacoInstance.updateOptions({
+            'readOnly': this.isDisabled ? true : this.isReadonly
         });
     },
     'modelValue': function () {
@@ -115,6 +142,13 @@ exports.methods = {
         }
         if (this.cgSelfPopOpen) {
             this.cgHidePop();
+        }
+    },
+    touchDown: function (e) {
+        if (navigator.clipboard) {
+            clickgo.dom.bindLong(e, () => {
+                this.cgShowPop(e);
+            });
         }
     },
     execCmd: function (ac) {
@@ -166,9 +200,13 @@ exports.mounted = function () {
         this.monacoInstance.getModel().onDidChangeContent(() => {
             this.$emit('update:modelValue', this.monacoInstance.getValue());
         });
+        this.monacoInstance.onDidFocusEditorWidget(() => {
+            monaco.languages.typescript.typescriptDefaults.setExtraLibs(this.filesComp);
+        });
         clickgo.dom.watchSize(this.$refs.monaco, () => {
             this.monacoInstance.layout();
         });
+        this.$emit('init', this.monacoInstance);
     }
     else {
         this.notInit = true;

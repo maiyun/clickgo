@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.methods = exports.computed = exports.props = void 0;
+exports.mounted = exports.methods = exports.data = exports.watch = exports.computed = exports.props = void 0;
 exports.props = {
     'disabled': {
         'default': false
@@ -28,6 +28,12 @@ exports.props = {
     },
     'plain': {
         'default': false
+    },
+    'checked': {
+        'default': undefined
+    },
+    'modelValue': {
+        'default': undefined
     }
 };
 exports.computed = {
@@ -36,7 +42,18 @@ exports.computed = {
     },
     'isPlain': function () {
         return clickgo.tool.getBoolean(this.plain);
+    },
+    'isChecked': function () {
+        return clickgo.tool.getBoolean(this.checkedData);
     }
+};
+exports.watch = {
+    'checked': function () {
+        this.checkedData = this.checked;
+    }
+};
+exports.data = {
+    'checkedData': undefined
 };
 exports.methods = {
     keydown: function (e) {
@@ -44,5 +61,15 @@ exports.methods = {
             return;
         }
         this.cgTap(e);
+    },
+    click: function (e) {
+        if (this.checkedData !== undefined) {
+            this.checkedData = this.isChecked ? false : true;
+            this.$emit('update:checked', this.checkedData);
+        }
+        this.cgTap(e);
     }
+};
+exports.mounted = function () {
+    this.checkedData = this.checked;
 };

@@ -139,6 +139,14 @@ exports.watch = {
             });
         }
     },
+    'password': {
+        handler: function () {
+            return __awaiter(this, void 0, void 0, function* () {
+                yield this.$nextTick();
+                this.refreshLength();
+            });
+        }
+    },
     'wrap': {
         handler: function () {
             return __awaiter(this, void 0, void 0, function* () {
@@ -303,7 +311,7 @@ exports.methods = {
         this.canTouch = false;
         if (navigator.clipboard) {
             clickgo.dom.bindLong(e, () => {
-                this.showPop(e);
+                this.cgShowPop(e);
             });
         }
     },
@@ -437,8 +445,11 @@ exports.methods = {
 exports.mounted = function () {
     clickgo.dom.watchSize(this.$refs.text, () => __awaiter(this, void 0, void 0, function* () {
         this.refreshClient();
+        this.refreshLength();
     }), true);
-    this.refreshLength();
-    this.$refs.text.scrollTop = this.scrollTop;
-    this.$refs.text.scrollLeft = this.scrollLeft;
+    this.cgCreateTimer(() => {
+        this.refreshLength();
+        this.$refs.text.scrollTop = this.scrollTop;
+        this.$refs.text.scrollLeft = this.scrollLeft;
+    }, 5);
 };

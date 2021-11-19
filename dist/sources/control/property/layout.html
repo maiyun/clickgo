@@ -1,0 +1,43 @@
+<div class="wrap" :class="[cgSelfPopOpen && 'cg-pop-open', isDisabled && 'cg-disabled', cgHover && 'hover', cgActive && 'active']" :style="{'width': cgWidthPx, 'height': cgHeightPx, 'left': left + 'px', 'top': top + 'px', 'z-index': zIndex, 'flex-grow': flex}" @click="cgTap" @mousedown="down" @mouseup="cgUp" @mouseenter="cgEnter" @mouseleave="cgLeave" @touchstart="down" @touchend="cgUp" @touchcancel="cgCancel" @dblclick="cgDblclick">
+    <div class="controls">
+        <cg-button :checked="sortData === 'kind'" @tap="changeSort('kind')">&#xe742;</cg-button>
+        <cg-button :checked="sortData === 'letter'" @tap="changeSort('letter')">&#xe7ad;</cg-button>
+        <div class="split"></div>
+        <cg-button :checked="typeData === 'property'" @tap="changeType('property')">&#xe603;</cg-button>
+        <cg-button :checked="typeData === 'event'" @tap="changeType('event')">&#xe613;</cg-button>
+    </div>
+    <div class="content" @touchstart="vdown" @contextmenu="contextmenu">
+        <cg-view flex="1" direction="v">
+            <template v-for="item of value">
+                <div v-if="item.title" class="bigTitle">
+                    <div class="control"></div>
+                    <div class="title">{{item.title}}</div>
+                </div>
+                <template v-for="item2 of item.list">
+                    <div class="line" :class="{'selected': !selectedSub && (selectedTitle === item2.title)}" @mousedown="select($event, item2.title, undefined)" @touchstart="select($event, item2.title, undefined)">
+                        <div class="control"></div>
+                        <div class="title">{{item2.title}}</div>
+                        <div class="value">{{item2.value}}</div>
+                    </div>
+                    <div v-if="item2.sub" v-for="item3, i3 of item2.sub" class="line" :class="{'selected': (selectedTitle === item2.title) && (selectedSub === item3.title)}" @mousedown="select($event, item2.title, item3.title)" @touchstart="select($event, item2.title, item3.title)">
+                        <div class="control"></div>
+                        <div class="title">
+                            <div class="sub">{{item3.title}}</div>
+                        </div>
+                        <div class="value">{{item2.value.split(',')[i3].trim()}}</div>
+                    </div>
+                </template>
+            </template>
+        </cg-view>
+    </div>
+    <div class="description"></div>
+    <teleport to="#cg-pop-list">
+        <div class="pop" :class="[cgSelfPopOpen && 'open']" :style="cgPopPosition">
+            <cg-menulist>
+                <cg-menulist-item alt="R" @tap="execCmd('cut')">{{l('reset')}}</cg-menulist-item>
+                <cg-menulist-split></cg-menulist-split>
+                <cg-menulist-item alt="D" @tap="execCmd('description')">{{l('description')}}</cg-menulist-item>
+            </cg-menulist>
+        </div>
+    </teleport>
+</div>

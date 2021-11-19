@@ -1,10 +1,12 @@
 <form title="Monaco" width="500" height="450" padding="10">
     <layout flex="1" gutter="10" direction="v">
         <label>Length: {{code.length}}</label>
-        <monaco flex="1" v-model="code" :language="language" :readonly="readonly"></monaco>
+        <monaco flex="1" v-model="code" :language="language" :readonly="readonly" :disabled="disabled" :files="files" :theme="theme"></monaco>
         <layout gutter="10">
+            <button flex="1" @tap="disabled = !disabled">{{disabled ? 'Remove' : 'Set'}} disabled</button>
             <button flex="1" @tap="readonly = !readonly">{{readonly ? 'Remove' : 'Set'}} readonly</button>
-            <select v-model="language" :data="list" flex="2"></select>
+            <select flex="1" v-model="theme" :data="themes"></select>
+            <select flex="2" v-model="language" :data="list"></select>
         </layout>
     </layout>
 </form>

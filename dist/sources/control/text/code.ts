@@ -127,6 +127,12 @@ export let watch = {
             this.refreshLength();
         }
     },
+    'password': {
+        handler: async function(this: IVueControl): Promise<void> {
+            await this.$nextTick();
+            this.refreshLength();
+        }
+    },
     'wrap': {
         handler: async function(this: IVueControl): Promise<void> {
             await this.$nextTick();
@@ -305,11 +311,12 @@ export let methods = {
     inputDown: function(this: IVueControl, e: TouchEvent): void {
         this.touchX = e.touches[0].clientX;
         this.touchY = e.touches[0].clientY;
+        // --- 按下后第一次的拖动判断可拖动后，则后面此次都可拖动（交由浏览器可自行处理） ---
         this.canTouch = false;
         // --- 长按触发 contextmenu ---
         if (navigator.clipboard) {
             clickgo.dom.bindLong(e, () => {
-                this.showPop(e);
+                this.cgShowPop(e);
             });
         }
     },
@@ -451,10 +458,13 @@ export let methods = {
 export let mounted = function(this: IVueControl): void {
     clickgo.dom.watchSize(this.$refs.text, async (): Promise<void> => {
         this.refreshClient();
+        this.refreshLength();
     }, true);
-    // --- 更新 length ---
-    this.refreshLength();
-    // --- 对 scroll 位置进行归位 ---
-    this.$refs.text.scrollTop = this.scrollTop;
-    this.$refs.text.scrollLeft = this.scrollLeft;
+    this.cgCreateTimer(() => {
+        // --- 更新 length ---
+        this.refreshLength();
+        // --- 对 scroll 位置进行归位 ---
+        this.$refs.text.scrollTop = this.scrollTop;
+        this.$refs.text.scrollLeft = this.scrollLeft;
+    }, 5);
 };

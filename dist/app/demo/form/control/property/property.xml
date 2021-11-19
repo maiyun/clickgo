@@ -1,0 +1,6 @@
+<form title="Property" width="450" height="400" min-width="300" min-height="400" padding="10">
+    <layout gutter="10" flex="1">
+        <text flex="1" :modelValue="JSON.stringify(data)" style="height: auto;" multi readonly wrap></text>
+        <property flex="1" v-model="data"></property>
+    </layout>
+</form>

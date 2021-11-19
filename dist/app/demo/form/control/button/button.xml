@@ -47,6 +47,13 @@
                     <img width="16" height="16" src="../../../res/icon.svg" /><label style="padding-left: 5px;">Disabled</label>
                 </button>
             </layout>
+            <label>Checked:</label>
+            <layout gutter="10">
+                <button flex="1" checked>Check 1</button>
+                <button flex="1" checked="false">Check 2</button>
+                <button flex="1" :checked="btnRadio === '0'" @tap="btnRadio = '0'">Radio 1</button>
+                <button flex="1" :checked="btnRadio === '1'" @tap="btnRadio = '1'">Radio 2</button>
+            </layout>
         </layout>
     </overflow>
 </form>

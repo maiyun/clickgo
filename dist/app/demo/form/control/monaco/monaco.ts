@@ -1,6 +1,5 @@
 export let data = {
     'code': '',
-    'language': 'HTML',
     'codeList': [
         `<html>
     <head>
@@ -11,13 +10,33 @@ export let data = {
     </body>
 </html>`,
         'export' + ` let props = {
+};\n\nexport` + ` let methods = {
+    hehe: function(): string {
+        return str() + ', en.';
+    }
+};\n`,
+        `.red {
+    color: red;
 }`,
         `.red {
     color: red;
+    span {
+        color: blue;
+    }
 }`
     ],
-    'list': ['HTML', 'TypeScript', 'CSS'],
-    'readonly': false
+    'files': {
+        'global.ts': 'declare function str(): string;'
+    },
+
+    'language': 'HTML',
+    'list': ['HTML', 'TypeScript', 'CSS', 'SCSS'],
+
+    'theme': 'vs',
+    'themes': ['vs', 'dark', 'reader'],
+
+    'readonly': false,
+    'disabled': false
 };
 
 export let watch = {

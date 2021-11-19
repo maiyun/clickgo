@@ -27,6 +27,12 @@ export let props = {
     },
     'plain': {
         'default': false
+    },
+    'checked': {
+        'default': undefined
+    },
+    'modelValue': {
+        'default': undefined
     }
 };
 
@@ -36,7 +42,20 @@ export let computed = {
     },
     'isPlain': function(this: IVueControl): boolean {
         return clickgo.tool.getBoolean(this.plain);
+    },
+    'isChecked': function(this: IVueControl): boolean {
+        return clickgo.tool.getBoolean(this.checkedData);
     }
+};
+
+export let watch = {
+    'checked': function(this: IVueControl): void {
+        this.checkedData = this.checked;
+    }
+};
+
+export let data = {
+    'checkedData': undefined
 };
 
 export let methods = {
@@ -45,5 +64,16 @@ export let methods = {
             return;
         }
         this.cgTap(e);
+    },
+    click: function(this: IVueControl, e: MouseEvent): void {
+        if (this.checkedData !== undefined) {
+            this.checkedData = this.isChecked ? false : true;
+            this.$emit('update:checked', this.checkedData);
+        }
+        this.cgTap(e);
     }
+};
+
+export let mounted = function(this: IVueControl): void {
+    this.checkedData = this.checked;
 };

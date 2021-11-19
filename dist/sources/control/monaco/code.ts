@@ -30,12 +30,32 @@ export let props = {
     },
     'language': {
         'default': undefined
+    },
+    'theme': {
+        'default': undefined
+    },
+    'files': {
+        'default': {}
     }
 };
 
 export let computed = {
     'isDisabled': function(this: IVueControl): boolean {
         return clickgo.tool.getBoolean(this.disabled);
+    },
+    'isReadonly': function(this: IVueControl): boolean {
+        return clickgo.tool.getBoolean(this.readonly);
+    },
+
+    'filesComp': function(this: IVueControl): any[] {
+        let list = [];
+        for (let path in this.files) {
+            list.push({
+                'content': this.files[path],
+                'filePath': path
+            });
+        }
+        return list;
     }
 };
 
@@ -67,14 +87,23 @@ export let data = {
 };
 
 export let watch = {
-    'readonly': function(this: IVueControl): void {
+    'isReadonly': function(this: IVueControl): void {
         if (!this.monacoInstance) {
             return;
         }
         this.monacoInstance.updateOptions({
-            'readOnly': this.readonly
+            'readOnly': this.isDisabled ? true : this.isReadonly
         });
     },
+    'isDisabled': function(this: IVueControl): void {
+        if (!this.monacoInstance) {
+            return;
+        }
+        this.monacoInstance.updateOptions({
+            'readOnly': this.isDisabled ? true : this.isReadonly
+        });
+    },
+
     'modelValue': function(this: IVueControl): void {
         if (!this.monacoInstance) {
             return;
@@ -110,6 +139,13 @@ export let methods = {
         }
         if (this.cgSelfPopOpen) {
             this.cgHidePop();
+        }
+    },
+    touchDown: function(this: IVueControl, e: TouchEvent): void {
+        if (navigator.clipboard) {
+            clickgo.dom.bindLong(e, () => {
+                this.cgShowPop(e);
+            });
         }
     },
     execCmd: async function(this: IVueControl, ac: string): Promise<void> {
@@ -162,10 +198,16 @@ export let mounted = function(this: IVueControl): void {
         this.monacoInstance.getModel().onDidChangeContent(() => {
             this.$emit('update:modelValue', this.monacoInstance.getValue());
         });
+        // --- 焦点 ---
+        this.monacoInstance.onDidFocusEditorWidget(() => {
+            monaco.languages.typescript.typescriptDefaults.setExtraLibs(this.filesComp);
+        });
         // --- 自动设置大小 ---
         clickgo.dom.watchSize(this.$refs.monaco, () => {
             this.monacoInstance.layout();
         });
+        // --- 初始化成功 ---
+        this.$emit('init', this.monacoInstance);
     }
     else {
         // --- 没有成功 ---

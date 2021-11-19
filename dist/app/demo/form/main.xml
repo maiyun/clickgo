@@ -20,6 +20,7 @@
                     <button @tap="openForm('control', 'menu')">Menu</button>
                     <button @tap="openForm('control', 'list')">List</button>
                     <button @tap="openForm('control', 'select')">Select</button>
+                    <button @tap="openForm('control', 'property')">Property</button>
                     <button @tap="openForm('control', 'monaco')">Monaco</button>
                 </layout>
             </overflow>

@@ -1,6 +1,6 @@
 <div class="wrap" :class="[isDisabled && 'cg-disabled', cgSelfPopOpen && 'cg-pop-open', cgHover && 'hover', cgActive && 'active', notInit && 'notInit']" :style="{'width': cgWidthPx, 'height': cgHeightPx, 'left': left + 'px', 'top': top + 'px', 'z-index': zIndex, 'flex-grow': flex}" @click="cgTap" @mousedown="down" @mouseup="cgUp" @mouseenter="cgEnter" @mouseleave="cgLeave" @touchstart="down" @touchend="cgUp" @touchcancel="cgCancel" @dblclick="cgDblclick">
     <div v-if="notInit" class="notInit">Monaco Editor Not Found.</div>
-    <div v-else class="monaco" ref="monaco" @contextmenu="contextmenu"></div>
+    <div v-else class="monaco" ref="monaco" @contextmenu="contextmenu" @touchstart="touchDown" :class="[theme ? 'theme-' + theme : undefined]"></div>
     <teleport to="#cg-pop-list">
         <div class="pop" :class="[cgSelfPopOpen && 'open']" :style="cgPopPosition">
             <slot>
