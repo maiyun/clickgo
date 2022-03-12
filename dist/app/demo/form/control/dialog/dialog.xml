@@ -1,23 +1,25 @@
 <form title="Dialog" width="400" height="400" min-width="400" min-height="400" padding="10">
-    <layout direction="v" gutter="10" flex="1">
-        <layout align-h="center" align-v="center" flex="1">
-            <form title="Title" :min="false" :max="false" :resize="false" width="auto" height="auto">
+    <layout direction="v" gutter="10" style="flex: 1; width: 0;">
+        <layout align-h="center" align-v="center" style="flex: 1;">
+            <form title="Title" :min="false" :max="false" :resize="false" width="auto" height="auto" direction="v">
                 <dialog @select="btn = $event" :buttons="buttons" :direction="message === 'lines' ? 'v' : 'h'">
                     <template v-if="message === 'message'">Message</template>
-                    <template v-else-if="message === 'buttons'"><button flex="1">Button1</button><button flex="1" style="margin-left: 10px;">Button2</button></template>
-                    <template v-else><block v-for="i of 5">Line {{i}}.</block></template>
+                    <template v-else-if="message === 'buttons'"><button style="flex: 1; height: 30px;">Button1</button><button style="margin-left: 10px; flex: 1; height: 30px;">Button2</button></template>
+                    <template v-else-if="message === 'lines'"><block v-for="i of 5">Line {{i}}.</block></template>
+                    <template v-else>longlonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglong</template>
                 </dialog>
             </form>
         </layout>
         <layout gutter="10">
-            <button flex="1" @tap="buttons = ['A', 'B', 'C']">['A', 'B', 'C']</button>
-            <button flex="1" @tap="buttons = ['Cancel', 'OK']">['Cancel', 'OK']</button>
-            <button flex="1" @tap="buttons = ['OK']">['OK']</button>
+            <button style="flex: 1; height: 30px;" @click="buttons = ['A', 'B', 'C']">['A', 'B', 'C']</button>
+            <button style="flex: 1; height: 30px;" @click="buttons = ['Cancel', 'OK']">['Cancel', 'OK']</button>
+            <button style="flex: 1; height: 30px;" @click="buttons = ['OK']">['OK']</button>
         </layout>
         <layout gutter="10">
-            <button flex="1" @tap="message = 'message'">Message</button>
-            <button flex="1" @tap="message = 'buttons'">Two buttons</button>
-            <button flex="1" @tap="message = 'lines'">Multiple lines</button>
+            <button style="flex: 1; height: 30px;" @click="message = 'message'">Message</button>
+            <button style="flex: 1; height: 30px;" @click="message = 'long'">Long</button>
+            <button style="flex: 1; height: 30px;" @click="message = 'buttons'">Two buttons</button>
+            <button style="flex: 1; height: 30px;" @click="message = 'lines'">Multiple lines</button>
         </layout>
         <label>You click: {{btn}}.</label>
     </layout>

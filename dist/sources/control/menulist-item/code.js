@@ -5,9 +5,6 @@ exports.props = {
     'disabled': {
         'default': false
     },
-    'padding': {
-        'default': undefined
-    },
     'alt': {
         'default': undefined
     },
@@ -22,11 +19,14 @@ exports.props = {
     }
 };
 exports.data = {
-    'direction': 'h'
+    'padding': ''
 };
 exports.computed = {
     'isDisabled': function () {
         return clickgo.tool.getBoolean(this.disabled);
+    },
+    'opMargin': function () {
+        return this.padding.replace(/(\w+)/g, '-$1');
     }
 };
 exports.watch = {
@@ -47,15 +47,20 @@ exports.watch = {
     }
 };
 exports.methods = {
-    click: function (e) {
-        if (this.isDisabled) {
+    enter: function (e) {
+        if (clickgo.dom.hasTouchButMouse(e)) {
             return;
         }
+        clickgo.form.showPop(this.$el, this.$refs.pop, 'h');
+    },
+    touchstart: function () {
+        clickgo.form.showPop(this.$el, this.$refs.pop, 'h');
+    },
+    click: function () {
         if (!this.type) {
-            if (!this.cgSelfPop) {
+            if (!this.$slots.pop) {
                 clickgo.form.hidePop();
             }
-            this.cgTap(e);
             return;
         }
         if (this.type === 'radio') {
@@ -65,27 +70,12 @@ exports.methods = {
             this.$emit('update:modelValue', this.modelValue ? false : true);
         }
         clickgo.form.hidePop();
-        this.cgTap(e);
-    },
-    enter: function (e) {
-        this.cgEnter(e);
-        if (clickgo.dom.isMouseAlsoTouchEvent(e)) {
-            return;
-        }
-        if (this.isDisabled) {
-            return;
-        }
-        this.cgShowPop('h');
-    },
-    down: function (e) {
-        this.cgDown(e);
-        if (this.isDisabled) {
-            return;
-        }
-        this.cgShowPop('h');
     }
 };
 exports.mounted = function () {
+    clickgo.dom.watchStyle(this.$el, 'padding', (n, v) => {
+        this.padding = v;
+    }, true);
     let menulist = this.cgParentByName('menulist');
     if (!menulist) {
         return;

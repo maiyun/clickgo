@@ -1,7 +1,7 @@
 .wrap {
     display: flex; align-items: center; outline: none;
-    &.cg-disabled {
-        color: hsl(205, 0%, 50%); pointer-events: none;
+    &[data-cg-disabled] {
+        color: hsl(205, 0%, 60%);
     }
 
     .radio {
@@ -10,33 +10,32 @@
             content: ''; pointer-events: none; position: absolute; left: 0; top: 0; width: 200%; height: 200%; transform-origin: 0 0; transform: scale(.5); border: solid 1px hsl(205, 0%, 70%); border-radius: 50%;
         }
         &::after {
-            content: ''; pointer-events: none; position: absolute; left: 4px; top: 4px; width: calc(100% - 8px); height: calc(100% - 8px); background: #2A2E2E; display: none; border-radius: 50%;
+            content: ''; pointer-events: none; position: absolute; left: 4px; top: 4px; width: calc(100% - 8px); height: calc(100% - 8px); background: hsl(0, 0%, 20%); display: none; border-radius: 50%;
         }
     }
-    &.hover .radio {
-        &::before {
-            border-color: hsl(205, 100%, 50%);
+    &:not([data-cg-disabled]) {
+        &:hover .radio {
+            &::before {
+                border-color: hsl(205, 100%, 50%);
+            }
+            &::after {
+                background: hsl(205, 100%, 50%);
+            }
         }
-        &::after {
-            background: hsl(205, 100%, 50%);
+        &:active .radio {
+            background: hsl(205, 100%, 90%); color: hsl(205, 100%, 30%);
+            &::before {
+                border-color: hsl(205, 100%, 30%);
+            }
+            &::after {
+                background: hsl(205, 100%, 30%);
+            }
         }
     }
-    &.active .radio {
-        background: hsl(205, 100%, 90%); color: hsl(205, 100%, 30%);
-        &::before {
-            border-color: hsl(205, 100%, 30%);
-        }
+    &[data-cg-disabled] .radio {
+        background: hsl(0, 0%, 95%);
         &::after {
-            background: hsl(205, 100%, 30%);
-        }
-    }
-    &.cg-disabled .radio {
-        background: hsl(205, 0%, 95%);
-        &::before {
-            border-color: hsl(205, 0%, 60%);
-        }
-        &::after {
-            background: hsl(205, 0%, 60%);
+            background: hsl(0, 0%, 60%);
         }
     }
 
@@ -47,7 +46,7 @@
     .label {
         padding-left: 5px; position: relative;
         &::before {
-            content: ''; pointer-events: none; position: absolute; left: 4px; top: -1px; width: calc(200% - 6px); height: calc(200% + 4px); transform-origin: 0 0; transform: scale(.5); border: dotted 1px hsl(205, 0%, 10%); display: none;
+            content: ''; pointer-events: none; position: absolute; left: 4px; top: -1px; width: calc(200% - 6px); height: calc(200% + 4px); transform-origin: 0 0; transform: scale(.5); border: dotted 1px hsl(0, 0%, 20%); display: none;
         }
     }
     &:focus .label {

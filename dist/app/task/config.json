@@ -12,10 +12,10 @@
         "/clickgo/control/menulist"
     ],
     "locals": {
-        "/local/en-us": "en-us",
-        "/local/ja-jp": "ja-jp",
-        "/local/zh-cn": "zh-cn",
-        "/local/zh-tw": "zh-tw"
+        "/local/en": "en",
+        "/local/ja": "ja",
+        "/local/sc": "sc",
+        "/local/tc": "tc"
     },
     "main": "/form/bar/bar",
 
@@ -23,9 +23,9 @@
         "/form/bar/bar.js",
         "/form/bar/bar.xml",
         "/form/desktop/desktop.xml",
-        "/local/en-us.json",
-        "/local/ja-jp.json",
-        "/local/zh-cn.json",
-        "/local/zh-tw.json"
+        "/local/en.json",
+        "/local/ja.json",
+        "/local/sc.json",
+        "/local/tc.json"
     ]
 }

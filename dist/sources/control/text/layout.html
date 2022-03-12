@@ -1,22 +1,24 @@
-<div class="wrap" :class="[isDisabled && 'cg-disabled', cgSelfPopOpen && 'cg-pop-open', cgHover && 'hover', cgActive && 'active', isFocus && 'focus']" :tabindex="!isDisabled && focus && '0'" :style="{'width': cgWidthPx, 'height': cgHeightPx, 'left': left + 'px', 'top': top + 'px', 'z-index': zIndex, 'flex-grow': flex}" @click="cgTap" @mousedown="down" @mouseup="cgUp" @mouseenter="cgEnter" @mouseleave="cgLeave" @touchstart="down" @touchend="cgUp" @touchcancel="cgCancel" @dblclick="cgDblclick" @focus="focus" @keydown="keydown">
-    <template v-if="isMulti">
-        <div class="multi-t">
-            <textarea ref="text" class="text" :value="value" :style="{'padding': padding && padding.replace(/([0-9]+)($| )/g, '$1px$2'), '-webkit-text-security': isPassword ? 'disc' : undefined, 'white-space': isWrap ? undefined : 'nowrap', 'line-height': lineHeight, 'font-size': fontSize ? parseInt(fontSize) + 'px' : undefined}" :readonly="isReadonly" :disabled="isDisabled" @focus="tfocus" @blur="tblur" @input="input" @wheel="wheel" @scroll="scroll" @touchstart="inputDown"  @touchmove="move" @change="$event.stopPropagation()" @contextmenu="contextmenu" @select="select" @mousedown="reselect" @keydown="reselect"></textarea>
-            <cg-scroll width="16" :disabled="lengthHeight <= clientHeight" :length="lengthHeight" :client="clientHeight" :scroll-offset="scrollTopEmit" @update:scroll-offset="$refs.text.scrollTop = $event"></cg-scroll>
-        </div>
-        <div v-if="lengthWidth > clientWidth" class="multi-b">
-            <cg-scroll direction="h" height="16" flex="1" :length="lengthWidth" :client="clientWidth" :scroll-offset="scrollLeftEmit" @update:scroll-offset="$refs.text.scrollLeft = $event"></cg-scroll>
-            <div class="multi-rb"></div>
-        </div>
-    </template>
-    <input v-else ref="text" class="text" type="text" :value="value" :style="{'padding': padding && padding.replace(/([0-9]+)($| )/g, '$1px$2'), '-webkit-text-security': isPassword ? 'disc' : undefined, 'line-height': lineHeight, 'font-size': fontSize ? parseInt(fontSize) + 'px' : undefined}" :readonly="isReadonly" :disabled="isDisabled" @focus="tfocus" @blur="tblur" @input="input" @wheel="wheel" @scroll="scroll" @touchstart="inputDown"  @touchmove="move" @change="$event.stopPropagation()" @contextmenu="contextmenu" @select="select" @mousedown="reselect" @keydown="reselect">
+<div class="wrap" :class="[isFocus && 'focus', 'border-' + border]" :data-cg-disabled="isDisabled ? '' : undefined" :tabindex="!isDisabled && focus && '0'" @mousedown="down" @touchstart="down" @keydown="keydown" @focus="focus">
+    <div class="op" :style="{'margin': opMargin}">
+        <template v-if="isMulti">
+            <div class="multi-t">
+                <textarea ref="text" class="text" :value="value" :style="{'padding': padding, '-webkit-text-security': isPassword ? 'disc' : undefined, 'white-space': isWrap ? undefined : 'nowrap', 'line-height': lineHeight, 'font': font, 'font-weight': fontWeight, 'background': background, 'color': color}" :readonly="isReadonly" :disabled="isDisabled" @focus="tfocus" @blur="tblur" @input="input" @wheel="wheel" @scroll="scroll" @touchstart="inputTouch"  @touchmove="move" @change="$event.stopPropagation()" @contextmenu="contextmenu" @select="select" @mousedown="reselect" @keydown="reselect"></textarea>
+                <cg-scroll :disabled="lengthHeight <= clientHeight" :length="lengthHeight" :client="clientHeight" :scroll-offset="scrollTopEmit" @update:scroll-offset="$refs.text.scrollTop = $event"></cg-scroll>
+            </div>
+            <div v-if="lengthWidth > clientWidth" class="multi-b">
+                <cg-scroll direction="h" :length="lengthWidth" :client="clientWidth" :scroll-offset="scrollLeftEmit" @update:scroll-offset="$refs.text.scrollLeft = $event"></cg-scroll>
+                <div class="multi-rb"></div>
+            </div>
+        </template>
+        <input v-else ref="text" class="text" type="text" :value="value" :style="{'padding': padding, '-webkit-text-security': isPassword ? 'disc' : undefined, 'line-height': lineHeight, 'font': font, 'font-weight': fontWeight, 'background': background, 'color': color}" :readonly="isReadonly" :disabled="isDisabled" @focus="tfocus" @blur="tblur" @input="input" @wheel="wheel" @scroll="scroll" @touchstart="inputTouch"  @touchmove="move" @change="$event.stopPropagation()" @contextmenu="contextmenu" @select="select" @mousedown="reselect" @keydown="reselect">
+    </div>
     <teleport to="#cg-pop-list">
-        <div class="pop" :class="[cgSelfPopOpen && 'open']" :style="cgPopPosition">
+        <div ref="pop" class="pop" data-cg-pop>
             <slot>
                 <cg-menulist>
-                    <cg-menulist-item alt="C" @tap="execCmd('cut')">{{l('cut')}}</cg-menulist-item>
-                    <cg-menulist-item alt="C" @tap="execCmd('copy')">{{l('copy')}}</cg-menulist-item>
-                    <cg-menulist-item alt="C" @tap="execCmd('paste')">{{l('paste')}}</cg-menulist-item>
+                    <cg-menulist-item alt="T" @click="execCmd('cut')">{{l('cut')}}</cg-menulist-item>
+                    <cg-menulist-item alt="C" @click="execCmd('copy')">{{l('copy')}}</cg-menulist-item>
+                    <cg-menulist-item alt="P" @click="execCmd('paste')">{{l('paste')}}</cg-menulist-item>
                 </cg-menulist>
             </slot>
         </div>

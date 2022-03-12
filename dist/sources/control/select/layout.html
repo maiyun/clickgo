@@ -1,7 +1,9 @@
-<cg-greatselect @tap="cgTap" @down="cgDown" @up="cgUp" @enter="cgEnter" @leave="cgLeave" @cancel="cgCancel" @dblclick="cgDblclick" :disabled="isDisabled" :cg-focus="cgFocus" :area="isEditable ? 'arrow' : 'all'" :width="width" :height="height" :left="left" :top="top" :z-index="zIndex" :flex="flex" :padding="isEditable ? '0' : padding">
-    <input v-if="isEditable" type="text" class="input" v-model="inputValue" @input="input" :disabled="isDisabled" :style="{'padding': padding && padding.replace(/([0-9]+)($| )/g, '$1px$2')}">
+<cg-greatselect :disabled="isDisabled" :area="isEditable ? 'arrow' : 'all'" pop="custom">
+    <div v-if="isEditable" class="op" :style="{'margin': opMargin}">
+        <cg-text :modelValue="inputValue" @update:modelValue="updateInputValue" :disabled="isDisabled" border="none" :style="{'background': background, 'padding': padding}"></cg-text>
+    </div>
     <template v-else>{{label}}</template>
     <template v-slot:pop>
-        <cg-list :modelValue="value" @update:modelValue="updateModelValue" @label="label = $event" :data="data" :same="true" :adaptation="true" :must="!isEditable" :padding="padding"></cg-list>
+        <cg-list ref="list" @label="label = $event" :data="data" :must="!isEditable" :modelValue="value" @update:modelValue="updateModelValue" adaptation></cg-list>
     </template>
 </cg-greatselect>

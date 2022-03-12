@@ -1,67 +1,73 @@
-<form title="List" width="400" height="450" min-width="300" min-height="400" padding="10">
+<form title="List" width="400" height="450" min-width="300" min-height="400" padding="10" direction="v">
     <label>Greatlist: {{select}}, list: {{select2}}, label: {{label2}}</label>
-    <tab flex="1" v-model="tab">
+    <tab v-model="tab" style="flex: 1; height: 0;">
         <!-- 默认 -->
         <tab-panel label="greatlist" direction="v">
-            <greatlist v-model="select" :data="slist" flex="1" :disabled="disabled" :must="must" :multi="multi" style="line-height: 1.3;">
+            <greatlist v-model="select" :data="slist" :disabled="disabled" :must="must" :multi="multi" :selection="selection" :scroll="scroll" @select="onSelect" style="line-height: 1.3; flex: 1; height: 0;">
                 <template v-slot="data">
-                    <greatlist-item v-if="data.row.type === 0" :disabled="data.row.disabled" :value="data.index">
-                        <layout align-v="center" gutter="5" flex="1">
-                            <img width="32" height="32" :src="data.row.src"></img>
-                            <block flex="1">
-                                <block>{{data.row.name}}</block>
-                                <block style="opacity:.7;">{{data.row.path}}</block>
-                            </block>
-                        </layout>
-                        <template v-if="data.row.menu" v-slot:pop>
-                            <menulist>
-                                <menulist-item alt="S">Set the default</menulist-item>
-                            </menulist>
-                        </template>
-                    </greatlist-item>
-                    <greatlist-split v-else-if="data.row.type === 1"></greatlist-split>
-                    <greatlist-item v-else :value="data.index">Other</greatlist-item>
+                    <layout v-if="data.row.type === 0" align-v="center" gutter="5" style="flex: 1;">
+                        <img :src="data.row.src" style="width: 32px; height: 32px;"></img>
+                        <block style="flex: 1;">
+                            <block>{{data.row.name}}</block>
+                            <block style="opacity: .7;">{{data.row.path}}</block>
+                        </block>
+                    </layout>
+                    <template v-else>Other</template>
                 </template>
                 <template v-slot:pop>
                     <menulist>
-                        <menulist-item alt="I" @tap="cgDialog('Index is ' + select + '.')">Show index</menulist-item>
-                        <menulist-item alt="S" @tap="showType">Show type</menulist-item>
+                        <menulist-item alt="I" @click="cgDialog('Index is ' + select + '.')">Show index</menulist-item>
+                        <menulist-item alt="S" @click="showType">Show type</menulist-item>
+                    </menulist>
+                </template>
+                <template v-slot:itempop>
+                    <menulist>
+                        <menulist-item alt="S">Set the default</menulist-item>
                     </menulist>
                 </template>
             </greatlist>
             <label class="tip">Right-click (computer) or press and hold (phone) to open the universal menu.</label>
+            <label class="tip">Area: {{selectionArea}}</label>
         </tab-panel>
         <!-- 自适应 -->
         <tab-panel label="adaptation" direction="v">
-            <greatlist class="adaptation" v-model="select" :data="slist" v-slot="data" :adaptation="true" :same="true" :disabled="disabled" :must="must" :multi="multi">
-                <greatlist-item :value="data.index" :disabled="data.row.disabled">type: {{data.row.type}}, index: {{data.index}}.</greatlist-item>
-            </greatlist>
+            <greatlist class="adaptation" v-model="select" :data="adData" v-slot="data" :disabled="disabled" :must="must" :multi="multi" :selection="selection" :scroll="scroll" same>type: {{data.row.type}}, index: {{data.index}}.</greatlist>
         </tab-panel>
         <!-- list -->
         <tab-panel label="list" direction="v">
-            <layout direction="v" gutter="10" flex="1">
+            <layout direction="v" gutter="10" style="flex: 1; height: 0;">
                 <label>Raw data:</label>
-                <view height="50" direction="v" padding="5" content="min" style="border: solid 1px #b3b3b3; line-height: 1.5;">{{listData}}</view>
-                <layout gutter="10" flex="1">
-                    <list v-model="select2" :disabled="disabled" :must="must" :multi="multi" :data="listData" flex="2" @label="label2 = $event">
+                <view direction="v" style="border: solid 1px #b3b3b3; line-height: 1.5; height: 50px; padding: 5px;">{{listData}}</view>
+                <layout gutter="10" style="flex: 1; height: 0;">
+                    <list v-model="select2" :disabled="disabled" :must="must" :multi="multi" :selection="selection" :scroll="scroll" :data="listData" @label="label2 = $event" style="flex: 2; width: 0;">
                         <menulist>
-                            <menulist-item alt="I" @tap="cgDialog('Select is ' + select2 + '.')">Show select</menulist-item>
+                            <menulist-item alt="I" @click="cgDialog('Select is ' + select2 + '.')">Show select</menulist-item>
                         </menulist>
                     </list>
-                    <list :disabled="disabled" :must="must" :multi="multi" :data="listData2" flex="1"></list>
+                    <list :disabled="disabled" :must="must" :multi="multi" :selection="selection" :scroll="scroll" :data="listData2" style="flex: 1; width: 0;"></list>
                 </layout>
                 <label class="tip">Right-click (computer) or press and hold (phone) to open the universal menu.</label>
             </layout>
         </tab-panel>
+        <!-- async -->
+        <tab-panel label="async" direction="v">
+            <layout direction="v" gutter="10" style="flex: 1; height: 0;">
+                <label>Select: {{select3}}</label>
+                <list v-model="select3" :disabled="disabled" :must="must" :multi="multi" :selection="selection" :scroll="scroll" :data="listData3" style="flex: 1; height: 0;"></list>
+                <button v-if="listData3.length === 0" @click="listData3 = [{'value': 'A', disabled: true}, 'B', 'C', 'D', 'E']" style="height: 30px;">Load data</button>
+            </layout>
+        </tab-panel>
     </tab>
-    <layout class="ctr" gutter="10">
-        <button flex="1" @tap="slist.splice(-2, 0, {'type': 0, 'name': 'Card' + slist.length, 'path': 'Bob >> folder >> Card', 'src': '/res/r-2.svg','disabled': false})">Add item</button>
-        <button flex="1" @tap="slist.splice(-3, 1)">Remove item</button>
-        <button flex="1" @tap="selectButton">Select {{tab === 'list' ? 'Item1' : 'item2'}}</button>
+    <layout class="ctr" gutter="10" v-show="tab !== 'async'">
+        <button @click="slist.splice(-2, 0, {'type': 0, 'name': 'Card' + slist.length, 'path': 'Bob >> folder >> Card', 'src': '/res/r-2.svg','disabled': false})">Add</button>
+        <button @click="slist.splice(-3, 1)">Remove</button>
+        <button @click="scrollChange">Scroll {{scroll}}</button>
+        <button @click="selectButton">Select {{tab === 'list' ? 'Item1' : 'item2'}}</button>
     </layout>
     <layout class="ctr" gutter="10">
-        <button flex="1" @tap="disabled = !disabled">{{disabled ? 'Remove' : 'Set'}} disabled</button>
-        <button flex="1" @tap="must = !must">{{must ? 'Remove' : 'Set'}} must</button>
-        <button flex="1" @tap="multi = !multi">{{multi ? 'Remove' : 'Set'}} multi</button>
+        <button @click="disabled = !disabled">{{disabled ? '' : '!'}}disabled</button>
+        <button @click="must = !must">{{must ? '' : '!'}}must</button>
+        <button @click="multi = !multi">{{multi ? '' : '!'}}multi</button>
+        <button @click="selection = !selection">{{selection ? '' : '!'}}selection</button>
     </layout>
 </form>

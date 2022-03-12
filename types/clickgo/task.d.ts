@@ -7,6 +7,12 @@ interface ICGTaskLib {
     run(url: string | Blob, opt?: { 'runtime'?: Record<string, Blob | string>; 'icon'?: string; 'progress'?: boolean; }): Promise<number>;
     end(taskId: number): boolean;
     loadLocalData(taskId: number, name: string, data: Record<string, any>, pre?: string): void;
+    createTimer(taskId: number, formId: number, fun: () => void | Promise<void>, delay: number, opt?: {
+        'immediate'?: boolean;
+        'scope'?: 'form' | 'task';
+        'count'?: number;
+    }): number;
+    removeTimer(taskId: number, timer: number): void;
 }
 
 /** --- 单条任务对象 --- */
@@ -29,7 +35,7 @@ interface ICGTask {
     'files': Record<string, Blob | string>;
     'objectURLs': Record<string, string>;
     'initControls': Record<string, { 'layout': string; 'prep': string; }>;
-    'timers': number[];
+    'timers': Record<number, number>;
 }
 
 /** --- Task Item 的简略情况，通常在 list 当中 --- */

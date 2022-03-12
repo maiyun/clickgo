@@ -55,7 +55,7 @@ function run() {
             if (item.isFile()) {
                 continue;
             }
-            if (['greatlist-item', 'greatlist-split', 'img', 'label', 'layout', 'menu-item', 'menulist-item', 'menulist-split', 'overflow', 'tab-panel', 'task-item'].includes(item.name)) {
+            if (['img', 'label', 'layout', 'menu-item', 'menulist-item', 'menulist-split', 'overflow', 'tab-panel', 'task-item'].includes(item.name)) {
                 continue;
             }
             let zipo = new zip();
@@ -68,10 +68,6 @@ function run() {
                 yield addFile(zipo, base, 'label/');
                 yield addFile(zipo, base, 'layout/');
                 yield addFile(zipo, base, 'overflow/');
-            }
-            else if (item.name === 'greatlist') {
-                yield addFile(zipo, base, 'greatlist-item/');
-                yield addFile(zipo, base, 'greatlist-split/');
             }
             else if (item.name === 'menu') {
                 yield addFile(zipo, base, 'menu-item/');

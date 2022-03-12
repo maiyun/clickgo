@@ -1,11 +1,14 @@
-<cg-view ref="view" @tap="cgTap" @down="cgDown" @up="cgUp" @enter="cgEnter" @leave="cgLeave" @cancel="cgCancel" @dblclick="cgDblclick" :width="width" :height="height" :left="left" :top="top" :z-index="zIndex" :flex="flex" :direction="direction" :scrollLeft="scrollLeft" @update:scrollLeft="updateScrollOffset($event, 'left')" :scrollTop="scrollTop" @update:scrollTop="updateScrollOffset($event, 'top')" :adaptation="isAdaptation" :content="content" @resize="onResize($event)" @resizen="onResizen($event)" @change="onChange($event)">
-    <div class="place" :style="{'width': lengthWidth + 'px', 'height': lengthHeight + 'px'}"></div>
-    <div ref="comp" class="comp" :class="[direction]" :style="{'min-width': clientWidth + 'px', 'min-height': clientHeight + 'px'}">
-        <div v-for="(item, index) of dataComp.slice(compPos.start, compPos.end)" class="item" :class="[direction, 'content-' + content]" :style="{'left': 0, 'top': 0, 'min-width': direction === 'v' ? 'calc(100% - ' + (paddingComp.left + paddingComp.right) + 'px)' : undefined, 'min-height': direction === 'v' ? undefined : 'calc(100% - ' + (paddingComp.top + paddingComp.bottom) + 'px)'}">
-            <slot :row="item" :index="compPos.start + index"></slot>
+<div class="wrap" :class="[direction]">
+    <cg-view ref="view" :direction="direction" :scrollLeft="scrollLeft" @update:scrollLeft="updateScrollOffset($event, 'left')" :scrollTop="scrollTop" @update:scrollTop="updateScrollOffset($event, 'top')" :content="content" :solo="isSolo" :selection="isSelection" @before-select="$emit('beforeSelect')" @select="onSelect($event)" @after-select="$emit('afterSelect')" @resize="onResize($event)" @resizen="onResizen($event)" @change="onChange($event)" :style="{'max-width': 'calc(100% + ' + (paddingChild.left + paddingChild.right) + 'px)', 'max-height': 'calc(100% + ' + (paddingChild.top + paddingChild.bottom) + 'px)', 'margin': opMargin}">
+        <div class="place" :style="{'width': lengthWidth + 'px', 'height': lengthHeight + 'px'}"></div>
+        <div ref="comp" class="comp" :class="[direction]" :style="{'padding': padding, 'width': content ? content + '-content' : undefined, 'height': content ? content + '-content' : undefined}">
+            <div v-for="item of needItemsComp" :data-cursor="item">
+                <slot v-if="dataComp[item]" :row="dataComp[item]" :index="item"></slot>
+            </div>
         </div>
-    </div>
-    <div v-for="(item, index) of dataComp.slice(showPos.start, showPos.end)" class="item" :class="[direction, 'content-' + content]" :style="{'left': (direction === 'v' ? paddingComp.left : (!isSame ? (dataHeight[showPos.start + index] ? dataHeight[showPos.start + index].start : '0') : (lineHeight * (showPos.start + index) + paddingComp.left))) + 'px', 'top': (direction === 'v' ? (!isSame ? (dataHeight[showPos.start + index] ? dataHeight[showPos.start + index].start : '0') : (lineHeight * (showPos.start + index) + paddingComp.top)) : paddingComp.top) + 'px', 'min-width': direction === 'v' ? 'calc(100% - ' + (paddingComp.left + paddingComp.right) + 'px)' : undefined, 'min-height': direction === 'v' ? undefined : 'calc(100% - ' + (paddingComp.top + paddingComp.bottom) + 'px)'}">
-        <slot :row="item" :index="showPos.start + index"></slot>
-    </div>
-</cg-view>
+        <!-- 不用 v-if 因为有效率问题，vue 会生成很多注释 DOM -->
+        <div v-for="index of (showPos.end - showPos.start + 1)" class="item" :class="[direction]" :style="itemStyle(showPos.start + index - 1)">
+            <slot v-if="dataComp[showPos.start + index - 1]" :row="dataComp[showPos.start + index - 1]" :index="showPos.start + index - 1"></slot>
+        </div>
+    </cg-view>
+</div>

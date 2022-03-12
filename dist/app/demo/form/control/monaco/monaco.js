@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.methods = exports.watch = exports.data = void 0;
+exports.methods = exports.computed = exports.watch = exports.data = void 0;
 exports.data = {
     'code': '',
     'codeList': [
@@ -28,6 +28,7 @@ exports.data = {
     }
 }`
     ],
+    'file': '',
     'files': {
         'global.ts': 'declare function str(): string;'
     },
@@ -44,6 +45,15 @@ exports.watch = {
             this.code = this.codeList[this.list.indexOf(this.language)];
         },
         'immediate': true
+    }
+};
+exports.computed = {
+    'filesName': function () {
+        let names = [];
+        for (let name in this.files) {
+            names.push(name);
+        }
+        return names;
     }
 };
 exports.methods = {};

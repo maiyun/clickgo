@@ -1,6 +1,6 @@
 interface ICGDomLib {
     setGlobalCursor(type?: string): void;
-    isMouseAlsoTouchEvent(e: MouseEvent | TouchEvent): boolean;
+    hasTouchButMouse(e: MouseEvent | TouchEvent): boolean;
     createToStyleList(taskId: number): void;
     removeFromStyleList(taskId: number): void;
     pushStyle(taskId: number, style: string, type?: 'global'): void;
@@ -13,6 +13,7 @@ interface ICGDomLib {
     getSize(el: HTMLElement): ICGDomSize;
     watchSize(el: HTMLElement, cb: (size: ICGDomSize) => Promise<void> | void, immediate?: boolean): ICGDomSize;
     watch(el: HTMLElement, cb: () => void, mode?: 'child' | 'childsub' | 'style' | 'default', immediate?: boolean): void;
+    watchStyle(el: HTMLElement, name: string | string[], cb: (name: string, value: string) => void, immediate?: boolean): void;
     bindDown(oe: MouseEvent | TouchEvent, opt: {
         'down'?: (e: MouseEvent | TouchEvent) => void;
         'start'?: (e: MouseEvent | TouchEvent) => void | boolean;
@@ -20,7 +21,8 @@ interface ICGDomLib {
         'up'?: (e: MouseEvent | TouchEvent) => void;
         'end'?: (e: MouseEvent | TouchEvent) => void;
     }): void;
-    bindLong(e: MouseEvent | TouchEvent, long: (e: MouseEvent | TouchEvent) => void): void;
+    allowEvent(e: MouseEvent | TouchEvent | KeyboardEvent): boolean;
+    bindLong(e: MouseEvent | TouchEvent, long: (e: MouseEvent | TouchEvent) => void | Promise<void>): void;
     'is': {
         'move': boolean;
     };
@@ -67,8 +69,25 @@ interface ICGDomLib {
         'move'?: (left: number, top: number, width: number, height: number, x: number, y: number, border: TCGBorder) => void;
         'end'?: () => void;
     }): void;
-    findParentByClass(el: HTMLElement, cn: string | RegExp | Array<string | RegExp>): HTMLElement | null;
-    siblings(e: HTMLElement, cn: string): HTMLElement | null;
+    /**
+     * --- 通过 data 名查找上层所有标签是否存在 ---
+     * @param el 当前标签
+     * @param name 要查找的 data 名
+     */
+    findParentByData(el: HTMLElement, name: string): HTMLElement | null;
+    /**
+     * --- 查找指定 el 的同级所有元素 ---
+     * @param el 基准
+     * @returns HTMLElement[]
+     */
+    siblings(el: HTMLElement): HTMLElement[];
+    /**
+     * --- 查找指定 el 的同级的存在 data 的元素 ---
+     * @param el 基准
+     * @param name data 名，不含 data-
+     * @returns HTMLElement[]
+     */
+    siblingsData(el: HTMLElement, name: string): HTMLElement[];
 }
 
 /** --- 方向类型，从左上开始 --- */

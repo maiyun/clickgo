@@ -1,18 +1,19 @@
-<form width="300" height="350" title="Library form" padding="10">
-    <layout gutter="10" direction="v" flex="1">
-        <button @tap="getAvailArea">form.getAvailArea()</button>
-        <button @tap="getList">form.getList({{taskId}})</button>
+<form width="350" height="400" title="Library form" padding="10">
+    <layout gutter="10" direction="v" style="flex: 1; width: 0;">
+        <button @click="getAvailArea">form.getAvailArea()</button>
+        <button @click="getList">form.getList({{taskId}})</button>
         <layout gutter="10">
-            <text v-model="fid" flex="1"></text>
-            <button @tap="changeFocus(fid)" width="150">form.changeFocus({{fid}})</button>
+            <text v-model="fid" style="flex: 1; width: 0; height: 30px;"></text>
+            <button @click="changeFocus(fid)" style="padding: 0 10px;">form.changeFocus({{fid}})</button>
         </layout>
-        <button @tap="cgDialog(getMaxZIndexFormID())">form.getMaxZIndexFormID()</button>
-        <button @tap="showCircular">form.showCircular(x, y)</button>
-        <button @tap="showRectangle">form.showRectangle(x, y, 't')</button>
+        <button @click="cgDialog(getMaxZIndexFormID())">form.getMaxZIndexFormID()</button>
+        <button @click="showCircular">form.showCircular(x, y)</button>
+        <button @click="showRectangle">form.showRectangle(x, y, 't')</button>
+        <button @click="send">Send {'x': 'yes'} to self.</button>
         <layout gutter="10">
             <select v-model="type" :data="['primary', 'info', 'warning', 'danger']"></select>
-            <select v-model="progress" :data="['normal', 'progress + icon']" flex="1"></select>
-            <button @tap="notify" style="padding: 0 10px;">notify()</button>
+            <select v-model="progress" :data="['normal', 'progress + icon']" style="flex: 1; width: 0;"></select>
+            <button @click="notify" style="padding: 0 10px;">notify()</button>
         </layout>
     </layout>
 </form>

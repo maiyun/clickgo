@@ -2,27 +2,27 @@
 <form v-model:width="width" v-model:height="height" v-model:left="left" v-model:top="top" title="Bar" border="none" :resize="false" background="transparent">
     <task :position="position">
         <task-item>
-            <img width="16" height="16" src="/clickgo/icon-white.png" />
+            <img src="/clickgo/icon-white.png" style="width: 16px; height: 16px;" />
         </task-item>
-        <task-item v-for="(app, appIndex) of apps" :selected="app.selected" :opened="app.opened" :multi="app.formCount > 1" @tap="itemTap(appIndex)">
-            <img width="16" height="16" :src="app.icon" />
+        <task-item v-for="(app, appIndex) of apps" :selected="app.selected" :opened="app.opened" :multi="app.formCount > 1" @click="itemTap(appIndex)" @mousedown="$event.stopPropagation()" @touchstart="$event.stopPropagation()">
+            <img :src="app.icon" style="width: 16px; height: 16px;" />
             <template v-if="app.formCount > 1" v-slot:pop>
                 <menulist>
-                    <menulist-item v-for="(form, formId) of app.forms" @tap="changeFocus(formId)">
-                        <img :src="form.icon" width="16" height="16" /><label style="margin-left: 10px;">{{form.title}}</label>
+                    <menulist-item v-for="(form, formId) of app.forms" @click="changeFocus(formId)">
+                        <img :src="form.icon" style="width: 16px; height: 16px;" /><label style="margin-left: 10px;">{{form.title}}</label>
                     </menulist-item>
                 </menulist>
             </template>
             <template v-slot:contextmenu>
                 <menulist>
-                    <menulist-item @tap="run(app.path)">
-                        <img :src="app.icon" width="16" height="16" /><label style="margin-left: 10px;">{{app.name}}</label>
+                    <menulist-item @click="run(app.path)">
+                        <img :src="app.icon" style="width: 16px; height: 16px;" /><label style="margin-left: 10px;">{{app.name}}</label>
                     </menulist-item>
                     <menulist-split v-if="app.formCount > 0"></menulist-split>
-                    <menulist-item @tap="pin(appIndex)">
+                    <menulist-item @click="pin(appIndex)">
                         <block style="width: 16px; height: 16px;"></block><label style="margin-left: 10px;">{{app.pin ? l('unpin from taskbar') : l('pin to taskbar')}}</label>
                     </menulist-item>
-                    <menulist-item v-if="app.formCount > 0" @tap="close(appIndex)">
+                    <menulist-item v-if="app.formCount > 0" @click="close(appIndex)">
                         <block style="width: 16px; height: 16px;"></block><label style="margin-left: 10px;">{{app.formCount > 1 ? l('close all windows') : l('close window')}}</label>
                     </menulist-item>
                 </menulist>

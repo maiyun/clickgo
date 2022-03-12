@@ -52,7 +52,7 @@ async function run(): Promise<void> {
         if (item.isFile()) {
             continue;
         }
-        if (['greatlist-item', 'greatlist-split', 'img', 'label', 'layout', 'menu-item', 'menulist-item', 'menulist-split', 'overflow', 'tab-panel', 'task-item'].includes(item.name)) {
+        if (['img', 'label', 'layout', 'menu-item', 'menulist-item', 'menulist-split', 'overflow', 'tab-panel', 'task-item'].includes(item.name)) {
             continue;
         }
 
@@ -68,10 +68,6 @@ async function run(): Promise<void> {
             await addFile(zipo, base, 'label/');
             await addFile(zipo, base, 'layout/');
             await addFile(zipo, base, 'overflow/');
-        }
-        else if (item.name === 'greatlist') {
-            await addFile(zipo, base, 'greatlist-item/');
-            await addFile(zipo, base, 'greatlist-split/');
         }
         else if (item.name === 'menu') {
             await addFile(zipo, base, 'menu-item/');

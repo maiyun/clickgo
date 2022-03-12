@@ -25,6 +25,7 @@ export let data = {
     }
 }`
     ],
+    'file': '',
     'files': {
         'global.ts': 'declare function str(): string;'
     },
@@ -41,10 +42,20 @@ export let data = {
 
 export let watch = {
     'language': {
-        handler: function(this: IVueForm): void {
+        handler: function(this: IVForm): void {
             this.code = this.codeList[this.list.indexOf(this.language)];
         },
         'immediate': true
+    }
+};
+
+export let computed = {
+    'filesName': function(this: IVForm): string[] {
+        let names: string[] = [];
+        for (let name in this.files) {
+            names.push(name);
+        }
+        return names;
     }
 };
 

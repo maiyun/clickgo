@@ -3,78 +3,82 @@ export let props = {
         'default': false
     },
 
-    'width': {
-        'default': undefined
-    },
-    'height': {
-        'default': undefined
-    },
-    'left': {
-        'default': 0
-    },
-    'top': {
-        'default': 0
-    },
-    'zIndex': {
-        'default': 0
-    },
     'direction': {
         'default': 'h'
-    },
-    'flex': {
-        'default': ''
-    },
-    'padding': {
-        'default': undefined
     },
 
     'area': {
         'default': 'all'
+    },
+    'pop': {
+        'default': 'greatlist'
+    },
+
+    'data': {
+        'default': []
+    },
+    'modelValue': {
+        'default': -1
     }
 };
 
+export let data = {
+    'padding': ''
+};
+
 export let computed = {
-    'isDisabled': function(this: IVueControl): boolean {
+    'isDisabled': function(this: IVControl): boolean {
         return clickgo.tool.getBoolean(this.disabled);
+    },
+
+    'opMargin': function(this: IVControl): string {
+        return this.padding.replace(/(\w+)/g, '-$1');
     }
 };
 
 export let methods = {
-    keydown: function(this: IVueControl, e: KeyboardEvent): void {
-        if (e.keyCode !== 13) {
+    keydown: function(this: IVControl, e: KeyboardEvent): void {
+        if (e.key !== 'Enter') {
             return;
         }
-        if (this.cgSelfPopOpen) {
-            this.cgHidePop();
+        if (this.$el.dataset.cgPopOpen !== undefined) {
+            clickgo.form.hidePop(this.$el);
             return;
         }
-        this.cgShowPop('v', {
+        clickgo.form.showPop(this.$el, this.$refs.pop, 'v', {
             'size': {
                 'width': this.$el.offsetWidth
             }
         });
     },
-    click: function(this: IVueControl, e: MouseEvent, area: 'left' | 'arrow'): void {
-        if (this.disabled) {
-            return;
-        }
-        this.cgTap(e);
-        if (this.cgSelfPopOpen) {
-            this.cgHidePop();
+    click: function(this: IVControl, e: MouseEvent, area: 'left' | 'arrow'): void {
+        if (this.$el.dataset.cgPopOpen !== undefined) {
+            clickgo.form.hidePop(this.$el);
             return;
         }
         if (this.area === 'arrow' && area === 'left') {
             // --- 当前只能箭头展开，并且点击的还是不能展开的左侧 ---
             return;
         }
-        this.cgShowPop('v', {
+        clickgo.form.showPop(this.$el, this.$refs.pop, 'v', {
             'size': {
                 'width': this.$el.offsetWidth
             }
         });
+    },
+    updateModelValue: function(this: IVControl, val: number): void {
+        this.$emit('update:modelValue', val);
+    },
+    itemclick: function(this: IVControl, e: MouseEvent, arrow: boolean): void {
+        if (arrow) {
+            return;
+        }
+        clickgo.form.hidePop();
     }
 };
 
-export let mounted = function(this: IVueControl): void {
-    this.cgPopPosition.width = '800px';
+export let mounted = function(this: IVControl): void {
+    clickgo.dom.watchStyle(this.$el, 'padding', (n, v) => {
+        this.padding = v;
+    }, true);
 };

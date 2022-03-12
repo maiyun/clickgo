@@ -2,24 +2,6 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.mounted = exports.methods = exports.watch = exports.computed = exports.data = exports.props = void 0;
 exports.props = {
-    'width': {
-        'default': undefined
-    },
-    'height': {
-        'default': undefined
-    },
-    'left': {
-        'default': 0
-    },
-    'top': {
-        'default': 0
-    },
-    'zIndex': {
-        'default': 0
-    },
-    'flex': {
-        'default': ''
-    },
     'direction': {
         'default': 'h'
     },
@@ -39,7 +21,7 @@ exports.data = {
     'lengthHeight': 0,
     'touchX': 0,
     'touchY': 0,
-    'canTouch': false
+    'canTouch': 10
 };
 exports.computed = {
     'maxScrollLeft': function () {
@@ -56,7 +38,7 @@ exports.watch = {
             if (sl === this.scrollLeftEmit) {
                 return;
             }
-            this.$refs.wrap.scrollLeft = this.scrollLeft;
+            this.$el.scrollLeft = this.scrollLeft;
         }
     },
     'scrollTop': {
@@ -65,18 +47,18 @@ exports.watch = {
             if (st === this.scrollTopEmit) {
                 return;
             }
-            this.$refs.wrap.scrollTop = this.scrollTop;
+            this.$el.scrollTop = this.scrollTop;
         }
     }
 };
 exports.methods = {
     scroll: function () {
-        let sl = Math.round(this.$refs.wrap.scrollLeft);
+        let sl = Math.round(this.$el.scrollLeft);
         if (this.scrollLeftEmit !== sl) {
             this.scrollLeftEmit = sl;
             this.$emit('update:scrollLeft', sl);
         }
-        let st = Math.round(this.$refs.wrap.scrollTop);
+        let st = Math.round(this.$el.scrollTop);
         if (this.scrollTopEmit !== st) {
             this.scrollTopEmit = st;
             this.$emit('update:scrollTop', st);
@@ -85,115 +67,94 @@ exports.methods = {
     wheel: function (e) {
         if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
             if (e.deltaY < 0) {
-                if (this.$refs.wrap.scrollTop > 0) {
+                if (this.$el.scrollTop > 0) {
                     e.stopPropagation();
                 }
-                else if (this.$refs.wrap.scrollLeft > 0 && this.$refs.wrap.scrollHeight === this.$refs.wrap.clientHeight) {
+                else if (this.$el.scrollLeft > 0 && this.$el.scrollHeight === this.$el.clientHeight) {
                     e.stopPropagation();
                     e.preventDefault();
-                    this.$refs.wrap.scrollLeft += e.deltaY;
+                    this.$el.scrollLeft += e.deltaY;
                 }
             }
             else {
-                if (this.$refs.wrap.scrollTop < this.maxScrollTop) {
+                if (this.$el.scrollTop < this.maxScrollTop) {
                     e.stopPropagation();
                 }
-                else if (this.$refs.wrap.scrollLeft < this.maxScrollLeft && this.$refs.wrap.scrollHeight === this.$refs.wrap.clientHeight) {
+                else if (this.$el.scrollLeft < this.maxScrollLeft && this.$el.scrollHeight === this.$el.clientHeight) {
                     e.stopPropagation();
                     e.preventDefault();
-                    this.$refs.wrap.scrollLeft += e.deltaY;
+                    this.$el.scrollLeft += e.deltaY;
                 }
             }
         }
         else {
             if (e.deltaX < 0) {
-                if (this.$refs.wrap.scrollLeft > 0) {
+                if (this.$el.scrollLeft > 0) {
                     e.stopPropagation();
                 }
-                else if (this.$refs.wrap.scrollTop > 0 && this.$refs.wrap.scrollWidth === this.$refs.wrap.clientWidth) {
+                else if (this.$el.scrollTop > 0 && this.$el.scrollWidth === this.$el.clientWidth) {
                     e.stopPropagation();
                     e.preventDefault();
-                    this.$refs.wrap.scrollTop += e.deltaX;
+                    this.$el.scrollTop += e.deltaX;
                 }
             }
             else {
-                if (this.$refs.wrap.scrollLeft < this.maxScrollLeft) {
+                if (this.$el.scrollLeft < this.maxScrollLeft) {
                     e.stopPropagation();
                 }
-                else if (this.$refs.wrap.scrollTop < this.maxScrollTop && this.$refs.wrap.scrollWidth === this.$refs.wrap.clientWidth) {
+                else if (this.$el.scrollTop < this.maxScrollTop && this.$el.scrollWidth === this.$el.clientWidth) {
                     e.stopPropagation();
                     e.preventDefault();
-                    this.$refs.wrap.scrollTop += e.deltaX;
+                    this.$el.scrollTop += e.deltaX;
                 }
             }
         }
     },
-    down: function (e) {
+    touchstart: function (e) {
         this.touchX = e.touches[0].clientX;
         this.touchY = e.touches[0].clientY;
-        this.canTouch = false;
-        this.cgDown(e);
+        this.canTouch = 10;
     },
     move: function (e) {
         let deltaX = this.touchX - e.touches[0].clientX;
         let deltaY = this.touchY - e.touches[0].clientY;
-        if (this.canTouch) {
+        if (this.canTouch === 0) {
             return;
         }
         if (Math.abs(deltaY) > Math.abs(deltaX)) {
             if (deltaY < 0) {
-                if (this.$refs.wrap.scrollTop > 0) {
+                if (this.$el.scrollTop > 0) {
                     e.stopPropagation();
-                    this.canTouch = true;
+                    --this.canTouch;
                 }
             }
             else {
-                if (this.$refs.wrap.scrollTop < this.maxScrollTop) {
+                if (this.$el.scrollTop < this.maxScrollTop) {
                     e.stopPropagation();
-                    this.canTouch = true;
+                    --this.canTouch;
                 }
             }
         }
         else {
             if (deltaX < 0) {
-                if (this.$refs.wrap.scrollLeft > 0) {
+                if (this.$el.scrollLeft > 0) {
                     e.stopPropagation();
-                    this.canTouch = true;
+                    --this.canTouch;
                 }
             }
             else {
-                if (this.$refs.wrap.scrollLeft < this.maxScrollLeft) {
+                if (this.$el.scrollLeft < this.maxScrollLeft) {
                     e.stopPropagation();
-                    this.canTouch = true;
+                    --this.canTouch;
                 }
             }
         }
         this.touchX = e.touches[0].clientX;
         this.touchY = e.touches[0].clientY;
-    }
-};
-exports.mounted = function () {
-    clickgo.dom.watchSize(this.$refs.wrap, () => {
-        if (!this.$refs.wrap) {
-            return;
-        }
-        let clientWidth = this.$refs.wrap.clientWidth;
-        let clientHeight = this.$refs.wrap.clientHeight;
-        if (this.clientWidth !== clientWidth) {
-            this.clientWidth = clientWidth;
-            this.$emit(this.direction === 'v' ? 'resizen' : 'resize', Math.round(this.clientWidth));
-        }
-        if (clientHeight !== this.clientHeight) {
-            this.clientHeight = clientHeight;
-            this.$emit(this.direction === 'v' ? 'resize' : 'resizen', Math.round(this.clientHeight));
-        }
-    }, true);
-    clickgo.dom.watch(this.$refs.wrap, () => {
-        if (!this.$refs.wrap) {
-            return;
-        }
-        let lengthWidth = this.$refs.wrap.scrollWidth;
-        let lengthHeight = this.$refs.wrap.scrollHeight;
+    },
+    refreshLength: function () {
+        let lengthWidth = this.$el.scrollWidth;
+        let lengthHeight = this.$el.scrollHeight;
         if (this.lengthWidth !== lengthWidth) {
             this.lengthWidth = lengthWidth;
             if (this.direction === 'h') {
@@ -206,7 +167,31 @@ exports.mounted = function () {
                 this.$emit('change', lengthHeight);
             }
         }
+    }
+};
+exports.mounted = function () {
+    clickgo.dom.watchSize(this.$el, () => {
+        if (!this.$el) {
+            return;
+        }
+        let clientWidth = this.$el.clientWidth;
+        let clientHeight = this.$el.clientHeight;
+        if (this.clientWidth !== clientWidth) {
+            this.clientWidth = clientWidth;
+            this.$emit(this.direction === 'v' ? 'resizen' : 'resize', Math.round(this.clientWidth));
+        }
+        if (clientHeight !== this.clientHeight) {
+            this.clientHeight = clientHeight;
+            this.$emit(this.direction === 'v' ? 'resize' : 'resizen', Math.round(this.clientHeight));
+        }
+        this.refreshLength();
+    }, true);
+    clickgo.dom.watch(this.$el, () => {
+        if (!this.$el) {
+            return;
+        }
+        this.refreshLength();
     }, 'default', true);
-    this.$refs.wrap.scrollTop = this.scrollTop;
-    this.$refs.wrap.scrollLeft = this.scrollLeft;
+    this.$el.scrollTop = this.scrollTop;
+    this.$el.scrollLeft = this.scrollLeft;
 };

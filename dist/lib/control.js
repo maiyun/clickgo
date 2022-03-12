@@ -37,7 +37,7 @@ function read(blob) {
                     if (!fab) {
                         continue;
                     }
-                    files[file] = fab;
+                    files[file] = fab.replace(/^\ufeff/, '');
                 }
                 else {
                     let fab = yield zip.getContent('/' + control.name + file, 'arraybuffer');

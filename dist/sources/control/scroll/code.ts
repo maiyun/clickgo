@@ -3,24 +3,6 @@ export let props = {
         'default': false
     },
 
-    'width': {
-        'default': undefined
-    },
-    'height': {
-        'default': undefined
-    },
-    'left': {
-        'default': undefined
-    },
-    'top': {
-        'default': undefined
-    },
-    'zIndex': {
-        'default': undefined
-    },
-    'flex': {
-        'default': ''
-    },
     'direction': {
         'default': 'v'
     },
@@ -49,22 +31,25 @@ export let data = {
 
     'opacity': '1',
     'opacityTimer': undefined,
-    'isEnter': false
+    'isEnter': false,
+
+    'width': 0,
+    'height': 0
 };
 
 export let watch = {
     'length': {
-        handler: function(this: IVueControl): void {
+        handler: function(this: IVControl): void {
             this.resizePx();
         }
     },
     'client': {
-        handler: function(this: IVueControl): void {
+        handler: function(this: IVControl): void {
             this.resizePx();
         }
     },
     'scrollOffset': {
-        handler: function(this: IVueControl): void {
+        handler: function(this: IVControl): void {
             let scrollOffsetData = Math.round(parseFloat(this.scrollOffset));
             if (this.scrollOffsetData === scrollOffsetData) {
                 return;
@@ -74,7 +59,7 @@ export let watch = {
         }
     },
     'scrollOffsetData': {
-        handler: function(this: IVueControl): void {
+        handler: function(this: IVControl): void {
             if (!this.isFloat) {
                 return;
             }
@@ -87,15 +72,19 @@ export let watch = {
             }
             this.opacityTimer = this.cgCreateTimer(() => {
                 this.opacity = '0';
-            }, 800);
+            }, 800, {
+                'count': 1
+            });
             this.opacity = '1';
         }
     },
-    'float': function(this: IVueControl): void {
+    'float': function(this: IVControl): void {
         if (this.isFloat) {
             this.opacityTimer = this.cgCreateTimer(() => {
                 this.opacity = '0';
-            }, 800);
+            }, 800, {
+                'count': 1
+            });
         }
         else {
             if (this.opacityTimer) {
@@ -109,14 +98,14 @@ export let watch = {
 
 export let computed = {
     // --- 滑块真实应该长度 px ---
-    'realSize': function(this: IVueControl): number {
+    'realSize': function(this: IVControl): number {
         if (this.client >= this.length) {
             return this.barLengthPx;
         }
         return this.client / this.length * this.barLengthPx;
     },
     // --- 滑块目前显示长度 ---
-    'size': function(this: IVueControl): number {
+    'size': function(this: IVControl): number {
         if (this.realSize < 5) {
             if (5 > this.barLengthPx) {
                 return this.barLengthPx;
@@ -126,29 +115,29 @@ export let computed = {
         return this.realSize;
     },
     // --- 目前显示长度大于真实长度的长度 ---
-    'sizeOut': function(this: IVueControl): number {
+    'sizeOut': function(this: IVControl): number {
         return this.size - this.realSize;
     },
     // --- 除去滑块外的 bar 长度 --- */
-    'barOutSize': function(this: IVueControl): number {
+    'barOutSize': function(this: IVControl): number {
         return this.barLengthPx - this.size;
     },
     // --- 最大可拖动的 scroll 位置 ---
-    'maxScroll': function(this: IVueControl): number {
+    'maxScroll': function(this: IVControl): number {
         return (this.length > this.client) ? this.length - this.client : 0;
     },
 
-    'isDisabled': function(this: IVueControl): boolean {
+    'isDisabled': function(this: IVControl): boolean {
         return clickgo.tool.getBoolean(this.disabled);
     },
-    'isFloat': function(this: IVueControl): boolean {
+    'isFloat': function(this: IVControl): boolean {
         return clickgo.tool.getBoolean(this.float);
     }
 };
 
 export let methods = {
-    down: function(this: IVueControl, e: MouseEvent | TouchEvent): void {
-        if (clickgo.dom.isMouseAlsoTouchEvent(e)) {
+    down: function(this: IVControl, e: MouseEvent | TouchEvent): void {
+        if (clickgo.dom.hasTouchButMouse(e)) {
             return;
         }
         clickgo.dom.bindMove(e, {
@@ -163,8 +152,8 @@ export let methods = {
             }
         });
     },
-    bardown: function(this: IVueControl, e: MouseEvent | TouchEvent): void {
-        if (clickgo.dom.isMouseAlsoTouchEvent(e)) {
+    bardown: function(this: IVControl, e: MouseEvent | TouchEvent): void {
+        if (clickgo.dom.hasTouchButMouse(e)) {
             return;
         }
         if (e.currentTarget !== e.target) {
@@ -192,10 +181,7 @@ export let methods = {
         this.$emit('update:scrollOffset', this.scrollOffsetData);
         this.down(e);
     },
-    longDown: function(this: IVueControl, e: MouseEvent | TouchEvent, type: 'start' | 'end'): void {
-        if (this.isDisabled) {
-            return;
-        }
+    longDown: function(this: IVControl, e: MouseEvent | TouchEvent, type: 'start' | 'end'): void {
         if (this.client >= this.length) {
             return;
         }
@@ -249,11 +235,10 @@ export let methods = {
         });
     },
     // --- 进入时保持滚动条常亮 ---
-    enter: function(this: IVueControl, e: MouseEvent): void {
-        if (clickgo.dom.isMouseAlsoTouchEvent(e)) {
+    enter: function(this: IVControl, e: MouseEvent): void {
+        if (clickgo.dom.hasTouchButMouse(e)) {
             return;
         }
-        this.cgEnter(e);
         this.isEnter = true;
         if (this.isFloat) {
             this.opacity = '1';
@@ -263,20 +248,21 @@ export let methods = {
             }
         }
     },
-    leave: function(this: IVueControl, e: MouseEvent): void {
-        if (clickgo.dom.isMouseAlsoTouchEvent(e)) {
+    leave: function(this: IVControl, e: MouseEvent): void {
+        if (clickgo.dom.hasTouchButMouse(e)) {
             return;
         }
-        this.cgLeave(e);
         this.isEnter = false;
         if (this.isFloat) {
             this.opacityTimer = this.cgCreateTimer(() => {
                 this.opacity = '0';
-            }, 800);
+            }, 800, {
+                'count': 1
+            });
         }
     },
-    wrapDown: function(this: IVueControl, e: TouchEvent): void {
-        this.cgDown(e);
+    wrapDown: function(this: IVControl, e: TouchEvent): void {
+        // --- 防止在手机模式按下的状态下滚动条被自动隐藏，PC 下有 enter 所以没事 ---
         clickgo.dom.bindDown(e, {
             down: () => {
                 this.isEnter = true;
@@ -293,13 +279,15 @@ export let methods = {
                 if (this.isFloat) {
                     this.opacityTimer = this.cgCreateTimer(() => {
                         this.opacity = '0';
-                    }, 800);
+                    }, 800, {
+                        'count': 1
+                    });
                 }
             }
         });
     },
     // --- 根据 this.scrollOffsetData 值，来设定 px 位置的值 ---
-    resizePx: function(this: IVueControl): void {
+    resizePx: function(this: IVControl): void {
         if (this.scrollOffsetData > this.maxScroll) {
             this.scrollOffsetData = this.maxScroll;
             this.scrollOffsetPx = this.barOutSize;
@@ -316,18 +304,24 @@ export let methods = {
     }
 };
 
-export let mounted = function(this: IVueControl): void {
+export let mounted = function(this: IVControl): void {
     // --- 是否自动隐藏 scroll ---
     if (this.isFloat) {
         this.opacityTimer = this.cgCreateTimer(() => {
             this.opacity = '0';
-        }, 800);
+        }, 800, {
+            'count': 1
+        });
     }
     // --- 监听 bar 的 size ---
     clickgo.dom.watchSize(this.$refs.bar, (size) => {
         this.barLengthPx = this.direction === 'v' ? size.height : size.width;
         this.scrollOffsetPx =  this.barOutSize * (this.scrollOffsetData / this.maxScroll);
-    });
+        // --- bar 的 size 改了，整个 el 肯定也改了 ---
+        let els = clickgo.dom.getSize(this.$el);
+        this.width = els.width;
+        this.height = els.height;
+    }, true);
     let scrollOffsetData = Math.round(parseFloat(this.scrollOffset));
     if (this.scrollOffsetData === scrollOffsetData) {
         return;
@@ -336,7 +330,7 @@ export let mounted = function(this: IVueControl): void {
     this.resizePx();
 };
 
-export let unmounted = function(this: IVueControl): void {
+export let unmounted = function(this: IVControl): void {
     if (this.timer !== undefined) {
         clearInterval(this.timer);
     }

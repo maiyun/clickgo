@@ -1,3 +1,7 @@
 export let data = {
-    btnRadio: '0'
+    btnChecked: false,
+    btnRadio: '0',
+    type: 'default',
+    area: 'all',
+    plain: 'not'
 };

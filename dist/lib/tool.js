@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.execCommand = exports.blob2DataUrl = exports.blob2Text = exports.urlResolve = exports.parseUrl = exports.request = exports.replace = exports.includes = exports.escapeHTML = exports.getBoolean = exports.rand = exports.getObjectURLList = exports.revokeObjectURL = exports.createObjectURL = exports.getMimeByPath = exports.stylePrepend = exports.layoutClassPrepend = exports.layoutInsertAttr = exports.layoutAddTagClassAndReTagName = exports.styleUrl2ObjectOrDataUrl = exports.purify = exports.sleep = exports.clone = exports.blob2ArrayBuffer = exports.file2ObjectUrl = void 0;
+exports.execCommand = exports.blob2DataUrl = exports.blob2Text = exports.urlResolve = exports.parseUrl = exports.request = exports.escapeHTML = exports.getBoolean = exports.rand = exports.getObjectURLList = exports.revokeObjectURL = exports.createObjectURL = exports.getMimeByPath = exports.stylePrepend = exports.eventsAttrWrap = exports.layoutClassPrepend = exports.layoutInsertAttr = exports.layoutAddTagClassAndReTagName = exports.styleUrl2ObjectOrDataUrl = exports.purify = exports.sleep = exports.clone = exports.blob2ArrayBuffer = exports.file2ObjectUrl = void 0;
 function file2ObjectUrl(file, obj) {
     let ourl = obj.objectURLs[file];
     if (!ourl) {
@@ -52,11 +52,11 @@ function clone(obj) {
 }
 exports.clone = clone;
 function sleep(ms = 0) {
-    if (ms > 600000) {
-        ms = 600000;
+    if (ms > 1000 * 5) {
+        ms = 1000 * 5;
     }
     return new Promise(function (resolve) {
-        setTimeout(function () {
+        window.setTimeout(function () {
             resolve();
         }, ms);
     });
@@ -205,6 +205,17 @@ function layoutClassPrepend(layout, preps) {
     });
 }
 exports.layoutClassPrepend = layoutClassPrepend;
+function eventsAttrWrap(layout) {
+    let events = ['click', 'dblclick', 'mousedown', 'mouseenter', 'mouseleave', 'mouseup', 'touchstart', 'touchmove', 'touchend', 'keydown', 'keypress', 'keyup', 'contextmenu'];
+    let reg = new RegExp(`@(${events.join('|')})="(.+?)"`, 'g');
+    return layout.replace(reg, function (t, t1, t2) {
+        if (/^[\w]+$/.test(t2)) {
+            return `@${t1}="cgAllowEvent($event) && ${t2}($event)"`;
+        }
+        return `@${t1}=";if(cgAllowEvent($event)){${t2}}"`;
+    });
+}
+exports.eventsAttrWrap = eventsAttrWrap;
 function stylePrepend(style, prep = '') {
     if (prep === '') {
         prep = 'cg-scope' + Math.round(Math.random() * 1000000000000000) + '_';
@@ -217,9 +228,6 @@ function stylePrepend(style, prep = '') {
             return 'keyframes ' + t1;
         });
         return t1.replace(/([.#])([a-zA-Z0-9-_]+)/g, function (t, t1, t2) {
-            if (t2.startsWith('cg-')) {
-                return t;
-            }
             return t1 + prep + t2;
         }) + '{' + t2 + '}';
     });
@@ -313,24 +321,6 @@ function escapeHTML(html) {
     return html.replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
 exports.escapeHTML = escapeHTML;
-function includes(str, search) {
-    for (let item of search) {
-        if (!str.includes(item)) {
-            return false;
-        }
-    }
-    return true;
-}
-exports.includes = includes;
-function replace(text, search, replace) {
-    let result = text.replace(search, replace);
-    while (result !== text) {
-        text = result;
-        result = text.replace(search, replace);
-    }
-    return result;
-}
-exports.replace = replace;
 function request(url, opt) {
     return new Promise(function (resove) {
         var _a;

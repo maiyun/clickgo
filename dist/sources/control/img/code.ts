@@ -1,23 +1,4 @@
 export let props = {
-    'width': {
-        'default': undefined
-    },
-    'height': {
-        'default': undefined
-    },
-    'left': {
-        'default': 0
-    },
-    'top': {
-        'default': 0
-    },
-    'zIndex': {
-        'default': 0
-    },
-    'flex': {
-        'default': ''
-    },
-
     'src': {
         'default': ''
     },
@@ -27,16 +8,15 @@ export let props = {
 };
 
 export let data = {
-    'imgData': ''
+    'imgData': '',
+    'width': 0,
+    'height': 0
 };
 
 export let computed = {
-    'backgroundSize': function(this: IVueControl): string | undefined {
+    'backgroundSize': function(this: IVControl): string | undefined {
         if (this.mode === 'default') {
-            if ((this.width !== undefined) && (this.height !== undefined)) {
-                return this.width + 'px ' + this.height + 'px';
-            }
-            return undefined;
+            return this.width + 'px ' + this.height + 'px';
         }
         else {
             return this.mode;
@@ -46,7 +26,7 @@ export let computed = {
 
 export let watch = {
     'src': {
-        handler: async function(this: IVueControl): Promise<void> {
+        handler: async function(this: IVControl): Promise<void> {
             if (this.src === '') {
                 this.imgData = undefined;
                 return;
@@ -66,4 +46,11 @@ export let watch = {
         },
         'immediate': true
     }
+};
+
+export let mounted = function(this: IVControl): void {
+    clickgo.dom.watchSize(this.$el, (size) => {
+        this.width = size.width;
+        this.height = size.height;
+    }, true);
 };

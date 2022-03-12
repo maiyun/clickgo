@@ -1,8 +1,8 @@
 <form width="400" height="450" title="cgCreateForm" padding="10">
-    <layout gutter="10" direction="v" flex="1">
-        <button @tap="cgCreateForm({ 'layout': '<form width=\'300\' height=\'300\' title=\'normal\'></form>' })">Create from param</button>
-        <button @tap="cgCreateForm('test')">Create from path</button>
-        <button @tap="cgCreateForm({ 'layout': '<form width=\'300\' height=\'300\' title=\'normal\'></form>', 'mask': true })">Create mask form</button>
-        <button @tap="cgCreateForm({ 'layout': '<form width=\'300\' height=\'300\' title=\'normal\'></form>', 'topMost': true })">Create topMost form</button>
+    <layout gutter="10" direction="v" style="flex: 1; width: 0;">
+        <button @click="cgCreateForm({ 'layout': '<form width=\'300\' height=\'300\' title=\'normal\'></form>' })" style="height: 30px;">Create from param</button>
+        <button @click="cgCreateForm('test')" style="height: 30px;">Create from path</button>
+        <button @click="cgCreateForm({ 'layout': '<form width=\'300\' height=\'300\' title=\'normal\'></form>', 'mask': true })" style="height: 30px;">Create mask form</button>
+        <button @click="cgCreateForm({ 'layout': '<form width=\'300\' height=\'300\' title=\'normal\'></form>', 'topMost': true })" style="height: 30px;">Create topMost form</button>
     </layout>
 </form>

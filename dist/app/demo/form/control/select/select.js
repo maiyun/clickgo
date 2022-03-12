@@ -34,10 +34,10 @@ exports.data = {
             'disabled': true
         },
         {
-            'type': 1
+            'control': 'split'
         },
         {
-            'type': 2
+            'type': 1
         }
     ],
     'select': 0,
@@ -68,7 +68,10 @@ exports.data = {
         }
     ],
     'select2': 'haha2',
-    'editable': false
+    'editable': false,
+    'padding': false,
+    'fontSize': false,
+    'background': false
 };
 exports.watch = {
     'select': function (n, o) {

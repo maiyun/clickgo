@@ -8,6 +8,7 @@
 
     .controls {
         display: flex;
+
         cg-button {
             font-family: 'ifont'; margin-right: 1px; font-size: 14px; width: 24px; height: 24px;
         }
@@ -20,16 +21,28 @@
     }
 
     .content {
-        margin-top: 3px; background: #FFF; flex-grow: 1; height: 0; display: flex; position: relative;
+        margin-top: 3px; background: #FFF; flex: 1; display: flex; position: relative; overflow: hidden;
         &::before {
             content: ''; pointer-events: none; position: absolute; left: 0; top: 0; width: 200%; height: 200%; transform-origin: 0 0; transform: scale(.5); border: solid 1px hsl(205, 0%, 70%); z-index: 1;
+        }
+
+        cg-view {
+            flex: 1;
         }
 
         .bigTitle {
             background: hsl(205, 0%, 95%); font-weight: bold; display: flex;
 
             .control {
-                width: 24px;
+                width: 24px; display: flex; align-items: center; justify-content: center;
+                &.arrow {
+                    &::after {
+                        content: ''; border: solid 2px hsl(205, 0%, 70%); border-width: 0 2px 2px 0; width: 6px; height: 6px; transform: rotate(-45deg);
+                    }
+                    &.open::after {
+                        border-color: hsl(0, 0%, 20%); transform: rotate(45deg);
+                    }
+                }
             }
             .title {
                 padding: 5px;
@@ -43,7 +56,15 @@
             }
 
             .control {
-                background: hsl(205, 0%, 95%); width: 24px;
+                background: hsl(205, 0%, 95%); width: 24px; display: flex; align-items: center; justify-content: center;
+                &.arrow {
+                    &::after {
+                        content: ''; border: solid 2px hsl(205, 0%, 70%); border-width: 0 2px 2px 0; width: 6px; height: 6px; transform: rotate(-45deg);
+                    }
+                    &.open::after {
+                        border-color: hsl(0, 0%, 20%); transform: rotate(45deg);
+                    }
+                }
             }
 
             .title {
@@ -57,25 +78,75 @@
             }
 
             .value {
-                padding: 5px; flex: 2; width: 0; overflow: hidden;
+                flex: 1; width: 0; display: flex; flex-direction: column; justify-content: center;
+
+                .text {
+                    padding: 5px; height: 22px;
+                }
+
+                cg-check {
+                    margin-left: 5px;
+                }
+
+                .dock {
+                    display: flex;
+                    .text {
+                        flex: 1;
+                    }
+                }
+
+                .arrow {
+                    position: relative; display: flex; justify-content: center; align-items: center; width: 20px;
+                    &::after {
+                        content: ''; border: solid 1px hsl(0, 0%, 20%); border-width: 0 1px 1px 0; width: 6px; height: 6px; transform: rotate(45deg); margin-top: -3px;
+                    }
+                }
             }
         }
     }
 
     .description {
-        margin-top: 3px; background: hsl(205, 0%, 95%); position: relative; min-height: 70px;
+        margin-top: 3px; background: hsl(205, 0%, 95%); position: relative; height: 51px; padding: 5px; overflow: hidden;
         &::before {
             content: ''; pointer-events: none; position: absolute; left: 0; top: 0; width: 200%; height: 200%; transform-origin: 0 0; transform: scale(.5); border: solid 1px hsl(205, 0%, 70%); z-index: 1;
         }
+
+        .title {
+            font-weight: bold;
+        }
+        .desc {
+            margin-top: 5px;
+        }
     }
+
 }
 
-.pop {
-    position: absolute; box-shadow: 1px 1px 5px rgba(0, 0, 0, .2); transition: .1s ease-out; transition-property: transform, opacity; transform: translateY(-10px); opacity: 0;
-    &:not(.open) {
-        pointer-events: none;
+// --- POP ---
+
+.dock-pop {
+    position: relative; background: #FFF; display: flex; flex-direction: column; width: 200px; padding: 1px;
+    &::before {
+        content: ''; pointer-events: none; position: absolute; left: 0; top: 0; width: 200%; height: 200%; transform-origin: 0 0; transform: scale(.5); border: solid 1px hsl(205, 0%, 70%); z-index: 1;
     }
-    &.open {
-        transform: translateY(0px); opacity: 1;
-    } 
+
+    > :not(:last-child) {
+        margin-bottom: 1px;
+    }
+
+    .top, .bottom, .none {
+        height: 22px;
+    }
+    .center {
+        height: 70px; display: flex;
+        .left, .right {
+            width: 22px;
+        }
+        .fill {
+            flex: 1;
+        }
+
+        > :not(:last-child) {
+            margin-right: 1px;
+        }
+    }
 }

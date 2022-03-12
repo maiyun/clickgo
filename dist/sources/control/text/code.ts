@@ -3,32 +3,8 @@ export let props = {
         'default': false
     },
 
-    'width': {
-        'default': undefined
-    },
-    'height': {
-        'default': undefined
-    },
-    'left': {
-        'default': 0
-    },
-    'top': {
-        'default': 0
-    },
-    'zIndex': {
-        'default': 0
-    },
-    'flex': {
-        'default': ''
-    },
-    'padding': {
-        'default': undefined
-    },
-    'lineHeight': {
-        'default': undefined
-    },
-    'fontSize': {
-        'default': undefined
+    'border': {
+        'default': 'solid'
     },
 
     'multi': {
@@ -41,7 +17,7 @@ export let props = {
         'default': false
     },
     'wrap': {
-        'default': false
+        'default': true
     },
     'modelValue': {
         'default': ''
@@ -61,40 +37,44 @@ export let props = {
 };
 
 export let computed = {
-    'isDisabled': function(this: IVueControl): boolean {
+    'isDisabled': function(this: IVControl): boolean {
         return clickgo.tool.getBoolean(this.disabled);
     },
-    'isMulti': function(this: IVueControl): boolean {
+    'isMulti': function(this: IVControl): boolean {
         return clickgo.tool.getBoolean(this.multi);
     },
-    'isReadonly': function(this: IVueControl): boolean {
+    'isReadonly': function(this: IVControl): boolean {
         return clickgo.tool.getBoolean(this.readonly);
     },
-    'isPassword': function(this: IVueControl): boolean {
+    'isPassword': function(this: IVControl): boolean {
         return clickgo.tool.getBoolean(this.password);
     },
-    'isWrap': function(this: IVueControl): boolean {
+    'isWrap': function(this: IVControl): boolean {
         return clickgo.tool.getBoolean(this.wrap);
     },
 
     // --- 最大可拖动的 scroll 位置 ---
-    'maxScrollLeft': function(this: IVueControl): number {
+    'maxScrollLeft': function(this: IVControl): number {
         return Math.round(this.lengthWidth) - Math.round(this.clientWidth);
     },
-    'maxScrollTop': function(this: IVueControl): number {
+    'maxScrollTop': function(this: IVControl): number {
         return Math.round(this.lengthHeight) - Math.round(this.clientHeight);
+    },
+
+    'opMargin': function(this: IVControl): string {
+        return this.padding.replace(/(\w+)/g, '-$1');
     }
 };
 
 export let watch = {
     'modelValue': {
-        handler: function(this: IVueControl): void {
+        handler: function(this: IVControl): void {
             this.value = this.modelValue;
         },
         'immediate': true
     },
     'value': {
-        handler: async function(this: IVueControl): Promise<void> {
+        handler: async function(this: IVControl): Promise<void> {
             this.$emit('update:modelValue', this.value);
             // --- 内容变更，更新 length ---
             await this.$nextTick();
@@ -102,10 +82,10 @@ export let watch = {
         }
     },
     'multi': {
-        handler: async function(this: IVueControl): Promise<void> {
+        handler: async function(this: IVControl): Promise<void> {
             await this.$nextTick();
             // --- 大小改变，会影响 scroll offset、client，也会影响 length ---
-            clickgo.dom.watchSize(this.$refs.text, async (): Promise<void> => {
+            clickgo.dom.watchSize(this.$refs.text, () => {
                 this.refreshLength();
                 this.refreshClient();
             }, true);
@@ -116,31 +96,31 @@ export let watch = {
         }
     },
     'lineHeight': {
-        handler: async function(this: IVueControl): Promise<void> {
+        handler: async function(this: IVControl): Promise<void> {
             await this.$nextTick();
             this.refreshLength();
         }
     },
     'fontSize': {
-        handler: async function(this: IVueControl): Promise<void> {
+        handler: async function(this: IVControl): Promise<void> {
             await this.$nextTick();
             this.refreshLength();
         }
     },
     'password': {
-        handler: async function(this: IVueControl): Promise<void> {
+        handler: async function(this: IVControl): Promise<void> {
             await this.$nextTick();
             this.refreshLength();
         }
     },
     'wrap': {
-        handler: async function(this: IVueControl): Promise<void> {
+        handler: async function(this: IVControl): Promise<void> {
             await this.$nextTick();
             this.refreshLength();
         }
     },
     'scrollLeft': {
-        handler: function(this: IVueControl): void {
+        handler: function(this: IVControl): void {
             let sl = typeof this.scrollLeft === 'number' ? this.scrollLeft : parseInt(this.scrollLeft);
             if (sl === this.scrollLeftEmit) {
                 return;
@@ -149,7 +129,7 @@ export let watch = {
         }
     },
     'scrollTop': {
-        handler: function(this: IVueControl): void {
+        handler: function(this: IVControl): void {
             let st = typeof this.scrollTop === 'number' ? this.scrollTop : parseInt(this.scrollTop);
             if (st === this.scrollTopEmit) {
                 return;
@@ -158,13 +138,13 @@ export let watch = {
         }
     },
     'selectionStart': {
-        handler: function(this: IVueControl): void {
+        handler: function(this: IVControl): void {
             this.selectionStartEmit = this.selectionStart;
             (this.$refs.text as unknown as HTMLTextAreaElement).selectionStart = this.selectionStartEmit;
         }
     },
     'selectionEnd': {
-        handler: function(this: IVueControl): void {
+        handler: function(this: IVControl): void {
             this.selectionEndEmit = this.selectionEnd;
             (this.$refs.text as unknown as HTMLTextAreaElement).selectionEnd = this.selectionEndEmit;
         }
@@ -172,6 +152,13 @@ export let watch = {
 };
 
 export let data = {
+    'font': '',
+    'fontWeight': '',
+    'lineHeight': '',
+    'background': '',
+    'color': '',
+    'padding': '',
+
     'isFocus': false,
     'value': '',
     'selectionStartEmit': 0,
@@ -192,22 +179,22 @@ export let data = {
     'lastDownTime': 0,      // --- mouse 或 touch 的时间戳 ---
 
     'localData': {
-        'en-us': {
+        'en': {
             'copy': 'Copy',
             'cut': 'Cut',
             'paste': 'Paste'
         },
-        'zh-cn': {
+        'sc': {
             'copy': '复制',
             'cut': '剪下',
             'paste': '粘上'
         },
-        'zh-tw': {
+        'tc': {
             'copy': '複製',
             'cut': '剪貼',
             'paste': '貼上'
         },
-        'ja-jp': {
+        'ja': {
             'copy': 'コピー',
             'cut': '切り取り',
             'paste': '貼り付け'
@@ -216,31 +203,30 @@ export let data = {
 };
 
 export let methods = {
-    focus: function(this: IVueControl): void {
+    focus: function(this: IVControl): void {
         let now = Date.now();
         if (now - this.lastDownTime >= 500) {
             this.$refs.text.focus();
         }
     },
-    keydown: function(this: IVueControl): void {
+    keydown: function(this: IVControl): void {
         this.$refs.text.focus();
     },
-    tfocus: function(this: IVueControl): void {
+    tfocus: function(this: IVControl): void {
         this.isFocus = true;
     },
-    tblur: function(this: IVueControl): void {
+    tblur: function(this: IVControl): void {
         this.isFocus = false;
     },
-    input: function(this: IVueControl, e: InputEvent): void {
+    input: function(this: IVControl, e: InputEvent): void {
         this.value = (e.target as HTMLInputElement).value;
     },
-    down: function(this: IVueControl, e: MouseEvent | TouchEvent): void {
-        this.cgDown(e);
-        if (clickgo.dom.isMouseAlsoTouchEvent(e)) {
+    down: function(this: IVControl, e: MouseEvent | TouchEvent): void {
+        if (clickgo.dom.hasTouchButMouse(e)) {
             return;
         }
-        if (this.cgSelfPopOpen) {
-            this.cgHidePop();
+        if (this.$el.dataset.cgPopOpen !== undefined) {
+            clickgo.form.hidePop(this.$el);
         }
         // --- 如果是点击进入的，则不触发 input、textarea 的 focus，防止光标乱跳 ---
         let tagName = (e.target as HTMLElement).tagName.toLowerCase();
@@ -249,10 +235,10 @@ export let methods = {
         }
     },
 
-    scroll: function(this: IVueControl): void {
+    scroll: function(this: IVControl): void {
         this.refreshScroll();
     },
-    wheel: function(this: IVueControl, e: WheelEvent): void {
+    wheel: function(this: IVControl, e: WheelEvent): void {
         if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
             // --- 竖向滚动 ---
             if (e.deltaY < 0) {
@@ -308,7 +294,7 @@ export let methods = {
             }
         }
     },
-    inputDown: function(this: IVueControl, e: TouchEvent): void {
+    inputTouch: function(this: IVControl, e: TouchEvent): void {
         this.touchX = e.touches[0].clientX;
         this.touchY = e.touches[0].clientY;
         // --- 按下后第一次的拖动判断可拖动后，则后面此次都可拖动（交由浏览器可自行处理） ---
@@ -316,11 +302,11 @@ export let methods = {
         // --- 长按触发 contextmenu ---
         if (navigator.clipboard) {
             clickgo.dom.bindLong(e, () => {
-                this.cgShowPop(e);
+                clickgo.form.showPop(this.$el, this.$refs.pop, e);
             });
         }
     },
-    move: function(this: IVueControl, e: TouchEvent): void {
+    move: function(this: IVControl, e: TouchEvent): void {
         // --- 必须有这个，要不然被上层的 e.preventDefault(); 给屏蔽不能拖动，可拖时必须 stopPropagation ---
         let deltaX = this.touchX - e.touches[0].clientX;
         let deltaY = this.touchY - e.touches[0].clientY;
@@ -367,17 +353,17 @@ export let methods = {
         this.touchY = e.touches[0].clientY;
     },
 
-    contextmenu: function(this: IVueControl, e: MouseEvent): void {
+    contextmenu: function(this: IVControl, e: MouseEvent): void {
         if (!navigator.clipboard) {
             e.stopPropagation();
             return;
         }
-        if (clickgo.dom.isMouseAlsoTouchEvent(e)) {
+        if (clickgo.dom.hasTouchButMouse(e)) {
             return;
         }
-        this.cgShowPop(e);
+        clickgo.form.showPop(this.$el, this.$refs.pop, e);
     },
-    select: function(this: IVueControl): void {
+    select: function(this: IVControl): void {
         let selectionStart = (this.$refs.text as unknown as HTMLTextAreaElement).selectionStart;
         let selectionEnd = (this.$refs.text as unknown as HTMLTextAreaElement).selectionEnd;
         if (selectionStart !== this.selectionStartEmit) {
@@ -389,13 +375,16 @@ export let methods = {
             this.$emit('update:selectionEnd', this.selectionEndEmit);
         }
     },
-    reselect: async function(this: IVueControl): Promise<void> {
+    reselect: async function(this: IVControl): Promise<void> {
         await clickgo.tool.sleep(150);
         this.select();
     },
-    execCmd: async function(this: IVueControl, ac: string): Promise<void> {
+    execCmd: async function(this: IVControl, ac: string): Promise<void> {
         this.$refs.text.focus();
         if (ac === 'paste') {
+            if (this.isReadonly) {
+                return;
+            }
             let str = await navigator.clipboard.readText();
             this.value = this.value.slice(0, this.selectionStartEmit) + str + this.value.slice(this.selectionEndEmit);
             await this.$nextTick();
@@ -418,7 +407,7 @@ export let methods = {
         }
     },
 
-    refreshLength: function(this: IVueControl): void {
+    refreshLength: function(this: IVControl): void {
         let lengthWidth = this.$refs.text.scrollWidth;
         let lengthHeight = this.$refs.text.scrollHeight;
         if (this.lengthWidth !== lengthWidth) {
@@ -429,7 +418,7 @@ export let methods = {
             this.$emit('change', lengthHeight);
         }
     },
-    refreshClient: function(this: IVueControl): void {
+    refreshClient: function(this: IVControl): void {
         let clientWidth = this.$refs.text.clientWidth;
         let clientHeight = this.$refs.text.clientHeight;
         if (this.clientWidth !== clientWidth) {
@@ -441,7 +430,7 @@ export let methods = {
             this.$emit('resize', Math.round(this.clientHeight));
         }
     },
-    refreshScroll: function(this: IVueControl): void {
+    refreshScroll: function(this: IVControl): void {
         let sl = Math.round(this.$refs.text.scrollLeft);
         if (this.scrollLeftEmit !== sl) {
             this.scrollLeftEmit = sl;
@@ -455,16 +444,43 @@ export let methods = {
     }
 };
 
-export let mounted = function(this: IVueControl): void {
+export let mounted = async function(this: IVControl): Promise<void> {
     clickgo.dom.watchSize(this.$refs.text, async (): Promise<void> => {
         this.refreshClient();
         this.refreshLength();
     }, true);
-    this.cgCreateTimer(() => {
-        // --- 更新 length ---
-        this.refreshLength();
-        // --- 对 scroll 位置进行归位 ---
-        this.$refs.text.scrollTop = this.scrollTop;
-        this.$refs.text.scrollLeft = this.scrollLeft;
-    }, 5);
+    clickgo.dom.watchStyle(this.$el, ['font', 'font-weight', 'line-height', 'background', 'color', 'padding'], (n, v) => {
+        switch (n) {
+            case 'font': {
+                this.font = v;
+                break;
+            }
+            case 'font-weight': {
+                this.fontWeight = v;
+                break;
+            }
+            case 'line-height': {
+                this.lineHeight = v;
+                break;
+            }
+            case 'background': {
+                this.background = v;
+                break;
+            }
+            case 'color': {
+                this.color = v;
+                break;
+            }
+            case 'padding': {
+                this.padding = v;
+                break;
+            }
+        }
+    }, true);
+    await clickgo.tool.sleep(5);
+    // --- 更新 length ---
+    this.refreshLength();
+    // --- 对 scroll 位置进行归位 ---
+    this.$refs.text.scrollTop = this.scrollTop;
+    this.$refs.text.scrollLeft = this.scrollLeft;
 };

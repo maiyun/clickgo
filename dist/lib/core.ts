@@ -19,7 +19,7 @@
  */
 
 let cgConfig: ICGCoreConfig = {
-    'local': 'en-us',
+    'local': 'en',
     'task.position': 'bottom',
     'task.pin': {},
     'desktop.icon.storage': true,
@@ -28,7 +28,7 @@ let cgConfig: ICGCoreConfig = {
     'desktop.path': null
 };
 export let config: ICGCoreConfig = Vue.reactive({
-    'local': 'en-us',
+    'local': 'en',
     'task.position': 'bottom',
     'task.pin': {},
     'desktop.icon.storage': true,
@@ -219,7 +219,7 @@ export let clickgoFiles: Record<string, Blob | string> = {};
 /** --- 全局响应事件 --- */
 export let globalEvents: ICGGlobalEvents = {
     errorHandler: null,
-    screenResizeHandler: function() {
+    screenResizeHandler: function(): void {
         clickgo.form.refreshMaxPosition();
     },
     configChangedHandler: null,
@@ -441,7 +441,7 @@ export async function readApp(blob: Blob): Promise<false | ICGAppPkg> {
             if (!fab) {
                 continue;
             }
-            files[file] = fab;
+            files[file] = fab.replace(/^\ufeff/, '');
         }
         else {
             let fab = await zip.getContent(file, 'arraybuffer');

@@ -25,24 +25,39 @@ exports.data = {
             'disabled': true
         },
         {
-            'type': 1
+            'control': 'split'
         },
         {
-            'type': 2
+            'type': 1
         }
     ],
     'select': 0,
     'select2': 'Appraise',
     'label2': '',
+    'select3': 'xxx',
+    'listData3': [],
     'disabled': false,
     'must': true,
-    'multi': false
+    'multi': false,
+    'selection': false,
+    'selectionArea': {},
+    'scroll': 'auto'
 };
 exports.computed = {
+    'adData': function () {
+        let data = [];
+        for (let item of this.slist) {
+            data.push({
+                'type': item.type === undefined ? 'split' : item.type
+            });
+        }
+        return data;
+    },
     'listData': function () {
         let data = ['Item1', {
                 'label': 'Title1',
-                'children': ['Sub1',
+                'children': [
+                    'Sub1',
                     {
                         'label': 'Title2',
                         'children': ['Sub2', 'Sub3']
@@ -99,6 +114,24 @@ exports.methods = {
         }
         else {
             this.select = 1;
+        }
+    },
+    onSelect: function (area) {
+        this.selectionArea = area;
+    },
+    scrollChange: function () {
+        switch (this.scroll) {
+            case 'auto': {
+                this.scroll = 'visible';
+                break;
+            }
+            case 'visible': {
+                this.scroll = 'hidden';
+                break;
+            }
+            default: {
+                this.scroll = 'auto';
+            }
         }
     }
 };

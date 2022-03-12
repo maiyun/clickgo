@@ -1,13 +1,13 @@
-<div class="wrap" :class="[isDisabled && 'cg-disabled', cgSelfPopOpen && 'cg-pop-open', cgHover && 'hover', cgActive && 'active', notInit && 'notInit']" :style="{'width': cgWidthPx, 'height': cgHeightPx, 'left': left + 'px', 'top': top + 'px', 'z-index': zIndex, 'flex-grow': flex}" @click="cgTap" @mousedown="down" @mouseup="cgUp" @mouseenter="cgEnter" @mouseleave="cgLeave" @touchstart="down" @touchend="cgUp" @touchcancel="cgCancel" @dblclick="cgDblclick">
+<div class="wrap" :class="[notInit && 'notInit']" :data-cg-disabled="isDisabled ? '' : undefined" @mousedown="down" @touchstart="down">
     <div v-if="notInit" class="notInit">Monaco Editor Not Found.</div>
-    <div v-else class="monaco" ref="monaco" @contextmenu="contextmenu" @touchstart="touchDown" :class="[theme ? 'theme-' + theme : undefined]"></div>
+    <div v-else class="monaco" ref="monaco" @contextmenu="contextmenu" @touchstart="touch" :class="[theme ? 'theme-' + theme : undefined]"></div>
     <teleport to="#cg-pop-list">
-        <div class="pop" :class="[cgSelfPopOpen && 'open']" :style="cgPopPosition">
+        <div ref="pop" data-cg-pop>
             <slot>
                 <cg-menulist>
-                    <cg-menulist-item alt="C" @tap="execCmd('cut')">{{l('cut')}}</cg-menulist-item>
-                    <cg-menulist-item alt="C" @tap="execCmd('copy')">{{l('copy')}}</cg-menulist-item>
-                    <cg-menulist-item alt="C" @tap="execCmd('paste')">{{l('paste')}}</cg-menulist-item>
+                    <cg-menulist-item alt="C" @click="execCmd('cut')">{{l('cut')}}</cg-menulist-item>
+                    <cg-menulist-item alt="C" @click="execCmd('copy')">{{l('copy')}}</cg-menulist-item>
+                    <cg-menulist-item alt="C" @click="execCmd('paste')">{{l('paste')}}</cg-menulist-item>
                 </cg-menulist>
             </slot>
         </div>

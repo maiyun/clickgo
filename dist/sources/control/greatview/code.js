@@ -11,32 +11,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.mounted = exports.methods = exports.computed = exports.watch = exports.data = exports.props = void 0;
 exports.props = {
-    'width': {
-        'default': undefined
-    },
-    'height': {
-        'default': undefined
-    },
-    'left': {
-        'default': undefined
-    },
-    'top': {
-        'default': undefined
-    },
-    'zIndex': {
-        'default': undefined
-    },
-    'flex': {
-        'default': undefined
-    },
     'direction': {
         'default': 'h'
-    },
-    'padding': {
-        'default': undefined
-    },
-    'adaptation': {
-        'dafault': false
     },
     'scrollLeft': {
         'default': undefined
@@ -45,36 +21,52 @@ exports.props = {
         'default': undefined
     },
     'content': {
-        'default': 'max',
+        'default': undefined,
+    },
+    'selection': {
+        'default': false
     },
     'same': {
         'default': false
     },
+    'solo': {
+        'default': true
+    },
     'data': {
+        'default': []
+    },
+    'itemsSize': {
         'default': []
     }
 };
 exports.data = {
-    'compPos': {
-        'start': 0,
-        'end': 0
+    'padding': '',
+    'paddingChild': {
+        'top': 0,
+        'right': 0,
+        'bottom': 0,
+        'left': 0
     },
     'showPos': {
         'start': 0,
         'end': 0
     },
-    'dataHeight': [],
-    'lineHeight': 0,
+    'selectPos': {
+        'start': 0,
+        'end': 0
+    },
+    'itemsPos': [],
+    'needItemsComp': [],
     'scrollLeftEmit': 0,
     'scrollTopEmit': 0,
+    'length': 0,
     'lengthWidth': 0,
     'lengthHeight': 0,
     'client': 0,
     'clientWidth': 0,
     'clientHeight': 0,
     'refreshCount': 0,
-    'lengthInit': false,
-    'cgNest': true
+    'lengthInit': false
 };
 exports.watch = {
     'data': {
@@ -103,8 +95,11 @@ exports.computed = {
     'isSame': function () {
         return clickgo.tool.getBoolean(this.same);
     },
-    'isAdaptation': function () {
-        return clickgo.tool.getBoolean(this.adaptation);
+    'isSelection': function () {
+        return clickgo.tool.getBoolean(this.selection);
+    },
+    'isSolo': function () {
+        return clickgo.tool.getBoolean(this.solo);
     },
     'dataComp': function () {
         if (typeof this.data !== 'number') {
@@ -116,133 +111,174 @@ exports.computed = {
         }
         return list;
     },
-    'paddingComp': function () {
-        if (!this.padding) {
-            return { 'top': 0, 'right': 0, 'bottom': 0, 'left': 0 };
-        }
-        let arr = this.padding.split(' ');
-        for (let i = 0; i < arr.length; ++i) {
-            arr[i] = Math.round(arr[i]);
-        }
-        switch (arr.length) {
-            case 1: {
-                return { 'top': arr[0], 'right': arr[0], 'bottom': arr[0], 'left': arr[0] };
-            }
-            case 2: {
-                return { 'top': arr[0], 'right': arr[1], 'bottom': arr[0], 'left': arr[1] };
-            }
-            case 3: {
-                return { 'top': arr[0], 'right': arr[1], 'bottom': arr[2], 'left': arr[1] };
-            }
-            default: {
-                return { 'top': arr[0], 'right': arr[1], 'bottom': arr[2], 'left': arr[3] };
-            }
-        }
+    'scrollOffset': function () {
+        return this.direction === 'v' ? this.scrollTopEmit : this.scrollLeftEmit;
+    },
+    'itemStyle': function () {
+        return (index) => {
+            return {
+                'left': (this.direction === 'v' ?
+                    this.paddingChild.left :
+                    (this.itemsPos[index] ?
+                        this.itemsPos[index].start :
+                        '0')) + 'px',
+                'top': (this.direction === 'v' ?
+                    (this.itemsPos[index] ?
+                        this.itemsPos[index].start :
+                        '0') :
+                    this.paddingChild.top) + 'px',
+                'min-width': (this.direction === 'v' ?
+                    'calc(100% - ' + (this.paddingChild.left + this.paddingChild.right) + 'px)' :
+                    undefined),
+                'min-height': (this.direction === 'v' ?
+                    undefined :
+                    'calc(100% - ' + (this.paddingChild.top + this.paddingChild.bottom) + 'px)')
+            };
+        };
+    },
+    'opMargin': function () {
+        return this.padding.replace(/(\w+)/g, '-$1');
     }
 };
 exports.methods = {
     refreshView: function () {
         return __awaiter(this, void 0, void 0, function* () {
             let nowCount = ++this.refreshCount;
-            let lengthWidth = this.paddingComp.left;
-            let lengthHeight = this.paddingComp.top;
+            let lengthWidth = this.paddingChild.left;
+            let lengthHeight = this.paddingChild.top;
             if (this.dataComp.length === 0) {
-                this.dataHeight = [];
-                this.lineHeight = 0;
-                this.lengthWidth = lengthWidth + this.paddingComp.right;
-                this.lengthHeight = lengthHeight + this.paddingComp.bottom;
+                this.lengthWidth = lengthWidth + this.paddingChild.right;
+                this.lengthHeight = lengthHeight + this.paddingChild.bottom;
+                this.length = this.direction === 'v' ? this.lengthHeight : this.lengthWidth;
                 return;
             }
-            if (!this.isSame) {
-                let maxCursor = this.dataComp.length;
-                let cursor = 0;
-                let anotherWOH = 0;
-                let dataHeight = [];
-                while (true) {
-                    if (nowCount !== this.refreshCount) {
-                        return;
+            yield clickgo.tool.sleep(0);
+            if (nowCount !== this.refreshCount) {
+                return;
+            }
+            let maxCursor = this.dataComp.length;
+            let cursor = 0;
+            let anotherMax = 0;
+            let itemsSize = [];
+            let itemsSizeAlias = {};
+            while (true) {
+                if (nowCount !== this.refreshCount) {
+                    return;
+                }
+                let needItemsComp = [];
+                for (let i = cursor; i < maxCursor; ++i) {
+                    if (typeof this.itemsSize[i] === 'number') {
+                        cursor = i;
+                        continue;
                     }
-                    let theCursor = cursor + 50;
-                    if (theCursor > maxCursor) {
-                        theCursor = maxCursor;
-                    }
-                    this.compPos.start = cursor;
-                    this.compPos.end = theCursor;
-                    yield this.$nextTick();
-                    yield clickgo.tool.sleep(34);
-                    if (nowCount !== this.refreshCount) {
-                        return;
-                    }
-                    if (!this.$refs.comp) {
-                        return;
-                    }
-                    for (let i = 0; i < this.$refs.comp.children.length; ++i) {
-                        let item = this.$refs.comp.children.item(i);
-                        let start = this.direction === 'v' ? lengthHeight : lengthWidth;
-                        let rect = item.getBoundingClientRect();
-                        if (this.direction === 'v') {
-                            lengthHeight += rect.height;
-                            if (anotherWOH < rect.width) {
-                                anotherWOH = rect.width;
-                            }
+                    if (typeof this.itemsSize[i] === 'string') {
+                        if (itemsSizeAlias[this.itemsSize[i]] !== undefined) {
+                            cursor = i;
+                            continue;
                         }
                         else {
-                            lengthWidth += rect.width;
-                            if (anotherWOH < rect.height) {
-                                anotherWOH = rect.height;
-                            }
+                            itemsSizeAlias[this.itemsSize[i]] = -1;
                         }
-                        dataHeight[cursor + i] = {
-                            'start': start,
-                            'end': this.direction === 'v' ? lengthHeight : lengthWidth
-                        };
                     }
-                    if (theCursor === maxCursor) {
+                    else if (this.isSame) {
+                        if (itemsSizeAlias['cg-same'] !== undefined) {
+                            cursor = i;
+                            continue;
+                        }
+                        else {
+                            itemsSizeAlias['cg-same'] = -1;
+                        }
+                    }
+                    needItemsComp.push(i);
+                    if (needItemsComp.length === 50) {
+                        cursor = i;
                         break;
                     }
-                    cursor = theCursor;
+                    cursor = i;
                 }
-                this.dataHeight = dataHeight;
-                if (this.direction === 'v') {
-                    lengthWidth += anotherWOH;
-                }
-                else {
-                    lengthHeight += anotherWOH;
-                }
-            }
-            else {
-                this.compPos.start = 0;
-                this.compPos.end = 1;
+                this.needItemsComp = needItemsComp;
                 yield this.$nextTick();
-                yield clickgo.tool.sleep(0);
                 if (nowCount !== this.refreshCount) {
                     return;
                 }
                 if (!this.$refs.comp) {
                     return;
                 }
-                let item = this.$refs.comp.children.item(0);
-                if (item) {
+                for (let i = 0; i < this.$refs.comp.children.length; ++i) {
+                    let item = this.$refs.comp.children.item(i);
                     let rect = item.getBoundingClientRect();
+                    let theCursor = parseInt(item.dataset.cursor);
+                    let size = 0;
                     if (this.direction === 'v') {
-                        this.lineHeight = rect.height;
-                        lengthHeight += this.lineHeight * this.dataComp.length;
-                        lengthWidth += rect.width;
+                        size = rect.height;
+                        if (anotherMax < rect.width) {
+                            anotherMax = rect.width;
+                        }
                     }
                     else {
-                        this.lineHeight = rect.width;
-                        lengthWidth += this.lineHeight * this.dataComp.length;
-                        lengthHeight += rect.height;
+                        size = rect.width;
+                        if (anotherMax < rect.height) {
+                            anotherMax = rect.height;
+                        }
+                    }
+                    if (typeof this.itemsSize[theCursor] === 'string') {
+                        itemsSizeAlias[itemsSize[theCursor]] = size;
+                    }
+                    else if (this.isSame) {
+                        itemsSizeAlias['cg-same'] = size;
+                    }
+                    else {
+                        itemsSize[theCursor] = size;
                     }
                 }
+                if (cursor + 1 === maxCursor) {
+                    break;
+                }
+                ++cursor;
+            }
+            let itemsPos = [];
+            for (let i = 0; i < maxCursor; ++i) {
+                let size = 0;
+                if (this.itemsSize[i] !== undefined) {
+                    let type = typeof this.itemsSize[i];
+                    if (type === 'number') {
+                        size = this.itemsSize[i];
+                    }
+                    else {
+                        size = itemsSizeAlias[this.itemsSize[i]];
+                    }
+                }
+                else if (this.isSame) {
+                    size = itemsSizeAlias['cg-same'];
+                }
                 else {
-                    this.lineHeight = 0;
+                    size = itemsSize[i];
+                }
+                let start = this.direction === 'v' ? lengthHeight : lengthWidth;
+                let end = start + size;
+                itemsPos.push({
+                    'start': start,
+                    'end': end
+                });
+                if (this.direction === 'v') {
+                    lengthHeight += size;
+                }
+                else {
+                    lengthWidth += size;
                 }
             }
-            lengthWidth += this.paddingComp.right;
-            lengthHeight += this.paddingComp.bottom;
+            if (this.direction === 'v') {
+                lengthWidth += anotherMax;
+            }
+            else {
+                lengthHeight += anotherMax;
+            }
+            lengthWidth += this.paddingChild.right;
+            lengthHeight += this.paddingChild.bottom;
             this.lengthWidth = lengthWidth;
             this.lengthHeight = lengthHeight;
+            this.length = this.direction === 'v' ? this.lengthHeight : this.lengthWidth;
+            this.itemsPos = itemsPos;
             if (!this.lengthInit) {
                 this.lengthInit = true;
                 yield clickgo.tool.sleep(34);
@@ -258,47 +294,129 @@ exports.methods = {
             this.reShow();
         });
     },
-    reShow: function () {
-        let scrollOffset = this.direction === 'v' ? this.scrollTopEmit : this.scrollLeftEmit;
-        if (!this.isSame) {
-            let overShow = false;
-            for (let i = 0; i < this.dataComp.length; ++i) {
-                let pos = this.dataHeight[i];
-                if (!pos) {
-                    return;
-                }
-                if ((pos.end > scrollOffset - 10) && (pos.start < scrollOffset + this.client + 10)) {
-                    if (!overShow) {
-                        overShow = true;
-                        this.showPos.start = i;
-                    }
-                    if (!this.dataComp[i + 1]) {
-                        this.showPos.end = i + 1;
-                    }
+    refreshPos: function (pos, area) {
+        if (this.length <= area.start) {
+            return {
+                'start': -1,
+                'end': -1
+            };
+        }
+        let rtn = { 'start': pos.start, 'end': pos.end };
+        let needFind = false;
+        let startShow = this.isInArea(rtn.start, area);
+        let endShow = this.isInArea(rtn.end, area);
+        if (startShow) {
+            for (let i = rtn.start - 1; i >= 0; --i) {
+                if (this.isInArea(i, area)) {
+                    rtn.start = i;
                     continue;
                 }
-                if (overShow) {
-                    this.showPos.end = i;
-                    break;
-                }
+                break;
             }
         }
         else {
-            if (this.lineHeight === 0) {
-                this.showPos.start = this.showPos.end = 0;
-                return;
+            let found = false;
+            let jmax = endShow ? 999 : 3;
+            for (let i = rtn.start + 1, j = 0; i < this.dataComp.length && j < jmax; ++i, ++j) {
+                if (!this.isInArea(i, area)) {
+                    continue;
+                }
+                found = true;
+                rtn.start = i;
+                break;
             }
-            let start = Math.floor((scrollOffset - 10) / this.lineHeight);
-            let end = Math.ceil((scrollOffset + this.client + 10) / this.lineHeight);
-            if (start < 0) {
-                start = 0;
+            if (!found) {
+                needFind = true;
             }
-            if (end > this.dataComp.length) {
-                end = this.dataComp.length;
-            }
-            this.showPos.start = start;
-            this.showPos.end = end;
         }
+        if (endShow) {
+            for (let i = rtn.end + 1; i < this.dataComp.length; ++i) {
+                if (this.isInArea(i, area)) {
+                    rtn.end = i;
+                    continue;
+                }
+                break;
+            }
+        }
+        else {
+            let found = false;
+            let jmax = startShow ? 999 : 3;
+            for (let i = rtn.end - 1, j = 0; i >= 0 && j < jmax; --i, ++j) {
+                if (!this.isInArea(i, area)) {
+                    continue;
+                }
+                found = true;
+                rtn.end = i;
+                break;
+            }
+            if (!found) {
+                needFind = true;
+            }
+        }
+        if (needFind) {
+            let firstShow = false;
+            if (!this.itemsPos[rtn.start]) {
+                rtn.start = 0;
+                if (!this.itemsPos[rtn.start]) {
+                    return { 'start': 0, 'end': 0 };
+                }
+            }
+            if (this.scrollOffset < this.itemsPos[rtn.start].start) {
+                for (let i = rtn.start; i >= 0; --i) {
+                    if (this.isInArea(i, area)) {
+                        if (!firstShow) {
+                            firstShow = true;
+                            rtn.end = i;
+                        }
+                        if (!this.dataComp[i - 1]) {
+                            rtn.start = i;
+                        }
+                        continue;
+                    }
+                    if (firstShow) {
+                        rtn.start = i + 1;
+                        break;
+                    }
+                }
+            }
+            else {
+                for (let i = rtn.start; i < this.dataComp.length; ++i) {
+                    if (this.isInArea(i, area)) {
+                        if (!firstShow) {
+                            firstShow = true;
+                            rtn.start = i;
+                        }
+                        if (!this.dataComp[i + 1]) {
+                            rtn.end = i;
+                        }
+                        continue;
+                    }
+                    if (firstShow) {
+                        rtn.end = i - 1;
+                        break;
+                    }
+                }
+            }
+        }
+        return rtn;
+    },
+    reShow: function () {
+        let rtn = this.refreshPos(this.showPos, {
+            'start': this.scrollOffset - 20,
+            'end': this.scrollOffset + this.client + 20
+        });
+        this.showPos.start = rtn.start;
+        this.showPos.end = rtn.end;
+    },
+    isInArea: function (i, area) {
+        let pos = this.itemsPos[i];
+        if (!pos) {
+            return false;
+        }
+        if ((pos.end > area.start) && (pos.start < area.end)) {
+            return true;
+        }
+        return false;
     },
     updateScrollOffset: function (val, pos) {
         if (!this.lengthInit) {
@@ -344,11 +462,52 @@ exports.methods = {
         }
     },
     onChange: function (val) {
+        if (!this.lengthInit) {
+            return;
+        }
         this.$emit('change', val);
+    },
+    onSelect: function (area) {
+        let offset = this.direction === 'v' ? area.y : area.x;
+        let length = this.direction === 'v' ? area.height : area.width;
+        let rtn = this.refreshPos(this.selectPos, {
+            'start': offset,
+            'end': offset + length
+        });
+        this.selectPos.start = rtn.start;
+        this.selectPos.end = rtn.end;
+        area.start = rtn.start;
+        area.end = rtn.end;
+        this.$emit('select', area);
+    },
+    getPos: function (val) {
+        return this.itemsPos[val];
     }
 };
 exports.mounted = function () {
-    clickgo.dom.watch(this.$refs.view.$el, () => {
+    clickgo.dom.watchStyle(this.$el, ['padding', 'padding-top', 'padding-right', 'padding-bottom', 'padding-left', 'line-height'], (n, v) => {
+        switch (n) {
+            case 'padding': {
+                this.padding = v;
+                break;
+            }
+            case 'padding-top': {
+                this.paddingChild.top = parseInt(v);
+                break;
+            }
+            case 'padding-right': {
+                this.paddingChild.right = parseInt(v);
+                break;
+            }
+            case 'padding-bottom': {
+                this.paddingChild.bottom = parseInt(v);
+                break;
+            }
+            case 'padding-left': {
+                this.paddingChild.left = parseInt(v);
+                break;
+            }
+        }
         this.refreshView();
-    }, 'style', true);
+    }, true);
 };

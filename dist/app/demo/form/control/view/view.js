@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.data = void 0;
 exports.data = {
+    'lineValue': 10,
     'lineCount': 2,
     'sLeft1': 0,
     'sTop1': 0,
@@ -19,6 +20,7 @@ exports.data = {
     'sTop4': 0,
     'l4': 0,
     'c4': 0,
+    'direction': false,
     'dir5': 'v',
     'sLeft5': 0,
     'sTop5': 0,
@@ -26,5 +28,7 @@ exports.data = {
     'c5': 0,
     'line5': 10,
     'c6': 0,
-    'style': false
+    'style': false,
+    'selection': false,
+    'area': {}
 };

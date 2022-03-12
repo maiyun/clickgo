@@ -15,11 +15,11 @@
  */
 
 /** --- style list 的 div --- */
-let topClass: string[] = ['cg-form-list', 'cg-pop-list', 'cg-system', 'cg-simpletask'];
+let topClass: string[] = ['#cg-form-list', '#cg-pop-list', '#cg-system', '#cg-simpletask'];
 function classUnfold(after?: string): string {
     let arr: string[] = [];
     for (let name of topClass) {
-        arr.push('.' + name + (after ? (' ' + after) : ''));
+        arr.push(name + (after ? (' ' + after) : ''));
     }
     return arr.join(', ');
 }
@@ -28,23 +28,26 @@ let styleList: HTMLDivElement = document.createElement('div');
 styleList.style.display = 'none';
 document.getElementsByTagName('body')[0].appendChild(styleList);
 styleList.insertAdjacentHTML('beforeend', '<style id=\'cg-global-cursor\'></style>');
-styleList.insertAdjacentHTML('beforeend', `<style class='cg-global'>
+styleList.insertAdjacentHTML('beforeend', `<style id='cg-global'>
 ${classUnfold()} {-webkit-user-select: none; user-select: none; position: fixed; left: 0; top: 0; width: 0; height: 0; cursor: default; box-sizing: border-box;}
-.cg-form-list {z-index: 20020000;}
-.cg-pop-list {z-index: 20020001;}
-.cg-system {z-index: 20020002;}
-.cg-simpletask {z-index: 20020003;}
-.cg-form-list img, .cg-pop-list img, .cg-system img {vertical-align: bottom;}
-.cg-form-list ::selection, .cg-pop-list ::selection, .cg-system ::selection {background-color: rgba(0, 120, 215, .3);}
-.cg-form-list, .cg-pop-list, .cg-system {-webkit-user-select: none; user-select: none;}
+#cg-form-list {z-index: 20020000;}
+#cg-pop-list {z-index: 20020001;}
+#cg-system {z-index: 20020002;}
+#cg-simpletask {z-index: 20020003;}
+${classUnfold('img')} {vertical-align: bottom;}
+${classUnfold('::selection')} {background-color: rgba(0, 120, 215, .3);}
 
 ${classUnfold('*')}, ${classUnfold('*::after')}, ${classUnfold('*::before')} {box-sizing: border-box; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); flex-shrink: 0;}
-${classUnfold()}, ${classUnfold('input')}, ${classUnfold('textarea')} {font-family: "Helvetica Neue","Helvetica","PingFang SC","Hiragino Sans GB","Noto Sans CJK SC","Noto Sans CJK","Source Han Sans","WenQuanYi Micro Hei","Microsoft YaHei",sans-serif; /* -apple-system,BlinkMacSystemFont,Roboto,"Segoe UI","Helvetica Neue","PingFang SC","Noto Sans","Noto Sans CJK SC","Microsoft YaHei","微软雅黑",sans-serif */; font-size: 12px; line-height: 1; -webkit-font-smoothing: antialiased;}
+${classUnfold()}, ${classUnfold('input')}, ${classUnfold('textarea')} {font-family: "Lucida Sans Unicode", "Helvetica Neue","Helvetica","PingFang SC","Hiragino Sans GB","Noto Sans CJK SC","Noto Sans CJK","Source Han Sans","WenQuanYi Micro Hei","Microsoft YaHei",sans-serif; font-size: 12px; line-height: 1; -webkit-font-smoothing: antialiased;}
 
-.cg-circular {box-sizing: border-box; position: fixed; z-index: 20020003; border: solid 3px #ffa657; border-radius: 50%; filter: drop-shadow(0 0 3px #ffa657); pointer-events: none; opacity: 0;}
-.cg-rectangle {box-sizing: border-box; position: fixed; z-index: 20020002; border-radius: 3px; box-shadow: inset 0 1px 1px rgba(255, 255, 255, .1), 0 0 10px rgba(0, 0, 0, .3); background: rgba(255, 255, 255, .05); pointer-events: none; opacity: 0;}
+#cg-circular {box-sizing: border-box; position: fixed; z-index: 20020003; border: solid 3px #ffa657; border-radius: 50%; filter: drop-shadow(0 0 3px #ffa657); pointer-events: none; opacity: 0;}
+#cg-rectangle {box-sizing: border-box; position: fixed; z-index: 20020002; border-radius: 3px; box-shadow: 0 0 10px rgba(0, 0, 0, .3); background: rgba(255, 255, 255, .05); pointer-events: none; opacity: 0;}
 
-.cg-system-notify {background: #30363d; position: fixed; padding: 15px; border: solid 1px #000; border-radius: 3px; right: 0; top: 0; width: 280px; font-size: 14px; display: flex; transition: .1s ease-out; transition-property: transform, opacity; overflow: hidden; color: #f6f6f6; box-shadow: inset 0 1px 1px rgba(255, 255, 255, .1), 0 0 10px rgba(0, 0, 0, .3);}
+[data-cg-pop] {position: fixed; box-shadow: 1px 1px 5px rgba(0, 0, 0, .2); transition: .1s ease-out; transition-property: transform, opacity; transform: translateY(-10px); opacity: 0;}
+[data-cg-pop]:not([data-cg-open]) {pointer-events: none;}
+[data-cg-pop][data-cg-open] {transform: translateY(0px); opacity: 1;}
+
+.cg-system-notify {background: rgba(0, 0, 0, .5); position: fixed; padding: 15px; border-radius: 3px; right: 0; top: 0; width: 280px; font-size: 14px; display: flex; transition: .1s ease-out; transition-property: transform, opacity; overflow: hidden; color: #f6f6f6; box-shadow: 0 0 10px rgba(0, 0, 0, .1); backdrop-filter: blur(20px) brightness(1.1);}
 .cg-system-icon {margin-right: 10px; width: 16px; height: 16px; border-radius: 50%;}
 .cg-system-icon-primary {background: #07c160;}
 .cg-system-icon-info {background: #1989fa;}
@@ -55,8 +58,8 @@ ${classUnfold()}, ${classUnfold('input')}, ${classUnfold('textarea')} {font-fami
 .cg-system-notify-content {line-height: 1.5;}
 .cg-system-notify-progress {position: absolute; bottom: 0; left: 0; border-radius: 1px; background: #ffa657; transition: width 1s ease-out; width: 0%; height: 2px;}
 
-.cg-simpletask {bottom: -46px; width: 100%; height: 46px; top: initial; background: rgb(39, 39, 39, .7); backdrop-filter: blur(5px); padding: 5px 0 5px 5px; display: flex; color: #f6f6f6; transition: bottom .1s ease-out; overflow-x: auto;}
-.cg-simpletask::-webkit-scrollbar {display: none;}
+#cg-simpletask {bottom: -46px; width: 100%; height: 46px; top: initial; background: rgb(0, 0, 0, .5); backdrop-filter: blur(20px) brightness(1.1); padding: 5px 0 5px 5px; display: flex; color: #f6f6f6; transition: bottom .1s ease-out; overflow-x: auto;}
+#cg-simpletask::-webkit-scrollbar {display: none;}
 .cg-simpletask-item {background: rgba(246, 246, 246, .05); border-radius: 3px; padding: 10px; display: flex; align-items: center; margin-right: 5px;}
 .cg-simpletask-item:hover {background: rgba(246, 246, 246, .1);}
 .cg-simpletask-item:active {background: rgba(246, 246, 246, .2);}
@@ -90,14 +93,19 @@ document.addEventListener('touchstart', function() {
 });
 
 /**
- * --- 判断当前的 mosedown、click 事件是否是 touch 触发的，如果当前就是 touch 则直接返回 false ---
+ * --- 判断当前的事件是否是含有 touch 的设备触发的，如果当前就是 touch 则直接返回 false（false 代表 OK，true 代表 touch 设备却触发了 mouse 事件） ---
  */
-export function isMouseAlsoTouchEvent(e: MouseEvent | TouchEvent): boolean {
+export function hasTouchButMouse(e: MouseEvent | TouchEvent | PointerEvent): boolean {
     if (e instanceof TouchEvent) {
         return false;
     }
+    if (((e as any).pointerType === 'touch') && (e.type === 'contextmenu')) {
+        // --- 当前是 mouse 但是却是 touch 触发的 ---
+        return true;
+    }
     let now = Date.now();
-    if (now - lastTouchTime < 500) {
+    if (now - lastTouchTime < 1000 * 60) {
+        // --- 当前是 mouse 但是 10000ms 内有 touch start ---
         return true;
     }
     return false;
@@ -312,13 +320,87 @@ export function watch(el: HTMLElement, cb: () => void, mode: 'child' | 'childsub
     */
 }
 
+let watchStyleObjects: Array<{
+    'el': HTMLElement;
+    'sd': CSSStyleDeclaration;
+    'names': Record<string, {
+        'old': string;
+        'cb': Array<(name?: string, value?: string) => void>;
+    }>;
+}> = [];
+export function watchStyle(el: HTMLElement, name: string | string[], cb: (name?: string, value?: string) => void, immediate: boolean = false): void {
+    for (let item of watchStyleObjects) {
+        if (item.el !== el) {
+            continue;
+        }
+        // --- 已经有监听了 ---
+        for (let n of name) {
+            if (!item.names[n]) {
+                item.names[n] = {
+                    'old': (item.sd as any)[n],
+                    'cb': [cb]
+                };
+            }
+            else {
+                item.names[n].cb.push(cb);
+            }
+            if (immediate) {
+                cb(n, (item.sd as any)[n]);
+            }
+        }
+        return;
+    }
+    // --- 创建监听 ---
+    let sd = getComputedStyle(el);
+    if (typeof name === 'string') {
+        name = [name];
+    }
+    watchStyleObjects.push({
+        'el': el,
+        'sd': sd,
+        'names': {}
+    });
+    let item = watchStyleObjects[watchStyleObjects.length - 1];
+    for (let n of name) {
+        item.names[n] = {
+            'old': (item.sd as any)[n],
+            'cb': [cb]
+        };
+        if (immediate) {
+            cb(n, (item.sd as any)[n]);
+        }
+    }
+}
+let watchStyleRAF = function(): void {
+    for (let i = 0; i < watchStyleObjects.length; ++i) {
+        let item = watchStyleObjects[i];
+        if (watchStyleObjects[i].sd.flex === '') {
+            watchStyleObjects.splice(i, 1);
+            --i;
+            continue;
+        }
+        // --- 执行 cb ---
+        for (let name in item.names) {
+            if ((item.sd as any)[name] === item.names[name].old) {
+                continue;
+            }
+            item.names[name].old = (item.sd as any)[name];
+            for (let cb of item.names[name].cb) {
+                cb(name, (item.sd as any)[name]);
+            }
+        }
+    }
+    requestAnimationFrame(watchStyleRAF);
+};
+watchStyleRAF();
+
 /**
  * --- 绑定按下以及弹起事件 ---
  * @param e MouseEvent | TouchEvent
  * @param opt 回调选项
  */
 export function bindDown(oe: MouseEvent | TouchEvent, opt: { 'down'?: (e: MouseEvent | TouchEvent) => void; 'start'?: (e: MouseEvent | TouchEvent) => void | boolean; 'move'?: (e: MouseEvent | TouchEvent) => void | boolean; 'up'?: (e: MouseEvent | TouchEvent) => void; 'end'?: (e: MouseEvent | TouchEvent) => void; }): void {
-    if (isMouseAlsoTouchEvent(oe)) {
+    if (hasTouchButMouse(oe)) {
         return;
     }
     /** --- 上一次的坐标 --- */
@@ -337,6 +419,8 @@ export function bindDown(oe: MouseEvent | TouchEvent, opt: { 'down'?: (e: MouseE
 
     let end: (e: MouseEvent | TouchEvent) => void;
     let move = function(e: MouseEvent | TouchEvent): void {
+        // --- 虽然上层已经有 preventDefault 了，但是有可能 e.target 会被注销，这样就响应不到上层的 preventDefault 事件，所以要在这里再加一个 ---
+        e.preventDefault();
         let x: number = e instanceof MouseEvent ? e.clientX : e.touches[0].clientX;
         let y: number = e instanceof MouseEvent ? e.clientY : e.touches[0].clientY;
         if (x === ox && y === oy) {
@@ -364,9 +448,11 @@ export function bindDown(oe: MouseEvent | TouchEvent, opt: { 'down'?: (e: MouseE
                 window.removeEventListener('mouseup', end);
             }
             else {
-                (oe.target as HTMLElement).removeEventListener('touchmove', move);
-                (oe.target as HTMLElement).removeEventListener('touchend', end);
-                (oe.target as HTMLElement).removeEventListener('touchcancel', end);
+                if (oe.target) {
+                    (oe.target as HTMLElement).removeEventListener('touchmove', move);
+                    (oe.target as HTMLElement).removeEventListener('touchend', end);
+                    (oe.target as HTMLElement).removeEventListener('touchcancel', end);
+                }
             }
             return;
         }
@@ -377,9 +463,11 @@ export function bindDown(oe: MouseEvent | TouchEvent, opt: { 'down'?: (e: MouseE
             window.removeEventListener('mouseup', end);
         }
         else {
-            (oe.target as HTMLElement).removeEventListener('touchmove', move);
-            (oe.target as HTMLElement).removeEventListener('touchend', end);
-            (oe.target as HTMLElement).removeEventListener('touchcancel', end);
+            if (oe.target) {
+                (oe.target as HTMLElement).removeEventListener('touchmove', move);
+                (oe.target as HTMLElement).removeEventListener('touchend', end);
+                (oe.target as HTMLElement).removeEventListener('touchcancel', end);
+            }
         }
         opt.up?.(e);
         if (isStart) {
@@ -398,22 +486,47 @@ export function bindDown(oe: MouseEvent | TouchEvent, opt: { 'down'?: (e: MouseE
     opt.down?.(oe);
 }
 
-export function bindLong(e: MouseEvent | TouchEvent, long: (e: MouseEvent | TouchEvent) => void): void {
-    if (isMouseAlsoTouchEvent(e)) {
+let lastLongTime: number = 0;
+
+export function allowEvent(e: MouseEvent | TouchEvent | KeyboardEvent): boolean {
+    let now = Date.now();
+    if (now - lastLongTime < 5) {
+        return false;
+    }
+    let current = e.currentTarget as HTMLElement;
+    if (current.dataset.cgDisabled !== undefined) {
+        return false;
+    }
+    if (findParentByData(current, 'cg-disabled')) {
+        return false;
+    }
+    return true;
+}
+
+export function bindLong(e: MouseEvent | TouchEvent, long: (e: MouseEvent | TouchEvent) => void | Promise<void>): void {
+    if (hasTouchButMouse(e)) {
         return;
     }
     /** --- 上一次的坐标 --- */
     let tx: number = e instanceof MouseEvent ? e.clientX : e.touches[0].clientX;
     let ty: number = e instanceof MouseEvent ? e.clientY : e.touches[0].clientY;
-    let ox: number = 0;
+    let ox:  number = 0;
     let oy: number = 0;
+    /** --- 是否执行了 long --- */
+    let isLong: boolean = false;
     let timer: number | undefined = window.setTimeout(() => {
         clearTimeout(timer);
         timer = undefined;
         if (ox <= 1 && oy <= 1) {
-            long(e);
+            isLong = true;
+            const rtn = long(e);
+            if (rtn instanceof Promise) {
+                rtn.catch((e) => {
+                    throw e;
+                });
+            }
         }
-    }, 500);
+    }, 300);
     bindDown(e, {
         move: (e: MouseEvent | TouchEvent) => {
             let x: number = e instanceof MouseEvent ? e.clientX : e.touches[0].clientX;
@@ -421,13 +534,14 @@ export function bindLong(e: MouseEvent | TouchEvent, long: (e: MouseEvent | Touc
             ox = Math.abs(x - tx);
             oy = Math.abs(y - ty);
         },
-        up: (e) => {
+        up: async () => {
             if (timer !== undefined) {
+                // --- 肯定没执行 long ---
                 clearTimeout(timer);
                 timer = undefined;
             }
-            if (e.type === 'touchcancel') {
-                long(e);
+            else if (isLong) {
+                lastLongTime = Date.now();
             }
         }
     });
@@ -437,13 +551,14 @@ export function bindLong(e: MouseEvent | TouchEvent, long: (e: MouseEvent | Touc
 export let is = Vue.reactive({
     'move': false
 });
+
 /**
  * --- 绑定拖动事件 ---
  * @param e mousedown 或 touchstart 的 event
  * @param opt 回调选项
  */
 export function bindMove(e: MouseEvent | TouchEvent, opt: { 'areaObject'?: HTMLElement | IVue; 'left'?: number; 'top'?: number; 'right'?: number; 'bottom'?: number; 'offsetLeft'?: number; 'offsetTop'?: number; 'offsetRight'?: number; 'offsetBottom'?: number; 'objectLeft'?: number; 'objectTop'?: number; 'objectWidth'?: number; 'objectHeight'?: number; 'object'?: HTMLElement | IVue; 'showRect'?: boolean; 'start'?: (x: number, y: number) => void | boolean; 'move'?: (ox: number, oy: number, x: number, y: number, border: TCGBorder) => void; 'up'?: (moveTimes: Array<{ 'time': number; 'ox': number; 'oy': number; }>) => void; 'end'?: (moveTimes: Array<{ 'time': number; 'ox': number; 'oy': number; }>) => void; 'borderIn'?: (x: number, y: number, border: TCGBorder) => void; 'borderOut'?: () => void; }): { 'left': number; 'top': number; 'right': number; 'bottom': number; } {
-    if (isMouseAlsoTouchEvent(e)) {
+    if (hasTouchButMouse(e)) {
         return {
             'left': 0,
             'top': 0,
@@ -453,19 +568,19 @@ export function bindMove(e: MouseEvent | TouchEvent, opt: { 'areaObject'?: HTMLE
     }
     is.move = true;
     setGlobalCursor(getComputedStyle(e.target as Element).cursor);
-    /** --- 上一次的坐标 --- */
-    let tx: number, ty: number;
-    if (e instanceof MouseEvent) {
-        tx = e.clientX;
-        ty = e.clientY;
-    }
-    else {
-        tx = e.touches[0].clientX;
-        ty = e.touches[0].clientY;
-    }
+    /** --- 上一次的 x 坐标 --- */
+    let tx: number = e instanceof MouseEvent ? e.clientX : e.touches[0].clientX;
+    /** --- 上一次的 y 坐标 --- */
+    let ty: number = e instanceof MouseEvent ? e.clientY : e.touches[0].clientY;
 
-    // --- 限定拖动区域 ---
-    let left: number, top: number, right: number, bottom: number;
+    /** --- 拖动限定区域左侧 --- */
+    let left: number,
+        /** --- 拖动限定区域顶部 --- */
+        top: number,
+        /** --- 拖动限定区域右侧 --- */
+        right: number,
+        /** --- 拖动限定区域底部 --- */
+        bottom: number;
     if (opt.areaObject) {
         if (!(opt.areaObject instanceof HTMLElement)) {
             opt.areaObject = opt.areaObject.$el;
@@ -503,10 +618,14 @@ export function bindMove(e: MouseEvent | TouchEvent, opt: { 'areaObject'?: HTMLE
 
     // --- 限定拖动对象，限定后整体对象将无法拖动出边界 ---
     let objectLeft: number, objectTop: number, objectWidth: number, objectHeight: number;
-    let offsetLeft = 0;
-    let offsetTop = 0;
-    let offsetRight = 0;
-    let offsetBottom = 0;
+    /** --- 初始坐标距离 object 左侧的距离 --- */
+    let offsetLeft: number = 0,
+        /** --- 初始坐标距离 object 顶部的距离 --- */
+        offsetTop: number = 0,
+        /** --- 初始坐标距离 object 右侧的距离 --- */
+        offsetRight: number = 0,
+        /** --- 初始坐标距离 object 底部的距离 --- */
+        offsetBottom = 0;
 
     /** --- 每次拖动时的时间以及偏移 --- */
     let moveTimes: Array<{ 'time': number; 'ox': number; 'oy': number; }> = [];
@@ -549,20 +668,33 @@ export function bindMove(e: MouseEvent | TouchEvent, opt: { 'areaObject'?: HTMLE
         },
         move: (e: MouseEvent | TouchEvent) => {
             /** --- 本次 x 坐标 --- */
-            let x: number, y: number;
+            let x: number,
+                /** --- 本次 y 坐标 --- */
+                y: number;
             x = e instanceof MouseEvent ? e.clientX : e.touches[0].clientX;
             y = e instanceof MouseEvent ? e.clientY : e.touches[0].clientY;
             if (x === tx && y === ty) {
+                // --- 没有移动，直接返回 ---
                 return;
             }
 
-            /** --- 当前是否在边界线上 --- */
-            let inBorderTop: boolean = false, inBorderRight: boolean = false, inBorderBottom: boolean = false, inBorderLeft: boolean = false;
+            /** --- 当前是否在顶部边界线上 --- */
+            let inBorderTop: boolean = false,
+                /** --- 当前是否在右侧边界上 --- */
+                inBorderRight: boolean = false,
+                /** --- 当前是否在底部边界上 --- */
+                inBorderBottom: boolean = false,
+                /** --- 当前是否在左侧边界上 --- */
+                inBorderLeft: boolean = false;
 
-            let xol = x - offsetLeft;
-            let xor = x + offsetRight;
-            if (xol <= left) {
-                if (xol < left && x < tx) {
+            /** --- 当前理论上可拖动 object 应该存在的 x 左侧 --- */
+            let nowLeft = x - offsetLeft;
+            /** --- 当前理论上可拖动 object 应该存在的 x 右侧 --- */
+            let nowRight = x + offsetRight;
+            if (nowLeft <= left) {
+                // --- 必定是到左侧边界了 ---
+                inBorderLeft = true;
+                if (nowLeft < left && x < tx) {
                     // --- 当前 x 超越了 left 界限，还在向左移动 ---
                     if (tx - offsetLeft > left) {
                         // --- 如果刚刚还没超过，则设定为界限值 ---
@@ -573,11 +705,12 @@ export function bindMove(e: MouseEvent | TouchEvent, opt: { 'areaObject'?: HTMLE
                         x = tx;
                     }
                 }
-                inBorderLeft = true;
             }
-            else if (offsetRight > 0) {
-                if (xor >= right) {
-                    if (xor > right && x > tx) {
+            else if (offsetRight !== 0) {
+                if (nowRight >= right) {
+                    // --- 必定到右侧边界 ---
+                    inBorderRight = true;
+                    if (nowRight > right && x > tx) {
                         if (tx + offsetRight < right) {
                             x = right - offsetRight;
                         }
@@ -585,27 +718,30 @@ export function bindMove(e: MouseEvent | TouchEvent, opt: { 'areaObject'?: HTMLE
                             x = tx;
                         }
                     }
-                    inBorderRight = true;
                 }
             }
             else if (offsetRight === 0) {
-                let rs1 = right - 1;
-                if (x >= rs1) {
-                    if (x > rs1 && x > tx) {
-                        if (tx < rs1) {
-                            x = rs1;
+                let r1 = right - 1;
+                if (x >= r1) {
+                    inBorderRight = true;
+                    if (x > r1 && x > tx) {
+                        if (tx < r1) {
+                            x = r1;
                         }
                         else {
                             x = tx;
                         }
                     }
-                    inBorderRight = true;
                 }
             }
-            let yot = y - offsetTop;
-            let yob = y + offsetBottom;
-            if (yot <= top) {
-                if (yot < top && y < ty) {
+
+            /** --- 当前理论上可拖动 object 应该存在的 y 顶部 --- */
+            let nowTop = y - offsetTop;
+            /** --- 当前理论上可拖动 object 应该存在的 y 底部 --- */
+            let nowBottom = y + offsetBottom;
+            if (nowTop <= top) {
+                inBorderTop = true;
+                if (nowTop < top && y < ty) {
                     if (ty - offsetTop > top) {
                         y = top + offsetTop;
                     }
@@ -613,11 +749,11 @@ export function bindMove(e: MouseEvent | TouchEvent, opt: { 'areaObject'?: HTMLE
                         y = ty;
                     }
                 }
-                inBorderTop = true;
             }
-            else if (offsetBottom > 0) {
-                if (yob >= bottom) {
-                    if (yob > bottom && y > ty) {
+            else if (offsetBottom !== 0) {
+                if (nowBottom >= bottom) {
+                    inBorderBottom = true;
+                    if (nowBottom > bottom && y > ty) {
                         if (ty + offsetBottom < bottom) {
                             y = bottom - offsetBottom;
                         }
@@ -625,21 +761,20 @@ export function bindMove(e: MouseEvent | TouchEvent, opt: { 'areaObject'?: HTMLE
                             y = ty;
                         }
                     }
-                    inBorderBottom = true;
                 }
             }
             else if (offsetBottom === 0) {
-                let bs1 = bottom - 1;
-                if (y >= bs1) {
-                    if (y > bs1 && y > ty) {
-                        if (ty < bs1) {
-                            y = bs1;
+                let b1 = bottom - 1;
+                if (y >= b1) {
+                    inBorderBottom = true;
+                    if (y > b1 && y > ty) {
+                        if (ty < b1) {
+                            y = b1;
                         }
                         else {
                             y = ty;
                         }
                     }
-                    inBorderBottom = true;
                 }
             }
 
@@ -735,7 +870,7 @@ export function bindMove(e: MouseEvent | TouchEvent, opt: { 'areaObject'?: HTMLE
         });
         setTimeout(() => {
             clickgo.form.hideRectangle();
-        }, 1000);
+        }, 3000);
     }
 
     return {
@@ -754,7 +889,7 @@ export function bindMove(e: MouseEvent | TouchEvent, opt: { 'areaObject'?: HTMLE
  * @param endCb 结束时的回调
  */
 export function bindResize(e: MouseEvent | TouchEvent, opt: { 'objectLeft'?: number; 'objectTop'?: number; 'objectWidth'?: number; 'objectHeight'?: number; 'object'?: HTMLElement | IVue; 'minWidth'?: number; 'minHeight'?: number; 'maxWidth'?: number; 'maxHeight'?: number; 'border': TCGBorder; 'start'?: (x: number, y: number) => void | boolean; 'move'?: (left: number, top: number, width: number, height: number, x: number, y: number, border: TCGBorder) => void; 'end'?: () => void; }): void {
-    if (isMouseAlsoTouchEvent(e)) {
+    if (hasTouchButMouse(e)) {
         return;
     }
     opt.minWidth = opt.minWidth ?? 0;
@@ -850,32 +985,18 @@ export function bindResize(e: MouseEvent | TouchEvent, opt: { 'objectLeft'?: num
 }
 
 /**
- * --- 通过 class 名查找上层所有标签是否有匹配的 ---
+ * --- 通过 data 名查找上层所有标签是否存在 ---
  * @param el 当前标签
- * @param cn 要查找的 class 名/列表
+ * @param name 要查找的 data 名
  */
-export function findParentByClass(el: HTMLElement, cn: string | RegExp | Array<string | RegExp>): HTMLElement | null {
-    if (!Array.isArray(cn)) {
-        cn = [cn];
-    }
+export function findParentByData(el: HTMLElement, name: string): HTMLElement | null {
     let parent = el.parentNode as HTMLElement;
     while (parent) {
         if (parent.tagName.toLowerCase() === 'body') {
             break;
         }
-        for (let it of cn) {
-            if (typeof it === 'string') {
-                if (parent.classList.contains(it)) {
-                    return parent;
-                }
-            }
-            else {
-                for (let cl of parent.classList) {
-                    if (it.test(cl)) {
-                        return parent;
-                    }
-                }
-            }
+        if (parent.getAttribute('data-' + name) !== null) {
+            return parent;
         }
         parent = parent.parentNode as HTMLElement;
     }
@@ -883,22 +1004,39 @@ export function findParentByClass(el: HTMLElement, cn: string | RegExp | Array<s
 }
 
 /**
- * --- 查找指定 el 的同级 className ---
+ * --- 查找指定 el 的同级所有元素 ---
  * @param el 基准
- * @param cn 同级 classname
+ * @returns HTMLElement[]
  */
-export function siblings(el: HTMLElement, cn: string): HTMLElement | null {
+export function siblings(el: HTMLElement): HTMLElement[] {
     if (!el.parentNode) {
-        return null;
+        return [];
     }
+    let list: HTMLElement[] = [];
     for (let i = 0; i < el.parentNode.children.length; ++i) {
         let e = el.parentNode.children.item(i) as HTMLElement;
         if (e === el) {
             continue;
         }
-        if (e.classList.contains(cn)) {
-            return e;
-        }
+        list.push(e);
     }
-    return null;
+    return list;
+}
+
+/**
+ * --- 查找指定 el 的同级的存在 data 的元素 ---
+ * @param el 基准
+ * @param name data 名，不含 data-
+ * @returns HTMLElement[]
+ */
+export function siblingsData(el: HTMLElement, name: string): HTMLElement[] {
+    let list = siblings(el);
+    let olist: HTMLElement[] = [];
+    for (let item of list) {
+        if (item.getAttribute('data-' + name) === null) {
+            continue;
+        }
+        olist.push(item);
+    }
+    return olist;
 }

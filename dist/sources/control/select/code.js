@@ -1,30 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.methods = exports.computed = exports.data = exports.watch = exports.props = void 0;
+exports.mounted = exports.methods = exports.computed = exports.data = exports.watch = exports.props = void 0;
 exports.props = {
     'disabled': {
         'default': false
-    },
-    'width': {
-        'default': undefined
-    },
-    'height': {
-        'default': undefined
-    },
-    'left': {
-        'default': undefined
-    },
-    'top': {
-        'default': undefined
-    },
-    'zIndex': {
-        'default': undefined
-    },
-    'flex': {
-        'default': undefined
-    },
-    'padding': {
-        'default': undefined
     },
     'modelValue': {
         'default': ''
@@ -53,11 +32,11 @@ exports.watch = {
     }
 };
 exports.data = {
-    'cgNest': true,
+    'background': '',
+    'padding': '',
     'value': '',
     'label': '',
-    'inputValue': '',
-    'doInput': false
+    'inputValue': ''
 };
 exports.computed = {
     'isDisabled': function () {
@@ -65,23 +44,41 @@ exports.computed = {
     },
     'isEditable': function () {
         return clickgo.tool.getBoolean(this.editable);
+    },
+    'opMargin': function () {
+        return this.padding.replace(/(\w+)/g, '-$1');
     }
 };
 exports.methods = {
-    updateModelValue: function (value) {
-        this.value = value;
-        if (!this.doInput) {
-            this.inputValue = value;
-            this.$emit('update:modelValue', value);
-            return;
-        }
-        else {
-            this.doInput = false;
-        }
-    },
-    input: function () {
-        this.doInput = true;
+    updateInputValue: function (value) {
+        this.inputValue = value;
         this.value = this.inputValue;
         this.$emit('update:modelValue', this.value);
+    },
+    updateModelValue: function (value) {
+        this.value = value;
+        if (this.isEditable && (value === '')) {
+            return;
+        }
+        this.inputValue = value;
+        this.$emit('update:modelValue', value);
+        if (this.$refs.list) {
+            let pop = clickgo.dom.findParentByData(this.$refs.list.$el, 'cg-pop');
+            clickgo.form.hidePop(pop);
+        }
     }
+};
+exports.mounted = function () {
+    clickgo.dom.watchStyle(this.$el, ['font', 'line-height', 'background', 'color', 'padding'], (n, v) => {
+        switch (n) {
+            case 'background': {
+                this.background = v;
+                break;
+            }
+            case 'padding': {
+                this.padding = v;
+                break;
+            }
+        }
+    }, true);
 };

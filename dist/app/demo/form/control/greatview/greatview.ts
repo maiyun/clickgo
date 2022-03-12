@@ -1,4 +1,5 @@
 export let data = {
+    'lineValue': 100,
     'lineCount': 2,
 
     'sLeft1': 0,
@@ -21,6 +22,8 @@ export let data = {
     'l4': 0,
     'c4': 0,
 
+    'direction': false,
+
     'dir5': 'v',
     'sLeft5': 0,
     'sTop5': 0,
@@ -29,6 +32,27 @@ export let data = {
     'line5': 10,
 
     'c6': 0,
+    'is6': [],
 
-    'style': false
+    'style': false,
+    'selection': false,
+    'area': {}
+};
+
+export let computed = {
+    'is': function(this: IVForm): any[] {
+        let is = [];
+        for (let i = 0; i < this.lineCount; ++i) {
+            if (i > 0 && i % 10 === 0) {
+                is[i] = 30;
+                continue;
+            }
+        }
+        return is;
+    }
+};
+
+export let mounted = function(this: IVForm): void {
+    this.is6[29] = 50;
+    this.is6[39] = 50;
 };

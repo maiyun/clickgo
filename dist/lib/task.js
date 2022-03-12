@@ -9,20 +9,20 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.loadLocalData = exports.end = exports.run = exports.getList = exports.get = exports.lastId = exports.list = void 0;
+exports.removeTimer = exports.createTimer = exports.loadLocalData = exports.end = exports.run = exports.getList = exports.get = exports.lastId = exports.list = void 0;
 exports.list = {};
 exports.lastId = 0;
 let localData = {
-    'en-us': {
+    'en': {
         'loading': 'Loading...',
     },
-    'zh-cn': {
+    'sc': {
         'loading': '加载中……'
     },
-    'zh-tw': {
+    'tc': {
         'loading': '載入中……'
     },
-    'ja-jp': {
+    'ja': {
         'loading': '読み込み中...'
     }
 };
@@ -70,7 +70,7 @@ function run(url, opt = {}) {
             opt.runtime = {};
         }
         let notifyId = opt.progress ? clickgo.form.notify({
-            'title': (_b = (_a = localData[clickgo.core.config.local]) === null || _a === void 0 ? void 0 : _a.loading) !== null && _b !== void 0 ? _b : localData['en-us'].loading,
+            'title': (_b = (_a = localData[clickgo.core.config.local]) === null || _a === void 0 ? void 0 : _a.loading) !== null && _b !== void 0 ? _b : localData['en'].loading,
             'content': url,
             'icon': opt.icon,
             'timeout': 0,
@@ -245,8 +245,8 @@ function end(taskId) {
     for (let name in task.controlPkgs) {
         clickgo.control.revokeObjectURL(task.controlPkgs[name]);
     }
-    for (let timer of exports.list[taskId].timers) {
-        clearTimeout(timer);
+    for (let timer in exports.list[taskId].timers) {
+        clearTimeout(parseFloat(timer));
     }
     delete (exports.list[taskId]);
     clickgo.core.trigger('taskEnded', taskId);
@@ -269,3 +269,54 @@ function loadLocalData(taskId, name, data, pre = '') {
     }
 }
 exports.loadLocalData = loadLocalData;
+function createTimer(taskId, formId, fun, delay, opt = {}) {
+    var _a, _b;
+    let scope = (_a = opt.scope) !== null && _a !== void 0 ? _a : 'form';
+    let count = (_b = opt.count) !== null && _b !== void 0 ? _b : 0;
+    let c = 0;
+    if (opt.immediate) {
+        fun();
+        ++c;
+        if (count > 0 && c === count) {
+            return 0;
+        }
+    }
+    let timer;
+    let timerHandler = () => {
+        ++c;
+        if (exports.list[taskId].forms[formId] === undefined) {
+            if (scope === 'form') {
+                clearTimeout(timer);
+                delete (exports.list[taskId].timers[timer]);
+                return;
+            }
+        }
+        fun();
+        if (count > 0 && c === count) {
+            clearTimeout(timer);
+            delete (exports.list[taskId].timers[timer]);
+            return;
+        }
+    };
+    if (count === 1) {
+        timer = window.setTimeout(timerHandler, delay);
+    }
+    else {
+        timer = window.setInterval(timerHandler, delay);
+    }
+    exports.list[taskId].timers[timer] = formId;
+    return timer;
+}
+exports.createTimer = createTimer;
+function removeTimer(taskId, timer) {
+    if (clickgo.task.list[taskId] === undefined) {
+        return;
+    }
+    let formId = clickgo.task.list[taskId].timers[timer];
+    if (formId === undefined) {
+        return;
+    }
+    clearTimeout(timer);
+    delete (clickgo.task.list[taskId].timers[timer]);
+}
+exports.removeTimer = removeTimer;

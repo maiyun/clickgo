@@ -5,24 +5,6 @@ exports.props = {
     'disabled': {
         'default': false
     },
-    'width': {
-        'default': undefined
-    },
-    'height': {
-        'default': undefined
-    },
-    'left': {
-        'default': undefined
-    },
-    'top': {
-        'default': undefined
-    },
-    'zIndex': {
-        'default': undefined
-    },
-    'flex': {
-        'default': ''
-    },
     'direction': {
         'default': 'v'
     },
@@ -47,7 +29,9 @@ exports.data = {
     'tran': false,
     'opacity': '1',
     'opacityTimer': undefined,
-    'isEnter': false
+    'isEnter': false,
+    'width': 0,
+    'height': 0
 };
 exports.watch = {
     'length': {
@@ -84,7 +68,9 @@ exports.watch = {
             }
             this.opacityTimer = this.cgCreateTimer(() => {
                 this.opacity = '0';
-            }, 800);
+            }, 800, {
+                'count': 1
+            });
             this.opacity = '1';
         }
     },
@@ -92,7 +78,9 @@ exports.watch = {
         if (this.isFloat) {
             this.opacityTimer = this.cgCreateTimer(() => {
                 this.opacity = '0';
-            }, 800);
+            }, 800, {
+                'count': 1
+            });
         }
         else {
             if (this.opacityTimer) {
@@ -137,7 +125,7 @@ exports.computed = {
 };
 exports.methods = {
     down: function (e) {
-        if (clickgo.dom.isMouseAlsoTouchEvent(e)) {
+        if (clickgo.dom.hasTouchButMouse(e)) {
             return;
         }
         clickgo.dom.bindMove(e, {
@@ -152,7 +140,7 @@ exports.methods = {
         });
     },
     bardown: function (e) {
-        if (clickgo.dom.isMouseAlsoTouchEvent(e)) {
+        if (clickgo.dom.hasTouchButMouse(e)) {
             return;
         }
         if (e.currentTarget !== e.target) {
@@ -176,9 +164,6 @@ exports.methods = {
         this.down(e);
     },
     longDown: function (e, type) {
-        if (this.isDisabled) {
-            return;
-        }
         if (this.client >= this.length) {
             return;
         }
@@ -232,10 +217,9 @@ exports.methods = {
         });
     },
     enter: function (e) {
-        if (clickgo.dom.isMouseAlsoTouchEvent(e)) {
+        if (clickgo.dom.hasTouchButMouse(e)) {
             return;
         }
-        this.cgEnter(e);
         this.isEnter = true;
         if (this.isFloat) {
             this.opacity = '1';
@@ -246,19 +230,19 @@ exports.methods = {
         }
     },
     leave: function (e) {
-        if (clickgo.dom.isMouseAlsoTouchEvent(e)) {
+        if (clickgo.dom.hasTouchButMouse(e)) {
             return;
         }
-        this.cgLeave(e);
         this.isEnter = false;
         if (this.isFloat) {
             this.opacityTimer = this.cgCreateTimer(() => {
                 this.opacity = '0';
-            }, 800);
+            }, 800, {
+                'count': 1
+            });
         }
     },
     wrapDown: function (e) {
-        this.cgDown(e);
         clickgo.dom.bindDown(e, {
             down: () => {
                 this.isEnter = true;
@@ -275,7 +259,9 @@ exports.methods = {
                 if (this.isFloat) {
                     this.opacityTimer = this.cgCreateTimer(() => {
                         this.opacity = '0';
-                    }, 800);
+                    }, 800, {
+                        'count': 1
+                    });
                 }
             }
         });
@@ -300,12 +286,17 @@ exports.mounted = function () {
     if (this.isFloat) {
         this.opacityTimer = this.cgCreateTimer(() => {
             this.opacity = '0';
-        }, 800);
+        }, 800, {
+            'count': 1
+        });
     }
     clickgo.dom.watchSize(this.$refs.bar, (size) => {
         this.barLengthPx = this.direction === 'v' ? size.height : size.width;
         this.scrollOffsetPx = this.barOutSize * (this.scrollOffsetData / this.maxScroll);
-    });
+        let els = clickgo.dom.getSize(this.$el);
+        this.width = els.width;
+        this.height = els.height;
+    }, true);
     let scrollOffsetData = Math.round(parseFloat(this.scrollOffset));
     if (this.scrollOffsetData === scrollOffsetData) {
         return;

@@ -1,6 +1,10 @@
-<div class="wrap" :class="[cgHover && 'hover', cgActive && 'active']" :style="{'width': cgWidthPx, 'height': cgHeightPx, 'left': left + 'px', 'top': top + 'px', 'z-index': zIndex, 'flex-grow': flex}" @click="cgTap" @mousedown="cgDown" @mouseup="cgUp" @mouseenter="cgEnter" @mouseleave="cgLeave" @touchstart="cgDown" @touchend="cgUp" @touchcancel="cgCancel" @dblclick="cgDblclick">
-    <cg-layout class="content" :direction="direction" :gutter="gutter" :style="{'padding': padding && padding.replace(/([0-9]+)($| )/g, '$1px$2')}"><slot></slot></cg-layout>
-    <cg-layout align-h="end" class="controls" gutter="10">
-        <cg-button v-for="item of buttons" @tap="click(item)" width="80" :cg-focus="cgFocus">{{item}}</cg-button>
-    </cg-layout>
+<div class="wrap">
+    <div :style="{'margin': paddingMargin}">
+        <cg-layout class="content" :direction="direction" :gutter="gutter" :style="{'padding': padding}">
+            <slot></slot>
+        </cg-layout>
+        <cg-layout align-h="end" class="controls" gutter="10">
+            <cg-button v-for="item of buttons" @click="click(item)">{{item}}</cg-button>
+        </cg-layout>
+    </div>
 </div>

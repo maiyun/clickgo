@@ -32,7 +32,8 @@ export async function read(blob: Blob): Promise<false | ICGControlPkg> {
                 if (!fab) {
                     continue;
                 }
-                files[file] = fab;
+                // --- 去除 BOM ---
+                files[file] = fab.replace(/^\ufeff/, '');
             }
             else {
                 let fab = await zip.getContent('/' + control.name + file, 'arraybuffer');

@@ -1,5 +1,5 @@
 <form width="300" height="300" title="Label">
-    <layout direction="v" gutter="10" style="padding: 10px;">
+    <layout direction="v" gutter="10" style="padding: 10px; flex: 1; width: 0;">
         <label>You can use CSS to customize the label:</label>
         <label>Normal</label>
         <label style="text-align: center;">Center</label>

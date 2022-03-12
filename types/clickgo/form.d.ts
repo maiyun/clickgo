@@ -1,9 +1,4 @@
 interface ICGFormLib {
-    'popShowing': null | IVueControl;
-    'lastFormId': number;
-    'lastZIndex': number;
-    'lastTopZIndex': number;
-    'lastPopZIndex': number;
     'taskInfo': ICGFormTaskInfo;
     setTask(taskId: number, formId: number): boolean;
     clearTask(taskId: number): boolean;
@@ -13,6 +8,7 @@ interface ICGFormLib {
     getTaskId(formId: number): number;
     min(formId: number): boolean;
     get(formId: number): ICGFormItem | null;
+    send(formId: number, obj: Record<string, any>): void;
     getList(taskId: number): Record<string, ICGFormItem>;
     changeFocus(formId?: number): void;
     getMaxZIndexFormID(out?: {
@@ -42,8 +38,8 @@ interface ICGFormLib {
     'simpletaskRoot': IVue;
     appendToPop(el: HTMLElement): void;
     removeFromPop(el: HTMLElement): void;
-    showPop(pop: IVueControl, direction: 'h' | 'v' | MouseEvent | TouchEvent | { x: number; y: number; }, opt?: { 'size'?: { width?: number; height?: number; }; 'null'?: boolean; }): void;
-    hidePop(pop?: IVueControl | null): void;
+    showPop(el: HTMLElement, pop: HTMLElement | undefined, direction: 'h' | 'v' | MouseEvent | TouchEvent | { x: number; y: number; }, opt?: { 'size'?: { width?: number; height?: number; }; 'null'?: boolean; }): void;
+    hidePop(pop?: HTMLElement | undefined | null): void;
     doFocusAndPopEvent(e: MouseEvent | TouchEvent): void;
     remove(formId: number): boolean;
     create(taskId: number, opt: ICGFormCreateOptions): Promise<number | ICGForm>;
@@ -53,7 +49,7 @@ interface ICGFormLib {
 interface ICGForm {
     'id': number;
     'vapp': IVueApp;
-    'vroot': IVueForm;
+    'vroot': IVForm;
     'win': Electron.BrowserWindow | null;
     'events': Record<string, (...any: any) => void | Promise<void>>;
 }

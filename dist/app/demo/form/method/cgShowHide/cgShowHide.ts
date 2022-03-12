@@ -1,8 +1,7 @@
 export let methods = {
-    cgShowHide: function(this: IVueForm): void {
+    cgShowHide: async function(this: IVForm):  Promise<void> {
         this.cgHide();
-        this.cgCreateTimer(() => {
-            this.cgShow();
-        }, 1000);
+        await clickgo.tool.sleep(1000);
+        this.cgShow();
     }
 };

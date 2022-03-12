@@ -1,5 +1,7 @@
 /** --- ClickGo 基 --- */
 interface IClickGo {
+    /** --- 安全模式 --- */
+    'safe': boolean;
     /** --- 当前请求页面的基路径 --- */
     'rootPath': string;
     /** --- 当前 JS 文件的基路径 --- */

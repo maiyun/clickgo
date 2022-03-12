@@ -1,32 +1,32 @@
 <form title="Scroll" width="400" min-width="300" height="400" min-height="390" padding="10" background="#FFF">
-    <layout flex="1" gutter="10" direction="v">
-        <layout flex="1" gutter="10">
-            <layout flex="1" gutter="10" direction="v">
+    <layout gutter="10" direction="v" style="flex: 1; width: 0;">
+        <layout gutter="10" style="flex: 1; height: 0;">
+            <layout gutter="10" direction="v" style="flex: 1;">
                 <label>Scroll offset: {{so1}}</label>
                 <layout gutter="10">
-                    <button flex="1" @tap="l1 = (l1 === 1000 ? 2000 : 1000)">Set length {{l1 === 1000 ? '2000' : '1000'}}</button>
-                    <button flex="1" @tap="c1 = (c1 === 100 ? 200 : 100)">Set client {{c1 === 100 ? '200' : '100'}}</button>
+                    <button @click="l1 = (l1 === 1000 ? 2000 : 1000)" style="height: 30px; flex: 1;">Set length {{l1 === 1000 ? '2000' : '1000'}}</button>
+                    <button @click="c1 = (c1 === 100 ? 200 : 100)" style="height: 30px; flex: 1;">Set client {{c1 === 100 ? '200' : '100'}}</button>
                 </layout>
-                <button @tap="disabled = !disabled">{{disabled ? 'Remove' : 'Set'}} disabled</button>
+                <button @click="disabled = !disabled" style="height: 30px;">{{disabled ? 'Remove' : 'Set'}} disabled</button>
             </layout>
-            <scroll width="20" :length="l1" :client="c1" v-model:scroll-offset="so1" :disabled="disabled"></scroll>
-            <scroll width="30" scroll-offset="200" :disabled="disabled"></scroll>
-            <scroll width="30" :disabled="disabled"></scroll>
+            <scroll :length="l1" :client="c1" v-model:scroll-offset="so1" :disabled="disabled" style="width: 20px;"></scroll>
+            <scroll scroll-offset="200" :disabled="disabled" style="width: 30px;"></scroll>
+            <scroll :disabled="disabled" style="width: 30px;"></scroll>
         </layout>
-        <scroll direction="h" height="30" :disabled="disabled"></scroll>
-        <layout flex="1" style="border: solid 1px rgba(0, 0, 0, .3);">
-            <overflow v-model:scroll-top="so2" flex="1" direction="v" @resize="c2 = $event" @change="l2 = $event" style="line-height: 1.5;">
+        <scroll direction="h" :disabled="disabled" style="height: 30px;"></scroll>
+        <layout style="border: solid 1px rgba(0, 0, 0, .3); flex: 1; height: 0;">
+            <overflow v-model:scroll-top="so2" direction="v" @resize="c2 = $event" @change="l2 = $event" style="line-height: 1.5; flex: 1;">
                 <block style="padding: 10px;">
                     <block>Length: {{l2}}, Client: {{c2}}.</block>
                     <block v-for="line of count">Line {{line}}.</block>
                 </block>
             </overflow>
-            <scroll width="20" :length="l2" :client="c2" v-model:scroll-offset="so2" :float="float" :disabled="disabled"></scroll>
+            <scroll :length="l2" :client="c2" v-model:scroll-offset="so2" :float="float" :disabled="disabled" style="width: 20px;"></scroll>
         </layout>
         <layout gutter="10" align-v="center">
-            <label flex="1">On the left is the overflow control.</label>
-            <button @tap="float = !float" style="padding: 0 10px;">{{float ? 'Remove' : 'Set'}} float</button>
-            <button @tap="count += 10" style="padding: 0 10px;">Add 10 lines</button>
+            <label style="flex: 1;">On the left is the overflow control.</label>
+            <button @click="float = !float" style="padding: 0 10px; height: 30px;">{{float ? 'Remove' : 'Set'}} float</button>
+            <button @click="count += 10" style="padding: 0 10px; height: 30px;">Add 10 lines</button>
         </layout>
     </layout>
 </form>

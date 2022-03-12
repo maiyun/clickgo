@@ -11,32 +11,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.unmounted = exports.mounted = exports.methods = exports.computed = exports.watch = exports.data = exports.props = void 0;
 exports.props = {
-    'width': {
-        'default': undefined
-    },
-    'height': {
-        'default': undefined
-    },
-    'left': {
-        'default': 0
-    },
-    'top': {
-        'default': 0
-    },
-    'zIndex': {
-        'default': 0
-    },
-    'flex': {
-        'default': ''
-    },
     'direction': {
         'default': 'h'
-    },
-    'padding': {
-        'default': undefined
-    },
-    'adaptation': {
-        'dafault': false
     },
     'scrollLeft': {
         'default': 0
@@ -44,11 +20,18 @@ exports.props = {
     'scrollTop': {
         'default': 0
     },
+    'selection': {
+        'default': false
+    },
     'content': {
-        'default': 'max'
+        'default': undefined
+    },
+    'solo': {
+        'default': true
     }
 };
 exports.data = {
+    'padding': '',
     'scrollLeftData': 0,
     'scrollTopData': 0,
     'scrollLeftEmit': 0,
@@ -56,19 +39,22 @@ exports.data = {
     'clientWidth': 0,
     'clientHeight': 0,
     'clientInit': false,
-    'lengthWidth': 0,
-    'lengthHeight': 0,
-    'lengthInit': false,
-    'timer': false
+    'lengthWidth': -1,
+    'lengthHeight': -1,
+    'lengthEmit': -1,
+    'selectionOrigin': { x: 0, y: 0 },
+    'selectionCurrent': { x: 0, y: 0, quick: false },
+    'timer': false,
+    'selectionTimer': false
 };
 exports.watch = {
     'direction': function () {
-        let size = clickgo.dom.getSize(this.$refs.wrap);
-        if (this.clientWidth !== size.innerWidth) {
-            this.clientWidth = size.innerWidth;
+        let size = clickgo.dom.getSize(this.$el);
+        if (this.clientWidth !== size.clientWidth) {
+            this.clientWidth = size.clientWidth;
         }
-        if (this.clientHeight !== size.innerHeight) {
-            this.clientHeight = size.innerHeight;
+        if (this.clientHeight !== size.clientHeight) {
+            this.clientHeight = size.clientHeight;
         }
         this.$emit('resize', this.direction === 'v' ? Math.round(this.clientHeight) : Math.round(this.clientWidth));
         this.$emit('resizen', this.direction === 'h' ? Math.round(this.clientHeight) : Math.round(this.clientWidth));
@@ -82,17 +68,30 @@ exports.watch = {
         handler: function () {
             this.goScroll(this.scrollTop, 'top');
         }
+    },
+    'scrollLeftData': {
+        handler: function () {
+            return __awaiter(this, void 0, void 0, function* () {
+                yield this.$nextTick();
+                this.refreshSelection();
+            });
+        }
+    },
+    'scrollTopData': {
+        handler: function () {
+            return __awaiter(this, void 0, void 0, function* () {
+                yield this.$nextTick();
+                this.refreshSelection();
+            });
+        }
     }
 };
 exports.computed = {
-    'adaptationComp': function () {
-        if (typeof this.adaptation === 'string') {
-            if (this.adaptation === 'false') {
-                return false;
-            }
-            return true;
-        }
-        return this.adaptation ? true : false;
+    'isSelection': function () {
+        return clickgo.tool.getBoolean(this.selection);
+    },
+    'isSolo': function () {
+        return clickgo.tool.getBoolean(this.solo);
     },
     'maxScrollLeft': function () {
         if (this.lengthWidth <= this.clientWidth) {
@@ -105,6 +104,9 @@ exports.computed = {
             return 0;
         }
         return Math.round(this.lengthHeight) - Math.round(this.clientHeight);
+    },
+    'opMargin': function () {
+        return this.padding.replace(/(\w+)/g, '-$1');
     }
 };
 exports.methods = {
@@ -116,14 +118,14 @@ exports.methods = {
                     e.stopPropagation();
                     e.preventDefault();
                     this.scrollTopData += e.deltaY;
-                    this.refreshView();
+                    this.refreshScroll();
                 }
-                else if (this.scrollLeftData > 0 && this.lengthHeight === this.clientHeight) {
+                else if (this.scrollLeftData > 0 && this.lengthHeight <= this.clientHeight) {
                     this.stopAnimation();
                     e.stopPropagation();
                     e.preventDefault();
                     this.scrollLeftData += e.deltaY;
-                    this.refreshView();
+                    this.refreshScroll();
                 }
             }
             else {
@@ -132,14 +134,14 @@ exports.methods = {
                     e.stopPropagation();
                     e.preventDefault();
                     this.scrollTopData += e.deltaY;
-                    this.refreshView();
+                    this.refreshScroll();
                 }
-                else if (this.scrollLeftData < this.maxScrollLeft && this.lengthHeight === this.clientHeight) {
+                else if (this.scrollLeftData < this.maxScrollLeft && this.lengthHeight <= this.clientHeight) {
                     this.stopAnimation();
                     e.stopPropagation();
                     e.preventDefault();
                     this.scrollLeftData += e.deltaY;
-                    this.refreshView();
+                    this.refreshScroll();
                 }
             }
         }
@@ -150,14 +152,14 @@ exports.methods = {
                     e.stopPropagation();
                     e.preventDefault();
                     this.scrollLeftData += e.deltaX;
-                    this.refreshView();
+                    this.refreshScroll();
                 }
-                else if (this.scrollTopData > 0 && this.lengthWidth === this.clientWidth) {
+                else if (this.scrollTopData > 0 && this.lengthWidth <= this.clientWidth) {
                     this.stopAnimation();
                     e.stopPropagation();
                     e.preventDefault();
                     this.scrollTopData += e.deltaX;
-                    this.refreshView();
+                    this.refreshScroll();
                 }
             }
             else {
@@ -166,38 +168,34 @@ exports.methods = {
                     e.stopPropagation();
                     e.preventDefault();
                     this.scrollLeftData += e.deltaX;
-                    this.refreshView();
+                    this.refreshScroll();
                 }
-                else if (this.scrollTopData < this.maxScrollTop && this.lengthWidth === this.clientWidth) {
+                else if (this.scrollTopData < this.maxScrollTop && this.lengthWidth <= this.clientWidth) {
                     this.stopAnimation();
                     e.stopPropagation();
                     e.preventDefault();
                     this.scrollTopData += e.deltaX;
-                    this.refreshView();
+                    this.refreshScroll();
                 }
             }
         }
     },
     down: function (e) {
-        if (clickgo.dom.isMouseAlsoTouchEvent(e)) {
+        if (clickgo.dom.hasTouchButMouse(e)) {
             return;
         }
         this.stopAnimation();
         let bindMove = (e) => {
-            let wrapSize = clickgo.dom.getSize(this.$refs.wrap);
-            let top = wrapSize.top + wrapSize.border.top + wrapSize.padding.top;
-            let right = wrapSize.right - wrapSize.border.right - wrapSize.padding.right;
-            let bottom = wrapSize.bottom - wrapSize.border.bottom - wrapSize.padding.bottom;
-            let left = wrapSize.left + wrapSize.border.left + wrapSize.padding.left;
+            let size = clickgo.dom.getSize(this.$el);
             let overWidth = this.lengthWidth - this.clientWidth;
             let overHeight = this.lengthHeight - this.clientHeight;
             clickgo.dom.bindMove(e, {
                 'object': this.$refs.inner,
-                'left': left - overWidth,
-                'right': right + overWidth,
-                'top': top - overHeight,
-                'bottom': bottom + overHeight,
-                'move': (ox, oy) => {
+                'left': size.left + size.border.left - (overWidth > 0 ? overWidth : 0),
+                'right': overWidth > 0 ? (size.right - size.border.right + overWidth) : (size.left + size.border.left + this.lengthWidth),
+                'top': size.top + size.border.top - (overHeight > 0 ? overHeight : 0),
+                'bottom': overHeight > 0 ? (size.bottom - size.border.bottom + overHeight) : (size.top + size.border.top + this.lengthHeight),
+                move: (ox, oy) => {
                     this.scrollLeftData -= ox;
                     this.scrollTopData -= oy;
                     let sleft = Math.round(this.scrollLeftData);
@@ -217,7 +215,7 @@ exports.methods = {
                         this.$emit('update:scrollTop', this.scrollTopEmit);
                     }
                 },
-                'up': (moveTimes) => __awaiter(this, void 0, void 0, function* () {
+                up: (moveTimes) => __awaiter(this, void 0, void 0, function* () {
                     let moveLeftPos = 0;
                     let moveTopPos = 0;
                     let topTime = 0;
@@ -339,62 +337,117 @@ exports.methods = {
         };
         let x = (e instanceof MouseEvent) ? e.clientX : e.touches[0].clientX;
         let y = (e instanceof MouseEvent) ? e.clientY : e.touches[0].clientY;
-        let count = 0;
-        let cancel = false;
-        clickgo.dom.bindDown(e, {
-            'move': (e) => {
-                if (cancel) {
-                    return;
-                }
-                ++count;
-                if (clickgo.dom.is.move) {
-                    cancel = true;
-                    return;
-                }
-                if (count < 3) {
-                    return;
-                }
-                let deltaX = x - ((e instanceof MouseEvent) ? e.clientX : e.touches[0].clientX);
-                let deltaY = y - ((e instanceof MouseEvent) ? e.clientY : e.touches[0].clientY);
-                if (deltaX === 0 && deltaY === 0) {
-                    return;
-                }
-                let isWheel = false;
-                if (Math.abs(deltaY) > Math.abs(deltaX)) {
-                    if (deltaY < 0) {
-                        if (this.scrollTopData > 0) {
-                            isWheel = true;
-                        }
-                    }
-                    else if (deltaY > 0) {
-                        if (this.scrollTopData < this.maxScrollTop) {
-                            isWheel = true;
-                        }
-                    }
-                }
-                else {
-                    if (deltaX < 0) {
-                        if (this.scrollLeftData > 0) {
-                            isWheel = true;
-                        }
-                    }
-                    else if (deltaX > 0) {
-                        if (this.scrollLeftData < this.maxScrollLeft) {
-                            isWheel = true;
-                        }
-                    }
-                }
-                if (isWheel) {
-                    e.stopPropagation();
-                    bindMove(e);
-                }
-                cancel = true;
+        if (this.isSelection) {
+            if (clickgo.dom.findParentByData(e.target, 'cg-selection-cancel')) {
+                return;
             }
-        });
-        this.cgDown(e);
+            clickgo.dom.bindDown(e, {
+                start: () => {
+                    let innerRect = this.$refs.inner.getBoundingClientRect();
+                    this.selectionOrigin.x = x - innerRect.left;
+                    this.selectionOrigin.y = y - innerRect.top;
+                    this.$refs.selection.style.opacity = '1';
+                    this.$refs.selection.style.left = this.selectionOrigin.x + 'px';
+                    this.$refs.selection.style.top = this.selectionOrigin.y + 'px';
+                    this.selectionTimer = true;
+                    this.$emit('beforeSelect');
+                    this.selectionCurrent.x = x;
+                    this.selectionCurrent.y = y;
+                    this.selectionRoll();
+                },
+                move: (ne) => {
+                    let nx = (ne instanceof MouseEvent) ? ne.clientX : ne.touches[0].clientX;
+                    let ny = (ne instanceof MouseEvent) ? ne.clientY : ne.touches[0].clientY;
+                    this.selectionCurrent.x = nx;
+                    this.selectionCurrent.y = ny;
+                    this.selectionCurrent.quick = true;
+                    this.refreshSelection(ne.shiftKey, ne.ctrlKey);
+                },
+                end: () => {
+                    this.$refs.selection.style.opacity = '0';
+                    this.selectionTimer = false;
+                    this.$emit('afterSelect');
+                }
+            });
+        }
+        else {
+            let count = 0;
+            let cancel = false;
+            clickgo.dom.bindDown(e, {
+                move: (e) => {
+                    if (cancel) {
+                        return;
+                    }
+                    if (clickgo.dom.is.move) {
+                        cancel = true;
+                        return;
+                    }
+                    if (this.isSolo) {
+                        bindMove(e);
+                        cancel = true;
+                        return;
+                    }
+                    ++count;
+                    if (count < 3) {
+                        return;
+                    }
+                    let deltaX = x - ((e instanceof MouseEvent) ? e.clientX : e.touches[0].clientX);
+                    let deltaY = y - ((e instanceof MouseEvent) ? e.clientY : e.touches[0].clientY);
+                    if (deltaX === 0 && deltaY === 0) {
+                        return;
+                    }
+                    let isWheel = false;
+                    if (Math.abs(deltaY) > Math.abs(deltaX)) {
+                        if (deltaY < 0) {
+                            if (this.scrollTopData > 0) {
+                                isWheel = true;
+                            }
+                        }
+                        else if (deltaY > 0) {
+                            if (this.scrollTopData < this.maxScrollTop) {
+                                isWheel = true;
+                            }
+                        }
+                    }
+                    else {
+                        if (deltaX < 0) {
+                            if (this.scrollLeftData > 0) {
+                                isWheel = true;
+                            }
+                        }
+                        else if (deltaX > 0) {
+                            if (this.scrollLeftData < this.maxScrollLeft) {
+                                isWheel = true;
+                            }
+                        }
+                    }
+                    if (isWheel) {
+                        bindMove(e);
+                    }
+                    cancel = true;
+                }
+            });
+        }
     },
-    'refreshView': function () {
-        if (!this.lengthInit || !this.clientInit) {
+    refreshLength: function () {
+        if (this.lengthWidth === -1 || this.lengthHeight === -1) {
+            return;
+        }
+        let length = 0;
+        if (this.direction === 'h') {
+            length = Math.round(this.lengthWidth < this.clientWidth ? this.clientWidth : this.lengthWidth);
+        }
+        else {
+            length = Math.round(this.lengthHeight < this.clientHeight ? this.clientHeight : this.lengthHeight);
+        }
+        if (length !== this.lengthEmit) {
+            this.lengthEmit = length;
+            this.$emit('change', length);
+        }
+        this.refreshScroll();
+    },
+    refreshScroll: function () {
+        if (this.lengthEmit === -1 || !this.clientInit) {
             return;
         }
         if (this.scrollLeftData > this.maxScrollLeft) {
@@ -420,7 +473,7 @@ exports.methods = {
             this.$emit('update:scrollTop', this.scrollTopEmit);
         }
     },
-    'goScroll': function (scroll, pos) {
+    goScroll: function (scroll, pos) {
         scroll = typeof scroll === 'number' ? scroll : parseInt(scroll);
         if (pos === 'left') {
             if (scroll === this.scrollLeftEmit) {
@@ -443,18 +496,138 @@ exports.methods = {
         if (this.timer) {
             this.timer = false;
         }
-        this.refreshView();
+        this.refreshScroll();
     },
     stopAnimation: function () {
         if (this.timer) {
             this.timer = false;
         }
+    },
+    refreshSelection: function (shift = false, ctrl = false) {
+        if (!this.selectionTimer) {
+            return;
+        }
+        let innerRect = this.$refs.inner.getBoundingClientRect();
+        let sx = this.selectionCurrent.x - innerRect.left;
+        let sy = this.selectionCurrent.y - innerRect.top;
+        let area = {
+            'x': 0,
+            'y': 0,
+            'width': 0,
+            'height': 0,
+            'shift': shift,
+            'ctrl': ctrl
+        };
+        if (sx >= this.selectionOrigin.x) {
+            area.x = Math.round(this.selectionOrigin.x);
+            area.width = Math.round(sx - this.selectionOrigin.x);
+        }
+        else {
+            area.x = Math.round(sx);
+            area.width = Math.round(this.selectionOrigin.x - sx);
+        }
+        if (sy >= this.selectionOrigin.y) {
+            area.y = Math.round(this.selectionOrigin.y);
+            area.height = Math.round(sy - this.selectionOrigin.y);
+        }
+        else {
+            area.y = Math.round(sy);
+            area.height = Math.round(this.selectionOrigin.y - sy);
+        }
+        this.$refs.selection.style.left = area.x + 'px';
+        this.$refs.selection.style.top = area.y + 'px';
+        this.$refs.selection.style.width = area.width + 'px';
+        this.$refs.selection.style.height = area.height + 'px';
+        this.$emit('select', area);
+    },
+    selectionRoll: function () {
+        if (!this.selectionTimer) {
+            return;
+        }
+        let rect = this.$el.getBoundingClientRect();
+        if (this.selectionCurrent.x < rect.left) {
+            if (this.scrollLeftData > 0) {
+                let x = rect.left - this.selectionCurrent.x;
+                let dist = 0;
+                if (this.selectionCurrent.quick) {
+                    dist = x / 2;
+                    this.selectionCurrent.quick = false;
+                }
+                else {
+                    dist = x / 5;
+                }
+                if (this.scrollLeftData - dist < 0) {
+                    dist = this.scrollLeftData;
+                }
+                this.scrollLeftData -= dist;
+                this.scrollLeftEmit = Math.round(this.scrollLeftData);
+                this.$emit('update:scrollLeft', this.scrollLeftEmit);
+            }
+        }
+        else if (this.selectionCurrent.x > rect.right) {
+            if (this.scrollLeftData < this.maxScrollLeft) {
+                let x = this.selectionCurrent.x - rect.right;
+                let dist = 0;
+                if (this.selectionCurrent.quick) {
+                    dist = x / 2;
+                    this.selectionCurrent.quick = false;
+                }
+                else {
+                    dist = x / 5;
+                }
+                if (this.scrollLeftData + dist > this.maxScrollLeft) {
+                    dist = this.maxScrollLeft - this.scrollLeftData;
+                }
+                this.scrollLeftData += dist;
+                this.scrollLeftEmit = Math.round(this.scrollLeftData);
+                this.$emit('update:scrollLeft', this.scrollLeftEmit);
+            }
+        }
+        if (this.selectionCurrent.y < rect.top) {
+            if (this.scrollTopData > 0) {
+                let x = rect.top - this.selectionCurrent.y;
+                let dist = 0;
+                if (this.selectionCurrent.quick) {
+                    dist = x / 2;
+                    this.selectionCurrent.quick = false;
+                }
+                else {
+                    dist = x / 5;
+                }
+                if (this.scrollTopData - dist < 0) {
+                    dist = this.scrollTopData;
+                }
+                this.scrollTopData -= dist;
+                this.scrollTopEmit = Math.round(this.scrollTopData);
+                this.$emit('update:scrollTop', this.scrollTopEmit);
+            }
+        }
+        else if (this.selectionCurrent.y > rect.bottom) {
+            if (this.scrollTopData < this.maxScrollTop) {
+                let x = this.selectionCurrent.y - rect.bottom;
+                let dist = 0;
+                if (this.selectionCurrent.quick) {
+                    dist = x / 2;
+                    this.selectionCurrent.quick = false;
+                }
+                else {
+                    dist = x / 5;
+                }
+                if (this.scrollTopData + dist > this.maxScrollTop) {
+                    dist = this.maxScrollTop - this.scrollTopData;
+                }
+                this.scrollTopData += dist;
+                this.scrollTopEmit = Math.round(this.scrollTopData);
+                this.$emit('update:scrollTop', this.scrollTopEmit);
+            }
+        }
+        requestAnimationFrame(this.selectionRoll);
     }
 };
 exports.mounted = function () {
-    clickgo.dom.watchSize(this.$refs.wrap, (size) => {
-        let clientWidth = size.innerWidth;
-        let clientHeight = size.innerHeight;
+    clickgo.dom.watchSize(this.$el, (size) => {
+        let clientWidth = size.clientWidth;
+        let clientHeight = size.clientHeight;
         if (this.direction === 'v') {
             if (this.clientWidth !== clientWidth) {
                 this.clientWidth = clientWidth;
@@ -478,27 +651,19 @@ exports.mounted = function () {
         if (!this.clientInit) {
             this.clientInit = true;
         }
-        this.refreshView();
+        this.refreshLength();
     }, true);
     clickgo.dom.watchSize(this.$refs.inner, (size) => {
-        let lengthWidth = size.width;
-        let lengthHeight = size.height;
-        if (lengthWidth !== this.lengthWidth) {
-            this.lengthWidth = lengthWidth;
-            if (this.direction === 'h') {
-                this.$emit('change', Math.round(this.lengthWidth));
-            }
+        if (size.width !== this.lengthWidth) {
+            this.lengthWidth = size.width;
         }
-        if (lengthHeight !== this.lengthHeight) {
-            this.lengthHeight = lengthHeight;
-            if (this.direction === 'v') {
-                this.$emit('change', Math.round(this.lengthHeight));
-            }
+        if (size.height !== this.lengthHeight) {
+            this.lengthHeight = size.height;
         }
-        if (!this.lengthInit) {
-            this.lengthInit = true;
-        }
-        this.refreshView();
+        this.refreshLength();
+    }, true);
+    clickgo.dom.watchStyle(this.$el, 'padding', (n, v) => {
+        this.padding = v;
     }, true);
     this.goScroll(this.scrollLeft, 'left');
     this.goScroll(this.scrollTop, 'top');

@@ -43,7 +43,7 @@ export async function read(blob: Blob): Promise<false | ICGThemePkg> {
             if (!fab) {
                 continue;
             }
-            files[file] = fab;
+            files[file] = fab.replace(/^\ufeff/, '');
         }
         else {
             let fab = await zip.getContent(file, 'arraybuffer');

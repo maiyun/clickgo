@@ -8,15 +8,15 @@ export let data = {
 };
 
 export let methods = {
-    add: function(this: IVueForm): void {
+    add: function(this: IVForm): void {
         this.tabs.push({'label': 'Tab' + (this.tabs.length + 1), 'value': 'tab' + (this.tabs.length + 1)});
     },
-    remove: function(this: IVueForm): void {
+    remove: function(this: IVForm): void {
         if (this.tabs.length > 0) {
             this.tabs.splice(this.tabs.length - 1);
         }
     },
-    position: function(this: IVueForm): void {
+    position: function(this: IVForm): void {
         switch (this.tabPosition) {
             case 'top':
                 this.tabPosition = 'right';

@@ -1,26 +1,4 @@
 export let props = {
-    'width': {
-        'default': undefined
-    },
-    'height': {
-        'default': undefined
-    },
-    'left': {
-        'default': 0
-    },
-    'top': {
-        'default': 0
-    },
-    'zIndex': {
-        'default': 0
-    },
-    'flex': {
-        'default': ''
-    },
-
-    'adaptation': {
-        'dafault': false
-    },
     'same': {
         'default': false
     },
@@ -33,6 +11,12 @@ export let props = {
     'multi': {
         'default': false,
     },
+    'selection': {
+        'default': false
+    },
+    'scroll': {
+        'default': 'auto'
+    },
 
     'data': {
         'default': []
@@ -43,8 +27,6 @@ export let props = {
 };
 
 export let data = {
-    'direction': 'v',
-
     'client': 0,
     'length': 0,
     'offset': 0,
@@ -52,249 +34,507 @@ export let data = {
     'valueData': -1,
     'shiftStart': 0,
 
-    'itemDown': false,       // --- 本次 down 事件是在 item 上触发的，因此本次 greatlist 上不响应相关事件 ---
-    'itemClick': false
+    'selectValues': [],
+    'beforeSelectValues': []
 };
 
 export let computed = {
-    'isAdaptation': function(this: IVueControl): boolean {
-        return clickgo.tool.getBoolean(this.adaptation);
-    },
-    'isSame': function(this: IVueControl): boolean {
+    'isSame': function(this: IVControl): boolean {
         return clickgo.tool.getBoolean(this.same);
     },
-    'isDisabled': function(this: IVueControl): boolean {
+    'isSelection': function(this: IVControl): boolean {
+        return clickgo.tool.getBoolean(this.selection);
+    },
+    'isDisabled': function(this: IVControl): boolean {
         return clickgo.tool.getBoolean(this.disabled);
     },
-    'isMust': function(this: IVueControl): boolean {
+    'isMust': function(this: IVControl): boolean {
         return clickgo.tool.getBoolean(this.must);
     },
-    'isMulti': function(this: IVueControl): boolean {
+    'isMulti': function(this: IVControl): boolean {
         return clickgo.tool.getBoolean(this.multi);
-    }
+    },
+
+    'isSelected': function(this: IVControl) {
+        return (value: number): boolean => {
+            return this.multi ? this.valueData.includes(value) : (this.valueData === value);
+        };
+    },
 };
 
 export let watch = {
     'data': {
-        handler: function(this: IVueControl): void {
-            this.select();
+        handler: function(this: IVControl, n: any[], o: any[]): void {
+            if (o.length === 0 && n.length > 0) {
+                // --- 用来强制使 checkValue 生效，因为有可能 data 还没传入，但是默认值已经设定为了 0，所以传入 data 后要再次设定为 0 并响应事件 ---
+                this.valueData = -1;
+            }
+            this.checkValue();
         },
         'deep': true
     },
     'modelValue': {
-        handler: function(this: IVueControl): void {
-            this.valueData = this.modelValue;
-            this.select();
-            if (typeof this.valueData !== 'object') {
-                this.shiftStart = this.valueData;
+        handler: function(this: IVControl, n: any[] | number, o: any[] | number): void {
+            if (Array.isArray(n) && Array.isArray(o)) {
+                if (n.length === 0 && o.length === 0) {
+                    // --- 不加这个循环可能会无限执行此方法 ---
+                    // --- 在 data 数据缺失的时候 ---
+                    return;
+                }
             }
+            if (typeof this.modelValue === 'object') {
+                if (typeof this.valueData !== 'object') {
+                    this.valueData = this.modelValue;
+                    this.shiftStart = this.valueData[0] ?? 0;
+                }
+                else {
+                    if ((this.valueData.length === this.modelValue.length) && this.valueData.every((ele: number) => this.modelValue.includes(ele))) {
+                        return;
+                    }
+                    this.valueData = this.modelValue;
+                    this.shiftStart = this.valueData[0] ?? 0;
+                }
+            }
+            else {
+                if (typeof this.valueData === 'object') {
+                    this.valueData = this.modelValue;
+                    this.shiftStart = this.valueData === -1 ? 0 : this.valueData;
+                }
+                else {
+                    if (this.valueData === this.modelValue) {
+                        return;
+                    }
+                    this.valueData = this.modelValue;
+                    this.shiftStart = this.valueData;
+                }
+            }
+            this.checkValue();
         },
         'deep': true,
         'immediate': true
     },
     'must': {
-        handler: function(this: IVueControl): void {
-            this.select();
+        handler: function(this: IVControl): void {
+            this.checkValue();
         }
     },
     'multi': {
-        handler: function(this: IVueControl): void {
-            this.select();
+        handler: function(this: IVControl): void {
+            this.checkValue();
+        }
+    },
+    'shiftStart': {
+        handler: function(this: IVControl): void {
+            let pos = this.$refs.view?.getPos(this.shiftStart);
+            if (!pos) {
+                return;
+            }
+            if (pos.start < this.offset) {
+                this.offset = pos.start;
+                return;
+            }
+            if (pos.end > this.offset + this.client) {
+                this.offset = pos.end - this.client;
+            }
         }
     }
 };
 
 export let methods = {
-    select: function(this: IVueControl, value?: number, shift: boolean = false, ctrl: boolean = false): boolean {
+    checkValue: function(this: IVControl): void {
         let change: boolean = false;
-        // --- 处理选中数据（多行模式但单选、单行模式所有情况） ---
-        if (value !== undefined) {
-            if (this.isMulti) {
-                if (!shift && !ctrl) {
-                    this.valueData = this.isMulti ? [value] : value;
-                    this.shiftStart = value;
-                    this.$emit('update:modelValue', this.valueData);
-                    // --- 排除: 有 value，多行，没有 shift，没有 ctrl ---
-                    return true;
-                }
-            }
-            else {
-                if (this.valueData !== value) {
-                    this.valueData = value;
-                    this.shiftStart = value;
-                    this.$emit('update:modelValue', this.valueData);
-                    return true;
-                }
-                // --- 排除: 有 value 且单行全部排除 ---
-                return false;
-            }
-        }
-        // --- 剩：无 value、有 value 多行且有 shift 或有 ctrl ---
-        // --- 检测过去 value 的数据格式是否正确（多行为数组、单行为值，以及必须状态下是否未选择） ---
+        let notDisabledIndex = this.getFirstNotDisabledDataIndex();
         if (typeof this.valueData === 'object') {
-            // --- 当前是数组 ---
-            if (this.isMust && (this.valueData.length === 0) && (this.data.length > 0)) {
-                this.valueData = [0];
-                change = true;
-            }
-            if (!this.isMulti) {
-                // --- 但是不等于多行 ---
-                this.valueData = this.valueData[0] ?? -1;
-                change = true;
-            }
-        }
-        else {
-            // --- 当前是值 ---
-            if (this.isMust && (this.valueData === -1) && (this.data.length > 0)) {
-                this.valueData = 0;
-                change = true;
-            }
             if (this.isMulti) {
+                // --- 多行 ---
+                if (this.isMust && (this.valueData.length === 0)) {
+                    change = true;
+                    this.valueData = [notDisabledIndex];
+                    this.shiftStart = this.valueData[0];
+                }
+            }
+            else {
+                // --- 不是多行模式，应该改为单行值 ---
+                change = true;
+                this.valueData = this.valueData[0] ?? -1;
+                this.shiftStart = (this.valueData === -1) ? notDisabledIndex : this.valueData;
+                if (this.isMust && (this.valueData === -1)) {
+                    this.valueData = notDisabledIndex;
+                }
+            }
+        }
+        else {
+            // --- 当前单行值 ---
+            if (this.isMulti) {
+                // --- 应该变为多行值 ---
+                change = true;
                 this.valueData = this.valueData === -1 ? [] : [this.valueData];
+                this.shiftStart = this.valueData.length === 0 ? notDisabledIndex : this.valueData[0];
+                if (this.isMust && (this.valueData.length === 0)) {
+                    this.valueData = [notDisabledIndex];
+                }
+            }
+            else {
+                // --- 单行 ---
+                if (this.isMust && (this.valueData === -1)) {
+                    change = true;
+                    this.valueData = notDisabledIndex;
+                    this.shiftStart = notDisabledIndex;
+                }
+            }
+        }
+        // --- 检测单行/多行的值有没有超出 data 的长度 ---
+        let dataMaxIndex = this.data.length - 1;
+        if (this.isMulti) {
+            // --- 多行要逐个判断，剔除超出的 ---
+            for (let i = 0; i < this.valueData.length; ++i) {
+                if (this.valueData[i] === 0) {
+                    continue;
+                }
+                if (this.valueData[i] <= dataMaxIndex) {
+                    continue;
+                }
+                // --- 超出了 ---
+                change = true;
+                if (this.shiftStart === this.valueData[i]) {
+                    this.shiftStart = i > 0 ? (this.valueData[0] ?? notDisabledIndex) : notDisabledIndex;
+                }
+                this.valueData.splice(i, 1);
+                --i;
+            }
+            if (change) {
+                if (this.isMust && this.valueData.length === 0) {
+                    this.valueData = [notDisabledIndex];
+                }
+            }
+        }
+        else {
+            // --- 检测值是否大于 data 长度 ---
+            if ((this.valueData > 0) && (this.valueData > dataMaxIndex)) {
+                change = true;
+                if (this.shiftStart === this.valueData) {
+                    this.shiftStart = notDisabledIndex;
+                }
+                this.valueData = this.isMust ? notDisabledIndex : -1;
+            }
+        }
+        if (change) {
+            this.$emit('update:modelValue', this.valueData);
+        }
+    },
+    select: function(this: IVControl, value: number, shift: boolean = false, ctrl: boolean = false): void {
+        let change: boolean = false;
+        if (value < -1) {
+            value = -1;
+        }
+        if (this.isMust && value === -1) {
+            value = 0;
+        }
+        if (this.data[value]) {
+            if (this.data[value].disabled || (this.data[value].control === 'split')) {
+                return;
+            }
+        }
+        if (this.isMulti) {
+            if (!shift && !ctrl) {
+                // --- 单选 ---
+                if (value === -1) {
+                    if (this.valueData.length > 0) {
+                        change = true;
+                        this.valueData = [];
+                    }
+                }
+                else {
+                    // --- 要选择 ---
+                    if (this.valueData.length > 1 || this.valueData.length === 0) {
+                        // --- 只选择一个，但现在有多个，则重置为一个 ---
+                        change = true;
+                        this.valueData = [value];
+                        this.shiftStart = value;
+                    }
+                    else {
+                        // --- 只有一个，看看是不是选择的 ---
+                        if (this.valueData[0] !== value) {
+                            change = true;
+                            this.valueData = [value];
+                            this.shiftStart = value;
+                        }
+                    }
+                }
+            }
+            else {
+                // --- 多选 ---
+                if (value === -1) {
+                    // --- 按住 shift 或 ctrl 时则什么也不处理 ---
+                }
+                else {
+                    // --- 选择值了 ---
+                    if (shift) {
+                        // --- 判断要不要改值 ---
+                        let valueData = [];
+                        if (value > this.shiftStart) {
+                            for (let k = this.shiftStart; k <= value; ++k) {
+                                if (this.data[k].disabled || (this.data[k].control === 'split')) {
+                                    continue;
+                                }
+                                valueData.push(k);
+                                change = true;
+                            }
+                        }
+                        else {
+                            for (let k = this.shiftStart; k >= value; --k) {
+                                if (this.data[k].disabled === true) {
+                                    continue;
+                                }
+                                if (this.data[k].control === 'split') {
+                                    continue;
+                                }
+                                valueData.push(k);
+                                change = true;
+                            }
+                        }
+                        if ((valueData.length !== this.valueData.length) || !valueData.every((item: number) => this.valueData.includes(item))) {
+                            this.valueData = valueData;
+                            change = true;
+                        }
+                    }
+                    else {
+                        // --- ctrl ---
+                        let indexOf = this.valueData.indexOf(value);
+                        if (indexOf > -1) {
+                            // --- 选择已经存在的值 ---
+                            if (!this.isMust || (this.valueData.length > 1)) {
+                                change = true;
+                                this.valueData.splice(indexOf, 1);
+                                this.shiftStart = value;
+                            }
+                        }
+                        else {
+                            // --- 选择不存在的值 ---
+                            change = true;
+                            this.valueData.push(value);
+                            this.shiftStart = value;
+                        }
+                    }
+                }
+            }
+        }
+        else {
+            // --- 单行模式 ---
+            if (this.valueData !== value) {
+                this.valueData = value;
+                if (value !== -1) {
+                    this.shiftStart = value;
+                }
                 change = true;
             }
         }
-        // --- 判断历史的 value 的数据内容是否合规 ---
-        if (this.isMulti) {
-            if (this.valueData.length > 0) {
-                for (let k = 0; k < this.valueData.length; ++k) {
-                    if (!this.data[this.valueData[k]]) {
-                        this.valueData.splice(k, 1);
-                        --k;
-                        change = true;
-                    }
-                }
-            }
-        }
-        else {
-            if (this.valueData > -1) {
-                if (!this.data[this.valueData]) {
-                    this.valueData = this.isMust ? 0 : -1;
-                    change = true;
-                }
-            }
-        }
-        // --- 选择新的 ---
-        if (value === undefined) {
-            if (change) {
-                this.$emit('update:modelValue', this.valueData);
-                return true;
-            }
-            // --- 排除无 value 情况的所有情况 ---
-            return false;
-        }
-        // --- 剩：有 value 多行且有 shift 或有 ctrl ---
-        if (shift) {
-            this.valueData = [];
-            if (value > this.shiftStart) {
-                for (let k = this.shiftStart; k <= value; ++k) {
-                    this.valueData.push(k);
-                    change = true;
-                }
-            }
-            else {
-                for (let k = this.shiftStart; k >= value; --k) {
-                    this.valueData.push(k);
-                    change = true;
-                }
-            }
-            if (change) {
-                this.$emit('update:modelValue', this.valueData);
-                return true;
-            }
-            return false;
-        }
-        else {
-            // --- ctrl ---
-            if (this.valueData.includes(value)) {
-                if (this.isMust && this.valueData.length === 1) {
-                    // --- 必须有至少 1 个选定，移除当前的就没选定了，所以不能移除 ---
-                    if (change) {
-                        this.$emit('update:modelValue', this.valueData);
-                        return true;
-                    }
-                    return false;
-                }
-                this.valueData.splice(this.valueData.indexOf(value), 1);
-                this.shiftStart = value;
-                this.$emit('update:modelValue', this.valueData);
-                return true;
-            }
-            else {
-                this.valueData.push(value);
-                this.shiftStart = value;
-                this.valueData.sort();
-                this.$emit('update:modelValue', this.valueData);
-                return true;
-            }
+        if (change) {
+            this.$emit('update:modelValue', this.valueData);
         }
     },
-
-    down: function(this: IVueControl, e: MouseEvent | TouchEvent): void {
-        if (clickgo.dom.isMouseAlsoTouchEvent(e)) {
+    innerDown: function(this: IVControl, e: MouseEvent | TouchEvent): void {
+        if (clickgo.dom.hasTouchButMouse(e)) {
             return;
         }
-        this.cgDown(e);
-        if (this.cgSelfPopOpen) {
-            this.cgHidePop();
+        if (this.$refs.inner.dataset.cgPopOpen !== undefined) {
+            clickgo.form.hidePop();
         }
-        if (!this.itemDown) {
-            if (this.cgChildPopItemShowing) {
-                this.cgChildPopItemShowing.cgHidePop();
-            }
-        }
-        else {
-            this.itemDown = false;
-        }
-    },
-    innerDown: function(this: IVueControl, e: MouseEvent | TouchEvent): void {
-        if (clickgo.dom.isMouseAlsoTouchEvent(e)) {
-            return;
-        }
-        if (this.itemDown) {
-            return;
-        }
-        if (e instanceof MouseEvent) {
-            // --- 电脑 ---
-            if (!this.isMust) {
-                this.valueData = this.isMulti ? [] : -1;
-                this.$emit('update:modelValue', this.valueData);
-            }
-        }
-        else {
-            // --- 手机 ---
+        if (e instanceof TouchEvent) {
             // --- 长按触发 contextmenu ---
             clickgo.dom.bindLong(e, () => {
-                if (!this.isMust) {
-                    this.valueData = this.isMulti ? [] : -1;
-                    this.$emit('update:modelValue', this.valueData);
-                }
-                this.cgShowPop(e);
+                clickgo.form.showPop(this.$refs.inner, this.$refs.pop, e);
             });
         }
     },
-    click: function(this: IVueControl, e: MouseEvent): void {
-        if (!clickgo.dom.isMouseAlsoTouchEvent(e)) {
-            // --- 电脑不响应本事件 ---
-            // --- e 只可能是鼠标事件，但是没有监听到 touch 事件，就代表一定是鼠标事件，则直接 return ---
+    context: function(this: IVControl, e: MouseEvent): void {
+        if (clickgo.dom.hasTouchButMouse(e)) {
             return;
         }
-        // --- 手机 ---
-        if (!this.itemClick) {
-            if (!this.isMust) {
-                this.valueData = this.isMulti ? [] : -1;
-                this.$emit('update:modelValue', this.valueData);
+        clickgo.form.showPop(this.$refs.inner, this.$refs.pop, e);
+    },
+    click: function(this: IVControl, e: MouseEvent): void {
+        if (!this.isMust) {
+            let gi = clickgo.dom.findParentByData(e.target as HTMLElement, 'cg-control-greatlist-item');
+            if (!gi) {
+                this.select(-1, e.shiftKey, e.ctrlKey);
+            }
+        }
+    },
+    keydown: function(this: IVControl, e: KeyboardEvent): void {
+        if ((e.key === 'ArrowDown') || (e.key === 'ArrowUp')) {
+            e.preventDefault();
+            let nvalue: number = -1;
+            if (this.isMulti) {
+                if (this.valueData.length > 0) {
+                    if (e.key === 'ArrowDown') {
+                        for (let i of this.valueData) {
+                            if (nvalue === -1) {
+                                nvalue = i;
+                                continue;
+                            }
+                            if (i < nvalue) {
+                                continue;
+                            }
+                            nvalue = i;
+                        }
+                    }
+                    else {
+                        for (let i of this.valueData) {
+                            if (nvalue === -1) {
+                                nvalue = i;
+                                continue;
+                            }
+                            if (i > nvalue) {
+                                continue;
+                            }
+                            nvalue = i;
+                        }
+                    }
+                }
+                else {
+                    this.select(0);
+                    return;
+                }
+            }
+            else {
+                if (this.valueData === -1) {
+                    this.select(0);
+                    return;
+                }
+                nvalue = this.valueData;
+            }
+            if (e.key === 'ArrowUp') {
+                if (nvalue === 0) {
+                    return;
+                }
+                for (let i = nvalue - 1; i >= 0; --i) {
+                    if (!this.data[i]) {
+                        continue;
+                    }
+                    if (this.data[i].disabled === true) {
+                        continue;
+                    }
+                    if (this.data[i].control === 'split') {
+                        continue;
+                    }
+                    this.select(i);
+                    break;
+                }
+            }
+            else {
+                if (nvalue === this.data.length - 1) {
+                    return;
+                }
+                for (let i = nvalue + 1; i < this.data.length; ++i) {
+                    if (!this.data[i]) {
+                        continue;
+                    }
+                    if (this.data[i].disabled === true) {
+                        continue;
+                    }
+                    if (this.data[i].control === 'split') {
+                        continue;
+                    }
+                    this.select(i);
+                    break;
+                }
+            }
+        }
+    },
+    // --- item 相关事件 ---
+    itemContext: function(this: IVControl, e: MouseEvent, value: number): void {
+        if (clickgo.dom.hasTouchButMouse(e)) {
+            return;
+        }
+        if (this.isSelected(value)) {
+            return;
+        }
+        this.select(value, e.shiftKey, e.ctrlKey);
+    },
+    itemTouch: function(this: IVControl, e: TouchEvent, value: number): void {
+        // --- 长按 item 选中自己 ---
+        clickgo.dom.bindLong(e, () => {
+            if (this.isSelected(value)) {
+                return;
+            }
+            this.select(value, e.shiftKey, this.multi ? true : e.ctrlKey);
+        });
+    },
+    itemClick: function(this: IVControl, e: MouseEvent, value: number): void {
+        e.stopPropagation();
+        let hasTouch = clickgo.dom.hasTouchButMouse(e);
+        this.select(value, e.shiftKey, (hasTouch && this.multi) ? true : e.ctrlKey);
+        // --- 上报点击事件，false: arrow click ---
+        this.$emit('itemclick', e, false);
+    },
+    arrowClick: function(this: IVControl, e: MouseEvent, value: number): void {
+        e.stopPropagation();
+        let hasTouch = clickgo.dom.hasTouchButMouse(e);
+        this.select(value, e.shiftKey, (hasTouch && this.multi) ? true : e.ctrlKey);
+        // --- 显示/隐藏 arrow menu ---
+        let current = e.currentTarget as HTMLElement;
+        if (current.dataset.cgPopOpen === undefined) {
+            clickgo.form.showPop(current, this.$refs.itempop, e);
+        }
+        else {
+            clickgo.form.hidePop(current);
+        }
+        // --- 上报点击事件，true: arrow click ---
+        this.$emit('itemclick', e, true);
+    },
+    // --- 获取数据中第一个不是 disabled 的 index ---
+    getFirstNotDisabledDataIndex: function(this: IVControl): number {
+        let notDisabledIndex = 0;
+        for (let i = 0; i < this.data.length; ++i) {
+            if (this.data[i].disabled === true) {
+                continue;
+            }
+            notDisabledIndex = i;
+            break;
+        }
+        return notDisabledIndex;
+    },
+    // --- 当出现了选区 ---
+    onBeforeSelect: function(this: IVControl): void {
+        this.selectValues = [];
+        this.beforeSelectValues = Array.isArray(this.valueData) ? this.valueData : [this.valueData];
+    },
+    onSelect: function(this: IVControl, area: Record<string, any>): void {
+        if (this.isMulti) {
+            // --- 多行 ---
+            if (area.shift) {
+                // -- TODO ---
+            }
+            else if (area.ctrl) {
+                for (let i = area.start; i <= area.end; ++i) {
+                    // --- TODO ---
+                }
+            }
+            else {
+                // --- 没有 ctrl 和 shift ---
+                if (area.start !== -1) {
+                    this.shiftStart = area.start;
+                    this.select(area.end, true);
+                }
+                else {
+                    // --- 清空 ---
+                    this.select(-1);
+                }
             }
         }
         else {
-            this.itemClick = false;
+            if (area.start !== -1) {
+                this.select(area.start, area.shift, area.ctrl);
+            }
         }
+        this.$emit('select', area);
     },
-    // --- 以下为空白处右键菜单 ---
-    contextmenu: function(this: IVueControl, e: MouseEvent): void {
-        if (clickgo.dom.isMouseAlsoTouchEvent(e)) {
-            return;
-        }
-        this.cgShowPop(e);
+    onAfterSelect: function(): void {
+        // -- TODO ---
     }
+};
+
+export let mounted = function(this: IVControl): void {
+    this.checkValue();
 };

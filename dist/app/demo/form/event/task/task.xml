@@ -1,19 +1,19 @@
-<form width="400" height="550" title="About task" padding="10">
+<form width="400" height="550" title="About task" padding="10" direction="v">
     <label>The task list:</label>
-    <layout align-h="center" align-v="center" flex="1" style="margin-top: 10px;">
+    <layout align-h="center" align-v="center" style="margin-top: 10px; flex: 1; height: 0;">
         <layout direction="v" gutter="10">
             <label>Select task id: {{tid}}</label>
-            <list v-model="tid" :data="tlist" width="200" height="200"></list>
-            <button @tap="runTask">Run task app</button>
+            <list v-model="tid" :data="tlist" style="width: 200px; height: 200px;"></list>
+            <button @click="runTask" style="height: 30px;">Run task app</button>
             <layout gutter="10">
-                <button flex="1" @tap="run">Run self</button>
-                <button flex="1" @tap="end">End</button>
+                <button @click="run" style="flex: 1; width: 0; height: 30px;">Run self</button>
+                <button @click="end" style="flex: 1; width: 0; height: 30px;">End</button>
             </layout>
         </layout>
     </layout>
-    <layout gutter="10" style="margin-top: 10px;">
-        <list :data="['taskStarted', 'taskEnded']" width="150"></list>
-        <greatview v-slot="data" :data="list" height="80" padding="10" direction="v" flex="1" style="color: #FFF; background: #000; line-height: 1.5;" same>
+    <layout gutter="10" style="margin-top: 10px; height: 80px;">
+        <list :data="['taskStarted', 'taskEnded']" width="150" style="width: 150px;"></list>
+        <greatview v-slot="data" :data="list" direction="v" style="color: #FFF; background: hsl(0, 0%, 20%); line-height: 1.5; flex: 1; width: 0; padding: 10px;" same>
             <label>[{{data.row.time}}] {{data.row.name}}, {{data.row.text}}.</label>
         </greatview>
     </layout>

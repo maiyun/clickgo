@@ -3,10 +3,10 @@ export let data = {
 };
 
 export let methods = {
-    dialog: async function(this: IVueForm, opt: string | ICGFormDialog): Promise<void> {
+    dialog: async function(this: IVForm, opt: string | ICGFormDialog): Promise<void> {
         this.result = await this.cgDialog(opt);
     },
-    donot: async function(this: IVueForm): Promise<void> {
+    donot: async function(this: IVForm): Promise<void> {
         this.result = await this.cgDialog({
             'content': 'Hello world!',
             'buttons': ['Do not close', 'Close'],
@@ -17,7 +17,7 @@ export let methods = {
             }
         });
     },
-    confirm: async function(this: IVueForm, cancel: boolean = false): Promise<void> {
+    confirm: async function(this: IVForm, cancel: boolean = false): Promise<void> {
         this.result = await this.cgConfirm('Hello world?', cancel);
         if (typeof this.result === 'boolean') {
             this.result = this.result ? 'true (boolean)' : 'false (boolean)';

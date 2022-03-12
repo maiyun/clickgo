@@ -8,13 +8,13 @@ export let data = {
 };
 
 export let computed = {
-    'position': function(this: IVueForm): string {
+    'position': function(this: IVForm): string {
         return clickgo.core.config['task.position'];
     }
 };
 
 export let methods = {
-    itemTap: async function(this: IVueForm, appIndex: number): Promise<void> {
+    itemTap: async function(this: IVForm, appIndex: number): Promise<void> {
         if (this.apps[appIndex].formCount === 0) {
             // --- 启动 ---
             try {
@@ -45,7 +45,7 @@ export let methods = {
             // --- 多个窗体，则让用户选择显示哪个 ---
         }
     },
-    run: async function(this: IVueForm, path: string): Promise<void> {
+    run: async function(this: IVForm, path: string): Promise<void> {
         try {
             await clickgo.task.run(path);
         }
@@ -53,7 +53,7 @@ export let methods = {
             return;
         }
     },
-    pin: function(this: IVueForm, index: number): void {
+    pin: function(this: IVForm, index: number): void {
         let app = this.apps[index];
         if (!app) {
             return;
@@ -71,7 +71,7 @@ export let methods = {
             };
         }
     },
-    close: function(this: IVueForm, index: number): void {
+    close: function(this: IVForm, index: number): void {
         let app = this.apps[index];
         if (!app) {
             return;
@@ -80,13 +80,13 @@ export let methods = {
             clickgo.form.remove(parseInt(formId));
         }
     },
-    changeFocus: function(this: IVueForm, formId: string): void {
+    changeFocus: function(this: IVForm, formId: string): void {
         clickgo.form.changeFocus(parseInt(formId));
     },
     updatePosition: function(position: 'left' | 'right' | 'top' | 'bottom'): void {
         clickgo.core.config['task.position'] = position;
     },
-    getAppIndexByPath: function(this: IVueForm, path: string): number {
+    getAppIndexByPath: function(this: IVForm, path: string): number {
         for (let i = 0; i < this.apps.length; ++i) {
             let app = this.apps[i];
             if (app.path !== path) {
@@ -99,7 +99,7 @@ export let methods = {
     }
 };
 
-export let mounted = function(this: IVueForm): void {
+export let mounted = function(this: IVForm): void {
     this.cgSetTopMost(true);
     clickgo.form.setTask(this.taskId, this.formId);
 

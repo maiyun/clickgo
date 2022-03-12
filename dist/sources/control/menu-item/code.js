@@ -16,27 +16,24 @@ exports.computed = {
 };
 exports.methods = {
     enter: function (e) {
-        this.cgEnter(e);
-        if (this.isDisabled) {
+        if (clickgo.dom.hasTouchButMouse(e)) {
             return;
         }
-        if (clickgo.dom.isMouseAlsoTouchEvent(e)) {
+        let length = clickgo.dom.siblingsData(this.$el, 'cg-pop-open').length;
+        if (length === 0) {
             return;
         }
-        if (!this.cgParentPopLayer.cgChildPopItemShowing) {
-            return;
-        }
-        this.cgShowPop('v', { 'null': true });
+        clickgo.form.showPop(this.$el, this.$refs.pop, 'v', {
+            'null': true
+        });
     },
-    click: function (e) {
-        if (this.isDisabled) {
+    click: function () {
+        if (this.$el.dataset.cgPopOpen !== undefined) {
+            clickgo.form.hidePop(this.$refs.pop);
             return;
         }
-        this.cgTap(e);
-        if (this.cgSelfPopOpen) {
-            this.cgHidePop();
-            return;
-        }
-        this.cgShowPop('v', { 'null': true });
+        clickgo.form.showPop(this.$el, this.$refs.pop, 'v', {
+            'null': true
+        });
     }
 };

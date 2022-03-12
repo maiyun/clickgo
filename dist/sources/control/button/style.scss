@@ -1,160 +1,243 @@
+@font-face {
+    font-family: 'ifont';
+    src: url('res/font.woff') format('woff');
+}
+
 .wrap {
-    display: flex; align-items: center; justify-content: center; outline: none; position: relative; height: 30px;
+    display: flex; outline: none; position: relative;
+    // --- 外边框 ---
     &::before {
-        content: ''; pointer-events: none; position: absolute; left: 0; top: 0; width: 200%; height: 200%; transform-origin: 0 0; transform: scale(.5);
+        content: ''; pointer-events: none; position: absolute; left: 0; top: 0; width: 200%; height: 200%; transform-origin: 0 0; transform: scale(.5); z-index: 1;
     }
-    &::after {
-        content: ''; pointer-events: none; position: absolute; left: 2px; top: 2px; width: calc(200% - 8px); height: calc(200% - 8px); transform-origin: 0 0; transform: scale(.5); display: none;
+    // --- 焦点框 ---
+    &::after, .inner::after, .arrow::after {
+        content: ''; pointer-events: none; position: absolute; left: 2px; top: 2px; width: calc(200% - 8px); height: calc(200% - 8px); transform-origin: 0 0; transform: scale(.5); display: none; z-index: 1;
     }
-    &:focus::after {
+    // --- 获取焦点时自动显示焦点框 ---
+    &:focus::after, .inner:focus::after, .arrow:focus::after {
         display: block;
     }
+    &[data-cg-disabled] {
+        filter: grayscale(1);
+    }
 
-    // --- not plain ---
-    &:not(.plain) {
-        // --- default ---
-        &.default {
-            &::after {
-                border: dotted 1px hsl(205, 0%, 10%);
+    .op {
+        flex: 1; display: flex;
+    }
+
+    .inner {
+        flex: 1; display: flex; align-items: center; justify-content: center; outline: none; position: relative;
+        // --- inner 右边框 ---
+        &::before {
+            content: ''; pointer-events: none; position: absolute; left: 0; top: 0; width: 200%; height: 200%; transform-origin: 0 0; transform: scale(.5); z-index: 1;
+        }
+    }
+    .arrow {
+        font-family: 'ifont'; font-size: 12px; display: flex; align-items: center; justify-content: center; width: 16px; outline: none; position: relative;
+    }
+
+    &.default {
+        &:not(.plain) {
+            --focusbox-border: dotted 1px hsl(0, 0%, 20%);
+            --border: solid 1px hsl(0, 0%, 70%);
+            --background: hsl(0, 0%, 90%);
+            --focus-border: solid 2px hsl(205, 100%, 40%);
+            --hover-border: solid 1px hsl(205, 100%, 50%);
+            --hover-background: hsl(205, 100%, 95%);
+            --active-border: solid 1px hsl(205, 100%, 30%);
+            --active-background: hsl(205, 100%, 90%);
+            --disabled-border: solid 1px hsl(0, 0%, 60%);
+            --disabled-background: hsl(0, 0%, 80%);
+            --disabled-color: hsl(0, 0%, 60%);
+        }
+        &.plain {
+            --focusbox-border: dotted 1px hsl(0, 0%, 20%);
+            --border: solid 1px hsl(0, 0%, 70%);
+            --background: #fff;
+            --focus-border: solid 2px hsl(205, 100%, 40%);
+            --hover-border: solid 1px hsl(205, 100%, 50%);
+            --hover-color: hsl(205, 100%, 50%);
+            --active-border: solid 1px hsl(205, 100%, 30%);
+            --active-background: #ccc;
+            --active-color: hsl(205, 100%, 30%);
+            --disabled-background:  hsl(0, 0%, 95%);
+            --disabled-color: hsl(0, 0%, 60%);
+        }
+    }
+    &.tool {
+        &:not(.plain) {
+            --focusbox-border: dotted 1px hsl(0, 0%, 20%);
+            --focus-border: solid 2px hsl(205, 100%, 40%);
+            --hover-border: solid 1px hsl(205, 100%, 50%);
+            --hover-background: hsl(205, 100%, 95%);
+            --active-border: solid 1px hsl(205, 100%, 30%);
+            --active-background: hsl(205, 100%, 90%);
+            --disabled-color: hsl(0, 0%, 60%);
+        }
+        &.plain {
+            --focusbox-border: dotted 1px hsl(0, 0%, 20%);
+            --hover-background: #fff;
+            --active-background: #ccc;
+            --disabled-color: hsl(0, 0%, 60%);
+        }
+    }
+    &.primary {
+        &:not(.plain) {
+            --focusbox-border: dotted 1px #fff;
+            --background: #07c160;
+            --color: #fff;
+            --hover-background: #39cd80;
+            --active-background: #069a4d;
+        }
+        &.plain {
+            --focusbox-border: dotted 1px hsl(0, 0%, 20%);
+            --border: solid 1px #07c160;
+            --background: #fff;
+            --color: #07c160;
+            --hover-border: solid 1px #39cd80;
+            --hover-color: #39cd80;
+            --active-border: solid 1px #069a4d;
+            --active-background: #ccc;
+            --active-color: #069a4d;
+            --disabled-background:  hsl(0, 0%, 95%);
+        }
+    }
+    &.info {
+        &:not(.plain) {
+            --focusbox-border: dotted 1px #fff;
+            --background: #1989fa;
+            --color: #fff;
+            --hover-background: #47a1fb;
+            --active-background: #146ec8;
+        }
+        &.plain {
+            --focusbox-border: dotted 1px hsl(0, 0%, 20%);
+            --border: solid 1px #1989fa;
+            --background: #fff;
+            --color: #1989fa;
+            --hover-border: solid 1px #47a1fb;
+            --hover-color: #47a1fb;
+            --active-border: solid 1px #146ec8;
+            --active-background: #ccc;
+            --active-color: #146ec8;
+            --disabled-background:  hsl(0, 0%, 95%);
+        }
+    }
+    &.warning {
+        &:not(.plain) {
+            --focusbox-border: dotted 1px #fff;
+            --background: #ff976a;
+            --color: #fff;
+            --hover-background: #ffac88;
+            --active-background: #cc7955;
+        }
+        &.plain {
+            --focusbox-border: dotted 1px hsl(0, 0%, 20%);
+            --border: solid 1px #ff976a;
+            --background: #fff;
+            --color: #ff976a;
+            --hover-border: solid 1px #ffac88;
+            --hover-color: #ffac88;
+            --active-border: solid 1px #cc7955;
+            --active-background: #ccc;
+            --active-color: #cc7955;
+            --disabled-background:  hsl(0, 0%, 95%);
+        }
+    }
+    &.danger {
+        &:not(.plain) {
+            --focusbox-border: dotted 1px #fff;
+            --background: #ee0a24;
+            --color: #fff;
+            --hover-background: #f13b50;
+            --active-background: #be081d;
+        }
+        &.plain {
+            --focusbox-border: dotted 1px hsl(0, 0%, 20%);
+            --border: solid 1px #ee0a24;
+            --background: #fff;
+            --color: #ee0a24;
+            --hover-border: solid 1px #f13b50;
+            --hover-color: #f13b50;
+            --active-border: solid 1px #be081d;
+            --active-background: #ccc;
+            --active-color: #be081d;
+            --disabled-background:  hsl(0, 0%, 95%);
+        }
+    }
+
+    &::before {                             // --- 外边框 ---
+        border: var(--border);
+    }
+    &::after, .inner::after, .arrow::after {                              // --- 焦点框 ---
+        border: var(--focusbox-border);
+    }
+    background: var(--background);          // --- 背景色 ---
+    color: var(--color);                    // --- 文字色 ---
+    &.area-arrow {
+        .inner::before {
+            border-right: var(--border);
+        }
+    }
+    &:not([data-cg-disabled]) {
+        &:focus, &.childfocus {             // --- 焦点状态 ---
+            &::before {                     // --- 外边框 ---
+                border: var(--focus-border, var(--border));
             }
-            &:not(.cg-disabled) {
-                background: hsl(205, 0%, 90%);
-                &::before {
-                    border: solid 1px hsl(205, 0%, 70%);
-                }
-                &:focus {
-                    &::before {
-                        border: solid 2px hsl(205, 100%, 40%);
-                    }
-                }
-                &.hover {
-                    background: hsl(205, 100%, 95%);
-                    &::before {
-                        border: solid 1px hsl(205, 100%, 50%);
-                    }
-                }
-                &.active {
-                    background: hsl(205, 100%, 90%);
-                    &::before {
-                        border: solid 1px hsl(205, 100%, 30%);
-                    }
-                }
-            }
-            &.cg-disabled {
-                background: hsl(205, 0%, 80%);
-                color: hsl(205, 0%, 50%);
-                &::before {
-                    border: solid 1px hsl(205, 0%, 60%);
+            &.area-arrow {
+                .inner::before {            // --- 里边框 ---
+                    border-right: var(--focus-border, var(--border));
                 }
             }
         }
-        // --- not default ---
-        &.primary {
-            background: #07c160;
-        }
-        &.info {
-            background: #1989fa;
-        }
-        &.warning {
-            background: #ff976a;
-        }
-        &.danger {
-            background: #ee0a24;
-        }
-        &:not(.default) {
-            color: #FFF;
-            &::after {
-                border: dotted 1px hsl(0, 0%, 100%);
+        &:hover {                           // --- 鼠标悬停 ---
+            &::before {                     // --- 外边框 ---
+                border: var(--hover-border, var(--border));
             }
-            &:not(.cg-disabled) {
-                &.hover, &:focus {
-                    filter: brightness(1.1);
-                }
-                &.active {
-                    filter: brightness(.9);
+            &.area-all {
+                background: var(--hover-background, var(--background));
+                color: var(--hover-color, var(--color));
+            }
+            &.area-arrow {
+                .inner::before {            // --- 里边框 ---
+                    border-right: var(--hover-border, var(--border));
                 }
             }
-            &.cg-disabled {
-                filter: grayscale(1);
+        }
+        &:active, &.active, &[data-cg-pop-open] {     // --- 鼠标按下 ---
+            &::before {
+                border: var(--active-border, var(--border));
+            }
+            &.area-all {
+                background: var(--active-background, var(--background));
+                color: var(--active-color, var(--color));
+            }
+            &.area-arrow {
+                .inner::before {            // --- 里边框 ---
+                    border-right: var(--active-border, var(--border));
+                }
+            }
+        }
+
+        &.area-arrow {
+            .inner, .arrow {
+                &:hover {                   // --- 鼠标悬停 ---
+                    background: var(--hover-background, var(--background));
+                    color: var(--hover-color, var(--color));
+                }
+                // --- 鼠标按下 ---
+                &:active, .active, &[data-cg-pop-open] {
+                    background: var(--active-background, var(--background));
+                    color: var(--active-color, var(--color));
+                }
             }
         }
     }
-    // --- plain ---
-    &.plain {
-        background: #FFF;
-        &::after {
-            border: dotted 1px hsl(0, 0%, 50%);
+    &[data-cg-disabled] {
+        &::before {
+            border: var(--disabled-border, var(--border));
         }
-        // --- default ---
-        &.default {
-            &::before {
-                border: solid 1px hsl(205, 0%, 70%);
-            }
-            &:not(.cg-disabled) {
-                &:focus {
-                    color: hsl(205, 100%, 40%);
-                    &::before {
-                        border: solid 1px hsl(205, 100%, 40%);
-                    }
-                }
-                &.hover {
-                    color: hsl(205, 100%, 50%);
-                    &::before {
-                        border: solid 1px hsl(205, 100%, 50%);
-                    }
-                }
-                &.active {
-                    filter: brightness(.9);
-                    color: hsl(205, 100%, 50%);
-                    &::before {
-                        border: solid 1px hsl(205, 100%, 50%);
-                    }
-                }
-            }
-            &.cg-disabled {
-                background: hsl(0, 0%, 90%);
-                color: hsl(205, 0%, 50%);
-            }
-        }
-        // --- not default ---
-        &.primary {
-            color: #07c160;
-            &::before {
-                border: solid 1px #07c160;
-            }
-        }
-        &.info {
-            color: #1989fa;
-            &::before {
-                border: solid 1px #1989fa;
-            }
-        }
-        &.warning {
-            color: #ff976a;
-            &::before {
-                border: solid 1px #ff976a;
-            }
-        }
-        &.danger {
-            color: #ee0a24;
-            &::before {
-                border: solid 1px #ee0a24;
-            }
-        }
-        &:not(.default) {
-            &:not(.cg-disabled) {
-                &:focus, &.hover {
-                    filter: brightness(1.1);
-                }
-                &.active {
-                    filter: brightness(.9);
-                }
-            }
-            // --- disabled ---
-            &.cg-disabled {
-                background: hsl(0, 0%, 90%);
-                filter: grayscale(1);
-            }
-        }
+        background: var(--disabled-background, var(--background));
+        color: var(--disabled-color, var(--color));
     }
 }

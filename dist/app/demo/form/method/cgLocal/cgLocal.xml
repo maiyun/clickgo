@@ -1,23 +1,23 @@
 <form width="400" height="500" title="cgLocal">
-    <overflow flex="1" direction="v" style="padding: 10px;">
+    <overflow direction="v" style="padding: 10px; flex: 1; width: 0;">
         <layout gutter="10" direction="v">
             <label>Now local: {{cgLocal}}, Global local: {{globalLocal}}</label>
             <label>File name: {{l('File name')}}</label>
             <label>File size: {{l('File size')}}</label>
-            <button @tap="cgLoadLocal('en-us', 'test1')">cgLoadLocal('en-us', 'test1')</button>
-            <button @tap="cgLoadLocal('zh-cn', 'test2')">cgLoadLocal('zh-cn', 'test2')</button>
-            <button @tap="cgSetLocal('zh-cn', 'test2')">cgSetLocal('zh-cn', 'test2')</button>
-            <button @tap="cgClearLocal">cgClearLocal</button>
-            <button @tap="cgLoadLocalData('en-us', { 'File size': 'File size' })">cgLoadLocalData('en-us', { 'File size': 'File size' })</button>
-            <button @tap="cgLoadLocalData('zh-cn', { 'File size': '文件大小' })">cgLoadLocalData('zh-cn', { 'File size': '文件大小' })</button>
+            <button @click="cgLoadLocal('en', 'test1')" style="height: 30px;">cgLoadLocal('en', 'test1')</button>
+            <button @click="cgLoadLocal('sc', 'test2')" style="height: 30px;">cgLoadLocal('sc', 'test2')</button>
+            <button @click="cgSetLocal('sc', 'test2')" style="height: 30px;">cgSetLocal('sc', 'test2')</button>
+            <button @click="cgClearLocal" style="height: 30px;">cgClearLocal</button>
+            <button @click="cgLoadLocalData('en', {'File size': 'File size'})" style="height: 30px;">cgLoadLocalData('en', {'File size': 'File size'})</button>
+            <button @click="cgLoadLocalData('sc', {'File size': '文件大小'})" style="height: 30px;">cgLoadLocalData('sc', {'File size': '文件大小'})</button>
             <label>Change local name:</label>
-            <button @tap="cgSetLocalName('en-us')">cgSetLocalName('en-us')</button>
-            <button @tap="cgSetLocalName('zh-cn')">cgSetLocalName('zh-cn')</button>
-            <button @tap="cgClearLocalName()">cgClearLocalName()</button>
+            <button @click="cgSetLocalName('en')" style="height: 30px;">cgSetLocalName('en')</button>
+            <button @click="cgSetLocalName('sc')" style="height: 30px;">cgSetLocalName('sc')</button>
+            <button @click="cgClearLocalName()" style="height: 30px;">cgClearLocalName()</button>
             <label>Change global local name:</label>
             <layout gutter="10">
-                <select v-model="select" :data="['zh-cn', 'zh-tw', 'en-us', 'ja-jp']" flex="1"></select>
-                <button @tap="change" style="padding: 0 10px;">Change</button>
+                <select v-model="select" :data="['sc', 'tc', 'en', 'ja']" style="flex: 1; width: 0;"></select>
+                <button @click="change" style="padding: 0 10px; height: 30px;">Change</button>
             </layout>
         </layout>
     </overflow>

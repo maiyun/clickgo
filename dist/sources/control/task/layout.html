@@ -1,4 +1,4 @@
-<div ref="wrap" class="wrap" :class="[position]" @click="cgTap" @mousedown="down" @mouseup="cgUp" @mouseenter="cgEnter" @mouseleave="cgLeave" @touchstart="down" @touchend="cgUp" @touchcancel="cgCancel" @dblclick="cgDblclick" @contextmenu="contextmenu">
+<div ref="wrap" class="wrap" :class="[position]" @mousedown="down" @touchstart="down" @contextmenu="contextmenu">
     <div ref="task" class="task">
         <slot></slot>
     </div>
@@ -6,7 +6,7 @@
         <slot name="tray"></slot>
     </div>
     <teleport v-if="$slots.pop" to="#cg-pop-list">
-        <div class="pop" :class="[cgSelfPopOpen && 'open']" :style="cgPopPosition">
+        <div ref="pop" data-cg-pop>
             <slot name="pop"></slot>
         </div>
     </teleport>

@@ -12,13 +12,13 @@ export let props = {
 };
 
 export let computed = {
-    'show': function(this: IVueControl): boolean {
+    'show': function(this: IVControl): boolean {
         return this.$parent ? this.$parent.selected === (this.value ?? this.label) : false;
     }
 };
 
 export let watch = {
-    'show': function(this: IVueControl): void {
+    'show': function(this: IVControl): void {
         if (this.showTab) {
             this.$emit('show');
         }

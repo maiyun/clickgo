@@ -4,7 +4,7 @@ export let data = {
 };
 
 export let methods = {
-    'pushConsole': function(this: IVueForm, name: string, text: string): void {
+    'pushConsole': function(this: IVForm, name: string, text: string): void {
         let date = new Date();
         this.list.unshift({
             'time': date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds(),
@@ -12,12 +12,12 @@ export let methods = {
             'text': text
         });
     },
-    'changeFocus': function(this: IVueForm, fid: string): void {
+    'changeFocus': function(this: IVForm, fid: string): void {
         clickgo.form.changeFocus(parseInt(fid));
     }
 };
 
-export let mounted = function(this: IVueForm): void {
+export let mounted = function(this: IVForm): void {
     let list = clickgo.task.getList();
     for (let taskId in list) {
         let flist = clickgo.form.getList(parseInt(taskId));
@@ -102,16 +102,17 @@ export let mounted = function(this: IVueForm): void {
         this.flist[formId].focus = false;
         this.pushConsole('formBlurred', `taskId: ${taskId}, formId: ${formId}`);
     });
-    this.cgSetSystemEventListener('formFlash', (taskId: number, formId: number): void => {
+    this.cgSetSystemEventListener('formFlash', async (taskId: number, formId: number): Promise<void> => {
         if (!this.flist[formId]) {
             return;
         }
         if (this.flist[formId].flash) {
             this.cgRemoveTimer(this.flist[formId].flash);
         }
-        this.flist[formId].flash = this.cgCreateTimer(() => {
-            this.flist[formId].flash = undefined;
-        }, 1000);
         this.pushConsole('formFlash', `taskId: ${taskId}, formId: ${formId}`);
+        this.flist[formId].flash = true;
+        await clickgo.tool.sleep(1000);
+        this.flist[formId].flash = false;
+
     });
 };

@@ -3,25 +3,6 @@ export let props = {
         'default': false
     },
 
-    'width': {
-        'default': undefined
-    },
-    'height': {
-        'default': undefined
-    },
-    'left': {
-        'default': 0
-    },
-    'top': {
-        'default': 0
-    },
-    'zIndex': {
-        'default': 0
-    },
-    'flex': {
-        'default': ''
-    },
-
     'value': {
         'default': undefined
     },
@@ -31,19 +12,34 @@ export let props = {
 };
 
 export let computed = {
-    'isDisabled': function(this: IVueControl): boolean {
+    'isDisabled': function(this: IVControl): boolean {
         return clickgo.tool.getBoolean(this.disabled);
     }
 };
+
+export let data = {
+    'isKeyDown': false
+};
+
 export let methods = {
-    keydown: function(this: IVueControl, e: KeyboardEvent): void {
-        if (e.keyCode !== 13) {
+    click: function(this: IVControl): void {
+        this.$emit('update:modelValue', this.value);
+    },
+    keydown: function(this: IVControl, e: KeyboardEvent): void {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            this.click();
+        }
+        else if (e.key === ' ') {
+            e.preventDefault();
+            this.isKeyDown = true;
+        }
+    },
+    keyup: function(this: IVControl): void {
+        if (!this.isKeyDown) {
             return;
         }
-        this.click(e);
-    },
-    click: function(this: IVueControl, e: MouseEvent): void {
-        this.cgTap(e);
-        this.$emit('update:modelValue', this.value);
+        this.isKeyDown = false;
+        this.click();
     }
 };

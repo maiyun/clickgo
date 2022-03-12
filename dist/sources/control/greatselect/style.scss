@@ -1,5 +1,5 @@
 .wrap {
-    display: flex; outline: none; position: relative;
+    display: flex; outline: none; position: relative; padding: 7px;
     &.area-all {
         background: hsl(205, 0%, 90%);
     }
@@ -10,7 +10,7 @@
     &::before {
         content: ''; pointer-events: none; position: absolute; left: 0; top: 0; width: 200%; height: 200%; transform-origin: 0 0; transform: scale(.5); border: solid 1px hsl(205, 0%, 70%); z-index: 1;
     }
-    &.cg-pop-open {
+    &[data-cg-pop-open] {
         &.area-all {
             background: hsl(205, 100%, 90%);
         }
@@ -19,35 +19,39 @@
         }
     }
 
-    &.cg-disabled {
+    &[data-cg-disabled] {
         background: hsl(205, 0%, 80%); color: hsl(205, 0%, 50%);
         &::before {
             border: solid 1px hsl(205, 0%, 60%);
         }
     }
-    &:not(.cg-disabled):not(.cg-pop-open) {
-        &.hover, &:focus {
+    &:not([data-cg-disabled]):not([data-cg-pop-open]) {
+        &:hover, &:focus {
             &::before {
                 border: solid 1px hsl(205, 100%, 50%);
             }
         }
-        &.active {
+        &:active {
             &::before {
                 border: solid 1px hsl(205, 100%, 30%);
             }
         }
         &.area-all {
-            &.hover, &:focus {
+            &:hover, &:focus {
                 background: hsl(205, 100%, 95%);
             }
-            &.active {
+            &:active {
                 background: hsl(205, 100%, 90%);
             }
         }
     }
 
-    .inner {
-        display: flex; flex-grow: 1; flex-basis: 0; padding: 7px;
+    .op {
+        display: flex; flex: 1;
+    }
+
+    .content {
+        display: flex; flex: 1;
         &.h {
             align-items: center;
         }
@@ -62,39 +66,40 @@
             content: ''; pointer-events: none; position: absolute; left: 0; top: 0; width: 200%; height: 200%; transform-origin: 0 0; transform: scale(.5); border: solid 1px transparent;
         }
         &::after {
-            content: ''; border: solid 1px #000; border-width: 0 1px 1px 0; width: 6px; height: 6px; transform: rotate(45deg); margin-top: -3px;
+            content: ''; border: solid 1px hsl(0, 0%, 20%); border-width: 0 1px 1px 0; width: 6px; height: 6px; transform: rotate(45deg); margin-top: -3px;
         }
     }
-    &:not(.cg-disabled):not(.cg-pop-open) {
-        &.area-arrow > .arrow:hover {
-            background: hsl(205, 100%, 95%);
-            &::before {
-                border-left-color: hsl(205, 100%, 50%);
+
+    &:not([data-cg-disabled]):not([data-cg-pop-open]) {
+        &.area-arrow {
+            .arrow {
+                &:hover {
+                    background: hsl(205, 100%, 95%);
+                    &::before {
+                        border-left-color: hsl(205, 100%, 50%);
+                    }
+                }
+                &:active {
+                    background: hsl(205, 100%, 90%);
+                    &::before {
+                        border-left-color: hsl(205, 100%, 30%);
+                    }
+                }
             }
         }
-        &.area-arrow > .arrow:active {
+    }
+    &.area-arrow[data-cg-pop-open] {
+        .arrow {
             background: hsl(205, 100%, 90%);
             &::before {
                 border-left-color: hsl(205, 100%, 30%);
             }
         }
     }
-    &.area-arrow.cg-pop-open > .arrow {
-        background: hsl(205, 100%, 90%);
-        &::before {
-            border-left-color: hsl(205, 100%, 30%);
-        }
-    }
 }
 
 .pop {
-    position: absolute; box-shadow: 1px 1px 5px rgba(0, 0, 0, .2); transition: .1s ease-out; transition-property: transform, opacity; transform: translateY(-10px); opacity: 0;
-    &:not(.open) {
-        pointer-events: none;
-    }
-    &.open {
-        transform: translateY(0px); opacity: 1;
-    }
+    width: 800px;
     > * {
         max-height: 300px;
     }

@@ -16,6 +16,7 @@
 
 /** --- ClickGo 对象 --- */
 const clickgo: IClickGo = {
+    'safe': true,
     'rootPath': window.location.href.slice(0, window.location.href.lastIndexOf('/') + 1),
     'cgRootPath': '',
     'cdnPath': 'https://cdn.jsdelivr.net',
@@ -66,11 +67,12 @@ const clickgo: IClickGo = {
     // --- 加载 loader ---
     let tmpScript = document.createElement('script');
     tmpScript.src = clickgo.cdnPath + '/npm/@litert/loader@3.0.0/dist/index.min.js';
+    // tmpScript.src = '/project/litert/loader.js/dist/index.js';
     tmpScript.addEventListener('load', function(): void {
         loader.ready(async () => {
             // --- 通过标签加载库 ---
             let paths: string[] = [
-                clickgo.cdnPath + '/npm/vue@3.2.20/dist/vue.global.min.js',
+                clickgo.cdnPath + '/npm/vue@3.2.31/dist/vue.global.min.js',
                 clickgo.cdnPath + '/npm/jszip@3.7.1/dist/jszip.min.js'
             ];
             // --- 判断 ResizeObserver 是否存在 ---
@@ -78,7 +80,7 @@ const clickgo: IClickGo = {
             // ResizeObserver = undefined;
             if (!((window as any).ResizeObserver)) {
                 ro = false;
-                paths.push(clickgo.cdnPath + '/npm/@juggle/resize-observer@3.3.0/lib/exports/resize-observer.umd.min.js');
+                paths.push(clickgo.cdnPath + '/npm/@juggle/resize-observer@3.3.1/lib/exports/resize-observer.umd.min.js');
             }
             // --- 加载 vue 以及必要库 ---
             await loader.loadScripts(paths);

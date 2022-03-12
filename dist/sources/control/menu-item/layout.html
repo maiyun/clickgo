@@ -1,9 +1,9 @@
-<div class="wrap" :class="[isDisabled && 'cg-disabled', cgSelfPopOpen && 'cg-pop-open', cgHover && 'hover', cgActive && 'active']" @click="click"  @mousedown="cgDown" @mouseup="cgUp" @mouseenter="enter" @mouseleave="cgLeave" @touchstart="cgDown" @touchend="cgUp" @touchcancel="cgCancel" @dblclick="cgDblclick">
+<div class="wrap" :data-cg-disabled="isDisabled ? '' : undefined" @mouseenter="enter" @click="click">
     <div class="inner">
         <slot></slot>
     </div>
     <teleport v-if="$slots.pop" to="#cg-pop-list">
-        <div class="pop" :class="[cgSelfPopOpen && 'open']" :style="cgPopPosition">
+        <div ref="pop" data-cg-pop>
             <slot name="pop"></slot>
         </div>
     </teleport>

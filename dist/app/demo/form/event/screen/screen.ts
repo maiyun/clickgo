@@ -5,7 +5,7 @@ export let data = {
     'list': []
 };
 
-export let mounted = function(this: IVueForm): void {
+export let mounted = function(this: IVForm): void {
     this.cgSetSystemEventListener('screenResize', (): void => {
         let area = clickgo.form.getAvailArea();
         this.width = area.width;

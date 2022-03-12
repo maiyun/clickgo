@@ -1,10 +1,18 @@
-.content {
-    padding: 15px; background: #FFF;
-}
+.wrap {
+    padding: 15px; min-width: 200px; max-width: 400px; word-break: break-all;
 
-.controls {
-    padding: 10px 10px 10px 70px; position: relative;
-    &::before {
-        content: ' '; position: absolute; left: 0; top: 0; width: 200%; height: 200%; transform-origin: 0 0; transform: scale(.5); border-top: solid 1px hsl(205, 0%, 70%);
+    .content {
+        background: #FFF;
+    }
+    
+    .controls {
+        padding: 10px 10px 10px 70px; position: relative;
+        &::before {
+            content: ' '; position: absolute; left: 0; top: 0; width: 200%; height: 200%; transform-origin: 0 0; transform: scale(.5); border-top: solid 1px hsl(205, 0%, 70%);
+        }
+    
+        cg-button {
+            height: 30px; width: 80px;
+        }
     }
 }

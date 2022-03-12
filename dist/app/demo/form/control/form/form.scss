@@ -1,0 +1,9 @@
+button {
+    height: 30px;
+}
+
+.bottom {
+    button {
+        flex: 1; width: 0;
+    }
+}

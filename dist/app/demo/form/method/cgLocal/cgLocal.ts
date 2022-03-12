@@ -9,11 +9,11 @@ export let computed = {
 };
 
 export let methods = {
-    'change': function(this: IVueForm): void {
+    'change': function(this: IVForm): void {
         clickgo.core.config.local = this.select;
     }
 };
 
-export let mounted = function(this: IVueForm): void {
+export let mounted = function(this: IVForm): void {
     this.select = clickgo.core.config.local;
 };

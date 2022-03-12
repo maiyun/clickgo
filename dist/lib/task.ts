@@ -7,16 +7,16 @@ export let lastId: number = 0;
 let localData: Record<string, {
     'loading': string;
 }> = {
-    'en-us': {
+    'en': {
         'loading': 'Loading...',
     },
-    'zh-cn': {
+    'sc': {
         'loading': '加载中……'
     },
-    'zh-tw': {
+    'tc': {
         'loading': '載入中……'
     },
-    'ja-jp': {
+    'ja': {
         'loading': '読み込み中...'
     }
 };
@@ -71,7 +71,7 @@ export async function run(url: string, opt: { 'runtime'?: Record<string, Blob | 
         opt.runtime = {};
     }
     let notifyId: number | undefined = opt.progress ? clickgo.form.notify({
-        'title': localData[clickgo.core.config.local]?.loading ?? localData['en-us'].loading,
+        'title': localData[clickgo.core.config.local]?.loading ?? localData['en'].loading,
         'content': url,
         'icon': opt.icon,
         'timeout': 0,
@@ -270,8 +270,8 @@ export function end(taskId: number): boolean {
         clickgo.control.revokeObjectURL(task.controlPkgs[name]);
     }
     // --- 移除所有 timer ---
-    for (let timer of list[taskId].timers) {
-        clearTimeout(timer);
+    for (let timer in list[taskId].timers) {
+        clearTimeout(parseFloat(timer));
     }
     // --- 移除 task ---
     delete(list[taskId]);
@@ -296,4 +296,65 @@ export function loadLocalData(taskId: number, name: string, data: Record<string,
             clickgo.task.list[taskId].local.data[name][pre + k] = v;
         }
     }
+}
+
+// --- 创建 timer ---
+export function createTimer(taskId: number, formId: number, fun: () => void | Promise<void>, delay: number, opt: {
+    'immediate'?: boolean;
+    'scope'?: 'form' | 'task';
+    'count'?: number;
+} = {}): number {
+    /** --- 作用域 --- */
+    let scope = opt.scope ?? 'form';
+    /** --- 执行几次，0 代表无限次 --- */
+    let count = opt.count ?? 0;
+    let c: number = 0;
+    // --- 是否立即执行 ---
+    if (opt.immediate) {
+        fun() as void;
+        ++c;
+        if (count > 0 && c === count) {
+            return 0;
+        }
+    }
+    let timer: number;
+    let timerHandler = (): void => {
+        ++c;
+        if (list[taskId].forms[formId] === undefined) {
+            // --- form 已经没了 ---
+            if (scope === 'form') {
+                clearTimeout(timer);
+                delete(list[taskId].timers[timer]);
+                return;
+            }
+        }
+        fun() as void;
+        if (count > 0 && c === count) {
+            clearTimeout(timer);
+            delete(list[taskId].timers[timer]);
+            return;
+        }
+    };
+    /** --- timer 对象 number --- */
+    if (count === 1) {
+        timer = window.setTimeout(timerHandler, delay);
+    }
+    else {
+        timer = window.setInterval(timerHandler, delay);
+    }
+    list[taskId].timers[timer] = formId;
+    return timer;
+}
+
+export function removeTimer(taskId: number, timer: number): void {
+    if (clickgo.task.list[taskId] === undefined) {
+        return;
+    }
+    let formId = clickgo.task.list[taskId].timers[timer];
+    if (formId === undefined) {
+        return;
+    }
+    // --- 放在这，防止一个 task 能结束 别的 task 的 timer ---
+    clearTimeout(timer);
+    delete(clickgo.task.list[taskId].timers[timer]);
 }

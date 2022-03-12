@@ -1,60 +1,76 @@
 <form title="Select" width="400" height="450" min-width="300" min-height="400" padding="10">
-    <tab flex="1">
+    <tab style="flex: 1; width: 0;">
         <!-- greatselect -->
         <tab-panel label="greatselect" style="padding: 10px;">
-            <layout flex="1" gutter="10" direction="v">
+            <layout gutter="10" direction="v" style="flex: 1;">
                 <label>Now select value is {{select}}:</label>
-                <greatselect :area="area" :disabled="disabled">
-                    <layout flex="1" align-v="center" gutter="5" style="line-height: 1.2;">
-                        <img width="32" height="32" :src="slist[select].src"></img>
+                <greatselect v-model="select" :data="slist" :area="area" :disabled="disabled" :style="{'font-size': fontSize ? '16px' : undefined, 'padding': padding ? '15px' : undefined, 'background': background ? 'red' : undefined, 'color': background ? '#FFF' : undefined}">
+                    <layout align-v="center" gutter="5" style="line-height: 1.3; flex: 1;">
+                        <img :src="slist[select].src" style="width: 32px; height: 32px;"></img>
                         <block>
                             <block>{{slist[select].name}}</block>
-                            <block style="opacity:.7;">{{slist[select].path}}</block>
+                            <block style="opacity: .7;">{{slist[select].path}}</block>
                         </block>
                     </layout>
+                    <template v-slot:pop="data">
+                        <layout v-if="data.row.type === 0" align-v="center" gutter="5" style="flex: 1; line-height: 1.3;">
+                            <img :src="data.row.src" style="width: 32px; height: 32px;"></img>
+                            <block style="flex: 1;">
+                                <block>{{data.row.name}}</block>
+                                <block style="opacity: .7;">{{data.row.path}}</block>
+                            </block>
+                        </layout>
+                        <template v-else>Other</template>
+                    </template>
+                    <template v-slot:itempop>
+                        <menulist>
+                            <menulist-item alt="S">Set the default</menulist-item>
+                        </menulist>
+                    </template>
+                </greatselect>
+                <label>Custom pop: {{fontSize}} | {{fontSize && '16px'}}</label>
+                <greatselect pop="custom" :area="area" :disabled="disabled" :style="{'font-size': fontSize ? '16px' : undefined, 'padding': padding ? '15px' : undefined, 'background': background ? 'red' : undefined, 'color': background ? '#FFF' : undefined}">
+                    <label>Pop is button.</label>
                     <template v-slot:pop>
-                        <greatlist v-model="select" :data="slist" v-slot="data" :adaptation="true" style="line-height: 1.3;">
-                            <greatlist-item v-if="data.row.type === 0" :disabled="data.row.disabled" :value="data.index">
-                                <layout align-v="center" gutter="5" flex="1">
-                                    <img width="32" height="32" :src="data.row.src"></img>
-                                    <block flex="1">
-                                        <block>{{data.row.name}}</block>
-                                        <block style="opacity:.7;">{{data.row.path}}</block>
-                                    </block>
-                                </layout>
-                                <template v-if="data.row.menu" v-slot:pop>
-                                    <menulist>
-                                        <menulist-item alt="S">Set the default</menulist-item>
-                                    </menulist>
-                                </template>
-                            </greatlist-item>
-                            <greatlist-split v-else-if="data.row.type === 1"></greatlist-split>
-                            <greatlist-item v-else :value="data.index">Other</greatlist-item>
-                        </greatlist>
+                        <button style="height: 30px;">Nothing</button>
                     </template>
                 </greatselect>
                 <layout gutter="10">
-                    <button flex="1" @tap="slist.splice(-2, 0, {'type': 0, 'name': 'Card' + slist.length, 'path': 'Bob >> folder >> Card', 'src': '/res/r-2.svg','disabled': false})">Add item</button>
-                    <button flex="1" @tap="slist.splice(-3, 1)">Remove item</button>
+                    <button @click="slist.splice(-2, 0, {'type': 0, 'name': 'Card' + slist.length, 'path': 'Bob >> folder >> Card', 'src': '/res/r-2.svg','disabled': false})" style="flex: 1; height: 30px;">Add item</button>
+                    <button @click="slist.splice(-3, 1)" style="flex: 1; height: 30px;">Remove item</button>
                 </layout>
                 <layout gutter="10">
-                    <button flex="1" @tap="disabled = !disabled">Disabled: {{disabled}}</button>
-                    <button flex="1" @tap="area = area === 'all' ? 'arrow' : 'all'">Area: {{area}}</button>
+                    <button @click="disabled = !disabled" style="flex: 1; height: 30px;">Disabled: {{disabled}}</button>
+                    <button @click="area = area === 'all' ? 'arrow' : 'all'" style="flex: 1; height: 30px;">Area: {{area}}</button>
+                </layout>
+                <layout gutter="10">
+                    <button @click="fontSize = !fontSize" style="flex: 1; height: 30px;">Change font size</button>
+                    <button @click="padding = !padding" style="flex: 1; height: 30px;">Change padding</button>
+                </layout>
+                <layout gutter="10">
+                    <button @click="background = !background" style="flex: 1; height: 30px;">Change background and color</button>
                 </layout>
             </layout>
         </tab-panel>
         <!-- select -->
         <tab-panel label="select" style="padding: 10px;">
-            <layout flex="1" gutter="10" direction="v">
+            <layout gutter="10" direction="v" style="flex: 1;">
                 <label>Now select value is {{select2}}:</label>
-                <select v-model="select2" :data="slist2" :disabled="disabled" :editable="editable"></select>
+                <select v-model="select2" :data="slist2" :disabled="disabled" :editable="editable" :style="{'font-size': fontSize ? '16px' : undefined, 'padding': padding ? '15px' : undefined, 'background': background ? 'red' : undefined, 'color': background ? '#FFF' : undefined}"></select>
                 <label>Custom height:</label>
-                <select :data="['1','2','3','4','5']" :disabled="disabled" :editable="editable" height="60"></select>
+                <select :data="['1','2','3','4','5']" :disabled="disabled" :editable="editable" style="height: 60px;" :style="{'font-size': fontSize ? '16px' : undefined, 'padding': padding ? '15px' : undefined, 'background': background ? 'red' : undefined, 'color': background ? '#FFF' : undefined}"></select>
                 <label>Always editable:</label>
-                <select :data="['1','2','3','4','5']" :disabled="disabled" editable></select>
+                <select :data="['1','2','3','4','5']" :disabled="disabled" editable :style="{'font-size': fontSize ? '16px' : undefined, 'padding': padding ? '15px' : undefined, 'background': background ? 'red' : undefined, 'color': background ? '#FFF' : undefined}"></select>
                 <layout gutter="10">
-                    <button flex="1" @tap="disabled = !disabled">Disabled: {{disabled}}</button>
-                    <button flex="1" @tap="editable = !editable">Editable: {{editable}}</button>
+                    <button @click="disabled = !disabled" style="flex: 1; height: 30px;">Disabled: {{disabled}}</button>
+                    <button @click="editable = !editable" style="flex: 1; height: 30px;">Editable: {{editable}}</button>
+                </layout>
+                <layout gutter="10">
+                    <button @click="fontSize = !fontSize" style="flex: 1; height: 30px;">Change font size</button>
+                    <button @click="padding = !padding" style="flex: 1; height: 30px;">Change padding</button>
+                </layout>
+                <layout gutter="10">
+                    <button @click="background = !background" style="flex: 1; height: 30px;">Change background and color</button>
                 </layout>
             </layout>
         </tab-panel>

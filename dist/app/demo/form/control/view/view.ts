@@ -1,4 +1,5 @@
 export let data = {
+    'lineValue': 10,
     'lineCount': 2,
 
     'sLeft1': 0,
@@ -21,6 +22,8 @@ export let data = {
     'l4': 0,
     'c4': 0,
 
+    'direction': false,
+
     'dir5': 'v',
     'sLeft5': 0,
     'sTop5': 0,
@@ -30,5 +33,7 @@ export let data = {
 
     'c6': 0,
 
-    'style': false
+    'style': false,
+    'selection': false,
+    'area': {}
 };

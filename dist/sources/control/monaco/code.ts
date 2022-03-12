@@ -3,25 +3,6 @@ export let props = {
         'default': false
     },
 
-    'width': {
-        'default': undefined
-    },
-    'height': {
-        'default': undefined
-    },
-    'left': {
-        'default': 0
-    },
-    'top': {
-        'default': 0
-    },
-    'zIndex': {
-        'default': 0
-    },
-    'flex': {
-        'default': ''
-    },
-
     'readonly': {
         'default': false
     },
@@ -40,14 +21,14 @@ export let props = {
 };
 
 export let computed = {
-    'isDisabled': function(this: IVueControl): boolean {
+    'isDisabled': function(this: IVControl): boolean {
         return clickgo.tool.getBoolean(this.disabled);
     },
-    'isReadonly': function(this: IVueControl): boolean {
+    'isReadonly': function(this: IVControl): boolean {
         return clickgo.tool.getBoolean(this.readonly);
     },
 
-    'filesComp': function(this: IVueControl): any[] {
+    'filesComp': function(this: IVControl): any[] {
         let list = [];
         for (let path in this.files) {
             list.push({
@@ -63,22 +44,22 @@ export let data = {
     'notInit': false,
 
     'localData': {
-        'en-us': {
+        'en': {
             'copy': 'Copy',
             'cut': 'Cut',
             'paste': 'Paste'
         },
-        'zh-cn': {
+        'sc': {
             'copy': '复制',
             'cut': '剪下',
             'paste': '粘上'
         },
-        'zh-tw': {
+        'tc': {
             'copy': '複製',
             'cut': '剪貼',
             'paste': '貼上'
         },
-        'ja-jp': {
+        'ja': {
             'copy': 'コピー',
             'cut': '切り取り',
             'paste': '貼り付け'
@@ -87,7 +68,7 @@ export let data = {
 };
 
 export let watch = {
-    'isReadonly': function(this: IVueControl): void {
+    'isReadonly': function(this: IVControl): void {
         if (!this.monacoInstance) {
             return;
         }
@@ -95,7 +76,7 @@ export let watch = {
             'readOnly': this.isDisabled ? true : this.isReadonly
         });
     },
-    'isDisabled': function(this: IVueControl): void {
+    'isDisabled': function(this: IVControl): void {
         if (!this.monacoInstance) {
             return;
         }
@@ -104,7 +85,7 @@ export let watch = {
         });
     },
 
-    'modelValue': function(this: IVueControl): void {
+    'modelValue': function(this: IVControl): void {
         if (!this.monacoInstance) {
             return;
         }
@@ -113,7 +94,7 @@ export let watch = {
         }
         this.monacoInstance.setValue(this.modelValue);
     },
-    'language': function(this: IVueControl): void {
+    'language': function(this: IVControl): void {
         if (!this.monacoInstance) {
             return;
         }
@@ -122,33 +103,32 @@ export let watch = {
 };
 
 export let methods = {
-    contextmenu: function(this: IVueControl, e: MouseEvent): void {
+    contextmenu: function(this: IVControl, e: MouseEvent): void {
         if (!navigator.clipboard) {
             e.stopPropagation();
             return;
         }
-        if (clickgo.dom.isMouseAlsoTouchEvent(e)) {
+        if (clickgo.dom.hasTouchButMouse(e)) {
             return;
         }
-        this.cgShowPop(e);
+        clickgo.form.showPop(this.$el, this.$refs.pop, e);
     },
-    down: function(this: IVueControl, e: MouseEvent | TouchEvent): void {
-        this.cgDown(e);
-        if (clickgo.dom.isMouseAlsoTouchEvent(e)) {
-            return;
-        }
-        if (this.cgSelfPopOpen) {
-            this.cgHidePop();
-        }
-    },
-    touchDown: function(this: IVueControl, e: TouchEvent): void {
+    touch: function(this: IVControl, e: TouchEvent): void {
         if (navigator.clipboard) {
             clickgo.dom.bindLong(e, () => {
-                this.cgShowPop(e);
+                clickgo.form.showPop(this.$el, this.$refs.pop, e);
             });
         }
     },
-    execCmd: async function(this: IVueControl, ac: string): Promise<void> {
+    down: function(this: IVControl, e: MouseEvent | TouchEvent): void {
+        if (clickgo.dom.hasTouchButMouse(e)) {
+            return;
+        }
+        if (this.$el.dataset.cgPopOpen !== undefined) {
+            clickgo.form.hidePop();
+        }
+    },
+    execCmd: async function(this: IVControl, ac: string): Promise<void> {
         switch (ac) {
             case 'copy': {
                 clickgo.tool.execCommand(ac);
@@ -181,7 +161,7 @@ export let methods = {
     }
 };
 
-export let mounted = function(this: IVueControl): void {
+export let mounted = function(this: IVControl): void {
     let monaco = clickgo.core.getModule('monaco');
     if (monaco) {
         this.monaco = monaco;
@@ -215,7 +195,7 @@ export let mounted = function(this: IVueControl): void {
     }
 };
 
-export let unmounted = function(this: IVueControl): void {
+export let unmounted = function(this: IVControl): void {
     if (this.monacoInstance) {
         this.monacoInstance.dispose();
     }

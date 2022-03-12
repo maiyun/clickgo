@@ -1,25 +1,36 @@
 <form width="350" height="350" title="Textbox">
-    <layout direction="v" gutter="10" flex="1" style="padding: 10px;">
+    <layout direction="v" gutter="10" style="padding: 10px; flex: 1; width: 0;">
         <label>Text Length: {{value.length}}, Selection Start: {{selectionStart}}, Selection End: {{selectionEnd}}</label>
         <label>Scroll Left: {{scrollLeft}}, Scroll Top: {{scrollTop}}, Length: {{length}}, Client Height: {{clientHeight}}, Client Width: {{clientWidth}}</label>
-        <text v-model="value" :multi="multi" :disabled="disabled" :readonly="readonly" :password="password" :wrap="wrap" :line-height="lineHeight" :font-size="fontSize" :flex="multi ? 1 : undefined" v-model:scroll-left="scrollLeft" v-model:scroll-top="scrollTop" v-model:selection-start="selectionStart" v-model:selection-end="selectionEnd" @resize="clientHeight = $event" @resizen="clientWidth = $event" @change="length = $event">
+        <text v-model="value" :multi="multi" :disabled="disabled" :readonly="readonly" :password="password" :wrap="wrap" :border="border" v-model:scroll-left="scrollLeft" v-model:scroll-top="scrollTop" v-model:selection-start="selectionStart" v-model:selection-end="selectionEnd" @resize="clientHeight = $event" @resizen="clientWidth = $event" @change="length = $event" :style="{'flex': multi ? '1' : undefined, 'line-height': lineHeight, 'font-size': fontSize + 'px', 'background': background, 'color': background ? '#FFF' : undefined, 'height': multi ? undefined : '30px'}">
             <menulist v-if="menu">
                 <menulist-item>Custom</menulist-item>
             </menulist>
         </text>
         <layout gutter="10">
-            <button flex="1" @tap="multi = !multi">{{multi ? 'Remove' : 'Set'}} multi</button>
-            <button flex="1" @tap="disabled = !disabled">{{disabled ? 'Remove' : 'Set'}} disabled</button>
-            <button flex="1" @tap="readonly = !readonly">{{readonly ? 'Remove' : 'Set'}} readonly</button>
+            <button @click="multi = !multi" style="flex: 1; height: 30px;">{{multi ? '' : '!'}}multi</button>
+            <button @click="disabled = !disabled" style="flex: 1; height: 30px;">{{disabled ? '' : '!'}}disabled</button>
+            <button @click="readonly = !readonly" style="flex: 1; height: 30px;">{{readonly ? '' : '!'}}readonly</button>
+            <button @click="longClick" style="flex: 1; height: 30px;">{{long ? '' : '!'}}long</button>
         </layout>
         <layout gutter="10">
-            <button flex="1" @tap="password = !password">{{password ? 'Remove' : 'Set'}} password</button>
-            <button flex="1" @tap="wrap = !wrap">{{wrap ? 'Remove' : 'Set'}} wrap</button>
-            <button flex="1" @tap="menu = !menu">{{menu ? 'Remove' : 'Set'}} menu</button>
+            <button @click="password = !password" style="flex: 1; height: 30px;">{{password ? 'Remove' : 'Set'}} password</button>
+            <button @click="wrap = !wrap" style="flex: 1; height: 30px;">{{wrap ? 'Remove' : 'Set'}} wrap</button>
+            <button @click="menu = !menu" style="flex: 1; height: 30px;">{{menu ? 'Remove' : 'Set'}} menu</button>
         </layout>
         <layout gutter="10">
-            <button flex="1" @tap="lineHeight = lineHeight === 1 ? 1.5 : 1">Set line-height {{lineHeight === 1 ? 1.5 : 1}}</button>
-            <button flex="1" @tap="fontSize = fontSize === 12 ? 16 : 12">Set font-size {{fontSize === 12 ? 16 : 12}}</button>
+            <button @click="lineHeight = lineHeight === 1 ? 1.5 : 1" style="flex: 1; height: 30px;">Set line-height {{lineHeight === 1 ? 1.5 : 1}}</button>
+            <button @click="fontSize = fontSize === 12 ? 16 : 12" style="flex: 1; height: 30px;">Set font-size {{fontSize === 12 ? 16 : 12}}</button>
+        </layout>
+        <layout gutter="10">
+            <button @click="border = 'solid'" style="flex: 2; height: 30px;">Set border solid</button>
+            <button @click="border = 'underline'" style="flex: 1; height: 30px;">Underline</button>
+            <button @click="border = 'none'" style="flex: 1; height: 30px;">None</button>
+        </layout>
+        <layout gutter="10">
+            <button @click="background = 'red'" style="flex: 2; height: 30px;">Set background red</button>
+            <button @click="background = 'green'" style="flex: 1; height: 30px;">Green</button>
+            <button @click="background = undefined" style="flex: 1; height: 30px;">Remove</button>
         </layout>
     </layout>
 </form>

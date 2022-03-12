@@ -1,27 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.methods = exports.computed = exports.props = void 0;
+exports.methods = exports.data = exports.computed = exports.props = void 0;
 exports.props = {
     'disabled': {
         'default': false
-    },
-    'width': {
-        'default': undefined
-    },
-    'height': {
-        'default': undefined
-    },
-    'left': {
-        'default': 0
-    },
-    'top': {
-        'default': 0
-    },
-    'zIndex': {
-        'default': 0
-    },
-    'flex': {
-        'default': ''
     },
     'value': {
         'default': undefined
@@ -35,15 +17,28 @@ exports.computed = {
         return clickgo.tool.getBoolean(this.disabled);
     }
 };
+exports.data = {
+    'isKeyDown': false
+};
 exports.methods = {
+    click: function () {
+        this.$emit('update:modelValue', this.value);
+    },
     keydown: function (e) {
-        if (e.keyCode !== 13) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            this.click();
+        }
+        else if (e.key === ' ') {
+            e.preventDefault();
+            this.isKeyDown = true;
+        }
+    },
+    keyup: function () {
+        if (!this.isKeyDown) {
             return;
         }
-        this.click(e);
-    },
-    click: function (e) {
-        this.cgTap(e);
-        this.$emit('update:modelValue', this.value);
+        this.isKeyDown = false;
+        this.click();
     }
 };

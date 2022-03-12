@@ -14,32 +14,8 @@ exports.props = {
     'disabled': {
         'default': false
     },
-    'width': {
-        'default': undefined
-    },
-    'height': {
-        'default': undefined
-    },
-    'left': {
-        'default': 0
-    },
-    'top': {
-        'default': 0
-    },
-    'zIndex': {
-        'default': 0
-    },
-    'flex': {
-        'default': ''
-    },
-    'padding': {
-        'default': undefined
-    },
-    'lineHeight': {
-        'default': undefined
-    },
-    'fontSize': {
-        'default': undefined
+    'border': {
+        'default': 'solid'
     },
     'multi': {
         'default': false,
@@ -51,7 +27,7 @@ exports.props = {
         'default': false
     },
     'wrap': {
-        'default': false
+        'default': true
     },
     'modelValue': {
         'default': ''
@@ -90,6 +66,9 @@ exports.computed = {
     },
     'maxScrollTop': function () {
         return Math.round(this.lengthHeight) - Math.round(this.clientHeight);
+    },
+    'opMargin': function () {
+        return this.padding.replace(/(\w+)/g, '-$1');
     }
 };
 exports.watch = {
@@ -112,10 +91,10 @@ exports.watch = {
         handler: function () {
             return __awaiter(this, void 0, void 0, function* () {
                 yield this.$nextTick();
-                clickgo.dom.watchSize(this.$refs.text, () => __awaiter(this, void 0, void 0, function* () {
+                clickgo.dom.watchSize(this.$refs.text, () => {
                     this.refreshLength();
                     this.refreshClient();
-                }), true);
+                }, true);
                 this.refreshLength();
                 this.refreshClient();
                 this.refreshScroll();
@@ -187,6 +166,12 @@ exports.watch = {
     }
 };
 exports.data = {
+    'font': '',
+    'fontWeight': '',
+    'lineHeight': '',
+    'background': '',
+    'color': '',
+    'padding': '',
     'isFocus': false,
     'value': '',
     'selectionStartEmit': 0,
@@ -202,22 +187,22 @@ exports.data = {
     'canTouch': false,
     'lastDownTime': 0,
     'localData': {
-        'en-us': {
+        'en': {
             'copy': 'Copy',
             'cut': 'Cut',
             'paste': 'Paste'
         },
-        'zh-cn': {
+        'sc': {
             'copy': '复制',
             'cut': '剪下',
             'paste': '粘上'
         },
-        'zh-tw': {
+        'tc': {
             'copy': '複製',
             'cut': '剪貼',
             'paste': '貼上'
         },
-        'ja-jp': {
+        'ja': {
             'copy': 'コピー',
             'cut': '切り取り',
             'paste': '貼り付け'
@@ -244,12 +229,11 @@ exports.methods = {
         this.value = e.target.value;
     },
     down: function (e) {
-        this.cgDown(e);
-        if (clickgo.dom.isMouseAlsoTouchEvent(e)) {
+        if (clickgo.dom.hasTouchButMouse(e)) {
             return;
         }
-        if (this.cgSelfPopOpen) {
-            this.cgHidePop();
+        if (this.$el.dataset.cgPopOpen !== undefined) {
+            clickgo.form.hidePop(this.$el);
         }
         let tagName = e.target.tagName.toLowerCase();
         if (tagName !== 'input' && tagName !== 'textarea') {
@@ -305,13 +289,13 @@ exports.methods = {
             }
         }
     },
-    inputDown: function (e) {
+    inputTouch: function (e) {
         this.touchX = e.touches[0].clientX;
         this.touchY = e.touches[0].clientY;
         this.canTouch = false;
         if (navigator.clipboard) {
             clickgo.dom.bindLong(e, () => {
-                this.cgShowPop(e);
+                clickgo.form.showPop(this.$el, this.$refs.pop, e);
             });
         }
     },
@@ -357,10 +341,10 @@ exports.methods = {
             e.stopPropagation();
             return;
         }
-        if (clickgo.dom.isMouseAlsoTouchEvent(e)) {
+        if (clickgo.dom.hasTouchButMouse(e)) {
             return;
         }
-        this.cgShowPop(e);
+        clickgo.form.showPop(this.$el, this.$refs.pop, e);
     },
     select: function () {
         let selectionStart = this.$refs.text.selectionStart;
@@ -384,6 +368,9 @@ exports.methods = {
         return __awaiter(this, void 0, void 0, function* () {
             this.$refs.text.focus();
             if (ac === 'paste') {
+                if (this.isReadonly) {
+                    return;
+                }
                 let str = yield navigator.clipboard.readText();
                 this.value = this.value.slice(0, this.selectionStartEmit) + str + this.value.slice(this.selectionEndEmit);
                 yield this.$nextTick();
@@ -443,13 +430,42 @@ exports.methods = {
     }
 };
 exports.mounted = function () {
-    clickgo.dom.watchSize(this.$refs.text, () => __awaiter(this, void 0, void 0, function* () {
-        this.refreshClient();
-        this.refreshLength();
-    }), true);
-    this.cgCreateTimer(() => {
+    return __awaiter(this, void 0, void 0, function* () {
+        clickgo.dom.watchSize(this.$refs.text, () => __awaiter(this, void 0, void 0, function* () {
+            this.refreshClient();
+            this.refreshLength();
+        }), true);
+        clickgo.dom.watchStyle(this.$el, ['font', 'font-weight', 'line-height', 'background', 'color', 'padding'], (n, v) => {
+            switch (n) {
+                case 'font': {
+                    this.font = v;
+                    break;
+                }
+                case 'font-weight': {
+                    this.fontWeight = v;
+                    break;
+                }
+                case 'line-height': {
+                    this.lineHeight = v;
+                    break;
+                }
+                case 'background': {
+                    this.background = v;
+                    break;
+                }
+                case 'color': {
+                    this.color = v;
+                    break;
+                }
+                case 'padding': {
+                    this.padding = v;
+                    break;
+                }
+            }
+        }, true);
+        yield clickgo.tool.sleep(5);
         this.refreshLength();
         this.$refs.text.scrollTop = this.scrollTop;
         this.$refs.text.scrollLeft = this.scrollLeft;
-    }, 5);
+    });
 };

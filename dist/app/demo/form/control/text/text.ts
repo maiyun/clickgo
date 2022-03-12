@@ -5,15 +5,25 @@ export let data = {
     'multi': false,
     'disabled': false,
     'readonly': false,
+    'long': false,
     'password': false,
     'wrap': true,
     'menu': false,
     'lineHeight': 1,
     'fontSize': 12,
+    'border': 'solid',
+    'background': undefined,
 
     'scrollLeft': 0,
     'scrollTop': 0,
     'length': 0,
     'clientHeight': 0,
     'clientWidth': 0
+};
+
+export let methods = {
+    longClick: function(this: IVForm): void {
+        this.value = this.long ? 'short' : 'long\nlong\nlong\nlong\nlong\nlong\nlong\nlong\nlong\nlong\nlong\nlong\nlong\nlong\nlong\nlong\nlong\nlong';
+        this.long = !this.long;
+    }
 };

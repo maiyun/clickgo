@@ -5,7 +5,7 @@ export let data = {
 };
 
 export let methods = {
-    'pushConsole': function(this: IVueForm, name: string, text: string): void {
+    'pushConsole': function(this: IVForm, name: string, text: string): void {
         let date = new Date();
         this.list.unshift({
             'time': date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds(),
@@ -13,16 +13,16 @@ export let methods = {
             'text': text
         });
     },
-    'run': async function(this: IVueForm): Promise<void> {
+    'run': async function(this: IVForm): Promise<void> {
         let taskId = await clickgo.task.run('/clickgo/app/demo/');
         await this.cgDialog(`Successfully run, task id is: ${taskId}.`);
     },
-    'end': async function(this: IVueForm): Promise<void> {
+    'end': async function(this: IVForm): Promise<void> {
         if (await this.cgConfirm(`Are you sure to end Task ${this.tid}?`)) {
             clickgo.task.end(parseInt(this.tid));
         }
     },
-    'runTask': async function(this: IVueForm): Promise<void> {
+    'runTask': async function(this: IVForm): Promise<void> {
         if (clickgo.form.taskInfo.taskId > 0) {
             await this.cgDialog('The Task APP is already running.');
             return;
@@ -33,7 +33,7 @@ export let methods = {
     }
 };
 
-export let mounted = function(this: IVueForm): void {
+export let mounted = function(this: IVForm): void {
     let list = clickgo.task.getList();
     for (let tid in list) {
         this.tlist.push({

@@ -9,6 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 const clickgo = {
+    'safe': true,
     'rootPath': window.location.href.slice(0, window.location.href.lastIndexOf('/') + 1),
     'cgRootPath': '',
     'cdnPath': 'https://cdn.jsdelivr.net',
@@ -53,13 +54,13 @@ const clickgo = {
     tmpScript.addEventListener('load', function () {
         loader.ready(() => __awaiter(this, void 0, void 0, function* () {
             let paths = [
-                clickgo.cdnPath + '/npm/vue@3.2.20/dist/vue.global.min.js',
+                clickgo.cdnPath + '/npm/vue@3.2.31/dist/vue.global.min.js',
                 clickgo.cdnPath + '/npm/jszip@3.7.1/dist/jszip.min.js'
             ];
             let ro = true;
             if (!(window.ResizeObserver)) {
                 ro = false;
-                paths.push(clickgo.cdnPath + '/npm/@juggle/resize-observer@3.3.0/lib/exports/resize-observer.umd.min.js');
+                paths.push(clickgo.cdnPath + '/npm/@juggle/resize-observer@3.3.1/lib/exports/resize-observer.umd.min.js');
             }
             yield loader.loadScripts(paths);
             if (!ro) {

@@ -65,7 +65,7 @@ interface IVueVNode {
     [key: string]: any;
 }
 
-interface IVueForm extends IVue {
+interface IVForm extends IVue {
     /** --- 当前任务 id --- */
     'taskId': number;
     /** --- 当前窗体 id --- */
@@ -86,7 +86,7 @@ interface IVueForm extends IVue {
     'cgLocal': string;
     /** --- 获取语言内容 --- */
     'l': (key: string) => string;
-    cgCreateForm(paramOpt?: string | ICGFormCreateOptions & { 'mask'?: boolean; }): Promise<void>;
+    cgCreateForm(paramOpt?: string | ICGFormCreateOptions & { 'mask'?: boolean; }): Promise<number>;
     cgClose(): void;
     cgMax(): void;
     cgMin(): void;
@@ -127,12 +127,37 @@ interface IVueForm extends IVue {
      * @param cla class 内容对象
      */
     cgClassPrepend(cla: any): string;
-    cgCreateTimer(fun: () => void | Promise<void>, delay: number, interval?: boolean): number;
+    /**
+     * --- 创建 timer ---
+     * @param fun 执行的函数
+     * @param delay 间隔时间
+     * @param opt 选项
+     */
+    cgCreateTimer(fun: () => void | Promise<void>, delay: number, opt?: {
+        'immediate'?: boolean;
+        'scope'?: 'form' | 'task';
+        'count'?: number;
+    }): number;
+    /**
+     * --- sleep 一段时间再执行 ---
+     * @param fun 执行的函数
+     * @param delay 间隔时间
+     */
+    cgSleep(fun: () => void | Promise<void>, delay: number): number;
+    /**
+     * --- 移除 timer ---
+     * @param timer 要移除的 timer number ---
+     */
     cgRemoveTimer(timer: number): void;
+    /**
+     * --- 检测事件是否可被执行 ---
+     * @param e 事件
+     */
+    cgAllowEvent(e: MouseEvent | TouchEvent | KeyboardEvent): boolean;
 }
 
-interface IVueControl extends IVue {
-    '$parent': IVueControl | null;
+interface IVControl extends IVue {
+    '$parent': IVControl | null;
 
     /** --- 当前窗体是否有焦点 --- */
     'cgFocus': boolean;
@@ -148,43 +173,12 @@ interface IVueControl extends IVue {
     'cgPrep': string;
     /** --- 获取目前现存的子 slots --- */
     'cgSlots': (name?: string) => IVueVNode[];
-    /** --- 是否是嵌套组件 --- */
-    'cgNest': boolean;
-    /** --- 自己是不是就是 pop 层 --- */
-    'cgSelfIsPopLayer': boolean;
-    /** --- 自己下面的正在显示的含有 pop 层的 control --- */
-    'cgChildPopItemShowing': IVueControl | undefined;
-    /** --- 自己的 pop 层的对象 --- */
-    'cgSelfPop': IVueControl | undefined;
-    /** --- 当前的 selfPop 是否显示 --- */
-    'cgSelfPopOpen': boolean;
-    /** --- pop 最终的显示位置 --- */
-    'cgPopPosition': {
-        'left': string;
-        'top': string;
-        'zIndex': string;
-        [key: string]: string;
-    };
-    /** --- 当前是否是真实 hover 状态 --- */
-    'cgRealHover': boolean;
-    /** --- 当前是否是 active 状态 --- */
-    'cgActive': boolean;
-    /** --- 当前是否是 hover 状态（move 模式下一定返回 false） --- */
-    'cgHover': boolean;
-    /** --- 组件宽度 --- */
-    'cgWidthPx': string | undefined;
-    /** ---组件高度 --- */
-    'cgHeightPx': string | undefined;
     /** --- 当前 task 的 local 值 --- */
     'cgLocal': string;
     /** --- 获取语言内容 --- */
     'l': (key: string, data?: Record<string, Record<string, string>>) => string;
-    /** --- 获取正常非 nest 上级 --- */
-    'cgParent': IVueControl | null;
     /** --- 根据 control name 来寻找上级 --- */
-    'cgParentByName': (controlName: string) => IVueControl;
-    /** --- 上级最近的一层的 pop layer 组件 --- */
-    'cgParentPopLayer': IVueControl;
+    'cgParentByName': (controlName: string) => IVControl;
     /**
      * --- 关闭窗体 ---
      */
@@ -196,43 +190,8 @@ interface IVueControl extends IVue {
      */
     cgBindFormResize(e: MouseEvent | TouchEvent, border: TCGBorder): void;
     /**
-     * --- 控件默认的 down 事件绑定 ---
-     * @param e 鼠标或触摸事件对象
-     */
-    cgDown(e: MouseEvent | TouchEvent): void;
-    /**
      * --- 控件默认的 up 事件绑定 ---
      * @param e 鼠标或触摸事件对象
-     */
-    cgUp(e: MouseEvent | TouchEvent): void;
-    /**
-     * --- 控件默认的 cancel（up） 事件绑定 ---
-     * @param e 触摸事件对象
-     */
-    cgCancel(e: TouchEvent): void;
-    /**
-     * --- 鼠标移入事件绑定，有 touch 事件的则不会触发 emit ---
-     * @param e 鼠标事件对象
-     */
-    cgEnter(e: MouseEvent): void;
-    /**
-     * --- 鼠标移出事件绑定，有 touch 事件的则不会触发 emit ---
-     * @param e 鼠标事件对象
-     */
-    cgLeave(e: MouseEvent): void;
-    /**
-     * --- 控件默认的 tap 事件绑定 ---
-     * @param e 鼠标、触摸或键盘事件对象
-     */
-    cgTap(e: MouseEvent | TouchEvent | KeyboardEvent): void;
-    /**
-     * --- 控件默认的 dblclick 事件绑定 ---
-     * @param e 鼠标事件对象
-     */
-    cgDblclick(e: MouseEvent): void;
-    /**
-     * --- 获取文件 blob 或 string 对象 ---
-     * @param file 文件路径
      */
     cgGetFile(this: IVue, path: string): Promise<Blob | string | null>;
     /**
@@ -253,23 +212,29 @@ interface IVueControl extends IVue {
     /**
      * --- 创建 timer ---
      * @param fun 执行的函数
-     * @param delay 延时
-     * @param interval 是否重复执行
+     * @param delay 间隔时间
+     * @param opt 选项
      */
-    cgCreateTimer(fun: () => void | Promise<void>, delay: number, interval?: boolean): number;
+    cgCreateTimer(fun: () => void | Promise<void>, delay: number, opt?: {
+        'immediate'?: boolean;
+        'scope'?: 'form' | 'task';
+        'count'?: number;
+    }): number;
     /**
-     * --- 删除 timer ---
-     * @param timer 要删除的 timer number ---
+     * --- sleep 一段时间再执行 ---
+     * @param fun 执行的函数
+     * @param delay 间隔时间
+     */
+    cgSleep(fun: () => void | Promise<void>, delay: number): number;
+    /**
+     * --- 移除 timer ---
+     * @param timer 要移除的 timer number ---
      */
     cgRemoveTimer(timer: number): void;
     /**
-     * --- 显示 pop ---
-     * @param direction 要显示方向（以 $el 为准的 h 水平和 v 垂直）或坐标
-     * @param size 显示的 pop 定义自定义宽度，可省略
+     * --- 检测事件是否可被执行 ---
+     * @param e 事件
      */
-    cgShowPop(direction: 'h' | 'v' | MouseEvent | TouchEvent | { x: number; y: number; }, opt?: { 'size'?: { width?: number; height?: number; }; 'null'?: boolean; }): void;
-    /**
-     * --- 隐藏 pop ---
-     */
-    cgHidePop(): void;
+    cgAllowEvent(e: MouseEvent | TouchEvent | KeyboardEvent): boolean;
+
 }

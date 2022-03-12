@@ -16,7 +16,7 @@
     .arrow {
         display: flex; justify-content: center; align-items: center;
         &::before {
-            content: ''; pointer-events: none; border: solid 1px #000; width: 6px; height: 6px; transform: rotate(45deg);
+            content: ''; pointer-events: none; border: solid 1px hsl(0, 0%, 20%); width: 6px; height: 6px; transform: rotate(45deg);
         }
         &:hover::before {
             border-color: hsl(205, 100%, 50%);

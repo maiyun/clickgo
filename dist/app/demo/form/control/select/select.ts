@@ -22,10 +22,10 @@ export let data = {
             'disabled': true
         },
         {
-            'type': 1
+            'control': 'split'
         },
         {
-            'type': 2
+            'type': 1
         }
     ],
     'select': 0,
@@ -57,14 +57,19 @@ export let data = {
         }
     ],
     'select2': 'haha2',
-    'editable': false
+    'editable': false,
+
+    'padding': false,
+    'fontSize': false,
+    'background': false
 };
 
 export let watch = {
-    'select': async function(this: IVueForm, n: number, o: number): Promise<void> {
+    'select': async function(this: IVForm, n: number, o: number): Promise<void> {
         if (this.slist[n].type === 0) {
             return;
         }
+        // --- 让其响应 watch 重定 modelValue ---
         await this.$nextTick();
         if (this.slist[o].type === 0) {
             this.select = o;

@@ -14,24 +14,6 @@ exports.props = {
     'disabled': {
         'default': false
     },
-    'width': {
-        'default': undefined
-    },
-    'height': {
-        'default': undefined
-    },
-    'left': {
-        'default': 0
-    },
-    'top': {
-        'default': 0
-    },
-    'zIndex': {
-        'default': 0
-    },
-    'flex': {
-        'default': ''
-    },
     'readonly': {
         'default': false
     },
@@ -69,22 +51,22 @@ exports.computed = {
 exports.data = {
     'notInit': false,
     'localData': {
-        'en-us': {
+        'en': {
             'copy': 'Copy',
             'cut': 'Cut',
             'paste': 'Paste'
         },
-        'zh-cn': {
+        'sc': {
             'copy': '复制',
             'cut': '剪下',
             'paste': '粘上'
         },
-        'zh-tw': {
+        'tc': {
             'copy': '複製',
             'cut': '剪貼',
             'paste': '貼上'
         },
-        'ja-jp': {
+        'ja': {
             'copy': 'コピー',
             'cut': '切り取り',
             'paste': '貼り付け'
@@ -130,25 +112,24 @@ exports.methods = {
             e.stopPropagation();
             return;
         }
-        if (clickgo.dom.isMouseAlsoTouchEvent(e)) {
+        if (clickgo.dom.hasTouchButMouse(e)) {
             return;
         }
-        this.cgShowPop(e);
+        clickgo.form.showPop(this.$el, this.$refs.pop, e);
     },
-    down: function (e) {
-        this.cgDown(e);
-        if (clickgo.dom.isMouseAlsoTouchEvent(e)) {
-            return;
-        }
-        if (this.cgSelfPopOpen) {
-            this.cgHidePop();
-        }
-    },
-    touchDown: function (e) {
+    touch: function (e) {
         if (navigator.clipboard) {
             clickgo.dom.bindLong(e, () => {
-                this.cgShowPop(e);
+                clickgo.form.showPop(this.$el, this.$refs.pop, e);
             });
+        }
+    },
+    down: function (e) {
+        if (clickgo.dom.hasTouchButMouse(e)) {
+            return;
+        }
+        if (this.$el.dataset.cgPopOpen !== undefined) {
+            clickgo.form.hidePop();
         }
     },
     execCmd: function (ac) {

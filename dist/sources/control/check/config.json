@@ -9,6 +9,7 @@
     "style": "/style",
 
     "files": [
+        "/res/font.woff",
         "/code.js",
         "/layout.html",
         "/style.css"

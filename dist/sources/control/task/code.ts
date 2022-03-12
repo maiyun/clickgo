@@ -5,31 +5,23 @@ export let props = {
 };
 
 export let methods = {
-    down: function(this: IVueControl, e: MouseEvent | TouchEvent): void {
-        this.cgDown(e);
-        if (clickgo.dom.isMouseAlsoTouchEvent(e)) {
+    down: function(this: IVControl, e: MouseEvent | TouchEvent): void {
+        if (clickgo.dom.hasTouchButMouse(e)) {
             return;
         }
-        // --- 不使别的窗体丢掉焦点 ---
-        e.stopPropagation();
-        e.preventDefault();
-        clickgo.form.hidePop();
-        // --- 长按弹出 menu ---
-        if (e instanceof MouseEvent) {
-            return;
+        if (this.$el.dataset.cgPopOpen !== undefined) {
+            clickgo.form.hidePop();
         }
-        if ((e.target === this.$refs.wrap) || (e.target === this.$refs.task) || (e.target === this.$refs.tray)) {
-            clickgo.dom.bindLong(e, () => {
-                this.cgShowPop(e);
+        if (e instanceof TouchEvent) {
+            clickgo.dom.bindLong(e, (e) => {
+                clickgo.form.showPop(this.$el, this.$refs.pop, e);
             });
         }
     },
-    contextmenu: function(this: IVueControl, e: MouseEvent): void {
-        if (clickgo.dom.isMouseAlsoTouchEvent(e)) {
+    contextmenu: async function(this: IVControl, e: MouseEvent): Promise<void> {
+        if (clickgo.dom.hasTouchButMouse(e)) {
             return;
         }
-        if ((e.target === this.$refs.wrap) || (e.target === this.$refs.task) || (e.target === this.$refs.tray)) {
-            this.cgShowPop(e);
-        }
+        clickgo.form.showPop(this.$el, this.$refs.pop, e);
     }
 };

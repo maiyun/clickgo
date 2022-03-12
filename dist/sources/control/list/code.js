@@ -1,28 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.methods = exports.computed = exports.data = exports.props = void 0;
+exports.methods = exports.computed = exports.props = void 0;
 exports.props = {
-    'width': {
-        'default': undefined
-    },
-    'height': {
-        'default': undefined
-    },
-    'left': {
-        'default': undefined
-    },
-    'top': {
-        'default': undefined
-    },
-    'zIndex': {
-        'default': undefined
-    },
-    'flex': {
-        'default': undefined
-    },
-    'padding': {
-        'default': undefined
-    },
     'adaptation': {
         'dafault': undefined
     },
@@ -42,11 +21,8 @@ exports.props = {
         'default': ''
     }
 };
-exports.data = {
-    'cgNest': true
-};
 function formatData(inData, level = 0) {
-    var _a, _b, _c, _d, _e;
+    var _a, _b, _c, _d, _e, _f;
     let data = [];
     for (let k = 0; k < inData.length; ++k) {
         let item = inData[k];
@@ -54,15 +30,17 @@ function formatData(inData, level = 0) {
         let over = {
             'label': '',
             'value': '',
-            'disabled': false,
             'title': false,
+            'disabled': false,
+            'control': 'item',
             'level': level
         };
         if (type === 'object') {
             over.label = (_b = (_a = item.label) !== null && _a !== void 0 ? _a : item.value) !== null && _b !== void 0 ? _b : k;
             over.value = (_d = (_c = item.value) !== null && _c !== void 0 ? _c : item.label) !== null && _d !== void 0 ? _d : k;
-            over.disabled = (_e = item.disabled) !== null && _e !== void 0 ? _e : false;
             over.title = item.children ? true : false;
+            over.disabled = over.title ? true : ((_e = item.disabled) !== null && _e !== void 0 ? _e : false);
+            over.control = (_f = item.control) !== null && _f !== void 0 ? _f : 'item';
             data.push(over);
             if (item.children) {
                 data = data.concat(formatData(item.children, level + 1));
@@ -92,19 +70,19 @@ exports.computed = {
         let modelValue = this.modelValue;
         if (typeof modelValue === 'object') {
             if (!this.isMulti) {
-                modelValue = (_a = modelValue[0]) !== null && _a !== void 0 ? _a : '';
                 change = true;
+                modelValue = (_a = modelValue[0]) !== null && _a !== void 0 ? _a : '';
             }
         }
         else {
             if (this.isMulti) {
-                modelValue = modelValue === '' ? [] : [modelValue];
                 change = true;
+                modelValue = modelValue === '' ? [] : [modelValue];
             }
         }
         if (this.isMust) {
             if (typeof modelValue === 'object') {
-                if (modelValue.length === []) {
+                if (modelValue.length === 0) {
                     return [];
                 }
             }
@@ -125,17 +103,17 @@ exports.computed = {
                     for (let k = 0; k < this.dataComp.length; ++k) {
                         if (this.dataComp[k].value === modelValue[i]) {
                             if (!this.dataComp[k].disabled && !this.dataComp[k].title) {
+                                found = true;
                                 value.push(k);
                                 label.push(this.dataComp[k].label);
-                                found = true;
                             }
                             break;
                         }
                     }
                     if (!found) {
+                        change = true;
                         modelValue.splice(i, 1);
                         --i;
-                        change = true;
                     }
                 }
             }
@@ -154,8 +132,8 @@ exports.computed = {
                     }
                 }
                 if (value === -1) {
-                    modelValue = '';
                     change = true;
+                    modelValue = '';
                 }
             }
         }

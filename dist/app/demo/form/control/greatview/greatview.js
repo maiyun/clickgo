@@ -1,7 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.data = void 0;
+exports.mounted = exports.computed = exports.data = void 0;
 exports.data = {
+    'lineValue': 100,
     'lineCount': 2,
     'sLeft1': 0,
     'sTop1': 0,
@@ -19,6 +20,7 @@ exports.data = {
     'sTop4': 0,
     'l4': 0,
     'c4': 0,
+    'direction': false,
     'dir5': 'v',
     'sLeft5': 0,
     'sTop5': 0,
@@ -26,5 +28,24 @@ exports.data = {
     'c5': 0,
     'line5': 10,
     'c6': 0,
-    'style': false
+    'is6': [],
+    'style': false,
+    'selection': false,
+    'area': {}
+};
+exports.computed = {
+    'is': function () {
+        let is = [];
+        for (let i = 0; i < this.lineCount; ++i) {
+            if (i > 0 && i % 10 === 0) {
+                is[i] = 30;
+                continue;
+            }
+        }
+        return is;
+    }
+};
+exports.mounted = function () {
+    this.is6[29] = 50;
+    this.is6[39] = 50;
 };

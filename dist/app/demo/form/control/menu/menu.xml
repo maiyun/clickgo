@@ -1,5 +1,5 @@
 <form title="Menu" width="300" height="500" min-width="300" min-height="400" padding="10">
-    <layout flex="1" direction="v" gutter="10">
+    <layout direction="v" gutter="10" style="flex: 1; width: 0;">
         <label>Radio, Check, Split, Custom:</label>
         <menulist>
             <menulist-item alt="A">Item1</menulist-item>
@@ -31,9 +31,9 @@
                             <template v-slot>Icon</template>
                             <template v-slot:pop>
                                 <menulist>
-                                    <menulist-item alt="A"><img src="../../../res/txt.svg" width="16" height="16" /><label style="margin-left: 10px;">Txt</label></menulist-item>
-                                    <menulist-item alt="B"><img src="../../../res/sql.svg" width="16" height="16" /><label style="margin-left: 10px;">Sql</label></menulist-item>
-                                    <menulist-item alt="C"><img src="../../../res/zip.svg" width="16" height="16" /><label style="margin-left: 10px;">Zip</label></menulist-item>
+                                    <menulist-item alt="A"><img src="../../../res/txt.svg" style="width: 16px; height: 16px;" /><label style="margin-left: 10px;">Txt</label></menulist-item>
+                                    <menulist-item alt="B"><img src="../../../res/sql.svg" style="width: 16px; height: 16px;" /><label style="margin-left: 10px;">Sql</label></menulist-item>
+                                    <menulist-item alt="C"><img src="../../../res/zip.svg" style="width: 16px; height: 16px;" /><label style="margin-left: 10px;">Zip</label></menulist-item>
                                 </menulist>
                             </template>
                         </menulist-item>
@@ -42,13 +42,13 @@
                             <template v-slot:pop>
                                 <menulist>
                                     <menulist-item alt="A">
-                                        <button flex="1" @tap="$event.stopPropagation()">Button</button>
+                                        <button @click="$event.stopPropagation()" style="height: 30px; flex: 1; width: 0;">Button</button>
                                     </menulist-item>
                                     <menulist-item alt="B">
-                                        <scroll direction="h" height="30" width="150" @tap="$event.stopPropagation()"></scroll>
+                                        <scroll direction="h" @click="$event.stopPropagation()" style="height: 30px; width: 150px;"></scroll>
                                     </menulist-item>
-                                    <menulist-item alt="A">
-                                        <text flex="1" @tap="$event.stopPropagation()"></text>
+                                    <menulist-item alt="C">
+                                        <text @click="$event.stopPropagation()" style="height: 30px; flex: 1; width: 0;"></text>
                                     </menulist-item>
                                 </menulist>
                             </template>
@@ -58,8 +58,15 @@
                             <template v-slot:pop>
                                 <menulist>
                                     <layout>
-                                        <menulist-item alt="A" padding="20">Box 1</menulist-item>
-                                        <menulist-item alt="B" padding="20">Box 2</menulist-item>
+                                        <menulist-item alt="A" style="padding: 20px;">Box 1</menulist-item>
+                                        <menulist-item alt="B" style="padding: 20px;">
+                                            <template v-slot>Box 2</template>
+                                            <template v-slot:pop>
+                                                <menulist>
+                                                    <menulist-item alt="A">Child</menulist-item>
+                                                </menulist>
+                                            </template>
+                                        </menulist-item>
                                     </layout>
                                     <menulist-item alt="C">Other item</menulist-item>
                                 </menulist>
@@ -78,7 +85,7 @@
                     <menulist>
                         <menulist-item alt="A">Item3</menulist-item>
                         <menulist-item alt="B">Item4</menulist-item>
-                        <menulist-item alt="C" :disabled="true">Item5</menulist-item>
+                        <menulist-item alt="C" disabled>Item5</menulist-item>
                     </menulist>
                 </template>
             </menulist-item>
@@ -101,7 +108,7 @@
                     </menulist>
                 </template>
             </menu-item>
-            <menu-item alt="I" :disabled="true">
+            <menu-item alt="I" disabled>
                 <template v-slot>Item3</template>
                 <template v-slot:pop>
                     <menulist>

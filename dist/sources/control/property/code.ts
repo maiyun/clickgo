@@ -3,30 +3,14 @@ export let props = {
         'default': false
     },
 
-    'width': {
-        'default': undefined
-    },
-    'height': {
-        'default': undefined
-    },
-    'left': {
-        'default': 0
-    },
-    'top': {
-        'default': 0
-    },
-    'zIndex': {
-        'default': 0
-    },
-    'flex': {
-        'default': ''
-    },
-
     'sort': {
         'default': 'kind'
     },
     'type': {
         'default': 'property'
+    },
+    'desc': {
+        'default': true
     },
     'modelValue': {
         'default': []
@@ -34,17 +18,34 @@ export let props = {
 };
 
 export let computed = {
-    'isDisabled': function(this: IVueControl): boolean {
+    'isDisabled': function(this: IVControl): boolean {
         return clickgo.tool.getBoolean(this.disabled);
     },
+    'isDesc': function(this: IVControl): boolean {
+        return clickgo.tool.getBoolean(this.descData);
+    },
 
-    'value': function(this: IVueControl): any[] {
+    'subValue': function(this: IVControl) {
+        return (item2: Record<string, any>, i3: number, isDefault: boolean = false): string => {
+            if (isDefault) {
+                return item2.default.split(',')[i3] ? item2.default.split(',')[i3].trim() : '';
+            }
+            else {
+                return item2.value.split(',')[i3] ? item2.value.split(',')[i3].trim() : '';
+            }
+        };
+    },
+    'value': function(this: IVControl): any[] {
         let list: any[] = [];
         // --- 大列表 ---
         let bigList: any = {};
         let bigTitle: string[] = [];
         for (let item of this.modelValue) {
             let kind = this.sortData === 'letter' ? undefined : item.kind;
+            let type = item.type ?? 'property';
+            if (type !== this.typeData) {
+                continue;
+            }
             if (!bigList[kind]) {
                 bigList[kind] = {
                     'list': {},
@@ -55,11 +56,12 @@ export let computed = {
             bigList[kind].list[item.title] = {
                 'kind': item.kind,
                 'title': item.title,
-                'desc': item.desc,
-                'type': item.type,
-                'control': item.control,
-                'default': item.default,
-                'value': item.value,
+                'desc': item.desc ?? '',
+                'type': type,
+                'control': item.control ?? 'text',
+                'default': item.default ?? '',
+                'value': item.value ?? '',
+                'data': item.data,
                 'sub': item.sub
             };
             bigList[kind].title.push(item.title);
@@ -81,14 +83,20 @@ export let computed = {
 
 export let watch = {
     'sort': {
-        handler: function(this: IVueControl): void {
+        handler: function(this: IVControl): void {
             this.sortData = this.sort;
         },
         'immediate': true
     },
     'type': {
-        handler: function(this: IVueControl): void {
+        handler: function(this: IVControl): void {
             this.typeData = this.type;
+        },
+        'immediate': true
+    },
+    'desc': {
+        handler: function(this: IVControl): void {
+            this.descData = this.desc;
         },
         'immediate': true
     }
@@ -97,64 +105,202 @@ export let watch = {
 export let data = {
     'direction': 'h',
     'localData': {
-        'en-us': {
+        'en': {
             'reset': 'Reset',
             'description': 'Description'
         },
-        'zh-cn': {
+        'sc': {
             'reset': '重置',
             'description': '说明'
         },
-        'zh-tw': {
+        'tc': {
             'reset': '重置',
             'description': '說明'
         },
-        'ja-jp': {
+        'ja': {
             'reset': 'リセット',
             'description': '形容'
         }
     },
     'sortData': 'kind',
     'typeData': 'property',
+    'descData': true,
     'selectedTitle': undefined,
-    'selectedSub': undefined
+    'selectedSub': undefined,
+    'bigClosed': [],
+    'opened': [],
+
+    'title': '',
+    'description': '',
+
+    'dockValue': ''
 };
 
 export let methods = {
-    contextmenu: function(this: IVueControl, e: MouseEvent): void {
-        if (clickgo.dom.isMouseAlsoTouchEvent(e)) {
+    contextmenu: function(this: IVControl, e: MouseEvent): void {
+        if (clickgo.dom.hasTouchButMouse(e)) {
             return;
         }
-        this.cgShowPop(e);
+        clickgo.form.showPop(this.$refs.content, this.$refs.pop, e);
     },
-    down: function(this: IVueControl, e: MouseEvent | TouchEvent): void {
-        this.cgDown(e);
-        if (clickgo.dom.isMouseAlsoTouchEvent(e)) {
+    down: function(this: IVControl, e: MouseEvent | TouchEvent): void {
+        if (clickgo.dom.hasTouchButMouse(e)) {
             return;
         }
-        if (this.cgSelfPopOpen) {
-            this.cgHidePop();
+        if (this.$refs.content.dataset.cgPopOpen !== undefined) {
+            clickgo.form.hidePop(this.$refs.content);
+        }
+        if (e instanceof TouchEvent) {
+            // --- 长按触发 contextmenu ---
+            clickgo.dom.bindLong(e, () => {
+                clickgo.form.showPop(this.$refs.content, this.$refs.pop, e);
+            });
         }
     },
-    vdown: function(this: IVueControl, e: TouchEvent): void {
-        // --- 长按触发 contextmenu ---
-        clickgo.dom.bindLong(e, () => {
-            this.cgShowPop(e);
-        });
-    },
-    changeSort: function(this: IVueControl, sort: string): void {
+    changeSort: function(this: IVControl, sort: string): void {
         this.sortData = sort;
         this.$emit('update:sort', sort);
     },
-    changeType: function(this: IVueControl, type: string): void {
+    changeType: function(this: IVControl, type: string): void {
         this.typeData = type;
         this.$emit('update:type', type);
     },
-    select: function(this: IVueControl, e: MouseEvent | TouchEvent, item2: string, item3: string): void {
-        if (clickgo.dom.isMouseAlsoTouchEvent(e)) {
+    // --- 点击选择一个 line ---
+    select: function(this: IVControl, e: MouseEvent | TouchEvent, item2: string, item3: string, desc: string): void {
+        if (clickgo.dom.hasTouchButMouse(e)) {
             return;
         }
         this.selectedTitle = item2;
         this.selectedSub = item3;
+        this.title = item3 ?? item2;
+        this.description = desc;
+    },
+    // --- 打开/关闭子项 ---
+    bigToggle: function(this: IVControl, bigTitle: string): void {
+        let io = this.bigClosed.indexOf(bigTitle);
+        if (io === -1) {
+            this.bigClosed.push(bigTitle);
+            return;
+        }
+        this.bigClosed.splice(io, 1);
+    },
+    toggle: function(this: IVControl, title: string): void {
+        let io = this.opened.indexOf(title);
+        if (io === -1) {
+            this.opened.push(title);
+            return;
+        }
+        this.opened.splice(io, 1);
+    },
+    // --- 项内容更新方法 ---
+    update: function(this: IVControl, value: string): void {
+        for (let item of this.modelValue) {
+            if (item.title !== this.selectedTitle) {
+                continue;
+            }
+            if (!this.selectedSub) {
+                // --- 大级别 ---
+                if (item.value === value) {
+                    continue;
+                }
+                item.value = value;
+                this.$emit('update:modelValue', this.modelValue);
+            }
+            else {
+                // --- 小级别 ---
+                let arr = item.value.split(',');
+                for (let i = 0; i < arr.length; ++i) {
+                    if (typeof arr[i] !== 'string') {
+                        continue;
+                    }
+                    arr[i] = arr[i].trim();
+                }
+                for (let i = 0; i < item.sub.length; ++i) {
+                    let sub = item.sub[i];
+                    if (sub.title !== this.selectedSub) {
+                        continue;
+                    }
+                    let val = this.subValue(item, i);
+                    if (val === value) {
+                        continue;
+                    }
+                    arr[i] = value;
+                    item.value = arr.join(', ');
+                    this.$emit('update:modelValue', this.modelValue);
+                }
+            }
+        }
+    },
+    // --- dock ---
+    dock: function(this: IVControl, e: MouseEvent): void {
+        if ((e.currentTarget as HTMLElement).dataset.cgPopOpen !== undefined) {
+            clickgo.form.hidePop();
+            return;
+        }
+        for (let item of this.modelValue) {
+            if (item.title !== this.selectedTitle) {
+                continue;
+            }
+            if (!this.selectedSub) {
+                // --- 大级别 ---
+                this.dockValue = item.value;
+            }
+            else {
+                // --- 小级别 ---
+                for (let i = 0; i < item.sub.length; ++i) {
+                    let sub = item.sub[i];
+                    if (sub.title !== this.selectedSub) {
+                        continue;
+                    }
+                    this.dockValue = this.subValue(item, i);
+                }
+            }
+        }
+        clickgo.form.showPop(e.currentTarget as HTMLElement, this.$refs.dock, 'v');
+    },
+    dockSelect: function(this: IVControl, value: string): void {
+        this.update(value);
+        clickgo.form.hidePop();
+    },
+    // --- 双击 ---
+    reset: function(this: IVControl): void {
+        for (let item of this.modelValue) {
+            if (item.title !== this.selectedTitle) {
+                continue;
+            }
+            if (!this.selectedSub) {
+                // --- 大级别 ---
+                if (item.value === item.default) {
+                    continue;
+                }
+                item.value = item.default;
+                this.$emit('update:modelValue', this.modelValue);
+            }
+            else {
+                // --- 小级别 ---
+                let arr = item.value.split(',');
+                for (let i = 0; i < arr.length; ++i) {
+                    if (typeof arr[i] !== 'string') {
+                        continue;
+                    }
+                    arr[i] = arr[i].trim();
+                }
+                for (let i = 0; i < item.sub.length; ++i) {
+                    let sub = item.sub[i];
+                    if (sub.title !== this.selectedSub) {
+                        continue;
+                    }
+                    let val = this.subValue(item, i);
+                    let def = this.subValue(item, i, true);
+                    if (val === def) {
+                        continue;
+                    }
+                    // --- 要 reset ---
+                    arr[i] = def;
+                    item.value = arr.join(', ');
+                    this.$emit('update:modelValue', this.modelValue);
+                }
+            }
+        }
     }
 };

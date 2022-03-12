@@ -8,6 +8,7 @@ interface ICGToolLib {
     layoutAddTagClassAndReTagName(layout: string, retagname: boolean): string;
     layoutInsertAttr(layout: string, insert: string, opt?: { 'ignore'?: RegExp[]; 'include'?: RegExp[]; }): string;
     layoutClassPrepend(layout: string, preps: string[]): string;
+    eventsAttrWrap(layout: string): string;
     stylePrepend(style: string, prep?: string): { 'style': string; 'prep': string; };
     getMimeByPath(path: string): { 'mime': string; 'ext': string; };
     createObjectURL(object: Blob): string;
@@ -16,8 +17,6 @@ interface ICGToolLib {
     rand(min: number, max: number): number;
     getBoolean(param: boolean | string | number): boolean;
     escapeHTML(html: string): string;
-    includes(str: string, search: string | string[]): boolean;
-    replace(text: string, search: string, replace: string): string;
     request(url: string, opt: ICGToolRequestOptions): Promise<null | any>;
     parseUrl(url: string): ILoaderUrl;
     urlResolve(from: string, to: string): string;

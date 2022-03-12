@@ -3,28 +3,6 @@ export let props = {
         'default': false
     },
 
-    'width': {
-        'default': undefined
-    },
-    'height': {
-        'default': undefined
-    },
-    'left': {
-        'default': undefined
-    },
-    'top': {
-        'default': undefined
-    },
-    'zIndex': {
-        'default': undefined
-    },
-    'flex': {
-        'default': undefined
-    },
-    'padding': {
-        'default': undefined
-    },
-
     'modelValue': {
         'default': ''
     },
@@ -38,13 +16,13 @@ export let props = {
 
 export let watch = {
     'modelValue': {
-        'handler': function(this: IVueControl): void {
+        'handler': function(this: IVControl): void {
             this.value = this.modelValue;
         },
         'immediate': true
     },
     'isEditable': {
-        'handler': function(this: IVueControl, editable: boolean): void {
+        'handler': function(this: IVControl, editable: boolean): void {
             if (editable) {
                 this.inputValue = this.value;
             }
@@ -54,38 +32,58 @@ export let watch = {
 };
 
 export let data = {
-    'cgNest': true,
+    'background': '',
+    'padding': '',
 
     'value': '',
     'label': '',
-    'inputValue': '',
-    'doInput': false
+    'inputValue': ''
 };
 
 export let computed = {
-    'isDisabled': function(this: IVueControl): boolean {
+    'isDisabled': function(this: IVControl): boolean {
         return clickgo.tool.getBoolean(this.disabled);
     },
-    'isEditable': function(this: IVueControl): boolean {
+    'isEditable': function(this: IVControl): boolean {
         return clickgo.tool.getBoolean(this.editable);
+    },
+    'opMargin': function(this: IVControl): string {
+        return this.padding.replace(/(\w+)/g, '-$1');
     }
 };
 
 export let methods = {
-    updateModelValue: function(this: IVueControl, value: string): void {
-        this.value = value;
-        if (!this.doInput) {
-            this.inputValue = value;
-            this.$emit('update:modelValue', value);
-            return;
-        }
-        else {
-            this.doInput = false;
-        }
-    },
-    input: function(this: IVueControl): void {
-        this.doInput = true;
+    updateInputValue: function(this: IVControl, value: string): void {
+        this.inputValue = value;
         this.value = this.inputValue;
         this.$emit('update:modelValue', this.value);
+    },
+    updateModelValue: function(this: IVControl, value: string): void {
+        this.value = value;
+        if (this.isEditable && (value === '')) {
+            return;
+        }
+        this.inputValue = value;
+        this.$emit('update:modelValue', value);
+        // --- 隐藏 pop ---
+        if (this.$refs.list) {
+            let pop = clickgo.dom.findParentByData(this.$refs.list.$el, 'cg-pop');
+            clickgo.form.hidePop(pop);
+        }
     }
+};
+
+export let mounted = function(this: IVControl): void {
+    clickgo.dom.watchStyle(this.$el, ['font', 'line-height', 'background', 'color', 'padding'], (n, v) => {
+        switch (n) {
+            case 'background': {
+                this.background = v;
+                break;
+            }
+            case 'padding': {
+                this.padding = v;
+                break;
+            }
+        }
+    }, true);
 };

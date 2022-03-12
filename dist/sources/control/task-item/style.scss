@@ -4,19 +4,19 @@
         display: inline-block;
     }
 
-    &.hover {
+    &:hover {
         background: rgba(255, 255, 255, .1);
     }
-    &.active {
+    &:active {
         background: rgba(255, 255, 255, .05);
     }
 
     &.selected {
         background: rgba(255, 255, 255, .2);
-        &.hover {
+        &:hover {
             background: rgba(255, 255, 255, .3);
         }
-        &.active {
+        &:active {
             background: rgba(255, 255, 255, .25);
         }
     }
@@ -81,7 +81,7 @@
             background: hsl(205, 100%, 70%);
         }
     }
-    &.selected, &.hover {
+    &.selected, &:hover {
         &.top, &.bottom {
             .line::after {
                 width: 100%;
@@ -99,14 +99,4 @@
             }
         }
     }
-}
-
-.pop {
-    position: absolute; box-shadow: 1px 1px 5px rgba(0, 0, 0, .2); transition: .1s ease-out; transition-property: transform, opacity; transform: translateY(-10px); opacity: 0;
-    &:not(.open) {
-        pointer-events: none;
-    }
-    &.open {
-        transform: translateY(0px); opacity: 1;
-    } 
 }

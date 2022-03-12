@@ -11,24 +11,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.mounted = exports.methods = exports.watch = exports.computed = exports.data = exports.props = void 0;
 exports.props = {
-    'width': {
-        'default': undefined
-    },
-    'height': {
-        'default': undefined
-    },
-    'left': {
-        'default': 0
-    },
-    'top': {
-        'default': 0
-    },
-    'zIndex': {
-        'default': 0
-    },
-    'flex': {
-        'default': ''
-    },
     'tabPosition': {
         'default': 'top'
     },
@@ -79,7 +61,7 @@ exports.watch = {
         handler: function () {
             return __awaiter(this, void 0, void 0, function* () {
                 yield this.$nextTick();
-                this.onResize(clickgo.dom.getSize(this.$refs.tabs));
+                this.onResize(clickgo.dom.getSize(this.$refs.tabs[0]));
                 this.reSelected();
             });
         },
@@ -89,11 +71,11 @@ exports.watch = {
         handler: function () {
             return __awaiter(this, void 0, void 0, function* () {
                 yield this.$nextTick();
-                if (this.oldTabs === this.$refs.tabs) {
+                if (this.oldTabs === this.$refs.tabs[0]) {
                     return;
                 }
-                this.oldTabs = this.$refs.tabs;
-                clickgo.dom.watchSize(this.$refs.tabs, (size) => {
+                this.oldTabs = this.$refs.tabs[0];
+                clickgo.dom.watchSize(this.$refs.tabs[0], (size) => {
                     this.onResize(size);
                 });
             });
@@ -109,10 +91,14 @@ exports.methods = {
             return;
         }
         e.preventDefault();
-        this.$refs.tabs.scrollLeft += e.deltaY;
+        this.$refs.tabs[0].scrollLeft += e.deltaY;
+    },
+    tabClick: function (e, item) {
+        this.selected = item.value;
+        this.$emit('update:modelValue', item.value);
     },
     longDown: function (e, type) {
-        if (clickgo.dom.isMouseAlsoTouchEvent(e)) {
+        if (clickgo.dom.hasTouchButMouse(e)) {
             return;
         }
         let num = type === 'start' ? -5 : 5;
@@ -123,10 +109,10 @@ exports.methods = {
                 }
                 let cb = () => {
                     if (this.tabPosition === 'top' || this.tabPosition === 'bottom') {
-                        this.$refs.tabs.scrollLeft += num;
+                        this.$refs.tabs[0].scrollLeft += num;
                     }
                     else {
-                        this.$refs.tabs.scrollTop += num;
+                        this.$refs.tabs[0].scrollTop += num;
                     }
                     if (this.timer !== undefined) {
                         requestAnimationFrame(cb);
@@ -179,8 +165,8 @@ exports.methods = {
     }
 };
 exports.mounted = function () {
-    this.oldTabs = this.$refs.tabs;
-    clickgo.dom.watchSize(this.$refs.tabs, (size) => {
+    this.oldTabs = this.$refs.tabs[0];
+    clickgo.dom.watchSize(this.$refs.tabs[0], (size) => {
         this.onResize(size);
     });
     this.reSelected();

@@ -1,52 +1,52 @@
 <form width="400" height="550" title="ClickGo demo" icon="/res/icon.svg">
-    <tab flex="1" style="margin: 10px;">
+    <tab style="margin: 10px; flex: 1; width: 0;">
         <tab-panel label="control">
-            <overflow class="inner" flex="1" direction="v">
-                <layout gutter="10" direction="v">
-                    <button @tap="openForm('control', 'form')">Form</button>
-                    <button @tap="openForm('control', 'img')">Img</button>
-                    <button @tap="openForm('control', 'button')">Button</button>
-                    <button @tap="openForm('control', 'check')">Check</button>
-                    <button @tap="openForm('control', 'radio')">Radio</button>
-                    <button @tap="openForm('control', 'text')">Text</button>
-                    <button @tap="openForm('control', 'tab')">Tab</button>
-                    <button @tap="openForm('control', 'label')">Label</button>
-                    <button @tap="openForm('control', 'dialog')">Dialog</button>
-                    <button @tap="openForm('control', 'block')">Block</button>
-                    <button @tap="openForm('control', 'overflow')">Overflow</button>
-                    <button @tap="openForm('control', 'view')">View</button>
-                    <button @tap="openForm('control', 'greatview')">Greatview</button>
-                    <button @tap="openForm('control', 'scroll')">Scroll</button>
-                    <button @tap="openForm('control', 'menu')">Menu</button>
-                    <button @tap="openForm('control', 'list')">List</button>
-                    <button @tap="openForm('control', 'select')">Select</button>
-                    <button @tap="openForm('control', 'property')">Property</button>
-                    <button @tap="openForm('control', 'monaco')">Monaco</button>
+            <overflow class="inner" direction="v">
+                <layout class="buttons" gutter="10" direction="v">
+                    <button @click="openForm('control', 'form')">Form</button>
+                    <button @click="openForm('control', 'img')">Img</button>
+                    <button @click="openForm('control', 'button')">Button</button>
+                    <button @click="openForm('control', 'check')">Check</button>
+                    <button @click="openForm('control', 'radio')">Radio</button>
+                    <button @click="openForm('control', 'text')">Text</button>
+                    <button @click="openForm('control', 'tab')">Tab</button>
+                    <button @click="openForm('control', 'label')">Label</button>
+                    <button @click="openForm('control', 'dialog')">Dialog</button>
+                    <button @click="openForm('control', 'block')">Block</button>
+                    <button @click="openForm('control', 'overflow')">Overflow</button>
+                    <button @click="openForm('control', 'view')">View</button>
+                    <button @click="openForm('control', 'greatview')">Greatview</button>
+                    <button @click="openForm('control', 'scroll')">Scroll</button>
+                    <button @click="openForm('control', 'menu')">Menu</button>
+                    <button @click="openForm('control', 'list')">List</button>
+                    <button @click="openForm('control', 'select')">Select</button>
+                    <button @click="openForm('control', 'property')">Property</button>
+                    <button @click="openForm('control', 'monaco')">Monaco</button>
                 </layout>
             </overflow>
         </tab-panel>
         <tab-panel label="method">
-            <overflow class="inner" flex="1" direction="v">
-                <layout gutter="10" direction="v">
-                    <button @tap="openForm('method', 'cgCreateForm')">cgCreateForm</button>
-                    <button @tap="openForm('method', 'cgFormState')">cgFormState</button>
-                    <button @tap="openForm('method', 'cgBindFormDragResize')">cgBindFormDrag / Resize</button>
-                    <button @tap="openForm('method', 'cgDialog')">cgDialog</button>
-                    <button @tap="openForm('method', 'cgSetTopMost')">cgSetTopMost</button>
-                    <button @tap="openForm('method', 'cgFlash')">cgFlash</button>
-                    <button @tap="openForm('method', 'cgShowHide')">cgShow / cgHide</button>
-                    <button @tap="openForm('method', 'cgLocal')">cgLocal</button>
-                    <button @tap="openForm('method', 'dom')">Library dom</button>
-                    <button @tap="openForm('method', 'form')">Library form</button>
+            <overflow class="inner" direction="v">
+                <layout class="buttons" gutter="10" direction="v">
+                    <button @click="openForm('method', 'cgCreateForm')">cgCreateForm</button>
+                    <button @click="openForm('method', 'cgFormState')">cgFormState</button>
+                    <button @click="openForm('method', 'cgBindFormDragResize')">cgBindFormDrag / Resize</button>
+                    <button @click="openForm('method', 'cgDialog')">cgDialog</button>
+                    <button @click="openForm('method', 'cgSetTopMost')">cgSetTopMost</button>
+                    <button @click="openForm('method', 'cgFlash')">cgFlash</button>
+                    <button @click="openForm('method', 'cgShowHide')">cgShow / cgHide</button>
+                    <button @click="openForm('method', 'cgLocal')">cgLocal</button>
+                    <button @click="openForm('method', 'dom')">Library dom</button>
+                    <button @click="openForm('method', 'form')">Library form</button>
                 </layout>
             </overflow>
         </tab-panel>
         <tab-panel label="event">
-            <overflow class="inner" flex="1" direction="v">
-                <layout gutter="10" direction="v">
-                    <button @tap="openForm('event', 'screen')">About screen</button>
-                    <button @tap="openForm('event', 'form')">About form</button>
-                    <button @tap="openForm('event', 'task')">About task</button>
+            <overflow class="inner" direction="v">
+                <layout class="buttons" gutter="10" direction="v">
+                    <button @click="openForm('event', 'screen')">About screen</button>
+                    <button @click="openForm('event', 'form')">About form</button>
+                    <button @click="openForm('event', 'task')">About task</button>
                 </layout>
             </overflow>
         </tab-panel>

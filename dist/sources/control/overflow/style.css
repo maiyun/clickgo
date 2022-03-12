@@ -1,1 +1,1 @@
-.wrap{display:flex;-webkit-overflow-scrolling:touch}.wrap::-webkit-scrollbar{display:none}.wrap.v{overflow:scroll;flex-direction:column}.wrap.h{overflow:scroll;white-space:nowrap}
+.wrap{display:flex;-webkit-overflow-scrolling:touch;max-width:100%;max-height:100%}.wrap::-webkit-scrollbar{display:none}.wrap.v{overflow:scroll;flex-direction:column}.wrap.h{overflow:scroll;white-space:nowrap}

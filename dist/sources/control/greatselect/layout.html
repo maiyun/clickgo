@@ -1,11 +1,23 @@
-<div class="wrap" :tabindex="(!isDisabled && cgFocus) ? '0' : undefined" :style="{'width': cgWidthPx, 'height': cgHeightPx, 'left': left + 'px', 'top': top + 'px', 'z-index': zIndex, 'flex-grow': flex}" :class="[isDisabled ? 'cg-disabled' : undefined, cgSelfPopOpen && 'cg-pop-open', 'area-' + area, cgHover && 'hover', cgActive && 'active']" @click="cgTap" @mousedown="cgDown" @mouseup="cgUp" @mouseenter="cgEnter" @mouseleave="cgLeave" @touchstart="cgDown" @touchend="cgUp" @touchcancel="cgCancel" @dblclick="cgDblclick" @keydown="keydown">
-    <div class="inner" @click="click($event, 'left')" :class="[direction]" :style="{'padding': padding && padding.replace(/([0-9]+)($| )/g, '$1px$2')}">
-        <slot></slot>
+<div class="wrap" :class="['area-' + area]" :data-cg-disabled="isDisabled ? '' : undefined" :tabindex="(!isDisabled && cgFocus) ? '0' : undefined" @keydown="keydown">
+    <div class="op" :style="{'margin': opMargin}">
+        <div class="content" @click="click($event, 'left')" :class="[direction]" :style="{'padding': padding}">
+            <slot></slot>
+        </div>
+        <div class="arrow" @click="click($event, 'arrow')"></div>
     </div>
-    <div class="arrow" @click="click($event, 'arrow')"></div>
     <teleport v-if="$slots.pop" to="#cg-pop-list">
-        <div class="pop" :class="[cgSelfPopOpen && 'open']" :style="cgPopPosition">
-            <slot name="pop"></slot>
+        <div ref="pop" class="pop" data-cg-pop>
+            <cg-greatlist v-if="pop === 'greatlist'" :modelValue="modelValue" @update:modelValue="updateModelValue" :data="data" @itemclick="itemclick" adaptation>
+                <template v-slot="d">
+                    <slot name="pop" :row="d.row" :index="d.index"></slot>
+                </template>
+                <template v-if="$slots.itempop" v-slot:itempop>
+                    <slot name="itempop"></slot>
+                </template>
+            </cg-greatlist>
+            <template v-else>
+                <slot name="pop"></slot>
+            </template>
         </div>
     </teleport>
 </div>

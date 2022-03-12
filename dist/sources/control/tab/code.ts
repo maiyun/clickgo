@@ -1,22 +1,4 @@
 export let props = {
-    'width': {
-        'default': undefined
-    },
-    'height': {
-        'default': undefined
-    },
-    'left': {
-        'default': 0
-    },
-    'top': {
-        'default': 0
-    },
-    'zIndex': {
-        'default': 0
-    },
-    'flex': {
-        'default': ''
-    },
     'tabPosition': {
         'default': 'top'
     },
@@ -35,7 +17,7 @@ export let data = {
 };
 
 export let computed = {
-    'tabs': function(this: IVueControl): any[] {
+    'tabs': function(this: IVControl): any[] {
         if (!this.$slots.default) {
             return [];
         }
@@ -48,7 +30,7 @@ export let computed = {
         }
         return tabs;
     },
-    'values': function(this: IVueControl): string[] {
+    'values': function(this: IVControl): string[] {
         let list = [];
         for (let item of this.tabs) {
             list.push(item.value);
@@ -59,7 +41,7 @@ export let computed = {
 
 export let watch = {
     'modelValue': {
-        handler: function(this: IVueControl): void {
+        handler: function(this: IVControl): void {
             if (this.selected !== this.modelValue) {
                 this.selected = this.modelValue;
                 this.reSelected();
@@ -68,21 +50,21 @@ export let watch = {
         'immediate': true
     },
     'tabs': {
-        handler: async function(this: IVueControl): Promise<void> {
+        handler: async function(this: IVControl): Promise<void> {
             await this.$nextTick();
-            this.onResize(clickgo.dom.getSize(this.$refs.tabs));
+            this.onResize(clickgo.dom.getSize(this.$refs.tabs[0]));
             this.reSelected();
         },
         'deep': 'true'
     },
     'tabPosition': {
-        handler: async function(this: IVueControl): Promise<void> {
+        handler: async function(this: IVControl): Promise<void> {
             await this.$nextTick();
-            if (this.oldTabs === this.$refs.tabs) {
+            if (this.oldTabs === this.$refs.tabs[0]) {
                 return;
             }
-            this.oldTabs = this.$refs.tabs;
-            clickgo.dom.watchSize(this.$refs.tabs, (size) => {
+            this.oldTabs = this.$refs.tabs[0];
+            clickgo.dom.watchSize(this.$refs.tabs[0], (size) => {
                 this.onResize(size);
             });
         }
@@ -90,7 +72,7 @@ export let watch = {
 };
 
 export let methods = {
-    wheel: function(this: IVueControl, e: WheelEvent): void {
+    wheel: function(this: IVControl, e: WheelEvent): void {
         if (this.tabPosition === 'left' || this.tabPosition === 'right') {
             return;
         }
@@ -99,10 +81,14 @@ export let methods = {
         }
         // --- 用来屏蔽不小心触发前进、后退的浏览器事件 ---
         e.preventDefault();
-        this.$refs.tabs.scrollLeft += e.deltaY;
+        this.$refs.tabs[0].scrollLeft += e.deltaY;
     },
-    longDown: function(this: IVueControl, e: MouseEvent | TouchEvent, type: 'start' | 'end'): void {
-        if (clickgo.dom.isMouseAlsoTouchEvent(e)) {
+    tabClick: function(this: IVControl, e: MouseEvent | TouchEvent, item: Record<string, any>): void {
+        this.selected = item.value;
+        this.$emit('update:modelValue', item.value);
+    },
+    longDown: function(this: IVControl, e: MouseEvent | TouchEvent, type: 'start' | 'end'): void {
+        if (clickgo.dom.hasTouchButMouse(e)) {
             return;
         }
         let num = type === 'start' ? -5 : 5;
@@ -113,10 +99,10 @@ export let methods = {
                 }
                 let cb = (): void => {
                     if (this.tabPosition === 'top' || this.tabPosition === 'bottom') {
-                        this.$refs.tabs.scrollLeft += num;
+                        this.$refs.tabs[0].scrollLeft += num;
                     }
                     else {
-                        this.$refs.tabs.scrollTop += num;
+                        this.$refs.tabs[0].scrollTop += num;
                     }
                     if (this.timer !== undefined) {
                         requestAnimationFrame(cb);
@@ -132,7 +118,7 @@ export let methods = {
         });
     },
     // --- 检测是否显示箭头 ---
-    onResize: function(this: IVueControl, size: ICGDomSize): void {
+    onResize: function(this: IVControl, size: ICGDomSize): void {
         if (this.tabPosition === 'top' || this.tabPosition === 'bottom') {
             let width = this.arrow ? Math.round(size.clientWidth) + 40 : Math.round(size.clientWidth);
             if (size.scrollWidth > width) {
@@ -152,7 +138,7 @@ export let methods = {
             }
         }
     },
-    reSelected: function(this: IVueControl): void {
+    reSelected: function(this: IVControl): void {
         // --- 默认选项卡选择 ---
         if (this.selected === '') {
             let s = this.values[0] ? this.values[0] : '';
@@ -171,10 +157,10 @@ export let methods = {
     }
 };
 
-export let mounted = function(this: IVueControl): void {
+export let mounted = function(this: IVControl): void {
     // --- 检测是否显示箭头 ---
-    this.oldTabs = this.$refs.tabs;
-    clickgo.dom.watchSize(this.$refs.tabs, (size) => {
+    this.oldTabs = this.$refs.tabs[0];
+    clickgo.dom.watchSize(this.$refs.tabs[0], (size) => {
         this.onResize(size);
     });
     this.reSelected();

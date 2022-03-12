@@ -3,25 +3,6 @@ export let props = {
         'default': false
     },
 
-    'width': {
-        'default': undefined
-    },
-    'height': {
-        'default': undefined
-    },
-    'left': {
-        'default': 0
-    },
-    'top': {
-        'default': 0
-    },
-    'zIndex': {
-        'default': 0
-    },
-    'flex': {
-        'default': ''
-    },
-
     'modelValue': {
         'default': undefined
     },
@@ -31,14 +12,14 @@ export let props = {
 };
 
 export let computed = {
-    'isDisabled': function(this: IVueControl): boolean {
+    'isDisabled': function(this: IVControl): boolean {
         return clickgo.tool.getBoolean(this.disabled);
     }
 };
 
 export let watch = {
     'modelValue': {
-        handler: function(this: IVueControl): void {
+        handler: function(this: IVControl): void {
             if (this.modelValue !== undefined) {
                 this.value = this.modelValue;
             }
@@ -50,7 +31,7 @@ export let watch = {
         'immediate': true
     },
     'indeterminate': {
-        handler: function(this: IVueControl): void {
+        handler: function(this: IVControl): void {
             if (this.indeterminate !== undefined) {
                 this.indeterminateData = this.indeterminate;
             }
@@ -65,18 +46,13 @@ export let watch = {
 
 export let data = {
     'value': false,
-    'indeterminateData': false
+    'indeterminateData': false,
+
+    'isKeyDown': false
 };
 
 export let methods = {
-    keydown: function(this: IVueControl, e: KeyboardEvent): void {
-        if (e.keyCode !== 13) {
-            return;
-        }
-        this.click(e);
-    },
-    click: function(this: IVueControl, e: MouseEvent): void {
-        this.cgTap(e);
+    click: function(this: IVControl): void {
         if (this.indeterminateData) {
             this.indeterminateData = false;
             this.$emit('update:indeterminate', this.indeterminateData);
@@ -85,5 +61,22 @@ export let methods = {
             this.value = !this.value;
             this.$emit('update:modelValue', this.value);
         }
+    },
+    keydown: function(this: IVControl, e: KeyboardEvent): void {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            this.click();
+        }
+        else if (e.key === ' ') {
+            e.preventDefault();
+            this.isKeyDown = true;
+        }
+    },
+    keyup: function(this: IVControl): void {
+        if (!this.isKeyDown) {
+            return;
+        }
+        this.isKeyDown = false;
+        this.click();
     }
 };

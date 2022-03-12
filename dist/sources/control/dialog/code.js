@@ -1,30 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.methods = exports.props = void 0;
+exports.mounted = exports.methods = exports.computed = exports.data = exports.props = void 0;
 exports.props = {
-    'width': {
-        'default': undefined
-    },
-    'height': {
-        'default': undefined
-    },
-    'left': {
-        'default': 0
-    },
-    'top': {
-        'default': 0
-    },
-    'zIndex': {
-        'default': 0
-    },
     'direction': {
         'default': 'h'
-    },
-    'flex': {
-        'default': ''
-    },
-    'padding': {
-        'default': undefined
     },
     'gutter': {
         'default': undefined
@@ -33,8 +12,21 @@ exports.props = {
         'default': ['OK']
     }
 };
+exports.data = {
+    'padding': ''
+};
+exports.computed = {
+    'paddingMargin': function () {
+        return this.padding.replace(/(\w+)/g, '-$1');
+    }
+};
 exports.methods = {
     click: function (item) {
         this.$emit('select', item);
     }
+};
+exports.mounted = function () {
+    clickgo.dom.watchStyle(this.$el, 'padding', (n, v) => {
+        this.padding = v;
+    }, true);
 };

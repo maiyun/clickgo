@@ -23,7 +23,7 @@ exports.methods = {
         let str = JSON.stringify(clickgo.form.getList(this.taskId)).replace(/"icon":"(.*?)"/g, function (t, t1) {
             return `"icon":"${t1 ? (t1.slice(0, 10) + '...') : t1}"`;
         });
-        this.cgDialog(`<overflow width="200" height="80" direction="v" style="word-break: break-word;">${str}</overflow>`).catch((e) => { throw e; });
+        this.cgDialog(`<overflow direction="v" style="width: 200px; height: 80px;">${str}</overflow>`).catch((e) => { throw e; });
     },
     changeFocus: function (formId) {
         clickgo.form.changeFocus(parseInt(formId));
@@ -35,10 +35,17 @@ exports.methods = {
         clickgo.form.showCircular(e.clientX, e.clientY);
     },
     showRectangle: function (e) {
-        clickgo.form.showRectangle(e.clientX, e.clientY, 't');
-        this.cgCreateTimer(() => {
+        return __awaiter(this, void 0, void 0, function* () {
+            clickgo.form.showRectangle(e.clientX, e.clientY, 't');
+            yield clickgo.tool.sleep(1000);
             clickgo.form.hideRectangle();
-        }, 1000);
+        });
+    },
+    send: function () {
+        clickgo.form.send(this.formId, { 'x': 'yes' });
+    },
+    cgReceive: function (obj) {
+        this.cgDialog(JSON.stringify(obj));
     },
     notify: function () {
         return __awaiter(this, void 0, void 0, function* () {

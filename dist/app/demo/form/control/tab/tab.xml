@@ -1,16 +1,16 @@
-<form title="Tab" width="400" height="450" min-width="300" min-height="400" padding="10">
+<form title="Tab" width="400" height="450" min-width="300" min-height="400" padding="10" direction="v">
     <label>Now tab: {{ntab}}.</label>
-    <tab v-model="ntab" flex="1" :tabPosition="tabPosition" style="margin-top: 10px;">
+    <tab v-model="ntab" :tabPosition="tabPosition" style="margin-top: 10px; flex: 1; height: 0;">
         <!-- 默认 -->
         <tab-panel v-for="tab of tabs" :label="tab.label" :value="tab.value" style="padding: 10px;">
-            <button v-if="tab.value === 'tab2'" style="padding: 0 10px;">Test button</button>
+            <button v-if="tab.value === 'tab2'" style="padding: 0 10px; height: 30px;">Test button</button>
             <label v-else>The tab's label is "{{tab.label}}", value is "{{tab.value}}";</label>
         </tab-panel>
     </tab>
     <layout gutter="10" style="margin-top: 10px;">
-        <button @tap="add" flex="1" style="padding: 0 10px;">Add</button>
-        <button @tap="remove" flex="1" style="padding: 0 10px;">Remove</button>
-        <button @tap="position" flex="1" style="padding: 0 10px;">Position</button>
-        <button @tap="ntab = 'tab2'" flex="1" style="padding: 0 10px;">Tab2</button>
+        <button @click="add" style="padding: 0 10px; flex: 1; width: 0; height: 30px;">Add</button>
+        <button @click="remove" style="padding: 0 10px; flex: 1; width: 0; height: 30px;">Remove</button>
+        <button @click="position" style="padding: 0 10px; flex: 1; width: 0; height: 30px;">Position</button>
+        <button @click="ntab = 'tab2'" style="padding: 0 10px; flex: 1; width: 0; height: 30px;">Tab2</button>
     </layout>
 </form>

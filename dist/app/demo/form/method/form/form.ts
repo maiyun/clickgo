@@ -5,31 +5,36 @@ export let data = {
 };
 
 export let methods = {
-    getAvailArea: function(this: IVueForm): void {
+    getAvailArea: function(this: IVForm): void {
         this.cgDialog(JSON.stringify(clickgo.form.getAvailArea(), undefined, 4)).catch((e) => { throw e; });
     },
-    getList: function(this: IVueForm): void {
+    getList: function(this: IVForm): void {
         let str = JSON.stringify(clickgo.form.getList(this.taskId)).replace(/"icon":"(.*?)"/g, function(t: string, t1: string): string {
             return `"icon":"${t1 ? (t1.slice(0, 10) + '...') : t1}"`;
         });
-        this.cgDialog(`<overflow width="200" height="80" direction="v" style="word-break: break-word;">${str}</overflow>`).catch((e) => { throw e; });
+        this.cgDialog(`<overflow direction="v" style="width: 200px; height: 80px;">${str}</overflow>`).catch((e) => { throw e; });
     },
-    changeFocus: function(this: IVueForm, formId: string): void {
+    changeFocus: function(this: IVForm, formId: string): void {
         clickgo.form.changeFocus(parseInt(formId));
     },
-    getMaxZIndexFormID: function(this: IVueForm): number | null {
+    getMaxZIndexFormID: function(this: IVForm): number | null {
         return clickgo.form.getMaxZIndexFormID();
     },
-    showCircular: function(this: IVueForm, e: MouseEvent): void {
+    showCircular: function(this: IVForm, e: MouseEvent): void {
         clickgo.form.showCircular(e.clientX, e.clientY);
     },
-    showRectangle: function(this: IVueForm, e: MouseEvent): void {
+    showRectangle: async function(this: IVForm, e: MouseEvent): Promise<void> {
         clickgo.form.showRectangle(e.clientX, e.clientY, 't');
-        this.cgCreateTimer(() => {
-            clickgo.form.hideRectangle();
-        }, 1000);
+        await clickgo.tool.sleep(1000);
+        clickgo.form.hideRectangle();
     },
-    notify: async function(this: IVueForm): Promise<void> {
+    send: function(this: IVForm): void {
+        clickgo.form.send(this.formId, {'x': 'yes'});
+    },
+    cgReceive: function(this: IVForm, obj: Record<string, any>): void {
+        this.cgDialog(JSON.stringify(obj)) as any;
+    },
+    notify: async function(this: IVForm): Promise<void> {
         let icon = undefined;
         if (this.progress === 'progress + icon') {
             icon = await this.cgGetDataUrl('/res/icon.svg');

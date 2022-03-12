@@ -1,29 +1,17 @@
 .wrap {
-    position: relative; overflow: hidden; max-width: 100%; max-height: 100%;
+    position: relative; overflow: hidden; max-width: 100%; max-height: 100%; display: flex;
     &.v {
-        > .inner {
-            min-width: 100%;
-            flex-direction: column;
-        }
-        &:not(.adaptation) {
-            > .inner {
-                min-height: 100%;
-            }
-        }
-    }
-    &.h {
-        > .inner {
-            min-height: 100%;
-        }
-        &:not(.adaptation) > .inner {
-            min-width: 100%;
-        }
+        flex-direction: column;
     }
 
     .inner {
-        position: absolute; left: 0; top: 0; display: flex;
+        display: flex;
     }
-    &.content-max .inner {
-        width: -webkit-max-content; width: max-content; height: -webkit-max-content; height: max-content;
+    &.v > .inner {
+        flex-direction: column;
+    }
+
+    .selection {
+        position: absolute; background: hsla(205, 100%, 50%, .2); border: solid 1px hsl(205, 100%, 50%); left: 0; top: 0; width: 100px; height: 100px; pointer-events: none; opacity: 0;
     }
 }

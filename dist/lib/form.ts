@@ -14,16 +14,17 @@
  * limitations under the License.
  */
 
-/** --- 当前显示的总 pop 母级的 vue 对象 --- */
-export let popShowing: null | IVueControl;
+/** --- 当前显示的 pop 列表 --- */
+let popList: HTMLElement[] = [];
+let popElList: HTMLElement[] = [];
 /** --- 最后一个窗体 id --- */
-export let lastFormId: number = 0;
+let lastFormId: number = 0;
 /** --- 最后一个层级 --- */
-export let lastZIndex: number = 999;
+let lastZIndex: number = 999;
 /** --- top 的最后一个层级 --- */
-export let lastTopZIndex: number = 9999999;
+let lastTopZIndex: number = 9999999;
 /** --- pop 最后一个层级 --- */
-export let lastPopZIndex: number = 0;
+let lastPopZIndex: number = 0;
 
 /** --- form lib 用到的语言包 --- */
 let localData: Record<string, {
@@ -32,25 +33,25 @@ let localData: Record<string, {
     'no': string;
     'cancel': string;
 }> = {
-    'en-us': {
+    'en': {
         'ok': 'OK',
         'yes': 'Yes',
         'no': 'No',
         'cancel': 'Cancel'
     },
-    'zh-cn': {
+    'sc': {
         'ok': '好',
         'yes': '是',
         'no': '否',
         'cancel': '取消'
     },
-    'zh-tw': {
+    'tc': {
         'ok': '好',
         'yes': '是',
         'no': '否',
         'cancel': '取消'
     },
-    'ja-jp': {
+    'ja': {
         'ok': '好',
         'yes': 'はい',
         'no': 'いいえ',
@@ -60,7 +61,7 @@ let localData: Record<string, {
 
 /** --- form list 的 div --- */
 let formListElement: HTMLDivElement = document.createElement('div');
-formListElement.classList.add('cg-form-list');
+formListElement.id = 'cg-form-list';
 document.getElementsByTagName('body')[0].appendChild(formListElement);
 formListElement.addEventListener('touchmove', function(e): void {
     // --- 防止拖动时整个网页跟着动 ---
@@ -81,7 +82,6 @@ formListElement.addEventListener('wheel', function(e): void {
 /** --- pop list 的 div --- */
 let popListElement: HTMLDivElement = document.createElement('div');
 popListElement.id = 'cg-pop-list';
-popListElement.classList.add('cg-pop-list');
 popListElement.addEventListener('contextmenu', function(e): void {
     e.preventDefault();
 });
@@ -95,13 +95,13 @@ popListElement.addEventListener('touchmove', function(e): void {
 
 // --- 从鼠标指针处从小到大缩放然后淡化的圆圈动画特效对象 ---
 let circularElement: HTMLDivElement = document.createElement('div');
-circularElement.classList.add('cg-circular');
+circularElement.id = 'cg-circular';
 document.getElementsByTagName('body')[0].appendChild(circularElement);
 
 // --- 从鼠标指针处开始从小到大缩放并铺满屏幕（或任意大小矩形）的对象 ---
 let rectangleElement: HTMLDivElement = document.createElement('div');
 rectangleElement.setAttribute('data-pos', '');
-rectangleElement.classList.add('cg-rectangle');
+rectangleElement.id = 'cg-rectangle';
 document.getElementsByTagName('body')[0].appendChild(rectangleElement);
 
 /** --- task 的信息 --- */
@@ -245,45 +245,55 @@ export function refreshTaskPosition(): void {
  * --- 获取屏幕可用区域 ---
  */
 export function getAvailArea(): ICGFormAvailArea {
-    let left: number = 0;
-    let top: number = 0;
-    let width: number = 0;
-    let height: number = 0;
-    switch (clickgo.core.config['task.position']) {
-        case 'left': {
-            left = taskInfo.length;
-            top = 0;
-            width = window.innerWidth - taskInfo.length;
-            height = window.innerHeight;
-            break;
-        }
-        case 'right': {
-            left = 0;
-            top = 0;
-            width = window.innerWidth - taskInfo.length;
-            height = window.innerHeight;
-            break;
-        }
-        case 'top': {
-            left = 0;
-            top = taskInfo.length;
-            width = window.innerWidth;
-            height = window.innerHeight - taskInfo.length;
-            break;
-        }
-        case 'bottom': {
-            left = 0;
-            top = 0;
-            width = window.innerWidth;
-            height = window.innerHeight - taskInfo.length;
-        }
+    if (Object.keys(simpletaskRoot.forms).length > 0) {
+        return {
+            'left': 0,
+            'top': 0,
+            'width': window.innerWidth,
+            'height': window.innerHeight - 46
+        };
     }
-    return {
-        'left': left,
-        'top': top,
-        'width': width,
-        'height': height
-    };
+    else {
+        let left: number = 0;
+        let top: number = 0;
+        let width: number = 0;
+        let height: number = 0;
+        switch (clickgo.core.config['task.position']) {
+            case 'left': {
+                left = taskInfo.length;
+                top = 0;
+                width = window.innerWidth - taskInfo.length;
+                height = window.innerHeight;
+                break;
+            }
+            case 'right': {
+                left = 0;
+                top = 0;
+                width = window.innerWidth - taskInfo.length;
+                height = window.innerHeight;
+                break;
+            }
+            case 'top': {
+                left = 0;
+                top = taskInfo.length;
+                width = window.innerWidth;
+                height = window.innerHeight - taskInfo.length;
+                break;
+            }
+            case 'bottom': {
+                left = 0;
+                top = 0;
+                width = window.innerWidth;
+                height = window.innerHeight - taskInfo.length;
+            }
+        }
+        return {
+            'left': left,
+            'top': top,
+            'width': width,
+            'height': height
+        };
+    }
 }
 
 /**
@@ -294,7 +304,7 @@ export function refreshMaxPosition(): void {
     for (let i = 0; i < formListElement.children.length; ++i) {
         let el = formListElement.children.item(i) as HTMLElement;
         let ef = el.children.item(0) as HTMLElement;
-        if (!ef.className.includes('cg-state-max')) {
+        if (ef.dataset.cgMax === undefined) {
             continue;
         }
         let taskId = parseInt(el.getAttribute('data-task-id') as string);
@@ -335,6 +345,9 @@ export function min(formId: number): boolean {
 
 export function get(formId: number): ICGFormItem | null {
     let taskId: number = getTaskId(formId);
+    if (taskId === 0) {
+        return null;
+    }
     let item = clickgo.task.list[taskId].forms[formId];
     return {
         'taskId': taskId,
@@ -345,6 +358,23 @@ export function get(formId: number): ICGFormItem | null {
         'show': item.vroot.$refs.form.showData,
         'focus': item.vroot.cgFocus
     };
+}
+
+/**
+ * --- 给一个窗体发送一个对象，不会知道成功与失败状态 ---
+ * @param formId 要接收对象的 form id
+ * @param obj 要发送的对象
+ */
+export function send(formId: number, obj: Record<string, any>): void {
+    let taskId: number = getTaskId(formId);
+    if (taskId === 0) {
+        return;
+    }
+    let item = clickgo.task.list[taskId].forms[formId];
+    if (!item.vroot.cgReceive) {
+        return;
+    }
+    item.vroot.cgReceive(obj);
 }
 
 /**
@@ -384,7 +414,7 @@ export function changeFocus(formId: number = 0): void {
         });
         return;
     }
-    let focusElement = document.querySelector('.cg-form-list > .cg-focus');
+    let focusElement = document.querySelector('#cg-form-list > [data-cg-focus]');
     if (focusElement) {
         let dataFormId = focusElement.getAttribute('data-form-id');
         if (dataFormId) {
@@ -395,7 +425,7 @@ export function changeFocus(formId: number = 0): void {
             else {
                 let taskId = parseInt(focusElement.getAttribute('data-task-id') ?? '0');
                 let task = clickgo.task.list[taskId];
-                task.forms[dataFormIdNumber].vapp._container.classList.remove('cg-focus');
+                task.forms[dataFormIdNumber].vapp._container.removeAttribute('data-cg-focus');
                 task.forms[dataFormIdNumber].vroot._cgFocus = false;
                 // --- 触发 formBlurred 事件 ---
                 clickgo.core.trigger('formBlurred', taskId, dataFormIdNumber);
@@ -408,12 +438,12 @@ export function changeFocus(formId: number = 0): void {
     if (formId === 0) {
         return;
     }
-    let el = document.querySelector(`.cg-form-list > [data-form-id='${formId}']`);
+    let el = document.querySelector(`#cg-form-list > [data-form-id='${formId}']`);
     if (!el) {
         return;
     }
     // --- 如果是最小化状态的话，需要还原 ---
-    if ((el.childNodes.item(0) as HTMLElement).classList.contains('cg-state-min')) {
+    if ((el.childNodes.item(0) as HTMLElement).dataset.cgMin !== undefined) {
         min(formId);
     }
     // --- 获取所属的 taskId ---
@@ -446,7 +476,7 @@ export function changeFocus(formId: number = 0): void {
             }
         }
         // --- 开启 focus ---
-        clickgo.task.list[taskId].forms[maskFor].vapp._container.classList.add('cg-focus');
+        clickgo.task.list[taskId].forms[maskFor].vapp._container.dataset.cgFocus = '';
         clickgo.task.list[taskId].forms[maskFor].vroot._cgFocus = true;
         // --- 触发 formFocused 事件 ---
         clickgo.core.trigger('formFocused', taskId, maskFor);
@@ -455,7 +485,7 @@ export function changeFocus(formId: number = 0): void {
     }
     else {
         // --- 正常开启 focus ---
-        task.forms[formId].vapp._container.classList.add('cg-focus');
+        task.forms[formId].vapp._container.dataset.cgFocus = '';
         task.forms[formId].vroot._cgFocus = true;
         // --- 触发 formFocused 事件 ---
         clickgo.core.trigger('formFocused', taskId, formId);
@@ -480,7 +510,7 @@ export function getMaxZIndexFormID(out: {
             continue;
         }
         // --- 排除最小化窗体 ---
-        if (formWrap.classList.contains('cg-state-min')) {
+        if (formWrap.dataset.cgMin !== undefined) {
             continue;
         }
         // --- 排除用户定义的 task id 窗体 ---
@@ -672,7 +702,6 @@ export function hideRectangle(): void {
 // --- 添加 cg-system 的 dom ---
 let systemElement: HTMLDivElement = document.createElement('div');
 systemElement.id = 'cg-system';
-systemElement.classList.add('cg-system');
 systemElement.addEventListener('contextmenu', function(e): void {
     e.preventDefault();
 });
@@ -793,7 +822,6 @@ export function hideNotify(notifyId: number): void {
 // --- 添加 cg-simpletask 的 dom ---
 let simpletaskElement: HTMLDivElement = document.createElement('div');
 simpletaskElement.id = 'cg-simpletask';
-simpletaskElement.classList.add('cg-simpletask');
 simpletaskElement.addEventListener('contextmenu', function(e): void {
     e.preventDefault();
 });
@@ -806,7 +834,7 @@ simpletaskElement.addEventListener('touchmove', function(e): void {
 });
 export let simpletaskRoot: IVue;
 const simpletaskApp = Vue.createApp({
-    'template': '<div v-for="(item, formId) of forms" class="cg-simpletask-item" @click="tap(parseInt(formId))"><div v-if="item.icon" class="cg-simpletask-icon" :style="{\'background-image\': \'url(\' + item.icon + \')\'}"></div><div>{{item.title}}</div></div>',
+    'template': '<div v-for="(item, formId) of forms" class="cg-simpletask-item" @click="click(parseInt(formId))"><div v-if="item.icon" class="cg-simpletask-icon" :style="{\'background-image\': \'url(\' + item.icon + \')\'}"></div><div>{{item.title}}</div></div>',
     'data': function() {
         return {
             'forms': {}
@@ -819,11 +847,13 @@ const simpletaskApp = Vue.createApp({
                 if (length > 0) {
                     if (simpletaskElement.style.bottom !== '0px') {
                         simpletaskElement.style.bottom = '0px';
+                        clickgo.core.trigger('screenResize');
                     }
                 }
                 else {
                     if (simpletaskElement.style.bottom === '0px') {
                         simpletaskElement.style.bottom = '-46px';
+                        clickgo.core.trigger('screenResize');
                     }
                 }
             },
@@ -831,7 +861,7 @@ const simpletaskApp = Vue.createApp({
         }
     },
     'methods': {
-        tap: function(this: IVue, formId: number): void {
+        click: function(this: IVue, formId: number): void {
             changeFocus(formId);
         }
     },
@@ -857,16 +887,16 @@ export function removeFromPop(el: HTMLElement): void {
     popListElement.removeChild(el);
 }
 
+/** --- 最后一次 touchstart 的时间戳 */
+let lastShowPopTime: number = 0;
 /**
  * --- 获取 pop 显示出来的坐标并报系统全局记录 ---
- * @param pop 要显示 pop 的母层对象
+ * @param el 响应的元素
+ * @param pop 要显示 pop 元素
  * @param direction 要显示方向（以 $el 为准的 h 水平和 v 垂直）或坐标
- * @param size 显示的 pop 定义自定义宽度，可省略
+ * @param opt width / height 显示的 pop 定义自定义宽/高度，可省略；null，true 代表为空也会显示，默认为 false
  */
-export function showPop(pop: IVueControl, direction: 'h' | 'v' | MouseEvent | TouchEvent | { x: number; y: number; }, opt: { 'size'?: { width?: number; height?: number; }; 'null'?: boolean; } = {}): void {
-    if (pop.cgSelfPopOpen) {
-        return;
-    }
+export function showPop(el: HTMLElement, pop: HTMLElement | undefined, direction: 'h' | 'v' | MouseEvent | TouchEvent | { x: number; y: number; }, opt: { 'size'?: { width?: number; height?: number; }; 'null'?: boolean; } = {}): void {
     // --- opt.null 为 true 代表可为空，为空也会被显示，默认为 false ---
     if (opt.null === undefined) {
         opt.null = false;
@@ -874,41 +904,52 @@ export function showPop(pop: IVueControl, direction: 'h' | 'v' | MouseEvent | To
     if (opt.size === undefined) {
         opt.size = {};
     }
-    /** --- 是否显示本 pop --- */
-    let doShow: boolean = (pop.cgSelfPop !== undefined) ? true : opt.null;
-    if (!clickgo.dom.findParentByClass(pop.$el, 'cg-pop-list')) {
-        // --- 本层不是 pop，因此要弹出 current pop ---
-        if (popShowing) {
-            popShowing.cgHidePop();
-        }
-        if (doShow) {
-            popShowing = pop;
+    // --- 也可能不执行本次显示 ---
+    if (!pop && !opt.null) {
+        return;
+    }
+    // --- 如果短时间内已经有了 pop 被展示，则可能是冒泡序列，本次则不展示 ---
+    let now = Date.now();
+    if (now - lastShowPopTime < 5) {
+        lastShowPopTime = now;
+        return;
+    }
+    lastShowPopTime = now;
+    // --- 检测是不是已经显示了 ---
+    if (el.dataset.cgPopOpen !== undefined) {
+        return;
+    }
+    /** --- 要不要隐藏别的 pop --- */
+    let parentPop = clickgo.dom.findParentByData(el, 'cg-pop');
+    if (parentPop) {
+        for (let i = 0; i < popList.length; ++i) {
+            if (popList[i] !== parentPop) {
+                continue;
+            }
+            if (!popElList[i + 1]) {
+                continue;
+            }
+            hidePop(popElList[i + 1]);
         }
     }
-    // --- 有本 layer 的其他子层显示的话则隐藏 ---
-    pop.cgParentPopLayer.cgChildPopItemShowing?.cgHidePop();
-    if (doShow) {
-        // --- 显示前一些变量的处理 ---
-        pop.cgSelfPopOpen = true;
-        // --- 然后将本 layer 的子层显示设置为自己 ---
-        pop.cgParentPopLayer.cgChildPopItemShowing = pop;
+    else {
+        // --- 本层不是 pop，因此要隐藏所有 pop ---
+        hidePop();
     }
-    // --- 没有子层直接返回 ---
-    if (pop.cgSelfPop === undefined) {
-        pop.cgPopPosition = {
-            'left': '-5000px',
-            'top': '0px',
-            'zIndex': '0'
-        };
+    // --- 检测如果 pop 是 undefined 还显示吗 ---
+    if (!pop) {
+        popElList.push(el);
+        el.dataset.cgPopOpen = '';
+        el.dataset.cgLevel = (popElList.length - 1).toString();
         return;
     }
     // --- 最终 pop 的大小 ---
-    let width = opt.size.width ?? pop.cgSelfPop.$el.offsetWidth;
-    let height = opt.size.height ?? pop.cgSelfPop.$el.offsetHeight;
+    let width = opt.size.width ?? (pop ? pop.offsetWidth : 0);
+    let height = opt.size.height ?? (pop ? pop.offsetHeight : 0);
     // --- 最终显示位置 ---
     let left: number, top: number;
     if (typeof direction === 'string') {
-        let bcr = pop.$el.getBoundingClientRect();
+        let bcr = el.getBoundingClientRect();
         if (direction === 'v') {
             // --- 垂直弹出 ---
             left = bcr.left;
@@ -972,49 +1013,68 @@ export function showPop(pop: IVueControl, direction: 'h' | 'v' | MouseEvent | To
     if (top < 0) {
         top = 0;
     }
-    pop.cgPopPosition = {
-        'left': left + 'px',
-        'top': top + 'px',
-        'zIndex': (++lastPopZIndex).toString()
-    };
+    pop.style.left = left + 'px';
+    pop.style.top = top + 'px';
+    pop.style.zIndex = (++lastPopZIndex).toString();
     if (opt.size.width) {
-        pop.cgPopPosition.width = opt.size.width + 'px';
+        pop.style.width = opt.size.width + 'px';
     }
     if (opt.size.height) {
-        pop.cgPopPosition.width = opt.size.height + 'px';
+        pop.style.height = opt.size.height + 'px';
     }
+    popList.push(pop);
+    popElList.push(el);
+    pop.dataset.cgOpen = '';
+    pop.dataset.cgLevel = (popList.length - 1).toString();
+    el.dataset.cgPopOpen = '';
+    el.dataset.cgLevel = (popElList.length - 1).toString();
 }
 
 /**
- * --- 隐藏正在显示中的顶级 pop 母层，或指定 pop 母层 ---
+ * --- 隐藏正在显示中的所有 pop，或指定 pop/el ---
  */
-export function hidePop(pop: IVueControl | null = null): void {
+export function hidePop(pop?: HTMLElement): void {
     if (!pop) {
-        if (!popShowing) {
+        if (popElList.length === 0) {
             return;
         }
-        if (!popShowing.cgSelfPopOpen) {
-            return;
+        hidePop(popElList[0]);
+        return;
+    }
+    let isPop: boolean = false;
+    if (pop.dataset.cgPopOpen !== undefined) {
+        // --- el ---
+    }
+    else if (pop.dataset.cgOpen !== undefined) {
+        // --- pop ---
+        isPop = true;
+    }
+    else {
+        return;
+    }
+    let level = pop.dataset.cgLevel ? parseInt(pop.dataset.cgLevel) : -1;
+    if (level === -1) {
+        return;
+    }
+    if (popElList[level + 1]) {
+        hidePop(popElList[level + 1]);
+    }
+    if (isPop) {
+        pop.removeAttribute('data-cg-open');
+        pop.removeAttribute('data-cg-level');
+        popElList[level].removeAttribute('data-cg-pop-open');
+        popElList[level].removeAttribute('data-cg-level');
+    }
+    else {
+        if (popList[level]) {
+            popList[level].removeAttribute('data-cg-open');
+            popList[level].removeAttribute('data-cg-level');
         }
-        popShowing.cgHidePop();
-        // --- cgHidePop 中会自动执行下面的（会被执行 hidePop(pop)） ---
-        return;
+        pop.removeAttribute('data-cg-pop-open');
+        pop.removeAttribute('data-cg-level');
     }
-    if (!pop.cgSelfPopOpen) {
-        return;
-    }
-    pop.cgSelfPopOpen = false;
-    if (pop.cgParentPopLayer.cgChildPopItemShowing === pop) {
-    // --- 如果在母层上还显示着的 pop 层是自己，则注销他，因为自己已经隐藏 ---
-        pop.cgParentPopLayer.cgChildPopItemShowing = undefined;
-    }
-    if (pop.cgSelfPop?.cgChildPopItemShowing) {
-        // --- 如果自己的 pop 还显示着 pop，也要一并 hidePop ---
-        pop.cgSelfPop.cgChildPopItemShowing.cgHidePop();
-    }
-    if (pop === popShowing) {
-        popShowing = null;
-    }
+    popList.splice(level);
+    popElList.splice(level);
 }
 
 /**
@@ -1022,7 +1082,7 @@ export function hidePop(pop: IVueControl | null = null): void {
  * @param e 事件对象
  */
 export function doFocusAndPopEvent(e: MouseEvent | TouchEvent): void {
-    if (clickgo.dom.isMouseAlsoTouchEvent(e)) {
+    if (clickgo.dom.hasTouchButMouse(e)) {
         return;
     }
     let target = e.target;
@@ -1030,21 +1090,36 @@ export function doFocusAndPopEvent(e: MouseEvent | TouchEvent): void {
         return;
     }
     let element: HTMLElement | null = target as HTMLElement;
-    if (element.classList.contains('cg-pop-open')) {
-        // --- 此对象为已打开 pop 的组件，不做处理，因为 down 时不能处理隐藏等情况 ---
+    if (element.dataset.cgPopOpen !== undefined) {
+        // --- 此对象为已打开 pop 的组件，不做处理，组件自行处理 ---
         return;
     }
-    let parent: HTMLElement | null;
-    if (clickgo.dom.findParentByClass(element, ['cg-pop-list', 'cg-pop-open'])) {
-        // --- 弹出层点击，不触发丢失焦点，也不触发隐藏 pop，是否隐藏请自行处理 ---
-        return;
+    let paths: HTMLElement[] = (e as any).path ?? (e.composedPath ? e.composedPath() : []);
+    // --- 检测是不是弹出层 ---
+    for (let item of paths) {
+        if (item.tagName.toLowerCase() === 'body') {
+            break;
+        }
+        if (item.id === 'cg-pop-list') {
+            // --- 弹出层点击，不触发丢失焦点，也不触发隐藏 pop，是否隐藏请自行处理 ---
+            return;
+        }
+        if (item.dataset.cgPopOpen !== undefined) {
+            return;
+        }
     }
-    if ((parent = clickgo.dom.findParentByClass(element, 'cg-form-wrap'))) {
-        // --- 窗体内部点击，转换焦点到当前窗体，但触发隐藏 pop ---
-        let formId = parseInt(parent.getAttribute('data-form-id') ?? '0');
-        changeFocus(formId);
-        hidePop();
-        return;
+    // --- 检测是不是窗体内部点击 ---
+    for (let item of paths) {
+        if (item.tagName.toLowerCase() === 'body') {
+            break;
+        }
+        if (item.classList.contains('cg-form-wrap')) {
+            // --- 窗体内部点击，转换焦点到当前窗体，但触发隐藏 pop ---
+            let formId = parseInt(item.getAttribute('data-form-id') ?? '0');
+            changeFocus(formId);
+            hidePop();
+            return;
+        }
     }
     // --- 普罗大众的状态，要隐藏 menu，并且丢失窗体焦点 ---
     hidePop();
@@ -1120,90 +1195,104 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
     // ---  申请 formId ---
     let formId = ++lastFormId;
     // --- 注入的参数，屏蔽浏览器全局对象，注入新的对象 ---
-    let invoke: Record<string, any> = {
-        'window': undefined,
-        'loader': undefined
-    };
-    let ks = Object.getOwnPropertyNames(window);
-    for (let k of ks) {
-        if (k.includes('Event')) {
-            continue;
-        }
-        if ([
-            'require',
-            '__awaiter', 'requestAnimationFrame', 'eval', 'Math', 'Array', 'Blob', 'Infinity', 'parseInt', 'parseFloat', 'Promise', 'Date', 'JSON'].includes(k)) {
-            continue;
-        }
-        invoke[k] = undefined;
-    }
-    invoke.clickgo = {
-        'core': {},
-        'dom': {},
-        'form': {},
-        'task': {},
-        'tool': {},
-        'zip': {}
-    };
-    for (let k in clickgo.core) {
-        if (!['config', 'regModule', 'initModules', 'getModule', 'trigger'].includes(k)) {
-            continue;
-        }
-        invoke.clickgo.core[k] = (clickgo.core as any)[k];
-    }
-    for (let k in clickgo.dom) {
-        if (!['setGlobalCursor', 'isMouseAlsoTouchEvent', 'getStyleCount', 'getSize', 'watchSize', 'watch', 'bindDown', 'bindLong', 'is', 'bindMove', 'bindResize'].includes(k)) {
-            continue;
-        }
-        invoke.clickgo.dom[k] = (clickgo.dom as any)[k];
-    }
-    for (let k in clickgo.form) {
-        if (!['taskInfo', 'setTask', 'clearTask', 'getAvailArea', 'refreshMaxPosition', 'getTaskId', 'min', 'get', 'getList', 'changeFocus', 'getMaxZIndexFormID', 'getRectByBorder', 'showCircular', 'moveRectangle', 'showRectangle', 'hideRectangle', 'notify', 'notifyProgress', 'hideNotify', 'showPop', 'hidePop', 'remove'].includes(k)) {
-            continue;
-        }
-        invoke.clickgo.form[k] = (clickgo.form as any)[k];
-    }
-    for (let k in clickgo.task) {
-        if (!['get', 'getList', 'run', 'end'].includes(k)) {
-            continue;
-        }
-        invoke.clickgo.task[k] = (clickgo.task as any)[k];
-    }
-    for (let k in clickgo.tool) {
-        if (!['blob2ArrayBuffer', 'clone', 'sleep', 'purify', 'getMimeByPath', 'rand', 'getBoolean', 'escapeHTML', 'includes', 'replace', 'parseUrl', 'urlResolve', 'blob2Text', 'blob2DataUrl', 'execCommand'].includes(k)) {
-            continue;
-        }
-        invoke.clickgo.tool[k] = (clickgo.tool as any)[k];
-    }
-    for (let k in clickgo.zip) {
-        if (!['get'].includes(k)) {
-            continue;
-        }
-        invoke.clickgo.zip[k] = (clickgo.zip as any)[k];
-    }
-    // --- console ---
-    invoke.console = {
-        log: function(message?: any, ...optionalParams: any[]) {
-            console.log(message, ...optionalParams);
-        }
-    };
-    // --- Object ---
-    invoke.Object = {
-        defineProperty: function(): void {
-            return;
-        },
-        keys: function(o: any): string[] {
-            return Object.keys(o);
-        },
-        assign: function(o: any, o2: any): any {
-            if (o.controlName !== undefined) {
-                return o;
+    let invoke: Record<string, any> = {};
+    if (clickgo.safe) {
+        invoke.window = undefined;
+        invoke.loader = undefined;
+        let ks = Object.getOwnPropertyNames(window);
+        for (let k of ks) {
+            if (k.includes('Event')) {
+                continue;
             }
-            return Object.assign(o, o2);
+            if ([
+                'require',
+                '__awaiter', 'requestAnimationFrame', 'eval', 'Math', 'Array', 'Blob', 'Infinity', 'parseInt', 'parseFloat', 'Promise', 'Date', 'JSON', 'fetch'].includes(k)) {
+                continue;
+            }
+            invoke[k] = undefined;
         }
-    };
-    invoke.navigator = {};
-    if (navigator.clipboard) {
-        invoke.navigator.clipboard = navigator.clipboard;
+        invoke.clickgo = {
+            'core': {},
+            'dom': {},
+            'form': {},
+            'task': {},
+            'tool': {},
+            'zip': {}
+        };
+        for (let k in clickgo.core) {
+            if (!['config', 'regModule', 'initModules', 'getModule', 'trigger'].includes(k)) {
+                continue;
+            }
+            invoke.clickgo.core[k] = (clickgo.core as any)[k];
+        }
+        for (let k in clickgo.dom) {
+            if (!['setGlobalCursor', 'hasTouchButMouse', 'getStyleCount', 'getSize', 'watchSize', 'watch', 'watchStyle', 'bindDown', 'bindLong', 'is', 'bindMove', 'bindResize', 'findParentByData', 'siblings', 'siblingsData'].includes(k)) {
+                continue;
+            }
+            invoke.clickgo.dom[k] = (clickgo.dom as any)[k];
+        }
+        for (let k in clickgo.form) {
+            if (!['taskInfo', 'setTask', 'clearTask', 'getAvailArea', 'getTaskId', 'min', 'get', 'send', 'getList', 'changeFocus', 'getMaxZIndexFormID', 'getRectByBorder', 'showCircular', 'moveRectangle', 'showRectangle', 'hideRectangle', 'notify', 'notifyProgress', 'hideNotify', 'showPop', 'hidePop', 'remove'].includes(k)) {
+                continue;
+            }
+            invoke.clickgo.form[k] = (clickgo.form as any)[k];
+        }
+        for (let k in clickgo.task) {
+            if (!['get', 'getList', 'run', 'end'].includes(k)) {
+                continue;
+            }
+            invoke.clickgo.task[k] = (clickgo.task as any)[k];
+        }
+        for (let k in clickgo.tool) {
+            if (!['blob2ArrayBuffer', 'clone', 'sleep', 'purify', 'getMimeByPath', 'rand', 'getBoolean', 'escapeHTML', 'request', 'parseUrl', 'urlResolve', 'blob2Text', 'blob2DataUrl', 'execCommand'].includes(k)) {
+                continue;
+            }
+            invoke.clickgo.tool[k] = (clickgo.tool as any)[k];
+        }
+        for (let k in clickgo.zip) {
+            if (!['get'].includes(k)) {
+                continue;
+            }
+            invoke.clickgo.zip[k] = (clickgo.zip as any)[k];
+        }
+        // --- console ---
+        invoke.console = {
+            log: function(message?: any, ...optionalParams: any[]) {
+                console.log(message, ...optionalParams);
+            }
+        };
+        // --- loader ---
+        invoke.loader = {
+            require: function(paths: string | string[], files: Record<string, Blob | string>, opt?: {
+                'executed'?: Record<string, any>;
+                'map'?: Record<string, string>;
+                'dir'?: string;
+                'style'?: string;
+                'invoke'?: Record<string, any>;
+                'preprocess'?: (code: string, path: string) => string;
+            }): any[] {
+                return loader.require(paths, files, opt);
+            }
+        };
+        // --- Object ---
+        invoke.Object = {
+            defineProperty: function(): void {
+                return;
+            },
+            keys: function(o: any): string[] {
+                return Object.keys(o);
+            },
+            assign: function(o: any, o2: any): any {
+                if (o.controlName !== undefined) {
+                    return o;
+                }
+                return Object.assign(o, o2);
+            }
+        };
+        invoke.navigator = {};
+        if (navigator.clipboard) {
+            invoke.navigator.clipboard = navigator.clipboard;
+        }
     }
     // --- 代码预处理 ---
     let preprocess = function(code: string, path: string): string {
@@ -1287,7 +1376,7 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
             else {
                 let style = item.files[item.config.style + '.css'] as string;
                 if (style) {
-                    let r = clickgo.tool.stylePrepend(style.replace(/^\ufeff/, ''));
+                    let r = clickgo.tool.stylePrepend(style);
                     prep = r.prep;
                     clickgo.dom.pushStyle(task.id, await clickgo.tool.styleUrl2ObjectOrDataUrl(item.config.style, r.style, item), 'control', name);
                 }
@@ -1296,7 +1385,8 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
                 if (!layout) {
                     return -4;
                 }
-                layout = layout.replace(/^\ufeff/, '');
+                // --- 给 layout 增加 data-cg-control-xxx ---
+                layout = layout.replace(/^(<[a-zA-Z0-9-]+)( |>)/, '$1 data-cg-control-' + name + '$2');
                 // --- 给控件的 layout 的 class 增加前置 ---
                 let prepList = [
                     'cg-theme-task' + taskId + '-' + name + '_'
@@ -1308,6 +1398,14 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
                 layout = clickgo.tool.layoutAddTagClassAndReTagName(layout, false);
                 // --- 给 layout 的 class 增加前置 ---
                 layout = clickgo.tool.layoutClassPrepend(layout, prepList);
+                // --- 给 cg 对象增加 :cg-focus 传递 ---
+                if (layout.includes('<cg-')) {
+                    layout = clickgo.tool.layoutInsertAttr(layout, ':cg-focus=\'cgFocus\'', {
+                        'include': [/^cg-.+/]
+                    });
+                }
+                // --- 给 event 增加包裹 ---
+                layout = clickgo.tool.eventsAttrWrap(layout);
                 task.initControls[name] = {
                     'layout': layout,
                     'prep': prep
@@ -1384,7 +1482,7 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
                 }
             };
             // --- 获取目前现存的子 slots ---
-            computed.cgSlots = function(this: IVueControl): (name?: string) => IVueVNode[] {
+            computed.cgSlots = function(this: IVControl): (name?: string) => IVueVNode[] {
                 return (name: string = 'default'): IVueVNode[] => {
                     let d = this.$slots[name];
                     if (!d) {
@@ -1406,87 +1504,30 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
                     return slots;
                 };
             };
-            // --- data ---
-            if (data.cgNest === undefined) {
-                data.cgNest = false;
-            }
-            // --- pop start ---
-            if (data.cgSelfIsPopLayer === undefined) {
-                data.cgSelfIsPopLayer = false;
-            }
-            data.cgChildPopItemShowing = undefined;
-            data.cgSelfPop = undefined;
-            data.cgSelfPopOpen = false;
-            data.cgPopPosition = {
-                'left': '-5000px',
-                'top': '0px',
-                'zIndex': '0'
-            };
-            // --- pop end ---
-            data.cgRealHover = false;
-            data.cgActive = false;
             // --- 预设 computed ---
-            computed.cgHover = function(this: IVueControl): boolean {
-                if (clickgo.dom.is.move) {
-                    return false;
-                }
-                return this.cgRealHover;
-            };
-            computed.cgWidthPx = function(this: IVueControl): string | undefined {
-                if (this.width !== undefined) {
-                    return this.width + 'px';
-                }
-                if (this.flex !== '') {
-                    let parent = this.cgParent;
-                    return parent ? (parent.direction === 'v' ? undefined : '0') : undefined;
-                }
-            };
-            computed.cgHeightPx = function(this: IVueControl): string | undefined {
-                if (this.height !== undefined) {
-                    return this.height + 'px';
-                }
-                if (this.flex !== '') {
-                    let parent = this.cgParent;
-                    return parent ? (parent.direction === 'v' ? '0' : undefined) : undefined;
-                }
-            };
-            computed.cgLocal = function(this: IVueControl): string {
+            computed.cgLocal = function(this: IVControl): string {
                 if (clickgo.task.list[this.taskId].local.name === '') {
                     return clickgo.core.config.local;
                 }
                 return clickgo.task.list[this.taskId].local.name;
             };
             // --- 获取语言 ---
-            computed.l = function(this: IVueControl): (key: string, data?: Record<string, Record<string, string>>) => string {
+            computed.l = function(this: IVControl): (key: string, data?: Record<string, Record<string, string>>) => string {
                 return (key: string, data?: Record<string, Record<string, string>>): string => {
                     if (data) {
-                        return data[this.cgLocal]?.[key] ?? data['en-us'][key] ?? 'LocaleError';
+                        return data[this.cgLocal]?.[key] ?? data['en'][key] ?? 'LocaleError';
                     }
                     else if (this.localData) {
-                        return this.localData[this.cgLocal]?.[key] ?? this.localData['en-us'][key] ?? 'LocaleError';
+                        return this.localData[this.cgLocal]?.[key] ?? this.localData['en'][key] ?? 'LocaleError';
                     }
                     else {
                         return 'LocaleError';
                     }
                 };
             };
-            // --- 获取正常非 nest 上级 ---
-            computed.cgParent = function(this: IVueControl): IVueControl | null {
-                let parent = this.$parent;
-                while (true) {
-                    if (!parent) {
-                        return null;
-                    }
-                    if (parent.cgNest) {
-                        parent = parent.$parent;
-                        continue;
-                    }
-                    return parent;
-                }
-            };
             // --- 根据 control name 查询上级序列 ---
-            computed.cgParentByName = function(this: IVueControl): (controlName: string) => IVueControl | null {
-                return (controlName: string): IVueControl | null => {
+            computed.cgParentByName = function(this: IVControl): (controlName: string) => IVControl | null {
+                return (controlName: string): IVControl | null => {
                     let parent = this.$parent;
                     while (true) {
                         if (!parent) {
@@ -1499,93 +1540,14 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
                     }
                 };
             };
-            // --- 上级最近的一层的 pop layer 组件 ---
-            computed.cgParentPopLayer = function(this: IVueControl): IVueControl {
-                let parent = this.$parent;
-                while (true) {
-                    if (!parent) {
-                        return this;
-                    }
-                    if (parent.controlName === 'form') {
-                        return parent;
-                    }
-                    if (parent.cgSelfIsPopLayer) {
-                        return parent;
-                    }
-                    parent = parent.$parent;
-                }
-            };
-            methods.cgClose = function(this: IVueControl): void {
+            methods.cgClose = function(this: IVControl): void {
                 remove(this.formId);
             };
-            methods.cgBindFormResize = function(this: IVueControl, e: MouseEvent | TouchEvent, border: TCGBorder): void {
+            methods.cgBindFormResize = function(this: IVControl, e: MouseEvent | TouchEvent, border: TCGBorder): void {
                 this.cgParentByName('form').resizeMethod(e, border);
             };
-            // --- 预设 methods ---
-            methods.cgDown = function(this: IVueControl, e: MouseEvent | TouchEvent) {
-                if (clickgo.dom.isMouseAlsoTouchEvent(e)) {
-                    return;
-                }
-                if (e instanceof TouchEvent) {
-                    this.cgRealHover = true;
-                    this.$emit('enter', e);
-                }
-                else {
-                    let up = (): void => {
-                        window.removeEventListener('mouseup', up);
-                        this.cgActive = false;
-                        this.$emit('up', e);
-                    };
-                    window.addEventListener('mouseup', up);
-                }
-                // --- 触发自定义 down 事件 ---
-                this.cgActive = true;
-                this.$emit('down', e);
-            };
-            methods.cgUp = function(this: IVueControl, e: MouseEvent | TouchEvent) {
-                if (e instanceof MouseEvent) {
-                    return;
-                }
-                this.cgRealHover = false;
-                this.$emit('leave', e);
-                this.cgActive = false;
-                this.$emit('up', e);
-            };
-            methods.cgCancel = function(this: IVueControl, e: TouchEvent) {
-                this.cgRealHover = false;
-                this.cgActive = false;
-                this.$emit('leave', e);
-                this.$emit('up', e);
-            };
-            methods.cgEnter = function(this: IVueControl, e: MouseEvent) {
-                if (clickgo.dom.isMouseAlsoTouchEvent(e)) {
-                    return;
-                }
-                this.cgRealHover = true;
-                this.$emit('enter', e);
-            };
-            methods.cgLeave = function(this: IVueControl, e: MouseEvent) {
-                if (!this.cgRealHover) {
-                    return;
-                }
-                this.cgRealHover = false;
-                this.$emit('leave', e);
-            };
-            methods.cgTap = function(this: IVueControl, e: MouseEvent | TouchEvent | KeyboardEvent) {
-                if (this.$el.className.includes('cg-disabled')) {
-                    return;
-                }
-                this.$emit('tap', e);
-            };
-            methods.cgDblclick = function(this: IVueControl, e: MouseEvent) {
-                e.stopPropagation();
-                if (this.$el.className.includes('cg-disabled')) {
-                    return;
-                }
-                this.$emit('dblclick', e);
-            };
             // --- 获取文件 blob 或 string 对象 ---
-            methods.cgGetFile = async function(this: IVueControl, path: string): Promise<Blob | string | null> {
+            methods.cgGetFile = async function(this: IVControl, path: string): Promise<Blob | string | null> {
                 if (path.startsWith('/clickgo/')) {
                     return await clickgo.core.fetchClickGoFile(path.slice(8));
                 }
@@ -1595,14 +1557,14 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
                 }
             };
             // --- 获取本 task 的 object url ---
-            methods.cgGetObjectUrl = function(this: IVueControl, file: string): string | null {
+            methods.cgGetObjectUrl = function(this: IVControl, file: string): string | null {
                 file = clickgo.tool.urlResolve(this.cgPath, file);
                 if (file.startsWith('/clickgo/')) {
                     return clickgo.cgRootPath + file.slice(9);
                 }
                 return clickgo.tool.file2ObjectUrl(file, clickgo.task.list[this.taskId]);
             };
-            methods.cgGetDataUrl = async function(this: IVueControl, file: string): Promise<string | null> {
+            methods.cgGetDataUrl = async function(this: IVControl, file: string): Promise<string | null> {
                 let f = await this.cgGetFile(file);
                 if (!f) {
                     return null;
@@ -1610,55 +1572,37 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
                 return f && f instanceof Blob ? await clickgo.tool.blob2DataUrl(f) : null;
             };
             // --- layout 中 :class 的转义 ---
-            methods.cgClassPrepend = function(this: IVueControl, cla: any): string {
+            methods.cgClassPrepend = function(this: IVControl, cla: any): string {
                 if (typeof cla !== 'string') {
                     return cla;
                 }
+                /*
                 if (cla.startsWith('cg-')) {
                     return cla;
                 }
+                */
                 return `cg-theme-task${this.taskId}-${this.controlName}_${cla} ${this.cgPrep}${cla}`;
             };
             // --- 设置 timer ---
-            methods.cgCreateTimer = function(this: IVueControl, fun: () => void | Promise<void>, delay: number, interval: boolean = false): number {
-                let timer: number;
-                if (interval) {
-                    timer = window.setInterval(() => {
-                        fun() as void;
-                    }, delay);
-                }
-                else {
-                    timer = window.setTimeout(() => {
-                        let i = clickgo.task.list[this.taskId].timers.indexOf(timer);
-                        if (i === -1) {
-                            return;
-                        }
-                        clickgo.task.list[this.taskId].timers.splice(i, 1);
-                        fun() as void;
-                    }, delay);
-                }
-                clickgo.task.list[this.taskId].timers.push(timer);
-                return timer;
+            methods.cgCreateTimer = function(this: IVControl, fun: () => void | Promise<void>, delay: number, opt: {
+                'immediate'?: boolean;
+                'scope'?: 'form' | 'task';
+                'count'?: number;
+            } = {}): number {
+                return clickgo.task.createTimer(this.taskId, this.formId, fun, delay, opt);
             };
-            methods.cgRemoveTimer = function(this: IVueControl, timer: number): void {
-                let i = clickgo.task.list[this.taskId].timers.indexOf(timer);
-                if (i === -1) {
-                    return;
-                }
-                clickgo.task.list[this.taskId].timers.splice(i, 1);
-                clearTimeout(timer);
+            methods.cgSleep = function(this: IVForm, fun: () => void | Promise<void>, delay: number): number {
+                return this.cgCreateTimer(fun, delay, {
+                    'count': 1
+                });
             };
-            // --- pop 相关操作 ---
-            if (!methods.cgShowPop) {
-                methods.cgShowPop = function(this: IVueControl, direction: 'h' | 'v' | MouseEvent | TouchEvent | { x: number; y: number; }, opt?: { 'size'?: { width?: number; height?: number; }; 'null'?: boolean; }): void {
-                    clickgo.form.showPop(this, direction, opt);
-                };
-            }
-            if (!methods.cgHidePop) {
-                methods.cgHidePop = function(this: IVueControl): void {
-                    clickgo.form.hidePop(this);
-                };
-            }
+            methods.cgRemoveTimer = function(this: IVControl, timer: number): void {
+                clickgo.task.removeTimer(this.taskId, timer);
+            };
+            // --- 判断当前事件可否执行 ---
+            methods.cgAllowEvent = function(this: IVForm, e: MouseEvent | TouchEvent | KeyboardEvent): boolean {
+                return clickgo.dom.allowEvent(e);
+            };
             // --- 组成 component ---
             components['cg-' + name] = {
                 'template': layout,
@@ -1673,15 +1617,8 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
                 'beforeCreate': beforeCreate,
                 'created': created,
                 'beforeMount': beforeMount,
-                'mounted': async function(this: IVueControl) {
+                'mounted': async function(this: IVControl) {
                     await this.$nextTick();
-                    // --- 检测本控件是否是 pop 层的控件 ---
-                    if ((this.$el.parentNode?.parentNode as HTMLDivElement | undefined)?.id === 'cg-pop-list') {
-                        this.cgSelfIsPopLayer = true;
-                        if (this.$parent) {
-                            this.$parent.cgSelfPop = this;
-                        }
-                    }
                     mounted?.call(this);
                 },
                 'beforeUpdate': beforeUpdate,
@@ -1689,19 +1626,10 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
                     await this.$nextTick();
                     updated?.call(this);
                 },
-                'beforeUnmount': function(this: IVueControl) {
+                'beforeUnmount': function(this: IVControl) {
                     beforeUnmount?.call(this);
-                    // --- before 不能 nextTick ---
-                    // --- 如果自己是 pop 层并且有上层，则吧上层的 cgSelfPop 注销 ---
-                    if (this.cgSelfIsPopLayer && this.$parent) {
-                        this.$parent.cgSelfPop = undefined;
-                    }
-                    // --- 如果自己还在上层显示，则取消 ---
-                    if (this.cgParentPopLayer.cgChildPopItemShowing === this) {
-                        this.cgHidePop();
-                    }
                 },
-                'unmounted': async function(this: IVueControl) {
+                'unmounted': async function(this: IVControl) {
                     await this.$nextTick();
                     unmounted?.call(this);
                 }
@@ -1782,6 +1710,9 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
         prepList.push(prep);
     }
     layout = clickgo.tool.layoutClassPrepend(layout, prepList);
+    // --- 给 event 增加包裹 ---
+    layout = clickgo.tool.eventsAttrWrap(layout);
+    // --- 插入 HTML 到 Element ---
     formListElement.insertAdjacentHTML('beforeend', `<div class="cg-form-wrap" data-form-id="${formId.toString()}" data-task-id="${taskId.toString()}"></div>`);
     // --- 获取刚才的 form wrap element 对象 ---
     let el: HTMLElement = formListElement.children.item(formListElement.children.length - 1) as HTMLElement;
@@ -1900,20 +1831,20 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
         }
     };
     // --- 预设 computed ---
-    computed.cgLocal = function(this: IVueForm): string {
+    computed.cgLocal = function(this: IVForm): string {
         if (clickgo.task.list[this.taskId].local.name === '') {
             return clickgo.core.config.local;
         }
         return clickgo.task.list[this.taskId].local.name;
     };
     // --- 获取语言 ---
-    computed.l = function(this: IVueForm): (key: string) => string {
+    computed.l = function(this: IVForm): (key: string) => string {
         return (key: string): string => {
-            return clickgo.task.list[this.taskId].local.data[this.cgLocal]?.[key] ?? clickgo.task.list[this.taskId].local.data['en-us']?.[key] ?? 'LocaleError';
+            return clickgo.task.list[this.taskId].local.data[this.cgLocal]?.[key] ?? clickgo.task.list[this.taskId].local.data['en']?.[key] ?? 'LocaleError';
         };
     };
     // --- 初始化系统方法 ---
-    methods.cgCreateForm = async function(this: IVueForm, paramOpt: string | ICGFormCreateOptions & { 'mask'?: boolean; } = {}): Promise<void> {
+    methods.cgCreateForm = async function(this: IVForm, paramOpt: string | ICGFormCreateOptions & { 'mask'?: boolean; } = {}): Promise<number> {
         let inOpt: ICGFormCreateOptions = {
             'path': this.cgPath
         };
@@ -1952,37 +1883,39 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
             if (this.$refs.form) {
                 this.$refs.form.maskFor = undefined;
             }
+            return form;
         }
         else {
             if (this.$refs.form?.maskFor) {
                 this.$refs.form.maskFor = form.id;
                 form.vroot.$refs.form.maskFrom = this.formId;
             }
+            return form.id;
         }
     };
-    methods.cgClose = function(this: IVueForm): void {
+    methods.cgClose = function(this: IVForm): void {
         remove(this.formId);
     };
-    methods.cgMax = function(this: IVueForm): void {
+    methods.cgMax = function(this: IVForm): void {
         // --- 平时同 state 传值，这个是外围调用的时候才会用到 ---
         this.$refs.form.maxMethod();
     };
-    methods.cgMin = function(this: IVueForm): void {
+    methods.cgMin = function(this: IVForm): void {
         this.$refs.form.minMethod();
     };
-    methods.cgBindFormDrag = function(this: IVueForm, e: MouseEvent | TouchEvent): void {
+    methods.cgBindFormDrag = function(this: IVForm, e: MouseEvent | TouchEvent): void {
         this.$refs.form.moveMethod(e, true);
     };
-    methods.cgBindFormResize = function(this: IVueForm, e: MouseEvent | TouchEvent, border: TCGBorder): void {
+    methods.cgBindFormResize = function(this: IVForm, e: MouseEvent | TouchEvent, border: TCGBorder): void {
         this.$refs.form.resizeMethod(e, border);
     };
-    methods.cgSetSystemEventListener = function(this: IVueForm, name: TCGGlobalEvent, func: (...any: any) => void | Promise<void>): void {
+    methods.cgSetSystemEventListener = function(this: IVForm, name: TCGGlobalEvent, func: (...any: any) => void | Promise<void>): void {
         clickgo.task.list[this.taskId].forms[this.formId].events[name] = func;
     };
-    methods.cgRemoveSystemEventListener = function(this: IVueForm, name: TCGGlobalEvent): void {
+    methods.cgRemoveSystemEventListener = function(this: IVForm, name: TCGGlobalEvent): void {
         delete(clickgo.task.list[this.taskId].forms[this.formId].events[name]);
     };
-    methods.cgDialog = function(this: IVueForm, opt: string | ICGFormDialog): Promise<string> {
+    methods.cgDialog = function(this: IVForm, opt: string | ICGFormDialog): Promise<string> {
         return new Promise((resolve) => {
             if (typeof opt === 'string' || typeof opt === 'number') {
                 opt = {
@@ -1990,16 +1923,16 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
                 };
             }
             if (opt.buttons === undefined) {
-                opt.buttons = [localData[this.cgLocal]?.ok ?? localData['en-us'].ok];
+                opt.buttons = [localData[this.cgLocal]?.ok ?? localData['en'].ok];
             }
             this.cgCreateForm({
-                'layout': `<form title="${opt.title ?? 'dialog'}" width="auto" height="auto" :min="false" :max="false" :resize="false" :min-height="50" border="${opt.title ? 'normal' : 'plain'}"><dialog :buttons="buttons" @select="select">${opt.content}</dialog></form>`,
+                'layout': `<form title="${opt.title ?? 'dialog'}" width="auto" height="auto" :min="false" :max="false" :resize="false" border="${opt.title ? 'normal' : 'plain'}" direction="v"><dialog :buttons="buttons" @select="select">${opt.content}</dialog></form>`,
                 'code': {
                     data: {
                         'buttons': opt.buttons
                     },
                     methods: {
-                        select: function(this: IVueForm, button: string) {
+                        select: function(this: IVForm, button: string) {
                             let event = {
                                 'go': true,
                                 preventDefault: function() {
@@ -2020,25 +1953,25 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
             });
         });
     };
-    methods.cgConfirm = async function(this: IVueForm, content: string, cancel: boolean = false): Promise<boolean | number> {
-        let buttons = [localData[this.cgLocal]?.yes ?? localData['en-us'].yes, localData[this.cgLocal]?.no ?? localData['en-us'].no];
+    methods.cgConfirm = async function(this: IVForm, content: string, cancel: boolean = false): Promise<boolean | number> {
+        let buttons = [localData[this.cgLocal]?.yes ?? localData['en'].yes, localData[this.cgLocal]?.no ?? localData['en'].no];
         if (cancel) {
-            buttons.push(localData[this.cgLocal]?.cancel ?? localData['en-us'].cancel);
+            buttons.push(localData[this.cgLocal]?.cancel ?? localData['en'].cancel);
         }
         let res = await this.cgDialog({
             'content': content,
             'buttons': buttons
         });
-        if (res === (localData[this.cgLocal]?.yes ?? localData['en-us'].yes)) {
+        if (res === (localData[this.cgLocal]?.yes ?? localData['en'].yes)) {
             return true;
         }
-        if (res === (localData[this.cgLocal]?.cancel ?? localData['en-us'].cancel)) {
+        if (res === (localData[this.cgLocal]?.cancel ?? localData['en'].cancel)) {
             return 0;
         }
         return false;
     };
     // --- 获取文件 blob 对象 ---
-    methods.cgGetFile = async function(this: IVueForm, path: string): Promise<Blob | string | null> {
+    methods.cgGetFile = async function(this: IVForm, path: string): Promise<Blob | string | null> {
         if (path.startsWith('/clickgo/')) {
             return await clickgo.core.fetchClickGoFile(path.slice(8));
         }
@@ -2048,14 +1981,14 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
         }
     };
     // --- 获取本 task 的 object url ---
-    methods.cgGetObjectUrl = function(this: IVueForm, file: string): string | null {
+    methods.cgGetObjectUrl = function(this: IVForm, file: string): string | null {
         file = clickgo.tool.urlResolve(this.cgPath, file);
         if (file.startsWith('/clickgo/')) {
             return clickgo.cgRootPath + file.slice(9);
         }
         return clickgo.tool.file2ObjectUrl(file, clickgo.task.list[this.taskId]);
     };
-    methods.cgGetDataUrl = async function(this: IVueForm, file: string): Promise<string | null> {
+    methods.cgGetDataUrl = async function(this: IVForm, file: string): Promise<string | null> {
         let f = await this.cgGetFile(file);
         if (!f) {
             return null;
@@ -2063,27 +1996,27 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
         return f && f instanceof Blob ? await clickgo.tool.blob2DataUrl(f) : null;
     };
     // --- 加载主题 ---
-    methods.cgLoadTheme = async function(this: IVueForm, path: string): Promise<boolean> {
+    methods.cgLoadTheme = async function(this: IVForm, path: string): Promise<boolean> {
         path = clickgo.tool.urlResolve(this.cgPath, path);
         return await clickgo.theme.load(this.taskId, path);
     };
     // --- 卸载主题 ---
-    methods.cgRemoveTheme = async function(this: IVueForm, path: string): Promise<void> {
+    methods.cgRemoveTheme = async function(this: IVForm, path: string): Promise<void> {
         path = clickgo.tool.urlResolve(this.cgPath, path);
         await clickgo.theme.remove(this.taskId, path);
     };
     // --- 加载全新主题（老主题会被清除） ---
-    methods.cgSetTheme = async function(this: IVueForm, path: string): Promise<void> {
+    methods.cgSetTheme = async function(this: IVForm, path: string): Promise<void> {
         path = clickgo.tool.urlResolve(this.cgPath, path);
         await clickgo.theme.clear(this.taskId);
         await clickgo.theme.load(this.taskId, path);
     };
     // --- 清除主题 ---
-    methods.cgClearTheme = async function(this: IVueForm): Promise<void> {
+    methods.cgClearTheme = async function(this: IVForm): Promise<void> {
         await clickgo.theme.clear(this.taskId);
     };
     // --- 加载全局主题 ---
-    methods.cgSetGlobalTheme = async function(this: IVueForm, path: string | Blob): Promise<void> {
+    methods.cgSetGlobalTheme = async function(this: IVForm, path: string | Blob): Promise<void> {
         if (typeof path === 'string') {
             let blob = await this.cgGetFile(path);
             if (blob instanceof Blob) {
@@ -2099,7 +2032,7 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
         await clickgo.theme.clearGlobal();
     };
     // --- 设置窗体置顶/取消置顶 ---
-    methods.cgSetTopMost = function(this: IVueForm, top: boolean): void {
+    methods.cgSetTopMost = function(this: IVForm, top: boolean): void {
         this.$data._cgCustomZIndex = false;
         if (top) {
             // --- 要置顶 ---
@@ -2118,7 +2051,7 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
         }
     };
     // --- 让窗体闪烁 ---
-    methods.cgFlash = function(this: IVueForm): void {
+    methods.cgFlash = function(this: IVForm): void {
         if (!this.cgFocus) {
             changeFocus(this.formId);
         }
@@ -2135,15 +2068,15 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
         clickgo.core.trigger('formFlash', taskId, formId);
     };
     // --- 让窗体显示出来 ---
-    methods.cgShow = function(this: IVueForm): void {
+    methods.cgShow = function(this: IVForm): void {
         this.$refs.form.$data.showData = true;
     };
     // --- 让窗体隐藏 ---
-    methods.cgHide = function(this: IVueForm): void {
+    methods.cgHide = function(this: IVForm): void {
         this.$refs.form.$data.showData = false;
     };
     // --- 加载 local 文件 json ---
-    methods.cgLoadLocal = async function(this: IVueForm, name: string, path: string): Promise<boolean> {
+    methods.cgLoadLocal = async function(this: IVForm, name: string, path: string): Promise<boolean> {
         path = clickgo.tool.urlResolve(this.cgPath, path + '.json');
         if (!task.files[path]) {
             return false;
@@ -2158,63 +2091,56 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
         }
     };
     // --- 加载全新 local（老 local 的所以语言的缓存会被卸载） ---
-    methods.cgSetLocal = async function(this: IVueForm, name: string, path: string): Promise<boolean> {
+    methods.cgSetLocal = async function(this: IVForm, name: string, path: string): Promise<boolean> {
         this.cgClearLocal();
         return await this.cgLoadLocal(name, path);
     };
     // --- 清除所有语言文件 ---
-    methods.cgClearLocal = function(this: IVueForm): void {
+    methods.cgClearLocal = function(this: IVForm): void {
         clickgo.task.list[this.taskId].local.data = {};
     };
     // --- 加载 local data 对象到 task ---
-    methods.cgLoadLocalData = function(this: IVueForm, name: string, data: Record<string, any>, pre: string = ''): void {
+    methods.cgLoadLocalData = function(this: IVForm, name: string, data: Record<string, any>, pre: string = ''): void {
         clickgo.task.loadLocalData(this.taskId, name, data, pre);
     };
     // --- 设置本 task 的语言 name ---
-    methods.cgSetLocalName = function(this: IVueForm, name: string): void {
+    methods.cgSetLocalName = function(this: IVForm, name: string): void {
         clickgo.task.list[this.taskId].local.name = name;
     };
-    methods.cgClearLocalName = function(this: IVueForm): void {
+    methods.cgClearLocalName = function(this: IVForm): void {
         clickgo.task.list[this.taskId].local.name = '';
     };
     // --- layout 中 :class 的转义 ---
-    methods.cgClassPrepend = function(this: IVueForm, cla: any): string {
+    methods.cgClassPrepend = function(this: IVForm, cla: any): string {
         if (typeof cla !== 'string') {
             return cla;
         }
+        /*
         if (cla.startsWith('cg-')) {
             return cla;
         }
+        */
         return `cg-task${this.taskId}_${cla} ${this.cgPrep}${cla}`;
     };
     // --- 设置 timer ---
-    methods.cgCreateTimer = function(this: IVueForm, fun: () => void | Promise<void>, delay: number, interval: boolean = false): number {
-        let timer: number;
-        if (interval) {
-            timer = window.setInterval(() => {
-                fun() as void;
-            }, delay);
-        }
-        else {
-            timer = window.setTimeout(() => {
-                let i = clickgo.task.list[this.taskId].timers.indexOf(timer);
-                if (i === -1) {
-                    return;
-                }
-                clickgo.task.list[this.taskId].timers.splice(i, 1);
-                fun() as void;
-            }, delay);
-        }
-        clickgo.task.list[this.taskId].timers.push(timer);
-        return timer;
+    methods.cgCreateTimer = function(this: IVForm, fun: () => void | Promise<void>, delay: number, opt: {
+        'immediate'?: boolean;
+        'scope'?: 'form' | 'task';
+        'count'?: number;
+    } = {}): number {
+        return clickgo.task.createTimer(this.taskId, this.formId, fun, delay, opt);
     };
-    methods.cgRemoveTimer = function(this: IVueForm, timer: number): void {
-        let i = clickgo.task.list[this.taskId].timers.indexOf(timer);
-        if (i === -1) {
-            return;
-        }
-        clickgo.task.list[this.taskId].timers.splice(i, 1);
-        clearTimeout(timer);
+    methods.cgSleep = function(this: IVForm, fun: () => void | Promise<void>, delay: number): number {
+        return this.cgCreateTimer(fun, delay, {
+            'count': 1
+        });
+    };
+    methods.cgRemoveTimer = function(this: IVForm, timer: number): void {
+        clickgo.task.removeTimer(this.taskId, timer);
+    };
+    // --- 判断当前事件可否执行 ---
+    methods.cgAllowEvent = function(this: IVForm, e: MouseEvent | TouchEvent | KeyboardEvent): boolean {
+        return clickgo.dom.allowEvent(e);
     };
     // --- 挂载 style ---
     if (style) {
@@ -2224,7 +2150,7 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
     // --- 创建 app 对象 ---
     let rtn: {
         'vapp': IVueApp;
-        'vroot': IVueForm;
+        'vroot': IVForm;
     } = await new Promise(function(resolve) {
         const vapp = Vue.createApp({
             'template': (layout as string).replace(/^<cg-form/, '<cg-form ref="form"'),
@@ -2239,7 +2165,7 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
             'beforeCreate': beforeCreate,
             'created': created,
             'beforeMount': beforeMount,
-            'mounted': async function(this: IVueForm) {
+            'mounted': async function(this: IVForm) {
                 await this.$nextTick();
                 // --- 判断是否有 icon，对 icon 进行第一次读取 ---
                 // --- 为啥要在这搞，因为 form 控件中读取，将可能导致下方的 formCreate 事件获取不到 icon 图标 ---
@@ -2261,7 +2187,7 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
             'beforeUnmount': beforeUnmount,
             'unmounted': unmounted,
         });
-        vapp.config.errorHandler = function(err: Error, vm: IVueForm, info: string): void {
+        vapp.config.errorHandler = function(err: Error, vm: IVForm, info: string): void {
             notify({
                 'title': 'Runtime Error',
                 'content': `Message: ${err.message}\nTask id: ${vm.taskId}\nForm id: ${vm.formId}`,
@@ -2286,7 +2212,7 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
     // --- 挂载 form ---
     task.forms[formId] = form;
     // --- 执行 mounted ---
-    await clickgo.tool.sleep(5);
+    await clickgo.tool.sleep(50);
     if (mounted) {
         try {
             await mounted.call(rtn.vroot);
@@ -2328,5 +2254,5 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
 // --- 绑定 resize 事件 ---
 window.addEventListener('resize', function(): void {
     // --- 触发 screenResize 事件 ---
-    refreshTaskPosition();
+    refreshTaskPosition(); // 会在里面自动触发 screenResize 事件
 });

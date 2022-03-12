@@ -9,37 +9,33 @@ export let props = {
 };
 
 export let computed = {
-    'isDisabled': function(this: IVueControl): boolean {
+    'isDisabled': function(this: IVControl): boolean {
         return clickgo.tool.getBoolean(this.disabled);
     }
 };
 
 export let methods = {
-    enter: function(this: IVueControl, e: MouseEvent): void {
-        this.cgEnter(e);
-        if (this.isDisabled) {
-            // --- 如果当前是者禁用状态，不管 ---
+    enter: function(this: IVControl, e: MouseEvent): void {
+        if (clickgo.dom.hasTouchButMouse(e)) {
             return;
         }
-        if (clickgo.dom.isMouseAlsoTouchEvent(e)) {
-            return;
-        }
-        if (!this.cgParentPopLayer.cgChildPopItemShowing) {
+        let length = clickgo.dom.siblingsData(this.$el, 'cg-pop-open').length;
+        if (length === 0) {
             // --- 别的没有展开，则不管 ---
             return;
         }
-        this.cgShowPop('v', { 'null': true });
+        clickgo.form.showPop(this.$el, this.$refs.pop, 'v', {
+            'null': true
+        });
     },
-    click: function(this: IVueControl, e: MouseEvent): void {
-        if (this.isDisabled) {
-            return;
-        }
-        this.cgTap(e);
-        if (this.cgSelfPopOpen) {
+    click: function(this: IVControl): void {
+        if (this.$el.dataset.cgPopOpen !== undefined) {
             // --- 本来是展开状态，就隐藏起来 ---
-            this.cgHidePop();
+            clickgo.form.hidePop(this.$refs.pop);
             return;
         }
-        this.cgShowPop('v', { 'null': true });
+        clickgo.form.showPop(this.$el, this.$refs.pop, 'v', {
+            'null': true
+        });
     }
 };

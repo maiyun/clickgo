@@ -70,14 +70,14 @@ export function clone(obj: Record<string, any> | any[]): any[] | any {
 
 /**
  * --- 等待毫秒 ---
- * @param ms 等待的毫秒，默认 0，最大 10 分钟
+ * @param ms 等待的毫秒，默认 0，最大 5 秒
  */
 export function sleep(ms: number = 0): Promise<void> {
-    if (ms > 600000) {
-        ms = 600000;
+    if (ms > 1000 * 5) {
+        ms = 1000 * 5;
     }
     return new Promise(function(resolve) {
-        setTimeout(function() {
+        window.setTimeout(function() {
             resolve();
         }, ms);
     });
@@ -269,6 +269,21 @@ export function layoutClassPrepend(layout: string, preps: string[]): string {
 }
 
 /**
+ * --- 对 layout 的 @events 事件进行包裹 ---
+ * @param layout 要包裹的 layout
+ */
+export function eventsAttrWrap(layout: string): string {
+    let events = ['click', 'dblclick', 'mousedown', 'mouseenter', 'mouseleave', 'mouseup', 'touchstart', 'touchmove', 'touchend', 'keydown', 'keypress', 'keyup', 'contextmenu'];
+    let reg = new RegExp(`@(${events.join('|')})="(.+?)"`, 'g');
+    return layout.replace(reg, function(t, t1, t2): string {
+        if (/^[\w]+$/.test(t2)) {
+            return `@${t1}="cgAllowEvent($event) && ${t2}($event)"`;
+        }
+        return `@${t1}=";if(cgAllowEvent($event)){${t2}}"`;
+    });
+}
+
+/**
  * --- 给 class 前部增加唯一标识符 ---
  * @param style 样式内容
  * @param prep 给 class、font 等增加前置
@@ -289,9 +304,11 @@ export function stylePrepend(style: string, prep: string = ''): { 'style': strin
         });
         // --- 给 style 的 class 前添加 scope ---
         return t1.replace(/([.#])([a-zA-Z0-9-_]+)/g, function(t: string, t1: string, t2: string) {
+            /*
             if (t2.startsWith('cg-')) {
                 return t;
             }
+            */
             return t1 + prep + t2;
         }) + '{' + t2 + '}';
     });
@@ -416,35 +433,6 @@ export function getBoolean(param: boolean | string | number): boolean {
  */
 export function escapeHTML(html: string): string {
     return html.replace(/</g, '&lt;').replace(/>/g, '&gt;');
-}
-
-/**
- * --- 字符串必须包含后面的所有字符 ---
- * @param str 要查找的字符串
- * @param search 要查找的字符（char）
- */
-export function includes(str: string, search: string | string[]): boolean {
-    for (let item of search) {
-        if (!str.includes(item)) {
-            return false;
-        }
-    }
-    return true;
-}
-
-/**
- * --- 完整替换字符串 ---
- * @param text 原始字符串
- * @param search 要替换的
- * @param replace 替换成
- */
-export function replace(text: string, search: string, replace: string): string {
-    let result: string = text.replace(search, replace);
-    while (result !== text) {
-        text = result;
-        result = text.replace(search, replace);
-    }
-    return result;
 }
 
 export function request(url: string, opt: ICGToolRequestOptions): Promise<null | any> {

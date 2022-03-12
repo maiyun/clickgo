@@ -11,7 +11,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.fetchApp = exports.readApp = exports.fetchClickGoFile = exports.trigger = exports.globalEvents = exports.clickgoFiles = exports.getModule = exports.initModules = exports.regModule = exports.config = void 0;
 let cgConfig = {
-    'local': 'en-us',
+    'local': 'en',
     'task.position': 'bottom',
     'task.pin': {},
     'desktop.icon.storage': true,
@@ -20,7 +20,7 @@ let cgConfig = {
     'desktop.path': null
 };
 exports.config = Vue.reactive({
-    'local': 'en-us',
+    'local': 'en',
     'task.position': 'bottom',
     'task.pin': {},
     'desktop.icon.storage': true,
@@ -409,7 +409,7 @@ function readApp(blob) {
                 if (!fab) {
                     continue;
                 }
-                files[file] = fab;
+                files[file] = fab.replace(/^\ufeff/, '');
             }
             else {
                 let fab = yield zip.getContent(file, 'arraybuffer');

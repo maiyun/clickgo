@@ -1,43 +1,80 @@
-<div class="wrap" :class="[cgSelfPopOpen && 'cg-pop-open', isDisabled && 'cg-disabled', cgHover && 'hover', cgActive && 'active']" :style="{'width': cgWidthPx, 'height': cgHeightPx, 'left': left + 'px', 'top': top + 'px', 'z-index': zIndex, 'flex-grow': flex}" @click="cgTap" @mousedown="down" @mouseup="cgUp" @mouseenter="cgEnter" @mouseleave="cgLeave" @touchstart="down" @touchend="cgUp" @touchcancel="cgCancel" @dblclick="cgDblclick">
+<div class="wrap" :data-cg-disabled="isDisabled ? '' : undefined">
     <div class="controls">
-        <cg-button :checked="sortData === 'kind'" @tap="changeSort('kind')">&#xe742;</cg-button>
-        <cg-button :checked="sortData === 'letter'" @tap="changeSort('letter')">&#xe7ad;</cg-button>
+        <cg-button :checked="sortData === 'kind'" @click="changeSort('kind')">&#xe742;</cg-button>
+        <cg-button :checked="sortData === 'letter'" @click="changeSort('letter')">&#xe7ad;</cg-button>
         <div class="split"></div>
-        <cg-button :checked="typeData === 'property'" @tap="changeType('property')">&#xe603;</cg-button>
-        <cg-button :checked="typeData === 'event'" @tap="changeType('event')">&#xe613;</cg-button>
+        <cg-button :checked="typeData === 'property'" @click="changeType('property')">&#xe603;</cg-button>
+        <cg-button :checked="typeData === 'event'" @click="changeType('event')">&#xe613;</cg-button>
     </div>
-    <div class="content" @touchstart="vdown" @contextmenu="contextmenu">
-        <cg-view flex="1" direction="v">
+    <div ref="content" class="content" @mousedown="down" @touchstart="down" @contextmenu="contextmenu">
+        <cg-view direction="v">
             <template v-for="item of value">
                 <div v-if="item.title" class="bigTitle">
-                    <div class="control"></div>
+                    <div class="control arrow" :class="{'open': !bigClosed.includes(item.title)}" @click="bigToggle(item.title)"></div>
                     <div class="title">{{item.title}}</div>
                 </div>
-                <template v-for="item2 of item.list">
-                    <div class="line" :class="{'selected': !selectedSub && (selectedTitle === item2.title)}" @mousedown="select($event, item2.title, undefined)" @touchstart="select($event, item2.title, undefined)">
-                        <div class="control"></div>
-                        <div class="title">{{item2.title}}</div>
-                        <div class="value">{{item2.value}}</div>
+                <template v-if="!bigClosed.includes(item.title)" v-for="item2, i2 of item.list">
+                    <div class="line" :class="{'selected': !selectedSub && (selectedTitle === item2.title)}" @mousedown="select($event, item2.title, undefined, item2.desc)" @touchstart="select($event, item2.title, undefined, item2.desc)">
+                        <div class="control" :class="{'arrow': item2.sub, 'open': opened.includes(item2.title)}" @click="toggle(item2.title)"></div>
+                        <div class="title" @dblclick="reset">{{item2.title}}</div>
+                        <div class="value">
+                            <template v-if="!selectedSub && (selectedTitle === item2.title)">
+                                <cg-text v-if="item2.control === 'text'" class="text" border="none" :modelValue="item2.value" @update:modelValue="update($event)" :style="{'font-weight': item2.default !== item2.value ? 'bold' : undefined}"></cg-text>
+                                <cg-check v-else-if="item2.control === 'check'" :modelValue="item2.value === 'true'" @update:modelValue="update($event ? 'true' : 'false')" :style="{'font-weight': item2.default !== item2.value ? 'bold' : undefined}">{{item2.value}}</cg-check>
+                                <div v-else-if="item2.control === 'dock'" class="dock">
+                                    <div class="text" :style="{'font-weight': item2.default !== item2.value ? 'bold' : undefined}">{{item2.value}}</div>
+                                    <cg-button @click="dock($event)"><div class="arrow"></div></cg-button>
+                                </div>
+                                <cg-select v-else-if="item2.control === 'select'" class="text" :modelValue="item2.value" @update:modelValue="update($event)" :data="item2.data" :style="{'font-weight': item2.default !== item2.value ? 'bold' : undefined}"></cg-select>
+                            </template>
+                            <template v-else>
+                                <div class="text" :style="{'font-weight': item2.default !== item2.value ? 'bold' : undefined}">{{item2.value}}</div>
+                            </template>
+                        </div>
                     </div>
-                    <div v-if="item2.sub" v-for="item3, i3 of item2.sub" class="line" :class="{'selected': (selectedTitle === item2.title) && (selectedSub === item3.title)}" @mousedown="select($event, item2.title, item3.title)" @touchstart="select($event, item2.title, item3.title)">
+                    <div v-if="item2.sub && opened.includes(item2.title)" v-for="item3, i3 of item2.sub" class="line" :class="{'selected': (selectedTitle === item2.title) && (selectedSub === item3.title)}" @mousedown="select($event, item2.title, item3.title, item3.desc)" @touchstart="select($event, item2.title, item3.title, item3.desc)">
                         <div class="control"></div>
-                        <div class="title">
+                        <div class="title" @dblclick="reset">
                             <div class="sub">{{item3.title}}</div>
                         </div>
-                        <div class="value">{{item2.value.split(',')[i3].trim()}}</div>
+                        <div class="value">
+                            <template v-if="(selectedTitle === item2.title) && (selectedSub === item3.title)">
+                                <cg-text v-if="item3.control === 'text'" class="text" border="none" :modelValue="subValue(item2, i3)" @update:modelValue="update($event)" :style="{'font-weight': subValue(item2, i3, true) !== subValue(item2, i3) ? 'bold' : undefined}"></cg-text>
+                                <cg-check v-else-if="item3.control === 'check'" :modelValue="subValue(item2, i3) === 'true'" @update:modelValue="update($event ? 'true' : 'false')" :style="{'font-weight': subValue(item2, i3, true) !== subValue(item2, i3) ? 'bold' : undefined}">{{subValue(item2, i3)}}</cg-check>
+                                <div v-else-if="item3.control === 'dock'" class="dock">
+                                    <div class="text" :style="{'font-weight': subValue(item2, i3, true) !== subValue(item2, i3) ? 'bold' : undefined}">{{subValue(item2, i3)}}</div>
+                                    <cg-button @click="dock($event)"><div class="arrow"></div></cg-button>
+                                </div>
+                                <cg-select v-else-if="item3.control === 'select'" class="text" :modelValue="subValue(item2, i3)" @update:modelValue="update($event)" :data="item3.data" :style="{'font-weight': subValue(item2, i3, true) !== subValue(item2, i3) ? 'bold' : undefined}"></cg-select>
+                            </template>
+                            <template v-else><div class="text" :style="{'font-weight': subValue(item2, i3, true) !== subValue(item2, i3) ? 'bold' : undefined}">{{subValue(item2, i3)}}</div></template>
+                        </div>
                     </div>
                 </template>
             </template>
         </cg-view>
     </div>
-    <div class="description"></div>
+    <div v-if="isDesc" class="description">
+        <div class="title">{{title}}</div>
+        <div class="desc">{{description}}</div>
+    </div>
     <teleport to="#cg-pop-list">
-        <div class="pop" :class="[cgSelfPopOpen && 'open']" :style="cgPopPosition">
+        <div ref="pop" data-cg-pop>
             <cg-menulist>
-                <cg-menulist-item alt="R" @tap="execCmd('cut')">{{l('reset')}}</cg-menulist-item>
+                <cg-menulist-item alt="R" @click="reset">{{l('reset')}}</cg-menulist-item>
                 <cg-menulist-split></cg-menulist-split>
-                <cg-menulist-item alt="D" @tap="execCmd('description')">{{l('description')}}</cg-menulist-item>
+                <cg-menulist-item alt="D" type="check" :modelValue="isDesc" @update:modelValue="this.descData = $event;$emit('update:desc', $event)">{{l('description')}}</cg-menulist-item>
             </cg-menulist>
+        </div>
+        <div ref="dock" class="dock-pop" data-cg-pop>
+            <cg-button class="top" :checked="dockValue === 'top'" @click="dockSelect('top')"></cg-button>
+            <div class="center">
+                <cg-button class="left" :checked="dockValue === 'left'" @click="dockSelect('left')"></cg-button>
+                <cg-button class="fill" :checked="dockValue === 'fill'" @click="dockSelect('fill')"></cg-button>
+                <cg-button class="right" :checked="dockValue === 'right'" @click="dockSelect('right')"></cg-button>
+            </div>
+            <cg-button class="bottom" :checked="dockValue === 'bottom'" @click="dockSelect('bottom')"></cg-button>
+            <cg-button class="none" :checked="dockValue === 'none'" @click="dockSelect('none')">none</cg-button>
         </div>
     </teleport>
 </div>

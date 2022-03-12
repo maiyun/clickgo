@@ -1,27 +1,6 @@
 export let props = {
-    'width': {
-        'default': undefined
-    },
-    'height': {
-        'default': undefined
-    },
-    'left': {
-        'default': 0
-    },
-    'top': {
-        'default': 0
-    },
-    'zIndex': {
-        'default': 0
-    },
     'direction': {
         'default': 'h'
-    },
-    'flex': {
-        'default': ''
-    },
-    'padding': {
-        'default': undefined
     },
     'gutter': {
         'default': undefined
@@ -32,8 +11,24 @@ export let props = {
     }
 };
 
+export let data = {
+    'padding': ''
+};
+
+export let computed = {
+    'paddingMargin': function(this: IVControl): string {
+        return this.padding.replace(/(\w+)/g, '-$1');
+    }
+};
+
 export let methods = {
-    click: function(this: IVueControl, item: string): void {
+    click: function(this: IVControl, item: string): void {
         this.$emit('select', item);
     }
+};
+
+export let mounted = function(this: IVControl): void {
+    clickgo.dom.watchStyle(this.$el, 'padding', (n, v) => {
+        this.padding = v;
+    }, true);
 };

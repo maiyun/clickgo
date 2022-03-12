@@ -4,11 +4,9 @@
     "version": "0.1",
     "author": "clickgo",
 
-    "code": "/code",
     "layout": "/layout",
 
     "files": [
-        "/code.js",
         "/layout.html"
     ]
 }

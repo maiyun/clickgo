@@ -1,5 +1,5 @@
 <form width="300" height="300" title="Block">
-    <layout direction="v" gutter="10" style="padding: 10px;">
+    <layout direction="v" gutter="10" style="padding: 10px; flex: 1; width: 0;">
         <label>Like div, you can use CSS:</label>
         <block class="block">Block</block>
         <block class="block2">Block2</block>

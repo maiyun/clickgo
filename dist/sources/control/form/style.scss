@@ -6,31 +6,31 @@
 @keyframes flash {
     0%, 50% {
         box-shadow: 0 0 15px rgba(0, 0, 0, .5);
-        color: #2A2E2E;
+        color: hsl(0, 0, 20%);
     }
     51%, 100% {
         box-shadow: 0 0 10px rgba(0, 0, 0, .5);
-        color: #999;
+        color: hsl(0, 0, 60%);
     }
 }
 @keyframes flash-after {
     0%, 50% {
-        border-color: rgba(0, 0, 0, .3);
+        border-color: hsl(0, 0, 20%);
     }
     51%, 100% {
-        border-color: rgba(0, 0, 0, .7);
+        border-color: hsl(0, 0, 60%);
     }
 }
 
 .wrap {
-    position: relative; color: #999; display: flex;
+    position: relative; color: hsl(0, 0, 60%); display: flex;
     &:not(.inside) {
-        position: absolute; transition: .1s ease-out; transition-property: transform, opacity; transform: translateX(10px) translateY(0) translateZ(0); opacity: 0;
+        position: fixed; transition: .1s ease-out; transition-property: transform, opacity; transform: translateX(10px) translateY(0) translateZ(0); opacity: 0;
     }
-    &:not(.border-none):not(.cg-state-max) {
+    &:not(.border-none):not([data-cg-max]) {
         box-shadow: 0 0 10px rgba(0, 0, 0, .5);
         &::after {
-            content: ' '; position: absolute; left: 0; top: 0; width: 200%; height: 200%; transform-origin: 0 0; transform: scale(.5); border: solid 1px #999; pointer-events: none;
+            content: ' '; position: absolute; left: 0; top: 0; width: 200%; height: 200%; transform-origin: 0 0; transform: scale(.5); border: solid 1px hsl(0, 0, 60%); pointer-events: none;
         }
     }
     &:not(.show) {
@@ -39,7 +39,7 @@
     &.show {
         transform: translateX(0px) translateY(0) translateZ(0); opacity: 1;
     }
-    &.cg-state-min {
+    &[data-cg-min] {
         opacity: 0; pointer-events: none;
     }
     &.state-min-left {
@@ -54,12 +54,12 @@
     &.state-min-bottom {
         transform: translateX(0px) translateY(50px) translateZ(0);
     }
-    &.cg-focus {
-        color: #2A2E2E;
-        &:not(.border-none):not(.cg-state-max) {
+    &[data-cg-focus] {
+        color: hsl(0, 0%, 20%);
+        &:not(.border-none):not([data-cg-max]) {
             box-shadow: 0 0 15px rgba(0, 0, 0, .5);
             &::after {
-                border: solid 1px #000;
+                border: solid 1px hsl(0, 0%, 20%);
             }
         }
     }
@@ -163,7 +163,10 @@
         }
         // --- 主体内容 ---
         .content {
-            flex: 1; background-color: hsl(205, 0%, 95%); display: flex; flex-direction: column; height: 0; position: relative; overflow: hidden;
+            flex: 1; background-color: hsl(0, 0%, 95%); display: flex; height: 0; position: relative; overflow: hidden;
+            &.v {
+                flex-direction: column;
+            }
         }
     }
     &.border-thin {

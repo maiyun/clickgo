@@ -9,26 +9,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.watch = exports.computed = exports.data = exports.props = void 0;
+exports.mounted = exports.watch = exports.computed = exports.data = exports.props = void 0;
 exports.props = {
-    'width': {
-        'default': undefined
-    },
-    'height': {
-        'default': undefined
-    },
-    'left': {
-        'default': 0
-    },
-    'top': {
-        'default': 0
-    },
-    'zIndex': {
-        'default': 0
-    },
-    'flex': {
-        'default': ''
-    },
     'src': {
         'default': ''
     },
@@ -37,15 +19,14 @@ exports.props = {
     }
 };
 exports.data = {
-    'imgData': ''
+    'imgData': '',
+    'width': 0,
+    'height': 0
 };
 exports.computed = {
     'backgroundSize': function () {
         if (this.mode === 'default') {
-            if ((this.width !== undefined) && (this.height !== undefined)) {
-                return this.width + 'px ' + this.height + 'px';
-            }
-            return undefined;
+            return this.width + 'px ' + this.height + 'px';
         }
         else {
             return this.mode;
@@ -75,4 +56,10 @@ exports.watch = {
         },
         'immediate': true
     }
+};
+exports.mounted = function () {
+    clickgo.dom.watchSize(this.$el, (size) => {
+        this.width = size.width;
+        this.height = size.height;
+    }, true);
 };

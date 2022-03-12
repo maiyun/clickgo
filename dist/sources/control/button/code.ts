@@ -3,25 +3,6 @@ export let props = {
         'default': false
     },
 
-    'width': {
-        'default': undefined
-    },
-    'height': {
-        'default': undefined
-    },
-    'left': {
-        'default': 0
-    },
-    'top': {
-        'default': 0
-    },
-    'zIndex': {
-        'default': 0
-    },
-    'flex': {
-        'default': ''
-    },
-
     'type': {
         'default': 'default'
     },
@@ -33,47 +14,120 @@ export let props = {
     },
     'modelValue': {
         'default': undefined
+    },
+
+    'area': {
+        'default': 'all'
     }
 };
 
 export let computed = {
-    'isDisabled': function(this: IVueControl): boolean {
+    'isDisabled': function(this: IVControl): boolean {
         return clickgo.tool.getBoolean(this.disabled);
     },
-    'isPlain': function(this: IVueControl): boolean {
+    'isPlain': function(this: IVControl): boolean {
         return clickgo.tool.getBoolean(this.plain);
     },
-    'isChecked': function(this: IVueControl): boolean {
-        return clickgo.tool.getBoolean(this.checkedData);
-    }
-};
+    'isChecked': function(this: IVControl): boolean {
+        return clickgo.tool.getBoolean(this.checked);
+    },
+    'isAreaAll': function(this: IVControl): boolean {
+        return this.$slots.pop ? this.area === 'all' : true;
+    },
+    'isChildFocus': function(this: IVControl): boolean {
+        return this.innerFocus || this.arrowFocus;
+    },
 
-export let watch = {
-    'checked': function(this: IVueControl): void {
-        this.checkedData = this.checked;
+    'opMargin': function(this: IVControl): string {
+        return this.padding.replace(/(\w+)/g, '-$1');
     }
 };
 
 export let data = {
-    'checkedData': undefined
+    'padding': '',
+
+    'isKeyDown': false,
+
+    'innerFocus': false,
+    'arrowFocus': false
 };
 
 export let methods = {
-    keydown: function(this: IVueControl, e: KeyboardEvent): void {
-        if (e.keyCode !== 13) {
+    keydown: function(this: IVControl, e: KeyboardEvent): void {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            if (this.area === 'all') {
+                this.innerClick(e);
+            }
+            else {
+                if (this.innerFocus) {
+                    this.innerClick(e);
+                }
+                else {
+                    this.arrowClick(e);
+                }
+            }
+        }
+        else if (e.key === ' ') {
+            e.preventDefault();
+            this.isKeyDown = true;
+        }
+    },
+    keyup: function(this: IVControl, e: KeyboardEvent): void {
+        if (!this.isKeyDown) {
             return;
         }
-        this.cgTap(e);
-    },
-    click: function(this: IVueControl, e: MouseEvent): void {
-        if (this.checkedData !== undefined) {
-            this.checkedData = this.isChecked ? false : true;
-            this.$emit('update:checked', this.checkedData);
+        this.isKeyDown = false;
+        if (this.area === 'all') {
+            this.innerClick(e);
         }
-        this.cgTap(e);
+        else {
+            if (this.innerFocus) {
+                this.innerClick(e);
+            }
+            else {
+                this.arrowClick(e);
+            }
+        }
+    },
+
+    innerClick: function(this: IVControl, e: MouseEvent): void {
+        if (!this.$slots.pop || (this.area === 'arrow')) {
+            return;
+        }
+        e.stopPropagation();
+        // --- 检测是否显示 pop ---
+        if (this.$el.dataset.cgPopOpen === undefined) {
+            clickgo.form.showPop(this.$el, this.$refs.pop, 'v');
+        }
+        else {
+            clickgo.form.hidePop(this.$el);
+        }
+    },
+
+    arrowClick: function(this: IVControl, e: MouseEvent): void {
+        e.stopPropagation();
+        if (this.area === 'all') {
+            if (this.$el.dataset.cgPopOpen === undefined) {
+                clickgo.form.showPop(this.$el, this.$refs.pop, 'v');
+            }
+            else {
+                clickgo.form.hidePop(this.$el);
+            }
+        }
+        else {
+            if (this.$refs.arrow.dataset.cgPopOpen === undefined) {
+                clickgo.form.showPop(this.$refs.arrow, this.$refs.pop, 'v');
+            }
+            else {
+                clickgo.form.hidePop(this.$refs.arrow);
+            }
+        }
     }
 };
 
-export let mounted = function(this: IVueControl): void {
-    this.checkedData = this.checked;
+export let mounted = function(this: IVControl): void {
+    clickgo.dom.watchStyle(this.$el, 'padding', (n, v) => {
+        this.padding = v;
+    }, true);
 };

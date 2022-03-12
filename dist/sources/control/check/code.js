@@ -5,24 +5,6 @@ exports.props = {
     'disabled': {
         'default': false
     },
-    'width': {
-        'default': undefined
-    },
-    'height': {
-        'default': undefined
-    },
-    'left': {
-        'default': 0
-    },
-    'top': {
-        'default': 0
-    },
-    'zIndex': {
-        'default': 0
-    },
-    'flex': {
-        'default': ''
-    },
     'modelValue': {
         'default': undefined
     },
@@ -63,17 +45,11 @@ exports.watch = {
 };
 exports.data = {
     'value': false,
-    'indeterminateData': false
+    'indeterminateData': false,
+    'isKeyDown': false
 };
 exports.methods = {
-    keydown: function (e) {
-        if (e.keyCode !== 13) {
-            return;
-        }
-        this.click(e);
-    },
-    click: function (e) {
-        this.cgTap(e);
+    click: function () {
         if (this.indeterminateData) {
             this.indeterminateData = false;
             this.$emit('update:indeterminate', this.indeterminateData);
@@ -82,5 +58,22 @@ exports.methods = {
             this.value = !this.value;
             this.$emit('update:modelValue', this.value);
         }
+    },
+    keydown: function (e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            this.click();
+        }
+        else if (e.key === ' ') {
+            e.preventDefault();
+            this.isKeyDown = true;
+        }
+    },
+    keyup: function () {
+        if (!this.isKeyDown) {
+            return;
+        }
+        this.isKeyDown = false;
+        this.click();
     }
 };

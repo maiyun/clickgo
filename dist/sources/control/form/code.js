@@ -72,7 +72,7 @@ exports.props = {
         'default': undefined
     },
     'direction': {
-        'default': 'v'
+        'default': 'h'
     }
 };
 exports.data = {
@@ -198,7 +198,7 @@ exports.watch = {
 };
 exports.methods = {
     moveMethod: function (e, custom = false) {
-        if (clickgo.dom.isMouseAlsoTouchEvent(e)) {
+        if (clickgo.dom.hasTouchButMouse(e)) {
             return;
         }
         if (!this.isMove && !custom) {
@@ -226,6 +226,7 @@ exports.methods = {
                 var _a, _b;
                 if (this.stateMaxData) {
                     this.$emit('max', e, 0, this.historyLocation);
+                    this.$el.removeAttribute('data-cg-max');
                     this.stateMaxData = false;
                     this.$emit('update:stateMax', false);
                     let olx = x - this.leftData;
@@ -419,13 +420,14 @@ exports.methods = {
         if (!this.stateMinData) {
             this.$emit('min', event, 1, {});
             if (event.go) {
+                this.$el.dataset.cgMin = '';
                 this.stateMinData = true;
                 this.$emit('update:stateMin', true);
                 if (this.cgFocus) {
                     let formId = clickgo.form.getMaxZIndexFormID({
                         'formIds': [this.formId]
                     });
-                    this.cgCreateTimer(function () {
+                    this.cgSleep(() => {
                         if (formId) {
                             clickgo.form.changeFocus(formId);
                         }
@@ -442,6 +444,7 @@ exports.methods = {
         else {
             this.$emit('min', event, 0, this.historyLocation);
             if (event.go) {
+                this.$el.removeAttribute('data-cg-min');
                 this.stateMinData = false;
                 this.$emit('update:stateMin', false);
             }
@@ -527,6 +530,7 @@ exports.methods = {
                         'top': this.topData
                     };
                 }
+                this.$el.dataset.cgMax = '';
                 this.stateMaxData = true;
                 this.$emit('update:stateMax', true);
                 let area = clickgo.form.getAvailArea();
@@ -550,6 +554,7 @@ exports.methods = {
         else {
             this.$emit('max', event, 0, this.historyLocation);
             if (event.go) {
+                this.$el.removeAttribute('data-cg-max');
                 this.stateMaxData = false;
                 this.$emit('update:stateMax', false);
                 this.leftData = this.historyLocation.left;
@@ -598,7 +603,7 @@ exports.methods = {
         if (this.stateMaxData) {
             return;
         }
-        if (clickgo.dom.isMouseAlsoTouchEvent(e)) {
+        if (clickgo.dom.hasTouchButMouse(e)) {
             return;
         }
         let isBorder = '';

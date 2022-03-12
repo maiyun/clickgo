@@ -62,7 +62,7 @@ export let props = {
         'default': undefined
     },
     'direction': {
-        'default': 'v'
+        'default': 'h'
     }
 };
 
@@ -93,35 +93,35 @@ export let data = {
 };
 
 export let computed = {
-    'isMin': function(this: IVueControl): boolean {
+    'isMin': function(this: IVControl): boolean {
         return clickgo.tool.getBoolean(this.min);
     },
-    'isMax': function(this: IVueControl): boolean {
+    'isMax': function(this: IVControl): boolean {
         return clickgo.tool.getBoolean(this.max);
     },
-    'isClose': function(this: IVueControl): boolean {
+    'isClose': function(this: IVControl): boolean {
         return clickgo.tool.getBoolean(this.close);
     },
-    'isStateMax': function(this: IVueControl): boolean {
+    'isStateMax': function(this: IVControl): boolean {
         return clickgo.tool.getBoolean(this.stateMax);
     },
-    'isStateMin': function(this: IVueControl): boolean {
+    'isStateMin': function(this: IVControl): boolean {
         return clickgo.tool.getBoolean(this.stateMin);
     },
-    'isResize': function(this: IVueControl): boolean {
+    'isResize': function(this: IVControl): boolean {
         return clickgo.tool.getBoolean(this.resize);
     },
-    'isMove': function(this: IVueControl): boolean {
+    'isMove': function(this: IVControl): boolean {
         return clickgo.tool.getBoolean(this.move);
     },
-    'taskPosition': function(this: IVueControl): string {
+    'taskPosition': function(this: IVControl): string {
         return clickgo.form.taskInfo.taskId === 0 ? 'bottom' : clickgo.core.config['task.position'];
     }
 };
 
 export let watch = {
     'icon': {
-        handler: async function(this: IVueControl): Promise<void> {
+        handler: async function(this: IVControl): Promise<void> {
             /*
             let first: boolean = false;
             if (this.iconData === undefined) {
@@ -145,32 +145,32 @@ export let watch = {
         },
         'immediate': false
     },
-    'title': function(this: IVueControl): void {
+    'title': function(this: IVControl): void {
         // --- 触发 formTitleChanged 事件 ---
         clickgo.core.trigger('formTitleChanged', this.taskId, this.formId, this.title);
     },
-    'isStateMin': function(this: IVueControl): void {
+    'isStateMin': function(this: IVControl): void {
         if (this.stateMin === this.stateMinData) {
             return;
         }
         this.minMethod();
     },
-    'isStateMax': function(this: IVueControl): void {
+    'isStateMax': function(this: IVControl): void {
         if (this.stateMax === this.stateMaxData) {
             return;
         }
         this.maxMethod();
     },
-    'show': function(this: IVueControl): void {
+    'show': function(this: IVControl): void {
         if (this.showData !== this.show) {
             this.showData = this.show;
         }
     },
-    'showData': function(this: IVueControl): void {
+    'showData': function(this: IVControl): void {
         clickgo.core.trigger('formShowChanged', this.taskId, this.formId, this.showData);
     },
 
-    'width': async function(this: IVueControl): Promise<void> {
+    'width': async function(this: IVControl): Promise<void> {
         if (this.width === 'auto') {
             if (this.widthData !== undefined) {
                 this.widthData = undefined;
@@ -180,7 +180,7 @@ export let watch = {
             this.widthData = parseInt(this.width);
         }
     },
-    'height': async function(this: IVueControl): Promise<void> {
+    'height': async function(this: IVControl): Promise<void> {
         if (this.height === 'auto') {
             if (this.heightData !== undefined) {
                 this.heightData = undefined;
@@ -190,21 +190,21 @@ export let watch = {
             this.heightData = parseInt(this.height);
         }
     },
-    'left': function(this: IVueControl): void {
+    'left': function(this: IVControl): void {
         this.leftData = parseInt(this.left);
     },
-    'top': function(this: IVueControl): void {
+    'top': function(this: IVControl): void {
         this.topData = parseInt(this.top);
     },
-    'zIndex': function(this: IVueControl): void {
+    'zIndex': function(this: IVControl): void {
         this.zIndexData = parseInt(this.zIndex);
     }
 };
 
 export let methods = {
     // --- 拖动 ---
-    moveMethod: function(this: IVueControl, e: MouseEvent | TouchEvent, custom: boolean = false): void {
-        if (clickgo.dom.isMouseAlsoTouchEvent(e)) {
+    moveMethod: function(this: IVControl, e: MouseEvent | TouchEvent, custom: boolean = false): void {
+        if (clickgo.dom.hasTouchButMouse(e)) {
             return;
         }
         if (!this.isMove && !custom) {
@@ -235,6 +235,7 @@ export let methods = {
                 if (this.stateMaxData) {
                     // --- 不能用 maxMethod 方法，因为那个获得的形状不能满足拖动还原的形状 ---
                     this.$emit('max', e, 0, this.historyLocation);
+                    this.$el.removeAttribute('data-cg-max');
                     this.stateMaxData = false;
                     this.$emit('update:stateMax', false);
                     // --- 进行位置设定 ---
@@ -412,7 +413,7 @@ export let methods = {
         });
     },
     // --- 最小化 ---
-    minMethod: function(this: IVueControl): boolean {
+    minMethod: function(this: IVControl): boolean {
         if (this.isInside) {
             return true;
         }
@@ -442,6 +443,7 @@ export let methods = {
             // --- 当前是正常状态，需要变成最小化 ---
             this.$emit('min', event, 1, {});
             if (event.go) {
+                this.$el.dataset.cgMin = '';
                 this.stateMinData = true;
                 this.$emit('update:stateMin', true);
                 // --- 如果当前有焦点，则使别人获取焦点 ---
@@ -449,7 +451,7 @@ export let methods = {
                     let formId = clickgo.form.getMaxZIndexFormID({
                         'formIds': [this.formId]
                     });
-                    this.cgCreateTimer(function() {
+                    this.cgSleep(() => {
                         if (formId) {
                             clickgo.form.changeFocus(formId);
                         }
@@ -467,6 +469,7 @@ export let methods = {
             // --- 需要变正常 ---
             this.$emit('min', event, 0, this.historyLocation);
             if (event.go) {
+                this.$el.removeAttribute('data-cg-min');
                 this.stateMinData = false;
                 this.$emit('update:stateMin', false);
             }
@@ -474,12 +477,12 @@ export let methods = {
                 return false;
             }
         }
-        // --- 触发 formRemoved 事件 ---
+        // --- 触发 formStateMinChanged 事件 ---
         clickgo.core.trigger('formStateMinChanged', this.taskId, this.formId, this.stateMinData);
         return true;
     },
     // --- 竖版扩大 ---
-    maxVMethod: function(this: IVueControl, dbl: boolean): void {
+    maxVMethod: function(this: IVControl, dbl: boolean): void {
         if (this.isInside) {
             return;
         }
@@ -524,7 +527,7 @@ export let methods = {
         }
     },
     // --- 最大化 ---
-    maxMethod: function(this: IVueControl): boolean {
+    maxMethod: function(this: IVControl): boolean {
         if (this.isInside) {
             return true;
         }
@@ -554,6 +557,7 @@ export let methods = {
                         'top': this.topData
                     };
                 }
+                this.$el.dataset.cgMax = '';
                 this.stateMaxData = true;
                 this.$emit('update:stateMax', true);
                 // --- 变窗体样子 ---
@@ -579,6 +583,7 @@ export let methods = {
             // --- 需要变正常 ---
             this.$emit('max', event, 0, this.historyLocation);
             if (event.go) {
+                this.$el.removeAttribute('data-cg-max');
                 this.stateMaxData = false;
                 this.$emit('update:stateMax', false);
                 // --- 变窗体样子 ---
@@ -610,7 +615,7 @@ export let methods = {
         return true;
     },
     // --- 关闭窗体 ---
-    closeMethod: function(this: IVueControl): void {
+    closeMethod: function(this: IVControl): void {
         if (this.isInside) {
             return;
         }
@@ -626,11 +631,11 @@ export let methods = {
         }
     },
     // --- 改变窗体大小 ---
-    resizeMethod: function(this: IVueControl, e: MouseEvent | TouchEvent, border: TCGBorder): void {
+    resizeMethod: function(this: IVControl, e: MouseEvent | TouchEvent, border: TCGBorder): void {
         if (this.stateMaxData) {
             return;
         }
-        if (clickgo.dom.isMouseAlsoTouchEvent(e)) {
+        if (clickgo.dom.hasTouchButMouse(e)) {
             return;
         }
         let isBorder: TCGBorder = '';
@@ -737,7 +742,7 @@ export let methods = {
         });
     },
     // --- 设置 left, width, zIndex 等 ---
-    setPropData: function(this: IVueControl, name: string, val: number, mode: string = ''): void {
+    setPropData: function(this: IVControl, name: string, val: number, mode: string = ''): void {
         switch (name) {
             case 'left': {
                 switch (mode) {
@@ -829,7 +834,7 @@ export let methods = {
     }
 };
 
-export let mounted = async function(this: IVueControl): Promise<void> {
+export let mounted = async function(this: IVControl): Promise<void> {
     await this.$nextTick();
     await clickgo.tool.sleep(0);
     if (this.$parent!.controlName !== 'root') {

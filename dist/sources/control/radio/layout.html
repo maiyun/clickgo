@@ -1,4 +1,4 @@
-<div class="wrap" :class="[isDisabled && 'cg-disabled', cgHover && 'hover', cgActive && 'active', (value === modelValue) && 'selected']" :tabindex="!isDisabled && cgFocus && '0'" :style="{'width': cgWidthPx, 'height': cgHeightPx, 'left': left + 'px', 'top': top + 'px', 'z-index': zIndex, 'flex-grow': flex}" @click="click" @mousedown="cgDown" @mouseup="cgUp" @mouseenter="cgEnter" @mouseleave="cgLeave" @touchstart="cgDown" @touchend="cgUp" @touchcancel="cgCancel" @keydown="keydown" @dblclick="cgDblclick">
+<div class="wrap" :class="[isKeyDown && 'active', (value === modelValue) && 'selected']" :data-cg-disabled="isDisabled ? '' : undefined" :tabindex="!isDisabled && cgFocus && '0'" @click="click" @keydown="keydown" @keyup="keyup">
     <div class="radio"></div>
     <div class="label">
         <slot></slot>

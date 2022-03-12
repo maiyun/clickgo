@@ -1,27 +1,27 @@
-<form v-model:width="width" v-model:height="height" :icon="icon" :title="title" :min="min" :max="max" :close="close" v-model:state-max="stateMax" v-model:state-min="stateMin" :min-width="minWidth" :min-height="minHeight" :resize="resize" :border="border">
-    <overflow :flex="flex" direction="v">
+<form v-model:width="width" v-model:height="height" :icon="icon" :title="title" :min="min" :max="max" :close="close" v-model:state-max="stateMax" v-model:state-min="stateMin" :min-width="minWidth" :min-height="minHeight" :resize="resize" :border="border" direction="v">
+    <overflow direction="v" :style="{'flex': flex, 'height': flex ? '0' : undefined}">
         <layout direction="v" gutter="10" style="padding: 10px;">
             <label>focus: {{cgFocus}}, width: {{width}}, height: {{height}}, state-max: {{stateMax}}, state-min: {{stateMin}}.</label>
-            <button @tap="icon = icon ? '' : '/res/icon.svg'" style="padding: 0 15px;">Set icon</button>
-            <button @tap="title = (title === 'Form') ? 'Changed' : 'Form'" style="padding: 0 15px;">Set title</button>
-            <button @tap="min = min ? false : true" style="padding: 0 15px;">{{min ? 'Hide' : 'Show'}} min button</button>
-            <button @tap="max = max ? false : true" style="padding: 0 15px;">{{max ? 'Hide' : 'Show'}} max button</button>
-            <button @tap="close = close ? false : true" style="padding: 0 15px;">{{close ? 'Hide' : 'Show'}} close button</button>
-            <button @tap="stateMax = true" style="padding: 0 15px;">To max</button>
-            <button @tap="stateMin = true" style="padding: 0 15px;">To min</button>
-            <button @tap="minWidth = (minWidth === 200) ? 300 : 200" style="padding: 0 15px;">Set min-width to {{minWidth === 200 ? '300' : '200'}}</button>
-            <button @tap="minHeight = (minHeight === 100) ? 200 : 100" style="padding: 0 15px;">Set min-height to {{minHeight === 100 ? '200' : '100'}}</button>
-            <button @tap="width = 350" style="padding: 0 15px;">Set width to 350</button>
-            <button @tap="height = 400" style="padding: 0 15px;">Set height to 400</button>
-            <button @tap="flex = flex ? undefined : 1" style="padding: 0 15px;">{{flex ? 'Remove flex' : 'Set flex to 1'}}</button>
-            <button @tap="width = 'auto'" style="padding: 0 15px;">Set width to "auto"</button>
-            <button @tap="height = 'auto'" style="padding: 0 15px;">Set height to "auto"</button>
-            <button @tap="resize = resize ? false : true" style="padding: 0 15px;">{{resize ? 'Disabled' : 'Enabled'}} resize</button>
-            <layout gutter="10">
-                <button @tap="border = 'normal'" flex="1">Normal</button>
-                <button @tap="border = 'thin'" flex="1">Thin</button>
-                <button @tap="border = 'plain'" flex="1">Plain</button>
-                <button @tap="border = 'none'" flex="1">none</button>
+            <button @click="icon = icon ? '' : '/res/icon.svg'">Set icon</button>
+            <button @click="title = (title === 'Form') ? 'Changed' : 'Form'">Set title</button>
+            <button @click="min = min ? false : true">{{min ? 'Hide' : 'Show'}} min button</button>
+            <button @click="max = max ? false : true">{{max ? 'Hide' : 'Show'}} max button</button>
+            <button @click="close = close ? false : true">{{close ? 'Hide' : 'Show'}} close button</button>
+            <button @click="stateMax = true">To max</button>
+            <button @click="stateMin = true">To min</button>
+            <button @click="minWidth = (minWidth === 200) ? 300 : 200">Set min-width to {{minWidth === 200 ? '300' : '200'}}</button>
+            <button @click="minHeight = (minHeight === 100) ? 200 : 100">Set min-height to {{minHeight === 100 ? '200' : '100'}}</button>
+            <button @click="width = 350">Set width to 350</button>
+            <button @click="height = 400">Set height to 400</button>
+            <button @click="flex = flex ? undefined : 1">{{flex ? 'Remove flex' : 'Set flex to 1'}}</button>
+            <button @click="width = 'auto'">Set width to "auto"</button>
+            <button @click="height = 'auto'">Set height to "auto"</button>
+            <button @click="resize = resize ? false : true">{{resize ? 'Disabled' : 'Enabled'}} resize</button>
+            <layout class="bottom" gutter="10">
+                <button @click="border = 'normal'">Normal</button>
+                <button @click="border = 'thin'">Thin</button>
+                <button @click="border = 'plain'">Plain</button>
+                <button @click="border = 'none'">None</button>
             </layout>
         </layout>
     </overflow>

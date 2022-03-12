@@ -10,61 +10,48 @@ export let props = {
     }
 };
 
-export let data = {
-    'menu': 'left'
-};
-
 export let computed = {
-    'isSelected': function(this: IVueControl): boolean {
+    'isSelected': function(this: IVControl): boolean {
         return clickgo.tool.getBoolean(this.selected);
     },
-    'isOpened': function(this: IVueControl): boolean {
+    'isOpened': function(this: IVControl): boolean {
         return clickgo.tool.getBoolean(this.opened);
     },
-    'isMulti': function(this: IVueControl): boolean {
+    'isMulti': function(this: IVControl): boolean {
         return clickgo.tool.getBoolean(this.multi);
     },
-    'position': function(this: IVueControl): string {
-        return this.cgParent?.position ?? 'bottom';
+    'position': function(this: IVControl): string {
+        return this.cgParentByName('task')?.position ?? 'bottom';
     }
 };
 
 export let methods = {
-    tap: function(this: IVueControl, e: MouseEvent): void {
-        this.cgTap(e);
-        this.menu = 'left';
+    click: function(this: IVControl): void {
         if (!this.$slots.pop) {
             return;
         }
-        this.cgCreateTimer(() => {
-            this.cgShowPop('v');
-        }, 100);
+        clickgo.form.showPop(this.$el, this.$refs.pop, 'v');
     },
-    contextmenu: function(this: IVueControl, e: MouseEvent): void {
-        if (clickgo.dom.isMouseAlsoTouchEvent(e)) {
+    contextmenu: async function(this: IVControl, e: MouseEvent): Promise<void> {
+        if (clickgo.dom.hasTouchButMouse(e)) {
             return;
         }
         if (!this.$slots.contextmenu) {
             return;
         }
-        this.menu = 'right';
-        this.cgCreateTimer(() => {
-            this.cgShowPop(e);
-        }, 100);
+        clickgo.form.showPop(this.$el, this.$refs.contextmenu, 'v');
     },
-    down: function(this: IVueControl, e: MouseEvent | TouchEvent): void {
-        this.cgDown(e);
-        if (clickgo.dom.isMouseAlsoTouchEvent(e)) {
+    down: function(this: IVControl, e: MouseEvent | TouchEvent): void {
+        if (clickgo.dom.hasTouchButMouse(e)) {
             return;
         }
-        if (!this.$slots.contextmenu) {
-            return;
+        if (this.$el.dataset.cgPopOpen !== undefined) {
+            clickgo.form.hidePop();
         }
-        clickgo.dom.bindLong(e, () => {
-            this.menu = 'right';
-            this.cgCreateTimer(() => {
-                this.cgShowPop(e);
-            }, 100);
-        });
+        if (e instanceof TouchEvent && this.$slots.contextmenu) {
+            clickgo.dom.bindLong(e, () => {
+                clickgo.form.showPop(this.$el, this.$refs.contextmenu, 'v');
+            });
+        }
     }
 };
