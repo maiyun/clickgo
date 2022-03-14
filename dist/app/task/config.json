@@ -5,11 +5,9 @@
     "author": "clickgo",
 
     "controls": [
-        "/clickgo/control/form",
         "/clickgo/control/common",
-        "/clickgo/control/task",
-        "/clickgo/control/menu",
-        "/clickgo/control/menulist"
+        "/clickgo/control/form",
+        "/clickgo/control/task"
     ],
     "locals": {
         "/local/en": "en",

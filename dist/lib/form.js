@@ -1964,7 +1964,7 @@ function create(taskId, opt) {
             'events': {}
         };
         task.forms[formId] = form;
-        yield clickgo.tool.sleep(50);
+        yield clickgo.tool.sleep(34);
         if (mounted) {
             try {
                 yield mounted.call(rtn.vroot);

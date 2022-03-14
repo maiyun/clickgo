@@ -2212,7 +2212,7 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
     // --- 挂载 form ---
     task.forms[formId] = form;
     // --- 执行 mounted ---
-    await clickgo.tool.sleep(50);
+    await clickgo.tool.sleep(34);
     if (mounted) {
         try {
             await mounted.call(rtn.vroot);

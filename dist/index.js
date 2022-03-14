@@ -9,6 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 const clickgo = {
+    'version': '3.0.0',
     'safe': true,
     'rootPath': window.location.href.slice(0, window.location.href.lastIndexOf('/') + 1),
     'cgRootPath': '',

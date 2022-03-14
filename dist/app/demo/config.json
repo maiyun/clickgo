@@ -5,25 +5,10 @@
     "author": "clickgo",
 
     "controls": [
-        "/clickgo/control/button",
-        "/clickgo/control/check",
         "/clickgo/control/common",
-        "/clickgo/control/dialog",
         "/clickgo/control/form",
-        "/clickgo/control/greatlist",
-        "/clickgo/control/greatselect",
-        "/clickgo/control/greatview",
-        "/clickgo/control/list",
-        "/clickgo/control/menu",
-        "/clickgo/control/menulist",
         "/clickgo/control/monaco",
-        "/clickgo/control/property",
-        "/clickgo/control/radio",
-        "/clickgo/control/scroll",
-        "/clickgo/control/select",
-        "/clickgo/control/tab",
-        "/clickgo/control/text",
-        "/clickgo/control/view"
+        "/clickgo/control/property"
     ],
     "style": "/global",
     "main": "/form/main",

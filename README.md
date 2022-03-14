@@ -19,22 +19,20 @@ Simply download and include with a script tag. ClickGo will be registered as a g
 **Development Version**
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/@litert/loader@0.3.2/dist/index.min.js"></script>
 <script src="index.js"></script>
 ```
 
 **Production Version**
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/@litert/loader@0.3.2/dist/index.min.js"></script>
 <script src="index.min.js"></script>
 ```
 
 ### CDN (recommend)
 
-Recommended: https://cdn.jsdelivr.net/npm/clickgo@3.0.0/dist/loader.min.js (Less than 3kb minified and gzipped), which will reflect the latest version as soon as it is published to npm. You can also browse the source of the npm package at https://cdn.jsdelivr.net/npm/clickgo/.
+Recommended: https://cdn.jsdelivr.net/npm/clickgo@3.0.0/dist/index.min.js (Less than 3kb minified and gzipped), which will reflect the latest version as soon as it is published to npm. You can also browse the source of the npm package at https://cdn.jsdelivr.net/npm/clickgo/.
 
-Also available on [unpkg](https://unpkg.com/clickgo@3.0.0/dist/loader.js).
+Also available on [unpkg](https://unpkg.com/clickgo@3.0.0/dist/index.js).
 
 For example:
 
@@ -58,7 +56,7 @@ $ npm i clickgo@dev --save
 
 ## Note
 
-ClickGo demand loading Vue, Vuex, es6-promise, whatwg-fetch, but **DO NOT** reference these JS and CSS files. ClickGo will automatically reference. You only need to reference "loader.js" and "index.js".
+ClickGo demand loading Vue, jszip, resize-observer, but **DO NOT** reference these JS and CSS files. ClickGo will automatically reference. You only need to reference "index.js".
 
 ## Demo
 

@@ -62,10 +62,9 @@ exports.methods = {
         }
         this.inputValue = value;
         this.$emit('update:modelValue', value);
-        if (this.$refs.list) {
-            let pop = clickgo.dom.findParentByData(this.$refs.list.$el, 'cg-pop');
-            clickgo.form.hidePop(pop);
-        }
+    },
+    listItemClick: function () {
+        clickgo.form.hidePop();
     }
 };
 exports.mounted = function () {

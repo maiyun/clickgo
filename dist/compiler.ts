@@ -52,7 +52,7 @@ async function run(): Promise<void> {
         if (item.isFile()) {
             continue;
         }
-        if (['img', 'label', 'layout', 'menu-item', 'menulist-item', 'menulist-split', 'overflow', 'tab-panel', 'task-item'].includes(item.name)) {
+        if (['button', 'check', 'dialog', 'greatlist', 'greatselect', 'greatview', 'img', 'label', 'layout', 'list', 'menu', 'menu-item', 'menulist', 'menulist-item', 'menulist-split', 'overflow', 'radio', 'scroll', 'select', 'tab', 'tab-panel', 'text', 'view', 'task-item'].includes(item.name)) {
             continue;
         }
 
@@ -64,20 +64,29 @@ async function run(): Promise<void> {
 
         if (item.name === 'block') {
             name = 'common';
+            await addFile(zipo, base, 'button/');
+            await addFile(zipo, base, 'check/');
+            await addFile(zipo, base, 'dialog/');
+            await addFile(zipo, base, 'greatlist/');
+            await addFile(zipo, base, 'greatselect/');
+            await addFile(zipo, base, 'greatview/');
             await addFile(zipo, base, 'img/');
             await addFile(zipo, base, 'label/');
             await addFile(zipo, base, 'layout/');
-            await addFile(zipo, base, 'overflow/');
-        }
-        else if (item.name === 'menu') {
+            await addFile(zipo, base, 'list/');
+            await addFile(zipo, base, 'menu/');
             await addFile(zipo, base, 'menu-item/');
-        }
-        else if (item.name === 'menulist') {
+            await addFile(zipo, base, 'menulist/');
             await addFile(zipo, base, 'menulist-item/');
             await addFile(zipo, base, 'menulist-split/');
-        }
-        else if (item.name === 'tab') {
+            await addFile(zipo, base, 'overflow/');
+            await addFile(zipo, base, 'radio/');
+            await addFile(zipo, base, 'scroll/');
+            await addFile(zipo, base, 'select/');
+            await addFile(zipo, base, 'tab/');
             await addFile(zipo, base, 'tab-panel/');
+            await addFile(zipo, base, 'text/');
+            await addFile(zipo, base, 'view/');
         }
         else if (item.name === 'task') {
             await addFile(zipo, base, 'task-item/');

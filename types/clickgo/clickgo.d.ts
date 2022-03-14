@@ -1,5 +1,7 @@
 /** --- ClickGo 基 --- */
 interface IClickGo {
+    /** --- 当前 ClickGo 版本 --- */
+    'version': string;
     /** --- 安全模式 --- */
     'safe': boolean;
     /** --- 当前请求页面的基路径 --- */

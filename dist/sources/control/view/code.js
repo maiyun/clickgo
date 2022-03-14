@@ -350,7 +350,7 @@ exports.methods = {
                     this.$refs.selection.style.left = this.selectionOrigin.x + 'px';
                     this.$refs.selection.style.top = this.selectionOrigin.y + 'px';
                     this.selectionTimer = true;
-                    this.$emit('beforeSelect');
+                    this.$emit('beforeselect');
                     this.selectionCurrent.x = x;
                     this.selectionCurrent.y = y;
                     this.selectionRoll();
@@ -366,7 +366,7 @@ exports.methods = {
                 end: () => {
                     this.$refs.selection.style.opacity = '0';
                     this.selectionTimer = false;
-                    this.$emit('afterSelect');
+                    this.$emit('afterselect');
                 }
             });
         }

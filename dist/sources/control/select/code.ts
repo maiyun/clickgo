@@ -65,11 +65,9 @@ export let methods = {
         }
         this.inputValue = value;
         this.$emit('update:modelValue', value);
-        // --- 隐藏 pop ---
-        if (this.$refs.list) {
-            let pop = clickgo.dom.findParentByData(this.$refs.list.$el, 'cg-pop');
-            clickgo.form.hidePop(pop);
-        }
+    },
+    listItemClick: function(this: IVControl): void {
+        clickgo.form.hidePop();
     }
 };
 

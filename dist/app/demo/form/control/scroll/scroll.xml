@@ -7,7 +7,10 @@
                     <button @click="l1 = (l1 === 1000 ? 2000 : 1000)" style="height: 30px; flex: 1;">Set length {{l1 === 1000 ? '2000' : '1000'}}</button>
                     <button @click="c1 = (c1 === 100 ? 200 : 100)" style="height: 30px; flex: 1;">Set client {{c1 === 100 ? '200' : '100'}}</button>
                 </layout>
-                <button @click="disabled = !disabled" style="height: 30px;">{{disabled ? 'Remove' : 'Set'}} disabled</button>
+                <layout gutter="10">
+                    <button @click="disabled = !disabled" style="height: 30px; flex: 1;">{{disabled ? 'Remove' : 'Set'}} disabled</button>
+                    <button @click="l1 = 1000;c1 = 2000" style="height: 30px; flex: 1;">Set client > length</button>
+                </layout>
             </layout>
             <scroll :length="l1" :client="c1" v-model:scroll-offset="so1" :disabled="disabled" style="width: 20px;"></scroll>
             <scroll scroll-offset="200" :disabled="disabled" style="width: 30px;"></scroll>

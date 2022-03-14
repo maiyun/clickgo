@@ -291,6 +291,7 @@ exports.methods = {
                     this.$refs.view.goScroll(this.scrollTop, 'top');
                 }
             }
+            this.$emit('itemsposchange');
             this.reShow();
         });
     },

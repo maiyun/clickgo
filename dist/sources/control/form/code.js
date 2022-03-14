@@ -328,7 +328,7 @@ exports.methods = {
                 this.topData += oy;
                 this.$emit('update:top', this.topData);
                 if (border !== '') {
-                    if ((border === 't' && this.max) || (border !== 't' && this.isResize)) {
+                    if ((border === 't' && this.isMax) || (border !== 't' && this.isResize)) {
                         if (isBorder === '') {
                             isBorder = border;
                             clickgo.form.showCircular(x, y);
@@ -356,7 +356,7 @@ exports.methods = {
             'end': () => {
                 if (isBorder !== '') {
                     if (isBorder === 't') {
-                        if (this.max) {
+                        if (this.isMax) {
                             this.widthData = this.width === 'auto' ? undefined : this.historyLocation.width;
                             this.heightData = this.height === 'auto' ? undefined : this.historyLocation.height;
                             this.leftData = this.historyLocation.left;
@@ -366,12 +366,6 @@ exports.methods = {
                     }
                     else {
                         if (this.isResize) {
-                            if (this.stateMinData) {
-                                if (!this.minMethod()) {
-                                    clickgo.form.hideRectangle();
-                                    return;
-                                }
-                            }
                             this.stateAbs = true;
                             let pos = clickgo.form.getRectByBorder(isBorder);
                             this.widthData = pos.width;
@@ -403,20 +397,6 @@ exports.methods = {
                 this.go = false;
             }
         };
-        if (this.stateMaxData) {
-            if (this.maxMethod() === false) {
-                return false;
-            }
-        }
-        if (this.stateAbs) {
-            this.stateAbs = false;
-            this.widthData = this.width === 'auto' ? undefined : this.historyLocation.width;
-            this.heightData = this.height === 'auto' ? undefined : this.historyLocation.height;
-            this.leftData = this.historyLocation.left;
-            this.$emit('update:left', this.leftData);
-            this.topData = this.historyLocation.top;
-            this.$emit('update:top', this.topData);
-        }
         if (!this.stateMinData) {
             this.$emit('min', event, 1, {});
             if (event.go) {

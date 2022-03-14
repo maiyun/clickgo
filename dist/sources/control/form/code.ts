@@ -344,7 +344,7 @@ export let methods = {
                 this.topData += oy;
                 this.$emit('update:top', this.topData);
                 if (border !== '') {
-                    if ((border === 't' && this.max) || (border !== 't' && this.isResize)) {
+                    if ((border === 't' && this.isMax) || (border !== 't' && this.isResize)) {
                         if (isBorder === '') {
                             isBorder = border;
                             clickgo.form.showCircular(x, y);
@@ -373,7 +373,7 @@ export let methods = {
                 if (isBorder !== '') {
                     if (isBorder === 't') {
                         // --- 要最大化 ---
-                        if (this.max) {
+                        if (this.isMax) {
                             // --- 不要使用 emit，只是模拟原大小，马上值就又被改变了 ---
                             this.widthData = this.width === 'auto' ? undefined : this.historyLocation.width;
                             this.heightData = this.height === 'auto' ? undefined : this.historyLocation.height;
@@ -385,12 +385,14 @@ export let methods = {
                     else {
                         // --- 要做大小调整 ---
                         if (this.isResize) {
+                            /*
                             if (this.stateMinData) {
                                 if (!this.minMethod()) {
                                     clickgo.form.hideRectangle();
                                     return;
                                 }
                             }
+                            */
                             this.stateAbs = true;
                             let pos = clickgo.form.getRectByBorder(isBorder);
                             this.widthData = pos.width;
@@ -424,12 +426,17 @@ export let methods = {
             }
         };
         // --- 如果当前是最大化状态，要先还原 ---
+        // --- 不应该还原，直接最小化，然后点击后返回来还是最大化状态 ---
+        /*
         if (this.stateMaxData) {
             if (this.maxMethod() === false) {
                 return false;
             }
         }
+        */
         // --- 当前是吸附状态 ---
+        // --- 吸附状态也不应该还原，直接最小化，然后点击后返回来还是吸附状态 ---
+        /*
         if (this.stateAbs) {
             this.stateAbs = false;
             this.widthData = this.width === 'auto' ? undefined : this.historyLocation.width;
@@ -439,8 +446,9 @@ export let methods = {
             this.topData = this.historyLocation.top;
             this.$emit('update:top', this.topData);
         }
+        */
         if (!this.stateMinData) {
-            // --- 当前是正常状态，需要变成最小化 ---
+            // --- 当前是正常/最大化状态，需要变成最小化 ---
             this.$emit('min', event, 1, {});
             if (event.go) {
                 this.$el.dataset.cgMin = '';

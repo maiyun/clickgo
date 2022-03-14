@@ -332,6 +332,7 @@ export let methods = {
                 this.$refs.view.goScroll(this.scrollTop, 'top');
             }
         }
+        this.$emit('itemsposchange');
         this.reShow();
     },
     // --- 控制显示和隐藏 ---

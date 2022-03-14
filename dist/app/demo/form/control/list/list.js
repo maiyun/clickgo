@@ -34,8 +34,10 @@ exports.data = {
     'select': 0,
     'select2': 'Appraise',
     'label2': '',
-    'select3': 'xxx',
+    'select3': 0,
     'listData3': [],
+    'select4': '',
+    'listData4': [],
     'disabled': false,
     'must': true,
     'multi': false,
@@ -46,9 +48,11 @@ exports.data = {
 exports.computed = {
     'adData': function () {
         let data = [];
-        for (let item of this.slist) {
+        for (let i = 0; i < this.slist.length; ++i) {
+            let item = this.slist[i];
             data.push({
-                'type': item.type === undefined ? 'split' : item.type
+                'type': item.type === undefined ? 'split' : item.type,
+                'menu': i === 20 ? true : false
             });
         }
         return data;

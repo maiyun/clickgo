@@ -31,7 +31,14 @@
         </tab-panel>
         <!-- 自适应 -->
         <tab-panel label="adaptation" direction="v">
-            <greatlist class="adaptation" v-model="select" :data="adData" v-slot="data" :disabled="disabled" :must="must" :multi="multi" :selection="selection" :scroll="scroll" same>type: {{data.row.type}}, index: {{data.index}}.</greatlist>
+            <greatlist class="adaptation" :data="adData" v-model="select" :disabled="disabled" :must="must" :multi="multi" :selection="selection" :scroll="scroll" same>
+                <template v-slot="data">type: {{data.row.type}}, index: {{data.index}}. {{(data.index === 20) ? 'long test long test long test long test long test' : ''}}</template>
+                <template v-slot:itempop>
+                    <menulist>
+                        <menulist-item alt="N">None</menulist-item>
+                    </menulist>
+                </template>
+            </greatlist>
         </tab-panel>
         <!-- list -->
         <tab-panel label="list" direction="v">
@@ -50,11 +57,20 @@
             </layout>
         </tab-panel>
         <!-- async -->
-        <tab-panel label="async" direction="v">
-            <layout direction="v" gutter="10" style="flex: 1; height: 0;">
-                <label>Select: {{select3}}</label>
-                <list v-model="select3" :disabled="disabled" :must="must" :multi="multi" :selection="selection" :scroll="scroll" :data="listData3" style="flex: 1; height: 0;"></list>
-                <button v-if="listData3.length === 0" @click="listData3 = [{'value': 'A', disabled: true}, 'B', 'C', 'D', 'E']" style="height: 30px;">Load data</button>
+        <tab-panel label="async">
+            <layout gutter="10" style="flex: 1; width: 0;">
+                <layout direction="v" gutter="10" style="flex: 1; width: 0;">
+                    <label>greatlist: {{select3}}</label>
+                    <greatlist v-model="select3" :disabled="disabled" :must="must" :multi="multi" :selection="selection" :scroll="scroll" :data="listData3" v-slot="data" style="flex: 1; height: 0;" same>
+                        {{data.row.value ? data.row.value : data.row}}
+                    </greatlist>
+                    <button v-if="listData3.length === 0" @click="listData3 = [{'value': 'A', disabled: true}, 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N'];select3 = 12" style="height: 30px;">Load data</button>
+                </layout>
+                <layout direction="v" gutter="10" style="flex: 1; width: 0;">
+                    <label>list: {{select4}}</label>
+                    <list v-model="select4" :disabled="disabled" :must="must" :multi="multi" :selection="selection" :scroll="scroll" :data="listData4" style="flex: 1; height: 0;"></list>
+                    <button v-if="listData4.length === 0" @click="listData4 = [{'value': 'A', disabled: true}, 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N'];select4 = 'M'" style="height: 30px;">Load data</button>
+                </layout>
             </layout>
         </tab-panel>
     </tab>

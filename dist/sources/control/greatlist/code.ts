@@ -28,11 +28,13 @@ export let props = {
 
 export let data = {
     'client': 0,
+    'clientWidth': 0,
     'length': 0,
     'offset': 0,
 
     'valueData': -1,
     'shiftStart': 0,
+    'delayRefreshShiftStartPos': false,
 
     'selectValues': [],
     'beforeSelectValues': []
@@ -67,7 +69,19 @@ export let watch = {
         handler: function(this: IVControl, n: any[], o: any[]): void {
             if (o.length === 0 && n.length > 0) {
                 // --- 用来强制使 checkValue 生效，因为有可能 data 还没传入，但是默认值已经设定为了 0，所以传入 data 后要再次设定为 0 并响应事件 ---
-                this.valueData = -1;
+                this.valueData = this.modelValue;
+                if (typeof this.valueData === 'object') {
+                    if (this.valueData[0] !== undefined) {
+                        this.shiftStart = this.valueData[0];
+                        this.valueData = [];
+                    }
+                }
+                else {
+                    this.shiftStart = this.valueData;
+                    if (this.valueData === 0) {
+                        this.valueData = -1;
+                    }
+                }
             }
             this.checkValue();
         },
@@ -126,21 +140,37 @@ export let watch = {
     'shiftStart': {
         handler: function(this: IVControl): void {
             let pos = this.$refs.view?.getPos(this.shiftStart);
-            if (!pos) {
-                return;
+            if (pos) {
+                this.refreshShiftStartPos(pos);
             }
-            if (pos.start < this.offset) {
-                this.offset = pos.start;
-                return;
-            }
-            if (pos.end > this.offset + this.client) {
-                this.offset = pos.end - this.client;
+            else {
+                this.delayRefreshShiftStartPos = true;
             }
         }
     }
 };
 
 export let methods = {
+    onItemsPosChange: function(this: IVControl): void {
+        if (!this.delayRefreshShiftStartPos) {
+            return;
+        }
+        this.delayRefreshShiftStartPos = false;
+        this.refreshShiftStartPos(this.$refs.view?.getPos(this.shiftStart));
+    },
+    refreshShiftStartPos: function(this: IVControl): void {
+        let pos = this.$refs.view?.getPos(this.shiftStart);
+        if (!pos) {
+            return;
+        }
+        if (pos.start < this.offset) {
+            this.offset = pos.start;
+            return;
+        }
+        if (pos.end > this.offset + this.client) {
+            this.offset = pos.end - this.client;
+        }
+    },
     checkValue: function(this: IVControl): void {
         let change: boolean = false;
         let notDisabledIndex = this.getFirstNotDisabledDataIndex();
@@ -184,23 +214,23 @@ export let methods = {
             }
         }
         // --- 检测单行/多行的值有没有超出 data 的长度 ---
+        // --- 检测当前 valueData 是不是 disabled 或 split ---
         let dataMaxIndex = this.data.length - 1;
         if (this.isMulti) {
-            // --- 多行要逐个判断，剔除超出的 ---
+            // --- 多行要逐个判断，剔除超出的或 disabled 的 ---
             for (let i = 0; i < this.valueData.length; ++i) {
-                if (this.valueData[i] === 0) {
-                    continue;
+                if (
+                    ((this.valueData[i] > 0) && (this.valueData[i] > dataMaxIndex)) ||
+                    (this.data[this.valueData[i]]?.disabled || (this.data[this.valueData[i]]?.control === 'split'))
+                ) {
+                    // --- 超出/不可选 ---
+                    change = true;
+                    if (this.shiftStart === this.valueData[i]) {
+                        this.shiftStart = i > 0 ? (this.valueData[0] ?? notDisabledIndex) : notDisabledIndex;
+                    }
+                    this.valueData.splice(i, 1);
+                    --i;
                 }
-                if (this.valueData[i] <= dataMaxIndex) {
-                    continue;
-                }
-                // --- 超出了 ---
-                change = true;
-                if (this.shiftStart === this.valueData[i]) {
-                    this.shiftStart = i > 0 ? (this.valueData[0] ?? notDisabledIndex) : notDisabledIndex;
-                }
-                this.valueData.splice(i, 1);
-                --i;
             }
             if (change) {
                 if (this.isMust && this.valueData.length === 0) {
@@ -209,8 +239,11 @@ export let methods = {
             }
         }
         else {
-            // --- 检测值是否大于 data 长度 ---
-            if ((this.valueData > 0) && (this.valueData > dataMaxIndex)) {
+            // --- 检测值是否大于 data 长度或 disabled 的 ---
+            if (
+                ((this.valueData > 0) && (this.valueData > dataMaxIndex)) ||
+                (this.data[this.valueData]?.disabled || (this.data[this.valueData]?.control === 'split'))
+            ) {
                 change = true;
                 if (this.shiftStart === this.valueData) {
                     this.shiftStart = notDisabledIndex;

@@ -126,15 +126,21 @@ export let watch = {
                 return;
             }
             this.$refs.text.scrollLeft = this.scrollLeft;
+            // --- input 的 scroll 事件有可能没那么快响应，要增加 hack ---
+            this.scrollLeftWatch = this.scrollLeft;
+            this.scrollLeftWatchTime = Date.now();
         }
     },
     'scrollTop': {
-        handler: function(this: IVControl): void {
+        handler: async function(this: IVControl): Promise<void> {
             let st = typeof this.scrollTop === 'number' ? this.scrollTop : parseInt(this.scrollTop);
             if (st === this.scrollTopEmit) {
                 return;
             }
             this.$refs.text.scrollTop = this.scrollTop;
+            // --- input 的 scroll 事件有可能没那么快响应，要增加 hack ---
+            this.scrollTopWatch = this.scrollTop;
+            this.scrollTopWatchTime = Date.now();
         }
     },
     'selectionStart': {
@@ -166,6 +172,11 @@ export let data = {
 
     'scrollLeftEmit': 0,
     'scrollTopEmit': 0,
+
+    'scrollLeftWatch': 0,
+    'scrollTopWatch': 0,
+    'scrollLeftWatchTime': 0,
+    'scrollTopWatchTime': 0,
 
     'clientWidth': 0,
     'clientHeight': 0,
@@ -236,6 +247,15 @@ export let methods = {
     },
 
     scroll: function(this: IVControl): void {
+        // --- input 的 scroll 事件有可能没那么快响应，要增加 hack ---
+        // --- value(client) -> set scroll(client) -> input scroll(event) ??, so... ---
+        let now = Date.now();
+        if ((now - this.scrollLeftWatchTime) < 50) {
+            this.$refs.text.scrollLeft = this.scrollLeftWatch;
+        }
+        if ((now - this.scrollTopWatchTime) < 50) {
+            this.$refs.text.scrollTop = this.scrollTopWatch;
+        }
         this.refreshScroll();
     },
     wheel: function(this: IVControl, e: WheelEvent): void {

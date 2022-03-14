@@ -16,6 +16,7 @@
 
 /** --- ClickGo 对象 --- */
 const clickgo: IClickGo = {
+    'version': '3.0.0',
     'safe': true,
     'rootPath': window.location.href.slice(0, window.location.href.lastIndexOf('/') + 1),
     'cgRootPath': '',

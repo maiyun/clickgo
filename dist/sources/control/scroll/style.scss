@@ -38,7 +38,7 @@
         }
     }
     &:not([data-cg-disabled]) {
-        .start, .end {
+        .start:not([data-cg-disabled]), .end:not([data-cg-disabled]) {
             &:hover {
                 background-color: hsl(205, 0%, 85%);
             }
@@ -47,6 +47,11 @@
                 &::before {
                     border-color: #FFF;
                 }
+            }
+        }
+        .start[data-cg-disabled], .end[data-cg-disabled] {
+            &::before {
+                border-color: hsl(205, 0%, 50%);
             }
         }
     }
@@ -78,7 +83,9 @@
             }
         }
     }
-    &[data-cg-disabled] .scroll-bar {
-        visibility: hidden; pointer-events: none;
+    &[data-cg-disabled] {
+        .scroll-bar {
+            visibility: hidden; pointer-events: none;
+        }
     }
 }

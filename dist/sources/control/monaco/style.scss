@@ -1,12 +1,12 @@
 .wrap {
-    display: flex; flex-direction: column;
+    display: flex;
 
     .notInit {
         border: dotted 1px hsl(0, 0%, 20%); flex: 1; display: flex; align-items: center; justify-content: center;
     }
 
     .monaco {
-        flex: 1;
+        flex: 1; width: 0;
         &.theme-dark {
             filter: invert(1) hue-rotate(170deg) brightness(.8) grayscale(.3);
         }

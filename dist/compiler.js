@@ -55,7 +55,7 @@ function run() {
             if (item.isFile()) {
                 continue;
             }
-            if (['img', 'label', 'layout', 'menu-item', 'menulist-item', 'menulist-split', 'overflow', 'tab-panel', 'task-item'].includes(item.name)) {
+            if (['button', 'check', 'dialog', 'greatlist', 'greatselect', 'greatview', 'img', 'label', 'layout', 'list', 'menu', 'menu-item', 'menulist', 'menulist-item', 'menulist-split', 'overflow', 'radio', 'scroll', 'select', 'tab', 'tab-panel', 'text', 'view', 'task-item'].includes(item.name)) {
                 continue;
             }
             let zipo = new zip();
@@ -64,20 +64,29 @@ function run() {
             yield addFile(zipo, base, item.name + '/');
             if (item.name === 'block') {
                 name = 'common';
+                yield addFile(zipo, base, 'button/');
+                yield addFile(zipo, base, 'check/');
+                yield addFile(zipo, base, 'dialog/');
+                yield addFile(zipo, base, 'greatlist/');
+                yield addFile(zipo, base, 'greatselect/');
+                yield addFile(zipo, base, 'greatview/');
                 yield addFile(zipo, base, 'img/');
                 yield addFile(zipo, base, 'label/');
                 yield addFile(zipo, base, 'layout/');
-                yield addFile(zipo, base, 'overflow/');
-            }
-            else if (item.name === 'menu') {
+                yield addFile(zipo, base, 'list/');
+                yield addFile(zipo, base, 'menu/');
                 yield addFile(zipo, base, 'menu-item/');
-            }
-            else if (item.name === 'menulist') {
+                yield addFile(zipo, base, 'menulist/');
                 yield addFile(zipo, base, 'menulist-item/');
                 yield addFile(zipo, base, 'menulist-split/');
-            }
-            else if (item.name === 'tab') {
+                yield addFile(zipo, base, 'overflow/');
+                yield addFile(zipo, base, 'radio/');
+                yield addFile(zipo, base, 'scroll/');
+                yield addFile(zipo, base, 'select/');
+                yield addFile(zipo, base, 'tab/');
                 yield addFile(zipo, base, 'tab-panel/');
+                yield addFile(zipo, base, 'text/');
+                yield addFile(zipo, base, 'view/');
             }
             else if (item.name === 'task') {
                 yield addFile(zipo, base, 'task-item/');

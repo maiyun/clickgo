@@ -141,15 +141,21 @@ exports.watch = {
                 return;
             }
             this.$refs.text.scrollLeft = this.scrollLeft;
+            this.scrollLeftWatch = this.scrollLeft;
+            this.scrollLeftWatchTime = Date.now();
         }
     },
     'scrollTop': {
         handler: function () {
-            let st = typeof this.scrollTop === 'number' ? this.scrollTop : parseInt(this.scrollTop);
-            if (st === this.scrollTopEmit) {
-                return;
-            }
-            this.$refs.text.scrollTop = this.scrollTop;
+            return __awaiter(this, void 0, void 0, function* () {
+                let st = typeof this.scrollTop === 'number' ? this.scrollTop : parseInt(this.scrollTop);
+                if (st === this.scrollTopEmit) {
+                    return;
+                }
+                this.$refs.text.scrollTop = this.scrollTop;
+                this.scrollTopWatch = this.scrollTop;
+                this.scrollTopWatchTime = Date.now();
+            });
         }
     },
     'selectionStart': {
@@ -178,6 +184,10 @@ exports.data = {
     'selectionEndEmit': 0,
     'scrollLeftEmit': 0,
     'scrollTopEmit': 0,
+    'scrollLeftWatch': 0,
+    'scrollTopWatch': 0,
+    'scrollLeftWatchTime': 0,
+    'scrollTopWatchTime': 0,
     'clientWidth': 0,
     'clientHeight': 0,
     'lengthWidth': 0,
@@ -241,6 +251,13 @@ exports.methods = {
         }
     },
     scroll: function () {
+        let now = Date.now();
+        if ((now - this.scrollLeftWatchTime) < 50) {
+            this.$refs.text.scrollLeft = this.scrollLeftWatch;
+        }
+        if ((now - this.scrollTopWatchTime) < 50) {
+            this.$refs.text.scrollTop = this.scrollTopWatch;
+        }
         this.refreshScroll();
     },
     wheel: function (e) {

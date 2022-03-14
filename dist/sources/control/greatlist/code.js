@@ -29,10 +29,12 @@ exports.props = {
 };
 exports.data = {
     'client': 0,
+    'clientWidth': 0,
     'length': 0,
     'offset': 0,
     'valueData': -1,
     'shiftStart': 0,
+    'delayRefreshShiftStartPos': false,
     'selectValues': [],
     'beforeSelectValues': []
 };
@@ -62,7 +64,19 @@ exports.watch = {
     'data': {
         handler: function (n, o) {
             if (o.length === 0 && n.length > 0) {
-                this.valueData = -1;
+                this.valueData = this.modelValue;
+                if (typeof this.valueData === 'object') {
+                    if (this.valueData[0] !== undefined) {
+                        this.shiftStart = this.valueData[0];
+                        this.valueData = [];
+                    }
+                }
+                else {
+                    this.shiftStart = this.valueData;
+                    if (this.valueData === 0) {
+                        this.valueData = -1;
+                    }
+                }
             }
             this.checkValue();
         },
@@ -121,22 +135,40 @@ exports.watch = {
         handler: function () {
             var _a;
             let pos = (_a = this.$refs.view) === null || _a === void 0 ? void 0 : _a.getPos(this.shiftStart);
-            if (!pos) {
-                return;
+            if (pos) {
+                this.refreshShiftStartPos(pos);
             }
-            if (pos.start < this.offset) {
-                this.offset = pos.start;
-                return;
-            }
-            if (pos.end > this.offset + this.client) {
-                this.offset = pos.end - this.client;
+            else {
+                this.delayRefreshShiftStartPos = true;
             }
         }
     }
 };
 exports.methods = {
+    onItemsPosChange: function () {
+        var _a;
+        if (!this.delayRefreshShiftStartPos) {
+            return;
+        }
+        this.delayRefreshShiftStartPos = false;
+        this.refreshShiftStartPos((_a = this.$refs.view) === null || _a === void 0 ? void 0 : _a.getPos(this.shiftStart));
+    },
+    refreshShiftStartPos: function () {
+        var _a;
+        let pos = (_a = this.$refs.view) === null || _a === void 0 ? void 0 : _a.getPos(this.shiftStart);
+        if (!pos) {
+            return;
+        }
+        if (pos.start < this.offset) {
+            this.offset = pos.start;
+            return;
+        }
+        if (pos.end > this.offset + this.client) {
+            this.offset = pos.end - this.client;
+        }
+    },
     checkValue: function () {
-        var _a, _b;
+        var _a, _b, _c, _d, _e, _f;
         let change = false;
         let notDisabledIndex = this.getFirstNotDisabledDataIndex();
         if (typeof this.valueData === 'object') {
@@ -176,18 +208,15 @@ exports.methods = {
         let dataMaxIndex = this.data.length - 1;
         if (this.isMulti) {
             for (let i = 0; i < this.valueData.length; ++i) {
-                if (this.valueData[i] === 0) {
-                    continue;
+                if (((this.valueData[i] > 0) && (this.valueData[i] > dataMaxIndex)) ||
+                    (((_b = this.data[this.valueData[i]]) === null || _b === void 0 ? void 0 : _b.disabled) || (((_c = this.data[this.valueData[i]]) === null || _c === void 0 ? void 0 : _c.control) === 'split'))) {
+                    change = true;
+                    if (this.shiftStart === this.valueData[i]) {
+                        this.shiftStart = i > 0 ? ((_d = this.valueData[0]) !== null && _d !== void 0 ? _d : notDisabledIndex) : notDisabledIndex;
+                    }
+                    this.valueData.splice(i, 1);
+                    --i;
                 }
-                if (this.valueData[i] <= dataMaxIndex) {
-                    continue;
-                }
-                change = true;
-                if (this.shiftStart === this.valueData[i]) {
-                    this.shiftStart = i > 0 ? ((_b = this.valueData[0]) !== null && _b !== void 0 ? _b : notDisabledIndex) : notDisabledIndex;
-                }
-                this.valueData.splice(i, 1);
-                --i;
             }
             if (change) {
                 if (this.isMust && this.valueData.length === 0) {
@@ -196,7 +225,8 @@ exports.methods = {
             }
         }
         else {
-            if ((this.valueData > 0) && (this.valueData > dataMaxIndex)) {
+            if (((this.valueData > 0) && (this.valueData > dataMaxIndex)) ||
+                (((_e = this.data[this.valueData]) === null || _e === void 0 ? void 0 : _e.disabled) || (((_f = this.data[this.valueData]) === null || _f === void 0 ? void 0 : _f.control) === 'split'))) {
                 change = true;
                 if (this.shiftStart === this.valueData) {
                     this.shiftStart = notDisabledIndex;

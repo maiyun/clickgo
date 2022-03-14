@@ -1,8 +1,8 @@
 <div class="wrap" :data-cg-disabled="isDisabled ? '' : undefined" :tabindex="!isDisabled && cgFocus && '0'" @keydown="keydown">
     <div class="inner" ref="inner" @contextmenu="context" @mousedown="innerDown" @touchstart="innerDown" @click="click">
-        <cg-greatview ref="view" :same="isSame" :selection="isSelection" :data="data" v-slot="d" direction="v" v-model:scroll-top="offset" @before-select="onBeforeSelect" @select="onSelect($event)" @after-select="onAfterSelect" @resize="client = $event" @change="length = $event">
+        <cg-greatview ref="view" :same="isSame" :selection="isSelection" :data="data" v-slot="d" direction="v" v-model:scroll-top="offset" @beforeselect="onBeforeSelect" @select="onSelect($event)" @afterselect="onAfterSelect" @itemsposchange="onItemsPosChange" @resize="client = $event" @resizen="clientWidth = $event" @change="length = $event">
             <div v-if="d.row.control === 'split'" class="split"></div>
-            <div v-else class="item" :class="[isSelected(d.index) && 'selected', (shiftStart === d.index) && 'shift']" :data-cg-disabled="d.row.disabled ? '' : undefined" @touchstart="itemTouch($event, d.index)" @contextmenu="itemContext($event, d.index)">
+            <div v-else class="item" :class="[isSelected(d.index) && 'selected', (shiftStart === d.index) && 'shift']" :style="{'width': clientWidth + 'px'}" :data-cg-disabled="d.row.disabled ? '' : undefined" @touchstart="itemTouch($event, d.index)" @contextmenu="itemContext($event, d.index)">
                 <div class="itemInner" @click="itemClick($event, d.index)">
                     <slot :row="d.row" :index="d.index"></slot>
                 </div>

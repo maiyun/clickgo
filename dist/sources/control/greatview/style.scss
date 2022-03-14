@@ -3,6 +3,12 @@
     &.v {
         flex-direction: column;
     }
+    &:not(.same) {
+        word-break: break-all;
+    }
+    &.same {
+        white-space: nowrap;
+    }
 
     cg-view {
         flex: 1;

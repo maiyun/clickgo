@@ -40,7 +40,7 @@
                 }
 
                 .itemInner {
-                    flex: 1; padding: 7px;
+                    flex: 1; width: 0; padding: 7px; overflow: hidden;
                 }
 
                 .itemArrow {
