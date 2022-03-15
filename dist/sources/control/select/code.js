@@ -67,8 +67,8 @@ exports.methods = {
         clickgo.form.hidePop();
     }
 };
-exports.mounted = function () {
-    clickgo.dom.watchStyle(this.$el, ['font', 'line-height', 'background', 'color', 'padding'], (n, v) => {
+let mounted = function () {
+    clickgo.dom.watchStyle(this.$el, ['background', 'padding'], (n, v) => {
         switch (n) {
             case 'background': {
                 this.background = v;
@@ -81,3 +81,4 @@ exports.mounted = function () {
         }
     }, true);
 };
+exports.mounted = mounted;

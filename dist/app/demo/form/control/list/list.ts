@@ -72,14 +72,14 @@ export let computed = {
         for (let k = 0; k < this.slist.length; ++k) {
             if (this.slist[k].name) {
                 data.push({
-                    'label': 'Index: ' + k + ', value: ' + this.slist[k].name,
+                    'label': 'Index: ' + k + ', value: ' + this.slist[k].name + (k === 20 ? ' long test long test long test long test long test' : ''),
                     'value': this.slist[k].name,
                     'disabled': this.slist[k].disabled
                 });
             }
             else {
                 data.push({
-                    'label': 'index: ' + k + ', value: i' + k,
+                    'label': 'index: ' + k + ', value: i' + k + (k === 20 ? ' long test long test long test long test long test' : ''),
                     'value': 'i' + k,
                     'disabled': true
                 });

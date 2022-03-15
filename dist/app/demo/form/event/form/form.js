@@ -27,7 +27,7 @@ exports.methods = {
         clickgo.form.changeFocus(parseInt(fid));
     }
 };
-exports.mounted = function () {
+let mounted = function () {
     let list = clickgo.task.getList();
     for (let taskId in list) {
         let flist = clickgo.form.getList(parseInt(taskId));
@@ -125,3 +125,4 @@ exports.mounted = function () {
         this.flist[formId].flash = false;
     }));
 };
+exports.mounted = mounted;

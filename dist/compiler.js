@@ -55,7 +55,7 @@ function run() {
             if (item.isFile()) {
                 continue;
             }
-            if (['button', 'check', 'dialog', 'greatlist', 'greatselect', 'greatview', 'img', 'label', 'layout', 'list', 'menu', 'menu-item', 'menulist', 'menulist-item', 'menulist-split', 'overflow', 'radio', 'scroll', 'select', 'tab', 'tab-panel', 'text', 'view', 'task-item'].includes(item.name)) {
+            if (['button', 'check', 'dialog', 'greatlist', 'greatselect', 'greatview', 'img', 'label', 'layout', 'list', 'marquee', 'menu', 'menu-item', 'menulist', 'menulist-item', 'menulist-split', 'overflow', 'radio', 'scroll', 'select', 'tab', 'tab-panel', 'text', 'view', 'task-item'].includes(item.name)) {
                 continue;
             }
             let zipo = new zip();
@@ -74,6 +74,7 @@ function run() {
                 yield addFile(zipo, base, 'label/');
                 yield addFile(zipo, base, 'layout/');
                 yield addFile(zipo, base, 'list/');
+                yield addFile(zipo, base, 'marquee/');
                 yield addFile(zipo, base, 'menu/');
                 yield addFile(zipo, base, 'menu-item/');
                 yield addFile(zipo, base, 'menulist/');

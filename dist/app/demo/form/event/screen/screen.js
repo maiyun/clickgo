@@ -7,7 +7,7 @@ exports.data = {
     'scale': 4,
     'list': []
 };
-exports.mounted = function () {
+let mounted = function () {
     this.cgSetSystemEventListener('screenResize', () => {
         let area = clickgo.form.getAvailArea();
         this.width = area.width;
@@ -47,3 +47,4 @@ exports.mounted = function () {
         'height': this.height
     });
 };
+exports.mounted = mounted;

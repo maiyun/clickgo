@@ -178,6 +178,9 @@ export let methods = {
         this.touchY = e.touches[0].clientY;
     },
     refreshLength: function(this: IVControl): void {
+        if (!this.$el.offsetParent) {
+            return;
+        }
         let lengthWidth = this.$el.scrollWidth;
         let lengthHeight = this.$el.scrollHeight;
         if (this.lengthWidth !== lengthWidth) {
@@ -198,9 +201,6 @@ export let methods = {
 export let mounted = function(this: IVControl): void {
     // --- 大小改变，会影响 scroll offset、client，不会影响 length ---
     clickgo.dom.watchSize(this.$el, () => {
-        if (!this.$el) {
-            return;
-        }
         let clientWidth = this.$el.clientWidth;
         let clientHeight = this.$el.clientHeight;
         if (this.clientWidth !== clientWidth) {
@@ -216,15 +216,9 @@ export let mounted = function(this: IVControl): void {
 
     // --- 内容改变 ---
     clickgo.dom.watch(this.$el, () => {
-        if (!this.$el) {
-            return;
-        }
         this.refreshLength();
     }, 'childsub', true);
     clickgo.dom.watchStyle(this.$el, ['padding', 'font'], () => {
-        if (!this.$el) {
-            return;
-        }
         this.refreshLength();
     });
 

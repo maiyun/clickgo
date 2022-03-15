@@ -45,7 +45,8 @@ exports.computed = {
         return is;
     }
 };
-exports.mounted = function () {
+let mounted = function () {
     this.is6[29] = 50;
     this.is6[39] = 50;
 };
+exports.mounted = mounted;

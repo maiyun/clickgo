@@ -164,10 +164,11 @@ exports.methods = {
         }
     }
 };
-exports.mounted = function () {
+let mounted = function () {
     this.oldTabs = this.$refs.tabs[0];
     clickgo.dom.watchSize(this.$refs.tabs[0], (size) => {
         this.onResize(size);
     });
     this.reSelected();
 };
+exports.mounted = mounted;

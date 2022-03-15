@@ -53,10 +53,14 @@ exports.methods = {
             e.preventDefault();
             if (this.area === 'all') {
                 this.innerClick(e);
+                if (!this.$slots.pop) {
+                    this.$el.click();
+                }
             }
             else {
                 if (this.innerFocus) {
                     this.innerClick(e);
+                    this.$el.click();
                 }
                 else {
                     this.arrowClick(e);
@@ -75,10 +79,14 @@ exports.methods = {
         this.isKeyDown = false;
         if (this.area === 'all') {
             this.innerClick(e);
+            if (!this.$slots.pop) {
+                this.$el.click();
+            }
         }
         else {
             if (this.innerFocus) {
                 this.innerClick(e);
+                this.$el.click();
             }
             else {
                 this.arrowClick(e);
@@ -117,8 +125,9 @@ exports.methods = {
         }
     }
 };
-exports.mounted = function () {
+let mounted = function () {
     clickgo.dom.watchStyle(this.$el, 'padding', (n, v) => {
         this.padding = v;
     }, true);
 };
+exports.mounted = mounted;

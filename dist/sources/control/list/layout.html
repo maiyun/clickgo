@@ -1,6 +1,8 @@
 <cg-greatlist :model-value="value" @update:model-value="updateModelValue" :data="dataComp" :adaptation="adaptation" :disabled="disabled" :must="isMust" :multi="isMulti" same>
     <template v-slot="data">
-        <div :class="[data.row.title && 'title']" :style="{'padding-left': data.row.level * 14 + 'px'}">{{data.row.label === '' ? '　' : data.row.label}}</div>
+        <cg-marquee scroll="false">
+            <div :class="[data.row.title && 'title']" :style="{'padding-left': data.row.level * 14 + 'px'}">{{data.row.label === '' ? '　' : data.row.label}}</div>
+        </cg-marquee>
     </template>
     <template v-if="$slots.default" v-slot:pop>
         <slot></slot>

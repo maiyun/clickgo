@@ -1,0 +1,1 @@
+.wrap{overflow:hidden;display:flex}.wrap .inner{display:flex}.wrap.top,.wrap.bottom{flex-direction:column}.wrap.top .inner,.wrap.bottom .inner{flex-direction:column}

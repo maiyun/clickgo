@@ -201,7 +201,7 @@ exports.methods = {
                 if (nowCount !== this.refreshCount) {
                     return;
                 }
-                if (!this.$refs.comp) {
+                if (!this.$refs.comp.offsetParent) {
                     return;
                 }
                 for (let i = 0; i < this.$refs.comp.children.length; ++i) {
@@ -485,7 +485,7 @@ exports.methods = {
         return this.itemsPos[val];
     }
 };
-exports.mounted = function () {
+let mounted = function () {
     clickgo.dom.watchStyle(this.$el, ['padding', 'padding-top', 'padding-right', 'padding-bottom', 'padding-left', 'font'], (n, v) => {
         switch (n) {
             case 'padding': {
@@ -512,3 +512,4 @@ exports.mounted = function () {
         this.refreshView();
     }, true);
 };
+exports.mounted = mounted;

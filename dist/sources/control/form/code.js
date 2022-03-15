@@ -773,7 +773,7 @@ exports.methods = {
         }
     }
 };
-exports.mounted = function () {
+let mounted = function () {
     return __awaiter(this, void 0, void 0, function* () {
         yield this.$nextTick();
         yield clickgo.tool.sleep(0);
@@ -807,3 +807,4 @@ exports.mounted = function () {
         }
     });
 };
+exports.mounted = mounted;

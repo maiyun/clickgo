@@ -34,6 +34,8 @@
         "/form/control/list/list.css",
         "/form/control/list/list.js",
         "/form/control/list/list.xml",
+        "/form/control/marquee/marquee.js",
+        "/form/control/marquee/marquee.xml",
         "/form/control/menu/menu.js",
         "/form/control/menu/menu.xml",
         "/form/control/monaco/monaco.js",

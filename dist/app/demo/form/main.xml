@@ -16,6 +16,7 @@
                     <button @click="openForm('control', 'overflow')">Overflow</button>
                     <button @click="openForm('control', 'view')">View</button>
                     <button @click="openForm('control', 'greatview')">Greatview</button>
+                    <button @click="openForm('control', 'marquee')">Marquee</button>
                     <button @click="openForm('control', 'scroll')">Scroll</button>
                     <button @click="openForm('control', 'menu')">Menu</button>
                     <button @click="openForm('control', 'list')">List</button>

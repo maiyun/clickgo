@@ -282,7 +282,7 @@ exports.methods = {
         }
     }
 };
-exports.mounted = function () {
+let mounted = function () {
     if (this.isFloat) {
         this.opacityTimer = this.cgCreateTimer(() => {
             this.opacity = '0';
@@ -304,8 +304,10 @@ exports.mounted = function () {
     this.scrollOffsetData = scrollOffsetData;
     this.resizePx();
 };
-exports.unmounted = function () {
+exports.mounted = mounted;
+let unmounted = function () {
     if (this.timer !== undefined) {
         clearInterval(this.timer);
     }
 };
+exports.unmounted = unmounted;

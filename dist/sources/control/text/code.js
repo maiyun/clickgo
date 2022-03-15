@@ -102,15 +102,7 @@ exports.watch = {
             });
         }
     },
-    'lineHeight': {
-        handler: function () {
-            return __awaiter(this, void 0, void 0, function* () {
-                yield this.$nextTick();
-                this.refreshLength();
-            });
-        }
-    },
-    'fontSize': {
+    'font': {
         handler: function () {
             return __awaiter(this, void 0, void 0, function* () {
                 yield this.$nextTick();
@@ -173,8 +165,6 @@ exports.watch = {
 };
 exports.data = {
     'font': '',
-    'fontWeight': '',
-    'lineHeight': '',
     'background': '',
     'color': '',
     'padding': '',
@@ -446,24 +436,16 @@ exports.methods = {
         }
     }
 };
-exports.mounted = function () {
+let mounted = function () {
     return __awaiter(this, void 0, void 0, function* () {
         clickgo.dom.watchSize(this.$refs.text, () => __awaiter(this, void 0, void 0, function* () {
             this.refreshClient();
             this.refreshLength();
         }), true);
-        clickgo.dom.watchStyle(this.$el, ['font', 'font-weight', 'line-height', 'background', 'color', 'padding'], (n, v) => {
+        clickgo.dom.watchStyle(this.$el, ['font', 'background', 'color', 'padding'], (n, v) => {
             switch (n) {
                 case 'font': {
                     this.font = v;
-                    break;
-                }
-                case 'font-weight': {
-                    this.fontWeight = v;
-                    break;
-                }
-                case 'line-height': {
-                    this.lineHeight = v;
                     break;
                 }
                 case 'background': {
@@ -486,3 +468,4 @@ exports.mounted = function () {
         this.$refs.text.scrollLeft = this.scrollLeft;
     });
 };
+exports.mounted = mounted;

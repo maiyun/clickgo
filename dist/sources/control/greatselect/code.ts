@@ -23,7 +23,8 @@ export let props = {
 };
 
 export let data = {
-    'padding': ''
+    'padding': '',
+    'isKeyDown': false
 };
 
 export let computed = {
@@ -38,18 +39,21 @@ export let computed = {
 
 export let methods = {
     keydown: function(this: IVControl, e: KeyboardEvent): void {
-        if (e.key !== 'Enter') {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            this.click('arrow');
+        }
+        else if (e.key === ' ') {
+            e.preventDefault();
+            this.isKeyDown = true;
+        }
+    },
+    keyup: function(this: IVControl): void {
+        if (!this.isKeyDown) {
             return;
         }
-        if (this.$el.dataset.cgPopOpen !== undefined) {
-            clickgo.form.hidePop(this.$el);
-            return;
-        }
-        clickgo.form.showPop(this.$el, this.$refs.pop, 'v', {
-            'size': {
-                'width': this.$el.offsetWidth
-            }
-        });
+        this.isKeyDown = false;
+        this.click('arrow');
     },
     click: function(this: IVControl, e: MouseEvent, area: 'left' | 'arrow'): void {
         if (this.$el.dataset.cgPopOpen !== undefined) {

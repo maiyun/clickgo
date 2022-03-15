@@ -22,7 +22,8 @@ exports.props = {
     }
 };
 exports.data = {
-    'padding': ''
+    'padding': '',
+    'isKeyDown': false
 };
 exports.computed = {
     'isDisabled': function () {
@@ -34,18 +35,21 @@ exports.computed = {
 };
 exports.methods = {
     keydown: function (e) {
-        if (e.key !== 'Enter') {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            this.click('arrow');
+        }
+        else if (e.key === ' ') {
+            e.preventDefault();
+            this.isKeyDown = true;
+        }
+    },
+    keyup: function () {
+        if (!this.isKeyDown) {
             return;
         }
-        if (this.$el.dataset.cgPopOpen !== undefined) {
-            clickgo.form.hidePop(this.$el);
-            return;
-        }
-        clickgo.form.showPop(this.$el, this.$refs.pop, 'v', {
-            'size': {
-                'width': this.$el.offsetWidth
-            }
-        });
+        this.isKeyDown = false;
+        this.click('arrow');
     },
     click: function (e, area) {
         if (this.$el.dataset.cgPopOpen !== undefined) {
@@ -71,8 +75,9 @@ exports.methods = {
         clickgo.form.hidePop();
     }
 };
-exports.mounted = function () {
+let mounted = function () {
     clickgo.dom.watchStyle(this.$el, 'padding', (n, v) => {
         this.padding = v;
     }, true);
 };
+exports.mounted = mounted;

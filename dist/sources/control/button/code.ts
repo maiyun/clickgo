@@ -58,10 +58,14 @@ export let methods = {
             e.preventDefault();
             if (this.area === 'all') {
                 this.innerClick(e);
+                if (!this.$slots.pop) {
+                    this.$el.click();
+                }
             }
             else {
                 if (this.innerFocus) {
                     this.innerClick(e);
+                    this.$el.click();
                 }
                 else {
                     this.arrowClick(e);
@@ -80,10 +84,14 @@ export let methods = {
         this.isKeyDown = false;
         if (this.area === 'all') {
             this.innerClick(e);
+            if (!this.$slots.pop) {
+                this.$el.click();
+            }
         }
         else {
             if (this.innerFocus) {
                 this.innerClick(e);
+                this.$el.click();
             }
             else {
                 this.arrowClick(e);

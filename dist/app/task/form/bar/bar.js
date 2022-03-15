@@ -103,7 +103,7 @@ exports.methods = {
         return -1;
     }
 };
-exports.mounted = function () {
+let mounted = function () {
     this.cgSetTopMost(true);
     clickgo.form.setTask(this.taskId, this.formId);
     for (let path in clickgo.core.config['task.pin']) {
@@ -295,3 +295,4 @@ exports.mounted = function () {
         }
     });
 };
+exports.mounted = mounted;

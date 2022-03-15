@@ -1,0 +1,13 @@
+.wrap {
+    overflow: hidden; display: flex;
+
+    .inner {
+        display: flex;
+    }
+    &.top, &.bottom {
+        flex-direction: column;
+        .inner {
+            flex-direction: column;
+        }
+    }
+}

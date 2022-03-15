@@ -1,6 +1,6 @@
 <cg-greatselect :disabled="isDisabled" :area="isEditable ? 'arrow' : 'all'" pop="custom">
     <div v-if="isEditable" class="op" :style="{'margin': opMargin}">
-        <cg-text :modelValue="inputValue" @update:modelValue="updateInputValue" :disabled="isDisabled" border="none" :style="{'background': background, 'padding': padding}"></cg-text>
+        <cg-text :modelValue="inputValue" @update:modelValue="updateInputValue" :disabled="isDisabled" border="none" :style="{'background': background, 'padding': padding}" @keydown="$event.stopPropagation()"></cg-text>
     </div>
     <template v-else>{{label}}</template>
     <template v-slot:pop>

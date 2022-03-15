@@ -14,6 +14,7 @@ exports.methods = {
         clickgo.core.config.local = this.select;
     }
 };
-exports.mounted = function () {
+let mounted = function () {
     this.select = clickgo.core.config.local;
 };
+exports.mounted = mounted;

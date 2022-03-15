@@ -153,6 +153,9 @@ exports.methods = {
         this.touchY = e.touches[0].clientY;
     },
     refreshLength: function () {
+        if (!this.$el.offsetParent) {
+            return;
+        }
         let lengthWidth = this.$el.scrollWidth;
         let lengthHeight = this.$el.scrollHeight;
         if (this.lengthWidth !== lengthWidth) {
@@ -169,11 +172,8 @@ exports.methods = {
         }
     }
 };
-exports.mounted = function () {
+let mounted = function () {
     clickgo.dom.watchSize(this.$el, () => {
-        if (!this.$el) {
-            return;
-        }
         let clientWidth = this.$el.clientWidth;
         let clientHeight = this.$el.clientHeight;
         if (this.clientWidth !== clientWidth) {
@@ -187,17 +187,12 @@ exports.mounted = function () {
         this.refreshLength();
     }, true);
     clickgo.dom.watch(this.$el, () => {
-        if (!this.$el) {
-            return;
-        }
         this.refreshLength();
     }, 'childsub', true);
     clickgo.dom.watchStyle(this.$el, ['padding', 'font'], () => {
-        if (!this.$el) {
-            return;
-        }
         this.refreshLength();
     });
     this.$el.scrollTop = this.scrollTop;
     this.$el.scrollLeft = this.scrollLeft;
 };
+exports.mounted = mounted;

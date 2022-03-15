@@ -48,7 +48,7 @@ exports.methods = {
         });
     }
 };
-exports.mounted = function () {
+let mounted = function () {
     let list = clickgo.task.getList();
     for (let tid in list) {
         this.tlist.push({
@@ -74,3 +74,4 @@ exports.mounted = function () {
         this.pushConsole('taskEnded', `taskId: ${taskId}`);
     });
 };
+exports.mounted = mounted;

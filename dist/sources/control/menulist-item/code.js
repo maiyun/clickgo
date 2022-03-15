@@ -72,7 +72,7 @@ exports.methods = {
         clickgo.form.hidePop();
     }
 };
-exports.mounted = function () {
+let mounted = function () {
     clickgo.dom.watchStyle(this.$el, 'padding', (n, v) => {
         this.padding = v;
     }, true);
@@ -84,7 +84,8 @@ exports.mounted = function () {
         ++menulist.hasTypeItemsCount;
     }
 };
-exports.beforeUnmounted = function () {
+exports.mounted = mounted;
+let beforeUnmounted = function () {
     if (!this.menulist) {
         return;
     }
@@ -92,3 +93,4 @@ exports.beforeUnmounted = function () {
         --this.menulist.hasTypeItemsCount;
     }
 };
+exports.beforeUnmounted = beforeUnmounted;

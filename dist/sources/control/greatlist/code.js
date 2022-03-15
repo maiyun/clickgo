@@ -524,6 +524,7 @@ exports.methods = {
     onAfterSelect: function () {
     }
 };
-exports.mounted = function () {
+let mounted = function () {
     this.checkValue();
 };
+exports.mounted = mounted;

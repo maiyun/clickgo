@@ -624,7 +624,7 @@ exports.methods = {
         requestAnimationFrame(this.selectionRoll);
     }
 };
-exports.mounted = function () {
+let mounted = function () {
     clickgo.dom.watchSize(this.$el, (size) => {
         let clientWidth = size.clientWidth;
         let clientHeight = size.clientHeight;
@@ -668,8 +668,10 @@ exports.mounted = function () {
     this.goScroll(this.scrollLeft, 'left');
     this.goScroll(this.scrollTop, 'top');
 };
-exports.unmounted = function () {
+exports.mounted = mounted;
+let unmounted = function () {
     if (this.timer) {
         this.timer = false;
     }
 };
+exports.unmounted = unmounted;

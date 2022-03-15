@@ -57,9 +57,10 @@ exports.watch = {
         'immediate': true
     }
 };
-exports.mounted = function () {
+let mounted = function () {
     clickgo.dom.watchSize(this.$el, (size) => {
         this.width = size.width;
         this.height = size.height;
     }, true);
 };
+exports.mounted = mounted;

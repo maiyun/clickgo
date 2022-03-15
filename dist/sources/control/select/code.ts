@@ -72,7 +72,7 @@ export let methods = {
 };
 
 export let mounted = function(this: IVControl): void {
-    clickgo.dom.watchStyle(this.$el, ['font', 'line-height', 'background', 'color', 'padding'], (n, v) => {
+    clickgo.dom.watchStyle(this.$el, ['background', 'padding'], (n, v) => {
         switch (n) {
             case 'background': {
                 this.background = v;

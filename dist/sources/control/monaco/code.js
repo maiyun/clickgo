@@ -165,7 +165,7 @@ exports.methods = {
         });
     }
 };
-exports.mounted = function () {
+let mounted = function () {
     let monaco = clickgo.core.getModule('monaco');
     if (monaco) {
         this.monaco = monaco;
@@ -193,8 +193,10 @@ exports.mounted = function () {
         this.notInit = true;
     }
 };
-exports.unmounted = function () {
+exports.mounted = mounted;
+let unmounted = function () {
     if (this.monacoInstance) {
         this.monacoInstance.dispose();
     }
 };
+exports.unmounted = unmounted;
