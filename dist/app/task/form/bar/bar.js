@@ -23,7 +23,7 @@ exports.computed = {
     }
 };
 exports.methods = {
-    itemTap: function (appIndex) {
+    itemClick: function (appIndex) {
         return __awaiter(this, void 0, void 0, function* () {
             if (this.apps[appIndex].formCount === 0) {
                 try {

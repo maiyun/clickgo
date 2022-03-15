@@ -550,7 +550,7 @@ export let methods = {
 
 export let mounted = function(this: IVControl): void {
     // --- nest 内嵌闪烁是 mounted 导致 ---
-    clickgo.dom.watchStyle(this.$el, ['padding', 'padding-top', 'padding-right', 'padding-bottom', 'padding-left', 'line-height'], (n, v) => {
+    clickgo.dom.watchStyle(this.$el, ['padding', 'padding-top', 'padding-right', 'padding-bottom', 'padding-left', 'font'], (n, v) => {
         switch (n) {
             case 'padding': {
                 this.padding = v;

@@ -220,7 +220,13 @@ export let mounted = function(this: IVControl): void {
             return;
         }
         this.refreshLength();
-    }, 'default', true);
+    }, 'childsub', true);
+    clickgo.dom.watchStyle(this.$el, ['padding', 'font'], () => {
+        if (!this.$el) {
+            return;
+        }
+        this.refreshLength();
+    });
 
     // --- 对 scroll 位置进行归位 ---
     this.$el.scrollTop = this.scrollTop;

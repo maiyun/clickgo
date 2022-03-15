@@ -14,7 +14,7 @@ export let computed = {
 };
 
 export let methods = {
-    itemTap: async function(this: IVForm, appIndex: number): Promise<void> {
+    itemClick: async function(this: IVForm, appIndex: number): Promise<void> {
         if (this.apps[appIndex].formCount === 0) {
             // --- 启动 ---
             try {

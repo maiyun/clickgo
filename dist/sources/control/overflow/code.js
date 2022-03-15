@@ -191,7 +191,13 @@ exports.mounted = function () {
             return;
         }
         this.refreshLength();
-    }, 'default', true);
+    }, 'childsub', true);
+    clickgo.dom.watchStyle(this.$el, ['padding', 'font'], () => {
+        if (!this.$el) {
+            return;
+        }
+        this.refreshLength();
+    });
     this.$el.scrollTop = this.scrollTop;
     this.$el.scrollLeft = this.scrollLeft;
 };
