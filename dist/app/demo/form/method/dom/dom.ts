@@ -3,7 +3,8 @@ export let data = {
     'moveLeft': 0,
     'moveTop': 0,
     'moveWidth': 25,
-    'moveHeight': 25
+    'moveHeight': 25,
+    'bindGestureText': ''
 };
 
 export let computed = {
@@ -39,6 +40,30 @@ export let methods = {
             move: (ox: number, oy: number): void => {
                 this.moveLeft += ox;
                 this.moveTop += oy;
+            }
+        });
+    },
+    bindGesture: function(this: IVForm, e: MouseEvent | TouchEvent): void {
+        clickgo.dom.bindGesture(e, {
+            'top': async () => {
+                this.bindGestureText = 'Top';
+                await clickgo.tool.sleep(500);
+                this.bindGestureText = '';
+            },
+            'right': async () => {
+                this.bindGestureText = 'Right';
+                await clickgo.tool.sleep(500);
+                this.bindGestureText = '';
+            },
+            'bottom': async () => {
+                this.bindGestureText = 'Bottom';
+                await clickgo.tool.sleep(500);
+                this.bindGestureText = '';
+            },
+            'left': async () => {
+                this.bindGestureText = 'Left';
+                await clickgo.tool.sleep(500);
+                this.bindGestureText = '';
             }
         });
     }

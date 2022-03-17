@@ -31,7 +31,7 @@
                 border: solid 1px hsl(205, 100%, 50%);
             }
         }
-        &:active {
+        &:active, &.active {
             &::before {
                 border: solid 1px hsl(205, 100%, 30%);
             }
@@ -40,7 +40,7 @@
             &:hover, &:focus {
                 background: hsl(205, 100%, 95%);
             }
-            &:active {
+            &:active, &.active {
                 background: hsl(205, 100%, 90%);
             }
         }
@@ -88,11 +88,13 @@
             }
         }
     }
-    &.area-arrow[data-cg-pop-open] {
-        .arrow {
-            background: hsl(205, 100%, 90%);
-            &::before {
-                border-left-color: hsl(205, 100%, 30%);
+    &.area-arrow {
+        &[data-cg-pop-open], &.active {
+            .arrow {
+                background: hsl(205, 100%, 90%);
+                &::before {
+                    border-left-color: hsl(205, 100%, 30%);
+                }
             }
         }
     }

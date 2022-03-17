@@ -1,4 +1,4 @@
-<div class="wrap" :class="['area-' + area]" :data-cg-disabled="isDisabled ? '' : undefined" :tabindex="(!isDisabled && cgFocus) ? '0' : undefined" @keydown="keydown" @keyup="keyup">
+<div class="wrap" :class="['area-' + area, isKeyDown && 'active']" :data-cg-disabled="isDisabled ? '' : undefined" :tabindex="(!isDisabled && cgFocus) ? '0' : undefined" @keydown="keydown" @keyup="keyup">
     <div class="op" :style="{'margin': opMargin}">
         <div class="content" @click="click($event, 'left')" :class="[direction]" :style="{'padding': padding}">
             <slot></slot>

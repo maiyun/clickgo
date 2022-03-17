@@ -15,7 +15,8 @@ exports.data = {
     'moveLeft': 0,
     'moveTop': 0,
     'moveWidth': 25,
-    'moveHeight': 25
+    'moveHeight': 25,
+    'bindGestureText': ''
 };
 exports.computed = {
     'isMove': function () {
@@ -50,6 +51,30 @@ exports.methods = {
                 this.moveLeft += ox;
                 this.moveTop += oy;
             }
+        });
+    },
+    bindGesture: function (e) {
+        clickgo.dom.bindGesture(e, {
+            'top': () => __awaiter(this, void 0, void 0, function* () {
+                this.bindGestureText = 'Top';
+                yield clickgo.tool.sleep(500);
+                this.bindGestureText = '';
+            }),
+            'right': () => __awaiter(this, void 0, void 0, function* () {
+                this.bindGestureText = 'Right';
+                yield clickgo.tool.sleep(500);
+                this.bindGestureText = '';
+            }),
+            'bottom': () => __awaiter(this, void 0, void 0, function* () {
+                this.bindGestureText = 'Bottom';
+                yield clickgo.tool.sleep(500);
+                this.bindGestureText = '';
+            }),
+            'left': () => __awaiter(this, void 0, void 0, function* () {
+                this.bindGestureText = 'Left';
+                yield clickgo.tool.sleep(500);
+                this.bindGestureText = '';
+            })
         });
     }
 };

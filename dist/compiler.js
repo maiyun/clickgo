@@ -55,16 +55,15 @@ function run() {
             if (item.isFile()) {
                 continue;
             }
-            if (['button', 'check', 'dialog', 'greatlist', 'greatselect', 'greatview', 'img', 'label', 'layout', 'list', 'marquee', 'menu', 'menu-item', 'menulist', 'menulist-item', 'menulist-split', 'overflow', 'radio', 'scroll', 'select', 'tab', 'tab-panel', 'text', 'view', 'task-item'].includes(item.name)) {
+            if (['check', 'dialog', 'greatlist', 'greatselect', 'greatview', 'img', 'label', 'layout', 'list', 'marquee', 'menu', 'menu-item', 'menulist', 'menulist-item', 'menulist-split', 'overflow', 'radio', 'scroll', 'select', 'tab', 'tab-panel', 'text', 'view', 'task-item'].includes(item.name)) {
                 continue;
             }
             let zipo = new zip();
             let base = 'dist/sources/control/';
             let name = item.name;
             yield addFile(zipo, base, item.name + '/');
-            if (item.name === 'block') {
+            if (item.name === 'button') {
                 name = 'common';
-                yield addFile(zipo, base, 'button/');
                 yield addFile(zipo, base, 'check/');
                 yield addFile(zipo, base, 'dialog/');
                 yield addFile(zipo, base, 'greatlist/');

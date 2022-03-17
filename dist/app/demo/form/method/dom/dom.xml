@@ -5,10 +5,11 @@
         <button @click="cgDialog(hasTouchButMouse($event) ? 'true' : 'false')" style="height: 30px;">dom.hasTouchButMouse()</button>
         <button @click="getStyleCount()" style="height: 30px;">dom.getStyleCount({{taskId}}, 'form')</button>
         <button @click="bindLong" ref="bindLong" @mousedown="bindLongDown" @touchstart="bindLongDown" style="height: 30px;">{{bindLongText ? 'Yeah!' : 'dom.bindLong(e, () => { ... })'}}</button>
-        <block @mousedown="bindMoveDown" @touchstart="bindMoveDown" style="height: 50px; background: #FFF; position: relative;">
-            <label style="position: absolute; left: 0; top: 0; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; color: rgba(0, 0, 0, .5); font-size: 16px;">dom.bindMove(e, { ... })</label>
+        <block @mousedown="bindMoveDown" @touchstart="bindMoveDown" style="height: 50px; background: #FFF; display: flex; justify-content: center; align-items: center; color: rgba(0, 0, 0, .5); font-size: 16px; position: relative;">
+            <label>dom.bindMove(e, { ... })</label>
             <block ref="move" style="background: #07c160; position: absolute;" :style="{'left': moveLeft + 'px', 'top': moveTop + 'px', 'width': moveWidth + 'px', 'height': moveHeight + 'px'}" @dblclick="moveWidth = moveWidth === 25 ? 50 : 25;moveHeight = moveHeight === 25 ? 50 : 25"></block>
         </block>
+        <block @mousedown="bindGesture" @touchstart="bindGesture" style="height: 50px; background: #FFF; display: flex; justify-content: center; align-items: center; color: rgba(0, 0, 0, .5); font-size: 16px;">{{bindGestureText ? bindGestureText : 'dom.bindGesture(e, { ... })'}}</block>
         <label>clickgo.form.is.move: {{isMove ? 'true' : 'false'}}</label>
     </layout>
 </form>

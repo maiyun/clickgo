@@ -41,6 +41,10 @@ exports.methods = {
         if (!this.$slots.pop) {
             return;
         }
+        if (this.$el.dataset.cgPopOpen !== undefined) {
+            clickgo.form.hidePop();
+            return;
+        }
         clickgo.form.showPop(this.$el, this.$refs.pop, 'v');
     },
     contextmenu: function (e) {
@@ -55,11 +59,14 @@ exports.methods = {
         });
     },
     down: function (e) {
+        var _a;
         if (clickgo.dom.hasTouchButMouse(e)) {
             return;
         }
         if (this.$el.dataset.cgPopOpen !== undefined) {
-            clickgo.form.hidePop();
+            if (((_a = this.$refs.contextmenu) === null || _a === void 0 ? void 0 : _a.dataset.cgOpen) !== undefined) {
+                clickgo.form.hidePop();
+            }
         }
         if (e instanceof TouchEvent && this.$slots.contextmenu) {
             clickgo.dom.bindLong(e, () => {

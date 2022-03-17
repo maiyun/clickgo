@@ -147,7 +147,12 @@ export function layoutAddTagClassAndReTagName(layout: string, retagname: boolean
         else {
             // --- 需要给 class 添加 cg-xxx ---
             if (t1 === '/') {
-                return retagname ? ('<' + t1 + 'cg-' + t2 + t3) : t;
+                if (t2 === 'block') {
+                    return '</div' + t3;
+                }
+                else {
+                    return retagname ? ('</cg-' + t2 + t3) : t;
+                }
             }
             if (t3.toLowerCase().includes(' class')) {
                 // --- 有 class，前置增加 ---
@@ -155,9 +160,14 @@ export function layoutAddTagClassAndReTagName(layout: string, retagname: boolean
             }
             else {
                 // --- 无 class 的 attr，增加 attr ---
-                t2 = t2 + ` class="tag-${t2}"`;
+                t3 = ` class="tag-${t2}"` + t3;
             }
-            return retagname ? ('<cg-' + t2 + t3) : ('<' + t2 + t3);
+            if (t2 === 'block') {
+                return '<div' + t3;
+            }
+            else {
+                return retagname ? ('<cg-' + t2 + t3) : ('<' + t2 + t3);
+            }
         }
     });
     // --- 恢复 placeholder ---

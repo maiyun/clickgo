@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.siblingsData = exports.siblings = exports.findParentByData = exports.bindResize = exports.bindMove = exports.is = exports.bindLong = exports.allowEvent = exports.bindDown = exports.watchStyle = exports.watch = exports.watchSize = exports.getSize = exports.getStyleCount = exports.removeStyle = exports.pushStyle = exports.removeFromStyleList = exports.createToStyleList = exports.hasTouchButMouse = exports.setGlobalCursor = void 0;
+exports.siblingsData = exports.siblings = exports.findParentByData = exports.bindResize = exports.bindMove = exports.is = exports.bindLong = exports.allowEvent = exports.bindGesture = exports.bindDown = exports.watchStyle = exports.watch = exports.watchSize = exports.getSize = exports.getStyleCount = exports.removeStyle = exports.pushStyle = exports.removeFromStyleList = exports.createToStyleList = exports.hasTouchButMouse = exports.setGlobalCursor = void 0;
 let topClass = ['#cg-form-list', '#cg-pop-list', '#cg-system', '#cg-simpletask'];
 function classUnfold(after) {
     let arr = [];
@@ -34,25 +34,27 @@ ${classUnfold('::selection')} {background-color: rgba(0, 120, 215, .3);}
 ${classUnfold('*')}, ${classUnfold('*::after')}, ${classUnfold('*::before')} {box-sizing: border-box; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); flex-shrink: 0;}
 ${classUnfold()}, ${classUnfold('input')}, ${classUnfold('textarea')} {font-family: "Lucida Sans Unicode", "Helvetica Neue","Helvetica","PingFang SC","Hiragino Sans GB","Noto Sans CJK SC","Noto Sans CJK","Source Han Sans","WenQuanYi Micro Hei","Microsoft YaHei",sans-serif; font-size: 12px; line-height: 1; -webkit-font-smoothing: antialiased;}
 
-#cg-circular {box-sizing: border-box; position: fixed; z-index: 20020003; border: solid 3px #ffa657; border-radius: 50%; filter: drop-shadow(0 0 3px #ffa657); pointer-events: none; opacity: 0;}
 #cg-rectangle {box-sizing: border-box; position: fixed; z-index: 20020002; border-radius: 3px; box-shadow: 0 0 10px rgba(0, 0, 0, .3); background: rgba(255, 255, 255, .05); pointer-events: none; opacity: 0;}
+#cg-circular {box-sizing: border-box; position: fixed; z-index: 20020003; border: solid 3px #ff976a; border-radius: 50%; filter: drop-shadow(0 0 3px #ff976a); pointer-events: none; opacity: 0;}
+#cg-gesture {box-sizing: border-box; position: fixed; z-index: 20020004; border: solid 3px #ff976a; border-radius: 50%; filter: drop-shadow(0 0 3px #ff976a); pointer-events: none; opacity: 0; transform: scale(0); width: 20px; height: 20px;}
+#cg-gesture.done {background: #ff976a;}
 
 [data-cg-pop] {position: fixed; box-shadow: 1px 1px 5px rgba(0, 0, 0, .2); transition: .1s ease-out; transition-property: transform, opacity; transform: translateY(-10px); opacity: 0;}
 [data-cg-pop]:not([data-cg-open]) {pointer-events: none;}
 [data-cg-pop][data-cg-open] {transform: translateY(0px); opacity: 1;}
 
-.cg-system-notify {background: rgba(0, 0, 0, .5); position: fixed; padding: 15px; border-radius: 3px; right: 0; top: 0; width: 280px; font-size: 14px; display: flex; transition: .1s ease-out; transition-property: transform, opacity; overflow: hidden; color: #f6f6f6; box-shadow: 0 0 10px rgba(0, 0, 0, .1); backdrop-filter: blur(20px) brightness(1.1);}
+.cg-system-notify {background: rgba(0, 0, 0, .5); position: fixed; padding: 15px; border-radius: 3px; right: 0; top: 0; width: 280px; font-size: 14px; display: flex; transition: .1s ease-out; transition-property: transform, opacity; overflow: hidden; color: #f6f6f6; box-shadow: 0 0 10px rgba(0, 0, 0, .1); -webkit-backdrop-filter: blur(20px) brightness(1.1); backdrop-filter: blur(20px) brightness(1.1);}
 .cg-system-icon {margin-right: 10px; width: 16px; height: 16px; border-radius: 50%;}
 .cg-system-icon-primary {background: #07c160;}
 .cg-system-icon-info {background: #1989fa;}
 .cg-system-icon-warning {background: #ff976a;}
 .cg-system-icon-danger {background: #ee0a24;}
-.cg-system-icon-progress {background: #ffa657;}
+.cg-system-icon-progress {background: #ff976a;}
 .cg-system-notify-title {font-size: 16px; font-weight: bold; padding-bottom: 10px;}
 .cg-system-notify-content {line-height: 1.5;}
-.cg-system-notify-progress {position: absolute; bottom: 0; left: 0; border-radius: 1px; background: #ffa657; transition: width 1s ease-out; width: 0%; height: 2px;}
+.cg-system-notify-progress {position: absolute; bottom: 0; left: 0; border-radius: 1px; background: #ff976a; transition: width 1s ease-out; width: 0%; height: 2px;}
 
-#cg-simpletask {bottom: -46px; width: 100%; height: 46px; top: initial; background: rgb(0, 0, 0, .5); backdrop-filter: blur(20px) brightness(1.1); padding: 5px 0 5px 5px; display: flex; color: #f6f6f6; transition: bottom .1s ease-out; overflow-x: auto;}
+#cg-simpletask {bottom: -46px; width: 100%; height: 46px; top: initial; background: rgb(0, 0, 0, .5); -webkit-backdrop-filter: blur(20px) brightness(1.1); backdrop-filter: blur(20px) brightness(1.1); padding: 5px 0 5px 5px; display: flex; color: #f6f6f6; transition: bottom .1s ease-out; overflow-x: auto;}
 #cg-simpletask::-webkit-scrollbar {display: none;}
 .cg-simpletask-item {background: rgba(246, 246, 246, .05); border-radius: 3px; padding: 10px; display: flex; align-items: center; margin-right: 5px;}
 .cg-simpletask-item:hover {background: rgba(246, 246, 246, .1);}
@@ -398,6 +400,118 @@ function bindDown(oe, opt) {
     (_a = opt.down) === null || _a === void 0 ? void 0 : _a.call(opt, oe);
 }
 exports.bindDown = bindDown;
+function bindGesture(e, opt = {}) {
+    var _a;
+    let gestureElement = document.getElementById('cg-gesture');
+    let el = (_a = opt.el) !== null && _a !== void 0 ? _a : e.currentTarget;
+    let rect = el.getBoundingClientRect();
+    let x = e instanceof MouseEvent ? e.clientX : e.touches[0].clientX;
+    let y = e instanceof MouseEvent ? e.clientY : e.touches[0].clientY;
+    let dir = null;
+    bindDown(e, {
+        start: () => {
+            gestureElement.style.transform = 'scale(0)';
+        },
+        move: (e) => {
+            e.preventDefault();
+            let nx = e instanceof MouseEvent ? e.clientX : e.touches[0].clientX;
+            let ny = e instanceof MouseEvent ? e.clientY : e.touches[0].clientY;
+            let xx = nx - x;
+            let xy = ny - y;
+            let xxAbs = Math.abs(xx);
+            let xyAbs = Math.abs(xy);
+            if ((!opt.top && !opt.bottom) || ((xxAbs > xyAbs) && (opt.left || opt.right))) {
+                if (xx > 0) {
+                    if (!opt.left) {
+                        gestureElement.style.opacity = '0';
+                        return;
+                    }
+                    gestureElement.style.opacity = '1';
+                    if (xxAbs > 120) {
+                        xxAbs = 120;
+                        dir = 'left';
+                        gestureElement.classList.add('done');
+                    }
+                    else {
+                        dir = null;
+                        gestureElement.classList.remove('done');
+                    }
+                    gestureElement.style.top = rect.top + ((rect.height - 20) / 2) + 'px';
+                    gestureElement.style.left = rect.left - 10 + (xxAbs / 1.5) + 'px';
+                    gestureElement.style.transform = 'scale(' + (xxAbs / 120) + ')';
+                }
+                else {
+                    if (!opt.right) {
+                        gestureElement.style.opacity = '0';
+                        return;
+                    }
+                    gestureElement.style.opacity = '1';
+                    if (xxAbs > 120) {
+                        xxAbs = 120;
+                        dir = 'right';
+                        gestureElement.classList.add('done');
+                    }
+                    else {
+                        dir = null;
+                        gestureElement.classList.remove('done');
+                    }
+                    gestureElement.style.top = rect.top + ((rect.height - 20) / 2) + 'px';
+                    gestureElement.style.left = rect.left + rect.width - 10 - (xxAbs / 1.5) + 'px';
+                    gestureElement.style.transform = 'scale(' + (xxAbs / 120) + ')';
+                }
+            }
+            else {
+                if (xy > 0) {
+                    if (!opt.top) {
+                        gestureElement.style.opacity = '0';
+                        return;
+                    }
+                    gestureElement.style.opacity = '1';
+                    if (xyAbs > 120) {
+                        xyAbs = 120;
+                        dir = 'top';
+                        gestureElement.classList.add('done');
+                    }
+                    else {
+                        dir = null;
+                        gestureElement.classList.remove('done');
+                    }
+                    gestureElement.style.left = rect.left + ((rect.width - 20) / 2) + 'px';
+                    gestureElement.style.top = rect.top - 10 + (xyAbs / 1.5) + 'px';
+                    gestureElement.style.transform = 'scale(' + (xyAbs / 120) + ')';
+                }
+                else {
+                    if (!opt.bottom) {
+                        gestureElement.style.opacity = '0';
+                        return;
+                    }
+                    gestureElement.style.opacity = '1';
+                    if (xyAbs > 120) {
+                        xyAbs = 120;
+                        dir = 'bottom';
+                        gestureElement.classList.add('done');
+                    }
+                    else {
+                        dir = null;
+                        gestureElement.classList.remove('done');
+                    }
+                    gestureElement.style.left = rect.left + ((rect.width - 20) / 2) + 'px';
+                    gestureElement.style.top = rect.top + rect.height - 10 - (xyAbs / 1.5) + 'px';
+                    gestureElement.style.transform = 'scale(' + (xyAbs / 120) + ')';
+                }
+            }
+        },
+        end: (e) => {
+            var _a;
+            gestureElement.style.opacity = '0';
+            if (!dir) {
+                return;
+            }
+            (_a = opt[dir]) === null || _a === void 0 ? void 0 : _a.call(opt, e);
+        }
+    });
+}
+exports.bindGesture = bindGesture;
 let lastLongTime = 0;
 function allowEvent(e) {
     let now = Date.now();

@@ -104,6 +104,11 @@ rectangleElement.setAttribute('data-pos', '');
 rectangleElement.id = 'cg-rectangle';
 document.getElementsByTagName('body')[0].appendChild(rectangleElement);
 
+// --- 手势有效无效的圆圈 ---
+let gestureElement: HTMLDivElement = document.createElement('div');
+gestureElement.id = 'cg-gesture';
+document.getElementsByTagName('body')[0].appendChild(gestureElement);
+
 /** --- task 的信息 --- */
 export let taskInfo: ICGFormTaskInfo = Vue.reactive({
     'taskId': 0,
@@ -1226,7 +1231,7 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
             invoke.clickgo.core[k] = (clickgo.core as any)[k];
         }
         for (let k in clickgo.dom) {
-            if (!['setGlobalCursor', 'hasTouchButMouse', 'getStyleCount', 'getSize', 'watchSize', 'watch', 'watchStyle', 'bindDown', 'bindLong', 'is', 'bindMove', 'bindResize', 'findParentByData', 'siblings', 'siblingsData'].includes(k)) {
+            if (!['setGlobalCursor', 'hasTouchButMouse', 'getStyleCount', 'getSize', 'watchSize', 'watch', 'watchStyle', 'bindDown', 'bindGesture', 'bindLong', 'is', 'bindMove', 'bindResize', 'findParentByData', 'siblings', 'siblingsData'].includes(k)) {
                 continue;
             }
             invoke.clickgo.dom[k] = (clickgo.dom as any)[k];

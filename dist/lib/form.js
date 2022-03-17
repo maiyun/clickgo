@@ -75,6 +75,9 @@ let rectangleElement = document.createElement('div');
 rectangleElement.setAttribute('data-pos', '');
 rectangleElement.id = 'cg-rectangle';
 document.getElementsByTagName('body')[0].appendChild(rectangleElement);
+let gestureElement = document.createElement('div');
+gestureElement.id = 'cg-gesture';
+document.getElementsByTagName('body')[0].appendChild(gestureElement);
 exports.taskInfo = Vue.reactive({
     'taskId': 0,
     'formId': 0,
@@ -1042,7 +1045,7 @@ function create(taskId, opt) {
                 invoke.clickgo.core[k] = clickgo.core[k];
             }
             for (let k in clickgo.dom) {
-                if (!['setGlobalCursor', 'hasTouchButMouse', 'getStyleCount', 'getSize', 'watchSize', 'watch', 'watchStyle', 'bindDown', 'bindLong', 'is', 'bindMove', 'bindResize', 'findParentByData', 'siblings', 'siblingsData'].includes(k)) {
+                if (!['setGlobalCursor', 'hasTouchButMouse', 'getStyleCount', 'getSize', 'watchSize', 'watch', 'watchStyle', 'bindDown', 'bindGesture', 'bindLong', 'is', 'bindMove', 'bindResize', 'findParentByData', 'siblings', 'siblingsData'].includes(k)) {
                     continue;
                 }
                 invoke.clickgo.dom[k] = clickgo.dom[k];

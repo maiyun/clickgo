@@ -107,15 +107,25 @@ function layoutAddTagClassAndReTagName(layout, retagname) {
         }
         else {
             if (t1 === '/') {
-                return retagname ? ('<' + t1 + 'cg-' + t2 + t3) : t;
+                if (t2 === 'block') {
+                    return '</div' + t3;
+                }
+                else {
+                    return retagname ? ('</cg-' + t2 + t3) : t;
+                }
             }
             if (t3.toLowerCase().includes(' class')) {
                 t3 = t3.replace(/ class=(["']{0,1})/i, ' class=$1tag-' + t2 + ' ');
             }
             else {
-                t2 = t2 + ` class="tag-${t2}"`;
+                t3 = ` class="tag-${t2}"` + t3;
             }
-            return retagname ? ('<cg-' + t2 + t3) : ('<' + t2 + t3);
+            if (t2 === 'block') {
+                return '<div' + t3;
+            }
+            else {
+                return retagname ? ('<cg-' + t2 + t3) : ('<' + t2 + t3);
+            }
         }
     });
     let i = -1;

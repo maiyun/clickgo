@@ -30,6 +30,10 @@ export let methods = {
         if (!this.$slots.pop) {
             return;
         }
+        if (this.$el.dataset.cgPopOpen !== undefined) {
+            clickgo.form.hidePop();
+            return;
+        }
         clickgo.form.showPop(this.$el, this.$refs.pop, 'v');
     },
     contextmenu: async function(this: IVControl, e: MouseEvent): Promise<void> {
@@ -46,7 +50,10 @@ export let methods = {
             return;
         }
         if (this.$el.dataset.cgPopOpen !== undefined) {
-            clickgo.form.hidePop();
+            // --- 是否要隐藏 ---
+            if (this.$refs.contextmenu?.dataset.cgOpen !== undefined) {
+                clickgo.form.hidePop();
+            }
         }
         if (e instanceof TouchEvent && this.$slots.contextmenu) {
             clickgo.dom.bindLong(e, () => {

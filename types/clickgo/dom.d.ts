@@ -21,6 +21,7 @@ interface ICGDomLib {
         'up'?: (e: MouseEvent | TouchEvent) => void;
         'end'?: (e: MouseEvent | TouchEvent) => void;
     }): void;
+    bindGesture(e: MouseEvent | TouchEvent, opt?: { 'el'?: HTMLElement; 'top'?: (e: MouseEvent | TouchEvent) => void; 'bottom'?: (e: MouseEvent | TouchEvent) => void; 'left'?: (e: MouseEvent | TouchEvent) => void; 'right'?: (e: MouseEvent | TouchEvent) => void; }): void;
     allowEvent(e: MouseEvent | TouchEvent | KeyboardEvent): boolean;
     bindLong(e: MouseEvent | TouchEvent, long: (e: MouseEvent | TouchEvent) => void | Promise<void>): void;
     'is': {
