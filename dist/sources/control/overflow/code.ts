@@ -157,7 +157,7 @@ export let methods = {
             }
         }
     },
-    touchstart: function(this: IVControl, e: TouchEvent): void {
+    touch: function(this: IVControl, e: TouchEvent): void {
         this.touchX = e.touches[0].clientX;
         this.touchY = e.touches[0].clientY;
         this.canTouchScroll = false;
@@ -233,7 +233,7 @@ export let methods = {
         this.touchX = e.touches[0].clientX;
         this.touchY = e.touches[0].clientY;
     },
-    touchend: function(this: IVControl): void {
+    end: function(this: IVControl): void {
         this.alreadySb = false;
     },
     refreshLength: function(this: IVControl): void {

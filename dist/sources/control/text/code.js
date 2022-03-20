@@ -184,7 +184,8 @@ exports.data = {
     'lengthHeight': 0,
     'touchX': 0,
     'touchY': 0,
-    'canTouch': false,
+    'canTouchScroll': false,
+    'alreadySb': false,
     'lastDownTime': 0,
     'localData': {
         'en': {
@@ -256,20 +257,32 @@ exports.methods = {
                 if (this.$refs.text.scrollTop > 0) {
                     e.stopPropagation();
                 }
-                else if (this.$refs.text.scrollLeft > 0 && this.$refs.text.scrollHeight === this.$refs.text.clientHeight) {
+                else if (this.$refs.text.scrollLeft > 0) {
                     e.stopPropagation();
                     e.preventDefault();
                     this.$refs.text.scrollLeft += e.deltaY;
+                }
+                else {
+                    if (!this.isMulti) {
+                        e.direction = 'h';
+                    }
+                    this.$emit('scrollborder', e);
                 }
             }
             else {
                 if (this.$refs.text.scrollTop < this.maxScrollTop) {
                     e.stopPropagation();
                 }
-                else if (this.$refs.text.scrollLeft < this.maxScrollLeft && this.$refs.text.scrollHeight === this.$refs.text.clientHeight) {
+                else if (this.$refs.text.scrollLeft < this.maxScrollLeft) {
                     e.stopPropagation();
                     e.preventDefault();
                     this.$refs.text.scrollLeft += e.deltaY;
+                }
+                else {
+                    if (!this.isMulti) {
+                        e.direction = 'h';
+                    }
+                    this.$emit('scrollborder', e);
                 }
             }
         }
@@ -278,20 +291,28 @@ exports.methods = {
                 if (this.$refs.text.scrollLeft > 0) {
                     e.stopPropagation();
                 }
-                else if (this.$refs.text.scrollTop > 0 && this.$refs.text.scrollWidth === this.$refs.text.clientWidth) {
+                else if (this.$refs.text.scrollTop > 0) {
                     e.stopPropagation();
                     e.preventDefault();
                     this.$refs.text.scrollTop += e.deltaX;
+                }
+                else {
+                    e.direction = 'v';
+                    this.$emit('scrollborder', e);
                 }
             }
             else {
                 if (this.$refs.text.scrollLeft < this.maxScrollLeft) {
                     e.stopPropagation();
                 }
-                else if (this.$refs.text.scrollTop < this.maxScrollTop && this.$refs.text.scrollWidth === this.$refs.text.clientWidth) {
+                else if (this.$refs.text.scrollTop < this.maxScrollTop) {
                     e.stopPropagation();
                     e.preventDefault();
                     this.$refs.text.scrollTop += e.deltaX;
+                }
+                else {
+                    e.direction = 'v';
+                    this.$emit('scrollborder', e);
                 }
             }
         }
@@ -299,7 +320,7 @@ exports.methods = {
     inputTouch: function (e) {
         this.touchX = e.touches[0].clientX;
         this.touchY = e.touches[0].clientY;
-        this.canTouch = false;
+        this.canTouchScroll = false;
         if (navigator.clipboard) {
             clickgo.dom.bindLong(e, () => {
                 clickgo.form.showPop(this.$el, this.$refs.pop, e);
@@ -309,20 +330,33 @@ exports.methods = {
     move: function (e) {
         let deltaX = this.touchX - e.touches[0].clientX;
         let deltaY = this.touchY - e.touches[0].clientY;
-        if (this.canTouch) {
+        if (this.canTouchScroll) {
+            e.stopPropagation();
             return;
         }
         if (Math.abs(deltaY) > Math.abs(deltaX)) {
             if (deltaY < 0) {
                 if (this.$refs.text.scrollTop > 0) {
                     e.stopPropagation();
-                    this.canTouch = true;
+                    this.canTouchScroll = true;
+                }
+                else {
+                    if (!this.alreadySb) {
+                        this.alreadySb = true;
+                        this.$emit('scrollborder', e);
+                    }
                 }
             }
             else {
                 if (this.$refs.text.scrollTop < this.maxScrollTop) {
                     e.stopPropagation();
-                    this.canTouch = true;
+                    this.canTouchScroll = true;
+                }
+                else {
+                    if (!this.alreadySb) {
+                        this.alreadySb = true;
+                        this.$emit('scrollborder', e);
+                    }
                 }
             }
         }
@@ -330,18 +364,33 @@ exports.methods = {
             if (deltaX < 0) {
                 if (this.$refs.text.scrollLeft > 0) {
                     e.stopPropagation();
-                    this.canTouch = true;
+                    this.canTouchScroll = true;
+                }
+                else {
+                    if (!this.alreadySb) {
+                        this.alreadySb = true;
+                        this.$emit('scrollborder', e);
+                    }
                 }
             }
             else {
                 if (this.$refs.text.scrollLeft < this.maxScrollLeft) {
                     e.stopPropagation();
-                    this.canTouch = true;
+                    this.canTouchScroll = true;
+                }
+                else {
+                    if (!this.alreadySb) {
+                        this.alreadySb = true;
+                        this.$emit('scrollborder', e);
+                    }
                 }
             }
         }
         this.touchX = e.touches[0].clientX;
         this.touchY = e.touches[0].clientY;
+    },
+    end: function () {
+        this.alreadySb = false;
     },
     contextmenu: function (e) {
         if (!navigator.clipboard) {

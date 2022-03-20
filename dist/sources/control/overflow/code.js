@@ -136,7 +136,7 @@ exports.methods = {
             }
         }
     },
-    touchstart: function (e) {
+    touch: function (e) {
         this.touchX = e.touches[0].clientX;
         this.touchY = e.touches[0].clientY;
         this.canTouchScroll = false;
@@ -203,7 +203,7 @@ exports.methods = {
         this.touchX = e.touches[0].clientX;
         this.touchY = e.touches[0].clientY;
     },
-    touchend: function () {
+    end: function () {
         this.alreadySb = false;
     },
     refreshLength: function () {

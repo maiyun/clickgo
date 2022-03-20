@@ -178,7 +178,8 @@ export let data = {
 
     'touchX': 0,
     'touchY': 0,
-    'canTouch': false,      // --- 按下后第一次的拖动判断可拖动后，则后面此次都可拖动（交由浏览器可自行处理） ---
+    'canTouchScroll': false,      // --- 按下后第一次的拖动判断可拖动后，则后面此次都可拖动（交由浏览器可自行处理） ---
+    'alreadySb': false,
     'lastDownTime': 0,      // --- mouse 或 touch 的时间戳 ---
 
     'localData': {
@@ -259,11 +260,18 @@ export let methods = {
                     // --- 可以滚动 ---
                     e.stopPropagation();
                 }
-                else if (this.$refs.text.scrollLeft > 0 && this.$refs.text.scrollHeight === this.$refs.text.clientHeight) {
+                else if (this.$refs.text.scrollLeft > 0) {
                     // --- 上面不能滚但左边可以 ---
                     e.stopPropagation();
                     e.preventDefault();
                     this.$refs.text.scrollLeft += e.deltaY;
+                }
+                else {
+                    // --- 上边左边都不能滚 ---
+                    if (!this.isMulti) {
+                        (e as any).direction = 'h';
+                    }
+                    this.$emit('scrollborder', e);
                 }
             }
             else {
@@ -271,10 +279,17 @@ export let methods = {
                 if (this.$refs.text.scrollTop < this.maxScrollTop) {
                     e.stopPropagation();
                 }
-                else if (this.$refs.text.scrollLeft < this.maxScrollLeft && this.$refs.text.scrollHeight === this.$refs.text.clientHeight) {
+                else if (this.$refs.text.scrollLeft < this.maxScrollLeft) {
                     e.stopPropagation();
                     e.preventDefault();
                     this.$refs.text.scrollLeft += e.deltaY;
+                }
+                else {
+                    // --- 下边右边都不能滚 ---
+                    if (!this.isMulti) {
+                        (e as any).direction = 'h';
+                    }
+                    this.$emit('scrollborder', e);
                 }
             }
         }
@@ -286,11 +301,16 @@ export let methods = {
                     // --- 可以滚动 ---
                     e.stopPropagation();
                 }
-                else if (this.$refs.text.scrollTop > 0 && this.$refs.text.scrollWidth === this.$refs.text.clientWidth) {
+                else if (this.$refs.text.scrollTop > 0) {
                     // --- 左面不能滚但上边可以 ---
                     e.stopPropagation();
                     e.preventDefault();
                     this.$refs.text.scrollTop += e.deltaX;
+                }
+                else {
+                    // --- 左边上边都不能滚 ---
+                    (e as any).direction = 'v';
+                    this.$emit('scrollborder', e);
                 }
             }
             else {
@@ -298,10 +318,15 @@ export let methods = {
                 if (this.$refs.text.scrollLeft < this.maxScrollLeft) {
                     e.stopPropagation();
                 }
-                else if (this.$refs.text.scrollTop < this.maxScrollTop && this.$refs.text.scrollWidth === this.$refs.text.clientWidth) {
+                else if (this.$refs.text.scrollTop < this.maxScrollTop) {
                     e.stopPropagation();
                     e.preventDefault();
                     this.$refs.text.scrollTop += e.deltaX;
+                }
+                else {
+                    // --- 右边下边都不能滚 ---
+                    (e as any).direction = 'v';
+                    this.$emit('scrollborder', e);
                 }
             }
         }
@@ -309,8 +334,7 @@ export let methods = {
     inputTouch: function(this: IVControl, e: TouchEvent): void {
         this.touchX = e.touches[0].clientX;
         this.touchY = e.touches[0].clientY;
-        // --- 按下后第一次的拖动判断可拖动后，则后面此次都可拖动（交由浏览器可自行处理） ---
-        this.canTouch = false;
+        this.canTouchScroll = false;
         // --- 长按触发 contextmenu ---
         if (navigator.clipboard) {
             clickgo.dom.bindLong(e, () => {
@@ -322,7 +346,8 @@ export let methods = {
         // --- 必须有这个，要不然被上层的 e.preventDefault(); 给屏蔽不能拖动，可拖时必须 stopPropagation ---
         let deltaX = this.touchX - e.touches[0].clientX;
         let deltaY = this.touchY - e.touches[0].clientY;
-        if (this.canTouch) {
+        if (this.canTouchScroll) {
+            e.stopPropagation();
             return;
         }
         if (Math.abs(deltaY) > Math.abs(deltaX)) {
@@ -332,14 +357,26 @@ export let methods = {
                 if (this.$refs.text.scrollTop > 0) {
                     // --- 可以滚动 ---
                     e.stopPropagation();
-                    this.canTouch = true;
+                    this.canTouchScroll = true;
+                }
+                else {
+                    if (!this.alreadySb) {
+                        this.alreadySb = true;
+                        this.$emit('scrollborder', e);
+                    }
                 }
             }
             else {
                 // --- 向下滚 ---
                 if (this.$refs.text.scrollTop < this.maxScrollTop) {
                     e.stopPropagation();
-                    this.canTouch = true;
+                    this.canTouchScroll = true;
+                }
+                else {
+                    if (!this.alreadySb) {
+                        this.alreadySb = true;
+                        this.$emit('scrollborder', e);
+                    }
                 }
             }
         }
@@ -350,19 +387,34 @@ export let methods = {
                 if (this.$refs.text.scrollLeft > 0) {
                     // --- 可以滚动 ---
                     e.stopPropagation();
-                    this.canTouch = true;
+                    this.canTouchScroll = true;
+                }
+                else {
+                    if (!this.alreadySb) {
+                        this.alreadySb = true;
+                        this.$emit('scrollborder', e);
+                    }
                 }
             }
             else {
                 // --- 向右滚 ---
                 if (this.$refs.text.scrollLeft < this.maxScrollLeft) {
                     e.stopPropagation();
-                    this.canTouch = true;
+                    this.canTouchScroll = true;
+                }
+                else {
+                    if (!this.alreadySb) {
+                        this.alreadySb = true;
+                        this.$emit('scrollborder', e);
+                    }
                 }
             }
         }
         this.touchX = e.touches[0].clientX;
         this.touchY = e.touches[0].clientY;
+    },
+    end: function(this: IVControl): void {
+        this.alreadySb = false;
     },
 
     contextmenu: function(this: IVControl, e: MouseEvent): void {

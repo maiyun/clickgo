@@ -2,7 +2,7 @@
     <layout direction="v" gutter="10" style="padding: 10px; flex: 1; width: 0;">
         <label>Text Length: {{value.length}}, Selection Start: {{selectionStart}}, Selection End: {{selectionEnd}}</label>
         <label>Scroll Left: {{scrollLeft}}, Scroll Top: {{scrollTop}}, Length: {{length}}, Client Height: {{clientHeight}}, Client Width: {{clientWidth}}</label>
-        <text v-model="value" :multi="multi" :disabled="disabled" :readonly="readonly" :password="password" :wrap="wrap" :border="border" v-model:scroll-left="scrollLeft" v-model:scroll-top="scrollTop" v-model:selection-start="selectionStart" v-model:selection-end="selectionEnd" @resize="clientHeight = $event" @resizen="clientWidth = $event" @change="length = $event" :style="{'flex': multi ? '1' : undefined, 'line-height': lineHeight, 'font-size': fontSize + 'px', 'background': background, 'color': background ? '#FFF' : undefined, 'height': multi ? undefined : '30px'}">
+        <text v-model="value" :multi="multi" :disabled="disabled" :readonly="readonly" :password="password" :wrap="wrap" :border="border" v-model:scroll-left="scrollLeft" v-model:scroll-top="scrollTop" v-model:selection-start="selectionStart" v-model:selection-end="selectionEnd" @resize="clientHeight = $event" @resizen="clientWidth = $event" @change="length = $event" @scrollborder="scrollborder" :style="{'flex': multi ? '1' : undefined, 'line-height': lineHeight, 'font-size': fontSize + 'px', 'background': background, 'color': background ? '#FFF' : undefined, 'height': multi ? undefined : '30px'}">
             <menulist v-if="menu">
                 <menulist-item>Custom</menulist-item>
             </menulist>
@@ -17,6 +17,7 @@
             <button @click="password = !password" style="flex: 1; height: 30px;">{{password ? '' : '!'}}password</button>
             <button @click="wrap = !wrap" style="flex: 1; height: 30px;">{{wrap ? '' : '!'}}wrap</button>
             <button @click="menu = !menu" style="flex: 1; height: 30px;">{{menu ? '' : '!'}}menu</button>
+            <button @click="gesture = !gesture" style="flex: 1; height: 30px;">{{gesture ? '' : '!'}}gesture</button>
         </layout>
         <layout gutter="10">
             <button @click="lineHeight = lineHeight === 1 ? 1.5 : 1" style="flex: 1; height: 30px;">Set line-height {{lineHeight === 1 ? 1.5 : 1}}</button>
