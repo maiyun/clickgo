@@ -334,7 +334,9 @@ function bindDown(oe, opt) {
     let isStart = false;
     let end;
     let move = function (e) {
-        e.preventDefault();
+        if (!e.target || !e.target.offsetParent) {
+            e.preventDefault();
+        }
         let x = e instanceof MouseEvent ? e.clientX : e.touches[0].clientX;
         let y = e instanceof MouseEvent ? e.clientY : e.touches[0].clientY;
         if (x === ox && y === oy) {
@@ -461,7 +463,7 @@ function bindGestureAnimation(opt) {
                 return;
             }
             gestureElement.style.opacity = '1';
-            if (xxAbs === 120) {
+            if (xxAbs === 90) {
                 bindGestureData.dir = 'left';
                 gestureElement.classList.add('done');
             }
@@ -471,7 +473,7 @@ function bindGestureAnimation(opt) {
             }
             gestureElement.style.top = rect.top + ((rect.height - 20) / 2) + 'px';
             gestureElement.style.left = rect.left - 10 + (xxAbs / 1.5) + 'px';
-            gestureElement.style.transform = 'scale(' + (xxAbs / 120) + ')';
+            gestureElement.style.transform = 'scale(' + (xxAbs / 90) + ')';
         }
         else {
             if (!dirs.includes('right')) {
@@ -480,7 +482,7 @@ function bindGestureAnimation(opt) {
                 return;
             }
             gestureElement.style.opacity = '1';
-            if (xxAbs === 120) {
+            if (xxAbs === 90) {
                 bindGestureData.dir = 'right';
                 gestureElement.classList.add('done');
             }
@@ -490,7 +492,7 @@ function bindGestureAnimation(opt) {
             }
             gestureElement.style.top = rect.top + ((rect.height - 20) / 2) + 'px';
             gestureElement.style.left = rect.left + rect.width - 10 - (xxAbs / 1.5) + 'px';
-            gestureElement.style.transform = 'scale(' + (xxAbs / 120) + ')';
+            gestureElement.style.transform = 'scale(' + (xxAbs / 90) + ')';
         }
     }
     else {
@@ -501,7 +503,7 @@ function bindGestureAnimation(opt) {
                 return;
             }
             gestureElement.style.opacity = '1';
-            if (xyAbs === 120) {
+            if (xyAbs === 90) {
                 bindGestureData.dir = 'top';
                 gestureElement.classList.add('done');
             }
@@ -511,7 +513,7 @@ function bindGestureAnimation(opt) {
             }
             gestureElement.style.left = rect.left + ((rect.width - 20) / 2) + 'px';
             gestureElement.style.top = rect.top - 10 + (xyAbs / 1.5) + 'px';
-            gestureElement.style.transform = 'scale(' + (xyAbs / 120) + ')';
+            gestureElement.style.transform = 'scale(' + (xyAbs / 90) + ')';
         }
         else {
             if (!dirs.includes('bottom')) {
@@ -520,7 +522,7 @@ function bindGestureAnimation(opt) {
                 return;
             }
             gestureElement.style.opacity = '1';
-            if (xyAbs === 120) {
+            if (xyAbs === 90) {
                 bindGestureData.dir = 'bottom';
                 gestureElement.classList.add('done');
             }
@@ -530,7 +532,7 @@ function bindGestureAnimation(opt) {
             }
             gestureElement.style.left = rect.left + ((rect.width - 20) / 2) + 'px';
             gestureElement.style.top = rect.top + rect.height - 10 - (xyAbs / 1.5) + 'px';
-            gestureElement.style.transform = 'scale(' + (xyAbs / 120) + ')';
+            gestureElement.style.transform = 'scale(' + (xyAbs / 90) + ')';
         }
     }
     if (bindGestureData.xx === bindGestureData.tx && bindGestureData.xy === bindGestureData.ty) {
@@ -588,8 +590,8 @@ function bindGesture(e, opt = {}) {
                             return;
                         }
                         gestureElement.style.opacity = '1';
-                        if (xxAbs > 120) {
-                            xxAbs = 120;
+                        if (xxAbs > 90) {
+                            xxAbs = 90;
                             dir = 'left';
                             gestureElement.classList.add('done');
                         }
@@ -599,7 +601,7 @@ function bindGesture(e, opt = {}) {
                         }
                         gestureElement.style.top = rect.top + ((rect.height - 20) / 2) + 'px';
                         gestureElement.style.left = rect.left - 10 + (xxAbs / 1.5) + 'px';
-                        gestureElement.style.transform = 'scale(' + (xxAbs / 120) + ')';
+                        gestureElement.style.transform = 'scale(' + (xxAbs / 90) + ')';
                     }
                     else {
                         if (!dirs.includes('right')) {
@@ -607,8 +609,8 @@ function bindGesture(e, opt = {}) {
                             return;
                         }
                         gestureElement.style.opacity = '1';
-                        if (xxAbs > 120) {
-                            xxAbs = 120;
+                        if (xxAbs > 90) {
+                            xxAbs = 90;
                             dir = 'right';
                             gestureElement.classList.add('done');
                         }
@@ -618,7 +620,7 @@ function bindGesture(e, opt = {}) {
                         }
                         gestureElement.style.top = rect.top + ((rect.height - 20) / 2) + 'px';
                         gestureElement.style.left = rect.left + rect.width - 10 - (xxAbs / 1.5) + 'px';
-                        gestureElement.style.transform = 'scale(' + (xxAbs / 120) + ')';
+                        gestureElement.style.transform = 'scale(' + (xxAbs / 90) + ')';
                     }
                 }
                 else {
@@ -628,8 +630,8 @@ function bindGesture(e, opt = {}) {
                             return;
                         }
                         gestureElement.style.opacity = '1';
-                        if (xyAbs > 120) {
-                            xyAbs = 120;
+                        if (xyAbs > 90) {
+                            xyAbs = 90;
                             dir = 'top';
                             gestureElement.classList.add('done');
                         }
@@ -639,7 +641,7 @@ function bindGesture(e, opt = {}) {
                         }
                         gestureElement.style.left = rect.left + ((rect.width - 20) / 2) + 'px';
                         gestureElement.style.top = rect.top - 10 + (xyAbs / 1.5) + 'px';
-                        gestureElement.style.transform = 'scale(' + (xyAbs / 120) + ')';
+                        gestureElement.style.transform = 'scale(' + (xyAbs / 90) + ')';
                     }
                     else {
                         if (!dirs.includes('bottom')) {
@@ -647,8 +649,8 @@ function bindGesture(e, opt = {}) {
                             return;
                         }
                         gestureElement.style.opacity = '1';
-                        if (xyAbs > 120) {
-                            xyAbs = 120;
+                        if (xyAbs > 90) {
+                            xyAbs = 90;
                             dir = 'bottom';
                             gestureElement.classList.add('done');
                         }
@@ -658,7 +660,7 @@ function bindGesture(e, opt = {}) {
                         }
                         gestureElement.style.left = rect.left + ((rect.width - 20) / 2) + 'px';
                         gestureElement.style.top = rect.top + rect.height - 10 - (xyAbs / 1.5) + 'px';
-                        gestureElement.style.transform = 'scale(' + (xyAbs / 120) + ')';
+                        gestureElement.style.transform = 'scale(' + (xyAbs / 90) + ')';
                     }
                 }
             },
@@ -699,18 +701,18 @@ function bindGesture(e, opt = {}) {
             y = (_d = e.y) !== null && _d !== void 0 ? _d : 0;
         }
         let tx = bindGestureData.tx + x;
-        if (tx > 120) {
-            tx = 120;
+        if (tx > 90) {
+            tx = 90;
         }
-        else if (tx < -120) {
-            tx = -120;
+        else if (tx < -90) {
+            tx = -90;
         }
         let ty = bindGestureData.ty + y;
-        if (ty > 120) {
-            ty = 120;
+        if (ty > 90) {
+            ty = 90;
         }
-        else if (ty < -120) {
-            ty = -120;
+        else if (ty < -90) {
+            ty = -90;
         }
         bindGestureData.tx = tx;
         bindGestureData.ty = ty;

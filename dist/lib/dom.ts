@@ -426,7 +426,9 @@ export function bindDown(oe: MouseEvent | TouchEvent, opt: { 'down'?: (e: MouseE
     let end: (e: MouseEvent | TouchEvent) => void;
     let move = function(e: MouseEvent | TouchEvent): void {
         // --- 虽然上层已经有 preventDefault 了，但是有可能 e.target 会被注销，这样就响应不到上层的 preventDefault 事件，所以要在这里再加一个 ---
-        e.preventDefault();
+        if (!e.target || !(e.target as HTMLElement).offsetParent) {
+            e.preventDefault();
+        }
         let x: number = e instanceof MouseEvent ? e.clientX : e.touches[0].clientX;
         let y: number = e instanceof MouseEvent ? e.clientY : e.touches[0].clientY;
         if (x === ox && y === oy) {
@@ -568,7 +570,7 @@ function bindGestureAnimation(opt: { 'dirs'?: ('top' | 'right' | 'bottom' | 'lef
                 return;
             }
             gestureElement.style.opacity = '1';
-            if (xxAbs === 120) {
+            if (xxAbs === 90) {
                 bindGestureData.dir = 'left';
                 gestureElement.classList.add('done');
             }
@@ -578,7 +580,7 @@ function bindGestureAnimation(opt: { 'dirs'?: ('top' | 'right' | 'bottom' | 'lef
             }
             gestureElement.style.top = rect.top + ((rect.height - 20) / 2) + 'px';
             gestureElement.style.left = rect.left - 10 + (xxAbs / 1.5) + 'px';
-            gestureElement.style.transform = 'scale(' + (xxAbs / 120) + ')';
+            gestureElement.style.transform = 'scale(' + (xxAbs / 90) + ')';
         }
         else {
             // --- right ---
@@ -588,7 +590,7 @@ function bindGestureAnimation(opt: { 'dirs'?: ('top' | 'right' | 'bottom' | 'lef
                 return;
             }
             gestureElement.style.opacity = '1';
-            if (xxAbs === 120) {
+            if (xxAbs === 90) {
                 bindGestureData.dir = 'right';
                 gestureElement.classList.add('done');
             }
@@ -598,7 +600,7 @@ function bindGestureAnimation(opt: { 'dirs'?: ('top' | 'right' | 'bottom' | 'lef
             }
             gestureElement.style.top = rect.top + ((rect.height - 20) / 2) + 'px';
             gestureElement.style.left = rect.left + rect.width - 10 - (xxAbs / 1.5) + 'px';
-            gestureElement.style.transform = 'scale(' + (xxAbs / 120) + ')';
+            gestureElement.style.transform = 'scale(' + (xxAbs / 90) + ')';
         }
     }
     else {
@@ -610,7 +612,7 @@ function bindGestureAnimation(opt: { 'dirs'?: ('top' | 'right' | 'bottom' | 'lef
                 return;
             }
             gestureElement.style.opacity = '1';
-            if (xyAbs === 120) {
+            if (xyAbs === 90) {
                 bindGestureData.dir = 'top';
                 gestureElement.classList.add('done');
             }
@@ -620,7 +622,7 @@ function bindGestureAnimation(opt: { 'dirs'?: ('top' | 'right' | 'bottom' | 'lef
             }
             gestureElement.style.left = rect.left + ((rect.width - 20) / 2) + 'px';
             gestureElement.style.top = rect.top - 10 + (xyAbs / 1.5) + 'px';
-            gestureElement.style.transform = 'scale(' + (xyAbs / 120) + ')';
+            gestureElement.style.transform = 'scale(' + (xyAbs / 90) + ')';
         }
         else {
             // --- bottom ---
@@ -630,7 +632,7 @@ function bindGestureAnimation(opt: { 'dirs'?: ('top' | 'right' | 'bottom' | 'lef
                 return;
             }
             gestureElement.style.opacity = '1';
-            if (xyAbs === 120) {
+            if (xyAbs === 90) {
                 bindGestureData.dir = 'bottom';
                 gestureElement.classList.add('done');
             }
@@ -640,7 +642,7 @@ function bindGestureAnimation(opt: { 'dirs'?: ('top' | 'right' | 'bottom' | 'lef
             }
             gestureElement.style.left = rect.left + ((rect.width - 20) / 2) + 'px';
             gestureElement.style.top = rect.top + rect.height - 10 - (xyAbs / 1.5) + 'px';
-            gestureElement.style.transform = 'scale(' + (xyAbs / 120) + ')';
+            gestureElement.style.transform = 'scale(' + (xyAbs / 90) + ')';
         }
     }
 
@@ -707,8 +709,8 @@ export function bindGesture(e: MouseEvent | TouchEvent | WheelEvent | { 'x'?: nu
                             return;
                         }
                         gestureElement.style.opacity = '1';
-                        if (xxAbs > 120) {
-                            xxAbs = 120;
+                        if (xxAbs > 90) {
+                            xxAbs = 90;
                             dir = 'left';
                             gestureElement.classList.add('done');
                         }
@@ -718,7 +720,7 @@ export function bindGesture(e: MouseEvent | TouchEvent | WheelEvent | { 'x'?: nu
                         }
                         gestureElement.style.top = rect.top + ((rect.height - 20) / 2) + 'px';
                         gestureElement.style.left = rect.left - 10 + (xxAbs / 1.5) + 'px';
-                        gestureElement.style.transform = 'scale(' + (xxAbs / 120) + ')';
+                        gestureElement.style.transform = 'scale(' + (xxAbs / 90) + ')';
                     }
                     else {
                         // --- right ---
@@ -727,8 +729,8 @@ export function bindGesture(e: MouseEvent | TouchEvent | WheelEvent | { 'x'?: nu
                             return;
                         }
                         gestureElement.style.opacity = '1';
-                        if (xxAbs > 120) {
-                            xxAbs = 120;
+                        if (xxAbs > 90) {
+                            xxAbs = 90;
                             dir = 'right';
                             gestureElement.classList.add('done');
                         }
@@ -738,7 +740,7 @@ export function bindGesture(e: MouseEvent | TouchEvent | WheelEvent | { 'x'?: nu
                         }
                         gestureElement.style.top = rect.top + ((rect.height - 20) / 2) + 'px';
                         gestureElement.style.left = rect.left + rect.width - 10 - (xxAbs / 1.5) + 'px';
-                        gestureElement.style.transform = 'scale(' + (xxAbs / 120) + ')';
+                        gestureElement.style.transform = 'scale(' + (xxAbs / 90) + ')';
                     }
                 }
                 else {
@@ -749,8 +751,8 @@ export function bindGesture(e: MouseEvent | TouchEvent | WheelEvent | { 'x'?: nu
                             return;
                         }
                         gestureElement.style.opacity = '1';
-                        if (xyAbs > 120) {
-                            xyAbs = 120;
+                        if (xyAbs > 90) {
+                            xyAbs = 90;
                             dir = 'top';
                             gestureElement.classList.add('done');
                         }
@@ -760,7 +762,7 @@ export function bindGesture(e: MouseEvent | TouchEvent | WheelEvent | { 'x'?: nu
                         }
                         gestureElement.style.left = rect.left + ((rect.width - 20) / 2) + 'px';
                         gestureElement.style.top = rect.top - 10 + (xyAbs / 1.5) + 'px';
-                        gestureElement.style.transform = 'scale(' + (xyAbs / 120) + ')';
+                        gestureElement.style.transform = 'scale(' + (xyAbs / 90) + ')';
                     }
                     else {
                         // --- bottom ---
@@ -769,8 +771,8 @@ export function bindGesture(e: MouseEvent | TouchEvent | WheelEvent | { 'x'?: nu
                             return;
                         }
                         gestureElement.style.opacity = '1';
-                        if (xyAbs > 120) {
-                            xyAbs = 120;
+                        if (xyAbs > 90) {
+                            xyAbs = 90;
                             dir = 'bottom';
                             gestureElement.classList.add('done');
                         }
@@ -780,7 +782,7 @@ export function bindGesture(e: MouseEvent | TouchEvent | WheelEvent | { 'x'?: nu
                         }
                         gestureElement.style.left = rect.left + ((rect.width - 20) / 2) + 'px';
                         gestureElement.style.top = rect.top + rect.height - 10 - (xyAbs / 1.5) + 'px';
-                        gestureElement.style.transform = 'scale(' + (xyAbs / 120) + ')';
+                        gestureElement.style.transform = 'scale(' + (xyAbs / 90) + ')';
                     }
                 }
             },
@@ -821,18 +823,18 @@ export function bindGesture(e: MouseEvent | TouchEvent | WheelEvent | { 'x'?: nu
             y = e.y ?? 0;
         }
         let tx = bindGestureData.tx + x;
-        if (tx > 120) {
-            tx = 120;
+        if (tx > 90) {
+            tx = 90;
         }
-        else if (tx < -120) {
-            tx = -120;
+        else if (tx < -90) {
+            tx = -90;
         }
         let ty = bindGestureData.ty + y;
-        if (ty > 120) {
-            ty = 120;
+        if (ty > 90) {
+            ty = 90;
         }
-        else if (ty < -120) {
-            ty = -120;
+        else if (ty < -90) {
+            ty = -90;
         }
         bindGestureData.tx = tx;
         bindGestureData.ty = ty;

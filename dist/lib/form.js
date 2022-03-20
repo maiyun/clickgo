@@ -57,6 +57,9 @@ formListElement.addEventListener('wheel', function (e) {
 }, {
     'passive': false
 });
+formListElement.addEventListener('contextmenu', function (e) {
+    e.preventDefault();
+});
 let popListElement = document.createElement('div');
 popListElement.id = 'cg-pop-list';
 popListElement.addEventListener('contextmenu', function (e) {

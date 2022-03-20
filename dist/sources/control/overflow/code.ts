@@ -31,10 +31,10 @@ export let data = {
 export let computed = {
     // --- 最大可拖动的 scroll 位置 ---
     'maxScrollLeft': function(this: IVControl): number {
-        return Math.round(this.lengthWidth) - Math.round(this.clientWidth);
+        return Math.round(this.lengthWidth - this.clientWidth);
     },
     'maxScrollTop': function(this: IVControl): number {
-        return Math.round(this.lengthHeight) - Math.round(this.clientHeight);
+        return Math.round(this.lengthHeight - this.clientHeight);
     }
 };
 
@@ -73,19 +73,21 @@ export let methods = {
         }
     },
     wheel: function(this: IVControl, e: WheelEvent): void {
+        let scrollTop = Math.ceil(this.$el.scrollTop);
+        let scrollLeft = Math.ceil(this.$el.scrollLeft);
         if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
             // --- 竖向滚动 ---
             if (e.deltaY < 0) {
                 // --- 向上滚 ---
-                if (this.$el.scrollTop > 0) {
+                if (scrollTop > 0) {
                     // --- 可以滚动 ---
                     e.stopPropagation();
                 }
-                else if (this.$el.scrollLeft > 0) {
+                else if (scrollLeft > 0) {
                     // --- 上面不能滚但左边可以 ---
                     e.stopPropagation();
                     e.preventDefault();
-                    this.$el.scrollLeft += e.deltaY; // deltaY 是负数，实际上是向左
+                    this.$el.scrollLeft = scrollLeft + e.deltaY; // deltaY 是负数，实际上是向左
                 }
                 else {
                     // --- 上边左边都不能滚 ---
@@ -97,14 +99,14 @@ export let methods = {
             }
             else {
                 // --- 向下滚 ---
-                if (this.$el.scrollTop < this.maxScrollTop) {
+                if (scrollTop < this.maxScrollTop) {
                     e.stopPropagation();
                 }
-                else if (this.$el.scrollLeft < this.maxScrollLeft) {
+                else if (scrollLeft < this.maxScrollLeft) {
                     // --- 下面不能滚但右边可以 ---
                     e.stopPropagation();
                     e.preventDefault();
-                    this.$el.scrollLeft += e.deltaY;
+                    this.$el.scrollLeft = scrollLeft + e.deltaY;
                 }
                 else {
                     // --- 下边右边都不能滚 ---
@@ -119,15 +121,15 @@ export let methods = {
             // --- 横向滚动 ---
             if (e.deltaX < 0) {
                 // --- 向左滚 ---
-                if (this.$el.scrollLeft > 0) {
+                if (scrollLeft > 0) {
                     // --- 可以滚动 ---
                     e.stopPropagation();
                 }
-                else if (this.$el.scrollTop > 0) {
+                else if (scrollTop > 0) {
                     // --- 左面不能滚但上边可以 ---
                     e.stopPropagation();
                     e.preventDefault();
-                    this.$el.scrollTop += e.deltaX;
+                    this.$el.scrollTop = scrollTop + e.deltaX;
                 }
                 else {
                     // --- 左边上边都不能滚 ---
@@ -139,13 +141,13 @@ export let methods = {
             }
             else {
                 // --- 向右滚 ---
-                if (this.$el.scrollLeft < this.maxScrollLeft) {
+                if (scrollLeft < this.maxScrollLeft) {
                     e.stopPropagation();
                 }
-                else if (this.$el.scrollTop < this.maxScrollTop) {
+                else if (scrollTop < this.maxScrollTop) {
                     e.stopPropagation();
                     e.preventDefault();
-                    this.$el.scrollTop += e.deltaX;
+                    this.$el.scrollTop = scrollTop + e.deltaX;
                 }
                 else {
                     // --- 右边下边都不能滚 ---
@@ -163,10 +165,12 @@ export let methods = {
         this.canTouchScroll = false;
     },
     move: function(this: IVControl, e: TouchEvent): void {
-        // --- 必须有这个，要不然被上层的 e.preventDefault(); 给屏蔽不能拖动，可拖时必须 stopPropagation(虽然 wheel 已经有了 stioPropagation，但毕竟那是 wheel 的，touch 被preventDefault 照样不能拖动) ---
+        let scrollTop = Math.ceil(this.$el.scrollTop);
+        let scrollLeft = Math.ceil(this.$el.scrollLeft);
         let deltaX = this.touchX - e.touches[0].clientX;
         let deltaY = this.touchY - e.touches[0].clientY;
         if (this.canTouchScroll) {
+            // --- 必须有这个，要不然被上层的 e.preventDefault(); 给屏蔽不能拖动，可拖时必须 stopPropagation(虽然 wheel 已经有了 stioPropagation，但毕竟那是 wheel 的，touch 被 preventDefault 照样不能拖动) ---
             e.stopPropagation();
             return;
         }
@@ -174,7 +178,7 @@ export let methods = {
             // --- 竖向滚动 ---
             if (deltaY < 0) {
                 // --- 向上滚 ---
-                if (this.$el.scrollTop > 0) {
+                if (scrollTop > 0) {
                     // --- 可以滚动 ---
                     e.stopPropagation();
                     this.canTouchScroll = true;
@@ -188,7 +192,7 @@ export let methods = {
             }
             else {
                 // --- 向下滚 ---
-                if (this.$el.scrollTop < this.maxScrollTop) {
+                if (scrollTop < this.maxScrollTop) {
                     e.stopPropagation();
                     this.canTouchScroll = true;
                 }
@@ -204,7 +208,7 @@ export let methods = {
             // --- 横向滚动 ---
             if (deltaX < 0) {
                 // --- 向左滚 ---
-                if (this.$el.scrollLeft > 0) {
+                if (scrollLeft > 0) {
                     // --- 可以滚动 ---
                     e.stopPropagation();
                     this.canTouchScroll = true;
@@ -218,7 +222,7 @@ export let methods = {
             }
             else {
                 // --- 向右滚 ---
-                if (this.$el.scrollLeft < this.maxScrollLeft) {
+                if (scrollLeft < this.maxScrollLeft) {
                     e.stopPropagation();
                     this.canTouchScroll = true;
                 }

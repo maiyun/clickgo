@@ -62,10 +62,10 @@ exports.computed = {
         return clickgo.tool.getBoolean(this.wrap);
     },
     'maxScrollLeft': function () {
-        return Math.round(this.lengthWidth) - Math.round(this.clientWidth);
+        return Math.round(this.lengthWidth - this.clientWidth);
     },
     'maxScrollTop': function () {
-        return Math.round(this.lengthHeight) - Math.round(this.clientHeight);
+        return Math.round(this.lengthHeight - this.clientHeight);
     },
     'opMargin': function () {
         return this.padding.replace(/(\w+)/g, '-$1');
@@ -252,15 +252,17 @@ exports.methods = {
         this.refreshScroll();
     },
     wheel: function (e) {
+        let scrollTop = Math.ceil(this.$refs.text.scrollTop);
+        let scrollLeft = Math.ceil(this.$refs.text.scrollLeft);
         if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
             if (e.deltaY < 0) {
-                if (this.$refs.text.scrollTop > 0) {
+                if (scrollTop > 0) {
                     e.stopPropagation();
                 }
-                else if (this.$refs.text.scrollLeft > 0) {
+                else if (scrollLeft > 0) {
                     e.stopPropagation();
                     e.preventDefault();
-                    this.$refs.text.scrollLeft += e.deltaY;
+                    this.$refs.text.scrollLeft = scrollLeft + e.deltaY;
                 }
                 else {
                     if (!this.isMulti) {
@@ -270,13 +272,13 @@ exports.methods = {
                 }
             }
             else {
-                if (this.$refs.text.scrollTop < this.maxScrollTop) {
+                if (scrollTop < this.maxScrollTop) {
                     e.stopPropagation();
                 }
-                else if (this.$refs.text.scrollLeft < this.maxScrollLeft) {
+                else if (scrollLeft < this.maxScrollLeft) {
                     e.stopPropagation();
                     e.preventDefault();
-                    this.$refs.text.scrollLeft += e.deltaY;
+                    this.$refs.text.scrollLeft = scrollLeft + e.deltaY;
                 }
                 else {
                     if (!this.isMulti) {
@@ -288,13 +290,13 @@ exports.methods = {
         }
         else {
             if (e.deltaX < 0) {
-                if (this.$refs.text.scrollLeft > 0) {
+                if (scrollLeft > 0) {
                     e.stopPropagation();
                 }
-                else if (this.$refs.text.scrollTop > 0) {
+                else if (scrollTop > 0) {
                     e.stopPropagation();
                     e.preventDefault();
-                    this.$refs.text.scrollTop += e.deltaX;
+                    this.$refs.text.scrollTop = scrollTop + e.deltaX;
                 }
                 else {
                     e.direction = 'v';
@@ -302,13 +304,13 @@ exports.methods = {
                 }
             }
             else {
-                if (this.$refs.text.scrollLeft < this.maxScrollLeft) {
+                if (scrollLeft < this.maxScrollLeft) {
                     e.stopPropagation();
                 }
-                else if (this.$refs.text.scrollTop < this.maxScrollTop) {
+                else if (scrollTop < this.maxScrollTop) {
                     e.stopPropagation();
                     e.preventDefault();
-                    this.$refs.text.scrollTop += e.deltaX;
+                    this.$refs.text.scrollTop = scrollTop + e.deltaX;
                 }
                 else {
                     e.direction = 'v';
@@ -321,6 +323,7 @@ exports.methods = {
         this.touchX = e.touches[0].clientX;
         this.touchY = e.touches[0].clientY;
         this.canTouchScroll = false;
+        e.stopPropagation();
         if (navigator.clipboard) {
             clickgo.dom.bindLong(e, () => {
                 clickgo.form.showPop(this.$el, this.$refs.pop, e);
@@ -328,6 +331,8 @@ exports.methods = {
         }
     },
     move: function (e) {
+        let scrollTop = Math.ceil(this.$refs.text.scrollTop);
+        let scrollLeft = Math.ceil(this.$refs.text.scrollLeft);
         let deltaX = this.touchX - e.touches[0].clientX;
         let deltaY = this.touchY - e.touches[0].clientY;
         if (this.canTouchScroll) {
@@ -336,7 +341,7 @@ exports.methods = {
         }
         if (Math.abs(deltaY) > Math.abs(deltaX)) {
             if (deltaY < 0) {
-                if (this.$refs.text.scrollTop > 0) {
+                if (scrollTop > 0) {
                     e.stopPropagation();
                     this.canTouchScroll = true;
                 }
@@ -348,7 +353,7 @@ exports.methods = {
                 }
             }
             else {
-                if (this.$refs.text.scrollTop < this.maxScrollTop) {
+                if (scrollTop < this.maxScrollTop) {
                     e.stopPropagation();
                     this.canTouchScroll = true;
                 }
@@ -362,7 +367,7 @@ exports.methods = {
         }
         else {
             if (deltaX < 0) {
-                if (this.$refs.text.scrollLeft > 0) {
+                if (scrollLeft > 0) {
                     e.stopPropagation();
                     this.canTouchScroll = true;
                 }
@@ -374,7 +379,7 @@ exports.methods = {
                 }
             }
             else {
-                if (this.$refs.text.scrollLeft < this.maxScrollLeft) {
+                if (scrollLeft < this.maxScrollLeft) {
                     e.stopPropagation();
                     this.canTouchScroll = true;
                 }

@@ -27,10 +27,10 @@ exports.data = {
 };
 exports.computed = {
     'maxScrollLeft': function () {
-        return Math.round(this.lengthWidth) - Math.round(this.clientWidth);
+        return Math.round(this.lengthWidth - this.clientWidth);
     },
     'maxScrollTop': function () {
-        return Math.round(this.lengthHeight) - Math.round(this.clientHeight);
+        return Math.round(this.lengthHeight - this.clientHeight);
     }
 };
 exports.watch = {
@@ -67,15 +67,17 @@ exports.methods = {
         }
     },
     wheel: function (e) {
+        let scrollTop = Math.ceil(this.$el.scrollTop);
+        let scrollLeft = Math.ceil(this.$el.scrollLeft);
         if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
             if (e.deltaY < 0) {
-                if (this.$el.scrollTop > 0) {
+                if (scrollTop > 0) {
                     e.stopPropagation();
                 }
-                else if (this.$el.scrollLeft > 0) {
+                else if (scrollLeft > 0) {
                     e.stopPropagation();
                     e.preventDefault();
-                    this.$el.scrollLeft += e.deltaY;
+                    this.$el.scrollLeft = scrollLeft + e.deltaY;
                 }
                 else {
                     if (this.direction === 'h') {
@@ -85,13 +87,13 @@ exports.methods = {
                 }
             }
             else {
-                if (this.$el.scrollTop < this.maxScrollTop) {
+                if (scrollTop < this.maxScrollTop) {
                     e.stopPropagation();
                 }
-                else if (this.$el.scrollLeft < this.maxScrollLeft) {
+                else if (scrollLeft < this.maxScrollLeft) {
                     e.stopPropagation();
                     e.preventDefault();
-                    this.$el.scrollLeft += e.deltaY;
+                    this.$el.scrollLeft = scrollLeft + e.deltaY;
                 }
                 else {
                     if (this.direction === 'h') {
@@ -103,13 +105,13 @@ exports.methods = {
         }
         else {
             if (e.deltaX < 0) {
-                if (this.$el.scrollLeft > 0) {
+                if (scrollLeft > 0) {
                     e.stopPropagation();
                 }
-                else if (this.$el.scrollTop > 0) {
+                else if (scrollTop > 0) {
                     e.stopPropagation();
                     e.preventDefault();
-                    this.$el.scrollTop += e.deltaX;
+                    this.$el.scrollTop = scrollTop + e.deltaX;
                 }
                 else {
                     if (this.direction === 'v') {
@@ -119,13 +121,13 @@ exports.methods = {
                 }
             }
             else {
-                if (this.$el.scrollLeft < this.maxScrollLeft) {
+                if (scrollLeft < this.maxScrollLeft) {
                     e.stopPropagation();
                 }
-                else if (this.$el.scrollTop < this.maxScrollTop) {
+                else if (scrollTop < this.maxScrollTop) {
                     e.stopPropagation();
                     e.preventDefault();
-                    this.$el.scrollTop += e.deltaX;
+                    this.$el.scrollTop = scrollTop + e.deltaX;
                 }
                 else {
                     if (this.direction === 'v') {
@@ -142,6 +144,8 @@ exports.methods = {
         this.canTouchScroll = false;
     },
     move: function (e) {
+        let scrollTop = Math.ceil(this.$el.scrollTop);
+        let scrollLeft = Math.ceil(this.$el.scrollLeft);
         let deltaX = this.touchX - e.touches[0].clientX;
         let deltaY = this.touchY - e.touches[0].clientY;
         if (this.canTouchScroll) {
@@ -150,7 +154,7 @@ exports.methods = {
         }
         if (Math.abs(deltaY) > Math.abs(deltaX)) {
             if (deltaY < 0) {
-                if (this.$el.scrollTop > 0) {
+                if (scrollTop > 0) {
                     e.stopPropagation();
                     this.canTouchScroll = true;
                 }
@@ -162,7 +166,7 @@ exports.methods = {
                 }
             }
             else {
-                if (this.$el.scrollTop < this.maxScrollTop) {
+                if (scrollTop < this.maxScrollTop) {
                     e.stopPropagation();
                     this.canTouchScroll = true;
                 }
@@ -176,7 +180,7 @@ exports.methods = {
         }
         else {
             if (deltaX < 0) {
-                if (this.$el.scrollLeft > 0) {
+                if (scrollLeft > 0) {
                     e.stopPropagation();
                     this.canTouchScroll = true;
                 }
@@ -188,7 +192,7 @@ exports.methods = {
                 }
             }
             else {
-                if (this.$el.scrollLeft < this.maxScrollLeft) {
+                if (scrollLeft < this.maxScrollLeft) {
                     e.stopPropagation();
                     this.canTouchScroll = true;
                 }

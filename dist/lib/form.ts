@@ -78,6 +78,9 @@ formListElement.addEventListener('wheel', function(e): void {
 }, {
     'passive': false
 });
+formListElement.addEventListener('contextmenu', function(e): void {
+    e.preventDefault();
+});
 
 /** --- pop list 的 div --- */
 let popListElement: HTMLDivElement = document.createElement('div');
