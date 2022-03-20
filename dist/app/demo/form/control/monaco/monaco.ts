@@ -13,6 +13,9 @@ export let data = {
 };\n\nexport` + ` let methods = {
     hehe: function(): string {
         return str() + ', en.';
+    },
+    incl: function(): string {
+        return str2() + ', o.';
     }
 };\n`,
         `.red {
@@ -27,7 +30,7 @@ export let data = {
     ],
     'file': '',
     'files': {
-        'global.ts': 'declare function str(): string;'
+        'global.d.ts': 'declare function str(): string;'
     },
 
     'language': 'HTML',
@@ -36,6 +39,7 @@ export let data = {
     'theme': 'vs',
     'themes': ['vs', 'dark', 'reader'],
 
+    'add': false,
     'readonly': false,
     'disabled': false
 };
@@ -60,4 +64,8 @@ export let computed = {
 };
 
 export let methods = {
+    addInclude: function(this: IVForm): void {
+        this.add = true;
+        this.files['new.d.ts'] = 'declare function str2(): string;';
+    }
 };

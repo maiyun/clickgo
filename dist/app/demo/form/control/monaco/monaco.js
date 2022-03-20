@@ -16,6 +16,9 @@ exports.data = {
 };\n\nexport` + ` let methods = {
     hehe: function(): string {
         return str() + ', en.';
+    },
+    incl: function(): string {
+        return str2() + ', o.';
     }
 };\n`,
         `.red {
@@ -30,12 +33,13 @@ exports.data = {
     ],
     'file': '',
     'files': {
-        'global.ts': 'declare function str(): string;'
+        'global.d.ts': 'declare function str(): string;'
     },
     'language': 'HTML',
     'list': ['HTML', 'TypeScript', 'CSS', 'SCSS'],
     'theme': 'vs',
     'themes': ['vs', 'dark', 'reader'],
+    'add': false,
     'readonly': false,
     'disabled': false
 };
@@ -56,4 +60,9 @@ exports.computed = {
         return names;
     }
 };
-exports.methods = {};
+exports.methods = {
+    addInclude: function () {
+        this.add = true;
+        this.files['new.d.ts'] = 'declare function str2(): string;';
+    }
+};

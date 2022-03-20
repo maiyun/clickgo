@@ -3,10 +3,11 @@
         <label>Length: {{code.length}}</label>
         <monaco v-model="code" :language="language" :readonly="readonly" :disabled="disabled" :files="files" :theme="theme" style="flex: 1; height: 0;"></monaco>
         <layout gutter="10">
+            <button @click="addInclude" :disabled="add" style="height: 30px; flex: 1; width: 0;">Add include</button>
             <button @click="disabled = !disabled" style="height: 30px; flex: 1; width: 0;">{{disabled ? '' : '!'}}disabled</button>
             <button @click="readonly = !readonly" style="height: 30px; flex: 1; width: 0;">{{readonly ? '' : '!'}}readonly</button>
             <select v-model="theme" :data="themes" style="flex: 1; width: 0;"></select>
-            <select v-model="language" :data="list" style="flex: 2; width: 0;"></select>
+            <select v-model="language" :data="list" style="flex: 1; width: 0;"></select>
         </layout>
         <label>Include files:</label>
         <layout gutter="10" style="flex: 1; height: 0;">
