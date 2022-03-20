@@ -6,7 +6,7 @@
     }
 
     .monaco {
-        flex: 1; width: 0;
+        flex: 1; width: 0; -webkit-user-select: auto; user-select: auto;
         &.theme-dark {
             filter: invert(1) hue-rotate(170deg) brightness(.8) grayscale(.3);
         }

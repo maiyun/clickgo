@@ -108,6 +108,9 @@ exports.watch = {
 };
 exports.methods = {
     contextmenu: function (e) {
+        if (this.notInit) {
+            return;
+        }
         if (!navigator.clipboard) {
             e.stopPropagation();
             return;
@@ -117,19 +120,22 @@ exports.methods = {
         }
         clickgo.form.showPop(this.$el, this.$refs.pop, e);
     },
-    touch: function (e) {
-        if (navigator.clipboard) {
-            clickgo.dom.bindLong(e, () => {
-                clickgo.form.showPop(this.$el, this.$refs.pop, e);
-            });
-        }
-    },
     down: function (e) {
+        if (this.notInit) {
+            return;
+        }
         if (clickgo.dom.hasTouchButMouse(e)) {
             return;
         }
         if (this.$el.dataset.cgPopOpen !== undefined) {
             clickgo.form.hidePop();
+        }
+        if (e instanceof TouchEvent) {
+            if (navigator.clipboard) {
+                clickgo.dom.bindLong(e, () => {
+                    clickgo.form.showPop(this.$el, this.$refs.pop, e);
+                });
+            }
         }
     },
     execCmd: function (ac) {

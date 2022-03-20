@@ -104,6 +104,9 @@ export let watch = {
 
 export let methods = {
     contextmenu: function(this: IVControl, e: MouseEvent): void {
+        if (this.notInit) {
+            return;
+        }
         if (!navigator.clipboard) {
             e.stopPropagation();
             return;
@@ -113,19 +116,22 @@ export let methods = {
         }
         clickgo.form.showPop(this.$el, this.$refs.pop, e);
     },
-    touch: function(this: IVControl, e: TouchEvent): void {
-        if (navigator.clipboard) {
-            clickgo.dom.bindLong(e, () => {
-                clickgo.form.showPop(this.$el, this.$refs.pop, e);
-            });
-        }
-    },
     down: function(this: IVControl, e: MouseEvent | TouchEvent): void {
+        if (this.notInit) {
+            return;
+        }
         if (clickgo.dom.hasTouchButMouse(e)) {
             return;
         }
         if (this.$el.dataset.cgPopOpen !== undefined) {
             clickgo.form.hidePop();
+        }
+        if (e instanceof TouchEvent) {
+            if (navigator.clipboard) {
+                clickgo.dom.bindLong(e, () => {
+                    clickgo.form.showPop(this.$el, this.$refs.pop, e);
+                });
+            }
         }
     },
     execCmd: async function(this: IVControl, ac: string): Promise<void> {
