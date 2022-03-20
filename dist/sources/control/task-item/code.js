@@ -64,12 +64,23 @@ exports.methods = {
             return;
         }
         if (this.$el.dataset.cgPopOpen !== undefined) {
-            if (((_a = this.$refs.contextmenu) === null || _a === void 0 ? void 0 : _a.dataset.cgOpen) !== undefined) {
-                clickgo.form.hidePop();
+            if (e instanceof MouseEvent && e.button === 2) {
+                if (this.$el.dataset.cgPopOpen !== undefined) {
+                    clickgo.form.hidePop();
+                }
+            }
+            else {
+                if (((_a = this.$refs.contextmenu) === null || _a === void 0 ? void 0 : _a.dataset.cgOpen) !== undefined) {
+                    clickgo.form.hidePop();
+                }
             }
         }
-        if (e instanceof TouchEvent && this.$slots.contextmenu) {
+        if (e instanceof TouchEvent) {
             clickgo.dom.bindLong(e, () => {
+                var _a;
+                if (((_a = this.$refs.pop) === null || _a === void 0 ? void 0 : _a.dataset.cgOpen) !== undefined) {
+                    clickgo.form.hidePop();
+                }
                 clickgo.form.showPop(this.$el, this.$refs.contextmenu, 'v');
             });
         }
