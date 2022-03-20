@@ -14,9 +14,9 @@
             <button @click="longClick" style="flex: 1; height: 30px;">{{long ? '' : '!'}}long</button>
         </layout>
         <layout gutter="10">
-            <button @click="password = !password" style="flex: 1; height: 30px;">{{password ? 'Remove' : 'Set'}} password</button>
-            <button @click="wrap = !wrap" style="flex: 1; height: 30px;">{{wrap ? 'Remove' : 'Set'}} wrap</button>
-            <button @click="menu = !menu" style="flex: 1; height: 30px;">{{menu ? 'Remove' : 'Set'}} menu</button>
+            <button @click="password = !password" style="flex: 1; height: 30px;">{{password ? '' : '!'}}password</button>
+            <button @click="wrap = !wrap" style="flex: 1; height: 30px;">{{wrap ? '' : '!'}}wrap</button>
+            <button @click="menu = !menu" style="flex: 1; height: 30px;">{{menu ? '' : '!'}}menu</button>
         </layout>
         <layout gutter="10">
             <button @click="lineHeight = lineHeight === 1 ? 1.5 : 1" style="flex: 1; height: 30px;">Set line-height {{lineHeight === 1 ? 1.5 : 1}}</button>

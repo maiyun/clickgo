@@ -34,16 +34,16 @@ ${classUnfold('::selection')} {background-color: rgba(0, 120, 215, .3);}
 ${classUnfold('*')}, ${classUnfold('*::after')}, ${classUnfold('*::before')} {box-sizing: border-box; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); flex-shrink: 0;}
 ${classUnfold()}, ${classUnfold('input')}, ${classUnfold('textarea')} {font-family: "Lucida Sans Unicode", "Helvetica Neue","Helvetica","PingFang SC","Hiragino Sans GB","Noto Sans CJK SC","Noto Sans CJK","Source Han Sans","WenQuanYi Micro Hei","Microsoft YaHei",sans-serif; font-size: 12px; line-height: 1; -webkit-font-smoothing: antialiased;}
 
-#cg-rectangle {box-sizing: border-box; position: fixed; z-index: 20020002; border-radius: 3px; box-shadow: 0 0 10px rgba(0, 0, 0, .3); background: rgba(255, 255, 255, .05); pointer-events: none; opacity: 0;}
+#cg-rectangle {box-sizing: border-box; position: fixed; z-index: 20020002; border-radius: 3px; box-shadow: 0 0 10px rgba(0, 0, 0, .25); background: rgba(255, 255, 255, .05); pointer-events: none; opacity: 0;}
 #cg-circular {box-sizing: border-box; position: fixed; z-index: 20020003; border: solid 3px #ff976a; border-radius: 50%; filter: drop-shadow(0 0 3px #ff976a); pointer-events: none; opacity: 0;}
-#cg-gesture {box-sizing: border-box; position: fixed; z-index: 20020004; border: solid 3px #ff976a; border-radius: 50%; filter: drop-shadow(0 0 3px #ff976a); pointer-events: none; opacity: 0; transform: scale(0); width: 20px; height: 20px;}
-#cg-gesture.done {background: #ff976a;}
+#cg-gesture {box-sizing: border-box; position: fixed; z-index: 20020004; border-radius: 50%; pointer-events: none; opacity: 0; background: rgba(0, 0, 0, .3); box-shadow: 0 5px 20px rgba(0, 0, 0, .25); transform: scale(0); width: 20px; height: 20px;}
+#cg-gesture.done {background: rgba(255, 255, 255, .3); border: solid 3px rgba(0, 0, 0, .3)}
 
-[data-cg-pop] {position: fixed; box-shadow: 1px 1px 5px rgba(0, 0, 0, .2); transition: .1s ease-out; transition-property: transform, opacity; transform: translateY(-10px); opacity: 0;}
+[data-cg-pop] {position: fixed; box-shadow: 0px 5px 20px rgba(0, 0, 0, .25); transition: .1s ease-out; transition-property: transform, opacity; transform: translateY(-10px); opacity: 0;}
 [data-cg-pop]:not([data-cg-open]) {pointer-events: none;}
 [data-cg-pop][data-cg-open] {transform: translateY(0px); opacity: 1;}
 
-.cg-system-notify {background: rgba(0, 0, 0, .5); position: fixed; padding: 15px; border-radius: 3px; right: 0; top: 0; width: 280px; font-size: 14px; display: flex; transition: .1s ease-out; transition-property: transform, opacity; overflow: hidden; color: #f6f6f6; box-shadow: 0 0 10px rgba(0, 0, 0, .1); -webkit-backdrop-filter: blur(20px) brightness(1.1); backdrop-filter: blur(20px) brightness(1.1);}
+.cg-system-notify {background: rgba(0, 0, 0, .5); position: fixed; padding: 15px; border-radius: 3px; right: 0; top: 0; width: 280px; font-size: 14px; display: flex; transition: .1s ease-out; transition-property: transform, opacity; overflow: hidden; color: #f6f6f6; box-shadow: 0 5px 20px rgba(0, 0, 0, .25); -webkit-backdrop-filter: blur(20px) brightness(1.1); backdrop-filter: blur(20px) brightness(1.1);}
 .cg-system-icon {margin-right: 10px; width: 16px; height: 16px; border-radius: 50%;}
 .cg-system-icon-primary {background: #07c160;}
 .cg-system-icon-info {background: #1989fa;}
@@ -400,116 +400,333 @@ function bindDown(oe, opt) {
     (_a = opt.down) === null || _a === void 0 ? void 0 : _a.call(opt, oe);
 }
 exports.bindDown = bindDown;
-function bindGesture(e, opt = {}) {
+let bindGestureData = {
+    'el': null,
+    'xx': 0,
+    'xy': 0,
+    'tx': 0,
+    'ty': 0,
+    'dir': null,
+    'timers': {
+        'ani': 0,
+        'sleep': 0
+    }
+};
+function clearGestureData() {
+    bindGestureData.xx = 0;
+    bindGestureData.xy = 0;
+    bindGestureData.tx = 0;
+    bindGestureData.ty = 0;
+}
+function bindGestureAnimation(opt) {
     var _a;
+    if (!bindGestureData.el) {
+        return;
+    }
+    let speed = 6;
     let gestureElement = document.getElementById('cg-gesture');
-    let el = (_a = opt.el) !== null && _a !== void 0 ? _a : e.currentTarget;
-    let rect = el.getBoundingClientRect();
-    let x = e instanceof MouseEvent ? e.clientX : e.touches[0].clientX;
-    let y = e instanceof MouseEvent ? e.clientY : e.touches[0].clientY;
-    let dir = null;
-    bindDown(e, {
-        start: () => {
-            gestureElement.style.transform = 'scale(0)';
-        },
-        move: (e) => {
-            e.preventDefault();
-            let nx = e instanceof MouseEvent ? e.clientX : e.touches[0].clientX;
-            let ny = e instanceof MouseEvent ? e.clientY : e.touches[0].clientY;
-            let xx = nx - x;
-            let xy = ny - y;
-            let xxAbs = Math.abs(xx);
-            let xyAbs = Math.abs(xy);
-            if ((!opt.top && !opt.bottom) || ((xxAbs > xyAbs) && (opt.left || opt.right))) {
-                if (xx > 0) {
-                    if (!opt.left) {
-                        gestureElement.style.opacity = '0';
-                        return;
-                    }
-                    gestureElement.style.opacity = '1';
-                    if (xxAbs > 120) {
-                        xxAbs = 120;
-                        dir = 'left';
-                        gestureElement.classList.add('done');
-                    }
-                    else {
-                        dir = null;
-                        gestureElement.classList.remove('done');
-                    }
-                    gestureElement.style.top = rect.top + ((rect.height - 20) / 2) + 'px';
-                    gestureElement.style.left = rect.left - 10 + (xxAbs / 1.5) + 'px';
-                    gestureElement.style.transform = 'scale(' + (xxAbs / 120) + ')';
-                }
-                else {
-                    if (!opt.right) {
-                        gestureElement.style.opacity = '0';
-                        return;
-                    }
-                    gestureElement.style.opacity = '1';
-                    if (xxAbs > 120) {
-                        xxAbs = 120;
-                        dir = 'right';
-                        gestureElement.classList.add('done');
-                    }
-                    else {
-                        dir = null;
-                        gestureElement.classList.remove('done');
-                    }
-                    gestureElement.style.top = rect.top + ((rect.height - 20) / 2) + 'px';
-                    gestureElement.style.left = rect.left + rect.width - 10 - (xxAbs / 1.5) + 'px';
-                    gestureElement.style.transform = 'scale(' + (xxAbs / 120) + ')';
-                }
-            }
-            else {
-                if (xy > 0) {
-                    if (!opt.top) {
-                        gestureElement.style.opacity = '0';
-                        return;
-                    }
-                    gestureElement.style.opacity = '1';
-                    if (xyAbs > 120) {
-                        xyAbs = 120;
-                        dir = 'top';
-                        gestureElement.classList.add('done');
-                    }
-                    else {
-                        dir = null;
-                        gestureElement.classList.remove('done');
-                    }
-                    gestureElement.style.left = rect.left + ((rect.width - 20) / 2) + 'px';
-                    gestureElement.style.top = rect.top - 10 + (xyAbs / 1.5) + 'px';
-                    gestureElement.style.transform = 'scale(' + (xyAbs / 120) + ')';
-                }
-                else {
-                    if (!opt.bottom) {
-                        gestureElement.style.opacity = '0';
-                        return;
-                    }
-                    gestureElement.style.opacity = '1';
-                    if (xyAbs > 120) {
-                        xyAbs = 120;
-                        dir = 'bottom';
-                        gestureElement.classList.add('done');
-                    }
-                    else {
-                        dir = null;
-                        gestureElement.classList.remove('done');
-                    }
-                    gestureElement.style.left = rect.left + ((rect.width - 20) / 2) + 'px';
-                    gestureElement.style.top = rect.top + rect.height - 10 - (xyAbs / 1.5) + 'px';
-                    gestureElement.style.transform = 'scale(' + (xyAbs / 120) + ')';
-                }
-            }
-        },
-        end: (e) => {
-            var _a;
-            gestureElement.style.opacity = '0';
-            if (!dir) {
+    let rect = bindGestureData.el.getBoundingClientRect();
+    let dirs = (_a = opt.dirs) !== null && _a !== void 0 ? _a : ['top', 'bottom'];
+    if (bindGestureData.tx > bindGestureData.xx) {
+        bindGestureData.xx += speed;
+        if (bindGestureData.xx > bindGestureData.tx) {
+            bindGestureData.xx = bindGestureData.tx;
+        }
+    }
+    else {
+        bindGestureData.xx -= speed;
+        if (bindGestureData.xx < bindGestureData.tx) {
+            bindGestureData.xx = bindGestureData.tx;
+        }
+    }
+    if (bindGestureData.ty > bindGestureData.xy) {
+        bindGestureData.xy += speed;
+        if (bindGestureData.xy > bindGestureData.ty) {
+            bindGestureData.xy = bindGestureData.ty;
+        }
+    }
+    else {
+        bindGestureData.xy -= speed;
+        if (bindGestureData.xy < bindGestureData.ty) {
+            bindGestureData.xy = bindGestureData.ty;
+        }
+    }
+    let xxAbs = Math.abs(bindGestureData.xx);
+    let xyAbs = Math.abs(bindGestureData.xy);
+    if ((!dirs.includes('top') && !dirs.includes('bottom')) || ((xxAbs > xyAbs) && (dirs.includes('left') || dirs.includes('right')))) {
+        if (bindGestureData.xx < 0) {
+            if (!dirs.includes('left')) {
+                gestureElement.style.opacity = '0';
+                clearGestureData();
                 return;
             }
-            (_a = opt[dir]) === null || _a === void 0 ? void 0 : _a.call(opt, e);
+            gestureElement.style.opacity = '1';
+            if (xxAbs === 120) {
+                bindGestureData.dir = 'left';
+                gestureElement.classList.add('done');
+            }
+            else {
+                bindGestureData.dir = null;
+                gestureElement.classList.remove('done');
+            }
+            gestureElement.style.top = rect.top + ((rect.height - 20) / 2) + 'px';
+            gestureElement.style.left = rect.left - 10 + (xxAbs / 1.5) + 'px';
+            gestureElement.style.transform = 'scale(' + (xxAbs / 120) + ')';
         }
+        else {
+            if (!dirs.includes('right')) {
+                gestureElement.style.opacity = '0';
+                clearGestureData();
+                return;
+            }
+            gestureElement.style.opacity = '1';
+            if (xxAbs === 120) {
+                bindGestureData.dir = 'right';
+                gestureElement.classList.add('done');
+            }
+            else {
+                bindGestureData.dir = null;
+                gestureElement.classList.remove('done');
+            }
+            gestureElement.style.top = rect.top + ((rect.height - 20) / 2) + 'px';
+            gestureElement.style.left = rect.left + rect.width - 10 - (xxAbs / 1.5) + 'px';
+            gestureElement.style.transform = 'scale(' + (xxAbs / 120) + ')';
+        }
+    }
+    else {
+        if (bindGestureData.xy < 0) {
+            if (!dirs.includes('top')) {
+                gestureElement.style.opacity = '0';
+                clearGestureData();
+                return;
+            }
+            gestureElement.style.opacity = '1';
+            if (xyAbs === 120) {
+                bindGestureData.dir = 'top';
+                gestureElement.classList.add('done');
+            }
+            else {
+                bindGestureData.dir = null;
+                gestureElement.classList.remove('done');
+            }
+            gestureElement.style.left = rect.left + ((rect.width - 20) / 2) + 'px';
+            gestureElement.style.top = rect.top - 10 + (xyAbs / 1.5) + 'px';
+            gestureElement.style.transform = 'scale(' + (xyAbs / 120) + ')';
+        }
+        else {
+            if (!dirs.includes('bottom')) {
+                gestureElement.style.opacity = '0';
+                clearGestureData();
+                return;
+            }
+            gestureElement.style.opacity = '1';
+            if (xyAbs === 120) {
+                bindGestureData.dir = 'bottom';
+                gestureElement.classList.add('done');
+            }
+            else {
+                bindGestureData.dir = null;
+                gestureElement.classList.remove('done');
+            }
+            gestureElement.style.left = rect.left + ((rect.width - 20) / 2) + 'px';
+            gestureElement.style.top = rect.top + rect.height - 10 - (xyAbs / 1.5) + 'px';
+            gestureElement.style.transform = 'scale(' + (xyAbs / 120) + ')';
+        }
+    }
+    if (bindGestureData.xx === bindGestureData.tx && bindGestureData.xy === bindGestureData.ty) {
+        bindGestureData.timers.ani = 0;
+        bindGestureData.timers.sleep = window.setTimeout(() => {
+            var _a;
+            clearGestureData();
+            bindGestureData.timers.sleep = 0;
+            gestureElement.style.opacity = '0';
+            if (!bindGestureData.dir) {
+                return;
+            }
+            (_a = opt.handler) === null || _a === void 0 ? void 0 : _a.call(opt, bindGestureData.dir);
+        }, 500);
+        return;
+    }
+    bindGestureData.timers.ani = requestAnimationFrame(() => {
+        bindGestureAnimation(opt);
     });
+}
+function bindGesture(e, opt = {}) {
+    var _a, _b, _c, _d;
+    let gestureElement = document.getElementById('cg-gesture');
+    let el = (_a = e.currentTarget) !== null && _a !== void 0 ? _a : opt.el;
+    if (!el) {
+        return;
+    }
+    let rect = el.getBoundingClientRect();
+    let dirs = (_b = opt.dirs) !== null && _b !== void 0 ? _b : ['top', 'bottom'];
+    if ((e instanceof MouseEvent || e instanceof TouchEvent) && !(e instanceof WheelEvent)) {
+        let x = e instanceof MouseEvent ? e.clientX : e.touches[0].clientX;
+        let y = e instanceof MouseEvent ? e.clientY : e.touches[0].clientY;
+        let dir = null;
+        bindDown(e, {
+            move: (e) => {
+                e.preventDefault();
+                if (bindGestureData.timers.ani !== 0) {
+                    cancelAnimationFrame(bindGestureData.timers.ani);
+                    bindGestureData.timers.ani = 0;
+                }
+                if (bindGestureData.timers.sleep !== 0) {
+                    clearTimeout(bindGestureData.timers.sleep);
+                    bindGestureData.timers.sleep = 0;
+                }
+                let nx = e instanceof MouseEvent ? e.clientX : e.touches[0].clientX;
+                let ny = e instanceof MouseEvent ? e.clientY : e.touches[0].clientY;
+                let xx = nx - x;
+                let xy = ny - y;
+                let xxAbs = Math.abs(xx);
+                let xyAbs = Math.abs(xy);
+                if ((!dirs.includes('top') && !dirs.includes('bottom')) || ((xxAbs > xyAbs) && (dirs.includes('left') || dirs.includes('right')))) {
+                    if (xx > 0) {
+                        if (!dirs.includes('left')) {
+                            gestureElement.style.opacity = '0';
+                            return;
+                        }
+                        gestureElement.style.opacity = '1';
+                        if (xxAbs > 120) {
+                            xxAbs = 120;
+                            dir = 'left';
+                            gestureElement.classList.add('done');
+                        }
+                        else {
+                            dir = null;
+                            gestureElement.classList.remove('done');
+                        }
+                        gestureElement.style.top = rect.top + ((rect.height - 20) / 2) + 'px';
+                        gestureElement.style.left = rect.left - 10 + (xxAbs / 1.5) + 'px';
+                        gestureElement.style.transform = 'scale(' + (xxAbs / 120) + ')';
+                    }
+                    else {
+                        if (!dirs.includes('right')) {
+                            gestureElement.style.opacity = '0';
+                            return;
+                        }
+                        gestureElement.style.opacity = '1';
+                        if (xxAbs > 120) {
+                            xxAbs = 120;
+                            dir = 'right';
+                            gestureElement.classList.add('done');
+                        }
+                        else {
+                            dir = null;
+                            gestureElement.classList.remove('done');
+                        }
+                        gestureElement.style.top = rect.top + ((rect.height - 20) / 2) + 'px';
+                        gestureElement.style.left = rect.left + rect.width - 10 - (xxAbs / 1.5) + 'px';
+                        gestureElement.style.transform = 'scale(' + (xxAbs / 120) + ')';
+                    }
+                }
+                else {
+                    if (xy > 0) {
+                        if (!dirs.includes('top')) {
+                            gestureElement.style.opacity = '0';
+                            return;
+                        }
+                        gestureElement.style.opacity = '1';
+                        if (xyAbs > 120) {
+                            xyAbs = 120;
+                            dir = 'top';
+                            gestureElement.classList.add('done');
+                        }
+                        else {
+                            dir = null;
+                            gestureElement.classList.remove('done');
+                        }
+                        gestureElement.style.left = rect.left + ((rect.width - 20) / 2) + 'px';
+                        gestureElement.style.top = rect.top - 10 + (xyAbs / 1.5) + 'px';
+                        gestureElement.style.transform = 'scale(' + (xyAbs / 120) + ')';
+                    }
+                    else {
+                        if (!dirs.includes('bottom')) {
+                            gestureElement.style.opacity = '0';
+                            return;
+                        }
+                        gestureElement.style.opacity = '1';
+                        if (xyAbs > 120) {
+                            xyAbs = 120;
+                            dir = 'bottom';
+                            gestureElement.classList.add('done');
+                        }
+                        else {
+                            dir = null;
+                            gestureElement.classList.remove('done');
+                        }
+                        gestureElement.style.left = rect.left + ((rect.width - 20) / 2) + 'px';
+                        gestureElement.style.top = rect.top + rect.height - 10 - (xyAbs / 1.5) + 'px';
+                        gestureElement.style.transform = 'scale(' + (xyAbs / 120) + ')';
+                    }
+                }
+            },
+            end: (e) => {
+                var _a;
+                gestureElement.style.opacity = '0';
+                if (!dir) {
+                    return;
+                }
+                (_a = opt.handler) === null || _a === void 0 ? void 0 : _a.call(opt, dir);
+            }
+        });
+    }
+    else {
+        if (bindGestureData.el !== el) {
+            bindGestureData.el = el;
+            bindGestureData.xx = 0;
+            bindGestureData.xy = 0;
+        }
+        let x = 0, y = 0;
+        if (e instanceof WheelEvent) {
+            if (Math.abs(e.deltaX) < 5 && Math.abs(e.deltaY) < 5) {
+                return;
+            }
+            x = Math.round(e.deltaX / 3);
+            y = Math.round(e.deltaY / 3);
+            if (e.direction === 'h') {
+                x = y;
+                y = 0;
+            }
+            else if (e.direction === 'v') {
+                y = x;
+                x = 0;
+            }
+        }
+        else {
+            x = (_c = e.x) !== null && _c !== void 0 ? _c : 0;
+            y = (_d = e.y) !== null && _d !== void 0 ? _d : 0;
+        }
+        let tx = bindGestureData.tx + x;
+        if (tx > 120) {
+            tx = 120;
+        }
+        else if (tx < -120) {
+            tx = -120;
+        }
+        let ty = bindGestureData.ty + y;
+        if (ty > 120) {
+            ty = 120;
+        }
+        else if (ty < -120) {
+            ty = -120;
+        }
+        bindGestureData.tx = tx;
+        bindGestureData.ty = ty;
+        if (bindGestureData.timers.ani !== 0) {
+            cancelAnimationFrame(bindGestureData.timers.ani);
+            bindGestureData.timers.ani = 0;
+        }
+        if (bindGestureData.timers.sleep !== 0) {
+            clearTimeout(bindGestureData.timers.sleep);
+            bindGestureData.timers.sleep = 0;
+        }
+        bindGestureAnimation({
+            'dirs': opt.dirs,
+            'handler': opt.handler
+        });
+    }
 }
 exports.bindGesture = bindGesture;
 let lastLongTime = 0;

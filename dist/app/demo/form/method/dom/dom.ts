@@ -4,7 +4,8 @@ export let data = {
     'moveTop': 0,
     'moveWidth': 25,
     'moveHeight': 25,
-    'bindGestureText': ''
+    'bindGestureText': '',
+    'bindGestureWheelText': ''
 };
 
 export let computed = {
@@ -45,25 +46,21 @@ export let methods = {
     },
     bindGesture: function(this: IVForm, e: MouseEvent | TouchEvent): void {
         clickgo.dom.bindGesture(e, {
-            'top': async () => {
-                this.bindGestureText = 'Top';
+            'dirs': ['top', 'bottom'],
+            handler: async (dir) => {
+                this.bindGestureText = dir.slice(0, 1).toUpperCase() + dir.slice(1);
                 await clickgo.tool.sleep(500);
                 this.bindGestureText = '';
-            },
-            'right': async () => {
-                this.bindGestureText = 'Right';
+            }
+        });
+    },
+    bindGestureWheel: function(this: IVForm, e: WheelEvent): void {
+        clickgo.dom.bindGesture(e, {
+            'dirs': ['top', 'bottom', 'left', 'right'],
+            handler: async (dir) => {
+                this.bindGestureWheelText = dir.slice(0, 1).toUpperCase() + dir.slice(1);
                 await clickgo.tool.sleep(500);
-                this.bindGestureText = '';
-            },
-            'bottom': async () => {
-                this.bindGestureText = 'Bottom';
-                await clickgo.tool.sleep(500);
-                this.bindGestureText = '';
-            },
-            'left': async () => {
-                this.bindGestureText = 'Left';
-                await clickgo.tool.sleep(500);
-                this.bindGestureText = '';
+                this.bindGestureWheelText = '';
             }
         });
     }

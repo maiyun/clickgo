@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.data = void 0;
+exports.methods = exports.data = void 0;
 exports.data = {
     'lineValue': 10,
     'lineCount': 2,
@@ -28,4 +28,37 @@ exports.data = {
     'c5': 0,
     'line5': 10,
     'style': false
+};
+exports.methods = {
+    scrollborder: function (e, dir) {
+        let dirs = [];
+        switch (dir) {
+            case 'h': {
+                dirs = ['left', 'right'];
+                break;
+            }
+            default: {
+                dirs = ['top', 'bottom'];
+                break;
+            }
+        }
+        clickgo.dom.bindGesture(e, {
+            'dirs': dirs,
+            'handler': (dir) => {
+                switch (dir) {
+                    case 'left':
+                    case 'top': {
+                        this.lineCount -= 10;
+                        if (this.lineCount < 0) {
+                            this.lineCount = 0;
+                        }
+                        break;
+                    }
+                    default: {
+                        this.lineCount += this.lineValue;
+                    }
+                }
+            }
+        });
+    }
 };

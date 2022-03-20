@@ -1211,7 +1211,7 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
             }
             if ([
                 'require',
-                '__awaiter', 'requestAnimationFrame', 'eval', 'Math', 'Array', 'Blob', 'Infinity', 'parseInt', 'parseFloat', 'Promise', 'Date', 'JSON', 'fetch'].includes(k)) {
+                '__awaiter', 'requestAnimationFrame', 'cancelAnimationFrame', 'eval', 'Math', 'Array', 'Blob', 'Infinity', 'parseInt', 'parseFloat', 'Promise', 'Date', 'JSON', 'fetch'].includes(k)) {
                 continue;
             }
             invoke[k] = undefined;

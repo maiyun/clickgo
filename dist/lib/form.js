@@ -1024,7 +1024,7 @@ function create(taskId, opt) {
                 }
                 if ([
                     'require',
-                    '__awaiter', 'requestAnimationFrame', 'eval', 'Math', 'Array', 'Blob', 'Infinity', 'parseInt', 'parseFloat', 'Promise', 'Date', 'JSON', 'fetch'
+                    '__awaiter', 'requestAnimationFrame', 'cancelAnimationFrame', 'eval', 'Math', 'Array', 'Blob', 'Infinity', 'parseInt', 'parseFloat', 'Promise', 'Date', 'JSON', 'fetch'
                 ].includes(k)) {
                     continue;
                 }

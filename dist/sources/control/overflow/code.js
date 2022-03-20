@@ -13,6 +13,7 @@ exports.props = {
     }
 };
 exports.data = {
+    'text': '',
     'scrollLeftEmit': 0,
     'scrollTopEmit': 0,
     'clientWidth': 0,
@@ -21,7 +22,8 @@ exports.data = {
     'lengthHeight': 0,
     'touchX': 0,
     'touchY': 0,
-    'canTouch': 10
+    'canTouchScroll': false,
+    'alreadySb': false
 };
 exports.computed = {
     'maxScrollLeft': function () {
@@ -70,20 +72,32 @@ exports.methods = {
                 if (this.$el.scrollTop > 0) {
                     e.stopPropagation();
                 }
-                else if (this.$el.scrollLeft > 0 && this.$el.scrollHeight === this.$el.clientHeight) {
+                else if (this.$el.scrollLeft > 0) {
                     e.stopPropagation();
                     e.preventDefault();
                     this.$el.scrollLeft += e.deltaY;
+                }
+                else {
+                    if (this.direction === 'h') {
+                        e.direction = 'h';
+                    }
+                    this.$emit('scrollborder', e);
                 }
             }
             else {
                 if (this.$el.scrollTop < this.maxScrollTop) {
                     e.stopPropagation();
                 }
-                else if (this.$el.scrollLeft < this.maxScrollLeft && this.$el.scrollHeight === this.$el.clientHeight) {
+                else if (this.$el.scrollLeft < this.maxScrollLeft) {
                     e.stopPropagation();
                     e.preventDefault();
                     this.$el.scrollLeft += e.deltaY;
+                }
+                else {
+                    if (this.direction === 'h') {
+                        e.direction = 'h';
+                    }
+                    this.$emit('scrollborder', e);
                 }
             }
         }
@@ -92,20 +106,32 @@ exports.methods = {
                 if (this.$el.scrollLeft > 0) {
                     e.stopPropagation();
                 }
-                else if (this.$el.scrollTop > 0 && this.$el.scrollWidth === this.$el.clientWidth) {
+                else if (this.$el.scrollTop > 0) {
                     e.stopPropagation();
                     e.preventDefault();
                     this.$el.scrollTop += e.deltaX;
+                }
+                else {
+                    if (this.direction === 'v') {
+                        e.direction = 'v';
+                    }
+                    this.$emit('scrollborder', e);
                 }
             }
             else {
                 if (this.$el.scrollLeft < this.maxScrollLeft) {
                     e.stopPropagation();
                 }
-                else if (this.$el.scrollTop < this.maxScrollTop && this.$el.scrollWidth === this.$el.clientWidth) {
+                else if (this.$el.scrollTop < this.maxScrollTop) {
                     e.stopPropagation();
                     e.preventDefault();
                     this.$el.scrollTop += e.deltaX;
+                }
+                else {
+                    if (this.direction === 'v') {
+                        e.direction = 'v';
+                    }
+                    this.$emit('scrollborder', e);
                 }
             }
         }
@@ -113,25 +139,38 @@ exports.methods = {
     touchstart: function (e) {
         this.touchX = e.touches[0].clientX;
         this.touchY = e.touches[0].clientY;
-        this.canTouch = 10;
+        this.canTouchScroll = false;
     },
     move: function (e) {
         let deltaX = this.touchX - e.touches[0].clientX;
         let deltaY = this.touchY - e.touches[0].clientY;
-        if (this.canTouch === 0) {
+        if (this.canTouchScroll) {
+            e.stopPropagation();
             return;
         }
         if (Math.abs(deltaY) > Math.abs(deltaX)) {
             if (deltaY < 0) {
                 if (this.$el.scrollTop > 0) {
                     e.stopPropagation();
-                    --this.canTouch;
+                    this.canTouchScroll = true;
+                }
+                else {
+                    if (!this.alreadySb) {
+                        this.alreadySb = true;
+                        this.$emit('scrollborder', e);
+                    }
                 }
             }
             else {
                 if (this.$el.scrollTop < this.maxScrollTop) {
                     e.stopPropagation();
-                    --this.canTouch;
+                    this.canTouchScroll = true;
+                }
+                else {
+                    if (!this.alreadySb) {
+                        this.alreadySb = true;
+                        this.$emit('scrollborder', e);
+                    }
                 }
             }
         }
@@ -139,18 +178,33 @@ exports.methods = {
             if (deltaX < 0) {
                 if (this.$el.scrollLeft > 0) {
                     e.stopPropagation();
-                    --this.canTouch;
+                    this.canTouchScroll = true;
+                }
+                else {
+                    if (!this.alreadySb) {
+                        this.alreadySb = true;
+                        this.$emit('scrollborder', e);
+                    }
                 }
             }
             else {
                 if (this.$el.scrollLeft < this.maxScrollLeft) {
                     e.stopPropagation();
-                    --this.canTouch;
+                    this.canTouchScroll = true;
+                }
+                else {
+                    if (!this.alreadySb) {
+                        this.alreadySb = true;
+                        this.$emit('scrollborder', e);
+                    }
                 }
             }
         }
         this.touchX = e.touches[0].clientX;
         this.touchY = e.touches[0].clientY;
+    },
+    touchend: function () {
+        this.alreadySb = false;
     },
     refreshLength: function () {
         if (!this.$el.offsetParent) {

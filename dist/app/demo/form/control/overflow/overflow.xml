@@ -5,7 +5,7 @@
             <layout gutter="10" direction="v" style="flex: 1; width: 0;">
                 <!-- v -->
                 <layout gutter="10" style="flex: 1; height: 0;">
-                    <overflow v-model:scroll-left="sLeft1" v-model:scroll-top="sTop1" direction="v" @resize="c1 = $event" @change="l1 = $event" :style="{'line-height': style ? '1.5' : undefined}" class="border" style="flex: 1;">
+                    <overflow v-model:scroll-left="sLeft1" v-model:scroll-top="sTop1" direction="v" @resize="c1 = $event" @change="l1 = $event" @scrollborder="scrollborder($event, 'v')" :style="{'line-height': style ? '1.5' : undefined}" class="border" style="flex: 1;">
                         <block :style="{'padding': style ? '10px' : undefined}">
                             <block v-for="(line, index) of lineCount">
                                 <button v-if="index > 0 && index % 10 === 0" style="height: 30px;">test</button>
@@ -14,7 +14,7 @@
                         </block>
                     </overflow>
                     <layout class="border" style="flex: 1;">
-                        <overflow v-model:scroll-left="sLeft2" v-model:scroll-top="sTop2" direction="v" @resize="c2 = $event" @change="l2 = $event" :style="{'line-height': style ? '1.5' : undefined}" style="flex: 1;">
+                        <overflow v-model:scroll-left="sLeft2" v-model:scroll-top="sTop2" direction="v" @resize="c2 = $event" @change="l2 = $event" @scrollborder="scrollborder($event, 'v')" :style="{'line-height': style ? '1.5' : undefined}" style="flex: 1;">
                             <block :style="{'padding': style ? '10px' : undefined}">
                                 <block v-for="(line, index) of lineCount">
                                     <block v-if="index > 0 && index % 10 === 0" class="custom">Custom</block>
@@ -28,7 +28,7 @@
                 <label>Scroll Left: {{sLeft1}}, Scroll Top: {{sTop1}}, Length: {{l1}}, Client: {{c1}}.</label>
                 <label>Scroll Left: {{sLeft2}}, Scroll Top: {{sTop2}}, Length: {{l2}}, Client: {{c2}}.</label>
                 <!-- h -->
-                <overflow v-model:scroll-left="sLeft3" v-model:scroll-top="sTop3" @resize="c3 = $event" @change="l3 = $event" :style="{'line-height': style ? '1.5' : undefined}" class="border" style="flex: 1; height: 0;">
+                <overflow v-model:scroll-left="sLeft3" v-model:scroll-top="sTop3" @resize="c3 = $event" @change="l3 = $event" @scrollborder="scrollborder($event, 'h')" :style="{'line-height': style ? '1.5' : undefined}" class="border" style="flex: 1; height: 0;">
                     <layout :style="{'padding': style ? '10px' : undefined}" style="flex: 1;">
                         <layout v-for="(line, index) of lineCount" align-v="center" align-h="center" direction="v" class="rightborder" style="width: 80px;">
                             <label>Col {{line}}.</label>
@@ -52,7 +52,7 @@
         <tab-panel label="adaptation">
             <layout gutter="10" direction="v" style="flex: 1; width: 0;">
                 <layout :direction="direction ? 'h' : 'v'" style="flex: 1; height: 0;">
-                    <overflow class="border" v-model:scroll-left="sLeft4" v-model:scroll-top="sTop4" :direction="direction ? 'h' : 'v'" @resize="c4 = $event" @change="l4 = $event">
+                    <overflow class="border" v-model:scroll-left="sLeft4" v-model:scroll-top="sTop4" :direction="direction ? 'h' : 'v'" @resize="c4 = $event" @change="l4 = $event" @scrollborder="scrollborder($event, 'v')">
                         <layout v-for="(line, index) of lineCount" align-v="center" direction="v" :class="[direction && 'rightborder']">
                             <button v-if="index > 0 && index % 10 === 0" style="height: 30px;" :style="{'width': direction ? '30px' : undefined}">test</button>
                             <block v-else :style="{'width': direction ? '80px' : undefined, 'text-align': direction ? 'center' : undefined}">Line {{line}}</block>

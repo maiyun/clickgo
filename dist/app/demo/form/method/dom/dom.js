@@ -16,7 +16,8 @@ exports.data = {
     'moveTop': 0,
     'moveWidth': 25,
     'moveHeight': 25,
-    'bindGestureText': ''
+    'bindGestureText': '',
+    'bindGestureWheelText': ''
 };
 exports.computed = {
     'isMove': function () {
@@ -55,25 +56,21 @@ exports.methods = {
     },
     bindGesture: function (e) {
         clickgo.dom.bindGesture(e, {
-            'top': () => __awaiter(this, void 0, void 0, function* () {
-                this.bindGestureText = 'Top';
+            'dirs': ['top', 'bottom'],
+            handler: (dir) => __awaiter(this, void 0, void 0, function* () {
+                this.bindGestureText = dir.slice(0, 1).toUpperCase() + dir.slice(1);
                 yield clickgo.tool.sleep(500);
                 this.bindGestureText = '';
-            }),
-            'right': () => __awaiter(this, void 0, void 0, function* () {
-                this.bindGestureText = 'Right';
+            })
+        });
+    },
+    bindGestureWheel: function (e) {
+        clickgo.dom.bindGesture(e, {
+            'dirs': ['top', 'bottom', 'left', 'right'],
+            handler: (dir) => __awaiter(this, void 0, void 0, function* () {
+                this.bindGestureWheelText = dir.slice(0, 1).toUpperCase() + dir.slice(1);
                 yield clickgo.tool.sleep(500);
-                this.bindGestureText = '';
-            }),
-            'bottom': () => __awaiter(this, void 0, void 0, function* () {
-                this.bindGestureText = 'Bottom';
-                yield clickgo.tool.sleep(500);
-                this.bindGestureText = '';
-            }),
-            'left': () => __awaiter(this, void 0, void 0, function* () {
-                this.bindGestureText = 'Left';
-                yield clickgo.tool.sleep(500);
-                this.bindGestureText = '';
+                this.bindGestureWheelText = '';
             })
         });
     }
