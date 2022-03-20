@@ -53,7 +53,7 @@ exports.methods = {
         }
         clickgo.form.showPop(this.$el, this.$refs.pop, 'h');
     },
-    touchstart: function () {
+    touch: function () {
         clickgo.form.showPop(this.$el, this.$refs.pop, 'h');
     },
     click: function () {

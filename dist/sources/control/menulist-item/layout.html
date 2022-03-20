@@ -1,4 +1,4 @@
-<div class="wrap" :data-cg-disabled="isDisabled ? '' : undefined" @click="click" @mouseenter="enter" @touchstart="touchstart">
+<div class="wrap" :data-cg-disabled="isDisabled ? '' : undefined" @click="click" @mouseenter="enter" @touchstart="touch">
     <div class="op" :style="{'margin': opMargin}">
         <div v-if="cgParentByName('menulist') && cgParentByName('menulist').hasTypeItemsCount > 0" :class="[type ? type : 'check']" :style="{'visibility': type !== undefined ? ((type === 'check' ? modelValue : label === modelValue) ? 'inherit' : undefined) : undefined}"></div>
         <div class="inner" :style="{'padding': padding}">

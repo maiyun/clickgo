@@ -56,7 +56,7 @@ export let methods = {
         }
         clickgo.form.showPop(this.$el, this.$refs.pop, 'h');
     },
-    touchstart: function(this: IVControl): void {
+    touch: function(this: IVControl): void {
         // --- 只有 touchstart 才显示，因为 PC 的 mouseenter 已经显示过了 ---
         clickgo.form.showPop(this.$el, this.$refs.pop, 'h');
     },
