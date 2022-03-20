@@ -5,11 +5,11 @@
 
 @keyframes flash {
     0%, 50% {
-        box-shadow: 0 0 15px rgba(0, 0, 0, .5);
+        box-shadow: 0 5px 20px rgba(0, 0, 0, .25);
         color: hsl(0, 0, 20%);
     }
     51%, 100% {
-        box-shadow: 0 0 10px rgba(0, 0, 0, .5);
+        box-shadow: 0 5px 10px rgba(0, 0, 0, .25);
         color: hsl(0, 0, 60%);
     }
 }
@@ -28,7 +28,7 @@
         position: fixed; transition: .1s ease-out; transition-property: transform, opacity; transform: translateX(10px) translateY(0) translateZ(0); opacity: 0;
     }
     &:not(.border-none):not([data-cg-max]) {
-        box-shadow: 0 0 10px rgba(0, 0, 0, .5);
+        box-shadow: 0 5px 10px rgba(0, 0, 0, .25);
         &::after {
             content: ' '; position: absolute; left: 0; top: 0; width: 200%; height: 200%; transform-origin: 0 0; transform: scale(.5); border: solid 1px hsl(0, 0, 60%); pointer-events: none;
         }
@@ -57,7 +57,7 @@
     &[data-cg-focus] {
         color: hsl(0, 0%, 20%);
         &:not(.border-none):not([data-cg-max]) {
-            box-shadow: 0 0 15px rgba(0, 0, 0, .5);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, .25);
             &::after {
                 border: solid 1px hsl(0, 0%, 20%);
             }
