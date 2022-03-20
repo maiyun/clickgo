@@ -720,37 +720,49 @@ exports.methods = {
                 break;
             }
             case 'width': {
-                switch (mode) {
-                    case '': {
-                        this.widthData = val;
-                        break;
-                    }
-                    case '+': {
-                        this.widthData += val;
-                        break;
-                    }
-                    default: {
-                        this.widthData -= val;
-                    }
+                if (val === 'auto') {
+                    this.widthData = undefined;
+                    this.$emit('update:width', 'auto');
                 }
-                this.$emit('update:width', this.widthData);
+                else {
+                    switch (mode) {
+                        case '': {
+                            this.widthData = val;
+                            break;
+                        }
+                        case '+': {
+                            this.widthData += val;
+                            break;
+                        }
+                        default: {
+                            this.widthData -= val;
+                        }
+                    }
+                    this.$emit('update:width', this.widthData);
+                }
                 break;
             }
             case 'height': {
-                switch (mode) {
-                    case '': {
-                        this.heightData = val;
-                        break;
-                    }
-                    case '+': {
-                        this.heightData += val;
-                        break;
-                    }
-                    default: {
-                        this.heightData -= val;
-                    }
+                if (val === 'auto') {
+                    this.heightData = undefined;
+                    this.$emit('update:height', 'auto');
                 }
-                this.$emit('update:height', this.heightData);
+                else {
+                    switch (mode) {
+                        case '': {
+                            this.heightData = val;
+                            break;
+                        }
+                        case '+': {
+                            this.heightData += val;
+                            break;
+                        }
+                        default: {
+                            this.heightData -= val;
+                        }
+                    }
+                    this.$emit('update:height', this.heightData);
+                }
                 break;
             }
             case 'zIndex': {

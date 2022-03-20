@@ -157,12 +157,12 @@ function refreshTaskPosition() {
             case 'left':
             case 'right': {
                 form.vroot.$refs.form.setPropData('width', 'auto');
-                form.vroot.$refs.form.setPropData('height', window.innerHeight);
+                form.vroot.$refs.form.setPropData('height', document.body.clientHeight);
                 break;
             }
             case 'top':
             case 'bottom': {
-                form.vroot.$refs.form.setPropData('width', window.innerWidth);
+                form.vroot.$refs.form.setPropData('width', document.body.clientWidth);
                 form.vroot.$refs.form.setPropData('height', 'auto');
                 break;
             }
@@ -177,7 +177,7 @@ function refreshTaskPosition() {
                 }
                 case 'right': {
                     exports.taskInfo.length = form.vroot.$el.offsetWidth;
-                    form.vroot.$refs.form.setPropData('left', window.innerWidth - exports.taskInfo.length);
+                    form.vroot.$refs.form.setPropData('left', document.body.clientWidth - exports.taskInfo.length);
                     form.vroot.$refs.form.setPropData('top', 0);
                     break;
                 }
@@ -190,7 +190,7 @@ function refreshTaskPosition() {
                 case 'bottom': {
                     exports.taskInfo.length = form.vroot.$el.offsetHeight;
                     form.vroot.$refs.form.setPropData('left', 0);
-                    form.vroot.$refs.form.setPropData('top', window.innerHeight - exports.taskInfo.length);
+                    form.vroot.$refs.form.setPropData('top', document.body.clientHeight - exports.taskInfo.length);
                     break;
                 }
             }
@@ -207,8 +207,8 @@ function getAvailArea() {
         return {
             'left': 0,
             'top': 0,
-            'width': window.innerWidth,
-            'height': window.innerHeight - 46
+            'width': document.body.clientWidth,
+            'height': document.body.clientHeight - 46
         };
     }
     else {
@@ -220,29 +220,29 @@ function getAvailArea() {
             case 'left': {
                 left = exports.taskInfo.length;
                 top = 0;
-                width = window.innerWidth - exports.taskInfo.length;
-                height = window.innerHeight;
+                width = document.body.clientWidth - exports.taskInfo.length;
+                height = document.body.clientHeight;
                 break;
             }
             case 'right': {
                 left = 0;
                 top = 0;
-                width = window.innerWidth - exports.taskInfo.length;
-                height = window.innerHeight;
+                width = document.body.clientWidth - exports.taskInfo.length;
+                height = document.body.clientHeight;
                 break;
             }
             case 'top': {
                 left = 0;
                 top = exports.taskInfo.length;
-                width = window.innerWidth;
-                height = window.innerHeight - exports.taskInfo.length;
+                width = document.body.clientWidth;
+                height = document.body.clientHeight - exports.taskInfo.length;
                 break;
             }
             case 'bottom': {
                 left = 0;
                 top = 0;
-                width = window.innerWidth;
-                height = window.innerHeight - exports.taskInfo.length;
+                width = document.body.clientWidth;
+                height = document.body.clientHeight - exports.taskInfo.length;
             }
         }
         return {
@@ -817,7 +817,7 @@ function showPop(el, pop, direction, opt = {}) {
             left = bcr.left + bcr.width - 2;
             top = bcr.top - 2;
         }
-        if (width + left > window.innerWidth) {
+        if (width + left > document.body.clientWidth) {
             if (direction === 'v') {
                 left = bcr.left + bcr.width - width;
             }
@@ -825,7 +825,7 @@ function showPop(el, pop, direction, opt = {}) {
                 left = bcr.left - width + 2;
             }
         }
-        if (height + top > window.innerHeight) {
+        if (height + top > document.body.clientHeight) {
             if (direction === 'v') {
                 top = bcr.top - height;
             }
@@ -851,10 +851,10 @@ function showPop(el, pop, direction, opt = {}) {
         }
         left = x + 5;
         top = y + 7;
-        if (width + left > window.innerWidth) {
+        if (width + left > document.body.clientWidth) {
             left = x - width - 5;
         }
-        if (height + top > window.innerHeight) {
+        if (height + top > document.body.clientHeight) {
             top = y - height - 5;
         }
     }
@@ -938,6 +938,9 @@ function doFocusAndPopEvent(e) {
     }
     let paths = (_a = e.path) !== null && _a !== void 0 ? _a : (e.composedPath ? e.composedPath() : []);
     for (let item of paths) {
+        if (!item.tagName) {
+            continue;
+        }
         if (item.tagName.toLowerCase() === 'body') {
             break;
         }
@@ -949,6 +952,9 @@ function doFocusAndPopEvent(e) {
         }
     }
     for (let item of paths) {
+        if (!item.tagName) {
+            continue;
+        }
         if (item.tagName.toLowerCase() === 'body') {
             break;
         }
@@ -1023,6 +1029,9 @@ function create(taskId, opt) {
             let ks = Object.getOwnPropertyNames(window);
             for (let k of ks) {
                 if (k.includes('Event')) {
+                    continue;
+                }
+                if (k.includes('-')) {
                     continue;
                 }
                 if ([

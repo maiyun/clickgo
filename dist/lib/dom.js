@@ -1152,6 +1152,9 @@ exports.bindResize = bindResize;
 function findParentByData(el, name) {
     let parent = el.parentNode;
     while (parent) {
+        if (!parent.tagName) {
+            continue;
+        }
         if (parent.tagName.toLowerCase() === 'body') {
             break;
         }

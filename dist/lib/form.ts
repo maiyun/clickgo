@@ -204,12 +204,12 @@ export function refreshTaskPosition(): void {
             case 'left':
             case 'right': {
                 form.vroot.$refs.form.setPropData('width', 'auto');
-                form.vroot.$refs.form.setPropData('height', window.innerHeight);
+                form.vroot.$refs.form.setPropData('height', document.body.clientHeight);
                 break;
             }
             case 'top':
             case 'bottom': {
-                form.vroot.$refs.form.setPropData('width', window.innerWidth);
+                form.vroot.$refs.form.setPropData('width', document.body.clientWidth);
                 form.vroot.$refs.form.setPropData('height', 'auto');
                 break;
             }
@@ -224,7 +224,7 @@ export function refreshTaskPosition(): void {
                 }
                 case 'right': {
                     taskInfo.length = form.vroot.$el.offsetWidth;
-                    form.vroot.$refs.form.setPropData('left', window.innerWidth - taskInfo.length);
+                    form.vroot.$refs.form.setPropData('left', document.body.clientWidth - taskInfo.length);
                     form.vroot.$refs.form.setPropData('top', 0);
                     break;
                 }
@@ -237,7 +237,7 @@ export function refreshTaskPosition(): void {
                 case 'bottom': {
                     taskInfo.length = form.vroot.$el.offsetHeight;
                     form.vroot.$refs.form.setPropData('left', 0);
-                    form.vroot.$refs.form.setPropData('top', window.innerHeight - taskInfo.length);
+                    form.vroot.$refs.form.setPropData('top', document.body.clientHeight - taskInfo.length);
                     break;
                 }
             }
@@ -257,8 +257,8 @@ export function getAvailArea(): ICGFormAvailArea {
         return {
             'left': 0,
             'top': 0,
-            'width': window.innerWidth,
-            'height': window.innerHeight - 46
+            'width': document.body.clientWidth,
+            'height': document.body.clientHeight - 46
         };
     }
     else {
@@ -270,29 +270,29 @@ export function getAvailArea(): ICGFormAvailArea {
             case 'left': {
                 left = taskInfo.length;
                 top = 0;
-                width = window.innerWidth - taskInfo.length;
-                height = window.innerHeight;
+                width = document.body.clientWidth - taskInfo.length;
+                height = document.body.clientHeight;
                 break;
             }
             case 'right': {
                 left = 0;
                 top = 0;
-                width = window.innerWidth - taskInfo.length;
-                height = window.innerHeight;
+                width = document.body.clientWidth - taskInfo.length;
+                height = document.body.clientHeight;
                 break;
             }
             case 'top': {
                 left = 0;
                 top = taskInfo.length;
-                width = window.innerWidth;
-                height = window.innerHeight - taskInfo.length;
+                width = document.body.clientWidth;
+                height = document.body.clientHeight - taskInfo.length;
                 break;
             }
             case 'bottom': {
                 left = 0;
                 top = 0;
-                width = window.innerWidth;
-                height = window.innerHeight - taskInfo.length;
+                width = document.body.clientWidth;
+                height = document.body.clientHeight - taskInfo.length;
             }
         }
         return {
@@ -969,7 +969,7 @@ export function showPop(el: HTMLElement, pop: HTMLElement | undefined, direction
             top = bcr.top - 2;
         }
         // --- 检查水平是否出框 ---
-        if (width + left > window.innerWidth) {
+        if (width + left > document.body.clientWidth) {
             if (direction === 'v') {
                 // --- 垂直弹出 ---
                 left = bcr.left + bcr.width - width;
@@ -980,7 +980,7 @@ export function showPop(el: HTMLElement, pop: HTMLElement | undefined, direction
             }
         }
         // --- 检测垂直是否出框 ---
-        if (height + top > window.innerHeight) {
+        if (height + top > document.body.clientHeight) {
             if (direction === 'v') {
                 top = bcr.top - height;
             }
@@ -1007,11 +1007,11 @@ export function showPop(el: HTMLElement, pop: HTMLElement | undefined, direction
         left = x + 5;
         top = y + 7;
         // --- 水平 ---
-        if (width + left > window.innerWidth) {
+        if (width + left > document.body.clientWidth) {
             left = x - width - 5;
         }
         // --- 垂直 ---
-        if (height + top > window.innerHeight) {
+        if (height + top > document.body.clientHeight) {
             top = y - height - 5;
         }
     }
@@ -1105,6 +1105,9 @@ export function doFocusAndPopEvent(e: MouseEvent | TouchEvent): void {
     let paths: HTMLElement[] = (e as any).path ?? (e.composedPath ? e.composedPath() : []);
     // --- 检测是不是弹出层 ---
     for (let item of paths) {
+        if (!item.tagName) {
+            continue;
+        }
         if (item.tagName.toLowerCase() === 'body') {
             break;
         }
@@ -1118,6 +1121,9 @@ export function doFocusAndPopEvent(e: MouseEvent | TouchEvent): void {
     }
     // --- 检测是不是窗体内部点击 ---
     for (let item of paths) {
+        if (!item.tagName) {
+            continue;
+        }
         if (item.tagName.toLowerCase() === 'body') {
             break;
         }
@@ -1210,6 +1216,9 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
         let ks = Object.getOwnPropertyNames(window);
         for (let k of ks) {
             if (k.includes('Event')) {
+                continue;
+            }
+            if (k.includes('-')) {
                 continue;
             }
             if ([

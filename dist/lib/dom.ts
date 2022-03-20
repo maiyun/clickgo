@@ -1359,6 +1359,9 @@ export function bindResize(e: MouseEvent | TouchEvent, opt: { 'objectLeft'?: num
 export function findParentByData(el: HTMLElement, name: string): HTMLElement | null {
     let parent = el.parentNode as HTMLElement;
     while (parent) {
+        if (!parent.tagName) {
+            continue;
+        }
         if (parent.tagName.toLowerCase() === 'body') {
             break;
         }
