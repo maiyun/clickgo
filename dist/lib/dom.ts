@@ -1410,3 +1410,19 @@ export function siblingsData(el: HTMLElement, name: string): HTMLElement[] {
     }
     return olist;
 }
+
+// --- 全屏 ---
+export function fullscreen(): boolean {
+    let he = document.getElementsByTagName('html')[0] as any;
+    if (he.webkitRequestFullscreen) {
+        he.webkitRequestFullscreen();
+        return true;
+    }
+    else if (he.requestFullscreen) {
+        he.requestFullscreen();
+        return true;
+    }
+    else {
+        return false;
+    }
+}

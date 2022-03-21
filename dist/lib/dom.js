@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.siblingsData = exports.siblings = exports.findParentByData = exports.bindResize = exports.bindMove = exports.is = exports.bindLong = exports.allowEvent = exports.bindGesture = exports.bindDown = exports.watchStyle = exports.watch = exports.watchSize = exports.getSize = exports.getStyleCount = exports.removeStyle = exports.pushStyle = exports.removeFromStyleList = exports.createToStyleList = exports.hasTouchButMouse = exports.setGlobalCursor = void 0;
+exports.fullscreen = exports.siblingsData = exports.siblings = exports.findParentByData = exports.bindResize = exports.bindMove = exports.is = exports.bindLong = exports.allowEvent = exports.bindGesture = exports.bindDown = exports.watchStyle = exports.watch = exports.watchSize = exports.getSize = exports.getStyleCount = exports.removeStyle = exports.pushStyle = exports.removeFromStyleList = exports.createToStyleList = exports.hasTouchButMouse = exports.setGlobalCursor = void 0;
 let topClass = ['#cg-form-list', '#cg-pop-list', '#cg-system', '#cg-simpletask'];
 function classUnfold(after) {
     let arr = [];
@@ -1193,3 +1193,18 @@ function siblingsData(el, name) {
     return olist;
 }
 exports.siblingsData = siblingsData;
+function fullscreen() {
+    let he = document.getElementsByTagName('html')[0];
+    if (he.webkitRequestFullscreen) {
+        he.webkitRequestFullscreen();
+        return true;
+    }
+    else if (he.requestFullscreen) {
+        he.requestFullscreen();
+        return true;
+    }
+    else {
+        return false;
+    }
+}
+exports.fullscreen = fullscreen;

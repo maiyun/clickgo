@@ -24,6 +24,9 @@ export let methods = {
     getStyleCount: function(this: IVForm): void {
         this.cgDialog(clickgo.dom.getStyleCount(this.taskId, 'form').toString()).catch((e) => { throw e; });
     },
+    fullscreen: function(this: IVForm): void {
+        clickgo.dom.fullscreen();
+    },
     bindLong: function(this: IVForm): void {
         this.cgDialog('Press and hold this button.').catch((e) => { throw e; });
     },

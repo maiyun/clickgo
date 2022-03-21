@@ -6,31 +6,31 @@
 @keyframes flash {
     0%, 50% {
         box-shadow: 0 5px 20px rgba(0, 0, 0, .25);
-        color: hsl(0, 0, 20%);
+        color: hsl(0, 0%, 20%);
     }
     51%, 100% {
         box-shadow: 0 5px 10px rgba(0, 0, 0, .25);
-        color: hsl(0, 0, 60%);
+        color: hsl(0, 0%, 60%);
     }
 }
 @keyframes flash-after {
     0%, 50% {
-        border-color: hsl(0, 0, 20%);
+        border-color: hsl(0, 0%, 20%);
     }
     51%, 100% {
-        border-color: hsl(0, 0, 60%);
+        border-color: hsl(0, 0%, 60%);
     }
 }
 
 .wrap {
-    position: relative; color: hsl(0, 0, 60%); display: flex;
+    position: relative; color: hsl(0, 0%, 60%); display: flex;
     &:not(.inside) {
         position: fixed; transition: .1s ease-out; transition-property: transform, opacity; transform: translateX(10px) translateY(0) translateZ(0); opacity: 0;
     }
     &:not(.border-none):not([data-cg-max]) {
         box-shadow: 0 5px 10px rgba(0, 0, 0, .25);
         &::after {
-            content: ' '; position: absolute; left: 0; top: 0; width: 200%; height: 200%; transform-origin: 0 0; transform: scale(.5); border: solid 1px hsl(0, 0, 60%); pointer-events: none;
+            content: ' '; position: absolute; left: 0; top: 0; width: 200%; height: 200%; transform-origin: 0 0; transform: scale(.5); border: solid 1px hsl(0, 0%, 60%); pointer-events: none;
         }
     }
     &:not(.show) {

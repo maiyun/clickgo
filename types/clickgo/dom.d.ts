@@ -89,6 +89,10 @@ interface ICGDomLib {
      * @returns HTMLElement[]
      */
     siblingsData(el: HTMLElement, name: string): HTMLElement[];
+    /**
+     * --- 使网页全屏 ---
+     */
+    fullscreen(): boolean;
 }
 
 /** --- 方向类型，从左上开始 --- */

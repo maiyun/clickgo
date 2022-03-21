@@ -34,6 +34,9 @@ exports.methods = {
     getStyleCount: function () {
         this.cgDialog(clickgo.dom.getStyleCount(this.taskId, 'form').toString()).catch((e) => { throw e; });
     },
+    fullscreen: function () {
+        clickgo.dom.fullscreen();
+    },
     bindLong: function () {
         this.cgDialog('Press and hold this button.').catch((e) => { throw e; });
     },

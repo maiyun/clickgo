@@ -1057,7 +1057,7 @@ function create(taskId, opt) {
                 invoke.clickgo.core[k] = clickgo.core[k];
             }
             for (let k in clickgo.dom) {
-                if (!['setGlobalCursor', 'hasTouchButMouse', 'getStyleCount', 'getSize', 'watchSize', 'watch', 'watchStyle', 'bindDown', 'bindGesture', 'bindLong', 'is', 'bindMove', 'bindResize', 'findParentByData', 'siblings', 'siblingsData'].includes(k)) {
+                if (!['setGlobalCursor', 'hasTouchButMouse', 'getStyleCount', 'getSize', 'watchSize', 'watch', 'watchStyle', 'bindDown', 'bindGesture', 'bindLong', 'is', 'bindMove', 'bindResize', 'findParentByData', 'siblings', 'siblingsData', 'fullscreen'].includes(k)) {
                     continue;
                 }
                 invoke.clickgo.dom[k] = clickgo.dom[k];
