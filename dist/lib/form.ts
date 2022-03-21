@@ -1223,7 +1223,7 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
             }
             if ([
                 'require',
-                '__awaiter', 'requestAnimationFrame', 'cancelAnimationFrame', 'eval', 'Math', 'Array', 'Blob', 'Infinity', 'parseInt', 'parseFloat', 'Promise', 'Date', 'JSON', 'fetch'].includes(k)) {
+                '__awaiter', 'eval', 'Math', 'Array', 'Blob', 'Infinity', 'parseInt', 'parseFloat', 'Promise', 'Date', 'JSON', 'fetch'].includes(k)) {
                 continue;
             }
             invoke[k] = undefined;
@@ -1608,16 +1608,26 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
             } = {}): number {
                 return clickgo.task.createTimer(this.taskId, this.formId, fun, delay, opt);
             };
-            methods.cgSleep = function(this: IVForm, fun: () => void | Promise<void>, delay: number): number {
+            methods.cgRemoveTimer = function(this: IVControl, timer: number): void {
+                clickgo.task.removeTimer(this.taskId, timer);
+            };
+            methods.cgSleep = function(this: IVControl, fun: () => void | Promise<void>, delay: number): number {
                 return this.cgCreateTimer(fun, delay, {
                     'count': 1
                 });
             };
-            methods.cgRemoveTimer = function(this: IVControl, timer: number): void {
-                clickgo.task.removeTimer(this.taskId, timer);
+            // --- 帧 ---
+            methods.cgAddFrameListener = function(this: IVControl, fun: () => void | Promise<void>, opt: {
+                'scope'?: 'form' | 'task';
+                'count'?: number;
+            } = {}): number {
+                return clickgo.task.addFrameListener(this.taskId, this.formId, fun, opt);
+            };
+            methods.cgRemoveFrameListener = function(this: IVControl, ft: number): void {
+                clickgo.task.removeFrameListener(this.taskId, ft);
             };
             // --- 判断当前事件可否执行 ---
-            methods.cgAllowEvent = function(this: IVForm, e: MouseEvent | TouchEvent | KeyboardEvent): boolean {
+            methods.cgAllowEvent = function(this: IVControl, e: MouseEvent | TouchEvent | KeyboardEvent): boolean {
                 return clickgo.dom.allowEvent(e);
             };
             // --- 组成 component ---
@@ -2147,13 +2157,23 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
     } = {}): number {
         return clickgo.task.createTimer(this.taskId, this.formId, fun, delay, opt);
     };
+    methods.cgRemoveTimer = function(this: IVForm, timer: number): void {
+        clickgo.task.removeTimer(this.taskId, timer);
+    };
     methods.cgSleep = function(this: IVForm, fun: () => void | Promise<void>, delay: number): number {
         return this.cgCreateTimer(fun, delay, {
             'count': 1
         });
     };
-    methods.cgRemoveTimer = function(this: IVForm, timer: number): void {
-        clickgo.task.removeTimer(this.taskId, timer);
+    // --- 帧 ---
+    methods.cgAddFrameListener = function(this: IVForm, fun: () => void | Promise<void>, opt: {
+        'scope'?: 'form' | 'task';
+        'count'?: number;
+    } = {}): number {
+        return clickgo.task.addFrameListener(this.taskId, this.formId, fun, opt);
+    };
+    methods.cgRemoveFrameListener = function(this: IVForm, ft: number): void {
+        clickgo.task.removeFrameListener(this.taskId, ft);
     };
     // --- 判断当前事件可否执行 ---
     methods.cgAllowEvent = function(this: IVForm, e: MouseEvent | TouchEvent | KeyboardEvent): boolean {

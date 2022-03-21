@@ -1,0 +1,14 @@
+<form width="300" height="300" title="cgAddFrameListener">
+    <layout align-v="center" align-h="center" style="flex: 1; width: 0;">
+        <layout v-if="timer === 0" gutter="10" direction="v">
+            <button @click="start(0)" style="height: 30px; padding: 0 10px;">Start once</button>
+            <button @click="start(1)" style="height: 30px; padding: 0 10px;">Start count 100</button>
+            <button @click="start(2)" style="height: 30px; padding: 0 10px;">Start form</button>
+            <button @click="start(3)" style="height: 30px; padding: 0 10px;">Start task</button>
+        </layout>
+        <layout v-else gutter="10" direction="v">
+            <layout>timer: {{timer}}, count: {{count}}</layout>
+            <button @click="end" style="height: 30px; padding: 0 10px;">End</button>
+        </layout>
+    </layout>
+</form>

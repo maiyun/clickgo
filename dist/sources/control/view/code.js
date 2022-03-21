@@ -44,8 +44,8 @@ exports.data = {
     'lengthEmit': -1,
     'selectionOrigin': { x: 0, y: 0 },
     'selectionCurrent': { x: 0, y: 0, quick: false },
-    'timer': false,
-    'selectionTimer': false
+    'timer': 0,
+    'selectionTimer': 0
 };
 exports.watch = {
     'direction': function () {
@@ -245,10 +245,9 @@ exports.methods = {
                     let speedTop = (moveTopPos / (Date.now() - topTime)) * 16;
                     let fleft = 0;
                     let ftop = 0;
-                    this.timer = true;
                     let leftEnd = false;
                     let topEnd = false;
-                    let animation = () => {
+                    this.timer = this.cgAddFrameListener(() => {
                         if (!leftEnd) {
                             fleft = Math.min(Math.abs(speedLeft) / 32, 0.5);
                             if (speedLeft > 0.2) {
@@ -278,7 +277,6 @@ exports.methods = {
                             }
                         }
                         if (leftEnd && topEnd) {
-                            this.timer = false;
                             this.scrollLeftData = Math.round(this.scrollLeftData);
                             if (this.scrollLeftData > this.maxScrollLeft) {
                                 this.scrollLeftData = this.maxScrollLeft;
@@ -287,6 +285,8 @@ exports.methods = {
                             if (this.scrollTopData > this.maxScrollTop) {
                                 this.scrollTopData = this.maxScrollTop;
                             }
+                            this.cgRemoveFrameListener(this.timer);
+                            this.timer = 0;
                             return;
                         }
                         if (this.scrollLeftData > this.maxScrollLeft) {
@@ -316,22 +316,10 @@ exports.methods = {
                         this.scrollTopEmit = Math.round(this.scrollTopData);
                         this.$emit('update:scrollTop', this.scrollTopEmit);
                         if (leftEnd && topEnd) {
-                            this.timer = false;
-                            return;
+                            this.cgRemoveFrameListener(this.timer);
+                            this.timer = 0;
                         }
-                        if (this.timer) {
-                            requestAnimationFrame(animation);
-                        }
-                        else {
-                            if (this.scrollLeftData > this.maxScrollLeft) {
-                                this.scrollLeftData = this.maxScrollLeft;
-                            }
-                            if (this.scrollTopData > this.maxScrollTop) {
-                                this.scrollTopData = this.maxScrollTop;
-                            }
-                        }
-                    };
-                    animation();
+                    });
                 })
             });
         };
@@ -349,11 +337,88 @@ exports.methods = {
                     this.$refs.selection.style.opacity = '1';
                     this.$refs.selection.style.left = this.selectionOrigin.x + 'px';
                     this.$refs.selection.style.top = this.selectionOrigin.y + 'px';
-                    this.selectionTimer = true;
-                    this.$emit('beforeselect');
                     this.selectionCurrent.x = x;
                     this.selectionCurrent.y = y;
-                    this.selectionRoll();
+                    this.selectionTimer = this.cgAddFrameListener(() => {
+                        let rect = this.$el.getBoundingClientRect();
+                        if (this.selectionCurrent.x < rect.left) {
+                            if (this.scrollLeftData > 0) {
+                                let x = rect.left - this.selectionCurrent.x;
+                                let dist = 0;
+                                if (this.selectionCurrent.quick) {
+                                    dist = x / 2;
+                                    this.selectionCurrent.quick = false;
+                                }
+                                else {
+                                    dist = x / 5;
+                                }
+                                if (this.scrollLeftData - dist < 0) {
+                                    dist = this.scrollLeftData;
+                                }
+                                this.scrollLeftData -= dist;
+                                this.scrollLeftEmit = Math.round(this.scrollLeftData);
+                                this.$emit('update:scrollLeft', this.scrollLeftEmit);
+                            }
+                        }
+                        else if (this.selectionCurrent.x > rect.right) {
+                            if (this.scrollLeftData < this.maxScrollLeft) {
+                                let x = this.selectionCurrent.x - rect.right;
+                                let dist = 0;
+                                if (this.selectionCurrent.quick) {
+                                    dist = x / 2;
+                                    this.selectionCurrent.quick = false;
+                                }
+                                else {
+                                    dist = x / 5;
+                                }
+                                if (this.scrollLeftData + dist > this.maxScrollLeft) {
+                                    dist = this.maxScrollLeft - this.scrollLeftData;
+                                }
+                                this.scrollLeftData += dist;
+                                this.scrollLeftEmit = Math.round(this.scrollLeftData);
+                                this.$emit('update:scrollLeft', this.scrollLeftEmit);
+                            }
+                        }
+                        if (this.selectionCurrent.y < rect.top) {
+                            if (this.scrollTopData > 0) {
+                                let x = rect.top - this.selectionCurrent.y;
+                                let dist = 0;
+                                if (this.selectionCurrent.quick) {
+                                    dist = x / 2;
+                                    this.selectionCurrent.quick = false;
+                                }
+                                else {
+                                    dist = x / 5;
+                                }
+                                if (this.scrollTopData - dist < 0) {
+                                    dist = this.scrollTopData;
+                                }
+                                this.scrollTopData -= dist;
+                                this.scrollTopEmit = Math.round(this.scrollTopData);
+                                this.$emit('update:scrollTop', this.scrollTopEmit);
+                            }
+                        }
+                        else if (this.selectionCurrent.y > rect.bottom) {
+                            if (this.scrollTopData < this.maxScrollTop) {
+                                let x = this.selectionCurrent.y - rect.bottom;
+                                let dist = 0;
+                                if (this.selectionCurrent.quick) {
+                                    dist = x / 2;
+                                    this.selectionCurrent.quick = false;
+                                }
+                                else {
+                                    dist = x / 5;
+                                }
+                                if (this.scrollTopData + dist > this.maxScrollTop) {
+                                    dist = this.maxScrollTop - this.scrollTopData;
+                                }
+                                this.scrollTopData += dist;
+                                this.scrollTopEmit = Math.round(this.scrollTopData);
+                                this.$emit('update:scrollTop', this.scrollTopEmit);
+                            }
+                        }
+                    });
+                    this.$emit('beforeselect');
                 },
                 move: (ne) => {
                     let nx = (ne instanceof MouseEvent) ? ne.clientX : ne.touches[0].clientX;
@@ -365,7 +430,8 @@ exports.methods = {
                 },
                 end: () => {
                     this.$refs.selection.style.opacity = '0';
-                    this.selectionTimer = false;
+                    this.cgRemoveFrameListener(this.selectionTimer);
+                    this.selectionTimer = 0;
                     this.$emit('afterselect');
                 }
             });
@@ -493,14 +559,16 @@ exports.methods = {
                 this.scrollTopEmit = scroll;
             }
         }
-        if (this.timer) {
-            this.timer = false;
+        if (this.timer > 0) {
+            this.cgRemoveFrameListener(this.timer);
+            this.timer = 0;
         }
         this.refreshScroll();
     },
     stopAnimation: function () {
-        if (this.timer) {
-            this.timer = false;
+        if (this.timer > 0) {
+            this.cgRemoveFrameListener(this.timer);
+            this.timer = 0;
         }
     },
     refreshSelection: function (shift = false, ctrl = false) {
@@ -539,89 +607,6 @@ exports.methods = {
         this.$refs.selection.style.width = area.width + 'px';
         this.$refs.selection.style.height = area.height + 'px';
         this.$emit('select', area);
-    },
-    selectionRoll: function () {
-        if (!this.selectionTimer) {
-            return;
-        }
-        let rect = this.$el.getBoundingClientRect();
-        if (this.selectionCurrent.x < rect.left) {
-            if (this.scrollLeftData > 0) {
-                let x = rect.left - this.selectionCurrent.x;
-                let dist = 0;
-                if (this.selectionCurrent.quick) {
-                    dist = x / 2;
-                    this.selectionCurrent.quick = false;
-                }
-                else {
-                    dist = x / 5;
-                }
-                if (this.scrollLeftData - dist < 0) {
-                    dist = this.scrollLeftData;
-                }
-                this.scrollLeftData -= dist;
-                this.scrollLeftEmit = Math.round(this.scrollLeftData);
-                this.$emit('update:scrollLeft', this.scrollLeftEmit);
-            }
-        }
-        else if (this.selectionCurrent.x > rect.right) {
-            if (this.scrollLeftData < this.maxScrollLeft) {
-                let x = this.selectionCurrent.x - rect.right;
-                let dist = 0;
-                if (this.selectionCurrent.quick) {
-                    dist = x / 2;
-                    this.selectionCurrent.quick = false;
-                }
-                else {
-                    dist = x / 5;
-                }
-                if (this.scrollLeftData + dist > this.maxScrollLeft) {
-                    dist = this.maxScrollLeft - this.scrollLeftData;
-                }
-                this.scrollLeftData += dist;
-                this.scrollLeftEmit = Math.round(this.scrollLeftData);
-                this.$emit('update:scrollLeft', this.scrollLeftEmit);
-            }
-        }
-        if (this.selectionCurrent.y < rect.top) {
-            if (this.scrollTopData > 0) {
-                let x = rect.top - this.selectionCurrent.y;
-                let dist = 0;
-                if (this.selectionCurrent.quick) {
-                    dist = x / 2;
-                    this.selectionCurrent.quick = false;
-                }
-                else {
-                    dist = x / 5;
-                }
-                if (this.scrollTopData - dist < 0) {
-                    dist = this.scrollTopData;
-                }
-                this.scrollTopData -= dist;
-                this.scrollTopEmit = Math.round(this.scrollTopData);
-                this.$emit('update:scrollTop', this.scrollTopEmit);
-            }
-        }
-        else if (this.selectionCurrent.y > rect.bottom) {
-            if (this.scrollTopData < this.maxScrollTop) {
-                let x = this.selectionCurrent.y - rect.bottom;
-                let dist = 0;
-                if (this.selectionCurrent.quick) {
-                    dist = x / 2;
-                    this.selectionCurrent.quick = false;
-                }
-                else {
-                    dist = x / 5;
-                }
-                if (this.scrollTopData + dist > this.maxScrollTop) {
-                    dist = this.maxScrollTop - this.scrollTopData;
-                }
-                this.scrollTopData += dist;
-                this.scrollTopEmit = Math.round(this.scrollTopData);
-                this.$emit('update:scrollTop', this.scrollTopEmit);
-            }
-        }
-        requestAnimationFrame(this.selectionRoll);
     }
 };
 let mounted = function () {
@@ -670,8 +655,9 @@ let mounted = function () {
 };
 exports.mounted = mounted;
 let unmounted = function () {
-    if (this.timer) {
-        this.timer = false;
+    if (this.timer > 0) {
+        this.cgRemoveFrameListener(this.timer);
+        this.timer = 0;
     }
 };
 exports.unmounted = unmounted;

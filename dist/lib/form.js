@@ -1036,7 +1036,7 @@ function create(taskId, opt) {
                 }
                 if ([
                     'require',
-                    '__awaiter', 'requestAnimationFrame', 'cancelAnimationFrame', 'eval', 'Math', 'Array', 'Blob', 'Infinity', 'parseInt', 'parseFloat', 'Promise', 'Date', 'JSON', 'fetch'
+                    '__awaiter', 'eval', 'Math', 'Array', 'Blob', 'Infinity', 'parseInt', 'parseFloat', 'Promise', 'Date', 'JSON', 'fetch'
                 ].includes(k)) {
                     continue;
                 }
@@ -1385,13 +1385,19 @@ function create(taskId, opt) {
                 methods.cgCreateTimer = function (fun, delay, opt = {}) {
                     return clickgo.task.createTimer(this.taskId, this.formId, fun, delay, opt);
                 };
+                methods.cgRemoveTimer = function (timer) {
+                    clickgo.task.removeTimer(this.taskId, timer);
+                };
                 methods.cgSleep = function (fun, delay) {
                     return this.cgCreateTimer(fun, delay, {
                         'count': 1
                     });
                 };
-                methods.cgRemoveTimer = function (timer) {
-                    clickgo.task.removeTimer(this.taskId, timer);
+                methods.cgAddFrameListener = function (fun, opt = {}) {
+                    return clickgo.task.addFrameListener(this.taskId, this.formId, fun, opt);
+                };
+                methods.cgRemoveFrameListener = function (ft) {
+                    clickgo.task.removeFrameListener(this.taskId, ft);
                 };
                 methods.cgAllowEvent = function (e) {
                     return clickgo.dom.allowEvent(e);
@@ -1908,13 +1914,19 @@ function create(taskId, opt) {
         methods.cgCreateTimer = function (fun, delay, opt = {}) {
             return clickgo.task.createTimer(this.taskId, this.formId, fun, delay, opt);
         };
+        methods.cgRemoveTimer = function (timer) {
+            clickgo.task.removeTimer(this.taskId, timer);
+        };
         methods.cgSleep = function (fun, delay) {
             return this.cgCreateTimer(fun, delay, {
                 'count': 1
             });
         };
-        methods.cgRemoveTimer = function (timer) {
-            clickgo.task.removeTimer(this.taskId, timer);
+        methods.cgAddFrameListener = function (fun, opt = {}) {
+            return clickgo.task.addFrameListener(this.taskId, this.formId, fun, opt);
+        };
+        methods.cgRemoveFrameListener = function (ft) {
+            clickgo.task.removeFrameListener(this.taskId, ft);
         };
         methods.cgAllowEvent = function (e) {
             return clickgo.dom.allowEvent(e);

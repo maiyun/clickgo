@@ -117,7 +117,7 @@ export async function run(url: string, opt: { 'runtime'?: Record<string, Blob | 
         'forms': {},
         'objectURLs': {},
         'initControls': {},
-        'timers': []
+        'timers': {}
     };
     let task: ICGTask = list[taskId];
     // --- 读取 config，对 control 和 theme 进行 pkg 化（clickgo 的话要运行一遍 fetch 保证已经完成加载） ---
@@ -271,7 +271,14 @@ export function end(taskId: number): boolean {
     }
     // --- 移除所有 timer ---
     for (let timer in list[taskId].timers) {
-        clearTimeout(parseFloat(timer));
+        if (timer.slice(0, 2) === '1x') {
+            let ft = timer.slice(2)
+            cancelAnimationFrame(frameMaps[ft]);
+            delete(frameMaps[ft]);
+        }
+        else {
+            clearTimeout(parseFloat(timer));
+        }
     }
     // --- 移除 task ---
     delete(list[taskId]);
@@ -308,6 +315,7 @@ export function createTimer(taskId: number, formId: number, fun: () => void | Pr
     let scope = opt.scope ?? 'form';
     /** --- 执行几次，0 代表无限次 --- */
     let count = opt.count ?? 0;
+    /** --- 当前已经执行的次数 --- */
     let c: number = 0;
     // --- 是否立即执行 ---
     if (opt.immediate) {
@@ -357,4 +365,75 @@ export function removeTimer(taskId: number, timer: number): void {
     // --- 放在这，防止一个 task 能结束 别的 task 的 timer ---
     clearTimeout(timer);
     delete(clickgo.task.list[taskId].timers[timer]);
+}
+
+// --- 创建 frame 监听 ---
+let frameTimer: number = 0;
+let frameMaps: Record<string, number> = {};
+export function addFrameListener(taskId: number, formId: number, fun: () => void | Promise<void>, opt: { 'scope'?: 'form' | 'task'; 'count'?: number;
+} = {}): number {
+    let ft = ++frameTimer;
+    /** --- 作用域 --- */
+    let scope = opt.scope ?? 'form';
+    /** --- 执行几次，0 代表无限次 --- */
+    let count = opt.count ?? 0;
+    /** --- 当前已经执行的次数 --- */
+    let c: number = 0;
+    let timer: number;
+    let timerHandler = async (): Promise<void> => {
+        ++c;
+        if (list[taskId].forms[formId] === undefined) {
+            // --- form 已经没了 ---
+            if (scope === 'form') {
+                delete(list[taskId].timers['1x' + ft]);
+                delete(frameMaps[ft]);
+                return;
+            }
+        }
+        await fun();
+        if (list[taskId].timers['1x' + ft] == undefined) {
+            return;
+        }
+        if (count > 1) {
+            if (c === count) {
+                // --- 终止循环 ---
+                delete(list[taskId].timers['1x' + ft]);
+                delete(frameMaps[ft]);
+                return;
+            }
+            else {
+                // --- 接着循环 ---
+                timer = requestAnimationFrame(timerHandler);
+                frameMaps[ft] = timer;
+            }
+        }
+        else if (count === 1) {
+            // --- 不循环 ---
+            delete(list[taskId].timers['1x' + ft]);
+            delete(frameMaps[ft]);
+        }
+        else {
+            // --- 无限循环 ---
+            timer = requestAnimationFrame(timerHandler);
+            frameMaps[ft] = timer;
+        }
+    };
+    /** --- timer 对象 number --- */
+    timer = requestAnimationFrame(timerHandler);
+    frameMaps[ft] = timer;
+    list[taskId].timers['1x' + ft] = formId;
+    return ft;
+}
+
+export function removeFrameListener(taskId: number, ft: number): void {
+    if (clickgo.task.list[taskId] === undefined) {
+        return;
+    }
+    let formId = clickgo.task.list[taskId].timers['1x' + ft];
+    if (formId === undefined) {
+        return;
+    }
+    cancelAnimationFrame(frameMaps[ft]);
+    delete(clickgo.task.list[taskId].timers['1x' + ft]);
+    delete(frameMaps[ft]);
 }

@@ -65,6 +65,8 @@
         "/form/event/screen/screen.xml",
         "/form/event/task/task.js",
         "/form/event/task/task.xml",
+        "/form/method/cgAddFrameListener/cgAddFrameListener.js",
+        "/form/method/cgAddFrameListener/cgAddFrameListener.xml",
         "/form/method/cgBindFormDragResize/cgBindFormDragResize.xml",
         "/form/method/cgCreateForm/cgCreateForm.xml",
         "/form/method/cgCreateForm/test.xml",

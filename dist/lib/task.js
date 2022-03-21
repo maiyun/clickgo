@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.removeTimer = exports.createTimer = exports.loadLocalData = exports.end = exports.run = exports.getList = exports.get = exports.lastId = exports.list = void 0;
+exports.removeFrameListener = exports.addFrameListener = exports.removeTimer = exports.createTimer = exports.loadLocalData = exports.end = exports.run = exports.getList = exports.get = exports.lastId = exports.list = void 0;
 exports.list = {};
 exports.lastId = 0;
 let localData = {
@@ -112,7 +112,7 @@ function run(url, opt = {}) {
             'forms': {},
             'objectURLs': {},
             'initControls': {},
-            'timers': []
+            'timers': {}
         };
         let task = exports.list[taskId];
         let clickgoFileList = [];
@@ -246,7 +246,14 @@ function end(taskId) {
         clickgo.control.revokeObjectURL(task.controlPkgs[name]);
     }
     for (let timer in exports.list[taskId].timers) {
-        clearTimeout(parseFloat(timer));
+        if (timer.slice(0, 2) === '1x') {
+            let ft = timer.slice(2);
+            cancelAnimationFrame(frameMaps[ft]);
+            delete (frameMaps[ft]);
+        }
+        else {
+            clearTimeout(parseFloat(timer));
+        }
     }
     delete (exports.list[taskId]);
     clickgo.core.trigger('taskEnded', taskId);
@@ -320,3 +327,64 @@ function removeTimer(taskId, timer) {
     delete (clickgo.task.list[taskId].timers[timer]);
 }
 exports.removeTimer = removeTimer;
+let frameTimer = 0;
+let frameMaps = {};
+function addFrameListener(taskId, formId, fun, opt = {}) {
+    var _a, _b;
+    let ft = ++frameTimer;
+    let scope = (_a = opt.scope) !== null && _a !== void 0 ? _a : 'form';
+    let count = (_b = opt.count) !== null && _b !== void 0 ? _b : 0;
+    let c = 0;
+    let timer;
+    let timerHandler = () => __awaiter(this, void 0, void 0, function* () {
+        ++c;
+        if (exports.list[taskId].forms[formId] === undefined) {
+            if (scope === 'form') {
+                delete (exports.list[taskId].timers['1x' + ft]);
+                delete (frameMaps[ft]);
+                return;
+            }
+        }
+        yield fun();
+        if (exports.list[taskId].timers['1x' + ft] == undefined) {
+            return;
+        }
+        if (count > 1) {
+            if (c === count) {
+                delete (exports.list[taskId].timers['1x' + ft]);
+                delete (frameMaps[ft]);
+                return;
+            }
+            else {
+                timer = requestAnimationFrame(timerHandler);
+                frameMaps[ft] = timer;
+            }
+        }
+        else if (count === 1) {
+            delete (exports.list[taskId].timers['1x' + ft]);
+            delete (frameMaps[ft]);
+        }
+        else {
+            timer = requestAnimationFrame(timerHandler);
+            frameMaps[ft] = timer;
+        }
+    });
+    timer = requestAnimationFrame(timerHandler);
+    frameMaps[ft] = timer;
+    exports.list[taskId].timers['1x' + ft] = formId;
+    return ft;
+}
+exports.addFrameListener = addFrameListener;
+function removeFrameListener(taskId, ft) {
+    if (clickgo.task.list[taskId] === undefined) {
+        return;
+    }
+    let formId = clickgo.task.list[taskId].timers['1x' + ft];
+    if (formId === undefined) {
+        return;
+    }
+    cancelAnimationFrame(frameMaps[ft]);
+    delete (clickgo.task.list[taskId].timers['1x' + ft]);
+    delete (frameMaps[ft]);
+}
+exports.removeFrameListener = removeFrameListener;

@@ -36,6 +36,7 @@
                     <button @click="openForm('method', 'cgSetTopMost')">cgSetTopMost</button>
                     <button @click="openForm('method', 'cgFlash')">cgFlash</button>
                     <button @click="openForm('method', 'cgShowHide')">cgShow / cgHide</button>
+                    <button @click="openForm('method', 'cgAddFrameListener')">cgAddFrameListener</button>
                     <button @click="openForm('method', 'cgLocal')">cgLocal</button>
                     <button @click="openForm('method', 'dom')">Library dom</button>
                     <button @click="openForm('method', 'form')">Library form</button>

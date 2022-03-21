@@ -10,7 +10,7 @@ export let props = {
 
 export let data = {
     'arrow': false,
-    'timer': undefined,
+    'timer': 0,
 
     'oldTabs': undefined,
     'selected': ''
@@ -94,26 +94,18 @@ export let methods = {
         let num = type === 'start' ? -5 : 5;
         clickgo.dom.bindDown(e, {
             down: () => {
-                if (this.timer !== undefined) {
-                    this.timer = undefined;
-                }
-                let cb = (): void => {
+                this.timer = this.cgAddFrameListener(() => {
                     if (this.tabPosition === 'top' || this.tabPosition === 'bottom') {
                         this.$refs.tabs[0].scrollLeft += num;
                     }
                     else {
                         this.$refs.tabs[0].scrollTop += num;
                     }
-                    if (this.timer !== undefined) {
-                        requestAnimationFrame(cb);
-                    }
-                };
-                this.timer = requestAnimationFrame(cb);
+                });
             },
             up: () => {
-                if (this.timer !== undefined) {
-                    this.timer = undefined;
-                }
+                this.cgRemoveFrameListener(this.timer);
+                this.timer = 0;
             }
         });
     },

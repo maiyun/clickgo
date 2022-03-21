@@ -40,8 +40,8 @@ export let data = {
     'selectionCurrent': {x: 0, y: 0, quick: false},
 
     // --- 惯性 ---
-    'timer': false,
-    'selectionTimer': false
+    'timer': 0,
+    'selectionTimer': 0
 };
 
 export let watch = {
@@ -263,11 +263,11 @@ export let methods = {
 
                     let fleft = 0;
                     let ftop = 0;
-                    this.timer = true;
 
                     let leftEnd = false;
                     let topEnd = false;
-                    let animation = (): void => {
+
+                    this.timer = this.cgAddFrameListener(() => {
                         if (!leftEnd) {
                             fleft = Math.min(Math.abs(speedLeft) / 32, 0.5);
                             if (speedLeft > 0.2) {
@@ -299,7 +299,6 @@ export let methods = {
 
                         // --- 检测是否终止滚动，本轮就未发生移动，无需 emit ---
                         if (leftEnd && topEnd) {
-                            this.timer = false;
                             this.scrollLeftData = Math.round(this.scrollLeftData);
                             if (this.scrollLeftData > this.maxScrollLeft) {
                                 this.scrollLeftData = this.maxScrollLeft;
@@ -308,6 +307,8 @@ export let methods = {
                             if (this.scrollTopData > this.maxScrollTop) {
                                 this.scrollTopData = this.maxScrollTop;
                             }
+                            this.cgRemoveFrameListener(this.timer);
+                            this.timer = 0;
                             return;
                         }
 
@@ -340,23 +341,10 @@ export let methods = {
                         this.$emit('update:scrollTop', this.scrollTopEmit);
 
                         if (leftEnd && topEnd) {
-                            this.timer = false;
-                            return;
+                            this.cgRemoveFrameListener(this.timer);
+                            this.timer = 0;
                         }
-
-                        if (this.timer) {
-                            requestAnimationFrame(animation);
-                        }
-                        else {
-                            if (this.scrollLeftData > this.maxScrollLeft) {
-                                this.scrollLeftData = this.maxScrollLeft;
-                            }
-                            if (this.scrollTopData > this.maxScrollTop) {
-                                this.scrollTopData = this.maxScrollTop;
-                            }
-                        }
-                    };
-                    animation();
+                    });
                 }
             });
         };
@@ -376,11 +364,106 @@ export let methods = {
                     this.$refs.selection.style.opacity = '1';
                     this.$refs.selection.style.left = this.selectionOrigin.x + 'px';
                     this.$refs.selection.style.top = this.selectionOrigin.y + 'px';
-                    this.selectionTimer = true;
-                    this.$emit('beforeselect');
                     this.selectionCurrent.x = x;
                     this.selectionCurrent.y = y;
-                    this.selectionRoll();
+                    this.selectionTimer = this.cgAddFrameListener(() => {
+                        let rect = this.$el.getBoundingClientRect();
+                        // --- 横向 ---
+                        if (this.selectionCurrent.x < rect.left) {
+                            // --- 向左滚动 ---
+                            if (this.scrollLeftData > 0) {
+                                /** --- 差值 --- */
+                                let x = rect.left - this.selectionCurrent.x;
+                                /** --- 移动的距离 --- */
+                                let dist = 0;
+                                // --- 判断是否是 quick 模式，将加速滚动 ---
+                                if (this.selectionCurrent.quick) {
+                                    dist = x / 2;
+                                    this.selectionCurrent.quick = false;
+                                }
+                                else {
+                                    dist = x / 5;
+                                }
+                                if (this.scrollLeftData - dist < 0) {
+                                    dist = this.scrollLeftData;
+                                }
+                                this.scrollLeftData -= dist;
+                                this.scrollLeftEmit = Math.round(this.scrollLeftData);
+                                this.$emit('update:scrollLeft', this.scrollLeftEmit);
+                            }
+                        }
+                        else if (this.selectionCurrent.x > rect.right) {
+                            // --- 向右滚动 ---
+                            if (this.scrollLeftData < this.maxScrollLeft) {
+                                /** --- 差值 --- */
+                                let x = this.selectionCurrent.x - rect.right;
+                                /** --- 移动的距离 --- */
+                                let dist = 0;
+                                // --- 判断是否是 quick 模式，将加速滚动 ---
+                                if (this.selectionCurrent.quick) {
+                                    dist = x / 2;
+                                    this.selectionCurrent.quick = false;
+                                }
+                                else {
+                                    dist = x / 5;
+                                }
+                                if (this.scrollLeftData + dist > this.maxScrollLeft) {
+                                    dist = this.maxScrollLeft - this.scrollLeftData;
+                                }
+                                this.scrollLeftData += dist;
+                                this.scrollLeftEmit = Math.round(this.scrollLeftData);
+                                this.$emit('update:scrollLeft', this.scrollLeftEmit);
+                            }
+                        }
+                        // --- 纵向 ---
+                        if (this.selectionCurrent.y < rect.top) {
+                            // --- 向左滚动 ---
+                            if (this.scrollTopData > 0) {
+                                /** --- 差值 --- */
+                                let x = rect.top - this.selectionCurrent.y;
+                                /** --- 移动的距离 --- */
+                                let dist = 0;
+                                // --- 判断是否是 quick 模式，将加速滚动 ---
+                                if (this.selectionCurrent.quick) {
+                                    dist = x / 2;
+                                    this.selectionCurrent.quick = false;
+                                }
+                                else {
+                                    dist = x / 5;
+                                }
+                                if (this.scrollTopData - dist < 0) {
+                                    dist = this.scrollTopData;
+                                }
+                                this.scrollTopData -= dist;
+                                this.scrollTopEmit = Math.round(this.scrollTopData);
+                                this.$emit('update:scrollTop', this.scrollTopEmit);
+                            }
+                        }
+                        else if (this.selectionCurrent.y > rect.bottom) {
+                            // --- 向右滚动 ---
+                            if (this.scrollTopData < this.maxScrollTop) {
+                                /** --- 差值 --- */
+                                let x = this.selectionCurrent.y - rect.bottom;
+                                /** --- 移动的距离 --- */
+                                let dist = 0;
+                                // --- 判断是否是 quick 模式，将加速滚动 ---
+                                if (this.selectionCurrent.quick) {
+                                    dist = x / 2;
+                                    this.selectionCurrent.quick = false;
+                                }
+                                else {
+                                    dist = x / 5;
+                                }
+                                if (this.scrollTopData + dist > this.maxScrollTop) {
+                                    dist = this.maxScrollTop - this.scrollTopData;
+                                }
+                                this.scrollTopData += dist;
+                                this.scrollTopEmit = Math.round(this.scrollTopData);
+                                this.$emit('update:scrollTop', this.scrollTopEmit);
+                            }
+                        }
+                    });
+                    this.$emit('beforeselect');
                 },
                 move: (ne: MouseEvent | TouchEvent): void => {
                     let nx: number = (ne instanceof MouseEvent) ? ne.clientX : ne.touches[0].clientX;
@@ -394,7 +477,8 @@ export let methods = {
                 },
                 end: () => {
                     this.$refs.selection.style.opacity = '0';
-                    this.selectionTimer = false;
+                    this.cgRemoveFrameListener(this.selectionTimer);
+                    this.selectionTimer = 0;
                     this.$emit('afterselect');
                 }
             });
@@ -537,15 +621,17 @@ export let methods = {
                 this.scrollTopEmit = scroll;
             }
         }
-        if (this.timer) {
-            this.timer = false;
+        if (this.timer > 0) {
+            this.cgRemoveFrameListener(this.timer);
+            this.timer = 0;
         }
         this.refreshScroll();
     },
     // --- 如果当前正在运行动画，则终止他 ---
     stopAnimation: function(this: IVControl): void {
-        if (this.timer) {
-            this.timer = false;
+        if (this.timer > 0) {
+            this.cgRemoveFrameListener(this.timer);
+            this.timer = 0;
         }
     },
     // --- 当 scroll 触发或者手动 move 后，需要刷新 selection area 区域 ---
@@ -595,107 +681,6 @@ export let methods = {
         this.$refs.selection.style.height = area.height + 'px';
         // --- 响应 select 事件 ---
         this.$emit('select', area);
-    },
-    selectionRoll: function(this: IVControl): void {
-        if (!this.selectionTimer) {
-            return;
-        }
-        let rect = this.$el.getBoundingClientRect();
-        // --- 横向 ---
-        if (this.selectionCurrent.x < rect.left) {
-            // --- 向左滚动 ---
-            if (this.scrollLeftData > 0) {
-                /** --- 差值 --- */
-                let x = rect.left - this.selectionCurrent.x;
-                /** --- 移动的距离 --- */
-                let dist = 0;
-                // --- 判断是否是 quick 模式，将加速滚动 ---
-                if (this.selectionCurrent.quick) {
-                    dist = x / 2;
-                    this.selectionCurrent.quick = false;
-                }
-                else {
-                    dist = x / 5;
-                }
-                if (this.scrollLeftData - dist < 0) {
-                    dist = this.scrollLeftData;
-                }
-                this.scrollLeftData -= dist;
-                this.scrollLeftEmit = Math.round(this.scrollLeftData);
-                this.$emit('update:scrollLeft', this.scrollLeftEmit);
-            }
-        }
-        else if (this.selectionCurrent.x > rect.right) {
-            // --- 向右滚动 ---
-            if (this.scrollLeftData < this.maxScrollLeft) {
-                /** --- 差值 --- */
-                let x = this.selectionCurrent.x - rect.right;
-                /** --- 移动的距离 --- */
-                let dist = 0;
-                // --- 判断是否是 quick 模式，将加速滚动 ---
-                if (this.selectionCurrent.quick) {
-                    dist = x / 2;
-                    this.selectionCurrent.quick = false;
-                }
-                else {
-                    dist = x / 5;
-                }
-                if (this.scrollLeftData + dist > this.maxScrollLeft) {
-                    dist = this.maxScrollLeft - this.scrollLeftData;
-                }
-                this.scrollLeftData += dist;
-                this.scrollLeftEmit = Math.round(this.scrollLeftData);
-                this.$emit('update:scrollLeft', this.scrollLeftEmit);
-            }
-        }
-        // --- 纵向 ---
-        if (this.selectionCurrent.y < rect.top) {
-            // --- 向左滚动 ---
-            if (this.scrollTopData > 0) {
-                /** --- 差值 --- */
-                let x = rect.top - this.selectionCurrent.y;
-                /** --- 移动的距离 --- */
-                let dist = 0;
-                // --- 判断是否是 quick 模式，将加速滚动 ---
-                if (this.selectionCurrent.quick) {
-                    dist = x / 2;
-                    this.selectionCurrent.quick = false;
-                }
-                else {
-                    dist = x / 5;
-                }
-                if (this.scrollTopData - dist < 0) {
-                    dist = this.scrollTopData;
-                }
-                this.scrollTopData -= dist;
-                this.scrollTopEmit = Math.round(this.scrollTopData);
-                this.$emit('update:scrollTop', this.scrollTopEmit);
-            }
-        }
-        else if (this.selectionCurrent.y > rect.bottom) {
-            // --- 向右滚动 ---
-            if (this.scrollTopData < this.maxScrollTop) {
-                /** --- 差值 --- */
-                let x = this.selectionCurrent.y - rect.bottom;
-                /** --- 移动的距离 --- */
-                let dist = 0;
-                // --- 判断是否是 quick 模式，将加速滚动 ---
-                if (this.selectionCurrent.quick) {
-                    dist = x / 2;
-                    this.selectionCurrent.quick = false;
-                }
-                else {
-                    dist = x / 5;
-                }
-                if (this.scrollTopData + dist > this.maxScrollTop) {
-                    dist = this.maxScrollTop - this.scrollTopData;
-                }
-                this.scrollTopData += dist;
-                this.scrollTopEmit = Math.round(this.scrollTopData);
-                this.$emit('update:scrollTop', this.scrollTopEmit);
-            }
-        }
-        requestAnimationFrame(this.selectionRoll);
     }
 };
 
@@ -753,7 +738,8 @@ export let mounted = function(this: IVControl): void {
 };
 
 export let unmounted = function(this: IVControl): void {
-    if (this.timer) {
-        this.timer = false;
+    if (this.timer > 0) {
+        this.cgRemoveFrameListener(this.timer);
+        this.timer = 0;
     }
 };

@@ -18,8 +18,8 @@ export let data = {
     'client': 0,
     'length': 0,
 
-    'timer': undefined,
-    'timerCount': 0
+    'dir': '',
+    'timer': 0
 }
 
 export let computed = {
@@ -42,7 +42,7 @@ export let watch = {
     },
     'direction': {
         handler: function(this: IVControl, n: string, o: string) {
-            if (!this.timer) {
+            if (this.timer === 0) {
                 return;
             }
             let ndir = (n === 'left' || n === 'right') ? 'h' : 'v';
@@ -53,13 +53,13 @@ export let watch = {
             if (ndir === 'v') {
                 this.left = 0;
                 if (!this.isScroll) {
-                    this.timer = 'top';
+                    this.dir = 'top';
                 }
             }
             else {
                 this.top = 0;
                 if (!this.isScroll) {
-                    this.timer = 'left';
+                    this.dir = 'left';
                 }
             }
         }
@@ -73,10 +73,10 @@ export let methods = {
         }
         if (this.isScroll) {
             // --- 无论是否超出都要滚动 ---
-            if (this.timer) {
+            if (this.timer > 0) {
                 return;
             }
-            this.timer = this.direction;
+            this.dir = this.direction;
             switch (this.direction) {
                 case 'left': {
                     this.left = this.client;
@@ -102,120 +102,113 @@ export let methods = {
         }
         else if (this.length > this.client) {
             // --- 超出，来回滚 ---
-            if (this.timer) {
+            if (this.timer > 0) {
                 return;
             }
             switch (this.direction) {
                 case 'left':
                 case "right": {
-                    this.timer = 'left';
+                    this.dir = 'left';
                     break;
                 }
                 default: {
-                    this.timer = 'top';
+                    this.dir = 'top';
                 }
             }
         }
         else {
-            // --- 未超出、且不滚动 ---
-            if (!this.timer) {
+            // --- 未超出、且不需要滚动 ---
+            if (this.timer === 0) {
                 return;
             }
-            this.timer = undefined;
+            this.cgRemoveFrameListener(this.timer);
+            this.timer = 0;
             this.left = 0;
             this.top = 0;
             return;
         }
-        this.animation(++this.timerCount);
-    },
-    animation: async function(this: IVControl, count: number): Promise<void> {
-        if (!this.timer) {
-            return;
-        }
-        if (!this.$el.offsetParent) {
-            return;
-        }
-        if (count < this.timerCount) {
-            return;
-        }
-        if (this.isScroll) {
-            switch (this.direction) {
-                case 'left': {
-                    this.left -= this.speedPx;
-                    if (this.left < -this.length) {
-                        this.left = this.client;
+        this.timer = this.cgAddFrameListener(async () => {
+            if (!this.$el.offsetParent) {
+                this.cgRemoveFrameListener(this.timer);
+                this.timer = 0;
+                return;
+            }
+            if (this.isScroll) {
+                switch (this.direction) {
+                    case 'left': {
+                        this.left -= this.speedPx;
+                        if (this.left < -this.length) {
+                            this.left = this.client;
+                        }
+                        break;
                     }
-                    break;
-                }
-                case 'right': {
-                    this.left +=  this.speedPx;
-                    if (this.left > this.client) {
-                        this.left = -this.length;
+                    case 'right': {
+                        this.left +=  this.speedPx;
+                        if (this.left > this.client) {
+                            this.left = -this.length;
+                        }
+                        break;
                     }
-                    break;
-                }
-                case 'top': {
-                    this.top -=  this.speedPx;
-                    if (this.top < -this.length) {
-                        this.top = this.client;
+                    case 'top': {
+                        this.top -=  this.speedPx;
+                        if (this.top < -this.length) {
+                            this.top = this.client;
+                        }
+                        break;
                     }
-                    break;
-                }
-                case 'bottom': {
-                    this.top += this.speedPx;
-                    if (this.top > this.client) {
-                        this.top = -this.length;
+                    case 'bottom': {
+                        this.top += this.speedPx;
+                        if (this.top > this.client) {
+                            this.top = -this.length;
+                        }
+                        break;
                     }
-                    break;
                 }
             }
-        }
-        else {
-            /** --- 超出的部分 --- */
-            let xv = this.length - this.client;
-            switch (this.timer) {
-                case 'left': {
-                    this.left -= this.speedPx;
-                    if (this.left < -xv) {
-                        this.timer = 'right';
-                        this.left = -xv;
-                        await clickgo.tool.sleep(1000);
+            else {
+                /** --- 超出的部分 --- */
+                let xv = this.length - this.client;
+                switch (this.dir) {
+                    case 'left': {
+                        this.left -= this.speedPx;
+                        if (this.left < -xv) {
+                            this.dir = 'right';
+                            this.left = -xv;
+                            await clickgo.tool.sleep(1000);
+                        }
+                        break;
                     }
-                    break;
-                }
-                case 'right': {
-                    this.left += this.speedPx;
-                    if (this.left > 0) {
-                        this.timer = 'left';
-                        this.left = 0;
-                        await clickgo.tool.sleep(1000);
+                    case 'right': {
+                        this.left += this.speedPx;
+                        if (this.left > 0) {
+                            this.dir = 'left';
+                            this.left = 0;
+                            await clickgo.tool.sleep(1000);
+                        }
+                        break;
                     }
-                    break;
-                }
-                case 'top': {
-                    this.top -= this.speedPx;
-                    if (this.top < -xv) {
-                        this.timer = 'bottom';
-                        this.top = -xv;
-                        await clickgo.tool.sleep(1000);
+                    case 'top': {
+                        this.top -= this.speedPx;
+                        if (this.top < -xv) {
+                            this.dir = 'bottom';
+                            this.top = -xv;
+                            await clickgo.tool.sleep(1000);
+                        }
+                        break;
                     }
-                    break;
-                }
-                case 'bottom': {
-                    this.top += this.speedPx;
-                    if (this.top > 0) {
-                        this.timer = 'top';
-                        this.top = 0;
-                        await clickgo.tool.sleep(1000);
+                    case 'bottom': {
+                        this.top += this.speedPx;
+                        if (this.top > 0) {
+                            this.dir = 'top';
+                            this.top = 0;
+                            await clickgo.tool.sleep(1000);
+                        }
+                        break;
                     }
-                    break;
                 }
             }
-        }
-        requestAnimationFrame(() => {
-            this.animation(count);
         });
-    } 
+    }
 };
 
 export let mounted = function(this: IVControl): void {

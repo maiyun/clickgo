@@ -27,8 +27,8 @@ exports.data = {
     'top': 0,
     'client': 0,
     'length': 0,
-    'timer': undefined,
-    'timerCount': 0
+    'dir': '',
+    'timer': 0
 };
 exports.computed = {
     'opMargin': function () {
@@ -49,7 +49,7 @@ exports.watch = {
     },
     'direction': {
         handler: function (n, o) {
-            if (!this.timer) {
+            if (this.timer === 0) {
                 return;
             }
             let ndir = (n === 'left' || n === 'right') ? 'h' : 'v';
@@ -60,13 +60,13 @@ exports.watch = {
             if (ndir === 'v') {
                 this.left = 0;
                 if (!this.isScroll) {
-                    this.timer = 'top';
+                    this.dir = 'top';
                 }
             }
             else {
                 this.top = 0;
                 if (!this.isScroll) {
-                    this.timer = 'left';
+                    this.dir = 'left';
                 }
             }
         }
@@ -78,10 +78,10 @@ exports.methods = {
             return;
         }
         if (this.isScroll) {
-            if (this.timer) {
+            if (this.timer > 0) {
                 return;
             }
-            this.timer = this.direction;
+            this.dir = this.direction;
             switch (this.direction) {
                 case 'left': {
                     this.left = this.client;
@@ -106,40 +106,34 @@ exports.methods = {
             }
         }
         else if (this.length > this.client) {
-            if (this.timer) {
+            if (this.timer > 0) {
                 return;
             }
             switch (this.direction) {
                 case 'left':
                 case "right": {
-                    this.timer = 'left';
+                    this.dir = 'left';
                     break;
                 }
                 default: {
-                    this.timer = 'top';
+                    this.dir = 'top';
                 }
             }
         }
         else {
-            if (!this.timer) {
+            if (this.timer === 0) {
                 return;
             }
-            this.timer = undefined;
+            this.cgRemoveFrameListener(this.timer);
+            this.timer = 0;
             this.left = 0;
             this.top = 0;
             return;
         }
-        this.animation(++this.timerCount);
-    },
-    animation: function (count) {
-        return __awaiter(this, void 0, void 0, function* () {
-            if (!this.timer) {
-                return;
-            }
+        this.timer = this.cgAddFrameListener(() => __awaiter(this, void 0, void 0, function* () {
             if (!this.$el.offsetParent) {
-                return;
-            }
-            if (count < this.timerCount) {
+                this.cgRemoveFrameListener(this.timer);
+                this.timer = 0;
                 return;
             }
             if (this.isScroll) {
@@ -176,11 +170,11 @@ exports.methods = {
             }
             else {
                 let xv = this.length - this.client;
-                switch (this.timer) {
+                switch (this.dir) {
                     case 'left': {
                         this.left -= this.speedPx;
                         if (this.left < -xv) {
-                            this.timer = 'right';
+                            this.dir = 'right';
                             this.left = -xv;
                             yield clickgo.tool.sleep(1000);
                         }
@@ -189,7 +183,7 @@ exports.methods = {
                     case 'right': {
                         this.left += this.speedPx;
                         if (this.left > 0) {
-                            this.timer = 'left';
+                            this.dir = 'left';
                             this.left = 0;
                             yield clickgo.tool.sleep(1000);
                         }
@@ -198,7 +192,7 @@ exports.methods = {
                     case 'top': {
                         this.top -= this.speedPx;
                         if (this.top < -xv) {
-                            this.timer = 'bottom';
+                            this.dir = 'bottom';
                             this.top = -xv;
                             yield clickgo.tool.sleep(1000);
                         }
@@ -207,7 +201,7 @@ exports.methods = {
                     case 'bottom': {
                         this.top += this.speedPx;
                         if (this.top > 0) {
-                            this.timer = 'top';
+                            this.dir = 'top';
                             this.top = 0;
                             yield clickgo.tool.sleep(1000);
                         }
@@ -215,10 +209,7 @@ exports.methods = {
                     }
                 }
             }
-            requestAnimationFrame(() => {
-                this.animation(count);
-            });
-        });
+        }));
     }
 };
 let mounted = function () {

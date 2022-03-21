@@ -13,6 +13,8 @@ interface ICGTaskLib {
         'count'?: number;
     }): number;
     removeTimer(taskId: number, timer: number): void;
+    addFrameListener(taskId: number, formId: number, fun: () => void | Promise<void>, opt?: { 'scope'?: 'form' | 'task'; 'count'?: number; }): number;
+    removeFrameListener(taskId: number, ft: number): void;
 }
 
 /** --- 单条任务对象 --- */
@@ -35,7 +37,7 @@ interface ICGTask {
     'files': Record<string, Blob | string>;
     'objectURLs': Record<string, string>;
     'initControls': Record<string, { 'layout': string; 'prep': string; }>;
-    'timers': Record<number, number>;
+    'timers': Record<string, number>;
 }
 
 /** --- Task Item 的简略情况，通常在 list 当中 --- */

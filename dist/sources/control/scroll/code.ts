@@ -26,11 +26,11 @@ export let data = {
     'scrollOffsetPx': 0,
     'barLengthPx': 0,
 
-    'timer': undefined,
+    'timer': 0,
     'tran': false,
 
     'opacity': '1',
-    'opacityTimer': undefined,
+    'opacityTimer': 0,
     'isEnter': false,
 
     'width': 0,
@@ -66,30 +66,26 @@ export let watch = {
             if (this.isEnter) {
                 return;
             }
-            if (this.opacityTimer) {
+            if (this.opacityTimer > 0) {
                 this.cgRemoveTimer(this.opacityTimer);
-                this.opacityTimer = undefined;
+                this.opacityTimer = 0;
             }
-            this.opacityTimer = this.cgCreateTimer(() => {
+            this.opacityTimer = this.cgSleep(() => {
                 this.opacity = '0';
-            }, 800, {
-                'count': 1
-            });
+            }, 800);
             this.opacity = '1';
         }
     },
     'float': function(this: IVControl): void {
         if (this.isFloat) {
-            this.opacityTimer = this.cgCreateTimer(() => {
+            this.opacityTimer = this.cgSleep(() => {
                 this.opacity = '0';
-            }, 800, {
-                'count': 1
-            });
+            }, 800);
         }
         else {
-            if (this.opacityTimer) {
+            if (this.opacityTimer > 0) {
                 this.cgRemoveTimer(this.opacityTimer);
-                this.opacityTimer = undefined;
+                this.opacityTimer = 0;
             }
             this.opacity = '1';
         }
@@ -187,11 +183,8 @@ export let methods = {
         }
         clickgo.dom.bindDown(e, {
             down: () => {
-                if (this.timer !== undefined) {
-                    clearInterval(this.timer);
-                }
                 this.tran = true;
-                let cb = (): void => {
+                this.timer = this.cgAddFrameListener(() => {
                     if (type === 'start') {
                         if (this.scrollOffsetData - 10 < 0) {
                             if (this.scrollOffsetData !== 0) {
@@ -220,17 +213,12 @@ export let methods = {
                             this.$emit('update:scrollOffset', this.scrollOffsetData);
                         }
                     }
-                    if (this.timer !== undefined) {
-                        requestAnimationFrame(cb);
-                    }
-                };
-                this.timer = requestAnimationFrame(cb);
+                });
             },
             up: () => {
                 this.tran = false;
-                if (this.timer !== undefined) {
-                    this.timer = undefined;
-                }
+                this.cgRemoveFrameListener(this.timer);
+                this.timer = 0;
             }
         });
     },
@@ -242,9 +230,9 @@ export let methods = {
         this.isEnter = true;
         if (this.isFloat) {
             this.opacity = '1';
-            if (this.opacityTimer) {
+            if (this.opacityTimer > 0) {
                 this.cgRemoveTimer(this.opacityTimer);
-                this.opacityTimer = undefined;
+                this.opacityTimer = 0;
             }
         }
     },
@@ -254,11 +242,9 @@ export let methods = {
         }
         this.isEnter = false;
         if (this.isFloat) {
-            this.opacityTimer = this.cgCreateTimer(() => {
+            this.opacityTimer = this.cgSleep(() => {
                 this.opacity = '0';
-            }, 800, {
-                'count': 1
-            });
+            }, 800);
         }
     },
     wrapDown: function(this: IVControl, e: TouchEvent): void {
@@ -268,20 +254,18 @@ export let methods = {
                 this.isEnter = true;
                 if (this.isFloat) {
                     this.opacity = '1';
-                    if (this.opacityTimer) {
+                    if (this.opacityTimer > 0) {
                         this.cgRemoveTimer(this.opacityTimer);
-                        this.opacityTimer = undefined;
+                        this.opacityTimer = 0;
                     }
                 }
             },
             up: () => {
                 this.isEnter = false;
                 if (this.isFloat) {
-                    this.opacityTimer = this.cgCreateTimer(() => {
+                    this.opacityTimer = this.cgSleep(() => {
                         this.opacity = '0';
-                    }, 800, {
-                        'count': 1
-                    });
+                    }, 800);
                 }
             }
         });
@@ -307,11 +291,9 @@ export let methods = {
 export let mounted = function(this: IVControl): void {
     // --- 是否自动隐藏 scroll ---
     if (this.isFloat) {
-        this.opacityTimer = this.cgCreateTimer(() => {
+        this.opacityTimer = this.cgSleep(() => {
             this.opacity = '0';
-        }, 800, {
-            'count': 1
-        });
+        }, 800);
     }
     // --- 监听 bar 的 size ---
     clickgo.dom.watchSize(this.$refs.bar, (size) => {
@@ -331,7 +313,7 @@ export let mounted = function(this: IVControl): void {
 };
 
 export let unmounted = function(this: IVControl): void {
-    if (this.timer !== undefined) {
-        clearInterval(this.timer);
+    if (this.timer > 0) {
+        this.cgRemoveFrameListener(this.timer);
     }
 };

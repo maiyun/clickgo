@@ -139,16 +139,27 @@ interface IVForm extends IVue {
         'count'?: number;
     }): number;
     /**
+     * --- 移除 timer ---
+     * @param timer 要移除的 timer number ---
+     */
+    cgRemoveTimer(timer: number): void;
+    /**
      * --- sleep 一段时间再执行 ---
      * @param fun 执行的函数
      * @param delay 间隔时间
      */
     cgSleep(fun: () => void | Promise<void>, delay: number): number;
     /**
-     * --- 移除 timer ---
-     * @param timer 要移除的 timer number ---
+     * --- 创建 frame listener ---
+     * @param fun 执行的函数
+     * @param opt 选项
      */
-    cgRemoveTimer(timer: number): void;
+    cgAddFrameListener(fun: () => void | Promise<void>, opt?: { 'scope'?: 'form' | 'task'; 'count'?: number; }): number;
+    /**
+     * --- 移除 frame listene ---
+     * @param ft timer ---
+     */
+    cgRemoveFrameListener(ft: number): void;
     /**
      * --- 检测事件是否可被执行 ---
      * @param e 事件
@@ -221,16 +232,27 @@ interface IVControl extends IVue {
         'count'?: number;
     }): number;
     /**
+     * --- 移除 timer ---
+     * @param timer 要移除的 timer number ---
+     */
+    cgRemoveTimer(timer: number): void;
+    /**
      * --- sleep 一段时间再执行 ---
      * @param fun 执行的函数
      * @param delay 间隔时间
      */
     cgSleep(fun: () => void | Promise<void>, delay: number): number;
     /**
-     * --- 移除 timer ---
-     * @param timer 要移除的 timer number ---
+     * --- 创建 frame listener ---
+     * @param fun 执行的函数
+     * @param opt 选项
      */
-    cgRemoveTimer(timer: number): void;
+    cgAddFrameListener(fun: () => void | Promise<void>, opt?: { 'scope'?: 'form' | 'task'; 'count'?: number; }): number;
+    /**
+     * --- 移除 frame listene ---
+     * @param ft timer ---
+     */
+    cgRemoveFrameListener(ft: number): void;
     /**
      * --- 检测事件是否可被执行 ---
      * @param e 事件

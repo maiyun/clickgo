@@ -25,10 +25,10 @@ exports.data = {
     'scrollOffsetData': 0,
     'scrollOffsetPx': 0,
     'barLengthPx': 0,
-    'timer': undefined,
+    'timer': 0,
     'tran': false,
     'opacity': '1',
-    'opacityTimer': undefined,
+    'opacityTimer': 0,
     'isEnter': false,
     'width': 0,
     'height': 0
@@ -62,30 +62,26 @@ exports.watch = {
             if (this.isEnter) {
                 return;
             }
-            if (this.opacityTimer) {
+            if (this.opacityTimer > 0) {
                 this.cgRemoveTimer(this.opacityTimer);
-                this.opacityTimer = undefined;
+                this.opacityTimer = 0;
             }
-            this.opacityTimer = this.cgCreateTimer(() => {
+            this.opacityTimer = this.cgSleep(() => {
                 this.opacity = '0';
-            }, 800, {
-                'count': 1
-            });
+            }, 800);
             this.opacity = '1';
         }
     },
     'float': function () {
         if (this.isFloat) {
-            this.opacityTimer = this.cgCreateTimer(() => {
+            this.opacityTimer = this.cgSleep(() => {
                 this.opacity = '0';
-            }, 800, {
-                'count': 1
-            });
+            }, 800);
         }
         else {
-            if (this.opacityTimer) {
+            if (this.opacityTimer > 0) {
                 this.cgRemoveTimer(this.opacityTimer);
-                this.opacityTimer = undefined;
+                this.opacityTimer = 0;
             }
             this.opacity = '1';
         }
@@ -169,11 +165,8 @@ exports.methods = {
         }
         clickgo.dom.bindDown(e, {
             down: () => {
-                if (this.timer !== undefined) {
-                    clearInterval(this.timer);
-                }
                 this.tran = true;
-                let cb = () => {
+                this.timer = this.cgAddFrameListener(() => {
                     if (type === 'start') {
                         if (this.scrollOffsetData - 10 < 0) {
                             if (this.scrollOffsetData !== 0) {
@@ -202,17 +195,12 @@ exports.methods = {
                             this.$emit('update:scrollOffset', this.scrollOffsetData);
                         }
                     }
-                    if (this.timer !== undefined) {
-                        requestAnimationFrame(cb);
-                    }
-                };
-                this.timer = requestAnimationFrame(cb);
+                });
             },
             up: () => {
                 this.tran = false;
-                if (this.timer !== undefined) {
-                    this.timer = undefined;
-                }
+                this.cgRemoveFrameListener(this.timer);
+                this.timer = 0;
             }
         });
     },
@@ -223,9 +211,9 @@ exports.methods = {
         this.isEnter = true;
         if (this.isFloat) {
             this.opacity = '1';
-            if (this.opacityTimer) {
+            if (this.opacityTimer > 0) {
                 this.cgRemoveTimer(this.opacityTimer);
-                this.opacityTimer = undefined;
+                this.opacityTimer = 0;
             }
         }
     },
@@ -235,11 +223,9 @@ exports.methods = {
         }
         this.isEnter = false;
         if (this.isFloat) {
-            this.opacityTimer = this.cgCreateTimer(() => {
+            this.opacityTimer = this.cgSleep(() => {
                 this.opacity = '0';
-            }, 800, {
-                'count': 1
-            });
+            }, 800);
         }
     },
     wrapDown: function (e) {
@@ -248,20 +234,18 @@ exports.methods = {
                 this.isEnter = true;
                 if (this.isFloat) {
                     this.opacity = '1';
-                    if (this.opacityTimer) {
+                    if (this.opacityTimer > 0) {
                         this.cgRemoveTimer(this.opacityTimer);
-                        this.opacityTimer = undefined;
+                        this.opacityTimer = 0;
                     }
                 }
             },
             up: () => {
                 this.isEnter = false;
                 if (this.isFloat) {
-                    this.opacityTimer = this.cgCreateTimer(() => {
+                    this.opacityTimer = this.cgSleep(() => {
                         this.opacity = '0';
-                    }, 800, {
-                        'count': 1
-                    });
+                    }, 800);
                 }
             }
         });
@@ -284,11 +268,9 @@ exports.methods = {
 };
 let mounted = function () {
     if (this.isFloat) {
-        this.opacityTimer = this.cgCreateTimer(() => {
+        this.opacityTimer = this.cgSleep(() => {
             this.opacity = '0';
-        }, 800, {
-            'count': 1
-        });
+        }, 800);
     }
     clickgo.dom.watchSize(this.$refs.bar, (size) => {
         this.barLengthPx = this.direction === 'v' ? size.height : size.width;
@@ -306,8 +288,8 @@ let mounted = function () {
 };
 exports.mounted = mounted;
 let unmounted = function () {
-    if (this.timer !== undefined) {
-        clearInterval(this.timer);
+    if (this.timer > 0) {
+        this.cgRemoveFrameListener(this.timer);
     }
 };
 exports.unmounted = unmounted;

@@ -53,7 +53,7 @@ function clone(obj) {
 exports.clone = clone;
 function sleep(ms = 0) {
     return new Promise(function (resolve) {
-        if (ms > 1000 * 5) {
+        if (ms > 1000 * 3) {
             resolve(false);
             return;
         }
