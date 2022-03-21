@@ -52,12 +52,13 @@ function clone(obj) {
 }
 exports.clone = clone;
 function sleep(ms = 0) {
-    if (ms > 1000 * 5) {
-        ms = 1000 * 5;
-    }
     return new Promise(function (resolve) {
+        if (ms > 1000 * 5) {
+            resolve(false);
+            return;
+        }
         window.setTimeout(function () {
-            resolve();
+            resolve(true);
         }, ms);
     });
 }

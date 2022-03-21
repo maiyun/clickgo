@@ -72,13 +72,14 @@ export function clone(obj: Record<string, any> | any[]): any[] | any {
  * --- 等待毫秒 ---
  * @param ms 等待的毫秒，默认 0，最大 5 秒
  */
-export function sleep(ms: number = 0): Promise<void> {
-    if (ms > 1000 * 5) {
-        ms = 1000 * 5;
-    }
+export function sleep(ms: number = 0): Promise<boolean> {
     return new Promise(function(resolve) {
+        if (ms > 1000 * 5) {
+            resolve(false);
+            return;
+        }
         window.setTimeout(function() {
-            resolve();
+            resolve(true);
         }, ms);
     });
 }

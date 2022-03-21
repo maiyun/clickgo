@@ -2,7 +2,7 @@ interface ICGToolLib {
     file2ObjectUrl(file: string, obj: ICGTask | ICGControl | ICGThemePkg): string | null;
     blob2ArrayBuffer(blob: Blob): Promise<ArrayBuffer>;
     clone(obj: Record<string, any> | any[]): any[] | any;
-    sleep(ms?: number): Promise<void>;
+    sleep(ms?: number): Promise<boolean>;
     purify(text: string): string;
     styleUrl2ObjectOrDataUrl(path: string, style: string, obj: ICGTask | ICGControl | ICGThemePkg, mode?: 'object' | 'data'): Promise<string>;
     layoutAddTagClassAndReTagName(layout: string, retagname: boolean): string;
