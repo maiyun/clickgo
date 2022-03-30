@@ -75,22 +75,22 @@
         position: absolute; z-index: 1;
     }
     .pop-resize-lt, .pop-resize-t, .pop-resize-tr {
-        top: -5px; height: 10px;
+        top: -10px; height: 20px;
     }
     .pop-resize-tr, .pop-resize-r, .pop-resize-rb {
-        right: -5px; width: 10px;
+        right: -10px; width: 20px;
     }
     .pop-resize-rb, .pop-resize-b, .pop-resize-bl {
-        bottom: -5px; height: 10px;
+        bottom: -10px; height: 20px;
     }
     .pop-resize-bl, .pop-resize-l, .pop-resize-lt {
-        left: -5px; width: 10px;
+        left: -10px; width: 20px;
     }
     .pop-resize-t, .pop-resize-b {
-        left: 5px; width: calc(100% - 10px);
+        left: 10px; width: calc(100% - 20px);
     }
     .pop-resize-l, .pop-resize-r {
-        top: 5px; height: calc(100% - 10px);
+        top: 10px; height: calc(100% - 20px);
     }
     .pop-resize-lt {
         cursor: nw-resize;

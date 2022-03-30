@@ -53,7 +53,7 @@ ${classUnfold()}, ${classUnfold('input')}, ${classUnfold('textarea')} {font-fami
 [data-cg-pop]:not([data-cg-open]) {pointer-events: none;}
 [data-cg-pop][data-cg-open] {transform: translateY(0px); opacity: 1;}
 
-.cg-system-notify {background: rgba(0, 0, 0, .5); position: fixed; padding: 15px; border-radius: 3px; right: 0; top: 0; width: 280px; font-size: 14px; display: flex; transition: .1s ease-out; transition-property: transform, opacity; overflow: hidden; color: #f6f6f6; box-shadow: 0 5px 20px rgba(0, 0, 0, .25); -webkit-backdrop-filter: blur(20px) brightness(1.1); backdrop-filter: blur(20px) brightness(1.1);}
+.cg-system-notify {background: rgba(0, 0, 0, .5); position: fixed; padding: 15px; border-radius: 3px; right: 0; top: 0; width: 280px; font-size: 14px; display: flex; transition: .1s ease-out; transition-property: transform, opacity; overflow: hidden; color: #f6f6f6; box-shadow: 0 5px 20px rgba(0, 0, 0, .25); -webkit-backdrop-filter: blur(30px) brightness(1.1); backdrop-filter: blur(30px) brightness(1.1);}
 .cg-system-icon {margin-right: 10px; width: 16px; height: 16px; border-radius: 50%;}
 .cg-system-icon-primary {background: #07c160;}
 .cg-system-icon-info {background: #1989fa;}
@@ -64,7 +64,7 @@ ${classUnfold()}, ${classUnfold('input')}, ${classUnfold('textarea')} {font-fami
 .cg-system-notify-content {line-height: 1.5;}
 .cg-system-notify-progress {position: absolute; bottom: 0; left: 0; border-radius: 1px; background: #ff976a; transition: width 1s ease-out; width: 0%; height: 2px;}
 
-#cg-simpletask {bottom: -46px; width: 100%; height: 46px; top: initial; background: rgb(0, 0, 0, .5); -webkit-backdrop-filter: blur(20px) brightness(1.1); backdrop-filter: blur(20px) brightness(1.1); padding: 5px 0 5px 5px; display: flex; color: #f6f6f6; transition: bottom .1s ease-out; overflow-x: auto;}
+#cg-simpletask {bottom: -46px; width: 100%; height: 46px; top: initial; background: rgb(0, 0, 0, .5); -webkit-backdrop-filter: blur(30px) brightness(1.1); backdrop-filter: blur(30px) brightness(1.1); padding: 5px 0 5px 5px; display: flex; color: #f6f6f6; transition: bottom .1s ease-out; overflow-x: auto;}
 #cg-simpletask::-webkit-scrollbar {display: none;}
 .cg-simpletask-item {background: rgba(246, 246, 246, .05); border-radius: 3px; padding: 10px; display: flex; align-items: center; margin-right: 5px;}
 .cg-simpletask-item:hover {background: rgba(246, 246, 246, .1);}
@@ -405,7 +405,7 @@ watchStyleRAF();
  * @param e MouseEvent | TouchEvent
  * @param opt 回调选项
  */
-export function bindDown(oe: MouseEvent | TouchEvent, opt: { 'down'?: (e: MouseEvent | TouchEvent) => void; 'start'?: (e: MouseEvent | TouchEvent) => void | boolean; 'move'?: (e: MouseEvent | TouchEvent) => void | boolean; 'up'?: (e: MouseEvent | TouchEvent) => void; 'end'?: (e: MouseEvent | TouchEvent) => void; }): void {
+export function bindDown(oe: MouseEvent | TouchEvent, opt: { 'down'?: (e: MouseEvent | TouchEvent) => void; 'start'?: (e: MouseEvent | TouchEvent) => void | boolean; 'move'?: (e: MouseEvent | TouchEvent, dir: 'top' | 'right' | 'bottom' | 'left') => void | boolean; 'up'?: (e: MouseEvent | TouchEvent) => void; 'end'?: (e: MouseEvent | TouchEvent) => void; }): void {
     if (hasTouchButMouse(oe)) {
         return;
     }
@@ -429,11 +429,39 @@ export function bindDown(oe: MouseEvent | TouchEvent, opt: { 'down'?: (e: MouseE
         if (!e.target || !(e.target as HTMLElement).offsetParent) {
             e.preventDefault();
         }
+        /** --- 本次的移动方向 --- */
+        let dir: 'top' | 'right' | 'bottom' | 'left' = 'top';
         let x: number = e instanceof MouseEvent ? e.clientX : e.touches[0].clientX;
         let y: number = e instanceof MouseEvent ? e.clientY : e.touches[0].clientY;
         if (x === ox && y === oy) {
             return;
         }
+        let xx = x - ox;
+        let xy = y - oy;
+        if (Math.abs(xy) > Math.abs(xx)) {
+            // --- 竖向滚动 ---
+            if (xy < 0) {
+                // -- 向上移 ---
+                dir = 'top';
+            }
+            else {
+                // -- 向下移 ---
+                dir = 'bottom';
+            }
+        }
+        else {
+            // --- 横向滚动 ---
+            if (xx < 0) {
+                // -- 向左移 ---
+                dir = 'left';
+            }
+            else {
+                // -- 向右移 ---
+                dir = 'right';
+            }
+        }
+        ox = x;
+        oy = y;
 
         if (!isStart) {
             isStart = true;
@@ -450,7 +478,7 @@ export function bindDown(oe: MouseEvent | TouchEvent, opt: { 'down'?: (e: MouseE
                 return;
             }
         }
-        if (opt.move && (opt.move(e) === false)) {
+        if (opt.move && (opt.move(e, dir) === false)) {
             if (e instanceof MouseEvent) {
                 window.removeEventListener('mousemove', move);
                 window.removeEventListener('mouseup', end);
@@ -525,13 +553,12 @@ function clearGestureData(): void {
     bindGestureData.ty = 0;
 }
 
-function bindGestureAnimation(opt: { 'dirs'?: ('top' | 'right' | 'bottom' | 'left')[]; handler?: (dir: 'top' | 'right' | 'bottom' | 'left') => void; }) {
+function bindGestureAnimation(opt: { 'rect': DOMRect; 'dirs'?: ('top' | 'right' | 'bottom' | 'left')[]; handler: (dir: 'top' | 'right' | 'bottom' | 'left') => void; }) {
     if (!bindGestureData.el) {
         return;
     }
     let speed: number = 6;
     let gestureElement = document.getElementById('cg-gesture') as HTMLElement;
-    let rect = bindGestureData.el.getBoundingClientRect();
     let dirs = opt.dirs ?? ['top', 'bottom'];
 
     if (bindGestureData.tx > bindGestureData.xx) {
@@ -578,8 +605,8 @@ function bindGestureAnimation(opt: { 'dirs'?: ('top' | 'right' | 'bottom' | 'lef
                 bindGestureData.dir = null;
                 gestureElement.classList.remove('done');
             }
-            gestureElement.style.top = rect.top + ((rect.height - 20) / 2) + 'px';
-            gestureElement.style.left = rect.left - 10 + (xxAbs / 1.5) + 'px';
+            gestureElement.style.top = opt.rect.top + ((opt.rect.height - 20) / 2) + 'px';
+            gestureElement.style.left = opt.rect.left - 10 + (xxAbs / 1.5) + 'px';
             gestureElement.style.transform = 'scale(' + (xxAbs / 90) + ')';
         }
         else {
@@ -598,8 +625,8 @@ function bindGestureAnimation(opt: { 'dirs'?: ('top' | 'right' | 'bottom' | 'lef
                 bindGestureData.dir = null;
                 gestureElement.classList.remove('done');
             }
-            gestureElement.style.top = rect.top + ((rect.height - 20) / 2) + 'px';
-            gestureElement.style.left = rect.left + rect.width - 10 - (xxAbs / 1.5) + 'px';
+            gestureElement.style.top = opt.rect.top + ((opt.rect.height - 20) / 2) + 'px';
+            gestureElement.style.left = opt.rect.left + opt.rect.width - 10 - (xxAbs / 1.5) + 'px';
             gestureElement.style.transform = 'scale(' + (xxAbs / 90) + ')';
         }
     }
@@ -620,8 +647,8 @@ function bindGestureAnimation(opt: { 'dirs'?: ('top' | 'right' | 'bottom' | 'lef
                 bindGestureData.dir = null;
                 gestureElement.classList.remove('done');
             }
-            gestureElement.style.left = rect.left + ((rect.width - 20) / 2) + 'px';
-            gestureElement.style.top = rect.top - 10 + (xyAbs / 1.5) + 'px';
+            gestureElement.style.left = opt.rect.left + ((opt.rect.width - 20) / 2) + 'px';
+            gestureElement.style.top = opt.rect.top - 10 + (xyAbs / 1.5) + 'px';
             gestureElement.style.transform = 'scale(' + (xyAbs / 90) + ')';
         }
         else {
@@ -640,8 +667,8 @@ function bindGestureAnimation(opt: { 'dirs'?: ('top' | 'right' | 'bottom' | 'lef
                 bindGestureData.dir = null;
                 gestureElement.classList.remove('done');
             }
-            gestureElement.style.left = rect.left + ((rect.width - 20) / 2) + 'px';
-            gestureElement.style.top = rect.top + rect.height - 10 - (xyAbs / 1.5) + 'px';
+            gestureElement.style.left = opt.rect.left + ((opt.rect.width - 20) / 2) + 'px';
+            gestureElement.style.top = opt.rect.top + opt.rect.height - 10 - (xyAbs / 1.5) + 'px';
             gestureElement.style.transform = 'scale(' + (xyAbs / 90) + ')';
         }
     }
@@ -657,7 +684,7 @@ function bindGestureAnimation(opt: { 'dirs'?: ('top' | 'right' | 'bottom' | 'lef
             if (!bindGestureData.dir) {
                 return;
             }
-            opt.handler?.(bindGestureData.dir);
+            opt.handler(bindGestureData.dir);
         }, 500);
         return;
     }
@@ -666,13 +693,25 @@ function bindGestureAnimation(opt: { 'dirs'?: ('top' | 'right' | 'bottom' | 'lef
     });
 }
 
-export function bindGesture(e: MouseEvent | TouchEvent | WheelEvent | { 'x'?: number; 'y'?: number; 'currentTarget'?: HTMLElement; }, opt: { 'el'?: HTMLElement; 'dirs'?: ('top' | 'right' | 'bottom' | 'left')[]; handler?: (dir: 'top' | 'right' | 'bottom' | 'left') => void; } = {}): void {
+export function bindGesture(e: MouseEvent | TouchEvent | WheelEvent | { 'x'?: number; 'y'?: number; }, opt: { 'el'?: HTMLElement; 'rect'?: DOMRect, 'dirs'?: ('top' | 'right' | 'bottom' | 'left')[]; handler: (dir: 'top' | 'right' | 'bottom' | 'left') => void; }): void {
     let gestureElement = document.getElementById('cg-gesture') as HTMLElement;
-    let el: HTMLElement | undefined = (e.currentTarget as HTMLElement | undefined) ?? opt.el;
+    let el: HTMLElement | undefined = ((e as any).currentTarget as HTMLElement | undefined) ?? ((e as any).target as HTMLElement | undefined) ?? opt.el;
     if (!el) {
         return;
     }
-    let rect = el.getBoundingClientRect();
+    let rect: DOMRect;
+    if ((e as any).rect) {
+        rect = (e as any).rect as DOMRect;
+    }
+    else if (opt.rect) {
+        rect = opt.rect;
+    }
+    else {
+        if (!(el.getBoundingClientRect)) {
+            return;
+        }
+        rect = el.getBoundingClientRect();
+    }
     let dirs = opt.dirs ?? ['top', 'bottom'];
     if ((e instanceof MouseEvent || e instanceof TouchEvent) && !(e instanceof WheelEvent)) {
         // --- touch / mouse 触发的 ---
@@ -791,7 +830,7 @@ export function bindGesture(e: MouseEvent | TouchEvent | WheelEvent | { 'x'?: nu
                 if (!dir) {
                     return;
                 }
-                opt.handler?.(dir);
+                opt.handler(dir);
             }
         });
     }
@@ -847,6 +886,7 @@ export function bindGesture(e: MouseEvent | TouchEvent | WheelEvent | { 'x'?: nu
             bindGestureData.timers.sleep = 0;
         }
         bindGestureAnimation({
+            'rect': rect,
             'dirs': opt.dirs,
             'handler': opt.handler
         });
@@ -924,7 +964,7 @@ export let is = Vue.reactive({
  * @param e mousedown 或 touchstart 的 event
  * @param opt 回调选项
  */
-export function bindMove(e: MouseEvent | TouchEvent, opt: { 'areaObject'?: HTMLElement | IVue; 'left'?: number; 'top'?: number; 'right'?: number; 'bottom'?: number; 'offsetLeft'?: number; 'offsetTop'?: number; 'offsetRight'?: number; 'offsetBottom'?: number; 'objectLeft'?: number; 'objectTop'?: number; 'objectWidth'?: number; 'objectHeight'?: number; 'object'?: HTMLElement | IVue; 'showRect'?: boolean; 'start'?: (x: number, y: number) => void | boolean; 'move'?: (ox: number, oy: number, x: number, y: number, border: TCGBorder) => void; 'up'?: (moveTimes: Array<{ 'time': number; 'ox': number; 'oy': number; }>) => void; 'end'?: (moveTimes: Array<{ 'time': number; 'ox': number; 'oy': number; }>) => void; 'borderIn'?: (x: number, y: number, border: TCGBorder) => void; 'borderOut'?: () => void; }): { 'left': number; 'top': number; 'right': number; 'bottom': number; } {
+export function bindMove(e: MouseEvent | TouchEvent, opt: { 'areaObject'?: HTMLElement | IVue; 'left'?: number; 'top'?: number; 'right'?: number; 'bottom'?: number; 'offsetLeft'?: number; 'offsetTop'?: number; 'offsetRight'?: number; 'offsetBottom'?: number; 'objectLeft'?: number; 'objectTop'?: number; 'objectWidth'?: number; 'objectHeight'?: number; 'object'?: HTMLElement | IVue; 'showRect'?: boolean; 'start'?: (x: number, y: number) => void | boolean; 'move'?: (ox: number, oy: number, x: number, y: number, border: TCGBorder, dir: 'top' | 'right' | 'bottom' | 'left', e: MouseEvent | TouchEvent) => void; 'up'?: (moveTimes: Array<{ 'time': number; 'ox': number; 'oy': number; }>, e: MouseEvent | TouchEvent) => void; 'end'?: (moveTimes: Array<{ 'time': number; 'ox': number; 'oy': number; }>, e: MouseEvent | TouchEvent) => void; 'borderIn'?: (x: number, y: number, border: TCGBorder, e: MouseEvent | TouchEvent) => void; 'borderOut'?: () => void; }): { 'left': number; 'top': number; 'right': number; 'bottom': number; } {
     if (hasTouchButMouse(e)) {
         return {
             'left': 0,
@@ -1033,7 +1073,7 @@ export function bindMove(e: MouseEvent | TouchEvent, opt: { 'areaObject'?: HTMLE
             offsetRight = objectWidth - offsetLeft;
             offsetBottom = objectHeight - offsetTop;
         },
-        move: (e: MouseEvent | TouchEvent) => {
+        move: (e: MouseEvent | TouchEvent, dir) => {
             /** --- 本次 x 坐标 --- */
             let x: number,
                 /** --- 本次 y 坐标 --- */
@@ -1195,7 +1235,7 @@ export function bindMove(e: MouseEvent | TouchEvent, opt: { 'areaObject'?: HTMLE
 
                 if (!isBorder) {
                     isBorder = true;
-                    opt.borderIn?.(x, y, border);
+                    opt.borderIn?.(x, y, border, e);
                 }
             }
             else {
@@ -1214,17 +1254,17 @@ export function bindMove(e: MouseEvent | TouchEvent, opt: { 'areaObject'?: HTMLE
                 'oy': oy
             });
 
-            opt.move?.(ox, oy, x, y, border);
+            opt.move?.(ox, oy, x, y, border, dir, e);
             tx = x;
             ty = y;
         },
-        up: () => {
+        up: (e) => {
             is.move = false;
             setGlobalCursor();
-            opt.up?.(moveTimes);
+            opt.up?.(moveTimes, e);
         },
-        end: () => {
-            opt.end?.(moveTimes);
+        end: (e) => {
+            opt.end?.(moveTimes, e);
         }
     });
 

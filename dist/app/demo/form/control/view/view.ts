@@ -33,7 +33,46 @@ export let data = {
 
     'c6': 0,
 
+    'gesture': false,
     'style': false,
     'selection': false,
     'area': {}
 };
+
+export let methods = {
+    scrollborder: function(this: IVForm, e: MouseEvent | TouchEvent | WheelEvent, dir: string): void {
+        if (!this.gesture) {
+            return;
+        }
+        let dirs: any = [];
+        switch (dir) {
+            case 'h': {
+                dirs = ['left', 'right']
+                break;
+            }
+            default: {
+                dirs = ['top', 'bottom'];
+                break;
+            }
+        }
+        clickgo.dom.bindGesture(e, {
+            'dirs': dirs,
+            'handler': (dir) => {
+                switch (dir) {
+                    case 'left':
+                    case 'top': {
+                        this.lineCount -= 10;
+                        if (this.lineCount < 0) {
+                            this.lineCount = 0;
+                        }
+                        break;
+                    }
+                    default: {
+                        this.lineCount += this.lineValue;
+                    }
+                }
+            }
+        });
+    }
+};
+

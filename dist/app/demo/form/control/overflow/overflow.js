@@ -27,10 +27,14 @@ exports.data = {
     'l5': 0,
     'c5': 0,
     'line5': 10,
+    'gesture': false,
     'style': false
 };
 exports.methods = {
     scrollborder: function (e, dir) {
+        if (!this.gesture) {
+            return;
+        }
         let dirs = [];
         switch (dir) {
             case 'h': {

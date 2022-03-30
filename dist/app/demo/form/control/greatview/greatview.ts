@@ -34,6 +34,7 @@ export let data = {
     'c6': 0,
     'is6': [],
 
+    'gesture': false,
     'style': false,
     'selection': false,
     'area': {}

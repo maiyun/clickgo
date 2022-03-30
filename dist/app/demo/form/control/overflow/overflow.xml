@@ -44,7 +44,8 @@
                     <button @click="lineCount += lineValue;if(lineCount < 0) {lineCount = 0;}" style="height: 30px; padding: 0 10px;">Remove lines</button>
                 </layout>
                 <layout gutter="10">
-                    <button @click="style = !style" style="flex: 1; width: 0; height: 30px;">Change style</button>
+                    <button @click="gesture = !gesture" style="flex: 1; width: 0; height: 30px;">{{gesture ? '' : '!'}}gesture</button>
+                    <button @click="style = !style" style="flex: 1; width: 0; height: 30px;">{{style ? '' : '!'}}style</button>
                 </layout>
             </layout>
         </tab-panel>

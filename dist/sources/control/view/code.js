@@ -120,12 +120,18 @@ exports.methods = {
                     this.scrollTopData += e.deltaY;
                     this.refreshScroll();
                 }
-                else if (this.scrollLeftData > 0 && this.lengthHeight <= this.clientHeight) {
+                else if (this.scrollLeftData > 0) {
                     this.stopAnimation();
                     e.stopPropagation();
                     e.preventDefault();
                     this.scrollLeftData += e.deltaY;
                     this.refreshScroll();
+                }
+                else {
+                    if (this.direction === 'h') {
+                        e.direction = 'h';
+                    }
+                    this.$emit('scrollborder', e);
                 }
             }
             else {
@@ -136,12 +142,18 @@ exports.methods = {
                     this.scrollTopData += e.deltaY;
                     this.refreshScroll();
                 }
-                else if (this.scrollLeftData < this.maxScrollLeft && this.lengthHeight <= this.clientHeight) {
+                else if (this.scrollLeftData < this.maxScrollLeft) {
                     this.stopAnimation();
                     e.stopPropagation();
                     e.preventDefault();
                     this.scrollLeftData += e.deltaY;
                     this.refreshScroll();
+                }
+                else {
+                    if (this.direction === 'h') {
+                        e.direction = 'h';
+                    }
+                    this.$emit('scrollborder', e);
                 }
             }
         }
@@ -154,12 +166,18 @@ exports.methods = {
                     this.scrollLeftData += e.deltaX;
                     this.refreshScroll();
                 }
-                else if (this.scrollTopData > 0 && this.lengthWidth <= this.clientWidth) {
+                else if (this.scrollTopData > 0) {
                     this.stopAnimation();
                     e.stopPropagation();
                     e.preventDefault();
                     this.scrollTopData += e.deltaX;
                     this.refreshScroll();
+                }
+                else {
+                    if (this.direction === 'v') {
+                        e.direction = 'v';
+                    }
+                    this.$emit('scrollborder', e);
                 }
             }
             else {
@@ -170,12 +188,18 @@ exports.methods = {
                     this.scrollLeftData += e.deltaX;
                     this.refreshScroll();
                 }
-                else if (this.scrollTopData < this.maxScrollTop && this.lengthWidth <= this.clientWidth) {
+                else if (this.scrollTopData < this.maxScrollTop) {
                     this.stopAnimation();
                     e.stopPropagation();
                     e.preventDefault();
                     this.scrollTopData += e.deltaX;
                     this.refreshScroll();
+                }
+                else {
+                    if (this.direction === 'v') {
+                        e.direction = 'v';
+                    }
+                    this.$emit('scrollborder', e);
                 }
             }
         }
@@ -187,6 +211,8 @@ exports.methods = {
         this.stopAnimation();
         let bindMove = (e) => {
             let size = clickgo.dom.getSize(this.$el);
+            let alreadySb = false;
+            let isFirstMove = false;
             let overWidth = this.lengthWidth - this.clientWidth;
             let overHeight = this.lengthHeight - this.clientHeight;
             clickgo.dom.bindMove(e, {
@@ -195,7 +221,7 @@ exports.methods = {
                 'right': overWidth > 0 ? (size.right - size.border.right + overWidth) : (size.left + size.border.left + this.lengthWidth),
                 'top': size.top + size.border.top - (overHeight > 0 ? overHeight : 0),
                 'bottom': overHeight > 0 ? (size.bottom - size.border.bottom + overHeight) : (size.top + size.border.top + this.lengthHeight),
-                move: (ox, oy) => {
+                move: (ox, oy, x, y, border, dir, ne) => {
                     this.scrollLeftData -= ox;
                     this.scrollTopData -= oy;
                     let sleft = Math.round(this.scrollLeftData);
@@ -213,6 +239,50 @@ exports.methods = {
                     if (this.scrollTopEmit !== stop) {
                         this.scrollTopEmit = stop;
                         this.$emit('update:scrollTop', this.scrollTopEmit);
+                    }
+                    if (!isFirstMove) {
+                        isFirstMove = true;
+                        switch (dir) {
+                            case 'top': {
+                                if (this.direction === 'h') {
+                                    break;
+                                }
+                                if (stop === this.maxScrollTop) {
+                                    alreadySb = true;
+                                }
+                                break;
+                            }
+                            case 'right': {
+                                if (this.direction === 'v') {
+                                    break;
+                                }
+                                if (sleft === 0) {
+                                    alreadySb = true;
+                                }
+                                break;
+                            }
+                            case 'bottom': {
+                                if (this.direction === 'h') {
+                                    break;
+                                }
+                                if (stop === 0) {
+                                    alreadySb = true;
+                                }
+                                break;
+                            }
+                            default: {
+                                if (this.direction === 'v') {
+                                    break;
+                                }
+                                if (sleft === this.maxScrollLeft) {
+                                    alreadySb = true;
+                                }
+                            }
+                        }
+                        if (alreadySb) {
+                            ne.rect = this.$el.getBoundingClientRect();
+                            this.$emit('scrollborder', ne);
+                        }
                     }
                 },
                 up: (moveTimes) => __awaiter(this, void 0, void 0, function* () {

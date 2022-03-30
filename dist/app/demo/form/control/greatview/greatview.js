@@ -29,6 +29,7 @@ exports.data = {
     'line5': 10,
     'c6': 0,
     'is6': [],
+    'gesture': false,
     'style': false,
     'selection': false,
     'area': {}

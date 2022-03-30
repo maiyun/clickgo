@@ -31,11 +31,15 @@ export let data = {
     'c5': 0,
     'line5': 10,
 
+    'gesture': false,
     'style': false
 };
 
 export let methods = {
     scrollborder: function(this: IVForm, e: MouseEvent | TouchEvent | WheelEvent, dir: string): void {
+        if (!this.gesture) {
+            return;
+        }
         let dirs: any = [];
         switch (dir) {
             case 'h': {

@@ -17,11 +17,11 @@ interface ICGDomLib {
     bindDown(oe: MouseEvent | TouchEvent, opt: {
         'down'?: (e: MouseEvent | TouchEvent) => void;
         'start'?: (e: MouseEvent | TouchEvent) => void | boolean;
-        'move'?: (e: MouseEvent | TouchEvent) => void | boolean;
+        'move'?: (e: MouseEvent | TouchEvent, dir: 'top' | 'right' | 'bottom' | 'left') => void | boolean;
         'up'?: (e: MouseEvent | TouchEvent) => void;
         'end'?: (e: MouseEvent | TouchEvent) => void;
     }): void;
-    bindGesture(e: MouseEvent | TouchEvent | WheelEvent | { 'x'?: number; 'y'?: number; 'currentTarget'?: HTMLElement; }, opt?: { 'el'?: HTMLElement; 'dirs'?: ('top' | 'right' | 'bottom' | 'left')[]; handler?: (dir: 'top' | 'right' | 'bottom' | 'left') => void; }): void;
+    bindGesture(e: MouseEvent | TouchEvent | WheelEvent | { 'x'?: number; 'y'?: number; }, opt: { 'el'?: HTMLElement; 'rect'?: DOMRect, 'dirs'?: ('top' | 'right' | 'bottom' | 'left')[]; handler: (dir: 'top' | 'right' | 'bottom' | 'left') => void; }): void;
     allowEvent(e: MouseEvent | TouchEvent | KeyboardEvent): boolean;
     bindLong(e: MouseEvent | TouchEvent, long: (e: MouseEvent | TouchEvent) => void | Promise<void>): void;
     'is': {
@@ -44,10 +44,10 @@ interface ICGDomLib {
         'object'?: HTMLElement | IVue;
         'showRect'?: boolean;
         'start'?: (x: number, y: number) => void | boolean;
-        'move'?: (ox: number, oy: number, x: number, y: number, border: TCGBorder) => void;
-        'up'?: (moveTimes: Array<{ 'time': number; 'ox': number; 'oy': number; }>) => void;
-        'end'?: (moveTimes: Array<{ 'time': number; 'ox': number; 'oy': number; }>) => void;
-        'borderIn'?: (x: number, y: number, border: TCGBorder) => void;
+        'move'?: (ox: number, oy: number, x: number, y: number, border: TCGBorder, dir: 'top' | 'right' | 'bottom' | 'left', e: MouseEvent | TouchEvent) => void;
+        'up'?: (moveTimes: Array<{ 'time': number; 'ox': number; 'oy': number; }>, e: MouseEvent | TouchEvent) => void;
+        'end'?: (moveTimes: Array<{ 'time': number; 'ox': number; 'oy': number; }>, e: MouseEvent | TouchEvent) => void;
+        'borderIn'?: (x: number, y: number, border: TCGBorder, e: MouseEvent | TouchEvent) => void;
         'borderOut'?: () => void;
     }): {
         'left': number;
