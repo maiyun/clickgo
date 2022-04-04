@@ -102,7 +102,7 @@ exports.watch = {
 };
 exports.data = {
     'direction': 'h',
-    'localData': {
+    'localeData': {
         'en': {
             'reset': 'Reset',
             'description': 'Description'

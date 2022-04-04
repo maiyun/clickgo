@@ -10,8 +10,8 @@ interface IClickGo {
     'cgRootPath': string;
     /** --- 第三方 cdn 路径 --- */
     'cdnPath': string;
-    /** --- 是否是桌面环境 --- */
-    'isNative': boolean;
+    /** --- 是否是 native --- */
+    'native': boolean;
 
     /** --- 是否已加载完成 --- */
     'isReady': boolean;

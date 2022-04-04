@@ -1,10 +1,12 @@
-export let data = {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.methods = exports.data = void 0;
+exports.data = {
     'timer': 0,
     'count': 0
 };
-
-export let methods = {
-    start: function(this: IVForm, v: number): void {
+exports.methods = {
+    start: function (v) {
         let opt = {};
         switch (v) {
             case 0: {
@@ -26,13 +28,13 @@ export let methods = {
                 break;
             }
         }
-        this.timer = this.cgAddFrameListener(() => {
+        this.timer = this.cgOnFrame(() => {
             ++this.count;
             console.log('this.count', this.count);
         }, opt);
     },
-    end: function(this: IVForm): void {
-        this.cgRemoveFrameListener(this.timer);
+    end: function () {
+        this.cgOffFrame(this.timer);
         this.count = 0;
         this.timer = 0;
     }

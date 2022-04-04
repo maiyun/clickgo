@@ -124,15 +124,15 @@ exports.methods = {
             if (this.timer === 0) {
                 return;
             }
-            this.cgRemoveFrameListener(this.timer);
+            this.cgOffFrame(this.timer);
             this.timer = 0;
             this.left = 0;
             this.top = 0;
             return;
         }
-        this.timer = this.cgAddFrameListener(() => __awaiter(this, void 0, void 0, function* () {
+        this.timer = this.cgOnFrame(() => __awaiter(this, void 0, void 0, function* () {
             if (!this.$el.offsetParent) {
-                this.cgRemoveFrameListener(this.timer);
+                this.cgOffFrame(this.timer);
                 this.timer = 0;
                 return;
             }

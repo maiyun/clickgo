@@ -32,7 +32,7 @@ export let watch = {
                 return;
             }
             let pre = this.src.slice(0, 6).toLowerCase();
-            if (pre === 'http:/' || pre === 'https:' || pre === 'data:i') {
+            if (pre === 'http:/' || pre === 'https:' || pre === 'file:/' || pre === 'data:i') {
                 this.imgData = 'url(' + this.src + ')';
                 return;
             }

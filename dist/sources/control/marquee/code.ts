@@ -121,15 +121,15 @@ export let methods = {
             if (this.timer === 0) {
                 return;
             }
-            this.cgRemoveFrameListener(this.timer);
+            this.cgOffFrame(this.timer);
             this.timer = 0;
             this.left = 0;
             this.top = 0;
             return;
         }
-        this.timer = this.cgAddFrameListener(async () => {
+        this.timer = this.cgOnFrame(async () => {
             if (!this.$el.offsetParent) {
-                this.cgRemoveFrameListener(this.timer);
+                this.cgOffFrame(this.timer);
                 this.timer = 0;
                 return;
             }

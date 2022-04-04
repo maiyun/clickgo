@@ -10,6 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.get = void 0;
+const jszip = require("jszip");
 class Zip {
     constructor(zip) {
         this._path = '/';
@@ -268,7 +269,7 @@ class Zip {
 }
 function get(data) {
     return __awaiter(this, void 0, void 0, function* () {
-        let z = JSZip();
+        let z = jszip();
         try {
             if (data) {
                 yield z.loadAsync(data);

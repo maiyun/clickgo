@@ -104,7 +104,7 @@ export let watch = {
 
 export let data = {
     'direction': 'h',
-    'localData': {
+    'localeData': {
         'en': {
             'reset': 'Reset',
             'description': 'Description'

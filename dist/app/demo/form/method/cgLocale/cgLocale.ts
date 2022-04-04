@@ -3,17 +3,17 @@ export let data = {
 };
 
 export let computed = {
-    'globalLocal': function(): string {
-        return clickgo.core.config.local;
+    'globalLocale': function(): string {
+        return clickgo.core.config.locale;
     }
 };
 
 export let methods = {
     'change': function(this: IVForm): void {
-        clickgo.core.config.local = this.select;
+        clickgo.core.config.locale = this.select;
     }
 };
 
 export let mounted = function(this: IVForm): void {
-    this.select = clickgo.core.config.local;
+    this.select = clickgo.core.config.locale;
 };

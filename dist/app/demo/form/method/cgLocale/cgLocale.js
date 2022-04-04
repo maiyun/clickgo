@@ -5,16 +5,16 @@ exports.data = {
     'select': ''
 };
 exports.computed = {
-    'globalLocal': function () {
-        return clickgo.core.config.local;
+    'globalLocale': function () {
+        return clickgo.core.config.locale;
     }
 };
 exports.methods = {
     'change': function () {
-        clickgo.core.config.local = this.select;
+        clickgo.core.config.locale = this.select;
     }
 };
 let mounted = function () {
-    this.select = clickgo.core.config.local;
+    this.select = clickgo.core.config.locale;
 };
 exports.mounted = mounted;

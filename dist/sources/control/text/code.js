@@ -187,7 +187,7 @@ exports.data = {
     'canTouchScroll': false,
     'alreadySb': false,
     'lastDownTime': 0,
-    'localData': {
+    'localeData': {
         'en': {
             'copy': 'Copy',
             'cut': 'Cut',

@@ -19,7 +19,7 @@
  */
 
 let cgConfig: ICGCoreConfig = {
-    'local': 'en',
+    'locale': 'en',
     'task.position': 'bottom',
     'task.pin': {},
     'desktop.icon.storage': true,
@@ -28,7 +28,7 @@ let cgConfig: ICGCoreConfig = {
     'desktop.path': null
 };
 export let config: ICGCoreConfig = Vue.reactive({
-    'local': 'en',
+    'locale': 'en',
     'task.position': 'bottom',
     'task.pin': {},
     'desktop.icon.storage': true,
@@ -88,6 +88,119 @@ Vue.watch(config, function() {
     'deep': true
 });
 
+// --- Native start ---
+
+let sendNativeId = 0;
+// --- sendNativeList 一定会被清理 ---
+let sendNativeList: Array<{
+    'id': number;
+    'name': string;
+    'param': string | undefined;
+}> = [];
+
+/** --- 监听的 listener，需要调用者手动清理 --- */
+let nativeListeners: Record<string, Array<{
+    'id': number;
+    'once': boolean;
+    'handler': (param?: string) => void | Promise<void>;
+}>> = {};
+
+export function getNativeListeners(): Array<{ 'id': number; 'name': string; 'once': boolean; }> {
+    let list = [];
+    for (let name in nativeListeners) {
+        for (let item of nativeListeners[name]) {
+            list.push({
+                'id': item.id,
+                'name': name,
+                'once': item.once
+            });
+        }
+    }
+    return list;
+}
+
+export function sendNative(name: string, param?: string, handler?: (param?: string) => void | Promise<void>): number {
+    if (!clickgo.native) {
+        return 0;
+    }
+    let id = ++sendNativeId;
+    sendNativeList.push({
+        'id': id,
+        'name': name,
+        'param': param
+    });
+    if (handler) {
+        onNative(name, handler, id, true);
+    }
+    return id;
+}
+
+export function onNative(name: string, handler: (param?: string) => void | Promise<void>, id?: number, once: boolean = false): void {
+    if (!clickgo.native) {
+        return;
+    }
+    if (!nativeListeners[name]) {
+        nativeListeners[name] = [];
+    }
+    nativeListeners[name].push({
+        'id': id ?? 0,
+        'once': once,
+        'handler': handler
+    });
+}
+export function onceNative(name: string, handler: (param?: string) => void | Promise<void>, id?: number): void {
+    onNative(name, handler, id, true)
+}
+export function offNative(name: string, handler: (param?: string) => void | Promise<void>): void {
+    if (!nativeListeners[name]) {
+        return;
+    }
+    for (let i = 0; i < nativeListeners[name].length; ++i) {
+        if (nativeListeners[name][i].handler !== handler) {
+            continue;
+        }
+        nativeListeners[name].splice(i, 1);
+        if (nativeListeners[name].length === 0) {
+            delete(nativeListeners[name]);
+            break;
+        }
+        --i;
+    }
+}
+
+// --- 将 send 值全部提交给 native ---
+export function __nativeGetSends(): string {
+    let json = JSON.stringify(sendNativeList);
+    sendNativeList = [];
+    return json;
+}
+
+// --- 供 node 调用的回调数据（执行结果） ---
+export function __nativeReceive(id: number, name: string, result?: string): void {
+    console.log('name', name, 'nativeListeners', nativeListeners, 'sendNativeList', sendNativeList);
+    if (!nativeListeners[name]) {
+        return;
+    }
+    for (let i = 0; i < nativeListeners[name].length; ++i) {
+        let item = nativeListeners[name][i];
+        if (item.id > 0) {
+            if (item.id !== id) {
+                continue;
+            }
+            item.handler(result);
+        }
+        else {
+            item.handler(result);
+        }
+        if (item.once) {
+            nativeListeners[name].splice(i, 1);
+            --i;
+        }
+    }
+}
+
+// --- Native end ---
+
 /** --- module 列表 --- */
 let modules: Record<string, { func: () => any | Promise<any>; 'obj': null | any; 'loading': boolean; }> = {
     'monaco': {
@@ -113,8 +226,8 @@ let modules: Record<string, { func: () => any | Promise<any>; 'obj': null | any;
                     (window.require as any)(['vs/editor/editor.main'], function(monaco: any) {
                         resolve(monaco);
                     });
-                }).catch(function() {
-                    reject();
+                }).catch(function(e) {
+                    reject(e);
                 });
             });
         },

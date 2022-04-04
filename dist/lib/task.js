@@ -9,10 +9,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.removeFrameListener = exports.addFrameListener = exports.removeTimer = exports.createTimer = exports.loadLocalData = exports.end = exports.run = exports.getList = exports.get = exports.lastId = exports.list = void 0;
+exports.offFrame = exports.onFrame = exports.removeTimer = exports.createTimer = exports.loadLocaleData = exports.end = exports.run = exports.getList = exports.get = exports.lastId = exports.list = void 0;
 exports.list = {};
 exports.lastId = 0;
-let localData = {
+let localeData = {
     'en': {
         'loading': 'Loading...',
     },
@@ -33,7 +33,7 @@ function get(tid) {
     return {
         'name': exports.list[tid].appPkg.config.name,
         'customTheme': exports.list[tid].customTheme,
-        'localName': exports.list[tid].local.name,
+        'localeName': exports.list[tid].locale.name,
         'formCount': Object.keys(exports.list[tid].forms).length,
         'icon': exports.list[tid].icon,
         'path': exports.list[tid].path
@@ -47,7 +47,7 @@ function getList() {
         list[tid] = {
             'name': item.appPkg.config.name,
             'customTheme': item.customTheme,
-            'localName': item.local.name,
+            'localeName': item.locale.name,
             'formCount': Object.keys(item.forms).length,
             'icon': item.icon,
             'path': item.path
@@ -70,7 +70,7 @@ function run(url, opt = {}) {
             opt.runtime = {};
         }
         let notifyId = opt.progress ? clickgo.form.notify({
-            'title': (_b = (_a = localData[clickgo.core.config.local]) === null || _a === void 0 ? void 0 : _a.loading) !== null && _b !== void 0 ? _b : localData['en'].loading,
+            'title': (_b = (_a = localeData[clickgo.core.config.locale]) === null || _a === void 0 ? void 0 : _a.loading) !== null && _b !== void 0 ? _b : localeData['en'].loading,
             'content': url,
             'icon': opt.icon,
             'timeout': 0,
@@ -99,7 +99,7 @@ function run(url, opt = {}) {
             'id': taskId,
             'appPkg': appPkg,
             'customTheme': false,
-            'local': Vue.reactive({
+            'locale': Vue.reactive({
                 'name': '',
                 'data': {}
             }),
@@ -142,14 +142,14 @@ function run(url, opt = {}) {
                 }
             }
         }
-        if (appPkg.config.locals) {
-            for (let path in appPkg.config.locals) {
-                let localName = appPkg.config.locals[path];
+        if (appPkg.config.locales) {
+            for (let path in appPkg.config.locales) {
+                let localeName = appPkg.config.locales[path];
                 path += '.json';
                 if (task.files[path]) {
                     try {
                         let data = JSON.parse(task.files[path]);
-                        loadLocalData(task.id, localName, data);
+                        loadLocaleData(task.id, localeName, data);
                     }
                     catch (_d) {
                     }
@@ -261,21 +261,21 @@ function end(taskId) {
     return true;
 }
 exports.end = end;
-function loadLocalData(taskId, name, data, pre = '') {
-    if (!exports.list[taskId].local.data[name]) {
-        exports.list[taskId].local.data[name] = {};
+function loadLocaleData(taskId, name, data, pre = '') {
+    if (!exports.list[taskId].locale.data[name]) {
+        exports.list[taskId].locale.data[name] = {};
     }
     for (let k in data) {
         let v = data[k];
         if (typeof v === 'object') {
-            loadLocalData(taskId, name, v, pre + k + '.');
+            loadLocaleData(taskId, name, v, pre + k + '.');
         }
         else {
-            clickgo.task.list[taskId].local.data[name][pre + k] = v;
+            clickgo.task.list[taskId].locale.data[name][pre + k] = v;
         }
     }
 }
-exports.loadLocalData = loadLocalData;
+exports.loadLocaleData = loadLocaleData;
 function createTimer(taskId, formId, fun, delay, opt = {}) {
     var _a, _b;
     let scope = (_a = opt.scope) !== null && _a !== void 0 ? _a : 'form';
@@ -329,7 +329,7 @@ function removeTimer(taskId, timer) {
 exports.removeTimer = removeTimer;
 let frameTimer = 0;
 let frameMaps = {};
-function addFrameListener(taskId, formId, fun, opt = {}) {
+function onFrame(taskId, formId, fun, opt = {}) {
     var _a, _b;
     let ft = ++frameTimer;
     let scope = (_a = opt.scope) !== null && _a !== void 0 ? _a : 'form';
@@ -374,8 +374,8 @@ function addFrameListener(taskId, formId, fun, opt = {}) {
     exports.list[taskId].timers['1x' + ft] = formId;
     return ft;
 }
-exports.addFrameListener = addFrameListener;
-function removeFrameListener(taskId, ft) {
+exports.onFrame = onFrame;
+function offFrame(taskId, ft) {
     if (clickgo.task.list[taskId] === undefined) {
         return;
     }
@@ -387,4 +387,4 @@ function removeFrameListener(taskId, ft) {
     delete (clickgo.task.list[taskId].timers['1x' + ft]);
     delete (frameMaps[ft]);
 }
-exports.removeFrameListener = removeFrameListener;
+exports.offFrame = offFrame;

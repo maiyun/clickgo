@@ -11,7 +11,6 @@ interface IVueConfig {
     errorHandler?(err: unknown, instance: IVue | null, info: string): void;
     'globalProperties': Record<string, any>;
     isCustomElement(tag: string): boolean;
-    isNativeTag?(tag: string): boolean;
     'optionMergeStrategies': Record<string, IVueOptionMergeFunction>;
     'performance': boolean;
     warnHandler?(msg: string, instance: IVue | null, trace: string): void;
@@ -82,8 +81,8 @@ interface IVForm extends IVue {
     'cgCustomZIndex': boolean;
     /** --- 是否在顶层 --- */
     'cgTopMost': boolean;
-    /** --- 当前的 local name --- */
-    'cgLocal': string;
+    /** --- 当前的 locale name --- */
+    'cgLocale': string;
     /** --- 获取语言内容 --- */
     'l': (key: string) => string;
     cgCreateForm(paramOpt?: string | ICGFormCreateOptions & { 'mask'?: boolean; }): Promise<number>;
@@ -116,12 +115,12 @@ interface IVForm extends IVue {
     cgFlash(): void;
     cgShow(): void;
     cgHide(): void;
-    cgLoadLocal(name: string, path: string): Promise<boolean>;
-    cgSetLocal(name: string, path: string): Promise<boolean>;
-    cgClearLocal(): void;
-    cgLoadLocalData(name: string, data: Record<string, any>, pre?: string): void;
-    cgSetLocalName(name: string): void;
-    cgClearLocalName(): void;
+    cgLoadLocale(name: string, path: string): Promise<boolean>;
+    cgSetLocale(name: string, path: string): Promise<boolean>;
+    cgClearLocale(): void;
+    cgLoadLocaleData(name: string, data: Record<string, any>, pre?: string): void;
+    cgSetLocaleName(name: string): void;
+    cgClearLocaleName(): void;
     /**
      * --- layout 中 :class 的转义 ---
      * @param cla class 内容对象
@@ -154,12 +153,12 @@ interface IVForm extends IVue {
      * @param fun 执行的函数
      * @param opt 选项
      */
-    cgAddFrameListener(fun: () => void | Promise<void>, opt?: { 'scope'?: 'form' | 'task'; 'count'?: number; }): number;
+    cgOnFrame(fun: () => void | Promise<void>, opt?: { 'scope'?: 'form' | 'task'; 'count'?: number; }): number;
     /**
      * --- 移除 frame listene ---
      * @param ft timer ---
      */
-    cgRemoveFrameListener(ft: number): void;
+    cgOffFrame(ft: number): void;
     /**
      * --- 检测事件是否可被执行 ---
      * @param e 事件
@@ -184,8 +183,8 @@ interface IVControl extends IVue {
     'cgPrep': string;
     /** --- 获取目前现存的子 slots --- */
     'cgSlots': (name?: string) => IVueVNode[];
-    /** --- 当前 task 的 local 值 --- */
-    'cgLocal': string;
+    /** --- 当前 task 的 locale 值 --- */
+    'cgLocale': string;
     /** --- 获取语言内容 --- */
     'l': (key: string, data?: Record<string, Record<string, string>>) => string;
     /** --- 根据 control name 来寻找上级 --- */
@@ -247,12 +246,12 @@ interface IVControl extends IVue {
      * @param fun 执行的函数
      * @param opt 选项
      */
-    cgAddFrameListener(fun: () => void | Promise<void>, opt?: { 'scope'?: 'form' | 'task'; 'count'?: number; }): number;
+    cgOnFrame(fun: () => void | Promise<void>, opt?: { 'scope'?: 'form' | 'task'; 'count'?: number; }): number;
     /**
      * --- 移除 frame listene ---
      * @param ft timer ---
      */
-    cgRemoveFrameListener(ft: number): void;
+    cgOffFrame(ft: number): void;
     /**
      * --- 检测事件是否可被执行 ---
      * @param e 事件

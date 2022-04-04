@@ -6,15 +6,15 @@ interface ICGTaskLib {
     getList(): Record<string, ICGTaskItem>;
     run(url: string | Blob, opt?: { 'runtime'?: Record<string, Blob | string>; 'icon'?: string; 'progress'?: boolean; }): Promise<number>;
     end(taskId: number): boolean;
-    loadLocalData(taskId: number, name: string, data: Record<string, any>, pre?: string): void;
+    loadLocaleData(taskId: number, name: string, data: Record<string, any>, pre?: string): void;
     createTimer(taskId: number, formId: number, fun: () => void | Promise<void>, delay: number, opt?: {
         'immediate'?: boolean;
         'scope'?: 'form' | 'task';
         'count'?: number;
     }): number;
     removeTimer(taskId: number, timer: number): void;
-    addFrameListener(taskId: number, formId: number, fun: () => void | Promise<void>, opt?: { 'scope'?: 'form' | 'task'; 'count'?: number; }): number;
-    removeFrameListener(taskId: number, ft: number): void;
+    onFrame(taskId: number, formId: number, fun: () => void | Promise<void>, opt?: { 'scope'?: 'form' | 'task'; 'count'?: number; }): number;
+    offFrame(taskId: number, ft: number): void;
 }
 
 /** --- 单条任务对象 --- */
@@ -22,7 +22,7 @@ interface ICGTask {
     'id': number;
     'appPkg': ICGAppPkg;
     'customTheme': boolean;
-    'local': {
+    'locale': {
         'name': string;
         'data': Record<string, Record<string, string>>;
     };
@@ -44,7 +44,7 @@ interface ICGTask {
 interface ICGTaskItem {
     'name': string;
     'customTheme': boolean;
-    'localName': string;
+    'localeName': string;
     'formCount': number;
     'icon': string;
     'path': string;

@@ -182,7 +182,7 @@ export let data = {
     'alreadySb': false,
     'lastDownTime': 0,      // --- mouse 或 touch 的时间戳 ---
 
-    'localData': {
+    'localeData': {
         'en': {
             'copy': 'Copy',
             'cut': 'Cut',

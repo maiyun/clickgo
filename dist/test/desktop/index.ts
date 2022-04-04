@@ -2,6 +2,12 @@ clickgo.ready(async function() {
     // --- 注册系统默认的库 ---
     // clickgo.core.regModule('monaco', );
 
+    let body = document.getElementsByTagName('body')[0];
+    // --- 设置背景 ---
+    if (!clickgo.native) {
+        body.style.background = '#222';
+    }
+
     // --- 其他 ---
     let el = document.getElementById('tip');
     if (!el) {
@@ -39,5 +45,11 @@ clickgo.ready(async function() {
         return;
     }
     el.innerHTML = 'Running...';
-    document.getElementsByTagName('body')[0].classList.add('running');
+    if (clickgo.native) {
+        document.getElementById('spic')!.style.display = 'none';
+    }
+    else {
+        body.style.background = '#0063b1';
+        document.getElementById('spic')!.style.background = '#0063b1';
+    }
 });

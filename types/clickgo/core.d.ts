@@ -1,5 +1,10 @@
 interface ICGCoreLib {
     'config': ICGCoreConfig;
+    getNativeListeners(): Array<{ 'id': number; 'name': string; 'once': boolean; }>;
+    sendNative(name: string, param?: string, handler?: (param?: string) => void | Promise<void>): number;
+    onNative(name: string, handler: (param?: string) => void | Promise<void>, id?: number, once?: boolean): void;
+    onceNative(name: string, handler: (param?: string) => void | Promise<void>, id?: number): void;
+    offNative(name: string, handler: (param?: string) => void | Promise<void>): void;
     regModule(name: string, func: () => any | Promise<any>): boolean;
     initModules(names: string | string[]): Promise<number>;
     getModule(name: string): null | any;
@@ -19,7 +24,7 @@ interface ICGCoreLib {
 }
 
 interface ICGCoreConfig {
-    'local': string;
+    'locale': string;
     'task.position': 'left' | 'right' | 'top' | 'bottom';
     'task.pin': Record<string, { 'name': string; 'icon': string; }>;
     'desktop.icon.storage': boolean;
@@ -28,7 +33,7 @@ interface ICGCoreConfig {
     'desktop.path': string | null;
 }
 
-type TCGCoreConfigName = 'local' | 'task.position' | 'task.pin' | 'desktop.icon.storage' | 'desktop.icon.recycler' | 'desktop.wallpaper' | 'desktop.path';
+type TCGCoreConfigName = 'locale' | 'task.position' | 'task.pin' | 'desktop.icon.storage' | 'desktop.icon.recycler' | 'desktop.wallpaper' | 'desktop.path';
 
 /** --- 全局事件 --- */
 interface ICGGlobalEvents {
@@ -90,7 +95,7 @@ interface ICGAppConfig {
     /** --- 将自动加载的主题 --- */
     'themes'?: string[];
     /** --- 将自动加载的语言包 --- */
-    'locals'?: Record<string, string>;
+    'locales'?: Record<string, string>;
     /** --- 不带扩展名，系统会在末尾添加 .css --- */
     'style'?: string;
     /** --- 不带扩展名，系统会在末尾添加 .xml --- */

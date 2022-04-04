@@ -21,7 +21,7 @@ const clickgo: IClickGo = {
     'rootPath': window.location.href.slice(0, window.location.href.lastIndexOf('/') + 1),
     'cgRootPath': '',
     'cdnPath': 'https://cdn.jsdelivr.net',
-    'isNative': navigator.userAgent.toLowerCase().includes('electron') ? true : false,
+    'native': navigator.userAgent.toLowerCase().includes('electron') ? true : false,
 
     'isReady': false,
     'readys': [],
@@ -67,14 +67,12 @@ const clickgo: IClickGo = {
 
     // --- 加载 loader ---
     let tmpScript = document.createElement('script');
-    tmpScript.src = clickgo.cdnPath + '/npm/@litert/loader@3.0.0/dist/index.min.js';
-    // tmpScript.src = '/project/litert/loader.js/dist/index.js';
+    tmpScript.src = clickgo.cdnPath + '/npm/@litert/loader@3.0.5/dist/loader.min.js';
     tmpScript.addEventListener('load', function(): void {
         loader.ready(async () => {
             // --- 通过标签加载库 ---
             let paths: string[] = [
-                clickgo.cdnPath + '/npm/vue@3.2.31/dist/vue.global.min.js',
-                clickgo.cdnPath + '/npm/jszip@3.7.1/dist/jszip.min.js'
+                clickgo.cdnPath + '/npm/vue@3.2.31/dist/vue.global.min.js'
             ];
             // --- 判断 ResizeObserver 是否存在 ---
             let ro = true;
@@ -90,13 +88,19 @@ const clickgo: IClickGo = {
                 (window as any).ResizeObserverEntry = (window as any).ResizeObserver.ResizeObserverEntry;
                 (window as any).ResizeObserver = (window as any).ResizeObserver.ResizeObserver;
             }
+            // --- map 加载库 ---
+            let map: Record<string, string> = {
+                'jszip': clickgo.cdnPath + '/npm/jszip@3.8.0/dist/jszip.min'
+            };
             // --- 加载 clickgo 主程序 ---
             let files = await loader.sniffFiles('clickgo.js', {
                 'dir': clickgo.cgRootPath,
-                'after': '?' + Math.random().toString()
+                'after': '?' + Math.random().toString(),
+                'map': map
             });
             let cg = loader.require('clickgo', files, {
-                'dir': clickgo.cgRootPath
+                'dir': clickgo.cgRootPath,
+                'map': map
             })[0];
             if (!cg) {
                 alert('Clickgo load failed.');

@@ -341,7 +341,7 @@ export let methods = {
                     let leftEnd = false;
                     let topEnd = false;
 
-                    this.timer = this.cgAddFrameListener(() => {
+                    this.timer = this.cgOnFrame(() => {
                         if (!leftEnd) {
                             fleft = Math.min(Math.abs(speedLeft) / 32, 0.5);
                             if (speedLeft > 0.2) {
@@ -381,7 +381,7 @@ export let methods = {
                             if (this.scrollTopData > this.maxScrollTop) {
                                 this.scrollTopData = this.maxScrollTop;
                             }
-                            this.cgRemoveFrameListener(this.timer);
+                            this.cgOffFrame(this.timer);
                             this.timer = 0;
                             return;
                         }
@@ -415,7 +415,7 @@ export let methods = {
                         this.$emit('update:scrollTop', this.scrollTopEmit);
 
                         if (leftEnd && topEnd) {
-                            this.cgRemoveFrameListener(this.timer);
+                            this.cgOffFrame(this.timer);
                             this.timer = 0;
                         }
                     });
@@ -440,7 +440,7 @@ export let methods = {
                     this.$refs.selection.style.top = this.selectionOrigin.y + 'px';
                     this.selectionCurrent.x = x;
                     this.selectionCurrent.y = y;
-                    this.selectionTimer = this.cgAddFrameListener(() => {
+                    this.selectionTimer = this.cgOnFrame(() => {
                         let rect = this.$el.getBoundingClientRect();
                         // --- 横向 ---
                         if (this.selectionCurrent.x < rect.left) {
@@ -551,7 +551,7 @@ export let methods = {
                 },
                 end: () => {
                     this.$refs.selection.style.opacity = '0';
-                    this.cgRemoveFrameListener(this.selectionTimer);
+                    this.cgOffFrame(this.selectionTimer);
                     this.selectionTimer = 0;
                     this.$emit('afterselect');
                 }
@@ -696,7 +696,7 @@ export let methods = {
             }
         }
         if (this.timer > 0) {
-            this.cgRemoveFrameListener(this.timer);
+            this.cgOffFrame(this.timer);
             this.timer = 0;
         }
         this.refreshScroll();
@@ -704,7 +704,7 @@ export let methods = {
     // --- 如果当前正在运行动画，则终止他 ---
     stopAnimation: function(this: IVControl): void {
         if (this.timer > 0) {
-            this.cgRemoveFrameListener(this.timer);
+            this.cgOffFrame(this.timer);
             this.timer = 0;
         }
     },
@@ -813,7 +813,7 @@ export let mounted = function(this: IVControl): void {
 
 export let unmounted = function(this: IVControl): void {
     if (this.timer > 0) {
-        this.cgRemoveFrameListener(this.timer);
+        this.cgOffFrame(this.timer);
         this.timer = 0;
     }
 };

@@ -104,7 +104,7 @@ exports.methods = {
         let num = type === 'start' ? -5 : 5;
         clickgo.dom.bindDown(e, {
             down: () => {
-                this.timer = this.cgAddFrameListener(() => {
+                this.timer = this.cgOnFrame(() => {
                     if (this.tabPosition === 'top' || this.tabPosition === 'bottom') {
                         this.$refs.tabs[0].scrollLeft += num;
                     }
@@ -114,7 +114,7 @@ exports.methods = {
                 });
             },
             up: () => {
-                this.cgRemoveFrameListener(this.timer);
+                this.cgOffFrame(this.timer);
                 this.timer = 0;
             }
         });

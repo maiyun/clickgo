@@ -166,7 +166,7 @@ exports.methods = {
         clickgo.dom.bindDown(e, {
             down: () => {
                 this.tran = true;
-                this.timer = this.cgAddFrameListener(() => {
+                this.timer = this.cgOnFrame(() => {
                     if (type === 'start') {
                         if (this.scrollOffsetData - 10 < 0) {
                             if (this.scrollOffsetData !== 0) {
@@ -199,7 +199,7 @@ exports.methods = {
             },
             up: () => {
                 this.tran = false;
-                this.cgRemoveFrameListener(this.timer);
+                this.cgOffFrame(this.timer);
                 this.timer = 0;
             }
         });
@@ -289,7 +289,7 @@ let mounted = function () {
 exports.mounted = mounted;
 let unmounted = function () {
     if (this.timer > 0) {
-        this.cgRemoveFrameListener(this.timer);
+        this.cgOffFrame);
     }
 };
 exports.unmounted = unmounted;

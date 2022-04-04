@@ -9,9 +9,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.fetchApp = exports.readApp = exports.fetchClickGoFile = exports.trigger = exports.globalEvents = exports.clickgoFiles = exports.getModule = exports.initModules = exports.regModule = exports.config = void 0;
+exports.fetchApp = exports.readApp = exports.fetchClickGoFile = exports.trigger = exports.globalEvents = exports.clickgoFiles = exports.getModule = exports.initModules = exports.regModule = exports.__nativeReceive = exports.__nativeGetSends = exports.offNative = exports.onceNative = exports.onNative = exports.sendNative = exports.getNativeListeners = exports.config = void 0;
 let cgConfig = {
-    'local': 'en',
+    'locale': 'en',
     'task.position': 'bottom',
     'task.pin': {},
     'desktop.icon.storage': true,
@@ -20,7 +20,7 @@ let cgConfig = {
     'desktop.path': null
 };
 exports.config = Vue.reactive({
-    'local': 'en',
+    'locale': 'en',
     'task.position': 'bottom',
     'task.pin': {},
     'desktop.icon.storage': true,
@@ -76,6 +76,103 @@ Vue.watch(exports.config, function () {
 }, {
     'deep': true
 });
+let sendNativeId = 0;
+let sendNativeList = [];
+let nativeListeners = {};
+function getNativeListeners() {
+    let list = [];
+    for (let name in nativeListeners) {
+        for (let item of nativeListeners[name]) {
+            list.push({
+                'id': item.id,
+                'name': name,
+                'once': item.once
+            });
+        }
+    }
+    return list;
+}
+exports.getNativeListeners = getNativeListeners;
+function sendNative(name, param, handler) {
+    if (!clickgo.native) {
+        return 0;
+    }
+    let id = ++sendNativeId;
+    sendNativeList.push({
+        'id': id,
+        'name': name,
+        'param': param
+    });
+    if (handler) {
+        onNative(name, handler, id, true);
+    }
+    return id;
+}
+exports.sendNative = sendNative;
+function onNative(name, handler, id, once = false) {
+    if (!clickgo.native) {
+        return;
+    }
+    if (!nativeListeners[name]) {
+        nativeListeners[name] = [];
+    }
+    nativeListeners[name].push({
+        'id': id !== null && id !== void 0 ? id : 0,
+        'once': once,
+        'handler': handler
+    });
+}
+exports.onNative = onNative;
+function onceNative(name, handler, id) {
+    onNative(name, handler, id, true);
+}
+exports.onceNative = onceNative;
+function offNative(name, handler) {
+    if (!nativeListeners[name]) {
+        return;
+    }
+    for (let i = 0; i < nativeListeners[name].length; ++i) {
+        if (nativeListeners[name][i].handler !== handler) {
+            continue;
+        }
+        nativeListeners[name].splice(i, 1);
+        if (nativeListeners[name].length === 0) {
+            delete (nativeListeners[name]);
+            break;
+        }
+        --i;
+    }
+}
+exports.offNative = offNative;
+function __nativeGetSends() {
+    let json = JSON.stringify(sendNativeList);
+    sendNativeList = [];
+    return json;
+}
+exports.__nativeGetSends = __nativeGetSends;
+function __nativeReceive(id, name, result) {
+    console.log('name', name, 'nativeListeners', nativeListeners, 'sendNativeList', sendNativeList);
+    if (!nativeListeners[name]) {
+        return;
+    }
+    for (let i = 0; i < nativeListeners[name].length; ++i) {
+        let item = nativeListeners[name][i];
+        if (item.id > 0) {
+            if (item.id !== id) {
+                continue;
+            }
+            item.handler(result);
+        }
+        else {
+            item.handler(result);
+        }
+        if (item.once) {
+            nativeListeners[name].splice(i, 1);
+            --i;
+        }
+    }
+}
+exports.__nativeReceive = __nativeReceive;
 let modules = {
     'monaco': {
         func: function () {
@@ -99,8 +196,8 @@ let modules = {
                         window.require(['vs/editor/editor.main'], function (monaco) {
                             resolve(monaco);
                         });
-                    }).catch(function () {
-                        reject();
+                    }).catch(function (e) {
+                        reject(e);
                     });
                 });
             });

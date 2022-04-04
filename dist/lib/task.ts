@@ -4,7 +4,7 @@ export let list: Record<number, ICGTask> = {};
 export let lastId: number = 0;
 
 /** --- task lib 用到的语言包 --- */
-let localData: Record<string, {
+let localeData: Record<string, {
     'loading': string;
 }> = {
     'en': {
@@ -28,7 +28,7 @@ export function get(tid: number): ICGTaskItem | null {
     return {
         'name': list[tid].appPkg.config.name,
         'customTheme': list[tid].customTheme,
-        'localName': list[tid].local.name,
+        'localeName': list[tid].locale.name,
         'formCount': Object.keys(list[tid].forms).length,
         'icon': list[tid].icon,
         'path': list[tid].path
@@ -45,7 +45,7 @@ export function getList(): Record<string, ICGTaskItem> {
         list[tid] = {
             'name': item.appPkg.config.name,
             'customTheme': item.customTheme,
-            'localName': item.local.name,
+            'localeName': item.locale.name,
             'formCount': Object.keys(item.forms).length,
             'icon': item.icon,
             'path': item.path
@@ -71,7 +71,7 @@ export async function run(url: string, opt: { 'runtime'?: Record<string, Blob | 
         opt.runtime = {};
     }
     let notifyId: number | undefined = opt.progress ? clickgo.form.notify({
-        'title': localData[clickgo.core.config.local]?.loading ?? localData['en'].loading,
+        'title': localeData[clickgo.core.config.locale]?.loading ?? localeData['en'].loading,
         'content': url,
         'icon': opt.icon,
         'timeout': 0,
@@ -102,7 +102,7 @@ export async function run(url: string, opt: { 'runtime'?: Record<string, Blob | 
         'id': taskId,
         'appPkg': appPkg,
         'customTheme': false,
-        'local': Vue.reactive({
+        'locale': Vue.reactive({
             'name': '',
             'data': {}
         }),
@@ -150,15 +150,15 @@ export async function run(url: string, opt: { 'runtime'?: Record<string, Blob | 
             }
         }
     }
-    // --- local ---
-    if (appPkg.config.locals) {
-        for (let path in appPkg.config.locals) {
-            let localName = appPkg.config.locals[path];
+    // --- locale ---
+    if (appPkg.config.locales) {
+        for (let path in appPkg.config.locales) {
+            let localeName = appPkg.config.locales[path];
             path += '.json';
             if (task.files[path]) {
                 try {
                     let data = JSON.parse(task.files[path] as string);
-                    loadLocalData(task.id, localName, data);
+                    loadLocaleData(task.id, localeName, data);
                 }
                 catch {
                     // --- 无所谓 ---
@@ -289,18 +289,18 @@ export function end(taskId: number): boolean {
     return true;
 }
 
-// --- 加载 local data 对象到 task ---
-export function loadLocalData(taskId: number, name: string, data: Record<string, any>, pre: string = ''): void {
-    if (!list[taskId].local.data[name]) {
-        list[taskId].local.data[name] = {};
+// --- 加载 locale data 对象到 task ---
+export function loadLocaleData(taskId: number, name: string, data: Record<string, any>, pre: string = ''): void {
+    if (!list[taskId].locale.data[name]) {
+        list[taskId].locale.data[name] = {};
     }
     for (let k in data) {
         let v = data[k];
         if (typeof v === 'object') {
-            loadLocalData(taskId, name, v, pre + k + '.');
+            loadLocaleData(taskId, name, v, pre + k + '.');
         }
         else {
-            clickgo.task.list[taskId].local.data[name][pre + k] = v;
+            clickgo.task.list[taskId].locale.data[name][pre + k] = v;
         }
     }
 }
@@ -370,7 +370,7 @@ export function removeTimer(taskId: number, timer: number): void {
 // --- 创建 frame 监听 ---
 let frameTimer: number = 0;
 let frameMaps: Record<string, number> = {};
-export function addFrameListener(taskId: number, formId: number, fun: () => void | Promise<void>, opt: { 'scope'?: 'form' | 'task'; 'count'?: number;
+export function onFrame(taskId: number, formId: number, fun: () => void | Promise<void>, opt: { 'scope'?: 'form' | 'task'; 'count'?: number;
 } = {}): number {
     let ft = ++frameTimer;
     /** --- 作用域 --- */
@@ -425,7 +425,7 @@ export function addFrameListener(taskId: number, formId: number, fun: () => void
     return ft;
 }
 
-export function removeFrameListener(taskId: number, ft: number): void {
+export function offFrame(taskId: number, ft: number): void {
     if (clickgo.task.list[taskId] === undefined) {
         return;
     }

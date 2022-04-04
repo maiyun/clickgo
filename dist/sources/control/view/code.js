@@ -317,7 +317,7 @@ exports.methods = {
                     let ftop = 0;
                     let leftEnd = false;
                     let topEnd = false;
-                    this.timer = this.cgAddFrameListener(() => {
+                    this.timer = this.cgOnFrame(() => {
                         if (!leftEnd) {
                             fleft = Math.min(Math.abs(speedLeft) / 32, 0.5);
                             if (speedLeft > 0.2) {
@@ -355,7 +355,7 @@ exports.methods = {
                             if (this.scrollTopData > this.maxScrollTop) {
                                 this.scrollTopData = this.maxScrollTop;
                             }
-                            this.cgRemoveFrameListener(this.timer);
+                            this.cgOffFrame(this.timer);
                             this.timer = 0;
                             return;
                         }
@@ -386,7 +386,7 @@ exports.methods = {
                         this.scrollTopEmit = Math.round(this.scrollTopData);
                         this.$emit('update:scrollTop', this.scrollTopEmit);
                         if (leftEnd && topEnd) {
-                            this.cgRemoveFrameListener(this.timer);
+                            this.cgOffFrame(this.timer);
                             this.timer = 0;
                         }
                     });
@@ -409,7 +409,7 @@ exports.methods = {
                     this.$refs.selection.style.top = this.selectionOrigin.y + 'px';
                     this.selectionCurrent.x = x;
                     this.selectionCurrent.y = y;
-                    this.selectionTimer = this.cgAddFrameListener(() => {
+                    this.selectionTimer = this.cgOnFrame(() => {
                         let rect = this.$el.getBoundingClientRect();
                         if (this.selectionCurrent.x < rect.left) {
                             if (this.scrollLeftData > 0) {
@@ -500,7 +500,7 @@ exports.methods = {
                 },
                 end: () => {
                     this.$refs.selection.style.opacity = '0';
-                    this.cgRemoveFrameListener(this.selectionTimer);
+                    this.cgOffFrame(this.selectionTimer);
                     this.selectionTimer = 0;
                     this.$emit('afterselect');
                 }
@@ -630,14 +630,14 @@ exports.methods = {
             }
         }
         if (this.timer > 0) {
-            this.cgRemoveFrameListener(this.timer);
+            this.cgOffFrame(this.timer);
             this.timer = 0;
         }
         this.refreshScroll();
     },
     stopAnimation: function () {
         if (this.timer > 0) {
-            this.cgRemoveFrameListener(this.timer);
+            this.cgOffFrame(this.timer);
             this.timer = 0;
         }
     },
@@ -726,7 +726,7 @@ let mounted = function () {
 exports.mounted = mounted;
 let unmounted = function () {
     if (this.timer > 0) {
-        this.cgRemoveFrameListener(this.timer);
+        this.cgOffFrame(this.timer);
         this.timer = 0;
     }
 };

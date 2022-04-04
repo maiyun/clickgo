@@ -9,11 +9,11 @@
         "/clickgo/control/form",
         "/clickgo/control/task"
     ],
-    "locals": {
-        "/local/en": "en",
-        "/local/ja": "ja",
-        "/local/sc": "sc",
-        "/local/tc": "tc"
+    "locales": {
+        "/locale/en": "en",
+        "/locale/ja": "ja",
+        "/locale/sc": "sc",
+        "/locale/tc": "tc"
     },
     "main": "/form/bar/bar",
 
@@ -21,9 +21,9 @@
         "/form/bar/bar.js",
         "/form/bar/bar.xml",
         "/form/desktop/desktop.xml",
-        "/local/en.json",
-        "/local/ja.json",
-        "/local/sc.json",
-        "/local/tc.json"
+        "/locale/en.json",
+        "/locale/ja.json",
+        "/locale/sc.json",
+        "/locale/tc.json"
     ]
 }

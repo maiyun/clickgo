@@ -184,7 +184,7 @@ export let methods = {
         clickgo.dom.bindDown(e, {
             down: () => {
                 this.tran = true;
-                this.timer = this.cgAddFrameListener(() => {
+                this.timer = this.cgOnFrame(() => {
                     if (type === 'start') {
                         if (this.scrollOffsetData - 10 < 0) {
                             if (this.scrollOffsetData !== 0) {
@@ -217,7 +217,7 @@ export let methods = {
             },
             up: () => {
                 this.tran = false;
-                this.cgRemoveFrameListener(this.timer);
+                this.cgOffFrame(this.timer);
                 this.timer = 0;
             }
         });
@@ -314,6 +314,6 @@ export let mounted = function(this: IVControl): void {
 
 export let unmounted = function(this: IVControl): void {
     if (this.timer > 0) {
-        this.cgRemoveFrameListener(this.timer);
+        this.cgOffFrame(this.timer);
     }
 };

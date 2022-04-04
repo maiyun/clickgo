@@ -1,12 +1,14 @@
+import * as jszip from "jszip";
+
 class Zip implements ICGZip {
 
     /** --- zip 对象 --- */
-    private _zip!: JSZip;
+    private _zip!: jszip;
 
     /** --- 当前路径，以 / 开头以 / 结尾 --- */
     private _path: string = '/';
 
-    public constructor(zip: JSZip) {
+    public constructor(zip: jszip) {
         this._zip = zip;
         this._refreshList();
     }
@@ -40,7 +42,7 @@ class Zip implements ICGZip {
      */
     public putContent<T extends TCGZipInputType>(path: string, data: ICGZipInputByType[T], options: { 'base64'?: boolean; 'binary'?: boolean; 'date'?: Date; } = {}): void {
         path = clickgo.tool.urlResolve(this._path, path);
-        this._zip.file(path.slice(1), data as InputByType[T], {
+        this._zip.file(path.slice(1), data as jszip.InputType, {
             'base64': options.base64,
             'binary': options.binary,
             'date': options.date
@@ -246,7 +248,7 @@ class Zip implements ICGZip {
      * @param options 选项
      */
     public async generate<T extends TCGZipOutputType>(options: { 'type'?: T; 'level'?: number; 'onUpdate'?: (percent: number, currentFile: string) => void; } = {}): Promise<ICGZipOutputByType[T]> {
-        let opt: JSZip.JSZipGeneratorOptions<T> = {};
+        let opt: any = {};
         if (options.type === undefined) {
             opt.type = 'blob' as T;
         }
@@ -262,7 +264,7 @@ class Zip implements ICGZip {
         if (options.level > 0) {
             opt.compression = 'DEFLATE';
         }
-        return await this._zip.generateAsync(opt, function(meta: Metadata): void {
+        return await this._zip.generateAsync(opt, function(meta: ICGZipMetadata): void {
             options.onUpdate?.(meta.percent, meta.currentFile);
         });
     }
@@ -326,7 +328,7 @@ class Zip implements ICGZip {
  * @param data 对象数据
  */
 export async function get(data?: TCGZipInputFileFormat): Promise<Zip | null> {
-    let z = JSZip();
+    let z = jszip();
     try {
         if (data) {
             await z.loadAsync(data);

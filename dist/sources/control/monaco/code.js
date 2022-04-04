@@ -50,7 +50,7 @@ exports.computed = {
 };
 exports.data = {
     'notInit': false,
-    'localData': {
+    'localeData': {
         'en': {
             'copy': 'Copy',
             'cut': 'Cut',

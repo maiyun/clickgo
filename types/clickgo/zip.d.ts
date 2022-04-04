@@ -45,3 +45,8 @@ interface ICGZipInputByType {
 type TCGZipInputType = keyof ICGZipInputByType;
 
 type TCGZipInputFileFormat = ICGZipInputByType[keyof ICGZipInputByType];
+
+interface ICGZipMetadata {
+    percent: number;
+    currentFile: string;
+}

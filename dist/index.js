@@ -14,7 +14,7 @@ const clickgo = {
     'rootPath': window.location.href.slice(0, window.location.href.lastIndexOf('/') + 1),
     'cgRootPath': '',
     'cdnPath': 'https://cdn.jsdelivr.net',
-    'isNative': navigator.userAgent.toLowerCase().includes('electron') ? true : false,
+    'native': navigator.userAgent.toLowerCase().includes('electron') ? true : false,
     'isReady': false,
     'readys': [],
     ready: function (callback) {
@@ -51,12 +51,11 @@ const clickgo = {
         }
     }
     let tmpScript = document.createElement('script');
-    tmpScript.src = clickgo.cdnPath + '/npm/@litert/loader@3.0.0/dist/index.min.js';
+    tmpScript.src = clickgo.cdnPath + '/npm/@litert/loader@3.0.5/dist/loader.min.js';
     tmpScript.addEventListener('load', function () {
         loader.ready(() => __awaiter(this, void 0, void 0, function* () {
             let paths = [
-                clickgo.cdnPath + '/npm/vue@3.2.31/dist/vue.global.min.js',
-                clickgo.cdnPath + '/npm/jszip@3.7.1/dist/jszip.min.js'
+                clickgo.cdnPath + '/npm/vue@3.2.31/dist/vue.global.min.js'
             ];
             let ro = true;
             if (!(window.ResizeObserver)) {
@@ -68,12 +67,17 @@ const clickgo = {
                 window.ResizeObserverEntry = window.ResizeObserver.ResizeObserverEntry;
                 window.ResizeObserver = window.ResizeObserver.ResizeObserver;
             }
+            let map = {
+                'jszip': clickgo.cdnPath + '/npm/jszip@3.8.0/dist/jszip.min'
+            };
             let files = yield loader.sniffFiles('clickgo.js', {
                 'dir': clickgo.cgRootPath,
-                'after': '?' + Math.random().toString()
+                'after': '?' + Math.random().toString(),
+                'map': map
             });
             let cg = loader.require('clickgo', files, {
-                'dir': clickgo.cgRootPath
+                'dir': clickgo.cgRootPath,
+                'map': map
             })[0];
             if (!cg) {
                 alert('Clickgo load failed.');

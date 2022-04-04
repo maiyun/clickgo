@@ -10,6 +10,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 clickgo.ready(function () {
     return __awaiter(this, void 0, void 0, function* () {
+        let body = document.getElementsByTagName('body')[0];
+        if (!clickgo.native) {
+            body.style.background = '#222';
+        }
         let el = document.getElementById('tip');
         if (!el) {
             return;
@@ -42,6 +46,12 @@ clickgo.ready(function () {
             return;
         }
         el.innerHTML = 'Running...';
-        document.getElementsByTagName('body')[0].classList.add('running');
+        if (clickgo.native) {
+            document.getElementById('spic').style.display = 'none';
+        }
+        else {
+            body.style.background = '#0063b1';
+            document.getElementById('spic').style.background = '#0063b1';
+        }
     });
 });

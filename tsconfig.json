@@ -3,13 +3,18 @@
         "module": "CommonJS",
         "removeComments": true,
         "preserveConstEnums": true, // 保留 const 和 enum 声明
-        // "outDir": "code",
+        // "outDir": "dist/",
         "sourceMap": false,
         "target": "ES2015",
         "strict": true,             // 严格模式
         "declaration": false,       // d.ts
         "declarationMap": false,
-        "newLine": "LF"
+        "newLine": "LF",
+        "resolveJsonModule": true,
+        "typeRoots": [
+            "./node_modules/@types",
+            "./node_modules/@litert/loader"
+        ]
     },
     "include": [
         "./**/*.ts"

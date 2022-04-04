@@ -27,7 +27,7 @@ let lastTopZIndex: number = 9999999;
 let lastPopZIndex: number = 0;
 
 /** --- form lib 用到的语言包 --- */
-let localData: Record<string, {
+let localeData: Record<string, {
     'ok': string;
     'yes': string;
     'no': string;
@@ -59,10 +59,23 @@ let localData: Record<string, {
     }
 };
 
+/** --- clickgo 所有的 div wrap --- */
+let wrapElement: HTMLDivElement = document.createElement('div');
+wrapElement.id = 'cg-wrap';
+document.getElementsByTagName('body')[0].appendChild(wrapElement);
+if (clickgo.native) {
+    wrapElement.addEventListener('mouseenter', function() {
+        clickgo.core.sendNative('cg-mouse-ignore', 'false');
+    });
+    wrapElement.addEventListener('mouseleave', function() {
+        clickgo.core.sendNative('cg-mouse-ignore', 'true');
+    });
+}
+
 /** --- form list 的 div --- */
 let formListElement: HTMLDivElement = document.createElement('div');
 formListElement.id = 'cg-form-list';
-document.getElementsByTagName('body')[0].appendChild(formListElement);
+wrapElement.appendChild(formListElement);
 formListElement.addEventListener('touchmove', function(e): void {
     // --- 防止拖动时整个网页跟着动 ---
     if (e.cancelable) {
@@ -88,7 +101,7 @@ popListElement.id = 'cg-pop-list';
 popListElement.addEventListener('contextmenu', function(e): void {
     e.preventDefault();
 });
-document.getElementsByTagName('body')[0].appendChild(popListElement);
+wrapElement.appendChild(popListElement);
 popListElement.addEventListener('touchmove', function(e): void {
     // --- 防止拖动时整个网页跟着动 ---
     e.preventDefault();
@@ -99,18 +112,18 @@ popListElement.addEventListener('touchmove', function(e): void {
 // --- 从鼠标指针处从小到大缩放然后淡化的圆圈动画特效对象 ---
 let circularElement: HTMLDivElement = document.createElement('div');
 circularElement.id = 'cg-circular';
-document.getElementsByTagName('body')[0].appendChild(circularElement);
+wrapElement.appendChild(circularElement);
 
 // --- 从鼠标指针处开始从小到大缩放并铺满屏幕（或任意大小矩形）的对象 ---
 let rectangleElement: HTMLDivElement = document.createElement('div');
 rectangleElement.setAttribute('data-pos', '');
 rectangleElement.id = 'cg-rectangle';
-document.getElementsByTagName('body')[0].appendChild(rectangleElement);
+wrapElement.appendChild(rectangleElement);
 
 // --- 手势有效无效的圆圈 ---
 let gestureElement: HTMLDivElement = document.createElement('div');
 gestureElement.id = 'cg-gesture';
-document.getElementsByTagName('body')[0].appendChild(gestureElement);
+wrapElement.appendChild(gestureElement);
 
 /** --- task 的信息 --- */
 export let taskInfo: ICGFormTaskInfo = Vue.reactive({
@@ -713,7 +726,7 @@ systemElement.id = 'cg-system';
 systemElement.addEventListener('contextmenu', function(e): void {
     e.preventDefault();
 });
-document.getElementsByTagName('body')[0].appendChild(systemElement);
+wrapElement.appendChild(systemElement);
 systemElement.addEventListener('touchmove', function(e): void {
     // --- 防止拖动时整个网页跟着动 ---
     e.preventDefault();
@@ -833,7 +846,7 @@ simpletaskElement.id = 'cg-simpletask';
 simpletaskElement.addEventListener('contextmenu', function(e): void {
     e.preventDefault();
 });
-document.getElementsByTagName('body')[0].appendChild(simpletaskElement);
+wrapElement.appendChild(simpletaskElement);
 simpletaskElement.addEventListener('touchmove', function(e): void {
     // --- 防止拖动时整个网页跟着动 ---
     e.preventDefault();
@@ -1237,7 +1250,7 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
             'zip': {}
         };
         for (let k in clickgo.core) {
-            if (!['config', 'regModule', 'initModules', 'getModule', 'trigger'].includes(k)) {
+            if (!['config', 'getNativeListeners', 'regModule', 'initModules', 'getModule', 'trigger'].includes(k)) {
                 continue;
             }
             invoke.clickgo.core[k] = (clickgo.core as any)[k];
@@ -1522,20 +1535,20 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
                 };
             };
             // --- 预设 computed ---
-            computed.cgLocal = function(this: IVControl): string {
-                if (clickgo.task.list[this.taskId].local.name === '') {
-                    return clickgo.core.config.local;
+            computed.cgLocale = function(this: IVControl): string {
+                if (clickgo.task.list[this.taskId].locale.name === '') {
+                    return clickgo.core.config.locale;
                 }
-                return clickgo.task.list[this.taskId].local.name;
+                return clickgo.task.list[this.taskId].locale.name;
             };
             // --- 获取语言 ---
             computed.l = function(this: IVControl): (key: string, data?: Record<string, Record<string, string>>) => string {
                 return (key: string, data?: Record<string, Record<string, string>>): string => {
                     if (data) {
-                        return data[this.cgLocal]?.[key] ?? data['en'][key] ?? 'LocaleError';
+                        return data[this.cgLocale]?.[key] ?? data['en'][key] ?? 'LocaleError';
                     }
-                    else if (this.localData) {
-                        return this.localData[this.cgLocal]?.[key] ?? this.localData['en'][key] ?? 'LocaleError';
+                    else if (this.localeData) {
+                        return this.localeData[this.cgLocale]?.[key] ?? this.localeData['en'][key] ?? 'LocaleError';
                     }
                     else {
                         return 'LocaleError';
@@ -1617,14 +1630,14 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
                 });
             };
             // --- 帧 ---
-            methods.cgAddFrameListener = function(this: IVControl, fun: () => void | Promise<void>, opt: {
+            methods.cgOnFrame = function(this: IVControl, fun: () => void | Promise<void>, opt: {
                 'scope'?: 'form' | 'task';
                 'count'?: number;
             } = {}): number {
-                return clickgo.task.addFrameListener(this.taskId, this.formId, fun, opt);
+                return clickgo.task.onFrame(this.taskId, this.formId, fun, opt);
             };
-            methods.cgRemoveFrameListener = function(this: IVControl, ft: number): void {
-                clickgo.task.removeFrameListener(this.taskId, ft);
+            methods.cgOffFrame = function(this: IVControl, ft: number): void {
+                clickgo.task.offFrame(this.taskId, ft);
             };
             // --- 判断当前事件可否执行 ---
             methods.cgAllowEvent = function(this: IVControl, e: MouseEvent | TouchEvent | KeyboardEvent): boolean {
@@ -1858,16 +1871,16 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
         }
     };
     // --- 预设 computed ---
-    computed.cgLocal = function(this: IVForm): string {
-        if (clickgo.task.list[this.taskId].local.name === '') {
-            return clickgo.core.config.local;
+    computed.cgLocale = function(this: IVForm): string {
+        if (clickgo.task.list[this.taskId].locale.name === '') {
+            return clickgo.core.config.locale;
         }
-        return clickgo.task.list[this.taskId].local.name;
+        return clickgo.task.list[this.taskId].locale.name;
     };
     // --- 获取语言 ---
     computed.l = function(this: IVForm): (key: string) => string {
         return (key: string): string => {
-            return clickgo.task.list[this.taskId].local.data[this.cgLocal]?.[key] ?? clickgo.task.list[this.taskId].local.data['en']?.[key] ?? 'LocaleError';
+            return clickgo.task.list[this.taskId].locale.data[this.cgLocale]?.[key] ?? clickgo.task.list[this.taskId].locale.data['en']?.[key] ?? 'LocaleError';
         };
     };
     // --- 初始化系统方法 ---
@@ -1950,7 +1963,7 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
                 };
             }
             if (opt.buttons === undefined) {
-                opt.buttons = [localData[this.cgLocal]?.ok ?? localData['en'].ok];
+                opt.buttons = [localeData[this.cgLocale]?.ok ?? localeData['en'].ok];
             }
             this.cgCreateForm({
                 'layout': `<form title="${opt.title ?? 'dialog'}" width="auto" height="auto" :min="false" :max="false" :resize="false" border="${opt.title ? 'normal' : 'plain'}" direction="v"><dialog :buttons="buttons" @select="select">${opt.content}</dialog></form>`,
@@ -1981,18 +1994,18 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
         });
     };
     methods.cgConfirm = async function(this: IVForm, content: string, cancel: boolean = false): Promise<boolean | number> {
-        let buttons = [localData[this.cgLocal]?.yes ?? localData['en'].yes, localData[this.cgLocal]?.no ?? localData['en'].no];
+        let buttons = [localeData[this.cgLocale]?.yes ?? localeData['en'].yes, localeData[this.cgLocale]?.no ?? localeData['en'].no];
         if (cancel) {
-            buttons.push(localData[this.cgLocal]?.cancel ?? localData['en'].cancel);
+            buttons.push(localeData[this.cgLocale]?.cancel ?? localeData['en'].cancel);
         }
         let res = await this.cgDialog({
             'content': content,
             'buttons': buttons
         });
-        if (res === (localData[this.cgLocal]?.yes ?? localData['en'].yes)) {
+        if (res === (localeData[this.cgLocale]?.yes ?? localeData['en'].yes)) {
             return true;
         }
-        if (res === (localData[this.cgLocal]?.cancel ?? localData['en'].cancel)) {
+        if (res === (localeData[this.cgLocale]?.cancel ?? localeData['en'].cancel)) {
             return 0;
         }
         return false;
@@ -2102,40 +2115,40 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
     methods.cgHide = function(this: IVForm): void {
         this.$refs.form.$data.showData = false;
     };
-    // --- 加载 local 文件 json ---
-    methods.cgLoadLocal = async function(this: IVForm, name: string, path: string): Promise<boolean> {
+    // --- 加载 locale 文件 json ---
+    methods.cgLoadLocale = async function(this: IVForm, name: string, path: string): Promise<boolean> {
         path = clickgo.tool.urlResolve(this.cgPath, path + '.json');
         if (!task.files[path]) {
             return false;
         }
         try {
             let data = JSON.parse(task.files[path] as string);
-            this.cgLoadLocalData(name, data);
+            this.cgLoadLocaleData(name, data);
             return true;
         }
         catch {
             return false;
         }
     };
-    // --- 加载全新 local（老 local 的所以语言的缓存会被卸载） ---
-    methods.cgSetLocal = async function(this: IVForm, name: string, path: string): Promise<boolean> {
-        this.cgClearLocal();
-        return await this.cgLoadLocal(name, path);
+    // --- 加载全新 locale（老 locale 的所以语言的缓存会被卸载） ---
+    methods.cgSetLocale = async function(this: IVForm, name: string, path: string): Promise<boolean> {
+        this.cgClearLocale();
+        return await this.cgLoadLocale(name, path);
     };
     // --- 清除所有语言文件 ---
-    methods.cgClearLocal = function(this: IVForm): void {
-        clickgo.task.list[this.taskId].local.data = {};
+    methods.cgClearLocale = function(this: IVForm): void {
+        clickgo.task.list[this.taskId].locale.data = {};
     };
-    // --- 加载 local data 对象到 task ---
-    methods.cgLoadLocalData = function(this: IVForm, name: string, data: Record<string, any>, pre: string = ''): void {
-        clickgo.task.loadLocalData(this.taskId, name, data, pre);
+    // --- 加载 locale data 对象到 task ---
+    methods.cgLoadLocaleData = function(this: IVForm, name: string, data: Record<string, any>, pre: string = ''): void {
+        clickgo.task.loadLocaleData(this.taskId, name, data, pre);
     };
     // --- 设置本 task 的语言 name ---
-    methods.cgSetLocalName = function(this: IVForm, name: string): void {
-        clickgo.task.list[this.taskId].local.name = name;
+    methods.cgSetLocaleName = function(this: IVForm, name: string): void {
+        clickgo.task.list[this.taskId].locale.name = name;
     };
-    methods.cgClearLocalName = function(this: IVForm): void {
-        clickgo.task.list[this.taskId].local.name = '';
+    methods.cgClearLocaleName = function(this: IVForm): void {
+        clickgo.task.list[this.taskId].locale.name = '';
     };
     // --- layout 中 :class 的转义 ---
     methods.cgClassPrepend = function(this: IVForm, cla: any): string {
@@ -2166,14 +2179,14 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
         });
     };
     // --- 帧 ---
-    methods.cgAddFrameListener = function(this: IVForm, fun: () => void | Promise<void>, opt: {
+    methods.cgOnFrame = function(this: IVForm, fun: () => void | Promise<void>, opt: {
         'scope'?: 'form' | 'task';
         'count'?: number;
     } = {}): number {
-        return clickgo.task.addFrameListener(this.taskId, this.formId, fun, opt);
+        return clickgo.task.onFrame(this.taskId, this.formId, fun, opt);
     };
-    methods.cgRemoveFrameListener = function(this: IVForm, ft: number): void {
-        clickgo.task.removeFrameListener(this.taskId, ft);
+    methods.cgOffFrame = function(this: IVForm, ft: number): void {
+        clickgo.task.offFrame(this.taskId, ft);
     };
     // --- 判断当前事件可否执行 ---
     methods.cgAllowEvent = function(this: IVForm, e: MouseEvent | TouchEvent | KeyboardEvent): boolean {
