@@ -1,4 +1,4 @@
-export let data = {
+export const data = {
     'tab': '',
     'slist': [
         {
@@ -46,11 +46,11 @@ export let data = {
     'scroll': 'auto'
 };
 
-export let computed = {
+export const computed = {
     'adData': function(this: IVForm): any[] {
-        let data: any[] = [];
+        const data: any[] = [];
         for (let i = 0; i < this.slist.length; ++i) {
-            let item = this.slist[i];
+            const item = this.slist[i];
             data.push({
                 'type': item.type === undefined ? 'split' : item.type,
                 'menu': i === 20 ? true : false
@@ -59,7 +59,7 @@ export let computed = {
         return data;
     },
     'listData': function(this: IVForm): any[] {
-        let data: any[] = ['Item1', {
+        const data: any[] = ['Item1', {
             'label': 'Title1',
             'children': [
                 'Sub1',
@@ -72,15 +72,15 @@ export let computed = {
         for (let k = 0; k < this.slist.length; ++k) {
             if (this.slist[k].name) {
                 data.push({
-                    'label': 'Index: ' + k + ', value: ' + this.slist[k].name + (k === 20 ? ' long test long test long test long test long test' : ''),
+                    'label': `index: ${k}, value: ${this.slist[k].name}${(k === 20 ? ' long test long test long test long test long test' : '')}`,
                     'value': this.slist[k].name,
                     'disabled': this.slist[k].disabled
                 });
             }
             else {
                 data.push({
-                    'label': 'index: ' + k + ', value: i' + k + (k === 20 ? ' long test long test long test long test long test' : ''),
-                    'value': 'i' + k,
+                    'label': `index: ${k}, value: i${k}${(k === 20 ? ' long test long test long test long test long test' : '')}`,
+                    'value': 'i' + k.toString(),
                     'disabled': true
                 });
             }
@@ -88,7 +88,7 @@ export let computed = {
         return data;
     },
     'listData2': function(this: IVForm): number[] {
-        let data = [];
+        const data = [];
         for (let k = 0; k < this.listData.length; k++) {
             data.push(k + 1);
         }
@@ -96,22 +96,22 @@ export let computed = {
     }
 };
 
-export let methods = {
+export const methods = {
     showType: function(this: IVForm): void {
         if (Array.isArray(this.select)) {
             if (this.select.length === 0) {
                 this.cgDialog('There are currently no selected items.').catch((e) => { throw e; });
             }
             else {
-                let types = [];
-                for (let item of this.select) {
+                const types = [];
+                for (const item of this.select) {
                     types.push(this.slist[item].type);
                 }
-                this.cgDialog('Type is ' + types + '.').catch((e) => { throw e; });
+                this.cgDialog(`Type is ${types}.`).catch((e) => { throw e; });
             }
         }
         else {
-            this.cgDialog(this.select === -1 ? 'There are currently no selected items.' : 'Type is ' + this.slist[this.select].type + '.').catch((e) => { throw e; });
+            this.cgDialog(this.select === -1 ? 'There are currently no selected items.' : `Type is ${this.slist[this.select].type}.`).catch((e) => { throw e; });
         }
     },
     selectButton: function(this: IVForm): void {

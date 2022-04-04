@@ -1,4 +1,4 @@
-export let data = {
+export const data = {
     'bindLongText': false,
     'moveLeft': 0,
     'moveTop': 0,
@@ -8,13 +8,13 @@ export let data = {
     'bindGestureWheelText': ''
 };
 
-export let computed = {
+export const computed = {
     'isMove': function(): boolean {
         return clickgo.dom.is.move;
     }
 };
 
-export let methods = {
+export const methods = {
     setGlobalCursor: function(this: IVForm, type?: string): void {
         clickgo.dom.setGlobalCursor(type);
     },
@@ -42,28 +42,38 @@ export let methods = {
             'areaObject': e.currentTarget as HTMLElement,
             'object': this.$refs.move,
             move: (ox: number, oy: number): void => {
-                this.moveLeft += ox;
-                this.moveTop += oy;
+                (this.moveLeft as number) += ox;
+                (this.moveTop as number) += oy;
             }
         });
     },
     bindGesture: function(this: IVForm, e: MouseEvent | TouchEvent): void {
         clickgo.dom.bindGesture(e, {
             'dirs': ['top', 'bottom'],
-            handler: async (dir) => {
+            handler: (dir) => {
                 this.bindGestureText = dir.slice(0, 1).toUpperCase() + dir.slice(1);
-                await clickgo.tool.sleep(500);
-                this.bindGestureText = '';
+                const handler = async (): Promise<void> => {
+                    await clickgo.tool.sleep(500);
+                    this.bindGestureText = '';
+                };
+                handler().catch((e) => {
+                    console.log(e);
+                });
             }
         });
     },
     bindGestureWheel: function(this: IVForm, e: WheelEvent): void {
         clickgo.dom.bindGesture(e, {
             'dirs': ['top', 'bottom', 'left', 'right'],
-            handler: async (dir) => {
+            handler: (dir) => {
                 this.bindGestureWheelText = dir.slice(0, 1).toUpperCase() + dir.slice(1);
-                await clickgo.tool.sleep(500);
-                this.bindGestureWheelText = '';
+                const handler = async (): Promise<void> => {
+                    await clickgo.tool.sleep(500);
+                    this.bindGestureWheelText = '';
+                };
+                handler().catch((e) => {
+                    console.log(e);
+                });
             }
         });
     }

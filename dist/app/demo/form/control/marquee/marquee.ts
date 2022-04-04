@@ -1,4 +1,4 @@
-export let data = {
+export const data = {
     'lineCount': 2,
     'style': false,
 
@@ -6,7 +6,7 @@ export let data = {
     'scroll': false
 };
 
-export let methods = {
+export const methods = {
     changeDirection: function(this: IVForm): void {
         switch (this.direction) {
             case 'top': {

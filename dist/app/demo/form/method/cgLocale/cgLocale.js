@@ -14,7 +14,7 @@ exports.methods = {
         clickgo.core.config.locale = this.select;
     }
 };
-let mounted = function () {
+const mounted = function () {
     this.select = clickgo.core.config.locale;
 };
 exports.mounted = mounted;

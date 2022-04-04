@@ -1,4 +1,4 @@
-export let props = {
+export const props = {
     'tabPosition': {
         'default': 'top'
     },
@@ -8,7 +8,7 @@ export let props = {
     }
 };
 
-export let data = {
+export const data = {
     'arrow': false,
     'timer': 0,
 
@@ -16,13 +16,13 @@ export let data = {
     'selected': ''
 };
 
-export let computed = {
+export const computed = {
     'tabs': function(this: IVControl): any[] {
         if (!this.$slots.default) {
             return [];
         }
-        let tabs = [];
-        for (let item of this.cgSlots()) {
+        const tabs = [];
+        for (const item of this.cgSlots()) {
             tabs.push({
                 'label': item.props.label,
                 'value': item.props.value ?? item.props.label
@@ -31,15 +31,15 @@ export let computed = {
         return tabs;
     },
     'values': function(this: IVControl): string[] {
-        let list = [];
-        for (let item of this.tabs) {
+        const list = [];
+        for (const item of this.tabs) {
             list.push(item.value);
         }
         return list;
     }
 };
 
-export let watch = {
+export const watch = {
     'modelValue': {
         handler: function(this: IVControl): void {
             if (this.selected !== this.modelValue) {
@@ -71,7 +71,7 @@ export let watch = {
     }
 };
 
-export let methods = {
+export const methods = {
     wheel: function(this: IVControl, e: WheelEvent): void {
         if (this.tabPosition === 'left' || this.tabPosition === 'right') {
             return;
@@ -81,7 +81,7 @@ export let methods = {
         }
         // --- 用来屏蔽不小心触发前进、后退的浏览器事件 ---
         e.preventDefault();
-        this.$refs.tabs[0].scrollLeft += e.deltaY;
+        (this.$refs.tabs[0] as HTMLElement).scrollLeft += e.deltaY;
     },
     tabClick: function(this: IVControl, e: MouseEvent | TouchEvent, item: Record<string, any>): void {
         this.selected = item.value;
@@ -91,15 +91,15 @@ export let methods = {
         if (clickgo.dom.hasTouchButMouse(e)) {
             return;
         }
-        let num = type === 'start' ? -5 : 5;
+        const num = type === 'start' ? -5 : 5;
         clickgo.dom.bindDown(e, {
             down: () => {
                 this.timer = this.cgOnFrame(() => {
                     if (this.tabPosition === 'top' || this.tabPosition === 'bottom') {
-                        this.$refs.tabs[0].scrollLeft += num;
+                        (this.$refs.tabs[0] as HTMLElement).scrollLeft += num;
                     }
                     else {
-                        this.$refs.tabs[0].scrollTop += num;
+                        (this.$refs.tabs[0] as HTMLElement).scrollTop += num;
                     }
                 });
             },
@@ -112,7 +112,7 @@ export let methods = {
     // --- 检测是否显示箭头 ---
     onResize: function(this: IVControl, size: ICGDomSize): void {
         if (this.tabPosition === 'top' || this.tabPosition === 'bottom') {
-            let width = this.arrow ? Math.round(size.clientWidth) + 40 : Math.round(size.clientWidth);
+            const width = this.arrow ? Math.round(size.clientWidth) + 40 : Math.round(size.clientWidth);
             if (size.scrollWidth > width) {
                 this.arrow = true;
             }
@@ -121,7 +121,7 @@ export let methods = {
             }
         }
         else {
-            let height = this.arrow ? Math.round(size.clientHeight) + 40 : Math.round(size.clientHeight);
+            const height = this.arrow ? Math.round(size.clientHeight) + 40 : Math.round(size.clientHeight);
             if (size.scrollHeight > height) {
                 this.arrow = true;
             }
@@ -133,14 +133,14 @@ export let methods = {
     reSelected: function(this: IVControl): void {
         // --- 默认选项卡选择 ---
         if (this.selected === '') {
-            let s = this.values[0] ? this.values[0] : '';
+            const s = this.values[0] ? this.values[0] : '';
             if (this.selected !== s) {
                 this.selected = s;
                 this.$emit('update:modelValue', this.selected);
             }
         }
         else if (this.values.indexOf(this.selected) === -1) {
-            let s = this.values[this.values.length - 1] ? this.values[this.values.length - 1] : '';
+            const s = this.values[this.values.length - 1] ? this.values[this.values.length - 1] : '';
             if (this.selected !== s) {
                 this.selected = s;
                 this.$emit('update:modelValue', this.selected);
@@ -149,7 +149,7 @@ export let methods = {
     }
 };
 
-export let mounted = function(this: IVControl): void {
+export const mounted = function(this: IVControl): void {
     // --- 检测是否显示箭头 ---
     this.oldTabs = this.$refs.tabs[0];
     clickgo.dom.watchSize(this.$refs.tabs[0], (size) => {

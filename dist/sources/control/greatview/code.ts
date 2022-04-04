@@ -1,4 +1,4 @@
-export let props = {
+export const props = {
     'direction': {
         'default': 'h'
     },
@@ -30,7 +30,7 @@ export let props = {
     }
 };
 
-export let data = {
+export const data = {
     'padding': '',
     'paddingChild': {
         'top': 0,
@@ -64,7 +64,7 @@ export let data = {
     'lengthInit': false
 };
 
-export let watch = {
+export const watch = {
     'data': {
         handler: function(this: IVControl): void {
             this.refreshView();
@@ -88,7 +88,7 @@ export let watch = {
     }
 };
 
-export let computed = {
+export const computed = {
     'isSame': function(this: IVControl): boolean {
         return clickgo.tool.getBoolean(this.same);
     },
@@ -103,7 +103,7 @@ export let computed = {
         if (typeof this.data !== 'number') {
             return this.data;
         }
-        let list: any[] = [];
+        const list: any[] = [];
         for (let i = 1; i <= this.data; ++i) {
             list.push(i);
         }
@@ -121,21 +121,21 @@ export let computed = {
                         this.itemsPos[index].start :
                         '0'
                     )
-                ) + 'px',
+                ) as string + 'px',
                 'top': (this.direction === 'v' ?
                     (this.itemsPos[index] ?
                         this.itemsPos[index].start :
                         '0'
                     ) :
                     this.paddingChild.top
-                ) + 'px',
+                ) as string + 'px',
                 'min-width': (this.direction === 'v' ?
-                    'calc(100% - ' + (this.paddingChild.left + this.paddingChild.right) + 'px)' :
+                    `calc(100% - ${(this.paddingChild.left as number) + (this.paddingChild.right as number)}px)` :
                     undefined
                 ),
                 'min-height': (this.direction === 'v' ?
                     undefined :
-                    'calc(100% - ' + (this.paddingChild.top + this.paddingChild.bottom) + 'px)'
+                    `calc(100% - ${(this.paddingChild.top as number) + (this.paddingChild.bottom as number)}px)`
                 )
             };
         };
@@ -146,18 +146,18 @@ export let computed = {
     }
 };
 
-export let methods = {
+export const methods = {
     // --- 重新获取宽度高度 ---
     refreshView: async function(this: IVControl): Promise<void> {
-        let nowCount = ++this.refreshCount;
+        const nowCount = ++this.refreshCount;
         // let date = Date.now();
 
         let lengthWidth: number = this.paddingChild.left;
         let lengthHeight: number = this.paddingChild.top;
         if (this.dataComp.length === 0) {
             // --- 没有数据 ---
-            this.lengthWidth = lengthWidth + this.paddingChild.right;
-            this.lengthHeight = lengthHeight + this.paddingChild.bottom;
+            this.lengthWidth = lengthWidth + (this.paddingChild.right as number);
+            this.lengthHeight = lengthHeight + (this.paddingChild.bottom as number);
             this.length = this.direction === 'v' ? this.lengthHeight : this.lengthWidth;
             return;
         }
@@ -169,15 +169,15 @@ export let methods = {
         }
 
         /** --- 数据总数 --- */
-        let maxCursor = this.dataComp.length;
+        const maxCursor = this.dataComp.length as number;
         /** --- 当前位置 --- */
         let cursor = 0;
         /** --- 另一边的最大值 --- */
         let anotherMax: number = 0;
         /** --- 独立的 item 的 size --- */
-        let itemsSize: number[] = [];
+        const itemsSize: number[] = [];
         /** --- item 的 size 别名对应的 size 数值 --- */
-        let itemsSizeAlias: Record<string, number> = {};
+        const itemsSizeAlias: Record<string, number> = {};
         // --- 循环建立 itemsSize ---
         while (true) {
             if (nowCount !== this.refreshCount) {
@@ -185,7 +185,7 @@ export let methods = {
                 return;
             }
             /** --- 获取要计算的值 --- */
-            let needItemsComp = [];
+            const needItemsComp = [];
             for (let i = cursor; i < maxCursor; ++i) {
                 if (typeof this.itemsSize[i] === 'number') {
                     // --- 用户已经定义了 size，无需计算 ---
@@ -237,10 +237,10 @@ export let methods = {
             }
             // --- 遍历 comp items ---
             for (let i = 0; i < this.$refs.comp.children.length; ++i) {
-                let item = this.$refs.comp.children.item(i) as HTMLElement;
-                let rect = item.getBoundingClientRect();
+                const item = this.$refs.comp.children.item(i) as HTMLElement;
+                const rect = item.getBoundingClientRect();
                 /** --- items size cursor --- */
-                let theCursor = parseInt(item.dataset.cursor as string);
+                const theCursor = parseInt(item.dataset.cursor!);
                 let size = 0;
                 if (this.direction === 'v') {
                     size = rect.height;
@@ -272,11 +272,11 @@ export let methods = {
         }
         // --- 遍历 itemsSize 检查哪些还没应用 size ---
         // --- 同时组合 itemsPos ---
-        let itemsPos = [];
+        const itemsPos = [];
         for (let i = 0; i < maxCursor; ++i) {
             let size = 0;
             if (this.itemsSize[i] !== undefined) {
-                let type = typeof this.itemsSize[i];
+                const type = typeof this.itemsSize[i];
                 if (type === 'number') {
                     size = this.itemsSize[i];
                 }
@@ -290,8 +290,8 @@ export let methods = {
             else {
                 size = itemsSize[i];
             }
-            let start = this.direction === 'v' ? lengthHeight : lengthWidth;
-            let end = start + size;
+            const start = this.direction === 'v' ? lengthHeight : lengthWidth;
+            const end = start + size;
             itemsPos.push({
                 'start': start,
                 'end': end
@@ -312,8 +312,8 @@ export let methods = {
             lengthHeight += anotherMax;
         }
         // --- 加末尾的 padding ---
-        lengthWidth += this.paddingChild.right;
-        lengthHeight += this.paddingChild.bottom;
+        lengthWidth += this.paddingChild.right as number;
+        lengthHeight += this.paddingChild.bottom as number;
         this.lengthWidth = lengthWidth;
         this.lengthHeight = lengthHeight;
         this.length = this.direction === 'v' ? this.lengthHeight : this.lengthWidth;
@@ -336,7 +336,7 @@ export let methods = {
         this.reShow();
     },
     // --- 控制显示和隐藏 ---
-    refreshPos: function(this: IVControl, pos: {'start': number; 'end': number;}, area: {'start': number; 'end': number;}): {'start': number; 'end': number;} {
+    refreshPos: function(this: IVControl, pos: { 'start': number; 'end': number; }, area: { 'start': number; 'end': number; }): { 'start': number; 'end': number; } {
         if (this.length <= area.start) {
             return {
                 'start': -1,
@@ -344,11 +344,11 @@ export let methods = {
             };
         }
         // let date = Date.now();
-        let rtn = {'start': pos.start, 'end': pos.end};
+        const rtn = { 'start': pos.start, 'end': pos.end };
         /** --- 是否要大找 --- */
         let needFind: boolean = false;
-        let startShow = this.isInArea(rtn.start, area);
-        let endShow = this.isInArea(rtn.end, area);
+        const startShow = this.isInArea(rtn.start, area);
+        const endShow = this.isInArea(rtn.end, area);
         // --- 检测起始 ---
         if (startShow) {
             // --- 往上找，看看上面还有没有显示 ---
@@ -363,7 +363,7 @@ export let methods = {
         else {
             // --- 往下找三个看看 ---
             let found = false;
-            let jmax = endShow ? 999 : 3;
+            const jmax = endShow ? 999 : 3;
             for (let i = rtn.start + 1, j = 0; i < this.dataComp.length && j < jmax; ++i, ++j) {
                 if (!this.isInArea(i, area)) {
                     continue;
@@ -390,7 +390,7 @@ export let methods = {
         else {
             // --- 往上找三个看看 ---
             let found = false;
-            let jmax = startShow ? 999 : 3;
+            const jmax = startShow ? 999 : 3;
             for (let i = rtn.end - 1, j = 0; i >= 0 && j < jmax; --i, ++j) {
                 if (!this.isInArea(i, area)) {
                     continue;
@@ -410,7 +410,7 @@ export let methods = {
                 // --- 可能有移除的后，导致 rtn.start 没有 item ---
                 rtn.start = 0;
                 if (!this.itemsPos[rtn.start]) {
-                    return {'start': 0, 'end': 0};
+                    return { 'start': 0, 'end': 0 };
                 }
             }
             if (this.scrollOffset < this.itemsPos[rtn.start].start) {
@@ -460,15 +460,15 @@ export let methods = {
         return rtn;
     },
     reShow: function(this: IVControl): void {
-        let rtn = this.refreshPos(this.showPos, {
+        const rtn = this.refreshPos(this.showPos, {
             'start': this.scrollOffset - 20,
-            'end': this.scrollOffset + this.client + 20
+            'end': (this.scrollOffset as number) + (this.client as number) + 20
         });
         this.showPos.start = rtn.start;
         this.showPos.end = rtn.end;
     },
-    isInArea: function(this: IVControl, i: number, area: {'start': number; 'end': number;}): boolean {
-        let pos = this.itemsPos[i];
+    isInArea: function(this: IVControl, i: number, area: { 'start': number; 'end': number; }): boolean {
+        const pos = this.itemsPos[i];
         if (!pos) {
             return false;
         }
@@ -530,9 +530,9 @@ export let methods = {
         this.$emit('change', val);
     },
     onSelect: function(this: IVControl, area: Record<string, number>): void {
-        let offset = this.direction === 'v' ? area.y : area.x;
-        let length = this.direction === 'v' ? area.height : area.width;
-        let rtn = this.refreshPos(this.selectPos, {
+        const offset = this.direction === 'v' ? area.y : area.x;
+        const length = this.direction === 'v' ? area.height : area.width;
+        const rtn = this.refreshPos(this.selectPos, {
             'start': offset,
             'end': offset + length
         });
@@ -548,7 +548,7 @@ export let methods = {
     }
 };
 
-export let mounted = function(this: IVControl): void {
+export const mounted = function(this: IVControl): void {
     // --- nest 内嵌闪烁是 mounted 导致 ---
     clickgo.dom.watchStyle(this.$el, ['padding', 'padding-top', 'padding-right', 'padding-bottom', 'padding-left', 'font'], (n, v) => {
         switch (n) {

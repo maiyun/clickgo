@@ -67,7 +67,7 @@ exports.methods = {
         clickgo.form.hidePop();
     }
 };
-let mounted = function () {
+const mounted = function () {
     clickgo.dom.watchStyle(this.$el, ['background', 'padding'], (n, v) => {
         switch (n) {
             case 'background': {

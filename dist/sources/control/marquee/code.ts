@@ -1,4 +1,4 @@
-export let props = {
+export const props = {
     'direction': {
         'default': 'left'
     },
@@ -11,7 +11,7 @@ export let props = {
     }
 };
 
-export let data = {
+export const data = {
     'padding': '',
     'left': 0,
     'top': 0,
@@ -20,9 +20,9 @@ export let data = {
 
     'dir': '',
     'timer': 0
-}
+};
 
-export let computed = {
+export const computed = {
     'opMargin': function(this: IVControl): string {
         return this.padding.replace(/(\w+)/g, '-$1');
     },
@@ -34,19 +34,19 @@ export let computed = {
     }
 };
 
-export let watch = {
+export const watch = {
     'scroll': {
-        handler: function(this: IVControl) {
+        handler: function(this: IVControl): void {
             this.refresh();
         }
     },
     'direction': {
-        handler: function(this: IVControl, n: string, o: string) {
+        handler: function(this: IVControl, n: string, o: string): void {
             if (this.timer === 0) {
                 return;
             }
-            let ndir = (n === 'left' || n === 'right') ? 'h' : 'v';
-            let odir = (o === 'left' || o === 'right') ? 'h' : 'v';
+            const ndir = (n === 'left' || n === 'right') ? 'h' : 'v';
+            const odir = (o === 'left' || o === 'right') ? 'h' : 'v';
             if (ndir === odir) {
                 return;
             }
@@ -66,7 +66,7 @@ export let watch = {
     }
 };
 
-export let methods = {
+export const methods = {
     refresh: function(this: IVControl): void {
         if (this.length === 0 || this.client === 0) {
             return;
@@ -107,7 +107,7 @@ export let methods = {
             }
             switch (this.direction) {
                 case 'left':
-                case "right": {
+                case 'right': {
                     this.dir = 'left';
                     break;
                 }
@@ -143,7 +143,7 @@ export let methods = {
                         break;
                     }
                     case 'right': {
-                        this.left +=  this.speedPx;
+                        (this.left as number) += this.speedPx as number;
                         if (this.left > this.client) {
                             this.left = -this.length;
                         }
@@ -157,7 +157,7 @@ export let methods = {
                         break;
                     }
                     case 'bottom': {
-                        this.top += this.speedPx;
+                        (this.top as number) += this.speedPx as number;
                         if (this.top > this.client) {
                             this.top = -this.length;
                         }
@@ -167,7 +167,7 @@ export let methods = {
             }
             else {
                 /** --- 超出的部分 --- */
-                let xv = this.length - this.client;
+                const xv = this.length - this.client;
                 switch (this.dir) {
                     case 'left': {
                         this.left -= this.speedPx;
@@ -179,7 +179,7 @@ export let methods = {
                         break;
                     }
                     case 'right': {
-                        this.left += this.speedPx;
+                        (this.left as number) += this.speedPx as number;
                         if (this.left > 0) {
                             this.dir = 'left';
                             this.left = 0;
@@ -197,7 +197,7 @@ export let methods = {
                         break;
                     }
                     case 'bottom': {
-                        this.top += this.speedPx;
+                        (this.top as number) += this.speedPx as number;
                         if (this.top > 0) {
                             this.dir = 'top';
                             this.top = 0;
@@ -211,13 +211,13 @@ export let methods = {
     }
 };
 
-export let mounted = function(this: IVControl): void {
+export const mounted = function(this: IVControl): void {
     clickgo.dom.watchStyle(this.$el, 'padding', (n, v) => {
         this.padding = v;
     }, true);
     // --- 外部包裹的改变 ---
     clickgo.dom.watchSize(this.$el, (size) => {
-        let client = (this.direction === 'left' || this.direction === 'right') ? size.width : size.height;
+        const client = (this.direction === 'left' || this.direction === 'right') ? size.width : size.height;
         if (client !== this.client) {
             this.client = client;
         }
@@ -225,7 +225,7 @@ export let mounted = function(this: IVControl): void {
     }, true);
     // --- 内部内容的改变 ---
     clickgo.dom.watchSize(this.$refs.inner, (size) => {
-        let length = (this.direction === 'left' || this.direction === 'right') ? size.width : size.height;
+        const length = (this.direction === 'left' || this.direction === 'right') ? size.width : size.height;
         if (length !== this.length) {
             this.length = length;
         }

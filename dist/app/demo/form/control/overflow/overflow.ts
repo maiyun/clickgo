@@ -1,4 +1,4 @@
-export let data = {
+export const data = {
     'lineValue': 10,
     'lineCount': 2,
 
@@ -35,7 +35,7 @@ export let data = {
     'style': false
 };
 
-export let methods = {
+export const methods = {
     scrollborder: function(this: IVForm, e: MouseEvent | TouchEvent | WheelEvent, dir: string): void {
         if (!this.gesture) {
             return;
@@ -43,7 +43,7 @@ export let methods = {
         let dirs: any = [];
         switch (dir) {
             case 'h': {
-                dirs = ['left', 'right']
+                dirs = ['left', 'right'];
                 break;
             }
             default: {
@@ -64,7 +64,7 @@ export let methods = {
                         break;
                     }
                     default: {
-                        this.lineCount += this.lineValue;
+                        (this.lineCount as number) += this.lineValue as number;
                     }
                 }
             }

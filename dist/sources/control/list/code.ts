@@ -1,4 +1,4 @@
-export let props = {
+export const props = {
     'adaptation': {
         'dafault': undefined
     },
@@ -27,9 +27,9 @@ export let props = {
 function formatData(inData: any[], level: number = 0): any[] {
     let data: any[] = [];
     for (let k = 0; k < inData.length; ++k) {
-        let item = inData[k];
-        let type = typeof item;
-        let over = {
+        const item = inData[k];
+        const type = typeof item;
+        const over = {
             'label': '',
             'value': '',
             'title': false,
@@ -57,7 +57,7 @@ function formatData(inData: any[], level: number = 0): any[] {
     return data;
 }
 
-export let computed = {
+export const computed = {
     'isMust': function(this: IVControl): boolean {
         return clickgo.tool.getBoolean(this.must);
     },
@@ -159,12 +159,12 @@ export let computed = {
     }
 };
 
-export let methods = {
+export const methods = {
     updateModelValue: function(this: IVControl, value: number | number[]): void {
         if (typeof value === 'object') {
-            let modelValue = [];
-            let label = [];
-            for (let item of value) {
+            const modelValue = [];
+            const label = [];
+            for (const item of value) {
                 if (this.dataComp[item] && !this.dataComp[item].disabled && !this.dataComp[item].title) {
                     modelValue.push(this.dataComp[item].value);
                     label.push(this.dataComp[item].label);

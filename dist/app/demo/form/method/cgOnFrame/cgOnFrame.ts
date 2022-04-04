@@ -1,9 +1,9 @@
-export let data = {
+export const data = {
     'timer': 0,
     'count': 0
 };
 
-export let methods = {
+export const methods = {
     start: function(this: IVForm, v: number): void {
         let opt = {};
         switch (v) {

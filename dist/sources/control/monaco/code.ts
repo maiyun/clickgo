@@ -1,4 +1,4 @@
-export let props = {
+export const props = {
     'disabled': {
         'default': false
     },
@@ -20,7 +20,7 @@ export let props = {
     }
 };
 
-export let computed = {
+export const computed = {
     'isDisabled': function(this: IVControl): boolean {
         return clickgo.tool.getBoolean(this.disabled);
     },
@@ -29,8 +29,8 @@ export let computed = {
     },
 
     'filesComp': function(this: IVControl): any[] {
-        let list = [];
-        for (let path in this.files) {
+        const list = [];
+        for (const path in this.files) {
             list.push({
                 'content': this.files[path],
                 'filePath': path
@@ -40,7 +40,7 @@ export let computed = {
     }
 };
 
-export let data = {
+export const data = {
     'notInit': false,
 
     'localeData': {
@@ -67,7 +67,7 @@ export let data = {
     }
 };
 
-export let watch = {
+export const watch = {
     'isReadonly': function(this: IVControl): void {
         if (!this.monacoInstance) {
             return;
@@ -102,7 +102,7 @@ export let watch = {
     }
 };
 
-export let methods = {
+export const methods = {
     contextmenu: function(this: IVControl, e: MouseEvent): void {
         if (this.notInit) {
             return;
@@ -142,10 +142,15 @@ export let methods = {
             }
             case 'cut': {
                 clickgo.tool.execCommand('copy');
-                let selection = this.monacoInstance.getSelection();
+                const selection = this.monacoInstance.getSelection();
                 this.monacoInstance.executeEdits('', [
                     {
-                        range: new this.monaco.Range(selection.startLineNumber, selection.startColumn, selection.endLineNumber, selection.endColumn),
+                        range: new this.monaco.Range(
+                            selection.startLineNumber,
+                            selection.startColumn,
+                            selection.endLineNumber,
+                            selection.endColumn
+                        ),
                         text: ''
                     }
                 ]);
@@ -153,11 +158,16 @@ export let methods = {
                 break;
             }
             case 'paste': {
-                let str = await navigator.clipboard.readText();
-                let selection = this.monacoInstance.getSelection();
+                const str = await navigator.clipboard.readText();
+                const selection = this.monacoInstance.getSelection();
                 this.monacoInstance.executeEdits('', [
                     {
-                        range: new this.monaco.Range(selection.startLineNumber, selection.startColumn, selection.endLineNumber, selection.endColumn),
+                        range: new this.monaco.Range(
+                            selection.startLineNumber,
+                            selection.startColumn,
+                            selection.endLineNumber,
+                            selection.endColumn
+                        ),
                         text: str
                     }
                 ]);
@@ -167,8 +177,8 @@ export let methods = {
     }
 };
 
-export let mounted = function(this: IVControl): void {
-    let monaco = clickgo.core.getModule('monaco');
+export const mounted = function(this: IVControl): void {
+    const monaco = clickgo.core.getModule('monaco');
     if (monaco) {
         this.monaco = monaco;
         this.monacoInstance = monaco.editor.create(this.$refs.monaco, {
@@ -201,7 +211,7 @@ export let mounted = function(this: IVControl): void {
     }
 };
 
-export let unmounted = function(this: IVControl): void {
+export const unmounted = function(this: IVControl): void {
     if (this.monacoInstance) {
         this.monacoInstance.dispose();
     }

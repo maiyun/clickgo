@@ -17,36 +17,36 @@
 /** --- 当前全局主题 --- */
 export let global: ICGThemePkg | null = null;
 /** --- clickgo 中的 cgt 文件编译后的对象 --- */
-export let clickgoThemePkgs: Record<string, ICGThemePkg> = {};
+export const clickgoThemePkgs: Record<string, ICGThemePkg> = {};
 
 /**
  * --- cgt 文件 blob 转 IThemePkg 对象，会自动创建 object url，请注意释放 ---
  * @param blob blob 对象
  */
 export async function read(blob: Blob): Promise<false | ICGThemePkg> {
-    let zip = await clickgo.zip.get(blob);
+    const zip = await clickgo.zip.get(blob);
     if (!zip) {
         return false;
     }
-    let configContent = await zip.getContent('/config.json');
+    const configContent = await zip.getContent('/config.json');
     if (!configContent) {
         return false;
     }
-    let config: ICGThemeConfig = JSON.parse(configContent);
+    const config: ICGThemeConfig = JSON.parse(configContent);
     // --- 开始读取文件 ---
-    let objectURLs: Record<string, string> = {};
-    let files: Record<string, Blob | string> = {};
-    for (let file of config.files) {
-        let mime = clickgo.tool.getMimeByPath(file);
+    const objectURLs: Record<string, string> = {};
+    const files: Record<string, Blob | string> = {};
+    for (const file of config.files) {
+        const mime = clickgo.tool.getMimeByPath(file);
         if (['txt', 'json', 'js', 'css', 'xml', 'html'].includes(mime.ext)) {
-            let fab = await zip.getContent(file, 'string');
+            const fab = await zip.getContent(file, 'string');
             if (!fab) {
                 continue;
             }
             files[file] = fab.replace(/^\ufeff/, '');
         }
         else {
-            let fab = await zip.getContent(file, 'arraybuffer');
+            const fab = await zip.getContent(file, 'arraybuffer');
             if (!fab) {
                 continue;
             }
@@ -69,7 +69,7 @@ export async function read(blob: Blob): Promise<false | ICGThemePkg> {
  * @param pkg 要处理的 theme pkg 对象
  */
 export function revokeObjectURL(pkg: ICGThemePkg): void {
-    for (let path in pkg.objectURLs) {
+    for (const path in pkg.objectURLs) {
         clickgo.tool.revokeObjectURL(pkg.objectURLs[path]);
     }
 }
@@ -80,7 +80,7 @@ export function revokeObjectURL(pkg: ICGThemePkg): void {
  * @param path 特殊字符串“global”代表加载全局主题进来 或 cgt 文件路径只可应用于本任务
  */
 export async function load(taskId: number, path: string = 'global'): Promise<boolean> {
-    let task = clickgo.task.list[taskId];
+    const task = clickgo.task.list[taskId];
     if (!task) {
         return false;
     }
@@ -98,7 +98,7 @@ export async function load(taskId: number, path: string = 'global'): Promise<boo
     else {
         if (path.startsWith('/clickgo/')) {
             // --- 加载的是 clickgo 库的主题 ---
-            let clickgoPath = path.slice(8);
+            const clickgoPath = path.slice(8);
             if (!clickgoThemePkgs[clickgoPath]) {
                 if ((await clickgo.core.fetchClickGoFile(clickgoPath)) === null) {
                     return false;
@@ -138,7 +138,7 @@ export async function load(taskId: number, path: string = 'global'): Promise<boo
  * @param path 要移除的 path
  */
 export async function remove(taskId: number, path: string): Promise<void> {
-    let task = clickgo.task.list[taskId];
+    const task = clickgo.task.list[taskId];
     if (!task) {
         return;
     }
@@ -162,7 +162,7 @@ export async function remove(taskId: number, path: string): Promise<void> {
  * @param taskId task id
  */
 export async function clear(taskId: number): Promise<void> {
-    let task = clickgo.task.list[taskId];
+    const task = clickgo.task.list[taskId];
     if (!task) {
         return;
     }
@@ -183,7 +183,7 @@ export async function clear(taskId: number): Promise<void> {
  * @param file cgt 文件的 blob 对象
  */
 export async function setGlobal(file: Blob): Promise<void> {
-    let pkg = await read(file);
+    const pkg = await read(file);
     if (!pkg) {
         return;
     }
@@ -191,7 +191,7 @@ export async function setGlobal(file: Blob): Promise<void> {
         revokeObjectURL(global);
     }
     global = pkg;
-    for (let taskId in clickgo.task.list) {
+    for (const taskId in clickgo.task.list) {
         await load(parseInt(taskId), 'global');
     }
 }
@@ -199,14 +199,14 @@ export async function setGlobal(file: Blob): Promise<void> {
 /**
  * --- 清除全局主题 ---
  */
-export async function clearGlobal(): Promise<void> {
+export function clearGlobal(): void {
     if (!global) {
         return;
     }
     revokeObjectURL(global);
     global = null;
-    for (let taskId in clickgo.task.list) {
-        let task = clickgo.task.list[taskId];
+    for (const taskId in clickgo.task.list) {
+        const task = clickgo.task.list[taskId];
         if (task.customTheme) {
             continue;
         }

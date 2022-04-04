@@ -1,4 +1,4 @@
-export let data = {
+export const data = {
     'left': 0,
     'top': 0,
     'width': undefined,
@@ -7,13 +7,13 @@ export let data = {
     'apps': []
 };
 
-export let computed = {
+export const computed = {
     'position': function(this: IVForm): string {
         return clickgo.core.config['task.position'];
     }
 };
 
-export let methods = {
+export const methods = {
     itemClick: async function(this: IVForm, appIndex: number): Promise<void> {
         if (this.apps[appIndex].formCount === 0) {
             // --- 启动 ---
@@ -25,9 +25,9 @@ export let methods = {
             }
         }
         else if (this.apps[appIndex].formCount === 1) {
-            let formIds = Object.keys(this.apps[appIndex].forms);
-            let formId = parseInt(formIds[0]);
-            let form = clickgo.form.get(formId);
+            const formIds = Object.keys(this.apps[appIndex].forms);
+            const formId = parseInt(formIds[0]);
+            const form = clickgo.form.get(formId);
             if (!form) {
                 return;
             }
@@ -54,14 +54,14 @@ export let methods = {
         }
     },
     pin: function(this: IVForm, index: number): void {
-        let app = this.apps[index];
+        const app = this.apps[index];
         if (!app) {
             return;
         }
-        let paths = Object.keys(clickgo.core.config['task.pin']);
+        const paths = Object.keys(clickgo.core.config['task.pin']);
         if (paths.includes(app.path)) {
             // --- 剔除 ---
-            delete(clickgo.core.config['task.pin'][app.path]);
+            delete clickgo.core.config['task.pin'][app.path];
         }
         else {
             // --- 加入 ---
@@ -72,11 +72,11 @@ export let methods = {
         }
     },
     close: function(this: IVForm, index: number): void {
-        let app = this.apps[index];
+        const app = this.apps[index];
         if (!app) {
             return;
         }
-        for (let formId in app.forms) {
+        for (const formId in app.forms) {
             clickgo.form.remove(parseInt(formId));
         }
     },
@@ -88,7 +88,7 @@ export let methods = {
     },
     getAppIndexByPath: function(this: IVForm, path: string): number {
         for (let i = 0; i < this.apps.length; ++i) {
-            let app = this.apps[i];
+            const app = this.apps[i];
             if (app.path !== path) {
                 continue;
             }
@@ -99,12 +99,12 @@ export let methods = {
     }
 };
 
-export let mounted = function(this: IVForm): void {
+export const mounted = function(this: IVForm): void {
     this.cgSetTopMost(true);
     clickgo.form.setTask(this.taskId, this.formId);
 
     // --- 先读取 pin 列表 ---
-    for (let path in clickgo.core.config['task.pin']) {
+    for (const path in clickgo.core.config['task.pin']) {
         this.apps.push({
             'name': clickgo.core.config['task.pin'][path].name,
             'path': path,
@@ -118,13 +118,13 @@ export let mounted = function(this: IVForm): void {
     }
 
     // --- 先读取正在运行的 task 列表，并填充 forms 列表 ---
-    let tasks = clickgo.task.getList();
-    for (let taskId in tasks) {
+    const tasks = clickgo.task.getList();
+    for (const taskId in tasks) {
         if (parseInt(taskId) === this.taskId) {
             // --- 如果获取的 task 是本 task 则跳过 ---
             continue;
         }
-        let task = tasks[taskId];
+        const task = tasks[taskId];
         // --- 看看能不能找到 task ---
         let appIndex = this.getAppIndexByPath(task.path);
         if (appIndex >= 0) {
@@ -144,9 +144,9 @@ export let mounted = function(this: IVForm): void {
             appIndex = this.apps.length - 1;
         }
         // --- 获取窗体 ---
-        let forms = clickgo.form.getList(parseInt(taskId));
-        for (let formId in forms) {
-            let form = forms[formId];
+        const forms = clickgo.form.getList(parseInt(taskId));
+        for (const formId in forms) {
+            const form = forms[formId];
             this.apps[appIndex].forms[formId] = {
                 'title': form.title,
                 'icon': form.icon || this.apps[appIndex].icon
@@ -158,7 +158,7 @@ export let mounted = function(this: IVForm): void {
         if (taskId === this.taskId) {
             return;
         }
-        let task = clickgo.task.get(taskId);
+        const task = clickgo.task.get(taskId);
         if (!task) {
             return;
         }
@@ -186,22 +186,22 @@ export let mounted = function(this: IVForm): void {
         ++this.apps[appIndex].formCount;
     });
     this.cgSetSystemEventListener('formRemoved', (taskId: number, formId: number): void => {
-        let task = clickgo.task.get(taskId);
+        const task = clickgo.task.get(taskId);
         if (!task) {
             return;
         }
-        let appIndex = this.getAppIndexByPath(task.path);
+        const appIndex = this.getAppIndexByPath(task.path);
         if (appIndex < 0) {
             return;
         }
-        delete(this.apps[appIndex].forms[formId]);
+        delete this.apps[appIndex].forms[formId];
         --this.apps[appIndex].formCount;
         // --- 检测 app 是否要关掉 ---
         if (this.apps[appIndex].formCount > 0) {
             return;
         }
         // --- 看看在不在 pin 里 ---
-        let pinPaths = Object.keys(clickgo.core.config['task.pin']);
+        const pinPaths = Object.keys(clickgo.core.config['task.pin']);
         if (pinPaths.includes(this.apps[appIndex].path)) {
             this.apps[appIndex].opened = false;
         }
@@ -211,33 +211,33 @@ export let mounted = function(this: IVForm): void {
         }
     });
     this.cgSetSystemEventListener('formFocused', (taskId: number): void => {
-        let task = clickgo.task.get(taskId);
+        const task = clickgo.task.get(taskId);
         if (!task) {
             return;
         }
-        let appIndex = this.getAppIndexByPath(task.path);
+        const appIndex = this.getAppIndexByPath(task.path);
         if (appIndex < 0) {
             return;
         }
         this.apps[appIndex].selected = true;
     });
     this.cgSetSystemEventListener('formBlurred', (taskId: number): void => {
-        let task = clickgo.task.get(taskId);
+        const task = clickgo.task.get(taskId);
         if (!task) {
             return;
         }
-        let appIndex = this.getAppIndexByPath(task.path);
+        const appIndex = this.getAppIndexByPath(task.path);
         if (appIndex < 0) {
             return;
         }
         this.apps[appIndex].selected = false;
     });
     this.cgSetSystemEventListener('formTitleChanged', (taskId: number, formId: number, title: string): void => {
-        let task = clickgo.task.get(taskId);
+        const task = clickgo.task.get(taskId);
         if (!task) {
             return;
         }
-        let appIndex = this.getAppIndexByPath(task.path);
+        const appIndex = this.getAppIndexByPath(task.path);
         if (appIndex < 0) {
             return;
         }
@@ -247,11 +247,11 @@ export let mounted = function(this: IVForm): void {
         this.apps[appIndex].forms[formId].title = title;
     });
     this.cgSetSystemEventListener('formIconChanged', (taskId: number, formId: number, icon: string): void => {
-        let task = clickgo.task.get(taskId);
+        const task = clickgo.task.get(taskId);
         if (!task) {
             return;
         }
-        let appIndex = this.getAppIndexByPath(task.path);
+        const appIndex = this.getAppIndexByPath(task.path);
         if (appIndex < 0) {
             return;
         }
@@ -265,8 +265,8 @@ export let mounted = function(this: IVForm): void {
             return;
         }
         // --- 系统设置里，已经 pin 的 path 列表 ---
-        for (let path in v) {
-            let appIndex = this.getAppIndexByPath(path) ;
+        for (const path in v) {
+            const appIndex = this.getAppIndexByPath(path) ;
             if (appIndex < 0) {
                 // --- apps 里没有，要添加进去已 pin 的 item ---
                 this.apps.unshift({
@@ -289,7 +289,7 @@ export let mounted = function(this: IVForm): void {
         }
         // --- apps 里有，但是已经被取消 pin 的 ---
         for (let appIndex = 0; appIndex < this.apps.length; ++appIndex) {
-            let app = this.apps[appIndex];
+            const app = this.apps[appIndex];
             if (!app.pin) {
                 continue;
             }

@@ -1,4 +1,4 @@
-export let data = {
+export const data = {
     'area': 'all',
     'slist': [
         {
@@ -64,7 +64,7 @@ export let data = {
     'background': false
 };
 
-export let watch = {
+export const watch = {
     'select': async function(this: IVForm, n: number, o: number): Promise<void> {
         if (this.slist[n].type === 0) {
             return;

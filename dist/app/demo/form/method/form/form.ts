@@ -1,17 +1,18 @@
-export let data = {
+export const data = {
     'fid': '',
     'type': 'primary',
     'progress': 'noraml'
 };
 
-export let methods = {
+export const methods = {
     getAvailArea: function(this: IVForm): void {
         this.cgDialog(JSON.stringify(clickgo.form.getAvailArea(), undefined, 4)).catch((e) => { throw e; });
     },
     getList: function(this: IVForm): void {
-        let str = JSON.stringify(clickgo.form.getList(this.taskId)).replace(/"icon":"(.*?)"/g, function(t: string, t1: string): string {
-            return `"icon":"${t1 ? (t1.slice(0, 10) + '...') : t1}"`;
-        });
+        const str = JSON.stringify(clickgo.form.getList(this.taskId))
+            .replace(/"icon":"(.*?)"/g, function(t: string, t1: string): string {
+                return `"icon":"${t1 ? (t1.slice(0, 10) + '...') : t1}"`;
+            });
         this.cgDialog(`<overflow direction="v" style="width: 200px; height: 80px;">${str}</overflow>`).catch((e) => { throw e; });
     },
     changeFocus: function(this: IVForm, formId: string): void {
@@ -29,7 +30,7 @@ export let methods = {
         clickgo.form.hideRectangle();
     },
     send: function(this: IVForm): void {
-        clickgo.form.send(this.formId, {'x': 'yes'});
+        clickgo.form.send(this.formId, { 'x': 'yes' });
     },
     cgReceive: function(this: IVForm, obj: Record<string, any>): void {
         this.cgDialog(JSON.stringify(obj)) as any;
@@ -42,7 +43,7 @@ export let methods = {
                 icon = undefined;
             }
         }
-        let nid = clickgo.form.notify({
+        const nid = clickgo.form.notify({
             'title': 'Notify',
             'content': 'Content',
             'type': this.type,

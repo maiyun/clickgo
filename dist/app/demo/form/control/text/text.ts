@@ -1,4 +1,4 @@
-export let data = {
+export const data = {
     'value': '',
     'selectionStart': 0,
     'selectionEnd': 0,
@@ -22,7 +22,7 @@ export let data = {
     'clientWidth': 0
 };
 
-export let methods = {
+export const methods = {
     longClick: function(this: IVForm): void {
         this.value = this.long ? 'short\nshort\nshort\nshort\nshort\nshort\nshort\nshort\nshort' : 'long\nlong\nlong\nlong\nlong\nlong\nlong\nlong\nlong\nlong\nlong\nlong\nlong\nlong\nlong\nlong\nlong\nlong\nlong\nlong\nlong\nlong\nlong\nlong\nlong\nlong\nlong\nlong\nlong';
         this.long = !this.long;
@@ -42,7 +42,7 @@ export let methods = {
                         break;
                     }
                     default: {
-                        this.value += 'A';
+                        (this.value as string) += 'A';
                     }
                 }
             }

@@ -51,27 +51,27 @@ const clickgo: IClickGo = {
 
 /** --- 获取当前 cg index 的基路径 --- */
 (function() {
-    let temp = document.querySelectorAll('script');
-    let scriptEle = temp[temp.length - 1];
+    const temp = document.querySelectorAll('script');
+    const scriptEle = temp[temp.length - 1];
 
     // --- 获取 js 文件基路径，以 / 结尾 ---
     clickgo.cgRootPath = scriptEle.src.slice(0, scriptEle.src.lastIndexOf('/') + 1);
     // --- 获取第三方库的引用路径基 ---
-    let lio = scriptEle.src.lastIndexOf('?');
+    const lio = scriptEle.src.lastIndexOf('?');
     if (lio !== -1) {
-        let match = /[?&]cdn=(.+?)($|&)/.exec(scriptEle.src.slice(lio));
+        const match = /[?&]cdn=(.+?)($|&)/.exec(scriptEle.src.slice(lio));
         if (match) {
             clickgo.cdnPath = match[1];
         }
     }
 
     // --- 加载 loader ---
-    let tmpScript = document.createElement('script');
+    const tmpScript = document.createElement('script');
     tmpScript.src = clickgo.cdnPath + '/npm/@litert/loader@3.0.5/dist/loader.min.js';
     tmpScript.addEventListener('load', function(): void {
         loader.ready(async () => {
             // --- 通过标签加载库 ---
-            let paths: string[] = [
+            const paths: string[] = [
                 clickgo.cdnPath + '/npm/vue@3.2.31/dist/vue.global.min.js'
             ];
             // --- 判断 ResizeObserver 是否存在 ---
@@ -89,16 +89,16 @@ const clickgo: IClickGo = {
                 (window as any).ResizeObserver = (window as any).ResizeObserver.ResizeObserver;
             }
             // --- map 加载库 ---
-            let map: Record<string, string> = {
+            const map: Record<string, string> = {
                 'jszip': clickgo.cdnPath + '/npm/jszip@3.8.0/dist/jszip.min'
             };
             // --- 加载 clickgo 主程序 ---
-            let files = await loader.sniffFiles('clickgo.js', {
+            const files = await loader.sniffFiles('clickgo.js', {
                 'dir': clickgo.cgRootPath,
                 'after': '?' + Math.random().toString(),
                 'map': map
             });
-            let cg = loader.require('clickgo', files, {
+            const cg = loader.require('clickgo', files, {
                 'dir': clickgo.cgRootPath,
                 'map': map
             })[0];
@@ -116,8 +116,13 @@ const clickgo: IClickGo = {
             clickgo.zip = cg.zip;
             // --- 执行 ready ---
             clickgo.isReady = true;
-            for (let func of clickgo.readys) {
-                func() as void;
+            for (const func of clickgo.readys) {
+                const r = func();
+                if (r instanceof Promise) {
+                    r.catch(function(e) {
+                        console.log(e);
+                    });
+                }
             }
         });
     });

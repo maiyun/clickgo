@@ -53,8 +53,8 @@ exports.watch = {
 };
 exports.computed = {
     'filesName': function () {
-        let names = [];
-        for (let name in this.files) {
+        const names = [];
+        for (const name in this.files) {
             names.push(name);
         }
         return names;

@@ -1,4 +1,4 @@
-export let data = {
+export const data = {
     'width': 300,
     'height': 520,
     'flex': 1,

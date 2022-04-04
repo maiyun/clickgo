@@ -36,7 +36,7 @@ exports.computed = {
 exports.watch = {
     'scrollLeft': {
         handler: function () {
-            let sl = typeof this.scrollLeft === 'number' ? this.scrollLeft : parseInt(this.scrollLeft);
+            const sl = typeof this.scrollLeft === 'number' ? this.scrollLeft : parseInt(this.scrollLeft);
             if (sl === this.scrollLeftEmit) {
                 return;
             }
@@ -45,7 +45,7 @@ exports.watch = {
     },
     'scrollTop': {
         handler: function () {
-            let st = typeof this.scrollTop === 'number' ? this.scrollTop : parseInt(this.scrollTop);
+            const st = typeof this.scrollTop === 'number' ? this.scrollTop : parseInt(this.scrollTop);
             if (st === this.scrollTopEmit) {
                 return;
             }
@@ -55,20 +55,20 @@ exports.watch = {
 };
 exports.methods = {
     scroll: function () {
-        let sl = Math.round(this.$el.scrollLeft);
+        const sl = Math.round(this.$el.scrollLeft);
         if (this.scrollLeftEmit !== sl) {
             this.scrollLeftEmit = sl;
             this.$emit('update:scrollLeft', sl);
         }
-        let st = Math.round(this.$el.scrollTop);
+        const st = Math.round(this.$el.scrollTop);
         if (this.scrollTopEmit !== st) {
             this.scrollTopEmit = st;
             this.$emit('update:scrollTop', st);
         }
     },
     wheel: function (e) {
-        let scrollTop = Math.ceil(this.$el.scrollTop);
-        let scrollLeft = Math.ceil(this.$el.scrollLeft);
+        const scrollTop = Math.ceil(this.$el.scrollTop);
+        const scrollLeft = Math.ceil(this.$el.scrollLeft);
         if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
             if (e.deltaY < 0) {
                 if (scrollTop > 0) {
@@ -144,10 +144,10 @@ exports.methods = {
         this.canTouchScroll = false;
     },
     move: function (e) {
-        let scrollTop = Math.ceil(this.$el.scrollTop);
-        let scrollLeft = Math.ceil(this.$el.scrollLeft);
-        let deltaX = this.touchX - e.touches[0].clientX;
-        let deltaY = this.touchY - e.touches[0].clientY;
+        const scrollTop = Math.ceil(this.$el.scrollTop);
+        const scrollLeft = Math.ceil(this.$el.scrollLeft);
+        const deltaX = this.touchX - e.touches[0].clientX;
+        const deltaY = this.touchY - e.touches[0].clientY;
         if (this.canTouchScroll) {
             e.stopPropagation();
             return;
@@ -214,8 +214,8 @@ exports.methods = {
         if (!this.$el.offsetParent) {
             return;
         }
-        let lengthWidth = this.$el.scrollWidth;
-        let lengthHeight = this.$el.scrollHeight;
+        const lengthWidth = this.$el.scrollWidth;
+        const lengthHeight = this.$el.scrollHeight;
         if (this.lengthWidth !== lengthWidth) {
             this.lengthWidth = lengthWidth;
             if (this.direction === 'h') {
@@ -230,10 +230,10 @@ exports.methods = {
         }
     }
 };
-let mounted = function () {
+const mounted = function () {
     clickgo.dom.watchSize(this.$el, () => {
-        let clientWidth = this.$el.clientWidth;
-        let clientHeight = this.$el.clientHeight;
+        const clientWidth = this.$el.clientWidth;
+        const clientHeight = this.$el.clientHeight;
         if (this.clientWidth !== clientWidth) {
             this.clientWidth = clientWidth;
             this.$emit(this.direction === 'v' ? 'resizen' : 'resize', Math.round(this.clientWidth));

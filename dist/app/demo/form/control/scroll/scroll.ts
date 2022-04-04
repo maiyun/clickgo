@@ -1,4 +1,4 @@
-export let data = {
+export const data = {
     'l1': 1000,
     'c1': 100,
     'so1': 500,

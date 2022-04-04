@@ -39,7 +39,7 @@ exports.methods = {
                 this.result = this.result ? 'true (boolean)' : 'false (boolean)';
             }
             else {
-                this.result = this.result + ' (number)';
+                this.result = this.result.toString() + ' (number)';
             }
         });
     }

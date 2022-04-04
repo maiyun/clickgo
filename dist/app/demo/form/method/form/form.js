@@ -20,7 +20,8 @@ exports.methods = {
         this.cgDialog(JSON.stringify(clickgo.form.getAvailArea(), undefined, 4)).catch((e) => { throw e; });
     },
     getList: function () {
-        let str = JSON.stringify(clickgo.form.getList(this.taskId)).replace(/"icon":"(.*?)"/g, function (t, t1) {
+        const str = JSON.stringify(clickgo.form.getList(this.taskId))
+            .replace(/"icon":"(.*?)"/g, function (t, t1) {
             return `"icon":"${t1 ? (t1.slice(0, 10) + '...') : t1}"`;
         });
         this.cgDialog(`<overflow direction="v" style="width: 200px; height: 80px;">${str}</overflow>`).catch((e) => { throw e; });
@@ -56,7 +57,7 @@ exports.methods = {
                     icon = undefined;
                 }
             }
-            let nid = clickgo.form.notify({
+            const nid = clickgo.form.notify({
                 'title': 'Notify',
                 'content': 'Content',
                 'type': this.type,

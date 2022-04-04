@@ -1,13 +1,13 @@
-export let data = {
+export const data = {
     'flist': {},
     'list': []
 };
 
-export let methods = {
+export const methods = {
     'pushConsole': function(this: IVForm, name: string, text: string): void {
-        let date = new Date();
+        const date = new Date();
         this.list.unshift({
-            'time': date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds(),
+            'time': date.getHours().toString() + ':' + date.getMinutes().toString() + ':' + date.getSeconds().toString(),
             'name': name,
             'text': text
         });
@@ -17,11 +17,11 @@ export let methods = {
     }
 };
 
-export let mounted = function(this: IVForm): void {
-    let list = clickgo.task.getList();
-    for (let taskId in list) {
-        let flist = clickgo.form.getList(parseInt(taskId));
-        for (let fid in flist) {
+export const mounted = function(this: IVForm): void {
+    const list = clickgo.task.getList();
+    for (const taskId in list) {
+        const flist = clickgo.form.getList(parseInt(taskId));
+        for (const fid in flist) {
             this.flist[fid] = {
                 'title': flist[fid].title,
                 'icon': flist[fid].icon,
@@ -50,7 +50,7 @@ export let mounted = function(this: IVForm): void {
             return;
         }
         this.flist[formId] = undefined;
-        delete(this.flist[formId]);
+        delete this.flist[formId];
         this.pushConsole('formRemoved', `taskId: ${taskId}, formId: ${formId}, title: ${title}, icon: ${icon ? icon.slice(0, 10) + '...' : 'null'}`);
     });
     this.cgSetSystemEventListener('formTitleChanged', (taskId: number, formId: number, title: string): void => {

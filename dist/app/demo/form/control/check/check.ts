@@ -1,4 +1,4 @@
-export let data = {
+export const data = {
     'checked1': false,
     'checked2': false,
     'checked3': false,

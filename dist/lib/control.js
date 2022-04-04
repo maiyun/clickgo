@@ -13,34 +13,34 @@ exports.revokeObjectURL = exports.read = exports.clickgoControlPkgs = void 0;
 exports.clickgoControlPkgs = {};
 function read(blob) {
     return __awaiter(this, void 0, void 0, function* () {
-        let zip = yield clickgo.zip.get(blob);
+        const zip = yield clickgo.zip.get(blob);
         if (!zip) {
             return false;
         }
-        let controlPkg = {};
-        let controls = zip.readDir();
-        for (let control of controls) {
+        const controlPkg = {};
+        const controls = zip.readDir();
+        for (const control of controls) {
             if (control.isFile) {
                 continue;
             }
-            let configContent = yield zip.getContent('/' + control.name + '/config.json');
+            const configContent = yield zip.getContent('/' + control.name + '/config.json');
             if (!configContent) {
                 continue;
             }
-            let config = JSON.parse(configContent);
-            let objectURLs = {};
-            let files = {};
-            for (let file of config.files) {
-                let mime = clickgo.tool.getMimeByPath(file);
+            const config = JSON.parse(configContent);
+            const objectURLs = {};
+            const files = {};
+            for (const file of config.files) {
+                const mime = clickgo.tool.getMimeByPath(file);
                 if (['txt', 'json', 'js', 'css', 'xml', 'html'].includes(mime.ext)) {
-                    let fab = yield zip.getContent('/' + control.name + file, 'string');
+                    const fab = yield zip.getContent('/' + control.name + file, 'string');
                     if (!fab) {
                         continue;
                     }
                     files[file] = fab.replace(/^\ufeff/, '');
                 }
                 else {
-                    let fab = yield zip.getContent('/' + control.name + file, 'arraybuffer');
+                    const fab = yield zip.getContent('/' + control.name + file, 'arraybuffer');
                     if (!fab) {
                         continue;
                     }
@@ -62,8 +62,8 @@ function read(blob) {
 }
 exports.read = read;
 function revokeObjectURL(pkg) {
-    for (let name in pkg) {
-        for (let path in pkg[name].objectURLs) {
+    for (const name in pkg) {
+        for (const path in pkg[name].objectURLs) {
             clickgo.tool.revokeObjectURL(pkg[name].objectURLs[path]);
         }
     }

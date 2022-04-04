@@ -1,4 +1,4 @@
-export let props = {
+export const props = {
     'same': {
         'default': false
     },
@@ -26,7 +26,7 @@ export let props = {
     }
 };
 
-export let data = {
+export const data = {
     'client': 0,
     'clientWidth': 0,
     'length': 0,
@@ -40,7 +40,7 @@ export let data = {
     'beforeSelectValues': []
 };
 
-export let computed = {
+export const computed = {
     'isSame': function(this: IVControl): boolean {
         return clickgo.tool.getBoolean(this.same);
     },
@@ -64,7 +64,7 @@ export let computed = {
     },
 };
 
-export let watch = {
+export const watch = {
     'data': {
         handler: function(this: IVControl, n: any[], o: any[]): void {
             if (o.length === 0 && n.length > 0) {
@@ -102,7 +102,10 @@ export let watch = {
                     this.shiftStart = this.valueData[0] ?? 0;
                 }
                 else {
-                    if ((this.valueData.length === this.modelValue.length) && this.valueData.every((ele: number) => this.modelValue.includes(ele))) {
+                    if (
+                        (this.valueData.length === this.modelValue.length)
+                        && this.valueData.every((ele: number) => this.modelValue.includes(ele))
+                    ) {
                         return;
                     }
                     this.valueData = this.modelValue;
@@ -139,7 +142,7 @@ export let watch = {
     },
     'shiftStart': {
         handler: function(this: IVControl): void {
-            let pos = this.$refs.view?.getPos(this.shiftStart);
+            const pos = this.$refs.view?.getPos(this.shiftStart);
             if (pos) {
                 this.refreshShiftStartPos(pos);
             }
@@ -150,7 +153,7 @@ export let watch = {
     }
 };
 
-export let methods = {
+export const methods = {
     onItemsPosChange: function(this: IVControl): void {
         if (!this.delayRefreshShiftStartPos) {
             return;
@@ -159,7 +162,7 @@ export let methods = {
         this.refreshShiftStartPos(this.$refs.view?.getPos(this.shiftStart));
     },
     refreshShiftStartPos: function(this: IVControl): void {
-        let pos = this.$refs.view?.getPos(this.shiftStart);
+        const pos = this.$refs.view?.getPos(this.shiftStart);
         if (!pos) {
             return;
         }
@@ -167,13 +170,13 @@ export let methods = {
             this.offset = pos.start;
             return;
         }
-        if (pos.end > this.offset + this.client) {
+        if (pos.end > (this.offset as number) + (this.client as number)) {
             this.offset = pos.end - this.client;
         }
     },
     checkValue: function(this: IVControl): void {
         let change: boolean = false;
-        let notDisabledIndex = this.getFirstNotDisabledDataIndex();
+        const notDisabledIndex = this.getFirstNotDisabledDataIndex();
         if (typeof this.valueData === 'object') {
             if (this.isMulti) {
                 // --- 多行 ---
@@ -215,7 +218,7 @@ export let methods = {
         }
         // --- 检测单行/多行的值有没有超出 data 的长度 ---
         // --- 检测当前 valueData 是不是 disabled 或 split ---
-        let dataMaxIndex = this.data.length - 1;
+        const dataMaxIndex = this.data.length - 1;
         if (this.isMulti) {
             // --- 多行要逐个判断，剔除超出的或 disabled 的 ---
             for (let i = 0; i < this.valueData.length; ++i) {
@@ -304,7 +307,7 @@ export let methods = {
                     // --- 选择值了 ---
                     if (shift) {
                         // --- 判断要不要改值 ---
-                        let valueData = [];
+                        const valueData = [];
                         if (value > this.shiftStart) {
                             for (let k = this.shiftStart; k <= value; ++k) {
                                 if (this.data[k].disabled || (this.data[k].control === 'split')) {
@@ -326,14 +329,17 @@ export let methods = {
                                 change = true;
                             }
                         }
-                        if ((valueData.length !== this.valueData.length) || !valueData.every((item: number) => this.valueData.includes(item))) {
+                        if (
+                            (valueData.length !== this.valueData.length)
+                            || !valueData.every((item: number) => this.valueData.includes(item))
+                        ) {
                             this.valueData = valueData;
                             change = true;
                         }
                     }
                     else {
                         // --- ctrl ---
-                        let indexOf = this.valueData.indexOf(value);
+                        const indexOf = this.valueData.indexOf(value);
                         if (indexOf > -1) {
                             // --- 选择已经存在的值 ---
                             if (!this.isMust || (this.valueData.length > 1)) {
@@ -388,7 +394,7 @@ export let methods = {
     },
     click: function(this: IVControl, e: MouseEvent): void {
         if (!this.isMust) {
-            let gi = clickgo.dom.findParentByData(e.target as HTMLElement, 'cg-control-greatlist-item');
+            const gi = clickgo.dom.findParentByData(e.target as HTMLElement, 'cg-control-greatlist-item');
             if (!gi) {
                 this.select(-1, e.shiftKey, e.ctrlKey);
             }
@@ -401,7 +407,7 @@ export let methods = {
             if (this.isMulti) {
                 if (this.valueData.length > 0) {
                     if (e.key === 'ArrowDown') {
-                        for (let i of this.valueData) {
+                        for (const i of this.valueData) {
                             if (nvalue === -1) {
                                 nvalue = i;
                                 continue;
@@ -413,7 +419,7 @@ export let methods = {
                         }
                     }
                     else {
-                        for (let i of this.valueData) {
+                        for (const i of this.valueData) {
                             if (nvalue === -1) {
                                 nvalue = i;
                                 continue;
@@ -496,17 +502,17 @@ export let methods = {
     },
     itemClick: function(this: IVControl, e: MouseEvent, value: number): void {
         e.stopPropagation();
-        let hasTouch = clickgo.dom.hasTouchButMouse(e);
+        const hasTouch = clickgo.dom.hasTouchButMouse(e);
         this.select(value, e.shiftKey, (hasTouch && this.multi) ? true : e.ctrlKey);
         // --- 上报点击事件，false: arrow click ---
         this.$emit('itemclick', e, false);
     },
     arrowClick: function(this: IVControl, e: MouseEvent, value: number): void {
         e.stopPropagation();
-        let hasTouch = clickgo.dom.hasTouchButMouse(e);
+        const hasTouch = clickgo.dom.hasTouchButMouse(e);
         this.select(value, e.shiftKey, (hasTouch && this.multi) ? true : e.ctrlKey);
         // --- 显示/隐藏 arrow menu ---
-        let current = e.currentTarget as HTMLElement;
+        const current = e.currentTarget as HTMLElement;
         if (current.dataset.cgPopOpen === undefined) {
             clickgo.form.showPop(current, this.$refs.itempop, e);
         }
@@ -568,6 +574,6 @@ export let methods = {
     }
 };
 
-export let mounted = function(this: IVControl): void {
+export const mounted = function(this: IVControl): void {
     this.checkValue();
 };

@@ -1,13 +1,13 @@
-export let data = {
+export const data = {
     'nativeListeners': []
 };
 
-export let methods = {
+export const methods = {
     getNativeListeners: function(this: IVForm): void {
-        let list = clickgo.core.getNativeListeners();
+        const list = clickgo.core.getNativeListeners();
         this.nativeListeners = [];
-        for (let item of list) {
-            this.nativeListeners.push('name: ' + item.name + '[' + item.id + '], once: ' + (item.once ? 'true' : 'false'));
+        for (const item of list) {
+            this.nativeListeners.push(`name: ${item.name}[${item.id}], once: ${(item.once ? 'true' : 'false')}`);
         }
     }
 };

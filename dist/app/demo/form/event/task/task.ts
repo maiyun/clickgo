@@ -1,20 +1,20 @@
-export let data = {
+export const data = {
     'tlist': [],
     'list': [],
     'tid': 0
 };
 
-export let methods = {
+export const methods = {
     'pushConsole': function(this: IVForm, name: string, text: string): void {
-        let date = new Date();
+        const date = new Date();
         this.list.unshift({
-            'time': date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds(),
+            'time': date.getHours().toString() + ':' + date.getMinutes().toString() + ':' + date.getSeconds().toString(),
             'name': name,
             'text': text
         });
     },
     'run': async function(this: IVForm): Promise<void> {
-        let taskId = await clickgo.task.run('/clickgo/app/demo/');
+        const taskId = await clickgo.task.run('/clickgo/app/demo/');
         await this.cgDialog(`Successfully run, task id is: ${taskId}.`);
     },
     'end': async function(this: IVForm): Promise<void> {
@@ -28,14 +28,14 @@ export let methods = {
             return;
         }
         // --- 执行 ---
-        let taskId = await clickgo.task.run('/clickgo/app/task/');
+        const taskId = await clickgo.task.run('/clickgo/app/task/');
         await this.cgDialog(`Successfully run, task id is: ${taskId}.`);
     }
 };
 
-export let mounted = function(this: IVForm): void {
-    let list = clickgo.task.getList();
-    for (let tid in list) {
+export const mounted = function(this: IVForm): void {
+    const list = clickgo.task.getList();
+    for (const tid in list) {
         this.tlist.push({
             'label': 'Task ' + tid,
             'value': parseInt(tid)
@@ -43,7 +43,7 @@ export let mounted = function(this: IVForm): void {
     }
     this.cgSetSystemEventListener('taskStarted', (taskId: number) => {
         this.tlist.push({
-            'label': 'Task ' + taskId,
+            'label': 'Task ' + taskId.toString(),
             'value': taskId
         });
         this.pushConsole('taskStarted', `taskId: ${taskId}`);

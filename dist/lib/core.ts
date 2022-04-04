@@ -18,7 +18,7 @@
  * /clickgo/, /runtime/, /storage/, /mounted/
  */
 
-let cgConfig: ICGCoreConfig = {
+const cgConfig: ICGCoreConfig = {
     'locale': 'en',
     'task.position': 'bottom',
     'task.pin': {},
@@ -27,7 +27,7 @@ let cgConfig: ICGCoreConfig = {
     'desktop.wallpaper': null,
     'desktop.path': null
 };
-export let config: ICGCoreConfig = Vue.reactive({
+export const config: ICGCoreConfig = Vue.reactive({
     'locale': 'en',
     'task.position': 'bottom',
     'task.pin': {},
@@ -39,7 +39,7 @@ export let config: ICGCoreConfig = Vue.reactive({
 
 Vue.watch(config, function() {
     // --- 检测有没有缺少的 config key ---
-    for (let key in cgConfig) {
+    for (const key in cgConfig) {
         if ((config as any)[key] !== undefined) {
             continue;
         }
@@ -50,25 +50,25 @@ Vue.watch(config, function() {
         });
         (config as any)[key] = (cgConfig as any)[key];
     }
-    for (let key in config) {
+    for (const key in config) {
         if (!Object.keys(cgConfig).includes(key)) {
             clickgo.form.notify({
                 'title': 'Warning',
                 'content': 'There is a software that maliciously modifies the system config.\nKey: ' + key,
                 'type': 'warning'
             });
-            delete((config as any)[key]);
+            delete (config as any)[key];
             continue;
         }
         if (key === 'task.pin') {
             // --- 如果是 pin，要检查老的和新的的 path 是否相等 ---
-            let paths = Object.keys(config['task.pin']).sort().toString();
-            let cgPaths = Object.keys(cgConfig['task.pin']).sort().toString();
+            const paths = Object.keys(config['task.pin']).sort().toString();
+            const cgPaths = Object.keys(cgConfig['task.pin']).sort().toString();
             if (paths === cgPaths) {
                 continue;
             }
             cgConfig['task.pin'] = {};
-            for (let path in config['task.pin']) {
+            for (const path in config['task.pin']) {
                 cgConfig['task.pin'][path] = config['task.pin'][path];
             }
             trigger('configChanged', 'task.pin', config['task.pin']);
@@ -99,16 +99,16 @@ let sendNativeList: Array<{
 }> = [];
 
 /** --- 监听的 listener，需要调用者手动清理 --- */
-let nativeListeners: Record<string, Array<{
+const nativeListeners: Record<string, Array<{
     'id': number;
     'once': boolean;
     'handler': (param?: string) => void | Promise<void>;
 }>> = {};
 
 export function getNativeListeners(): Array<{ 'id': number; 'name': string; 'once': boolean; }> {
-    let list = [];
-    for (let name in nativeListeners) {
-        for (let item of nativeListeners[name]) {
+    const list = [];
+    for (const name in nativeListeners) {
+        for (const item of nativeListeners[name]) {
             list.push({
                 'id': item.id,
                 'name': name,
@@ -123,7 +123,7 @@ export function sendNative(name: string, param?: string, handler?: (param?: stri
     if (!clickgo.native) {
         return 0;
     }
-    let id = ++sendNativeId;
+    const id = ++sendNativeId;
     sendNativeList.push({
         'id': id,
         'name': name,
@@ -135,7 +135,12 @@ export function sendNative(name: string, param?: string, handler?: (param?: stri
     return id;
 }
 
-export function onNative(name: string, handler: (param?: string) => void | Promise<void>, id?: number, once: boolean = false): void {
+export function onNative(
+    name: string,
+    handler: (param?: string) => void | Promise<void>,
+    id?: number,
+    once: boolean = false
+): void {
     if (!clickgo.native) {
         return;
     }
@@ -149,7 +154,7 @@ export function onNative(name: string, handler: (param?: string) => void | Promi
     });
 }
 export function onceNative(name: string, handler: (param?: string) => void | Promise<void>, id?: number): void {
-    onNative(name, handler, id, true)
+    onNative(name, handler, id, true);
 }
 export function offNative(name: string, handler: (param?: string) => void | Promise<void>): void {
     if (!nativeListeners[name]) {
@@ -161,7 +166,7 @@ export function offNative(name: string, handler: (param?: string) => void | Prom
         }
         nativeListeners[name].splice(i, 1);
         if (nativeListeners[name].length === 0) {
-            delete(nativeListeners[name]);
+            delete nativeListeners[name];
             break;
         }
         --i;
@@ -169,28 +174,38 @@ export function offNative(name: string, handler: (param?: string) => void | Prom
 }
 
 // --- 将 send 值全部提交给 native ---
-export function __nativeGetSends(): string {
-    let json = JSON.stringify(sendNativeList);
+export function cgInnerNativeGetSends(): string {
+    const json = JSON.stringify(sendNativeList);
     sendNativeList = [];
     return json;
 }
 
 // --- 供 node 调用的回调数据（执行结果） ---
-export function __nativeReceive(id: number, name: string, result?: string): void {
+export function cgInnerNativeReceive(id: number, name: string, result?: string): void {
     console.log('name', name, 'nativeListeners', nativeListeners, 'sendNativeList', sendNativeList);
     if (!nativeListeners[name]) {
         return;
     }
     for (let i = 0; i < nativeListeners[name].length; ++i) {
-        let item = nativeListeners[name][i];
+        const item = nativeListeners[name][i];
         if (item.id > 0) {
             if (item.id !== id) {
                 continue;
             }
-            item.handler(result);
+            const r = item.handler(result);
+            if (r instanceof Promise) {
+                r.catch(function(e) {
+                    console.log(e);
+                });
+            }
         }
         else {
-            item.handler(result);
+            const r = item.handler(result);
+            if (r instanceof Promise) {
+                r.catch(function(e) {
+                    console.log(e);
+                });
+            }
         }
         if (item.once) {
             nativeListeners[name].splice(i, 1);
@@ -202,7 +217,7 @@ export function __nativeReceive(id: number, name: string, result?: string): void
 // --- Native end ---
 
 /** --- module 列表 --- */
-let modules: Record<string, { func: () => any | Promise<any>; 'obj': null | any; 'loading': boolean; }> = {
+const modules: Record<string, { func: () => any | Promise<any>; 'obj': null | any; 'loading': boolean; }> = {
     'monaco': {
         func: async function() {
             return new Promise(function(resolve, reject) {
@@ -213,7 +228,7 @@ let modules: Record<string, { func: () => any | Promise<any>; 'obj': null | any;
                         }
                     });
                     // --- 初始化 Monaco ---
-                    let proxy = URL.createObjectURL(new Blob([`
+                    const proxy = URL.createObjectURL(new Blob([`
                         self.MonacoEnvironment = {
                             baseUrl: '${clickgo.cdnPath}/npm/monaco-editor@0.29.1/min/'
                         };
@@ -259,7 +274,7 @@ export function initModules(names: string | string[]): Promise<number> {
         }
         let loaded = 0;
         let successful = 0;
-        for (let name of names) {
+        for (const name of names) {
             if (!modules[name]) {
                 ++loaded;
                 if (loaded === names.length) {
@@ -287,7 +302,7 @@ export function initModules(names: string | string[]): Promise<number> {
             }
             // --- 正式开始加载 init ---
             modules[name].loading = true;
-            let rtn = modules[name].func();
+            const rtn = modules[name].func();
             if (rtn instanceof Promise) {
                 rtn.then(function(obj) {
                     modules[name].obj = obj;
@@ -327,10 +342,10 @@ export function getModule(name: string): null | any {
 }
 
 /** --- clickgo 已经加载的文件列表 --- */
-export let clickgoFiles: Record<string, Blob | string> = {};
+export const clickgoFiles: Record<string, Blob | string> = {};
 
 /** --- 全局响应事件 --- */
-export let globalEvents: ICGGlobalEvents = {
+export const globalEvents: ICGGlobalEvents = {
     errorHandler: null,
     screenResizeHandler: function(): void {
         clickgo.form.refreshMaxPosition();
@@ -341,7 +356,7 @@ export let globalEvents: ICGGlobalEvents = {
         if (!clickgo.form.simpletaskRoot.forms[formId]) {
             return;
         }
-        delete(clickgo.form.simpletaskRoot.forms[formId]);
+        delete clickgo.form.simpletaskRoot.forms[formId];
     },
     formTitleChangedHandler: function(taskId: number, formId: number, title: string): void {
         if (!clickgo.form.simpletaskRoot.forms[formId]) {
@@ -360,7 +375,7 @@ export let globalEvents: ICGGlobalEvents = {
             return;
         }
         if (state) {
-            let item = clickgo.form.get(formId);
+            const item = clickgo.form.get(formId);
             if (!item) {
                 return;
             }
@@ -373,7 +388,7 @@ export let globalEvents: ICGGlobalEvents = {
             if (!clickgo.form.simpletaskRoot.forms[formId]) {
                 return;
             }
-            delete(clickgo.form.simpletaskRoot.forms[formId]);
+            delete clickgo.form.simpletaskRoot.forms[formId];
         }
     },
     formStateMaxChangedHandler: null,
@@ -394,21 +409,41 @@ export function trigger(name: TCGGlobalEvent, taskId: number | string = 0, formI
             if (typeof taskId !== 'number' || typeof formId !== 'number') {
                 break;
             }
-            globalEvents.errorHandler?.(taskId, formId, param1 as Error, param2) as void;
-            for (let tid in clickgo.task.list) {
-                let task = clickgo.task.list[tid];
-                for (let fid in task.forms) {
-                    task.forms[fid].events[name]?.(taskId, formId, param1, param2) as void;
+            const r = globalEvents.errorHandler?.(taskId, formId, param1 as Error, param2);
+            if (r && (r instanceof Promise))  {
+                r.catch(function(e) {
+                    console.log(e);
+                });
+            }
+            for (const tid in clickgo.task.list) {
+                const task = clickgo.task.list[tid];
+                for (const fid in task.forms) {
+                    const r = task.forms[fid].events[name]?.(taskId, formId, param1, param2);
+                    if (r instanceof Promise)  {
+                        r.catch(function(e) {
+                            console.log(e);
+                        });
+                    }
                 }
             }
             break;
         }
         case 'screenResize': {
-            globalEvents.screenResizeHandler?.() as void;
-            for (let tid in clickgo.task.list) {
-                let task = clickgo.task.list[tid];
-                for (let fid in task.forms) {
-                    task.forms[fid].events[name]?.() as void;
+            const r = globalEvents.screenResizeHandler?.();
+            if (r && (r instanceof Promise))  {
+                r.catch(function(e) {
+                    console.log(e);
+                });
+            }
+            for (const tid in clickgo.task.list) {
+                const task = clickgo.task.list[tid];
+                for (const fid in task.forms) {
+                    const r = task.forms[fid].events[name]?.();
+                    if (r instanceof Promise)  {
+                        r.catch(function(e) {
+                            console.log(e);
+                        });
+                    }
                 }
             }
             break;
@@ -417,11 +452,21 @@ export function trigger(name: TCGGlobalEvent, taskId: number | string = 0, formI
             if ((typeof taskId !== 'string') || (typeof formId === 'number')) {
                 break;
             }
-            globalEvents.configChangedHandler?.(taskId as TCGCoreConfigName, formId) as void;
-            for (let tid in clickgo.task.list) {
-                let task = clickgo.task.list[tid];
-                for (let fid in task.forms) {
-                    task.forms[fid].events[name]?.(taskId, formId) as void;
+            const r = globalEvents.configChangedHandler?.(taskId as TCGCoreConfigName, formId);
+            if (r && (r instanceof Promise))  {
+                r.catch(function(e) {
+                    console.log(e);
+                });
+            }
+            for (const tid in clickgo.task.list) {
+                const task = clickgo.task.list[tid];
+                for (const fid in task.forms) {
+                    const r = task.forms[fid].events[name]?.(taskId, formId);
+                    if (r instanceof Promise)  {
+                        r.catch(function(e) {
+                            console.log(e);
+                        });
+                    }
                 }
             }
             break;
@@ -429,10 +474,15 @@ export function trigger(name: TCGGlobalEvent, taskId: number | string = 0, formI
         case 'formCreated':
         case 'formRemoved': {
             (globalEvents as any)[name + 'Handler']?.(taskId, formId, param1, param2);
-            for (let tid in clickgo.task.list) {
-                let task = clickgo.task.list[tid];
-                for (let fid in task.forms) {
-                    task.forms[fid].events[name]?.(taskId, formId, param1, param2) as void;
+            for (const tid in clickgo.task.list) {
+                const task = clickgo.task.list[tid];
+                for (const fid in task.forms) {
+                    const r = task.forms[fid].events[name]?.(taskId, formId, param1, param2);
+                    if (r instanceof Promise)  {
+                        r.catch(function(e) {
+                            console.log(e);
+                        });
+                    }
                 }
             }
             break;
@@ -440,10 +490,15 @@ export function trigger(name: TCGGlobalEvent, taskId: number | string = 0, formI
         case 'formTitleChanged':
         case 'formIconChanged': {
             (globalEvents as any)[name + 'Handler']?.(taskId, formId, param1);
-            for (let tid in clickgo.task.list) {
-                let task = clickgo.task.list[tid];
-                for (let fid in task.forms) {
-                    task.forms[fid].events[name]?.(taskId, formId, param1) as void;
+            for (const tid in clickgo.task.list) {
+                const task = clickgo.task.list[tid];
+                for (const fid in task.forms) {
+                    const r = task.forms[fid].events[name]?.(taskId, formId, param1);
+                    if (r instanceof Promise)  {
+                        r.catch(function(e) {
+                            console.log(e);
+                        });
+                    }
                 }
             }
             break;
@@ -452,10 +507,15 @@ export function trigger(name: TCGGlobalEvent, taskId: number | string = 0, formI
         case 'formStateMaxChanged':
         case 'formShowChanged': {
             (globalEvents as any)[name + 'Handler']?.(taskId, formId, param1);
-            for (let tid in clickgo.task.list) {
-                let task = clickgo.task.list[tid];
-                for (let fid in task.forms) {
-                    task.forms[fid].events[name]?.(taskId, formId, param1) as void;
+            for (const tid in clickgo.task.list) {
+                const task = clickgo.task.list[tid];
+                for (const fid in task.forms) {
+                    const r = task.forms[fid].events[name]?.(taskId, formId, param1);
+                    if (r instanceof Promise)  {
+                        r.catch(function(e) {
+                            console.log(e);
+                        });
+                    }
                 }
             }
             break;
@@ -464,10 +524,15 @@ export function trigger(name: TCGGlobalEvent, taskId: number | string = 0, formI
         case 'formBlurred':
         case 'formFlash': {
             (globalEvents as any)[name + 'Handler']?.(taskId, formId);
-            for (let tid in clickgo.task.list) {
-                let task = clickgo.task.list[tid];
-                for (let fid in task.forms) {
-                    task.forms[fid].events[name]?.(taskId, formId) as void;
+            for (const tid in clickgo.task.list) {
+                const task = clickgo.task.list[tid];
+                for (const fid in task.forms) {
+                    const r = task.forms[fid].events[name]?.(taskId, formId);
+                    if (r instanceof Promise)  {
+                        r.catch(function(e) {
+                            console.log(e);
+                        });
+                    }
                 }
             }
             break;
@@ -475,10 +540,15 @@ export function trigger(name: TCGGlobalEvent, taskId: number | string = 0, formI
         case 'taskStarted':
         case 'taskEnded': {
             (globalEvents as any)[name + 'Handler']?.(taskId, formId);
-            for (let tid in clickgo.task.list) {
-                let task = clickgo.task.list[tid];
-                for (let fid in task.forms) {
-                    task.forms[fid].events[name]?.(taskId) as void;
+            for (const tid in clickgo.task.list) {
+                const task = clickgo.task.list[tid];
+                for (const fid in task.forms) {
+                    const r = task.forms[fid].events[name]?.(taskId);
+                    if (r instanceof Promise)  {
+                        r.catch(function(e) {
+                            console.log(e);
+                        });
+                    }
                 }
             }
             break;
@@ -497,13 +567,13 @@ export async function fetchClickGoFile(path: string): Promise<Blob | string | nu
     }
     // --- 加载 clickgo 文件 ---
     try {
-        let blob = await (await fetch(clickgo.cgRootPath + path.slice(1) + '?' + Math.random())).blob();
-        let lio = path.lastIndexOf('.');
-        let ext = lio === -1 ? '' : path.slice(lio + 1).toLowerCase();
+        const blob = await (await fetch(clickgo.cgRootPath + path.slice(1) + '?' + Math.random().toString())).blob();
+        const lio = path.lastIndexOf('.');
+        const ext = lio === -1 ? '' : path.slice(lio + 1).toLowerCase();
         switch (ext) {
             case 'cgc': {
                 // --- 控件文件 ---
-                let pkg = await clickgo.control.read(blob);
+                const pkg = await clickgo.control.read(blob);
                 if (!pkg) {
                     return null;
                 }
@@ -512,7 +582,7 @@ export async function fetchClickGoFile(path: string): Promise<Blob | string | nu
             }
             case 'cgt': {
                 // --- 主题文件 ---
-                let theme = await clickgo.theme.read(blob);
+                const theme = await clickgo.theme.read(blob);
                 if (!theme) {
                     return null;
                 }
@@ -533,31 +603,31 @@ export async function fetchClickGoFile(path: string): Promise<Blob | string | nu
  * @param blob blob 对象
  */
 export async function readApp(blob: Blob): Promise<false | ICGAppPkg> {
-    let iconLength = parseInt(await blob.slice(0, 7).text());
-    let icon = await clickgo.tool.blob2DataUrl(blob.slice(7, 7 + iconLength));
-    let zip = await clickgo.zip.get(blob.slice(7 + iconLength));
+    const iconLength = parseInt(await blob.slice(0, 7).text());
+    const icon = await clickgo.tool.blob2DataUrl(blob.slice(7, 7 + iconLength));
+    const zip = await clickgo.zip.get(blob.slice(7 + iconLength));
     if (!zip) {
         return false;
     }
     // --- 开始读取文件 ---
-    let files: Record<string, Blob | string> = {};
+    const files: Record<string, Blob | string> = {};
     /** --- 配置文件 --- */
-    let configContent = await zip.getContent('/config.json');
+    const configContent = await zip.getContent('/config.json');
     if (!configContent) {
         return false;
     }
-    let config: ICGAppConfig = JSON.parse(configContent);
-    for (let file of config.files) {
-        let mime = clickgo.tool.getMimeByPath(file);
+    const config: ICGAppConfig = JSON.parse(configContent);
+    for (const file of config.files) {
+        const mime = clickgo.tool.getMimeByPath(file);
         if (['txt', 'json', 'js', 'css', 'xml', 'html'].includes(mime.ext)) {
-            let fab = await zip.getContent(file, 'string');
+            const fab = await zip.getContent(file, 'string');
             if (!fab) {
                 continue;
             }
             files[file] = fab.replace(/^\ufeff/, '');
         }
         else {
-            let fab = await zip.getContent(file, 'arraybuffer');
+            const fab = await zip.getContent(file, 'arraybuffer');
             if (!fab) {
                 continue;
             }
@@ -585,8 +655,8 @@ export async function fetchApp(url: string, opt: ICGCoreFetchAppOptions = {}): P
     // --- 判断是通过目录加载，还是 cga 文件 ---
     let isCga: boolean = false;
     if (!url.endsWith('/')) {
-        let lio = url.lastIndexOf('.');
-        let ext = lio === -1 ? '' : url.slice(lio + 1).toLowerCase();
+        const lio = url.lastIndexOf('.');
+        const ext = lio === -1 ? '' : url.slice(lio + 1).toLowerCase();
         if (ext !== 'cga') {
             return null;
         }
@@ -605,7 +675,7 @@ export async function fetchApp(url: string, opt: ICGCoreFetchAppOptions = {}): P
     // --- 如果是 cga 文件，直接下载并交给 readApp 函数处理 ---
     if (isCga) {
         if (opt.notifyId) {
-            let blob = await clickgo.tool.request(realUrl + '?' + Math.random(), {
+            const blob = await clickgo.tool.request(realUrl + '?' + Math.random().toString(), {
                 progress: (loaded, total): void => {
                     clickgo.form.notifyProgress(opt.notifyId!, loaded / total);
                 }
@@ -618,7 +688,7 @@ export async function fetchApp(url: string, opt: ICGCoreFetchAppOptions = {}): P
         }
         else {
             try {
-                let blob = await (await fetch(realUrl + '?' + Math.random())).blob();
+                const blob = await (await fetch(realUrl + '?' + Math.random().toString())).blob();
                 return await readApp(blob) || null;
             }
             catch {
@@ -632,15 +702,15 @@ export async function fetchApp(url: string, opt: ICGCoreFetchAppOptions = {}): P
     // --- 已加载的 files ---
     let files: Record<string, Blob | string> = {};
     try {
-        config = await (await fetch(realUrl + 'config.json?' + Math.random())).json();
-        let random = Math.random().toString();
-        let lopt: any = {
+        config = await (await fetch(realUrl + 'config.json?' + Math.random().toString())).json();
+        const random = Math.random().toString();
+        const lopt: any = {
             'dir': '/',
             'before': realUrl.slice(0, -1),
             'after': '?' + random
         };
         if (opt.notifyId) {
-            let total = config.files.length;
+            const total = config.files.length;
             let loaded = 0;
             lopt.loaded = function(): void {
                 ++loaded;

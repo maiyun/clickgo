@@ -1,4 +1,4 @@
-export let props = {
+export const props = {
     'disabled': {
         'default': false
     },
@@ -11,13 +11,13 @@ export let props = {
     }
 };
 
-export let computed = {
+export const computed = {
     'isDisabled': function(this: IVControl): boolean {
         return clickgo.tool.getBoolean(this.disabled);
     }
 };
 
-export let watch = {
+export const watch = {
     'modelValue': {
         handler: function(this: IVControl): void {
             if (this.modelValue !== undefined) {
@@ -44,14 +44,14 @@ export let watch = {
     }
 };
 
-export let data = {
+export const data = {
     'value': false,
     'indeterminateData': false,
 
     'isKeyDown': false
 };
 
-export let methods = {
+export const methods = {
     click: function(this: IVControl): void {
         if (this.indeterminateData) {
             this.indeterminateData = false;

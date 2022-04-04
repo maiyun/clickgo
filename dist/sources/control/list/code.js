@@ -25,9 +25,9 @@ function formatData(inData, level = 0) {
     var _a, _b, _c, _d, _e, _f;
     let data = [];
     for (let k = 0; k < inData.length; ++k) {
-        let item = inData[k];
-        let type = typeof item;
-        let over = {
+        const item = inData[k];
+        const type = typeof item;
+        const over = {
             'label': '',
             'value': '',
             'title': false,
@@ -147,9 +147,9 @@ exports.computed = {
 exports.methods = {
     updateModelValue: function (value) {
         if (typeof value === 'object') {
-            let modelValue = [];
-            let label = [];
-            for (let item of value) {
+            const modelValue = [];
+            const label = [];
+            for (const item of value) {
                 if (this.dataComp[item] && !this.dataComp[item].disabled && !this.dataComp[item].title) {
                     modelValue.push(this.dataComp[item].value);
                     label.push(this.dataComp[item].label);

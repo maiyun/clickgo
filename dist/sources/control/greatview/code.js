@@ -105,7 +105,7 @@ exports.computed = {
         if (typeof this.data !== 'number') {
             return this.data;
         }
-        let list = [];
+        const list = [];
         for (let i = 1; i <= this.data; ++i) {
             list.push(i);
         }
@@ -128,11 +128,11 @@ exports.computed = {
                         '0') :
                     this.paddingChild.top) + 'px',
                 'min-width': (this.direction === 'v' ?
-                    'calc(100% - ' + (this.paddingChild.left + this.paddingChild.right) + 'px)' :
+                    `calc(100% - ${this.paddingChild.left + this.paddingChild.right}px)` :
                     undefined),
                 'min-height': (this.direction === 'v' ?
                     undefined :
-                    'calc(100% - ' + (this.paddingChild.top + this.paddingChild.bottom) + 'px)')
+                    `calc(100% - ${this.paddingChild.top + this.paddingChild.bottom}px)`)
             };
         };
     },
@@ -143,7 +143,7 @@ exports.computed = {
 exports.methods = {
     refreshView: function () {
         return __awaiter(this, void 0, void 0, function* () {
-            let nowCount = ++this.refreshCount;
+            const nowCount = ++this.refreshCount;
             let lengthWidth = this.paddingChild.left;
             let lengthHeight = this.paddingChild.top;
             if (this.dataComp.length === 0) {
@@ -156,16 +156,16 @@ exports.methods = {
             if (nowCount !== this.refreshCount) {
                 return;
             }
-            let maxCursor = this.dataComp.length;
+            const maxCursor = this.dataComp.length;
             let cursor = 0;
             let anotherMax = 0;
-            let itemsSize = [];
-            let itemsSizeAlias = {};
+            const itemsSize = [];
+            const itemsSizeAlias = {};
             while (true) {
                 if (nowCount !== this.refreshCount) {
                     return;
                 }
-                let needItemsComp = [];
+                const needItemsComp = [];
                 for (let i = cursor; i < maxCursor; ++i) {
                     if (typeof this.itemsSize[i] === 'number') {
                         cursor = i;
@@ -205,9 +205,9 @@ exports.methods = {
                     return;
                 }
                 for (let i = 0; i < this.$refs.comp.children.length; ++i) {
-                    let item = this.$refs.comp.children.item(i);
-                    let rect = item.getBoundingClientRect();
-                    let theCursor = parseInt(item.dataset.cursor);
+                    const item = this.$refs.comp.children.item(i);
+                    const rect = item.getBoundingClientRect();
+                    const theCursor = parseInt(item.dataset.cursor);
                     let size = 0;
                     if (this.direction === 'v') {
                         size = rect.height;
@@ -236,11 +236,11 @@ exports.methods = {
                 }
                 ++cursor;
             }
-            let itemsPos = [];
+            const itemsPos = [];
             for (let i = 0; i < maxCursor; ++i) {
                 let size = 0;
                 if (this.itemsSize[i] !== undefined) {
-                    let type = typeof this.itemsSize[i];
+                    const type = typeof this.itemsSize[i];
                     if (type === 'number') {
                         size = this.itemsSize[i];
                     }
@@ -254,8 +254,8 @@ exports.methods = {
                 else {
                     size = itemsSize[i];
                 }
-                let start = this.direction === 'v' ? lengthHeight : lengthWidth;
-                let end = start + size;
+                const start = this.direction === 'v' ? lengthHeight : lengthWidth;
+                const end = start + size;
                 itemsPos.push({
                     'start': start,
                     'end': end
@@ -302,10 +302,10 @@ exports.methods = {
                 'end': -1
             };
         }
-        let rtn = { 'start': pos.start, 'end': pos.end };
+        const rtn = { 'start': pos.start, 'end': pos.end };
         let needFind = false;
-        let startShow = this.isInArea(rtn.start, area);
-        let endShow = this.isInArea(rtn.end, area);
+        const startShow = this.isInArea(rtn.start, area);
+        const endShow = this.isInArea(rtn.end, area);
         if (startShow) {
             for (let i = rtn.start - 1; i >= 0; --i) {
                 if (this.isInArea(i, area)) {
@@ -317,7 +317,7 @@ exports.methods = {
         }
         else {
             let found = false;
-            let jmax = endShow ? 999 : 3;
+            const jmax = endShow ? 999 : 3;
             for (let i = rtn.start + 1, j = 0; i < this.dataComp.length && j < jmax; ++i, ++j) {
                 if (!this.isInArea(i, area)) {
                     continue;
@@ -341,7 +341,7 @@ exports.methods = {
         }
         else {
             let found = false;
-            let jmax = startShow ? 999 : 3;
+            const jmax = startShow ? 999 : 3;
             for (let i = rtn.end - 1, j = 0; i >= 0 && j < jmax; --i, ++j) {
                 if (!this.isInArea(i, area)) {
                     continue;
@@ -402,7 +402,7 @@ exports.methods = {
         return rtn;
     },
     reShow: function () {
-        let rtn = this.refreshPos(this.showPos, {
+        const rtn = this.refreshPos(this.showPos, {
             'start': this.scrollOffset - 20,
             'end': this.scrollOffset + this.client + 20
         });
@@ -410,7 +410,7 @@ exports.methods = {
         this.showPos.end = rtn.end;
     },
     isInArea: function (i, area) {
-        let pos = this.itemsPos[i];
+        const pos = this.itemsPos[i];
         if (!pos) {
             return false;
         }
@@ -469,9 +469,9 @@ exports.methods = {
         this.$emit('change', val);
     },
     onSelect: function (area) {
-        let offset = this.direction === 'v' ? area.y : area.x;
-        let length = this.direction === 'v' ? area.height : area.width;
-        let rtn = this.refreshPos(this.selectPos, {
+        const offset = this.direction === 'v' ? area.y : area.x;
+        const length = this.direction === 'v' ? area.height : area.width;
+        const rtn = this.refreshPos(this.selectPos, {
             'start': offset,
             'end': offset + length
         });
@@ -485,7 +485,7 @@ exports.methods = {
         return this.itemsPos[val];
     }
 };
-let mounted = function () {
+const mounted = function () {
     clickgo.dom.watchStyle(this.$el, ['padding', 'padding-top', 'padding-right', 'padding-bottom', 'padding-left', 'font'], (n, v) => {
         switch (n) {
             case 'padding': {

@@ -7,9 +7,9 @@ exports.data = {
     'scale': 4,
     'list': []
 };
-let mounted = function () {
+const mounted = function () {
     this.cgSetSystemEventListener('screenResize', () => {
-        let area = clickgo.form.getAvailArea();
+        const area = clickgo.form.getAvailArea();
         this.width = area.width;
         this.height = area.height;
         if (this.width > 1100 || this.height > 1100) {
@@ -21,14 +21,14 @@ let mounted = function () {
         else {
             this.scale = 4;
         }
-        let date = new Date();
+        const date = new Date();
         this.list.unshift({
-            'time': date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds(),
+            'time': date.getHours().toString() + ':' + date.getMinutes().toString() + ':' + date.getSeconds().toString(),
             'width': area.width,
             'height': area.height
         });
     });
-    let area = clickgo.form.getAvailArea();
+    const area = clickgo.form.getAvailArea();
     this.width = area.width;
     this.height = area.height;
     if (this.width > 1100 || this.height > 1100) {
@@ -40,9 +40,9 @@ let mounted = function () {
     else {
         this.scale = 4;
     }
-    let date = new Date();
+    const date = new Date();
     this.list.unshift({
-        'time': date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds(),
+        'time': date.getHours().toString() + ':' + date.getMinutes().toString() + ':' + date.getSeconds().toString(),
         'width': this.width,
         'height': this.height
     });

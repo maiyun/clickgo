@@ -1,4 +1,4 @@
-export let props = {
+export const props = {
     'icon': {
         'default': '',
     },
@@ -66,7 +66,7 @@ export let props = {
     }
 };
 
-export let data = {
+export const data = {
     'stateMaxData': false,
     'stateMinData': false,
     'stateAbs': false,
@@ -92,7 +92,7 @@ export let data = {
     'isInside': false
 };
 
-export let computed = {
+export const computed = {
     'isMin': function(this: IVControl): boolean {
         return clickgo.tool.getBoolean(this.min);
     },
@@ -119,7 +119,7 @@ export let computed = {
     }
 };
 
-export let watch = {
+export const watch = {
     'icon': {
         handler: async function(this: IVControl): Promise<void> {
             /*
@@ -170,7 +170,7 @@ export let watch = {
         clickgo.core.trigger('formShowChanged', this.taskId, this.formId, this.showData);
     },
 
-    'width': async function(this: IVControl): Promise<void> {
+    'width': function(this: IVControl): void {
         if (this.width === 'auto') {
             if (this.widthData !== undefined) {
                 this.widthData = undefined;
@@ -180,7 +180,7 @@ export let watch = {
             this.widthData = parseInt(this.width);
         }
     },
-    'height': async function(this: IVControl): Promise<void> {
+    'height': function(this: IVControl): void {
         if (this.height === 'auto') {
             if (this.heightData !== undefined) {
                 this.heightData = undefined;
@@ -201,7 +201,7 @@ export let watch = {
     }
 };
 
-export let methods = {
+export const methods = {
     // --- 拖动 ---
     moveMethod: function(this: IVControl, e: MouseEvent | TouchEvent, custom: boolean = false): void {
         if (clickgo.dom.hasTouchButMouse(e)) {
@@ -215,8 +215,8 @@ export let methods = {
             return;
         }
         // --- 绑定双击事件 ---
-        let el = e.currentTarget as HTMLElement;
-        let dataHasDbl = el.getAttribute('data-has-dbl');
+        const el = e.currentTarget as HTMLElement;
+        const dataHasDbl = el.getAttribute('data-has-dbl');
         if (!dataHasDbl) {
             el.setAttribute('data-has-dbl', 'yes');
             el.addEventListener('dblclick', () => {
@@ -239,9 +239,9 @@ export let methods = {
                     this.stateMaxData = false;
                     this.$emit('update:stateMax', false);
                     // --- 进行位置设定 ---
-                    let olx = x - this.leftData;
-                    let orx = this.leftData + this.widthData - x;
-                    let w2 = this.historyLocation.width / 2;
+                    const olx = x - this.leftData;
+                    const orx = (this.leftData as number) + (this.widthData as number) - x;
+                    const w2 = this.historyLocation.width / 2;
                     if (olx <= w2) {
                         this.leftData = x - olx;
                     }
@@ -253,9 +253,9 @@ export let methods = {
                     }
                     this.$emit('update:left', this.leftData);
                     // --- 高 ---
-                    let oty = y - this.topData;
-                    let oby = this.topData + this.heightData - y;
-                    let h2 = this.historyLocation.height / 2;
+                    const oty = y - this.topData;
+                    const oby = (this.topData as number) + (this.heightData as number) - y;
+                    const h2 = this.historyLocation.height / 2;
                     if (oty <= h2) {
                         this.topData = y - oty;
                     }
@@ -286,9 +286,9 @@ export let methods = {
                     // --- 吸附拖动还原 ---
                     this.stateAbs = false;
                     // --- 进行位置设定 ---
-                    let olx = x - this.leftData;
-                    let orx = this.leftData + this.widthData - x;
-                    let w2 = this.historyLocation.width / 2;
+                    const olx = x - this.leftData;
+                    const orx = (this.leftData as number) + (this.widthData as number) - x;
+                    const w2 = this.historyLocation.width / 2;
                     if (olx <= w2) {
                         this.leftData = x - olx;
                     }
@@ -300,9 +300,9 @@ export let methods = {
                     }
                     this.$emit('update:left', this.leftData);
                     // --- 高 ---
-                    let oty = y - this.topData;
-                    let oby = this.topData + this.heightData - y;
-                    let h2 = this.historyLocation.height / 2;
+                    const oty = y - this.topData;
+                    const oby = (this.topData as number) + (this.heightData as number) - y;
+                    const h2 = this.historyLocation.height / 2;
                     if (oty <= h2) {
                         this.topData = y - oty;
                     }
@@ -339,9 +339,9 @@ export let methods = {
                 }
             },
             'move': (ox, oy, x, y, border) => {
-                this.leftData += ox;
+                (this.leftData as number) += ox;
                 this.$emit('update:left', this.leftData);
-                this.topData += oy;
+                (this.topData as number) += oy;
                 this.$emit('update:top', this.topData);
                 if (border !== '') {
                     if ((border === 't' && this.isMax) || (border !== 't' && this.isResize)) {
@@ -394,7 +394,7 @@ export let methods = {
                             }
                             */
                             this.stateAbs = true;
-                            let pos = clickgo.form.getRectByBorder(isBorder);
+                            const pos = clickgo.form.getRectByBorder(isBorder);
                             this.widthData = pos.width;
                             if (this.width !== 'auto') {
                                 this.$emit('update:width', this.widthData);
@@ -419,7 +419,7 @@ export let methods = {
         if (this.isInside) {
             return true;
         }
-        let event = {
+        const event = {
             'go': true,
             preventDefault: function() {
                 this.go = false;
@@ -456,7 +456,7 @@ export let methods = {
                 this.$emit('update:stateMin', true);
                 // --- 如果当前有焦点，则使别人获取焦点 ---
                 if (this.cgFocus) {
-                    let formId = clickgo.form.getMaxZIndexFormID({
+                    const formId = clickgo.form.getMaxZIndexFormID({
                         'formIds': [this.formId]
                     });
                     this.cgSleep(() => {
@@ -525,7 +525,7 @@ export let methods = {
                 'left': this.leftData,
                 'top': this.topData
             };
-            let area = clickgo.form.getAvailArea();
+            const area = clickgo.form.getAvailArea();
             this.topData = area.top;
             this.$emit('update:top', this.topData);
             this.heightData = area.height;
@@ -544,7 +544,7 @@ export let methods = {
                 return false;
             }
         }
-        let event = {
+        const event = {
             'go': true,
             preventDefault: function() {
                 this.go = false;
@@ -569,7 +569,7 @@ export let methods = {
                 this.stateMaxData = true;
                 this.$emit('update:stateMax', true);
                 // --- 变窗体样子 ---
-                let area = clickgo.form.getAvailArea();
+                const area = clickgo.form.getAvailArea();
                 this.leftData = area.left;
                 this.$emit('update:left', this.leftData);
                 this.topData = area.top;
@@ -627,7 +627,7 @@ export let methods = {
         if (this.isInside) {
             return;
         }
-        let event = {
+        const event = {
             go: true,
             preventDefault: function() {
                 this.go = false;
@@ -654,7 +654,7 @@ export let methods = {
                 // --- 进行高度还原 ---
                 if (border === 'lt' || border === 't' || border === 'tr') {
                     // --- 左上、上、右上 ---
-                    height = this.historyLocation.top + this.historyLocation.height;
+                    height = (this.historyLocation.top as number) + (this.historyLocation.height as number);
                 }
                 else {
                     // --- 左下、下、右下 ---
@@ -737,7 +737,7 @@ export let methods = {
             'end': () => {
                 if (isBorder !== '') {
                     if (isBorder !== 'l' && isBorder !== 'r') {
-                        let area = clickgo.form.getAvailArea();
+                        const area = clickgo.form.getAvailArea();
                         this.stateAbs = true;
                         this.heightData = area.height;
                         this.$emit('update:height', this.heightData);
@@ -750,16 +750,19 @@ export let methods = {
         });
     },
     // --- 设置 left, width, zIndex 等 ---
-    setPropData: function(this: IVControl, name: string, val: any, mode: string = ''): void {
+    setPropData: function(this: IVControl, name: string, val: number | string, mode: string = ''): void {
         switch (name) {
             case 'left': {
+                if (typeof val !== 'number') {
+                    break;
+                }
                 switch (mode) {
                     case '': {
                         this.leftData = val;
                         break;
                     }
                     case '+': {
-                        this.leftData += val;
+                        (this.leftData as number) += val;
                         break;
                     }
                     default: {
@@ -770,13 +773,16 @@ export let methods = {
                 break;
             }
             case 'top': {
+                if (typeof val !== 'number') {
+                    break;
+                }
                 switch (mode) {
                     case '': {
                         this.topData = val;
                         break;
                     }
                     case '+': {
-                        this.topData += val;
+                        (this.topData as number) += val;
                         break;
                     }
                     default: {
@@ -792,13 +798,16 @@ export let methods = {
                     this.$emit('update:width', 'auto');
                 }
                 else {
+                    if (typeof val !== 'number') {
+                        break;
+                    }
                     switch (mode) {
                         case '': {
                             this.widthData = val;
                             break;
                         }
                         case '+': {
-                            this.widthData += val;
+                            (this.widthData as number) += val;
                             break;
                         }
                         default: {
@@ -815,13 +824,16 @@ export let methods = {
                     this.$emit('update:height', 'auto');
                 }
                 else {
+                    if (typeof val !== 'number') {
+                        break;
+                    }
                     switch (mode) {
                         case '': {
                             this.heightData = val;
                             break;
                         }
                         case '+': {
-                            this.heightData += val;
+                            (this.heightData as number) += val;
                             break;
                         }
                         default: {
@@ -833,13 +845,16 @@ export let methods = {
                 break;
             }
             case 'zIndex': {
+                if (typeof val !== 'number') {
+                    break;
+                }
                 switch (mode) {
                     case '': {
                         this.zIndexData = val;
                         break;
                     }
                     case '+': {
-                        this.zIndexData += val;
+                        (this.zIndexData as number) += val;
                         break;
                     }
                     default: {
@@ -853,7 +868,7 @@ export let methods = {
     }
 };
 
-export let mounted = async function(this: IVControl): Promise<void> {
+export const mounted = async function(this: IVControl): Promise<void> {
     await this.$nextTick();
     await clickgo.tool.sleep(0);
     if (this.$parent!.controlName !== 'root') {
@@ -874,12 +889,12 @@ export let mounted = async function(this: IVControl): Promise<void> {
             this.$emit('update:height', this.heightData);
         }
     }
-    let zIndex = parseInt(this.zIndex);
+    const zIndex = parseInt(this.zIndex);
     if (zIndex !== -1) {
         this.zIndexData = zIndex;
     }
     if (this.isStateMax) {
-        let area = clickgo.form.getAvailArea();
+        const area = clickgo.form.getAvailArea();
         this.leftData = (area.width - this.widthData) / 2;
         this.topData = (area.height - this.heightData) / 2;
         this.maxMethod();

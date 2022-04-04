@@ -1,4 +1,4 @@
-export let props = {
+export const props = {
     'direction': {
         'default': 'h'
     },

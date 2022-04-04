@@ -30,8 +30,8 @@ exports.computed = {
         if (!this.$slots.default) {
             return [];
         }
-        let tabs = [];
-        for (let item of this.cgSlots()) {
+        const tabs = [];
+        for (const item of this.cgSlots()) {
             tabs.push({
                 'label': item.props.label,
                 'value': (_a = item.props.value) !== null && _a !== void 0 ? _a : item.props.label
@@ -40,8 +40,8 @@ exports.computed = {
         return tabs;
     },
     'values': function () {
-        let list = [];
-        for (let item of this.tabs) {
+        const list = [];
+        for (const item of this.tabs) {
             list.push(item.value);
         }
         return list;
@@ -101,7 +101,7 @@ exports.methods = {
         if (clickgo.dom.hasTouchButMouse(e)) {
             return;
         }
-        let num = type === 'start' ? -5 : 5;
+        const num = type === 'start' ? -5 : 5;
         clickgo.dom.bindDown(e, {
             down: () => {
                 this.timer = this.cgOnFrame(() => {
@@ -121,7 +121,7 @@ exports.methods = {
     },
     onResize: function (size) {
         if (this.tabPosition === 'top' || this.tabPosition === 'bottom') {
-            let width = this.arrow ? Math.round(size.clientWidth) + 40 : Math.round(size.clientWidth);
+            const width = this.arrow ? Math.round(size.clientWidth) + 40 : Math.round(size.clientWidth);
             if (size.scrollWidth > width) {
                 this.arrow = true;
             }
@@ -130,7 +130,7 @@ exports.methods = {
             }
         }
         else {
-            let height = this.arrow ? Math.round(size.clientHeight) + 40 : Math.round(size.clientHeight);
+            const height = this.arrow ? Math.round(size.clientHeight) + 40 : Math.round(size.clientHeight);
             if (size.scrollHeight > height) {
                 this.arrow = true;
             }
@@ -141,14 +141,14 @@ exports.methods = {
     },
     reSelected: function () {
         if (this.selected === '') {
-            let s = this.values[0] ? this.values[0] : '';
+            const s = this.values[0] ? this.values[0] : '';
             if (this.selected !== s) {
                 this.selected = s;
                 this.$emit('update:modelValue', this.selected);
             }
         }
         else if (this.values.indexOf(this.selected) === -1) {
-            let s = this.values[this.values.length - 1] ? this.values[this.values.length - 1] : '';
+            const s = this.values[this.values.length - 1] ? this.values[this.values.length - 1] : '';
             if (this.selected !== s) {
                 this.selected = s;
                 this.$emit('update:modelValue', this.selected);
@@ -156,7 +156,7 @@ exports.methods = {
         }
     }
 };
-let mounted = function () {
+const mounted = function () {
     this.oldTabs = this.$refs.tabs[0];
     clickgo.dom.watchSize(this.$refs.tabs[0], (size) => {
         this.onResize(size);

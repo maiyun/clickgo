@@ -32,7 +32,7 @@ exports.computed = {
 exports.watch = {
     'type': {
         handler: function () {
-            let menulist = this.cgParentByName('menulist');
+            const menulist = this.cgParentByName('menulist');
             if (!menulist) {
                 return;
             }
@@ -72,11 +72,11 @@ exports.methods = {
         clickgo.form.hidePop();
     }
 };
-let mounted = function () {
+const mounted = function () {
     clickgo.dom.watchStyle(this.$el, 'padding', (n, v) => {
         this.padding = v;
     }, true);
-    let menulist = this.cgParentByName('menulist');
+    const menulist = this.cgParentByName('menulist');
     if (!menulist) {
         return;
     }
@@ -85,7 +85,7 @@ let mounted = function () {
     }
 };
 exports.mounted = mounted;
-let beforeUnmounted = function () {
+const beforeUnmounted = function () {
     if (!this.menulist) {
         return;
     }

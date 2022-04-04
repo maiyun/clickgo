@@ -38,8 +38,8 @@ exports.computed = {
         return clickgo.tool.getBoolean(this.readonly);
     },
     'filesComp': function () {
-        let list = [];
-        for (let path in this.files) {
+        const list = [];
+        for (const path in this.files) {
             list.push({
                 'content': this.files[path],
                 'filePath': path
@@ -147,7 +147,7 @@ exports.methods = {
                 }
                 case 'cut': {
                     clickgo.tool.execCommand('copy');
-                    let selection = this.monacoInstance.getSelection();
+                    const selection = this.monacoInstance.getSelection();
                     this.monacoInstance.executeEdits('', [
                         {
                             range: new this.monaco.Range(selection.startLineNumber, selection.startColumn, selection.endLineNumber, selection.endColumn),
@@ -157,8 +157,8 @@ exports.methods = {
                     break;
                 }
                 case 'paste': {
-                    let str = yield navigator.clipboard.readText();
-                    let selection = this.monacoInstance.getSelection();
+                    const str = yield navigator.clipboard.readText();
+                    const selection = this.monacoInstance.getSelection();
                     this.monacoInstance.executeEdits('', [
                         {
                             range: new this.monaco.Range(selection.startLineNumber, selection.startColumn, selection.endLineNumber, selection.endColumn),
@@ -171,8 +171,8 @@ exports.methods = {
         });
     }
 };
-let mounted = function () {
-    let monaco = clickgo.core.getModule('monaco');
+const mounted = function () {
+    const monaco = clickgo.core.getModule('monaco');
     if (monaco) {
         this.monaco = monaco;
         this.monacoInstance = monaco.editor.create(this.$refs.monaco, {
@@ -200,7 +200,7 @@ let mounted = function () {
     }
 };
 exports.mounted = mounted;
-let unmounted = function () {
+const unmounted = function () {
     if (this.monacoInstance) {
         this.monacoInstance.dispose();
     }

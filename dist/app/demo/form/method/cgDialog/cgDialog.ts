@@ -1,8 +1,8 @@
-export let data = {
+export const data = {
     'result': 'None'
 };
 
-export let methods = {
+export const methods = {
     dialog: async function(this: IVForm, opt: string | ICGFormDialog): Promise<void> {
         this.result = await this.cgDialog(opt);
     },
@@ -23,7 +23,7 @@ export let methods = {
             this.result = this.result ? 'true (boolean)' : 'false (boolean)';
         }
         else {
-            this.result = this.result + ' (number)';
+            this.result = (this.result as number).toString() + ' (number)';
         }
     }
 };

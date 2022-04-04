@@ -1,4 +1,4 @@
-export let props = {
+export const props = {
     'disabled': {
         'default': false
     },
@@ -36,7 +36,7 @@ export let props = {
     }
 };
 
-export let computed = {
+export const computed = {
     'isDisabled': function(this: IVControl): boolean {
         return clickgo.tool.getBoolean(this.disabled);
     },
@@ -66,7 +66,7 @@ export let computed = {
     }
 };
 
-export let watch = {
+export const watch = {
     'modelValue': {
         handler: function(this: IVControl): void {
             this.value = this.modelValue;
@@ -115,7 +115,7 @@ export let watch = {
     },
     'scrollLeft': {
         handler: function(this: IVControl): void {
-            let sl = typeof this.scrollLeft === 'number' ? this.scrollLeft : parseInt(this.scrollLeft);
+            const sl = typeof this.scrollLeft === 'number' ? this.scrollLeft : parseInt(this.scrollLeft);
             if (sl === this.scrollLeftEmit) {
                 return;
             }
@@ -126,8 +126,8 @@ export let watch = {
         }
     },
     'scrollTop': {
-        handler: async function(this: IVControl): Promise<void> {
-            let st = typeof this.scrollTop === 'number' ? this.scrollTop : parseInt(this.scrollTop);
+        handler: function(this: IVControl): void {
+            const st = typeof this.scrollTop === 'number' ? this.scrollTop : parseInt(this.scrollTop);
             if (st === this.scrollTopEmit) {
                 return;
             }
@@ -151,7 +151,7 @@ export let watch = {
     }
 };
 
-export let data = {
+export const data = {
     'font': '',
     'background': '',
     'color': '',
@@ -206,9 +206,9 @@ export let data = {
     }
 };
 
-export let methods = {
+export const methods = {
     focus: function(this: IVControl): void {
-        let now = Date.now();
+        const now = Date.now();
         if (now - this.lastDownTime >= 500) {
             this.$refs.text.focus();
         }
@@ -233,7 +233,7 @@ export let methods = {
             clickgo.form.hidePop(this.$el);
         }
         // --- 如果是点击进入的，则不触发 input、textarea 的 focus，防止光标乱跳 ---
-        let tagName = (e.target as HTMLElement).tagName.toLowerCase();
+        const tagName = (e.target as HTMLElement).tagName.toLowerCase();
         if (tagName !== 'input' && tagName !== 'textarea') {
             this.lastDownTime = Date.now();
         }
@@ -242,7 +242,7 @@ export let methods = {
     scroll: function(this: IVControl): void {
         // --- input 的 scroll 事件有可能没那么快响应，要增加 hack ---
         // --- value(client) -> set scroll(client) -> input scroll(event) ??, so... ---
-        let now = Date.now();
+        const now = Date.now();
         if ((now - this.scrollLeftWatchTime) < 50) {
             this.$refs.text.scrollLeft = this.scrollLeftWatch;
         }
@@ -252,8 +252,8 @@ export let methods = {
         this.refreshScroll();
     },
     wheel: function(this: IVControl, e: WheelEvent): void {
-        let scrollTop = Math.ceil(this.$refs.text.scrollTop);
-        let scrollLeft = Math.ceil(this.$refs.text.scrollLeft);
+        const scrollTop = Math.ceil(this.$refs.text.scrollTop);
+        const scrollLeft = Math.ceil(this.$refs.text.scrollLeft);
         if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
             // --- 竖向滚动 ---
             if (e.deltaY < 0) {
@@ -346,10 +346,10 @@ export let methods = {
         }
     },
     move: function(this: IVControl, e: TouchEvent): void {
-        let scrollTop = Math.ceil(this.$refs.text.scrollTop);
-        let scrollLeft = Math.ceil(this.$refs.text.scrollLeft);
-        let deltaX = this.touchX - e.touches[0].clientX;
-        let deltaY = this.touchY - e.touches[0].clientY;
+        const scrollTop = Math.ceil(this.$refs.text.scrollTop);
+        const scrollLeft = Math.ceil(this.$refs.text.scrollLeft);
+        const deltaX = this.touchX - e.touches[0].clientX;
+        const deltaY = this.touchY - e.touches[0].clientY;
         if (this.canTouchScroll) {
             // --- 必须有这个，要不然被上层的 e.preventDefault(); 给屏蔽不能拖动，可拖时必须 stopPropagation ---
             e.stopPropagation();
@@ -433,8 +433,8 @@ export let methods = {
         clickgo.form.showPop(this.$el, this.$refs.pop, e);
     },
     select: function(this: IVControl): void {
-        let selectionStart = (this.$refs.text as unknown as HTMLTextAreaElement).selectionStart;
-        let selectionEnd = (this.$refs.text as unknown as HTMLTextAreaElement).selectionEnd;
+        const selectionStart = (this.$refs.text as unknown as HTMLTextAreaElement).selectionStart;
+        const selectionEnd = (this.$refs.text as unknown as HTMLTextAreaElement).selectionEnd;
         if (selectionStart !== this.selectionStartEmit) {
             this.selectionStartEmit = selectionStart;
             this.$emit('update:selectionStart', this.selectionStartEmit);
@@ -454,11 +454,13 @@ export let methods = {
             if (this.isReadonly) {
                 return;
             }
-            let str = await navigator.clipboard.readText();
-            this.value = this.value.slice(0, this.selectionStartEmit) + str + this.value.slice(this.selectionEndEmit);
+            const str = await navigator.clipboard.readText();
+            this.value = (this.value as string).slice(0, this.selectionStartEmit)
+                + str
+                + (this.value as string).slice(this.selectionEndEmit);
             await this.$nextTick();
-            let selectionStart = this.selectionStartEmit + str.length;
-            let selectionEnd = selectionStart;
+            const selectionStart = (this.selectionStartEmit as number) + str.length;
+            const selectionEnd = selectionStart;
             (this.$refs.text as unknown as HTMLTextAreaElement).selectionStart = selectionStart;
             if (selectionStart !== this.selectionStartEmit) {
                 this.selectionStartEmit = selectionStart;
@@ -477,8 +479,8 @@ export let methods = {
     },
 
     refreshLength: function(this: IVControl): void {
-        let lengthWidth = this.$refs.text.scrollWidth;
-        let lengthHeight = this.$refs.text.scrollHeight;
+        const lengthWidth = this.$refs.text.scrollWidth;
+        const lengthHeight = this.$refs.text.scrollHeight;
         if (this.lengthWidth !== lengthWidth) {
             this.lengthWidth = lengthWidth;
         }
@@ -488,8 +490,8 @@ export let methods = {
         }
     },
     refreshClient: function(this: IVControl): void {
-        let clientWidth = this.$refs.text.clientWidth;
-        let clientHeight = this.$refs.text.clientHeight;
+        const clientWidth = this.$refs.text.clientWidth;
+        const clientHeight = this.$refs.text.clientHeight;
         if (this.clientWidth !== clientWidth) {
             this.clientWidth = clientWidth;
             this.$emit('resizen', Math.round(this.clientWidth));
@@ -500,12 +502,12 @@ export let methods = {
         }
     },
     refreshScroll: function(this: IVControl): void {
-        let sl = Math.round(this.$refs.text.scrollLeft);
+        const sl = Math.round(this.$refs.text.scrollLeft);
         if (this.scrollLeftEmit !== sl) {
             this.scrollLeftEmit = sl;
             this.$emit('update:scrollLeft', sl);
         }
-        let st = Math.round(this.$refs.text.scrollTop);
+        const st = Math.round(this.$refs.text.scrollTop);
         if (this.scrollTopEmit !== st) {
             this.scrollTopEmit = st;
             this.$emit('update:scrollTop', st);
@@ -513,8 +515,8 @@ export let methods = {
     }
 };
 
-export let mounted = async function(this: IVControl): Promise<void> {
-    clickgo.dom.watchSize(this.$refs.text, async (): Promise<void> => {
+export const mounted = async function(this: IVControl): Promise<void> {
+    clickgo.dom.watchSize(this.$refs.text, (): void => {
         this.refreshClient();
         this.refreshLength();
     }, true);

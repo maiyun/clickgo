@@ -1,19 +1,19 @@
-export let data = {
+export const data = {
     'select': ''
 };
 
-export let computed = {
+export const computed = {
     'globalLocale': function(): string {
         return clickgo.core.config.locale;
     }
 };
 
-export let methods = {
+export const methods = {
     'change': function(this: IVForm): void {
         clickgo.core.config.locale = this.select;
     }
 };
 
-export let mounted = function(this: IVForm): void {
+export const mounted = function(this: IVForm): void {
     this.select = clickgo.core.config.locale;
 };

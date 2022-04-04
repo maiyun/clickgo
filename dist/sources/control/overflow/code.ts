@@ -1,4 +1,4 @@
-export let props = {
+export const props = {
     'direction': {
         'default': 'h'
     },
@@ -11,7 +11,7 @@ export let props = {
     }
 };
 
-export let data = {
+export const data = {
     'text': '',
     'scrollLeftEmit': 0,
     'scrollTopEmit': 0,
@@ -28,7 +28,7 @@ export let data = {
     'alreadySb': false
 };
 
-export let computed = {
+export const computed = {
     // --- 最大可拖动的 scroll 位置 ---
     'maxScrollLeft': function(this: IVControl): number {
         return Math.round(this.lengthWidth - this.clientWidth);
@@ -38,10 +38,10 @@ export let computed = {
     }
 };
 
-export let watch = {
+export const watch = {
     'scrollLeft': {
         handler: function(this: IVControl): void {
-            let sl = typeof this.scrollLeft === 'number' ? this.scrollLeft : parseInt(this.scrollLeft);
+            const sl = typeof this.scrollLeft === 'number' ? this.scrollLeft : parseInt(this.scrollLeft);
             if (sl === this.scrollLeftEmit) {
                 return;
             }
@@ -50,7 +50,7 @@ export let watch = {
     },
     'scrollTop': {
         handler: function(this: IVControl): void {
-            let st = typeof this.scrollTop === 'number' ? this.scrollTop : parseInt(this.scrollTop);
+            const st = typeof this.scrollTop === 'number' ? this.scrollTop : parseInt(this.scrollTop);
             if (st === this.scrollTopEmit) {
                 return;
             }
@@ -59,22 +59,22 @@ export let watch = {
     }
 };
 
-export let methods = {
+export const methods = {
     scroll: function(this: IVControl): void {
-        let sl = Math.round(this.$el.scrollLeft);
+        const sl = Math.round(this.$el.scrollLeft);
         if (this.scrollLeftEmit !== sl) {
             this.scrollLeftEmit = sl;
             this.$emit('update:scrollLeft', sl);
         }
-        let st = Math.round(this.$el.scrollTop);
+        const st = Math.round(this.$el.scrollTop);
         if (this.scrollTopEmit !== st) {
             this.scrollTopEmit = st;
             this.$emit('update:scrollTop', st);
         }
     },
     wheel: function(this: IVControl, e: WheelEvent): void {
-        let scrollTop = Math.ceil(this.$el.scrollTop);
-        let scrollLeft = Math.ceil(this.$el.scrollLeft);
+        const scrollTop = Math.ceil(this.$el.scrollTop);
+        const scrollLeft = Math.ceil(this.$el.scrollLeft);
         if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
             // --- 竖向滚动 ---
             if (e.deltaY < 0) {
@@ -165,10 +165,10 @@ export let methods = {
         this.canTouchScroll = false;
     },
     move: function(this: IVControl, e: TouchEvent): void {
-        let scrollTop = Math.ceil(this.$el.scrollTop);
-        let scrollLeft = Math.ceil(this.$el.scrollLeft);
-        let deltaX = this.touchX - e.touches[0].clientX;
-        let deltaY = this.touchY - e.touches[0].clientY;
+        const scrollTop = Math.ceil(this.$el.scrollTop);
+        const scrollLeft = Math.ceil(this.$el.scrollLeft);
+        const deltaX = this.touchX - e.touches[0].clientX;
+        const deltaY = this.touchY - e.touches[0].clientY;
         if (this.canTouchScroll) {
             // --- 必须有这个，要不然被上层的 e.preventDefault(); 给屏蔽不能拖动，可拖时必须 stopPropagation(虽然 wheel 已经有了 stioPropagation，但毕竟那是 wheel 的，touch 被 preventDefault 照样不能拖动) ---
             e.stopPropagation();
@@ -244,8 +244,8 @@ export let methods = {
         if (!this.$el.offsetParent) {
             return;
         }
-        let lengthWidth = this.$el.scrollWidth;
-        let lengthHeight = this.$el.scrollHeight;
+        const lengthWidth = this.$el.scrollWidth;
+        const lengthHeight = this.$el.scrollHeight;
         if (this.lengthWidth !== lengthWidth) {
             this.lengthWidth = lengthWidth;
             if (this.direction === 'h') {
@@ -261,11 +261,11 @@ export let methods = {
     }
 };
 
-export let mounted = function(this: IVControl): void {
+export const mounted = function(this: IVControl): void {
     // --- 大小改变，会影响 scroll offset、client，不会影响 length ---
     clickgo.dom.watchSize(this.$el, () => {
-        let clientWidth = this.$el.clientWidth;
-        let clientHeight = this.$el.clientHeight;
+        const clientWidth = this.$el.clientWidth;
+        const clientHeight = this.$el.clientHeight;
         if (this.clientWidth !== clientWidth) {
             this.clientWidth = clientWidth;
             this.$emit(this.direction === 'v' ? 'resizen' : 'resize', Math.round(this.clientWidth));

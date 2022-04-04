@@ -10,15 +10,15 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.fullscreen = exports.siblingsData = exports.siblings = exports.findParentByData = exports.bindResize = exports.bindMove = exports.is = exports.bindLong = exports.allowEvent = exports.bindGesture = exports.bindDown = exports.watchStyle = exports.watch = exports.watchSize = exports.getSize = exports.getStyleCount = exports.removeStyle = exports.pushStyle = exports.removeFromStyleList = exports.createToStyleList = exports.hasTouchButMouse = exports.setGlobalCursor = void 0;
-let topClass = ['#cg-form-list', '#cg-pop-list', '#cg-system', '#cg-simpletask'];
+const topClass = ['#cg-form-list', '#cg-pop-list', '#cg-system', '#cg-simpletask'];
 function classUnfold(after) {
-    let arr = [];
-    for (let name of topClass) {
+    const arr = [];
+    for (const name of topClass) {
         arr.push(name + (after ? (' ' + after) : ''));
     }
     return arr.join(', ');
 }
-let styleList = document.createElement('div');
+const styleList = document.createElement('div');
 styleList.style.display = 'none';
 document.getElementsByTagName('body')[0].appendChild(styleList);
 styleList.insertAdjacentHTML('beforeend', '<style id=\'cg-global-cursor\'></style>');
@@ -86,7 +86,7 @@ function hasTouchButMouse(e) {
     if ((e.pointerType === 'touch') && (e.type === 'contextmenu')) {
         return true;
     }
-    let now = Date.now();
+    const now = Date.now();
     if (now - lastTouchTime < 1000 * 60) {
         return true;
     }
@@ -99,11 +99,11 @@ function createToStyleList(taskId) {
 exports.createToStyleList = createToStyleList;
 function removeFromStyleList(taskId) {
     var _a;
-    (_a = document.getElementById('cg-style-task' + taskId)) === null || _a === void 0 ? void 0 : _a.remove();
+    (_a = document.getElementById('cg-style-task' + taskId.toString())) === null || _a === void 0 ? void 0 : _a.remove();
 }
 exports.removeFromStyleList = removeFromStyleList;
 function pushStyle(taskId, style, type = 'global', formId = 0) {
-    let el = document.querySelector(`#cg-style-task${taskId} > .cg-style-${type}`);
+    const el = document.querySelector(`#cg-style-task${taskId} > .cg-style-${type}`);
     if (!el) {
         return;
     }
@@ -119,12 +119,12 @@ function pushStyle(taskId, style, type = 'global', formId = 0) {
 }
 exports.pushStyle = pushStyle;
 function removeStyle(taskId, type = 'global', formId = 0) {
-    let styleTask = document.getElementById('cg-style-task' + taskId);
+    const styleTask = document.getElementById('cg-style-task' + taskId.toString());
     if (!styleTask) {
         return;
     }
     if (type === 'global') {
-        let el = document.querySelector(`#cg-style-task${taskId} > .cg-style-global`);
+        const el = document.querySelector(`#cg-style-task${taskId} > .cg-style-global`);
         if (!el) {
             return;
         }
@@ -132,14 +132,14 @@ function removeStyle(taskId, type = 'global', formId = 0) {
     }
     else if (type === 'theme' || type === 'control') {
         if (formId === 0) {
-            let el = document.querySelector(`#cg-style-task${taskId} > .cg-style-${type}`);
+            const el = document.querySelector(`#cg-style-task${taskId} > .cg-style-${type}`);
             if (!el) {
                 return;
             }
             el.innerHTML = '';
         }
         else {
-            let el = document.querySelector(`#cg-style-task${taskId} > .cg-style-${type} > [data-name='${formId}']`);
+            const el = document.querySelector(`#cg-style-task${taskId} > .cg-style-${type} > [data-name='${formId}']`);
             if (!el) {
                 return;
             }
@@ -147,7 +147,7 @@ function removeStyle(taskId, type = 'global', formId = 0) {
         }
     }
     else {
-        let elist = styleTask.querySelectorAll('.cg-style-form' + formId);
+        const elist = styleTask.querySelectorAll('.cg-style-form' + formId.toString());
         for (let i = 0; i < elist.length; ++i) {
             elist.item(i).remove();
         }
@@ -159,15 +159,15 @@ function getStyleCount(taskId, type) {
 }
 exports.getStyleCount = getStyleCount;
 function getSize(el) {
-    let rect = el.getBoundingClientRect();
-    let cs = getComputedStyle(el);
-    let border = {
+    const rect = el.getBoundingClientRect();
+    const cs = getComputedStyle(el);
+    const border = {
         'top': parseFloat(cs.borderTopWidth),
         'right': parseFloat(cs.borderRightWidth),
         'bottom': parseFloat(cs.borderBottomWidth),
         'left': parseFloat(cs.borderLeftWidth)
     };
-    let padding = {
+    const padding = {
         'top': parseFloat(cs.paddingTop),
         'right': parseFloat(cs.paddingRight),
         'bottom': parseFloat(cs.paddingBottom),
@@ -192,16 +192,26 @@ function getSize(el) {
 }
 exports.getSize = getSize;
 function watchSize(el, cb, immediate = false) {
-    let fsize = getSize(el);
+    const fsize = getSize(el);
     if (immediate) {
-        cb(fsize);
+        const r = cb(fsize);
+        if (r instanceof Promise) {
+            r.catch(function (e) {
+                console.log(e);
+            });
+        }
     }
     const resizeObserver = new window.ResizeObserver(function () {
-        let size = getSize(el);
+        const size = getSize(el);
         if (Number.isNaN(size.clientWidth)) {
             return;
         }
-        cb(size);
+        const r = cb(size);
+        if (r instanceof Promise) {
+            r.catch(function (e) {
+                console.log(e);
+            });
+        }
     });
     resizeObserver.observe(el);
     return fsize;
@@ -249,17 +259,17 @@ function watch(el, cb, mode = 'default', immediate = false) {
             moi = mode;
         }
     }
-    let mo = new MutationObserver(cb);
+    const mo = new MutationObserver(cb);
     mo.observe(el, moi);
 }
 exports.watch = watch;
-let watchStyleObjects = [];
+const watchStyleObjects = [];
 function watchStyle(el, name, cb, immediate = false) {
-    for (let item of watchStyleObjects) {
+    for (const item of watchStyleObjects) {
         if (item.el !== el) {
             continue;
         }
-        for (let n of name) {
+        for (const n of name) {
             if (!item.names[n]) {
                 item.names[n] = {
                     'old': item.sd[n],
@@ -275,7 +285,7 @@ function watchStyle(el, name, cb, immediate = false) {
         }
         return;
     }
-    let sd = getComputedStyle(el);
+    const sd = getComputedStyle(el);
     if (typeof name === 'string') {
         name = [name];
     }
@@ -284,8 +294,8 @@ function watchStyle(el, name, cb, immediate = false) {
         'sd': sd,
         'names': {}
     });
-    let item = watchStyleObjects[watchStyleObjects.length - 1];
-    for (let n of name) {
+    const item = watchStyleObjects[watchStyleObjects.length - 1];
+    for (const n of name) {
         item.names[n] = {
             'old': item.sd[n],
             'cb': [cb]
@@ -296,20 +306,20 @@ function watchStyle(el, name, cb, immediate = false) {
     }
 }
 exports.watchStyle = watchStyle;
-let watchStyleRAF = function () {
+const watchStyleRAF = function () {
     for (let i = 0; i < watchStyleObjects.length; ++i) {
-        let item = watchStyleObjects[i];
+        const item = watchStyleObjects[i];
         if (watchStyleObjects[i].sd.flex === '') {
             watchStyleObjects.splice(i, 1);
             --i;
             continue;
         }
-        for (let name in item.names) {
+        for (const name in item.names) {
             if (item.sd[name] === item.names[name].old) {
                 continue;
             }
             item.names[name].old = item.sd[name];
-            for (let cb of item.names[name].cb) {
+            for (const cb of item.names[name].cb) {
                 cb(name, item.sd[name]);
             }
         }
@@ -332,19 +342,19 @@ function bindDown(oe, opt) {
         oy = oe.touches[0].clientY;
     }
     let isStart = false;
-    let end;
-    let move = function (e) {
+    let end = undefined;
+    const move = function (e) {
         if (!e.target || !e.target.offsetParent) {
             e.preventDefault();
         }
         let dir = 'top';
-        let x = e instanceof MouseEvent ? e.clientX : e.touches[0].clientX;
-        let y = e instanceof MouseEvent ? e.clientY : e.touches[0].clientY;
+        const x = e instanceof MouseEvent ? e.clientX : e.touches[0].clientX;
+        const y = e instanceof MouseEvent ? e.clientY : e.touches[0].clientY;
         if (x === ox && y === oy) {
             return;
         }
-        let xx = x - ox;
-        let xy = y - oy;
+        const xx = x - ox;
+        const xy = y - oy;
         if (Math.abs(xy) > Math.abs(xx)) {
             if (xy < 0) {
                 dir = 'top';
@@ -423,7 +433,7 @@ function bindDown(oe, opt) {
     (_a = opt.down) === null || _a === void 0 ? void 0 : _a.call(opt, oe);
 }
 exports.bindDown = bindDown;
-let bindGestureData = {
+const bindGestureData = {
     'el': null,
     'xx': 0,
     'xy': 0,
@@ -446,9 +456,9 @@ function bindGestureAnimation(opt) {
     if (!bindGestureData.el) {
         return;
     }
-    let speed = 6;
-    let gestureElement = document.getElementById('cg-gesture');
-    let dirs = (_a = opt.dirs) !== null && _a !== void 0 ? _a : ['top', 'bottom'];
+    const speed = 6;
+    const gestureElement = document.getElementById('cg-gesture');
+    const dirs = (_a = opt.dirs) !== null && _a !== void 0 ? _a : ['top', 'bottom'];
     if (bindGestureData.tx > bindGestureData.xx) {
         bindGestureData.xx += speed;
         if (bindGestureData.xx > bindGestureData.tx) {
@@ -473,8 +483,8 @@ function bindGestureAnimation(opt) {
             bindGestureData.xy = bindGestureData.ty;
         }
     }
-    let xxAbs = Math.abs(bindGestureData.xx);
-    let xyAbs = Math.abs(bindGestureData.xy);
+    const xxAbs = Math.abs(bindGestureData.xx);
+    const xyAbs = Math.abs(bindGestureData.xy);
     if ((!dirs.includes('top') && !dirs.includes('bottom')) || ((xxAbs > xyAbs) && (dirs.includes('left') || dirs.includes('right')))) {
         if (bindGestureData.xx < 0) {
             if (!dirs.includes('left')) {
@@ -491,9 +501,9 @@ function bindGestureAnimation(opt) {
                 bindGestureData.dir = null;
                 gestureElement.classList.remove('done');
             }
-            gestureElement.style.top = opt.rect.top + ((opt.rect.height - 20) / 2) + 'px';
-            gestureElement.style.left = opt.rect.left - 10 + (xxAbs / 1.5) + 'px';
-            gestureElement.style.transform = 'scale(' + (xxAbs / 90) + ')';
+            gestureElement.style.top = (opt.rect.top + ((opt.rect.height - 20) / 2)).toString() + 'px';
+            gestureElement.style.left = (opt.rect.left - 10 + (xxAbs / 1.5)).toString() + 'px';
+            gestureElement.style.transform = 'scale(' + (xxAbs / 90).toString() + ')';
         }
         else {
             if (!dirs.includes('right')) {
@@ -510,9 +520,9 @@ function bindGestureAnimation(opt) {
                 bindGestureData.dir = null;
                 gestureElement.classList.remove('done');
             }
-            gestureElement.style.top = opt.rect.top + ((opt.rect.height - 20) / 2) + 'px';
-            gestureElement.style.left = opt.rect.left + opt.rect.width - 10 - (xxAbs / 1.5) + 'px';
-            gestureElement.style.transform = 'scale(' + (xxAbs / 90) + ')';
+            gestureElement.style.top = (opt.rect.top + ((opt.rect.height - 20) / 2)).toString() + 'px';
+            gestureElement.style.left = (opt.rect.left + opt.rect.width - 10 - (xxAbs / 1.5)).toString() + 'px';
+            gestureElement.style.transform = 'scale(' + (xxAbs / 90).toString() + ')';
         }
     }
     else {
@@ -531,9 +541,9 @@ function bindGestureAnimation(opt) {
                 bindGestureData.dir = null;
                 gestureElement.classList.remove('done');
             }
-            gestureElement.style.left = opt.rect.left + ((opt.rect.width - 20) / 2) + 'px';
-            gestureElement.style.top = opt.rect.top - 10 + (xyAbs / 1.5) + 'px';
-            gestureElement.style.transform = 'scale(' + (xyAbs / 90) + ')';
+            gestureElement.style.left = (opt.rect.left + ((opt.rect.width - 20) / 2)).toString() + 'px';
+            gestureElement.style.top = (opt.rect.top - 10 + (xyAbs / 1.5)).toString() + 'px';
+            gestureElement.style.transform = 'scale(' + (xyAbs / 90).toString() + ')';
         }
         else {
             if (!dirs.includes('bottom')) {
@@ -550,9 +560,9 @@ function bindGestureAnimation(opt) {
                 bindGestureData.dir = null;
                 gestureElement.classList.remove('done');
             }
-            gestureElement.style.left = opt.rect.left + ((opt.rect.width - 20) / 2) + 'px';
-            gestureElement.style.top = opt.rect.top + opt.rect.height - 10 - (xyAbs / 1.5) + 'px';
-            gestureElement.style.transform = 'scale(' + (xyAbs / 90) + ')';
+            gestureElement.style.left = (opt.rect.left + ((opt.rect.width - 20) / 2)).toString() + 'px';
+            gestureElement.style.top = (opt.rect.top + opt.rect.height - 10 - (xyAbs / 1.5)).toString() + 'px';
+            gestureElement.style.transform = 'scale(' + (xyAbs / 90).toString() + ')';
         }
     }
     if (bindGestureData.xx === bindGestureData.tx && bindGestureData.xy === bindGestureData.ty) {
@@ -574,8 +584,8 @@ function bindGestureAnimation(opt) {
 }
 function bindGesture(e, opt) {
     var _a, _b, _c, _d, _e;
-    let gestureElement = document.getElementById('cg-gesture');
-    let el = (_b = (_a = e.currentTarget) !== null && _a !== void 0 ? _a : e.target) !== null && _b !== void 0 ? _b : opt.el;
+    const gestureElement = document.getElementById('cg-gesture');
+    const el = (_b = (_a = e.currentTarget) !== null && _a !== void 0 ? _a : e.target) !== null && _b !== void 0 ? _b : opt.el;
     if (!el) {
         return;
     }
@@ -592,10 +602,10 @@ function bindGesture(e, opt) {
         }
         rect = el.getBoundingClientRect();
     }
-    let dirs = (_c = opt.dirs) !== null && _c !== void 0 ? _c : ['top', 'bottom'];
+    const dirs = (_c = opt.dirs) !== null && _c !== void 0 ? _c : ['top', 'bottom'];
     if ((e instanceof MouseEvent || e instanceof TouchEvent) && !(e instanceof WheelEvent)) {
-        let x = e instanceof MouseEvent ? e.clientX : e.touches[0].clientX;
-        let y = e instanceof MouseEvent ? e.clientY : e.touches[0].clientY;
+        const x = e instanceof MouseEvent ? e.clientX : e.touches[0].clientX;
+        const y = e instanceof MouseEvent ? e.clientY : e.touches[0].clientY;
         let dir = null;
         bindDown(e, {
             move: (e) => {
@@ -608,10 +618,10 @@ function bindGesture(e, opt) {
                     clearTimeout(bindGestureData.timers.sleep);
                     bindGestureData.timers.sleep = 0;
                 }
-                let nx = e instanceof MouseEvent ? e.clientX : e.touches[0].clientX;
-                let ny = e instanceof MouseEvent ? e.clientY : e.touches[0].clientY;
-                let xx = nx - x;
-                let xy = ny - y;
+                const nx = e instanceof MouseEvent ? e.clientX : e.touches[0].clientX;
+                const ny = e instanceof MouseEvent ? e.clientY : e.touches[0].clientY;
+                const xx = nx - x;
+                const xy = ny - y;
                 let xxAbs = Math.abs(xx);
                 let xyAbs = Math.abs(xy);
                 if ((!dirs.includes('top') && !dirs.includes('bottom')) || ((xxAbs > xyAbs) && (dirs.includes('left') || dirs.includes('right')))) {
@@ -630,9 +640,9 @@ function bindGesture(e, opt) {
                             dir = null;
                             gestureElement.classList.remove('done');
                         }
-                        gestureElement.style.top = rect.top + ((rect.height - 20) / 2) + 'px';
-                        gestureElement.style.left = rect.left - 10 + (xxAbs / 1.5) + 'px';
-                        gestureElement.style.transform = 'scale(' + (xxAbs / 90) + ')';
+                        gestureElement.style.top = (rect.top + ((rect.height - 20) / 2)).toString() + 'px';
+                        gestureElement.style.left = (rect.left - 10 + (xxAbs / 1.5)).toString() + 'px';
+                        gestureElement.style.transform = 'scale(' + (xxAbs / 90).toString() + ')';
                     }
                     else {
                         if (!dirs.includes('right')) {
@@ -649,9 +659,9 @@ function bindGesture(e, opt) {
                             dir = null;
                             gestureElement.classList.remove('done');
                         }
-                        gestureElement.style.top = rect.top + ((rect.height - 20) / 2) + 'px';
-                        gestureElement.style.left = rect.left + rect.width - 10 - (xxAbs / 1.5) + 'px';
-                        gestureElement.style.transform = 'scale(' + (xxAbs / 90) + ')';
+                        gestureElement.style.top = (rect.top + ((rect.height - 20) / 2)).toString() + 'px';
+                        gestureElement.style.left = (rect.left + rect.width - 10 - (xxAbs / 1.5)).toString() + 'px';
+                        gestureElement.style.transform = 'scale(' + (xxAbs / 90).toString() + ')';
                     }
                 }
                 else {
@@ -670,9 +680,9 @@ function bindGesture(e, opt) {
                             dir = null;
                             gestureElement.classList.remove('done');
                         }
-                        gestureElement.style.left = rect.left + ((rect.width - 20) / 2) + 'px';
-                        gestureElement.style.top = rect.top - 10 + (xyAbs / 1.5) + 'px';
-                        gestureElement.style.transform = 'scale(' + (xyAbs / 90) + ')';
+                        gestureElement.style.left = (rect.left + ((rect.width - 20) / 2)).toString() + 'px';
+                        gestureElement.style.top = (rect.top - 10 + (xyAbs / 1.5)).toString() + 'px';
+                        gestureElement.style.transform = 'scale(' + (xyAbs / 90).toString() + ')';
                     }
                     else {
                         if (!dirs.includes('bottom')) {
@@ -689,9 +699,9 @@ function bindGesture(e, opt) {
                             dir = null;
                             gestureElement.classList.remove('done');
                         }
-                        gestureElement.style.left = rect.left + ((rect.width - 20) / 2) + 'px';
-                        gestureElement.style.top = rect.top + rect.height - 10 - (xyAbs / 1.5) + 'px';
-                        gestureElement.style.transform = 'scale(' + (xyAbs / 90) + ')';
+                        gestureElement.style.left = (rect.left + ((rect.width - 20) / 2)).toString() + 'px';
+                        gestureElement.style.top = (rect.top + rect.height - 10 - (xyAbs / 1.5)).toString() + 'px';
+                        gestureElement.style.transform = 'scale(' + (xyAbs / 90).toString() + ')';
                     }
                 }
             },

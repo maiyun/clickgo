@@ -1,4 +1,4 @@
-export let props = {
+export const props = {
     'disabled': {
         'default': false
     },
@@ -17,7 +17,7 @@ export let props = {
     }
 };
 
-export let computed = {
+export const computed = {
     'isDisabled': function(this: IVControl): boolean {
         return clickgo.tool.getBoolean(this.disabled);
     },
@@ -36,13 +36,13 @@ export let computed = {
         };
     },
     'value': function(this: IVControl): any[] {
-        let list: any[] = [];
+        const list: any[] = [];
         // --- 大列表 ---
-        let bigList: any = {};
-        let bigTitle: string[] = [];
-        for (let item of this.modelValue) {
-            let kind = this.sortData === 'letter' ? undefined : item.kind;
-            let type = item.type ?? 'property';
+        const bigList: any = {};
+        const bigTitle: string[] = [];
+        for (const item of this.modelValue) {
+            const kind = this.sortData === 'letter' ? undefined : item.kind;
+            const type = item.type ?? 'property';
             if (type !== this.typeData) {
                 continue;
             }
@@ -66,14 +66,14 @@ export let computed = {
             };
             bigList[kind].title.push(item.title);
         }
-        for (let title of bigTitle) {
+        for (const title of bigTitle) {
             list.push({
                 'title': title,
                 'list': []
             });
-            let i = list.length - 1;
+            const i = list.length - 1;
             bigList[title].title.sort();
-            for (let item of bigList[title].title) {
+            for (const item of bigList[title].title) {
                 list[i].list.push(bigList[title].list[item]);
             }
         }
@@ -81,7 +81,7 @@ export let computed = {
     }
 };
 
-export let watch = {
+export const watch = {
     'sort': {
         handler: function(this: IVControl): void {
             this.sortData = this.sort;
@@ -102,7 +102,7 @@ export let watch = {
     }
 };
 
-export let data = {
+export const data = {
     'direction': 'h',
     'localeData': {
         'en': {
@@ -136,7 +136,7 @@ export let data = {
     'dockValue': ''
 };
 
-export let methods = {
+export const methods = {
     contextmenu: function(this: IVControl, e: MouseEvent): void {
         if (clickgo.dom.hasTouchButMouse(e)) {
             return;
@@ -177,7 +177,7 @@ export let methods = {
     },
     // --- 打开/关闭子项 ---
     bigToggle: function(this: IVControl, bigTitle: string): void {
-        let io = this.bigClosed.indexOf(bigTitle);
+        const io = this.bigClosed.indexOf(bigTitle);
         if (io === -1) {
             this.bigClosed.push(bigTitle);
             return;
@@ -185,7 +185,7 @@ export let methods = {
         this.bigClosed.splice(io, 1);
     },
     toggle: function(this: IVControl, title: string): void {
-        let io = this.opened.indexOf(title);
+        const io = this.opened.indexOf(title);
         if (io === -1) {
             this.opened.push(title);
             return;
@@ -194,7 +194,7 @@ export let methods = {
     },
     // --- 项内容更新方法 ---
     update: function(this: IVControl, value: string): void {
-        for (let item of this.modelValue) {
+        for (const item of this.modelValue) {
             if (item.title !== this.selectedTitle) {
                 continue;
             }
@@ -208,7 +208,7 @@ export let methods = {
             }
             else {
                 // --- 小级别 ---
-                let arr = item.value.split(',');
+                const arr = item.value.split(',');
                 for (let i = 0; i < arr.length; ++i) {
                     if (typeof arr[i] !== 'string') {
                         continue;
@@ -216,11 +216,11 @@ export let methods = {
                     arr[i] = arr[i].trim();
                 }
                 for (let i = 0; i < item.sub.length; ++i) {
-                    let sub = item.sub[i];
+                    const sub = item.sub[i];
                     if (sub.title !== this.selectedSub) {
                         continue;
                     }
-                    let val = this.subValue(item, i);
+                    const val = this.subValue(item, i);
                     if (val === value) {
                         continue;
                     }
@@ -237,7 +237,7 @@ export let methods = {
             clickgo.form.hidePop();
             return;
         }
-        for (let item of this.modelValue) {
+        for (const item of this.modelValue) {
             if (item.title !== this.selectedTitle) {
                 continue;
             }
@@ -248,7 +248,7 @@ export let methods = {
             else {
                 // --- 小级别 ---
                 for (let i = 0; i < item.sub.length; ++i) {
-                    let sub = item.sub[i];
+                    const sub = item.sub[i];
                     if (sub.title !== this.selectedSub) {
                         continue;
                     }
@@ -264,7 +264,7 @@ export let methods = {
     },
     // --- 双击 ---
     reset: function(this: IVControl): void {
-        for (let item of this.modelValue) {
+        for (const item of this.modelValue) {
             if (item.title !== this.selectedTitle) {
                 continue;
             }
@@ -278,7 +278,7 @@ export let methods = {
             }
             else {
                 // --- 小级别 ---
-                let arr = item.value.split(',');
+                const arr = item.value.split(',');
                 for (let i = 0; i < arr.length; ++i) {
                     if (typeof arr[i] !== 'string') {
                         continue;
@@ -286,12 +286,12 @@ export let methods = {
                     arr[i] = arr[i].trim();
                 }
                 for (let i = 0; i < item.sub.length; ++i) {
-                    let sub = item.sub[i];
+                    const sub = item.sub[i];
                     if (sub.title !== this.selectedSub) {
                         continue;
                     }
-                    let val = this.subValue(item, i);
-                    let def = this.subValue(item, i, true);
+                    const val = this.subValue(item, i);
+                    const def = this.subValue(item, i, true);
                     if (val === def) {
                         continue;
                     }

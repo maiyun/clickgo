@@ -10,11 +10,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 clickgo.ready(function () {
     return __awaiter(this, void 0, void 0, function* () {
-        let body = document.getElementsByTagName('body')[0];
+        const body = document.getElementsByTagName('body')[0];
         if (!clickgo.native) {
             body.style.background = '#222';
         }
-        let el = document.getElementById('tip');
+        const el = document.getElementById('tip');
         if (!el) {
             return;
         }
@@ -24,15 +24,15 @@ clickgo.ready(function () {
                 return;
             }
             console.log(info, error);
-            let err = document.getElementById('err');
+            const err = document.getElementById('err');
             err.style.display = 'block';
-            err.innerHTML = 'Error, Task ID: ' + taskId + ', Form ID: ' + formId + '<br>' + (error.stack ? error.stack.replace(/\n/g, '<br>') : '');
+            err.innerHTML = 'Error, Task ID: ' + taskId.toString() + ', Form ID: ' + formId.toString() + '<br>' + (error.stack ? error.stack.replace(/\n/g, '<br>') : '');
             clickgo.task.end(taskId);
         };
         clickgo.core.globalEvents.taskEndedHandler = function (taskId) {
-            el.innerHTML = 'Task(' + taskId + ') ended.';
+            el.innerHTML = 'Task(' + taskId.toString() + ') ended.';
         };
-        let sTaskId = yield clickgo.task.run('/clickgo/app/task/', {
+        const sTaskId = yield clickgo.task.run('/clickgo/app/task/', {
             'progress': false
         });
         if (sTaskId <= 0) {
@@ -40,7 +40,7 @@ clickgo.ready(function () {
             return;
         }
         el.innerHTML = 'Starting app...';
-        let taskId = yield clickgo.task.run('/clickgo/app/demo/');
+        const taskId = yield clickgo.task.run('/clickgo/app/demo/');
         if (taskId <= 0) {
             el.innerHTML = `Start failed(${taskId.toString()}).`;
             return;

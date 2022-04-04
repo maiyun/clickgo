@@ -1,4 +1,4 @@
-export let data = {
+export const data = {
     'lineValue': 100,
     'lineCount': 2,
 
@@ -40,9 +40,9 @@ export let data = {
     'area': {}
 };
 
-export let computed = {
+export const computed = {
     'is': function(this: IVForm): any[] {
-        let is = [];
+        const is = [];
         for (let i = 0; i < this.lineCount; ++i) {
             if (i > 0 && i % 10 === 0) {
                 is[i] = 30;
@@ -53,7 +53,44 @@ export let computed = {
     }
 };
 
-export let mounted = function(this: IVForm): void {
+export const mounted = function(this: IVForm): void {
     this.is6[29] = 50;
     this.is6[39] = 50;
+};
+
+export const methods = {
+    scrollborder: function(this: IVForm, e: MouseEvent | TouchEvent | WheelEvent, dir: string): void {
+        if (!this.gesture) {
+            return;
+        }
+        let dirs: any = [];
+        switch (dir) {
+            case 'h': {
+                dirs = ['left', 'right'];
+                break;
+            }
+            default: {
+                dirs = ['top', 'bottom'];
+                break;
+            }
+        }
+        clickgo.dom.bindGesture(e, {
+            'dirs': dirs,
+            'handler': (dir) => {
+                switch (dir) {
+                    case 'left':
+                    case 'top': {
+                        this.lineCount -= 10;
+                        if (this.lineCount < 0) {
+                            this.lineCount = 0;
+                        }
+                        break;
+                    }
+                    default: {
+                        (this.lineCount as number) += this.lineValue as number;
+                    }
+                }
+            }
+        });
+    }
 };

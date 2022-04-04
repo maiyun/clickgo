@@ -1,9 +1,9 @@
-import * as jszip from "jszip";
+import * as jszip from 'jszip';
 
 class Zip implements ICGZip {
 
     /** --- zip 对象 --- */
-    private _zip!: jszip;
+    private readonly _zip!: jszip;
 
     /** --- 当前路径，以 / 开头以 / 结尾 --- */
     private _path: string = '/';
@@ -22,15 +22,15 @@ class Zip implements ICGZip {
      */
     public async getContent<T extends TCGZipOutputType>(path: string, type: T = 'string' as T): Promise<ICGZipOutputByType[T] | string | null> {
         path = clickgo.tool.urlResolve(this._path, path);
-        let f = this._zip.file(path.slice(1));
+        const f = this._zip.file(path.slice(1));
         if (!f) {
             return null;
         }
         if (type === 'string') {
-            return await f.async('string');
+            return f.async('string');
         }
         else {
-            return await f.async(type);
+            return f.async(type);
         }
     }
 
@@ -87,7 +87,7 @@ class Zip implements ICGZip {
         if (!path.endsWith('/')) {
             path += '/';
         }
-        let folder = this._zip.folder(path.slice(1));
+        const folder = this._zip.folder(path.slice(1));
         if (!folder) {
             return [];
         }
@@ -99,9 +99,9 @@ class Zip implements ICGZip {
         }
         // --- 定义 list ---
         if (opt.pathAsKey) {
-            let list: Record<string, ICGZipItem> = {};
+            const list: Record<string, ICGZipItem> = {};
             // --- 遍历子项 ---
-            for (let item of this._list[path]) {
+            for (const item of this._list[path]) {
                 if (item.isFile || opt.hasDir) {
                     list[item.path + item.name] = item;
                 }
@@ -118,7 +118,7 @@ class Zip implements ICGZip {
         else {
             let list: ICGZipItem[] = [];
             // --- 遍历子项 ---
-            for (let item of this._list[path]) {
+            for (const item of this._list[path]) {
                 if (item.isFile || opt.hasDir) {
                     list.push(item);
                 }
@@ -142,11 +142,11 @@ class Zip implements ICGZip {
      */
     private _readDir(item: ICGZipItem, opt: { 'hasChildren'?: boolean; 'hasDir'?: boolean; 'pathAsKey'?: boolean; }): Record<string, ICGZipItem> | ICGZipItem[] {
         if (opt.pathAsKey) {
-            let list: Record<string, ICGZipItem> = {};
+            const list: Record<string, ICGZipItem> = {};
             if (!this._list[item.path + item.name + '/']) {
                 return {};
             }
-            for (let it of this._list[item.path + item.name + '/']) {
+            for (const it of this._list[item.path + item.name + '/']) {
                 if (it.isFile || opt.hasDir) {
                     list[it.path + it.name] = it;
                 }
@@ -165,7 +165,7 @@ class Zip implements ICGZip {
             if (!this._list[item.path + item.name + '/']) {
                 return [];
             }
-            for (let it of this._list[item.path + item.name + '/']) {
+            for (const it of this._list[item.path + item.name + '/']) {
                 if (it.isFile || opt.hasDir) {
                     list.push(it);
                 }
@@ -183,11 +183,12 @@ class Zip implements ICGZip {
 
     /** --- 目录列表缓存 --- */
     private _list: Record<string, ICGZipItem[]> = {};
+
     /**
      * --- 重建目录列表缓存 ---
      */
     private _refreshList(): void {
-        let list: Record<string, ICGZipItem[]> = {};
+        const list: Record<string, ICGZipItem[]> = {};
         this._zip.forEach(function(relativePath, item) {
             let parentPath = '/';
             let name = '';
@@ -247,8 +248,8 @@ class Zip implements ICGZip {
      * --- 打包 zip ---
      * @param options 选项
      */
-    public async generate<T extends TCGZipOutputType>(options: { 'type'?: T; 'level'?: number; 'onUpdate'?: (percent: number, currentFile: string) => void; } = {}): Promise<ICGZipOutputByType[T]> {
-        let opt: any = {};
+    public generate<T extends TCGZipOutputType>(options: { 'type'?: T; 'level'?: number; 'onUpdate'?: (percent: number, currentFile: string) => void; } = {}): Promise<ICGZipOutputByType[T]> {
+        const opt: any = {};
         if (options.type === undefined) {
             opt.type = 'blob' as T;
         }
@@ -264,7 +265,7 @@ class Zip implements ICGZip {
         if (options.level > 0) {
             opt.compression = 'DEFLATE';
         }
-        return await this._zip.generateAsync(opt, function(meta: ICGZipMetadata): void {
+        return this._zip.generateAsync(opt, function(meta: ICGZipMetadata): void {
             options.onUpdate?.(meta.percent, meta.currentFile);
         });
     }
@@ -274,14 +275,14 @@ class Zip implements ICGZip {
      */
     public getList(): Promise<Record<string, Blob | string>> {
         return new Promise((resolve) => {
-            let files: Record<string, Blob | string> = {};
-            let list = this.readDir('/', {
+            const files: Record<string, Blob | string> = {};
+            const list = this.readDir('/', {
                 'hasChildren': true,
                 'hasDir': false
             });
             let loaded = 0;
-            for (let file of list) {
-                let mime = clickgo.tool.getMimeByPath(file.name);
+            for (const file of list) {
+                const mime = clickgo.tool.getMimeByPath(file.name);
                 if (['txt', 'json', 'js', 'css', 'xml', 'html'].includes(mime.ext)) {
                     this.getContent(file.path + file.name, 'string').then(function(fb) {
                         if (fb) {
@@ -328,7 +329,7 @@ class Zip implements ICGZip {
  * @param data 对象数据
  */
 export async function get(data?: TCGZipInputFileFormat): Promise<Zip | null> {
-    let z = jszip();
+    const z = jszip();
     try {
         if (data) {
             await z.loadAsync(data);

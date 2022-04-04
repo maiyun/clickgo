@@ -1,4 +1,4 @@
-export let props = {
+export const props = {
     'direction': {
         'default': 'h'
     },
@@ -11,13 +11,13 @@ export let props = {
     }
 };
 
-export let computed = {
+export const computed = {
     'show': function(this: IVControl): boolean {
         return this.$parent ? this.$parent.selected === (this.value ?? this.label) : false;
     }
 };
 
-export let watch = {
+export const watch = {
     'show': function(this: IVControl): void {
         if (this.showTab) {
             this.$emit('show');

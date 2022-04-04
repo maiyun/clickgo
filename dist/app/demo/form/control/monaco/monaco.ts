@@ -1,4 +1,4 @@
-export let data = {
+export const data = {
     'code': '',
     'codeList': [
         `<html>
@@ -44,7 +44,7 @@ export let data = {
     'disabled': false
 };
 
-export let watch = {
+export const watch = {
     'language': {
         handler: function(this: IVForm): void {
             this.code = this.codeList[this.list.indexOf(this.language)];
@@ -53,17 +53,17 @@ export let watch = {
     }
 };
 
-export let computed = {
+export const computed = {
     'filesName': function(this: IVForm): string[] {
-        let names: string[] = [];
-        for (let name in this.files) {
+        const names: string[] = [];
+        for (const name in this.files) {
             names.push(name);
         }
         return names;
     }
 };
 
-export let methods = {
+export const methods = {
     addInclude: function(this: IVForm): void {
         this.add = true;
         this.files['new.d.ts'] = 'declare function str2(): string;';

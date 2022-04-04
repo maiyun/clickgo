@@ -1,10 +1,10 @@
-export let props = {
+export const props = {
     'position': {
         'default': 'bottom'
     }
 };
 
-export let methods = {
+export const methods = {
     down: function(this: IVControl, e: MouseEvent | TouchEvent): void {
         if (clickgo.dom.hasTouchButMouse(e)) {
             return;
@@ -18,7 +18,7 @@ export let methods = {
             });
         }
     },
-    contextmenu: async function(this: IVControl, e: MouseEvent): Promise<void> {
+    contextmenu: function(this: IVControl, e: MouseEvent): void {
         if (clickgo.dom.hasTouchButMouse(e)) {
             return;
         }

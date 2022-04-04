@@ -96,7 +96,8 @@ exports.watch = {
                     this.shiftStart = (_a = this.valueData[0]) !== null && _a !== void 0 ? _a : 0;
                 }
                 else {
-                    if ((this.valueData.length === this.modelValue.length) && this.valueData.every((ele) => this.modelValue.includes(ele))) {
+                    if ((this.valueData.length === this.modelValue.length)
+                        && this.valueData.every((ele) => this.modelValue.includes(ele))) {
                         return;
                     }
                     this.valueData = this.modelValue;
@@ -134,7 +135,7 @@ exports.watch = {
     'shiftStart': {
         handler: function () {
             var _a;
-            let pos = (_a = this.$refs.view) === null || _a === void 0 ? void 0 : _a.getPos(this.shiftStart);
+            const pos = (_a = this.$refs.view) === null || _a === void 0 ? void 0 : _a.getPos(this.shiftStart);
             if (pos) {
                 this.refreshShiftStartPos(pos);
             }
@@ -155,7 +156,7 @@ exports.methods = {
     },
     refreshShiftStartPos: function () {
         var _a;
-        let pos = (_a = this.$refs.view) === null || _a === void 0 ? void 0 : _a.getPos(this.shiftStart);
+        const pos = (_a = this.$refs.view) === null || _a === void 0 ? void 0 : _a.getPos(this.shiftStart);
         if (!pos) {
             return;
         }
@@ -170,7 +171,7 @@ exports.methods = {
     checkValue: function () {
         var _a, _b, _c, _d, _e, _f;
         let change = false;
-        let notDisabledIndex = this.getFirstNotDisabledDataIndex();
+        const notDisabledIndex = this.getFirstNotDisabledDataIndex();
         if (typeof this.valueData === 'object') {
             if (this.isMulti) {
                 if (this.isMust && (this.valueData.length === 0)) {
@@ -205,7 +206,7 @@ exports.methods = {
                 }
             }
         }
-        let dataMaxIndex = this.data.length - 1;
+        const dataMaxIndex = this.data.length - 1;
         if (this.isMulti) {
             for (let i = 0; i < this.valueData.length; ++i) {
                 if (((this.valueData[i] > 0) && (this.valueData[i] > dataMaxIndex)) ||
@@ -279,7 +280,7 @@ exports.methods = {
                 }
                 else {
                     if (shift) {
-                        let valueData = [];
+                        const valueData = [];
                         if (value > this.shiftStart) {
                             for (let k = this.shiftStart; k <= value; ++k) {
                                 if (this.data[k].disabled || (this.data[k].control === 'split')) {
@@ -301,13 +302,14 @@ exports.methods = {
                                 change = true;
                             }
                         }
-                        if ((valueData.length !== this.valueData.length) || !valueData.every((item) => this.valueData.includes(item))) {
+                        if ((valueData.length !== this.valueData.length)
+                            || !valueData.every((item) => this.valueData.includes(item))) {
                             this.valueData = valueData;
                             change = true;
                         }
                     }
                     else {
-                        let indexOf = this.valueData.indexOf(value);
+                        const indexOf = this.valueData.indexOf(value);
                         if (indexOf > -1) {
                             if (!this.isMust || (this.valueData.length > 1)) {
                                 change = true;
@@ -358,7 +360,7 @@ exports.methods = {
     },
     click: function (e) {
         if (!this.isMust) {
-            let gi = clickgo.dom.findParentByData(e.target, 'cg-control-greatlist-item');
+            const gi = clickgo.dom.findParentByData(e.target, 'cg-control-greatlist-item');
             if (!gi) {
                 this.select(-1, e.shiftKey, e.ctrlKey);
             }
@@ -371,7 +373,7 @@ exports.methods = {
             if (this.isMulti) {
                 if (this.valueData.length > 0) {
                     if (e.key === 'ArrowDown') {
-                        for (let i of this.valueData) {
+                        for (const i of this.valueData) {
                             if (nvalue === -1) {
                                 nvalue = i;
                                 continue;
@@ -383,7 +385,7 @@ exports.methods = {
                         }
                     }
                     else {
-                        for (let i of this.valueData) {
+                        for (const i of this.valueData) {
                             if (nvalue === -1) {
                                 nvalue = i;
                                 continue;
@@ -464,15 +466,15 @@ exports.methods = {
     },
     itemClick: function (e, value) {
         e.stopPropagation();
-        let hasTouch = clickgo.dom.hasTouchButMouse(e);
+        const hasTouch = clickgo.dom.hasTouchButMouse(e);
         this.select(value, e.shiftKey, (hasTouch && this.multi) ? true : e.ctrlKey);
         this.$emit('itemclick', e, false);
     },
     arrowClick: function (e, value) {
         e.stopPropagation();
-        let hasTouch = clickgo.dom.hasTouchButMouse(e);
+        const hasTouch = clickgo.dom.hasTouchButMouse(e);
         this.select(value, e.shiftKey, (hasTouch && this.multi) ? true : e.ctrlKey);
-        let current = e.currentTarget;
+        const current = e.currentTarget;
         if (current.dataset.cgPopOpen === undefined) {
             clickgo.form.showPop(current, this.$refs.itempop, e);
         }
@@ -524,7 +526,7 @@ exports.methods = {
     onAfterSelect: function () {
     }
 };
-let mounted = function () {
+const mounted = function () {
     this.checkValue();
 };
 exports.mounted = mounted;

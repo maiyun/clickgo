@@ -1,4 +1,4 @@
-export let props = {
+export const props = {
     'selected': {
         'default': false
     },
@@ -10,7 +10,7 @@ export let props = {
     }
 };
 
-export let computed = {
+export const computed = {
     'isSelected': function(this: IVControl): boolean {
         return clickgo.tool.getBoolean(this.selected);
     },
@@ -25,7 +25,7 @@ export let computed = {
     }
 };
 
-export let methods = {
+export const methods = {
     click: function(this: IVControl): void {
         if (!this.$slots.pop) {
             return;
@@ -36,7 +36,7 @@ export let methods = {
         }
         clickgo.form.showPop(this.$el, this.$refs.pop, 'v');
     },
-    contextmenu: async function(this: IVControl, e: MouseEvent): Promise<void> {
+    contextmenu: function(this: IVControl, e: MouseEvent): void {
         if (clickgo.dom.hasTouchButMouse(e)) {
             return;
         }

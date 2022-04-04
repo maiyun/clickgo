@@ -1,4 +1,4 @@
-export let props = {
+export const props = {
     'disabled': {
         'default': false
     },
@@ -21,7 +21,7 @@ export let props = {
     }
 };
 
-export let computed = {
+export const computed = {
     'isDisabled': function(this: IVControl): boolean {
         return clickgo.tool.getBoolean(this.disabled);
     },
@@ -43,7 +43,7 @@ export let computed = {
     }
 };
 
-export let data = {
+export const data = {
     'padding': '',
 
     'isKeyDown': false,
@@ -52,7 +52,7 @@ export let data = {
     'arrowFocus': false
 };
 
-export let methods = {
+export const methods = {
     keydown: function(this: IVControl, e: KeyboardEvent): void {
         if (e.key === 'Enter') {
             e.preventDefault();
@@ -134,7 +134,7 @@ export let methods = {
     }
 };
 
-export let mounted = function(this: IVControl): void {
+export const mounted = function(this: IVControl): void {
     clickgo.dom.watchStyle(this.$el, 'padding', (n, v) => {
         this.padding = v;
     }, true);

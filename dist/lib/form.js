@@ -9,14 +9,14 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.create = exports.remove = exports.doFocusAndPopEvent = exports.hidePop = exports.showPop = exports.removeFromPop = exports.appendToPop = exports.simpletaskRoot = exports.hideNotify = exports.notifyProgress = exports.notify = exports.hideRectangle = exports.showRectangle = exports.moveRectangle = exports.showCircular = exports.getRectByBorder = exports.getMaxZIndexFormID = exports.changeFocus = exports.getList = exports.send = exports.get = exports.min = exports.getTaskId = exports.refreshMaxPosition = exports.getAvailArea = exports.refreshTaskPosition = exports.clearTask = exports.setTask = exports.taskInfo = void 0;
-let popList = [];
-let popElList = [];
+exports.create = exports.remove = exports.doFocusAndPopEvent = exports.hidePop = exports.showPop = exports.removeFromPop = exports.appendToPop = exports.hideNotify = exports.notifyProgress = exports.notify = exports.hideRectangle = exports.showRectangle = exports.moveRectangle = exports.showCircular = exports.getRectByBorder = exports.getMaxZIndexFormID = exports.changeFocus = exports.getList = exports.send = exports.get = exports.min = exports.getTaskId = exports.refreshMaxPosition = exports.getAvailArea = exports.refreshTaskPosition = exports.clearTask = exports.setTask = exports.taskInfo = exports.simpletaskRoot = void 0;
+const popList = [];
+const popElList = [];
 let lastFormId = 0;
 let lastZIndex = 999;
 let lastTopZIndex = 9999999;
 let lastPopZIndex = 0;
-let localeData = {
+const localeData = {
     'en': {
         'ok': 'OK',
         'yes': 'Yes',
@@ -42,7 +42,7 @@ let localeData = {
         'cancel': 'キャンセル'
     }
 };
-let wrapElement = document.createElement('div');
+const wrapElement = document.createElement('div');
 wrapElement.id = 'cg-wrap';
 document.getElementsByTagName('body')[0].appendChild(wrapElement);
 if (clickgo.native) {
@@ -53,7 +53,7 @@ if (clickgo.native) {
         clickgo.core.sendNative('cg-mouse-ignore', 'true');
     });
 }
-let formListElement = document.createElement('div');
+const formListElement = document.createElement('div');
 formListElement.id = 'cg-form-list';
 wrapElement.appendChild(formListElement);
 formListElement.addEventListener('touchmove', function (e) {
@@ -71,7 +71,7 @@ formListElement.addEventListener('wheel', function (e) {
 formListElement.addEventListener('contextmenu', function (e) {
     e.preventDefault();
 });
-let popListElement = document.createElement('div');
+const popListElement = document.createElement('div');
 popListElement.id = 'cg-pop-list';
 popListElement.addEventListener('contextmenu', function (e) {
     e.preventDefault();
@@ -82,27 +82,75 @@ popListElement.addEventListener('touchmove', function (e) {
 }, {
     'passive': false
 });
-let circularElement = document.createElement('div');
+const circularElement = document.createElement('div');
 circularElement.id = 'cg-circular';
 wrapElement.appendChild(circularElement);
-let rectangleElement = document.createElement('div');
+const rectangleElement = document.createElement('div');
 rectangleElement.setAttribute('data-pos', '');
 rectangleElement.id = 'cg-rectangle';
 wrapElement.appendChild(rectangleElement);
-let gestureElement = document.createElement('div');
+const gestureElement = document.createElement('div');
 gestureElement.id = 'cg-gesture';
 wrapElement.appendChild(gestureElement);
+const simpletaskElement = document.createElement('div');
+simpletaskElement.id = 'cg-simpletask';
+simpletaskElement.addEventListener('contextmenu', function (e) {
+    e.preventDefault();
+});
+wrapElement.appendChild(simpletaskElement);
+simpletaskElement.addEventListener('touchmove', function (e) {
+    e.preventDefault();
+}, {
+    'passive': false
+});
+const simpletaskApp = Vue.createApp({
+    'template': '<div v-for="(item, formId) of forms" class="cg-simpletask-item" @click="click(parseInt(formId))"><div v-if="item.icon" class="cg-simpletask-icon" :style="{\'background-image\': \'url(\' + item.icon + \')\'}"></div><div>{{item.title}}</div></div>',
+    'data': function () {
+        return {
+            'forms': {}
+        };
+    },
+    'watch': {
+        'forms': {
+            handler: function () {
+                const length = Object.keys(this.forms).length;
+                if (length > 0) {
+                    if (simpletaskElement.style.bottom !== '0px') {
+                        simpletaskElement.style.bottom = '0px';
+                        clickgo.core.trigger('screenResize');
+                    }
+                }
+                else {
+                    if (simpletaskElement.style.bottom === '0px') {
+                        simpletaskElement.style.bottom = '-46px';
+                        clickgo.core.trigger('screenResize');
+                    }
+                }
+            },
+            'deep': true
+        }
+    },
+    'methods': {
+        click: function (formId) {
+            changeFocus(formId);
+        }
+    },
+    'mounted': function () {
+        exports.simpletaskRoot = this;
+    }
+});
+simpletaskApp.mount('#cg-simpletask');
 exports.taskInfo = Vue.reactive({
     'taskId': 0,
     'formId': 0,
     'length': 0
 });
 function setTask(taskId, formId) {
-    let task = clickgo.task.list[taskId];
+    const task = clickgo.task.list[taskId];
     if (!task) {
         return false;
     }
-    let form = task.forms[formId];
+    const form = task.forms[formId];
     if (!form) {
         return false;
     }
@@ -144,11 +192,11 @@ function clearTask(taskId) {
     exports.taskInfo.formId = 0;
     exports.taskInfo.length = 0;
     clickgo.core.trigger('screenResize');
-    let tasks = clickgo.task.getList();
-    for (let taskId in tasks) {
-        let forms = getList(parseInt(taskId));
-        for (let formId in forms) {
-            let form = forms[formId];
+    const tasks = clickgo.task.getList();
+    for (const taskId in tasks) {
+        const forms = getList(parseInt(taskId));
+        for (const formId in forms) {
+            const form = forms[formId];
             if (!form.stateMin) {
                 continue;
             }
@@ -163,7 +211,7 @@ function clearTask(taskId) {
 exports.clearTask = clearTask;
 function refreshTaskPosition() {
     if (exports.taskInfo.taskId > 0) {
-        let form = clickgo.task.list[exports.taskInfo.taskId].forms[exports.taskInfo.formId];
+        const form = clickgo.task.list[exports.taskInfo.taskId].forms[exports.taskInfo.formId];
         switch (clickgo.core.config['task.position']) {
             case 'left':
             case 'right': {
@@ -266,19 +314,19 @@ function getAvailArea() {
 }
 exports.getAvailArea = getAvailArea;
 function refreshMaxPosition() {
-    let area = getAvailArea();
+    const area = getAvailArea();
     for (let i = 0; i < formListElement.children.length; ++i) {
-        let el = formListElement.children.item(i);
-        let ef = el.children.item(0);
+        const el = formListElement.children.item(i);
+        const ef = el.children.item(0);
         if (ef.dataset.cgMax === undefined) {
             continue;
         }
-        let taskId = parseInt(el.getAttribute('data-task-id'));
-        let formId = parseInt(el.getAttribute('data-form-id'));
+        const taskId = parseInt(el.getAttribute('data-task-id'));
+        const formId = parseInt(el.getAttribute('data-form-id'));
         if (!clickgo.task.list[taskId]) {
             continue;
         }
-        let vroot = clickgo.task.list[taskId].forms[formId].vroot;
+        const vroot = clickgo.task.list[taskId].forms[formId].vroot;
         vroot.$refs.form.setPropData('left', area.left);
         vroot.$refs.form.setPropData('top', area.top);
         vroot.$refs.form.setPropData('width', area.width);
@@ -287,11 +335,11 @@ function refreshMaxPosition() {
 }
 exports.refreshMaxPosition = refreshMaxPosition;
 function getTaskId(formId) {
-    let formElement = formListElement.querySelector(`[data-form-id='${formId}']`);
+    const formElement = formListElement.querySelector(`[data-form-id='${formId}']`);
     if (!formElement) {
         return 0;
     }
-    let taskIdAttr = formElement.getAttribute('data-task-id');
+    const taskIdAttr = formElement.getAttribute('data-task-id');
     if (!taskIdAttr) {
         return 0;
     }
@@ -299,8 +347,8 @@ function getTaskId(formId) {
 }
 exports.getTaskId = getTaskId;
 function min(formId) {
-    let taskId = getTaskId(formId);
-    let task = clickgo.task.list[taskId];
+    const taskId = getTaskId(formId);
+    const task = clickgo.task.list[taskId];
     if (!task) {
         return false;
     }
@@ -309,11 +357,11 @@ function min(formId) {
 }
 exports.min = min;
 function get(formId) {
-    let taskId = getTaskId(formId);
+    const taskId = getTaskId(formId);
     if (taskId === 0) {
         return null;
     }
-    let item = clickgo.task.list[taskId].forms[formId];
+    const item = clickgo.task.list[taskId].forms[formId];
     return {
         'taskId': taskId,
         'title': item.vroot.$refs.form.title,
@@ -326,11 +374,11 @@ function get(formId) {
 }
 exports.get = get;
 function send(formId, obj) {
-    let taskId = getTaskId(formId);
+    const taskId = getTaskId(formId);
     if (taskId === 0) {
         return;
     }
-    let item = clickgo.task.list[taskId].forms[formId];
+    const item = clickgo.task.list[taskId].forms[formId];
     if (!item.vroot.cgReceive) {
         return;
     }
@@ -341,9 +389,9 @@ function getList(taskId) {
     if (!clickgo.task.list[taskId]) {
         return {};
     }
-    let list = {};
-    for (let fid in clickgo.task.list[taskId].forms) {
-        let item = clickgo.task.list[taskId].forms[fid];
+    const list = {};
+    for (const fid in clickgo.task.list[taskId].forms) {
+        const item = clickgo.task.list[taskId].forms[fid];
         list[fid] = {
             'taskId': taskId,
             'title': item.vroot.$refs.form.title,
@@ -367,17 +415,17 @@ function changeFocus(formId = 0) {
         });
         return;
     }
-    let focusElement = document.querySelector('#cg-form-list > [data-cg-focus]');
+    const focusElement = document.querySelector('#cg-form-list > [data-cg-focus]');
     if (focusElement) {
-        let dataFormId = focusElement.getAttribute('data-form-id');
+        const dataFormId = focusElement.getAttribute('data-form-id');
         if (dataFormId) {
-            let dataFormIdNumber = parseInt(dataFormId);
+            const dataFormIdNumber = parseInt(dataFormId);
             if (dataFormIdNumber === formId) {
                 return;
             }
             else {
-                let taskId = parseInt((_a = focusElement.getAttribute('data-task-id')) !== null && _a !== void 0 ? _a : '0');
-                let task = clickgo.task.list[taskId];
+                const taskId = parseInt((_a = focusElement.getAttribute('data-task-id')) !== null && _a !== void 0 ? _a : '0');
+                const task = clickgo.task.list[taskId];
                 task.forms[dataFormIdNumber].vapp._container.removeAttribute('data-cg-focus');
                 task.forms[dataFormIdNumber].vroot._cgFocus = false;
                 clickgo.core.trigger('formBlurred', taskId, dataFormIdNumber);
@@ -390,15 +438,15 @@ function changeFocus(formId = 0) {
     if (formId === 0) {
         return;
     }
-    let el = document.querySelector(`#cg-form-list > [data-form-id='${formId}']`);
+    const el = document.querySelector(`#cg-form-list > [data-form-id='${formId}']`);
     if (!el) {
         return;
     }
     if (el.childNodes.item(0).dataset.cgMin !== undefined) {
         min(formId);
     }
-    let taskId = parseInt((_b = el.getAttribute('data-task-id')) !== null && _b !== void 0 ? _b : '0');
-    let task = clickgo.task.list[taskId];
+    const taskId = parseInt((_b = el.getAttribute('data-task-id')) !== null && _b !== void 0 ? _b : '0');
+    const task = clickgo.task.list[taskId];
     if (!task.forms[formId].vroot.cgCustomZIndex) {
         if (task.forms[formId].vroot.cgTopMost) {
             task.forms[formId].vroot.$refs.form.setPropData('zIndex', ++lastTopZIndex);
@@ -407,7 +455,7 @@ function changeFocus(formId = 0) {
             task.forms[formId].vroot.$refs.form.setPropData('zIndex', ++lastZIndex);
         }
     }
-    let maskFor = task.forms[formId].vroot.$refs.form.maskFor;
+    const maskFor = task.forms[formId].vroot.$refs.form.maskFor;
     if ((typeof maskFor === 'number') && (clickgo.task.list[taskId].forms[maskFor])) {
         if (get(maskFor).stateMin) {
             min(maskFor);
@@ -437,20 +485,20 @@ function getMaxZIndexFormID(out = {}) {
     let zIndex = 0;
     let formId = null;
     for (let i = 0; i < formListElement.children.length; ++i) {
-        let root = formListElement.children.item(i);
-        let formWrap = root.children.item(0);
-        let z = parseInt(formWrap.style.zIndex);
+        const root = formListElement.children.item(i);
+        const formWrap = root.children.item(0);
+        const z = parseInt(formWrap.style.zIndex);
         if (z > 9999999) {
             continue;
         }
         if (formWrap.dataset.cgMin !== undefined) {
             continue;
         }
-        let tid = parseInt(root.getAttribute('data-task-id'));
+        const tid = parseInt(root.getAttribute('data-task-id'));
         if ((_a = out.taskIds) === null || _a === void 0 ? void 0 : _a.includes(tid)) {
             continue;
         }
-        let fid = parseInt(root.getAttribute('data-form-id'));
+        const fid = parseInt(root.getAttribute('data-form-id'));
         if ((_b = out.formIds) === null || _b === void 0 ? void 0 : _b.includes(fid)) {
             continue;
         }
@@ -464,7 +512,7 @@ function getMaxZIndexFormID(out = {}) {
 exports.getMaxZIndexFormID = getMaxZIndexFormID;
 function getRectByBorder(border) {
     var _a, _b, _c, _d;
-    let area = getAvailArea();
+    const area = getAvailArea();
     let width, height, left, top;
     if (typeof border === 'string') {
         switch (border) {
@@ -524,6 +572,9 @@ function getRectByBorder(border) {
                 top = area.top;
                 break;
             }
+            default: {
+                break;
+            }
         }
     }
     else {
@@ -545,16 +596,16 @@ function showCircular(x, y) {
     requestAnimationFrame(function () {
         circularElement.style.width = '6px';
         circularElement.style.height = '6px';
-        circularElement.style.left = x - 3 + 'px';
-        circularElement.style.top = y - 3 + 'px';
+        circularElement.style.left = (x - 3).toString() + 'px';
+        circularElement.style.top = (y - 3).toString() + 'px';
         circularElement.style.opacity = '1';
         requestAnimationFrame(function () {
             circularElement.style.transition = 'all .3s ease-out';
             requestAnimationFrame(function () {
                 circularElement.style.width = '60px';
                 circularElement.style.height = '60px';
-                circularElement.style.left = x - 30 + 'px';
-                circularElement.style.top = y - 30 + 'px';
+                circularElement.style.left = (x - 30).toString() + 'px';
+                circularElement.style.top = (y - 30).toString() + 'px';
                 circularElement.style.opacity = '0';
             });
         });
@@ -563,26 +614,26 @@ function showCircular(x, y) {
 exports.showCircular = showCircular;
 function moveRectangle(border) {
     var _a, _b, _c, _d;
-    let dataReady = (_a = rectangleElement.getAttribute('data-ready')) !== null && _a !== void 0 ? _a : '0';
+    const dataReady = (_a = rectangleElement.getAttribute('data-ready')) !== null && _a !== void 0 ? _a : '0';
     if (dataReady === '0') {
         return;
     }
-    let dataBorder = (_b = rectangleElement.getAttribute('data-border')) !== null && _b !== void 0 ? _b : '';
-    let setDataBorder = typeof border === 'string' ? border : 'o-' + border.left + '-' + ((_c = border.top) !== null && _c !== void 0 ? _c : 'n') + '-' + border.width + '-' + ((_d = border.height) !== null && _d !== void 0 ? _d : 'n');
+    const dataBorder = (_b = rectangleElement.getAttribute('data-border')) !== null && _b !== void 0 ? _b : '';
+    const setDataBorder = typeof border === 'string' ? border : `o-${border.left}-${(_c = border.top) !== null && _c !== void 0 ? _c : 'n'}-${border.width}-${(_d = border.height) !== null && _d !== void 0 ? _d : 'n'}`;
     if (dataBorder === setDataBorder) {
         return;
     }
     rectangleElement.setAttribute('data-dir', setDataBorder);
-    let pos = getRectByBorder(border);
-    let width = pos.width - 20;
-    let height = pos.height - 20;
-    let left = pos.left + 10;
-    let top = pos.top + 10;
+    const pos = getRectByBorder(border);
+    const width = pos.width - 20;
+    const height = pos.height - 20;
+    const left = pos.left + 10;
+    const top = pos.top + 10;
     if (width !== undefined && height !== undefined && left !== undefined && top !== undefined) {
-        rectangleElement.style.width = width + 'px';
-        rectangleElement.style.height = height + 'px';
-        rectangleElement.style.left = left + 'px';
-        rectangleElement.style.top = top + 'px';
+        rectangleElement.style.width = width.toString() + 'px';
+        rectangleElement.style.height = height.toString() + 'px';
+        rectangleElement.style.left = left.toString() + 'px';
+        rectangleElement.style.top = top.toString() + 'px';
     }
 }
 exports.moveRectangle = moveRectangle;
@@ -591,8 +642,8 @@ function showRectangle(x, y, border) {
     requestAnimationFrame(function () {
         rectangleElement.style.width = '5px';
         rectangleElement.style.height = '5px';
-        rectangleElement.style.left = x - 10 + 'px';
-        rectangleElement.style.top = y - 10 + 'px';
+        rectangleElement.style.left = (x - 10).toString() + 'px';
+        rectangleElement.style.top = (y - 10).toString() + 'px';
         rectangleElement.style.opacity = '1';
         rectangleElement.setAttribute('data-ready', '0');
         rectangleElement.setAttribute('data-dir', '');
@@ -610,7 +661,7 @@ function hideRectangle() {
     rectangleElement.style.opacity = '0';
 }
 exports.hideRectangle = hideRectangle;
-let systemElement = document.createElement('div');
+const systemElement = document.createElement('div');
 systemElement.id = 'cg-system';
 systemElement.addEventListener('contextmenu', function (e) {
     e.preventDefault();
@@ -625,7 +676,7 @@ let notifyTop = 10;
 let notifyId = 0;
 function notify(opt) {
     var _a;
-    let nid = ++notifyId;
+    const nid = ++notifyId;
     let timeout = 5000;
     if (opt.timeout !== undefined) {
         if (opt.timeout <= 0 || opt.timeout > 300000) {
@@ -638,8 +689,8 @@ function notify(opt) {
     if (opt.progress && !opt.type) {
         opt.type = 'progress';
     }
-    let el = document.createElement('div');
-    let y = notifyTop;
+    const el = document.createElement('div');
+    const y = notifyTop;
     el.classList.add('cg-system-notify');
     el.setAttribute('data-notifyid', nid.toString());
     el.style.transform = `translateY(${y}px) translateX(280px)`;
@@ -658,7 +709,7 @@ function notify(opt) {
     notifyTop += el.offsetHeight + 10;
     requestAnimationFrame(function () {
         el.style.transform = `translateY(${y}px) translateX(-10px)`;
-        let timer = window.setTimeout(function () {
+        const timer = window.setTimeout(function () {
             hideNotify(nid);
         }, timeout);
         el.setAttribute('data-timer', timer.toString());
@@ -667,11 +718,11 @@ function notify(opt) {
 }
 exports.notify = notify;
 function notifyProgress(notifyId, per) {
-    let el = systemElement.querySelector(`[data-notifyid="${notifyId}"]`);
+    const el = systemElement.querySelector(`[data-notifyid="${notifyId}"]`);
     if (!el) {
         return;
     }
-    let progress = el.querySelector('.cg-system-notify-progress');
+    const progress = el.querySelector('.cg-system-notify-progress');
     if (!progress) {
         return;
     }
@@ -679,7 +730,7 @@ function notifyProgress(notifyId, per) {
         per = 100;
     }
     if (per === 1) {
-        let o = parseFloat(progress.style.width);
+        const o = parseFloat(progress.style.width);
         if (o > 1) {
             per = 100;
         }
@@ -687,22 +738,22 @@ function notifyProgress(notifyId, per) {
     if (per === 100) {
         progress.style.transitionDelay = '.1s';
     }
-    progress.style.width = (per < 1 ? per * 100 : per) + '%';
+    progress.style.width = (per < 1 ? per * 100 : per).toString() + '%';
 }
 exports.notifyProgress = notifyProgress;
 function hideNotify(notifyId) {
-    let el = systemElement.querySelector(`[data-notifyid="${notifyId}"]`);
+    const el = systemElement.querySelector(`[data-notifyid="${notifyId}"]`);
     if (!el) {
         return;
     }
     clearTimeout(parseInt(el.getAttribute('data-timer')));
-    let notifyHeight = el.offsetHeight;
+    const notifyHeight = el.offsetHeight;
     el.style.opacity = '0';
     setTimeout(function () {
         notifyTop -= notifyHeight + 10;
-        let notifyElementList = document.getElementsByClassName('cg-system-notify');
+        const notifyElementList = document.getElementsByClassName('cg-system-notify');
         let needSub = false;
-        for (let notifyElement of notifyElementList) {
+        for (const notifyElement of notifyElementList) {
             if (notifyElement === el) {
                 needSub = true;
                 continue;
@@ -717,54 +768,6 @@ function hideNotify(notifyId) {
     }, 100);
 }
 exports.hideNotify = hideNotify;
-let simpletaskElement = document.createElement('div');
-simpletaskElement.id = 'cg-simpletask';
-simpletaskElement.addEventListener('contextmenu', function (e) {
-    e.preventDefault();
-});
-wrapElement.appendChild(simpletaskElement);
-simpletaskElement.addEventListener('touchmove', function (e) {
-    e.preventDefault();
-}, {
-    'passive': false
-});
-const simpletaskApp = Vue.createApp({
-    'template': '<div v-for="(item, formId) of forms" class="cg-simpletask-item" @click="click(parseInt(formId))"><div v-if="item.icon" class="cg-simpletask-icon" :style="{\'background-image\': \'url(\' + item.icon + \')\'}"></div><div>{{item.title}}</div></div>',
-    'data': function () {
-        return {
-            'forms': {}
-        };
-    },
-    'watch': {
-        'forms': {
-            handler: function () {
-                let length = Object.keys(this.forms).length;
-                if (length > 0) {
-                    if (simpletaskElement.style.bottom !== '0px') {
-                        simpletaskElement.style.bottom = '0px';
-                        clickgo.core.trigger('screenResize');
-                    }
-                }
-                else {
-                    if (simpletaskElement.style.bottom === '0px') {
-                        simpletaskElement.style.bottom = '-46px';
-                        clickgo.core.trigger('screenResize');
-                    }
-                }
-            },
-            'deep': true
-        }
-    },
-    'methods': {
-        click: function (formId) {
-            changeFocus(formId);
-        }
-    },
-    'mounted': function () {
-        exports.simpletaskRoot = this;
-    }
-});
-simpletaskApp.mount('#cg-simpletask');
 function appendToPop(el) {
     popListElement.appendChild(el);
 }
@@ -785,7 +788,7 @@ function showPop(el, pop, direction, opt = {}) {
     if (!pop && !opt.null) {
         return;
     }
-    let now = Date.now();
+    const now = Date.now();
     if (now - lastShowPopTime < 5) {
         lastShowPopTime = now;
         return;
@@ -794,7 +797,7 @@ function showPop(el, pop, direction, opt = {}) {
     if (el.dataset.cgPopOpen !== undefined) {
         return;
     }
-    let parentPop = clickgo.dom.findParentByData(el, 'cg-pop');
+    const parentPop = clickgo.dom.findParentByData(el, 'cg-pop');
     if (parentPop) {
         for (let i = 0; i < popList.length; ++i) {
             if (popList[i] !== parentPop) {
@@ -815,11 +818,11 @@ function showPop(el, pop, direction, opt = {}) {
         el.dataset.cgLevel = (popElList.length - 1).toString();
         return;
     }
-    let width = (_a = opt.size.width) !== null && _a !== void 0 ? _a : (pop ? pop.offsetWidth : 0);
-    let height = (_b = opt.size.height) !== null && _b !== void 0 ? _b : (pop ? pop.offsetHeight : 0);
+    const width = (_a = opt.size.width) !== null && _a !== void 0 ? _a : (pop ? pop.offsetWidth : 0);
+    const height = (_b = opt.size.height) !== null && _b !== void 0 ? _b : (pop ? pop.offsetHeight : 0);
     let left, top;
     if (typeof direction === 'string') {
-        let bcr = el.getBoundingClientRect();
+        const bcr = el.getBoundingClientRect();
         if (direction === 'v') {
             left = bcr.left;
             top = bcr.top + bcr.height;
@@ -875,14 +878,14 @@ function showPop(el, pop, direction, opt = {}) {
     if (top < 0) {
         top = 0;
     }
-    pop.style.left = left + 'px';
-    pop.style.top = top + 'px';
+    pop.style.left = left.toString() + 'px';
+    pop.style.top = top.toString() + 'px';
     pop.style.zIndex = (++lastPopZIndex).toString();
     if (opt.size.width) {
-        pop.style.width = opt.size.width + 'px';
+        pop.style.width = opt.size.width.toString() + 'px';
     }
     if (opt.size.height) {
-        pop.style.height = opt.size.height + 'px';
+        pop.style.height = opt.size.height.toString() + 'px';
     }
     popList.push(pop);
     popElList.push(el);
@@ -909,7 +912,7 @@ function hidePop(pop) {
     else {
         return;
     }
-    let level = pop.dataset.cgLevel ? parseInt(pop.dataset.cgLevel) : -1;
+    const level = pop.dataset.cgLevel ? parseInt(pop.dataset.cgLevel) : -1;
     if (level === -1) {
         return;
     }
@@ -939,16 +942,16 @@ function doFocusAndPopEvent(e) {
     if (clickgo.dom.hasTouchButMouse(e)) {
         return;
     }
-    let target = e.target;
+    const target = e.target;
     if (!target) {
         return;
     }
-    let element = target;
+    const element = target;
     if (element.dataset.cgPopOpen !== undefined) {
         return;
     }
-    let paths = (_a = e.path) !== null && _a !== void 0 ? _a : (e.composedPath ? e.composedPath() : []);
-    for (let item of paths) {
+    const paths = (_a = e.path) !== null && _a !== void 0 ? _a : (e.composedPath ? e.composedPath() : []);
+    for (const item of paths) {
         if (!item.tagName) {
             continue;
         }
@@ -962,7 +965,7 @@ function doFocusAndPopEvent(e) {
             return;
         }
     }
-    for (let item of paths) {
+    for (const item of paths) {
         if (!item.tagName) {
             continue;
         }
@@ -970,7 +973,7 @@ function doFocusAndPopEvent(e) {
             break;
         }
         if (item.classList.contains('cg-form-wrap')) {
-            let formId = parseInt((_b = item.getAttribute('data-form-id')) !== null && _b !== void 0 ? _b : '0');
+            const formId = parseInt((_b = item.getAttribute('data-form-id')) !== null && _b !== void 0 ? _b : '0');
             changeFocus(formId);
             hidePop();
             return;
@@ -983,19 +986,19 @@ exports.doFocusAndPopEvent = doFocusAndPopEvent;
 window.addEventListener('touchstart', doFocusAndPopEvent);
 window.addEventListener('mousedown', doFocusAndPopEvent);
 function remove(formId) {
-    let taskId = getTaskId(formId);
+    const taskId = getTaskId(formId);
     let title = '';
     let icon = '';
     if (clickgo.task.list[taskId].forms[formId]) {
         title = clickgo.task.list[taskId].forms[formId].vroot.$refs.form.title;
         icon = clickgo.task.list[taskId].forms[formId].vroot.$refs.form.iconData;
         if (clickgo.task.list[taskId].forms[formId].vroot.$refs.form.maskFrom !== undefined) {
-            let fid = clickgo.task.list[taskId].forms[formId].vroot.$refs.form.maskFrom;
+            const fid = clickgo.task.list[taskId].forms[formId].vroot.$refs.form.maskFrom;
             clickgo.task.list[taskId].forms[fid].vroot.$refs.form.maskFor = undefined;
         }
         clickgo.task.list[taskId].forms[formId].vroot.$refs.form.$data.showData = false;
         setTimeout(function () {
-            let fid = getMaxZIndexFormID({
+            const fid = getMaxZIndexFormID({
                 'formIds': [formId]
             });
             if (fid) {
@@ -1009,7 +1012,7 @@ function remove(formId) {
             }
             clickgo.task.list[taskId].forms[formId].vapp.unmount();
             clickgo.task.list[taskId].forms[formId].vapp._container.remove();
-            delete (clickgo.task.list[taskId].forms[formId]);
+            delete clickgo.task.list[taskId].forms[formId];
             clickgo.dom.removeStyle(taskId, 'form', formId);
             clickgo.core.trigger('formRemoved', taskId, formId, title, icon);
             if (Object.keys(clickgo.task.list[taskId].forms).length === 0) {
@@ -1026,19 +1029,19 @@ exports.remove = remove;
 function create(taskId, opt) {
     var _a, _b, _c, _d, _e;
     return __awaiter(this, void 0, void 0, function* () {
-        let cgPath = (_b = (_a = opt.file) !== null && _a !== void 0 ? _a : opt.path) !== null && _b !== void 0 ? _b : '/';
-        let task = clickgo.task.list[taskId];
+        const cgPath = (_b = (_a = opt.file) !== null && _a !== void 0 ? _a : opt.path) !== null && _b !== void 0 ? _b : '/';
+        const task = clickgo.task.list[taskId];
         if (!task) {
             return -1;
         }
-        let appPkg = task.appPkg;
-        let formId = ++lastFormId;
-        let invoke = {};
+        const appPkg = task.appPkg;
+        const formId = ++lastFormId;
+        const invoke = {};
         if (clickgo.safe) {
             invoke.window = undefined;
             invoke.loader = undefined;
-            let ks = Object.getOwnPropertyNames(window);
-            for (let k of ks) {
+            const ks = Object.getOwnPropertyNames(window);
+            for (const k of ks) {
                 if (k.includes('Event')) {
                     continue;
                 }
@@ -1061,37 +1064,37 @@ function create(taskId, opt) {
                 'tool': {},
                 'zip': {}
             };
-            for (let k in clickgo.core) {
+            for (const k in clickgo.core) {
                 if (!['config', 'getNativeListeners', 'regModule', 'initModules', 'getModule', 'trigger'].includes(k)) {
                     continue;
                 }
                 invoke.clickgo.core[k] = clickgo.core[k];
             }
-            for (let k in clickgo.dom) {
+            for (const k in clickgo.dom) {
                 if (!['setGlobalCursor', 'hasTouchButMouse', 'getStyleCount', 'getSize', 'watchSize', 'watch', 'watchStyle', 'bindDown', 'bindGesture', 'bindLong', 'is', 'bindMove', 'bindResize', 'findParentByData', 'siblings', 'siblingsData', 'fullscreen'].includes(k)) {
                     continue;
                 }
                 invoke.clickgo.dom[k] = clickgo.dom[k];
             }
-            for (let k in clickgo.form) {
+            for (const k in clickgo.form) {
                 if (!['taskInfo', 'setTask', 'clearTask', 'getAvailArea', 'getTaskId', 'min', 'get', 'send', 'getList', 'changeFocus', 'getMaxZIndexFormID', 'getRectByBorder', 'showCircular', 'moveRectangle', 'showRectangle', 'hideRectangle', 'notify', 'notifyProgress', 'hideNotify', 'showPop', 'hidePop', 'remove'].includes(k)) {
                     continue;
                 }
                 invoke.clickgo.form[k] = clickgo.form[k];
             }
-            for (let k in clickgo.task) {
+            for (const k in clickgo.task) {
                 if (!['get', 'getList', 'run', 'end'].includes(k)) {
                     continue;
                 }
                 invoke.clickgo.task[k] = clickgo.task[k];
             }
-            for (let k in clickgo.tool) {
+            for (const k in clickgo.tool) {
                 if (!['blob2ArrayBuffer', 'clone', 'sleep', 'purify', 'getMimeByPath', 'rand', 'getBoolean', 'escapeHTML', 'request', 'parseUrl', 'urlResolve', 'blob2Text', 'blob2DataUrl', 'execCommand'].includes(k)) {
                     continue;
                 }
                 invoke.clickgo.tool[k] = clickgo.tool[k];
             }
-            for (let k in clickgo.zip) {
+            for (const k in clickgo.zip) {
                 if (!['get'].includes(k)) {
                     continue;
                 }
@@ -1126,8 +1129,8 @@ function create(taskId, opt) {
                 invoke.navigator.clipboard = navigator.clipboard;
             }
         }
-        let preprocess = function (code, path) {
-            let exec = /eval\W/.exec(code);
+        const preprocess = function (code, path) {
+            const exec = /eval\W/.exec(code);
             if (exec) {
                 notify({
                     'title': 'Error',
@@ -1138,11 +1141,11 @@ function create(taskId, opt) {
             }
             return code;
         };
-        let components = {};
-        for (let controlPath of appPkg.config.controls) {
+        const components = {};
+        for (const controlPath of appPkg.config.controls) {
             let controlPkg;
             if (controlPath.startsWith('/clickgo/')) {
-                let path = controlPath.slice(8);
+                const path = controlPath.slice(8);
                 if (clickgo.control.clickgoControlPkgs[path + '.cgc']) {
                     controlPkg = clickgo.control.clickgoControlPkgs[path + '.cgc'];
                 }
@@ -1156,8 +1159,8 @@ function create(taskId, opt) {
             else {
                 return -3;
             }
-            for (let name in controlPkg) {
-                let item = controlPkg[name];
+            for (const name in controlPkg) {
+                const item = controlPkg[name];
                 let props = {};
                 let data = {};
                 let methods = {};
@@ -1172,7 +1175,7 @@ function create(taskId, opt) {
                 let beforeUnmount = undefined;
                 let unmounted = undefined;
                 if (item.files[item.config.code + '.js']) {
-                    let expo = loader.require(item.config.code, item.files, {
+                    const expo = loader.require(item.config.code, item.files, {
                         'dir': '/',
                         'invoke': invoke,
                         'preprocess': preprocess
@@ -1200,9 +1203,9 @@ function create(taskId, opt) {
                     prep = task.initControls[name].prep;
                 }
                 else {
-                    let style = item.files[item.config.style + '.css'];
+                    const style = item.files[item.config.style + '.css'];
                     if (style) {
-                        let r = clickgo.tool.stylePrepend(style);
+                        const r = clickgo.tool.stylePrepend(style);
                         prep = r.prep;
                         clickgo.dom.pushStyle(task.id, yield clickgo.tool.styleUrl2ObjectOrDataUrl(item.config.style, r.style, item), 'control', name);
                     }
@@ -1211,8 +1214,8 @@ function create(taskId, opt) {
                         return -4;
                     }
                     layout = layout.replace(/^(<[a-zA-Z0-9-]+)( |>)/, '$1 data-cg-control-' + name + '$2');
-                    let prepList = [
-                        'cg-theme-task' + taskId + '-' + name + '_'
+                    const prepList = [
+                        'cg-theme-task' + taskId.toString() + '-' + name + '_'
                     ];
                     if (prep !== '') {
                         prepList.push(prep);
@@ -1300,15 +1303,15 @@ function create(taskId, opt) {
                 };
                 computed.cgSlots = function () {
                     return (name = 'default') => {
-                        let d = this.$slots[name];
+                        const d = this.$slots[name];
                         if (!d) {
                             return [];
                         }
-                        let slots = [];
-                        let list = d();
-                        for (let item of list) {
+                        const slots = [];
+                        const list = d();
+                        for (const item of list) {
                             if (typeof item.type === 'symbol') {
-                                for (let item2 of item.children) {
+                                for (const item2 of item.children) {
                                     slots.push(item2);
                                 }
                             }
@@ -1363,7 +1366,7 @@ function create(taskId, opt) {
                     var _a;
                     return __awaiter(this, void 0, void 0, function* () {
                         if (path.startsWith('/clickgo/')) {
-                            return yield clickgo.core.fetchClickGoFile(path.slice(8));
+                            return clickgo.core.fetchClickGoFile(path.slice(8));
                         }
                         else {
                             path = clickgo.tool.urlResolve(this.cgPath, path);
@@ -1380,11 +1383,11 @@ function create(taskId, opt) {
                 };
                 methods.cgGetDataUrl = function (file) {
                     return __awaiter(this, void 0, void 0, function* () {
-                        let f = yield this.cgGetFile(file);
+                        const f = yield this.cgGetFile(file);
                         if (!f) {
                             return null;
                         }
-                        return f && f instanceof Blob ? yield clickgo.tool.blob2DataUrl(f) : null;
+                        return f && f instanceof Blob ? clickgo.tool.blob2DataUrl(f) : null;
                     });
                 };
                 methods.cgClassPrepend = function (cla) {
@@ -1453,11 +1456,11 @@ function create(taskId, opt) {
         let style = opt.style;
         let layout = opt.layout;
         if (opt.file) {
-            let layoutFile = appPkg.files[opt.file + '.xml'];
+            const layoutFile = appPkg.files[opt.file + '.xml'];
             if (layoutFile) {
                 layout = layoutFile.replace(/^\ufeff/, '');
             }
-            let styleFile = appPkg.files[opt.file + '.css'];
+            const styleFile = appPkg.files[opt.file + '.css'];
             if (styleFile) {
                 style = styleFile.replace(/^\ufeff/, '');
             }
@@ -1478,7 +1481,7 @@ function create(taskId, opt) {
         let beforeUnmount = undefined;
         let unmounted = undefined;
         let expo = opt.code;
-        if (appPkg.files[opt.file + '.js']) {
+        if (opt.file && appPkg.files[opt.file + '.js']) {
             expo = loader.require(opt.file, appPkg.files, {
                 'dir': '/',
                 'invoke': invoke,
@@ -1501,7 +1504,7 @@ function create(taskId, opt) {
         }
         let prep = '';
         if (style) {
-            let r = clickgo.tool.stylePrepend(style);
+            const r = clickgo.tool.stylePrepend(style);
             prep = r.prep;
             style = yield clickgo.tool.styleUrl2ObjectOrDataUrl((_e = (_d = opt.file) !== null && _d !== void 0 ? _d : opt.path) !== null && _e !== void 0 ? _e : '/', r.style, task);
         }
@@ -1510,14 +1513,14 @@ function create(taskId, opt) {
         layout = clickgo.tool.layoutInsertAttr(layout, ':cg-focus=\'cgFocus\'', {
             'include': [/^cg-.+/]
         });
-        let prepList = ['cg-task' + taskId + '_'];
+        const prepList = ['cg-task' + taskId.toString() + '_'];
         if (prep !== '') {
             prepList.push(prep);
         }
         layout = clickgo.tool.layoutClassPrepend(layout, prepList);
         layout = clickgo.tool.eventsAttrWrap(layout);
         formListElement.insertAdjacentHTML('beforeend', `<div class="cg-form-wrap" data-form-id="${formId.toString()}" data-task-id="${taskId.toString()}"></div>`);
-        let el = formListElement.children.item(formListElement.children.length - 1);
+        const el = formListElement.children.item(formListElement.children.length - 1);
         computed.taskId = {
             get: function () {
                 return taskId;
@@ -1645,7 +1648,7 @@ function create(taskId, opt) {
         methods.cgCreateForm = function (paramOpt = {}) {
             var _a;
             return __awaiter(this, void 0, void 0, function* () {
-                let inOpt = {
+                const inOpt = {
                     'path': this.cgPath
                 };
                 if (typeof paramOpt === 'string') {
@@ -1677,7 +1680,7 @@ function create(taskId, opt) {
                 if (this.cgTopMost) {
                     inOpt.topMost = true;
                 }
-                let form = yield create(taskId, inOpt);
+                const form = yield create(taskId, inOpt);
                 if (typeof form === 'number') {
                     if (this.$refs.form) {
                         this.$refs.form.maskFor = undefined;
@@ -1712,7 +1715,7 @@ function create(taskId, opt) {
             clickgo.task.list[this.taskId].forms[this.formId].events[name] = func;
         };
         methods.cgRemoveSystemEventListener = function (name) {
-            delete (clickgo.task.list[this.taskId].forms[this.formId].events[name]);
+            delete clickgo.task.list[this.taskId].forms[this.formId].events[name];
         };
         methods.cgDialog = function (opt) {
             return new Promise((resolve) => {
@@ -1734,7 +1737,7 @@ function create(taskId, opt) {
                         methods: {
                             select: function (button) {
                                 var _a, _b;
-                                let event = {
+                                const event = {
                                     'go': true,
                                     preventDefault: function () {
                                         this.go = false;
@@ -1757,11 +1760,11 @@ function create(taskId, opt) {
         methods.cgConfirm = function (content, cancel = false) {
             var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k;
             return __awaiter(this, void 0, void 0, function* () {
-                let buttons = [(_b = (_a = localeData[this.cgLocale]) === null || _a === void 0 ? void 0 : _a.yes) !== null && _b !== void 0 ? _b : localeData['en'].yes, (_d = (_c = localeData[this.cgLocale]) === null || _c === void 0 ? void 0 : _c.no) !== null && _d !== void 0 ? _d : localeData['en'].no];
+                const buttons = [(_b = (_a = localeData[this.cgLocale]) === null || _a === void 0 ? void 0 : _a.yes) !== null && _b !== void 0 ? _b : localeData['en'].yes, (_d = (_c = localeData[this.cgLocale]) === null || _c === void 0 ? void 0 : _c.no) !== null && _d !== void 0 ? _d : localeData['en'].no];
                 if (cancel) {
                     buttons.push((_f = (_e = localeData[this.cgLocale]) === null || _e === void 0 ? void 0 : _e.cancel) !== null && _f !== void 0 ? _f : localeData['en'].cancel);
                 }
-                let res = yield this.cgDialog({
+                const res = yield this.cgDialog({
                     'content': content,
                     'buttons': buttons
                 });
@@ -1778,7 +1781,7 @@ function create(taskId, opt) {
             var _a;
             return __awaiter(this, void 0, void 0, function* () {
                 if (path.startsWith('/clickgo/')) {
-                    return yield clickgo.core.fetchClickGoFile(path.slice(8));
+                    return clickgo.core.fetchClickGoFile(path.slice(8));
                 }
                 else {
                     path = clickgo.tool.urlResolve(this.cgPath, path);
@@ -1795,17 +1798,17 @@ function create(taskId, opt) {
         };
         methods.cgGetDataUrl = function (file) {
             return __awaiter(this, void 0, void 0, function* () {
-                let f = yield this.cgGetFile(file);
+                const f = yield this.cgGetFile(file);
                 if (!f) {
                     return null;
                 }
-                return f && f instanceof Blob ? yield clickgo.tool.blob2DataUrl(f) : null;
+                return f && f instanceof Blob ? clickgo.tool.blob2DataUrl(f) : null;
             });
         };
         methods.cgLoadTheme = function (path) {
             return __awaiter(this, void 0, void 0, function* () {
                 path = clickgo.tool.urlResolve(this.cgPath, path);
-                return yield clickgo.theme.load(this.taskId, path);
+                return clickgo.theme.load(this.taskId, path);
             });
         };
         methods.cgRemoveTheme = function (path) {
@@ -1829,7 +1832,7 @@ function create(taskId, opt) {
         methods.cgSetGlobalTheme = function (path) {
             return __awaiter(this, void 0, void 0, function* () {
                 if (typeof path === 'string') {
-                    let blob = yield this.cgGetFile(path);
+                    const blob = yield this.cgGetFile(path);
                     if (blob instanceof Blob) {
                         yield clickgo.theme.setGlobal(blob);
                     }
@@ -1883,26 +1886,22 @@ function create(taskId, opt) {
             this.$refs.form.$data.showData = false;
         };
         methods.cgLoadLocale = function (name, path) {
-            return __awaiter(this, void 0, void 0, function* () {
-                path = clickgo.tool.urlResolve(this.cgPath, path + '.json');
-                if (!task.files[path]) {
-                    return false;
-                }
-                try {
-                    let data = JSON.parse(task.files[path]);
-                    this.cgLoadLocaleData(name, data);
-                    return true;
-                }
-                catch (_a) {
-                    return false;
-                }
-            });
+            path = clickgo.tool.urlResolve(this.cgPath, path + '.json');
+            if (!task.files[path]) {
+                return false;
+            }
+            try {
+                const data = JSON.parse(task.files[path]);
+                this.cgLoadLocaleData(name, data);
+                return true;
+            }
+            catch (_a) {
+                return false;
+            }
         };
         methods.cgSetLocale = function (name, path) {
-            return __awaiter(this, void 0, void 0, function* () {
-                this.cgClearLocale();
-                return yield this.cgLoadLocale(name, path);
-            });
+            this.cgClearLocale();
+            return this.cgLoadLocale(name, path);
         };
         methods.cgClearLocale = function () {
             clickgo.task.list[this.taskId].locale.data = {};
@@ -1945,7 +1944,7 @@ function create(taskId, opt) {
         if (style) {
             clickgo.dom.pushStyle(taskId, style, 'form', formId);
         }
-        let rtn = yield new Promise(function (resolve) {
+        const rtn = yield new Promise(function (resolve) {
             const vapp = Vue.createApp({
                 'template': layout.replace(/^<cg-form/, '<cg-form ref="form"'),
                 'data': function () {
@@ -1989,12 +1988,12 @@ function create(taskId, opt) {
                 });
                 clickgo.core.trigger('error', vm.taskId, vm.formId, err, info);
             };
-            for (let key in components) {
+            for (const key in components) {
                 vapp.component(key, components[key]);
             }
             vapp.mount(el);
         });
-        let form = {
+        const form = {
             'id': formId,
             'vapp': rtn.vapp,
             'vroot': rtn.vroot,
@@ -2010,14 +2009,14 @@ function create(taskId, opt) {
             catch (err) {
                 clickgo.core.trigger('error', rtn.vroot.taskId, rtn.vroot.formId, err, 'Create form mounted error.');
                 task.forms[formId] = undefined;
-                delete (task.forms[formId]);
+                delete task.forms[formId];
                 rtn.vapp.unmount();
                 rtn.vapp._container.remove();
                 clickgo.dom.removeStyle(rtn.vroot.taskId, 'form', rtn.vroot.formId);
                 return -6;
             }
         }
-        let area = getAvailArea();
+        const area = getAvailArea();
         if (!rtn.vroot.$refs.form.stateMaxData) {
             if (rtn.vroot.$refs.form.left === -1) {
                 rtn.vroot.$refs.form.setPropData('left', (area.width - rtn.vroot.$el.offsetWidth) / 2);

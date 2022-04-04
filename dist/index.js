@@ -40,21 +40,21 @@ const clickgo = {
     'zip': {}
 };
 (function () {
-    let temp = document.querySelectorAll('script');
-    let scriptEle = temp[temp.length - 1];
+    const temp = document.querySelectorAll('script');
+    const scriptEle = temp[temp.length - 1];
     clickgo.cgRootPath = scriptEle.src.slice(0, scriptEle.src.lastIndexOf('/') + 1);
-    let lio = scriptEle.src.lastIndexOf('?');
+    const lio = scriptEle.src.lastIndexOf('?');
     if (lio !== -1) {
-        let match = /[?&]cdn=(.+?)($|&)/.exec(scriptEle.src.slice(lio));
+        const match = /[?&]cdn=(.+?)($|&)/.exec(scriptEle.src.slice(lio));
         if (match) {
             clickgo.cdnPath = match[1];
         }
     }
-    let tmpScript = document.createElement('script');
+    const tmpScript = document.createElement('script');
     tmpScript.src = clickgo.cdnPath + '/npm/@litert/loader@3.0.5/dist/loader.min.js';
     tmpScript.addEventListener('load', function () {
         loader.ready(() => __awaiter(this, void 0, void 0, function* () {
-            let paths = [
+            const paths = [
                 clickgo.cdnPath + '/npm/vue@3.2.31/dist/vue.global.min.js'
             ];
             let ro = true;
@@ -67,15 +67,15 @@ const clickgo = {
                 window.ResizeObserverEntry = window.ResizeObserver.ResizeObserverEntry;
                 window.ResizeObserver = window.ResizeObserver.ResizeObserver;
             }
-            let map = {
+            const map = {
                 'jszip': clickgo.cdnPath + '/npm/jszip@3.8.0/dist/jszip.min'
             };
-            let files = yield loader.sniffFiles('clickgo.js', {
+            const files = yield loader.sniffFiles('clickgo.js', {
                 'dir': clickgo.cgRootPath,
                 'after': '?' + Math.random().toString(),
                 'map': map
             });
-            let cg = loader.require('clickgo', files, {
+            const cg = loader.require('clickgo', files, {
                 'dir': clickgo.cgRootPath,
                 'map': map
             })[0];
@@ -92,8 +92,13 @@ const clickgo = {
             clickgo.tool = cg.tool;
             clickgo.zip = cg.zip;
             clickgo.isReady = true;
-            for (let func of clickgo.readys) {
-                func();
+            for (const func of clickgo.readys) {
+                const r = func();
+                if (r instanceof Promise) {
+                    r.catch(function (e) {
+                        console.log(e);
+                    });
+                }
             }
         }));
     });

@@ -44,7 +44,7 @@ export function off(name: string, handler: (param?: string) => string | void | P
     }
 }
 
-let win: electron.BrowserWindow;
+let win: electron.BrowserWindow | undefined;
 function createForm(path: string): void {
     win = new electron.BrowserWindow({
         'width': 400,
@@ -55,14 +55,15 @@ function createForm(path: string): void {
         'transparent': true
     });
     win.once('ready-to-show', function(): void {
+        if (!win) {
+            return;
+        }
         win.maximize();
         win.show();
+        win.setIgnoreMouseEvents(true, { 'forward': true });
         // --- timer ---
         let timerFunc = async function() {
             if (!win) {
-                return;
-            }
-            if (!win.webContents) {
                 return;
             }
             let isReady = await win.webContents.executeJavaScript('clickgo.isReady');
@@ -81,6 +82,9 @@ function createForm(path: string): void {
                     let result = it.handler(item.param);
                     if (result instanceof Promise) {
                         result.then(function(result) {
+                            if (!win) {
+                                return;
+                            }
                             win.webContents.executeJavaScript(`clickgo.core.__nativeReceive(${item.id}, "${item.name}", ${result !== undefined ? (', "' + result.replace(/"/g, '\"') + '"') : ''})`);
                         });
                     }
@@ -99,6 +103,9 @@ function createForm(path: string): void {
     win.loadFile(path).catch(function(e): void {
         throw e;
     });
+    win.on('close', function() {
+        win = undefined;
+    })
 }
 
 export function run(path: string): void {

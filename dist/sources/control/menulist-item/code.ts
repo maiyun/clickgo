@@ -1,4 +1,4 @@
-export let props = {
+export const props = {
     'disabled': {
         'default': false
     },
@@ -17,11 +17,11 @@ export let props = {
     }
 };
 
-export let data = {
+export const data = {
     'padding': ''
 };
 
-export let computed = {
+export const computed = {
     'isDisabled': function(this: IVControl): boolean {
         return clickgo.tool.getBoolean(this.disabled);
     },
@@ -31,10 +31,10 @@ export let computed = {
     }
 };
 
-export let watch = {
+export const watch = {
     'type': {
         handler: function(this: IVControl): void {
-            let menulist = this.cgParentByName('menulist');
+            const menulist = this.cgParentByName('menulist');
             if (!menulist) {
                 return;
             }
@@ -49,7 +49,7 @@ export let watch = {
     }
 };
 
-export let methods = {
+export const methods = {
     enter: function(this: IVControl, e: MouseEvent): void {
         if (clickgo.dom.hasTouchButMouse(e)) {
             return;
@@ -79,12 +79,12 @@ export let methods = {
     }
 };
 
-export let mounted = function(this: IVControl): void {
+export const mounted = function(this: IVControl): void {
     clickgo.dom.watchStyle(this.$el, 'padding', (n, v) => {
         this.padding = v;
     }, true);
 
-    let menulist = this.cgParentByName('menulist');
+    const menulist = this.cgParentByName('menulist');
     if (!menulist) {
         return;
     }
@@ -93,7 +93,7 @@ export let mounted = function(this: IVControl): void {
     }
 };
 
-export let beforeUnmounted = function(this: IVControl): void {
+export const beforeUnmounted = function(this: IVControl): void {
     if (!this.menulist) {
         return;
     }

@@ -11,7 +11,7 @@ exports.data = {
 };
 exports.methods = {
     add: function () {
-        this.tabs.push({ 'label': 'Tab' + (this.tabs.length + 1), 'value': 'tab' + (this.tabs.length + 1) });
+        this.tabs.push({ 'label': 'Tab' + (this.tabs.length + 1).toString(), 'value': 'tab' + (this.tabs.length + 1).toString() });
     },
     remove: function () {
         if (this.tabs.length > 0) {

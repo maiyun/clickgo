@@ -52,8 +52,8 @@ exports.watch = {
             if (this.timer === 0) {
                 return;
             }
-            let ndir = (n === 'left' || n === 'right') ? 'h' : 'v';
-            let odir = (o === 'left' || o === 'right') ? 'h' : 'v';
+            const ndir = (n === 'left' || n === 'right') ? 'h' : 'v';
+            const odir = (o === 'left' || o === 'right') ? 'h' : 'v';
             if (ndir === odir) {
                 return;
             }
@@ -111,7 +111,7 @@ exports.methods = {
             }
             switch (this.direction) {
                 case 'left':
-                case "right": {
+                case 'right': {
                     this.dir = 'left';
                     break;
                 }
@@ -169,7 +169,7 @@ exports.methods = {
                 }
             }
             else {
-                let xv = this.length - this.client;
+                const xv = this.length - this.client;
                 switch (this.dir) {
                     case 'left': {
                         this.left -= this.speedPx;
@@ -212,19 +212,19 @@ exports.methods = {
         }));
     }
 };
-let mounted = function () {
+const mounted = function () {
     clickgo.dom.watchStyle(this.$el, 'padding', (n, v) => {
         this.padding = v;
     }, true);
     clickgo.dom.watchSize(this.$el, (size) => {
-        let client = (this.direction === 'left' || this.direction === 'right') ? size.width : size.height;
+        const client = (this.direction === 'left' || this.direction === 'right') ? size.width : size.height;
         if (client !== this.client) {
             this.client = client;
         }
         this.refresh();
     }, true);
     clickgo.dom.watchSize(this.$refs.inner, (size) => {
-        let length = (this.direction === 'left' || this.direction === 'right') ? size.width : size.height;
+        const length = (this.direction === 'left' || this.direction === 'right') ? size.width : size.height;
         if (length !== this.length) {
             this.length = length;
         }

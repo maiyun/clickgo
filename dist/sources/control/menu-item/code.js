@@ -19,7 +19,7 @@ exports.methods = {
         if (clickgo.dom.hasTouchButMouse(e)) {
             return;
         }
-        let length = clickgo.dom.siblingsData(this.$el, 'cg-pop-open').length;
+        const length = clickgo.dom.siblingsData(this.$el, 'cg-pop-open').length;
         if (length === 0) {
             return;
         }

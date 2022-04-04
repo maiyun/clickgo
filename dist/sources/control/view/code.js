@@ -49,7 +49,7 @@ exports.data = {
 };
 exports.watch = {
     'direction': function () {
-        let size = clickgo.dom.getSize(this.$el);
+        const size = clickgo.dom.getSize(this.$el);
         if (this.clientWidth !== size.clientWidth) {
             this.clientWidth = size.clientWidth;
         }
@@ -209,12 +209,12 @@ exports.methods = {
             return;
         }
         this.stopAnimation();
-        let bindMove = (e) => {
-            let size = clickgo.dom.getSize(this.$el);
+        const bindMove = (e) => {
+            const size = clickgo.dom.getSize(this.$el);
             let alreadySb = false;
             let isFirstMove = false;
-            let overWidth = this.lengthWidth - this.clientWidth;
-            let overHeight = this.lengthHeight - this.clientHeight;
+            const overWidth = this.lengthWidth - this.clientWidth;
+            const overHeight = this.lengthHeight - this.clientHeight;
             clickgo.dom.bindMove(e, {
                 'object': this.$refs.inner,
                 'left': size.left + size.border.left - (overWidth > 0 ? overWidth : 0),
@@ -285,12 +285,12 @@ exports.methods = {
                         }
                     }
                 },
-                up: (moveTimes) => __awaiter(this, void 0, void 0, function* () {
+                up: (moveTimes) => {
                     let moveLeftPos = 0;
                     let moveTopPos = 0;
                     let topTime = 0;
-                    let nowDate = Date.now();
-                    for (let item of moveTimes) {
+                    const nowDate = Date.now();
+                    for (const item of moveTimes) {
                         if (nowDate - item.time > 150) {
                             continue;
                         }
@@ -390,30 +390,30 @@ exports.methods = {
                             this.timer = 0;
                         }
                     });
-                })
+                }
             });
         };
-        let x = (e instanceof MouseEvent) ? e.clientX : e.touches[0].clientX;
-        let y = (e instanceof MouseEvent) ? e.clientY : e.touches[0].clientY;
+        const x = (e instanceof MouseEvent) ? e.clientX : e.touches[0].clientX;
+        const y = (e instanceof MouseEvent) ? e.clientY : e.touches[0].clientY;
         if (this.isSelection) {
             if (clickgo.dom.findParentByData(e.target, 'cg-selection-cancel')) {
                 return;
             }
             clickgo.dom.bindDown(e, {
                 start: () => {
-                    let innerRect = this.$refs.inner.getBoundingClientRect();
+                    const innerRect = this.$refs.inner.getBoundingClientRect();
                     this.selectionOrigin.x = x - innerRect.left;
                     this.selectionOrigin.y = y - innerRect.top;
                     this.$refs.selection.style.opacity = '1';
-                    this.$refs.selection.style.left = this.selectionOrigin.x + 'px';
-                    this.$refs.selection.style.top = this.selectionOrigin.y + 'px';
+                    this.$refs.selection.style.left = this.selectionOrigin.x.toString() + 'px';
+                    this.$refs.selection.style.top = this.selectionOrigin.y.toString() + 'px';
                     this.selectionCurrent.x = x;
                     this.selectionCurrent.y = y;
                     this.selectionTimer = this.cgOnFrame(() => {
-                        let rect = this.$el.getBoundingClientRect();
+                        const rect = this.$el.getBoundingClientRect();
                         if (this.selectionCurrent.x < rect.left) {
                             if (this.scrollLeftData > 0) {
-                                let x = rect.left - this.selectionCurrent.x;
+                                const x = rect.left - this.selectionCurrent.x;
                                 let dist = 0;
                                 if (this.selectionCurrent.quick) {
                                     dist = x / 2;
@@ -432,7 +432,7 @@ exports.methods = {
                         }
                         else if (this.selectionCurrent.x > rect.right) {
                             if (this.scrollLeftData < this.maxScrollLeft) {
-                                let x = this.selectionCurrent.x - rect.right;
+                                const x = this.selectionCurrent.x - rect.right;
                                 let dist = 0;
                                 if (this.selectionCurrent.quick) {
                                     dist = x / 2;
@@ -451,7 +451,7 @@ exports.methods = {
                         }
                         if (this.selectionCurrent.y < rect.top) {
                             if (this.scrollTopData > 0) {
-                                let x = rect.top - this.selectionCurrent.y;
+                                const x = rect.top - this.selectionCurrent.y;
                                 let dist = 0;
                                 if (this.selectionCurrent.quick) {
                                     dist = x / 2;
@@ -470,7 +470,7 @@ exports.methods = {
                         }
                         else if (this.selectionCurrent.y > rect.bottom) {
                             if (this.scrollTopData < this.maxScrollTop) {
-                                let x = this.selectionCurrent.y - rect.bottom;
+                                const x = this.selectionCurrent.y - rect.bottom;
                                 let dist = 0;
                                 if (this.selectionCurrent.quick) {
                                     dist = x / 2;
@@ -491,8 +491,8 @@ exports.methods = {
                     this.$emit('beforeselect');
                 },
                 move: (ne) => {
-                    let nx = (ne instanceof MouseEvent) ? ne.clientX : ne.touches[0].clientX;
-                    let ny = (ne instanceof MouseEvent) ? ne.clientY : ne.touches[0].clientY;
+                    const nx = (ne instanceof MouseEvent) ? ne.clientX : ne.touches[0].clientX;
+                    const ny = (ne instanceof MouseEvent) ? ne.clientY : ne.touches[0].clientY;
                     this.selectionCurrent.x = nx;
                     this.selectionCurrent.y = ny;
                     this.selectionCurrent.quick = true;
@@ -527,8 +527,8 @@ exports.methods = {
                     if (count < 3) {
                         return;
                     }
-                    let deltaX = x - ((e instanceof MouseEvent) ? e.clientX : e.touches[0].clientX);
-                    let deltaY = y - ((e instanceof MouseEvent) ? e.clientY : e.touches[0].clientY);
+                    const deltaX = x - ((e instanceof MouseEvent) ? e.clientX : e.touches[0].clientX);
+                    const deltaY = y - ((e instanceof MouseEvent) ? e.clientY : e.touches[0].clientY);
                     if (deltaX === 0 && deltaY === 0) {
                         return;
                     }
@@ -598,12 +598,12 @@ exports.methods = {
         else if (this.scrollTopData < 0) {
             this.scrollTopData = 0;
         }
-        let sleft = Math.round(this.scrollLeftData);
+        const sleft = Math.round(this.scrollLeftData);
         if (this.scrollLeftEmit !== sleft) {
             this.scrollLeftEmit = sleft;
             this.$emit('update:scrollLeft', this.scrollLeftEmit);
         }
-        let stop = Math.round(this.scrollTopData);
+        const stop = Math.round(this.scrollTopData);
         if (this.scrollTopEmit !== stop) {
             this.scrollTopEmit = stop;
             this.$emit('update:scrollTop', this.scrollTopEmit);
@@ -645,10 +645,10 @@ exports.methods = {
         if (!this.selectionTimer) {
             return;
         }
-        let innerRect = this.$refs.inner.getBoundingClientRect();
-        let sx = this.selectionCurrent.x - innerRect.left;
-        let sy = this.selectionCurrent.y - innerRect.top;
-        let area = {
+        const innerRect = this.$refs.inner.getBoundingClientRect();
+        const sx = this.selectionCurrent.x - innerRect.left;
+        const sy = this.selectionCurrent.y - innerRect.top;
+        const area = {
             'x': 0,
             'y': 0,
             'width': 0,
@@ -672,17 +672,17 @@ exports.methods = {
             area.y = Math.round(sy);
             area.height = Math.round(this.selectionOrigin.y - sy);
         }
-        this.$refs.selection.style.left = area.x + 'px';
-        this.$refs.selection.style.top = area.y + 'px';
-        this.$refs.selection.style.width = area.width + 'px';
-        this.$refs.selection.style.height = area.height + 'px';
+        this.$refs.selection.style.left = area.x.toString() + 'px';
+        this.$refs.selection.style.top = area.y.toString() + 'px';
+        this.$refs.selection.style.width = area.width.toString() + 'px';
+        this.$refs.selection.style.height = area.height.toString() + 'px';
         this.$emit('select', area);
     }
 };
-let mounted = function () {
+const mounted = function () {
     clickgo.dom.watchSize(this.$el, (size) => {
-        let clientWidth = size.clientWidth;
-        let clientHeight = size.clientHeight;
+        const clientWidth = size.clientWidth;
+        const clientHeight = size.clientHeight;
         if (this.direction === 'v') {
             if (this.clientWidth !== clientWidth) {
                 this.clientWidth = clientWidth;
@@ -724,7 +724,7 @@ let mounted = function () {
     this.goScroll(this.scrollTop, 'top');
 };
 exports.mounted = mounted;
-let unmounted = function () {
+const unmounted = function () {
     if (this.timer > 0) {
         this.cgOffFrame(this.timer);
         this.timer = 0;

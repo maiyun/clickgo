@@ -17,16 +17,16 @@ exports.data = {
 };
 exports.methods = {
     'pushConsole': function (name, text) {
-        let date = new Date();
+        const date = new Date();
         this.list.unshift({
-            'time': date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds(),
+            'time': date.getHours().toString() + ':' + date.getMinutes().toString() + ':' + date.getSeconds().toString(),
             'name': name,
             'text': text
         });
     },
     'run': function () {
         return __awaiter(this, void 0, void 0, function* () {
-            let taskId = yield clickgo.task.run('/clickgo/app/demo/');
+            const taskId = yield clickgo.task.run('/clickgo/app/demo/');
             yield this.cgDialog(`Successfully run, task id is: ${taskId}.`);
         });
     },
@@ -43,14 +43,14 @@ exports.methods = {
                 yield this.cgDialog('The Task APP is already running.');
                 return;
             }
-            let taskId = yield clickgo.task.run('/clickgo/app/task/');
+            const taskId = yield clickgo.task.run('/clickgo/app/task/');
             yield this.cgDialog(`Successfully run, task id is: ${taskId}.`);
         });
     }
 };
-let mounted = function () {
-    let list = clickgo.task.getList();
-    for (let tid in list) {
+const mounted = function () {
+    const list = clickgo.task.getList();
+    for (const tid in list) {
         this.tlist.push({
             'label': 'Task ' + tid,
             'value': parseInt(tid)
@@ -58,7 +58,7 @@ let mounted = function () {
     }
     this.cgSetSystemEventListener('taskStarted', (taskId) => {
         this.tlist.push({
-            'label': 'Task ' + taskId,
+            'label': 'Task ' + taskId.toString(),
             'value': taskId
         });
         this.pushConsole('taskStarted', `taskId: ${taskId}`);

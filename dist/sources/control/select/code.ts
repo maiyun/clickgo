@@ -1,4 +1,4 @@
-export let props = {
+export const props = {
     'disabled': {
         'default': false
     },
@@ -14,7 +14,7 @@ export let props = {
     }
 };
 
-export let watch = {
+export const watch = {
     'modelValue': {
         'handler': function(this: IVControl): void {
             this.value = this.modelValue;
@@ -31,7 +31,7 @@ export let watch = {
     }
 };
 
-export let data = {
+export const data = {
     'background': '',
     'padding': '',
 
@@ -40,7 +40,7 @@ export let data = {
     'inputValue': ''
 };
 
-export let computed = {
+export const computed = {
     'isDisabled': function(this: IVControl): boolean {
         return clickgo.tool.getBoolean(this.disabled);
     },
@@ -52,7 +52,7 @@ export let computed = {
     }
 };
 
-export let methods = {
+export const methods = {
     updateInputValue: function(this: IVControl, value: string): void {
         this.inputValue = value;
         this.value = this.inputValue;
@@ -71,7 +71,7 @@ export let methods = {
     }
 };
 
-export let mounted = function(this: IVControl): void {
+export const mounted = function(this: IVControl): void {
     clickgo.dom.watchStyle(this.$el, ['background', 'padding'], (n, v) => {
         switch (n) {
             case 'background': {

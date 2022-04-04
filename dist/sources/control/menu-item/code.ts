@@ -1,4 +1,4 @@
-export let props = {
+export const props = {
     'disabled': {
         'default': false
     },
@@ -8,18 +8,18 @@ export let props = {
     }
 };
 
-export let computed = {
+export const computed = {
     'isDisabled': function(this: IVControl): boolean {
         return clickgo.tool.getBoolean(this.disabled);
     }
 };
 
-export let methods = {
+export const methods = {
     enter: function(this: IVControl, e: MouseEvent): void {
         if (clickgo.dom.hasTouchButMouse(e)) {
             return;
         }
-        let length = clickgo.dom.siblingsData(this.$el, 'cg-pop-open').length;
+        const length = clickgo.dom.siblingsData(this.$el, 'cg-pop-open').length;
         if (length === 0) {
             // --- 别的没有展开，则不管 ---
             return;

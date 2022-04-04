@@ -27,7 +27,7 @@ function file2ObjectUrl(file, obj) {
 exports.file2ObjectUrl = file2ObjectUrl;
 function blob2ArrayBuffer(blob) {
     return new Promise(function (resove) {
-        let fr = new FileReader();
+        const fr = new FileReader();
         fr.addEventListener('load', function () {
             resove(fr.result);
         });
@@ -44,7 +44,7 @@ function clone(obj) {
         }
     }
     else {
-        for (let key in obj) {
+        for (const key in obj) {
             newObj[key] = typeof obj[key] === 'object' ? clone(obj[key]) : obj[key];
         }
     }
@@ -73,10 +73,10 @@ function purify(text) {
 exports.purify = purify;
 function styleUrl2ObjectOrDataUrl(path, style, obj, mode = 'object') {
     return __awaiter(this, void 0, void 0, function* () {
-        let reg = /url\(["']{0,1}(.+?)["']{0,1}\)/ig;
+        const reg = /url\(["']{0,1}(.+?)["']{0,1}\)/ig;
         let match = null;
         while ((match = reg.exec(style))) {
-            let realPath = urlResolve(path, match[1]);
+            const realPath = urlResolve(path, match[1]);
             if (!obj.files[realPath]) {
                 continue;
             }
@@ -94,7 +94,7 @@ function styleUrl2ObjectOrDataUrl(path, style, obj, mode = 'object') {
 }
 exports.styleUrl2ObjectOrDataUrl = styleUrl2ObjectOrDataUrl;
 function layoutAddTagClassAndReTagName(layout, retagname) {
-    let list = [];
+    const list = [];
     layout = layout.replace(/(\S+)=(".+?"|'.+?')/g, function (t, t1) {
         if (t1 === 'class') {
             return t;
@@ -138,7 +138,7 @@ exports.layoutAddTagClassAndReTagName = layoutAddTagClassAndReTagName;
 function layoutInsertAttr(layout, insert, opt = {}) {
     return layout.replace(/<([\w-]+)[\s\S]*?>/g, function (t, t1) {
         if (opt.ignore) {
-            for (let item of opt.ignore) {
+            for (const item of opt.ignore) {
                 if (item.test(t1)) {
                     return t;
                 }
@@ -146,7 +146,7 @@ function layoutInsertAttr(layout, insert, opt = {}) {
         }
         if (opt.include) {
             let found = false;
-            for (let item of opt.include) {
+            for (const item of opt.include) {
                 if (item.test(t1)) {
                     found = true;
                     break;
@@ -166,12 +166,12 @@ function layoutClassPrependObject(object) {
     object = object.slice(1, -1).trim();
     return '{' + object.replace(/(.+?):(.+?)(,|$)/g, function (t, t1, t2, t3) {
         t1 = t1.trim();
-        if (t1[0] === '[') {
+        if (t1.startsWith('[')) {
             t1 = '[cgClassPrepend(' + t1.slice(1, -1) + ')]';
         }
         else {
             let sp = '';
-            if (t1[0] === '\'' || t1[0] === '"') {
+            if (t1.startsWith('\'') || t1.startsWith('"')) {
                 sp = t1[0];
                 t1 = t1.slice(1, -1);
             }
@@ -183,10 +183,10 @@ function layoutClassPrependObject(object) {
 function layoutClassPrepend(layout, preps) {
     return layout.replace(/ class=["'](.+?)["']/gi, function (t, t1) {
         t1 = t1.trim();
-        let classList = t1.split(' ');
-        let resultList = [];
-        for (let item of classList) {
-            for (let prep of preps) {
+        const classList = t1.split(' ');
+        const resultList = [];
+        for (const item of classList) {
+            for (const prep of preps) {
                 resultList.push(prep + item);
             }
         }
@@ -196,7 +196,7 @@ function layoutClassPrepend(layout, preps) {
             t1 = t1.trim();
             if (t1.startsWith('[')) {
                 t1 = t1.slice(1, -1);
-                let t1a = t1.split(',');
+                const t1a = t1.split(',');
                 for (let i = 0; i < t1a.length; ++i) {
                     t1a[i] = t1a[i].trim();
                     if (t1a[i].startsWith('{')) {
@@ -217,8 +217,8 @@ function layoutClassPrepend(layout, preps) {
 }
 exports.layoutClassPrepend = layoutClassPrepend;
 function eventsAttrWrap(layout) {
-    let events = ['click', 'dblclick', 'mousedown', 'mouseenter', 'mouseleave', 'mouseup', 'touchstart', 'touchmove', 'touchend', 'keydown', 'keypress', 'keyup', 'contextmenu'];
-    let reg = new RegExp(`@(${events.join('|')})="(.+?)"`, 'g');
+    const events = ['click', 'dblclick', 'mousedown', 'mouseenter', 'mouseleave', 'mouseup', 'touchstart', 'touchmove', 'touchend', 'keydown', 'keypress', 'keyup', 'contextmenu'];
+    const reg = new RegExp(`@(${events.join('|')})="(.+?)"`, 'g');
     return layout.replace(reg, function (t, t1, t2) {
         if (/^[\w]+$/.test(t2)) {
             return `@${t1}="cgAllowEvent($event) && ${t2}($event)"`;
@@ -229,7 +229,7 @@ function eventsAttrWrap(layout) {
 exports.eventsAttrWrap = eventsAttrWrap;
 function stylePrepend(style, prep = '') {
     if (prep === '') {
-        prep = 'cg-scope' + Math.round(Math.random() * 1000000000000000) + '_';
+        prep = 'cg-scope' + Math.round(Math.random() * 1000000000000000).toString() + '_';
     }
     style = style.replace(/([\s\S]+?){([\s\S]+?)}/g, function (t, t1, t2) {
         t1 = t1.replace(/(^|[ >,\r\n])([a-zA-Z-_])([a-zA-Z0-9-_]*)/g, function (t, t1, t2, t3) {
@@ -242,26 +242,26 @@ function stylePrepend(style, prep = '') {
             return t1 + prep + t2;
         }) + '{' + t2 + '}';
     });
-    let fontList = [];
+    const fontList = [];
     style = style.replace(/(@font-face[\s\S]+?font-family\s*:\s*["']{0,1})(.+?)(["']{0,1}\s*[;\r\n }])/gi, function (t, t1, t2, t3) {
         fontList.push(t2);
         return t1 + prep + t2 + t3;
     });
-    for (let font of fontList) {
-        let reg = new RegExp(`(font.+?[: "'])(${font})`, 'gi');
+    for (const font of fontList) {
+        const reg = new RegExp(`(font.+?[: "'])(${font})`, 'gi');
         style = style.replace(reg, function (t, t1, t2) {
             return t1 + prep + t2;
         });
     }
-    let keyframeList = [];
+    const keyframeList = [];
     style = style.replace(/([-@]keyframes *["']{0,1})([\w-]+)(["']{0,1}\s*?\{)/gi, function (t, t1, t2, t3) {
         if (!keyframeList.includes(t2)) {
             keyframeList.push(t2);
         }
         return t1 + prep + t2 + t3;
     });
-    for (let keyframe of keyframeList) {
-        let reg = new RegExp(`(animation[ :\\r\\n]+)(${keyframe})([ ;}\\r\\n])`, 'gi');
+    for (const keyframe of keyframeList) {
+        const reg = new RegExp(`(animation[ :\\r\\n]+)(${keyframe})([ ;}\\r\\n])`, 'gi');
         style = style.replace(reg, function (t, t1, t2, t3) {
             return t1 + prep + t2 + t3;
         });
@@ -274,9 +274,9 @@ function stylePrepend(style, prep = '') {
 exports.stylePrepend = stylePrepend;
 function getMimeByPath(path) {
     var _a;
-    let lio = path.lastIndexOf('.');
-    let ext = (lio === -1 ? path : path.slice(lio + 1)).toLowerCase();
-    let exts = {
+    const lio = path.lastIndexOf('.');
+    const ext = (lio === -1 ? path : path.slice(lio + 1)).toLowerCase();
+    const exts = {
         'eot': 'application/vnd.ms-fontobject',
         'woff': 'font/woff',
         'ttf': 'font/ttf',
@@ -286,16 +286,16 @@ function getMimeByPath(path) {
         'gif': 'image/gif',
         'png': 'image/png'
     };
-    let mime = (_a = exts[ext]) !== null && _a !== void 0 ? _a : 'application/octet-stream';
+    const mime = (_a = exts[ext]) !== null && _a !== void 0 ? _a : 'application/octet-stream';
     return {
         'mime': mime,
         'ext': ext
     };
 }
 exports.getMimeByPath = getMimeByPath;
-let objectURLList = [];
+const objectURLList = [];
 function createObjectURL(object) {
-    let url = URL.createObjectURL(object);
+    const url = URL.createObjectURL(object);
     objectURLList.push(url);
     return url;
 }
@@ -316,7 +316,7 @@ function rand(min, max) {
 }
 exports.rand = rand;
 function getBoolean(param) {
-    let t = typeof param;
+    const t = typeof param;
     if (t === 'boolean') {
         return param;
     }
@@ -335,30 +335,60 @@ exports.escapeHTML = escapeHTML;
 function request(url, opt) {
     return new Promise(function (resove) {
         var _a;
-        let xhr = new XMLHttpRequest();
+        const xhr = new XMLHttpRequest();
         xhr.upload.onloadstart = function (e) {
             var _a;
-            (_a = opt.uploadStart) === null || _a === void 0 ? void 0 : _a.call(opt, e.total);
+            const r = (_a = opt.uploadStart) === null || _a === void 0 ? void 0 : _a.call(opt, e.total);
+            if (r && (r instanceof Promise)) {
+                r.catch(function (e) {
+                    console.log(e);
+                });
+            }
         };
         xhr.upload.onprogress = function (e) {
             var _a;
-            (_a = opt.uploadProgress) === null || _a === void 0 ? void 0 : _a.call(opt, e.loaded, e.total);
+            const r = (_a = opt.uploadProgress) === null || _a === void 0 ? void 0 : _a.call(opt, e.loaded, e.total);
+            if (r && (r instanceof Promise)) {
+                r.catch(function (e) {
+                    console.log(e);
+                });
+            }
         };
         xhr.upload.onloadend = function () {
             var _a;
-            (_a = opt.uploadEnd) === null || _a === void 0 ? void 0 : _a.call(opt);
+            const r = (_a = opt.uploadEnd) === null || _a === void 0 ? void 0 : _a.call(opt);
+            if (r && (r instanceof Promise)) {
+                r.catch(function (e) {
+                    console.log(e);
+                });
+            }
         };
         xhr.onloadstart = function (e) {
             var _a;
-            (_a = opt.start) === null || _a === void 0 ? void 0 : _a.call(opt, e.total);
+            const r = (_a = opt.start) === null || _a === void 0 ? void 0 : _a.call(opt, e.total);
+            if (r && (r instanceof Promise)) {
+                r.catch(function (e) {
+                    console.log(e);
+                });
+            }
         };
         xhr.onprogress = function (e) {
             var _a;
-            (_a = opt.progress) === null || _a === void 0 ? void 0 : _a.call(opt, e.loaded, e.total);
+            const r = (_a = opt.progress) === null || _a === void 0 ? void 0 : _a.call(opt, e.loaded, e.total);
+            if (r && (r instanceof Promise)) {
+                r.catch(function (e) {
+                    console.log(e);
+                });
+            }
         };
         xhr.onloadend = function () {
             var _a;
-            (_a = opt.end) === null || _a === void 0 ? void 0 : _a.call(opt);
+            const r = (_a = opt.end) === null || _a === void 0 ? void 0 : _a.call(opt);
+            if (r && (r instanceof Promise)) {
+                r.catch(function (e) {
+                    console.log(e);
+                });
+            }
         };
         xhr.onload = function () {
             var _a, _b;
@@ -371,12 +401,22 @@ function request(url, opt) {
                     res = this.response;
                 }
             }
-            (_b = opt.load) === null || _b === void 0 ? void 0 : _b.call(opt, res);
+            const r = (_b = opt.load) === null || _b === void 0 ? void 0 : _b.call(opt, res);
+            if (r && (r instanceof Promise)) {
+                r.catch(function (e) {
+                    console.log(e);
+                });
+            }
             resove(res);
         };
         xhr.onerror = function () {
             var _a;
-            (_a = opt.error) === null || _a === void 0 ? void 0 : _a.call(opt);
+            const r = (_a = opt.error) === null || _a === void 0 ? void 0 : _a.call(opt);
+            if (r && (r instanceof Promise)) {
+                r.catch(function (e) {
+                    console.log(e);
+                });
+            }
             resove(null);
         };
         if (opt.responseType) {

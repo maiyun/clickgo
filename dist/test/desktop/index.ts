@@ -2,14 +2,14 @@ clickgo.ready(async function() {
     // --- 注册系统默认的库 ---
     // clickgo.core.regModule('monaco', );
 
-    let body = document.getElementsByTagName('body')[0];
+    const body = document.getElementsByTagName('body')[0];
     // --- 设置背景 ---
     if (!clickgo.native) {
         body.style.background = '#222';
     }
 
     // --- 其他 ---
-    let el = document.getElementById('tip');
+    const el = document.getElementById('tip');
     if (!el) {
         return;
     }
@@ -20,17 +20,17 @@ clickgo.ready(async function() {
             return;
         }
         console.log(info, error);
-        let err = document.getElementById('err') as HTMLElement;
+        const err = document.getElementById('err')!;
         err.style.display = 'block';
-        err.innerHTML = 'Error, Task ID: ' + taskId + ', Form ID: ' + formId + '<br>' + (error.stack ? error.stack.replace(/\n/g, '<br>') : '');
+        err.innerHTML = 'Error, Task ID: ' + taskId.toString() + ', Form ID: ' + formId.toString() + '<br>' + (error.stack ? error.stack.replace(/\n/g, '<br>') : '');
         clickgo.task.end(taskId);
     };
     // --- 监听任务关闭 ---
     clickgo.core.globalEvents.taskEndedHandler = function(taskId: number) {
-        el!.innerHTML = 'Task(' + taskId + ') ended.';
+        el.innerHTML = 'Task(' + taskId.toString() + ') ended.';
     };
     // --- 启动 task app ---
-    let sTaskId = await clickgo.task.run('/clickgo/app/task/', {
+    const sTaskId = await clickgo.task.run('/clickgo/app/task/', {
         'progress': false
     });
     if (sTaskId <= 0) {
@@ -39,7 +39,7 @@ clickgo.ready(async function() {
     }
     // --- sapp 启动成功 ---
     el.innerHTML = 'Starting app...';
-    let taskId = await clickgo.task.run('/clickgo/app/demo/');
+    const taskId = await clickgo.task.run('/clickgo/app/demo/');
     if (taskId <= 0) {
         el.innerHTML = `Start failed(${taskId.toString()}).`;
         return;

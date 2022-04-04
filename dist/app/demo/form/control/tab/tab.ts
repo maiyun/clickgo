@@ -1,4 +1,4 @@
-export let data = {
+export const data = {
     'ntab': '',
     'tabs': [{
         'label': 'Tab1',
@@ -7,9 +7,9 @@ export let data = {
     'tabPosition': 'top'
 };
 
-export let methods = {
+export const methods = {
     add: function(this: IVForm): void {
-        this.tabs.push({'label': 'Tab' + (this.tabs.length + 1), 'value': 'tab' + (this.tabs.length + 1)});
+        this.tabs.push({ 'label': 'Tab' + ((this.tabs.length as number) + 1).toString(), 'value': 'tab' + ((this.tabs.length as number) + 1).toString() });
     },
     remove: function(this: IVForm): void {
         if (this.tabs.length > 0) {

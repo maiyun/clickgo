@@ -1,4 +1,4 @@
-export let props = {
+export const props = {
     'disabled': {
         'default': false
     },
@@ -21,7 +21,7 @@ export let props = {
     }
 };
 
-export let data = {
+export const data = {
     'scrollOffsetData': 0,
     'scrollOffsetPx': 0,
     'barLengthPx': 0,
@@ -37,7 +37,7 @@ export let data = {
     'height': 0
 };
 
-export let watch = {
+export const watch = {
     'length': {
         handler: function(this: IVControl): void {
             this.resizePx();
@@ -50,7 +50,7 @@ export let watch = {
     },
     'scrollOffset': {
         handler: function(this: IVControl): void {
-            let scrollOffsetData = Math.round(parseFloat(this.scrollOffset));
+            const scrollOffsetData = Math.round(parseFloat(this.scrollOffset));
             if (this.scrollOffsetData === scrollOffsetData) {
                 return;
             }
@@ -92,7 +92,7 @@ export let watch = {
     }
 };
 
-export let computed = {
+export const computed = {
     // --- 滑块真实应该长度 px ---
     'realSize': function(this: IVControl): number {
         if (this.client >= this.length) {
@@ -131,7 +131,7 @@ export let computed = {
     }
 };
 
-export let methods = {
+export const methods = {
     down: function(this: IVControl, e: MouseEvent | TouchEvent): void {
         if (clickgo.dom.hasTouchButMouse(e)) {
             return;
@@ -140,9 +140,9 @@ export let methods = {
             'areaObject': this.$refs.bar,
             'object': this.$refs.block,
             'move': (ox, oy) => {
-                this.scrollOffsetPx += this.direction === 'v' ? oy : ox;
+                (this.scrollOffsetPx as number) += this.direction === 'v' ? oy : ox;
                 /** --- 滚动百分比 --- */
-                let scrollPer = (this.barOutSize > 0) ? (this.scrollOffsetPx / this.barOutSize) : 0;
+                const scrollPer = (this.barOutSize > 0) ? (this.scrollOffsetPx / this.barOutSize) : 0;
                 this.scrollOffsetData = Math.round(scrollPer * this.maxScroll);
                 this.$emit('update:scrollOffset', this.scrollOffsetData);
             }
@@ -156,9 +156,9 @@ export let methods = {
             return;
         }
         /** --- bar inner 的 rect 对象 --- */
-        let barRect = this.$refs.bar.getBoundingClientRect();
+        const barRect = this.$refs.bar.getBoundingClientRect();
         /** --- bar inner 对应的 left 或 top 位置 --- */
-        let barOffset = this.direction === 'v' ? barRect.top : barRect.left;
+        const barOffset = this.direction === 'v' ? barRect.top : barRect.left;
         /** --- 鼠标点击在 bar 中的位置 --- */
         let eOffset = this.direction === 'v' ? (e instanceof MouseEvent ? e.clientY : e.touches[0].clientY) : (e instanceof MouseEvent ? e.clientX : e.touches[0].clientX);
         eOffset = eOffset - barOffset;
@@ -167,12 +167,12 @@ export let methods = {
         if (scrollOffsetPx < 0) {
             scrollOffsetPx = 0;
         }
-        if (scrollOffsetPx + this.size > this.barLengthPx) {
+        if (scrollOffsetPx + (this.size as number) > this.barLengthPx) {
             scrollOffsetPx = this.barLengthPx - this.size;
         }
         this.scrollOffsetPx = scrollOffsetPx;
         /** --- 滚动百分比 --- */
-        let scrollPer = this.scrollOffsetPx / this.barOutSize;
+        const scrollPer = this.scrollOffsetPx / this.barOutSize;
         this.scrollOffsetData = Math.round(scrollPer * this.maxScroll);
         this.$emit('update:scrollOffset', this.scrollOffsetData);
         this.down(e);
@@ -195,12 +195,13 @@ export let methods = {
                         }
                         else {
                             this.scrollOffsetData -= 10;
-                            this.scrollOffsetPx = (this.maxScroll > 0) ? (this.barOutSize * (this.scrollOffsetData / this.maxScroll)) : 0;
+                            this.scrollOffsetPx = (this.maxScroll > 0)
+                                ? (this.barOutSize * (this.scrollOffsetData / this.maxScroll)) : 0;
                             this.$emit('update:scrollOffset', this.scrollOffsetData);
                         }
                     }
                     else {
-                        if (this.scrollOffsetData + 10 > this.maxScroll) {
+                        if ((this.scrollOffsetData as number) + 10 > this.maxScroll) {
                             if (this.scrollOffsetData !== this.maxScroll) {
                                 this.scrollOffsetData = this.maxScroll;
                                 this.scrollOffsetPx = this.barOutSize;
@@ -208,8 +209,9 @@ export let methods = {
                             }
                         }
                         else {
-                            this.scrollOffsetData += 10;
-                            this.scrollOffsetPx = (this.maxScroll > 0) ? (this.barOutSize * (this.scrollOffsetData / this.maxScroll)) : 0;
+                            (this.scrollOffsetData as number) += 10;
+                            this.scrollOffsetPx = (this.maxScroll > 0)
+                                ? (this.barOutSize * (this.scrollOffsetData / this.maxScroll)) : 0;
                             this.$emit('update:scrollOffset', this.scrollOffsetData);
                         }
                     }
@@ -288,7 +290,7 @@ export let methods = {
     }
 };
 
-export let mounted = function(this: IVControl): void {
+export const mounted = function(this: IVControl): void {
     // --- 是否自动隐藏 scroll ---
     if (this.isFloat) {
         this.opacityTimer = this.cgSleep(() => {
@@ -300,11 +302,11 @@ export let mounted = function(this: IVControl): void {
         this.barLengthPx = this.direction === 'v' ? size.height : size.width;
         this.scrollOffsetPx =  this.barOutSize * (this.scrollOffsetData / this.maxScroll);
         // --- bar 的 size 改了，整个 el 肯定也改了 ---
-        let els = clickgo.dom.getSize(this.$el);
+        const els = clickgo.dom.getSize(this.$el);
         this.width = els.width;
         this.height = els.height;
     }, true);
-    let scrollOffsetData = Math.round(parseFloat(this.scrollOffset));
+    const scrollOffsetData = Math.round(parseFloat(this.scrollOffset));
     if (this.scrollOffsetData === scrollOffsetData) {
         return;
     }
@@ -312,7 +314,7 @@ export let mounted = function(this: IVControl): void {
     this.resizePx();
 };
 
-export let unmounted = function(this: IVControl): void {
+export const unmounted = function(this: IVControl): void {
     if (this.timer > 0) {
         this.cgOffFrame(this.timer);
     }

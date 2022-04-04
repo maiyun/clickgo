@@ -37,12 +37,12 @@ exports.computed = {
     },
     'value': function () {
         var _a, _b, _c, _d, _e;
-        let list = [];
-        let bigList = {};
-        let bigTitle = [];
-        for (let item of this.modelValue) {
-            let kind = this.sortData === 'letter' ? undefined : item.kind;
-            let type = (_a = item.type) !== null && _a !== void 0 ? _a : 'property';
+        const list = [];
+        const bigList = {};
+        const bigTitle = [];
+        for (const item of this.modelValue) {
+            const kind = this.sortData === 'letter' ? undefined : item.kind;
+            const type = (_a = item.type) !== null && _a !== void 0 ? _a : 'property';
             if (type !== this.typeData) {
                 continue;
             }
@@ -66,14 +66,14 @@ exports.computed = {
             };
             bigList[kind].title.push(item.title);
         }
-        for (let title of bigTitle) {
+        for (const title of bigTitle) {
             list.push({
                 'title': title,
                 'list': []
             });
-            let i = list.length - 1;
+            const i = list.length - 1;
             bigList[title].title.sort();
-            for (let item of bigList[title].title) {
+            for (const item of bigList[title].title) {
                 list[i].list.push(bigList[title].list[item]);
             }
         }
@@ -169,7 +169,7 @@ exports.methods = {
         this.description = desc;
     },
     bigToggle: function (bigTitle) {
-        let io = this.bigClosed.indexOf(bigTitle);
+        const io = this.bigClosed.indexOf(bigTitle);
         if (io === -1) {
             this.bigClosed.push(bigTitle);
             return;
@@ -177,7 +177,7 @@ exports.methods = {
         this.bigClosed.splice(io, 1);
     },
     toggle: function (title) {
-        let io = this.opened.indexOf(title);
+        const io = this.opened.indexOf(title);
         if (io === -1) {
             this.opened.push(title);
             return;
@@ -185,7 +185,7 @@ exports.methods = {
         this.opened.splice(io, 1);
     },
     update: function (value) {
-        for (let item of this.modelValue) {
+        for (const item of this.modelValue) {
             if (item.title !== this.selectedTitle) {
                 continue;
             }
@@ -197,7 +197,7 @@ exports.methods = {
                 this.$emit('update:modelValue', this.modelValue);
             }
             else {
-                let arr = item.value.split(',');
+                const arr = item.value.split(',');
                 for (let i = 0; i < arr.length; ++i) {
                     if (typeof arr[i] !== 'string') {
                         continue;
@@ -205,11 +205,11 @@ exports.methods = {
                     arr[i] = arr[i].trim();
                 }
                 for (let i = 0; i < item.sub.length; ++i) {
-                    let sub = item.sub[i];
+                    const sub = item.sub[i];
                     if (sub.title !== this.selectedSub) {
                         continue;
                     }
-                    let val = this.subValue(item, i);
+                    const val = this.subValue(item, i);
                     if (val === value) {
                         continue;
                     }
@@ -225,7 +225,7 @@ exports.methods = {
             clickgo.form.hidePop();
             return;
         }
-        for (let item of this.modelValue) {
+        for (const item of this.modelValue) {
             if (item.title !== this.selectedTitle) {
                 continue;
             }
@@ -234,7 +234,7 @@ exports.methods = {
             }
             else {
                 for (let i = 0; i < item.sub.length; ++i) {
-                    let sub = item.sub[i];
+                    const sub = item.sub[i];
                     if (sub.title !== this.selectedSub) {
                         continue;
                     }
@@ -249,7 +249,7 @@ exports.methods = {
         clickgo.form.hidePop();
     },
     reset: function () {
-        for (let item of this.modelValue) {
+        for (const item of this.modelValue) {
             if (item.title !== this.selectedTitle) {
                 continue;
             }
@@ -261,7 +261,7 @@ exports.methods = {
                 this.$emit('update:modelValue', this.modelValue);
             }
             else {
-                let arr = item.value.split(',');
+                const arr = item.value.split(',');
                 for (let i = 0; i < arr.length; ++i) {
                     if (typeof arr[i] !== 'string') {
                         continue;
@@ -269,12 +269,12 @@ exports.methods = {
                     arr[i] = arr[i].trim();
                 }
                 for (let i = 0; i < item.sub.length; ++i) {
-                    let sub = item.sub[i];
+                    const sub = item.sub[i];
                     if (sub.title !== this.selectedSub) {
                         continue;
                     }
-                    let val = this.subValue(item, i);
-                    let def = this.subValue(item, i, true);
+                    const val = this.subValue(item, i);
+                    const def = this.subValue(item, i, true);
                     if (val === def) {
                         continue;
                     }

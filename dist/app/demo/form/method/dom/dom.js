@@ -60,21 +60,31 @@ exports.methods = {
     bindGesture: function (e) {
         clickgo.dom.bindGesture(e, {
             'dirs': ['top', 'bottom'],
-            handler: (dir) => __awaiter(this, void 0, void 0, function* () {
+            handler: (dir) => {
                 this.bindGestureText = dir.slice(0, 1).toUpperCase() + dir.slice(1);
-                yield clickgo.tool.sleep(500);
-                this.bindGestureText = '';
-            })
+                const handler = () => __awaiter(this, void 0, void 0, function* () {
+                    yield clickgo.tool.sleep(500);
+                    this.bindGestureText = '';
+                });
+                handler().catch((e) => {
+                    console.log(e);
+                });
+            }
         });
     },
     bindGestureWheel: function (e) {
         clickgo.dom.bindGesture(e, {
             'dirs': ['top', 'bottom', 'left', 'right'],
-            handler: (dir) => __awaiter(this, void 0, void 0, function* () {
+            handler: (dir) => {
                 this.bindGestureWheelText = dir.slice(0, 1).toUpperCase() + dir.slice(1);
-                yield clickgo.tool.sleep(500);
-                this.bindGestureWheelText = '';
-            })
+                const handler = () => __awaiter(this, void 0, void 0, function* () {
+                    yield clickgo.tool.sleep(500);
+                    this.bindGestureWheelText = '';
+                });
+                handler().catch((e) => {
+                    console.log(e);
+                });
+            }
         });
     }
 };

@@ -163,28 +163,24 @@ exports.watch = {
         clickgo.core.trigger('formShowChanged', this.taskId, this.formId, this.showData);
     },
     'width': function () {
-        return __awaiter(this, void 0, void 0, function* () {
-            if (this.width === 'auto') {
-                if (this.widthData !== undefined) {
-                    this.widthData = undefined;
-                }
+        if (this.width === 'auto') {
+            if (this.widthData !== undefined) {
+                this.widthData = undefined;
             }
-            else {
-                this.widthData = parseInt(this.width);
-            }
-        });
+        }
+        else {
+            this.widthData = parseInt(this.width);
+        }
     },
     'height': function () {
-        return __awaiter(this, void 0, void 0, function* () {
-            if (this.height === 'auto') {
-                if (this.heightData !== undefined) {
-                    this.heightData = undefined;
-                }
+        if (this.height === 'auto') {
+            if (this.heightData !== undefined) {
+                this.heightData = undefined;
             }
-            else {
-                this.heightData = parseInt(this.height);
-            }
-        });
+        }
+        else {
+            this.heightData = parseInt(this.height);
+        }
     },
     'left': function () {
         this.leftData = parseInt(this.left);
@@ -207,8 +203,8 @@ exports.methods = {
         if (this.isInside) {
             return;
         }
-        let el = e.currentTarget;
-        let dataHasDbl = el.getAttribute('data-has-dbl');
+        const el = e.currentTarget;
+        const dataHasDbl = el.getAttribute('data-has-dbl');
         if (!dataHasDbl) {
             el.setAttribute('data-has-dbl', 'yes');
             el.addEventListener('dblclick', () => {
@@ -229,9 +225,9 @@ exports.methods = {
                     this.$el.removeAttribute('data-cg-max');
                     this.stateMaxData = false;
                     this.$emit('update:stateMax', false);
-                    let olx = x - this.leftData;
-                    let orx = this.leftData + this.widthData - x;
-                    let w2 = this.historyLocation.width / 2;
+                    const olx = x - this.leftData;
+                    const orx = this.leftData + this.widthData - x;
+                    const w2 = this.historyLocation.width / 2;
                     if (olx <= w2) {
                         this.leftData = x - olx;
                     }
@@ -242,9 +238,9 @@ exports.methods = {
                         this.leftData = x - w2;
                     }
                     this.$emit('update:left', this.leftData);
-                    let oty = y - this.topData;
-                    let oby = this.topData + this.heightData - y;
-                    let h2 = this.historyLocation.height / 2;
+                    const oty = y - this.topData;
+                    const oby = this.topData + this.heightData - y;
+                    const h2 = this.historyLocation.height / 2;
                     if (oty <= h2) {
                         this.topData = y - oty;
                     }
@@ -272,9 +268,9 @@ exports.methods = {
                 }
                 else if (this.stateAbs) {
                     this.stateAbs = false;
-                    let olx = x - this.leftData;
-                    let orx = this.leftData + this.widthData - x;
-                    let w2 = this.historyLocation.width / 2;
+                    const olx = x - this.leftData;
+                    const orx = this.leftData + this.widthData - x;
+                    const w2 = this.historyLocation.width / 2;
                     if (olx <= w2) {
                         this.leftData = x - olx;
                     }
@@ -285,9 +281,9 @@ exports.methods = {
                         this.leftData = x - w2;
                     }
                     this.$emit('update:left', this.leftData);
-                    let oty = y - this.topData;
-                    let oby = this.topData + this.heightData - y;
-                    let h2 = this.historyLocation.height / 2;
+                    const oty = y - this.topData;
+                    const oby = this.topData + this.heightData - y;
+                    const h2 = this.historyLocation.height / 2;
                     if (oty <= h2) {
                         this.topData = y - oty;
                     }
@@ -367,7 +363,7 @@ exports.methods = {
                     else {
                         if (this.isResize) {
                             this.stateAbs = true;
-                            let pos = clickgo.form.getRectByBorder(isBorder);
+                            const pos = clickgo.form.getRectByBorder(isBorder);
                             this.widthData = pos.width;
                             if (this.width !== 'auto') {
                                 this.$emit('update:width', this.widthData);
@@ -391,7 +387,7 @@ exports.methods = {
         if (this.isInside) {
             return true;
         }
-        let event = {
+        const event = {
             'go': true,
             preventDefault: function () {
                 this.go = false;
@@ -404,7 +400,7 @@ exports.methods = {
                 this.stateMinData = true;
                 this.$emit('update:stateMin', true);
                 if (this.cgFocus) {
-                    let formId = clickgo.form.getMaxZIndexFormID({
+                    const formId = clickgo.form.getMaxZIndexFormID({
                         'formIds': [this.formId]
                     });
                     this.cgSleep(() => {
@@ -471,7 +467,7 @@ exports.methods = {
                 'left': this.leftData,
                 'top': this.topData
             };
-            let area = clickgo.form.getAvailArea();
+            const area = clickgo.form.getAvailArea();
             this.topData = area.top;
             this.$emit('update:top', this.topData);
             this.heightData = area.height;
@@ -490,7 +486,7 @@ exports.methods = {
                 return false;
             }
         }
-        let event = {
+        const event = {
             'go': true,
             preventDefault: function () {
                 this.go = false;
@@ -513,7 +509,7 @@ exports.methods = {
                 this.$el.dataset.cgMax = '';
                 this.stateMaxData = true;
                 this.$emit('update:stateMax', true);
-                let area = clickgo.form.getAvailArea();
+                const area = clickgo.form.getAvailArea();
                 this.leftData = area.left;
                 this.$emit('update:left', this.leftData);
                 this.topData = area.top;
@@ -567,7 +563,7 @@ exports.methods = {
         if (this.isInside) {
             return;
         }
-        let event = {
+        const event = {
             go: true,
             preventDefault: function () {
                 this.go = false;
@@ -671,7 +667,7 @@ exports.methods = {
             'end': () => {
                 if (isBorder !== '') {
                     if (isBorder !== 'l' && isBorder !== 'r') {
-                        let area = clickgo.form.getAvailArea();
+                        const area = clickgo.form.getAvailArea();
                         this.stateAbs = true;
                         this.heightData = area.height;
                         this.$emit('update:height', this.heightData);
@@ -686,6 +682,9 @@ exports.methods = {
     setPropData: function (name, val, mode = '') {
         switch (name) {
             case 'left': {
+                if (typeof val !== 'number') {
+                    break;
+                }
                 switch (mode) {
                     case '': {
                         this.leftData = val;
@@ -703,6 +702,9 @@ exports.methods = {
                 break;
             }
             case 'top': {
+                if (typeof val !== 'number') {
+                    break;
+                }
                 switch (mode) {
                     case '': {
                         this.topData = val;
@@ -725,6 +727,9 @@ exports.methods = {
                     this.$emit('update:width', 'auto');
                 }
                 else {
+                    if (typeof val !== 'number') {
+                        break;
+                    }
                     switch (mode) {
                         case '': {
                             this.widthData = val;
@@ -748,6 +753,9 @@ exports.methods = {
                     this.$emit('update:height', 'auto');
                 }
                 else {
+                    if (typeof val !== 'number') {
+                        break;
+                    }
                     switch (mode) {
                         case '': {
                             this.heightData = val;
@@ -766,6 +774,9 @@ exports.methods = {
                 break;
             }
             case 'zIndex': {
+                if (typeof val !== 'number') {
+                    break;
+                }
                 switch (mode) {
                     case '': {
                         this.zIndexData = val;
@@ -785,7 +796,7 @@ exports.methods = {
         }
     }
 };
-let mounted = function () {
+const mounted = function () {
     return __awaiter(this, void 0, void 0, function* () {
         yield this.$nextTick();
         yield clickgo.tool.sleep(0);
@@ -807,12 +818,12 @@ let mounted = function () {
                 this.$emit('update:height', this.heightData);
             }
         }
-        let zIndex = parseInt(this.zIndex);
+        const zIndex = parseInt(this.zIndex);
         if (zIndex !== -1) {
             this.zIndexData = zIndex;
         }
         if (this.isStateMax) {
-            let area = clickgo.form.getAvailArea();
+            const area = clickgo.form.getAvailArea();
             this.leftData = (area.width - this.widthData) / 2;
             this.topData = (area.height - this.heightData) / 2;
             this.maxMethod();

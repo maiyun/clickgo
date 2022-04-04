@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.mounted = exports.computed = exports.data = void 0;
+exports.methods = exports.mounted = exports.computed = exports.data = void 0;
 exports.data = {
     'lineValue': 100,
     'lineCount': 2,
@@ -36,7 +36,7 @@ exports.data = {
 };
 exports.computed = {
     'is': function () {
-        let is = [];
+        const is = [];
         for (let i = 0; i < this.lineCount; ++i) {
             if (i > 0 && i % 10 === 0) {
                 is[i] = 30;
@@ -46,8 +46,44 @@ exports.computed = {
         return is;
     }
 };
-let mounted = function () {
+const mounted = function () {
     this.is6[29] = 50;
     this.is6[39] = 50;
 };
 exports.mounted = mounted;
+exports.methods = {
+    scrollborder: function (e, dir) {
+        if (!this.gesture) {
+            return;
+        }
+        let dirs = [];
+        switch (dir) {
+            case 'h': {
+                dirs = ['left', 'right'];
+                break;
+            }
+            default: {
+                dirs = ['top', 'bottom'];
+                break;
+            }
+        }
+        clickgo.dom.bindGesture(e, {
+            'dirs': dirs,
+            'handler': (dir) => {
+                switch (dir) {
+                    case 'left':
+                    case 'top': {
+                        this.lineCount -= 10;
+                        if (this.lineCount < 0) {
+                            this.lineCount = 0;
+                        }
+                        break;
+                    }
+                    default: {
+                        this.lineCount += this.lineValue;
+                    }
+                }
+            }
+        });
+    }
+};

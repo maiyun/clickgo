@@ -21,15 +21,15 @@ class Zip {
     getContent(path, type = 'string') {
         return __awaiter(this, void 0, void 0, function* () {
             path = clickgo.tool.urlResolve(this._path, path);
-            let f = this._zip.file(path.slice(1));
+            const f = this._zip.file(path.slice(1));
             if (!f) {
                 return null;
             }
             if (type === 'string') {
-                return yield f.async('string');
+                return f.async('string');
             }
             else {
-                return yield f.async(type);
+                return f.async(type);
             }
         });
     }
@@ -66,7 +66,7 @@ class Zip {
         if (!path.endsWith('/')) {
             path += '/';
         }
-        let folder = this._zip.folder(path.slice(1));
+        const folder = this._zip.folder(path.slice(1));
         if (!folder) {
             return [];
         }
@@ -77,8 +77,8 @@ class Zip {
             return this._list[path];
         }
         if (opt.pathAsKey) {
-            let list = {};
-            for (let item of this._list[path]) {
+            const list = {};
+            for (const item of this._list[path]) {
                 if (item.isFile || opt.hasDir) {
                     list[item.path + item.name] = item;
                 }
@@ -94,7 +94,7 @@ class Zip {
         }
         else {
             let list = [];
-            for (let item of this._list[path]) {
+            for (const item of this._list[path]) {
                 if (item.isFile || opt.hasDir) {
                     list.push(item);
                 }
@@ -111,11 +111,11 @@ class Zip {
     }
     _readDir(item, opt) {
         if (opt.pathAsKey) {
-            let list = {};
+            const list = {};
             if (!this._list[item.path + item.name + '/']) {
                 return {};
             }
-            for (let it of this._list[item.path + item.name + '/']) {
+            for (const it of this._list[item.path + item.name + '/']) {
                 if (it.isFile || opt.hasDir) {
                     list[it.path + it.name] = it;
                 }
@@ -134,7 +134,7 @@ class Zip {
             if (!this._list[item.path + item.name + '/']) {
                 return [];
             }
-            for (let it of this._list[item.path + item.name + '/']) {
+            for (const it of this._list[item.path + item.name + '/']) {
                 if (it.isFile || opt.hasDir) {
                     list.push(it);
                 }
@@ -150,7 +150,7 @@ class Zip {
         }
     }
     _refreshList() {
-        let list = {};
+        const list = {};
         this._zip.forEach(function (relativePath, item) {
             let parentPath = '/';
             let name = '';
@@ -195,39 +195,37 @@ class Zip {
         return this._path;
     }
     generate(options = {}) {
-        return __awaiter(this, void 0, void 0, function* () {
-            let opt = {};
-            if (options.type === undefined) {
-                opt.type = 'blob';
-            }
-            else {
-                opt.type = options.type;
-            }
-            if (options.level === undefined) {
-                options.level = 9;
-            }
-            else if (options.level > 9) {
-                options.level = 9;
-            }
-            if (options.level > 0) {
-                opt.compression = 'DEFLATE';
-            }
-            return yield this._zip.generateAsync(opt, function (meta) {
-                var _a;
-                (_a = options.onUpdate) === null || _a === void 0 ? void 0 : _a.call(options, meta.percent, meta.currentFile);
-            });
+        const opt = {};
+        if (options.type === undefined) {
+            opt.type = 'blob';
+        }
+        else {
+            opt.type = options.type;
+        }
+        if (options.level === undefined) {
+            options.level = 9;
+        }
+        else if (options.level > 9) {
+            options.level = 9;
+        }
+        if (options.level > 0) {
+            opt.compression = 'DEFLATE';
+        }
+        return this._zip.generateAsync(opt, function (meta) {
+            var _a;
+            (_a = options.onUpdate) === null || _a === void 0 ? void 0 : _a.call(options, meta.percent, meta.currentFile);
         });
     }
     getList() {
         return new Promise((resolve) => {
-            let files = {};
-            let list = this.readDir('/', {
+            const files = {};
+            const list = this.readDir('/', {
                 'hasChildren': true,
                 'hasDir': false
             });
             let loaded = 0;
-            for (let file of list) {
-                let mime = clickgo.tool.getMimeByPath(file.name);
+            for (const file of list) {
+                const mime = clickgo.tool.getMimeByPath(file.name);
                 if (['txt', 'json', 'js', 'css', 'xml', 'html'].includes(mime.ext)) {
                     this.getContent(file.path + file.name, 'string').then(function (fb) {
                         if (fb) {
@@ -269,7 +267,7 @@ class Zip {
 }
 function get(data) {
     return __awaiter(this, void 0, void 0, function* () {
-        let z = jszip();
+        const z = jszip();
         try {
             if (data) {
                 yield z.loadAsync(data);

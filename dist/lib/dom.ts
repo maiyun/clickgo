@@ -15,10 +15,10 @@
  */
 
 /** --- style list 的 div --- */
-let topClass: string[] = ['#cg-form-list', '#cg-pop-list', '#cg-system', '#cg-simpletask'];
+const topClass: string[] = ['#cg-form-list', '#cg-pop-list', '#cg-system', '#cg-simpletask'];
 function classUnfold(after?: string): string {
-    let arr: string[] = [];
-    for (let name of topClass) {
+    const arr: string[] = [];
+    for (const name of topClass) {
         arr.push(name + (after ? (' ' + after) : ''));
     }
     return arr.join(', ');
@@ -28,7 +28,7 @@ function classUnfold(after?: string): string {
 #cg-gesture {box-sizing: border-box; position: fixed; z-index: 20020004; border: solid 3px #ff976a; border-radius: 50%; filter: drop-shadow(0 0 3px #ff976a); pointer-events: none; opacity: 0; transform: scale(0); width: 20px; height: 20px;}
 #cg-gesture.done {background: #ff976a;}
 */
-let styleList: HTMLDivElement = document.createElement('div');
+const styleList: HTMLDivElement = document.createElement('div');
 styleList.style.display = 'none';
 document.getElementsByTagName('body')[0].appendChild(styleList);
 styleList.insertAdjacentHTML('beforeend', '<style id=\'cg-global-cursor\'></style>');
@@ -109,7 +109,7 @@ export function hasTouchButMouse(e: MouseEvent | TouchEvent | PointerEvent): boo
         // --- 当前是 mouse 但是却是 touch 触发的 ---
         return true;
     }
-    let now = Date.now();
+    const now = Date.now();
     if (now - lastTouchTime < 1000 * 60) {
         // --- 当前是 mouse 但是 10000ms 内有 touch start ---
         return true;
@@ -130,7 +130,7 @@ export function createToStyleList(taskId: number): void {
  * @param taskId 任务 id
  */
 export function removeFromStyleList(taskId: number): void {
-    document.getElementById('cg-style-task' + taskId)?.remove();
+    document.getElementById('cg-style-task' + taskId.toString())?.remove();
 }
 
 /**
@@ -141,7 +141,7 @@ export function removeFromStyleList(taskId: number): void {
  * @param formId 当前窗体 ID（global 下可空，theme 下为主题唯一标识符）
  */
 export function pushStyle(taskId: number, style: string, type: 'global' | 'theme' | 'control' | 'form' = 'global', formId: number | string = 0): void {
-    let el = document.querySelector(`#cg-style-task${taskId} > .cg-style-${type}`);
+    const el = document.querySelector(`#cg-style-task${taskId} > .cg-style-${type}`);
     if (!el) {
         return;
     }
@@ -163,12 +163,12 @@ export function pushStyle(taskId: number, style: string, type: 'global' | 'theme
  * @param formId 要移除的窗体 ID
  */
 export function removeStyle(taskId: number, type: 'global' | 'theme' | 'control' | 'form' = 'global', formId: number | string = 0): void {
-    let styleTask = document.getElementById('cg-style-task' + taskId);
+    const styleTask = document.getElementById('cg-style-task' + taskId.toString());
     if (!styleTask) {
         return;
     }
     if (type === 'global') {
-        let el = document.querySelector(`#cg-style-task${taskId} > .cg-style-global`);
+        const el = document.querySelector(`#cg-style-task${taskId} > .cg-style-global`);
         if (!el) {
             return;
         }
@@ -176,14 +176,14 @@ export function removeStyle(taskId: number, type: 'global' | 'theme' | 'control'
     }
     else if (type === 'theme' || type === 'control') {
         if (formId === 0) {
-            let el = document.querySelector(`#cg-style-task${taskId} > .cg-style-${type}`);
+            const el = document.querySelector(`#cg-style-task${taskId} > .cg-style-${type}`);
             if (!el) {
                 return;
             }
             el.innerHTML = '';
         }
         else {
-            let el = document.querySelector(`#cg-style-task${taskId} > .cg-style-${type} > [data-name='${formId}']`);
+            const el = document.querySelector(`#cg-style-task${taskId} > .cg-style-${type} > [data-name='${formId}']`);
             if (!el) {
                 return;
             }
@@ -191,7 +191,7 @@ export function removeStyle(taskId: number, type: 'global' | 'theme' | 'control'
         }
     }
     else {
-        let elist = styleTask.querySelectorAll('.cg-style-form' + formId);
+        const elist = styleTask.querySelectorAll('.cg-style-form' + formId.toString());
         for (let i = 0; i < elist.length; ++i) {
             elist.item(i).remove();
         }
@@ -212,15 +212,15 @@ export function getStyleCount(taskId: number, type: 'theme' | 'control' | 'form'
  * @param el 要获取的 dom
  */
 export function getSize(el: HTMLElement): ICGDomSize {
-    let rect = el.getBoundingClientRect();
-    let cs = getComputedStyle(el);
-    let border = {
+    const rect = el.getBoundingClientRect();
+    const cs = getComputedStyle(el);
+    const border = {
         'top': parseFloat(cs.borderTopWidth),
         'right': parseFloat(cs.borderRightWidth),
         'bottom': parseFloat(cs.borderBottomWidth),
         'left': parseFloat(cs.borderLeftWidth)
     };
-    let padding = {
+    const padding = {
         'top': parseFloat(cs.paddingTop),
         'right': parseFloat(cs.paddingRight),
         'bottom': parseFloat(cs.paddingBottom),
@@ -249,17 +249,31 @@ export function getSize(el: HTMLElement): ICGDomSize {
  * @param el 要监视的大小
  * @param cb 回调函数
  */
-export function watchSize(el: HTMLElement, cb: (size: ICGDomSize) => Promise<void> | void, immediate: boolean = false): ICGDomSize {
-    let fsize = getSize(el);
+export function watchSize(
+    el: HTMLElement,
+    cb: (size: ICGDomSize) => Promise<void> | void,
+    immediate: boolean = false
+): ICGDomSize {
+    const fsize = getSize(el);
     if (immediate) {
-        cb(fsize) as void;
+        const r = cb(fsize);
+        if (r instanceof Promise) {
+            r.catch(function(e) {
+                console.log(e);
+            });
+        }
     }
     const resizeObserver = new (window as any).ResizeObserver(function(): void {
-        let size = getSize(el);
+        const size = getSize(el);
         if (Number.isNaN(size.clientWidth)) {
             return;
         }
-        cb(size) as void;
+        const r = cb(size);
+        if (r instanceof Promise) {
+            r.catch(function(e) {
+                console.log(e);
+            });
+        }
     });
     resizeObserver.observe(el);
     return fsize;
@@ -313,7 +327,7 @@ export function watch(el: HTMLElement, cb: () => void, mode: 'child' | 'childsub
             moi = mode;
         }
     }
-    let mo = new MutationObserver(cb);
+    const mo = new MutationObserver(cb);
     mo.observe(el, moi);
     /*
     {
@@ -326,7 +340,7 @@ export function watch(el: HTMLElement, cb: () => void, mode: 'child' | 'childsub
     */
 }
 
-let watchStyleObjects: Array<{
+const watchStyleObjects: Array<{
     'el': HTMLElement;
     'sd': CSSStyleDeclaration;
     'names': Record<string, {
@@ -334,13 +348,18 @@ let watchStyleObjects: Array<{
         'cb': Array<(name?: string, value?: string) => void>;
     }>;
 }> = [];
-export function watchStyle(el: HTMLElement, name: string | string[], cb: (name?: string, value?: string) => void, immediate: boolean = false): void {
-    for (let item of watchStyleObjects) {
+export function watchStyle(
+    el: HTMLElement,
+    name: string | string[],
+    cb: (name?: string, value?: string) => void,
+    immediate: boolean = false
+): void {
+    for (const item of watchStyleObjects) {
         if (item.el !== el) {
             continue;
         }
         // --- 已经有监听了 ---
-        for (let n of name) {
+        for (const n of name) {
             if (!item.names[n]) {
                 item.names[n] = {
                     'old': (item.sd as any)[n],
@@ -357,7 +376,7 @@ export function watchStyle(el: HTMLElement, name: string | string[], cb: (name?:
         return;
     }
     // --- 创建监听 ---
-    let sd = getComputedStyle(el);
+    const sd = getComputedStyle(el);
     if (typeof name === 'string') {
         name = [name];
     }
@@ -366,8 +385,8 @@ export function watchStyle(el: HTMLElement, name: string | string[], cb: (name?:
         'sd': sd,
         'names': {}
     });
-    let item = watchStyleObjects[watchStyleObjects.length - 1];
-    for (let n of name) {
+    const item = watchStyleObjects[watchStyleObjects.length - 1];
+    for (const n of name) {
         item.names[n] = {
             'old': (item.sd as any)[n],
             'cb': [cb]
@@ -377,21 +396,21 @@ export function watchStyle(el: HTMLElement, name: string | string[], cb: (name?:
         }
     }
 }
-let watchStyleRAF = function(): void {
+const watchStyleRAF = function(): void {
     for (let i = 0; i < watchStyleObjects.length; ++i) {
-        let item = watchStyleObjects[i];
+        const item = watchStyleObjects[i];
         if (watchStyleObjects[i].sd.flex === '') {
             watchStyleObjects.splice(i, 1);
             --i;
             continue;
         }
         // --- 执行 cb ---
-        for (let name in item.names) {
+        for (const name in item.names) {
             if ((item.sd as any)[name] === item.names[name].old) {
                 continue;
             }
             item.names[name].old = (item.sd as any)[name];
-            for (let cb of item.names[name].cb) {
+            for (const cb of item.names[name].cb) {
                 cb(name, (item.sd as any)[name]);
             }
         }
@@ -405,7 +424,7 @@ watchStyleRAF();
  * @param e MouseEvent | TouchEvent
  * @param opt 回调选项
  */
-export function bindDown(oe: MouseEvent | TouchEvent, opt: { 'down'?: (e: MouseEvent | TouchEvent) => void; 'start'?: (e: MouseEvent | TouchEvent) => void | boolean; 'move'?: (e: MouseEvent | TouchEvent, dir: 'top' | 'right' | 'bottom' | 'left') => void | boolean; 'up'?: (e: MouseEvent | TouchEvent) => void; 'end'?: (e: MouseEvent | TouchEvent) => void; }): void {
+export function bindDown(oe: MouseEvent | TouchEvent, opt: { 'down'?: (e: MouseEvent | TouchEvent) => void; 'start'?: (e: MouseEvent | TouchEvent) => any; 'move'?: (e: MouseEvent | TouchEvent, dir: 'top' | 'right' | 'bottom' | 'left') => any; 'up'?: (e: MouseEvent | TouchEvent) => void; 'end'?: (e: MouseEvent | TouchEvent) => void; }): void {
     if (hasTouchButMouse(oe)) {
         return;
     }
@@ -423,21 +442,21 @@ export function bindDown(oe: MouseEvent | TouchEvent, opt: { 'down'?: (e: MouseE
     /** --- 是否是第一次执行 move --- */
     let isStart: boolean = false;
 
-    let end: (e: MouseEvent | TouchEvent) => void;
-    let move = function(e: MouseEvent | TouchEvent): void {
+    let end: ((e: MouseEvent | TouchEvent) => void) | undefined = undefined;
+    const move = function(e: MouseEvent | TouchEvent): void {
         // --- 虽然上层已经有 preventDefault 了，但是有可能 e.target 会被注销，这样就响应不到上层的 preventDefault 事件，所以要在这里再加一个 ---
         if (!e.target || !(e.target as HTMLElement).offsetParent) {
             e.preventDefault();
         }
         /** --- 本次的移动方向 --- */
         let dir: 'top' | 'right' | 'bottom' | 'left' = 'top';
-        let x: number = e instanceof MouseEvent ? e.clientX : e.touches[0].clientX;
-        let y: number = e instanceof MouseEvent ? e.clientY : e.touches[0].clientY;
+        const x: number = e instanceof MouseEvent ? e.clientX : e.touches[0].clientX;
+        const y: number = e instanceof MouseEvent ? e.clientY : e.touches[0].clientY;
         if (x === ox && y === oy) {
             return;
         }
-        let xx = x - ox;
-        let xy = y - oy;
+        const xx = x - ox;
+        const xy = y - oy;
         if (Math.abs(xy) > Math.abs(xx)) {
             // --- 竖向滚动 ---
             if (xy < 0) {
@@ -468,12 +487,12 @@ export function bindDown(oe: MouseEvent | TouchEvent, opt: { 'down'?: (e: MouseE
             if (opt.start && (opt.start(e) === false)) {
                 if (e instanceof MouseEvent) {
                     window.removeEventListener('mousemove', move);
-                    window.removeEventListener('mouseup', end);
+                    window.removeEventListener('mouseup', end!);
                 }
                 else {
                     (oe.target as HTMLElement).removeEventListener('touchmove', move);
-                    (oe.target as HTMLElement).removeEventListener('touchend', end);
-                    (oe.target as HTMLElement).removeEventListener('touchcancel', end);
+                    (oe.target as HTMLElement).removeEventListener('touchend', end!);
+                    (oe.target as HTMLElement).removeEventListener('touchcancel', end!);
                 }
                 return;
             }
@@ -481,13 +500,13 @@ export function bindDown(oe: MouseEvent | TouchEvent, opt: { 'down'?: (e: MouseE
         if (opt.move && (opt.move(e, dir) === false)) {
             if (e instanceof MouseEvent) {
                 window.removeEventListener('mousemove', move);
-                window.removeEventListener('mouseup', end);
+                window.removeEventListener('mouseup', end!);
             }
             else {
                 if (oe.target) {
                     (oe.target as HTMLElement).removeEventListener('touchmove', move);
-                    (oe.target as HTMLElement).removeEventListener('touchend', end);
-                    (oe.target as HTMLElement).removeEventListener('touchcancel', end);
+                    (oe.target as HTMLElement).removeEventListener('touchend', end!);
+                    (oe.target as HTMLElement).removeEventListener('touchcancel', end!);
                 }
             }
             return;
@@ -496,13 +515,13 @@ export function bindDown(oe: MouseEvent | TouchEvent, opt: { 'down'?: (e: MouseE
     end = function(e: MouseEvent | TouchEvent): void {
         if (e instanceof MouseEvent) {
             window.removeEventListener('mousemove', move);
-            window.removeEventListener('mouseup', end);
+            window.removeEventListener('mouseup', end!);
         }
         else {
             if (oe.target) {
                 (oe.target as HTMLElement).removeEventListener('touchmove', move);
-                (oe.target as HTMLElement).removeEventListener('touchend', end);
-                (oe.target as HTMLElement).removeEventListener('touchcancel', end);
+                (oe.target as HTMLElement).removeEventListener('touchend', end!);
+                (oe.target as HTMLElement).removeEventListener('touchcancel', end!);
             }
         }
         opt.up?.(e);
@@ -522,7 +541,7 @@ export function bindDown(oe: MouseEvent | TouchEvent, opt: { 'down'?: (e: MouseE
     opt.down?.(oe);
 }
 
-let bindGestureData: {
+const bindGestureData: {
     'el': HTMLElement | null;
     'xx': number;
     'xy': number;
@@ -532,12 +551,12 @@ let bindGestureData: {
     'timers': {
         'ani': number;
         'sleep': number;
-    }
+    };
 } = {
     'el': null,
     'xx': 0,    // 当前 x
     'xy': 0,
-    'tx': 0,    // 最终 x 
+    'tx': 0,    // 最终 x
     'ty': 0,
     'dir': null,
     'timers': {
@@ -553,13 +572,13 @@ function clearGestureData(): void {
     bindGestureData.ty = 0;
 }
 
-function bindGestureAnimation(opt: { 'rect': DOMRect; 'dirs'?: ('top' | 'right' | 'bottom' | 'left')[]; handler: (dir: 'top' | 'right' | 'bottom' | 'left') => void; }) {
+function bindGestureAnimation(opt: { 'rect': DOMRect; 'dirs'?: Array<('top' | 'right' | 'bottom' | 'left')>; handler: (dir: 'top' | 'right' | 'bottom' | 'left') => void; }): void {
     if (!bindGestureData.el) {
         return;
     }
-    let speed: number = 6;
-    let gestureElement = document.getElementById('cg-gesture') as HTMLElement;
-    let dirs = opt.dirs ?? ['top', 'bottom'];
+    const speed: number = 6;
+    const gestureElement = document.getElementById('cg-gesture')!;
+    const dirs = opt.dirs ?? ['top', 'bottom'];
 
     if (bindGestureData.tx > bindGestureData.xx) {
         bindGestureData.xx += speed;
@@ -585,8 +604,8 @@ function bindGestureAnimation(opt: { 'rect': DOMRect; 'dirs'?: ('top' | 'right' 
             bindGestureData.xy = bindGestureData.ty;
         }
     }
-    let xxAbs = Math.abs(bindGestureData.xx);
-    let xyAbs = Math.abs(bindGestureData.xy);
+    const xxAbs = Math.abs(bindGestureData.xx);
+    const xyAbs = Math.abs(bindGestureData.xy);
     if ((!dirs.includes('top') && !dirs.includes('bottom')) || ((xxAbs > xyAbs) && (dirs.includes('left') || dirs.includes('right')))) {
         // --- 水平 ---
         if (bindGestureData.xx < 0) {
@@ -605,9 +624,9 @@ function bindGestureAnimation(opt: { 'rect': DOMRect; 'dirs'?: ('top' | 'right' 
                 bindGestureData.dir = null;
                 gestureElement.classList.remove('done');
             }
-            gestureElement.style.top = opt.rect.top + ((opt.rect.height - 20) / 2) + 'px';
-            gestureElement.style.left = opt.rect.left - 10 + (xxAbs / 1.5) + 'px';
-            gestureElement.style.transform = 'scale(' + (xxAbs / 90) + ')';
+            gestureElement.style.top = (opt.rect.top + ((opt.rect.height - 20) / 2)).toString() + 'px';
+            gestureElement.style.left = (opt.rect.left - 10 + (xxAbs / 1.5)).toString() + 'px';
+            gestureElement.style.transform = 'scale(' + (xxAbs / 90).toString() + ')';
         }
         else {
             // --- right ---
@@ -625,9 +644,9 @@ function bindGestureAnimation(opt: { 'rect': DOMRect; 'dirs'?: ('top' | 'right' 
                 bindGestureData.dir = null;
                 gestureElement.classList.remove('done');
             }
-            gestureElement.style.top = opt.rect.top + ((opt.rect.height - 20) / 2) + 'px';
-            gestureElement.style.left = opt.rect.left + opt.rect.width - 10 - (xxAbs / 1.5) + 'px';
-            gestureElement.style.transform = 'scale(' + (xxAbs / 90) + ')';
+            gestureElement.style.top = (opt.rect.top + ((opt.rect.height - 20) / 2)).toString() + 'px';
+            gestureElement.style.left = (opt.rect.left + opt.rect.width - 10 - (xxAbs / 1.5)).toString() + 'px';
+            gestureElement.style.transform = 'scale(' + (xxAbs / 90).toString() + ')';
         }
     }
     else {
@@ -647,9 +666,9 @@ function bindGestureAnimation(opt: { 'rect': DOMRect; 'dirs'?: ('top' | 'right' 
                 bindGestureData.dir = null;
                 gestureElement.classList.remove('done');
             }
-            gestureElement.style.left = opt.rect.left + ((opt.rect.width - 20) / 2) + 'px';
-            gestureElement.style.top = opt.rect.top - 10 + (xyAbs / 1.5) + 'px';
-            gestureElement.style.transform = 'scale(' + (xyAbs / 90) + ')';
+            gestureElement.style.left = (opt.rect.left + ((opt.rect.width - 20) / 2)).toString() + 'px';
+            gestureElement.style.top = (opt.rect.top - 10 + (xyAbs / 1.5)).toString() + 'px';
+            gestureElement.style.transform = 'scale(' + (xyAbs / 90).toString() + ')';
         }
         else {
             // --- bottom ---
@@ -667,9 +686,9 @@ function bindGestureAnimation(opt: { 'rect': DOMRect; 'dirs'?: ('top' | 'right' 
                 bindGestureData.dir = null;
                 gestureElement.classList.remove('done');
             }
-            gestureElement.style.left = opt.rect.left + ((opt.rect.width - 20) / 2) + 'px';
-            gestureElement.style.top = opt.rect.top + opt.rect.height - 10 - (xyAbs / 1.5) + 'px';
-            gestureElement.style.transform = 'scale(' + (xyAbs / 90) + ')';
+            gestureElement.style.left = (opt.rect.left + ((opt.rect.width - 20) / 2)).toString() + 'px';
+            gestureElement.style.top = (opt.rect.top + opt.rect.height - 10 - (xyAbs / 1.5)).toString() + 'px';
+            gestureElement.style.transform = 'scale(' + (xyAbs / 90).toString() + ')';
         }
     }
 
@@ -693,9 +712,10 @@ function bindGestureAnimation(opt: { 'rect': DOMRect; 'dirs'?: ('top' | 'right' 
     });
 }
 
-export function bindGesture(e: MouseEvent | TouchEvent | WheelEvent | { 'x'?: number; 'y'?: number; }, opt: { 'el'?: HTMLElement; 'rect'?: DOMRect, 'dirs'?: ('top' | 'right' | 'bottom' | 'left')[]; handler: (dir: 'top' | 'right' | 'bottom' | 'left') => void; }): void {
-    let gestureElement = document.getElementById('cg-gesture') as HTMLElement;
-    let el: HTMLElement | undefined = ((e as any).currentTarget as HTMLElement | undefined) ?? ((e as any).target as HTMLElement | undefined) ?? opt.el;
+export function bindGesture(e: MouseEvent | TouchEvent | WheelEvent | { 'x'?: number; 'y'?: number; }, opt: { 'el'?: HTMLElement; 'rect'?: DOMRect; 'dirs'?: Array<('top' | 'right' | 'bottom' | 'left')>; handler: (dir: 'top' | 'right' | 'bottom' | 'left') => void; }): void {
+    const gestureElement = document.getElementById('cg-gesture')!;
+    const el: HTMLElement | undefined = ((e as any).currentTarget as HTMLElement | undefined)
+        ?? ((e as any).target as HTMLElement | undefined) ?? opt.el;
     if (!el) {
         return;
     }
@@ -712,15 +732,15 @@ export function bindGesture(e: MouseEvent | TouchEvent | WheelEvent | { 'x'?: nu
         }
         rect = el.getBoundingClientRect();
     }
-    let dirs = opt.dirs ?? ['top', 'bottom'];
+    const dirs = opt.dirs ?? ['top', 'bottom'];
     if ((e instanceof MouseEvent || e instanceof TouchEvent) && !(e instanceof WheelEvent)) {
         // --- touch / mouse 触发的 ---
-        let x: number = e instanceof MouseEvent ? e.clientX : e.touches[0].clientX;
-        let y: number = e instanceof MouseEvent ? e.clientY : e.touches[0].clientY;
+        const x: number = e instanceof MouseEvent ? e.clientX : e.touches[0].clientX;
+        const y: number = e instanceof MouseEvent ? e.clientY : e.touches[0].clientY;
         let dir: 'top' | 'right' | 'bottom' | 'left' | null = null;
         /** --- 当前手势方向 --- */
         bindDown(e, {
-            move: (e): void => {
+            move: (e) => {
                 e.preventDefault();
                 if (bindGestureData.timers.ani !== 0) {
                     cancelAnimationFrame(bindGestureData.timers.ani);
@@ -731,12 +751,12 @@ export function bindGesture(e: MouseEvent | TouchEvent | WheelEvent | { 'x'?: nu
                     bindGestureData.timers.sleep = 0;
                 }
 
-                let nx: number = e instanceof MouseEvent ? e.clientX : e.touches[0].clientX;
-                let ny: number = e instanceof MouseEvent ? e.clientY : e.touches[0].clientY;
+                const nx: number = e instanceof MouseEvent ? e.clientX : e.touches[0].clientX;
+                const ny: number = e instanceof MouseEvent ? e.clientY : e.touches[0].clientY;
                 /** --- 相对于按下时 x 的差值 --- */
-                let xx = nx - x;
+                const xx = nx - x;
                 /** --- 相对于按下时 y 的差值 --- */
-                let xy = ny - y;
+                const xy = ny - y;
                 let xxAbs = Math.abs(xx);
                 let xyAbs = Math.abs(xy);
                 if ((!dirs.includes('top') && !dirs.includes('bottom')) || ((xxAbs > xyAbs) && (dirs.includes('left') || dirs.includes('right')))) {
@@ -757,9 +777,9 @@ export function bindGesture(e: MouseEvent | TouchEvent | WheelEvent | { 'x'?: nu
                             dir = null;
                             gestureElement.classList.remove('done');
                         }
-                        gestureElement.style.top = rect.top + ((rect.height - 20) / 2) + 'px';
-                        gestureElement.style.left = rect.left - 10 + (xxAbs / 1.5) + 'px';
-                        gestureElement.style.transform = 'scale(' + (xxAbs / 90) + ')';
+                        gestureElement.style.top = (rect.top + ((rect.height - 20) / 2)).toString() + 'px';
+                        gestureElement.style.left = (rect.left - 10 + (xxAbs / 1.5)).toString() + 'px';
+                        gestureElement.style.transform = 'scale(' + (xxAbs / 90).toString() + ')';
                     }
                     else {
                         // --- right ---
@@ -777,9 +797,9 @@ export function bindGesture(e: MouseEvent | TouchEvent | WheelEvent | { 'x'?: nu
                             dir = null;
                             gestureElement.classList.remove('done');
                         }
-                        gestureElement.style.top = rect.top + ((rect.height - 20) / 2) + 'px';
-                        gestureElement.style.left = rect.left + rect.width - 10 - (xxAbs / 1.5) + 'px';
-                        gestureElement.style.transform = 'scale(' + (xxAbs / 90) + ')';
+                        gestureElement.style.top = (rect.top + ((rect.height - 20) / 2)).toString() + 'px';
+                        gestureElement.style.left = (rect.left + rect.width - 10 - (xxAbs / 1.5)).toString() + 'px';
+                        gestureElement.style.transform = 'scale(' + (xxAbs / 90).toString() + ')';
                     }
                 }
                 else {
@@ -799,9 +819,9 @@ export function bindGesture(e: MouseEvent | TouchEvent | WheelEvent | { 'x'?: nu
                             dir = null;
                             gestureElement.classList.remove('done');
                         }
-                        gestureElement.style.left = rect.left + ((rect.width - 20) / 2) + 'px';
-                        gestureElement.style.top = rect.top - 10 + (xyAbs / 1.5) + 'px';
-                        gestureElement.style.transform = 'scale(' + (xyAbs / 90) + ')';
+                        gestureElement.style.left = (rect.left + ((rect.width - 20) / 2)).toString() + 'px';
+                        gestureElement.style.top = (rect.top - 10 + (xyAbs / 1.5)).toString() + 'px';
+                        gestureElement.style.transform = 'scale(' + (xyAbs / 90).toString() + ')';
                     }
                     else {
                         // --- bottom ---
@@ -819,13 +839,13 @@ export function bindGesture(e: MouseEvent | TouchEvent | WheelEvent | { 'x'?: nu
                             dir = null;
                             gestureElement.classList.remove('done');
                         }
-                        gestureElement.style.left = rect.left + ((rect.width - 20) / 2) + 'px';
-                        gestureElement.style.top = rect.top + rect.height - 10 - (xyAbs / 1.5) + 'px';
-                        gestureElement.style.transform = 'scale(' + (xyAbs / 90) + ')';
+                        gestureElement.style.left = (rect.left + ((rect.width - 20) / 2)).toString() + 'px';
+                        gestureElement.style.top = (rect.top + rect.height - 10 - (xyAbs / 1.5)).toString() + 'px';
+                        gestureElement.style.transform = 'scale(' + (xyAbs / 90).toString() + ')';
                     }
                 }
             },
-            end: (e): void => {
+            end: (): void => {
                 gestureElement.style.opacity = '0';
                 if (!dir) {
                     return;
@@ -896,11 +916,11 @@ export function bindGesture(e: MouseEvent | TouchEvent | WheelEvent | { 'x'?: nu
 let lastLongTime: number = 0;
 
 export function allowEvent(e: MouseEvent | TouchEvent | KeyboardEvent): boolean {
-    let now = Date.now();
+    const now = Date.now();
     if (now - lastLongTime < 5) {
         return false;
     }
-    let current = e.currentTarget as HTMLElement;
+    const current = e.currentTarget as HTMLElement;
     if (current.dataset.cgDisabled !== undefined) {
         return false;
     }
@@ -915,8 +935,8 @@ export function bindLong(e: MouseEvent | TouchEvent, long: (e: MouseEvent | Touc
         return;
     }
     /** --- 上一次的坐标 --- */
-    let tx: number = e instanceof MouseEvent ? e.clientX : e.touches[0].clientX;
-    let ty: number = e instanceof MouseEvent ? e.clientY : e.touches[0].clientY;
+    const tx: number = e instanceof MouseEvent ? e.clientX : e.touches[0].clientX;
+    const ty: number = e instanceof MouseEvent ? e.clientY : e.touches[0].clientY;
     let ox:  number = 0;
     let oy: number = 0;
     /** --- 是否执行了 long --- */
@@ -936,12 +956,12 @@ export function bindLong(e: MouseEvent | TouchEvent, long: (e: MouseEvent | Touc
     }, 300);
     bindDown(e, {
         move: (e: MouseEvent | TouchEvent) => {
-            let x: number = e instanceof MouseEvent ? e.clientX : e.touches[0].clientX;
-            let y: number = e instanceof MouseEvent ? e.clientY : e.touches[0].clientY;
+            const x: number = e instanceof MouseEvent ? e.clientX : e.touches[0].clientX;
+            const y: number = e instanceof MouseEvent ? e.clientY : e.touches[0].clientY;
             ox = Math.abs(x - tx);
             oy = Math.abs(y - ty);
         },
-        up: async () => {
+        up: () => {
             if (timer !== undefined) {
                 // --- 肯定没执行 long ---
                 clearTimeout(timer);
@@ -955,7 +975,7 @@ export function bindLong(e: MouseEvent | TouchEvent, long: (e: MouseEvent | Touc
 }
 
 /** --- 目前是否已绑定了 bindMove --- */
-export let is = Vue.reactive({
+export const is = Vue.reactive({
     'move': false
 });
 
@@ -964,7 +984,7 @@ export let is = Vue.reactive({
  * @param e mousedown 或 touchstart 的 event
  * @param opt 回调选项
  */
-export function bindMove(e: MouseEvent | TouchEvent, opt: { 'areaObject'?: HTMLElement | IVue; 'left'?: number; 'top'?: number; 'right'?: number; 'bottom'?: number; 'offsetLeft'?: number; 'offsetTop'?: number; 'offsetRight'?: number; 'offsetBottom'?: number; 'objectLeft'?: number; 'objectTop'?: number; 'objectWidth'?: number; 'objectHeight'?: number; 'object'?: HTMLElement | IVue; 'showRect'?: boolean; 'start'?: (x: number, y: number) => void | boolean; 'move'?: (ox: number, oy: number, x: number, y: number, border: TCGBorder, dir: 'top' | 'right' | 'bottom' | 'left', e: MouseEvent | TouchEvent) => void; 'up'?: (moveTimes: Array<{ 'time': number; 'ox': number; 'oy': number; }>, e: MouseEvent | TouchEvent) => void; 'end'?: (moveTimes: Array<{ 'time': number; 'ox': number; 'oy': number; }>, e: MouseEvent | TouchEvent) => void; 'borderIn'?: (x: number, y: number, border: TCGBorder, e: MouseEvent | TouchEvent) => void; 'borderOut'?: () => void; }): { 'left': number; 'top': number; 'right': number; 'bottom': number; } {
+export function bindMove(e: MouseEvent | TouchEvent, opt: { 'areaObject'?: HTMLElement | IVue; 'left'?: number; 'top'?: number; 'right'?: number; 'bottom'?: number; 'offsetLeft'?: number; 'offsetTop'?: number; 'offsetRight'?: number; 'offsetBottom'?: number; 'objectLeft'?: number; 'objectTop'?: number; 'objectWidth'?: number; 'objectHeight'?: number; 'object'?: HTMLElement | IVue; 'showRect'?: boolean; 'start'?: (x: number, y: number) => any; 'move'?: (ox: number, oy: number, x: number, y: number, border: TCGBorder, dir: 'top' | 'right' | 'bottom' | 'left', e: MouseEvent | TouchEvent) => void; 'up'?: (moveTimes: Array<{ 'time': number; 'ox': number; 'oy': number; }>, e: MouseEvent | TouchEvent) => void; 'end'?: (moveTimes: Array<{ 'time': number; 'ox': number; 'oy': number; }>, e: MouseEvent | TouchEvent) => void; 'borderIn'?: (x: number, y: number, border: TCGBorder, e: MouseEvent | TouchEvent) => void; 'borderOut'?: () => void; }): { 'left': number; 'top': number; 'right': number; 'bottom': number; } {
     if (hasTouchButMouse(e)) {
         return {
             'left': 0,
@@ -992,15 +1012,17 @@ export function bindMove(e: MouseEvent | TouchEvent, opt: { 'areaObject'?: HTMLE
         if (!(opt.areaObject instanceof HTMLElement)) {
             opt.areaObject = opt.areaObject.$el;
         }
-        let areaRect = opt.areaObject.getBoundingClientRect();
-        let areaStyle = getComputedStyle(opt.areaObject);
+        const areaRect = opt.areaObject.getBoundingClientRect();
+        const areaStyle = getComputedStyle(opt.areaObject);
         left = areaRect.left + parseFloat(areaStyle.borderLeftWidth) + parseFloat(areaStyle.paddingLeft);
         top = areaRect.top + parseFloat(areaStyle.borderTopWidth) + parseFloat(areaStyle.paddingTop);
-        right = areaRect.left + areaRect.width - (parseFloat(areaStyle.borderRightWidth) + parseFloat(areaStyle.paddingRight));
-        bottom = areaRect.top + areaRect.height - (parseFloat(areaStyle.borderRightWidth) + parseFloat(areaStyle.paddingRight));
+        right = areaRect.left + areaRect.width - (parseFloat(areaStyle.borderRightWidth)
+            + parseFloat(areaStyle.paddingRight));
+        bottom = areaRect.top + areaRect.height - (parseFloat(areaStyle.borderRightWidth)
+            + parseFloat(areaStyle.paddingRight));
     }
     else {
-        let area = clickgo.form.getAvailArea();
+        const area = clickgo.form.getAvailArea();
         left = opt.left ?? area.left;
         top = opt.top ?? area.top;
         right = opt.right ?? area.width;
@@ -1035,7 +1057,7 @@ export function bindMove(e: MouseEvent | TouchEvent, opt: { 'areaObject'?: HTMLE
         offsetBottom = 0;
 
     /** --- 每次拖动时的时间以及偏移 --- */
-    let moveTimes: Array<{ 'time': number; 'ox': number; 'oy': number; }> = [];
+    const moveTimes: Array<{ 'time': number; 'ox': number; 'oy': number; }> = [];
 
     bindDown(e, {
         start: () => {
@@ -1050,7 +1072,7 @@ export function bindMove(e: MouseEvent | TouchEvent, opt: { 'areaObject'?: HTMLE
                 if (!(opt.object instanceof HTMLElement)) {
                     opt.object = opt.object.$el;
                 }
-                let rect = opt.object.getBoundingClientRect();
+                const rect = opt.object.getBoundingClientRect();
                 objectLeft = rect.left;
                 objectTop = rect.top;
                 objectWidth = rect.width;
@@ -1095,9 +1117,9 @@ export function bindMove(e: MouseEvent | TouchEvent, opt: { 'areaObject'?: HTMLE
                 inBorderLeft: boolean = false;
 
             /** --- 当前理论上可拖动 object 应该存在的 x 左侧 --- */
-            let nowLeft = x - offsetLeft;
+            const nowLeft = x - offsetLeft;
             /** --- 当前理论上可拖动 object 应该存在的 x 右侧 --- */
-            let nowRight = x + offsetRight;
+            const nowRight = x + offsetRight;
             if (nowLeft <= left) {
                 // --- 必定是到左侧边界了 ---
                 inBorderLeft = true;
@@ -1128,7 +1150,7 @@ export function bindMove(e: MouseEvent | TouchEvent, opt: { 'areaObject'?: HTMLE
                 }
             }
             else if (offsetRight === 0) {
-                let r1 = right - 1;
+                const r1 = right - 1;
                 if (x >= r1) {
                     inBorderRight = true;
                     if (x > r1 && x > tx) {
@@ -1143,9 +1165,9 @@ export function bindMove(e: MouseEvent | TouchEvent, opt: { 'areaObject'?: HTMLE
             }
 
             /** --- 当前理论上可拖动 object 应该存在的 y 顶部 --- */
-            let nowTop = y - offsetTop;
+            const nowTop = y - offsetTop;
             /** --- 当前理论上可拖动 object 应该存在的 y 底部 --- */
-            let nowBottom = y + offsetBottom;
+            const nowBottom = y + offsetBottom;
             if (nowTop <= top) {
                 inBorderTop = true;
                 if (nowTop < top && y < ty) {
@@ -1171,7 +1193,7 @@ export function bindMove(e: MouseEvent | TouchEvent, opt: { 'areaObject'?: HTMLE
                 }
             }
             else if (offsetBottom === 0) {
-                let b1 = bottom - 1;
+                const b1 = bottom - 1;
                 if (y >= b1) {
                     inBorderBottom = true;
                     if (y > b1 && y > ty) {
@@ -1246,8 +1268,8 @@ export function bindMove(e: MouseEvent | TouchEvent, opt: { 'areaObject'?: HTMLE
                 }
             }
 
-            let ox = x - tx;
-            let oy = y - ty;
+            const ox = x - tx;
+            const oy = y - ty;
             moveTimes.push({
                 'time': Date.now(),
                 'ox': ox,
@@ -1295,30 +1317,34 @@ export function bindMove(e: MouseEvent | TouchEvent, opt: { 'areaObject'?: HTMLE
  * @param moveCb 拖动时的回调
  * @param endCb 结束时的回调
  */
-export function bindResize(e: MouseEvent | TouchEvent, opt: { 'objectLeft'?: number; 'objectTop'?: number; 'objectWidth'?: number; 'objectHeight'?: number; 'object'?: HTMLElement | IVue; 'minWidth'?: number; 'minHeight'?: number; 'maxWidth'?: number; 'maxHeight'?: number; 'border': TCGBorder; 'start'?: (x: number, y: number) => void | boolean; 'move'?: (left: number, top: number, width: number, height: number, x: number, y: number, border: TCGBorder) => void; 'end'?: () => void; }): void {
+export function bindResize(e: MouseEvent | TouchEvent, opt: { 'objectLeft'?: number; 'objectTop'?: number; 'objectWidth'?: number; 'objectHeight'?: number; 'object'?: HTMLElement | IVue; 'minWidth'?: number; 'minHeight'?: number; 'maxWidth'?: number; 'maxHeight'?: number; 'border': TCGBorder; 'start'?: (x: number, y: number) => any; 'move'?: (left: number, top: number, width: number, height: number, x: number, y: number, border: TCGBorder) => void; 'end'?: () => void; }): void {
     if (hasTouchButMouse(e)) {
         return;
     }
     opt.minWidth = opt.minWidth ?? 0;
     opt.minHeight = opt.minHeight ?? 0;
     /** --- 当前鼠标位置 x --- */
-    let x: number = e instanceof MouseEvent ? e.clientX : e.touches[0].clientX;
+    const x: number = e instanceof MouseEvent ? e.clientX : e.touches[0].clientX;
     /** --- 当前鼠标位置 y --- */
-    let y: number = e instanceof MouseEvent ? e.clientY : e.touches[0].clientY;
+    const y: number = e instanceof MouseEvent ? e.clientY : e.touches[0].clientY;
     // --- 获取偏差补偿 ---
     let offsetLeft!: number, offsetTop!: number, offsetRight!: number, offsetBottom!: number;
     /** --- 上下左右界限 --- */
     let left!: number, top!: number, right!: number, bottom!: number;
 
     // --- 获取 object 的 x,y 和 w,h 信息 ---
-    if (opt.objectLeft === undefined || opt.objectTop === undefined || opt.objectWidth === undefined || opt.objectHeight === undefined) {
+    if (opt.objectLeft === undefined
+        || opt.objectTop === undefined
+        || opt.objectWidth === undefined
+        || opt.objectHeight === undefined
+    ) {
         if (!opt.object) {
             return;
         }
         if (!(opt.object instanceof HTMLElement)) {
             opt.object = opt.object.$el;
         }
-        let objectRect = opt.object.getBoundingClientRect();
+        const objectRect = opt.object.getBoundingClientRect();
         opt.objectLeft = objectRect.left;
         opt.objectTop = objectRect.top;
         opt.objectWidth = objectRect.width;
@@ -1422,9 +1448,9 @@ export function siblings(el: HTMLElement): HTMLElement[] {
     if (!el.parentNode) {
         return [];
     }
-    let list: HTMLElement[] = [];
+    const list: HTMLElement[] = [];
     for (let i = 0; i < el.parentNode.children.length; ++i) {
-        let e = el.parentNode.children.item(i) as HTMLElement;
+        const e = el.parentNode.children.item(i) as HTMLElement;
         if (e === el) {
             continue;
         }
@@ -1440,9 +1466,9 @@ export function siblings(el: HTMLElement): HTMLElement[] {
  * @returns HTMLElement[]
  */
 export function siblingsData(el: HTMLElement, name: string): HTMLElement[] {
-    let list = siblings(el);
-    let olist: HTMLElement[] = [];
-    for (let item of list) {
+    const list = siblings(el);
+    const olist: HTMLElement[] = [];
+    for (const item of list) {
         if (item.getAttribute('data-' + name) === null) {
             continue;
         }
@@ -1453,7 +1479,7 @@ export function siblingsData(el: HTMLElement, name: string): HTMLElement[] {
 
 // --- 全屏 ---
 export function fullscreen(): boolean {
-    let he = document.getElementsByTagName('html')[0] as any;
+    const he = document.getElementsByTagName('html')[0] as any;
     if (he.webkitRequestFullscreen) {
         he.webkitRequestFullscreen();
         return true;

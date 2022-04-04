@@ -1,4 +1,4 @@
-export let data = {
+export const data = {
     'message': 'message',
     'buttons': ['OK'],
     'btn': 'none'

@@ -14,28 +14,28 @@ exports.global = null;
 exports.clickgoThemePkgs = {};
 function read(blob) {
     return __awaiter(this, void 0, void 0, function* () {
-        let zip = yield clickgo.zip.get(blob);
+        const zip = yield clickgo.zip.get(blob);
         if (!zip) {
             return false;
         }
-        let configContent = yield zip.getContent('/config.json');
+        const configContent = yield zip.getContent('/config.json');
         if (!configContent) {
             return false;
         }
-        let config = JSON.parse(configContent);
-        let objectURLs = {};
-        let files = {};
-        for (let file of config.files) {
-            let mime = clickgo.tool.getMimeByPath(file);
+        const config = JSON.parse(configContent);
+        const objectURLs = {};
+        const files = {};
+        for (const file of config.files) {
+            const mime = clickgo.tool.getMimeByPath(file);
             if (['txt', 'json', 'js', 'css', 'xml', 'html'].includes(mime.ext)) {
-                let fab = yield zip.getContent(file, 'string');
+                const fab = yield zip.getContent(file, 'string');
                 if (!fab) {
                     continue;
                 }
                 files[file] = fab.replace(/^\ufeff/, '');
             }
             else {
-                let fab = yield zip.getContent(file, 'arraybuffer');
+                const fab = yield zip.getContent(file, 'arraybuffer');
                 if (!fab) {
                     continue;
                 }
@@ -55,14 +55,14 @@ function read(blob) {
 }
 exports.read = read;
 function revokeObjectURL(pkg) {
-    for (let path in pkg.objectURLs) {
+    for (const path in pkg.objectURLs) {
         clickgo.tool.revokeObjectURL(pkg.objectURLs[path]);
     }
 }
 exports.revokeObjectURL = revokeObjectURL;
 function load(taskId, path = 'global') {
     return __awaiter(this, void 0, void 0, function* () {
-        let task = clickgo.task.list[taskId];
+        const task = clickgo.task.list[taskId];
         if (!task) {
             return false;
         }
@@ -78,7 +78,7 @@ function load(taskId, path = 'global') {
         }
         else {
             if (path.startsWith('/clickgo/')) {
-                let clickgoPath = path.slice(8);
+                const clickgoPath = path.slice(8);
                 if (!exports.clickgoThemePkgs[clickgoPath]) {
                     if ((yield clickgo.core.fetchClickGoFile(clickgoPath)) === null) {
                         return false;
@@ -112,7 +112,7 @@ function load(taskId, path = 'global') {
 exports.load = load;
 function remove(taskId, path) {
     return __awaiter(this, void 0, void 0, function* () {
-        let task = clickgo.task.list[taskId];
+        const task = clickgo.task.list[taskId];
         if (!task) {
             return;
         }
@@ -131,7 +131,7 @@ function remove(taskId, path) {
 exports.remove = remove;
 function clear(taskId) {
     return __awaiter(this, void 0, void 0, function* () {
-        let task = clickgo.task.list[taskId];
+        const task = clickgo.task.list[taskId];
         if (!task) {
             return;
         }
@@ -148,7 +148,7 @@ function clear(taskId) {
 exports.clear = clear;
 function setGlobal(file) {
     return __awaiter(this, void 0, void 0, function* () {
-        let pkg = yield read(file);
+        const pkg = yield read(file);
         if (!pkg) {
             return;
         }
@@ -156,26 +156,24 @@ function setGlobal(file) {
             revokeObjectURL(exports.global);
         }
         exports.global = pkg;
-        for (let taskId in clickgo.task.list) {
+        for (const taskId in clickgo.task.list) {
             yield load(parseInt(taskId), 'global');
         }
     });
 }
 exports.setGlobal = setGlobal;
 function clearGlobal() {
-    return __awaiter(this, void 0, void 0, function* () {
-        if (!exports.global) {
-            return;
+    if (!exports.global) {
+        return;
+    }
+    revokeObjectURL(exports.global);
+    exports.global = null;
+    for (const taskId in clickgo.task.list) {
+        const task = clickgo.task.list[taskId];
+        if (task.customTheme) {
+            continue;
         }
-        revokeObjectURL(exports.global);
-        exports.global = null;
-        for (let taskId in clickgo.task.list) {
-            let task = clickgo.task.list[taskId];
-            if (task.customTheme) {
-                continue;
-            }
-            clickgo.dom.removeStyle(task.id, 'theme');
-        }
-    });
+        clickgo.dom.removeStyle(task.id, 'theme');
+    }
 }
 exports.clearGlobal = clearGlobal;

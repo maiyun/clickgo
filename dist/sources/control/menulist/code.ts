@@ -1,3 +1,3 @@
-export let data = {
+export const data = {
     'hasTypeItemsCount': 0
 };

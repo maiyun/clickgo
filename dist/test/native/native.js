@@ -62,14 +62,15 @@ function createForm(path) {
         'transparent': true
     });
     win.once('ready-to-show', function () {
+        if (!win) {
+            return;
+        }
         win.maximize();
         win.show();
+        win.setIgnoreMouseEvents(true, { 'forward': true });
         let timerFunc = function () {
             return __awaiter(this, void 0, void 0, function* () {
                 if (!win) {
-                    return;
-                }
-                if (!win.webContents) {
                     return;
                 }
                 let isReady = yield win.webContents.executeJavaScript('clickgo.isReady');
@@ -85,6 +86,9 @@ function createForm(path) {
                         let result = it.handler(item.param);
                         if (result instanceof Promise) {
                             result.then(function (result) {
+                                if (!win) {
+                                    return;
+                                }
                                 win.webContents.executeJavaScript(`clickgo.core.__nativeReceive(${item.id}, "${item.name}", ${result !== undefined ? (', "' + result.replace(/"/g, '\"') + '"') : ''})`);
                             });
                         }
@@ -102,6 +106,9 @@ function createForm(path) {
     });
     win.loadFile(path).catch(function (e) {
         throw e;
+    });
+    win.on('close', function () {
+        win = undefined;
     });
 }
 function run(path) {

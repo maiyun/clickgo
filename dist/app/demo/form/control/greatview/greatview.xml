@@ -5,12 +5,12 @@
             <layout gutter="10" direction="v" style="flex: 1; width: 0;">
                 <!-- v -->
                 <layout gutter="10" style="flex: 1; height: 0;">
-                    <greatview v-model:scroll-left="sLeft1" v-model:scroll-top="sTop1" direction="v" :selection="selection" @select="area = $event" @resize="c1 = $event" @change="l1 = $event" :style="{'line-height': style ? '1.5' : undefined, 'padding': style ? '10px' : undefined}" class="border" style="flex: 1; width: 0;" :data="lineCount" v-slot="data" :items-size="is" same>
+                    <greatview v-model:scroll-left="sLeft1" v-model:scroll-top="sTop1" direction="v" :selection="selection" @select="area = $event" @resize="c1 = $event" @change="l1 = $event" @scrollborder="scrollborder($event, 'v')" :style="{'line-height': style ? '1.5' : undefined, 'padding': style ? '10px' : undefined}" class="border" style="flex: 1; width: 0;" :data="lineCount" v-slot="data" :items-size="is" same>
                         <button v-if="data.index > 0 && data.index % 10 === 0" style="height: 30px;">test</button>
                         <block v-else>Line {{data.row}}, index: {{data.index}}.</block>
                     </greatview>
                     <layout class="border" style="flex: 1; width: 0;">
-                        <greatview v-model:scroll-left="sLeft2" v-model:scroll-top="sTop2" direction="v" :selection="selection" @select="area = $event" @resize="c2 = $event" @change="l2 = $event" :style="{'line-height': style ? '1.5' : undefined, 'padding': style ? '10px' : undefined}" style="flex: 1; width: 0;" :data="lineCount" v-slot="data" :items-size="is" same>
+                        <greatview v-model:scroll-left="sLeft2" v-model:scroll-top="sTop2" direction="v" :selection="selection" @select="area = $event" @resize="c2 = $event" @change="l2 = $event" @scrollborder="scrollborder($event, 'v')" :style="{'line-height': style ? '1.5' : undefined, 'padding': style ? '10px' : undefined}" style="flex: 1; width: 0;" :data="lineCount" v-slot="data" :items-size="is" same>
                             <block v-if="data.index > 0 && data.index % 10 === 0" class="custom">Custom</block>
                             <block v-else>Line {{data.row}}, index: {{data.index}}.</block>
                         </greatview>
@@ -20,7 +20,7 @@
                 <label>Scroll Left: {{sLeft1}}, Scroll Top: {{sTop1}}, Length: {{l1}}, Client: {{c1}}.</label>
                 <label>Scroll Left: {{sLeft2}}, Scroll Top: {{sTop2}}, Length: {{l2}}, Client: {{c2}}.</label>
                 <!-- h -->
-                <greatview v-model:scroll-left="sLeft3" v-model:scroll-top="sTop3" :selection="selection" @select="area = $event" @resize="c3 = $event" @change="l3 = $event" :style="{'line-height': style ? '1.5' : undefined, 'padding': style ? '10px' : undefined}" class="border" style="flex: 1; height: 0;" :data="lineCount" v-slot="data" same>
+                <greatview v-model:scroll-left="sLeft3" v-model:scroll-top="sTop3" :selection="selection" @select="area = $event" @resize="c3 = $event" @change="l3 = $event" @scrollborder="scrollborder($event, 'h')" :style="{'line-height': style ? '1.5' : undefined, 'padding': style ? '10px' : undefined}" class="border" style="flex: 1; height: 0;" :data="lineCount" v-slot="data" same>
                     <layout align-v="center" align-h="center" direction="v" class="rightborder" style="width: 80px;">
                         <label>Col {{data.row}}.</label>
                         <label>index: {{data.index}}.</label>
@@ -45,7 +45,7 @@
         <tab-panel label="adaptation">
             <layout gutter="10" direction="v" style="flex: 1; width: 0;">
                 <layout :direction="direction ? 'h' : 'v'" style="flex: 1; height: 0;">
-                    <greatview class="border" v-model:scroll-left="sLeft4" v-model:scroll-top="sTop4" :direction="direction ? 'h' : 'v'" @resize="c4 = $event" @change="l4 = $event" :data="lineCount" v-slot="data" :items-size="is" same>
+                    <greatview class="border" v-model:scroll-left="sLeft4" v-model:scroll-top="sTop4" :direction="direction ? 'h' : 'v'" @resize="c4 = $event" @change="l4 = $event" @scrollborder="scrollborder($event, 'v')" :data="lineCount" v-slot="data" :items-size="is" same>
                         <layout align-v="center" direction="v" :class="[direction && 'rightborder']" style="flex: 1;">
                             <button v-if="data.index > 0 && data.index % 10 === 0" style="height: 30px;" :style="{'width': direction ? '30px' : undefined}">btn</button>
                             <block v-else :style="{'width': direction ? '80px' : undefined, 'text-align': direction ? 'center' : undefined}">Line {{data.row}}</block>

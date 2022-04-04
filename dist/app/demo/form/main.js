@@ -17,7 +17,7 @@ exports.methods = {
         });
     }
 };
-let mounted = function () {
+const mounted = function () {
     return __awaiter(this, void 0, void 0, function* () {
         yield clickgo.core.initModules('monaco');
     });

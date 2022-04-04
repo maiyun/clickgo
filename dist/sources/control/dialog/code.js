@@ -25,7 +25,7 @@ exports.methods = {
         this.$emit('select', item);
     }
 };
-let mounted = function () {
+const mounted = function () {
     clickgo.dom.watchStyle(this.$el, 'padding', (n, v) => {
         this.padding = v;
     }, true);

@@ -46,7 +46,7 @@ exports.watch = {
     },
     'scrollOffset': {
         handler: function () {
-            let scrollOffsetData = Math.round(parseFloat(this.scrollOffset));
+            const scrollOffsetData = Math.round(parseFloat(this.scrollOffset));
             if (this.scrollOffsetData === scrollOffsetData) {
                 return;
             }
@@ -129,7 +129,7 @@ exports.methods = {
             'object': this.$refs.block,
             'move': (ox, oy) => {
                 this.scrollOffsetPx += this.direction === 'v' ? oy : ox;
-                let scrollPer = (this.barOutSize > 0) ? (this.scrollOffsetPx / this.barOutSize) : 0;
+                const scrollPer = (this.barOutSize > 0) ? (this.scrollOffsetPx / this.barOutSize) : 0;
                 this.scrollOffsetData = Math.round(scrollPer * this.maxScroll);
                 this.$emit('update:scrollOffset', this.scrollOffsetData);
             }
@@ -142,8 +142,8 @@ exports.methods = {
         if (e.currentTarget !== e.target) {
             return;
         }
-        let barRect = this.$refs.bar.getBoundingClientRect();
-        let barOffset = this.direction === 'v' ? barRect.top : barRect.left;
+        const barRect = this.$refs.bar.getBoundingClientRect();
+        const barOffset = this.direction === 'v' ? barRect.top : barRect.left;
         let eOffset = this.direction === 'v' ? (e instanceof MouseEvent ? e.clientY : e.touches[0].clientY) : (e instanceof MouseEvent ? e.clientX : e.touches[0].clientX);
         eOffset = eOffset - barOffset;
         let scrollOffsetPx = eOffset - this.size / 2;
@@ -154,7 +154,7 @@ exports.methods = {
             scrollOffsetPx = this.barLengthPx - this.size;
         }
         this.scrollOffsetPx = scrollOffsetPx;
-        let scrollPer = this.scrollOffsetPx / this.barOutSize;
+        const scrollPer = this.scrollOffsetPx / this.barOutSize;
         this.scrollOffsetData = Math.round(scrollPer * this.maxScroll);
         this.$emit('update:scrollOffset', this.scrollOffsetData);
         this.down(e);
@@ -177,7 +177,8 @@ exports.methods = {
                         }
                         else {
                             this.scrollOffsetData -= 10;
-                            this.scrollOffsetPx = (this.maxScroll > 0) ? (this.barOutSize * (this.scrollOffsetData / this.maxScroll)) : 0;
+                            this.scrollOffsetPx = (this.maxScroll > 0)
+                                ? (this.barOutSize * (this.scrollOffsetData / this.maxScroll)) : 0;
                             this.$emit('update:scrollOffset', this.scrollOffsetData);
                         }
                     }
@@ -191,7 +192,8 @@ exports.methods = {
                         }
                         else {
                             this.scrollOffsetData += 10;
-                            this.scrollOffsetPx = (this.maxScroll > 0) ? (this.barOutSize * (this.scrollOffsetData / this.maxScroll)) : 0;
+                            this.scrollOffsetPx = (this.maxScroll > 0)
+                                ? (this.barOutSize * (this.scrollOffsetData / this.maxScroll)) : 0;
                             this.$emit('update:scrollOffset', this.scrollOffsetData);
                         }
                     }
@@ -266,7 +268,7 @@ exports.methods = {
         }
     }
 };
-let mounted = function () {
+const mounted = function () {
     if (this.isFloat) {
         this.opacityTimer = this.cgSleep(() => {
             this.opacity = '0';
@@ -275,11 +277,11 @@ let mounted = function () {
     clickgo.dom.watchSize(this.$refs.bar, (size) => {
         this.barLengthPx = this.direction === 'v' ? size.height : size.width;
         this.scrollOffsetPx = this.barOutSize * (this.scrollOffsetData / this.maxScroll);
-        let els = clickgo.dom.getSize(this.$el);
+        const els = clickgo.dom.getSize(this.$el);
         this.width = els.width;
         this.height = els.height;
     }, true);
-    let scrollOffsetData = Math.round(parseFloat(this.scrollOffset));
+    const scrollOffsetData = Math.round(parseFloat(this.scrollOffset));
     if (this.scrollOffsetData === scrollOffsetData) {
         return;
     }
@@ -287,9 +289,9 @@ let mounted = function () {
     this.resizePx();
 };
 exports.mounted = mounted;
-let unmounted = function () {
+const unmounted = function () {
     if (this.timer > 0) {
-        this.cgOffFrame);
+        this.cgOffFrame(this.timer);
     }
 };
 exports.unmounted = unmounted;

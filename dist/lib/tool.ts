@@ -40,7 +40,7 @@ export function file2ObjectUrl(file: string, obj: ICGTask | ICGControl | ICGThem
  */
 export function blob2ArrayBuffer(blob: Blob): Promise<ArrayBuffer> {
     return new Promise(function(resove) {
-        let fr = new FileReader();
+        const fr = new FileReader();
         fr.addEventListener('load', function() {
             resove(fr.result as ArrayBuffer);
         });
@@ -61,7 +61,7 @@ export function clone(obj: Record<string, any> | any[]): any[] | any {
         }
     }
     else {
-        for (let key in obj) {
+        for (const key in obj) {
             newObj[key] = typeof obj[key] === 'object' ? clone(obj[key]) : obj[key];
         }
     }
@@ -104,10 +104,10 @@ export function purify(text: string): string {
  * @param mode object/data
  */
 export async function styleUrl2ObjectOrDataUrl(path: string, style: string, obj: ICGTask | ICGControl | ICGThemePkg, mode: 'object' | 'data' = 'object'): Promise<string> {
-    let reg = /url\(["']{0,1}(.+?)["']{0,1}\)/ig;
+    const reg = /url\(["']{0,1}(.+?)["']{0,1}\)/ig;
     let match: RegExpExecArray | null = null;
     while ((match = reg.exec(style))) {
-        let realPath = urlResolve(path, match[1]);
+        const realPath = urlResolve(path, match[1]);
         if (!obj.files[realPath]) {
             continue;
         }
@@ -130,7 +130,7 @@ export async function styleUrl2ObjectOrDataUrl(path: string, style: string, obj:
  */
 export function layoutAddTagClassAndReTagName(layout: string, retagname: boolean): string {
     // --- "" '' 引号中的内容先替换为 placeholder 排除掉干扰 ---
-    let list: string[] = [];
+    const list: string[] = [];
     layout = layout.replace(/(\S+)=(".+?"|'.+?')/g, function(t, t1): string {
         // --- t1 不是标签名，而是 attr 名，例如 class="xxx"、style="xxx" ---
         if (t1 === 'class') {
@@ -140,7 +140,7 @@ export function layoutAddTagClassAndReTagName(layout: string, retagname: boolean
         return '"CG-PLACEHOLDER"';
     });
     // --- 开始添加 class tag ---
-    layout = layout.replace(/<(\/{0,1})([\w-]+)([\s\S]*?>)/g, function(t, t1, t2, t3): string {
+    layout = layout.replace(/<(\/{0,1})([\w-]+)([\s\S]*?>)/g, function(t, t1, t2: string, t3: string): string {
         // --- t1 是 /，t2 是 tagname，t3 是标签其他内容 ---
         if (['template', 'slot', 'teleport'].includes(t2)) {
             return t;
@@ -187,7 +187,7 @@ export function layoutAddTagClassAndReTagName(layout: string, retagname: boolean
 export function layoutInsertAttr(layout: string, insert: string, opt: { 'ignore'?: RegExp[]; 'include'?: RegExp[]; } = {}): string {
     return layout.replace(/<([\w-]+)[\s\S]*?>/g, function(t, t1): string {
         if (opt.ignore) {
-            for (let item of opt.ignore) {
+            for (const item of opt.ignore) {
                 if (item.test(t1)) {
                     return t;
                 }
@@ -195,7 +195,7 @@ export function layoutInsertAttr(layout: string, insert: string, opt: { 'ignore'
         }
         if (opt.include) {
             let found = false;
-            for (let item of opt.include) {
+            for (const item of opt.include) {
                 if (item.test(t1)) {
                     found = true;
                     break;
@@ -217,15 +217,15 @@ export function layoutInsertAttr(layout: string, insert: string, opt: { 'ignore'
  */
 function layoutClassPrependObject(object: string): string {
     object = object.slice(1, -1).trim();
-    return '{' + object.replace(/(.+?):(.+?)(,|$)/g, function(t, t1, t2, t3) {
+    return '{' + object.replace(/(.+?):(.+?)(,|$)/g, function(t, t1: string, t2: string, t3: string) {
         // --- t1 是 'xxx', t2 是 xxx，t3 是结尾或者 , 分隔符 ---
         t1 = t1.trim();
-        if (t1[0] === '[') {
+        if (t1.startsWith('[')) {
             t1 = '[cgClassPrepend(' + t1.slice(1, -1) + ')]';
         }
         else {
             let sp = '';
-            if (t1[0] === '\'' || t1[0] === '"') {
+            if (t1.startsWith('\'') || t1.startsWith('"')) {
                 sp = t1[0];
                 t1 = t1.slice(1, -1);
             }
@@ -243,10 +243,10 @@ export function layoutClassPrepend(layout: string, preps: string[]): string {
     return layout.replace(/ class=["'](.+?)["']/gi, function(t, t1: string) {
         // --- t1 为 xxx yyy zzz 这样的 ----
         t1 = t1.trim();
-        let classList = t1.split(' ');
-        let resultList: string[] = [];
-        for (let item of classList) {
-            for (let prep of preps) {
+        const classList = t1.split(' ');
+        const resultList: string[] = [];
+        for (const item of classList) {
+            for (const prep of preps) {
                 resultList.push(prep + item);
             }
         }
@@ -259,7 +259,7 @@ export function layoutClassPrepend(layout: string, preps: string[]): string {
                 // --- ['xxx', yyy && 'yyy'] ---
                 t1 = t1.slice(1, -1);
                 /** --- 'xxx', yyy && 'yyy' 的数组 --- */
-                let t1a = t1.split(',');
+                const t1a = t1.split(',');
                 for (let i = 0; i < t1a.length; ++i) {
                     t1a[i] = t1a[i].trim();
                     if (t1a[i].startsWith('{')) {
@@ -284,8 +284,8 @@ export function layoutClassPrepend(layout: string, preps: string[]): string {
  * @param layout 要包裹的 layout
  */
 export function eventsAttrWrap(layout: string): string {
-    let events = ['click', 'dblclick', 'mousedown', 'mouseenter', 'mouseleave', 'mouseup', 'touchstart', 'touchmove', 'touchend', 'keydown', 'keypress', 'keyup', 'contextmenu'];
-    let reg = new RegExp(`@(${events.join('|')})="(.+?)"`, 'g');
+    const events = ['click', 'dblclick', 'mousedown', 'mouseenter', 'mouseleave', 'mouseup', 'touchstart', 'touchmove', 'touchend', 'keydown', 'keypress', 'keyup', 'contextmenu'];
+    const reg = new RegExp(`@(${events.join('|')})="(.+?)"`, 'g');
     return layout.replace(reg, function(t, t1, t2): string {
         if (/^[\w]+$/.test(t2)) {
             return `@${t1}="cgAllowEvent($event) && ${t2}($event)"`;
@@ -301,15 +301,17 @@ export function eventsAttrWrap(layout: string): string {
  */
 export function stylePrepend(style: string, prep: string = ''): { 'style': string; 'prep': string; } {
     if (prep === '') {
-        prep = 'cg-scope' + Math.round(Math.random() * 1000000000000000) + '_';
+        prep = 'cg-scope' + Math.round(Math.random() * 1000000000000000).toString() + '_';
     }
-    style = style.replace(/([\s\S]+?){([\s\S]+?)}/g, function(t, t1, t2) {
+    style = style.replace(/([\s\S]+?){([\s\S]+?)}/g, function(t, t1: string, t2: string) {
         // --- xxx { xxx; } ---
         // --- 将 element 模式的 css 变为 class 模式，如 div 变为 .tag-div ---
         // --- 这里面遇到了一个 bug， @keyframe 也被转换了，这是不对的 ---
-        t1 = t1.replace(/(^|[ >,\r\n])([a-zA-Z-_])([a-zA-Z0-9-_]*)/g, function(t: string, t1: string, t2: string, t3: string) {
-            return t1 + '.tag-' + t2 + t3;
-        });
+        t1 = t1.replace(/(^|[ >,\r\n])([a-zA-Z-_])([a-zA-Z0-9-_]*)/g,
+            function(t: string, t1: string, t2: string, t3: string) {
+                return t1 + '.tag-' + t2 + t3;
+            }
+        );
         t1 = t1.replace(/keyframes \.tag-([a-zA-Z0-9-_]+)/g, function(t: string, t1: string) {
             return 'keyframes ' + t1;
         });
@@ -324,30 +326,34 @@ export function stylePrepend(style: string, prep: string = ''): { 'style': strin
         }) + '{' + t2 + '}';
     });
     // --- 自定义 font 名添加 scope ---
-    let fontList: string[] = [];
-    style = style.replace(/(@font-face[\s\S]+?font-family\s*:\s*["']{0,1})(.+?)(["']{0,1}\s*[;\r\n }])/gi, function(t, t1, t2, t3) {
-        fontList.push(t2);
-        return t1 + prep + t2 + t3;
-    });
+    const fontList: string[] = [];
+    style = style.replace(/(@font-face[\s\S]+?font-family\s*:\s*["']{0,1})(.+?)(["']{0,1}\s*[;\r\n }])/gi,
+        function(t, t1: string, t2: string, t3: string) {
+            fontList.push(t2);
+            return t1 + prep + t2 + t3;
+        }
+    );
     // --- 对自定义 font 进行更名 ---
-    for (let font of fontList) {
-        let reg = new RegExp(`(font.+?[: "'])(${font})`, 'gi');
-        style = style.replace(reg, function(t, t1, t2) {
+    for (const font of fontList) {
+        const reg = new RegExp(`(font.+?[: "'])(${font})`, 'gi');
+        style = style.replace(reg, function(t, t1: string, t2: string) {
             return t1 + prep + t2;
         });
     }
     // --- keyframes ---
-    let keyframeList: string[] = [];
-    style = style.replace(/([-@]keyframes *["']{0,1})([\w-]+)(["']{0,1}\s*?\{)/gi, function(t, t1, t2, t3) {
-        if (!keyframeList.includes(t2)) {
-            keyframeList.push(t2);
+    const keyframeList: string[] = [];
+    style = style.replace(/([-@]keyframes *["']{0,1})([\w-]+)(["']{0,1}\s*?\{)/gi,
+        function(t, t1: string, t2: string, t3: string) {
+            if (!keyframeList.includes(t2)) {
+                keyframeList.push(t2);
+            }
+            return t1 + prep + t2 + t3;
         }
-        return t1 + prep + t2 + t3;
-    });
+    );
     // --- 对自定义 keyframe 进行更名 ---
-    for (let keyframe of keyframeList) {
-        let reg = new RegExp(`(animation[ :\\r\\n]+)(${keyframe})([ ;}\\r\\n])`, 'gi');
-        style = style.replace(reg, function(t, t1, t2, t3) {
+    for (const keyframe of keyframeList) {
+        const reg = new RegExp(`(animation[ :\\r\\n]+)(${keyframe})([ ;}\\r\\n])`, 'gi');
+        style = style.replace(reg, function(t, t1: string, t2: string, t3: string) {
             return t1 + prep + t2 + t3;
         });
     }
@@ -362,9 +368,9 @@ export function stylePrepend(style: string, prep: string = ''): { 'style': strin
  * @param path 后缀、文件名或路径
  */
 export function getMimeByPath(path: string): { 'mime': string; 'ext': string; } {
-    let lio = path.lastIndexOf('.');
-    let ext: string = (lio === -1 ? path : path.slice(lio + 1)).toLowerCase();
-    let exts: Record<string, string> = {
+    const lio = path.lastIndexOf('.');
+    const ext: string = (lio === -1 ? path : path.slice(lio + 1)).toLowerCase();
+    const exts: Record<string, string> = {
         'eot': 'application/vnd.ms-fontobject',
         'woff': 'font/woff',
         'ttf': 'font/ttf',
@@ -374,7 +380,7 @@ export function getMimeByPath(path: string): { 'mime': string; 'ext': string; } 
         'gif': 'image/gif',
         'png': 'image/png'
     };
-    let mime: string = exts[ext] ?? 'application/octet-stream';
+    const mime: string = exts[ext] ?? 'application/octet-stream';
     return {
         'mime': mime,
         'ext': ext
@@ -382,14 +388,14 @@ export function getMimeByPath(path: string): { 'mime': string; 'ext': string; } 
 }
 
 /** --- 已创建的 object url 列表 --- */
-let objectURLList: string[] = [];
+const objectURLList: string[] = [];
 
 /**
  * --- 通过 blob 创建 object url ---
  * @param object blob 对象
  */
 export function createObjectURL(object: Blob): string {
-    let url = URL.createObjectURL(object);
+    const url = URL.createObjectURL(object);
     objectURLList.push(url);
     return url;
 }
@@ -426,7 +432,7 @@ export function rand(min: number, max: number): number {
  * @param param 参数
  */
 export function getBoolean(param: boolean | string | number): boolean {
-    let t = typeof param;
+    const t = typeof param;
     if (t === 'boolean') {
         return param as boolean;
     }
@@ -448,24 +454,54 @@ export function escapeHTML(html: string): string {
 
 export function request(url: string, opt: ICGToolRequestOptions): Promise<null | any> {
     return new Promise(function(resove) {
-        let xhr = new XMLHttpRequest();
+        const xhr = new XMLHttpRequest();
         xhr.upload.onloadstart = function(e: ProgressEvent): void {
-            opt.uploadStart?.(e.total) as void;
+            const r = opt.uploadStart?.(e.total);
+            if (r && (r instanceof Promise)) {
+                r.catch(function(e) {
+                    console.log(e);
+                });
+            }
         };
         xhr.upload.onprogress = function(e: ProgressEvent): void {
-            opt.uploadProgress?.(e.loaded, e.total) as void;
+            const r = opt.uploadProgress?.(e.loaded, e.total);
+            if (r && (r instanceof Promise)) {
+                r.catch(function(e) {
+                    console.log(e);
+                });
+            }
         };
         xhr.upload.onloadend = function(): void {
-            opt.uploadEnd?.() as void;
+            const r = opt.uploadEnd?.();
+            if (r && (r instanceof Promise)) {
+                r.catch(function(e) {
+                    console.log(e);
+                });
+            }
         };
         xhr.onloadstart = function(e: ProgressEvent): void {
-            opt.start?.(e.total) as void;
+            const r = opt.start?.(e.total);
+            if (r && (r instanceof Promise)) {
+                r.catch(function(e) {
+                    console.log(e);
+                });
+            }
         };
         xhr.onprogress = function(e: ProgressEvent): void {
-            opt.progress?.(e.loaded, e.total) as void;
+            const r = opt.progress?.(e.loaded, e.total);
+            if (r && (r instanceof Promise)) {
+                r.catch(function(e) {
+                    console.log(e);
+                });
+            }
         };
         xhr.onloadend = function(): void {
-            opt.end?.() as void;
+            const r = opt.end?.();
+            if (r && (r instanceof Promise)) {
+                r.catch(function(e) {
+                    console.log(e);
+                });
+            }
         };
         xhr.onload = function(): void {
             let res = this.response;
@@ -477,11 +513,21 @@ export function request(url: string, opt: ICGToolRequestOptions): Promise<null |
                     res = this.response;
                 }
             }
-            opt.load?.(res) as void;
+            const r = opt.load?.(res);
+            if (r && (r instanceof Promise)) {
+                r.catch(function(e) {
+                    console.log(e);
+                });
+            }
             resove(res);
         };
         xhr.onerror = function(): void {
-            opt.error?.() as void;
+            const r = opt.error?.();
+            if (r && (r instanceof Promise)) {
+                r.catch(function(e) {
+                    console.log(e);
+                });
+            }
             resove(null);
         };
         if (opt.responseType) {

@@ -47,9 +47,9 @@ exports.data = {
 };
 exports.computed = {
     'adData': function () {
-        let data = [];
+        const data = [];
         for (let i = 0; i < this.slist.length; ++i) {
-            let item = this.slist[i];
+            const item = this.slist[i];
             data.push({
                 'type': item.type === undefined ? 'split' : item.type,
                 'menu': i === 20 ? true : false
@@ -58,7 +58,7 @@ exports.computed = {
         return data;
     },
     'listData': function () {
-        let data = ['Item1', {
+        const data = ['Item1', {
                 'label': 'Title1',
                 'children': [
                     'Sub1',
@@ -71,15 +71,15 @@ exports.computed = {
         for (let k = 0; k < this.slist.length; ++k) {
             if (this.slist[k].name) {
                 data.push({
-                    'label': 'Index: ' + k + ', value: ' + this.slist[k].name + (k === 20 ? ' long test long test long test long test long test' : ''),
+                    'label': `index: ${k}, value: ${this.slist[k].name}${(k === 20 ? ' long test long test long test long test long test' : '')}`,
                     'value': this.slist[k].name,
                     'disabled': this.slist[k].disabled
                 });
             }
             else {
                 data.push({
-                    'label': 'index: ' + k + ', value: i' + k + (k === 20 ? ' long test long test long test long test long test' : ''),
-                    'value': 'i' + k,
+                    'label': `index: ${k}, value: i${k}${(k === 20 ? ' long test long test long test long test long test' : '')}`,
+                    'value': 'i' + k.toString(),
                     'disabled': true
                 });
             }
@@ -87,7 +87,7 @@ exports.computed = {
         return data;
     },
     'listData2': function () {
-        let data = [];
+        const data = [];
         for (let k = 0; k < this.listData.length; k++) {
             data.push(k + 1);
         }
@@ -101,15 +101,15 @@ exports.methods = {
                 this.cgDialog('There are currently no selected items.').catch((e) => { throw e; });
             }
             else {
-                let types = [];
-                for (let item of this.select) {
+                const types = [];
+                for (const item of this.select) {
                     types.push(this.slist[item].type);
                 }
-                this.cgDialog('Type is ' + types + '.').catch((e) => { throw e; });
+                this.cgDialog(`Type is ${types}.`).catch((e) => { throw e; });
             }
         }
         else {
-            this.cgDialog(this.select === -1 ? 'There are currently no selected items.' : 'Type is ' + this.slist[this.select].type + '.').catch((e) => { throw e; });
+            this.cgDialog(this.select === -1 ? 'There are currently no selected items.' : `Type is ${this.slist[this.select].type}.`).catch((e) => { throw e; });
         }
     },
     selectButton: function () {

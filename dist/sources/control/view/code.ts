@@ -1,4 +1,4 @@
-export let props = {
+export const props = {
     'direction': {
         'default': 'h'
     },
@@ -20,7 +20,7 @@ export let props = {
     }
 };
 
-export let data = {
+export const data = {
     'padding': '',
 
     'scrollLeftData': 0,
@@ -36,17 +36,17 @@ export let data = {
     'lengthHeight': -1,
     'lengthEmit': -1,
 
-    'selectionOrigin': {x: 0, y: 0},
-    'selectionCurrent': {x: 0, y: 0, quick: false},
+    'selectionOrigin': { x: 0, y: 0 },
+    'selectionCurrent': { x: 0, y: 0, quick: false },
 
     // --- 惯性 ---
     'timer': 0,
     'selectionTimer': 0
 };
 
-export let watch = {
+export const watch = {
     'direction': function(this: IVControl): void {
-        let size = clickgo.dom.getSize(this.$el);
+        const size = clickgo.dom.getSize(this.$el);
         if (this.clientWidth !== size.clientWidth) {
             this.clientWidth = size.clientWidth;
         }
@@ -83,7 +83,7 @@ export let watch = {
     }
 };
 
-export let computed = {
+export const computed = {
     'isSelection': function(this: IVControl): boolean {
         return clickgo.tool.getBoolean(this.selection);
     },
@@ -110,7 +110,7 @@ export let computed = {
     }
 };
 
-export let methods = {
+export const methods = {
     wheel: function(this: IVControl, e: WheelEvent): void {
         if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
             // --- 竖向滚动 ---
@@ -121,7 +121,7 @@ export let methods = {
                     this.stopAnimation();
                     e.stopPropagation();
                     e.preventDefault();
-                    this.scrollTopData += e.deltaY;
+                    (this.scrollTopData as number) += e.deltaY;
                     this.refreshScroll();
                 }
                 else if (this.scrollLeftData > 0) {
@@ -129,7 +129,7 @@ export let methods = {
                     this.stopAnimation();
                     e.stopPropagation();
                     e.preventDefault();
-                    this.scrollLeftData += e.deltaY;
+                    (this.scrollLeftData as number) += e.deltaY;
                     this.refreshScroll();
                 }
                 else {
@@ -146,14 +146,14 @@ export let methods = {
                     this.stopAnimation();
                     e.stopPropagation();
                     e.preventDefault();
-                    this.scrollTopData += e.deltaY;
+                    (this.scrollTopData as number) += e.deltaY;
                     this.refreshScroll();
                 }
                 else if (this.scrollLeftData < this.maxScrollLeft) {
                     this.stopAnimation();
                     e.stopPropagation();
                     e.preventDefault();
-                    this.scrollLeftData += e.deltaY;
+                    (this.scrollLeftData as number) += e.deltaY;
                     this.refreshScroll();
                 }
                 else {
@@ -174,7 +174,7 @@ export let methods = {
                     this.stopAnimation();
                     e.stopPropagation();
                     e.preventDefault();
-                    this.scrollLeftData += e.deltaX;
+                    (this.scrollLeftData as number) += e.deltaX;
                     this.refreshScroll();
 
                 }
@@ -183,7 +183,7 @@ export let methods = {
                     this.stopAnimation();
                     e.stopPropagation();
                     e.preventDefault();
-                    this.scrollTopData += e.deltaX;
+                    (this.scrollTopData as number) += e.deltaX;
                     this.refreshScroll();
                 }
                 else {
@@ -200,14 +200,14 @@ export let methods = {
                     this.stopAnimation();
                     e.stopPropagation();
                     e.preventDefault();
-                    this.scrollLeftData += e.deltaX;
+                    (this.scrollLeftData as number) += e.deltaX;
                     this.refreshScroll();
                 }
                 else if (this.scrollTopData < this.maxScrollTop) {
                     this.stopAnimation();
                     e.stopPropagation();
                     e.preventDefault();
-                    this.scrollTopData += e.deltaX;
+                    (this.scrollTopData as number) += e.deltaX;
                     this.refreshScroll();
                 }
                 else {
@@ -225,20 +225,20 @@ export let methods = {
             return;
         }
         this.stopAnimation();
-        let bindMove = (e: MouseEvent | TouchEvent): void => {
-            let size = clickgo.dom.getSize(this.$el);
+        const bindMove = (e: MouseEvent | TouchEvent): void => {
+            const size = clickgo.dom.getSize(this.$el);
             let alreadySb: boolean = false;
             let isFirstMove: boolean = false;
             /** --- 内容超出像素 --- */
-            let overWidth = this.lengthWidth - this.clientWidth;
-            let overHeight = this.lengthHeight - this.clientHeight;
+            const overWidth = this.lengthWidth - this.clientWidth;
+            const overHeight = this.lengthHeight - this.clientHeight;
             clickgo.dom.bindMove(e, {
                 // 'showRect': true,
                 'object': this.$refs.inner,
                 'left': size.left + size.border.left - (overWidth > 0 ? overWidth : 0),
-                'right': overWidth > 0 ? (size.right - size.border.right + overWidth) : (size.left + size.border.left + this.lengthWidth),
+                'right': overWidth > 0 ? (size.right - size.border.right + overWidth) : (size.left + size.border.left + (this.lengthWidth as number)),
                 'top': size.top + size.border.top - (overHeight > 0 ? overHeight : 0),
-                'bottom': overHeight > 0 ? (size.bottom - size.border.bottom + overHeight) : (size.top + size.border.top + this.lengthHeight),
+                'bottom': overHeight > 0 ? (size.bottom - size.border.bottom + overHeight) : (size.top + size.border.top + (this.lengthHeight as number)),
                 move: (ox: number, oy: number, x, y, border, dir, ne): void => {
                     this.scrollLeftData -= ox;
                     this.scrollTopData -= oy;
@@ -303,13 +303,13 @@ export let methods = {
                         }
                     }
                 },
-                up: async (moveTimes) => {
+                up: (moveTimes) => {
                     // --- 获取 100 毫秒内的偏移 ---
                     let moveLeftPos = 0;
                     let moveTopPos = 0;
                     let topTime = 0;
-                    let nowDate = Date.now();
-                    for (let item of moveTimes) {
+                    const nowDate = Date.now();
+                    for (const item of moveTimes) {
                         if (nowDate - item.time > 150) {
                             continue;
                         }
@@ -423,8 +423,8 @@ export let methods = {
             });
         };
 
-        let x: number = (e instanceof MouseEvent) ? e.clientX : e.touches[0].clientX;
-        let y: number = (e instanceof MouseEvent) ? e.clientY : e.touches[0].clientY;
+        const x: number = (e instanceof MouseEvent) ? e.clientX : e.touches[0].clientX;
+        const y: number = (e instanceof MouseEvent) ? e.clientY : e.touches[0].clientY;
         if (this.isSelection) {
             // --- 建立选区 ---
             if (clickgo.dom.findParentByData(e.target as HTMLElement, 'cg-selection-cancel')) {
@@ -432,22 +432,22 @@ export let methods = {
             }
             clickgo.dom.bindDown(e, {
                 start: (): void => {
-                    let innerRect = this.$refs.inner.getBoundingClientRect();
+                    const innerRect = this.$refs.inner.getBoundingClientRect();
                     this.selectionOrigin.x = x - innerRect.left;
                     this.selectionOrigin.y = y - innerRect.top;
                     this.$refs.selection.style.opacity = '1';
-                    this.$refs.selection.style.left = this.selectionOrigin.x + 'px';
-                    this.$refs.selection.style.top = this.selectionOrigin.y + 'px';
+                    this.$refs.selection.style.left = (this.selectionOrigin.x as number).toString() + 'px';
+                    this.$refs.selection.style.top = (this.selectionOrigin.y as number).toString() + 'px';
                     this.selectionCurrent.x = x;
                     this.selectionCurrent.y = y;
                     this.selectionTimer = this.cgOnFrame(() => {
-                        let rect = this.$el.getBoundingClientRect();
+                        const rect = this.$el.getBoundingClientRect();
                         // --- 横向 ---
                         if (this.selectionCurrent.x < rect.left) {
                             // --- 向左滚动 ---
                             if (this.scrollLeftData > 0) {
                                 /** --- 差值 --- */
-                                let x = rect.left - this.selectionCurrent.x;
+                                const x = rect.left - this.selectionCurrent.x;
                                 /** --- 移动的距离 --- */
                                 let dist = 0;
                                 // --- 判断是否是 quick 模式，将加速滚动 ---
@@ -470,7 +470,7 @@ export let methods = {
                             // --- 向右滚动 ---
                             if (this.scrollLeftData < this.maxScrollLeft) {
                                 /** --- 差值 --- */
-                                let x = this.selectionCurrent.x - rect.right;
+                                const x = this.selectionCurrent.x - rect.right;
                                 /** --- 移动的距离 --- */
                                 let dist = 0;
                                 // --- 判断是否是 quick 模式，将加速滚动 ---
@@ -481,10 +481,10 @@ export let methods = {
                                 else {
                                     dist = x / 5;
                                 }
-                                if (this.scrollLeftData + dist > this.maxScrollLeft) {
+                                if ((this.scrollLeftData as number) + dist > this.maxScrollLeft) {
                                     dist = this.maxScrollLeft - this.scrollLeftData;
                                 }
-                                this.scrollLeftData += dist;
+                                (this.scrollLeftData as number) += dist;
                                 this.scrollLeftEmit = Math.round(this.scrollLeftData);
                                 this.$emit('update:scrollLeft', this.scrollLeftEmit);
                             }
@@ -494,7 +494,7 @@ export let methods = {
                             // --- 向左滚动 ---
                             if (this.scrollTopData > 0) {
                                 /** --- 差值 --- */
-                                let x = rect.top - this.selectionCurrent.y;
+                                const x = rect.top - this.selectionCurrent.y;
                                 /** --- 移动的距离 --- */
                                 let dist = 0;
                                 // --- 判断是否是 quick 模式，将加速滚动 ---
@@ -517,7 +517,7 @@ export let methods = {
                             // --- 向右滚动 ---
                             if (this.scrollTopData < this.maxScrollTop) {
                                 /** --- 差值 --- */
-                                let x = this.selectionCurrent.y - rect.bottom;
+                                const x = this.selectionCurrent.y - rect.bottom;
                                 /** --- 移动的距离 --- */
                                 let dist = 0;
                                 // --- 判断是否是 quick 模式，将加速滚动 ---
@@ -528,10 +528,10 @@ export let methods = {
                                 else {
                                     dist = x / 5;
                                 }
-                                if (this.scrollTopData + dist > this.maxScrollTop) {
+                                if ((this.scrollTopData as number) + dist > this.maxScrollTop) {
                                     dist = this.maxScrollTop - this.scrollTopData;
                                 }
-                                this.scrollTopData += dist;
+                                (this.scrollTopData as number) += dist;
                                 this.scrollTopEmit = Math.round(this.scrollTopData);
                                 this.$emit('update:scrollTop', this.scrollTopEmit);
                             }
@@ -540,8 +540,8 @@ export let methods = {
                     this.$emit('beforeselect');
                 },
                 move: (ne: MouseEvent | TouchEvent): void => {
-                    let nx: number = (ne instanceof MouseEvent) ? ne.clientX : ne.touches[0].clientX;
-                    let ny: number = (ne instanceof MouseEvent) ? ne.clientY : ne.touches[0].clientY;
+                    const nx: number = (ne instanceof MouseEvent) ? ne.clientX : ne.touches[0].clientX;
+                    const ny: number = (ne instanceof MouseEvent) ? ne.clientY : ne.touches[0].clientY;
                     // --- 更新自动滚动需要用到的坐标信息 ---
                     this.selectionCurrent.x = nx;
                     this.selectionCurrent.y = ny;
@@ -578,11 +578,11 @@ export let methods = {
                         return;
                     }
                     ++count;
-                    if(count < 3) {
+                    if (count < 3) {
                         return;
                     }
-                    let deltaX: number = x - ((e instanceof MouseEvent) ? e.clientX : e.touches[0].clientX);
-                    let deltaY: number = y - ((e instanceof MouseEvent) ? e.clientY : e.touches[0].clientY);
+                    const deltaX: number = x - ((e instanceof MouseEvent) ? e.clientX : e.touches[0].clientX);
+                    const deltaY: number = y - ((e instanceof MouseEvent) ? e.clientY : e.touches[0].clientY);
                     if (deltaX === 0 && deltaY === 0) {
                         return;
                     }
@@ -663,12 +663,12 @@ export let methods = {
             this.scrollTopData = 0;
         }
 
-        let sleft = Math.round(this.scrollLeftData);
+        const sleft = Math.round(this.scrollLeftData);
         if (this.scrollLeftEmit !== sleft) {
             this.scrollLeftEmit = sleft;
             this.$emit('update:scrollLeft', this.scrollLeftEmit);
         }
-        let stop = Math.round(this.scrollTopData);
+        const stop = Math.round(this.scrollTopData);
         if (this.scrollTopEmit !== stop) {
             this.scrollTopEmit = stop;
             this.$emit('update:scrollTop', this.scrollTopEmit);
@@ -713,13 +713,13 @@ export let methods = {
         if (!this.selectionTimer) {
             return;
         }
-        let innerRect = this.$refs.inner.getBoundingClientRect();
+        const innerRect = this.$refs.inner.getBoundingClientRect();
         /** --- 相对实际内容的 x 坐标 --- */
-        let sx = this.selectionCurrent.x - innerRect.left;
+        const sx = this.selectionCurrent.x - innerRect.left;
         /** --- 相对实际内容的 y 坐标 --- */
-        let sy = this.selectionCurrent.y - innerRect.top;
+        const sy = this.selectionCurrent.y - innerRect.top;
         /** --- 要显示的区域 --- */
-        let area = {
+        const area = {
             'x': 0,
             'y': 0,
             'width': 0,
@@ -749,20 +749,20 @@ export let methods = {
             area.height = Math.round(this.selectionOrigin.y - sy);
         }
         // --- 更新选框位置和大小 ---
-        this.$refs.selection.style.left = area.x + 'px';
-        this.$refs.selection.style.top = area.y + 'px';
-        this.$refs.selection.style.width = area.width + 'px';
-        this.$refs.selection.style.height = area.height + 'px';
+        this.$refs.selection.style.left = area.x.toString() + 'px';
+        this.$refs.selection.style.top = area.y.toString() + 'px';
+        this.$refs.selection.style.width = area.width.toString() + 'px';
+        this.$refs.selection.style.height = area.height.toString() + 'px';
         // --- 响应 select 事件 ---
         this.$emit('select', area);
     }
 };
 
-export let mounted = function(this: IVControl): void {
+export const mounted = function(this: IVControl): void {
     // --- 外部包裹的改变 ---
     clickgo.dom.watchSize(this.$el, (size) => {
-        let clientWidth = size.clientWidth;
-        let clientHeight = size.clientHeight;
+        const clientWidth = size.clientWidth;
+        const clientHeight = size.clientHeight;
         if (this.direction === 'v') {
             // --- 垂直 ---
             if (this.clientWidth !== clientWidth) {
@@ -811,7 +811,7 @@ export let mounted = function(this: IVControl): void {
     this.goScroll(this.scrollTop, 'top');
 };
 
-export let unmounted = function(this: IVControl): void {
+export const unmounted = function(this: IVControl): void {
     if (this.timer > 0) {
         this.cgOffFrame(this.timer);
         this.timer = 0;

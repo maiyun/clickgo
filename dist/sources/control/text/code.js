@@ -128,7 +128,7 @@ exports.watch = {
     },
     'scrollLeft': {
         handler: function () {
-            let sl = typeof this.scrollLeft === 'number' ? this.scrollLeft : parseInt(this.scrollLeft);
+            const sl = typeof this.scrollLeft === 'number' ? this.scrollLeft : parseInt(this.scrollLeft);
             if (sl === this.scrollLeftEmit) {
                 return;
             }
@@ -139,15 +139,13 @@ exports.watch = {
     },
     'scrollTop': {
         handler: function () {
-            return __awaiter(this, void 0, void 0, function* () {
-                let st = typeof this.scrollTop === 'number' ? this.scrollTop : parseInt(this.scrollTop);
-                if (st === this.scrollTopEmit) {
-                    return;
-                }
-                this.$refs.text.scrollTop = this.scrollTop;
-                this.scrollTopWatch = this.scrollTop;
-                this.scrollTopWatchTime = Date.now();
-            });
+            const st = typeof this.scrollTop === 'number' ? this.scrollTop : parseInt(this.scrollTop);
+            if (st === this.scrollTopEmit) {
+                return;
+            }
+            this.$refs.text.scrollTop = this.scrollTop;
+            this.scrollTopWatch = this.scrollTop;
+            this.scrollTopWatchTime = Date.now();
         }
     },
     'selectionStart': {
@@ -212,7 +210,7 @@ exports.data = {
 };
 exports.methods = {
     focus: function () {
-        let now = Date.now();
+        const now = Date.now();
         if (now - this.lastDownTime >= 500) {
             this.$refs.text.focus();
         }
@@ -236,13 +234,13 @@ exports.methods = {
         if (this.$el.dataset.cgPopOpen !== undefined) {
             clickgo.form.hidePop(this.$el);
         }
-        let tagName = e.target.tagName.toLowerCase();
+        const tagName = e.target.tagName.toLowerCase();
         if (tagName !== 'input' && tagName !== 'textarea') {
             this.lastDownTime = Date.now();
         }
     },
     scroll: function () {
-        let now = Date.now();
+        const now = Date.now();
         if ((now - this.scrollLeftWatchTime) < 50) {
             this.$refs.text.scrollLeft = this.scrollLeftWatch;
         }
@@ -252,8 +250,8 @@ exports.methods = {
         this.refreshScroll();
     },
     wheel: function (e) {
-        let scrollTop = Math.ceil(this.$refs.text.scrollTop);
-        let scrollLeft = Math.ceil(this.$refs.text.scrollLeft);
+        const scrollTop = Math.ceil(this.$refs.text.scrollTop);
+        const scrollLeft = Math.ceil(this.$refs.text.scrollLeft);
         if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
             if (e.deltaY < 0) {
                 if (scrollTop > 0) {
@@ -331,10 +329,10 @@ exports.methods = {
         }
     },
     move: function (e) {
-        let scrollTop = Math.ceil(this.$refs.text.scrollTop);
-        let scrollLeft = Math.ceil(this.$refs.text.scrollLeft);
-        let deltaX = this.touchX - e.touches[0].clientX;
-        let deltaY = this.touchY - e.touches[0].clientY;
+        const scrollTop = Math.ceil(this.$refs.text.scrollTop);
+        const scrollLeft = Math.ceil(this.$refs.text.scrollLeft);
+        const deltaX = this.touchX - e.touches[0].clientX;
+        const deltaY = this.touchY - e.touches[0].clientY;
         if (this.canTouchScroll) {
             e.stopPropagation();
             return;
@@ -408,8 +406,8 @@ exports.methods = {
         clickgo.form.showPop(this.$el, this.$refs.pop, e);
     },
     select: function () {
-        let selectionStart = this.$refs.text.selectionStart;
-        let selectionEnd = this.$refs.text.selectionEnd;
+        const selectionStart = this.$refs.text.selectionStart;
+        const selectionEnd = this.$refs.text.selectionEnd;
         if (selectionStart !== this.selectionStartEmit) {
             this.selectionStartEmit = selectionStart;
             this.$emit('update:selectionStart', this.selectionStartEmit);
@@ -432,11 +430,13 @@ exports.methods = {
                 if (this.isReadonly) {
                     return;
                 }
-                let str = yield navigator.clipboard.readText();
-                this.value = this.value.slice(0, this.selectionStartEmit) + str + this.value.slice(this.selectionEndEmit);
+                const str = yield navigator.clipboard.readText();
+                this.value = this.value.slice(0, this.selectionStartEmit)
+                    + str
+                    + this.value.slice(this.selectionEndEmit);
                 yield this.$nextTick();
-                let selectionStart = this.selectionStartEmit + str.length;
-                let selectionEnd = selectionStart;
+                const selectionStart = this.selectionStartEmit + str.length;
+                const selectionEnd = selectionStart;
                 this.$refs.text.selectionStart = selectionStart;
                 if (selectionStart !== this.selectionStartEmit) {
                     this.selectionStartEmit = selectionStart;
@@ -455,8 +455,8 @@ exports.methods = {
         });
     },
     refreshLength: function () {
-        let lengthWidth = this.$refs.text.scrollWidth;
-        let lengthHeight = this.$refs.text.scrollHeight;
+        const lengthWidth = this.$refs.text.scrollWidth;
+        const lengthHeight = this.$refs.text.scrollHeight;
         if (this.lengthWidth !== lengthWidth) {
             this.lengthWidth = lengthWidth;
         }
@@ -466,8 +466,8 @@ exports.methods = {
         }
     },
     refreshClient: function () {
-        let clientWidth = this.$refs.text.clientWidth;
-        let clientHeight = this.$refs.text.clientHeight;
+        const clientWidth = this.$refs.text.clientWidth;
+        const clientHeight = this.$refs.text.clientHeight;
         if (this.clientWidth !== clientWidth) {
             this.clientWidth = clientWidth;
             this.$emit('resizen', Math.round(this.clientWidth));
@@ -478,24 +478,24 @@ exports.methods = {
         }
     },
     refreshScroll: function () {
-        let sl = Math.round(this.$refs.text.scrollLeft);
+        const sl = Math.round(this.$refs.text.scrollLeft);
         if (this.scrollLeftEmit !== sl) {
             this.scrollLeftEmit = sl;
             this.$emit('update:scrollLeft', sl);
         }
-        let st = Math.round(this.$refs.text.scrollTop);
+        const st = Math.round(this.$refs.text.scrollTop);
         if (this.scrollTopEmit !== st) {
             this.scrollTopEmit = st;
             this.$emit('update:scrollTop', st);
         }
     }
 };
-let mounted = function () {
+const mounted = function () {
     return __awaiter(this, void 0, void 0, function* () {
-        clickgo.dom.watchSize(this.$refs.text, () => __awaiter(this, void 0, void 0, function* () {
+        clickgo.dom.watchSize(this.$refs.text, () => {
             this.refreshClient();
             this.refreshLength();
-        }), true);
+        }, true);
         clickgo.dom.watchStyle(this.$el, ['font', 'background', 'color', 'padding'], (n, v) => {
             switch (n) {
                 case 'font': {
