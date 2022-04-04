@@ -42,7 +42,9 @@ interface ICGGlobalEvents {
     /** --- 当屏幕大小改变时触发的事件 --- */
     screenResizeHandler: null | (() => void | Promise<void>);
     /** --- 系统配置被更改时触发 --- */
-    configChangedHandler: null | ((n: TCGCoreConfigName, v: string | boolean | Record<string, any> | null) => void | Promise<void>);
+    configChangedHandler: null | (
+        (n: TCGCoreConfigName, v: string | boolean | Record<string, any> | null) => void | Promise<void>
+    );
     /** --- 窗体被创建后触发 --- */
     formCreatedHandler: null | ((taskId: number, formId: number, title: string, icon: string) => void | Promise<void>);
     /** --- 窗体被移除后触发 --- */

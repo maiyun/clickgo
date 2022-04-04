@@ -13,15 +13,17 @@ interface ICGDomLib {
     getSize(el: HTMLElement): ICGDomSize;
     watchSize(el: HTMLElement, cb: (size: ICGDomSize) => Promise<void> | void, immediate?: boolean): ICGDomSize;
     watch(el: HTMLElement, cb: () => void, mode?: 'child' | 'childsub' | 'style' | 'default', immediate?: boolean): void;
-    watchStyle(el: HTMLElement, name: string | string[], cb: (name: string, value: string) => void, immediate?: boolean): void;
+    watchStyle(
+        el: HTMLElement, name: string | string[], cb: (name: string, value: string) => void, immediate?: boolean
+    ): void;
     bindDown(oe: MouseEvent | TouchEvent, opt: {
         'down'?: (e: MouseEvent | TouchEvent) => void;
-        'start'?: (e: MouseEvent | TouchEvent) => void | boolean;
-        'move'?: (e: MouseEvent | TouchEvent, dir: 'top' | 'right' | 'bottom' | 'left') => void | boolean;
+        'start'?: (e: MouseEvent | TouchEvent) => any;
+        'move'?: (e: MouseEvent | TouchEvent, dir: 'top' | 'right' | 'bottom' | 'left') => any;
         'up'?: (e: MouseEvent | TouchEvent) => void;
         'end'?: (e: MouseEvent | TouchEvent) => void;
     }): void;
-    bindGesture(e: MouseEvent | TouchEvent | WheelEvent | { 'x'?: number; 'y'?: number; }, opt: { 'el'?: HTMLElement; 'rect'?: DOMRect, 'dirs'?: ('top' | 'right' | 'bottom' | 'left')[]; handler: (dir: 'top' | 'right' | 'bottom' | 'left') => void; }): void;
+    bindGesture(e: MouseEvent | TouchEvent | WheelEvent | { 'x'?: number; 'y'?: number; }, opt: { 'el'?: HTMLElement; 'rect'?: DOMRect; 'dirs'?: Array<'top' | 'right' | 'bottom' | 'left'>; handler: (dir: 'top' | 'right' | 'bottom' | 'left') => void; }): void;
     allowEvent(e: MouseEvent | TouchEvent | KeyboardEvent): boolean;
     bindLong(e: MouseEvent | TouchEvent, long: (e: MouseEvent | TouchEvent) => void | Promise<void>): void;
     'is': {
@@ -43,7 +45,7 @@ interface ICGDomLib {
         'objectHeight'?: number;
         'object'?: HTMLElement | IVue;
         'showRect'?: boolean;
-        'start'?: (x: number, y: number) => void | boolean;
+        'start'?: (x: number, y: number) => any;
         'move'?: (ox: number, oy: number, x: number, y: number, border: TCGBorder, dir: 'top' | 'right' | 'bottom' | 'left', e: MouseEvent | TouchEvent) => void;
         'up'?: (moveTimes: Array<{ 'time': number; 'ox': number; 'oy': number; }>, e: MouseEvent | TouchEvent) => void;
         'end'?: (moveTimes: Array<{ 'time': number; 'ox': number; 'oy': number; }>, e: MouseEvent | TouchEvent) => void;
@@ -66,7 +68,7 @@ interface ICGDomLib {
         'maxWidth'?: number;
         'maxHeight'?: number;
         'border': TCGBorder;
-        'start'?: (x: number, y: number) => void | boolean;
+        'start'?: (x: number, y: number) => any;
         'move'?: (left: number, top: number, width: number, height: number, x: number, y: number, border: TCGBorder) => void;
         'end'?: () => void;
     }): void;

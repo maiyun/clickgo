@@ -1,17 +1,17 @@
 /** --- clickgo 中的 cgc 文件读取后的 pkg 对象 --- */
-export const clickgoControlPkgs: Record<string, ICGControlPkg> = {};
+export const clickgoControlPkgs: Record<string, TCGControlPkg> = {};
 
 /**
  * --- 将 cgc 文件 blob 转换为 pkg 对象，会自动创建 object url，请注意释放 ---
  * @param blob 文件 blob
  */
-export async function read(blob: Blob): Promise<false | ICGControlPkg> {
+export async function read(blob: Blob): Promise<false | TCGControlPkg> {
     const zip = await clickgo.zip.get(blob);
     if (!zip) {
         return false;
     }
     // --- 创建空白 pkg 对象 ---
-    const controlPkg: ICGControlPkg = {};
+    const controlPkg: TCGControlPkg = {};
     const controls = zip.readDir();
     for (const control of controls) {
         if (control.isFile) {
@@ -60,7 +60,7 @@ export async function read(blob: Blob): Promise<false | ICGControlPkg> {
  * --- 移出 IControlPkg 的所有已创建的 object url ---
  * @param pkg 要处理的 control pkg 对象
  */
-export function revokeObjectURL(pkg: ICGControlPkg): void {
+export function revokeObjectURL(pkg: TCGControlPkg): void {
     for (const name in pkg) {
         for (const path in pkg[name].objectURLs) {
             clickgo.tool.revokeObjectURL(pkg[name].objectURLs[path]);

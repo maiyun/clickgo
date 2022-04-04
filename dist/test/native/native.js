@@ -19,7 +19,7 @@ function ready() {
     });
 }
 exports.ready = ready;
-let listeners = {};
+const listeners = {};
 function on(name, handler, once = false) {
     if (!listeners[name]) {
         listeners[name] = [];
@@ -44,7 +44,7 @@ function off(name, handler) {
         }
         listeners[name].splice(i, 1);
         if (listeners[name].length === 0) {
-            delete (listeners[name]);
+            delete listeners[name];
             break;
         }
         --i;
@@ -68,41 +68,53 @@ function createForm(path) {
         win.maximize();
         win.show();
         win.setIgnoreMouseEvents(true, { 'forward': true });
-        let timerFunc = function () {
+        const timerFunc = function () {
             return __awaiter(this, void 0, void 0, function* () {
                 if (!win) {
                     return;
                 }
-                let isReady = yield win.webContents.executeJavaScript('clickgo.isReady');
+                const isReady = yield win.webContents.executeJavaScript('clickgo.isReady');
                 if (!isReady) {
                     setTimeout(function () {
-                        timerFunc();
+                        timerFunc().catch(function (e) {
+                            console.log(e);
+                        });
                     }, 100);
                     return;
                 }
-                let list = JSON.parse(yield win.webContents.executeJavaScript('clickgo.core.__nativeGetSends()'));
-                for (let item of list) {
-                    for (let it of listeners[item.name]) {
-                        let result = it.handler(item.param);
+                const list = JSON.parse(yield win.webContents.executeJavaScript('clickgo.core.cgInnerNativeGetSends()'));
+                for (const item of list) {
+                    for (const it of listeners[item.name]) {
+                        const result = it.handler(item.param);
                         if (result instanceof Promise) {
                             result.then(function (result) {
                                 if (!win) {
                                     return;
                                 }
-                                win.webContents.executeJavaScript(`clickgo.core.__nativeReceive(${item.id}, "${item.name}", ${result !== undefined ? (', "' + result.replace(/"/g, '\"') + '"') : ''})`);
+                                win.webContents.executeJavaScript(`clickgo.core.cgInnerNativeReceive(${item.id}, "${item.name}", ${result !== undefined ? (', "' + result.replace(/"/g, '\\"') + '"') : ''})`).catch(function (e) {
+                                    console.log(e);
+                                });
+                            }).catch(function (e) {
+                                console.log(e);
                             });
                         }
                         else {
-                            win.webContents.executeJavaScript(`clickgo.core.__nativeReceive(${item.id}, "${item.name}", ${result !== undefined ? (', "' + result.replace(/"/g, '\"') + '"') : ''})`);
+                            win.webContents.executeJavaScript(`clickgo.core.cgInnerNativeReceive(${item.id}, "${item.name}", ${result !== undefined ? (', "' + result.replace(/"/g, '\\"') + '"') : ''})`).catch(function (e) {
+                                console.log(e);
+                            });
                         }
                     }
                 }
                 setTimeout(function () {
-                    timerFunc();
+                    timerFunc().catch(function (e) {
+                        console.log(e);
+                    });
                 }, 100);
             });
         };
-        timerFunc();
+        timerFunc().catch(function (e) {
+            console.log(e);
+        });
     });
     win.loadFile(path).catch(function (e) {
         throw e;

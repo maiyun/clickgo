@@ -8,12 +8,16 @@ export async function ready(): Promise<void> {
 }
 
 /** --- node 监听前台消息列表 --- */
-let listeners: Record<string, Array<{
+const listeners: Record<string, Array<{
     'once': boolean;
-    'handler': (param?: string) => string | void | Promise<string | void>;
+    'handler': (param?: string) => any | Promise<any>;
 }>> = {};
 // --- 添加前台监听 ---
-export function on(name: string, handler: (param?: string) => string | void | Promise<string | void>, once: boolean = false): void {
+export function on(
+    name: string,
+    handler: (param?: string) => any | Promise<any>,
+    once: boolean = false
+): void {
     if (!listeners[name]) {
         listeners[name] = [];
     }
@@ -22,12 +26,12 @@ export function on(name: string, handler: (param?: string) => string | void | Pr
         'handler': handler
     });
 }
-export function once(name: string, handler: (param?: string) => string | void | Promise<string | void>): void {
+export function once(name: string, handler: (param?: string) => any | Promise<any>): void {
     on(name, handler, true);
 }
 
 // --- 移除前台监听 ---
-export function off(name: string, handler: (param?: string) => string | void | Promise<string | void>): void {
+export function off(name: string, handler: (param?: string) => any | Promise<any>): void {
     if (!listeners[name]) {
         return;
     }
@@ -37,7 +41,7 @@ export function off(name: string, handler: (param?: string) => string | void | P
         }
         listeners[name].splice(i, 1);
         if (listeners[name].length === 0) {
-            delete(listeners[name]);
+            delete listeners[name];
             break;
         }
         --i;
@@ -62,50 +66,62 @@ function createForm(path: string): void {
         win.show();
         win.setIgnoreMouseEvents(true, { 'forward': true });
         // --- timer ---
-        let timerFunc = async function() {
+        const timerFunc = async function(): Promise<void> {
             if (!win) {
                 return;
             }
-            let isReady = await win.webContents.executeJavaScript('clickgo.isReady');
+            const isReady = await win.webContents.executeJavaScript('clickgo.isReady');
             if (!isReady) {
                 // --- 下一次循环 ---
                 setTimeout(function() {
-                    timerFunc();
+                    timerFunc().catch(function(e) {
+                        console.log(e);
+                    });
                 }, 100);
                 return;
             }
             // --- 检测浏览器是否有要执行的内容 ---
-            let list = JSON.parse(await win.webContents.executeJavaScript('clickgo.core.__nativeGetSends()')) as Array<{ 'id': number; 'name': string; 'param': string | undefined; }>;
-            for (let item of list) {
+            const list = JSON.parse(await win.webContents.executeJavaScript('clickgo.core.cgInnerNativeGetSends()')) as Array<{ 'id': number; 'name': string; 'param': string | undefined; }>;
+            for (const item of list) {
                 // --- 根据 name 执行相关函数 ---
-                for (let it of listeners[item.name]) {
-                    let result = it.handler(item.param);
+                for (const it of listeners[item.name]) {
+                    const result = it.handler(item.param);
                     if (result instanceof Promise) {
                         result.then(function(result) {
                             if (!win) {
                                 return;
                             }
-                            win.webContents.executeJavaScript(`clickgo.core.__nativeReceive(${item.id}, "${item.name}", ${result !== undefined ? (', "' + result.replace(/"/g, '\"') + '"') : ''})`);
+                            win.webContents.executeJavaScript(`clickgo.core.cgInnerNativeReceive(${item.id}, "${item.name}", ${result !== undefined ? (', "' + (result as string).replace(/"/g, '\\"') + '"') : ''})`).catch(function(e) {
+                                console.log(e);
+                            });
+                        }).catch(function(e) {
+                            console.log(e);
                         });
                     }
                     else {
-                        win.webContents.executeJavaScript(`clickgo.core.__nativeReceive(${item.id}, "${item.name}", ${result !== undefined ? (', "' + result.replace(/"/g, '\"') + '"') : ''})`);
+                        win.webContents.executeJavaScript(`clickgo.core.cgInnerNativeReceive(${item.id}, "${item.name}", ${result !== undefined ? (', "' + (result as string).replace(/"/g, '\\"') + '"') : ''})`).catch(function(e) {
+                            console.log(e);
+                        });
                     }
                 }
             }
             // --- 下一次循环 ---
             setTimeout(function() {
-                timerFunc();
+                timerFunc().catch(function(e) {
+                    console.log(e);
+                });
             }, 100);
         };
-        timerFunc();
+        timerFunc().catch(function(e) {
+            console.log(e);
+        });
     });
     win.loadFile(path).catch(function(e): void {
         throw e;
     });
     win.on('close', function() {
         win = undefined;
-    })
+    });
 }
 
 export function run(path: string): void {
@@ -133,5 +149,5 @@ export function run(path: string): void {
         if (electron.BrowserWindow.getAllWindows().length === 0) {
             createForm(path);
         }
-    });    
+    });
 }

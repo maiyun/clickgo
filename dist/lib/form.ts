@@ -1345,7 +1345,7 @@ export async function create(taskId: number, opt: ICGFormCreateOptions): Promise
     // --- 获取要定义的控件列表 ---
     const components: any = {};
     for (const controlPath of appPkg.config.controls) {
-        let controlPkg: false | ICGControlPkg;
+        let controlPkg: false | TCGControlPkg;
         if (controlPath.startsWith('/clickgo/')) {
             const path = controlPath.slice(8);
             if (clickgo.control.clickgoControlPkgs[path + '.cgc']) {

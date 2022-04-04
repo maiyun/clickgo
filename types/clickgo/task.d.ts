@@ -30,7 +30,7 @@ interface ICGTask {
     'path': string;
     'permission': Record<string, any>;
 
-    'controlPkgs': Record<string, ICGControlPkg>;
+    'controlPkgs': Record<string, TCGControlPkg>;
     'themePkgs': Record<string, ICGThemePkg>;
 
     'forms': Record<number, ICGForm>;

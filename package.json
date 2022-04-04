@@ -12,7 +12,7 @@
   "license": "Apache-2.0",
   "types": "./types/clickgo.d.ts",
   "scripts": {
-    "start": "electron ./dist/test/native"
+    "native": "electron ./dist/test/native"
   },
   "devDependencies": {
     "@litert/loader": "^3.0.5",
