@@ -36,7 +36,8 @@ exports.data = {
     'shiftStart': 0,
     'delayRefreshShiftStartPos': false,
     'selectValues': [],
-    'beforeSelectValues': []
+    'beforeSelectValues': [],
+    'isSelectStart': false
 };
 exports.computed = {
     'isSame': function () {
@@ -135,6 +136,9 @@ exports.watch = {
     'shiftStart': {
         handler: function () {
             var _a;
+            if (this.isSelectStart) {
+                return;
+            }
             const pos = (_a = this.$refs.view) === null || _a === void 0 ? void 0 : _a.getPos(this.shiftStart);
             if (pos) {
                 this.refreshShiftStartPos(pos);
@@ -247,11 +251,12 @@ exports.methods = {
         if (this.isMust && value === -1) {
             value = 0;
         }
-        if (this.data[value]) {
-            if (this.data[value].disabled || (this.data[value].control === 'split')) {
-                return;
+        const canSelect = (i) => {
+            if (this.data[i].disabled || (this.data[i].control === 'split')) {
+                return false;
             }
-        }
+            return true;
+        };
         if (this.isMulti) {
             if (!shift && !ctrl) {
                 if (value === -1) {
@@ -262,15 +267,19 @@ exports.methods = {
                 }
                 else {
                     if (this.valueData.length > 1 || this.valueData.length === 0) {
-                        change = true;
-                        this.valueData = [value];
-                        this.shiftStart = value;
-                    }
-                    else {
-                        if (this.valueData[0] !== value) {
+                        if (canSelect(value)) {
                             change = true;
                             this.valueData = [value];
                             this.shiftStart = value;
+                        }
+                    }
+                    else {
+                        if (this.valueData[0] !== value) {
+                            if (canSelect(value)) {
+                                change = true;
+                                this.valueData = [value];
+                                this.shiftStart = value;
+                            }
                         }
                     }
                 }
@@ -283,29 +292,26 @@ exports.methods = {
                         const valueData = [];
                         if (value > this.shiftStart) {
                             for (let k = this.shiftStart; k <= value; ++k) {
-                                if (this.data[k].disabled || (this.data[k].control === 'split')) {
+                                if (!canSelect(k)) {
                                     continue;
                                 }
-                                valueData.push(k);
                                 change = true;
+                                valueData.push(k);
                             }
                         }
                         else {
                             for (let k = this.shiftStart; k >= value; --k) {
-                                if (this.data[k].disabled === true) {
+                                if (!canSelect(k)) {
                                     continue;
                                 }
-                                if (this.data[k].control === 'split') {
-                                    continue;
-                                }
-                                valueData.push(k);
                                 change = true;
+                                valueData.push(k);
                             }
                         }
                         if ((valueData.length !== this.valueData.length)
                             || !valueData.every((item) => this.valueData.includes(item))) {
-                            this.valueData = valueData;
                             change = true;
+                            this.valueData = valueData;
                         }
                     }
                     else {
@@ -318,9 +324,11 @@ exports.methods = {
                             }
                         }
                         else {
-                            change = true;
-                            this.valueData.push(value);
-                            this.shiftStart = value;
+                            if (canSelect(value)) {
+                                change = true;
+                                this.valueData.push(value);
+                                this.shiftStart = value;
+                            }
                         }
                     }
                 }
@@ -328,11 +336,16 @@ exports.methods = {
         }
         else {
             if (this.valueData !== value) {
-                this.valueData = value;
-                if (value !== -1) {
+                if (value === -1) {
+                    change = true;
+                    this.valueData = -1;
+                    this.shiftStart = 0;
+                }
+                else if (canSelect(value)) {
+                    change = true;
+                    this.valueData = value;
                     this.shiftStart = value;
                 }
-                change = true;
             }
         }
         if (change) {
@@ -346,6 +359,7 @@ exports.methods = {
         if (this.$refs.inner.dataset.cgPopOpen !== undefined) {
             clickgo.form.hidePop();
         }
+        this.isSelectStart = false;
         if (e instanceof TouchEvent) {
             clickgo.dom.bindLong(e, () => {
                 clickgo.form.showPop(this.$refs.inner, this.$refs.pop, e);
@@ -359,6 +373,9 @@ exports.methods = {
         clickgo.form.showPop(this.$refs.inner, this.$refs.pop, e);
     },
     click: function (e) {
+        if (this.isSelection && this.isSelectStart) {
+            return;
+        }
         if (!this.isMust) {
             const gi = clickgo.dom.findParentByData(e.target, 'cg-control-greatlist-item');
             if (!gi) {
@@ -465,6 +482,9 @@ exports.methods = {
         });
     },
     itemClick: function (e, value) {
+        if (this.isSelection && this.isSelectStart) {
+            return;
+        }
         e.stopPropagation();
         const hasTouch = clickgo.dom.hasTouchButMouse(e);
         this.select(value, e.shiftKey, (hasTouch && this.multi) ? true : e.ctrlKey);
@@ -495,12 +515,39 @@ exports.methods = {
         return notDisabledIndex;
     },
     onBeforeSelect: function () {
+        this.isSelectStart = true;
         this.selectValues = [];
         this.beforeSelectValues = Array.isArray(this.valueData) ? this.valueData : [this.valueData];
     },
     onSelect: function (area) {
         if (this.isMulti) {
             if (area.shift) {
+                if (area.start !== -1) {
+                    for (let i = area.start; i <= area.end; ++i) {
+                        if (this.beforeSelectValues.includes(i)) {
+                            continue;
+                        }
+                        if (this.selectValues.includes(i)) {
+                            continue;
+                        }
+                        this.selectValues.push(i);
+                        this.select(i, false, true);
+                    }
+                    for (let i = 0; i < this.selectValues.length; ++i) {
+                        if (this.selectValues[i] >= area.start && this.selectValues[i] <= area.end) {
+                            continue;
+                        }
+                        this.select(this.selectValues[i], false, true);
+                        this.selectValues.splice(i, 1);
+                        --i;
+                    }
+                }
+                else {
+                    for (const item of this.selectValues) {
+                        this.select(item, false, true);
+                    }
+                    this.selectValues = [];
+                }
             }
             else if (area.ctrl) {
                 for (let i = area.start; i <= area.end; ++i) {

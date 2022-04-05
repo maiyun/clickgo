@@ -413,7 +413,7 @@ export const methods = {
                     return { 'start': 0, 'end': 0 };
                 }
             }
-            if (this.scrollOffset < this.itemsPos[rtn.start].start) {
+            if (area.start < this.itemsPos[rtn.start].start) {
                 // --- 从后往前 ---
                 for (let i = rtn.start; i >= 0; --i) {
                     if (this.isInArea(i, area)) {

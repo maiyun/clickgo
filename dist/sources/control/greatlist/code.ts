@@ -37,7 +37,8 @@ export const data = {
     'delayRefreshShiftStartPos': false,
 
     'selectValues': [],
-    'beforeSelectValues': []
+    'beforeSelectValues': [],
+    'isSelectStart': false
 };
 
 export const computed = {
@@ -142,6 +143,9 @@ export const watch = {
     },
     'shiftStart': {
         handler: function(this: IVControl): void {
+            if (this.isSelectStart) {
+                return;
+            }
             const pos = this.$refs.view?.getPos(this.shiftStart);
             if (pos) {
                 this.refreshShiftStartPos(pos);
@@ -266,11 +270,20 @@ export const methods = {
         if (this.isMust && value === -1) {
             value = 0;
         }
+        /*
+        // --- 即使是 disabled 也能继续执行，只是 disabled 的项无法被选中，因此注释本段 ---
         if (this.data[value]) {
             if (this.data[value].disabled || (this.data[value].control === 'split')) {
                 return;
             }
         }
+        */
+        const canSelect = (i: number): boolean => {
+            if (this.data[i].disabled || (this.data[i].control === 'split')) {
+                return false;
+            }
+            return true;
+        };
         if (this.isMulti) {
             if (!shift && !ctrl) {
                 // --- 单选 ---
@@ -284,16 +297,20 @@ export const methods = {
                     // --- 要选择 ---
                     if (this.valueData.length > 1 || this.valueData.length === 0) {
                         // --- 只选择一个，但现在有多个，则重置为一个 ---
-                        change = true;
-                        this.valueData = [value];
-                        this.shiftStart = value;
+                        if (canSelect(value)) {
+                            change = true;
+                            this.valueData = [value];
+                            this.shiftStart = value;
+                        }
                     }
                     else {
                         // --- 只有一个，看看是不是选择的 ---
                         if (this.valueData[0] !== value) {
-                            change = true;
-                            this.valueData = [value];
-                            this.shiftStart = value;
+                            if (canSelect(value)) {
+                                change = true;
+                                this.valueData = [value];
+                                this.shiftStart = value;
+                            }
                         }
                     }
                 }
@@ -310,31 +327,28 @@ export const methods = {
                         const valueData = [];
                         if (value > this.shiftStart) {
                             for (let k = this.shiftStart; k <= value; ++k) {
-                                if (this.data[k].disabled || (this.data[k].control === 'split')) {
+                                if (!canSelect(k)) {
                                     continue;
                                 }
-                                valueData.push(k);
                                 change = true;
+                                valueData.push(k);
                             }
                         }
                         else {
                             for (let k = this.shiftStart; k >= value; --k) {
-                                if (this.data[k].disabled === true) {
+                                if (!canSelect(k)) {
                                     continue;
                                 }
-                                if (this.data[k].control === 'split') {
-                                    continue;
-                                }
-                                valueData.push(k);
                                 change = true;
+                                valueData.push(k);
                             }
                         }
                         if (
                             (valueData.length !== this.valueData.length)
                             || !valueData.every((item: number) => this.valueData.includes(item))
                         ) {
-                            this.valueData = valueData;
                             change = true;
+                            this.valueData = valueData;
                         }
                     }
                     else {
@@ -350,9 +364,11 @@ export const methods = {
                         }
                         else {
                             // --- 选择不存在的值 ---
-                            change = true;
-                            this.valueData.push(value);
-                            this.shiftStart = value;
+                            if (canSelect(value)) {
+                                change = true;
+                                this.valueData.push(value);
+                                this.shiftStart = value;
+                            }
                         }
                     }
                 }
@@ -361,11 +377,16 @@ export const methods = {
         else {
             // --- 单行模式 ---
             if (this.valueData !== value) {
-                this.valueData = value;
-                if (value !== -1) {
+                if (value === -1) {
+                    change = true;
+                    this.valueData = -1;
+                    this.shiftStart = 0;
+                }
+                else if (canSelect(value)) {
+                    change = true;
+                    this.valueData = value;
                     this.shiftStart = value;
                 }
-                change = true;
             }
         }
         if (change) {
@@ -379,6 +400,7 @@ export const methods = {
         if (this.$refs.inner.dataset.cgPopOpen !== undefined) {
             clickgo.form.hidePop();
         }
+        this.isSelectStart = false;
         if (e instanceof TouchEvent) {
             // --- 长按触发 contextmenu ---
             clickgo.dom.bindLong(e, () => {
@@ -393,6 +415,9 @@ export const methods = {
         clickgo.form.showPop(this.$refs.inner, this.$refs.pop, e);
     },
     click: function(this: IVControl, e: MouseEvent): void {
+        if (this.isSelection && this.isSelectStart) {
+            return;
+        }
         if (!this.isMust) {
             const gi = clickgo.dom.findParentByData(e.target as HTMLElement, 'cg-control-greatlist-item');
             if (!gi) {
@@ -501,6 +526,9 @@ export const methods = {
         });
     },
     itemClick: function(this: IVControl, e: MouseEvent, value: number): void {
+        if (this.isSelection && this.isSelectStart) {
+            return;
+        }
         e.stopPropagation();
         const hasTouch = clickgo.dom.hasTouchButMouse(e);
         this.select(value, e.shiftKey, (hasTouch && this.multi) ? true : e.ctrlKey);
@@ -536,6 +564,7 @@ export const methods = {
     },
     // --- 当出现了选区 ---
     onBeforeSelect: function(this: IVControl): void {
+        this.isSelectStart = true;
         this.selectValues = [];
         this.beforeSelectValues = Array.isArray(this.valueData) ? this.valueData : [this.valueData];
     },
@@ -543,7 +572,38 @@ export const methods = {
         if (this.isMulti) {
             // --- 多行 ---
             if (area.shift) {
-                // -- TODO ---
+                if (area.start !== -1) {
+                    // --- 先检查要加的 ---
+                    for (let i = area.start; i <= area.end; ++i) {
+                        if (this.beforeSelectValues.includes(i)) {
+                            // --- 本来就选中状态，不管 ---
+                            continue;
+                        }
+                        if (this.selectValues.includes(i)) {
+                            // --- 已经选中了，也不管 ---
+                            continue;
+                        }
+                        this.selectValues.push(i);
+                        this.select(i, false, true);
+                    }
+                    // --- 再看有没有要减掉的 ---
+                    for (let i = 0; i < this.selectValues.length; ++i) {
+                        if (this.selectValues[i] >= area.start && this.selectValues[i] <= area.end) {
+                            // --- 正常 ---
+                            continue;
+                        }
+                        // --- 要剔除 ---
+                        this.select(this.selectValues[i], false, true);
+                        this.selectValues.splice(i, 1);
+                        --i;
+                    }
+                }
+                else {
+                    for (const item of this.selectValues) {
+                        this.select(item, false, true);
+                    }
+                    this.selectValues = [];
+                }
             }
             else if (area.ctrl) {
                 for (let i = area.start; i <= area.end; ++i) {
@@ -563,6 +623,7 @@ export const methods = {
             }
         }
         else {
+            // --- 单行 ---
             if (area.start !== -1) {
                 this.select(area.start, area.shift, area.ctrl);
             }
