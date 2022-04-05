@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.methods = exports.computed = exports.data = void 0;
 exports.data = {
-    'tab': '',
+    'ntab': '',
     'slist': [
         {
             'type': 0,
@@ -113,7 +113,7 @@ exports.methods = {
         }
     },
     selectButton: function () {
-        if (this.tab === 'list') {
+        if (this.ntab === 'list') {
             this.select2 = 'Item1';
         }
         else {

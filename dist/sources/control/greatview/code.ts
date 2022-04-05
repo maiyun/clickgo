@@ -231,7 +231,7 @@ export const methods = {
                 // --- 重复执行，以最后一次执行为准 ---
                 return;
             }
-            if (!this.$refs.comp.offsetParent) {
+            if (!this.$refs.comp || !this.$refs.comp.offsetParent) {
                 // --- 当前被卸载了 ---
                 return;
             }

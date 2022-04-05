@@ -1,15 +1,12 @@
 export const data = {
     'ntab': '',
-    'tabs': [{
-        'label': 'Tab1',
-        'value': 'tab1'
-    }],
+    'tabs': ['tab1'],
     'tabPosition': 'top'
 };
 
 export const methods = {
     add: function(this: IVForm): void {
-        this.tabs.push({ 'label': 'Tab' + ((this.tabs.length as number) + 1).toString(), 'value': 'tab' + ((this.tabs.length as number) + 1).toString() });
+        this.tabs.push('tab' + ((this.tabs.length as number) + 1).toString());
     },
     remove: function(this: IVForm): void {
         if (this.tabs.length > 0) {

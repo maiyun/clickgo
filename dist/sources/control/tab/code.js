@@ -14,6 +14,12 @@ exports.props = {
     'tabPosition': {
         'default': 'top'
     },
+    'drag': {
+        'default': false
+    },
+    'tabs': {
+        'default': []
+    },
     'modelValue': {
         'default': ''
     }
@@ -22,26 +28,34 @@ exports.data = {
     'arrow': false,
     'timer': 0,
     'oldTabs': undefined,
-    'selected': ''
+    'value': ''
 };
 exports.computed = {
-    'tabs': function () {
-        var _a;
-        if (!this.$slots.default) {
-            return [];
-        }
+    'isDrag': function () {
+        return clickgo.tool.getBoolean(this.drag);
+    },
+    'tabsComp': function () {
+        var _a, _b;
         const tabs = [];
-        for (const item of this.cgSlots()) {
-            tabs.push({
-                'label': item.props.label,
-                'value': (_a = item.props.value) !== null && _a !== void 0 ? _a : item.props.label
-            });
+        for (const item of this.tabs) {
+            if (typeof item !== 'object') {
+                tabs.push({
+                    'value': item,
+                    'drag': this.isDrag
+                });
+            }
+            else {
+                tabs.push({
+                    'value': (_a = item.value) !== null && _a !== void 0 ? _a : 'error',
+                    'drag': (_b = item.drag) !== null && _b !== void 0 ? _b : this.isDrag
+                });
+            }
         }
         return tabs;
     },
     'values': function () {
         const list = [];
-        for (const item of this.tabs) {
+        for (const item of this.tabsComp) {
             list.push(item.value);
         }
         return list;
@@ -50,19 +64,20 @@ exports.computed = {
 exports.watch = {
     'modelValue': {
         handler: function () {
-            if (this.selected !== this.modelValue) {
-                this.selected = this.modelValue;
-                this.reSelected();
+            if (this.value !== this.modelValue) {
+                this.value = this.modelValue;
+                this.refreshValue();
             }
         },
         'immediate': true
     },
     'tabs': {
         handler: function () {
-            return __awaiter(this, void 0, void 0, function* () {
-                yield this.$nextTick();
+            this.refreshValue();
+            this.$nextTick().then(() => {
                 this.onResize(clickgo.dom.getSize(this.$refs.tabs[0]));
-                this.reSelected();
+            }).catch(function (e) {
+                console.log(e);
             });
         },
         'deep': 'true'
@@ -94,8 +109,8 @@ exports.methods = {
         this.$refs.tabs[0].scrollLeft += e.deltaY;
     },
     tabClick: function (e, item) {
-        this.selected = item.value;
-        this.$emit('update:modelValue', item.value);
+        this.value = item.value;
+        this.$emit('update:modelValue', this.value);
     },
     longDown: function (e, type) {
         if (clickgo.dom.hasTouchButMouse(e)) {
@@ -139,19 +154,19 @@ exports.methods = {
             }
         }
     },
-    reSelected: function () {
-        if (this.selected === '') {
-            const s = this.values[0] ? this.values[0] : '';
-            if (this.selected !== s) {
-                this.selected = s;
-                this.$emit('update:modelValue', this.selected);
+    refreshValue: function () {
+        if (this.value === '') {
+            const v = this.values[0] ? this.values[0] : '';
+            if (this.value !== v) {
+                this.value = v;
+                this.$emit('update:modelValue', this.value);
             }
         }
-        else if (this.values.indexOf(this.selected) === -1) {
-            const s = this.values[this.values.length - 1] ? this.values[this.values.length - 1] : '';
-            if (this.selected !== s) {
-                this.selected = s;
-                this.$emit('update:modelValue', this.selected);
+        else if (this.values.indexOf(this.value) === -1) {
+            const v = this.values[this.values.length - 1] ? this.values[this.values.length - 1] : '';
+            if (this.value !== v) {
+                this.value = v;
+                this.$emit('update:modelValue', this.value);
             }
         }
     }
@@ -161,6 +176,6 @@ const mounted = function () {
     clickgo.dom.watchSize(this.$refs.tabs[0], (size) => {
         this.onResize(size);
     });
-    this.reSelected();
+    this.refreshValue();
 };
 exports.mounted = mounted;

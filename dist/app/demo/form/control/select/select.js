@@ -11,6 +11,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.watch = exports.data = void 0;
 exports.data = {
+    'ntab': '',
     'area': 'all',
     'slist': [
         {

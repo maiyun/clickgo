@@ -1,5 +1,5 @@
 export const data = {
-    'tab': '',
+    'ntab': '',
     'slist': [
         {
             'type': 0,
@@ -115,7 +115,7 @@ export const methods = {
         }
     },
     selectButton: function(this: IVForm): void {
-        if (this.tab === 'list') {
+        if (this.ntab === 'list') {
             this.select2 = 'Item1';
         }
         else {

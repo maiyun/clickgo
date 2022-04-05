@@ -17,11 +17,11 @@ function purify(text: string): string {
 }
 
 async function addFile(zipo: zip, base: string = '', path: string = ''): Promise<void> {
-    let list = await fs.promises.readdir(base + path, {
+    const list = await fs.promises.readdir(base + path, {
         'withFileTypes': true
     });
-    for (let item of list) {
-        let p = base + path + item.name;
+    for (const item of list) {
+        const p = base + path + item.name;
         if (item.isFile()) {
             if (item.name.endsWith('.ts')) {
                 continue;
@@ -29,7 +29,7 @@ async function addFile(zipo: zip, base: string = '', path: string = ''): Promise
             if (item.name.endsWith('.scss')) {
                 continue;
             }
-            let file = await fs.promises.readFile(p);
+            const file = await fs.promises.readFile(p);
             if (item.name.endsWith('.html')) {
                 zipo.file(path + item.name, purify(file.toString()));
             }
@@ -48,16 +48,16 @@ async function run(): Promise<void> {
     let list = await fs.promises.readdir('dist/sources/control/', {
         'withFileTypes': true
     });
-    for (let item of list) {
+    for (const item of list) {
         if (item.isFile()) {
             continue;
         }
-        if (['check', 'dialog', 'greatlist', 'greatselect', 'greatview', 'img', 'label', 'layout', 'list', 'marquee', 'menu', 'menu-item', 'menulist', 'menulist-item', 'menulist-split', 'overflow', 'radio', 'scroll', 'select', 'tab', 'tab-panel', 'text', 'view', 'task-item'].includes(item.name)) {
+        if (['check', 'dialog', 'greatlist', 'greatselect', 'greatview', 'img', 'label', 'layout', 'list', 'marquee', 'menu', 'menu-item', 'menulist', 'menulist-item', 'menulist-split', 'overflow', 'radio', 'scroll', 'select', 'tab', 'text', 'view', 'task-item'].includes(item.name)) {
             continue;
         }
 
-        let zipo = new zip();
-        let base = 'dist/sources/control/';
+        const zipo = new zip();
+        const base = 'dist/sources/control/';
         let name = item.name;
 
         await addFile(zipo, base, item.name + '/');
@@ -84,7 +84,6 @@ async function run(): Promise<void> {
             await addFile(zipo, base, 'scroll/');
             await addFile(zipo, base, 'select/');
             await addFile(zipo, base, 'tab/');
-            await addFile(zipo, base, 'tab-panel/');
             await addFile(zipo, base, 'text/');
             await addFile(zipo, base, 'view/');
         }
@@ -101,17 +100,17 @@ async function run(): Promise<void> {
         }));
     }
     // --- theme to cgt ---
-    let base = 'dist/sources/theme/';
+    const base = 'dist/sources/theme/';
 
     list = await fs.promises.readdir('dist/sources/theme/', {
         'withFileTypes': true
     });
-    for (let item of list) {
+    for (const item of list) {
         if (item.isFile()) {
             continue;
         }
 
-        let zipo = new zip();
+        const zipo = new zip();
         await addFile(zipo, base + item.name + '/');
 
         // --- 组成 cgt 文件 ---

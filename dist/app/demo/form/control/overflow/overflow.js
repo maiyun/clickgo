@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.methods = exports.data = void 0;
 exports.data = {
+    'ntab': '',
     'lineValue': 10,
     'lineCount': 2,
     'sLeft1': 0,

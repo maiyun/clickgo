@@ -1,3 +1,7 @@
+export const data = {
+    'ntab': ''
+};
+
 export const methods = {
     openForm: async function(this: IVForm, type: string, name: string): Promise<void> {
         await this.cgCreateForm(`/form/${type}/${name}/${name}`);

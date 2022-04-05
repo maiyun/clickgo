@@ -9,7 +9,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.mounted = exports.methods = void 0;
+exports.mounted = exports.methods = exports.data = void 0;
+exports.data = {
+    'ntab': ''
+};
 exports.methods = {
     openForm: function (type, name) {
         return __awaiter(this, void 0, void 0, function* () {

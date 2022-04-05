@@ -20,11 +20,11 @@ function purify(text) {
 }
 function addFile(zipo, base = '', path = '') {
     return __awaiter(this, void 0, void 0, function* () {
-        let list = yield fs.promises.readdir(base + path, {
+        const list = yield fs.promises.readdir(base + path, {
             'withFileTypes': true
         });
-        for (let item of list) {
-            let p = base + path + item.name;
+        for (const item of list) {
+            const p = base + path + item.name;
             if (item.isFile()) {
                 if (item.name.endsWith('.ts')) {
                     continue;
@@ -32,7 +32,7 @@ function addFile(zipo, base = '', path = '') {
                 if (item.name.endsWith('.scss')) {
                     continue;
                 }
-                let file = yield fs.promises.readFile(p);
+                const file = yield fs.promises.readFile(p);
                 if (item.name.endsWith('.html')) {
                     zipo.file(path + item.name, purify(file.toString()));
                 }
@@ -51,15 +51,15 @@ function run() {
         let list = yield fs.promises.readdir('dist/sources/control/', {
             'withFileTypes': true
         });
-        for (let item of list) {
+        for (const item of list) {
             if (item.isFile()) {
                 continue;
             }
-            if (['check', 'dialog', 'greatlist', 'greatselect', 'greatview', 'img', 'label', 'layout', 'list', 'marquee', 'menu', 'menu-item', 'menulist', 'menulist-item', 'menulist-split', 'overflow', 'radio', 'scroll', 'select', 'tab', 'tab-panel', 'text', 'view', 'task-item'].includes(item.name)) {
+            if (['check', 'dialog', 'greatlist', 'greatselect', 'greatview', 'img', 'label', 'layout', 'list', 'marquee', 'menu', 'menu-item', 'menulist', 'menulist-item', 'menulist-split', 'overflow', 'radio', 'scroll', 'select', 'tab', 'text', 'view', 'task-item'].includes(item.name)) {
                 continue;
             }
-            let zipo = new zip();
-            let base = 'dist/sources/control/';
+            const zipo = new zip();
+            const base = 'dist/sources/control/';
             let name = item.name;
             yield addFile(zipo, base, item.name + '/');
             if (item.name === 'button') {
@@ -84,7 +84,6 @@ function run() {
                 yield addFile(zipo, base, 'scroll/');
                 yield addFile(zipo, base, 'select/');
                 yield addFile(zipo, base, 'tab/');
-                yield addFile(zipo, base, 'tab-panel/');
                 yield addFile(zipo, base, 'text/');
                 yield addFile(zipo, base, 'view/');
             }
@@ -99,15 +98,15 @@ function run() {
                 }
             }));
         }
-        let base = 'dist/sources/theme/';
+        const base = 'dist/sources/theme/';
         list = yield fs.promises.readdir('dist/sources/theme/', {
             'withFileTypes': true
         });
-        for (let item of list) {
+        for (const item of list) {
             if (item.isFile()) {
                 continue;
             }
-            let zipo = new zip();
+            const zipo = new zip();
             yield addFile(zipo, base + item.name + '/');
             yield fs.promises.writeFile('dist/theme/' + item.name + '.cgt', yield zipo.generateAsync({
                 type: 'nodebuffer',

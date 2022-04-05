@@ -3,12 +3,12 @@
         <div v-if="(i === 1 && (tabPosition === 'top' || tabPosition === 'left')) || (i === 2 && (tabPosition === 'right' || tabPosition === 'bottom'))" class="tabs-wrap">
             <div v-show="arrow" class="arrow start" @mousedown="longDown($event, 'start')" @touchstart="longDown($event, 'start')"></div>
             <div ref="tabs" class="tabs" @wheel="wheel">
-                <div v-for="item of tabs" class="tab" :class="[selected === item.value ? 'selected' : undefined]" @click="tabClick($event, item)">{{item.label}}</div>
+                <div v-for="item of tabsComp" class="tab" :class="[value === item.value ? 'selected' : undefined]" @click="tabClick($event, item)">{{item.value}}</div>
             </div>
             <div v-show="arrow" class="arrow end" @mousedown="longDown($event, 'end')" @touchstart="longDown($event, 'end')"></div>
         </div>
-        <template v-else>
+        <div v-else class="panel">
             <slot></slot>
-        </template>
+        </div>
     </template>
 </div>

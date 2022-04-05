@@ -1,100 +1,92 @@
 <form title="View" width="450" height="450" min-width="300" min-height="400" padding="10">
-    <tab style="flex: 1; width: 0;">
+    <tab v-model="ntab" :tabs="['normal', 'adaptation', 'beyond', 'nest']" style="flex: 1; width: 0;">
         <!-- 默认 -->
-        <tab-panel label="normal" name="normal">
-            <layout gutter="10" direction="v" style="flex: 1; width: 0;">
-                <!-- v -->
-                <layout gutter="10" style="flex: 1; height: 0;">
-                    <view v-model:scroll-left="sLeft1" v-model:scroll-top="sTop1" direction="v" :selection="selection" @select="area = $event" @resize="c1 = $event" @change="l1 = $event" @scrollborder="scrollborder($event, 'v')" :style="{'line-height': style ? '1.5' : undefined, 'padding': style ? '10px' : undefined}" class="border" style="flex: 1; width: 0;">
+        <layout v-if="ntab === 'normal'" gutter="10" direction="v" style="flex: 1; width: 0; padding: 10px;">
+            <!-- v -->
+            <layout gutter="10" style="flex: 1; height: 0;">
+                <view v-model:scroll-left="sLeft1" v-model:scroll-top="sTop1" direction="v" :selection="selection" @select="area = $event" @resize="c1 = $event" @change="l1 = $event" @scrollborder="scrollborder($event, 'v')" :style="{'line-height': style ? '1.5' : undefined, 'padding': style ? '10px' : undefined}" class="border" style="flex: 1; width: 0;">
+                    <block v-for="(line, index) of lineCount">
+                        <button v-if="index > 0 && index % 10 === 0" style="height: 30px;">test</button>
+                        <block v-else>Line {{line}}, index: {{index}}.</block>
+                    </block>
+                </view>
+                <layout class="border" style="flex: 1; width: 0;">
+                    <view v-model:scroll-left="sLeft2" v-model:scroll-top="sTop2" direction="v" :selection="selection" @select="area = $event" @resize="c2 = $event" @change="l2 = $event" @scrollborder="scrollborder($event, 'v')" :style="{'line-height': style ? '1.5' : undefined, 'padding': style ? '10px' : undefined}" style="flex: 1; width: 0;">
                         <block v-for="(line, index) of lineCount">
-                            <button v-if="index > 0 && index % 10 === 0" style="height: 30px;">test</button>
+                            <block v-if="index > 0 && index % 10 === 0" class="custom">Custom</block>
                             <block v-else>Line {{line}}, index: {{index}}.</block>
                         </block>
                     </view>
-                    <layout class="border" style="flex: 1; width: 0;">
-                        <view v-model:scroll-left="sLeft2" v-model:scroll-top="sTop2" direction="v" :selection="selection" @select="area = $event" @resize="c2 = $event" @change="l2 = $event" @scrollborder="scrollborder($event, 'v')" :style="{'line-height': style ? '1.5' : undefined, 'padding': style ? '10px' : undefined}" style="flex: 1; width: 0;">
-                            <block v-for="(line, index) of lineCount">
-                                <block v-if="index > 0 && index % 10 === 0" class="custom">Custom</block>
-                                <block v-else>Line {{line}}, index: {{index}}.</block>
-                            </block>
-                        </view>
-                        <scroll :length="l2" :client="c2" v-model:scroll-offset="sTop2" style="width: 20px;"></scroll>
-                    </layout>
-                </layout>
-                <label>Scroll Left: {{sLeft1}}, Scroll Top: {{sTop1}}, Length: {{l1}}, Client: {{c1}}.</label>
-                <label>Scroll Left: {{sLeft2}}, Scroll Top: {{sTop2}}, Length: {{l2}}, Client: {{c2}}.</label>
-                <!-- h -->
-                <view v-model:scroll-left="sLeft3" v-model:scroll-top="sTop3" :selection="selection" @select="area = $event" @resize="c3 = $event" @change="l3 = $event" @scrollborder="scrollborder($event, 'h')" :style="{'line-height': style ? '1.5' : undefined, 'padding': style ? '10px' : undefined}" class="border" style="flex: 1; height: 0;">
-                    <layout v-for="(line, index) of lineCount" align-v="center" align-h="center" direction="v" class="rightborder" style="width: 80px;">
-                        <label>Col {{line}}.</label>
-                        <label>index: {{index}}.</label>
-                    </layout>
-                </view>
-                <label>Scroll Left: {{sLeft3}}, Scroll Top: {{sTop3}}, Length: {{l3}}, Client: {{c3}}.</label>
-                <label>Selection area: {{area}}</label>
-                <!-- button list -->
-                <layout gutter="10">
-                    <select v-model="lineValue" :data="[10, 50]" style="flex: 1; width: 0;"></select>
-                    <button @click="lineCount += lineValue" style="height: 30px; padding: 0 10px;">Add lines</button>
-                    <button @click="lineCount -= lineValue;if(lineCount < 0) {lineCount = 0;}" style="height: 30px; padding: 0 10px;">Remove lines</button>
-                </layout>
-                <layout gutter="10">
-                    <button @click="gesture = !gesture" style="flex: 1; width: 0; height: 30px;">{{gesture ? '' : '!'}}gesture</button>
-                    <button @click="selection = !selection" style="flex: 1; width: 0; height: 30px;">{{selection ? '' : '!'}}selection</button>
-                    <button @click="style = !style" style="flex: 1; width: 0; height: 30px;">{{style ? '' : '!'}}style</button>
+                    <scroll :length="l2" :client="c2" v-model:scroll-offset="sTop2" style="width: 20px;"></scroll>
                 </layout>
             </layout>
-        </tab-panel>
-        <!-- 自适应 -->
-        <tab-panel label="adaptation">
-            <layout gutter="10" direction="v" style="flex: 1; width: 0;">
-                <layout :direction="direction ? 'h' : 'v'" style="flex: 1; height: 0;">
-                    <view class="border" v-model:scroll-left="sLeft4" v-model:scroll-top="sTop4" :direction="direction ? 'h' : 'v'" @resize="c4 = $event" @change="l4 = $event" @scrollborder="scrollborder($event, 'v')">
-                        <layout v-for="(line, index) of lineCount" align-v="center" direction="v" :class="[direction && 'rightborder']">
-                            <button v-if="index > 0 && index % 10 === 0" style="height: 30px;" :style="{'width': direction ? '30px' : undefined}">test</button>
-                            <block v-else :style="{'width': direction ? '80px' : undefined, 'text-align': direction ? 'center' : undefined}">Line {{line}}</block>
-                        </layout>
-                    </view>
+            <label>Scroll Left: {{sLeft1}}, Scroll Top: {{sTop1}}, Length: {{l1}}, Client: {{c1}}.</label>
+            <label>Scroll Left: {{sLeft2}}, Scroll Top: {{sTop2}}, Length: {{l2}}, Client: {{c2}}.</label>
+            <!-- h -->
+            <view v-model:scroll-left="sLeft3" v-model:scroll-top="sTop3" :selection="selection" @select="area = $event" @resize="c3 = $event" @change="l3 = $event" @scrollborder="scrollborder($event, 'h')" :style="{'line-height': style ? '1.5' : undefined, 'padding': style ? '10px' : undefined}" class="border" style="flex: 1; height: 0;">
+                <layout v-for="(line, index) of lineCount" align-v="center" align-h="center" direction="v" class="rightborder" style="width: 80px;">
+                    <label>Col {{line}}.</label>
+                    <label>index: {{index}}.</label>
                 </layout>
-                <label>Scroll Left: {{sLeft4}}, Scroll Top: {{sTop4}}, Length: {{l4}}, Client: {{c4}}.</label>
-                <layout gutter="10">
-                    <button @click="lineCount += 10" style="flex: 1; width: 0; height: 30px;">Add 10 lines</button>
-                    <button @click="lineCount -= 10;if(lineCount < 0) {lineCount = 0;}" style="flex: 1; width: 0; height: 30px;">Remove 10 lines</button>
-                    <button @click="direction = !direction" style="flex: 1; height: 30px;">Direction</button>
-                </layout>
-            </layout>
-        </tab-panel>
-        <!-- 内容超出 -->
-        <tab-panel label="beyond">
-            <layout gutter="10" direction="v" style="flex: 1; width: 0;">
-                <layout gutter="10" align-v="center">
-                    <button @click="dir5 = (dir5 === 'h' ? 'v' : 'h')" style="flex: 1; width: 0; height: 30px;">Change direction</button>
-                    <button @click="line5 = (line5 === 10 ? 1 : 10)" style="flex: 1; width: 0; height: 30px;">Change data</button>
-                    <label>Direction: {{dir5}}</label>
-                </layout>
-                <view v-model:scroll-left="sLeft5" v-model:scroll-top="sTop5" content="max" @resize="c5 = $event" @change="l5 = $event" :direction="dir5" class="border" style="flex: 1; height: 0; padding: 10px 0 0 10px;">
-                    <layout v-for="i of line5" :direction="dir5 === 'h' ? 'v' : 'h'">
-                        <layout v-for="j of 10" class="block">
-                            <block>{{i}}-{{j}}</block>
-                        </layout>
-                    </layout>
-                </view>
-                <label>Scroll Left: {{sLeft5}}, Scroll Top: {{sTop5}}, Length: {{l5}}, Client: {{c5}}.</label>
-            </layout>
-        </tab-panel>
-        <!-- 嵌套 -->
-        <tab-panel label="nest">
-            <view class="border" direction="v" @resizen="c6 = $event" solo="false" style="flex: 1; width: 0;">
-                <template v-for="i of 100">
-                    <view v-if="i === 30" class="border" direction="v" solo="false" style="height: 50px;">
-                        <label v-for="k of 50">Line {{k}}</label>
-                    </view>
-                    <view v-else-if="i === 40" class="border" solo="false" style="height: 50px;" :style="{'width': c6 + 'px'}">
-                        <label v-for="k of 50" class="rightborder" style="width: 80px;">Line {{k}}</label>
-                    </view>
-                    <label v-else>Line {{i}}</label>
-                </template>
             </view>
-        </tab-panel>
+            <label>Scroll Left: {{sLeft3}}, Scroll Top: {{sTop3}}, Length: {{l3}}, Client: {{c3}}.</label>
+            <label>Selection area: {{area}}</label>
+            <!-- button list -->
+            <layout gutter="10">
+                <select v-model="lineValue" :data="[10, 50]" style="flex: 1; width: 0;"></select>
+                <button @click="lineCount += lineValue" style="height: 30px; padding: 0 10px;">Add lines</button>
+                <button @click="lineCount -= lineValue;if(lineCount < 0) {lineCount = 0;}" style="height: 30px; padding: 0 10px;">Remove lines</button>
+            </layout>
+            <layout gutter="10">
+                <button @click="gesture = !gesture" style="flex: 1; width: 0; height: 30px;">{{gesture ? '' : '!'}}gesture</button>
+                <button @click="selection = !selection" style="flex: 1; width: 0; height: 30px;">{{selection ? '' : '!'}}selection</button>
+                <button @click="style = !style" style="flex: 1; width: 0; height: 30px;">{{style ? '' : '!'}}style</button>
+            </layout>
+        </layout>
+        <!-- 自适应 -->
+        <layout v-else-if="ntab === 'adaptation'" gutter="10" direction="v" style="flex: 1; padding: 10px;">
+            <layout :direction="direction ? 'h' : 'v'" style="flex: 1; width: 0; height: 0;">
+                <view class="border" v-model:scroll-left="sLeft4" v-model:scroll-top="sTop4" :direction="direction ? 'h' : 'v'" @resize="c4 = $event" @change="l4 = $event" @scrollborder="scrollborder($event, 'v')">
+                    <layout v-for="(line, index) of lineCount" align-v="center" direction="v" :class="[direction && 'rightborder']">
+                        <button v-if="index > 0 && index % 10 === 0" style="height: 30px;" :style="{'width': direction ? '30px' : undefined}">test</button>
+                        <block v-else :style="{'width': direction ? '80px' : undefined, 'text-align': direction ? 'center' : undefined}">Line {{line}}</block>
+                    </layout>
+                </view>
+            </layout>
+            <label>Scroll Left: {{sLeft4}}, Scroll Top: {{sTop4}}, Length: {{l4}}, Client: {{c4}}.</label>
+            <layout gutter="10">
+                <button @click="lineCount += 10" style="flex: 1; width: 0; height: 30px;">Add 10 lines</button>
+                <button @click="lineCount -= 10;if(lineCount < 0) {lineCount = 0;}" style="flex: 1; width: 0; height: 30px;">Remove 10 lines</button>
+                <button @click="direction = !direction" style="flex: 1; height: 30px;">Direction</button>
+            </layout>
+        </layout>
+        <!-- 内容超出 -->
+        <layout v-else-if="ntab === 'beyond'" gutter="10" direction="v" style="flex: 1; width: 0; padding: 10px;">
+            <layout gutter="10" align-v="center">
+                <button @click="dir5 = (dir5 === 'h' ? 'v' : 'h')" style="flex: 1; width: 0; height: 30px;">Change direction</button>
+                <button @click="line5 = (line5 === 10 ? 1 : 10)" style="flex: 1; width: 0; height: 30px;">Change data</button>
+                <label>Direction: {{dir5}}</label>
+            </layout>
+            <view v-model:scroll-left="sLeft5" v-model:scroll-top="sTop5" content="max" @resize="c5 = $event" @change="l5 = $event" :direction="dir5" class="border" style="flex: 1; height: 0; padding: 10px 0 0 10px;">
+                <layout v-for="i of line5" :direction="dir5 === 'h' ? 'v' : 'h'">
+                    <layout v-for="j of 10" class="block">
+                        <block>{{i}}-{{j}}</block>
+                    </layout>
+                </layout>
+            </view>
+            <label>Scroll Left: {{sLeft5}}, Scroll Top: {{sTop5}}, Length: {{l5}}, Client: {{c5}}.</label>
+        </layout>
+        <!-- 嵌套 -->
+        <view v-else class="border" direction="v" @resizen="c6 = $event" solo="false" style="flex: 1; width: 0; padding: 10px;">
+            <template v-for="i of 100">
+                <view v-if="i === 30" class="border" direction="v" solo="false" style="height: 50px;">
+                    <label v-for="k of 50">Line {{k}}</label>
+                </view>
+                <view v-else-if="i === 40" class="border" solo="false" style="height: 50px;" :style="{'width': c6 + 'px'}">
+                    <label v-for="k of 50" class="rightborder" style="width: 80px;">Line {{k}}</label>
+                </view>
+                <label v-else>Line {{i}}</label>
+            </template>
+        </view>
     </tab>
 </form>

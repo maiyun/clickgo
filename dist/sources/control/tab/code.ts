@@ -2,7 +2,13 @@ export const props = {
     'tabPosition': {
         'default': 'top'
     },
+    'drag': {
+        'default': false
+    },
 
+    'tabs': {
+        'default': []
+    },
     'modelValue': {
         'default': ''
     }
@@ -13,26 +19,35 @@ export const data = {
     'timer': 0,
 
     'oldTabs': undefined,
-    'selected': ''
+    'value': ''
 };
 
 export const computed = {
-    'tabs': function(this: IVControl): any[] {
-        if (!this.$slots.default) {
-            return [];
-        }
+    'isDrag': function(this: IVControl): boolean {
+        return clickgo.tool.getBoolean(this.drag);
+    },
+
+    'tabsComp': function(this: IVControl): any[] {
         const tabs = [];
-        for (const item of this.cgSlots()) {
-            tabs.push({
-                'label': item.props.label,
-                'value': item.props.value ?? item.props.label
-            });
+        for (const item of this.tabs) {
+            if (typeof item !== 'object') {
+                tabs.push({
+                    'value': item,
+                    'drag': this.isDrag
+                });
+            }
+            else {
+                tabs.push({
+                    'value': item.value ?? 'error',
+                    'drag': item.drag ?? this.isDrag
+                });
+            }
         }
         return tabs;
     },
     'values': function(this: IVControl): string[] {
         const list = [];
-        for (const item of this.tabs) {
+        for (const item of this.tabsComp) {
             list.push(item.value);
         }
         return list;
@@ -42,18 +57,21 @@ export const computed = {
 export const watch = {
     'modelValue': {
         handler: function(this: IVControl): void {
-            if (this.selected !== this.modelValue) {
-                this.selected = this.modelValue;
-                this.reSelected();
+            if (this.value !== this.modelValue) {
+                this.value = this.modelValue;
+                this.refreshValue();
             }
         },
         'immediate': true
     },
     'tabs': {
-        handler: async function(this: IVControl): Promise<void> {
-            await this.$nextTick();
-            this.onResize(clickgo.dom.getSize(this.$refs.tabs[0]));
-            this.reSelected();
+        handler: function(this: IVControl): void {
+            this.refreshValue();
+            this.$nextTick().then(() => {
+                this.onResize(clickgo.dom.getSize(this.$refs.tabs[0]));
+            }).catch(function(e) {
+                console.log(e);
+            });
         },
         'deep': 'true'
     },
@@ -84,8 +102,8 @@ export const methods = {
         (this.$refs.tabs[0] as HTMLElement).scrollLeft += e.deltaY;
     },
     tabClick: function(this: IVControl, e: MouseEvent | TouchEvent, item: Record<string, any>): void {
-        this.selected = item.value;
-        this.$emit('update:modelValue', item.value);
+        this.value = item.value;
+        this.$emit('update:modelValue', this.value);
     },
     longDown: function(this: IVControl, e: MouseEvent | TouchEvent, type: 'start' | 'end'): void {
         if (clickgo.dom.hasTouchButMouse(e)) {
@@ -130,20 +148,20 @@ export const methods = {
             }
         }
     },
-    reSelected: function(this: IVControl): void {
+    refreshValue: function(this: IVControl): void {
         // --- 默认选项卡选择 ---
-        if (this.selected === '') {
-            const s = this.values[0] ? this.values[0] : '';
-            if (this.selected !== s) {
-                this.selected = s;
-                this.$emit('update:modelValue', this.selected);
+        if (this.value === '') {
+            const v = this.values[0] ? this.values[0] : '';
+            if (this.value !== v) {
+                this.value = v;
+                this.$emit('update:modelValue', this.value);
             }
         }
-        else if (this.values.indexOf(this.selected) === -1) {
-            const s = this.values[this.values.length - 1] ? this.values[this.values.length - 1] : '';
-            if (this.selected !== s) {
-                this.selected = s;
-                this.$emit('update:modelValue', this.selected);
+        else if (this.values.indexOf(this.value) === -1) {
+            const v = this.values[this.values.length - 1] ? this.values[this.values.length - 1] : '';
+            if (this.value !== v) {
+                this.value = v;
+                this.$emit('update:modelValue', this.value);
             }
         }
     }
@@ -155,5 +173,5 @@ export const mounted = function(this: IVControl): void {
     clickgo.dom.watchSize(this.$refs.tabs[0], (size) => {
         this.onResize(size);
     });
-    this.reSelected();
+    this.refreshValue();
 };

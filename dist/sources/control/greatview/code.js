@@ -201,7 +201,7 @@ exports.methods = {
                 if (nowCount !== this.refreshCount) {
                     return;
                 }
-                if (!this.$refs.comp.offsetParent) {
+                if (!this.$refs.comp || !this.$refs.comp.offsetParent) {
                     return;
                 }
                 for (let i = 0; i < this.$refs.comp.children.length; ++i) {

@@ -1,4 +1,6 @@
 export const data = {
+    'ntab': '',
+
     'area': 'all',
     'slist': [
         {

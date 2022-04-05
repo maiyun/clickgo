@@ -1,4 +1,6 @@
 export const data = {
+    'ntab': '',
+
     'lineValue': 10,
     'lineCount': 2,
 

@@ -3,15 +3,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.methods = exports.data = void 0;
 exports.data = {
     'ntab': '',
-    'tabs': [{
-            'label': 'Tab1',
-            'value': 'tab1'
-        }],
+    'tabs': ['tab1'],
     'tabPosition': 'top'
 };
 exports.methods = {
     add: function () {
-        this.tabs.push({ 'label': 'Tab' + (this.tabs.length + 1).toString(), 'value': 'tab' + (this.tabs.length + 1).toString() });
+        this.tabs.push('tab' + (this.tabs.length + 1).toString());
     },
     remove: function () {
         if (this.tabs.length > 0) {
