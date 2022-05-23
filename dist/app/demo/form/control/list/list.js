@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.methods = exports.computed = exports.data = void 0;
+const clickgo = require("clickgo");
 exports.data = {
     'ntab': '',
     'slist': [
@@ -8,20 +9,20 @@ exports.data = {
             'type': 0,
             'name': 'Appraise',
             'path': 'Bob >> folder >> Appraise',
-            'src': '/res/r-1.svg'
+            'src': '/package/res/r-1.svg'
         },
         {
             'type': 0,
             'name': 'Card',
             'path': 'Bob >> folder >> Card',
-            'src': '/res/r-2.svg',
+            'src': '/package/res/r-2.svg',
             'menu': true
         },
         {
             'type': 0,
             'name': 'Appraise2',
             'path': 'Bob >> folder >> Appraise2',
-            'src': '/res/r-1.svg',
+            'src': '/package/res/r-1.svg',
             'disabled': true
         },
         {
@@ -95,21 +96,27 @@ exports.computed = {
     }
 };
 exports.methods = {
+    showIndex: function () {
+        clickgo.form.dialog('Index is ' + this.select.toString() + '.').catch((e) => { throw e; });
+    },
+    showIndex2: function () {
+        clickgo.form.dialog('Index is ' + this.select2.toString() + '.').catch((e) => { throw e; });
+    },
     showType: function () {
         if (Array.isArray(this.select)) {
             if (this.select.length === 0) {
-                this.cgDialog('There are currently no selected items.').catch((e) => { throw e; });
+                clickgo.form.dialog('There are currently no selected items.').catch((e) => { throw e; });
             }
             else {
                 const types = [];
                 for (const item of this.select) {
                     types.push(this.slist[item].type);
                 }
-                this.cgDialog(`Type is ${types}.`).catch((e) => { throw e; });
+                clickgo.form.dialog(`Type is ${types}.`).catch((e) => { throw e; });
             }
         }
         else {
-            this.cgDialog(this.select === -1 ? 'There are currently no selected items.' : `Type is ${this.slist[this.select].type}.`).catch((e) => { throw e; });
+            clickgo.form.dialog(this.select === -1 ? 'There are currently no selected items.' : `Type is ${this.slist[this.select].type}.`).catch((e) => { throw e; });
         }
     },
     selectButton: function () {

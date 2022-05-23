@@ -1,0 +1,12 @@
+<form width="350" height="400" title="Library zip" padding="10">
+    <layout direction="v" gutter="10" style="flex: 1;">
+        <button @click="select" style="height: 30px;">
+            Select a ".zip, .apk" file
+            <file ref="file" @change="change" :accept="['zip', 'apk']"></file>
+        </button>
+        <label>Double click the item below:</label>
+        <block style="background: #000; color: #FFF; padding: 5px;">{{path}}</block>
+        <list v-model="val" :data="list" @dblclick="dblclick" style="flex: 1; height: 0;"></list>
+        <button style="height: 30px;" @click="up">Up</button>
+    </layout>
+</form>

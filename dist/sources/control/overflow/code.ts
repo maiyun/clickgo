@@ -1,3 +1,6 @@
+import * as clickgo from 'clickgo';
+import * as types from '~/types/index';
+
 export const props = {
     'direction': {
         'default': 'h'
@@ -30,17 +33,17 @@ export const data = {
 
 export const computed = {
     // --- 最大可拖动的 scroll 位置 ---
-    'maxScrollLeft': function(this: IVControl): number {
+    'maxScrollLeft': function(this: types.IVControl): number {
         return Math.round(this.lengthWidth - this.clientWidth);
     },
-    'maxScrollTop': function(this: IVControl): number {
+    'maxScrollTop': function(this: types.IVControl): number {
         return Math.round(this.lengthHeight - this.clientHeight);
     }
 };
 
 export const watch = {
     'scrollLeft': {
-        handler: function(this: IVControl): void {
+        handler: function(this: types.IVControl): void {
             const sl = typeof this.scrollLeft === 'number' ? this.scrollLeft : parseInt(this.scrollLeft);
             if (sl === this.scrollLeftEmit) {
                 return;
@@ -49,7 +52,7 @@ export const watch = {
         }
     },
     'scrollTop': {
-        handler: function(this: IVControl): void {
+        handler: function(this: types.IVControl): void {
             const st = typeof this.scrollTop === 'number' ? this.scrollTop : parseInt(this.scrollTop);
             if (st === this.scrollTopEmit) {
                 return;
@@ -60,7 +63,7 @@ export const watch = {
 };
 
 export const methods = {
-    scroll: function(this: IVControl): void {
+    scroll: function(this: types.IVControl): void {
         const sl = Math.round(this.$el.scrollLeft);
         if (this.scrollLeftEmit !== sl) {
             this.scrollLeftEmit = sl;
@@ -72,7 +75,7 @@ export const methods = {
             this.$emit('update:scrollTop', st);
         }
     },
-    wheel: function(this: IVControl, e: WheelEvent): void {
+    wheel: function(this: types.IVControl, e: WheelEvent): void {
         const scrollTop = Math.ceil(this.$el.scrollTop);
         const scrollLeft = Math.ceil(this.$el.scrollLeft);
         if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
@@ -159,12 +162,12 @@ export const methods = {
             }
         }
     },
-    touch: function(this: IVControl, e: TouchEvent): void {
+    touch: function(this: types.IVControl, e: TouchEvent): void {
         this.touchX = e.touches[0].clientX;
         this.touchY = e.touches[0].clientY;
         this.canTouchScroll = false;
     },
-    move: function(this: IVControl, e: TouchEvent): void {
+    move: function(this: types.IVControl, e: TouchEvent): void {
         const scrollTop = Math.ceil(this.$el.scrollTop);
         const scrollLeft = Math.ceil(this.$el.scrollLeft);
         const deltaX = this.touchX - e.touches[0].clientX;
@@ -237,10 +240,10 @@ export const methods = {
         this.touchX = e.touches[0].clientX;
         this.touchY = e.touches[0].clientY;
     },
-    end: function(this: IVControl): void {
+    end: function(this: types.IVControl): void {
         this.alreadySb = false;
     },
-    refreshLength: function(this: IVControl): void {
+    refreshLength: function(this: types.IVControl): void {
         if (!this.$el.offsetParent) {
             return;
         }
@@ -261,7 +264,7 @@ export const methods = {
     }
 };
 
-export const mounted = function(this: IVControl): void {
+export const mounted = function(this: types.IVControl): void {
     // --- 大小改变，会影响 scroll offset、client，不会影响 length ---
     clickgo.dom.watchSize(this.$el, () => {
         const clientWidth = this.$el.clientWidth;

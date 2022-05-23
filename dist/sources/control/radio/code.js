@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.methods = exports.data = exports.computed = exports.props = void 0;
+const clickgo = require("clickgo");
 exports.props = {
     'disabled': {
         'default': false

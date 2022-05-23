@@ -1,3 +1,6 @@
+import * as clickgo from 'clickgo';
+import * as types from '~/types/index';
+
 export const props = {
     'disabled': {
         'default': false
@@ -17,28 +20,28 @@ export const props = {
     },
 
     'area': {
-        'default': 'all'
+        'default': 'all'    // all, mark, arrow
     }
 };
 
 export const computed = {
-    'isDisabled': function(this: IVControl): boolean {
+    'isDisabled': function(this: types.IVControl): boolean {
         return clickgo.tool.getBoolean(this.disabled);
     },
-    'isPlain': function(this: IVControl): boolean {
+    'isPlain': function(this: types.IVControl): boolean {
         return clickgo.tool.getBoolean(this.plain);
     },
-    'isChecked': function(this: IVControl): boolean {
+    'isChecked': function(this: types.IVControl): boolean {
         return clickgo.tool.getBoolean(this.checked);
     },
-    'isAreaAll': function(this: IVControl): boolean {
-        return this.$slots.pop ? this.area === 'all' : true;
+    'isAreaAllMark': function(this: types.IVControl): boolean {
+        return this.$slots.pop ? (this.area === 'all' || this.area === 'mark') : true;
     },
-    'isChildFocus': function(this: IVControl): boolean {
+    'isChildFocus': function(this: types.IVControl): boolean {
         return this.innerFocus || this.arrowFocus;
     },
 
-    'opMargin': function(this: IVControl): string {
+    'opMargin': function(this: types.IVControl): string {
         return this.padding.replace(/(\w+)/g, '-$1');
     }
 };
@@ -53,10 +56,10 @@ export const data = {
 };
 
 export const methods = {
-    keydown: function(this: IVControl, e: KeyboardEvent): void {
+    keydown: function(this: types.IVControl, e: KeyboardEvent): void {
         if (e.key === 'Enter') {
             e.preventDefault();
-            if (this.area === 'all') {
+            if (this.area === 'all' || this.area === 'mark') {
                 this.innerClick(e);
                 if (!this.$slots.pop) {
                     this.$el.click();
@@ -77,12 +80,12 @@ export const methods = {
             this.isKeyDown = true;
         }
     },
-    keyup: function(this: IVControl, e: KeyboardEvent): void {
+    keyup: function(this: types.IVControl, e: KeyboardEvent): void {
         if (!this.isKeyDown) {
             return;
         }
         this.isKeyDown = false;
-        if (this.area === 'all') {
+        if (this.area === 'all' || this.area === 'mark') {
             this.innerClick(e);
             if (!this.$slots.pop) {
                 this.$el.click();
@@ -98,11 +101,21 @@ export const methods = {
             }
         }
     },
-
-    innerClick: function(this: IVControl, e: MouseEvent): void {
-        if (!this.$slots.pop || (this.area === 'arrow')) {
+    down: function(this: types.IVControl, e: MouseEvent | TouchEvent): void {
+        if (this.area !== 'mark') {
             return;
         }
+        clickgo.dom.bindLong(e, () => {
+            clickgo.form.showPop(this.$refs.arrow, this.$refs.pop, 'h');
+        });
+    },
+
+    innerClick: function(this: types.IVControl, e: MouseEvent): void {
+        if (!this.$slots.pop || (this.area === 'arrow' || this.area === 'mark')) {
+            // --- 没有菜单，或者有菜单，但是只有点击 arrow 区域才会显示、隐藏 ---
+            return;
+        }
+        // --- 全局模式，要显示/隐藏菜单 ---
         e.stopPropagation();
         // --- 检测是否显示 pop ---
         if (this.$el.dataset.cgPopOpen === undefined) {
@@ -113,7 +126,7 @@ export const methods = {
         }
     },
 
-    arrowClick: function(this: IVControl, e: MouseEvent): void {
+    arrowClick: function(this: types.IVControl, e: MouseEvent): void {
         e.stopPropagation();
         if (this.area === 'all') {
             if (this.$el.dataset.cgPopOpen === undefined) {
@@ -125,7 +138,7 @@ export const methods = {
         }
         else {
             if (this.$refs.arrow.dataset.cgPopOpen === undefined) {
-                clickgo.form.showPop(this.$refs.arrow, this.$refs.pop, 'v');
+                clickgo.form.showPop(this.$refs.arrow, this.$refs.pop, this.area === 'arrow' ? 'v' : 'h');
             }
             else {
                 clickgo.form.hidePop(this.$refs.arrow);
@@ -134,7 +147,7 @@ export const methods = {
     }
 };
 
-export const mounted = function(this: IVControl): void {
+export const mounted = function(this: types.IVControl): void {
     clickgo.dom.watchStyle(this.$el, 'padding', (n, v) => {
         this.padding = v;
     }, true);

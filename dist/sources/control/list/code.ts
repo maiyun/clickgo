@@ -1,3 +1,6 @@
+import * as clickgo from 'clickgo';
+import * as types from '~/types/index';
+
 export const props = {
     'adaptation': {
         'dafault': undefined
@@ -58,17 +61,17 @@ function formatData(inData: any[], level: number = 0): any[] {
 }
 
 export const computed = {
-    'isMust': function(this: IVControl): boolean {
+    'isMust': function(this: types.IVControl): boolean {
         return clickgo.tool.getBoolean(this.must);
     },
-    'isMulti': function(this: IVControl): boolean {
+    'isMulti': function(this: types.IVControl): boolean {
         return clickgo.tool.getBoolean(this.multi);
     },
 
-    'dataComp': function(this: IVControl): any[] {
+    'dataComp': function(this: types.IVControl): any[] {
         return formatData(this.data);
     },
-    'value': function(this: IVControl): number | number[] {
+    'value': function(this: types.IVControl): number | number[] {
         let change: boolean = false;
         // --- modelValue 的格式类似：['xx', 'xxx'], 或 'xxx'，只是 value，又不是 data ---
         let modelValue = this.modelValue;
@@ -160,7 +163,7 @@ export const computed = {
 };
 
 export const methods = {
-    updateModelValue: function(this: IVControl, value: number | number[]): void {
+    updateModelValue: function(this: types.IVControl, value: number | number[]): void {
         if (typeof value === 'object') {
             const modelValue = [];
             const label = [];

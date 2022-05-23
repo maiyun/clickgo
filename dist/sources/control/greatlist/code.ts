@@ -1,3 +1,6 @@
+import * as clickgo from 'clickgo';
+import * as types from '~/types/index';
+
 export const props = {
     'same': {
         'default': false
@@ -42,23 +45,23 @@ export const data = {
 };
 
 export const computed = {
-    'isSame': function(this: IVControl): boolean {
+    'isSame': function(this: types.IVControl): boolean {
         return clickgo.tool.getBoolean(this.same);
     },
-    'isSelection': function(this: IVControl): boolean {
+    'isSelection': function(this: types.IVControl): boolean {
         return clickgo.tool.getBoolean(this.selection);
     },
-    'isDisabled': function(this: IVControl): boolean {
+    'isDisabled': function(this: types.IVControl): boolean {
         return clickgo.tool.getBoolean(this.disabled);
     },
-    'isMust': function(this: IVControl): boolean {
+    'isMust': function(this: types.IVControl): boolean {
         return clickgo.tool.getBoolean(this.must);
     },
-    'isMulti': function(this: IVControl): boolean {
+    'isMulti': function(this: types.IVControl): boolean {
         return clickgo.tool.getBoolean(this.multi);
     },
 
-    'isSelected': function(this: IVControl) {
+    'isSelected': function(this: types.IVControl) {
         return (value: number): boolean => {
             return this.multi ? this.valueData.includes(value) : (this.valueData === value);
         };
@@ -67,7 +70,7 @@ export const computed = {
 
 export const watch = {
     'data': {
-        handler: function(this: IVControl, n: any[], o: any[]): void {
+        handler: function(this: types.IVControl, n: any[], o: any[]): void {
             if (o.length === 0 && n.length > 0) {
                 // --- 用来强制使 checkValue 生效，因为有可能 data 还没传入，但是默认值已经设定为了 0，所以传入 data 后要再次设定为 0 并响应事件 ---
                 this.valueData = this.modelValue;
@@ -89,7 +92,7 @@ export const watch = {
         'deep': true
     },
     'modelValue': {
-        handler: function(this: IVControl, n: any[] | number, o: any[] | number): void {
+        handler: function(this: types.IVControl, n: any[] | number, o: any[] | number): void {
             if (Array.isArray(n) && Array.isArray(o)) {
                 if (n.length === 0 && o.length === 0) {
                     // --- 不加这个循环可能会无限执行此方法 ---
@@ -132,17 +135,17 @@ export const watch = {
         'immediate': true
     },
     'must': {
-        handler: function(this: IVControl): void {
+        handler: function(this: types.IVControl): void {
             this.checkValue();
         }
     },
     'multi': {
-        handler: function(this: IVControl): void {
+        handler: function(this: types.IVControl): void {
             this.checkValue();
         }
     },
     'shiftStart': {
-        handler: function(this: IVControl): void {
+        handler: function(this: types.IVControl): void {
             if (this.isSelectStart) {
                 return;
             }
@@ -158,14 +161,14 @@ export const watch = {
 };
 
 export const methods = {
-    onItemsPosChange: function(this: IVControl): void {
+    onItemsPosChange: function(this: types.IVControl): void {
         if (!this.delayRefreshShiftStartPos) {
             return;
         }
         this.delayRefreshShiftStartPos = false;
         this.refreshShiftStartPos(this.$refs.view?.getPos(this.shiftStart));
     },
-    refreshShiftStartPos: function(this: IVControl): void {
+    refreshShiftStartPos: function(this: types.IVControl): void {
         const pos = this.$refs.view?.getPos(this.shiftStart);
         if (!pos) {
             return;
@@ -178,7 +181,7 @@ export const methods = {
             this.offset = pos.end - this.client;
         }
     },
-    checkValue: function(this: IVControl): void {
+    checkValue: function(this: types.IVControl): void {
         let change: boolean = false;
         const notDisabledIndex = this.getFirstNotDisabledDataIndex();
         if (typeof this.valueData === 'object') {
@@ -262,7 +265,7 @@ export const methods = {
             this.$emit('update:modelValue', this.valueData);
         }
     },
-    select: function(this: IVControl, value: number, shift: boolean = false, ctrl: boolean = false): void {
+    select: function(this: types.IVControl, value: number, shift: boolean = false, ctrl: boolean = false): void {
         let change: boolean = false;
         if (value < -1) {
             value = -1;
@@ -393,7 +396,7 @@ export const methods = {
             this.$emit('update:modelValue', this.valueData);
         }
     },
-    innerDown: function(this: IVControl, e: MouseEvent | TouchEvent): void {
+    innerDown: function(this: types.IVControl, e: MouseEvent | TouchEvent): void {
         if (clickgo.dom.hasTouchButMouse(e)) {
             return;
         }
@@ -408,13 +411,13 @@ export const methods = {
             });
         }
     },
-    context: function(this: IVControl, e: MouseEvent): void {
+    context: function(this: types.IVControl, e: MouseEvent): void {
         if (clickgo.dom.hasTouchButMouse(e)) {
             return;
         }
         clickgo.form.showPop(this.$refs.inner, this.$refs.pop, e);
     },
-    click: function(this: IVControl, e: MouseEvent): void {
+    click: function(this: types.IVControl, e: MouseEvent): void {
         if (this.isSelection && this.isSelectStart) {
             return;
         }
@@ -425,7 +428,7 @@ export const methods = {
             }
         }
     },
-    keydown: function(this: IVControl, e: KeyboardEvent): void {
+    keydown: function(this: types.IVControl, e: KeyboardEvent): void {
         if ((e.key === 'ArrowDown') || (e.key === 'ArrowUp')) {
             e.preventDefault();
             let nvalue: number = -1;
@@ -507,7 +510,7 @@ export const methods = {
         }
     },
     // --- item 相关事件 ---
-    itemContext: function(this: IVControl, e: MouseEvent, value: number): void {
+    itemContext: function(this: types.IVControl, e: MouseEvent, value: number): void {
         if (clickgo.dom.hasTouchButMouse(e)) {
             return;
         }
@@ -516,7 +519,7 @@ export const methods = {
         }
         this.select(value, e.shiftKey, e.ctrlKey);
     },
-    itemTouch: function(this: IVControl, e: TouchEvent, value: number): void {
+    itemTouch: function(this: types.IVControl, e: TouchEvent, value: number): void {
         // --- 长按 item 选中自己 ---
         clickgo.dom.bindLong(e, () => {
             if (this.isSelected(value)) {
@@ -525,7 +528,7 @@ export const methods = {
             this.select(value, e.shiftKey, this.multi ? true : e.ctrlKey);
         });
     },
-    itemClick: function(this: IVControl, e: MouseEvent, value: number): void {
+    itemClick: function(this: types.IVControl, e: MouseEvent, value: number): void {
         if (this.isSelection && this.isSelectStart) {
             return;
         }
@@ -535,7 +538,7 @@ export const methods = {
         // --- 上报点击事件，false: arrow click ---
         this.$emit('itemclick', e, false);
     },
-    arrowClick: function(this: IVControl, e: MouseEvent, value: number): void {
+    arrowClick: function(this: types.IVControl, e: MouseEvent, value: number): void {
         e.stopPropagation();
         const hasTouch = clickgo.dom.hasTouchButMouse(e);
         this.select(value, e.shiftKey, (hasTouch && this.multi) ? true : e.ctrlKey);
@@ -551,7 +554,7 @@ export const methods = {
         this.$emit('itemclick', e, true);
     },
     // --- 获取数据中第一个不是 disabled 的 index ---
-    getFirstNotDisabledDataIndex: function(this: IVControl): number {
+    getFirstNotDisabledDataIndex: function(this: types.IVControl): number {
         let notDisabledIndex = 0;
         for (let i = 0; i < this.data.length; ++i) {
             if (this.data[i].disabled === true) {
@@ -563,26 +566,34 @@ export const methods = {
         return notDisabledIndex;
     },
     // --- 当出现了选区 ---
-    onBeforeSelect: function(this: IVControl): void {
+    onBeforeSelect: function(this: types.IVControl): void {
         this.isSelectStart = true;
         this.selectValues = [];
         this.beforeSelectValues = Array.isArray(this.valueData) ? this.valueData : [this.valueData];
     },
-    onSelect: function(this: IVControl, area: Record<string, any>): void {
+    onSelect: function(this: types.IVControl, area: Record<string, any>): void {
         if (this.isMulti) {
             // --- 多行 ---
-            if (area.shift) {
-                if (area.start !== -1) {
+            if (area.shift || area.ctrl) {
+                if (area.start === -1) {
+                    // --- 本次选中的先取消掉 ---
+                    for (const item of this.selectValues) {
+                        this.select(item, false, true);
+                    }
+                    this.selectValues = [];
+                }
+                else if (area.shift) {
                     // --- 先检查要加的 ---
                     for (let i = area.start; i <= area.end; ++i) {
+                        if (this.selectValues.includes(i)) {
+                            // --- 已经选中了，不管 ---
+                            continue;
+                        }
                         if (this.beforeSelectValues.includes(i)) {
                             // --- 本来就选中状态，不管 ---
                             continue;
                         }
-                        if (this.selectValues.includes(i)) {
-                            // --- 已经选中了，也不管 ---
-                            continue;
-                        }
+                        // --- 需要选中 ---
                         this.selectValues.push(i);
                         this.select(i, false, true);
                     }
@@ -599,15 +610,34 @@ export const methods = {
                     }
                 }
                 else {
-                    for (const item of this.selectValues) {
-                        this.select(item, false, true);
+                    // --- ctrl ---
+                    // --- 先检查要加的 ---
+                    for (let i = area.start; i <= area.end; ++i) {
+                        if (this.selectValues.includes(i)) {
+                            // --- 已经选中了，不管 ---
+                            continue;
+                        }
+                        if (this.beforeSelectValues.includes(i)) {
+                            // --- 本来是选中状态，则变为不选 ---
+                            this.selectValues.push(i);
+                            this.select(i, false, true);
+                            continue;
+                        }
+                        // --- 需要选中 ---
+                        this.selectValues.push(i);
+                        this.select(i, false, true);
                     }
-                    this.selectValues = [];
-                }
-            }
-            else if (area.ctrl) {
-                for (let i = area.start; i <= area.end; ++i) {
-                    // --- TODO ---
+                    // --- 再看有没有要减掉的 ---
+                    for (let i = 0; i < this.selectValues.length; ++i) {
+                        if (this.selectValues[i] >= area.start && this.selectValues[i] <= area.end) {
+                            // --- 正常 ---
+                            continue;
+                        }
+                        // --- 要剔除/还原 ---
+                        this.select(this.selectValues[i], false, true);
+                        this.selectValues.splice(i, 1);
+                        --i;
+                    }
                 }
             }
             else {
@@ -635,6 +665,6 @@ export const methods = {
     }
 };
 
-export const mounted = function(this: IVControl): void {
+export const mounted = function(this: types.IVControl): void {
     this.checkValue();
 };

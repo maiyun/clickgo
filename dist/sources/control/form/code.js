@@ -10,6 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.mounted = exports.methods = exports.watch = exports.computed = exports.data = exports.props = void 0;
+const clickgo = require("clickgo");
 exports.props = {
     'icon': {
         'default': '',
@@ -120,19 +121,19 @@ exports.computed = {
         return clickgo.tool.getBoolean(this.move);
     },
     'taskPosition': function () {
-        return clickgo.form.taskInfo.taskId === 0 ? 'bottom' : clickgo.core.config['task.position'];
+        return clickgo.task.systemTaskInfo.taskId === 0 ? 'bottom' : clickgo.core.config['task.position'];
     }
 };
 exports.watch = {
     'icon': {
         handler: function () {
-            var _a;
             return __awaiter(this, void 0, void 0, function* () {
                 if (this.icon === '') {
                     this.iconData = '';
                 }
                 else {
-                    this.iconData = (_a = yield this.cgGetDataUrl(this.icon)) !== null && _a !== void 0 ? _a : '';
+                    const icon = yield clickgo.fs.getContent(this.icon);
+                    this.iconData = (icon instanceof Blob) ? yield clickgo.tool.blob2DataUrl(icon) : '';
                 }
                 clickgo.core.trigger('formIconChanged', this.taskId, this.formId, this.iconData);
             });
@@ -400,17 +401,17 @@ exports.methods = {
                 this.stateMinData = true;
                 this.$emit('update:stateMin', true);
                 if (this.cgFocus) {
-                    const formId = clickgo.form.getMaxZIndexFormID({
+                    const formId = clickgo.form.getMaxZIndexID({
                         'formIds': [this.formId]
                     });
-                    this.cgSleep(() => {
+                    clickgo.tool.sleep(100).then(() => {
                         if (formId) {
                             clickgo.form.changeFocus(formId);
                         }
                         else {
                             clickgo.form.changeFocus();
                         }
-                    }, 100);
+                    }).catch((e) => { throw e; });
                 }
             }
             else {
@@ -467,7 +468,7 @@ exports.methods = {
                 'left': this.leftData,
                 'top': this.topData
             };
-            const area = clickgo.form.getAvailArea();
+            const area = clickgo.core.getAvailArea();
             this.topData = area.top;
             this.$emit('update:top', this.topData);
             this.heightData = area.height;
@@ -509,7 +510,7 @@ exports.methods = {
                 this.$el.dataset.cgMax = '';
                 this.stateMaxData = true;
                 this.$emit('update:stateMax', true);
-                const area = clickgo.form.getAvailArea();
+                const area = clickgo.core.getAvailArea();
                 this.leftData = area.left;
                 this.$emit('update:left', this.leftData);
                 this.topData = area.top;
@@ -571,7 +572,7 @@ exports.methods = {
         };
         this.$emit('close', event);
         if (event.go) {
-            this.cgClose();
+            clickgo.form.close();
         }
     },
     resizeMethod: function (e, border) {
@@ -592,7 +593,7 @@ exports.methods = {
                 }
                 else {
                     top = this.historyLocation.top;
-                    height = clickgo.form.getAvailArea().height - top;
+                    height = clickgo.core.getAvailArea().height - top;
                 }
             }
             else {
@@ -667,7 +668,7 @@ exports.methods = {
             'end': () => {
                 if (isBorder !== '') {
                     if (isBorder !== 'l' && isBorder !== 'r') {
-                        const area = clickgo.form.getAvailArea();
+                        const area = clickgo.core.getAvailArea();
                         this.stateAbs = true;
                         this.heightData = area.height;
                         this.$emit('update:height', this.heightData);
@@ -823,7 +824,7 @@ const mounted = function () {
             this.zIndexData = zIndex;
         }
         if (this.isStateMax) {
-            const area = clickgo.form.getAvailArea();
+            const area = clickgo.core.getAvailArea();
             this.leftData = (area.width - this.widthData) / 2;
             this.topData = (area.height - this.heightData) / 2;
             this.maxMethod();

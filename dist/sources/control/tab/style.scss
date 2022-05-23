@@ -1,3 +1,8 @@
+@font-face {
+    font-family: 'ifont';
+    src: url('res/font.woff') format('woff');
+}
+
 .wrap {
     display: flex;
     &.top, &.bottom {
@@ -78,24 +83,47 @@
     }
 
     .tab {
-        background-color: hsl(205, 0%, 95%); display: inline-block; position: relative;
+        background-color: hsl(205, 0%, 95%); display: inline-flex; align-items: center; position: relative;
         &::before {
             content: ''; pointer-events: none; position: absolute; left: 0; top: 0; width: 200%; height: 200%; transform-origin: 0 0; transform: scale(.5); border: solid 1px hsl(205, 0%, 70%); z-index: 1;
         }
         &::after {
             content: ' '; pointer-events: none; position: absolute; transform: scale(.5); background: #FFF; display: none;
         }
-        &:not(.selected):hover {
+        &:not(.selected):not([data-cg-hover]):hover {
             background-color: hsl(205, 100%, 95%);
         }
         &.selected {
             background-color: #FFF;
         }
+        &[data-cg-hover] {
+            background-color: #333; color: #FFF;
+        }
+
+        .drag {
+            cursor: move; padding-left: 8px; font-family: 'ifont'; opacity: .5;
+        }
+        .content {
+            padding: 8px;
+        }
+        .close {
+            margin-right: 8px; font-family: 'ifont'; opacity: 0; font-weight: bold; padding: 2px; border-radius: 3px;
+            &:hover {
+                background: rgba(0,0,0,.05);
+            }
+            &:active {
+                background: rgba(0,0,0,.1);
+            }
+        }
+        &:hover {
+            .close {
+                opacity: 1;
+            }
+        }
     }
     &.top, &.bottom {
         .tabs {
             .tab {
-                padding: 6px 10px;
                 &.selected {
                     &::before {
                         border-right-width: 1px;
@@ -120,7 +148,7 @@
                 border-width: 1px 0 0 1px;
             }
             &.selected {
-                padding-bottom: 9px;
+                padding-bottom: 3px;
                 &::after {
                     display: block; left: 0; top: calc(100% - 2px); width: calc(200% - 2px); height: 4px; transform-origin: 1px 50%;
                 }
@@ -133,7 +161,7 @@
                 border-width: 0 0 1px 1px;
             }
             &.selected {
-                padding-top: 9px;
+                padding-top: 3px;
                 &::after {
                     display: block; left: 0; top: -2px; width: calc(200% - 2px); height: 4px; transform-origin: 1px 50%;
                 }
@@ -143,7 +171,6 @@
     &.left, &.right {
         .tabs {
             .tab {
-                padding: 10px 6px;
                 &.selected {
                     &::before {
                         border-bottom-width: 1px;

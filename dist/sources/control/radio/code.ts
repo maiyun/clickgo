@@ -1,3 +1,6 @@
+import * as clickgo from 'clickgo';
+import * as types from '~/types/index';
+
 export const props = {
     'disabled': {
         'default': false
@@ -12,7 +15,7 @@ export const props = {
 };
 
 export const computed = {
-    'isDisabled': function(this: IVControl): boolean {
+    'isDisabled': function(this: types.IVControl): boolean {
         return clickgo.tool.getBoolean(this.disabled);
     }
 };
@@ -22,10 +25,10 @@ export const data = {
 };
 
 export const methods = {
-    click: function(this: IVControl): void {
+    click: function(this: types.IVControl): void {
         this.$emit('update:modelValue', this.value);
     },
-    keydown: function(this: IVControl, e: KeyboardEvent): void {
+    keydown: function(this: types.IVControl, e: KeyboardEvent): void {
         if (e.key === 'Enter') {
             e.preventDefault();
             this.click();
@@ -35,7 +38,7 @@ export const methods = {
             this.isKeyDown = true;
         }
     },
-    keyup: function(this: IVControl): void {
+    keyup: function(this: types.IVControl): void {
         if (!this.isKeyDown) {
             return;
         }

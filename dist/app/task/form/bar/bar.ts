@@ -1,3 +1,6 @@
+import * as clickgo from 'clickgo';
+import * as types from '~/types/index';
+
 export const data = {
     'left': 0,
     'top': 0,
@@ -8,13 +11,13 @@ export const data = {
 };
 
 export const computed = {
-    'position': function(this: IVForm): string {
+    'position': function(this: types.IVForm): string {
         return clickgo.core.config['task.position'];
     }
 };
 
 export const methods = {
-    itemClick: async function(this: IVForm, appIndex: number): Promise<void> {
+    itemClick: async function(this: types.IVForm, appIndex: number): Promise<void> {
         if (this.apps[appIndex].formCount === 0) {
             // --- 启动 ---
             try {
@@ -45,7 +48,7 @@ export const methods = {
             // --- 多个窗体，则让用户选择显示哪个 ---
         }
     },
-    run: async function(this: IVForm, path: string): Promise<void> {
+    run: async function(this: types.IVForm, path: string): Promise<void> {
         try {
             await clickgo.task.run(path);
         }
@@ -53,7 +56,7 @@ export const methods = {
             return;
         }
     },
-    pin: function(this: IVForm, index: number): void {
+    pin: function(this: types.IVForm, index: number): void {
         const app = this.apps[index];
         if (!app) {
             return;
@@ -71,7 +74,7 @@ export const methods = {
             };
         }
     },
-    close: function(this: IVForm, index: number): void {
+    close: function(this: types.IVForm, index: number): void {
         const app = this.apps[index];
         if (!app) {
             return;
@@ -80,13 +83,13 @@ export const methods = {
             clickgo.form.remove(parseInt(formId));
         }
     },
-    changeFocus: function(this: IVForm, formId: string): void {
+    changeFocus: function(this: types.IVForm, formId: string): void {
         clickgo.form.changeFocus(parseInt(formId));
     },
     updatePosition: function(position: 'left' | 'right' | 'top' | 'bottom'): void {
         clickgo.core.config['task.position'] = position;
     },
-    getAppIndexByPath: function(this: IVForm, path: string): number {
+    getAppIndexByPath: function(this: types.IVForm, path: string): number {
         for (let i = 0; i < this.apps.length; ++i) {
             const app = this.apps[i];
             if (app.path !== path) {
@@ -99,9 +102,9 @@ export const methods = {
     }
 };
 
-export const mounted = function(this: IVForm): void {
-    this.cgSetTopMost(true);
-    clickgo.form.setTask(this.taskId, this.formId);
+export const mounted = function(this: types.IVForm): void {
+    clickgo.form.setTopMost(true);
+    clickgo.task.setSystem();
 
     // --- 先读取 pin 列表 ---
     for (const path in clickgo.core.config['task.pin']) {
@@ -154,7 +157,7 @@ export const mounted = function(this: IVForm): void {
         }
         this.apps[appIndex].formCount = Object.keys(this.apps[appIndex].forms).length;
     }
-    this.cgSetSystemEventListener('formCreated', (taskId: number, formId: number, title: string, icon: string): void => {
+    clickgo.core.setSystemEventListener('formCreated', (taskId: number, formId: number, title: string, icon: string): void => {
         if (taskId === this.taskId) {
             return;
         }
@@ -185,7 +188,7 @@ export const mounted = function(this: IVForm): void {
         };
         ++this.apps[appIndex].formCount;
     });
-    this.cgSetSystemEventListener('formRemoved', (taskId: number, formId: number): void => {
+    clickgo.core.setSystemEventListener('formRemoved', (taskId: number, formId: number): void => {
         const task = clickgo.task.get(taskId);
         if (!task) {
             return;
@@ -210,7 +213,7 @@ export const mounted = function(this: IVForm): void {
             this.apps.splice(appIndex, 1);
         }
     });
-    this.cgSetSystemEventListener('formFocused', (taskId: number): void => {
+    clickgo.core.setSystemEventListener('formFocused', (taskId: number): void => {
         const task = clickgo.task.get(taskId);
         if (!task) {
             return;
@@ -221,7 +224,7 @@ export const mounted = function(this: IVForm): void {
         }
         this.apps[appIndex].selected = true;
     });
-    this.cgSetSystemEventListener('formBlurred', (taskId: number): void => {
+    clickgo.core.setSystemEventListener('formBlurred', (taskId: number): void => {
         const task = clickgo.task.get(taskId);
         if (!task) {
             return;
@@ -232,7 +235,7 @@ export const mounted = function(this: IVForm): void {
         }
         this.apps[appIndex].selected = false;
     });
-    this.cgSetSystemEventListener('formTitleChanged', (taskId: number, formId: number, title: string): void => {
+    clickgo.core.setSystemEventListener('formTitleChanged', (taskId: number, formId: number, title: string): void => {
         const task = clickgo.task.get(taskId);
         if (!task) {
             return;
@@ -246,7 +249,7 @@ export const mounted = function(this: IVForm): void {
         }
         this.apps[appIndex].forms[formId].title = title;
     });
-    this.cgSetSystemEventListener('formIconChanged', (taskId: number, formId: number, icon: string): void => {
+    clickgo.core.setSystemEventListener('formIconChanged', (taskId: number, formId: number, icon: string): void => {
         const task = clickgo.task.get(taskId);
         if (!task) {
             return;
@@ -260,7 +263,7 @@ export const mounted = function(this: IVForm): void {
         }
         this.apps[appIndex].forms[formId].icon = icon || this.apps[appIndex].icon;
     });
-    this.cgSetSystemEventListener('configChanged', (n: TCGCoreConfigName, v: any): void => {
+    clickgo.core.setSystemEventListener('configChanged', (n: types.TConfigName, v: any): void => {
         if (n !== 'task.pin') {
             return;
         }

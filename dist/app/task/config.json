@@ -10,12 +10,12 @@
         "/clickgo/control/task"
     ],
     "locales": {
-        "/locale/en": "en",
-        "/locale/ja": "ja",
-        "/locale/sc": "sc",
-        "/locale/tc": "tc"
+        "/package/locale/sc": "sc",
+        "/package/locale/tc": "tc",
+        "/package/locale/en": "en",
+        "/package/locale/ja": "ja"
     },
-    "main": "/form/bar/bar",
+    "main": "/package/form/bar/bar",
 
     "files": [
         "/form/bar/bar.js",

@@ -1,3 +1,6 @@
+import * as clickgo from 'clickgo';
+import * as types from '~/types/index';
+
 export const props = {
     'direction': {
         'default': 'h'
@@ -66,21 +69,21 @@ export const data = {
 
 export const watch = {
     'data': {
-        handler: function(this: IVControl): void {
+        handler: function(this: types.IVControl): void {
             this.refreshView();
         },
         'deep': true
     },
-    'direction': function(this: IVControl): void {
+    'direction': function(this: types.IVControl): void {
         this.refreshView();
     },
-    'scrollLeft': function(this: IVControl): void {
+    'scrollLeft': function(this: types.IVControl): void {
         if (this.direction === 'h' && this.scrollLeftEmit !== this.scrollLeft) {
             this.scrollLeftEmit = this.scrollLeft;
             this.reShow();
         }
     },
-    'scrollTop': function(this: IVControl): void {
+    'scrollTop': function(this: types.IVControl): void {
         if (this.direction === 'v' && this.scrollTopEmit !== this.scrollTop) {
             this.scrollTopEmit = this.scrollTop;
             this.reShow();
@@ -89,17 +92,17 @@ export const watch = {
 };
 
 export const computed = {
-    'isSame': function(this: IVControl): boolean {
+    'isSame': function(this: types.IVControl): boolean {
         return clickgo.tool.getBoolean(this.same);
     },
-    'isSelection': function(this: IVControl): boolean {
+    'isSelection': function(this: types.IVControl): boolean {
         return clickgo.tool.getBoolean(this.selection);
     },
-    'isSolo': function(this: IVControl): boolean {
+    'isSolo': function(this: types.IVControl): boolean {
         return clickgo.tool.getBoolean(this.solo);
     },
 
-    'dataComp': function(this: IVControl): any[] {
+    'dataComp': function(this: types.IVControl): any[] {
         if (typeof this.data !== 'number') {
             return this.data;
         }
@@ -109,10 +112,10 @@ export const computed = {
         }
         return list;
     },
-    'scrollOffset': function(this: IVControl): number {
+    'scrollOffset': function(this: types.IVControl): number {
         return this.direction === 'v' ? this.scrollTopEmit : this.scrollLeftEmit;
     },
-    'itemStyle': function(this: IVControl): any {
+    'itemStyle': function(this: types.IVControl): any {
         return (index: number): any => {
             return {
                 'left': (this.direction === 'v' ?
@@ -141,14 +144,14 @@ export const computed = {
         };
     },
 
-    'opMargin': function(this: IVControl): string {
+    'opMargin': function(this: types.IVControl): string {
         return this.padding.replace(/(\w+)/g, '-$1');
     }
 };
 
 export const methods = {
     // --- 重新获取宽度高度 ---
-    refreshView: async function(this: IVControl): Promise<void> {
+    refreshView: async function(this: types.IVControl): Promise<void> {
         const nowCount = ++this.refreshCount;
         // let date = Date.now();
 
@@ -336,7 +339,7 @@ export const methods = {
         this.reShow();
     },
     // --- 控制显示和隐藏 ---
-    refreshPos: function(this: IVControl, pos: { 'start': number; 'end': number; }, area: { 'start': number; 'end': number; }): { 'start': number; 'end': number; } {
+    refreshPos: function(this: types.IVControl, pos: { 'start': number; 'end': number; }, area: { 'start': number; 'end': number; }): { 'start': number; 'end': number; } {
         if (this.length <= area.start) {
             return {
                 'start': -1,
@@ -459,7 +462,7 @@ export const methods = {
         // console.log('xxx', Date.now() - date);
         return rtn;
     },
-    reShow: function(this: IVControl): void {
+    reShow: function(this: types.IVControl): void {
         const rtn = this.refreshPos(this.showPos, {
             'start': this.scrollOffset - 20,
             'end': (this.scrollOffset as number) + (this.client as number) + 20
@@ -467,7 +470,7 @@ export const methods = {
         this.showPos.start = rtn.start;
         this.showPos.end = rtn.end;
     },
-    isInArea: function(this: IVControl, i: number, area: { 'start': number; 'end': number; }): boolean {
+    isInArea: function(this: types.IVControl, i: number, area: { 'start': number; 'end': number; }): boolean {
         const pos = this.itemsPos[i];
         if (!pos) {
             return false;
@@ -478,7 +481,7 @@ export const methods = {
         return false;
     },
 
-    updateScrollOffset: function(this: IVControl, val: number, pos: 'left' | 'top'): void {
+    updateScrollOffset: function(this: types.IVControl, val: number, pos: 'left' | 'top'): void {
         // --- 接收 view 组件传递的 scroll-offset 更改事件 ---
         if (!this.lengthInit) {
             // --- length 还没初始化成功，不更新 scroll offset ---
@@ -499,7 +502,7 @@ export const methods = {
             }
         }
     },
-    onResize: function(this: IVControl, val: number): void {
+    onResize: function(this: types.IVControl, val: number): void {
         this.client = val;
         this.$emit('resize', val);
         if (this.direction === 'v') {
@@ -513,7 +516,7 @@ export const methods = {
         }
         this.refreshView();
     },
-    onResizen: function(this: IVControl, val: number): void {
+    onResizen: function(this: types.IVControl, val: number): void {
         this.refreshView();
         this.$emit('resizen', val);
         if (this.direction === 'h') {
@@ -523,13 +526,13 @@ export const methods = {
             this.clientWidth = val;
         }
     },
-    onChange: function(this: IVControl, val: number): void {
+    onChange: function(this: types.IVControl, val: number): void {
         if (!this.lengthInit) {
             return;
         }
         this.$emit('change', val);
     },
-    onSelect: function(this: IVControl, area: Record<string, number>): void {
+    onSelect: function(this: types.IVControl, area: Record<string, number>): void {
         const offset = this.direction === 'v' ? area.y : area.x;
         const length = this.direction === 'v' ? area.height : area.width;
         const rtn = this.refreshPos(this.selectPos, {
@@ -543,12 +546,12 @@ export const methods = {
         this.$emit('select', area);
     },
 
-    getPos: function(this: IVControl, val: number): { 'start': number; 'end': number; } {
+    getPos: function(this: types.IVControl, val: number): { 'start': number; 'end': number; } {
         return this.itemsPos[val];
     }
 };
 
-export const mounted = function(this: IVControl): void {
+export const mounted = function(this: types.IVControl): void {
     // --- nest 内嵌闪烁是 mounted 导致 ---
     clickgo.dom.watchStyle(this.$el, ['padding', 'padding-top', 'padding-right', 'padding-bottom', 'padding-left', 'font'], (n, v) => {
         switch (n) {

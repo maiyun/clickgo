@@ -1,7 +1,6 @@
 export const data = {
     'width': 300,
     'height': 520,
-    'flex': 1,
     'icon': '',
     'title': 'Form',
     'min': true,

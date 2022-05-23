@@ -1,13 +1,14 @@
-export const data = {
-    'nativeListeners': []
+import * as types from '~/types/index';
+import * as clickgo from 'clickgo';
+
+export const computed = {
+    'config': function(): string {
+        return JSON.stringify(clickgo.core.config, null, 4);
+    }
 };
 
 export const methods = {
-    getNativeListeners: function(this: IVForm): void {
-        const list = clickgo.core.getNativeListeners();
-        this.nativeListeners = [];
-        for (const item of list) {
-            this.nativeListeners.push(`name: ${item.name}[${item.id}], once: ${(item.once ? 'true' : 'false')}`);
-        }
+    getAvailArea: async function(this: types.IVForm): Promise<void> {
+        await clickgo.form.dialog(JSON.stringify(clickgo.core.getAvailArea()));
     }
 };

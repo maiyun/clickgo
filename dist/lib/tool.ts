@@ -1,5 +1,5 @@
 /**
- * Copyright 2021 Han Guoshuai <zohegs@gmail.com>
+ * Copyright 2022 Han Guoshuai <zohegs@gmail.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,26 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-/**
- * --- 将 obj 中的一个文件路径转换成 object url，已经转换的直接返回 ---
- * @param file 要转换的文件绝对路径（不能用 clickgo 路径）
- * @param obj 包含 files 属性的对象
- */
-export function file2ObjectUrl(file: string, obj: ICGTask | ICGControl | ICGThemePkg): string | null {
-    let ourl = obj.objectURLs[file];
-    if (!ourl) {
-        if (!obj.files[file]) {
-            return null;
-        }
-        if (typeof obj.files[file] === 'string') {
-            return null;
-        }
-        ourl = createObjectURL(obj.files[file] as Blob);
-        obj.objectURLs[file] = ourl;
-    }
-    return ourl;
-}
+import * as types from '../../types';
+import * as task from './task';
 
 /**
  * --- 将 blob 对象转换为 ArrayBuffer ---
@@ -97,27 +79,29 @@ export function purify(text: string): string {
 }
 
 /**
- * --- 将 style 中的 url 转换成 object 或 base64 data url(不存在会自动创建 object url) ---
+ * --- 将 style 中的 url 转换成 base64 data url ---
  * @param path 路径基准或以文件的路径为基准
  * @param style 样式表
- * @param obj 包含 files 属性的对象
- * @param mode object/data
+ * @param files 在此文件列表中查找
  */
-export async function styleUrl2ObjectOrDataUrl(path: string, style: string, obj: ICGTask | ICGControl | ICGThemePkg, mode: 'object' | 'data' = 'object'): Promise<string> {
+export async function styleUrl2DataUrl(
+    path: string,
+    style: string,
+    files: Record<string, Blob | string>
+): Promise<string> {
     const reg = /url\(["']{0,1}(.+?)["']{0,1}\)/ig;
     let match: RegExpExecArray | null = null;
     while ((match = reg.exec(style))) {
-        const realPath = urlResolve(path, match[1]);
-        if (!obj.files[realPath]) {
+        let realPath = urlResolve(path, match[1]);
+        if (realPath.startsWith('/package/')) {
+            // --- 处理 form 里面的路径 ---
+            realPath = realPath.slice(8);
+        }
+        if (!files[realPath]) {
             continue;
         }
-        if (mode === 'data') {
-            if (typeof obj.files[realPath] !== 'string') {
-                style = style.replace(match[0], `url('${await blob2DataUrl(obj.files[realPath] as Blob)}')`);
-            }
-        }
-        else {
-            style = style.replace(match[0], `url('${file2ObjectUrl(realPath, obj)}')`);
+        if (typeof files[realPath] !== 'string') {
+            style = style.replace(match[0], `url('${await blob2DataUrl(files[realPath] as Blob)}')`);
         }
     }
     return style;
@@ -388,31 +372,59 @@ export function getMimeByPath(path: string): { 'mime': string; 'ext': string; } 
 }
 
 /** --- 已创建的 object url 列表 --- */
-const objectURLList: string[] = [];
+const objectURLs: string[] = [];
 
 /**
  * --- 通过 blob 创建 object url ---
  * @param object blob 对象
+ * @param taskId 要记录到 task 里面，待 task 结束后则清除相关 object url
  */
-export function createObjectURL(object: Blob): string {
+export function createObjectURL(object: Blob, taskId: number = 0): string {
+    let t: types.ITask | null = null;
+    if (taskId > 0) {
+        t = task.list[taskId];
+        if (!t) {
+            return '';
+        }
+    }
     const url = URL.createObjectURL(object);
-    objectURLList.push(url);
+    objectURLs.push(url);
+    if (t) {
+        t.objectURLs.push(url);
+    }
     return url;
 }
 
 /**
  * --- 移除已创建的 object url ---
  * @param url 已创建的 url
+ * @param 是否是 task 里面的，若不是，则无法被移除
  */
-export function revokeObjectURL(url: string): void {
+export function revokeObjectURL(url: string, taskId: number = 0): void {
+    const oio = objectURLs.indexOf(url);
+    if (oio === -1) {
+        return;
+    }
+    if (taskId > 0) {
+        const t = task.list[taskId];
+        if (!t) {
+            return;
+        }
+        const io = t.objectURLs.indexOf(url);
+        if (io === -1) {
+            return;
+        }
+        t.objectURLs.splice(io, 1);
+    }
+    objectURLs.splice(oio, 1);
     URL.revokeObjectURL(url);
 }
 
 /**
- * --- 获取已创建的 object url 列表 ---
+ * --- 获取已创建的 object url 列表，App 模式下无效 ---
  */
-export function getObjectURLList(): string[] {
-    return objectURLList;
+export function getObjectURLs(): string[] {
+    return objectURLs;
 }
 
 /**
@@ -425,6 +437,35 @@ export function rand(min: number, max: number): number {
         [min, max] = [max, min];
     }
     return min + Math.round(Math.random() * (max - min));
+}
+
+export const RANDOM_N = '0123456789';
+export const RANDOM_U = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+export const RANDOM_L = 'abcdefghijklmnopqrstuvwxyz';
+
+export const RANDOM_UN = RANDOM_U + RANDOM_N;
+export const RANDOM_LN = RANDOM_L + RANDOM_N;
+export const RANDOM_LU = RANDOM_L + RANDOM_U;
+export const RANDOM_LUN = RANDOM_L + RANDOM_U + RANDOM_N;
+export const RANDOM_V = 'ACEFGHJKLMNPRSTWXY34567';
+export const RANDOM_LUNS = RANDOM_LUN + '()`~!@#$%^&*-+=_|{}[]:;\'<>,.?/]';
+export function random(length: number = 8, source: string = RANDOM_LN, block: string = ''): string {
+    // --- 剔除 block 字符 ---
+    let len = block.length;
+    if (len > 0) {
+        for (let i = 0; i < len; ++i) {
+            source = source.replace(block[i], '');
+        }
+    }
+    len = source.length;
+    if (len === 0) {
+        return '';
+    }
+    let temp = '';
+    for (let i = 0; i < length; ++i) {
+        temp += source[rand(0, len - 1)];
+    }
+    return temp;
 }
 
 /**
@@ -452,7 +493,12 @@ export function escapeHTML(html: string): string {
     return html.replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
 
-export function request(url: string, opt: ICGToolRequestOptions): Promise<null | any> {
+/**
+ * --- 发起一个网络请求 ---
+ * @param url 网址
+ * @param opt 选项
+ */
+export function request(url: string, opt: types.IRequestOptions): Promise<null | any> {
     return new Promise(function(resove) {
         const xhr = new XMLHttpRequest();
         xhr.upload.onloadstart = function(e: ProgressEvent): void {
@@ -535,6 +581,11 @@ export function request(url: string, opt: ICGToolRequestOptions): Promise<null |
         }
         if (opt.timeout) {
             xhr.timeout = opt.timeout;
+        }
+        if (opt.headers) {
+            for (const k in opt.headers) {
+                xhr.setRequestHeader(k, (opt.headers as any)[k]);
+            }
         }
         xhr.open(opt.method ?? 'GET', url, true);
         xhr.send(opt.body);

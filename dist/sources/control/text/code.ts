@@ -1,3 +1,6 @@
+import * as clickgo from 'clickgo';
+import * as types from '~/types/index';
+
 export const props = {
     'disabled': {
         'default': false
@@ -37,44 +40,44 @@ export const props = {
 };
 
 export const computed = {
-    'isDisabled': function(this: IVControl): boolean {
+    'isDisabled': function(this: types.IVControl): boolean {
         return clickgo.tool.getBoolean(this.disabled);
     },
-    'isMulti': function(this: IVControl): boolean {
+    'isMulti': function(this: types.IVControl): boolean {
         return clickgo.tool.getBoolean(this.multi);
     },
-    'isReadonly': function(this: IVControl): boolean {
+    'isReadonly': function(this: types.IVControl): boolean {
         return clickgo.tool.getBoolean(this.readonly);
     },
-    'isPassword': function(this: IVControl): boolean {
+    'isPassword': function(this: types.IVControl): boolean {
         return clickgo.tool.getBoolean(this.password);
     },
-    'isWrap': function(this: IVControl): boolean {
+    'isWrap': function(this: types.IVControl): boolean {
         return clickgo.tool.getBoolean(this.wrap);
     },
 
     // --- 最大可拖动的 scroll 位置 ---
-    'maxScrollLeft': function(this: IVControl): number {
+    'maxScrollLeft': function(this: types.IVControl): number {
         return Math.round(this.lengthWidth - this.clientWidth);
     },
-    'maxScrollTop': function(this: IVControl): number {
+    'maxScrollTop': function(this: types.IVControl): number {
         return Math.round(this.lengthHeight - this.clientHeight);
     },
 
-    'opMargin': function(this: IVControl): string {
+    'opMargin': function(this: types.IVControl): string {
         return this.padding.replace(/(\w+)/g, '-$1');
     }
 };
 
 export const watch = {
     'modelValue': {
-        handler: function(this: IVControl): void {
+        handler: function(this: types.IVControl): void {
             this.value = this.modelValue;
         },
         'immediate': true
     },
     'value': {
-        handler: async function(this: IVControl): Promise<void> {
+        handler: async function(this: types.IVControl): Promise<void> {
             this.$emit('update:modelValue', this.value);
             // --- 内容变更，更新 length ---
             await this.$nextTick();
@@ -82,7 +85,7 @@ export const watch = {
         }
     },
     'multi': {
-        handler: async function(this: IVControl): Promise<void> {
+        handler: async function(this: types.IVControl): Promise<void> {
             await this.$nextTick();
             // --- 大小改变，会影响 scroll offset、client，也会影响 length ---
             clickgo.dom.watchSize(this.$refs.text, () => {
@@ -96,25 +99,25 @@ export const watch = {
         }
     },
     'font': {
-        handler: async function(this: IVControl): Promise<void> {
+        handler: async function(this: types.IVControl): Promise<void> {
             await this.$nextTick();
             this.refreshLength();
         }
     },
     'password': {
-        handler: async function(this: IVControl): Promise<void> {
+        handler: async function(this: types.IVControl): Promise<void> {
             await this.$nextTick();
             this.refreshLength();
         }
     },
     'wrap': {
-        handler: async function(this: IVControl): Promise<void> {
+        handler: async function(this: types.IVControl): Promise<void> {
             await this.$nextTick();
             this.refreshLength();
         }
     },
     'scrollLeft': {
-        handler: function(this: IVControl): void {
+        handler: function(this: types.IVControl): void {
             const sl = typeof this.scrollLeft === 'number' ? this.scrollLeft : parseInt(this.scrollLeft);
             if (sl === this.scrollLeftEmit) {
                 return;
@@ -126,7 +129,7 @@ export const watch = {
         }
     },
     'scrollTop': {
-        handler: function(this: IVControl): void {
+        handler: function(this: types.IVControl): void {
             const st = typeof this.scrollTop === 'number' ? this.scrollTop : parseInt(this.scrollTop);
             if (st === this.scrollTopEmit) {
                 return;
@@ -138,13 +141,13 @@ export const watch = {
         }
     },
     'selectionStart': {
-        handler: function(this: IVControl): void {
+        handler: function(this: types.IVControl): void {
             this.selectionStartEmit = this.selectionStart;
             (this.$refs.text as unknown as HTMLTextAreaElement).selectionStart = this.selectionStartEmit;
         }
     },
     'selectionEnd': {
-        handler: function(this: IVControl): void {
+        handler: function(this: types.IVControl): void {
             this.selectionEndEmit = this.selectionEnd;
             (this.$refs.text as unknown as HTMLTextAreaElement).selectionEnd = this.selectionEndEmit;
         }
@@ -207,25 +210,25 @@ export const data = {
 };
 
 export const methods = {
-    focus: function(this: IVControl): void {
+    focus: function(this: types.IVControl): void {
         const now = Date.now();
         if (now - this.lastDownTime >= 500) {
             this.$refs.text.focus();
         }
     },
-    keydown: function(this: IVControl): void {
+    keydown: function(this: types.IVControl): void {
         this.$refs.text.focus();
     },
-    tfocus: function(this: IVControl): void {
+    tfocus: function(this: types.IVControl): void {
         this.isFocus = true;
     },
-    tblur: function(this: IVControl): void {
+    tblur: function(this: types.IVControl): void {
         this.isFocus = false;
     },
-    input: function(this: IVControl, e: InputEvent): void {
+    input: function(this: types.IVControl, e: InputEvent): void {
         this.value = (e.target as HTMLInputElement).value;
     },
-    down: function(this: IVControl, e: MouseEvent | TouchEvent): void {
+    down: function(this: types.IVControl, e: MouseEvent | TouchEvent): void {
         if (clickgo.dom.hasTouchButMouse(e)) {
             return;
         }
@@ -239,7 +242,7 @@ export const methods = {
         }
     },
 
-    scroll: function(this: IVControl): void {
+    scroll: function(this: types.IVControl): void {
         // --- input 的 scroll 事件有可能没那么快响应，要增加 hack ---
         // --- value(client) -> set scroll(client) -> input scroll(event) ??, so... ---
         const now = Date.now();
@@ -251,7 +254,7 @@ export const methods = {
         }
         this.refreshScroll();
     },
-    wheel: function(this: IVControl, e: WheelEvent): void {
+    wheel: function(this: types.IVControl, e: WheelEvent): void {
         const scrollTop = Math.ceil(this.$refs.text.scrollTop);
         const scrollLeft = Math.ceil(this.$refs.text.scrollLeft);
         if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
@@ -333,7 +336,7 @@ export const methods = {
             }
         }
     },
-    inputTouch: function(this: IVControl, e: TouchEvent): void {
+    inputTouch: function(this: types.IVControl, e: TouchEvent): void {
         this.touchX = e.touches[0].clientX;
         this.touchY = e.touches[0].clientY;
         this.canTouchScroll = false;
@@ -345,7 +348,7 @@ export const methods = {
             });
         }
     },
-    move: function(this: IVControl, e: TouchEvent): void {
+    move: function(this: types.IVControl, e: TouchEvent): void {
         const scrollTop = Math.ceil(this.$refs.text.scrollTop);
         const scrollLeft = Math.ceil(this.$refs.text.scrollLeft);
         const deltaX = this.touchX - e.touches[0].clientX;
@@ -418,11 +421,11 @@ export const methods = {
         this.touchX = e.touches[0].clientX;
         this.touchY = e.touches[0].clientY;
     },
-    end: function(this: IVControl): void {
+    end: function(this: types.IVControl): void {
         this.alreadySb = false;
     },
 
-    contextmenu: function(this: IVControl, e: MouseEvent): void {
+    contextmenu: function(this: types.IVControl, e: MouseEvent): void {
         if (!navigator.clipboard) {
             e.stopPropagation();
             return;
@@ -432,7 +435,7 @@ export const methods = {
         }
         clickgo.form.showPop(this.$el, this.$refs.pop, e);
     },
-    select: function(this: IVControl): void {
+    select: function(this: types.IVControl): void {
         const selectionStart = (this.$refs.text as unknown as HTMLTextAreaElement).selectionStart;
         const selectionEnd = (this.$refs.text as unknown as HTMLTextAreaElement).selectionEnd;
         if (selectionStart !== this.selectionStartEmit) {
@@ -444,11 +447,11 @@ export const methods = {
             this.$emit('update:selectionEnd', this.selectionEndEmit);
         }
     },
-    reselect: async function(this: IVControl): Promise<void> {
+    reselect: async function(this: types.IVControl): Promise<void> {
         await clickgo.tool.sleep(150);
         this.select();
     },
-    execCmd: async function(this: IVControl, ac: string): Promise<void> {
+    execCmd: async function(this: types.IVControl, ac: string): Promise<void> {
         this.$refs.text.focus();
         if (ac === 'paste') {
             if (this.isReadonly) {
@@ -478,7 +481,7 @@ export const methods = {
         }
     },
 
-    refreshLength: function(this: IVControl): void {
+    refreshLength: function(this: types.IVControl): void {
         const lengthWidth = this.$refs.text.scrollWidth;
         const lengthHeight = this.$refs.text.scrollHeight;
         if (this.lengthWidth !== lengthWidth) {
@@ -489,7 +492,7 @@ export const methods = {
             this.$emit('change', lengthHeight);
         }
     },
-    refreshClient: function(this: IVControl): void {
+    refreshClient: function(this: types.IVControl): void {
         const clientWidth = this.$refs.text.clientWidth;
         const clientHeight = this.$refs.text.clientHeight;
         if (this.clientWidth !== clientWidth) {
@@ -501,7 +504,7 @@ export const methods = {
             this.$emit('resize', Math.round(this.clientHeight));
         }
     },
-    refreshScroll: function(this: IVControl): void {
+    refreshScroll: function(this: types.IVControl): void {
         const sl = Math.round(this.$refs.text.scrollLeft);
         if (this.scrollLeftEmit !== sl) {
             this.scrollLeftEmit = sl;
@@ -515,7 +518,7 @@ export const methods = {
     }
 };
 
-export const mounted = async function(this: IVControl): Promise<void> {
+export const mounted = async function(this: types.IVControl): Promise<void> {
     clickgo.dom.watchSize(this.$refs.text, (): void => {
         this.refreshClient();
         this.refreshLength();

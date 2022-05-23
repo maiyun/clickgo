@@ -1,3 +1,6 @@
+import * as clickgo from 'clickgo';
+import * as types from '~/types/index';
+
 export const props = {
     'disabled': {
         'default': false
@@ -28,17 +31,17 @@ export const data = {
 };
 
 export const computed = {
-    'isDisabled': function(this: IVControl): boolean {
+    'isDisabled': function(this: types.IVControl): boolean {
         return clickgo.tool.getBoolean(this.disabled);
     },
 
-    'opMargin': function(this: IVControl): string {
+    'opMargin': function(this: types.IVControl): string {
         return this.padding.replace(/(\w+)/g, '-$1');
     }
 };
 
 export const methods = {
-    keydown: function(this: IVControl, e: KeyboardEvent): void {
+    keydown: function(this: types.IVControl, e: KeyboardEvent): void {
         if (e.key === 'Enter') {
             e.preventDefault();
             this.click('arrow');
@@ -48,14 +51,14 @@ export const methods = {
             this.isKeyDown = true;
         }
     },
-    keyup: function(this: IVControl): void {
+    keyup: function(this: types.IVControl): void {
         if (!this.isKeyDown) {
             return;
         }
         this.isKeyDown = false;
         this.click('arrow');
     },
-    click: function(this: IVControl, e: MouseEvent, area: 'left' | 'arrow'): void {
+    click: function(this: types.IVControl, e: MouseEvent, area: 'left' | 'arrow'): void {
         if (this.$el.dataset.cgPopOpen !== undefined) {
             clickgo.form.hidePop(this.$el);
             return;
@@ -70,10 +73,10 @@ export const methods = {
             }
         });
     },
-    updateModelValue: function(this: IVControl, val: number): void {
+    updateModelValue: function(this: types.IVControl, val: number): void {
         this.$emit('update:modelValue', val);
     },
-    itemclick: function(this: IVControl, e: MouseEvent, arrow: boolean): void {
+    itemclick: function(this: types.IVControl, e: MouseEvent, arrow: boolean): void {
         if (arrow) {
             return;
         }
@@ -81,7 +84,7 @@ export const methods = {
     }
 };
 
-export const mounted = function(this: IVControl): void {
+export const mounted = function(this: types.IVControl): void {
     clickgo.dom.watchStyle(this.$el, 'padding', (n, v) => {
         this.padding = v;
     }, true);

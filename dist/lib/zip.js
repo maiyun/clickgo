@@ -9,8 +9,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.get = void 0;
+exports.get = exports.Zip = void 0;
 const jszip = require("jszip");
+const tool = require("./tool");
 class Zip {
     constructor(zip) {
         this._path = '/';
@@ -20,7 +21,7 @@ class Zip {
     }
     getContent(path, type = 'string') {
         return __awaiter(this, void 0, void 0, function* () {
-            path = clickgo.tool.urlResolve(this._path, path);
+            path = tool.urlResolve(this._path, path);
             const f = this._zip.file(path.slice(1));
             if (!f) {
                 return null;
@@ -34,7 +35,7 @@ class Zip {
         });
     }
     putContent(path, data, options = {}) {
-        path = clickgo.tool.urlResolve(this._path, path);
+        path = tool.urlResolve(this._path, path);
         this._zip.file(path.slice(1), data, {
             'base64': options.base64,
             'binary': options.binary,
@@ -43,9 +44,67 @@ class Zip {
         this._refreshList();
     }
     unlink(path) {
-        path = clickgo.tool.urlResolve(this._path, path);
+        path = tool.urlResolve(this._path, path);
         this._zip.remove(path.slice(1));
         this._refreshList();
+    }
+    stats(path) {
+        path = tool.urlResolve(this._path, path);
+        let dirpath = path.endsWith('/') ? path : path + '/';
+        if (!this._list[dirpath]) {
+            if (path.endsWith('/')) {
+                return null;
+            }
+            const lio = path.lastIndexOf('/') + 1;
+            const dpath = path.slice(0, lio);
+            const fname = path.slice(lio);
+            if (!this._list[dpath]) {
+                return null;
+            }
+            const file = this._list[dpath][fname];
+            if (!file) {
+                return null;
+            }
+            return {
+                'date': file.date,
+                'isFile': true,
+                'isDirectory': false
+            };
+        }
+        else {
+            if (dirpath === '/') {
+                return {
+                    'date': new Date(),
+                    'isFile': false,
+                    'isDirectory': true
+                };
+            }
+            dirpath = dirpath.slice(0, -1);
+            const lio = dirpath.lastIndexOf('/') + 1;
+            const dpath = dirpath.slice(0, lio);
+            const fname = dirpath.slice(lio);
+            const pfolder = this._list[dpath];
+            const folder = pfolder[fname];
+            return {
+                'date': folder.date,
+                'isFile': false,
+                'isDirectory': true
+            };
+        }
+    }
+    isDir(path) {
+        const pstats = this.stats(path);
+        if (!pstats || !pstats.isDirectory) {
+            return false;
+        }
+        return pstats;
+    }
+    isFile(path) {
+        const pstats = this.stats(path);
+        if (!pstats || !pstats.isFile) {
+            return false;
+        }
+        return pstats;
     }
     readDir(path, opt = {}) {
         if (opt.hasChildren === undefined) {
@@ -61,30 +120,37 @@ class Zip {
             path = this._path;
         }
         else {
-            path = clickgo.tool.urlResolve(this._path, path);
+            path = tool.urlResolve(this._path, path);
         }
         if (!path.endsWith('/')) {
             path += '/';
         }
         const folder = this._zip.folder(path.slice(1));
         if (!folder) {
-            return [];
+            return opt.pathAsKey ? {} : [];
         }
         if (!this._list[path]) {
-            return [];
+            return opt.pathAsKey ? {} : [];
         }
         if (!opt.hasChildren) {
-            return this._list[path];
+            if (opt.pathAsKey) {
+                return this._list[path];
+            }
+            const list = [];
+            for (const k in this._list[path]) {
+                list.push(this._list[path][k]);
+            }
+            return list;
         }
         if (opt.pathAsKey) {
             const list = {};
-            for (const item of this._list[path]) {
+            for (const k in this._list[path]) {
+                const item = this._list[path][k];
                 if (item.isFile || opt.hasDir) {
                     list[item.path + item.name] = item;
                 }
                 if (item.isDirectory) {
                     Object.assign(list, this._readDir(item, {
-                        'hasChildren': opt.hasChildren,
                         'hasDir': opt.hasDir,
                         'pathAsKey': opt.pathAsKey
                     }));
@@ -94,13 +160,13 @@ class Zip {
         }
         else {
             let list = [];
-            for (const item of this._list[path]) {
+            for (const k in this._list[path]) {
+                const item = this._list[path][k];
                 if (item.isFile || opt.hasDir) {
                     list.push(item);
                 }
                 if (item.isDirectory) {
                     list = list.concat(this._readDir(item, {
-                        'hasChildren': opt.hasChildren,
                         'hasDir': opt.hasDir,
                         'pathAsKey': opt.pathAsKey
                     }));
@@ -115,13 +181,13 @@ class Zip {
             if (!this._list[item.path + item.name + '/']) {
                 return {};
             }
-            for (const it of this._list[item.path + item.name + '/']) {
+            for (const k in this._list[item.path + item.name + '/']) {
+                const it = this._list[item.path + item.name + '/'][k];
                 if (it.isFile || opt.hasDir) {
                     list[it.path + it.name] = it;
                 }
                 if (it.isDirectory) {
                     Object.assign(list, this._readDir(it, {
-                        'hasChildren': opt.hasChildren,
                         'hasDir': opt.hasDir,
                         'pathAsKey': opt.pathAsKey
                     }));
@@ -134,13 +200,13 @@ class Zip {
             if (!this._list[item.path + item.name + '/']) {
                 return [];
             }
-            for (const it of this._list[item.path + item.name + '/']) {
+            for (const k in this._list[item.path + item.name + '/']) {
+                const it = this._list[item.path + item.name + '/'][k];
                 if (it.isFile || opt.hasDir) {
                     list.push(it);
                 }
                 if (it.isDirectory) {
                     list = list.concat(this._readDir(it, {
-                        'hasChildren': opt.hasChildren,
                         'hasDir': opt.hasDir,
                         'pathAsKey': opt.pathAsKey
                     }));
@@ -172,15 +238,15 @@ class Zip {
                 name = name.slice(0, -1);
             }
             if (!list[parentPath]) {
-                list[parentPath] = [];
+                list[parentPath] = {};
             }
-            list[parentPath].push({
+            list[parentPath][name] = {
                 'name': name,
                 'date': item.date,
                 'isFile': !item.dir,
                 'isDirectory': item.dir,
                 'path': parentPath
-            });
+            };
         });
         this._list = list;
     }
@@ -188,7 +254,7 @@ class Zip {
         return this._path.slice(0, -1);
     }
     cd(dir) {
-        this._path = clickgo.tool.urlResolve(this._path, dir);
+        this._path = tool.urlResolve(this._path, dir);
         if (!this._path.endsWith('/')) {
             this._path += '/';
         }
@@ -225,7 +291,7 @@ class Zip {
             });
             let loaded = 0;
             for (const file of list) {
-                const mime = clickgo.tool.getMimeByPath(file.name);
+                const mime = tool.getMimeByPath(file.name);
                 if (['txt', 'json', 'js', 'css', 'xml', 'html'].includes(mime.ext)) {
                     this.getContent(file.path + file.name, 'string').then(function (fb) {
                         if (fb) {
@@ -265,6 +331,7 @@ class Zip {
         });
     }
 }
+exports.Zip = Zip;
 function get(data) {
     return __awaiter(this, void 0, void 0, function* () {
         const z = jszip();

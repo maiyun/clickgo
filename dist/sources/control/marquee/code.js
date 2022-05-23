@@ -10,6 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.mounted = exports.methods = exports.watch = exports.computed = exports.data = exports.props = void 0;
+const clickgo = require("clickgo");
 exports.props = {
     'direction': {
         'default': 'left'
@@ -124,15 +125,15 @@ exports.methods = {
             if (this.timer === 0) {
                 return;
             }
-            this.cgOffFrame(this.timer);
+            clickgo.task.offFrame(this.timer);
             this.timer = 0;
             this.left = 0;
             this.top = 0;
             return;
         }
-        this.timer = this.cgOnFrame(() => __awaiter(this, void 0, void 0, function* () {
+        this.timer = clickgo.task.onFrame(() => __awaiter(this, void 0, void 0, function* () {
             if (!this.$el.offsetParent) {
-                this.cgOffFrame(this.timer);
+                clickgo.task.offFrame(this.timer);
                 this.timer = 0;
                 return;
             }

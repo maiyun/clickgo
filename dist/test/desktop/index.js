@@ -8,17 +8,17 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-clickgo.ready(function () {
+Object.defineProperty(exports, "__esModule", { value: true });
+const clickgo = require("../../index");
+function run() {
     return __awaiter(this, void 0, void 0, function* () {
         const body = document.getElementsByTagName('body')[0];
-        if (!clickgo.native) {
-            body.style.background = '#222';
-        }
         const el = document.getElementById('tip');
         if (!el) {
             return;
         }
         el.innerHTML = 'Starting system app...';
+        yield clickgo.init();
         clickgo.core.globalEvents.errorHandler = function (taskId, formId, error, info) {
             if (!el) {
                 return;
@@ -46,7 +46,7 @@ clickgo.ready(function () {
             return;
         }
         el.innerHTML = 'Running...';
-        if (clickgo.native) {
+        if (clickgo.getNative()) {
             document.getElementById('spic').style.display = 'none';
         }
         else {
@@ -54,4 +54,7 @@ clickgo.ready(function () {
             document.getElementById('spic').style.background = '#0063b1';
         }
     });
+}
+run().catch(function (e) {
+    throw e;
 });

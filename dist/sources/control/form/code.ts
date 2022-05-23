@@ -1,3 +1,6 @@
+import * as clickgo from 'clickgo';
+import * as types from '~/types/index';
+
 export const props = {
     'icon': {
         'default': '',
@@ -93,35 +96,35 @@ export const data = {
 };
 
 export const computed = {
-    'isMin': function(this: IVControl): boolean {
+    'isMin': function(this: types.IVControl): boolean {
         return clickgo.tool.getBoolean(this.min);
     },
-    'isMax': function(this: IVControl): boolean {
+    'isMax': function(this: types.IVControl): boolean {
         return clickgo.tool.getBoolean(this.max);
     },
-    'isClose': function(this: IVControl): boolean {
+    'isClose': function(this: types.IVControl): boolean {
         return clickgo.tool.getBoolean(this.close);
     },
-    'isStateMax': function(this: IVControl): boolean {
+    'isStateMax': function(this: types.IVControl): boolean {
         return clickgo.tool.getBoolean(this.stateMax);
     },
-    'isStateMin': function(this: IVControl): boolean {
+    'isStateMin': function(this: types.IVControl): boolean {
         return clickgo.tool.getBoolean(this.stateMin);
     },
-    'isResize': function(this: IVControl): boolean {
+    'isResize': function(this: types.IVControl): boolean {
         return clickgo.tool.getBoolean(this.resize);
     },
-    'isMove': function(this: IVControl): boolean {
+    'isMove': function(this: types.IVControl): boolean {
         return clickgo.tool.getBoolean(this.move);
     },
-    'taskPosition': function(this: IVControl): string {
-        return clickgo.form.taskInfo.taskId === 0 ? 'bottom' : clickgo.core.config['task.position'];
+    'taskPosition': function(this: types.IVControl): string {
+        return clickgo.task.systemTaskInfo.taskId === 0 ? 'bottom' : clickgo.core.config['task.position'];
     }
 };
 
 export const watch = {
     'icon': {
-        handler: async function(this: IVControl): Promise<void> {
+        handler: async function(this: types.IVControl): Promise<void> {
             /*
             let first: boolean = false;
             if (this.iconData === undefined) {
@@ -132,7 +135,8 @@ export const watch = {
                 this.iconData = '';
             }
             else {
-                this.iconData = await this.cgGetDataUrl(this.icon) ?? '';
+                const icon = await clickgo.fs.getContent(this.icon);
+                this.iconData = (icon instanceof Blob) ? await clickgo.tool.blob2DataUrl(icon) : '';
             }
             // --- 触发 formIconChanged 事件 ---
             clickgo.core.trigger('formIconChanged', this.taskId, this.formId, this.iconData);
@@ -145,32 +149,32 @@ export const watch = {
         },
         'immediate': false
     },
-    'title': function(this: IVControl): void {
+    'title': function(this: types.IVControl): void {
         // --- 触发 formTitleChanged 事件 ---
         clickgo.core.trigger('formTitleChanged', this.taskId, this.formId, this.title);
     },
-    'isStateMin': function(this: IVControl): void {
+    'isStateMin': function(this: types.IVControl): void {
         if (this.stateMin === this.stateMinData) {
             return;
         }
         this.minMethod();
     },
-    'isStateMax': function(this: IVControl): void {
+    'isStateMax': function(this: types.IVControl): void {
         if (this.stateMax === this.stateMaxData) {
             return;
         }
         this.maxMethod();
     },
-    'show': function(this: IVControl): void {
+    'show': function(this: types.IVControl): void {
         if (this.showData !== this.show) {
             this.showData = this.show;
         }
     },
-    'showData': function(this: IVControl): void {
+    'showData': function(this: types.IVControl): void {
         clickgo.core.trigger('formShowChanged', this.taskId, this.formId, this.showData);
     },
 
-    'width': function(this: IVControl): void {
+    'width': function(this: types.IVControl): void {
         if (this.width === 'auto') {
             if (this.widthData !== undefined) {
                 this.widthData = undefined;
@@ -180,7 +184,7 @@ export const watch = {
             this.widthData = parseInt(this.width);
         }
     },
-    'height': function(this: IVControl): void {
+    'height': function(this: types.IVControl): void {
         if (this.height === 'auto') {
             if (this.heightData !== undefined) {
                 this.heightData = undefined;
@@ -190,20 +194,20 @@ export const watch = {
             this.heightData = parseInt(this.height);
         }
     },
-    'left': function(this: IVControl): void {
+    'left': function(this: types.IVControl): void {
         this.leftData = parseInt(this.left);
     },
-    'top': function(this: IVControl): void {
+    'top': function(this: types.IVControl): void {
         this.topData = parseInt(this.top);
     },
-    'zIndex': function(this: IVControl): void {
+    'zIndex': function(this: types.IVControl): void {
         this.zIndexData = parseInt(this.zIndex);
     }
 };
 
 export const methods = {
     // --- 拖动 ---
-    moveMethod: function(this: IVControl, e: MouseEvent | TouchEvent, custom: boolean = false): void {
+    moveMethod: function(this: types.IVControl, e: MouseEvent | TouchEvent, custom: boolean = false): void {
         if (clickgo.dom.hasTouchButMouse(e)) {
             return;
         }
@@ -229,7 +233,7 @@ export const methods = {
             });
         }
         /** --- 当前所处边框 --- */
-        let isBorder: TCGBorder = '';
+        let isBorder: types.TBorder = '';
         clickgo.dom.bindMove(e, {
             'start': (x, y) => {
                 if (this.stateMaxData) {
@@ -415,7 +419,7 @@ export const methods = {
         });
     },
     // --- 最小化 ---
-    minMethod: function(this: IVControl): boolean {
+    minMethod: function(this: types.IVControl): boolean {
         if (this.isInside) {
             return true;
         }
@@ -456,17 +460,17 @@ export const methods = {
                 this.$emit('update:stateMin', true);
                 // --- 如果当前有焦点，则使别人获取焦点 ---
                 if (this.cgFocus) {
-                    const formId = clickgo.form.getMaxZIndexFormID({
+                    const formId = clickgo.form.getMaxZIndexID({
                         'formIds': [this.formId]
                     });
-                    this.cgSleep(() => {
+                    clickgo.tool.sleep(100).then(() => {
                         if (formId) {
                             clickgo.form.changeFocus(formId);
                         }
                         else {
                             clickgo.form.changeFocus();
                         }
-                    }, 100);
+                    }).catch((e) => { throw e; });
                 }
             }
             else {
@@ -490,7 +494,7 @@ export const methods = {
         return true;
     },
     // --- 竖版扩大 ---
-    maxVMethod: function(this: IVControl, dbl: boolean): void {
+    maxVMethod: function(this: types.IVControl, dbl: boolean): void {
         if (this.isInside) {
             return;
         }
@@ -525,7 +529,7 @@ export const methods = {
                 'left': this.leftData,
                 'top': this.topData
             };
-            const area = clickgo.form.getAvailArea();
+            const area = clickgo.core.getAvailArea();
             this.topData = area.top;
             this.$emit('update:top', this.topData);
             this.heightData = area.height;
@@ -535,7 +539,7 @@ export const methods = {
         }
     },
     // --- 最大化 ---
-    maxMethod: function(this: IVControl): boolean {
+    maxMethod: function(this: types.IVControl): boolean {
         if (this.isInside) {
             return true;
         }
@@ -569,7 +573,7 @@ export const methods = {
                 this.stateMaxData = true;
                 this.$emit('update:stateMax', true);
                 // --- 变窗体样子 ---
-                const area = clickgo.form.getAvailArea();
+                const area = clickgo.core.getAvailArea();
                 this.leftData = area.left;
                 this.$emit('update:left', this.leftData);
                 this.topData = area.top;
@@ -623,7 +627,7 @@ export const methods = {
         return true;
     },
     // --- 关闭窗体 ---
-    closeMethod: function(this: IVControl): void {
+    closeMethod: function(this: types.IVControl): void {
         if (this.isInside) {
             return;
         }
@@ -635,18 +639,18 @@ export const methods = {
         };
         this.$emit('close', event);
         if (event.go) {
-            this.cgClose();
+            clickgo.form.close();
         }
     },
     // --- 改变窗体大小 ---
-    resizeMethod: function(this: IVControl, e: MouseEvent | TouchEvent, border: TCGBorder): void {
+    resizeMethod: function(this: types.IVControl, e: MouseEvent | TouchEvent, border: types.TBorder): void {
         if (this.stateMaxData) {
             return;
         }
         if (clickgo.dom.hasTouchButMouse(e)) {
             return;
         }
-        let isBorder: TCGBorder = '';
+        let isBorder: types.TBorder = '';
         let top = this.topData;
         let height = this.heightData ?? this.$el.offsetHeight;
         if (border !== 'l' && border !== 'r') {
@@ -659,7 +663,7 @@ export const methods = {
                 else {
                     // --- 左下、下、右下 ---
                     top = this.historyLocation.top;
-                    height = clickgo.form.getAvailArea().height - top;
+                    height = clickgo.core.getAvailArea().height - top;
                 }
             }
             else {
@@ -737,7 +741,7 @@ export const methods = {
             'end': () => {
                 if (isBorder !== '') {
                     if (isBorder !== 'l' && isBorder !== 'r') {
-                        const area = clickgo.form.getAvailArea();
+                        const area = clickgo.core.getAvailArea();
                         this.stateAbs = true;
                         this.heightData = area.height;
                         this.$emit('update:height', this.heightData);
@@ -750,7 +754,7 @@ export const methods = {
         });
     },
     // --- 设置 left, width, zIndex 等 ---
-    setPropData: function(this: IVControl, name: string, val: number | string, mode: string = ''): void {
+    setPropData: function(this: types.IVControl, name: string, val: number | string, mode: string = ''): void {
         switch (name) {
             case 'left': {
                 if (typeof val !== 'number') {
@@ -868,7 +872,7 @@ export const methods = {
     }
 };
 
-export const mounted = async function(this: IVControl): Promise<void> {
+export const mounted = async function(this: types.IVControl): Promise<void> {
     await this.$nextTick();
     await clickgo.tool.sleep(0);
     if (this.$parent!.controlName !== 'root') {
@@ -894,7 +898,7 @@ export const mounted = async function(this: IVControl): Promise<void> {
         this.zIndexData = zIndex;
     }
     if (this.isStateMax) {
-        const area = clickgo.form.getAvailArea();
+        const area = clickgo.core.getAvailArea();
         this.leftData = (area.width - this.widthData) / 2;
         this.topData = (area.height - this.heightData) / 2;
         this.maxMethod();

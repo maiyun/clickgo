@@ -10,11 +10,15 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.mounted = exports.methods = exports.watch = exports.computed = exports.data = exports.props = void 0;
+const clickgo = require("clickgo");
 exports.props = {
     'tabPosition': {
         'default': 'top'
     },
     'drag': {
+        'default': false
+    },
+    'close': {
         'default': false
     },
     'tabs': {
@@ -27,27 +31,34 @@ exports.props = {
 exports.data = {
     'arrow': false,
     'timer': 0,
+    'tabsData': [],
     'oldTabs': undefined,
-    'value': ''
+    'value': '',
+    'rand': 0
 };
 exports.computed = {
     'isDrag': function () {
         return clickgo.tool.getBoolean(this.drag);
     },
+    'isClose': function () {
+        return clickgo.tool.getBoolean(this.close);
+    },
     'tabsComp': function () {
-        var _a, _b;
+        var _a, _b, _c;
         const tabs = [];
-        for (const item of this.tabs) {
+        for (const item of this.tabsData) {
             if (typeof item !== 'object') {
                 tabs.push({
                     'value': item,
-                    'drag': this.isDrag
+                    'drag': this.isDrag,
+                    'close': this.isClose
                 });
             }
             else {
                 tabs.push({
                     'value': (_a = item.value) !== null && _a !== void 0 ? _a : 'error',
-                    'drag': (_b = item.drag) !== null && _b !== void 0 ? _b : this.isDrag
+                    'drag': (_b = item.drag) !== null && _b !== void 0 ? _b : this.isDrag,
+                    'close': (_c = item.close) !== null && _c !== void 0 ? _c : this.isClose
                 });
             }
         }
@@ -72,6 +83,12 @@ exports.watch = {
         'immediate': true
     },
     'tabs': {
+        handler: function () {
+            this.tabsData = this.tabs;
+        },
+        'deep': 'true'
+    },
+    'tabsData': {
         handler: function () {
             this.refreshValue();
             this.$nextTick().then(() => {
@@ -108,6 +125,45 @@ exports.methods = {
         e.preventDefault();
         this.$refs.tabs[0].scrollLeft += e.deltaY;
     },
+    down: function (e, index) {
+        const nval = this.tabsComp[index].value;
+        if (this.value !== nval) {
+            this.value = nval;
+            this.$emit('update:modelValue', this.value);
+        }
+        clickgo.dom.bindDrag(e, {
+            'el': e.currentTarget.parentNode,
+            'data': {
+                'index': index,
+                'tab': this.rand
+            }
+        });
+    },
+    tabClose: function (e, index) {
+        const event = {
+            'go': true,
+            preventDefault: function () {
+                this.go = false;
+            }
+        };
+        this.$emit('close', event, index);
+        if (!event.go) {
+            return;
+        }
+        e.stopPropagation();
+        this.tabsData.splice(index, 1);
+        this.$emit('update:tabs', this.tabsData);
+    },
+    drop: function (e, index) {
+        if (typeof e.detail.value !== 'object') {
+            return;
+        }
+        if (e.detail.value.tab !== this.rand) {
+            return;
+        }
+        this.tabsData.splice(index, 0, this.tabsData.splice(e.detail.value.index, 1)[0]);
+        this.$emit('update:tabs', this.tabsData);
+    },
     tabClick: function (e, item) {
         this.value = item.value;
         this.$emit('update:modelValue', this.value);
@@ -119,7 +175,7 @@ exports.methods = {
         const num = type === 'start' ? -5 : 5;
         clickgo.dom.bindDown(e, {
             down: () => {
-                this.timer = this.cgOnFrame(() => {
+                this.timer = clickgo.task.onFrame(() => {
                     if (this.tabPosition === 'top' || this.tabPosition === 'bottom') {
                         this.$refs.tabs[0].scrollLeft += num;
                     }
@@ -129,7 +185,7 @@ exports.methods = {
                 });
             },
             up: () => {
-                this.cgOffFrame(this.timer);
+                clickgo.task.offFrame(this.timer);
                 this.timer = 0;
             }
         });
@@ -172,6 +228,8 @@ exports.methods = {
     }
 };
 const mounted = function () {
+    this.rand = clickgo.tool.random(16);
+    this.tabsData = this.tabs;
     this.oldTabs = this.$refs.tabs[0];
     clickgo.dom.watchSize(this.$refs.tabs[0], (size) => {
         this.onResize(size);

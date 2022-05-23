@@ -1,6 +1,0 @@
-<form width="300" height="300" title="cgBindFormDrag / Resize">
-    <layout align-v="center" align-h="center" direction="v" gutter="10" style="flex: 1; width: 0;">
-        <label @mousedown="cgBindFormDrag" @touchstart="cgBindFormDrag" style="padding: 20px; background: rgba(0, 0, 0, .1);">Drag the window by me</label>
-        <label @mousedown="cgBindFormResize($event, 'rb')" @touchstart="cgBindFormResize($event, 'rb')" style="padding: 20px; background: rgba(0, 0, 0, .1); cursor: se-resize;">Resize the window by me</label>
-    </layout>
-</form>

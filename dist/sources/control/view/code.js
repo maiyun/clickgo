@@ -10,6 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.unmounted = exports.mounted = exports.methods = exports.computed = exports.watch = exports.data = exports.props = void 0;
+const clickgo = require("clickgo");
 exports.props = {
     'direction': {
         'default': 'h'
@@ -73,7 +74,7 @@ exports.watch = {
         handler: function () {
             return __awaiter(this, void 0, void 0, function* () {
                 yield this.$nextTick();
-                this.refreshSelection();
+                this.refreshSelection(clickgo.dom.is.shift, clickgo.dom.is.ctrl);
             });
         }
     },
@@ -81,7 +82,7 @@ exports.watch = {
         handler: function () {
             return __awaiter(this, void 0, void 0, function* () {
                 yield this.$nextTick();
-                this.refreshSelection();
+                this.refreshSelection(clickgo.dom.is.shift, clickgo.dom.is.ctrl);
             });
         }
     }
@@ -317,7 +318,7 @@ exports.methods = {
                     let ftop = 0;
                     let leftEnd = false;
                     let topEnd = false;
-                    this.timer = this.cgOnFrame(() => {
+                    this.timer = clickgo.task.onFrame(() => {
                         if (!leftEnd) {
                             fleft = Math.min(Math.abs(speedLeft) / 32, 0.5);
                             if (speedLeft > 0.2) {
@@ -355,7 +356,7 @@ exports.methods = {
                             if (this.scrollTopData > this.maxScrollTop) {
                                 this.scrollTopData = this.maxScrollTop;
                             }
-                            this.cgOffFrame(this.timer);
+                            clickgo.task.offFrame(this.timer);
                             this.timer = 0;
                             return;
                         }
@@ -386,7 +387,7 @@ exports.methods = {
                         this.scrollTopEmit = Math.round(this.scrollTopData);
                         this.$emit('update:scrollTop', this.scrollTopEmit);
                         if (leftEnd && topEnd) {
-                            this.cgOffFrame(this.timer);
+                            clickgo.task.offFrame(this.timer);
                             this.timer = 0;
                         }
                     });
@@ -409,7 +410,7 @@ exports.methods = {
                     this.$refs.selection.style.top = this.selectionOrigin.y.toString() + 'px';
                     this.selectionCurrent.x = x;
                     this.selectionCurrent.y = y;
-                    this.selectionTimer = this.cgOnFrame(() => {
+                    this.selectionTimer = clickgo.task.onFrame(() => {
                         const rect = this.$el.getBoundingClientRect();
                         if (this.selectionCurrent.x < rect.left) {
                             if (this.scrollLeftData > 0) {
@@ -500,7 +501,7 @@ exports.methods = {
                 },
                 end: () => {
                     this.$refs.selection.style.opacity = '0';
-                    this.cgOffFrame(this.selectionTimer);
+                    clickgo.task.offFrame(this.selectionTimer);
                     this.selectionTimer = 0;
                     this.$emit('afterselect');
                 }
@@ -630,14 +631,14 @@ exports.methods = {
             }
         }
         if (this.timer > 0) {
-            this.cgOffFrame(this.timer);
+            clickgo.task.offFrame(this.timer);
             this.timer = 0;
         }
         this.refreshScroll();
     },
     stopAnimation: function () {
         if (this.timer > 0) {
-            this.cgOffFrame(this.timer);
+            clickgo.task.offFrame(this.timer);
             this.timer = 0;
         }
     },
@@ -726,7 +727,7 @@ const mounted = function () {
 exports.mounted = mounted;
 const unmounted = function () {
     if (this.timer > 0) {
-        this.cgOffFrame(this.timer);
+        clickgo.task.offFrame(this.timer);
         this.timer = 0;
     }
 };

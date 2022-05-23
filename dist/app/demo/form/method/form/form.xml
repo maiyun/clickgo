@@ -1,19 +1,56 @@
 <form width="350" height="400" title="Library form" padding="10">
-    <layout gutter="10" direction="v" style="flex: 1; width: 0;">
-        <button @click="getAvailArea">form.getAvailArea()</button>
-        <button @click="getList">form.getList({{taskId}})</button>
-        <layout gutter="10">
-            <text v-model="fid" style="flex: 1; width: 0; height: 30px;"></text>
-            <button @click="changeFocus(fid)" style="padding: 0 10px;">form.changeFocus({{fid}})</button>
+    <overflow direction="v" style="flex: 1;">
+        <layout gutter="10" direction="v" style="flex: 1;">
+            <button @click="min" style="height: 30px;">min()</button>
+            <button @click="max" style="height: 30px;">max()</button>
+            <button @click="close" style="height: 30px;">close()</button>
+            <label @mousedown="bindResize" @touchstart="bindResize" style="padding: 20px; background: rgba(0, 0, 0, .1); cursor: se-resize;">bindResize(e, 'rb')</label>
+            <label @mousedown="bindDrag" @touchstart="bindDrag" style="padding: 20px; background: rgba(0, 0, 0, .1);">bindDrag(e)</label>
+            <layout gutter="10" align-v="center">
+                <label>Form ID:</label>
+                <text v-model="fid" style="flex: 1; width: 0; height: 30px;"></text>
+            </layout>
+            <button @click="getTaskId" style="height: 30px;">getTaskId({{fid}})</button>
+            <button @click="get" style="height: 30px;">get({{fid}})</button>
+            <layout gutter="10" align-v="center">
+                <label>Send: </label>
+                <text v-model="sendValue" style="flex: 1; width: 0; height: 30px;"></text>
+                <button @click="send" style="padding: 0 10px;">send({{fid}}, {'key': '{{sendValue}}'})</button>
+            </layout>
+            <button @click="changeFocus" style="height: 30px;">changeFocus({{fid}})</button>
+            <layout gutter="10" align-v="center">
+                <label>Task ID:</label>
+                <text v-model="tid" style="flex: 1; width: 0; height: 30px;"></text>
+                <button @click="getList" style="padding: 0 10px;">getList({{tid}})</button>
+            </layout>
+            <button @click="getMaxZIndexID" style="height: 30px;">getMaxZIndexID()</button>
+            <button @click="getRectByBorder" style="height: 30px;">getRectByBorder('rb')</button>
+            <button @click="showCircular" style="height: 30px;">showCircular(x, y)</button>
+            <button @click="showRectangle" style="height: 30px;">showRectangle(x, y, 'rb')</button>
+            <button @click="showDrag" ref="showDrag" style="height: 30px;">showDrag()</button>
+            <layout gutter="10">
+                <select v-model="type" :data="['primary', 'info', 'warning', 'danger']"></select>
+                <select v-model="progress" :data="['normal', 'progress + icon']" style="flex: 1; width: 0;"></select>
+                <button @click="notify" style="padding: 0 10px;">notify({ ... })</button>
+            </layout>
+            <button @click="showPop" style="height: 30px;">showPop(e.currentTarget, this.$refs.pop)</button>
+            <teleport to="#cg-pop-list">
+                <block ref="pop" data-cg-pop style="border: solid 1px #000; background: #FFF; width: 200px; height: 100px; display: flex; justify-content: center; align-items: center;">$refs.pop</block>
+            </teleport>
+            <button @click="createParam" style="height: 30px;">create({'layout':'xxx'})</button>
+            <button @click="createPath" style="height: 30px;">create('test')</button>
+            <button @click="createTop" style="height: 30px;">create({'layout':'xxx','topMost':true})</button>
+            <label>Dialog result: {{dialogResult}}.</label>
+            <button @click="dialog" style="height: 30px;">dialog('Hello world!')</button>
+            <button @click="dialogLong">dialog('long...')</button>
+            <button @click="dialogTitle" style="height: 30px;">dialog({'title':'Title','content':'Hello world!'})</button>
+            <button @click="dialogButtons" style="height: 30px;">dialog({'content':'Hello world!','buttons':['A','B','C']})</button>
+            <button @click="dialogCannot" style="height: 30px;">Dialog can not be close</button>
+            <button @click="confirm(false)" style="height: 30px;">confirm('confirm')</button>
+            <button @click="confirm(true)" style="height: 30px;">confirm({'content':'confirm','cancel':true})</button>
+            <button @click="setTopMost" style="height: 30px;">setTopMost({{setTopMostValue ? 'false' : 'true'}})</button>
+            <button @click="flash" style="height: 30px;">flash()</button>
+            <button @click="hide" style="height: 30px;">hide() and show()</button>
         </layout>
-        <button @click="cgDialog(getMaxZIndexFormID())">form.getMaxZIndexFormID()</button>
-        <button @click="showCircular">form.showCircular(x, y)</button>
-        <button @click="showRectangle">form.showRectangle(x, y, 't')</button>
-        <button @click="send">Send {'x': 'yes'} to self.</button>
-        <layout gutter="10">
-            <select v-model="type" :data="['primary', 'info', 'warning', 'danger']"></select>
-            <select v-model="progress" :data="['normal', 'progress + icon']" style="flex: 1; width: 0;"></select>
-            <button @click="notify" style="padding: 0 10px;">notify()</button>
-        </layout>
-    </layout>
+    </overflow>
 </form>

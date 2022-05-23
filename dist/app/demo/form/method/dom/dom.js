@@ -9,19 +9,31 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.methods = exports.computed = exports.data = void 0;
+exports.mounted = exports.methods = exports.computed = exports.data = void 0;
+const clickgo = require("clickgo");
 exports.data = {
+    'watchSizeText': false,
+    'watchSizeHeight': true,
+    'watchText': false,
+    'watchInner': true,
+    'watchStyleChange': true,
+    'bindGestureText': '',
+    'bindGestureWheelText': '',
     'bindLongText': false,
     'moveLeft': 0,
     'moveTop': 0,
     'moveWidth': 25,
     'moveHeight': 25,
-    'bindGestureText': '',
-    'bindGestureWheelText': ''
 };
 exports.computed = {
     'isMove': function () {
         return clickgo.dom.is.move;
+    },
+    'isShift': function () {
+        return clickgo.dom.is.shift;
+    },
+    'isCtrl': function () {
+        return clickgo.dom.is.ctrl;
     }
 };
 exports.methods = {
@@ -29,33 +41,38 @@ exports.methods = {
         clickgo.dom.setGlobalCursor(type);
     },
     hasTouchButMouse: function (e) {
-        clickgo.dom.hasTouchButMouse(e);
+        clickgo.form.dialog(clickgo.dom.hasTouchButMouse(e) ? 'true' : 'false').catch((e) => { throw e; });
     },
     getStyleCount: function () {
-        this.cgDialog(clickgo.dom.getStyleCount(this.taskId, 'form').toString()).catch((e) => { throw e; });
+        clickgo.form.dialog(clickgo.dom.getStyleCount(this.taskId, 'form').toString()).catch((e) => { throw e; });
     },
-    fullscreen: function () {
-        clickgo.dom.fullscreen();
+    getSize: function () {
+        clickgo.form.dialog(JSON.stringify(clickgo.dom.getSize(this.$refs.getSize.$el))).catch((e) => { throw e; });
     },
-    bindLong: function () {
-        this.cgDialog('Press and hold this button.').catch((e) => { throw e; });
+    watchSize: function () {
+        this.watchSizeText = !this.watchSizeText;
+        if (this.watchSizeText) {
+            clickgo.dom.watchSize(this.$refs.watchSize.$el, (size) => {
+                clickgo.form.dialog(JSON.stringify(size)).catch((e) => { throw e; });
+            });
+        }
+        else {
+            clickgo.dom.unwatchSize(this.$refs.watchSize.$el);
+        }
     },
-    bindLongDown: function (e) {
-        clickgo.dom.bindLong(e, () => __awaiter(this, void 0, void 0, function* () {
-            this.bindLongText = true;
-            yield clickgo.tool.sleep(500);
-            this.bindLongText = false;
-        }));
+    watch: function () {
+        this.watchText = !this.watchText;
+        if (this.watchText) {
+            clickgo.dom.watch(this.$refs.watch.$el, () => {
+                clickgo.form.dialog('Changed.').catch((e) => { throw e; });
+            });
+        }
+        else {
+            clickgo.dom.unwatch(this.$refs.watch.$el);
+        }
     },
-    bindMoveDown: function (e) {
-        clickgo.dom.bindMove(e, {
-            'areaObject': e.currentTarget,
-            'object': this.$refs.move,
-            move: (ox, oy) => {
-                this.moveLeft += ox;
-                this.moveTop += oy;
-            }
-        });
+    isWatchStyle: function () {
+        clickgo.form.dialog(clickgo.dom.isWatchStyle(this.$refs.watchStyle.$el) ? 'true' : 'false').catch((e) => { throw e; });
     },
     bindGesture: function (e) {
         clickgo.dom.bindGesture(e, {
@@ -86,5 +103,61 @@ exports.methods = {
                 });
             }
         });
+    },
+    bindLong: function () {
+        clickgo.form.dialog('Press and hold this button.').catch((e) => { throw e; });
+    },
+    bindLongDown: function (e) {
+        clickgo.dom.bindLong(e, () => __awaiter(this, void 0, void 0, function* () {
+            this.bindLongText = true;
+            yield clickgo.tool.sleep(500);
+            this.bindLongText = false;
+        }));
+    },
+    bindDragDown: function (e) {
+        clickgo.dom.bindDrag(e, {
+            'el': this.$refs.bindDrag,
+            'data': 'bindDragDownTest'
+        });
+    },
+    dragEnter: function (e) {
+        return __awaiter(this, void 0, void 0, function* () {
+            e.target.innerText = 'enter';
+            yield clickgo.tool.sleep(200);
+            e.target.innerText = '';
+        });
+    },
+    dragLeave: function (e) {
+        return __awaiter(this, void 0, void 0, function* () {
+            e.target.innerText = 'leave';
+            yield clickgo.tool.sleep(200);
+            e.target.innerText = '';
+        });
+    },
+    drop: function (e) {
+        return __awaiter(this, void 0, void 0, function* () {
+            e.target.innerText = 'drop';
+            yield clickgo.tool.sleep(500);
+            e.target.innerText = '';
+        });
+    },
+    bindMoveDown: function (e) {
+        clickgo.dom.bindMove(e, {
+            'areaObject': e.currentTarget,
+            'object': this.$refs.move,
+            move: (ox, oy) => {
+                this.moveLeft += ox;
+                this.moveTop += oy;
+            }
+        });
+    },
+    fullscreen: function () {
+        clickgo.dom.fullscreen();
     }
 };
+const mounted = function () {
+    clickgo.dom.watchStyle(this.$refs.watchStyle.$el, 'font-size', (n, v) => {
+        clickgo.form.dialog('name: ' + n + ', value: ' + v).catch((e) => { throw e; });
+    });
+};
+exports.mounted = mounted;

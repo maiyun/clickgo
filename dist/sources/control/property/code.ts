@@ -1,3 +1,6 @@
+import * as clickgo from 'clickgo';
+import * as types from '~/types/index';
+
 export const props = {
     'disabled': {
         'default': false
@@ -18,14 +21,14 @@ export const props = {
 };
 
 export const computed = {
-    'isDisabled': function(this: IVControl): boolean {
+    'isDisabled': function(this: types.IVControl): boolean {
         return clickgo.tool.getBoolean(this.disabled);
     },
-    'isDesc': function(this: IVControl): boolean {
+    'isDesc': function(this: types.IVControl): boolean {
         return clickgo.tool.getBoolean(this.descData);
     },
 
-    'subValue': function(this: IVControl) {
+    'subValue': function(this: types.IVControl) {
         return (item2: Record<string, any>, i3: number, isDefault: boolean = false): string => {
             if (isDefault) {
                 return item2.default.split(',')[i3] ? item2.default.split(',')[i3].trim() : '';
@@ -35,7 +38,7 @@ export const computed = {
             }
         };
     },
-    'value': function(this: IVControl): any[] {
+    'value': function(this: types.IVControl): any[] {
         const list: any[] = [];
         // --- 大列表 ---
         const bigList: any = {};
@@ -83,19 +86,19 @@ export const computed = {
 
 export const watch = {
     'sort': {
-        handler: function(this: IVControl): void {
+        handler: function(this: types.IVControl): void {
             this.sortData = this.sort;
         },
         'immediate': true
     },
     'type': {
-        handler: function(this: IVControl): void {
+        handler: function(this: types.IVControl): void {
             this.typeData = this.type;
         },
         'immediate': true
     },
     'desc': {
-        handler: function(this: IVControl): void {
+        handler: function(this: types.IVControl): void {
             this.descData = this.desc;
         },
         'immediate': true
@@ -137,13 +140,13 @@ export const data = {
 };
 
 export const methods = {
-    contextmenu: function(this: IVControl, e: MouseEvent): void {
+    contextmenu: function(this: types.IVControl, e: MouseEvent): void {
         if (clickgo.dom.hasTouchButMouse(e)) {
             return;
         }
         clickgo.form.showPop(this.$refs.content, this.$refs.pop, e);
     },
-    down: function(this: IVControl, e: MouseEvent | TouchEvent): void {
+    down: function(this: types.IVControl, e: MouseEvent | TouchEvent): void {
         if (clickgo.dom.hasTouchButMouse(e)) {
             return;
         }
@@ -157,16 +160,22 @@ export const methods = {
             });
         }
     },
-    changeSort: function(this: IVControl, sort: string): void {
+    changeSort: function(this: types.IVControl, sort: string): void {
         this.sortData = sort;
         this.$emit('update:sort', sort);
     },
-    changeType: function(this: IVControl, type: string): void {
+    changeType: function(this: types.IVControl, type: string): void {
         this.typeData = type;
         this.$emit('update:type', type);
     },
     // --- 点击选择一个 line ---
-    select: function(this: IVControl, e: MouseEvent | TouchEvent, item2: string, item3: string, desc: string): void {
+    select: function(
+        this: types.IVControl,
+        e: MouseEvent | TouchEvent,
+        item2: string,
+        item3: string,
+        desc: string
+    ): void {
         if (clickgo.dom.hasTouchButMouse(e)) {
             return;
         }
@@ -176,7 +185,7 @@ export const methods = {
         this.description = desc;
     },
     // --- 打开/关闭子项 ---
-    bigToggle: function(this: IVControl, bigTitle: string): void {
+    bigToggle: function(this: types.IVControl, bigTitle: string): void {
         const io = this.bigClosed.indexOf(bigTitle);
         if (io === -1) {
             this.bigClosed.push(bigTitle);
@@ -184,7 +193,7 @@ export const methods = {
         }
         this.bigClosed.splice(io, 1);
     },
-    toggle: function(this: IVControl, title: string): void {
+    toggle: function(this: types.IVControl, title: string): void {
         const io = this.opened.indexOf(title);
         if (io === -1) {
             this.opened.push(title);
@@ -193,7 +202,7 @@ export const methods = {
         this.opened.splice(io, 1);
     },
     // --- 项内容更新方法 ---
-    update: function(this: IVControl, value: string): void {
+    update: function(this: types.IVControl, value: string): void {
         for (const item of this.modelValue) {
             if (item.title !== this.selectedTitle) {
                 continue;
@@ -232,7 +241,7 @@ export const methods = {
         }
     },
     // --- dock ---
-    dock: function(this: IVControl, e: MouseEvent): void {
+    dock: function(this: types.IVControl, e: MouseEvent): void {
         if ((e.currentTarget as HTMLElement).dataset.cgPopOpen !== undefined) {
             clickgo.form.hidePop();
             return;
@@ -258,12 +267,12 @@ export const methods = {
         }
         clickgo.form.showPop(e.currentTarget as HTMLElement, this.$refs.dock, 'v');
     },
-    dockSelect: function(this: IVControl, value: string): void {
+    dockSelect: function(this: types.IVControl, value: string): void {
         this.update(value);
         clickgo.form.hidePop();
     },
     // --- 双击 ---
-    reset: function(this: IVControl): void {
+    reset: function(this: types.IVControl): void {
         for (const item of this.modelValue) {
             if (item.title !== this.selectedTitle) {
                 continue;

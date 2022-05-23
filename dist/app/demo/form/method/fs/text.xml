@@ -1,0 +1,3 @@
+<form width="350" height="400" :title="title" padding="10">
+    <text v-model="content" style="flex: 1;" multi readonly></text>
+</form>

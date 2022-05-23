@@ -1,0 +1,43 @@
+// --- Button ---
+
+.button_wrap {
+    &.button_default {
+        &:not(.button_plain) {
+            --focusbox-border: dotted 1px hsl(0, 0%, 20%);
+            --background: hsl(0, 0%, 90%);
+            --border: solid 1px hsl(0, 0%, 70%);
+            --hover-background: hsl(205, 100%, 95%);
+            --hover-border: solid 1px hsl(205, 100%, 50%);
+            --active-background: hsl(205, 100%, 90%);
+            --active-border: solid 1px hsl(205, 100%, 30%);
+            --focus-border: solid 2px hsl(205, 100%, 40%);
+        }
+        &.button_plain {
+            --focusbox-border: dotted 1px hsl(0, 0%, 20%);
+            --background: hsl(0, 0%, 100%);
+            --border: solid 1px hsl(0, 0%, 70%);
+            --hover-color: hsl(205, 100%, 50%);
+            --hover-border: solid 1px hsl(205, 100%, 50%);
+            --active-color: hsl(205, 100%, 30%);
+            --active-border: solid 1px hsl(205, 100%, 30%);
+            --focus-color: hsl(205, 100%, 40%);
+            --focus-border: solid 2px hsl(205, 100%, 40%);
+        }
+    }
+    &.button_tool {
+        &:not(.button_plain) {
+            --focusbox-border: dotted 1px hsl(0, 0%, 20%);
+            --hover-background: hsl(205, 100%, 95%);
+            --hover-border: solid 1px hsl(205, 100%, 50%);
+            --active-background: hsl(205, 100%, 90%);
+            --active-border: solid 1px hsl(205, 100%, 30%);
+            --focus-border: solid 2px hsl(205, 100%, 40%);
+        }
+        &.button_plain {
+            --focusbox-border: dotted 1px hsl(0, 0%, 20%);
+            --hover-color: hsl(205, 100%, 50%);
+            --active-color: hsl(205, 100%, 30%);
+            --focus-color: hsl(205, 100%, 50%);
+        }
+    }
+}

@@ -10,6 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.mounted = exports.methods = exports.computed = exports.data = void 0;
+const clickgo = require("clickgo");
 exports.data = {
     'left': 0,
     'top': 0,
@@ -104,8 +105,8 @@ exports.methods = {
     }
 };
 const mounted = function () {
-    this.cgSetTopMost(true);
-    clickgo.form.setTask(this.taskId, this.formId);
+    clickgo.form.setTopMost(true);
+    clickgo.task.setSystem();
     for (const path in clickgo.core.config['task.pin']) {
         this.apps.push({
             'name': clickgo.core.config['task.pin'][path].name,
@@ -151,7 +152,7 @@ const mounted = function () {
         }
         this.apps[appIndex].formCount = Object.keys(this.apps[appIndex].forms).length;
     }
-    this.cgSetSystemEventListener('formCreated', (taskId, formId, title, icon) => {
+    clickgo.core.setSystemEventListener('formCreated', (taskId, formId, title, icon) => {
         if (taskId === this.taskId) {
             return;
         }
@@ -182,7 +183,7 @@ const mounted = function () {
         };
         ++this.apps[appIndex].formCount;
     });
-    this.cgSetSystemEventListener('formRemoved', (taskId, formId) => {
+    clickgo.core.setSystemEventListener('formRemoved', (taskId, formId) => {
         const task = clickgo.task.get(taskId);
         if (!task) {
             return;
@@ -204,7 +205,7 @@ const mounted = function () {
             this.apps.splice(appIndex, 1);
         }
     });
-    this.cgSetSystemEventListener('formFocused', (taskId) => {
+    clickgo.core.setSystemEventListener('formFocused', (taskId) => {
         const task = clickgo.task.get(taskId);
         if (!task) {
             return;
@@ -215,7 +216,7 @@ const mounted = function () {
         }
         this.apps[appIndex].selected = true;
     });
-    this.cgSetSystemEventListener('formBlurred', (taskId) => {
+    clickgo.core.setSystemEventListener('formBlurred', (taskId) => {
         const task = clickgo.task.get(taskId);
         if (!task) {
             return;
@@ -226,7 +227,7 @@ const mounted = function () {
         }
         this.apps[appIndex].selected = false;
     });
-    this.cgSetSystemEventListener('formTitleChanged', (taskId, formId, title) => {
+    clickgo.core.setSystemEventListener('formTitleChanged', (taskId, formId, title) => {
         const task = clickgo.task.get(taskId);
         if (!task) {
             return;
@@ -240,7 +241,7 @@ const mounted = function () {
         }
         this.apps[appIndex].forms[formId].title = title;
     });
-    this.cgSetSystemEventListener('formIconChanged', (taskId, formId, icon) => {
+    clickgo.core.setSystemEventListener('formIconChanged', (taskId, formId, icon) => {
         const task = clickgo.task.get(taskId);
         if (!task) {
             return;
@@ -254,7 +255,7 @@ const mounted = function () {
         }
         this.apps[appIndex].forms[formId].icon = icon || this.apps[appIndex].icon;
     });
-    this.cgSetSystemEventListener('configChanged', (n, v) => {
+    clickgo.core.setSystemEventListener('configChanged', (n, v) => {
         if (n !== 'task.pin') {
             return;
         }

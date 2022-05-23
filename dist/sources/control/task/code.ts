@@ -1,3 +1,6 @@
+import * as clickgo from 'clickgo';
+import * as types from '~/types/index';
+
 export const props = {
     'position': {
         'default': 'bottom'
@@ -5,7 +8,7 @@ export const props = {
 };
 
 export const methods = {
-    down: function(this: IVControl, e: MouseEvent | TouchEvent): void {
+    down: function(this: types.IVControl, e: MouseEvent | TouchEvent): void {
         if (clickgo.dom.hasTouchButMouse(e)) {
             return;
         }
@@ -18,7 +21,7 @@ export const methods = {
             });
         }
     },
-    contextmenu: function(this: IVControl, e: MouseEvent): void {
+    contextmenu: function(this: types.IVControl, e: MouseEvent): void {
         if (clickgo.dom.hasTouchButMouse(e)) {
             return;
         }

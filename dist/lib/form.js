@@ -9,324 +9,256 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.create = exports.remove = exports.doFocusAndPopEvent = exports.hidePop = exports.showPop = exports.removeFromPop = exports.appendToPop = exports.hideNotify = exports.notifyProgress = exports.notify = exports.hideRectangle = exports.showRectangle = exports.moveRectangle = exports.showCircular = exports.getRectByBorder = exports.getMaxZIndexFormID = exports.changeFocus = exports.getList = exports.send = exports.get = exports.min = exports.getTaskId = exports.refreshMaxPosition = exports.getAvailArea = exports.refreshTaskPosition = exports.clearTask = exports.setTask = exports.taskInfo = exports.simpletaskRoot = void 0;
-const popList = [];
-const popElList = [];
-let lastFormId = 0;
-let lastZIndex = 999;
-let lastTopZIndex = 9999999;
-let lastPopZIndex = 0;
-const localeData = {
-    'en': {
-        'ok': 'OK',
-        'yes': 'Yes',
-        'no': 'No',
-        'cancel': 'Cancel'
-    },
-    'sc': {
-        'ok': '好',
-        'yes': '是',
-        'no': '否',
-        'cancel': '取消'
-    },
-    'tc': {
-        'ok': '好',
-        'yes': '是',
-        'no': '否',
-        'cancel': '取消'
-    },
-    'ja': {
-        'ok': '好',
-        'yes': 'はい',
-        'no': 'いいえ',
-        'cancel': 'キャンセル'
+exports.hide = exports.show = exports.flash = exports.setTopMost = exports.confirm = exports.dialog = exports.create = exports.remove = exports.doFocusAndPopEvent = exports.hidePop = exports.showPop = exports.removeFromPop = exports.appendToPop = exports.hideNotify = exports.notifyProgress = exports.notify = exports.hideDrag = exports.moveDrag = exports.showDrag = exports.hideRectangle = exports.showRectangle = exports.moveRectangle = exports.showCircular = exports.getRectByBorder = exports.getMaxZIndexID = exports.changeFocus = exports.getList = exports.send = exports.get = exports.getTaskId = exports.refreshMaxPosition = exports.bindDrag = exports.bindResize = exports.close = exports.max = exports.min = exports.simpleSystemTaskRoot = void 0;
+const clickgo = require("../clickgo");
+const core = require("./core");
+const task = require("./task");
+const tool = require("./tool");
+const dom = require("./dom");
+const control = require("./control");
+const native = require("./native");
+const info = {
+    'lastId': 0,
+    'lastZIndex': 999,
+    'topLastZIndex': 9999999,
+    'locale': {
+        'sc': {
+            'ok': '好',
+            'yes': '是',
+            'no': '否',
+            'cancel': '取消'
+        },
+        'tc': {
+            'ok': '好',
+            'yes': '是',
+            'no': '否',
+            'cancel': '取消'
+        },
+        'en': {
+            'ok': 'OK',
+            'yes': 'Yes',
+            'no': 'No',
+            'cancel': 'Cancel'
+        },
+        'ja': {
+            'ok': '好',
+            'yes': 'はい',
+            'no': 'いいえ',
+            'cancel': 'キャンセル'
+        }
     }
 };
-const wrapElement = document.createElement('div');
-wrapElement.id = 'cg-wrap';
-document.getElementsByTagName('body')[0].appendChild(wrapElement);
-if (clickgo.native) {
-    wrapElement.addEventListener('mouseenter', function () {
-        clickgo.core.sendNative('cg-mouse-ignore', 'false');
-    });
-    wrapElement.addEventListener('mouseleave', function () {
-        clickgo.core.sendNative('cg-mouse-ignore', 'true');
-    });
-}
-const formListElement = document.createElement('div');
-formListElement.id = 'cg-form-list';
-wrapElement.appendChild(formListElement);
-formListElement.addEventListener('touchmove', function (e) {
-    if (e.cancelable) {
-        e.preventDefault();
-    }
-}, {
-    'passive': false
-});
-formListElement.addEventListener('wheel', function (e) {
-    e.preventDefault();
-}, {
-    'passive': false
-});
-formListElement.addEventListener('contextmenu', function (e) {
-    e.preventDefault();
-});
-const popListElement = document.createElement('div');
-popListElement.id = 'cg-pop-list';
-popListElement.addEventListener('contextmenu', function (e) {
-    e.preventDefault();
-});
-wrapElement.appendChild(popListElement);
-popListElement.addEventListener('touchmove', function (e) {
-    e.preventDefault();
-}, {
-    'passive': false
-});
-const circularElement = document.createElement('div');
-circularElement.id = 'cg-circular';
-wrapElement.appendChild(circularElement);
-const rectangleElement = document.createElement('div');
-rectangleElement.setAttribute('data-pos', '');
-rectangleElement.id = 'cg-rectangle';
-wrapElement.appendChild(rectangleElement);
-const gestureElement = document.createElement('div');
-gestureElement.id = 'cg-gesture';
-wrapElement.appendChild(gestureElement);
-const simpletaskElement = document.createElement('div');
-simpletaskElement.id = 'cg-simpletask';
-simpletaskElement.addEventListener('contextmenu', function (e) {
-    e.preventDefault();
-});
-wrapElement.appendChild(simpletaskElement);
-simpletaskElement.addEventListener('touchmove', function (e) {
-    e.preventDefault();
-}, {
-    'passive': false
-});
-const simpletaskApp = Vue.createApp({
-    'template': '<div v-for="(item, formId) of forms" class="cg-simpletask-item" @click="click(parseInt(formId))"><div v-if="item.icon" class="cg-simpletask-icon" :style="{\'background-image\': \'url(\' + item.icon + \')\'}"></div><div>{{item.title}}</div></div>',
-    'data': function () {
-        return {
-            'forms': {}
-        };
-    },
-    'watch': {
-        'forms': {
-            handler: function () {
-                const length = Object.keys(this.forms).length;
-                if (length > 0) {
-                    if (simpletaskElement.style.bottom !== '0px') {
-                        simpletaskElement.style.bottom = '0px';
-                        clickgo.core.trigger('screenResize');
-                    }
-                }
-                else {
-                    if (simpletaskElement.style.bottom === '0px') {
-                        simpletaskElement.style.bottom = '-46px';
-                        clickgo.core.trigger('screenResize');
-                    }
+const popInfo = {
+    'list': [],
+    'elList': [],
+    'lastZIndex': 0
+};
+const elements = {
+    'wrap': document.createElement('div'),
+    'list': document.createElement('div'),
+    'popList': document.createElement('div'),
+    'circular': document.createElement('div'),
+    'rectangle': document.createElement('div'),
+    'gesture': document.createElement('div'),
+    'drag': document.createElement('div'),
+    'dragIcon': undefined,
+    'system': document.createElement('div'),
+    'simpleSystemtask': document.createElement('div'),
+    'init': function () {
+        this.wrap.id = 'cg-wrap';
+        document.getElementsByTagName('body')[0].appendChild(this.wrap);
+        if (clickgo.getNative()) {
+            this.wrap.addEventListener('mouseenter', function () {
+                native.send('cg-mouse-ignore', 'false');
+            });
+            this.wrap.addEventListener('mouseleave', function () {
+                native.send('cg-mouse-ignore', 'true');
+            });
+        }
+        this.list.id = 'cg-form-list';
+        this.wrap.appendChild(this.list);
+        this.list.addEventListener('touchmove', function (e) {
+            if (e.cancelable) {
+                e.preventDefault();
+            }
+        }, {
+            'passive': false
+        });
+        this.list.addEventListener('wheel', function (e) {
+            e.preventDefault();
+        }, {
+            'passive': false
+        });
+        this.list.addEventListener('contextmenu', function (e) {
+            e.preventDefault();
+        });
+        this.popList.id = 'cg-pop-list';
+        this.popList.addEventListener('contextmenu', function (e) {
+            e.preventDefault();
+        });
+        this.wrap.appendChild(this.popList);
+        this.popList.addEventListener('touchmove', function (e) {
+            e.preventDefault();
+        }, {
+            'passive': false
+        });
+        this.circular.id = 'cg-circular';
+        this.wrap.appendChild(this.circular);
+        this.rectangle.setAttribute('data-pos', '');
+        this.rectangle.id = 'cg-rectangle';
+        this.wrap.appendChild(this.rectangle);
+        this.gesture.id = 'cg-gesture';
+        this.wrap.appendChild(this.gesture);
+        this.drag.id = 'cg-drag';
+        this.drag.innerHTML = '<svg width="16" height="16" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 8L40 40" stroke="#FFF" stroke-width="4" stroke-linecap="butt" stroke-linejoin="miter"/><path d="M8 40L40 8" stroke="#FFF" stroke-width="4" stroke-linecap="butt" stroke-linejoin="miter"/></svg>';
+        this.dragIcon = this.drag.childNodes[0];
+        this.wrap.appendChild(this.drag);
+        this.system.id = 'cg-system';
+        this.system.addEventListener('contextmenu', function (e) {
+            e.preventDefault();
+        });
+        this.wrap.appendChild(this.system);
+        this.system.addEventListener('touchmove', function (e) {
+            e.preventDefault();
+        }, {
+            'passive': false
+        });
+        this.simpleSystemtask.id = 'cg-simplesystemtask';
+        this.simpleSystemtask.addEventListener('contextmenu', function (e) {
+            e.preventDefault();
+        });
+        this.wrap.appendChild(this.simpleSystemtask);
+        this.simpleSystemtask.addEventListener('touchmove', function (e) {
+            e.preventDefault();
+        }, {
+            'passive': false
+        });
+        const simpleSystemtaskApp = Vue.createApp({
+            'template': '<div v-for="(item, formId) of forms" class="cg-simplesystemtask-item" @click="click(parseInt(formId))"><div v-if="item.icon" class="cg-simplesystemtask-icon" :style="{\'background-image\': \'url(\' + item.icon + \')\'}"></div><div>{{item.title}}</div></div>',
+            'data': function () {
+                return {
+                    'forms': {}
+                };
+            },
+            'watch': {
+                'forms': {
+                    handler: function () {
+                        const length = Object.keys(this.forms).length;
+                        if (length > 0) {
+                            if (elements.simpleSystemtask.style.bottom !== '0px') {
+                                elements.simpleSystemtask.style.bottom = '0px';
+                                core.trigger('screenResize');
+                            }
+                        }
+                        else {
+                            if (elements.simpleSystemtask.style.bottom === '0px') {
+                                elements.simpleSystemtask.style.bottom = '-46px';
+                                core.trigger('screenResize');
+                            }
+                        }
+                    },
+                    'deep': true
                 }
             },
-            'deep': true
-        }
-    },
-    'methods': {
-        click: function (formId) {
-            changeFocus(formId);
-        }
-    },
-    'mounted': function () {
-        exports.simpletaskRoot = this;
-    }
-});
-simpletaskApp.mount('#cg-simpletask');
-exports.taskInfo = Vue.reactive({
-    'taskId': 0,
-    'formId': 0,
-    'length': 0
-});
-function setTask(taskId, formId) {
-    const task = clickgo.task.list[taskId];
-    if (!task) {
-        return false;
-    }
-    const form = task.forms[formId];
-    if (!form) {
-        return false;
-    }
-    if (form.vroot.position === undefined) {
-        notify({
-            'title': 'Warning',
-            'content': `Task id is "${taskId}" app is not an available task app, position not found.`,
-            'type': 'warning'
-        });
-        return false;
-    }
-    if (exports.taskInfo.taskId > 0) {
-        notify({
-            'title': 'Info',
-            'content': 'More than 1 system-level task application is currently running.',
-            'type': 'info'
-        });
-    }
-    exports.taskInfo.taskId = taskId;
-    exports.taskInfo.formId = formId;
-    exports.simpletaskRoot.forms = {};
-    refreshTaskPosition();
-    return true;
-}
-exports.setTask = setTask;
-function clearTask(taskId) {
-    if (typeof taskId !== 'number') {
-        notify({
-            'title': 'Warning',
-            'content': 'The "formId" of "clearTask" must be a number type.',
-            'type': 'warning'
-        });
-        return false;
-    }
-    if (exports.taskInfo.taskId !== taskId) {
-        return false;
-    }
-    exports.taskInfo.taskId = 0;
-    exports.taskInfo.formId = 0;
-    exports.taskInfo.length = 0;
-    clickgo.core.trigger('screenResize');
-    const tasks = clickgo.task.getList();
-    for (const taskId in tasks) {
-        const forms = getList(parseInt(taskId));
-        for (const formId in forms) {
-            const form = forms[formId];
-            if (!form.stateMin) {
-                continue;
+            'methods': {
+                click: function (formId) {
+                    changeFocus(formId);
+                }
+            },
+            'mounted': function () {
+                exports.simpleSystemTaskRoot = this;
             }
-            exports.simpletaskRoot.forms[formId] = {
-                'title': form.title,
-                'icon': form.icon
-            };
+        });
+        simpleSystemtaskApp.mount('#cg-simplesystemtask');
+    }
+};
+elements.init();
+function changeState(state, formId) {
+    if (!formId) {
+        return false;
+    }
+    const tid = getTaskId(formId);
+    const t = task.list[tid];
+    if (!t) {
+        return false;
+    }
+    switch (state) {
+        case 'max': {
+            t.forms[formId].vroot.$refs.form.maxMethod();
+            break;
+        }
+        case 'min': {
+            t.forms[formId].vroot.$refs.form.minMethod();
+            break;
+        }
+        default: {
+            remove(formId);
         }
     }
     return true;
 }
-exports.clearTask = clearTask;
-function refreshTaskPosition() {
-    if (exports.taskInfo.taskId > 0) {
-        const form = clickgo.task.list[exports.taskInfo.taskId].forms[exports.taskInfo.formId];
-        switch (clickgo.core.config['task.position']) {
-            case 'left':
-            case 'right': {
-                form.vroot.$refs.form.setPropData('width', 'auto');
-                form.vroot.$refs.form.setPropData('height', document.body.clientHeight);
-                break;
-            }
-            case 'top':
-            case 'bottom': {
-                form.vroot.$refs.form.setPropData('width', document.body.clientWidth);
-                form.vroot.$refs.form.setPropData('height', 'auto');
-                break;
-            }
-        }
-        setTimeout(function () {
-            switch (clickgo.core.config['task.position']) {
-                case 'left': {
-                    exports.taskInfo.length = form.vroot.$el.offsetWidth;
-                    form.vroot.$refs.form.setPropData('left', 0);
-                    form.vroot.$refs.form.setPropData('top', 0);
-                    break;
-                }
-                case 'right': {
-                    exports.taskInfo.length = form.vroot.$el.offsetWidth;
-                    form.vroot.$refs.form.setPropData('left', document.body.clientWidth - exports.taskInfo.length);
-                    form.vroot.$refs.form.setPropData('top', 0);
-                    break;
-                }
-                case 'top': {
-                    exports.taskInfo.length = form.vroot.$el.offsetHeight;
-                    form.vroot.$refs.form.setPropData('left', 0);
-                    form.vroot.$refs.form.setPropData('top', 0);
-                    break;
-                }
-                case 'bottom': {
-                    exports.taskInfo.length = form.vroot.$el.offsetHeight;
-                    form.vroot.$refs.form.setPropData('left', 0);
-                    form.vroot.$refs.form.setPropData('top', document.body.clientHeight - exports.taskInfo.length);
-                    break;
-                }
-            }
-            clickgo.core.trigger('screenResize');
-        }, 50);
-    }
-    else {
-        clickgo.core.trigger('screenResize');
-    }
+function min(formId) {
+    return changeState('min', formId);
 }
-exports.refreshTaskPosition = refreshTaskPosition;
-function getAvailArea() {
-    if (Object.keys(exports.simpletaskRoot.forms).length > 0) {
-        return {
-            'left': 0,
-            'top': 0,
-            'width': document.body.clientWidth,
-            'height': document.body.clientHeight - 46
-        };
-    }
-    else {
-        let left = 0;
-        let top = 0;
-        let width = 0;
-        let height = 0;
-        switch (clickgo.core.config['task.position']) {
-            case 'left': {
-                left = exports.taskInfo.length;
-                top = 0;
-                width = document.body.clientWidth - exports.taskInfo.length;
-                height = document.body.clientHeight;
-                break;
-            }
-            case 'right': {
-                left = 0;
-                top = 0;
-                width = document.body.clientWidth - exports.taskInfo.length;
-                height = document.body.clientHeight;
-                break;
-            }
-            case 'top': {
-                left = 0;
-                top = exports.taskInfo.length;
-                width = document.body.clientWidth;
-                height = document.body.clientHeight - exports.taskInfo.length;
-                break;
-            }
-            case 'bottom': {
-                left = 0;
-                top = 0;
-                width = document.body.clientWidth;
-                height = document.body.clientHeight - exports.taskInfo.length;
-            }
-        }
-        return {
-            'left': left,
-            'top': top,
-            'width': width,
-            'height': height
-        };
-    }
+exports.min = min;
+function max(formId) {
+    return changeState('max', formId);
 }
-exports.getAvailArea = getAvailArea;
+exports.max = max;
+function close(formId) {
+    return changeState('close', formId);
+}
+exports.close = close;
+function bindResize(e, border) {
+    const formWrap = dom.findParentByClass(e.target, 'cg-form-wrap');
+    if (!formWrap) {
+        return;
+    }
+    const formId = formWrap.dataset.formId;
+    if (!formId) {
+        return;
+    }
+    const fid = parseInt(formId);
+    const tid = getTaskId(fid);
+    const t = task.list[tid];
+    if (!t) {
+        return;
+    }
+    t.forms[fid].vroot.$refs.form.resizeMethod(e, border);
+}
+exports.bindResize = bindResize;
+function bindDrag(e) {
+    const formWrap = dom.findParentByClass(e.target, 'cg-form-wrap');
+    if (!formWrap) {
+        return;
+    }
+    const formId = formWrap.dataset.formId;
+    if (!formId) {
+        return;
+    }
+    const fid = parseInt(formId);
+    const tid = getTaskId(fid);
+    const t = task.list[tid];
+    if (!t) {
+        return;
+    }
+    t.forms[fid].vroot.$refs.form.moveMethod(e, true);
+}
+exports.bindDrag = bindDrag;
 function refreshMaxPosition() {
-    const area = getAvailArea();
-    for (let i = 0; i < formListElement.children.length; ++i) {
-        const el = formListElement.children.item(i);
+    const area = core.getAvailArea();
+    for (let i = 0; i < elements.list.children.length; ++i) {
+        const el = elements.list.children.item(i);
         const ef = el.children.item(0);
         if (ef.dataset.cgMax === undefined) {
             continue;
         }
         const taskId = parseInt(el.getAttribute('data-task-id'));
         const formId = parseInt(el.getAttribute('data-form-id'));
-        if (!clickgo.task.list[taskId]) {
+        if (!task.list[taskId]) {
             continue;
         }
-        const vroot = clickgo.task.list[taskId].forms[formId].vroot;
+        const vroot = task.list[taskId].forms[formId].vroot;
         vroot.$refs.form.setPropData('left', area.left);
         vroot.$refs.form.setPropData('top', area.top);
         vroot.$refs.form.setPropData('width', area.width);
@@ -335,7 +267,7 @@ function refreshMaxPosition() {
 }
 exports.refreshMaxPosition = refreshMaxPosition;
 function getTaskId(formId) {
-    const formElement = formListElement.querySelector(`[data-form-id='${formId}']`);
+    const formElement = elements.list.querySelector(`[data-form-id='${formId}']`);
     if (!formElement) {
         return 0;
     }
@@ -346,22 +278,12 @@ function getTaskId(formId) {
     return parseInt(taskIdAttr);
 }
 exports.getTaskId = getTaskId;
-function min(formId) {
-    const taskId = getTaskId(formId);
-    const task = clickgo.task.list[taskId];
-    if (!task) {
-        return false;
-    }
-    task.forms[formId].vroot.cgMin();
-    return true;
-}
-exports.min = min;
 function get(formId) {
     const taskId = getTaskId(formId);
     if (taskId === 0) {
         return null;
     }
-    const item = clickgo.task.list[taskId].forms[formId];
+    const item = task.list[taskId].forms[formId];
     return {
         'taskId': taskId,
         'title': item.vroot.$refs.form.title,
@@ -378,7 +300,7 @@ function send(formId, obj) {
     if (taskId === 0) {
         return;
     }
-    const item = clickgo.task.list[taskId].forms[formId];
+    const item = task.list[taskId].forms[formId];
     if (!item.vroot.cgReceive) {
         return;
     }
@@ -386,12 +308,12 @@ function send(formId, obj) {
 }
 exports.send = send;
 function getList(taskId) {
-    if (!clickgo.task.list[taskId]) {
+    if (!task.list[taskId]) {
         return {};
     }
     const list = {};
-    for (const fid in clickgo.task.list[taskId].forms) {
-        const item = clickgo.task.list[taskId].forms[fid];
+    for (const fid in task.list[taskId].forms) {
+        const item = task.list[taskId].forms[fid];
         list[fid] = {
             'taskId': taskId,
             'title': item.vroot.$refs.form.title,
@@ -425,10 +347,10 @@ function changeFocus(formId = 0) {
             }
             else {
                 const taskId = parseInt((_a = focusElement.getAttribute('data-task-id')) !== null && _a !== void 0 ? _a : '0');
-                const task = clickgo.task.list[taskId];
-                task.forms[dataFormIdNumber].vapp._container.removeAttribute('data-cg-focus');
-                task.forms[dataFormIdNumber].vroot._cgFocus = false;
-                clickgo.core.trigger('formBlurred', taskId, dataFormIdNumber);
+                const t = task.list[taskId];
+                t.forms[dataFormIdNumber].vapp._container.removeAttribute('data-cg-focus');
+                t.forms[dataFormIdNumber].vroot._cgFocus = false;
+                core.trigger('formBlurred', taskId, dataFormIdNumber);
             }
         }
         else {
@@ -442,63 +364,63 @@ function changeFocus(formId = 0) {
     if (!el) {
         return;
     }
-    if (el.childNodes.item(0).dataset.cgMin !== undefined) {
+    if (el.children.item(0).dataset.cgMin !== undefined) {
         min(formId);
     }
     const taskId = parseInt((_b = el.getAttribute('data-task-id')) !== null && _b !== void 0 ? _b : '0');
-    const task = clickgo.task.list[taskId];
-    if (!task.forms[formId].vroot.cgCustomZIndex) {
-        if (task.forms[formId].vroot.cgTopMost) {
-            task.forms[formId].vroot.$refs.form.setPropData('zIndex', ++lastTopZIndex);
+    const t = task.list[taskId];
+    if (!t.forms[formId].vroot.cgCustomZIndex) {
+        if (t.forms[formId].vroot.cgTopMost) {
+            t.forms[formId].vroot.$refs.form.setPropData('zIndex', ++info.topLastZIndex);
         }
         else {
-            task.forms[formId].vroot.$refs.form.setPropData('zIndex', ++lastZIndex);
+            t.forms[formId].vroot.$refs.form.setPropData('zIndex', ++info.lastZIndex);
         }
     }
-    const maskFor = task.forms[formId].vroot.$refs.form.maskFor;
-    if ((typeof maskFor === 'number') && (clickgo.task.list[taskId].forms[maskFor])) {
+    const maskFor = t.forms[formId].vroot.$refs.form.maskFor;
+    if ((typeof maskFor === 'number') && (task.list[taskId].forms[maskFor])) {
         if (get(maskFor).stateMin) {
             min(maskFor);
         }
-        if (!clickgo.task.list[taskId].forms[maskFor].vroot.cgCustomZIndex) {
-            if (clickgo.task.list[taskId].forms[maskFor].vroot.cgTopMost) {
-                clickgo.task.list[taskId].forms[maskFor].vroot.$refs.form.setPropData('zIndex', ++lastTopZIndex);
+        if (!task.list[taskId].forms[maskFor].vroot.cgCustomZIndex) {
+            if (task.list[taskId].forms[maskFor].vroot.cgTopMost) {
+                task.list[taskId].forms[maskFor].vroot.$refs.form.setPropData('zIndex', ++info.topLastZIndex);
             }
             else {
-                clickgo.task.list[taskId].forms[maskFor].vroot.$refs.form.setPropData('zIndex', ++lastZIndex);
+                task.list[taskId].forms[maskFor].vroot.$refs.form.setPropData('zIndex', ++info.lastZIndex);
             }
         }
-        clickgo.task.list[taskId].forms[maskFor].vapp._container.dataset.cgFocus = '';
-        clickgo.task.list[taskId].forms[maskFor].vroot._cgFocus = true;
-        clickgo.core.trigger('formFocused', taskId, maskFor);
-        clickgo.task.list[taskId].forms[maskFor].vroot.cgFlash();
+        task.list[taskId].forms[maskFor].vapp._container.dataset.cgFocus = '';
+        task.list[taskId].forms[maskFor].vroot._cgFocus = true;
+        core.trigger('formFocused', taskId, maskFor);
+        clickgo.form.flash(maskFor, taskId);
     }
     else {
-        task.forms[formId].vapp._container.dataset.cgFocus = '';
-        task.forms[formId].vroot._cgFocus = true;
-        clickgo.core.trigger('formFocused', taskId, formId);
+        t.forms[formId].vapp._container.dataset.cgFocus = '';
+        t.forms[formId].vroot._cgFocus = true;
+        core.trigger('formFocused', taskId, formId);
     }
 }
 exports.changeFocus = changeFocus;
-function getMaxZIndexFormID(out = {}) {
+function getMaxZIndexID(out = {}) {
     var _a, _b;
     let zIndex = 0;
     let formId = null;
-    for (let i = 0; i < formListElement.children.length; ++i) {
-        const root = formListElement.children.item(i);
-        const formWrap = root.children.item(0);
-        const z = parseInt(formWrap.style.zIndex);
+    for (let i = 0; i < elements.list.children.length; ++i) {
+        const formWrap = elements.list.children.item(i);
+        const formInner = formWrap.children.item(0);
+        const z = parseInt(formInner.style.zIndex);
         if (z > 9999999) {
             continue;
         }
-        if (formWrap.dataset.cgMin !== undefined) {
+        if (formInner.dataset.cgMin !== undefined) {
             continue;
         }
-        const tid = parseInt(root.getAttribute('data-task-id'));
+        const tid = parseInt(formWrap.getAttribute('data-task-id'));
         if ((_a = out.taskIds) === null || _a === void 0 ? void 0 : _a.includes(tid)) {
             continue;
         }
-        const fid = parseInt(root.getAttribute('data-form-id'));
+        const fid = parseInt(formWrap.getAttribute('data-form-id'));
         if ((_b = out.formIds) === null || _b === void 0 ? void 0 : _b.includes(fid)) {
             continue;
         }
@@ -509,10 +431,10 @@ function getMaxZIndexFormID(out = {}) {
     }
     return formId;
 }
-exports.getMaxZIndexFormID = getMaxZIndexFormID;
+exports.getMaxZIndexID = getMaxZIndexID;
 function getRectByBorder(border) {
     var _a, _b, _c, _d;
-    const area = getAvailArea();
+    const area = core.getAvailArea();
     let width, height, left, top;
     if (typeof border === 'string') {
         switch (border) {
@@ -592,21 +514,21 @@ function getRectByBorder(border) {
 }
 exports.getRectByBorder = getRectByBorder;
 function showCircular(x, y) {
-    circularElement.style.transition = 'none';
+    elements.circular.style.transition = 'none';
     requestAnimationFrame(function () {
-        circularElement.style.width = '6px';
-        circularElement.style.height = '6px';
-        circularElement.style.left = (x - 3).toString() + 'px';
-        circularElement.style.top = (y - 3).toString() + 'px';
-        circularElement.style.opacity = '1';
+        elements.circular.style.width = '6px';
+        elements.circular.style.height = '6px';
+        elements.circular.style.left = (x - 3).toString() + 'px';
+        elements.circular.style.top = (y - 3).toString() + 'px';
+        elements.circular.style.opacity = '1';
         requestAnimationFrame(function () {
-            circularElement.style.transition = 'all .3s ease-out';
+            elements.circular.style.transition = 'all .3s ease-out';
             requestAnimationFrame(function () {
-                circularElement.style.width = '60px';
-                circularElement.style.height = '60px';
-                circularElement.style.left = (x - 30).toString() + 'px';
-                circularElement.style.top = (y - 30).toString() + 'px';
-                circularElement.style.opacity = '0';
+                elements.circular.style.width = '60px';
+                elements.circular.style.height = '60px';
+                elements.circular.style.left = (x - 30).toString() + 'px';
+                elements.circular.style.top = (y - 30).toString() + 'px';
+                elements.circular.style.opacity = '0';
             });
         });
     });
@@ -614,43 +536,43 @@ function showCircular(x, y) {
 exports.showCircular = showCircular;
 function moveRectangle(border) {
     var _a, _b, _c, _d;
-    const dataReady = (_a = rectangleElement.getAttribute('data-ready')) !== null && _a !== void 0 ? _a : '0';
+    const dataReady = (_a = elements.rectangle.getAttribute('data-ready')) !== null && _a !== void 0 ? _a : '0';
     if (dataReady === '0') {
         return;
     }
-    const dataBorder = (_b = rectangleElement.getAttribute('data-border')) !== null && _b !== void 0 ? _b : '';
+    const dataBorder = (_b = elements.rectangle.getAttribute('data-border')) !== null && _b !== void 0 ? _b : '';
     const setDataBorder = typeof border === 'string' ? border : `o-${border.left}-${(_c = border.top) !== null && _c !== void 0 ? _c : 'n'}-${border.width}-${(_d = border.height) !== null && _d !== void 0 ? _d : 'n'}`;
     if (dataBorder === setDataBorder) {
         return;
     }
-    rectangleElement.setAttribute('data-dir', setDataBorder);
+    elements.rectangle.setAttribute('data-dir', setDataBorder);
     const pos = getRectByBorder(border);
     const width = pos.width - 20;
     const height = pos.height - 20;
     const left = pos.left + 10;
     const top = pos.top + 10;
     if (width !== undefined && height !== undefined && left !== undefined && top !== undefined) {
-        rectangleElement.style.width = width.toString() + 'px';
-        rectangleElement.style.height = height.toString() + 'px';
-        rectangleElement.style.left = left.toString() + 'px';
-        rectangleElement.style.top = top.toString() + 'px';
+        elements.rectangle.style.width = width.toString() + 'px';
+        elements.rectangle.style.height = height.toString() + 'px';
+        elements.rectangle.style.left = left.toString() + 'px';
+        elements.rectangle.style.top = top.toString() + 'px';
     }
 }
 exports.moveRectangle = moveRectangle;
 function showRectangle(x, y, border) {
-    rectangleElement.style.transition = 'none';
+    elements.rectangle.style.transition = 'none';
     requestAnimationFrame(function () {
-        rectangleElement.style.width = '5px';
-        rectangleElement.style.height = '5px';
-        rectangleElement.style.left = (x - 10).toString() + 'px';
-        rectangleElement.style.top = (y - 10).toString() + 'px';
-        rectangleElement.style.opacity = '1';
-        rectangleElement.setAttribute('data-ready', '0');
-        rectangleElement.setAttribute('data-dir', '');
+        elements.rectangle.style.width = '5px';
+        elements.rectangle.style.height = '5px';
+        elements.rectangle.style.left = (x - 10).toString() + 'px';
+        elements.rectangle.style.top = (y - 10).toString() + 'px';
+        elements.rectangle.style.opacity = '1';
+        elements.rectangle.setAttribute('data-ready', '0');
+        elements.rectangle.setAttribute('data-dir', '');
         requestAnimationFrame(function () {
-            rectangleElement.style.transition = 'all .2s ease-out';
+            elements.rectangle.style.transition = 'all .2s ease-out';
             requestAnimationFrame(function () {
-                rectangleElement.setAttribute('data-ready', '1');
+                elements.rectangle.setAttribute('data-ready', '1');
                 moveRectangle(border);
             });
         });
@@ -658,20 +580,42 @@ function showRectangle(x, y, border) {
 }
 exports.showRectangle = showRectangle;
 function hideRectangle() {
-    rectangleElement.style.opacity = '0';
+    elements.rectangle.style.opacity = '0';
 }
 exports.hideRectangle = hideRectangle;
-const systemElement = document.createElement('div');
-systemElement.id = 'cg-system';
-systemElement.addEventListener('contextmenu', function (e) {
-    e.preventDefault();
-});
-wrapElement.appendChild(systemElement);
-systemElement.addEventListener('touchmove', function (e) {
-    e.preventDefault();
-}, {
-    'passive': false
-});
+function showDrag() {
+    elements.drag.style.opacity = '1';
+}
+exports.showDrag = showDrag;
+function moveDrag(opt) {
+    if (opt.top) {
+        elements.drag.style.top = opt.top.toString() + 'px';
+    }
+    if (opt.left) {
+        elements.drag.style.left = opt.left.toString() + 'px';
+    }
+    if (opt.width) {
+        elements.drag.style.width = opt.width.toString() + 'px';
+    }
+    if (opt.height) {
+        elements.drag.style.height = opt.height.toString() + 'px';
+    }
+    if (opt.icon) {
+        if (elements.dragIcon) {
+            elements.dragIcon.style.display = 'block';
+        }
+    }
+    else {
+        if (elements.dragIcon) {
+            elements.dragIcon.style.display = 'none';
+        }
+    }
+}
+exports.moveDrag = moveDrag;
+function hideDrag() {
+    elements.drag.style.opacity = '0';
+}
+exports.hideDrag = hideDrag;
 let notifyTop = 10;
 let notifyId = 0;
 function notify(opt) {
@@ -679,8 +623,8 @@ function notify(opt) {
     const nid = ++notifyId;
     let timeout = 5000;
     if (opt.timeout !== undefined) {
-        if (opt.timeout <= 0 || opt.timeout > 300000) {
-            timeout = 300000;
+        if (opt.timeout <= 0 || opt.timeout > 30000) {
+            timeout = 30000;
         }
         else {
             timeout = opt.timeout;
@@ -695,17 +639,17 @@ function notify(opt) {
     el.setAttribute('data-notifyid', nid.toString());
     el.style.transform = `translateY(${y}px) translateX(280px)`;
     el.style.opacity = '1';
-    el.innerHTML = `<div class="cg-system-icon cg-system-icon-${clickgo.tool.escapeHTML((_a = opt.type) !== null && _a !== void 0 ? _a : 'primary')}"></div>
+    el.innerHTML = `<div class="cg-system-icon cg-system-icon-${tool.escapeHTML((_a = opt.type) !== null && _a !== void 0 ? _a : 'primary')}"></div>
 <div style="flex: 1;">
-    <div class="cg-system-notify-title">${clickgo.tool.escapeHTML(opt.title)}</div>
-    <div class="cg-system-notify-content">${clickgo.tool.escapeHTML(opt.content).replace(/\r\n/g, '\n').replace(/\r/g, '\n').replace(/\n/g, '<br>')}</div>
+    <div class="cg-system-notify-title">${tool.escapeHTML(opt.title)}</div>
+    <div class="cg-system-notify-content">${tool.escapeHTML(opt.content).replace(/\r\n/g, '\n').replace(/\r/g, '\n').replace(/\n/g, '<br>')}</div>
     ${opt.progress ? '<div class="cg-system-notify-progress"></div>' : ''}
 </div>`;
     if (opt.icon) {
         el.childNodes.item(0).style.background = 'url(' + opt.icon + ')';
         el.childNodes.item(0).style.backgroundSize = '16px';
     }
-    systemElement.appendChild(el);
+    elements.system.appendChild(el);
     notifyTop += el.offsetHeight + 10;
     requestAnimationFrame(function () {
         el.style.transform = `translateY(${y}px) translateX(-10px)`;
@@ -718,7 +662,7 @@ function notify(opt) {
 }
 exports.notify = notify;
 function notifyProgress(notifyId, per) {
-    const el = systemElement.querySelector(`[data-notifyid="${notifyId}"]`);
+    const el = elements.system.querySelector(`[data-notifyid="${notifyId}"]`);
     if (!el) {
         return;
     }
@@ -742,7 +686,7 @@ function notifyProgress(notifyId, per) {
 }
 exports.notifyProgress = notifyProgress;
 function hideNotify(notifyId) {
-    const el = systemElement.querySelector(`[data-notifyid="${notifyId}"]`);
+    const el = elements.system.querySelector(`[data-notifyid="${notifyId}"]`);
     if (!el) {
         return;
     }
@@ -769,11 +713,11 @@ function hideNotify(notifyId) {
 }
 exports.hideNotify = hideNotify;
 function appendToPop(el) {
-    popListElement.appendChild(el);
+    elements.popList.appendChild(el);
 }
 exports.appendToPop = appendToPop;
 function removeFromPop(el) {
-    popListElement.removeChild(el);
+    elements.popList.removeChild(el);
 }
 exports.removeFromPop = removeFromPop;
 let lastShowPopTime = 0;
@@ -797,25 +741,25 @@ function showPop(el, pop, direction, opt = {}) {
     if (el.dataset.cgPopOpen !== undefined) {
         return;
     }
-    const parentPop = clickgo.dom.findParentByData(el, 'cg-pop');
+    const parentPop = dom.findParentByData(el, 'cg-pop');
     if (parentPop) {
-        for (let i = 0; i < popList.length; ++i) {
-            if (popList[i] !== parentPop) {
+        for (let i = 0; i < popInfo.list.length; ++i) {
+            if (popInfo.list[i] !== parentPop) {
                 continue;
             }
-            if (!popElList[i + 1]) {
+            if (!popInfo.elList[i + 1]) {
                 continue;
             }
-            hidePop(popElList[i + 1]);
+            hidePop(popInfo.elList[i + 1]);
         }
     }
     else {
         hidePop();
     }
     if (!pop) {
-        popElList.push(el);
+        popInfo.elList.push(el);
         el.dataset.cgPopOpen = '';
-        el.dataset.cgLevel = (popElList.length - 1).toString();
+        el.dataset.cgLevel = (popInfo.elList.length - 1).toString();
         return;
     }
     const width = (_a = opt.size.width) !== null && _a !== void 0 ? _a : (pop ? pop.offsetWidth : 0);
@@ -880,27 +824,27 @@ function showPop(el, pop, direction, opt = {}) {
     }
     pop.style.left = left.toString() + 'px';
     pop.style.top = top.toString() + 'px';
-    pop.style.zIndex = (++lastPopZIndex).toString();
+    pop.style.zIndex = (++popInfo.lastZIndex).toString();
     if (opt.size.width) {
         pop.style.width = opt.size.width.toString() + 'px';
     }
     if (opt.size.height) {
         pop.style.height = opt.size.height.toString() + 'px';
     }
-    popList.push(pop);
-    popElList.push(el);
+    popInfo.list.push(pop);
+    popInfo.elList.push(el);
     pop.dataset.cgOpen = '';
-    pop.dataset.cgLevel = (popList.length - 1).toString();
+    pop.dataset.cgLevel = (popInfo.list.length - 1).toString();
     el.dataset.cgPopOpen = '';
-    el.dataset.cgLevel = (popElList.length - 1).toString();
+    el.dataset.cgLevel = (popInfo.elList.length - 1).toString();
 }
 exports.showPop = showPop;
 function hidePop(pop) {
     if (!pop) {
-        if (popElList.length === 0) {
+        if (popInfo.elList.length === 0) {
             return;
         }
-        hidePop(popElList[0]);
+        hidePop(popInfo.elList[0]);
         return;
     }
     let isPop = false;
@@ -916,30 +860,30 @@ function hidePop(pop) {
     if (level === -1) {
         return;
     }
-    if (popElList[level + 1]) {
-        hidePop(popElList[level + 1]);
+    if (popInfo.elList[level + 1]) {
+        hidePop(popInfo.elList[level + 1]);
     }
     if (isPop) {
         pop.removeAttribute('data-cg-open');
         pop.removeAttribute('data-cg-level');
-        popElList[level].removeAttribute('data-cg-pop-open');
-        popElList[level].removeAttribute('data-cg-level');
+        popInfo.elList[level].removeAttribute('data-cg-pop-open');
+        popInfo.elList[level].removeAttribute('data-cg-level');
     }
     else {
-        if (popList[level]) {
-            popList[level].removeAttribute('data-cg-open');
-            popList[level].removeAttribute('data-cg-level');
+        if (popInfo.list[level]) {
+            popInfo.list[level].removeAttribute('data-cg-open');
+            popInfo.list[level].removeAttribute('data-cg-level');
         }
         pop.removeAttribute('data-cg-pop-open');
         pop.removeAttribute('data-cg-level');
     }
-    popList.splice(level);
-    popElList.splice(level);
+    popInfo.list.splice(level);
+    popInfo.elList.splice(level);
 }
 exports.hidePop = hidePop;
 function doFocusAndPopEvent(e) {
     var _a, _b;
-    if (clickgo.dom.hasTouchButMouse(e)) {
+    if (dom.hasTouchButMouse(e)) {
         return;
     }
     const target = e.target;
@@ -989,16 +933,16 @@ function remove(formId) {
     const taskId = getTaskId(formId);
     let title = '';
     let icon = '';
-    if (clickgo.task.list[taskId].forms[formId]) {
-        title = clickgo.task.list[taskId].forms[formId].vroot.$refs.form.title;
-        icon = clickgo.task.list[taskId].forms[formId].vroot.$refs.form.iconData;
-        if (clickgo.task.list[taskId].forms[formId].vroot.$refs.form.maskFrom !== undefined) {
-            const fid = clickgo.task.list[taskId].forms[formId].vroot.$refs.form.maskFrom;
-            clickgo.task.list[taskId].forms[fid].vroot.$refs.form.maskFor = undefined;
+    if (task.list[taskId].forms[formId]) {
+        title = task.list[taskId].forms[formId].vroot.$refs.form.title;
+        icon = task.list[taskId].forms[formId].vroot.$refs.form.iconData;
+        if (task.list[taskId].forms[formId].vroot.$refs.form.maskFrom !== undefined) {
+            const fid = task.list[taskId].forms[formId].vroot.$refs.form.maskFrom;
+            task.list[taskId].forms[fid].vroot.$refs.form.maskFor = undefined;
         }
-        clickgo.task.list[taskId].forms[formId].vroot.$refs.form.$data.showData = false;
+        task.list[taskId].forms[formId].vroot.$refs.form.$data.showData = false;
         setTimeout(function () {
-            const fid = getMaxZIndexFormID({
+            const fid = getMaxZIndexID({
                 'formIds': [formId]
             });
             if (fid) {
@@ -1007,16 +951,16 @@ function remove(formId) {
             else {
                 changeFocus();
             }
-            if (!clickgo.task.list[taskId]) {
+            if (!task.list[taskId]) {
                 return true;
             }
-            clickgo.task.list[taskId].forms[formId].vapp.unmount();
-            clickgo.task.list[taskId].forms[formId].vapp._container.remove();
-            delete clickgo.task.list[taskId].forms[formId];
-            clickgo.dom.removeStyle(taskId, 'form', formId);
-            clickgo.core.trigger('formRemoved', taskId, formId, title, icon);
-            if (Object.keys(clickgo.task.list[taskId].forms).length === 0) {
-                clickgo.task.end(taskId);
+            task.list[taskId].forms[formId].vapp.unmount();
+            task.list[taskId].forms[formId].vapp._container.remove();
+            delete task.list[taskId].forms[formId];
+            dom.removeStyle(taskId, 'form', formId);
+            core.trigger('formRemoved', taskId, formId, title, icon);
+            if (Object.keys(task.list[taskId].forms).length === 0) {
+                task.end(taskId);
             }
         }, 100);
         return true;
@@ -1026,18 +970,67 @@ function remove(formId) {
     }
 }
 exports.remove = remove;
-function create(taskId, opt) {
-    var _a, _b, _c, _d, _e;
+function getForm(taskId, formId) {
+    if (!taskId) {
+        return null;
+    }
+    const t = task.list[taskId];
+    if (!t) {
+        return null;
+    }
+    if (!formId) {
+        return null;
+    }
+    const form = t.forms[formId];
+    if (!form) {
+        return null;
+    }
+    return form;
+}
+function create(opt) {
+    var _a, _b, _c, _d;
     return __awaiter(this, void 0, void 0, function* () {
-        const cgPath = (_b = (_a = opt.file) !== null && _a !== void 0 ? _a : opt.path) !== null && _b !== void 0 ? _b : '/';
-        const task = clickgo.task.list[taskId];
-        if (!task) {
+        if (typeof opt === 'string') {
+            return 0;
+        }
+        if (!opt.taskId) {
             return -1;
         }
-        const appPkg = task.appPkg;
-        const formId = ++lastFormId;
+        if (opt.path && (!opt.path.endsWith('/') || !((_a = opt.path) === null || _a === void 0 ? void 0 : _a.startsWith('/')))) {
+            return -2;
+        }
+        const taskId = opt.taskId;
+        const t = task.list[taskId];
+        if (!t) {
+            return -3;
+        }
+        let form = null;
+        if (opt.formId) {
+            if (!t.forms[opt.formId]) {
+                return -4;
+            }
+            form = t.forms[opt.formId];
+        }
+        let topMost = (_b = opt.topMost) !== null && _b !== void 0 ? _b : false;
+        if (form === null || form === void 0 ? void 0 : form.vroot.cgTopMost) {
+            topMost = true;
+        }
+        if (opt.mask && form) {
+            form.vroot.$refs.form.maskFor = 0;
+        }
+        const base = form ? form.vroot.cgPath : '/';
+        let filePath = '', newBase = '';
+        if (opt.file) {
+            filePath = clickgo.tool.urlResolve(base, opt.file);
+            newBase = filePath.slice(0, filePath.lastIndexOf('/') + 1);
+        }
+        else {
+            newBase = (_c = opt.path) !== null && _c !== void 0 ? _c : base;
+        }
+        const app = t.app;
+        const formId = ++info.lastId;
         const invoke = {};
-        if (clickgo.safe) {
+        if (clickgo.getSafe()) {
             invoke.window = undefined;
             invoke.loader = undefined;
             const ks = Object.getOwnPropertyNames(window);
@@ -1055,50 +1048,6 @@ function create(taskId, opt) {
                     continue;
                 }
                 invoke[k] = undefined;
-            }
-            invoke.clickgo = {
-                'core': {},
-                'dom': {},
-                'form': {},
-                'task': {},
-                'tool': {},
-                'zip': {}
-            };
-            for (const k in clickgo.core) {
-                if (!['config', 'getNativeListeners', 'regModule', 'initModules', 'getModule', 'trigger'].includes(k)) {
-                    continue;
-                }
-                invoke.clickgo.core[k] = clickgo.core[k];
-            }
-            for (const k in clickgo.dom) {
-                if (!['setGlobalCursor', 'hasTouchButMouse', 'getStyleCount', 'getSize', 'watchSize', 'watch', 'watchStyle', 'bindDown', 'bindGesture', 'bindLong', 'is', 'bindMove', 'bindResize', 'findParentByData', 'siblings', 'siblingsData', 'fullscreen'].includes(k)) {
-                    continue;
-                }
-                invoke.clickgo.dom[k] = clickgo.dom[k];
-            }
-            for (const k in clickgo.form) {
-                if (!['taskInfo', 'setTask', 'clearTask', 'getAvailArea', 'getTaskId', 'min', 'get', 'send', 'getList', 'changeFocus', 'getMaxZIndexFormID', 'getRectByBorder', 'showCircular', 'moveRectangle', 'showRectangle', 'hideRectangle', 'notify', 'notifyProgress', 'hideNotify', 'showPop', 'hidePop', 'remove'].includes(k)) {
-                    continue;
-                }
-                invoke.clickgo.form[k] = clickgo.form[k];
-            }
-            for (const k in clickgo.task) {
-                if (!['get', 'getList', 'run', 'end'].includes(k)) {
-                    continue;
-                }
-                invoke.clickgo.task[k] = clickgo.task[k];
-            }
-            for (const k in clickgo.tool) {
-                if (!['blob2ArrayBuffer', 'clone', 'sleep', 'purify', 'getMimeByPath', 'rand', 'getBoolean', 'escapeHTML', 'request', 'parseUrl', 'urlResolve', 'blob2Text', 'blob2DataUrl', 'execCommand'].includes(k)) {
-                    continue;
-                }
-                invoke.clickgo.tool[k] = clickgo.tool[k];
-            }
-            for (const k in clickgo.zip) {
-                if (!['get'].includes(k)) {
-                    continue;
-                }
-                invoke.clickgo.zip[k] = clickgo.zip[k];
             }
             invoke.console = {
                 log: function (message, ...optionalParams) {
@@ -1128,8 +1077,519 @@ function create(taskId, opt) {
             if (navigator.clipboard) {
                 invoke.navigator.clipboard = navigator.clipboard;
             }
+            invoke.invokeClickgo = {
+                'control': {
+                    read: function (blob) {
+                        return clickgo.control.read(blob);
+                    }
+                },
+                'core': {
+                    'config': clickgo.core.config,
+                    initModules: function (names) {
+                        return clickgo.core.initModules(names);
+                    },
+                    getModule: function (name) {
+                        return clickgo.core.getModule(name);
+                    },
+                    setSystemEventListener: function (name, func, fid) {
+                        clickgo.core.setSystemEventListener(name, func, fid !== null && fid !== void 0 ? fid : formId, taskId);
+                    },
+                    removeSystemEventListener: function (name, fid) {
+                        clickgo.core.removeSystemEventListener(name, fid !== null && fid !== void 0 ? fid : formId, taskId);
+                    },
+                    trigger: function (name, param1 = '', param2 = '') {
+                        if (!['formTitleChanged', 'formIconChanged', 'formStateMinChanged', 'formStateMaxChanged', 'formShowChanged'].includes(name)) {
+                            return;
+                        }
+                        clickgo.core.trigger(name, taskId, formId, param1, param2);
+                    },
+                    readApp: function (blob) {
+                        return clickgo.core.readApp(blob);
+                    },
+                    getAvailArea: function () {
+                        return clickgo.core.getAvailArea();
+                    }
+                },
+                'dom': {
+                    setGlobalCursor: function (type) {
+                        clickgo.dom.setGlobalCursor(type);
+                    },
+                    hasTouchButMouse: function (e) {
+                        return clickgo.dom.hasTouchButMouse(e);
+                    },
+                    getStyleCount: function (taskId, type) {
+                        return clickgo.dom.getStyleCount(taskId, type);
+                    },
+                    getSize: function (el) {
+                        return clickgo.dom.getSize(el);
+                    },
+                    watchSize: function (el, cb, immediate = false) {
+                        return clickgo.dom.watchSize(el, cb, immediate, taskId);
+                    },
+                    unwatchSize: function (el) {
+                        clickgo.dom.unwatchSize(el, taskId);
+                    },
+                    clearWatchSize() {
+                        clickgo.dom.clearWatchSize(taskId);
+                    },
+                    watch: function (el, cb, mode = 'default', immediate = false) {
+                        clickgo.dom.watch(el, cb, mode, immediate, taskId);
+                    },
+                    unwatch: function (el) {
+                        clickgo.dom.unwatch(el, taskId);
+                    },
+                    clearWatch: function () {
+                        clickgo.dom.clearWatch(taskId);
+                    },
+                    watchStyle: function (el, name, cb, immediate = false) {
+                        clickgo.dom.watchStyle(el, name, cb, immediate);
+                    },
+                    isWatchStyle: function (el) {
+                        return clickgo.dom.isWatchStyle(el);
+                    },
+                    bindDown: function (oe, opt) {
+                        clickgo.dom.bindDown(oe, opt);
+                    },
+                    bindGesture: function (e, opt) {
+                        clickgo.dom.bindGesture(e, opt);
+                    },
+                    bindLong: function (e, long) {
+                        clickgo.dom.bindLong(e, long);
+                    },
+                    bindDrag: function (e, opt) {
+                        clickgo.dom.bindDrag(e, opt);
+                    },
+                    'is': clickgo.dom.is,
+                    bindMove: function (e, opt) {
+                        return clickgo.dom.bindMove(e, opt);
+                    },
+                    bindResize: function (e, opt) {
+                        clickgo.dom.bindResize(e, opt);
+                    },
+                    findParentByData: function (el, name) {
+                        return clickgo.dom.findParentByData(el, name);
+                    },
+                    findParentByClass: function (el, name) {
+                        return clickgo.dom.findParentByClass(el, name);
+                    },
+                    siblings: function (el) {
+                        return clickgo.dom.siblings(el);
+                    },
+                    siblingsData: function (el, name) {
+                        return clickgo.dom.siblingsData(el, name);
+                    },
+                    fullscreen: function () {
+                        return clickgo.dom.fullscreen();
+                    }
+                },
+                'form': {
+                    min: function (fid) {
+                        return clickgo.form.min(fid !== null && fid !== void 0 ? fid : formId);
+                    },
+                    max: function max(fid) {
+                        return clickgo.form.max(fid !== null && fid !== void 0 ? fid : formId);
+                    },
+                    close: function (fid) {
+                        return clickgo.form.close(fid !== null && fid !== void 0 ? fid : formId);
+                    },
+                    bindResize: function (e, border) {
+                        clickgo.form.bindResize(e, border);
+                    },
+                    bindDrag: function (e) {
+                        clickgo.form.bindDrag(e);
+                    },
+                    getTaskId: function (fid) {
+                        return clickgo.form.getTaskId(fid);
+                    },
+                    get: function (fid) {
+                        return clickgo.form.get(fid);
+                    },
+                    send: function (fid, obj) {
+                        obj.taskId = taskId;
+                        obj.formId = formId;
+                        clickgo.form.send(fid, obj);
+                    },
+                    getList: function (tid) {
+                        return clickgo.form.getList(tid);
+                    },
+                    changeFocus: function (fid = 0) {
+                        clickgo.form.changeFocus(fid);
+                    },
+                    getMaxZIndexID: function (out) {
+                        return clickgo.form.getMaxZIndexID(out);
+                    },
+                    getRectByBorder: function (border) {
+                        return clickgo.form.getRectByBorder(border);
+                    },
+                    showCircular: function (x, y) {
+                        clickgo.form.showCircular(x, y);
+                    },
+                    moveRectangle: function (border) {
+                        clickgo.form.moveRectangle(border);
+                    },
+                    showRectangle: function (x, y, border) {
+                        clickgo.form.showRectangle(x, y, border);
+                    },
+                    hideRectangle: function () {
+                        clickgo.form.hideRectangle();
+                    },
+                    showDrag: function () {
+                        clickgo.form.showDrag();
+                    },
+                    moveDrag: function (opt) {
+                        clickgo.form.moveDrag(opt);
+                    },
+                    hideDrag: function () {
+                        clickgo.form.hideDrag();
+                    },
+                    notify: function (opt) {
+                        return clickgo.form.notify(opt);
+                    },
+                    notifyProgress: function (notifyId, per) {
+                        clickgo.form.notifyProgress(notifyId, per);
+                    },
+                    hideNotify: function (notifyId) {
+                        clickgo.form.hideNotify(notifyId);
+                    },
+                    showPop: function (el, pop, direction, opt = {}) {
+                        clickgo.form.showPop(el, pop, direction, opt);
+                    },
+                    hidePop: function (pop) {
+                        clickgo.form.hidePop(pop);
+                    },
+                    create: function (opt) {
+                        if (typeof opt === 'string') {
+                            opt = {
+                                'file': opt
+                            };
+                        }
+                        opt.taskId = taskId;
+                        opt.formId = formId;
+                        return clickgo.form.create(opt);
+                    },
+                    dialog: function (opt) {
+                        if (typeof opt === 'string') {
+                            opt = {
+                                'content': opt
+                            };
+                        }
+                        opt.formId = formId;
+                        return clickgo.form.dialog(opt);
+                    },
+                    confirm: function (opt) {
+                        if (typeof opt === 'string') {
+                            opt = {
+                                'content': opt
+                            };
+                        }
+                        opt.formId = formId;
+                        return clickgo.form.confirm(opt);
+                    },
+                    setTopMost: function (top, opt = {}) {
+                        opt.taskId = taskId;
+                        opt.formId = formId;
+                        clickgo.form.setTopMost(top, opt);
+                    },
+                    flash: function (fid) {
+                        clickgo.form.flash(fid !== null && fid !== void 0 ? fid : formId, taskId);
+                    },
+                    show: function (fid) {
+                        clickgo.form.show(fid !== null && fid !== void 0 ? fid : formId, taskId);
+                    },
+                    hide: function (fid) {
+                        clickgo.form.hide(fid !== null && fid !== void 0 ? fid : formId, taskId);
+                    }
+                },
+                'fs': {
+                    getContent: function (path, options = {}) {
+                        if (!options.files) {
+                            options.files = t.files;
+                        }
+                        if (!options.current) {
+                            options.current = t.path;
+                        }
+                        return clickgo.fs.getContent(path, options);
+                    },
+                    putContent: function (path, data, options = {}) {
+                        if (!options.current) {
+                            options.current = t.path;
+                        }
+                        return clickgo.fs.putContent(path, data, options);
+                    },
+                    readLink: function (path, options = {}) {
+                        if (!options.current) {
+                            options.current = t.path;
+                        }
+                        return clickgo.fs.readLink(path, options);
+                    },
+                    symlink: function (fPath, linkPath, options = {}) {
+                        if (!options.current) {
+                            options.current = t.path;
+                        }
+                        return clickgo.fs.symlink(fPath, linkPath, options);
+                    },
+                    unlink: function (path, options = {}) {
+                        if (!options.current) {
+                            options.current = t.path;
+                        }
+                        return clickgo.fs.unlink(path, options);
+                    },
+                    stats: function (path, options = {}) {
+                        if (!options.files) {
+                            options.files = t.files;
+                        }
+                        if (!options.current) {
+                            options.current = t.path;
+                        }
+                        return clickgo.fs.stats(path, options);
+                    },
+                    isDir: function (path, options = {}) {
+                        if (!options.files) {
+                            options.files = t.files;
+                        }
+                        if (!options.current) {
+                            options.current = t.path;
+                        }
+                        return clickgo.fs.isDir(path, options);
+                    },
+                    isFile: function (path, options = {}) {
+                        if (!options.files) {
+                            options.files = t.files;
+                        }
+                        if (!options.current) {
+                            options.current = t.path;
+                        }
+                        return clickgo.fs.isFile(path, options);
+                    },
+                    mkdir: function (path, mode, options = {}) {
+                        if (!options.current) {
+                            options.current = t.path;
+                        }
+                        return clickgo.fs.mkdir(path, mode, options);
+                    },
+                    rmdir: function (path, options = {}) {
+                        if (!options.current) {
+                            options.current = t.path;
+                        }
+                        return clickgo.fs.rmdir(path, options);
+                    },
+                    rmdirDeep: function (path, options = {}) {
+                        if (!options.current) {
+                            options.current = t.path;
+                        }
+                        return clickgo.fs.rmdirDeep(path, options);
+                    },
+                    chmod: function (path, mod, options = {}) {
+                        if (!options.current) {
+                            options.current = t.path;
+                        }
+                        return clickgo.fs.chmod(path, mod, options);
+                    },
+                    rename(oldPath, newPath, options = {}) {
+                        if (!options.current) {
+                            options.current = t.path;
+                        }
+                        return clickgo.fs.rename(oldPath, newPath, options);
+                    },
+                    readDir(path, options = {}) {
+                        if (!options.files) {
+                            options.files = t.files;
+                        }
+                        if (!options.current) {
+                            options.current = t.path;
+                        }
+                        return clickgo.fs.readDir(path, options);
+                    },
+                    copyFolder(from, to, options = {}) {
+                        if (!options.current) {
+                            options.current = t.path;
+                        }
+                        return clickgo.fs.copyFolder(from, to, options);
+                    },
+                    copyFile(src, dest, options = {}) {
+                        if (!options.current) {
+                            options.current = t.path;
+                        }
+                        return clickgo.fs.copyFile(src, dest, options);
+                    }
+                },
+                'native': {
+                    getListeners: function () {
+                        return clickgo.native.getListeners();
+                    },
+                    send: function (name, param, handler) {
+                        return clickgo.native.send(name, param, handler, taskId);
+                    },
+                    on: function (name, handler, id, once = false) {
+                        clickgo.native.on(name, handler, id, once, taskId);
+                    },
+                    once: function (name, handler, id) {
+                        clickgo.native.once(name, handler, id, taskId);
+                    },
+                    off: function (name, handler) {
+                        clickgo.native.off(name, handler, taskId);
+                    },
+                    clearListener: function () {
+                        clickgo.native.clearListener(taskId);
+                    }
+                },
+                'task': {
+                    onFrame: function (fun, opt = {}) {
+                        opt.taskId = taskId;
+                        opt.formId = formId;
+                        return clickgo.task.onFrame(fun, opt);
+                    },
+                    offFrame: function (ft, opt = {}) {
+                        opt.taskId = taskId;
+                        clickgo.task.offFrame(ft, opt);
+                    },
+                    get: function (tid) {
+                        return clickgo.task.get(tid);
+                    },
+                    getList: function () {
+                        return clickgo.task.getList();
+                    },
+                    run: function (url, opt = {}) {
+                        opt.taskId = taskId;
+                        return clickgo.task.run(url, opt);
+                    },
+                    end: function (tid) {
+                        return clickgo.task.end(tid !== null && tid !== void 0 ? tid : taskId);
+                    },
+                    loadLocaleData: function (lang, data, pre = '') {
+                        clickgo.task.loadLocaleData(lang, data, pre, taskId);
+                    },
+                    loadLocale: function (lang, path) {
+                        return clickgo.task.loadLocale(lang, path, taskId, formId);
+                    },
+                    clearLocale: function () {
+                        clickgo.task.clearLocale(taskId);
+                    },
+                    setLocale: function (lang, path) {
+                        return clickgo.task.setLocale(lang, path, taskId, formId);
+                    },
+                    setLocaleLang: function (lang) {
+                        clickgo.task.setLocaleLang(lang, taskId);
+                    },
+                    clearLocaleLang: function () {
+                        clickgo.task.clearLocaleLang(taskId);
+                    },
+                    createTimer: function (fun, delay, opt = {}) {
+                        opt.taskId = taskId;
+                        if (!opt.formId) {
+                            opt.formId = formId;
+                        }
+                        return clickgo.task.createTimer(fun, delay, opt);
+                    },
+                    removeTimer: function (timer) {
+                        clickgo.task.removeTimer(timer, taskId);
+                    },
+                    sleep: function (fun, delay) {
+                        return clickgo.task.sleep(fun, delay, taskId, formId);
+                    },
+                    systemTaskInfo: clickgo.task.systemTaskInfo,
+                    setSystem: function (fid) {
+                        return clickgo.task.setSystem(fid !== null && fid !== void 0 ? fid : formId, taskId);
+                    },
+                    clearSystem: function () {
+                        return clickgo.task.clearSystem(taskId);
+                    }
+                },
+                'theme': {
+                    read: function (blob) {
+                        return clickgo.theme.read(blob);
+                    },
+                    load: function (theme) {
+                        return __awaiter(this, void 0, void 0, function* () {
+                            if (!theme) {
+                                return false;
+                            }
+                            return clickgo.theme.load(theme, taskId);
+                        });
+                    },
+                    remove: function (name) {
+                        return clickgo.theme.remove(name, taskId);
+                    },
+                    clear: function () {
+                        return clickgo.theme.clear(taskId);
+                    },
+                    setGlobal: function (theme) {
+                        return clickgo.theme.setGlobal(theme);
+                    },
+                    clearGlobal: function () {
+                        clickgo.theme.clearGlobal();
+                    }
+                },
+                'tool': {
+                    blob2ArrayBuffer: function (blob) {
+                        return clickgo.tool.blob2ArrayBuffer(blob);
+                    },
+                    clone: function (obj) {
+                        return clickgo.tool.clone(obj);
+                    },
+                    sleep: function (ms = 0) {
+                        return clickgo.tool.sleep(ms);
+                    },
+                    purify: function (text) {
+                        return clickgo.tool.purify(text);
+                    },
+                    createObjectURL: function (object) {
+                        return clickgo.tool.createObjectURL(object, taskId);
+                    },
+                    revokeObjectURL: function (url) {
+                        clickgo.tool.revokeObjectURL(url, taskId);
+                    },
+                    rand: function (min, max) {
+                        return clickgo.tool.rand(min, max);
+                    },
+                    'RANDOM_N': clickgo.tool.RANDOM_N,
+                    'RANDOM_U': clickgo.tool.RANDOM_U,
+                    'RANDOM_L': clickgo.tool.RANDOM_L,
+                    'RANDOM_UN': clickgo.tool.RANDOM_UN,
+                    'RANDOM_LN': clickgo.tool.RANDOM_LN,
+                    'RANDOM_LU': clickgo.tool.RANDOM_LU,
+                    'RANDOM_LUN': clickgo.tool.RANDOM_LUN,
+                    'RANDOM_V': clickgo.tool.RANDOM_V,
+                    'RANDOM_LUNS': clickgo.tool.RANDOM_LUNS,
+                    random: function (length = 8, source = clickgo.tool.RANDOM_LN, block = '') {
+                        return clickgo.tool.random(length, source, block);
+                    },
+                    getBoolean: function (param) {
+                        return clickgo.tool.getBoolean(param);
+                    },
+                    escapeHTML: function (html) {
+                        return clickgo.tool.escapeHTML(html);
+                    },
+                    request: function (url, opt) {
+                        return clickgo.tool.request(url, opt);
+                    },
+                    parseUrl: function (url) {
+                        return clickgo.tool.parseUrl(url);
+                    },
+                    urlResolve: function (from, to) {
+                        return clickgo.tool.urlResolve(from, to);
+                    },
+                    blob2Text: function (blob) {
+                        return clickgo.tool.blob2Text(blob);
+                    },
+                    blob2DataUrl: function (blob) {
+                        return clickgo.tool.blob2DataUrl(blob);
+                    },
+                    execCommand: function (ac) {
+                        clickgo.tool.execCommand(ac);
+                    }
+                },
+                'zip': {
+                    get: function (data) {
+                        return clickgo.zip.get(data);
+                    }
+                }
+            };
         }
-        const preprocess = function (code, path) {
+        else {
+            invoke.invokeClickgo = clickgo;
+        }
+        const preprocess = clickgo.getSafe() ? function (code, path) {
             const exec = /eval\W/.exec(code);
             if (exec) {
                 notify({
@@ -1140,333 +1600,35 @@ function create(taskId, opt) {
                 return '';
             }
             return code;
-        };
-        const components = {};
-        for (const controlPath of appPkg.config.controls) {
-            let controlPkg;
-            if (controlPath.startsWith('/clickgo/')) {
-                const path = controlPath.slice(8);
-                if (clickgo.control.clickgoControlPkgs[path + '.cgc']) {
-                    controlPkg = clickgo.control.clickgoControlPkgs[path + '.cgc'];
-                }
-                else {
-                    return -2;
-                }
+        } : undefined;
+        const components = yield control.init(t.id, formId, newBase, preprocess, invoke);
+        if (!components) {
+            if ((form === null || form === void 0 ? void 0 : form.vroot.$refs.form.maskFor) !== undefined) {
+                form.vroot.$refs.form.maskFor = undefined;
             }
-            else if (task.controlPkgs[controlPath + '.cgc']) {
-                controlPkg = task.controlPkgs[controlPath + '.cgc'];
-            }
-            else {
-                return -3;
-            }
-            for (const name in controlPkg) {
-                const item = controlPkg[name];
-                let props = {};
-                let data = {};
-                let methods = {};
-                let computed = {};
-                let watch = {};
-                let beforeCreate = undefined;
-                let created = undefined;
-                let beforeMount = undefined;
-                let mounted = undefined;
-                let beforeUpdate = undefined;
-                let updated = undefined;
-                let beforeUnmount = undefined;
-                let unmounted = undefined;
-                if (item.files[item.config.code + '.js']) {
-                    const expo = loader.require(item.config.code, item.files, {
-                        'dir': '/',
-                        'invoke': invoke,
-                        'preprocess': preprocess
-                    })[0];
-                    if (expo) {
-                        props = expo.props || {};
-                        data = expo.data || {};
-                        methods = expo.methods || {};
-                        computed = expo.computed || {};
-                        watch = expo.watch || {};
-                        beforeCreate = expo.beforeCreate;
-                        created = expo.created;
-                        beforeMount = expo.beforeMount;
-                        mounted = expo.mounted;
-                        beforeUpdate = expo.beforeUpdate;
-                        updated = expo.updated;
-                        beforeUnmount = expo.beforeUnmount;
-                        unmounted = expo.unmounted;
-                    }
-                }
-                let layout = '';
-                let prep = '';
-                if (task.initControls[name]) {
-                    layout = task.initControls[name].layout;
-                    prep = task.initControls[name].prep;
-                }
-                else {
-                    const style = item.files[item.config.style + '.css'];
-                    if (style) {
-                        const r = clickgo.tool.stylePrepend(style);
-                        prep = r.prep;
-                        clickgo.dom.pushStyle(task.id, yield clickgo.tool.styleUrl2ObjectOrDataUrl(item.config.style, r.style, item), 'control', name);
-                    }
-                    layout = item.files[item.config.layout + '.html'];
-                    if (!layout) {
-                        return -4;
-                    }
-                    layout = layout.replace(/^(<[a-zA-Z0-9-]+)( |>)/, '$1 data-cg-control-' + name + '$2');
-                    const prepList = [
-                        'cg-theme-task' + taskId.toString() + '-' + name + '_'
-                    ];
-                    if (prep !== '') {
-                        prepList.push(prep);
-                    }
-                    layout = clickgo.tool.layoutAddTagClassAndReTagName(layout, false);
-                    layout = clickgo.tool.layoutClassPrepend(layout, prepList);
-                    if (layout.includes('<cg-')) {
-                        layout = clickgo.tool.layoutInsertAttr(layout, ':cg-focus=\'cgFocus\'', {
-                            'include': [/^cg-.+/]
-                        });
-                    }
-                    layout = clickgo.tool.eventsAttrWrap(layout);
-                    task.initControls[name] = {
-                        'layout': layout,
-                        'prep': prep
-                    };
-                }
-                props.cgFocus = {
-                    'default': false
-                };
-                computed.taskId = {
-                    get: function () {
-                        return taskId;
-                    },
-                    set: function () {
-                        notify({
-                            'title': 'Error',
-                            'content': `The control tries to modify the system variable "taskId".\nPath: ${this.cgPath}\nControl: ${name}`,
-                            'type': 'danger'
-                        });
-                        return;
-                    }
-                };
-                computed.formId = {
-                    get: function () {
-                        return formId;
-                    },
-                    set: function () {
-                        notify({
-                            'title': 'Error',
-                            'content': `The control tries to modify the system variable "formId".\nPath: ${this.cgPath}\nControl: ${name}`,
-                            'type': 'danger'
-                        });
-                        return;
-                    }
-                };
-                computed.controlName = {
-                    get: function () {
-                        return name;
-                    },
-                    set: function () {
-                        notify({
-                            'title': 'Error',
-                            'content': `The control tries to modify the system variable "controlName".\nPath: ${this.cgPath}\nControl: ${name}`,
-                            'type': 'danger'
-                        });
-                        return;
-                    }
-                };
-                computed.cgPath = {
-                    get: function () {
-                        return cgPath;
-                    },
-                    set: function () {
-                        notify({
-                            'title': 'Error',
-                            'content': `The control tries to modify the system variable "cgPath".\nPath: ${this.cgPath}\nControl: ${name}`,
-                            'type': 'danger'
-                        });
-                        return;
-                    }
-                };
-                computed.cgPrep = {
-                    get: function () {
-                        return prep;
-                    },
-                    set: function () {
-                        notify({
-                            'title': 'Error',
-                            'content': `The control tries to modify the system variable "cgPrep".\nPath: ${this.cgPath}\nControl: ${name}`,
-                            'type': 'danger'
-                        });
-                        return;
-                    }
-                };
-                computed.cgSlots = function () {
-                    return (name = 'default') => {
-                        const d = this.$slots[name];
-                        if (!d) {
-                            return [];
-                        }
-                        const slots = [];
-                        const list = d();
-                        for (const item of list) {
-                            if (typeof item.type === 'symbol') {
-                                for (const item2 of item.children) {
-                                    slots.push(item2);
-                                }
-                            }
-                            else {
-                                slots.push(item);
-                            }
-                        }
-                        return slots;
-                    };
-                };
-                computed.cgLocale = function () {
-                    if (clickgo.task.list[this.taskId].locale.name === '') {
-                        return clickgo.core.config.locale;
-                    }
-                    return clickgo.task.list[this.taskId].locale.name;
-                };
-                computed.l = function () {
-                    return (key, data) => {
-                        var _a, _b, _c, _d, _e, _f;
-                        if (data) {
-                            return (_c = (_b = (_a = data[this.cgLocale]) === null || _a === void 0 ? void 0 : _a[key]) !== null && _b !== void 0 ? _b : data['en'][key]) !== null && _c !== void 0 ? _c : 'LocaleError';
-                        }
-                        else if (this.localeData) {
-                            return (_f = (_e = (_d = this.localeData[this.cgLocale]) === null || _d === void 0 ? void 0 : _d[key]) !== null && _e !== void 0 ? _e : this.localeData['en'][key]) !== null && _f !== void 0 ? _f : 'LocaleError';
-                        }
-                        else {
-                            return 'LocaleError';
-                        }
-                    };
-                };
-                computed.cgParentByName = function () {
-                    return (controlName) => {
-                        let parent = this.$parent;
-                        while (true) {
-                            if (!parent) {
-                                return null;
-                            }
-                            if (parent.controlName === controlName) {
-                                return parent;
-                            }
-                            parent = parent.$parent;
-                        }
-                    };
-                };
-                methods.cgClose = function () {
-                    remove(this.formId);
-                };
-                methods.cgBindFormResize = function (e, border) {
-                    this.cgParentByName('form').resizeMethod(e, border);
-                };
-                methods.cgGetFile = function (path) {
-                    var _a;
-                    return __awaiter(this, void 0, void 0, function* () {
-                        if (path.startsWith('/clickgo/')) {
-                            return clickgo.core.fetchClickGoFile(path.slice(8));
-                        }
-                        else {
-                            path = clickgo.tool.urlResolve(this.cgPath, path);
-                            return (_a = task.appPkg.files[path]) !== null && _a !== void 0 ? _a : null;
-                        }
-                    });
-                };
-                methods.cgGetObjectUrl = function (file) {
-                    file = clickgo.tool.urlResolve(this.cgPath, file);
-                    if (file.startsWith('/clickgo/')) {
-                        return clickgo.cgRootPath + file.slice(9);
-                    }
-                    return clickgo.tool.file2ObjectUrl(file, clickgo.task.list[this.taskId]);
-                };
-                methods.cgGetDataUrl = function (file) {
-                    return __awaiter(this, void 0, void 0, function* () {
-                        const f = yield this.cgGetFile(file);
-                        if (!f) {
-                            return null;
-                        }
-                        return f && f instanceof Blob ? clickgo.tool.blob2DataUrl(f) : null;
-                    });
-                };
-                methods.cgClassPrepend = function (cla) {
-                    if (typeof cla !== 'string') {
-                        return cla;
-                    }
-                    return `cg-theme-task${this.taskId}-${this.controlName}_${cla} ${this.cgPrep}${cla}`;
-                };
-                methods.cgCreateTimer = function (fun, delay, opt = {}) {
-                    return clickgo.task.createTimer(this.taskId, this.formId, fun, delay, opt);
-                };
-                methods.cgRemoveTimer = function (timer) {
-                    clickgo.task.removeTimer(this.taskId, timer);
-                };
-                methods.cgSleep = function (fun, delay) {
-                    return this.cgCreateTimer(fun, delay, {
-                        'count': 1
-                    });
-                };
-                methods.cgOnFrame = function (fun, opt = {}) {
-                    return clickgo.task.onFrame(this.taskId, this.formId, fun, opt);
-                };
-                methods.cgOffFrame = function (ft) {
-                    clickgo.task.offFrame(this.taskId, ft);
-                };
-                methods.cgAllowEvent = function (e) {
-                    return clickgo.dom.allowEvent(e);
-                };
-                components['cg-' + name] = {
-                    'template': layout,
-                    'props': props,
-                    'data': function () {
-                        return clickgo.tool.clone(data);
-                    },
-                    'methods': methods,
-                    'computed': computed,
-                    'watch': watch,
-                    'beforeCreate': beforeCreate,
-                    'created': created,
-                    'beforeMount': beforeMount,
-                    'mounted': function () {
-                        return __awaiter(this, void 0, void 0, function* () {
-                            yield this.$nextTick();
-                            mounted === null || mounted === void 0 ? void 0 : mounted.call(this);
-                        });
-                    },
-                    'beforeUpdate': beforeUpdate,
-                    'updated': function () {
-                        return __awaiter(this, void 0, void 0, function* () {
-                            yield this.$nextTick();
-                            updated === null || updated === void 0 ? void 0 : updated.call(this);
-                        });
-                    },
-                    'beforeUnmount': function () {
-                        beforeUnmount === null || beforeUnmount === void 0 ? void 0 : beforeUnmount.call(this);
-                    },
-                    'unmounted': function () {
-                        return __awaiter(this, void 0, void 0, function* () {
-                            yield this.$nextTick();
-                            unmounted === null || unmounted === void 0 ? void 0 : unmounted.call(this);
-                        });
-                    }
-                };
-            }
+            return -5;
         }
         let style = opt.style;
         let layout = opt.layout;
-        if (opt.file) {
-            const layoutFile = appPkg.files[opt.file + '.xml'];
+        if (filePath) {
+            if (!filePath.startsWith('/package/')) {
+                return -6;
+            }
+            const file = filePath.slice(8);
+            const layoutFile = app.files[file + '.xml'];
             if (layoutFile) {
                 layout = layoutFile.replace(/^\ufeff/, '');
             }
-            const styleFile = appPkg.files[opt.file + '.css'];
+            const styleFile = app.files[file + '.css'];
             if (styleFile) {
                 style = styleFile.replace(/^\ufeff/, '');
             }
         }
         if (layout === undefined) {
-            return -5;
+            if ((form === null || form === void 0 ? void 0 : form.vroot.$refs.form.maskFor) !== undefined) {
+                form.vroot.$refs.form.maskFor = undefined;
+            }
+            return -7;
         }
         let data = {};
         let methods = {};
@@ -1480,16 +1642,24 @@ function create(taskId, opt) {
         let updated = undefined;
         let beforeUnmount = undefined;
         let unmounted = undefined;
+        let receive = undefined;
         let expo = opt.code;
-        if (opt.file && appPkg.files[opt.file + '.js']) {
-            expo = loader.require(opt.file, appPkg.files, {
-                'dir': '/',
-                'invoke': invoke,
-                'preprocess': preprocess
-            })[0];
+        if ((filePath === null || filePath === void 0 ? void 0 : filePath.startsWith('/package/')) && app.files[filePath.slice(8) + '.js']) {
+            const file = filePath.slice(8);
+            if (app.files[file + '.js']) {
+                app.files['/invoke/clickgo.js'] = `module.exports = invokeClickgo;`;
+                expo = loader.require(file, app.files, {
+                    'dir': '/',
+                    'invoke': invoke,
+                    'preprocess': preprocess,
+                    'map': {
+                        'clickgo': '/invoke/clickgo'
+                    }
+                })[0];
+            }
         }
         if (expo) {
-            data = (_c = expo.data) !== null && _c !== void 0 ? _c : {};
+            data = (_d = expo.data) !== null && _d !== void 0 ? _d : {};
             methods = expo.methods || {};
             computed = expo.computed || {};
             watch = expo.watch || {};
@@ -1501,26 +1671,27 @@ function create(taskId, opt) {
             updated = expo.updated;
             beforeUnmount = expo.beforeUnmount;
             unmounted = expo.unmounted;
+            receive = expo.receive;
         }
         let prep = '';
         if (style) {
-            const r = clickgo.tool.stylePrepend(style);
+            const r = tool.stylePrepend(style);
             prep = r.prep;
-            style = yield clickgo.tool.styleUrl2ObjectOrDataUrl((_e = (_d = opt.file) !== null && _d !== void 0 ? _d : opt.path) !== null && _e !== void 0 ? _e : '/', r.style, task);
+            style = yield tool.styleUrl2DataUrl(newBase, r.style, app.files);
         }
-        layout = clickgo.tool.purify(layout);
-        layout = clickgo.tool.layoutAddTagClassAndReTagName(layout, true);
-        layout = clickgo.tool.layoutInsertAttr(layout, ':cg-focus=\'cgFocus\'', {
+        layout = tool.purify(layout);
+        layout = tool.layoutAddTagClassAndReTagName(layout, true);
+        layout = tool.layoutInsertAttr(layout, ':cg-focus=\'cgFocus\'', {
             'include': [/^cg-.+/]
         });
-        const prepList = ['cg-task' + taskId.toString() + '_'];
+        const prepList = ['cg-task' + opt.taskId.toString() + '_'];
         if (prep !== '') {
             prepList.push(prep);
         }
-        layout = clickgo.tool.layoutClassPrepend(layout, prepList);
-        layout = clickgo.tool.eventsAttrWrap(layout);
-        formListElement.insertAdjacentHTML('beforeend', `<div class="cg-form-wrap" data-form-id="${formId.toString()}" data-task-id="${taskId.toString()}"></div>`);
-        const el = formListElement.children.item(formListElement.children.length - 1);
+        layout = tool.layoutClassPrepend(layout, prepList);
+        layout = tool.eventsAttrWrap(layout);
+        elements.list.insertAdjacentHTML('beforeend', `<div class="cg-form-wrap" data-form-id="${formId.toString()}" data-task-id="${opt.taskId.toString()}"></div>`);
+        const el = elements.list.children.item(elements.list.children.length - 1);
         computed.taskId = {
             get: function () {
                 return taskId;
@@ -1576,7 +1747,7 @@ function create(taskId, opt) {
         };
         computed.cgPath = {
             get: function () {
-                return cgPath;
+                return newBase;
             },
             set: function () {
                 notify({
@@ -1614,7 +1785,7 @@ function create(taskId, opt) {
                 return;
             }
         };
-        if (opt.topMost) {
+        if (topMost) {
             data._cgTopMost = true;
         }
         else {
@@ -1634,286 +1805,16 @@ function create(taskId, opt) {
             }
         };
         computed.cgLocale = function () {
-            if (clickgo.task.list[this.taskId].locale.name === '') {
-                return clickgo.core.config.locale;
+            if (task.list[this.taskId].locale.lang === '') {
+                return core.config.locale;
             }
-            return clickgo.task.list[this.taskId].locale.name;
+            return task.list[this.taskId].locale.lang;
         };
         computed.l = function () {
             return (key) => {
                 var _a, _b, _c, _d;
-                return (_d = (_b = (_a = clickgo.task.list[this.taskId].locale.data[this.cgLocale]) === null || _a === void 0 ? void 0 : _a[key]) !== null && _b !== void 0 ? _b : (_c = clickgo.task.list[this.taskId].locale.data['en']) === null || _c === void 0 ? void 0 : _c[key]) !== null && _d !== void 0 ? _d : 'LocaleError';
+                return (_d = (_b = (_a = task.list[this.taskId].locale.data[this.cgLocale]) === null || _a === void 0 ? void 0 : _a[key]) !== null && _b !== void 0 ? _b : (_c = task.list[this.taskId].locale.data['en']) === null || _c === void 0 ? void 0 : _c[key]) !== null && _d !== void 0 ? _d : 'LocaleError';
             };
-        };
-        methods.cgCreateForm = function (paramOpt = {}) {
-            var _a;
-            return __awaiter(this, void 0, void 0, function* () {
-                const inOpt = {
-                    'path': this.cgPath
-                };
-                if (typeof paramOpt === 'string') {
-                    inOpt.file = clickgo.tool.urlResolve(this.cgPath, paramOpt);
-                }
-                else {
-                    if (paramOpt.file) {
-                        inOpt.file = clickgo.tool.urlResolve(this.cgPath, paramOpt.file);
-                    }
-                    if (paramOpt.path) {
-                        inOpt.path = paramOpt.path;
-                    }
-                    if (paramOpt.code) {
-                        inOpt.code = paramOpt.code;
-                    }
-                    if (paramOpt.layout) {
-                        inOpt.layout = paramOpt.layout;
-                    }
-                    if (paramOpt.style) {
-                        inOpt.style = paramOpt.style;
-                    }
-                    if (paramOpt.topMost) {
-                        inOpt.topMost = paramOpt.topMost;
-                    }
-                    if (paramOpt.mask) {
-                        this.$refs.form.maskFor = true;
-                    }
-                }
-                if (this.cgTopMost) {
-                    inOpt.topMost = true;
-                }
-                const form = yield create(taskId, inOpt);
-                if (typeof form === 'number') {
-                    if (this.$refs.form) {
-                        this.$refs.form.maskFor = undefined;
-                    }
-                    return form;
-                }
-                else {
-                    if ((_a = this.$refs.form) === null || _a === void 0 ? void 0 : _a.maskFor) {
-                        this.$refs.form.maskFor = form.id;
-                        form.vroot.$refs.form.maskFrom = this.formId;
-                    }
-                    return form.id;
-                }
-            });
-        };
-        methods.cgClose = function () {
-            remove(this.formId);
-        };
-        methods.cgMax = function () {
-            this.$refs.form.maxMethod();
-        };
-        methods.cgMin = function () {
-            this.$refs.form.minMethod();
-        };
-        methods.cgBindFormDrag = function (e) {
-            this.$refs.form.moveMethod(e, true);
-        };
-        methods.cgBindFormResize = function (e, border) {
-            this.$refs.form.resizeMethod(e, border);
-        };
-        methods.cgSetSystemEventListener = function (name, func) {
-            clickgo.task.list[this.taskId].forms[this.formId].events[name] = func;
-        };
-        methods.cgRemoveSystemEventListener = function (name) {
-            delete clickgo.task.list[this.taskId].forms[this.formId].events[name];
-        };
-        methods.cgDialog = function (opt) {
-            return new Promise((resolve) => {
-                var _a, _b, _c;
-                if (typeof opt === 'string' || typeof opt === 'number') {
-                    opt = {
-                        'content': opt
-                    };
-                }
-                if (opt.buttons === undefined) {
-                    opt.buttons = [(_b = (_a = localeData[this.cgLocale]) === null || _a === void 0 ? void 0 : _a.ok) !== null && _b !== void 0 ? _b : localeData['en'].ok];
-                }
-                this.cgCreateForm({
-                    'layout': `<form title="${(_c = opt.title) !== null && _c !== void 0 ? _c : 'dialog'}" width="auto" height="auto" :min="false" :max="false" :resize="false" border="${opt.title ? 'normal' : 'plain'}" direction="v"><dialog :buttons="buttons" @select="select">${opt.content}</dialog></form>`,
-                    'code': {
-                        data: {
-                            'buttons': opt.buttons
-                        },
-                        methods: {
-                            select: function (button) {
-                                var _a, _b;
-                                const event = {
-                                    'go': true,
-                                    preventDefault: function () {
-                                        this.go = false;
-                                    }
-                                };
-                                (_b = (_a = opt).select) === null || _b === void 0 ? void 0 : _b.call(_a, event, button);
-                                if (event.go) {
-                                    this.cgClose();
-                                    resolve(button);
-                                }
-                            }
-                        }
-                    },
-                    'mask': true
-                }).catch((e) => {
-                    throw e;
-                });
-            });
-        };
-        methods.cgConfirm = function (content, cancel = false) {
-            var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k;
-            return __awaiter(this, void 0, void 0, function* () {
-                const buttons = [(_b = (_a = localeData[this.cgLocale]) === null || _a === void 0 ? void 0 : _a.yes) !== null && _b !== void 0 ? _b : localeData['en'].yes, (_d = (_c = localeData[this.cgLocale]) === null || _c === void 0 ? void 0 : _c.no) !== null && _d !== void 0 ? _d : localeData['en'].no];
-                if (cancel) {
-                    buttons.push((_f = (_e = localeData[this.cgLocale]) === null || _e === void 0 ? void 0 : _e.cancel) !== null && _f !== void 0 ? _f : localeData['en'].cancel);
-                }
-                const res = yield this.cgDialog({
-                    'content': content,
-                    'buttons': buttons
-                });
-                if (res === ((_h = (_g = localeData[this.cgLocale]) === null || _g === void 0 ? void 0 : _g.yes) !== null && _h !== void 0 ? _h : localeData['en'].yes)) {
-                    return true;
-                }
-                if (res === ((_k = (_j = localeData[this.cgLocale]) === null || _j === void 0 ? void 0 : _j.cancel) !== null && _k !== void 0 ? _k : localeData['en'].cancel)) {
-                    return 0;
-                }
-                return false;
-            });
-        };
-        methods.cgGetFile = function (path) {
-            var _a;
-            return __awaiter(this, void 0, void 0, function* () {
-                if (path.startsWith('/clickgo/')) {
-                    return clickgo.core.fetchClickGoFile(path.slice(8));
-                }
-                else {
-                    path = clickgo.tool.urlResolve(this.cgPath, path);
-                    return (_a = task.appPkg.files[path]) !== null && _a !== void 0 ? _a : null;
-                }
-            });
-        };
-        methods.cgGetObjectUrl = function (file) {
-            file = clickgo.tool.urlResolve(this.cgPath, file);
-            if (file.startsWith('/clickgo/')) {
-                return clickgo.cgRootPath + file.slice(9);
-            }
-            return clickgo.tool.file2ObjectUrl(file, clickgo.task.list[this.taskId]);
-        };
-        methods.cgGetDataUrl = function (file) {
-            return __awaiter(this, void 0, void 0, function* () {
-                const f = yield this.cgGetFile(file);
-                if (!f) {
-                    return null;
-                }
-                return f && f instanceof Blob ? clickgo.tool.blob2DataUrl(f) : null;
-            });
-        };
-        methods.cgLoadTheme = function (path) {
-            return __awaiter(this, void 0, void 0, function* () {
-                path = clickgo.tool.urlResolve(this.cgPath, path);
-                return clickgo.theme.load(this.taskId, path);
-            });
-        };
-        methods.cgRemoveTheme = function (path) {
-            return __awaiter(this, void 0, void 0, function* () {
-                path = clickgo.tool.urlResolve(this.cgPath, path);
-                yield clickgo.theme.remove(this.taskId, path);
-            });
-        };
-        methods.cgSetTheme = function (path) {
-            return __awaiter(this, void 0, void 0, function* () {
-                path = clickgo.tool.urlResolve(this.cgPath, path);
-                yield clickgo.theme.clear(this.taskId);
-                yield clickgo.theme.load(this.taskId, path);
-            });
-        };
-        methods.cgClearTheme = function () {
-            return __awaiter(this, void 0, void 0, function* () {
-                yield clickgo.theme.clear(this.taskId);
-            });
-        };
-        methods.cgSetGlobalTheme = function (path) {
-            return __awaiter(this, void 0, void 0, function* () {
-                if (typeof path === 'string') {
-                    const blob = yield this.cgGetFile(path);
-                    if (blob instanceof Blob) {
-                        yield clickgo.theme.setGlobal(blob);
-                    }
-                }
-                else {
-                    yield clickgo.theme.setGlobal(path);
-                }
-            });
-        };
-        methods.cgClearGlobalTheme = function () {
-            return __awaiter(this, void 0, void 0, function* () {
-                yield clickgo.theme.clearGlobal();
-            });
-        };
-        methods.cgSetTopMost = function (top) {
-            this.$data._cgCustomZIndex = false;
-            if (top) {
-                this.$data._cgTopMost = true;
-                if (!this.cgFocus) {
-                    changeFocus(this.formId);
-                }
-                else {
-                    this.$refs.form.setPropData('zIndex', ++lastTopZIndex);
-                }
-            }
-            else {
-                this.$data._cgTopMost = false;
-                this.$refs.form.setPropData('zIndex', ++lastZIndex);
-            }
-        };
-        methods.cgFlash = function () {
-            var _a;
-            if (!this.cgFocus) {
-                changeFocus(this.formId);
-            }
-            if ((_a = this.$refs.form) === null || _a === void 0 ? void 0 : _a.flashTimer) {
-                clearTimeout(this.$refs.form.flashTimer);
-                this.$refs.form.flashTimer = undefined;
-            }
-            this.$refs.form.flashTimer = setTimeout(() => {
-                if (this.$refs.form) {
-                    this.$refs.form.flashTimer = undefined;
-                }
-            }, 1000);
-            clickgo.core.trigger('formFlash', taskId, formId);
-        };
-        methods.cgShow = function () {
-            this.$refs.form.$data.showData = true;
-        };
-        methods.cgHide = function () {
-            this.$refs.form.$data.showData = false;
-        };
-        methods.cgLoadLocale = function (name, path) {
-            path = clickgo.tool.urlResolve(this.cgPath, path + '.json');
-            if (!task.files[path]) {
-                return false;
-            }
-            try {
-                const data = JSON.parse(task.files[path]);
-                this.cgLoadLocaleData(name, data);
-                return true;
-            }
-            catch (_a) {
-                return false;
-            }
-        };
-        methods.cgSetLocale = function (name, path) {
-            this.cgClearLocale();
-            return this.cgLoadLocale(name, path);
-        };
-        methods.cgClearLocale = function () {
-            clickgo.task.list[this.taskId].locale.data = {};
-        };
-        methods.cgLoadLocaleData = function (name, data, pre = '') {
-            clickgo.task.loadLocaleData(this.taskId, name, data, pre);
-        };
-        methods.cgSetLocaleName = function (name) {
-            clickgo.task.list[this.taskId].locale.name = name;
-        };
-        methods.cgClearLocaleName = function () {
-            clickgo.task.list[this.taskId].locale.name = '';
         };
         methods.cgClassPrepend = function (cla) {
             if (typeof cla !== 'string') {
@@ -1921,48 +1822,33 @@ function create(taskId, opt) {
             }
             return `cg-task${this.taskId}_${cla} ${this.cgPrep}${cla}`;
         };
-        methods.cgCreateTimer = function (fun, delay, opt = {}) {
-            return clickgo.task.createTimer(this.taskId, this.formId, fun, delay, opt);
-        };
-        methods.cgRemoveTimer = function (timer) {
-            clickgo.task.removeTimer(this.taskId, timer);
-        };
-        methods.cgSleep = function (fun, delay) {
-            return this.cgCreateTimer(fun, delay, {
-                'count': 1
-            });
-        };
-        methods.cgOnFrame = function (fun, opt = {}) {
-            return clickgo.task.onFrame(this.taskId, this.formId, fun, opt);
-        };
-        methods.cgOffFrame = function (ft) {
-            clickgo.task.offFrame(this.taskId, ft);
-        };
         methods.cgAllowEvent = function (e) {
-            return clickgo.dom.allowEvent(e);
+            return dom.allowEvent(e);
+        };
+        methods.cgReceive = function (obj) {
+            receive === null || receive === void 0 ? void 0 : receive.call(this, obj);
         };
         if (style) {
-            clickgo.dom.pushStyle(taskId, style, 'form', formId);
+            dom.pushStyle(taskId, style, 'form', formId);
         }
         const rtn = yield new Promise(function (resolve) {
             const vapp = Vue.createApp({
                 'template': layout.replace(/^<cg-form/, '<cg-form ref="form"'),
                 'data': function () {
-                    return clickgo.tool.clone(data);
+                    return tool.clone(data);
                 },
                 'methods': methods,
                 'computed': computed,
                 'watch': watch,
-                'components': components,
                 'beforeCreate': beforeCreate,
                 'created': created,
                 'beforeMount': beforeMount,
                 'mounted': function () {
-                    var _a;
                     return __awaiter(this, void 0, void 0, function* () {
                         yield this.$nextTick();
                         if (this.$refs.form.icon !== '') {
-                            this.$refs.form.iconData = (_a = yield this.cgGetDataUrl(this.$refs.form.icon)) !== null && _a !== void 0 ? _a : '';
+                            const icon = yield clickgo.fs.getContent(this.$refs.form.icon);
+                            this.$refs.form.iconData = (icon instanceof Blob) ? yield clickgo.tool.blob2DataUrl(icon) : '';
                         }
                         resolve({
                             'vapp': vapp,
@@ -1983,40 +1869,46 @@ function create(taskId, opt) {
             vapp.config.errorHandler = function (err, vm, info) {
                 notify({
                     'title': 'Runtime Error',
-                    'content': `Message: ${err.message}\nTask id: ${vm.taskId}\nForm id: ${vm.formId}`,
+                    'content': `Message: ${err.message}\ntask id: ${vm.taskId}\nForm id: ${vm.formId}`,
                     'type': 'danger'
                 });
-                clickgo.core.trigger('error', vm.taskId, vm.formId, err, info);
+                core.trigger('error', vm.taskId, vm.formId, err, info);
             };
             for (const key in components) {
                 vapp.component(key, components[key]);
             }
             vapp.mount(el);
         });
-        const form = {
+        const nform = {
             'id': formId,
             'vapp': rtn.vapp,
             'vroot': rtn.vroot,
-            'win': null,
             'events': {}
         };
-        task.forms[formId] = form;
-        yield clickgo.tool.sleep(34);
+        t.forms[formId] = nform;
+        if (opt.mask && form) {
+            form.vroot.$refs.form.maskFor = formId;
+            nform.vroot.$refs.form.maskFrom = form.id;
+        }
+        yield tool.sleep(34);
         if (mounted) {
             try {
-                yield mounted.call(rtn.vroot);
+                yield mounted.call(rtn.vroot, opt.data);
             }
             catch (err) {
-                clickgo.core.trigger('error', rtn.vroot.taskId, rtn.vroot.formId, err, 'Create form mounted error.');
-                task.forms[formId] = undefined;
-                delete task.forms[formId];
+                if ((nform === null || nform === void 0 ? void 0 : nform.vroot.$refs.form.maskFor) !== undefined) {
+                    nform.vroot.$refs.form.maskFor = undefined;
+                }
+                core.trigger('error', rtn.vroot.taskId, rtn.vroot.formId, err, 'Create form mounted error.');
+                t.forms[formId] = undefined;
+                delete t.forms[formId];
                 rtn.vapp.unmount();
                 rtn.vapp._container.remove();
-                clickgo.dom.removeStyle(rtn.vroot.taskId, 'form', rtn.vroot.formId);
-                return -6;
+                dom.removeStyle(rtn.vroot.taskId, 'form', rtn.vroot.formId);
+                return -8;
             }
         }
-        const area = getAvailArea();
+        const area = core.getAvailArea();
         if (!rtn.vroot.$refs.form.stateMaxData) {
             if (rtn.vroot.$refs.form.left === -1) {
                 rtn.vroot.$refs.form.setPropData('left', (area.width - rtn.vroot.$el.offsetWidth) / 2);
@@ -2029,14 +1921,164 @@ function create(taskId, opt) {
             rtn.vroot._cgCustomZIndex = true;
         }
         if (rtn.vroot.$refs.form.$data.show !== false) {
-            rtn.vroot.cgShow();
+            rtn.vroot.$refs.form.$data.showData = true;
         }
-        clickgo.core.trigger('formCreated', taskId, formId, rtn.vroot.$refs.form.title, rtn.vroot.$refs.form.iconData);
+        core.trigger('formCreated', taskId, formId, rtn.vroot.$refs.form.title, rtn.vroot.$refs.form.iconData);
         changeFocus(formId);
-        return form;
+        return nform;
     });
 }
 exports.create = create;
+function dialog(opt) {
+    return new Promise(function (resolve) {
+        var _a, _b, _c;
+        if (typeof opt === 'string') {
+            opt = {
+                'content': opt
+            };
+        }
+        const formId = opt.formId;
+        if (!formId) {
+            resolve('');
+            return;
+        }
+        const taskId = getTaskId(formId);
+        const t = task.list[taskId];
+        if (!t) {
+            resolve('');
+            return;
+        }
+        const locale = t.forms[formId].vroot.cgLocale;
+        if (opt.buttons === undefined) {
+            opt.buttons = [(_b = (_a = info.locale[locale]) === null || _a === void 0 ? void 0 : _a.ok) !== null && _b !== void 0 ? _b : info.locale['en'].ok];
+        }
+        create({
+            'taskId': taskId,
+            'formId': formId,
+            'layout': `<form title="${(_c = opt.title) !== null && _c !== void 0 ? _c : 'dialog'}" width="auto" height="auto" :min="false" :max="false" :resize="false" border="${opt.title ? 'normal' : 'plain'}" direction="v"><dialog :buttons="buttons" @select="select">${opt.content}</dialog></form>`,
+            'code': {
+                data: {
+                    'buttons': opt.buttons
+                },
+                methods: {
+                    select: function (button) {
+                        var _a, _b;
+                        const event = {
+                            'go': true,
+                            preventDefault: function () {
+                                this.go = false;
+                            }
+                        };
+                        (_b = (_a = opt).select) === null || _b === void 0 ? void 0 : _b.call(_a, event, button);
+                        if (event.go) {
+                            close(this.formId);
+                            resolve(button);
+                        }
+                    }
+                }
+            },
+            'mask': true
+        }).catch((e) => {
+            throw e;
+        });
+    });
+}
+exports.dialog = dialog;
+function confirm(opt) {
+    var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k;
+    return __awaiter(this, void 0, void 0, function* () {
+        if (typeof opt === 'string') {
+            opt = {
+                'content': opt
+            };
+        }
+        const formId = opt.formId;
+        if (!formId) {
+            return false;
+        }
+        const taskId = getTaskId(formId);
+        const t = task.list[taskId];
+        if (!t) {
+            return false;
+        }
+        const locale = t.forms[formId].vroot.cgLocale;
+        const buttons = [(_b = (_a = info.locale[locale]) === null || _a === void 0 ? void 0 : _a.yes) !== null && _b !== void 0 ? _b : info.locale['en'].yes, (_d = (_c = info.locale[locale]) === null || _c === void 0 ? void 0 : _c.no) !== null && _d !== void 0 ? _d : info.locale['en'].no];
+        if (opt.cancel) {
+            buttons.push((_f = (_e = info.locale[locale]) === null || _e === void 0 ? void 0 : _e.cancel) !== null && _f !== void 0 ? _f : info.locale['en'].cancel);
+        }
+        const res = yield dialog({
+            'formId': formId,
+            'content': opt.content,
+            'buttons': buttons
+        });
+        if (res === ((_h = (_g = info.locale[locale]) === null || _g === void 0 ? void 0 : _g.yes) !== null && _h !== void 0 ? _h : info.locale['en'].yes)) {
+            return true;
+        }
+        if (res === ((_k = (_j = info.locale[locale]) === null || _j === void 0 ? void 0 : _j.cancel) !== null && _k !== void 0 ? _k : info.locale['en'].cancel)) {
+            return 0;
+        }
+        return false;
+    });
+}
+exports.confirm = confirm;
+function setTopMost(top, opt = {}) {
+    const form = getForm(opt.taskId, opt.formId);
+    if (!form) {
+        return;
+    }
+    form.vroot.$data._cgCustomZIndex = false;
+    if (top) {
+        form.vroot.$data._cgTopMost = true;
+        if (!form.vroot.cgFocus) {
+            changeFocus(form.id);
+        }
+        else {
+            form.vroot.$refs.form.setPropData('zIndex', ++info.topLastZIndex);
+        }
+    }
+    else {
+        form.vroot.$data._cgTopMost = false;
+        form.vroot.$refs.form.setPropData('zIndex', ++info.lastZIndex);
+    }
+}
+exports.setTopMost = setTopMost;
+function flash(formId, taskId) {
+    var _a;
+    const form = getForm(taskId, formId);
+    if (!form) {
+        return;
+    }
+    if (!form.vroot.cgFocus) {
+        changeFocus(form.id);
+    }
+    if ((_a = form.vroot.$refs.form) === null || _a === void 0 ? void 0 : _a.flashTimer) {
+        clearTimeout(form.vroot.$refs.form.flashTimer);
+        form.vroot.$refs.form.flashTimer = undefined;
+    }
+    form.vroot.$refs.form.flashTimer = setTimeout(() => {
+        if (form.vroot.$refs.form) {
+            form.vroot.$refs.form.flashTimer = undefined;
+        }
+    }, 1000);
+    core.trigger('formFlash', taskId, formId);
+}
+exports.flash = flash;
+function show(formId, taskId) {
+    const form = getForm(taskId, formId);
+    if (!form) {
+        return;
+    }
+    form.vroot.$refs.form.$data.showData = true;
+}
+exports.show = show;
+function hide(formId, taskId) {
+    const form = getForm(taskId, formId);
+    if (!form) {
+        return;
+    }
+    form.vroot.$refs.form.$data.showData = false;
+}
+exports.hide = hide;
 window.addEventListener('resize', function () {
-    refreshTaskPosition();
+    task.refreshSystemPosition();
 });

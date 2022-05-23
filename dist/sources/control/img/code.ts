@@ -1,3 +1,6 @@
+import * as clickgo from 'clickgo';
+import * as types from '~/types/index';
+
 export const props = {
     'src': {
         'default': ''
@@ -10,11 +13,14 @@ export const props = {
 export const data = {
     'imgData': '',
     'width': 0,
-    'height': 0
+    'height': 0,
+
+    // --- watch: src 变更次数 ---
+    'count': 0
 };
 
 export const computed = {
-    'backgroundSize': function(this: IVControl): string | undefined {
+    'backgroundSize': function(this: types.IVControl): string | undefined {
         if (this.mode === 'default') {
             return (this.width as number).toString() + 'px ' + (this.height as number).toString() + 'px';
         }
@@ -26,18 +32,30 @@ export const computed = {
 
 export const watch = {
     'src': {
-        handler: function(this: IVControl): void {
-            if (this.src === '') {
+        handler: async function(this: types.IVControl): Promise<void> {
+            const count = ++this.count;
+            if (typeof this.src !== 'string' || this.src === '') {
                 this.imgData = undefined;
                 return;
             }
             const pre = this.src.slice(0, 6).toLowerCase();
-            if (pre === 'http:/' || pre === 'https:' || pre === 'file:/' || pre === 'data:i') {
+            if (pre === 'file:/') {
+                return;
+            }
+            if (pre === 'http:/' || pre === 'https:' || pre === 'data:i') {
                 this.imgData = `url(${this.src})`;
                 return;
             }
             // --- 本 app 包 ---
-            const t = this.cgGetObjectUrl(this.src);
+            const path = clickgo.tool.urlResolve(this.cgPath, this.src);
+            const blob = await clickgo.fs.getContent(path);
+            if ((count !== this.count) || !blob || typeof blob === 'string') {
+                return;
+            }
+            const t = await clickgo.tool.blob2DataUrl(blob);
+            if (count !== this.count) {
+                return;
+            }
             if (t) {
                 this.imgData = 'url(' + t + ')';
                 return;
@@ -48,7 +66,7 @@ export const watch = {
     }
 };
 
-export const mounted = function(this: IVControl): void {
+export const mounted = function(this: types.IVControl): void {
     clickgo.dom.watchSize(this.$el, (size) => {
         this.width = size.width;
         this.height = size.height;

@@ -1,8 +1,14 @@
+import * as clickgo from 'clickgo';
+import * as types from '~/types/index';
+
 export const props = {
     'tabPosition': {
         'default': 'top'
     },
     'drag': {
+        'default': false
+    },
+    'close': {
         'default': false
     },
 
@@ -18,34 +24,41 @@ export const data = {
     'arrow': false,
     'timer': 0,
 
+    'tabsData': [],
     'oldTabs': undefined,
-    'value': ''
+    'value': '',
+    'rand': 0
 };
 
 export const computed = {
-    'isDrag': function(this: IVControl): boolean {
+    'isDrag': function(this: types.IVControl): boolean {
         return clickgo.tool.getBoolean(this.drag);
     },
+    'isClose': function(this: types.IVControl): boolean {
+        return clickgo.tool.getBoolean(this.close);
+    },
 
-    'tabsComp': function(this: IVControl): any[] {
+    'tabsComp': function(this: types.IVControl): any[] {
         const tabs = [];
-        for (const item of this.tabs) {
+        for (const item of this.tabsData) {
             if (typeof item !== 'object') {
                 tabs.push({
                     'value': item,
-                    'drag': this.isDrag
+                    'drag': this.isDrag,
+                    'close': this.isClose
                 });
             }
             else {
                 tabs.push({
                     'value': item.value ?? 'error',
-                    'drag': item.drag ?? this.isDrag
+                    'drag': item.drag ?? this.isDrag,
+                    'close': item.close ?? this.isClose
                 });
             }
         }
         return tabs;
     },
-    'values': function(this: IVControl): string[] {
+    'values': function(this: types.IVControl): string[] {
         const list = [];
         for (const item of this.tabsComp) {
             list.push(item.value);
@@ -56,7 +69,7 @@ export const computed = {
 
 export const watch = {
     'modelValue': {
-        handler: function(this: IVControl): void {
+        handler: function(this: types.IVControl): void {
             if (this.value !== this.modelValue) {
                 this.value = this.modelValue;
                 this.refreshValue();
@@ -65,7 +78,13 @@ export const watch = {
         'immediate': true
     },
     'tabs': {
-        handler: function(this: IVControl): void {
+        handler: function(this: types.IVControl): void {
+            this.tabsData = this.tabs;
+        },
+        'deep': 'true'
+    },
+    'tabsData': {
+        handler: function(this: types.IVControl): void {
             this.refreshValue();
             this.$nextTick().then(() => {
                 this.onResize(clickgo.dom.getSize(this.$refs.tabs[0]));
@@ -76,7 +95,7 @@ export const watch = {
         'deep': 'true'
     },
     'tabPosition': {
-        handler: async function(this: IVControl): Promise<void> {
+        handler: async function(this: types.IVControl): Promise<void> {
             await this.$nextTick();
             if (this.oldTabs === this.$refs.tabs[0]) {
                 return;
@@ -90,7 +109,7 @@ export const watch = {
 };
 
 export const methods = {
-    wheel: function(this: IVControl, e: WheelEvent): void {
+    wheel: function(this: types.IVControl, e: WheelEvent): void {
         if (this.tabPosition === 'left' || this.tabPosition === 'right') {
             return;
         }
@@ -101,18 +120,57 @@ export const methods = {
         e.preventDefault();
         (this.$refs.tabs[0] as HTMLElement).scrollLeft += e.deltaY;
     },
-    tabClick: function(this: IVControl, e: MouseEvent | TouchEvent, item: Record<string, any>): void {
+    down: function(this: types.IVControl, e: MouseEvent | TouchEvent, index: number): void {
+        const nval = this.tabsComp[index].value;
+        if (this.value !== nval) {
+            this.value = nval;
+            this.$emit('update:modelValue', this.value);
+        }
+        clickgo.dom.bindDrag(e, {
+            'el': (e.currentTarget as HTMLElement).parentNode as HTMLElement,
+            'data': {
+                'index': index,
+                'tab': this.rand
+            }
+        });
+    },
+    tabClose: function(this: types.IVControl, e: MouseEvent, index: number): void {
+        const event = {
+            'go': true,
+            preventDefault: function() {
+                this.go = false;
+            }
+        };
+        this.$emit('close', event, index);
+        if (!event.go) {
+            return;
+        }
+        e.stopPropagation();
+        this.tabsData.splice(index, 1);
+        this.$emit('update:tabs', this.tabsData);
+    },
+    drop: function(this: types.IVControl, e: CustomEvent, index: number): void {
+        if (typeof e.detail.value !== 'object') {
+            return;
+        }
+        if (e.detail.value.tab !== this.rand) {
+            return;
+        }
+        this.tabsData.splice(index, 0, this.tabsData.splice(e.detail.value.index, 1)[0]);
+        this.$emit('update:tabs', this.tabsData);
+    },
+    tabClick: function(this: types.IVControl, e: MouseEvent | TouchEvent, item: Record<string, any>): void {
         this.value = item.value;
         this.$emit('update:modelValue', this.value);
     },
-    longDown: function(this: IVControl, e: MouseEvent | TouchEvent, type: 'start' | 'end'): void {
+    longDown: function(this: types.IVControl, e: MouseEvent | TouchEvent, type: 'start' | 'end'): void {
         if (clickgo.dom.hasTouchButMouse(e)) {
             return;
         }
         const num = type === 'start' ? -5 : 5;
         clickgo.dom.bindDown(e, {
             down: () => {
-                this.timer = this.cgOnFrame(() => {
+                this.timer = clickgo.task.onFrame(() => {
                     if (this.tabPosition === 'top' || this.tabPosition === 'bottom') {
                         (this.$refs.tabs[0] as HTMLElement).scrollLeft += num;
                     }
@@ -122,13 +180,13 @@ export const methods = {
                 });
             },
             up: () => {
-                this.cgOffFrame(this.timer);
+                clickgo.task.offFrame(this.timer);
                 this.timer = 0;
             }
         });
     },
     // --- 检测是否显示箭头 ---
-    onResize: function(this: IVControl, size: ICGDomSize): void {
+    onResize: function(this: types.IVControl, size: types.IDomSize): void {
         if (this.tabPosition === 'top' || this.tabPosition === 'bottom') {
             const width = this.arrow ? Math.round(size.clientWidth) + 40 : Math.round(size.clientWidth);
             if (size.scrollWidth > width) {
@@ -148,7 +206,7 @@ export const methods = {
             }
         }
     },
-    refreshValue: function(this: IVControl): void {
+    refreshValue: function(this: types.IVControl): void {
         // --- 默认选项卡选择 ---
         if (this.value === '') {
             const v = this.values[0] ? this.values[0] : '';
@@ -167,7 +225,9 @@ export const methods = {
     }
 };
 
-export const mounted = function(this: IVControl): void {
+export const mounted = function(this: types.IVControl): void {
+    this.rand = clickgo.tool.random(16);
+    this.tabsData = this.tabs;
     // --- 检测是否显示箭头 ---
     this.oldTabs = this.$refs.tabs[0];
     clickgo.dom.watchSize(this.$refs.tabs[0], (size) => {

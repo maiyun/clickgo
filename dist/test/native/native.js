@@ -73,8 +73,10 @@ function createForm(path) {
                 if (!win) {
                     return;
                 }
-                const isReady = yield win.webContents.executeJavaScript('clickgo.isReady');
-                if (!isReady) {
+                try {
+                    yield win.webContents.executeJavaScript('clickGoNative.isReady');
+                }
+                catch (_a) {
                     setTimeout(function () {
                         timerFunc().catch(function (e) {
                             console.log(e);
@@ -82,7 +84,7 @@ function createForm(path) {
                     }, 100);
                     return;
                 }
-                const list = JSON.parse(yield win.webContents.executeJavaScript('clickgo.core.cgInnerNativeGetSends()'));
+                const list = JSON.parse(yield win.webContents.executeJavaScript('clickGoNative.cgInnerGetSends()'));
                 for (const item of list) {
                     for (const it of listeners[item.name]) {
                         const result = it.handler(item.param);
@@ -91,7 +93,7 @@ function createForm(path) {
                                 if (!win) {
                                     return;
                                 }
-                                win.webContents.executeJavaScript(`clickgo.core.cgInnerNativeReceive(${item.id}, "${item.name}", ${result !== undefined ? (', "' + result.replace(/"/g, '\\"') + '"') : ''})`).catch(function (e) {
+                                win.webContents.executeJavaScript(`clickGoNative.cgInnerReceive(${item.id}, "${item.name}", ${result !== undefined ? (', "' + result.replace(/"/g, '\\"') + '"') : ''})`).catch(function (e) {
                                     console.log(e);
                                 });
                             }).catch(function (e) {
@@ -99,7 +101,7 @@ function createForm(path) {
                             });
                         }
                         else {
-                            win.webContents.executeJavaScript(`clickgo.core.cgInnerNativeReceive(${item.id}, "${item.name}", ${result !== undefined ? (', "' + result.replace(/"/g, '\\"') + '"') : ''})`).catch(function (e) {
+                            win.webContents.executeJavaScript(`clickGoNative.cgInnerReceive(${item.id}, "${item.name}", ${result !== undefined ? (', "' + result.replace(/"/g, '\\"') + '"') : ''})`).catch(function (e) {
                                 console.log(e);
                             });
                         }

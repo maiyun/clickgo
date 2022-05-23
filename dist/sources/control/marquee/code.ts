@@ -1,3 +1,6 @@
+import * as clickgo from 'clickgo';
+import * as types from '~/types/index';
+
 export const props = {
     'direction': {
         'default': 'left'
@@ -23,25 +26,25 @@ export const data = {
 };
 
 export const computed = {
-    'opMargin': function(this: IVControl): string {
+    'opMargin': function(this: types.IVControl): string {
         return this.padding.replace(/(\w+)/g, '-$1');
     },
-    'isScroll': function(this: IVControl): boolean {
+    'isScroll': function(this: types.IVControl): boolean {
         return clickgo.tool.getBoolean(this.scroll);
     },
-    'speedPx': function(this: IVControl): number {
+    'speedPx': function(this: types.IVControl): number {
         return this.speed * 0.5;
     }
 };
 
 export const watch = {
     'scroll': {
-        handler: function(this: IVControl): void {
+        handler: function(this: types.IVControl): void {
             this.refresh();
         }
     },
     'direction': {
-        handler: function(this: IVControl, n: string, o: string): void {
+        handler: function(this: types.IVControl, n: string, o: string): void {
             if (this.timer === 0) {
                 return;
             }
@@ -67,7 +70,7 @@ export const watch = {
 };
 
 export const methods = {
-    refresh: function(this: IVControl): void {
+    refresh: function(this: types.IVControl): void {
         if (this.length === 0 || this.client === 0) {
             return;
         }
@@ -121,15 +124,15 @@ export const methods = {
             if (this.timer === 0) {
                 return;
             }
-            this.cgOffFrame(this.timer);
+            clickgo.task.offFrame(this.timer);
             this.timer = 0;
             this.left = 0;
             this.top = 0;
             return;
         }
-        this.timer = this.cgOnFrame(async () => {
+        this.timer = clickgo.task.onFrame(async () => {
             if (!this.$el.offsetParent) {
-                this.cgOffFrame(this.timer);
+                clickgo.task.offFrame(this.timer);
                 this.timer = 0;
                 return;
             }
@@ -211,7 +214,7 @@ export const methods = {
     }
 };
 
-export const mounted = function(this: IVControl): void {
+export const mounted = function(this: types.IVControl): void {
     clickgo.dom.watchStyle(this.$el, 'padding', (n, v) => {
         this.padding = v;
     }, true);

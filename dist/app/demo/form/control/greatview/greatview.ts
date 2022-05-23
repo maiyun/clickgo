@@ -1,3 +1,6 @@
+import * as clickgo from 'clickgo';
+import * as types from '~/types/index';
+
 export const data = {
     'ntab': '',
 
@@ -43,7 +46,7 @@ export const data = {
 };
 
 export const computed = {
-    'is': function(this: IVForm): any[] {
+    'is': function(this: types.IVForm): any[] {
         const is = [];
         for (let i = 0; i < this.lineCount; ++i) {
             if (i > 0 && i % 10 === 0) {
@@ -55,13 +58,13 @@ export const computed = {
     }
 };
 
-export const mounted = function(this: IVForm): void {
+export const mounted = function(this: types.IVForm): void {
     this.is6[29] = 50;
     this.is6[39] = 50;
 };
 
 export const methods = {
-    scrollborder: function(this: IVForm, e: MouseEvent | TouchEvent | WheelEvent, dir: string): void {
+    scrollborder: function(this: types.IVForm, e: MouseEvent | TouchEvent | WheelEvent, dir: string): void {
         if (!this.gesture) {
             return;
         }

@@ -1,3 +1,6 @@
+import * as clickgo from 'clickgo';
+import * as types from '~/types/index';
+
 export const props = {
     'disabled': {
         'default': false
@@ -21,14 +24,14 @@ export const props = {
 };
 
 export const computed = {
-    'isDisabled': function(this: IVControl): boolean {
+    'isDisabled': function(this: types.IVControl): boolean {
         return clickgo.tool.getBoolean(this.disabled);
     },
-    'isReadonly': function(this: IVControl): boolean {
+    'isReadonly': function(this: types.IVControl): boolean {
         return clickgo.tool.getBoolean(this.readonly);
     },
 
-    'filesComp': function(this: IVControl): any[] {
+    'filesComp': function(this: types.IVControl): any[] {
         const list = [];
         for (const path in this.files) {
             list.push({
@@ -68,7 +71,7 @@ export const data = {
 };
 
 export const watch = {
-    'isReadonly': function(this: IVControl): void {
+    'isReadonly': function(this: types.IVControl): void {
         if (!this.monacoInstance) {
             return;
         }
@@ -76,7 +79,7 @@ export const watch = {
             'readOnly': this.isDisabled ? true : this.isReadonly
         });
     },
-    'isDisabled': function(this: IVControl): void {
+    'isDisabled': function(this: types.IVControl): void {
         if (!this.monacoInstance) {
             return;
         }
@@ -85,7 +88,7 @@ export const watch = {
         });
     },
 
-    'modelValue': function(this: IVControl): void {
+    'modelValue': function(this: types.IVControl): void {
         if (!this.monacoInstance) {
             return;
         }
@@ -94,7 +97,7 @@ export const watch = {
         }
         this.monacoInstance.setValue(this.modelValue);
     },
-    'language': function(this: IVControl): void {
+    'language': function(this: types.IVControl): void {
         if (!this.monacoInstance) {
             return;
         }
@@ -103,7 +106,7 @@ export const watch = {
 };
 
 export const methods = {
-    contextmenu: function(this: IVControl, e: MouseEvent): void {
+    contextmenu: function(this: types.IVControl, e: MouseEvent): void {
         if (this.notInit) {
             return;
         }
@@ -116,7 +119,7 @@ export const methods = {
         }
         clickgo.form.showPop(this.$el, this.$refs.pop, e);
     },
-    down: function(this: IVControl, e: MouseEvent | TouchEvent): void {
+    down: function(this: types.IVControl, e: MouseEvent | TouchEvent): void {
         if (this.notInit) {
             return;
         }
@@ -134,7 +137,7 @@ export const methods = {
             }
         }
     },
-    execCmd: async function(this: IVControl, ac: string): Promise<void> {
+    execCmd: async function(this: types.IVControl, ac: string): Promise<void> {
         switch (ac) {
             case 'copy': {
                 clickgo.tool.execCommand(ac);
@@ -177,7 +180,7 @@ export const methods = {
     }
 };
 
-export const mounted = function(this: IVControl): void {
+export const mounted = function(this: types.IVControl): void {
     const monaco = clickgo.core.getModule('monaco');
     if (monaco) {
         this.monaco = monaco;
@@ -211,7 +214,7 @@ export const mounted = function(this: IVControl): void {
     }
 };
 
-export const unmounted = function(this: IVControl): void {
+export const unmounted = function(this: types.IVControl): void {
     if (this.monacoInstance) {
         this.monacoInstance.dispose();
     }

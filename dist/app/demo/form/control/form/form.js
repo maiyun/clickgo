@@ -4,7 +4,6 @@ exports.data = void 0;
 exports.data = {
     'width': 300,
     'height': 520,
-    'flex': 1,
     'icon': '',
     'title': 'Form',
     'min': true,

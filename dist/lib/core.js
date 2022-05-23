@@ -9,8 +9,14 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.fetchApp = exports.readApp = exports.fetchClickGoFile = exports.trigger = exports.globalEvents = exports.clickgoFiles = exports.getModule = exports.initModules = exports.regModule = exports.cgInnerNativeReceive = exports.cgInnerNativeGetSends = exports.offNative = exports.onceNative = exports.onNative = exports.sendNative = exports.getNativeListeners = exports.config = void 0;
-const cgConfig = {
+exports.getAvailArea = exports.fetchApp = exports.readApp = exports.trigger = exports.removeSystemEventListener = exports.setSystemEventListener = exports.globalEvents = exports.getModule = exports.initModules = exports.regModule = exports.config = void 0;
+const clickgo = require("../clickgo");
+const fs = require("./fs");
+const form = require("./form");
+const task = require("./task");
+const tool = require("./tool");
+const zip = require("./zip");
+const configOrigin = {
     'locale': 'en',
     'task.position': 'bottom',
     'task.pin': {},
@@ -29,20 +35,20 @@ exports.config = Vue.reactive({
     'desktop.path': null
 });
 Vue.watch(exports.config, function () {
-    for (const key in cgConfig) {
+    for (const key in configOrigin) {
         if (exports.config[key] !== undefined) {
             continue;
         }
-        clickgo.form.notify({
+        form.notify({
             'title': 'Warning',
             'content': 'There is a software that maliciously removed the system config item.\nKey: ' + key,
             'type': 'warning'
         });
-        exports.config[key] = cgConfig[key];
+        exports.config[key] = configOrigin[key];
     }
     for (const key in exports.config) {
-        if (!Object.keys(cgConfig).includes(key)) {
-            clickgo.form.notify({
+        if (!Object.keys(configOrigin).includes(key)) {
+            form.notify({
                 'title': 'Warning',
                 'content': 'There is a software that maliciously modifies the system config.\nKey: ' + key,
                 'type': 'warning'
@@ -52,23 +58,23 @@ Vue.watch(exports.config, function () {
         }
         if (key === 'task.pin') {
             const paths = Object.keys(exports.config['task.pin']).sort().toString();
-            const cgPaths = Object.keys(cgConfig['task.pin']).sort().toString();
-            if (paths === cgPaths) {
+            const originPaths = Object.keys(configOrigin['task.pin']).sort().toString();
+            if (paths === originPaths) {
                 continue;
             }
-            cgConfig['task.pin'] = {};
+            configOrigin['task.pin'] = {};
             for (const path in exports.config['task.pin']) {
-                cgConfig['task.pin'][path] = exports.config['task.pin'][path];
+                configOrigin['task.pin'][path] = exports.config['task.pin'][path];
             }
             trigger('configChanged', 'task.pin', exports.config['task.pin']);
         }
         else {
-            if (exports.config[key] === cgConfig[key]) {
+            if (exports.config[key] === configOrigin[key]) {
                 continue;
             }
-            cgConfig[key] = exports.config[key];
+            configOrigin[key] = exports.config[key];
             if (key === 'task.position') {
-                clickgo.form.refreshTaskPosition();
+                task.refreshSystemPosition();
             }
             trigger('configChanged', key, exports.config[key]);
         }
@@ -76,129 +82,22 @@ Vue.watch(exports.config, function () {
 }, {
     'deep': true
 });
-let sendNativeId = 0;
-let sendNativeList = [];
-const nativeListeners = {};
-function getNativeListeners() {
-    const list = [];
-    for (const name in nativeListeners) {
-        for (const item of nativeListeners[name]) {
-            list.push({
-                'id': item.id,
-                'name': name,
-                'once': item.once
-            });
-        }
-    }
-    return list;
-}
-exports.getNativeListeners = getNativeListeners;
-function sendNative(name, param, handler) {
-    if (!clickgo.native) {
-        return 0;
-    }
-    const id = ++sendNativeId;
-    sendNativeList.push({
-        'id': id,
-        'name': name,
-        'param': param
-    });
-    if (handler) {
-        onNative(name, handler, id, true);
-    }
-    return id;
-}
-exports.sendNative = sendNative;
-function onNative(name, handler, id, once = false) {
-    if (!clickgo.native) {
-        return;
-    }
-    if (!nativeListeners[name]) {
-        nativeListeners[name] = [];
-    }
-    nativeListeners[name].push({
-        'id': id !== null && id !== void 0 ? id : 0,
-        'once': once,
-        'handler': handler
-    });
-}
-exports.onNative = onNative;
-function onceNative(name, handler, id) {
-    onNative(name, handler, id, true);
-}
-exports.onceNative = onceNative;
-function offNative(name, handler) {
-    if (!nativeListeners[name]) {
-        return;
-    }
-    for (let i = 0; i < nativeListeners[name].length; ++i) {
-        if (nativeListeners[name][i].handler !== handler) {
-            continue;
-        }
-        nativeListeners[name].splice(i, 1);
-        if (nativeListeners[name].length === 0) {
-            delete nativeListeners[name];
-            break;
-        }
-        --i;
-    }
-}
-exports.offNative = offNative;
-function cgInnerNativeGetSends() {
-    const json = JSON.stringify(sendNativeList);
-    sendNativeList = [];
-    return json;
-}
-exports.cgInnerNativeGetSends = cgInnerNativeGetSends;
-function cgInnerNativeReceive(id, name, result) {
-    console.log('name', name, 'nativeListeners', nativeListeners, 'sendNativeList', sendNativeList);
-    if (!nativeListeners[name]) {
-        return;
-    }
-    for (let i = 0; i < nativeListeners[name].length; ++i) {
-        const item = nativeListeners[name][i];
-        if (item.id > 0) {
-            if (item.id !== id) {
-                continue;
-            }
-            const r = item.handler(result);
-            if (r instanceof Promise) {
-                r.catch(function (e) {
-                    console.log(e);
-                });
-            }
-        }
-        else {
-            const r = item.handler(result);
-            if (r instanceof Promise) {
-                r.catch(function (e) {
-                    console.log(e);
-                });
-            }
-        }
-        if (item.once) {
-            nativeListeners[name].splice(i, 1);
-            --i;
-        }
-    }
-}
-exports.cgInnerNativeReceive = cgInnerNativeReceive;
 const modules = {
     'monaco': {
         func: function () {
             return __awaiter(this, void 0, void 0, function* () {
                 return new Promise(function (resolve, reject) {
-                    loader.loadScript(clickgo.cdnPath + '/npm/monaco-editor@0.29.1/min/vs/loader.js').then(function () {
+                    loader.loadScript(clickgo.getCdn() + '/npm/monaco-editor@0.29.1/min/vs/loader.js').then(function () {
                         window.require.config({
                             paths: {
-                                'vs': clickgo.cdnPath + '/npm/monaco-editor@0.29.1/min/vs'
+                                'vs': clickgo.getCdn() + '/npm/monaco-editor@0.29.1/min/vs'
                             }
                         });
                         const proxy = URL.createObjectURL(new Blob([`
                         self.MonacoEnvironment = {
-                            baseUrl: '${clickgo.cdnPath}/npm/monaco-editor@0.29.1/min/'
+                            baseUrl: '${clickgo.getCdn()}/npm/monaco-editor@0.29.1/min/'
                         };
-                        importScripts('${clickgo.cdnPath}/npm/monaco-editor@0.29.1/min/vs/base/worker/workerMain.js');
+                        importScripts('${clickgo.getCdn()}/npm/monaco-editor@0.29.1/min/vs/base/worker/workerMain.js');
                     `], { type: 'text/javascript' }));
                         window.MonacoEnvironment = {
                             getWorkerUrl: () => proxy
@@ -305,51 +204,50 @@ function getModule(name) {
     return modules[name].obj;
 }
 exports.getModule = getModule;
-exports.clickgoFiles = {};
 exports.globalEvents = {
     errorHandler: null,
     screenResizeHandler: function () {
-        clickgo.form.refreshMaxPosition();
+        form.refreshMaxPosition();
     },
     configChangedHandler: null,
     formCreatedHandler: null,
     formRemovedHandler: function (taskId, formId) {
-        if (!clickgo.form.simpletaskRoot.forms[formId]) {
+        if (!form.simpleSystemTaskRoot.forms[formId]) {
             return;
         }
-        delete clickgo.form.simpletaskRoot.forms[formId];
+        delete form.simpleSystemTaskRoot.forms[formId];
     },
     formTitleChangedHandler: function (taskId, formId, title) {
-        if (!clickgo.form.simpletaskRoot.forms[formId]) {
+        if (!form.simpleSystemTaskRoot.forms[formId]) {
             return;
         }
-        clickgo.form.simpletaskRoot.forms[formId].title = title;
+        form.simpleSystemTaskRoot.forms[formId].title = title;
     },
     formIconChangedHandler: function (taskId, formId, icon) {
-        if (!clickgo.form.simpletaskRoot.forms[formId]) {
+        if (!form.simpleSystemTaskRoot.forms[formId]) {
             return;
         }
-        clickgo.form.simpletaskRoot.forms[formId].icon = icon;
+        form.simpleSystemTaskRoot.forms[formId].icon = icon;
     },
     formStateMinChangedHandler: function (taskId, formId, state) {
-        if (clickgo.form.taskInfo.taskId > 0) {
+        if (task.systemTaskInfo.taskId > 0) {
             return;
         }
         if (state) {
-            const item = clickgo.form.get(formId);
+            const item = form.get(formId);
             if (!item) {
                 return;
             }
-            clickgo.form.simpletaskRoot.forms[formId] = {
+            form.simpleSystemTaskRoot.forms[formId] = {
                 'title': item.title,
                 'icon': item.icon
             };
         }
         else {
-            if (!clickgo.form.simpletaskRoot.forms[formId]) {
+            if (!form.simpleSystemTaskRoot.forms[formId]) {
                 return;
             }
-            delete clickgo.form.simpletaskRoot.forms[formId];
+            delete form.simpleSystemTaskRoot.forms[formId];
         }
     },
     formStateMaxChangedHandler: null,
@@ -360,6 +258,42 @@ exports.globalEvents = {
     taskStartedHandler: null,
     taskEndedHandler: null
 };
+function setSystemEventListener(name, func, formId, taskId) {
+    if (!taskId) {
+        return;
+    }
+    const t = task.list[taskId];
+    if (!t) {
+        return;
+    }
+    if (!formId) {
+        return;
+    }
+    const f = t.forms[formId];
+    if (!f) {
+        return;
+    }
+    f.events[name] = func;
+}
+exports.setSystemEventListener = setSystemEventListener;
+function removeSystemEventListener(name, formId, taskId) {
+    if (!taskId) {
+        return;
+    }
+    const t = task.list[taskId];
+    if (!t) {
+        return;
+    }
+    if (!formId) {
+        return;
+    }
+    const f = t.forms[formId];
+    if (!f) {
+        return;
+    }
+    delete f.events[name];
+}
+exports.removeSystemEventListener = removeSystemEventListener;
 function trigger(name, taskId = 0, formId = 0, param1 = '', param2 = '') {
     var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z, _0, _1, _2, _3, _4;
     switch (name) {
@@ -373,10 +307,10 @@ function trigger(name, taskId = 0, formId = 0, param1 = '', param2 = '') {
                     console.log(e);
                 });
             }
-            for (const tid in clickgo.task.list) {
-                const task = clickgo.task.list[tid];
-                for (const fid in task.forms) {
-                    const r = (_c = (_b = task.forms[fid].events)[name]) === null || _c === void 0 ? void 0 : _c.call(_b, taskId, formId, param1, param2);
+            for (const tid in task.list) {
+                const t = task.list[tid];
+                for (const fid in t.forms) {
+                    const r = (_c = (_b = t.forms[fid].events)[name]) === null || _c === void 0 ? void 0 : _c.call(_b, taskId, formId, param1, param2);
                     if (r instanceof Promise) {
                         r.catch(function (e) {
                             console.log(e);
@@ -393,10 +327,10 @@ function trigger(name, taskId = 0, formId = 0, param1 = '', param2 = '') {
                     console.log(e);
                 });
             }
-            for (const tid in clickgo.task.list) {
-                const task = clickgo.task.list[tid];
-                for (const fid in task.forms) {
-                    const r = (_f = (_e = task.forms[fid].events)[name]) === null || _f === void 0 ? void 0 : _f.call(_e);
+            for (const tid in task.list) {
+                const t = task.list[tid];
+                for (const fid in t.forms) {
+                    const r = (_f = (_e = t.forms[fid].events)[name]) === null || _f === void 0 ? void 0 : _f.call(_e);
                     if (r instanceof Promise) {
                         r.catch(function (e) {
                             console.log(e);
@@ -416,10 +350,10 @@ function trigger(name, taskId = 0, formId = 0, param1 = '', param2 = '') {
                     console.log(e);
                 });
             }
-            for (const tid in clickgo.task.list) {
-                const task = clickgo.task.list[tid];
-                for (const fid in task.forms) {
-                    const r = (_j = (_h = task.forms[fid].events)[name]) === null || _j === void 0 ? void 0 : _j.call(_h, taskId, formId);
+            for (const tid in task.list) {
+                const t = task.list[tid];
+                for (const fid in t.forms) {
+                    const r = (_j = (_h = t.forms[fid].events)[name]) === null || _j === void 0 ? void 0 : _j.call(_h, taskId, formId);
                     if (r instanceof Promise) {
                         r.catch(function (e) {
                             console.log(e);
@@ -432,10 +366,10 @@ function trigger(name, taskId = 0, formId = 0, param1 = '', param2 = '') {
         case 'formCreated':
         case 'formRemoved': {
             (_l = (_k = exports.globalEvents)[name + 'Handler']) === null || _l === void 0 ? void 0 : _l.call(_k, taskId, formId, param1, param2);
-            for (const tid in clickgo.task.list) {
-                const task = clickgo.task.list[tid];
-                for (const fid in task.forms) {
-                    const r = (_o = (_m = task.forms[fid].events)[name]) === null || _o === void 0 ? void 0 : _o.call(_m, taskId, formId, param1, param2);
+            for (const tid in task.list) {
+                const t = task.list[tid];
+                for (const fid in t.forms) {
+                    const r = (_o = (_m = t.forms[fid].events)[name]) === null || _o === void 0 ? void 0 : _o.call(_m, taskId, formId, param1, param2);
                     if (r instanceof Promise) {
                         r.catch(function (e) {
                             console.log(e);
@@ -448,10 +382,10 @@ function trigger(name, taskId = 0, formId = 0, param1 = '', param2 = '') {
         case 'formTitleChanged':
         case 'formIconChanged': {
             (_q = (_p = exports.globalEvents)[name + 'Handler']) === null || _q === void 0 ? void 0 : _q.call(_p, taskId, formId, param1);
-            for (const tid in clickgo.task.list) {
-                const task = clickgo.task.list[tid];
-                for (const fid in task.forms) {
-                    const r = (_s = (_r = task.forms[fid].events)[name]) === null || _s === void 0 ? void 0 : _s.call(_r, taskId, formId, param1);
+            for (const tid in task.list) {
+                const t = task.list[tid];
+                for (const fid in t.forms) {
+                    const r = (_s = (_r = t.forms[fid].events)[name]) === null || _s === void 0 ? void 0 : _s.call(_r, taskId, formId, param1);
                     if (r instanceof Promise) {
                         r.catch(function (e) {
                             console.log(e);
@@ -465,10 +399,10 @@ function trigger(name, taskId = 0, formId = 0, param1 = '', param2 = '') {
         case 'formStateMaxChanged':
         case 'formShowChanged': {
             (_u = (_t = exports.globalEvents)[name + 'Handler']) === null || _u === void 0 ? void 0 : _u.call(_t, taskId, formId, param1);
-            for (const tid in clickgo.task.list) {
-                const task = clickgo.task.list[tid];
-                for (const fid in task.forms) {
-                    const r = (_w = (_v = task.forms[fid].events)[name]) === null || _w === void 0 ? void 0 : _w.call(_v, taskId, formId, param1);
+            for (const tid in task.list) {
+                const t = task.list[tid];
+                for (const fid in t.forms) {
+                    const r = (_w = (_v = t.forms[fid].events)[name]) === null || _w === void 0 ? void 0 : _w.call(_v, taskId, formId, param1);
                     if (r instanceof Promise) {
                         r.catch(function (e) {
                             console.log(e);
@@ -482,10 +416,10 @@ function trigger(name, taskId = 0, formId = 0, param1 = '', param2 = '') {
         case 'formBlurred':
         case 'formFlash': {
             (_y = (_x = exports.globalEvents)[name + 'Handler']) === null || _y === void 0 ? void 0 : _y.call(_x, taskId, formId);
-            for (const tid in clickgo.task.list) {
-                const task = clickgo.task.list[tid];
-                for (const fid in task.forms) {
-                    const r = (_0 = (_z = task.forms[fid].events)[name]) === null || _0 === void 0 ? void 0 : _0.call(_z, taskId, formId);
+            for (const tid in task.list) {
+                const t = task.list[tid];
+                for (const fid in t.forms) {
+                    const r = (_0 = (_z = t.forms[fid].events)[name]) === null || _0 === void 0 ? void 0 : _0.call(_z, taskId, formId);
                     if (r instanceof Promise) {
                         r.catch(function (e) {
                             console.log(e);
@@ -498,10 +432,10 @@ function trigger(name, taskId = 0, formId = 0, param1 = '', param2 = '') {
         case 'taskStarted':
         case 'taskEnded': {
             (_2 = (_1 = exports.globalEvents)[name + 'Handler']) === null || _2 === void 0 ? void 0 : _2.call(_1, taskId, formId);
-            for (const tid in clickgo.task.list) {
-                const task = clickgo.task.list[tid];
-                for (const fid in task.forms) {
-                    const r = (_4 = (_3 = task.forms[fid].events)[name]) === null || _4 === void 0 ? void 0 : _4.call(_3, taskId);
+            for (const tid in task.list) {
+                const t = task.list[tid];
+                for (const fid in t.forms) {
+                    const r = (_4 = (_3 = t.forms[fid].events)[name]) === null || _4 === void 0 ? void 0 : _4.call(_3, taskId);
                     if (r instanceof Promise) {
                         r.catch(function (e) {
                             console.log(e);
@@ -514,67 +448,31 @@ function trigger(name, taskId = 0, formId = 0, param1 = '', param2 = '') {
     }
 }
 exports.trigger = trigger;
-function fetchClickGoFile(path) {
-    return __awaiter(this, void 0, void 0, function* () {
-        if (exports.clickgoFiles[path]) {
-            return exports.clickgoFiles[path];
-        }
-        try {
-            const blob = yield (yield fetch(clickgo.cgRootPath + path.slice(1) + '?' + Math.random().toString())).blob();
-            const lio = path.lastIndexOf('.');
-            const ext = lio === -1 ? '' : path.slice(lio + 1).toLowerCase();
-            switch (ext) {
-                case 'cgc': {
-                    const pkg = yield clickgo.control.read(blob);
-                    if (!pkg) {
-                        return null;
-                    }
-                    clickgo.control.clickgoControlPkgs[path] = pkg;
-                    break;
-                }
-                case 'cgt': {
-                    const theme = yield clickgo.theme.read(blob);
-                    if (!theme) {
-                        return null;
-                    }
-                    clickgo.theme.clickgoThemePkgs[path] = theme;
-                    break;
-                }
-            }
-            exports.clickgoFiles[path] = blob;
-            return exports.clickgoFiles[path];
-        }
-        catch (_a) {
-            return null;
-        }
-    });
-}
-exports.fetchClickGoFile = fetchClickGoFile;
 function readApp(blob) {
     return __awaiter(this, void 0, void 0, function* () {
         const iconLength = parseInt(yield blob.slice(0, 7).text());
-        const icon = yield clickgo.tool.blob2DataUrl(blob.slice(7, 7 + iconLength));
-        const zip = yield clickgo.zip.get(blob.slice(7 + iconLength));
-        if (!zip) {
+        const icon = yield tool.blob2DataUrl(blob.slice(7, 7 + iconLength));
+        const z = yield zip.get(blob.slice(7 + iconLength));
+        if (!z) {
             return false;
         }
         const files = {};
-        const configContent = yield zip.getContent('/config.json');
+        const configContent = yield z.getContent('/config.json');
         if (!configContent) {
             return false;
         }
         const config = JSON.parse(configContent);
         for (const file of config.files) {
-            const mime = clickgo.tool.getMimeByPath(file);
+            const mime = tool.getMimeByPath(file);
             if (['txt', 'json', 'js', 'css', 'xml', 'html'].includes(mime.ext)) {
-                const fab = yield zip.getContent(file, 'string');
+                const fab = yield z.getContent(file, 'string');
                 if (!fab) {
                     continue;
                 }
                 files[file] = fab.replace(/^\ufeff/, '');
             }
             else {
-                const fab = yield zip.getContent(file, 'arraybuffer');
+                const fab = yield z.getContent(file, 'arraybuffer');
                 if (!fab) {
                     continue;
                 }
@@ -597,38 +495,59 @@ function readApp(blob) {
 exports.readApp = readApp;
 function fetchApp(url, opt = {}) {
     return __awaiter(this, void 0, void 0, function* () {
-        let isCga = false;
+        let cga = '';
         if (!url.endsWith('/')) {
-            const lio = url.lastIndexOf('.');
-            const ext = lio === -1 ? '' : url.slice(lio + 1).toLowerCase();
-            if (ext !== 'cga') {
+            const lio = url.lastIndexOf('/');
+            cga = lio === -1 ? url : url.slice(lio + 1);
+            if (!cga.endsWith('.cga')) {
                 return null;
             }
-            isCga = true;
         }
-        let realUrl;
-        if (url.startsWith('/clickgo/')) {
-            realUrl = clickgo.tool.urlResolve(clickgo.cgRootPath, url.slice(9));
+        let current = '';
+        if (opt.current) {
+            if (!opt.current.endsWith('/')) {
+                return null;
+            }
+            current = opt.current.slice(0, -1);
+            if (!url.startsWith('/')) {
+                url = '/current/' + url;
+            }
         }
         else {
-            realUrl = clickgo.tool.urlResolve(clickgo.rootPath, url);
+            if (!url.startsWith('/clickgo/') && !url.startsWith('/storage/') && !url.startsWith('/mounted/')) {
+                current = tool.urlResolve(window.location.href, url);
+                if (cga) {
+                    current = current.slice(0, -cga.length - 1);
+                    url = '/current/' + cga;
+                }
+                else {
+                    current = current.slice(0, -1);
+                    url = '/current/';
+                }
+            }
         }
-        if (isCga) {
+        if (cga) {
             if (opt.notifyId) {
-                const blob = yield clickgo.tool.request(realUrl + '?' + Math.random().toString(), {
+                const blob = yield fs.getContent(url, {
+                    'current': current,
                     progress: (loaded, total) => {
-                        clickgo.form.notifyProgress(opt.notifyId, loaded / total);
+                        form.notifyProgress(opt.notifyId, loaded / total);
                     }
                 });
-                if (blob === null) {
+                if ((blob === null) || (typeof blob === 'string')) {
                     return null;
                 }
-                clickgo.form.notifyProgress(opt.notifyId, 1);
+                form.notifyProgress(opt.notifyId, 1);
                 return (yield readApp(blob)) || null;
             }
             else {
                 try {
-                    const blob = yield (yield fetch(realUrl + '?' + Math.random().toString())).blob();
+                    const blob = yield fs.getContent(url, {
+                        'current': current
+                    });
+                    if ((blob === null) || typeof blob === 'string') {
+                        return null;
+                    }
                     return (yield readApp(blob)) || null;
                 }
                 catch (_a) {
@@ -637,31 +556,66 @@ function fetchApp(url, opt = {}) {
             }
         }
         let config;
-        let files = {};
+        const files = {};
         try {
-            config = yield (yield fetch(realUrl + 'config.json?' + Math.random().toString())).json();
-            const random = Math.random().toString();
-            const lopt = {
-                'dir': '/',
-                'before': realUrl.slice(0, -1),
-                'after': '?' + random
-            };
-            if (opt.notifyId) {
+            const blob = yield fs.getContent(url + 'config.json', {
+                'current': current
+            });
+            if (blob === null || typeof blob === 'string') {
+                return null;
+            }
+            config = JSON.parse(yield tool.blob2Text(blob));
+            yield new Promise(function (resolve) {
                 const total = config.files.length;
                 let loaded = 0;
-                lopt.loaded = function () {
-                    ++loaded;
-                    clickgo.form.notifyProgress(opt.notifyId, loaded / total);
-                };
-            }
-            files = yield loader.fetchFiles(config.files, lopt);
+                for (const file of config.files) {
+                    fs.getContent(url + file.slice(1), {
+                        'current': current
+                    }).then(function (blob) {
+                        return __awaiter(this, void 0, void 0, function* () {
+                            if (blob === null || typeof blob === 'string') {
+                                clickgo.form.notify({
+                                    'title': 'File not found',
+                                    'content': url + file.slice(1),
+                                    'type': 'danger'
+                                });
+                                return;
+                            }
+                            const mime = tool.getMimeByPath(file);
+                            if (['txt', 'json', 'js', 'css', 'xml', 'html'].includes(mime.ext)) {
+                                files[file] = (yield tool.blob2Text(blob)).replace(/^\ufeff/, '');
+                            }
+                            else {
+                                files[file] = blob;
+                            }
+                            ++loaded;
+                            if (opt.notifyId) {
+                                form.notifyProgress(opt.notifyId, loaded / total);
+                            }
+                            if (loaded < total) {
+                                return;
+                            }
+                            resolve();
+                        });
+                    }).catch(function () {
+                        ++loaded;
+                        if (opt.notifyId) {
+                            form.notifyProgress(opt.notifyId, loaded / total);
+                        }
+                        if (loaded < total) {
+                            return;
+                        }
+                        resolve();
+                    });
+                }
+            });
         }
         catch (_b) {
             return null;
         }
-        let icon = clickgo.cgRootPath + 'icon.png';
+        let icon = tool.urlResolve(__dirname, './') + 'icon.png';
         if (config.icon && (files[config.icon] instanceof Blob)) {
-            icon = yield clickgo.tool.blob2DataUrl(files[config.icon]);
+            icon = yield tool.blob2DataUrl(files[config.icon]);
         }
         return {
             'type': 'app',
@@ -672,3 +626,55 @@ function fetchApp(url, opt = {}) {
     });
 }
 exports.fetchApp = fetchApp;
+function getAvailArea() {
+    if (Object.keys(form.simpleSystemTaskRoot.forms).length > 0) {
+        return {
+            'left': 0,
+            'top': 0,
+            'width': document.body.clientWidth,
+            'height': document.body.clientHeight - 46
+        };
+    }
+    else {
+        let left = 0;
+        let top = 0;
+        let width = 0;
+        let height = 0;
+        switch (exports.config['task.position']) {
+            case 'left': {
+                left = task.systemTaskInfo.length;
+                top = 0;
+                width = document.body.clientWidth - task.systemTaskInfo.length;
+                height = document.body.clientHeight;
+                break;
+            }
+            case 'right': {
+                left = 0;
+                top = 0;
+                width = document.body.clientWidth - task.systemTaskInfo.length;
+                height = document.body.clientHeight;
+                break;
+            }
+            case 'top': {
+                left = 0;
+                top = task.systemTaskInfo.length;
+                width = document.body.clientWidth;
+                height = document.body.clientHeight - task.systemTaskInfo.length;
+                break;
+            }
+            case 'bottom': {
+                left = 0;
+                top = 0;
+                width = document.body.clientWidth;
+                height = document.body.clientHeight - task.systemTaskInfo.length;
+            }
+        }
+        return {
+            'left': left,
+            'top': top,
+            'width': width,
+            'height': height
+        };
+    }
+}
+exports.getAvailArea = getAvailArea;

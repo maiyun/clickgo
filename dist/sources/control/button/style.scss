@@ -38,130 +38,129 @@
 
     &.default {
         &:not(.plain) {
-            --focusbox-border: dotted 1px hsl(0, 0%, 20%);
-            --border: solid 1px hsl(0, 0%, 70%);
-            --background: hsl(0, 0%, 90%);
-            --focus-border: solid 2px hsl(205, 100%, 40%);
-            --hover-border: solid 1px hsl(205, 100%, 50%);
-            --hover-background: hsl(205, 100%, 95%);
-            --active-border: solid 1px hsl(205, 100%, 30%);
-            --active-background: hsl(205, 100%, 90%);
-            --disabled-border: solid 1px hsl(0, 0%, 60%);
-            --disabled-background: hsl(0, 0%, 80%);
+            --focusbox-border: dotted 1px hsl(0, 0%, 30%);
+            --background: hsl(0, 0%, 95%);
+            --border: solid 1px hsl(0, 0%, 30%);
+            --hover-background: hsl(0, 0%, 100%);
+            --hover-border: solid 1px hsl(0, 0%, 40%);
+            --active-background: hsl(0, 0%, 85%);
+            --active-border: solid 1px hsl(0, 0%, 20%);
+            --focus-border: solid 2px hsl(0, 0%, 20%);
             --disabled-color: hsl(0, 0%, 60%);
+            --disabled-background: hsl(0, 0%, 75%);
+            --disabled-border: solid 1px hsl(0, 0%, 60%);
         }
         &.plain {
-            --focusbox-border: dotted 1px hsl(0, 0%, 20%);
-            --border: solid 1px hsl(0, 0%, 70%);
-            --background: #fff;
-            --focus-border: solid 2px hsl(205, 100%, 40%);
-            --hover-border: solid 1px hsl(205, 100%, 50%);
-            --hover-color: hsl(205, 100%, 50%);
-            --active-border: solid 1px hsl(205, 100%, 30%);
-            --active-background: #ccc;
-            --active-color: hsl(205, 100%, 30%);
-            --disabled-background:  hsl(0, 0%, 95%);
+            --focusbox-border: dotted 1px hsl(0, 0%, 30%);
+            --background: hsl(0, 0%, 100%);
+            --border: solid 1px hsl(0, 0%, 30%);
+            --hover-border: solid 1px hsl(0, 0%, 40%);
+            --active-background: hsl(0, 0%, 85%);
+            --active-border: solid 1px hsl(0, 0%, 20%);
+            --focus-border: solid 2px hsl(0, 0%, 20%);
             --disabled-color: hsl(0, 0%, 60%);
+            --disabled-background: hsl(0, 0%, 95%);
+            --disabled-border: solid 1px hsl(0, 0%, 60%);
         }
     }
     &.tool {
         &:not(.plain) {
             --focusbox-border: dotted 1px hsl(0, 0%, 20%);
-            --focus-border: solid 2px hsl(205, 100%, 40%);
-            --hover-border: solid 1px hsl(205, 100%, 50%);
-            --hover-background: hsl(205, 100%, 95%);
-            --active-border: solid 1px hsl(205, 100%, 30%);
-            --active-background: hsl(205, 100%, 90%);
+            --hover-background: hsl(0, 0%, 100%);
+            --hover-border: solid 1px hsl(0, 0%, 40%);
+            --active-background: hsl(0, 0%, 85%);
+            --active-border: solid 1px hsl(0, 0%, 20%);
+            --focus-border: solid 2px hsl(0, 0%, 20%);
             --disabled-color: hsl(0, 0%, 60%);
         }
         &.plain {
             --focusbox-border: dotted 1px hsl(0, 0%, 20%);
-            --hover-background: #fff;
-            --active-background: #ccc;
+            --hover-background: hsl(0, 0%, 100%);
+            --active-background: hsl(0, 0%, 85%);
             --disabled-color: hsl(0, 0%, 60%);
         }
     }
     &.primary {
         &:not(.plain) {
             --focusbox-border: dotted 1px #fff;
-            --background: #07c160;
             --color: #fff;
+            --background: #07c160;
             --hover-background: #39cd80;
             --active-background: #069a4d;
         }
         &.plain {
             --focusbox-border: dotted 1px hsl(0, 0%, 20%);
-            --border: solid 1px #07c160;
-            --background: #fff;
             --color: #07c160;
-            --hover-border: solid 1px #39cd80;
+            --background: #fff;
+            --border: solid 1px #07c160;
             --hover-color: #39cd80;
-            --active-border: solid 1px #069a4d;
-            --active-background: #ccc;
+            --hover-border: solid 1px #39cd80;
             --active-color: #069a4d;
+            --active-background: #ccc;
+            --active-border: solid 1px #069a4d;
             --disabled-background:  hsl(0, 0%, 95%);
         }
     }
     &.info {
         &:not(.plain) {
             --focusbox-border: dotted 1px #fff;
-            --background: #1989fa;
             --color: #fff;
+            --background: #1989fa;
             --hover-background: #47a1fb;
             --active-background: #146ec8;
         }
         &.plain {
             --focusbox-border: dotted 1px hsl(0, 0%, 20%);
-            --border: solid 1px #1989fa;
-            --background: #fff;
             --color: #1989fa;
-            --hover-border: solid 1px #47a1fb;
+            --background: #fff;
+            --border: solid 1px #1989fa;
             --hover-color: #47a1fb;
-            --active-border: solid 1px #146ec8;
-            --active-background: #ccc;
+            --hover-border: solid 1px #47a1fb;
             --active-color: #146ec8;
+            --active-background: #ccc;
+            --active-border: solid 1px #146ec8;
             --disabled-background:  hsl(0, 0%, 95%);
         }
     }
     &.warning {
         &:not(.plain) {
             --focusbox-border: dotted 1px #fff;
-            --background: #ff976a;
             --color: #fff;
+            --background: #ff976a;
             --hover-background: #ffac88;
             --active-background: #cc7955;
         }
         &.plain {
             --focusbox-border: dotted 1px hsl(0, 0%, 20%);
-            --border: solid 1px #ff976a;
-            --background: #fff;
             --color: #ff976a;
-            --hover-border: solid 1px #ffac88;
+            --background: #fff;
+            --border: solid 1px #ff976a;
             --hover-color: #ffac88;
-            --active-border: solid 1px #cc7955;
-            --active-background: #ccc;
+            --hover-border: solid 1px #ffac88;
             --active-color: #cc7955;
+            --active-background: #ccc;
+            --active-border: solid 1px #cc7955;
             --disabled-background:  hsl(0, 0%, 95%);
         }
     }
     &.danger {
         &:not(.plain) {
             --focusbox-border: dotted 1px #fff;
-            --background: #ee0a24;
             --color: #fff;
+            --background: #ee0a24;
             --hover-background: #f13b50;
             --active-background: #be081d;
         }
         &.plain {
             --focusbox-border: dotted 1px hsl(0, 0%, 20%);
-            --border: solid 1px #ee0a24;
-            --background: #fff;
             --color: #ee0a24;
-            --hover-border: solid 1px #f13b50;
+            --background: #fff;
+            --border: solid 1px #ee0a24;
             --hover-color: #f13b50;
-            --active-border: solid 1px #be081d;
-            --active-background: #ccc;
+            --hover-border: solid 1px #f13b50;
             --active-color: #be081d;
+            --active-background: #ccc;
+            --active-border: solid 1px #be081d;
             --disabled-background:  hsl(0, 0%, 95%);
         }
     }
@@ -184,6 +183,10 @@
             &::before {                     // --- 外边框 ---
                 border: var(--focus-border, var(--border));
             }
+            &.area-all, &.area-mark {
+                background: var(--focus-background, var(--background));
+                color: var(--focus-color, var(--color));
+            }
             &.area-arrow {
                 .inner::before {            // --- 里边框 ---
                     border-right: var(--focus-border, var(--border));
@@ -194,7 +197,7 @@
             &::before {                     // --- 外边框 ---
                 border: var(--hover-border, var(--border));
             }
-            &.area-all {
+            &.area-all, &.area-mark {
                 background: var(--hover-background, var(--background));
                 color: var(--hover-color, var(--color));
             }
@@ -208,7 +211,7 @@
             &::before {
                 border: var(--active-border, var(--border));
             }
-            &.area-all {
+            &.area-all, &.area-mark {
                 background: var(--active-background, var(--background));
                 color: var(--active-color, var(--color));
             }
@@ -230,6 +233,12 @@
                     background: var(--active-background, var(--background));
                     color: var(--active-color, var(--color));
                 }
+            }
+        }
+
+        &.area-mark {
+            .arrow {
+                position: absolute; right: -3px; bottom: -3px; width: initial; transform: rotate(-45deg);
             }
         }
     }

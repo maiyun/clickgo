@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.mounted = exports.methods = exports.watch = exports.computed = exports.data = exports.props = void 0;
+const clickgo = require("clickgo");
 exports.props = {
     'same': {
         'default': false
@@ -521,13 +522,19 @@ exports.methods = {
     },
     onSelect: function (area) {
         if (this.isMulti) {
-            if (area.shift) {
-                if (area.start !== -1) {
+            if (area.shift || area.ctrl) {
+                if (area.start === -1) {
+                    for (const item of this.selectValues) {
+                        this.select(item, false, true);
+                    }
+                    this.selectValues = [];
+                }
+                else if (area.shift) {
                     for (let i = area.start; i <= area.end; ++i) {
-                        if (this.beforeSelectValues.includes(i)) {
+                        if (this.selectValues.includes(i)) {
                             continue;
                         }
-                        if (this.selectValues.includes(i)) {
+                        if (this.beforeSelectValues.includes(i)) {
                             continue;
                         }
                         this.selectValues.push(i);
@@ -543,14 +550,26 @@ exports.methods = {
                     }
                 }
                 else {
-                    for (const item of this.selectValues) {
-                        this.select(item, false, true);
+                    for (let i = area.start; i <= area.end; ++i) {
+                        if (this.selectValues.includes(i)) {
+                            continue;
+                        }
+                        if (this.beforeSelectValues.includes(i)) {
+                            this.selectValues.push(i);
+                            this.select(i, false, true);
+                            continue;
+                        }
+                        this.selectValues.push(i);
+                        this.select(i, false, true);
                     }
-                    this.selectValues = [];
-                }
-            }
-            else if (area.ctrl) {
-                for (let i = area.start; i <= area.end; ++i) {
+                    for (let i = 0; i < this.selectValues.length; ++i) {
+                        if (this.selectValues[i] >= area.start && this.selectValues[i] <= area.end) {
+                            continue;
+                        }
+                        this.select(this.selectValues[i], false, true);
+                        this.selectValues.splice(i, 1);
+                        --i;
+                    }
                 }
             }
             else {

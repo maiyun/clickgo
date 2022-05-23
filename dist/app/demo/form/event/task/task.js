@@ -10,6 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.mounted = exports.methods = exports.data = void 0;
+const clickgo = require("clickgo");
 exports.data = {
     'tlist': [],
     'list': [],
@@ -27,24 +28,24 @@ exports.methods = {
     'run': function () {
         return __awaiter(this, void 0, void 0, function* () {
             const taskId = yield clickgo.task.run('/clickgo/app/demo/');
-            yield this.cgDialog(`Successfully run, task id is: ${taskId}.`);
+            yield clickgo.form.dialog(`Successfully run, task id is: ${taskId}.`);
         });
     },
     'end': function () {
         return __awaiter(this, void 0, void 0, function* () {
-            if (yield this.cgConfirm(`Are you sure to end Task ${this.tid}?`)) {
+            if (yield clickgo.form.confirm(`Are you sure to end Task ${this.tid}?`)) {
                 clickgo.task.end(parseInt(this.tid));
             }
         });
     },
     'runTask': function () {
         return __awaiter(this, void 0, void 0, function* () {
-            if (clickgo.form.taskInfo.taskId > 0) {
-                yield this.cgDialog('The Task APP is already running.');
+            if (clickgo.task.systemTaskInfo.taskId > 0) {
+                yield clickgo.form.dialog('The Task APP is already running.');
                 return;
             }
             const taskId = yield clickgo.task.run('/clickgo/app/task/');
-            yield this.cgDialog(`Successfully run, task id is: ${taskId}.`);
+            yield clickgo.form.dialog(`Successfully run, task id is: ${taskId}.`);
         });
     }
 };
@@ -56,14 +57,14 @@ const mounted = function () {
             'value': parseInt(tid)
         });
     }
-    this.cgSetSystemEventListener('taskStarted', (taskId) => {
+    clickgo.core.setSystemEventListener('taskStarted', (taskId) => {
         this.tlist.push({
             'label': 'Task ' + taskId.toString(),
             'value': taskId
         });
         this.pushConsole('taskStarted', `taskId: ${taskId}`);
     });
-    this.cgSetSystemEventListener('taskEnded', (taskId) => {
+    clickgo.core.setSystemEventListener('taskEnded', (taskId) => {
         for (let i = 0; i < this.tlist.length; ++i) {
             if (this.tlist[i].value !== taskId) {
                 continue;

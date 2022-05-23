@@ -1,3 +1,6 @@
+import * as clickgo from 'clickgo';
+import * as types from '~/types/index';
+
 export const props = {
     'disabled': {
         'default': false
@@ -22,18 +25,18 @@ export const data = {
 };
 
 export const computed = {
-    'isDisabled': function(this: IVControl): boolean {
+    'isDisabled': function(this: types.IVControl): boolean {
         return clickgo.tool.getBoolean(this.disabled);
     },
 
-    'opMargin': function(this: IVControl): string {
+    'opMargin': function(this: types.IVControl): string {
         return this.padding.replace(/(\w+)/g, '-$1');
     }
 };
 
 export const watch = {
     'type': {
-        handler: function(this: IVControl): void {
+        handler: function(this: types.IVControl): void {
             const menulist = this.cgParentByName('menulist');
             if (!menulist) {
                 return;
@@ -50,17 +53,17 @@ export const watch = {
 };
 
 export const methods = {
-    enter: function(this: IVControl, e: MouseEvent): void {
+    enter: function(this: types.IVControl, e: MouseEvent): void {
         if (clickgo.dom.hasTouchButMouse(e)) {
             return;
         }
         clickgo.form.showPop(this.$el, this.$refs.pop, 'h');
     },
-    touch: function(this: IVControl): void {
+    touch: function(this: types.IVControl): void {
         // --- 只有 touchstart 才显示，因为 PC 的 mouseenter 已经显示过了 ---
         clickgo.form.showPop(this.$el, this.$refs.pop, 'h');
     },
-    click: function(this: IVControl): void {
+    click: function(this: types.IVControl): void {
         if (!this.type) {
             if (!this.$slots.pop) {
                 // --- 没有下层，则隐藏所有 pop ---
@@ -79,7 +82,7 @@ export const methods = {
     }
 };
 
-export const mounted = function(this: IVControl): void {
+export const mounted = function(this: types.IVControl): void {
     clickgo.dom.watchStyle(this.$el, 'padding', (n, v) => {
         this.padding = v;
     }, true);
@@ -93,7 +96,7 @@ export const mounted = function(this: IVControl): void {
     }
 };
 
-export const beforeUnmounted = function(this: IVControl): void {
+export const beforeUnmounted = function(this: types.IVControl): void {
     if (!this.menulist) {
         return;
     }

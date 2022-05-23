@@ -1,3 +1,6 @@
+import * as clickgo from 'clickgo';
+import * as types from '~/types/index';
+
 export const props = {
     'disabled': {
         'default': false
@@ -39,17 +42,17 @@ export const data = {
 
 export const watch = {
     'length': {
-        handler: function(this: IVControl): void {
+        handler: function(this: types.IVControl): void {
             this.resizePx();
         }
     },
     'client': {
-        handler: function(this: IVControl): void {
+        handler: function(this: types.IVControl): void {
             this.resizePx();
         }
     },
     'scrollOffset': {
-        handler: function(this: IVControl): void {
+        handler: function(this: types.IVControl): void {
             const scrollOffsetData = Math.round(parseFloat(this.scrollOffset));
             if (this.scrollOffsetData === scrollOffsetData) {
                 return;
@@ -59,7 +62,7 @@ export const watch = {
         }
     },
     'scrollOffsetData': {
-        handler: function(this: IVControl): void {
+        handler: function(this: types.IVControl): void {
             if (!this.isFloat) {
                 return;
             }
@@ -67,24 +70,24 @@ export const watch = {
                 return;
             }
             if (this.opacityTimer > 0) {
-                this.cgRemoveTimer(this.opacityTimer);
+                clickgo.task.removeTimer(this.opacityTimer);
                 this.opacityTimer = 0;
             }
-            this.opacityTimer = this.cgSleep(() => {
+            this.opacityTimer = clickgo.task.sleep(() => {
                 this.opacity = '0';
             }, 800);
             this.opacity = '1';
         }
     },
-    'float': function(this: IVControl): void {
+    'float': function(this: types.IVControl): void {
         if (this.isFloat) {
-            this.opacityTimer = this.cgSleep(() => {
+            this.opacityTimer = clickgo.task.sleep(() => {
                 this.opacity = '0';
             }, 800);
         }
         else {
             if (this.opacityTimer > 0) {
-                this.cgRemoveTimer(this.opacityTimer);
+                clickgo.task.removeTimer(this.opacityTimer);
                 this.opacityTimer = 0;
             }
             this.opacity = '1';
@@ -94,14 +97,14 @@ export const watch = {
 
 export const computed = {
     // --- 滑块真实应该长度 px ---
-    'realSize': function(this: IVControl): number {
+    'realSize': function(this: types.IVControl): number {
         if (this.client >= this.length) {
             return this.barLengthPx;
         }
         return this.client / this.length * this.barLengthPx;
     },
     // --- 滑块目前显示长度 ---
-    'size': function(this: IVControl): number {
+    'size': function(this: types.IVControl): number {
         if (this.realSize < 5) {
             if (5 > this.barLengthPx) {
                 return this.barLengthPx;
@@ -111,28 +114,28 @@ export const computed = {
         return this.realSize;
     },
     // --- 目前显示长度大于真实长度的长度 ---
-    'sizeOut': function(this: IVControl): number {
+    'sizeOut': function(this: types.IVControl): number {
         return this.size - this.realSize;
     },
     // --- 除去滑块外的 bar 长度 --- */
-    'barOutSize': function(this: IVControl): number {
+    'barOutSize': function(this: types.IVControl): number {
         return this.barLengthPx - this.size;
     },
     // --- 最大可拖动的 scroll 位置 ---
-    'maxScroll': function(this: IVControl): number {
+    'maxScroll': function(this: types.IVControl): number {
         return (this.length > this.client) ? this.length - this.client : 0;
     },
 
-    'isDisabled': function(this: IVControl): boolean {
+    'isDisabled': function(this: types.IVControl): boolean {
         return clickgo.tool.getBoolean(this.disabled);
     },
-    'isFloat': function(this: IVControl): boolean {
+    'isFloat': function(this: types.IVControl): boolean {
         return clickgo.tool.getBoolean(this.float);
     }
 };
 
 export const methods = {
-    down: function(this: IVControl, e: MouseEvent | TouchEvent): void {
+    down: function(this: types.IVControl, e: MouseEvent | TouchEvent): void {
         if (clickgo.dom.hasTouchButMouse(e)) {
             return;
         }
@@ -148,7 +151,7 @@ export const methods = {
             }
         });
     },
-    bardown: function(this: IVControl, e: MouseEvent | TouchEvent): void {
+    bardown: function(this: types.IVControl, e: MouseEvent | TouchEvent): void {
         if (clickgo.dom.hasTouchButMouse(e)) {
             return;
         }
@@ -177,14 +180,14 @@ export const methods = {
         this.$emit('update:scrollOffset', this.scrollOffsetData);
         this.down(e);
     },
-    longDown: function(this: IVControl, e: MouseEvent | TouchEvent, type: 'start' | 'end'): void {
+    longDown: function(this: types.IVControl, e: MouseEvent | TouchEvent, type: 'start' | 'end'): void {
         if (this.client >= this.length) {
             return;
         }
         clickgo.dom.bindDown(e, {
             down: () => {
                 this.tran = true;
-                this.timer = this.cgOnFrame(() => {
+                this.timer = clickgo.task.onFrame(() => {
                     if (type === 'start') {
                         if (this.scrollOffsetData - 10 < 0) {
                             if (this.scrollOffsetData !== 0) {
@@ -219,13 +222,13 @@ export const methods = {
             },
             up: () => {
                 this.tran = false;
-                this.cgOffFrame(this.timer);
+                clickgo.task.offFrame(this.timer);
                 this.timer = 0;
             }
         });
     },
     // --- 进入时保持滚动条常亮 ---
-    enter: function(this: IVControl, e: MouseEvent): void {
+    enter: function(this: types.IVControl, e: MouseEvent): void {
         if (clickgo.dom.hasTouchButMouse(e)) {
             return;
         }
@@ -233,23 +236,23 @@ export const methods = {
         if (this.isFloat) {
             this.opacity = '1';
             if (this.opacityTimer > 0) {
-                this.cgRemoveTimer(this.opacityTimer);
+                clickgo.task.removeTimer(this.opacityTimer);
                 this.opacityTimer = 0;
             }
         }
     },
-    leave: function(this: IVControl, e: MouseEvent): void {
+    leave: function(this: types.IVControl, e: MouseEvent): void {
         if (clickgo.dom.hasTouchButMouse(e)) {
             return;
         }
         this.isEnter = false;
         if (this.isFloat) {
-            this.opacityTimer = this.cgSleep(() => {
+            this.opacityTimer = clickgo.task.sleep(() => {
                 this.opacity = '0';
             }, 800);
         }
     },
-    wrapDown: function(this: IVControl, e: TouchEvent): void {
+    wrapDown: function(this: types.IVControl, e: TouchEvent): void {
         // --- 防止在手机模式按下的状态下滚动条被自动隐藏，PC 下有 enter 所以没事 ---
         clickgo.dom.bindDown(e, {
             down: () => {
@@ -257,7 +260,7 @@ export const methods = {
                 if (this.isFloat) {
                     this.opacity = '1';
                     if (this.opacityTimer > 0) {
-                        this.cgRemoveTimer(this.opacityTimer);
+                        clickgo.task.removeTimer(this.opacityTimer);
                         this.opacityTimer = 0;
                     }
                 }
@@ -265,7 +268,7 @@ export const methods = {
             up: () => {
                 this.isEnter = false;
                 if (this.isFloat) {
-                    this.opacityTimer = this.cgSleep(() => {
+                    this.opacityTimer = clickgo.task.sleep(() => {
                         this.opacity = '0';
                     }, 800);
                 }
@@ -273,7 +276,7 @@ export const methods = {
         });
     },
     // --- 根据 this.scrollOffsetData 值，来设定 px 位置的值 ---
-    resizePx: function(this: IVControl): void {
+    resizePx: function(this: types.IVControl): void {
         if (this.scrollOffsetData > this.maxScroll) {
             this.scrollOffsetData = this.maxScroll;
             this.scrollOffsetPx = this.barOutSize;
@@ -290,10 +293,10 @@ export const methods = {
     }
 };
 
-export const mounted = function(this: IVControl): void {
+export const mounted = function(this: types.IVControl): void {
     // --- 是否自动隐藏 scroll ---
     if (this.isFloat) {
-        this.opacityTimer = this.cgSleep(() => {
+        this.opacityTimer = clickgo.task.sleep(() => {
             this.opacity = '0';
         }, 800);
     }
@@ -314,8 +317,8 @@ export const mounted = function(this: IVControl): void {
     this.resizePx();
 };
 
-export const unmounted = function(this: IVControl): void {
+export const unmounted = function(this: types.IVControl): void {
     if (this.timer > 0) {
-        this.cgOffFrame(this.timer);
+        clickgo.task.offFrame(this.timer);
     }
 };

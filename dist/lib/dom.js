@@ -1,15 +1,8 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.fullscreen = exports.siblingsData = exports.siblings = exports.findParentByData = exports.bindResize = exports.bindMove = exports.is = exports.bindLong = exports.allowEvent = exports.bindGesture = exports.bindDown = exports.watchStyle = exports.watch = exports.watchSize = exports.getSize = exports.getStyleCount = exports.removeStyle = exports.pushStyle = exports.removeFromStyleList = exports.createToStyleList = exports.hasTouchButMouse = exports.setGlobalCursor = void 0;
+exports.fullscreen = exports.siblingsData = exports.siblings = exports.findParentByClass = exports.findParentByData = exports.bindResize = exports.bindMove = exports.is = exports.bindDrag = exports.bindLong = exports.allowEvent = exports.bindGesture = exports.bindDown = exports.isWatchStyle = exports.watchStyle = exports.clearWatch = exports.unwatch = exports.watch = exports.clearWatchSize = exports.unwatchSize = exports.watchSize = exports.getSize = exports.getStyleCount = exports.removeStyle = exports.pushStyle = exports.removeFromStyleList = exports.createToStyleList = exports.hasTouchButMouse = exports.setGlobalCursor = void 0;
+const form = require("./form");
+const core = require("./core");
 const topClass = ['#cg-form-list', '#cg-pop-list', '#cg-system', '#cg-simpletask'];
 function classUnfold(after) {
     const arr = [];
@@ -38,6 +31,7 @@ ${classUnfold()}, ${classUnfold('input')}, ${classUnfold('textarea')} {font-fami
 #cg-circular {box-sizing: border-box; position: fixed; z-index: 20020003; border: solid 3px #ff976a; border-radius: 50%; filter: drop-shadow(0 0 3px #ff976a); pointer-events: none; opacity: 0;}
 #cg-gesture {box-sizing: border-box; position: fixed; z-index: 20020004; border-radius: 50%; pointer-events: none; opacity: 0; background: rgba(0, 0, 0, .3); box-shadow: 0 5px 20px rgba(0, 0, 0, .25); transform: scale(0); width: 20px; height: 20px;}
 #cg-gesture.done {background: rgba(255, 255, 255, .3); border: solid 3px rgba(0, 0, 0, .3)}
+#cg-drag {box-sizing: border-box; position: fixed; border-radius: 3px; z-index: 20020005; pointer-events: none; background: rgba(0, 0, 0, .5); box-shadow: 0 5px 20px rgba(0, 0, 0, .25); opacity: 0; display: flex; justify-content: center; align-items: center;}
 
 [data-cg-pop] {position: fixed; box-shadow: 0px 5px 20px rgba(0, 0, 0, .25); transition: .1s ease-out; transition-property: transform, opacity; transform: translateY(-10px); opacity: 0;}
 [data-cg-pop]:not([data-cg-open]) {pointer-events: none;}
@@ -51,7 +45,7 @@ ${classUnfold()}, ${classUnfold('input')}, ${classUnfold('textarea')} {font-fami
 .cg-system-icon-danger {background: #ee0a24;}
 .cg-system-icon-progress {background: #ff976a;}
 .cg-system-notify-title {font-size: 16px; font-weight: bold; padding-bottom: 10px;}
-.cg-system-notify-content {line-height: 1.5;}
+.cg-system-notify-content {line-height: 1.5; word-break: break-word;}
 .cg-system-notify-progress {position: absolute; bottom: 0; left: 0; border-radius: 1px; background: #ff976a; transition: width 1s ease-out; width: 0%; height: 2px;}
 
 #cg-simpletask {bottom: -46px; width: 100%; height: 46px; top: initial; background: rgb(0, 0, 0, .5); -webkit-backdrop-filter: blur(30px) brightness(1.1); backdrop-filter: blur(30px) brightness(1.1); padding: 5px 0 5px 5px; display: flex; color: #f6f6f6; transition: bottom .1s ease-out; overflow-x: auto;}
@@ -94,7 +88,7 @@ function hasTouchButMouse(e) {
 }
 exports.hasTouchButMouse = hasTouchButMouse;
 function createToStyleList(taskId) {
-    styleList.insertAdjacentHTML('beforeend', `<div id="cg-style-task${taskId}"><style class="cg-style-global"></style><div class="cg-style-theme"></div><div class="cg-style-control"></div><div class="cg-style-form"></div></div>`);
+    styleList.insertAdjacentHTML('beforeend', `<div id="cg-style-task${taskId}"><style class="cg-style-global"></style><div class="cg-style-control"></div><div class="cg-style-theme"></div><div class="cg-style-form"></div></div>`);
 }
 exports.createToStyleList = createToStyleList;
 function removeFromStyleList(taskId) {
@@ -124,7 +118,7 @@ function removeStyle(taskId, type = 'global', formId = 0) {
         return;
     }
     if (type === 'global') {
-        const el = document.querySelector(`#cg-style-task${taskId} > .cg-style-global`);
+        const el = styleTask.querySelector(`.cg-style-global`);
         if (!el) {
             return;
         }
@@ -132,18 +126,17 @@ function removeStyle(taskId, type = 'global', formId = 0) {
     }
     else if (type === 'theme' || type === 'control') {
         if (formId === 0) {
-            const el = document.querySelector(`#cg-style-task${taskId} > .cg-style-${type}`);
+            const el = styleTask.querySelector(`.cg-style-${type}`);
             if (!el) {
                 return;
             }
             el.innerHTML = '';
         }
         else {
-            const el = document.querySelector(`#cg-style-task${taskId} > .cg-style-${type} > [data-name='${formId}']`);
-            if (!el) {
-                return;
+            const elist = styleTask.querySelectorAll(`.cg-style-${type} > [data-name='${formId}']`);
+            for (let i = 0; i < elist.length; ++i) {
+                elist.item(i).remove();
             }
-            el.remove();
         }
     }
     else {
@@ -191,8 +184,14 @@ function getSize(el) {
     };
 }
 exports.getSize = getSize;
-function watchSize(el, cb, immediate = false) {
+const watchSizeList = [];
+function watchSize(el, cb, immediate = false, taskId) {
     const fsize = getSize(el);
+    for (const item of watchSizeList) {
+        if (item.el === el) {
+            return fsize;
+        }
+    }
     if (immediate) {
         const r = cb(fsize);
         if (r instanceof Promise) {
@@ -214,10 +213,62 @@ function watchSize(el, cb, immediate = false) {
         }
     });
     resizeObserver.observe(el);
+    watchSizeList.push({
+        'el': el,
+        'ro': resizeObserver,
+        'taskId': taskId
+    });
     return fsize;
 }
 exports.watchSize = watchSize;
-function watch(el, cb, mode = 'default', immediate = false) {
+function unwatchSize(el, taskId) {
+    for (let i = 0; i < watchSizeList.length; ++i) {
+        const item = watchSizeList[i];
+        if (item.el !== el) {
+            continue;
+        }
+        if (taskId && taskId !== item.taskId) {
+            return;
+        }
+        if (item.el.offsetParent) {
+            item.ro.unobserve(item.el);
+        }
+        watchSizeList.splice(i, 1);
+        --i;
+        return;
+    }
+}
+exports.unwatchSize = unwatchSize;
+function clearWatchSize(taskId) {
+    if (!taskId) {
+        return;
+    }
+    for (let i = 0; i < watchSizeList.length; ++i) {
+        const item = watchSizeList[i];
+        if (taskId !== item.taskId) {
+            continue;
+        }
+        if (item.el.offsetParent) {
+            item.ro.unobserve(item.el);
+        }
+        watchSizeList.splice(i, 1);
+        --i;
+    }
+}
+exports.clearWatchSize = clearWatchSize;
+function cgClearWatchSize() {
+    for (let i = 0; i < watchSizeList.length; ++i) {
+        const item = watchSizeList[i];
+        if (item.el.offsetParent) {
+            continue;
+        }
+        watchSizeList.splice(i, 1);
+        --i;
+    }
+}
+setInterval(cgClearWatchSize, 1000 * 60 * 5);
+const watchList = [];
+function watch(el, cb, mode = 'default', immediate = false, taskId) {
     if (immediate) {
         cb();
     }
@@ -261,10 +312,64 @@ function watch(el, cb, mode = 'default', immediate = false) {
     }
     const mo = new MutationObserver(cb);
     mo.observe(el, moi);
+    watchList.push({
+        'el': el,
+        'mo': mo,
+        'taskId': taskId
+    });
 }
 exports.watch = watch;
+function unwatch(el, taskId) {
+    for (let i = 0; i < watchList.length; ++i) {
+        const item = watchList[i];
+        if (item.el !== el) {
+            continue;
+        }
+        if (taskId && taskId !== item.taskId) {
+            return;
+        }
+        if (item.el.offsetParent) {
+            item.mo.disconnect();
+        }
+        watchList.splice(i, 1);
+        --i;
+        return;
+    }
+}
+exports.unwatch = unwatch;
+function clearWatch(taskId) {
+    if (!taskId) {
+        return;
+    }
+    for (let i = 0; i < watchList.length; ++i) {
+        const item = watchList[i];
+        if (taskId !== item.taskId) {
+            continue;
+        }
+        if (item.el.offsetParent) {
+            item.mo.disconnect();
+        }
+        watchList.splice(i, 1);
+        --i;
+    }
+}
+exports.clearWatch = clearWatch;
+function cgClearWatch() {
+    for (let i = 0; i < watchList.length; ++i) {
+        const item = watchList[i];
+        if (item.el.offsetParent) {
+            continue;
+        }
+        watchList.splice(i, 1);
+        --i;
+    }
+}
+setInterval(cgClearWatch, 1000 * 60 * 5);
 const watchStyleObjects = [];
 function watchStyle(el, name, cb, immediate = false) {
+    if (typeof name === 'string') {
+        name = [name];
+    }
     for (const item of watchStyleObjects) {
         if (item.el !== el) {
             continue;
@@ -286,9 +391,6 @@ function watchStyle(el, name, cb, immediate = false) {
         return;
     }
     const sd = getComputedStyle(el);
-    if (typeof name === 'string') {
-        name = [name];
-    }
     watchStyleObjects.push({
         'el': el,
         'sd': sd,
@@ -327,6 +429,16 @@ const watchStyleRAF = function () {
     requestAnimationFrame(watchStyleRAF);
 };
 watchStyleRAF();
+function isWatchStyle(el) {
+    for (const item of watchStyleObjects) {
+        if (item.el !== el) {
+            continue;
+        }
+        return true;
+    }
+    return false;
+}
+exports.isWatchStyle = isWatchStyle;
 function bindDown(oe, opt) {
     var _a;
     if (hasTouchButMouse(oe)) {
@@ -705,7 +817,7 @@ function bindGesture(e, opt) {
                     }
                 }
             },
-            end: (e) => {
+            end: () => {
                 gestureElement.style.opacity = '0';
                 if (!dir) {
                     return;
@@ -722,6 +834,7 @@ function bindGesture(e, opt) {
         }
         let x = 0, y = 0;
         if (e instanceof WheelEvent) {
+            e.preventDefault();
             if (Math.abs(e.deltaX) < 5 && Math.abs(e.deltaY) < 5) {
                 return;
             }
@@ -774,11 +887,11 @@ function bindGesture(e, opt) {
 exports.bindGesture = bindGesture;
 let lastLongTime = 0;
 function allowEvent(e) {
-    let now = Date.now();
+    const now = Date.now();
     if (now - lastLongTime < 5) {
         return false;
     }
-    let current = e.currentTarget;
+    const current = e.currentTarget;
     if (current.dataset.cgDisabled !== undefined) {
         return false;
     }
@@ -792,8 +905,8 @@ function bindLong(e, long) {
     if (hasTouchButMouse(e)) {
         return;
     }
-    let tx = e instanceof MouseEvent ? e.clientX : e.touches[0].clientX;
-    let ty = e instanceof MouseEvent ? e.clientY : e.touches[0].clientY;
+    const tx = e instanceof MouseEvent ? e.clientX : e.touches[0].clientX;
+    const ty = e instanceof MouseEvent ? e.clientY : e.touches[0].clientY;
     let ox = 0;
     let oy = 0;
     let isLong = false;
@@ -812,12 +925,12 @@ function bindLong(e, long) {
     }, 300);
     bindDown(e, {
         move: (e) => {
-            let x = e instanceof MouseEvent ? e.clientX : e.touches[0].clientX;
-            let y = e instanceof MouseEvent ? e.clientY : e.touches[0].clientY;
+            const x = e instanceof MouseEvent ? e.clientX : e.touches[0].clientX;
+            const y = e instanceof MouseEvent ? e.clientY : e.touches[0].clientY;
             ox = Math.abs(x - tx);
             oy = Math.abs(y - ty);
         },
-        up: () => __awaiter(this, void 0, void 0, function* () {
+        up: () => {
             if (timer !== undefined) {
                 clearTimeout(timer);
                 timer = undefined;
@@ -825,12 +938,124 @@ function bindLong(e, long) {
             else if (isLong) {
                 lastLongTime = Date.now();
             }
-        })
+        }
     });
 }
 exports.bindLong = bindLong;
+function bindDrag(e, opt) {
+    let otop = 0;
+    let oleft = 0;
+    let nel = null;
+    bindMove(e, {
+        'object': opt.el,
+        'start': function () {
+            const rect = opt.el.getBoundingClientRect();
+            form.showDrag();
+            form.moveDrag({
+                'top': rect.top,
+                'left': rect.left,
+                'width': rect.width,
+                'height': rect.height,
+                'icon': true
+            });
+            otop = rect.top;
+            oleft = rect.left;
+        },
+        'move': function (ox, oy, x, y) {
+            const ntop = otop + oy;
+            const nleft = oleft + ox;
+            form.moveDrag({
+                'top': ntop,
+                'left': nleft,
+                'icon': false
+            });
+            otop = ntop;
+            oleft = nleft;
+            const els = document.elementsFromPoint(x, y);
+            for (const el of els) {
+                if (el.dataset.cgDrop === undefined) {
+                    continue;
+                }
+                if (el === opt.el) {
+                    continue;
+                }
+                if (el === nel) {
+                    return;
+                }
+                if (nel !== null) {
+                    nel.removeAttribute('data-cg-hover');
+                    nel.dispatchEvent(new CustomEvent('dragleave', {
+                        'detail': {
+                            'value': opt.data
+                        }
+                    }));
+                }
+                el.dataset.cgHover = '';
+                nel = el;
+                nel.dispatchEvent(new CustomEvent('dragenter', {
+                    'detail': {
+                        'value': opt.data
+                    }
+                }));
+                return;
+            }
+            form.moveDrag({
+                'icon': true
+            });
+            if (nel === null) {
+                return;
+            }
+            nel.removeAttribute('data-cg-hover');
+            nel.dispatchEvent(new CustomEvent('dragleave', {
+                'detail': {
+                    'value': opt.data
+                }
+            }));
+            nel = null;
+        },
+        'end': function () {
+            form.hideDrag();
+            if (nel === null) {
+                return;
+            }
+            nel.removeAttribute('data-cg-hover');
+            nel.dispatchEvent(new CustomEvent('drop', {
+                'detail': {
+                    'value': opt.data
+                }
+            }));
+        }
+    });
+}
+exports.bindDrag = bindDrag;
 exports.is = Vue.reactive({
-    'move': false
+    'move': false,
+    'shift': false,
+    'ctrl': false
+});
+window.addEventListener('keydown', function (e) {
+    switch (e.key) {
+        case 'Shift': {
+            exports.is.shift = true;
+            break;
+        }
+        case 'Control': {
+            exports.is.ctrl = true;
+            break;
+        }
+    }
+});
+window.addEventListener('keyup', function (e) {
+    switch (e.key) {
+        case 'Shift': {
+            exports.is.shift = false;
+            break;
+        }
+        case 'Control': {
+            exports.is.ctrl = false;
+            break;
+        }
+    }
 });
 function bindMove(e, opt) {
     var _a, _b, _c, _d;
@@ -851,15 +1076,17 @@ function bindMove(e, opt) {
         if (!(opt.areaObject instanceof HTMLElement)) {
             opt.areaObject = opt.areaObject.$el;
         }
-        let areaRect = opt.areaObject.getBoundingClientRect();
-        let areaStyle = getComputedStyle(opt.areaObject);
+        const areaRect = opt.areaObject.getBoundingClientRect();
+        const areaStyle = getComputedStyle(opt.areaObject);
         left = areaRect.left + parseFloat(areaStyle.borderLeftWidth) + parseFloat(areaStyle.paddingLeft);
         top = areaRect.top + parseFloat(areaStyle.borderTopWidth) + parseFloat(areaStyle.paddingTop);
-        right = areaRect.left + areaRect.width - (parseFloat(areaStyle.borderRightWidth) + parseFloat(areaStyle.paddingRight));
-        bottom = areaRect.top + areaRect.height - (parseFloat(areaStyle.borderRightWidth) + parseFloat(areaStyle.paddingRight));
+        right = areaRect.left + areaRect.width - (parseFloat(areaStyle.borderRightWidth)
+            + parseFloat(areaStyle.paddingRight));
+        bottom = areaRect.top + areaRect.height - (parseFloat(areaStyle.borderRightWidth)
+            + parseFloat(areaStyle.paddingRight));
     }
     else {
-        let area = clickgo.form.getAvailArea();
+        const area = core.getAvailArea();
         left = (_a = opt.left) !== null && _a !== void 0 ? _a : area.left;
         top = (_b = opt.top) !== null && _b !== void 0 ? _b : area.top;
         right = (_c = opt.right) !== null && _c !== void 0 ? _c : area.width;
@@ -880,13 +1107,13 @@ function bindMove(e, opt) {
     let isBorder = false;
     let objectLeft, objectTop, objectWidth, objectHeight;
     let offsetLeft = 0, offsetTop = 0, offsetRight = 0, offsetBottom = 0;
-    let moveTimes = [];
+    const moveTimes = [];
     bindDown(e, {
         start: () => {
             var _a, _b, _c, _d;
             if (opt.start) {
                 if (opt.start(tx, ty) === false) {
-                    clickgo.dom.setGlobalCursor();
+                    setGlobalCursor();
                     return false;
                 }
             }
@@ -894,7 +1121,7 @@ function bindMove(e, opt) {
                 if (!(opt.object instanceof HTMLElement)) {
                     opt.object = opt.object.$el;
                 }
-                let rect = opt.object.getBoundingClientRect();
+                const rect = opt.object.getBoundingClientRect();
                 objectLeft = rect.left;
                 objectTop = rect.top;
                 objectWidth = rect.width;
@@ -924,8 +1151,8 @@ function bindMove(e, opt) {
                 return;
             }
             let inBorderTop = false, inBorderRight = false, inBorderBottom = false, inBorderLeft = false;
-            let nowLeft = x - offsetLeft;
-            let nowRight = x + offsetRight;
+            const nowLeft = x - offsetLeft;
+            const nowRight = x + offsetRight;
             if (nowLeft <= left) {
                 inBorderLeft = true;
                 if (nowLeft < left && x < tx) {
@@ -951,7 +1178,7 @@ function bindMove(e, opt) {
                 }
             }
             else if (offsetRight === 0) {
-                let r1 = right - 1;
+                const r1 = right - 1;
                 if (x >= r1) {
                     inBorderRight = true;
                     if (x > r1 && x > tx) {
@@ -964,8 +1191,8 @@ function bindMove(e, opt) {
                     }
                 }
             }
-            let nowTop = y - offsetTop;
-            let nowBottom = y + offsetBottom;
+            const nowTop = y - offsetTop;
+            const nowBottom = y + offsetBottom;
             if (nowTop <= top) {
                 inBorderTop = true;
                 if (nowTop < top && y < ty) {
@@ -991,7 +1218,7 @@ function bindMove(e, opt) {
                 }
             }
             else if (offsetBottom === 0) {
-                let b1 = bottom - 1;
+                const b1 = bottom - 1;
                 if (y >= b1) {
                     inBorderBottom = true;
                     if (y > b1 && y > ty) {
@@ -1061,8 +1288,8 @@ function bindMove(e, opt) {
                     (_b = opt.borderOut) === null || _b === void 0 ? void 0 : _b.call(opt);
                 }
             }
-            let ox = x - tx;
-            let oy = y - ty;
+            const ox = x - tx;
+            const oy = y - ty;
             moveTimes.push({
                 'time': Date.now(),
                 'ox': ox,
@@ -1084,14 +1311,14 @@ function bindMove(e, opt) {
         }
     });
     if (opt.showRect) {
-        clickgo.form.showRectangle(tx, ty, {
+        form.showRectangle(tx, ty, {
             'left': left,
             'top': top,
             'width': right - left,
             'height': bottom - top
         });
         setTimeout(() => {
-            clickgo.form.hideRectangle();
+            form.hideRectangle();
         }, 3000);
     }
     return {
@@ -1109,18 +1336,21 @@ function bindResize(e, opt) {
     }
     opt.minWidth = (_a = opt.minWidth) !== null && _a !== void 0 ? _a : 0;
     opt.minHeight = (_b = opt.minHeight) !== null && _b !== void 0 ? _b : 0;
-    let x = e instanceof MouseEvent ? e.clientX : e.touches[0].clientX;
-    let y = e instanceof MouseEvent ? e.clientY : e.touches[0].clientY;
+    const x = e instanceof MouseEvent ? e.clientX : e.touches[0].clientX;
+    const y = e instanceof MouseEvent ? e.clientY : e.touches[0].clientY;
     let offsetLeft, offsetTop, offsetRight, offsetBottom;
     let left, top, right, bottom;
-    if (opt.objectLeft === undefined || opt.objectTop === undefined || opt.objectWidth === undefined || opt.objectHeight === undefined) {
+    if (opt.objectLeft === undefined
+        || opt.objectTop === undefined
+        || opt.objectWidth === undefined
+        || opt.objectHeight === undefined) {
         if (!opt.object) {
             return;
         }
         if (!(opt.object instanceof HTMLElement)) {
             opt.object = opt.object.$el;
         }
-        let objectRect = opt.object.getBoundingClientRect();
+        const objectRect = opt.object.getBoundingClientRect();
         opt.objectLeft = objectRect.left;
         opt.objectTop = objectRect.top;
         opt.objectWidth = objectRect.width;
@@ -1207,13 +1437,30 @@ function findParentByData(el, name) {
     return null;
 }
 exports.findParentByData = findParentByData;
+function findParentByClass(el, name) {
+    let parent = el.parentNode;
+    while (parent) {
+        if (!parent.tagName) {
+            continue;
+        }
+        if (parent.tagName.toLowerCase() === 'body') {
+            break;
+        }
+        if (parent.classList.contains(name)) {
+            return parent;
+        }
+        parent = parent.parentNode;
+    }
+    return null;
+}
+exports.findParentByClass = findParentByClass;
 function siblings(el) {
     if (!el.parentNode) {
         return [];
     }
-    let list = [];
+    const list = [];
     for (let i = 0; i < el.parentNode.children.length; ++i) {
-        let e = el.parentNode.children.item(i);
+        const e = el.parentNode.children.item(i);
         if (e === el) {
             continue;
         }
@@ -1223,9 +1470,9 @@ function siblings(el) {
 }
 exports.siblings = siblings;
 function siblingsData(el, name) {
-    let list = siblings(el);
-    let olist = [];
-    for (let item of list) {
+    const list = siblings(el);
+    const olist = [];
+    for (const item of list) {
         if (item.getAttribute('data-' + name) === null) {
             continue;
         }
@@ -1235,7 +1482,7 @@ function siblingsData(el, name) {
 }
 exports.siblingsData = siblingsData;
 function fullscreen() {
-    let he = document.getElementsByTagName('html')[0];
+    const he = document.getElementsByTagName('html')[0];
     if (he.webkitRequestFullscreen) {
         he.webkitRequestFullscreen();
         return true;

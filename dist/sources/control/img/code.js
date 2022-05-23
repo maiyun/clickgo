@@ -1,6 +1,16 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.mounted = exports.watch = exports.computed = exports.data = exports.props = void 0;
+const clickgo = require("clickgo");
 exports.props = {
     'src': {
         'default': ''
@@ -12,7 +22,8 @@ exports.props = {
 exports.data = {
     'imgData': '',
     'width': 0,
-    'height': 0
+    'height': 0,
+    'count': 0
 };
 exports.computed = {
     'backgroundSize': function () {
@@ -27,21 +38,35 @@ exports.computed = {
 exports.watch = {
     'src': {
         handler: function () {
-            if (this.src === '') {
+            return __awaiter(this, void 0, void 0, function* () {
+                const count = ++this.count;
+                if (typeof this.src !== 'string' || this.src === '') {
+                    this.imgData = undefined;
+                    return;
+                }
+                const pre = this.src.slice(0, 6).toLowerCase();
+                if (pre === 'file:/') {
+                    return;
+                }
+                if (pre === 'http:/' || pre === 'https:' || pre === 'data:i') {
+                    this.imgData = `url(${this.src})`;
+                    return;
+                }
+                const path = clickgo.tool.urlResolve(this.cgPath, this.src);
+                const blob = yield clickgo.fs.getContent(path);
+                if ((count !== this.count) || !blob || typeof blob === 'string') {
+                    return;
+                }
+                const t = yield clickgo.tool.blob2DataUrl(blob);
+                if (count !== this.count) {
+                    return;
+                }
+                if (t) {
+                    this.imgData = 'url(' + t + ')';
+                    return;
+                }
                 this.imgData = undefined;
-                return;
-            }
-            const pre = this.src.slice(0, 6).toLowerCase();
-            if (pre === 'http:/' || pre === 'https:' || pre === 'file:/' || pre === 'data:i') {
-                this.imgData = `url(${this.src})`;
-                return;
-            }
-            const t = this.cgGetObjectUrl(this.src);
-            if (t) {
-                this.imgData = 'url(' + t + ')';
-                return;
-            }
-            this.imgData = undefined;
+            });
         },
         'immediate': true
     }

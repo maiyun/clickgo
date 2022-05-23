@@ -1,19 +1,14 @@
-clickgo.ready(async function() {
-    // --- 注册系统默认的库 ---
-    // clickgo.core.regModule('monaco', );
+import * as clickgo from '../../index';
 
+async function run(): Promise<void> {
     const body = document.getElementsByTagName('body')[0];
-    // --- 设置背景 ---
-    if (!clickgo.native) {
-        body.style.background = '#222';
-    }
-
     // --- 其他 ---
     const el = document.getElementById('tip');
     if (!el) {
         return;
     }
     el.innerHTML = 'Starting system app...';
+    await clickgo.init();
     // --- 监听错误 ---
     clickgo.core.globalEvents.errorHandler = function(taskId, formId, error, info) {
         if (!el) {
@@ -45,11 +40,14 @@ clickgo.ready(async function() {
         return;
     }
     el.innerHTML = 'Running...';
-    if (clickgo.native) {
+    if (clickgo.getNative()) {
         document.getElementById('spic')!.style.display = 'none';
     }
     else {
         body.style.background = '#0063b1';
         document.getElementById('spic')!.style.background = '#0063b1';
     }
+}
+run().catch(function(e) {
+    throw e;
 });

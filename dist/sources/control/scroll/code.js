@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.unmounted = exports.mounted = exports.methods = exports.computed = exports.watch = exports.data = exports.props = void 0;
+const clickgo = require("clickgo");
 exports.props = {
     'disabled': {
         'default': false
@@ -63,10 +64,10 @@ exports.watch = {
                 return;
             }
             if (this.opacityTimer > 0) {
-                this.cgRemoveTimer(this.opacityTimer);
+                clickgo.task.removeTimer(this.opacityTimer);
                 this.opacityTimer = 0;
             }
-            this.opacityTimer = this.cgSleep(() => {
+            this.opacityTimer = clickgo.task.sleep(() => {
                 this.opacity = '0';
             }, 800);
             this.opacity = '1';
@@ -74,13 +75,13 @@ exports.watch = {
     },
     'float': function () {
         if (this.isFloat) {
-            this.opacityTimer = this.cgSleep(() => {
+            this.opacityTimer = clickgo.task.sleep(() => {
                 this.opacity = '0';
             }, 800);
         }
         else {
             if (this.opacityTimer > 0) {
-                this.cgRemoveTimer(this.opacityTimer);
+                clickgo.task.removeTimer(this.opacityTimer);
                 this.opacityTimer = 0;
             }
             this.opacity = '1';
@@ -166,7 +167,7 @@ exports.methods = {
         clickgo.dom.bindDown(e, {
             down: () => {
                 this.tran = true;
-                this.timer = this.cgOnFrame(() => {
+                this.timer = clickgo.task.onFrame(() => {
                     if (type === 'start') {
                         if (this.scrollOffsetData - 10 < 0) {
                             if (this.scrollOffsetData !== 0) {
@@ -201,7 +202,7 @@ exports.methods = {
             },
             up: () => {
                 this.tran = false;
-                this.cgOffFrame(this.timer);
+                clickgo.task.offFrame(this.timer);
                 this.timer = 0;
             }
         });
@@ -214,7 +215,7 @@ exports.methods = {
         if (this.isFloat) {
             this.opacity = '1';
             if (this.opacityTimer > 0) {
-                this.cgRemoveTimer(this.opacityTimer);
+                clickgo.task.removeTimer(this.opacityTimer);
                 this.opacityTimer = 0;
             }
         }
@@ -225,7 +226,7 @@ exports.methods = {
         }
         this.isEnter = false;
         if (this.isFloat) {
-            this.opacityTimer = this.cgSleep(() => {
+            this.opacityTimer = clickgo.task.sleep(() => {
                 this.opacity = '0';
             }, 800);
         }
@@ -237,7 +238,7 @@ exports.methods = {
                 if (this.isFloat) {
                     this.opacity = '1';
                     if (this.opacityTimer > 0) {
-                        this.cgRemoveTimer(this.opacityTimer);
+                        clickgo.task.removeTimer(this.opacityTimer);
                         this.opacityTimer = 0;
                     }
                 }
@@ -245,7 +246,7 @@ exports.methods = {
             up: () => {
                 this.isEnter = false;
                 if (this.isFloat) {
-                    this.opacityTimer = this.cgSleep(() => {
+                    this.opacityTimer = clickgo.task.sleep(() => {
                         this.opacity = '0';
                     }, 800);
                 }
@@ -270,7 +271,7 @@ exports.methods = {
 };
 const mounted = function () {
     if (this.isFloat) {
-        this.opacityTimer = this.cgSleep(() => {
+        this.opacityTimer = clickgo.task.sleep(() => {
             this.opacity = '0';
         }, 800);
     }
@@ -291,7 +292,7 @@ const mounted = function () {
 exports.mounted = mounted;
 const unmounted = function () {
     if (this.timer > 0) {
-        this.cgOffFrame(this.timer);
+        clickgo.task.offFrame(this.timer);
     }
 };
 exports.unmounted = unmounted;

@@ -1,5 +1,5 @@
 /**
- * Copyright 2021 Han Guoshuai <zohegs@gmail.com>
+ * Copyright 2022 Han Guoshuai <zohegs@gmail.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,10 +13,38 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+const version = '3.0.0';
+export function getVersion(): string {
+    return version;
+}
+
+const native = navigator.userAgent.toLowerCase().includes('electron') ? true : false;
+export function getNative(): boolean {
+    return native;
+}
+
+let safe = true;
+export function setSafe(val: boolean): void {
+    safe = val;
+}
+export function getSafe(): boolean {
+    return safe;
+}
+
+let cdn = '';
+export function setCdn(val: string): void {
+    cdn = val;
+}
+export function getCdn(): string {
+    return cdn;
+}
+
 export * as control from './lib/control';
 export * as core from './lib/core';
 export * as dom from './lib/dom';
 export * as form from './lib/form';
+export * as fs from './lib/fs';
+export * as native from './lib/native';
 export * as task from './lib/task';
 export * as theme from './lib/theme';
 export * as tool from './lib/tool';

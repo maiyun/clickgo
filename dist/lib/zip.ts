@@ -1,6 +1,8 @@
 import * as jszip from 'jszip';
+import * as types from '../../types';
+import * as tool from './tool';
 
-class Zip implements ICGZip {
+export class Zip {
 
     /** --- zip 对象 --- */
     private readonly _zip!: jszip;
@@ -14,14 +16,16 @@ class Zip implements ICGZip {
     }
 
     public async getContent(path: string): Promise<string | null>;
-    public async getContent<T extends TCGZipOutputType>(path: string, type: T): Promise<ICGZipOutputByType[T] | null>;
+    public async getContent<T extends types.TZipOutputType>(
+        path: string,
+        type: T): Promise<types.IZipOutputByType[T] | null>;
     /**
      * --- 读取完整文件 ---
      * @param path 文件路径
-     * @param encoding 编码或选项
+     * @param type 返回类型
      */
-    public async getContent<T extends TCGZipOutputType>(path: string, type: T = 'string' as T): Promise<ICGZipOutputByType[T] | string | null> {
-        path = clickgo.tool.urlResolve(this._path, path);
+    public async getContent<T extends types.TZipOutputType>(path: string, type: T = 'string' as T): Promise<types.IZipOutputByType[T] | string | null> {
+        path = tool.urlResolve(this._path, path);
         const f = this._zip.file(path.slice(1));
         if (!f) {
             return null;
@@ -40,8 +44,8 @@ class Zip implements ICGZip {
      * @param data 要写入的内容
      * @param options 选项
      */
-    public putContent<T extends TCGZipInputType>(path: string, data: ICGZipInputByType[T], options: { 'base64'?: boolean; 'binary'?: boolean; 'date'?: Date; } = {}): void {
-        path = clickgo.tool.urlResolve(this._path, path);
+    public putContent<T extends types.TZipInputType>(path: string, data: types.IZipInputByType[T], options: { 'base64'?: boolean; 'binary'?: boolean; 'date'?: Date; } = {}): void {
+        path = tool.urlResolve(this._path, path);
         this._zip.file(path.slice(1), data as jszip.InputType, {
             'base64': options.base64,
             'binary': options.binary,
@@ -55,19 +59,97 @@ class Zip implements ICGZip {
      * @param path 要删除的文件路径
      */
     public unlink(path: string): void {
-        path = clickgo.tool.urlResolve(this._path, path);
+        path = tool.urlResolve(this._path, path);
         this._zip.remove(path.slice(1));
         this._refreshList();
     }
 
-    public readDir(path?: string, opt?: { 'hasChildren'?: boolean; 'hasDir'?: boolean; 'pathAsKey'?: false; }): ICGZipItem[];
-    public readDir(path?: string, opt?: { 'hasChildren'?: boolean; 'hasDir'?: boolean; 'pathAsKey': true; }): Record<string, ICGZipItem>;
+    /**
+     * --- 获取对象是否存在，存在则返回 stats 对象，否则返回 null ---
+     * @param path 对象路径
+     * @param options 选项
+     */
+    public stats(path: string): types.IZipStats | null {
+        path = tool.urlResolve(this._path, path);
+        let dirpath = path.endsWith('/') ? path : path + '/';
+        if (!this._list[dirpath]) {
+            // --- 可能是文件 ---
+            if (path.endsWith('/')) {
+                // --- 不可能是文件 ---
+                return null;
+            }
+            const lio = path.lastIndexOf('/') + 1;
+            const dpath = path.slice(0, lio);
+            const fname = path.slice(lio);
+            if (!this._list[dpath]) {
+                // --- 上层目录不存在 ---
+                return null;
+            }
+            const file = this._list[dpath][fname];
+            if (!file) {
+                return null;
+            }
+            return {
+                'date': file.date,
+                'isFile': true,
+                'isDirectory': false
+            };
+        }
+        else {
+            // --- 文件夹 ---
+            if (dirpath === '/') {
+                return {
+                    'date': new Date(),
+                    'isFile': false,
+                    'isDirectory': true
+                };
+            }
+            dirpath = dirpath.slice(0, -1);
+            const lio = dirpath.lastIndexOf('/') + 1;
+            const dpath = dirpath.slice(0, lio);
+            const fname = dirpath.slice(lio);
+            const pfolder = this._list[dpath];
+            const folder = pfolder[fname];
+            return {
+                'date': folder.date,
+                'isFile': false,
+                'isDirectory': true
+            };
+        }
+    }
+
+    /**
+     * --- 判断是否是目录或目录是否存在，是的话返回 stats ---
+     * @param path 判断路径
+     */
+    public isDir(path: string): types.IZipStats | false {
+        const pstats = this.stats(path);
+        if (!pstats || !pstats.isDirectory) {
+            return false;
+        }
+        return pstats;
+    }
+
+    /**
+     * --- 判断是否是文件或文件是否存在，是的话返回 stats ---
+     * @param path 判断路径
+     */
+    public isFile(path: string): types.IZipStats | false {
+        const pstats = this.stats(path);
+        if (!pstats || !pstats.isFile) {
+            return false;
+        }
+        return pstats;
+    }
+
+    public readDir(path?: string, opt?: { 'hasChildren'?: boolean; 'hasDir'?: boolean; 'pathAsKey'?: false; }): types.IZipItem[];
+    public readDir(path?: string, opt?: { 'hasChildren'?: boolean; 'hasDir'?: boolean; 'pathAsKey': true; }): Record<string, types.IZipItem>;
     /**
      * --- 获取文件夹下文件列表 ---
      * @param path 文件夹路径
      * @param opt 选项
      */
-    public readDir(path?: string, opt: { 'hasChildren'?: boolean; 'hasDir'?: boolean; 'pathAsKey'?: boolean; } = {}): Record<string, ICGZipItem> | ICGZipItem[] {
+    public readDir(path?: string, opt: { 'hasChildren'?: boolean; 'hasDir'?: boolean; 'pathAsKey'?: boolean; } = {}): Record<string, types.IZipItem> | types.IZipItem[] {
         if (opt.hasChildren === undefined) {
             opt.hasChildren = false;
         }
@@ -82,32 +164,39 @@ class Zip implements ICGZip {
             path = this._path;
         }
         else {
-            path = clickgo.tool.urlResolve(this._path, path);
+            path = tool.urlResolve(this._path, path);
         }
         if (!path.endsWith('/')) {
             path += '/';
         }
         const folder = this._zip.folder(path.slice(1));
         if (!folder) {
-            return [];
+            return opt.pathAsKey ? {} : [];
         }
         if (!this._list[path]) {
-            return [];
+            return opt.pathAsKey ? {} : [];
         }
         if (!opt.hasChildren) {
-            return this._list[path];
+            if (opt.pathAsKey) {
+                return this._list[path];
+            }
+            const list: types.IZipItem[] = [];
+            for (const k in this._list[path]) {
+                list.push(this._list[path][k]);
+            }
+            return list;
         }
         // --- 定义 list ---
         if (opt.pathAsKey) {
-            const list: Record<string, ICGZipItem> = {};
+            const list: Record<string, types.IZipItem> = {};
             // --- 遍历子项 ---
-            for (const item of this._list[path]) {
+            for (const k in this._list[path]) {
+                const item = this._list[path][k];
                 if (item.isFile || opt.hasDir) {
                     list[item.path + item.name] = item;
                 }
                 if (item.isDirectory) {
                     Object.assign(list, this._readDir(item, {
-                        'hasChildren': opt.hasChildren,
                         'hasDir': opt.hasDir,
                         'pathAsKey': opt.pathAsKey
                     }));
@@ -116,15 +205,15 @@ class Zip implements ICGZip {
             return list;
         }
         else {
-            let list: ICGZipItem[] = [];
+            let list: types.IZipItem[] = [];
             // --- 遍历子项 ---
-            for (const item of this._list[path]) {
+            for (const k in this._list[path]) {
+                const item = this._list[path][k];
                 if (item.isFile || opt.hasDir) {
                     list.push(item);
                 }
                 if (item.isDirectory) {
                     list = list.concat(this._readDir(item, {
-                        'hasChildren': opt.hasChildren,
                         'hasDir': opt.hasDir,
                         'pathAsKey': opt.pathAsKey
                     }));
@@ -134,25 +223,25 @@ class Zip implements ICGZip {
         }
     }
 
-    private _readDir(item: ICGZipItem, opt: { 'hasChildren'?: boolean; 'hasDir'?: boolean; 'pathAsKey'?: false; }): ICGZipItem[];
-    private _readDir(item: ICGZipItem, opt: { 'hasChildren'?: boolean; 'hasDir'?: boolean; 'pathAsKey': true; }): Record<string, ICGZipItem>;
+    private _readDir(item: types.IZipItem, opt: { 'hasDir'?: boolean; 'pathAsKey'?: false; }): types.IZipItem[];
+    private _readDir(item: types.IZipItem, opt: { 'hasDir'?: boolean; 'pathAsKey': true; }): Record<string, types.IZipItem>;
     /**
      * --- 根据 item 文件夹读取子层及所有子层项 ---
      * @param item 文件夹
      */
-    private _readDir(item: ICGZipItem, opt: { 'hasChildren'?: boolean; 'hasDir'?: boolean; 'pathAsKey'?: boolean; }): Record<string, ICGZipItem> | ICGZipItem[] {
+    private _readDir(item: types.IZipItem, opt: { 'hasDir'?: boolean; 'pathAsKey'?: boolean; }): Record<string, types.IZipItem> | types.IZipItem[] {
         if (opt.pathAsKey) {
-            const list: Record<string, ICGZipItem> = {};
+            const list: Record<string, types.IZipItem> = {};
             if (!this._list[item.path + item.name + '/']) {
                 return {};
             }
-            for (const it of this._list[item.path + item.name + '/']) {
+            for (const k in this._list[item.path + item.name + '/']) {
+                const it = this._list[item.path + item.name + '/'][k];
                 if (it.isFile || opt.hasDir) {
                     list[it.path + it.name] = it;
                 }
                 if (it.isDirectory) {
                     Object.assign(list, this._readDir(it, {
-                        'hasChildren': opt.hasChildren,
                         'hasDir': opt.hasDir,
                         'pathAsKey': opt.pathAsKey
                     }));
@@ -161,17 +250,17 @@ class Zip implements ICGZip {
             return list;
         }
         else {
-            let list: ICGZipItem[] = [];
+            let list: types.IZipItem[] = [];
             if (!this._list[item.path + item.name + '/']) {
                 return [];
             }
-            for (const it of this._list[item.path + item.name + '/']) {
+            for (const k in this._list[item.path + item.name + '/']) {
+                const it = this._list[item.path + item.name + '/'][k];
                 if (it.isFile || opt.hasDir) {
                     list.push(it);
                 }
                 if (it.isDirectory) {
                     list = list.concat(this._readDir(it, {
-                        'hasChildren': opt.hasChildren,
                         'hasDir': opt.hasDir,
                         'pathAsKey': opt.pathAsKey
                     }));
@@ -182,13 +271,13 @@ class Zip implements ICGZip {
     }
 
     /** --- 目录列表缓存 --- */
-    private _list: Record<string, ICGZipItem[]> = {};
+    private _list: Record<string, Record<string, types.IZipItem>> = {};
 
     /**
      * --- 重建目录列表缓存 ---
      */
     private _refreshList(): void {
-        const list: Record<string, ICGZipItem[]> = {};
+        const list: Record<string, Record<string, types.IZipItem>> = {};
         this._zip.forEach(function(relativePath, item) {
             let parentPath = '/';
             let name = '';
@@ -210,15 +299,15 @@ class Zip implements ICGZip {
                 name = name.slice(0, -1);
             }
             if (!list[parentPath]) {
-                list[parentPath] = [];
+                list[parentPath] = {};
             }
-            list[parentPath].push({
+            list[parentPath][name] = {
                 'name': name,
                 'date': item.date,
                 'isFile': !item.dir,
                 'isDirectory': item.dir,
                 'path': parentPath
-            });
+            };
         });
         this._list = list;
     }
@@ -237,7 +326,7 @@ class Zip implements ICGZip {
      * @param dir 相对路径或绝对路径
      */
     public cd(dir: string): string {
-        this._path = clickgo.tool.urlResolve(this._path, dir);
+        this._path = tool.urlResolve(this._path, dir);
         if (!this._path.endsWith('/')) {
             this._path += '/';
         }
@@ -248,7 +337,7 @@ class Zip implements ICGZip {
      * --- 打包 zip ---
      * @param options 选项
      */
-    public generate<T extends TCGZipOutputType>(options: { 'type'?: T; 'level'?: number; 'onUpdate'?: (percent: number, currentFile: string) => void; } = {}): Promise<ICGZipOutputByType[T]> {
+    public generate<T extends types.TZipOutputType>(options: { 'type'?: T; 'level'?: number; 'onUpdate'?: (percent: number, currentFile: string) => void; } = {}): Promise<types.IZipOutputByType[T]> {
         const opt: any = {};
         if (options.type === undefined) {
             opt.type = 'blob' as T;
@@ -265,7 +354,7 @@ class Zip implements ICGZip {
         if (options.level > 0) {
             opt.compression = 'DEFLATE';
         }
-        return this._zip.generateAsync(opt, function(meta: ICGZipMetadata): void {
+        return this._zip.generateAsync(opt, function(meta: types.IZipMetadata): void {
             options.onUpdate?.(meta.percent, meta.currentFile);
         });
     }
@@ -282,7 +371,7 @@ class Zip implements ICGZip {
             });
             let loaded = 0;
             for (const file of list) {
-                const mime = clickgo.tool.getMimeByPath(file.name);
+                const mime = tool.getMimeByPath(file.name);
                 if (['txt', 'json', 'js', 'css', 'xml', 'html'].includes(mime.ext)) {
                     this.getContent(file.path + file.name, 'string').then(function(fb) {
                         if (fb) {
@@ -328,7 +417,7 @@ class Zip implements ICGZip {
  * --- 获取 zip 对象 ---
  * @param data 对象数据
  */
-export async function get(data?: TCGZipInputFileFormat): Promise<Zip | null> {
+export async function get(data?: types.TZipInputFileFormat): Promise<Zip | null> {
     const z = jszip();
     try {
         if (data) {

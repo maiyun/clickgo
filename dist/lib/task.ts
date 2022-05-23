@@ -1,5 +1,30 @@
+/**
+ * Copyright 2022 Han Guoshuai <zohegs@gmail.com>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+import * as types from '../../types';
+import * as core from './core';
+import * as control from './control';
+import * as dom from './dom';
+import * as tool from './tool';
+import * as form from './form';
+import * as theme from './theme';
+import * as fs from './fs';
+import * as native from './native';
+
 /** --- 当前运行的程序 --- */
-export const list: Record<number, ICGTask> = {};
+export const list: Record<number, types.ITask> = {};
 /** --- 最后一个 task id --- */
 export let lastId: number = 0;
 
@@ -24,8 +49,23 @@ const localeData: Record<string, {
 // --- 创建 frame 监听 ---
 let frameTimer: number = 0;
 const frameMaps: Record<string, number> = {};
-export function onFrame(taskId: number, formId: number, fun: () => void | Promise<void>, opt: { 'scope'?: 'form' | 'task'; 'count'?: number;
+
+/**
+ * --- 创建 frame 监听 ---
+ * @param fun 监听回调
+ * @param opt 选项, scope:有效范围,count:执行次数，默认无限次,taskId:APP模式下无效,formId:APP模式下无效
+ */
+export function onFrame(fun: () => void | Promise<void>, opt: {
+    'scope'?: 'form' | 'task';
+    'count'?: number;
+    'taskId'?: number;
+    'formId'?: number;
 } = {}): number {
+    const taskId = opt.taskId;
+    const formId = opt.formId;
+    if (!taskId || !formId) {
+        return 0;
+    }
     const ft = ++frameTimer;
     /** --- 作用域 --- */
     const scope = opt.scope ?? 'form';
@@ -91,27 +131,39 @@ export function onFrame(taskId: number, formId: number, fun: () => void | Promis
     return ft;
 }
 
-export function offFrame(taskId: number, ft: number): void {
-    if (clickgo.task.list[taskId] === undefined) {
+/**
+ * --- 移除 frame 监听 ---
+ * @param ft 监听 ID
+ * @param opt 选项,taskId:APP模式下无效
+ */
+export function offFrame(ft: number, opt: {
+    'taskId'?: number;
+} = {}): void {
+    const taskId = opt.taskId;
+    if (!taskId) {
         return;
     }
-    const formId = clickgo.task.list[taskId].timers['1x' + ft.toString()];
+    const formId = list[taskId].timers['1x' + ft.toString()];
     if (formId === undefined) {
         return;
     }
     cancelAnimationFrame(frameMaps[ft]);
-    delete clickgo.task.list[taskId].timers['1x' + ft.toString()];
+    delete list[taskId].timers['1x' + ft.toString()];
     delete frameMaps[ft];
 }
 
-export function get(tid: number): ICGTaskItem | null {
+/**
+ * --- 获取任务当前信息 ---
+ * @param tid 任务 id
+ */
+export function get(tid: number): types.ITaskInfo | null {
     if (list[tid] === undefined) {
         return null;
     }
     return {
-        'name': list[tid].appPkg.config.name,
+        'name': list[tid].app.config.name,
+        'locale': list[tid].locale.lang,
         'customTheme': list[tid].customTheme,
-        'localeName': list[tid].locale.name,
         'formCount': Object.keys(list[tid].forms).length,
         'icon': list[tid].icon,
         'path': list[tid].path
@@ -121,196 +173,192 @@ export function get(tid: number): ICGTaskItem | null {
 /**
  * --- 获取 task list 的简略情况 ---
  */
-export function getList(): Record<string, ICGTaskItem> {
-    const list: Record<string, ICGTaskItem> = {};
-    for (const tid in clickgo.task.list) {
-        const item = clickgo.task.list[tid];
-        list[tid] = {
-            'name': item.appPkg.config.name,
+export function getList(): Record<string, types.ITaskInfo> {
+    const rtn: Record<string, types.ITaskInfo> = {};
+    for (const tid in list) {
+        const item = list[tid];
+        rtn[tid] = {
+            'name': item.app.config.name,
+            'locale': item.locale.lang,
             'customTheme': item.customTheme,
-            'localeName': item.locale.name,
             'formCount': Object.keys(item.forms).length,
             'icon': item.icon,
             'path': item.path
         };
     }
-    return list;
+    return rtn;
 }
 
 /**
  * --- 运行一个应用 ---
- * @param url app 路径
- * @param opt runtime 运行时要注入的文件列表（cg 文件默认被注入） ---
+ * @param url app 路径（以 / 为结尾的路径或以 .cga 结尾的文件）
+ * @param opt 选项，icon:图标,progress:显示进度条,taskId:所属任务，App 模式下无效
  */
-export async function run(url: string, opt: { 'runtime'?: Record<string, Blob | string>; 'icon'?: string; 'progress'?: boolean; } = {}): Promise<number> {
-    let icon = clickgo.cgRootPath + 'icon.png';
+export async function run(url: string, opt: types.ITaskRunOptions = {}): Promise<number> {
+    /** --- 是否是在任务当中启动的任务 --- */
+    let ntask: types.ITask | null = null;
+    if (opt.taskId) {
+        ntask = list[opt.taskId];
+    }
+    // --- 检测 url 是否合法 ---
+    if (!url.endsWith('/') && !url.endsWith('.cga')) {
+        return 0;
+    }
+    /** --- 要显示的应用图标 --- */
+    let icon = __dirname + '/../icon.png';
     if (opt.icon) {
         icon = opt.icon;
     }
     if (opt.progress === undefined) {
         opt.progress = true;
     }
-    if (!opt.runtime) {
-        opt.runtime = {};
-    }
-    const notifyId: number | undefined = opt.progress ? clickgo.form.notify({
-        'title': localeData[clickgo.core.config.locale]?.loading ?? localeData['en'].loading,
+    const notifyId: number | undefined = opt.progress ? form.notify({
+        'title': localeData[core.config.locale]?.loading ?? localeData['en'].loading,
         'content': url,
         'icon': opt.icon,
         'timeout': 0,
         'progress': true
     }) : undefined;
-    const appPkg: ICGAppPkg | null = await clickgo.core.fetchApp(url, {
-        'notifyId': notifyId
+    const app: types.IApp | null = await core.fetchApp(url, {
+        'notifyId': notifyId,
+        'current': ntask ? ntask.path : undefined
     });
     if (notifyId) {
         setTimeout(function(): void {
-            clickgo.form.hideNotify(notifyId);
+            form.hideNotify(notifyId);
         }, 2000);
     }
-    if (!appPkg) {
+    if (!app) {
         return -1;
     }
     // --- app 的内置文件以及运行时文件 ---
     const files: Record<string, Blob | string> = {};
-    for (const fpath in appPkg.files) {
-        files[fpath] = appPkg.files[fpath];
-    }
-    for (const fpath in opt.runtime) {
-        files['/runtime' + fpath] = opt.runtime[fpath];
+    for (const fpath in app.files) {
+        files[fpath] = app.files[fpath];
     }
     // --- 创建任务对象 ITask ---
     const taskId = ++lastId;
     list[taskId] = {
         'id': taskId,
-        'appPkg': appPkg,
+        'app': app,
         'customTheme': false,
         'locale': Vue.reactive({
-            'name': '',
+            'lang': '',
             'data': {}
         }),
-        'icon': appPkg.icon ?? icon,
+        'icon': app.icon ?? icon,
         'path': url,
-        'permission': {},
-
-        'controlPkgs': {},
-        'themePkgs': {},
-
         'files': files,
+
+        'permissions': {},
         'forms': {},
-        'objectURLs': {},
-        'initControls': {},
+        'objectURLs': [],
+        'controls': {
+            'loaded': {},
+            'layout': {},
+            'prep': {}
+        },
         'timers': {}
     };
-    const task: ICGTask = list[taskId];
-    // --- 读取 config，对 control 和 theme 进行 pkg 化（clickgo 的话要运行一遍 fetch 保证已经完成加载） ---
-    const clickgoFileList: string[] = [];
+    const task: types.ITask = list[taskId];
     // --- control ---
-    for (let path of appPkg.config.controls) {
+    for (let path of app.config.controls) {
         path += '.cgc';
-        if (path.startsWith('/clickgo/')) {
-            clickgoFileList.push(path.slice(8));
-        }
-        else if (task.files[path]) {
-            const pkg = await clickgo.control.read(task.files[path] as Blob);
-            if (pkg) {
-                task.controlPkgs[path] = pkg;
+        path = tool.urlResolve('/', path);
+        const file = await fs.getContent(path, {
+            'files': task.files
+        });
+        if (file && typeof file !== 'string') {
+            const c = await control.read(file);
+            if (c) {
+                task.controls.loaded[path] = c;
             }
         }
     }
     // --- theme ---
-    if (appPkg.config.themes) {
-        for (let path of appPkg.config.themes) {
+    if (app.config.themes) {
+        for (let path of app.config.themes) {
             path += '.cgt';
-            if (path.startsWith('/clickgo/')) {
-                clickgoFileList.push(path.slice(8));
-            }
-            else if (task.files[path]) {
-                const pkg = await clickgo.theme.read(task.files[path] as Blob);
-                if (pkg) {
-                    task.themePkgs[path] = pkg;
+            path = tool.urlResolve('/', path);
+            const file = await fs.getContent(path, {
+                'files': task.files
+            });
+            if (file && typeof file !== 'string') {
+                const th = await theme.read(file);
+                if (th) {
+                    await theme.load(th, taskId);
                 }
             }
         }
     }
     // --- locale ---
-    if (appPkg.config.locales) {
-        for (let path in appPkg.config.locales) {
-            const localeName = appPkg.config.locales[path];
-            path += '.json';
-            if (task.files[path]) {
-                try {
-                    const data = JSON.parse(task.files[path] as string);
-                    loadLocaleData(task.id, localeName, data);
-                }
-                catch {
-                    // --- 无所谓 ---
-                }
+    if (app.config.locales) {
+        for (let path in app.config.locales) {
+            const locale = app.config.locales[path];
+            if (!path.endsWith('.json')) {
+                path += '.json';
+            }
+            const lcontent = await fs.getContent(path, {
+                'encoding': 'utf8',
+                'files': task.files,
+                'current': task.path
+            });
+            if (!lcontent) {
+                continue;
+            }
+            try {
+                const data = JSON.parse(lcontent);
+                loadLocaleData(locale, data, '', task.id);
+            }
+            catch {
+                // --- 无所谓 ---
             }
         }
     }
-    // --- 然后 fetch clickgo 文件 ---
-    if (clickgoFileList.length > 0) {
-        try {
-            await new Promise<void>(function(resolve, reject) {
-                let count = 0;
-                for (const file of clickgoFileList) {
-                    clickgo.core.fetchClickGoFile(file).then(function(blob: Blob | string | null) {
-                        if (blob === null) {
-                            reject();
-                            return;
-                        }
-                        ++count;
-                        if (count === clickgoFileList.length) {
-                            resolve();
-                        }
-                    }).catch(function() {
-                        reject();
-                    });
-                }
-            });
-        }
-        catch {
-            return -2;
-        }
-    }
     // --- 触发 taskStarted 事件 ---
-    clickgo.core.trigger('taskStarted', task.id);
+    core.trigger('taskStarted', task.id);
+    // --- 创建 Task 总 style ---
+    dom.createToStyleList(task.id);
     // --- 创建 form ---
-    clickgo.dom.createToStyleList(task.id);
-    const form = await clickgo.form.create(task.id, {
-        'file': appPkg.config.main
+    const f = await form.create({
+        'taskId': task.id,
+        'file': app.config.main
     });
-    if (typeof form === 'number') {
+    if (typeof f === 'number') {
         // --- 结束任务 ---
-        for (const name in task.controlPkgs) {
-            clickgo.control.revokeObjectURL(task.controlPkgs[name]);
-        }
-        for (const name in task.themePkgs) {
-            clickgo.theme.revokeObjectURL(task.themePkgs[name]);
-        }
         delete list[task.id];
-        clickgo.dom.removeFromStyleList(task.id);
-        clickgo.core.trigger('taskEnded', task.id);
-        return form - 100;
+        dom.removeFromStyleList(task.id);
+        core.trigger('taskEnded', task.id);
+        return f - 100;
     }
     // --- 设置 global style（如果 form 创建失败，就不设置 global style 了） ---
-    if (appPkg.config.style && appPkg.files[appPkg.config.style + '.css']) {
-        const style = appPkg.files[appPkg.config.style + '.css'] as string;
-        const r = clickgo.tool.stylePrepend(style, 'cg-task' + task.id.toString() + '_');
-        clickgo.dom.pushStyle(task.id, await clickgo.tool.styleUrl2ObjectOrDataUrl(appPkg.config.style, r.style, task));
+    if (app.config.style && app.files[app.config.style + '.css']) {
+        const style = app.files[app.config.style + '.css'] as string;
+        const r = tool.stylePrepend(style, 'cg-task' + task.id.toString() + '_');
+        dom.pushStyle(task.id, await tool.styleUrl2DataUrl(app.config.style, r.style, app.files));
     }
     // --- 是否要加载独立的 theme ---
-    if (appPkg.config.themes) {
+    if (app.config.themes && app.config.themes.length > 0) {
         task.customTheme = true;
-        for (const theme of appPkg.config.themes) {
-            await clickgo.theme.load(task.id, theme + '.cgt');
+        for (const path of app.config.themes) {
+            const blob = await fs.getContent(path, {
+                'files': task.files,
+                'current': task.path
+            });
+            if (!(blob instanceof Blob)) {
+                continue;
+            }
+            const th = await theme.read(blob);
+            if (!th) {
+                continue;
+            }
+            await theme.load(th, task.id);
         }
     }
     else {
         // --- 检测是否加载系统 theme ---
-        if (clickgo.theme.global) {
-            await clickgo.theme.load(task.id);
+        if (theme.global) {
+            await theme.load(undefined, task.id);
         }
     }
     return task.id;
@@ -326,31 +374,27 @@ export function end(taskId: number): boolean {
         return true;
     }
     // --- 获取最大的 z index 窗体，并让他获取焦点 ---
-    const fid = clickgo.form.getMaxZIndexFormID({
+    const fid = form.getMaxZIndexID({
         'taskIds': [task.id]
     });
     if (fid) {
-        clickgo.form.changeFocus(fid);
+        form.changeFocus(fid);
     }
     else {
-        clickgo.form.changeFocus();
+        form.changeFocus();
     }
     // --- 移除窗体 list ---
     for (const fid in task.forms) {
-        const form = task.forms[fid];
-        clickgo.core.trigger('formRemoved', taskId, form.id, form.vroot.$refs.form.title, form.vroot.$refs.form.iconData);
-        form.vapp.unmount();
-        form.vapp._container.remove();
+        const f = task.forms[fid];
+        core.trigger('formRemoved', taskId, f.id, f.vroot.$refs.form.title, f.vroot.$refs.form.iconData);
+        f.vapp.unmount();
+        f.vapp._container.remove();
     }
     // --- 移除 style ---
-    clickgo.dom.removeFromStyleList(taskId);
+    dom.removeFromStyleList(taskId);
     // --- 移除本 task 创建的所有 object url ---
-    for (const path in task.objectURLs) {
-        const url = task.objectURLs[path];
-        clickgo.tool.revokeObjectURL(url);
-    }
-    for (const name in task.controlPkgs) {
-        clickgo.control.revokeObjectURL(task.controlPkgs[name]);
+    for (const url of task.objectURLs) {
+        tool.revokeObjectURL(url, task.id);
     }
     // --- 移除所有 timer ---
     for (const timer in list[taskId].timers) {
@@ -363,37 +407,164 @@ export function end(taskId: number): boolean {
             clearTimeout(parseFloat(timer));
         }
     }
+    // --- 移除各类监听 ---
+    native.clearListener(taskId);
+    dom.clearWatchSize(taskId);
     // --- 移除 task ---
     delete list[taskId];
     // --- 触发 taskEnded 事件 ---
-    clickgo.core.trigger('taskEnded', taskId);
+    core.trigger('taskEnded', taskId);
     // --- 移除 task bar ---
-    clickgo.form.clearTask(taskId);
+    clearSystem(taskId);
     return true;
 }
 
-// --- 加载 locale data 对象到 task ---
-export function loadLocaleData(taskId: number, name: string, data: Record<string, any>, pre: string = ''): void {
-    if (!list[taskId].locale.data[name]) {
-        list[taskId].locale.data[name] = {};
+/**
+ * --- 加载 locale data 对象到 task ---
+ * @param lang 语言名，如 sc
+ * @param data 数据
+ * @param pre 前置
+ * @param taskId 任务ID，App 模式下无效
+ */
+export function loadLocaleData(lang: string, data: Record<string, any>, pre: string = '', taskId?: number): void {
+    if (!taskId) {
+        return;
+    }
+    if (!list[taskId].locale.data[lang]) {
+        list[taskId].locale.data[lang] = {};
     }
     for (const k in data) {
         const v = data[k];
         if (typeof v === 'object') {
-            loadLocaleData(taskId, name, v, pre + k + '.');
+            loadLocaleData(lang, v, pre + k + '.', taskId);
         }
         else {
-            clickgo.task.list[taskId].locale.data[name][pre + k] = v;
+            list[taskId].locale.data[lang][pre + k] = v;
         }
     }
 }
 
-// --- 创建 timer ---
-export function createTimer(taskId: number, formId: number, fun: () => void | Promise<void>, delay: number, opt: {
-    'immediate'?: boolean;
-    'scope'?: 'form' | 'task';
-    'count'?: number;
-} = {}): number {
+/**
+ * --- 加载 locale 文件 json ---
+ * @param lang 语言名，如 sc
+ * @param path 地址
+ * @param taskId 所属的 taskId，App 模式下无效
+ * @param formId 所属的 formId，App 模式下无效
+ */
+export async function loadLocale(lang: string, path: string, taskId?: number, formId?: number): Promise<boolean> {
+    if (!taskId) {
+        return false;
+    }
+    const task = list[taskId];
+    if (!task) {
+        return false;
+    }
+    let form: types.IForm | null = null;
+    if (formId) {
+        if (!task.forms[formId]) {
+            return false;
+        }
+        form = task.forms[formId];
+    }
+    /** --- 当前父 form 的路径（以 / 结尾）或 /（没有基路径的话） --- */
+    const base: string = form ? form.vroot.cgPath : '/';
+    path = tool.urlResolve(base, path) + '.json';
+    /** --- 获取的语言文件 --- */
+    const fcontent = await fs.getContent(path, {
+        'encoding': 'utf8',
+        'files': task.files,
+        'current': task.path
+    });
+    if (!fcontent) {
+        return false;
+    }
+    try {
+        const data = JSON.parse(fcontent);
+        loadLocaleData(lang, data, '', task.id);
+        return true;
+    }
+    catch {
+        return false;
+    }
+}
+
+/**
+ * --- 清除任务的所有加载的语言包 ---
+ * @param taskId 所属的 taskId，App 模式下无效
+ */
+export function clearLocale(taskId?: number): void {
+    if (!taskId) {
+        return;
+    }
+    const task = list[taskId];
+    if (!task) {
+        return;
+    }
+    task.locale.data = {};
+}
+
+/**
+ * --- 加载全新 locale（老 locale 的所以语言的缓存会被卸载） ---
+ * @param lang 语言名，如 sc
+ * @param path 路径
+ * @param taskId 所属的 taskId，App 模式下无效
+ * @param formId 所属的 formId，App 模式下无效
+ */
+export function setLocale(lang: string, path: string, taskId?: number, formId?: number): Promise<boolean> {
+    clearLocale(taskId);
+    return loadLocale(lang, path, taskId, formId);
+}
+
+/**
+ * --- 设置本 task 的语言 name ---
+ * @param lang 语言名，如 sc
+ * @param taskId 所属的 taskId，App 模式下无效
+ */
+export function setLocaleLang(lang: string, taskId?: number): void {
+    if (!taskId) {
+        return;
+    }
+    const task = list[taskId];
+    if (!task) {
+        return;
+    }
+    task.locale.lang = lang;
+}
+
+/**
+ * --- 清除 task 的语言设置 ---
+ * @param taskId 所属的 taskId，App 模式下无效
+ */
+export function clearLocaleLang(taskId?: number): void {
+    if (!taskId) {
+        return;
+    }
+    const task = list[taskId];
+    if (!task) {
+        return;
+    }
+    task.locale.lang = '';
+}
+
+/**
+ * --- 创建 timer ---
+ * @param fun 执行函数
+ * @param delay 延迟/间隔
+ * @param opt 选项, taskId: App 模式下无效, formId: 可省略，App 模式下省略代表当前窗体，immediate: 立即执行
+ */
+export function createTimer(
+    fun: () => void | Promise<void>,
+    delay: number,
+    opt: types.ICreateTimerOptions = {}
+): number {
+    const taskId = opt.taskId;
+    if (!taskId) {
+        return 0;
+    }
+    const formId = opt.formId;
+    if (!formId) {
+        return 0;
+    }
     /** --- 作用域 --- */
     const scope = opt.scope ?? 'form';
     /** --- 执行几次，0 代表无限次 --- */
@@ -447,15 +618,219 @@ export function createTimer(taskId: number, formId: number, fun: () => void | Pr
     return timer;
 }
 
-export function removeTimer(taskId: number, timer: number): void {
-    if (clickgo.task.list[taskId] === undefined) {
+/**
+ * --- 移除 timer ---
+ * @param timer ID
+ * @param taskId 任务 id，App 模式下无效
+ */
+export function removeTimer(timer: number, taskId?: number): void {
+    if (!taskId) {
         return;
     }
-    const formId = clickgo.task.list[taskId].timers[timer];
+    if (list[taskId] === undefined) {
+        return;
+    }
+    const formId = list[taskId].timers[timer];
     if (formId === undefined) {
         return;
     }
     // --- 放在这，防止一个 task 能结束 别的 task 的 timer ---
     clearTimeout(timer);
-    delete clickgo.task.list[taskId].timers[timer];
+    delete list[taskId].timers[timer];
+}
+
+/**
+ * --- 暂停一小段时间 ---
+ * @param fun 回调函数
+ * @param delay 暂停时间
+ * @param taskId 任务 id，App 模式下无效
+ * @param formId 窗体 id，App 模式下无效
+ */
+export function sleep(fun: () => void | Promise<void>, delay: number, taskId?: number, formId?: number): number {
+    return createTimer(fun, delay, {
+        'taskId': taskId,
+        'formId': formId,
+        'count': 1
+    });
+}
+
+/** --- task 的信息 --- */
+export const systemTaskInfo: types.ISystemTaskInfo = Vue.reactive({
+    'taskId': 0,
+    'formId': 0,
+    'length': 0
+});
+
+Vue.watch(systemTaskInfo, function(n, o) {
+    const originKeys = ['taskId', 'formId', 'length'];
+    // --- 检测有没有缺少的 key ---
+    for (const key of originKeys) {
+        if ((systemTaskInfo as any)[key] !== undefined) {
+            continue;
+        }
+        form.notify({
+            'title': 'Warning',
+            'content': 'There is a software that maliciously removed the system task info item.\nKey: ' + key,
+            'type': 'warning'
+        });
+        (systemTaskInfo as any)[key] = o[key] ?? 0;
+    }
+    for (const key in systemTaskInfo) {
+        if (!['taskId', 'formId', 'length'].includes(key)) {
+            form.notify({
+                'title': 'Warning',
+                'content': 'There is a software that maliciously modifies the system task info item.\nKey: ' + key,
+                'type': 'warning'
+            });
+            delete (systemTaskInfo as any)[key];
+            continue;
+        }
+        if (typeof (systemTaskInfo as any)[key] === 'number') {
+            continue;
+        }
+        form.notify({
+            'title': 'Warning',
+            'content': 'There is a software that maliciously modifies the system task info item.\nKey: ' + key,
+            'type': 'warning'
+        });
+        (systemTaskInfo as any)[key] = o[key] ?? 0;
+    }
+}, {
+    'deep': true
+});
+
+/**
+ * --- 将任务注册为系统 task ---
+ * @param formId task bar 的 form id，App 模式下留空为当前窗体
+ * @param taskId task id，App 模式下无效
+ */
+export function setSystem(formId?: number, taskId?: number): boolean {
+    if (!formId || !taskId) {
+        return false;
+    }
+    const task = list[taskId];
+    if (!task) {
+        return false;
+    }
+    const f = task.forms[formId];
+    if (!f) {
+        return false;
+    }
+    if (f.vroot.position === undefined) {
+        form.notify({
+            'title': 'Warning',
+            'content': `Task id is "${taskId}" app is not an available task app, position not found.`,
+            'type': 'warning'
+        });
+        return false;
+    }
+    if (systemTaskInfo.taskId > 0) {
+        form.notify({
+            'title': 'Info',
+            'content': 'More than 1 system-level task application is currently running.',
+            'type': 'info'
+        });
+    }
+    systemTaskInfo.taskId = taskId;
+    systemTaskInfo.formId = formId;
+    form.simpleSystemTaskRoot.forms = {};
+    refreshSystemPosition();
+    return true;
+}
+
+/**
+ * --- 清除系统任务设定 ---
+ * @param taskId 清除的 taskid 为 task id 才能清除，App 模式下无效
+ */
+export function clearSystem(taskId?: number): boolean {
+    if (!taskId) {
+        return false;
+    }
+    if (typeof taskId !== 'number') {
+        form.notify({
+            'title': 'Warning',
+            'content': 'The "formId" of "clearTask" must be a number type.',
+            'type': 'warning'
+        });
+        return false;
+    }
+    if (systemTaskInfo.taskId !== taskId) {
+        return false;
+    }
+    systemTaskInfo.taskId = 0;
+    systemTaskInfo.formId = 0;
+    systemTaskInfo.length = 0;
+    core.trigger('screenResize');
+    // --- 如果此时已经有最小化的窗体，那么他将永远“不见天日”，需要将他们传递给 simpletask ---
+    const tasks = getList();
+    for (const taskId in tasks) {
+        const forms = form.getList(parseInt(taskId));
+        for (const formId in forms) {
+            const f = forms[formId];
+            if (!f.stateMin) {
+                continue;
+            }
+            form.simpleSystemTaskRoot.forms[formId] = {
+                'title': f.title,
+                'icon': f.icon
+            };
+        }
+    }
+    return true;
+}
+
+/**
+ * --- 刷新系统任务的 form 的位置以及 length ---
+ */
+export function refreshSystemPosition(): void {
+    if (systemTaskInfo.taskId > 0) {
+        const form = list[systemTaskInfo.taskId].forms[systemTaskInfo.formId];
+        // --- 更新 task bar 的位置 ---
+        switch (core.config['task.position']) {
+            case 'left':
+            case 'right': {
+                form.vroot.$refs.form.setPropData('width', 'auto');
+                form.vroot.$refs.form.setPropData('height', document.body.clientHeight);
+                break;
+            }
+            case 'top':
+            case 'bottom': {
+                form.vroot.$refs.form.setPropData('width', document.body.clientWidth);
+                form.vroot.$refs.form.setPropData('height', 'auto');
+                break;
+            }
+        }
+        setTimeout(function() {
+            switch (core.config['task.position']) {
+                case 'left': {
+                    systemTaskInfo.length = form.vroot.$el.offsetWidth;
+                    form.vroot.$refs.form.setPropData('left', 0);
+                    form.vroot.$refs.form.setPropData('top', 0);
+                    break;
+                }
+                case 'right': {
+                    systemTaskInfo.length = form.vroot.$el.offsetWidth;
+                    form.vroot.$refs.form.setPropData('left', document.body.clientWidth - systemTaskInfo.length);
+                    form.vroot.$refs.form.setPropData('top', 0);
+                    break;
+                }
+                case 'top': {
+                    systemTaskInfo.length = form.vroot.$el.offsetHeight;
+                    form.vroot.$refs.form.setPropData('left', 0);
+                    form.vroot.$refs.form.setPropData('top', 0);
+                    break;
+                }
+                case 'bottom': {
+                    systemTaskInfo.length = form.vroot.$el.offsetHeight;
+                    form.vroot.$refs.form.setPropData('left', 0);
+                    form.vroot.$refs.form.setPropData('top', document.body.clientHeight - systemTaskInfo.length);
+                    break;
+                }
+            }
+            core.trigger('screenResize');
+        }, 50);
+    }
+    else {
+        core.trigger('screenResize');
+    }
 }

@@ -1,3 +1,6 @@
+import * as types from '~/types/index';
+import * as clickgo from 'clickgo';
+
 export const data = {
     'ntab': '',
     'slist': [
@@ -5,20 +8,20 @@ export const data = {
             'type': 0,
             'name': 'Appraise',
             'path': 'Bob >> folder >> Appraise',
-            'src': '/res/r-1.svg'
+            'src': '/package/res/r-1.svg'
         },
         {
             'type': 0,
             'name': 'Card',
             'path': 'Bob >> folder >> Card',
-            'src': '/res/r-2.svg',
+            'src': '/package/res/r-2.svg',
             'menu': true
         },
         {
             'type': 0,
             'name': 'Appraise2',
             'path': 'Bob >> folder >> Appraise2',
-            'src': '/res/r-1.svg',
+            'src': '/package/res/r-1.svg',
             'disabled': true
         },
         {
@@ -47,7 +50,7 @@ export const data = {
 };
 
 export const computed = {
-    'adData': function(this: IVForm): any[] {
+    'adData': function(this: types.IVForm): any[] {
         const data: any[] = [];
         for (let i = 0; i < this.slist.length; ++i) {
             const item = this.slist[i];
@@ -58,7 +61,7 @@ export const computed = {
         }
         return data;
     },
-    'listData': function(this: IVForm): any[] {
+    'listData': function(this: types.IVForm): any[] {
         const data: any[] = ['Item1', {
             'label': 'Title1',
             'children': [
@@ -87,7 +90,7 @@ export const computed = {
         }
         return data;
     },
-    'listData2': function(this: IVForm): number[] {
+    'listData2': function(this: types.IVForm): number[] {
         const data = [];
         for (let k = 0; k < this.listData.length; k++) {
             data.push(k + 1);
@@ -97,24 +100,30 @@ export const computed = {
 };
 
 export const methods = {
-    showType: function(this: IVForm): void {
+    showIndex: function(this: types.IVForm): void {
+        clickgo.form.dialog('Index is ' + (this.select as number).toString() + '.').catch((e: Error) => { throw e; });
+    },
+    showIndex2: function(this: types.IVForm): void {
+        clickgo.form.dialog('Index is ' + (this.select2 as number).toString() + '.').catch((e: Error) => { throw e; });
+    },
+    showType: function(this: types.IVForm): void {
         if (Array.isArray(this.select)) {
             if (this.select.length === 0) {
-                this.cgDialog('There are currently no selected items.').catch((e) => { throw e; });
+                clickgo.form.dialog('There are currently no selected items.').catch((e: Error) => { throw e; });
             }
             else {
                 const types = [];
                 for (const item of this.select) {
                     types.push(this.slist[item].type);
                 }
-                this.cgDialog(`Type is ${types}.`).catch((e) => { throw e; });
+                clickgo.form.dialog(`Type is ${types}.`).catch((e: Error) => { throw e; });
             }
         }
         else {
-            this.cgDialog(this.select === -1 ? 'There are currently no selected items.' : `Type is ${this.slist[this.select].type}.`).catch((e) => { throw e; });
+            clickgo.form.dialog(this.select === -1 ? 'There are currently no selected items.' : `Type is ${this.slist[this.select].type}.`).catch((e: Error) => { throw e; });
         }
     },
-    selectButton: function(this: IVForm): void {
+    selectButton: function(this: types.IVForm): void {
         if (this.ntab === 'list') {
             this.select2 = 'Item1';
         }
@@ -122,10 +131,10 @@ export const methods = {
             this.select = 1;
         }
     },
-    onSelect: function(this: IVForm, area: Record<string, any>): void {
+    onSelect: function(this: types.IVForm, area: Record<string, any>): void {
         this.selectionArea = area;
     },
-    scrollChange: function(this: IVForm): void {
+    scrollChange: function(this: types.IVForm): void {
         switch (this.scroll) {
             case 'auto': {
                 this.scroll = 'visible';

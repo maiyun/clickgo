@@ -1,0 +1,26 @@
+<form width="350" height="400" title="Library tool" padding="10">
+    <overflow direction="v" style="flex: 1;">
+        <layout direction="v" gutter="10">
+            <button @click="sleep" style="height: 30px;">{{sleeping ? 'Waiting...' : 'sleep(1000)'}}</button>
+            <text v-model="purifyTxt" multi style="height: 100px;"></text>
+            <button @click="purify" style="height: 30px;">purify('{{purifyTxt.slice(0, 5).replace("'", "\\'")}}...')</button>
+            <layout gutter="10">
+                <text v-model="min" style="height: 30px; flex: 1;"></text>
+                <text v-model="max" style="height: 30px; flex: 1;"></text>
+                <button @click="rand" style="height: 30px; padding: 0 10px;">rand({{min}}, {{max}})</button>
+            </layout>
+            <layout gutter="10">
+                <text v-model="length" style="height: 30px; width: 30px;"></text>
+                <text v-model="block" style="height: 30px; flex: 1;"></text>
+                <button @click="random" style="height: 30px; padding: 0 10px;">random({{length}}, RANDOM_LN, '{{block}}')</button>
+            </layout>
+            <text v-model="url" style="height: 30px;"></text>
+            <button @click="escapeHTML" style="height: 30px;">escapeHTML('{{purifyTxt.slice(0, 5).replace("'", "\\'")}}...')</button>
+            <button @click="parseUrl" style="height: 30px;">parseUrl('{{url.slice(0, 5).replace("'","\\'")}}...')</button>
+            <label>urlResolve:</label>
+            <text v-model="url1" style="height: 30px;"></text>
+            <text v-model="url2" style="height: 30px;"></text>
+            <button @click="urlResolve" style="height: 30px;">urlResolve('{{url1.slice(0, 5)}}...', '{{url2.slice(0, 5)}}...')</button>
+        </layout>
+    </overflow>
+</form>

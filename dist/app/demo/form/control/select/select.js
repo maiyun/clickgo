@@ -18,20 +18,20 @@ exports.data = {
             'type': 0,
             'name': 'Appraise',
             'path': 'Bob >> folder >> Appraise',
-            'src': '/res/r-1.svg'
+            'src': '/package/res/r-1.svg'
         },
         {
             'type': 0,
             'name': 'Card',
             'path': 'Bob >> folder >> Card',
-            'src': '/res/r-2.svg',
+            'src': '/package/res/r-2.svg',
             'menu': true
         },
         {
             'type': 0,
             'name': 'Appraise2',
             'path': 'Bob >> folder >> Appraise2',
-            'src': '/res/r-1.svg',
+            'src': '/package/res/r-1.svg',
             'disabled': true
         },
         {

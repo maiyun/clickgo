@@ -1,0 +1,57 @@
+<form width="350" height="400" title="Library task" padding="10">
+    <overflow direction="v" style="flex: 1;">
+        <layout direction="v" gutter="10">
+            <label>onFrame(): timer: {{frameTimer}}, count: {{frameCount}}</label>
+            <layout gutter="10">
+                <template v-if="frameTimer === 0">
+                    <button @click="frameStart(0)" style="height: 30px; flex: 1;">Once</button>
+                    <button @click="frameStart(1)" style="height: 30px; flex: 1;">Count 100</button>
+                    <button @click="frameStart(2)" style="height: 30px; flex: 1;">Form</button>
+                    <button @click="frameStart(3)" style="height: 30px; flex: 1;">Task</button>
+                </template>
+                <template v-else>
+                    <button @click="frameEnd" style="height: 30px; flex: 1;">End</button>
+                </template>
+            </layout>
+            <label>createTimer(): timer: {{timer}}, count: {{timerCount}}</label>
+            <layout gutter="10">
+                <template v-if="timer === 0">
+                    <button @click="timerStart(0)" style="height: 30px; flex: 1;">Once</button>
+                    <button @click="timerStart(1)" style="height: 30px; flex: 1;">Count 100</button>
+                    <button @click="timerStart(2)" style="height: 30px; flex: 1;">Form</button>
+                    <button @click="timerStart(3)" style="height: 30px; flex: 1;">Task</button>
+                </template>
+                <template v-else>
+                    <button @click="timerEnd" style="height: 30px; flex: 1;">End</button>
+                </template>
+            </layout>
+            <layout gutter="10" align-v="center">
+                <label>Task ID:</label>
+                <text v-model="tid" style="flex: 1; width: 0; height: 30px;"></text>
+                <button @click="get" style="height: 30px; padding: 0 10px;">get({{tid}})</button>
+            </layout>
+            <button @click="getList" style="height: 30px;">getList()</button>
+            <button @click="run" style="height: 30px;">run('/clickgo/app/demo/')</button>
+            <button @click="end" style="height: 30px;">end('{{tid}}')</button>
+            <label>Now locale: {{cgLocale}}, Global locale: {{globalLocale}}</label>
+            <label>l('File name'): {{l('File name')}}</label>
+            <label>l('File size'): {{l('File size')}}</label>
+            <button @click="loadLocale('en', 'locale1')" style="height: 30px;">loadLocale('en', 'locale1')</button>
+            <button @click="loadLocale('sc', 'locale2')" style="height: 30px;">loadLocale('sc', 'locale2')</button>
+            <button @click="setLocale('sc', 'locale2')" style="height: 30px;">setLocale('sc', 'locale2')</button>
+            <button @click="clearLocale" style="height: 30px;">clearLocale()</button>
+            <button @click="loadLocaleData('en', {'File size': 'File size'})" style="height: 30px;">loadLocaleData('en', {'File size': 'File size'})</button>
+            <button @click="loadLocaleData('sc', {'File size': '文件大小'})" style="height: 30px;">loadLocaleData('sc', {'File size': '文件大小'})</button>
+            <button @click="setLocaleLang('en')" style="height: 30px;">setLocaleLang('en')</button>
+            <button @click="setLocaleLang('sc')" style="height: 30px;">setLocaleLang('sc')</button>
+            <button @click="clearLocaleLang()" style="height: 30px;">clearLocaleLang()</button>
+            <label>Change global locale lang:</label>
+            <layout gutter="10">
+                <select v-model="select" :data="['sc', 'tc', 'en', 'ja']" style="flex: 1; width: 0;"></select>
+                <button @click="changeLocaleLang" style="padding: 0 10px; height: 30px;">Change</button>
+            </layout>
+            <button @click="sleep" style="height: 30px;">{{sleeping ? 'Waiting...' : 'sleep(() => { ... }, 1000)'}}</button>
+            <button @click="systemTaskInfo()" style="height: 30px;">systemTaskInfo</button>
+        </layout>
+    </overflow>
+</form>

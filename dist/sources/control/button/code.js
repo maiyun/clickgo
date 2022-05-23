@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.mounted = exports.methods = exports.data = exports.computed = exports.props = void 0;
+const clickgo = require("clickgo");
 exports.props = {
     'disabled': {
         'default': false
@@ -31,8 +32,8 @@ exports.computed = {
     'isChecked': function () {
         return clickgo.tool.getBoolean(this.checked);
     },
-    'isAreaAll': function () {
-        return this.$slots.pop ? this.area === 'all' : true;
+    'isAreaAllMark': function () {
+        return this.$slots.pop ? (this.area === 'all' || this.area === 'mark') : true;
     },
     'isChildFocus': function () {
         return this.innerFocus || this.arrowFocus;
@@ -51,7 +52,7 @@ exports.methods = {
     keydown: function (e) {
         if (e.key === 'Enter') {
             e.preventDefault();
-            if (this.area === 'all') {
+            if (this.area === 'all' || this.area === 'mark') {
                 this.innerClick(e);
                 if (!this.$slots.pop) {
                     this.$el.click();
@@ -77,7 +78,7 @@ exports.methods = {
             return;
         }
         this.isKeyDown = false;
-        if (this.area === 'all') {
+        if (this.area === 'all' || this.area === 'mark') {
             this.innerClick(e);
             if (!this.$slots.pop) {
                 this.$el.click();
@@ -93,8 +94,16 @@ exports.methods = {
             }
         }
     },
+    down: function (e) {
+        if (this.area !== 'mark') {
+            return;
+        }
+        clickgo.dom.bindLong(e, () => {
+            clickgo.form.showPop(this.$refs.arrow, this.$refs.pop, 'h');
+        });
+    },
     innerClick: function (e) {
-        if (!this.$slots.pop || (this.area === 'arrow')) {
+        if (!this.$slots.pop || (this.area === 'arrow' || this.area === 'mark')) {
             return;
         }
         e.stopPropagation();
@@ -117,7 +126,7 @@ exports.methods = {
         }
         else {
             if (this.$refs.arrow.dataset.cgPopOpen === undefined) {
-                clickgo.form.showPop(this.$refs.arrow, this.$refs.pop, 'v');
+                clickgo.form.showPop(this.$refs.arrow, this.$refs.pop, this.area === 'arrow' ? 'v' : 'h');
             }
             else {
                 clickgo.form.hidePop(this.$refs.arrow);

@@ -7,21 +7,21 @@
     "ui",
     "clickgo"
   ],
-  "main": "dist/index.js",
+  "main": "dist/loader.js",
   "author": "hanguoshuai",
   "license": "Apache-2.0",
-  "types": "./types/clickgo.d.ts",
+  "types": "./types/index.d.ts",
   "scripts": {
     "native": "electron ./dist/test/native"
   },
   "devDependencies": {
-    "@litert/loader": "^3.0.5",
+    "@litert/loader": "^3.1.1",
     "@types/node": "^17.0.21",
     "@typescript-eslint/eslint-plugin": "^5.17.0",
     "@typescript-eslint/parser": "^5.17.0",
     "electron": "^18.0.1",
     "eslint": "^8.12.0",
     "jszip": "^3.8.0",
-    "typescript": "^4.6.3"
+    "typescript": "^4.6.4"
   }
 }

@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.methods = exports.mounted = exports.computed = exports.data = void 0;
+const clickgo = require("clickgo");
 exports.data = {
     'ntab': '',
     'lineValue': 100,

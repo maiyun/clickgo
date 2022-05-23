@@ -1,0 +1,25 @@
+<form width="300" height="300" title="File" padding="10">
+    <layout direction="v" gutter="10" style="flex: 1;">
+        <label>A control that reads a local files:</label>
+        <layout gutter="10" align-v="center">
+            <label style="width: 50px;">accept:</label>
+            <radio v-model="accept" value="txt" style="flex: 1;">txt</radio>
+            <radio v-model="accept" value="jpg" style="flex: 1;">jpg</radio>
+        </layout>
+        <layout gutter="10" align-v="center">
+            <label style="width: 50px;">multi:</label>
+            <radio v-model="multi" value="true" style="flex: 1;">true</radio>
+            <radio v-model="multi" value="false" style="flex: 1;">false</radio>
+        </layout>
+        <layout gutter="10" align-v="center">
+            <label style="width: 50px;">dir:</label>
+            <radio v-model="dir" value="true" style="flex: 1;">true</radio>
+            <radio v-model="dir" value="false" style="flex: 1;">false</radio>
+        </layout>
+        <button @click="select" style="height: 30px;">
+            Select
+            <file ref="file" @change="change" :accept="[accept]" :multi="multi" :dir="dir"></file>
+        </button>
+        <list :data="list" style="flex: 1;"></list>
+    </layout>
+</form>

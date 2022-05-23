@@ -1,3 +1,5 @@
+import * as types from '~/types/index';
+
 export const data = {
     'lineCount': 2,
     'style': false,
@@ -7,7 +9,7 @@ export const data = {
 };
 
 export const methods = {
-    changeDirection: function(this: IVForm): void {
+    changeDirection: function(this: types.IVForm): void {
         switch (this.direction) {
             case 'top': {
                 this.direction = 'bottom';

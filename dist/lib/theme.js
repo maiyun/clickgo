@@ -9,121 +9,104 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.clearGlobal = exports.setGlobal = exports.clear = exports.remove = exports.load = exports.revokeObjectURL = exports.read = exports.clickgoThemePkgs = exports.global = void 0;
+exports.clearGlobal = exports.setGlobal = exports.clear = exports.remove = exports.load = exports.read = exports.global = void 0;
+const zip = require("./zip");
+const tool = require("./tool");
+const task = require("./task");
+const dom = require("./dom");
 exports.global = null;
-exports.clickgoThemePkgs = {};
 function read(blob) {
     return __awaiter(this, void 0, void 0, function* () {
-        const zip = yield clickgo.zip.get(blob);
-        if (!zip) {
+        const z = yield zip.get(blob);
+        if (!z) {
             return false;
         }
-        const configContent = yield zip.getContent('/config.json');
+        const configContent = yield z.getContent('/config.json');
         if (!configContent) {
             return false;
         }
         const config = JSON.parse(configContent);
-        const objectURLs = {};
         const files = {};
         for (const file of config.files) {
-            const mime = clickgo.tool.getMimeByPath(file);
+            const mime = tool.getMimeByPath(file);
             if (['txt', 'json', 'js', 'css', 'xml', 'html'].includes(mime.ext)) {
-                const fab = yield zip.getContent(file, 'string');
+                const fab = yield z.getContent(file, 'string');
                 if (!fab) {
                     continue;
                 }
                 files[file] = fab.replace(/^\ufeff/, '');
             }
             else {
-                const fab = yield zip.getContent(file, 'arraybuffer');
+                const fab = yield z.getContent(file, 'arraybuffer');
                 if (!fab) {
                     continue;
                 }
                 files[file] = new Blob([fab], {
                     'type': mime.mime
                 });
-                objectURLs[file] = clickgo.tool.createObjectURL(files[file]);
             }
         }
         return {
             'type': 'theme',
             'config': config,
-            'files': files,
-            'objectURLs': objectURLs
+            'files': files
         };
     });
 }
 exports.read = read;
-function revokeObjectURL(pkg) {
-    for (const path in pkg.objectURLs) {
-        clickgo.tool.revokeObjectURL(pkg.objectURLs[path]);
-    }
-}
-exports.revokeObjectURL = revokeObjectURL;
-function load(taskId, path = 'global') {
+function load(theme, taskId) {
     return __awaiter(this, void 0, void 0, function* () {
-        const task = clickgo.task.list[taskId];
-        if (!task) {
+        if (!taskId) {
             return false;
         }
-        if (task.customTheme && (path === 'global')) {
+        const t = task.list[taskId];
+        if (!t) {
+            return false;
+        }
+        const isGlobal = theme ? false : true;
+        if (t.customTheme && isGlobal) {
             return true;
         }
-        let theme;
-        if (path === 'global') {
+        if (!theme) {
             if (!exports.global) {
-                return false;
+                return true;
             }
             theme = exports.global;
-        }
-        else {
-            if (path.startsWith('/clickgo/')) {
-                const clickgoPath = path.slice(8);
-                if (!exports.clickgoThemePkgs[clickgoPath]) {
-                    if ((yield clickgo.core.fetchClickGoFile(clickgoPath)) === null) {
-                        return false;
-                    }
-                }
-                theme = exports.clickgoThemePkgs[clickgoPath];
-            }
-            else if (task.themePkgs[path]) {
-                theme = task.themePkgs[path];
-            }
-            else {
-                return false;
-            }
         }
         let style = theme.files[theme.config.style + '.css'];
         if (!style) {
             return false;
         }
-        style = clickgo.tool.stylePrepend(style, `cg-theme-task${taskId}-`).style;
-        style = yield clickgo.tool.styleUrl2ObjectOrDataUrl(theme.config.style, style, theme);
-        if (!task.customTheme) {
-            if (path !== 'global') {
-                task.customTheme = true;
+        style = tool.stylePrepend(style, `cg-theme-task${taskId}-`).style;
+        style = yield tool.styleUrl2DataUrl(theme.config.style, style, theme.files);
+        if (!t.customTheme) {
+            if (!isGlobal) {
+                t.customTheme = true;
             }
-            clickgo.dom.removeStyle(taskId, 'theme');
+            dom.removeStyle(taskId, 'theme');
         }
-        clickgo.dom.pushStyle(taskId, style, 'theme', path);
+        dom.pushStyle(taskId, style, 'theme', theme.config.name);
         return true;
     });
 }
 exports.load = load;
-function remove(taskId, path) {
+function remove(name, taskId) {
     return __awaiter(this, void 0, void 0, function* () {
-        const task = clickgo.task.list[taskId];
-        if (!task) {
+        if (!taskId) {
             return;
         }
-        if (!task.customTheme) {
+        const t = task.list[taskId];
+        if (!t) {
             return;
         }
-        clickgo.dom.removeStyle(taskId, 'theme', path);
-        if (clickgo.dom.getStyleCount(taskId, 'theme') === 0) {
-            task.customTheme = false;
+        if (!t.customTheme) {
+            return;
+        }
+        dom.removeStyle(taskId, 'theme', name);
+        if (dom.getStyleCount(taskId, 'theme') === 0) {
+            t.customTheme = false;
             if (exports.global) {
-                yield load(taskId, 'global');
+                yield load(undefined, taskId);
             }
         }
     });
@@ -131,33 +114,29 @@ function remove(taskId, path) {
 exports.remove = remove;
 function clear(taskId) {
     return __awaiter(this, void 0, void 0, function* () {
-        const task = clickgo.task.list[taskId];
-        if (!task) {
+        if (!taskId) {
             return;
         }
-        if (!task.customTheme) {
+        const t = task.list[taskId];
+        if (!t) {
             return;
         }
-        clickgo.dom.removeStyle(taskId, 'theme');
-        task.customTheme = false;
+        if (!t.customTheme) {
+            return;
+        }
+        dom.removeStyle(taskId, 'theme');
+        t.customTheme = false;
         if (exports.global) {
-            yield load(taskId);
+            yield load(undefined, taskId);
         }
     });
 }
 exports.clear = clear;
-function setGlobal(file) {
+function setGlobal(theme) {
     return __awaiter(this, void 0, void 0, function* () {
-        const pkg = yield read(file);
-        if (!pkg) {
-            return;
-        }
-        if (exports.global) {
-            revokeObjectURL(exports.global);
-        }
-        exports.global = pkg;
-        for (const taskId in clickgo.task.list) {
-            yield load(parseInt(taskId), 'global');
+        exports.global = theme;
+        for (const taskId in task.list) {
+            yield load(undefined, parseInt(taskId));
         }
     });
 }
@@ -166,14 +145,13 @@ function clearGlobal() {
     if (!exports.global) {
         return;
     }
-    revokeObjectURL(exports.global);
     exports.global = null;
-    for (const taskId in clickgo.task.list) {
-        const task = clickgo.task.list[taskId];
-        if (task.customTheme) {
+    for (const taskId in task.list) {
+        const t = task.list[taskId];
+        if (t.customTheme) {
             continue;
         }
-        clickgo.dom.removeStyle(task.id, 'theme');
+        dom.removeStyle(t.id, 'theme');
     }
 }
 exports.clearGlobal = clearGlobal;

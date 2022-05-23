@@ -10,6 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.mounted = exports.methods = exports.data = void 0;
+const clickgo = require("clickgo");
 exports.data = {
     'flist': {},
     'list': []
@@ -43,7 +44,7 @@ const mounted = function () {
             };
         }
     }
-    this.cgSetSystemEventListener('formCreated', (taskId, formId, title, icon) => {
+    clickgo.core.setSystemEventListener('formCreated', (taskId, formId, title, icon) => {
         this.flist[formId] = {
             'title': title,
             'icon': icon,
@@ -55,7 +56,7 @@ const mounted = function () {
         };
         this.pushConsole('formCreated', `taskId: ${taskId}, formId: ${formId}, title: ${title}, icon: ${icon ? icon.slice(0, 10) + '...' : 'null'}`);
     });
-    this.cgSetSystemEventListener('formRemoved', (taskId, formId, title, icon) => {
+    clickgo.core.setSystemEventListener('formRemoved', (taskId, formId, title, icon) => {
         if (!this.flist[formId]) {
             return;
         }
@@ -63,61 +64,61 @@ const mounted = function () {
         delete this.flist[formId];
         this.pushConsole('formRemoved', `taskId: ${taskId}, formId: ${formId}, title: ${title}, icon: ${icon ? icon.slice(0, 10) + '...' : 'null'}`);
     });
-    this.cgSetSystemEventListener('formTitleChanged', (taskId, formId, title) => {
+    clickgo.core.setSystemEventListener('formTitleChanged', (taskId, formId, title) => {
         if (!this.flist[formId]) {
             return;
         }
         this.flist[formId].title = title;
         this.pushConsole('formTitleChanged', `taskId: ${taskId}, formId: ${formId}, title: ${title}`);
     });
-    this.cgSetSystemEventListener('formIconChanged', (taskId, formId, icon) => {
+    clickgo.core.setSystemEventListener('formIconChanged', (taskId, formId, icon) => {
         if (!this.flist[formId]) {
             return;
         }
         this.flist[formId].icon = icon;
         this.pushConsole('formIconChanged', `taskId: ${taskId}, formId: ${formId}, icon: ${icon ? icon.slice(0, 10) + '...' : 'null'}`);
     });
-    this.cgSetSystemEventListener('formStateMinChanged', (taskId, formId, state) => {
+    clickgo.core.setSystemEventListener('formStateMinChanged', (taskId, formId, state) => {
         if (!this.flist[formId]) {
             return;
         }
         this.flist[formId].min = state;
         this.pushConsole('formStateMinChanged', `taskId: ${taskId}, formId: ${formId}, state: ${state ? 'true' : 'false'}`);
     });
-    this.cgSetSystemEventListener('formStateMaxChanged', (taskId, formId, state) => {
+    clickgo.core.setSystemEventListener('formStateMaxChanged', (taskId, formId, state) => {
         if (!this.flist[formId]) {
             return;
         }
         this.flist[formId].max = state;
         this.pushConsole('formStateMaxChanged', `taskId: ${taskId}, formId: ${formId}, state: ${state ? 'true' : 'false'}`);
     });
-    this.cgSetSystemEventListener('formShowChanged', (taskId, formId, state) => {
+    clickgo.core.setSystemEventListener('formShowChanged', (taskId, formId, state) => {
         if (!this.flist[formId]) {
             return;
         }
         this.flist[formId].show = state;
         this.pushConsole('formShowChanged', `taskId: ${taskId}, formId: ${formId}, state: ${state ? 'true' : 'false'}`);
     });
-    this.cgSetSystemEventListener('formFocused', (taskId, formId) => {
+    clickgo.core.setSystemEventListener('formFocused', (taskId, formId) => {
         if (!this.flist[formId]) {
             return;
         }
         this.flist[formId].focus = true;
         this.pushConsole('formFocused', `taskId: ${taskId}, formId: ${formId}`);
     });
-    this.cgSetSystemEventListener('formBlurred', (taskId, formId) => {
+    clickgo.core.setSystemEventListener('formBlurred', (taskId, formId) => {
         if (!this.flist[formId]) {
             return;
         }
         this.flist[formId].focus = false;
         this.pushConsole('formBlurred', `taskId: ${taskId}, formId: ${formId}`);
     });
-    this.cgSetSystemEventListener('formFlash', (taskId, formId) => __awaiter(this, void 0, void 0, function* () {
+    clickgo.core.setSystemEventListener('formFlash', (taskId, formId) => __awaiter(this, void 0, void 0, function* () {
         if (!this.flist[formId]) {
             return;
         }
         if (this.flist[formId].flash) {
-            this.cgRemoveTimer(this.flist[formId].flash);
+            clickgo.task.removeTimer(this.flist[formId].flash);
         }
         this.pushConsole('formFlash', `taskId: ${taskId}, formId: ${formId}`);
         this.flist[formId].flash = true;

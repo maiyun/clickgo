@@ -35,7 +35,7 @@
                 </template>
             </greatselect>
             <layout gutter="10">
-                <button @click="slist.splice(-2, 0, {'type': 0, 'name': 'Card' + slist.length, 'path': 'Bob >> folder >> Card', 'src': '/res/r-2.svg','disabled': false})" style="flex: 1; height: 30px;">Add item</button>
+                <button @click="slist.splice(-2, 0, {'type': 0, 'name': 'Card' + slist.length, 'path': 'Bob >> folder >> Card', 'src': '/package/res/r-2.svg','disabled': false})" style="flex: 1; height: 30px;">Add item</button>
                 <button @click="slist.splice(-3, 1)" style="flex: 1; height: 30px;">Remove item</button>
             </layout>
             <layout gutter="10">

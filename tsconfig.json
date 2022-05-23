@@ -10,6 +10,9 @@
         "declaration": false,       // d.ts
         "declarationMap": false,
         "newLine": "LF",
+        "paths": {
+            "~/*": ["./*"]
+        },
         "resolveJsonModule": true,
         "typeRoots": [
             "./node_modules/@types",

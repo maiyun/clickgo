@@ -1,0 +1,9 @@
+<form width="350" height="400" title="Library theme" padding="10">
+    <layout direction="v" gutter="10" style="flex: 1;">
+        <button @click="load" style="height: 30px;">Load "/clickgo/theme/familiar.cgt"</button>
+        <button @click="remove" style="height: 30px;">remove('familiar')</button>
+        <button @click="clear" style="height: 30px;">clear()</button>
+        <button @click="setGlobal" style="height: 30px;">setGlobal "/clickgo/theme/familiar.cgt"</button>
+        <button @click="clearGlobal" style="height: 30px;">clearGlobal()</button>
+    </layout>
+</form>

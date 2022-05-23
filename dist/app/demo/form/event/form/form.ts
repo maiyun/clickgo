@@ -1,10 +1,13 @@
+import * as clickgo from 'clickgo';
+import * as types from '~/types/index';
+
 export const data = {
     'flist': {},
     'list': []
 };
 
 export const methods = {
-    'pushConsole': function(this: IVForm, name: string, text: string): void {
+    'pushConsole': function(this: types.IVForm, name: string, text: string): void {
         const date = new Date();
         this.list.unshift({
             'time': date.getHours().toString() + ':' + date.getMinutes().toString() + ':' + date.getSeconds().toString(),
@@ -12,12 +15,12 @@ export const methods = {
             'text': text
         });
     },
-    'changeFocus': function(this: IVForm, fid: string): void {
+    'changeFocus': function(this: types.IVForm, fid: string): void {
         clickgo.form.changeFocus(parseInt(fid));
     }
 };
 
-export const mounted = function(this: IVForm): void {
+export const mounted = function(this: types.IVForm): void {
     const list = clickgo.task.getList();
     for (const taskId in list) {
         const flist = clickgo.form.getList(parseInt(taskId));
@@ -33,7 +36,7 @@ export const mounted = function(this: IVForm): void {
             };
         }
     }
-    this.cgSetSystemEventListener('formCreated', (taskId: number, formId: number, title: string, icon: string): void => {
+    clickgo.core.setSystemEventListener('formCreated', (taskId: number, formId: number, title: string, icon: string): void => {
         this.flist[formId] = {
             'title': title,
             'icon': icon,
@@ -45,7 +48,7 @@ export const mounted = function(this: IVForm): void {
         };
         this.pushConsole('formCreated', `taskId: ${taskId}, formId: ${formId}, title: ${title}, icon: ${icon ? icon.slice(0, 10) + '...' : 'null'}`);
     });
-    this.cgSetSystemEventListener('formRemoved', (taskId: number, formId: number, title: string, icon: string): void => {
+    clickgo.core.setSystemEventListener('formRemoved', (taskId: number, formId: number, title: string, icon: string): void => {
         if (!this.flist[formId]) {
             return;
         }
@@ -53,66 +56,65 @@ export const mounted = function(this: IVForm): void {
         delete this.flist[formId];
         this.pushConsole('formRemoved', `taskId: ${taskId}, formId: ${formId}, title: ${title}, icon: ${icon ? icon.slice(0, 10) + '...' : 'null'}`);
     });
-    this.cgSetSystemEventListener('formTitleChanged', (taskId: number, formId: number, title: string): void => {
+    clickgo.core.setSystemEventListener('formTitleChanged', (taskId: number, formId: number, title: string): void => {
         if (!this.flist[formId]) {
             return;
         }
         this.flist[formId].title = title;
         this.pushConsole('formTitleChanged', `taskId: ${taskId}, formId: ${formId}, title: ${title}`);
     });
-    this.cgSetSystemEventListener('formIconChanged', (taskId: number, formId: number, icon: string): void => {
+    clickgo.core.setSystemEventListener('formIconChanged', (taskId: number, formId: number, icon: string): void => {
         if (!this.flist[formId]) {
             return;
         }
         this.flist[formId].icon = icon;
         this.pushConsole('formIconChanged', `taskId: ${taskId}, formId: ${formId}, icon: ${icon ? icon.slice(0, 10) + '...' : 'null'}`);
     });
-    this.cgSetSystemEventListener('formStateMinChanged', (taskId: number, formId: number, state: boolean): void => {
+    clickgo.core.setSystemEventListener('formStateMinChanged', (taskId: number, formId: number, state: boolean): void => {
         if (!this.flist[formId]) {
             return;
         }
         this.flist[formId].min = state;
         this.pushConsole('formStateMinChanged', `taskId: ${taskId}, formId: ${formId}, state: ${state ? 'true' : 'false'}`);
     });
-    this.cgSetSystemEventListener('formStateMaxChanged', (taskId: number, formId: number, state: boolean): void => {
+    clickgo.core.setSystemEventListener('formStateMaxChanged', (taskId: number, formId: number, state: boolean): void => {
         if (!this.flist[formId]) {
             return;
         }
         this.flist[formId].max = state;
         this.pushConsole('formStateMaxChanged', `taskId: ${taskId}, formId: ${formId}, state: ${state ? 'true' : 'false'}`);
     });
-    this.cgSetSystemEventListener('formShowChanged', (taskId: number, formId: number, state: boolean): void => {
+    clickgo.core.setSystemEventListener('formShowChanged', (taskId: number, formId: number, state: boolean): void => {
         if (!this.flist[formId]) {
             return;
         }
         this.flist[formId].show = state;
         this.pushConsole('formShowChanged', `taskId: ${taskId}, formId: ${formId}, state: ${state ? 'true' : 'false'}`);
     });
-    this.cgSetSystemEventListener('formFocused', (taskId: number, formId: number): void => {
+    clickgo.core.setSystemEventListener('formFocused', (taskId: number, formId: number): void => {
         if (!this.flist[formId]) {
             return;
         }
         this.flist[formId].focus = true;
         this.pushConsole('formFocused', `taskId: ${taskId}, formId: ${formId}`);
     });
-    this.cgSetSystemEventListener('formBlurred', (taskId: number, formId: number): void => {
+    clickgo.core.setSystemEventListener('formBlurred', (taskId: number, formId: number): void => {
         if (!this.flist[formId]) {
             return;
         }
         this.flist[formId].focus = false;
         this.pushConsole('formBlurred', `taskId: ${taskId}, formId: ${formId}`);
     });
-    this.cgSetSystemEventListener('formFlash', async (taskId: number, formId: number): Promise<void> => {
+    clickgo.core.setSystemEventListener('formFlash', async (taskId: number, formId: number): Promise<void> => {
         if (!this.flist[formId]) {
             return;
         }
         if (this.flist[formId].flash) {
-            this.cgRemoveTimer(this.flist[formId].flash);
+            clickgo.task.removeTimer(this.flist[formId].flash);
         }
         this.pushConsole('formFlash', `taskId: ${taskId}, formId: ${formId}`);
         this.flist[formId].flash = true;
         await clickgo.tool.sleep(1000);
         this.flist[formId].flash = false;
-
     });
 };

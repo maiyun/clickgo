@@ -1,3 +1,6 @@
+import * as clickgo from 'clickgo';
+import * as types from '~/types/index';
+
 export const props = {
     'disabled': {
         'default': false
@@ -16,13 +19,13 @@ export const props = {
 
 export const watch = {
     'modelValue': {
-        'handler': function(this: IVControl): void {
+        'handler': function(this: types.IVControl): void {
             this.value = this.modelValue;
         },
         'immediate': true
     },
     'isEditable': {
-        'handler': function(this: IVControl, editable: boolean): void {
+        'handler': function(this: types.IVControl, editable: boolean): void {
             if (editable) {
                 this.inputValue = this.value;
             }
@@ -41,24 +44,24 @@ export const data = {
 };
 
 export const computed = {
-    'isDisabled': function(this: IVControl): boolean {
+    'isDisabled': function(this: types.IVControl): boolean {
         return clickgo.tool.getBoolean(this.disabled);
     },
-    'isEditable': function(this: IVControl): boolean {
+    'isEditable': function(this: types.IVControl): boolean {
         return clickgo.tool.getBoolean(this.editable);
     },
-    'opMargin': function(this: IVControl): string {
+    'opMargin': function(this: types.IVControl): string {
         return this.padding.replace(/(\w+)/g, '-$1');
     }
 };
 
 export const methods = {
-    updateInputValue: function(this: IVControl, value: string): void {
+    updateInputValue: function(this: types.IVControl, value: string): void {
         this.inputValue = value;
         this.value = this.inputValue;
         this.$emit('update:modelValue', this.value);
     },
-    updateModelValue: function(this: IVControl, value: string): void {
+    updateModelValue: function(this: types.IVControl, value: string): void {
         this.value = value;
         if (this.isEditable && (value === '')) {
             return;
@@ -66,12 +69,12 @@ export const methods = {
         this.inputValue = value;
         this.$emit('update:modelValue', value);
     },
-    listItemClick: function(this: IVControl): void {
+    listItemClick: function(this: types.IVControl): void {
         clickgo.form.hidePop();
     }
 };
 
-export const mounted = function(this: IVControl): void {
+export const mounted = function(this: types.IVControl): void {
     clickgo.dom.watchStyle(this.$el, ['background', 'padding'], (n, v) => {
         switch (n) {
             case 'background': {

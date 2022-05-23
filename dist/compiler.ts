@@ -52,7 +52,7 @@ async function run(): Promise<void> {
         if (item.isFile()) {
             continue;
         }
-        if (['check', 'dialog', 'greatlist', 'greatselect', 'greatview', 'img', 'label', 'layout', 'list', 'marquee', 'menu', 'menu-item', 'menulist', 'menulist-item', 'menulist-split', 'overflow', 'radio', 'scroll', 'select', 'tab', 'text', 'view', 'task-item'].includes(item.name)) {
+        if (['check', 'dialog', 'file', 'greatlist', 'greatselect', 'greatview', 'img', 'label', 'layout', 'list', 'marquee', 'menu', 'menu-item', 'menulist', 'menulist-item', 'menulist-split', 'overflow', 'radio', 'scroll', 'select', 'tab', 'text', 'view', 'task-item'].includes(item.name)) {
             continue;
         }
 
@@ -66,6 +66,7 @@ async function run(): Promise<void> {
             name = 'common';
             await addFile(zipo, base, 'check/');
             await addFile(zipo, base, 'dialog/');
+            await addFile(zipo, base, 'file/');
             await addFile(zipo, base, 'greatlist/');
             await addFile(zipo, base, 'greatselect/');
             await addFile(zipo, base, 'greatview/');

@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.mounted = exports.data = void 0;
+const clickgo = require("clickgo");
 exports.data = {
     'width': 0,
     'height': 0,
@@ -8,8 +9,8 @@ exports.data = {
     'list': []
 };
 const mounted = function () {
-    this.cgSetSystemEventListener('screenResize', () => {
-        const area = clickgo.form.getAvailArea();
+    clickgo.core.setSystemEventListener('screenResize', () => {
+        const area = clickgo.core.getAvailArea();
         this.width = area.width;
         this.height = area.height;
         if (this.width > 1100 || this.height > 1100) {
@@ -28,7 +29,7 @@ const mounted = function () {
             'height': area.height
         });
     });
-    const area = clickgo.form.getAvailArea();
+    const area = clickgo.core.getAvailArea();
     this.width = area.width;
     this.height = area.height;
     if (this.width > 1100 || this.height > 1100) {

@@ -60,7 +60,7 @@
             </layout>
             <label>Menu:</label>
             <layout gutter="10" class="buttons">
-                <button :type="type" :area="area" :plain="plain === 'plain' ? 'plain' : undefined" @click="cgDialog('Click!')">
+                <button :type="type" :area="area" :plain="plain === 'plain' ? 'plain' : undefined" @click="dialog('Click!')">
                     <template v-slot>Area all</template>
                     <template v-slot:pop>
                         <menulist>
@@ -70,7 +70,7 @@
                     </template>
                 </button>
                 <select v-model="type" :data="['default', 'primary', 'info', 'warning', 'danger', 'tool']"></select>
-                <select v-model="area" :data="['all', 'arrow']"></select>
+                <select v-model="area" :data="['all', 'arrow', 'mark']"></select>
                 <select v-model="plain" :data="['plain', 'not']"></select>
             </layout>
             <label>Tool buttons:</label>
@@ -89,6 +89,24 @@
                 </button>
                 <button type="tool">
                     <img src="../../../res/icon.svg" style="filter: hue-rotate(180deg);" />
+                </button>
+                <button type="tool" area="mark">
+                    <img src="../../../res/icon.svg" style="filter: hue-rotate(180deg);" />
+                    <template v-slot:pop>
+                        <menulist>
+                            <menulist-item alt="T">Test 1</menulist-item>
+                            <menulist-item alt="U">Test 2</menulist-item>
+                        </menulist>
+                    </template>
+                </button>
+                <button type="tool" area="arrow" style="width: initial;">
+                    <img src="../../../res/icon.svg" style="margin: 0 5px;" />
+                    <template v-slot:pop>
+                        <menulist>
+                            <menulist-item alt="T">Test 1</menulist-item>
+                            <menulist-item alt="U">Test 2</menulist-item>
+                        </menulist>
+                    </template>
                 </button>
             </layout>
             <label>Other:</label>

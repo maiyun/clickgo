@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.methods = exports.props = void 0;
+const clickgo = require("clickgo");
 exports.props = {
     'position': {
         'default': 'bottom'

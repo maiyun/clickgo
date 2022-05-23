@@ -1,3 +1,6 @@
+import * as clickgo from 'clickgo';
+import * as types from '~/types/index';
+
 export const props = {
     'selected': {
         'default': false
@@ -11,22 +14,22 @@ export const props = {
 };
 
 export const computed = {
-    'isSelected': function(this: IVControl): boolean {
+    'isSelected': function(this: types.IVControl): boolean {
         return clickgo.tool.getBoolean(this.selected);
     },
-    'isOpened': function(this: IVControl): boolean {
+    'isOpened': function(this: types.IVControl): boolean {
         return clickgo.tool.getBoolean(this.opened);
     },
-    'isMulti': function(this: IVControl): boolean {
+    'isMulti': function(this: types.IVControl): boolean {
         return clickgo.tool.getBoolean(this.multi);
     },
-    'position': function(this: IVControl): string {
+    'position': function(this: types.IVControl): string {
         return this.cgParentByName('task')?.position ?? 'bottom';
     }
 };
 
 export const methods = {
-    click: function(this: IVControl): void {
+    click: function(this: types.IVControl): void {
         if (!this.$slots.pop) {
             return;
         }
@@ -36,7 +39,7 @@ export const methods = {
         }
         clickgo.form.showPop(this.$el, this.$refs.pop, 'v');
     },
-    contextmenu: function(this: IVControl, e: MouseEvent): void {
+    contextmenu: function(this: types.IVControl, e: MouseEvent): void {
         if (clickgo.dom.hasTouchButMouse(e)) {
             return;
         }
@@ -45,7 +48,7 @@ export const methods = {
         }
         clickgo.form.showPop(this.$el, this.$refs.contextmenu, 'v');
     },
-    down: function(this: IVControl, e: MouseEvent | TouchEvent): void {
+    down: function(this: types.IVControl, e: MouseEvent | TouchEvent): void {
         if (clickgo.dom.hasTouchButMouse(e)) {
             return;
         }

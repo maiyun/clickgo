@@ -1,4 +1,4 @@
-<form width="400" height="550" title="ClickGo demo" icon="/res/icon.svg">
+<form width="400" height="550" title="ClickGo demo" icon="/package/res/icon.svg">
     <tab v-model="ntab" :tabs="['control', 'method', 'event']" style="margin: 10px; flex: 1;">
         <overflow v-if="ntab === 'control'" class="inner" direction="v">
             <layout class="buttons" gutter="10" direction="v">
@@ -11,6 +11,7 @@
                 <button @click="openForm('control', 'tab')">Tab</button>
                 <button @click="openForm('control', 'label')">Label</button>
                 <button @click="openForm('control', 'dialog')">Dialog</button>
+                <button @click="openForm('control', 'file')">File</button>
                 <button @click="openForm('control', 'block')">Block</button>
                 <button @click="openForm('control', 'overflow')">Overflow</button>
                 <button @click="openForm('control', 'view')">View</button>
@@ -26,18 +27,14 @@
         </overflow>
         <overflow v-else-if="ntab === 'method'" class="inner" direction="v">
             <layout class="buttons" gutter="10" direction="v">
-                <button @click="openForm('method', 'cgCreateForm')">cgCreateForm</button>
-                <button @click="openForm('method', 'cgFormState')">cgFormState</button>
-                <button @click="openForm('method', 'cgBindFormDragResize')">cgBindFormDrag / Resize</button>
-                <button @click="openForm('method', 'cgDialog')">cgDialog</button>
-                <button @click="openForm('method', 'cgSetTopMost')">cgSetTopMost</button>
-                <button @click="openForm('method', 'cgFlash')">cgFlash</button>
-                <button @click="openForm('method', 'cgShowHide')">cgShow / cgHide</button>
-                <button @click="openForm('method', 'cgOnFrame')">cgOnFrame</button>
-                <button @click="openForm('method', 'cgLocale')">cgLocale</button>
                 <button @click="openForm('method', 'core')">Library core</button>
                 <button @click="openForm('method', 'dom')">Library dom</button>
                 <button @click="openForm('method', 'form')">Library form</button>
+                <button @click="openForm('method', 'fs')">Library fs</button>
+                <button @click="openForm('method', 'task')">Library task</button>
+                <button @click="openForm('method', 'theme')">Library theme</button>
+                <button @click="openForm('method', 'tool')">Library tool</button>
+                <button @click="openForm('method', 'zip')">Library zip</button>
             </layout>
         </overflow>
         <overflow v-else class="inner" direction="v">

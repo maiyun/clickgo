@@ -1,3 +1,6 @@
+import * as clickgo from 'clickgo';
+import * as types from '~/types/index';
+
 export const data = {
     'ntab': '',
 
@@ -38,7 +41,7 @@ export const data = {
 };
 
 export const methods = {
-    scrollborder: function(this: IVForm, e: MouseEvent | TouchEvent | WheelEvent, dir: string): void {
+    scrollborder: function(this: types.IVForm, e: MouseEvent | TouchEvent | WheelEvent, dir: string): void {
         if (!this.gesture) {
             return;
         }

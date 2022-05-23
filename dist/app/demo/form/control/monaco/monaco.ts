@@ -1,3 +1,5 @@
+import * as types from '~/types/index';
+
 export const data = {
     'code': '',
     'codeList': [
@@ -46,7 +48,7 @@ export const data = {
 
 export const watch = {
     'language': {
-        handler: function(this: IVForm): void {
+        handler: function(this: types.IVForm): void {
             this.code = this.codeList[this.list.indexOf(this.language)];
         },
         'immediate': true
@@ -54,7 +56,7 @@ export const watch = {
 };
 
 export const computed = {
-    'filesName': function(this: IVForm): string[] {
+    'filesName': function(this: types.IVForm): string[] {
         const names: string[] = [];
         for (const name in this.files) {
             names.push(name);
@@ -64,7 +66,7 @@ export const computed = {
 };
 
 export const methods = {
-    addInclude: function(this: IVForm): void {
+    addInclude: function(this: types.IVForm): void {
         this.add = true;
         this.files['new.d.ts'] = 'declare function str2(): string;';
     }

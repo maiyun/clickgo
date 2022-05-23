@@ -1,3 +1,6 @@
+import * as clickgo from 'clickgo';
+import * as types from '~/types/index';
+
 export const data = {
     'value': '',
     'selectionStart': 0,
@@ -23,12 +26,12 @@ export const data = {
 };
 
 export const methods = {
-    longClick: function(this: IVForm): void {
+    longClick: function(this: types.IVForm): void {
         this.value = this.long ? 'short\nshort\nshort\nshort\nshort\nshort\nshort\nshort\nshort' : 'long\nlong\nlong\nlong\nlong\nlong\nlong\nlong\nlong\nlong\nlong\nlong\nlong\nlong\nlong\nlong\nlong\nlong\nlong\nlong\nlong\nlong\nlong\nlong\nlong\nlong\nlong\nlong\nlong';
         this.long = !this.long;
         this.scrollTop = 0;
     },
-    scrollborder: function(this: IVForm, e: MouseEvent | TouchEvent | WheelEvent): void {
+    scrollborder: function(this: types.IVForm, e: MouseEvent | TouchEvent | WheelEvent): void {
         if (!this.gesture) {
             return;
         }

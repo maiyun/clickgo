@@ -1,3 +1,6 @@
+import * as clickgo from 'clickgo';
+import * as types from '~/types/index';
+
 export const props = {
     'direction': {
         'default': 'h'
@@ -45,7 +48,7 @@ export const data = {
 };
 
 export const watch = {
-    'direction': function(this: IVControl): void {
+    'direction': function(this: types.IVControl): void {
         const size = clickgo.dom.getSize(this.$el);
         if (this.clientWidth !== size.clientWidth) {
             this.clientWidth = size.clientWidth;
@@ -57,61 +60,61 @@ export const watch = {
         this.$emit('resizen', this.direction === 'h' ? Math.round(this.clientHeight) : Math.round(this.clientWidth));
     },
     'scrollLeft': {
-        handler: function(this: IVControl): void {
+        handler: function(this: types.IVControl): void {
             this.goScroll(this.scrollLeft, 'left');
         }
     },
     'scrollTop': {
-        handler: function(this: IVControl): void {
+        handler: function(this: types.IVControl): void {
             this.goScroll(this.scrollTop, 'top');
         }
     },
 
     'scrollLeftData': {
-        handler: async function(this: IVControl): Promise<void> {
+        handler: async function(this: types.IVControl): Promise<void> {
             await this.$nextTick();
             // --- 重置框选区域 ---
-            this.refreshSelection();
+            this.refreshSelection(clickgo.dom.is.shift, clickgo.dom.is.ctrl);
         }
     },
     'scrollTopData': {
-        handler: async function(this: IVControl): Promise<void> {
+        handler: async function(this: types.IVControl): Promise<void> {
             await this.$nextTick();
             // --- 重置框选区域 ---
-            this.refreshSelection();
+            this.refreshSelection(clickgo.dom.is.shift, clickgo.dom.is.ctrl);
         }
     }
 };
 
 export const computed = {
-    'isSelection': function(this: IVControl): boolean {
+    'isSelection': function(this: types.IVControl): boolean {
         return clickgo.tool.getBoolean(this.selection);
     },
-    'isSolo': function(this: IVControl): boolean {
+    'isSolo': function(this: types.IVControl): boolean {
         return clickgo.tool.getBoolean(this.solo);
     },
 
     // --- 最大可拖动的 scroll 位置 ---
-    'maxScrollLeft': function(this: IVControl): number {
+    'maxScrollLeft': function(this: types.IVControl): number {
         if (this.lengthWidth <= this.clientWidth) {
             return 0;
         }
         return Math.round(this.lengthWidth) - Math.round(this.clientWidth);
     },
-    'maxScrollTop': function(this: IVControl): number {
+    'maxScrollTop': function(this: types.IVControl): number {
         if (this.lengthHeight <= this.clientHeight) {
             return 0;
         }
         return Math.round(this.lengthHeight) - Math.round(this.clientHeight);
     },
 
-    'opMargin': function(this: IVControl): string {
+    'opMargin': function(this: types.IVControl): string {
         return this.padding.replace(/(\w+)/g, '-$1');
     }
 };
 
 export const methods = {
-    wheel: function(this: IVControl, e: WheelEvent): void {
+    wheel: function(this: types.IVControl, e: WheelEvent): void {
         if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
             // --- 竖向滚动 ---
             if (e.deltaY < 0) {
@@ -220,7 +223,7 @@ export const methods = {
             }
         }
     },
-    down: function(this: IVControl, e: MouseEvent | TouchEvent): void {
+    down: function(this: types.IVControl, e: MouseEvent | TouchEvent): void {
         if (clickgo.dom.hasTouchButMouse(e)) {
             return;
         }
@@ -341,7 +344,7 @@ export const methods = {
                     let leftEnd = false;
                     let topEnd = false;
 
-                    this.timer = this.cgOnFrame(() => {
+                    this.timer = clickgo.task.onFrame(() => {
                         if (!leftEnd) {
                             fleft = Math.min(Math.abs(speedLeft) / 32, 0.5);
                             if (speedLeft > 0.2) {
@@ -381,7 +384,7 @@ export const methods = {
                             if (this.scrollTopData > this.maxScrollTop) {
                                 this.scrollTopData = this.maxScrollTop;
                             }
-                            this.cgOffFrame(this.timer);
+                            clickgo.task.offFrame(this.timer);
                             this.timer = 0;
                             return;
                         }
@@ -415,7 +418,7 @@ export const methods = {
                         this.$emit('update:scrollTop', this.scrollTopEmit);
 
                         if (leftEnd && topEnd) {
-                            this.cgOffFrame(this.timer);
+                            clickgo.task.offFrame(this.timer);
                             this.timer = 0;
                         }
                     });
@@ -440,7 +443,7 @@ export const methods = {
                     this.$refs.selection.style.top = (this.selectionOrigin.y as number).toString() + 'px';
                     this.selectionCurrent.x = x;
                     this.selectionCurrent.y = y;
-                    this.selectionTimer = this.cgOnFrame(() => {
+                    this.selectionTimer = clickgo.task.onFrame(() => {
                         const rect = this.$el.getBoundingClientRect();
                         // --- 横向 ---
                         if (this.selectionCurrent.x < rect.left) {
@@ -551,7 +554,7 @@ export const methods = {
                 },
                 end: () => {
                     this.$refs.selection.style.opacity = '0';
-                    this.cgOffFrame(this.selectionTimer);
+                    clickgo.task.offFrame(this.selectionTimer);
                     this.selectionTimer = 0;
                     this.$emit('afterselect');
                 }
@@ -628,7 +631,7 @@ export const methods = {
         }
     },
     // --- 重置 length ---
-    refreshLength: function(this: IVControl): void {
+    refreshLength: function(this: types.IVControl): void {
         if (this.lengthWidth === -1 || this.lengthHeight === -1) {
             return;
         }
@@ -646,7 +649,7 @@ export const methods = {
         this.refreshScroll();
     },
     // --- 重置视图 scroll ---
-    refreshScroll: function(this: IVControl): void {
+    refreshScroll: function(this: types.IVControl): void {
         if (this.lengthEmit === -1 || !this.clientInit) {
             return;
         }
@@ -675,7 +678,7 @@ export const methods = {
         }
     },
     // --- 设定滚动位置，但不执行任何 emit 方法，仅仅应用位置，位置既为上级传来来的合理值 ---
-    goScroll: function(this: IVControl, scroll: number | string, pos: 'left' | 'top'): void {
+    goScroll: function(this: types.IVControl, scroll: number | string, pos: 'left' | 'top'): void {
         scroll = typeof scroll === 'number' ? scroll : parseInt(scroll);
         if (pos === 'left') {
             if (scroll === this.scrollLeftEmit) {
@@ -696,20 +699,20 @@ export const methods = {
             }
         }
         if (this.timer > 0) {
-            this.cgOffFrame(this.timer);
+            clickgo.task.offFrame(this.timer);
             this.timer = 0;
         }
         this.refreshScroll();
     },
     // --- 如果当前正在运行动画，则终止他 ---
-    stopAnimation: function(this: IVControl): void {
+    stopAnimation: function(this: types.IVControl): void {
         if (this.timer > 0) {
-            this.cgOffFrame(this.timer);
+            clickgo.task.offFrame(this.timer);
             this.timer = 0;
         }
     },
     // --- 当 scroll 触发或者手动 move 后，需要刷新 selection area 区域 ---
-    refreshSelection: function(this: IVControl, shift: boolean = false, ctrl: boolean = false): void {
+    refreshSelection: function(this: types.IVControl, shift: boolean = false, ctrl: boolean = false): void {
         if (!this.selectionTimer) {
             return;
         }
@@ -758,7 +761,7 @@ export const methods = {
     }
 };
 
-export const mounted = function(this: IVControl): void {
+export const mounted = function(this: types.IVControl): void {
     // --- 外部包裹的改变 ---
     clickgo.dom.watchSize(this.$el, (size) => {
         const clientWidth = size.clientWidth;
@@ -811,9 +814,9 @@ export const mounted = function(this: IVControl): void {
     this.goScroll(this.scrollTop, 'top');
 };
 
-export const unmounted = function(this: IVControl): void {
+export const unmounted = function(this: types.IVControl): void {
     if (this.timer > 0) {
-        this.cgOffFrame(this.timer);
+        clickgo.task.offFrame(this.timer);
         this.timer = 0;
     }
 };

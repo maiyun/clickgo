@@ -1,5 +1,5 @@
 /**
- * Copyright 2021 Han Guoshuai <zohegs@gmail.com>
+ * Copyright 2022 Han Guoshuai <zohegs@gmail.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,6 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import * as types from '../../types';
+import * as form from './form';
+import * as core from './core';
 
 /** --- style list 的 div --- */
 const topClass: string[] = ['#cg-form-list', '#cg-pop-list', '#cg-system', '#cg-simpletask'];
@@ -48,6 +51,7 @@ ${classUnfold()}, ${classUnfold('input')}, ${classUnfold('textarea')} {font-fami
 #cg-circular {box-sizing: border-box; position: fixed; z-index: 20020003; border: solid 3px #ff976a; border-radius: 50%; filter: drop-shadow(0 0 3px #ff976a); pointer-events: none; opacity: 0;}
 #cg-gesture {box-sizing: border-box; position: fixed; z-index: 20020004; border-radius: 50%; pointer-events: none; opacity: 0; background: rgba(0, 0, 0, .3); box-shadow: 0 5px 20px rgba(0, 0, 0, .25); transform: scale(0); width: 20px; height: 20px;}
 #cg-gesture.done {background: rgba(255, 255, 255, .3); border: solid 3px rgba(0, 0, 0, .3)}
+#cg-drag {box-sizing: border-box; position: fixed; border-radius: 3px; z-index: 20020005; pointer-events: none; background: rgba(0, 0, 0, .5); box-shadow: 0 5px 20px rgba(0, 0, 0, .25); opacity: 0; display: flex; justify-content: center; align-items: center;}
 
 [data-cg-pop] {position: fixed; box-shadow: 0px 5px 20px rgba(0, 0, 0, .25); transition: .1s ease-out; transition-property: transform, opacity; transform: translateY(-10px); opacity: 0;}
 [data-cg-pop]:not([data-cg-open]) {pointer-events: none;}
@@ -61,7 +65,7 @@ ${classUnfold()}, ${classUnfold('input')}, ${classUnfold('textarea')} {font-fami
 .cg-system-icon-danger {background: #ee0a24;}
 .cg-system-icon-progress {background: #ff976a;}
 .cg-system-notify-title {font-size: 16px; font-weight: bold; padding-bottom: 10px;}
-.cg-system-notify-content {line-height: 1.5;}
+.cg-system-notify-content {line-height: 1.5; word-break: break-word;}
 .cg-system-notify-progress {position: absolute; bottom: 0; left: 0; border-radius: 1px; background: #ff976a; transition: width 1s ease-out; width: 0%; height: 2px;}
 
 #cg-simpletask {bottom: -46px; width: 100%; height: 46px; top: initial; background: rgb(0, 0, 0, .5); -webkit-backdrop-filter: blur(30px) brightness(1.1); backdrop-filter: blur(30px) brightness(1.1); padding: 5px 0 5px 5px; display: flex; color: #f6f6f6; transition: bottom .1s ease-out; overflow-x: auto;}
@@ -122,7 +126,7 @@ export function hasTouchButMouse(e: MouseEvent | TouchEvent | PointerEvent): boo
  * @param taskId 任务 id
  */
 export function createToStyleList(taskId: number): void {
-    styleList.insertAdjacentHTML('beforeend', `<div id="cg-style-task${taskId}"><style class="cg-style-global"></style><div class="cg-style-theme"></div><div class="cg-style-control"></div><div class="cg-style-form"></div></div>`);
+    styleList.insertAdjacentHTML('beforeend', `<div id="cg-style-task${taskId}"><style class="cg-style-global"></style><div class="cg-style-control"></div><div class="cg-style-theme"></div><div class="cg-style-form"></div></div>`);
 }
 
 /**
@@ -168,7 +172,7 @@ export function removeStyle(taskId: number, type: 'global' | 'theme' | 'control'
         return;
     }
     if (type === 'global') {
-        const el = document.querySelector(`#cg-style-task${taskId} > .cg-style-global`);
+        const el = styleTask.querySelector(`.cg-style-global`);
         if (!el) {
             return;
         }
@@ -176,18 +180,17 @@ export function removeStyle(taskId: number, type: 'global' | 'theme' | 'control'
     }
     else if (type === 'theme' || type === 'control') {
         if (formId === 0) {
-            const el = document.querySelector(`#cg-style-task${taskId} > .cg-style-${type}`);
+            const el = styleTask.querySelector(`.cg-style-${type}`);
             if (!el) {
                 return;
             }
             el.innerHTML = '';
         }
         else {
-            const el = document.querySelector(`#cg-style-task${taskId} > .cg-style-${type} > [data-name='${formId}']`);
-            if (!el) {
-                return;
+            const elist = styleTask.querySelectorAll(`.cg-style-${type} > [data-name='${formId}']`);
+            for (let i = 0; i < elist.length; ++i) {
+                elist.item(i).remove();
             }
-            el.remove();
         }
     }
     else {
@@ -211,7 +214,7 @@ export function getStyleCount(taskId: number, type: 'theme' | 'control' | 'form'
  * --- 获取实时的 DOM SIZE ---
  * @param el 要获取的 dom
  */
-export function getSize(el: HTMLElement): ICGDomSize {
+export function getSize(el: HTMLElement): types.IDomSize {
     const rect = el.getBoundingClientRect();
     const cs = getComputedStyle(el);
     const border = {
@@ -244,17 +247,28 @@ export function getSize(el: HTMLElement): ICGDomSize {
     };
 }
 
+/** --- 被监视中的元素 --- */
+const watchSizeList: types.IWatchSizeItem[] = [];
+
 /**
- * --- 添加监视 Element 对象大小
+ * --- 添加监视 Element 对象大小，元素移除后自动停止监视（浏览器原生效果） ---
  * @param el 要监视的大小
  * @param cb 回调函数
+ * @param immediate 立刻先执行一次回调
+ * @param taskId 归属到一个任务里可留空，App 模式下无效
  */
 export function watchSize(
     el: HTMLElement,
-    cb: (size: ICGDomSize) => Promise<void> | void,
-    immediate: boolean = false
-): ICGDomSize {
+    cb: (size: types.IDomSize) => Promise<void> | void,
+    immediate: boolean = false,
+    taskId?: number
+): types.IDomSize {
     const fsize = getSize(el);
+    for (const item of watchSizeList) {
+        if (item.el === el) {
+            return fsize;
+        }
+    }
     if (immediate) {
         const r = cb(fsize);
         if (r instanceof Promise) {
@@ -276,16 +290,86 @@ export function watchSize(
         }
     });
     resizeObserver.observe(el);
+    watchSizeList.push({
+        'el': el,
+        'ro': resizeObserver,
+        'taskId': taskId
+    });
     return fsize;
 }
+
+/**
+ * --- 移除监视 Element 对象大小
+ * @param el 要移除监视
+ * @param taskId 校验任务 id，App 模式下无效
+ */
+export function unwatchSize(el: HTMLElement, taskId?: number): void {
+    for (let i = 0; i < watchSizeList.length; ++i) {
+        const item = watchSizeList[i];
+        if (item.el !== el) {
+            continue;
+        }
+        if (taskId && taskId !== item.taskId) {
+            // --- taskId 校验失败 ---
+            return;
+        }
+        // --- 要移除 ---
+        if (item.el.offsetParent) {
+            item.ro.unobserve(item.el);
+        }
+        watchSizeList.splice(i, 1);
+        --i;
+        return;
+    }
+}
+
+/**
+ * --- 清除某个任务下面的所有监视 ---
+ * @param taskId 任务 id，App 模式下无效
+ */
+export function clearWatchSize(taskId?: number): void {
+    if (!taskId) {
+        return;
+    }
+    for (let i = 0; i < watchSizeList.length; ++i) {
+        const item = watchSizeList[i];
+        if (taskId !== item.taskId) {
+            continue;
+        }
+        if (item.el.offsetParent) {
+            item.ro.unobserve(item.el);
+        }
+        watchSizeList.splice(i, 1);
+        --i;
+    }
+}
+
+/**
+ * --- 每隔一段时间清除一次无效的 el ---
+ */
+function cgClearWatchSize(): void {
+    for (let i = 0; i < watchSizeList.length; ++i) {
+        const item = watchSizeList[i];
+        if (item.el.offsetParent) {
+            continue;
+        }
+        watchSizeList.splice(i, 1);
+        --i;
+    }
+}
+setInterval(cgClearWatchSize, 1000 * 60 * 5);
+
+/** --- 监视 dom 变动中的元素 */
+const watchList: types.IWatchItem[] = [];
 
 /**
  * --- 添加 DOM 内容变化监视 ---
  * @param el dom 对象
  * @param cb 回调
  * @param mode 监听模式
+ * @param taskId 归属到一个任务里可留空，App 模式下无效
  */
-export function watch(el: HTMLElement, cb: () => void, mode: 'child' | 'childsub' | 'style' | 'default' = 'default', immediate: boolean = false): void {
+export function watch(el: HTMLElement, cb: () => void, mode: 'child' | 'childsub' | 'style' | 'default' = 'default', immediate: boolean = false, taskId?: number): void {
     if (immediate) {
         cb();
     }
@@ -329,6 +413,11 @@ export function watch(el: HTMLElement, cb: () => void, mode: 'child' | 'childsub
     }
     const mo = new MutationObserver(cb);
     mo.observe(el, moi);
+    watchList.push({
+        'el': el,
+        'mo': mo,
+        'taskId': taskId
+    });
     /*
     {
         'attributeFilter': ['style', 'class'],
@@ -340,20 +429,84 @@ export function watch(el: HTMLElement, cb: () => void, mode: 'child' | 'childsub
     */
 }
 
+/**
+ * --- 移除监视 Element 对象大小
+ * @param el 要移除监视
+ * @param taskId 校验任务 id 可留空，App 模式下无效
+ */
+export function unwatch(el: HTMLElement, taskId?: number): void {
+    for (let i = 0; i < watchList.length; ++i) {
+        const item = watchList[i];
+        if (item.el !== el) {
+            continue;
+        }
+        if (taskId && taskId !== item.taskId) {
+            // --- taskId 校验失败 ---
+            return;
+        }
+        // --- 要移除 ---
+        if (item.el.offsetParent) {
+            item.mo.disconnect();
+        }
+        watchList.splice(i, 1);
+        --i;
+        return;
+    }
+}
+
+/**
+ * --- 清除某个任务下面的所有 watch 监视 ---
+ * @param taskId 任务 id，App 模式下无效
+ */
+export function clearWatch(taskId?: number): void {
+    if (!taskId) {
+        return;
+    }
+    for (let i = 0; i < watchList.length; ++i) {
+        const item = watchList[i];
+        if (taskId !== item.taskId) {
+            continue;
+        }
+        if (item.el.offsetParent) {
+            item.mo.disconnect();
+        }
+        watchList.splice(i, 1);
+        --i;
+    }
+}
+
+/**
+ * --- 每隔一段时间清除一次无效的 watch el ---
+ */
+function cgClearWatch(): void {
+    for (let i = 0; i < watchList.length; ++i) {
+        const item = watchList[i];
+        if (item.el.offsetParent) {
+            continue;
+        }
+        watchList.splice(i, 1);
+        --i;
+    }
+}
+setInterval(cgClearWatch, 1000 * 60 * 5);
+
 const watchStyleObjects: Array<{
     'el': HTMLElement;
     'sd': CSSStyleDeclaration;
     'names': Record<string, {
         'old': string;
-        'cb': Array<(name?: string, value?: string) => void>;
+        'cb': Array<(name: string, value: string) => void>;
     }>;
 }> = [];
 export function watchStyle(
     el: HTMLElement,
     name: string | string[],
-    cb: (name?: string, value?: string) => void,
+    cb: (name: string, value: string) => void,
     immediate: boolean = false
 ): void {
+    if (typeof name === 'string') {
+        name = [name];
+    }
     for (const item of watchStyleObjects) {
         if (item.el !== el) {
             continue;
@@ -377,9 +530,6 @@ export function watchStyle(
     }
     // --- 创建监听 ---
     const sd = getComputedStyle(el);
-    if (typeof name === 'string') {
-        name = [name];
-    }
     watchStyleObjects.push({
         'el': el,
         'sd': sd,
@@ -420,11 +570,25 @@ const watchStyleRAF = function(): void {
 watchStyleRAF();
 
 /**
+ * --- 检测一个标签是否正在被 watchStyle ---
+ * @param el 要检测的标签
+ */
+export function isWatchStyle(el: HTMLElement): boolean {
+    for (const item of watchStyleObjects) {
+        if (item.el !== el) {
+            continue;
+        }
+        return true;
+    }
+    return false;
+}
+
+/**
  * --- 绑定按下以及弹起事件 ---
  * @param e MouseEvent | TouchEvent
  * @param opt 回调选项
  */
-export function bindDown(oe: MouseEvent | TouchEvent, opt: { 'down'?: (e: MouseEvent | TouchEvent) => void; 'start'?: (e: MouseEvent | TouchEvent) => any; 'move'?: (e: MouseEvent | TouchEvent, dir: 'top' | 'right' | 'bottom' | 'left') => any; 'up'?: (e: MouseEvent | TouchEvent) => void; 'end'?: (e: MouseEvent | TouchEvent) => void; }): void {
+export function bindDown(oe: MouseEvent | TouchEvent, opt: types.IBindDownOptions): void {
     if (hasTouchButMouse(oe)) {
         return;
     }
@@ -712,7 +876,12 @@ function bindGestureAnimation(opt: { 'rect': DOMRect; 'dirs'?: Array<('top' | 'r
     });
 }
 
-export function bindGesture(e: MouseEvent | TouchEvent | WheelEvent | { 'x'?: number; 'y'?: number; }, opt: { 'el'?: HTMLElement; 'rect'?: DOMRect; 'dirs'?: Array<('top' | 'right' | 'bottom' | 'left')>; handler: (dir: 'top' | 'right' | 'bottom' | 'left') => void; }): void {
+/**
+ * --- 绑定上拉、下拉、左拉、右拉 ---
+ * @param e 响应事件
+ * @param opt 选项
+ */
+export function bindGesture(e: MouseEvent | TouchEvent | WheelEvent | { 'x'?: number; 'y'?: number; }, opt: types.IBindGestureOptions): void {
     const gestureElement = document.getElementById('cg-gesture')!;
     const el: HTMLElement | undefined = ((e as any).currentTarget as HTMLElement | undefined)
         ?? ((e as any).target as HTMLElement | undefined) ?? opt.el;
@@ -863,6 +1032,7 @@ export function bindGesture(e: MouseEvent | TouchEvent | WheelEvent | { 'x'?: nu
         }
         let x: number = 0, y: number = 0;
         if (e instanceof WheelEvent) {
+            e.preventDefault();
             if (Math.abs(e.deltaX) < 5 && Math.abs(e.deltaY) < 5) {
                 return;
             }
@@ -930,6 +1100,11 @@ export function allowEvent(e: MouseEvent | TouchEvent | KeyboardEvent): boolean 
     return true;
 }
 
+/**
+ * --- 绑定长按事件 ---
+ * @param e 事件原型
+ * @param long 回调
+ */
 export function bindLong(e: MouseEvent | TouchEvent, long: (e: MouseEvent | TouchEvent) => void | Promise<void>): void {
     if (hasTouchButMouse(e)) {
         return;
@@ -974,9 +1149,130 @@ export function bindLong(e: MouseEvent | TouchEvent, long: (e: MouseEvent | Touc
     });
 }
 
+/**
+ * --- 绑定拖动 ---
+ * @param e 鼠标事件
+ * @param opt 参数
+ */
+export function bindDrag(e: MouseEvent | TouchEvent, opt: { 'el': HTMLElement; 'data'?: any; }): void {
+    let otop = 0;
+    let oleft = 0;
+    let nel: HTMLElement | null = null;
+    bindMove(e, {
+        'object': opt.el,
+        'start': function() {
+            const rect = opt.el.getBoundingClientRect();
+            form.showDrag();
+            form.moveDrag({
+                'top': rect.top,
+                'left': rect.left,
+                'width': rect.width,
+                'height': rect.height,
+                'icon': true
+            });
+            otop = rect.top;
+            oleft = rect.left;
+        },
+        'move': function(ox, oy, x, y) {
+            const ntop = otop + oy;
+            const nleft = oleft + ox;
+            form.moveDrag({
+                'top': ntop,
+                'left': nleft,
+                'icon': false
+            });
+            otop = ntop;
+            oleft = nleft;
+            // --- 获取当前 element ---
+            const els = document.elementsFromPoint(x, y) as HTMLElement[];
+            for (const el of els) {
+                if (el.dataset.cgDrop === undefined) {
+                    continue;
+                }
+                if (el === opt.el) {
+                    continue;
+                }
+                if (el === nel) {
+                    // --- 还是当前的 ---
+                    return;
+                }
+                if (nel !== null) {
+                    nel.removeAttribute('data-cg-hover');
+                    nel.dispatchEvent(new CustomEvent('dragleave', {
+                        'detail': {
+                            'value': opt.data
+                        }
+                    }));
+                }
+                el.dataset.cgHover = '';
+                nel = el;
+                nel.dispatchEvent(new CustomEvent('dragenter', {
+                    'detail': {
+                        'value': opt.data
+                    }
+                }));
+                return;
+            }
+            // --- not found ---
+            form.moveDrag({
+                'icon': true
+            });
+            if (nel === null) {
+                return;
+            }
+            nel.removeAttribute('data-cg-hover');
+            nel.dispatchEvent(new CustomEvent('dragleave', {
+                'detail': {
+                    'value': opt.data
+                }
+            }));
+            nel = null;
+        },
+        'end': function() {
+            form.hideDrag();
+            if (nel === null) {
+                return;
+            }
+            nel.removeAttribute('data-cg-hover');
+            nel.dispatchEvent(new CustomEvent('drop', {
+                'detail': {
+                    'value': opt.data
+                }
+            }));
+        }
+    });
+}
+
 /** --- 目前是否已绑定了 bindMove --- */
 export const is = Vue.reactive({
-    'move': false
+    'move': false,
+    'shift': false,
+    'ctrl': false
+});
+
+window.addEventListener('keydown', function(e: KeyboardEvent) {
+    switch (e.key) {
+        case 'Shift': {
+            is.shift = true;
+            break;
+        }
+        case 'Control': {
+            is.ctrl = true;
+            break;
+        }
+    }
+});
+window.addEventListener('keyup', function(e: KeyboardEvent) {
+    switch (e.key) {
+        case 'Shift': {
+            is.shift = false;
+            break;
+        }
+        case 'Control': {
+            is.ctrl = false;
+            break;
+        }
+    }
 });
 
 /**
@@ -984,7 +1280,7 @@ export const is = Vue.reactive({
  * @param e mousedown 或 touchstart 的 event
  * @param opt 回调选项
  */
-export function bindMove(e: MouseEvent | TouchEvent, opt: { 'areaObject'?: HTMLElement | IVue; 'left'?: number; 'top'?: number; 'right'?: number; 'bottom'?: number; 'offsetLeft'?: number; 'offsetTop'?: number; 'offsetRight'?: number; 'offsetBottom'?: number; 'objectLeft'?: number; 'objectTop'?: number; 'objectWidth'?: number; 'objectHeight'?: number; 'object'?: HTMLElement | IVue; 'showRect'?: boolean; 'start'?: (x: number, y: number) => any; 'move'?: (ox: number, oy: number, x: number, y: number, border: TCGBorder, dir: 'top' | 'right' | 'bottom' | 'left', e: MouseEvent | TouchEvent) => void; 'up'?: (moveTimes: Array<{ 'time': number; 'ox': number; 'oy': number; }>, e: MouseEvent | TouchEvent) => void; 'end'?: (moveTimes: Array<{ 'time': number; 'ox': number; 'oy': number; }>, e: MouseEvent | TouchEvent) => void; 'borderIn'?: (x: number, y: number, border: TCGBorder, e: MouseEvent | TouchEvent) => void; 'borderOut'?: () => void; }): { 'left': number; 'top': number; 'right': number; 'bottom': number; } {
+export function bindMove(e: MouseEvent | TouchEvent, opt: types.IBindMoveOptions): types.IBindMoveResult {
     if (hasTouchButMouse(e)) {
         return {
             'left': 0,
@@ -1022,7 +1318,7 @@ export function bindMove(e: MouseEvent | TouchEvent, opt: { 'areaObject'?: HTMLE
             + parseFloat(areaStyle.paddingRight));
     }
     else {
-        const area = clickgo.form.getAvailArea();
+        const area = core.getAvailArea();
         left = opt.left ?? area.left;
         top = opt.top ?? area.top;
         right = opt.right ?? area.width;
@@ -1063,7 +1359,7 @@ export function bindMove(e: MouseEvent | TouchEvent, opt: { 'areaObject'?: HTMLE
         start: () => {
             if (opt.start) {
                 if (opt.start(tx, ty) === false) {
-                    clickgo.dom.setGlobalCursor();
+                    setGlobalCursor();
                     return false;
                 }
             }
@@ -1208,7 +1504,7 @@ export function bindMove(e: MouseEvent | TouchEvent, opt: { 'areaObject'?: HTMLE
             }
 
             // --- 检测是否执行 borderIn 事件（是否正在边界上） ---
-            let border: TCGBorder = '';
+            let border: types.TBorder = '';
             if (inBorderTop || inBorderRight || inBorderBottom || inBorderLeft) {
                 if (inBorderTop) {
                     if (x - left <= 20) {
@@ -1291,14 +1587,14 @@ export function bindMove(e: MouseEvent | TouchEvent, opt: { 'areaObject'?: HTMLE
     });
 
     if (opt.showRect) {
-        clickgo.form.showRectangle(tx, ty, {
+        form.showRectangle(tx, ty, {
             'left': left,
             'top': top,
             'width': right - left,
             'height': bottom - top
         });
         setTimeout(() => {
-            clickgo.form.hideRectangle();
+            form.hideRectangle();
         }, 3000);
     }
 
@@ -1317,7 +1613,7 @@ export function bindMove(e: MouseEvent | TouchEvent, opt: { 'areaObject'?: HTMLE
  * @param moveCb 拖动时的回调
  * @param endCb 结束时的回调
  */
-export function bindResize(e: MouseEvent | TouchEvent, opt: { 'objectLeft'?: number; 'objectTop'?: number; 'objectWidth'?: number; 'objectHeight'?: number; 'object'?: HTMLElement | IVue; 'minWidth'?: number; 'minHeight'?: number; 'maxWidth'?: number; 'maxHeight'?: number; 'border': TCGBorder; 'start'?: (x: number, y: number) => any; 'move'?: (left: number, top: number, width: number, height: number, x: number, y: number, border: TCGBorder) => void; 'end'?: () => void; }): void {
+export function bindResize(e: MouseEvent | TouchEvent, opt: types.IBindResizeOptions): void {
     if (hasTouchButMouse(e)) {
         return;
     }
@@ -1432,6 +1728,28 @@ export function findParentByData(el: HTMLElement, name: string): HTMLElement | n
             break;
         }
         if (parent.getAttribute('data-' + name) !== null) {
+            return parent;
+        }
+        parent = parent.parentNode as HTMLElement;
+    }
+    return null;
+}
+
+/**
+ * --- 通过 class 名查找上层所有标签是否存在 ---
+ * @param el 当前标签
+ * @param name 要查找的 class 名
+ */
+export function findParentByClass(el: HTMLElement, name: string): HTMLElement | null {
+    let parent = el.parentNode as HTMLElement;
+    while (parent) {
+        if (!parent.tagName) {
+            continue;
+        }
+        if (parent.tagName.toLowerCase() === 'body') {
+            break;
+        }
+        if (parent.classList.contains(name)) {
             return parent;
         }
         parent = parent.parentNode as HTMLElement;

@@ -44,8 +44,8 @@
             </layout>
         </layout>
         <!-- 自适应 -->
-        <layout v-else-if="ntab === 'adaptation'" gutter="10" direction="v" style="flex: 1; padding: 10px;">
-            <layout :direction="direction ? 'h' : 'v'" style="flex: 1; width: 0; height: 0;">
+        <layout v-else-if="ntab === 'adaptation'" gutter="10" direction="v" style="flex: 1; width: 0; padding: 10px;">
+            <layout :direction="direction ? 'h' : 'v'" style="flex: 1; height: 0;">
                 <view class="border" v-model:scroll-left="sLeft4" v-model:scroll-top="sTop4" :direction="direction ? 'h' : 'v'" @resize="c4 = $event" @change="l4 = $event" @scrollborder="scrollborder($event, 'v')">
                     <layout v-for="(line, index) of lineCount" align-v="center" direction="v" :class="[direction && 'rightborder']">
                         <button v-if="index > 0 && index % 10 === 0" style="height: 30px;" :style="{'width': direction ? '30px' : undefined}">test</button>

@@ -6,9 +6,9 @@ node_modules/
 tsconfig.json
 .DS_Store
 /doc/
-/types/
-*.ts
 
+/dist/app/**/*.ts
 /dist/sources/
 /dist/test/
+/dist/build*
 /dist/compiler*

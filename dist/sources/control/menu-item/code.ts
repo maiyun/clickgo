@@ -1,3 +1,6 @@
+import * as clickgo from 'clickgo';
+import * as types from '~/types/index';
+
 export const props = {
     'disabled': {
         'default': false
@@ -9,13 +12,13 @@ export const props = {
 };
 
 export const computed = {
-    'isDisabled': function(this: IVControl): boolean {
+    'isDisabled': function(this: types.IVControl): boolean {
         return clickgo.tool.getBoolean(this.disabled);
     }
 };
 
 export const methods = {
-    enter: function(this: IVControl, e: MouseEvent): void {
+    enter: function(this: types.IVControl, e: MouseEvent): void {
         if (clickgo.dom.hasTouchButMouse(e)) {
             return;
         }
@@ -28,7 +31,7 @@ export const methods = {
             'null': true
         });
     },
-    click: function(this: IVControl): void {
+    click: function(this: types.IVControl): void {
         if (this.$el.dataset.cgPopOpen !== undefined) {
             // --- 本来是展开状态，就隐藏起来 ---
             clickgo.form.hidePop(this.$refs.pop);

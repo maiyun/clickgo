@@ -9,22 +9,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.execCommand = exports.blob2DataUrl = exports.blob2Text = exports.urlResolve = exports.parseUrl = exports.request = exports.escapeHTML = exports.getBoolean = exports.rand = exports.getObjectURLList = exports.revokeObjectURL = exports.createObjectURL = exports.getMimeByPath = exports.stylePrepend = exports.eventsAttrWrap = exports.layoutClassPrepend = exports.layoutInsertAttr = exports.layoutAddTagClassAndReTagName = exports.styleUrl2ObjectOrDataUrl = exports.purify = exports.sleep = exports.clone = exports.blob2ArrayBuffer = exports.file2ObjectUrl = void 0;
-function file2ObjectUrl(file, obj) {
-    let ourl = obj.objectURLs[file];
-    if (!ourl) {
-        if (!obj.files[file]) {
-            return null;
-        }
-        if (typeof obj.files[file] === 'string') {
-            return null;
-        }
-        ourl = createObjectURL(obj.files[file]);
-        obj.objectURLs[file] = ourl;
-    }
-    return ourl;
-}
-exports.file2ObjectUrl = file2ObjectUrl;
+exports.execCommand = exports.blob2DataUrl = exports.blob2Text = exports.urlResolve = exports.parseUrl = exports.request = exports.escapeHTML = exports.getBoolean = exports.random = exports.RANDOM_LUNS = exports.RANDOM_V = exports.RANDOM_LUN = exports.RANDOM_LU = exports.RANDOM_LN = exports.RANDOM_UN = exports.RANDOM_L = exports.RANDOM_U = exports.RANDOM_N = exports.rand = exports.getObjectURLs = exports.revokeObjectURL = exports.createObjectURL = exports.getMimeByPath = exports.stylePrepend = exports.eventsAttrWrap = exports.layoutClassPrepend = exports.layoutInsertAttr = exports.layoutAddTagClassAndReTagName = exports.styleUrl2DataUrl = exports.purify = exports.sleep = exports.clone = exports.blob2ArrayBuffer = void 0;
+const task = require("./task");
 function blob2ArrayBuffer(blob) {
     return new Promise(function (resove) {
         const fr = new FileReader();
@@ -71,28 +57,26 @@ function purify(text) {
     return text.slice(1, -1);
 }
 exports.purify = purify;
-function styleUrl2ObjectOrDataUrl(path, style, obj, mode = 'object') {
+function styleUrl2DataUrl(path, style, files) {
     return __awaiter(this, void 0, void 0, function* () {
         const reg = /url\(["']{0,1}(.+?)["']{0,1}\)/ig;
         let match = null;
         while ((match = reg.exec(style))) {
-            const realPath = urlResolve(path, match[1]);
-            if (!obj.files[realPath]) {
+            let realPath = urlResolve(path, match[1]);
+            if (realPath.startsWith('/package/')) {
+                realPath = realPath.slice(8);
+            }
+            if (!files[realPath]) {
                 continue;
             }
-            if (mode === 'data') {
-                if (typeof obj.files[realPath] !== 'string') {
-                    style = style.replace(match[0], `url('${yield blob2DataUrl(obj.files[realPath])}')`);
-                }
-            }
-            else {
-                style = style.replace(match[0], `url('${file2ObjectUrl(realPath, obj)}')`);
+            if (typeof files[realPath] !== 'string') {
+                style = style.replace(match[0], `url('${yield blob2DataUrl(files[realPath])}')`);
             }
         }
         return style;
     });
 }
-exports.styleUrl2ObjectOrDataUrl = styleUrl2ObjectOrDataUrl;
+exports.styleUrl2DataUrl = styleUrl2DataUrl;
 function layoutAddTagClassAndReTagName(layout, retagname) {
     const list = [];
     layout = layout.replace(/(\S+)=(".+?"|'.+?')/g, function (t, t1) {
@@ -293,21 +277,47 @@ function getMimeByPath(path) {
     };
 }
 exports.getMimeByPath = getMimeByPath;
-const objectURLList = [];
-function createObjectURL(object) {
+const objectURLs = [];
+function createObjectURL(object, taskId = 0) {
+    let t = null;
+    if (taskId > 0) {
+        t = task.list[taskId];
+        if (!t) {
+            return '';
+        }
+    }
     const url = URL.createObjectURL(object);
-    objectURLList.push(url);
+    objectURLs.push(url);
+    if (t) {
+        t.objectURLs.push(url);
+    }
     return url;
 }
 exports.createObjectURL = createObjectURL;
-function revokeObjectURL(url) {
+function revokeObjectURL(url, taskId = 0) {
+    const oio = objectURLs.indexOf(url);
+    if (oio === -1) {
+        return;
+    }
+    if (taskId > 0) {
+        const t = task.list[taskId];
+        if (!t) {
+            return;
+        }
+        const io = t.objectURLs.indexOf(url);
+        if (io === -1) {
+            return;
+        }
+        t.objectURLs.splice(io, 1);
+    }
+    objectURLs.splice(oio, 1);
     URL.revokeObjectURL(url);
 }
 exports.revokeObjectURL = revokeObjectURL;
-function getObjectURLList() {
-    return objectURLList;
+function getObjectURLs() {
+    return objectURLs;
 }
-exports.getObjectURLList = getObjectURLList;
+exports.getObjectURLs = getObjectURLs;
 function rand(min, max) {
     if (min > max) {
         [min, max] = [max, min];
@@ -315,6 +325,33 @@ function rand(min, max) {
     return min + Math.round(Math.random() * (max - min));
 }
 exports.rand = rand;
+exports.RANDOM_N = '0123456789';
+exports.RANDOM_U = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+exports.RANDOM_L = 'abcdefghijklmnopqrstuvwxyz';
+exports.RANDOM_UN = exports.RANDOM_U + exports.RANDOM_N;
+exports.RANDOM_LN = exports.RANDOM_L + exports.RANDOM_N;
+exports.RANDOM_LU = exports.RANDOM_L + exports.RANDOM_U;
+exports.RANDOM_LUN = exports.RANDOM_L + exports.RANDOM_U + exports.RANDOM_N;
+exports.RANDOM_V = 'ACEFGHJKLMNPRSTWXY34567';
+exports.RANDOM_LUNS = exports.RANDOM_LUN + '()`~!@#$%^&*-+=_|{}[]:;\'<>,.?/]';
+function random(length = 8, source = exports.RANDOM_LN, block = '') {
+    let len = block.length;
+    if (len > 0) {
+        for (let i = 0; i < len; ++i) {
+            source = source.replace(block[i], '');
+        }
+    }
+    len = source.length;
+    if (len === 0) {
+        return '';
+    }
+    let temp = '';
+    for (let i = 0; i < length; ++i) {
+        temp += source[rand(0, len - 1)];
+    }
+    return temp;
+}
+exports.random = random;
 function getBoolean(param) {
     const t = typeof param;
     if (t === 'boolean') {
@@ -424,6 +461,11 @@ function request(url, opt) {
         }
         if (opt.timeout) {
             xhr.timeout = opt.timeout;
+        }
+        if (opt.headers) {
+            for (const k in opt.headers) {
+                xhr.setRequestHeader(k, opt.headers[k]);
+            }
         }
         xhr.open((_a = opt.method) !== null && _a !== void 0 ? _a : 'GET', url, true);
         xhr.send(opt.body);

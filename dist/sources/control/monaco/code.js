@@ -10,6 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.unmounted = exports.mounted = exports.methods = exports.watch = exports.data = exports.computed = exports.props = void 0;
+const clickgo = require("clickgo");
 exports.props = {
     'disabled': {
         'default': false
