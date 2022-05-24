@@ -1041,6 +1041,9 @@ function create(opt) {
                 if (k.includes('-')) {
                     continue;
                 }
+                if (/^[0-9]+$/.test(k)) {
+                    continue;
+                }
                 if ([
                     'require',
                     '__awaiter', 'eval', 'Math', 'Array', 'Blob', 'Infinity', 'parseInt', 'parseFloat', 'Promise', 'Date', 'JSON', 'fetch'
@@ -1078,6 +1081,18 @@ function create(opt) {
                 invoke.navigator.clipboard = navigator.clipboard;
             }
             invoke.invokeClickgo = {
+                getVersion: function () {
+                    return clickgo.getVersion();
+                },
+                getNative() {
+                    return clickgo.getNative();
+                },
+                getSafe() {
+                    return clickgo.getSafe();
+                },
+                getCdn() {
+                    return clickgo.getCdn();
+                },
                 'control': {
                     read: function (blob) {
                         return clickgo.control.read(blob);

@@ -14,8 +14,8 @@
                 <text v-model="block" style="height: 30px; flex: 1;"></text>
                 <button @click="random" style="height: 30px; padding: 0 10px;">random({{length}}, RANDOM_LN, '{{block}}')</button>
             </layout>
-            <text v-model="url" style="height: 30px;"></text>
             <button @click="escapeHTML" style="height: 30px;">escapeHTML('{{purifyTxt.slice(0, 5).replace("'", "\\'")}}...')</button>
+            <text v-model="url" style="height: 30px;"></text>
             <button @click="parseUrl" style="height: 30px;">parseUrl('{{url.slice(0, 5).replace("'","\\'")}}...')</button>
             <label>urlResolve:</label>
             <text v-model="url1" style="height: 30px;"></text>

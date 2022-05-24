@@ -97,26 +97,12 @@ const modules: Record<string, { func: () => any | Promise<any>; 'obj': null | an
     'monaco': {
         func: async function() {
             return new Promise(function(resolve, reject) {
-                loader.loadScript(clickgo.getCdn() + '/npm/monaco-editor@0.29.1/min/vs/loader.js').then(function() {
-                    (window.require as any).config({
-                        paths: {
-                            'vs': clickgo.getCdn() + '/npm/monaco-editor@0.29.1/min/vs'
-                        }
-                    });
-                    // --- 初始化 Monaco ---
-                    const proxy = URL.createObjectURL(new Blob([`
-                        self.MonacoEnvironment = {
-                            baseUrl: '${clickgo.getCdn()}/npm/monaco-editor@0.29.1/min/'
-                        };
-                        importScripts('${clickgo.getCdn()}/npm/monaco-editor@0.29.1/min/vs/base/worker/workerMain.js');
-                    `], { type: 'text/javascript' }));
-                    (window as any).MonacoEnvironment = {
-                        getWorkerUrl: () => proxy
-                    };
-                    // --- 加载 ---
-                    (window.require as any)(['vs/editor/editor.main'], function(monaco: any) {
-                        resolve(monaco);
-                    });
+                fetch(clickgo.getCdn() + '/npm/monaco-editor@0.29.1/min/vs/loader.js').then(function(r) {
+                    return r.blob();
+                }).then(function(b) {
+                    return tool.blob2DataUrl(b);
+                }).then(function(d) {
+                    resolve(d);
                 }).catch(function(e) {
                     reject(e);
                 });

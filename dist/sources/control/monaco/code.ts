@@ -31,6 +31,9 @@ export const computed = {
         return clickgo.tool.getBoolean(this.readonly);
     },
 
+    'showMask': function(): boolean {
+        return clickgo.dom.is.move;
+    },
     'filesComp': function(this: types.IVControl): any[] {
         const list = [];
         for (const path in this.files) {
@@ -102,41 +105,22 @@ export const watch = {
             return;
         }
         this.monaco.editor.setModelLanguage(this.monacoInstance.getModel(), this.language.toLowerCase());
+    },
+    'filesComp': function(this: types.IVControl): void {
+        if (!this.monacoInstance) {
+            return;
+        }
+        this.monaco.languages.typescript.typescriptDefaults.setExtraLibs(this.filesComp);
+    },
+    'theme': function(this: types.IVControl): void {
+        if (!this.monacoInstance) {
+            return;
+        }
+        this.monaco.editor.setTheme(this.theme);
     }
 };
 
 export const methods = {
-    contextmenu: function(this: types.IVControl, e: MouseEvent): void {
-        if (this.notInit) {
-            return;
-        }
-        if (!navigator.clipboard) {
-            e.stopPropagation();
-            return;
-        }
-        if (clickgo.dom.hasTouchButMouse(e)) {
-            return;
-        }
-        clickgo.form.showPop(this.$el, this.$refs.pop, e);
-    },
-    down: function(this: types.IVControl, e: MouseEvent | TouchEvent): void {
-        if (this.notInit) {
-            return;
-        }
-        if (clickgo.dom.hasTouchButMouse(e)) {
-            return;
-        }
-        if (this.$el.dataset.cgPopOpen !== undefined) {
-            clickgo.form.hidePop();
-        }
-        if (e instanceof TouchEvent) {
-            if (navigator.clipboard) {
-                clickgo.dom.bindLong(e, () => {
-                    clickgo.form.showPop(this.$el, this.$refs.pop, e);
-                });
-            }
-        }
-    },
     execCmd: async function(this: types.IVControl, ac: string): Promise<void> {
         switch (ac) {
             case 'copy': {
@@ -181,41 +165,104 @@ export const methods = {
 };
 
 export const mounted = function(this: types.IVControl): void {
+    const iframeEl = this.$refs.iframe as unknown as HTMLIFrameElement;
+    if (!iframeEl.contentWindow) {
+        return;
+    }
+    const iwindow = iframeEl.contentWindow;
+    const idoc = iwindow.document;
+    idoc.body.style.margin = '0';
+    const monacoEl = idoc.createElement('div');
+    monacoEl.id = 'monaco';
+    monacoEl.style.height = '100%';
+    idoc.body.append(monacoEl);
+    /** --- monaco 的 loader 文件全量 data url --- */
     const monaco = clickgo.core.getModule('monaco');
     if (monaco) {
-        this.monaco = monaco;
-        this.monacoInstance = monaco.editor.create(this.$refs.monaco, {
-            'language': this.language.toLowerCase(),
-            'value': this.modelValue,
-            'contextmenu': false,
-            'minimap': {
-                'enabled': false
-            },
-            'readOnly': this.readonly
+        const loaderEl = idoc.createElement('script');
+        loaderEl.addEventListener('load', () => {
+            (iwindow as any).require.config({
+                paths: {
+                    'vs': clickgo.getCdn() + '/npm/monaco-editor@0.29.1/min/vs'
+                }
+            });
+            // --- 初始化 Monaco ---
+            const proxy = (iwindow as any).URL.createObjectURL(new Blob([`
+                self.MonacoEnvironment = {
+                    baseUrl: '${clickgo.getCdn()}/npm/monaco-editor@0.29.1/min/'
+                };
+                importScripts('${clickgo.getCdn()}/npm/monaco-editor@0.29.1/min/vs/base/worker/workerMain.js');
+            `], { type: 'text/javascript' }));
+            (iwindow as any).MonacoEnvironment = {
+                getWorkerUrl: () => proxy
+            };
+            // --- 加载 ---
+            (iwindow as any).require(['vs/editor/editor.main'], (monaco: any) => {
+                this.monaco = monaco;
+                this.monacoInstance = this.monaco.editor.create(monacoEl, {
+                    'language': this.language.toLowerCase(),
+                    'value': this.modelValue,
+                    'contextmenu': false,
+                    'minimap': {
+                        'enabled': false
+                    },
+                    'readOnly': this.readonly
+                });
+                // --- 自动设置大小 ---
+                clickgo.dom.watchSize(this.$refs.iframe, () => {
+                    this.monacoInstance.layout();
+                });
+                // --- 内容改变 ---
+                this.monacoInstance.getModel().onDidChangeContent(() => {
+                    this.$emit('update:modelValue', this.monacoInstance.getValue());
+                });
+                // -- 设置文件外挂 ---
+                monaco.languages.typescript.typescriptDefaults.setExtraLibs(this.filesComp);
+                // --- 设置主题 ---
+                if (this.theme) {
+                    this.monaco.editor.setTheme(this.theme);
+                }
+                // --- 绑定 contextmenu ---
+                if (navigator.clipboard) {
+                    monacoEl.addEventListener('contextmenu', (e: MouseEvent) => {
+                        e.preventDefault();
+                        if (clickgo.dom.hasTouchButMouse(e)) {
+                            return;
+                        }
+                        const rect = this.$el.getBoundingClientRect();
+                        clickgo.form.showPop(this.$el, this.$refs.pop, {
+                            'x': rect.left + e.clientX,
+                            'y': rect.top + e.clientY
+                        });
+                    });
+                }
+                // --- 绑定 down 事件 ---
+                const down = (e: MouseEvent | TouchEvent): void => {
+                    if (clickgo.dom.hasTouchButMouse(e)) {
+                        return;
+                    }
+                    if (e instanceof TouchEvent) {
+                        // --- touch 长按弹出 ---
+                        clickgo.dom.bindLong(e, () => {
+                            clickgo.form.showPop(this.$el, this.$refs.pop, e);
+                        });
+                    }
+                    // --- 让本窗体获取焦点 ---
+                    clickgo.form.changeFocus(this.formId);
+                    // --- 无论是否 menu 是否被展开，都要隐藏，因为 iframe 外的 doFocusAndPopEvent 并不会执行 ---
+                    clickgo.form.hidePop();
+                };
+                monacoEl.addEventListener('mousedown', down);
+                monacoEl.addEventListener('touchstart', down);
+                // --- 初始化成功 ---
+                this.$emit('init', this.monacoInstance);
+            });
         });
-        // --- 内容改变 ---
-        this.monacoInstance.getModel().onDidChangeContent(() => {
-            this.$emit('update:modelValue', this.monacoInstance.getValue());
-        });
-        // --- 焦点 ---
-        this.monacoInstance.onDidFocusEditorWidget(() => {
-            monaco.languages.typescript.typescriptDefaults.setExtraLibs(this.filesComp);
-        });
-        // --- 自动设置大小 ---
-        clickgo.dom.watchSize(this.$refs.monaco, () => {
-            this.monacoInstance.layout();
-        });
-        // --- 初始化成功 ---
-        this.$emit('init', this.monacoInstance);
+        loaderEl.src = monaco;
+        idoc.head.append(loaderEl);
     }
     else {
         // --- 没有成功 ---
         this.notInit = true;
-    }
-};
-
-export const unmounted = function(this: types.IVControl): void {
-    if (this.monacoInstance) {
-        this.monacoInstance.dispose();
     }
 };

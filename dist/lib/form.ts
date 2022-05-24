@@ -1307,6 +1307,9 @@ export async function create(opt: string | types.IFormCreateOptions): Promise<nu
             if (k.includes('-')) {
                 continue;
             }
+            if (/^[0-9]+$/.test(k)) {
+                continue;
+            }
             if ([
                 'require',
                 '__awaiter', 'eval', 'Math', 'Array', 'Blob', 'Infinity', 'parseInt', 'parseFloat', 'Promise', 'Date', 'JSON', 'fetch'].includes(k)) {
@@ -1354,6 +1357,18 @@ export async function create(opt: string | types.IFormCreateOptions): Promise<nu
         }
         // --- ClickGo 相关 ---
         invoke.invokeClickgo = {
+            getVersion: function(): string {
+                return clickgo.getVersion();
+            },
+            getNative(): boolean {
+                return clickgo.getNative();
+            },
+            getSafe(): boolean {
+                return clickgo.getSafe();
+            },
+            getCdn(): string {
+                return clickgo.getCdn();
+            },
             'control': {
                 read: function(blob: Blob): Promise<false | types.TControl> {
                     return clickgo.control.read(blob);

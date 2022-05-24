@@ -1,6 +1,7 @@
-<div class="wrap" :class="[notInit && 'notInit']" :data-cg-disabled="isDisabled ? '' : undefined" @mousedown="down" @touchstart="down" @contextmenu="contextmenu">
+<div class="wrap" :class="[notInit && 'notInit']" :data-cg-disabled="isDisabled ? '' : undefined">
     <div v-if="notInit" class="notInit">Monaco Editor Not Found.</div>
-    <div v-else class="monaco" ref="monaco" :class="[theme ? 'theme-' + theme : undefined]"></div>
+    <iframe v-else class="iframe" ref="iframe"></iframe>
+    <div class="mask" v-show="showMask"></div>
     <teleport to="#cg-pop-list">
         <div ref="pop" data-cg-pop>
             <slot>

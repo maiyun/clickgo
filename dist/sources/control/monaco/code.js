@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.unmounted = exports.mounted = exports.methods = exports.watch = exports.data = exports.computed = exports.props = void 0;
+exports.mounted = exports.methods = exports.watch = exports.data = exports.computed = exports.props = void 0;
 const clickgo = require("clickgo");
 exports.props = {
     'disabled': {
@@ -37,6 +37,9 @@ exports.computed = {
     },
     'isReadonly': function () {
         return clickgo.tool.getBoolean(this.readonly);
+    },
+    'showMask': function () {
+        return clickgo.dom.is.move;
     },
     'filesComp': function () {
         const list = [];
@@ -105,40 +108,21 @@ exports.watch = {
             return;
         }
         this.monaco.editor.setModelLanguage(this.monacoInstance.getModel(), this.language.toLowerCase());
+    },
+    'filesComp': function () {
+        if (!this.monacoInstance) {
+            return;
+        }
+        this.monaco.languages.typescript.typescriptDefaults.setExtraLibs(this.filesComp);
+    },
+    'theme': function () {
+        if (!this.monacoInstance) {
+            return;
+        }
+        this.monaco.editor.setTheme(this.theme);
     }
 };
 exports.methods = {
-    contextmenu: function (e) {
-        if (this.notInit) {
-            return;
-        }
-        if (!navigator.clipboard) {
-            e.stopPropagation();
-            return;
-        }
-        if (clickgo.dom.hasTouchButMouse(e)) {
-            return;
-        }
-        clickgo.form.showPop(this.$el, this.$refs.pop, e);
-    },
-    down: function (e) {
-        if (this.notInit) {
-            return;
-        }
-        if (clickgo.dom.hasTouchButMouse(e)) {
-            return;
-        }
-        if (this.$el.dataset.cgPopOpen !== undefined) {
-            clickgo.form.hidePop();
-        }
-        if (e instanceof TouchEvent) {
-            if (navigator.clipboard) {
-                clickgo.dom.bindLong(e, () => {
-                    clickgo.form.showPop(this.$el, this.$refs.pop, e);
-                });
-            }
-        }
-    },
     execCmd: function (ac) {
         return __awaiter(this, void 0, void 0, function* () {
             switch (ac) {
@@ -173,37 +157,91 @@ exports.methods = {
     }
 };
 const mounted = function () {
+    const iframeEl = this.$refs.iframe;
+    if (!iframeEl.contentWindow) {
+        return;
+    }
+    const iwindow = iframeEl.contentWindow;
+    const idoc = iwindow.document;
+    idoc.body.style.margin = '0';
+    const monacoEl = idoc.createElement('div');
+    monacoEl.id = 'monaco';
+    monacoEl.style.height = '100%';
+    idoc.body.append(monacoEl);
     const monaco = clickgo.core.getModule('monaco');
     if (monaco) {
-        this.monaco = monaco;
-        this.monacoInstance = monaco.editor.create(this.$refs.monaco, {
-            'language': this.language.toLowerCase(),
-            'value': this.modelValue,
-            'contextmenu': false,
-            'minimap': {
-                'enabled': false
-            },
-            'readOnly': this.readonly
+        const loaderEl = idoc.createElement('script');
+        loaderEl.addEventListener('load', () => {
+            iwindow.require.config({
+                paths: {
+                    'vs': clickgo.getCdn() + '/npm/monaco-editor@0.29.1/min/vs'
+                }
+            });
+            const proxy = iwindow.URL.createObjectURL(new Blob([`
+                self.MonacoEnvironment = {
+                    baseUrl: '${clickgo.getCdn()}/npm/monaco-editor@0.29.1/min/'
+                };
+                importScripts('${clickgo.getCdn()}/npm/monaco-editor@0.29.1/min/vs/base/worker/workerMain.js');
+            `], { type: 'text/javascript' }));
+            iwindow.MonacoEnvironment = {
+                getWorkerUrl: () => proxy
+            };
+            iwindow.require(['vs/editor/editor.main'], (monaco) => {
+                this.monaco = monaco;
+                this.monacoInstance = this.monaco.editor.create(monacoEl, {
+                    'language': this.language.toLowerCase(),
+                    'value': this.modelValue,
+                    'contextmenu': false,
+                    'minimap': {
+                        'enabled': false
+                    },
+                    'readOnly': this.readonly
+                });
+                clickgo.dom.watchSize(this.$refs.iframe, () => {
+                    this.monacoInstance.layout();
+                });
+                this.monacoInstance.getModel().onDidChangeContent(() => {
+                    this.$emit('update:modelValue', this.monacoInstance.getValue());
+                });
+                monaco.languages.typescript.typescriptDefaults.setExtraLibs(this.filesComp);
+                if (this.theme) {
+                    this.monaco.editor.setTheme(this.theme);
+                }
+                if (navigator.clipboard) {
+                    monacoEl.addEventListener('contextmenu', (e) => {
+                        e.preventDefault();
+                        if (clickgo.dom.hasTouchButMouse(e)) {
+                            return;
+                        }
+                        const rect = this.$el.getBoundingClientRect();
+                        clickgo.form.showPop(this.$el, this.$refs.pop, {
+                            'x': rect.left + e.clientX,
+                            'y': rect.top + e.clientY
+                        });
+                    });
+                }
+                const down = (e) => {
+                    if (clickgo.dom.hasTouchButMouse(e)) {
+                        return;
+                    }
+                    if (e instanceof TouchEvent) {
+                        clickgo.dom.bindLong(e, () => {
+                            clickgo.form.showPop(this.$el, this.$refs.pop, e);
+                        });
+                    }
+                    clickgo.form.changeFocus(this.formId);
+                    clickgo.form.hidePop();
+                };
+                monacoEl.addEventListener('mousedown', down);
+                monacoEl.addEventListener('touchstart', down);
+                this.$emit('init', this.monacoInstance);
+            });
         });
-        this.monacoInstance.getModel().onDidChangeContent(() => {
-            this.$emit('update:modelValue', this.monacoInstance.getValue());
-        });
-        this.monacoInstance.onDidFocusEditorWidget(() => {
-            monaco.languages.typescript.typescriptDefaults.setExtraLibs(this.filesComp);
-        });
-        clickgo.dom.watchSize(this.$refs.monaco, () => {
-            this.monacoInstance.layout();
-        });
-        this.$emit('init', this.monacoInstance);
+        loaderEl.src = monaco;
+        idoc.head.append(loaderEl);
     }
     else {
         this.notInit = true;
     }
 };
 exports.mounted = mounted;
-const unmounted = function () {
-    if (this.monacoInstance) {
-        this.monacoInstance.dispose();
-    }
-};
-exports.unmounted = unmounted;

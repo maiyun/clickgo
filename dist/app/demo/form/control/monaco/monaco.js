@@ -38,7 +38,7 @@ exports.data = {
     'language': 'HTML',
     'list': ['HTML', 'TypeScript', 'CSS', 'SCSS'],
     'theme': 'vs',
-    'themes': ['vs', 'dark', 'reader'],
+    'themes': ['vs', 'vs-dark', 'hc-black'],
     'add': false,
     'readonly': false,
     'disabled': false
