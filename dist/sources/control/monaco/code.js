@@ -39,7 +39,7 @@ exports.computed = {
         return clickgo.tool.getBoolean(this.readonly);
     },
     'showMask': function () {
-        return clickgo.dom.is.move;
+        return this.maskTxt !== '' ? true : clickgo.dom.is.move;
     },
     'filesComp': function () {
         const list = [];
@@ -54,6 +54,7 @@ exports.computed = {
 };
 exports.data = {
     'notInit': false,
+    'maskTxt': 'Loading...',
     'localeData': {
         'en': {
             'copy': 'Copy',
@@ -234,6 +235,7 @@ const mounted = function () {
                 };
                 monacoEl.addEventListener('mousedown', down);
                 monacoEl.addEventListener('touchstart', down);
+                this.maskTxt = '';
                 this.$emit('init', this.monacoInstance);
             });
         });

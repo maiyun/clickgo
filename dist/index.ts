@@ -60,6 +60,7 @@ export async function init(cdn: string = 'https://cdn.jsdelivr.net'): Promise<vo
     const files = await loader.sniffFiles('clickgo.js', {
         'dir': __dirname + '/',
         'after': '?' + Math.random().toString(),
+        'afterIgnore': new RegExp('^' + cdn.replace(/\./g, '\\.')),
         'map': map
     });
     const cg = loader.require('clickgo', files, {

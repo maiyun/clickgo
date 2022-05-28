@@ -105,7 +105,6 @@ export const methods = {
 export const mounted = function(this: types.IVForm): void {
     clickgo.form.setTopMost(true);
     clickgo.task.setSystem();
-
     // --- 先读取 pin 列表 ---
     for (const path in clickgo.core.config['task.pin']) {
         this.apps.push({
@@ -119,7 +118,6 @@ export const mounted = function(this: types.IVForm): void {
             'pin': true
         });
     }
-
     // --- 先读取正在运行的 task 列表，并填充 forms 列表 ---
     const tasks = clickgo.task.getList();
     for (const taskId in tasks) {

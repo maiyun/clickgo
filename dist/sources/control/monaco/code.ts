@@ -31,8 +31,8 @@ export const computed = {
         return clickgo.tool.getBoolean(this.readonly);
     },
 
-    'showMask': function(): boolean {
-        return clickgo.dom.is.move;
+    'showMask': function(this: types.IVControl): boolean {
+        return this.maskTxt !== '' ? true : clickgo.dom.is.move;
     },
     'filesComp': function(this: types.IVControl): any[] {
         const list = [];
@@ -48,6 +48,7 @@ export const computed = {
 
 export const data = {
     'notInit': false,
+    'maskTxt': 'Loading...',
 
     'localeData': {
         'en': {
@@ -255,6 +256,7 @@ export const mounted = function(this: types.IVControl): void {
                 monacoEl.addEventListener('mousedown', down);
                 monacoEl.addEventListener('touchstart', down);
                 // --- 初始化成功 ---
+                this.maskTxt = '';
                 this.$emit('init', this.monacoInstance);
             });
         });

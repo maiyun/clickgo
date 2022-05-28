@@ -54,15 +54,17 @@ function createForm(path: string): void {
         'width': 400,
         'height': 400,
         'frame': false,
-        'resizable': false,
+        // 'resizable': false,
         'show': false,
-        'transparent': true
+        'transparent': true,
+        'hasShadow': false
     });
     win.once('ready-to-show', function(): void {
         if (!win) {
             return;
         }
         win.maximize();
+        win.resizable = false;
         win.show();
         win.setIgnoreMouseEvents(true, { 'forward': true });
         // --- timer ---

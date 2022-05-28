@@ -217,6 +217,12 @@ function run(url, opt = {}) {
                 if (c) {
                     task.controls.loaded[path] = c;
                 }
+                else {
+                    form.notify({
+                        'title': 'Control failed to load',
+                        'content': path
+                    });
+                }
             }
         }
         if (app.config.themes) {

@@ -20,28 +20,24 @@ function purify(text) {
 }
 function addFile(zipo, base = '', path = '') {
     return __awaiter(this, void 0, void 0, function* () {
-        const list = yield fs.promises.readdir(base + path, {
-            'withFileTypes': true
-        });
-        for (const item of list) {
-            const p = base + path + item.name;
-            if (item.isFile()) {
-                if (item.name.endsWith('.ts')) {
-                    continue;
-                }
-                if (item.name.endsWith('.scss')) {
-                    continue;
-                }
-                const file = yield fs.promises.readFile(p);
-                if (item.name.endsWith('.html')) {
-                    zipo.file(path + item.name, purify(file.toString()));
-                }
-                else {
-                    zipo.file(path + item.name, file);
-                }
+        let config;
+        try {
+            const c = yield fs.promises.readFile(base + '/config.json', 'utf8');
+            config = JSON.parse(c);
+        }
+        catch (e) {
+            console.log('[ERROR]', e);
+            return;
+        }
+        zipo.file(path + '/config.json', JSON.stringify(config));
+        for (const file of config.files) {
+            const p = base + file;
+            const buf = yield fs.promises.readFile(p);
+            if (file.endsWith('.html')) {
+                zipo.file(path + file, purify(buf.toString()));
             }
-            else if (item.isDirectory()) {
-                yield addFile(zipo, base, path + item.name + '/');
+            else {
+                zipo.file(path + file, buf);
             }
         }
     });
@@ -52,70 +48,72 @@ function run() {
             'withFileTypes': true
         });
         for (const item of list) {
-            if (item.isFile()) {
+            if (['check', 'dialog', 'file', 'greatlist', 'greatselect', 'greatview', 'img', 'label', 'layout', 'list', 'marquee', 'menu', 'menu-item', 'menulist', 'menulist-item', 'menulist-split', 'overflow', 'radio', 'scroll', 'select', 'tab', 'text', 'view', 'task-item'].includes(item.name)) {
                 continue;
             }
-            if (['check', 'dialog', 'file', 'greatlist', 'greatselect', 'greatview', 'img', 'label', 'layout', 'list', 'marquee', 'menu', 'menu-item', 'menulist', 'menulist-item', 'menulist-split', 'overflow', 'radio', 'scroll', 'select', 'tab', 'text', 'view', 'task-item'].includes(item.name)) {
+            if (item.name.startsWith('.')) {
                 continue;
             }
             const zipo = new zip();
             const base = 'dist/sources/control/';
             let name = item.name;
-            yield addFile(zipo, base, item.name + '/');
+            yield addFile(zipo, base + item.name, item.name);
             if (item.name === 'button') {
                 name = 'common';
-                yield addFile(zipo, base, 'check/');
-                yield addFile(zipo, base, 'dialog/');
-                yield addFile(zipo, base, 'file/');
-                yield addFile(zipo, base, 'greatlist/');
-                yield addFile(zipo, base, 'greatselect/');
-                yield addFile(zipo, base, 'greatview/');
-                yield addFile(zipo, base, 'img/');
-                yield addFile(zipo, base, 'label/');
-                yield addFile(zipo, base, 'layout/');
-                yield addFile(zipo, base, 'list/');
-                yield addFile(zipo, base, 'marquee/');
-                yield addFile(zipo, base, 'menu/');
-                yield addFile(zipo, base, 'menu-item/');
-                yield addFile(zipo, base, 'menulist/');
-                yield addFile(zipo, base, 'menulist-item/');
-                yield addFile(zipo, base, 'menulist-split/');
-                yield addFile(zipo, base, 'overflow/');
-                yield addFile(zipo, base, 'radio/');
-                yield addFile(zipo, base, 'scroll/');
-                yield addFile(zipo, base, 'select/');
-                yield addFile(zipo, base, 'tab/');
-                yield addFile(zipo, base, 'text/');
-                yield addFile(zipo, base, 'view/');
+                yield addFile(zipo, base + 'check', 'check');
+                yield addFile(zipo, base + 'dialog', 'dialog');
+                yield addFile(zipo, base + 'file', 'file');
+                yield addFile(zipo, base + 'greatlist', 'greatlist');
+                yield addFile(zipo, base + 'greatselect', 'greatselect');
+                yield addFile(zipo, base + 'greatview', 'greatview');
+                yield addFile(zipo, base + 'img', 'img');
+                yield addFile(zipo, base + 'label', 'label');
+                yield addFile(zipo, base + 'layout', 'layout');
+                yield addFile(zipo, base + 'list', 'list');
+                yield addFile(zipo, base + 'marquee', 'marquee');
+                yield addFile(zipo, base + 'menu', 'menu');
+                yield addFile(zipo, base + 'menu-item', 'menu-item');
+                yield addFile(zipo, base + 'menulist', 'menulist');
+                yield addFile(zipo, base + 'menulist-item', 'menulist-item');
+                yield addFile(zipo, base + 'menulist-split', 'menulist-split');
+                yield addFile(zipo, base + 'overflow', 'overflow');
+                yield addFile(zipo, base + 'radio', 'radio');
+                yield addFile(zipo, base + 'scroll', 'scroll');
+                yield addFile(zipo, base + 'select', 'select');
+                yield addFile(zipo, base + 'tab', 'tab');
+                yield addFile(zipo, base + 'text', 'text');
+                yield addFile(zipo, base + 'view', 'view');
             }
             else if (item.name === 'task') {
-                yield addFile(zipo, base, 'task-item/');
+                yield addFile(zipo, base + 'task-item', 'task-item');
             }
-            yield fs.promises.writeFile('dist/control/' + name + '.cgc', yield zipo.generateAsync({
+            const buf = yield zipo.generateAsync({
                 type: 'nodebuffer',
                 compression: 'DEFLATE',
                 compressionOptions: {
                     level: 9
                 }
-            }));
+            });
+            yield fs.promises.writeFile('dist/control/' + name + '.cgc', buf);
         }
-        const base = 'dist/sources/theme/';
         list = yield fs.promises.readdir('dist/sources/theme/', {
             'withFileTypes': true
         });
         for (const item of list) {
-            if (item.isFile()) {
+            if (item.name.startsWith('.')) {
                 continue;
             }
             const zipo = new zip();
-            yield addFile(zipo, base + item.name + '/');
-            yield fs.promises.writeFile('dist/theme/' + item.name + '.cgt', yield zipo.generateAsync({
+            const base = 'dist/sources/theme/' + item.name;
+            yield addFile(zipo, base);
+            const buf = yield zipo.generateAsync({
                 type: 'nodebuffer',
                 compression: 'DEFLATE',
                 compressionOptions: {
                     level: 9
                 }
-            }));
+            });
+            yield fs.promises.writeFile('dist/theme/' + item.name + '.cgt', buf);
         }
     });
 }

@@ -55,6 +55,7 @@ function init(cdn = 'https://cdn.jsdelivr.net') {
         const files = yield loader.sniffFiles('clickgo.js', {
             'dir': __dirname + '/',
             'after': '?' + Math.random().toString(),
+            'afterIgnore': new RegExp('^' + cdn.replace(/\./g, '\\.')),
             'map': map
         });
         const cg = loader.require('clickgo', files, {

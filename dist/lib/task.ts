@@ -273,6 +273,12 @@ export async function run(url: string, opt: types.ITaskRunOptions = {}): Promise
             if (c) {
                 task.controls.loaded[path] = c;
             }
+            else {
+                form.notify({
+                    'title': 'Control failed to load',
+                    'content': path
+                });
+            }
         }
     }
     // --- theme ---
