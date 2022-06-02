@@ -29,6 +29,9 @@ function readDir(path) {
                 if (item.name.endsWith('.scss')) {
                     continue;
                 }
+                if (item.name === '.DS_Store') {
+                    continue;
+                }
                 if ((path + item.name).startsWith('dist/build.')) {
                     continue;
                 }

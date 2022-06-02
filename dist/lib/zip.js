@@ -218,6 +218,9 @@ class Zip {
     _refreshList() {
         const list = {};
         this._zip.forEach(function (relativePath, item) {
+            if (relativePath.startsWith('/')) {
+                relativePath = relativePath.slice(1);
+            }
             let parentPath = '/';
             let name = '';
             let s;

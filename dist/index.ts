@@ -54,12 +54,13 @@ export async function init(cdn: string = 'https://cdn.jsdelivr.net'): Promise<vo
     }
     // --- map 加载库 ---
     const map: Record<string, string> = {
-        'jszip': cdn + '/npm/jszip@3.8.0/dist/jszip.min'
+        'jszip': cdn + '/npm/jszip@3.10.0/dist/jszip.min'
     };
     // --- 加载 clickgo 主程序 ---
+    const after = '?' + Math.random().toString();
     const files = await loader.sniffFiles('clickgo.js', {
         'dir': __dirname + '/',
-        'after': '?' + Math.random().toString(),
+        'after': after,
         'afterIgnore': new RegExp('^' + cdn.replace(/\./g, '\\.')),
         'map': map
     });
@@ -68,6 +69,14 @@ export async function init(cdn: string = 'https://cdn.jsdelivr.net'): Promise<vo
         'map': map
     })[0] as typeof import('../dist/clickgo');
     cg.setCdn(cdn);
+    // --- 加载 clickgo 的 global css ---
+    try {
+        const style = await (await fetch(__dirname + '/global.css' + (!__dirname.startsWith(cdn) ? after : ''))).text();
+        document.getElementById('cg-global')?.insertAdjacentHTML('afterbegin', style);
+    }
+    catch {
+        alert(`ClickGo: "${__dirname}/global.css'" failed.`);
+    }
     // --- 设置一些项目 ---
     clickgo = cg;
     control = cg.control;

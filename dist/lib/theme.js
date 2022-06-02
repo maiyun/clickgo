@@ -21,7 +21,7 @@ function read(blob) {
         if (!z) {
             return false;
         }
-        const configContent = yield z.getContent('/config.json');
+        const configContent = yield z.getContent('config.json');
         if (!configContent) {
             return false;
         }

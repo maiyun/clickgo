@@ -327,7 +327,7 @@ export type TZipInputFileFormat = IZipInputByType[keyof IZipInputByType];
 
 export interface IZipMetadata {
     percent: number;
-    currentFile: string;
+    currentFile: string | null;
 }
 
 // --- task ---

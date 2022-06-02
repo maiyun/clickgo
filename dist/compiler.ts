@@ -33,16 +33,17 @@ async function addFile(zipo: zip, base: string = '', path: string = ''): Promise
         console.log('[ERROR]', e);
         return;
     }
-    zipo.file(path + '/config.json', JSON.stringify(config));
+    zipo.file(path + (path ? '/' : '') + 'config.json', JSON.stringify(config));
     for (const file of config.files as string[]) {
         const p = base + file;
         const buf = await fs.promises.readFile(p);
+        const bfile = path ? file : file.slice(1);
         if (file.endsWith('.html')) {
             // --- 为了去除 html 中的空白和注释 ---
-            zipo.file(path + file, purify(buf.toString()));
+            zipo.file(path + bfile, purify(buf.toString()));
         }
         else {
-            zipo.file(path + file, buf);
+            zipo.file(path + bfile, buf);
         }
     }
 }

@@ -12,3 +12,4 @@ tsconfig.json
 /dist/test/
 /dist/build*
 /dist/compiler*
+/dist/global.scss

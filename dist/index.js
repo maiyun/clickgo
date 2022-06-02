@@ -35,6 +35,7 @@ function getCdn() {
 }
 exports.getCdn = getCdn;
 function init(cdn = 'https://cdn.jsdelivr.net') {
+    var _a;
     return __awaiter(this, void 0, void 0, function* () {
         const paths = [
             cdn + '/npm/vue@3.2.31/dist/vue.global.min.js'
@@ -50,11 +51,12 @@ function init(cdn = 'https://cdn.jsdelivr.net') {
             window.ResizeObserver = window.ResizeObserver.ResizeObserver;
         }
         const map = {
-            'jszip': cdn + '/npm/jszip@3.8.0/dist/jszip.min'
+            'jszip': cdn + '/npm/jszip@3.10.0/dist/jszip.min'
         };
+        const after = '?' + Math.random().toString();
         const files = yield loader.sniffFiles('clickgo.js', {
             'dir': __dirname + '/',
-            'after': '?' + Math.random().toString(),
+            'after': after,
             'afterIgnore': new RegExp('^' + cdn.replace(/\./g, '\\.')),
             'map': map
         });
@@ -63,6 +65,13 @@ function init(cdn = 'https://cdn.jsdelivr.net') {
             'map': map
         })[0];
         cg.setCdn(cdn);
+        try {
+            const style = yield (yield fetch(__dirname + '/global.css' + (!__dirname.startsWith(cdn) ? after : ''))).text();
+            (_a = document.getElementById('cg-global')) === null || _a === void 0 ? void 0 : _a.insertAdjacentHTML('afterbegin', style);
+        }
+        catch (_b) {
+            alert(`ClickGo: "${__dirname}/global.css'" failed.`);
+        }
         exports.clickgo = cg;
         exports.control = cg.control;
         exports.core = cg.core;

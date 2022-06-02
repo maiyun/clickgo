@@ -31,7 +31,7 @@ export async function read(blob: Blob): Promise<types.ITheme | false> {
     if (!z) {
         return false;
     }
-    const configContent = await z.getContent('/config.json');
+    const configContent = await z.getContent('config.json');
     if (!configContent) {
         return false;
     }

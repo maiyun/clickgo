@@ -1,1 +1,25 @@
-@import './button.scss';
+global {
+
+    // --- 默认 ---
+
+    --g-background:hsl(205, 0%, 90%);
+    --g-background-hover: hsl(205, 100%, 95%);
+    --g-background-active:hsl(205, 100%, 90%);
+    --g-background-focus:hsl(205, 100%, 95%);
+
+    --g-border-color:hsl(0, 0%, 70%);
+    --g-border-color-hover:hsl(205, 100%, 50%);
+    --g-border-color-active:hsl(205, 100%, 40%);
+    --g-border-color-focus:hsl(205, 100%, 50%);
+    
+    // --- 轻量 ---
+
+    --g-plain-color-hover:hsl(205, 100%, 50%);
+    --g-plain-color-active:hsl(205, 100%, 40%);
+    --g-plain-color-focus:hsl(205, 100%, 50%);
+
+    --g-plain-border-color-hover:hsl(205, 100%, 50%);
+    --g-plain-border-color-active:hsl(205, 100%, 40%);
+    --g-plain-border-color-focus:hsl(205, 100%, 50%);
+    --g-plain-border-color-disabled:hsl(205, 0%, 50%);
+}

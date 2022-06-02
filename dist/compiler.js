@@ -29,15 +29,16 @@ function addFile(zipo, base = '', path = '') {
             console.log('[ERROR]', e);
             return;
         }
-        zipo.file(path + '/config.json', JSON.stringify(config));
+        zipo.file(path + (path ? '/' : '') + 'config.json', JSON.stringify(config));
         for (const file of config.files) {
             const p = base + file;
             const buf = yield fs.promises.readFile(p);
+            const bfile = path ? file : file.slice(1);
             if (file.endsWith('.html')) {
-                zipo.file(path + file, purify(buf.toString()));
+                zipo.file(path + bfile, purify(buf.toString()));
             }
             else {
-                zipo.file(path + file, buf);
+                zipo.file(path + bfile, buf);
             }
         }
     });

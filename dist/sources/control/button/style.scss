@@ -38,202 +38,304 @@
 
     &.default {
         &:not(.plain) {
-            --focusbox-border: dotted 1px hsl(0, 0%, 30%);
-            --background: hsl(0, 0%, 95%);
-            --border: solid 1px hsl(0, 0%, 30%);
-            --hover-background: hsl(0, 0%, 100%);
-            --hover-border: solid 1px hsl(0, 0%, 40%);
-            --active-background: hsl(0, 0%, 85%);
-            --active-border: solid 1px hsl(0, 0%, 20%);
-            --focus-border: solid 2px hsl(0, 0%, 20%);
-            --disabled-color: hsl(0, 0%, 60%);
-            --disabled-background: hsl(0, 0%, 75%);
-            --disabled-border: solid 1px hsl(0, 0%, 60%);
+            --color-hover:var(--g-color-hover);
+            --color-active:var(--g-color-active);
+            --color-focus:var(--g-color-focus);
+            --color-disabled:var(--g-color-disabled);
+
+            --background:var(--g-background);
+            --background-hover:var(--g-background-hover);
+            --background-active:var(--g-background-active);
+            --background-focus:var(--g-background-focus);
+            --background-disabled:var(--g-background-disabled);
+
+            --border:solid 1px var(--g-border-color);
+            --border-hover:solid 1px var(--g-border-color-hover);
+            --border-active:solid 1px var(--g-border-color-active);
+            --border-focus:solid 2px var(--g-border-color-focus);
+            --border-disabled:solid 1px var(--g-border-color-disabled);
+
+            --focusbox-border:dotted 1px var(--g-border-color);
         }
         &.plain {
-            --focusbox-border: dotted 1px hsl(0, 0%, 30%);
-            --background: hsl(0, 0%, 100%);
-            --border: solid 1px hsl(0, 0%, 30%);
-            --hover-color: hsl(0, 0%, 40%);
-            --hover-border: solid 1px hsl(0, 0%, 40%);
-            --active-color: hsl(0, 0%, 20%);
-            --active-background: hsl(0, 0%, 85%);
-            --active-border: solid 1px hsl(0, 0%, 20%);
-            --focus-border: solid 2px hsl(0, 0%, 20%);
-            --disabled-color: hsl(0, 0%, 60%);
-            --disabled-background: hsl(0, 0%, 95%);
-            --disabled-border: solid 1px hsl(0, 0%, 60%);
+            --color-hover:var(--g-plain-color-hover);
+            --color-active:var(--g-plain-color-active);
+            --color-focus:var(--g-plain-color-focus);
+            --color-disabled:var(--g-plain-color-disabled);
+
+            --background:var(--g-plain-background);
+            --background-hover:var(--g-plain-background-hover);
+            --background-active:var(--g-plain-background-active);
+            --background-focus:var(--g-plain-background-focus);
+            --background-disabled:var(--g-plain-background-disabled);
+
+            --border:solid 1px var(--g-plain-border-color);
+            --border-hover:solid 1px var(--g-plain-border-color-hover);
+            --border-active:solid 1px var(--g-plain-border-color-active);
+            --border-focus:solid 1px var(--g-plain-border-color-focus);
+            --border-disabled:solid 1px var(--g-plain-border-color-disabled);
+
+            --focusbox-border:dotted 1px var(--g-plain-border-color);
         }
     }
     &.tool {
         &:not(.plain) {
-            --focusbox-border: dotted 1px hsl(0, 0%, 20%);
-            --hover-background: hsl(0, 0%, 100%);
-            --hover-border: solid 1px hsl(0, 0%, 40%);
-            --active-background: hsl(0, 0%, 85%);
-            --active-border: solid 1px hsl(0, 0%, 20%);
-            --focus-border: solid 2px hsl(0, 0%, 20%);
-            --disabled-color: hsl(0, 0%, 60%);
+            --color-hover:var(--g-color-hover);
+            --color-active:var(--g-color-active);
+            --color-focus:var(--g-color-focus);
+            --color-disabled:var(--g-color-disabled);
+
+            --background-hover:var(--g-background-hover);
+            --background-active:var(--g-background-active);
+            --background-focus:var(--g-background-focus);
+            --background-disabled:var(--g-background-disabled);
+
+            --border-hover:solid 1px var(--g-border-color-hover);
+            --border-active:solid 1px var(--g-border-color-active);
+            --border-focus:solid 1px var(--g-border-color-focus);
+            --border-disabled:solid 1px var(--g-border-color-disabled);
+
+            --focusbox-border:dotted 1px var(--g-border-color);
         }
         &.plain {
-            --focusbox-border: dotted 1px hsl(0, 0%, 20%);
-            --hover-background: hsl(0, 0%, 100%);
-            --active-background: hsl(0, 0%, 85%);
-            --disabled-color: hsl(0, 0%, 60%);
+            --color-hover:var(--g-plain-color-hover);
+            --color-active:var(--g-plain-color-active);
+            --color-focus:var(--g-plain-color-focus);
+            --color-disabled:var(--g-plain-color-disabled);
+
+            --background-hover:var(--g-plain-background-hover);
+            --background-active:var(--g-plain-background-active);
+            --background-focus:var(--g-plain-background-focus);
+            --background-disabled:var(--g-plain-background-disabled);
+
+            --border-hover:solid 1px var(--g-plain-border-color-hover);
+            --border-active:solid 1px var(--g-plain-border-color-active);
+            --border-focus:solid 1px var(--g-plain-border-color-focus);
+            --border-disabled:solid 1px var(--g-plain-border-color-disabled);
+
+            --focusbox-border:dotted 1px var(--g-plain-border-color);
         }
     }
     &.primary {
         &:not(.plain) {
-            --focusbox-border: dotted 1px #fff;
-            --color: #fff;
-            --background: #07c160;
-            --hover-background: #39cd80;
-            --active-background: #069a4d;
+            --color:hsl(0, 0%, 100%);
+            --color-hover:hsl(0, 0%, 100%);
+            --color-active:hsl(0, 0%, 100%);
+            --color-focus:hsl(0, 0%, 100%);
+            --color-disabled:var(--g-plain-color-disabled);
+
+            --background:var(--success);
+            --background-hover:var(--success-hover);
+            --background-active:var(--success-active);
+            --background-focus:var(--success-focus);
+            --background-disabled:var(--success-disabled);
+
+            --focusbox-border:dotted 1px hsl(0, 0%, 100%);
         }
         &.plain {
-            --focusbox-border: dotted 1px hsl(0, 0%, 20%);
-            --color: #07c160;
-            --background: #fff;
-            --border: solid 1px #07c160;
-            --hover-color: #39cd80;
-            --hover-border: solid 1px #39cd80;
-            --active-color: #069a4d;
-            --active-background: #ccc;
-            --active-border: solid 1px #069a4d;
-            --disabled-background:  hsl(0, 0%, 95%);
+            --color:var(--success);
+            --color-hover:var(--success-hover);
+            --color-active:var(--success-active);
+            --color-focus:var(--success-focus);
+            --color-disabled:var(--success-disabled);
+
+            --background:var(--g-plain-background);
+            --background-hover:var(--g-plain-background-hover);
+            --background-active:var(--g-plain-background-active);
+            --background-focus:var(--g-plain-background-focus);
+            --background-disabled:var(--g-plain-background-disabled);
+
+            --border:solid 1px var(--success);
+            --border-hover:solid 1px var(--success-hover);
+            --border-active:solid 1px var(--success-active);
+            --border-focus:solid 1px var(--success-focus);
+            --border-disabled:solid 1px var(--success-disabled);
+
+            --focusbox-border:dotted 1px var(--g-plain-border-color);
         }
     }
     &.info {
         &:not(.plain) {
-            --focusbox-border: dotted 1px #fff;
-            --color: #fff;
-            --background: #1989fa;
-            --hover-background: #47a1fb;
-            --active-background: #146ec8;
+            --color:hsl(0, 0%, 100%);
+            --color-hover:hsl(0, 0%, 100%);
+            --color-active:hsl(0, 0%, 100%);
+            --color-focus:hsl(0, 0%, 100%);
+            --color-disabled:var(--g-plain-color-disabled);
+
+            --background:var(--info);
+            --background-hover:var(--info-hover);
+            --background-active:var(--info-active);
+            --background-focus:var(--info-focus);
+            --background-disabled:var(--info-disabled);
+
+            --focusbox-border:dotted 1px hsl(0, 0%, 100%);
         }
         &.plain {
-            --focusbox-border: dotted 1px hsl(0, 0%, 20%);
-            --color: #1989fa;
-            --background: #fff;
-            --border: solid 1px #1989fa;
-            --hover-color: #47a1fb;
-            --hover-border: solid 1px #47a1fb;
-            --active-color: #146ec8;
-            --active-background: #ccc;
-            --active-border: solid 1px #146ec8;
-            --disabled-background:  hsl(0, 0%, 95%);
+            --color:var(--info);
+            --color-hover:var(--info-hover);
+            --color-active:var(--info-active);
+            --color-focus:var(--info-focus);
+            --color-disabled:var(--info-disabled);
+
+            --background:var(--g-plain-background);
+            --background-hover:var(--g-plain-background-hover);
+            --background-active:var(--g-plain-background-active);
+            --background-focus:var(--g-plain-background-focus);
+            --background-disabled:var(--g-plain-background-disabled);
+
+            --border:solid 1px var(--info);
+            --border-hover:solid 1px var(--info-hover);
+            --border-active:solid 1px var(--info-active);
+            --border-focus:solid 1px var(--info-focus);
+            --border-disabled:solid 1px var(--info-disabled);
+
+            --focusbox-border:dotted 1px var(--g-plain-border-color);
         }
     }
     &.warning {
         &:not(.plain) {
-            --focusbox-border: dotted 1px #fff;
-            --color: #fff;
-            --background: #ff976a;
-            --hover-background: #ffac88;
-            --active-background: #cc7955;
+            --color:hsl(0, 0%, 100%);
+            --color-hover:hsl(0, 0%, 100%);
+            --color-active:hsl(0, 0%, 100%);
+            --color-focus:hsl(0, 0%, 100%);
+            --color-disabled:var(--g-plain-color-disabled);
+
+            --background:var(--warning);
+            --background-hover:var(--warning-hover);
+            --background-active:var(--warning-active);
+            --background-focus:var(--warning-focus);
+            --background-disabled:var(--warning-disabled);
+
+            --focusbox-border:dotted 1px hsl(0, 0%, 100%);
         }
         &.plain {
-            --focusbox-border: dotted 1px hsl(0, 0%, 20%);
-            --color: #ff976a;
-            --background: #fff;
-            --border: solid 1px #ff976a;
-            --hover-color: #ffac88;
-            --hover-border: solid 1px #ffac88;
-            --active-color: #cc7955;
-            --active-background: #ccc;
-            --active-border: solid 1px #cc7955;
-            --disabled-background:  hsl(0, 0%, 95%);
+            --color:var(--warning);
+            --color-hover:var(--warning-hover);
+            --color-active:var(--warning-active);
+            --color-focus:var(--warning-focus);
+            --color-disabled:var(--warning-disabled);
+
+            --background:var(--g-plain-background);
+            --background-hover:var(--g-plain-background-hover);
+            --background-active:var(--g-plain-background-active);
+            --background-focus:var(--g-plain-background-focus);
+            --background-disabled:var(--g-plain-background-disabled);
+
+            --border:solid 1px var(--warning);
+            --border-hover:solid 1px var(--warning-hover);
+            --border-active:solid 1px var(--warning-active);
+            --border-focus:solid 1px var(--warning-focus);
+            --border-disabled:solid 1px var(--warning-disabled);
+
+            --focusbox-border:dotted 1px var(--g-plain-border-color);
         }
     }
     &.danger {
         &:not(.plain) {
-            --focusbox-border: dotted 1px #fff;
-            --color: #fff;
-            --background: #ee0a24;
-            --hover-background: #f13b50;
-            --active-background: #be081d;
+            --color:hsl(0, 0%, 100%);
+            --color-hover:hsl(0, 0%, 100%);
+            --color-active:hsl(0, 0%, 100%);
+            --color-focus:hsl(0, 0%, 100%);
+            --color-disabled:var(--g-plain-color-disabled);
+
+            --background:var(--danger);
+            --background-hover:var(--danger-hover);
+            --background-active:var(--danger-active);
+            --background-focus:var(--danger-focus);
+            --background-disabled:var(--danger-disabled);
+
+            --focusbox-border:dotted 1px hsl(0, 0%, 100%);
         }
         &.plain {
-            --focusbox-border: dotted 1px hsl(0, 0%, 20%);
-            --color: #ee0a24;
-            --background: #fff;
-            --border: solid 1px #ee0a24;
-            --hover-color: #f13b50;
-            --hover-border: solid 1px #f13b50;
-            --active-color: #be081d;
-            --active-background: #ccc;
-            --active-border: solid 1px #be081d;
-            --disabled-background:  hsl(0, 0%, 95%);
+            --color:var(--danger);
+            --color-hover:var(--danger-hover);
+            --color-active:var(--danger-active);
+            --color-focus:var(--danger-focus);
+            --color-disabled:var(--danger-disabled);
+
+            --background:var(--g-plain-background);
+            --background-hover:var(--g-plain-background-hover);
+            --background-active:var(--g-plain-background-active);
+            --background-focus:var(--g-plain-background-focus);
+            --background-disabled:var(--g-plain-background-disabled);
+
+            --border:solid 1px var(--danger);
+            --border-hover:solid 1px var(--danger-hover);
+            --border-active:solid 1px var(--danger-active);
+            --border-focus:solid 1px var(--danger-focus);
+            --border-disabled:solid 1px var(--danger-disabled);
+
+            --focusbox-border:dotted 1px var(--g-plain-border-color);
         }
     }
 
-    &::before {                             // --- 外边框 ---
+    &::before {                                 // --- 外边框 ---
         border: var(--border);
     }
-    &::after, .inner::after, .arrow::after {                              // --- 焦点框 ---
+    &::after, .inner::after, .arrow::after {    // --- 焦点框 ---
         border: var(--focusbox-border);
     }
-    background: var(--background);          // --- 背景色 ---
-    color: var(--color);                    // --- 文字色 ---
+    color: var(--color);                        // --- 文字色 ---
+    background: var(--background);              // --- 背景色 ---
     &.area-arrow {
         .inner::before {
             border-right: var(--border);
         }
     }
     &:not([data-cg-disabled]) {
-        &:focus, &.childfocus {             // --- 焦点状态 ---
-            &::before {                     // --- 外边框 ---
-                border: var(--focus-border, var(--border));
+        &:focus, &.childfocus {                 // --- 焦点状态 ---
+            &::before {                         // --- 外边框 ---
+                border: var(--border-focus);
             }
             &.area-all, &.area-mark {
-                background: var(--focus-background, var(--background));
-                color: var(--focus-color, var(--color));
+                color: var(--color-focus);
+                background: var(--background-focus);
             }
             &.area-arrow {
-                .inner::before {            // --- 里边框 ---
-                    border-right: var(--focus-border, var(--border));
+                .inner::before {                // --- 里边框 ---
+                    border-right: var(--border-focus);
                 }
             }
         }
-        &:hover {                           // --- 鼠标悬停 ---
-            &::before {                     // --- 外边框 ---
-                border: var(--hover-border, var(--border));
+        &:hover {                               // --- 鼠标悬停 ---
+            &::before {                         // --- 外边框 ---
+                border: var(--border-hover);
             }
             &.area-all, &.area-mark {
-                background: var(--hover-background, var(--background));
-                color: var(--hover-color, var(--color));
+                color: var(--color-hover);
+                background: var(--background-hover);
             }
             &.area-arrow {
-                .inner::before {            // --- 里边框 ---
-                    border-right: var(--hover-border, var(--border));
+                .inner::before {                // --- 里边框 ---
+                    border-right: var(--border-hover);
                 }
             }
         }
         &:active, &.active, &[data-cg-pop-open] {     // --- 鼠标按下 ---
             &::before {
-                border: var(--active-border, var(--border));
+                border: var(--border-active);
             }
             &.area-all, &.area-mark {
-                background: var(--active-background, var(--background));
-                color: var(--active-color, var(--color));
+                color: var(--color-active);
+                background: var(--background-active);
             }
             &.area-arrow {
-                .inner::before {            // --- 里边框 ---
-                    border-right: var(--active-border, var(--border));
+                .inner::before {                // --- 里边框 ---
+                    border-right: var(--border-active);
                 }
             }
         }
 
         &.area-arrow {
             .inner, .arrow {
-                &:hover {                   // --- 鼠标悬停 ---
-                    background: var(--hover-background, var(--background));
-                    color: var(--hover-color, var(--color));
+                &:hover {                       // --- 鼠标悬停 ---
+                    color: var(--color-hover);
+                    background: var(--background-hover);
                 }
                 // --- 鼠标按下 ---
                 &:active, .active, &[data-cg-pop-open] {
-                    background: var(--active-background, var(--background));
-                    color: var(--active-color, var(--color));
+                    color: var(--color-active);
+                    background: var(--background-active);
                 }
             }
         }
@@ -246,9 +348,9 @@
     }
     &[data-cg-disabled] {
         &::before {
-            border: var(--disabled-border, var(--border));
+            border: var(--border-disabled);
         }
-        background: var(--disabled-background, var(--background));
-        color: var(--disabled-color, var(--color));
+        color: var(--color-disabled);
+        background: var(--background-disabled);
     }
 }

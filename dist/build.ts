@@ -18,6 +18,9 @@ async function readDir(path: string): Promise<void> {
             if (item.name.endsWith('.scss')) {
                 continue;
             }
+            if (item.name === '.DS_Store') {
+                continue;
+            }
             if ((path + item.name).startsWith('dist/build.')) {
                 continue;
             }

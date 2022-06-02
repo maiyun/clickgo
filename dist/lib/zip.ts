@@ -279,6 +279,9 @@ export class Zip {
     private _refreshList(): void {
         const list: Record<string, Record<string, types.IZipItem>> = {};
         this._zip.forEach(function(relativePath, item) {
+            if (relativePath.startsWith('/')) {
+                relativePath = relativePath.slice(1);
+            }
             let parentPath = '/';
             let name = '';
             let s: number;
@@ -337,7 +340,7 @@ export class Zip {
      * --- 打包 zip ---
      * @param options 选项
      */
-    public generate<T extends types.TZipOutputType>(options: { 'type'?: T; 'level'?: number; 'onUpdate'?: (percent: number, currentFile: string) => void; } = {}): Promise<types.IZipOutputByType[T]> {
+    public generate<T extends types.TZipOutputType>(options: { 'type'?: T; 'level'?: number; 'onUpdate'?: (percent: number, currentFile: string | null) => void; } = {}): Promise<types.IZipOutputByType[T]> {
         const opt: any = {};
         if (options.type === undefined) {
             opt.type = 'blob' as T;

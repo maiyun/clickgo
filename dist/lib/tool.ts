@@ -290,10 +290,13 @@ export function stylePrepend(style: string, prep: string = ''): { 'style': strin
     style = style.replace(/([\s\S]+?){([\s\S]+?)}/g, function(t, t1: string, t2: string) {
         // --- xxx { xxx; } ---
         // --- 将 element 模式的 css 变为 class 模式，如 div 变为 .tag-div ---
-        // --- 这里面遇到了一个 bug， @keyframe 也被转换了，这是不对的 ---
-        t1 = t1.replace(/(^|[ >,\r\n])([a-zA-Z-_])([a-zA-Z0-9-_]*)/g,
-            function(t: string, t1: string, t2: string, t3: string) {
-                return t1 + '.tag-' + t2 + t3;
+        // --- 这里面遇到了一个 bug， @keyframe 也被转换了，这是不对的，因此在下面修复 ---
+        t1 = t1.replace(/(^|[ >,\r\n])([a-zA-Z-_][a-zA-Z0-9-_]*)/g,
+            function(t: string, t1: string, t2: string) {
+                if (t2 === 'global') {
+                    return '#cg-wrap';
+                }
+                return t1 + '.tag-' + t2;
             }
         );
         t1 = t1.replace(/keyframes \.tag-([a-zA-Z0-9-_]+)/g, function(t: string, t1: string) {
@@ -306,6 +309,9 @@ export function stylePrepend(style: string, prep: string = ''): { 'style': strin
                 return t;
             }
             */
+            if (t === '#cg-wrap') {
+                return t;
+            }
             return t1 + prep + t2;
         }) + '{' + t2 + '}';
     });
