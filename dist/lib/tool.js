@@ -218,19 +218,17 @@ function stylePrepend(style, prep = '') {
     style = style.replace(/([\s\S]+?){([\s\S]+?)}/g, function (t, t1, t2) {
         t1 = t1.replace(/(^|[ >,\r\n])([a-zA-Z-_][a-zA-Z0-9-_]*)/g, function (t, t1, t2) {
             if (t2 === 'global') {
-                return '#cg-wrap';
+                return '[CGTMP-GLOBAL]';
             }
             return t1 + '.tag-' + t2;
         });
         t1 = t1.replace(/keyframes \.tag-([a-zA-Z0-9-_]+)/g, function (t, t1) {
             return 'keyframes ' + t1;
         });
-        return t1.replace(/([.#])([a-zA-Z0-9-_]+)/g, function (t, t1, t2) {
-            if (t === '#cg-wrap') {
-                return t;
-            }
+        t1 = t1.replace(/([.#])([a-zA-Z0-9-_]+)/g, function (t, t1, t2) {
             return t1 + prep + t2;
         }) + '{' + t2 + '}';
+        return t1;
     });
     const fontList = [];
     style = style.replace(/(@font-face[\s\S]+?font-family\s*:\s*["']{0,1})(.+?)(["']{0,1}\s*[;\r\n }])/gi, function (t, t1, t2, t3) {

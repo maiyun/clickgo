@@ -294,7 +294,7 @@ export function stylePrepend(style: string, prep: string = ''): { 'style': strin
         t1 = t1.replace(/(^|[ >,\r\n])([a-zA-Z-_][a-zA-Z0-9-_]*)/g,
             function(t: string, t1: string, t2: string) {
                 if (t2 === 'global') {
-                    return '#cg-wrap';
+                    return '[CGTMP-GLOBAL]';
                 }
                 return t1 + '.tag-' + t2;
             }
@@ -303,17 +303,15 @@ export function stylePrepend(style: string, prep: string = ''): { 'style': strin
             return 'keyframes ' + t1;
         });
         // --- 给 style 的 class 前添加 scope ---
-        return t1.replace(/([.#])([a-zA-Z0-9-_]+)/g, function(t: string, t1: string, t2: string) {
+        t1 = t1.replace(/([.#])([a-zA-Z0-9-_]+)/g, function(t: string, t1: string, t2: string) {
             /*
             if (t2.startsWith('cg-')) {
                 return t;
             }
             */
-            if (t === '#cg-wrap') {
-                return t;
-            }
             return t1 + prep + t2;
         }) + '{' + t2 + '}';
+        return t1;
     });
     // --- 自定义 font 名添加 scope ---
     const fontList: string[] = [];
