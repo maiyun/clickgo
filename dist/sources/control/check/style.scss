@@ -5,71 +5,129 @@
 
 .wrap {
     display: flex; align-items: center; outline: none;
-    &[data-cg-disabled] {
-        color: hsl(205, 0%, 60%);
-    }
 
     .check {
-        width: 14px; height: 14px; position: relative; background: #FFF;
+        width: 14px; height: 14px; position: relative;
         &::before {
-            content: ''; pointer-events: none; position: absolute; left: 0; top: 0; width: 200%; height: 200%; transform-origin: 0 0; transform: scale(.5); border: solid 1px hsl(0, 0%, 70%);
+            content: ''; pointer-events: none; position: absolute; left: 0; top: 0; width: 200%; height: 200%; transform-origin: 0 0; transform: scale(.5); border: solid 1px var(--g-plain-border-color);
         }
         &::after {
             content: '\e600'; font-family: 'ifont'; align-items: center; justify-content: center; font-size: 12px; pointer-events: none; position: absolute; left: 0; top: 0; width: 100%; height: 100%; display: none;
-        }
-    }
-    &:not([data-cg-disabled]) {
-        &:hover .check {
-            &::before {
-                border-color: hsl(0, 0%, 80%);
-            }
-        }
-        &:active, &.active {
-            .check {
-                background: hsl(0, 0%, 85%);
-                &::before {
-                    border-color: hsl(0, 0%, 60%);
-                }
-            }
-        }
-    }
-    &[data-cg-disabled] {
-        .check {
-            background: hsl(0, 0%, 95%); color: hsl(205, 0%, 60%);
-        }
-    }
-
-    &.checked .check::after {
-        display: flex;
-    }
-
-    &.indeterminate {
-        .check::after {
-            content: ''; left: 4px; top: 4px; width: calc(100% - 8px); height: calc(100% - 8px); background: hsl(0, 0%, 20%);
-        }
-        &:hover .check::after {
-            background: hsl(0, 0%, 80%);
-        }
-        &:active, &.active {
-            .check::after {
-                background: hsl(0, 0%, 60%);
-            }
-        }
-
-        &[data-cg-disabled] .check::after {
-            background: hsl(0, 0%, 60%);
         }
     }
 
     .label {
         padding-left: 5px; position: relative;
         &::before {
-            content: ''; pointer-events: none; position: absolute; left: 4px; top: -1px; width: calc(200% - 6px); height: calc(200% + 4px); transform-origin: 0 0; transform: scale(.5); border: dotted 1px hsl(0, 0%, 20%); display: none;
+            content: ''; pointer-events: none; position: absolute; left: 4px; top: -1px; width: calc(200% - 6px); height: calc(200% + 4px); transform-origin: 0 0; transform: scale(.5); display: none;
         }
     }
-    &:focus .label {
-        &::before {
-            display: block;
+
+    // --- 半选中模式 ---
+    &.indeterminate {
+        .check::after {
+            content: ''; left: 4px; top: 4px; width: calc(100% - 8px); height: calc(100% - 8px);
+        }
+    }
+
+    // --- 选中模式（含全、半） ---
+    &.checked {
+        .check::after {
+            display: flex;
+        }
+    }
+
+    &:not([data-cg-disabled]) {
+        .check {
+            background: var(--g-plain-background);
+            &::before {
+                border: solid 1px var(--g-plain-border-color);
+            }
+        }
+
+        .label {
+            &::before {
+                border: dotted 1px var(--g-plain-border-color);
+            }
+        }
+
+        &.indeterminate {
+            .check::after {
+                background: var(--g-plain-color);
+            }
+        }
+
+        &:focus {
+            color: var(--g-plain-color-focus);
+
+            .check {
+                background: var(--g-plain-background-focus);
+                &::before {
+                    border: solid 1px var(--g-plain-border-color-focus);
+                }
+            }
+
+            .label {
+                &::before {
+                    display: block;
+                }
+            }
+
+            &.indeterminate {
+                .check::after {
+                    background: var(--g-plain-color-focus);
+                }
+            }
+        }
+
+        // --- hover ---
+        &:hover {
+            color: var(--g-plain-color-hover);
+
+            .check {
+                background: var(--g-plain-background-hover);
+                &::before {
+                    border: solid 1px var(--g-plain-border-color-hover);
+                }
+            }
+
+            &.indeterminate {
+                .check::after {
+                    background: var(--g-plain-color-hover);
+                }
+            }
+        }
+
+        // --- active ---
+        &:active, &.active {
+            color: var(--g-plain-color-active);
+
+            .check {
+                background: var(--g-plain-background-active);
+                &::before {
+                    border: solid 1px var(--g-plain-border-color-active);
+                }
+            }
+
+            &.indeterminate {
+                .check::after {
+                    background: var(--g-plain-color-active);
+                }
+            }
+        }
+    }
+
+    &[data-cg-disabled] {
+        color: var(--g-plain-color-disabled);
+
+        .check {
+            background: var(--g-plain-background-disabled);
+        }
+
+        &.indeterminate {
+            .check::after {
+                background: var(--g-plain-color-disabled);
+            }
         }
     }
 }
