@@ -28,7 +28,7 @@ exports.props = {
         'default': undefined
     },
     'files': {
-        'default': {}
+        'default': undefined
     }
 };
 exports.computed = {
@@ -40,16 +40,6 @@ exports.computed = {
     },
     'showMask': function () {
         return this.maskTxt !== '' ? true : clickgo.dom.is.move;
-    },
-    'filesComp': function () {
-        const list = [];
-        for (const path in this.files) {
-            list.push({
-                'content': this.files[path],
-                'filePath': path
-            });
-        }
-        return list;
     }
 };
 exports.data = {
@@ -80,50 +70,115 @@ exports.data = {
 };
 exports.watch = {
     'isReadonly': function () {
-        if (!this.monacoInstance) {
+        if (!this.instance) {
             return;
         }
-        this.monacoInstance.updateOptions({
+        this.instance.updateOptions({
             'readOnly': this.isDisabled ? true : this.isReadonly
         });
     },
     'isDisabled': function () {
-        if (!this.monacoInstance) {
+        if (!this.instance) {
             return;
         }
-        this.monacoInstance.updateOptions({
+        this.instance.updateOptions({
             'readOnly': this.isDisabled ? true : this.isReadonly
         });
     },
+    'files': {
+        handler: function (after, before) {
+            if (!this.instance) {
+                return;
+            }
+            if (after !== undefined) {
+                if (before === undefined) {
+                    let model = this.monaco.editor.getModels()[0];
+                    if (model) {
+                        model.dispose();
+                    }
+                    model = this.monaco.editor.getModel(this.monaco.Uri.parse(this.modelValue));
+                    if (model) {
+                        this.instance.setModel(model);
+                        if (this.language) {
+                            this.monaco.editor.setModelLanguage(model, this.language.toLowerCase());
+                        }
+                    }
+                }
+                else {
+                    this.refreshModels();
+                }
+            }
+            else {
+                const models = this.monaco.editor.getModels();
+                for (const model of models) {
+                    model.dispose();
+                }
+                const model = this.monaco.editor.createModel(this.modelValue, this.language);
+                model.pushEOL(0);
+                model.onDidChangeContent(() => {
+                    this.$emit('update:modelValue', model.getValue());
+                });
+                this.instance.setModel(model);
+            }
+        },
+        'deep': true
+    },
     'modelValue': function () {
-        if (!this.monacoInstance) {
+        if (!this.instance) {
             return;
         }
-        if (this.modelValue === this.monacoInstance.getValue()) {
-            return;
+        if (this.files) {
+            const model = this.monaco.editor.getModel(this.monaco.Uri.parse(this.modelValue));
+            if (model) {
+                this.instance.setModel(model);
+                if (this.language) {
+                    this.monaco.editor.setModelLanguage(model, this.language.toLowerCase());
+                    if (this.language === 'typescript') {
+                        this.setValue(model);
+                    }
+                }
+            }
         }
-        this.monacoInstance.setValue(this.modelValue);
+        else {
+            const model = this.instance.getModel();
+            if (this.modelValue === model.getValue()) {
+                return;
+            }
+            this.setValue(model, this.modelValue);
+        }
     },
     'language': function () {
-        if (!this.monacoInstance) {
+        if (!this.instance) {
             return;
         }
-        this.monaco.editor.setModelLanguage(this.monacoInstance.getModel(), this.language.toLowerCase());
-    },
-    'filesComp': function () {
-        if (!this.monacoInstance) {
+        if (!this.language) {
             return;
         }
-        this.monaco.languages.typescript.typescriptDefaults.setExtraLibs(this.filesComp);
+        const model = this.instance.getModel();
+        if (!model) {
+            return;
+        }
+        this.monaco.editor.setModelLanguage(model, this.language.toLowerCase());
+        if (this.language === 'typescript') {
+            this.setValue(model);
+        }
     },
     'theme': function () {
-        if (!this.monacoInstance) {
+        if (!this.instance) {
             return;
         }
         this.monaco.editor.setTheme(this.theme);
     }
 };
 exports.methods = {
+    setValue: function (model, val) {
+        model.pushEditOperations([], [
+            {
+                range: model.getFullModelRange(),
+                text: val === undefined ? model.getValue() : val
+            }
+        ], () => { });
+    },
     execCmd: function (ac) {
         return __awaiter(this, void 0, void 0, function* () {
             switch (ac) {
@@ -133,8 +188,8 @@ exports.methods = {
                 }
                 case 'cut': {
                     clickgo.tool.execCommand('copy');
-                    const selection = this.monacoInstance.getSelection();
-                    this.monacoInstance.executeEdits('', [
+                    const selection = this.instance.getSelection();
+                    this.instance.executeEdits('', [
                         {
                             range: new this.monaco.Range(selection.startLineNumber, selection.startColumn, selection.endLineNumber, selection.endColumn),
                             text: ''
@@ -144,8 +199,8 @@ exports.methods = {
                 }
                 case 'paste': {
                     const str = yield navigator.clipboard.readText();
-                    const selection = this.monacoInstance.getSelection();
-                    this.monacoInstance.executeEdits('', [
+                    const selection = this.instance.getSelection();
+                    this.instance.executeEdits('', [
                         {
                             range: new this.monaco.Range(selection.startLineNumber, selection.startColumn, selection.endLineNumber, selection.endColumn),
                             text: str
@@ -155,6 +210,42 @@ exports.methods = {
                 }
             }
         });
+    },
+    refreshModels: function () {
+        const beforePaths = [];
+        const models = this.monaco.editor.getModels();
+        let refreshInstance = false;
+        for (const model of models) {
+            if (this.files[model.uri.path] === undefined) {
+                model.dispose();
+                refreshInstance = true;
+                continue;
+            }
+            beforePaths.push(model.uri.path);
+        }
+        for (const path in this.files) {
+            if (beforePaths.includes(path)) {
+                const model = this.monaco.editor.getModel(this.monaco.Uri.parse(path));
+                if (model.getValue() !== this.files[path]) {
+                    this.setValue(model, this.files[path]);
+                    refreshInstance = true;
+                }
+                continue;
+            }
+            const model = this.monaco.editor.createModel(this.files[path], undefined, this.monaco.Uri.parse(path));
+            model.pushEOL(0);
+            model.onDidChangeContent(() => {
+                this.files[path] = model.getValue();
+                this.$emit('update:files', this.files);
+            });
+            refreshInstance = true;
+        }
+        if (this.language === 'typescript' && refreshInstance) {
+            const model = this.instance.getModel();
+            if (model) {
+                this.setValue(model);
+            }
+        }
     }
 };
 const mounted = function () {
@@ -165,6 +256,7 @@ const mounted = function () {
     const iwindow = iframeEl.contentWindow;
     const idoc = iwindow.document;
     idoc.body.style.margin = '0';
+    idoc.body.style.overflow = 'hidden';
     const monacoEl = idoc.createElement('div');
     monacoEl.id = 'monaco';
     monacoEl.style.height = '100%';
@@ -175,23 +267,22 @@ const mounted = function () {
         loaderEl.addEventListener('load', () => {
             iwindow.require.config({
                 paths: {
-                    'vs': clickgo.getCdn() + '/npm/monaco-editor@0.29.1/min/vs'
+                    'vs': clickgo.getCdn() + '/npm/monaco-editor@0.33.0/min/vs'
                 }
             });
             const proxy = iwindow.URL.createObjectURL(new Blob([`
                 self.MonacoEnvironment = {
-                    baseUrl: '${clickgo.getCdn()}/npm/monaco-editor@0.29.1/min/'
+                    baseUrl: '${clickgo.getCdn()}/npm/monaco-editor@0.33.0/min/'
                 };
-                importScripts('${clickgo.getCdn()}/npm/monaco-editor@0.29.1/min/vs/base/worker/workerMain.js');
+                importScripts('${clickgo.getCdn()}/npm/monaco-editor@0.33.0/min/vs/base/worker/workerMain.js');
             `], { type: 'text/javascript' }));
             iwindow.MonacoEnvironment = {
                 getWorkerUrl: () => proxy
             };
             iwindow.require(['vs/editor/editor.main'], (monaco) => {
                 this.monaco = monaco;
-                this.monacoInstance = this.monaco.editor.create(monacoEl, {
-                    'language': this.language.toLowerCase(),
-                    'value': this.modelValue,
+                this.instance = this.monaco.editor.create(monacoEl, {
+                    'model': null,
                     'contextmenu': false,
                     'minimap': {
                         'enabled': false
@@ -199,15 +290,20 @@ const mounted = function () {
                     'readOnly': this.readonly
                 });
                 clickgo.dom.watchSize(this.$refs.iframe, () => {
-                    this.monacoInstance.layout();
+                    this.instance.layout();
                 });
-                this.monacoInstance.getModel().onDidChangeContent(() => {
-                    this.$emit('update:modelValue', this.monacoInstance.getValue());
-                });
-                monaco.languages.typescript.typescriptDefaults.setExtraLibs(this.filesComp);
                 if (this.theme) {
                     this.monaco.editor.setTheme(this.theme);
                 }
+                const editorService = this.instance._codeEditorService;
+                const openEditorBase = editorService.openCodeEditor.bind(editorService);
+                editorService.openCodeEditor = (input, source) => __awaiter(this, void 0, void 0, function* () {
+                    const result = yield openEditorBase(input, source);
+                    if (result === null) {
+                        this.$emit('jump', input);
+                    }
+                    return result;
+                });
                 if (navigator.clipboard) {
                     monacoEl.addEventListener('contextmenu', (e) => {
                         e.preventDefault();
@@ -235,8 +331,29 @@ const mounted = function () {
                 };
                 monacoEl.addEventListener('mousedown', down);
                 monacoEl.addEventListener('touchstart', down);
+                if (this.files !== undefined) {
+                    this.refreshModels(this.files, undefined);
+                    const model = this.monaco.editor.getModel(this.monaco.Uri.parse(this.modelValue));
+                    if (model) {
+                        this.instance.setModel(model);
+                        if (this.language) {
+                            this.monaco.editor.setModelLanguage(model, this.language.toLowerCase());
+                        }
+                    }
+                }
+                else {
+                    const model = this.monaco.editor.createModel(this.modelValue, this.language);
+                    model.pushEOL(0);
+                    model.onDidChangeContent(() => {
+                        this.$emit('update:modelValue', model.getValue());
+                    });
+                    this.instance.setModel(model);
+                }
                 this.maskTxt = '';
-                this.$emit('init', this.monacoInstance);
+                this.$emit('init', {
+                    'monaco': this.monaco,
+                    'instance': this.instance
+                });
             });
         });
         loaderEl.src = monaco;

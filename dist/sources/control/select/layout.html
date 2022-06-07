@@ -4,6 +4,6 @@
     </div>
     <template v-else>{{label}}</template>
     <template v-slot:pop>
-        <cg-list ref="list" @label="label = $event" :data="data" :must="!isEditable" :modelValue="value" @update:modelValue="updateModelValue" @itemclick="listItemClick" adaptation></cg-list>
+        <cg-list ref="list" @label="updateLabel" :data="data" :must="!isEditable" :modelValue="value" @update:modelValue="updateModelValue" @itemclick="listItemClick" adaptation></cg-list>
     </template>
 </cg-greatselect>

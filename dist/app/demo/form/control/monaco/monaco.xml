@@ -1,18 +1,22 @@
 <form title="Monaco" width="500" height="450" padding="10">
     <layout gutter="10" direction="v" style="flex: 1; width: 0;">
-        <label>Length: {{code.length}}</label>
-        <monaco v-model="code" :language="language" :readonly="readonly" :disabled="disabled" :files="files" :theme="theme" style="flex: 1; height: 0;"></monaco>
+        <label>File: {{path}}, Length: {{files[path].length}}</label>
+        <layout gutter="10" style="flex: 1; height: 0;">
+            <text :modelValue="JSON.stringify(files, null, 4)" style="flex: 1; width: 0;" multi readonly wrap></text>
+            <monaco v-model="path" v-model:files="files" :readonly="readonly" :language="language" :disabled="disabled" :theme="theme" @jump="jump" style="flex: 1; wdith: 0;"></monaco>
+        </layout>
         <layout gutter="10">
-            <button @click="addInclude" :disabled="add" style="height: 30px; flex: 1; width: 0;">Add include</button>
+            <button @click="globalInclude" style="height: 30px; flex: 1; width: 0;">{{globali ? '' : '!'}}global</button>
+            <button @click="newInclude" style="height: 30px; flex: 1; width: 0;">{{newi ? '' : '!'}}new</button>
             <button @click="disabled = !disabled" style="height: 30px; flex: 1; width: 0;">{{disabled ? '' : '!'}}disabled</button>
             <button @click="readonly = !readonly" style="height: 30px; flex: 1; width: 0;">{{readonly ? '' : '!'}}readonly</button>
             <select v-model="theme" :data="themes" style="flex: 1; width: 0;"></select>
-            <select v-model="language" :data="list" style="flex: 1; width: 0;"></select>
+            <select v-model="path" @label="pathLebel" :data="list" style="flex: 1; width: 0;"></select>
         </layout>
         <label>Include files:</label>
         <layout gutter="10" style="flex: 1; height: 0;">
             <list v-model="file" :data="filesName" :must="false" style="width: 100px;"></list>
-            <monaco v-if="files[file] !== undefined" v-model="files[file]" language="TypeScript" style="flex: 1; width: 0;"></monaco>
+            <monaco v-if="files[file] !== undefined" v-model="files[file]" language="typescript" style="flex: 1; width: 0;"></monaco>
             <layout v-else align-v="center" align-h="center" style="flex: 1; width: 0;">Please select file.</layout>
         </layout>
     </layout>

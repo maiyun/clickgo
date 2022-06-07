@@ -1,10 +1,12 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.methods = exports.computed = exports.watch = exports.data = void 0;
+exports.methods = exports.computed = exports.data = void 0;
+const clickgo = require("clickgo");
 exports.data = {
-    'code': '',
-    'codeList': [
-        `<html>
+    'path': '/index.html',
+    'file': '',
+    'files': {
+        '/index.html': `<html>
     <head>
         <title>Monaco</title>
     </head>
@@ -12,7 +14,7 @@ exports.data = {
         Hello Monaco Editor!
     </body>
 </html>`,
-        'export' + ` let props = {
+        '/index.ts': 'export' + ` let props = {
 };\n\nexport` + ` let methods = {
     hehe: function(): string {
         return str() + ', en.';
@@ -21,48 +23,80 @@ exports.data = {
         return str2() + ', o.';
     }
 };\n`,
-        `.red {
+        '/index.css': `.red {
     color: red;
 }`,
-        `.red {
+        '/index.scss': `.red {
     color: red;
     span {
         color: blue;
     }
 }`
-    ],
-    'file': '',
-    'files': {
-        'global.d.ts': 'declare function str(): string;'
     },
-    'language': 'HTML',
-    'list': ['HTML', 'TypeScript', 'CSS', 'SCSS'],
+    'list': [
+        {
+            'label': 'HTML',
+            'value': '/index.html'
+        },
+        {
+            'label': 'TypeScript',
+            'value': '/index.ts'
+        },
+        {
+            'label': 'CSS',
+            'value': '/index.css'
+        },
+        {
+            'label': 'SCSS',
+            'value': '/index.scss'
+        }
+    ],
     'theme': 'vs',
     'themes': ['vs', 'vs-dark', 'hc-black'],
-    'add': false,
+    'language': undefined,
+    'globali': false,
+    'newi': false,
     'readonly': false,
     'disabled': false
-};
-exports.watch = {
-    'language': {
-        handler: function () {
-            this.code = this.codeList[this.list.indexOf(this.language)];
-        },
-        'immediate': true
-    }
 };
 exports.computed = {
     'filesName': function () {
         const names = [];
         for (const name in this.files) {
+            if (!name.includes('.d.ts')) {
+                continue;
+            }
             names.push(name);
         }
         return names;
     }
 };
 exports.methods = {
-    addInclude: function () {
-        this.add = true;
-        this.files['new.d.ts'] = 'declare function str2(): string;';
+    globalInclude: function () {
+        if (this.globali) {
+            delete this.files['/global.d.ts'];
+        }
+        else {
+            this.files['/global.d.ts'] = 'declare function str(): string;';
+        }
+        this.globali = !this.globali;
+    },
+    newInclude: function () {
+        if (this.newi) {
+            delete this.files['/new.d.ts'];
+        }
+        else {
+            this.files['/new.d.ts'] = 'declare function str2(): string;';
+        }
+        this.newi = !this.newi;
+    },
+    jump: function (input) {
+        clickgo.form.dialog({
+            'content': `<block>Path: ${input.resource.path}</block><block>Line: ${input.options.selection.startLineNumber}</block>`,
+            'direction': 'v'
+        }).catch((e) => { throw e; });
+    },
+    pathLebel: function (label) {
+        this.language = label.toLowerCase();
     }
 };

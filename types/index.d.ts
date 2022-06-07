@@ -458,6 +458,8 @@ export interface IFormDialogOptions {
     'title'?: string;
     'content': string;
     'buttons'?: string[];
+    'direction'?: 'h' | 'v';
+
     'select'?: (e: Event, button: string) => void;
 }
 

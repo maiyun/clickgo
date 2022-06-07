@@ -20,6 +20,6 @@
             Select
             <file ref="file" @change="change" :accept="[accept]" :multi="multi" :dir="dir"></file>
         </button>
-        <list :data="list" style="flex: 1;"></list>
+        <list :data="list" style="flex: 1; height: 0;"></list>
     </layout>
 </form>

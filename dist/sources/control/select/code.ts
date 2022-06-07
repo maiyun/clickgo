@@ -69,6 +69,10 @@ export const methods = {
         this.inputValue = value;
         this.$emit('update:modelValue', value);
     },
+    updateLabel: function(this: types.IVControl, label: string): void {
+        this.label = label;
+        this.$emit('label', label);
+    },
     listItemClick: function(this: types.IVControl): void {
         clickgo.form.hidePop();
     }

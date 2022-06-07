@@ -97,7 +97,7 @@ const modules: Record<string, { func: () => any | Promise<any>; 'obj': null | an
     'monaco': {
         func: async function() {
             return new Promise(function(resolve, reject) {
-                fetch(clickgo.getCdn() + '/npm/monaco-editor@0.29.1/min/vs/loader.js').then(function(r) {
+                fetch(clickgo.getCdn() + '/npm/monaco-editor@0.33.0/min/vs/loader.js').then(function(r) {
                     return r.blob();
                 }).then(function(b) {
                     return tool.blob2DataUrl(b);

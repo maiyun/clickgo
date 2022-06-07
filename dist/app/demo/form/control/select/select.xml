@@ -27,7 +27,7 @@
                     </menulist>
                 </template>
             </greatselect>
-            <label>Custom pop: {{fontSize}} | {{fontSize && '16px'}}</label>
+            <label>Custom pop:</label>
             <greatselect pop="custom" :area="area" :disabled="disabled" :style="{'font-size': fontSize ? '16px' : undefined, 'padding': padding ? '15px' : undefined, 'background': background ? 'red' : undefined, 'color': background ? '#FFF' : undefined}">
                 <label>Pop is button.</label>
                 <template v-slot:pop>

@@ -64,6 +64,10 @@ exports.methods = {
         this.inputValue = value;
         this.$emit('update:modelValue', value);
     },
+    updateLabel: function (label) {
+        this.label = label;
+        this.$emit('label', label);
+    },
     listItemClick: function () {
         clickgo.form.hidePop();
     }
