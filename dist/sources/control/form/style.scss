@@ -23,7 +23,7 @@
 }
 
 .wrap {
-    position: relative; color: var(--g-color); display: flex;
+    position: relative; color: var(--g-color-disabled); display: flex;
     &:not(.inside) {
         position: fixed; transition: .1s ease-out; transition-property: transform, opacity; transform: translateX(10px) translateY(0) translateZ(0); opacity: 0;
     }
