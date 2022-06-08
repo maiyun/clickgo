@@ -6,31 +6,31 @@
 @keyframes flash {
     0%, 50% {
         box-shadow: 0 5px 20px rgba(0, 0, 0, .25);
-        color: hsl(0, 0%, 20%);
+        color: var(--g-color);
     }
     51%, 100% {
         box-shadow: 0 5px 10px rgba(0, 0, 0, .25);
-        color: hsl(0, 0%, 60%);
+        color: var(--g-color-disabled);
     }
 }
 @keyframes flash-after {
     0%, 50% {
-        border-color: hsl(0, 0%, 20%);
+        border-color: var(--g-color);
     }
     51%, 100% {
-        border-color: hsl(0, 0%, 60%);
+        border-color: var(--g-color-disabled);
     }
 }
 
 .wrap {
-    position: relative; color: hsl(0, 0%, 60%); display: flex;
+    position: relative; color: var(--g-color); display: flex;
     &:not(.inside) {
         position: fixed; transition: .1s ease-out; transition-property: transform, opacity; transform: translateX(10px) translateY(0) translateZ(0); opacity: 0;
     }
     &:not(.border-none):not([data-cg-max]) {
         box-shadow: 0 5px 10px rgba(0, 0, 0, .25);
         &::after {
-            content: ' '; position: absolute; left: 0; top: 0; width: 200%; height: 200%; transform-origin: 0 0; transform: scale(.5); border: solid 1px hsl(0, 0%, 60%); pointer-events: none;
+            content: ' '; position: absolute; left: 0; top: 0; width: 200%; height: 200%; transform-origin: 0 0; transform: scale(.5); border: solid 1px var(--g-color-disabled); pointer-events: none;
         }
     }
     &:not(.show) {
@@ -55,11 +55,11 @@
         transform: translateX(0px) translateY(50px) translateZ(0);
     }
     &[data-cg-focus] {
-        color: hsl(0, 0%, 20%);
+        color: var(--g-color);
         &:not(.border-none):not([data-cg-max]) {
             box-shadow: 0 5px 20px rgba(0, 0, 0, .25);
             &::after {
-                border: solid 1px hsl(0, 0%, 20%);
+                border: solid 1px var(--g-color);
             }
         }
     }
@@ -153,17 +153,17 @@
                 }
                 .close {
                     &:hover {
-                        background: #e81123; color: #FFF;
+                        background: var(--danger); color: #FFF;
                     }
                     &:active {
-                        background: #f1707a; color: #FFF;
+                        background: var(--danger-hover); color: #FFF;
                     }
                 }
             }
         }
         // --- 主体内容 ---
         .content {
-            flex: 1; background-color: hsl(0, 0%, 95%); display: flex; height: 0; position: relative; overflow: hidden;
+            flex: 1; background-color: var(--face); display: flex; height: 0; position: relative; overflow: hidden;
             &.v {
                 flex-direction: column;
             }
