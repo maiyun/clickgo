@@ -39,8 +39,9 @@
     --g-color-disabled:hsl(0, 0%, 60%);
 
     --g-background:hsl(0, 0%, 95%);
-    --g-background-hover: hsl(0, 0%, 100%);
+    --g-background-hover:hsl(0, 0%, 100%);
     --g-background-active:hsl(0, 0%, 85%);
+    --g-background-kp:hsl(0, 0%, 80%);
     --g-background-focus:hsl(0, 0%, 97.5%);
     --g-background-disabled:hsl(0, 0%, 75%);
 
@@ -60,9 +61,9 @@
 
     --g-plain-background:hsl(0, 0%, 100%);
     --g-plain-background-hover:hsl(0, 0%, 98%);
-    --g-plain-background-active:hsl(0, 0%, 93%);
+    --g-plain-background-active:hsl(0, 0%, 95%);
     --g-plain-background-focus:var(--g-plain-background);
-    --g-plain-background-disabled:hsl(0, 0%, 90%);
+    --g-plain-background-disabled:hsl(0, 0%, 95%);
 
     --g-plain-border-color:hsl(0, 0%, 70%);
     --g-plain-border-color-hover:hsl(0, 0%, 80%);

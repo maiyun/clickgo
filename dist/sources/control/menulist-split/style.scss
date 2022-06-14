@@ -8,7 +8,7 @@
     .line {
         height: 1px; margin-left: 5px; flex-grow: 1; flex-basis: 0; position: relative;
         &::before {
-            content: ' '; position: absolute; left: 0; top: 0; width: 200%; height: 200%; transform-origin: 0 0; transform: scale(.5); border-bottom: solid 1px hsl(205, 0%, 70%);
+            content: ' '; position: absolute; left: 0; top: 0; width: 200%; height: 200%; transform-origin: 0 0; transform: scale(.5); border-bottom: solid 1px var(--g-border-color);
         }
     }    
 }

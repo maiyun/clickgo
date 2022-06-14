@@ -1,5 +1,9 @@
 .wrap {
-    background-color: hsl(205, 0%, 95%); display: flex; transition: opacity .1s ease-out;
+    background-color: var(--face); display: flex; transition: opacity .1s ease-out;
+
+    --block-background:hsl(0, 0%, 85%);
+    --block-background-hover:hsl(0, 0%, 75%);
+
     &.v {
         flex-direction: column;
         .start::before {
@@ -34,32 +38,7 @@
     .start, .end {
         display: flex; justify-content: center; align-items: center;
         &::before {
-            content: ''; border-style: solid; border-color: hsl(0, 0%, 20%); width: 24%; height: 24%; transform: rotate(45deg);
-        }
-    }
-    &:not([data-cg-disabled]) {
-        .start:not([data-cg-disabled]), .end:not([data-cg-disabled]) {
-            &:hover {
-                background-color: hsl(205, 0%, 85%);
-            }
-            &:active {
-                background-color: hsl(205, 0%, 30%);
-                &::before {
-                    border-color: #FFF;
-                }
-            }
-        }
-        .start[data-cg-disabled], .end[data-cg-disabled] {
-            &::before {
-                border-color: hsl(205, 0%, 50%);
-            }
-        }
-    }
-    &[data-cg-disabled] {
-        .start, .end {
-            &::before {
-                border-color: hsl(205, 0%, 50%);
-            }
+            content: ''; border-style: solid; border-color: var(--g-color); width: 24%; height: 24%; transform: rotate(45deg);
         }
     }
 
@@ -69,9 +48,9 @@
     
         // --- 滚动块 ---
         .block {
-            background-color: hsl(205, 0%, 80%); display: flex;
+            background: var(--block-background); display: flex;
             &:hover {
-                background-color: hsl(205, 0%, 60%);
+                background: var(--block-background-hover);
             }
             &.tran {
                 transition: transform .03s linear;
@@ -79,11 +58,37 @@
         }
         &:active {
             .block {
-                background-color: hsl(205, 0%, 30%);
+                background: var(--g-color);
             }
         }
     }
+
+    &:not([data-cg-disabled]) {
+        .start:not([data-cg-disabled]), .end:not([data-cg-disabled]) {
+            &:hover {
+                background: var(--block-background);
+            }
+            &:active {
+                background-color: var(--g-color);
+                &::before {
+                    border-color: var(--face);
+                }
+            }
+        }
+        .start[data-cg-disabled], .end[data-cg-disabled] {
+            &::before {
+                border-color: var(--g-color-disabled);
+            }
+        }
+    }
+
     &[data-cg-disabled] {
+        .start, .end {
+            &::before {
+                border-color: var(--g-color-disabled);
+            }
+        }
+
         .scroll-bar {
             visibility: hidden; pointer-events: none;
         }

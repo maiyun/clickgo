@@ -86,9 +86,9 @@ exports.watch = {
         handler: function () {
             this.tabsData = this.tabs;
         },
-        'deep': 'true'
+        'deep': true
     },
-    'tabsData': {
+    'tabsComp': {
         handler: function () {
             this.refreshValue();
             this.$nextTick().then(() => {
@@ -97,7 +97,7 @@ exports.watch = {
                 console.log(e);
             });
         },
-        'deep': 'true'
+        'deep': true
     },
     'tabPosition': {
         handler: function () {

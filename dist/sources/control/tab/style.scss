@@ -5,6 +5,9 @@
 
 .wrap {
     display: flex;
+
+    --background-selected: #FFF;
+
     &.top, &.bottom {
         flex-direction: column;
     }
@@ -21,13 +24,19 @@
     .arrow {
         display: flex; justify-content: center; align-items: center;
         &::before {
-            content: ''; pointer-events: none; border: solid 1px hsl(0, 0%, 20%); width: 6px; height: 6px; transform: rotate(45deg);
+            content: ''; pointer-events: none; border: solid 1px var(--g-color); width: 6px; height: 6px; transform: rotate(45deg);
         }
-        &:hover::before {
-            border-color: hsl(205, 100%, 50%);
+        &:hover {
+            background: var(--g-plain-background-hover);
+            &::before {
+                border-color: var(--g-color-hover);
+            }
         }
-        &:active::before {
-            border-color: hsl(205, 100%, 30%);
+        &:active {
+            background: var(--g-color);
+            &::before {
+                border-color: var(--face);
+            }
         }
     }
     &.top, &.bottom {
@@ -83,21 +92,21 @@
     }
 
     .tab {
-        background-color: hsl(205, 0%, 95%); display: inline-flex; align-items: center; position: relative;
+        background: var(--face); display: inline-flex; align-items: center; position: relative;
         &::before {
-            content: ''; pointer-events: none; position: absolute; left: 0; top: 0; width: 200%; height: 200%; transform-origin: 0 0; transform: scale(.5); border: solid 1px hsl(205, 0%, 70%); z-index: 1;
+            content: ''; pointer-events: none; position: absolute; left: 0; top: 0; width: 200%; height: 200%; transform-origin: 0 0; transform: scale(.5); border: solid 1px var(--g-plain-border-color); z-index: 1;
         }
         &::after {
-            content: ' '; pointer-events: none; position: absolute; transform: scale(.5); background: #FFF; display: none;
+            content: ' '; pointer-events: none; position: absolute; transform: scale(.5); background: var(--background-selected); display: none;
         }
         &:not(.selected):not([data-cg-hover]):hover {
-            background-color: hsl(205, 100%, 95%);
+            background: var(--g-plain-background-hover);
         }
         &.selected {
-            background-color: #FFF;
+            background: var(--background-selected);;
         }
         &[data-cg-hover] {
-            background-color: #333; color: #FFF;
+            background: var(--g-color); color: var(--face);
         }
 
         .drag {
@@ -215,9 +224,9 @@
     }
 
     .panel {
-        background-color: #FFF; display: flex; flex: 1; overflow: hidden; position: relative;
+        background: var(--background-selected);; display: flex; flex: 1; overflow: hidden; position: relative;
         &::before {
-            content: ''; pointer-events: none; position: absolute; left: 0; top: 0; width: 200%; height: 200%; transform-origin: 0 0; transform: scale(.5); border: solid 1px hsl(205, 0%, 70%);
+            content: ''; pointer-events: none; position: absolute; left: 0; top: 0; width: 200%; height: 200%; transform-origin: 0 0; transform: scale(.5); border: solid 1px var(--g-plain-border-color);
         }
     }    
 }

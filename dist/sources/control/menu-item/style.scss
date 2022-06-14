@@ -5,22 +5,22 @@
     }
     &:not([data-cg-disabled]) {
         &:hover {
-            background: hsl(205, 100%, 95%);
+            background: var(--g-background-hover);
             &::before {
-                border: solid 1px hsl(205, 100%, 50%);
+                border: solid 1px var(--g-border-color-hover);
             }
         }
         &:active, &[data-cg-pop-open] {
-            background: hsl(205, 100%, 90%);
+            background: var(--g-background-active);
             &::before {
-                border: solid 1px hsl(205, 100%, 30%);
+                border: solid 1px var(--g-border-color-active);
             }
         }
     }
     &[data-cg-disabled] {
-        color: hsl(205, 0%, 60%);
+        color: var(--g-color-disabled);
         &:hover {
-            background: hsl(205, 0%, 90%);
+            background: var(--g-background-disabled);
         }
     }
 

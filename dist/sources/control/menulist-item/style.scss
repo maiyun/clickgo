@@ -2,20 +2,20 @@
     padding: 6px 35px 6px 10px;
     &:not([data-cg-disabled]) {
         &:hover {
-            background: hsl(205, 100%, 80%);
+            background: var(--g-background-active);
             .check, .radio {
-                background-color: hsl(205, 100%, 70%);
+                background-color: var(--g-background-kp);
             }
         }
     }
     &[data-cg-disabled] {
-        color: hsl(0, 0%, 60%);
+        color: var(--g-color-disabled);
         &:hover {
-            background: hsl(0, 0%, 90%);
+            background: var(--g-background-disabled);
         }
     }
     &[data-cg-pop-open] {
-        background: hsl(205, 100%, 80%);
+        background: var(--g-background-active);
     }
 
     .op {
@@ -23,12 +23,12 @@
     }
 
     .check {
-        background-image: url(res/check.svg); background-color: hsl(205, 100%, 80%); background-size: 12px 12px; background-position: center center; background-repeat: no-repeat; width: 24px; height: 24px; visibility: hidden;
+        background-image: url(res/check.svg); background-color: var(--g-background-active); background-size: 12px 12px; background-position: center center; background-repeat: no-repeat; width: 24px; height: 24px; visibility: hidden;
     }
     .radio {
-        background-color:  hsl(205, 100%, 80%); display: flex; align-items: center; justify-content: center; width: 24px; height: 24px; visibility: hidden;
+        background-color: var(--g-background-active); display: flex; align-items: center; justify-content: center; width: 24px; height: 24px; visibility: hidden;
         &::before {
-            content: ''; width: 6px; height: 6px; border-radius: 50%; background-color: hsl(0, 0%, 20%);
+            content: ''; width: 6px; height: 6px; border-radius: 50%; background-color: var(--g-color);
         }
     }
     
@@ -39,7 +39,7 @@
     .arrow {
         display: flex; justify-content: center; align-items: center; width: 20px;
         &::after {
-            content: ''; border: solid 1px hsl(0, 0%, 20%); border-width: 1px 1px 0 0; width: 6px; height: 6px; transform: rotate(45deg); margin-left: -3px;
+            content: ''; border: solid 1px var(--g-color); border-width: 1px 1px 0 0; width: 6px; height: 6px; transform: rotate(45deg); margin-left: -3px;
         }
     }
 }

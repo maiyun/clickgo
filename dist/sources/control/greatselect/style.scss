@@ -1,47 +1,47 @@
 .wrap {
     display: flex; outline: none; position: relative; padding: 7px;
     &.area-all {
-        background: hsl(205, 0%, 90%);
+        background: var(--g-background);
     }
     &.area-arrow {
-        background: hsl(205, 0%, 100%);
+        background: var(--g-plain-background);
     }
 
     &::before {
-        content: ''; pointer-events: none; position: absolute; left: 0; top: 0; width: 200%; height: 200%; transform-origin: 0 0; transform: scale(.5); border: solid 1px hsl(205, 0%, 70%); z-index: 1;
+        content: ''; pointer-events: none; position: absolute; left: 0; top: 0; width: 200%; height: 200%; transform-origin: 0 0; transform: scale(.5); border: solid 1px var(--g-border-color); z-index: 1;
     }
     &[data-cg-pop-open] {
         &.area-all {
-            background: hsl(205, 100%, 90%);
+            background: var(--g-background-active);
         }
         &::before {
-            border: solid 1px hsl(205, 100%, 30%);
+            border: solid 1px var(--g-border-color-active);
         }
     }
 
     &[data-cg-disabled] {
-        background: hsl(205, 0%, 80%); color: hsl(205, 0%, 50%);
+        background: var(--g-background-disabled); color: var(--g-color-disabled);;
         &::before {
-            border: solid 1px hsl(205, 0%, 60%);
+            border: solid 1px var(--g-border-color-disabled);
         }
     }
     &:not([data-cg-disabled]):not([data-cg-pop-open]) {
         &:hover, &:focus {
             &::before {
-                border: solid 1px hsl(205, 100%, 50%);
+                border: solid 1px var(--g-border-color-hover);
             }
         }
         &:active, &.active {
             &::before {
-                border: solid 1px hsl(205, 100%, 30%);
+                border: solid 1px var(--g-border-color-active);
             }
         }
         &.area-all {
             &:hover, &:focus {
-                background: hsl(205, 100%, 95%);
+                background: var(--g-background-hover);
             }
             &:active, &.active {
-                background: hsl(205, 100%, 90%);
+                background: var(--g-background-active);
             }
         }
     }
@@ -66,7 +66,7 @@
             content: ''; pointer-events: none; position: absolute; left: 0; top: 0; width: 200%; height: 200%; transform-origin: 0 0; transform: scale(.5); border: solid 1px transparent;
         }
         &::after {
-            content: ''; border: solid 1px hsl(0, 0%, 20%); border-width: 0 1px 1px 0; width: 6px; height: 6px; transform: rotate(45deg); margin-top: -3px;
+            content: ''; border: solid 1px var(--g-color); border-width: 0 1px 1px 0; width: 6px; height: 6px; transform: rotate(45deg); margin-top: -3px;
         }
     }
 
@@ -74,15 +74,15 @@
         &.area-arrow {
             .arrow {
                 &:hover {
-                    background: hsl(205, 100%, 95%);
+                    background: var(--g-plain-background-hover);
                     &::before {
-                        border-left-color: hsl(205, 100%, 50%);
+                        border-left-color: var(--g-plain-border-color-hover);
                     }
                 }
                 &:active {
-                    background: hsl(205, 100%, 90%);
+                    background: var(--g-plain-background-active);
                     &::before {
-                        border-left-color: hsl(205, 100%, 30%);
+                        border-left-color: var(--g-plain-border-color-active);
                     }
                 }
             }
@@ -91,9 +91,9 @@
     &.area-arrow {
         &[data-cg-pop-open], &.active {
             .arrow {
-                background: hsl(205, 100%, 90%);
+                background: var(--g-plain-background-active);
                 &::before {
-                    border-left-color: hsl(205, 100%, 30%);
+                    border-left-color: var(--g-plain-border-color-active);
                 }
             }
         }

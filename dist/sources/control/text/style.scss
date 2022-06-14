@@ -1,7 +1,8 @@
 .wrap {
-    display: flex; position: relative; outline: none; background: #FFF; padding: 7px;
+    display: flex; position: relative; outline: none; padding: 7px;
+
     &::before {
-        content: ''; pointer-events: none; position: absolute; left: 0; top: 0; width: 200%; height: 200%; transform-origin: 0 0; transform: scale(.5); border: solid 1px hsl(205, 0%, 70%); z-index: 1;
+        content: ''; pointer-events: none; position: absolute; left: 0; top: 0; width: 200%; height: 200%; transform-origin: 0 0; transform: scale(.5); z-index: 1; border-style: solid; border-width: 1px;
     }
     &.border-none::before {
         border: none;
@@ -12,41 +13,6 @@
     
     .op {
         flex: 1; width: 0; display: flex; flex-direction: column;
-    }
-
-    &:not([data-cg-disabled]) {
-        &:hover, &.focus {
-            &::before {
-                border: solid 1px hsl(205, 100%, 50%);
-            }
-            &.border-none::before {
-                border: none;
-            }
-            &.border-underline::before {
-                border-width: 0 0 1px 0;
-            }
-        }
-        &:active {
-            &::before {
-                border: solid 1px hsl(205, 100%, 30%);
-            }
-            &.border-none::before {
-                border: none;
-            }
-            &.border-underline::before {
-                border-width: 0 0 1px 0;
-            }
-        }
-    }
-    &[data-cg-disabled] {
-        background: hsl(205, 0%, 95%); color: hsl(205, 0%, 50%);
-        &::before {
-            border-color: hsl(205, 0%, 60%);
-        }
-
-        .op {
-            pointer-events: none;
-        }
     }
 
     .multi-t {
@@ -77,6 +43,40 @@
 
     input {
         height: 0;
+    }
+
+    &:not([data-cg-disabled]) {
+        background: var(--g-plain-background);
+        &::before {
+            border-color: var(--g-plain-border-color);
+        }
+        
+        &.focus {
+            &::before {
+                border-color: var(--g-plain-border-color-focus);
+            }
+        }
+        &:hover {
+            &::before {
+                border-color: var(--g-plain-border-color-hover);
+            }
+        }
+        &:active {
+            &::before {
+                border-color: var(--g-plain-border-color-active);
+            }
+        }
+    }
+
+    &[data-cg-disabled] {
+        background: var(--g-plain-background-disabled); color: var(--g-plain-color-disabled);
+        &::before {
+            border-color: var(--g-plain-border-color-disabled);
+        }
+
+        .op {
+            pointer-events: none;
+        }
     }
 
 }

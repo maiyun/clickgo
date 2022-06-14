@@ -81,9 +81,9 @@ export const watch = {
         handler: function(this: types.IVControl): void {
             this.tabsData = this.tabs;
         },
-        'deep': 'true'
+        'deep': true
     },
-    'tabsData': {
+    'tabsComp': {
         handler: function(this: types.IVControl): void {
             this.refreshValue();
             this.$nextTick().then(() => {
@@ -92,7 +92,7 @@ export const watch = {
                 console.log(e);
             });
         },
-        'deep': 'true'
+        'deep': true
     },
     'tabPosition': {
         handler: async function(this: types.IVControl): Promise<void> {
