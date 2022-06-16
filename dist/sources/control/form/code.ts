@@ -139,11 +139,11 @@ export const watch = {
                 this.iconData = (icon instanceof Blob) ? await clickgo.tool.blob2DataUrl(icon) : '';
             }
             // --- 触发 formIconChanged 事件 ---
-            clickgo.core.trigger('formIconChanged', this.taskId, this.formId, this.iconData);
+            clickgo.core.trigger('formIconChanged', this.iconData);
             /*
             if (!first) {
                 // --- 触发 formIconChanged 事件 ---
-                clickgo.core.trigger('formIconChanged', this.taskId, this.formId, this.iconData);
+                clickgo.core.trigger('formIconChanged', this.iconData);
             }
             */
         },
@@ -151,7 +151,7 @@ export const watch = {
     },
     'title': function(this: types.IVControl): void {
         // --- 触发 formTitleChanged 事件 ---
-        clickgo.core.trigger('formTitleChanged', this.taskId, this.formId, this.title);
+        clickgo.core.trigger('formTitleChanged', this.title);
     },
     'isStateMin': function(this: types.IVControl): void {
         if (this.stateMin === this.stateMinData) {
@@ -171,7 +171,7 @@ export const watch = {
         }
     },
     'showData': function(this: types.IVControl): void {
-        clickgo.core.trigger('formShowChanged', this.taskId, this.formId, this.showData);
+        clickgo.core.trigger('formShowChanged', this.showData);
     },
 
     'width': function(this: types.IVControl): void {
@@ -490,7 +490,7 @@ export const methods = {
             }
         }
         // --- 触发 formStateMinChanged 事件 ---
-        clickgo.core.trigger('formStateMinChanged', this.taskId, this.formId, this.stateMinData);
+        clickgo.core.trigger('formStateMinChanged', this.stateMinData);
         return true;
     },
     // --- 竖版扩大 ---
@@ -623,7 +623,7 @@ export const methods = {
             }
         }
         // --- 触发 formRemoved 事件 ---
-        clickgo.core.trigger('formStateMaxChanged', this.taskId, this.formId, this.stateMaxData);
+        clickgo.core.trigger('formStateMaxChanged', this.stateMaxData);
         return true;
     },
     // --- 关闭窗体 ---

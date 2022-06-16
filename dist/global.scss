@@ -113,8 +113,8 @@
 .cg-system-notify {
     background: var(--system-background); position: fixed; padding: 15px; border-radius: 3px; right: 0; top: 0; width: 280px; font-size: 14px; display: flex; transition: .1s ease-out; transition-property: transform, opacity; overflow: hidden; color: #f6f6f6; box-shadow: 0 5px 20px rgba(0, 0, 0, .25); -webkit-backdrop-filter: blur(30px) brightness(1.1); backdrop-filter: blur(30px) brightness(1.1);
 }
-.cg-system-icon {margin-right: 10px; width: 16px; height: 16px; border-radius: 50%;}
 .cg-system-icon {
+    margin-right: 10px; width: 16px; height: 16px; border-radius: 50%;
     &.cg-primary {
         background: var(--success);
     }

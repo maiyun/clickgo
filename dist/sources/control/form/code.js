@@ -135,13 +135,13 @@ exports.watch = {
                     const icon = yield clickgo.fs.getContent(this.icon);
                     this.iconData = (icon instanceof Blob) ? yield clickgo.tool.blob2DataUrl(icon) : '';
                 }
-                clickgo.core.trigger('formIconChanged', this.taskId, this.formId, this.iconData);
+                clickgo.core.trigger('formIconChanged', this.iconData);
             });
         },
         'immediate': false
     },
     'title': function () {
-        clickgo.core.trigger('formTitleChanged', this.taskId, this.formId, this.title);
+        clickgo.core.trigger('formTitleChanged', this.title);
     },
     'isStateMin': function () {
         if (this.stateMin === this.stateMinData) {
@@ -161,7 +161,7 @@ exports.watch = {
         }
     },
     'showData': function () {
-        clickgo.core.trigger('formShowChanged', this.taskId, this.formId, this.showData);
+        clickgo.core.trigger('formShowChanged', this.showData);
     },
     'width': function () {
         if (this.width === 'auto') {
@@ -429,7 +429,7 @@ exports.methods = {
                 return false;
             }
         }
-        clickgo.core.trigger('formStateMinChanged', this.taskId, this.formId, this.stateMinData);
+        clickgo.core.trigger('formStateMinChanged', this.stateMinData);
         return true;
     },
     maxVMethod: function (dbl) {
@@ -557,7 +557,7 @@ exports.methods = {
                 return false;
             }
         }
-        clickgo.core.trigger('formStateMaxChanged', this.taskId, this.formId, this.stateMaxData);
+        clickgo.core.trigger('formStateMaxChanged', this.stateMaxData);
         return true;
     },
     closeMethod: function () {
