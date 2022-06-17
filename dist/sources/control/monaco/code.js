@@ -39,12 +39,12 @@ exports.computed = {
         return clickgo.tool.getBoolean(this.readonly);
     },
     'showMask': function () {
-        return this.maskTxt !== '' ? true : clickgo.dom.is.move;
+        return this.isLoading ? true : clickgo.dom.is.move;
     }
 };
 exports.data = {
     'notInit': false,
-    'maskTxt': 'Loading...',
+    'isLoading': true,
     'localeData': {
         'en': {
             'copy': 'Copy',
@@ -349,7 +349,7 @@ const mounted = function () {
                     });
                     this.instance.setModel(model);
                 }
-                this.maskTxt = '';
+                this.isLoading = false;
                 this.$emit('init', {
                     'monaco': this.monaco,
                     'instance': this.instance

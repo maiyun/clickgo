@@ -33,13 +33,13 @@ export const computed = {
 
     'showMask': function(this: types.IVControl): boolean {
         // --- 防止拖动导致卡顿 ---
-        return this.maskTxt !== '' ? true : clickgo.dom.is.move;
+        return this.isLoading ? true : clickgo.dom.is.move;
     }
 };
 
 export const data = {
     'notInit': false,
-    'maskTxt': 'Loading...',
+    'isLoading': true,
 
     'localeData': {
         'en': {
@@ -400,7 +400,7 @@ export const mounted = function(this: types.IVControl): void {
                     this.instance.setModel(model);
                 }
                 // --- 初始化成功 ---
-                this.maskTxt = '';
+                this.isLoading = false;
                 this.$emit('init', {
                     'monaco': this.monaco,
                     'instance': this.instance

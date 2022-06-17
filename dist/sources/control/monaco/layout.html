@@ -1,7 +1,9 @@
 <div class="wrap" :class="[notInit && 'notInit']" :data-cg-disabled="isDisabled ? '' : undefined">
     <div v-if="notInit" class="notInit">Monaco Editor Not Found.</div>
     <iframe v-else class="iframe" ref="iframe"></iframe>
-    <div class="mask" :class="[maskTxt && 'loading']" v-show="showMask">{{maskTxt}}</div>
+    <div class="mask" :class="[isLoading && 'loading']" v-show="showMask">
+        <cg-loading v-if="isLoading"></cg-loading>
+    </div>
     <teleport to="#cg-pop-list">
         <div ref="pop" data-cg-pop>
             <slot>

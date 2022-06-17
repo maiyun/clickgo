@@ -10,6 +10,7 @@
                 <button @click="openForm('control', 'text')">Text</button>
                 <button @click="openForm('control', 'tab')">Tab</button>
                 <button @click="openForm('control', 'label')">Label</button>
+                <button @click="openForm('control', 'loading')">Loading</button>
                 <button @click="openForm('control', 'dialog')">Dialog</button>
                 <button @click="openForm('control', 'file')">File</button>
                 <button @click="openForm('control', 'block')">Block</button>
