@@ -21,6 +21,9 @@
             </div>
         </div>
         <div class="content" :class="[direction]" :style="{'background': background, 'padding': padding ? padding.replace(/([0-9]+)($| )/g, '$1px$2') : undefined}">
+            <div v-if="loading" class="loading">
+                <cg-loading></cg-loading>
+            </div>
             <slot></slot>
         </div>
     </div>

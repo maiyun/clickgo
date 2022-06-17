@@ -60,6 +60,9 @@ exports.props = {
     'resize': {
         'default': true
     },
+    'loading': {
+        'default': false
+    },
     'move': {
         'default': true
     },
