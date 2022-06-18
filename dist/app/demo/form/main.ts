@@ -12,7 +12,3 @@ export const methods = {
         });
     }
 };
-
-export const mounted = async function(): Promise<void> {
-    await clickgo.core.initModules('monaco');
-};

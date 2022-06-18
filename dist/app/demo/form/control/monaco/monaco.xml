@@ -1,22 +1,26 @@
-<form title="Monaco" width="500" height="450" padding="10">
+<form title="Monaco" width="500" height="450" padding="10" :loading="!initMonaco">
     <layout gutter="10" direction="v" style="flex: 1; width: 0;">
         <label>File: {{path}}, Length: {{files[path].length}}</label>
         <layout gutter="10" style="flex: 1; height: 0;">
             <text :modelValue="JSON.stringify(files, null, 4)" style="flex: 1; width: 0;" multi readonly wrap></text>
-            <monaco v-model="path" v-model:files="files" :readonly="readonly" :language="language" :disabled="disabled" :theme="theme" @jump="jump" style="flex: 1; wdith: 0;"></monaco>
+            <monaco v-if="initMonaco" v-model="path" v-model:files="files" :readonly="readonly" :language="language" :disabled="disabled" :theme="theme" @jump="jump" style="flex: 1; wdith: 0;" :style="{'font-size': size, 'font-family': family ? 'Consolas, \'Courier New\', monospace' : undefined}"></monaco>
         </layout>
         <layout gutter="10">
-            <button @click="globalInclude" style="height: 30px; flex: 1; width: 0;">{{globali ? '' : '!'}}global</button>
-            <button @click="newInclude" style="height: 30px; flex: 1; width: 0;">{{newi ? '' : '!'}}new</button>
             <button @click="disabled = !disabled" style="height: 30px; flex: 1; width: 0;">{{disabled ? '' : '!'}}disabled</button>
             <button @click="readonly = !readonly" style="height: 30px; flex: 1; width: 0;">{{readonly ? '' : '!'}}readonly</button>
+            <button @click="family = !family" style="height: 30px; flex: 1; width: 0;">{{family ? '' : '!'}}Family CCM</button>
+            <select v-model="size" :data="['12px', '13px', '14px', '15px', '16px']" style="flex: 1; width: 0;"></select>
             <select v-model="theme" :data="themes" style="flex: 1; width: 0;"></select>
             <select v-model="path" @label="pathLebel" :data="list" style="flex: 1; width: 0;"></select>
         </layout>
         <label>Include files:</label>
         <layout gutter="10" style="flex: 1; height: 0;">
-            <list v-model="file" :data="filesName" :must="false" style="width: 100px;"></list>
-            <monaco v-if="files[file] !== undefined" v-model="files[file]" language="typescript" style="flex: 1; width: 0;"></monaco>
+            <layout direction="v" gutter="10" style="width: 100px;">
+                <list v-model="file" :data="filesName" :must="false" style="flex: 1;"></list>
+                <button @click="globalInclude" style="height: 30px;">{{globali ? '' : '!'}}global</button>
+                <button @click="newInclude" style="height: 30px;">{{newi ? '' : '!'}}new</button>
+            </layout>
+            <monaco v-if="(files[file] !== undefined) && initMonaco" v-model="files[file]" language="typescript" style="flex: 1; width: 0;"></monaco>
             <layout v-else align-v="center" align-h="center" style="flex: 1; width: 0;">Please select file.</layout>
         </layout>
     </layout>

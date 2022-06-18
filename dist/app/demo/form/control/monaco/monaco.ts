@@ -60,7 +60,11 @@ export const data = {
     'newi': false,
 
     'readonly': false,
-    'disabled': false
+    'disabled': false,
+    'size': '12px',
+    'family': false,
+
+    'initMonaco': false
 };
 
 export const computed = {
@@ -104,4 +108,12 @@ export const methods = {
     pathLebel: function(this: types.IVForm, label: string): void {
         this.language = label.toLowerCase();
     }
+};
+
+export const mounted = function(this: types.IVForm): void {
+    clickgo.core.initModules('monaco').then(() => {
+        this.initMonaco = true;
+    }).catch(() => {
+        this.initMonaco = true;
+    });
 };

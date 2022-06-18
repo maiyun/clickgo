@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.methods = exports.computed = exports.data = void 0;
+exports.mounted = exports.methods = exports.computed = exports.data = void 0;
 const clickgo = require("clickgo");
 exports.data = {
     'path': '/index.html',
@@ -57,7 +57,10 @@ exports.data = {
     'globali': false,
     'newi': false,
     'readonly': false,
-    'disabled': false
+    'disabled': false,
+    'size': '12px',
+    'family': false,
+    'initMonaco': false
 };
 exports.computed = {
     'filesName': function () {
@@ -100,3 +103,11 @@ exports.methods = {
         this.language = label.toLowerCase();
     }
 };
+const mounted = function () {
+    clickgo.core.initModules('monaco').then(() => {
+        this.initMonaco = true;
+    }).catch(() => {
+        this.initMonaco = true;
+    });
+};
+exports.mounted = mounted;

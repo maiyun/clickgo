@@ -1,5 +1,5 @@
 <div class="wrap" :class="[notInit && 'notInit']" :data-cg-disabled="isDisabled ? '' : undefined">
-    <div v-if="notInit" class="notInit">Monaco Editor Not Found.</div>
+    <div v-if="notInit" class="notInit">Monaco module not found.</div>
     <iframe v-else class="iframe" ref="iframe"></iframe>
     <div class="mask" :class="[isLoading && 'loading']" v-show="showMask">
         <cg-loading v-if="isLoading"></cg-loading>

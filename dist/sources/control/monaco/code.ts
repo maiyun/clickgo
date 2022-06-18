@@ -399,6 +399,25 @@ export const mounted = function(this: types.IVControl): void {
                     });
                     this.instance.setModel(model);
                 }
+                // --- 监听 font 相关信息 ---
+                clickgo.dom.watchStyle(this.$el, ['font-size', 'font-family'], (n, v) => {
+                    switch (n) {
+                        case 'font-size': {
+                            idoc.body.style.fontSize = v;
+                            this.instance.updateOptions({
+                                'fontSize': v
+                            });
+                            break;
+                        }
+                        case 'font-family': {
+                            idoc.body.style.fontFamily = v;
+                            this.instance.updateOptions({
+                                'fontFamily': v
+                            });
+                            break;
+                        }
+                    }
+                }, true);
                 // --- 初始化成功 ---
                 this.isLoading = false;
                 this.$emit('init', {
@@ -412,6 +431,7 @@ export const mounted = function(this: types.IVControl): void {
     }
     else {
         // --- 没有成功 ---
+        this.isLoading = false;
         this.notInit = true;
     }
 };

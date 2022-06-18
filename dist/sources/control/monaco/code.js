@@ -349,6 +349,24 @@ const mounted = function () {
                     });
                     this.instance.setModel(model);
                 }
+                clickgo.dom.watchStyle(this.$el, ['font-size', 'font-family'], (n, v) => {
+                    switch (n) {
+                        case 'font-size': {
+                            idoc.body.style.fontSize = v;
+                            this.instance.updateOptions({
+                                'fontSize': v
+                            });
+                            break;
+                        }
+                        case 'font-family': {
+                            idoc.body.style.fontFamily = v;
+                            this.instance.updateOptions({
+                                'fontFamily': v
+                            });
+                            break;
+                        }
+                    }
+                }, true);
                 this.isLoading = false;
                 this.$emit('init', {
                     'monaco': this.monaco,
@@ -360,6 +378,7 @@ const mounted = function () {
         idoc.head.append(loaderEl);
     }
     else {
+        this.isLoading = false;
         this.notInit = true;
     }
 };
