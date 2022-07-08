@@ -34,6 +34,7 @@ exports.data = {
     'gesture': false,
     'style': false,
     'selection': false,
+    'content': false,
     'area': {}
 };
 exports.computed = {

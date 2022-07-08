@@ -1,4 +1,13 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.methods = exports.computed = exports.data = void 0;
 const clickgo = require("clickgo");
@@ -35,6 +44,10 @@ exports.data = {
     'select': 0,
     'select2': 'Appraise',
     'label2': '',
+    'tree': false,
+    'async': false,
+    'icon': false,
+    'sub6children': [],
     'select3': 0,
     'listData3': [],
     'select4': '',
@@ -65,7 +78,21 @@ exports.computed = {
                     'Sub1',
                     {
                         'label': 'Title2',
-                        'children': ['Sub2', 'Sub3']
+                        'children': ['Sub2', 'Sub3'],
+                        'icon': '../../../res/zip.svg',
+                        'openicon': '../../../res/sql.svg'
+                    },
+                    'Sub4',
+                    {
+                        'label': 'Title3',
+                        'title': true,
+                        'children': ['Sub5',
+                            {
+                                'value': 'Sub6',
+                                'children': this.sub6children
+                            }
+                        ],
+                        'tree': 1
                     }
                 ]
             }];
@@ -126,6 +153,25 @@ exports.methods = {
         else {
             this.select = 1;
         }
+    },
+    selectButtonList: function () {
+        this.select2 = 'Sub3';
+    },
+    onSelectLoad: function (value, resolve) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (value !== 'Sub6') {
+                yield clickgo.tool.sleep(100);
+                if (value === 'Sub8') {
+                    resolve(['Sub9', 'Sub10']);
+                }
+                else {
+                    resolve();
+                }
+                return;
+            }
+            yield clickgo.tool.sleep(300);
+            this.sub6children = ['Sub7', 'Sub8'];
+        });
     },
     onSelect: function (area) {
         this.selectionArea = area;

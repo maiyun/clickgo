@@ -67,6 +67,8 @@ let lastTouchTime: number = 0;
 document.addEventListener('touchstart', function() {
     lastTouchTime = Date.now();
     return;
+}, {
+    'passive': true
 });
 
 /**
@@ -661,11 +663,15 @@ export function bindDown(oe: MouseEvent | TouchEvent, opt: types.IBindDownOption
         }
     };
     if (oe instanceof MouseEvent) {
-        window.addEventListener('mousemove', move, { 'passive': false });
+        window.addEventListener('mousemove', move, {
+            'passive': false
+        });
         window.addEventListener('mouseup', end);
     }
     else {
-        (oe.target as HTMLElement).addEventListener('touchmove', move, { 'passive': false });
+        (oe.target as HTMLElement).addEventListener('touchmove', move, {
+            'passive': false
+        });
         (oe.target as HTMLElement).addEventListener('touchend', end);
         (oe.target as HTMLElement).addEventListener('touchcancel', end);
     }

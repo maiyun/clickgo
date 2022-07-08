@@ -211,6 +211,11 @@ export async function init(
                 }
                 // --- 给 event 增加包裹 ---
                 layout = tool.eventsAttrWrap(layout);
+                // --- 给 touchstart 增加 .passive 防止 [Violation] Added non-passive event listener to a scroll-blocking ---
+                /*
+                layout = layout.replace(/@(touchstart|touchmove|wheel)=/g, '@$1.passive=');
+                layout = layout.replace(/@(touchstart|touchmove|wheel)\.not=/g, '@$1=');
+                */
                 t.controls.layout[name] = layout;
                 t.controls.prep[name] = prep;
             }

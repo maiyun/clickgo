@@ -64,7 +64,8 @@ export const data = {
     'clientHeight': 0,
 
     'refreshCount': 0,
-    'lengthInit': false
+    'lengthInit': false,
+    'isWatch': true
 };
 
 export const watch = {
@@ -463,12 +464,18 @@ export const methods = {
         return rtn;
     },
     reShow: function(this: types.IVControl): void {
+        this.isWatch = false;
         const rtn = this.refreshPos(this.showPos, {
             'start': this.scrollOffset - 20,
             'end': (this.scrollOffset as number) + (this.client as number) + 20
         });
         this.showPos.start = rtn.start;
         this.showPos.end = rtn.end;
+        this.$nextTick().then(() => {
+            this.isWatch = true;
+        }).catch(() => {
+            // --- Nothing ---
+        });
     },
     isInArea: function(this: types.IVControl, i: number, area: { 'start': number; 'end': number; }): boolean {
         const pos = this.itemsPos[i];
@@ -578,6 +585,13 @@ export const mounted = function(this: types.IVControl): void {
         }
         this.refreshView();
     }, true);
+    // --- 监听 content 发生的变动，如果不监听，可能导致内容撑开了元素，但是行高没有改变（content 按钮的例子） ---
+    clickgo.dom.watch(this.$el, () => {
+        if (!this.isWatch) {
+            return;
+        }
+        this.refreshView();
+    }, 'childsub');
     /*
     let mo = new MutationObserver(() => {
         this.refreshView();

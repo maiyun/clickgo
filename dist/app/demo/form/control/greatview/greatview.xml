@@ -6,7 +6,7 @@
             <layout gutter="10" style="flex: 1; height: 0;">
                 <greatview v-model:scroll-left="sLeft1" v-model:scroll-top="sTop1" direction="v" :selection="selection" @select="area = $event" @resize="c1 = $event" @change="l1 = $event" @scrollborder="scrollborder($event, 'v')" :style="{'line-height': style ? '1.5' : undefined, 'padding': style ? '10px' : undefined}" class="border" style="flex: 1; width: 0;" :data="lineCount" v-slot="data" :items-size="is" same>
                     <button v-if="data.index > 0 && data.index % 10 === 0" style="height: 30px;">test</button>
-                    <block v-else>Line {{data.row}}, index: {{data.index}}.</block>
+                    <block v-else>Line {{data.row}}, index: {{data.index}}<label v-if="content" class="content">ha</label>.</block>
                 </greatview>
                 <layout class="border" style="flex: 1; width: 0;">
                     <greatview v-model:scroll-left="sLeft2" v-model:scroll-top="sTop2" direction="v" :selection="selection" @select="area = $event" @resize="c2 = $event" @change="l2 = $event" @scrollborder="scrollborder($event, 'v')" :style="{'line-height': style ? '1.5' : undefined, 'padding': style ? '10px' : undefined}" style="flex: 1; width: 0;" :data="lineCount" v-slot="data" :items-size="is" same>
@@ -37,6 +37,7 @@
                 <button @click="gesture = !gesture" style="flex: 1; width: 0; height: 30px;">{{gesture ? '' : '!'}}gesture</button>
                 <button @click="selection = !selection" style="flex: 1; width: 0; height: 30px;">{{selection ? '' : '!'}}selection</button>
                 <button @click="style = !style" style="flex: 1; width: 0; height: 30px;">{{style ? '' : '!'}}style</button>
+                <button @click="content = !content" style="flex: 1; width: 0; height: 30px;">{{content ? '' : '!'}}content</button>
             </layout>
         </layout>
         <!-- 自适应 -->
@@ -73,14 +74,16 @@
             <label>Scroll Left: {{sLeft5}}, Scroll Top: {{sTop5}}, Length: {{l5}}, Client: {{c5}}.</label>
         </layout>
         <!-- 嵌套 -->
-        <greatview v-else class="border" direction="v" @resizen="c6 = $event" solo="false" style="flex: 1; width: 0; padding: 10px;" :data="100" v-slot="data" :items-size="is6" same>
-            <greatview v-if="data.row === 30" class="border" direction="v" solo="false" style="height: 50px;" :data="50" v-slot="data" same>
-                <label>Line {{data.row}}</label>
+        <layout v-else style="flex: 1; width: 0; padding: 10px;">
+            <greatview class="border" direction="v" @resizen="c6 = $event" solo="false" style="flex: 1; width: 0;" :data="100" v-slot="data" :items-size="is6" same>
+                <greatview v-if="data.row === 30" class="border" direction="v" solo="false" style="height: 50px;" :data="50" v-slot="data" same>
+                    <label>Line {{data.row}}</label>
+                </greatview>
+                <greatview v-else-if="data.row === 40" :data="50" v-slot="data" class="border" solo="false" style="height: 50px;" :style="{'width': c6 + 'px'}" same>
+                    <label class="rightborder" style="width: 80px;">Line {{data.row}}</label>
+                </greatview>
+                <label v-else>Line {{data.row}}</label>
             </greatview>
-            <greatview v-else-if="data.row === 40" :data="50" v-slot="data" class="border" solo="false" style="height: 50px;" :style="{'width': c6 + 'px'}" same>
-                <label class="rightborder" style="width: 80px;">Line {{data.row}}</label>
-            </greatview>
-            <label v-else>Line {{data.row}}</label>
-        </greatview>
+        </layout>
     </tab>
 </form>

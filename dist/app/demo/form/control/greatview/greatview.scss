@@ -16,3 +16,7 @@
 .block block {
     background: #07c160; color: #FFF; display: flex; align-items: center; justify-content: center; flex: 1;
 }
+
+.content {
+    display: inline-block; padding: 5px; background: rgba(0, 0, 0, .1); margin-left: 2px; margin-bottom: 1px;
+}

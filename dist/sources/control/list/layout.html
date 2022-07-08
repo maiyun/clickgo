@@ -1,8 +1,14 @@
 <cg-greatlist :model-value="value" @update:model-value="updateModelValue" :data="dataComp" :adaptation="adaptation" :disabled="disabled" :must="isMust" :multi="isMulti" same>
     <template v-slot="data">
-        <cg-marquee scroll="false">
-            <div :class="[data.row.title && 'title']" :style="{'padding-left': data.row.level * 14 + 'px'}">{{data.row.label === '' ? '　' : data.row.label}}</div>
-        </cg-marquee>
+        <div class="item" :class="[data.row.disabled && 'disabled']" :style="{'padding-left': 'calc(var(--space) * ' + data.row.level + ')'}">
+            <div v-if="isTree" class="tree" :class="['tree' + data.row.tree]" @click="treeClick(data.row)">
+                <cg-loading v-if="data.row.tree === 2" style="width: 12px; height: 12px;"></cg-loading>
+            </div>
+            <cg-img v-if="isIcon" class="icon" :src="((data.row.tree <= 0) || (data.row.tree === 2)) ? data.row.icon : (data.row.openicon || data.row.icon)"></cg-img>
+            <cg-marquee scroll="false">
+                <div :class="[data.row.title && 'title']">{{data.row.label === '' ? '　' : data.row.label}}</div>
+            </cg-marquee>
+        </div>
     </template>
     <template v-if="$slots.default" v-slot:pop>
         <slot></slot>

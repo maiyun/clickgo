@@ -35,6 +35,10 @@ export const data = {
 
     'select2': 'Appraise',
     'label2': '',
+    'tree': false,
+    'async': false,
+    'icon': false,
+    'sub6children': [],
 
     'select3': 0,
     'listData3': [],
@@ -68,7 +72,21 @@ export const computed = {
                 'Sub1',
                 {
                     'label': 'Title2',
-                    'children': ['Sub2', 'Sub3']
+                    'children': ['Sub2', 'Sub3'],
+                    'icon': '../../../res/zip.svg',
+                    'openicon': '../../../res/sql.svg'
+                },
+                'Sub4',
+                {
+                    'label': 'Title3',
+                    'title': true,
+                    'children': ['Sub5',
+                        {
+                            'value': 'Sub6',
+                            'children': this.sub6children
+                        }
+                    ],
+                    'tree': 1
                 }
             ]
         }];
@@ -130,6 +148,26 @@ export const methods = {
         else {
             this.select = 1;
         }
+    },
+    selectButtonList: function(this: types.IVForm): void {
+        this.select2 = 'Sub3';
+    },
+    onSelectLoad: async function(this: types.IVForm,
+        value: string,
+        resolve: (child?: any[]) => void
+    ): Promise<void> {
+        if (value !== 'Sub6') {
+            await clickgo.tool.sleep(100);
+            if (value === 'Sub8') {
+                resolve(['Sub9', 'Sub10']);
+            }
+            else {
+                resolve();
+            }
+            return;
+        }
+        await clickgo.tool.sleep(300);
+        this.sub6children = ['Sub7', 'Sub8'];
     },
     onSelect: function(this: types.IVForm, area: Record<string, any>): void {
         this.selectionArea = area;

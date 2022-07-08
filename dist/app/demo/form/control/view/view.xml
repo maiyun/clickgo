@@ -77,16 +77,18 @@
             <label>Scroll Left: {{sLeft5}}, Scroll Top: {{sTop5}}, Length: {{l5}}, Client: {{c5}}.</label>
         </layout>
         <!-- 嵌套 -->
-        <view v-else class="border" direction="v" @resizen="c6 = $event" solo="false" style="flex: 1; width: 0; padding: 10px;">
-            <template v-for="i of 100">
-                <view v-if="i === 30" class="border" direction="v" solo="false" style="height: 50px;">
-                    <label v-for="k of 50">Line {{k}}</label>
-                </view>
-                <view v-else-if="i === 40" class="border" solo="false" style="height: 50px;" :style="{'width': c6 + 'px'}">
-                    <label v-for="k of 50" class="rightborder" style="width: 80px;">Line {{k}}</label>
-                </view>
-                <label v-else>Line {{i}}</label>
-            </template>
-        </view>
+        <layout v-else style="flex: 1; width: 0; padding: 10px;">
+            <view class="border" direction="v" @resizen="c6 = $event" solo="false" style="flex: 1; width: 0;">
+                <template v-for="i of 100">
+                    <view v-if="i === 30" class="border" direction="v" solo="false" style="height: 50px;">
+                        <label v-for="k of 50">Line {{k}}</label>
+                    </view>
+                    <view v-else-if="i === 40" class="border" solo="false" style="height: 50px;" :style="{'width': c6 + 'px'}">
+                        <label v-for="k of 50" class="rightborder" style="width: 80px;">Line {{k}}</label>
+                    </view>
+                    <label v-else>Line {{i}}</label>
+                </template>
+            </view>
+        </layout>
     </tab>
 </form>

@@ -927,7 +927,9 @@ function doFocusAndPopEvent(e) {
     changeFocus();
 }
 exports.doFocusAndPopEvent = doFocusAndPopEvent;
-window.addEventListener('touchstart', doFocusAndPopEvent);
+window.addEventListener('touchstart', doFocusAndPopEvent, {
+    'passive': true
+});
 window.addEventListener('mousedown', doFocusAndPopEvent);
 function remove(formId) {
     const taskId = getTaskId(formId);

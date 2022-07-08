@@ -4,5 +4,5 @@
         <loading style="width: 40px; height: 40px;"></loading>
         <loading style="width: 30px; height: 30px;"></loading>
         <loading></loading>
-    <layout>
+    </layout>
 </form>

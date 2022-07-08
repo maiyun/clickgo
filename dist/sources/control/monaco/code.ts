@@ -376,7 +376,9 @@ export const mounted = function(this: types.IVControl): void {
                     clickgo.form.hidePop();
                 };
                 monacoEl.addEventListener('mousedown', down);
-                monacoEl.addEventListener('touchstart', down);
+                monacoEl.addEventListener('touchstart', down, {
+                    'passive': true
+                });
                 // -- 设置文件列表 ---
                 if (this.files !== undefined) {
                     // --- 读取 files 中的文件内容 ---

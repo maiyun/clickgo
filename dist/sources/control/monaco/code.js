@@ -330,7 +330,9 @@ const mounted = function () {
                     clickgo.form.hidePop();
                 };
                 monacoEl.addEventListener('mousedown', down);
-                monacoEl.addEventListener('touchstart', down);
+                monacoEl.addEventListener('touchstart', down, {
+                    'passive': true
+                });
                 if (this.files !== undefined) {
                     this.refreshModels(this.files, undefined);
                     const model = this.monaco.editor.getModel(this.monaco.Uri.parse(this.modelValue));

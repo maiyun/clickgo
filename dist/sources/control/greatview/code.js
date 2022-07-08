@@ -67,7 +67,8 @@ exports.data = {
     'clientWidth': 0,
     'clientHeight': 0,
     'refreshCount': 0,
-    'lengthInit': false
+    'lengthInit': false,
+    'isWatch': true
 };
 exports.watch = {
     'data': {
@@ -403,12 +404,17 @@ exports.methods = {
         return rtn;
     },
     reShow: function () {
+        this.isWatch = false;
         const rtn = this.refreshPos(this.showPos, {
             'start': this.scrollOffset - 20,
             'end': this.scrollOffset + this.client + 20
         });
         this.showPos.start = rtn.start;
         this.showPos.end = rtn.end;
+        this.$nextTick().then(() => {
+            this.isWatch = true;
+        }).catch(() => {
+        });
     },
     isInArea: function (i, area) {
         const pos = this.itemsPos[i];
@@ -512,5 +518,11 @@ const mounted = function () {
         }
         this.refreshView();
     }, true);
+    clickgo.dom.watch(this.$el, () => {
+        if (!this.isWatch) {
+            return;
+        }
+        this.refreshView();
+    }, 'childsub');
 };
 exports.mounted = mounted;

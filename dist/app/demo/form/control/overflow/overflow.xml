@@ -81,16 +81,18 @@
             <label>Scroll Left: {{sLeft5}}, Scroll Top: {{sTop5}}, Length: {{l5}}, Client: {{c5}}.</label>
         </layout>
         <!-- 嵌套 -->
-        <overflow v-else class="border" direction="v" style="flex: 1; width: 0; padding: 10px;">
-            <template v-for="i of 100">
-                <overflow v-if="i === 30" class="border" direction="v" style="height: 50px;">
-                    <label v-for="k of 50">Line {{k}}</label>
-                </overflow>
-                <overflow v-else-if="i === 40" class="border" style="height: 50px;">
-                    <label v-for="k of 50" class="rightborder" style="width: 80px;">Line {{k}}</label>
-                </overflow>
-                <label v-else>Line {{i}}</label>
-            </template>
-        </overflow>
+        <layout v-else style="flex: 1; width: 0; padding: 10px;">
+            <overflow class="border" direction="v" style="flex: 1; width: 0;">
+                <template v-for="i of 100">
+                    <overflow v-if="i === 30" class="border" direction="v" style="height: 50px;">
+                        <label v-for="k of 50">Line {{k}}</label>
+                    </overflow>
+                    <overflow v-else-if="i === 40" class="border" style="height: 50px;">
+                        <label v-for="k of 50" class="rightborder" style="width: 80px;">Line {{k}}</label>
+                    </overflow>
+                    <label v-else>Line {{i}}</label>
+                </template>
+            </overflow>
+        </layout>
     </tab>
 </form>

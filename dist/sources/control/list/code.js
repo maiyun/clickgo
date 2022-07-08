@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.methods = exports.computed = exports.props = void 0;
+exports.methods = exports.watch = exports.data = exports.computed = exports.props = void 0;
 const clickgo = require("clickgo");
 exports.props = {
     'adaptation': {
@@ -13,7 +13,22 @@ exports.props = {
         'default': true
     },
     'multi': {
-        'default': false,
+        'default': false
+    },
+    'tree': {
+        'default': false
+    },
+    'tree-default': {
+        'default': 0
+    },
+    'async': {
+        'default': false
+    },
+    'icon': {
+        'default': false
+    },
+    'icon-default': {
+        'default': undefined
     },
     'data': {
         'default': []
@@ -22,39 +37,6 @@ exports.props = {
         'default': ''
     }
 };
-function formatData(inData, level = 0) {
-    var _a, _b, _c, _d, _e, _f;
-    let data = [];
-    for (let k = 0; k < inData.length; ++k) {
-        const item = inData[k];
-        const type = typeof item;
-        const over = {
-            'label': '',
-            'value': '',
-            'title': false,
-            'disabled': false,
-            'control': 'item',
-            'level': level
-        };
-        if (type === 'object') {
-            over.label = (_b = (_a = item.label) !== null && _a !== void 0 ? _a : item.value) !== null && _b !== void 0 ? _b : k;
-            over.value = (_d = (_c = item.value) !== null && _c !== void 0 ? _c : item.label) !== null && _d !== void 0 ? _d : k;
-            over.title = item.children ? true : false;
-            over.disabled = over.title ? true : ((_e = item.disabled) !== null && _e !== void 0 ? _e : false);
-            over.control = (_f = item.control) !== null && _f !== void 0 ? _f : 'item';
-            data.push(over);
-            if (item.children) {
-                data = data.concat(formatData(item.children, level + 1));
-            }
-        }
-        else {
-            over.label = item;
-            over.value = item;
-            data.push(over);
-        }
-    }
-    return data;
-}
 exports.computed = {
     'isMust': function () {
         return clickgo.tool.getBoolean(this.must);
@@ -62,8 +44,14 @@ exports.computed = {
     'isMulti': function () {
         return clickgo.tool.getBoolean(this.multi);
     },
-    'dataComp': function () {
-        return formatData(this.data);
+    'isTree': function () {
+        return clickgo.tool.getBoolean(this.tree);
+    },
+    'isAsync': function () {
+        return clickgo.tool.getBoolean(this.async);
+    },
+    'isIcon': function () {
+        return clickgo.tool.getBoolean(this.icon);
     },
     'value': function () {
         var _a;
@@ -100,18 +88,13 @@ exports.computed = {
             label = [];
             if (modelValue.length > 0) {
                 for (let i = 0; i < modelValue.length; ++i) {
-                    let found = false;
-                    for (let k = 0; k < this.dataComp.length; ++k) {
-                        if (this.dataComp[k].value === modelValue[i]) {
-                            if (!this.dataComp[k].disabled && !this.dataComp[k].title) {
-                                found = true;
-                                value.push(k);
-                                label.push(this.dataComp[k].label);
-                            }
-                            break;
-                        }
+                    const item = this.find(modelValue[i], this.dataFormat);
+                    if (item) {
+                        const j = this.findComp(item.value);
+                        value.push(j);
+                        label.push(item.label);
                     }
-                    if (!found) {
+                    else {
                         change = true;
                         modelValue.splice(i, 1);
                         --i;
@@ -123,16 +106,13 @@ exports.computed = {
             value = -1;
             label = '';
             if (modelValue !== '') {
-                for (let k = 0; k < this.dataComp.length; ++k) {
-                    if (this.dataComp[k].value === modelValue) {
-                        if (!this.dataComp[k].disabled && !this.dataComp[k].title) {
-                            value = k;
-                            label = this.dataComp[k].label;
-                        }
-                        break;
-                    }
+                const item = this.find(modelValue, this.dataFormat);
+                if (item) {
+                    const j = this.findComp(item.value);
+                    value = j;
+                    label = item.label;
                 }
-                if (value === -1) {
+                else {
                     change = true;
                     modelValue = '';
                 }
@@ -143,6 +123,21 @@ exports.computed = {
         }
         this.$emit('label', label);
         return value;
+    },
+    'dataComp': function () {
+        return this.unpack(this.dataFormat);
+    }
+};
+exports.data = {
+    'dataFormat': []
+};
+exports.watch = {
+    'data': {
+        handler: function () {
+            this.dataFormat = this.formatData(this.data, this.dataFormat);
+        },
+        'immediate': true,
+        'deep': true
     }
 };
 exports.methods = {
@@ -151,7 +146,7 @@ exports.methods = {
             const modelValue = [];
             const label = [];
             for (const item of value) {
-                if (this.dataComp[item] && !this.dataComp[item].disabled && !this.dataComp[item].title) {
+                if (this.dataComp[item] && !this.dataComp[item].disabled) {
                     modelValue.push(this.dataComp[item].value);
                     label.push(this.dataComp[item].label);
                 }
@@ -162,6 +157,145 @@ exports.methods = {
         else {
             this.$emit('update:modelValue', this.dataComp[value] ? this.dataComp[value].value : '');
             this.$emit('label', this.dataComp[value] ? this.dataComp[value].label : '');
+        }
+    },
+    formatData: function (newData, oldData) {
+        var _a, _b, _c, _d, _e, _f;
+        const data = [];
+        const oldValues = [];
+        for (const item of oldData) {
+            if (oldValues.includes(item.value)) {
+                continue;
+            }
+            oldValues.push(item.value);
+        }
+        for (let k = 0; k < newData.length; ++k) {
+            const item = newData[k];
+            const type = typeof item;
+            const over = {
+                'label': '',
+                'value': '',
+                'title': false,
+                'disabled': false,
+                'control': 'item',
+                'tree': this.treeDefault,
+                'children': []
+            };
+            const value = type === 'object' ? ((_b = (_a = item.value) !== null && _a !== void 0 ? _a : item.label) !== null && _b !== void 0 ? _b : k) : item;
+            const oldIo = oldValues.indexOf(value);
+            if (type === 'object') {
+                over.label = (_d = (_c = item.label) !== null && _c !== void 0 ? _c : item.value) !== null && _d !== void 0 ? _d : k;
+                over.value = value;
+                over.title = item.title !== undefined ? item.title : false;
+                over.disabled = item.disabled !== undefined ? item.disabled : (over.title ? true : false);
+                over.control = (_e = item.control) !== null && _e !== void 0 ? _e : 'item';
+                if (item.icon) {
+                    over.icon = item.icon;
+                }
+                if (item.openicon) {
+                    over.openicon = item.openicon;
+                }
+                if (item.tree !== undefined) {
+                    over.tree = item.tree;
+                }
+                if (((_f = item.children) === null || _f === void 0 ? void 0 : _f.length) > 0) {
+                    over.children = this.formatData(item.children, oldIo !== -1 ? oldData[oldIo].children : []);
+                }
+            }
+            else {
+                over.label = value;
+                over.value = value;
+            }
+            if (oldIo !== -1) {
+                over.tree = oldData[oldIo].tree;
+            }
+            if (over.tree === 2) {
+                if (over.children.length === 0) {
+                    over.tree = -1;
+                }
+                else {
+                    over.tree = 1;
+                }
+            }
+            data.push(over);
+        }
+        return data;
+    },
+    unpack: function (data, level = 0) {
+        var _a, _b, _c;
+        const result = [];
+        for (const item of data) {
+            let tree = item.tree;
+            if ((item.children.length === 0) && !this.isAsync) {
+                tree = -1;
+            }
+            result.push({
+                'label': item.label,
+                'value': item.value,
+                'title': item.title,
+                'disabled': item.disabled,
+                'control': item.control,
+                'tree': tree,
+                'icon': (_a = item.icon) !== null && _a !== void 0 ? _a : this.iconDefault,
+                'openicon': (_c = (_b = item.openicon) !== null && _b !== void 0 ? _b : item.icon) !== null && _c !== void 0 ? _c : this.iconDefault,
+                'level': level,
+                'format': item
+            });
+            if (!this.isTree || (tree === 1)) {
+                result.push(...this.unpack(item.children, level + 1));
+            }
+        }
+        return result;
+    },
+    find: function (value, data) {
+        for (const item of data) {
+            if ((item.value === value) && !item.disabled) {
+                return item;
+            }
+            const result = this.find(value, item.children);
+            if (result) {
+                if (item.tree === 0) {
+                    item.tree = 1;
+                }
+                return result;
+            }
+        }
+        return null;
+    },
+    findComp: function (value) {
+        for (let i = 0; i < this.dataComp.length; ++i) {
+            if (this.dataComp[i].value === value) {
+                return i;
+            }
+        }
+        return null;
+    },
+    treeClick: function (item) {
+        if (item.format.tree === 0) {
+            if (this.isAsync && item.format.children.length === 0) {
+                item.format.tree = 2;
+                this.$emit('load', item.value, (children) => {
+                    if (children) {
+                        if (children.length === 0) {
+                            item.format.children = [];
+                            item.format.tree = -1;
+                        }
+                        else {
+                            item.format.children = this.formatData(children, []);
+                            item.format.tree = 1;
+                        }
+                    }
+                    else {
+                        item.format.tree = -1;
+                    }
+                });
+            }
+            else {
+                item.format.tree = 1;
+            }
+        }
+        else if (item.format.tree === 1) {
+            item.format.tree = 0;
         }
     }
 };

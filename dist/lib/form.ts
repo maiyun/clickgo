@@ -1164,7 +1164,9 @@ export function doFocusAndPopEvent(e: MouseEvent | TouchEvent): void {
     hidePop();
     changeFocus();
 }
-window.addEventListener('touchstart', doFocusAndPopEvent);
+window.addEventListener('touchstart', doFocusAndPopEvent, {
+    'passive': true
+});
 window.addEventListener('mousedown', doFocusAndPopEvent);
 
 /**
@@ -2040,6 +2042,11 @@ export async function create(opt: string | types.IFormCreateOptions): Promise<nu
     layout = tool.layoutClassPrepend(layout, prepList);
     // --- 给 event 增加包裹 ---
     layout = tool.eventsAttrWrap(layout);
+    // --- 给 touchstart 增加 .passive 防止 [Violation] Added non-passive event listener to a scroll-blocking ---
+    /*
+    layout = layout.replace(/@(touchstart|touchmove|wheel)=/g, '@$1.passive=');
+    layout = layout.replace(/@(touchstart|touchmove|wheel)\.not=/g, '@$1=');
+    */
     // --- 插入 HTML 到 Element ---
     elements.list.insertAdjacentHTML('beforeend', `<div class="cg-form-wrap" data-form-id="${formId.toString()}" data-task-id="${opt.taskId.toString()}"></div>`);
     // --- 获取刚才的 form wrap element 对象 ---

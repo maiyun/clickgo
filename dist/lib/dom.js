@@ -39,6 +39,8 @@ let lastTouchTime = 0;
 document.addEventListener('touchstart', function () {
     lastTouchTime = Date.now();
     return;
+}, {
+    'passive': true
 });
 function hasTouchButMouse(e) {
     if (e instanceof TouchEvent) {
@@ -501,11 +503,15 @@ function bindDown(oe, opt) {
         }
     };
     if (oe instanceof MouseEvent) {
-        window.addEventListener('mousemove', move, { 'passive': false });
+        window.addEventListener('mousemove', move, {
+            'passive': false
+        });
         window.addEventListener('mouseup', end);
     }
     else {
-        oe.target.addEventListener('touchmove', move, { 'passive': false });
+        oe.target.addEventListener('touchmove', move, {
+            'passive': false
+        });
         oe.target.addEventListener('touchend', end);
         oe.target.addEventListener('touchcancel', end);
     }

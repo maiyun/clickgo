@@ -12,6 +12,6 @@
     }
 
     .selection {
-        position: absolute; background: hsla(205, 100%, 50%, .2); border: solid 1px hsl(205, 100%, 50%); left: 0; top: 0; width: 100px; height: 100px; pointer-events: none; opacity: 0;
+        position: absolute; background: var(--g-background-opacity); border: solid 1px var(--g-border-color-focus); left: 0; top: 0; width: 100px; height: 100px; pointer-events: none; opacity: 0;
     }
 }

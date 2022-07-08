@@ -45,7 +45,7 @@
             <label>Raw data:</label>
             <view direction="v" style="border: solid 1px #b3b3b3; line-height: 1.5; height: 50px; padding: 5px;">{{listData}}</view>
             <layout gutter="10" style="flex: 1; height: 0;">
-                <list v-model="select2" :disabled="disabled" :must="must" :multi="multi" :selection="selection" :scroll="scroll" :data="listData" @label="label2 = $event" style="flex: 2; width: 0;">
+                <list v-model="select2" :disabled="disabled" :must="must" :multi="multi" :selection="selection" :scroll="scroll" :data="listData" @label="label2 = $event" style="flex: 2; width: 0;" :tree="tree" :async="async" :icon="icon" icon-default="../../../res/txt.svg" @load="onSelectLoad">
                     <menulist>
                         <menulist-item alt="I" @click="showIndex2">Show select</menulist-item>
                     </menulist>
@@ -74,7 +74,13 @@
         <button @click="slist.splice(-2, 0, {'type': 0, 'name': 'Card' + slist.length, 'path': 'Bob >> folder >> Card', 'src': '/package/res/r-2.svg','disabled': false})">Add</button>
         <button @click="slist.splice(-3, 1)">Remove</button>
         <button @click="scrollChange">Scroll {{scroll}}</button>
-        <button @click="selectButton">Select {{ntab === 'list' ? 'Item1' : 'item2'}}</button>
+        <button @click="icon = !icon" v-show="ntab === 'list'">{{icon ? '' : '!'}}icon</button>
+    </layout>
+    <layout class="ctr" gutter="10" v-show="ntab !== 'async'">
+        <button @click="selectButton">Select {{ntab === 'list' ? 'item1' : 'item2'}}</button>
+        <button @click="selectButtonList" v-show="ntab === 'list'">Select Sub3</button>
+        <button @click="tree = !tree" v-show="ntab === 'list'">{{tree ? '' : '!'}}tree</button>
+        <button @click="async = !async" v-show="ntab === 'list'">{{async ? '' : '!'}}async</button>
     </layout>
     <layout class="ctr" gutter="10">
         <button @click="disabled = !disabled">{{disabled ? '' : '!'}}disabled</button>

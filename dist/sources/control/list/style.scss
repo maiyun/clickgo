@@ -1,3 +1,41 @@
-.title {
-    font-style: italic;
+.item {
+    --space: 14px; display: flex; align-items: center;
+    .tree {
+        margin-right: 7px; position: relative; width: 12px; height: 12px; /* background-color: rgb(255, 0, 0, .1); */
+        &::before {
+            content: ''; position: absolute; left: 0; top: 2px; border: solid 1px var(--g-color-disabled); border-width: 1px 1px 0 0; width: 8px; height: 8px; transform: rotate(45deg);
+        }
+        &.tree2::before {
+            border-width: 0;
+        }
+        &.tree1::before {
+            border-width: 0 1px 1px 0; left: 2px; top: 0;
+        }
+        &.tree-1 {
+            visibility: hidden; pointer-events: none;
+        }
+    }
+    .icon {
+        margin-right: 7px; width: 16px; height: 16px;
+    }
+    cg-marquee {
+        flex: 1;
+    }
+    .title {
+        font-style: italic;
+    }
+
+    &:not(.disabled) {
+        .tree {
+            &.tree1::before {
+                border-color: var(--g-color);
+            }
+            &:hover::before {
+                border-color: var(--g-color-hover);
+            }
+            &:active::before {
+                border-color: var(--g-color-active);
+            }
+        }
+    }
 }
