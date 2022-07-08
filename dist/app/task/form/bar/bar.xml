@@ -2,7 +2,7 @@
 <form v-model:width="width" v-model:height="height" v-model:left="left" v-model:top="top" title="Bar" border="none" :resize="false" background="transparent">
     <task :position="position">
         <task-item>
-            <img src="/clickgo/icon-white.png" style="width: 16px; height: 16px;" />
+            <img src="/clickgo/icon.png" style="width: 16px; height: 16px;" />
         </task-item>
         <task-item v-for="(app, appIndex) of apps" :selected="app.selected" :opened="app.opened" :multi="app.formCount > 1" @click="itemClick(appIndex)" @mousedown="$event.stopPropagation()" @touchstart="$event.stopPropagation()">
             <img :src="app.icon" style="width: 16px; height: 16px;" />
