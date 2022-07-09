@@ -1,3 +1,5 @@
+// npm publish --tag dev --access public
+
 // --- 以下不会真正加载，最终会在底部进行赋值 ---
 export let clickgo: typeof import('./clickgo');
 export let control: typeof import('./lib/control');
