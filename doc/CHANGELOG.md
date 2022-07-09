@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.0.1-dev2
+
+[\*] Some optimizations.
+
 ## 3.0.0-dev
 
 [\*] Fully refactored, fresh start.
