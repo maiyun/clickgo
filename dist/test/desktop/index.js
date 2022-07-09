@@ -10,7 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const clickgo = require("../../index");
-function run() {
+(function () {
     return __awaiter(this, void 0, void 0, function* () {
         const body = document.getElementsByTagName('body')[0];
         const el = document.getElementById('tip');
@@ -54,7 +54,6 @@ function run() {
             document.getElementById('spic').style.background = '#0063b1';
         }
     });
-}
-run().catch(function (e) {
-    throw e;
+})().catch((e) => {
+    console.log(e);
 });

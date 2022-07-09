@@ -1,6 +1,6 @@
 import * as clickgo from '../../index';
 
-async function run(): Promise<void> {
+(async function() {
     const body = document.getElementsByTagName('body')[0];
     // --- 其他 ---
     const el = document.getElementById('tip');
@@ -47,7 +47,6 @@ async function run(): Promise<void> {
         body.style.background = '#0063b1';
         document.getElementById('spic')!.style.background = '#0063b1';
     }
-}
-run().catch(function(e) {
-    throw e;
+})().catch((e) => {
+    console.log(e);
 });

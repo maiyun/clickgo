@@ -1,13 +1,13 @@
 {
   "name": "clickgo",
-  "version": "3.0.0-dev",
+  "version": "3.0.1-dev2",
   "description": "Background interface, software interface, mobile phone APP interface operation library.",
   "keywords": [
     "deskrt",
     "ui",
     "clickgo"
   ],
-  "main": "dist/loader.js",
+  "main": "dist/index.js",
   "author": "hanguoshuai",
   "license": "Apache-2.0",
   "types": "./types/index.d.ts",
@@ -21,7 +21,9 @@
     "@typescript-eslint/parser": "^5.17.0",
     "electron": "^18.3.4",
     "eslint": "^8.12.0",
-    "jszip": "^3.10.0",
     "typescript": "^4.6.4"
+  },
+  "dependencies": {
+    "jszip": "^3.10.0"
   }
 }

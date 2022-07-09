@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 import * as types from '../../types';
+import * as clickgo from '../clickgo';
 import * as core from './core';
 import * as control from './control';
 import * as dom from './dom';
@@ -242,7 +243,7 @@ export async function run(url: string, opt: types.ITaskRunOptions = {}): Promise
         'id': taskId,
         'app': app,
         'customTheme': false,
-        'locale': Vue.reactive({
+        'locale': clickgo.vue.reactive({
             'lang': '',
             'data': {}
         }),
@@ -661,13 +662,13 @@ export function sleep(fun: () => void | Promise<void>, delay: number, taskId?: n
 }
 
 /** --- task 的信息 --- */
-export const systemTaskInfo: types.ISystemTaskInfo = Vue.reactive({
+export const systemTaskInfo: types.ISystemTaskInfo = clickgo.vue.reactive({
     'taskId': 0,
     'formId': 0,
     'length': 0
 });
 
-Vue.watch(systemTaskInfo, function(n, o) {
+clickgo.vue.watch(systemTaskInfo, function(n: any, o: any) {
     const originKeys = ['taskId', 'formId', 'length'];
     // --- 检测有没有缺少的 key ---
     for (const key of originKeys) {

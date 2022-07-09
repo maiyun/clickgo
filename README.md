@@ -14,32 +14,24 @@ Quickly and easily create a beautiful console interface.
 
 ## Installation
 
-Simply download and include with a script tag. ClickGo will be registered as a global variable.
+Load the module loader first, and then load it using the module loader.
 
-> Don't use the minified version during development. You will miss out on all the nice warnings for common mistakes!
-
-**Development Version**
+**index.html**
 
 ```html
-<script src="index.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@litert/loader@3.2.0/dist/loader.min.js?path=index"></script>
 ```
 
-**Production Version**
+**index.js**
 
-```html
-<script src="index.min.js"></script>
-```
-
-### CDN (recommend)
-
-Recommended: https://cdn.jsdelivr.net/npm/clickgo@3.0.0/dist/index.min.js (Less than 3kb minified and gzipped), which will reflect the latest version as soon as it is published to npm. You can also browse the source of the npm package at https://cdn.jsdelivr.net/npm/clickgo/.
-
-Also available on [unpkg](https://unpkg.com/clickgo@3.0.0/dist/index.js).
-
-For example:
-
-```html
-<script src="https://cdn.jsdelivr.net/npm/clickgo@3.0.0/dist/index.min.js"></script>
+```typescript
+import * as clickgo from 'clickgo';
+(async function() {
+    await clickgo.init();
+    await clickgo.task.run('xxx');
+})().catch((e) => {
+    console.log(e);
+});
 ```
 
 ### NPM
@@ -58,7 +50,7 @@ $ npm i clickgo@dev --save
 
 ## Note
 
-ClickGo demand loading Vue, jszip, resize-observer, but **DO NOT** reference these JS and CSS files. ClickGo will automatically reference. You only need to reference "index.js".
+ClickGo demand loading Vue, jszip, resize-observer, but **DO NOT** reference these JS and CSS files. ClickGo will automatically reference. You only need to import "clickgo" module.
 
 ## Demo
 

@@ -39,6 +39,8 @@ export function getCdn(): string {
     return cdn;
 }
 
+export const vue: import('../types/index').IVueObject = (window as any).Vue;
+
 export * as control from './lib/control';
 export * as core from './lib/core';
 export * as dom from './lib/dom';

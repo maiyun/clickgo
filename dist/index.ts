@@ -12,6 +12,7 @@ export let task: typeof import('./lib/task');
 export let theme: typeof import('./lib/theme');
 export let tool: typeof import('./lib/tool');
 export let zip: typeof import('./lib/zip');
+export let vue: import('../types/index').IVueObject;
 
 export function getVersion(): string {
     return clickgo.getVersion();

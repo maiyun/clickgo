@@ -30,7 +30,7 @@ const configOrigin: types.IConfig = {
     'desktop.wallpaper': null,
     'desktop.path': null
 };
-export const config: types.IConfig = Vue.reactive({
+export const config: types.IConfig = clickgo.vue.reactive({
     'locale': 'en',
     'task.position': 'bottom',
     'task.pin': {},
@@ -40,7 +40,7 @@ export const config: types.IConfig = Vue.reactive({
     'desktop.path': null
 });
 
-Vue.watch(config, function() {
+clickgo.vue.watch(config, function() {
     // --- 检测有没有缺少的 config key ---
     for (const key in configOrigin) {
         if ((config as any)[key] !== undefined) {

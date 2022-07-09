@@ -133,7 +133,7 @@ const elements = {
         }, {
             'passive': false
         });
-        const simpleSystemtaskApp = Vue.createApp({
+        const simpleSystemtaskApp = clickgo.vue.createApp({
             'template': '<div v-for="(item, formId) of forms" class="cg-simplesystemtask-item" @click="click(parseInt(formId))"><div v-if="item.icon" class="cg-simplesystemtask-icon" :style="{\'background-image\': \'url(\' + item.icon + \')\'}"></div><div>{{item.title}}</div></div>',
             'data': function () {
                 return {
@@ -1849,7 +1849,7 @@ function create(opt) {
             dom.pushStyle(taskId, style, 'form', formId);
         }
         const rtn = yield new Promise(function (resolve) {
-            const vapp = Vue.createApp({
+            const vapp = clickgo.vue.createApp({
                 'template': layout.replace(/^<cg-form/, '<cg-form ref="form"'),
                 'data': function () {
                     return tool.clone(data);

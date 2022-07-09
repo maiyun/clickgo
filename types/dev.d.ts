@@ -17,14 +17,3 @@ declare module 'clickgo' {
     export function setCdn(val: string): void;
     export function getCdn(): string;
 }
-
-declare namespace Vue {
-    export function createApp(opt: any): import('./index').IVueApp;
-    export function ref<T extends number | string>(obj: T): { 'value': T; };
-    export function reactive<T>(obj: T): T;
-    export function watch(
-        v: any,
-        cb: (n: any, o: any) => void | Promise<void>,
-        opt: Record<string, string | boolean>
-    ): void;
-}

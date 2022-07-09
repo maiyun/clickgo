@@ -10,6 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.refreshSystemPosition = exports.clearSystem = exports.setSystem = exports.systemTaskInfo = exports.sleep = exports.removeTimer = exports.createTimer = exports.clearLocaleLang = exports.setLocaleLang = exports.setLocale = exports.clearLocale = exports.loadLocale = exports.loadLocaleData = exports.end = exports.run = exports.getList = exports.get = exports.offFrame = exports.onFrame = exports.lastId = exports.list = void 0;
+const clickgo = require("../clickgo");
 const core = require("./core");
 const control = require("./control");
 const dom = require("./dom");
@@ -188,7 +189,7 @@ function run(url, opt = {}) {
             'id': taskId,
             'app': app,
             'customTheme': false,
-            'locale': Vue.reactive({
+            'locale': clickgo.vue.reactive({
                 'lang': '',
                 'data': {}
             }),
@@ -520,12 +521,12 @@ function sleep(fun, delay, taskId, formId) {
     });
 }
 exports.sleep = sleep;
-exports.systemTaskInfo = Vue.reactive({
+exports.systemTaskInfo = clickgo.vue.reactive({
     'taskId': 0,
     'formId': 0,
     'length': 0
 });
-Vue.watch(exports.systemTaskInfo, function (n, o) {
+clickgo.vue.watch(exports.systemTaskInfo, function (n, o) {
     var _a, _b;
     const originKeys = ['taskId', 'formId', 'length'];
     for (const key of originKeys) {

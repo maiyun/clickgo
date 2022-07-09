@@ -13,3 +13,4 @@ tsconfig.json
 /dist/build*
 /dist/compiler*
 /dist/global.scss
+/types/dev.d.ts

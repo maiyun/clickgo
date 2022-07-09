@@ -614,6 +614,17 @@ export interface IVControl extends IVue {
 
 // --- vue ---
 
+export interface IVueObject {
+    createApp(opt: any): IVueApp;
+    ref<T extends number | string>(obj: T): { 'value': T; };
+    reactive<T>(obj: T): T;
+    watch(
+        v: any,
+        cb: (n: any, o: any) => void | Promise<void>,
+        opt: Record<string, string | boolean>
+    ): void;
+}
+
 export type IVueOptionMergeFunction = (to: unknown, from: unknown, instance: IVue) => any;
 
 export interface IVueConfig {

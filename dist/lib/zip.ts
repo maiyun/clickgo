@@ -278,7 +278,7 @@ export class Zip {
      */
     private _refreshList(): void {
         const list: Record<string, Record<string, types.IZipItem>> = {};
-        this._zip.forEach(function(relativePath, item) {
+        this._zip.forEach(function(relativePath: string, item: jszip.JSZipObject) {
             if (relativePath.startsWith('/')) {
                 relativePath = relativePath.slice(1);
             }

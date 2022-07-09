@@ -25,7 +25,7 @@ const configOrigin = {
     'desktop.wallpaper': null,
     'desktop.path': null
 };
-exports.config = Vue.reactive({
+exports.config = clickgo.vue.reactive({
     'locale': 'en',
     'task.position': 'bottom',
     'task.pin': {},
@@ -34,7 +34,7 @@ exports.config = Vue.reactive({
     'desktop.wallpaper': null,
     'desktop.path': null
 });
-Vue.watch(exports.config, function () {
+clickgo.vue.watch(exports.config, function () {
     for (const key in configOrigin) {
         if (exports.config[key] !== undefined) {
             continue;
