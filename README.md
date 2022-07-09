@@ -1,5 +1,7 @@
 # ClickGo
 
+<p align="center"><img src="dist/icon.png" width="100" height="100" alt="ClickGo"></p>
+
 [![npm version](https://img.shields.io/npm/v/clickgo.svg?colorB=brightgreen)](https://www.npmjs.com/package/clickgo "Stable Version")
 [![npm version](https://img.shields.io/npm/v/clickgo/dev.svg)](https://www.npmjs.com/package/clickgo "Development Version")
 [![npm version](https://img.shields.io/npm/v/clickgo/beta.svg)](https://www.npmjs.com/package/clickgo "Beta Version")

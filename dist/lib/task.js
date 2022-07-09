@@ -163,7 +163,7 @@ function run(url, opt = {}) {
         const notifyId = opt.progress ? form.notify({
             'title': (_b = (_a = localeData[core.config.locale]) === null || _a === void 0 ? void 0 : _a.loading) !== null && _b !== void 0 ? _b : localeData['en'].loading,
             'content': url,
-            'icon': opt.icon,
+            'icon': icon,
             'timeout': 0,
             'progress': true
         }) : undefined;

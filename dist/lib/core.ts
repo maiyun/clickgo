@@ -664,7 +664,7 @@ export async function fetchApp(url: string, opt: types.ICoreFetchAppOptions = {}
     catch {
         return null;
     }
-    let icon = tool.urlResolve(__dirname, './') + 'icon.png';
+    let icon = '/clickgo/icon.png';
     if (config.icon && (files[config.icon] instanceof Blob)) {
         icon = await tool.blob2DataUrl(files[config.icon] as Blob);
     }

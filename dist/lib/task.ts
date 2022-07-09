@@ -215,7 +215,7 @@ export async function run(url: string, opt: types.ITaskRunOptions = {}): Promise
     const notifyId: number | undefined = opt.progress ? form.notify({
         'title': localeData[core.config.locale]?.loading ?? localeData['en'].loading,
         'content': url,
-        'icon': opt.icon,
+        'icon': icon,
         'timeout': 0,
         'progress': true
     }) : undefined;

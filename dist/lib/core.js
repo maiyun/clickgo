@@ -601,7 +601,7 @@ function fetchApp(url, opt = {}) {
         catch (_b) {
             return null;
         }
-        let icon = tool.urlResolve(__dirname, './') + 'icon.png';
+        let icon = '/clickgo/icon.png';
         if (config.icon && (files[config.icon] instanceof Blob)) {
             icon = yield tool.blob2DataUrl(files[config.icon]);
         }
