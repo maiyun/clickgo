@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 import * as types from '../../types';
+import * as clickgo from '../clickgo';
 import * as form from './form';
 import * as core from './core';
 
@@ -1217,7 +1218,7 @@ export function bindDrag(e: MouseEvent | TouchEvent, opt: { 'el': HTMLElement; '
 }
 
 /** --- 目前是否已绑定了 bindMove --- */
-export const is = Vue.reactive({
+export const is = clickgo.vue.reactive({
     'move': false,
     'shift': false,
     'ctrl': false

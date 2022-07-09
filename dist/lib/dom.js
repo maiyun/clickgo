@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.fullscreen = exports.siblingsData = exports.siblings = exports.findParentByClass = exports.findParentByData = exports.bindResize = exports.bindMove = exports.is = exports.bindDrag = exports.bindLong = exports.allowEvent = exports.bindGesture = exports.bindDown = exports.isWatchStyle = exports.watchStyle = exports.clearWatch = exports.unwatch = exports.watch = exports.clearWatchSize = exports.unwatchSize = exports.watchSize = exports.getSize = exports.getStyleCount = exports.removeStyle = exports.pushStyle = exports.removeFromStyleList = exports.createToStyleList = exports.hasTouchButMouse = exports.setGlobalCursor = void 0;
+const clickgo = require("../clickgo");
 const form = require("./form");
 const core = require("./core");
 const topClass = ['#cg-form-list', '#cg-pop-list', '#cg-system', '#cg-simpletask'];
@@ -1001,7 +1002,7 @@ function bindDrag(e, opt) {
     });
 }
 exports.bindDrag = bindDrag;
-exports.is = Vue.reactive({
+exports.is = clickgo.vue.reactive({
     'move': false,
     'shift': false,
     'ctrl': false
