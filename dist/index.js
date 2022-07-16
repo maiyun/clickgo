@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.init = exports.getCdn = exports.setCdn = exports.getSafe = exports.setSafe = exports.getNative = exports.getVersion = exports.vue = exports.zip = exports.tool = exports.theme = exports.task = exports.native = exports.fs = exports.form = exports.dom = exports.core = exports.control = exports.clickgo = void 0;
+exports.init = exports.getCdn = exports.setCdn = exports.getSafe = exports.setSafe = exports.getPlatform = exports.getNative = exports.getVersion = exports.vue = exports.zip = exports.tool = exports.theme = exports.task = exports.native = exports.fs = exports.form = exports.dom = exports.core = exports.control = exports.clickgo = void 0;
 function getVersion() {
     return exports.clickgo.getVersion();
 }
@@ -18,6 +18,10 @@ function getNative() {
     return exports.clickgo.getNative();
 }
 exports.getNative = getNative;
+function getPlatform() {
+    return exports.clickgo.getPlatform();
+}
+exports.getPlatform = getPlatform;
 function setSafe(val) {
     exports.clickgo.setSafe(val);
 }

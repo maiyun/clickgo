@@ -9,6 +9,7 @@ import * as clickgo from '../../index';
     }
     el.innerHTML = 'Starting system app...';
     await clickgo.init();
+    clickgo.native.send('cg-set-token', clickgo.core.getToken());
     // --- 监听错误 ---
     clickgo.core.globalEvents.errorHandler = function(taskId, formId, error, info) {
         if (!el) {
@@ -26,7 +27,7 @@ import * as clickgo from '../../index';
     };
     // --- 启动 task app ---
     const sTaskId = await clickgo.task.run('/clickgo/app/task/', {
-        'progress': false
+        'notify': false
     });
     if (sTaskId <= 0) {
         el.innerHTML = `Start failed(${sTaskId.toString()}).`;

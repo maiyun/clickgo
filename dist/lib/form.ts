@@ -113,10 +113,16 @@ const elements: {
         document.getElementsByTagName('body')[0].appendChild(this.wrap);
         if (clickgo.getNative()) {
             this.wrap.addEventListener('mouseenter', function() {
-                native.send('cg-mouse-ignore', 'false');
+                native.send('cg-mouse-ignore', JSON.stringify({
+                    'token': core.getToken(),
+                    'param': false
+                }));
             });
             this.wrap.addEventListener('mouseleave', function() {
-                native.send('cg-mouse-ignore', 'true');
+                native.send('cg-mouse-ignore', JSON.stringify({
+                    'token': core.getToken(),
+                    'param': true
+                }));
             });
         }
 
@@ -1364,6 +1370,9 @@ export async function create(opt: string | types.IFormCreateOptions): Promise<nu
             },
             getNative(): boolean {
                 return clickgo.getNative();
+            },
+            getPlatform(): string {
+                return clickgo.getPlatform();
             },
             getSafe(): boolean {
                 return clickgo.getSafe();

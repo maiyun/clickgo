@@ -22,6 +22,10 @@ export function getNative(): boolean {
     return clickgo.getNative();
 }
 
+export function getPlatform(): string {
+    return clickgo.getPlatform();
+}
+
 export function setSafe(val: boolean): void {
     clickgo.setSafe(val);
 }

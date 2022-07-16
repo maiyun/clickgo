@@ -18,9 +18,20 @@ export function getVersion(): string {
     return version;
 }
 
-const native = navigator.userAgent.toLowerCase().includes('electron') ? true : false;
+const native = navigator.userAgent.includes('electron') ? true : false;
 export function getNative(): boolean {
     return native;
+}
+
+let platform = 'web';
+if (native) {
+    const reg = / s(.+?)\//.exec(navigator.userAgent);
+    if (reg) {
+        platform = reg[1];
+    }
+}
+export function getPlatform(): string {
+    return platform;
 }
 
 let safe = true;

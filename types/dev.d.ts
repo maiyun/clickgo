@@ -12,6 +12,7 @@ declare module 'clickgo' {
 
     export function getVersion(): string;
     export function getNative(): boolean;
+    export function getPlatform(): string;
     export function setSafe(val: boolean): void;
     export function getSafe(): boolean;
     export function setCdn(val: string): void;

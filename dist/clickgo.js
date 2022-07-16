@@ -1,16 +1,27 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.zip = exports.tool = exports.theme = exports.task = exports.native = exports.fs = exports.form = exports.dom = exports.core = exports.control = exports.vue = exports.getCdn = exports.setCdn = exports.getSafe = exports.setSafe = exports.getNative = exports.getVersion = void 0;
+exports.zip = exports.tool = exports.theme = exports.task = exports.native = exports.fs = exports.form = exports.dom = exports.core = exports.control = exports.vue = exports.getCdn = exports.setCdn = exports.getSafe = exports.setSafe = exports.getPlatform = exports.getNative = exports.getVersion = void 0;
 const version = '3.0.0';
 function getVersion() {
     return version;
 }
 exports.getVersion = getVersion;
-const native = navigator.userAgent.toLowerCase().includes('electron') ? true : false;
+const native = navigator.userAgent.includes('electron') ? true : false;
 function getNative() {
     return native;
 }
 exports.getNative = getNative;
+let platform = 'web';
+if (native) {
+    const reg = / s(.+?)\//.exec(navigator.userAgent);
+    if (reg) {
+        platform = reg[1];
+    }
+}
+function getPlatform() {
+    return platform;
+}
+exports.getPlatform = getPlatform;
 let safe = true;
 function setSafe(val) {
     safe = val;

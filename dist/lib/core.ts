@@ -21,6 +21,14 @@ import * as task from './task';
 import * as tool from './tool';
 import * as zip from './zip';
 
+const token = tool.random(32);
+/**
+ * --- 获取 native 通讯 token，app 模式下无效 ---
+ */
+export function getToken(): string {
+    return token;
+}
+
 const configOrigin: types.IConfig = {
     'locale': 'en',
     'task.position': 'bottom',
@@ -577,32 +585,28 @@ export async function fetchApp(url: string, opt: types.ICoreFetchAppOptions = {}
 
     // --- 如果是 cga 文件，直接读取并交给 readApp 函数处理 ---
     if (cga) {
-        if (opt.notifyId) {
+        try {
             const blob = await fs.getContent(url, {
                 'current': current,
-                progress: (loaded, total): void => {
-                    form.notifyProgress(opt.notifyId!, loaded / total);
+                'progress': (loaded: number, total: number): void => {
+                    if (opt.notifyId) {
+                        form.notifyProgress(opt.notifyId, loaded / total);
+                    }
+                    if (opt.progress) {
+                        opt.progress(loaded, total) as unknown;
+                    }
                 }
             });
-            if ((blob === null) || (typeof blob === 'string')) {
+            if ((blob === null) || typeof blob === 'string') {
                 return null;
             }
-            form.notifyProgress(opt.notifyId, 1);
+            if (opt.notifyId) {
+                form.notifyProgress(opt.notifyId, 1);
+            }
             return await readApp(blob) || null;
         }
-        else {
-            try {
-                const blob = await fs.getContent(url, {
-                    'current': current
-                });
-                if ((blob === null) || typeof blob === 'string') {
-                    return null;
-                }
-                return await readApp(blob) || null;
-            }
-            catch {
-                return null;
-            }
+        catch {
+            return null;
         }
     }
     // --- 加载目录 ---

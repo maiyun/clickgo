@@ -158,10 +158,10 @@ function run(url, opt = {}) {
         if (opt.icon) {
             icon = opt.icon;
         }
-        if (opt.progress === undefined) {
-            opt.progress = true;
+        if (opt.notify === undefined) {
+            opt.notify = true;
         }
-        const notifyId = opt.progress ? form.notify({
+        const notifyId = opt.notify ? form.notify({
             'title': (_b = (_a = localeData[core.config.locale]) === null || _a === void 0 ? void 0 : _a.loading) !== null && _b !== void 0 ? _b : localeData['en'].loading,
             'content': url,
             'icon': icon,

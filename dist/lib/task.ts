@@ -210,10 +210,10 @@ export async function run(url: string, opt: types.ITaskRunOptions = {}): Promise
     if (opt.icon) {
         icon = opt.icon;
     }
-    if (opt.progress === undefined) {
-        opt.progress = true;
+    if (opt.notify === undefined) {
+        opt.notify = true;
     }
-    const notifyId: number | undefined = opt.progress ? form.notify({
+    const notifyId: number | undefined = opt.notify ? form.notify({
         'title': localeData[core.config.locale]?.loading ?? localeData['en'].loading,
         'content': url,
         'icon': icon,

@@ -84,6 +84,7 @@ export type TGlobalEvent = 'error' | 'screenResize' | 'configChanged' | 'formCre
 export interface ICoreFetchAppOptions {
     'notifyId'?: number;
     'current'?: string;
+    'progress'?: (loaded: number, total: number) => void | Promise<void>;
 }
 
 /** --- 应用文件包 --- */
@@ -341,7 +342,8 @@ export interface ISystemTaskInfo {
 
 export interface ITaskRunOptions {
     'icon'?: string;
-    'progress'?: boolean;
+    'progress'?: (loaded: number, total: number) => void | Promise<void>;
+    'notify'?: boolean;
     'taskId'?: number;
 }
 

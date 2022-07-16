@@ -9,9 +9,17 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.run = exports.off = exports.once = exports.on = exports.ready = void 0;
+exports.run = exports.off = exports.once = exports.on = exports.ready = exports.verifyToken = void 0;
 const electron = require("electron");
 let isReady = false;
+let token = '';
+function verifyToken(t) {
+    if (t !== token) {
+        return false;
+    }
+    return true;
+}
+exports.verifyToken = verifyToken;
 function ready() {
     return __awaiter(this, void 0, void 0, function* () {
         yield electron.app.whenReady();
@@ -54,28 +62,40 @@ exports.off = off;
 let win;
 function createForm(path) {
     win = new electron.BrowserWindow({
-        'width': 400,
+        'width': 500,
         'height': 400,
         'frame': false,
         'show': false,
         'transparent': true,
-        'hasShadow': false
+        'hasShadow': false,
+        'center': true
     });
+    win.webContents.userAgent = 'electron/' + electron.app.getVersion() + ' s' + process.platform + '/' + process.arch;
     win.once('ready-to-show', function () {
         if (!win) {
             return;
         }
-        win.maximize();
+        if (process.platform === 'win32') {
+            win.maximize();
+            win.setIgnoreMouseEvents(true, { 'forward': true });
+        }
         win.resizable = false;
         win.show();
-        win.setIgnoreMouseEvents(true, { 'forward': true });
         const timerFunc = function () {
             return __awaiter(this, void 0, void 0, function* () {
                 if (!win) {
                     return;
                 }
                 try {
-                    yield win.webContents.executeJavaScript('clickGoNative.isReady');
+                    const rtn = yield win.webContents.executeJavaScript('window.clickGoNative && clickGoNative.isReady');
+                    if (!rtn) {
+                        setTimeout(function () {
+                            timerFunc().catch(function (e) {
+                                console.log(e);
+                            });
+                        }, 100);
+                        return;
+                    }
                 }
                 catch (_a) {
                     setTimeout(function () {
@@ -87,8 +107,16 @@ function createForm(path) {
                 }
                 const list = JSON.parse(yield win.webContents.executeJavaScript('clickGoNative.cgInnerGetSends()'));
                 for (const item of list) {
-                    for (const it of listeners[item.name]) {
+                    if (!listeners[item.name]) {
+                        continue;
+                    }
+                    for (let i = 0; i < listeners[item.name].length; ++i) {
+                        const it = listeners[item.name][i];
                         const result = it.handler(item.param);
+                        if (it.once) {
+                            listeners[item.name].splice(i, 1);
+                            --i;
+                        }
                         if (result instanceof Promise) {
                             result.then(function (result) {
                                 if (!win) {
@@ -105,6 +133,14 @@ function createForm(path) {
                             win.webContents.executeJavaScript(`clickGoNative.cgInnerReceive(${item.id}, "${item.name}", ${result !== undefined ? (', "' + result.replace(/"/g, '\\"') + '"') : ''})`).catch(function (e) {
                                 console.log(e);
                             });
+                        }
+                        if (it.once) {
+                            listeners[item.name].splice(i, 1);
+                            if (listeners[item.name].length === 0) {
+                                delete listeners[item.name];
+                                break;
+                            }
+                            --i;
                         }
                     }
                 }
@@ -131,15 +167,30 @@ function run(path) {
         return;
     }
     createForm(path);
-    on('cg-mouse-ignore', function (b) {
-        if (!win) {
+    once('cg-set-token', function (t) {
+        if (!t) {
             return;
         }
-        if (b === 'true') {
-            win.setIgnoreMouseEvents(true, { 'forward': true });
+        token = t;
+    });
+    on('cg-mouse-ignore', function (b) {
+        if (!win || !b) {
+            return;
         }
-        else {
-            win.setIgnoreMouseEvents(false);
+        try {
+            const rtn = JSON.parse(b);
+            if (!verifyToken(rtn.token)) {
+                return;
+            }
+            if (rtn.param) {
+                win.setIgnoreMouseEvents(true, { 'forward': true });
+            }
+            else {
+                win.setIgnoreMouseEvents(false);
+            }
+        }
+        catch (e) {
+            console.log(e);
         }
     });
     electron.app.on('window-all-closed', function () {
@@ -154,3 +205,13 @@ function run(path) {
     });
 }
 exports.run = run;
+setInterval(function () {
+    const keysCount = {};
+    let count = 0;
+    for (const key in listeners) {
+        keysCount[key] = listeners[key].length;
+        count += keysCount[key];
+    }
+    console.log('keysCount', keysCount);
+    console.log(`All count: ${count}`);
+}, 5000);

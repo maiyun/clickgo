@@ -19,6 +19,7 @@ const clickgo = require("../../index");
         }
         el.innerHTML = 'Starting system app...';
         yield clickgo.init();
+        clickgo.native.send('cg-set-token', clickgo.core.getToken());
         clickgo.core.globalEvents.errorHandler = function (taskId, formId, error, info) {
             if (!el) {
                 return;
@@ -33,7 +34,7 @@ const clickgo = require("../../index");
             el.innerHTML = 'Task(' + taskId.toString() + ') ended.';
         };
         const sTaskId = yield clickgo.task.run('/clickgo/app/task/', {
-            'progress': false
+            'notify': false
         });
         if (sTaskId <= 0) {
             el.innerHTML = `Start failed(${sTaskId.toString()}).`;

@@ -15,6 +15,7 @@
  */
 import * as clickgo from '../clickgo';
 
+/** --- 最后一个 send ID --- */
 let sendId = 0;
 // --- sendList 一定会被清理 ---
 let sendList: Array<{
