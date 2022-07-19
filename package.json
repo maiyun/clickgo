@@ -1,6 +1,6 @@
 {
   "name": "clickgo",
-  "version": "3.0.1-dev2",
+  "version": "3.0.2-dev3",
   "description": "Background interface, software interface, mobile phone APP interface operation library.",
   "keywords": [
     "deskrt",
@@ -12,7 +12,10 @@
   "license": "Apache-2.0",
   "types": "./types/index.d.ts",
   "scripts": {
-    "native": "electron ./dist/test/native"
+    "native": "electron ./dist/test/native",
+    "native2": "electron ./dist/test/native/index2",
+    "native3": "electron ./dist/test/native/index3",
+    "native4": "electron ./dist/test/native/index4"
   },
   "devDependencies": {
     "@litert/loader": "^3.2.0",

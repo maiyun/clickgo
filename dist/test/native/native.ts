@@ -1,7 +1,15 @@
 import * as electron from 'electron';
+electron.Menu.setApplicationMenu(null);
 
 /** --- 环境是否已经准备好了 --- */
 let isReady: boolean = false;
+/** --- 窗体是否显示边框 --- */
+let isFrame: boolean = false;
+/** --- 是否关闭窗口就退出 --- */
+let isQuit: boolean = true;
+
+// const platform: NodeJS.Platform = process.platform;
+const platform: NodeJS.Platform = 'darwin';
 
 let token: string = '';
 /**
@@ -66,26 +74,35 @@ export function off(name: string, handler: (param?: string) => any | Promise<any
 
 let win: electron.BrowserWindow | undefined;
 function createForm(path: string): void {
-    win = new electron.BrowserWindow({
+    const op: Electron.BrowserWindowConstructorOptions = {
         'width': 500,
         'height': 400,
-        'frame': false,
-        // 'resizable': false,
+        'frame': isFrame,
+        'resizable': false,
         'show': false,
-        'transparent': true,
-        'hasShadow': false,
-        'center': true
-    });
-    win.webContents.userAgent = 'electron/' + electron.app.getVersion() + ' s' + process.platform + '/' + process.arch;
+        // 'hasShadow': false,
+        'center': true,
+        'transparent': isFrame ? undefined : true
+    };
+    /*
+    if (platform === 'win32') {
+        op.transparent = true;
+    }
+    */
+    win = new electron.BrowserWindow(op);
+    win.webContents.userAgent = 'electron/' + electron.app.getVersion() + ' ' + platform + '/' + process.arch;
+    // win.webContents.openDevTools();
     win.once('ready-to-show', function(): void {
         if (!win) {
             return;
         }
-        if (process.platform === 'win32') {
+        if (platform === 'win32') {
             win.maximize();
             win.setIgnoreMouseEvents(true, { 'forward': true });
         }
-        win.resizable = false;
+        else {
+            // --- 设置为第一个窗体的大小 ---
+        }
         win.show();
         // --- timer ---
         const timerFunc = async function(): Promise<void> {
@@ -140,6 +157,9 @@ function createForm(path: string): void {
                         });
                     }
                     else {
+                        if (!win) {
+                            return;
+                        }
                         win.webContents.executeJavaScript(`clickGoNative.cgInnerReceive(${item.id}, "${item.name}", ${result !== undefined ? (', "' + (result as string).replace(/"/g, '\\"') + '"') : ''})`).catch(function(e) {
                             console.log(e);
                         });
@@ -165,7 +185,14 @@ function createForm(path: string): void {
             console.log(e);
         });
     });
-    win.loadFile(path).catch(function(e): void {
+    const lio = path.indexOf('?');
+    const search = lio === -1 ? '' : path.slice(lio + 1);
+    if (lio !== -1) {
+        path = path.slice(0, lio);
+    }
+    win.loadFile(path, {
+        'search': search
+    }).catch(function(e): void {
         throw e;
     });
     win.on('close', function() {
@@ -173,25 +200,117 @@ function createForm(path: string): void {
     });
 }
 
-export function run(path: string): void {
+export function run(path: string, opt: { 'frame'?: boolean; 'quit'?: boolean; } = {}): void {
     if (!isReady) {
         return;
     }
+    if (opt.frame !== undefined) {
+        isFrame = opt.frame;
+    }
+    if (opt.quit !== undefined) {
+        isQuit = opt.quit;
+    }
     createForm(path);
-    // --- 设置 token，仅限一次 ---
-    once('cg-set-token', function(t): void {
-        if (!t) {
+    // --- 成功运行一个 task 后 init ---
+    once('cg-init', function(t): void {
+        if (!t || !win) {
             return;
         }
+        win.resizable = true;
         token = t;
     });
-    // --- 设置 IgnoreMouseEvents，仅限 windows ---
-    on('cg-mouse-ignore', function(b) {
-        if (!win || !b) {
+    // --- 退出软件 ---
+    on('cg-quit', function(j): void {
+        if (!win || !j) {
             return;
         }
         try {
-            const rtn = JSON.parse(b);
+            const rtn = JSON.parse(j);
+            if (!verifyToken(rtn.token)) {
+                return;
+            }
+            electron.app.quit();
+        }
+        catch (e) {
+            console.log(e);
+        }
+    });
+    // --- 设置窗体大小 ---
+    on('cg-set-size', function(j) {
+        if (!win || !j) {
+            return;
+        }
+        try {
+            const rtn = JSON.parse(j);
+            if (!verifyToken(rtn.token)) {
+                return;
+            }
+            if (!rtn.width || !rtn.height) {
+                return;
+            }
+            win.setSize(rtn.width, rtn.height);
+            win.center();
+        }
+        catch (e) {
+            console.log(e);
+        }
+    });
+    // --- 设置窗体最大化、最小化、还原 ---
+    on('cg-set-state', function(j) {
+        if (!win || !j) {
+            return;
+        }
+        try {
+            const rtn = JSON.parse(j);
+            if (!verifyToken(rtn.token)) {
+                return;
+            }
+            switch (rtn.state) {
+                case 'max': {
+                    win.maximize();
+                    break;
+                }
+                case 'min': {
+                    win.minimize();
+                    break;
+                }
+                default: {
+                    win.restore();
+                }
+            }
+        }
+        catch (e) {
+            console.log(e);
+        }
+    });
+    // --- 响应主 task 被关闭的情况 ---
+    on('cg-main-close', function(j) {
+        if (!win || !j) {
+            return;
+        }
+        try {
+            const rtn = JSON.parse(j);
+            if (!verifyToken(rtn.token)) {
+                return;
+            }
+            if (isQuit) {
+                electron.app.quit();
+            }
+            else {
+                win.close();
+            }
+        }
+        catch (e) {
+            console.log(e);
+        }
+    });
+    // --- 设置 IgnoreMouseEvents，仅限 windows ---
+    on('cg-mouse-ignore', function(j) {
+        if (!win || !j) {
+            return;
+        }
+        try {
+            const rtn = JSON.parse(j);
             if (!verifyToken(rtn.token)) {
                 return;
             }
@@ -207,13 +326,27 @@ export function run(path: string): void {
         }
     });
     electron.app.on('window-all-closed', function(): void {
-        if (process.platform !== 'darwin') {
+        /*
+        // --- MAC ---
+        if (platform !== 'darwin') {
+            electron.app.quit();
+        }
+        */
+        if (isQuit) {
             electron.app.quit();
         }
     });
     electron.app.on('activate', function(): void {
         if (electron.BrowserWindow.getAllWindows().length === 0) {
             createForm(path);
+            // --- 成功运行一个 task 后 init ---
+            once('cg-init', function(t): void {
+                if (!t || !win) {
+                    return;
+                }
+                win.resizable = true;
+                token = t;
+            });
         }
     });
 }

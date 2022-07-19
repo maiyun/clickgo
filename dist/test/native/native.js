@@ -11,7 +11,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.run = exports.off = exports.once = exports.on = exports.ready = exports.verifyToken = void 0;
 const electron = require("electron");
+electron.Menu.setApplicationMenu(null);
 let isReady = false;
+let isFrame = false;
+let isQuit = true;
+const platform = 'darwin';
 let token = '';
 function verifyToken(t) {
     if (t !== token) {
@@ -61,25 +65,27 @@ function off(name, handler) {
 exports.off = off;
 let win;
 function createForm(path) {
-    win = new electron.BrowserWindow({
+    const op = {
         'width': 500,
         'height': 400,
-        'frame': false,
+        'frame': isFrame,
+        'resizable': false,
         'show': false,
-        'transparent': true,
-        'hasShadow': false,
-        'center': true
-    });
-    win.webContents.userAgent = 'electron/' + electron.app.getVersion() + ' s' + process.platform + '/' + process.arch;
+        'center': true,
+        'transparent': isFrame ? undefined : true
+    };
+    win = new electron.BrowserWindow(op);
+    win.webContents.userAgent = 'electron/' + electron.app.getVersion() + ' ' + platform + '/' + process.arch;
     win.once('ready-to-show', function () {
         if (!win) {
             return;
         }
-        if (process.platform === 'win32') {
+        if (platform === 'win32') {
             win.maximize();
             win.setIgnoreMouseEvents(true, { 'forward': true });
         }
-        win.resizable = false;
+        else {
+        }
         win.show();
         const timerFunc = function () {
             return __awaiter(this, void 0, void 0, function* () {
@@ -130,6 +136,9 @@ function createForm(path) {
                             });
                         }
                         else {
+                            if (!win) {
+                                return;
+                            }
                             win.webContents.executeJavaScript(`clickGoNative.cgInnerReceive(${item.id}, "${item.name}", ${result !== undefined ? (', "' + result.replace(/"/g, '\\"') + '"') : ''})`).catch(function (e) {
                                 console.log(e);
                             });
@@ -155,30 +164,125 @@ function createForm(path) {
             console.log(e);
         });
     });
-    win.loadFile(path).catch(function (e) {
+    const lio = path.indexOf('?');
+    const search = lio === -1 ? '' : path.slice(lio + 1);
+    if (lio !== -1) {
+        path = path.slice(0, lio);
+    }
+    win.loadFile(path, {
+        'search': search
+    }).catch(function (e) {
         throw e;
     });
     win.on('close', function () {
         win = undefined;
     });
 }
-function run(path) {
+function run(path, opt = {}) {
     if (!isReady) {
         return;
     }
+    if (opt.frame !== undefined) {
+        isFrame = opt.frame;
+    }
+    if (opt.quit !== undefined) {
+        isQuit = opt.quit;
+    }
     createForm(path);
-    once('cg-set-token', function (t) {
-        if (!t) {
+    once('cg-init', function (t) {
+        if (!t || !win) {
             return;
         }
+        win.resizable = true;
         token = t;
     });
-    on('cg-mouse-ignore', function (b) {
-        if (!win || !b) {
+    on('cg-quit', function (j) {
+        if (!win || !j) {
             return;
         }
         try {
-            const rtn = JSON.parse(b);
+            const rtn = JSON.parse(j);
+            if (!verifyToken(rtn.token)) {
+                return;
+            }
+            electron.app.quit();
+        }
+        catch (e) {
+            console.log(e);
+        }
+    });
+    on('cg-set-size', function (j) {
+        if (!win || !j) {
+            return;
+        }
+        try {
+            const rtn = JSON.parse(j);
+            if (!verifyToken(rtn.token)) {
+                return;
+            }
+            if (!rtn.width || !rtn.height) {
+                return;
+            }
+            win.setSize(rtn.width, rtn.height);
+            win.center();
+        }
+        catch (e) {
+            console.log(e);
+        }
+    });
+    on('cg-set-state', function (j) {
+        if (!win || !j) {
+            return;
+        }
+        try {
+            const rtn = JSON.parse(j);
+            if (!verifyToken(rtn.token)) {
+                return;
+            }
+            switch (rtn.state) {
+                case 'max': {
+                    win.maximize();
+                    break;
+                }
+                case 'min': {
+                    win.minimize();
+                    break;
+                }
+                default: {
+                    win.restore();
+                }
+            }
+        }
+        catch (e) {
+            console.log(e);
+        }
+    });
+    on('cg-main-close', function (j) {
+        if (!win || !j) {
+            return;
+        }
+        try {
+            const rtn = JSON.parse(j);
+            if (!verifyToken(rtn.token)) {
+                return;
+            }
+            if (isQuit) {
+                electron.app.quit();
+            }
+            else {
+                win.close();
+            }
+        }
+        catch (e) {
+            console.log(e);
+        }
+    });
+    on('cg-mouse-ignore', function (j) {
+        if (!win || !j) {
+            return;
+        }
+        try {
+            const rtn = JSON.parse(j);
             if (!verifyToken(rtn.token)) {
                 return;
             }
@@ -194,13 +298,20 @@ function run(path) {
         }
     });
     electron.app.on('window-all-closed', function () {
-        if (process.platform !== 'darwin') {
+        if (isQuit) {
             electron.app.quit();
         }
     });
     electron.app.on('activate', function () {
         if (electron.BrowserWindow.getAllWindows().length === 0) {
             createForm(path);
+            once('cg-init', function (t) {
+                if (!t || !win) {
+                    return;
+                }
+                win.resizable = true;
+                token = t;
+            });
         }
     });
 }

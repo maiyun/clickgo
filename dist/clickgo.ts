@@ -23,14 +23,14 @@ export function getNative(): boolean {
     return native;
 }
 
-let platform = 'web';
+let platform: NodeJS.Platform | 'web' = 'web';
 if (native) {
-    const reg = / s(.+?)\//.exec(navigator.userAgent);
+    const reg = /electron\/(.+?) (.+?)\//.exec(navigator.userAgent);
     if (reg) {
-        platform = reg[1];
+        platform = reg[2] as any;
     }
 }
-export function getPlatform(): string {
+export function getPlatform(): NodeJS.Platform | 'web' {
     return platform;
 }
 

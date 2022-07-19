@@ -21,14 +21,6 @@ import * as task from './task';
 import * as tool from './tool';
 import * as zip from './zip';
 
-const token = tool.random(32);
-/**
- * --- 获取 native 通讯 token，app 模式下无效 ---
- */
-export function getToken(): string {
-    return token;
-}
-
 const configOrigin: types.IConfig = {
     'locale': 'en',
     'task.position': 'bottom',

@@ -1,7 +1,7 @@
 import * as native from './native';
-// --- 运行不带边框的桌面 ---
+// --- 只运行单个程序 ---
 native.ready().then(function() {
-    native.run('../desktop/index.html');
+    native.run('../desktop/index.html?single');
 }).catch(function(e) {
     console.log(e);
 });

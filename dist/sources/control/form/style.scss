@@ -137,6 +137,9 @@
             .title {
                 padding: 10px 10px 10px 0; flex: 1; text-overflow: ellipsis; white-space: nowrap; overflow: hidden;
             }
+            .native-drag {
+                -webkit-app-region: drag;
+            }
             // --- 控制按钮 ---
             .controls {
                 font-family: 'ifont'; display: flex;

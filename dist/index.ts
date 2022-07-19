@@ -22,7 +22,7 @@ export function getNative(): boolean {
     return clickgo.getNative();
 }
 
-export function getPlatform(): string {
+export function getPlatform(): NodeJS.Platform | 'web' {
     return clickgo.getPlatform();
 }
 

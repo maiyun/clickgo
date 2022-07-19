@@ -37,7 +37,8 @@ styleList.style.display = 'none';
 document.getElementsByTagName('body')[0].appendChild(styleList);
 styleList.insertAdjacentHTML('beforeend', '<style id=\'cg-global-cursor\'></style>');
 styleList.insertAdjacentHTML('beforeend', `<style id='cg-global'>
-${classUnfold()} {-webkit-user-select: none; user-select: none; position: fixed; left: 0; top: 0; width: 0; height: 0; cursor: default; box-sizing: border-box;}
+${classUnfold()} {-webkit-user-select: none; user-select: none; position: fixed; cursor: default; box-sizing: border-box;}
+${topClass.slice(0, 3).join(', ')} {left: 0; top: 0; width: 0; height: 0;}
 ${classUnfold('img')} {vertical-align: bottom;}
 ${classUnfold('::selection')} {background-color: rgba(0, 0, 0, .1);}
 ${classUnfold('*')}, ${classUnfold('*::after')}, ${classUnfold('*::before')} {box-sizing: border-box; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); flex-shrink: 0;}

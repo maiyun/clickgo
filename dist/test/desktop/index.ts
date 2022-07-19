@@ -9,7 +9,6 @@ import * as clickgo from '../../index';
     }
     el.innerHTML = 'Starting system app...';
     await clickgo.init();
-    clickgo.native.send('cg-set-token', clickgo.core.getToken());
     // --- 监听错误 ---
     clickgo.core.globalEvents.errorHandler = function(taskId, formId, error, info) {
         if (!el) {
@@ -25,23 +24,45 @@ import * as clickgo from '../../index';
     clickgo.core.globalEvents.taskEndedHandler = function(taskId: number) {
         el.innerHTML = 'Task(' + taskId.toString() + ') ended.';
     };
-    // --- 启动 task app ---
-    const sTaskId = await clickgo.task.run('/clickgo/app/task/', {
-        'notify': false
-    });
-    if (sTaskId <= 0) {
-        el.innerHTML = `Start failed(${sTaskId.toString()}).`;
-        return;
+    if (!window.location.href.includes('?single')) {
+        // --- 启动 task app ---
+        const sTaskId = await clickgo.task.run('/clickgo/app/task/', {
+            'notify': false,
+            'main': true
+        });
+        if (sTaskId <= 0) {
+            el.innerHTML = `Start failed(${sTaskId.toString()}).`;
+            return;
+        }
+        // --- sapp 启动成功 ---
+        el.innerHTML = 'Starting app...';
+        // --- 最大化窗体 ---
+        if (clickgo.getNative()) {
+            clickgo.native.send('cg-set-state', JSON.stringify({
+                'token': clickgo.native.getToken(),
+                'state': 'max'
+            }));
+        }
     }
-    // --- sapp 启动成功 ---
-    el.innerHTML = 'Starting app...';
-    const taskId = await clickgo.task.run('/clickgo/app/demo/');
+    const taskId = await clickgo.task.run('/clickgo/app/demo/', {
+        'notify': window.location.href.includes('?single') ? false : undefined,
+        'main': window.location.href.includes('?single') ? true : undefined,
+        'sync': window.location.href.includes('?single') ? true : undefined
+    });
     if (taskId <= 0) {
         el.innerHTML = `Start failed(${taskId.toString()}).`;
         return;
     }
     el.innerHTML = 'Running...';
-    if (clickgo.getNative()) {
+    if (window.location.href.includes('?single')) {
+        clickgo.native.send('cg-set-size', JSON.stringify({
+            'token': clickgo.native.getToken(),
+            'width': 400,
+            'height': 550
+        }));
+    }
+    if (clickgo.getPlatform() === 'win32' || window.location.href.includes('?single')) {
+        body.style.background = 'transparent';
         document.getElementById('spic')!.style.display = 'none';
     }
     else {

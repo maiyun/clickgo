@@ -16,6 +16,9 @@
         "/package/locale/ja": "ja"
     },
     "main": "/package/form/bar/bar",
+    "native": {
+        "state": "max"
+    },
 
     "files": [
         "/form/bar/bar.js",

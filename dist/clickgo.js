@@ -13,9 +13,9 @@ function getNative() {
 exports.getNative = getNative;
 let platform = 'web';
 if (native) {
-    const reg = / s(.+?)\//.exec(navigator.userAgent);
+    const reg = /electron\/(.+?) (.+?)\//.exec(navigator.userAgent);
     if (reg) {
-        platform = reg[1];
+        platform = reg[2];
     }
 }
 function getPlatform() {

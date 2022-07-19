@@ -11,6 +11,7 @@ export let zip: typeof import('../dist/lib/zip');
 
 export function getVersion(): string;
 export function getNative(): boolean;
+export function getPlatform(): NodeJS.Platform | 'web';
 export function setSafe(val: boolean): void;
 export function getSafe(): boolean;
 export function setCdn(val: string): void;
@@ -344,6 +345,8 @@ export interface ITaskRunOptions {
     'icon'?: string;
     'progress'?: (loaded: number, total: number) => void | Promise<void>;
     'notify'?: boolean;
+    'main'?: boolean;
+    'sync'?: boolean;
     'taskId'?: number;
 }
 
@@ -369,6 +372,7 @@ export interface ITask {
     /** --- 当前 app 运行路径，末尾包含 / --- */
     'path': string;
     'files': Record<string, Blob | string>;
+    'main': boolean;
 
     /** --- 已申请的权限列表 --- */
     'permissions': Record<string, any>;

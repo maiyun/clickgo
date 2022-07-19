@@ -193,7 +193,7 @@ export function getList(): Record<string, types.ITaskInfo> {
 /**
  * --- 运行一个应用 ---
  * @param url app 路径（以 / 为结尾的路径或以 .cga 结尾的文件）
- * @param opt 选项，icon:图标,progress:显示进度条,taskId:所属任务，App 模式下无效
+ * @param opt 选项，icon:图标,progress:显示进度条,main:native模式下的主进程，App 模式下无效,taskId:所属任务，App 模式下无效
  */
 export async function run(url: string, opt: types.ITaskRunOptions = {}): Promise<number> {
     /** --- 是否是在任务当中启动的任务 --- */
@@ -250,6 +250,7 @@ export async function run(url: string, opt: types.ITaskRunOptions = {}): Promise
         'icon': app.icon ?? icon,
         'path': url,
         'files': files,
+        'main': opt.main ?? false,
 
         'permissions': {},
         'forms': {},
@@ -338,6 +339,13 @@ export async function run(url: string, opt: types.ITaskRunOptions = {}): Promise
         core.trigger('taskEnded', task.id);
         return f - 100;
     }
+    if (clickgo.getNative() && opt.sync) {
+        f.vroot.$refs.form.isNativeSync = true;
+        window.addEventListener('resize', function(): void {
+            f.vroot.$refs.form.setPropData('width', window.innerWidth);
+            f.vroot.$refs.form.setPropData('height', window.innerHeight);
+        });
+    }
     // --- 设置 global style（如果 form 创建失败，就不设置 global style 了） ---
     if (app.config.style && app.files[app.config.style + '.css']) {
         const style = app.files[app.config.style + '.css'] as string;
@@ -368,6 +376,10 @@ export async function run(url: string, opt: types.ITaskRunOptions = {}): Promise
             await theme.load(undefined, task.id);
         }
     }
+    // --- 给 native 发送任务启动成功的消息 ---
+    if (task.id === 1) {
+        clickgo.native.send('cg-init', clickgo.native.getToken());
+    }
     return task.id;
 }
 
@@ -379,6 +391,12 @@ export function end(taskId: number): boolean {
     const task = list[taskId];
     if (!task) {
         return true;
+    }
+    // --- 如果是 native 模式 ---
+    if (clickgo.getNative() && task.main) {
+        clickgo.native.send('cg-main-close', JSON.stringify({
+            'token': clickgo.native.getToken()
+        }));
     }
     // --- 获取最大的 z index 窗体，并让他获取焦点 ---
     const fid = form.getMaxZIndexID({

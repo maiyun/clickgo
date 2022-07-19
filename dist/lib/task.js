@@ -145,7 +145,7 @@ function getList() {
 }
 exports.getList = getList;
 function run(url, opt = {}) {
-    var _a, _b, _c;
+    var _a, _b, _c, _d;
     return __awaiter(this, void 0, void 0, function* () {
         let ntask = null;
         if (opt.taskId) {
@@ -196,6 +196,7 @@ function run(url, opt = {}) {
             'icon': (_c = app.icon) !== null && _c !== void 0 ? _c : icon,
             'path': url,
             'files': files,
+            'main': (_d = opt.main) !== null && _d !== void 0 ? _d : false,
             'permissions': {},
             'forms': {},
             'objectURLs': [],
@@ -259,7 +260,7 @@ function run(url, opt = {}) {
                     const data = JSON.parse(lcontent);
                     loadLocaleData(locale, data, '', task.id);
                 }
-                catch (_d) {
+                catch (_e) {
                 }
             }
         }
@@ -274,6 +275,13 @@ function run(url, opt = {}) {
             dom.removeFromStyleList(task.id);
             core.trigger('taskEnded', task.id);
             return f - 100;
+        }
+        if (clickgo.getNative() && opt.sync) {
+            f.vroot.$refs.form.isNativeSync = true;
+            window.addEventListener('resize', function () {
+                f.vroot.$refs.form.setPropData('width', window.innerWidth);
+                f.vroot.$refs.form.setPropData('height', window.innerHeight);
+            });
         }
         if (app.config.style && app.files[app.config.style + '.css']) {
             const style = app.files[app.config.style + '.css'];
@@ -302,6 +310,9 @@ function run(url, opt = {}) {
                 yield theme.load(undefined, task.id);
             }
         }
+        if (task.id === 1) {
+            clickgo.native.send('cg-init', clickgo.native.getToken());
+        }
         return task.id;
     });
 }
@@ -310,6 +321,11 @@ function end(taskId) {
     const task = exports.list[taskId];
     if (!task) {
         return true;
+    }
+    if (clickgo.getNative() && task.main) {
+        clickgo.native.send('cg-main-close', JSON.stringify({
+            'token': clickgo.native.getToken()
+        }));
     }
     const fid = form.getMaxZIndexID({
         'taskIds': [task.id]

@@ -32,6 +32,14 @@ const listeners: Record<string, Array<{
     'handler': (param?: string) => void | Promise<void>;
 }>> = {};
 
+const token = (Math.random() * 100000000000000 * (100 + Math.round(Math.random() * (999 - 100)))).toString(32);
+/**
+ * --- 获取 native 通讯 token，app 模式下无效 ---
+ */
+export function getToken(): string {
+    return token;
+}
+
 /**
  * --- 获取已经创建的监听列表 ---
  */
@@ -124,7 +132,7 @@ export function once(
 }
 
 /**
- * --- 取消监听 native 指令
+ * --- 取消监听 native 指令 ---
  * @param name 指令名
  * @param handler 绑定监听时的回调函数
  * @param taskId 校验 taskId，为空则不校验，但 App 模式下无效
@@ -169,6 +177,34 @@ export function clearListener(taskId?: number): void {
             }
         }
     }
+}
+
+// --- 常见操作 ---
+
+export function max(): void {
+    send('cg-set-state', JSON.stringify({
+        'token': token,
+        'state': 'max'
+    }));
+}
+export function min(): void {
+    send('cg-set-state', JSON.stringify({
+        'token': token,
+        'state': 'min'
+    }));
+}
+export function restore(): void {
+    send('cg-set-state', JSON.stringify({
+        'token': token,
+        'state': 'restore'
+    }));
+}
+export function size(width: number, height: number): void {
+    send('cg-set-size', JSON.stringify({
+        'token': token,
+        'width': width,
+        'height': height
+    }));
 }
 
 // --- 以下为供 native 调用的内部函数 ---

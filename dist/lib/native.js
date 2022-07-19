@@ -1,10 +1,15 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.cgInnerReceive = exports.cgInnerGetSends = exports.clearListener = exports.off = exports.once = exports.on = exports.send = exports.getListeners = void 0;
+exports.cgInnerReceive = exports.cgInnerGetSends = exports.size = exports.restore = exports.min = exports.max = exports.clearListener = exports.off = exports.once = exports.on = exports.send = exports.getListeners = exports.getToken = void 0;
 const clickgo = require("../clickgo");
 let sendId = 0;
 let sendList = [];
 const listeners = {};
+const token = (Math.random() * 100000000000000 * (100 + Math.round(Math.random() * (999 - 100)))).toString(32);
+function getToken() {
+    return token;
+}
+exports.getToken = getToken;
 function getListeners() {
     const list = [];
     for (const name in listeners) {
@@ -93,6 +98,35 @@ function clearListener(taskId) {
     }
 }
 exports.clearListener = clearListener;
+function max() {
+    send('cg-set-state', JSON.stringify({
+        'token': token,
+        'state': 'max'
+    }));
+}
+exports.max = max;
+function min() {
+    send('cg-set-state', JSON.stringify({
+        'token': token,
+        'state': 'min'
+    }));
+}
+exports.min = min;
+function restore() {
+    send('cg-set-state', JSON.stringify({
+        'token': token,
+        'state': 'restore'
+    }));
+}
+exports.restore = restore;
+function size(width, height) {
+    send('cg-set-size', JSON.stringify({
+        'token': token,
+        'width': width,
+        'height': height
+    }));
+}
+exports.size = size;
 function cgInnerGetSends() {
     const json = JSON.stringify(sendList);
     sendList = [];

@@ -99,7 +99,8 @@ exports.data = {
     'maskFor': undefined,
     'maskFrom': undefined,
     'flashTimer': undefined,
-    'isInside': false
+    'isInside': false,
+    'isNativeSync': false
 };
 exports.computed = {
     'isMin': function () {
@@ -118,7 +119,7 @@ exports.computed = {
         return clickgo.tool.getBoolean(this.stateMin);
     },
     'isResize': function () {
-        return clickgo.tool.getBoolean(this.resize);
+        return this.isNativeSync ? false : clickgo.tool.getBoolean(this.resize);
     },
     'isMove': function () {
         return clickgo.tool.getBoolean(this.move);
@@ -269,6 +270,12 @@ exports.methods = {
                         this.heightData = this.historyLocation.height;
                         this.$emit('update:height', this.historyLocation.height);
                     }
+                    if (this.isNativeSync) {
+                        clickgo.native.restore();
+                        if (clickgo.getPlatform() === 'darwin') {
+                            clickgo.native.size(this.widthData, this.heightData);
+                        }
+                    }
                 }
                 else if (this.stateAbs) {
                     this.stateAbs = false;
@@ -400,21 +407,26 @@ exports.methods = {
         if (!this.stateMinData) {
             this.$emit('min', event, 1, {});
             if (event.go) {
-                this.$el.dataset.cgMin = '';
-                this.stateMinData = true;
-                this.$emit('update:stateMin', true);
-                if (this.cgFocus) {
-                    const formId = clickgo.form.getMaxZIndexID({
-                        'formIds': [this.formId]
-                    });
-                    clickgo.tool.sleep(100).then(() => {
-                        if (formId) {
-                            clickgo.form.changeFocus(formId);
-                        }
-                        else {
-                            clickgo.form.changeFocus();
-                        }
-                    }).catch((e) => { throw e; });
+                if (this.isNativeSync) {
+                    clickgo.native.min();
+                }
+                else {
+                    this.$el.dataset.cgMin = '';
+                    this.stateMinData = true;
+                    this.$emit('update:stateMin', true);
+                    if (this.cgFocus) {
+                        const formId = clickgo.form.getMaxZIndexID({
+                            'formIds': [this.formId]
+                        });
+                        clickgo.tool.sleep(100).then(() => {
+                            if (formId) {
+                                clickgo.form.changeFocus(formId);
+                            }
+                            else {
+                                clickgo.form.changeFocus();
+                            }
+                        }).catch((e) => { throw e; });
+                    }
                 }
             }
             else {
@@ -499,6 +511,9 @@ exports.methods = {
         if (!this.stateMaxData) {
             this.$emit('max', event, 1, {});
             if (event.go) {
+                if (this.isNativeSync) {
+                    clickgo.native.max();
+                }
                 if (this.stateAbs) {
                     this.stateAbs = false;
                 }
@@ -554,6 +569,12 @@ exports.methods = {
                 else {
                     this.heightData = this.historyLocation.height;
                     this.$emit('update:height', this.historyLocation.height);
+                }
+                if (this.isNativeSync) {
+                    clickgo.native.restore();
+                    if (clickgo.getPlatform() === 'darwin') {
+                        clickgo.native.size(this.widthData, this.heightData);
+                    }
                 }
             }
             else {

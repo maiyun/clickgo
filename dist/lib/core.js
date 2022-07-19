@@ -9,18 +9,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getAvailArea = exports.fetchApp = exports.readApp = exports.trigger = exports.removeSystemEventListener = exports.setSystemEventListener = exports.globalEvents = exports.getModule = exports.initModules = exports.regModule = exports.config = exports.getToken = void 0;
+exports.getAvailArea = exports.fetchApp = exports.readApp = exports.trigger = exports.removeSystemEventListener = exports.setSystemEventListener = exports.globalEvents = exports.getModule = exports.initModules = exports.regModule = exports.config = void 0;
 const clickgo = require("../clickgo");
 const fs = require("./fs");
 const form = require("./form");
 const task = require("./task");
 const tool = require("./tool");
 const zip = require("./zip");
-const token = tool.random(32);
-function getToken() {
-    return token;
-}
-exports.getToken = getToken;
 const configOrigin = {
     'locale': 'en',
     'task.position': 'bottom',

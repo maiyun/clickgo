@@ -67,16 +67,16 @@ const elements = {
     'init': function () {
         this.wrap.id = 'cg-wrap';
         document.getElementsByTagName('body')[0].appendChild(this.wrap);
-        if (clickgo.getNative()) {
+        if (clickgo.getNative() && (clickgo.getPlatform() === 'win32')) {
             this.wrap.addEventListener('mouseenter', function () {
                 native.send('cg-mouse-ignore', JSON.stringify({
-                    'token': core.getToken(),
+                    'token': native.getToken(),
                     'param': false
                 }));
             });
             this.wrap.addEventListener('mouseleave', function () {
                 native.send('cg-mouse-ignore', JSON.stringify({
-                    'token': core.getToken(),
+                    'token': native.getToken(),
                     'param': true
                 }));
             });
@@ -129,7 +129,7 @@ const elements = {
         }, {
             'passive': false
         });
-        this.simpleSystemtask.id = 'cg-simplesystemtask';
+        this.simpleSystemtask.id = 'cg-simpletask';
         this.simpleSystemtask.addEventListener('contextmenu', function (e) {
             e.preventDefault();
         });
@@ -139,8 +139,8 @@ const elements = {
         }, {
             'passive': false
         });
-        const simpleSystemtaskApp = clickgo.vue.createApp({
-            'template': '<div v-for="(item, formId) of forms" class="cg-simplesystemtask-item" @click="click(parseInt(formId))"><div v-if="item.icon" class="cg-simplesystemtask-icon" :style="{\'background-image\': \'url(\' + item.icon + \')\'}"></div><div>{{item.title}}</div></div>',
+        const simpletaskApp = clickgo.vue.createApp({
+            'template': '<div v-for="(item, formId) of forms" class="cg-simpletask-item" @click="click(parseInt(formId))"><div v-if="item.icon" class="cg-simpletask-icon" :style="{\'background-image\': \'url(\' + item.icon + \')\'}"></div><div>{{item.title}}</div></div>',
             'data': function () {
                 return {
                     'forms': {}
@@ -175,7 +175,7 @@ const elements = {
                 exports.simpleSystemTaskRoot = this;
             }
         });
-        simpleSystemtaskApp.mount('#cg-simplesystemtask');
+        simpletaskApp.mount('#cg-simpletask');
     }
 };
 elements.init();
@@ -1457,6 +1457,18 @@ function create(opt) {
                     },
                     clearListener: function () {
                         clickgo.native.clearListener(taskId);
+                    },
+                    max: function () {
+                        clickgo.native.max();
+                    },
+                    min: function () {
+                        clickgo.native.min();
+                    },
+                    restore: function () {
+                        clickgo.native.restore();
+                    },
+                    size: function (width, height) {
+                        clickgo.native.size(width, height);
                     }
                 },
                 'task': {
@@ -1477,6 +1489,7 @@ function create(opt) {
                     },
                     run: function (url, opt = {}) {
                         opt.taskId = taskId;
+                        opt.main = false;
                         return clickgo.task.run(url, opt);
                     },
                     end: function (tid) {

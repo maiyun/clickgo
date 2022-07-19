@@ -23,7 +23,7 @@
     </div>
 </div>
 <script>
-if (!navigator.userAgent.toLowerCase().includes('electron')) {
+if (!navigator.userAgent.toLowerCase().includes('win32/') || !navigator.userAgent.toLowerCase().includes('electron/')) {
     document.write('<style>body{background: #222;}</style>');
 }
 </script>

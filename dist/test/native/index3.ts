@@ -1,7 +1,9 @@
 import * as native from './native';
-// --- 运行不带边框的桌面 ---
+// --- 显示外边框 ---
 native.ready().then(function() {
-    native.run('../desktop/index.html');
+    native.run('../desktop/index.html', {
+        'frame': true
+    });
 }).catch(function(e) {
     console.log(e);
 });
