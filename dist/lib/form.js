@@ -781,7 +781,7 @@ function showPop(el, pop, direction, opt = {}) {
             left = bcr.left + bcr.width - 2;
             top = bcr.top - 2;
         }
-        if (width + left > document.body.clientWidth) {
+        if (width + left > window.innerWidth) {
             if (direction === 'v') {
                 left = bcr.left + bcr.width - width;
             }
@@ -789,7 +789,7 @@ function showPop(el, pop, direction, opt = {}) {
                 left = bcr.left - width + 2;
             }
         }
-        if (height + top > document.body.clientHeight) {
+        if (height + top > window.innerHeight) {
             if (direction === 'v') {
                 top = bcr.top - height;
             }
@@ -815,10 +815,10 @@ function showPop(el, pop, direction, opt = {}) {
         }
         left = x + 5;
         top = y + 7;
-        if (width + left > document.body.clientWidth) {
+        if (width + left > window.innerWidth) {
             left = x - width - 5;
         }
-        if (height + top > document.body.clientHeight) {
+        if (height + top > window.innerHeight) {
             top = y - height - 5;
         }
     }

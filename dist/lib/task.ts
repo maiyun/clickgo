@@ -815,12 +815,12 @@ export function refreshSystemPosition(): void {
             case 'left':
             case 'right': {
                 form.vroot.$refs.form.setPropData('width', 'auto');
-                form.vroot.$refs.form.setPropData('height', document.body.clientHeight);
+                form.vroot.$refs.form.setPropData('height', window.innerHeight);
                 break;
             }
             case 'top':
             case 'bottom': {
-                form.vroot.$refs.form.setPropData('width', document.body.clientWidth);
+                form.vroot.$refs.form.setPropData('width', window.innerWidth);
                 form.vroot.$refs.form.setPropData('height', 'auto');
                 break;
             }
@@ -835,7 +835,7 @@ export function refreshSystemPosition(): void {
                 }
                 case 'right': {
                     systemTaskInfo.length = form.vroot.$el.offsetWidth;
-                    form.vroot.$refs.form.setPropData('left', document.body.clientWidth - systemTaskInfo.length);
+                    form.vroot.$refs.form.setPropData('left', window.innerWidth - systemTaskInfo.length);
                     form.vroot.$refs.form.setPropData('top', 0);
                     break;
                 }
@@ -848,7 +848,7 @@ export function refreshSystemPosition(): void {
                 case 'bottom': {
                     systemTaskInfo.length = form.vroot.$el.offsetHeight;
                     form.vroot.$refs.form.setPropData('left', 0);
-                    form.vroot.$refs.form.setPropData('top', document.body.clientHeight - systemTaskInfo.length);
+                    form.vroot.$refs.form.setPropData('top', window.innerHeight - systemTaskInfo.length);
                     break;
                 }
             }

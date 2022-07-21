@@ -1000,7 +1000,7 @@ export function showPop(el: HTMLElement, pop: HTMLElement | undefined, direction
             top = bcr.top - 2;
         }
         // --- 检查水平是否出框 ---
-        if (width + left > document.body.clientWidth) {
+        if (width + left > window.innerWidth) {
             if (direction === 'v') {
                 // --- 垂直弹出 ---
                 left = bcr.left + bcr.width - width;
@@ -1011,7 +1011,7 @@ export function showPop(el: HTMLElement, pop: HTMLElement | undefined, direction
             }
         }
         // --- 检测垂直是否出框 ---
-        if (height + top > document.body.clientHeight) {
+        if (height + top > window.innerHeight) {
             if (direction === 'v') {
                 top = bcr.top - height;
             }
@@ -1038,11 +1038,11 @@ export function showPop(el: HTMLElement, pop: HTMLElement | undefined, direction
         left = x + 5;
         top = y + 7;
         // --- 水平 ---
-        if (width + left > document.body.clientWidth) {
+        if (width + left > window.innerWidth) {
             left = x - width - 5;
         }
         // --- 垂直 ---
-        if (height + top > document.body.clientHeight) {
+        if (height + top > window.innerHeight) {
             top = y - height - 5;
         }
     }

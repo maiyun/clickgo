@@ -614,8 +614,8 @@ function getAvailArea() {
         return {
             'left': 0,
             'top': 0,
-            'width': document.body.clientWidth,
-            'height': document.body.clientHeight - 46
+            'width': window.innerWidth,
+            'height': window.innerHeight - 46
         };
     }
     else {
@@ -627,29 +627,29 @@ function getAvailArea() {
             case 'left': {
                 left = task.systemTaskInfo.length;
                 top = 0;
-                width = document.body.clientWidth - task.systemTaskInfo.length;
-                height = document.body.clientHeight;
+                width = window.innerWidth - task.systemTaskInfo.length;
+                height = window.innerHeight;
                 break;
             }
             case 'right': {
                 left = 0;
                 top = 0;
-                width = document.body.clientWidth - task.systemTaskInfo.length;
-                height = document.body.clientHeight;
+                width = window.innerWidth - task.systemTaskInfo.length;
+                height = window.innerHeight;
                 break;
             }
             case 'top': {
                 left = 0;
                 top = task.systemTaskInfo.length;
-                width = document.body.clientWidth;
-                height = document.body.clientHeight - task.systemTaskInfo.length;
+                width = window.innerWidth;
+                height = window.innerHeight - task.systemTaskInfo.length;
                 break;
             }
             case 'bottom': {
                 left = 0;
                 top = 0;
-                width = document.body.clientWidth;
-                height = document.body.clientHeight - task.systemTaskInfo.length;
+                width = window.innerWidth;
+                height = window.innerHeight - task.systemTaskInfo.length;
             }
         }
         return {
