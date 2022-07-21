@@ -277,20 +277,6 @@ function run(url, opt = {}) {
             core.trigger('taskEnded', task.id);
             return f - 100;
         }
-        if (clickgo.getNative() && opt.sync) {
-            f.vroot.$refs.form.isNativeSync = true;
-            setTimeout(function () {
-                clickgo.native.send('cg-set-size', JSON.stringify({
-                    'token': clickgo.native.getToken(),
-                    'width': f.vroot.$refs.form.widthData,
-                    'height': f.vroot.$refs.form.heightData
-                }));
-                window.addEventListener('resize', function () {
-                    f.vroot.$refs.form.setPropData('width', window.innerWidth);
-                    f.vroot.$refs.form.setPropData('height', window.innerHeight);
-                });
-            }, 10);
-        }
         if (app.config.style && app.files[app.config.style + '.css']) {
             const style = app.files[app.config.style + '.css'];
             const r = tool.stylePrepend(style, 'cg-task' + task.id.toString() + '_');
@@ -320,6 +306,18 @@ function run(url, opt = {}) {
         }
         if (task.id === 1) {
             clickgo.native.send('cg-init', clickgo.native.getToken());
+        }
+        if (clickgo.getNative() && opt.sync) {
+            f.vroot.$refs.form.isNativeSync = true;
+            clickgo.native.send('cg-set-size', JSON.stringify({
+                'token': clickgo.native.getToken(),
+                'width': f.vroot.$refs.form.widthData,
+                'height': f.vroot.$refs.form.heightData
+            }));
+            window.addEventListener('resize', function () {
+                f.vroot.$refs.form.setPropData('width', window.innerWidth);
+                f.vroot.$refs.form.setPropData('height', window.innerHeight);
+            });
         }
         return task.id;
     });

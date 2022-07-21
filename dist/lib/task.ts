@@ -340,20 +340,6 @@ export async function run(url: string, opt: types.ITaskRunOptions = {}): Promise
         core.trigger('taskEnded', task.id);
         return f - 100;
     }
-    if (clickgo.getNative() && opt.sync) {
-        f.vroot.$refs.form.isNativeSync = true;
-        setTimeout(function() {
-            clickgo.native.send('cg-set-size', JSON.stringify({
-                'token': clickgo.native.getToken(),
-                'width': f.vroot.$refs.form.widthData,
-                'height': f.vroot.$refs.form.heightData
-            }));
-            window.addEventListener('resize', function(): void {
-                f.vroot.$refs.form.setPropData('width', window.innerWidth);
-                f.vroot.$refs.form.setPropData('height', window.innerHeight);
-            });
-        }, 10);
-    }
     // --- 设置 global style（如果 form 创建失败，就不设置 global style 了） ---
     if (app.config.style && app.files[app.config.style + '.css']) {
         const style = app.files[app.config.style + '.css'] as string;
@@ -387,6 +373,19 @@ export async function run(url: string, opt: types.ITaskRunOptions = {}): Promise
     // --- 给 native 发送任务启动成功的消息 ---
     if (task.id === 1) {
         clickgo.native.send('cg-init', clickgo.native.getToken());
+    }
+    // --- 提交 sync ---
+    if (clickgo.getNative() && opt.sync) {
+        f.vroot.$refs.form.isNativeSync = true;
+        clickgo.native.send('cg-set-size', JSON.stringify({
+            'token': clickgo.native.getToken(),
+            'width': f.vroot.$refs.form.widthData,
+            'height': f.vroot.$refs.form.heightData
+        }));
+        window.addEventListener('resize', function(): void {
+            f.vroot.$refs.form.setPropData('width', window.innerWidth);
+            f.vroot.$refs.form.setPropData('height', window.innerHeight);
+        });
     }
     return task.id;
 }
