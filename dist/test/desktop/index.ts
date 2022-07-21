@@ -54,13 +54,6 @@ import * as clickgo from '../../index';
         return;
     }
     el.innerHTML = 'Running...';
-    if (window.location.href.includes('?single')) {
-        clickgo.native.send('cg-set-size', JSON.stringify({
-            'token': clickgo.native.getToken(),
-            'width': 400,
-            'height': 550
-        }));
-    }
     if (clickgo.getPlatform() === 'win32' || window.location.href.includes('?single')) {
         body.style.background = 'transparent';
         document.getElementById('spic')!.style.display = 'none';

@@ -279,10 +279,17 @@ function run(url, opt = {}) {
         }
         if (clickgo.getNative() && opt.sync) {
             f.vroot.$refs.form.isNativeSync = true;
-            window.addEventListener('resize', function () {
-                f.vroot.$refs.form.setPropData('width', window.innerWidth);
-                f.vroot.$refs.form.setPropData('height', window.innerHeight);
-            });
+            setTimeout(function () {
+                clickgo.native.send('cg-set-size', JSON.stringify({
+                    'token': clickgo.native.getToken(),
+                    'width': f.vroot.$refs.form.widthData,
+                    'height': f.vroot.$refs.form.heightData
+                }));
+                window.addEventListener('resize', function () {
+                    f.vroot.$refs.form.setPropData('width', window.innerWidth);
+                    f.vroot.$refs.form.setPropData('height', window.innerHeight);
+                });
+            }, 10);
         }
         if (app.config.style && app.files[app.config.style + '.css']) {
             const style = app.files[app.config.style + '.css'];
