@@ -540,7 +540,7 @@ export async function readApp(blob: Blob): Promise<false | types.IApp> {
 /**
  * --- 从网址下载应用，App 模式下本方法不可用 ---
  * @param url 对于当前网页的相对、绝对路径，以 / 结尾的目录或 .cga 结尾的文件 ---
- * @param opt,notifyId:显示进度条的 notify id,current:设置则以设置的为准，否则以 location 为准 ---
+ * @param opt,notifyId:显示进度条的 notify id,current:设置则以设置的为准，以 / 结尾，否则以 location 为准 ---
  */
 export async function fetchApp(url: string, opt: types.ICoreFetchAppOptions = {}): Promise<null | types.IApp> {
     /** --- 若是 cga 文件，则是 cga 的文件名，含 .cga --- */
@@ -558,7 +558,6 @@ export async function fetchApp(url: string, opt: types.ICoreFetchAppOptions = {}
         if (!opt.current.endsWith('/')) {
             return null;
         }
-        current = opt.current.slice(0, -1);
         if (!url.startsWith('/')) {
             url = '/current/' + url;
         }
@@ -567,11 +566,10 @@ export async function fetchApp(url: string, opt: types.ICoreFetchAppOptions = {}
         if (!url.startsWith('/clickgo/') && !url.startsWith('/storage/') && !url.startsWith('/mounted/')) {
             current = tool.urlResolve(window.location.href, url);
             if (cga) {
-                current = current.slice(0, -cga.length - 1);
+                current = current.slice(0, -cga.length);
                 url = '/current/' + cga;
             }
             else {
-                current = current.slice(0, -1);
                 url = '/current/';
             }
         }

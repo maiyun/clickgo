@@ -497,7 +497,6 @@ function fetchApp(url, opt = {}) {
             if (!opt.current.endsWith('/')) {
                 return null;
             }
-            current = opt.current.slice(0, -1);
             if (!url.startsWith('/')) {
                 url = '/current/' + url;
             }
@@ -506,11 +505,10 @@ function fetchApp(url, opt = {}) {
             if (!url.startsWith('/clickgo/') && !url.startsWith('/storage/') && !url.startsWith('/mounted/')) {
                 current = tool.urlResolve(window.location.href, url);
                 if (cga) {
-                    current = current.slice(0, -cga.length - 1);
+                    current = current.slice(0, -cga.length);
                     url = '/current/' + cga;
                 }
                 else {
-                    current = current.slice(0, -1);
                     url = '/current/';
                 }
             }
