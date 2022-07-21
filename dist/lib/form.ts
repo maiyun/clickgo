@@ -1377,9 +1377,6 @@ export async function create(opt: string | types.IFormCreateOptions): Promise<nu
             getSafe(): boolean {
                 return clickgo.getSafe();
             },
-            getCdn(): string {
-                return clickgo.getCdn();
-            },
             'control': {
                 read: function(blob: Blob): Promise<false | types.TControl> {
                     return clickgo.control.read(blob);
@@ -1387,6 +1384,7 @@ export async function create(opt: string | types.IFormCreateOptions): Promise<nu
             },
             'core': {
                 'config': clickgo.core.config,
+                'cdn': loader.cdn,
                 initModules: function(names: string | string[]): Promise<number> {
                     return clickgo.core.initModules(names);
                 },

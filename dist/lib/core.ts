@@ -40,6 +40,8 @@ export const config: types.IConfig = clickgo.vue.reactive({
     'desktop.path': null
 });
 
+export const cdn = '';
+
 clickgo.vue.watch(config, function() {
     // --- 检测有没有缺少的 config key ---
     for (const key in configOrigin) {
@@ -97,7 +99,7 @@ const modules: Record<string, { func: () => any | Promise<any>; 'obj': null | an
     'monaco': {
         func: async function() {
             return new Promise(function(resolve, reject) {
-                fetch(clickgo.getCdn() + '/npm/monaco-editor@0.33.0/min/vs/loader.js').then(function(r) {
+                fetch(loader.cdn + '/npm/monaco-editor@0.33.0/min/vs/loader.js').then(function(r) {
                     return r.blob();
                 }).then(function(b) {
                     return tool.blob2DataUrl(b);

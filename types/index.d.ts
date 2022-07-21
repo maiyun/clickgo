@@ -14,10 +14,8 @@ export function getNative(): boolean;
 export function getPlatform(): NodeJS.Platform | 'web';
 export function setSafe(val: boolean): void;
 export function getSafe(): boolean;
-export function setCdn(val: string): void;
-export function getCdn(): string;
 
-export function init(cdn?: string): Promise<void>;
+export function init(): Promise<void>;
 
 // --- core 核心 ---
 

@@ -33,24 +33,17 @@ export function getSafe(): boolean {
     return clickgo.getSafe();
 }
 
-export function setCdn(val: string): void {
-    clickgo.setCdn(val);
-}
-export function getCdn(): string {
-    return clickgo.getCdn();
-}
-
-export async function init(cdn: string = 'https://cdn.jsdelivr.net'): Promise<void> {
+export async function init(): Promise<void> {
     // --- 通过标签加载库 ---
     const paths: string[] = [
-        cdn + '/npm/vue@3.2.31/dist/vue.global.min.js'
+        loader.cdn + '/npm/vue@3.2.31/dist/vue.global.min.js'
     ];
     // --- 判断 ResizeObserver 是否存在 ---
     let ro = true;
     // ResizeObserver = undefined;
     if (!((window as any).ResizeObserver)) {
         ro = false;
-        paths.push(cdn + '/npm/@juggle/resize-observer@3.3.1/lib/exports/resize-observer.umd.min.js');
+        paths.push(loader.cdn + '/npm/@juggle/resize-observer@3.3.1/lib/exports/resize-observer.umd.min.js');
     }
     // --- 加载 vue 以及必要库 ---
     await loader.loadScripts(paths);
@@ -61,24 +54,23 @@ export async function init(cdn: string = 'https://cdn.jsdelivr.net'): Promise<vo
     }
     // --- map 加载库 ---
     const map: Record<string, string> = {
-        'jszip': cdn + '/npm/jszip@3.10.0/dist/jszip.min'
+        'jszip': loader.cdn + '/npm/jszip@3.10.0/dist/jszip.min'
     };
     // --- 加载 clickgo 主程序 ---
     const after = '?' + Math.random().toString();
     const files = await loader.sniffFiles('clickgo.js', {
         'dir': __dirname + '/',
         'after': after,
-        'afterIgnore': new RegExp('^' + cdn.replace(/\./g, '\\.')),
+        'afterIgnore': new RegExp('^' + loader.cdn.replace(/\./g, '\\.')),
         'map': map
     });
     const cg = loader.require('clickgo', files, {
         'dir': __dirname + '/',
         'map': map
     })[0] as typeof import('../dist/clickgo');
-    cg.setCdn(cdn);
     // --- 加载 clickgo 的 global css ---
     try {
-        const style = await (await fetch(__dirname + '/global.css' + (!__dirname.startsWith(cdn) ? after : ''))).text();
+        const style = await (await fetch(__dirname + '/global.css' + (!__dirname.startsWith(loader.cdn) ? after : ''))).text();
         document.getElementById('cg-global')?.insertAdjacentHTML('afterbegin', style);
     }
     catch {

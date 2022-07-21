@@ -267,14 +267,14 @@ const mounted = function () {
         loaderEl.addEventListener('load', () => {
             iwindow.require.config({
                 paths: {
-                    'vs': clickgo.getCdn() + '/npm/monaco-editor@0.33.0/min/vs'
+                    'vs': clickgo.core.cdn + '/npm/monaco-editor@0.33.0/min/vs'
                 }
             });
             const proxy = iwindow.URL.createObjectURL(new Blob([`
                 self.MonacoEnvironment = {
-                    baseUrl: '${clickgo.getCdn()}/npm/monaco-editor@0.33.0/min/'
+                    baseUrl: '${clickgo.core.cdn}/npm/monaco-editor@0.33.0/min/'
                 };
-                importScripts('${clickgo.getCdn()}/npm/monaco-editor@0.33.0/min/vs/base/worker/workerMain.js');
+                importScripts('${clickgo.core.cdn}/npm/monaco-editor@0.33.0/min/vs/base/worker/workerMain.js');
             `], { type: 'text/javascript' }));
             iwindow.MonacoEnvironment = {
                 getWorkerUrl: () => proxy

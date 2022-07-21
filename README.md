@@ -5,10 +5,10 @@
 [![npm version](https://img.shields.io/npm/v/clickgo.svg?colorB=brightgreen)](https://www.npmjs.com/package/clickgo "Stable Version")
 [![npm version](https://img.shields.io/npm/v/clickgo/dev.svg)](https://www.npmjs.com/package/clickgo "Development Version")
 [![npm version](https://img.shields.io/npm/v/clickgo/beta.svg)](https://www.npmjs.com/package/clickgo "Beta Version")
-[![License](https://img.shields.io/github/license/maiyun/ClickGo.svg)](https://github.com/MaiyunNET/ClickGo/blob/master/LICENSE)
-[![GitHub issues](https://img.shields.io/github/issues/maiyun/ClickGo.svg)](https://github.com/MaiyunNET/ClickGo/issues)
-[![GitHub Releases](https://img.shields.io/github/release/maiyun/ClickGo.svg)](https://github.com/MaiyunNET/ClickGo/releases "Stable Release")
-[![GitHub Pre-Releases](https://img.shields.io/github/release/maiyun/ClickGo/all.svg)](https://github.com/MaiyunNET/ClickGo/releases "Pre-Release")
+[![License](https://img.shields.io/github/license/maiyun/clickgo.svg)](https://github.com/maiyun/clickgo/blob/master/LICENSE)
+[![GitHub issues](https://img.shields.io/github/issues/maiyun/clickgo.svg)](https://github.com/maiyun/clickgo/issues)
+[![GitHub Releases](https://img.shields.io/github/release/maiyun/clickgo.svg)](https://github.com/maiyun/clickgo/releases "Stable Release")
+[![GitHub Pre-Releases](https://img.shields.io/github/release/maiyun/clickgo/all.svg)](https://github.com/maiyun/clickgo/releases "Pre-Release")
 
 Quickly and easily create a beautiful console interface.
 

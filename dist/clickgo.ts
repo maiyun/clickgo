@@ -42,14 +42,6 @@ export function getSafe(): boolean {
     return safe;
 }
 
-let cdn = '';
-export function setCdn(val: string): void {
-    cdn = val;
-}
-export function getCdn(): string {
-    return cdn;
-}
-
 export const vue: import('../types/index').IVueObject = (window as any).Vue;
 
 export * as control from './lib/control';

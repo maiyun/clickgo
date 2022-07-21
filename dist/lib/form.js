@@ -1101,9 +1101,6 @@ function create(opt) {
                 getSafe() {
                     return clickgo.getSafe();
                 },
-                getCdn() {
-                    return clickgo.getCdn();
-                },
                 'control': {
                     read: function (blob) {
                         return clickgo.control.read(blob);
@@ -1111,6 +1108,7 @@ function create(opt) {
                 },
                 'core': {
                     'config': clickgo.core.config,
+                    'cdn': loader.cdn,
                     initModules: function (names) {
                         return clickgo.core.initModules(names);
                     },

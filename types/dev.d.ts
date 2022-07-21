@@ -15,6 +15,4 @@ declare module 'clickgo' {
     export function getPlatform(): NodeJS.Platform | 'web';
     export function setSafe(val: boolean): void;
     export function getSafe(): boolean;
-    export function setCdn(val: string): void;
-    export function getCdn(): string;
 }

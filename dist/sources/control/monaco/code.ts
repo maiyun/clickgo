@@ -299,15 +299,15 @@ export const mounted = function(this: types.IVControl): void {
         loaderEl.addEventListener('load', () => {
             (iwindow as any).require.config({
                 paths: {
-                    'vs': clickgo.getCdn() + '/npm/monaco-editor@0.33.0/min/vs'
+                    'vs': clickgo.core.cdn + '/npm/monaco-editor@0.33.0/min/vs'
                 }
             });
             // --- 初始化 Monaco ---
             const proxy = (iwindow as any).URL.createObjectURL(new Blob([`
                 self.MonacoEnvironment = {
-                    baseUrl: '${clickgo.getCdn()}/npm/monaco-editor@0.33.0/min/'
+                    baseUrl: '${clickgo.core.cdn}/npm/monaco-editor@0.33.0/min/'
                 };
-                importScripts('${clickgo.getCdn()}/npm/monaco-editor@0.33.0/min/vs/base/worker/workerMain.js');
+                importScripts('${clickgo.core.cdn}/npm/monaco-editor@0.33.0/min/vs/base/worker/workerMain.js');
             `], { type: 'text/javascript' }));
             (iwindow as any).MonacoEnvironment = {
                 getWorkerUrl: () => proxy

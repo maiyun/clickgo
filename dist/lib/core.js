@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getAvailArea = exports.fetchApp = exports.readApp = exports.trigger = exports.removeSystemEventListener = exports.setSystemEventListener = exports.globalEvents = exports.getModule = exports.initModules = exports.regModule = exports.config = void 0;
+exports.getAvailArea = exports.fetchApp = exports.readApp = exports.trigger = exports.removeSystemEventListener = exports.setSystemEventListener = exports.globalEvents = exports.getModule = exports.initModules = exports.regModule = exports.cdn = exports.config = void 0;
 const clickgo = require("../clickgo");
 const fs = require("./fs");
 const form = require("./form");
@@ -34,6 +34,7 @@ exports.config = clickgo.vue.reactive({
     'desktop.wallpaper': null,
     'desktop.path': null
 });
+exports.cdn = '';
 clickgo.vue.watch(exports.config, function () {
     for (const key in configOrigin) {
         if (exports.config[key] !== undefined) {
@@ -87,7 +88,7 @@ const modules = {
         func: function () {
             return __awaiter(this, void 0, void 0, function* () {
                 return new Promise(function (resolve, reject) {
-                    fetch(clickgo.getCdn() + '/npm/monaco-editor@0.33.0/min/vs/loader.js').then(function (r) {
+                    fetch(loader.cdn + '/npm/monaco-editor@0.33.0/min/vs/loader.js').then(function (r) {
                         return r.blob();
                     }).then(function (b) {
                         return tool.blob2DataUrl(b);
