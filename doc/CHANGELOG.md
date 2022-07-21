@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.0.3-dev4
+
+[\*] Op loader.
+
 ## 3.0.2-dev3
 
 [\*] Op Native.
