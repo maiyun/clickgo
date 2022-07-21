@@ -170,7 +170,8 @@ function run(url, opt = {}) {
         }) : undefined;
         const app = yield core.fetchApp(url, {
             'notifyId': notifyId,
-            'current': ntask ? ntask.path : undefined
+            'current': ntask ? ntask.path : undefined,
+            'progress': opt.progress
         });
         if (notifyId) {
             setTimeout(function () {

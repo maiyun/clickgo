@@ -637,6 +637,7 @@ export async function fetchApp(url: string, opt: types.ICoreFetchAppOptions = {}
                         files[file] = blob;
                     }
                     ++loaded;
+                    opt.progress?.(loaded, total) as unknown;
                     if (opt.notifyId) {
                         form.notifyProgress(opt.notifyId, loaded / total);
                     }
@@ -646,6 +647,7 @@ export async function fetchApp(url: string, opt: types.ICoreFetchAppOptions = {}
                     resolve();
                 }).catch(function() {
                     ++loaded;
+                    opt.progress?.(loaded, total) as unknown;
                     if (opt.notifyId) {
                         form.notifyProgress(opt.notifyId, loaded / total);
                     }

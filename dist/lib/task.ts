@@ -222,7 +222,8 @@ export async function run(url: string, opt: types.ITaskRunOptions = {}): Promise
     }) : undefined;
     const app: types.IApp | null = await core.fetchApp(url, {
         'notifyId': notifyId,
-        'current': ntask ? ntask.path : undefined
+        'current': ntask ? ntask.path : undefined,
+        'progress': opt.progress
     });
     if (notifyId) {
         setTimeout(function(): void {

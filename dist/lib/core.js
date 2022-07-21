@@ -555,6 +555,7 @@ function fetchApp(url, opt = {}) {
                     fs.getContent(url + file.slice(1), {
                         'current': current
                     }).then(function (blob) {
+                        var _a;
                         return __awaiter(this, void 0, void 0, function* () {
                             if (blob === null || typeof blob === 'string') {
                                 clickgo.form.notify({
@@ -572,6 +573,7 @@ function fetchApp(url, opt = {}) {
                                 files[file] = blob;
                             }
                             ++loaded;
+                            (_a = opt.progress) === null || _a === void 0 ? void 0 : _a.call(opt, loaded, total);
                             if (opt.notifyId) {
                                 form.notifyProgress(opt.notifyId, loaded / total);
                             }
@@ -581,7 +583,9 @@ function fetchApp(url, opt = {}) {
                             resolve();
                         });
                     }).catch(function () {
+                        var _a;
                         ++loaded;
+                        (_a = opt.progress) === null || _a === void 0 ? void 0 : _a.call(opt, loaded, total);
                         if (opt.notifyId) {
                             form.notifyProgress(opt.notifyId, loaded / total);
                         }
