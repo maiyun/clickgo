@@ -51,7 +51,7 @@ export async function getContent(path: string, options?: BufferEncoding | {
     const encoding = options.encoding;
     const start = options.start;
     const end = options.end;
-    if (path.startsWith('/clickgo/') || path.startsWith('http:') || path.startsWith('https:')) {
+    if (path.startsWith('/clickgo/') || path.startsWith('http:') || path.startsWith('https:') || path.startsWith('file:')) {
         let ourl: string = '';
         if (path.startsWith('/clickgo/')) {
             if (!clickgoFiles.includes(fpath)) {
