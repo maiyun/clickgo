@@ -43,10 +43,7 @@ const clickgo = require("../../index");
             }
             el.innerHTML = 'Starting app...';
             if (clickgo.getNative()) {
-                clickgo.native.send('cg-set-state', JSON.stringify({
-                    'token': clickgo.native.getToken(),
-                    'state': 'max'
-                }));
+                clickgo.native.max();
             }
         }
         const taskId = yield clickgo.task.run('/clickgo/app/demo/', {

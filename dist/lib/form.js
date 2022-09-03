@@ -69,16 +69,10 @@ const elements = {
         document.getElementsByTagName('body')[0].appendChild(this.wrap);
         if (clickgo.getNative() && (clickgo.getPlatform() === 'win32')) {
             this.wrap.addEventListener('mouseenter', function () {
-                native.send('cg-mouse-ignore', JSON.stringify({
-                    'token': native.getToken(),
-                    'param': false
-                }));
+                native.invoke('cg-mouse-ignore', native.getToken(), false);
             });
             this.wrap.addEventListener('mouseleave', function () {
-                native.send('cg-mouse-ignore', JSON.stringify({
-                    'token': native.getToken(),
-                    'param': true
-                }));
+                native.invoke('cg-mouse-ignore', native.getToken(), true);
             });
         }
         this.list.id = 'cg-form-list';
@@ -1438,23 +1432,8 @@ function create(opt) {
                     }
                 },
                 'native': {
-                    getListeners: function () {
-                        return clickgo.native.getListeners();
-                    },
-                    send: function (name, param, handler) {
-                        return clickgo.native.send(name, param, handler, taskId);
-                    },
-                    on: function (name, handler, id, once = false) {
-                        clickgo.native.on(name, handler, id, once, taskId);
-                    },
-                    once: function (name, handler, id) {
-                        clickgo.native.once(name, handler, id, taskId);
-                    },
-                    off: function (name, handler) {
-                        clickgo.native.off(name, handler, taskId);
-                    },
-                    clearListener: function () {
-                        clickgo.native.clearListener(taskId);
+                    invoke: function (name, ...param) {
+                        return clickgo.native.invoke(name, ...param);
                     },
                     max: function () {
                         clickgo.native.max();

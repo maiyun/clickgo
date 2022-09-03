@@ -113,16 +113,10 @@ const elements: {
         document.getElementsByTagName('body')[0].appendChild(this.wrap);
         if (clickgo.getNative() && (clickgo.getPlatform() === 'win32')) {
             this.wrap.addEventListener('mouseenter', function() {
-                native.send('cg-mouse-ignore', JSON.stringify({
-                    'token': native.getToken(),
-                    'param': false
-                }));
+                native.invoke('cg-mouse-ignore', native.getToken(), false);
             });
             this.wrap.addEventListener('mouseleave', function() {
-                native.send('cg-mouse-ignore', JSON.stringify({
-                    'token': native.getToken(),
-                    'param': true
-                }));
+                native.invoke('cg-mouse-ignore', native.getToken(), true);
             });
         }
 
@@ -1739,36 +1733,8 @@ export async function create(opt: string | types.IFormCreateOptions): Promise<nu
                 }
             },
             'native': {
-                getListeners: function(): Array<{ 'id': number; 'name': string; 'once': boolean; 'taskId'?: number; }> {
-                    return clickgo.native.getListeners();
-                },
-                send: function(
-                    name: string,
-                    param?: string,
-                    handler?: (param?: string) => void | Promise<void>
-                ): number {
-                    return clickgo.native.send(name, param, handler, taskId);
-                },
-                on: function(
-                    name: string,
-                    handler: (param?: string) => void | Promise<void>,
-                    id?: number,
-                    once: boolean = false
-                ): void {
-                    clickgo.native.on(name, handler, id, once, taskId);
-                },
-                once: function(
-                    name: string,
-                    handler: (param?: string) => void | Promise<void>,
-                    id?: number
-                ): void {
-                    clickgo.native.once(name, handler, id, taskId);
-                },
-                off: function(name: string, handler: (param?: string) => void | Promise<void>): void {
-                    clickgo.native.off(name, handler, taskId);
-                },
-                clearListener: function(): void {
-                    clickgo.native.clearListener(taskId);
+                invoke: function(name: string, ...param: any[]): any {
+                    return clickgo.native.invoke(name, ...param);
                 },
                 max: function(): void {
                     clickgo.native.max();

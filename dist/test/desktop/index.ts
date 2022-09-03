@@ -38,10 +38,7 @@ import * as clickgo from '../../index';
         el.innerHTML = 'Starting app...';
         // --- 最大化窗体 ---
         if (clickgo.getNative()) {
-            clickgo.native.send('cg-set-state', JSON.stringify({
-                'token': clickgo.native.getToken(),
-                'state': 'max'
-            }));
+            clickgo.native.max();
         }
     }
     const taskId = await clickgo.task.run('/clickgo/app/demo/', {

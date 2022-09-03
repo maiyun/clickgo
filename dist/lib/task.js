@@ -305,15 +305,11 @@ function run(url, opt = {}) {
             }
         }
         if (task.id === 1) {
-            clickgo.native.send('cg-init', clickgo.native.getToken());
+            native.invoke('cg-init', native.getToken());
         }
         if (clickgo.getNative() && opt.sync) {
             f.vroot.$refs.form.isNativeSync = true;
-            clickgo.native.send('cg-set-size', JSON.stringify({
-                'token': clickgo.native.getToken(),
-                'width': f.vroot.$refs.form.widthData,
-                'height': f.vroot.$refs.form.heightData
-            }));
+            native.invoke('cg-set-size', native.getToken(), f.vroot.$refs.form.widthData, f.vroot.$refs.form.heightData);
             window.addEventListener('resize', function () {
                 f.vroot.$refs.form.setPropData('width', window.innerWidth);
                 f.vroot.$refs.form.setPropData('height', window.innerHeight);
@@ -329,9 +325,7 @@ function end(taskId) {
         return true;
     }
     if (clickgo.getNative() && task.main) {
-        clickgo.native.send('cg-main-close', JSON.stringify({
-            'token': clickgo.native.getToken()
-        }));
+        native.invoke('cg-close', native.getToken());
     }
     const fid = form.getMaxZIndexID({
         'taskIds': [task.id]
@@ -362,7 +356,6 @@ function end(taskId) {
             clearTimeout(parseFloat(timer));
         }
     }
-    native.clearListener(taskId);
     dom.clearWatchSize(taskId);
     delete exports.list[taskId];
     core.trigger('taskEnded', taskId);

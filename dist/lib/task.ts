@@ -372,16 +372,12 @@ export async function run(url: string, opt: types.ITaskRunOptions = {}): Promise
     }
     // --- 给 native 发送任务启动成功的消息 ---
     if (task.id === 1) {
-        clickgo.native.send('cg-init', clickgo.native.getToken());
+        native.invoke('cg-init', native.getToken());
     }
     // --- 提交 sync ---
     if (clickgo.getNative() && opt.sync) {
         f.vroot.$refs.form.isNativeSync = true;
-        clickgo.native.send('cg-set-size', JSON.stringify({
-            'token': clickgo.native.getToken(),
-            'width': f.vroot.$refs.form.widthData,
-            'height': f.vroot.$refs.form.heightData
-        }));
+        native.invoke('cg-set-size', native.getToken(), f.vroot.$refs.form.widthData, f.vroot.$refs.form.heightData);
         window.addEventListener('resize', function(): void {
             f.vroot.$refs.form.setPropData('width', window.innerWidth);
             f.vroot.$refs.form.setPropData('height', window.innerHeight);
@@ -401,9 +397,7 @@ export function end(taskId: number): boolean {
     }
     // --- 如果是 native 模式 ---
     if (clickgo.getNative() && task.main) {
-        clickgo.native.send('cg-main-close', JSON.stringify({
-            'token': clickgo.native.getToken()
-        }));
+        native.invoke('cg-close', native.getToken());
     }
     // --- 获取最大的 z index 窗体，并让他获取焦点 ---
     const fid = form.getMaxZIndexID({
@@ -440,7 +434,6 @@ export function end(taskId: number): boolean {
         }
     }
     // --- 移除各类监听 ---
-    native.clearListener(taskId);
     dom.clearWatchSize(taskId);
     // --- 移除 task ---
     delete list[taskId];

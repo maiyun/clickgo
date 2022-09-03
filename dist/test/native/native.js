@@ -9,14 +9,134 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.run = exports.off = exports.once = exports.on = exports.ready = exports.verifyToken = void 0;
+exports.run = exports.ready = exports.verifyToken = exports.unbind = exports.once = exports.bind = void 0;
 const electron = require("electron");
+const path = require("path");
 electron.Menu.setApplicationMenu(null);
 let isReady = false;
 let isFrame = false;
 let isQuit = true;
+let win;
 const platform = 'darwin';
 let token = '';
+const methods = {
+    'cg-init': {
+        'once': true,
+        handler: function (t) {
+            if (!t || !win) {
+                return;
+            }
+            win.resizable = true;
+            token = t;
+        }
+    },
+    'cg-quit': {
+        'once': false,
+        handler: function (t) {
+            if (!win || !t) {
+                return;
+            }
+            if (!verifyToken(t)) {
+                return;
+            }
+            electron.app.quit();
+        }
+    },
+    'cg-set-size': {
+        'once': false,
+        handler: function (t, width, height) {
+            if (!win || !width || !height) {
+                return;
+            }
+            if (!verifyToken(t)) {
+                return;
+            }
+            win.setSize(width, height);
+            win.center();
+        }
+    },
+    'cg-set-state': {
+        'once': false,
+        handler: function (t, state) {
+            if (!win || !state) {
+                return;
+            }
+            if (!verifyToken(t)) {
+                return;
+            }
+            switch (state) {
+                case 'max': {
+                    win.maximize();
+                    break;
+                }
+                case 'min': {
+                    win.minimize();
+                    break;
+                }
+                default: {
+                    win.restore();
+                }
+            }
+        }
+    },
+    'cg-close': {
+        'once': false,
+        handler: function (t) {
+            if (!win) {
+                return;
+            }
+            if (!verifyToken(t)) {
+                return;
+            }
+            win.close();
+        }
+    },
+    'cg-mouse-ignore': {
+        'once': false,
+        handler: function (t, val) {
+            if (!win) {
+                return;
+            }
+            if (!verifyToken(t)) {
+                return;
+            }
+            if (val) {
+                win.setIgnoreMouseEvents(true, { 'forward': true });
+            }
+            else {
+                win.setIgnoreMouseEvents(false);
+            }
+        }
+    }
+};
+function bind(name, handler, once = false) {
+    methods[name] = {
+        'once': once,
+        'handler': handler
+    };
+}
+exports.bind = bind;
+function once(name, handler) {
+    bind(name, handler, true);
+}
+exports.once = once;
+function unbind(name) {
+    if (!methods[name]) {
+        return;
+    }
+    delete methods[name];
+}
+exports.unbind = unbind;
+electron.ipcMain.handle('pre', function (e, name, ...param) {
+    if (!methods[name]) {
+        return;
+    }
+    const r = methods[name].handler(...param);
+    if (methods[name].once) {
+        delete methods[name];
+    }
+    return r;
+});
 function verifyToken(t) {
     if (t !== token) {
         return false;
@@ -31,41 +151,13 @@ function ready() {
     });
 }
 exports.ready = ready;
-const listeners = {};
-function on(name, handler, once = false) {
-    if (!listeners[name]) {
-        listeners[name] = [];
-    }
-    listeners[name].push({
-        'once': once,
-        'handler': handler
-    });
-}
-exports.on = on;
-function once(name, handler) {
-    on(name, handler, true);
-}
-exports.once = once;
-function off(name, handler) {
-    if (!listeners[name]) {
-        return;
-    }
-    for (let i = 0; i < listeners[name].length; ++i) {
-        if (listeners[name][i].handler !== handler) {
-            continue;
-        }
-        listeners[name].splice(i, 1);
-        if (listeners[name].length === 0) {
-            delete listeners[name];
-            break;
-        }
-        --i;
-    }
-}
-exports.off = off;
-let win;
-function createForm(path) {
+function createForm(p) {
     const op = {
+        'webPreferences': {
+            'nodeIntegration': false,
+            'contextIsolation': true,
+            'preload': path.join(__dirname, '/pre.js')
+        },
         'width': 500,
         'height': 400,
         'frame': isFrame,
@@ -87,89 +179,13 @@ function createForm(path) {
         else {
         }
         win.show();
-        const timerFunc = function () {
-            return __awaiter(this, void 0, void 0, function* () {
-                if (!win) {
-                    return;
-                }
-                try {
-                    const rtn = yield win.webContents.executeJavaScript('window.clickGoNative && clickGoNative.isReady');
-                    if (!rtn) {
-                        setTimeout(function () {
-                            timerFunc().catch(function (e) {
-                                console.log(e);
-                            });
-                        }, 100);
-                        return;
-                    }
-                }
-                catch (_a) {
-                    setTimeout(function () {
-                        timerFunc().catch(function (e) {
-                            console.log(e);
-                        });
-                    }, 100);
-                    return;
-                }
-                const list = JSON.parse(yield win.webContents.executeJavaScript('clickGoNative.cgInnerGetSends()'));
-                for (const item of list) {
-                    if (!listeners[item.name]) {
-                        continue;
-                    }
-                    for (let i = 0; i < listeners[item.name].length; ++i) {
-                        const it = listeners[item.name][i];
-                        const result = it.handler(item.param);
-                        if (it.once) {
-                            listeners[item.name].splice(i, 1);
-                            --i;
-                        }
-                        if (result instanceof Promise) {
-                            result.then(function (result) {
-                                if (!win) {
-                                    return;
-                                }
-                                win.webContents.executeJavaScript(`clickGoNative.cgInnerReceive(${item.id}, "${item.name}", ${result !== undefined ? (', "' + result.replace(/"/g, '\\"') + '"') : ''})`).catch(function (e) {
-                                    console.log(e);
-                                });
-                            }).catch(function (e) {
-                                console.log(e);
-                            });
-                        }
-                        else {
-                            if (!win) {
-                                return;
-                            }
-                            win.webContents.executeJavaScript(`clickGoNative.cgInnerReceive(${item.id}, "${item.name}", ${result !== undefined ? (', "' + result.replace(/"/g, '\\"') + '"') : ''})`).catch(function (e) {
-                                console.log(e);
-                            });
-                        }
-                        if (it.once) {
-                            listeners[item.name].splice(i, 1);
-                            if (listeners[item.name].length === 0) {
-                                delete listeners[item.name];
-                                break;
-                            }
-                            --i;
-                        }
-                    }
-                }
-                setTimeout(function () {
-                    timerFunc().catch(function (e) {
-                        console.log(e);
-                    });
-                }, 100);
-            });
-        };
-        timerFunc().catch(function (e) {
-            console.log(e);
-        });
     });
-    const lio = path.indexOf('?');
-    const search = lio === -1 ? '' : path.slice(lio + 1);
+    const lio = p.indexOf('?');
+    const search = lio === -1 ? '' : p.slice(lio + 1);
     if (lio !== -1) {
-        path = path.slice(0, lio);
+        p = p.slice(0, lio);
     }
-    win.loadFile(path, {
+    win.loadFile(p, {
         'search': search
     }).catch(function (e) {
         throw e;
@@ -189,140 +205,26 @@ function run(path, opt = {}) {
         isQuit = opt.quit;
     }
     createForm(path);
-    once('cg-init', function (t) {
-        if (!t || !win) {
-            return;
-        }
-        win.resizable = true;
-        token = t;
-    });
-    on('cg-quit', function (j) {
-        if (!win || !j) {
-            return;
-        }
-        try {
-            const rtn = JSON.parse(j);
-            if (!verifyToken(rtn.token)) {
-                return;
-            }
-            electron.app.quit();
-        }
-        catch (e) {
-            console.log(e);
-        }
-    });
-    on('cg-set-size', function (j) {
-        if (!win || !j) {
-            return;
-        }
-        try {
-            const rtn = JSON.parse(j);
-            if (!verifyToken(rtn.token)) {
-                return;
-            }
-            if (!rtn.width || !rtn.height) {
-                return;
-            }
-            win.setSize(rtn.width, rtn.height);
-            win.center();
-        }
-        catch (e) {
-            console.log(e);
-        }
-    });
-    on('cg-set-state', function (j) {
-        if (!win || !j) {
-            return;
-        }
-        try {
-            const rtn = JSON.parse(j);
-            if (!verifyToken(rtn.token)) {
-                return;
-            }
-            switch (rtn.state) {
-                case 'max': {
-                    win.maximize();
-                    break;
-                }
-                case 'min': {
-                    win.minimize();
-                    break;
-                }
-                default: {
-                    win.restore();
-                }
-            }
-        }
-        catch (e) {
-            console.log(e);
-        }
-    });
-    on('cg-main-close', function (j) {
-        if (!win || !j) {
-            return;
-        }
-        try {
-            const rtn = JSON.parse(j);
-            if (!verifyToken(rtn.token)) {
-                return;
-            }
-            if (isQuit) {
-                electron.app.quit();
-            }
-            else {
-                win.close();
-            }
-        }
-        catch (e) {
-            console.log(e);
-        }
-    });
-    on('cg-mouse-ignore', function (j) {
-        if (!win || !j) {
-            return;
-        }
-        try {
-            const rtn = JSON.parse(j);
-            if (!verifyToken(rtn.token)) {
-                return;
-            }
-            if (rtn.param) {
-                win.setIgnoreMouseEvents(true, { 'forward': true });
-            }
-            else {
-                win.setIgnoreMouseEvents(false);
-            }
-        }
-        catch (e) {
-            console.log(e);
-        }
-    });
     electron.app.on('window-all-closed', function () {
         if (isQuit) {
             electron.app.quit();
         }
     });
     electron.app.on('activate', function () {
-        if (electron.BrowserWindow.getAllWindows().length === 0) {
-            createForm(path);
-            once('cg-init', function (t) {
+        if (electron.BrowserWindow.getAllWindows().length > 0) {
+            return;
+        }
+        createForm(path);
+        methods['cg-init'] = {
+            'once': true,
+            handler: function (t) {
                 if (!t || !win) {
                     return;
                 }
                 win.resizable = true;
                 token = t;
-            });
-        }
+            }
+        };
     });
 }
 exports.run = run;
-setInterval(function () {
-    const keysCount = {};
-    let count = 0;
-    for (const key in listeners) {
-        keysCount[key] = listeners[key].length;
-        count += keysCount[key];
-    }
-    console.log('keysCount', keysCount);
-    console.log(`All count: ${count}`);
-}, 5000);
