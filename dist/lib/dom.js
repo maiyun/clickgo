@@ -4,10 +4,13 @@ exports.fullscreen = exports.siblingsData = exports.siblings = exports.findParen
 const clickgo = require("../clickgo");
 const form = require("./form");
 const core = require("./core");
-const topClass = ['#cg-form-list', '#cg-pop-list', '#cg-system', '#cg-simpletask'];
-function classUnfold(after) {
+const topClass = ['#cg-form-list', '#cg-pop-list', '#cg-system', '#cg-simpletask', '#cg-launcher'];
+function classUnfold(after, out = []) {
     const arr = [];
     for (const name of topClass) {
+        if (out.includes(name)) {
+            continue;
+        }
         arr.push(name + (after ? (' ' + after) : ''));
     }
     return arr.join(', ');
@@ -20,7 +23,7 @@ styleList.insertAdjacentHTML('beforeend', `<style id='cg-global'>
 ${classUnfold()} {-webkit-user-select: none; user-select: none; position: fixed; cursor: default; box-sizing: border-box;}
 ${topClass.slice(0, 3).join(', ')} {left: 0; top: 0; width: 0; height: 0;}
 ${classUnfold('img')} {vertical-align: bottom;}
-${classUnfold('::selection')} {background-color: rgba(0, 0, 0, .1);}
+${classUnfold('::selection', ['#cg-launcher'])} {background-color: rgba(0, 0, 0, .1);}
 ${classUnfold('*')}, ${classUnfold('*::after')}, ${classUnfold('*::before')} {box-sizing: border-box; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); flex-shrink: 0;}
 ${classUnfold()}, ${classUnfold('input')}, ${classUnfold('textarea')} {font-family: "Lucida Sans Unicode", "Helvetica Neue","Helvetica","PingFang SC","Hiragino Sans GB","Noto Sans CJK SC","Noto Sans CJK","Source Han Sans","WenQuanYi Micro Hei","Microsoft YaHei",sans-serif; font-size: 12px; line-height: 1; -webkit-font-smoothing: antialiased;}
 </style>`);

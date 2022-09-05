@@ -46,6 +46,47 @@ import * as clickgo from '../../index';
         'main': window.location.href.includes('?single') ? true : undefined,
         'sync': window.location.href.includes('?single') ? true : undefined
     });
+    let icon = await clickgo.fs.getContent(clickgo.task.list[taskId].icon);
+    if (icon instanceof Blob) {
+        icon = await clickgo.tool.blob2DataUrl(icon);
+        clickgo.core.config['launcher.list'] = [
+            {
+                'name': clickgo.task.list[taskId].app.config.name + '01',
+                'icon': icon,
+                'path': clickgo.task.list[taskId].path
+            },
+            {
+                'name': clickgo.task.list[taskId].app.config.name + '02',
+                'icon': icon,
+                'path': clickgo.task.list[taskId].path
+            },
+            {
+                'name': 'folder1',
+                'list': [
+                    {
+                        'name': clickgo.task.list[taskId].app.config.name + '11',
+                        'icon': icon,
+                        'path': clickgo.task.list[taskId].path
+                    },
+                    {
+                        'name': clickgo.task.list[taskId].app.config.name + '12',
+                        'icon': icon,
+                        'path': clickgo.task.list[taskId].path
+                    }
+                ]
+            },
+            {
+                'name': 'folder2',
+                'list': [
+                    {
+                        'name': clickgo.task.list[taskId].app.config.name + '21',
+                        'icon': icon,
+                        'path': clickgo.task.list[taskId].path
+                    }
+                ]
+            }
+        ];
+    }
     if (taskId <= 0) {
         el.innerHTML = `Start failed(${taskId.toString()}).`;
         return;

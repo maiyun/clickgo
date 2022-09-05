@@ -36,6 +36,7 @@ const info: {
         'yes': string;
         'no': string;
         'cancel': string;
+        'search': string;
     }>;
 } = {
     'lastId': 0,
@@ -46,25 +47,29 @@ const info: {
             'ok': '好',
             'yes': '是',
             'no': '否',
-            'cancel': '取消'
+            'cancel': '取消',
+            'search': '搜索'
         },
         'tc': {
             'ok': '好',
             'yes': '是',
             'no': '否',
-            'cancel': '取消'
+            'cancel': '取消',
+            'search': '檢索'
         },
         'en': {
             'ok': 'OK',
             'yes': 'Yes',
             'no': 'No',
-            'cancel': 'Cancel'
+            'cancel': 'Cancel',
+            'search': 'Search'
         },
         'ja': {
             'ok': '好',
             'yes': 'はい',
             'no': 'いいえ',
-            'cancel': 'キャンセル'
+            'cancel': 'キャンセル',
+            'search': '検索'
         }
     }
 };
@@ -84,6 +89,7 @@ const popInfo: {
 };
 
 export let simpleSystemTaskRoot: types.IVue;
+export let launcherRoot: types.IVue;
 const elements: {
     'wrap': HTMLDivElement;
     'list': HTMLDivElement;
@@ -95,6 +101,7 @@ const elements: {
     'dragIcon'?: HTMLElement;
     'system': HTMLElement;
     'simpleSystemtask': HTMLDivElement;
+    'launcher': HTMLDivElement;
     'init': () => void;
 } = {
     'wrap': document.createElement('div'),
@@ -107,6 +114,7 @@ const elements: {
     'dragIcon': undefined,
     'system': document.createElement('div'),
     'simpleSystemtask': document.createElement('div'),
+    'launcher': document.createElement('div'),
     'init': function() {
         /** --- clickgo 所有的 div wrap --- */
         this.wrap.id = 'cg-wrap';
@@ -236,6 +244,192 @@ const elements: {
             }
         });
         simpletaskApp.mount('#cg-simpletask');
+
+        // --- cg-launcher ---
+        this.launcher.id = 'cg-launcher';
+        this.launcher.addEventListener('contextmenu', function(e): void {
+            e.preventDefault();
+        });
+        this.wrap.appendChild(this.launcher);
+        this.launcher.addEventListener('touchmove', function(e): void {
+            // --- 防止拖动时整个网页跟着动 ---
+            e.preventDefault();
+        }, {
+            'passive': false
+        });
+        // --- Vue 挂载在这里 ---
+        const waiting = function(): void {
+            // --- 必须在这里执行，要不然 computed 无法更新，因为 core 还没加载进来 ---
+            if (!core.config) {
+                setTimeout(function() {
+                    waiting();
+                }, 2000);
+                return;
+            }
+            const launcherApp = clickgo.vue.createApp({
+                'template': `<div class="cg-launcher-search">` +
+    `<input v-if="folderName === ''" class="cg-launcher-sinput" :placeholder="search" v-model="name">` +
+    `<input v-else class="cg-launcher-foldername" :value="folderName" @change="folderNameChange">` +
+`</div>` +
+`<div class="cg-launcher-list" @mousedown="mousedown" @click="listClick" :class="[folderName === '' ? '' : 'cg-folder-open']">` +
+    `<div v-for="item of list" class="cg-launcher-item">` +
+        `<div class="cg-launcher-inner">` +
+            `<div v-if="!item.list || item.list.length === 0" class="cg-launcher-icon" :style="{'background-image': 'url(' + item.icon + ')'}" @click="iconClick($event, item)"></div>` +
+            `<div v-else class="cg-launcher-folder" @click="openFolder($event, item)">` +
+                `<div>` +
+                    `<div v-for="sub of item.list" class="cg-launcher-item">` +
+                        `<div class="cg-launcher-inner">` +
+                            `<div class="cg-launcher-icon" :style="{'background-image': 'url(' + sub.icon + ')'}" @click="subIconClick($event, sub)"></div>` +
+                            `<div class="cg-launcher-name">{{sub.name}}</div>` +
+                        `</div>` +
+                        `<div class="cg-launcher-space"></div>` +
+                    `</div>` +
+                `</div>` +
+            `</div>` +
+            `<div class="cg-launcher-name">{{item.name}}</div>` +
+        `</div>` +
+        `<div class="cg-launcher-space"></div>` +
+    `</div>` +
+`</div>`,
+                'data': function() {
+                    return {
+                        'name': '',
+                        'folderName': ''
+                    };
+                },
+                'computed': {
+                    'search': function() {
+                        return info.locale[core.config.locale]?.search ?? info.locale['en'].search;
+                    },
+                    'list': function(this: types.IVue) {
+                        if (this.name === '') {
+                            return core.config['launcher.list'];
+                        }
+                        const list = [];
+                        for (const item of core.config['launcher.list']) {
+                            if (item.list && item.list.length > 0) {
+                                for (const sub of item.list) {
+                                    if (sub.name.toLowerCase().includes(this.name.toLowerCase())) {
+                                        list.push(sub);
+                                    }
+                                }
+                            }
+                            else {
+                                if (item.name.toLowerCase().includes(this.name.toLowerCase())) {
+                                    list.push(item);
+                                }
+                            }
+                        }
+                        return list;
+                    }
+                },
+                'methods': {
+                    mousedown: function(this: types.IVue, e: MouseEvent): void {
+                        this.md = e.pageX + e.pageY;
+                    },
+                    listClick: function(this: types.IVue, e: MouseEvent) {
+                        if (this.md !== e.pageX + e.pageY) {
+                            return;
+                        }
+                        if (e.currentTarget !== e.target) {
+                            return;
+                        }
+                        if (this.folderName === '') {
+                            hideLauncher();
+                        }
+                        else {
+                            this.closeFolder();
+                        }
+                    },
+                    iconClick: async function(
+                        this: types.IVue,
+                        e: MouseEvent,
+                        item: types.IConfigLauncherItem
+                    ): Promise<void> {
+                        if (this.md !== e.pageX + e.pageY) {
+                            return;
+                        }
+                        hideLauncher();
+                        await clickgo.task.run(item.path!, {
+                            'icon': item.icon
+                        });
+                    },
+                    subIconClick: async function(
+                        this: types.IVue,
+                        e: MouseEvent,
+                        item: types.IConfigLauncherItem
+                    ): Promise<void> {
+                        if (this.md !== e.pageX + e.pageY) {
+                            return;
+                        }
+                        hideLauncher();
+                        await clickgo.task.run(item.path!, {
+                            'icon': item.icon
+                        });
+                    },
+                    closeFolder: function(this: types.IVue): void {
+                        // --- 关闭文件夹 ---
+                        this.folderName = '';
+                        const el = this.folderEl as HTMLDivElement;
+                        const rect = (el.parentNode as HTMLDivElement).getBoundingClientRect();
+                        el.classList.remove('cg-show');
+                        el.style.left = (rect.left + 30).toString() + 'px';
+                        el.style.top = rect.top.toString() + 'px';
+                        el.style.width = '';
+                        el.style.height = '';
+                        setTimeout(() => {
+                            el.style.position = '';
+                            el.style.left = '';
+                            el.style.top = '';
+                        }, 150);
+                    },
+                    openFolder: function(this: types.IVue, e: MouseEvent, item: types.IConfigLauncherItem): void {
+                        if (this.md !== e.pageX + e.pageY) {
+                            return;
+                        }
+                        if ((e.currentTarget as HTMLElement).childNodes[0] !== e.target) {
+                            return;
+                        }
+                        if (this.folderName !== '') {
+                            this.closeFolder();
+                            return;
+                        }
+                        this.folderName = item.name;
+                        this.folderItem = item;
+                        const el = (e.currentTarget as HTMLDivElement).childNodes.item(0) as HTMLDivElement;
+                        this.folderEl = el;
+                        const searchEl = document.getElementsByClassName('cg-launcher-search')[0] as HTMLDivElement;
+                        const rect = el.getBoundingClientRect();
+                        el.style.left = rect.left.toString() + 'px';
+                        el.style.top = rect.top.toString() + 'px';
+                        el.style.position = 'fixed';
+                        requestAnimationFrame(() => {
+                            el.classList.add('cg-show');
+                            el.style.left = '50px';
+                            el.style.top = searchEl.offsetHeight.toString() + 'px';
+                            el.style.width = 'calc(100% - 100px)';
+                            el.style.height = 'calc(100% - 50px - ' + searchEl.offsetHeight.toString() + 'px)';
+                        });
+                    },
+                    folderNameChange: function(this: types.IVue, e: InputEvent): void {
+                        const input = e.target as HTMLInputElement;
+                        const val = input.value.trim();
+                        if (val === '') {
+                            input.value = this.folderName;
+                            return;
+                        }
+                        this.folderName = val;
+                        // --- 触发 folder name change 事件 ---
+                        core.trigger('launcherFolderNameChanged', this.folderItem.id ?? '', val);
+                    }
+                },
+                'mounted': function(this: types.IVue): void {
+                    launcherRoot = this;
+                }
+            });
+            launcherApp.mount('#cg-launcher');
+        };
+        waiting();
     }
 };
 elements.init();
@@ -1614,6 +1808,12 @@ export async function create(opt: string | types.IFormCreateOptions): Promise<nu
                 },
                 hide: function(fid?: number): void {
                     clickgo.form.hide(fid ?? formId, taskId);
+                },
+                showLauncher: function(): void {
+                    clickgo.form.showLauncher();
+                },
+                hideLauncher: function(): void {
+                    clickgo.form.hideLauncher();
                 }
             },
             'fs': {
@@ -2473,6 +2673,30 @@ export function hide(formId?: number, taskId?: number): void {
         return;
     }
     form.vroot.$refs.form.$data.showData = false;
+}
+
+/**
+ * --- 显示 launcher 界面 ---
+ */
+export function showLauncher(): void {
+    elements.launcher.style.display = 'flex';
+    requestAnimationFrame(function() {
+        elements.launcher.classList.add('cg-show');
+    });
+}
+
+/**
+ * --- 隐藏 launcher 界面 ---
+ */
+export function hideLauncher(): void {
+    elements.launcher.classList.remove('cg-show');
+    setTimeout(function() {
+        if (launcherRoot.folderName !== '') {
+            launcherRoot.closeFolder();
+        }
+        launcherRoot.name = '';
+        elements.launcher.style.display = 'none';
+    }, 300);
 }
 
 // --- 绑定 resize 事件 ---

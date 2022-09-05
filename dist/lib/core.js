@@ -23,7 +23,8 @@ const configOrigin = {
     'desktop.icon.storage': true,
     'desktop.icon.recycler': true,
     'desktop.wallpaper': null,
-    'desktop.path': null
+    'desktop.path': null,
+    'launcher.list': []
 };
 exports.config = clickgo.vue.reactive({
     'locale': 'en',
@@ -32,7 +33,8 @@ exports.config = clickgo.vue.reactive({
     'desktop.icon.storage': true,
     'desktop.icon.recycler': true,
     'desktop.wallpaper': null,
-    'desktop.path': null
+    'desktop.path': null,
+    'launcher.list': []
 });
 exports.cdn = '';
 clickgo.vue.watch(exports.config, function () {
@@ -245,7 +247,8 @@ exports.globalEvents = {
     formBlurredHandler: null,
     formFlashHandler: null,
     taskStartedHandler: null,
-    taskEndedHandler: null
+    taskEndedHandler: null,
+    launcherFolderNameChangedHandler: null
 };
 function setSystemEventListener(name, func, formId, taskId) {
     if (!taskId) {
@@ -284,7 +287,7 @@ function removeSystemEventListener(name, formId, taskId) {
 }
 exports.removeSystemEventListener = removeSystemEventListener;
 function trigger(name, taskId = 0, formId = 0, param1 = '', param2 = '') {
-    var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z, _0, _1, _2, _3, _4;
+    var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z, _0, _1, _2, _3, _4, _5, _6, _7;
     switch (name) {
         case 'error': {
             if (typeof taskId !== 'number' || typeof formId !== 'number') {
@@ -425,6 +428,32 @@ function trigger(name, taskId = 0, formId = 0, param1 = '', param2 = '') {
                 const t = task.list[tid];
                 for (const fid in t.forms) {
                     const r = (_4 = (_3 = t.forms[fid].events)[name]) === null || _4 === void 0 ? void 0 : _4.call(_3, taskId);
+                    if (r instanceof Promise) {
+                        r.catch(function (e) {
+                            console.log(e);
+                        });
+                    }
+                }
+            }
+            break;
+        }
+        case 'launcherFolderNameChanged': {
+            if (typeof formId !== 'string') {
+                break;
+            }
+            if (typeof taskId === 'number') {
+                taskId = taskId.toString();
+            }
+            const r = (_5 = exports.globalEvents.launcherFolderNameChangedHandler) === null || _5 === void 0 ? void 0 : _5.call(exports.globalEvents, taskId, formId);
+            if (r && (r instanceof Promise)) {
+                r.catch(function (e) {
+                    console.log(e);
+                });
+            }
+            for (const tid in task.list) {
+                const t = task.list[tid];
+                for (const fid in t.forms) {
+                    const r = (_7 = (_6 = t.forms[fid].events)[name]) === null || _7 === void 0 ? void 0 : _7.call(_6, taskId, formId);
                     if (r instanceof Promise) {
                         r.catch(function (e) {
                             console.log(e);

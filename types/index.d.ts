@@ -61,10 +61,12 @@ export interface IGlobalEvents {
     taskStartedHandler: null | ((taskId: number) => void | Promise<void>);
     /** --- 任务结束后触发 --- */
     taskEndedHandler: null | ((taskId: number) => void | Promise<void>);
+    /** --- launcher 的文件夹名称被修改后触发 --- */
+    launcherFolderNameChangedHandler: null | ((id: string, name: string) => void | Promise<void>);
 }
 
 /** --- Core Config 属性列表 --- */
-export type TConfigName = 'locale' | 'task.position' | 'task.pin' | 'desktop.icon.storage' | 'desktop.icon.recycler' | 'desktop.wallpaper' | 'desktop.path';
+export type TConfigName = 'locale' | 'task.position' | 'task.pin' | 'desktop.icon.storage' | 'desktop.icon.recycler' | 'desktop.wallpaper' | 'desktop.path' | 'launcher.list';
 
 /** --- Config 对象 --- */
 export interface IConfig {
@@ -75,10 +77,20 @@ export interface IConfig {
     ['desktop.icon.recycler']: boolean;
     ['desktop.wallpaper']: string | null;
     ['desktop.path']: string | null;
+    ['launcher.list']: IConfigLauncherItem[];
+}
+
+/** --- Launcher 的 item 对象 --- */
+export interface IConfigLauncherItem {
+    'id'?: string;
+    'name': string;
+    'path'?: string;
+    'icon'?: string;
+    'list'?: Array<{ 'id'?: string; 'name': string; 'path': string; 'icon': string; }>;
 }
 
 /** --- 全局事件类型 --- */
-export type TGlobalEvent = 'error' | 'screenResize' | 'configChanged' | 'formCreated' | 'formRemoved' | 'formTitleChanged' | 'formIconChanged' | 'formStateMinChanged' | 'formStateMaxChanged' | 'formShowChanged' | 'formFocused' | 'formBlurred' | 'formFlash' | 'taskStarted' | 'taskEnded';
+export type TGlobalEvent = 'error' | 'screenResize' | 'configChanged' | 'formCreated' | 'formRemoved' | 'formTitleChanged' | 'formIconChanged' | 'formStateMinChanged' | 'formStateMaxChanged' | 'formShowChanged' | 'formFocused' | 'formBlurred' | 'formFlash' | 'taskStarted' | 'taskEnded' | 'launcherFolderNameChanged';
 
 export interface ICoreFetchAppOptions {
     'notifyId'?: number;
@@ -627,6 +639,7 @@ export interface IVueObject {
         cb: (n: any, o: any) => void | Promise<void>,
         opt: Record<string, string | boolean>
     ): void;
+    h(tag: string, props?: Record<string, any> | any[], list?: any[]): any;
 }
 
 export type IVueOptionMergeFunction = (to: unknown, from: unknown, instance: IVue) => any;

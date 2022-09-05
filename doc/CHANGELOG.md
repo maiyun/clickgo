@@ -1,5 +1,21 @@
 # Changelog
 
+# 3.0.7-dev8
+
+[+] Add launcher.  
+[\*] Op native lib.
+
+# 3.0.6-dev7
+
+[\*] Op getContent of fs lib.
+
+## 3.0.5-dev6
+
+[\*] Op current of core lib.  
+[\*] Fix getAvailArea of core lib.  
+[\*] Op progress on fetchApp of core, run of task.  
+[\*] Native sets the form automatically to set the form size for sync form.
+
 ## 3.0.3-dev4
 
 [\*] Op loader.

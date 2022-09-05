@@ -28,6 +28,7 @@
 
     --system-color:hsl(0, 0%, 95%);
     --system-background:hsla(0, 0%, 0%, .5);
+    --system-border-color:hsla(0, 0%, 100%, .2);
     --face:hsl(0, 0%, 95%);
 
     // --- 组件默认颜色（如按钮） ---
@@ -82,23 +83,128 @@
 #cg-simpletask {
     z-index: 20020002;
 }
-#cg-system {
-    z-index: 20020003;
-}
 #cg-rectangle {
-    z-index: 20020004; box-sizing: border-box; position: fixed; border-radius: 3px; box-shadow: 0 0 10px rgba(0, 0, 0, .25); background: rgba(255, 255, 255, .05); pointer-events: none; opacity: 0;
+    z-index: 20020003; box-sizing: border-box; position: fixed; border-radius: 3px; box-shadow: 0 0 10px rgba(0, 0, 0, .25); background: rgba(255, 255, 255, .05); pointer-events: none; opacity: 0;
 }
 #cg-circular {
-    z-index: 20020004; box-sizing: border-box; position: fixed; border: solid 3px var(--cg); border-radius: 50%; filter: drop-shadow(0 0 3px var(--cg)); pointer-events: none; opacity: 0;
+    z-index: 20020003; box-sizing: border-box; position: fixed; border: solid 3px var(--cg); border-radius: 50%; filter: drop-shadow(0 0 3px var(--cg)); pointer-events: none; opacity: 0;
 }
 #cg-gesture {
-    z-index: 20020004; box-sizing: border-box; position: fixed; border-radius: 50%; pointer-events: none; opacity: 0; background: var(--system-background); box-shadow: 0 5px 20px rgba(0, 0, 0, .25); transform: scale(0); width: 20px; height: 20px;
+    z-index: 20020003; box-sizing: border-box; position: fixed; border-radius: 50%; pointer-events: none; opacity: 0; background: var(--system-background); box-shadow: 0 5px 20px rgba(0, 0, 0, .25); transform: scale(0); width: 20px; height: 20px;
     &.done {
         background: rgba(255, 255, 255, .3); border: solid 3px rgba(0, 0, 0, .3);
     }
 }
 #cg-drag {
-    box-sizing: border-box; position: fixed; border-radius: 3px; z-index: 20020004; pointer-events: none; background: var(--system-background); box-shadow: 0 5px 20px rgba(0, 0, 0, .25); opacity: 0; display: flex; justify-content: center; align-items: center;
+    z-index: 20020003; box-sizing: border-box; position: fixed; border-radius: 3px; pointer-events: none; background: var(--system-background); box-shadow: 0 5px 20px rgba(0, 0, 0, .25); opacity: 0; display: flex; justify-content: center; align-items: center;
+}
+#cg-launcher {
+    z-index: 20020004; box-sizing: border-box; position: fixed; background: var(--system-background); -webkit-backdrop-filter: blur(30px) brightness(1.2); backdrop-filter: blur(30px) brightness(1.2); width: 100%; height: 100%; left: 0; top: 0; color: var(--system-color); display: none; flex-direction: column; transition: all .1s linear; transform: scale(1.2); opacity: 0;
+    &:not(.cg-show) {
+        pointer-events: none;
+    }
+    &.cg-show {
+        transform: scale(1); opacity: 1;
+    }
+}
+.cg-launcher-search {
+    text-align: center; padding: 50px;
+}
+.cg-launcher-sinput {
+    -webkit-appearance: none; padding: 10px; height: 38px; border: solid 1px var(--system-border-color); background: transparent; width: 50%; border-radius: 3px; color: var(--system-color);
+    &::placeholder {
+        color: var(--system-border-color);
+    }
+    &::selection {
+        background-color: var(--system-color); color: var(--g-color);
+    }
+    &:focus {
+        outline: none; border-color: var(--system-color);
+    }
+}
+.cg-launcher-foldername {
+    -webkit-appearance: none; height: 38px; font-size: 28px !important; border: none; background: transparent; width: 50%; color: var(--system-color); text-align: center;
+    &::selection {
+        background-color: var(--system-color); color: var(--g-color);
+    }
+    &:focus {
+        outline: none;
+    }
+}
+.cg-launcher-item {
+    width: 190px; display: inline-flex; vertical-align: middle; margin-bottom: 50px;
+}
+.cg-launcher-inner {
+    flex: 1; width: 0;
+}
+.cg-launcher-icon {
+    background-position: center; background-size: 80px; height: 80px; background-repeat: no-repeat;
+    &:active {
+        filter: brightness(.6);
+    }
+}
+
+.cg-launcher-name {
+    font-size: 13px; font-weight: bold; text-shadow: 0 0 3px rgba(0, 0, 0, .6); text-align: center; margin-top: 20px;
+}
+.cg-launcher-icon, .cg-launcher-name {
+    transition: all .1s linear; transition-property: opacity;
+}
+.cg-launcher-space {
+    width: 50px;
+}
+.cg-launcher-folder {
+    display: flex; justify-content: center; height: 80px;
+
+    > div {
+        height: 80px; width: 80px; background: rgba(255, 255, 255, .3); border-radius: 20px; padding: 10px 4px 4px 10px; transition: all .1s linear; transition-property: left, top, width, height, opacity; overflow-y: auto;
+        &::-webkit-scrollbar {
+            display: none;
+        }
+        .cg-launcher-item, .cg-launcher-space {
+            transition: all .1s linear;
+        }
+
+        &.cg-show {
+            padding: 50px 0 0 50px;
+        }
+        &:not(.cg-show) {
+            &:active {
+                filter: brightness(.6);
+            }
+
+            .cg-launcher-item {
+                width: 22px; margin-bottom: 6px;
+            }
+            .cg-launcher-icon {
+                background-size: 16px; height: 16px; pointer-events: none;
+            }
+            .cg-launcher-name {
+                display: none;
+            }
+            .cg-launcher-space {
+                width: 6px;
+            }
+        }
+    }
+}
+.cg-launcher-list {
+    flex: 1; height: 0; overflow-y: auto; padding: 0 0 0 50px;
+    &::-webkit-scrollbar {
+        display: none;
+    }
+    &.cg-folder-open {
+        > .cg-launcher-item > .cg-launcher-inner {
+            > {
+                .cg-launcher-icon, .cg-launcher-name {
+                    opacity: 0;
+                }
+                .cg-launcher-folder > div:not(.cg-show) {
+                    opacity: 0;
+                }
+            }
+        }
+    }
 }
 
 [data-cg-pop] {
@@ -111,8 +217,11 @@
     }
 }
 
+#cg-system {
+    z-index: 20020005;
+}
 .cg-system-notify {
-    background: var(--system-background); position: fixed; padding: 15px; border-radius: 3px; right: 0; top: 0; width: 280px; font-size: 14px; display: flex; transition: .1s ease-out; transition-property: transform, opacity; overflow: hidden; color: #f6f6f6; box-shadow: 0 5px 20px rgba(0, 0, 0, .25); -webkit-backdrop-filter: blur(30px) brightness(1.1); backdrop-filter: blur(30px) brightness(1.1);
+    background: var(--system-background); position: fixed; padding: 15px; border-radius: 3px; right: 0; top: 0; width: 280px; font-size: 14px; display: flex; transition: .1s ease-out; transition-property: transform, opacity; overflow: hidden; color: var(--system-color); box-shadow: 0 5px 20px rgba(0, 0, 0, .25); -webkit-backdrop-filter: blur(30px) brightness(1.2); backdrop-filter: blur(30px) brightness(1.2);
 }
 .cg-system-icon {
     margin-right: 10px; width: 16px; height: 16px; border-radius: 50%;
@@ -143,7 +252,7 @@
 }
 
 #cg-simpletask {
-    left: 0; bottom: -46px; width: 100%; height: 46px; top: initial; background: var(--system-background); -webkit-backdrop-filter: blur(30px) brightness(1.1); backdrop-filter: blur(30px) brightness(1.1); padding: 5px 0 5px 5px; display: flex; color: var(--system-color); transition: bottom .1s ease-out; overflow-x: auto;
+    left: 0; bottom: -46px; width: 100%; height: 46px; top: initial; background: var(--system-background); -webkit-backdrop-filter: blur(30px) brightness(1.2); backdrop-filter: blur(30px) brightness(1.2); padding: 5px 0 5px 5px; display: flex; color: var(--system-color); transition: bottom .1s ease-out; overflow-x: auto;
     &::-webkit-scrollbar {
         display: none;
     }

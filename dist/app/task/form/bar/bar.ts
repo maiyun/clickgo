@@ -17,6 +17,9 @@ export const computed = {
 };
 
 export const methods = {
+    showLauncher: function(): void {
+        clickgo.form.showLauncher();
+    },
     itemClick: async function(this: types.IVForm, appIndex: number): Promise<void> {
         if (this.apps[appIndex].formCount === 0) {
             // --- 启动 ---

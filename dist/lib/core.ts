@@ -28,7 +28,8 @@ const configOrigin: types.IConfig = {
     'desktop.icon.storage': true,
     'desktop.icon.recycler': true,
     'desktop.wallpaper': null,
-    'desktop.path': null
+    'desktop.path': null,
+    'launcher.list': []
 };
 export const config: types.IConfig = clickgo.vue.reactive({
     'locale': 'en',
@@ -37,7 +38,8 @@ export const config: types.IConfig = clickgo.vue.reactive({
     'desktop.icon.storage': true,
     'desktop.icon.recycler': true,
     'desktop.wallpaper': null,
-    'desktop.path': null
+    'desktop.path': null,
+    'launcher.list': []
 });
 
 export const cdn = '';
@@ -271,7 +273,8 @@ export const globalEvents: types.IGlobalEvents = {
     formBlurredHandler: null,
     formFlashHandler: null,
     taskStartedHandler: null,
-    taskEndedHandler: null
+    taskEndedHandler: null,
+    launcherFolderNameChangedHandler: null
 };
 
 /**
@@ -476,6 +479,32 @@ export function trigger(name: types.TGlobalEvent, taskId: number | string = 0, f
                 const t = task.list[tid];
                 for (const fid in t.forms) {
                     const r = t.forms[fid].events[name]?.(taskId);
+                    if (r instanceof Promise)  {
+                        r.catch(function(e) {
+                            console.log(e);
+                        });
+                    }
+                }
+            }
+            break;
+        }
+        case 'launcherFolderNameChanged': {
+            if (typeof formId !== 'string') {
+                break;
+            }
+            if (typeof taskId === 'number') {
+                taskId = taskId.toString();
+            }
+            const r = globalEvents.launcherFolderNameChangedHandler?.(taskId, formId);
+            if (r && (r instanceof Promise))  {
+                r.catch(function(e) {
+                    console.log(e);
+                });
+            }
+            for (const tid in task.list) {
+                const t = task.list[tid];
+                for (const fid in t.forms) {
+                    const r = t.forms[fid].events[name]?.(taskId, formId);
                     if (r instanceof Promise)  {
                         r.catch(function(e) {
                             console.log(e);

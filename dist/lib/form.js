@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.hide = exports.show = exports.flash = exports.setTopMost = exports.confirm = exports.dialog = exports.create = exports.remove = exports.doFocusAndPopEvent = exports.hidePop = exports.showPop = exports.removeFromPop = exports.appendToPop = exports.hideNotify = exports.notifyProgress = exports.notify = exports.hideDrag = exports.moveDrag = exports.showDrag = exports.hideRectangle = exports.showRectangle = exports.moveRectangle = exports.showCircular = exports.getRectByBorder = exports.getMaxZIndexID = exports.changeFocus = exports.getList = exports.send = exports.get = exports.getTaskId = exports.refreshMaxPosition = exports.bindDrag = exports.bindResize = exports.close = exports.max = exports.min = exports.simpleSystemTaskRoot = void 0;
+exports.hideLauncher = exports.showLauncher = exports.hide = exports.show = exports.flash = exports.setTopMost = exports.confirm = exports.dialog = exports.create = exports.remove = exports.doFocusAndPopEvent = exports.hidePop = exports.showPop = exports.removeFromPop = exports.appendToPop = exports.hideNotify = exports.notifyProgress = exports.notify = exports.hideDrag = exports.moveDrag = exports.showDrag = exports.hideRectangle = exports.showRectangle = exports.moveRectangle = exports.showCircular = exports.getRectByBorder = exports.getMaxZIndexID = exports.changeFocus = exports.getList = exports.send = exports.get = exports.getTaskId = exports.refreshMaxPosition = exports.bindDrag = exports.bindResize = exports.close = exports.max = exports.min = exports.launcherRoot = exports.simpleSystemTaskRoot = void 0;
 const clickgo = require("../clickgo");
 const core = require("./core");
 const task = require("./task");
@@ -26,25 +26,29 @@ const info = {
             'ok': '好',
             'yes': '是',
             'no': '否',
-            'cancel': '取消'
+            'cancel': '取消',
+            'search': '搜索'
         },
         'tc': {
             'ok': '好',
             'yes': '是',
             'no': '否',
-            'cancel': '取消'
+            'cancel': '取消',
+            'search': '檢索'
         },
         'en': {
             'ok': 'OK',
             'yes': 'Yes',
             'no': 'No',
-            'cancel': 'Cancel'
+            'cancel': 'Cancel',
+            'search': 'Search'
         },
         'ja': {
             'ok': '好',
             'yes': 'はい',
             'no': 'いいえ',
-            'cancel': 'キャンセル'
+            'cancel': 'キャンセル',
+            'search': '検索'
         }
     }
 };
@@ -64,6 +68,7 @@ const elements = {
     'dragIcon': undefined,
     'system': document.createElement('div'),
     'simpleSystemtask': document.createElement('div'),
+    'launcher': document.createElement('div'),
     'init': function () {
         this.wrap.id = 'cg-wrap';
         document.getElementsByTagName('body')[0].appendChild(this.wrap);
@@ -170,6 +175,183 @@ const elements = {
             }
         });
         simpletaskApp.mount('#cg-simpletask');
+        this.launcher.id = 'cg-launcher';
+        this.launcher.addEventListener('contextmenu', function (e) {
+            e.preventDefault();
+        });
+        this.wrap.appendChild(this.launcher);
+        this.launcher.addEventListener('touchmove', function (e) {
+            e.preventDefault();
+        }, {
+            'passive': false
+        });
+        const waiting = function () {
+            if (!core.config) {
+                setTimeout(function () {
+                    waiting();
+                }, 2000);
+                return;
+            }
+            const launcherApp = clickgo.vue.createApp({
+                'template': `<div class="cg-launcher-search">` +
+                    `<input v-if="folderName === ''" class="cg-launcher-sinput" :placeholder="search" v-model="name">` +
+                    `<input v-else class="cg-launcher-foldername" :value="folderName" @change="folderNameChange">` +
+                    `</div>` +
+                    `<div class="cg-launcher-list" @mousedown="mousedown" @click="listClick" :class="[folderName === '' ? '' : 'cg-folder-open']">` +
+                    `<div v-for="item of list" class="cg-launcher-item">` +
+                    `<div class="cg-launcher-inner">` +
+                    `<div v-if="!item.list || item.list.length === 0" class="cg-launcher-icon" :style="{'background-image': 'url(' + item.icon + ')'}" @click="iconClick($event, item)"></div>` +
+                    `<div v-else class="cg-launcher-folder" @click="openFolder($event, item)">` +
+                    `<div>` +
+                    `<div v-for="sub of item.list" class="cg-launcher-item">` +
+                    `<div class="cg-launcher-inner">` +
+                    `<div class="cg-launcher-icon" :style="{'background-image': 'url(' + sub.icon + ')'}" @click="subIconClick($event, sub)"></div>` +
+                    `<div class="cg-launcher-name">{{sub.name}}</div>` +
+                    `</div>` +
+                    `<div class="cg-launcher-space"></div>` +
+                    `</div>` +
+                    `</div>` +
+                    `</div>` +
+                    `<div class="cg-launcher-name">{{item.name}}</div>` +
+                    `</div>` +
+                    `<div class="cg-launcher-space"></div>` +
+                    `</div>` +
+                    `</div>`,
+                'data': function () {
+                    return {
+                        'name': '',
+                        'folderName': ''
+                    };
+                },
+                'computed': {
+                    'search': function () {
+                        var _a, _b;
+                        return (_b = (_a = info.locale[core.config.locale]) === null || _a === void 0 ? void 0 : _a.search) !== null && _b !== void 0 ? _b : info.locale['en'].search;
+                    },
+                    'list': function () {
+                        if (this.name === '') {
+                            return core.config['launcher.list'];
+                        }
+                        const list = [];
+                        for (const item of core.config['launcher.list']) {
+                            if (item.list && item.list.length > 0) {
+                                for (const sub of item.list) {
+                                    if (sub.name.toLowerCase().includes(this.name.toLowerCase())) {
+                                        list.push(sub);
+                                    }
+                                }
+                            }
+                            else {
+                                if (item.name.toLowerCase().includes(this.name.toLowerCase())) {
+                                    list.push(item);
+                                }
+                            }
+                        }
+                        return list;
+                    }
+                },
+                'methods': {
+                    mousedown: function (e) {
+                        this.md = e.pageX + e.pageY;
+                    },
+                    listClick: function (e) {
+                        if (this.md !== e.pageX + e.pageY) {
+                            return;
+                        }
+                        if (e.currentTarget !== e.target) {
+                            return;
+                        }
+                        if (this.folderName === '') {
+                            hideLauncher();
+                        }
+                        else {
+                            this.closeFolder();
+                        }
+                    },
+                    iconClick: function (e, item) {
+                        return __awaiter(this, void 0, void 0, function* () {
+                            if (this.md !== e.pageX + e.pageY) {
+                                return;
+                            }
+                            hideLauncher();
+                            yield clickgo.task.run(item.path, {
+                                'icon': item.icon
+                            });
+                        });
+                    },
+                    subIconClick: function (e, item) {
+                        return __awaiter(this, void 0, void 0, function* () {
+                            if (this.md !== e.pageX + e.pageY) {
+                                return;
+                            }
+                            hideLauncher();
+                            yield clickgo.task.run(item.path, {
+                                'icon': item.icon
+                            });
+                        });
+                    },
+                    closeFolder: function () {
+                        this.folderName = '';
+                        const el = this.folderEl;
+                        const rect = el.parentNode.getBoundingClientRect();
+                        el.classList.remove('cg-show');
+                        el.style.left = (rect.left + 30).toString() + 'px';
+                        el.style.top = rect.top.toString() + 'px';
+                        el.style.width = '';
+                        el.style.height = '';
+                        setTimeout(() => {
+                            el.style.position = '';
+                            el.style.left = '';
+                            el.style.top = '';
+                        }, 150);
+                    },
+                    openFolder: function (e, item) {
+                        if (this.md !== e.pageX + e.pageY) {
+                            return;
+                        }
+                        if (e.currentTarget.childNodes[0] !== e.target) {
+                            return;
+                        }
+                        if (this.folderName !== '') {
+                            this.closeFolder();
+                            return;
+                        }
+                        this.folderName = item.name;
+                        this.folderItem = item;
+                        const el = e.currentTarget.childNodes.item(0);
+                        this.folderEl = el;
+                        const searchEl = document.getElementsByClassName('cg-launcher-search')[0];
+                        const rect = el.getBoundingClientRect();
+                        el.style.left = rect.left.toString() + 'px';
+                        el.style.top = rect.top.toString() + 'px';
+                        el.style.position = 'fixed';
+                        requestAnimationFrame(() => {
+                            el.classList.add('cg-show');
+                            el.style.left = '50px';
+                            el.style.top = searchEl.offsetHeight.toString() + 'px';
+                            el.style.width = 'calc(100% - 100px)';
+                            el.style.height = 'calc(100% - 50px - ' + searchEl.offsetHeight.toString() + 'px)';
+                        });
+                    },
+                    folderNameChange: function (e) {
+                        var _a;
+                        const input = e.target;
+                        const val = input.value.trim();
+                        if (val === '') {
+                            input.value = this.folderName;
+                            return;
+                        }
+                        this.folderName = val;
+                        core.trigger('launcherFolderNameChanged', (_a = this.folderItem.id) !== null && _a !== void 0 ? _a : '', val);
+                    }
+                },
+                'mounted': function () {
+                    exports.launcherRoot = this;
+                }
+            });
+            launcherApp.mount('#cg-launcher');
+        };
+        waiting();
     }
 };
 elements.init();
@@ -1316,6 +1498,12 @@ function create(opt) {
                     },
                     hide: function (fid) {
                         clickgo.form.hide(fid !== null && fid !== void 0 ? fid : formId, taskId);
+                    },
+                    showLauncher: function () {
+                        clickgo.form.showLauncher();
+                    },
+                    hideLauncher: function () {
+                        clickgo.form.hideLauncher();
                     }
                 },
                 'fs': {
@@ -2095,6 +2283,24 @@ function hide(formId, taskId) {
     form.vroot.$refs.form.$data.showData = false;
 }
 exports.hide = hide;
+function showLauncher() {
+    elements.launcher.style.display = 'flex';
+    requestAnimationFrame(function () {
+        elements.launcher.classList.add('cg-show');
+    });
+}
+exports.showLauncher = showLauncher;
+function hideLauncher() {
+    elements.launcher.classList.remove('cg-show');
+    setTimeout(function () {
+        if (exports.launcherRoot.folderName !== '') {
+            exports.launcherRoot.closeFolder();
+        }
+        exports.launcherRoot.name = '';
+        elements.launcher.style.display = 'none';
+    }, 300);
+}
+exports.hideLauncher = hideLauncher;
 window.addEventListener('resize', function () {
     task.refreshSystemPosition();
 });
