@@ -12,61 +12,47 @@ export let zip: typeof import('../dist/lib/zip');
 export function getVersion(): string;
 export function getNative(): boolean;
 export function getPlatform(): NodeJS.Platform | 'web';
-export function setSafe(val: boolean): void;
-export function getSafe(): boolean;
+// eslint-disable-next-line @typescript-eslint/naming-convention
+export const AbstractBoot: typeof import('../dist/index').AbstractBoot;
+export function launcher(boot: import('../dist/index').AbstractBoot): void;
 
-export function init(): Promise<void>;
+// -------------------------
+// ------ control lib ------
+// -------------------------
 
-// --- core 核心 ---
+/** --- 控件文件包的 config --- */
+export interface IControlConfig {
+    'name': string;
+    'ver': number;
+    'version': string;
+    'author': string;
 
-/** --- 屏幕可用区域 --- */
-export interface IAvailArea {
-    'left': number;
-    'top': number;
-    'width': number;
-    'height': number;
+    /** --- 不带扩展名，系统会在末尾添加 .js --- */
+    'code': string;
+    /** --- 不带扩展名，系统会在末尾添加 .html --- */
+    'layout': string;
+    /** --- 不带扩展名，系统会在末尾添加 .css --- */
+    'style': string;
+
+    /** --- 将要加载的文件 --- */
+    'files': string[];
 }
 
-/** --- 全局事件 --- */
-export interface IGlobalEvents {
-    /** --- 配置捕获 Vue 错误 --- */
-    errorHandler: null | ((taskId: number, formId: number, error: Error, info: string) => void | Promise<void>);
-    /** --- 当屏幕大小改变时触发的事件 --- */
-    screenResizeHandler: null | (() => void | Promise<void>);
-    /** --- 系统配置被更改时触发 --- */
-    configChangedHandler: null | (
-        (n: TConfigName, v: string | boolean | Record<string, any> | null) => void | Promise<void>
-    );
-    /** --- 窗体被创建后触发 --- */
-    formCreatedHandler: null | ((taskId: number, formId: number, title: string, icon: string) => void | Promise<void>);
-    /** --- 窗体被移除后触发 --- */
-    formRemovedHandler: null | ((taskId: number, formId: number, title: string, icon: string) => void | Promise<void>);
-    /** --- 窗体标题被改变后触发 --- */
-    formTitleChangedHandler: null | ((taskId: number, formId: number, title: string) => void | Promise<void>);
-    /** --- 窗体图标被改变后触发 --- */
-    formIconChangedHandler: null | ((taskId: number, formId: number, icon: string) => void | Promise<void>);
-    /** --- 窗体最小化状态改变后触发 --- */
-    formStateMinChangedHandler: null | ((taskId: number, formId: number, state: boolean) => void | Promise<void>);
-    /** --- 窗体最大化状态改变后触发 --- */
-    formStateMaxChangedHandler: null | ((taskId: number, formId: number, state: boolean) => void | Promise<void>);
-    /** --- 窗体显示状态改变后触发 */
-    formShowChangedHandler: null | ((taskId: number, formId: number, state: boolean) => void | Promise<void>);
-    /** --- 窗体获得焦点后触发 --- */
-    formFocusedHandler: null | ((taskId: number, formId: number) => void | Promise<void>);
-    /** --- 窗体丢失焦点后触发 --- */
-    formBlurredHandler: null | ((taskId: number, formId: number) => void | Promise<void>);
-    /** --- 窗体闪烁时触发 --- */
-    formFlashHandler: null | ((taskId: number, formId: number) => void | Promise<void>);
-    /** --- 任务开始后触发 --- */
-    taskStartedHandler: null | ((taskId: number) => void | Promise<void>);
-    /** --- 任务结束后触发 --- */
-    taskEndedHandler: null | ((taskId: number) => void | Promise<void>);
-    /** --- launcher 的文件夹名称被修改后触发 --- */
-    launcherFolderNameChangedHandler: null | ((id: string, name: string) => void | Promise<void>);
+/** --- 控件对象 --- */
+export interface IControl {
+    'type': 'control';
+    /** --- 控件对象配置文件 --- */
+    'config': IControlConfig;
+    /** --- 所有已加载的文件内容 --- */
+    'files': Record<string, Blob | string>;
 }
 
-/** --- Core Config 属性列表 --- */
-export type TConfigName = 'locale' | 'task.position' | 'task.pin' | 'desktop.icon.storage' | 'desktop.icon.recycler' | 'desktop.wallpaper' | 'desktop.path' | 'launcher.list';
+/** --- 控件文件包 --- */
+export type TControlPackage = Record<string, IControl>;
+
+// --------------------------
+// -------- core lib --------
+// --------------------------
 
 /** --- Config 对象 --- */
 export interface IConfig {
@@ -89,31 +75,48 @@ export interface IConfigLauncherItem {
     'list'?: Array<{ 'id'?: string; 'name': string; 'path': string; 'icon': string; }>;
 }
 
+/** --- 屏幕可用区域 --- */
+export interface IAvailArea {
+    'left': number;
+    'top': number;
+    'width': number;
+    'height': number;
+}
+
 /** --- 全局事件类型 --- */
 export type TGlobalEvent = 'error' | 'screenResize' | 'configChanged' | 'formCreated' | 'formRemoved' | 'formTitleChanged' | 'formIconChanged' | 'formStateMinChanged' | 'formStateMaxChanged' | 'formShowChanged' | 'formFocused' | 'formBlurred' | 'formFlash' | 'taskStarted' | 'taskEnded' | 'launcherFolderNameChanged';
 
+/** --- 现场下载 app 的参数 --- */
 export interface ICoreFetchAppOptions {
     'notifyId'?: number;
     'current'?: string;
     'progress'?: (loaded: number, total: number) => void | Promise<void>;
 }
 
-/** --- 应用文件包 --- */
+/** --- 应用包解包后对象 --- */
 export interface IApp {
-    'type': 'app';
-    /** --- 应用图标 --- */
+    /** --- net 模式将包含 net 属性，否则是 app 解包模式 --- */
+    'net'?: {
+        'current': string;
+        'url': string;
+        'notify'?: number;
+        'progress'?: (loaded: number, total: number) => void | Promise<void>;
+    };
+    /** --- 应用图标，net 模式下可能为空 --- */
     'icon': string;
-    /** --- 应用对象配置文件 --- */
-    'config': IAppConfig;
     /** --- 所有已加载的文件内容 --- */
     'files': Record<string, Blob | string>;
 }
 
 /** --- 应用文件包 config --- */
 export interface IAppConfig {
+    /** --- 应用名 --- */
     'name': string;
+    /** --- 发行版本 --- */
     'ver': number;
+    /** --- 发行版本字符串 --- */
     'version': string;
+    /** --- 作者 --- */
     'author': string;
 
     /** --- 将要加载的控件 --- */
@@ -124,18 +127,23 @@ export interface IAppConfig {
     'permissions'?: Record<string, any>;
     /** --- 将自动加载的语言包，path: lang --- */
     'locales'?: Record<string, string>;
-    /** --- 不带扩展名，系统会在末尾添加 .css --- */
+    /** --- 全局样式，不带扩展名，系统会在末尾添加 .css --- */
     'style'?: string;
-    /** --- 不带扩展名，系统会在末尾添加 .xml --- */
-    'main': string;
-    /** --- 图标路径，需包含扩张名 --- */
-    'icon': string;
+    /** --- 图标路径，需包含扩展名 --- */
+    'icon'?: string;
 
-    /** --- 将要加载的文件列表 --- */
-    'files': string[];
+    /** --- 将要加载的非 js 文件列表，仅 net 模式有用 --- */
+    'files'?: string[];
 }
 
-// --- dom ---
+// -------------------------
+// -------- dom lib --------
+// -------------------------
+
+/** --- 方向类型，从左上开始 --- */
+export type TDomBorder = 'lt' | 't' | 'tr' | 'r' | 'rb' | 'b' | 'bl' | 'l' | '';
+
+export type TDomBorderCustom = TDomBorder | { 'left': number; 'top'?: number; 'width': number; 'height'?: number; };
 
 /** --- Element 的大小 --- */
 export interface IDomSize {
@@ -203,10 +211,10 @@ export interface IBindMoveOptions {
     'object'?: HTMLElement | IVue;
     'showRect'?: boolean;
     'start'?: (x: number, y: number) => any;
-    'move'?: (ox: number, oy: number, x: number, y: number, border: TBorder, dir: 'top' | 'right' | 'bottom' | 'left', e: MouseEvent | TouchEvent) => void;
+    'move'?: (ox: number, oy: number, x: number, y: number, border: TDomBorder, dir: 'top' | 'right' | 'bottom' | 'left', e: MouseEvent | TouchEvent) => void;
     'up'?: (moveTimes: Array<{ 'time': number; 'ox': number; 'oy': number; }>, e: MouseEvent | TouchEvent) => void;
     'end'?: (moveTimes: Array<{ 'time': number; 'ox': number; 'oy': number; }>, e: MouseEvent | TouchEvent) => void;
-    'borderIn'?: (x: number, y: number, border: TBorder, e: MouseEvent | TouchEvent) => void;
+    'borderIn'?: (x: number, y: number, border: TDomBorder, e: MouseEvent | TouchEvent) => void;
     'borderOut'?: () => void;
 }
 
@@ -216,6 +224,23 @@ export interface IBindMoveResult {
     'top': number;
     'right': number;
     'bottom': number;
+}
+
+/** --- 绑定改变大小选项 --- */
+export interface IBindResizeOptions {
+    'objectLeft'?: number;
+    'objectTop'?: number;
+    'objectWidth'?: number;
+    'objectHeight'?: number;
+    'object'?: HTMLElement | IVue;
+    'minWidth'?: number;
+    'minHeight'?: number;
+    'maxWidth'?: number;
+    'maxHeight'?: number;
+    'border': TDomBorder;
+    'start'?: (x: number, y: number) => any;
+    'move'?: (left: number, top: number, width: number, height: number, x: number, y: number, border: TDomBorder) => void;
+    'end'?: () => void;
 }
 
 /** --- 监视大小中的元素 --- */
@@ -232,43 +257,65 @@ export interface IWatchItem {
     'taskId'?: number;
 }
 
-/** --- 绑定改变大小选项 --- */
-export interface IBindResizeOptions {
-    'objectLeft'?: number;
-    'objectTop'?: number;
-    'objectWidth'?: number;
-    'objectHeight'?: number;
-    'object'?: HTMLElement | IVue;
-    'minWidth'?: number;
-    'minHeight'?: number;
-    'maxWidth'?: number;
-    'maxHeight'?: number;
-    'border': TBorder;
-    'start'?: (x: number, y: number) => any;
-    'move'?: (left: number, top: number, width: number, height: number, x: number, y: number, border: TBorder) => void;
-    'end'?: () => void;
+// --------------------------
+// -------- form lib --------
+// --------------------------
+
+export type AbstractForm = import('../dist/lib/form').AbstractForm;
+
+/** --- 运行时 task 中的 form 对象 --- */
+export interface IForm {
+    'id': number;
+    'vapp': IVApp;
+    'vroot': IVue;
 }
 
-// --- 工具包 --- tool ---
-
-export interface IRequestOptions {
-    'method'?: 'GET' | 'POST';
-    'body'?: FormData;
-    'timeout'?: number;
-    'responseType'?: XMLHttpRequestResponseType;
-    'headers'?: HeadersInit;
-
-    'uploadStart'?: (total: number) => void | Promise<void>;
-    'uploadProgress'?: (loaded: number, total: number) => void | Promise<void>;
-    'uploadEnd'?: () => void | Promise<void>;
-    'start'?: (total: number) => void | Promise<void>;
-    'end'?: () => void | Promise<void>;
-    'progress'?: (loaded: number, total: number) => void | Promise<void>;
-    'load'?: (res: any) => void | Promise<void>;
-    'error'?: () => void | Promise<void>;
+/** --- Form 的简略情况，通常在 list 当中 --- */
+export interface IFormInfo {
+    'taskId': number;
+    'title': string;
+    'icon': string;
+    'stateMax': boolean;
+    'stateMin': boolean;
+    'show': boolean;
+    'focus': boolean;
 }
 
-// --- 文件系统 --- fs ---
+/** --- 窗体创建选项 --- */
+export interface IFormCreateOptions {
+    'code'?: IFormCreateCode;
+    'layout': string;
+    'style'?: string;
+
+    /** --- 当前窗体的基准路径，不以 / 结尾，仅用作传值，App 内无法填写 --- */
+    'path'?: string;
+    /** --- 传递到 onMounted 的数据 --- */
+    'data'?: Record<string, any>;
+    /** --- APP 内无法填写 --- */
+    'taskId'?: number;
+}
+
+/** --- 窗体的 code 参数 --- */
+export interface IFormCreateCode {
+    'data'?: Record<string, any>;
+    'methods'?: Record<string, any>;
+    'computed'?: Record<string, {
+        'get'?: any;
+        'set'?: any;
+    }>;
+    'beforeCreate'?: any;
+    'created'?: any;
+    'beforeMount'?: any;
+    'mounted'?: any;
+    'beforeUpdate'?: any;
+    'updated'?: any;
+    'beforeUnmount'?: any;
+    'unmounted'?: any;
+}
+
+// --------------------------
+// --------- fs lib ---------
+// --------------------------
 
 /** --- 文件/文件夹信息对象 --- */
 export interface IStats {
@@ -295,7 +342,144 @@ export interface IDirent {
     name: string;
 }
 
-// --- zip ---
+// --------------------------
+// -------- task lib --------
+// --------------------------
+
+/** --- 运行中的任务对象 --- */
+export interface ITask {
+    'id': number;
+    'app': IApp;
+    'class': import('../dist/lib/core').AbstractApp;
+    'config': IAppConfig;
+    'customTheme': boolean;
+    'locale': {
+        'lang': string;
+        'data': Record<string, Record<string, string>>;
+    };
+    /** --- 当前 app 自己的完整路径，如 /x/xx.cga，或 /x/x，末尾不含 / --- */
+    'path': string;
+    /** --- 当前 app 运行路径，末尾不含 / --- */
+    'current': string;
+
+    /** --- 运行时的一些参数 --- */
+    'runtime': {
+        /** --- 独占窗体序列 --- */
+        'dialogFormIds': number[];
+        /** --- 已申请的权限列表 --- */
+        'permissions': Record<string, any>;
+    };
+    /** --- 窗体对象列表 --- */
+    'forms': Record<string, IForm>;
+    /** --- 已解析的控件处理后的对象，任务启动时解析，窗体创建时部分复用 --- */
+    'controls': Record<string, {
+        'layout': string;
+
+        'props': Record<string, any>;
+        'data': Record<string, any>;
+        'access': Record<string, any>;
+        'methods': Record<string, any>;
+        'computed': Record<string, any>;
+    }>;
+    /** --- 任务中的 timer 列表 --- */
+    'timers': Record<string, number>;
+    /** --- 用于初始化 control 时 invoke 用 --- */
+    'invoke'?: Record<string, any>;
+}
+
+/** --- 系统任务信息 --- */
+export interface ISystemTaskInfo {
+    'taskId': number;
+    'formId': number;
+    'length': number;
+}
+
+export interface ITaskRunOptions {
+    'icon'?: string;
+    /** --- 加载进度回调 --- */
+    'progress'?: (loaded: number, total: number) => void | Promise<void>;
+    /** --- 显示 notify 窗口 --- */
+    'notify'?: boolean;
+    /** --- 设置为主应用，整个运行时只能设置一次，因此 App 下不可能被设置 --- */
+    'main'?: boolean;
+    /** --- native 下窗体与实体窗体大小同步，App 模式下无法设置 --- */
+    'sync'?: boolean;
+    /** --- 所属任务，App 模式无法设置 --- */
+    'taskId'?: number;
+    /** --- 不禁止某些浏览器对象，App 模式下无法设置 --- */
+    'unblock'?: string[];
+}
+
+export interface ICreateTimerOptions {
+    'taskId'?: number;
+    'formId'?: number;
+
+    'immediate'?: boolean;
+    'count'?: number;
+}
+
+/** --- Task 的简略情况，通常在 list 当中 --- */
+export interface ITaskInfo {
+    'name': string;
+    'locale': string;
+    'customTheme': boolean;
+    'formCount': number;
+    'icon': string;
+    'path': string;
+    'current': string;
+}
+
+// ---------------------------
+// -------- theme lib --------
+// ---------------------------
+
+/** --- 主题对象 --- */
+export interface ITheme {
+    'type': 'theme';
+    /** --- 主题对象配置文件 --- */
+    'config': IThemeConfig;
+    /** --- 所有已加载的文件内容 --- */
+    'files': Record<string, Blob | string>;
+}
+
+/** --- 主题文件包的 config --- */
+export interface IThemeConfig {
+    'name': string;
+    'ver': number;
+    'version': string;
+    'author': string;
+
+    /** --- 不带扩展名，系统会在末尾添加 .css --- */
+    'style': string;
+
+    /** --- 将要加载的文件 --- */
+    'files': string[];
+}
+
+// --------------------------
+// -------- tool lib --------
+// --------------------------
+
+export interface IRequestOptions {
+    'method'?: 'GET' | 'POST';
+    'body'?: FormData;
+    'timeout'?: number;
+    'responseType'?: XMLHttpRequestResponseType;
+    'headers'?: HeadersInit;
+
+    'uploadStart'?: (total: number) => void | Promise<void>;
+    'uploadProgress'?: (loaded: number, total: number) => void | Promise<void>;
+    'uploadEnd'?: () => void | Promise<void>;
+    'start'?: (total: number) => void | Promise<void>;
+    'end'?: () => void | Promise<void>;
+    'progress'?: (loaded: number, total: number) => void | Promise<void>;
+    'load'?: (res: any) => void | Promise<void>;
+    'error'?: () => void | Promise<void>;
+}
+
+// -------------------------
+// -------- zip lib --------
+// -------------------------
 
 export type TZip = import('../dist/lib/zip').Zip;
 
@@ -342,134 +526,12 @@ export interface IZipMetadata {
     currentFile: string | null;
 }
 
-// --- task ---
-
-/** --- 系统任务信息 --- */
-export interface ISystemTaskInfo {
-    'taskId': number;
-    'formId': number;
-    'length': number;
-}
-
-export interface ITaskRunOptions {
-    'icon'?: string;
-    'progress'?: (loaded: number, total: number) => void | Promise<void>;
-    'notify'?: boolean;
-    'main'?: boolean;
-    'sync'?: boolean;
-    'taskId'?: number;
-}
-
-export interface ICreateTimerOptions {
-    'taskId'?: number;
-    'formId'?: number;
-
-    'immediate'?: boolean;
-    'scope'?: 'form' | 'task';
-    'count'?: number;
-}
-
-/** --- 运行中的任务对象 --- */
-export interface ITask {
-    'id': number;
-    'app': IApp;
-    'customTheme': boolean;
-    'locale': {
-        'lang': string;
-        'data': Record<string, Record<string, string>>;
-    };
-    'icon': string;
-    /** --- 当前 app 运行路径，末尾包含 / --- */
-    'path': string;
-    'files': Record<string, Blob | string>;
-    'main': boolean;
-
-    /** --- 已申请的权限列表 --- */
-    'permissions': Record<string, any>;
-    'forms': Record<number, IForm>;
-    'objectURLs': string[];
-    /** --- 已解析的控件 path 映射控件对象 --- */
-    'controls': {
-        'loaded': Record<string, TControl | undefined>;
-        'layout': Record<string, string>;
-        'prep': Record<string, string>;
-    };
-    /** --- 任务重的 timer 列表 --- */
-    'timers': Record<string, number>;
-}
-
-/** --- Task 的简略情况，通常在 list 当中 --- */
-export interface ITaskInfo {
-    'name': string;
-    'locale': string;
-    'customTheme': boolean;
-    'formCount': number;
-    'icon': string;
-    'path': string;
-}
-
-// --- theme ---
-
-/** --- 主题对象 --- */
-export interface ITheme {
-    'type': 'theme';
-    /** --- 主题对象配置文件 --- */
-    'config': IThemeConfig;
-    /** --- 所有已加载的文件内容 --- */
-    'files': Record<string, Blob | string>;
-}
-
-/** --- 主题文件包的 config --- */
-export interface IThemeConfig {
-    'name': string;
-    'ver': number;
-    'version': string;
-    'author': string;
-
-    /** --- 不带扩展名，系统会在末尾添加 .css --- */
-    'style': string;
-
-    /** --- 将要加载的文件 --- */
-    'files': string[];
-}
-
 // --- form ---
-
-/** --- 窗体对象 --- */
-export interface IForm {
-    'id': number;
-    'vapp': IVueApp;
-    'vroot': IVForm;
-    'events': Record<string, (...any: any) => void | Promise<void>>;
-}
-
-/** --- 窗体创建选项 --- */
-export interface IFormCreateOptions {
-    /** --- 当前 taskId，App 模式下无效 --- */
-    'taskId'?: number;
-    /** --- 当前的 formId，App 模式下无效 --- */
-    'formId'?: number;
-
-    'file'?: string;
-
-    /** --- 相当于 base dir，有 file 以 file 的路径为准，没有则以 path 为准，用于定义当前 form 中文件所在的基准路径，以 / 结尾 --- */
-    'path'?: string;
-    'code'?: Record<string, any>;
-    'layout'?: string;
-    'style'?: string;
-
-    /** --- 置顶 --- */
-    'topMost'?: boolean;
-    /** --- 遮罩 --- */
-    'mask'?: boolean;
-    /** --- 传输的数据 --- */
-    'data'?: Record<string, any>;
-}
 
 /** --- Dialog 选项 --- */
 export interface IFormDialogOptions {
-    /** --- 当前的 formId，App 模式下无效 --- */
-    'formId'?: number;
+    /** --- 当前的 taskId，App 模式下无效 --- */
+    'taskId'?: number;
 
     'title'?: string;
     'content': string;
@@ -481,8 +543,8 @@ export interface IFormDialogOptions {
 
 /** --- Confirm 选项 --- */
 export interface IFormConfirmOptions {
-    /** --- 当前的 formId，App 模式下无效 --- */
-    'formId'?: number;
+    /** --- 当前的 taskId，App 模式下无效 --- */
+    'taskId'?: number;
 
     'content': string;
     'cancel'?: boolean;
@@ -493,17 +555,6 @@ export interface IFormSetTopMostOptions {
     'taskId'?: number;
     /** --- 当前的 formId，App 模式下留空为当前窗体 --- */
     'formId'?: number;
-}
-
-/** --- Form 的简略情况，通常在 list 当中 --- */
-export interface IFormInfo {
-    'taskId': number;
-    'title': string;
-    'icon': string;
-    'stateMax': boolean;
-    'stateMin': boolean;
-    'show': boolean;
-    'focus': boolean;
 }
 
 /** --- 移动 drag 到新位置函数的选项 --- */
@@ -524,114 +575,12 @@ export interface INotifyOptions {
     'progress'?: boolean;
 }
 
-/** --- 方向类型，从左上开始 --- */
-export type TBorder = 'lt' | 't' | 'tr' | 'r' | 'rb' | 'b' | 'bl' | 'l' | '' | { 'left': number; 'top'?: number; 'width': number; 'height'?: number; };
-
-export interface IVForm extends IVue {
-    /** --- 当前任务 id --- */
-    'taskId': number;
-    /** --- 当前窗体 id --- */
-    'formId': number;
-    /** --- 控件名 --- */
-    'controlName': 'root';
-    /** --- 当前窗体是否有焦点 --- */
-    'cgFocus': boolean;
-    /** --- 当前窗体的路径 --- */
-    'cgPath': string;
-    /** --- 前导 --- */
-    'cgPrep': string;
-    /** --- 是否 form 自定义的 zindex --- */
-    'cgCustomZIndex': boolean;
-    /** --- 是否在顶层 --- */
-    'cgTopMost': boolean;
-    /** --- 当前的 locale name --- */
-    'cgLocale': string;
-    /** --- 获取语言内容 --- */
-    'l': (key: string) => string;
-    /**
-     * --- layout 中 :class 的转义 ---
-     * @param cla class 内容对象
-     */
-    cgClassPrepend(cla: any): string;
-    /**
-     * --- 检测事件是否可被执行 ---
-     * @param e 事件
-     */
-    cgAllowEvent(e: MouseEvent | TouchEvent | KeyboardEvent): boolean;
-}
-
-// --- 控件 --- control ---
-
-/** --- 控件文件包 --- */
-export type TControl = Record<string, IControlItem>;
-
-/** --- 控件对象 --- */
-export interface IControlItem {
-    'type': 'control';
-    /** --- 控件对象配置文件 --- */
-    'config': IControlConfig;
-    /** --- 所有已加载的文件内容 --- */
-    'files': Record<string, Blob | string>;
-}
-
-/** --- 控件文件包的 config --- */
-export interface IControlConfig {
-    'name': string;
-    'ver': number;
-    'version': string;
-    'author': string;
-
-    /** --- 不带扩展名，系统会在末尾添加 .js --- */
-    'code': string;
-    /** --- 不带扩展名，系统会在末尾添加 .html --- */
-    'layout': string;
-    /** --- 不带扩展名，系统会在末尾添加 .css --- */
-    'style': string;
-
-    /** --- 将要加载的文件 --- */
-    'files': string[];
-}
-
-export interface IVControl extends IVue {
-    '$parent': IVControl | null;
-
-    /** --- 当前窗体是否有焦点 --- */
-    'cgFocus': boolean;
-    /** --- 当前任务 id --- */
-    'taskId': number;
-    /** --- 当前窗体 id --- */
-    'formId': number;
-    /** --- 控件名 --- */
-    'controlName': string;
-    /** --- 窗体基目录 --- */
-    'cgPath': string;
-    /** --- 控件前导 --- */
-    'cgPrep': string;
-    /** --- 获取目前现存的子 slots --- */
-    'cgSlots': (name?: string) => IVueVNode[];
-    /** --- 当前 task 的 locale 值 --- */
-    'cgLocale': string;
-    /** --- 获取语言内容 --- */
-    'l': (key: string, data?: Record<string, Record<string, string>>) => string;
-    /** --- 根据 control name 来寻找上级 --- */
-    'cgParentByName': (controlName: string) => IVControl | null;
-    /**
-     * --- layout 中 :class 的转义 ---
-     * @param cla class 内容对象
-     */
-    cgClassPrepend(cla: any): string;
-    /**
-     * --- 检测事件是否可被执行 ---
-     * @param e 事件
-     */
-    cgAllowEvent(e: MouseEvent | TouchEvent | KeyboardEvent): boolean;
-
-}
-
-// --- vue ---
+// -------------------------
+// ---------- vue ----------
+// -------------------------
 
 export interface IVueObject {
-    createApp(opt: any): IVueApp;
+    createApp(opt: any): IVApp;
     ref<T extends number | string>(obj: T): { 'value': T; };
     reactive<T>(obj: T): T;
     watch(
@@ -653,7 +602,7 @@ export interface IVueConfig {
     warnHandler?(msg: string, instance: IVue | null, trace: string): void;
 }
 
-export interface IVueApp {
+export interface IVApp {
     component(name: string): any | undefined;
     component(name: string, config: any): this;
     'config': IVueConfig;
@@ -681,19 +630,19 @@ export interface IVue {
     '$refs': Record<string, HTMLElement & IVue>;
     '$root': IVue;
     '$slots': {
-        'default': undefined | ((o?: any) => IVueVNode[]);
-        [key: string]: undefined | ((o?: any) => IVueVNode[]);
+        'default': undefined | ((o?: any) => IVNode[]);
+        [key: string]: undefined | ((o?: any) => IVNode[]);
     };
     '$watch': (o: any, cb: (n: any, o: any) => void) => void;
 
     [key: string]: any;
 }
 
-export interface IVueVNode {
+export interface IVNode {
     'children': {
-        'default': undefined | (() => IVueVNode[]);
-        [key: string]: undefined | (() => IVueVNode[]);
-    } & IVueVNode[];
+        'default': undefined | (() => IVNode[]);
+        [key: string]: undefined | (() => IVNode[]);
+    } & IVNode[];
     'props': Record<string, any>;
     'type': symbol | Record<string, any>;
 

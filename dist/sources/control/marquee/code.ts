@@ -1,76 +1,41 @@
 import * as clickgo from 'clickgo';
-import * as types from '~/types/index';
 
-export const props = {
-    'direction': {
-        'default': 'left'
-    },
+export default class extends clickgo.control.AbstractControl {
 
-    'scroll': {
-        'default': true
-    },
-    'speed': {
-        'default': 1
-    }
-};
+    public props = {
+        'direction': 'left',
 
-export const data = {
-    'padding': '',
-    'left': 0,
-    'top': 0,
-    'client': 0,
-    'length': 0,
+        'scroll': true,
+        'speed': 1
+    };
 
-    'dir': '',
-    'timer': 0
-};
+    public padding = '';
 
-export const computed = {
-    'opMargin': function(this: types.IVControl): string {
+    public left = 0;
+
+    public top = 0;
+
+    public client = 0;
+
+    public length = 0;
+
+    public dir = '';
+
+    public timer = 0;
+
+    public get opMargin(): string {
         return this.padding.replace(/(\w+)/g, '-$1');
-    },
-    'isScroll': function(this: types.IVControl): boolean {
-        return clickgo.tool.getBoolean(this.scroll);
-    },
-    'speedPx': function(this: types.IVControl): number {
-        return this.speed * 0.5;
     }
-};
 
-export const watch = {
-    'scroll': {
-        handler: function(this: types.IVControl): void {
-            this.refresh();
-        }
-    },
-    'direction': {
-        handler: function(this: types.IVControl, n: string, o: string): void {
-            if (this.timer === 0) {
-                return;
-            }
-            const ndir = (n === 'left' || n === 'right') ? 'h' : 'v';
-            const odir = (o === 'left' || o === 'right') ? 'h' : 'v';
-            if (ndir === odir) {
-                return;
-            }
-            if (ndir === 'v') {
-                this.left = 0;
-                if (!this.isScroll) {
-                    this.dir = 'top';
-                }
-            }
-            else {
-                this.top = 0;
-                if (!this.isScroll) {
-                    this.dir = 'left';
-                }
-            }
-        }
+    public get isScroll(): boolean {
+        return clickgo.tool.getBoolean(this.props.scroll);
     }
-};
 
-export const methods = {
-    refresh: function(this: types.IVControl): void {
+    public get speedPx(): number {
+        return this.props.speed * 0.5;
+    }
+
+    public refresh(): void {
         if (this.length === 0 || this.client === 0) {
             return;
         }
@@ -79,8 +44,8 @@ export const methods = {
             if (this.timer > 0) {
                 return;
             }
-            this.dir = this.direction;
-            switch (this.direction) {
+            this.dir = this.props.direction;
+            switch (this.props.direction) {
                 case 'left': {
                     this.left = this.client;
                     this.top = 0;
@@ -108,7 +73,7 @@ export const methods = {
             if (this.timer > 0) {
                 return;
             }
-            switch (this.direction) {
+            switch (this.props.direction) {
                 case 'left':
                 case 'right': {
                     this.dir = 'left';
@@ -131,13 +96,13 @@ export const methods = {
             return;
         }
         this.timer = clickgo.task.onFrame(async () => {
-            if (!this.$el.offsetParent) {
+            if (!this.element.offsetParent) {
                 clickgo.task.offFrame(this.timer);
                 this.timer = 0;
                 return;
             }
             if (this.isScroll) {
-                switch (this.direction) {
+                switch (this.props.direction) {
                     case 'left': {
                         this.left -= this.speedPx;
                         if (this.left < -this.length) {
@@ -146,7 +111,7 @@ export const methods = {
                         break;
                     }
                     case 'right': {
-                        (this.left as number) += this.speedPx as number;
+                        this.left += this.speedPx;
                         if (this.left > this.client) {
                             this.left = -this.length;
                         }
@@ -160,7 +125,7 @@ export const methods = {
                         break;
                     }
                     case 'bottom': {
-                        (this.top as number) += this.speedPx as number;
+                        this.top += this.speedPx;
                         if (this.top > this.client) {
                             this.top = -this.length;
                         }
@@ -182,7 +147,7 @@ export const methods = {
                         break;
                     }
                     case 'right': {
-                        (this.left as number) += this.speedPx as number;
+                        this.left += this.speedPx;
                         if (this.left > 0) {
                             this.dir = 'left';
                             this.left = 0;
@@ -200,7 +165,7 @@ export const methods = {
                         break;
                     }
                     case 'bottom': {
-                        (this.top as number) += this.speedPx as number;
+                        this.top += this.speedPx;
                         if (this.top > 0) {
                             this.dir = 'top';
                             this.top = 0;
@@ -212,26 +177,53 @@ export const methods = {
             }
         });
     }
-};
 
-export const mounted = function(this: types.IVControl): void {
-    clickgo.dom.watchStyle(this.$el, 'padding', (n, v) => {
-        this.padding = v;
-    }, true);
-    // --- 外部包裹的改变 ---
-    clickgo.dom.watchSize(this.$el, (size) => {
-        const client = (this.direction === 'left' || this.direction === 'right') ? size.width : size.height;
-        if (client !== this.client) {
-            this.client = client;
-        }
-        this.refresh();
-    }, true);
-    // --- 内部内容的改变 ---
-    clickgo.dom.watchSize(this.$refs.inner, (size) => {
-        const length = (this.direction === 'left' || this.direction === 'right') ? size.width : size.height;
-        if (length !== this.length) {
-            this.length = length;
-        }
-        this.refresh();
-    }, true);
-};
+    public onMounted(): void | Promise<void> {
+        this.watch('scroll', (): void => {
+            this.refresh();
+        });
+        this.watch('direction', (n, o): void => {
+            if (this.timer === 0) {
+                return;
+            }
+            const ndir = (n === 'left' || n === 'right') ? 'h' : 'v';
+            const odir = (o === 'left' || o === 'right') ? 'h' : 'v';
+            if (ndir === odir) {
+                return;
+            }
+            if (ndir === 'v') {
+                this.left = 0;
+                if (!this.isScroll) {
+                    this.dir = 'top';
+                }
+            }
+            else {
+                this.top = 0;
+                if (!this.isScroll) {
+                    this.dir = 'left';
+                }
+            }
+        });
+
+        clickgo.dom.watchStyle(this.element, 'padding', (n, v) => {
+            this.padding = v;
+        }, true);
+        // --- 外部包裹的改变 ---
+        clickgo.dom.watchSize(this.element, (size) => {
+            const client = (this.props.direction === 'left' || this.props.direction === 'right') ? size.width : size.height;
+            if (client !== this.client) {
+                this.client = client;
+            }
+            this.refresh();
+        }, true);
+        // --- 内部内容的改变 ---
+        clickgo.dom.watchSize(this.refs.inner, (size) => {
+            const length = (this.props.direction === 'left' || this.props.direction === 'right') ? size.width : size.height;
+            if (length !== this.length) {
+                this.length = length;
+            }
+            this.refresh();
+        }, true);
+    }
+
+}

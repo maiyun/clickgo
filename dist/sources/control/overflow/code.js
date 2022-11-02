@@ -1,75 +1,47 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.mounted = exports.methods = exports.watch = exports.computed = exports.data = exports.props = void 0;
 const clickgo = require("clickgo");
-exports.props = {
-    'direction': {
-        'default': 'h'
-    },
-    'scrollLeft': {
-        'default': 0
-    },
-    'scrollTop': {
-        'default': 0
+class default_1 extends clickgo.control.AbstractControl {
+    constructor() {
+        super(...arguments);
+        this.props = {
+            'direction': 'h',
+            'scrollLeft': 0,
+            'scrollTop': 0
+        };
+        this.text = '';
+        this.scrollLeftEmit = 0;
+        this.scrollTopEmit = 0;
+        this.clientWidth = 0;
+        this.clientHeight = 0;
+        this.lengthWidth = 0;
+        this.lengthHeight = 0;
+        this.touchX = 0;
+        this.touchY = 0;
+        this.canTouchScroll = false;
+        this.alreadySb = false;
     }
-};
-exports.data = {
-    'text': '',
-    'scrollLeftEmit': 0,
-    'scrollTopEmit': 0,
-    'clientWidth': 0,
-    'clientHeight': 0,
-    'lengthWidth': 0,
-    'lengthHeight': 0,
-    'touchX': 0,
-    'touchY': 0,
-    'canTouchScroll': false,
-    'alreadySb': false
-};
-exports.computed = {
-    'maxScrollLeft': function () {
+    get maxScrollLeft() {
         return Math.round(this.lengthWidth - this.clientWidth);
-    },
-    'maxScrollTop': function () {
+    }
+    get maxScrollTop() {
         return Math.round(this.lengthHeight - this.clientHeight);
     }
-};
-exports.watch = {
-    'scrollLeft': {
-        handler: function () {
-            const sl = typeof this.scrollLeft === 'number' ? this.scrollLeft : parseInt(this.scrollLeft);
-            if (sl === this.scrollLeftEmit) {
-                return;
-            }
-            this.$el.scrollLeft = this.scrollLeft;
-        }
-    },
-    'scrollTop': {
-        handler: function () {
-            const st = typeof this.scrollTop === 'number' ? this.scrollTop : parseInt(this.scrollTop);
-            if (st === this.scrollTopEmit) {
-                return;
-            }
-            this.$el.scrollTop = this.scrollTop;
-        }
-    }
-};
-exports.methods = {
-    scroll: function () {
-        const sl = Math.round(this.$el.scrollLeft);
+    scroll() {
+        const sl = Math.round(this.element.scrollLeft);
         if (this.scrollLeftEmit !== sl) {
             this.scrollLeftEmit = sl;
-            this.$emit('update:scrollLeft', sl);
+            this.emit('update:scrollLeft', sl);
         }
-        const st = Math.round(this.$el.scrollTop);
+        const st = Math.round(this.element.scrollTop);
         if (this.scrollTopEmit !== st) {
             this.scrollTopEmit = st;
-            this.$emit('update:scrollTop', st);
+            this.emit('update:scrollTop', st);
         }
-    },
-    wheel: function (e) {
-        const scrollTop = Math.ceil(this.$el.scrollTop);
-        const scrollLeft = Math.ceil(this.$el.scrollLeft);
+    }
+    wheel(e) {
+        const scrollTop = Math.ceil(this.element.scrollTop);
+        const scrollLeft = Math.ceil(this.element.scrollLeft);
         if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
             if (e.deltaY < 0) {
                 if (scrollTop > 0) {
@@ -78,13 +50,13 @@ exports.methods = {
                 else if (scrollLeft > 0) {
                     e.stopPropagation();
                     e.preventDefault();
-                    this.$el.scrollLeft = scrollLeft + e.deltaY;
+                    this.element.scrollLeft = scrollLeft + e.deltaY;
                 }
                 else {
-                    if (this.direction === 'h') {
+                    if (this.props.direction === 'h') {
                         e.direction = 'h';
                     }
-                    this.$emit('scrollborder', e);
+                    this.emit('scrollborder', e);
                 }
             }
             else {
@@ -94,13 +66,13 @@ exports.methods = {
                 else if (scrollLeft < this.maxScrollLeft) {
                     e.stopPropagation();
                     e.preventDefault();
-                    this.$el.scrollLeft = scrollLeft + e.deltaY;
+                    this.element.scrollLeft = scrollLeft + e.deltaY;
                 }
                 else {
-                    if (this.direction === 'h') {
+                    if (this.props.direction === 'h') {
                         e.direction = 'h';
                     }
-                    this.$emit('scrollborder', e);
+                    this.emit('scrollborder', e);
                 }
             }
         }
@@ -112,13 +84,13 @@ exports.methods = {
                 else if (scrollTop > 0) {
                     e.stopPropagation();
                     e.preventDefault();
-                    this.$el.scrollTop = scrollTop + e.deltaX;
+                    this.element.scrollTop = scrollTop + e.deltaX;
                 }
                 else {
-                    if (this.direction === 'v') {
+                    if (this.props.direction === 'v') {
                         e.direction = 'v';
                     }
-                    this.$emit('scrollborder', e);
+                    this.emit('scrollborder', e);
                 }
             }
             else {
@@ -128,25 +100,25 @@ exports.methods = {
                 else if (scrollTop < this.maxScrollTop) {
                     e.stopPropagation();
                     e.preventDefault();
-                    this.$el.scrollTop = scrollTop + e.deltaX;
+                    this.element.scrollTop = scrollTop + e.deltaX;
                 }
                 else {
-                    if (this.direction === 'v') {
+                    if (this.props.direction === 'v') {
                         e.direction = 'v';
                     }
-                    this.$emit('scrollborder', e);
+                    this.emit('scrollborder', e);
                 }
             }
         }
-    },
-    touch: function (e) {
+    }
+    touch(e) {
         this.touchX = e.touches[0].clientX;
         this.touchY = e.touches[0].clientY;
         this.canTouchScroll = false;
-    },
-    move: function (e) {
-        const scrollTop = Math.ceil(this.$el.scrollTop);
-        const scrollLeft = Math.ceil(this.$el.scrollLeft);
+    }
+    move(e) {
+        const scrollTop = Math.ceil(this.element.scrollTop);
+        const scrollLeft = Math.ceil(this.element.scrollLeft);
         const deltaX = this.touchX - e.touches[0].clientX;
         const deltaY = this.touchY - e.touches[0].clientY;
         if (this.canTouchScroll) {
@@ -162,7 +134,7 @@ exports.methods = {
                 else {
                     if (!this.alreadySb) {
                         this.alreadySb = true;
-                        this.$emit('scrollborder', e);
+                        this.emit('scrollborder', e);
                     }
                 }
             }
@@ -174,7 +146,7 @@ exports.methods = {
                 else {
                     if (!this.alreadySb) {
                         this.alreadySb = true;
-                        this.$emit('scrollborder', e);
+                        this.emit('scrollborder', e);
                     }
                 }
             }
@@ -188,7 +160,7 @@ exports.methods = {
                 else {
                     if (!this.alreadySb) {
                         this.alreadySb = true;
-                        this.$emit('scrollborder', e);
+                        this.emit('scrollborder', e);
                     }
                 }
             }
@@ -200,58 +172,72 @@ exports.methods = {
                 else {
                     if (!this.alreadySb) {
                         this.alreadySb = true;
-                        this.$emit('scrollborder', e);
+                        this.emit('scrollborder', e);
                     }
                 }
             }
         }
         this.touchX = e.touches[0].clientX;
         this.touchY = e.touches[0].clientY;
-    },
-    end: function () {
+    }
+    end() {
         this.alreadySb = false;
-    },
-    refreshLength: function () {
-        if (!this.$el.offsetParent) {
+    }
+    refreshLength() {
+        if (!this.element.offsetParent) {
             return;
         }
-        const lengthWidth = this.$el.scrollWidth;
-        const lengthHeight = this.$el.scrollHeight;
+        const lengthWidth = this.element.scrollWidth;
+        const lengthHeight = this.element.scrollHeight;
         if (this.lengthWidth !== lengthWidth) {
             this.lengthWidth = lengthWidth;
-            if (this.direction === 'h') {
-                this.$emit('change', lengthWidth);
+            if (this.props.direction === 'h') {
+                this.emit('change', lengthWidth);
             }
         }
         if (this.lengthHeight !== lengthHeight) {
             this.lengthHeight = lengthHeight;
-            if (this.direction === 'v') {
-                this.$emit('change', lengthHeight);
+            if (this.props.direction === 'v') {
+                this.emit('change', lengthHeight);
             }
         }
     }
-};
-const mounted = function () {
-    clickgo.dom.watchSize(this.$el, () => {
-        const clientWidth = this.$el.clientWidth;
-        const clientHeight = this.$el.clientHeight;
-        if (this.clientWidth !== clientWidth) {
-            this.clientWidth = clientWidth;
-            this.$emit(this.direction === 'v' ? 'resizen' : 'resize', Math.round(this.clientWidth));
-        }
-        if (clientHeight !== this.clientHeight) {
-            this.clientHeight = clientHeight;
-            this.$emit(this.direction === 'v' ? 'resize' : 'resizen', Math.round(this.clientHeight));
-        }
-        this.refreshLength();
-    }, true);
-    clickgo.dom.watch(this.$el, () => {
-        this.refreshLength();
-    }, 'childsub', true);
-    clickgo.dom.watchStyle(this.$el, ['padding', 'font'], () => {
-        this.refreshLength();
-    });
-    this.$el.scrollTop = this.scrollTop;
-    this.$el.scrollLeft = this.scrollLeft;
-};
-exports.mounted = mounted;
+    onMounted() {
+        this.watch('scrollLeft', () => {
+            const sl = typeof this.props.scrollLeft === 'number' ? this.props.scrollLeft : parseInt(this.props.scrollLeft);
+            if (sl === this.scrollLeftEmit) {
+                return;
+            }
+            this.element.scrollLeft = this.props.scrollLeft;
+        });
+        this.watch('scrollTop', () => {
+            const st = typeof this.props.scrollTop === 'number' ? this.props.scrollTop : parseInt(this.props.scrollTop);
+            if (st === this.scrollTopEmit) {
+                return;
+            }
+            this.element.scrollTop = this.props.scrollTop;
+        });
+        clickgo.dom.watchSize(this.element, () => {
+            const clientWidth = this.element.clientWidth;
+            const clientHeight = this.element.clientHeight;
+            if (this.clientWidth !== clientWidth) {
+                this.clientWidth = clientWidth;
+                this.emit(this.props.direction === 'v' ? 'resizen' : 'resize', Math.round(this.clientWidth));
+            }
+            if (clientHeight !== this.clientHeight) {
+                this.clientHeight = clientHeight;
+                this.emit(this.props.direction === 'v' ? 'resize' : 'resizen', Math.round(this.clientHeight));
+            }
+            this.refreshLength();
+        }, true);
+        clickgo.dom.watch(this.element, () => {
+            this.refreshLength();
+        }, 'childsub', true);
+        clickgo.dom.watchStyle(this.element, ['padding', 'font'], () => {
+            this.refreshLength();
+        });
+        this.element.scrollTop = this.props.scrollTop;
+        this.element.scrollLeft = this.props.scrollLeft;
+    }
+}
+exports.default = default_1;

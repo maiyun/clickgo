@@ -9,41 +9,31 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.mounted = exports.methods = exports.watch = exports.computed = exports.data = exports.props = void 0;
 const clickgo = require("clickgo");
-exports.props = {
-    'tabPosition': {
-        'default': 'top'
-    },
-    'drag': {
-        'default': false
-    },
-    'close': {
-        'default': false
-    },
-    'tabs': {
-        'default': []
-    },
-    'modelValue': {
-        'default': ''
+class default_1 extends clickgo.control.AbstractControl {
+    constructor() {
+        super(...arguments);
+        this.props = {
+            'tabPosition': 'top',
+            'drag': false,
+            'close': false,
+            'tabs': [],
+            'modelValue': ''
+        };
+        this.arrow = false;
+        this.timer = 0;
+        this.tabsData = [];
+        this.oldTabs = undefined;
+        this.value = '';
+        this.rand = '';
     }
-};
-exports.data = {
-    'arrow': false,
-    'timer': 0,
-    'tabsData': [],
-    'oldTabs': undefined,
-    'value': '',
-    'rand': 0
-};
-exports.computed = {
-    'isDrag': function () {
-        return clickgo.tool.getBoolean(this.drag);
-    },
-    'isClose': function () {
-        return clickgo.tool.getBoolean(this.close);
-    },
-    'tabsComp': function () {
+    get isDrag() {
+        return clickgo.tool.getBoolean(this.props.drag);
+    }
+    get isClose() {
+        return clickgo.tool.getBoolean(this.props.close);
+    }
+    get tabsComp() {
         var _a, _b, _c;
         const tabs = [];
         for (const item of this.tabsData) {
@@ -63,73 +53,29 @@ exports.computed = {
             }
         }
         return tabs;
-    },
-    'values': function () {
+    }
+    get values() {
         const list = [];
         for (const item of this.tabsComp) {
             list.push(item.value);
         }
         return list;
     }
-};
-exports.watch = {
-    'modelValue': {
-        handler: function () {
-            if (this.value !== this.modelValue) {
-                this.value = this.modelValue;
-                this.refreshValue();
-            }
-        },
-        'immediate': true
-    },
-    'tabs': {
-        handler: function () {
-            this.tabsData = this.tabs;
-        },
-        'deep': true
-    },
-    'tabsComp': {
-        handler: function () {
-            this.refreshValue();
-            this.$nextTick().then(() => {
-                this.onResize(clickgo.dom.getSize(this.$refs.tabs[0]));
-            }).catch(function (e) {
-                console.log(e);
-            });
-        },
-        'deep': true
-    },
-    'tabPosition': {
-        handler: function () {
-            return __awaiter(this, void 0, void 0, function* () {
-                yield this.$nextTick();
-                if (this.oldTabs === this.$refs.tabs[0]) {
-                    return;
-                }
-                this.oldTabs = this.$refs.tabs[0];
-                clickgo.dom.watchSize(this.$refs.tabs[0], (size) => {
-                    this.onResize(size);
-                });
-            });
-        }
-    }
-};
-exports.methods = {
-    wheel: function (e) {
-        if (this.tabPosition === 'left' || this.tabPosition === 'right') {
+    wheel(e) {
+        if (this.props.tabPosition === 'left' || this.props.tabPosition === 'right') {
             return;
         }
         if (e.deltaX !== 0) {
             return;
         }
         e.preventDefault();
-        this.$refs.tabs[0].scrollLeft += e.deltaY;
-    },
-    down: function (e, index) {
+        this.refs.tabs[0].scrollLeft += e.deltaY;
+    }
+    down(e, index) {
         const nval = this.tabsComp[index].value;
         if (this.value !== nval) {
             this.value = nval;
-            this.$emit('update:modelValue', this.value);
+            this.emit('update:modelValue', this.value);
         }
         clickgo.dom.bindDrag(e, {
             'el': e.currentTarget.parentNode,
@@ -138,23 +84,23 @@ exports.methods = {
                 'tab': this.rand
             }
         });
-    },
-    tabClose: function (e, index) {
+    }
+    tabClose(e, index) {
         const event = {
             'go': true,
             preventDefault: function () {
                 this.go = false;
             }
         };
-        this.$emit('close', event, index);
+        this.emit('close', event, index);
         if (!event.go) {
             return;
         }
         e.stopPropagation();
         this.tabsData.splice(index, 1);
-        this.$emit('update:tabs', this.tabsData);
-    },
-    drop: function (e, index) {
+        this.emit('update:tabs', this.tabsData);
+    }
+    drop(e, index) {
         if (typeof e.detail.value !== 'object') {
             return;
         }
@@ -162,13 +108,13 @@ exports.methods = {
             return;
         }
         this.tabsData.splice(index, 0, this.tabsData.splice(e.detail.value.index, 1)[0]);
-        this.$emit('update:tabs', this.tabsData);
-    },
-    tabClick: function (e, item) {
+        this.emit('update:tabs', this.tabsData);
+    }
+    tabClick(e, item) {
         this.value = item.value;
-        this.$emit('update:modelValue', this.value);
-    },
-    longDown: function (e, type) {
+        this.emit('update:modelValue', this.value);
+    }
+    longDown(e, type) {
         if (clickgo.dom.hasTouchButMouse(e)) {
             return;
         }
@@ -176,11 +122,11 @@ exports.methods = {
         clickgo.dom.bindDown(e, {
             down: () => {
                 this.timer = clickgo.task.onFrame(() => {
-                    if (this.tabPosition === 'top' || this.tabPosition === 'bottom') {
-                        this.$refs.tabs[0].scrollLeft += num;
+                    if (this.props.tabPosition === 'top' || this.props.tabPosition === 'bottom') {
+                        this.refs.tabs[0].scrollLeft += num;
                     }
                     else {
-                        this.$refs.tabs[0].scrollTop += num;
+                        this.refs.tabs[0].scrollTop += num;
                     }
                 });
             },
@@ -189,9 +135,9 @@ exports.methods = {
                 this.timer = 0;
             }
         });
-    },
-    onResize: function (size) {
-        if (this.tabPosition === 'top' || this.tabPosition === 'bottom') {
+    }
+    onResize(size) {
+        if (this.props.tabPosition === 'top' || this.props.tabPosition === 'bottom') {
             const width = this.arrow ? Math.round(size.clientWidth) + 40 : Math.round(size.clientWidth);
             if (size.scrollWidth > width) {
                 this.arrow = true;
@@ -209,31 +155,64 @@ exports.methods = {
                 this.arrow = false;
             }
         }
-    },
-    refreshValue: function () {
+    }
+    refreshValue() {
         if (this.value === '') {
             const v = this.values[0] ? this.values[0] : '';
             if (this.value !== v) {
                 this.value = v;
-                this.$emit('update:modelValue', this.value);
+                this.emit('update:modelValue', this.value);
             }
         }
-        else if (this.values.indexOf(this.value) === -1) {
+        else if (!this.values.includes(this.value)) {
             const v = this.values[this.values.length - 1] ? this.values[this.values.length - 1] : '';
             if (this.value !== v) {
                 this.value = v;
-                this.$emit('update:modelValue', this.value);
+                this.emit('update:modelValue', this.value);
             }
         }
     }
-};
-const mounted = function () {
-    this.rand = clickgo.tool.random(16);
-    this.tabsData = this.tabs;
-    this.oldTabs = this.$refs.tabs[0];
-    clickgo.dom.watchSize(this.$refs.tabs[0], (size) => {
-        this.onResize(size);
-    });
-    this.refreshValue();
-};
-exports.mounted = mounted;
+    onMounted() {
+        this.watch('modelValue', () => {
+            if (this.value !== this.props.modelValue) {
+                this.value = this.props.modelValue;
+                this.refreshValue();
+            }
+        }, {
+            'immediate': true
+        });
+        this.watch('tabs', () => {
+            this.tabsData = this.props.tabs;
+        }, {
+            'deep': true
+        });
+        this.watch('tabsComp', () => {
+            this.refreshValue();
+            this.nextTick().then(() => {
+                this.onResize(clickgo.dom.getSize(this.refs.tabs[0]));
+            }).catch(function (e) {
+                console.log(e);
+            });
+        }, {
+            'deep': true
+        });
+        this.watch('tabPosition', () => __awaiter(this, void 0, void 0, function* () {
+            yield this.nextTick();
+            if (this.oldTabs === this.refs.tabs[0]) {
+                return;
+            }
+            this.oldTabs = this.refs.tabs[0];
+            clickgo.dom.watchSize(this.refs.tabs[0], (size) => {
+                this.onResize(size);
+            });
+        }));
+        this.rand = clickgo.tool.random(16);
+        this.tabsData = this.props.tabs;
+        this.oldTabs = this.refs.tabs[0];
+        clickgo.dom.watchSize(this.refs.tabs[0], (size) => {
+            this.onResize(size);
+        });
+        this.refreshValue();
+    }
+}
+exports.default = default_1;

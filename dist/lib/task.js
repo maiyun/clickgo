@@ -9,18 +9,30 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.refreshSystemPosition = exports.clearSystem = exports.setSystem = exports.systemTaskInfo = exports.sleep = exports.removeTimer = exports.createTimer = exports.clearLocaleLang = exports.setLocaleLang = exports.setLocale = exports.clearLocale = exports.loadLocale = exports.loadLocaleData = exports.end = exports.run = exports.getList = exports.get = exports.offFrame = exports.onFrame = exports.lastId = exports.list = void 0;
+exports.refreshSystemPosition = exports.clearSystem = exports.setSystem = exports.systemTaskInfo = exports.sleep = exports.removeTimer = exports.createTimer = exports.clearLocaleLang = exports.setLocaleLang = exports.setLocale = exports.clearLocale = exports.loadLocale = exports.loadLocaleData = exports.end = exports.run = exports.getList = exports.get = exports.offFrame = exports.onFrame = exports.isMain = exports.setMain = exports.lastId = exports.list = void 0;
 const clickgo = require("../clickgo");
 const core = require("./core");
-const control = require("./control");
 const dom = require("./dom");
 const tool = require("./tool");
 const form = require("./form");
-const theme = require("./theme");
+const control = require("./control");
 const fs = require("./fs");
 const native = require("./native");
 exports.list = {};
 exports.lastId = 0;
+let mainTaskId = 0;
+function setMain(taskId) {
+    if (mainTaskId > 0) {
+        return false;
+    }
+    mainTaskId = taskId;
+    return true;
+}
+exports.setMain = setMain;
+function isMain(taskId) {
+    return taskId === mainTaskId;
+}
+exports.isMain = isMain;
 const localeData = {
     'en': {
         'loading': 'Loading...',
@@ -38,33 +50,37 @@ const localeData = {
 let frameTimer = 0;
 const frameMaps = {};
 function onFrame(fun, opt = {}) {
-    var _a, _b;
+    var _a;
     const taskId = opt.taskId;
     const formId = opt.formId;
-    if (!taskId || !formId) {
+    if (!taskId) {
+        return 0;
+    }
+    const task = exports.list[taskId];
+    if (!task) {
+        return 0;
+    }
+    if (formId && !task.forms[formId]) {
         return 0;
     }
     const ft = ++frameTimer;
-    const scope = (_a = opt.scope) !== null && _a !== void 0 ? _a : 'form';
-    const count = (_b = opt.count) !== null && _b !== void 0 ? _b : 0;
+    const count = (_a = opt.count) !== null && _a !== void 0 ? _a : 0;
     let c = 0;
     let timer;
     const timerHandler = () => __awaiter(this, void 0, void 0, function* () {
         ++c;
-        if (exports.list[taskId].forms[formId] === undefined) {
-            if (scope === 'form') {
-                delete exports.list[taskId].timers['1x' + ft.toString()];
-                delete frameMaps[ft];
-                return;
-            }
+        if (formId && task.forms[formId] === undefined) {
+            delete task.timers['1x' + ft.toString()];
+            delete frameMaps[ft];
+            return;
         }
         yield fun();
-        if (exports.list[taskId].timers['1x' + ft.toString()] == undefined) {
+        if (task.timers['1x' + ft.toString()] == undefined) {
             return;
         }
         if (count > 1) {
             if (c === count) {
-                delete exports.list[taskId].timers['1x' + ft.toString()];
+                delete task.timers['1x' + ft.toString()];
                 delete frameMaps[ft];
                 return;
             }
@@ -78,7 +94,7 @@ function onFrame(fun, opt = {}) {
             }
         }
         else if (count === 1) {
-            delete exports.list[taskId].timers['1x' + ft.toString()];
+            delete task.timers['1x' + ft.toString()];
             delete frameMaps[ft];
         }
         else {
@@ -96,13 +112,16 @@ function onFrame(fun, opt = {}) {
         });
     });
     frameMaps[ft] = timer;
-    exports.list[taskId].timers['1x' + ft.toString()] = formId;
+    task.timers['1x' + ft.toString()] = formId !== null && formId !== void 0 ? formId : 0;
     return ft;
 }
 exports.onFrame = onFrame;
 function offFrame(ft, opt = {}) {
     const taskId = opt.taskId;
     if (!taskId) {
+        return;
+    }
+    if (!exports.list[taskId]) {
         return;
     }
     const formId = exports.list[taskId].timers['1x' + ft.toString()];
@@ -119,12 +138,13 @@ function get(tid) {
         return null;
     }
     return {
-        'name': exports.list[tid].app.config.name,
+        'name': exports.list[tid].config.name,
         'locale': exports.list[tid].locale.lang,
         'customTheme': exports.list[tid].customTheme,
         'formCount': Object.keys(exports.list[tid].forms).length,
-        'icon': exports.list[tid].icon,
-        'path': exports.list[tid].path
+        'icon': exports.list[tid].app.icon,
+        'path': exports.list[tid].path,
+        'current': exports.list[tid].current
     };
 }
 exports.get = get;
@@ -133,19 +153,20 @@ function getList() {
     for (const tid in exports.list) {
         const item = exports.list[tid];
         rtn[tid] = {
-            'name': item.app.config.name,
+            'name': item.config.name,
             'locale': item.locale.lang,
             'customTheme': item.customTheme,
             'formCount': Object.keys(item.forms).length,
-            'icon': item.icon,
-            'path': item.path
+            'icon': item.app.icon,
+            'path': item.path,
+            'current': item.current
         };
     }
     return rtn;
 }
 exports.getList = getList;
 function run(url, opt = {}) {
-    var _a, _b, _c, _d;
+    var _a, _b, _c;
     return __awaiter(this, void 0, void 0, function* () {
         let ntask = null;
         if (opt.taskId) {
@@ -170,22 +191,598 @@ function run(url, opt = {}) {
         }) : undefined;
         const app = yield core.fetchApp(url, {
             'notifyId': notifyId,
-            'current': ntask ? ntask.path : undefined,
+            'current': ntask ? ntask.current : undefined,
             'progress': opt.progress
         });
-        if (notifyId) {
+        if (!app) {
+            if (notifyId) {
+                setTimeout(function () {
+                    form.hideNotify(notifyId);
+                }, 2000);
+            }
+            return -1;
+        }
+        if (notifyId && !app.net) {
             setTimeout(function () {
                 form.hideNotify(notifyId);
             }, 2000);
         }
-        if (!app) {
-            return -1;
-        }
-        const files = {};
-        for (const fpath in app.files) {
-            files[fpath] = app.files[fpath];
-        }
         const taskId = ++exports.lastId;
+        const unblock = (_c = opt.unblock) !== null && _c !== void 0 ? _c : [];
+        const invoke = {};
+        if (!unblock.includes('window')) {
+            invoke.window = undefined;
+        }
+        const ks = Object.getOwnPropertyNames(window);
+        for (const k of ks) {
+            if (k.includes('Event')) {
+                continue;
+            }
+            if (k.includes('-')) {
+                continue;
+            }
+            if (/^[0-9]+$/.test(k)) {
+                continue;
+            }
+            if ([
+                'require',
+                '__awaiter', 'eval', 'Math', 'Array', 'Blob', 'Infinity', 'parseInt', 'parseFloat', 'Promise', 'Date', 'JSON', 'fetch'
+            ].includes(k)) {
+                continue;
+            }
+            if (unblock.includes(k)) {
+                continue;
+            }
+            invoke[k] = undefined;
+        }
+        invoke.console = {
+            log: function (message, ...optionalParams) {
+                console.log(message, ...optionalParams);
+            }
+        };
+        invoke.loader = {
+            require: function (paths, files, opt) {
+                return loader.require(paths, files, opt);
+            }
+        };
+        if (!unblock.includes('Object')) {
+            invoke.Object = {
+                defineProperty: function () {
+                    return;
+                },
+                keys: function (o) {
+                    return Object.keys(o);
+                },
+                assign: function (o, o2) {
+                    if (o.controlName !== undefined) {
+                        return o;
+                    }
+                    return Object.assign(o, o2);
+                }
+            };
+        }
+        invoke.navigator = {};
+        if (navigator.clipboard) {
+            invoke.navigator.clipboard = navigator.clipboard;
+        }
+        invoke.invokeClickgo = {
+            getVersion: function () {
+                return clickgo.getVersion();
+            },
+            getNative() {
+                return clickgo.getNative();
+            },
+            getPlatform() {
+                return clickgo.getPlatform();
+            },
+            'control': {
+                'AbstractControl': class extends control.AbstractControl {
+                    get taskId() {
+                        return taskId;
+                    }
+                },
+                read: function (blob) {
+                    return control.read(blob);
+                }
+            },
+            'core': {
+                'config': clickgo.core.config,
+                'AbstractApp': class extends core.AbstractApp {
+                    main() {
+                        return __awaiter(this, void 0, void 0, function* () {
+                            return;
+                        });
+                    }
+                    get taskId() {
+                        return taskId;
+                    }
+                },
+                getCdn: function () {
+                    return core.getCdn();
+                },
+                initModules: function (names) {
+                    return clickgo.core.initModules(names);
+                },
+                getModule: function (name) {
+                    return clickgo.core.getModule(name);
+                },
+                readApp: function (blob) {
+                    return clickgo.core.readApp(blob);
+                },
+                getAvailArea: function () {
+                    return clickgo.core.getAvailArea();
+                }
+            },
+            'dom': {
+                setGlobalCursor: function (type) {
+                    clickgo.dom.setGlobalCursor(type);
+                },
+                hasTouchButMouse: function (e) {
+                    return clickgo.dom.hasTouchButMouse(e);
+                },
+                getStyleCount: function (taskId, type) {
+                    return clickgo.dom.getStyleCount(taskId, type);
+                },
+                getSize: function (el) {
+                    return clickgo.dom.getSize(el);
+                },
+                watchSize: function (el, cb, immediate = false) {
+                    return clickgo.dom.watchSize(el, cb, immediate, taskId);
+                },
+                unwatchSize: function (el) {
+                    clickgo.dom.unwatchSize(el, taskId);
+                },
+                clearWatchSize() {
+                    clickgo.dom.clearWatchSize(taskId);
+                },
+                watch: function (el, cb, mode = 'default', immediate = false) {
+                    clickgo.dom.watch(el, cb, mode, immediate, taskId);
+                },
+                unwatch: function (el) {
+                    clickgo.dom.unwatch(el, taskId);
+                },
+                clearWatch: function () {
+                    clickgo.dom.clearWatch(taskId);
+                },
+                watchStyle: function (el, name, cb, immediate = false) {
+                    clickgo.dom.watchStyle(el, name, cb, immediate);
+                },
+                isWatchStyle: function (el) {
+                    return clickgo.dom.isWatchStyle(el);
+                },
+                bindDown: function (oe, opt) {
+                    clickgo.dom.bindDown(oe, opt);
+                },
+                bindGesture: function (e, opt) {
+                    clickgo.dom.bindGesture(e, opt);
+                },
+                bindLong: function (e, long) {
+                    clickgo.dom.bindLong(e, long);
+                },
+                bindDrag: function (e, opt) {
+                    clickgo.dom.bindDrag(e, opt);
+                },
+                'is': clickgo.dom.is,
+                bindMove: function (e, opt) {
+                    return clickgo.dom.bindMove(e, opt);
+                },
+                bindResize: function (e, opt) {
+                    clickgo.dom.bindResize(e, opt);
+                },
+                findParentByData: function (el, name) {
+                    return clickgo.dom.findParentByData(el, name);
+                },
+                findParentByClass: function (el, name) {
+                    return clickgo.dom.findParentByClass(el, name);
+                },
+                siblings: function (el) {
+                    return clickgo.dom.siblings(el);
+                },
+                siblingsData: function (el, name) {
+                    return clickgo.dom.siblingsData(el, name);
+                },
+                fullscreen: function () {
+                    return clickgo.dom.fullscreen();
+                }
+            },
+            'form': {
+                'AbstractForm': class extends form.AbstractForm {
+                    get taskId() {
+                        return taskId;
+                    }
+                },
+                min: function (fid) {
+                    return clickgo.form.min(fid);
+                },
+                max: function max(fid) {
+                    return clickgo.form.max(fid);
+                },
+                close: function (fid) {
+                    return clickgo.form.close(fid);
+                },
+                bindResize: function (e, border) {
+                    clickgo.form.bindResize(e, border);
+                },
+                bindDrag: function (e) {
+                    clickgo.form.bindDrag(e);
+                },
+                getTaskId: function (fid) {
+                    return clickgo.form.getTaskId(fid);
+                },
+                get: function (fid) {
+                    return clickgo.form.get(fid);
+                },
+                getList: function (tid) {
+                    return clickgo.form.getList(tid);
+                },
+                changeFocus: function (fid = 0) {
+                    clickgo.form.changeFocus(fid);
+                },
+                getMaxZIndexID: function (out) {
+                    return clickgo.form.getMaxZIndexID(out);
+                },
+                getRectByBorder: function (border) {
+                    return clickgo.form.getRectByBorder(border);
+                },
+                showCircular: function (x, y) {
+                    clickgo.form.showCircular(x, y);
+                },
+                moveRectangle: function (border) {
+                    clickgo.form.moveRectangle(border);
+                },
+                showRectangle: function (x, y, border) {
+                    clickgo.form.showRectangle(x, y, border);
+                },
+                hideRectangle: function () {
+                    clickgo.form.hideRectangle();
+                },
+                showDrag: function () {
+                    clickgo.form.showDrag();
+                },
+                moveDrag: function (opt) {
+                    clickgo.form.moveDrag(opt);
+                },
+                hideDrag: function () {
+                    clickgo.form.hideDrag();
+                },
+                notify: function (opt) {
+                    return clickgo.form.notify(opt);
+                },
+                notifyProgress: function (notifyId, per) {
+                    clickgo.form.notifyProgress(notifyId, per);
+                },
+                hideNotify: function (notifyId) {
+                    clickgo.form.hideNotify(notifyId);
+                },
+                showPop: function (el, pop, direction, opt = {}) {
+                    clickgo.form.showPop(el, pop, direction, opt);
+                },
+                hidePop: function (pop) {
+                    clickgo.form.hidePop(pop);
+                },
+                dialog: function (opt) {
+                    if (typeof opt === 'string') {
+                        opt = {
+                            'content': opt
+                        };
+                    }
+                    opt.taskId = taskId;
+                    return clickgo.form.dialog(opt);
+                },
+                confirm: function (opt) {
+                    if (typeof opt === 'string') {
+                        opt = {
+                            'content': opt
+                        };
+                    }
+                    opt.taskId = taskId;
+                    return clickgo.form.confirm(opt);
+                },
+                flash: function (fid) {
+                    clickgo.form.flash(fid, taskId);
+                },
+                showLauncher: function () {
+                    clickgo.form.showLauncher();
+                },
+                hideLauncher: function () {
+                    clickgo.form.hideLauncher();
+                }
+            },
+            'fs': {
+                getContent: function (path, options = {}) {
+                    if (!options.files) {
+                        options.files = exports.list[taskId].app.files;
+                    }
+                    if (!options.current) {
+                        options.current = exports.list[taskId].current;
+                    }
+                    return clickgo.fs.getContent(path, options);
+                },
+                putContent: function (path, data, options = {}) {
+                    if (!options.current) {
+                        options.current = exports.list[taskId].current;
+                    }
+                    return clickgo.fs.putContent(path, data, options);
+                },
+                readLink: function (path, options = {}) {
+                    if (!options.current) {
+                        options.current = exports.list[taskId].current;
+                    }
+                    return clickgo.fs.readLink(path, options);
+                },
+                symlink: function (fPath, linkPath, options = {}) {
+                    if (!options.current) {
+                        options.current = exports.list[taskId].current;
+                    }
+                    return clickgo.fs.symlink(fPath, linkPath, options);
+                },
+                unlink: function (path, options = {}) {
+                    if (!options.current) {
+                        options.current = exports.list[taskId].current;
+                    }
+                    return clickgo.fs.unlink(path, options);
+                },
+                stats: function (path, options = {}) {
+                    if (!options.files) {
+                        options.files = exports.list[taskId].app.files;
+                    }
+                    if (!options.current) {
+                        options.current = exports.list[taskId].current;
+                    }
+                    return clickgo.fs.stats(path, options);
+                },
+                isDir: function (path, options = {}) {
+                    if (!options.files) {
+                        options.files = exports.list[taskId].app.files;
+                    }
+                    if (!options.current) {
+                        options.current = exports.list[taskId].current;
+                    }
+                    return clickgo.fs.isDir(path, options);
+                },
+                isFile: function (path, options = {}) {
+                    if (!options.files) {
+                        options.files = exports.list[taskId].app.files;
+                    }
+                    if (!options.current) {
+                        options.current = exports.list[taskId].current;
+                    }
+                    return clickgo.fs.isFile(path, options);
+                },
+                mkdir: function (path, mode, options = {}) {
+                    if (!options.current) {
+                        options.current = exports.list[taskId].current;
+                    }
+                    return clickgo.fs.mkdir(path, mode, options);
+                },
+                rmdir: function (path, options = {}) {
+                    if (!options.current) {
+                        options.current = exports.list[taskId].current;
+                    }
+                    return clickgo.fs.rmdir(path, options);
+                },
+                rmdirDeep: function (path, options = {}) {
+                    if (!options.current) {
+                        options.current = exports.list[taskId].current;
+                    }
+                    return clickgo.fs.rmdirDeep(path, options);
+                },
+                chmod: function (path, mod, options = {}) {
+                    if (!options.current) {
+                        options.current = exports.list[taskId].current;
+                    }
+                    return clickgo.fs.chmod(path, mod, options);
+                },
+                rename(oldPath, newPath, options = {}) {
+                    if (!options.current) {
+                        options.current = exports.list[taskId].current;
+                    }
+                    return clickgo.fs.rename(oldPath, newPath, options);
+                },
+                readDir(path, options = {}) {
+                    if (!options.files) {
+                        options.files = exports.list[taskId].app.files;
+                    }
+                    if (!options.current) {
+                        options.current = exports.list[taskId].current;
+                    }
+                    return clickgo.fs.readDir(path, options);
+                },
+                copyFolder(from, to, options = {}) {
+                    if (!options.current) {
+                        options.current = exports.list[taskId].current;
+                    }
+                    return clickgo.fs.copyFolder(from, to, options);
+                },
+                copyFile(src, dest, options = {}) {
+                    if (!options.current) {
+                        options.current = exports.list[taskId].current;
+                    }
+                    return clickgo.fs.copyFile(src, dest, options);
+                }
+            },
+            'native': {
+                invoke: function (name, ...param) {
+                    return clickgo.native.invoke(name, ...param);
+                },
+                max: function () {
+                    clickgo.native.max();
+                },
+                min: function () {
+                    clickgo.native.min();
+                },
+                restore: function () {
+                    clickgo.native.restore();
+                },
+                size: function (width, height) {
+                    clickgo.native.size(width, height);
+                }
+            },
+            'task': {
+                isMain(taskId) {
+                    return isMain(taskId);
+                },
+                onFrame: function (fun, opt = {}) {
+                    opt.taskId = taskId;
+                    return clickgo.task.onFrame(fun, opt);
+                },
+                offFrame: function (ft, opt = {}) {
+                    opt.taskId = taskId;
+                    clickgo.task.offFrame(ft, opt);
+                },
+                get: function (tid) {
+                    return clickgo.task.get(tid);
+                },
+                getList: function () {
+                    return clickgo.task.getList();
+                },
+                run: function (url, opt = {}) {
+                    opt.taskId = taskId;
+                    opt.main = false;
+                    return clickgo.task.run(url, opt);
+                },
+                end: function (tid) {
+                    return clickgo.task.end(tid !== null && tid !== void 0 ? tid : taskId);
+                },
+                loadLocaleData: function (lang, data, pre = '') {
+                    clickgo.task.loadLocaleData(lang, data, pre, taskId);
+                },
+                loadLocale: function (lang, path) {
+                    return clickgo.task.loadLocale(lang, path, taskId);
+                },
+                clearLocale: function () {
+                    clickgo.task.clearLocale(taskId);
+                },
+                setLocale: function (lang, path) {
+                    return clickgo.task.setLocale(lang, path, taskId);
+                },
+                setLocaleLang: function (lang) {
+                    clickgo.task.setLocaleLang(lang, taskId);
+                },
+                clearLocaleLang: function () {
+                    clickgo.task.clearLocaleLang(taskId);
+                },
+                createTimer: function (fun, delay, opt = {}) {
+                    opt.taskId = taskId;
+                    return clickgo.task.createTimer(fun, delay, opt);
+                },
+                removeTimer: function (timer) {
+                    clickgo.task.removeTimer(timer, taskId);
+                },
+                sleep: function (fun, delay) {
+                    return clickgo.task.sleep(fun, delay, taskId);
+                },
+                systemTaskInfo: clickgo.task.systemTaskInfo,
+                setSystem: function (fid) {
+                    return clickgo.task.setSystem(fid, taskId);
+                },
+                clearSystem: function () {
+                    return clickgo.task.clearSystem(taskId);
+                }
+            },
+            'theme': {
+                read: function (blob) {
+                    return clickgo.theme.read(blob);
+                },
+                load: function (theme) {
+                    return __awaiter(this, void 0, void 0, function* () {
+                        if (!theme) {
+                            return false;
+                        }
+                        return clickgo.theme.load(theme, taskId);
+                    });
+                },
+                remove: function (name) {
+                    return clickgo.theme.remove(name, taskId);
+                },
+                clear: function () {
+                    return clickgo.theme.clear(taskId);
+                },
+                setGlobal: function (theme) {
+                    return clickgo.theme.setGlobal(theme);
+                },
+                clearGlobal: function () {
+                    clickgo.theme.clearGlobal();
+                }
+            },
+            'tool': {
+                blob2ArrayBuffer: function (blob) {
+                    return clickgo.tool.blob2ArrayBuffer(blob);
+                },
+                clone: function (obj) {
+                    return clickgo.tool.clone(obj);
+                },
+                sleep: function (ms = 0) {
+                    return clickgo.tool.sleep(ms);
+                },
+                purify: function (text) {
+                    return clickgo.tool.purify(text);
+                },
+                rand: function (min, max) {
+                    return clickgo.tool.rand(min, max);
+                },
+                'RANDOM_N': clickgo.tool.RANDOM_N,
+                'RANDOM_U': clickgo.tool.RANDOM_U,
+                'RANDOM_L': clickgo.tool.RANDOM_L,
+                'RANDOM_UN': clickgo.tool.RANDOM_UN,
+                'RANDOM_LN': clickgo.tool.RANDOM_LN,
+                'RANDOM_LU': clickgo.tool.RANDOM_LU,
+                'RANDOM_LUN': clickgo.tool.RANDOM_LUN,
+                'RANDOM_V': clickgo.tool.RANDOM_V,
+                'RANDOM_LUNS': clickgo.tool.RANDOM_LUNS,
+                random: function (length = 8, source = clickgo.tool.RANDOM_LN, block = '') {
+                    return clickgo.tool.random(length, source, block);
+                },
+                getBoolean: function (param) {
+                    return clickgo.tool.getBoolean(param);
+                },
+                escapeHTML: function (html) {
+                    return clickgo.tool.escapeHTML(html);
+                },
+                request: function (url, opt) {
+                    return clickgo.tool.request(url, opt);
+                },
+                parseUrl: function (url) {
+                    return clickgo.tool.parseUrl(url);
+                },
+                urlResolve: function (from, to) {
+                    return clickgo.tool.urlResolve(from, to);
+                },
+                blob2Text: function (blob) {
+                    return clickgo.tool.blob2Text(blob);
+                },
+                blob2DataUrl: function (blob) {
+                    return clickgo.tool.blob2DataUrl(blob);
+                },
+                execCommand: function (ac) {
+                    clickgo.tool.execCommand(ac);
+                }
+            },
+            'zip': {
+                get: function (data) {
+                    return clickgo.zip.get(data);
+                }
+            }
+        };
+        const preprocess = function (code, path) {
+            const exec = /eval\W/.exec(code);
+            if (exec) {
+                form.notify({
+                    'title': 'Error',
+                    'content': `The "eval" is prohibited.\nFile: "${path}".`,
+                    'type': 'danger'
+                });
+                return '';
+            }
+            code = code.replace(/extends[\s\S]+?\.\s*(AbstractApp|AbstractForm)\s*{/, (t) => {
+                return t + 'get filename() {return __filename;}';
+            });
+            return code;
+        };
+        app.files['/invoke/clickgo.js'] = `module.exports = invokeClickgo;`;
+        const path = url;
+        const lio = path.endsWith('.cga') ? path.lastIndexOf('/') : path.slice(0, -1).lastIndexOf('/');
+        const current = path.slice(0, lio);
         exports.list[taskId] = {
             'id': taskId,
             'app': app,
@@ -194,128 +791,50 @@ function run(url, opt = {}) {
                 'lang': '',
                 'data': {}
             }),
-            'icon': (_c = app.icon) !== null && _c !== void 0 ? _c : icon,
-            'path': url,
-            'files': files,
-            'main': (_d = opt.main) !== null && _d !== void 0 ? _d : false,
-            'permissions': {},
+            'path': path,
+            'current': current,
+            'runtime': clickgo.vue.reactive({
+                'permissions': {},
+                'dialogFormIds': []
+            }),
             'forms': {},
-            'objectURLs': [],
-            'controls': {
-                'loaded': {},
-                'layout': {},
-                'prep': {}
-            },
-            'timers': {}
+            'controls': {},
+            'timers': {},
+            'invoke': invoke
         };
-        const task = exports.list[taskId];
-        for (let path of app.config.controls) {
-            path += '.cgc';
-            path = tool.urlResolve('/', path);
-            const file = yield fs.getContent(path, {
-                'files': task.files
-            });
-            if (file && typeof file !== 'string') {
-                const c = yield control.read(file);
-                if (c) {
-                    task.controls.loaded[path] = c;
+        let expo = [];
+        try {
+            expo = loader.require('/app.js', app.files, {
+                'dir': '/',
+                'invoke': invoke,
+                'preprocess': preprocess,
+                'map': {
+                    'clickgo': '/invoke/clickgo'
                 }
-                else {
-                    form.notify({
-                        'title': 'Control failed to load',
-                        'content': path
-                    });
-                }
-            }
+            })[0];
         }
-        if (app.config.themes) {
-            for (let path of app.config.themes) {
-                path += '.cgt';
-                path = tool.urlResolve('/', path);
-                const file = yield fs.getContent(path, {
-                    'files': task.files
-                });
-                if (file && typeof file !== 'string') {
-                    const th = yield theme.read(file);
-                    if (th) {
-                        yield theme.load(th, taskId);
-                    }
-                }
-            }
+        catch (e) {
+            delete exports.list[taskId];
+            core.trigger('error', taskId, 0, e, e.message + '(-1)');
+            return -2;
         }
-        if (app.config.locales) {
-            for (let path in app.config.locales) {
-                const locale = app.config.locales[path];
-                if (!path.endsWith('.json')) {
-                    path += '.json';
-                }
-                const lcontent = yield fs.getContent(path, {
-                    'encoding': 'utf8',
-                    'files': task.files,
-                    'current': task.path
-                });
-                if (!lcontent) {
-                    continue;
-                }
-                try {
-                    const data = JSON.parse(lcontent);
-                    loadLocaleData(locale, data, '', task.id);
-                }
-                catch (_e) {
-                }
-            }
+        if (!(expo === null || expo === void 0 ? void 0 : expo.default)) {
+            delete exports.list[taskId];
+            return -3;
         }
-        core.trigger('taskStarted', task.id);
-        dom.createToStyleList(task.id);
-        const f = yield form.create({
-            'taskId': task.id,
-            'file': app.config.main
-        });
-        if (typeof f === 'number') {
-            delete exports.list[task.id];
-            dom.removeFromStyleList(task.id);
-            core.trigger('taskEnded', task.id);
-            return f - 100;
+        dom.createToStyleList(taskId);
+        const appCls = new expo.default();
+        yield appCls.main();
+        if (!exports.list[taskId].class) {
+            delete exports.list[taskId];
+            dom.removeFromStyleList(taskId);
+            return -4;
         }
-        if (app.config.style && app.files[app.config.style + '.css']) {
-            const style = app.files[app.config.style + '.css'];
-            const r = tool.stylePrepend(style, 'cg-task' + task.id.toString() + '_');
-            dom.pushStyle(task.id, yield tool.styleUrl2DataUrl(app.config.style, r.style, app.files));
-        }
-        if (app.config.themes && app.config.themes.length > 0) {
-            task.customTheme = true;
-            for (const path of app.config.themes) {
-                const blob = yield fs.getContent(path, {
-                    'files': task.files,
-                    'current': task.path
-                });
-                if (!(blob instanceof Blob)) {
-                    continue;
-                }
-                const th = yield theme.read(blob);
-                if (!th) {
-                    continue;
-                }
-                yield theme.load(th, task.id);
-            }
-        }
-        else {
-            if (theme.global) {
-                yield theme.load(undefined, task.id);
-            }
-        }
-        if (task.id === 1) {
+        core.trigger('taskStarted', taskId);
+        if (taskId === 1) {
             native.invoke('cg-init', native.getToken());
         }
-        if (clickgo.getNative() && opt.sync) {
-            f.vroot.$refs.form.isNativeSync = true;
-            native.invoke('cg-set-size', native.getToken(), f.vroot.$refs.form.widthData, f.vroot.$refs.form.heightData);
-            window.addEventListener('resize', function () {
-                f.vroot.$refs.form.setPropData('width', window.innerWidth);
-                f.vroot.$refs.form.setPropData('height', window.innerHeight);
-            });
-        }
-        return task.id;
+        return taskId;
     });
 }
 exports.run = run;
@@ -324,7 +843,7 @@ function end(taskId) {
     if (!task) {
         return true;
     }
-    if (clickgo.getNative() && task.main) {
+    if (clickgo.getNative() && isMain(taskId)) {
         native.invoke('cg-close', native.getToken());
     }
     const fid = form.getMaxZIndexID({
@@ -339,13 +858,25 @@ function end(taskId) {
     for (const fid in task.forms) {
         const f = task.forms[fid];
         core.trigger('formRemoved', taskId, f.id, f.vroot.$refs.form.title, f.vroot.$refs.form.iconData);
-        f.vapp.unmount();
+        try {
+            f.vapp.unmount();
+        }
+        catch (err) {
+            const msg = `Message: ${err.message}\nTask id: ${task.id}\nForm id: ${fid}\nFunction: task.end, unmount.`;
+            form.notify({
+                'title': 'Runtime Error',
+                'content': msg,
+                'type': 'danger'
+            });
+            console.log('Runtime Error', msg, err);
+        }
         f.vapp._container.remove();
     }
-    dom.removeFromStyleList(taskId);
-    for (const url of task.objectURLs) {
-        tool.revokeObjectURL(url, task.id);
+    const flist = document.querySelectorAll('#cg-form-list > [data-task-id="' + taskId.toString() + '"]');
+    for (const f of flist) {
+        f.remove();
     }
+    dom.removeFromStyleList(taskId);
     for (const timer in exports.list[taskId].timers) {
         if (timer.startsWith('1x')) {
             const ft = timer.slice(2);
@@ -381,7 +912,7 @@ function loadLocaleData(lang, data, pre = '', taskId) {
     }
 }
 exports.loadLocaleData = loadLocaleData;
-function loadLocale(lang, path, taskId, formId) {
+function loadLocale(lang, path, taskId) {
     return __awaiter(this, void 0, void 0, function* () {
         if (!taskId) {
             return false;
@@ -390,19 +921,11 @@ function loadLocale(lang, path, taskId, formId) {
         if (!task) {
             return false;
         }
-        let form = null;
-        if (formId) {
-            if (!task.forms[formId]) {
-                return false;
-            }
-            form = task.forms[formId];
-        }
-        const base = form ? form.vroot.cgPath : '/';
-        path = tool.urlResolve(base, path) + '.json';
+        path = tool.urlResolve(task.current + '/', path) + '.json';
         const fcontent = yield fs.getContent(path, {
             'encoding': 'utf8',
-            'files': task.files,
-            'current': task.path
+            'files': task.app.files,
+            'current': task.current
         });
         if (!fcontent) {
             return false;
@@ -429,9 +952,9 @@ function clearLocale(taskId) {
     task.locale.data = {};
 }
 exports.clearLocale = clearLocale;
-function setLocale(lang, path, taskId, formId) {
+function setLocale(lang, path, taskId) {
     clearLocale(taskId);
-    return loadLocale(lang, path, taskId, formId);
+    return loadLocale(lang, path, taskId);
 }
 exports.setLocale = setLocale;
 function setLocaleLang(lang, taskId) {
@@ -457,17 +980,20 @@ function clearLocaleLang(taskId) {
 }
 exports.clearLocaleLang = clearLocaleLang;
 function createTimer(fun, delay, opt = {}) {
-    var _a, _b;
+    var _a;
     const taskId = opt.taskId;
+    const formId = opt.formId;
     if (!taskId) {
         return 0;
     }
-    const formId = opt.formId;
-    if (!formId) {
+    const task = exports.list[taskId];
+    if (!task) {
         return 0;
     }
-    const scope = (_a = opt.scope) !== null && _a !== void 0 ? _a : 'form';
-    const count = (_b = opt.count) !== null && _b !== void 0 ? _b : 0;
+    if (formId && !task.forms[formId]) {
+        return 0;
+    }
+    const count = (_a = opt.count) !== null && _a !== void 0 ? _a : 0;
     let c = 0;
     if (opt.immediate) {
         const r = fun();
@@ -484,12 +1010,10 @@ function createTimer(fun, delay, opt = {}) {
     let timer;
     const timerHandler = () => {
         ++c;
-        if (exports.list[taskId].forms[formId] === undefined) {
-            if (scope === 'form') {
-                clearTimeout(timer);
-                delete exports.list[taskId].timers[timer];
-                return;
-            }
+        if (formId && task.forms[formId] === undefined) {
+            clearTimeout(timer);
+            delete task.timers[timer];
+            return;
         }
         const r = fun();
         if (r instanceof Promise) {
@@ -499,7 +1023,7 @@ function createTimer(fun, delay, opt = {}) {
         }
         if (count > 0 && c === count) {
             clearTimeout(timer);
-            delete exports.list[taskId].timers[timer];
+            delete task.timers[timer];
             return;
         }
     };
@@ -509,7 +1033,7 @@ function createTimer(fun, delay, opt = {}) {
     else {
         timer = window.setInterval(timerHandler, delay);
     }
-    exports.list[taskId].timers[timer] = formId;
+    task.timers[timer] = formId !== null && formId !== void 0 ? formId : 0;
     return timer;
 }
 exports.createTimer = createTimer;
@@ -528,10 +1052,9 @@ function removeTimer(timer, taskId) {
     delete exports.list[taskId].timers[timer];
 }
 exports.removeTimer = removeTimer;
-function sleep(fun, delay, taskId, formId) {
+function sleep(fun, delay, taskId) {
     return createTimer(fun, delay, {
         'taskId': taskId,
-        'formId': formId,
         'count': 1
     });
 }
@@ -579,7 +1102,7 @@ clickgo.vue.watch(exports.systemTaskInfo, function (n, o) {
     'deep': true
 });
 function setSystem(formId, taskId) {
-    if (!formId || !taskId) {
+    if (!taskId) {
         return false;
     }
     const task = exports.list[taskId];
@@ -654,14 +1177,14 @@ function refreshSystemPosition() {
         switch (core.config['task.position']) {
             case 'left':
             case 'right': {
-                form.vroot.$refs.form.setPropData('width', 'auto');
+                form.vroot.$refs.form.setPropData('width', 0);
                 form.vroot.$refs.form.setPropData('height', window.innerHeight);
                 break;
             }
             case 'top':
             case 'bottom': {
                 form.vroot.$refs.form.setPropData('width', window.innerWidth);
-                form.vroot.$refs.form.setPropData('height', 'auto');
+                form.vroot.$refs.form.setPropData('height', 0);
                 break;
             }
         }

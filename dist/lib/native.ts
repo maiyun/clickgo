@@ -40,12 +40,15 @@ export function invoke(name: string, ...param: any[]): any {
 export function max(): void {
     invoke('cg-set-state', token, 'max');
 }
+
 export function min(): void {
     invoke('cg-set-state', token, 'min');
 }
+
 export function restore(): void {
     invoke('cg-set-state', token, 'restore');
 }
+
 export function size(width: number, height: number): void {
     invoke('cg-set-size', token, width, height);
 }

@@ -1,97 +1,82 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.beforeUnmounted = exports.mounted = exports.methods = exports.watch = exports.computed = exports.data = exports.props = void 0;
 const clickgo = require("clickgo");
-exports.props = {
-    'disabled': {
-        'default': false
-    },
-    'alt': {
-        'default': undefined
-    },
-    'type': {
-        'default': undefined
-    },
-    'label': {
-        'default': undefined
-    },
-    'modelValue': {
-        'default': undefined
+class default_1 extends clickgo.control.AbstractControl {
+    constructor() {
+        super(...arguments);
+        this.props = {
+            'disabled': false,
+            'alt': '',
+            'type': '',
+            'label': '',
+            'modelValue': ''
+        };
+        this.padding = '';
     }
-};
-exports.data = {
-    'padding': ''
-};
-exports.computed = {
-    'isDisabled': function () {
-        return clickgo.tool.getBoolean(this.disabled);
-    },
-    'opMargin': function () {
+    get isDisabled() {
+        return clickgo.tool.getBoolean(this.props.disabled);
+    }
+    get opMargin() {
         return this.padding.replace(/(\w+)/g, '-$1');
     }
-};
-exports.watch = {
-    'type': {
-        handler: function () {
-            const menulist = this.cgParentByName('menulist');
+    enter(e) {
+        if (clickgo.dom.hasTouchButMouse(e)) {
+            return;
+        }
+        clickgo.form.showPop(this.element, this.refs.pop, 'h');
+    }
+    touch() {
+        clickgo.form.showPop(this.element, this.refs.pop, 'h');
+    }
+    click() {
+        if (!this.props.type) {
+            if (!this.slots('pop').length) {
+                clickgo.form.hidePop();
+            }
+            return;
+        }
+        if (this.props.type === 'radio') {
+            this.emit('update:modelValue', this.props.label);
+        }
+        else if (this.props.type === 'check') {
+            this.emit('update:modelValue', this.props.modelValue ? false : true);
+        }
+        clickgo.form.hidePop();
+    }
+    onBeforeUnmount() {
+        const menulist = this.parentByName('menulist');
+        if (!menulist) {
+            return;
+        }
+        if (this.props.type) {
+            --menulist.hasTypeItemsCount;
+        }
+    }
+    onMounted() {
+        this.watch('type', () => {
+            const menulist = this.parentByName('menulist');
             if (!menulist) {
                 return;
             }
-            if (this.type) {
+            if (this.props.type) {
                 ++menulist.hasTypeItemsCount;
             }
             else {
                 --menulist.hasTypeItemsCount;
             }
-        },
-        'immediate': true
-    }
-};
-exports.methods = {
-    enter: function (e) {
-        if (clickgo.dom.hasTouchButMouse(e)) {
+        }, {
+            'immediate': true
+        });
+        clickgo.dom.watchStyle(this.element, 'padding', (n, v) => {
+            this.padding = v;
+        }, true);
+        const menulist = this.parentByName('menulist');
+        if (!menulist) {
             return;
         }
-        clickgo.form.showPop(this.$el, this.$refs.pop, 'h');
-    },
-    touch: function () {
-        clickgo.form.showPop(this.$el, this.$refs.pop, 'h');
-    },
-    click: function () {
-        if (!this.type) {
-            if (!this.$slots.pop) {
-                clickgo.form.hidePop();
-            }
-            return;
+        if (this.props.type) {
+            ++menulist.hasTypeItemsCount;
         }
-        if (this.type === 'radio') {
-            this.$emit('update:modelValue', this.label);
-        }
-        else if (this.type === 'check') {
-            this.$emit('update:modelValue', this.modelValue ? false : true);
-        }
-        clickgo.form.hidePop();
     }
-};
-const mounted = function () {
-    clickgo.dom.watchStyle(this.$el, 'padding', (n, v) => {
-        this.padding = v;
-    }, true);
-    const menulist = this.cgParentByName('menulist');
-    if (!menulist) {
-        return;
-    }
-    if (this.type) {
-        ++menulist.hasTypeItemsCount;
-    }
-};
-exports.mounted = mounted;
-const beforeUnmounted = function () {
-    if (!this.menulist) {
-        return;
-    }
-    if (this.type) {
-        --this.menulist.hasTypeItemsCount;
-    }
-};
-exports.beforeUnmounted = beforeUnmounted;
+}
+exports.default = default_1;

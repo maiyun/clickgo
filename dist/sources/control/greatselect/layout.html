@@ -1,17 +1,17 @@
-<div class="wrap" :class="['area-' + area, isKeyDown && 'active']" :data-cg-disabled="isDisabled ? '' : undefined" :tabindex="(!isDisabled && cgFocus) ? '0' : undefined" @keydown="keydown" @keyup="keyup">
+<div class="wrap" :class="['area-' + area, isKeyDown && 'active']" :data-cg-disabled="isDisabled ? '' : undefined" :tabindex="(!isDisabled && formFocus) ? '0' : undefined" @keydown="keydown" @keyup="keyup">
     <div class="op" :style="{'margin': opMargin}">
         <div class="content" @click="click($event, 'left')" :class="[direction]" :style="{'padding': padding}">
             <slot></slot>
         </div>
         <div class="arrow" @click="click($event, 'arrow')"></div>
     </div>
-    <teleport v-if="$slots.pop" to="#cg-pop-list">
+    <teleport v-if="slots('pop').length" to="#cg-pop-list">
         <div ref="pop" class="pop" data-cg-pop>
             <cg-greatlist v-if="pop === 'greatlist'" :modelValue="modelValue" @update:modelValue="updateModelValue" :data="data" @itemclick="itemclick" adaptation>
                 <template v-slot="d">
                     <slot name="pop" :row="d.row" :index="d.index"></slot>
                 </template>
-                <template v-if="$slots.itempop" v-slot:itempop>
+                <template v-if="slots('itempop').length" v-slot:itempop>
                     <slot name="itempop"></slot>
                 </template>
             </cg-greatlist>

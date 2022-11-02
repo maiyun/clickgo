@@ -9,30 +9,31 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.methods = exports.data = void 0;
 const clickgo = require("clickgo");
-exports.data = {
-    'width': 300,
-    'height': 520,
-    'icon': '',
-    'title': 'Form',
-    'min': true,
-    'max': true,
-    'close': true,
-    'stateMax': false,
-    'stateMin': false,
-    'minWidth': 200,
-    'minHeight': 100,
-    'resize': true,
-    'loading': false,
-    'border': 'normal'
-};
-exports.methods = {
-    showLoading: function () {
+class default_1 extends clickgo.form.AbstractForm {
+    constructor() {
+        super(...arguments);
+        this.width = 300;
+        this.height = 520;
+        this.icon = '';
+        this.title = 'Form';
+        this.min = true;
+        this.max = true;
+        this.close = true;
+        this.stateMax = false;
+        this.stateMin = false;
+        this.minWidth = 200;
+        this.minHeight = 100;
+        this.resize = true;
+        this.loading = false;
+        this.border = 'normal';
+    }
+    showLoading() {
         return __awaiter(this, void 0, void 0, function* () {
             this.loading = true;
             yield clickgo.tool.sleep(1000);
             this.loading = false;
         });
     }
-};
+}
+exports.default = default_1;

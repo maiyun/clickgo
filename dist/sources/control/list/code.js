@@ -1,62 +1,43 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.methods = exports.watch = exports.data = exports.computed = exports.props = void 0;
 const clickgo = require("clickgo");
-exports.props = {
-    'adaptation': {
-        'dafault': undefined
-    },
-    'disabled': {
-        'default': undefined
-    },
-    'must': {
-        'default': true
-    },
-    'multi': {
-        'default': false
-    },
-    'tree': {
-        'default': false
-    },
-    'tree-default': {
-        'default': 0
-    },
-    'async': {
-        'default': false
-    },
-    'icon': {
-        'default': false
-    },
-    'icon-default': {
-        'default': undefined
-    },
-    'data': {
-        'default': []
-    },
-    'modelValue': {
-        'default': ''
+class default_1 extends clickgo.control.AbstractControl {
+    constructor() {
+        super(...arguments);
+        this.props = {
+            'adaptation': false,
+            'disabled': false,
+            'must': true,
+            'multi': false,
+            'tree': false,
+            'treeDefault': 0,
+            'async': false,
+            'icon': false,
+            'iconDefault': '',
+            'data': [],
+            'modelValue': ''
+        };
+        this.dataFormat = [];
     }
-};
-exports.computed = {
-    'isMust': function () {
-        return clickgo.tool.getBoolean(this.must);
-    },
-    'isMulti': function () {
-        return clickgo.tool.getBoolean(this.multi);
-    },
-    'isTree': function () {
-        return clickgo.tool.getBoolean(this.tree);
-    },
-    'isAsync': function () {
-        return clickgo.tool.getBoolean(this.async);
-    },
-    'isIcon': function () {
-        return clickgo.tool.getBoolean(this.icon);
-    },
-    'value': function () {
+    get isMust() {
+        return clickgo.tool.getBoolean(this.props.must);
+    }
+    get isMulti() {
+        return clickgo.tool.getBoolean(this.props.multi);
+    }
+    get isTree() {
+        return clickgo.tool.getBoolean(this.props.tree);
+    }
+    get isAsync() {
+        return clickgo.tool.getBoolean(this.props.async);
+    }
+    get isIcon() {
+        return clickgo.tool.getBoolean(this.props.icon);
+    }
+    get value() {
         var _a;
         let change = false;
-        let modelValue = this.modelValue;
+        let modelValue = this.props.modelValue;
         if (typeof modelValue === 'object') {
             if (!this.isMulti) {
                 change = true;
@@ -119,29 +100,15 @@ exports.computed = {
             }
         }
         if (change) {
-            this.$emit('update:modelValue', modelValue);
+            this.emit('update:modelValue', modelValue);
         }
-        this.$emit('label', label);
+        this.emit('label', label);
         return value;
-    },
-    'dataComp': function () {
+    }
+    get dataComp() {
         return this.unpack(this.dataFormat);
     }
-};
-exports.data = {
-    'dataFormat': []
-};
-exports.watch = {
-    'data': {
-        handler: function () {
-            this.dataFormat = this.formatData(this.data, this.dataFormat);
-        },
-        'immediate': true,
-        'deep': true
-    }
-};
-exports.methods = {
-    updateModelValue: function (value) {
+    updateModelValue(value) {
         if (typeof value === 'object') {
             const modelValue = [];
             const label = [];
@@ -151,15 +118,15 @@ exports.methods = {
                     label.push(this.dataComp[item].label);
                 }
             }
-            this.$emit('update:modelValue', modelValue);
-            this.$emit('label', label);
+            this.emit('update:modelValue', modelValue);
+            this.emit('label', label);
         }
         else {
-            this.$emit('update:modelValue', this.dataComp[value] ? this.dataComp[value].value : '');
-            this.$emit('label', this.dataComp[value] ? this.dataComp[value].label : '');
+            this.emit('update:modelValue', this.dataComp[value] ? this.dataComp[value].value : '');
+            this.emit('label', this.dataComp[value] ? this.dataComp[value].label : '');
         }
-    },
-    formatData: function (newData, oldData) {
+    }
+    formatData(newData, oldData) {
         var _a, _b, _c, _d, _e, _f;
         const data = [];
         const oldValues = [];
@@ -178,7 +145,7 @@ exports.methods = {
                 'title': false,
                 'disabled': false,
                 'control': 'item',
-                'tree': this.treeDefault,
+                'tree': this.props.treeDefault,
                 'children': []
             };
             const value = type === 'object' ? ((_b = (_a = item.value) !== null && _a !== void 0 ? _a : item.label) !== null && _b !== void 0 ? _b : k) : item;
@@ -220,8 +187,8 @@ exports.methods = {
             data.push(over);
         }
         return data;
-    },
-    unpack: function (data, level = 0) {
+    }
+    unpack(data, level = 0) {
         var _a, _b, _c;
         const result = [];
         for (const item of data) {
@@ -236,8 +203,8 @@ exports.methods = {
                 'disabled': item.disabled,
                 'control': item.control,
                 'tree': tree,
-                'icon': (_a = item.icon) !== null && _a !== void 0 ? _a : this.iconDefault,
-                'openicon': (_c = (_b = item.openicon) !== null && _b !== void 0 ? _b : item.icon) !== null && _c !== void 0 ? _c : this.iconDefault,
+                'icon': (_a = item.icon) !== null && _a !== void 0 ? _a : this.props.iconDefault,
+                'openicon': (_c = (_b = item.openicon) !== null && _b !== void 0 ? _b : item.icon) !== null && _c !== void 0 ? _c : this.props.iconDefault,
                 'level': level,
                 'format': item
             });
@@ -246,8 +213,8 @@ exports.methods = {
             }
         }
         return result;
-    },
-    find: function (value, data) {
+    }
+    find(value, data) {
         for (const item of data) {
             if ((item.value === value) && !item.disabled) {
                 return item;
@@ -261,20 +228,20 @@ exports.methods = {
             }
         }
         return null;
-    },
-    findComp: function (value) {
+    }
+    findComp(value) {
         for (let i = 0; i < this.dataComp.length; ++i) {
             if (this.dataComp[i].value === value) {
                 return i;
             }
         }
         return null;
-    },
-    treeClick: function (item) {
+    }
+    treeClick(item) {
         if (item.format.tree === 0) {
             if (this.isAsync && item.format.children.length === 0) {
                 item.format.tree = 2;
-                this.$emit('load', item.value, (children) => {
+                this.emit('load', item.value, (children) => {
                     if (children) {
                         if (children.length === 0) {
                             item.format.children = [];
@@ -298,4 +265,13 @@ exports.methods = {
             item.format.tree = 0;
         }
     }
-};
+    onMounted() {
+        this.watch('data', () => {
+            this.dataFormat = this.formatData(this.props.data, this.dataFormat);
+        }, {
+            'immediate': true,
+            'deep': true
+        });
+    }
+}
+exports.default = default_1;

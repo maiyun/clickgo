@@ -9,25 +9,19 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.mounted = exports.methods = exports.computed = exports.data = void 0;
 const clickgo = require("clickgo");
-exports.data = {
-    'left': 0,
-    'top': 0,
-    'width': undefined,
-    'height': undefined,
-    'apps': []
-};
-exports.computed = {
-    'position': function () {
+class default_1 extends clickgo.form.AbstractForm {
+    constructor() {
+        super(...arguments);
+        this.apps = [];
+    }
+    get position() {
         return clickgo.core.config['task.position'];
     }
-};
-exports.methods = {
-    showLauncher: function () {
+    showLauncher() {
         clickgo.form.showLauncher();
-    },
-    itemClick: function (appIndex) {
+    }
+    itemClick(appIndex) {
         return __awaiter(this, void 0, void 0, function* () {
             if (this.apps[appIndex].formCount === 0) {
                 try {
@@ -54,8 +48,8 @@ exports.methods = {
             else {
             }
         });
-    },
-    run: function (path) {
+    }
+    run(path) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 yield clickgo.task.run(path);
@@ -64,8 +58,8 @@ exports.methods = {
                 return;
             }
         });
-    },
-    pin: function (index) {
+    }
+    pin(index) {
         const app = this.apps[index];
         if (!app) {
             return;
@@ -80,8 +74,8 @@ exports.methods = {
                 'icon': app.icon
             };
         }
-    },
-    close: function (index) {
+    }
+    close(index) {
         const app = this.apps[index];
         if (!app) {
             return;
@@ -89,14 +83,14 @@ exports.methods = {
         for (const formId in app.forms) {
             clickgo.form.remove(parseInt(formId));
         }
-    },
-    changeFocus: function (formId) {
+    }
+    changeFocus(formId) {
         clickgo.form.changeFocus(parseInt(formId));
-    },
-    updatePosition: function (position) {
+    }
+    updatePosition(position) {
         clickgo.core.config['task.position'] = position;
-    },
-    getAppIndexByPath: function (path) {
+    }
+    getAppIndexByPath(path) {
         for (let i = 0; i < this.apps.length; ++i) {
             const app = this.apps[i];
             if (app.path !== path) {
@@ -106,56 +100,56 @@ exports.methods = {
         }
         return -1;
     }
-};
-const mounted = function () {
-    clickgo.form.setTopMost(true);
-    clickgo.task.setSystem();
-    for (const path in clickgo.core.config['task.pin']) {
-        this.apps.push({
-            'name': clickgo.core.config['task.pin'][path].name,
-            'path': path,
-            'icon': clickgo.core.config['task.pin'][path].icon,
-            'selected': false,
-            'opened': false,
-            'forms': {},
-            'formCount': 0,
-            'pin': true
-        });
-    }
-    const tasks = clickgo.task.getList();
-    for (const taskId in tasks) {
-        if (parseInt(taskId) === this.taskId) {
-            continue;
-        }
-        const task = tasks[taskId];
-        let appIndex = this.getAppIndexByPath(task.path);
-        if (appIndex >= 0) {
-            this.apps[appIndex].opened = true;
-        }
-        else {
+    onMounted() {
+        this.topMost = true;
+        clickgo.task.setSystem(this.formId);
+        for (const path in clickgo.core.config['task.pin']) {
             this.apps.push({
-                'name': task.name,
-                'path': task.path,
-                'icon': task.icon,
+                'name': clickgo.core.config['task.pin'][path].name,
+                'path': path,
+                'icon': clickgo.core.config['task.pin'][path].icon,
                 'selected': false,
-                'opened': true,
+                'opened': false,
                 'forms': {},
                 'formCount': 0,
-                'pin': false
+                'pin': true
             });
-            appIndex = this.apps.length - 1;
         }
-        const forms = clickgo.form.getList(parseInt(taskId));
-        for (const formId in forms) {
-            const form = forms[formId];
-            this.apps[appIndex].forms[formId] = {
-                'title': form.title,
-                'icon': form.icon || this.apps[appIndex].icon
-            };
+        const tasks = clickgo.task.getList();
+        for (const taskId in tasks) {
+            if (parseInt(taskId) === this.taskId) {
+                continue;
+            }
+            const task = tasks[taskId];
+            let appIndex = this.getAppIndexByPath(task.path);
+            if (appIndex >= 0) {
+                this.apps[appIndex].opened = true;
+            }
+            else {
+                this.apps.push({
+                    'name': task.name,
+                    'path': task.path,
+                    'icon': task.icon,
+                    'selected': false,
+                    'opened': true,
+                    'forms': {},
+                    'formCount': 0,
+                    'pin': false
+                });
+                appIndex = this.apps.length - 1;
+            }
+            const forms = clickgo.form.getList(parseInt(taskId));
+            for (const formId in forms) {
+                const form = forms[formId];
+                this.apps[appIndex].forms[formId] = {
+                    'title': form.title,
+                    'icon': form.icon || this.apps[appIndex].icon
+                };
+            }
+            this.apps[appIndex].formCount = Object.keys(this.apps[appIndex].forms).length;
         }
-        this.apps[appIndex].formCount = Object.keys(this.apps[appIndex].forms).length;
     }
-    clickgo.core.setSystemEventListener('formCreated', (taskId, formId, title, icon) => {
+    onFormCreated(taskId, formId, title, icon) {
         if (taskId === this.taskId) {
             return;
         }
@@ -185,8 +179,8 @@ const mounted = function () {
             'icon': icon || this.apps[appIndex].icon
         };
         ++this.apps[appIndex].formCount;
-    });
-    clickgo.core.setSystemEventListener('formRemoved', (taskId, formId) => {
+    }
+    onFormRemoved(taskId, formId) {
         const task = clickgo.task.get(taskId);
         if (!task) {
             return;
@@ -207,8 +201,8 @@ const mounted = function () {
         else {
             this.apps.splice(appIndex, 1);
         }
-    });
-    clickgo.core.setSystemEventListener('formFocused', (taskId) => {
+    }
+    onFormFocused(taskId) {
         const task = clickgo.task.get(taskId);
         if (!task) {
             return;
@@ -218,8 +212,8 @@ const mounted = function () {
             return;
         }
         this.apps[appIndex].selected = true;
-    });
-    clickgo.core.setSystemEventListener('formBlurred', (taskId) => {
+    }
+    onFormBlurred(taskId) {
         const task = clickgo.task.get(taskId);
         if (!task) {
             return;
@@ -229,8 +223,8 @@ const mounted = function () {
             return;
         }
         this.apps[appIndex].selected = false;
-    });
-    clickgo.core.setSystemEventListener('formTitleChanged', (taskId, formId, title) => {
+    }
+    onFormTitleChanged(taskId, formId, title) {
         const task = clickgo.task.get(taskId);
         if (!task) {
             return;
@@ -243,8 +237,8 @@ const mounted = function () {
             return;
         }
         this.apps[appIndex].forms[formId].title = title;
-    });
-    clickgo.core.setSystemEventListener('formIconChanged', (taskId, formId, icon) => {
+    }
+    onFormIconChanged(taskId, formId, icon) {
         const task = clickgo.task.get(taskId);
         if (!task) {
             return;
@@ -257,18 +251,20 @@ const mounted = function () {
             return;
         }
         this.apps[appIndex].forms[formId].icon = icon || this.apps[appIndex].icon;
-    });
-    clickgo.core.setSystemEventListener('configChanged', (n, v) => {
+    }
+    onConfigChanged(n, v) {
         if (n !== 'task.pin') {
             return;
         }
-        for (const path in v) {
+        const val = v;
+        for (const path in val) {
+            const item = val[path];
             const appIndex = this.getAppIndexByPath(path);
             if (appIndex < 0) {
                 this.apps.unshift({
-                    'name': v[path].name,
+                    'name': item.name,
                     'path': path,
-                    'icon': v[path].icon,
+                    'icon': item.icon,
                     'selected': false,
                     'opened': false,
                     'forms': {},
@@ -287,7 +283,7 @@ const mounted = function () {
             if (!app.pin) {
                 continue;
             }
-            if (v[app.path]) {
+            if (val[app.path]) {
                 continue;
             }
             if (app.formCount === 0) {
@@ -297,6 +293,6 @@ const mounted = function () {
                 app.pin = false;
             }
         }
-    });
-};
-exports.mounted = mounted;
+    }
+}
+exports.default = default_1;

@@ -1,34 +1,85 @@
 import * as clickgo from 'clickgo';
-import * as types from '~/types/index';
 
-export const props = {
-    'disabled': {
-        'default': false
-    },
+export default class extends clickgo.control.AbstractControl {
 
-    'sort': {
-        'default': 'kind'
-    },
-    'type': {
-        'default': 'property'
-    },
-    'desc': {
-        'default': true
-    },
-    'modelValue': {
-        'default': []
+    public props: {
+        'disabled': boolean;
+
+        'sort': 'kind' | 'letter';
+        'type': 'property' | 'event';
+        'desc': boolean;
+        'modelValue': Array<{
+            'title': string;
+            'desc': string;
+            'control': 'text' | 'check' | 'dock' | 'select';
+            'default': string;
+            'value': string;
+            'data'?: string[];
+            'sub': any[];
+            'kind': string;
+            'type': 'property' | 'event';
+        }>;
+    } = {
+            'disabled': false,
+
+            'sort': 'kind',
+            'type': 'property',
+            'desc': true,
+            'modelValue': []
+        };
+
+    public direction = 'h';
+
+    public localeData = {
+        'en': {
+            'reset': 'Reset',
+            'description': 'Description'
+        },
+        'sc': {
+            'reset': '重置',
+            'description': '说明'
+        },
+        'tc': {
+            'reset': '重置',
+            'description': '說明'
+        },
+        'ja': {
+            'reset': 'リセット',
+            'description': '形容'
+        }
+    };
+
+    public sortData = 'kind';
+
+    public typeData = 'property';
+
+    public descData = true;
+
+    public selectedTitle = '';
+
+    public selectedSub = '';
+
+    /** --- 已关闭的大类 --- */
+    public bigClosed: string[] = [];
+
+    /** --- 已打开的小类 --- */
+    public opened: string[] = [];
+
+    public title = '';
+
+    public description = '';
+
+    public dockValue = '';
+
+    public get isDisabled(): boolean {
+        return clickgo.tool.getBoolean(this.props.disabled);
     }
-};
 
-export const computed = {
-    'isDisabled': function(this: types.IVControl): boolean {
-        return clickgo.tool.getBoolean(this.disabled);
-    },
-    'isDesc': function(this: types.IVControl): boolean {
+    public get isDesc(): boolean {
         return clickgo.tool.getBoolean(this.descData);
-    },
+    }
 
-    'subValue': function(this: types.IVControl) {
+    public get subValue() {
         return (item2: Record<string, any>, i3: number, isDefault: boolean = false): string => {
             if (isDefault) {
                 return item2.default.split(',')[i3] ? item2.default.split(',')[i3].trim() : '';
@@ -37,14 +88,15 @@ export const computed = {
                 return item2.value.split(',')[i3] ? item2.value.split(',')[i3].trim() : '';
             }
         };
-    },
-    'value': function(this: types.IVControl): any[] {
+    }
+
+    public get value(): any[] {
         const list: any[] = [];
         // --- 大列表 ---
         const bigList: any = {};
         const bigTitle: string[] = [];
-        for (const item of this.modelValue) {
-            const kind = this.sortData === 'letter' ? undefined : item.kind;
+        for (const item of this.props.modelValue) {
+            const kind = this.sortData === 'letter' ? '' : item.kind;
             const type = item.type ?? 'property';
             if (type !== this.typeData) {
                 continue;
@@ -82,95 +134,41 @@ export const computed = {
         }
         return list;
     }
-};
 
-export const watch = {
-    'sort': {
-        handler: function(this: types.IVControl): void {
-            this.sortData = this.sort;
-        },
-        'immediate': true
-    },
-    'type': {
-        handler: function(this: types.IVControl): void {
-            this.typeData = this.type;
-        },
-        'immediate': true
-    },
-    'desc': {
-        handler: function(this: types.IVControl): void {
-            this.descData = this.desc;
-        },
-        'immediate': true
+    public contextmenu(e: MouseEvent): void {
+        if (clickgo.dom.hasTouchButMouse(e)) {
+            return;
+        }
+        clickgo.form.showPop(this.refs.content, this.refs.pop, e);
     }
-};
 
-export const data = {
-    'direction': 'h',
-    'localeData': {
-        'en': {
-            'reset': 'Reset',
-            'description': 'Description'
-        },
-        'sc': {
-            'reset': '重置',
-            'description': '说明'
-        },
-        'tc': {
-            'reset': '重置',
-            'description': '說明'
-        },
-        'ja': {
-            'reset': 'リセット',
-            'description': '形容'
-        }
-    },
-    'sortData': 'kind',
-    'typeData': 'property',
-    'descData': true,
-    'selectedTitle': undefined,
-    'selectedSub': undefined,
-    'bigClosed': [],
-    'opened': [],
-
-    'title': '',
-    'description': '',
-
-    'dockValue': ''
-};
-
-export const methods = {
-    contextmenu: function(this: types.IVControl, e: MouseEvent): void {
+    public down(e: MouseEvent | TouchEvent): void {
         if (clickgo.dom.hasTouchButMouse(e)) {
             return;
         }
-        clickgo.form.showPop(this.$refs.content, this.$refs.pop, e);
-    },
-    down: function(this: types.IVControl, e: MouseEvent | TouchEvent): void {
-        if (clickgo.dom.hasTouchButMouse(e)) {
-            return;
-        }
-        if (this.$refs.content.dataset.cgPopOpen !== undefined) {
-            clickgo.form.hidePop(this.$refs.content);
+        if (this.refs.content.dataset.cgPopOpen !== undefined) {
+            clickgo.form.hidePop(this.refs.content);
         }
         if (e instanceof TouchEvent) {
             // --- 长按触发 contextmenu ---
             clickgo.dom.bindLong(e, () => {
-                clickgo.form.showPop(this.$refs.content, this.$refs.pop, e);
+                clickgo.form.showPop(this.refs.content, this.refs.pop, e);
             });
         }
-    },
-    changeSort: function(this: types.IVControl, sort: string): void {
+    }
+
+    public changeSort(sort: string): void {
         this.sortData = sort;
-        this.$emit('update:sort', sort);
-    },
-    changeType: function(this: types.IVControl, type: string): void {
+        this.emit('update:sort', sort);
+    }
+
+    public changeType(type: string): void {
         this.typeData = type;
-        this.$emit('update:type', type);
-    },
+        this.emit('update:type', type);
+    }
+
     // --- 点击选择一个 line ---
-    select: function(
-        this: types.IVControl,
+    public select(
         e: MouseEvent | TouchEvent,
         item2: string,
         item3: string,
@@ -183,27 +181,30 @@ export const methods = {
         this.selectedSub = item3;
         this.title = item3 ?? item2;
         this.description = desc;
-    },
+    }
+
     // --- 打开/关闭子项 ---
-    bigToggle: function(this: types.IVControl, bigTitle: string): void {
+    public bigToggle(bigTitle: string): void {
         const io = this.bigClosed.indexOf(bigTitle);
         if (io === -1) {
             this.bigClosed.push(bigTitle);
             return;
         }
         this.bigClosed.splice(io, 1);
-    },
-    toggle: function(this: types.IVControl, title: string): void {
+    }
+
+    public toggle(title: string): void {
         const io = this.opened.indexOf(title);
         if (io === -1) {
             this.opened.push(title);
             return;
         }
         this.opened.splice(io, 1);
-    },
+    }
+
     // --- 项内容更新方法 ---
-    update: function(this: types.IVControl, value: string): void {
-        for (const item of this.modelValue) {
+    public update(value: string): void {
+        for (const item of this.props.modelValue) {
             if (item.title !== this.selectedTitle) {
                 continue;
             }
@@ -213,7 +214,7 @@ export const methods = {
                     continue;
                 }
                 item.value = value;
-                this.$emit('update:modelValue', this.modelValue);
+                this.emit('update:modelValue', this.props.modelValue);
             }
             else {
                 // --- 小级别 ---
@@ -235,18 +236,19 @@ export const methods = {
                     }
                     arr[i] = value;
                     item.value = arr.join(', ');
-                    this.$emit('update:modelValue', this.modelValue);
+                    this.emit('update:modelValue', this.props.modelValue);
                 }
             }
         }
-    },
+    }
+
     // --- dock ---
-    dock: function(this: types.IVControl, e: MouseEvent): void {
+    public dock(e: MouseEvent): void {
         if ((e.currentTarget as HTMLElement).dataset.cgPopOpen !== undefined) {
             clickgo.form.hidePop();
             return;
         }
-        for (const item of this.modelValue) {
+        for (const item of this.props.modelValue) {
             if (item.title !== this.selectedTitle) {
                 continue;
             }
@@ -265,15 +267,17 @@ export const methods = {
                 }
             }
         }
-        clickgo.form.showPop(e.currentTarget as HTMLElement, this.$refs.dock, 'v');
-    },
-    dockSelect: function(this: types.IVControl, value: string): void {
+        clickgo.form.showPop(e.currentTarget as HTMLElement, this.refs.dock, 'v');
+    }
+
+    public dockSelect(value: string): void {
         this.update(value);
         clickgo.form.hidePop();
-    },
+    }
+
     // --- 双击 ---
-    reset: function(this: types.IVControl): void {
-        for (const item of this.modelValue) {
+    public reset(): void {
+        for (const item of this.props.modelValue) {
             if (item.title !== this.selectedTitle) {
                 continue;
             }
@@ -283,7 +287,7 @@ export const methods = {
                     continue;
                 }
                 item.value = item.default;
-                this.$emit('update:modelValue', this.modelValue);
+                this.emit('update:modelValue', this.props.modelValue);
             }
             else {
                 // --- 小级别 ---
@@ -307,9 +311,28 @@ export const methods = {
                     // --- 要 reset ---
                     arr[i] = def;
                     item.value = arr.join(', ');
-                    this.$emit('update:modelValue', this.modelValue);
+                    this.emit('update:modelValue', this.props.modelValue);
                 }
             }
         }
     }
-};
+
+    public onMounted(): void {
+        this.watch('sort', (): void => {
+            this.sortData = this.props.sort;
+        }, {
+            'immediate': true
+        });
+        this.watch('type', (): void => {
+            this.typeData = this.props.type;
+        }, {
+            'immediate': true
+        });
+        this.watch('desc', (): void => {
+            this.descData = this.props.desc;
+        }, {
+            'immediate': true
+        });
+    }
+
+}

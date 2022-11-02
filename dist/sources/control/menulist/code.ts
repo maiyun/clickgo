@@ -1,3 +1,7 @@
-export const data = {
-    'hasTypeItemsCount': 0
-};
+import * as clickgo from 'clickgo';
+
+export default class extends clickgo.control.AbstractControl {
+
+    public hasTypeItemsCount = 0;
+
+}

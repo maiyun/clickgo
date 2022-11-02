@@ -9,13 +9,14 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.hideLauncher = exports.showLauncher = exports.hide = exports.show = exports.flash = exports.setTopMost = exports.confirm = exports.dialog = exports.create = exports.remove = exports.doFocusAndPopEvent = exports.hidePop = exports.showPop = exports.removeFromPop = exports.appendToPop = exports.hideNotify = exports.notifyProgress = exports.notify = exports.hideDrag = exports.moveDrag = exports.showDrag = exports.hideRectangle = exports.showRectangle = exports.moveRectangle = exports.showCircular = exports.getRectByBorder = exports.getMaxZIndexID = exports.changeFocus = exports.getList = exports.send = exports.get = exports.getTaskId = exports.refreshMaxPosition = exports.bindDrag = exports.bindResize = exports.close = exports.max = exports.min = exports.launcherRoot = exports.simpleSystemTaskRoot = void 0;
+exports.hideLauncher = exports.showLauncher = exports.flash = exports.confirm = exports.dialog = exports.create = exports.remove = exports.doFocusAndPopEvent = exports.hidePop = exports.showPop = exports.removeFromPop = exports.appendToPop = exports.hideNotify = exports.notifyProgress = exports.notify = exports.hideDrag = exports.moveDrag = exports.showDrag = exports.hideRectangle = exports.showRectangle = exports.moveRectangle = exports.showCircular = exports.getRectByBorder = exports.getMaxZIndexID = exports.changeFocus = exports.getList = exports.send = exports.get = exports.getTaskId = exports.refreshMaxPosition = exports.bindDrag = exports.bindResize = exports.close = exports.max = exports.min = exports.launcherRoot = exports.simpleSystemTaskRoot = exports.AbstractForm = void 0;
 const clickgo = require("../clickgo");
 const core = require("./core");
 const task = require("./task");
 const tool = require("./tool");
 const dom = require("./dom");
 const control = require("./control");
+const fs = require("./fs");
 const native = require("./native");
 const info = {
     'lastId': 0,
@@ -52,6 +53,272 @@ const info = {
         }
     }
 };
+class AbstractForm {
+    constructor() {
+        this._firstShow = true;
+        this.dialogResult = '';
+    }
+    static create(data) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const frm = new this();
+            const code = {
+                'data': {},
+                'methods': {},
+                'computed': {},
+                beforeCreate: frm.onBeforeCreate,
+                created: function () {
+                    this.onCreated();
+                },
+                beforeMount: function () {
+                    this.onBeforeMount();
+                },
+                mounted: function (data) {
+                    this.onMounted(data);
+                },
+                beforeUpdate: function () {
+                    this.onBeforeUpdate();
+                },
+                updated: function () {
+                    return __awaiter(this, void 0, void 0, function* () {
+                        yield this.$nextTick();
+                        this.onUpdated();
+                    });
+                },
+                beforeUnmount: function () {
+                    this.onBeforeUnmount();
+                },
+                unmounted: function () {
+                    return __awaiter(this, void 0, void 0, function* () {
+                        yield this.$nextTick();
+                        this.onUnmounted();
+                    });
+                }
+            };
+            const cdata = Object.entries(frm);
+            for (const item of cdata) {
+                code.data[item[0]] = item[1];
+            }
+            const layout = task.list[frm.taskId].app.files[frm.filename.slice(0, -2) + 'xml'];
+            if (typeof layout !== 'string') {
+                return 0;
+            }
+            const prot = tool.getClassPrototype(frm);
+            code.methods = prot.method;
+            code.computed = prot.access;
+            let style = undefined;
+            const fstyle = task.list[frm.taskId].app.files[frm.filename.slice(0, -2) + 'css'];
+            if (typeof fstyle === 'string') {
+                style = fstyle;
+            }
+            const fid = yield create({
+                'code': code,
+                'layout': layout,
+                'style': style,
+                'path': frm.filename.slice(0, frm.filename.lastIndexOf('/')),
+                'data': data,
+                'taskId': frm.taskId
+            });
+            if (fid > 0) {
+                return task.list[frm.taskId].forms[fid].vroot;
+            }
+            else {
+                return fid;
+            }
+        });
+    }
+    get filename() {
+        return '';
+    }
+    get controlName() {
+        return 'root';
+    }
+    set controlName(v) {
+        notify({
+            'title': 'Error',
+            'content': `The software tries to modify the system variable "controlName".\nPath: ${this.filename}`,
+            'type': 'danger'
+        });
+        return;
+    }
+    get taskId() {
+        return 0;
+    }
+    get formId() {
+        return 0;
+    }
+    get formFocus() {
+        return this._formFocus;
+    }
+    set formFocus(b) {
+        notify({
+            'title': 'Error',
+            'content': `The software tries to modify the system variable "formFocus".\nPath: ${this.filename}`,
+            'type': 'danger'
+        });
+    }
+    get path() {
+        return '';
+    }
+    get prep() {
+        return '';
+    }
+    get locale() {
+        return task.list[this.taskId].locale.lang || core.config.locale;
+    }
+    get l() {
+        return (key) => {
+            var _a, _b, _c, _d;
+            return (_d = (_b = (_a = task.list[this.taskId].locale.data[this.locale]) === null || _a === void 0 ? void 0 : _a[key]) !== null && _b !== void 0 ? _b : (_c = task.list[this.taskId].locale.data['en']) === null || _c === void 0 ? void 0 : _c[key]) !== null && _d !== void 0 ? _d : 'LocaleError';
+        };
+    }
+    classPrepend() {
+        return (cla) => {
+            if (typeof cla !== 'string') {
+                return cla;
+            }
+            return `cg-task${this.taskId}_${cla}${this.prep ? (' ' + this.prep + cla) : ''}`;
+        };
+    }
+    watch(name, cb, opt = {}) {
+        return this.$watch(name, cb, opt);
+    }
+    get refs() {
+        return this.$refs;
+    }
+    get nextTick() {
+        return this.$nextTick;
+    }
+    allowEvent(e) {
+        return dom.allowEvent(e);
+    }
+    trigger(name, param1 = '', param2 = '') {
+        if (!['formTitleChanged', 'formIconChanged', 'formStateMinChanged', 'formStateMaxChanged', 'formShowChanged'].includes(name)) {
+            return;
+        }
+        core.trigger(name, this.taskId, this.formId, param1, param2);
+    }
+    get topMost() {
+        return false;
+    }
+    set topMost(v) {
+    }
+    send(fid, obj) {
+        obj.taskId = this.taskId;
+        obj.formId = this.formId;
+        send(fid, obj);
+    }
+    get isMask() {
+        return !task.list[this.taskId].runtime.dialogFormIds.length ||
+            task.list[this.taskId].runtime.dialogFormIds[task.list[this.taskId].runtime.dialogFormIds.length - 1]
+                === this.formId ? false : true;
+    }
+    show() {
+        const v = this;
+        v.$refs.form.$data.showData = true;
+        if (this._firstShow) {
+            this._firstShow = false;
+            const area = core.getAvailArea();
+            if (!v.$refs.form.stateMaxData) {
+                if (v.$refs.form.left === -1) {
+                    v.$refs.form.setPropData('left', (area.width - v.$el.offsetWidth) / 2);
+                }
+                if (v.$refs.form.top === -1) {
+                    v.$refs.form.setPropData('top', (area.height - v.$el.offsetHeight) / 2);
+                }
+            }
+            v.$refs.form.$data.showData = true;
+            changeFocus(this.formId);
+        }
+    }
+    showDialog() {
+        return __awaiter(this, void 0, void 0, function* () {
+            this.show();
+            task.list[this.taskId].runtime.dialogFormIds.push(this.formId);
+            return new Promise((resolve) => {
+                this.cgDialogCallback = () => {
+                    resolve(this.dialogResult);
+                };
+            });
+        });
+    }
+    hide() {
+        const v = this;
+        v.$refs.form.$data.showData = false;
+    }
+    onBeforeCreate() {
+        return;
+    }
+    onCreated() {
+        return;
+    }
+    onBeforeMount() {
+        return;
+    }
+    onMounted() {
+        return;
+    }
+    onBeforeUpdate() {
+        return;
+    }
+    onUpdated() {
+        return;
+    }
+    onBeforeUnmount() {
+        return;
+    }
+    onUnmounted() {
+        return;
+    }
+    onReceive() {
+        return;
+    }
+    onScreenResize() {
+        return;
+    }
+    onConfigChanged() {
+        return;
+    }
+    onFormCreated() {
+        return;
+    }
+    onFormRemoved() {
+        return;
+    }
+    onFormTitleChanged() {
+        return;
+    }
+    onFormIconChanged() {
+        return;
+    }
+    onFormStateMinChanged() {
+        return;
+    }
+    onFormStateMaxChanged() {
+        return;
+    }
+    onFormShowChanged() {
+        return;
+    }
+    onFormFocused() {
+        return;
+    }
+    onFormBlurred() {
+        return;
+    }
+    onFormFlash() {
+        return;
+    }
+    onTaskStarted() {
+        return;
+    }
+    onTaskEnded() {
+        return;
+    }
+    onLauncherFolderNameChanged() {
+        return;
+    }
+}
+exports.AbstractForm = AbstractForm;
 const popInfo = {
     'list': [],
     'elList': [],
@@ -356,9 +623,6 @@ const elements = {
 };
 elements.init();
 function changeState(state, formId) {
-    if (!formId) {
-        return false;
-    }
     const tid = getTaskId(formId);
     const t = task.list[tid];
     if (!t) {
@@ -473,7 +737,7 @@ function get(formId) {
         'stateMax': item.vroot.$refs.form.stateMaxData,
         'stateMin': item.vroot.$refs.form.stateMinData,
         'show': item.vroot.$refs.form.showData,
-        'focus': item.vroot.cgFocus
+        'focus': item.vroot.formFocus
     };
 }
 exports.get = get;
@@ -483,10 +747,7 @@ function send(formId, obj) {
         return;
     }
     const item = task.list[taskId].forms[formId];
-    if (!item.vroot.cgReceive) {
-        return;
-    }
-    item.vroot.cgReceive(obj);
+    item.vroot.onReceive(obj);
 }
 exports.send = send;
 function getList(taskId) {
@@ -503,7 +764,7 @@ function getList(taskId) {
             'stateMax': item.vroot.$refs.form.stateMaxData,
             'stateMin': item.vroot.$refs.form.stateMinData,
             'show': item.vroot.$refs.form.showData,
-            'focus': item.vroot.cgFocus
+            'focus': item.vroot.formFocus
         };
     }
     return list;
@@ -519,7 +780,7 @@ function changeFocus(formId = 0) {
         });
         return;
     }
-    const focusElement = document.querySelector('#cg-form-list > [data-cg-focus]');
+    const focusElement = document.querySelector('#cg-form-list > [data-form-focus]');
     if (focusElement) {
         const dataFormId = focusElement.getAttribute('data-form-id');
         if (dataFormId) {
@@ -530,8 +791,8 @@ function changeFocus(formId = 0) {
             else {
                 const taskId = parseInt((_a = focusElement.getAttribute('data-task-id')) !== null && _a !== void 0 ? _a : '0');
                 const t = task.list[taskId];
-                t.forms[dataFormIdNumber].vapp._container.removeAttribute('data-cg-focus');
-                t.forms[dataFormIdNumber].vroot._cgFocus = false;
+                t.forms[dataFormIdNumber].vapp._container.removeAttribute('data-form-focus');
+                t.forms[dataFormIdNumber].vroot._formFocus = false;
                 core.trigger('formBlurred', taskId, dataFormIdNumber);
             }
         }
@@ -551,35 +812,33 @@ function changeFocus(formId = 0) {
     }
     const taskId = parseInt((_b = el.getAttribute('data-task-id')) !== null && _b !== void 0 ? _b : '0');
     const t = task.list[taskId];
-    if (!t.forms[formId].vroot.cgCustomZIndex) {
-        if (t.forms[formId].vroot.cgTopMost) {
-            t.forms[formId].vroot.$refs.form.setPropData('zIndex', ++info.topLastZIndex);
-        }
-        else {
-            t.forms[formId].vroot.$refs.form.setPropData('zIndex', ++info.lastZIndex);
-        }
-    }
-    const maskFor = t.forms[formId].vroot.$refs.form.maskFor;
-    if ((typeof maskFor === 'number') && (task.list[taskId].forms[maskFor])) {
-        if (get(maskFor).stateMin) {
-            min(maskFor);
-        }
-        if (!task.list[taskId].forms[maskFor].vroot.cgCustomZIndex) {
-            if (task.list[taskId].forms[maskFor].vroot.cgTopMost) {
-                task.list[taskId].forms[maskFor].vroot.$refs.form.setPropData('zIndex', ++info.topLastZIndex);
-            }
-            else {
-                task.list[taskId].forms[maskFor].vroot.$refs.form.setPropData('zIndex', ++info.lastZIndex);
-            }
-        }
-        task.list[taskId].forms[maskFor].vapp._container.dataset.cgFocus = '';
-        task.list[taskId].forms[maskFor].vroot._cgFocus = true;
-        core.trigger('formFocused', taskId, maskFor);
-        clickgo.form.flash(maskFor, taskId);
+    if (t.forms[formId].vroot._topMost) {
+        t.forms[formId].vroot.$refs.form.$data.zIndexData = ++info.topLastZIndex;
     }
     else {
-        t.forms[formId].vapp._container.dataset.cgFocus = '';
-        t.forms[formId].vroot._cgFocus = true;
+        t.forms[formId].vroot.$refs.form.$data.zIndexData = ++info.lastZIndex;
+    }
+    if (t.runtime.dialogFormIds.length) {
+        const dialogFormId = t.runtime.dialogFormIds[t.runtime.dialogFormIds.length - 1];
+        if (dialogFormId !== formId) {
+            if (get(dialogFormId).stateMin) {
+                min(dialogFormId);
+            }
+            if (task.list[taskId].forms[dialogFormId].vroot._topMost) {
+                task.list[taskId].forms[dialogFormId].vroot.$refs.form.$data.zIndexData = ++info.topLastZIndex;
+            }
+            else {
+                task.list[taskId].forms[dialogFormId].vroot.$refs.form.$data.zIndexData = ++info.lastZIndex;
+            }
+            task.list[taskId].forms[dialogFormId].vapp._container.dataset.formFocus = '';
+            task.list[taskId].forms[dialogFormId].vroot._formFocus = true;
+            core.trigger('formFocused', taskId, dialogFormId);
+            clickgo.form.flash(dialogFormId, taskId);
+        }
+    }
+    else {
+        t.forms[formId].vapp._container.dataset.formFocus = '';
+        t.forms[formId].vroot._formFocus = true;
         core.trigger('formFocused', taskId, formId);
     }
 }
@@ -591,6 +850,9 @@ function getMaxZIndexID(out = {}) {
     for (let i = 0; i < elements.list.children.length; ++i) {
         const formWrap = elements.list.children.item(i);
         const formInner = formWrap.children.item(0);
+        if (!formInner) {
+            continue;
+        }
         const z = parseInt(formInner.style.zIndex);
         if (z > 9999999) {
             continue;
@@ -1120,9 +1382,9 @@ function remove(formId) {
     if (task.list[taskId].forms[formId]) {
         title = task.list[taskId].forms[formId].vroot.$refs.form.title;
         icon = task.list[taskId].forms[formId].vroot.$refs.form.iconData;
-        if (task.list[taskId].forms[formId].vroot.$refs.form.maskFrom !== undefined) {
-            const fid = task.list[taskId].forms[formId].vroot.$refs.form.maskFrom;
-            task.list[taskId].forms[fid].vroot.$refs.form.maskFor = undefined;
+        const io = task.list[taskId].runtime.dialogFormIds.indexOf(formId);
+        if (io > -1) {
+            task.list[taskId].runtime.dialogFormIds.splice(io, 1);
         }
         task.list[taskId].forms[formId].vroot.$refs.form.$data.showData = false;
         setTimeout(function () {
@@ -1140,6 +1402,9 @@ function remove(formId) {
             }
             task.list[taskId].forms[formId].vapp.unmount();
             task.list[taskId].forms[formId].vapp._container.remove();
+            if (io > -1) {
+                task.list[taskId].forms[formId].vroot.cgDialogCallback();
+            }
             delete task.list[taskId].forms[formId];
             dom.removeStyle(taskId, 'form', formId);
             core.trigger('formRemoved', taskId, formId, title, icon);
@@ -1155,14 +1420,8 @@ function remove(formId) {
 }
 exports.remove = remove;
 function getForm(taskId, formId) {
-    if (!taskId) {
-        return null;
-    }
     const t = task.list[taskId];
     if (!t) {
-        return null;
-    }
-    if (!formId) {
         return null;
     }
     const form = t.forms[formId];
@@ -1174,670 +1433,21 @@ function getForm(taskId, formId) {
 function create(opt) {
     var _a, _b, _c, _d;
     return __awaiter(this, void 0, void 0, function* () {
-        if (typeof opt === 'string') {
-            return 0;
-        }
         if (!opt.taskId) {
             return -1;
         }
-        if (opt.path && (!opt.path.endsWith('/') || !((_a = opt.path) === null || _a === void 0 ? void 0 : _a.startsWith('/')))) {
+        const t = task.list[opt.taskId];
+        if (!t) {
             return -2;
         }
-        const taskId = opt.taskId;
-        const t = task.list[taskId];
-        if (!t) {
+        const formId = ++info.lastId;
+        const components = control.buildComponents(t.id, formId, (_a = opt.path) !== null && _a !== void 0 ? _a : '');
+        if (!components) {
             return -3;
         }
-        let form = null;
-        if (opt.formId) {
-            if (!t.forms[opt.formId]) {
-                return -4;
-            }
-            form = t.forms[opt.formId];
-        }
-        let topMost = (_b = opt.topMost) !== null && _b !== void 0 ? _b : false;
-        if (form === null || form === void 0 ? void 0 : form.vroot.cgTopMost) {
-            topMost = true;
-        }
-        if (opt.mask && form) {
-            form.vroot.$refs.form.maskFor = 0;
-        }
-        const base = form ? form.vroot.cgPath : '/';
-        let filePath = '', newBase = '';
-        if (opt.file) {
-            filePath = clickgo.tool.urlResolve(base, opt.file);
-            newBase = filePath.slice(0, filePath.lastIndexOf('/') + 1);
-        }
-        else {
-            newBase = (_c = opt.path) !== null && _c !== void 0 ? _c : base;
-        }
-        const app = t.app;
-        const formId = ++info.lastId;
-        const invoke = {};
-        if (clickgo.getSafe()) {
-            invoke.window = undefined;
-            invoke.loader = undefined;
-            const ks = Object.getOwnPropertyNames(window);
-            for (const k of ks) {
-                if (k.includes('Event')) {
-                    continue;
-                }
-                if (k.includes('-')) {
-                    continue;
-                }
-                if (/^[0-9]+$/.test(k)) {
-                    continue;
-                }
-                if ([
-                    'require',
-                    '__awaiter', 'eval', 'Math', 'Array', 'Blob', 'Infinity', 'parseInt', 'parseFloat', 'Promise', 'Date', 'JSON', 'fetch'
-                ].includes(k)) {
-                    continue;
-                }
-                invoke[k] = undefined;
-            }
-            invoke.console = {
-                log: function (message, ...optionalParams) {
-                    console.log(message, ...optionalParams);
-                }
-            };
-            invoke.loader = {
-                require: function (paths, files, opt) {
-                    return loader.require(paths, files, opt);
-                }
-            };
-            invoke.Object = {
-                defineProperty: function () {
-                    return;
-                },
-                keys: function (o) {
-                    return Object.keys(o);
-                },
-                assign: function (o, o2) {
-                    if (o.controlName !== undefined) {
-                        return o;
-                    }
-                    return Object.assign(o, o2);
-                }
-            };
-            invoke.navigator = {};
-            if (navigator.clipboard) {
-                invoke.navigator.clipboard = navigator.clipboard;
-            }
-            invoke.invokeClickgo = {
-                getVersion: function () {
-                    return clickgo.getVersion();
-                },
-                getNative() {
-                    return clickgo.getNative();
-                },
-                getPlatform() {
-                    return clickgo.getPlatform();
-                },
-                getSafe() {
-                    return clickgo.getSafe();
-                },
-                'control': {
-                    read: function (blob) {
-                        return clickgo.control.read(blob);
-                    }
-                },
-                'core': {
-                    'config': clickgo.core.config,
-                    'cdn': loader.cdn,
-                    initModules: function (names) {
-                        return clickgo.core.initModules(names);
-                    },
-                    getModule: function (name) {
-                        return clickgo.core.getModule(name);
-                    },
-                    setSystemEventListener: function (name, func, fid) {
-                        clickgo.core.setSystemEventListener(name, func, fid !== null && fid !== void 0 ? fid : formId, taskId);
-                    },
-                    removeSystemEventListener: function (name, fid) {
-                        clickgo.core.removeSystemEventListener(name, fid !== null && fid !== void 0 ? fid : formId, taskId);
-                    },
-                    trigger: function (name, param1 = '', param2 = '') {
-                        if (!['formTitleChanged', 'formIconChanged', 'formStateMinChanged', 'formStateMaxChanged', 'formShowChanged'].includes(name)) {
-                            return;
-                        }
-                        clickgo.core.trigger(name, taskId, formId, param1, param2);
-                    },
-                    readApp: function (blob) {
-                        return clickgo.core.readApp(blob);
-                    },
-                    getAvailArea: function () {
-                        return clickgo.core.getAvailArea();
-                    }
-                },
-                'dom': {
-                    setGlobalCursor: function (type) {
-                        clickgo.dom.setGlobalCursor(type);
-                    },
-                    hasTouchButMouse: function (e) {
-                        return clickgo.dom.hasTouchButMouse(e);
-                    },
-                    getStyleCount: function (taskId, type) {
-                        return clickgo.dom.getStyleCount(taskId, type);
-                    },
-                    getSize: function (el) {
-                        return clickgo.dom.getSize(el);
-                    },
-                    watchSize: function (el, cb, immediate = false) {
-                        return clickgo.dom.watchSize(el, cb, immediate, taskId);
-                    },
-                    unwatchSize: function (el) {
-                        clickgo.dom.unwatchSize(el, taskId);
-                    },
-                    clearWatchSize() {
-                        clickgo.dom.clearWatchSize(taskId);
-                    },
-                    watch: function (el, cb, mode = 'default', immediate = false) {
-                        clickgo.dom.watch(el, cb, mode, immediate, taskId);
-                    },
-                    unwatch: function (el) {
-                        clickgo.dom.unwatch(el, taskId);
-                    },
-                    clearWatch: function () {
-                        clickgo.dom.clearWatch(taskId);
-                    },
-                    watchStyle: function (el, name, cb, immediate = false) {
-                        clickgo.dom.watchStyle(el, name, cb, immediate);
-                    },
-                    isWatchStyle: function (el) {
-                        return clickgo.dom.isWatchStyle(el);
-                    },
-                    bindDown: function (oe, opt) {
-                        clickgo.dom.bindDown(oe, opt);
-                    },
-                    bindGesture: function (e, opt) {
-                        clickgo.dom.bindGesture(e, opt);
-                    },
-                    bindLong: function (e, long) {
-                        clickgo.dom.bindLong(e, long);
-                    },
-                    bindDrag: function (e, opt) {
-                        clickgo.dom.bindDrag(e, opt);
-                    },
-                    'is': clickgo.dom.is,
-                    bindMove: function (e, opt) {
-                        return clickgo.dom.bindMove(e, opt);
-                    },
-                    bindResize: function (e, opt) {
-                        clickgo.dom.bindResize(e, opt);
-                    },
-                    findParentByData: function (el, name) {
-                        return clickgo.dom.findParentByData(el, name);
-                    },
-                    findParentByClass: function (el, name) {
-                        return clickgo.dom.findParentByClass(el, name);
-                    },
-                    siblings: function (el) {
-                        return clickgo.dom.siblings(el);
-                    },
-                    siblingsData: function (el, name) {
-                        return clickgo.dom.siblingsData(el, name);
-                    },
-                    fullscreen: function () {
-                        return clickgo.dom.fullscreen();
-                    }
-                },
-                'form': {
-                    min: function (fid) {
-                        return clickgo.form.min(fid !== null && fid !== void 0 ? fid : formId);
-                    },
-                    max: function max(fid) {
-                        return clickgo.form.max(fid !== null && fid !== void 0 ? fid : formId);
-                    },
-                    close: function (fid) {
-                        return clickgo.form.close(fid !== null && fid !== void 0 ? fid : formId);
-                    },
-                    bindResize: function (e, border) {
-                        clickgo.form.bindResize(e, border);
-                    },
-                    bindDrag: function (e) {
-                        clickgo.form.bindDrag(e);
-                    },
-                    getTaskId: function (fid) {
-                        return clickgo.form.getTaskId(fid);
-                    },
-                    get: function (fid) {
-                        return clickgo.form.get(fid);
-                    },
-                    send: function (fid, obj) {
-                        obj.taskId = taskId;
-                        obj.formId = formId;
-                        clickgo.form.send(fid, obj);
-                    },
-                    getList: function (tid) {
-                        return clickgo.form.getList(tid);
-                    },
-                    changeFocus: function (fid = 0) {
-                        clickgo.form.changeFocus(fid);
-                    },
-                    getMaxZIndexID: function (out) {
-                        return clickgo.form.getMaxZIndexID(out);
-                    },
-                    getRectByBorder: function (border) {
-                        return clickgo.form.getRectByBorder(border);
-                    },
-                    showCircular: function (x, y) {
-                        clickgo.form.showCircular(x, y);
-                    },
-                    moveRectangle: function (border) {
-                        clickgo.form.moveRectangle(border);
-                    },
-                    showRectangle: function (x, y, border) {
-                        clickgo.form.showRectangle(x, y, border);
-                    },
-                    hideRectangle: function () {
-                        clickgo.form.hideRectangle();
-                    },
-                    showDrag: function () {
-                        clickgo.form.showDrag();
-                    },
-                    moveDrag: function (opt) {
-                        clickgo.form.moveDrag(opt);
-                    },
-                    hideDrag: function () {
-                        clickgo.form.hideDrag();
-                    },
-                    notify: function (opt) {
-                        return clickgo.form.notify(opt);
-                    },
-                    notifyProgress: function (notifyId, per) {
-                        clickgo.form.notifyProgress(notifyId, per);
-                    },
-                    hideNotify: function (notifyId) {
-                        clickgo.form.hideNotify(notifyId);
-                    },
-                    showPop: function (el, pop, direction, opt = {}) {
-                        clickgo.form.showPop(el, pop, direction, opt);
-                    },
-                    hidePop: function (pop) {
-                        clickgo.form.hidePop(pop);
-                    },
-                    create: function (opt) {
-                        if (typeof opt === 'string') {
-                            opt = {
-                                'file': opt
-                            };
-                        }
-                        opt.taskId = taskId;
-                        opt.formId = formId;
-                        return clickgo.form.create(opt);
-                    },
-                    dialog: function (opt) {
-                        if (typeof opt === 'string') {
-                            opt = {
-                                'content': opt
-                            };
-                        }
-                        opt.formId = formId;
-                        return clickgo.form.dialog(opt);
-                    },
-                    confirm: function (opt) {
-                        if (typeof opt === 'string') {
-                            opt = {
-                                'content': opt
-                            };
-                        }
-                        opt.formId = formId;
-                        return clickgo.form.confirm(opt);
-                    },
-                    setTopMost: function (top, opt = {}) {
-                        opt.taskId = taskId;
-                        opt.formId = formId;
-                        clickgo.form.setTopMost(top, opt);
-                    },
-                    flash: function (fid) {
-                        clickgo.form.flash(fid !== null && fid !== void 0 ? fid : formId, taskId);
-                    },
-                    show: function (fid) {
-                        clickgo.form.show(fid !== null && fid !== void 0 ? fid : formId, taskId);
-                    },
-                    hide: function (fid) {
-                        clickgo.form.hide(fid !== null && fid !== void 0 ? fid : formId, taskId);
-                    },
-                    showLauncher: function () {
-                        clickgo.form.showLauncher();
-                    },
-                    hideLauncher: function () {
-                        clickgo.form.hideLauncher();
-                    }
-                },
-                'fs': {
-                    getContent: function (path, options = {}) {
-                        if (!options.files) {
-                            options.files = t.files;
-                        }
-                        if (!options.current) {
-                            options.current = t.path;
-                        }
-                        return clickgo.fs.getContent(path, options);
-                    },
-                    putContent: function (path, data, options = {}) {
-                        if (!options.current) {
-                            options.current = t.path;
-                        }
-                        return clickgo.fs.putContent(path, data, options);
-                    },
-                    readLink: function (path, options = {}) {
-                        if (!options.current) {
-                            options.current = t.path;
-                        }
-                        return clickgo.fs.readLink(path, options);
-                    },
-                    symlink: function (fPath, linkPath, options = {}) {
-                        if (!options.current) {
-                            options.current = t.path;
-                        }
-                        return clickgo.fs.symlink(fPath, linkPath, options);
-                    },
-                    unlink: function (path, options = {}) {
-                        if (!options.current) {
-                            options.current = t.path;
-                        }
-                        return clickgo.fs.unlink(path, options);
-                    },
-                    stats: function (path, options = {}) {
-                        if (!options.files) {
-                            options.files = t.files;
-                        }
-                        if (!options.current) {
-                            options.current = t.path;
-                        }
-                        return clickgo.fs.stats(path, options);
-                    },
-                    isDir: function (path, options = {}) {
-                        if (!options.files) {
-                            options.files = t.files;
-                        }
-                        if (!options.current) {
-                            options.current = t.path;
-                        }
-                        return clickgo.fs.isDir(path, options);
-                    },
-                    isFile: function (path, options = {}) {
-                        if (!options.files) {
-                            options.files = t.files;
-                        }
-                        if (!options.current) {
-                            options.current = t.path;
-                        }
-                        return clickgo.fs.isFile(path, options);
-                    },
-                    mkdir: function (path, mode, options = {}) {
-                        if (!options.current) {
-                            options.current = t.path;
-                        }
-                        return clickgo.fs.mkdir(path, mode, options);
-                    },
-                    rmdir: function (path, options = {}) {
-                        if (!options.current) {
-                            options.current = t.path;
-                        }
-                        return clickgo.fs.rmdir(path, options);
-                    },
-                    rmdirDeep: function (path, options = {}) {
-                        if (!options.current) {
-                            options.current = t.path;
-                        }
-                        return clickgo.fs.rmdirDeep(path, options);
-                    },
-                    chmod: function (path, mod, options = {}) {
-                        if (!options.current) {
-                            options.current = t.path;
-                        }
-                        return clickgo.fs.chmod(path, mod, options);
-                    },
-                    rename(oldPath, newPath, options = {}) {
-                        if (!options.current) {
-                            options.current = t.path;
-                        }
-                        return clickgo.fs.rename(oldPath, newPath, options);
-                    },
-                    readDir(path, options = {}) {
-                        if (!options.files) {
-                            options.files = t.files;
-                        }
-                        if (!options.current) {
-                            options.current = t.path;
-                        }
-                        return clickgo.fs.readDir(path, options);
-                    },
-                    copyFolder(from, to, options = {}) {
-                        if (!options.current) {
-                            options.current = t.path;
-                        }
-                        return clickgo.fs.copyFolder(from, to, options);
-                    },
-                    copyFile(src, dest, options = {}) {
-                        if (!options.current) {
-                            options.current = t.path;
-                        }
-                        return clickgo.fs.copyFile(src, dest, options);
-                    }
-                },
-                'native': {
-                    invoke: function (name, ...param) {
-                        return clickgo.native.invoke(name, ...param);
-                    },
-                    max: function () {
-                        clickgo.native.max();
-                    },
-                    min: function () {
-                        clickgo.native.min();
-                    },
-                    restore: function () {
-                        clickgo.native.restore();
-                    },
-                    size: function (width, height) {
-                        clickgo.native.size(width, height);
-                    }
-                },
-                'task': {
-                    onFrame: function (fun, opt = {}) {
-                        opt.taskId = taskId;
-                        opt.formId = formId;
-                        return clickgo.task.onFrame(fun, opt);
-                    },
-                    offFrame: function (ft, opt = {}) {
-                        opt.taskId = taskId;
-                        clickgo.task.offFrame(ft, opt);
-                    },
-                    get: function (tid) {
-                        return clickgo.task.get(tid);
-                    },
-                    getList: function () {
-                        return clickgo.task.getList();
-                    },
-                    run: function (url, opt = {}) {
-                        opt.taskId = taskId;
-                        opt.main = false;
-                        return clickgo.task.run(url, opt);
-                    },
-                    end: function (tid) {
-                        return clickgo.task.end(tid !== null && tid !== void 0 ? tid : taskId);
-                    },
-                    loadLocaleData: function (lang, data, pre = '') {
-                        clickgo.task.loadLocaleData(lang, data, pre, taskId);
-                    },
-                    loadLocale: function (lang, path) {
-                        return clickgo.task.loadLocale(lang, path, taskId, formId);
-                    },
-                    clearLocale: function () {
-                        clickgo.task.clearLocale(taskId);
-                    },
-                    setLocale: function (lang, path) {
-                        return clickgo.task.setLocale(lang, path, taskId, formId);
-                    },
-                    setLocaleLang: function (lang) {
-                        clickgo.task.setLocaleLang(lang, taskId);
-                    },
-                    clearLocaleLang: function () {
-                        clickgo.task.clearLocaleLang(taskId);
-                    },
-                    createTimer: function (fun, delay, opt = {}) {
-                        opt.taskId = taskId;
-                        if (!opt.formId) {
-                            opt.formId = formId;
-                        }
-                        return clickgo.task.createTimer(fun, delay, opt);
-                    },
-                    removeTimer: function (timer) {
-                        clickgo.task.removeTimer(timer, taskId);
-                    },
-                    sleep: function (fun, delay) {
-                        return clickgo.task.sleep(fun, delay, taskId, formId);
-                    },
-                    systemTaskInfo: clickgo.task.systemTaskInfo,
-                    setSystem: function (fid) {
-                        return clickgo.task.setSystem(fid !== null && fid !== void 0 ? fid : formId, taskId);
-                    },
-                    clearSystem: function () {
-                        return clickgo.task.clearSystem(taskId);
-                    }
-                },
-                'theme': {
-                    read: function (blob) {
-                        return clickgo.theme.read(blob);
-                    },
-                    load: function (theme) {
-                        return __awaiter(this, void 0, void 0, function* () {
-                            if (!theme) {
-                                return false;
-                            }
-                            return clickgo.theme.load(theme, taskId);
-                        });
-                    },
-                    remove: function (name) {
-                        return clickgo.theme.remove(name, taskId);
-                    },
-                    clear: function () {
-                        return clickgo.theme.clear(taskId);
-                    },
-                    setGlobal: function (theme) {
-                        return clickgo.theme.setGlobal(theme);
-                    },
-                    clearGlobal: function () {
-                        clickgo.theme.clearGlobal();
-                    }
-                },
-                'tool': {
-                    blob2ArrayBuffer: function (blob) {
-                        return clickgo.tool.blob2ArrayBuffer(blob);
-                    },
-                    clone: function (obj) {
-                        return clickgo.tool.clone(obj);
-                    },
-                    sleep: function (ms = 0) {
-                        return clickgo.tool.sleep(ms);
-                    },
-                    purify: function (text) {
-                        return clickgo.tool.purify(text);
-                    },
-                    createObjectURL: function (object) {
-                        return clickgo.tool.createObjectURL(object, taskId);
-                    },
-                    revokeObjectURL: function (url) {
-                        clickgo.tool.revokeObjectURL(url, taskId);
-                    },
-                    rand: function (min, max) {
-                        return clickgo.tool.rand(min, max);
-                    },
-                    'RANDOM_N': clickgo.tool.RANDOM_N,
-                    'RANDOM_U': clickgo.tool.RANDOM_U,
-                    'RANDOM_L': clickgo.tool.RANDOM_L,
-                    'RANDOM_UN': clickgo.tool.RANDOM_UN,
-                    'RANDOM_LN': clickgo.tool.RANDOM_LN,
-                    'RANDOM_LU': clickgo.tool.RANDOM_LU,
-                    'RANDOM_LUN': clickgo.tool.RANDOM_LUN,
-                    'RANDOM_V': clickgo.tool.RANDOM_V,
-                    'RANDOM_LUNS': clickgo.tool.RANDOM_LUNS,
-                    random: function (length = 8, source = clickgo.tool.RANDOM_LN, block = '') {
-                        return clickgo.tool.random(length, source, block);
-                    },
-                    getBoolean: function (param) {
-                        return clickgo.tool.getBoolean(param);
-                    },
-                    escapeHTML: function (html) {
-                        return clickgo.tool.escapeHTML(html);
-                    },
-                    request: function (url, opt) {
-                        return clickgo.tool.request(url, opt);
-                    },
-                    parseUrl: function (url) {
-                        return clickgo.tool.parseUrl(url);
-                    },
-                    urlResolve: function (from, to) {
-                        return clickgo.tool.urlResolve(from, to);
-                    },
-                    blob2Text: function (blob) {
-                        return clickgo.tool.blob2Text(blob);
-                    },
-                    blob2DataUrl: function (blob) {
-                        return clickgo.tool.blob2DataUrl(blob);
-                    },
-                    execCommand: function (ac) {
-                        clickgo.tool.execCommand(ac);
-                    }
-                },
-                'zip': {
-                    get: function (data) {
-                        return clickgo.zip.get(data);
-                    }
-                }
-            };
-        }
-        else {
-            invoke.invokeClickgo = clickgo;
-        }
-        const preprocess = clickgo.getSafe() ? function (code, path) {
-            const exec = /eval\W/.exec(code);
-            if (exec) {
-                notify({
-                    'title': 'Error',
-                    'content': `The "eval" is prohibited.\nFile: "${path}".`,
-                    'type': 'danger'
-                });
-                return '';
-            }
-            return code;
-        } : undefined;
-        const components = yield control.init(t.id, formId, newBase, preprocess, invoke);
-        if (!components) {
-            if ((form === null || form === void 0 ? void 0 : form.vroot.$refs.form.maskFor) !== undefined) {
-                form.vroot.$refs.form.maskFor = undefined;
-            }
-            return -5;
-        }
-        let style = opt.style;
-        let layout = opt.layout;
-        if (filePath) {
-            if (!filePath.startsWith('/package/')) {
-                return -6;
-            }
-            const file = filePath.slice(8);
-            const layoutFile = app.files[file + '.xml'];
-            if (layoutFile) {
-                layout = layoutFile.replace(/^\ufeff/, '');
-            }
-            const styleFile = app.files[file + '.css'];
-            if (styleFile) {
-                style = styleFile.replace(/^\ufeff/, '');
-            }
-        }
-        if (layout === undefined) {
-            if ((form === null || form === void 0 ? void 0 : form.vroot.$refs.form.maskFor) !== undefined) {
-                form.vroot.$refs.form.maskFor = undefined;
-            }
-            return -7;
-        }
         let data = {};
-        let methods = {};
+        let methods = undefined;
         let computed = {};
-        let watch = {};
         let beforeCreate = undefined;
         let created = undefined;
         let beforeMount = undefined;
@@ -1846,46 +1456,29 @@ function create(opt) {
         let updated = undefined;
         let beforeUnmount = undefined;
         let unmounted = undefined;
-        let receive = undefined;
-        let expo = opt.code;
-        if ((filePath === null || filePath === void 0 ? void 0 : filePath.startsWith('/package/')) && app.files[filePath.slice(8) + '.js']) {
-            const file = filePath.slice(8);
-            if (app.files[file + '.js']) {
-                app.files['/invoke/clickgo.js'] = `module.exports = invokeClickgo;`;
-                expo = loader.require(file, app.files, {
-                    'dir': '/',
-                    'invoke': invoke,
-                    'preprocess': preprocess,
-                    'map': {
-                        'clickgo': '/invoke/clickgo'
-                    }
-                })[0];
-            }
+        if (opt.code) {
+            data = (_b = opt.code.data) !== null && _b !== void 0 ? _b : {};
+            methods = opt.code.methods;
+            computed = (_c = opt.code.computed) !== null && _c !== void 0 ? _c : {};
+            beforeCreate = opt.code.beforeCreate;
+            created = opt.code.created;
+            beforeMount = opt.code.beforeMount;
+            mounted = opt.code.mounted;
+            beforeUpdate = opt.code.beforeUpdate;
+            updated = opt.code.updated;
+            beforeUnmount = opt.code.beforeUnmount;
+            unmounted = opt.code.unmounted;
         }
-        if (expo) {
-            data = (_d = expo.data) !== null && _d !== void 0 ? _d : {};
-            methods = expo.methods || {};
-            computed = expo.computed || {};
-            watch = expo.watch || {};
-            beforeCreate = expo.beforeCreate;
-            created = expo.created;
-            beforeMount = expo.beforeMount;
-            mounted = expo.mounted;
-            beforeUpdate = expo.beforeUpdate;
-            updated = expo.updated;
-            beforeUnmount = expo.beforeUnmount;
-            unmounted = expo.unmounted;
-            receive = expo.receive;
-        }
+        let style = '';
         let prep = '';
-        if (style) {
-            const r = tool.stylePrepend(style);
+        if (opt.style) {
+            const r = tool.stylePrepend(opt.style);
             prep = r.prep;
-            style = yield tool.styleUrl2DataUrl(newBase, r.style, app.files);
+            style = yield tool.styleUrl2DataUrl((_d = opt.path) !== null && _d !== void 0 ? _d : '/', r.style, t.app.files);
         }
-        layout = tool.purify(layout);
+        let layout = tool.purify(opt.layout);
         layout = tool.layoutAddTagClassAndReTagName(layout, true);
-        layout = tool.layoutInsertAttr(layout, ':cg-focus=\'cgFocus\'', {
+        layout = tool.layoutInsertAttr(layout, ':form-focus=\'formFocus\'', {
             'include': [/^cg-.+/]
         });
         const prepList = ['cg-task' + opt.taskId.toString() + '_'];
@@ -1896,19 +1489,6 @@ function create(opt) {
         layout = tool.eventsAttrWrap(layout);
         elements.list.insertAdjacentHTML('beforeend', `<div class="cg-form-wrap" data-form-id="${formId.toString()}" data-task-id="${opt.taskId.toString()}"></div>`);
         const el = elements.list.children.item(elements.list.children.length - 1);
-        computed.taskId = {
-            get: function () {
-                return taskId;
-            },
-            set: function () {
-                notify({
-                    'title': 'Error',
-                    'content': `The software tries to modify the system variable "taskId".\nPath: ${this.cgPath}`,
-                    'type': 'danger'
-                });
-                return;
-            }
-        };
         computed.formId = {
             get: function () {
                 return formId;
@@ -1916,124 +1496,68 @@ function create(opt) {
             set: function () {
                 notify({
                     'title': 'Error',
-                    'content': `The software tries to modify the system variable "formId".\nPath: ${this.cgPath}`,
+                    'content': `The software tries to modify the system variable "formId".\nPath: ${this.filename}`,
                     'type': 'danger'
                 });
                 return;
             }
         };
-        computed.controlName = {
+        data._formFocus = false;
+        computed.path = {
             get: function () {
-                return 'root';
+                var _a;
+                return (_a = opt.path) !== null && _a !== void 0 ? _a : '';
             },
             set: function () {
                 notify({
                     'title': 'Error',
-                    'content': `The software tries to modify the system variable "controlName".\nPath: ${this.cgPath}`,
+                    'content': `The software tries to modify the system variable "path".\nPath: ${this.filename}`,
                     'type': 'danger'
                 });
                 return;
             }
         };
-        data._cgFocus = false;
-        computed.cgFocus = {
-            get: function () {
-                return this._cgFocus;
-            },
-            set: function () {
-                notify({
-                    'title': 'Error',
-                    'content': `The software tries to modify the system variable "cgFocus".\nPath: ${this.cgPath}`,
-                    'type': 'danger'
-                });
-                return;
-            }
-        };
-        computed.cgPath = {
-            get: function () {
-                return newBase;
-            },
-            set: function () {
-                notify({
-                    'title': 'Error',
-                    'content': `The software tries to modify the system variable "cgPath".\nPath: ${this.cgPath}`,
-                    'type': 'danger'
-                });
-                return;
-            }
-        };
-        computed.cgPrep = {
+        computed.prep = {
             get: function () {
                 return prep;
             },
             set: function () {
                 notify({
                     'title': 'Error',
-                    'content': `The software tries to modify the system variable "cgPrep".\nPath: ${this._cgPath}`,
+                    'content': `The software tries to modify the system variable "cgPrep".\nPath: ${this.filename}`,
                     'type': 'danger'
                 });
                 return;
             }
         };
-        data._cgCustomZIndex = false;
-        computed.cgCustomZIndex = {
+        data._topMost = false;
+        computed.topMost = {
             get: function () {
-                return this._cgCustomZIndex;
+                return this._topMost;
             },
-            set: function () {
-                notify({
-                    'title': 'Error',
-                    'content': `The software tries to modify the system variable "cgCustomZIndex".\nPath: ${this.cgPath}`,
-                    'type': 'danger'
-                });
+            set: function (v) {
+                const form = t.forms[formId];
+                if (!form) {
+                    return;
+                }
+                if (v) {
+                    form.vroot.$data._topMost = true;
+                    if (!form.vroot._formFocus) {
+                        changeFocus(form.id);
+                    }
+                    else {
+                        form.vroot.$refs.form.$data.zIndexData = ++info.topLastZIndex;
+                    }
+                }
+                else {
+                    form.vroot.$data._topMost = false;
+                    form.vroot.$refs.form.$data.zIndexData = ++info.lastZIndex;
+                }
                 return;
             }
-        };
-        if (topMost) {
-            data._cgTopMost = true;
-        }
-        else {
-            data._cgTopMost = false;
-        }
-        computed.cgTopMost = {
-            get: function () {
-                return this._cgTopMost;
-            },
-            set: function () {
-                notify({
-                    'title': 'Error',
-                    'content': `The software tries to modify the system variable "cgTopMost".\nPath: ${this.cgPath}`,
-                    'type': 'danger'
-                });
-                return;
-            }
-        };
-        computed.cgLocale = function () {
-            if (task.list[this.taskId].locale.lang === '') {
-                return core.config.locale;
-            }
-            return task.list[this.taskId].locale.lang;
-        };
-        computed.l = function () {
-            return (key) => {
-                var _a, _b, _c, _d;
-                return (_d = (_b = (_a = task.list[this.taskId].locale.data[this.cgLocale]) === null || _a === void 0 ? void 0 : _a[key]) !== null && _b !== void 0 ? _b : (_c = task.list[this.taskId].locale.data['en']) === null || _c === void 0 ? void 0 : _c[key]) !== null && _d !== void 0 ? _d : 'LocaleError';
-            };
-        };
-        methods.cgClassPrepend = function (cla) {
-            if (typeof cla !== 'string') {
-                return cla;
-            }
-            return `cg-task${this.taskId}_${cla} ${this.cgPrep}${cla}`;
-        };
-        methods.cgAllowEvent = function (e) {
-            return dom.allowEvent(e);
-        };
-        methods.cgReceive = function (obj) {
-            receive === null || receive === void 0 ? void 0 : receive.call(this, obj);
         };
         if (style) {
-            dom.pushStyle(taskId, style, 'form', formId);
+            dom.pushStyle(opt.taskId, style, 'form', formId);
         }
         const rtn = yield new Promise(function (resolve) {
             const vapp = clickgo.vue.createApp({
@@ -2043,16 +1567,18 @@ function create(opt) {
                 },
                 'methods': methods,
                 'computed': computed,
-                'watch': watch,
                 'beforeCreate': beforeCreate,
                 'created': created,
                 'beforeMount': beforeMount,
                 'mounted': function () {
                     return __awaiter(this, void 0, void 0, function* () {
                         yield this.$nextTick();
-                        if (this.$refs.form.icon !== '') {
-                            const icon = yield clickgo.fs.getContent(this.$refs.form.icon);
-                            this.$refs.form.iconData = (icon instanceof Blob) ? yield clickgo.tool.blob2DataUrl(icon) : '';
+                        if (this.$refs.form.icon) {
+                            const icon = yield fs.getContent(this.$refs.form.icon, {
+                                'current': t.current,
+                                'files': t.app.files
+                            });
+                            this.$refs.form.iconData = (icon instanceof Blob) ? yield tool.blob2DataUrl(icon) : '';
                         }
                         resolve({
                             'vapp': vapp,
@@ -2061,48 +1587,45 @@ function create(opt) {
                     });
                 },
                 'beforeUpdate': beforeUpdate,
-                'updated': function () {
-                    return __awaiter(this, void 0, void 0, function* () {
-                        yield this.$nextTick();
-                        updated === null || updated === void 0 ? void 0 : updated.call(this);
-                    });
-                },
+                'updated': updated,
                 'beforeUnmount': beforeUnmount,
-                'unmounted': unmounted,
+                'unmounted': unmounted
             });
             vapp.config.errorHandler = function (err, vm, info) {
                 notify({
                     'title': 'Runtime Error',
-                    'content': `Message: ${err.message}\ntask id: ${vm.taskId}\nForm id: ${vm.formId}`,
+                    'content': `Message: ${err.message}\nTask id: ${vm.taskId}\nForm id: ${vm.formId}`,
                     'type': 'danger'
                 });
-                core.trigger('error', vm.taskId, vm.formId, err, info);
+                core.trigger('error', vm.taskId, vm.formId, err, info + '(-3,' + vm.taskId + ',' + vm.formId + ')');
             };
             for (const key in components) {
                 vapp.component(key, components[key]);
             }
-            vapp.mount(el);
+            try {
+                vapp.mount(el);
+            }
+            catch (err) {
+                notify({
+                    'title': 'Runtime Error',
+                    'content': `Message: ${err.message}\nTask id: ${opt.taskId}\nForm id: ${formId}`,
+                    'type': 'danger'
+                });
+                core.trigger('error', opt.taskId, formId, err, err.message + '(-2)');
+            }
         });
         const nform = {
             'id': formId,
             'vapp': rtn.vapp,
-            'vroot': rtn.vroot,
-            'events': {}
+            'vroot': rtn.vroot
         };
         t.forms[formId] = nform;
-        if (opt.mask && form) {
-            form.vroot.$refs.form.maskFor = formId;
-            nform.vroot.$refs.form.maskFrom = form.id;
-        }
         yield tool.sleep(34);
         if (mounted) {
             try {
                 yield mounted.call(rtn.vroot, opt.data);
             }
             catch (err) {
-                if ((nform === null || nform === void 0 ? void 0 : nform.vroot.$refs.form.maskFor) !== undefined) {
-                    nform.vroot.$refs.form.maskFor = undefined;
-                }
                 core.trigger('error', rtn.vroot.taskId, rtn.vroot.formId, err, 'Create form mounted error.');
                 t.forms[formId] = undefined;
                 delete t.forms[formId];
@@ -2112,24 +1635,8 @@ function create(opt) {
                 return -8;
             }
         }
-        const area = core.getAvailArea();
-        if (!rtn.vroot.$refs.form.stateMaxData) {
-            if (rtn.vroot.$refs.form.left === -1) {
-                rtn.vroot.$refs.form.setPropData('left', (area.width - rtn.vroot.$el.offsetWidth) / 2);
-            }
-            if (rtn.vroot.$refs.form.top === -1) {
-                rtn.vroot.$refs.form.setPropData('top', (area.height - rtn.vroot.$el.offsetHeight) / 2);
-            }
-        }
-        if (rtn.vroot.$refs.form.zIndex !== -1) {
-            rtn.vroot._cgCustomZIndex = true;
-        }
-        if (rtn.vroot.$refs.form.$data.show !== false) {
-            rtn.vroot.$refs.form.$data.showData = true;
-        }
-        core.trigger('formCreated', taskId, formId, rtn.vroot.$refs.form.title, rtn.vroot.$refs.form.iconData);
-        changeFocus(formId);
-        return nform;
+        core.trigger('formCreated', opt.taskId, formId, rtn.vroot.$refs.form.title, rtn.vroot.$refs.form.iconData);
+        return formId;
     });
 }
 exports.create = create;
@@ -2141,25 +1648,21 @@ function dialog(opt) {
                 'content': opt
             };
         }
-        const formId = opt.formId;
-        if (!formId) {
+        const taskId = opt.taskId;
+        if (!taskId) {
             resolve('');
             return;
         }
-        const taskId = getTaskId(formId);
         const t = task.list[taskId];
         if (!t) {
             resolve('');
             return;
         }
-        const locale = t.forms[formId].vroot.cgLocale;
+        const locale = t.locale.lang || core.config.locale;
         if (opt.buttons === undefined) {
             opt.buttons = [(_b = (_a = info.locale[locale]) === null || _a === void 0 ? void 0 : _a.ok) !== null && _b !== void 0 ? _b : info.locale['en'].ok];
         }
         create({
-            'taskId': taskId,
-            'formId': formId,
-            'layout': `<form title="${(_c = opt.title) !== null && _c !== void 0 ? _c : 'dialog'}" width="auto" height="auto" :min="false" :max="false" :resize="false" border="${opt.title ? 'normal' : 'plain'}" direction="v"><dialog :buttons="buttons" @select="select"${opt.direction ? ` direction="${opt.direction}"` : ''}>${opt.content}</dialog></form>`,
             'code': {
                 data: {
                     'buttons': opt.buttons
@@ -2175,14 +1678,17 @@ function dialog(opt) {
                         };
                         (_b = (_a = opt).select) === null || _b === void 0 ? void 0 : _b.call(_a, event, button);
                         if (event.go) {
+                            this.dialogResult = button;
                             close(this.formId);
-                            resolve(button);
                         }
                     }
                 }
             },
-            'mask': true
-        }).catch((e) => {
+            'layout': `<form title="${(_c = opt.title) !== null && _c !== void 0 ? _c : 'dialog'}" :min="false" :max="false" :resize="false" border="${opt.title ? 'normal' : 'plain'}" direction="v"><dialog :buttons="buttons" @select="select"${opt.direction ? ` direction="${opt.direction}"` : ''}>${opt.content}</dialog></form>`,
+            'taskId': taskId
+        }).then((fid) => __awaiter(this, void 0, void 0, function* () {
+            resolve(yield t.forms[fid].vroot.showDialog());
+        })).catch((e) => {
             throw e;
         });
     });
@@ -2196,22 +1702,21 @@ function confirm(opt) {
                 'content': opt
             };
         }
-        const formId = opt.formId;
-        if (!formId) {
+        const taskId = opt.taskId;
+        if (!taskId) {
             return false;
         }
-        const taskId = getTaskId(formId);
         const t = task.list[taskId];
         if (!t) {
             return false;
         }
-        const locale = t.forms[formId].vroot.cgLocale;
+        const locale = t.locale.lang || core.config.locale;
         const buttons = [(_b = (_a = info.locale[locale]) === null || _a === void 0 ? void 0 : _a.yes) !== null && _b !== void 0 ? _b : info.locale['en'].yes, (_d = (_c = info.locale[locale]) === null || _c === void 0 ? void 0 : _c.no) !== null && _d !== void 0 ? _d : info.locale['en'].no];
         if (opt.cancel) {
             buttons.push((_f = (_e = info.locale[locale]) === null || _e === void 0 ? void 0 : _e.cancel) !== null && _f !== void 0 ? _f : info.locale['en'].cancel);
         }
         const res = yield dialog({
-            'formId': formId,
+            'taskId': taskId,
             'content': opt.content,
             'buttons': buttons
         });
@@ -2225,37 +1730,18 @@ function confirm(opt) {
     });
 }
 exports.confirm = confirm;
-function setTopMost(top, opt = {}) {
-    const form = getForm(opt.taskId, opt.formId);
-    if (!form) {
+function flash(formId, taskId) {
+    if (!taskId) {
         return;
     }
-    form.vroot.$data._cgCustomZIndex = false;
-    if (top) {
-        form.vroot.$data._cgTopMost = true;
-        if (!form.vroot.cgFocus) {
-            changeFocus(form.id);
-        }
-        else {
-            form.vroot.$refs.form.setPropData('zIndex', ++info.topLastZIndex);
-        }
-    }
-    else {
-        form.vroot.$data._cgTopMost = false;
-        form.vroot.$refs.form.setPropData('zIndex', ++info.lastZIndex);
-    }
-}
-exports.setTopMost = setTopMost;
-function flash(formId, taskId) {
-    var _a;
     const form = getForm(taskId, formId);
     if (!form) {
         return;
     }
-    if (!form.vroot.cgFocus) {
+    if (!form.vroot._formFocus) {
         changeFocus(form.id);
     }
-    if ((_a = form.vroot.$refs.form) === null || _a === void 0 ? void 0 : _a.flashTimer) {
+    if (form.vroot.$refs.form.flashTimer) {
         clearTimeout(form.vroot.$refs.form.flashTimer);
         form.vroot.$refs.form.flashTimer = undefined;
     }
@@ -2267,22 +1753,6 @@ function flash(formId, taskId) {
     core.trigger('formFlash', taskId, formId);
 }
 exports.flash = flash;
-function show(formId, taskId) {
-    const form = getForm(taskId, formId);
-    if (!form) {
-        return;
-    }
-    form.vroot.$refs.form.$data.showData = true;
-}
-exports.show = show;
-function hide(formId, taskId) {
-    const form = getForm(taskId, formId);
-    if (!form) {
-        return;
-    }
-    form.vroot.$refs.form.$data.showData = false;
-}
-exports.hide = hide;
 function showLauncher() {
     elements.launcher.style.display = 'flex';
     requestAnimationFrame(function () {

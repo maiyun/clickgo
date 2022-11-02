@@ -54,7 +54,7 @@
     &.state-min-bottom {
         transform: translateX(0px) translateY(50px) translateZ(0);
     }
-    &[data-cg-focus] {
+    &[data-form-focus] {
         color: var(--g-color);
         &:not(.border-none):not([data-cg-max]) {
             box-shadow: 0 5px 20px rgba(0, 0, 0, .25);

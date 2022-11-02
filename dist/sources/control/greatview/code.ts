@@ -1,158 +1,141 @@
 import * as clickgo from 'clickgo';
-import * as types from '~/types/index';
 
-export const props = {
-    'direction': {
-        'default': 'h'
-    },
+export default class extends clickgo.control.AbstractControl {
 
-    'scrollLeft': {
-        'default': undefined
-    },
-    'scrollTop': {
-        'default': undefined
-    },
-    'content': {
-        'default': undefined,
-    },
-    'selection': {
-        'default': false
-    },
-    'same': {
-        'default': false
-    },
-    'solo': {
-        'default': true
-    },
+    public props = {
+        'direction': 'h',
 
-    'data': {
-        'default': []
-    },
-    'itemsSize': {
-        'default': []
-    }
-};
+        'scrollLeft': -1,
+        'scrollTop': -1,
+        'content': '',
+        'selection': false,
+        'same': false,
+        'solo': true,
 
-export const data = {
-    'padding': '',
-    'paddingChild': {
+        'data': [],
+        'itemsSize': []
+    };
+
+    /** --- watch 的最外层的 padding，设置到内层 --- */
+    public padding = '';
+
+    /** --- watch 的最外层的 padding 的四个距离 --- */
+    public paddingChild = {
         'top': 0,
         'right': 0,
         'bottom': 0,
         'left': 0
-    },
-    'showPos': {
+    };
+
+    /** --- 要显示的项目起、终下标 --- */
+    public showPos = {
         'start': 0,
         'end': 0
-    },
-    'selectPos': {
+    };
+
+    /** --- 当前框选的部分起终下标 --- */
+    public selectPos = {
         'start': 0,
         'end': 0
-    },
-    'itemsPos': [],
+    };
 
-    'needItemsComp': [],
+    /** --- 每项的起终像素 --- */
+    public itemsPos: Array<{
+        'start': number;
+        'end': number;
+    }> = [];
 
-    'scrollLeftEmit': 0,
-    'scrollTopEmit': 0,
+    /** --- 当前正在需要重新计算起终像素的项的下标序列 --- */
+    public needItemsComp: number[] = [];
 
-    'length': 0,
-    'lengthWidth': 0,
-    'lengthHeight': 0,
-    'client': 0,
-    'clientWidth': 0,
-    'clientHeight': 0,
+    public scrollLeftEmit = 0;
 
-    'refreshCount': 0,
-    'lengthInit': false,
-    'isWatch': true
-};
+    public scrollTopEmit = 0;
 
-export const watch = {
-    'data': {
-        handler: function(this: types.IVControl): void {
-            this.refreshView();
-        },
-        'deep': true
-    },
-    'direction': function(this: types.IVControl): void {
-        this.refreshView();
-    },
-    'scrollLeft': function(this: types.IVControl): void {
-        if (this.direction === 'h' && this.scrollLeftEmit !== this.scrollLeft) {
-            this.scrollLeftEmit = this.scrollLeft;
-            this.reShow();
-        }
-    },
-    'scrollTop': function(this: types.IVControl): void {
-        if (this.direction === 'v' && this.scrollTopEmit !== this.scrollTop) {
-            this.scrollTopEmit = this.scrollTop;
-            this.reShow();
-        }
+    public length = 0;
+
+    public lengthWidth = 0;
+
+    public lengthHeight = 0;
+
+    public client = 0;
+
+    public clientWidth = 0;
+
+    public clientHeight = 0;
+
+    public refreshCount = 0;
+
+    public lengthInit = false;
+
+    /** --- reshow 是否在正在执行的过程中 --- */
+    public reShowing = false;
+
+    public get isSame(): boolean {
+        return clickgo.tool.getBoolean(this.props.same);
     }
-};
 
-export const computed = {
-    'isSame': function(this: types.IVControl): boolean {
-        return clickgo.tool.getBoolean(this.same);
-    },
-    'isSelection': function(this: types.IVControl): boolean {
-        return clickgo.tool.getBoolean(this.selection);
-    },
-    'isSolo': function(this: types.IVControl): boolean {
-        return clickgo.tool.getBoolean(this.solo);
-    },
+    public get isSelection(): boolean {
+        return clickgo.tool.getBoolean(this.props.selection);
+    }
 
-    'dataComp': function(this: types.IVControl): any[] {
-        if (typeof this.data !== 'number') {
-            return this.data;
+    /** --- 是否没有嵌套拖动层，有的话 solo 需要设置为 false --- */
+    public get isSolo(): boolean {
+        return clickgo.tool.getBoolean(this.props.solo);
+    }
+
+    public get dataComp(): any[] {
+        if (typeof this.props.data !== 'number') {
+            return this.props.data;
         }
         const list: any[] = [];
-        for (let i = 1; i <= this.data; ++i) {
+        for (let i = 1; i <= this.props.data; ++i) {
             list.push(i);
         }
         return list;
-    },
-    'scrollOffset': function(this: types.IVControl): number {
-        return this.direction === 'v' ? this.scrollTopEmit : this.scrollLeftEmit;
-    },
-    'itemStyle': function(this: types.IVControl): any {
+    }
+
+    public get scrollOffset(): number {
+        return this.props.direction === 'v' ? this.scrollTopEmit : this.scrollLeftEmit;
+    }
+
+    public get itemStyle(): any {
         return (index: number): any => {
             return {
-                'left': (this.direction === 'v' ?
+                'left': (this.props.direction === 'v' ?
                     this.paddingChild.left :
                     (this.itemsPos[index] ?
                         this.itemsPos[index].start :
                         '0'
                     )
                 ) as string + 'px',
-                'top': (this.direction === 'v' ?
+                'top': (this.props.direction === 'v' ?
                     (this.itemsPos[index] ?
                         this.itemsPos[index].start :
                         '0'
                     ) :
                     this.paddingChild.top
                 ) as string + 'px',
-                'min-width': (this.direction === 'v' ?
-                    `calc(100% - ${(this.paddingChild.left as number) + (this.paddingChild.right as number)}px)` :
+                'min-width': (this.props.direction === 'v' ?
+                    `calc(100% - ${this.paddingChild.left + this.paddingChild.right}px)` :
                     undefined
                 ),
-                'min-height': (this.direction === 'v' ?
+                'min-height': (this.props.direction === 'v' ?
                     undefined :
-                    `calc(100% - ${(this.paddingChild.top as number) + (this.paddingChild.bottom as number)}px)`
+                    `calc(100% - ${this.paddingChild.top + this.paddingChild.bottom}px)`
                 )
             };
         };
-    },
+    }
 
-    'opMargin': function(this: types.IVControl): string {
+    public get opMargin(): string {
         return this.padding.replace(/(\w+)/g, '-$1');
     }
-};
 
-export const methods = {
+    // --- method ---
+
     // --- 重新获取宽度高度 ---
-    refreshView: async function(this: types.IVControl): Promise<void> {
+    public async refreshView(): Promise<void> {
         const nowCount = ++this.refreshCount;
         // let date = Date.now();
 
@@ -160,9 +143,9 @@ export const methods = {
         let lengthHeight: number = this.paddingChild.top;
         if (this.dataComp.length === 0) {
             // --- 没有数据 ---
-            this.lengthWidth = lengthWidth + (this.paddingChild.right as number);
-            this.lengthHeight = lengthHeight + (this.paddingChild.bottom as number);
-            this.length = this.direction === 'v' ? this.lengthHeight : this.lengthWidth;
+            this.lengthWidth = lengthWidth + this.paddingChild.right;
+            this.lengthHeight = lengthHeight + this.paddingChild.bottom;
+            this.length = this.props.direction === 'v' ? this.lengthHeight : this.lengthWidth;
             return;
         }
 
@@ -173,7 +156,7 @@ export const methods = {
         }
 
         /** --- 数据总数 --- */
-        const maxCursor = this.dataComp.length as number;
+        const maxCursor = this.dataComp.length;
         /** --- 当前位置 --- */
         let cursor = 0;
         /** --- 另一边的最大值 --- */
@@ -191,21 +174,22 @@ export const methods = {
             /** --- 获取要计算的值 --- */
             const needItemsComp = [];
             for (let i = cursor; i < maxCursor; ++i) {
-                if (typeof this.itemsSize[i] === 'number') {
+                const type = typeof this.props.itemsSize[i];
+                if (type === 'number') {
                     // --- 用户已经定义了 size，无需计算 ---
                     cursor = i;
                     continue;
                 }
-                if (typeof this.itemsSize[i] === 'string') {
+                if (type === 'string') {
                     // --- 需要计算 size，但有别名，多个同用一个 size ---
-                    if (itemsSizeAlias[this.itemsSize[i]] !== undefined) {
+                    if (itemsSizeAlias[this.props.itemsSize[i]] !== undefined) {
                         // --- 已经计算过了，无需再次计算 ---
                         cursor = i;
                         continue;
                     }
                     else {
                         // --- 没有计算过，但相同的不会计算两次 ---
-                        itemsSizeAlias[this.itemsSize[i]] = -1;
+                        itemsSizeAlias[this.props.itemsSize[i]] = -1;
                     }
                 }
                 else if (this.isSame) {
@@ -229,24 +213,24 @@ export const methods = {
             }
             this.needItemsComp = needItemsComp;
             // --- 调整后等待视图响应 ---
-            await this.$nextTick();
+            await this.nextTick();
             // await clickgo.tool.sleep(34);
             if (nowCount !== this.refreshCount) {
                 // --- 重复执行，以最后一次执行为准 ---
                 return;
             }
-            if (!this.$refs.comp || !this.$refs.comp.offsetParent) {
+            if (!this.refs.comp || !this.refs.comp.offsetParent) {
                 // --- 当前被卸载了 ---
                 return;
             }
             // --- 遍历 comp items ---
-            for (let i = 0; i < this.$refs.comp.children.length; ++i) {
-                const item = this.$refs.comp.children.item(i) as HTMLElement;
+            for (let i = 0; i < this.refs.comp.children.length; ++i) {
+                const item = this.refs.comp.children.item(i) as HTMLElement;
                 const rect = item.getBoundingClientRect();
                 /** --- items size cursor --- */
                 const theCursor = parseInt(item.dataset.cursor!);
                 let size = 0;
-                if (this.direction === 'v') {
+                if (this.props.direction === 'v') {
                     size = rect.height;
                     if (anotherMax < rect.width) {
                         anotherMax = rect.width;
@@ -259,7 +243,7 @@ export const methods = {
                     }
                 }
                 // --- 别名 ---
-                if (typeof this.itemsSize[theCursor] === 'string') {
+                if (typeof this.props.itemsSize[theCursor] === 'string') {
                     itemsSizeAlias[itemsSize[theCursor]] = size;
                 }
                 else if (this.isSame) {
@@ -279,13 +263,13 @@ export const methods = {
         const itemsPos = [];
         for (let i = 0; i < maxCursor; ++i) {
             let size = 0;
-            if (this.itemsSize[i] !== undefined) {
-                const type = typeof this.itemsSize[i];
+            if (this.props.itemsSize[i] !== undefined) {
+                const type = typeof this.props.itemsSize[i];
                 if (type === 'number') {
-                    size = this.itemsSize[i];
+                    size = this.props.itemsSize[i];
                 }
                 else {
-                    size = itemsSizeAlias[this.itemsSize[i]];
+                    size = itemsSizeAlias[this.props.itemsSize[i]];
                 }
             }
             else if (this.isSame) {
@@ -294,13 +278,13 @@ export const methods = {
             else {
                 size = itemsSize[i];
             }
-            const start = this.direction === 'v' ? lengthHeight : lengthWidth;
+            const start = this.props.direction === 'v' ? lengthHeight : lengthWidth;
             const end = start + size;
             itemsPos.push({
                 'start': start,
                 'end': end
             });
-            if (this.direction === 'v') {
+            if (this.props.direction === 'v') {
                 lengthHeight += size;
             }
             else {
@@ -309,38 +293,39 @@ export const methods = {
         }
         // console.log('xxx1', Date.now() - date);
         // --- 增加另一边的边长 ---
-        if (this.direction === 'v') {
+        if (this.props.direction === 'v') {
             lengthWidth += anotherMax;
         }
         else {
             lengthHeight += anotherMax;
         }
         // --- 加末尾的 padding ---
-        lengthWidth += this.paddingChild.right as number;
-        lengthHeight += this.paddingChild.bottom as number;
+        lengthWidth += this.paddingChild.right;
+        lengthHeight += this.paddingChild.bottom;
         this.lengthWidth = lengthWidth;
         this.lengthHeight = lengthHeight;
-        this.length = this.direction === 'v' ? this.lengthHeight : this.lengthWidth;
+        this.length = this.props.direction === 'v' ? this.lengthHeight : this.lengthWidth;
         this.itemsPos = itemsPos;
         if (!this.lengthInit) {
             this.lengthInit = true;
             // --- 延迟让 length 的变更生效，让 view 可以监测到并重置他的 lengthWidth 逻辑 ---
             await clickgo.tool.sleep(34);
             // --- length 计算完毕后初次进行上层设定值的传导 ---
-            if (this.scrollLeft) {
-                this.scrollLeftEmit = this.scrollLeft;
-                this.$refs.view.goScroll(this.scrollLeft, 'left');
+            if (this.props.scrollLeft >= 0) {
+                this.scrollLeftEmit = this.props.scrollLeft;
+                this.refs.view.goScroll(this.props.scrollLeft, 'left');
             }
-            if (this.scrollTop) {
-                this.scrollTopEmit = this.scrollTop;
-                this.$refs.view.goScroll(this.scrollTop, 'top');
+            if (this.props.scrollTop >= 0) {
+                this.scrollTopEmit = this.props.scrollTop;
+                this.refs.view.goScroll(this.props.scrollTop, 'top');
             }
         }
-        this.$emit('itemsposchange');
+        this.emit('itemsposchange');
         this.reShow();
-    },
-    // --- 控制显示和隐藏 ---
-    refreshPos: function(this: types.IVControl, pos: { 'start': number; 'end': number; }, area: { 'start': number; 'end': number; }): { 'start': number; 'end': number; } {
+    }
+
+    /** --- 控制显示和隐藏 --- */
+    public refreshPos(pos: { 'start': number; 'end': number; }, area: { 'start': number; 'end': number; }): { 'start': number; 'end': number; } {
         if (this.length <= area.start) {
             return {
                 'start': -1,
@@ -462,22 +447,24 @@ export const methods = {
         }
         // console.log('xxx', Date.now() - date);
         return rtn;
-    },
-    reShow: function(this: types.IVControl): void {
-        this.isWatch = false;
+    }
+
+    public reShow(): void {
+        this.reShowing = true;
         const rtn = this.refreshPos(this.showPos, {
             'start': this.scrollOffset - 20,
-            'end': (this.scrollOffset as number) + (this.client as number) + 20
+            'end': this.scrollOffset + this.client + 20
         });
         this.showPos.start = rtn.start;
         this.showPos.end = rtn.end;
-        this.$nextTick().then(() => {
-            this.isWatch = true;
+        this.nextTick().then(() => {
+            this.reShowing = false;
         }).catch(() => {
             // --- Nothing ---
         });
-    },
-    isInArea: function(this: types.IVControl, i: number, area: { 'start': number; 'end': number; }): boolean {
+    }
+
+    public isInArea(i: number, area: { 'start': number; 'end': number; }): boolean {
         const pos = this.itemsPos[i];
         if (!pos) {
             return false;
@@ -486,9 +473,9 @@ export const methods = {
             return true;
         }
         return false;
-    },
+    }
 
-    updateScrollOffset: function(this: types.IVControl, val: number, pos: 'left' | 'top'): void {
+    public updateScrollOffset(val: number, pos: 'left' | 'top'): void {
         // --- 接收 view 组件传递的 scroll-offset 更改事件 ---
         if (!this.lengthInit) {
             // --- length 还没初始化成功，不更新 scroll offset ---
@@ -496,23 +483,24 @@ export const methods = {
         }
         if (pos === 'left') {
             this.scrollLeftEmit = val;
-            this.$emit('update:scrollLeft', val);
-            if (this.direction === 'h') {
+            this.emit('update:scrollLeft', val);
+            if (this.props.direction === 'h') {
                 this.reShow();
             }
         }
         else {
             this.scrollTopEmit = val;
-            this.$emit('update:scrollTop', val);
-            if (this.direction === 'v') {
+            this.emit('update:scrollTop', val);
+            if (this.props.direction === 'v') {
                 this.reShow();
             }
         }
-    },
-    onResize: function(this: types.IVControl, val: number): void {
+    }
+
+    public onResize(val: number): void {
         this.client = val;
-        this.$emit('resize', val);
-        if (this.direction === 'v') {
+        this.emit('resize', val);
+        if (this.props.direction === 'v') {
             this.clientHeight = val;
         }
         else {
@@ -521,27 +509,30 @@ export const methods = {
         if (!this.lengthInit) {
             return;
         }
-        this.refreshView();
-    },
-    onResizen: function(this: types.IVControl, val: number): void {
-        this.refreshView();
-        this.$emit('resizen', val);
-        if (this.direction === 'h') {
+        this.refreshView().catch((e) => { console.log(e); });
+    }
+
+    public onResizen(val: number): void {
+        this.emit('resizen', val);
+        if (this.props.direction === 'h') {
             this.clientHeight = val;
         }
         else {
             this.clientWidth = val;
         }
-    },
-    onChange: function(this: types.IVControl, val: number): void {
+        this.refreshView().catch((e) => { console.log(e); });
+    }
+
+    public onChange(val: number): void {
         if (!this.lengthInit) {
             return;
         }
-        this.$emit('change', val);
-    },
-    onSelect: function(this: types.IVControl, area: Record<string, number>): void {
-        const offset = this.direction === 'v' ? area.y : area.x;
-        const length = this.direction === 'v' ? area.height : area.width;
+        this.emit('change', val);
+    }
+
+    public onSelect(area: Record<string, number>): void {
+        const offset = this.props.direction === 'v' ? area.y : area.x;
+        const length = this.props.direction === 'v' ? area.height : area.width;
         const rtn = this.refreshPos(this.selectPos, {
             'start': offset,
             'end': offset + length
@@ -550,55 +541,77 @@ export const methods = {
         this.selectPos.end = rtn.end;
         area.start = rtn.start;
         area.end = rtn.end;
-        this.$emit('select', area);
-    },
+        this.emit('select', area);
+    }
 
-    getPos: function(this: types.IVControl, val: number): { 'start': number; 'end': number; } {
+    public getPos(val: number): { 'start': number; 'end': number; } {
         return this.itemsPos[val];
     }
-};
 
-export const mounted = function(this: types.IVControl): void {
-    // --- nest 内嵌闪烁是 mounted 导致 ---
-    clickgo.dom.watchStyle(this.$el, ['padding', 'padding-top', 'padding-right', 'padding-bottom', 'padding-left', 'font'], (n, v) => {
-        switch (n) {
-            case 'padding': {
-                this.padding = v;
-                break;
+    public onMounted(): void {
+        this.watch('data', (): void => {
+            this.refreshView().catch((e) => { console.log(e); });
+        }, {
+            'deep': true
+        });
+        this.watch('direction', (): void => {
+            this.refreshView().catch((e) => { console.log(e); });
+        });
+        this.watch('scrollLeft', (): void => {
+            if (this.props.direction === 'h' && this.scrollLeftEmit !== this.props.scrollLeft && this.props.scrollLeft >= 0) {
+                this.scrollLeftEmit = this.props.scrollLeft;
+                this.reShow();
             }
-            case 'padding-top': {
-                this.paddingChild.top = parseInt(v);
-                break;
+        });
+        this.watch('scrollTop', (): void => {
+            if (this.props.direction === 'v' && this.scrollTopEmit !== this.props.scrollTop && this.props.scrollTop >= 0) {
+                this.scrollTopEmit = this.props.scrollTop;
+                this.reShow();
             }
-            case 'padding-right': {
-                this.paddingChild.right = parseInt(v);
-                break;
+        });
+
+        // --- nest 内嵌闪烁是 mounted 导致 ---
+        clickgo.dom.watchStyle(this.element, ['padding', 'padding-top', 'padding-right', 'padding-bottom', 'padding-left', 'font'], (n, v) => {
+            switch (n) {
+                case 'padding': {
+                    this.padding = v;
+                    break;
+                }
+                case 'padding-top': {
+                    this.paddingChild.top = parseInt(v);
+                    break;
+                }
+                case 'padding-right': {
+                    this.paddingChild.right = parseInt(v);
+                    break;
+                }
+                case 'padding-bottom': {
+                    this.paddingChild.bottom = parseInt(v);
+                    break;
+                }
+                case 'padding-left': {
+                    this.paddingChild.left = parseInt(v);
+                    break;
+                }
             }
-            case 'padding-bottom': {
-                this.paddingChild.bottom = parseInt(v);
-                break;
+            this.refreshView().catch((e) => { console.log(e); });
+        }, true);
+        // --- 监听 content 发生的变动，如果不监听，可能导致内容撑开了元素，但是行高没有改变（content 按钮的例子） ---
+        clickgo.dom.watch(this.element, () => {
+            if (this.reShowing) {
+                return;
             }
-            case 'padding-left': {
-                this.paddingChild.left = parseInt(v);
-                break;
-            }
-        }
-        this.refreshView();
-    }, true);
-    // --- 监听 content 发生的变动，如果不监听，可能导致内容撑开了元素，但是行高没有改变（content 按钮的例子） ---
-    clickgo.dom.watch(this.$el, () => {
-        if (!this.isWatch) {
-            return;
-        }
-        this.refreshView();
-    }, 'childsub');
-    /*
-    let mo = new MutationObserver(() => {
-        this.refreshView();
-    });
-    mo.observe(this.$refs.view.$el, {
-        'attributeFilter': ['style', 'class'],
-        'attributes': true
-    });
-    //*/
-};
+            this.refreshView().catch((e) => { console.log(e); });
+        }, 'childsub');
+        /*
+        let mo = new MutationObserver(() => {
+            this.refreshView();
+        });
+        mo.observe(this.$refs.view.$el, {
+            'attributeFilter': ['style', 'class'],
+            'attributes': true
+        });
+        //*/
+    }
+
+}

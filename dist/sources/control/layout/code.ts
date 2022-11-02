@@ -1,14 +1,12 @@
-export const props = {
-    'direction': {
-        'default': 'h'
-    },
-    'gutter': {
-        'default': undefined
-    },
-    'align-h': {
-        'default': undefined
-    },
-    'align-v': {
-        'default': undefined
-    }
-};
+import * as clickgo from 'clickgo';
+
+export default class extends clickgo.control.AbstractControl {
+
+    public props = {
+        'direction': 'h',
+        'gutter': undefined,
+        'align-h': undefined,
+        'align-v': undefined
+    };
+
+}

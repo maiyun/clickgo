@@ -1,35 +1,30 @@
 import * as clickgo from 'clickgo';
-import * as types from '~/types/index';
 
-export const props = {
-    'accept': {
-        'default': undefined
-    },
-    'multi': {
-        'default': false
-    },
-    'dir': {
-        'default': false
+export default class extends clickgo.control.AbstractControl {
+
+    public props = {
+        'accept': undefined,
+        'multi': false,
+        'dir': false
+    };
+
+    public get isMulti(): boolean {
+        return clickgo.tool.getBoolean(this.props.multi);
     }
-};
 
-export const computed = {
-    'isMulti': function(this: types.IVControl): boolean {
-        return clickgo.tool.getBoolean(this.multi);
-    },
-    'isDir': function(this: types.IVControl): boolean {
-        return clickgo.tool.getBoolean(this.dir);
-    },
+    public get isDir(): boolean {
+        return clickgo.tool.getBoolean(this.props.dir);
+    }
 
-    'acceptComp': function(this: types.IVControl): string | undefined {
-        if (!this.accept) {
+    public get acceptComp(): string | undefined {
+        if (!this.props.accept) {
             return undefined;
         }
-        if (!Array.isArray(this.accept)) {
+        if (!Array.isArray(this.props.accept)) {
             return undefined;
         }
         const accept: string[] = [];
-        for (const item of this.accept) {
+        for (const item of this.props.accept as any[]) {
             if (typeof item !== 'string') {
                 continue;
             }
@@ -37,16 +32,18 @@ export const computed = {
         }
         return accept.join(',');
     }
-};
 
-export const methods = {
-    select: function(this: types.IVControl): void {
-        this.$refs.input.click();
-    },
-    change: function(this: types.IVControl, e: InputEvent): void {
+    // --- method ---
+
+    public select(): void {
+        this.refs.input.click();
+    }
+
+    public change(e: InputEvent): void {
         e.stopPropagation();
-        const inputEl = this.$refs.input as unknown as HTMLInputElement;
-        this.$emit('change', inputEl.files);
+        const inputEl = this.refs.input as unknown as HTMLInputElement;
+        this.emit('change', inputEl.files);
         inputEl.value = '';
     }
-};
+
+}

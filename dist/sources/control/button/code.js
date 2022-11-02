@@ -1,67 +1,53 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.mounted = exports.methods = exports.data = exports.computed = exports.props = void 0;
 const clickgo = require("clickgo");
-exports.props = {
-    'disabled': {
-        'default': false
-    },
-    'type': {
-        'default': 'default'
-    },
-    'plain': {
-        'default': false
-    },
-    'checked': {
-        'default': undefined
-    },
-    'modelValue': {
-        'default': undefined
-    },
-    'area': {
-        'default': 'all'
+class default_1 extends clickgo.control.AbstractControl {
+    constructor() {
+        super(...arguments);
+        this.props = {
+            'disabled': false,
+            'plain': false,
+            'checked': false,
+            'type': 'default',
+            'modelValue': undefined,
+            'area': 'all'
+        };
+        this.padding = '';
+        this.isKeyDown = false;
+        this.innerFocus = false;
+        this.arrowFocus = false;
     }
-};
-exports.computed = {
-    'isDisabled': function () {
-        return clickgo.tool.getBoolean(this.disabled);
-    },
-    'isPlain': function () {
-        return clickgo.tool.getBoolean(this.plain);
-    },
-    'isChecked': function () {
-        return clickgo.tool.getBoolean(this.checked);
-    },
-    'isAreaAllMark': function () {
-        return this.$slots.pop ? (this.area === 'all' || this.area === 'mark') : true;
-    },
-    'isChildFocus': function () {
+    get isDisabled() {
+        return clickgo.tool.getBoolean(this.props.disabled);
+    }
+    get isPlain() {
+        return clickgo.tool.getBoolean(this.props.plain);
+    }
+    get isChecked() {
+        return clickgo.tool.getBoolean(this.props.checked);
+    }
+    get isAreaAllMark() {
+        return this.slots('pop').length > 0 ? (this.props.area === 'all' || this.props.area === 'mark') : true;
+    }
+    get isChildFocus() {
         return this.innerFocus || this.arrowFocus;
-    },
-    'opMargin': function () {
+    }
+    get opMargin() {
         return this.padding.replace(/(\w+)/g, '-$1');
     }
-};
-exports.data = {
-    'padding': '',
-    'isKeyDown': false,
-    'innerFocus': false,
-    'arrowFocus': false
-};
-exports.methods = {
-    keydown: function (e) {
+    keydown(e) {
         if (e.key === 'Enter') {
             e.preventDefault();
-            if (this.area === 'all' || this.area === 'mark') {
+            if (this.props.area === 'all' || this.props.area === 'mark') {
                 this.innerClick(e);
-                if (!this.$slots.pop) {
-                    this.$el.click();
+                if (this.slots('pop').length === 0) {
+                    this.element.click();
                 }
             }
             else {
                 if (this.innerFocus) {
                     this.innerClick(e);
-                    this.$el.click();
+                    this.element.click();
                 }
                 else {
                     this.arrowClick(e);
@@ -72,71 +58,71 @@ exports.methods = {
             e.preventDefault();
             this.isKeyDown = true;
         }
-    },
-    keyup: function (e) {
+    }
+    keyup(e) {
         if (!this.isKeyDown) {
             return;
         }
         this.isKeyDown = false;
-        if (this.area === 'all' || this.area === 'mark') {
+        if (this.props.area === 'all' || this.props.area === 'mark') {
             this.innerClick(e);
-            if (!this.$slots.pop) {
-                this.$el.click();
+            if (!this.slots('pop').length) {
+                this.element.click();
             }
         }
         else {
             if (this.innerFocus) {
                 this.innerClick(e);
-                this.$el.click();
+                this.element.click();
             }
             else {
                 this.arrowClick(e);
             }
         }
-    },
-    down: function (e) {
-        if (this.area !== 'mark') {
+    }
+    down(e) {
+        if (this.props.area !== 'mark') {
             return;
         }
         clickgo.dom.bindLong(e, () => {
-            clickgo.form.showPop(this.$refs.arrow, this.$refs.pop, 'h');
+            clickgo.form.showPop(this.refs.arrow, this.refs.pop, 'h');
         });
-    },
-    innerClick: function (e) {
-        if (!this.$slots.pop || (this.area === 'arrow' || this.area === 'mark')) {
+    }
+    innerClick(e) {
+        if (!this.slots('pop').length || (this.props.area === 'arrow' || this.props.area === 'mark')) {
             return;
         }
         e.stopPropagation();
-        if (this.$el.dataset.cgPopOpen === undefined) {
-            clickgo.form.showPop(this.$el, this.$refs.pop, 'v');
+        if (this.element.dataset.cgPopOpen === undefined) {
+            clickgo.form.showPop(this.element, this.refs.pop, 'v');
         }
         else {
-            clickgo.form.hidePop(this.$el);
+            clickgo.form.hidePop(this.element);
         }
-    },
-    arrowClick: function (e) {
+    }
+    arrowClick(e) {
         e.stopPropagation();
-        if (this.area === 'all') {
-            if (this.$el.dataset.cgPopOpen === undefined) {
-                clickgo.form.showPop(this.$el, this.$refs.pop, 'v');
+        if (this.props.area === 'all') {
+            if (this.element.dataset.cgPopOpen === undefined) {
+                clickgo.form.showPop(this.element, this.refs.pop, 'v');
             }
             else {
-                clickgo.form.hidePop(this.$el);
+                clickgo.form.hidePop(this.element);
             }
         }
         else {
-            if (this.$refs.arrow.dataset.cgPopOpen === undefined) {
-                clickgo.form.showPop(this.$refs.arrow, this.$refs.pop, this.area === 'arrow' ? 'v' : 'h');
+            if (this.refs.arrow.dataset.cgPopOpen === undefined) {
+                clickgo.form.showPop(this.refs.arrow, this.refs.pop, this.props.area === 'arrow' ? 'v' : 'h');
             }
             else {
-                clickgo.form.hidePop(this.$refs.arrow);
+                clickgo.form.hidePop(this.refs.arrow);
             }
         }
     }
-};
-const mounted = function () {
-    clickgo.dom.watchStyle(this.$el, 'padding', (n, v) => {
-        this.padding = v;
-    }, true);
-};
-exports.mounted = mounted;
+    onMounted() {
+        clickgo.dom.watchStyle(this.element, 'padding', (n, v) => {
+            this.padding = v;
+        }, true);
+    }
+}
+exports.default = default_1;

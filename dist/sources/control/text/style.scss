@@ -35,7 +35,7 @@
     }
 
     .text {
-        flex: 1; -webkit-appearance: none; border: none; margin: 0; outline: none; resize: none; -webkit-overflow-scrolling: touch;
+        flex: 1; -webkit-appearance: none; appearance: none; border: none; margin: 0; outline: none; resize: none; -webkit-overflow-scrolling: touch;
         &::-webkit-scrollbar {
             display: none;
         }

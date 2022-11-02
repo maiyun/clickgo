@@ -19,7 +19,7 @@ import * as tool from './tool';
 import * as task from './task';
 import * as dom from './dom';
 
-/** --- 当前全局主题 --- */
+/** --- 当前全局主题，App 模式下无效 --- */
 export let global: types.ITheme | null = null;
 
 /**
@@ -117,7 +117,7 @@ export async function load(theme?: types.ITheme, taskId?: number): Promise<boole
 
 /**
  * --- 移除当前 task 的 theme（只能移除自定的） ---
- * @param 要移除的主题 name
+ * @param name 要移除的主题
  * @param taskId 任务 ID，App 模式下无效
  */
 export async function remove(name: string, taskId?: number): Promise<void> {

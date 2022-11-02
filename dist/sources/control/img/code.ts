@@ -1,53 +1,47 @@
 import * as clickgo from 'clickgo';
-import * as types from '~/types/index';
 
-export const props = {
-    'src': {
-        'default': ''
-    },
-    'mode': {
-        'default': 'default'
-    }
-};
+export default class extends clickgo.control.AbstractControl {
 
-export const data = {
-    'imgData': '',
-    'width': 0,
-    'height': 0,
+    public props = {
+        'src': '',
+        'mode': 'default'
+    };
 
-    // --- watch: src 变更次数 ---
-    'count': 0
-};
+    public imgData = '';
 
-export const computed = {
-    'backgroundSize': function(this: types.IVControl): string | undefined {
-        if (this.mode === 'default') {
-            return (this.width as number).toString() + 'px ' + (this.height as number).toString() + 'px';
+    public width = 0;
+
+    public height = 0;
+
+    /** --- watch: src 变更次数 --- */
+    public count = 0;
+
+    public get backgroundSize(): string {
+        if (this.props.mode === 'default') {
+            return this.width.toString() + 'px ' + this.height.toString() + 'px';
         }
         else {
-            return this.mode;
+            return this.props.mode;
         }
     }
-};
 
-export const watch = {
-    'src': {
-        handler: async function(this: types.IVControl): Promise<void> {
+    public onMounted(): void {
+        this.watch('src', async () => {
             const count = ++this.count;
-            if (typeof this.src !== 'string' || this.src === '') {
-                this.imgData = undefined;
+            if (typeof this.props.src !== 'string' || this.props.src === '') {
+                this.imgData = '';
                 return;
             }
-            const pre = this.src.slice(0, 6).toLowerCase();
+            const pre = this.props.src.slice(0, 6).toLowerCase();
             if (pre === 'file:/') {
                 return;
             }
             if (pre === 'http:/' || pre === 'https:' || pre === 'data:i') {
-                this.imgData = `url(${this.src})`;
+                this.imgData = `url(${this.props.src})`;
                 return;
             }
             // --- 本 app 包 ---
-            const path = clickgo.tool.urlResolve(this.cgPath, this.src);
+            const path = clickgo.tool.urlResolve(this.path + '/', this.props.src);
             const blob = await clickgo.fs.getContent(path);
             if ((count !== this.count) || !blob || typeof blob === 'string') {
                 return;
@@ -60,15 +54,15 @@ export const watch = {
                 this.imgData = 'url(' + t + ')';
                 return;
             }
-            this.imgData = undefined;
-        },
-        'immediate': true
-    }
-};
+            this.imgData = '';
+        }, {
+            'immediate': true
+        });
 
-export const mounted = function(this: types.IVControl): void {
-    clickgo.dom.watchSize(this.$el, (size) => {
-        this.width = size.width;
-        this.height = size.height;
-    }, true);
-};
+        clickgo.dom.watchSize(this.element, (size) => {
+            this.width = size.width;
+            this.height = size.height;
+        }, true);
+    }
+
+}

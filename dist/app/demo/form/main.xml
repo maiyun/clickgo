@@ -2,7 +2,7 @@
     <tab v-model="ntab" :tabs="['control', 'method', 'event']" style="margin: 10px; flex: 1;">
         <overflow v-if="ntab === 'control'" class="inner" direction="v">
             <layout class="buttons" gutter="10" direction="v">
-                <button @click="openForm('control', 'form')">Form</button>
+                <button @click="openForm('cform')">Form</button>
                 <button @click="openForm('control', 'img')">Img</button>
                 <button @click="openForm('control', 'button')">Button</button>
                 <button @click="openForm('control', 'check')">Check</button>

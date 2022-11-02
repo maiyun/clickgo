@@ -1,30 +1,31 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.methods = exports.props = void 0;
 const clickgo = require("clickgo");
-exports.props = {
-    'position': {
-        'default': 'bottom'
+class default_1 extends clickgo.control.AbstractControl {
+    constructor() {
+        super(...arguments);
+        this.props = {
+            'position': 'bottom'
+        };
     }
-};
-exports.methods = {
-    down: function (e) {
+    down(e) {
         if (clickgo.dom.hasTouchButMouse(e)) {
             return;
         }
-        if (this.$el.dataset.cgPopOpen !== undefined) {
+        if (this.element.dataset.cgPopOpen !== undefined) {
             clickgo.form.hidePop();
         }
         if (e instanceof TouchEvent) {
             clickgo.dom.bindLong(e, (e) => {
-                clickgo.form.showPop(this.$el, this.$refs.pop, e);
+                clickgo.form.showPop(this.element, this.refs.pop, e);
             });
         }
-    },
-    contextmenu: function (e) {
+    }
+    contextmenu(e) {
         if (clickgo.dom.hasTouchButMouse(e)) {
             return;
         }
-        clickgo.form.showPop(this.$el, this.$refs.pop, e);
+        clickgo.form.showPop(this.element, this.refs.pop, e);
     }
-};
+}
+exports.default = default_1;

@@ -1,94 +1,87 @@
 import * as clickgo from 'clickgo';
-import * as types from '~/types/index';
 
-export const props = {
-    'disabled': {
-        'default': false
-    },
+export default class extends clickgo.control.AbstractControl {
 
-    'modelValue': {
-        'default': ''
-    },
-    'editable': {
-        'default': false
-    },
-    'data': {
-        'default': []
+    public props = {
+        'disabled': false,
+
+        'modelValue': '',
+        'editable': false,
+        'data': []
+    };
+
+    public background = '';
+
+    public padding = '';
+
+    public value = '';
+
+    public label = '';
+
+    public inputValue = '';
+
+    public get isDisabled(): boolean {
+        return clickgo.tool.getBoolean(this.props.disabled);
     }
-};
 
-export const watch = {
-    'modelValue': {
-        'handler': function(this: types.IVControl): void {
-            this.value = this.modelValue;
-        },
-        'immediate': true
-    },
-    'isEditable': {
-        'handler': function(this: types.IVControl, editable: boolean): void {
-            if (editable) {
-                this.inputValue = this.value;
-            }
-        },
-        'immediate': true
+    public get isEditable(): boolean {
+        return clickgo.tool.getBoolean(this.props.editable);
     }
-};
 
-export const data = {
-    'background': '',
-    'padding': '',
-
-    'value': '',
-    'label': '',
-    'inputValue': ''
-};
-
-export const computed = {
-    'isDisabled': function(this: types.IVControl): boolean {
-        return clickgo.tool.getBoolean(this.disabled);
-    },
-    'isEditable': function(this: types.IVControl): boolean {
-        return clickgo.tool.getBoolean(this.editable);
-    },
-    'opMargin': function(this: types.IVControl): string {
+    public get opMargin(): string {
         return this.padding.replace(/(\w+)/g, '-$1');
     }
-};
 
-export const methods = {
-    updateInputValue: function(this: types.IVControl, value: string): void {
+    public updateInputValue(value: string): void {
         this.inputValue = value;
         this.value = this.inputValue;
-        this.$emit('update:modelValue', this.value);
-    },
-    updateModelValue: function(this: types.IVControl, value: string): void {
+        this.emit('update:modelValue', this.value);
+    }
+
+    public updateModelValue(value: string): void {
         this.value = value;
         if (this.isEditable && (value === '')) {
             return;
         }
         this.inputValue = value;
-        this.$emit('update:modelValue', value);
-    },
-    updateLabel: function(this: types.IVControl, label: string): void {
+        this.emit('update:modelValue', value);
+    }
+
+    public updateLabel(label: string): void {
         this.label = label;
-        this.$emit('label', label);
-    },
-    listItemClick: function(this: types.IVControl): void {
+        this.emit('label', label);
+    }
+
+    public listItemClick(): void {
         clickgo.form.hidePop();
     }
-};
 
-export const mounted = function(this: types.IVControl): void {
-    clickgo.dom.watchStyle(this.$el, ['background', 'padding'], (n, v) => {
-        switch (n) {
-            case 'background': {
-                this.background = v;
-                break;
+    public onMounted(): void | Promise<void> {
+        this.watch('modelValue', (): void => {
+            this.value = this.props.modelValue;
+        }, {
+            'immediate': true
+        });
+        this.watch('isEditable', (editable: boolean): void => {
+            if (editable) {
+                this.inputValue = this.value;
             }
-            case 'padding': {
-                this.padding = v;
-                break;
+        }, {
+            'immediate': true
+        });
+
+        clickgo.dom.watchStyle(this.element, ['background', 'padding'], (n, v) => {
+            switch (n) {
+                case 'background': {
+                    this.background = v;
+                    break;
+                }
+                case 'padding': {
+                    this.padding = v;
+                    break;
+                }
             }
-        }
-    }, true);
-};
+        }, true);
+    }
+
+}

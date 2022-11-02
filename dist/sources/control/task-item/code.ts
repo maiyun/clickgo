@@ -1,78 +1,76 @@
 import * as clickgo from 'clickgo';
-import * as types from '~/types/index';
 
-export const props = {
-    'selected': {
-        'default': false
-    },
-    'opened': {
-        'default': false
-    },
-    'multi': {
-        'default': false
+export default class extends clickgo.control.AbstractControl {
+
+    public props = {
+        'selected': false,
+        'opened': false,
+        'multi': false
+    };
+
+    public get isSelected(): boolean {
+        return clickgo.tool.getBoolean(this.props.selected);
     }
-};
 
-export const computed = {
-    'isSelected': function(this: types.IVControl): boolean {
-        return clickgo.tool.getBoolean(this.selected);
-    },
-    'isOpened': function(this: types.IVControl): boolean {
-        return clickgo.tool.getBoolean(this.opened);
-    },
-    'isMulti': function(this: types.IVControl): boolean {
-        return clickgo.tool.getBoolean(this.multi);
-    },
-    'position': function(this: types.IVControl): string {
-        return this.cgParentByName('task')?.position ?? 'bottom';
+    public get isOpened(): boolean {
+        return clickgo.tool.getBoolean(this.props.opened);
     }
-};
 
-export const methods = {
-    click: function(this: types.IVControl): void {
-        if (!this.$slots.pop) {
+    public get isMulti(): boolean {
+        return clickgo.tool.getBoolean(this.props.multi);
+    }
+
+    public get position(): string {
+        return this.parentByName('task')?.position ?? 'bottom';
+    }
+
+    public click(): void {
+        if (!this.slots('pop').length) {
             return;
         }
-        if (this.$el.dataset.cgPopOpen !== undefined) {
+        if (this.element.dataset.cgPopOpen !== undefined) {
             clickgo.form.hidePop();
             return;
         }
-        clickgo.form.showPop(this.$el, this.$refs.pop, 'v');
-    },
-    contextmenu: function(this: types.IVControl, e: MouseEvent): void {
+        clickgo.form.showPop(this.element, this.refs.pop, 'v');
+    }
+
+    public contextmenu(e: MouseEvent): void {
         if (clickgo.dom.hasTouchButMouse(e)) {
             return;
         }
-        if (!this.$slots.contextmenu) {
+        if (!this.slots('contextmenu').length) {
             return;
         }
-        clickgo.form.showPop(this.$el, this.$refs.contextmenu, 'v');
-    },
-    down: function(this: types.IVControl, e: MouseEvent | TouchEvent): void {
+        clickgo.form.showPop(this.element, this.refs.contextmenu, 'v');
+    }
+
+    public down(e: MouseEvent | TouchEvent): void {
         if (clickgo.dom.hasTouchButMouse(e)) {
             return;
         }
-        if (this.$el.dataset.cgPopOpen !== undefined) {
+        if (this.element.dataset.cgPopOpen !== undefined) {
             // --- 是否要隐藏 ---
             if (e instanceof MouseEvent && e.button === 2) {
                 // --- 点击鼠标右键 ---
-                if (this.$el.dataset.cgPopOpen !== undefined) {
+                if (this.element.dataset.cgPopOpen !== undefined) {
                     clickgo.form.hidePop();
                 }
             }
             else {
-                if (this.$refs.contextmenu?.dataset.cgOpen !== undefined) {
+                if (this.refs.contextmenu?.dataset.cgOpen !== undefined) {
                     clickgo.form.hidePop();
                 }
             }
         }
         if (e instanceof TouchEvent) {
             clickgo.dom.bindLong(e, () => {
-                if (this.$refs.pop?.dataset.cgOpen !== undefined) {
+                if (this.refs.pop?.dataset.cgOpen !== undefined) {
                     clickgo.form.hidePop();
                 }
-                clickgo.form.showPop(this.$el, this.$refs.contextmenu, 'v');
+                clickgo.form.showPop(this.element, this.refs.contextmenu, 'v');
             });
         }
     }
-};
+
+}

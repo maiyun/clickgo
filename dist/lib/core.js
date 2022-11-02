@@ -9,13 +9,16 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getAvailArea = exports.fetchApp = exports.readApp = exports.trigger = exports.removeSystemEventListener = exports.setSystemEventListener = exports.globalEvents = exports.getModule = exports.initModules = exports.regModule = exports.cdn = exports.config = void 0;
+exports.getAvailArea = exports.fetchApp = exports.readApp = exports.trigger = exports.getModule = exports.initModules = exports.regModule = exports.boot = exports.getCdn = exports.AbstractApp = exports.config = void 0;
 const clickgo = require("../clickgo");
 const fs = require("./fs");
 const form = require("./form");
 const task = require("./task");
 const tool = require("./tool");
+const control = require("./control");
+const theme = require("./theme");
 const zip = require("./zip");
+const dom = require("./dom");
 const configOrigin = {
     'locale': 'en',
     'task.position': 'bottom',
@@ -36,7 +39,223 @@ exports.config = clickgo.vue.reactive({
     'desktop.path': null,
     'launcher.list': []
 });
-exports.cdn = '';
+class AbstractApp {
+    get filename() {
+        return '';
+    }
+    get taskId() {
+        return 0;
+    }
+    set taskId(v) {
+        form.notify({
+            'title': 'Error',
+            'content': `The software tries to modify the system variable "taskId" to "${v}".\nPath: ${this.filename}`,
+            'type': 'danger'
+        });
+    }
+    config(config) {
+        var _a;
+        return __awaiter(this, void 0, void 0, function* () {
+            const t = task.list[this.taskId];
+            if (!t) {
+                return false;
+            }
+            t.config = config;
+            if (t.app.net) {
+                if (!t.config.files) {
+                    return false;
+                }
+                const files = t.config.files;
+                const net = t.app.net;
+                yield new Promise(function (resolve) {
+                    var _a;
+                    let loaded = 0;
+                    const total = files.length;
+                    const beforeTotal = Object.keys(t.app.files).length;
+                    (_a = net.progress) === null || _a === void 0 ? void 0 : _a.call(net, loaded + beforeTotal, total + beforeTotal);
+                    for (const file of files) {
+                        fs.getContent(net.url + file.slice(1), {
+                            'current': net.current
+                        }).then(function (blob) {
+                            var _a;
+                            return __awaiter(this, void 0, void 0, function* () {
+                                if (blob === null || typeof blob === 'string') {
+                                    clickgo.form.notify({
+                                        'title': 'File not found',
+                                        'content': net.url + file.slice(1),
+                                        'type': 'danger'
+                                    });
+                                    return;
+                                }
+                                const mime = tool.getMimeByPath(file);
+                                if (['txt', 'json', 'js', 'css', 'xml', 'html'].includes(mime.ext)) {
+                                    t.app.files[file] = (yield tool.blob2Text(blob)).replace(/^\ufeff/, '');
+                                }
+                                else {
+                                    t.app.files[file] = blob;
+                                }
+                                ++loaded;
+                                (_a = net.progress) === null || _a === void 0 ? void 0 : _a.call(net, loaded + beforeTotal, total + beforeTotal);
+                                if (net.notify) {
+                                    form.notifyProgress(net.notify, (loaded / total) / 2 + 0.5);
+                                }
+                                if (loaded < total) {
+                                    return;
+                                }
+                                resolve();
+                            });
+                        }).catch(function () {
+                            var _a;
+                            ++loaded;
+                            (_a = net.progress) === null || _a === void 0 ? void 0 : _a.call(net, loaded + beforeTotal, total + beforeTotal);
+                            if (net.notify) {
+                                form.notifyProgress(net.notify, (loaded / total) / 2 + 0.5);
+                            }
+                            if (loaded < total) {
+                                return;
+                            }
+                            resolve();
+                        });
+                    }
+                });
+                if (net.notify) {
+                    setTimeout(function () {
+                        form.hideNotify(net.notify);
+                    }, 2000);
+                }
+            }
+            if (!(yield control.init(this.taskId))) {
+                return false;
+            }
+            if ((_a = config.themes) === null || _a === void 0 ? void 0 : _a.length) {
+                for (let path of config.themes) {
+                    path += '.cgt';
+                    path = tool.urlResolve('/', path);
+                    const file = yield fs.getContent(path, {
+                        'files': t.app.files,
+                        'current': t.current
+                    });
+                    if (file && typeof file !== 'string') {
+                        const th = yield theme.read(file);
+                        if (th) {
+                            yield theme.load(th, t.id);
+                        }
+                    }
+                }
+            }
+            else {
+                if (theme.global) {
+                    yield theme.load(undefined, this.taskId);
+                }
+            }
+            if (config.locales) {
+                for (let path in config.locales) {
+                    const locale = config.locales[path];
+                    if (!path.endsWith('.json')) {
+                        path += '.json';
+                    }
+                    const lcontent = yield fs.getContent(path, {
+                        'encoding': 'utf8',
+                        'files': t.app.files,
+                        'current': t.current
+                    });
+                    if (!lcontent) {
+                        continue;
+                    }
+                    try {
+                        const data = JSON.parse(lcontent);
+                        task.loadLocaleData(locale, data, '', t.id);
+                    }
+                    catch (_b) {
+                    }
+                }
+            }
+            if (config.style) {
+                const style = yield fs.getContent(config.style + '.css', {
+                    'encoding': 'utf8',
+                    'files': t.app.files,
+                    'current': t.current
+                });
+                if (style) {
+                    const r = tool.stylePrepend(style, 'cg-task' + this.taskId.toString() + '_');
+                    dom.pushStyle(this.taskId, yield tool.styleUrl2DataUrl(config.style, r.style, t.app.files));
+                }
+            }
+            if (config.icon) {
+                const icon = yield fs.getContent(config.icon, {
+                    'files': t.app.files,
+                    'current': t.current
+                });
+                if (icon && typeof icon !== 'string') {
+                    t.app.icon = yield tool.blob2DataUrl(icon);
+                }
+            }
+            t.class = this;
+            return true;
+        });
+    }
+    run(form) {
+        if (typeof form === 'number') {
+            const msg = 'Application run error, Form creation failed (' + form.toString() + ').';
+            trigger('error', this.taskId, 0, new Error(msg), msg);
+            return;
+        }
+        form.show();
+    }
+    onError() {
+        return;
+    }
+    onScreenResize() {
+        return;
+    }
+    onConfigChanged() {
+        return;
+    }
+    onFormCreated() {
+        return;
+    }
+    onFormRemoved() {
+        return;
+    }
+    onFormTitleChanged() {
+        return;
+    }
+    onFormIconChanged() {
+        return;
+    }
+    onFormStateMinChanged() {
+        return;
+    }
+    onFormStateMaxChanged() {
+        return;
+    }
+    onFormShowChanged() {
+        return;
+    }
+    onFormFocused() {
+        return;
+    }
+    onFormBlurred() {
+        return;
+    }
+    onFormFlash() {
+        return;
+    }
+    onTaskStarted() {
+        return;
+    }
+    onTaskEnded() {
+        return;
+    }
+    onLauncherFolderNameChanged() {
+        return;
+    }
+}
+exports.AbstractApp = AbstractApp;
+function getCdn() {
+    return loader.cdn;
+}
+exports.getCdn = getCdn;
 clickgo.vue.watch(exports.config, function () {
     for (const key in configOrigin) {
         if (exports.config[key] !== undefined) {
@@ -90,7 +309,7 @@ const modules = {
         func: function () {
             return __awaiter(this, void 0, void 0, function* () {
                 return new Promise(function (resolve, reject) {
-                    fetch(loader.cdn + '/npm/monaco-editor@0.33.0/min/vs/loader.js').then(function (r) {
+                    fetch(loader.cdn + '/npm/monaco-editor@0.34.1/min/vs/loader.js').then(function (r) {
                         return r.blob();
                     }).then(function (b) {
                         return tool.blob2DataUrl(b);
@@ -195,32 +414,29 @@ function getModule(name) {
     return modules[name].obj;
 }
 exports.getModule = getModule;
-exports.globalEvents = {
-    errorHandler: null,
-    screenResizeHandler: function () {
+const globalEvents = {
+    screenResize: function () {
         form.refreshMaxPosition();
     },
-    configChangedHandler: null,
-    formCreatedHandler: null,
-    formRemovedHandler: function (taskId, formId) {
+    formRemoved: function (taskId, formId) {
         if (!form.simpleSystemTaskRoot.forms[formId]) {
             return;
         }
         delete form.simpleSystemTaskRoot.forms[formId];
     },
-    formTitleChangedHandler: function (taskId, formId, title) {
+    formTitleChanged: function (taskId, formId, title) {
         if (!form.simpleSystemTaskRoot.forms[formId]) {
             return;
         }
         form.simpleSystemTaskRoot.forms[formId].title = title;
     },
-    formIconChangedHandler: function (taskId, formId, icon) {
+    formIconChanged: function (taskId, formId, icon) {
         if (!form.simpleSystemTaskRoot.forms[formId]) {
             return;
         }
         form.simpleSystemTaskRoot.forms[formId].icon = icon;
     },
-    formStateMinChangedHandler: function (taskId, formId, state) {
+    formStateMinChanged: function (taskId, formId, state) {
         if (task.systemTaskInfo.taskId > 0) {
             return;
         }
@@ -240,94 +456,34 @@ exports.globalEvents = {
             }
             delete form.simpleSystemTaskRoot.forms[formId];
         }
-    },
-    formStateMaxChangedHandler: null,
-    formShowChangedHandler: null,
-    formFocusedHandler: null,
-    formBlurredHandler: null,
-    formFlashHandler: null,
-    taskStartedHandler: null,
-    taskEndedHandler: null,
-    launcherFolderNameChangedHandler: null
+    }
 };
-function setSystemEventListener(name, func, formId, taskId) {
-    if (!taskId) {
-        return;
-    }
-    const t = task.list[taskId];
-    if (!t) {
-        return;
-    }
-    if (!formId) {
-        return;
-    }
-    const f = t.forms[formId];
-    if (!f) {
-        return;
-    }
-    f.events[name] = func;
-}
-exports.setSystemEventListener = setSystemEventListener;
-function removeSystemEventListener(name, formId, taskId) {
-    if (!taskId) {
-        return;
-    }
-    const t = task.list[taskId];
-    if (!t) {
-        return;
-    }
-    if (!formId) {
-        return;
-    }
-    const f = t.forms[formId];
-    if (!f) {
-        return;
-    }
-    delete f.events[name];
-}
-exports.removeSystemEventListener = removeSystemEventListener;
 function trigger(name, taskId = 0, formId = 0, param1 = '', param2 = '') {
-    var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z, _0, _1, _2, _3, _4, _5, _6, _7;
+    var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z, _0, _1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12;
+    const eventName = 'on' + name[0].toUpperCase() + name.slice(1);
     switch (name) {
         case 'error': {
             if (typeof taskId !== 'number' || typeof formId !== 'number') {
                 break;
             }
-            const r = (_a = exports.globalEvents.errorHandler) === null || _a === void 0 ? void 0 : _a.call(exports.globalEvents, taskId, formId, param1, param2);
-            if (r && (r instanceof Promise)) {
-                r.catch(function (e) {
-                    console.log(e);
-                });
-            }
+            exports.boot[eventName](taskId, formId, param1, param2);
             for (const tid in task.list) {
                 const t = task.list[tid];
+                (_a = t.class) === null || _a === void 0 ? void 0 : _a[eventName](taskId, formId, param1, param2);
                 for (const fid in t.forms) {
-                    const r = (_c = (_b = t.forms[fid].events)[name]) === null || _c === void 0 ? void 0 : _c.call(_b, taskId, formId, param1, param2);
-                    if (r instanceof Promise) {
-                        r.catch(function (e) {
-                            console.log(e);
-                        });
-                    }
+                    (_c = (_b = t.forms[fid].vroot)[eventName]) === null || _c === void 0 ? void 0 : _c.call(_b, taskId, formId, param1, param2);
                 }
             }
             break;
         }
         case 'screenResize': {
-            const r = (_d = exports.globalEvents.screenResizeHandler) === null || _d === void 0 ? void 0 : _d.call(exports.globalEvents);
-            if (r && (r instanceof Promise)) {
-                r.catch(function (e) {
-                    console.log(e);
-                });
-            }
+            globalEvents.screenResize();
+            exports.boot[eventName]();
             for (const tid in task.list) {
                 const t = task.list[tid];
+                (_d = t.class) === null || _d === void 0 ? void 0 : _d[eventName]();
                 for (const fid in t.forms) {
-                    const r = (_f = (_e = t.forms[fid].events)[name]) === null || _f === void 0 ? void 0 : _f.call(_e);
-                    if (r instanceof Promise) {
-                        r.catch(function (e) {
-                            console.log(e);
-                        });
-                    }
+                    (_f = (_e = t.forms[fid].vroot)[eventName]) === null || _f === void 0 ? void 0 : _f.call(_e);
                 }
             }
             break;
@@ -336,53 +492,38 @@ function trigger(name, taskId = 0, formId = 0, param1 = '', param2 = '') {
             if ((typeof taskId !== 'string') || (typeof formId === 'number')) {
                 break;
             }
-            const r = (_g = exports.globalEvents.configChangedHandler) === null || _g === void 0 ? void 0 : _g.call(exports.globalEvents, taskId, formId);
-            if (r && (r instanceof Promise)) {
-                r.catch(function (e) {
-                    console.log(e);
-                });
-            }
+            exports.boot[eventName]();
             for (const tid in task.list) {
                 const t = task.list[tid];
+                (_g = t.class) === null || _g === void 0 ? void 0 : _g[eventName](taskId, formId);
                 for (const fid in t.forms) {
-                    const r = (_j = (_h = t.forms[fid].events)[name]) === null || _j === void 0 ? void 0 : _j.call(_h, taskId, formId);
-                    if (r instanceof Promise) {
-                        r.catch(function (e) {
-                            console.log(e);
-                        });
-                    }
+                    (_j = (_h = t.forms[fid].vroot)[eventName]) === null || _j === void 0 ? void 0 : _j.call(_h, taskId, formId);
                 }
             }
             break;
         }
         case 'formCreated':
         case 'formRemoved': {
-            (_l = (_k = exports.globalEvents)[name + 'Handler']) === null || _l === void 0 ? void 0 : _l.call(_k, taskId, formId, param1, param2);
+            (_l = (_k = globalEvents)[name]) === null || _l === void 0 ? void 0 : _l.call(_k, taskId, formId, param1, param2);
+            exports.boot[eventName](taskId, formId, param1, param2);
             for (const tid in task.list) {
                 const t = task.list[tid];
+                (_m = t.class) === null || _m === void 0 ? void 0 : _m[eventName](taskId, formId, param1, param2);
                 for (const fid in t.forms) {
-                    const r = (_o = (_m = t.forms[fid].events)[name]) === null || _o === void 0 ? void 0 : _o.call(_m, taskId, formId, param1, param2);
-                    if (r instanceof Promise) {
-                        r.catch(function (e) {
-                            console.log(e);
-                        });
-                    }
+                    (_p = (_o = t.forms[fid].vroot)[eventName]) === null || _p === void 0 ? void 0 : _p.call(_o, taskId, formId, param1, param2);
                 }
             }
             break;
         }
         case 'formTitleChanged':
         case 'formIconChanged': {
-            (_q = (_p = exports.globalEvents)[name + 'Handler']) === null || _q === void 0 ? void 0 : _q.call(_p, taskId, formId, param1);
+            (_r = (_q = globalEvents)[name]) === null || _r === void 0 ? void 0 : _r.call(_q, taskId, formId, param1);
+            exports.boot[eventName](taskId, formId, param1);
             for (const tid in task.list) {
                 const t = task.list[tid];
+                (_s = t.class) === null || _s === void 0 ? void 0 : _s[eventName](taskId, formId, param1);
                 for (const fid in t.forms) {
-                    const r = (_s = (_r = t.forms[fid].events)[name]) === null || _s === void 0 ? void 0 : _s.call(_r, taskId, formId, param1);
-                    if (r instanceof Promise) {
-                        r.catch(function (e) {
-                            console.log(e);
-                        });
-                    }
+                    (_u = (_t = t.forms[fid].vroot)[eventName]) === null || _u === void 0 ? void 0 : _u.call(_t, taskId, formId, param1);
                 }
             }
             break;
@@ -390,16 +531,13 @@ function trigger(name, taskId = 0, formId = 0, param1 = '', param2 = '') {
         case 'formStateMinChanged':
         case 'formStateMaxChanged':
         case 'formShowChanged': {
-            (_u = (_t = exports.globalEvents)[name + 'Handler']) === null || _u === void 0 ? void 0 : _u.call(_t, taskId, formId, param1);
+            (_w = (_v = globalEvents)[name]) === null || _w === void 0 ? void 0 : _w.call(_v, taskId, formId, param1);
+            exports.boot[eventName](taskId, formId, param1);
             for (const tid in task.list) {
                 const t = task.list[tid];
+                (_x = t.class) === null || _x === void 0 ? void 0 : _x[eventName](taskId, formId, param1);
                 for (const fid in t.forms) {
-                    const r = (_w = (_v = t.forms[fid].events)[name]) === null || _w === void 0 ? void 0 : _w.call(_v, taskId, formId, param1);
-                    if (r instanceof Promise) {
-                        r.catch(function (e) {
-                            console.log(e);
-                        });
-                    }
+                    (_z = (_y = t.forms[fid].vroot)[eventName]) === null || _z === void 0 ? void 0 : _z.call(_y, taskId, formId, param1);
                 }
             }
             break;
@@ -407,32 +545,26 @@ function trigger(name, taskId = 0, formId = 0, param1 = '', param2 = '') {
         case 'formFocused':
         case 'formBlurred':
         case 'formFlash': {
-            (_y = (_x = exports.globalEvents)[name + 'Handler']) === null || _y === void 0 ? void 0 : _y.call(_x, taskId, formId);
+            (_1 = (_0 = globalEvents)[name]) === null || _1 === void 0 ? void 0 : _1.call(_0, taskId, formId);
+            exports.boot[eventName](taskId, formId);
             for (const tid in task.list) {
                 const t = task.list[tid];
+                (_2 = t.class) === null || _2 === void 0 ? void 0 : _2[eventName](taskId, formId);
                 for (const fid in t.forms) {
-                    const r = (_0 = (_z = t.forms[fid].events)[name]) === null || _0 === void 0 ? void 0 : _0.call(_z, taskId, formId);
-                    if (r instanceof Promise) {
-                        r.catch(function (e) {
-                            console.log(e);
-                        });
-                    }
+                    (_4 = (_3 = t.forms[fid].vroot)[eventName]) === null || _4 === void 0 ? void 0 : _4.call(_3, taskId, formId);
                 }
             }
             break;
         }
         case 'taskStarted':
         case 'taskEnded': {
-            (_2 = (_1 = exports.globalEvents)[name + 'Handler']) === null || _2 === void 0 ? void 0 : _2.call(_1, taskId, formId);
+            (_6 = (_5 = globalEvents)[name]) === null || _6 === void 0 ? void 0 : _6.call(_5, taskId, formId);
+            exports.boot[eventName](taskId, formId);
             for (const tid in task.list) {
                 const t = task.list[tid];
+                (_7 = t.class) === null || _7 === void 0 ? void 0 : _7[eventName](taskId);
                 for (const fid in t.forms) {
-                    const r = (_4 = (_3 = t.forms[fid].events)[name]) === null || _4 === void 0 ? void 0 : _4.call(_3, taskId);
-                    if (r instanceof Promise) {
-                        r.catch(function (e) {
-                            console.log(e);
-                        });
-                    }
+                    (_9 = (_8 = t.forms[fid].vroot)[eventName]) === null || _9 === void 0 ? void 0 : _9.call(_8, taskId);
                 }
             }
             break;
@@ -444,21 +576,12 @@ function trigger(name, taskId = 0, formId = 0, param1 = '', param2 = '') {
             if (typeof taskId === 'number') {
                 taskId = taskId.toString();
             }
-            const r = (_5 = exports.globalEvents.launcherFolderNameChangedHandler) === null || _5 === void 0 ? void 0 : _5.call(exports.globalEvents, taskId, formId);
-            if (r && (r instanceof Promise)) {
-                r.catch(function (e) {
-                    console.log(e);
-                });
-            }
+            exports.boot[eventName](taskId, formId);
             for (const tid in task.list) {
                 const t = task.list[tid];
+                (_10 = t.class) === null || _10 === void 0 ? void 0 : _10[eventName](taskId, formId);
                 for (const fid in t.forms) {
-                    const r = (_7 = (_6 = t.forms[fid].events)[name]) === null || _7 === void 0 ? void 0 : _7.call(_6, taskId, formId);
-                    if (r instanceof Promise) {
-                        r.catch(function (e) {
-                            console.log(e);
-                        });
-                    }
+                    (_12 = (_11 = t.forms[fid].vroot)[eventName]) === null || _12 === void 0 ? void 0 : _12.call(_11, taskId, formId);
                 }
             }
             break;
@@ -475,37 +598,30 @@ function readApp(blob) {
             return false;
         }
         const files = {};
-        const configContent = yield z.getContent('/config.json');
-        if (!configContent) {
-            return false;
-        }
-        const config = JSON.parse(configContent);
-        for (const file of config.files) {
-            const mime = tool.getMimeByPath(file);
+        const list = z.readDir('/', {
+            'hasChildren': true
+        });
+        for (const file of list) {
+            const mime = tool.getMimeByPath(file.name);
             if (['txt', 'json', 'js', 'css', 'xml', 'html'].includes(mime.ext)) {
-                const fab = yield z.getContent(file, 'string');
+                const fab = yield z.getContent(file.path + file.name, 'string');
                 if (!fab) {
                     continue;
                 }
-                files[file] = fab.replace(/^\ufeff/, '');
+                files[file.path + file.name] = fab.replace(/^\ufeff/, '');
             }
             else {
-                const fab = yield z.getContent(file, 'arraybuffer');
+                const fab = yield z.getContent(file.path + file.name, 'arraybuffer');
                 if (!fab) {
                     continue;
                 }
-                files[file] = new Blob([fab], {
+                files[file.path + file.name] = new Blob([fab], {
                     'type': mime.mime
                 });
             }
         }
-        if (!config) {
-            return false;
-        }
         return {
-            'type': 'app',
             'icon': icon,
-            'config': config,
             'files': files
         };
     });
@@ -523,18 +639,14 @@ function fetchApp(url, opt = {}) {
         }
         let current = '';
         if (opt.current) {
-            if (!opt.current.endsWith('/')) {
-                return null;
-            }
-            if (!url.startsWith('/')) {
-                url = '/current/' + url;
-            }
+            current = opt.current.endsWith('/') ? opt.current.slice(0, -1) : opt.current;
+            url = tool.urlResolve('/current/', url);
         }
         else {
             if (!url.startsWith('/clickgo/') && !url.startsWith('/storage/') && !url.startsWith('/mounted/')) {
                 current = tool.urlResolve(window.location.href, url);
                 if (cga) {
-                    current = current.slice(0, -cga.length);
+                    current = current.slice(0, -cga.length - 1);
                     url = '/current/' + cga;
                 }
                 else {
@@ -567,76 +679,49 @@ function fetchApp(url, opt = {}) {
                 return null;
             }
         }
-        let config;
-        const files = {};
-        try {
-            const blob = yield fs.getContent(url + 'config.json', {
-                'current': current
-            });
-            if (blob === null || typeof blob === 'string') {
-                return null;
-            }
-            config = JSON.parse(yield tool.blob2Text(blob));
-            yield new Promise(function (resolve) {
-                const total = config.files.length;
-                let loaded = 0;
-                for (const file of config.files) {
-                    fs.getContent(url + file.slice(1), {
-                        'current': current
-                    }).then(function (blob) {
-                        var _a;
-                        return __awaiter(this, void 0, void 0, function* () {
-                            if (blob === null || typeof blob === 'string') {
-                                clickgo.form.notify({
-                                    'title': 'File not found',
-                                    'content': url + file.slice(1),
-                                    'type': 'danger'
-                                });
-                                return;
-                            }
-                            const mime = tool.getMimeByPath(file);
-                            if (['txt', 'json', 'js', 'css', 'xml', 'html'].includes(mime.ext)) {
-                                files[file] = (yield tool.blob2Text(blob)).replace(/^\ufeff/, '');
-                            }
-                            else {
-                                files[file] = blob;
-                            }
-                            ++loaded;
-                            (_a = opt.progress) === null || _a === void 0 ? void 0 : _a.call(opt, loaded, total);
-                            if (opt.notifyId) {
-                                form.notifyProgress(opt.notifyId, loaded / total);
-                            }
-                            if (loaded < total) {
-                                return;
-                            }
-                            resolve();
-                        });
-                    }).catch(function () {
-                        var _a;
-                        ++loaded;
-                        (_a = opt.progress) === null || _a === void 0 ? void 0 : _a.call(opt, loaded, total);
-                        if (opt.notifyId) {
-                            form.notifyProgress(opt.notifyId, loaded / total);
-                        }
-                        if (loaded < total) {
-                            return;
-                        }
-                        resolve();
-                    });
+        let loaded = 0;
+        let total = 30;
+        const files = yield loader.sniffFiles(url + 'app.js', {
+            'dir': '/',
+            adapter: (url) => __awaiter(this, void 0, void 0, function* () {
+                const r = yield fs.getContent(url, {
+                    'encoding': 'utf8',
+                    'current': current
+                });
+                return r;
+            }),
+            'loaded': () => {
+                ++loaded;
+                if (loaded === total) {
+                    ++total;
                 }
-            });
+                if (opt.notifyId) {
+                    form.notifyProgress(opt.notifyId, (loaded / total) / 2);
+                }
+                if (opt.progress) {
+                    opt.progress(loaded, total);
+                }
+            }
+        });
+        if (opt.notifyId) {
+            form.notifyProgress(opt.notifyId, 0.5);
         }
-        catch (_b) {
+        if (Object.keys(files).length === 0) {
             return null;
         }
-        let icon = '/clickgo/icon.png';
-        if (config.icon && (files[config.icon] instanceof Blob)) {
-            icon = yield tool.blob2DataUrl(files[config.icon]);
+        const ul = url.length - 1;
+        for (const fn in files) {
+            files[fn.slice(ul)] = files[fn];
+            delete files[fn];
         }
         return {
-            'type': 'app',
-            'icon': icon,
-            'config': config,
+            'net': {
+                'current': current,
+                'notify': opt.notifyId,
+                'url': url,
+                'progress': opt.progress
+            },
+            'icon': '',
             'files': files
         };
     });

@@ -9,109 +9,56 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.unmounted = exports.mounted = exports.methods = exports.computed = exports.watch = exports.data = exports.props = void 0;
 const clickgo = require("clickgo");
-exports.props = {
-    'direction': {
-        'default': 'h'
-    },
-    'scrollLeft': {
-        'default': 0
-    },
-    'scrollTop': {
-        'default': 0
-    },
-    'selection': {
-        'default': false
-    },
-    'content': {
-        'default': undefined
-    },
-    'solo': {
-        'default': true
+class default_1 extends clickgo.control.AbstractControl {
+    constructor() {
+        super(...arguments);
+        this.props = {
+            'direction': 'h',
+            'scrollLeft': 0,
+            'scrollTop': 0,
+            'selection': false,
+            'content': '',
+            'solo': true
+        };
+        this.padding = '';
+        this.scrollLeftData = 0;
+        this.scrollTopData = 0;
+        this.scrollLeftEmit = 0;
+        this.scrollTopEmit = 0;
+        this.clientWidth = 0;
+        this.clientHeight = 0;
+        this.clientInit = false;
+        this.lengthWidth = -1;
+        this.lengthHeight = -1;
+        this.lengthEmit = -1;
+        this.selectionOrigin = { x: 0, y: 0 };
+        this.selectionCurrent = { x: 0, y: 0, quick: false };
+        this.timer = 0;
+        this.selectionTimer = 0;
     }
-};
-exports.data = {
-    'padding': '',
-    'scrollLeftData': 0,
-    'scrollTopData': 0,
-    'scrollLeftEmit': 0,
-    'scrollTopEmit': 0,
-    'clientWidth': 0,
-    'clientHeight': 0,
-    'clientInit': false,
-    'lengthWidth': -1,
-    'lengthHeight': -1,
-    'lengthEmit': -1,
-    'selectionOrigin': { x: 0, y: 0 },
-    'selectionCurrent': { x: 0, y: 0, quick: false },
-    'timer': 0,
-    'selectionTimer': 0
-};
-exports.watch = {
-    'direction': function () {
-        const size = clickgo.dom.getSize(this.$el);
-        if (this.clientWidth !== size.clientWidth) {
-            this.clientWidth = size.clientWidth;
-        }
-        if (this.clientHeight !== size.clientHeight) {
-            this.clientHeight = size.clientHeight;
-        }
-        this.$emit('resize', this.direction === 'v' ? Math.round(this.clientHeight) : Math.round(this.clientWidth));
-        this.$emit('resizen', this.direction === 'h' ? Math.round(this.clientHeight) : Math.round(this.clientWidth));
-    },
-    'scrollLeft': {
-        handler: function () {
-            this.goScroll(this.scrollLeft, 'left');
-        }
-    },
-    'scrollTop': {
-        handler: function () {
-            this.goScroll(this.scrollTop, 'top');
-        }
-    },
-    'scrollLeftData': {
-        handler: function () {
-            return __awaiter(this, void 0, void 0, function* () {
-                yield this.$nextTick();
-                this.refreshSelection(clickgo.dom.is.shift, clickgo.dom.is.ctrl);
-            });
-        }
-    },
-    'scrollTopData': {
-        handler: function () {
-            return __awaiter(this, void 0, void 0, function* () {
-                yield this.$nextTick();
-                this.refreshSelection(clickgo.dom.is.shift, clickgo.dom.is.ctrl);
-            });
-        }
+    get isSelection() {
+        return clickgo.tool.getBoolean(this.props.selection);
     }
-};
-exports.computed = {
-    'isSelection': function () {
-        return clickgo.tool.getBoolean(this.selection);
-    },
-    'isSolo': function () {
-        return clickgo.tool.getBoolean(this.solo);
-    },
-    'maxScrollLeft': function () {
+    get isSolo() {
+        return clickgo.tool.getBoolean(this.props.solo);
+    }
+    get maxScrollLeft() {
         if (this.lengthWidth <= this.clientWidth) {
             return 0;
         }
         return Math.round(this.lengthWidth) - Math.round(this.clientWidth);
-    },
-    'maxScrollTop': function () {
+    }
+    get maxScrollTop() {
         if (this.lengthHeight <= this.clientHeight) {
             return 0;
         }
         return Math.round(this.lengthHeight) - Math.round(this.clientHeight);
-    },
-    'opMargin': function () {
+    }
+    get opMargin() {
         return this.padding.replace(/(\w+)/g, '-$1');
     }
-};
-exports.methods = {
-    wheel: function (e) {
+    wheel(e) {
         if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
             if (e.deltaY < 0) {
                 if (this.scrollTopData > 0) {
@@ -129,10 +76,10 @@ exports.methods = {
                     this.refreshScroll();
                 }
                 else {
-                    if (this.direction === 'h') {
+                    if (this.props.direction === 'h') {
                         e.direction = 'h';
                     }
-                    this.$emit('scrollborder', e);
+                    this.emit('scrollborder', e);
                 }
             }
             else {
@@ -151,10 +98,10 @@ exports.methods = {
                     this.refreshScroll();
                 }
                 else {
-                    if (this.direction === 'h') {
+                    if (this.props.direction === 'h') {
                         e.direction = 'h';
                     }
-                    this.$emit('scrollborder', e);
+                    this.emit('scrollborder', e);
                 }
             }
         }
@@ -175,10 +122,10 @@ exports.methods = {
                     this.refreshScroll();
                 }
                 else {
-                    if (this.direction === 'v') {
+                    if (this.props.direction === 'v') {
                         e.direction = 'v';
                     }
-                    this.$emit('scrollborder', e);
+                    this.emit('scrollborder', e);
                 }
             }
             else {
@@ -197,27 +144,27 @@ exports.methods = {
                     this.refreshScroll();
                 }
                 else {
-                    if (this.direction === 'v') {
+                    if (this.props.direction === 'v') {
                         e.direction = 'v';
                     }
-                    this.$emit('scrollborder', e);
+                    this.emit('scrollborder', e);
                 }
             }
         }
-    },
-    down: function (e) {
+    }
+    down(e) {
         if (clickgo.dom.hasTouchButMouse(e)) {
             return;
         }
         this.stopAnimation();
         const bindMove = (e) => {
-            const size = clickgo.dom.getSize(this.$el);
+            const size = clickgo.dom.getSize(this.element);
             let alreadySb = false;
             let isFirstMove = false;
             const overWidth = this.lengthWidth - this.clientWidth;
             const overHeight = this.lengthHeight - this.clientHeight;
             clickgo.dom.bindMove(e, {
-                'object': this.$refs.inner,
+                'object': this.refs.inner,
                 'left': size.left + size.border.left - (overWidth > 0 ? overWidth : 0),
                 'right': overWidth > 0 ? (size.right - size.border.right + overWidth) : (size.left + size.border.left + this.lengthWidth),
                 'top': size.top + size.border.top - (overHeight > 0 ? overHeight : 0),
@@ -231,7 +178,7 @@ exports.methods = {
                     }
                     if (this.scrollLeftEmit !== sleft) {
                         this.scrollLeftEmit = sleft;
-                        this.$emit('update:scrollLeft', this.scrollLeftEmit);
+                        this.emit('update:scrollLeft', this.scrollLeftEmit);
                     }
                     let stop = Math.round(this.scrollTopData);
                     if (stop > this.maxScrollTop) {
@@ -239,13 +186,13 @@ exports.methods = {
                     }
                     if (this.scrollTopEmit !== stop) {
                         this.scrollTopEmit = stop;
-                        this.$emit('update:scrollTop', this.scrollTopEmit);
+                        this.emit('update:scrollTop', this.scrollTopEmit);
                     }
                     if (!isFirstMove) {
                         isFirstMove = true;
                         switch (dir) {
                             case 'top': {
-                                if (this.direction === 'h') {
+                                if (this.props.direction === 'h') {
                                     break;
                                 }
                                 if (stop === this.maxScrollTop) {
@@ -254,7 +201,7 @@ exports.methods = {
                                 break;
                             }
                             case 'right': {
-                                if (this.direction === 'v') {
+                                if (this.props.direction === 'v') {
                                     break;
                                 }
                                 if (sleft === 0) {
@@ -263,7 +210,7 @@ exports.methods = {
                                 break;
                             }
                             case 'bottom': {
-                                if (this.direction === 'h') {
+                                if (this.props.direction === 'h') {
                                     break;
                                 }
                                 if (stop === 0) {
@@ -272,7 +219,7 @@ exports.methods = {
                                 break;
                             }
                             default: {
-                                if (this.direction === 'v') {
+                                if (this.props.direction === 'v') {
                                     break;
                                 }
                                 if (sleft === this.maxScrollLeft) {
@@ -281,8 +228,8 @@ exports.methods = {
                             }
                         }
                         if (alreadySb) {
-                            ne.rect = this.$el.getBoundingClientRect();
-                            this.$emit('scrollborder', ne);
+                            ne.rect = this.element.getBoundingClientRect();
+                            this.emit('scrollborder', ne);
                         }
                     }
                 },
@@ -383,9 +330,9 @@ exports.methods = {
                             topEnd = true;
                         }
                         this.scrollLeftEmit = Math.round(this.scrollLeftData);
-                        this.$emit('update:scrollLeft', this.scrollLeftEmit);
+                        this.emit('update:scrollLeft', this.scrollLeftEmit);
                         this.scrollTopEmit = Math.round(this.scrollTopData);
-                        this.$emit('update:scrollTop', this.scrollTopEmit);
+                        this.emit('update:scrollTop', this.scrollTopEmit);
                         if (leftEnd && topEnd) {
                             clickgo.task.offFrame(this.timer);
                             this.timer = 0;
@@ -402,16 +349,16 @@ exports.methods = {
             }
             clickgo.dom.bindDown(e, {
                 start: () => {
-                    const innerRect = this.$refs.inner.getBoundingClientRect();
+                    const innerRect = this.refs.inner.getBoundingClientRect();
                     this.selectionOrigin.x = x - innerRect.left;
                     this.selectionOrigin.y = y - innerRect.top;
-                    this.$refs.selection.style.opacity = '1';
-                    this.$refs.selection.style.left = this.selectionOrigin.x.toString() + 'px';
-                    this.$refs.selection.style.top = this.selectionOrigin.y.toString() + 'px';
+                    this.refs.selection.style.opacity = '1';
+                    this.refs.selection.style.left = this.selectionOrigin.x.toString() + 'px';
+                    this.refs.selection.style.top = this.selectionOrigin.y.toString() + 'px';
                     this.selectionCurrent.x = x;
                     this.selectionCurrent.y = y;
                     this.selectionTimer = clickgo.task.onFrame(() => {
-                        const rect = this.$el.getBoundingClientRect();
+                        const rect = this.element.getBoundingClientRect();
                         if (this.selectionCurrent.x < rect.left) {
                             if (this.scrollLeftData > 0) {
                                 const x = rect.left - this.selectionCurrent.x;
@@ -428,7 +375,7 @@ exports.methods = {
                                 }
                                 this.scrollLeftData -= dist;
                                 this.scrollLeftEmit = Math.round(this.scrollLeftData);
-                                this.$emit('update:scrollLeft', this.scrollLeftEmit);
+                                this.emit('update:scrollLeft', this.scrollLeftEmit);
                             }
                         }
                         else if (this.selectionCurrent.x > rect.right) {
@@ -447,7 +394,7 @@ exports.methods = {
                                 }
                                 this.scrollLeftData += dist;
                                 this.scrollLeftEmit = Math.round(this.scrollLeftData);
-                                this.$emit('update:scrollLeft', this.scrollLeftEmit);
+                                this.emit('update:scrollLeft', this.scrollLeftEmit);
                             }
                         }
                         if (this.selectionCurrent.y < rect.top) {
@@ -466,7 +413,7 @@ exports.methods = {
                                 }
                                 this.scrollTopData -= dist;
                                 this.scrollTopEmit = Math.round(this.scrollTopData);
-                                this.$emit('update:scrollTop', this.scrollTopEmit);
+                                this.emit('update:scrollTop', this.scrollTopEmit);
                             }
                         }
                         else if (this.selectionCurrent.y > rect.bottom) {
@@ -485,11 +432,11 @@ exports.methods = {
                                 }
                                 this.scrollTopData += dist;
                                 this.scrollTopEmit = Math.round(this.scrollTopData);
-                                this.$emit('update:scrollTop', this.scrollTopEmit);
+                                this.emit('update:scrollTop', this.scrollTopEmit);
                             }
                         }
                     });
-                    this.$emit('beforeselect');
+                    this.emit('beforeselect');
                 },
                 move: (ne) => {
                     const nx = (ne instanceof MouseEvent) ? ne.clientX : ne.touches[0].clientX;
@@ -500,10 +447,10 @@ exports.methods = {
                     this.refreshSelection(ne.shiftKey, ne.ctrlKey);
                 },
                 end: () => {
-                    this.$refs.selection.style.opacity = '0';
+                    this.refs.selection.style.opacity = '0';
                     clickgo.task.offFrame(this.selectionTimer);
                     this.selectionTimer = 0;
-                    this.$emit('afterselect');
+                    this.emit('afterselect');
                 }
             });
         }
@@ -565,13 +512,13 @@ exports.methods = {
                 }
             });
         }
-    },
-    refreshLength: function () {
+    }
+    refreshLength() {
         if (this.lengthWidth === -1 || this.lengthHeight === -1) {
             return;
         }
         let length = 0;
-        if (this.direction === 'h') {
+        if (this.props.direction === 'h') {
             length = Math.round(this.lengthWidth < this.clientWidth ? this.clientWidth : this.lengthWidth);
         }
         else {
@@ -579,11 +526,11 @@ exports.methods = {
         }
         if (length !== this.lengthEmit) {
             this.lengthEmit = length;
-            this.$emit('change', length);
+            this.emit('change', length);
         }
         this.refreshScroll();
-    },
-    refreshScroll: function () {
+    }
+    refreshScroll() {
         if (this.lengthEmit === -1 || !this.clientInit) {
             return;
         }
@@ -602,16 +549,16 @@ exports.methods = {
         const sleft = Math.round(this.scrollLeftData);
         if (this.scrollLeftEmit !== sleft) {
             this.scrollLeftEmit = sleft;
-            this.$emit('update:scrollLeft', this.scrollLeftEmit);
+            this.emit('update:scrollLeft', this.scrollLeftEmit);
         }
         const stop = Math.round(this.scrollTopData);
         if (this.scrollTopEmit !== stop) {
             this.scrollTopEmit = stop;
-            this.$emit('update:scrollTop', this.scrollTopEmit);
+            this.emit('update:scrollTop', this.scrollTopEmit);
         }
-    },
-    goScroll: function (scroll, pos) {
-        scroll = typeof scroll === 'number' ? scroll : parseInt(scroll);
+    }
+    goScroll(scroll, pos) {
+        scroll = clickgo.tool.getNumber(scroll);
         if (pos === 'left') {
             if (scroll === this.scrollLeftEmit) {
                 return;
@@ -635,18 +582,18 @@ exports.methods = {
             this.timer = 0;
         }
         this.refreshScroll();
-    },
-    stopAnimation: function () {
+    }
+    stopAnimation() {
         if (this.timer > 0) {
             clickgo.task.offFrame(this.timer);
             this.timer = 0;
         }
-    },
-    refreshSelection: function (shift = false, ctrl = false) {
+    }
+    refreshSelection(shift = false, ctrl = false) {
         if (!this.selectionTimer) {
             return;
         }
-        const innerRect = this.$refs.inner.getBoundingClientRect();
+        const innerRect = this.refs.inner.getBoundingClientRect();
         const sx = this.selectionCurrent.x - innerRect.left;
         const sy = this.selectionCurrent.y - innerRect.top;
         const area = {
@@ -673,62 +620,86 @@ exports.methods = {
             area.y = Math.round(sy);
             area.height = Math.round(this.selectionOrigin.y - sy);
         }
-        this.$refs.selection.style.left = area.x.toString() + 'px';
-        this.$refs.selection.style.top = area.y.toString() + 'px';
-        this.$refs.selection.style.width = area.width.toString() + 'px';
-        this.$refs.selection.style.height = area.height.toString() + 'px';
-        this.$emit('select', area);
+        this.refs.selection.style.left = area.x.toString() + 'px';
+        this.refs.selection.style.top = area.y.toString() + 'px';
+        this.refs.selection.style.width = area.width.toString() + 'px';
+        this.refs.selection.style.height = area.height.toString() + 'px';
+        this.emit('select', area);
     }
-};
-const mounted = function () {
-    clickgo.dom.watchSize(this.$el, (size) => {
-        const clientWidth = size.clientWidth;
-        const clientHeight = size.clientHeight;
-        if (this.direction === 'v') {
-            if (this.clientWidth !== clientWidth) {
-                this.clientWidth = clientWidth;
-                this.$emit('resizen', Math.round(this.clientWidth));
+    onMounted() {
+        this.watch('direction', () => {
+            const size = clickgo.dom.getSize(this.element);
+            if (this.clientWidth !== size.clientWidth) {
+                this.clientWidth = size.clientWidth;
             }
-            if (clientHeight !== this.clientHeight) {
-                this.clientHeight = clientHeight;
-                this.$emit('resize', Math.round(this.clientHeight));
+            if (this.clientHeight !== size.clientHeight) {
+                this.clientHeight = size.clientHeight;
             }
-        }
-        else {
-            if (this.clientHeight !== clientHeight) {
-                this.clientHeight = clientHeight;
-                this.$emit('resizen', Math.round(this.clientHeight));
+            this.emit('resize', this.props.direction === 'v' ? Math.round(this.clientHeight) : Math.round(this.clientWidth));
+            this.emit('resizen', this.props.direction === 'h' ? Math.round(this.clientHeight) : Math.round(this.clientWidth));
+        });
+        this.watch('scrollLeft', () => {
+            this.goScroll(this.props.scrollLeft, 'left');
+        });
+        this.watch('scrollTop', () => {
+            this.goScroll(this.props.scrollTop, 'top');
+        });
+        this.watch('scrollLeftData', () => __awaiter(this, void 0, void 0, function* () {
+            yield this.nextTick();
+            this.refreshSelection(clickgo.dom.is.shift, clickgo.dom.is.ctrl);
+        }));
+        this.watch('scrollTopData', () => __awaiter(this, void 0, void 0, function* () {
+            yield this.nextTick();
+            this.refreshSelection(clickgo.dom.is.shift, clickgo.dom.is.ctrl);
+        }));
+        clickgo.dom.watchSize(this.element, (size) => {
+            const clientWidth = size.clientWidth;
+            const clientHeight = size.clientHeight;
+            if (this.props.direction === 'v') {
+                if (this.clientWidth !== clientWidth) {
+                    this.clientWidth = clientWidth;
+                    this.emit('resizen', Math.round(this.clientWidth));
+                }
+                if (clientHeight !== this.clientHeight) {
+                    this.clientHeight = clientHeight;
+                    this.emit('resize', Math.round(this.clientHeight));
+                }
             }
-            if (clientWidth !== this.clientWidth) {
-                this.clientWidth = clientWidth;
-                this.$emit('resize', Math.round(this.clientWidth));
+            else {
+                if (this.clientHeight !== clientHeight) {
+                    this.clientHeight = clientHeight;
+                    this.emit('resizen', Math.round(this.clientHeight));
+                }
+                if (clientWidth !== this.clientWidth) {
+                    this.clientWidth = clientWidth;
+                    this.emit('resize', Math.round(this.clientWidth));
+                }
             }
-        }
-        if (!this.clientInit) {
-            this.clientInit = true;
-        }
-        this.refreshLength();
-    }, true);
-    clickgo.dom.watchSize(this.$refs.inner, (size) => {
-        if (size.width !== this.lengthWidth) {
-            this.lengthWidth = size.width;
-        }
-        if (size.height !== this.lengthHeight) {
-            this.lengthHeight = size.height;
-        }
-        this.refreshLength();
-    }, true);
-    clickgo.dom.watchStyle(this.$el, 'padding', (n, v) => {
-        this.padding = v;
-    }, true);
-    this.goScroll(this.scrollLeft, 'left');
-    this.goScroll(this.scrollTop, 'top');
-};
-exports.mounted = mounted;
-const unmounted = function () {
-    if (this.timer > 0) {
-        clickgo.task.offFrame(this.timer);
-        this.timer = 0;
+            if (!this.clientInit) {
+                this.clientInit = true;
+            }
+            this.refreshLength();
+        }, true);
+        clickgo.dom.watchSize(this.refs.inner, (size) => {
+            if (size.width !== this.lengthWidth) {
+                this.lengthWidth = size.width;
+            }
+            if (size.height !== this.lengthHeight) {
+                this.lengthHeight = size.height;
+            }
+            this.refreshLength();
+        }, true);
+        clickgo.dom.watchStyle(this.element, 'padding', (n, v) => {
+            this.padding = v;
+        }, true);
+        this.goScroll(this.props.scrollLeft, 'left');
+        this.goScroll(this.props.scrollTop, 'top');
     }
-};
-exports.unmounted = unmounted;
+    onUnmounted() {
+        if (this.timer > 0) {
+            clickgo.task.offFrame(this.timer);
+            this.timer = 0;
+        }
+    }
+}
+exports.default = default_1;

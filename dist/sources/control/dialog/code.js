@@ -1,34 +1,26 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.mounted = exports.methods = exports.computed = exports.data = exports.props = void 0;
 const clickgo = require("clickgo");
-exports.props = {
-    'direction': {
-        'default': 'h'
-    },
-    'gutter': {
-        'default': undefined
-    },
-    'buttons': {
-        'default': ['OK']
+class default_1 extends clickgo.control.AbstractControl {
+    constructor() {
+        super(...arguments);
+        this.padding = '';
+        this.props = {
+            'direction': 'h',
+            'gutter': undefined,
+            'buttons': ['OK']
+        };
     }
-};
-exports.data = {
-    'padding': ''
-};
-exports.computed = {
-    'paddingMargin': function () {
+    get paddingMargin() {
         return this.padding.replace(/(\w+)/g, '-$1');
     }
-};
-exports.methods = {
-    click: function (item) {
-        this.$emit('select', item);
+    click(item) {
+        this.emit('select', item);
     }
-};
-const mounted = function () {
-    clickgo.dom.watchStyle(this.$el, 'padding', (n, v) => {
-        this.padding = v;
-    }, true);
-};
-exports.mounted = mounted;
+    onMounted() {
+        clickgo.dom.watchStyle(this.element, 'padding', (n, v) => {
+            this.padding = v;
+        }, true);
+    }
+}
+exports.default = default_1;

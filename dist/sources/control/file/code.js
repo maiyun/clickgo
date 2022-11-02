@@ -1,34 +1,30 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.methods = exports.computed = exports.props = void 0;
 const clickgo = require("clickgo");
-exports.props = {
-    'accept': {
-        'default': undefined
-    },
-    'multi': {
-        'default': false
-    },
-    'dir': {
-        'default': false
+class default_1 extends clickgo.control.AbstractControl {
+    constructor() {
+        super(...arguments);
+        this.props = {
+            'accept': undefined,
+            'multi': false,
+            'dir': false
+        };
     }
-};
-exports.computed = {
-    'isMulti': function () {
-        return clickgo.tool.getBoolean(this.multi);
-    },
-    'isDir': function () {
-        return clickgo.tool.getBoolean(this.dir);
-    },
-    'acceptComp': function () {
-        if (!this.accept) {
+    get isMulti() {
+        return clickgo.tool.getBoolean(this.props.multi);
+    }
+    get isDir() {
+        return clickgo.tool.getBoolean(this.props.dir);
+    }
+    get acceptComp() {
+        if (!this.props.accept) {
             return undefined;
         }
-        if (!Array.isArray(this.accept)) {
+        if (!Array.isArray(this.props.accept)) {
             return undefined;
         }
         const accept = [];
-        for (const item of this.accept) {
+        for (const item of this.props.accept) {
             if (typeof item !== 'string') {
                 continue;
             }
@@ -36,15 +32,14 @@ exports.computed = {
         }
         return accept.join(',');
     }
-};
-exports.methods = {
-    select: function () {
-        this.$refs.input.click();
-    },
-    change: function (e) {
+    select() {
+        this.refs.input.click();
+    }
+    change(e) {
         e.stopPropagation();
-        const inputEl = this.$refs.input;
-        this.$emit('change', inputEl.files);
+        const inputEl = this.refs.input;
+        this.emit('change', inputEl.files);
         inputEl.value = '';
     }
-};
+}
+exports.default = default_1;

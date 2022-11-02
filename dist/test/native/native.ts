@@ -12,8 +12,8 @@ let isQuit: boolean = true;
 /** --- 主窗体 --- */
 let win: electron.BrowserWindow | undefined;
 /** --- 当前系统平台 --- */
-// const platform: NodeJS.Platform = process.platform;
-const platform: NodeJS.Platform = 'darwin';
+const platform: NodeJS.Platform = process.platform;
+// const platform: NodeJS.Platform = 'darwin';
 /** --- 当前设定的 token --- */
 let token: string = '';
 

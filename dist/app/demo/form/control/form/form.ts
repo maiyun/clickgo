@@ -1,27 +1,39 @@
 import * as clickgo from 'clickgo';
-import * as types from '~/types/index';
 
-export const data = {
-    'width': 300,
-    'height': 520,
-    'icon': '',
-    'title': 'Form',
-    'min': true,
-    'max': true,
-    'close': true,
-    'stateMax': false,
-    'stateMin': false,
-    'minWidth': 200,
-    'minHeight': 100,
-    'resize': true,
-    'loading': false,
-    'border': 'normal'
-};
+export default class extends clickgo.form.AbstractForm {
 
-export const methods = {
-    showLoading: async function(this: types.IVForm): Promise<void> {
+    public width = 300;
+
+    public height = 520;
+
+    public icon = '';
+
+    public title = 'Form';
+
+    public min = true;
+
+    public max = true;
+
+    public close = true;
+
+    public stateMax = false;
+
+    public stateMin = false;
+
+    public minWidth = 200;
+
+    public minHeight = 100;
+
+    public resize = true;
+
+    public loading = false;
+
+    public border = 'normal';
+
+    public async showLoading(): Promise<void> {
         this.loading = true;
         await clickgo.tool.sleep(1000);
         this.loading = false;
     }
-};
+
+}

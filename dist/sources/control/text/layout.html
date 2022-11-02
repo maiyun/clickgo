@@ -3,10 +3,10 @@
         <template v-if="isMulti">
             <div class="multi-t">
                 <textarea ref="text" class="text" :value="value" :style="{'padding': padding, '-webkit-text-security': isPassword ? 'disc' : undefined, 'white-space': isWrap ? undefined : 'nowrap', 'font': font, 'background': background, 'color': color}" :readonly="isReadonly" :disabled="isDisabled" @focus="tfocus" @blur="tblur" @input="input" @wheel="wheel" @scroll="scroll" @touchstart="inputTouch" @touchmove="move" @touchend="end" @touchcancel="end" @change="$event.stopPropagation()" @contextmenu="contextmenu" @select="select" @mousedown="reselect" @keydown="reselect"></textarea>
-                <cg-scroll :disabled="lengthHeight <= clientHeight" :length="lengthHeight" :client="clientHeight" :scroll-offset="scrollTopEmit" @update:scroll-offset="$refs.text.scrollTop = $event"></cg-scroll>
+                <cg-scroll :disabled="lengthHeight <= clientHeight" :length="lengthHeight" :client="clientHeight" :scroll-offset="scrollTopEmit" @update:scroll-offset="refs.text.scrollTop = $event"></cg-scroll>
             </div>
             <div v-if="lengthWidth > clientWidth" class="multi-b">
-                <cg-scroll direction="h" :length="lengthWidth" :client="clientWidth" :scroll-offset="scrollLeftEmit" @update:scroll-offset="$refs.text.scrollLeft = $event"></cg-scroll>
+                <cg-scroll direction="h" :length="lengthWidth" :client="clientWidth" :scroll-offset="scrollLeftEmit" @update:scroll-offset="refs.text.scrollLeft = $event"></cg-scroll>
                 <div class="multi-rb"></div>
             </div>
         </template>

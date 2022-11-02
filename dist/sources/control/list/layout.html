@@ -10,7 +10,7 @@
             </cg-marquee>
         </div>
     </template>
-    <template v-if="$slots.default" v-slot:pop>
+    <template v-if="slots('default').length" v-slot:pop>
         <slot></slot>
     </template>
 </cg-greatlist>

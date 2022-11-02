@@ -1,89 +1,75 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.mounted = exports.methods = exports.computed = exports.data = exports.watch = exports.props = void 0;
 const clickgo = require("clickgo");
-exports.props = {
-    'disabled': {
-        'default': false
-    },
-    'modelValue': {
-        'default': ''
-    },
-    'editable': {
-        'default': false
-    },
-    'data': {
-        'default': []
+class default_1 extends clickgo.control.AbstractControl {
+    constructor() {
+        super(...arguments);
+        this.props = {
+            'disabled': false,
+            'modelValue': '',
+            'editable': false,
+            'data': []
+        };
+        this.background = '';
+        this.padding = '';
+        this.value = '';
+        this.label = '';
+        this.inputValue = '';
     }
-};
-exports.watch = {
-    'modelValue': {
-        'handler': function () {
-            this.value = this.modelValue;
-        },
-        'immediate': true
-    },
-    'isEditable': {
-        'handler': function (editable) {
-            if (editable) {
-                this.inputValue = this.value;
-            }
-        },
-        'immediate': true
+    get isDisabled() {
+        return clickgo.tool.getBoolean(this.props.disabled);
     }
-};
-exports.data = {
-    'background': '',
-    'padding': '',
-    'value': '',
-    'label': '',
-    'inputValue': ''
-};
-exports.computed = {
-    'isDisabled': function () {
-        return clickgo.tool.getBoolean(this.disabled);
-    },
-    'isEditable': function () {
-        return clickgo.tool.getBoolean(this.editable);
-    },
-    'opMargin': function () {
+    get isEditable() {
+        return clickgo.tool.getBoolean(this.props.editable);
+    }
+    get opMargin() {
         return this.padding.replace(/(\w+)/g, '-$1');
     }
-};
-exports.methods = {
-    updateInputValue: function (value) {
+    updateInputValue(value) {
         this.inputValue = value;
         this.value = this.inputValue;
-        this.$emit('update:modelValue', this.value);
-    },
-    updateModelValue: function (value) {
+        this.emit('update:modelValue', this.value);
+    }
+    updateModelValue(value) {
         this.value = value;
         if (this.isEditable && (value === '')) {
             return;
         }
         this.inputValue = value;
-        this.$emit('update:modelValue', value);
-    },
-    updateLabel: function (label) {
+        this.emit('update:modelValue', value);
+    }
+    updateLabel(label) {
         this.label = label;
-        this.$emit('label', label);
-    },
-    listItemClick: function () {
+        this.emit('label', label);
+    }
+    listItemClick() {
         clickgo.form.hidePop();
     }
-};
-const mounted = function () {
-    clickgo.dom.watchStyle(this.$el, ['background', 'padding'], (n, v) => {
-        switch (n) {
-            case 'background': {
-                this.background = v;
-                break;
+    onMounted() {
+        this.watch('modelValue', () => {
+            this.value = this.props.modelValue;
+        }, {
+            'immediate': true
+        });
+        this.watch('isEditable', (editable) => {
+            if (editable) {
+                this.inputValue = this.value;
             }
-            case 'padding': {
-                this.padding = v;
-                break;
+        }, {
+            'immediate': true
+        });
+        clickgo.dom.watchStyle(this.element, ['background', 'padding'], (n, v) => {
+            switch (n) {
+                case 'background': {
+                    this.background = v;
+                    break;
+                }
+                case 'padding': {
+                    this.padding = v;
+                    break;
+                }
             }
-        }
-    }, true);
-};
-exports.mounted = mounted;
+        }, true);
+    }
+}
+exports.default = default_1;

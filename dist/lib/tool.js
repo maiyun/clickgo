@@ -9,8 +9,52 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.execCommand = exports.blob2DataUrl = exports.blob2Text = exports.urlResolve = exports.parseUrl = exports.request = exports.escapeHTML = exports.getBoolean = exports.random = exports.RANDOM_LUNS = exports.RANDOM_V = exports.RANDOM_LUN = exports.RANDOM_LU = exports.RANDOM_LN = exports.RANDOM_UN = exports.RANDOM_L = exports.RANDOM_U = exports.RANDOM_N = exports.rand = exports.getObjectURLs = exports.revokeObjectURL = exports.createObjectURL = exports.getMimeByPath = exports.stylePrepend = exports.eventsAttrWrap = exports.layoutClassPrepend = exports.layoutInsertAttr = exports.layoutAddTagClassAndReTagName = exports.styleUrl2DataUrl = exports.purify = exports.sleep = exports.clone = exports.blob2ArrayBuffer = void 0;
-const task = require("./task");
+exports.execCommand = exports.blob2DataUrl = exports.blob2Text = exports.urlResolve = exports.parseUrl = exports.request = exports.escapeHTML = exports.getNumber = exports.getBoolean = exports.random = exports.RANDOM_LUNS = exports.RANDOM_V = exports.RANDOM_LUN = exports.RANDOM_LU = exports.RANDOM_LN = exports.RANDOM_UN = exports.RANDOM_L = exports.RANDOM_U = exports.RANDOM_N = exports.rand = exports.getMimeByPath = exports.stylePrepend = exports.eventsAttrWrap = exports.layoutClassPrepend = exports.layoutInsertAttr = exports.layoutAddTagClassAndReTagName = exports.styleUrl2DataUrl = exports.purify = exports.sleep = exports.clone = exports.blob2ArrayBuffer = exports.getClassPrototype = void 0;
+function getClassPrototype(obj, over = [], level = 0) {
+    if (level === 0) {
+        return getClassPrototype(Object.getPrototypeOf(obj), over, level + 1);
+    }
+    const rtn = {
+        'method': {},
+        'access': {}
+    };
+    const names = Object.getOwnPropertyNames(obj);
+    if (names.includes('toString')) {
+        return rtn;
+    }
+    for (const item of names) {
+        if (item === 'constructor') {
+            continue;
+        }
+        if (over.includes(item)) {
+            continue;
+        }
+        const des = Object.getOwnPropertyDescriptor(obj, item);
+        if (!des) {
+            continue;
+        }
+        over.push(item);
+        if (des.value) {
+            rtn.method[item] = des.value;
+        }
+        else if (des.get || des.set) {
+            if (!rtn.access[item]) {
+                rtn.access[item] = {};
+            }
+            if (des.get) {
+                rtn.access[item].get = des.get;
+            }
+            if (des.set) {
+                rtn.access[item].set = des.set;
+            }
+        }
+    }
+    const rtn2 = getClassPrototype(Object.getPrototypeOf(obj), over, level + 1);
+    Object.assign(rtn.method, rtn2.method);
+    Object.assign(rtn.access, rtn2.access);
+    return rtn;
+}
+exports.getClassPrototype = getClassPrototype;
 function blob2ArrayBuffer(blob) {
     return new Promise(function (resove) {
         const fr = new FileReader();
@@ -151,7 +195,7 @@ function layoutClassPrependObject(object) {
     return '{' + object.replace(/(.+?):(.+?)(,|$)/g, function (t, t1, t2, t3) {
         t1 = t1.trim();
         if (t1.startsWith('[')) {
-            t1 = '[cgClassPrepend(' + t1.slice(1, -1) + ')]';
+            t1 = '[classPrepend(' + t1.slice(1, -1) + ')]';
         }
         else {
             let sp = '';
@@ -159,7 +203,7 @@ function layoutClassPrependObject(object) {
                 sp = t1[0];
                 t1 = t1.slice(1, -1);
             }
-            t1 = `[cgClassPrepend(${sp}${t1}${sp})]`;
+            t1 = `[classPrepend(${sp}${t1}${sp})]`;
         }
         return t1 + ':' + t2 + t3;
     }) + '}';
@@ -187,7 +231,7 @@ function layoutClassPrepend(layout, preps) {
                         t1a[i] = layoutClassPrependObject(t1a[i]);
                     }
                     else {
-                        t1a[i] = 'cgClassPrepend(' + t1a[i] + ')';
+                        t1a[i] = 'classPrepend(' + t1a[i] + ')';
                     }
                 }
                 t1 = '[' + t1a.join(',') + ']';
@@ -205,9 +249,9 @@ function eventsAttrWrap(layout) {
     const reg = new RegExp(`@(${events.join('|')})="(.+?)"`, 'g');
     return layout.replace(reg, function (t, t1, t2) {
         if (/^[\w]+$/.test(t2)) {
-            return `@${t1}="cgAllowEvent($event) && ${t2}($event)"`;
+            return `@${t1}="allowEvent($event) && ${t2}($event)"`;
         }
-        return `@${t1}=";if(cgAllowEvent($event)){${t2}}"`;
+        return `@${t1}=";if(allowEvent($event)){${t2}}"`;
     });
 }
 exports.eventsAttrWrap = eventsAttrWrap;
@@ -281,47 +325,6 @@ function getMimeByPath(path) {
     };
 }
 exports.getMimeByPath = getMimeByPath;
-const objectURLs = [];
-function createObjectURL(object, taskId = 0) {
-    let t = null;
-    if (taskId > 0) {
-        t = task.list[taskId];
-        if (!t) {
-            return '';
-        }
-    }
-    const url = URL.createObjectURL(object);
-    objectURLs.push(url);
-    if (t) {
-        t.objectURLs.push(url);
-    }
-    return url;
-}
-exports.createObjectURL = createObjectURL;
-function revokeObjectURL(url, taskId = 0) {
-    const oio = objectURLs.indexOf(url);
-    if (oio === -1) {
-        return;
-    }
-    if (taskId > 0) {
-        const t = task.list[taskId];
-        if (!t) {
-            return;
-        }
-        const io = t.objectURLs.indexOf(url);
-        if (io === -1) {
-            return;
-        }
-        t.objectURLs.splice(io, 1);
-    }
-    objectURLs.splice(oio, 1);
-    URL.revokeObjectURL(url);
-}
-exports.revokeObjectURL = revokeObjectURL;
-function getObjectURLs() {
-    return objectURLs;
-}
-exports.getObjectURLs = getObjectURLs;
 function rand(min, max) {
     if (min > max) {
         [min, max] = [max, min];
@@ -369,6 +372,13 @@ function getBoolean(param) {
     }
 }
 exports.getBoolean = getBoolean;
+function getNumber(param) {
+    if (typeof param === 'number') {
+        return param;
+    }
+    return parseFloat(param);
+}
+exports.getNumber = getNumber;
 function escapeHTML(html) {
     return html.replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }

@@ -9,141 +9,98 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.mounted = exports.methods = exports.computed = exports.watch = exports.data = exports.props = void 0;
 const clickgo = require("clickgo");
-exports.props = {
-    'direction': {
-        'default': 'h'
-    },
-    'scrollLeft': {
-        'default': undefined
-    },
-    'scrollTop': {
-        'default': undefined
-    },
-    'content': {
-        'default': undefined,
-    },
-    'selection': {
-        'default': false
-    },
-    'same': {
-        'default': false
-    },
-    'solo': {
-        'default': true
-    },
-    'data': {
-        'default': []
-    },
-    'itemsSize': {
-        'default': []
+class default_1 extends clickgo.control.AbstractControl {
+    constructor() {
+        super(...arguments);
+        this.props = {
+            'direction': 'h',
+            'scrollLeft': -1,
+            'scrollTop': -1,
+            'content': '',
+            'selection': false,
+            'same': false,
+            'solo': true,
+            'data': [],
+            'itemsSize': []
+        };
+        this.padding = '';
+        this.paddingChild = {
+            'top': 0,
+            'right': 0,
+            'bottom': 0,
+            'left': 0
+        };
+        this.showPos = {
+            'start': 0,
+            'end': 0
+        };
+        this.selectPos = {
+            'start': 0,
+            'end': 0
+        };
+        this.itemsPos = [];
+        this.needItemsComp = [];
+        this.scrollLeftEmit = 0;
+        this.scrollTopEmit = 0;
+        this.length = 0;
+        this.lengthWidth = 0;
+        this.lengthHeight = 0;
+        this.client = 0;
+        this.clientWidth = 0;
+        this.clientHeight = 0;
+        this.refreshCount = 0;
+        this.lengthInit = false;
+        this.reShowing = false;
     }
-};
-exports.data = {
-    'padding': '',
-    'paddingChild': {
-        'top': 0,
-        'right': 0,
-        'bottom': 0,
-        'left': 0
-    },
-    'showPos': {
-        'start': 0,
-        'end': 0
-    },
-    'selectPos': {
-        'start': 0,
-        'end': 0
-    },
-    'itemsPos': [],
-    'needItemsComp': [],
-    'scrollLeftEmit': 0,
-    'scrollTopEmit': 0,
-    'length': 0,
-    'lengthWidth': 0,
-    'lengthHeight': 0,
-    'client': 0,
-    'clientWidth': 0,
-    'clientHeight': 0,
-    'refreshCount': 0,
-    'lengthInit': false,
-    'isWatch': true
-};
-exports.watch = {
-    'data': {
-        handler: function () {
-            this.refreshView();
-        },
-        'deep': true
-    },
-    'direction': function () {
-        this.refreshView();
-    },
-    'scrollLeft': function () {
-        if (this.direction === 'h' && this.scrollLeftEmit !== this.scrollLeft) {
-            this.scrollLeftEmit = this.scrollLeft;
-            this.reShow();
-        }
-    },
-    'scrollTop': function () {
-        if (this.direction === 'v' && this.scrollTopEmit !== this.scrollTop) {
-            this.scrollTopEmit = this.scrollTop;
-            this.reShow();
-        }
+    get isSame() {
+        return clickgo.tool.getBoolean(this.props.same);
     }
-};
-exports.computed = {
-    'isSame': function () {
-        return clickgo.tool.getBoolean(this.same);
-    },
-    'isSelection': function () {
-        return clickgo.tool.getBoolean(this.selection);
-    },
-    'isSolo': function () {
-        return clickgo.tool.getBoolean(this.solo);
-    },
-    'dataComp': function () {
-        if (typeof this.data !== 'number') {
-            return this.data;
+    get isSelection() {
+        return clickgo.tool.getBoolean(this.props.selection);
+    }
+    get isSolo() {
+        return clickgo.tool.getBoolean(this.props.solo);
+    }
+    get dataComp() {
+        if (typeof this.props.data !== 'number') {
+            return this.props.data;
         }
         const list = [];
-        for (let i = 1; i <= this.data; ++i) {
+        for (let i = 1; i <= this.props.data; ++i) {
             list.push(i);
         }
         return list;
-    },
-    'scrollOffset': function () {
-        return this.direction === 'v' ? this.scrollTopEmit : this.scrollLeftEmit;
-    },
-    'itemStyle': function () {
+    }
+    get scrollOffset() {
+        return this.props.direction === 'v' ? this.scrollTopEmit : this.scrollLeftEmit;
+    }
+    get itemStyle() {
         return (index) => {
             return {
-                'left': (this.direction === 'v' ?
+                'left': (this.props.direction === 'v' ?
                     this.paddingChild.left :
                     (this.itemsPos[index] ?
                         this.itemsPos[index].start :
                         '0')) + 'px',
-                'top': (this.direction === 'v' ?
+                'top': (this.props.direction === 'v' ?
                     (this.itemsPos[index] ?
                         this.itemsPos[index].start :
                         '0') :
                     this.paddingChild.top) + 'px',
-                'min-width': (this.direction === 'v' ?
+                'min-width': (this.props.direction === 'v' ?
                     `calc(100% - ${this.paddingChild.left + this.paddingChild.right}px)` :
                     undefined),
-                'min-height': (this.direction === 'v' ?
+                'min-height': (this.props.direction === 'v' ?
                     undefined :
                     `calc(100% - ${this.paddingChild.top + this.paddingChild.bottom}px)`)
             };
         };
-    },
-    'opMargin': function () {
+    }
+    get opMargin() {
         return this.padding.replace(/(\w+)/g, '-$1');
     }
-};
-exports.methods = {
-    refreshView: function () {
+    refreshView() {
         return __awaiter(this, void 0, void 0, function* () {
             const nowCount = ++this.refreshCount;
             let lengthWidth = this.paddingChild.left;
@@ -151,7 +108,7 @@ exports.methods = {
             if (this.dataComp.length === 0) {
                 this.lengthWidth = lengthWidth + this.paddingChild.right;
                 this.lengthHeight = lengthHeight + this.paddingChild.bottom;
-                this.length = this.direction === 'v' ? this.lengthHeight : this.lengthWidth;
+                this.length = this.props.direction === 'v' ? this.lengthHeight : this.lengthWidth;
                 return;
             }
             yield clickgo.tool.sleep(0);
@@ -169,17 +126,18 @@ exports.methods = {
                 }
                 const needItemsComp = [];
                 for (let i = cursor; i < maxCursor; ++i) {
-                    if (typeof this.itemsSize[i] === 'number') {
+                    const type = typeof this.props.itemsSize[i];
+                    if (type === 'number') {
                         cursor = i;
                         continue;
                     }
-                    if (typeof this.itemsSize[i] === 'string') {
-                        if (itemsSizeAlias[this.itemsSize[i]] !== undefined) {
+                    if (type === 'string') {
+                        if (itemsSizeAlias[this.props.itemsSize[i]] !== undefined) {
                             cursor = i;
                             continue;
                         }
                         else {
-                            itemsSizeAlias[this.itemsSize[i]] = -1;
+                            itemsSizeAlias[this.props.itemsSize[i]] = -1;
                         }
                     }
                     else if (this.isSame) {
@@ -199,19 +157,19 @@ exports.methods = {
                     cursor = i;
                 }
                 this.needItemsComp = needItemsComp;
-                yield this.$nextTick();
+                yield this.nextTick();
                 if (nowCount !== this.refreshCount) {
                     return;
                 }
-                if (!this.$refs.comp || !this.$refs.comp.offsetParent) {
+                if (!this.refs.comp || !this.refs.comp.offsetParent) {
                     return;
                 }
-                for (let i = 0; i < this.$refs.comp.children.length; ++i) {
-                    const item = this.$refs.comp.children.item(i);
+                for (let i = 0; i < this.refs.comp.children.length; ++i) {
+                    const item = this.refs.comp.children.item(i);
                     const rect = item.getBoundingClientRect();
                     const theCursor = parseInt(item.dataset.cursor);
                     let size = 0;
-                    if (this.direction === 'v') {
+                    if (this.props.direction === 'v') {
                         size = rect.height;
                         if (anotherMax < rect.width) {
                             anotherMax = rect.width;
@@ -223,7 +181,7 @@ exports.methods = {
                             anotherMax = rect.height;
                         }
                     }
-                    if (typeof this.itemsSize[theCursor] === 'string') {
+                    if (typeof this.props.itemsSize[theCursor] === 'string') {
                         itemsSizeAlias[itemsSize[theCursor]] = size;
                     }
                     else if (this.isSame) {
@@ -241,13 +199,13 @@ exports.methods = {
             const itemsPos = [];
             for (let i = 0; i < maxCursor; ++i) {
                 let size = 0;
-                if (this.itemsSize[i] !== undefined) {
-                    const type = typeof this.itemsSize[i];
+                if (this.props.itemsSize[i] !== undefined) {
+                    const type = typeof this.props.itemsSize[i];
                     if (type === 'number') {
-                        size = this.itemsSize[i];
+                        size = this.props.itemsSize[i];
                     }
                     else {
-                        size = itemsSizeAlias[this.itemsSize[i]];
+                        size = itemsSizeAlias[this.props.itemsSize[i]];
                     }
                 }
                 else if (this.isSame) {
@@ -256,20 +214,20 @@ exports.methods = {
                 else {
                     size = itemsSize[i];
                 }
-                const start = this.direction === 'v' ? lengthHeight : lengthWidth;
+                const start = this.props.direction === 'v' ? lengthHeight : lengthWidth;
                 const end = start + size;
                 itemsPos.push({
                     'start': start,
                     'end': end
                 });
-                if (this.direction === 'v') {
+                if (this.props.direction === 'v') {
                     lengthHeight += size;
                 }
                 else {
                     lengthWidth += size;
                 }
             }
-            if (this.direction === 'v') {
+            if (this.props.direction === 'v') {
                 lengthWidth += anotherMax;
             }
             else {
@@ -279,25 +237,25 @@ exports.methods = {
             lengthHeight += this.paddingChild.bottom;
             this.lengthWidth = lengthWidth;
             this.lengthHeight = lengthHeight;
-            this.length = this.direction === 'v' ? this.lengthHeight : this.lengthWidth;
+            this.length = this.props.direction === 'v' ? this.lengthHeight : this.lengthWidth;
             this.itemsPos = itemsPos;
             if (!this.lengthInit) {
                 this.lengthInit = true;
                 yield clickgo.tool.sleep(34);
-                if (this.scrollLeft) {
-                    this.scrollLeftEmit = this.scrollLeft;
-                    this.$refs.view.goScroll(this.scrollLeft, 'left');
+                if (this.props.scrollLeft >= 0) {
+                    this.scrollLeftEmit = this.props.scrollLeft;
+                    this.refs.view.goScroll(this.props.scrollLeft, 'left');
                 }
-                if (this.scrollTop) {
-                    this.scrollTopEmit = this.scrollTop;
-                    this.$refs.view.goScroll(this.scrollTop, 'top');
+                if (this.props.scrollTop >= 0) {
+                    this.scrollTopEmit = this.props.scrollTop;
+                    this.refs.view.goScroll(this.props.scrollTop, 'top');
                 }
             }
-            this.$emit('itemsposchange');
+            this.emit('itemsposchange');
             this.reShow();
         });
-    },
-    refreshPos: function (pos, area) {
+    }
+    refreshPos(pos, area) {
         if (this.length <= area.start) {
             return {
                 'start': -1,
@@ -402,21 +360,21 @@ exports.methods = {
             }
         }
         return rtn;
-    },
-    reShow: function () {
-        this.isWatch = false;
+    }
+    reShow() {
+        this.reShowing = true;
         const rtn = this.refreshPos(this.showPos, {
             'start': this.scrollOffset - 20,
             'end': this.scrollOffset + this.client + 20
         });
         this.showPos.start = rtn.start;
         this.showPos.end = rtn.end;
-        this.$nextTick().then(() => {
-            this.isWatch = true;
+        this.nextTick().then(() => {
+            this.reShowing = false;
         }).catch(() => {
         });
-    },
-    isInArea: function (i, area) {
+    }
+    isInArea(i, area) {
         const pos = this.itemsPos[i];
         if (!pos) {
             return false;
@@ -425,30 +383,30 @@ exports.methods = {
             return true;
         }
         return false;
-    },
-    updateScrollOffset: function (val, pos) {
+    }
+    updateScrollOffset(val, pos) {
         if (!this.lengthInit) {
             return;
         }
         if (pos === 'left') {
             this.scrollLeftEmit = val;
-            this.$emit('update:scrollLeft', val);
-            if (this.direction === 'h') {
+            this.emit('update:scrollLeft', val);
+            if (this.props.direction === 'h') {
                 this.reShow();
             }
         }
         else {
             this.scrollTopEmit = val;
-            this.$emit('update:scrollTop', val);
-            if (this.direction === 'v') {
+            this.emit('update:scrollTop', val);
+            if (this.props.direction === 'v') {
                 this.reShow();
             }
         }
-    },
-    onResize: function (val) {
+    }
+    onResize(val) {
         this.client = val;
-        this.$emit('resize', val);
-        if (this.direction === 'v') {
+        this.emit('resize', val);
+        if (this.props.direction === 'v') {
             this.clientHeight = val;
         }
         else {
@@ -457,27 +415,27 @@ exports.methods = {
         if (!this.lengthInit) {
             return;
         }
-        this.refreshView();
-    },
-    onResizen: function (val) {
-        this.refreshView();
-        this.$emit('resizen', val);
-        if (this.direction === 'h') {
+        this.refreshView().catch((e) => { console.log(e); });
+    }
+    onResizen(val) {
+        this.emit('resizen', val);
+        if (this.props.direction === 'h') {
             this.clientHeight = val;
         }
         else {
             this.clientWidth = val;
         }
-    },
-    onChange: function (val) {
+        this.refreshView().catch((e) => { console.log(e); });
+    }
+    onChange(val) {
         if (!this.lengthInit) {
             return;
         }
-        this.$emit('change', val);
-    },
-    onSelect: function (area) {
-        const offset = this.direction === 'v' ? area.y : area.x;
-        const length = this.direction === 'v' ? area.height : area.width;
+        this.emit('change', val);
+    }
+    onSelect(area) {
+        const offset = this.props.direction === 'v' ? area.y : area.x;
+        const length = this.props.direction === 'v' ? area.height : area.width;
         const rtn = this.refreshPos(this.selectPos, {
             'start': offset,
             'end': offset + length
@@ -486,43 +444,63 @@ exports.methods = {
         this.selectPos.end = rtn.end;
         area.start = rtn.start;
         area.end = rtn.end;
-        this.$emit('select', area);
-    },
-    getPos: function (val) {
+        this.emit('select', area);
+    }
+    getPos(val) {
         return this.itemsPos[val];
     }
-};
-const mounted = function () {
-    clickgo.dom.watchStyle(this.$el, ['padding', 'padding-top', 'padding-right', 'padding-bottom', 'padding-left', 'font'], (n, v) => {
-        switch (n) {
-            case 'padding': {
-                this.padding = v;
-                break;
+    onMounted() {
+        this.watch('data', () => {
+            this.refreshView().catch((e) => { console.log(e); });
+        }, {
+            'deep': true
+        });
+        this.watch('direction', () => {
+            this.refreshView().catch((e) => { console.log(e); });
+        });
+        this.watch('scrollLeft', () => {
+            if (this.props.direction === 'h' && this.scrollLeftEmit !== this.props.scrollLeft && this.props.scrollLeft >= 0) {
+                this.scrollLeftEmit = this.props.scrollLeft;
+                this.reShow();
             }
-            case 'padding-top': {
-                this.paddingChild.top = parseInt(v);
-                break;
+        });
+        this.watch('scrollTop', () => {
+            if (this.props.direction === 'v' && this.scrollTopEmit !== this.props.scrollTop && this.props.scrollTop >= 0) {
+                this.scrollTopEmit = this.props.scrollTop;
+                this.reShow();
             }
-            case 'padding-right': {
-                this.paddingChild.right = parseInt(v);
-                break;
+        });
+        clickgo.dom.watchStyle(this.element, ['padding', 'padding-top', 'padding-right', 'padding-bottom', 'padding-left', 'font'], (n, v) => {
+            switch (n) {
+                case 'padding': {
+                    this.padding = v;
+                    break;
+                }
+                case 'padding-top': {
+                    this.paddingChild.top = parseInt(v);
+                    break;
+                }
+                case 'padding-right': {
+                    this.paddingChild.right = parseInt(v);
+                    break;
+                }
+                case 'padding-bottom': {
+                    this.paddingChild.bottom = parseInt(v);
+                    break;
+                }
+                case 'padding-left': {
+                    this.paddingChild.left = parseInt(v);
+                    break;
+                }
             }
-            case 'padding-bottom': {
-                this.paddingChild.bottom = parseInt(v);
-                break;
+            this.refreshView().catch((e) => { console.log(e); });
+        }, true);
+        clickgo.dom.watch(this.element, () => {
+            if (this.reShowing) {
+                return;
             }
-            case 'padding-left': {
-                this.paddingChild.left = parseInt(v);
-                break;
-            }
-        }
-        this.refreshView();
-    }, true);
-    clickgo.dom.watch(this.$el, () => {
-        if (!this.isWatch) {
-            return;
-        }
-        this.refreshView();
-    }, 'childsub');
-};
-exports.mounted = mounted;
+            this.refreshView().catch((e) => { console.log(e); });
+        }, 'childsub');
+    }
+}
+exports.default = default_1;

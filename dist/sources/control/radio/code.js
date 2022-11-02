@@ -1,31 +1,23 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.methods = exports.data = exports.computed = exports.props = void 0;
 const clickgo = require("clickgo");
-exports.props = {
-    'disabled': {
-        'default': false
-    },
-    'value': {
-        'default': undefined
-    },
-    'modelValue': {
-        'default': undefined
+class default_1 extends clickgo.control.AbstractControl {
+    constructor() {
+        super(...arguments);
+        this.props = {
+            'disabled': false,
+            'value': '',
+            'modelValue': ''
+        };
+        this.isKeyDown = false;
     }
-};
-exports.computed = {
-    'isDisabled': function () {
-        return clickgo.tool.getBoolean(this.disabled);
+    get isDisabled() {
+        return clickgo.tool.getBoolean(this.props.disabled);
     }
-};
-exports.data = {
-    'isKeyDown': false
-};
-exports.methods = {
-    click: function () {
-        this.$emit('update:modelValue', this.value);
-    },
-    keydown: function (e) {
+    click() {
+        this.emit('update:modelValue', this.props.value);
+    }
+    keydown(e) {
         if (e.key === 'Enter') {
             e.preventDefault();
             this.click();
@@ -34,12 +26,13 @@ exports.methods = {
             e.preventDefault();
             this.isKeyDown = true;
         }
-    },
-    keyup: function () {
+    }
+    keyup() {
         if (!this.isKeyDown) {
             return;
         }
         this.isKeyDown = false;
         this.click();
     }
-};
+}
+exports.default = default_1;

@@ -1,12 +1,12 @@
 <div class="wrap" :data-cg-disabled="isDisabled ? '' : undefined" @click="click" @mouseenter="enter" @touchstart="touch">
     <div class="op" :style="{'margin': opMargin}">
-        <div v-if="cgParentByName('menulist') && cgParentByName('menulist').hasTypeItemsCount > 0" :class="[type ? type : 'check']" :style="{'visibility': type !== undefined ? ((type === 'check' ? modelValue : label === modelValue) ? 'inherit' : undefined) : undefined}"></div>
+        <div v-if="parentByName('menulist') && parentByName('menulist').hasTypeItemsCount > 0" :class="[type ? type : 'check']" :style="{'visibility': type !== undefined ? ((type === 'check' ? modelValue : label === modelValue) ? 'inherit' : undefined) : undefined}"></div>
         <div class="inner" :style="{'padding': padding}">
             <slot></slot>
         </div>
-        <div v-if="$slots.pop" class="arrow"></div>
+        <div v-if="slots('pop').length" class="arrow"></div>
     </div>
-    <teleport v-if="$slots.pop" to="#cg-pop-list">
+    <teleport v-if="slots('pop').length" to="#cg-pop-list">
         <div ref="pop" data-cg-pop>
             <slot name="pop"></slot>
         </div>

@@ -19,8 +19,12 @@ import * as fs from './fs';
 import * as form from './form';
 import * as task from './task';
 import * as tool from './tool';
+import * as control from './control';
+import * as theme from './theme';
 import * as zip from './zip';
+import * as dom from './dom';
 
+/** --- Config 原始参考对象 --- */
 const configOrigin: types.IConfig = {
     'locale': 'en',
     'task.position': 'bottom',
@@ -31,6 +35,8 @@ const configOrigin: types.IConfig = {
     'desktop.path': null,
     'launcher.list': []
 };
+
+/** --- Config 配置对象 --- */
 export const config: types.IConfig = clickgo.vue.reactive({
     'locale': 'en',
     'task.position': 'bottom',
@@ -42,7 +48,296 @@ export const config: types.IConfig = clickgo.vue.reactive({
     'launcher.list': []
 });
 
-export const cdn = '';
+/** --- App 抽象类 --- */
+export abstract class AbstractApp {
+
+    /** --- 当前 js 文件在包内的完整路径 --- */
+    public get filename(): string {
+        return '';
+    }
+
+    /** --- invoke 时系统会自动设置本项 --- */
+    public get taskId(): number {
+        return 0;
+    }
+
+    public set taskId(v: number) {
+        form.notify({
+            'title': 'Error',
+            'content': `The software tries to modify the system variable "taskId" to "${v}".\nPath: ${this.filename}`,
+            'type': 'danger'
+        });
+    }
+
+    /** --- App 的入口文件 --- */
+    public abstract main(): Promise<void>;
+
+    /**
+     * --- 先设置 App 的配置信息 ---
+     * @param config 配置对象
+     */
+    public async config(config: types.IAppConfig): Promise<boolean> {
+        const t = task.list[this.taskId];
+        if (!t) {
+            return false;
+        }
+        t.config = config;
+        // --- 加载余下的 xml 等静态包内资源，仅限 net 的 app 模式 ---
+        if (t.app.net) {
+            if (!t.config.files) {
+                return false;
+            }
+            const files = t.config.files;
+            const net = t.app.net;
+            await new Promise<void>(function(resolve) {
+                let loaded = 0;
+                const total = files.length;
+                const beforeTotal = Object.keys(t.app.files).length;
+                net.progress?.(loaded + beforeTotal, total + beforeTotal) as unknown;
+                for (const file of files) {
+                    fs.getContent(net.url + file.slice(1), {
+                        'current': net.current
+                    }).then(async function(blob) {
+                        if (blob === null || typeof blob === 'string') {
+                            clickgo.form.notify({
+                                'title': 'File not found',
+                                'content': net.url + file.slice(1),
+                                'type': 'danger'
+                            });
+                            return;
+                        }
+                        const mime = tool.getMimeByPath(file);
+                        if (['txt', 'json', 'js', 'css', 'xml', 'html'].includes(mime.ext)) {
+                            t.app.files[file] = (await tool.blob2Text(blob)).replace(/^\ufeff/, '');
+                        }
+                        else {
+                            t.app.files[file] = blob;
+                        }
+                        ++loaded;
+                        net.progress?.(loaded + beforeTotal, total + beforeTotal) as unknown;
+                        if (net.notify) {
+                            form.notifyProgress(net.notify, (loaded / total) / 2 + 0.5);
+                        }
+                        if (loaded < total) {
+                            return;
+                        }
+                        resolve();
+                    }).catch(function() {
+                        ++loaded;
+                        net.progress?.(loaded + beforeTotal, total + beforeTotal) as unknown;
+                        if (net.notify) {
+                            form.notifyProgress(net.notify, (loaded / total) / 2 + 0.5);
+                        }
+                        if (loaded < total) {
+                            return;
+                        }
+                        resolve();
+                    });
+                }
+            });
+            if (net.notify) {
+                setTimeout(function(): void {
+                    form.hideNotify(net.notify!);
+                }, 2000);
+            }
+        }
+        // --- 要加载 control ---
+        if (!await control.init(this.taskId)) {
+            return false;
+        }
+        // --- theme ---
+        if (config.themes?.length) {
+            for (let path of config.themes) {
+                path += '.cgt';
+                path = tool.urlResolve('/', path);
+                const file = await fs.getContent(path, {
+                    'files': t.app.files,
+                    'current': t.current
+                });
+                if (file && typeof file !== 'string') {
+                    const th = await theme.read(file);
+                    if (th) {
+                        await theme.load(th, t.id);
+                    }
+                }
+            }
+        }
+        else {
+            // --- 加载全局主题 ---
+            if (theme.global) {
+                await theme.load(undefined, this.taskId);
+            }
+        }
+        // --- locale ---
+        if (config.locales) {
+            for (let path in config.locales) {
+                const locale = config.locales[path];
+                if (!path.endsWith('.json')) {
+                    path += '.json';
+                }
+                const lcontent = await fs.getContent(path, {
+                    'encoding': 'utf8',
+                    'files': t.app.files,
+                    'current': t.current
+                });
+                if (!lcontent) {
+                    continue;
+                }
+                try {
+                    const data = JSON.parse(lcontent);
+                    task.loadLocaleData(locale, data, '', t.id);
+                }
+                catch {
+                    // --- 无所谓 ---
+                }
+            }
+        }
+        // --- 加载任务级全局样式 ---
+        if (config.style) {
+            const style = await fs.getContent(config.style + '.css', {
+                'encoding': 'utf8',
+                'files': t.app.files,
+                'current': t.current
+            });
+            if (style) {
+                const r = tool.stylePrepend(style, 'cg-task' + this.taskId.toString() + '_');
+                dom.pushStyle(this.taskId, await tool.styleUrl2DataUrl(config.style, r.style, t.app.files));
+            }
+        }
+        // --- 加载图标 ---
+        if (config.icon) {
+            const icon = await fs.getContent(config.icon, {
+                'files': t.app.files,
+                'current': t.current
+            });
+            if (icon && typeof icon !== 'string') {
+                t.app.icon = await tool.blob2DataUrl(icon);
+            }
+        }
+        // --- 全部成功，设置 t.class 为自己 ---
+        t.class = this;
+        return true;
+    }
+
+    /**
+     * --- 以某个窗体进行正式启动这个 app（入口 form），不启动则任务也启动失败 ---
+     * @param form 窗体对象
+     */
+    public run(form: form.AbstractForm | number): void {
+        if (typeof form === 'number') {
+            // --- 报错 ---
+            const msg = 'Application run error, Form creation failed (' + form.toString() + ').';
+            trigger('error', this.taskId, 0, new Error(msg), msg);
+            return;
+        }
+        form.show();
+    }
+
+    /** --- 全局错误事件 --- */
+    public onError(taskId: number, formId: number, error: Error, info: string): void | Promise<void>;
+    public onError(): void {
+        return;
+    }
+
+    /** --- 屏幕大小改变事件 --- */
+    public onScreenResize(): void | Promise<void>;
+    public onScreenResize(): void {
+        return;
+    }
+
+    /** --- 系统配置变更事件 --- */
+    public onConfigChanged<T extends types.IConfig, TK extends keyof T>(n: TK, v: T[TK]): void | Promise<void>;
+    public onConfigChanged(): void {
+        return;
+    }
+
+    /** --- 窗体创建事件 --- */
+    public onFormCreated(taskId: number, formId: number, title: string, icon: string): void | Promise<void>;
+    public onFormCreated(): void {
+        return;
+    }
+
+    /** --- 窗体销毁事件 */
+    public onFormRemoved(taskId: number, formId: number, title: string, icon: string): void | Promise<void>;
+    public onFormRemoved(): void {
+        return;
+    }
+
+    /** --- 窗体标题改变事件 */
+    public onFormTitleChanged(taskId: number, formId: number, title: string): void | Promise<void>;
+    public onFormTitleChanged(): void | Promise<void> {
+        return;
+    }
+
+    /** --- 窗体图标改变事件 --- */
+    public onFormIconChanged(taskId: number, formId: number, icon: string): void | Promise<void>;
+    public onFormIconChanged(): void | Promise<void> {
+        return;
+    }
+
+    /** --- 窗体最小化状态改变事件 --- */
+    public onFormStateMinChanged(taskId: number, formId: number, state: boolean): void | Promise<void>;
+    public onFormStateMinChanged(): void {
+        return;
+    }
+
+    /** --- 窗体最大化状态改变事件 --- */
+    public onFormStateMaxChanged(taskId: number, formId: number, state: boolean): void | Promise<void>;
+    public onFormStateMaxChanged(): void {
+        return;
+    }
+
+    /** --- 窗体显示状态改变事件 --- */
+    public onFormShowChanged(taskId: number, formId: number, state: boolean): void | Promise<void>;
+    public onFormShowChanged(): void {
+        return;
+    }
+
+    /** --- 窗体获得焦点事件 --- */
+    public onFormFocused(taskId: number, formId: number): void | Promise<void>;
+    public onFormFocused(): void {
+        return;
+    }
+
+    /** --- 窗体丢失焦点事件 --- */
+    public onFormBlurred(taskId: number, formId: number): void | Promise<void>;
+    public onFormBlurred(): void {
+        return;
+    }
+
+    /** --- 窗体闪烁事件 --- */
+    public onFormFlash(taskId: number, formId: number): void | Promise<void>;
+    public onFormFlash(): void {
+        return;
+    }
+
+    /** --- 任务开始事件 --- */
+    public onTaskStarted(taskId: number): void | Promise<void>;
+    public onTaskStarted(): void | Promise<void> {
+        return;
+    }
+
+    /** --- 任务结束事件 --- */
+    public onTaskEnded(taskId: number): void | Promise<void>;
+    public onTaskEnded(): void | Promise<void> {
+        return;
+    }
+
+    /** --- launcher 文件夹名称修改事件 --- */
+    public onLauncherFolderNameChanged(id: string, name: string): void | Promise<void>;
+    public onLauncherFolderNameChanged(): void {
+        return;
+    }
+
+}
+
+/** --- CDN 地址 --- */
+export function getCdn(): string {
+    return loader.cdn;
+}
+
+/** --- boot 类 --- */
+export let boot: import('../index').AbstractBoot;
 
 clickgo.vue.watch(config, function() {
     // --- 检测有没有缺少的 config key ---
@@ -101,7 +396,7 @@ const modules: Record<string, { func: () => any | Promise<any>; 'obj': null | an
     'monaco': {
         func: async function() {
             return new Promise(function(resolve, reject) {
-                fetch(loader.cdn + '/npm/monaco-editor@0.33.0/min/vs/loader.js').then(function(r) {
+                fetch(loader.cdn + '/npm/monaco-editor@0.34.1/min/vs/loader.js').then(function(r) {
                     return r.blob();
                 }).then(function(b) {
                     return tool.blob2DataUrl(b);
@@ -118,7 +413,7 @@ const modules: Record<string, { func: () => any | Promise<any>; 'obj': null | an
 };
 
 /**
- * --- 注册新的外接模块 ---
+ * --- 注册新的外接模块，App 模式下无效 ---
  * @param name 模块名
  * @param func 执行加载函数
  */
@@ -220,33 +515,30 @@ export function getModule(name: string): null | any {
     return modules[name].obj;
 }
 
-/** --- 全局响应事件 --- */
-export const globalEvents: types.IGlobalEvents = {
-    errorHandler: null,
-    screenResizeHandler: function(): void {
+/** --- 系统要处理的全局响应事件 --- */
+const globalEvents = {
+    screenResize: function(): void {
         form.refreshMaxPosition();
     },
-    configChangedHandler: null,
-    formCreatedHandler: null,
-    formRemovedHandler: function(taskId: number, formId: number): void {
+    formRemoved: function(taskId: number, formId: number): void {
         if (!form.simpleSystemTaskRoot.forms[formId]) {
             return;
         }
         delete form.simpleSystemTaskRoot.forms[formId];
     },
-    formTitleChangedHandler: function(taskId: number, formId: number, title: string): void {
+    formTitleChanged: function(taskId: number, formId: number, title: string): void {
         if (!form.simpleSystemTaskRoot.forms[formId]) {
             return;
         }
         form.simpleSystemTaskRoot.forms[formId].title = title;
     },
-    formIconChangedHandler: function(taskId: number, formId: number, icon: string): void {
+    formIconChanged: function(taskId: number, formId: number, icon: string): void {
         if (!form.simpleSystemTaskRoot.forms[formId]) {
             return;
         }
         form.simpleSystemTaskRoot.forms[formId].icon = icon;
     },
-    formStateMinChangedHandler: function(taskId: number, formId: number, state: boolean): void {
+    formStateMinChanged: function(taskId: number, formId: number, state: boolean): void {
         if (task.systemTaskInfo.taskId > 0) {
             return;
         }
@@ -266,119 +558,37 @@ export const globalEvents: types.IGlobalEvents = {
             }
             delete form.simpleSystemTaskRoot.forms[formId];
         }
-    },
-    formStateMaxChangedHandler: null,
-    formShowChangedHandler: null,
-    formFocusedHandler: null,
-    formBlurredHandler: null,
-    formFlashHandler: null,
-    taskStartedHandler: null,
-    taskEndedHandler: null,
-    launcherFolderNameChangedHandler: null
+    }
 };
 
 /**
- * --- 设置系统事件监听，一个窗体只能设置一个监听 ---
- * @param name 系统事件名
- * @param func 回调函数
- * @param formId 窗体 id，app 模式下留空为当前窗体
- * @param taskId 任务 id，app 模式下无效
+ * --- 主动触发系统级事件，App 中无效，用 this.trigger 替代 ---
  */
-export function setSystemEventListener(
-    name: types.TGlobalEvent,
-    func: (...any: any) => void | Promise<void>,
-    formId?: number,
-    taskId?: number
-): void {
-    if (!taskId) {
-        return;
-    }
-    const t = task.list[taskId];
-    if (!t) {
-        return;
-    }
-    if (!formId) {
-        return;
-    }
-    const f = t.forms[formId];
-    if (!f) {
-        return;
-    }
-    f.events[name] = func;
-}
-
-/**
- * --- 移除系统事件监听，一个窗体只能设置一个监听 ---
- * @param name name 系统事件名
- * @param formId 窗体 id，app 默认为当前窗体
- * @param taskId 任务 id，app 模式下无效
- */
-export function removeSystemEventListener(
-    name: types.TGlobalEvent,
-    formId?: number,
-    taskId?: number
-): void {
-    if (!taskId) {
-        return;
-    }
-    const t = task.list[taskId];
-    if (!t) {
-        return;
-    }
-    if (!formId) {
-        return;
-    }
-    const f = t.forms[formId];
-    if (!f) {
-        return;
-    }
-    delete f.events[name];
-}
-
-/**
- * --- 主动触发系统级事件 ---
- */
-export function trigger(name: types.TGlobalEvent, taskId: number | string = 0, formId: number | string | boolean | Record<string, any> | null = 0, param1: boolean | Error | string = '', param2: string = ''): void {
+export function trigger(name: types.TGlobalEvent, taskId: number | string | boolean = 0, formId: number | string | boolean | Record<string, any> | null = 0, param1: boolean | Error | string = '', param2: string = ''): void {
+    const eventName = 'on' + name[0].toUpperCase() + name.slice(1);
     switch (name) {
         case 'error': {
             if (typeof taskId !== 'number' || typeof formId !== 'number') {
                 break;
             }
-            const r = globalEvents.errorHandler?.(taskId, formId, param1 as Error, param2);
-            if (r && (r instanceof Promise))  {
-                r.catch(function(e) {
-                    console.log(e);
-                });
-            }
+            (boot as any)[eventName](taskId, formId, param1, param2);
             for (const tid in task.list) {
                 const t = task.list[tid];
+                (t.class as any)?.[eventName](taskId, formId, param1, param2);
                 for (const fid in t.forms) {
-                    const r = t.forms[fid].events[name]?.(taskId, formId, param1, param2);
-                    if (r instanceof Promise)  {
-                        r.catch(function(e) {
-                            console.log(e);
-                        });
-                    }
+                    t.forms[fid].vroot[eventName]?.(taskId, formId, param1, param2);
                 }
             }
             break;
         }
         case 'screenResize': {
-            const r = globalEvents.screenResizeHandler?.();
-            if (r && (r instanceof Promise))  {
-                r.catch(function(e) {
-                    console.log(e);
-                });
-            }
+            globalEvents.screenResize();
+            (boot as any)[eventName]();
             for (const tid in task.list) {
                 const t = task.list[tid];
+                (t.class as any)?.[eventName]();
                 for (const fid in t.forms) {
-                    const r = t.forms[fid].events[name]?.();
-                    if (r instanceof Promise)  {
-                        r.catch(function(e) {
-                            console.log(e);
-                        });
-                    }
+                    t.forms[fid].vroot[eventName]?.();
                 }
             }
             break;
@@ -387,53 +597,38 @@ export function trigger(name: types.TGlobalEvent, taskId: number | string = 0, f
             if ((typeof taskId !== 'string') || (typeof formId === 'number')) {
                 break;
             }
-            const r = globalEvents.configChangedHandler?.(taskId as types.TConfigName, formId);
-            if (r && (r instanceof Promise))  {
-                r.catch(function(e) {
-                    console.log(e);
-                });
-            }
+            (boot as any)[eventName]();
             for (const tid in task.list) {
                 const t = task.list[tid];
+                (t.class as any)?.[eventName](taskId, formId);
                 for (const fid in t.forms) {
-                    const r = t.forms[fid].events[name]?.(taskId, formId);
-                    if (r instanceof Promise)  {
-                        r.catch(function(e) {
-                            console.log(e);
-                        });
-                    }
+                    t.forms[fid].vroot[eventName]?.(taskId, formId);
                 }
             }
             break;
         }
         case 'formCreated':
         case 'formRemoved': {
-            (globalEvents as any)[name + 'Handler']?.(taskId, formId, param1, param2);
+            (globalEvents as any)[name]?.(taskId, formId, param1, param2);
+            (boot as any)[eventName](taskId, formId, param1, param2);
             for (const tid in task.list) {
                 const t = task.list[tid];
+                (t.class as any)?.[eventName](taskId, formId, param1, param2);
                 for (const fid in t.forms) {
-                    const r = t.forms[fid].events[name]?.(taskId, formId, param1, param2);
-                    if (r instanceof Promise)  {
-                        r.catch(function(e) {
-                            console.log(e);
-                        });
-                    }
+                    t.forms[fid].vroot[eventName]?.(taskId, formId, param1, param2);
                 }
             }
             break;
         }
         case 'formTitleChanged':
         case 'formIconChanged': {
-            (globalEvents as any)[name + 'Handler']?.(taskId, formId, param1);
+            (globalEvents as any)[name]?.(taskId, formId, param1);
+            (boot as any)[eventName](taskId, formId, param1);
             for (const tid in task.list) {
                 const t = task.list[tid];
+                (t.class as any)?.[eventName](taskId, formId, param1);
                 for (const fid in t.forms) {
-                    const r = t.forms[fid].events[name]?.(taskId, formId, param1);
-                    if (r instanceof Promise)  {
-                        r.catch(function(e) {
-                            console.log(e);
-                        });
-                    }
+                    t.forms[fid].vroot[eventName]?.(taskId, formId, param1);
                 }
             }
             break;
@@ -441,16 +636,13 @@ export function trigger(name: types.TGlobalEvent, taskId: number | string = 0, f
         case 'formStateMinChanged':
         case 'formStateMaxChanged':
         case 'formShowChanged': {
-            (globalEvents as any)[name + 'Handler']?.(taskId, formId, param1);
+            (globalEvents as any)[name]?.(taskId, formId, param1);
+            (boot as any)[eventName](taskId, formId, param1);
             for (const tid in task.list) {
                 const t = task.list[tid];
+                (t.class as any)?.[eventName](taskId, formId, param1);
                 for (const fid in t.forms) {
-                    const r = t.forms[fid].events[name]?.(taskId, formId, param1);
-                    if (r instanceof Promise)  {
-                        r.catch(function(e) {
-                            console.log(e);
-                        });
-                    }
+                    t.forms[fid].vroot[eventName]?.(taskId, formId, param1);
                 }
             }
             break;
@@ -458,32 +650,26 @@ export function trigger(name: types.TGlobalEvent, taskId: number | string = 0, f
         case 'formFocused':
         case 'formBlurred':
         case 'formFlash': {
-            (globalEvents as any)[name + 'Handler']?.(taskId, formId);
+            (globalEvents as any)[name]?.(taskId, formId);
+            (boot as any)[eventName](taskId, formId);
             for (const tid in task.list) {
                 const t = task.list[tid];
+                (t.class as any)?.[eventName](taskId, formId);
                 for (const fid in t.forms) {
-                    const r = t.forms[fid].events[name]?.(taskId, formId);
-                    if (r instanceof Promise)  {
-                        r.catch(function(e) {
-                            console.log(e);
-                        });
-                    }
+                    t.forms[fid].vroot[eventName]?.(taskId, formId);
                 }
             }
             break;
         }
         case 'taskStarted':
         case 'taskEnded': {
-            (globalEvents as any)[name + 'Handler']?.(taskId, formId);
+            (globalEvents as any)[name]?.(taskId, formId);
+            (boot as any)[eventName](taskId, formId);
             for (const tid in task.list) {
                 const t = task.list[tid];
+                (t.class as any)?.[eventName](taskId);
                 for (const fid in t.forms) {
-                    const r = t.forms[fid].events[name]?.(taskId);
-                    if (r instanceof Promise)  {
-                        r.catch(function(e) {
-                            console.log(e);
-                        });
-                    }
+                    t.forms[fid].vroot[eventName]?.(taskId);
                 }
             }
             break;
@@ -495,21 +681,12 @@ export function trigger(name: types.TGlobalEvent, taskId: number | string = 0, f
             if (typeof taskId === 'number') {
                 taskId = taskId.toString();
             }
-            const r = globalEvents.launcherFolderNameChangedHandler?.(taskId, formId);
-            if (r && (r instanceof Promise))  {
-                r.catch(function(e) {
-                    console.log(e);
-                });
-            }
+            (boot as any)[eventName](taskId, formId);
             for (const tid in task.list) {
                 const t = task.list[tid];
+                (t.class as any)?.[eventName](taskId, formId);
                 for (const fid in t.forms) {
-                    const r = t.forms[fid].events[name]?.(taskId, formId);
-                    if (r instanceof Promise)  {
-                        r.catch(function(e) {
-                            console.log(e);
-                        });
-                    }
+                    t.forms[fid].vroot[eventName]?.(taskId, formId);
                 }
             }
             break;
@@ -518,7 +695,7 @@ export function trigger(name: types.TGlobalEvent, taskId: number | string = 0, f
 }
 
 /**
- * --- cga 文件 blob 转 IApp 对象 ---
+ * --- cga blob 文件解包 ---
  * @param blob blob 对象
  */
 export async function readApp(blob: Blob): Promise<false | types.IApp> {
@@ -530,38 +707,30 @@ export async function readApp(blob: Blob): Promise<false | types.IApp> {
     }
     // --- 开始读取文件 ---
     const files: Record<string, Blob | string> = {};
-    /** --- 配置文件 --- */
-    const configContent = await z.getContent('/config.json');
-    if (!configContent) {
-        return false;
-    }
-    const config: types.IAppConfig = JSON.parse(configContent);
-    for (const file of config.files) {
-        const mime = tool.getMimeByPath(file);
+    const list = z.readDir('/', {
+        'hasChildren': true
+    });
+    for (const file of list) {
+        const mime = tool.getMimeByPath(file.name);
         if (['txt', 'json', 'js', 'css', 'xml', 'html'].includes(mime.ext)) {
-            const fab = await z.getContent(file, 'string');
+            const fab = await z.getContent(file.path + file.name, 'string');
             if (!fab) {
                 continue;
             }
-            files[file] = fab.replace(/^\ufeff/, '');
+            files[file.path + file.name] = fab.replace(/^\ufeff/, '');
         }
         else {
-            const fab = await z.getContent(file, 'arraybuffer');
+            const fab = await z.getContent(file.path + file.name, 'arraybuffer');
             if (!fab) {
                 continue;
             }
-            files[file] = new Blob([fab], {
+            files[file.path + file.name] = new Blob([fab], {
                 'type': mime.mime
             });
         }
     }
-    if (!config) {
-        return false;
-    }
     return {
-        'type': 'app',
         'icon': icon,
-        'config': config,
         'files': files
     };
 }
@@ -569,9 +738,12 @@ export async function readApp(blob: Blob): Promise<false | types.IApp> {
 /**
  * --- 从网址下载应用，App 模式下本方法不可用 ---
  * @param url 对于当前网页的相对、绝对路径，以 / 结尾的目录或 .cga 结尾的文件 ---
- * @param opt,notifyId:显示进度条的 notify id,current:设置则以设置的为准，以 / 结尾，否则以 location 为准 ---
+ * @param opt,notifyId:显示进度条的 notify id,current:设置则以设置的为准，不以 / 结尾，否则以 location 为准 ---
  */
-export async function fetchApp(url: string, opt: types.ICoreFetchAppOptions = {}): Promise<null | types.IApp> {
+export async function fetchApp(
+    url: string,
+    opt: types.ICoreFetchAppOptions = {}
+): Promise<null | types.IApp> {
     /** --- 若是 cga 文件，则是 cga 的文件名，含 .cga --- */
     let cga: string = '';
     if (!url.endsWith('/')) {
@@ -584,18 +756,14 @@ export async function fetchApp(url: string, opt: types.ICoreFetchAppOptions = {}
 
     let current = '';
     if (opt.current) {
-        if (!opt.current.endsWith('/')) {
-            return null;
-        }
-        if (!url.startsWith('/')) {
-            url = '/current/' + url;
-        }
+        current = opt.current.endsWith('/') ? opt.current.slice(0, -1) : opt.current;
+        url = tool.urlResolve('/current/', url);
     }
     else {
         if (!url.startsWith('/clickgo/') && !url.startsWith('/storage/') && !url.startsWith('/mounted/')) {
             current = tool.urlResolve(window.location.href, url);
             if (cga) {
-                current = current.slice(0, -cga.length);
+                current = current.slice(0, -cga.length - 1);
                 url = '/current/' + cga;
             }
             else {
@@ -630,75 +798,52 @@ export async function fetchApp(url: string, opt: types.ICoreFetchAppOptions = {}
             return null;
         }
     }
-    // --- 加载目录 ---
-    // --- 加载 json 文件，并创建 control 信息对象 ---
-    let config: types.IAppConfig;
-    // --- 已加载的 files ---
-    const files: Record<string, Blob | string> = {};
-    try {
-        const blob = await fs.getContent(url + 'config.json', {
-            'current': current
-        });
-        if (blob === null || typeof blob === 'string') {
-            return null;
-        }
-        config = JSON.parse(await tool.blob2Text(blob));
-        await new Promise<void>(function(resolve) {
-            const total = config.files.length;
-            let loaded = 0;
-            for (const file of config.files) {
-                fs.getContent(url + file.slice(1), {
-                    'current': current
-                }).then(async function(blob) {
-                    if (blob === null || typeof blob === 'string') {
-                        clickgo.form.notify({
-                            'title': 'File not found',
-                            'content': url + file.slice(1),
-                            'type': 'danger'
-                        });
-                        return;
-                    }
-                    const mime = tool.getMimeByPath(file);
-                    if (['txt', 'json', 'js', 'css', 'xml', 'html'].includes(mime.ext)) {
-                        files[file] = (await tool.blob2Text(blob)).replace(/^\ufeff/, '');
-                    }
-                    else {
-                        files[file] = blob;
-                    }
-                    ++loaded;
-                    opt.progress?.(loaded, total) as unknown;
-                    if (opt.notifyId) {
-                        form.notifyProgress(opt.notifyId, loaded / total);
-                    }
-                    if (loaded < total) {
-                        return;
-                    }
-                    resolve();
-                }).catch(function() {
-                    ++loaded;
-                    opt.progress?.(loaded, total) as unknown;
-                    if (opt.notifyId) {
-                        form.notifyProgress(opt.notifyId, loaded / total);
-                    }
-                    if (loaded < total) {
-                        return;
-                    }
-                    resolve();
-                });
+    // --- 从网络嗅探 ---
+    let loaded = 0;
+    let total = 30;
+    // --- 网络嗅探，不知道文件总数，先暂定 30，不过超出 30 文件的建议打包为 cga ---
+    const files = await loader.sniffFiles(url + 'app.js', {
+        'dir': '/',
+        adapter: async (url) => {
+            const r = await fs.getContent(url, {
+                'encoding': 'utf8',
+                'current': current
+            });
+            return r;
+        },
+        'loaded': () => {
+            ++loaded;
+            if (loaded === total) {
+                ++total;
             }
-        });
+            if (opt.notifyId) {
+                form.notifyProgress(opt.notifyId, (loaded / total) / 2);
+            }
+            if (opt.progress) {
+                opt.progress(loaded, total) as unknown;
+            }
+        }
+    });
+    // --- net 模式此处加载完只算到 50%，因为还有 app 类当中 config 中的静态部分，暂定预留 50% ---
+    if (opt.notifyId) {
+        form.notifyProgress(opt.notifyId, 0.5);
     }
-    catch {
+    if (Object.keys(files).length === 0) {
         return null;
     }
-    let icon = '/clickgo/icon.png';
-    if (config.icon && (files[config.icon] instanceof Blob)) {
-        icon = await tool.blob2DataUrl(files[config.icon] as Blob);
+    const ul = url.length - 1;
+    for (const fn in files) {
+        files[fn.slice(ul)] = files[fn];
+        delete files[fn];
     }
     return {
-        'type': 'app',
-        'icon': icon,
-        'config': config,
+        'net': {
+            'current': current,
+            'notify': opt.notifyId,
+            'url': url,
+            'progress': opt.progress
+        },
+        'icon': '',
         'files': files
     };
 }

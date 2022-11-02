@@ -1,5 +1,5 @@
-<div class="wrap" :class="[border !== 'normal' && 'border-' + border, flashTimer !== undefined ? 'flash' : undefined, stateMinData ? 'state-min-' + taskPosition : undefined, showData && 'show', isInside && 'inside', !heightData && 'height-auto', !widthData && 'width-auto']" :data-cg-focus="cgFocus ? '' : undefined" :style="{'width': widthData && widthData + 'px', 'height': heightData && heightData + 'px', 'left': isNativeSync ? '0' : (Math.round(leftData) + 'px'), 'top': isNativeSync ? 0 : (Math.round(topData) + 'px'), 'z-index': zIndexData}">
-    <template v-if="!stateMaxData && !stateMinData && maskFor === undefined && isResize">
+<div class="wrap" :class="[border !== 'normal' && 'border-' + border, flashTimer !== undefined ? 'flash' : undefined, stateMinData ? 'state-min-' + taskPosition : undefined, showData && 'show', isInside && 'inside', !heightData && 'height-auto', !widthData && 'width-auto']" :data-form-focus="formFocus ? '' : undefined" :style="{'width': widthData ? (widthData + 'px') : undefined, 'height': heightData ? (heightData + 'px') : undefined, 'left': isNativeSync ? '0' : (Math.round(leftData) + 'px'), 'top': isNativeSync ? 0 : (Math.round(topData) + 'px'), 'z-index': zIndexData}">
+    <template v-if="!stateMaxData && !stateMinData && !isMask && isResize">
         <div class="pop-resize-lt" @mousedown="resizeMethod($event, 'lt')" @touchstart="resizeMethod($event, 'lt')"></div>
         <div class="pop-resize-t" @mousedown="resizeMethod($event, 't')" @touchstart="resizeMethod($event, 't')" @dblclick="maxVMethod"></div>
         <div class="pop-resize-tr" @mousedown="resizeMethod($event, 'tr')" @touchstart="resizeMethod($event, 'tr')"></div>
@@ -9,7 +9,7 @@
         <div class="pop-resize-bl" @mousedown="resizeMethod($event, 'bl')" @touchstart="resizeMethod($event, 'bl')"></div>
         <div class="pop-resize-l" @mousedown="resizeMethod($event, 'l')" @touchstart="resizeMethod($event, 'l')"></div>
     </template>
-    <div v-if="maskFor !== undefined" class="mask"></div>
+    <div v-if="isMask" class="mask"></div>
     <div class="inner">
         <div class="header" v-if="border !== 'none' && border !== 'plain'">
             <div class="icon"><img v-if="border !== 'thin' && iconData !== ''" :src="iconData" width="16" height="16" @dragstart="$event.preventDefault();"></div>
@@ -21,7 +21,7 @@
             </div>
         </div>
         <div class="content" :class="[direction]" :style="{'background': background, 'padding': padding ? padding.replace(/([0-9]+)($| )/g, '$1px$2') : undefined}">
-            <div v-if="loading" class="loading">
+            <div v-if="isLoading" class="loading">
                 <cg-loading></cg-loading>
             </div>
             <slot></slot>

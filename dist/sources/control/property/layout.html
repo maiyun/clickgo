@@ -63,7 +63,7 @@
             <cg-menulist>
                 <cg-menulist-item alt="R" @click="reset">{{l('reset')}}</cg-menulist-item>
                 <cg-menulist-split></cg-menulist-split>
-                <cg-menulist-item alt="D" type="check" :modelValue="isDesc" @update:modelValue="this.descData = $event;$emit('update:desc', $event)">{{l('description')}}</cg-menulist-item>
+                <cg-menulist-item alt="D" type="check" :modelValue="isDesc" @update:modelValue="this.descData = $event;emit('update:desc', $event)">{{l('description')}}</cg-menulist-item>
             </cg-menulist>
         </div>
         <div ref="dock" class="dock-pop" data-cg-pop>

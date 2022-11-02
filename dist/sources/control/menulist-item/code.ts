@@ -1,107 +1,102 @@
 import * as clickgo from 'clickgo';
-import * as types from '~/types/index';
 
-export const props = {
-    'disabled': {
-        'default': false
-    },
+export default class extends clickgo.control.AbstractControl {
 
-    'alt': {
-        'default': undefined
-    },
-    'type': {
-        'default': undefined
-    },
-    'label': {
-        'default': undefined
-    },
-    'modelValue': {
-        'default': undefined
+    public props: {
+        'disabled': boolean;
+
+        'alt': string;
+        'type': string;
+        'label': string;
+        'modelValue': string | boolean;
+    } = {
+            'disabled': false,
+
+            'alt': '',
+            'type': '',
+            'label': '',
+            'modelValue': ''
+        };
+
+    public padding = '';
+
+    public get isDisabled(): boolean {
+        return clickgo.tool.getBoolean(this.props.disabled);
     }
-};
 
-export const data = {
-    'padding': ''
-};
-
-export const computed = {
-    'isDisabled': function(this: types.IVControl): boolean {
-        return clickgo.tool.getBoolean(this.disabled);
-    },
-
-    'opMargin': function(this: types.IVControl): string {
+    public get opMargin(): string {
         return this.padding.replace(/(\w+)/g, '-$1');
     }
-};
 
-export const watch = {
-    'type': {
-        handler: function(this: types.IVControl): void {
-            const menulist = this.cgParentByName('menulist');
-            if (!menulist) {
-                return;
-            }
-            if (this.type) {
-                ++menulist.hasTypeItemsCount;
-            }
-            else {
-                --menulist.hasTypeItemsCount;
-            }
-        },
-        'immediate': true
-    }
-};
-
-export const methods = {
-    enter: function(this: types.IVControl, e: MouseEvent): void {
+    public enter(e: MouseEvent): void {
         if (clickgo.dom.hasTouchButMouse(e)) {
             return;
         }
-        clickgo.form.showPop(this.$el, this.$refs.pop, 'h');
-    },
-    touch: function(this: types.IVControl): void {
+        clickgo.form.showPop(this.element, this.refs.pop, 'h');
+    }
+
+    public touch(): void {
         // --- 只有 touchstart 才显示，因为 PC 的 mouseenter 已经显示过了 ---
-        clickgo.form.showPop(this.$el, this.$refs.pop, 'h');
-    },
-    click: function(this: types.IVControl): void {
-        if (!this.type) {
-            if (!this.$slots.pop) {
+        clickgo.form.showPop(this.element, this.refs.pop, 'h');
+    }
+
+    public click(): void {
+        if (!this.props.type) {
+            if (!this.slots('pop').length) {
                 // --- 没有下层，则隐藏所有 pop ---
                 clickgo.form.hidePop();
             }
             return;
         }
         // --- 有 type ---
-        if (this.type === 'radio') {
-            this.$emit('update:modelValue', this.label);
+        if (this.props.type === 'radio') {
+            this.emit('update:modelValue', this.props.label);
         }
-        else if (this.type === 'check') {
-            this.$emit('update:modelValue', this.modelValue ? false : true);
+        else if (this.props.type === 'check') {
+            this.emit('update:modelValue', this.props.modelValue ? false : true);
         }
         clickgo.form.hidePop();
     }
-};
 
-export const mounted = function(this: types.IVControl): void {
-    clickgo.dom.watchStyle(this.$el, 'padding', (n, v) => {
-        this.padding = v;
-    }, true);
+    public onBeforeUnmount(): void | Promise<void> {
+        // --- TODO, menulist 是谁 ---
+        const menulist = this.parentByName('menulist');
+        if (!menulist) {
+            return;
+        }
+        // --- type ---
+        if (this.props.type) {
+            --menulist.hasTypeItemsCount;
+        }
+    }
 
-    const menulist = this.cgParentByName('menulist');
-    if (!menulist) {
-        return;
-    }
-    if (this.type) {
-        ++menulist.hasTypeItemsCount;
-    }
-};
+    public onMounted(): void {
+        this.watch('type', (): void => {
+            const menulist = this.parentByName('menulist');
+            if (!menulist) {
+                return;
+            }
+            if (this.props.type) {
+                ++menulist.hasTypeItemsCount;
+            }
+            else {
+                --menulist.hasTypeItemsCount;
+            }
+        }, {
+            'immediate': true
+        });
 
-export const beforeUnmounted = function(this: types.IVControl): void {
-    if (!this.menulist) {
-        return;
+        clickgo.dom.watchStyle(this.element, 'padding', (n, v) => {
+            this.padding = v;
+        }, true);
+
+        const menulist = this.parentByName('menulist');
+        if (!menulist) {
+            return;
+        }
+        if (this.props.type) {
+            ++menulist.hasTypeItemsCount;
+        }
     }
-    // --- type ---
-    if (this.type) {
-        --this.menulist.hasTypeItemsCount;
-    }
-};
+
+}

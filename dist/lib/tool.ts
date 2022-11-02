@@ -14,7 +14,67 @@
  * limitations under the License.
  */
 import * as types from '../../types';
-import * as task from './task';
+
+interface IClassPrototype {
+    'method': Record<string, any>;
+    'access': Record<string, {
+        'get'?: any;
+        'set'?: any;
+    }>;
+}
+
+/**
+ * --- 获取 class 的所有 method 和 get/set ---
+ * @param obj 实例化 class 对象
+ * @param over 不传入此参数
+ * @param level 不传入此参数
+ */
+export function getClassPrototype(obj: object, over: string[] = [], level: number = 0): IClassPrototype {
+    if (level === 0) {
+        return getClassPrototype(Object.getPrototypeOf(obj), over, level + 1);
+    }
+    const rtn: IClassPrototype = {
+        'method': {},
+        'access': {}
+    };
+    const names = Object.getOwnPropertyNames(obj);
+    if (names.includes('toString')) {
+        return rtn;
+    }
+    for (const item of names) {
+        if (item === 'constructor') {
+            continue;
+        }
+        if (over.includes(item)) {
+            continue;
+        }
+        const des = Object.getOwnPropertyDescriptor(obj, item);
+        if (!des) {
+            continue;
+        }
+        over.push(item);
+        if (des.value) {
+            // --- method ---
+            rtn.method[item] = des.value;
+        }
+        else if (des.get || des.set) {
+            if (!rtn.access[item]) {
+                rtn.access[item] = {};
+            }
+            if (des.get) {
+                rtn.access[item].get = (des as any).get;
+            }
+            if (des.set) {
+                rtn.access[item].set = (des as any).set;
+            }
+        }
+    }
+    // --- 往上级检查 ---
+    const rtn2 = getClassPrototype(Object.getPrototypeOf(obj), over, level + 1);
+    Object.assign(rtn.method, rtn2.method);
+    Object.assign(rtn.access, rtn2.access);
+    return rtn;
+}
 
 /**
  * --- 将 blob 对象转换为 ArrayBuffer ---
@@ -80,7 +140,7 @@ export function purify(text: string): string {
 
 /**
  * --- 将 style 中的 url 转换成 base64 data url ---
- * @param path 路径基准或以文件的路径为基准
+ * @param path 路径基准或以文件的路径为基准，以 / 结尾
  * @param style 样式表
  * @param files 在此文件列表中查找
  */
@@ -205,7 +265,7 @@ function layoutClassPrependObject(object: string): string {
         // --- t1 是 'xxx', t2 是 xxx，t3 是结尾或者 , 分隔符 ---
         t1 = t1.trim();
         if (t1.startsWith('[')) {
-            t1 = '[cgClassPrepend(' + t1.slice(1, -1) + ')]';
+            t1 = '[classPrepend(' + t1.slice(1, -1) + ')]';
         }
         else {
             let sp = '';
@@ -213,7 +273,7 @@ function layoutClassPrependObject(object: string): string {
                 sp = t1[0];
                 t1 = t1.slice(1, -1);
             }
-            t1 = `[cgClassPrepend(${sp}${t1}${sp})]`;
+            t1 = `[classPrepend(${sp}${t1}${sp})]`;
         }
         return t1 + ':' + t2 + t3;
     }) + '}';
@@ -250,7 +310,7 @@ export function layoutClassPrepend(layout: string, preps: string[]): string {
                         t1a[i] = layoutClassPrependObject(t1a[i]);
                     }
                     else {
-                        t1a[i] = 'cgClassPrepend(' + t1a[i] + ')';
+                        t1a[i] = 'classPrepend(' + t1a[i] + ')';
                     }
                 }
                 t1 = '[' + t1a.join(',') + ']';
@@ -272,9 +332,9 @@ export function eventsAttrWrap(layout: string): string {
     const reg = new RegExp(`@(${events.join('|')})="(.+?)"`, 'g');
     return layout.replace(reg, function(t, t1, t2): string {
         if (/^[\w]+$/.test(t2)) {
-            return `@${t1}="cgAllowEvent($event) && ${t2}($event)"`;
+            return `@${t1}="allowEvent($event) && ${t2}($event)"`;
         }
-        return `@${t1}=";if(cgAllowEvent($event)){${t2}}"`;
+        return `@${t1}=";if(allowEvent($event)){${t2}}"`;
     });
 }
 
@@ -375,62 +435,6 @@ export function getMimeByPath(path: string): { 'mime': string; 'ext': string; } 
     };
 }
 
-/** --- 已创建的 object url 列表 --- */
-const objectURLs: string[] = [];
-
-/**
- * --- 通过 blob 创建 object url ---
- * @param object blob 对象
- * @param taskId 要记录到 task 里面，待 task 结束后则清除相关 object url
- */
-export function createObjectURL(object: Blob, taskId: number = 0): string {
-    let t: types.ITask | null = null;
-    if (taskId > 0) {
-        t = task.list[taskId];
-        if (!t) {
-            return '';
-        }
-    }
-    const url = URL.createObjectURL(object);
-    objectURLs.push(url);
-    if (t) {
-        t.objectURLs.push(url);
-    }
-    return url;
-}
-
-/**
- * --- 移除已创建的 object url ---
- * @param url 已创建的 url
- * @param 是否是 task 里面的，若不是，则无法被移除
- */
-export function revokeObjectURL(url: string, taskId: number = 0): void {
-    const oio = objectURLs.indexOf(url);
-    if (oio === -1) {
-        return;
-    }
-    if (taskId > 0) {
-        const t = task.list[taskId];
-        if (!t) {
-            return;
-        }
-        const io = t.objectURLs.indexOf(url);
-        if (io === -1) {
-            return;
-        }
-        t.objectURLs.splice(io, 1);
-    }
-    objectURLs.splice(oio, 1);
-    URL.revokeObjectURL(url);
-}
-
-/**
- * --- 获取已创建的 object url 列表，App 模式下无效 ---
- */
-export function getObjectURLs(): string[] {
-    return objectURLs;
-}
-
 /**
  * --- 生成范围内的随机数 ---
  * @param min 最新范围
@@ -476,7 +480,7 @@ export function random(length: number = 8, source: string = RANDOM_LN, block: st
  * --- 根据参数获取最终的布尔值 ---
  * @param param 参数
  */
-export function getBoolean(param: boolean | string | number): boolean {
+export function getBoolean(param: boolean | string | number | undefined): boolean {
     const t = typeof param;
     if (t === 'boolean') {
         return param as boolean;
@@ -487,6 +491,17 @@ export function getBoolean(param: boolean | string | number): boolean {
     else {
         return param ? true : false;
     }
+}
+
+/**
+ * --- 根据参数获取最终的数字型 ---
+ * @param param 参数
+ */
+export function getNumber(param: string | number): number {
+    if (typeof param === 'number') {
+        return param;
+    }
+    return parseFloat(param);
 }
 
 /**

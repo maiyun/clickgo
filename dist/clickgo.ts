@@ -34,14 +34,6 @@ export function getPlatform(): NodeJS.Platform | 'web' {
     return platform;
 }
 
-let safe = true;
-export function setSafe(val: boolean): void {
-    safe = val;
-}
-export function getSafe(): boolean {
-    return safe;
-}
-
 export const vue: import('../types/index').IVueObject = (window as any).Vue;
 
 export * as control from './lib/control';

@@ -20,18 +20,260 @@ import * as tool from './tool';
 import * as task from './task';
 import * as dom from './dom';
 import * as form from './form';
+import * as fs from './fs';
+
+/** --- 窗体的抽象类 --- */
+export abstract class AbstractControl {
+
+    /** --- 当前 js 文件在包内的完整路径 --- */
+    public get filename(): string {
+        // --- require 时系统自动在继承类中重写本函数 ---
+        return '';
+    }
+
+    /** --- 当前控件的名字 --- */
+    public get controlName(): string {
+        // --- init 中系统自动去重写本函数 ---
+        return '';
+    }
+
+    /** --- 当前组件所在的任务 ID --- */
+    public get taskId(): number {
+        // ---  init/require 中系统自动重写本函数 ---
+        return 0;
+    }
+
+    /** --- 当前组件所在的窗体 ID --- */
+    public get formId(): number {
+        // --- buildComponents 时会重写本函数 ---
+        return 0;
+    }
+
+    /**
+     * --- 当前窗体是否有焦点 ---
+     */
+    public get formFocus(): boolean {
+        // --- 实际上就是 props 中的 formFocus ---
+        return (this as any).props.formFocus;
+    }
+
+    /** --- 当前控件所在运行窗体的包内路径不以 / 结尾 --- */
+    public get path(): string {
+        // --- buildComponents 时会重写本函数 ---
+        return '';
+    }
+
+    /** --- 样式独占前缀 --- */
+    public get prep(): string {
+        // --- init 时会重写本函数 ---
+        return '';
+    }
+
+    /** --- 获取当前语言名 --- */
+    public get locale(): string {
+        return task.list[this.taskId].locale.lang || core.config.locale;
+    }
+
+    /**
+     * --- 获取语言内容 ---
+     */
+    public get l(): (
+        key: string,
+        data?: Record<string, Record<string, string>>
+    ) => string {
+        return (key: string, data?: Record<string, Record<string, string>>): string => {
+            if (data) {
+                return data[this.locale]?.[key] ?? data['en'][key] ?? 'LocaleError';
+            }
+            else if ((this as any).localeData) {
+                return (this as any).localeData[this.locale]?.[key] ?? (this as any).localeData['en'][key] ?? 'LocaleError';
+            }
+            else {
+                return 'LocaleError';
+            }
+        };
+    }
+
+    /** --- layout 中 :class 的转义 --- */
+    public get classPrepend(): (cla: any) => string {
+        return (cla: any): string => {
+            if (typeof cla !== 'string') {
+                return cla;
+            }
+            // --- 控件没有样式表，则除了主题样式外，class 将不进行设置 ---
+            return `cg-theme-task${this.taskId}-${this.controlName}_${cla}${this.prep ? (' ' + this.prep + cla) : ''}`;
+        };
+    }
+
+    /**
+     * --- 监视变动 ---
+     * @param name 监视的属性或 prop 值
+     * @param cb 回调
+     * @param opt 参数
+     */
+    public watch<T extends this & this['props'], TK extends keyof T>(
+        name: TK,
+        cb: (val: T[TK], old: T[TK]) => void | Promise<void>,
+        opt: {
+            'immediate'?: boolean;
+            'deep'?: boolean;
+        } = {}
+    ): () => void {
+        return (this as any).$watch(name, cb, opt);
+    }
+
+    /**
+     * --- 获取 refs 情况 ---
+     */
+    public get refs(): Record<string, HTMLElement & types.IVue> {
+        return (this as any).$refs;
+    }
+
+    /**
+     * --- 等待渲染 ---
+     */
+    public get nextTick(): () => Promise<void> {
+        return (this as any).$nextTick;
+    }
+
+    /**
+     * --- 判断当前事件可否执行 ---
+     * @param e 鼠标、触摸、键盘事件
+     */
+    public allowEvent(e: MouseEvent | TouchEvent | KeyboardEvent): boolean {
+        return dom.allowEvent(e);
+    }
+
+    /**
+     * --- 触发系统方法 ---
+     * @param name 方法名
+     * @param param1 参数1
+     * @param param2 参数2
+     */
+    public trigger(name: types.TGlobalEvent, param1: boolean | Error | string = '', param2: string = ''): void {
+        if (!['formTitleChanged', 'formIconChanged', 'formStateMinChanged', 'formStateMaxChanged', 'formShowChanged'].includes(name)) {
+            return;
+        }
+        core.trigger(name, this.taskId, this.formId, param1, param2);
+    }
+
+    // --- 以下为 control 有，但窗体没有 ---
+
+    /** --- 组件参数，由用户定义重写 --- */
+    public readonly props = {};
+
+    /** --- 获取当前的 HTML DOM --- */
+    public get element(): HTMLElement {
+        return (this as any).$el;
+    }
+
+    /**
+     * --- 向上反应事件 ---
+     * @param name 事件名
+     * @param v 事件值
+     */
+    public emit(name: string, ...v: string | any): void {
+        (this as any).$emit(name, ...v);
+    }
+
+    /**
+     * --- 获取目前现存的所有子 slots ---
+     */
+    public get slots(): (name?: string) => types.IVNode[] {
+        return (name: string = 'default'): types.IVNode[] => {
+            const d = (this as any).$slots[name];
+            if (!d) {
+                return [];
+            }
+            const slots = [];
+            const list = d();
+            for (const item of list) {
+                if (typeof item.type === 'symbol') {
+                    // --- 动态的 slot，例如 v-for 产生的 slot ---
+                    for (const item2 of item.children) {
+                        slots.push(item2);
+                    }
+                }
+                else {
+                    slots.push(item);
+                }
+            }
+            return slots;
+        };
+    }
+
+    /**
+     * --- 获取上层控件 ---
+     */
+    public get parent(): AbstractControl {
+        return (this as any).$parent;
+    }
+
+    /**
+    * --- 根据 control name 查询上层控件 ---
+    */
+    public get parentByName() {
+        return (controlName: string): (AbstractControl & Record<string, any>) | null => {
+            let parent = (this as any).$parent;
+            while (true) {
+                if (!parent) {
+                    return null;
+                }
+                if (parent.controlName === controlName) {
+                    return parent;
+                }
+                parent = parent.$parent;
+            }
+        };
+    }
+
+    // --- 控件响应事件，都可由用户重写 ---
+
+    public onBeforeCreate(): void | Promise<void> {
+        return;
+    }
+
+    public onCreated(): void | Promise<void> {
+        return;
+    }
+
+    public onBeforeMount(): void | Promise<void> {
+        return;
+    }
+
+    public onMounted(): void | Promise<void> {
+        return;
+    }
+
+    public onBeforeUpdate(): void | Promise<void> {
+        return;
+    }
+
+    public onUpdated(): void | Promise<void> {
+        return;
+    }
+
+    public onBeforeUnmount(): void | Promise<void> {
+        return;
+    }
+
+    public onUnmounted():  void | Promise<void> {
+        return;
+    }
+
+}
 
 /**
  * --- 将 cgc 文件 blob 转换为 control 对象 ---
  * @param blob 文件 blob
  */
-export async function read(blob: Blob): Promise<false | types.TControl> {
+export async function read(blob: Blob): Promise<false | types.TControlPackage> {
     const z = await zip.get(blob);
     if (!z) {
         return false;
     }
     /** --- 要返回的 control pkg 对象 --- */
-    const controlPkg: types.TControl = {};
+    const controlPkg: types.TControlPackage = {};
     /** --- 已处理的控件 --- */
     let controlProcessed = 0;
     /** --- 控件包中的控件根目录列表 --- */
@@ -122,307 +364,278 @@ export async function read(blob: Blob): Promise<false | types.TControl> {
 }
 
 /**
+ * --- 任务创建过程中，需要对 control 进行先行初始化 ---
+ * @param taskId 要处理的任务 ID
+ */
+export async function init(
+    taskId: number
+): Promise<boolean> {
+    const t = task.list[taskId];
+    if (!t) {
+        return false;
+    }
+    for (let path of t.config.controls) {
+        if (!path.endsWith('.cgc')) {
+            path += '.cgc';
+        }
+        path = tool.urlResolve('/', path);
+        const file = await fs.getContent(path, {
+            'files': t.app.files,
+            'current': t.current
+        });
+        if (file && typeof file !== 'string') {
+            const c = await read(file);
+            if (c) {
+                for (const name in c) {
+                    /** --- 控件组件中的单项 --- */
+                    const item = c[name];
+                    /** --- 样式唯一前缀 --- */
+                    let prep: string = '';
+                    // --- 组装预加载 control 对象 ---
+                    t.controls[name] = {
+                        'layout': '',
+
+                        'props': {
+                            'formFocus': {
+                                'default': false
+                            }
+                        },
+                        'data': {},
+                        'access': {},
+                        'methods': {},
+                        'computed': {}
+                    };
+                    // --- 要创建的控件的 layout ---
+                    t.controls[name].layout = item.files[item.config.layout + '.html'] as string;
+                    if (t.controls[name].layout === undefined) {
+                        // --- 控件没有 layout 那肯定不能用 ---
+                        return false;
+                    }
+                    // --- 给 layout 增加 data-cg-control-xxx ---
+                    t.controls[name].layout = t.controls[name].layout.replace(/^(<[a-zA-Z0-9-]+)( |>)/, '$1 data-cg-control-' + name + '$2');
+                    /** --- 样式表 --- */
+                    const style = item.files[item.config.style + '.css'] as string;
+                    if (style) {
+                        // --- 有样式表，给样式表内的项增加唯一前缀（scope） ---
+                        const r = tool.stylePrepend(style);
+                        prep = r.prep;
+                        dom.pushStyle(t.id, await tool.styleUrl2DataUrl(item.config.style, r.style, item.files), 'control', name);
+                    }
+                    // --- 给控件的 layout 的 class 增加前置 ---
+                    const prepList = [
+                        'cg-theme-task' + t.id.toString() + '-' + name + '_'
+                    ];
+                    if (prep !== '') {
+                        prepList.push(prep);
+                    }
+                    // --- 增加 class 为 tag-xxx ---
+                    t.controls[name].layout = tool.layoutAddTagClassAndReTagName(t.controls[name].layout, false);
+                    // --- 给 layout 的 class 增加前置 ---
+                    t.controls[name].layout = tool.layoutClassPrepend(t.controls[name].layout, prepList);
+                    // --- 给 cg 对象增加 :form-focus 传递 ---
+                    if (t.controls[name].layout.includes('<cg-')) {
+                        t.controls[name].layout = tool.layoutInsertAttr(t.controls[name].layout, ':form-focus=\'formFocus\'', {
+                            'include': [/^cg-.+/]
+                        });
+                    }
+                    // --- 给 event 增加包裹 ---
+                    t.controls[name].layout = tool.eventsAttrWrap(t.controls[name].layout);
+                    // --- 检测是否有 js ---
+                    let cls: any;
+                    if (item.files[item.config.code + '.js']) {
+                        item.files['/invoke/clickgo.js'] = `module.exports = invokeClickgo;`;
+                        let expo: any = [];
+                        try {
+                            expo = loader.require(item.config.code, item.files, {
+                                'dir': '/',
+                                'invoke': t.invoke,
+                                'preprocess': function(code: string, path: string): string {
+                                    // --- 屏蔽 eval 函数 ---
+                                    const exec = /eval\W/.exec(code);
+                                    if (exec) {
+                                        form.notify({
+                                            'title': 'Error',
+                                            'content': `The "eval" is prohibited.\nFile: "${path}".`,
+                                            'type': 'danger'
+                                        });
+                                        return '';
+                                    }
+                                    // --- 给 form 的 class 增加 filename 的 get ---
+                                    code = code.replace(/extends[\s\S]+?\.\s*AbstractControl\s*{/, (t: string) => {
+                                        return t + 'get filename() {return __filename;}';
+                                    });
+                                    return code;
+                                },
+                                'map': {
+                                    'clickgo': '/invoke/clickgo'
+                                }
+                            })[0];
+                        }
+                        catch (e: any) {
+                            core.trigger('error', taskId, 0, e, e.message + '(-4)');
+                            return false;
+                        }
+                        if (!expo?.default) {
+                            const msg = '"default" not found on "' + item.config.code + '" of "' + name + '" control.';
+                            core.trigger('error', taskId, 0, new Error(msg), msg);
+                            return false;
+                        }
+                        cls = new expo.default();
+                    }
+                    else {
+                        // --- 没有 js 文件 ---
+                        cls = new (class extends AbstractControl {
+                            public get taskId(): number {
+                                return taskId;
+                            }
+                        })();
+                    }
+                    if (cls.props) {
+                        for (const key in cls.props) {
+                            t.controls[name].props[key] = {
+                                'default': cls.props[key]
+                            };
+                        }
+                    }
+                    // --- DATA ---
+                    const cdata = Object.entries(cls);
+                    for (const item of cdata) {
+                        if (item[0] === 'access') {
+                            t.controls[name].access = item[1] as any;
+                            continue;
+                        }
+                        t.controls[name].data[item[0]] = item[1];
+                    }
+                    const prot = tool.getClassPrototype(cls);
+                    t.controls[name].methods = prot.method;
+                    Object.assign(t.controls[name].computed, prot.access);
+                    t.controls[name].computed.controlName = {
+                        get: function() {
+                            return name;
+                        },
+                        set: function() {
+                            form.notify({
+                                'title': 'Error',
+                                'content': `The software tries to modify the system variable "controlName".\nControl: ${name}`,
+                                'type': 'danger'
+                            });
+                            return;
+                        }
+                    };
+                    t.controls[name].computed.prep = {
+                        get: function() {
+                            return prep;
+                        },
+                        set: function() {
+                            form.notify({
+                                'title': 'Error',
+                                'content': `The software tries to modify the system variable "prep".\nControl: ${name}`,
+                                'type': 'danger'
+                            });
+                            return;
+                        }
+                    };
+                }
+            }
+            else {
+                form.notify({
+                    'title': 'Error',
+                    'content': 'Control failed to load.\nTask id: ' + t.id.toString() + '\nPath: ' + path,
+                    'type': 'danger'
+                });
+                return false;
+            }
+        }
+    }
+    t.invoke = undefined;
+    delete t.invoke;
+    return true;
+}
+
+/**
  * --- 初始化获取新窗体的控件 component ---
  * @param taskId 任务 id
  * @param formId 窗体 id
- * @param path 窗体路径（包内路径）
- * @param preprocess 代码检测函数
- * @param invoke 注入对象
+ * @param path 窗体路径基准（包内路径）不以 / 结尾
  */
-export async function init(
+export function buildComponents(
     taskId: number,
     formId: number,
-    path: string,
-    preprocess?: (code: string, path: string) => string,
-    invoke?: Record<string, any>
-): Promise<false | Record<string, any>> {
+    path: string
+): false | Record<string, any> {
     const t = task.list[taskId];
     if (!t) {
         return false;
     }
     /** --- 要返回的控件列表 --- */
     const components: Record<string, any> = {};
-    for (let cpath of t.app.config.controls) {
-        if (!cpath.endsWith('.cgc')) {
-            cpath += '.cgc';
-        }
-        /** --- 当前的控件包 --- */
-        const control = t.controls.loaded[cpath];
-        if (!control) {
-            return false;
-        }
-        for (const name in control) {
-            // --- 创建新的 ---
-            const item = control[name];
-            // --- 准备相关变量 ---
-            let props: any = {};
-            let data: any = {};
-            let methods: any = {};
-            let computed: any = {};
-            let watch: any = {};
-            let beforeCreate: (() => void) | undefined = undefined;
-            let created: (() => void) | undefined = undefined;
-            let beforeMount: (() => void) | undefined = undefined;
-            let mounted: (() => void) | undefined = undefined;
-            let beforeUpdate: (() => void) | undefined = undefined;
-            let updated: (() => void) | undefined = undefined;
-            let beforeUnmount: (() => void) | undefined = undefined;
-            let unmounted: (() => void) | undefined = undefined;
-            // --- 检测 layout and style ---
-            let layout = '', prep = '';
-            if (t.controls.layout[name]) {
-                // --- layout 和 style 已经加载过，无需再次解释和加载 ---
-                layout = t.controls.layout[name];
-                prep = t.controls.prep[name];
+    for (const name in t.controls) {
+        const control = t.controls[name];
+        // --- 准备相关变量 ---
+        const computed: Record<string, any> = Object.assign({}, control.computed);
+        computed.formId = {
+            get: function(): number {
+                return formId;
+            },
+            set: function(): void {
+                form.notify({
+                    'title': 'Error',
+                    'content': `The control tries to modify the system variable "formId".\nControl: ${name}`,
+                    'type': 'danger'
+                });
             }
-            else {
-                // --- 要创建的控件的 layout ---
-                layout = item.files[item.config.layout + '.html'] as string;
-                if (layout === undefined) {
-                    // --- 控件没有 layout 那肯定不能用 ---
-                    return false;
-                }
-                // --- 给 layout 增加 data-cg-control-xxx ---
-                layout = layout.replace(/^(<[a-zA-Z0-9-]+)( |>)/, '$1 data-cg-control-' + name + '$2');
-                /** --- 样式表 --- */
-                const style = item.files[item.config.style + '.css'] as string;
-                if (style) {
-                    // --- 有样式表，给样式表内的项增加唯一前缀（scope） ---
-                    const r = tool.stylePrepend(style);
-                    prep = r.prep;
-                    dom.pushStyle(t.id, await tool.styleUrl2DataUrl(item.config.style, r.style, item.files), 'control', name);
-                }
-                // --- 给控件的 layout 的 class 增加前置 ---
-                const prepList = [
-                    'cg-theme-task' + t.id.toString() + '-' + name + '_'
-                ];
-                if (prep !== '') {
-                    prepList.push(prep);
-                }
-                // --- 增加 class 为 tag-xxx ---
-                layout = tool.layoutAddTagClassAndReTagName(layout, false);
-                // --- 给 layout 的 class 增加前置 ---
-                layout = tool.layoutClassPrepend(layout, prepList);
-                // --- 给 cg 对象增加 :cg-focus 传递 ---
-                if (layout.includes('<cg-')) {
-                    layout = tool.layoutInsertAttr(layout, ':cg-focus=\'cgFocus\'', {
-                        'include': [/^cg-.+/]
-                    });
-                }
-                // --- 给 event 增加包裹 ---
-                layout = tool.eventsAttrWrap(layout);
-                // --- 给 touchstart 增加 .passive 防止 [Violation] Added non-passive event listener to a scroll-blocking ---
-                /*
-                layout = layout.replace(/@(touchstart|touchmove|wheel)=/g, '@$1.passive=');
-                layout = layout.replace(/@(touchstart|touchmove|wheel)\.not=/g, '@$1=');
-                */
-                t.controls.layout[name] = layout;
-                t.controls.prep[name] = prep;
+        };
+        computed.path = {
+            get: function(): string {
+                return path;
+            },
+            set: function(): void {
+                form.notify({
+                    'title': 'Error',
+                    'content': `The control tries to modify the system variable "path".\nControl: ${name}`,
+                    'type': 'danger'
+                });
             }
-            // --- 检测是否有 js ---
-            if (item.files[item.config.code + '.js']) {
-                item.files['/invoke/clickgo.js'] = `module.exports = invokeClickgo;`;
-                const expo = loader.require(item.config.code, item.files, {
-                    'dir': '/',
-                    'invoke': invoke,
-                    'preprocess': preprocess,
-                    'map': {
-                        'clickgo': '/invoke/clickgo'
-                    }
-                })[0];
-                if (expo) {
-                    props = expo.props || {};
-                    data = expo.data || {};
-                    methods = expo.methods || {};
-                    computed = expo.computed || {};
-                    watch = expo.watch || {};
-                    beforeCreate = expo.beforeCreate;
-                    created = expo.created;
-                    beforeMount = expo.beforeMount;
-                    mounted = expo.mounted;
-                    beforeUpdate = expo.beforeUpdate;
-                    updated = expo.updated;
-                    beforeUnmount = expo.beforeUnmount;
-                    unmounted = expo.unmounted;
-                }
-            }
-            // --- 组成 props ---
-            props.cgFocus = {
-                'default': false
-            };
-            // --- 组成 data ---
-            computed.taskId = {
-                get: function(): number {
-                    return taskId;
-                },
-                set: function(): void {
-                    form.notify({
-                        'title': 'Error',
-                        'content': `The control tries to modify the system variable "taskId".\nPath: ${this.cgPath}\nControl: ${name}`,
-                        'type': 'danger'
-                    });
-                    return;
-                }
-            };
-            computed.controlName = {
-                get: function(): string {
-                    return name;
-                },
-                set: function(): void {
-                    form.notify({
-                        'title': 'Error',
-                        'content': `The control tries to modify the system variable "controlName".\nPath: ${this.cgPath}\nControl: ${name}`,
-                        'type': 'danger'
-                    });
-                    return;
-                }
-            };
-            computed.cgPrep = {
-                get: function(): string {
-                    return prep;
-                },
-                set: function(): void {
-                    form.notify({
-                        'title': 'Error',
-                        'content': `The control tries to modify the system variable "cgPrep".\nPath: ${this.cgPath}\nControl: ${name}`,
-                        'type': 'danger'
-                    });
-                    return;
-                }
-            };
-            // --- 获取目前现存的子 slots ---
-            computed.cgSlots = function(this: types.IVControl): (name?: string) => types.IVueVNode[] {
-                return (name: string = 'default'): types.IVueVNode[] => {
-                    const d = this.$slots[name];
-                    if (!d) {
-                        return [];
-                    }
-                    const slots = [];
-                    const list = d();
-                    for (const item of list) {
-                        if (typeof item.type === 'symbol') {
-                            // --- 动态的 slot，例如 v-for 产生的 slot ---
-                            for (const item2 of item.children) {
-                                slots.push(item2);
-                            }
-                        }
-                        else {
-                            slots.push(item);
-                        }
-                    }
-                    return slots;
-                };
-            };
-            // --- 预设 computed ---
-            computed.cgLocale = function(this: types.IVControl): string {
-                if (task.list[this.taskId].locale.lang === '') {
-                    return core.config.locale;
-                }
-                return task.list[this.taskId].locale.lang;
-            };
-            // --- 获取语言 ---
-            computed.l = function(this: types.IVControl): (
-                key: string,
-                data?: Record<string, Record<string, string>>
-            ) => string {
-                return (key: string, data?: Record<string, Record<string, string>>): string => {
-                    if (data) {
-                        return data[this.cgLocale]?.[key] ?? data['en'][key] ?? 'LocaleError';
-                    }
-                    else if (this.localeData) {
-                        return this.localeData[this.cgLocale]?.[key] ?? this.localeData['en'][key] ?? 'LocaleError';
-                    }
-                    else {
-                        return 'LocaleError';
-                    }
-                };
-            };
-            // --- 根据 control name 查询上级序列 ---
-            computed.cgParentByName = function(this: types.IVControl): (
-                controlName: string
-            ) => types.IVControl | null {
-                return (controlName: string): types.IVControl | null => {
-                    let parent = this.$parent;
-                    while (true) {
-                        if (!parent) {
-                            return null;
-                        }
-                        if (parent.controlName === controlName) {
-                            return parent;
-                        }
-                        parent = parent.$parent;
-                    }
-                };
-            };
-            computed.formId = {
-                get: function(): number {
-                    return formId;
-                },
-                set: function(): void {
-                    form.notify({
-                        'title': 'Error',
-                        'content': `The control tries to modify the system variable "formId".\nPath: ${this.cgPath}\nControl: ${name}`,
-                        'type': 'danger'
-                    });
-                }
-            };
-            computed.cgPath = {
-                get: function(): string {
-                    return path;
-                },
-                set: function(): void {
-                    form.notify({
-                        'title': 'Error',
-                        'content': `The control tries to modify the system variable "cgPath".\nPath: ${this.cgPath}\nControl: ${name}`,
-                        'type': 'danger'
-                    });
-                }
-            };
-            // --- layout 中 :class 的转义 ---
-            methods.cgClassPrepend = function(this: types.IVControl, cla: any): string {
-                if (typeof cla !== 'string') {
-                    return cla;
-                }
-                return `cg-theme-task${this.taskId}-${this.controlName}_${cla}${this.cgPrep ? (' ' + this.cgPrep + cla) : ''}`;
-            };
-            // --- 判断当前事件可否执行 ---
-            methods.cgAllowEvent = function(
-                this: types.IVControl,
-                e: MouseEvent | TouchEvent | KeyboardEvent
-            ): boolean {
-                return dom.allowEvent(e);
-            };
-            components['cg-' + name] = {
-                'template': layout,
-                'props': props,
-                'data': function() {
-                    return tool.clone(data);
-                },
-                'methods': methods,
-                'computed': computed,
-                'watch': watch,
+        };
+        // --- 为什么要用 ?.(), 因为有些控件是没有 js 文件的，没有 Control 类继承 ---
+        components['cg-' + name] = {
+            'template': control.layout,
+            'props': control.props,
 
-                'beforeCreate': beforeCreate,
-                'created': created,
-                'beforeMount': beforeMount,
-                'mounted': async function(this: types.IVControl) {
-                    await this.$nextTick();
-                    mounted?.call(this);
-                },
-                'beforeUpdate': beforeUpdate,
-                'updated': async function(this: types.IVControl) {
-                    await this.$nextTick();
-                    updated?.call(this);
-                },
-                'beforeUnmount': function(this: types.IVControl) {
-                    beforeUnmount?.call(this);
-                },
-                'unmounted': async function(this: types.IVControl) {
-                    await this.$nextTick();
-                    unmounted?.call(this);
-                }
-            };
-        }
+            'data': function() {
+                return tool.clone(control.data);
+            },
+            'methods': control.methods,
+            'computed': computed,
+
+            beforeCreate: control.methods.onBeforeCreate,
+            created: function() {
+                this.props = this.$props;
+                this.access = tool.clone(control.access);
+                this.onCreated();
+            },
+            beforeMount: function() {
+                this.onBeforeMount();
+            },
+            mounted: async function() {
+                await this.$nextTick();
+                this.onMounted();
+            },
+            beforeUpdate: function() {
+                this.onBeforeUpdate();
+            },
+            updated: async function() {
+                await this.$nextTick();
+                this.onUpdated();
+            },
+            beforeUnmount: function() {
+                this.onBeforeUnmount();
+            },
+            unmounted: async function() {
+                await this.$nextTick();
+                this.onUnmounted();
+            }
+        };
     }
     return components;
 }

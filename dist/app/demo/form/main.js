@@ -9,17 +9,27 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.methods = exports.data = void 0;
 const clickgo = require("clickgo");
-exports.data = {
-    'ntab': ''
-};
-exports.methods = {
-    openForm: function (type, name) {
+const form_1 = require("./control/form/form");
+class default_1 extends clickgo.form.AbstractForm {
+    constructor() {
+        super(...arguments);
+        this.ntab = '';
+    }
+    openForm(name) {
         return __awaiter(this, void 0, void 0, function* () {
-            yield clickgo.form.create({
-                'file': `${type}/${name}/${name}`
-            });
+            let frm = 0;
+            switch (name) {
+                case 'cform': {
+                    frm = yield form_1.default.create();
+                    break;
+                }
+            }
+            if (typeof frm === 'number') {
+                return;
+            }
+            frm.show();
         });
     }
-};
+}
+exports.default = default_1;

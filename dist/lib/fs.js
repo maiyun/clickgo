@@ -11,7 +11,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.copyFile = exports.copyFolder = exports.readDir = exports.rename = exports.chmod = exports.rmdirDeep = exports.rmdir = exports.mkdir = exports.isFile = exports.isDir = exports.stats = exports.unlink = exports.symlink = exports.readLink = exports.putContent = exports.getContent = void 0;
 const tool = require("./tool");
-const clickgoFiles = ['/app/', '/app/demo/', '/app/demo/config.json', '/app/demo/form/', '/app/demo/form/control/', '/app/demo/form/control/block/', '/app/demo/form/control/block/block.css', '/app/demo/form/control/block/block.xml', '/app/demo/form/control/button/', '/app/demo/form/control/button/button.css', '/app/demo/form/control/button/button.js', '/app/demo/form/control/button/button.xml', '/app/demo/form/control/check/', '/app/demo/form/control/check/check.js', '/app/demo/form/control/check/check.xml', '/app/demo/form/control/dialog/', '/app/demo/form/control/dialog/dialog.js', '/app/demo/form/control/dialog/dialog.xml', '/app/demo/form/control/file/', '/app/demo/form/control/file/file.js', '/app/demo/form/control/file/file.xml', '/app/demo/form/control/form/', '/app/demo/form/control/form/form.css', '/app/demo/form/control/form/form.js', '/app/demo/form/control/form/form.xml', '/app/demo/form/control/greatview/', '/app/demo/form/control/greatview/greatview.css', '/app/demo/form/control/greatview/greatview.js', '/app/demo/form/control/greatview/greatview.xml', '/app/demo/form/control/img/', '/app/demo/form/control/img/img.xml', '/app/demo/form/control/label/', '/app/demo/form/control/label/label.xml', '/app/demo/form/control/list/', '/app/demo/form/control/list/list.css', '/app/demo/form/control/list/list.js', '/app/demo/form/control/list/list.xml', '/app/demo/form/control/loading/', '/app/demo/form/control/loading/loading.xml', '/app/demo/form/control/marquee/', '/app/demo/form/control/marquee/marquee.js', '/app/demo/form/control/marquee/marquee.xml', '/app/demo/form/control/menu/', '/app/demo/form/control/menu/menu.js', '/app/demo/form/control/menu/menu.xml', '/app/demo/form/control/monaco/', '/app/demo/form/control/monaco/monaco.js', '/app/demo/form/control/monaco/monaco.xml', '/app/demo/form/control/overflow/', '/app/demo/form/control/overflow/overflow.css', '/app/demo/form/control/overflow/overflow.js', '/app/demo/form/control/overflow/overflow.xml', '/app/demo/form/control/property/', '/app/demo/form/control/property/property.js', '/app/demo/form/control/property/property.xml', '/app/demo/form/control/radio/', '/app/demo/form/control/radio/radio.js', '/app/demo/form/control/radio/radio.xml', '/app/demo/form/control/scroll/', '/app/demo/form/control/scroll/scroll.js', '/app/demo/form/control/scroll/scroll.xml', '/app/demo/form/control/select/', '/app/demo/form/control/select/select.js', '/app/demo/form/control/select/select.xml', '/app/demo/form/control/tab/', '/app/demo/form/control/tab/tab.js', '/app/demo/form/control/tab/tab.xml', '/app/demo/form/control/text/', '/app/demo/form/control/text/text.js', '/app/demo/form/control/text/text.xml', '/app/demo/form/control/view/', '/app/demo/form/control/view/view.css', '/app/demo/form/control/view/view.js', '/app/demo/form/control/view/view.xml', '/app/demo/form/event/', '/app/demo/form/event/form/', '/app/demo/form/event/form/form.css', '/app/demo/form/event/form/form.js', '/app/demo/form/event/form/form.xml', '/app/demo/form/event/screen/', '/app/demo/form/event/screen/screen.js', '/app/demo/form/event/screen/screen.xml', '/app/demo/form/event/task/', '/app/demo/form/event/task/task.js', '/app/demo/form/event/task/task.xml', '/app/demo/form/main.css', '/app/demo/form/main.js', '/app/demo/form/main.xml', '/app/demo/form/method/', '/app/demo/form/method/core/', '/app/demo/form/method/core/core.js', '/app/demo/form/method/core/core.xml', '/app/demo/form/method/dom/', '/app/demo/form/method/dom/dom.css', '/app/demo/form/method/dom/dom.js', '/app/demo/form/method/dom/dom.xml', '/app/demo/form/method/form/', '/app/demo/form/method/form/form.css', '/app/demo/form/method/form/form.js', '/app/demo/form/method/form/form.xml', '/app/demo/form/method/form/test.xml', '/app/demo/form/method/fs/', '/app/demo/form/method/fs/fs.js', '/app/demo/form/method/fs/fs.xml', '/app/demo/form/method/fs/text.js', '/app/demo/form/method/fs/text.xml', '/app/demo/form/method/task/', '/app/demo/form/method/task/locale1.json', '/app/demo/form/method/task/locale2.json', '/app/demo/form/method/task/task.js', '/app/demo/form/method/task/task.xml', '/app/demo/form/method/theme/', '/app/demo/form/method/theme/theme.js', '/app/demo/form/method/theme/theme.xml', '/app/demo/form/method/tool/', '/app/demo/form/method/tool/tool.js', '/app/demo/form/method/tool/tool.xml', '/app/demo/form/method/zip/', '/app/demo/form/method/zip/zip.js', '/app/demo/form/method/zip/zip.xml', '/app/demo/global.css', '/app/demo/res/', '/app/demo/res/icon.svg', '/app/demo/res/img.jpg', '/app/demo/res/r-1.svg', '/app/demo/res/r-2.svg', '/app/demo/res/sql.svg', '/app/demo/res/txt.svg', '/app/demo/res/zip.svg', '/app/task/', '/app/task/config.json', '/app/task/form/', '/app/task/form/bar/', '/app/task/form/bar/bar.js', '/app/task/form/bar/bar.xml', '/app/task/form/desktop/', '/app/task/form/desktop/desktop.xml', '/app/task/locale/', '/app/task/locale/en.json', '/app/task/locale/ja.json', '/app/task/locale/sc.json', '/app/task/locale/tc.json', '/clickgo.js', '/clickgo.ts', '/control/', '/control/common.cgc', '/control/form.cgc', '/control/monaco.cgc', '/control/property.cgc', '/control/task.cgc', '/global.css', '/icon.png', '/index.js', '/index.ts', '/lib/', '/lib/control.js', '/lib/control.ts', '/lib/core.js', '/lib/core.ts', '/lib/dom.js', '/lib/dom.ts', '/lib/form.js', '/lib/form.ts', '/lib/fs.js', '/lib/fs.ts', '/lib/native.js', '/lib/native.ts', '/lib/task.js', '/lib/task.ts', '/lib/theme.js', '/lib/theme.ts', '/lib/tool.js', '/lib/tool.ts', '/lib/zip.js', '/lib/zip.ts', '/theme/', '/theme/familiar.cgt'];
+const clickgoFiles = ['/app/', '/app/demo/', '/app/demo/app.js', '/app/demo/form/', '/app/demo/form/control/', '/app/demo/form/control/block/', '/app/demo/form/control/block/block.css', '/app/demo/form/control/block/block.xml', '/app/demo/form/control/button/', '/app/demo/form/control/button/button.css', '/app/demo/form/control/button/button.js', '/app/demo/form/control/button/button.xml', '/app/demo/form/control/check/', '/app/demo/form/control/check/check.js', '/app/demo/form/control/check/check.xml', '/app/demo/form/control/dialog/', '/app/demo/form/control/dialog/dialog.js', '/app/demo/form/control/dialog/dialog.xml', '/app/demo/form/control/file/', '/app/demo/form/control/file/file.js', '/app/demo/form/control/file/file.xml', '/app/demo/form/control/form/', '/app/demo/form/control/form/form.css', '/app/demo/form/control/form/form.js', '/app/demo/form/control/form/form.xml', '/app/demo/form/control/greatview/', '/app/demo/form/control/greatview/greatview.css', '/app/demo/form/control/greatview/greatview.js', '/app/demo/form/control/greatview/greatview.xml', '/app/demo/form/control/img/', '/app/demo/form/control/img/img.xml', '/app/demo/form/control/label/', '/app/demo/form/control/label/label.xml', '/app/demo/form/control/list/', '/app/demo/form/control/list/list.css', '/app/demo/form/control/list/list.js', '/app/demo/form/control/list/list.xml', '/app/demo/form/control/loading/', '/app/demo/form/control/loading/loading.xml', '/app/demo/form/control/marquee/', '/app/demo/form/control/marquee/marquee.js', '/app/demo/form/control/marquee/marquee.xml', '/app/demo/form/control/menu/', '/app/demo/form/control/menu/menu.js', '/app/demo/form/control/menu/menu.xml', '/app/demo/form/control/monaco/', '/app/demo/form/control/monaco/monaco.js', '/app/demo/form/control/monaco/monaco.xml', '/app/demo/form/control/overflow/', '/app/demo/form/control/overflow/overflow.css', '/app/demo/form/control/overflow/overflow.js', '/app/demo/form/control/overflow/overflow.xml', '/app/demo/form/control/property/', '/app/demo/form/control/property/property.js', '/app/demo/form/control/property/property.xml', '/app/demo/form/control/radio/', '/app/demo/form/control/radio/radio.js', '/app/demo/form/control/radio/radio.xml', '/app/demo/form/control/scroll/', '/app/demo/form/control/scroll/scroll.js', '/app/demo/form/control/scroll/scroll.xml', '/app/demo/form/control/select/', '/app/demo/form/control/select/select.js', '/app/demo/form/control/select/select.xml', '/app/demo/form/control/tab/', '/app/demo/form/control/tab/tab.js', '/app/demo/form/control/tab/tab.xml', '/app/demo/form/control/text/', '/app/demo/form/control/text/text.js', '/app/demo/form/control/text/text.xml', '/app/demo/form/control/view/', '/app/demo/form/control/view/view.css', '/app/demo/form/control/view/view.js', '/app/demo/form/control/view/view.xml', '/app/demo/form/event/', '/app/demo/form/event/form/', '/app/demo/form/event/form/form.css', '/app/demo/form/event/form/form.js', '/app/demo/form/event/form/form.xml', '/app/demo/form/event/screen/', '/app/demo/form/event/screen/screen.js', '/app/demo/form/event/screen/screen.xml', '/app/demo/form/event/task/', '/app/demo/form/event/task/task.js', '/app/demo/form/event/task/task.xml', '/app/demo/form/main.css', '/app/demo/form/main.js', '/app/demo/form/main.xml', '/app/demo/form/method/', '/app/demo/form/method/core/', '/app/demo/form/method/core/core.js', '/app/demo/form/method/core/core.xml', '/app/demo/form/method/dom/', '/app/demo/form/method/dom/dom.css', '/app/demo/form/method/dom/dom.js', '/app/demo/form/method/dom/dom.xml', '/app/demo/form/method/form/', '/app/demo/form/method/form/form.css', '/app/demo/form/method/form/form.js', '/app/demo/form/method/form/form.xml', '/app/demo/form/method/form/test.xml', '/app/demo/form/method/fs/', '/app/demo/form/method/fs/fs.js', '/app/demo/form/method/fs/fs.xml', '/app/demo/form/method/fs/text.js', '/app/demo/form/method/fs/text.xml', '/app/demo/form/method/task/', '/app/demo/form/method/task/locale1.json', '/app/demo/form/method/task/locale2.json', '/app/demo/form/method/task/task.js', '/app/demo/form/method/task/task.xml', '/app/demo/form/method/theme/', '/app/demo/form/method/theme/theme.js', '/app/demo/form/method/theme/theme.xml', '/app/demo/form/method/tool/', '/app/demo/form/method/tool/tool.js', '/app/demo/form/method/tool/tool.xml', '/app/demo/form/method/zip/', '/app/demo/form/method/zip/zip.js', '/app/demo/form/method/zip/zip.xml', '/app/demo/global.css', '/app/demo/res/', '/app/demo/res/icon.svg', '/app/demo/res/img.jpg', '/app/demo/res/r-1.svg', '/app/demo/res/r-2.svg', '/app/demo/res/sql.svg', '/app/demo/res/txt.svg', '/app/demo/res/zip.svg', '/app/task/', '/app/task/app.js', '/app/task/form/', '/app/task/form/bar/', '/app/task/form/bar/bar.js', '/app/task/form/bar/bar.xml', '/app/task/form/desktop/', '/app/task/form/desktop/desktop.xml', '/app/task/locale/', '/app/task/locale/en.json', '/app/task/locale/ja.json', '/app/task/locale/sc.json', '/app/task/locale/tc.json', '/clickgo.js', '/clickgo.ts', '/control/', '/control/common.cgc', '/control/form.cgc', '/control/monaco.cgc', '/control/property.cgc', '/control/task.cgc', '/global.css', '/icon.png', '/index.js', '/index.ts', '/lib/', '/lib/control.js', '/lib/control.ts', '/lib/core.js', '/lib/core.ts', '/lib/dom.js', '/lib/dom.ts', '/lib/form.js', '/lib/form.ts', '/lib/fs.js', '/lib/fs.ts', '/lib/native.js', '/lib/native.ts', '/lib/task.js', '/lib/task.ts', '/lib/theme.js', '/lib/theme.ts', '/lib/tool.js', '/lib/tool.ts', '/lib/zip.js', '/lib/zip.ts', '/theme/', '/theme/familiar.cgt'];
 function getContent(path, options) {
     return __awaiter(this, void 0, void 0, function* () {
         path = tool.urlResolve('/', path);
@@ -105,11 +105,11 @@ function getContent(path, options) {
             });
         }
         else if (path.startsWith('/current/')) {
-            if (!options.current || !options.current.endsWith('/')) {
+            if (!options.current) {
                 return null;
             }
-            options.current = options.current.slice(0, -1);
-            return getContent(options.current + fpath, options);
+            const current = options.current.endsWith('/') ? options.current.slice(0, -1) : options.current;
+            return getContent(current + fpath, options);
         }
         else {
             return null;
@@ -134,11 +134,11 @@ function putContent(path, data, options = {}) {
             return false;
         }
         else if (path.startsWith('/current/')) {
-            if (!options.current || !options.current.endsWith('/')) {
+            if (!options.current) {
                 return false;
             }
-            options.current = options.current.slice(0, -1);
-            return putContent(options.current + fpath, data, options);
+            const current = options.current.endsWith('/') ? options.current.slice(0, -1) : options.current;
+            return putContent(current + fpath, data, options);
         }
         else {
             return false;
@@ -171,8 +171,11 @@ function readLink(path, options) {
             return null;
         }
         else if (path.startsWith('/current/')) {
-            if (!options.current || !options.current.endsWith('/')) {
+            if (!options.current) {
                 return null;
+            }
+            if (options.current.endsWith('/')) {
+                return options.current.slice(0, -1);
             }
             return options.current;
         }
@@ -199,14 +202,14 @@ function symlink(filePath, linkPath, options = {}) {
             return false;
         }
         else if (filePath.startsWith('/current/')) {
-            if (!options.current || !options.current.endsWith('/')) {
+            if (!options.current) {
                 return false;
             }
-            options.current = options.current.slice(0, -1);
+            const current = options.current.endsWith('/') ? options.current.slice(0, -1) : options.current;
             if (linkPath.startsWith('/current/')) {
-                linkPath = options.current + linkPath.slice(8);
+                linkPath = current + linkPath.slice(8);
             }
-            return symlink(options.current + filePath.slice(8), linkPath, options);
+            return symlink(current + filePath.slice(8), linkPath, options);
         }
         else {
             return false;
@@ -231,11 +234,11 @@ function unlink(path, options = {}) {
             return false;
         }
         else if (path.startsWith('/current/')) {
-            if (!options.current || !options.current.endsWith('/')) {
+            if (!options.current) {
                 return false;
             }
-            options.current = options.current.slice(0, -1);
-            return unlink(options.current + fpath, options);
+            const current = options.current.endsWith('/') ? options.current.slice(0, -1) : options.current;
+            return unlink(current + fpath, options);
         }
         else {
             return false;
@@ -408,11 +411,11 @@ function stats(path, options = {}) {
             return null;
         }
         else if (path.startsWith('/current/')) {
-            if (!options.current || !options.current.endsWith('/')) {
+            if (!options.current) {
                 return null;
             }
-            options.current = options.current.slice(0, -1);
-            return stats(options.current + fpath, options);
+            const current = options.current.endsWith('/') ? options.current.slice(0, -1) : options.current;
+            return stats(current + fpath, options);
         }
         else {
             return null;
@@ -460,11 +463,11 @@ function mkdir(path, mode = 0o755, options = {}) {
             return false;
         }
         else if (path.startsWith('/current/')) {
-            if (!options.current || !options.current.endsWith('/')) {
+            if (!options.current) {
                 return false;
             }
-            options.current = options.current.slice(0, -1);
-            return mkdir(options.current + fpath, mode, options);
+            const current = options.current.endsWith('/') ? options.current.slice(0, -1) : options.current;
+            return mkdir(current + fpath, mode, options);
         }
         else {
             return false;
@@ -489,11 +492,11 @@ function rmdir(path, options = {}) {
             return false;
         }
         else if (path.startsWith('/current/')) {
-            if (!options.current || !options.current.endsWith('/')) {
+            if (!options.current) {
                 return false;
             }
-            options.current = options.current.slice(0, -1);
-            return rmdir(options.current + fpath, options);
+            const current = options.current.endsWith('/') ? options.current.slice(0, -1) : options.current;
+            return rmdir(current + fpath, options);
         }
         else {
             return false;
@@ -547,11 +550,11 @@ function chmod(path, mod, options = {}) {
             return false;
         }
         else if (path.startsWith('/current/')) {
-            if (!options.current || !options.current.endsWith('/')) {
+            if (!options.current) {
                 return false;
             }
-            options.current = options.current.slice(0, -1);
-            return chmod(options.current + fpath, mod, options);
+            const current = options.current.endsWith('/') ? options.current.slice(0, -1) : options.current;
+            return chmod(current + fpath, mod, options);
         }
         else {
             return false;
@@ -581,11 +584,11 @@ function rename(oldPath, newPath, options = {}) {
             return false;
         }
         else if (oldPath.startsWith('/current/')) {
-            if (!options.current || !options.current.endsWith('/')) {
+            if (!options.current) {
                 return false;
             }
-            options.current = options.current.slice(0, -1);
-            return rename(options.current + ofpath, options.current + nfpath, options);
+            const current = options.current.endsWith('/') ? options.current.slice(0, -1) : options.current;
+            return rename(current + ofpath, current + nfpath, options);
         }
         else {
             return false;
@@ -767,11 +770,11 @@ function readDir(path, options = {}) {
             return list;
         }
         else if (path.startsWith('/current/')) {
-            if (!options.current || !options.current.endsWith('/')) {
+            if (!options.current) {
                 return [];
             }
-            options.current = options.current.slice(0, -1);
-            return readDir(options.current + fpath, options);
+            const current = options.current.endsWith('/') ? options.current.slice(0, -1) : options.current;
+            return readDir(current + fpath, options);
         }
         else {
             return [];
@@ -801,11 +804,11 @@ function copyFolder(from, to, options = {}) {
             return 0;
         }
         else if (from.startsWith('/current/')) {
-            if (!options.current || !options.current.endsWith('/')) {
+            if (!options.current) {
                 return 0;
             }
-            options.current = options.current.slice(0, -1);
-            return copyFolder(options.current + ffpath, options.current + tfpath, options);
+            const current = options.current.endsWith('/') ? options.current.slice(0, -1) : options.current;
+            return copyFolder(current + ffpath, current + tfpath, options);
         }
         else {
             return 0;
@@ -835,11 +838,11 @@ function copyFile(src, dest, options = {}) {
             return false;
         }
         else if (src.startsWith('/current/')) {
-            if (!options.current || !options.current.endsWith('/')) {
+            if (!options.current) {
                 return false;
             }
-            options.current = options.current.slice(0, -1);
-            return copyFile(options.current + sfpath, options.current + dfpath, options);
+            const current = options.current.endsWith('/') ? options.current.slice(0, -1) : options.current;
+            return copyFile(current + sfpath, current + dfpath, options);
         }
         else {
             return false;

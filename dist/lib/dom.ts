@@ -1482,7 +1482,7 @@ export function bindMove(e: MouseEvent | TouchEvent, opt: types.IBindMoveOptions
             }
 
             // --- 检测是否执行 borderIn 事件（是否正在边界上） ---
-            let border: types.TBorder = '';
+            let border: types.TDomBorder = '';
             if (inBorderTop || inBorderRight || inBorderBottom || inBorderLeft) {
                 if (inBorderTop) {
                     if (x - left <= 20) {
@@ -1588,8 +1588,6 @@ export function bindMove(e: MouseEvent | TouchEvent, opt: types.IBindMoveOptions
  * --- 绑定拖动改变大小事件 ---
  * @param e mousedown 或 touchstart 的 event
  * @param opt 选项，width, height 当前对象宽高
- * @param moveCb 拖动时的回调
- * @param endCb 结束时的回调
  */
 export function bindResize(e: MouseEvent | TouchEvent, opt: types.IBindResizeOptions): void {
     if (hasTouchButMouse(e)) {

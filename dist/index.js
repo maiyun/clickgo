@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.init = exports.getSafe = exports.setSafe = exports.getPlatform = exports.getNative = exports.getVersion = exports.vue = exports.zip = exports.tool = exports.theme = exports.task = exports.native = exports.fs = exports.form = exports.dom = exports.core = exports.control = exports.clickgo = void 0;
+exports.launcher = exports.AbstractBoot = exports.getPlatform = exports.getNative = exports.getVersion = exports.vue = exports.zip = exports.tool = exports.theme = exports.task = exports.native = exports.fs = exports.form = exports.dom = exports.core = exports.control = exports.clickgo = void 0;
 function getVersion() {
     return exports.clickgo.getVersion();
 }
@@ -22,62 +22,111 @@ function getPlatform() {
     return exports.clickgo.getPlatform();
 }
 exports.getPlatform = getPlatform;
-function setSafe(val) {
-    exports.clickgo.setSafe(val);
+class AbstractBoot {
+    onError() {
+        return;
+    }
+    onScreenResize() {
+        return;
+    }
+    onConfigChanged() {
+        return;
+    }
+    onFormCreated() {
+        return;
+    }
+    onFormRemoved() {
+        return;
+    }
+    onFormTitleChanged() {
+        return;
+    }
+    onFormIconChanged() {
+        return;
+    }
+    onFormStateMinChanged() {
+        return;
+    }
+    onFormStateMaxChanged() {
+        return;
+    }
+    onFormShowChanged() {
+        return;
+    }
+    onFormFocused() {
+        return;
+    }
+    onFormBlurred() {
+        return;
+    }
+    onFormFlash() {
+        return;
+    }
+    onTaskStarted() {
+        return;
+    }
+    onTaskEnded() {
+        return;
+    }
+    onLauncherFolderNameChanged() {
+        return;
+    }
 }
-exports.setSafe = setSafe;
-function getSafe() {
-    return exports.clickgo.getSafe();
-}
-exports.getSafe = getSafe;
-function init() {
-    var _a;
-    return __awaiter(this, void 0, void 0, function* () {
-        const paths = [
-            loader.cdn + '/npm/vue@3.2.31/dist/vue.global.min.js'
-        ];
-        let ro = true;
-        if (!(window.ResizeObserver)) {
-            ro = false;
-            paths.push(loader.cdn + '/npm/@juggle/resize-observer@3.3.1/lib/exports/resize-observer.umd.min.js');
-        }
-        yield loader.loadScripts(paths);
-        if (!ro) {
-            window.ResizeObserverEntry = window.ResizeObserver.ResizeObserverEntry;
-            window.ResizeObserver = window.ResizeObserver.ResizeObserver;
-        }
-        const map = {
-            'jszip': loader.cdn + '/npm/jszip@3.10.0/dist/jszip.min'
-        };
-        const after = '?' + Math.random().toString();
-        const files = yield loader.sniffFiles('clickgo.js', {
-            'dir': __dirname + '/',
-            'after': after,
-            'afterIgnore': new RegExp('^' + loader.cdn.replace(/\./g, '\\.')),
-            'map': map
+exports.AbstractBoot = AbstractBoot;
+function launcher(boot) {
+    (function () {
+        var _a;
+        return __awaiter(this, void 0, void 0, function* () {
+            const paths = [
+                loader.cdn + '/npm/vue@3.2.40/dist/vue.global.prod.min.js'
+            ];
+            let ro = true;
+            if (!(window.ResizeObserver)) {
+                ro = false;
+                paths.push(loader.cdn + '/npm/@juggle/resize-observer@3.4.0/lib/exports/resize-observer.umd.min.js');
+            }
+            yield loader.loadScripts(paths);
+            if (!ro) {
+                window.ResizeObserverEntry = window.ResizeObserver.ResizeObserverEntry;
+                window.ResizeObserver = window.ResizeObserver.ResizeObserver;
+            }
+            const map = {
+                'jszip': loader.cdn + '/npm/jszip@3.10.0/dist/jszip.min'
+            };
+            const after = '?' + Math.random().toString();
+            const files = yield loader.sniffFiles('clickgo.js', {
+                'dir': __dirname + '/',
+                'after': after,
+                'afterIgnore': new RegExp('^' + loader.cdn.replace(/\./g, '\\.')),
+                'map': map
+            });
+            const cg = loader.require('clickgo', files, {
+                'dir': __dirname + '/',
+                'map': map
+            })[0];
+            try {
+                const style = yield (yield fetch(__dirname + '/global.css' + (!__dirname.startsWith(loader.cdn) ? after : ''))).text();
+                (_a = document.getElementById('cg-global')) === null || _a === void 0 ? void 0 : _a.insertAdjacentHTML('afterbegin', style);
+            }
+            catch (_b) {
+                alert(`ClickGo: "${__dirname}/global.css'" failed.`);
+            }
+            exports.clickgo = cg;
+            exports.control = cg.control;
+            exports.core = cg.core;
+            exports.dom = cg.dom;
+            exports.form = cg.form;
+            exports.fs = cg.fs;
+            exports.native = cg.native;
+            exports.task = cg.task;
+            exports.theme = cg.theme;
+            exports.tool = cg.tool;
+            exports.zip = cg.zip;
+            exports.core.boot = boot;
+            yield boot.main();
         });
-        const cg = loader.require('clickgo', files, {
-            'dir': __dirname + '/',
-            'map': map
-        })[0];
-        try {
-            const style = yield (yield fetch(__dirname + '/global.css' + (!__dirname.startsWith(loader.cdn) ? after : ''))).text();
-            (_a = document.getElementById('cg-global')) === null || _a === void 0 ? void 0 : _a.insertAdjacentHTML('afterbegin', style);
-        }
-        catch (_b) {
-            alert(`ClickGo: "${__dirname}/global.css'" failed.`);
-        }
-        exports.clickgo = cg;
-        exports.control = cg.control;
-        exports.core = cg.core;
-        exports.dom = cg.dom;
-        exports.form = cg.form;
-        exports.fs = cg.fs;
-        exports.native = cg.native;
-        exports.task = cg.task;
-        exports.theme = cg.theme;
-        exports.tool = cg.tool;
-        exports.zip = cg.zip;
+    })().catch(function () {
+        return;
     });
 }
-exports.init = init;
+exports.launcher = launcher;

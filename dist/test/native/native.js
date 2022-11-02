@@ -17,7 +17,7 @@ let isReady = false;
 let isFrame = false;
 let isQuit = true;
 let win;
-const platform = 'darwin';
+const platform = process.platform;
 let token = '';
 const methods = {
     'cg-init': {

@@ -1,63 +1,62 @@
 import * as clickgo from 'clickgo';
-import * as types from '~/types/index';
 
-export const props = {
-    'adaptation': {
-        'dafault': undefined
-    },
-    'disabled': {
-        'default': undefined
-    },
-    'must': {
-        'default': true
-    },
-    'multi': {
-        'default': false
-    },
-    'tree': {
-        'default': false
-    },
-    'tree-default': {
-        'default': 0
-    },
-    'async': {
-        'default': false
-    },
-    'icon': {
-        'default': false
-    },
-    'icon-default': {
-        'default': undefined
-    },
+export default class extends clickgo.control.AbstractControl {
 
-    'data': {
-        'default': []
-    },
-    'modelValue': {
-        'default': ''
+    public props: {
+        'adaptation': boolean;
+        'disabled': boolean;
+        'must': boolean;
+        'multi': boolean;
+        'tree': boolean;
+        'treeDefault': number;
+        'async': boolean;
+        'icon': boolean;
+        'iconDefault': string;
+
+        'data': any[];
+        'modelValue': string | string[];
+    } = {
+            'adaptation': false,
+            'disabled': false,
+            'must': true,
+            'multi': false,
+            'tree': false,
+            'treeDefault': 0,
+            'async': false,
+            'icon': false,
+            'iconDefault': '',
+
+            'data': [],
+            'modelValue': ''
+        };
+
+    /** --- 预先格式化用户传入后的数据为 greatlist 可以识别的结构 --- */
+    public dataFormat: any[] = [];
+
+    public get isMust(): boolean {
+        return clickgo.tool.getBoolean(this.props.must);
     }
-};
 
-export const computed = {
-    'isMust': function(this: types.IVControl): boolean {
-        return clickgo.tool.getBoolean(this.must);
-    },
-    'isMulti': function(this: types.IVControl): boolean {
-        return clickgo.tool.getBoolean(this.multi);
-    },
-    'isTree': function(this: types.IVControl): boolean {
-        return clickgo.tool.getBoolean(this.tree);
-    },
-    'isAsync': function(this: types.IVControl): boolean {
-        return clickgo.tool.getBoolean(this.async);
-    },
-    'isIcon': function(this: types.IVControl): boolean {
-        return clickgo.tool.getBoolean(this.icon);
-    },
-    'value': function(this: types.IVControl): number | number[] {
+    public get isMulti(): boolean {
+        return clickgo.tool.getBoolean(this.props.multi);
+    }
+
+    public get isTree(): boolean {
+        return clickgo.tool.getBoolean(this.props.tree);
+    }
+
+    public get isAsync(): boolean {
+        return clickgo.tool.getBoolean(this.props.async);
+    }
+
+    public get isIcon(): boolean {
+        return clickgo.tool.getBoolean(this.props.icon);
+    }
+
+    public get value(): number | number[] {
         let change: boolean = false;
         // --- modelValue 的格式类似：['xx', 'xxx'], 或 'xxx'，只是 value，又不是 data ---
-        let modelValue = this.modelValue;
+        let modelValue = this.props.modelValue;
         if (typeof modelValue === 'object') {
             // --- 当前是数组 ---
             if (!this.isMulti) {
@@ -128,32 +127,19 @@ export const computed = {
             }
         }
         if (change) {
-            this.$emit('update:modelValue', modelValue);
+            this.emit('update:modelValue', modelValue);
         }
-        this.$emit('label', label);
+        this.emit('label', label);
         return value;
-    },
-    'dataComp': function(this: types.IVControl): any[] {
+    }
+
+    public get dataComp(): any[] {
         return this.unpack(this.dataFormat);
     }
-};
 
-export const data = {
-    'dataFormat': []
-};
+    // --- method ---
 
-export const watch = {
-    'data': {
-        handler: function(this: types.IVForm): void {
-            this.dataFormat = this.formatData(this.data, this.dataFormat);
-        },
-        'immediate': true,
-        'deep': true
-    }
-};
-
-export const methods = {
-    updateModelValue: function(this: types.IVControl, value: number | number[]): void {
+    public updateModelValue(value: number | number[]): void {
         if (typeof value === 'object') {
             const modelValue = [];
             const label = [];
@@ -163,15 +149,16 @@ export const methods = {
                     label.push(this.dataComp[item].label);
                 }
             }
-            this.$emit('update:modelValue', modelValue);
-            this.$emit('label', label);
+            this.emit('update:modelValue', modelValue);
+            this.emit('label', label);
         }
         else {
-            this.$emit('update:modelValue', this.dataComp[value] ? this.dataComp[value].value : '');
-            this.$emit('label', this.dataComp[value] ? this.dataComp[value].label : '');
+            this.emit('update:modelValue', this.dataComp[value] ? this.dataComp[value].value : '');
+            this.emit('label', this.dataComp[value] ? this.dataComp[value].label : '');
         }
-    },
-    formatData: function(this: types.IVForm, newData: any[], oldData: any[]): any[] {
+    }
+
+    public formatData(newData: any[], oldData: any[]): any[] {
         const data: any[] = [];
         // --- old 是序列化后的数据，获取当层 values ---
         const oldValues: string[] = [];
@@ -191,7 +178,7 @@ export const methods = {
                 'title': false,
                 'disabled': false,
                 'control': 'item',
-                'tree': this.treeDefault,
+                'tree': this.props.treeDefault,
                 'children': []
             };
             const value = type === 'object' ? (item.value ?? item.label ?? k) : item;
@@ -233,8 +220,9 @@ export const methods = {
             data.push(over);
         }
         return data;
-    },
-    unpack: function(this: types.IVForm, data: any[], level = 0): any[] {
+    }
+
+    public unpack(data: any[], level = 0): any[] {
         const result: any[] = [];
         for (const item of data) {
             let tree = item.tree;
@@ -249,8 +237,8 @@ export const methods = {
                 'disabled': item.disabled,
                 'control': item.control,
                 'tree': tree,
-                'icon': item.icon ?? this.iconDefault,
-                'openicon': item.openicon ?? item.icon ?? this.iconDefault,
+                'icon': item.icon ?? this.props.iconDefault,
+                'openicon': item.openicon ?? item.icon ?? this.props.iconDefault,
                 'level': level,
                 'format': item
             });
@@ -259,8 +247,9 @@ export const methods = {
             }
         }
         return result;
-    },
-    find: function(this: types.IVForm, value: string, data: any[]): any {
+    }
+
+    public find(value: string, data: any[]): any {
         // --- 在 format 中找 ---
         for (const item of data) {
             if ((item.value === value) && !item.disabled) {
@@ -276,8 +265,9 @@ export const methods = {
             }
         }
         return null;
-    },
-    findComp: function(this: types.IVForm, value: string): any {
+    }
+
+    public findComp(value: string): any {
         // --- 在 comp 中找，返回 index ---
         for (let i = 0; i < this.dataComp.length; ++i) {
             if (this.dataComp[i].value === value) {
@@ -285,13 +275,14 @@ export const methods = {
             }
         }
         return null;
-    },
-    treeClick: function(this: types.IVControl, item: Record<string, any>): void {
+    }
+
+    public treeClick(item: Record<string, any>): void {
         if (item.format.tree === 0) {
             if (this.isAsync && item.format.children.length === 0) {
                 // --- 异步加载子项 ---
                 item.format.tree = 2;
-                this.$emit('load', item.value, (children?: any[]) => {
+                this.emit('load', item.value, (children?: any[]) => {
                     if (children) {
                         if (children.length === 0) {
                             item.format.children = [];
@@ -315,4 +306,14 @@ export const methods = {
             item.format.tree = 0;
         }
     }
-};
+
+    public onMounted(): void {
+        this.watch('data', (): void => {
+            this.dataFormat = this.formatData(this.props.data, this.dataFormat);
+        }, {
+            'immediate': true,
+            'deep': true
+        });
+    }
+
+}

@@ -9,72 +9,63 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.mounted = exports.watch = exports.computed = exports.data = exports.props = void 0;
 const clickgo = require("clickgo");
-exports.props = {
-    'src': {
-        'default': ''
-    },
-    'mode': {
-        'default': 'default'
+class default_1 extends clickgo.control.AbstractControl {
+    constructor() {
+        super(...arguments);
+        this.props = {
+            'src': '',
+            'mode': 'default'
+        };
+        this.imgData = '';
+        this.width = 0;
+        this.height = 0;
+        this.count = 0;
     }
-};
-exports.data = {
-    'imgData': '',
-    'width': 0,
-    'height': 0,
-    'count': 0
-};
-exports.computed = {
-    'backgroundSize': function () {
-        if (this.mode === 'default') {
+    get backgroundSize() {
+        if (this.props.mode === 'default') {
             return this.width.toString() + 'px ' + this.height.toString() + 'px';
         }
         else {
-            return this.mode;
+            return this.props.mode;
         }
     }
-};
-exports.watch = {
-    'src': {
-        handler: function () {
-            return __awaiter(this, void 0, void 0, function* () {
-                const count = ++this.count;
-                if (typeof this.src !== 'string' || this.src === '') {
-                    this.imgData = undefined;
-                    return;
-                }
-                const pre = this.src.slice(0, 6).toLowerCase();
-                if (pre === 'file:/') {
-                    return;
-                }
-                if (pre === 'http:/' || pre === 'https:' || pre === 'data:i') {
-                    this.imgData = `url(${this.src})`;
-                    return;
-                }
-                const path = clickgo.tool.urlResolve(this.cgPath, this.src);
-                const blob = yield clickgo.fs.getContent(path);
-                if ((count !== this.count) || !blob || typeof blob === 'string') {
-                    return;
-                }
-                const t = yield clickgo.tool.blob2DataUrl(blob);
-                if (count !== this.count) {
-                    return;
-                }
-                if (t) {
-                    this.imgData = 'url(' + t + ')';
-                    return;
-                }
-                this.imgData = undefined;
-            });
-        },
-        'immediate': true
+    onMounted() {
+        this.watch('src', () => __awaiter(this, void 0, void 0, function* () {
+            const count = ++this.count;
+            if (typeof this.props.src !== 'string' || this.props.src === '') {
+                this.imgData = '';
+                return;
+            }
+            const pre = this.props.src.slice(0, 6).toLowerCase();
+            if (pre === 'file:/') {
+                return;
+            }
+            if (pre === 'http:/' || pre === 'https:' || pre === 'data:i') {
+                this.imgData = `url(${this.props.src})`;
+                return;
+            }
+            const path = clickgo.tool.urlResolve(this.path + '/', this.props.src);
+            const blob = yield clickgo.fs.getContent(path);
+            if ((count !== this.count) || !blob || typeof blob === 'string') {
+                return;
+            }
+            const t = yield clickgo.tool.blob2DataUrl(blob);
+            if (count !== this.count) {
+                return;
+            }
+            if (t) {
+                this.imgData = 'url(' + t + ')';
+                return;
+            }
+            this.imgData = '';
+        }), {
+            'immediate': true
+        });
+        clickgo.dom.watchSize(this.element, (size) => {
+            this.width = size.width;
+            this.height = size.height;
+        }, true);
     }
-};
-const mounted = function () {
-    clickgo.dom.watchSize(this.$el, (size) => {
-        this.width = size.width;
-        this.height = size.height;
-    }, true);
-};
-exports.mounted = mounted;
+}
+exports.default = default_1;

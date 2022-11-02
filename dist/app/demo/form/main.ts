@@ -1,14 +1,24 @@
-import * as types from '~/types/index';
 import * as clickgo from 'clickgo';
+import * as types from '~/types/index';
 
-export const data = {
-    'ntab': ''
-};
+import cformFrm from './control/form/form';
 
-export const methods = {
-    openForm: async function(this: types.IVForm, type: string, name: string): Promise<void> {
-        await clickgo.form.create({
-            'file': `${type}/${name}/${name}`
-        });
+export default class extends clickgo.form.AbstractForm {
+
+    public ntab = '';
+
+    public async openForm(name: string): Promise<void> {
+        let frm: number | types.AbstractForm = 0;
+        switch (name) {
+            case 'cform': {
+                frm = await cformFrm.create();
+                break;
+            }
+        }
+        if (typeof frm === 'number') {
+            // --- 报错 ---
+            return;
+        }
+        frm.show();
     }
-};
+}

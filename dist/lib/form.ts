@@ -20,6 +20,7 @@ import * as task from './task';
 import * as tool from './tool';
 import * as dom from './dom';
 import * as control from './control';
+import * as fs from './fs';
 import * as native from './native';
 
 /** --- form 相关信息 --- */
@@ -73,6 +74,433 @@ const info: {
         }
     }
 };
+
+/** --- 窗体的抽象类 --- */
+export class AbstractForm {
+
+    public static async create(data?: Record<string, any>): Promise<AbstractForm | number> {
+        const frm = new this();
+        /** --- 要挂载的 vue 参数 --- */
+        const code: types.IFormCreateCode = {
+            'data': {},
+            'methods': {},
+            'computed': {},
+
+            beforeCreate: (frm as any).onBeforeCreate,
+            created: function(this: types.IVue) {
+                this.onCreated();
+            },
+            beforeMount: function(this: types.IVue) {
+                this.onBeforeMount();
+            },
+            mounted: function(this: types.IVue, data?: Record<string, any>) {
+                // await this.$nextTick();
+                // --- form 不用 nextTick，因为全部处理完后才会主动调用本方法 ---
+                this.onMounted(data);
+            },
+            beforeUpdate: function(this: types.IVue) {
+                this.onBeforeUpdate();
+            },
+            updated: async function(this: types.IVue) {
+                await this.$nextTick();
+                this.onUpdated();
+            },
+            beforeUnmount: function(this: types.IVue) {
+                this.onBeforeUnmount();
+            },
+            unmounted: async function(this: types.IVue) {
+                await this.$nextTick();
+                this.onUnmounted();
+            }
+        };
+        /** --- class 对象类的属性列表 --- */
+        const cdata = Object.entries(frm);
+        for (const item of cdata) {
+            code.data![item[0]] = item[1];
+        }
+        const layout = task.list[frm.taskId].app.files[frm.filename.slice(0, -2) + 'xml'];
+        if (typeof layout !== 'string') {
+            return 0;
+        }
+        const prot = tool.getClassPrototype(frm);
+        code.methods = prot.method;
+        code.computed = prot.access;
+        // --- 窗体样式 ---
+        let style: string | undefined = undefined;
+        const fstyle = task.list[frm.taskId].app.files[frm.filename.slice(0, -2) + 'css'];
+        if (typeof fstyle === 'string') {
+            style = fstyle;
+        }
+        const fid = await create({
+            'code': code,
+            'layout': layout,
+            'style': style,
+
+            'path': frm.filename.slice(0, frm.filename.lastIndexOf('/')),
+            'data': data,
+            'taskId': frm.taskId
+        });
+        if (fid > 0) {
+            return task.list[frm.taskId].forms[fid].vroot as any;
+        }
+        else {
+            return fid;
+        }
+    }
+
+    /** --- 当前文件路径 --- */
+    public get filename(): string {
+        // --- require 时系统自动在继承类中重写本函数 ---
+        return '';
+    }
+
+    /** --- 当前控件的名字 --- */
+    public get controlName(): string {
+        return 'root';
+    }
+
+    public set controlName(v: string) {
+        notify({
+            'title': 'Error',
+            'content': `The software tries to modify the system variable "controlName".\nPath: ${this.filename}`,
+            'type': 'danger'
+        });
+        return;
+    }
+
+    /** --- 当前的任务 ID --- */
+    public get taskId(): number {
+        // --- 系统 invoke 继承时重写本函数 ---
+        return 0;
+    }
+
+    /** --- 当前的窗体 ID --- */
+    public get formId(): number {
+        // --- 窗体创建时 create 系统自动重写本函数 ---
+        return 0;
+    }
+
+    /** --- 当前窗体是否是焦点 --- */
+    public get formFocus(): boolean {
+        // --- _formFocus 在初始化时由系统设置 ---
+        return (this as any)._formFocus;
+    }
+
+    public set formFocus(b: boolean) {
+        notify({
+            'title': 'Error',
+            'content': `The software tries to modify the system variable "formFocus".\nPath: ${this.filename}`,
+            'type': 'danger'
+        });
+    }
+
+    /** --- 当前窗体的包内路径不以 / 结尾 --- */
+    public get path(): string {
+        // --- 将在初始化时系统自动重写本函数 ---
+        return '';
+    }
+
+    /** --- 样式独占前缀 --- */
+    public get prep(): string {
+        // --- 将在初始化时系统自动重写本函数 ---
+        return '';
+    }
+
+    /** --- 当前的语言 --- */
+    public get locale(): string {
+        return task.list[this.taskId].locale.lang || core.config.locale;
+    }
+
+    /**
+     * --- 获取语言内容 ---
+     */
+    public get l(): (key: string) => string {
+        return (key: string): string => {
+            return task.list[this.taskId].locale.data[this.locale]?.[key] ?? task.list[this.taskId].locale.data['en']?.[key] ?? 'LocaleError';
+        };
+    }
+
+    /** --- layout 中 :class 的转义 --- */
+    public classPrepend(): (cla: any) => string {
+        return (cla: any): string => {
+            if (typeof cla !== 'string') {
+                return cla;
+            }
+            // --- 没有单独的窗体样式，则只应用任务级样式 ---
+            return `cg-task${this.taskId}_${cla}${this.prep ? (' ' + this.prep + cla) : ''}`;
+        };
+    }
+
+    /**
+     * --- 监视变动 ---
+     * @param name 监视的属性
+     * @param cb 回调
+     * @param opt 参数
+     */
+    public watch<T extends this, TK extends keyof T>(
+        name: TK,
+        cb: (val: T[TK], old: T[TK]) => void | Promise<void>,
+        opt: {
+            'immediate'?: boolean;
+            'deep'?: boolean;
+        } = {}
+    ): () => void {
+        return (this as any).$watch(name, cb, opt);
+    }
+
+    /**
+     * --- 获取 refs 情况 ---
+     */
+    public get refs(): Record<string, HTMLElement & types.IVue> {
+        return (this as any).$refs;
+    }
+
+    /**
+     * --- 等待渲染 ---
+     */
+    public get nextTick(): () => Promise<void> {
+        return (this as any).$nextTick;
+    }
+
+    /**
+     * --- 判断当前事件可否执行 ---
+     * @param e 鼠标、触摸、键盘事件
+     */
+    public allowEvent(e: MouseEvent | TouchEvent | KeyboardEvent): boolean {
+        return dom.allowEvent(e);
+    }
+
+    /**
+     * --- 触发系统方法 ---
+     * @param name 方法名
+     * @param param1 参数1
+     * @param param2 参数2
+     */
+    public trigger(name: types.TGlobalEvent, param1: boolean | Error | string = '', param2: string = ''): void {
+        if (!['formTitleChanged', 'formIconChanged', 'formStateMinChanged', 'formStateMaxChanged', 'formShowChanged'].includes(name)) {
+            return;
+        }
+        core.trigger(name, this.taskId, this.formId, param1, param2);
+    }
+
+    // --- 以下为窗体有，但 control 没有 ---
+
+    /** --- 是否是置顶 --- */
+    public get topMost(): boolean {
+        // --- 将在初始化时系统自动重写本函数 ---
+        return false;
+    }
+
+    public set topMost(v: boolean) {
+        // --- 会进行重写 ---
+    }
+
+    /**
+     * --- 给一个窗体发送一个对象，不会知道成功与失败状态 ---
+     * @param fid formId 要接收对象的 form id
+     * @param obj 要发送的对象
+     */
+    public send(fid: number, obj: Record<string, any>): void {
+        obj.taskId = this.taskId;
+        obj.formId = this.formId;
+        send(fid, obj);
+    }
+
+    /**
+     * --- 是否在本窗体上显示遮罩层 ---
+     */
+    public get isMask(): boolean {
+        return !task.list[this.taskId].runtime.dialogFormIds.length ||
+        task.list[this.taskId].runtime.dialogFormIds[task.list[this.taskId].runtime.dialogFormIds.length - 1]
+            === this.formId ? false : true;
+    }
+
+    /** --- 当前是不是初次显示 --- */
+    private _firstShow: boolean = true;
+
+    /**
+     * --- 显示窗体 ---
+     */
+    public show(): void {
+        // --- 创建成功的窗体，可以直接显示 ---
+        const v = this as any;
+        v.$refs.form.$data.showData = true;
+        if (this._firstShow) {
+            this._firstShow = false;
+            // --- 将窗体居中 ---
+            const area = core.getAvailArea();
+            if (!v.$refs.form.stateMaxData) {
+                if (v.$refs.form.left === -1) {
+                    v.$refs.form.setPropData('left', (area.width - v.$el.offsetWidth) / 2);
+                }
+                if (v.$refs.form.top === -1) {
+                    v.$refs.form.setPropData('top', (area.height - v.$el.offsetHeight) / 2);
+                }
+            }
+            v.$refs.form.$data.showData = true;
+            changeFocus(this.formId);
+        }
+    }
+
+    /**
+     * --- 显示独占的窗体 ---
+     */
+    public async showDialog(): Promise<string> {
+        this.show();
+        task.list[this.taskId].runtime.dialogFormIds.push(this.formId);
+        return new Promise((resolve) => {
+            (this as any).cgDialogCallback = () => {
+                resolve(this.dialogResult);
+            };
+        });
+    }
+
+    /**
+     * --- 让窗体隐藏 ---
+     */
+    public hide(): void {
+        const v = this as any;
+        v.$refs.form.$data.showData = false;
+    }
+
+    /**
+     * --- dialog mask 窗体返回值，在 close 之后会进行传导 ---
+     */
+    public dialogResult: string = '';
+
+    // --- 控件响应事件，都可由用户重写 ---
+
+    public onBeforeCreate(): void | Promise<void> {
+        return;
+    }
+
+    public onCreated(): void | Promise<void> {
+        return;
+    }
+
+    public onBeforeMount(): void | Promise<void> {
+        return;
+    }
+
+    public onMounted(): void | Promise<void> {
+        return;
+    }
+
+    public onBeforeUpdate(): void | Promise<void> {
+        return;
+    }
+
+    public onUpdated(): void | Promise<void> {
+        return;
+    }
+
+    public onBeforeUnmount(): void | Promise<void> {
+        return;
+    }
+
+    public onUnmounted():  void | Promise<void> {
+        return;
+    }
+
+    // --- 窗体可以接收到的事件 ---
+
+    /** --- 接收 send 传递过来的 data 数据 --- */
+    public onReceive(data: Record<string, any>): void | Promise<void>;
+    public onReceive(): void {
+        return;
+    }
+
+    /** --- 屏幕大小改变事件 --- */
+    public onScreenResize(): void | Promise<void>;
+    public onScreenResize(): void {
+        return;
+    }
+
+    /** --- 系统配置变更事件 --- */
+    public onConfigChanged<T extends keyof types.IConfig>(n: keyof types.IConfig, v: types.IConfig[T]): void;
+    public onConfigChanged(): void {
+        return;
+    }
+
+    /** --- 窗体创建事件 --- */
+    public onFormCreated(taskId: number, formId: number, title: string, icon: string): void | Promise<void>;
+    public onFormCreated(): void {
+        return;
+    }
+
+    /** --- 窗体销毁事件 */
+    public onFormRemoved(taskId: number, formId: number, title: string, icon: string): void | Promise<void>;
+    public onFormRemoved(): void {
+        return;
+    }
+
+    /** --- 窗体标题改变事件 */
+    public onFormTitleChanged(taskId: number, formId: number, title: string): void | Promise<void>;
+    public onFormTitleChanged(): void | Promise<void> {
+        return;
+    }
+
+    /** --- 窗体图标改变事件 --- */
+    public onFormIconChanged(taskId: number, formId: number, icon: string): void | Promise<void>;
+    public onFormIconChanged(): void | Promise<void> {
+        return;
+    }
+
+    /** --- 窗体最小化状态改变事件 --- */
+    public onFormStateMinChanged(taskId: number, formId: number, state: boolean): void | Promise<void>;
+    public onFormStateMinChanged(): void {
+        return;
+    }
+
+    /** --- 窗体最大化状态改变事件 --- */
+    public onFormStateMaxChanged(taskId: number, formId: number, state: boolean): void | Promise<void>;
+    public onFormStateMaxChanged(): void {
+        return;
+    }
+
+    /** --- 窗体显示状态改变事件 --- */
+    public onFormShowChanged(taskId: number, formId: number, state: boolean): void | Promise<void>;
+    public onFormShowChanged(): void {
+        return;
+    }
+
+    /** --- 窗体获得焦点事件 --- */
+    public onFormFocused(taskId: number, formId: number): void | Promise<void>;
+    public onFormFocused(): void {
+        return;
+    }
+
+    /** --- 窗体丢失焦点事件 --- */
+    public onFormBlurred(taskId: number, formId: number): void | Promise<void>;
+    public onFormBlurred(): void {
+        return;
+    }
+
+    /** --- 窗体闪烁事件 --- */
+    public onFormFlash(taskId: number, formId: number): void | Promise<void>;
+    public onFormFlash(): void {
+        return;
+    }
+
+    /** --- 任务开始事件 --- */
+    public onTaskStarted(taskId: number): void | Promise<void>;
+    public onTaskStarted(): void | Promise<void> {
+        return;
+    }
+
+    /** --- 任务结束事件 --- */
+    public onTaskEnded(taskId: number): void | Promise<void>;
+    public onTaskEnded(): void | Promise<void> {
+        return;
+    }
+
+    /** --- launcher 文件夹名称修改事件 --- */
+    public onLauncherFolderNameChanged(id: string, name: string): void | Promise<void>;
+    public onLauncherFolderNameChanged(): void {
+        return;
+    }
+
+}
 
 /** --- pop 相关信息 --- */
 const popInfo: {
@@ -240,7 +668,7 @@ const elements: {
                 }
             },
             'mounted': function(this: types.IVue): void {
-                simpleSystemTaskRoot = this;
+                simpleSystemTaskRoot = this as any;
             }
         });
         simpletaskApp.mount('#cg-simpletask');
@@ -424,7 +852,7 @@ const elements: {
                     }
                 },
                 'mounted': function(this: types.IVue): void {
-                    launcherRoot = this;
+                    launcherRoot = this as any;
                 }
             });
             launcherApp.mount('#cg-launcher');
@@ -439,10 +867,7 @@ elements.init();
  * @param state 最大化、最小化或关闭
  * @param formId 窗体 id
  */
-function changeState(state: 'min' | 'max' | 'close', formId?: number): boolean {
-    if (!formId) {
-        return false;
-    }
+function changeState(state: 'min' | 'max' | 'close', formId: number): boolean {
     const tid: number = getTaskId(formId);
     const t = task.list[tid];
     if (!t) {
@@ -466,25 +891,25 @@ function changeState(state: 'min' | 'max' | 'close', formId?: number): boolean {
 
 /**
  * --- 最小化某个窗体 ---
- * @param formId 窗体 id，App 模式下可省略
+ * @param formId 窗体 id
  */
-export function min(formId?: number): boolean {
+export function min(formId: number): boolean {
     return changeState('min', formId);
 }
 
 /**
  * --- 最大化某个窗体 ---
- * @param formId formId 窗体 id，App 模式下可省略
+ * @param formId 窗体 id
  */
-export function max(formId?: number): boolean {
+export function max(formId: number): boolean {
     return changeState('max', formId);
 }
 
 /**
  * --- 关闭一个窗体 ---
- * @param formId formId 窗体 id，App 模式下可省略
+ * @param formId 窗体 id
  */
-export function close(formId?: number):  boolean {
+export function close(formId: number):  boolean {
     return changeState('close', formId);
 }
 
@@ -493,7 +918,7 @@ export function close(formId?: number):  boolean {
  * @param e 事件源
  * @param border 调整大小的方位
  */
-export function bindResize(e: MouseEvent | TouchEvent, border: types.TBorder): void {
+export function bindResize(e: MouseEvent | TouchEvent, border: types.TDomBorder): void {
     const formWrap = dom.findParentByClass(e.target as HTMLElement, 'cg-form-wrap');
     if (!formWrap) {
         return;
@@ -534,7 +959,7 @@ export function bindDrag(e: MouseEvent | TouchEvent): void {
 }
 
 /**
- *  --- 重置所有已经最大化的窗体大小和位置 ---
+ *  --- 重置所有已经最大化的窗体大小和位置，App 模式下无效 ---
  */
 export function refreshMaxPosition(): void {
     const area = core.getAvailArea();
@@ -591,12 +1016,12 @@ export function get(formId: number): types.IFormInfo | null {
         'stateMax': item.vroot.$refs.form.stateMaxData,
         'stateMin': item.vroot.$refs.form.stateMinData,
         'show': item.vroot.$refs.form.showData,
-        'focus': item.vroot.cgFocus
+        'focus': item.vroot.formFocus
     };
 }
 
 /**
- * --- 给一个窗体发送一个对象，不会知道成功与失败状态 ---
+ * --- 给一个窗体发送一个对象，不会知道成功与失败状态，APP 模式下无效用 this.send 替代 ---
  * @param formId 要接收对象的 form id
  * @param obj 要发送的对象
  */
@@ -606,10 +1031,7 @@ export function send(formId: number, obj: Record<string, any>): void {
         return;
     }
     const item = task.list[taskId].forms[formId];
-    if (!item.vroot.cgReceive) {
-        return;
-    }
-    item.vroot.cgReceive(obj);
+    item.vroot.onReceive(obj);
 }
 
 /**
@@ -630,7 +1052,7 @@ export function getList(taskId: number): Record<string, types.IFormInfo> {
             'stateMax': item.vroot.$refs.form.stateMaxData,
             'stateMin': item.vroot.$refs.form.stateMinData,
             'show': item.vroot.$refs.form.showData,
-            'focus': item.vroot.cgFocus
+            'focus': item.vroot.formFocus
         };
     }
     return list;
@@ -649,7 +1071,7 @@ export function changeFocus(formId: number = 0): void {
         });
         return;
     }
-    const focusElement = document.querySelector('#cg-form-list > [data-cg-focus]');
+    const focusElement = document.querySelector('#cg-form-list > [data-form-focus]');
     if (focusElement) {
         const dataFormId = focusElement.getAttribute('data-form-id');
         if (dataFormId) {
@@ -660,8 +1082,8 @@ export function changeFocus(formId: number = 0): void {
             else {
                 const taskId = parseInt(focusElement.getAttribute('data-task-id') ?? '0');
                 const t = task.list[taskId];
-                t.forms[dataFormIdNumber].vapp._container.removeAttribute('data-cg-focus');
-                t.forms[dataFormIdNumber].vroot._cgFocus = false;
+                t.forms[dataFormIdNumber].vapp._container.removeAttribute('data-form-focus');
+                t.forms[dataFormIdNumber].vroot._formFocus = false;
                 // --- 触发 formBlurred 事件 ---
                 core.trigger('formBlurred', taskId, dataFormIdNumber);
             }
@@ -685,43 +1107,42 @@ export function changeFocus(formId: number = 0): void {
     const taskId: number = parseInt(el.getAttribute('data-task-id') ?? '0');
     const t = task.list[taskId];
     // --- 如果不是自定义的 zindex，则设置 zIndex 为最大 ---
-    if (!t.forms[formId].vroot.cgCustomZIndex) {
-        if (t.forms[formId].vroot.cgTopMost) {
-            t.forms[formId].vroot.$refs.form.setPropData('zIndex', ++info.topLastZIndex);
-        }
-        else {
-            t.forms[formId].vroot.$refs.form.setPropData('zIndex', ++info.lastZIndex);
-        }
+    if (t.forms[formId].vroot._topMost) {
+        t.forms[formId].vroot.$refs.form.$data.zIndexData = ++info.topLastZIndex;
     }
-    // --- 检测 maskFor ---
-    const maskFor = t.forms[formId].vroot.$refs.form.maskFor;
-    if ((typeof maskFor === 'number') && (task.list[taskId].forms[maskFor])) {
-        // --- 有 maskFor 窗体 ---
-        // --- 如果是最小化状态的话，需要还原 ---
-        if (get(maskFor)!.stateMin) {
-            min(maskFor);
-        }
-        // --- 如果不是自定义的 zindex，则设置 zIndex 为最大 ---
-        if (!task.list[taskId].forms[maskFor].vroot.cgCustomZIndex) {
-            if (task.list[taskId].forms[maskFor].vroot.cgTopMost) {
-                task.list[taskId].forms[maskFor].vroot.$refs.form.setPropData('zIndex', ++info.topLastZIndex);
+    else {
+        t.forms[formId].vroot.$refs.form.$data.zIndexData = ++info.lastZIndex;
+    }
+    // --- 检测是否有 dialog mask 层 ---
+    if (t.runtime.dialogFormIds.length) {
+        // --- 有 dialog ---
+        const dialogFormId = t.runtime.dialogFormIds[t.runtime.dialogFormIds.length - 1];
+        // --- 的判断点击的窗体是不是就是 dialog mask 窗体本身 ---
+        if (dialogFormId !== formId) {
+            // --- 如果是最小化状态的话，需要还原 ---
+            if (get(dialogFormId)!.stateMin) {
+                min(dialogFormId);
+            }
+            // --- 如果不是自定义的 zindex，则设置 zIndex 为最大 ---
+            if (task.list[taskId].forms[dialogFormId].vroot._topMost) {
+                task.list[taskId].forms[dialogFormId].vroot.$refs.form.$data.zIndexData = ++info.topLastZIndex;
             }
             else {
-                task.list[taskId].forms[maskFor].vroot.$refs.form.setPropData('zIndex', ++info.lastZIndex);
+                task.list[taskId].forms[dialogFormId].vroot.$refs.form.$data.zIndexData = ++info.lastZIndex;
             }
+            // --- 开启 focus ---
+            task.list[taskId].forms[dialogFormId].vapp._container.dataset.formFocus = '';
+            task.list[taskId].forms[dialogFormId].vroot._formFocus = true;
+            // --- 触发 formFocused 事件 ---
+            core.trigger('formFocused', taskId, dialogFormId);
+            // --- 闪烁 ---
+            clickgo.form.flash(dialogFormId, taskId);
         }
-        // --- 开启 focus ---
-        task.list[taskId].forms[maskFor].vapp._container.dataset.cgFocus = '';
-        task.list[taskId].forms[maskFor].vroot._cgFocus = true;
-        // --- 触发 formFocused 事件 ---
-        core.trigger('formFocused', taskId, maskFor);
-        // --- 闪烁 ---
-        clickgo.form.flash(maskFor, taskId);
     }
     else {
         // --- 正常开启 focus ---
-        t.forms[formId].vapp._container.dataset.cgFocus = '';
-        t.forms[formId].vroot._cgFocus = true;
+        t.forms[formId].vapp._container.dataset.formFocus = '';
+        t.forms[formId].vroot._formFocus = true;
         // --- 触发 formFocused 事件 ---
         core.trigger('formFocused', taskId, formId);
     }
@@ -740,6 +1161,9 @@ export function getMaxZIndexID(out: {
     for (let i = 0; i < elements.list.children.length; ++i) {
         const formWrap = elements.list.children.item(i) as HTMLDivElement;
         const formInner = formWrap.children.item(0) as HTMLDivElement;
+        if (!formInner) {
+            continue;
+        }
         // --- 排除 top most 窗体 ---
         const z = parseInt(formInner.style.zIndex);
         if (z > 9999999) {
@@ -771,7 +1195,7 @@ export function getMaxZIndexID(out: {
  * --- 根据 border 方向 获取理论窗体大小 ---
  * @param border 显示的位置代号
  */
-export function getRectByBorder(border: types.TBorder): { 'width': number; 'height': number; 'left': number; 'top': number; } {
+export function getRectByBorder(border: types.TDomBorderCustom): { 'width': number; 'height': number; 'left': number; 'top': number; } {
     const area = core.getAvailArea();
     let width!: number, height!: number, left!: number, top!: number;
     if (typeof border === 'string') {
@@ -881,7 +1305,7 @@ export function showCircular(x: number, y: number): void {
  * --- 移动矩形到新位置 ---
  * @param border 显示的位置代号
  */
-export function moveRectangle(border: types.TBorder): void {
+export function moveRectangle(border: types.TDomBorderCustom): void {
     const dataReady = elements.rectangle.getAttribute('data-ready') ?? '0';
     if (dataReady === '0') {
         return;
@@ -911,7 +1335,7 @@ export function moveRectangle(border: types.TBorder): void {
  * @param y 起始位置
  * @param border 最大时位置代号
  */
-export function showRectangle(x: number, y: number, border: types.TBorder): void {
+export function showRectangle(x: number, y: number, border: types.TDomBorderCustom): void {
     elements.rectangle.style.transition = 'none';
     requestAnimationFrame(function() {
         elements.rectangle.style.width = '5px';
@@ -987,7 +1411,7 @@ let notifyTop: number = 10;
 let notifyId: number = 0;
 /**
  * --- 弹出右上角信息框 ---
- * @param opt timeout 默认 5 秒
+ * @param opt timeout 默认 5 秒，最大 30 秒
  */
 export function notify(opt: types.INotifyOptions): number {
     // --- 申请 nid ---
@@ -1099,7 +1523,7 @@ export function hideNotify(notifyId: number): void {
 }
 
 /**
- * --- 将标签追加到 pop 层 ---
+ * --- 将标签追加到 pop 层，App 模式下无效 ---
  * @param el 要追加的标签
  */
 export function appendToPop(el: HTMLElement): void {
@@ -1107,7 +1531,7 @@ export function appendToPop(el: HTMLElement): void {
 }
 
 /**
- * --- 将标签从 pop 层移除 ---
+ * --- 将标签从 pop 层移除，App 模式下无效 ---
  * @param el 要移除的标签
  */
 export function removeFromPop(el: HTMLElement): void {
@@ -1305,7 +1729,7 @@ export function hidePop(pop?: HTMLElement): void {
 }
 
 /**
- * --- 点下 (mousedown / touchstart) 屏幕任意一位置时根据点击处处理隐藏 pop 和焦点丢失事件，鼠标和 touch 只会响应一个 ---
+ * --- 点下 (mousedown / touchstart) 屏幕任意一位置时根据点击处处理隐藏 pop 和焦点丢失事件，鼠标和 touch 只会响应一个，App 模式下无效 ---
  * @param e 事件对象
  */
 export function doFocusAndPopEvent(e: MouseEvent | TouchEvent): void {
@@ -1364,7 +1788,7 @@ window.addEventListener('touchstart', doFocusAndPopEvent, {
 window.addEventListener('mousedown', doFocusAndPopEvent);
 
 /**
- * --- 移除一个 form（关闭窗口） ---
+ * --- 移除一个 form（关闭窗口），App 模式下无效 ---
  * @param formId 要移除的 form id
  */
 export function remove(formId: number): boolean {
@@ -1374,9 +1798,10 @@ export function remove(formId: number): boolean {
     if (task.list[taskId].forms[formId]) {
         title = task.list[taskId].forms[formId].vroot.$refs.form.title;
         icon = task.list[taskId].forms[formId].vroot.$refs.form.iconData;
-        if (task.list[taskId].forms[formId].vroot.$refs.form.maskFrom !== undefined) {
-            const fid = task.list[taskId].forms[formId].vroot.$refs.form.maskFrom;
-            task.list[taskId].forms[fid].vroot.$refs.form.maskFor = undefined;
+        const io = task.list[taskId].runtime.dialogFormIds.indexOf(formId);
+        if (io > -1) {
+            // --- 取消 dialog mask 记录 ---
+            task.list[taskId].runtime.dialogFormIds.splice(io, 1);
         }
         task.list[taskId].forms[formId].vroot.$refs.form.$data.showData = false;
         setTimeout(function() {
@@ -1397,6 +1822,10 @@ export function remove(formId: number): boolean {
             }
             task.list[taskId].forms[formId].vapp.unmount();
             task.list[taskId].forms[formId].vapp._container.remove();
+            if (io > -1) {
+                // --- 如果是 dialog 则要执行回调 ---
+                task.list[taskId].forms[formId].vroot.cgDialogCallback();
+            }
             delete task.list[taskId].forms[formId];
             // --- 移除 form 的 style ---
             dom.removeStyle(taskId, 'form', formId);
@@ -1415,20 +1844,14 @@ export function remove(formId: number): boolean {
 }
 
 /**
- * --- 根据任务 id 和 form id 获取 IForm 对象 ---
+ * --- 根据任务 id 和 form id 获取 IForm 对象，App 模式下无效 ---
  * @param taskId 任务 id
  * @param formId 窗体 id
  */
-function getForm(taskId?: number, formId?: number): types.IForm | null {
-    if (!taskId) {
-        return null;
-    }
+function getForm(taskId: number, formId: number): types.IForm | null {
     /** --- 当前的 task 对象 --- */
     const t = task.list[taskId];
     if (!t) {
-        return null;
-    }
-    if (!formId) {
         return null;
     }
     const form = t.forms[formId];
@@ -1439,731 +1862,29 @@ function getForm(taskId?: number, formId?: number): types.IForm | null {
 }
 
 /**
- * --- 直接创建一个窗体（需要验证传入 code、layout 等是否能成功创建) ---
+ * --- 创建一个窗体，App 模式下无效 ---
  * @param opt 创建窗体的配置对象
  */
-export async function create(opt: string | types.IFormCreateOptions): Promise<number | types.IForm> {
-    if (typeof opt === 'string') {
-        return 0;
-    }
+export async function create(opt: types.IFormCreateOptions): Promise<number> {
     if (!opt.taskId) {
         return -1;
     }
-    if (opt.path && (!opt.path.endsWith('/') || !opt.path?.startsWith('/'))) {
+    /** --- 当前的 task 对象 --- */
+    const t = task.list[opt.taskId];
+    if (!t) {
         return -2;
     }
-    const taskId = opt.taskId;
-    /** --- 当前的 task 对象 --- */
-    const t = task.list[taskId];
-    if (!t) {
-        return -3;
-    }
-    let form: types.IForm | null = null;
-    if (opt.formId) {
-        if (!t.forms[opt.formId]) {
-            return -4;
-        }
-        form = t.forms[opt.formId];
-    }
-    /** --- 是否创建置顶的窗体 --- */
-    let topMost = opt.topMost ?? false;
-    if (form?.vroot.cgTopMost) {
-        topMost = true;
-    }
-    // --- 是否要给原窗体增加遮罩 ---
-    if (opt.mask && form) {
-        form.vroot.$refs.form.maskFor = 0;
-    }
-    /** --- 当前父 form 的路径（以 / 结尾）或 /（没有基路径的话） --- */
-    const base: string = form ? form.vroot.cgPath : '/';
-    /** --- 要新建的 form 的文件路径 --- */
-    let filePath = '', newBase = '';
-    if (opt.file) {
-        filePath = clickgo.tool.urlResolve(base, opt.file);
-        newBase = filePath.slice(0, filePath.lastIndexOf('/') + 1);
-    }
-    else {
-        newBase = opt.path ?? base;
-    }
-
-    /** --- 当前的 APP 对象 --- */
-    const app: types.IApp = t.app;
     // ---  申请 formId ---
     const formId = ++info.lastId;
-    // --- 注入的参数，屏蔽浏览器全局对象，注入新的对象 ---
-    const invoke: Record<string, any> = {};
-    if (clickgo.getSafe()) {
-        invoke.window = undefined;
-        invoke.loader = undefined;
-        const ks = Object.getOwnPropertyNames(window);
-        for (const k of ks) {
-            if (k.includes('Event')) {
-                continue;
-            }
-            if (k.includes('-')) {
-                continue;
-            }
-            if (/^[0-9]+$/.test(k)) {
-                continue;
-            }
-            if ([
-                'require',
-                '__awaiter', 'eval', 'Math', 'Array', 'Blob', 'Infinity', 'parseInt', 'parseFloat', 'Promise', 'Date', 'JSON', 'fetch'].includes(k)) {
-                continue;
-            }
-            invoke[k] = undefined;
-        }
-        // --- console ---
-        invoke.console = {
-            log: function(message?: any, ...optionalParams: any[]) {
-                console.log(message, ...optionalParams);
-            }
-        };
-        // --- loader ---
-        invoke.loader = {
-            require: function(paths: string | string[], files: Record<string, Blob | string>, opt?: {
-                'executed'?: Record<string, any>;
-                'map'?: Record<string, string>;
-                'dir'?: string;
-                'style'?: string;
-                'invoke'?: Record<string, any>;
-                'preprocess'?: (code: string, path: string) => string;
-            }): any[] {
-                return loader.require(paths, files, opt);
-            }
-        };
-        // --- Object ---
-        invoke.Object = {
-            defineProperty: function(): void {
-                return;
-            },
-            keys: function(o: any): string[] {
-                return Object.keys(o);
-            },
-            assign: function(o: any, o2: any): any {
-                if (o.controlName !== undefined) {
-                    return o;
-                }
-                return Object.assign(o, o2);
-            }
-        };
-        invoke.navigator = {};
-        if (navigator.clipboard) {
-            invoke.navigator.clipboard = navigator.clipboard;
-        }
-        // --- ClickGo 相关 ---
-        invoke.invokeClickgo = {
-            getVersion: function(): string {
-                return clickgo.getVersion();
-            },
-            getNative(): boolean {
-                return clickgo.getNative();
-            },
-            getPlatform(): string {
-                return clickgo.getPlatform();
-            },
-            getSafe(): boolean {
-                return clickgo.getSafe();
-            },
-            'control': {
-                read: function(blob: Blob): Promise<false | types.TControl> {
-                    return clickgo.control.read(blob);
-                }
-            },
-            'core': {
-                'config': clickgo.core.config,
-                'cdn': loader.cdn,
-                initModules: function(names: string | string[]): Promise<number> {
-                    return clickgo.core.initModules(names);
-                },
-                getModule: function(name: string): null | any {
-                    return clickgo.core.getModule(name);
-                },
-                setSystemEventListener: function(
-                    name: types.TGlobalEvent,
-                    func: (...any: any) => void | Promise<void>,
-                    fid?: number
-                ): void {
-                    clickgo.core.setSystemEventListener(name, func, fid ?? formId, taskId);
-                },
-                removeSystemEventListener: function(
-                    name: types.TGlobalEvent,
-                    fid?: number
-                ): void {
-                    clickgo.core.removeSystemEventListener(name, fid ?? formId, taskId);
-                },
-                trigger: function(name: types.TGlobalEvent, param1: boolean | Error | string = '', param2: string = ''): void {
-                    if (!['formTitleChanged', 'formIconChanged', 'formStateMinChanged', 'formStateMaxChanged', 'formShowChanged'].includes(name)) {
-                        return;
-                    }
-                    clickgo.core.trigger(name, taskId, formId, param1, param2);
-                },
-                readApp: function(blob: Blob): Promise<false | types.IApp> {
-                    return clickgo.core.readApp(blob);
-                },
-                getAvailArea: function(): types.IAvailArea {
-                    return clickgo.core.getAvailArea();
-                }
-            },
-            'dom': {
-                setGlobalCursor: function(type?: string): void {
-                    clickgo.dom.setGlobalCursor(type);
-                },
-                hasTouchButMouse: function(e: MouseEvent | TouchEvent | PointerEvent): boolean {
-                    return clickgo.dom.hasTouchButMouse(e);
-                },
-                getStyleCount: function(taskId: number, type: 'theme' | 'control' | 'form'): number {
-                    return clickgo.dom.getStyleCount(taskId, type);
-                },
-                getSize: function(el: HTMLElement): types.IDomSize {
-                    return clickgo.dom.getSize(el);
-                },
-                watchSize: function(
-                    el: HTMLElement,
-                    cb: (size: types.IDomSize) => Promise<void> | void,
-                    immediate: boolean = false
-                ): types.IDomSize {
-                    return clickgo.dom.watchSize(el, cb, immediate, taskId);
-                },
-                unwatchSize: function(el: HTMLElement): void {
-                    clickgo.dom.unwatchSize(el, taskId);
-                },
-                clearWatchSize(): void {
-                    clickgo.dom.clearWatchSize(taskId);
-                },
-                watch: function(el: HTMLElement, cb: () => void, mode: 'child' | 'childsub' | 'style' | 'default' = 'default', immediate: boolean = false): void {
-                    clickgo.dom.watch(el, cb, mode, immediate, taskId);
-                },
-                unwatch: function(el: HTMLElement): void {
-                    clickgo.dom.unwatch(el, taskId);
-                },
-                clearWatch: function(): void {
-                    clickgo.dom.clearWatch(taskId);
-                },
-                watchStyle: function(
-                    el: HTMLElement,
-                    name: string | string[],
-                    cb: (name: string, value: string) => void,
-                    immediate: boolean = false
-                ): void {
-                    clickgo.dom.watchStyle(el, name, cb, immediate);
-                },
-                isWatchStyle: function(el: HTMLElement): boolean {
-                    return clickgo.dom.isWatchStyle(el);
-                },
-                bindDown: function(oe: MouseEvent | TouchEvent, opt: types.IBindDownOptions) {
-                    clickgo.dom.bindDown(oe, opt);
-                },
-                bindGesture: function(e: MouseEvent | TouchEvent | WheelEvent | { 'x'?: number; 'y'?: number; }, opt: types.IBindGestureOptions): void {
-                    clickgo.dom.bindGesture(e, opt);
-                },
-                bindLong: function(
-                    e: MouseEvent | TouchEvent,
-                    long: (e: MouseEvent | TouchEvent) => void | Promise<void>
-                ): void {
-                    clickgo.dom.bindLong(e, long);
-                },
-                bindDrag: function(e: MouseEvent | TouchEvent, opt: { 'el': HTMLElement; 'data'?: any; }): void {
-                    clickgo.dom.bindDrag(e, opt);
-                },
-                'is': clickgo.dom.is,
-                bindMove: function(e: MouseEvent | TouchEvent, opt: types.IBindMoveOptions): types.IBindMoveResult {
-                    return clickgo.dom.bindMove(e, opt);
-                },
-                bindResize: function(e: MouseEvent | TouchEvent, opt: types.IBindResizeOptions): void {
-                    clickgo.dom.bindResize(e, opt);
-                },
-                findParentByData: function(el: HTMLElement, name: string): HTMLElement | null {
-                    return clickgo.dom.findParentByData(el, name);
-                },
-                findParentByClass: function(el: HTMLElement, name: string): HTMLElement | null {
-                    return clickgo.dom.findParentByClass(el, name);
-                },
-                siblings: function(el: HTMLElement): HTMLElement[] {
-                    return clickgo.dom.siblings(el);
-                },
-                siblingsData: function(el: HTMLElement, name: string): HTMLElement[] {
-                    return clickgo.dom.siblingsData(el, name);
-                },
-                fullscreen: function(): boolean {
-                    return clickgo.dom.fullscreen();
-                }
-            },
-            'form': {
-                min: function(fid?: number): boolean {
-                    return clickgo.form.min(fid ?? formId);
-                },
-                max: function max(fid?: number): boolean {
-                    return clickgo.form.max(fid ?? formId);
-                },
-                close: function(fid?: number): boolean {
-                    return clickgo.form.close(fid ?? formId);
-                },
-                bindResize: function(e: MouseEvent | TouchEvent, border: types.TBorder): void {
-                    clickgo.form.bindResize(e, border);
-                },
-                bindDrag: function(e: MouseEvent | TouchEvent): void {
-                    clickgo.form.bindDrag(e);
-                },
-                getTaskId: function(fid: number): number {
-                    return clickgo.form.getTaskId(fid);
-                },
-                get: function(fid: number): types.IFormInfo | null {
-                    return clickgo.form.get(fid);
-                },
-                send: function(fid: number, obj: Record<string, any>): void {
-                    obj.taskId = taskId;
-                    obj.formId = formId;
-                    clickgo.form.send(fid, obj);
-                },
-                getList: function(tid: number): Record<string, types.IFormInfo> {
-                    return clickgo.form.getList(tid);
-                },
-                changeFocus: function(fid: number = 0): void {
-                    clickgo.form.changeFocus(fid);
-                },
-                getMaxZIndexID: function(out?: {
-                    'taskIds'?: number[];
-                    'formIds'?: number[];
-                }): number | null {
-                    return clickgo.form.getMaxZIndexID(out);
-                },
-                getRectByBorder: function(border: types.TBorder): { 'width': number; 'height': number; 'left': number; 'top': number; } {
-                    return clickgo.form.getRectByBorder(border);
-                },
-                showCircular: function(x: number, y: number): void {
-                    clickgo.form.showCircular(x, y);
-                },
-                moveRectangle: function(border: types.TBorder): void {
-                    clickgo.form.moveRectangle(border);
-                },
-                showRectangle: function(x: number, y: number, border: types.TBorder): void {
-                    clickgo.form.showRectangle(x, y, border);
-                },
-                hideRectangle: function(): void {
-                    clickgo.form.hideRectangle();
-                },
-                showDrag: function(): void {
-                    clickgo.form.showDrag();
-                },
-                moveDrag: function(opt: types.IMoveDragOptions): void {
-                    clickgo.form.moveDrag(opt);
-                },
-                hideDrag: function(): void {
-                    clickgo.form.hideDrag();
-                },
-                notify: function(opt: types.INotifyOptions): number {
-                    return clickgo.form.notify(opt);
-                },
-                notifyProgress: function(notifyId: number, per: number): void {
-                    clickgo.form.notifyProgress(notifyId, per);
-                },
-                hideNotify: function(notifyId: number): void {
-                    clickgo.form.hideNotify(notifyId);
-                },
-                showPop: function(el: HTMLElement, pop: HTMLElement | undefined, direction: 'h' | 'v' | MouseEvent | TouchEvent | { x: number; y: number; }, opt: { 'size'?: { width?: number; height?: number; }; 'null'?: boolean; } = {}): void {
-                    clickgo.form.showPop(el, pop, direction, opt);
-                },
-                hidePop: function(pop?: HTMLElement): void {
-                    clickgo.form.hidePop(pop);
-                },
-                create: function(opt: string | types.IFormCreateOptions): Promise<number | types.IForm> {
-                    if (typeof opt === 'string') {
-                        opt = {
-                            'file': opt
-                        };
-                    }
-                    opt.taskId = taskId;
-                    opt.formId = formId;
-                    return clickgo.form.create(opt);
-                },
-                dialog: function(opt: string | types.IFormDialogOptions): Promise<string> {
-                    if (typeof opt === 'string') {
-                        opt = {
-                            'content': opt
-                        };
-                    }
-                    opt.formId = formId;
-                    return clickgo.form.dialog(opt);
-                },
-                confirm: function(opt: string | types.IFormConfirmOptions): Promise<boolean | number> {
-                    if (typeof opt === 'string') {
-                        opt = {
-                            'content': opt
-                        };
-                    }
-                    opt.formId = formId;
-                    return clickgo.form.confirm(opt);
-                },
-                setTopMost: function(top: boolean, opt: types.IFormSetTopMostOptions = {}): void {
-                    opt.taskId = taskId;
-                    opt.formId = formId;
-                    clickgo.form.setTopMost(top, opt);
-                },
-                flash: function(fid?: number): void {
-                    clickgo.form.flash(fid ?? formId, taskId);
-                },
-                show: function(fid?: number): void {
-                    clickgo.form.show(fid ?? formId, taskId);
-                },
-                hide: function(fid?: number): void {
-                    clickgo.form.hide(fid ?? formId, taskId);
-                },
-                showLauncher: function(): void {
-                    clickgo.form.showLauncher();
-                },
-                hideLauncher: function(): void {
-                    clickgo.form.hideLauncher();
-                }
-            },
-            'fs': {
-                getContent: function(
-                    path: string,
-                    options: any = {}
-                ): Promise<Blob | string | null> {
-                    if (!options.files) {
-                        options.files = t.files;
-                    }
-                    if (!options.current) {
-                        options.current = t.path;
-                    }
-                    return clickgo.fs.getContent(path, options);
-                },
-                putContent: function(path: string, data: string | Buffer, options: any = {}) {
-                    if (!options.current) {
-                        options.current = t.path;
-                    }
-                    return clickgo.fs.putContent(path, data, options);
-                },
-                readLink: function(path: string, options: any = {}): Promise<string | null> {
-                    if (!options.current) {
-                        options.current = t.path;
-                    }
-                    return clickgo.fs.readLink(path, options);
-                },
-                symlink: function(fPath: string, linkPath: string, options: any = {}): Promise<boolean> {
-                    if (!options.current) {
-                        options.current = t.path;
-                    }
-                    return clickgo.fs.symlink(fPath, linkPath, options);
-                },
-                unlink: function(path: string, options: any = {}): Promise<boolean> {
-                    if (!options.current) {
-                        options.current = t.path;
-                    }
-                    return clickgo.fs.unlink(path, options);
-                },
-                stats: function(path: string, options: any = {}): Promise<types.IStats | null> {
-                    if (!options.files) {
-                        options.files = t.files;
-                    }
-                    if (!options.current) {
-                        options.current = t.path;
-                    }
-                    return clickgo.fs.stats(path, options);
-                },
-                isDir: function(path: string, options: any = {}): Promise<types.IStats | false> {
-                    if (!options.files) {
-                        options.files = t.files;
-                    }
-                    if (!options.current) {
-                        options.current = t.path;
-                    }
-                    return clickgo.fs.isDir(path, options);
-                },
-                isFile: function(path: string, options: any = {}): Promise<types.IStats | false> {
-                    if (!options.files) {
-                        options.files = t.files;
-                    }
-                    if (!options.current) {
-                        options.current = t.path;
-                    }
-                    return clickgo.fs.isFile(path, options);
-                },
-                mkdir: function(path: string, mode?: number, options: any = {}): Promise<boolean> {
-                    if (!options.current) {
-                        options.current = t.path;
-                    }
-                    return clickgo.fs.mkdir(path, mode, options);
-                },
-                rmdir: function(path: string, options: any = {}): Promise<boolean> {
-                    if (!options.current) {
-                        options.current = t.path;
-                    }
-                    return clickgo.fs.rmdir(path, options);
-                },
-                rmdirDeep: function(path: string, options: any = {}): Promise<boolean> {
-                    if (!options.current) {
-                        options.current = t.path;
-                    }
-                    return clickgo.fs.rmdirDeep(path, options);
-                },
-                chmod: function(path: string, mod: string | number, options: any = {}): Promise<boolean> {
-                    if (!options.current) {
-                        options.current = t.path;
-                    }
-                    return clickgo.fs.chmod(path, mod, options);
-                },
-                rename(oldPath: string, newPath: string, options: any = {}): Promise<boolean> {
-                    if (!options.current) {
-                        options.current = t.path;
-                    }
-                    return clickgo.fs.rename(oldPath, newPath, options);
-                },
-                readDir(path: string, options: any = {}): Promise<types.IDirent[]> {
-                    if (!options.files) {
-                        options.files = t.files;
-                    }
-                    if (!options.current) {
-                        options.current = t.path;
-                    }
-                    return clickgo.fs.readDir(path, options);
-                },
-                copyFolder(from: string, to: string, options: any = {}): Promise<number> {
-                    if (!options.current) {
-                        options.current = t.path;
-                    }
-                    return clickgo.fs.copyFolder(from, to, options);
-                },
-                copyFile(src: string, dest: string, options: any = {}): Promise<boolean> {
-                    if (!options.current) {
-                        options.current = t.path;
-                    }
-                    return clickgo.fs.copyFile(src, dest, options);
-                }
-            },
-            'native': {
-                invoke: function(name: string, ...param: any[]): any {
-                    return clickgo.native.invoke(name, ...param);
-                },
-                max: function(): void {
-                    clickgo.native.max();
-                },
-                min: function(): void {
-                    clickgo.native.min();
-                },
-                restore: function(): void {
-                    clickgo.native.restore();
-                },
-                size: function(width: number, height: number): void {
-                    clickgo.native.size(width, height);
-                }
-            },
-            'task': {
-                onFrame: function(fun: () => void | Promise<void>, opt: {
-                    'scope'?: 'form' | 'task';
-                    'count'?: number;
-                    'taskId'?: number;
-                    'formId'?: number;
-                } = {}): number {
-                    opt.taskId = taskId;
-                    opt.formId = formId;
-                    return clickgo.task.onFrame(fun, opt);
-                },
-                offFrame: function(ft: number, opt: {
-                    'taskId'?: number;
-                } = {}): void {
-                    opt.taskId = taskId;
-                    clickgo.task.offFrame(ft, opt);
-                },
-                get: function(tid: number): types.ITaskInfo | null {
-                    return clickgo.task.get(tid);
-                },
-                getList: function(): Record<string, types.ITaskInfo> {
-                    return clickgo.task.getList();
-                },
-                run: function(url: string, opt: types.ITaskRunOptions = {}): Promise<number> {
-                    opt.taskId = taskId;
-                    opt.main = false;
-                    return clickgo.task.run(url, opt);
-                },
-                end: function(tid: number): boolean {
-                    return clickgo.task.end(tid ?? taskId);
-                },
-                loadLocaleData: function(lang: string, data: Record<string, any>, pre: string = ''): void {
-                    clickgo.task.loadLocaleData(lang, data, pre, taskId);
-                },
-                loadLocale: function(lang: string, path: string): Promise<boolean> {
-                    return clickgo.task.loadLocale(lang, path, taskId, formId);
-                },
-                clearLocale: function(): void {
-                    clickgo.task.clearLocale(taskId);
-                },
-                setLocale: function(lang: string, path: string): Promise<boolean> {
-                    return clickgo.task.setLocale(lang, path, taskId, formId);
-                },
-                setLocaleLang: function(lang: string): void {
-                    clickgo.task.setLocaleLang(lang, taskId);
-                },
-                clearLocaleLang: function(): void {
-                    clickgo.task.clearLocaleLang(taskId);
-                },
-                createTimer: function(
-                    fun: () => void | Promise<void>,
-                    delay: number,
-                    opt: types.ICreateTimerOptions = {}
-                ): number {
-                    opt.taskId = taskId;
-                    if (!opt.formId) {
-                        opt.formId = formId;
-                    }
-                    return clickgo.task.createTimer(fun, delay, opt);
-                },
-                removeTimer: function(timer: number): void {
-                    clickgo.task.removeTimer(timer, taskId);
-                },
-                sleep: function(fun: () => void | Promise<void>, delay: number): number {
-                    return clickgo.task.sleep(fun, delay, taskId, formId);
-                },
-                systemTaskInfo: clickgo.task.systemTaskInfo,
-                setSystem: function(fid?: number): boolean {
-                    return clickgo.task.setSystem(fid ?? formId, taskId);
-                },
-                clearSystem: function(): boolean {
-                    return clickgo.task.clearSystem(taskId);
-                }
-            },
-            'theme': {
-                read: function(blob: Blob): Promise<types.ITheme | false> {
-                    return clickgo.theme.read(blob);
-                },
-                load: async function(theme?: types.ITheme): Promise<boolean> {
-                    if (!theme) {
-                        return false;
-                    }
-                    return clickgo.theme.load(theme, taskId);
-                },
-                remove: function(name: string): Promise<void> {
-                    return clickgo.theme.remove(name, taskId);
-                },
-                clear: function(): Promise<void> {
-                    return clickgo.theme.clear(taskId);
-                },
-                setGlobal: function(theme: types.ITheme): Promise<void> {
-                    return clickgo.theme.setGlobal(theme);
-                },
-                clearGlobal: function(): void {
-                    clickgo.theme.clearGlobal();
-                }
-            },
-            'tool': {
-                blob2ArrayBuffer: function(blob: Blob): Promise<ArrayBuffer> {
-                    return clickgo.tool.blob2ArrayBuffer(blob);
-                },
-                clone: function(obj: Record<string, any> | any[]): any[] | any {
-                    return clickgo.tool.clone(obj);
-                },
-                sleep: function(ms: number = 0): Promise<boolean> {
-                    return clickgo.tool.sleep(ms);
-                },
-                purify: function(text: string): string {
-                    return clickgo.tool.purify(text);
-                },
-                createObjectURL: function(object: Blob): string {
-                    return clickgo.tool.createObjectURL(object, taskId);
-                },
-                revokeObjectURL: function(url: string): void {
-                    clickgo.tool.revokeObjectURL(url, taskId);
-                },
-                rand: function(min: number, max: number): number {
-                    return clickgo.tool.rand(min, max);
-                },
-                'RANDOM_N': clickgo.tool.RANDOM_N,
-                'RANDOM_U': clickgo.tool.RANDOM_U,
-                'RANDOM_L': clickgo.tool.RANDOM_L,
-                'RANDOM_UN': clickgo.tool.RANDOM_UN,
-                'RANDOM_LN': clickgo.tool.RANDOM_LN,
-                'RANDOM_LU': clickgo.tool.RANDOM_LU,
-                'RANDOM_LUN': clickgo.tool.RANDOM_LUN,
-                'RANDOM_V': clickgo.tool.RANDOM_V,
-                'RANDOM_LUNS': clickgo.tool.RANDOM_LUNS,
-                random: function(length: number = 8, source: string = clickgo.tool.RANDOM_LN, block: string = ''): string {
-                    return clickgo.tool.random(length, source, block);
-                },
-                getBoolean: function(param: boolean | string | number): boolean {
-                    return clickgo.tool.getBoolean(param);
-                },
-                escapeHTML: function(html: string): string {
-                    return clickgo.tool.escapeHTML(html);
-                },
-                request: function(url: string, opt: types.IRequestOptions): Promise<null | any> {
-                    return clickgo.tool.request(url, opt);
-                },
-                parseUrl: function(url: string): ILoaderUrl {
-                    return clickgo.tool.parseUrl(url);
-                },
-                urlResolve: function(from: string, to: string): string {
-                    return clickgo.tool.urlResolve(from, to);
-                },
-                blob2Text: function(blob: Blob): Promise<string> {
-                    return clickgo.tool.blob2Text(blob);
-                },
-                blob2DataUrl: function(blob: Blob): Promise<string> {
-                    return clickgo.tool.blob2DataUrl(blob);
-                },
-                execCommand: function(ac: string): void {
-                    clickgo.tool.execCommand(ac);
-                }
-            },
-            'zip': {
-                get: function(data?: types.TZipInputFileFormat) {
-                    return clickgo.zip.get(data);
-                }
-            }
-        };
-    }
-    else {
-        invoke.invokeClickgo = clickgo;
-    }
-    // --- 代码预处理 ---
-    const preprocess = clickgo.getSafe() ? function(code: string, path: string): string {
-        const exec = /eval\W/.exec(code);
-        if (exec) {
-            notify({
-                'title': 'Error',
-                'content': `The "eval" is prohibited.\nFile: "${path}".`,
-                'type': 'danger'
-            });
-            return '';
-        }
-        return code;
-    } : undefined;
     // --- 获取要定义的控件列表 ---
-    const components = await control.init(t.id, formId, newBase, preprocess, invoke);
+    const components = control.buildComponents(t.id, formId, opt.path ?? '');
     if (!components) {
-        if (form?.vroot.$refs.form.maskFor !== undefined) {
-            form.vroot.$refs.form.maskFor = undefined;
-        }
-        return -5;
-    }
-    // --- 获取 style、layout ---
-    let style = opt.style;
-    let layout: string | undefined = opt.layout;
-    if (filePath) {
-        if (!filePath.startsWith('/package/')) {
-            return -6;
-        }
-        const file = filePath.slice(8);
-        const layoutFile = app.files[file + '.xml'] as string;
-        if (layoutFile) {
-            layout = layoutFile.replace(/^\ufeff/, '');
-        }
-        const styleFile = app.files[file + '.css'] as string;
-        if (styleFile) {
-            style = styleFile.replace(/^\ufeff/, '');
-        }
-    }
-    if (layout === undefined) {
-        if (form?.vroot.$refs.form.maskFor !== undefined) {
-            form.vroot.$refs.form.maskFor = undefined;
-        }
-        return -7;
+        return -3;
     }
     // --- 准备相关变量 ---
     let data: Record<string, any> = {};
-    let methods: any = {};
-    let computed: any = {};
-    let watch = {};
+    let methods: Record<string, any> | undefined = undefined;
+    let computed: Record<string, any> = {};
     let beforeCreate: (() => void) | undefined = undefined;
     let created: (() => void) | undefined = undefined;
     let beforeMount: (() => void) | undefined = undefined;
@@ -2172,52 +1893,34 @@ export async function create(opt: string | types.IFormCreateOptions): Promise<nu
     let updated: (() => void) | undefined = undefined;
     let beforeUnmount: (() => void) | undefined = undefined;
     let unmounted: (() => void) | undefined = undefined;
-    let receive: ((obj: Record<string, any>) => void) | undefined = undefined;
-    // --- 检测是否有 js ---
-    let expo = opt.code;
-    if (filePath?.startsWith('/package/') && app.files[filePath.slice(8) + '.js']) {
-        const file = filePath.slice(8);
-        if (app.files[file + '.js']) {
-            app.files['/invoke/clickgo.js'] = `module.exports = invokeClickgo;`;
-            expo = loader.require(file, app.files, {
-                'dir': '/',
-                'invoke': invoke,
-                'preprocess': preprocess,
-                'map': {
-                    'clickgo': '/invoke/clickgo'
-                }
-            })[0];
-        }
-    }
-    if (expo) {
-        data = expo.data ?? {};
-        methods = expo.methods || {};
-        computed = expo.computed || {};
-        watch = expo.watch || {};
-        beforeCreate = expo.beforeCreate;
-        created = expo.created;
-        beforeMount = expo.beforeMount;
-        mounted = expo.mounted;
-        beforeUpdate = expo.beforeUpdate;
-        updated = expo.updated;
-        beforeUnmount = expo.beforeUnmount;
-        unmounted = expo.unmounted;
-        receive = expo.receive;
+    if (opt.code) {
+        data = opt.code.data ?? {};
+        methods = opt.code.methods;
+        computed = opt.code.computed ?? {};
+        beforeCreate = opt.code.beforeCreate;
+        created = opt.code.created;
+        beforeMount = opt.code.beforeMount;
+        mounted = opt.code.mounted;
+        beforeUpdate = opt.code.beforeUpdate;
+        updated = opt.code.updated;
+        beforeUnmount = opt.code.beforeUnmount;
+        unmounted = opt.code.unmounted;
     }
     // --- 应用样式表 ---
+    let style = '';
     let prep = '';
-    if (style) {
+    if (opt.style) {
         // --- 将 style 中的 tag 标签转换为 class，如 button 变为 .tag-button，然后将 class 进行标准程序，添加 prep 进行区分隔离 ---
-        const r = tool.stylePrepend(style);
+        const r = tool.stylePrepend(opt.style);
         prep = r.prep;
-        style = await tool.styleUrl2DataUrl(newBase, r.style, app.files);
+        style = await tool.styleUrl2DataUrl(opt.path ?? '/', r.style, t.app.files);
     }
     // --- 要创建的 form 的 layout 所有标签增加 cg 前缀，并增加新的 class 为 tag-xxx ---
-    layout = tool.purify(layout);
+    let layout = tool.purify(opt.layout);
     // --- 标签增加 cg- 前缀，增加 class 为 tag-xxx ---
     layout = tool.layoutAddTagClassAndReTagName(layout, true);
     // --- 给所有控件传递窗体的 focus 信息 ---
-    layout = tool.layoutInsertAttr(layout, ':cg-focus=\'cgFocus\'', {
+    layout = tool.layoutInsertAttr(layout, ':form-focus=\'formFocus\'', {
         'include': [/^cg-.+/]
     });
     // --- 给 layout 的 class 增加前置 ---
@@ -2238,20 +1941,6 @@ export async function create(opt: string | types.IFormCreateOptions): Promise<nu
     // --- 获取刚才的 form wrap element 对象 ---
     const el: HTMLElement = elements.list.children.item(elements.list.children.length - 1) as HTMLElement;
     // --- 创建窗体对象 ---
-    // --- 初始化系统初始 data ---
-    computed.taskId = {
-        get: function(): number {
-            return taskId;
-        },
-        set: function(): void {
-            notify({
-                'title': 'Error',
-                'content': `The software tries to modify the system variable "taskId".\nPath: ${this.cgPath}`,
-                'type': 'danger'
-            });
-            return;
-        }
-    };
     computed.formId = {
         get: function(): number {
             return formId;
@@ -2259,161 +1948,100 @@ export async function create(opt: string | types.IFormCreateOptions): Promise<nu
         set: function(): void {
             notify({
                 'title': 'Error',
-                'content': `The software tries to modify the system variable "formId".\nPath: ${this.cgPath}`,
+                'content': `The software tries to modify the system variable "formId".\nPath: ${this.filename}`,
                 'type': 'danger'
             });
             return;
         }
     };
-    computed.controlName = {
+    data._formFocus = false;
+    computed.path = {
         get: function(): string {
-            return 'root';
+            return opt.path ?? '';
         },
         set: function(): void {
             notify({
                 'title': 'Error',
-                'content': `The software tries to modify the system variable "controlName".\nPath: ${this.cgPath}`,
+                'content': `The software tries to modify the system variable "path".\nPath: ${this.filename}`,
                 'type': 'danger'
             });
             return;
         }
     };
-    data._cgFocus = false;
-    computed.cgFocus = {
-        get: function(): number {
-            return this._cgFocus;
-        },
-        set: function(): void {
-            notify({
-                'title': 'Error',
-                'content': `The software tries to modify the system variable "cgFocus".\nPath: ${this.cgPath}`,
-                'type': 'danger'
-            });
-            return;
-        }
-    };
-    computed.cgPath = {
-        get: function(): string {
-            return newBase;
-        },
-        set: function(): void {
-            notify({
-                'title': 'Error',
-                'content': `The software tries to modify the system variable "cgPath".\nPath: ${this.cgPath}`,
-                'type': 'danger'
-            });
-            return;
-        }
-    };
-    computed.cgPrep = {
+    computed.prep = {
         get: function(): string {
             return prep;
         },
         set: function(): void {
             notify({
                 'title': 'Error',
-                'content': `The software tries to modify the system variable "cgPrep".\nPath: ${this._cgPath}`,
+                'content': `The software tries to modify the system variable "cgPrep".\nPath: ${this.filename}`,
                 'type': 'danger'
             });
             return;
         }
     };
-    data._cgCustomZIndex = false;
-    computed.cgCustomZIndex = {
+    // --- 是否在顶层的窗体 ---
+    data._topMost = false;
+    computed.topMost = {
         get: function(): number {
-            return this._cgCustomZIndex;
+            return this._topMost;
         },
-        set: function(): void {
-            notify({
-                'title': 'Error',
-                'content': `The software tries to modify the system variable "cgCustomZIndex".\nPath: ${this.cgPath}`,
-                'type': 'danger'
-            });
+        set: function(v: boolean): void {
+            const form = t.forms[formId];
+            if (!form) {
+                return;
+            }
+            if (v) {
+                // --- 置顶 ---
+                form.vroot.$data._topMost = true;
+                if (!form.vroot._formFocus) {
+                    changeFocus(form.id);
+                }
+                else {
+                    form.vroot.$refs.form.$data.zIndexData = ++info.topLastZIndex;
+                }
+            }
+            else {
+                // --- 取消置顶 ---
+                form.vroot.$data._topMost = false;
+                form.vroot.$refs.form.$data.zIndexData = ++info.lastZIndex;
+            }
             return;
         }
-    };
-    if (topMost) {
-        data._cgTopMost = true;
-    }
-    else {
-        data._cgTopMost = false;
-    }
-    computed.cgTopMost = {
-        get: function(): number {
-            return this._cgTopMost;
-        },
-        set: function(): void {
-            notify({
-                'title': 'Error',
-                'content': `The software tries to modify the system variable "cgTopMost".\nPath: ${this.cgPath}`,
-                'type': 'danger'
-            });
-            return;
-        }
-    };
-    // --- 预设 computed ---
-    computed.cgLocale = function(this: types.IVForm): string {
-        if (task.list[this.taskId].locale.lang === '') {
-            return core.config.locale;
-        }
-        return task.list[this.taskId].locale.lang;
-    };
-    // --- 获取语言 ---
-    computed.l = function(this: types.IVForm): (key: string) => string {
-        return (key: string): string => {
-            return task.list[this.taskId].locale.data[this.cgLocale]?.[key] ?? task.list[this.taskId].locale.data['en']?.[key] ?? 'LocaleError';
-        };
-    };
-    // --- layout 中 :class 的转义 ---
-    methods.cgClassPrepend = function(this: types.IVForm, cla: any): string {
-        if (typeof cla !== 'string') {
-            return cla;
-        }
-        /*
-        if (cla.startsWith('cg-')) {
-            return cla;
-        }
-        */
-        return `cg-task${this.taskId}_${cla} ${this.cgPrep}${cla}`;
-    };
-    // --- 判断当前事件可否执行 ---
-    methods.cgAllowEvent = function(this: types.IVForm, e: MouseEvent | TouchEvent | KeyboardEvent): boolean {
-        return dom.allowEvent(e);
-    };
-    // --- 窗体接收 send 事件 ---
-    methods.cgReceive = function(obj: Record<string, any>) {
-        receive?.call(this, obj);
     };
     // --- 挂载 style ---
     if (style) {
         // --- 窗体的 style ---
-        dom.pushStyle(taskId, style, 'form', formId);
+        dom.pushStyle(opt.taskId, style, 'form', formId);
     }
     // --- 创建 app 对象 ---
     const rtn: {
-        'vapp': types.IVueApp;
-        'vroot': types.IVForm;
+        'vapp': types.IVApp;
+        'vroot': types.IVue;
     } = await new Promise(function(resolve) {
         const vapp = clickgo.vue.createApp({
-            'template': layout!.replace(/^<cg-form/, '<cg-form ref="form"'),
+            'template': layout.replace(/^<cg-form/, '<cg-form ref="form"'),
             'data': function() {
                 return tool.clone(data);
             },
             'methods': methods,
             'computed': computed,
-            'watch': watch,
 
             'beforeCreate': beforeCreate,
             'created': created,
             'beforeMount': beforeMount,
-            'mounted': async function(this: types.IVForm) {
+            'mounted': async function(this: types.IVue) {
                 await this.$nextTick();
                 // --- 判断是否有 icon，对 icon 进行第一次读取 ---
                 // --- 为啥要在这搞，因为 form 控件中读取，将可能导致下方的 formCreate 事件获取不到 icon 图标 ---
                 // --- 而如果用延迟的方式获取，将可能导致 changeFocus 的窗体焦点事件先于 formCreate 触发 ---
-                if (this.$refs.form.icon !== '') {
-                    const icon = await clickgo.fs.getContent(this.$refs.form.icon);
-                    this.$refs.form.iconData = (icon instanceof Blob) ? await clickgo.tool.blob2DataUrl(icon) : '';
+                if (this.$refs.form.icon) {
+                    const icon = await fs.getContent(this.$refs.form.icon, {
+                        'current': t.current,
+                        'files': t.app.files
+                    });
+                    this.$refs.form.iconData = (icon instanceof Blob) ? await tool.blob2DataUrl(icon) : '';
                 }
                 // --- 完成 ---
                 resolve({
@@ -2422,41 +2050,42 @@ export async function create(opt: string | types.IFormCreateOptions): Promise<nu
                 });
             },
             'beforeUpdate': beforeUpdate,
-            'updated': async function(this: types.IVue) {
-                await this.$nextTick();
-                updated?.call(this);
-            },
+            'updated': updated,
             'beforeUnmount': beforeUnmount,
-            'unmounted': unmounted,
+            'unmounted': unmounted
         });
-        vapp.config.errorHandler = function(err: Error, vm: types.IVForm, info: string): void {
+        vapp.config.errorHandler = function(err: Error, vm: types.IVue, info: string): void {
             notify({
                 'title': 'Runtime Error',
-                'content': `Message: ${err.message}\ntask id: ${vm.taskId}\nForm id: ${vm.formId}`,
+                'content': `Message: ${err.message}\nTask id: ${vm.taskId}\nForm id: ${vm.formId}`,
                 'type': 'danger'
             });
-            core.trigger('error', vm.taskId, vm.formId, err, info);
+            core.trigger('error', vm.taskId, vm.formId, err, info + '(-3,' + vm.taskId + ',' + vm.formId + ')');
         };
         // --- 挂载控件对象到 vapp ---
         for (const key in components) {
             vapp.component(key, components[key]);
         }
-        vapp.mount(el);
+        try {
+            vapp.mount(el);
+        }
+        catch (err: any) {
+            notify({
+                'title': 'Runtime Error',
+                'content': `Message: ${err.message}\nTask id: ${opt.taskId}\nForm id: ${formId}`,
+                'type': 'danger'
+            });
+            core.trigger('error', opt.taskId, formId, err, err.message + '(-2)');
+        }
     });
     // --- 创建 form 信息对象 ---
     const nform: types.IForm = {
         'id': formId,
         'vapp': rtn.vapp,
-        'vroot': rtn.vroot,
-        'events': {}
+        'vroot': rtn.vroot
     };
     // --- 挂载 form ---
     t.forms[formId] = nform;
-    // --- 检测 mask ---
-    if (opt.mask && form) {
-        form.vroot.$refs.form.maskFor = formId;
-        nform.vroot.$refs.form.maskFrom = form.id;
-    }
     // --- 执行 mounted ---
     await tool.sleep(34);
     if (mounted) {
@@ -2464,9 +2093,6 @@ export async function create(opt: string | types.IFormCreateOptions): Promise<nu
             await mounted.call(rtn.vroot, opt.data);
         }
         catch (err: any) {
-            if (nform?.vroot.$refs.form.maskFor !== undefined) {
-                nform.vroot.$refs.form.maskFor = undefined;
-            }
             core.trigger('error', rtn.vroot.taskId, rtn.vroot.formId, err, 'Create form mounted error.');
             t.forms[formId] = undefined as any;
             delete t.forms[formId];
@@ -2476,27 +2102,9 @@ export async function create(opt: string | types.IFormCreateOptions): Promise<nu
             return -8;
         }
     }
-    // --- 将窗体居中 ---
-    const area = core.getAvailArea();
-    if (!rtn.vroot.$refs.form.stateMaxData) {
-        if (rtn.vroot.$refs.form.left === -1) {
-            rtn.vroot.$refs.form.setPropData('left', (area.width - rtn.vroot.$el.offsetWidth) / 2);
-        }
-        if (rtn.vroot.$refs.form.top === -1) {
-            rtn.vroot.$refs.form.setPropData('top', (area.height - rtn.vroot.$el.offsetHeight) / 2);
-        }
-    }
-    if (rtn.vroot.$refs.form.zIndex !== -1) {
-        rtn.vroot._cgCustomZIndex = true;
-    }
-    if (rtn.vroot.$refs.form.$data.show !== false) {
-        rtn.vroot.$refs.form.$data.showData = true;
-    }
     // --- 触发 formCreated 事件 ---
-    core.trigger('formCreated', taskId, formId, rtn.vroot.$refs.form.title, rtn.vroot.$refs.form.iconData);
-    // --- 绑定获取焦点事件 ---
-    changeFocus(formId);
-    return nform;
+    core.trigger('formCreated', opt.taskId, formId, rtn.vroot.$refs.form.title, rtn.vroot.$refs.form.iconData);
+    return formId;
 }
 
 /**
@@ -2510,31 +2118,27 @@ export function dialog(opt: string | types.IFormDialogOptions): Promise<string> 
                 'content': opt
             };
         }
-        const formId = opt.formId;
-        if (!formId) {
+        const taskId = opt.taskId;
+        if (!taskId) {
             resolve('');
             return;
         }
-        const taskId = getTaskId(formId);
         const t = task.list[taskId];
         if (!t) {
             resolve('');
             return;
         }
-        const locale = t.forms[formId].vroot.cgLocale;
+        const locale = t.locale.lang || core.config.locale;
         if (opt.buttons === undefined) {
             opt.buttons = [info.locale[locale]?.ok ?? info.locale['en'].ok];
         }
         create({
-            'taskId': taskId,
-            'formId': formId,
-            'layout': `<form title="${opt.title ?? 'dialog'}" width="auto" height="auto" :min="false" :max="false" :resize="false" border="${opt.title ? 'normal' : 'plain'}" direction="v"><dialog :buttons="buttons" @select="select"${opt.direction ? ` direction="${opt.direction}"` : ''}>${opt.content}</dialog></form>`,
             'code': {
                 data: {
                     'buttons': opt.buttons
                 },
                 methods: {
-                    select: function(this: types.IVForm, button: string) {
+                    select: function(this: types.IVue, button: string) {
                         const event = {
                             'go': true,
                             preventDefault: function() {
@@ -2543,13 +2147,16 @@ export function dialog(opt: string | types.IFormDialogOptions): Promise<string> 
                         };
                         (opt as types.IFormDialogOptions).select?.(event as unknown as Event, button);
                         if (event.go) {
+                            this.dialogResult = button;
                             close(this.formId);
-                            resolve(button);
                         }
                     }
                 }
             },
-            'mask': true
+            'layout': `<form title="${opt.title ?? 'dialog'}" :min="false" :max="false" :resize="false" border="${opt.title ? 'normal' : 'plain'}" direction="v"><dialog :buttons="buttons" @select="select"${opt.direction ? ` direction="${opt.direction}"` : ''}>${opt.content}</dialog></form>`,
+            'taskId': taskId
+        }).then(async (fid: number) => {
+            resolve(await t.forms[fid].vroot.showDialog());
         }).catch((e) => {
             throw e;
         });
@@ -2566,22 +2173,21 @@ export async function confirm(opt: string | types.IFormConfirmOptions): Promise<
             'content': opt
         };
     }
-    const formId = opt.formId;
-    if (!formId) {
+    const taskId = opt.taskId;
+    if (!taskId) {
         return false;
     }
-    const taskId = getTaskId(formId);
     const t = task.list[taskId];
     if (!t) {
         return false;
     }
-    const locale = t.forms[formId].vroot.cgLocale;
+    const locale = t.locale.lang || core.config.locale;
     const buttons = [info.locale[locale]?.yes ?? info.locale['en'].yes, info.locale[locale]?.no ?? info.locale['en'].no];
     if (opt.cancel) {
         buttons.push(info.locale[locale]?.cancel ?? info.locale['en'].cancel);
     }
     const res = await dialog({
-        'formId': formId,
+        'taskId': taskId,
 
         'content': opt.content,
         'buttons': buttons
@@ -2596,47 +2202,22 @@ export async function confirm(opt: string | types.IFormConfirmOptions): Promise<
 }
 
 /**
- * --- 设置窗体置顶和取消置顶 ---
- * @param top true: 置顶, false: 不置顶
- * @param opt 选项
+ * --- 让窗体闪烁 ---
+ * @param formId 要闪烁的窗体 id，必填
+ * @param taskId 所属的 taskId，必填，App 模式下仅能闪烁本任务的窗体
  */
-export function setTopMost(top: boolean, opt: types.IFormSetTopMostOptions = {}): void {
-    const form = getForm(opt.taskId, opt.formId);
-    if (!form) {
+export function flash(formId: number, taskId?: number): void {
+    if (!taskId) {
         return;
     }
-    form.vroot.$data._cgCustomZIndex = false;
-    if (top) {
-        // --- 置顶 ---
-        form.vroot.$data._cgTopMost = true;
-        if (!form.vroot.cgFocus) {
-            changeFocus(form.id);
-        }
-        else {
-            form.vroot.$refs.form.setPropData('zIndex', ++info.topLastZIndex);
-        }
-    }
-    else {
-        // --- 取消置顶 ---
-        form.vroot.$data._cgTopMost = false;
-        form.vroot.$refs.form.setPropData('zIndex', ++info.lastZIndex);
-    }
-}
-
-/**
- * --- 让窗体闪烁 ---
- * @param formId 要闪烁的窗体 id，必填，但 App 模式下留空为当前窗体
- * @param taskId 所属的 taskId，必填，但 App 模式下无效
- */
-export function flash(formId?: number, taskId?: number): void {
     const form = getForm(taskId, formId);
     if (!form) {
         return;
     }
-    if (!form.vroot.cgFocus) {
+    if (!form.vroot._formFocus) {
         changeFocus(form.id);
     }
-    if (form.vroot.$refs.form?.flashTimer) {
+    if (form.vroot.$refs.form.flashTimer) {
         clearTimeout(form.vroot.$refs.form.flashTimer);
         form.vroot.$refs.form.flashTimer = undefined;
     }
@@ -2647,32 +2228,6 @@ export function flash(formId?: number, taskId?: number): void {
     }, 1000);
     // --- 触发 formFlash 事件 ---
     core.trigger('formFlash', taskId, formId);
-}
-
-/**
- * --- 让窗体显示 ---
- * @param formId 要显示的窗体 id，App 模式下留空为当前窗体
- * @param taskId 所属的 taskId，App 模式下无效
- */
-export function show(formId?: number, taskId?: number): void {
-    const form = getForm(taskId, formId);
-    if (!form) {
-        return;
-    }
-    form.vroot.$refs.form.$data.showData = true;
-}
-
-/**
- * --- 让窗体隐藏 ---
- * @param formId 要隐藏的窗体 id，App 模式下留空为当前窗体
- * @param taskId 所属的 taskId，App 模式下无效
- */
-export function hide(formId?: number, taskId?: number): void {
-    const form = getForm(taskId, formId);
-    if (!form) {
-        return;
-    }
-    form.vroot.$refs.form.$data.showData = false;
 }
 
 /**

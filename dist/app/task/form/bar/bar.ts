@@ -1,26 +1,19 @@
 import * as clickgo from 'clickgo';
 import * as types from '~/types/index';
 
-export const data = {
-    'left': 0,
-    'top': 0,
-    'width': undefined,
-    'height': undefined,
+export default class extends clickgo.form.AbstractForm {
 
-    'apps': []
-};
+    public apps: any[] = [];
 
-export const computed = {
-    'position': function(this: types.IVForm): string {
+    public get position(): string {
         return clickgo.core.config['task.position'];
     }
-};
 
-export const methods = {
-    showLauncher: function(): void {
+    public showLauncher(): void {
         clickgo.form.showLauncher();
-    },
-    itemClick: async function(this: types.IVForm, appIndex: number): Promise<void> {
+    }
+
+    public async itemClick(appIndex: number): Promise<void> {
         if (this.apps[appIndex].formCount === 0) {
             // --- 启动 ---
             try {
@@ -50,16 +43,18 @@ export const methods = {
         else {
             // --- 多个窗体，则让用户选择显示哪个 ---
         }
-    },
-    run: async function(this: types.IVForm, path: string): Promise<void> {
+    }
+
+    public async run(path: string): Promise<void> {
         try {
             await clickgo.task.run(path);
         }
         catch {
             return;
         }
-    },
-    pin: function(this: types.IVForm, index: number): void {
+    }
+
+    public pin(index: number): void {
         const app = this.apps[index];
         if (!app) {
             return;
@@ -76,8 +71,9 @@ export const methods = {
                 'icon': app.icon
             };
         }
-    },
-    close: function(this: types.IVForm, index: number): void {
+    }
+
+    public close(index: number): void {
         const app = this.apps[index];
         if (!app) {
             return;
@@ -85,14 +81,17 @@ export const methods = {
         for (const formId in app.forms) {
             clickgo.form.remove(parseInt(formId));
         }
-    },
-    changeFocus: function(this: types.IVForm, formId: string): void {
+    }
+
+    public changeFocus(formId: string): void {
         clickgo.form.changeFocus(parseInt(formId));
-    },
-    updatePosition: function(position: 'left' | 'right' | 'top' | 'bottom'): void {
+    }
+
+    public updatePosition(position: 'left' | 'right' | 'top' | 'bottom'): void {
         clickgo.core.config['task.position'] = position;
-    },
-    getAppIndexByPath: function(this: types.IVForm, path: string): number {
+    }
+
+    public getAppIndexByPath(path: string): number {
         for (let i = 0; i < this.apps.length; ++i) {
             const app = this.apps[i];
             if (app.path !== path) {
@@ -103,62 +102,65 @@ export const methods = {
         }
         return -1;
     }
-};
 
-export const mounted = function(this: types.IVForm): void {
-    clickgo.form.setTopMost(true);
-    clickgo.task.setSystem();
-    // --- 先读取 pin 列表 ---
-    for (const path in clickgo.core.config['task.pin']) {
-        this.apps.push({
-            'name': clickgo.core.config['task.pin'][path].name,
-            'path': path,
-            'icon': clickgo.core.config['task.pin'][path].icon,
-            'selected': false,
-            'opened': false,
-            'forms': {},
-            'formCount': 0,
-            'pin': true
-        });
-    }
-    // --- 先读取正在运行的 task 列表，并填充 forms 列表 ---
-    const tasks = clickgo.task.getList();
-    for (const taskId in tasks) {
-        if (parseInt(taskId) === this.taskId) {
-            // --- 如果获取的 task 是本 task 则跳过 ---
-            continue;
-        }
-        const task = tasks[taskId];
-        // --- 看看能不能找到 task ---
-        let appIndex = this.getAppIndexByPath(task.path);
-        if (appIndex >= 0) {
-            this.apps[appIndex].opened = true;
-        }
-        else {
+    // --- 系统事件 ---
+
+    public onMounted(): void {
+        this.topMost = true;
+        clickgo.task.setSystem(this.formId);
+        // --- 先读取 pin 列表 ---
+        for (const path in clickgo.core.config['task.pin']) {
             this.apps.push({
-                'name': task.name,
-                'path': task.path,
-                'icon': task.icon,
+                'name': clickgo.core.config['task.pin'][path].name,
+                'path': path,
+                'icon': clickgo.core.config['task.pin'][path].icon,
                 'selected': false,
-                'opened': true,
+                'opened': false,
                 'forms': {},
                 'formCount': 0,
-                'pin': false
+                'pin': true
             });
-            appIndex = this.apps.length - 1;
         }
-        // --- 获取窗体 ---
-        const forms = clickgo.form.getList(parseInt(taskId));
-        for (const formId in forms) {
-            const form = forms[formId];
-            this.apps[appIndex].forms[formId] = {
-                'title': form.title,
-                'icon': form.icon || this.apps[appIndex].icon
-            };
+        // --- 先读取正在运行的 task 列表，并填充 forms 列表 ---
+        const tasks = clickgo.task.getList();
+        for (const taskId in tasks) {
+            if (parseInt(taskId) === this.taskId) {
+                // --- 如果获取的 task 是本 task 则跳过 ---
+                continue;
+            }
+            const task = tasks[taskId];
+            // --- 看看能不能找到 task ---
+            let appIndex = this.getAppIndexByPath(task.path);
+            if (appIndex >= 0) {
+                this.apps[appIndex].opened = true;
+            }
+            else {
+                this.apps.push({
+                    'name': task.name,
+                    'path': task.path,
+                    'icon': task.icon,
+                    'selected': false,
+                    'opened': true,
+                    'forms': {},
+                    'formCount': 0,
+                    'pin': false
+                });
+                appIndex = this.apps.length - 1;
+            }
+            // --- 获取窗体 ---
+            const forms = clickgo.form.getList(parseInt(taskId));
+            for (const formId in forms) {
+                const form = forms[formId];
+                this.apps[appIndex].forms[formId] = {
+                    'title': form.title,
+                    'icon': form.icon || this.apps[appIndex].icon
+                };
+            }
+            this.apps[appIndex].formCount = Object.keys(this.apps[appIndex].forms).length;
         }
-        this.apps[appIndex].formCount = Object.keys(this.apps[appIndex].forms).length;
     }
-    clickgo.core.setSystemEventListener('formCreated', (taskId: number, formId: number, title: string, icon: string): void => {
+
+    public onFormCreated(taskId: number, formId: number, title: string, icon: string): void {
         if (taskId === this.taskId) {
             return;
         }
@@ -188,8 +190,9 @@ export const mounted = function(this: types.IVForm): void {
             'icon': icon || this.apps[appIndex].icon
         };
         ++this.apps[appIndex].formCount;
-    });
-    clickgo.core.setSystemEventListener('formRemoved', (taskId: number, formId: number): void => {
+    }
+
+    public onFormRemoved(taskId: number, formId: number): void {
         const task = clickgo.task.get(taskId);
         if (!task) {
             return;
@@ -213,8 +216,9 @@ export const mounted = function(this: types.IVForm): void {
             // --- 直接移除 ---
             this.apps.splice(appIndex, 1);
         }
-    });
-    clickgo.core.setSystemEventListener('formFocused', (taskId: number): void => {
+    }
+
+    public onFormFocused(taskId: number): void {
         const task = clickgo.task.get(taskId);
         if (!task) {
             return;
@@ -224,8 +228,9 @@ export const mounted = function(this: types.IVForm): void {
             return;
         }
         this.apps[appIndex].selected = true;
-    });
-    clickgo.core.setSystemEventListener('formBlurred', (taskId: number): void => {
+    }
+
+    public onFormBlurred(taskId: number): void {
         const task = clickgo.task.get(taskId);
         if (!task) {
             return;
@@ -235,8 +240,9 @@ export const mounted = function(this: types.IVForm): void {
             return;
         }
         this.apps[appIndex].selected = false;
-    });
-    clickgo.core.setSystemEventListener('formTitleChanged', (taskId: number, formId: number, title: string): void => {
+    }
+
+    public onFormTitleChanged(taskId: number, formId: number, title: string): void | Promise<void> {
         const task = clickgo.task.get(taskId);
         if (!task) {
             return;
@@ -249,8 +255,9 @@ export const mounted = function(this: types.IVForm): void {
             return;
         }
         this.apps[appIndex].forms[formId].title = title;
-    });
-    clickgo.core.setSystemEventListener('formIconChanged', (taskId: number, formId: number, icon: string): void => {
+    }
+
+    public onFormIconChanged(taskId: number, formId: number, icon: string): void | Promise<void> {
         const task = clickgo.task.get(taskId);
         if (!task) {
             return;
@@ -263,20 +270,23 @@ export const mounted = function(this: types.IVForm): void {
             return;
         }
         this.apps[appIndex].forms[formId].icon = icon || this.apps[appIndex].icon;
-    });
-    clickgo.core.setSystemEventListener('configChanged', (n: types.TConfigName, v: any): void => {
+    }
+
+    public onConfigChanged<T extends types.IConfig, TK extends keyof T>(n: TK, v: T[TK]): void | Promise<void> {
         if (n !== 'task.pin') {
             return;
         }
         // --- 系统设置里，已经 pin 的 path 列表 ---
-        for (const path in v) {
+        const val = v as types.IConfig['task.pin'];
+        for (const path in val) {
+            const item = val[path];
             const appIndex = this.getAppIndexByPath(path) ;
             if (appIndex < 0) {
                 // --- apps 里没有，要添加进去已 pin 的 item ---
                 this.apps.unshift({
-                    'name': v[path].name,
+                    'name': item.name,
                     'path': path,
-                    'icon': v[path].icon,
+                    'icon': item.icon,
                     'selected': false,
                     'opened': false,
                     'forms': {},
@@ -297,7 +307,7 @@ export const mounted = function(this: types.IVForm): void {
             if (!app.pin) {
                 continue;
             }
-            if (v[app.path]) {
+            if (val[app.path]) {
                 continue;
             }
             if (app.formCount === 0) {
@@ -307,5 +317,6 @@ export const mounted = function(this: types.IVForm): void {
                 app.pin = false;
             }
         }
-    });
-};
+    }
+
+}

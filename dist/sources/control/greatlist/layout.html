@@ -1,4 +1,4 @@
-<div class="wrap" :data-cg-disabled="isDisabled ? '' : undefined" :tabindex="!isDisabled && cgFocus && '0'" @keydown="keydown">
+<div class="wrap" :data-cg-disabled="isDisabled ? '' : undefined" :tabindex="!isDisabled && formFocus && '0'" @keydown="keydown">
     <div class="inner" ref="inner" @contextmenu="context" @mousedown="innerDown" @touchstart="innerDown" @click="click">
         <cg-greatview ref="view" :same="isSame" :selection="isSelection" :data="data" v-slot="d" direction="v" v-model:scroll-top="offset" @beforeselect="onBeforeSelect" @select="onSelect($event)" @afterselect="onAfterSelect" @itemsposchange="onItemsPosChange" @resize="client = $event" @resizen="clientWidth = $event" @change="length = $event">
             <div v-if="d.row.control === 'split'" class="split"></div>
@@ -11,12 +11,12 @@
         </cg-greatview>
     </div>
     <cg-scroll v-if="scroll !== 'hidden'" v-show="(scroll === 'visible') || (length > client)" :length="length" :client="client" v-model:scroll-offset="offset" :float="scroll === 'auto'"></cg-scroll>
-    <teleport v-if="$slots.pop" to="#cg-pop-list">
+    <teleport v-if="slots('pop').length" to="#cg-pop-list">
         <div ref="pop" data-cg-pop>
             <slot name="pop"></slot>
         </div>
     </teleport>
-    <teleport v-if="$slots.itempop" to="#cg-pop-list">
+    <teleport v-if="slots('itempop').length" to="#cg-pop-list">
         <div ref="itempop" data-cg-pop>
             <slot name="itempop"></slot>
         </div>

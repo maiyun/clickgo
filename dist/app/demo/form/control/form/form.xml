@@ -1,7 +1,7 @@
 <form v-model:width="width" v-model:height="height" :icon="icon" :title="title" :min="min" :max="max" :close="close" v-model:state-max="stateMax" v-model:state-min="stateMin" :min-width="minWidth" :min-height="minHeight" :resize="resize" :loading="loading" :border="border" direction="v">
     <overflow direction="v">
         <layout direction="v" gutter="10" style="padding: 10px;">
-            <label>focus: {{cgFocus}}, width: {{width}}, height: {{height}}, state-max: {{stateMax}}, state-min: {{stateMin}}.</label>
+            <label>focus: {{formFocus}}, width: {{width}}, height: {{height}}, state-max: {{stateMax}}, state-min: {{stateMin}}.</label>
             <button @click="icon = icon ? '' : '/package/res/icon.svg'">Set icon</button>
             <button @click="title = (title === 'Form') ? 'Changed' : 'Form'">Set title</button>
             <button @click="min = min ? false : true">{{min ? 'Hide' : 'Show'}} min button</button>
@@ -13,8 +13,8 @@
             <button @click="minHeight = (minHeight === 100) ? 200 : 100">Set min-height to {{minHeight === 100 ? '200' : '100'}}</button>
             <button @click="width = 350">Set width to 350</button>
             <button @click="height = 400">Set height to 400</button>
-            <button @click="width = 'auto'">Set width to "auto"</button>
-            <button @click="height = 'auto'">Set height to "auto"</button>
+            <button @click="width = 0">Set width auto</button>
+            <button @click="height = 0">Set height auto</button>
             <button @click="resize = resize ? false : true">{{resize ? 'Disabled' : 'Enabled'}} resize</button>
             <button @click="showLoading">Show loading</button>
             <layout class="bottom" gutter="10">

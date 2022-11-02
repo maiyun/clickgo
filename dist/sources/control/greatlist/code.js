@@ -1,167 +1,62 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.mounted = exports.methods = exports.watch = exports.computed = exports.data = exports.props = void 0;
 const clickgo = require("clickgo");
-exports.props = {
-    'same': {
-        'default': false
-    },
-    'disabled': {
-        'default': false
-    },
-    'must': {
-        'default': true
-    },
-    'multi': {
-        'default': false,
-    },
-    'selection': {
-        'default': false
-    },
-    'scroll': {
-        'default': 'auto'
-    },
-    'data': {
-        'default': []
-    },
-    'modelValue': {
-        'default': -1
-    }
-};
-exports.data = {
-    'client': 0,
-    'clientWidth': 0,
-    'length': 0,
-    'offset': 0,
-    'valueData': -1,
-    'shiftStart': 0,
-    'delayRefreshShiftStartPos': false,
-    'selectValues': [],
-    'beforeSelectValues': [],
-    'isSelectStart': false
-};
-exports.computed = {
-    'isSame': function () {
-        return clickgo.tool.getBoolean(this.same);
-    },
-    'isSelection': function () {
-        return clickgo.tool.getBoolean(this.selection);
-    },
-    'isDisabled': function () {
-        return clickgo.tool.getBoolean(this.disabled);
-    },
-    'isMust': function () {
-        return clickgo.tool.getBoolean(this.must);
-    },
-    'isMulti': function () {
-        return clickgo.tool.getBoolean(this.multi);
-    },
-    'isSelected': function () {
-        return (value) => {
-            return this.multi ? this.valueData.includes(value) : (this.valueData === value);
+class default_1 extends clickgo.control.AbstractControl {
+    constructor() {
+        super(...arguments);
+        this.client = 0;
+        this.clientWidth = 0;
+        this.length = 0;
+        this.offset = 0;
+        this.valueData = -1;
+        this.shiftStart = 0;
+        this.needResetOffsetOfShiftStartPos = false;
+        this.selectValues = [];
+        this.beforeSelectValues = [];
+        this.isSelectStart = false;
+        this.props = {
+            'same': false,
+            'disabled': false,
+            'must': true,
+            'multi': false,
+            'selection': false,
+            'scroll': 'auto',
+            'data': [],
+            'modelValue': -1
         };
-    },
-};
-exports.watch = {
-    'data': {
-        handler: function (n, o) {
-            if (o.length === 0 && n.length > 0) {
-                this.valueData = this.modelValue;
-                if (typeof this.valueData === 'object') {
-                    if (this.valueData[0] !== undefined) {
-                        this.shiftStart = this.valueData[0];
-                        this.valueData = [];
-                    }
-                }
-                else {
-                    this.shiftStart = this.valueData;
-                    if (this.valueData === 0) {
-                        this.valueData = -1;
-                    }
-                }
-            }
-            this.checkValue();
-        },
-        'deep': true
-    },
-    'modelValue': {
-        handler: function (n, o) {
-            var _a, _b;
-            if (Array.isArray(n) && Array.isArray(o)) {
-                if (n.length === 0 && o.length === 0) {
-                    return;
-                }
-            }
-            if (typeof this.modelValue === 'object') {
-                if (typeof this.valueData !== 'object') {
-                    this.valueData = this.modelValue;
-                    this.shiftStart = (_a = this.valueData[0]) !== null && _a !== void 0 ? _a : 0;
-                }
-                else {
-                    if ((this.valueData.length === this.modelValue.length)
-                        && this.valueData.every((ele) => this.modelValue.includes(ele))) {
-                        return;
-                    }
-                    this.valueData = this.modelValue;
-                    this.shiftStart = (_b = this.valueData[0]) !== null && _b !== void 0 ? _b : 0;
-                }
-            }
-            else {
-                if (typeof this.valueData === 'object') {
-                    this.valueData = this.modelValue;
-                    this.shiftStart = this.valueData === -1 ? 0 : this.valueData;
-                }
-                else {
-                    if (this.valueData === this.modelValue) {
-                        return;
-                    }
-                    this.valueData = this.modelValue;
-                    this.shiftStart = this.valueData;
-                }
-            }
-            this.checkValue();
-        },
-        'deep': true,
-        'immediate': true
-    },
-    'must': {
-        handler: function () {
-            this.checkValue();
-        }
-    },
-    'multi': {
-        handler: function () {
-            this.checkValue();
-        }
-    },
-    'shiftStart': {
-        handler: function () {
-            var _a;
-            if (this.isSelectStart) {
-                return;
-            }
-            const pos = (_a = this.$refs.view) === null || _a === void 0 ? void 0 : _a.getPos(this.shiftStart);
-            if (pos) {
-                this.refreshShiftStartPos(pos);
-            }
-            else {
-                this.delayRefreshShiftStartPos = true;
-            }
-        }
     }
-};
-exports.methods = {
-    onItemsPosChange: function () {
-        var _a;
-        if (!this.delayRefreshShiftStartPos) {
+    get isSame() {
+        return clickgo.tool.getBoolean(this.props.same);
+    }
+    get isSelection() {
+        return clickgo.tool.getBoolean(this.props.selection);
+    }
+    get isDisabled() {
+        return clickgo.tool.getBoolean(this.props.disabled);
+    }
+    get isMust() {
+        return clickgo.tool.getBoolean(this.props.must);
+    }
+    get isMulti() {
+        return clickgo.tool.getBoolean(this.props.multi);
+    }
+    get isSelected() {
+        return (value) => {
+            return typeof this.valueData === 'number' ? (this.valueData === value) : this.valueData.includes(value);
+        };
+    }
+    onItemsPosChange() {
+        if (!this.needResetOffsetOfShiftStartPos) {
             return;
         }
-        this.delayRefreshShiftStartPos = false;
-        this.refreshShiftStartPos((_a = this.$refs.view) === null || _a === void 0 ? void 0 : _a.getPos(this.shiftStart));
-    },
-    refreshShiftStartPos: function () {
+        this.needResetOffsetOfShiftStartPos = false;
+        this.resetOffsetOfShiftStartPos();
+    }
+    resetOffsetOfShiftStartPos(pos) {
         var _a;
-        const pos = (_a = this.$refs.view) === null || _a === void 0 ? void 0 : _a.getPos(this.shiftStart);
+        if (!pos) {
+            pos = (_a = this.refs.view) === null || _a === void 0 ? void 0 : _a.getPos(this.shiftStart);
+        }
         if (!pos) {
             return;
         }
@@ -172,8 +67,8 @@ exports.methods = {
         if (pos.end > this.offset + this.client) {
             this.offset = pos.end - this.client;
         }
-    },
-    checkValue: function () {
+    }
+    checkValue() {
         var _a, _b, _c, _d, _e, _f;
         let change = false;
         const notDisabledIndex = this.getFirstNotDisabledDataIndex();
@@ -211,11 +106,11 @@ exports.methods = {
                 }
             }
         }
-        const dataMaxIndex = this.data.length - 1;
-        if (this.isMulti) {
+        const dataMaxIndex = this.props.data.length - 1;
+        if (typeof this.valueData !== 'number') {
             for (let i = 0; i < this.valueData.length; ++i) {
                 if (((this.valueData[i] > 0) && (this.valueData[i] > dataMaxIndex)) ||
-                    (((_b = this.data[this.valueData[i]]) === null || _b === void 0 ? void 0 : _b.disabled) || (((_c = this.data[this.valueData[i]]) === null || _c === void 0 ? void 0 : _c.control) === 'split'))) {
+                    (((_b = this.props.data[this.valueData[i]]) === null || _b === void 0 ? void 0 : _b.disabled) || (((_c = this.props.data[this.valueData[i]]) === null || _c === void 0 ? void 0 : _c.control) === 'split'))) {
                     change = true;
                     if (this.shiftStart === this.valueData[i]) {
                         this.shiftStart = i > 0 ? ((_d = this.valueData[0]) !== null && _d !== void 0 ? _d : notDisabledIndex) : notDisabledIndex;
@@ -232,7 +127,7 @@ exports.methods = {
         }
         else {
             if (((this.valueData > 0) && (this.valueData > dataMaxIndex)) ||
-                (((_e = this.data[this.valueData]) === null || _e === void 0 ? void 0 : _e.disabled) || (((_f = this.data[this.valueData]) === null || _f === void 0 ? void 0 : _f.control) === 'split'))) {
+                (((_e = this.props.data[this.valueData]) === null || _e === void 0 ? void 0 : _e.disabled) || (((_f = this.props.data[this.valueData]) === null || _f === void 0 ? void 0 : _f.control) === 'split'))) {
                 change = true;
                 if (this.shiftStart === this.valueData) {
                     this.shiftStart = notDisabledIndex;
@@ -241,10 +136,10 @@ exports.methods = {
             }
         }
         if (change) {
-            this.$emit('update:modelValue', this.valueData);
+            this.emit('update:modelValue', this.valueData);
         }
-    },
-    select: function (value, shift = false, ctrl = false) {
+    }
+    select(value, shift = false, ctrl = false) {
         let change = false;
         if (value < -1) {
             value = -1;
@@ -253,12 +148,12 @@ exports.methods = {
             value = 0;
         }
         const canSelect = (i) => {
-            if (this.data[i].disabled || (this.data[i].control === 'split')) {
+            if (this.props.data[i].disabled || (this.props.data[i].control === 'split')) {
                 return false;
             }
             return true;
         };
-        if (this.isMulti) {
+        if (typeof this.valueData !== 'number') {
             if (!shift && !ctrl) {
                 if (value === -1) {
                     if (this.valueData.length > 0) {
@@ -350,30 +245,31 @@ exports.methods = {
             }
         }
         if (change) {
-            this.$emit('update:modelValue', this.valueData);
+            this.emit('update:modelValue', this.valueData);
         }
-    },
-    innerDown: function (e) {
+    }
+    innerDown(e) {
         if (clickgo.dom.hasTouchButMouse(e)) {
             return;
         }
-        if (this.$refs.inner.dataset.cgPopOpen !== undefined) {
+        if (this.refs.inner.dataset.cgPopOpen !== undefined) {
             clickgo.form.hidePop();
         }
         this.isSelectStart = false;
+        console.log('TODO', this.isSelectStart);
         if (e instanceof TouchEvent) {
             clickgo.dom.bindLong(e, () => {
-                clickgo.form.showPop(this.$refs.inner, this.$refs.pop, e);
+                clickgo.form.showPop(this.refs.inner, this.refs.pop, e);
             });
         }
-    },
-    context: function (e) {
+    }
+    context(e) {
         if (clickgo.dom.hasTouchButMouse(e)) {
             return;
         }
-        clickgo.form.showPop(this.$refs.inner, this.$refs.pop, e);
-    },
-    click: function (e) {
+        clickgo.form.showPop(this.refs.inner, this.refs.pop, e);
+    }
+    click(e) {
         if (this.isSelection && this.isSelectStart) {
             return;
         }
@@ -383,12 +279,12 @@ exports.methods = {
                 this.select(-1, e.shiftKey, e.ctrlKey);
             }
         }
-    },
-    keydown: function (e) {
+    }
+    keydown(e) {
         if ((e.key === 'ArrowDown') || (e.key === 'ArrowUp')) {
             e.preventDefault();
             let nvalue = -1;
-            if (this.isMulti) {
+            if (typeof this.valueData !== 'number') {
                 if (this.valueData.length > 0) {
                     if (e.key === 'ArrowDown') {
                         for (const i of this.valueData) {
@@ -432,13 +328,13 @@ exports.methods = {
                     return;
                 }
                 for (let i = nvalue - 1; i >= 0; --i) {
-                    if (!this.data[i]) {
+                    if (!this.props.data[i]) {
                         continue;
                     }
-                    if (this.data[i].disabled === true) {
+                    if (this.props.data[i].disabled) {
                         continue;
                     }
-                    if (this.data[i].control === 'split') {
+                    if (this.props.data[i].control === 'split') {
                         continue;
                     }
                     this.select(i);
@@ -446,17 +342,17 @@ exports.methods = {
                 }
             }
             else {
-                if (nvalue === this.data.length - 1) {
+                if (nvalue === this.props.data.length - 1) {
                     return;
                 }
-                for (let i = nvalue + 1; i < this.data.length; ++i) {
-                    if (!this.data[i]) {
+                for (let i = nvalue + 1; i < this.props.data.length; ++i) {
+                    if (!this.props.data[i]) {
                         continue;
                     }
-                    if (this.data[i].disabled === true) {
+                    if (this.props.data[i].disabled) {
                         continue;
                     }
-                    if (this.data[i].control === 'split') {
+                    if (this.props.data[i].control === 'split') {
                         continue;
                     }
                     this.select(i);
@@ -464,8 +360,8 @@ exports.methods = {
                 }
             }
         }
-    },
-    itemContext: function (e, value) {
+    }
+    itemContext(e, value) {
         if (clickgo.dom.hasTouchButMouse(e)) {
             return;
         }
@@ -473,54 +369,54 @@ exports.methods = {
             return;
         }
         this.select(value, e.shiftKey, e.ctrlKey);
-    },
-    itemTouch: function (e, value) {
+    }
+    itemTouch(e, value) {
         clickgo.dom.bindLong(e, () => {
             if (this.isSelected(value)) {
                 return;
             }
-            this.select(value, e.shiftKey, this.multi ? true : e.ctrlKey);
+            this.select(value, e.shiftKey, this.isMulti ? true : e.ctrlKey);
         });
-    },
-    itemClick: function (e, value) {
+    }
+    itemClick(e, value) {
         if (this.isSelection && this.isSelectStart) {
             return;
         }
         e.stopPropagation();
         const hasTouch = clickgo.dom.hasTouchButMouse(e);
-        this.select(value, e.shiftKey, (hasTouch && this.multi) ? true : e.ctrlKey);
-        this.$emit('itemclick', e, false);
-    },
-    arrowClick: function (e, value) {
+        this.select(value, e.shiftKey, (hasTouch && this.isMulti) ? true : e.ctrlKey);
+        this.emit('itemclick', e, false);
+    }
+    arrowClick(e, value) {
         e.stopPropagation();
         const hasTouch = clickgo.dom.hasTouchButMouse(e);
-        this.select(value, e.shiftKey, (hasTouch && this.multi) ? true : e.ctrlKey);
+        this.select(value, e.shiftKey, (hasTouch && this.isMulti) ? true : e.ctrlKey);
         const current = e.currentTarget;
         if (current.dataset.cgPopOpen === undefined) {
-            clickgo.form.showPop(current, this.$refs.itempop, e);
+            clickgo.form.showPop(current, this.refs.itempop, e);
         }
         else {
             clickgo.form.hidePop(current);
         }
-        this.$emit('itemclick', e, true);
-    },
-    getFirstNotDisabledDataIndex: function () {
+        this.emit('itemclick', e, true);
+    }
+    getFirstNotDisabledDataIndex() {
         let notDisabledIndex = 0;
-        for (let i = 0; i < this.data.length; ++i) {
-            if (this.data[i].disabled === true) {
+        for (let i = 0; i < this.props.data.length; ++i) {
+            if (this.props.data[i].disabled) {
                 continue;
             }
             notDisabledIndex = i;
             break;
         }
         return notDisabledIndex;
-    },
-    onBeforeSelect: function () {
+    }
+    onBeforeSelect() {
         this.isSelectStart = true;
         this.selectValues = [];
-        this.beforeSelectValues = Array.isArray(this.valueData) ? this.valueData : [this.valueData];
-    },
-    onSelect: function (area) {
+        this.beforeSelectValues = typeof this.valueData !== 'number' ? this.valueData : (this.valueData > 0 ? [this.valueData] : []);
+    }
+    onSelect(area) {
         if (this.isMulti) {
             if (area.shift || area.ctrl) {
                 if (area.start === -1) {
@@ -587,12 +483,90 @@ exports.methods = {
                 this.select(area.start, area.shift, area.ctrl);
             }
         }
-        this.$emit('select', area);
-    },
-    onAfterSelect: function () {
+        this.emit('select', area);
     }
-};
-const mounted = function () {
-    this.checkValue();
-};
-exports.mounted = mounted;
+    onAfterSelect() {
+    }
+    onMounted() {
+        this.watch('data', (n, o) => {
+            if (o.length === 0 && n.length > 0) {
+                this.valueData = this.props.modelValue;
+                if (typeof this.valueData === 'object') {
+                    if (this.valueData[0] !== undefined) {
+                        this.shiftStart = this.valueData[0];
+                        this.valueData = [];
+                    }
+                }
+                else {
+                    this.shiftStart = this.valueData;
+                    if (this.valueData === 0) {
+                        this.valueData = -1;
+                    }
+                }
+            }
+            this.checkValue();
+        }, {
+            'deep': true
+        });
+        this.watch('modelValue', (n, o) => {
+            var _a, _b;
+            if (Array.isArray(n) && Array.isArray(o)) {
+                if (n.length === 0 && o.length === 0) {
+                    return;
+                }
+            }
+            if (typeof this.props.modelValue !== 'number') {
+                if (typeof this.valueData === 'number') {
+                    this.valueData = this.props.modelValue;
+                    this.shiftStart = (_a = this.valueData[0]) !== null && _a !== void 0 ? _a : 0;
+                }
+                else {
+                    if ((this.valueData.length === this.props.modelValue.length)
+                        && this.valueData.every((ele) => this.props.modelValue.includes(ele))) {
+                        return;
+                    }
+                    this.valueData = this.props.modelValue;
+                    this.shiftStart = (_b = this.valueData[0]) !== null && _b !== void 0 ? _b : 0;
+                }
+            }
+            else {
+                if (typeof this.valueData !== 'number') {
+                    this.valueData = this.props.modelValue;
+                    this.shiftStart = this.valueData === -1 ? 0 : this.valueData;
+                }
+                else {
+                    if (this.valueData === this.props.modelValue) {
+                        return;
+                    }
+                    this.valueData = this.props.modelValue;
+                    this.shiftStart = this.valueData;
+                }
+            }
+            this.checkValue();
+        }, {
+            'deep': true,
+            'immediate': true
+        });
+        this.watch('must', () => {
+            this.checkValue();
+        });
+        this.watch('multi', () => {
+            this.checkValue();
+        });
+        this.watch('shiftStart', () => {
+            var _a;
+            if (this.isSelectStart) {
+                return;
+            }
+            const pos = (_a = this.refs.view) === null || _a === void 0 ? void 0 : _a.getPos(this.shiftStart);
+            if (pos) {
+                this.resetOffsetOfShiftStartPos(pos);
+            }
+            else {
+                this.needResetOffsetOfShiftStartPos = true;
+            }
+        });
+        this.checkValue();
+    }
+}
+exports.default = default_1;

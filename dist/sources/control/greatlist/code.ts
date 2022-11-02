@@ -1,175 +1,107 @@
 import * as clickgo from 'clickgo';
-import * as types from '~/types/index';
 
-export const props = {
-    'same': {
-        'default': false
-    },
-    'disabled': {
-        'default': false
-    },
-    'must': {
-        'default': true
-    },
-    'multi': {
-        'default': false,
-    },
-    'selection': {
-        'default': false
-    },
-    'scroll': {
-        'default': 'auto'
-    },
+export default class extends clickgo.control.AbstractControl {
 
-    'data': {
-        'default': []
-    },
-    'modelValue': {
-        'default': -1
-    }
-};
+    /** --- 可视高度像素 --- */
+    public client = 0;
 
-export const data = {
-    'client': 0,
-    'clientWidth': 0,
-    'length': 0,
-    'offset': 0,
+    /** --- 可视宽度像素 --- */
+    public clientWidth = 0;
 
-    'valueData': -1,
-    'shiftStart': 0,
-    'delayRefreshShiftStartPos': false,
+    /** --- 总高度 --- */
+    public length = 0;
 
-    'selectValues': [],
-    'beforeSelectValues': [],
-    'isSelectStart': false
-};
+    /** --- 滚动位置 --- */
+    public offset = 0;
 
-export const computed = {
-    'isSame': function(this: types.IVControl): boolean {
-        return clickgo.tool.getBoolean(this.same);
-    },
-    'isSelection': function(this: types.IVControl): boolean {
-        return clickgo.tool.getBoolean(this.selection);
-    },
-    'isDisabled': function(this: types.IVControl): boolean {
-        return clickgo.tool.getBoolean(this.disabled);
-    },
-    'isMust': function(this: types.IVControl): boolean {
-        return clickgo.tool.getBoolean(this.must);
-    },
-    'isMulti': function(this: types.IVControl): boolean {
-        return clickgo.tool.getBoolean(this.multi);
-    },
+    /** --- 选中的数据 */
+    public valueData: number | number[] = -1;
 
-    'isSelected': function(this: types.IVControl) {
-        return (value: number): boolean => {
-            return this.multi ? this.valueData.includes(value) : (this.valueData === value);
+    /** --- shift 多选框原点 index --- */
+    public shiftStart = 0;
+
+    /** --- 需要刷新一下 offset 但是刚刚没有找到 view 控件所以稍等一下后刷新 --- */
+    public needResetOffsetOfShiftStartPos = false;
+
+    /** --- 选中框当前已选中的序列列表 --- */
+    public selectValues: number[] = [];
+
+    /** --- 选择之前的数据列表 --- */
+    public beforeSelectValues: number[] = [];
+
+    /** --- 是否正在框选 --- */
+    public isSelectStart = false;
+
+    public props: {
+        'same': boolean;
+        'disabled': boolean;
+        'must': boolean;
+        'multi': boolean;
+        'selection': boolean;
+        'scroll': 'auto' | 'hidden' | 'visible';
+
+        'data': Array<{
+            'disabled': boolean;
+            'control'?: 'split';
+            [key: string]: any;
+        }>;
+        'modelValue': number | number[];
+    } = {
+            'same': false,
+            'disabled': false,
+            'must': true,
+            'multi': false,
+            'selection': false,
+            'scroll': 'auto',
+
+            'data': [],
+            'modelValue': -1
         };
-    },
-};
 
-export const watch = {
-    'data': {
-        handler: function(this: types.IVControl, n: any[], o: any[]): void {
-            if (o.length === 0 && n.length > 0) {
-                // --- 用来强制使 checkValue 生效，因为有可能 data 还没传入，但是默认值已经设定为了 0，所以传入 data 后要再次设定为 0 并响应事件 ---
-                this.valueData = this.modelValue;
-                if (typeof this.valueData === 'object') {
-                    if (this.valueData[0] !== undefined) {
-                        this.shiftStart = this.valueData[0];
-                        this.valueData = [];
-                    }
-                }
-                else {
-                    this.shiftStart = this.valueData;
-                    if (this.valueData === 0) {
-                        this.valueData = -1;
-                    }
-                }
-            }
-            this.checkValue();
-        },
-        'deep': true
-    },
-    'modelValue': {
-        handler: function(this: types.IVControl, n: any[] | number, o: any[] | number): void {
-            if (Array.isArray(n) && Array.isArray(o)) {
-                if (n.length === 0 && o.length === 0) {
-                    // --- 不加这个循环可能会无限执行此方法 ---
-                    // --- 在 data 数据缺失的时候 ---
-                    return;
-                }
-            }
-            if (typeof this.modelValue === 'object') {
-                if (typeof this.valueData !== 'object') {
-                    this.valueData = this.modelValue;
-                    this.shiftStart = this.valueData[0] ?? 0;
-                }
-                else {
-                    if (
-                        (this.valueData.length === this.modelValue.length)
-                        && this.valueData.every((ele: number) => this.modelValue.includes(ele))
-                    ) {
-                        return;
-                    }
-                    this.valueData = this.modelValue;
-                    this.shiftStart = this.valueData[0] ?? 0;
-                }
-            }
-            else {
-                if (typeof this.valueData === 'object') {
-                    this.valueData = this.modelValue;
-                    this.shiftStart = this.valueData === -1 ? 0 : this.valueData;
-                }
-                else {
-                    if (this.valueData === this.modelValue) {
-                        return;
-                    }
-                    this.valueData = this.modelValue;
-                    this.shiftStart = this.valueData;
-                }
-            }
-            this.checkValue();
-        },
-        'deep': true,
-        'immediate': true
-    },
-    'must': {
-        handler: function(this: types.IVControl): void {
-            this.checkValue();
-        }
-    },
-    'multi': {
-        handler: function(this: types.IVControl): void {
-            this.checkValue();
-        }
-    },
-    'shiftStart': {
-        handler: function(this: types.IVControl): void {
-            if (this.isSelectStart) {
-                return;
-            }
-            const pos = this.$refs.view?.getPos(this.shiftStart);
-            if (pos) {
-                this.refreshShiftStartPos(pos);
-            }
-            else {
-                this.delayRefreshShiftStartPos = true;
-            }
-        }
+    public get isSame(): boolean {
+        return clickgo.tool.getBoolean(this.props.same);
     }
-};
 
-export const methods = {
-    onItemsPosChange: function(this: types.IVControl): void {
-        if (!this.delayRefreshShiftStartPos) {
+    public get isSelection(): boolean {
+        return clickgo.tool.getBoolean(this.props.selection);
+    }
+
+    public get isDisabled(): boolean {
+        return clickgo.tool.getBoolean(this.props.disabled);
+    }
+
+    public get isMust(): boolean {
+        return clickgo.tool.getBoolean(this.props.must);
+    }
+
+    public get isMulti(): boolean {
+        return clickgo.tool.getBoolean(this.props.multi);
+    }
+
+    public get isSelected() {
+        return (value: number): boolean => {
+            return typeof this.valueData === 'number' ? (this.valueData === value) : this.valueData.includes(value);
+        };
+    }
+
+    // --- method ---
+
+    // --- 子元素的 pos 位置被刷新的事件 ---
+    public onItemsPosChange(): void {
+        if (!this.needResetOffsetOfShiftStartPos) {
             return;
         }
-        this.delayRefreshShiftStartPos = false;
-        this.refreshShiftStartPos(this.$refs.view?.getPos(this.shiftStart));
-    },
-    refreshShiftStartPos: function(this: types.IVControl): void {
-        const pos = this.$refs.view?.getPos(this.shiftStart);
+        this.needResetOffsetOfShiftStartPos = false;
+        this.resetOffsetOfShiftStartPos();
+    }
+
+    /**
+     * --- 重置滚动到 shiftStart 的位置 ---
+     */
+    public resetOffsetOfShiftStartPos(pos?: Record<string, any>): void {
+        if (!pos) {
+            pos = this.refs.view?.getPos(this.shiftStart);
+        }
         if (!pos) {
             return;
         }
@@ -177,11 +109,12 @@ export const methods = {
             this.offset = pos.start;
             return;
         }
-        if (pos.end > (this.offset as number) + (this.client as number)) {
+        if (pos.end > this.offset + this.client) {
             this.offset = pos.end - this.client;
         }
-    },
-    checkValue: function(this: types.IVControl): void {
+    }
+
+    public checkValue(): void {
         let change: boolean = false;
         const notDisabledIndex = this.getFirstNotDisabledDataIndex();
         if (typeof this.valueData === 'object') {
@@ -225,13 +158,13 @@ export const methods = {
         }
         // --- 检测单行/多行的值有没有超出 data 的长度 ---
         // --- 检测当前 valueData 是不是 disabled 或 split ---
-        const dataMaxIndex = this.data.length - 1;
-        if (this.isMulti) {
+        const dataMaxIndex = this.props.data.length - 1;
+        if (typeof this.valueData !== 'number') {
             // --- 多行要逐个判断，剔除超出的或 disabled 的 ---
             for (let i = 0; i < this.valueData.length; ++i) {
                 if (
                     ((this.valueData[i] > 0) && (this.valueData[i] > dataMaxIndex)) ||
-                    (this.data[this.valueData[i]]?.disabled || (this.data[this.valueData[i]]?.control === 'split'))
+                    (this.props.data[this.valueData[i]]?.disabled || (this.props.data[this.valueData[i]]?.control === 'split'))
                 ) {
                     // --- 超出/不可选 ---
                     change = true;
@@ -252,7 +185,7 @@ export const methods = {
             // --- 检测值是否大于 data 长度或 disabled 的 ---
             if (
                 ((this.valueData > 0) && (this.valueData > dataMaxIndex)) ||
-                (this.data[this.valueData]?.disabled || (this.data[this.valueData]?.control === 'split'))
+                (this.props.data[this.valueData]?.disabled || (this.props.data[this.valueData]?.control === 'split'))
             ) {
                 change = true;
                 if (this.shiftStart === this.valueData) {
@@ -262,10 +195,11 @@ export const methods = {
             }
         }
         if (change) {
-            this.$emit('update:modelValue', this.valueData);
+            this.emit('update:modelValue', this.valueData);
         }
-    },
-    select: function(this: types.IVControl, value: number, shift: boolean = false, ctrl: boolean = false): void {
+    }
+
+    public select(value: number, shift: boolean = false, ctrl: boolean = false): void {
         let change: boolean = false;
         if (value < -1) {
             value = -1;
@@ -282,12 +216,12 @@ export const methods = {
         }
         */
         const canSelect = (i: number): boolean => {
-            if (this.data[i].disabled || (this.data[i].control === 'split')) {
+            if (this.props.data[i].disabled || (this.props.data[i].control === 'split')) {
                 return false;
             }
             return true;
         };
-        if (this.isMulti) {
+        if (typeof this.valueData !== 'number') {
             if (!shift && !ctrl) {
                 // --- 单选 ---
                 if (value === -1) {
@@ -348,7 +282,7 @@ export const methods = {
                         }
                         if (
                             (valueData.length !== this.valueData.length)
-                            || !valueData.every((item: number) => this.valueData.includes(item))
+                            || !valueData.every((item: number) => (this.valueData as number[]).includes(item))
                         ) {
                             change = true;
                             this.valueData = valueData;
@@ -393,31 +327,35 @@ export const methods = {
             }
         }
         if (change) {
-            this.$emit('update:modelValue', this.valueData);
+            this.emit('update:modelValue', this.valueData);
         }
-    },
-    innerDown: function(this: types.IVControl, e: MouseEvent | TouchEvent): void {
+    }
+
+    public innerDown(e: MouseEvent | TouchEvent): void {
         if (clickgo.dom.hasTouchButMouse(e)) {
             return;
         }
-        if (this.$refs.inner.dataset.cgPopOpen !== undefined) {
+        if (this.refs.inner.dataset.cgPopOpen !== undefined) {
             clickgo.form.hidePop();
         }
         this.isSelectStart = false;
+        console.log('TODO', this.isSelectStart);
         if (e instanceof TouchEvent) {
             // --- 长按触发 contextmenu ---
             clickgo.dom.bindLong(e, () => {
-                clickgo.form.showPop(this.$refs.inner, this.$refs.pop, e);
+                clickgo.form.showPop(this.refs.inner, this.refs.pop, e);
             });
         }
-    },
-    context: function(this: types.IVControl, e: MouseEvent): void {
+    }
+
+    public context(e: MouseEvent): void {
         if (clickgo.dom.hasTouchButMouse(e)) {
             return;
         }
-        clickgo.form.showPop(this.$refs.inner, this.$refs.pop, e);
-    },
-    click: function(this: types.IVControl, e: MouseEvent): void {
+        clickgo.form.showPop(this.refs.inner, this.refs.pop, e);
+    }
+
+    public click(e: MouseEvent): void {
         if (this.isSelection && this.isSelectStart) {
             return;
         }
@@ -427,12 +365,13 @@ export const methods = {
                 this.select(-1, e.shiftKey, e.ctrlKey);
             }
         }
-    },
-    keydown: function(this: types.IVControl, e: KeyboardEvent): void {
+    }
+
+    public keydown(e: KeyboardEvent): void {
         if ((e.key === 'ArrowDown') || (e.key === 'ArrowUp')) {
             e.preventDefault();
             let nvalue: number = -1;
-            if (this.isMulti) {
+            if (typeof this.valueData !== 'number') {
                 if (this.valueData.length > 0) {
                     if (e.key === 'ArrowDown') {
                         for (const i of this.valueData) {
@@ -476,13 +415,13 @@ export const methods = {
                     return;
                 }
                 for (let i = nvalue - 1; i >= 0; --i) {
-                    if (!this.data[i]) {
+                    if (!this.props.data[i]) {
                         continue;
                     }
-                    if (this.data[i].disabled === true) {
+                    if (this.props.data[i].disabled) {
                         continue;
                     }
-                    if (this.data[i].control === 'split') {
+                    if (this.props.data[i].control === 'split') {
                         continue;
                     }
                     this.select(i);
@@ -490,17 +429,17 @@ export const methods = {
                 }
             }
             else {
-                if (nvalue === this.data.length - 1) {
+                if (nvalue === this.props.data.length - 1) {
                     return;
                 }
-                for (let i = nvalue + 1; i < this.data.length; ++i) {
-                    if (!this.data[i]) {
+                for (let i = nvalue + 1; i < this.props.data.length; ++i) {
+                    if (!this.props.data[i]) {
                         continue;
                     }
-                    if (this.data[i].disabled === true) {
+                    if (this.props.data[i].disabled) {
                         continue;
                     }
-                    if (this.data[i].control === 'split') {
+                    if (this.props.data[i].control === 'split') {
                         continue;
                     }
                     this.select(i);
@@ -508,9 +447,10 @@ export const methods = {
                 }
             }
         }
-    },
+    }
+
     // --- item 相关事件 ---
-    itemContext: function(this: types.IVControl, e: MouseEvent, value: number): void {
+    public itemContext(e: MouseEvent, value: number): void {
         if (clickgo.dom.hasTouchButMouse(e)) {
             return;
         }
@@ -518,60 +458,68 @@ export const methods = {
             return;
         }
         this.select(value, e.shiftKey, e.ctrlKey);
-    },
-    itemTouch: function(this: types.IVControl, e: TouchEvent, value: number): void {
+    }
+
+    public itemTouch(e: TouchEvent, value: number): void {
         // --- 长按 item 选中自己 ---
         clickgo.dom.bindLong(e, () => {
             if (this.isSelected(value)) {
                 return;
             }
-            this.select(value, e.shiftKey, this.multi ? true : e.ctrlKey);
+            this.select(value, e.shiftKey, this.isMulti ? true : e.ctrlKey);
         });
-    },
-    itemClick: function(this: types.IVControl, e: MouseEvent, value: number): void {
+    }
+
+    public itemClick(e: MouseEvent, value: number): void {
         if (this.isSelection && this.isSelectStart) {
             return;
         }
         e.stopPropagation();
         const hasTouch = clickgo.dom.hasTouchButMouse(e);
-        this.select(value, e.shiftKey, (hasTouch && this.multi) ? true : e.ctrlKey);
+        this.select(value, e.shiftKey, (hasTouch && this.isMulti) ? true : e.ctrlKey);
         // --- 上报点击事件，false: arrow click ---
-        this.$emit('itemclick', e, false);
-    },
-    arrowClick: function(this: types.IVControl, e: MouseEvent, value: number): void {
+        this.emit('itemclick', e, false);
+    }
+
+    public arrowClick(e: MouseEvent, value: number): void {
         e.stopPropagation();
         const hasTouch = clickgo.dom.hasTouchButMouse(e);
-        this.select(value, e.shiftKey, (hasTouch && this.multi) ? true : e.ctrlKey);
+        this.select(value, e.shiftKey, (hasTouch && this.isMulti) ? true : e.ctrlKey);
         // --- 显示/隐藏 arrow menu ---
         const current = e.currentTarget as HTMLElement;
         if (current.dataset.cgPopOpen === undefined) {
-            clickgo.form.showPop(current, this.$refs.itempop, e);
+            clickgo.form.showPop(current, this.refs.itempop, e);
         }
         else {
             clickgo.form.hidePop(current);
         }
         // --- 上报点击事件，true: arrow click ---
-        this.$emit('itemclick', e, true);
-    },
-    // --- 获取数据中第一个不是 disabled 的 index ---
-    getFirstNotDisabledDataIndex: function(this: types.IVControl): number {
+        this.emit('itemclick', e, true);
+    }
+
+    /**
+     * --- 获取数据中第一个不是 disabled 的 index ---
+     */
+    public getFirstNotDisabledDataIndex(): number {
         let notDisabledIndex = 0;
-        for (let i = 0; i < this.data.length; ++i) {
-            if (this.data[i].disabled === true) {
+        for (let i = 0; i < this.props.data.length; ++i) {
+            if (this.props.data[i].disabled) {
                 continue;
             }
             notDisabledIndex = i;
             break;
         }
         return notDisabledIndex;
-    },
+    }
+
     // --- 当出现了选区 ---
-    onBeforeSelect: function(this: types.IVControl): void {
+    public onBeforeSelect(): void {
         this.isSelectStart = true;
         this.selectValues = [];
-        this.beforeSelectValues = Array.isArray(this.valueData) ? this.valueData : [this.valueData];
-    },
-    onSelect: function(this: types.IVControl, area: Record<string, any>): void {
+        this.beforeSelectValues = typeof this.valueData !== 'number' ? this.valueData : (this.valueData > 0 ? [this.valueData] : []);
+    }
+
+    public onSelect(area: Record<string, any>): void {
         if (this.isMulti) {
             // --- 多行 ---
             if (area.shift || area.ctrl) {
@@ -658,13 +606,107 @@ export const methods = {
                 this.select(area.start, area.shift, area.ctrl);
             }
         }
-        this.$emit('select', area);
-    },
-    onAfterSelect: function(): void {
+        this.emit('select', area);
+    }
+
+    public onAfterSelect(): void {
         // -- TODO ---
     }
-};
 
-export const mounted = function(this: types.IVControl): void {
-    this.checkValue();
-};
+    public onMounted(): void | Promise<void> {
+        this.watch('data', (n, o): void => {
+            if (o.length === 0 && n.length > 0) {
+                // --- 用来强制使 checkValue 生效，因为有可能 data 还没传入，但是默认值已经设定为了 0，所以传入 data 后要再次设定为 0 并响应事件 ---
+                this.valueData = this.props.modelValue;
+                if (typeof this.valueData === 'object') {
+                    if (this.valueData[0] !== undefined) {
+                        this.shiftStart = this.valueData[0];
+                        this.valueData = [];
+                    }
+                }
+                else {
+                    this.shiftStart = this.valueData;
+                    if (this.valueData === 0) {
+                        this.valueData = -1;
+                    }
+                }
+            }
+            this.checkValue();
+        }, {
+            'deep': true
+        });
+        this.watch('modelValue', (n, o): void => {
+            if (Array.isArray(n) && Array.isArray(o)) {
+                if (n.length === 0 && o.length === 0) {
+                    // --- 不加这个循环可能会无限执行此方法 ---
+                    // --- 在 data 数据缺失的时候 ---
+                    return;
+                }
+            }
+            if (typeof this.props.modelValue !== 'number') {
+                // --- 传入的是多条选择数据 ---
+                if (typeof this.valueData === 'number') {
+                    // --- 但当前的是单条 ---
+                    this.valueData = this.props.modelValue;
+                    this.shiftStart = this.valueData[0] ?? 0;
+                }
+                else {
+                    // --- 当前也是多条 ---
+                    if (
+                        (this.valueData.length === this.props.modelValue.length)
+                        && this.valueData.every((ele: number) => (this.props.modelValue as number[]).includes(ele))
+                    ) {
+                        return;
+                    }
+                    this.valueData = this.props.modelValue;
+                    this.shiftStart = this.valueData[0] ?? 0;
+                }
+            }
+            else {
+                // --- 传入的是单条数据 ---
+                if (typeof this.valueData !== 'number') {
+                    // --- 但当前是多条 ---
+                    this.valueData = this.props.modelValue;
+                    this.shiftStart = this.valueData === -1 ? 0 : this.valueData;
+                }
+                else {
+                    // --- 也是单条 ---
+                    if (this.valueData === this.props.modelValue) {
+                        return;
+                    }
+                    this.valueData = this.props.modelValue;
+                    this.shiftStart = this.valueData;
+                }
+            }
+            this.checkValue();
+        }, {
+            'deep': true,
+            'immediate': true
+        });
+        this.watch('must', (): void => {
+            this.checkValue();
+        });
+        this.watch('multi', (): void => {
+            this.checkValue();
+        });
+        // --- shift 原点变了，要监听 ---
+        this.watch('shiftStart', (): void => {
+            if (this.isSelectStart) {
+                // --- 框选过程中变了，不管 ---
+                return;
+            }
+            const pos = this.refs.view?.getPos(this.shiftStart);
+            if (pos) {
+                this.resetOffsetOfShiftStartPos(pos);
+            }
+            else {
+                this.needResetOffsetOfShiftStartPos = true;
+            }
+        });
+
+        // --- 加载后执行 ---
+
+        this.checkValue();
+    }
+
+}

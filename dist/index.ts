@@ -1,4 +1,5 @@
 // npm publish --tag dev --access public
+import * as types from '~/types';
 
 // --- 以下不会真正加载，最终会在底部进行赋值 ---
 export let clickgo: typeof import('./clickgo');
@@ -26,66 +27,170 @@ export function getPlatform(): NodeJS.Platform | 'web' {
     return clickgo.getPlatform();
 }
 
-export function setSafe(val: boolean): void {
-    clickgo.setSafe(val);
-}
-export function getSafe(): boolean {
-    return clickgo.getSafe();
+/** --- 全局类 --- */
+export abstract class AbstractBoot {
+
+    /** --- 入口文件 --- */
+    public abstract main(): void | Promise<void>;
+
+    /** --- 全局错误事件 --- */
+    public onError(taskId: number, formId: number, error: Error, info: string): void | Promise<void>;
+    public onError(): void {
+        return;
+    }
+
+    /** --- 屏幕大小改变事件 --- */
+    public onScreenResize(): void | Promise<void>;
+    public onScreenResize(): void {
+        return;
+    }
+
+    /** --- 系统配置变更事件 --- */
+    public onConfigChanged<T extends types.IConfig, TK extends keyof T>(n: TK, v: T[TK]): void | Promise<void>;
+    public onConfigChanged(): void {
+        return;
+    }
+
+    /** --- 窗体创建事件 --- */
+    public onFormCreated(taskId: number, formId: number, title: string, icon: string): void | Promise<void>;
+    public onFormCreated(): void {
+        return;
+    }
+
+    /** --- 窗体销毁事件 */
+    public onFormRemoved(taskId: number, formId: number, title: string, icon: string): void | Promise<void>;
+    public onFormRemoved(): void {
+        return;
+    }
+
+    /** --- 窗体标题改变事件 */
+    public onFormTitleChanged(taskId: number, formId: number, title: string): void | Promise<void>;
+    public onFormTitleChanged(): void | Promise<void> {
+        return;
+    }
+
+    /** --- 窗体图标改变事件 --- */
+    public onFormIconChanged(taskId: number, formId: number, icon: string): void | Promise<void>;
+    public onFormIconChanged(): void | Promise<void> {
+        return;
+    }
+
+    /** --- 窗体最小化状态改变事件 --- */
+    public onFormStateMinChanged(taskId: number, formId: number, state: boolean): void | Promise<void>;
+    public onFormStateMinChanged(): void {
+        return;
+    }
+
+    /** --- 窗体最大化状态改变事件 --- */
+    public onFormStateMaxChanged(taskId: number, formId: number, state: boolean): void | Promise<void>;
+    public onFormStateMaxChanged(): void {
+        return;
+    }
+
+    /** --- 窗体显示状态改变事件 --- */
+    public onFormShowChanged(taskId: number, formId: number, state: boolean): void | Promise<void>;
+    public onFormShowChanged(): void {
+        return;
+    }
+
+    /** --- 窗体获得焦点事件 --- */
+    public onFormFocused(taskId: number, formId: number): void | Promise<void>;
+    public onFormFocused(): void {
+        return;
+    }
+
+    /** --- 窗体丢失焦点事件 --- */
+    public onFormBlurred(taskId: number, formId: number): void | Promise<void>;
+    public onFormBlurred(): void {
+        return;
+    }
+
+    /** --- 窗体闪烁事件 --- */
+    public onFormFlash(taskId: number, formId: number): void | Promise<void>;
+    public onFormFlash(): void {
+        return;
+    }
+
+    /** --- 任务开始事件 --- */
+    public onTaskStarted(taskId: number): void | Promise<void>;
+    public onTaskStarted(): void | Promise<void> {
+        return;
+    }
+
+    /** --- 任务结束事件 --- */
+    public onTaskEnded(taskId: number): void | Promise<void>;
+    public onTaskEnded(): void | Promise<void> {
+        return;
+    }
+
+    /** --- launcher 文件夹名称修改事件 --- */
+    public onLauncherFolderNameChanged(id: string, name: string): void | Promise<void>;
+    public onLauncherFolderNameChanged(): void {
+        return;
+    }
+
 }
 
-export async function init(): Promise<void> {
-    // --- 通过标签加载库 ---
-    const paths: string[] = [
-        loader.cdn + '/npm/vue@3.2.31/dist/vue.global.min.js'
-    ];
-    // --- 判断 ResizeObserver 是否存在 ---
-    let ro = true;
-    // ResizeObserver = undefined;
-    if (!((window as any).ResizeObserver)) {
-        ro = false;
-        paths.push(loader.cdn + '/npm/@juggle/resize-observer@3.3.1/lib/exports/resize-observer.umd.min.js');
-    }
-    // --- 加载 vue 以及必要库 ---
-    await loader.loadScripts(paths);
-    // --- 处理 ResizeObserver ---
-    if (!ro) {
-        (window as any).ResizeObserverEntry = (window as any).ResizeObserver.ResizeObserverEntry;
-        (window as any).ResizeObserver = (window as any).ResizeObserver.ResizeObserver;
-    }
-    // --- map 加载库 ---
-    const map: Record<string, string> = {
-        'jszip': loader.cdn + '/npm/jszip@3.10.0/dist/jszip.min'
-    };
-    // --- 加载 clickgo 主程序 ---
-    const after = '?' + Math.random().toString();
-    const files = await loader.sniffFiles('clickgo.js', {
-        'dir': __dirname + '/',
-        'after': after,
-        'afterIgnore': new RegExp('^' + loader.cdn.replace(/\./g, '\\.')),
-        'map': map
+export function launcher(boot: AbstractBoot): void {
+    (async function() {
+        // --- 通过标签加载库 ---
+        const paths: string[] = [
+            loader.cdn + '/npm/vue@3.2.40/dist/vue.global.prod.min.js'
+        ];
+        // --- 判断 ResizeObserver 是否存在 ---
+        let ro = true;
+        // ResizeObserver = undefined;
+        if (!((window as any).ResizeObserver)) {
+            ro = false;
+            paths.push(loader.cdn + '/npm/@juggle/resize-observer@3.4.0/lib/exports/resize-observer.umd.min.js');
+        }
+        // --- 加载 vue 以及必要库 ---
+        await loader.loadScripts(paths);
+        // --- 处理 ResizeObserver ---
+        if (!ro) {
+            (window as any).ResizeObserverEntry = (window as any).ResizeObserver.ResizeObserverEntry;
+            (window as any).ResizeObserver = (window as any).ResizeObserver.ResizeObserver;
+        }
+        // --- map 加载库 ---
+        const map: Record<string, string> = {
+            'jszip': loader.cdn + '/npm/jszip@3.10.0/dist/jszip.min'
+        };
+        // --- 加载 clickgo 主程序 ---
+        const after = '?' + Math.random().toString();
+        const files = await loader.sniffFiles('clickgo.js', {
+            'dir': __dirname + '/',
+            'after': after,
+            'afterIgnore': new RegExp('^' + loader.cdn.replace(/\./g, '\\.')),
+            'map': map
+        });
+        const cg = loader.require('clickgo', files, {
+            'dir': __dirname + '/',
+            'map': map
+        })[0] as typeof import('../dist/clickgo');
+        // --- 加载 clickgo 的 global css ---
+        try {
+            const style = await (await fetch(__dirname + '/global.css' + (!__dirname.startsWith(loader.cdn) ? after : ''))).text();
+            document.getElementById('cg-global')?.insertAdjacentHTML('afterbegin', style);
+        }
+        catch {
+            alert(`ClickGo: "${__dirname}/global.css'" failed.`);
+        }
+        // --- 设置一些项目 ---
+        clickgo = cg;
+        control = cg.control;
+        core = cg.core;
+        dom = cg.dom;
+        form = cg.form;
+        fs = cg.fs;
+        native = cg.native;
+        task = cg.task;
+        theme = cg.theme;
+        tool = cg.tool;
+        zip = cg.zip;
+        core.boot = boot;
+        // --- 执行回调 ---
+        await boot.main();
+    })().catch(function() {
+        return;
     });
-    const cg = loader.require('clickgo', files, {
-        'dir': __dirname + '/',
-        'map': map
-    })[0] as typeof import('../dist/clickgo');
-    // --- 加载 clickgo 的 global css ---
-    try {
-        const style = await (await fetch(__dirname + '/global.css' + (!__dirname.startsWith(loader.cdn) ? after : ''))).text();
-        document.getElementById('cg-global')?.insertAdjacentHTML('afterbegin', style);
-    }
-    catch {
-        alert(`ClickGo: "${__dirname}/global.css'" failed.`);
-    }
-    // --- 设置一些项目 ---
-    clickgo = cg;
-    control = cg.control;
-    core = cg.core;
-    dom = cg.dom;
-    form = cg.form;
-    fs = cg.fs;
-    native = cg.native;
-    task = cg.task;
-    theme = cg.theme;
-    tool = cg.tool;
-    zip = cg.zip;
 }

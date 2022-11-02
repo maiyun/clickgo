@@ -1,22 +1,21 @@
-  
-<form v-model:width="width" v-model:height="height" v-model:left="left" v-model:top="top" title="Bar" border="none" :resize="false" background="transparent">
+  <form title="Bar" border="none" :resize="false" background="transparent">
     <task :position="position">
         <task-item @click="showLauncher">
             <img src="/clickgo/icon.png" style="width: 16px; height: 16px;" />
         </task-item>
         <task-item v-for="(app, appIndex) of apps" :selected="app.selected" :opened="app.opened" :multi="app.formCount > 1" @click="itemClick(appIndex)" @mousedown="$event.stopPropagation()" @touchstart="$event.stopPropagation()">
-            <img :src="app.icon" style="width: 16px; height: 16px;" />
+            <img :src="app.icon || '/clickgo/icon.png'" style="width: 16px; height: 16px;" />
             <template v-if="app.formCount > 1" v-slot:pop>
                 <menulist>
                     <menulist-item v-for="(form, formId) of app.forms" @click="changeFocus(formId)">
-                        <img :src="form.icon" style="width: 16px; height: 16px;" /><label style="margin-left: 10px;">{{form.title}}</label>
+                        <img :src="form.icon || app.icon" style="width: 16px; height: 16px;" /><label style="margin-left: 10px;">{{form.title}}</label>
                     </menulist-item>
                 </menulist>
             </template>
             <template v-slot:contextmenu>
                 <menulist>
                     <menulist-item @click="run(app.path)">
-                        <img :src="app.icon" style="width: 16px; height: 16px;" /><label style="margin-left: 10px;">{{app.name}}</label>
+                        <img :src="app.icon || '/clickgo/icon.png'" style="width: 16px; height: 16px;" /><label style="margin-left: 10px;">{{app.name}}</label>
                     </menulist-item>
                     <menulist-split v-if="app.formCount > 0"></menulist-split>
                     <menulist-item @click="pin(appIndex)">

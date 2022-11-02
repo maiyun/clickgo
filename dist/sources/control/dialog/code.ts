@@ -1,37 +1,28 @@
 import * as clickgo from 'clickgo';
-import * as types from '~/types/index';
 
-export const props = {
-    'direction': {
-        'default': 'h'
-    },
-    'gutter': {
-        'default': undefined
-    },
+export default class extends clickgo.control.AbstractControl {
 
-    'buttons': {
-        'default': ['OK']
-    }
-};
+    public padding: string = '';
 
-export const data = {
-    'padding': ''
-};
+    public props = {
+        'direction': 'h',
+        'gutter': undefined,
 
-export const computed = {
-    'paddingMargin': function(this: types.IVControl): string {
+        'buttons': ['OK']
+    };
+
+    public get paddingMargin(): string {
         return this.padding.replace(/(\w+)/g, '-$1');
     }
-};
 
-export const methods = {
-    click: function(this: types.IVControl, item: string): void {
-        this.$emit('select', item);
+    public click(item: string): void {
+        this.emit('select', item);
     }
-};
 
-export const mounted = function(this: types.IVControl): void {
-    clickgo.dom.watchStyle(this.$el, 'padding', (n, v) => {
-        this.padding = v;
-    }, true);
-};
+    public onMounted(): void {
+        clickgo.dom.watchStyle(this.element, 'padding', (n, v) => {
+            this.padding = v;
+        }, true);
+    }
+
+}

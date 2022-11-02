@@ -1,32 +1,53 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.methods = exports.data = exports.watch = exports.computed = exports.props = void 0;
 const clickgo = require("clickgo");
-exports.props = {
-    'disabled': {
-        'default': false
-    },
-    'sort': {
-        'default': 'kind'
-    },
-    'type': {
-        'default': 'property'
-    },
-    'desc': {
-        'default': true
-    },
-    'modelValue': {
-        'default': []
+class default_1 extends clickgo.control.AbstractControl {
+    constructor() {
+        super(...arguments);
+        this.props = {
+            'disabled': false,
+            'sort': 'kind',
+            'type': 'property',
+            'desc': true,
+            'modelValue': []
+        };
+        this.direction = 'h';
+        this.localeData = {
+            'en': {
+                'reset': 'Reset',
+                'description': 'Description'
+            },
+            'sc': {
+                'reset': '重置',
+                'description': '说明'
+            },
+            'tc': {
+                'reset': '重置',
+                'description': '說明'
+            },
+            'ja': {
+                'reset': 'リセット',
+                'description': '形容'
+            }
+        };
+        this.sortData = 'kind';
+        this.typeData = 'property';
+        this.descData = true;
+        this.selectedTitle = '';
+        this.selectedSub = '';
+        this.bigClosed = [];
+        this.opened = [];
+        this.title = '';
+        this.description = '';
+        this.dockValue = '';
     }
-};
-exports.computed = {
-    'isDisabled': function () {
-        return clickgo.tool.getBoolean(this.disabled);
-    },
-    'isDesc': function () {
+    get isDisabled() {
+        return clickgo.tool.getBoolean(this.props.disabled);
+    }
+    get isDesc() {
         return clickgo.tool.getBoolean(this.descData);
-    },
-    'subValue': function () {
+    }
+    get subValue() {
         return (item2, i3, isDefault = false) => {
             if (isDefault) {
                 return item2.default.split(',')[i3] ? item2.default.split(',')[i3].trim() : '';
@@ -35,14 +56,14 @@ exports.computed = {
                 return item2.value.split(',')[i3] ? item2.value.split(',')[i3].trim() : '';
             }
         };
-    },
-    'value': function () {
+    }
+    get value() {
         var _a, _b, _c, _d, _e;
         const list = [];
         const bigList = {};
         const bigTitle = [];
-        for (const item of this.modelValue) {
-            const kind = this.sortData === 'letter' ? undefined : item.kind;
+        for (const item of this.props.modelValue) {
+            const kind = this.sortData === 'letter' ? '' : item.kind;
             const type = (_a = item.type) !== null && _a !== void 0 ? _a : 'property';
             if (type !== this.typeData) {
                 continue;
@@ -80,87 +101,34 @@ exports.computed = {
         }
         return list;
     }
-};
-exports.watch = {
-    'sort': {
-        handler: function () {
-            this.sortData = this.sort;
-        },
-        'immediate': true
-    },
-    'type': {
-        handler: function () {
-            this.typeData = this.type;
-        },
-        'immediate': true
-    },
-    'desc': {
-        handler: function () {
-            this.descData = this.desc;
-        },
-        'immediate': true
+    contextmenu(e) {
+        if (clickgo.dom.hasTouchButMouse(e)) {
+            return;
+        }
+        clickgo.form.showPop(this.refs.content, this.refs.pop, e);
     }
-};
-exports.data = {
-    'direction': 'h',
-    'localeData': {
-        'en': {
-            'reset': 'Reset',
-            'description': 'Description'
-        },
-        'sc': {
-            'reset': '重置',
-            'description': '说明'
-        },
-        'tc': {
-            'reset': '重置',
-            'description': '說明'
-        },
-        'ja': {
-            'reset': 'リセット',
-            'description': '形容'
-        }
-    },
-    'sortData': 'kind',
-    'typeData': 'property',
-    'descData': true,
-    'selectedTitle': undefined,
-    'selectedSub': undefined,
-    'bigClosed': [],
-    'opened': [],
-    'title': '',
-    'description': '',
-    'dockValue': ''
-};
-exports.methods = {
-    contextmenu: function (e) {
+    down(e) {
         if (clickgo.dom.hasTouchButMouse(e)) {
             return;
         }
-        clickgo.form.showPop(this.$refs.content, this.$refs.pop, e);
-    },
-    down: function (e) {
-        if (clickgo.dom.hasTouchButMouse(e)) {
-            return;
-        }
-        if (this.$refs.content.dataset.cgPopOpen !== undefined) {
-            clickgo.form.hidePop(this.$refs.content);
+        if (this.refs.content.dataset.cgPopOpen !== undefined) {
+            clickgo.form.hidePop(this.refs.content);
         }
         if (e instanceof TouchEvent) {
             clickgo.dom.bindLong(e, () => {
-                clickgo.form.showPop(this.$refs.content, this.$refs.pop, e);
+                clickgo.form.showPop(this.refs.content, this.refs.pop, e);
             });
         }
-    },
-    changeSort: function (sort) {
+    }
+    changeSort(sort) {
         this.sortData = sort;
-        this.$emit('update:sort', sort);
-    },
-    changeType: function (type) {
+        this.emit('update:sort', sort);
+    }
+    changeType(type) {
         this.typeData = type;
-        this.$emit('update:type', type);
-    },
-    select: function (e, item2, item3, desc) {
+        this.emit('update:type', type);
+    }
+    select(e, item2, item3, desc) {
         if (clickgo.dom.hasTouchButMouse(e)) {
             return;
         }
@@ -168,25 +136,25 @@ exports.methods = {
         this.selectedSub = item3;
         this.title = item3 !== null && item3 !== void 0 ? item3 : item2;
         this.description = desc;
-    },
-    bigToggle: function (bigTitle) {
+    }
+    bigToggle(bigTitle) {
         const io = this.bigClosed.indexOf(bigTitle);
         if (io === -1) {
             this.bigClosed.push(bigTitle);
             return;
         }
         this.bigClosed.splice(io, 1);
-    },
-    toggle: function (title) {
+    }
+    toggle(title) {
         const io = this.opened.indexOf(title);
         if (io === -1) {
             this.opened.push(title);
             return;
         }
         this.opened.splice(io, 1);
-    },
-    update: function (value) {
-        for (const item of this.modelValue) {
+    }
+    update(value) {
+        for (const item of this.props.modelValue) {
             if (item.title !== this.selectedTitle) {
                 continue;
             }
@@ -195,7 +163,7 @@ exports.methods = {
                     continue;
                 }
                 item.value = value;
-                this.$emit('update:modelValue', this.modelValue);
+                this.emit('update:modelValue', this.props.modelValue);
             }
             else {
                 const arr = item.value.split(',');
@@ -216,17 +184,17 @@ exports.methods = {
                     }
                     arr[i] = value;
                     item.value = arr.join(', ');
-                    this.$emit('update:modelValue', this.modelValue);
+                    this.emit('update:modelValue', this.props.modelValue);
                 }
             }
         }
-    },
-    dock: function (e) {
+    }
+    dock(e) {
         if (e.currentTarget.dataset.cgPopOpen !== undefined) {
             clickgo.form.hidePop();
             return;
         }
-        for (const item of this.modelValue) {
+        for (const item of this.props.modelValue) {
             if (item.title !== this.selectedTitle) {
                 continue;
             }
@@ -243,14 +211,14 @@ exports.methods = {
                 }
             }
         }
-        clickgo.form.showPop(e.currentTarget, this.$refs.dock, 'v');
-    },
-    dockSelect: function (value) {
+        clickgo.form.showPop(e.currentTarget, this.refs.dock, 'v');
+    }
+    dockSelect(value) {
         this.update(value);
         clickgo.form.hidePop();
-    },
-    reset: function () {
-        for (const item of this.modelValue) {
+    }
+    reset() {
+        for (const item of this.props.modelValue) {
             if (item.title !== this.selectedTitle) {
                 continue;
             }
@@ -259,7 +227,7 @@ exports.methods = {
                     continue;
                 }
                 item.value = item.default;
-                this.$emit('update:modelValue', this.modelValue);
+                this.emit('update:modelValue', this.props.modelValue);
             }
             else {
                 const arr = item.value.split(',');
@@ -281,9 +249,27 @@ exports.methods = {
                     }
                     arr[i] = def;
                     item.value = arr.join(', ');
-                    this.$emit('update:modelValue', this.modelValue);
+                    this.emit('update:modelValue', this.props.modelValue);
                 }
             }
         }
     }
-};
+    onMounted() {
+        this.watch('sort', () => {
+            this.sortData = this.props.sort;
+        }, {
+            'immediate': true
+        });
+        this.watch('type', () => {
+            this.typeData = this.props.type;
+        }, {
+            'immediate': true
+        });
+        this.watch('desc', () => {
+            this.descData = this.props.desc;
+        }, {
+            'immediate': true
+        });
+    }
+}
+exports.default = default_1;
