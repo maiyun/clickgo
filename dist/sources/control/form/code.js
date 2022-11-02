@@ -100,6 +100,13 @@ class default_1 extends clickgo.control.AbstractControl {
     get topComp() {
         return typeof this.props.top === 'string' ? parseInt(this.props.top) : this.props.top;
     }
+    get isMask() {
+        var _a;
+        if (this.isInside) {
+            return false;
+        }
+        return (_a = this.parentByName('root')) === null || _a === void 0 ? void 0 : _a.isMask;
+    }
     moveMethod(e, custom = false) {
         if (clickgo.dom.hasTouchButMouse(e)) {
             return;

@@ -78,7 +78,12 @@ const info: {
 /** --- 窗体的抽象类 --- */
 export class AbstractForm {
 
-    public static async create(data?: Record<string, any>): Promise<AbstractForm | number> {
+    /**
+     * --- 创建窗体工厂函数 ---
+     * @param data 要传递的对象
+     * @param layout 是否使用此参数替换 layout 值
+     */
+    public static async create(data?: Record<string, any>, layout?: string): Promise<AbstractForm | number> {
         const frm = new this();
         /** --- 要挂载的 vue 参数 --- */
         const code: types.IFormCreateCode = {
@@ -118,9 +123,12 @@ export class AbstractForm {
         for (const item of cdata) {
             code.data![item[0]] = item[1];
         }
-        const layout = task.list[frm.taskId].app.files[frm.filename.slice(0, -2) + 'xml'];
-        if (typeof layout !== 'string') {
-            return 0;
+        if (!layout) {
+            const l = task.list[frm.taskId].app.files[frm.filename.slice(0, -2) + 'xml'];
+            if (typeof l !== 'string') {
+                return 0;
+            }
+            layout = l;
         }
         const prot = tool.getClassPrototype(frm);
         code.methods = prot.method;
@@ -284,6 +292,26 @@ export class AbstractForm {
     }
 
     // --- 以下为窗体有，但 control 没有 ---
+
+    /**
+     * --- 无 js 文件的窗体创建 ---
+     * @param path 包内相对于本窗体的路径或包内绝对路径，不含扩展名
+     * @param data 要传递的值
+     */
+    public async createForm(path: string, data?: Record<string, any>): Promise<AbstractForm | number> {
+        path = tool.urlResolve(this.filename, path);
+        const taskId = this.taskId;
+        const cls = class extends AbstractForm {
+            public get filename(): string {
+                return path + '.js';
+            }
+
+            public get taskId(): number {
+                return taskId;
+            }
+        };
+        return cls.create(data);
+    }
 
     /** --- 是否是置顶 --- */
     public get topMost(): boolean {
@@ -1106,40 +1134,39 @@ export function changeFocus(formId: number = 0): void {
     // --- 获取所属的 taskId ---
     const taskId: number = parseInt(el.getAttribute('data-task-id') ?? '0');
     const t = task.list[taskId];
-    // --- 如果不是自定义的 zindex，则设置 zIndex 为最大 ---
-    if (t.forms[formId].vroot._topMost) {
-        t.forms[formId].vroot.$refs.form.$data.zIndexData = ++info.topLastZIndex;
-    }
-    else {
-        t.forms[formId].vroot.$refs.form.$data.zIndexData = ++info.lastZIndex;
-    }
     // --- 检测是否有 dialog mask 层 ---
     if (t.runtime.dialogFormIds.length) {
         // --- 有 dialog ---
         const dialogFormId = t.runtime.dialogFormIds[t.runtime.dialogFormIds.length - 1];
-        // --- 的判断点击的窗体是不是就是 dialog mask 窗体本身 ---
+        // --- 如果是最小化状态的话，需要还原 ---
+        if (get(dialogFormId)!.stateMin) {
+            min(dialogFormId);
+        }
+        if (t.forms[dialogFormId].vroot._topMost) {
+            t.forms[dialogFormId].vroot.$refs.form.$data.zIndexData = ++info.topLastZIndex;
+        }
+        else {
+            t.forms[dialogFormId].vroot.$refs.form.$data.zIndexData = ++info.lastZIndex;
+        }
+        // --- 开启 focus ---
+        t.forms[dialogFormId].vapp._container.dataset.formFocus = '';
+        t.forms[dialogFormId].vroot._formFocus = true;
+        // --- 触发 formFocused 事件 ---
+        core.trigger('formFocused', taskId, dialogFormId);
+        // --- 判断点击的窗体是不是就是 dialog mask 窗体本身 ---
         if (dialogFormId !== formId) {
-            // --- 如果是最小化状态的话，需要还原 ---
-            if (get(dialogFormId)!.stateMin) {
-                min(dialogFormId);
-            }
-            // --- 如果不是自定义的 zindex，则设置 zIndex 为最大 ---
-            if (task.list[taskId].forms[dialogFormId].vroot._topMost) {
-                task.list[taskId].forms[dialogFormId].vroot.$refs.form.$data.zIndexData = ++info.topLastZIndex;
-            }
-            else {
-                task.list[taskId].forms[dialogFormId].vroot.$refs.form.$data.zIndexData = ++info.lastZIndex;
-            }
-            // --- 开启 focus ---
-            task.list[taskId].forms[dialogFormId].vapp._container.dataset.formFocus = '';
-            task.list[taskId].forms[dialogFormId].vroot._formFocus = true;
-            // --- 触发 formFocused 事件 ---
-            core.trigger('formFocused', taskId, dialogFormId);
             // --- 闪烁 ---
             clickgo.form.flash(dialogFormId, taskId);
         }
     }
     else {
+        // --- 没有 dialog，才修改 zindex ---
+        if (t.forms[formId].vroot._topMost) {
+            t.forms[formId].vroot.$refs.form.$data.zIndexData = ++info.topLastZIndex;
+        }
+        else {
+            t.forms[formId].vroot.$refs.form.$data.zIndexData = ++info.lastZIndex;
+        }
         // --- 正常开启 focus ---
         t.forms[formId].vapp._container.dataset.formFocus = '';
         t.forms[formId].vroot._formFocus = true;
@@ -2118,7 +2145,8 @@ export function dialog(opt: string | types.IFormDialogOptions): Promise<string> 
                 'content': opt
             };
         }
-        const taskId = opt.taskId;
+        const nopt = opt;
+        const taskId = nopt.taskId;
         if (!taskId) {
             resolve('');
             return;
@@ -2129,36 +2157,42 @@ export function dialog(opt: string | types.IFormDialogOptions): Promise<string> 
             return;
         }
         const locale = t.locale.lang || core.config.locale;
-        if (opt.buttons === undefined) {
-            opt.buttons = [info.locale[locale]?.ok ?? info.locale['en'].ok];
+        if (nopt.buttons === undefined) {
+            nopt.buttons = [info.locale[locale]?.ok ?? info.locale['en'].ok];
         }
-        create({
-            'code': {
-                data: {
-                    'buttons': opt.buttons
-                },
-                methods: {
-                    select: function(this: types.IVue, button: string) {
-                        const event = {
-                            'go': true,
-                            preventDefault: function() {
-                                this.go = false;
-                            }
-                        };
-                        (opt as types.IFormDialogOptions).select?.(event as unknown as Event, button);
-                        if (event.go) {
-                            this.dialogResult = button;
-                            close(this.formId);
-                        }
+        const cls = class extends AbstractForm {
+            public buttons = nopt.buttons;
+
+            public get taskId(): number {
+                return taskId;
+            }
+
+            public select(button: string): void {
+                const event = {
+                    'go': true,
+                    preventDefault: function() {
+                        this.go = false;
                     }
+                };
+                nopt.select?.(event as unknown as Event, button);
+                if (event.go) {
+                    this.dialogResult = button;
+                    close(this.formId);
                 }
-            },
-            'layout': `<form title="${opt.title ?? 'dialog'}" :min="false" :max="false" :resize="false" border="${opt.title ? 'normal' : 'plain'}" direction="v"><dialog :buttons="buttons" @select="select"${opt.direction ? ` direction="${opt.direction}"` : ''}>${opt.content}</dialog></form>`,
-            'taskId': taskId
-        }).then(async (fid: number) => {
-            resolve(await t.forms[fid].vroot.showDialog());
-        }).catch((e) => {
-            throw e;
+            }
+        };
+        cls.create(undefined, `<form title="${nopt.title ?? 'dialog'}" min="false" max="false" resize="false" height="0" border="${nopt.title ? 'normal' : 'plain'}" direction="v"><dialog :buttons="buttons" @select="select"${nopt.direction ? ` direction="${nopt.direction}"` : ''}>${nopt.content}</dialog></form>`).then((frm) => {
+            if (typeof frm === 'number') {
+                resolve('');
+                return;
+            }
+            frm.showDialog().then((v) => {
+                resolve(v);
+            }).catch(() => {
+                resolve('');
+            });
+        }).catch(() => {
+            resolve('');
         });
     });
 }

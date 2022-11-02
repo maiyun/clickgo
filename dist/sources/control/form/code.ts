@@ -148,6 +148,16 @@ export default class extends clickgo.control.AbstractControl {
         return typeof this.props.top === 'string' ? parseInt(this.props.top) : this.props.top;
     }
 
+    /**
+     * --- 是否在本窗体上显示遮罩层 ---
+     */
+    public get isMask(): boolean {
+        if (this.isInside) {
+            return false;
+        }
+        return this.parentByName('root')?.isMask;
+    }
+
     // --- 拖动 ---
     public moveMethod(e: MouseEvent | TouchEvent, custom: boolean = false): void {
         if (clickgo.dom.hasTouchButMouse(e)) {

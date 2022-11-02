@@ -836,6 +836,9 @@ export async function run(url: string, opt: types.ITaskRunOptions = {}): Promise
             getBoolean: function(param: boolean | string | number): boolean {
                 return clickgo.tool.getBoolean(param);
             },
+            getNumber: function(param: string | number): number {
+                return clickgo.tool.getNumber(param);
+            },
             escapeHTML: function(html: string): string {
                 return clickgo.tool.escapeHTML(html);
             },

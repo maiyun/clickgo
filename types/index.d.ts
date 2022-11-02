@@ -1,13 +1,13 @@
-export let control: typeof import('../dist/lib/control');
-export let core: typeof import('../dist/lib/core');
-export let dom: typeof import('../dist/lib/dom');
-export let form: typeof import('../dist/lib/form');
-export let fs: typeof import('../dist/lib/fs');
-export let native: typeof import('../dist/lib/native');
-export let task: typeof import('../dist/lib/task');
-export let theme: typeof import('../dist/lib/theme');
-export let tool: typeof import('../dist/lib/tool');
-export let zip: typeof import('../dist/lib/zip');
+export * as control from '../dist/lib/control';
+export * as core from '../dist/lib/core';
+export * as dom from '../dist/lib/dom';
+export * as form from '../dist/lib/form';
+export * as fs from '../dist/lib/fs';
+export * as native from '../dist/lib/native';
+export * as task from '../dist/lib/task';
+export * as theme from '../dist/lib/theme';
+export * as tool from '../dist/lib/tool';
+export * as zip from '../dist/lib/zip';
 
 export function getVersion(): string;
 export function getNative(): boolean;

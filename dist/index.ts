@@ -1,5 +1,5 @@
 // npm publish --tag dev --access public
-import * as types from '~/types';
+import * as types from '../types/index';
 
 // --- 以下不会真正加载，最终会在底部进行赋值 ---
 export let clickgo: typeof import('./clickgo');

@@ -736,6 +736,9 @@ function run(url, opt = {}) {
                 getBoolean: function (param) {
                     return clickgo.tool.getBoolean(param);
                 },
+                getNumber: function (param) {
+                    return clickgo.tool.getNumber(param);
+                },
                 escapeHTML: function (html) {
                     return clickgo.tool.escapeHTML(html);
                 },

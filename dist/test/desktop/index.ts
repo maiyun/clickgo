@@ -72,7 +72,6 @@ class Boot extends clickgo.AbstractBoot {
                 }
             ];
         }
-        alert('clickgo.getPlatform():' + clickgo.getPlatform());
         el.innerHTML = 'Running...';
         const body = document.getElementsByTagName('body')[0];
         if (clickgo.getPlatform() === 'win32' || window.location.href.includes('?single')) {

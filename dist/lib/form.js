@@ -58,7 +58,7 @@ class AbstractForm {
         this._firstShow = true;
         this.dialogResult = '';
     }
-    static create(data) {
+    static create(data, layout) {
         return __awaiter(this, void 0, void 0, function* () {
             const frm = new this();
             const code = {
@@ -98,9 +98,12 @@ class AbstractForm {
             for (const item of cdata) {
                 code.data[item[0]] = item[1];
             }
-            const layout = task.list[frm.taskId].app.files[frm.filename.slice(0, -2) + 'xml'];
-            if (typeof layout !== 'string') {
-                return 0;
+            if (!layout) {
+                const l = task.list[frm.taskId].app.files[frm.filename.slice(0, -2) + 'xml'];
+                if (typeof l !== 'string') {
+                    return 0;
+                }
+                layout = l;
             }
             const prot = tool.getClassPrototype(frm);
             code.methods = prot.method;
@@ -196,6 +199,21 @@ class AbstractForm {
             return;
         }
         core.trigger(name, this.taskId, this.formId, param1, param2);
+    }
+    createForm(path, data) {
+        return __awaiter(this, void 0, void 0, function* () {
+            path = tool.urlResolve(this.filename, path);
+            const taskId = this.taskId;
+            const cls = class extends AbstractForm {
+                get filename() {
+                    return path + '.js';
+                }
+                get taskId() {
+                    return taskId;
+                }
+            };
+            return cls.create(data);
+        });
     }
     get topMost() {
         return false;
@@ -812,31 +830,31 @@ function changeFocus(formId = 0) {
     }
     const taskId = parseInt((_b = el.getAttribute('data-task-id')) !== null && _b !== void 0 ? _b : '0');
     const t = task.list[taskId];
-    if (t.forms[formId].vroot._topMost) {
-        t.forms[formId].vroot.$refs.form.$data.zIndexData = ++info.topLastZIndex;
-    }
-    else {
-        t.forms[formId].vroot.$refs.form.$data.zIndexData = ++info.lastZIndex;
-    }
     if (t.runtime.dialogFormIds.length) {
         const dialogFormId = t.runtime.dialogFormIds[t.runtime.dialogFormIds.length - 1];
+        if (get(dialogFormId).stateMin) {
+            min(dialogFormId);
+        }
+        if (t.forms[dialogFormId].vroot._topMost) {
+            t.forms[dialogFormId].vroot.$refs.form.$data.zIndexData = ++info.topLastZIndex;
+        }
+        else {
+            t.forms[dialogFormId].vroot.$refs.form.$data.zIndexData = ++info.lastZIndex;
+        }
+        t.forms[dialogFormId].vapp._container.dataset.formFocus = '';
+        t.forms[dialogFormId].vroot._formFocus = true;
+        core.trigger('formFocused', taskId, dialogFormId);
         if (dialogFormId !== formId) {
-            if (get(dialogFormId).stateMin) {
-                min(dialogFormId);
-            }
-            if (task.list[taskId].forms[dialogFormId].vroot._topMost) {
-                task.list[taskId].forms[dialogFormId].vroot.$refs.form.$data.zIndexData = ++info.topLastZIndex;
-            }
-            else {
-                task.list[taskId].forms[dialogFormId].vroot.$refs.form.$data.zIndexData = ++info.lastZIndex;
-            }
-            task.list[taskId].forms[dialogFormId].vapp._container.dataset.formFocus = '';
-            task.list[taskId].forms[dialogFormId].vroot._formFocus = true;
-            core.trigger('formFocused', taskId, dialogFormId);
             clickgo.form.flash(dialogFormId, taskId);
         }
     }
     else {
+        if (t.forms[formId].vroot._topMost) {
+            t.forms[formId].vroot.$refs.form.$data.zIndexData = ++info.topLastZIndex;
+        }
+        else {
+            t.forms[formId].vroot.$refs.form.$data.zIndexData = ++info.lastZIndex;
+        }
         t.forms[formId].vapp._container.dataset.formFocus = '';
         t.forms[formId].vroot._formFocus = true;
         core.trigger('formFocused', taskId, formId);
@@ -1648,7 +1666,8 @@ function dialog(opt) {
                 'content': opt
             };
         }
-        const taskId = opt.taskId;
+        const nopt = opt;
+        const taskId = nopt.taskId;
         if (!taskId) {
             resolve('');
             return;
@@ -1659,37 +1678,44 @@ function dialog(opt) {
             return;
         }
         const locale = t.locale.lang || core.config.locale;
-        if (opt.buttons === undefined) {
-            opt.buttons = [(_b = (_a = info.locale[locale]) === null || _a === void 0 ? void 0 : _a.ok) !== null && _b !== void 0 ? _b : info.locale['en'].ok];
+        if (nopt.buttons === undefined) {
+            nopt.buttons = [(_b = (_a = info.locale[locale]) === null || _a === void 0 ? void 0 : _a.ok) !== null && _b !== void 0 ? _b : info.locale['en'].ok];
         }
-        create({
-            'code': {
-                data: {
-                    'buttons': opt.buttons
-                },
-                methods: {
-                    select: function (button) {
-                        var _a, _b;
-                        const event = {
-                            'go': true,
-                            preventDefault: function () {
-                                this.go = false;
-                            }
-                        };
-                        (_b = (_a = opt).select) === null || _b === void 0 ? void 0 : _b.call(_a, event, button);
-                        if (event.go) {
-                            this.dialogResult = button;
-                            close(this.formId);
-                        }
+        const cls = class extends AbstractForm {
+            constructor() {
+                super(...arguments);
+                this.buttons = nopt.buttons;
+            }
+            get taskId() {
+                return taskId;
+            }
+            select(button) {
+                var _a;
+                const event = {
+                    'go': true,
+                    preventDefault: function () {
+                        this.go = false;
                     }
+                };
+                (_a = nopt.select) === null || _a === void 0 ? void 0 : _a.call(nopt, event, button);
+                if (event.go) {
+                    this.dialogResult = button;
+                    close(this.formId);
                 }
-            },
-            'layout': `<form title="${(_c = opt.title) !== null && _c !== void 0 ? _c : 'dialog'}" :min="false" :max="false" :resize="false" border="${opt.title ? 'normal' : 'plain'}" direction="v"><dialog :buttons="buttons" @select="select"${opt.direction ? ` direction="${opt.direction}"` : ''}>${opt.content}</dialog></form>`,
-            'taskId': taskId
-        }).then((fid) => __awaiter(this, void 0, void 0, function* () {
-            resolve(yield t.forms[fid].vroot.showDialog());
-        })).catch((e) => {
-            throw e;
+            }
+        };
+        cls.create(undefined, `<form title="${(_c = nopt.title) !== null && _c !== void 0 ? _c : 'dialog'}" min="false" max="false" resize="false" height="0" border="${nopt.title ? 'normal' : 'plain'}" direction="v"><dialog :buttons="buttons" @select="select"${nopt.direction ? ` direction="${nopt.direction}"` : ''}>${nopt.content}</dialog></form>`).then((frm) => {
+            if (typeof frm === 'number') {
+                resolve('');
+                return;
+            }
+            frm.showDialog().then((v) => {
+                resolve(v);
+            }).catch(() => {
+                resolve('');
+            });
+        }).catch(() => {
+            resolve('');
         });
     });
 }

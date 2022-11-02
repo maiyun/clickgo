@@ -11,9 +11,9 @@
                 <button @click="openForm('control', 'tab')">Tab</button>
                 <button @click="openForm('control', 'label')">Label</button>
                 <button @click="openForm('control', 'loading')">Loading</button>
-                <button @click="openForm('control', 'dialog')">Dialog</button>
+                <button @click="openForm('cdialog')">Dialog</button>
                 <button @click="openForm('control', 'file')">File</button>
-                <button @click="openForm('control', 'block')">Block</button>
+                <button @click="openForm('cblock')">Block</button>
                 <button @click="openForm('control', 'overflow')">Overflow</button>
                 <button @click="openForm('control', 'view')">View</button>
                 <button @click="openForm('control', 'greatview')">Greatview</button>
@@ -30,7 +30,7 @@
             <layout class="buttons" gutter="10" direction="v">
                 <button @click="openForm('method', 'core')">Library core</button>
                 <button @click="openForm('method', 'dom')">Library dom</button>
-                <button @click="openForm('method', 'form')">Library form</button>
+                <button @click="openForm('mform')">Library form</button>
                 <button @click="openForm('method', 'fs')">Library fs</button>
                 <button @click="openForm('method', 'task')">Library task</button>
                 <button @click="openForm('method', 'theme')">Library theme</button>

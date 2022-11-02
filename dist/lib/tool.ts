@@ -631,5 +631,6 @@ export function execCommand(ac: string): void {
     if (!['copy', 'cut'].includes(ac)) {
         return;
     }
+    // eslint-disable-next-line deprecation/deprecation
     document.execCommand(ac);
 }

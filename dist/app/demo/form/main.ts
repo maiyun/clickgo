@@ -2,6 +2,8 @@ import * as clickgo from 'clickgo';
 import * as types from '~/types/index';
 
 import cformFrm from './control/form/form';
+import cdialogFrm from './control/dialog/dialog';
+import mformFrm from './method/form/form';
 
 export default class extends clickgo.form.AbstractForm {
 
@@ -10,8 +12,21 @@ export default class extends clickgo.form.AbstractForm {
     public async openForm(name: string): Promise<void> {
         let frm: number | types.AbstractForm = 0;
         switch (name) {
+            case 'cblock': {
+                frm = await this.createForm('control/block/block');
+                break;
+            }
             case 'cform': {
                 frm = await cformFrm.create();
+                break;
+            }
+            case 'cdialog': {
+                frm = await cdialogFrm.create();
+                break;
+            }
+
+            case 'mform': {
+                frm = await mformFrm.create();
                 break;
             }
         }

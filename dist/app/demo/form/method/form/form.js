@@ -9,76 +9,76 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.mounted = exports.receive = exports.methods = exports.data = void 0;
 const clickgo = require("clickgo");
-exports.data = {
-    'fid': '0',
-    'sendValue': 'sendValue',
-    'tid': '0',
-    'type': 'primary',
-    'progress': 'noraml',
-    'dialogResult': '',
-    'setTopMostValue': false
-};
-exports.methods = {
-    min: function () {
-        clickgo.form.min();
-    },
-    max: function () {
-        clickgo.form.max();
-    },
-    close: function () {
-        clickgo.form.close();
-    },
-    bindResize: function (e) {
+class default_1 extends clickgo.form.AbstractForm {
+    constructor() {
+        super(...arguments);
+        this.fid = '0';
+        this.sendValue = 'sendValue';
+        this.tid = '0';
+        this.type = 'primary';
+        this.progress = 'noraml';
+        this.dr = '';
+        this.setTopMostValue = false;
+    }
+    min() {
+        clickgo.form.min(this.formId);
+    }
+    max() {
+        clickgo.form.max(this.formId);
+    }
+    close() {
+        clickgo.form.close(this.formId);
+    }
+    bindResize(e) {
         clickgo.form.bindResize(e, 'rb');
-    },
-    bindDrag: function (e) {
+    }
+    bindDrag(e) {
         clickgo.form.bindDrag(e);
-    },
-    getTaskId: function () {
+    }
+    getTaskId() {
         clickgo.form.dialog(clickgo.form.getTaskId(parseInt(this.fid)).toString()).catch((e) => { throw e; });
-    },
-    get: function () {
+    }
+    get() {
         clickgo.form.dialog(JSON.stringify(clickgo.form.get(parseInt(this.fid)))).catch((e) => { throw e; });
-    },
-    send: function () {
+    }
+    send() {
         clickgo.form.send(parseInt(this.fid), {
             'key': this.sendValue
         });
-    },
-    changeFocus: function () {
+    }
+    changeFocus() {
         clickgo.form.changeFocus(parseInt(this.fid));
-    },
-    getList: function () {
+    }
+    getList() {
         let str = JSON.stringify(clickgo.form.getList(this.taskId));
         str = str.replace(/"icon":"(.*?)"/g, function (t, t1) {
             return `"icon":"${t1 ? (t1.slice(0, 10) + '...') : t1}"`;
         });
         clickgo.form.dialog(`<overflow direction="v" style="width: 200px; height: 80px;">${str}</overflow>`).catch((e) => { throw e; });
-    },
-    getMaxZIndexID: function () {
+    }
+    getMaxZIndexID() {
         const fid = clickgo.form.getMaxZIndexID();
         clickgo.form.dialog(JSON.stringify(fid)).catch((e) => { throw e; });
-    },
-    getRectByBorder: function () {
+    }
+    getRectByBorder() {
         const size = clickgo.form.getRectByBorder('rb');
         clickgo.form.dialog(JSON.stringify(size)).catch((e) => { throw e; });
-    },
-    showCircular: function (e) {
+    }
+    showCircular(e) {
         clickgo.form.showCircular(e.clientX, e.clientY);
-    },
-    showRectangle: function (e) {
+    }
+    showRectangle(e) {
         return __awaiter(this, void 0, void 0, function* () {
             clickgo.form.showRectangle(e.clientX, e.clientY, 'rb');
             yield clickgo.tool.sleep(1000);
             clickgo.form.hideRectangle();
         });
-    },
-    showDrag: function () {
+    }
+    showDrag() {
         return __awaiter(this, void 0, void 0, function* () {
             clickgo.form.showDrag();
-            const rect = this.$refs.showDrag.$el.getBoundingClientRect();
+            const rect = this.refs.showDrag.$el.getBoundingClientRect();
             clickgo.form.moveDrag({
                 'left': rect.left,
                 'top': rect.top,
@@ -88,8 +88,8 @@ exports.methods = {
             yield clickgo.tool.sleep(1000);
             clickgo.form.hideDrag();
         });
-    },
-    notify: function () {
+    }
+    notify() {
         return __awaiter(this, void 0, void 0, function* () {
             let icon = null;
             if (this.progress === 'progress + icon') {
@@ -117,56 +117,59 @@ exports.methods = {
                 clickgo.form.notifyProgress(nid, 100);
             }
         });
-    },
-    showPop: function (e) {
+    }
+    showPop(e) {
         if (!e.currentTarget) {
             return;
         }
-        clickgo.form.showPop(e.currentTarget, this.$refs.pop, 'v');
-    },
-    createParam: function () {
+        clickgo.form.showPop(e.currentTarget, this.refs.pop, 'v');
+    }
+    createParam() {
         clickgo.form.create({
             'layout': '<form width=\'300\' height=\'300\' title=\'normal\'></form>'
         }).catch((e) => { throw e; });
-    },
-    createPath: function () {
-        clickgo.form.create('test').then((e) => { console.log(e); }).catch((e) => { throw e; });
-    },
-    createTop: function () {
-        clickgo.form.create({
-            'layout': '<form width=\'300\' height=\'300\' title=\'normal\'></form>',
-            'topMost': true
-        }).catch((e) => { throw e; });
-    },
-    dialog: function () {
+    }
+    createPath() {
+        this.createForm('test').then((e) => { console.log(e); }).catch((e) => { throw e; });
+    }
+    createTop() {
         return __awaiter(this, void 0, void 0, function* () {
-            this.dialogResult = yield clickgo.form.dialog('Hello world!');
+            const frm = yield this.createForm('test');
+            if (typeof frm === 'number') {
+                return;
+            }
+            frm.topMost = true;
         });
-    },
-    dialogLong: function () {
+    }
+    dialog() {
         return __awaiter(this, void 0, void 0, function* () {
-            this.dialogResult = yield clickgo.form.dialog('longlonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglong');
+            this.dr = yield clickgo.form.dialog('Hello world!');
         });
-    },
-    dialogTitle: function () {
+    }
+    dialogLong() {
         return __awaiter(this, void 0, void 0, function* () {
-            this.dialogResult = yield clickgo.form.dialog({
+            this.dr = yield clickgo.form.dialog('longlonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglong');
+        });
+    }
+    dialogTitle() {
+        return __awaiter(this, void 0, void 0, function* () {
+            this.dr = yield clickgo.form.dialog({
                 'title': 'Title',
                 'content': 'Hello world!'
             });
         });
-    },
-    dialogButtons: function () {
+    }
+    dialogButtons() {
         return __awaiter(this, void 0, void 0, function* () {
-            this.dialogResult = yield clickgo.form.dialog({
+            this.dr = yield clickgo.form.dialog({
                 'content': 'Hello world!',
                 'buttons': ['A', 'B', 'C']
             });
         });
-    },
-    dialogCannot: function () {
+    }
+    dialogCannot() {
         return __awaiter(this, void 0, void 0, function* () {
-            this.dialogResult = yield clickgo.form.dialog({
+            this.dr = yield clickgo.form.dialog({
                 'content': 'Hello world!',
                 'buttons': ['Do not close', 'Close'],
                 'select': (e, button) => {
@@ -176,42 +179,41 @@ exports.methods = {
                 }
             });
         });
-    },
-    confirm: function (cancel) {
+    }
+    confirm(cancel) {
         return __awaiter(this, void 0, void 0, function* () {
-            this.dialogResult = yield clickgo.form.confirm({
+            this.dr = yield clickgo.form.confirm({
                 'content': 'Hello world?',
                 'cancel': cancel
             });
-            if (typeof this.dialogResult === 'boolean') {
-                this.dialogResult = this.dialogResult ? 'true (boolean)' : 'false (boolean)';
+            if (typeof this.dr === 'boolean') {
+                this.dr = this.dr ? 'true (boolean)' : 'false (boolean)';
             }
             else {
-                this.dialogResult = this.dialogResult.toString() + ' (number)';
+                this.dr = this.dr.toString() + ' (number)';
             }
         });
-    },
-    setTopMost: function () {
+    }
+    setTopMost() {
         this.setTopMostValue = !this.setTopMostValue;
-        clickgo.form.setTopMost(this.setTopMostValue);
-    },
-    flash: function () {
-        clickgo.form.flash();
-    },
-    hide: function () {
+        this.topMost = this.setTopMostValue;
+    }
+    flash() {
+        clickgo.form.flash(this.formId);
+    }
+    hhide() {
         return __awaiter(this, void 0, void 0, function* () {
-            clickgo.form.hide();
+            this.hide();
             yield clickgo.tool.sleep(1000);
-            clickgo.form.show();
+            this.show();
         });
     }
-};
-const receive = function (obj) {
-    clickgo.form.dialog(JSON.stringify(obj)).catch((e) => { throw e; });
-};
-exports.receive = receive;
-const mounted = function () {
-    this.fid = this.formId;
-    this.tid = this.taskId;
-};
-exports.mounted = mounted;
+    onReceive(obj) {
+        clickgo.form.dialog(JSON.stringify(obj)).catch((e) => { throw e; });
+    }
+    onMounted() {
+        this.fid = this.formId.toString();
+        this.tid = this.taskId.toString();
+    }
+}
+exports.default = default_1;
