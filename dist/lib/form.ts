@@ -352,7 +352,7 @@ export class AbstractForm {
     public show(): void {
         // --- 创建成功的窗体，可以直接显示 ---
         const v = this as any;
-        v.$refs.form.$data.showData = true;
+        v.$refs.form.$data.isShow = true;
         if (this._firstShow) {
             this._firstShow = false;
             // --- 将窗体居中 ---
@@ -365,7 +365,7 @@ export class AbstractForm {
                     v.$refs.form.setPropData('top', (area.height - v.$el.offsetHeight) / 2);
                 }
             }
-            v.$refs.form.$data.showData = true;
+            v.$refs.form.$data.isShow = true;
             changeFocus(this.formId);
         }
     }
@@ -374,6 +374,7 @@ export class AbstractForm {
      * --- 显示独占的窗体 ---
      */
     public async showDialog(): Promise<string> {
+        this.topMost = true;
         this.show();
         task.list[this.taskId].runtime.dialogFormIds.push(this.formId);
         return new Promise((resolve) => {
@@ -388,7 +389,7 @@ export class AbstractForm {
      */
     public hide(): void {
         const v = this as any;
-        v.$refs.form.$data.showData = false;
+        v.$refs.form.$data.isShow = false;
     }
 
     /**
@@ -575,7 +576,8 @@ const elements: {
         /** --- clickgo 所有的 div wrap --- */
         this.wrap.id = 'cg-wrap';
         document.getElementsByTagName('body')[0].appendChild(this.wrap);
-        if (clickgo.getNative() && (clickgo.getPlatform() === 'win32')) {
+        if (clickgo.isImmersion()) {
+            // --- 只有沉浸式模式（Windows 下非 frame 的 native）才会绑定这个事件 ---
             this.wrap.addEventListener('mouseenter', function() {
                 native.invoke('cg-mouse-ignore', native.getToken(), false);
             });
@@ -1040,10 +1042,10 @@ export function get(formId: number): types.IFormInfo | null {
     return {
         'taskId': taskId,
         'title': item.vroot.$refs.form.title,
-        'icon': item.vroot.$refs.form.iconData,
+        'icon': item.vroot.$refs.form.iconDataUrl,
         'stateMax': item.vroot.$refs.form.stateMaxData,
         'stateMin': item.vroot.$refs.form.stateMinData,
-        'show': item.vroot.$refs.form.showData,
+        'show': item.vroot.$refs.form.isShow,
         'focus': item.vroot.formFocus
     };
 }
@@ -1076,10 +1078,10 @@ export function getList(taskId: number): Record<string, types.IFormInfo> {
         list[fid] = {
             'taskId': taskId,
             'title': item.vroot.$refs.form.title,
-            'icon': item.vroot.$refs.form.iconData,
+            'icon': item.vroot.$refs.form.iconDataUrl,
             'stateMax': item.vroot.$refs.form.stateMaxData,
             'stateMin': item.vroot.$refs.form.stateMinData,
-            'show': item.vroot.$refs.form.showData,
+            'show': item.vroot.$refs.form.isShow,
             'focus': item.vroot.formFocus
         };
     }
@@ -1143,10 +1145,10 @@ export function changeFocus(formId: number = 0): void {
             min(dialogFormId);
         }
         if (t.forms[dialogFormId].vroot._topMost) {
-            t.forms[dialogFormId].vroot.$refs.form.$data.zIndexData = ++info.topLastZIndex;
+            t.forms[dialogFormId].vroot.$refs.form.$data.zIndex = ++info.topLastZIndex;
         }
         else {
-            t.forms[dialogFormId].vroot.$refs.form.$data.zIndexData = ++info.lastZIndex;
+            t.forms[dialogFormId].vroot.$refs.form.$data.zIndex = ++info.lastZIndex;
         }
         // --- 开启 focus ---
         t.forms[dialogFormId].vapp._container.dataset.formFocus = '';
@@ -1162,10 +1164,10 @@ export function changeFocus(formId: number = 0): void {
     else {
         // --- 没有 dialog，才修改 zindex ---
         if (t.forms[formId].vroot._topMost) {
-            t.forms[formId].vroot.$refs.form.$data.zIndexData = ++info.topLastZIndex;
+            t.forms[formId].vroot.$refs.form.$data.zIndex = ++info.topLastZIndex;
         }
         else {
-            t.forms[formId].vroot.$refs.form.$data.zIndexData = ++info.lastZIndex;
+            t.forms[formId].vroot.$refs.form.$data.zIndex = ++info.lastZIndex;
         }
         // --- 正常开启 focus ---
         t.forms[formId].vapp._container.dataset.formFocus = '';
@@ -1824,13 +1826,13 @@ export function remove(formId: number): boolean {
     let icon = '';
     if (task.list[taskId].forms[formId]) {
         title = task.list[taskId].forms[formId].vroot.$refs.form.title;
-        icon = task.list[taskId].forms[formId].vroot.$refs.form.iconData;
+        icon = task.list[taskId].forms[formId].vroot.$refs.form.iconDataUrl;
         const io = task.list[taskId].runtime.dialogFormIds.indexOf(formId);
         if (io > -1) {
             // --- 取消 dialog mask 记录 ---
             task.list[taskId].runtime.dialogFormIds.splice(io, 1);
         }
-        task.list[taskId].forms[formId].vroot.$refs.form.$data.showData = false;
+        task.list[taskId].forms[formId].vroot.$refs.form.$data.isShow = false;
         setTimeout(function() {
             // --- 获取最大的 z index 窗体，并让他获取焦点 ---
             const fid = getMaxZIndexID({
@@ -2026,13 +2028,13 @@ export async function create(opt: types.IFormCreateOptions): Promise<number> {
                     changeFocus(form.id);
                 }
                 else {
-                    form.vroot.$refs.form.$data.zIndexData = ++info.topLastZIndex;
+                    form.vroot.$refs.form.$data.zIndex = ++info.topLastZIndex;
                 }
             }
             else {
                 // --- 取消置顶 ---
                 form.vroot.$data._topMost = false;
-                form.vroot.$refs.form.$data.zIndexData = ++info.lastZIndex;
+                form.vroot.$refs.form.$data.zIndex = ++info.lastZIndex;
             }
             return;
         }
@@ -2068,7 +2070,7 @@ export async function create(opt: types.IFormCreateOptions): Promise<number> {
                         'current': t.current,
                         'files': t.app.files
                     });
-                    this.$refs.form.iconData = (icon instanceof Blob) ? await tool.blob2DataUrl(icon) : '';
+                    this.$refs.form.iconDataUrl = (icon instanceof Blob) ? await tool.blob2DataUrl(icon) : '';
                 }
                 // --- 完成 ---
                 resolve({
@@ -2130,7 +2132,16 @@ export async function create(opt: types.IFormCreateOptions): Promise<number> {
         }
     }
     // --- 触发 formCreated 事件 ---
-    core.trigger('formCreated', opt.taskId, formId, rtn.vroot.$refs.form.title, rtn.vroot.$refs.form.iconData);
+    core.trigger('formCreated', opt.taskId, formId, rtn.vroot.$refs.form.title, rtn.vroot.$refs.form.iconDataUrl);
+    // --- 判断是否要与 native 实体窗体大小同步 ---
+    if (clickgo.isNative() && (formId === 1) && !clickgo.isImmersion() && !clickgo.hasFrame()) {
+        rtn.vroot.$refs.form.isNativeSync = true;
+        native.invoke('cg-set-size', native.getToken(), rtn.vroot.$refs.form.$el.offsetWidth, rtn.vroot.$refs.form.$el.offsetHeight);
+        window.addEventListener('resize', function(): void {
+            rtn.vroot.$refs.form.setPropData('width', window.innerWidth);
+            rtn.vroot.$refs.form.setPropData('height', window.innerHeight);
+        });
+    }
     return formId;
 }
 

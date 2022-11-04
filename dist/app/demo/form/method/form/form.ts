@@ -4,8 +4,6 @@ export default class extends clickgo.form.AbstractForm {
 
     public fid = '0';
 
-    public sendValue = 'sendValue';
-
     public tid = '0';
 
     public type = 'primary';
@@ -42,12 +40,6 @@ export default class extends clickgo.form.AbstractForm {
 
     public get(): void {
         clickgo.form.dialog(JSON.stringify(clickgo.form.get(parseInt(this.fid)))).catch((e) => { throw e; });
-    }
-
-    public send(): void {
-        clickgo.form.send(parseInt(this.fid), {
-            'key': this.sendValue
-        });
     }
 
     public changeFocus(): void {
@@ -130,16 +122,6 @@ export default class extends clickgo.form.AbstractForm {
         clickgo.form.showPop(e.currentTarget as HTMLElement, this.refs.pop, 'v');
     }
 
-    public createParam(): void {
-        clickgo.form.create({
-            'layout': '<form width=\'300\' height=\'300\' title=\'normal\'></form>'
-        }).catch((e) => { throw e; });
-    }
-
-    public createPath(): void {
-        this.createForm('test').then((e) => { console.log(e); }).catch((e) => { throw e; });
-    }
-
     public async createTop(): Promise<void> {
         const frm = await this.createForm('test');
         if (typeof frm === 'number') {
@@ -204,10 +186,8 @@ export default class extends clickgo.form.AbstractForm {
         clickgo.form.flash(this.formId);
     }
 
-    public async hhide(): Promise<void> {
-        this.hide();
-        await clickgo.tool.sleep(1000);
-        this.show();
+    public showLauncher(): void {
+        clickgo.form.showLauncher();
     }
 
     public onReceive(obj: Record<string, any>): void {

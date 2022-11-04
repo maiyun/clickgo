@@ -1,8 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const native = require("./native");
-native.ready().then(function () {
-    native.run('../desktop/index.html?single');
-}).catch(function (e) {
-    console.log(e);
-});
+class Boot extends native.AbstractBoot {
+    main() {
+        this.run('../desktop/index.html?single');
+    }
+}
+native.launcher(new Boot());

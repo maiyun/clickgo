@@ -29,7 +29,7 @@ export function getToken(): string {
  * @param param 参数
  */
 export function invoke(name: string, ...param: any[]): any {
-    if (!clickgo.getNative()) {
+    if (!clickgo.isNative()) {
         return;
     }
     return (window as any).clickgoNative.invoke(name, ...param);

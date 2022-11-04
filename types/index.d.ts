@@ -10,8 +10,10 @@ export * as tool from '../dist/lib/tool';
 export * as zip from '../dist/lib/zip';
 
 export function getVersion(): string;
-export function getNative(): boolean;
+export function isNative(): boolean;
 export function getPlatform(): NodeJS.Platform | 'web';
+export function isImmersion(): boolean;
+export function hasFrame(): boolean;
 // eslint-disable-next-line @typescript-eslint/naming-convention
 export const AbstractBoot: typeof import('../dist/index').AbstractBoot;
 export function launcher(boot: import('../dist/index').AbstractBoot): void;
@@ -400,10 +402,6 @@ export interface ITaskRunOptions {
     'progress'?: (loaded: number, total: number) => void | Promise<void>;
     /** --- 显示 notify 窗口 --- */
     'notify'?: boolean;
-    /** --- 设置为主应用，整个运行时只能设置一次，因此 App 下不可能被设置 --- */
-    'main'?: boolean;
-    /** --- native 下窗体与实体窗体大小同步，App 模式下无法设置 --- */
-    'sync'?: boolean;
     /** --- 所属任务，App 模式无法设置 --- */
     'taskId'?: number;
     /** --- 不禁止某些浏览器对象，App 模式下无法设置 --- */

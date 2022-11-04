@@ -16,22 +16,15 @@ class Boot extends clickgo.AbstractBoot {
     main() {
         return __awaiter(this, void 0, void 0, function* () {
             if (!window.location.href.includes('?single')) {
-                const sTaskId = yield clickgo.task.run('/clickgo/app/task/', {
-                    'main': true
-                });
+                const sTaskId = yield clickgo.task.run('/clickgo/app/task/');
                 if (sTaskId <= 0) {
                     el.innerHTML = `Star system app failed(${sTaskId.toString()}).`;
                     return;
                 }
                 el.innerHTML = 'Starting main app...';
-                if (clickgo.getNative()) {
-                    clickgo.native.max();
-                }
             }
             const taskId = yield clickgo.task.run('/clickgo/app/demo/', {
-                'notify': window.location.href.includes('?single') ? false : undefined,
-                'main': window.location.href.includes('?single') ? true : undefined,
-                'sync': window.location.href.includes('?single') ? true : undefined
+                'notify': window.location.href.includes('?single') ? false : undefined
             });
             if (taskId <= 0) {
                 el.innerHTML = `Start main app failed(${taskId.toString()}).`;
@@ -79,7 +72,7 @@ class Boot extends clickgo.AbstractBoot {
             }
             el.innerHTML = 'Running...';
             const body = document.getElementsByTagName('body')[0];
-            if (clickgo.getPlatform() === 'win32' || window.location.href.includes('?single')) {
+            if (clickgo.isNative() && (clickgo.isImmersion() || window.location.href.includes('?single'))) {
                 body.style.background = 'transparent';
                 document.getElementById('spic').style.display = 'none';
             }

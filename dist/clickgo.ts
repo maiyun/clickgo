@@ -19,19 +19,38 @@ export function getVersion(): string {
 }
 
 const native = navigator.userAgent.includes('electron') ? true : false;
-export function getNative(): boolean {
+export function isNative(): boolean {
     return native;
 }
 
 let platform: NodeJS.Platform | 'web' = 'web';
+let immersion: boolean = false;
+let frame: boolean = false;
+
 if (native) {
-    const reg = /electron\/(.+?) (.+?)\//.exec(navigator.userAgent);
+    const reg = /electron\/(.+?) (.+?)\/(.+?) immersion\/([0-9]) frame\/([0-9])/.exec(navigator.userAgent);
     if (reg) {
         platform = reg[2] as any;
+        immersion = reg[4] === '0' ? false : true;
+        frame = reg[5] === '0' ? false : true;
     }
 }
 export function getPlatform(): NodeJS.Platform | 'web' {
     return platform;
+}
+
+/**
+ * --- 获取当前 native 是否是沉浸式 ---
+ */
+export function isImmersion(): boolean {
+    return immersion;
+}
+
+/**
+ * --- 是否含有窗体外边框 ---
+ */
+export function hasFrame(): boolean {
+    return frame;
 }
 
 export const vue: import('../types/index').IVueObject = (window as any).Vue;

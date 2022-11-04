@@ -1,0 +1,34 @@
+<form width="350" height="400" title="Abstract Form">
+    <overflow direction="v" style="flex: 1; padding: 10px;">
+        <layout gutter="10" direction="v" style="flex: 1;">
+            <label>filename: {{filename}}</label>
+            <label>controlName: {{controlName}}</label>
+            <label>taskId: {{taskId}}</label>
+            <label>formId: {{formId}}</label>
+            <label>formFocus: {{formFocus}}</label>
+            <label>path: {{path}}</label>
+            <label>locale: {{locale}}</label>
+            <label>isMask: {{isMask}}</label>
+            <layout gutter="10" align-v="center">
+                <label>test: {{test}}</label>
+                <button @click="test = test === 'A' ? 'B' : 'A'" style="height: 30px; flex: 1;">watch('test', () => { dialog })</button>
+            </layout>
+            <button @click="ccreateForm" style="height: 30px;">createForm('test')</button>
+            <button @click="topMost = !topMost" style="height: 30px;">topMost: {{topMost ? 'true' : 'false'}}</button>
+            <layout gutter="10" align-v="center">
+                <label>Form ID:</label>
+                <text v-model="fid" style="flex: 1; width: 0; height: 30px;"></text>
+            </layout>
+            <layout gutter="10" align-v="center">
+                <label>Send: </label>
+                <text v-model="sendValue" style="flex: 1; width: 0; height: 30px;"></text>
+                <button @click="ssend" style="padding: 0 10px; height: 30px;">send({{fid}}, { 'key': '{{sendValue}}' })</button>
+            </layout>
+            <button @click="hhide" style="height: 30px;">hide() and show()</button>
+            <layout gutter="10" align-v="center">
+                <button @click="sshowDialog" style="height: 30px; flex: 1;">showDialog()</button>
+                <label>result: {{dr}}</label>
+            </layout>
+        </layout>
+    </overflow>
+</form>

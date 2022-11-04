@@ -1,23 +1,27 @@
 import * as electron from 'electron';
 import * as path from 'path';
 
-electron.Menu.setApplicationMenu(null);
+/** --- 是否是沉浸式的 --- */
+let isImmersion: boolean = false;
+// --- windows 下是且只会是沉浸式，其他系统以启动的第一个窗体为准绑定大小最小化最大化关闭等功能 ---
 
-/** --- 环境是否已经准备好了 --- */
-let isReady: boolean = false;
-/** --- 窗体是否显示边框 --- */
-let isFrame: boolean = false;
-/** --- 是否关闭窗口就退出 --- */
-let isQuit: boolean = true;
+/** --- 窗体是否含有 border 边框，有的话将不是沉浸式，也不会绑定任何窗体的大小和相关事件 --- */
+let hasFrame: boolean = false;
+
+/** --- 是否没有物理窗体时就主动退出软件（进程结束），如果不要窗体只有 node 的话，会用到 false 的情况 --- */
+let isNoFormQuit: boolean = true;
+
 /** --- 主窗体 --- */
-let win: electron.BrowserWindow | undefined;
+let form: electron.BrowserWindow | undefined;
+
+/** --- 当前设定的通讯 token --- */
+let token: string = '';
+
 /** --- 当前系统平台 --- */
 const platform: NodeJS.Platform = process.platform;
 // const platform: NodeJS.Platform = 'darwin';
-/** --- 当前设定的 token --- */
-let token: string = '';
 
-/** --- 监听前台的执行的方法 --- */
+/** --- 监听前台的执行的方法，内置的方法，用户可调用方法自行添加 --- */
 const methods: Record<string, {
     'once': boolean;
     'handler': (...param: any[]) => any | Promise<any>;
@@ -26,18 +30,19 @@ const methods: Record<string, {
     'cg-init': {
         'once': true,
         handler: function(t: string) {
-            if (!t || !win) {
+            // --- t 是网页传来的 token ---
+            if (!t || !form) {
                 return;
             }
-            win.resizable = true;
+            form.resizable = true;
             token = t;
         }
     },
-    // --- 完全退出软件 ---
+    // --- 完全退出软件进程 ---
     'cg-quit': {
         'once': false,
         handler: function(t: string): void {
-            if (!win || !t) {
+            if (!t || !form) {
                 return;
             }
             if (!verifyToken(t)) {
@@ -46,25 +51,25 @@ const methods: Record<string, {
             electron.app.quit();
         }
     },
-    // --- 设置实体窗体大小，推荐仅限非 windows ---
+    // --- 设置实体窗体大小，仅非沉浸式可设置 ---
     'cg-set-size': {
         'once': false,
         handler: function(t: string, width: number, height: number): void {
-            if (!win || !width || !height) {
+            if (isImmersion || !form || !width || !height) {
                 return;
             }
             if (!verifyToken(t)) {
                 return;
             }
-            win.setSize(width, height);
-            win.center();
+            form.setSize(width, height);
+            form.center();
         }
     },
-    // --- 设置窗体最大化、最小化、还原 ---
+    // --- 设置窗体最大化、最小化、还原，仅非 frame 可设置 ---
     'cg-set-state': {
         'once': false,
         handler: function(t: string, state: string): void {
-            if (!win || !state) {
+            if (hasFrame || !form || !state) {
                 return;
             }
             if (!verifyToken(t)) {
@@ -72,90 +77,209 @@ const methods: Record<string, {
             }
             switch (state) {
                 case 'max': {
-                    win.maximize();
+                    form.maximize();
                     break;
                 }
                 case 'min': {
-                    win.minimize();
+                    form.minimize();
                     break;
                 }
                 default: {
-                    win.restore();
+                    form.restore();
                 }
             }
         }
     },
-    // --- 关闭窗体但不退出软件 ---
+    // --- 关闭窗体（可能软件进程不会被退出） ---
     'cg-close': {
         'once': false,
         handler: function(t: string): void {
-            if (!win) {
+            if (!form) {
                 return;
             }
             if (!verifyToken(t)) {
                 return;
             }
-            win.close();
+            form.close();
         }
     },
-    // --- 设置 IgnoreMouseEvents，仅限 windows ---
+    // --- 设置 IgnoreMouseEvents，仅限沉浸式 ---
     'cg-mouse-ignore': {
         'once': false,
         handler: function(t: string, val: boolean): void {
-            if (!win) {
+            if (!isImmersion || !form) {
                 return;
             }
             if (!verifyToken(t)) {
                 return;
             }
             if (val) {
-                win.setIgnoreMouseEvents(true, { 'forward': true });
+                form.setIgnoreMouseEvents(true, { 'forward': true });
             }
             else {
-                win.setIgnoreMouseEvents(false);
+                form.setIgnoreMouseEvents(false);
             }
+        }
+    },
+    // --- 测试与 native 的连通性 ---
+    'cg-ping': {
+        'once': false,
+        handler: function(t: string): string {
+            // --- t 不是 token，传过来什么就会传回去 ---
+            return 'pong: ' + t;
         }
     }
 };
 
-/**
- * --- node 端绑定前端来调用的方法 ---
- * @param name 方法名
- * @param handler 执行的函数
- * @param once 是否只执行一次
- */
-export function bind(
-    name: string,
-    handler: (...param: any[]) => any | Promise<any>,
-    once: boolean = false
-): void {
-    methods[name] = {
-        'once': once,
-        'handler': handler
-    };
-}
+/** --- 全局类 --- */
+export abstract class AbstractBoot {
 
-/**
- * --- node 端绑定前端来调用的方法只执行一次 ---
- * @param name 方法名
- * @param handler 执行的函数
- */
-export function once(name: string, handler: (...param: any[]) => any | Promise<any>): void {
-    bind(name, handler, true);
-}
-
-/**
- * --- 解绑 node 方法 ---
- * @param name 方法名
- */
-export function unbind(name: string): void {
-    if (!methods[name]) {
-        return;
+    /**
+     * --- 是否是沉浸式运行 ---
+     */
+    public get isImmersion(): boolean {
+        return isImmersion;
     }
-    delete methods[name];
+
+    /**
+     * --- 是否含有实体窗体边框和标题 ---
+     */
+    public get hasFrame(): boolean {
+        return hasFrame;
+    }
+
+    /**
+     * --- 没有实体窗体时整个实体进程是不是会被结束 ---
+     */
+    public get isNoFormQuit(): boolean {
+        return isNoFormQuit;
+    }
+
+    /**
+     * --- 当前系统代号 ---
+     */
+    public get platform(): NodeJS.Platform {
+        return platform;
+    }
+
+    /**
+     * --- 当前的通讯 token ---
+     */
+    public get token(): string {
+        return token;
+    }
+
+    /** --- 入口方法 --- */
+    public abstract main(): void | Promise<void>;
+
+    /**
+     * --- 开始运行起来一个主实体窗体，整个进程本方法只能执行一次 ---
+     * @param path 实体窗体网页路径
+     * @param opt 参数
+     */
+    public run(path: string, opt: { 'frame'?: boolean; 'quit'?: boolean; } = {}): void {
+        if (opt.frame !== undefined) {
+            // --- 默认 false ---
+            hasFrame = opt.frame;
+        }
+        if (opt.quit !== undefined) {
+            // --- 默认 true ---
+            isNoFormQuit = opt.quit;
+        }
+        // --- 判断是否是沉浸式 ---
+        if (platform === 'win32') {
+            // --- 是 Windows 才有可能是沉浸式 ---
+            if (!hasFrame) {
+                // --- 实体窗体没有边框，一定是沉浸式 ---
+                isImmersion = true;
+            }
+        }
+        // --- 创建实体窗体 ---
+        createForm(path);
+        // --- 监听所有实体窗体关闭事件 ---
+        electron.app.on('window-all-closed', function(): void {
+            if (isNoFormQuit) {
+                electron.app.quit();
+            }
+        });
+        // --- 软件被活动性激活的事件 ---
+        electron.app.on('activate', function(): void {
+            if (electron.BrowserWindow.getAllWindows().length > 0) {
+                return;
+            }
+            createForm(path);
+            // --- 成功运行一个 task 后再次添加 init ---
+            methods['cg-init'] = {
+                'once': true,
+                handler: function(t: string) {
+                    // --- t 是网页传来的 token ---
+                    if (!t || !form) {
+                        return;
+                    }
+                    form.resizable = true;
+                    token = t;
+                }
+            };
+        });
+    }
+
+    /**
+     * --- 绑定监听网页调用方法的方法 ---
+     * @param name 方法名
+     * @param handler 要执行的函数
+     * @param once 是否只执行一次
+     */
+    public on(
+        name: string,
+        handler: (...param: any[]) => any | Promise<any>,
+        once: boolean = false
+    ): void {
+        methods[name] = {
+            'once': once,
+            'handler': handler
+        };
+    }
+
+    /**
+     * --- 绑定监听网页调用方法的方法但只会执行一次 ---
+     * @param name 方法名
+     * @param handler 要执行的函数
+     */
+    public once(name: string, handler: (...param: any[]) => any | Promise<any>): void {
+        this.on(name, handler, true);
+    }
+
+    /**
+     * --- 解绑监听的方法 ---
+     * @param name 方法名
+     */
+    public off(name: string): void {
+        if (!methods[name]) {
+            return;
+        }
+        delete methods[name];
+    }
+
 }
 
-electron.ipcMain.handle('pre', function(e: electron.IpcMainInvokeEvent, name: string, ...param: any[]): any | Promise<any> {
+/** --- 用户调用运行 boot 类 --- */
+export function launcher(boot: AbstractBoot): void {
+    (async function() {
+        // --- 等到 native 环境装载完毕 ---
+        await electron.app.whenReady();
+        // --- 执行回调 ---
+        await boot.main();
+    })().catch(function() {
+        return;
+    });
+}
+
+// --- 系统启动 ---
+
+electron.Menu.setApplicationMenu(null);
+
+// --- 实际用来监听网页传输过来的数据 ---
+electron.ipcMain.handle('pre', function(e: electron.IpcMainInvokeEvent, name: string, ...param: any[]): any {
     if (!methods[name]) {
         return;
     }
@@ -178,13 +302,9 @@ export function verifyToken(t: string): boolean {
 }
 
 /**
- * --- 等到 native 环境装载完毕 ---
+ * --- 内部调用用来创建实体窗体的函数 ---
+ * @param p 窗体网页路径
  */
-export async function ready(): Promise<void> {
-    await electron.app.whenReady();
-    isReady = true;
-}
-
 function createForm(p: string): void {
     const op: Electron.BrowserWindowConstructorOptions = {
         'webPreferences': {
@@ -192,82 +312,42 @@ function createForm(p: string): void {
             'contextIsolation': true,
             'preload': path.join(__dirname, '/pre.js')
         },
-        'width': 500,
-        'height': 400,
-        'frame': isFrame,
+        'width': 800,
+        'height': 600,
+        'frame': hasFrame,
         'resizable': false,
         'show': false,
         'center': true,
-        'transparent': isFrame ? undefined : true
+        'transparent': hasFrame ? false : true
     };
-    win = new electron.BrowserWindow(op);
-    win.webContents.userAgent = 'electron/' + electron.app.getVersion() + ' ' + platform + '/' + process.arch;
+    form = new electron.BrowserWindow(op);
+    form.webContents.userAgent = 'electron/' + electron.app.getVersion() + ' ' + platform + '/' + process.arch + ' immersion/' + (isImmersion ? '1' : '0') + ' frame/' + (hasFrame ? '1' : '0');
     // win.webContents.openDevTools();
-    win.once('ready-to-show', function(): void {
-        if (!win) {
+    form.once('ready-to-show', function(): void {
+        if (!form) {
             return;
         }
-        if (platform === 'win32') {
-            win.maximize();
-            win.setIgnoreMouseEvents(true, { 'forward': true });
+        if (isImmersion) {
+            // --- 沉浸式默认最大化 ---
+            form.maximize();
+            form.setIgnoreMouseEvents(true, { 'forward': true });
         }
         else {
             // --- 设置为第一个窗体的大小 ---
         }
-        win.show();
+        form.show();
     });
     const lio = p.indexOf('?');
     const search = lio === -1 ? '' : p.slice(lio + 1);
     if (lio !== -1) {
         p = p.slice(0, lio);
     }
-    win.loadFile(p, {
+    form.loadFile(p, {
         'search': search
     }).catch(function(e): void {
         throw e;
     });
-    win.on('close', function() {
-        win = undefined;
-    });
-}
-
-export function run(path: string, opt: { 'frame'?: boolean; 'quit'?: boolean; } = {}): void {
-    if (!isReady) {
-        return;
-    }
-    if (opt.frame !== undefined) {
-        isFrame = opt.frame;
-    }
-    if (opt.quit !== undefined) {
-        isQuit = opt.quit;
-    }
-    createForm(path);
-    electron.app.on('window-all-closed', function(): void {
-        /*
-        // --- MAC ---
-        if (platform !== 'darwin') {
-            electron.app.quit();
-        }
-        */
-        if (isQuit) {
-            electron.app.quit();
-        }
-    });
-    electron.app.on('activate', function(): void {
-        if (electron.BrowserWindow.getAllWindows().length > 0) {
-            return;
-        }
-        createForm(path);
-        // --- 成功运行一个 task 后 init ---
-        methods['cg-init'] = {
-            'once': true,
-            handler: function(t: string) {
-                if (!t || !win) {
-                    return;
-                }
-                win.resizable = true;
-                token = t;
-            }
-        };
+    form.on('close', function() {
+        form = undefined;
     });
 }

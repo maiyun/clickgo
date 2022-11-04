@@ -4,6 +4,7 @@ import * as types from '~/types/index';
 import cformFrm from './control/form/form';
 import cdialogFrm from './control/dialog/dialog';
 import mformFrm from './method/form/form';
+import aformFrm from './method/aform/aform';
 
 export default class extends clickgo.form.AbstractForm {
 
@@ -27,6 +28,10 @@ export default class extends clickgo.form.AbstractForm {
 
             case 'mform': {
                 frm = await mformFrm.create();
+                break;
+            }
+            case 'aform': {
+                frm = await aformFrm.create();
                 break;
             }
         }

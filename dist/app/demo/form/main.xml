@@ -36,6 +36,7 @@
                 <button @click="openForm('method', 'theme')">Library theme</button>
                 <button @click="openForm('method', 'tool')">Library tool</button>
                 <button @click="openForm('method', 'zip')">Library zip</button>
+                <button @click="openForm('aform')">Abstract Form</button>
             </layout>
         </overflow>
         <overflow v-else class="inner" direction="v">

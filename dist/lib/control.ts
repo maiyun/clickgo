@@ -603,7 +603,11 @@ export function buildComponents(
             'props': control.props,
 
             'data': function() {
-                return tool.clone(control.data);
+                const data = tool.clone(control.data);
+                if (data.props) {
+                    delete data.props;
+                }
+                return tool.clone(data);
             },
             'methods': control.methods,
             'computed': computed,

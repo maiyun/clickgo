@@ -13,16 +13,38 @@ const clickgo = require("clickgo");
 class default_1 extends clickgo.control.AbstractControl {
     constructor() {
         super(...arguments);
-        this.stateMaxData = false;
+        this.props = {
+            'icon': '',
+            'title': 'title',
+            'min': true,
+            'max': true,
+            'close': true,
+            'resize': true,
+            'move': true,
+            'loading': false,
+            'minWidth': 200,
+            'minHeight': 100,
+            'border': 'normal',
+            'background': '',
+            'padding': '',
+            'direction': 'h',
+            'stateMin': false,
+            'stateMax': false,
+            'width': 300,
+            'height': 200,
+            'left': -1,
+            'top': -1,
+        };
         this.stateMinData = false;
-        this.stateAbs = '';
-        this.showData = false;
-        this.iconData = '';
+        this.stateMaxData = false;
         this.widthData = 0;
         this.heightData = 0;
         this.leftData = 0;
         this.topData = 0;
-        this.zIndexData = 0;
+        this.isShow = false;
+        this.iconDataUrl = '';
+        this.zIndex = 0;
+        this.stateAbs = '';
         this.historyLocation = {
             'width': 0,
             'height': 0,
@@ -32,28 +54,6 @@ class default_1 extends clickgo.control.AbstractControl {
         this.flashTimer = undefined;
         this.isInside = false;
         this.isNativeSync = false;
-        this.props = {
-            'icon': '',
-            'title': 'title',
-            'min': true,
-            'max': true,
-            'close': true,
-            'stateMax': false,
-            'stateMin': false,
-            'width': 300,
-            'height': 200,
-            'left': -1,
-            'top': -1,
-            'minWidth': 200,
-            'minHeight': 100,
-            'resize': true,
-            'loading': false,
-            'move': true,
-            'border': 'normal',
-            'background': '',
-            'padding': '',
-            'direction': 'h'
-        };
     }
     get isMin() {
         return clickgo.tool.getBoolean(this.props.min);
@@ -64,20 +64,20 @@ class default_1 extends clickgo.control.AbstractControl {
     get isClose() {
         return clickgo.tool.getBoolean(this.props.close);
     }
+    get isResize() {
+        return this.isNativeSync ? false : clickgo.tool.getBoolean(this.props.resize);
+    }
+    get isMove() {
+        return clickgo.tool.getBoolean(this.props.move);
+    }
+    get isLoading() {
+        return clickgo.tool.getBoolean(this.props.loading);
+    }
     get isStateMax() {
         return clickgo.tool.getBoolean(this.props.stateMax);
     }
     get isStateMin() {
         return clickgo.tool.getBoolean(this.props.stateMin);
-    }
-    get isResize() {
-        return this.isNativeSync ? false : clickgo.tool.getBoolean(this.props.resize);
-    }
-    get isLoading() {
-        return clickgo.tool.getBoolean(this.props.loading);
-    }
-    get isMove() {
-        return clickgo.tool.getBoolean(this.props.move);
     }
     get taskPosition() {
         return clickgo.task.systemTaskInfo.taskId === 0 ? 'bottom' : clickgo.core.config['task.position'];
@@ -315,7 +315,7 @@ class default_1 extends clickgo.control.AbstractControl {
         if (!this.stateMinData) {
             this.emit('min', event, 1, {});
             if (event.go) {
-                if (this.isNativeSync) {
+                if (clickgo.isNative() && (this.formId === 1) && !clickgo.hasFrame()) {
                     clickgo.native.min();
                 }
                 else {
@@ -434,6 +434,8 @@ class default_1 extends clickgo.control.AbstractControl {
                 this.element.dataset.cgMax = '';
                 this.stateMaxData = true;
                 this.emit('update:stateMax', true);
+                this.element.style.transition = 'all .1s linear';
+                this.element.style.transitionProperty = 'left,top,width,height';
                 const area = clickgo.core.getAvailArea();
                 this.leftData = area.left;
                 this.emit('update:left', this.leftData);
@@ -447,6 +449,9 @@ class default_1 extends clickgo.control.AbstractControl {
                 if (this.heightComp > 0) {
                     this.emit('update:height', this.heightData);
                 }
+                clickgo.tool.sleep(150).then(() => {
+                    this.element.style.transition = '';
+                }).catch((e) => { console.log(e); });
             }
             else {
                 return false;
@@ -458,6 +463,8 @@ class default_1 extends clickgo.control.AbstractControl {
                 this.element.removeAttribute('data-cg-max');
                 this.stateMaxData = false;
                 this.emit('update:stateMax', false);
+                this.element.style.transition = 'all .1s linear';
+                this.element.style.transitionProperty = 'left,top,width,height';
                 this.leftData = this.historyLocation.left;
                 this.emit('update:left', this.historyLocation.left);
                 this.topData = this.historyLocation.top;
@@ -477,11 +484,11 @@ class default_1 extends clickgo.control.AbstractControl {
                     this.emit('update:height', this.historyLocation.height);
                 }
                 if (this.isNativeSync) {
-                    clickgo.native.restore();
-                    if (clickgo.getPlatform() === 'darwin') {
-                        clickgo.native.size(this.widthData, this.heightData);
-                    }
+                    clickgo.native.size(this.widthData, this.heightData);
                 }
+                clickgo.tool.sleep(150).then(() => {
+                    this.element.style.transition = '';
+                }).catch((e) => { console.log(e); });
             }
             else {
                 return false;
@@ -718,13 +725,13 @@ class default_1 extends clickgo.control.AbstractControl {
     onMounted() {
         this.watch('icon', () => __awaiter(this, void 0, void 0, function* () {
             if (this.props.icon === '') {
-                this.iconData = '';
+                this.iconDataUrl = '';
             }
             else {
                 const icon = yield clickgo.fs.getContent(this.props.icon);
-                this.iconData = (icon instanceof Blob) ? yield clickgo.tool.blob2DataUrl(icon) : '';
+                this.iconDataUrl = (icon instanceof Blob) ? yield clickgo.tool.blob2DataUrl(icon) : '';
             }
-            this.trigger('formIconChanged', this.iconData);
+            this.trigger('formIconChanged', this.iconDataUrl);
         }));
         this.watch('title', () => {
             this.trigger('formTitleChanged', this.props.title);
@@ -741,8 +748,8 @@ class default_1 extends clickgo.control.AbstractControl {
             }
             this.maxMethod();
         });
-        this.watch('showData', () => {
-            this.trigger('formShowChanged', this.showData);
+        this.watch('isShow', () => {
+            this.trigger('formShowChanged', this.isShow);
         });
         this.watch('width', () => {
             if (this.widthComp === this.widthData) {
@@ -782,7 +789,7 @@ class default_1 extends clickgo.control.AbstractControl {
         });
         if (this.parent.controlName !== 'root') {
             this.isInside = true;
-            this.showData = true;
+            this.isShow = true;
         }
         if (this.isStateMax) {
             const area = clickgo.core.getAvailArea();

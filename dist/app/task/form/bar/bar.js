@@ -81,7 +81,7 @@ class default_1 extends clickgo.form.AbstractForm {
             return;
         }
         for (const formId in app.forms) {
-            clickgo.form.remove(parseInt(formId));
+            clickgo.form.close(parseInt(formId));
         }
     }
     changeFocus(formId) {

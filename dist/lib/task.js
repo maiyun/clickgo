@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.refreshSystemPosition = exports.clearSystem = exports.setSystem = exports.systemTaskInfo = exports.sleep = exports.removeTimer = exports.createTimer = exports.clearLocaleLang = exports.setLocaleLang = exports.setLocale = exports.clearLocale = exports.loadLocale = exports.loadLocaleData = exports.end = exports.run = exports.getList = exports.get = exports.offFrame = exports.onFrame = exports.isMain = exports.setMain = exports.lastId = exports.list = void 0;
+exports.refreshSystemPosition = exports.clearSystem = exports.setSystem = exports.systemTaskInfo = exports.sleep = exports.removeTimer = exports.createTimer = exports.clearLocaleLang = exports.setLocaleLang = exports.setLocale = exports.clearLocale = exports.loadLocale = exports.loadLocaleData = exports.end = exports.run = exports.getList = exports.get = exports.offFrame = exports.onFrame = exports.lastId = exports.list = void 0;
 const clickgo = require("../clickgo");
 const core = require("./core");
 const dom = require("./dom");
@@ -20,19 +20,6 @@ const fs = require("./fs");
 const native = require("./native");
 exports.list = {};
 exports.lastId = 0;
-let mainTaskId = 0;
-function setMain(taskId) {
-    if (mainTaskId > 0) {
-        return false;
-    }
-    mainTaskId = taskId;
-    return true;
-}
-exports.setMain = setMain;
-function isMain(taskId) {
-    return taskId === mainTaskId;
-}
-exports.isMain = isMain;
 const localeData = {
     'en': {
         'loading': 'Loading...',
@@ -269,11 +256,17 @@ function run(url, opt = {}) {
             getVersion: function () {
                 return clickgo.getVersion();
             },
-            getNative() {
-                return clickgo.getNative();
+            isNative() {
+                return clickgo.isNative();
             },
             getPlatform() {
                 return clickgo.getPlatform();
+            },
+            isImmersion() {
+                return clickgo.isImmersion();
+            },
+            hasFrame() {
+                return clickgo.hasFrame();
             },
             'control': {
                 'AbstractControl': class extends control.AbstractControl {
@@ -619,9 +612,6 @@ function run(url, opt = {}) {
                 }
             },
             'task': {
-                isMain(taskId) {
-                    return isMain(taskId);
-                },
                 onFrame: function (fun, opt = {}) {
                     opt.taskId = taskId;
                     return clickgo.task.onFrame(fun, opt);
@@ -638,7 +628,6 @@ function run(url, opt = {}) {
                 },
                 run: function (url, opt = {}) {
                     opt.taskId = taskId;
-                    opt.main = false;
                     return clickgo.task.run(url, opt);
                 },
                 end: function (tid) {
@@ -826,16 +815,17 @@ function run(url, opt = {}) {
             return -3;
         }
         dom.createToStyleList(taskId);
+        core.trigger('taskStarted', taskId);
+        if (taskId === 1) {
+            native.invoke('cg-init', native.getToken());
+        }
         const appCls = new expo.default();
         yield appCls.main();
         if (!exports.list[taskId].class) {
             delete exports.list[taskId];
             dom.removeFromStyleList(taskId);
+            core.trigger('taskEnded', taskId);
             return -4;
-        }
-        core.trigger('taskStarted', taskId);
-        if (taskId === 1) {
-            native.invoke('cg-init', native.getToken());
         }
         return taskId;
     });
@@ -846,7 +836,7 @@ function end(taskId) {
     if (!task) {
         return true;
     }
-    if (clickgo.getNative() && isMain(taskId)) {
+    if (clickgo.isNative() && (taskId === 1)) {
         native.invoke('cg-close', native.getToken());
     }
     const fid = form.getMaxZIndexID({
@@ -860,7 +850,7 @@ function end(taskId) {
     }
     for (const fid in task.forms) {
         const f = task.forms[fid];
-        core.trigger('formRemoved', taskId, f.id, f.vroot.$refs.form.title, f.vroot.$refs.form.iconData);
+        core.trigger('formRemoved', taskId, f.id, f.vroot.$refs.form.title, f.vroot.$refs.form.iconDataUrl);
         try {
             f.vapp.unmount();
         }

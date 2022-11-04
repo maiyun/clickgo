@@ -8,7 +8,7 @@ function getToken() {
 }
 exports.getToken = getToken;
 function invoke(name, ...param) {
-    if (!clickgo.getNative()) {
+    if (!clickgo.isNative()) {
         return;
     }
     return window.clickgoNative.invoke(name, ...param);

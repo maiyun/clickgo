@@ -29,29 +29,6 @@ export const list: Record<number, types.ITask> = {};
 /** --- 最后一个 task id，App 模式下无效 --- */
 export let lastId: number = 0;
 
-/** --- 当前是否设置的主任务的任务 ID，全局只可设置一次 --- */
-let mainTaskId: number = 0;
-
-/**
- * --- 将一个任务设置为主任务，全局只可设置一次 ---
- * @param taskId 任务 ID
- */
-export function setMain(taskId: number): boolean {
-    if (mainTaskId > 0) {
-        return false;
-    }
-    mainTaskId = taskId;
-    return true;
-}
-
-/**
- * --- 判断一个任务 ID 是不是主任务 ---
- * @param taskId 任务 ID
- */
-export function isMain(taskId: number): boolean {
-    return taskId === mainTaskId;
-}
-
 /** --- task lib 用到的语言包 --- */
 const localeData: Record<string, {
     'loading': string;
@@ -347,11 +324,17 @@ export async function run(url: string, opt: types.ITaskRunOptions = {}): Promise
         getVersion: function(): string {
             return clickgo.getVersion();
         },
-        getNative(): boolean {
-            return clickgo.getNative();
+        isNative(): boolean {
+            return clickgo.isNative();
         },
         getPlatform(): string {
             return clickgo.getPlatform();
+        },
+        isImmersion(): boolean {
+            return clickgo.isImmersion();
+        },
+        hasFrame(): boolean {
+            return clickgo.hasFrame();
         },
         'control': {
             'AbstractControl': class extends control.AbstractControl {
@@ -715,9 +698,6 @@ export async function run(url: string, opt: types.ITaskRunOptions = {}): Promise
             }
         },
         'task': {
-            isMain(taskId: number): boolean {
-                return isMain(taskId);
-            },
             onFrame: function(fun: () => void | Promise<void>, opt: any = {}): number {
                 opt.taskId = taskId;
                 return clickgo.task.onFrame(fun, opt);
@@ -736,7 +716,6 @@ export async function run(url: string, opt: types.ITaskRunOptions = {}): Promise
             },
             run: function(url: string, opt: types.ITaskRunOptions = {}): Promise<number> {
                 opt.taskId = taskId;
-                opt.main = false;
                 return clickgo.task.run(url, opt);
             },
             end: function(tid: number): boolean {
@@ -935,6 +914,12 @@ export async function run(url: string, opt: types.ITaskRunOptions = {}): Promise
     }
     // --- 创建 Task 总 style ---
     dom.createToStyleList(taskId);
+    // --- 触发 taskStarted 事件 ---
+    core.trigger('taskStarted', taskId);
+    // --- 第一个任务给 native 发送任务启动成功的消息 ---
+    if (taskId === 1) {
+        native.invoke('cg-init', native.getToken());
+    }
     // --- 执行 app ---
     const appCls: core.AbstractApp = new expo.default();
     await appCls.main();
@@ -943,25 +928,9 @@ export async function run(url: string, opt: types.ITaskRunOptions = {}): Promise
         // --- 结束任务 ---
         delete list[taskId];
         dom.removeFromStyleList(taskId);
+        core.trigger('taskEnded', taskId);
         return -4;
     }
-    // --- 触发 taskStarted 事件 ---
-    core.trigger('taskStarted', taskId);
-    // --- 给 native 发送任务启动成功的消息 ---
-    if (taskId === 1) {
-        native.invoke('cg-init', native.getToken());
-    }
-    // --- 提交 sync ---
-    /*
-    if (clickgo.getNative() && opt.sync) {
-        f.vroot.$refs.form.isNativeSync = true;
-        native.invoke('cg-set-size', native.getToken(), f.vroot.$refs.form.widthData, f.vroot.$refs.form.heightData);
-        window.addEventListener('resize', function(): void {
-            f.vroot.$refs.form.setPropData('width', window.innerWidth);
-            f.vroot.$refs.form.setPropData('height', window.innerHeight);
-        });
-    }
-    */
     return taskId;
 }
 
@@ -975,7 +944,7 @@ export function end(taskId: number): boolean {
         return true;
     }
     // --- 如果是 native 模式 ---
-    if (clickgo.getNative() && isMain(taskId)) {
+    if (clickgo.isNative() && (taskId === 1)) {
         native.invoke('cg-close', native.getToken());
     }
     // --- 获取最大的 z index 窗体，并让他获取焦点 ---
@@ -991,7 +960,7 @@ export function end(taskId: number): boolean {
     // --- 移除窗体 list ---
     for (const fid in task.forms) {
         const f = task.forms[fid];
-        core.trigger('formRemoved', taskId, f.id, f.vroot.$refs.form.title, f.vroot.$refs.form.iconData);
+        core.trigger('formRemoved', taskId, f.id, f.vroot.$refs.form.title, f.vroot.$refs.form.iconDataUrl);
         try {
             f.vapp.unmount();
         }

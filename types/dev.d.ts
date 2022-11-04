@@ -11,8 +11,10 @@ declare module 'clickgo' {
     export * as zip from '~/dist/lib/zip';
 
     export function getVersion(): string;
-    export function getNative(): boolean;
+    export function isNative(): boolean;
     export function getPlatform(): NodeJS.Platform | 'web';
+    export function isImmersion(): boolean;
+    export function hasFrame(): boolean;
     // eslint-disable-next-line @typescript-eslint/naming-convention
     export const AbstractBoot: typeof import('../dist/index').AbstractBoot;
     export function launcher(boot: import('../dist/index').AbstractBoot): void;

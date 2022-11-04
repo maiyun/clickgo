@@ -9,19 +9,27 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.launcher = exports.AbstractBoot = exports.getPlatform = exports.getNative = exports.getVersion = exports.vue = exports.zip = exports.tool = exports.theme = exports.task = exports.native = exports.fs = exports.form = exports.dom = exports.core = exports.control = exports.clickgo = void 0;
+exports.launcher = exports.AbstractBoot = exports.hasFrame = exports.isImmersion = exports.getPlatform = exports.isNative = exports.getVersion = exports.vue = exports.zip = exports.tool = exports.theme = exports.task = exports.native = exports.fs = exports.form = exports.dom = exports.core = exports.control = exports.clickgo = void 0;
 function getVersion() {
     return exports.clickgo.getVersion();
 }
 exports.getVersion = getVersion;
-function getNative() {
-    return exports.clickgo.getNative();
+function isNative() {
+    return exports.clickgo.isNative();
 }
-exports.getNative = getNative;
+exports.isNative = isNative;
 function getPlatform() {
     return exports.clickgo.getPlatform();
 }
 exports.getPlatform = getPlatform;
+function isImmersion() {
+    return exports.clickgo.isImmersion();
+}
+exports.isImmersion = isImmersion;
+function hasFrame() {
+    return exports.clickgo.hasFrame();
+}
+exports.hasFrame = hasFrame;
 class AbstractBoot {
     onError() {
         return;
@@ -71,6 +79,12 @@ class AbstractBoot {
     onLauncherFolderNameChanged() {
         return;
     }
+    onRuntimeFileLoad() {
+        return;
+    }
+    onRuntimeFileLoaded() {
+        return;
+    }
 }
 exports.AbstractBoot = AbstractBoot;
 function launcher(boot) {
@@ -98,7 +112,13 @@ function launcher(boot) {
                 'dir': __dirname + '/',
                 'after': after,
                 'afterIgnore': new RegExp('^' + loader.cdn.replace(/\./g, '\\.')),
-                'map': map
+                'map': map,
+                'load': (url) => {
+                    boot.onRuntimeFileLoad(url);
+                },
+                'loaded': (url, state) => {
+                    boot.onRuntimeFileLoaded(url, state);
+                }
             });
             const cg = loader.require('clickgo', files, {
                 'dir': __dirname + '/',

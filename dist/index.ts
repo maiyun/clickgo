@@ -19,18 +19,26 @@ export function getVersion(): string {
     return clickgo.getVersion();
 }
 
-export function getNative(): boolean {
-    return clickgo.getNative();
+export function isNative(): boolean {
+    return clickgo.isNative();
 }
 
 export function getPlatform(): NodeJS.Platform | 'web' {
     return clickgo.getPlatform();
 }
 
+export function isImmersion(): boolean {
+    return clickgo.isImmersion();
+}
+
+export function hasFrame(): boolean {
+    return clickgo.hasFrame();
+}
+
 /** --- 全局类 --- */
 export abstract class AbstractBoot {
 
-    /** --- 入口文件 --- */
+    /** --- 入口方法 --- */
     public abstract main(): void | Promise<void>;
 
     /** --- 全局错误事件 --- */
@@ -129,6 +137,18 @@ export abstract class AbstractBoot {
         return;
     }
 
+    /** --- 环境文件准备加载时的事件 --- */
+    public onRuntimeFileLoad(url: string): void | Promise<void>;
+    public onRuntimeFileLoad(): void {
+        return;
+    }
+
+    /** --- 环境文件加载完成的事件 --- */
+    public onRuntimeFileLoaded(url: string, state: number): void | Promise<void>;
+    public onRuntimeFileLoaded(): void {
+        return;
+    }
+
 }
 
 export function launcher(boot: AbstractBoot): void {
@@ -161,7 +181,13 @@ export function launcher(boot: AbstractBoot): void {
             'dir': __dirname + '/',
             'after': after,
             'afterIgnore': new RegExp('^' + loader.cdn.replace(/\./g, '\\.')),
-            'map': map
+            'map': map,
+            'load': (url) => {
+                boot.onRuntimeFileLoad(url) as any;
+            },
+            'loaded': (url, state) => {
+                boot.onRuntimeFileLoaded(url, state) as any;
+            }
         });
         const cg = loader.require('clickgo', files, {
             'dir': __dirname + '/',

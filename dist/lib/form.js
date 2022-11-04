@@ -232,7 +232,7 @@ class AbstractForm {
     }
     show() {
         const v = this;
-        v.$refs.form.$data.showData = true;
+        v.$refs.form.$data.isShow = true;
         if (this._firstShow) {
             this._firstShow = false;
             const area = core.getAvailArea();
@@ -244,12 +244,13 @@ class AbstractForm {
                     v.$refs.form.setPropData('top', (area.height - v.$el.offsetHeight) / 2);
                 }
             }
-            v.$refs.form.$data.showData = true;
+            v.$refs.form.$data.isShow = true;
             changeFocus(this.formId);
         }
     }
     showDialog() {
         return __awaiter(this, void 0, void 0, function* () {
+            this.topMost = true;
             this.show();
             task.list[this.taskId].runtime.dialogFormIds.push(this.formId);
             return new Promise((resolve) => {
@@ -261,7 +262,7 @@ class AbstractForm {
     }
     hide() {
         const v = this;
-        v.$refs.form.$data.showData = false;
+        v.$refs.form.$data.isShow = false;
     }
     onBeforeCreate() {
         return;
@@ -357,7 +358,7 @@ const elements = {
     'init': function () {
         this.wrap.id = 'cg-wrap';
         document.getElementsByTagName('body')[0].appendChild(this.wrap);
-        if (clickgo.getNative() && (clickgo.getPlatform() === 'win32')) {
+        if (clickgo.isImmersion()) {
             this.wrap.addEventListener('mouseenter', function () {
                 native.invoke('cg-mouse-ignore', native.getToken(), false);
             });
@@ -751,10 +752,10 @@ function get(formId) {
     return {
         'taskId': taskId,
         'title': item.vroot.$refs.form.title,
-        'icon': item.vroot.$refs.form.iconData,
+        'icon': item.vroot.$refs.form.iconDataUrl,
         'stateMax': item.vroot.$refs.form.stateMaxData,
         'stateMin': item.vroot.$refs.form.stateMinData,
-        'show': item.vroot.$refs.form.showData,
+        'show': item.vroot.$refs.form.isShow,
         'focus': item.vroot.formFocus
     };
 }
@@ -778,10 +779,10 @@ function getList(taskId) {
         list[fid] = {
             'taskId': taskId,
             'title': item.vroot.$refs.form.title,
-            'icon': item.vroot.$refs.form.iconData,
+            'icon': item.vroot.$refs.form.iconDataUrl,
             'stateMax': item.vroot.$refs.form.stateMaxData,
             'stateMin': item.vroot.$refs.form.stateMinData,
-            'show': item.vroot.$refs.form.showData,
+            'show': item.vroot.$refs.form.isShow,
             'focus': item.vroot.formFocus
         };
     }
@@ -836,10 +837,10 @@ function changeFocus(formId = 0) {
             min(dialogFormId);
         }
         if (t.forms[dialogFormId].vroot._topMost) {
-            t.forms[dialogFormId].vroot.$refs.form.$data.zIndexData = ++info.topLastZIndex;
+            t.forms[dialogFormId].vroot.$refs.form.$data.zIndex = ++info.topLastZIndex;
         }
         else {
-            t.forms[dialogFormId].vroot.$refs.form.$data.zIndexData = ++info.lastZIndex;
+            t.forms[dialogFormId].vroot.$refs.form.$data.zIndex = ++info.lastZIndex;
         }
         t.forms[dialogFormId].vapp._container.dataset.formFocus = '';
         t.forms[dialogFormId].vroot._formFocus = true;
@@ -850,10 +851,10 @@ function changeFocus(formId = 0) {
     }
     else {
         if (t.forms[formId].vroot._topMost) {
-            t.forms[formId].vroot.$refs.form.$data.zIndexData = ++info.topLastZIndex;
+            t.forms[formId].vroot.$refs.form.$data.zIndex = ++info.topLastZIndex;
         }
         else {
-            t.forms[formId].vroot.$refs.form.$data.zIndexData = ++info.lastZIndex;
+            t.forms[formId].vroot.$refs.form.$data.zIndex = ++info.lastZIndex;
         }
         t.forms[formId].vapp._container.dataset.formFocus = '';
         t.forms[formId].vroot._formFocus = true;
@@ -1399,12 +1400,12 @@ function remove(formId) {
     let icon = '';
     if (task.list[taskId].forms[formId]) {
         title = task.list[taskId].forms[formId].vroot.$refs.form.title;
-        icon = task.list[taskId].forms[formId].vroot.$refs.form.iconData;
+        icon = task.list[taskId].forms[formId].vroot.$refs.form.iconDataUrl;
         const io = task.list[taskId].runtime.dialogFormIds.indexOf(formId);
         if (io > -1) {
             task.list[taskId].runtime.dialogFormIds.splice(io, 1);
         }
-        task.list[taskId].forms[formId].vroot.$refs.form.$data.showData = false;
+        task.list[taskId].forms[formId].vroot.$refs.form.$data.isShow = false;
         setTimeout(function () {
             const fid = getMaxZIndexID({
                 'formIds': [formId]
@@ -1564,12 +1565,12 @@ function create(opt) {
                         changeFocus(form.id);
                     }
                     else {
-                        form.vroot.$refs.form.$data.zIndexData = ++info.topLastZIndex;
+                        form.vroot.$refs.form.$data.zIndex = ++info.topLastZIndex;
                     }
                 }
                 else {
                     form.vroot.$data._topMost = false;
-                    form.vroot.$refs.form.$data.zIndexData = ++info.lastZIndex;
+                    form.vroot.$refs.form.$data.zIndex = ++info.lastZIndex;
                 }
                 return;
             }
@@ -1596,7 +1597,7 @@ function create(opt) {
                                 'current': t.current,
                                 'files': t.app.files
                             });
-                            this.$refs.form.iconData = (icon instanceof Blob) ? yield tool.blob2DataUrl(icon) : '';
+                            this.$refs.form.iconDataUrl = (icon instanceof Blob) ? yield tool.blob2DataUrl(icon) : '';
                         }
                         resolve({
                             'vapp': vapp,
@@ -1653,7 +1654,15 @@ function create(opt) {
                 return -8;
             }
         }
-        core.trigger('formCreated', opt.taskId, formId, rtn.vroot.$refs.form.title, rtn.vroot.$refs.form.iconData);
+        core.trigger('formCreated', opt.taskId, formId, rtn.vroot.$refs.form.title, rtn.vroot.$refs.form.iconDataUrl);
+        if (clickgo.isNative() && (formId === 1) && !clickgo.isImmersion() && !clickgo.hasFrame()) {
+            rtn.vroot.$refs.form.isNativeSync = true;
+            native.invoke('cg-set-size', native.getToken(), rtn.vroot.$refs.form.$el.offsetWidth, rtn.vroot.$refs.form.$el.offsetHeight);
+            window.addEventListener('resize', function () {
+                rtn.vroot.$refs.form.setPropData('width', window.innerWidth);
+                rtn.vroot.$refs.form.setPropData('height', window.innerHeight);
+            });
+        }
         return formId;
     });
 }

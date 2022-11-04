@@ -1,8 +1,11 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const native = require("./native");
-native.ready().then(function () {
-    native.run('../desktop/index.html');
-}).catch(function (e) {
-    console.log(e);
-});
+class Boot extends native.AbstractBoot {
+    main() {
+        this.run('../desktop/index.html', {
+            'frame': this.platform === 'win32' ? false : true
+        });
+    }
+}
+native.launcher(new Boot());

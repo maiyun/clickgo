@@ -3,15 +3,63 @@ import * as types from '~/types/index';
 
 export default class extends clickgo.control.AbstractControl {
 
-    public stateMaxData = false;
+    public props: {
+
+        // --- 内部不可变更 ---
+
+        'icon': string;
+        'title': string;
+
+        'min': boolean | string;
+        'max': boolean | string;
+        'close': boolean | string;
+        'resize': boolean | string;
+        'move': boolean | string;
+        'loading': boolean | string;
+        'minWidth': number | string;
+        'minHeight': number | string;
+
+        'border': string;
+        'background': string;
+        'padding': string;
+        'direction': 'h' | 'v';
+
+        // --- 内部可变更 ---
+
+        'stateMin': boolean | string;
+        'stateMax': boolean | string;
+        'width': number | string;
+        'height': number | string;
+        'left': number | string;
+        'top': number | string;
+    } = {
+            'icon': '',
+            'title': 'title',
+
+            'min': true,
+            'max': true,
+            'close': true,
+            'resize': true,
+            'move': true,
+            'loading': false,
+            'minWidth': 200,
+            'minHeight': 100,
+            'border': 'normal',
+            'background': '',
+            'padding': '',
+            'direction': 'h',
+
+            'stateMin': false,
+            'stateMax': false,
+            'width': 300,
+            'height': 200,
+            'left': -1,
+            'top': -1,
+        };
 
     public stateMinData = false;
 
-    public stateAbs: '' | 'l' | 'lt' | 'tr' | 'r' | 'rb' | 'b' | 'bl' = '';
-
-    public showData = false;
-
-    public iconData = '';
+    public stateMaxData = false;
 
     public widthData = 0;
 
@@ -21,8 +69,16 @@ export default class extends clickgo.control.AbstractControl {
 
     public topData = 0;
 
-    public zIndexData = 0;
+    public isShow = false;
 
+    public iconDataUrl = '';
+
+    public zIndex = 0;
+
+    /** --- 当前的吸附状态 --- */
+    public stateAbs: '' | 'l' | 'lt' | 'tr' | 'r' | 'rb' | 'b' | 'bl' = '';
+
+    /** --- 最大化、吸附前的位置 --- */
     public historyLocation = {
         'width': 0,
         'height': 0,
@@ -32,59 +88,11 @@ export default class extends clickgo.control.AbstractControl {
 
     public flashTimer?: number = undefined;
 
+    /** --- 是否是内联窗体 --- */
     public isInside = false;
 
-    /** --- 是否和 native 窗体保持同步 --- */
+    /** --- 是否和实体窗体同步大小 --- */
     public isNativeSync = false;
-
-    public props: {
-        'icon': string;
-        'title': string;
-        'min': boolean | string;
-        'max': boolean | string;
-        'close': boolean | string;
-
-        'stateMax': boolean | string;
-        'stateMin': boolean | string;
-
-        'resize': boolean | string;
-        'loading': boolean | string;
-        'move': boolean | string;
-
-        'width': number | string;
-        'height': number | string;
-        'left': number | string;
-        'top': number | string;
-        'minWidth': number | string;
-        'minHeight': number | string;
-        'border': string;
-        'background': string;
-        'padding': string;
-        'direction': 'h' | 'v';
-    } = {
-            'icon': '',
-            'title': 'title',
-            'min': true,
-            'max': true,
-            'close': true,
-
-            'stateMax': false,
-            'stateMin': false,
-
-            'width': 300,
-            'height': 200,
-            'left': -1,
-            'top': -1,
-            'minWidth': 200,
-            'minHeight': 100,
-            'resize': true,
-            'loading': false,
-            'move': true,
-            'border': 'normal',
-            'background': '',
-            'padding': '',
-            'direction': 'h'
-        };
 
     public get isMin(): boolean {
         return clickgo.tool.getBoolean(this.props.min);
@@ -98,24 +106,24 @@ export default class extends clickgo.control.AbstractControl {
         return clickgo.tool.getBoolean(this.props.close);
     }
 
-    public get isStateMax(): boolean {
-        return clickgo.tool.getBoolean(this.props.stateMax);
-    }
-
-    public get isStateMin(): boolean {
-        return clickgo.tool.getBoolean(this.props.stateMin);
-    }
-
     public get isResize(): boolean {
         return this.isNativeSync ? false : clickgo.tool.getBoolean(this.props.resize);
+    }
+
+    public get isMove(): boolean {
+        return clickgo.tool.getBoolean(this.props.move);
     }
 
     public get isLoading(): boolean {
         return clickgo.tool.getBoolean(this.props.loading);
     }
 
-    public get isMove(): boolean {
-        return clickgo.tool.getBoolean(this.props.move);
+    public get isStateMax(): boolean {
+        return clickgo.tool.getBoolean(this.props.stateMax);
+    }
+
+    public get isStateMin(): boolean {
+        return clickgo.tool.getBoolean(this.props.stateMin);
     }
 
     public get taskPosition(): string {
@@ -237,7 +245,7 @@ export default class extends clickgo.control.AbstractControl {
                         this.heightData = this.historyLocation.height;
                         this.emit('update:height', this.historyLocation.height);
                     }
-                    // --- 如果是原生应用，则处理外围窗体 ---
+                    // --- 是否同步实体窗体 ---
                     if (this.isNativeSync) {
                         clickgo.native.restore();
                         // --- mac 要多处理一步 ---
@@ -421,7 +429,8 @@ export default class extends clickgo.control.AbstractControl {
             // --- 当前是正常/最大化状态，需要变成最小化 ---
             this.emit('min', event, 1, {});
             if (event.go) {
-                if (this.isNativeSync) {
+                if (clickgo.isNative() && (this.formId === 1) && !clickgo.hasFrame()) {
+                    // --- 最小化不要管是否是沉浸式，沉浸式也要实体最小化 ---
                     clickgo.native.min();
                 }
                 else {
@@ -550,6 +559,8 @@ export default class extends clickgo.control.AbstractControl {
                 this.stateMaxData = true;
                 this.emit('update:stateMax', true);
                 // --- 变窗体样子 ---
+                this.element.style.transition = 'all .1s linear';
+                this.element.style.transitionProperty = 'left,top,width,height';
                 const area = clickgo.core.getAvailArea();
                 this.leftData = area.left;
                 this.emit('update:left', this.leftData);
@@ -563,6 +574,9 @@ export default class extends clickgo.control.AbstractControl {
                 if (this.heightComp > 0) {
                     this.emit('update:height', this.heightData);
                 }
+                clickgo.tool.sleep(150).then(() => {
+                    this.element.style.transition = '';
+                }).catch((e) => { console.log(e); });
             }
             else {
                 return false;
@@ -576,6 +590,8 @@ export default class extends clickgo.control.AbstractControl {
                 this.stateMaxData = false;
                 this.emit('update:stateMax', false);
                 // --- 变窗体样子 ---
+                this.element.style.transition = 'all .1s linear';
+                this.element.style.transitionProperty = 'left,top,width,height';
                 this.leftData = this.historyLocation.left;
                 this.emit('update:left', this.historyLocation.left);
                 this.topData = this.historyLocation.top;
@@ -594,13 +610,13 @@ export default class extends clickgo.control.AbstractControl {
                     this.heightData = this.historyLocation.height;
                     this.emit('update:height', this.historyLocation.height);
                 }
+                // --- native 模式非 frame、非沉浸模式，要调整 size ---
                 if (this.isNativeSync) {
-                    clickgo.native.restore();
-                    // --- mac 要多处理一步 ---
-                    if (clickgo.getPlatform() === 'darwin') {
-                        clickgo.native.size(this.widthData, this.heightData);
-                    }
+                    clickgo.native.size(this.widthData, this.heightData);
                 }
+                clickgo.tool.sleep(150).then(() => {
+                    this.element.style.transition = '';
+                }).catch((e) => { console.log(e); });
             }
             else {
                 return false;
@@ -865,14 +881,14 @@ export default class extends clickgo.control.AbstractControl {
             }
             //*/
             if (this.props.icon === '') {
-                this.iconData = '';
+                this.iconDataUrl = '';
             }
             else {
                 const icon = await clickgo.fs.getContent(this.props.icon);
-                this.iconData = (icon instanceof Blob) ? await clickgo.tool.blob2DataUrl(icon) : '';
+                this.iconDataUrl = (icon instanceof Blob) ? await clickgo.tool.blob2DataUrl(icon) : '';
             }
             // --- 触发 formIconChanged 事件 ---
-            this.trigger('formIconChanged', this.iconData);
+            this.trigger('formIconChanged', this.iconDataUrl);
             /*
             if (!first) {
                 // --- 触发 formIconChanged 事件 ---
@@ -897,8 +913,8 @@ export default class extends clickgo.control.AbstractControl {
             }
             this.maxMethod();
         });
-        this.watch('showData', () => {
-            this.trigger('formShowChanged', this.showData);
+        this.watch('isShow', () => {
+            this.trigger('formShowChanged', this.isShow);
         });
         this.watch('width', () => {
             if (this.widthComp === this.widthData) {
@@ -941,7 +957,7 @@ export default class extends clickgo.control.AbstractControl {
 
         if (this.parent.controlName !== 'root') {
             this.isInside = true;
-            this.showData = true;
+            this.isShow = true;
         }
         if (this.isStateMax) {
             const area = clickgo.core.getAvailArea();

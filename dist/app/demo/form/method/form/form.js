@@ -14,7 +14,6 @@ class default_1 extends clickgo.form.AbstractForm {
     constructor() {
         super(...arguments);
         this.fid = '0';
-        this.sendValue = 'sendValue';
         this.tid = '0';
         this.type = 'primary';
         this.progress = 'noraml';
@@ -41,11 +40,6 @@ class default_1 extends clickgo.form.AbstractForm {
     }
     get() {
         clickgo.form.dialog(JSON.stringify(clickgo.form.get(parseInt(this.fid)))).catch((e) => { throw e; });
-    }
-    send() {
-        clickgo.form.send(parseInt(this.fid), {
-            'key': this.sendValue
-        });
     }
     changeFocus() {
         clickgo.form.changeFocus(parseInt(this.fid));
@@ -124,14 +118,6 @@ class default_1 extends clickgo.form.AbstractForm {
         }
         clickgo.form.showPop(e.currentTarget, this.refs.pop, 'v');
     }
-    createParam() {
-        clickgo.form.create({
-            'layout': '<form width=\'300\' height=\'300\' title=\'normal\'></form>'
-        }).catch((e) => { throw e; });
-    }
-    createPath() {
-        this.createForm('test').then((e) => { console.log(e); }).catch((e) => { throw e; });
-    }
     createTop() {
         return __awaiter(this, void 0, void 0, function* () {
             const frm = yield this.createForm('test');
@@ -201,12 +187,8 @@ class default_1 extends clickgo.form.AbstractForm {
     flash() {
         clickgo.form.flash(this.formId);
     }
-    hhide() {
-        return __awaiter(this, void 0, void 0, function* () {
-            this.hide();
-            yield clickgo.tool.sleep(1000);
-            this.show();
-        });
+    showLauncher() {
+        clickgo.form.showLauncher();
     }
     onReceive(obj) {
         clickgo.form.dialog(JSON.stringify(obj)).catch((e) => { throw e; });

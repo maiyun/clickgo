@@ -111,7 +111,7 @@
     text-align: center; padding: 50px;
 }
 .cg-launcher-sinput {
-    -webkit-appearance: none; padding: 10px; height: 38px; border: solid 1px var(--system-border-color); background: transparent; width: 50%; border-radius: 3px; color: var(--system-color);
+    -webkit-appearance: none; appearance: none; padding: 10px; height: 38px; border: solid 1px var(--system-border-color); background: transparent; width: 50%; border-radius: 3px; color: var(--system-color);
     &::placeholder {
         color: var(--system-border-color);
     }
@@ -123,7 +123,7 @@
     }
 }
 .cg-launcher-foldername {
-    -webkit-appearance: none; height: 38px; font-size: 28px !important; border: none; background: transparent; width: 50%; color: var(--system-color); text-align: center;
+    -webkit-appearance: none; appearance: none; height: 38px; font-size: 28px !important; border: none; background: transparent; width: 50%; color: var(--system-color); text-align: center;
     &::selection {
         background-color: var(--system-color); color: var(--g-color);
     }

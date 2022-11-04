@@ -8,25 +8,16 @@ class Boot extends clickgo.AbstractBoot {
     public async main(): Promise<void> {
         if (!window.location.href.includes('?single')) {
             // --- 启动 task app ---
-            const sTaskId = await clickgo.task.run('/clickgo/app/task/', {
-                // 'notify': false,
-                'main': true
-            });
+            const sTaskId = await clickgo.task.run('/clickgo/app/task/');
             if (sTaskId <= 0) {
                 el.innerHTML = `Star system app failed(${sTaskId.toString()}).`;
                 return;
             }
             // --- sapp 启动成功 ---
             el.innerHTML = 'Starting main app...';
-            // --- 最大化窗体 ---
-            if (clickgo.getNative()) {
-                clickgo.native.max();
-            }
         }
         const taskId = await clickgo.task.run('/clickgo/app/demo/', {
-            'notify': window.location.href.includes('?single') ? false : undefined,
-            'main': window.location.href.includes('?single') ? true : undefined,
-            'sync': window.location.href.includes('?single') ? true : undefined
+            'notify': window.location.href.includes('?single') ? false : undefined
         });
         if (taskId <= 0) {
             el.innerHTML = `Start main app failed(${taskId.toString()}).`;
@@ -74,7 +65,8 @@ class Boot extends clickgo.AbstractBoot {
         }
         el.innerHTML = 'Running...';
         const body = document.getElementsByTagName('body')[0];
-        if (clickgo.getPlatform() === 'win32' || window.location.href.includes('?single')) {
+        if (clickgo.isNative() && (clickgo.isImmersion() || window.location.href.includes('?single'))) {
+            // --- 是否将网页背景设置为透明（仅在 native 且沉浸模式或单应用模式才设置） ---
             body.style.background = 'transparent';
             document.getElementById('spic')!.style.display = 'none';
         }
