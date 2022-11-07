@@ -277,7 +277,7 @@
     }
     color: var(--color);                        // --- 文字色 ---
     background: var(--background);              // --- 背景色 ---
-    &.area-arrow {
+    &.area-split {
         .inner::before {
             border-right: var(--border);
         }
@@ -291,7 +291,7 @@
                 color: var(--color-focus);
                 background: var(--background-focus);
             }
-            &.area-arrow {
+            &.area-split {
                 .inner::before {                // --- 里边框 ---
                     border-right: var(--border-focus);
                 }
@@ -305,7 +305,7 @@
                 color: var(--color-hover);
                 background: var(--background-hover);
             }
-            &.area-arrow {
+            &.area-split {
                 .inner::before {                // --- 里边框 ---
                     border-right: var(--border-hover);
                 }
@@ -319,21 +319,21 @@
                 color: var(--color-active);
                 background: var(--background-active);
             }
-            &.area-arrow {
+            &.area-split {
                 .inner::before {                // --- 里边框 ---
                     border-right: var(--border-active);
                 }
             }
         }
 
-        &.area-arrow {
+        &.area-split {
             .inner, .arrow {
                 &:hover {                       // --- 鼠标悬停 ---
                     color: var(--color-hover);
                     background: var(--background-hover);
                 }
                 // --- 鼠标按下 ---
-                &:active, .active, &[data-cg-pop-open] {
+                &:active, &.active, &[data-cg-pop-open] {
                     color: var(--color-active);
                     background: var(--background-active);
                 }

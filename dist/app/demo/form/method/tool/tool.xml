@@ -1,5 +1,5 @@
 <form width="350" height="400" title="Library tool" padding="10">
-    <overflow direction="v" style="flex: 1;">
+    <flow direction="v" style="flex: 1;">
         <layout direction="v" gutter="10">
             <button @click="sleep" style="height: 30px;">{{sleeping ? 'Waiting...' : 'sleep(1000)'}}</button>
             <text v-model="purifyTxt" multi style="height: 100px;"></text>
@@ -22,5 +22,5 @@
             <text v-model="url2" style="height: 30px;"></text>
             <button @click="urlResolve" style="height: 30px;">urlResolve('{{url1.slice(0, 5)}}...', '{{url2.slice(0, 5)}}...')</button>
         </layout>
-    </overflow>
+    </flow>
 </form>

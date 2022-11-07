@@ -85,6 +85,21 @@ class AbstractControl {
         }
         core.trigger(name, this.taskId, this.formId, param1, param2);
     }
+    get propBoolean() {
+        return (name) => {
+            return tool.getBoolean(this.props[name]);
+        };
+    }
+    get propNumber() {
+        return (name) => {
+            return tool.getNumber(this.props[name]);
+        };
+    }
+    get propInt() {
+        return (name) => {
+            return Math.floor(this.propNumber(name));
+        };
+    }
     get element() {
         return this.$el;
     }

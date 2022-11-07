@@ -1,24 +1,26 @@
-import * as types from '~/types/index';
 import * as clickgo from 'clickgo';
 
-export const data = {
-    'tid': '0',
-    'frameTimer': 0,
-    'frameCount': 0,
-    'timer': 0,
-    'timerCount': 0,
-    'select': '',
-    'sleeping': false
-};
+export default class extends clickgo.form.AbstractForm {
 
-export const computed = {
-    globalLocale: function(): string {
+    public tid = '0';
+
+    public frameTimer = 0;
+
+    public frameCount = 0;
+
+    public timer = 0;
+
+    public timerCount = 0;
+
+    public select = '';
+
+    public sleeping = false;
+
+    public get globalLocale(): string {
         return clickgo.core.config.locale;
     }
-};
 
-export const methods = {
-    frameStart: function(this: types.IVForm, v: number): void {
+    public frameStart(v: number): void {
         let opt = {};
         switch (v) {
             case 0: {
@@ -43,13 +45,15 @@ export const methods = {
         this.frameTimer = clickgo.task.onFrame(() => {
             ++this.frameCount;
         }, opt);
-    },
-    frameEnd: function(this: types.IVForm): void {
+    }
+
+    public frameEnd(): void {
         clickgo.task.offFrame(this.frameTimer);
         this.frameCount = 0;
         this.frameTimer = 0;
-    },
-    timerStart: function(this: types.IVForm, v: number): void {
+    }
+
+    public timerStart(v: number): void {
         let opt = {};
         switch (v) {
             case 0: {
@@ -74,50 +78,63 @@ export const methods = {
         this.timer = clickgo.task.createTimer(() => {
             ++this.timerCount;
         }, 1, opt);
-    },
-    timerEnd: function(this: types.IVForm): void {
+    }
+
+    public timerEnd(): void {
         clickgo.task.removeTimer(this.timer);
         this.timerCount = 0;
         this.timer = 0;
-    },
-    get: function(this: types.IVForm): void {
-        const r = clickgo.task.get(this.tid);
+    }
+
+    public get(): void {
+        const r = clickgo.task.get(parseInt(this.tid));
         clickgo.form.dialog(r ? JSON.stringify(r) : 'null').catch((e) => { throw e; });
-    },
-    getList: function(this: types.IVForm): void {
+    }
+
+    public getList(): void {
         clickgo.form.dialog(JSON.stringify(clickgo.task.getList())).catch((e) => { throw e; });
-    },
-    run: async function(this: types.IVForm): Promise<void> {
+    }
+
+    public async run(): Promise<void> {
         const tid = await clickgo.task.run('/clickgo/app/demo/');
         await clickgo.form.dialog('Task ID: ' + tid.toString());
-    },
-    end: async function(this: types.IVForm): Promise<void> {
-        await clickgo.form.dialog('Result: ' + (clickgo.task.end(this.tid) ? 'true' : 'false'));
-    },
-    loadLocale: async function(lang: string, path: string): Promise<void> {
-        const r = await clickgo.task.loadLocale(lang, path);
+    }
+
+    public async end(): Promise<void> {
+        await clickgo.form.dialog('Result: ' + (clickgo.task.end(parseInt(this.tid)) ? 'true' : 'false'));
+    }
+
+    public async loadLocale(lang: string, path: string): Promise<void> {
+        const r = await clickgo.task.loadLocale(lang, '/package' + clickgo.tool.urlResolve(this.filename, path));
         await clickgo.form.dialog('Result: ' + (r ? 'true' : 'false'));
-    },
-    setLocale: async function(lang: string, path: string): Promise<void> {
-        const r = await clickgo.task.setLocale(lang, path);
+    }
+
+    public async setLocale(lang: string, path: string): Promise<void> {
+        const r = await clickgo.task.setLocale(lang, '/package' + clickgo.tool.urlResolve(this.filename, path));
         await clickgo.form.dialog('Result: ' + (r ? 'true' : 'false'));
-    },
-    clearLocale: function(): void {
+    }
+
+    public clearLocale(): void {
         clickgo.task.clearLocale();
-    },
-    loadLocaleData: function(lang: string, data: Record<string, any>): void {
+    }
+
+    public loadLocaleData(lang: string, data: Record<string, any>): void {
         clickgo.task.loadLocaleData(lang, data);
-    },
-    setLocaleLang: function(lang: string): void {
+    }
+
+    public setLocaleLang(lang: string): void {
         clickgo.task.setLocaleLang(lang);
-    },
-    clearLocaleLang: function(): void {
+    }
+
+    public clearLocaleLang(): void {
         clickgo.task.clearLocaleLang();
-    },
-    changeLocaleLang: function(this: types.IVForm): void {
+    }
+
+    public changeLocaleLang(): void {
         clickgo.core.config.locale = this.select;
-    },
-    sleep: function(this: types.IVForm): void {
+    }
+
+    public sleep(): void {
         if (this.sleeping) {
             return;
         }
@@ -125,13 +142,15 @@ export const methods = {
         clickgo.task.sleep(() => {
             this.sleeping = false;
         }, 1000);
-    },
-    systemTaskInfo: function(this: types.IVForm): void {
+    }
+
+    public systemTaskInfo(): void {
         clickgo.form.dialog(JSON.stringify(clickgo.task.systemTaskInfo)).catch((e) => { throw e; });
     }
-};
 
-export const mounted = function(this: types.IVForm): void {
-    this.tid = this.taskId;
-    this.select = clickgo.core.config.locale;
-};
+    public onMounted(): void {
+        this.tid = this.taskId.toString();
+        this.select = clickgo.core.config.locale;
+    }
+
+}

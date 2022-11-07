@@ -1,5 +1,5 @@
 <form width="350" height="400" title="Library form">
-    <overflow direction="v" style="flex: 1; padding: 10px;">
+    <flow direction="v" style="flex: 1; padding: 10px;">
         <layout gutter="10" direction="v" style="flex: 1;">
             <label>This form id: {{formId}}</label>
             <button @click="min" style="height: 30px;">min({{formId}})</button>
@@ -44,5 +44,5 @@
             <button @click="flash" style="height: 30px;">flash({{formId}})</button>
             <button @click="showLauncher" style="height: 30px;">showLauncher()</button>
         </layout>
-    </overflow>
+    </flow>
 </form>

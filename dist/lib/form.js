@@ -96,6 +96,9 @@ class AbstractForm {
             };
             const cdata = Object.entries(frm);
             for (const item of cdata) {
+                if (item[0] === 'access') {
+                    continue;
+                }
                 code.data[item[0]] = item[1];
             }
             if (!layout) {
@@ -1450,7 +1453,7 @@ function getForm(taskId, formId) {
     return form;
 }
 function create(opt) {
-    var _a, _b, _c, _d;
+    var _a, _b, _c, _d, _e;
     return __awaiter(this, void 0, void 0, function* () {
         if (!opt.taskId) {
             return -1;
@@ -1465,6 +1468,7 @@ function create(opt) {
             return -3;
         }
         let data = {};
+        let access = {};
         let methods = undefined;
         let computed = {};
         let beforeCreate = undefined;
@@ -1477,8 +1481,9 @@ function create(opt) {
         let unmounted = undefined;
         if (opt.code) {
             data = (_b = opt.code.data) !== null && _b !== void 0 ? _b : {};
+            access = (_c = opt.code.access) !== null && _c !== void 0 ? _c : {};
             methods = opt.code.methods;
-            computed = (_c = opt.code.computed) !== null && _c !== void 0 ? _c : {};
+            computed = (_d = opt.code.computed) !== null && _d !== void 0 ? _d : {};
             beforeCreate = opt.code.beforeCreate;
             created = opt.code.created;
             beforeMount = opt.code.beforeMount;
@@ -1493,7 +1498,7 @@ function create(opt) {
         if (opt.style) {
             const r = tool.stylePrepend(opt.style);
             prep = r.prep;
-            style = yield tool.styleUrl2DataUrl((_d = opt.path) !== null && _d !== void 0 ? _d : '/', r.style, t.app.files);
+            style = yield tool.styleUrl2DataUrl((_e = opt.path) !== null && _e !== void 0 ? _e : '/', r.style, t.app.files);
         }
         let layout = tool.purify(opt.layout);
         layout = tool.layoutAddTagClassAndReTagName(layout, true);
@@ -1587,7 +1592,10 @@ function create(opt) {
                 'methods': methods,
                 'computed': computed,
                 'beforeCreate': beforeCreate,
-                'created': created,
+                'created': function () {
+                    this.access = tool.clone(access);
+                    created === null || created === void 0 ? void 0 : created.call(this);
+                },
                 'beforeMount': beforeMount,
                 'mounted': function () {
                     return __awaiter(this, void 0, void 0, function* () {

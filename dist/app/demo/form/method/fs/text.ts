@@ -1,14 +1,17 @@
-import * as types from '~/types/index';
+import * as clickgo from 'clickgo';
 
-export const data = {
-    'title': 'Text viewer',
-    'content': ''
-};
+export default class extends clickgo.form.AbstractForm {
 
-export const receive = function(this: types.IVForm, obj: Record<string, any>): void {
-    if (obj.taskId !== this.taskId) {
-        return;
+    public title = 'Text viewer';
+
+    public content = '';
+
+    public onReceive(obj: Record<string, any>): void {
+        if (obj.taskId !== this.taskId) {
+            return;
+        }
+        this.title = (obj.title as string) + ' - Text viewer';
+        this.content = obj.content;
     }
-    this.title = (obj.title as string) + ' - Text viewer';
-    this.content = obj.content;
-};
+
+}

@@ -1,10 +1,12 @@
-import * as types from '~/types/index';
+import * as clickgo from 'clickgo';
 
-export const data = {
-    'ntab': '',
+export default class extends clickgo.form.AbstractForm {
 
-    'area': 'all',
-    'slist': [
+    public ntab = '';
+
+    public area = 'all';
+
+    public slist = [
         {
             'type': 0,
             'name': 'Appraise',
@@ -31,11 +33,13 @@ export const data = {
         {
             'type': 1
         }
-    ],
-    'select': 0,
-    'disabled': false,
+    ];
 
-    'slist2': [
+    public select = 0;
+
+    public disabled = false;
+
+    public slist2 = [
         'haha1', 'haha2', 'haha3', 'haha4', {
             'value': 'ha5',
             'label': 'The value is ha5'
@@ -59,26 +63,31 @@ export const data = {
             'label': 'happy',
             'children': ['xixi', 'xixida', 'gogogo']
         }
-    ],
-    'select2': 'haha2',
-    'editable': false,
+    ];
 
-    'padding': false,
-    'fontSize': false,
-    'background': false
-};
+    public select2 = 'haha2';
 
-export const watch = {
-    'select': async function(this: types.IVForm, n: number, o: number): Promise<void> {
-        if (this.slist[n].type === 0) {
-            return;
-        }
-        // --- 让其响应 watch 重定 modelValue ---
-        await this.$nextTick();
-        if (this.slist[o].type === 0) {
-            this.select = o;
-            return;
-        }
-        this.select = 0;
+    public editable = false;
+
+    public padding = false;
+
+    public fontSize = false;
+
+    public background = false;
+
+    public onMounted(): void {
+        this.watch('select', async (n: number, o: number): Promise<void> => {
+            if (this.slist[n].type === 0) {
+                return;
+            }
+            // --- 让其响应 watch 重定 modelValue ---
+            await this.nextTick();
+            if (this.slist[o].type === 0) {
+                this.select = o;
+                return;
+            }
+            this.select = 0;
+        });
     }
-};
+
+}

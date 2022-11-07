@@ -9,18 +9,22 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.methods = exports.data = void 0;
 const clickgo = require("clickgo");
-exports.data = {
-    'path': '/',
-    'list': [],
-    'val': ''
-};
-exports.methods = {
-    select: function () {
-        this.$refs.file.select();
-    },
-    change: function (files) {
+const text_1 = require("../fs/text");
+class default_1 extends clickgo.form.AbstractForm {
+    constructor() {
+        super(...arguments);
+        this.ppath = '/';
+        this.list = [];
+        this.val = '';
+        this.access = {
+            'zip': undefined
+        };
+    }
+    select() {
+        this.refs.file.select();
+    }
+    change(files) {
         return __awaiter(this, void 0, void 0, function* () {
             if (!files) {
                 return;
@@ -30,32 +34,33 @@ exports.methods = {
                 yield clickgo.form.dialog('File failed to open.');
                 return;
             }
-            this.zip = zip;
+            this.access.zip = zip;
             this.open('/');
         });
-    },
-    open: function (path) {
-        const zip = this.zip;
+    }
+    open(path) {
+        if (!this.access.zip) {
+            return;
+        }
         if (!path.endsWith('/')) {
             path += '/';
         }
         this.list = [];
-        const ls = zip.readDir(path);
+        const ls = this.access.zip.readDir(path);
         for (const item of ls) {
             this.list.push({
                 'label': (item.isDirectory ? '[FOLD]' : '[FILE]') + ' ' + item.name,
                 'value': path + item.name
             });
         }
-        this.path = path;
-    },
-    dblclick: function () {
+        this.ppath = path;
+    }
+    dblclick() {
         return __awaiter(this, void 0, void 0, function* () {
-            if (!this.zip) {
+            if (!this.access.zip) {
                 return;
             }
-            const zip = this.zip;
-            const r = zip.isFile(this.val);
+            const r = this.access.zip.isFile(this.val);
             if (r) {
                 const extlio = this.val.lastIndexOf('.');
                 if (extlio === -1) {
@@ -64,16 +69,17 @@ exports.methods = {
                 }
                 const ext = this.val.toLowerCase().slice(extlio + 1);
                 if (['xml', 'js', 'ts', 'json', 'css', 'html', 'php'].includes(ext)) {
-                    const content = yield zip.getContent(this.val);
+                    const content = yield this.access.zip.getContent(this.val);
                     if (!content) {
                         yield clickgo.form.dialog('This file cannot be opened.');
                         return;
                     }
-                    const f = yield clickgo.form.create('../fs/text');
+                    const f = yield text_1.default.create();
                     if (typeof f === 'number') {
                         return;
                     }
-                    clickgo.form.send(f.id, {
+                    f.show();
+                    this.send(f.formId, {
                         'title': this.val.slice(this.val.lastIndexOf('/') + 1),
                         'content': content
                     });
@@ -84,16 +90,15 @@ exports.methods = {
             }
             this.open(this.val);
         });
-    },
-    up: function () {
-        return __awaiter(this, void 0, void 0, function* () {
-            if (this.path === '/') {
-                return;
-            }
-            const path = this.path.slice(0, -1);
-            const lif = path.lastIndexOf('/');
-            const npath = path.slice(0, lif + 1);
-            yield this.open(npath);
-        });
     }
-};
+    up() {
+        if (this.ppath === '/') {
+            return;
+        }
+        const path = this.ppath.slice(0, -1);
+        const lif = path.lastIndexOf('/');
+        const npath = path.slice(0, lif + 1);
+        this.open(npath);
+    }
+}
+exports.default = default_1;

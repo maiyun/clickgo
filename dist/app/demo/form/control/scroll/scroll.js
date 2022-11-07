@@ -1,14 +1,18 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.data = void 0;
-exports.data = {
-    'l1': 1000,
-    'c1': 100,
-    'so1': 500,
-    'l2': 0,
-    'c2': 0,
-    'so2': 0,
-    'count': 3,
-    'float': false,
-    'disabled': false
-};
+const clickgo = require("clickgo");
+class default_1 extends clickgo.form.AbstractForm {
+    constructor() {
+        super(...arguments);
+        this.l1 = 1000;
+        this.c1 = 100;
+        this.so1 = 500;
+        this.l2 = 0;
+        this.c2 = 0;
+        this.so2 = 0;
+        this.count = 3;
+        this.float = false;
+        this.disabled = false;
+    }
+}
+exports.default = default_1;

@@ -1,4 +1,4 @@
-<div class="wrap" :class="[isKeyDown && 'active', value && 'checked', indeterminateData && 'indeterminate']" :data-cg-disabled="isDisabled ? '' : undefined" :tabindex="!isDisabled && formFocus && '0'" @click="click" @keydown="keydown" @keyup="keyup">
+<div class="wrap" :class="[isSpaceDown && 'active', value && 'checked', indeterminateData && 'indeterminate']" :data-cg-disabled="propBoolean('disabled') ? '' : undefined" :tabindex="!propBoolean('disabled') && formFocus && '0'" @click="click" @keydown="keydown" @keyup="keyup">
     <div class="check"></div>
     <div class="label">
         <slot></slot>

@@ -9,11 +9,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.methods = exports.data = void 0;
 const clickgo = require("clickgo");
-exports.data = {
-    'sleeping': false,
-    'purifyTxt': `<html>
+class default_1 extends clickgo.form.AbstractForm {
+    constructor() {
+        super(...arguments);
+        this.sleeping = false;
+        this.purifyTxt = `<html>
     <head>
         <title>Hello world!</title>
     </head>
@@ -23,17 +24,16 @@ exports.data = {
         <!-- content -->
         <div>content</div>
     </body>
-</html>`,
-    'min': '10',
-    'max': '30',
-    'length': '8',
-    'block': '',
-    'url': 'HtTp://uSer:pAss@sUBDom.TopdOm23.CoM:29819/Admxw2Ksiz/dszas?Mdi=KdiMs1&a=JDd#hehHe',
-    'url1': '/abc/def/hehe',
-    'url2': '../bb.index'
-};
-exports.methods = {
-    sleep: function () {
+</html>`;
+        this.min = '10';
+        this.max = '30';
+        this.length = '8';
+        this.block = '';
+        this.url = 'HtTp://uSer:pAss@sUBDom.TopdOm23.CoM:29819/Admxw2Ksiz/dszas?Mdi=KdiMs1&a=JDd#hehHe';
+        this.url1 = '/abc/def/hehe';
+        this.url2 = '../bb.index';
+    }
+    sleep() {
         return __awaiter(this, void 0, void 0, function* () {
             if (this.sleeping) {
                 return;
@@ -42,23 +42,24 @@ exports.methods = {
             yield clickgo.tool.sleep(1000);
             this.sleeping = false;
         });
-    },
-    purify: function () {
+    }
+    purify() {
         this.purifyTxt = clickgo.tool.purify(this.purifyTxt);
-    },
-    rand: function () {
+    }
+    rand() {
         clickgo.form.dialog(clickgo.tool.rand(parseInt(this.min), parseInt(this.max)).toString()).catch((e) => { throw e; });
-    },
-    random: function () {
+    }
+    random() {
         clickgo.form.dialog(clickgo.tool.random(parseInt(this.length), clickgo.tool.RANDOM_LN, this.block)).catch((e) => { throw e; });
-    },
-    escapeHTML: function () {
+    }
+    escapeHTML() {
         clickgo.form.dialog(clickgo.tool.escapeHTML(this.purifyTxt)).catch((e) => { throw e; });
-    },
-    parseUrl: function () {
+    }
+    parseUrl() {
         clickgo.form.dialog(JSON.stringify(clickgo.tool.parseUrl(this.url))).catch((e) => { throw e; });
-    },
-    urlResolve: function () {
+    }
+    urlResolve() {
         clickgo.form.dialog(clickgo.tool.urlResolve(this.url1, this.url2)).catch((e) => { throw e; });
     }
-};
+}
+exports.default = default_1;

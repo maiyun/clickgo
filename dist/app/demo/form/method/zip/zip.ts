@@ -1,17 +1,25 @@
-import * as types from '~/types/index';
 import * as clickgo from 'clickgo';
+import testFrm from '../fs/text';
 
-export const data = {
-    'path': '/',
-    'list': [],
-    'val': ''
-};
+export default class extends clickgo.form.AbstractForm {
 
-export const methods = {
-    select: function(this: types.IVForm): void {
-        this.$refs.file.select();
-    },
-    change: async function(this: types.IVForm, files: FileList | null): Promise<void> {
+    public ppath = '/';
+
+    public list: any[] = [];
+
+    public val = '';
+
+    public access: {
+        'zip'?: clickgo.zip.Zip;
+    } = {
+            'zip': undefined
+        };
+
+    public select(): void {
+        this.refs.file.select();
+    }
+
+    public async change(files: FileList | null): Promise<void> {
         if (!files) {
             return;
         }
@@ -20,30 +28,33 @@ export const methods = {
             await clickgo.form.dialog('File failed to open.');
             return;
         }
-        this.zip = zip;
+        this.access.zip = zip;
         this.open('/');
-    },
-    open: function(this: types.IVForm, path: string): void {
-        const zip = this.zip as types.TZip;
+    }
+
+    public open(path: string): void {
+        if (!this.access.zip) {
+            return;
+        }
         if (!path.endsWith('/')) {
             path += '/';
         }
         this.list = [];
-        const ls = zip.readDir(path);
+        const ls = this.access.zip.readDir(path);
         for (const item of ls) {
             this.list.push({
                 'label': (item.isDirectory ? '[FOLD]' : '[FILE]') + ' ' + item.name,
                 'value': path + item.name
             });
         }
-        this.path = path;
-    },
-    dblclick: async function(this: types.IVForm): Promise<void> {
-        if (!this.zip) {
+        this.ppath = path;
+    }
+
+    public async dblclick(): Promise<void> {
+        if (!this.access.zip) {
             return;
         }
-        const zip = this.zip as types.TZip;
-        const r = zip.isFile(this.val);
+        const r = this.access.zip.isFile(this.val);
         if (r) {
             const extlio: number = this.val.lastIndexOf('.');
             if (extlio === -1) {
@@ -52,17 +63,18 @@ export const methods = {
             }
             const ext: string = this.val.toLowerCase().slice(extlio + 1);
             if (['xml', 'js', 'ts', 'json', 'css', 'html', 'php'].includes(ext)) {
-                const content = await zip.getContent(this.val);
+                const content = await this.access.zip.getContent(this.val);
                 if (!content) {
                     await clickgo.form.dialog('This file cannot be opened.');
                     return;
                 }
-                const f = await clickgo.form.create('../fs/text');
+                const f = await testFrm.create();
                 if (typeof f === 'number') {
                     return;
                 }
-                clickgo.form.send(f.id, {
-                    'title': this.val.slice((this.val as string).lastIndexOf('/') + 1),
+                f.show();
+                this.send(f.formId, {
+                    'title': this.val.slice(this.val.lastIndexOf('/') + 1),
                     'content': content
                 });
                 return;
@@ -71,14 +83,16 @@ export const methods = {
             return;
         }
         this.open(this.val);
-    },
-    up: async function(this: types.IVForm): Promise<void> {
-        if (this.path === '/') {
+    }
+
+    public up(): void {
+        if (this.ppath === '/') {
             return;
         }
-        const path: string = this.path.slice(0, -1);
+        const path: string = this.ppath.slice(0, -1);
         const lif = path.lastIndexOf('/');
         const npath = path.slice(0, lif + 1);
-        await this.open(npath);
+        this.open(npath);
     }
-};
+
+}

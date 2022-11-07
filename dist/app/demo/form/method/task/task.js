@@ -9,24 +9,22 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.mounted = exports.methods = exports.computed = exports.data = void 0;
 const clickgo = require("clickgo");
-exports.data = {
-    'tid': '0',
-    'frameTimer': 0,
-    'frameCount': 0,
-    'timer': 0,
-    'timerCount': 0,
-    'select': '',
-    'sleeping': false
-};
-exports.computed = {
-    globalLocale: function () {
+class default_1 extends clickgo.form.AbstractForm {
+    constructor() {
+        super(...arguments);
+        this.tid = '0';
+        this.frameTimer = 0;
+        this.frameCount = 0;
+        this.timer = 0;
+        this.timerCount = 0;
+        this.select = '';
+        this.sleeping = false;
+    }
+    get globalLocale() {
         return clickgo.core.config.locale;
     }
-};
-exports.methods = {
-    frameStart: function (v) {
+    frameStart(v) {
         let opt = {};
         switch (v) {
             case 0: {
@@ -51,13 +49,13 @@ exports.methods = {
         this.frameTimer = clickgo.task.onFrame(() => {
             ++this.frameCount;
         }, opt);
-    },
-    frameEnd: function () {
+    }
+    frameEnd() {
         clickgo.task.offFrame(this.frameTimer);
         this.frameCount = 0;
         this.frameTimer = 0;
-    },
-    timerStart: function (v) {
+    }
+    timerStart(v) {
         let opt = {};
         switch (v) {
             case 0: {
@@ -82,58 +80,58 @@ exports.methods = {
         this.timer = clickgo.task.createTimer(() => {
             ++this.timerCount;
         }, 1, opt);
-    },
-    timerEnd: function () {
+    }
+    timerEnd() {
         clickgo.task.removeTimer(this.timer);
         this.timerCount = 0;
         this.timer = 0;
-    },
-    get: function () {
-        const r = clickgo.task.get(this.tid);
+    }
+    get() {
+        const r = clickgo.task.get(parseInt(this.tid));
         clickgo.form.dialog(r ? JSON.stringify(r) : 'null').catch((e) => { throw e; });
-    },
-    getList: function () {
+    }
+    getList() {
         clickgo.form.dialog(JSON.stringify(clickgo.task.getList())).catch((e) => { throw e; });
-    },
-    run: function () {
+    }
+    run() {
         return __awaiter(this, void 0, void 0, function* () {
             const tid = yield clickgo.task.run('/clickgo/app/demo/');
             yield clickgo.form.dialog('Task ID: ' + tid.toString());
         });
-    },
-    end: function () {
+    }
+    end() {
         return __awaiter(this, void 0, void 0, function* () {
-            yield clickgo.form.dialog('Result: ' + (clickgo.task.end(this.tid) ? 'true' : 'false'));
+            yield clickgo.form.dialog('Result: ' + (clickgo.task.end(parseInt(this.tid)) ? 'true' : 'false'));
         });
-    },
-    loadLocale: function (lang, path) {
+    }
+    loadLocale(lang, path) {
         return __awaiter(this, void 0, void 0, function* () {
-            const r = yield clickgo.task.loadLocale(lang, path);
+            const r = yield clickgo.task.loadLocale(lang, '/package' + clickgo.tool.urlResolve(this.filename, path));
             yield clickgo.form.dialog('Result: ' + (r ? 'true' : 'false'));
         });
-    },
-    setLocale: function (lang, path) {
+    }
+    setLocale(lang, path) {
         return __awaiter(this, void 0, void 0, function* () {
-            const r = yield clickgo.task.setLocale(lang, path);
+            const r = yield clickgo.task.setLocale(lang, '/package' + clickgo.tool.urlResolve(this.filename, path));
             yield clickgo.form.dialog('Result: ' + (r ? 'true' : 'false'));
         });
-    },
-    clearLocale: function () {
+    }
+    clearLocale() {
         clickgo.task.clearLocale();
-    },
-    loadLocaleData: function (lang, data) {
+    }
+    loadLocaleData(lang, data) {
         clickgo.task.loadLocaleData(lang, data);
-    },
-    setLocaleLang: function (lang) {
+    }
+    setLocaleLang(lang) {
         clickgo.task.setLocaleLang(lang);
-    },
-    clearLocaleLang: function () {
+    }
+    clearLocaleLang() {
         clickgo.task.clearLocaleLang();
-    },
-    changeLocaleLang: function () {
+    }
+    changeLocaleLang() {
         clickgo.core.config.locale = this.select;
-    },
-    sleep: function () {
+    }
+    sleep() {
         if (this.sleeping) {
             return;
         }
@@ -141,13 +139,13 @@ exports.methods = {
         clickgo.task.sleep(() => {
             this.sleeping = false;
         }, 1000);
-    },
-    systemTaskInfo: function () {
+    }
+    systemTaskInfo() {
         clickgo.form.dialog(JSON.stringify(clickgo.task.systemTaskInfo)).catch((e) => { throw e; });
     }
-};
-const mounted = function () {
-    this.tid = this.taskId;
-    this.select = clickgo.core.config.locale;
-};
-exports.mounted = mounted;
+    onMounted() {
+        this.tid = this.taskId.toString();
+        this.select = clickgo.core.config.locale;
+    }
+}
+exports.default = default_1;

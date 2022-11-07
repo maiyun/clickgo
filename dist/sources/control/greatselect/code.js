@@ -18,7 +18,7 @@ class default_1 extends clickgo.control.AbstractControl {
     get isDisabled() {
         return clickgo.tool.getBoolean(this.props.disabled);
     }
-    opMargin() {
+    get opMargin() {
         return this.padding.replace(/(\w+)/g, '-$1');
     }
     keydown(e) {

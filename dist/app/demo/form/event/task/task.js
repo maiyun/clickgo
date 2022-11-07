@@ -9,36 +9,36 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.mounted = exports.methods = exports.data = void 0;
 const clickgo = require("clickgo");
-exports.data = {
-    'tlist': [],
-    'list': [],
-    'tid': 0
-};
-exports.methods = {
-    'pushConsole': function (name, text) {
+class default_1 extends clickgo.form.AbstractForm {
+    constructor() {
+        super(...arguments);
+        this.tlist = [];
+        this.list = [];
+        this.tid = 0;
+    }
+    pushConsole(name, text) {
         const date = new Date();
         this.list.unshift({
             'time': date.getHours().toString() + ':' + date.getMinutes().toString() + ':' + date.getSeconds().toString(),
             'name': name,
             'text': text
         });
-    },
-    'run': function () {
+    }
+    run() {
         return __awaiter(this, void 0, void 0, function* () {
             const taskId = yield clickgo.task.run('/clickgo/app/demo/');
             yield clickgo.form.dialog(`Successfully run, task id is: ${taskId}.`);
         });
-    },
-    'end': function () {
+    }
+    end() {
         return __awaiter(this, void 0, void 0, function* () {
             if (yield clickgo.form.confirm(`Are you sure to end Task ${this.tid}?`)) {
-                clickgo.task.end(parseInt(this.tid));
+                clickgo.task.end(this.tid);
             }
         });
-    },
-    'runTask': function () {
+    }
+    runTask() {
         return __awaiter(this, void 0, void 0, function* () {
             if (clickgo.task.systemTaskInfo.taskId > 0) {
                 yield clickgo.form.dialog('The Task APP is already running.');
@@ -48,23 +48,14 @@ exports.methods = {
             yield clickgo.form.dialog(`Successfully run, task id is: ${taskId}.`);
         });
     }
-};
-const mounted = function () {
-    const list = clickgo.task.getList();
-    for (const tid in list) {
-        this.tlist.push({
-            'label': 'Task ' + tid,
-            'value': parseInt(tid)
-        });
-    }
-    clickgo.core.setSystemEventListener('taskStarted', (taskId) => {
+    onTaskStarted(taskId) {
         this.tlist.push({
             'label': 'Task ' + taskId.toString(),
             'value': taskId
         });
         this.pushConsole('taskStarted', `taskId: ${taskId}`);
-    });
-    clickgo.core.setSystemEventListener('taskEnded', (taskId) => {
+    }
+    onTaskEnded(taskId) {
         for (let i = 0; i < this.tlist.length; ++i) {
             if (this.tlist[i].value !== taskId) {
                 continue;
@@ -73,6 +64,15 @@ const mounted = function () {
             break;
         }
         this.pushConsole('taskEnded', `taskId: ${taskId}`);
-    });
-};
-exports.mounted = mounted;
+    }
+    onMounted() {
+        const list = clickgo.task.getList();
+        for (const tid in list) {
+            this.tlist.push({
+                'label': 'Task ' + tid,
+                'value': parseInt(tid)
+            });
+        }
+    }
+}
+exports.default = default_1;

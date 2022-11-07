@@ -1,5 +1,5 @@
 <form width="350" height="400" title="Abstract Form">
-    <overflow direction="v" style="flex: 1; padding: 10px;">
+    <flow direction="v" style="flex: 1; padding: 10px;">
         <layout gutter="10" direction="v" style="flex: 1;">
             <label>filename: {{filename}}</label>
             <label>controlName: {{controlName}}</label>
@@ -30,5 +30,5 @@
                 <label>result: {{dr}}</label>
             </layout>
         </layout>
-    </overflow>
+    </flow>
 </form>

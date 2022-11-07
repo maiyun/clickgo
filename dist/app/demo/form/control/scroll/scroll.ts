@@ -1,13 +1,23 @@
-export const data = {
-    'l1': 1000,
-    'c1': 100,
-    'so1': 500,
+import * as clickgo from 'clickgo';
 
-    'l2': 0,
-    'c2': 0,
-    'so2': 0,
-    'count': 3,
+export default class extends clickgo.form.AbstractForm {
 
-    'float': false,
-    'disabled': false
-};
+    public l1 = 1000;
+
+    public c1 = 100;
+
+    public so1 = 500;
+
+    public l2 = 0;
+
+    public c2 = 0;
+
+    public so2 = 0;
+
+    public count = 3;
+
+    public float = false;
+
+    public disabled = false;
+
+}

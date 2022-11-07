@@ -24,7 +24,7 @@ export default class extends clickgo.control.AbstractControl {
         return clickgo.tool.getBoolean(this.props.disabled);
     }
 
-    public opMargin(): string {
+    public get opMargin(): string {
         return this.padding.replace(/(\w+)/g, '-$1');
     }
 

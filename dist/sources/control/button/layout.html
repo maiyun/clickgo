@@ -1,9 +1,9 @@
-<div class="wrap" :class="[type, isPlain && 'plain', (isChecked || isKeyDown) ? 'active' : undefined, isChildFocus && 'childfocus', 'area-' + (slots('pop').length ? area : 'all')]" :data-cg-disabled="isDisabled ? '' : undefined" :tabindex="!isDisabled && formFocus && isAreaAllMark && '0'" @keydown="keydown" @keyup="keyup" @mousedown="down" @touchstart="down">
+<div class="wrap" :class="[type, propBoolean('plain') && 'plain', (propBoolean('checked') || isSpaceDown) ? 'active' : undefined, isChildFocus && 'childfocus', 'area-' + (slots('pop').length ? area : 'all')]" :data-cg-disabled="propBoolean('disabled') ? '' : undefined" :tabindex="!propBoolean('disabled') && formFocus && canDoMain && '0'" @keydown="keydown" @keyup="keyup" @mousedown="down" @touchstart="down">
     <div class="op" :style="{'margin': opMargin}">
-        <div class="inner" :class="[(isChecked || (innerFocus && isKeyDown)) && 'active']" :tabindex="!isDisabled && formFocus && !isAreaAllMark && '0'" @focus="innerFocus = true" @blur="innerFocus = false" @click="innerClick" :style="{'padding': padding}">
+        <div class="inner" :class="[(propBoolean('checked') || (innerFocus && isSpaceDown)) && 'active']" :tabindex="!propBoolean('disabled') && formFocus && !canDoMain && '0'" @focus="innerFocus = true" @blur="innerFocus = false" @click="innerClick" :style="{'padding': padding}">
             <slot></slot>
         </div>
-        <div v-if="slots('pop').length" ref="arrow" class="arrow" :class="[arrowFocus && isKeyDown && 'active']" :tabindex="!isDisabled && formFocus && !isAreaAllMark && '0'" @focus="arrowFocus = true" @blur="arrowFocus = false" @click="arrowClick">&#xe877;</div>
+        <div v-if="slots('pop').length" ref="arrow" class="arrow" :class="[arrowFocus && isSpaceDown && 'active']" :tabindex="!propBoolean('disabled') && formFocus && !canDoMain && '0'" @focus="arrowFocus = true" @blur="arrowFocus = false" @click="arrowClick">&#xe877;</div>
     </div>
     <teleport v-if="slots('pop').length" to="#cg-pop-list">
         <div ref="pop" data-cg-pop>

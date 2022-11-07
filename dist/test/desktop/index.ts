@@ -23,17 +23,18 @@ class Boot extends clickgo.AbstractBoot {
             el.innerHTML = `Start main app failed(${taskId.toString()}).`;
             return;
         }
-        const icon = clickgo.task.list[taskId].app.icon;
-        if (icon) {
+        const icon = await clickgo.fs.getContent('/clickgo/icon.png');
+        if (icon instanceof Blob) {
+            const du = await clickgo.tool.blob2DataUrl(icon);
             clickgo.core.config['launcher.list'] = [
                 {
                     'name': clickgo.task.list[taskId].config.name + '01',
-                    'icon': icon,
+                    'icon': du,
                     'path': clickgo.task.list[taskId].path
                 },
                 {
                     'name': clickgo.task.list[taskId].config.name + '02',
-                    'icon': icon,
+                    'icon': du,
                     'path': clickgo.task.list[taskId].path
                 },
                 {
@@ -41,12 +42,12 @@ class Boot extends clickgo.AbstractBoot {
                     'list': [
                         {
                             'name': clickgo.task.list[taskId].config.name + '11',
-                            'icon': icon,
+                            'icon': du,
                             'path': clickgo.task.list[taskId].path
                         },
                         {
                             'name': clickgo.task.list[taskId].config.name + '12',
-                            'icon': icon,
+                            'icon': du,
                             'path': clickgo.task.list[taskId].path
                         }
                     ]
@@ -56,7 +57,7 @@ class Boot extends clickgo.AbstractBoot {
                     'list': [
                         {
                             'name': clickgo.task.list[taskId].config.name + '21',
-                            'icon': icon,
+                            'icon': du,
                             'path': clickgo.task.list[taskId].path
                         }
                     ]

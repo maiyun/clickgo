@@ -300,6 +300,7 @@ export interface IFormCreateOptions {
 /** --- 窗体的 code 参数 --- */
 export interface IFormCreateCode {
     'data'?: Record<string, any>;
+    'access'?: Record<string, any>;
     'methods'?: Record<string, any>;
     'computed'?: Record<string, {
         'get'?: any;

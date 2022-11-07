@@ -1,15 +1,16 @@
-import * as types from '~/types/index';
+import * as clickgo from 'clickgo';
 
-export const data = {
-    'lineCount': 2,
-    'style': false,
+export default class extends clickgo.form.AbstractForm {
 
-    'direction': 'top',
-    'scroll': false
-};
+    public lineCount = 2;
 
-export const methods = {
-    changeDirection: function(this: types.IVForm): void {
+    public style = false;
+
+    public direction = 'top';
+
+    public scroll = false;
+
+    public changeDirection(): void {
         switch (this.direction) {
             case 'top': {
                 this.direction = 'bottom';
@@ -28,4 +29,5 @@ export const methods = {
             }
         }
     }
-};
+
+}

@@ -1,0 +1,17 @@
+.wrap {
+    display: flex; -webkit-overflow-scrolling: touch; max-width: 100%; max-height: 100%; position: relative;
+
+    &::-webkit-scrollbar {
+        display: none;
+    }
+    &.v {
+        overflow: scroll; flex-direction: column;
+    }
+    &.h {
+        overflow: scroll; white-space: nowrap;
+    }
+
+    .selection {
+        position: absolute; background: var(--g-background-opacity); border: solid 1px var(--g-border-color-focus); left: 0; top: 0; width: 1px; height: 1px; pointer-events: none; opacity: 0;
+    }
+}

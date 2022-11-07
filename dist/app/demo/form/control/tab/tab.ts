@@ -1,27 +1,33 @@
-import * as types from '~/types/index';
 import * as clickgo from 'clickgo';
 
-export const data = {
-    'ntab': '',
-    'tabs': ['tab1'],
-    'tindex': 1,
-    'tabPosition': 'top',
-    'color': undefined,
-    'size': undefined,
-    'drag': false,
-    'close': false
-};
+export default class extends clickgo.form.AbstractForm {
 
-export const methods = {
-    onClose: async function(this: types.IVForm, e: CustomEvent, i: number): Promise<void> {
+    public ntab = '';
+
+    public tabs: any[] = ['tab1'];
+
+    public tindex = 1;
+
+    public tabPosition = 'top';
+
+    public color = undefined;
+
+    public size = undefined;
+
+    public drag = false;
+
+    public close = false;
+
+    public async onClose(e: CustomEvent, i: number): Promise<void> {
         if (i !== 10) {
             return;
         }
         e.preventDefault();
         await clickgo.form.dialog('The tab can not be close.');
-    },
-    add: function(this: types.IVForm): void {
-        const len = this.tabs.length as number;
+    }
+
+    public add(): void {
+        const len = this.tabs.length;
         const val = 'tab' + (++this.tindex).toString();
         if (len === 15) {
             this.tabs.push({
@@ -40,13 +46,15 @@ export const methods = {
         else {
             this.tabs.push(val);
         }
-    },
-    remove: function(this: types.IVForm): void {
+    }
+
+    public remove(): void {
         if (this.tabs.length > 0) {
             this.tabs.splice(this.tabs.length - 1);
         }
-    },
-    position: function(this: types.IVForm): void {
+    }
+
+    public position(): void {
         switch (this.tabPosition) {
             case 'top':
                 this.tabPosition = 'right';
@@ -61,4 +69,5 @@ export const methods = {
                 this.tabPosition = 'top';
         }
     }
-};
+
+}

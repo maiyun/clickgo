@@ -1,0 +1,4 @@
+<div class="wrap" :class="[direction]" @scroll="scroll" @wheel="wheel" @touchmove="move" @touchend="end" @touchcancel="end" @mousedown="down" @touchstart="down">
+    <slot></slot>
+    <div class="selection" ref="selection"></div>
+</div>

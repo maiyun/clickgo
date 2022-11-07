@@ -6,7 +6,7 @@ export default class extends clickgo.control.AbstractControl {
 
     public indeterminateData = false;
 
-    public isKeyDown = false;
+    public isSpaceDown = false;
 
     public props = {
         'disabled': false,
@@ -14,10 +14,6 @@ export default class extends clickgo.control.AbstractControl {
         'modelValue': undefined,
         'indeterminate': undefined
     };
-
-    public get isDisabled(): boolean {
-        return clickgo.tool.getBoolean(this.props.disabled);
-    }
 
     public click(): void {
         if (this.indeterminateData) {
@@ -37,15 +33,15 @@ export default class extends clickgo.control.AbstractControl {
         }
         else if (e.key === ' ') {
             e.preventDefault();
-            this.isKeyDown = true;
+            this.isSpaceDown = true;
         }
     }
 
     public keyup(): void {
-        if (!this.isKeyDown) {
+        if (!this.isSpaceDown) {
             return;
         }
-        this.isKeyDown = false;
+        this.isSpaceDown = false;
         this.click();
     }
 

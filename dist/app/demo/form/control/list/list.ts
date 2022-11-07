@@ -1,9 +1,10 @@
-import * as types from '~/types/index';
 import * as clickgo from 'clickgo';
 
-export const data = {
-    'ntab': '',
-    'slist': [
+export default class extends clickgo.form.AbstractForm {
+
+    public ntab = '';
+
+    public slist = [
         {
             'type': 0,
             'name': 'Appraise',
@@ -30,31 +31,43 @@ export const data = {
         {
             'type': 1
         }
-    ],
-    'select': 0,
+    ];
 
-    'select2': 'Appraise',
-    'label2': '',
-    'tree': false,
-    'async': false,
-    'icon': false,
-    'sub6children': [],
+    public select = 0;
 
-    'select3': 0,
-    'listData3': [],
-    'select4': '',
-    'listData4': [],
+    public select2 = 'Appraise';
 
-    'disabled': false,
-    'must': true,
-    'multi': false,
-    'selection': false,
-    'selectionArea': {},
-    'scroll': 'auto'
-};
+    public label2 = '';
 
-export const computed = {
-    'adData': function(this: types.IVForm): any[] {
+    public tree = false;
+
+    public async = false;
+
+    public icon = false;
+
+    public sub6children: string[] = [];
+
+    public select3 = 0;
+
+    public listData3 = [];
+
+    public select4 = '';
+
+    public listData4 = [];
+
+    public disabled = false;
+
+    public must = true;
+
+    public multi = false;
+
+    public selection = false;
+
+    public selectionArea = {};
+
+    public scroll = 'auto';
+
+    public get adData(): any[] {
         const data: any[] = [];
         for (let i = 0; i < this.slist.length; ++i) {
             const item = this.slist[i];
@@ -64,8 +77,9 @@ export const computed = {
             });
         }
         return data;
-    },
-    'listData': function(this: types.IVForm): any[] {
+    }
+
+    public get listData(): any[] {
         const data: any[] = ['Item1', {
             'label': 'Title1',
             'children': [
@@ -107,24 +121,25 @@ export const computed = {
             }
         }
         return data;
-    },
-    'listData2': function(this: types.IVForm): number[] {
+    }
+
+    public get listData2(): number[] {
         const data = [];
         for (let k = 0; k < this.listData.length; k++) {
             data.push(k + 1);
         }
         return data;
     }
-};
 
-export const methods = {
-    showIndex: function(this: types.IVForm): void {
-        clickgo.form.dialog('Index is ' + (this.select as number).toString() + '.').catch((e: Error) => { throw e; });
-    },
-    showIndex2: function(this: types.IVForm): void {
-        clickgo.form.dialog('Index is ' + (this.select2 as number).toString() + '.').catch((e: Error) => { throw e; });
-    },
-    showType: function(this: types.IVForm): void {
+    public showIndex(): void {
+        clickgo.form.dialog('Index is ' + this.select.toString() + '.').catch((e: Error) => { throw e; });
+    }
+
+    public showIndex2(): void {
+        clickgo.form.dialog('Index is ' + this.select2.toString() + '.').catch((e: Error) => { throw e; });
+    }
+
+    public showType(): void {
         if (Array.isArray(this.select)) {
             if (this.select.length === 0) {
                 clickgo.form.dialog('There are currently no selected items.').catch((e: Error) => { throw e; });
@@ -140,22 +155,22 @@ export const methods = {
         else {
             clickgo.form.dialog(this.select === -1 ? 'There are currently no selected items.' : `Type is ${this.slist[this.select].type}.`).catch((e: Error) => { throw e; });
         }
-    },
-    selectButton: function(this: types.IVForm): void {
+    }
+
+    public selectButton(): void {
         if (this.ntab === 'list') {
             this.select2 = 'Item1';
         }
         else {
             this.select = 1;
         }
-    },
-    selectButtonList: function(this: types.IVForm): void {
+    }
+
+    public selectButtonList(): void {
         this.select2 = 'Sub3';
-    },
-    onSelectLoad: async function(this: types.IVForm,
-        value: string,
-        resolve: (child?: any[]) => void
-    ): Promise<void> {
+    }
+
+    public async onSelectLoad(value: string, resolve: (child?: any[]) => void): Promise<void> {
         if (value !== 'Sub6') {
             await clickgo.tool.sleep(100);
             if (value === 'Sub8') {
@@ -168,11 +183,13 @@ export const methods = {
         }
         await clickgo.tool.sleep(300);
         this.sub6children = ['Sub7', 'Sub8'];
-    },
-    onSelect: function(this: types.IVForm, area: Record<string, any>): void {
+    }
+
+    public onSelect(area: Record<string, any>): void {
         this.selectionArea = area;
-    },
-    scrollChange: function(this: types.IVForm): void {
+    }
+
+    public scrollChange(): void {
         switch (this.scroll) {
             case 'auto': {
                 this.scroll = 'visible';
@@ -187,4 +204,5 @@ export const methods = {
             }
         }
     }
-};
+
+}

@@ -1,16 +1,19 @@
-import * as types from '~/types/index';
 import * as clickgo from 'clickgo';
 
-export const data = {
-    btnChecked: false,
-    btnRadio: '0',
-    type: 'default',
-    area: 'all',
-    plain: 'not'
-};
+export default class extends clickgo.form.AbstractForm {
 
-export const methods = {
-    dialog: async function(this: types.IVForm, text: string): Promise<void> {
+    public btnChecked = false;
+
+    public btnRadio = 0;
+
+    public type = 'default';
+
+    public area = 'all';
+
+    public plain = 'not';
+
+    public async dialog(text: string): Promise<void> {
         await clickgo.form.dialog(text);
     }
-};
+
+}

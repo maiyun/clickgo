@@ -1,72 +1,88 @@
-import * as types from '~/types/index';
 import * as clickgo from 'clickgo';
 
-export const data = {
-    'watchSizeText': false,
-    'watchSizeHeight': true,
-    'watchText': false,
-    'watchInner': true,
-    'watchStyleChange': true,
-    'bindGestureText': '',
-    'bindGestureWheelText': '',
-    'bindLongText': false,
-    'moveLeft': 0,
-    'moveTop': 0,
-    'moveWidth': 25,
-    'moveHeight': 25,
-};
+export default class extends clickgo.form.AbstractForm {
 
-export const computed = {
-    'isMove': function(): boolean {
+    public watchSizeText = false;
+
+    public watchSizeHeight = true;
+
+    public watchText = false;
+
+    public watchInner = true;
+
+    public watchStyleChange = true;
+
+    public bindGestureText = '';
+
+    public bindGestureWheelText = '';
+
+    public bindLongText = false;
+
+    public moveLeft = 0;
+
+    public moveTop = 0;
+
+    public moveWidth = 25;
+
+    public moveHeight = 25;
+
+    public get isMove(): boolean {
         return clickgo.dom.is.move;
-    },
-    'isShift': function(): boolean {
+    }
+
+    public get isShift(): boolean {
         return clickgo.dom.is.shift;
-    },
-    'isCtrl': function(): boolean {
+    }
+
+    public get isCtrl(): boolean {
         return clickgo.dom.is.ctrl;
     }
-};
 
-export const methods = {
-    setGlobalCursor: function(this: types.IVForm, type?: string): void {
+    public setGlobalCursor(type?: string): void {
         clickgo.dom.setGlobalCursor(type);
-    },
-    hasTouchButMouse: function(this: types.IVForm, e: MouseEvent | TouchEvent): void {
+    }
+
+    public hasTouchButMouse(e: MouseEvent | TouchEvent): void {
         clickgo.form.dialog(clickgo.dom.hasTouchButMouse(e) ? 'true' : 'false').catch((e) => { throw e; });
-    },
-    getStyleCount: function(this: types.IVForm): void {
+    }
+
+    public getStyleCount(): void {
         clickgo.form.dialog(clickgo.dom.getStyleCount(this.taskId, 'form').toString()).catch((e) => { throw e; });
-    },
-    getSize: function(this: types.IVForm): void {
-        clickgo.form.dialog(JSON.stringify(clickgo.dom.getSize(this.$refs.getSize.$el))).catch((e) => { throw e; });
-    },
-    watchSize: function(this: types.IVForm): void {
+    }
+
+    public getSize(): void {
+        clickgo.form.dialog(JSON.stringify(clickgo.dom.getSize(this.refs.getSize.$el))).catch((e) => { throw e; });
+    }
+
+    public watchSize(): void {
         this.watchSizeText = !this.watchSizeText;
         if (this.watchSizeText) {
-            clickgo.dom.watchSize(this.$refs.watchSize.$el, (size) => {
+            clickgo.dom.watchSize(this.refs.watchSize.$el, (size) => {
                 clickgo.form.dialog(JSON.stringify(size)).catch((e) => { throw e; });
             });
         }
         else {
-            clickgo.dom.unwatchSize(this.$refs.watchSize.$el);
+            clickgo.dom.unwatchSize(this.refs.watchSize.$el);
         }
-    },
-    watch: function(this: types.IVForm): void {
+    }
+
+    public wwatch(): void {
         this.watchText = !this.watchText;
         if (this.watchText) {
-            clickgo.dom.watch(this.$refs.watch.$el, () => {
+            clickgo.dom.watch(this.refs.watch.$el, () => {
                 clickgo.form.dialog('Changed.').catch((e) => { throw e; });
             });
         }
         else {
-            clickgo.dom.unwatch(this.$refs.watch.$el);
+            clickgo.dom.unwatch(this.refs.watch.$el);
         }
-    },
-    isWatchStyle: function(this: types.IVForm): void {
-        clickgo.form.dialog(clickgo.dom.isWatchStyle(this.$refs.watchStyle.$el) ? 'true' : 'false').catch((e) => { throw e; });
-    },
-    bindGesture: function(this: types.IVForm, e: MouseEvent | TouchEvent): void {
+    }
+
+    public isWatchStyle(): void {
+        clickgo.form.dialog(clickgo.dom.isWatchStyle(this.refs.watchStyle.$el) ? 'true' : 'false').catch((e) => { throw e; });
+    }
+
+    public bindGesture(e: MouseEvent | TouchEvent): void {
         clickgo.dom.bindGesture(e, {
             'dirs': ['top', 'bottom'],
             handler: (dir) => {
@@ -80,8 +96,9 @@ export const methods = {
                 });
             }
         });
-    },
-    bindGestureWheel: function(this: types.IVForm, e: WheelEvent): void {
+    }
+
+    public bindGestureWheel(e: WheelEvent): void {
         clickgo.dom.bindGesture(e, {
             'dirs': ['top', 'bottom', 'left', 'right'],
             handler: (dir) => {
@@ -95,55 +112,64 @@ export const methods = {
                 });
             }
         });
-    },
-    bindLong: function(this: types.IVForm): void {
+    }
+
+    public bindLong(): void {
         clickgo.form.dialog('Press and hold this button.').catch((e) => { throw e; });
-    },
-    bindLongDown: function(this: types.IVForm, e: MouseEvent | TouchEvent): void {
+    }
+
+    public bindLongDown(e: MouseEvent | TouchEvent): void {
         clickgo.dom.bindLong(e, async () => {
             this.bindLongText = true;
             await clickgo.tool.sleep(500);
             this.bindLongText = false;
         });
-    },
-    bindDragDown: function(this: types.IVForm, e: MouseEvent | TouchEvent): void {
+    }
+
+    public bindDragDown(e: MouseEvent | TouchEvent): void {
         clickgo.dom.bindDrag(e, {
-            'el': this.$refs.bindDrag,
+            'el': this.refs.bindDrag,
             'data': 'bindDragDownTest'
         });
-    },
-    dragEnter: async function(this: types.IVForm, e: Event): Promise<void> {
+    }
+
+    public async dragEnter(e: Event): Promise<void> {
         (e.target as HTMLElement).innerText = 'enter';
         await clickgo.tool.sleep(200);
         (e.target as HTMLElement).innerText = '';
-    },
-    dragLeave: async function(this: types.IVForm, e: Event): Promise<void> {
+    }
+
+    public async dragLeave(e: Event): Promise<void> {
         (e.target as HTMLElement).innerText = 'leave';
         await clickgo.tool.sleep(200);
         (e.target as HTMLElement).innerText = '';
-    },
-    drop: async function(this: types.IVForm, e: Event): Promise<void> {
+    }
+
+    public async drop(e: Event): Promise<void> {
         (e.target as HTMLElement).innerText = 'drop';
         await clickgo.tool.sleep(500);
         (e.target as HTMLElement).innerText = '';
-    },
-    bindMoveDown: function(this: types.IVForm, e: MouseEvent | TouchEvent): void {
+    }
+
+    public bindMoveDown(e: MouseEvent | TouchEvent): void {
         clickgo.dom.bindMove(e, {
             'areaObject': e.currentTarget as HTMLElement,
-            'object': this.$refs.move,
+            'object': this.refs.move,
             move: (ox: number, oy: number): void => {
-                (this.moveLeft as number) += ox;
-                (this.moveTop as number) += oy;
+                this.moveLeft += ox;
+                this.moveTop += oy;
             }
         });
-    },
-    fullscreen: function(this: types.IVForm): void {
+    }
+
+    public fullscreen(): void {
         clickgo.dom.fullscreen();
     }
-};
 
-export const mounted = function(this: types.IVForm): void {
-    clickgo.dom.watchStyle(this.$refs.watchStyle.$el, 'font-size', (n, v) => {
-        clickgo.form.dialog('name: ' + n + ', value: ' + v).catch((e) => { throw e; });
-    });
-};
+    public onMounted(): void {
+        clickgo.dom.watchStyle(this.refs.watchStyle.$el, 'font-size', (n, v) => {
+            clickgo.form.dialog('name: ' + n + ', value: ' + v).catch((e) => { throw e; });
+        });
+    }
+
+}

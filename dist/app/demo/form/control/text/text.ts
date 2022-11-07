@@ -1,37 +1,54 @@
 import * as clickgo from 'clickgo';
-import * as types from '~/types/index';
 
-export const data = {
-    'value': '',
-    'selectionStart': 0,
-    'selectionEnd': 0,
-    'multi': false,
-    'disabled': false,
-    'readonly': false,
-    'long': false,
-    'password': false,
-    'wrap': true,
-    'menu': false,
-    'gesture': false,
-    'lineHeight': 1,
-    'fontSize': 12,
-    'border': 'solid',
-    'background': undefined,
+export default class extends clickgo.form.AbstractForm {
 
-    'scrollLeft': 0,
-    'scrollTop': 0,
-    'length': 0,
-    'clientHeight': 0,
-    'clientWidth': 0
-};
+    public value = '';
 
-export const methods = {
-    longClick: function(this: types.IVForm): void {
+    public selectionStart = 0;
+
+    public selectionEnd = 0;
+
+    public multi = false;
+
+    public disabled = false;
+
+    public readonly = false;
+
+    public long = false;
+
+    public password = false;
+
+    public wrap = true;
+
+    public menu = false;
+
+    public gesture = false;
+
+    public lineHeight = 1;
+
+    public fontSize = 12;
+
+    public border = 'solid';
+
+    public background = undefined;
+
+    public scrollLeft = 0;
+
+    public scrollTop = 0;
+
+    public length = 0;
+
+    public clientHeight = 0;
+
+    public clientWidth = 0;
+
+    public longClick(): void {
         this.value = this.long ? 'short\nshort\nshort\nshort\nshort\nshort\nshort\nshort\nshort' : 'long\nlong\nlong\nlong\nlong\nlong\nlong\nlong\nlong\nlong\nlong\nlong\nlong\nlong\nlong\nlong\nlong\nlong\nlong\nlong\nlong\nlong\nlong\nlong\nlong\nlong\nlong\nlong\nlong';
         this.long = !this.long;
         this.scrollTop = 0;
-    },
-    scrollborder: function(this: types.IVForm, e: MouseEvent | TouchEvent | WheelEvent): void {
+    }
+
+    public scrollborder(e: MouseEvent | TouchEvent | WheelEvent): void {
         if (!this.gesture) {
             return;
         }
@@ -45,10 +62,11 @@ export const methods = {
                         break;
                     }
                     default: {
-                        (this.value as string) += 'A';
+                        this.value += 'A';
                     }
                 }
             }
         });
     }
-};
+
+}

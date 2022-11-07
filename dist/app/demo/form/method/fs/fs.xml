@@ -1,7 +1,7 @@
 <form width="350" height="400" title="Library fs" padding="10">
     <layout gutter="10" direction="v" style="flex: 1;">
         <label>Double click the item below:</label>
-        <block style="background: #000; color: #FFF; padding: 5px;">{{path}}</block>
+        <block style="background: #000; color: #FFF; padding: 5px;">{{ppath}}</block>
         <list v-model="val" :data="list" @dblclick="dblclick" style="flex: 1; height: 0;"></list>
         <button style="height: 30px;" @click="up">Up</button>
     </layout>

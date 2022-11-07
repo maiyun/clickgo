@@ -1,9 +1,19 @@
-export const data = {
-    'checked1': false,
-    'checked2': false,
-    'checked3': false,
-    'indeterminate1': false,
-    'indeterminate2': false,
-    'indeterminate3': false,
-    'disabled': false
-};
+import * as clickgo from 'clickgo';
+
+export default class extends clickgo.form.AbstractForm {
+
+    public checked1 = false;
+
+    public checked2 = false;
+
+    public checked3 = false;
+
+    public indeterminate1 = false;
+
+    public indeterminate2 = false;
+
+    public indeterminate3 = false;
+
+    public disabled = false;
+
+}

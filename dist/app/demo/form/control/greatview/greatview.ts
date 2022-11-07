@@ -1,53 +1,74 @@
 import * as clickgo from 'clickgo';
-import * as types from '~/types/index';
 
-export const data = {
-    'ntab': '',
+export default class extends clickgo.form.AbstractForm {
 
-    'lineValue': 100,
-    'lineCount': 2,
+    public ntab = '';
 
-    'sLeft1': 0,
-    'sTop1': 0,
-    'l1': 0,
-    'c1': 0,
+    public lineValue = 100;
 
-    'sLeft2': 0,
-    'sTop2': 0,
-    'l2': 0,
-    'c2': 0,
+    public lineCount = 2;
 
-    'sLeft3': 0,
-    'sTop3': 0,
-    'l3': 0,
-    'c3': 0,
+    public sLeft1 = 0;
 
-    'sLeft4': 0,
-    'sTop4': 0,
-    'l4': 0,
-    'c4': 0,
+    public sTop1 = 0;
 
-    'direction': false,
+    public l1 = 0;
 
-    'dir5': 'v',
-    'sLeft5': 0,
-    'sTop5': 0,
-    'l5': 0,
-    'c5': 0,
-    'line5': 10,
+    public c1 = 0;
 
-    'c6': 0,
-    'is6': [],
+    public sLeft2 = 0;
 
-    'gesture': false,
-    'style': false,
-    'selection': false,
-    'content': false,
-    'area': {}
-};
+    public sTop2 = 0;
 
-export const computed = {
-    'is': function(this: types.IVForm): any[] {
+    public l2 = 0;
+
+    public c2 = 0;
+
+    public sLeft3 = 0;
+
+    public sTop3 = 0;
+
+    public l3 = 0;
+
+    public c3 = 0;
+
+    public sLeft4 = 0;
+
+    public sTop4 = 0;
+
+    public l4 = 0;
+
+    public c4 = 0;
+
+    public direction = false;
+
+    public dir5 = 'v';
+
+    public sLeft5 = 0;
+
+    public sTop5 = 0;
+
+    public l5 = 0;
+
+    public c5 = 0;
+
+    public line5 = 10;
+
+    public c6 = 0;
+
+    public is6: number[] = [];
+
+    public gesture = false;
+
+    public style = false;
+
+    public selection = false;
+
+    public content = false;
+
+    public area = {};
+
+    public get is(): any[] {
         const is = [];
         for (let i = 0; i < this.lineCount; ++i) {
             if (i > 0 && i % 10 === 0) {
@@ -57,15 +78,8 @@ export const computed = {
         }
         return is;
     }
-};
 
-export const mounted = function(this: types.IVForm): void {
-    this.is6[29] = 50;
-    this.is6[39] = 50;
-};
-
-export const methods = {
-    scrollborder: function(this: types.IVForm, e: MouseEvent | TouchEvent | WheelEvent, dir: string): void {
+    public scrollborder(e: MouseEvent | TouchEvent | WheelEvent, dir: string): void {
         if (!this.gesture) {
             return;
         }
@@ -93,10 +107,16 @@ export const methods = {
                         break;
                     }
                     default: {
-                        (this.lineCount as number) += this.lineValue as number;
+                        this.lineCount += this.lineValue;
                     }
                 }
             }
         });
     }
-};
+
+    public onMounted(): void {
+        this.is6[29] = 50;
+        this.is6[39] = 50;
+    }
+
+}

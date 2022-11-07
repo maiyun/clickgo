@@ -9,20 +9,20 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.methods = exports.data = void 0;
 const clickgo = require("clickgo");
-exports.data = {
-    'ntab': '',
-    'tabs': ['tab1'],
-    'tindex': 1,
-    'tabPosition': 'top',
-    'color': undefined,
-    'size': undefined,
-    'drag': false,
-    'close': false
-};
-exports.methods = {
-    onClose: function (e, i) {
+class default_1 extends clickgo.form.AbstractForm {
+    constructor() {
+        super(...arguments);
+        this.ntab = '';
+        this.tabs = ['tab1'];
+        this.tindex = 1;
+        this.tabPosition = 'top';
+        this.color = undefined;
+        this.size = undefined;
+        this.drag = false;
+        this.close = false;
+    }
+    onClose(e, i) {
         return __awaiter(this, void 0, void 0, function* () {
             if (i !== 10) {
                 return;
@@ -30,8 +30,8 @@ exports.methods = {
             e.preventDefault();
             yield clickgo.form.dialog('The tab can not be close.');
         });
-    },
-    add: function () {
+    }
+    add() {
         const len = this.tabs.length;
         const val = 'tab' + (++this.tindex).toString();
         if (len === 15) {
@@ -51,13 +51,13 @@ exports.methods = {
         else {
             this.tabs.push(val);
         }
-    },
-    remove: function () {
+    }
+    remove() {
         if (this.tabs.length > 0) {
             this.tabs.splice(this.tabs.length - 1);
         }
-    },
-    position: function () {
+    }
+    position() {
         switch (this.tabPosition) {
             case 'top':
                 this.tabPosition = 'right';
@@ -72,4 +72,5 @@ exports.methods = {
                 this.tabPosition = 'top';
         }
     }
-};
+}
+exports.default = default_1;

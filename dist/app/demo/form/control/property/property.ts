@@ -1,5 +1,8 @@
-export const data = {
-    'data': [
+import * as clickgo from 'clickgo';
+
+export default class extends clickgo.form.AbstractForm {
+
+    public data = [
         {
             'kind': 'Design',
             'title': 'Name',
@@ -122,5 +125,6 @@ export const data = {
             'default': '',
             'value': 'keyup'
         }
-    ]
-};
+    ];
+
+}

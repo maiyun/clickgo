@@ -1,5 +1,5 @@
-<form width="350" height="400" title="Library task" padding="10">
-    <overflow direction="v" style="flex: 1;">
+<form width="350" height="400" title="Library task">
+    <flow direction="v" style="flex: 1; padding: 10px;">
         <layout direction="v" gutter="10">
             <label>onFrame(): timer: {{frameTimer}}, count: {{frameCount}}</label>
             <layout gutter="10">
@@ -33,7 +33,7 @@
             <button @click="getList" style="height: 30px;">getList()</button>
             <button @click="run" style="height: 30px;">run('/clickgo/app/demo/')</button>
             <button @click="end" style="height: 30px;">end('{{tid}}')</button>
-            <label>Now locale: {{cgLocale}}, Global locale: {{globalLocale}}</label>
+            <label>Now locale: {{locale}}, Global locale: {{globalLocale}}</label>
             <label>l('File name'): {{l('File name')}}</label>
             <label>l('File size'): {{l('File size')}}</label>
             <button @click="loadLocale('en', 'locale1')" style="height: 30px;">loadLocale('en', 'locale1')</button>
@@ -53,5 +53,5 @@
             <button @click="sleep" style="height: 30px;">{{sleeping ? 'Waiting...' : 'sleep(() => { ... }, 1000)'}}</button>
             <button @click="systemTaskInfo()" style="height: 30px;">systemTaskInfo</button>
         </layout>
-    </overflow>
+    </flow>
 </form>

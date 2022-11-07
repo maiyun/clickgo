@@ -54,7 +54,7 @@ const frameMaps: Record<string, number> = {};
 /**
  * --- 创建 frame 监听，formId 存在则为窗体范围，否则为任务级范围 ---
  * @param fun 监听回调
- * @param opt 选项,count:执行次数，默认无限次,taskId:APP模式下无效,formId:APP模式下无效
+ * @param opt 选项,count:执行次数，默认无限次,formId:限定在当前任务的某个窗体,taskId:APP模式下无效
  */
 export function onFrame(fun: () => void | Promise<void>, opt: {
     'count'?: number;

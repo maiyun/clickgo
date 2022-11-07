@@ -162,6 +162,33 @@ export abstract class AbstractControl {
     /** --- 组件参数，由用户定义重写 --- */
     public readonly props = {};
 
+    /**
+     * --- 获取 props 中的 boolean 类型的值 ----
+     */
+    public get propBoolean() {
+        return (name: keyof this['props']): boolean => {
+            return tool.getBoolean((this.props as any)[name]);
+        };
+    }
+
+    /**
+     * --- 获取 props 中的 number 类型的值 ----
+     */
+    public get propNumber() {
+        return (name: keyof this['props']): number => {
+            return tool.getNumber((this.props as any)[name]);
+        };
+    }
+
+    /**
+     * --- 获取 props 中的 int 类型的值 ----
+     */
+    public get propInt() {
+        return (name: keyof this['props']): number => {
+            return Math.floor(this.propNumber(name));
+        };
+    }
+
     /** --- 获取当前的 HTML DOM --- */
     public get element(): HTMLElement {
         return (this as any).$el;
@@ -501,6 +528,7 @@ export async function init(
                     const cdata = Object.entries(cls);
                     for (const item of cdata) {
                         if (item[0] === 'access') {
+                            // --- access 属性不放在 data 当中 ---
                             t.controls[name].access = item[1] as any;
                             continue;
                         }

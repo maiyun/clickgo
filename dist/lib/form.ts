@@ -76,7 +76,7 @@ const info: {
 };
 
 /** --- 窗体的抽象类 --- */
-export class AbstractForm {
+export abstract class AbstractForm {
 
     /**
      * --- 创建窗体工厂函数 ---
@@ -84,7 +84,7 @@ export class AbstractForm {
      * @param layout 是否使用此参数替换 layout 值
      */
     public static async create(data?: Record<string, any>, layout?: string): Promise<AbstractForm | number> {
-        const frm = new this();
+        const frm: AbstractForm = new (this as any)();
         /** --- 要挂载的 vue 参数 --- */
         const code: types.IFormCreateCode = {
             'data': {},
@@ -121,6 +121,11 @@ export class AbstractForm {
         /** --- class 对象类的属性列表 --- */
         const cdata = Object.entries(frm);
         for (const item of cdata) {
+            if (item[0] === 'access') {
+                // --- access 属性不放在 data 当中 ---
+
+                continue;
+            }
             code.data![item[0]] = item[1];
         }
         if (!layout) {
@@ -1912,6 +1917,7 @@ export async function create(opt: types.IFormCreateOptions): Promise<number> {
     }
     // --- 准备相关变量 ---
     let data: Record<string, any> = {};
+    let access: Record<string, any> = {};
     let methods: Record<string, any> | undefined = undefined;
     let computed: Record<string, any> = {};
     let beforeCreate: (() => void) | undefined = undefined;
@@ -1924,6 +1930,7 @@ export async function create(opt: types.IFormCreateOptions): Promise<number> {
     let unmounted: (() => void) | undefined = undefined;
     if (opt.code) {
         data = opt.code.data ?? {};
+        access = opt.code.access ?? {};
         methods = opt.code.methods;
         computed = opt.code.computed ?? {};
         beforeCreate = opt.code.beforeCreate;
@@ -2058,7 +2065,10 @@ export async function create(opt: types.IFormCreateOptions): Promise<number> {
             'computed': computed,
 
             'beforeCreate': beforeCreate,
-            'created': created,
+            'created': function(this: types.IVue) {
+                this.access = tool.clone(access);
+                created?.call(this);
+            },
             'beforeMount': beforeMount,
             'mounted': async function(this: types.IVue) {
                 await this.$nextTick();

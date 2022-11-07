@@ -1,10 +1,12 @@
-import * as types from '~/types/index';
 import * as clickgo from 'clickgo';
 
-export const data = {
-    'path': '/index.html',
-    'file': '',
-    'files': {
+export default class extends clickgo.form.AbstractForm {
+
+    public npath = '/index.html';
+
+    public file = '';
+
+    public files: Record<string, string> = {
         '/index.html': `<html>
     <head>
         <title>Monaco</title>
@@ -31,9 +33,9 @@ export const data = {
         color: blue;
     }
 }`
-    },
+    };
 
-    'list': [
+    public list = [
         {
             'label': 'HTML',
             'value': '/index.html'
@@ -50,25 +52,29 @@ export const data = {
             'label': 'SCSS',
             'value': '/index.scss'
         }
-    ],
+    ];
 
-    'theme': 'vs',
-    'themes': ['vs', 'vs-dark', 'hc-black'],
-    'language': undefined,
+    public theme = 'vs';
 
-    'globali': false,
-    'newi': false,
+    public themes = ['vs', 'vs-dark', 'hc-black'];
 
-    'readonly': false,
-    'disabled': false,
-    'size': '12px',
-    'family': false,
+    public language = '';
 
-    'initMonaco': false
-};
+    public globali = false;
 
-export const computed = {
-    'filesName': function(this: types.IVForm): string[] {
+    public newi = false;
+
+    public readonly = false;
+
+    public disabled = false;
+
+    public size = '12px';
+
+    public family = false;
+
+    public initMonaco = false;
+
+    public get filesName(): string[] {
         const names: string[] = [];
         for (const name in this.files) {
             if (!name.includes('.d.ts')) {
@@ -78,10 +84,8 @@ export const computed = {
         }
         return names;
     }
-};
 
-export const methods = {
-    globalInclude: function(this: types.IVForm): void {
+    public globalInclude(): void {
         if (this.globali) {
             delete this.files['/global.d.ts'];
         }
@@ -89,8 +93,9 @@ export const methods = {
             this.files['/global.d.ts'] = 'declare function str(): string;';
         }
         this.globali = !this.globali;
-    },
-    newInclude: function(this: types.IVForm): void {
+    }
+
+    public newInclude(): void {
         if (this.newi) {
             delete this.files['/new.d.ts'];
         }
@@ -98,22 +103,25 @@ export const methods = {
             this.files['/new.d.ts'] = 'declare function str2(): string;';
         }
         this.newi = !this.newi;
-    },
-    jump: function(this: types.IVForm, input: Record<string, any>): void {
+    }
+
+    public jump(input: Record<string, any>): void {
         clickgo.form.dialog({
             'content': `<block>Path: ${input.resource.path}</block><block>Line: ${input.options.selection.startLineNumber}</block>`,
             'direction': 'v'
         }).catch((e) => { throw e; });
-    },
-    pathLebel: function(this: types.IVForm, label: string): void {
+    }
+
+    public pathLebel(label: string): void {
         this.language = label.toLowerCase();
     }
-};
 
-export const mounted = function(this: types.IVForm): void {
-    clickgo.core.initModules('monaco').then(() => {
-        this.initMonaco = true;
-    }).catch(() => {
-        this.initMonaco = true;
-    });
-};
+    public onMounted(): void {
+        clickgo.core.initModules('monaco').then(() => {
+            this.initMonaco = true;
+        }).catch(() => {
+            this.initMonaco = true;
+        });
+    }
+
+}

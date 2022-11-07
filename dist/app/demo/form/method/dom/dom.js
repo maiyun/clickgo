@@ -9,72 +9,70 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.mounted = exports.methods = exports.computed = exports.data = void 0;
 const clickgo = require("clickgo");
-exports.data = {
-    'watchSizeText': false,
-    'watchSizeHeight': true,
-    'watchText': false,
-    'watchInner': true,
-    'watchStyleChange': true,
-    'bindGestureText': '',
-    'bindGestureWheelText': '',
-    'bindLongText': false,
-    'moveLeft': 0,
-    'moveTop': 0,
-    'moveWidth': 25,
-    'moveHeight': 25,
-};
-exports.computed = {
-    'isMove': function () {
+class default_1 extends clickgo.form.AbstractForm {
+    constructor() {
+        super(...arguments);
+        this.watchSizeText = false;
+        this.watchSizeHeight = true;
+        this.watchText = false;
+        this.watchInner = true;
+        this.watchStyleChange = true;
+        this.bindGestureText = '';
+        this.bindGestureWheelText = '';
+        this.bindLongText = false;
+        this.moveLeft = 0;
+        this.moveTop = 0;
+        this.moveWidth = 25;
+        this.moveHeight = 25;
+    }
+    get isMove() {
         return clickgo.dom.is.move;
-    },
-    'isShift': function () {
+    }
+    get isShift() {
         return clickgo.dom.is.shift;
-    },
-    'isCtrl': function () {
+    }
+    get isCtrl() {
         return clickgo.dom.is.ctrl;
     }
-};
-exports.methods = {
-    setGlobalCursor: function (type) {
+    setGlobalCursor(type) {
         clickgo.dom.setGlobalCursor(type);
-    },
-    hasTouchButMouse: function (e) {
+    }
+    hasTouchButMouse(e) {
         clickgo.form.dialog(clickgo.dom.hasTouchButMouse(e) ? 'true' : 'false').catch((e) => { throw e; });
-    },
-    getStyleCount: function () {
+    }
+    getStyleCount() {
         clickgo.form.dialog(clickgo.dom.getStyleCount(this.taskId, 'form').toString()).catch((e) => { throw e; });
-    },
-    getSize: function () {
-        clickgo.form.dialog(JSON.stringify(clickgo.dom.getSize(this.$refs.getSize.$el))).catch((e) => { throw e; });
-    },
-    watchSize: function () {
+    }
+    getSize() {
+        clickgo.form.dialog(JSON.stringify(clickgo.dom.getSize(this.refs.getSize.$el))).catch((e) => { throw e; });
+    }
+    watchSize() {
         this.watchSizeText = !this.watchSizeText;
         if (this.watchSizeText) {
-            clickgo.dom.watchSize(this.$refs.watchSize.$el, (size) => {
+            clickgo.dom.watchSize(this.refs.watchSize.$el, (size) => {
                 clickgo.form.dialog(JSON.stringify(size)).catch((e) => { throw e; });
             });
         }
         else {
-            clickgo.dom.unwatchSize(this.$refs.watchSize.$el);
+            clickgo.dom.unwatchSize(this.refs.watchSize.$el);
         }
-    },
-    watch: function () {
+    }
+    wwatch() {
         this.watchText = !this.watchText;
         if (this.watchText) {
-            clickgo.dom.watch(this.$refs.watch.$el, () => {
+            clickgo.dom.watch(this.refs.watch.$el, () => {
                 clickgo.form.dialog('Changed.').catch((e) => { throw e; });
             });
         }
         else {
-            clickgo.dom.unwatch(this.$refs.watch.$el);
+            clickgo.dom.unwatch(this.refs.watch.$el);
         }
-    },
-    isWatchStyle: function () {
-        clickgo.form.dialog(clickgo.dom.isWatchStyle(this.$refs.watchStyle.$el) ? 'true' : 'false').catch((e) => { throw e; });
-    },
-    bindGesture: function (e) {
+    }
+    isWatchStyle() {
+        clickgo.form.dialog(clickgo.dom.isWatchStyle(this.refs.watchStyle.$el) ? 'true' : 'false').catch((e) => { throw e; });
+    }
+    bindGesture(e) {
         clickgo.dom.bindGesture(e, {
             'dirs': ['top', 'bottom'],
             handler: (dir) => {
@@ -88,8 +86,8 @@ exports.methods = {
                 });
             }
         });
-    },
-    bindGestureWheel: function (e) {
+    }
+    bindGestureWheel(e) {
         clickgo.dom.bindGesture(e, {
             'dirs': ['top', 'bottom', 'left', 'right'],
             handler: (dir) => {
@@ -103,61 +101,61 @@ exports.methods = {
                 });
             }
         });
-    },
-    bindLong: function () {
+    }
+    bindLong() {
         clickgo.form.dialog('Press and hold this button.').catch((e) => { throw e; });
-    },
-    bindLongDown: function (e) {
+    }
+    bindLongDown(e) {
         clickgo.dom.bindLong(e, () => __awaiter(this, void 0, void 0, function* () {
             this.bindLongText = true;
             yield clickgo.tool.sleep(500);
             this.bindLongText = false;
         }));
-    },
-    bindDragDown: function (e) {
+    }
+    bindDragDown(e) {
         clickgo.dom.bindDrag(e, {
-            'el': this.$refs.bindDrag,
+            'el': this.refs.bindDrag,
             'data': 'bindDragDownTest'
         });
-    },
-    dragEnter: function (e) {
+    }
+    dragEnter(e) {
         return __awaiter(this, void 0, void 0, function* () {
             e.target.innerText = 'enter';
             yield clickgo.tool.sleep(200);
             e.target.innerText = '';
         });
-    },
-    dragLeave: function (e) {
+    }
+    dragLeave(e) {
         return __awaiter(this, void 0, void 0, function* () {
             e.target.innerText = 'leave';
             yield clickgo.tool.sleep(200);
             e.target.innerText = '';
         });
-    },
-    drop: function (e) {
+    }
+    drop(e) {
         return __awaiter(this, void 0, void 0, function* () {
             e.target.innerText = 'drop';
             yield clickgo.tool.sleep(500);
             e.target.innerText = '';
         });
-    },
-    bindMoveDown: function (e) {
+    }
+    bindMoveDown(e) {
         clickgo.dom.bindMove(e, {
             'areaObject': e.currentTarget,
-            'object': this.$refs.move,
+            'object': this.refs.move,
             move: (ox, oy) => {
                 this.moveLeft += ox;
                 this.moveTop += oy;
             }
         });
-    },
-    fullscreen: function () {
+    }
+    fullscreen() {
         clickgo.dom.fullscreen();
     }
-};
-const mounted = function () {
-    clickgo.dom.watchStyle(this.$refs.watchStyle.$el, 'font-size', (n, v) => {
-        clickgo.form.dialog('name: ' + n + ', value: ' + v).catch((e) => { throw e; });
-    });
-};
-exports.mounted = mounted;
+    onMounted() {
+        clickgo.dom.watchStyle(this.refs.watchStyle.$el, 'font-size', (n, v) => {
+            clickgo.form.dialog('name: ' + n + ', value: ' + v).catch((e) => { throw e; });
+        });
+    }
+}
+exports.default = default_1;

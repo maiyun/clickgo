@@ -9,15 +9,16 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.mounted = exports.methods = exports.data = void 0;
 const clickgo = require("clickgo");
-exports.data = {
-    'path': '/',
-    'list': [],
-    'val': ''
-};
-exports.methods = {
-    open: function (path) {
+const text_1 = require("./text");
+class default_1 extends clickgo.form.AbstractForm {
+    constructor() {
+        super(...arguments);
+        this.ppath = '/';
+        this.list = [];
+        this.val = '';
+    }
+    open(path) {
         return __awaiter(this, void 0, void 0, function* () {
             if (!path.endsWith('/')) {
                 path += '/';
@@ -30,10 +31,10 @@ exports.methods = {
                     'value': path + item.name
                 });
             }
-            this.path = path;
+            this.ppath = path;
         });
-    },
-    dblclick: function () {
+    }
+    dblclick() {
         return __awaiter(this, void 0, void 0, function* () {
             const r = yield clickgo.fs.isFile(this.val);
             if (r) {
@@ -52,11 +53,12 @@ exports.methods = {
                     if (content instanceof Blob) {
                         content = yield clickgo.tool.blob2Text(content);
                     }
-                    const f = yield clickgo.form.create('text');
+                    const f = yield text_1.default.create();
                     if (typeof f === 'number') {
                         return;
                     }
-                    clickgo.form.send(f.id, {
+                    f.show();
+                    this.send(f.formId, {
                         'title': this.val.slice(this.val.lastIndexOf('/') + 1),
                         'content': content
                     });
@@ -67,22 +69,22 @@ exports.methods = {
             }
             yield this.open(this.val);
         });
-    },
-    up: function () {
+    }
+    up() {
         return __awaiter(this, void 0, void 0, function* () {
-            if (this.path === '/') {
+            if (this.ppath === '/') {
                 return;
             }
-            const path = this.path.slice(0, -1);
+            const path = this.ppath.slice(0, -1);
             const lif = path.lastIndexOf('/');
             const npath = path.slice(0, lif + 1);
             yield this.open(npath);
         });
     }
-};
-const mounted = function () {
-    return __awaiter(this, void 0, void 0, function* () {
-        yield this.open('/');
-    });
-};
-exports.mounted = mounted;
+    onMounted() {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.open('/');
+        });
+    }
+}
+exports.default = default_1;

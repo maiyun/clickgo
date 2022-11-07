@@ -399,9 +399,6 @@ export default class extends clickgo.control.AbstractControl {
         const y: number = (e instanceof MouseEvent) ? e.clientY : e.touches[0].clientY;
         if (this.isSelection) {
             // --- 建立选区 ---
-            if (clickgo.dom.findParentByData(e.target as HTMLElement, 'cg-selection-cancel')) {
-                return;
-            }
             clickgo.dom.bindDown(e, {
                 start: (): void => {
                     const innerRect = this.refs.inner.getBoundingClientRect();

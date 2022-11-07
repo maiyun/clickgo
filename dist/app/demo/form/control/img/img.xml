@@ -1,5 +1,5 @@
 <form width="300" height="500" title="Img">
-    <overflow direction="v" style="flex: 1; width: 0;">
+    <flow direction="v" style="flex: 1; width: 0;">
         <layout direction="v" gutter="10" style="padding: 10px;">
             <label>Load "../../../res/img.jpg":</label>
             <img src="../../../res/img.jpg" style="width: 200px; height: 200px;" />
@@ -12,5 +12,5 @@
             <label>You can also use http://, https:// and data: url, load "https://nodejs.org/static/images/logo.svg":</label>
             <img src="https://nodejs.org/static/images/logo.svg" style="background-color: #333; width: 122px; height: 75px;" />
         </layout>
-    </overflow>
+    </flow>
 </form>

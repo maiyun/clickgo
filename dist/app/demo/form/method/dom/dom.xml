@@ -1,22 +1,22 @@
-<form width="400" height="450" title="Library dom" padding="10">
-    <overflow direction="v" style="flex: 1;">
+<form width="400" height="450" title="Library dom">
+    <flow direction="v" style="flex: 1; padding: 10px;">
         <layout gutter="10" direction="v" style="flex: 1;">
             <button @click="setGlobalCursor('wait')" style="height: 30px;">setGlobalCursor('wait')</button>
             <button @click="setGlobalCursor" style="height: 30px;">setGlobalCursor()</button>
             <button @click="hasTouchButMouse" style="height: 30px;">hasTouchButMouse()</button>
             <button @click="getStyleCount" style="height: 30px;">getStyleCount({{taskId}}, 'form')</button>
-            <button @click="getSize" ref="getSize" style="height: 30px;">getSize(this.$refs.getSize)</button>
+            <button @click="getSize" ref="getSize" style="height: 30px;">getSize(this.refs.getSize)</button>
             <layout gutter="10">
                 <button @click="watchSize" ref="watchSize" :style="{'height': (watchSizeHeight ? 30 : 50) + 'px'}" style="padding: 0 5px; flex: 1;">{{watchSizeText ? '' : '!'}}watchSize</button>
                 <button @click="watchSizeHeight = !watchSizeHeight" style="padding: 0 5px; flex: 1;">Change</button>
             </layout>
             <layout gutter="10">
                 <layout ref="watch" align-v="center" align-h="center" style="flex: 1; background: #FFF;">{{watchInner ? 'inner' : 'Inner'}}</layout>
-                <button @click="watch" style="height: 30px; padding: 0 5px;">{{watchText ? '' : '!'}}watch</button>
+                <button @click="wwatch" style="height: 30px; padding: 0 5px;">{{watchText ? '' : '!'}}watch</button>
                 <button @click="watchInner = !watchInner" style="padding: 0 5px;">Change</button>
             </layout>
-            <button @click="watchStyleChange = !watchStyleChange" ref="watchStyle" style="height: 30px;" :style="{'font-size': watchStyleChange ? 'inherit' : '16px'}">watchStyle(this.$refs.watchStyle.$el, 'font-size', (n, v) => { ... })</button>
-            <button @click="isWatchStyle" style="height: 30px;">isWatchStyle(this.$refs.watchStyle.$el)</button>
+            <button @click="watchStyleChange = !watchStyleChange" ref="watchStyle" style="height: 30px;" :style="{'font-size': watchStyleChange ? 'inherit' : '16px'}">watchStyle(this.refs.watchStyle.$el, 'font-size', (n, v) => { ... })</button>
+            <button @click="isWatchStyle" style="height: 30px;">isWatchStyle(this.refs.watchStyle.$el)</button>
             <block @mousedown="bindGesture" @touchstart="bindGesture" style="height: 50px; background: #FFF; display: flex; justify-content: center; align-items: center; color: rgba(0, 0, 0, .5); font-size: 14px;">{{bindGestureText ? bindGestureText : 'bindGesture(e: Touch | Mouse, { ... })'}}</block>
             <block @wheel="bindGestureWheel" style="height: 50px; background: #FFF; display: flex; justify-content: center; align-items: center; color: rgba(0, 0, 0, .5); font-size: 14px;">{{bindGestureWheelText ? bindGestureWheelText : 'bindGesture(e: Wheel, { ... })'}}</block>
             <button @click="bindLong" ref="bindLong" @mousedown="bindLongDown" @touchstart="bindLongDown" style="height: 30px;">{{bindLongText ? 'Yeah!' : 'bindLong(e, () => { ... })'}}</button>
@@ -51,5 +51,5 @@
             <label>clickgo.form.is.shift: {{isShift ? 'true' : 'false'}}</label>
             <label>clickgo.form.is.ctrl: {{isCtrl ? 'true' : 'false'}}</label>
         </layout>
-    </overflow>
+    </flow>
 </form>

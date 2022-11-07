@@ -18,16 +18,16 @@
         </layout>
         <scroll direction="h" :disabled="disabled" style="height: 30px;"></scroll>
         <layout style="border: solid 1px rgba(0, 0, 0, .3); flex: 1; height: 0;">
-            <overflow v-model:scroll-top="so2" direction="v" @resize="c2 = $event" @change="l2 = $event" style="line-height: 1.5; flex: 1;">
+            <flow v-model:scroll-top="so2" direction="v" @resize="c2 = $event" @change="l2 = $event" style="line-height: 1.5; flex: 1;">
                 <block style="padding: 10px;">
                     <block>Length: {{l2}}, Client: {{c2}}.</block>
                     <block v-for="line of count">Line {{line}}.</block>
                 </block>
-            </overflow>
+            </flow>
             <scroll :length="l2" :client="c2" v-model:scroll-offset="so2" :float="float" :disabled="disabled" style="width: 20px;"></scroll>
         </layout>
         <layout gutter="10" align-v="center">
-            <label style="flex: 1;">On the left is the overflow control.</label>
+            <label style="flex: 1;">On the left is the flow control.</label>
             <button @click="float = !float" style="padding: 0 10px; height: 30px;">{{float ? 'Remove' : 'Set'}} float</button>
             <button @click="count += 10" style="padding: 0 10px; height: 30px;">Add 10 lines</button>
         </layout>

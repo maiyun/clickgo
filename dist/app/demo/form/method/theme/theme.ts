@@ -1,8 +1,9 @@
-import * as types from '~/types/index';
 import * as clickgo from 'clickgo';
+import * as types from '~/types/index';
 
-export const methods = {
-    get: async function(this: types.IVForm): Promise<types.ITheme | null> {
+export default class extends clickgo.form.AbstractForm {
+
+    public async get(): Promise<types.ITheme | null> {
         const f = await clickgo.fs.getContent('/clickgo/theme/familiar.cgt');
         if (!f) {
             return null;
@@ -15,8 +16,9 @@ export const methods = {
             return null;
         }
         return t;
-    },
-    load: async function(this: types.IVForm): Promise<void> {
+    }
+
+    public async load(): Promise<void> {
         const n = clickgo.form.notify({
             'title': 'Info',
             'content': 'Theme loading...',
@@ -30,14 +32,17 @@ export const methods = {
         clickgo.form.hideNotify(n);
         const r = await clickgo.theme.load(t);
         await clickgo.form.dialog('Result: ' + (r ? 'true' : 'false'));
-    },
-    remove: function(): void {
+    }
+
+    public remove(): void {
         clickgo.theme.remove('familiar').catch((e) => { throw e; });
-    },
-    clear: function(): void {
+    }
+
+    public clear(): void {
         clickgo.theme.clear().catch((e) => { throw e; });
-    },
-    setGlobal: async function(this: types.IVForm): Promise<void> {
+    }
+
+    public async setGlobal(): Promise<void> {
         const n = clickgo.form.notify({
             'title': 'Info',
             'content': 'Theme loading...',
@@ -51,8 +56,10 @@ export const methods = {
         clickgo.form.hideNotify(n);
         await clickgo.theme.setGlobal(t);
         await clickgo.form.dialog('Done.');
-    },
-    clearGlobal: function(): void {
+    }
+
+    public clearGlobal(): void {
         clickgo.theme.clearGlobal();
     }
-};
+
+}

@@ -41,7 +41,7 @@ export default class extends clickgo.control.AbstractControl {
                 return;
             }
             // --- 本 app 包 ---
-            const path = clickgo.tool.urlResolve(this.path + '/', this.props.src);
+            const path = clickgo.tool.urlResolve('/package' + this.path + '/', this.props.src);
             const blob = await clickgo.fs.getContent(path);
             if ((count !== this.count) || !blob || typeof blob === 'string') {
                 return;

@@ -7,7 +7,7 @@ class default_1 extends clickgo.control.AbstractControl {
         this.padding = '';
         this.props = {
             'direction': 'h',
-            'gutter': undefined,
+            'gutter': '',
             'buttons': ['OK']
         };
     }

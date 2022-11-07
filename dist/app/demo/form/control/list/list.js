@@ -9,58 +9,58 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.methods = exports.computed = exports.data = void 0;
 const clickgo = require("clickgo");
-exports.data = {
-    'ntab': '',
-    'slist': [
-        {
-            'type': 0,
-            'name': 'Appraise',
-            'path': 'Bob >> folder >> Appraise',
-            'src': '/package/res/r-1.svg'
-        },
-        {
-            'type': 0,
-            'name': 'Card',
-            'path': 'Bob >> folder >> Card',
-            'src': '/package/res/r-2.svg',
-            'menu': true
-        },
-        {
-            'type': 0,
-            'name': 'Appraise2',
-            'path': 'Bob >> folder >> Appraise2',
-            'src': '/package/res/r-1.svg',
-            'disabled': true
-        },
-        {
-            'control': 'split'
-        },
-        {
-            'type': 1
-        }
-    ],
-    'select': 0,
-    'select2': 'Appraise',
-    'label2': '',
-    'tree': false,
-    'async': false,
-    'icon': false,
-    'sub6children': [],
-    'select3': 0,
-    'listData3': [],
-    'select4': '',
-    'listData4': [],
-    'disabled': false,
-    'must': true,
-    'multi': false,
-    'selection': false,
-    'selectionArea': {},
-    'scroll': 'auto'
-};
-exports.computed = {
-    'adData': function () {
+class default_1 extends clickgo.form.AbstractForm {
+    constructor() {
+        super(...arguments);
+        this.ntab = '';
+        this.slist = [
+            {
+                'type': 0,
+                'name': 'Appraise',
+                'path': 'Bob >> folder >> Appraise',
+                'src': '/package/res/r-1.svg'
+            },
+            {
+                'type': 0,
+                'name': 'Card',
+                'path': 'Bob >> folder >> Card',
+                'src': '/package/res/r-2.svg',
+                'menu': true
+            },
+            {
+                'type': 0,
+                'name': 'Appraise2',
+                'path': 'Bob >> folder >> Appraise2',
+                'src': '/package/res/r-1.svg',
+                'disabled': true
+            },
+            {
+                'control': 'split'
+            },
+            {
+                'type': 1
+            }
+        ];
+        this.select = 0;
+        this.select2 = 'Appraise';
+        this.label2 = '';
+        this.tree = false;
+        this.async = false;
+        this.icon = false;
+        this.sub6children = [];
+        this.select3 = 0;
+        this.listData3 = [];
+        this.select4 = '';
+        this.listData4 = [];
+        this.disabled = false;
+        this.must = true;
+        this.multi = false;
+        this.selection = false;
+        this.selectionArea = {};
+        this.scroll = 'auto';
+    }
+    get adData() {
         const data = [];
         for (let i = 0; i < this.slist.length; ++i) {
             const item = this.slist[i];
@@ -70,8 +70,8 @@ exports.computed = {
             });
         }
         return data;
-    },
-    'listData': function () {
+    }
+    get listData() {
         const data = ['Item1', {
                 'label': 'Title1',
                 'children': [
@@ -113,23 +113,21 @@ exports.computed = {
             }
         }
         return data;
-    },
-    'listData2': function () {
+    }
+    get listData2() {
         const data = [];
         for (let k = 0; k < this.listData.length; k++) {
             data.push(k + 1);
         }
         return data;
     }
-};
-exports.methods = {
-    showIndex: function () {
+    showIndex() {
         clickgo.form.dialog('Index is ' + this.select.toString() + '.').catch((e) => { throw e; });
-    },
-    showIndex2: function () {
+    }
+    showIndex2() {
         clickgo.form.dialog('Index is ' + this.select2.toString() + '.').catch((e) => { throw e; });
-    },
-    showType: function () {
+    }
+    showType() {
         if (Array.isArray(this.select)) {
             if (this.select.length === 0) {
                 clickgo.form.dialog('There are currently no selected items.').catch((e) => { throw e; });
@@ -145,19 +143,19 @@ exports.methods = {
         else {
             clickgo.form.dialog(this.select === -1 ? 'There are currently no selected items.' : `Type is ${this.slist[this.select].type}.`).catch((e) => { throw e; });
         }
-    },
-    selectButton: function () {
+    }
+    selectButton() {
         if (this.ntab === 'list') {
             this.select2 = 'Item1';
         }
         else {
             this.select = 1;
         }
-    },
-    selectButtonList: function () {
+    }
+    selectButtonList() {
         this.select2 = 'Sub3';
-    },
-    onSelectLoad: function (value, resolve) {
+    }
+    onSelectLoad(value, resolve) {
         return __awaiter(this, void 0, void 0, function* () {
             if (value !== 'Sub6') {
                 yield clickgo.tool.sleep(100);
@@ -172,11 +170,11 @@ exports.methods = {
             yield clickgo.tool.sleep(300);
             this.sub6children = ['Sub7', 'Sub8'];
         });
-    },
-    onSelect: function (area) {
+    }
+    onSelect(area) {
         this.selectionArea = area;
-    },
-    scrollChange: function () {
+    }
+    scrollChange() {
         switch (this.scroll) {
             case 'auto': {
                 this.scroll = 'visible';
@@ -191,4 +189,5 @@ exports.methods = {
             }
         }
     }
-};
+}
+exports.default = default_1;

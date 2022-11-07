@@ -1,14 +1,15 @@
-import * as types from '~/types/index';
 import * as clickgo from 'clickgo';
+import testFrm from './text';
 
-export const data = {
-    'path': '/',
-    'list': [],
-    'val': ''
-};
+export default class extends clickgo.form.AbstractForm {
 
-export const methods = {
-    open: async function(this: types.IVForm, path: string): Promise<void> {
+    public ppath = '/';
+
+    public list: any[] = [];
+
+    public val = '';
+
+    public async open(path: string): Promise<void> {
         if (!path.endsWith('/')) {
             path += '/';
         }
@@ -20,9 +21,10 @@ export const methods = {
                 'value': path + item.name
             });
         }
-        this.path = path;
-    },
-    dblclick: async function(this: types.IVForm): Promise<void> {
+        this.ppath = path;
+    }
+
+    public async dblclick(): Promise<void> {
         const r = await clickgo.fs.isFile(this.val);
         if (r) {
             const extlio: number = this.val.lastIndexOf('.');
@@ -40,12 +42,13 @@ export const methods = {
                 if (content instanceof Blob) {
                     content = await clickgo.tool.blob2Text(content);
                 }
-                const f = await clickgo.form.create('text');
+                const f = await testFrm.create();
                 if (typeof f === 'number') {
                     return;
                 }
-                clickgo.form.send(f.id, {
-                    'title': this.val.slice((this.val as string).lastIndexOf('/') + 1),
+                f.show();
+                this.send(f.formId, {
+                    'title': this.val.slice(this.val.lastIndexOf('/') + 1),
                     'content': content
                 });
                 return;
@@ -54,18 +57,20 @@ export const methods = {
             return;
         }
         await this.open(this.val);
-    },
-    up: async function(this: types.IVForm): Promise<void> {
-        if (this.path === '/') {
+    }
+
+    public async up(): Promise<void> {
+        if (this.ppath === '/') {
             return;
         }
-        const path: string = this.path.slice(0, -1);
+        const path: string = this.ppath.slice(0, -1);
         const lif = path.lastIndexOf('/');
         const npath = path.slice(0, lif + 1);
         await this.open(npath);
     }
-};
 
-export const mounted = async function(this: types.IVForm): Promise<void> {
-    await this.open('/');
-};
+    public async onMounted(): Promise<void> {
+        await this.open('/');
+    }
+
+}

@@ -1,42 +1,42 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.methods = exports.data = void 0;
 const clickgo = require("clickgo");
-exports.data = {
-    'ntab': '',
-    'lineValue': 10,
-    'lineCount': 2,
-    'sLeft1': 0,
-    'sTop1': 0,
-    'l1': 0,
-    'c1': 0,
-    'sLeft2': 0,
-    'sTop2': 0,
-    'l2': 0,
-    'c2': 0,
-    'sLeft3': 0,
-    'sTop3': 0,
-    'l3': 0,
-    'c3': 0,
-    'sLeft4': 0,
-    'sTop4': 0,
-    'l4': 0,
-    'c4': 0,
-    'direction': false,
-    'dir5': 'v',
-    'sLeft5': 0,
-    'sTop5': 0,
-    'l5': 0,
-    'c5': 0,
-    'line5': 10,
-    'c6': 0,
-    'gesture': false,
-    'style': false,
-    'selection': false,
-    'area': {}
-};
-exports.methods = {
-    scrollborder: function (e, dir) {
+class default_1 extends clickgo.form.AbstractForm {
+    constructor() {
+        super(...arguments);
+        this.ntab = '';
+        this.lineValue = 10;
+        this.lineCount = 2;
+        this.sLeft1 = 0;
+        this.sTop1 = 0;
+        this.l1 = 0;
+        this.c1 = 0;
+        this.sLeft2 = 0;
+        this.sTop2 = 0;
+        this.l2 = 0;
+        this.c2 = 0;
+        this.sLeft3 = 0;
+        this.sTop3 = 0;
+        this.l3 = 0;
+        this.c3 = 0;
+        this.sLeft4 = 0;
+        this.sTop4 = 0;
+        this.l4 = 0;
+        this.c4 = 0;
+        this.direction = false;
+        this.dir5 = 'v';
+        this.sLeft5 = 0;
+        this.sTop5 = 0;
+        this.l5 = 0;
+        this.c5 = 0;
+        this.line5 = 10;
+        this.c6 = 0;
+        this.gesture = false;
+        this.style = false;
+        this.selection = false;
+        this.area = {};
+    }
+    scrollborder(e, dir) {
         if (!this.gesture) {
             return;
         }
@@ -70,4 +70,5 @@ exports.methods = {
             }
         });
     }
-};
+}
+exports.default = default_1;

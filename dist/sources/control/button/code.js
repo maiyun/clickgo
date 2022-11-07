@@ -9,25 +9,15 @@ class default_1 extends clickgo.control.AbstractControl {
             'plain': false,
             'checked': false,
             'type': 'default',
-            'modelValue': undefined,
             'area': 'all'
         };
         this.padding = '';
-        this.isKeyDown = false;
+        this.isSpaceDown = false;
         this.innerFocus = false;
         this.arrowFocus = false;
     }
-    get isDisabled() {
-        return clickgo.tool.getBoolean(this.props.disabled);
-    }
-    get isPlain() {
-        return clickgo.tool.getBoolean(this.props.plain);
-    }
-    get isChecked() {
-        return clickgo.tool.getBoolean(this.props.checked);
-    }
-    get isAreaAllMark() {
-        return this.slots('pop').length > 0 ? (this.props.area === 'all' || this.props.area === 'mark') : true;
+    get canDoMain() {
+        return (this.props.area === 'all' || this.props.area === 'mark') ? true : false;
     }
     get isChildFocus() {
         return this.innerFocus || this.arrowFocus;
@@ -38,10 +28,13 @@ class default_1 extends clickgo.control.AbstractControl {
     keydown(e) {
         if (e.key === 'Enter') {
             e.preventDefault();
-            if (this.props.area === 'all' || this.props.area === 'mark') {
+            if (this.canDoMain) {
                 this.innerClick(e);
-                if (this.slots('pop').length === 0) {
+                if (!this.slots('pop').length || (this.props.area === 'mark')) {
                     this.element.click();
+                    if (this.refs.arrow.dataset.cgPopOpen !== undefined) {
+                        clickgo.form.hidePop(this.refs.arrow);
+                    }
                 }
             }
             else {
@@ -56,17 +49,34 @@ class default_1 extends clickgo.control.AbstractControl {
         }
         else if (e.key === ' ') {
             e.preventDefault();
-            this.isKeyDown = true;
+            if (this.isSpaceDown) {
+                return;
+            }
+            this.isSpaceDown = true;
+            if (this.props.area === 'mark') {
+                if (this.refs.arrow.dataset.cgPopOpen !== undefined) {
+                    clickgo.form.hidePop(this.refs.arrow);
+                }
+                clickgo.tool.sleep(300).then(() => {
+                    if (!this.isSpaceDown) {
+                        return;
+                    }
+                    this.arrowClick(e);
+                }).catch((e) => { console.log(e); });
+            }
         }
     }
     keyup(e) {
-        if (!this.isKeyDown) {
+        if (!this.isSpaceDown) {
             return;
         }
-        this.isKeyDown = false;
-        if (this.props.area === 'all' || this.props.area === 'mark') {
+        this.isSpaceDown = false;
+        if (this.canDoMain) {
+            if (this.refs.arrow.dataset.cgPopOpen !== undefined) {
+                return;
+            }
             this.innerClick(e);
-            if (!this.slots('pop').length) {
+            if (!this.slots('pop').length || (this.props.area === 'mark')) {
                 this.element.click();
             }
         }
@@ -89,7 +99,7 @@ class default_1 extends clickgo.control.AbstractControl {
         });
     }
     innerClick(e) {
-        if (!this.slots('pop').length || (this.props.area === 'arrow' || this.props.area === 'mark')) {
+        if (!this.slots('pop').length || (this.props.area === 'split' || this.props.area === 'mark')) {
             return;
         }
         e.stopPropagation();
@@ -112,7 +122,7 @@ class default_1 extends clickgo.control.AbstractControl {
         }
         else {
             if (this.refs.arrow.dataset.cgPopOpen === undefined) {
-                clickgo.form.showPop(this.refs.arrow, this.refs.pop, this.props.area === 'arrow' ? 'v' : 'h');
+                clickgo.form.showPop(this.refs.arrow, this.refs.pop, this.props.area === 'split' ? 'v' : 'h');
             }
             else {
                 clickgo.form.hidePop(this.refs.arrow);

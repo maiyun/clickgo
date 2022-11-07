@@ -1,14 +1,15 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.methods = exports.data = void 0;
-exports.data = {
-    'lineCount': 2,
-    'style': false,
-    'direction': 'top',
-    'scroll': false
-};
-exports.methods = {
-    changeDirection: function () {
+const clickgo = require("clickgo");
+class default_1 extends clickgo.form.AbstractForm {
+    constructor() {
+        super(...arguments);
+        this.lineCount = 2;
+        this.style = false;
+        this.direction = 'top';
+        this.scroll = false;
+    }
+    changeDirection() {
         switch (this.direction) {
             case 'top': {
                 this.direction = 'bottom';
@@ -27,4 +28,5 @@ exports.methods = {
             }
         }
     }
-};
+}
+exports.default = default_1;

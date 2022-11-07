@@ -6,9 +6,9 @@ class default_1 extends clickgo.control.AbstractControl {
         super(...arguments);
         this.props = {
             'direction': 'h',
-            'gutter': undefined,
-            'align-h': undefined,
-            'align-v': undefined
+            'gutter': '',
+            'align-h': '',
+            'align-v': ''
         };
     }
 }

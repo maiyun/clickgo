@@ -1,17 +1,20 @@
-import * as types from '~/types/index';
+import * as clickgo from 'clickgo';
 
-export const data = {
-    'accept': 'txt',
-    'multi': 'false',
-    'dir': 'false',
-    'list': []
-};
+export default class extends clickgo.form.AbstractForm {
 
-export const methods = {
-    select: function(this: types.IVForm): void {
-        this.$refs.file.select();
-    },
-    change: function(this: types.IVForm, files: FileList | null): void {
+    public accept = 'txt';
+
+    public multi = 'false';
+
+    public dir = 'false';
+
+    public list: string[] = [];
+
+    public select(): void {
+        this.refs.file.select();
+    }
+
+    public change(files: FileList | null): void {
         this.list = [];
         if (!files) {
             return;
@@ -20,4 +23,5 @@ export const methods = {
             this.list.push((file.webkitRelativePath || file.name) + ' (' + file.size.toString() + ')');
         }
     }
-};
+
+}

@@ -1,5 +1,5 @@
 <form v-model:width="width" v-model:height="height" :icon="icon" :title="title" :min="min" :max="max" :close="close" v-model:state-max="stateMax" v-model:state-min="stateMin" :min-width="minWidth" :min-height="minHeight" :resize="resize" :loading="loading" :border="border" direction="v">
-    <overflow direction="v">
+    <flow direction="v">
         <layout direction="v" gutter="10" style="padding: 10px;">
             <label>focus: {{formFocus}}, width: {{width}}, height: {{height}}, state-max: {{stateMax}}, state-min: {{stateMin}}.</label>
             <button @click="icon = icon ? '' : '/package/res/icon.svg'">Set icon</button>
@@ -24,5 +24,5 @@
                 <button @click="border = 'none'">None</button>
             </layout>
         </layout>
-    </overflow>
+    </flow>
 </form>

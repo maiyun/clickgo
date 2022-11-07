@@ -1,36 +1,36 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.methods = exports.data = void 0;
 const clickgo = require("clickgo");
-exports.data = {
-    'value': '',
-    'selectionStart': 0,
-    'selectionEnd': 0,
-    'multi': false,
-    'disabled': false,
-    'readonly': false,
-    'long': false,
-    'password': false,
-    'wrap': true,
-    'menu': false,
-    'gesture': false,
-    'lineHeight': 1,
-    'fontSize': 12,
-    'border': 'solid',
-    'background': undefined,
-    'scrollLeft': 0,
-    'scrollTop': 0,
-    'length': 0,
-    'clientHeight': 0,
-    'clientWidth': 0
-};
-exports.methods = {
-    longClick: function () {
+class default_1 extends clickgo.form.AbstractForm {
+    constructor() {
+        super(...arguments);
+        this.value = '';
+        this.selectionStart = 0;
+        this.selectionEnd = 0;
+        this.multi = false;
+        this.disabled = false;
+        this.readonly = false;
+        this.long = false;
+        this.password = false;
+        this.wrap = true;
+        this.menu = false;
+        this.gesture = false;
+        this.lineHeight = 1;
+        this.fontSize = 12;
+        this.border = 'solid';
+        this.background = undefined;
+        this.scrollLeft = 0;
+        this.scrollTop = 0;
+        this.length = 0;
+        this.clientHeight = 0;
+        this.clientWidth = 0;
+    }
+    longClick() {
         this.value = this.long ? 'short\nshort\nshort\nshort\nshort\nshort\nshort\nshort\nshort' : 'long\nlong\nlong\nlong\nlong\nlong\nlong\nlong\nlong\nlong\nlong\nlong\nlong\nlong\nlong\nlong\nlong\nlong\nlong\nlong\nlong\nlong\nlong\nlong\nlong\nlong\nlong\nlong\nlong';
         this.long = !this.long;
         this.scrollTop = 0;
-    },
-    scrollborder: function (e) {
+    }
+    scrollborder(e) {
         if (!this.gesture) {
             return;
         }
@@ -50,4 +50,5 @@ exports.methods = {
             }
         });
     }
-};
+}
+exports.default = default_1;

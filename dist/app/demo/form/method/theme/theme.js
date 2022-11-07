@@ -9,10 +9,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.methods = void 0;
 const clickgo = require("clickgo");
-exports.methods = {
-    get: function () {
+class default_1 extends clickgo.form.AbstractForm {
+    get() {
         return __awaiter(this, void 0, void 0, function* () {
             const f = yield clickgo.fs.getContent('/clickgo/theme/familiar.cgt');
             if (!f) {
@@ -27,8 +26,8 @@ exports.methods = {
             }
             return t;
         });
-    },
-    load: function () {
+    }
+    load() {
         return __awaiter(this, void 0, void 0, function* () {
             const n = clickgo.form.notify({
                 'title': 'Info',
@@ -44,14 +43,14 @@ exports.methods = {
             const r = yield clickgo.theme.load(t);
             yield clickgo.form.dialog('Result: ' + (r ? 'true' : 'false'));
         });
-    },
-    remove: function () {
+    }
+    remove() {
         clickgo.theme.remove('familiar').catch((e) => { throw e; });
-    },
-    clear: function () {
+    }
+    clear() {
         clickgo.theme.clear().catch((e) => { throw e; });
-    },
-    setGlobal: function () {
+    }
+    setGlobal() {
         return __awaiter(this, void 0, void 0, function* () {
             const n = clickgo.form.notify({
                 'title': 'Info',
@@ -67,8 +66,9 @@ exports.methods = {
             yield clickgo.theme.setGlobal(t);
             yield clickgo.form.dialog('Done.');
         });
-    },
-    clearGlobal: function () {
+    }
+    clearGlobal() {
         clickgo.theme.clearGlobal();
     }
-};
+}
+exports.default = default_1;

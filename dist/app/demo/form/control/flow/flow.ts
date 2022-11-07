@@ -54,8 +54,6 @@ export default class extends clickgo.form.AbstractForm {
 
     public line5 = 10;
 
-    public c6 = 0;
-
     public gesture = false;
 
     public style = false;
