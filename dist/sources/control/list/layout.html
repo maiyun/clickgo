@@ -1,16 +1,16 @@
-<cg-greatlist :model-value="value" @update:model-value="updateModelValue" :data="dataComp" :adaptation="adaptation" :disabled="disabled" :must="isMust" :multi="isMulti" same>
+<cg-greatlist ref="gl" :model-value="value" @update:model-value="updateModelValue" :data="dataGl" :disabled="disabled" :must="must" :multi="multi" :ctrl="ctrl" :selection="selection" :gesture="gesture" :scroll="scroll">
     <template v-slot="data">
         <div class="item" :class="[data.row.disabled && 'disabled']" :style="{'padding-left': 'calc(var(--space) * ' + data.row.level + ')'}">
-            <div v-if="isTree" class="tree" :class="['tree' + data.row.tree]" @click="treeClick(data.row)">
-                <cg-loading v-if="data.row.tree === 2" style="width: 12px; height: 12px;"></cg-loading>
+            <div v-if="propBoolean('tree')" class="tree" :class="['tree' + data.row.tree]" @click="treeClick($event, data.row)">
+                <cg-loading v-if="data.row.tree === 2"></cg-loading>
             </div>
-            <cg-img v-if="isIcon" class="icon" :src="((data.row.tree <= 0) || (data.row.tree === 2)) ? data.row.icon : (data.row.openicon || data.row.icon)"></cg-img>
+            <cg-img v-if="propBoolean('icon')" class="icon" :src="((data.row.tree <= 0) || (data.row.tree === 2)) ? data.row.icon : (data.row.openicon || data.row.icon)"></cg-img>
             <cg-marquee scroll="false">
                 <div :class="[data.row.title && 'title']">{{data.row.label === '' ? '　' : data.row.label}}</div>
             </cg-marquee>
         </div>
     </template>
-    <template v-if="slots('default').length" v-slot:pop>
+    <template v-if="slots['default']" v-slot:pop>
         <slot></slot>
     </template>
 </cg-greatlist>

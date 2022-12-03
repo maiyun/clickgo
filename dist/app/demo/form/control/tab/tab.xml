@@ -1,6 +1,6 @@
 <form title="Tab" width="400" height="450" min-width="300" min-height="400" padding="10" direction="v">
     <label>Now tab: {{ntab}}.</label>
-    <tab v-model="ntab" v-model:tabs="tabs" :tabPosition="tabPosition" :drag="drag" :close="close" @close="onClose" style="margin-top: 10px; flex: 1; height: 0;" :style="{'font-size': size, 'color': color}">
+    <tab v-model="ntab" v-model:tabs="tabs" :tabPosition="tabPosition" :drag="drag" :close="cclose" @close="onClose" style="margin-top: 10px; flex: 1; height: 0;" :style="{'font-size': size, 'color': color}">
         <!-- 默认 -->
         <layout style="padding: 10px;">
             <button v-if="ntab === 'tab2'" style="padding: 0 10px; height: 30px;">Test button</button>
@@ -17,6 +17,6 @@
         <button @click="color = color ? undefined : 'red'" style="padding: 0 10px; flex: 1; width: 0; height: 30px;">{{color ? '' : '!'}}red</button>
         <button @click="size = size ? undefined : '18px'" style="padding: 0 10px; flex: 1; width: 0; height: 30px;">{{size ? '' : '!'}}18px</button>
         <button @click="drag = !drag" style="padding: 0 10px; flex: 1; width: 0; height: 30px;">{{drag ? '' : '!'}}drag</button>
-        <button @click="close = !close" style="padding: 0 10px; flex: 1; width: 0; height: 30px;">{{close ? '' : '!'}}close</button>
+        <button @click="cclose = !cclose" style="padding: 0 10px; flex: 1; width: 0; height: 30px;">{{cclose ? '' : '!'}}close</button>
     </layout>
 </form>

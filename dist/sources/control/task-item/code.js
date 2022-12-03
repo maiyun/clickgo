@@ -24,7 +24,7 @@ class default_1 extends clickgo.control.AbstractControl {
         return (_b = (_a = this.parentByName('task')) === null || _a === void 0 ? void 0 : _a.position) !== null && _b !== void 0 ? _b : 'bottom';
     }
     click() {
-        if (!this.slots('pop').length) {
+        if (!this.slots['pop']) {
             return;
         }
         if (this.element.dataset.cgPopOpen !== undefined) {
@@ -37,7 +37,7 @@ class default_1 extends clickgo.control.AbstractControl {
         if (clickgo.dom.hasTouchButMouse(e)) {
             return;
         }
-        if (!this.slots('contextmenu').length) {
+        if (!this.slots['contextmenu']) {
             return;
         }
         clickgo.form.showPop(this.element, this.refs.contextmenu, 'v');

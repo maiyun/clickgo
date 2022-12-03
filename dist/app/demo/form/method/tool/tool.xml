@@ -1,5 +1,5 @@
-<form width="350" height="400" title="Library tool" padding="10">
-    <flow direction="v" style="flex: 1;">
+<form width="350" height="400" title="Library tool">
+    <flow direction="v" style="flex: 1; padding: 10px;">
         <layout direction="v" gutter="10">
             <button @click="sleep" style="height: 30px;">{{sleeping ? 'Waiting...' : 'sleep(1000)'}}</button>
             <text v-model="purifyTxt" multi style="height: 100px;"></text>

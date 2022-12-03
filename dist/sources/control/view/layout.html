@@ -1,6 +1,0 @@
-<div class="wrap" :class="[direction]" @mousedown="down" @touchstart="down" @wheel="wheel">
-    <div ref="inner" class="inner" :style="{'transform': 'translate3d(' + -scrollLeftData + 'px, ' + -scrollTopData + 'px, 0) translateZ(0px)', 'padding': padding, 'margin': opMargin, 'width': content ? content + '-content' : undefined, 'height': content ? content + '-content' : undefined}">
-        <slot></slot>
-        <div class="selection" ref="selection"></div>
-    </div>
-</div>

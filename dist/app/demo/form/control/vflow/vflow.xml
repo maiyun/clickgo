@@ -1,0 +1,89 @@
+<form title="Vflow" width="450" height="450" min-width="300" min-height="400" padding="10">
+    <tab v-model="ntab" :tabs="['normal', 'adaptation', 'beyond', 'nest']" style="flex: 1; width: 0;">
+        <!-- 默认 -->
+        <layout v-if="ntab === 'normal'" gutter="10" direction="v" style="flex: 1; width: 0; padding: 10px;">
+            <!-- v -->
+            <layout gutter="10" style="flex: 1; height: 0;">
+                <vflow v-model:scroll-left="sLeft1" v-model:scroll-top="sTop1" @update:scrollTop="stst" direction="v" :selection="selection" :gesture="gesture ? ['top', 'bottom'] : []" @gesture="onGesture" @select="area = $event" @clientwidth="cWidth1 = $event" @clientheight="cHeight1 = $event" @scrollwidth="sWidth1 = $event" @scrollheight="sHeight1 = $event" :style="{'line-height': style ? '1.5' : undefined, 'padding': style ? '10px' : undefined}" class="border" style="flex: 1; width: 0;" :data="lineCount" v-slot="data" :sizes="is">
+                    <button v-if="data.index > 0 && data.index % 10 === 0" style="height: 30px;">test</button>
+                    <block v-else>Line {{data.row}}, index: {{data.index}}<label v-if="content" class="content">ha</label>.</block>
+                </vflow>
+                <layout class="border" style="flex: 1; width: 0;">
+                    <vflow v-model:scroll-left="sLeft2" v-model:scroll-top="sTop2" direction="v" :selection="selection" :gesture="gesture ? ['top', 'bottom'] : []" @gesture="onGesture" @select="area = $event" @clientwidth="cWidth2 = $event" @clientheight="cHeight2 = $event" @scrollwidth="sWidth2 = $event" @scrollheight="sHeight2 = $event" :style="{'line-height': style ? '1.5' : undefined, 'padding': style ? '10px' : undefined}" style="flex: 1; width: 0;" :data="lineCount" v-slot="data" :sizes="is">
+                        <block v-if="data.index > 0 && data.index % 10 === 0" class="custom">Custom</block>
+                        <block v-else>Line {{data.row}}, index: {{data.index}}.</block>
+                    </vflow>
+                    <scroll :length="sHeight2" :client="cHeight2" v-model:offset="sTop2" style="width: 20px;"></scroll>
+                </layout>
+            </layout>
+            <label>Scroll Left / Top: {{sLeft1}} / {{sTop1}}, Client Width / Height: {{cWidth1}} / {{cHeight1}}, Scroll Width / Height: {{sWidth1}} / {{sHeight1}}.</label>
+            <label>Scroll Left / Top: {{sLeft2}} / {{sTop2}}, Client Width / Height: {{cWidth2}} / {{cHeight2}}, Scroll Width / Height: {{sWidth2}} / {{sHeight2}}.</label>
+            <!-- h -->
+            <vflow v-model:scroll-left="sLeft3" v-model:scroll-top="sTop3" :selection="selection" :gesture="gesture ? ['left', 'right'] : []" @gesture="onGesture" @select="area = $event" @clientwidth="cWidth3 = $event" @clientheight="cHeight3 = $event" @scrollwidth="sWidth3 = $event" @scrollheight="sHeight3 = $event" :style="{'line-height': style ? '1.5' : undefined, 'padding': style ? '10px' : undefined}" class="border" style="flex: 1; height: 0;" :data="lineCount" v-slot="data">
+                <layout align-v="center" align-h="center" direction="v" class="rightborder" style="width: 80px;">
+                    <label>Col {{data.row}}.</label>
+                    <label>index: {{data.index}}.</label>
+                </layout>
+            </vflow>
+            <label>Scroll Left / Top: {{sLeft3}} / {{sTop3}}, Client Width / Height: {{cWidth3}} / {{cHeight3}}, Scroll Width / Height: {{sWidth3}} / {{sHeight3}}.</label>
+            <label>Selection area: {{area}}</label>
+            <!-- button list -->
+            <layout gutter="10">
+                <select v-model="lineValue" :data="[100, 500, 1000, 10000]" style="flex: 1; width: 0;"></select>
+                <button @click="lineCount += lineValue[0]" style="height: 30px; padding: 0 10px;">Add lines</button>
+                <button @click="lineCount -= lineValue[0];if(lineCount < 0) {lineCount = 0;}" style="height: 30px; padding: 0 10px;">Remove lines</button>
+            </layout>
+            <layout gutter="10">
+                <button @click="gesture = !gesture" style="flex: 1; width: 0; height: 30px;">{{gesture ? '' : '!'}}gesture</button>
+                <button @click="selection = !selection" style="flex: 1; width: 0; height: 30px;">{{selection ? '' : '!'}}selection</button>
+                <button @click="style = !style" style="flex: 1; width: 0; height: 30px;">{{style ? '' : '!'}}style</button>
+                <button @click="content = !content" style="flex: 1; width: 0; height: 30px;">{{content ? '' : '!'}}content</button>
+            </layout>
+        </layout>
+        <!-- 自适应 -->
+        <layout v-else-if="ntab === 'adaptation'" gutter="10" direction="v" style="flex: 1; width: 0; padding: 10px;">
+            <layout :direction="direction ? 'h' : 'v'" style="flex: 1; height: 0;">
+                <vflow class="border" v-model:scroll-left="sLeft4" v-model:scroll-top="sTop4" :selection="selection" :gesture="gesture ? (direction ? ['left', 'right'] : ['top', 'bottom']) : []" @gesture="onGesture" :direction="direction ? 'h' : 'v'" @clientwidth="cWidth4 = $event" @clientheight="cHeight4 = $event" @scrollwidth="sWidth4 = $event" @scrollheight="sHeight4 = $event" :data="lineCount" v-slot="data" :sizes="is">
+                    <layout align-v="center" direction="v" :class="[direction && 'rightborder']" style="flex: 1;">
+                        <button v-if="data.index > 0 && data.index % 10 === 0" style="height: 30px;" :style="{'width': direction ? '30px' : undefined}">btn</button>
+                        <block v-else :style="{'width': direction ? '80px' : undefined, 'text-align': direction ? 'center' : undefined}">Line {{data.row}}</block>
+                    </layout>
+                </vflow>
+            </layout>
+            <label>Scroll Left / Top: {{sLeft4}} / {{sTop4}}, Client Width / Height: {{cWidth4}} / {{cHeight4}}, Scroll Width / Height: {{sWidth4}} / {{sHeight4}}.</label>
+            <layout gutter="10">
+                <button @click="lineCount += 10" style="flex: 1; width: 0; height: 30px;">Add 10 lines</button>
+                <button @click="lineCount -= 10;if(lineCount < 0) {lineCount = 0;}" style="flex: 1; width: 0; height: 30px;">Remove 10 lines</button>
+                <button @click="direction = !direction" style="flex: 1; height: 30px;">Direction</button>
+            </layout>
+        </layout>
+        <!-- 内容超出 -->
+        <layout v-else-if="ntab === 'beyond'" gutter="10" direction="v" style="flex: 1; width: 0; padding: 10px;">
+            <layout gutter="10" align-v="center">
+                <button @click="dir5 = (dir5 === 'h' ? 'v' : 'h')" style="flex: 1; width: 0; height: 30px;">Change direction</button>
+                <button @click="line5 = (line5 === 10 ? 1 : 10)" style="flex: 1; width: 0; height: 30px;">Change data</button>
+                <label>Direction: {{dir5}}</label>
+            </layout>
+            <vflow v-model:scroll-left="sLeft5" v-model:scroll-top="sTop5" :selection="selection" :gesture="gesture ? ['left', 'right', 'top', 'bottom'] : []" @gesture="onGesture" :direction="dir5" @clientwidth="cWidth5 = $event" @clientheight="cHeight5 = $event" @scrollwidth="sWidth5 = $event" @scrollheight="sHeight5 = $event" class="border" style="flex: 1; height: 0; padding: 10px 0 0 10px;" :data="line5" v-slot="data">
+                <layout :direction="dir5 === 'h' ? 'v' : 'h'">
+                    <layout v-for="j of 10" class="block">
+                        <block>{{data.row}}-{{j}}</block>
+                    </layout>
+                </layout>
+            </vflow>
+            <label>Scroll Left / Top: {{sLeft5}} / {{sTop5}}, Client Width / Height: {{cWidth5}} / {{cHeight5}}, Scroll Width / Height: {{sWidth5}} / {{sHeight5}}.</label>
+        </layout>
+        <!-- 嵌套 -->
+        <layout v-else style="flex: 1; width: 0; padding: 10px;">
+            <vflow class="border" direction="v" style="flex: 1; width: 0;" :data="100" @clientwidth="cWidth6 = $event" v-slot="data" :sizes="is6">
+                <vflow v-if="data.row === 30" :data="50" v-slot="data" class="border" direction="v" style="height: 50px;">
+                    <label>Line {{data.row}}</label>
+                </vflow>
+                <vflow v-else-if="data.row === 40" :data="50" v-slot="data" class="border" style="height: 50px;" :style="{'width': cWidth6 + 'px'}">
+                    <label class="rightborder" style="width: 80px;">Line {{data.row}}</label>
+                </vflow>
+                <label v-else>Line {{data.row}}</label>
+            </vflow>
+        </layout>
+    </tab>
+</form>

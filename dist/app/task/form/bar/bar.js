@@ -75,7 +75,7 @@ class default_1 extends clickgo.form.AbstractForm {
             };
         }
     }
-    close(index) {
+    cclose(index) {
         const app = this.apps[index];
         if (!app) {
             return;

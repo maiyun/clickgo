@@ -14,6 +14,10 @@
         &.tree-1 {
             visibility: hidden; pointer-events: none;
         }
+
+        cg-loading {
+            width: 12px; height: 12px;
+        }
     }
     .icon {
         margin-right: 7px; width: 16px; height: 16px;

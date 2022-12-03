@@ -30,8 +30,8 @@
                 <button @click="notify" style="padding: 0 10px;">notify({ ... })</button>
             </layout>
             <button @click="showPop" style="height: 30px;">showPop(e.currentTarget, this.refs.pop)</button>
-            <teleport to="#cg-pop-list">
-                <block ref="pop" data-cg-pop style="border: solid 1px #000; background: #FFF; width: 200px; height: 100px; display: flex; justify-content: center; align-items: center;">refs.pop</block>
+            <teleport to="system">
+                <block ref="pop" style="border: solid 1px #000; background: #FFF; width: 200px; height: 100px; display: flex; justify-content: center; align-items: center;">refs.pop</block>
             </teleport>
             <label>Dialog result: {{dr}}.</label>
             <button @click="dialog" style="height: 30px;">dialog('Hello world!')</button>

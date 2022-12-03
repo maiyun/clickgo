@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.refreshSystemPosition = exports.clearSystem = exports.setSystem = exports.systemTaskInfo = exports.sleep = exports.removeTimer = exports.createTimer = exports.clearLocaleLang = exports.setLocaleLang = exports.setLocale = exports.clearLocale = exports.loadLocale = exports.loadLocaleData = exports.end = exports.run = exports.getList = exports.get = exports.offFrame = exports.onFrame = exports.lastId = exports.list = void 0;
+exports.refreshSystemPosition = exports.clearSystem = exports.setSystem = exports.systemTaskInfo = exports.sleep = exports.removeTimer = exports.createTimer = exports.clearLocaleLang = exports.setLocaleLang = exports.setLocale = exports.clearLocale = exports.loadLocale = exports.loadLocaleData = exports.end = exports.run = exports.getList = exports.get = exports.offFrame = exports.onFrame = exports.getFocus = exports.setFocus = exports.lastId = exports.list = void 0;
 const clickgo = require("../clickgo");
 const core = require("./core");
 const dom = require("./dom");
@@ -20,6 +20,15 @@ const fs = require("./fs");
 const native = require("./native");
 exports.list = {};
 exports.lastId = 0;
+let focusId = null;
+function setFocus(id) {
+    focusId = id !== null && id !== void 0 ? id : null;
+}
+exports.setFocus = setFocus;
+function getFocus() {
+    return focusId;
+}
+exports.getFocus = getFocus;
 const localeData = {
     'en': {
         'loading': 'Loading...',
@@ -293,89 +302,92 @@ function run(url, opt = {}) {
                 getCdn: function () {
                     return core.getCdn();
                 },
-                initModules: function (names) {
-                    return clickgo.core.initModules(names);
-                },
                 getModule: function (name) {
-                    return clickgo.core.getModule(name);
+                    return core.getModule(name);
                 },
                 readApp: function (blob) {
-                    return clickgo.core.readApp(blob);
+                    return core.readApp(blob);
                 },
                 getAvailArea: function () {
-                    return clickgo.core.getAvailArea();
+                    return core.getAvailArea();
                 }
             },
             'dom': {
                 setGlobalCursor: function (type) {
-                    clickgo.dom.setGlobalCursor(type);
+                    dom.setGlobalCursor(type);
                 },
                 hasTouchButMouse: function (e) {
-                    return clickgo.dom.hasTouchButMouse(e);
+                    return dom.hasTouchButMouse(e);
                 },
                 getStyleCount: function (taskId, type) {
-                    return clickgo.dom.getStyleCount(taskId, type);
-                },
-                getSize: function (el) {
-                    return clickgo.dom.getSize(el);
+                    return dom.getStyleCount(taskId, type);
                 },
                 watchSize: function (el, cb, immediate = false) {
-                    return clickgo.dom.watchSize(el, cb, immediate, taskId);
+                    return dom.watchSize(el, cb, immediate, taskId);
                 },
                 unwatchSize: function (el) {
-                    clickgo.dom.unwatchSize(el, taskId);
+                    dom.unwatchSize(el, taskId);
                 },
                 clearWatchSize() {
-                    clickgo.dom.clearWatchSize(taskId);
+                    dom.clearWatchSize(taskId);
                 },
                 watch: function (el, cb, mode = 'default', immediate = false) {
-                    clickgo.dom.watch(el, cb, mode, immediate, taskId);
+                    dom.watch(el, cb, mode, immediate, taskId);
                 },
                 unwatch: function (el) {
-                    clickgo.dom.unwatch(el, taskId);
+                    dom.unwatch(el, taskId);
                 },
                 clearWatch: function () {
-                    clickgo.dom.clearWatch(taskId);
+                    dom.clearWatch(taskId);
                 },
                 watchStyle: function (el, name, cb, immediate = false) {
-                    clickgo.dom.watchStyle(el, name, cb, immediate);
+                    dom.watchStyle(el, name, cb, immediate);
                 },
                 isWatchStyle: function (el) {
-                    return clickgo.dom.isWatchStyle(el);
+                    return dom.isWatchStyle(el);
+                },
+                watchProperty(el, name, cb, immediate = false) {
+                    dom.watchProperty(el, name, cb, immediate);
+                },
+                isWatchProperty(el) {
+                    return dom.isWatchProperty(el);
+                },
+                bindClick(e, handler) {
+                    dom.bindClick(e, handler);
                 },
                 bindDown: function (oe, opt) {
-                    clickgo.dom.bindDown(oe, opt);
+                    dom.bindDown(oe, opt);
                 },
-                bindGesture: function (e, opt) {
-                    clickgo.dom.bindGesture(e, opt);
+                bindGesture: function (oe, before, handler) {
+                    dom.bindGesture(oe, before, handler);
                 },
                 bindLong: function (e, long) {
-                    clickgo.dom.bindLong(e, long);
+                    dom.bindLong(e, long);
                 },
                 bindDrag: function (e, opt) {
-                    clickgo.dom.bindDrag(e, opt);
+                    dom.bindDrag(e, opt);
                 },
-                'is': clickgo.dom.is,
+                'is': dom.is,
                 bindMove: function (e, opt) {
-                    return clickgo.dom.bindMove(e, opt);
+                    return dom.bindMove(e, opt);
                 },
                 bindResize: function (e, opt) {
-                    clickgo.dom.bindResize(e, opt);
+                    dom.bindResize(e, opt);
                 },
                 findParentByData: function (el, name) {
-                    return clickgo.dom.findParentByData(el, name);
+                    return dom.findParentByData(el, name);
                 },
                 findParentByClass: function (el, name) {
-                    return clickgo.dom.findParentByClass(el, name);
+                    return dom.findParentByClass(el, name);
                 },
                 siblings: function (el) {
-                    return clickgo.dom.siblings(el);
+                    return dom.siblings(el);
                 },
                 siblingsData: function (el, name) {
-                    return clickgo.dom.siblingsData(el, name);
+                    return dom.siblingsData(el, name);
                 },
                 fullscreen: function () {
-                    return clickgo.dom.fullscreen();
+                    return dom.fullscreen();
                 }
             },
             'form': {
@@ -385,73 +397,76 @@ function run(url, opt = {}) {
                     }
                 },
                 min: function (fid) {
-                    return clickgo.form.min(fid);
+                    return form.min(fid);
                 },
                 max: function max(fid) {
-                    return clickgo.form.max(fid);
+                    return form.max(fid);
                 },
                 close: function (fid) {
-                    return clickgo.form.close(fid);
+                    return form.close(fid);
                 },
                 bindResize: function (e, border) {
-                    clickgo.form.bindResize(e, border);
+                    form.bindResize(e, border);
                 },
                 bindDrag: function (e) {
-                    clickgo.form.bindDrag(e);
+                    form.bindDrag(e);
                 },
                 getTaskId: function (fid) {
-                    return clickgo.form.getTaskId(fid);
+                    return form.getTaskId(fid);
                 },
                 get: function (fid) {
-                    return clickgo.form.get(fid);
+                    return form.get(fid);
                 },
                 getList: function (tid) {
-                    return clickgo.form.getList(tid);
+                    return form.getList(tid);
+                },
+                getFocus: function () {
+                    return form.getFocus();
                 },
                 changeFocus: function (fid = 0) {
-                    clickgo.form.changeFocus(fid);
+                    form.changeFocus(fid);
                 },
                 getMaxZIndexID: function (out) {
-                    return clickgo.form.getMaxZIndexID(out);
+                    return form.getMaxZIndexID(out);
                 },
                 getRectByBorder: function (border) {
-                    return clickgo.form.getRectByBorder(border);
+                    return form.getRectByBorder(border);
                 },
                 showCircular: function (x, y) {
-                    clickgo.form.showCircular(x, y);
+                    form.showCircular(x, y);
                 },
                 moveRectangle: function (border) {
-                    clickgo.form.moveRectangle(border);
+                    form.moveRectangle(border);
                 },
                 showRectangle: function (x, y, border) {
-                    clickgo.form.showRectangle(x, y, border);
+                    form.showRectangle(x, y, border);
                 },
                 hideRectangle: function () {
-                    clickgo.form.hideRectangle();
+                    form.hideRectangle();
                 },
                 showDrag: function () {
-                    clickgo.form.showDrag();
+                    form.showDrag();
                 },
                 moveDrag: function (opt) {
-                    clickgo.form.moveDrag(opt);
+                    form.moveDrag(opt);
                 },
                 hideDrag: function () {
-                    clickgo.form.hideDrag();
+                    form.hideDrag();
                 },
                 notify: function (opt) {
-                    return clickgo.form.notify(opt);
+                    return form.notify(opt);
                 },
                 notifyProgress: function (notifyId, per) {
-                    clickgo.form.notifyProgress(notifyId, per);
+                    form.notifyProgress(notifyId, per);
                 },
                 hideNotify: function (notifyId) {
-                    clickgo.form.hideNotify(notifyId);
+                    form.hideNotify(notifyId);
                 },
                 showPop: function (el, pop, direction, opt = {}) {
-                    clickgo.form.showPop(el, pop, direction, opt);
+                    form.showPop(el, pop, direction, opt);
                 },
                 hidePop: function (pop) {
-                    clickgo.form.hidePop(pop);
+                    form.hidePop(pop);
                 },
                 dialog: function (opt) {
                     if (typeof opt === 'string') {
@@ -460,7 +475,7 @@ function run(url, opt = {}) {
                         };
                     }
                     opt.taskId = taskId;
-                    return clickgo.form.dialog(opt);
+                    return form.dialog(opt);
                 },
                 confirm: function (opt) {
                     if (typeof opt === 'string') {
@@ -469,16 +484,16 @@ function run(url, opt = {}) {
                         };
                     }
                     opt.taskId = taskId;
-                    return clickgo.form.confirm(opt);
+                    return form.confirm(opt);
                 },
                 flash: function (fid) {
-                    clickgo.form.flash(fid, taskId);
+                    form.flash(fid, taskId);
                 },
                 showLauncher: function () {
-                    clickgo.form.showLauncher();
+                    form.showLauncher();
                 },
                 hideLauncher: function () {
-                    clickgo.form.hideLauncher();
+                    form.hideLauncher();
                 }
             },
             'fs': {
@@ -489,31 +504,31 @@ function run(url, opt = {}) {
                     if (!options.current) {
                         options.current = exports.list[taskId].current;
                     }
-                    return clickgo.fs.getContent(path, options);
+                    return fs.getContent(path, options);
                 },
                 putContent: function (path, data, options = {}) {
                     if (!options.current) {
                         options.current = exports.list[taskId].current;
                     }
-                    return clickgo.fs.putContent(path, data, options);
+                    return fs.putContent(path, data, options);
                 },
                 readLink: function (path, options = {}) {
                     if (!options.current) {
                         options.current = exports.list[taskId].current;
                     }
-                    return clickgo.fs.readLink(path, options);
+                    return fs.readLink(path, options);
                 },
                 symlink: function (fPath, linkPath, options = {}) {
                     if (!options.current) {
                         options.current = exports.list[taskId].current;
                     }
-                    return clickgo.fs.symlink(fPath, linkPath, options);
+                    return fs.symlink(fPath, linkPath, options);
                 },
                 unlink: function (path, options = {}) {
                     if (!options.current) {
                         options.current = exports.list[taskId].current;
                     }
-                    return clickgo.fs.unlink(path, options);
+                    return fs.unlink(path, options);
                 },
                 stats: function (path, options = {}) {
                     if (!options.files) {
@@ -522,7 +537,7 @@ function run(url, opt = {}) {
                     if (!options.current) {
                         options.current = exports.list[taskId].current;
                     }
-                    return clickgo.fs.stats(path, options);
+                    return fs.stats(path, options);
                 },
                 isDir: function (path, options = {}) {
                     if (!options.files) {
@@ -531,7 +546,7 @@ function run(url, opt = {}) {
                     if (!options.current) {
                         options.current = exports.list[taskId].current;
                     }
-                    return clickgo.fs.isDir(path, options);
+                    return fs.isDir(path, options);
                 },
                 isFile: function (path, options = {}) {
                     if (!options.files) {
@@ -540,37 +555,37 @@ function run(url, opt = {}) {
                     if (!options.current) {
                         options.current = exports.list[taskId].current;
                     }
-                    return clickgo.fs.isFile(path, options);
+                    return fs.isFile(path, options);
                 },
                 mkdir: function (path, mode, options = {}) {
                     if (!options.current) {
                         options.current = exports.list[taskId].current;
                     }
-                    return clickgo.fs.mkdir(path, mode, options);
+                    return fs.mkdir(path, mode, options);
                 },
                 rmdir: function (path, options = {}) {
                     if (!options.current) {
                         options.current = exports.list[taskId].current;
                     }
-                    return clickgo.fs.rmdir(path, options);
+                    return fs.rmdir(path, options);
                 },
                 rmdirDeep: function (path, options = {}) {
                     if (!options.current) {
                         options.current = exports.list[taskId].current;
                     }
-                    return clickgo.fs.rmdirDeep(path, options);
+                    return fs.rmdirDeep(path, options);
                 },
                 chmod: function (path, mod, options = {}) {
                     if (!options.current) {
                         options.current = exports.list[taskId].current;
                     }
-                    return clickgo.fs.chmod(path, mod, options);
+                    return fs.chmod(path, mod, options);
                 },
                 rename(oldPath, newPath, options = {}) {
                     if (!options.current) {
                         options.current = exports.list[taskId].current;
                     }
-                    return clickgo.fs.rename(oldPath, newPath, options);
+                    return fs.rename(oldPath, newPath, options);
                 },
                 readDir(path, options = {}) {
                     if (!options.files) {
@@ -579,94 +594,97 @@ function run(url, opt = {}) {
                     if (!options.current) {
                         options.current = exports.list[taskId].current;
                     }
-                    return clickgo.fs.readDir(path, options);
+                    return fs.readDir(path, options);
                 },
                 copyFolder(from, to, options = {}) {
                     if (!options.current) {
                         options.current = exports.list[taskId].current;
                     }
-                    return clickgo.fs.copyFolder(from, to, options);
+                    return fs.copyFolder(from, to, options);
                 },
                 copyFile(src, dest, options = {}) {
                     if (!options.current) {
                         options.current = exports.list[taskId].current;
                     }
-                    return clickgo.fs.copyFile(src, dest, options);
+                    return fs.copyFile(src, dest, options);
                 }
             },
             'native': {
                 invoke: function (name, ...param) {
-                    return clickgo.native.invoke(name, ...param);
+                    return native.invoke(name, ...param);
                 },
                 max: function () {
-                    clickgo.native.max();
+                    native.max();
                 },
                 min: function () {
-                    clickgo.native.min();
+                    native.min();
                 },
                 restore: function () {
-                    clickgo.native.restore();
+                    native.restore();
                 },
                 size: function (width, height) {
-                    clickgo.native.size(width, height);
+                    native.size(width, height);
                 }
             },
             'task': {
+                getFocus() {
+                    return focusId;
+                },
                 onFrame: function (fun, opt = {}) {
                     opt.taskId = taskId;
-                    return clickgo.task.onFrame(fun, opt);
+                    return onFrame(fun, opt);
                 },
                 offFrame: function (ft, opt = {}) {
                     opt.taskId = taskId;
-                    clickgo.task.offFrame(ft, opt);
+                    offFrame(ft, opt);
                 },
                 get: function (tid) {
-                    return clickgo.task.get(tid);
+                    return get(tid);
                 },
                 getList: function () {
-                    return clickgo.task.getList();
+                    return getList();
                 },
                 run: function (url, opt = {}) {
                     opt.taskId = taskId;
-                    return clickgo.task.run(url, opt);
+                    return run(url, opt);
                 },
                 end: function (tid) {
-                    return clickgo.task.end(tid !== null && tid !== void 0 ? tid : taskId);
+                    return end(tid !== null && tid !== void 0 ? tid : taskId);
                 },
                 loadLocaleData: function (lang, data, pre = '') {
-                    clickgo.task.loadLocaleData(lang, data, pre, taskId);
+                    loadLocaleData(lang, data, pre, taskId);
                 },
                 loadLocale: function (lang, path) {
-                    return clickgo.task.loadLocale(lang, path, taskId);
+                    return loadLocale(lang, path, taskId);
                 },
                 clearLocale: function () {
-                    clickgo.task.clearLocale(taskId);
+                    clearLocale(taskId);
                 },
                 setLocale: function (lang, path) {
-                    return clickgo.task.setLocale(lang, path, taskId);
+                    return setLocale(lang, path, taskId);
                 },
                 setLocaleLang: function (lang) {
-                    clickgo.task.setLocaleLang(lang, taskId);
+                    setLocaleLang(lang, taskId);
                 },
                 clearLocaleLang: function () {
-                    clickgo.task.clearLocaleLang(taskId);
+                    clearLocaleLang(taskId);
                 },
                 createTimer: function (fun, delay, opt = {}) {
                     opt.taskId = taskId;
-                    return clickgo.task.createTimer(fun, delay, opt);
+                    return createTimer(fun, delay, opt);
                 },
                 removeTimer: function (timer) {
-                    clickgo.task.removeTimer(timer, taskId);
+                    removeTimer(timer, taskId);
                 },
                 sleep: function (fun, delay) {
-                    return clickgo.task.sleep(fun, delay, taskId);
+                    return sleep(fun, delay, taskId);
                 },
-                systemTaskInfo: clickgo.task.systemTaskInfo,
+                'systemTaskInfo': clickgo.task.systemTaskInfo,
                 setSystem: function (fid) {
-                    return clickgo.task.setSystem(fid, taskId);
+                    return setSystem(fid, taskId);
                 },
                 clearSystem: function () {
-                    return clickgo.task.clearSystem(taskId);
+                    return clearSystem(taskId);
                 }
             },
             'theme': {
@@ -696,58 +714,67 @@ function run(url, opt = {}) {
             },
             'tool': {
                 blob2ArrayBuffer: function (blob) {
-                    return clickgo.tool.blob2ArrayBuffer(blob);
+                    return tool.blob2ArrayBuffer(blob);
                 },
                 clone: function (obj) {
-                    return clickgo.tool.clone(obj);
+                    return tool.clone(obj);
                 },
                 sleep: function (ms = 0) {
-                    return clickgo.tool.sleep(ms);
+                    return tool.sleep(ms);
+                },
+                nextFrame() {
+                    return tool.nextFrame();
+                },
+                sleepFrame(count) {
+                    return tool.sleepFrame(count);
                 },
                 purify: function (text) {
-                    return clickgo.tool.purify(text);
+                    return tool.purify(text);
                 },
                 rand: function (min, max) {
-                    return clickgo.tool.rand(min, max);
+                    return tool.rand(min, max);
                 },
-                'RANDOM_N': clickgo.tool.RANDOM_N,
-                'RANDOM_U': clickgo.tool.RANDOM_U,
-                'RANDOM_L': clickgo.tool.RANDOM_L,
-                'RANDOM_UN': clickgo.tool.RANDOM_UN,
-                'RANDOM_LN': clickgo.tool.RANDOM_LN,
-                'RANDOM_LU': clickgo.tool.RANDOM_LU,
-                'RANDOM_LUN': clickgo.tool.RANDOM_LUN,
-                'RANDOM_V': clickgo.tool.RANDOM_V,
-                'RANDOM_LUNS': clickgo.tool.RANDOM_LUNS,
-                random: function (length = 8, source = clickgo.tool.RANDOM_LN, block = '') {
-                    return clickgo.tool.random(length, source, block);
+                'RANDOM_N': tool.RANDOM_N,
+                'RANDOM_U': tool.RANDOM_U,
+                'RANDOM_L': tool.RANDOM_L,
+                'RANDOM_UN': tool.RANDOM_UN,
+                'RANDOM_LN': tool.RANDOM_LN,
+                'RANDOM_LU': tool.RANDOM_LU,
+                'RANDOM_LUN': tool.RANDOM_LUN,
+                'RANDOM_V': tool.RANDOM_V,
+                'RANDOM_LUNS': tool.RANDOM_LUNS,
+                random: function (length = 8, source = tool.RANDOM_LN, block = '') {
+                    return tool.random(length, source, block);
                 },
                 getBoolean: function (param) {
-                    return clickgo.tool.getBoolean(param);
+                    return tool.getBoolean(param);
                 },
                 getNumber: function (param) {
-                    return clickgo.tool.getNumber(param);
+                    return tool.getNumber(param);
+                },
+                getArray(param) {
+                    return tool.getArray(param);
                 },
                 escapeHTML: function (html) {
-                    return clickgo.tool.escapeHTML(html);
+                    return tool.escapeHTML(html);
                 },
                 request: function (url, opt) {
-                    return clickgo.tool.request(url, opt);
+                    return tool.request(url, opt);
                 },
                 parseUrl: function (url) {
-                    return clickgo.tool.parseUrl(url);
+                    return tool.parseUrl(url);
                 },
                 urlResolve: function (from, to) {
-                    return clickgo.tool.urlResolve(from, to);
+                    return tool.urlResolve(from, to);
                 },
                 blob2Text: function (blob) {
-                    return clickgo.tool.blob2Text(blob);
+                    return tool.blob2Text(blob);
                 },
                 blob2DataUrl: function (blob) {
-                    return clickgo.tool.blob2DataUrl(blob);
+                    return tool.blob2DataUrl(blob);
                 },
                 execCommand: function (ac) {
-                    clickgo.tool.execCommand(ac);
+                    tool.execCommand(ac);
                 }
             },
             'zip': {
@@ -832,6 +859,7 @@ function run(url, opt = {}) {
 }
 exports.run = run;
 function end(taskId) {
+    var _a;
     const task = exports.list[taskId];
     if (!task) {
         return true;
@@ -857,15 +885,18 @@ function end(taskId) {
         catch (err) {
             const msg = `Message: ${err.message}\nTask id: ${task.id}\nForm id: ${fid}\nFunction: task.end, unmount.`;
             form.notify({
-                'title': 'Runtime Error',
+                'title': 'Form Unmount Error',
                 'content': msg,
                 'type': 'danger'
             });
-            console.log('Runtime Error', msg, err);
+            console.log('Form Unmount Error', msg, err);
         }
         f.vapp._container.remove();
+        (_a = form.elements.popList.querySelector('[data-form-id="' + f.id.toString() + '"]')) === null || _a === void 0 ? void 0 : _a.remove();
+        dom.clearWatchStyle(fid);
+        dom.clearPropertyStyle(fid);
     }
-    const flist = document.querySelectorAll('#cg-form-list > [data-task-id="' + taskId.toString() + '"]');
+    const flist = form.elements.list.querySelectorAll('.cg-form-wrap[data-task-id="' + taskId.toString() + '"]');
     for (const f of flist) {
         f.remove();
     }

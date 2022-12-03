@@ -4,43 +4,69 @@ export default class extends clickgo.form.AbstractForm {
 
     public ntab = '';
 
-    public lineValue = 10;
+    public lineValue = [10];
 
     public lineCount = 2;
+
+    // --- 1 ---
 
     public sLeft1 = 0;
 
     public sTop1 = 0;
 
-    public l1 = 0;
+    public sWidth1 = 0;
 
-    public c1 = 0;
+    public sHeight1 = 0;
+
+    public cWidth1 = 0;
+
+    public cHeight1 = 0;
+
+    // --- 2 ---
 
     public sLeft2 = 0;
 
     public sTop2 = 0;
 
-    public l2 = 0;
+    public sWidth2 = 0;
 
-    public c2 = 0;
+    public sHeight2 = 0;
+
+    public cWidth2 = 0;
+
+    public cHeight2 = 0;
+
+    // --- 3 ---
 
     public sLeft3 = 0;
 
     public sTop3 = 0;
 
-    public l3 = 0;
+    public sWidth3 = 0;
 
-    public c3 = 0;
+    public sHeight3 = 0;
+
+    public cWidth3 = 0;
+
+    public cHeight3 = 0;
+
+    // --- 4 ---
 
     public sLeft4 = 0;
 
     public sTop4 = 0;
 
-    public l4 = 0;
+    public sWidth4 = 0;
 
-    public c4 = 0;
+    public sHeight4 = 0;
+
+    public cWidth4 = 0;
+
+    public cHeight4 = 0;
 
     public direction = false;
+
+    // --- 5 ---
 
     public dir5 = 'v';
 
@@ -48,11 +74,17 @@ export default class extends clickgo.form.AbstractForm {
 
     public sTop5 = 0;
 
-    public l5 = 0;
+    public sWidth5 = 0;
 
-    public c5 = 0;
+    public sHeight5 = 0;
+
+    public cWidth5 = 0;
+
+    public cHeight5 = 0;
 
     public line5 = 10;
+
+    // --- 操作 ---
 
     public gesture = false;
 
@@ -60,41 +92,12 @@ export default class extends clickgo.form.AbstractForm {
 
     public selection = false;
 
+    public sub = false;
+
     public area = {};
 
-    public scrollborder(e: MouseEvent | TouchEvent | WheelEvent, dir: string): void {
-        if (!this.gesture) {
-            return;
-        }
-        let dirs: any = [];
-        switch (dir) {
-            case 'h': {
-                dirs = ['left', 'right'];
-                break;
-            }
-            default: {
-                dirs = ['top', 'bottom'];
-                break;
-            }
-        }
-        clickgo.dom.bindGesture(e, {
-            'dirs': dirs,
-            'handler': (dir) => {
-                switch (dir) {
-                    case 'left':
-                    case 'top': {
-                        this.lineCount -= 10;
-                        if (this.lineCount < 0) {
-                            this.lineCount = 0;
-                        }
-                        break;
-                    }
-                    default: {
-                        this.lineCount += this.lineValue;
-                    }
-                }
-            }
-        });
+    public async onGesture(dir: string): Promise<void> {
+        await clickgo.form.dialog('onGesture: ' + dir);
     }
 
 }

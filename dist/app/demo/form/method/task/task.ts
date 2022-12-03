@@ -12,7 +12,7 @@ export default class extends clickgo.form.AbstractForm {
 
     public timerCount = 0;
 
-    public select = '';
+    public select: string[] = [];
 
     public sleeping = false;
 
@@ -35,9 +35,9 @@ export default class extends clickgo.form.AbstractForm {
                 };
                 break;
             }
-            case 3: {
+            case 2: {
                 opt = {
-                    'scope': 'task'
+                    'formId': this.formId
                 };
                 break;
             }
@@ -70,7 +70,7 @@ export default class extends clickgo.form.AbstractForm {
             }
             case 3: {
                 opt = {
-                    'scope': 'task'
+                    'formId': this.formId
                 };
                 break;
             }
@@ -131,7 +131,7 @@ export default class extends clickgo.form.AbstractForm {
     }
 
     public changeLocaleLang(): void {
-        clickgo.core.config.locale = this.select;
+        clickgo.core.config.locale = this.select[0];
     }
 
     public sleep(): void {
@@ -150,7 +150,7 @@ export default class extends clickgo.form.AbstractForm {
 
     public onMounted(): void {
         this.tid = this.taskId.toString();
-        this.select = clickgo.core.config.locale;
+        this.select = [clickgo.core.config.locale];
     }
 
 }

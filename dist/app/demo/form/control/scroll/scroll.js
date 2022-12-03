@@ -4,10 +4,10 @@ const clickgo = require("clickgo");
 class default_1 extends clickgo.form.AbstractForm {
     constructor() {
         super(...arguments);
-        this.l1 = 1000;
+        this.sh1 = 1000;
         this.c1 = 100;
         this.so1 = 500;
-        this.l2 = 0;
+        this.sh2 = 0;
         this.c2 = 0;
         this.so2 = 0;
         this.count = 3;

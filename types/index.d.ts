@@ -187,12 +187,20 @@ export interface IBindDownOptions {
     'end'?: (e: MouseEvent | TouchEvent) => void;
 }
 
-/** --- 绑定上下左右拉选项 --- */
-export interface IBindGestureOptions {
-    'el'?: HTMLElement;
-    'rect'?: DOMRect;
-    'dirs'?: Array<('top' | 'right' | 'bottom' | 'left')>;
-    handler: (dir: 'top' | 'right' | 'bottom' | 'left') => void;
+/** --- 绑定拖动选项 move 回调的回调参数 --- */
+export interface IBindMoveMoveOptions {
+    'ox': number;
+    'oy': number;
+    'x': number;
+    'y': number;
+    'border': TDomBorder;
+    'inBorder': {
+        'top': boolean;
+        'right': boolean;
+        'bottom': boolean;
+        'left': boolean;
+    };
+    'dir': 'top' | 'right' | 'bottom' | 'left';
 }
 
 /** --- 绑定拖动选项 --- */
@@ -213,7 +221,7 @@ export interface IBindMoveOptions {
     'object'?: HTMLElement | IVue;
     'showRect'?: boolean;
     'start'?: (x: number, y: number) => any;
-    'move'?: (ox: number, oy: number, x: number, y: number, border: TDomBorder, dir: 'top' | 'right' | 'bottom' | 'left', e: MouseEvent | TouchEvent) => void;
+    'move'?: (e: MouseEvent | TouchEvent, opt: IBindMoveMoveOptions) => void;
     'up'?: (moveTimes: Array<{ 'time': number; 'ox': number; 'oy': number; }>, e: MouseEvent | TouchEvent) => void;
     'end'?: (moveTimes: Array<{ 'time': number; 'ox': number; 'oy': number; }>, e: MouseEvent | TouchEvent) => void;
     'borderIn'?: (x: number, y: number, border: TDomBorder, e: MouseEvent | TouchEvent) => void;
@@ -248,7 +256,7 @@ export interface IBindResizeOptions {
 /** --- 监视大小中的元素 --- */
 export interface IWatchSizeItem {
     'el': HTMLElement;
-    'ro': any;
+    'handler': () => void | Promise<void>;
     'taskId'?: number;
 }
 

@@ -2,12 +2,17 @@ import * as clickgo from 'clickgo';
 
 export default class extends clickgo.control.AbstractControl {
 
-    public props = {
-        'direction': 'left',
+    public props: {
+        'direction': 'left' | 'right' | 'top' | 'bottom';
 
-        'scroll': true,
-        'speed': 1
-    };
+        'scroll': boolean | string;
+        'speed': number | string;
+    } = {
+            'direction': 'left',
+
+            'scroll': true,
+            'speed': 1
+        };
 
     public padding = '';
 
@@ -19,32 +24,25 @@ export default class extends clickgo.control.AbstractControl {
 
     public length = 0;
 
-    public dir = '';
-
     public timer = 0;
 
     public get opMargin(): string {
         return this.padding.replace(/(\w+)/g, '-$1');
     }
 
-    public get isScroll(): boolean {
-        return clickgo.tool.getBoolean(this.props.scroll);
-    }
-
     public get speedPx(): number {
-        return this.props.speed * 0.5;
+        return this.propInt('speed') * 0.5;
     }
 
     public refresh(): void {
         if (this.length === 0 || this.client === 0) {
             return;
         }
-        if (this.isScroll) {
+        if (this.propBoolean('scroll')) {
             // --- 无论是否超出都要滚动 ---
             if (this.timer > 0) {
                 return;
             }
-            this.dir = this.props.direction;
             switch (this.props.direction) {
                 case 'left': {
                     this.left = this.client;
@@ -69,18 +67,30 @@ export default class extends clickgo.control.AbstractControl {
             }
         }
         else if (this.length > this.client) {
-            // --- 超出，来回滚 ---
+            // --- 超出，得滚动 ---
             if (this.timer > 0) {
                 return;
             }
             switch (this.props.direction) {
-                case 'left':
-                case 'right': {
-                    this.dir = 'left';
+                case 'left': {
+                    this.left = 0;
+                    this.top = 0;
                     break;
                 }
-                default: {
-                    this.dir = 'top';
+                case 'right': {
+                    this.left = this.length - this.client;
+                    this.top = 0;
+                    break;
+                }
+                case 'top': {
+                    this.left = 0;
+                    this.top = 0;
+                    break;
+                }
+                case 'bottom': {
+                    this.left = 0;
+                    this.top = this.length - this.client;
+                    break;
                 }
             }
         }
@@ -95,13 +105,14 @@ export default class extends clickgo.control.AbstractControl {
             this.top = 0;
             return;
         }
+        // --- 没创建的 timer 的现在创建 timer ---
         this.timer = clickgo.task.onFrame(async () => {
             if (!this.element.offsetParent) {
                 clickgo.task.offFrame(this.timer);
                 this.timer = 0;
                 return;
             }
-            if (this.isScroll) {
+            if (this.propBoolean('scroll')) {
                 switch (this.props.direction) {
                     case 'left': {
                         this.left -= this.speedPx;
@@ -134,47 +145,65 @@ export default class extends clickgo.control.AbstractControl {
                 }
             }
             else {
-                /** --- 超出的部分 --- */
+                // --- 超出才滚动 ---
                 const xv = this.length - this.client;
-                switch (this.dir) {
+                switch (this.props.direction) {
                     case 'left': {
-                        this.left -= this.speedPx;
-                        if (this.left < -xv) {
-                            this.dir = 'right';
-                            this.left = -xv;
-                            await clickgo.tool.sleep(1000);
+                        if (this.left === -xv) {
+                            this.left = 0;
+                        }
+                        else {
+                            this.left -= this.speedPx;
+                            if (this.left < -xv) {
+                                this.left = -xv;
+                                await clickgo.tool.sleep(1000);
+                            }
                         }
                         break;
                     }
                     case 'right': {
-                        this.left += this.speedPx;
-                        if (this.left > 0) {
-                            this.dir = 'left';
-                            this.left = 0;
-                            await clickgo.tool.sleep(1000);
+                        if (this.left === 0) {
+                            this.left = xv;
+                        }
+                        else {
+                            this.left += this.speedPx;
+                            if (this.left > 0) {
+                                this.left = 0;
+                                await clickgo.tool.sleep(1000);
+                            }
                         }
                         break;
                     }
                     case 'top': {
-                        this.top -= this.speedPx;
-                        if (this.top < -xv) {
-                            this.dir = 'bottom';
-                            this.top = -xv;
-                            await clickgo.tool.sleep(1000);
+                        if (this.top === -xv) {
+                            this.top = 0;
+                        }
+                        else {
+                            this.top -= this.speedPx;
+                            if (this.top < -xv) {
+                                this.top = -xv;
+                                await clickgo.tool.sleep(1000);
+                            }
                         }
                         break;
                     }
                     case 'bottom': {
-                        this.top += this.speedPx;
-                        if (this.top > 0) {
-                            this.dir = 'top';
-                            this.top = 0;
-                            await clickgo.tool.sleep(1000);
+                        if (this.top === 0) {
+                            this.top = xv;
+                        }
+                        else {
+                            this.top += this.speedPx;
+                            if (this.top > 0) {
+                                this.top = 0;
+                                await clickgo.tool.sleep(1000);
+                            }
                         }
                         break;
                     }
                 }
             }
+        }, {
+            'formId': this.formId
         });
     }
 
@@ -193,15 +222,9 @@ export default class extends clickgo.control.AbstractControl {
             }
             if (ndir === 'v') {
                 this.left = 0;
-                if (!this.isScroll) {
-                    this.dir = 'top';
-                }
             }
             else {
                 this.top = 0;
-                if (!this.isScroll) {
-                    this.dir = 'left';
-                }
             }
         });
 
@@ -209,19 +232,21 @@ export default class extends clickgo.control.AbstractControl {
             this.padding = v;
         }, true);
         // --- 外部包裹的改变 ---
-        clickgo.dom.watchSize(this.element, (size) => {
-            const client = (this.props.direction === 'left' || this.props.direction === 'right') ? size.width : size.height;
-            if (client !== this.client) {
-                this.client = client;
+        clickgo.dom.watchSize(this.element, () => {
+            const client = (this.props.direction === 'left' || this.props.direction === 'right') ? this.element.getBoundingClientRect().width : this.element.getBoundingClientRect().height;
+            if (client === this.client) {
+                return;
             }
+            this.client = client;
             this.refresh();
         }, true);
         // --- 内部内容的改变 ---
-        clickgo.dom.watchSize(this.refs.inner, (size) => {
-            const length = (this.props.direction === 'left' || this.props.direction === 'right') ? size.width : size.height;
-            if (length !== this.length) {
-                this.length = length;
+        clickgo.dom.watchSize(this.refs.inner, () => {
+            const length = (this.props.direction === 'left' || this.props.direction === 'right') ? this.refs.inner.getBoundingClientRect().width : this.refs.inner.getBoundingClientRect().height;
+            if (length === this.length) {
+                return;
             }
+            this.length = length;
             this.refresh();
         }, true);
     }

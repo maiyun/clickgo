@@ -1,4 +1,4 @@
-<div class="wrap" :data-cg-disabled="isDisabled ? '' : undefined">
+<div class="wrap" :data-cg-disabled="propBoolean('disabled') ? '' : undefined">
     <div class="controls">
         <cg-button :checked="sortData === 'kind'" @click="changeSort('kind')">&#xe742;</cg-button>
         <cg-button :checked="sortData === 'letter'" @click="changeSort('letter')">&#xe7ad;</cg-button>
@@ -58,15 +58,17 @@
         <div class="title">{{title}}</div>
         <div class="desc">{{description}}</div>
     </div>
-    <teleport to="#cg-pop-list">
-        <div ref="pop" data-cg-pop>
+    <teleport to="system">
+        <div ref="pop">
             <cg-menulist>
                 <cg-menulist-item alt="R" @click="reset">{{l('reset')}}</cg-menulist-item>
                 <cg-menulist-split></cg-menulist-split>
                 <cg-menulist-item alt="D" type="check" :modelValue="isDesc" @update:modelValue="this.descData = $event;emit('update:desc', $event)">{{l('description')}}</cg-menulist-item>
             </cg-menulist>
         </div>
-        <div ref="dock" class="dock-pop" data-cg-pop>
+    </teleport>
+    <teleport to="system">
+        <div ref="dock" class="dock-pop">
             <cg-button class="top" :checked="dockValue === 'top'" @click="dockSelect('top')"></cg-button>
             <div class="center">
                 <cg-button class="left" :checked="dockValue === 'left'" @click="dockSelect('left')"></cg-button>

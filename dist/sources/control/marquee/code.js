@@ -23,27 +23,22 @@ class default_1 extends clickgo.control.AbstractControl {
         this.top = 0;
         this.client = 0;
         this.length = 0;
-        this.dir = '';
         this.timer = 0;
     }
     get opMargin() {
         return this.padding.replace(/(\w+)/g, '-$1');
     }
-    get isScroll() {
-        return clickgo.tool.getBoolean(this.props.scroll);
-    }
     get speedPx() {
-        return this.props.speed * 0.5;
+        return this.propInt('speed') * 0.5;
     }
     refresh() {
         if (this.length === 0 || this.client === 0) {
             return;
         }
-        if (this.isScroll) {
+        if (this.propBoolean('scroll')) {
             if (this.timer > 0) {
                 return;
             }
-            this.dir = this.props.direction;
             switch (this.props.direction) {
                 case 'left': {
                     this.left = this.client;
@@ -72,13 +67,25 @@ class default_1 extends clickgo.control.AbstractControl {
                 return;
             }
             switch (this.props.direction) {
-                case 'left':
-                case 'right': {
-                    this.dir = 'left';
+                case 'left': {
+                    this.left = 0;
+                    this.top = 0;
                     break;
                 }
-                default: {
-                    this.dir = 'top';
+                case 'right': {
+                    this.left = this.length - this.client;
+                    this.top = 0;
+                    break;
+                }
+                case 'top': {
+                    this.left = 0;
+                    this.top = 0;
+                    break;
+                }
+                case 'bottom': {
+                    this.left = 0;
+                    this.top = this.length - this.client;
+                    break;
                 }
             }
         }
@@ -98,7 +105,7 @@ class default_1 extends clickgo.control.AbstractControl {
                 this.timer = 0;
                 return;
             }
-            if (this.isScroll) {
+            if (this.propBoolean('scroll')) {
                 switch (this.props.direction) {
                     case 'left': {
                         this.left -= this.speedPx;
@@ -132,46 +139,64 @@ class default_1 extends clickgo.control.AbstractControl {
             }
             else {
                 const xv = this.length - this.client;
-                switch (this.dir) {
+                switch (this.props.direction) {
                     case 'left': {
-                        this.left -= this.speedPx;
-                        if (this.left < -xv) {
-                            this.dir = 'right';
-                            this.left = -xv;
-                            yield clickgo.tool.sleep(1000);
+                        if (this.left === -xv) {
+                            this.left = 0;
+                        }
+                        else {
+                            this.left -= this.speedPx;
+                            if (this.left < -xv) {
+                                this.left = -xv;
+                                yield clickgo.tool.sleep(1000);
+                            }
                         }
                         break;
                     }
                     case 'right': {
-                        this.left += this.speedPx;
-                        if (this.left > 0) {
-                            this.dir = 'left';
-                            this.left = 0;
-                            yield clickgo.tool.sleep(1000);
+                        if (this.left === 0) {
+                            this.left = xv;
+                        }
+                        else {
+                            this.left += this.speedPx;
+                            if (this.left > 0) {
+                                this.left = 0;
+                                yield clickgo.tool.sleep(1000);
+                            }
                         }
                         break;
                     }
                     case 'top': {
-                        this.top -= this.speedPx;
-                        if (this.top < -xv) {
-                            this.dir = 'bottom';
-                            this.top = -xv;
-                            yield clickgo.tool.sleep(1000);
+                        if (this.top === -xv) {
+                            this.top = 0;
+                        }
+                        else {
+                            this.top -= this.speedPx;
+                            if (this.top < -xv) {
+                                this.top = -xv;
+                                yield clickgo.tool.sleep(1000);
+                            }
                         }
                         break;
                     }
                     case 'bottom': {
-                        this.top += this.speedPx;
-                        if (this.top > 0) {
-                            this.dir = 'top';
-                            this.top = 0;
-                            yield clickgo.tool.sleep(1000);
+                        if (this.top === 0) {
+                            this.top = xv;
+                        }
+                        else {
+                            this.top += this.speedPx;
+                            if (this.top > 0) {
+                                this.top = 0;
+                                yield clickgo.tool.sleep(1000);
+                            }
                         }
                         break;
                     }
                 }
             }
-        }));
+        }), {
+            'formId': this.formId
+        });
     }
     onMounted() {
         this.watch('scroll', () => {
@@ -188,32 +213,28 @@ class default_1 extends clickgo.control.AbstractControl {
             }
             if (ndir === 'v') {
                 this.left = 0;
-                if (!this.isScroll) {
-                    this.dir = 'top';
-                }
             }
             else {
                 this.top = 0;
-                if (!this.isScroll) {
-                    this.dir = 'left';
-                }
             }
         });
         clickgo.dom.watchStyle(this.element, 'padding', (n, v) => {
             this.padding = v;
         }, true);
-        clickgo.dom.watchSize(this.element, (size) => {
-            const client = (this.props.direction === 'left' || this.props.direction === 'right') ? size.width : size.height;
-            if (client !== this.client) {
-                this.client = client;
+        clickgo.dom.watchSize(this.element, () => {
+            const client = (this.props.direction === 'left' || this.props.direction === 'right') ? this.element.getBoundingClientRect().width : this.element.getBoundingClientRect().height;
+            if (client === this.client) {
+                return;
             }
+            this.client = client;
             this.refresh();
         }, true);
-        clickgo.dom.watchSize(this.refs.inner, (size) => {
-            const length = (this.props.direction === 'left' || this.props.direction === 'right') ? size.width : size.height;
-            if (length !== this.length) {
-                this.length = length;
+        clickgo.dom.watchSize(this.refs.inner, () => {
+            const length = (this.props.direction === 'left' || this.props.direction === 'right') ? this.refs.inner.getBoundingClientRect().width : this.refs.inner.getBoundingClientRect().height;
+            if (length === this.length) {
+                return;
             }
+            this.length = length;
             this.refresh();
         }, true);
     }

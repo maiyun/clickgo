@@ -35,9 +35,7 @@ export default class extends clickgo.form.AbstractForm {
         }
     ];
 
-    public select = 0;
-
-    public disabled = false;
+    public select: number[] = [];
 
     public slist2 = [
         'haha1', 'haha2', 'haha3', 'haha4', {
@@ -65,9 +63,13 @@ export default class extends clickgo.form.AbstractForm {
         }
     ];
 
-    public select2 = 'haha2';
+    public slist2r: string[] = [];
 
-    public editable = false;
+    public select2 = ['haha2'];
+
+    public label2 = [];
+
+    // --- 操作 ---
 
     public padding = false;
 
@@ -75,18 +77,83 @@ export default class extends clickgo.form.AbstractForm {
 
     public background = false;
 
+    public disabled = false;
+
+    public multi = false;
+
+    public editable = false;
+
+    public tree = false;
+
+    public async = false;
+
+    public icon = false;
+
+    public remote = false;
+
+    // --- size 高度 ---
+    public get sizes(): any {
+        const rtn: any = {};
+        for (let i = 0; i < this.slist.length; ++i) {
+            if (this.slist[i].control === 'split') {
+                rtn[i] = 3;
+                continue;
+            }
+            if (this.slist[i].type === 1) {
+                rtn[i] = 31;
+                continue;
+            }
+        }
+        return rtn;
+    }
+
+    public async onLoad(value: string, resolve: (child?: any[]) => void): Promise<void> {
+        if (value !== 'haha4') {
+            await clickgo.tool.sleep(100);
+            if (value === '2') {
+                resolve(['60']);
+            }
+            else {
+                resolve();
+            }
+            return;
+        }
+        await clickgo.tool.sleep(300);
+        resolve(['he', 'ha']);
+    }
+
+    public async onRemote(value: string, resolve: () => void): Promise<void> {
+        await clickgo.tool.sleep(300);
+        if (value === '8') {
+            this.slist2r = [];
+            resolve();
+            return;
+        }
+        this.slist2r = ['test', value, 'remote'];
+        resolve();
+    }
+
     public onMounted(): void {
-        this.watch('select', async (n: number, o: number): Promise<void> => {
-            if (this.slist[n].type === 0) {
+        this.watch(() => this.select.join(','), (n, o): void => {
+            let select: number[] = [];
+            const now = n.split(',');
+            const old = o.split(',');
+            for (const item of now) {
+                if (this.slist[parseInt(item)].type !== 0) {
+                    continue;
+                }
+                select.push(parseInt(item));
+            }
+            if (select.length === now.length) {
                 return;
             }
-            // --- 让其响应 watch 重定 modelValue ---
-            await this.nextTick();
-            if (this.slist[o].type === 0) {
-                this.select = o;
-                return;
+            select = [];
+            for (const item of old) {
+                select.push(parseInt(item));
             }
-            this.select = 0;
+            this.select = select;
+        }, {
+            'deep': true
         });
     }
 

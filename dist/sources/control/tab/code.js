@@ -136,10 +136,11 @@ class default_1 extends clickgo.control.AbstractControl {
             }
         });
     }
-    onResize(size) {
+    onResize() {
+        const tab = this.refs.tabs[0];
         if (this.props.tabPosition === 'top' || this.props.tabPosition === 'bottom') {
-            const width = this.arrow ? Math.round(size.clientWidth) + 40 : Math.round(size.clientWidth);
-            if (size.scrollWidth > width) {
+            const width = this.arrow ? tab.clientWidth + 40 : tab.clientWidth;
+            if (tab.scrollWidth > width) {
                 this.arrow = true;
             }
             else {
@@ -147,8 +148,8 @@ class default_1 extends clickgo.control.AbstractControl {
             }
         }
         else {
-            const height = this.arrow ? Math.round(size.clientHeight) + 40 : Math.round(size.clientHeight);
-            if (size.scrollHeight > height) {
+            const height = this.arrow ? tab.clientHeight + 40 : tab.clientHeight;
+            if (tab.scrollHeight > height) {
                 this.arrow = true;
             }
             else {
@@ -189,7 +190,7 @@ class default_1 extends clickgo.control.AbstractControl {
         this.watch('tabsComp', () => {
             this.refreshValue();
             this.nextTick().then(() => {
-                this.onResize(clickgo.dom.getSize(this.refs.tabs[0]));
+                this.onResize();
             }).catch(function (e) {
                 console.log(e);
             });
@@ -202,15 +203,15 @@ class default_1 extends clickgo.control.AbstractControl {
                 return;
             }
             this.oldTabs = this.refs.tabs[0];
-            clickgo.dom.watchSize(this.refs.tabs[0], (size) => {
-                this.onResize(size);
+            clickgo.dom.watchSize(this.refs.tabs[0], () => {
+                this.onResize();
             });
         }));
         this.rand = clickgo.tool.random(16);
         this.tabsData = this.props.tabs;
         this.oldTabs = this.refs.tabs[0];
-        clickgo.dom.watchSize(this.refs.tabs[0], (size) => {
-            this.onResize(size);
+        clickgo.dom.watchSize(this.refs.tabs[0], () => {
+            this.onResize();
         });
         this.refreshValue();
     }

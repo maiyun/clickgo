@@ -20,6 +20,7 @@ const fs = require("./fs");
 class AbstractControl {
     constructor() {
         this.props = {};
+        this.slots = {};
     }
     get filename() {
         return '';
@@ -97,7 +98,12 @@ class AbstractControl {
     }
     get propInt() {
         return (name) => {
-            return Math.floor(this.propNumber(name));
+            return Math.round(this.propNumber(name));
+        };
+    }
+    get propArray() {
+        return (name) => {
+            return tool.getArray(this.props[name]);
         };
     }
     get element() {
@@ -105,27 +111,6 @@ class AbstractControl {
     }
     emit(name, ...v) {
         this.$emit(name, ...v);
-    }
-    get slots() {
-        return (name = 'default') => {
-            const d = this.$slots[name];
-            if (!d) {
-                return [];
-            }
-            const slots = [];
-            const list = d();
-            for (const item of list) {
-                if (typeof item.type === 'symbol') {
-                    for (const item2 of item.children) {
-                        slots.push(item2);
-                    }
-                }
-                else {
-                    slots.push(item);
-                }
-            }
-            return slots;
-        };
     }
     get parent() {
         return this.$parent;
@@ -314,6 +299,9 @@ function init(taskId) {
                             });
                         }
                         t.controls[name].layout = tool.eventsAttrWrap(t.controls[name].layout);
+                        if (t.controls[name].layout.includes('<teleport')) {
+                            t.controls[name].layout = tool.teleportGlue(t.controls[name].layout, '{{{formId}}}');
+                        }
                         let cls;
                         if (item.files[item.config.code + '.js']) {
                             item.files['/invoke/clickgo.js'] = `module.exports = invokeClickgo;`;
@@ -456,7 +444,7 @@ function buildComponents(taskId, formId, path) {
             }
         };
         components['cg-' + name] = {
-            'template': control.layout,
+            'template': control.layout.replace(/{{{formId}}}/g, formId.toString()),
             'props': control.props,
             'data': function () {
                 const data = tool.clone(control.data);
@@ -470,6 +458,7 @@ function buildComponents(taskId, formId, path) {
             beforeCreate: control.methods.onBeforeCreate,
             created: function () {
                 this.props = this.$props;
+                this.slots = this.$slots;
                 this.access = tool.clone(control.access);
                 this.onCreated();
             },

@@ -62,9 +62,9 @@ class default_1 extends clickgo.control.AbstractControl {
         }), {
             'immediate': true
         });
-        clickgo.dom.watchSize(this.element, (size) => {
-            this.width = size.width;
-            this.height = size.height;
+        clickgo.dom.watchSize(this.element, () => {
+            this.width = this.element.offsetWidth;
+            this.height = this.element.offsetHeight;
         }, true);
     }
 }

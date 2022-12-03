@@ -29,6 +29,22 @@ export const list: Record<number, types.ITask> = {};
 /** --- 最后一个 task id，App 模式下无效 --- */
 export let lastId: number = 0;
 
+/** --- 当前有焦点的任务 ID --- */
+let focusId: number | null = null;
+
+/**
+ * --- 设置 task focus id ---
+ * @param id id 或 null
+ */
+export function setFocus(id?: number): void {
+    focusId = id ?? null;
+}
+
+/** --- 获取当前有焦点的任务 ID --- */
+export function getFocus(): number | null {
+    return focusId;
+}
+
 /** --- task lib 用到的语言包 --- */
 const localeData: Record<string, {
     'loading': string;
@@ -361,101 +377,109 @@ export async function run(url: string, opt: types.ITaskRunOptions = {}): Promise
             getCdn: function() {
                 return core.getCdn();
             },
-            initModules: function(names: string | string[]): Promise<number> {
-                return clickgo.core.initModules(names);
-            },
             getModule: function(name: string): null | any {
-                return clickgo.core.getModule(name);
+                return core.getModule(name);
             },
             readApp: function(blob: Blob): Promise<false | types.IApp> {
-                return clickgo.core.readApp(blob);
+                return core.readApp(blob);
             },
             getAvailArea: function(): types.IAvailArea {
-                return clickgo.core.getAvailArea();
+                return core.getAvailArea();
             }
         },
         'dom': {
             setGlobalCursor: function(type?: string): void {
-                clickgo.dom.setGlobalCursor(type);
+                dom.setGlobalCursor(type);
             },
             hasTouchButMouse: function(e: MouseEvent | TouchEvent | PointerEvent): boolean {
-                return clickgo.dom.hasTouchButMouse(e);
+                return dom.hasTouchButMouse(e);
             },
             getStyleCount: function(taskId: number, type: 'theme' | 'control' | 'form'): number {
-                return clickgo.dom.getStyleCount(taskId, type);
-            },
-            getSize: function(el: HTMLElement): types.IDomSize {
-                return clickgo.dom.getSize(el);
+                return dom.getStyleCount(taskId, type);
             },
             watchSize: function(
                 el: HTMLElement,
-                cb: (size: types.IDomSize) => Promise<void> | void,
+                cb: () => void | Promise<void>,
                 immediate: boolean = false
-            ): types.IDomSize {
-                return clickgo.dom.watchSize(el, cb, immediate, taskId);
+            ): boolean {
+                return dom.watchSize(el, cb, immediate, taskId);
             },
             unwatchSize: function(el: HTMLElement): void {
-                clickgo.dom.unwatchSize(el, taskId);
+                dom.unwatchSize(el, taskId);
             },
             clearWatchSize(): void {
-                clickgo.dom.clearWatchSize(taskId);
+                dom.clearWatchSize(taskId);
             },
             watch: function(el: HTMLElement, cb: () => void, mode: 'child' | 'childsub' | 'style' | 'default' = 'default', immediate: boolean = false): void {
-                clickgo.dom.watch(el, cb, mode, immediate, taskId);
+                dom.watch(el, cb, mode, immediate, taskId);
             },
             unwatch: function(el: HTMLElement): void {
-                clickgo.dom.unwatch(el, taskId);
+                dom.unwatch(el, taskId);
             },
             clearWatch: function(): void {
-                clickgo.dom.clearWatch(taskId);
+                dom.clearWatch(taskId);
             },
             watchStyle: function(
+                el: HTMLElement,
+                name: string | string[],
+                cb: (name: string, value: string, old: string) => void,
+                immediate: boolean = false
+            ): void {
+                dom.watchStyle(el, name, cb, immediate);
+            },
+            isWatchStyle: function(el: HTMLElement): boolean {
+                return dom.isWatchStyle(el);
+            },
+            watchProperty(
                 el: HTMLElement,
                 name: string | string[],
                 cb: (name: string, value: string) => void,
                 immediate: boolean = false
             ): void {
-                clickgo.dom.watchStyle(el, name, cb, immediate);
+                dom.watchProperty(el, name, cb, immediate);
             },
-            isWatchStyle: function(el: HTMLElement): boolean {
-                return clickgo.dom.isWatchStyle(el);
+            isWatchProperty(el: HTMLElement): boolean {
+                return dom.isWatchProperty(el);
+            },
+            bindClick(e: MouseEvent | TouchEvent, handler: () => void): void {
+                dom.bindClick(e, handler);
             },
             bindDown: function(oe: MouseEvent | TouchEvent, opt: types.IBindDownOptions) {
-                clickgo.dom.bindDown(oe, opt);
+                dom.bindDown(oe, opt);
             },
-            bindGesture: function(e: MouseEvent | TouchEvent | WheelEvent | { 'x'?: number; 'y'?: number; }, opt: types.IBindGestureOptions): void {
-                clickgo.dom.bindGesture(e, opt);
+            bindGesture: function(oe: MouseEvent | TouchEvent | WheelEvent, before: (e: MouseEvent | TouchEvent | WheelEvent, dir: 'top' | 'right' | 'bottom' | 'left') => boolean, handler: (dir: 'top' | 'right' | 'bottom' | 'left') => void): void {
+                dom.bindGesture(oe, before, handler);
             },
             bindLong: function(
                 e: MouseEvent | TouchEvent,
                 long: (e: MouseEvent | TouchEvent) => void | Promise<void>
             ): void {
-                clickgo.dom.bindLong(e, long);
+                dom.bindLong(e, long);
             },
             bindDrag: function(e: MouseEvent | TouchEvent, opt: { 'el': HTMLElement; 'data'?: any; }): void {
-                clickgo.dom.bindDrag(e, opt);
+                dom.bindDrag(e, opt);
             },
-            'is': clickgo.dom.is,
+            'is': dom.is,
             bindMove: function(e: MouseEvent | TouchEvent, opt: types.IBindMoveOptions): types.IBindMoveResult {
-                return clickgo.dom.bindMove(e, opt);
+                return dom.bindMove(e, opt);
             },
             bindResize: function(e: MouseEvent | TouchEvent, opt: types.IBindResizeOptions): void {
-                clickgo.dom.bindResize(e, opt);
+                dom.bindResize(e, opt);
             },
             findParentByData: function(el: HTMLElement, name: string): HTMLElement | null {
-                return clickgo.dom.findParentByData(el, name);
+                return dom.findParentByData(el, name);
             },
             findParentByClass: function(el: HTMLElement, name: string): HTMLElement | null {
-                return clickgo.dom.findParentByClass(el, name);
+                return dom.findParentByClass(el, name);
             },
             siblings: function(el: HTMLElement): HTMLElement[] {
-                return clickgo.dom.siblings(el);
+                return dom.siblings(el);
             },
             siblingsData: function(el: HTMLElement, name: string): HTMLElement[] {
-                return clickgo.dom.siblingsData(el, name);
+                return dom.siblingsData(el, name);
             },
             fullscreen: function(): boolean {
-                return clickgo.dom.fullscreen();
+                return dom.fullscreen();
             }
         },
         'form': {
@@ -465,76 +489,79 @@ export async function run(url: string, opt: types.ITaskRunOptions = {}): Promise
                 }
             },
             min: function(fid: number): boolean {
-                return clickgo.form.min(fid);
+                return form.min(fid);
             },
             max: function max(fid: number): boolean {
-                return clickgo.form.max(fid);
+                return form.max(fid);
             },
             close: function(fid: number): boolean {
-                return clickgo.form.close(fid);
+                return form.close(fid);
             },
             bindResize: function(e: MouseEvent | TouchEvent, border: types.TDomBorder): void {
-                clickgo.form.bindResize(e, border);
+                form.bindResize(e, border);
             },
             bindDrag: function(e: MouseEvent | TouchEvent): void {
-                clickgo.form.bindDrag(e);
+                form.bindDrag(e);
             },
             getTaskId: function(fid: number): number {
-                return clickgo.form.getTaskId(fid);
+                return form.getTaskId(fid);
             },
             get: function(fid: number): types.IFormInfo | null {
-                return clickgo.form.get(fid);
+                return form.get(fid);
             },
             getList: function(tid: number): Record<string, types.IFormInfo> {
-                return clickgo.form.getList(tid);
+                return form.getList(tid);
+            },
+            getFocus: function(): number | null {
+                return form.getFocus();
             },
             changeFocus: function(fid: number = 0): void {
-                clickgo.form.changeFocus(fid);
+                form.changeFocus(fid);
             },
             getMaxZIndexID: function(out?: {
                 'taskIds'?: number[];
                 'formIds'?: number[];
             }): number | null {
-                return clickgo.form.getMaxZIndexID(out);
+                return form.getMaxZIndexID(out);
             },
             getRectByBorder: function(border: types.TDomBorder): { 'width': number; 'height': number; 'left': number; 'top': number; } {
-                return clickgo.form.getRectByBorder(border);
+                return form.getRectByBorder(border);
             },
             showCircular: function(x: number, y: number): void {
-                clickgo.form.showCircular(x, y);
+                form.showCircular(x, y);
             },
             moveRectangle: function(border: types.TDomBorder): void {
-                clickgo.form.moveRectangle(border);
+                form.moveRectangle(border);
             },
             showRectangle: function(x: number, y: number, border: types.TDomBorder): void {
-                clickgo.form.showRectangle(x, y, border);
+                form.showRectangle(x, y, border);
             },
             hideRectangle: function(): void {
-                clickgo.form.hideRectangle();
+                form.hideRectangle();
             },
             showDrag: function(): void {
-                clickgo.form.showDrag();
+                form.showDrag();
             },
             moveDrag: function(opt: types.IMoveDragOptions): void {
-                clickgo.form.moveDrag(opt);
+                form.moveDrag(opt);
             },
             hideDrag: function(): void {
-                clickgo.form.hideDrag();
+                form.hideDrag();
             },
             notify: function(opt: types.INotifyOptions): number {
-                return clickgo.form.notify(opt);
+                return form.notify(opt);
             },
             notifyProgress: function(notifyId: number, per: number): void {
-                clickgo.form.notifyProgress(notifyId, per);
+                form.notifyProgress(notifyId, per);
             },
             hideNotify: function(notifyId: number): void {
-                clickgo.form.hideNotify(notifyId);
+                form.hideNotify(notifyId);
             },
             showPop: function(el: HTMLElement, pop: HTMLElement | undefined, direction: 'h' | 'v' | MouseEvent | TouchEvent | { x: number; y: number; }, opt: { 'size'?: { width?: number; height?: number; }; 'null'?: boolean; } = {}): void {
-                clickgo.form.showPop(el, pop, direction, opt);
+                form.showPop(el, pop, direction, opt);
             },
             hidePop: function(pop?: HTMLElement): void {
-                clickgo.form.hidePop(pop);
+                form.hidePop(pop);
             },
             dialog: function(opt: string | types.IFormDialogOptions): Promise<string> {
                 if (typeof opt === 'string') {
@@ -543,7 +570,7 @@ export async function run(url: string, opt: types.ITaskRunOptions = {}): Promise
                     };
                 }
                 opt.taskId = taskId;
-                return clickgo.form.dialog(opt);
+                return form.dialog(opt);
             },
             confirm: function(opt: string | types.IFormConfirmOptions): Promise<boolean | number> {
                 if (typeof opt === 'string') {
@@ -552,16 +579,16 @@ export async function run(url: string, opt: types.ITaskRunOptions = {}): Promise
                     };
                 }
                 opt.taskId = taskId;
-                return clickgo.form.confirm(opt);
+                return form.confirm(opt);
             },
             flash: function(fid: number): void {
-                clickgo.form.flash(fid, taskId);
+                form.flash(fid, taskId);
             },
             showLauncher: function(): void {
-                clickgo.form.showLauncher();
+                form.showLauncher();
             },
             hideLauncher: function(): void {
-                clickgo.form.hideLauncher();
+                form.hideLauncher();
             }
         },
         'fs': {
@@ -575,31 +602,31 @@ export async function run(url: string, opt: types.ITaskRunOptions = {}): Promise
                 if (!options.current) {
                     options.current = list[taskId].current;
                 }
-                return clickgo.fs.getContent(path, options);
+                return fs.getContent(path, options);
             },
             putContent: function(path: string, data: string | Buffer, options: any = {}) {
                 if (!options.current) {
                     options.current = list[taskId].current;
                 }
-                return clickgo.fs.putContent(path, data, options);
+                return fs.putContent(path, data, options);
             },
             readLink: function(path: string, options: any = {}): Promise<string | null> {
                 if (!options.current) {
                     options.current = list[taskId].current;
                 }
-                return clickgo.fs.readLink(path, options);
+                return fs.readLink(path, options);
             },
             symlink: function(fPath: string, linkPath: string, options: any = {}): Promise<boolean> {
                 if (!options.current) {
                     options.current = list[taskId].current;
                 }
-                return clickgo.fs.symlink(fPath, linkPath, options);
+                return fs.symlink(fPath, linkPath, options);
             },
             unlink: function(path: string, options: any = {}): Promise<boolean> {
                 if (!options.current) {
                     options.current = list[taskId].current;
                 }
-                return clickgo.fs.unlink(path, options);
+                return fs.unlink(path, options);
             },
             stats: function(path: string, options: any = {}): Promise<types.IStats | null> {
                 if (!options.files) {
@@ -608,7 +635,7 @@ export async function run(url: string, opt: types.ITaskRunOptions = {}): Promise
                 if (!options.current) {
                     options.current = list[taskId].current;
                 }
-                return clickgo.fs.stats(path, options);
+                return fs.stats(path, options);
             },
             isDir: function(path: string, options: any = {}): Promise<types.IStats | false> {
                 if (!options.files) {
@@ -617,7 +644,7 @@ export async function run(url: string, opt: types.ITaskRunOptions = {}): Promise
                 if (!options.current) {
                     options.current = list[taskId].current;
                 }
-                return clickgo.fs.isDir(path, options);
+                return fs.isDir(path, options);
             },
             isFile: function(path: string, options: any = {}): Promise<types.IStats | false> {
                 if (!options.files) {
@@ -626,37 +653,37 @@ export async function run(url: string, opt: types.ITaskRunOptions = {}): Promise
                 if (!options.current) {
                     options.current = list[taskId].current;
                 }
-                return clickgo.fs.isFile(path, options);
+                return fs.isFile(path, options);
             },
             mkdir: function(path: string, mode?: number, options: any = {}): Promise<boolean> {
                 if (!options.current) {
                     options.current = list[taskId].current;
                 }
-                return clickgo.fs.mkdir(path, mode, options);
+                return fs.mkdir(path, mode, options);
             },
             rmdir: function(path: string, options: any = {}): Promise<boolean> {
                 if (!options.current) {
                     options.current = list[taskId].current;
                 }
-                return clickgo.fs.rmdir(path, options);
+                return fs.rmdir(path, options);
             },
             rmdirDeep: function(path: string, options: any = {}): Promise<boolean> {
                 if (!options.current) {
                     options.current = list[taskId].current;
                 }
-                return clickgo.fs.rmdirDeep(path, options);
+                return fs.rmdirDeep(path, options);
             },
             chmod: function(path: string, mod: string | number, options: any = {}): Promise<boolean> {
                 if (!options.current) {
                     options.current = list[taskId].current;
                 }
-                return clickgo.fs.chmod(path, mod, options);
+                return fs.chmod(path, mod, options);
             },
             rename(oldPath: string, newPath: string, options: any = {}): Promise<boolean> {
                 if (!options.current) {
                     options.current = list[taskId].current;
                 }
-                return clickgo.fs.rename(oldPath, newPath, options);
+                return fs.rename(oldPath, newPath, options);
             },
             readDir(path: string, options: any = {}): Promise<types.IDirent[]> {
                 if (!options.files) {
@@ -665,79 +692,82 @@ export async function run(url: string, opt: types.ITaskRunOptions = {}): Promise
                 if (!options.current) {
                     options.current = list[taskId].current;
                 }
-                return clickgo.fs.readDir(path, options);
+                return fs.readDir(path, options);
             },
             copyFolder(from: string, to: string, options: any = {}): Promise<number> {
                 if (!options.current) {
                     options.current = list[taskId].current;
                 }
-                return clickgo.fs.copyFolder(from, to, options);
+                return fs.copyFolder(from, to, options);
             },
             copyFile(src: string, dest: string, options: any = {}): Promise<boolean> {
                 if (!options.current) {
                     options.current = list[taskId].current;
                 }
-                return clickgo.fs.copyFile(src, dest, options);
+                return fs.copyFile(src, dest, options);
             }
         },
         'native': {
             invoke: function(name: string, ...param: any[]): any {
-                return clickgo.native.invoke(name, ...param);
+                return native.invoke(name, ...param);
             },
             max: function(): void {
-                clickgo.native.max();
+                native.max();
             },
             min: function(): void {
-                clickgo.native.min();
+                native.min();
             },
             restore: function(): void {
-                clickgo.native.restore();
+                native.restore();
             },
             size: function(width: number, height: number): void {
-                clickgo.native.size(width, height);
+                native.size(width, height);
             }
         },
         'task': {
+            getFocus(): number | null {
+                return focusId;
+            },
             onFrame: function(fun: () => void | Promise<void>, opt: any = {}): number {
                 opt.taskId = taskId;
-                return clickgo.task.onFrame(fun, opt);
+                return onFrame(fun, opt);
             },
             offFrame: function(ft: number, opt: {
                 'taskId'?: number;
             } = {}): void {
                 opt.taskId = taskId;
-                clickgo.task.offFrame(ft, opt);
+                offFrame(ft, opt);
             },
             get: function(tid: number): types.ITaskInfo | null {
-                return clickgo.task.get(tid);
+                return get(tid);
             },
             getList: function(): Record<string, types.ITaskInfo> {
-                return clickgo.task.getList();
+                return getList();
             },
             run: function(url: string, opt: types.ITaskRunOptions = {}): Promise<number> {
                 opt.taskId = taskId;
-                return clickgo.task.run(url, opt);
+                return run(url, opt);
             },
             end: function(tid: number): boolean {
-                return clickgo.task.end(tid ?? taskId);
+                return end(tid ?? taskId);
             },
             loadLocaleData: function(lang: string, data: Record<string, any>, pre: string = ''): void {
-                clickgo.task.loadLocaleData(lang, data, pre, taskId);
+                loadLocaleData(lang, data, pre, taskId);
             },
             loadLocale: function(lang: string, path: string): Promise<boolean> {
-                return clickgo.task.loadLocale(lang, path, taskId);
+                return loadLocale(lang, path, taskId);
             },
             clearLocale: function(): void {
-                clickgo.task.clearLocale(taskId);
+                clearLocale(taskId);
             },
             setLocale: function(lang: string, path: string): Promise<boolean> {
-                return clickgo.task.setLocale(lang, path, taskId);
+                return setLocale(lang, path, taskId);
             },
             setLocaleLang: function(lang: string): void {
-                clickgo.task.setLocaleLang(lang, taskId);
+                setLocaleLang(lang, taskId);
             },
             clearLocaleLang: function(): void {
-                clickgo.task.clearLocaleLang(taskId);
+                clearLocaleLang(taskId);
             },
             createTimer: function(
                 fun: () => void | Promise<void>,
@@ -745,20 +775,20 @@ export async function run(url: string, opt: types.ITaskRunOptions = {}): Promise
                 opt: types.ICreateTimerOptions = {}
             ): number {
                 opt.taskId = taskId;
-                return clickgo.task.createTimer(fun, delay, opt);
+                return createTimer(fun, delay, opt);
             },
             removeTimer: function(timer: number): void {
-                clickgo.task.removeTimer(timer, taskId);
+                removeTimer(timer, taskId);
             },
             sleep: function(fun: () => void | Promise<void>, delay: number): number {
-                return clickgo.task.sleep(fun, delay, taskId);
+                return sleep(fun, delay, taskId);
             },
-            systemTaskInfo: clickgo.task.systemTaskInfo,
+            'systemTaskInfo': clickgo.task.systemTaskInfo,
             setSystem: function(fid: number): boolean {
-                return clickgo.task.setSystem(fid, taskId);
+                return setSystem(fid, taskId);
             },
             clearSystem: function(): boolean {
-                return clickgo.task.clearSystem(taskId);
+                return clearSystem(taskId);
             }
         },
         'theme': {
@@ -786,58 +816,67 @@ export async function run(url: string, opt: types.ITaskRunOptions = {}): Promise
         },
         'tool': {
             blob2ArrayBuffer: function(blob: Blob): Promise<ArrayBuffer> {
-                return clickgo.tool.blob2ArrayBuffer(blob);
+                return tool.blob2ArrayBuffer(blob);
             },
             clone: function(obj: Record<string, any> | any[]): any[] | any {
-                return clickgo.tool.clone(obj);
+                return tool.clone(obj);
             },
             sleep: function(ms: number = 0): Promise<boolean> {
-                return clickgo.tool.sleep(ms);
+                return tool.sleep(ms);
+            },
+            nextFrame(): Promise<void> {
+                return tool.nextFrame();
+            },
+            sleepFrame(count: number): Promise<void> {
+                return tool.sleepFrame(count);
             },
             purify: function(text: string): string {
-                return clickgo.tool.purify(text);
+                return tool.purify(text);
             },
             rand: function(min: number, max: number): number {
-                return clickgo.tool.rand(min, max);
+                return tool.rand(min, max);
             },
-            'RANDOM_N': clickgo.tool.RANDOM_N,
-            'RANDOM_U': clickgo.tool.RANDOM_U,
-            'RANDOM_L': clickgo.tool.RANDOM_L,
-            'RANDOM_UN': clickgo.tool.RANDOM_UN,
-            'RANDOM_LN': clickgo.tool.RANDOM_LN,
-            'RANDOM_LU': clickgo.tool.RANDOM_LU,
-            'RANDOM_LUN': clickgo.tool.RANDOM_LUN,
-            'RANDOM_V': clickgo.tool.RANDOM_V,
-            'RANDOM_LUNS': clickgo.tool.RANDOM_LUNS,
-            random: function(length: number = 8, source: string = clickgo.tool.RANDOM_LN, block: string = ''): string {
-                return clickgo.tool.random(length, source, block);
+            'RANDOM_N': tool.RANDOM_N,
+            'RANDOM_U': tool.RANDOM_U,
+            'RANDOM_L': tool.RANDOM_L,
+            'RANDOM_UN': tool.RANDOM_UN,
+            'RANDOM_LN': tool.RANDOM_LN,
+            'RANDOM_LU': tool.RANDOM_LU,
+            'RANDOM_LUN': tool.RANDOM_LUN,
+            'RANDOM_V': tool.RANDOM_V,
+            'RANDOM_LUNS': tool.RANDOM_LUNS,
+            random: function(length: number = 8, source: string = tool.RANDOM_LN, block: string = ''): string {
+                return tool.random(length, source, block);
             },
             getBoolean: function(param: boolean | string | number): boolean {
-                return clickgo.tool.getBoolean(param);
+                return tool.getBoolean(param);
             },
             getNumber: function(param: string | number): number {
-                return clickgo.tool.getNumber(param);
+                return tool.getNumber(param);
+            },
+            getArray(param: string | any[]): any[] {
+                return tool.getArray(param);
             },
             escapeHTML: function(html: string): string {
-                return clickgo.tool.escapeHTML(html);
+                return tool.escapeHTML(html);
             },
             request: function(url: string, opt: types.IRequestOptions): Promise<null | any> {
-                return clickgo.tool.request(url, opt);
+                return tool.request(url, opt);
             },
             parseUrl: function(url: string): ILoaderUrl {
-                return clickgo.tool.parseUrl(url);
+                return tool.parseUrl(url);
             },
             urlResolve: function(from: string, to: string): string {
-                return clickgo.tool.urlResolve(from, to);
+                return tool.urlResolve(from, to);
             },
             blob2Text: function(blob: Blob): Promise<string> {
-                return clickgo.tool.blob2Text(blob);
+                return tool.blob2Text(blob);
             },
             blob2DataUrl: function(blob: Blob): Promise<string> {
-                return clickgo.tool.blob2DataUrl(blob);
+                return tool.blob2DataUrl(blob);
             },
             execCommand: function(ac: string): void {
-                clickgo.tool.execCommand(ac);
+                tool.execCommand(ac);
             }
         },
         'zip': {
@@ -959,6 +998,7 @@ export function end(taskId: number): boolean {
     }
     // --- 移除窗体 list ---
     for (const fid in task.forms) {
+        // --- 结束任务挨个关闭窗体 ---
         const f = task.forms[fid];
         core.trigger('formRemoved', taskId, f.id, f.vroot.$refs.form.title, f.vroot.$refs.form.iconDataUrl);
         try {
@@ -967,15 +1007,19 @@ export function end(taskId: number): boolean {
         catch (err: any) {
             const msg = `Message: ${err.message}\nTask id: ${task.id}\nForm id: ${fid}\nFunction: task.end, unmount.`;
             form.notify({
-                'title': 'Runtime Error',
+                'title': 'Form Unmount Error',
                 'content': msg,
                 'type': 'danger'
             });
-            console.log('Runtime Error', msg, err);
+            console.log('Form Unmount Error', msg, err);
         }
         f.vapp._container.remove();
+        form.elements.popList.querySelector('[data-form-id="' + f.id.toString() + '"]')?.remove();
+        dom.clearWatchStyle(fid);
+        dom.clearPropertyStyle(fid);
     }
-    const flist = document.querySelectorAll('#cg-form-list > [data-task-id="' + taskId.toString() + '"]');
+    // --- 移除可能残留的 form wrap ---
+    const flist = form.elements.list.querySelectorAll('.cg-form-wrap[data-task-id="' + taskId.toString() + '"]');
     for (const f of flist) {
         f.remove();
     }

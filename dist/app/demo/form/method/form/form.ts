@@ -6,9 +6,9 @@ export default class extends clickgo.form.AbstractForm {
 
     public tid = '0';
 
-    public type = 'primary';
+    public type = ['primary'];
 
-    public progress = 'noraml';
+    public progress = ['noraml'];
 
     public dr: string | number | boolean = '';
 
@@ -47,11 +47,11 @@ export default class extends clickgo.form.AbstractForm {
     }
 
     public getList(): void {
-        let str = JSON.stringify(clickgo.form.getList(this.taskId));
+        let str = JSON.stringify(clickgo.form.getList(parseInt(this.tid)));
         str = str.replace(/"icon":"(.*?)"/g, function(t: string, t1: string): string {
             return `"icon":"${t1 ? (t1.slice(0, 10) + '...') : t1}"`;
         });
-        clickgo.form.dialog(`<overflow direction="v" style="width: 200px; height: 80px;">${str}</overflow>`).catch((e) => { throw e; });
+        clickgo.form.dialog(`<flow direction="v" style="width: 200px; height: 80px;">${str}</flow>`).catch((e) => { throw e; });
     }
 
     public getMaxZIndexID(): void {
@@ -89,7 +89,7 @@ export default class extends clickgo.form.AbstractForm {
 
     public async notify(): Promise<void> {
         let icon: string | Blob | null = null;
-        if (this.progress === 'progress + icon') {
+        if (this.progress[0] === 'progress + icon') {
             icon = await clickgo.fs.getContent('/package/res/icon.svg');
         }
         if (icon instanceof Blob) {
@@ -98,11 +98,11 @@ export default class extends clickgo.form.AbstractForm {
         const nid = clickgo.form.notify({
             'title': 'Notify',
             'content': 'Content',
-            'type': this.type as any,
-            'progress': (this.progress === 'progress + icon') ? true : false,
+            'type': this.type[0] as any,
+            'progress': (this.progress[0] === 'progress + icon') ? true : false,
             'icon': icon
         });
-        if (this.progress === 'progress + icon') {
+        if (this.progress[0] === 'progress + icon') {
             clickgo.form.notifyProgress(nid, 12);
             await clickgo.tool.sleep(1000);
             clickgo.form.notifyProgress(nid, 30);

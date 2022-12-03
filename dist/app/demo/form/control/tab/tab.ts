@@ -16,7 +16,7 @@ export default class extends clickgo.form.AbstractForm {
 
     public drag = false;
 
-    public close = false;
+    public cclose = false;
 
     public async onClose(e: CustomEvent, i: number): Promise<void> {
         if (i !== 10) {

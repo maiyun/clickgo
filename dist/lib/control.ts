@@ -162,6 +162,9 @@ export abstract class AbstractControl {
     /** --- 组件参数，由用户定义重写 --- */
     public readonly props = {};
 
+    /** --- 组件的子插槽 --- */
+    public readonly slots: Record<string, any> = {};
+
     /**
      * --- 获取 props 中的 boolean 类型的值 ----
      */
@@ -185,7 +188,16 @@ export abstract class AbstractControl {
      */
     public get propInt() {
         return (name: keyof this['props']): number => {
-            return Math.floor(this.propNumber(name));
+            return Math.round(this.propNumber(name));
+        };
+    }
+
+    /**
+     * --- 获取 props 中的 array 类型的值 ----
+     */
+    public get propArray() {
+        return (name: keyof this['props']): any[] => {
+            return tool.getArray((this.props as any)[name]);
         };
     }
 
@@ -201,32 +213,6 @@ export abstract class AbstractControl {
      */
     public emit(name: string, ...v: string | any): void {
         (this as any).$emit(name, ...v);
-    }
-
-    /**
-     * --- 获取目前现存的所有子 slots ---
-     */
-    public get slots(): (name?: string) => types.IVNode[] {
-        return (name: string = 'default'): types.IVNode[] => {
-            const d = (this as any).$slots[name];
-            if (!d) {
-                return [];
-            }
-            const slots = [];
-            const list = d();
-            for (const item of list) {
-                if (typeof item.type === 'symbol') {
-                    // --- 动态的 slot，例如 v-for 产生的 slot ---
-                    for (const item2 of item.children) {
-                        slots.push(item2);
-                    }
-                }
-                else {
-                    slots.push(item);
-                }
-            }
-            return slots;
-        };
     }
 
     /**
@@ -467,6 +453,10 @@ export async function init(
                     }
                     // --- 给 event 增加包裹 ---
                     t.controls[name].layout = tool.eventsAttrWrap(t.controls[name].layout);
+                    // --- 给 teleport 做处理 ---
+                    if (t.controls[name].layout.includes('<teleport')) {
+                        t.controls[name].layout = tool.teleportGlue(t.controls[name].layout, '{{{formId}}}');
+                    }
                     // --- 检测是否有 js ---
                     let cls: any;
                     if (item.files[item.config.code + '.js']) {
@@ -625,9 +615,8 @@ export function buildComponents(
                 });
             }
         };
-        // --- 为什么要用 ?.(), 因为有些控件是没有 js 文件的，没有 Control 类继承 ---
         components['cg-' + name] = {
-            'template': control.layout,
+            'template': control.layout.replace(/{{{formId}}}/g, formId.toString()),
             'props': control.props,
 
             'data': function() {
@@ -643,6 +632,7 @@ export function buildComponents(
             beforeCreate: control.methods.onBeforeCreate,
             created: function() {
                 this.props = this.$props;
+                this.slots = this.$slots;
                 this.access = tool.clone(control.access);
                 this.onCreated();
             },

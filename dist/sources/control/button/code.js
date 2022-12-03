@@ -30,7 +30,7 @@ class default_1 extends clickgo.control.AbstractControl {
             e.preventDefault();
             if (this.canDoMain) {
                 this.innerClick(e);
-                if (!this.slots('pop').length || (this.props.area === 'mark')) {
+                if (!this.slots['pop'] || (this.props.area === 'mark')) {
                     this.element.click();
                     if (this.refs.arrow.dataset.cgPopOpen !== undefined) {
                         clickgo.form.hidePop(this.refs.arrow);
@@ -76,7 +76,7 @@ class default_1 extends clickgo.control.AbstractControl {
                 return;
             }
             this.innerClick(e);
-            if (!this.slots('pop').length || (this.props.area === 'mark')) {
+            if (!this.slots['pop'] || (this.props.area === 'mark')) {
                 this.element.click();
             }
         }
@@ -99,7 +99,7 @@ class default_1 extends clickgo.control.AbstractControl {
         });
     }
     innerClick(e) {
-        if (!this.slots('pop').length || (this.props.area === 'split' || this.props.area === 'mark')) {
+        if (!this.slots['pop'] || (this.props.area === 'split' || this.props.area === 'mark')) {
             return;
         }
         e.stopPropagation();

@@ -127,6 +127,30 @@ export function sleep(ms: number = 0): Promise<boolean> {
 }
 
 /**
+ * --- 等待浏览器帧 ---
+ */
+export function nextFrame(): Promise<void> {
+    return new Promise(function(resolve) {
+        requestAnimationFrame(() => {
+            resolve();
+        });
+    });
+}
+
+/**
+ * --- 等待浏览器帧 ---
+ * @param count 等待帧数最高 10 帧
+ */
+export async function sleepFrame(count: number): Promise<void> {
+    if (count > 10) {
+        count = 10;
+    }
+    for (let i = 0; i < count; ++i) {
+        await nextFrame();
+    }
+}
+
+/**
  * --- 去除 html 的空白符、换行以及注释 ---
  * @param text 要纯净的字符串
  */
@@ -339,6 +363,24 @@ export function eventsAttrWrap(layout: string): string {
 }
 
 /**
+ * --- 对 layout 的 teleport 做转义处理为 vue 识别的内容 ---
+ * @param layout 要处理的窗体或控件的 layout
+ * @param formId 要加入的 formId
+ */
+export function teleportGlue(layout: string, formId: number | string): string {
+    if (typeof formId !== 'string') {
+        formId = formId.toString();
+    }
+    const fid = formId;
+    return layout.replace(/<teleport([\s\S]+?)to="(.+?)"([\s\S]+?<[\w-]+)/g, (v, v1, v2, v3): string => {
+        if (v2 !== 'system') {
+            return v;
+        }
+        return '<teleport' + v1 + 'to="#cg-pop-list > [data-form-id=\'' + fid + '\']"' + v3 + ' data-cg-pop';
+    });
+}
+
+/**
  * --- 给 class 前部增加唯一标识符 ---
  * @param style 样式内容
  * @param prep 给 class、font 等增加前置
@@ -502,6 +544,25 @@ export function getNumber(param: string | number): number {
         return param;
     }
     return parseFloat(param);
+}
+
+/**
+ * --- 根据参数获取最终的数组型 ---
+ * @param param 参数
+ */
+export function getArray(param: string | any[]): any[] {
+    if (typeof param !== 'string') {
+        return param;
+    }
+    let rtn: any[] = [];
+    if (param.startsWith('[')) {
+        rtn = JSON.parse(param);
+    }
+    else {
+        param = param.replace(/ /g, '');
+        rtn = param.split(',');
+    }
+    return rtn;
 }
 
 /**

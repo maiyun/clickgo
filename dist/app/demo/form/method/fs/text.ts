@@ -6,10 +6,7 @@ export default class extends clickgo.form.AbstractForm {
 
     public content = '';
 
-    public onReceive(obj: Record<string, any>): void {
-        if (obj.taskId !== this.taskId) {
-            return;
-        }
+    public onMounted(obj: Record<string, any>): void {
         this.title = (obj.title as string) + ' - Text viewer';
         this.content = obj.content;
     }

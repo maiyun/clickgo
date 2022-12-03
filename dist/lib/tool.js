@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.execCommand = exports.blob2DataUrl = exports.blob2Text = exports.urlResolve = exports.parseUrl = exports.request = exports.escapeHTML = exports.getNumber = exports.getBoolean = exports.random = exports.RANDOM_LUNS = exports.RANDOM_V = exports.RANDOM_LUN = exports.RANDOM_LU = exports.RANDOM_LN = exports.RANDOM_UN = exports.RANDOM_L = exports.RANDOM_U = exports.RANDOM_N = exports.rand = exports.getMimeByPath = exports.stylePrepend = exports.eventsAttrWrap = exports.layoutClassPrepend = exports.layoutInsertAttr = exports.layoutAddTagClassAndReTagName = exports.styleUrl2DataUrl = exports.purify = exports.sleep = exports.clone = exports.blob2ArrayBuffer = exports.getClassPrototype = void 0;
+exports.execCommand = exports.blob2DataUrl = exports.blob2Text = exports.urlResolve = exports.parseUrl = exports.request = exports.escapeHTML = exports.getArray = exports.getNumber = exports.getBoolean = exports.random = exports.RANDOM_LUNS = exports.RANDOM_V = exports.RANDOM_LUN = exports.RANDOM_LU = exports.RANDOM_LN = exports.RANDOM_UN = exports.RANDOM_L = exports.RANDOM_U = exports.RANDOM_N = exports.rand = exports.getMimeByPath = exports.stylePrepend = exports.teleportGlue = exports.eventsAttrWrap = exports.layoutClassPrepend = exports.layoutInsertAttr = exports.layoutAddTagClassAndReTagName = exports.styleUrl2DataUrl = exports.purify = exports.sleepFrame = exports.nextFrame = exports.sleep = exports.clone = exports.blob2ArrayBuffer = exports.getClassPrototype = void 0;
 function getClassPrototype(obj, over = [], level = 0) {
     if (level === 0) {
         return getClassPrototype(Object.getPrototypeOf(obj), over, level + 1);
@@ -93,6 +93,25 @@ function sleep(ms = 0) {
     });
 }
 exports.sleep = sleep;
+function nextFrame() {
+    return new Promise(function (resolve) {
+        requestAnimationFrame(() => {
+            resolve();
+        });
+    });
+}
+exports.nextFrame = nextFrame;
+function sleepFrame(count) {
+    return __awaiter(this, void 0, void 0, function* () {
+        if (count > 10) {
+            count = 10;
+        }
+        for (let i = 0; i < count; ++i) {
+            yield nextFrame();
+        }
+    });
+}
+exports.sleepFrame = sleepFrame;
 function purify(text) {
     text = '>' + text + '<';
     text = text.replace(/<!--([\s\S]*?)-->/g, '').replace(/>([\s\S]*?)</g, function (t, t1) {
@@ -255,6 +274,19 @@ function eventsAttrWrap(layout) {
     });
 }
 exports.eventsAttrWrap = eventsAttrWrap;
+function teleportGlue(layout, formId) {
+    if (typeof formId !== 'string') {
+        formId = formId.toString();
+    }
+    const fid = formId;
+    return layout.replace(/<teleport([\s\S]+?)to="(.+?)"([\s\S]+?<[\w-]+)/g, (v, v1, v2, v3) => {
+        if (v2 !== 'system') {
+            return v;
+        }
+        return '<teleport' + v1 + 'to="#cg-pop-list > [data-form-id=\'' + fid + '\']"' + v3 + ' data-cg-pop';
+    });
+}
+exports.teleportGlue = teleportGlue;
 function stylePrepend(style, prep = '') {
     if (prep === '') {
         prep = 'cg-scope' + Math.round(Math.random() * 1000000000000000).toString() + '_';
@@ -379,6 +411,21 @@ function getNumber(param) {
     return parseFloat(param);
 }
 exports.getNumber = getNumber;
+function getArray(param) {
+    if (typeof param !== 'string') {
+        return param;
+    }
+    let rtn = [];
+    if (param.startsWith('[')) {
+        rtn = JSON.parse(param);
+    }
+    else {
+        param = param.replace(/ /g, '');
+        rtn = param.split(',');
+    }
+    return rtn;
+}
+exports.getArray = getArray;
 function escapeHTML(html) {
     return html.replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }

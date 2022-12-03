@@ -15,8 +15,8 @@ class default_1 extends clickgo.form.AbstractForm {
         super(...arguments);
         this.fid = '0';
         this.tid = '0';
-        this.type = 'primary';
-        this.progress = 'noraml';
+        this.type = ['primary'];
+        this.progress = ['noraml'];
         this.dr = '';
         this.setTopMostValue = false;
     }
@@ -45,11 +45,11 @@ class default_1 extends clickgo.form.AbstractForm {
         clickgo.form.changeFocus(parseInt(this.fid));
     }
     getList() {
-        let str = JSON.stringify(clickgo.form.getList(this.taskId));
+        let str = JSON.stringify(clickgo.form.getList(parseInt(this.tid)));
         str = str.replace(/"icon":"(.*?)"/g, function (t, t1) {
             return `"icon":"${t1 ? (t1.slice(0, 10) + '...') : t1}"`;
         });
-        clickgo.form.dialog(`<overflow direction="v" style="width: 200px; height: 80px;">${str}</overflow>`).catch((e) => { throw e; });
+        clickgo.form.dialog(`<flow direction="v" style="width: 200px; height: 80px;">${str}</flow>`).catch((e) => { throw e; });
     }
     getMaxZIndexID() {
         const fid = clickgo.form.getMaxZIndexID();
@@ -86,7 +86,7 @@ class default_1 extends clickgo.form.AbstractForm {
     notify() {
         return __awaiter(this, void 0, void 0, function* () {
             let icon = null;
-            if (this.progress === 'progress + icon') {
+            if (this.progress[0] === 'progress + icon') {
                 icon = yield clickgo.fs.getContent('/package/res/icon.svg');
             }
             if (icon instanceof Blob) {
@@ -95,11 +95,11 @@ class default_1 extends clickgo.form.AbstractForm {
             const nid = clickgo.form.notify({
                 'title': 'Notify',
                 'content': 'Content',
-                'type': this.type,
-                'progress': (this.progress === 'progress + icon') ? true : false,
+                'type': this.type[0],
+                'progress': (this.progress[0] === 'progress + icon') ? true : false,
                 'icon': icon
             });
-            if (this.progress === 'progress + icon') {
+            if (this.progress[0] === 'progress + icon') {
                 clickgo.form.notifyProgress(nid, 12);
                 yield clickgo.tool.sleep(1000);
                 clickgo.form.notifyProgress(nid, 30);

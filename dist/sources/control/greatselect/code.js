@@ -6,20 +6,27 @@ class default_1 extends clickgo.control.AbstractControl {
         super(...arguments);
         this.props = {
             'disabled': false,
+            'multi': false,
             'direction': 'h',
             'area': 'all',
             'pop': 'greatlist',
             'data': [],
-            'modelValue': -1
+            'sizes': {},
+            'modelValue': []
         };
         this.padding = '';
-        this.isKeyDown = false;
-    }
-    get isDisabled() {
-        return clickgo.tool.getBoolean(this.props.disabled);
+        this.font = '';
+        this.isSpaceDown = false;
     }
     get opMargin() {
         return this.padding.replace(/(\w+)/g, '-$1');
+    }
+    showPop() {
+        clickgo.form.showPop(this.element, this.refs.pop, 'v', {
+            'size': {
+                'width': this.element.offsetWidth
+            }
+        });
     }
     keydown(e) {
         if (e.key === 'Enter') {
@@ -28,14 +35,14 @@ class default_1 extends clickgo.control.AbstractControl {
         }
         else if (e.key === ' ') {
             e.preventDefault();
-            this.isKeyDown = true;
+            this.isSpaceDown = true;
         }
     }
     keyup(e) {
-        if (!this.isKeyDown) {
+        if (!this.isSpaceDown) {
             return;
         }
-        this.isKeyDown = false;
+        this.isSpaceDown = false;
         this.click(e, 'arrow');
     }
     click(e, area) {
@@ -46,11 +53,7 @@ class default_1 extends clickgo.control.AbstractControl {
         if (this.props.area === 'arrow' && area === 'left') {
             return;
         }
-        clickgo.form.showPop(this.element, this.refs.pop, 'v', {
-            'size': {
-                'width': this.element.offsetWidth
-            }
-        });
+        this.showPop();
     }
     updateModelValue(val) {
         this.emit('update:modelValue', val);
@@ -59,11 +62,23 @@ class default_1 extends clickgo.control.AbstractControl {
         if (arrow) {
             return;
         }
+        if (this.propBoolean('multi')) {
+            return;
+        }
         clickgo.form.hidePop();
     }
     onMounted() {
-        clickgo.dom.watchStyle(this.element, 'padding', (n, v) => {
-            this.padding = v;
+        clickgo.dom.watchStyle(this.element, ['font', 'padding'], (n, v) => {
+            switch (n) {
+                case 'font': {
+                    this.font = v;
+                    break;
+                }
+                case 'padding': {
+                    this.padding = v;
+                    break;
+                }
+            }
         }, true);
     }
 }

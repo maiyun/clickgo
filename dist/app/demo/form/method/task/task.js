@@ -18,7 +18,7 @@ class default_1 extends clickgo.form.AbstractForm {
         this.frameCount = 0;
         this.timer = 0;
         this.timerCount = 0;
-        this.select = '';
+        this.select = [];
         this.sleeping = false;
     }
     get globalLocale() {
@@ -39,9 +39,9 @@ class default_1 extends clickgo.form.AbstractForm {
                 };
                 break;
             }
-            case 3: {
+            case 2: {
                 opt = {
-                    'scope': 'task'
+                    'formId': this.formId
                 };
                 break;
             }
@@ -72,7 +72,7 @@ class default_1 extends clickgo.form.AbstractForm {
             }
             case 3: {
                 opt = {
-                    'scope': 'task'
+                    'formId': this.formId
                 };
                 break;
             }
@@ -129,7 +129,7 @@ class default_1 extends clickgo.form.AbstractForm {
         clickgo.task.clearLocaleLang();
     }
     changeLocaleLang() {
-        clickgo.core.config.locale = this.select;
+        clickgo.core.config.locale = this.select[0];
     }
     sleep() {
         if (this.sleeping) {
@@ -145,7 +145,7 @@ class default_1 extends clickgo.form.AbstractForm {
     }
     onMounted() {
         this.tid = this.taskId.toString();
-        this.select = clickgo.core.config.locale;
+        this.select = [clickgo.core.config.locale];
     }
 }
 exports.default = default_1;

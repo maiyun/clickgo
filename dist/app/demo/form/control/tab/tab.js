@@ -20,7 +20,7 @@ class default_1 extends clickgo.form.AbstractForm {
         this.color = undefined;
         this.size = undefined;
         this.drag = false;
-        this.close = false;
+        this.cclose = false;
     }
     onClose(e, i) {
         return __awaiter(this, void 0, void 0, function* () {

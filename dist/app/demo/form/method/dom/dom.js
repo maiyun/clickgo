@@ -44,14 +44,14 @@ class default_1 extends clickgo.form.AbstractForm {
     getStyleCount() {
         clickgo.form.dialog(clickgo.dom.getStyleCount(this.taskId, 'form').toString()).catch((e) => { throw e; });
     }
-    getSize() {
-        clickgo.form.dialog(JSON.stringify(clickgo.dom.getSize(this.refs.getSize.$el))).catch((e) => { throw e; });
-    }
     watchSize() {
         this.watchSizeText = !this.watchSizeText;
         if (this.watchSizeText) {
-            clickgo.dom.watchSize(this.refs.watchSize.$el, (size) => {
-                clickgo.form.dialog(JSON.stringify(size)).catch((e) => { throw e; });
+            clickgo.dom.watchSize(this.refs.watchSize.$el, () => {
+                clickgo.form.dialog(JSON.stringify({
+                    'width': this.refs.watchSize.$el.offsetWidth,
+                    'height': this.refs.watchSize.$el.offsetHeight
+                })).catch((e) => { throw e; });
             });
         }
         else {
@@ -73,34 +73,28 @@ class default_1 extends clickgo.form.AbstractForm {
         clickgo.form.dialog(clickgo.dom.isWatchStyle(this.refs.watchStyle.$el) ? 'true' : 'false').catch((e) => { throw e; });
     }
     bindGesture(e) {
-        clickgo.dom.bindGesture(e, {
-            'dirs': ['top', 'bottom'],
-            handler: (dir) => {
-                this.bindGestureText = dir.slice(0, 1).toUpperCase() + dir.slice(1);
-                const handler = () => __awaiter(this, void 0, void 0, function* () {
-                    yield clickgo.tool.sleep(500);
-                    this.bindGestureText = '';
-                });
-                handler().catch((e) => {
-                    console.log(e);
-                });
+        clickgo.dom.bindGesture(e, (ne, dir) => {
+            if (['top', 'bottom'].includes(dir)) {
+                return true;
             }
-        });
+            return false;
+        }, (dir) => __awaiter(this, void 0, void 0, function* () {
+            this.bindGestureText = dir.slice(0, 1).toUpperCase() + dir.slice(1);
+            yield clickgo.tool.sleep(500);
+            this.bindGestureText = '';
+        }));
     }
     bindGestureWheel(e) {
-        clickgo.dom.bindGesture(e, {
-            'dirs': ['top', 'bottom', 'left', 'right'],
-            handler: (dir) => {
-                this.bindGestureWheelText = dir.slice(0, 1).toUpperCase() + dir.slice(1);
-                const handler = () => __awaiter(this, void 0, void 0, function* () {
-                    yield clickgo.tool.sleep(500);
-                    this.bindGestureWheelText = '';
-                });
-                handler().catch((e) => {
-                    console.log(e);
-                });
+        clickgo.dom.bindGesture(e, (ne, dir) => {
+            if (['top', 'bottom', 'left', 'right'].includes(dir)) {
+                return true;
             }
-        });
+            return false;
+        }, (dir) => __awaiter(this, void 0, void 0, function* () {
+            this.bindGestureWheelText = dir.slice(0, 1).toUpperCase() + dir.slice(1);
+            yield clickgo.tool.sleep(500);
+            this.bindGestureWheelText = '';
+        }));
     }
     bindLong() {
         clickgo.form.dialog('Press and hold this button.').catch((e) => { throw e; });
@@ -143,9 +137,9 @@ class default_1 extends clickgo.form.AbstractForm {
         clickgo.dom.bindMove(e, {
             'areaObject': e.currentTarget,
             'object': this.refs.move,
-            move: (ox, oy) => {
-                this.moveLeft += ox;
-                this.moveTop += oy;
+            move: (e, o) => {
+                this.moveLeft += o.ox;
+                this.moveTop += o.oy;
             }
         });
     }

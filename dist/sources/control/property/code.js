@@ -41,12 +41,6 @@ class default_1 extends clickgo.control.AbstractControl {
         this.description = '';
         this.dockValue = '';
     }
-    get isDisabled() {
-        return clickgo.tool.getBoolean(this.props.disabled);
-    }
-    get isDesc() {
-        return clickgo.tool.getBoolean(this.descData);
-    }
     get subValue() {
         return (item2, i3, isDefault = false) => {
             if (isDefault) {
@@ -266,7 +260,7 @@ class default_1 extends clickgo.control.AbstractControl {
             'immediate': true
         });
         this.watch('desc', () => {
-            this.descData = this.props.desc;
+            this.descData = this.propBoolean('desc');
         }, {
             'immediate': true
         });

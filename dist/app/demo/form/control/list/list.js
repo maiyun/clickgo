@@ -42,23 +42,39 @@ class default_1 extends clickgo.form.AbstractForm {
                 'type': 1
             }
         ];
-        this.select = 0;
-        this.select2 = 'Appraise';
-        this.label2 = '';
-        this.tree = false;
-        this.async = false;
-        this.icon = false;
+        this.select = [];
+        this.select2 = ['Appraise'];
+        this.label2 = [''];
         this.sub6children = [];
-        this.select3 = 0;
+        this.select3 = [0];
         this.listData3 = [];
-        this.select4 = '';
+        this.select4 = [];
         this.listData4 = [];
         this.disabled = false;
         this.must = true;
         this.multi = false;
+        this.ctrl = true;
         this.selection = false;
+        this.gesture = false;
         this.selectionArea = {};
+        this.tree = false;
+        this.async = false;
+        this.icon = false;
         this.scroll = 'auto';
+    }
+    get sizes() {
+        const rtn = {};
+        for (let i = 0; i < this.slist.length; ++i) {
+            if (this.slist[i].control === 'split') {
+                rtn[i] = 3;
+                continue;
+            }
+            if (this.slist[i].type === 1) {
+                rtn[i] = 31;
+                continue;
+            }
+        }
+        return rtn;
     }
     get adData() {
         const data = [];
@@ -146,14 +162,14 @@ class default_1 extends clickgo.form.AbstractForm {
     }
     selectButton() {
         if (this.ntab === 'list') {
-            this.select2 = 'Item1';
+            this.select2 = ['Item1'];
         }
         else {
-            this.select = 1;
+            this.select = [1];
         }
     }
     selectButtonList() {
-        this.select2 = 'Sub3';
+        this.select2 = ['Sub3'];
     }
     onSelectLoad(value, resolve) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -188,6 +204,11 @@ class default_1 extends clickgo.form.AbstractForm {
                 this.scroll = 'auto';
             }
         }
+    }
+    onGesture(dir) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield clickgo.form.dialog('onGesture: ' + dir);
+        });
     }
 }
 exports.default = default_1;

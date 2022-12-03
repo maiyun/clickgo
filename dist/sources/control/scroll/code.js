@@ -6,52 +6,100 @@ class default_1 extends clickgo.control.AbstractControl {
         super(...arguments);
         this.props = {
             'disabled': false,
+            'float': false,
             'direction': 'v',
             'length': 1000,
             'client': 100,
-            'scrollOffset': 0,
-            'float': false
+            'offset': 0
         };
-        this.scrollOffsetData = 0;
-        this.scrollOffsetPx = 0;
-        this.barLengthPx = 0;
-        this.timer = 0;
-        this.tran = false;
-        this.opacity = '1';
-        this.opacityTimer = 0;
+        this.offsetData = 0;
+        this.hideTimer = 0;
+        this.tran = 0;
+        this.isShow = true;
         this.isEnter = false;
         this.width = 0;
         this.height = 0;
+        this.barPx = 0;
     }
-    get realSize() {
-        if (this.props.client >= this.props.length) {
-            return this.barLengthPx;
-        }
-        return this.props.client / this.props.length * this.barLengthPx;
-    }
-    get size() {
-        if (this.realSize < 5) {
-            if (5 > this.barLengthPx) {
-                return this.barLengthPx;
-            }
+    get blockPx() {
+        const px = this.propInt('client') / this.propInt('length') * this.barPx;
+        if (px < 5) {
             return 5;
         }
-        return this.realSize;
+        return px;
     }
-    get sizeOut() {
-        return this.size - this.realSize;
+    get maxOffset() {
+        return (this.props.length > this.props.client) ? this.propInt('length') - this.propInt('client') : 0;
     }
-    get barOutSize() {
-        return this.barLengthPx - this.size;
+    get offsetRatio() {
+        return this.maxOffset ? this.offsetData / this.maxOffset : 0;
     }
-    get maxScroll() {
-        return (this.props.length > this.props.client) ? this.props.length - this.props.client : 0;
+    get outBlockPx() {
+        return this.barPx - this.blockPx;
     }
-    get isDisabled() {
-        return clickgo.tool.getBoolean(this.props.disabled);
+    get offsetPx() {
+        return this.outBlockPx * this.offsetRatio;
     }
-    get isFloat() {
-        return clickgo.tool.getBoolean(this.props.float);
+    wrapTouch(e) {
+        clickgo.dom.bindDown(e, {
+            down: () => {
+                this.isEnter = true;
+                if (this.propBoolean('float')) {
+                    this.isShow = true;
+                    if (this.hideTimer) {
+                        clickgo.task.removeTimer(this.hideTimer);
+                        this.hideTimer = 0;
+                    }
+                }
+            },
+            up: () => {
+                this.isEnter = false;
+                if (this.propBoolean('float')) {
+                    this.hideTimer = clickgo.task.sleep(() => {
+                        this.isShow = false;
+                    }, 800);
+                }
+            }
+        });
+    }
+    controlDown(e, type) {
+        if (this.props.client >= this.props.length) {
+            return;
+        }
+        clickgo.dom.bindDown(e, {
+            down: () => {
+                this.tran = clickgo.task.onFrame(() => {
+                    if (type === 'start') {
+                        if (this.offsetData - 10 < 0) {
+                            if (this.offsetData !== 0) {
+                                this.offsetData = 0;
+                                this.emit('update:offset', this.offsetData);
+                            }
+                        }
+                        else {
+                            this.offsetData -= 10;
+                            this.emit('update:offset', this.offsetData);
+                        }
+                    }
+                    else {
+                        if (this.offsetData + 10 > this.maxOffset) {
+                            if (this.offsetData !== this.maxOffset) {
+                                this.offsetData = this.maxOffset;
+                                this.emit('update:offset', this.offsetData);
+                            }
+                        }
+                        else {
+                            this.offsetData += 10;
+                            this.emit('update:offset', this.offsetData);
+                        }
+                    }
+                });
+            },
+            up: () => {
+                clickgo.task.offFrame(this.tran);
+                this.tran = 0;
+            }
+        });
     }
     down(e) {
         if (clickgo.dom.hasTouchButMouse(e)) {
@@ -60,15 +108,23 @@ class default_1 extends clickgo.control.AbstractControl {
         clickgo.dom.bindMove(e, {
             'areaObject': this.refs.bar,
             'object': this.refs.block,
-            'move': (ox, oy) => {
-                this.scrollOffsetPx += this.props.direction === 'v' ? oy : ox;
-                const scrollPer = (this.barOutSize > 0) ? (this.scrollOffsetPx / this.barOutSize) : 0;
-                this.scrollOffsetData = Math.round(scrollPer * this.maxScroll);
-                this.emit('update:scrollOffset', this.scrollOffsetData);
+            'move': (e, o) => {
+                if ((this.props.direction === 'v' && o.inBorder.top) || (this.props.direction === 'h' && o.inBorder.left)) {
+                    this.offsetData = 0;
+                }
+                else if ((this.props.direction === 'v' && o.inBorder.bottom) || (this.props.direction === 'h' && o.inBorder.right)) {
+                    this.offsetData = this.maxOffset;
+                }
+                else {
+                    const offsetPx = this.offsetPx + (this.props.direction === 'v' ? o.oy : o.ox);
+                    const ratio = (this.outBlockPx > 0) ? (offsetPx / this.outBlockPx) : 0;
+                    this.offsetData = Math.round(ratio * this.maxOffset);
+                }
+                this.emit('update:offset', this.offsetData);
             }
         });
     }
-    bardown(e) {
+    barDown(e) {
         if (clickgo.dom.hasTouchButMouse(e)) {
             return;
         }
@@ -76,79 +132,31 @@ class default_1 extends clickgo.control.AbstractControl {
             return;
         }
         const barRect = this.refs.bar.getBoundingClientRect();
-        const barOffset = this.props.direction === 'v' ? barRect.top : barRect.left;
-        let eOffset = this.props.direction === 'v' ? (e instanceof MouseEvent ? e.clientY : e.touches[0].clientY) : (e instanceof MouseEvent ? e.clientX : e.touches[0].clientX);
-        eOffset = eOffset - barOffset;
-        let scrollOffsetPx = eOffset - this.size / 2;
-        if (scrollOffsetPx < 0) {
-            scrollOffsetPx = 0;
+        const barOffsetPx = this.props.direction === 'v' ? barRect.top : barRect.left;
+        let eOffsetPx = this.props.direction === 'v' ? (e instanceof MouseEvent ? e.clientY : e.touches[0].clientY) : (e instanceof MouseEvent ? e.clientX : e.touches[0].clientX);
+        eOffsetPx = eOffsetPx - barOffsetPx;
+        let offsetPx = eOffsetPx - this.blockPx / 2;
+        if (offsetPx < 0) {
+            offsetPx = 0;
         }
-        if (scrollOffsetPx + this.size > this.barLengthPx) {
-            scrollOffsetPx = this.barLengthPx - this.size;
+        if (offsetPx + this.blockPx > this.barPx) {
+            offsetPx = this.barPx - this.blockPx;
         }
-        this.scrollOffsetPx = scrollOffsetPx;
-        const scrollPer = this.scrollOffsetPx / this.barOutSize;
-        this.scrollOffsetData = Math.round(scrollPer * this.maxScroll);
-        this.emit('update:scrollOffset', this.scrollOffsetData);
+        const ratio = (this.outBlockPx > 0) ? (offsetPx / this.outBlockPx) : 0;
+        this.offsetData = Math.round(ratio * this.maxOffset);
+        this.emit('update:offset', this.offsetData);
         this.down(e);
-    }
-    longDown(e, type) {
-        if (this.props.client >= this.props.length) {
-            return;
-        }
-        clickgo.dom.bindDown(e, {
-            down: () => {
-                this.tran = true;
-                this.timer = clickgo.task.onFrame(() => {
-                    if (type === 'start') {
-                        if (this.scrollOffsetData - 10 < 0) {
-                            if (this.scrollOffsetData !== 0) {
-                                this.scrollOffsetData = 0;
-                                this.scrollOffsetPx = 0;
-                                this.emit('update:scrollOffset', this.scrollOffsetData);
-                            }
-                        }
-                        else {
-                            this.scrollOffsetData -= 10;
-                            this.scrollOffsetPx = (this.maxScroll > 0)
-                                ? (this.barOutSize * (this.scrollOffsetData / this.maxScroll)) : 0;
-                            this.emit('update:scrollOffset', this.scrollOffsetData);
-                        }
-                    }
-                    else {
-                        if (this.scrollOffsetData + 10 > this.maxScroll) {
-                            if (this.scrollOffsetData !== this.maxScroll) {
-                                this.scrollOffsetData = this.maxScroll;
-                                this.scrollOffsetPx = this.barOutSize;
-                                this.emit('update:scrollOffset', this.scrollOffsetData);
-                            }
-                        }
-                        else {
-                            this.scrollOffsetData += 10;
-                            this.scrollOffsetPx = (this.maxScroll > 0)
-                                ? (this.barOutSize * (this.scrollOffsetData / this.maxScroll)) : 0;
-                            this.emit('update:scrollOffset', this.scrollOffsetData);
-                        }
-                    }
-                });
-            },
-            up: () => {
-                this.tran = false;
-                clickgo.task.offFrame(this.timer);
-                this.timer = 0;
-            }
-        });
     }
     enter(e) {
         if (clickgo.dom.hasTouchButMouse(e)) {
             return;
         }
         this.isEnter = true;
-        if (this.isFloat) {
-            this.opacity = '1';
-            if (this.opacityTimer > 0) {
-                clickgo.task.removeTimer(this.opacityTimer);
-                this.opacityTimer = 0;
+        if (this.propBoolean('float')) {
+            this.isShow = true;
+            if (this.hideTimer) {
+                clickgo.task.removeTimer(this.hideTimer);
+                this.hideTimer = 0;
             }
         }
     }
@@ -157,116 +165,66 @@ class default_1 extends clickgo.control.AbstractControl {
             return;
         }
         this.isEnter = false;
-        if (this.isFloat) {
-            this.opacityTimer = clickgo.task.sleep(() => {
-                this.opacity = '0';
+        if (this.propBoolean('float')) {
+            this.hideTimer = clickgo.task.sleep(() => {
+                this.isShow = false;
             }, 800);
-        }
-    }
-    wrapDown(e) {
-        clickgo.dom.bindDown(e, {
-            down: () => {
-                this.isEnter = true;
-                if (this.isFloat) {
-                    this.opacity = '1';
-                    if (this.opacityTimer > 0) {
-                        clickgo.task.removeTimer(this.opacityTimer);
-                        this.opacityTimer = 0;
-                    }
-                }
-            },
-            up: () => {
-                this.isEnter = false;
-                if (this.isFloat) {
-                    this.opacityTimer = clickgo.task.sleep(() => {
-                        this.opacity = '0';
-                    }, 800);
-                }
-            }
-        });
-    }
-    resizePx() {
-        if (this.scrollOffsetData > this.maxScroll) {
-            this.scrollOffsetData = this.maxScroll;
-            this.scrollOffsetPx = this.barOutSize;
-            this.emit('update:scrollOffset', this.scrollOffsetData);
-        }
-        else if (this.scrollOffsetData < 0) {
-            this.scrollOffsetData = 0;
-            this.scrollOffsetPx = 0;
-            this.emit('update:scrollOffset', this.scrollOffsetData);
-        }
-        else {
-            this.scrollOffsetPx = this.barOutSize * (this.scrollOffsetData / this.maxScroll);
         }
     }
     onMounted() {
-        this.watch('length', () => {
-            this.resizePx();
-        });
-        this.watch('client', () => {
-            this.resizePx();
-        });
-        this.watch('scrollOffset', () => {
-            const scrollOffsetData = Math.round(this.props.scrollOffset);
-            if (this.scrollOffsetData === scrollOffsetData) {
+        const checkOffset = () => {
+            if (this.offsetData <= this.maxOffset) {
                 return;
             }
-            this.scrollOffsetData = scrollOffsetData;
-            this.resizePx();
-        });
-        this.watch('scrollOffsetData', () => {
-            if (!this.isFloat) {
+            this.offsetData = this.maxOffset;
+            this.emit('update:offset', this.offsetData);
+        };
+        this.watch('length', checkOffset);
+        this.watch('client', checkOffset);
+        this.watch('offset', () => {
+            if (this.offsetData === this.propInt('offset')) {
                 return;
             }
-            if (this.isEnter) {
-                return;
+            this.offsetData = this.propInt('offset');
+            if (this.propBoolean('float') && !this.isEnter) {
+                if (this.hideTimer) {
+                    clickgo.task.removeTimer(this.hideTimer);
+                }
+                this.isShow = true;
+                this.hideTimer = clickgo.task.sleep(() => {
+                    this.isShow = false;
+                }, 800);
             }
-            if (this.opacityTimer > 0) {
-                clickgo.task.removeTimer(this.opacityTimer);
-                this.opacityTimer = 0;
-            }
-            this.opacityTimer = clickgo.task.sleep(() => {
-                this.opacity = '0';
-            }, 800);
-            this.opacity = '1';
+        }, {
+            'immediate': true
         });
         this.watch('float', () => {
-            if (this.isFloat) {
-                this.opacityTimer = clickgo.task.sleep(() => {
-                    this.opacity = '0';
+            if (this.propBoolean('float')) {
+                this.hideTimer = clickgo.task.sleep(() => {
+                    this.isShow = false;
                 }, 800);
             }
             else {
-                if (this.opacityTimer > 0) {
-                    clickgo.task.removeTimer(this.opacityTimer);
-                    this.opacityTimer = 0;
+                this.isShow = true;
+                if (this.hideTimer) {
+                    clickgo.task.removeTimer(this.hideTimer);
+                    this.hideTimer = 0;
                 }
-                this.opacity = '1';
             }
+        }, {
+            'immediate': true
         });
-        if (this.isFloat) {
-            this.opacityTimer = clickgo.task.sleep(() => {
-                this.opacity = '0';
-            }, 800);
-        }
-        clickgo.dom.watchSize(this.refs.bar, (size) => {
-            this.barLengthPx = this.props.direction === 'v' ? size.height : size.width;
-            this.scrollOffsetPx = this.barOutSize * (this.scrollOffsetData / this.maxScroll);
-            const els = clickgo.dom.getSize(this.element);
-            this.width = els.width;
-            this.height = els.height;
+        clickgo.dom.watchSize(this.refs.bar, () => {
+            const barRect = this.refs.bar.getBoundingClientRect();
+            this.barPx = this.props.direction === 'v' ? barRect.height : barRect.width;
+            const rect = this.element.getBoundingClientRect();
+            this.width = rect.width;
+            this.height = rect.height;
         }, true);
-        const scrollOffsetData = Math.round(this.props.scrollOffset);
-        if (this.scrollOffsetData === scrollOffsetData) {
-            return;
-        }
-        this.scrollOffsetData = scrollOffsetData;
-        this.resizePx();
     }
     onUnmounted() {
-        if (this.timer > 0) {
-            clickgo.task.offFrame(this.timer);
+        if (this.hideTimer) {
+            clickgo.task.offFrame(this.hideTimer);
         }
     }
 }

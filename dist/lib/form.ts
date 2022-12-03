@@ -23,6 +23,9 @@ import * as control from './control';
 import * as fs from './fs';
 import * as native from './native';
 
+/** --- 当前有焦点的窗体 id --- */
+let focusId: number | null = null;
+
 /** --- form 相关信息 --- */
 const info: {
     /** --- 最后一个窗体 id --- */
@@ -234,7 +237,7 @@ export abstract class AbstractForm {
     }
 
     /** --- layout 中 :class 的转义 --- */
-    public classPrepend(): (cla: any) => string {
+    public get classPrepend(): (cla: any) => string {
         return (cla: any): string => {
             if (typeof cla !== 'string') {
                 return cla;
@@ -250,9 +253,9 @@ export abstract class AbstractForm {
      * @param cb 回调
      * @param opt 参数
      */
-    public watch<T extends this, TK extends keyof T>(
-        name: TK,
-        cb: (val: T[TK], old: T[TK]) => void | Promise<void>,
+    public watch<T extends this, TK extends keyof T, TR>(
+        name: TK | (() => TR),
+        cb: (val: T[TK] & TR, old: T[TK] & TR) => void | Promise<void>,
         opt: {
             'immediate'?: boolean;
             'deep'?: boolean;
@@ -398,6 +401,13 @@ export abstract class AbstractForm {
     }
 
     /**
+     * --- 关闭当前窗体 ---
+     */
+    public close(): void {
+        clickgo.form.close(this.formId);
+    }
+
+    /**
      * --- dialog mask 窗体返回值，在 close 之后会进行传导 ---
      */
     public dialogResult: string = '';
@@ -416,6 +426,7 @@ export abstract class AbstractForm {
         return;
     }
 
+    public onMounted(obj: Record<string, any>): void | Promise<void>;
     public onMounted(): void | Promise<void> {
         return;
     }
@@ -552,7 +563,8 @@ const popInfo: {
 
 export let simpleSystemTaskRoot: types.IVue;
 export let launcherRoot: types.IVue;
-const elements: {
+
+export const elements: {
     'wrap': HTMLDivElement;
     'list': HTMLDivElement;
     'popList': HTMLDivElement;
@@ -581,6 +593,24 @@ const elements: {
         /** --- clickgo 所有的 div wrap --- */
         this.wrap.id = 'cg-wrap';
         document.getElementsByTagName('body')[0].appendChild(this.wrap);
+        this.wrap.addEventListener('touchmove', function(e): void {
+            // --- 防止拖动时整个网页跟着动 ---
+            if (e.cancelable) {
+                e.preventDefault();
+            }
+            // --- 为啥要在这加，因为有些设备性能不行，在 touchstart 之时添加的 touchmove 不能立马响应，导致网页还是跟着动，所以增加此函数 ---
+        }, {
+            'passive': false
+        });
+        this.wrap.addEventListener('wheel', function(e): void {
+            // --- 防止不小心前进后退，或上下缓动滚动（Mac、触摸板） ---
+            e.preventDefault();
+        }, {
+            'passive': false
+        });
+        this.wrap.addEventListener('contextmenu', function(e): void {
+            e.preventDefault();
+        });
         if (clickgo.isImmersion()) {
             // --- 只有沉浸式模式（Windows 下非 frame 的 native）才会绑定这个事件 ---
             this.wrap.addEventListener('mouseenter', function() {
@@ -594,37 +624,10 @@ const elements: {
         /** --- form list 的 div --- */
         this.list.id = 'cg-form-list';
         this.wrap.appendChild(this.list);
-        this.list.addEventListener('touchmove', function(e): void {
-            // --- 防止拖动时整个网页跟着动 ---
-            if (e.cancelable) {
-                e.preventDefault();
-            }
-            // --- 为啥要在这加，因为有些设备性能不行，在 touchstart 之时添加的 touchmove 不能立马响应，导致网页还是跟着动，所以增加此函数 ---
-        }, {
-            'passive': false
-        });
-        this.list.addEventListener('wheel', function(e): void {
-            // --- 防止不小心前进后退，或上下缓动滚动（Mac） ---
-            e.preventDefault();
-        }, {
-            'passive': false
-        });
-        this.list.addEventListener('contextmenu', function(e): void {
-            e.preventDefault();
-        });
 
         /** --- pop list 的 div --- */
         this.popList.id = 'cg-pop-list';
-        this.popList.addEventListener('contextmenu', function(e): void {
-            e.preventDefault();
-        });
         this.wrap.appendChild(this.popList);
-        this.popList.addEventListener('touchmove', function(e): void {
-            // --- 防止拖动时整个网页跟着动 ---
-            e.preventDefault();
-        }, {
-            'passive': false
-        });
 
         // --- 从鼠标指针处从小到大缩放然后淡化的圆圈动画特效对象 ---=
         this.circular.id = 'cg-circular';
@@ -647,29 +650,11 @@ const elements: {
 
         // --- 添加 cg-system 的 dom ---
         this.system.id = 'cg-system';
-        this.system.addEventListener('contextmenu', function(e): void {
-            e.preventDefault();
-        });
         this.wrap.appendChild(this.system);
-        this.system.addEventListener('touchmove', function(e): void {
-            // --- 防止拖动时整个网页跟着动 ---
-            e.preventDefault();
-        }, {
-            'passive': false
-        });
 
         // --- 添加 cg-simpletask 的 dom ---
         this.simpleSystemtask.id = 'cg-simpletask';
-        this.simpleSystemtask.addEventListener('contextmenu', function(e): void {
-            e.preventDefault();
-        });
         this.wrap.appendChild(this.simpleSystemtask);
-        this.simpleSystemtask.addEventListener('touchmove', function(e): void {
-            // --- 防止拖动时整个网页跟着动 ---
-            e.preventDefault();
-        }, {
-            'passive': false
-        });
         const simpletaskApp = clickgo.vue.createApp({
             'template': '<div v-for="(item, formId) of forms" class="cg-simpletask-item" @click="click(parseInt(formId))"><div v-if="item.icon" class="cg-simpletask-icon" :style="{\'background-image\': \'url(\' + item.icon + \')\'}"></div><div>{{item.title}}</div></div>',
             'data': function() {
@@ -710,23 +695,14 @@ const elements: {
 
         // --- cg-launcher ---
         this.launcher.id = 'cg-launcher';
-        this.launcher.addEventListener('contextmenu', function(e): void {
-            e.preventDefault();
-        });
         this.wrap.appendChild(this.launcher);
-        this.launcher.addEventListener('touchmove', function(e): void {
-            // --- 防止拖动时整个网页跟着动 ---
-            e.preventDefault();
-        }, {
-            'passive': false
-        });
         // --- Vue 挂载在这里 ---
         const waiting = function(): void {
             // --- 必须在这里执行，要不然 computed 无法更新，因为 core 还没加载进来 ---
             if (!core.config) {
                 setTimeout(function() {
                     waiting();
-                }, 2000);
+                }, 150);
                 return;
             }
             const launcherApp = clickgo.vue.createApp({
@@ -1094,6 +1070,13 @@ export function getList(taskId: number): Record<string, types.IFormInfo> {
 }
 
 /**
+ * --- 获取当前有焦点的窗体 form id ---
+ */
+export function getFocus(): number | null {
+    return focusId;
+}
+
+/**
  * --- 改变 form 的焦点 class ---
  * @param formId 变更后的 form id
  */
@@ -1106,31 +1089,25 @@ export function changeFocus(formId: number = 0): void {
         });
         return;
     }
-    const focusElement = document.querySelector('#cg-form-list > [data-form-focus]');
-    if (focusElement) {
-        const dataFormId = focusElement.getAttribute('data-form-id');
-        if (dataFormId) {
-            const dataFormIdNumber = parseInt(dataFormId);
-            if (dataFormIdNumber === formId) {
-                return;
-            }
-            else {
-                const taskId = parseInt(focusElement.getAttribute('data-task-id') ?? '0');
-                const t = task.list[taskId];
-                t.forms[dataFormIdNumber].vapp._container.removeAttribute('data-form-focus');
-                t.forms[dataFormIdNumber].vroot._formFocus = false;
-                // --- 触发 formBlurred 事件 ---
-                core.trigger('formBlurred', taskId, dataFormIdNumber);
-            }
-        }
-        else {
+    const dataFormId = getFocus();
+    if (dataFormId) {
+        if (dataFormId === formId) {
             return;
         }
+        else {
+            const t = task.list[task.getFocus()!];
+            t.forms[dataFormId].vapp._container.removeAttribute('data-form-focus');
+            t.forms[dataFormId].vroot._formFocus = false;
+            // --- 触发 formBlurred 事件 ---
+            core.trigger('formBlurred', t.id, dataFormId);
+        }
     }
+    focusId = null;
+    task.setFocus();
     if (formId === 0) {
         return;
     }
-    const el = document.querySelector(`#cg-form-list > [data-form-id='${formId}']`);
+    const el = elements.list.querySelector(`.cg-form-wrap[data-form-id='${formId}']`);
     if (!el) {
         return;
     }
@@ -1158,6 +1135,8 @@ export function changeFocus(formId: number = 0): void {
         // --- 开启 focus ---
         t.forms[dialogFormId].vapp._container.dataset.formFocus = '';
         t.forms[dialogFormId].vroot._formFocus = true;
+        focusId = dialogFormId;
+        task.setFocus(t.id);
         // --- 触发 formFocused 事件 ---
         core.trigger('formFocused', taskId, dialogFormId);
         // --- 判断点击的窗体是不是就是 dialog mask 窗体本身 ---
@@ -1177,6 +1156,8 @@ export function changeFocus(formId: number = 0): void {
         // --- 正常开启 focus ---
         t.forms[formId].vapp._container.dataset.formFocus = '';
         t.forms[formId].vroot._formFocus = true;
+        focusId = formId;
+        task.setFocus(t.id);
         // --- 触发 formFocused 事件 ---
         core.trigger('formFocused', taskId, formId);
     }
@@ -1856,6 +1837,7 @@ export function remove(formId: number): boolean {
             }
             task.list[taskId].forms[formId].vapp.unmount();
             task.list[taskId].forms[formId].vapp._container.remove();
+            elements.popList.querySelector('[data-form-id="' + formId.toString() + '"]')?.remove();
             if (io > -1) {
                 // --- 如果是 dialog 则要执行回调 ---
                 task.list[taskId].forms[formId].vroot.cgDialogCallback();
@@ -1865,6 +1847,8 @@ export function remove(formId: number): boolean {
             dom.removeStyle(taskId, 'form', formId);
             // --- 触发 formRemoved 事件 ---
             core.trigger('formRemoved', taskId, formId, title, icon);
+            dom.clearWatchStyle(formId);
+            dom.clearPropertyStyle(formId);
             // --- 检测是否已经没有窗体了，如果没有了的话就要结束任务了 ---
             if (Object.keys(task.list[taskId].forms).length === 0) {
                 task.end(taskId);
@@ -1972,8 +1956,13 @@ export async function create(opt: types.IFormCreateOptions): Promise<number> {
     layout = layout.replace(/@(touchstart|touchmove|wheel)=/g, '@$1.passive=');
     layout = layout.replace(/@(touchstart|touchmove|wheel)\.not=/g, '@$1=');
     */
+    // --- 给 teleport 做处理 ---
+    if (layout.includes('<teleport')) {
+        layout = tool.teleportGlue(layout, formId);
+    }
     // --- 插入 HTML 到 Element ---
     elements.list.insertAdjacentHTML('beforeend', `<div class="cg-form-wrap" data-form-id="${formId.toString()}" data-task-id="${opt.taskId.toString()}"></div>`);
+    elements.popList.insertAdjacentHTML('beforeend', `<div data-form-id="${formId.toString()}" data-task-id="${opt.taskId.toString()}"></div>`);
     // --- 获取刚才的 form wrap element 对象 ---
     const el: HTMLElement = elements.list.children.item(elements.list.children.length - 1) as HTMLElement;
     // --- 创建窗体对象 ---
@@ -2132,11 +2121,26 @@ export async function create(opt: types.IFormCreateOptions): Promise<number> {
             await mounted.call(rtn.vroot, opt.data);
         }
         catch (err: any) {
+            // --- 窗体创建失败，做垃圾回收 ---
             core.trigger('error', rtn.vroot.taskId, rtn.vroot.formId, err, 'Create form mounted error.');
-            t.forms[formId] = undefined as any;
             delete t.forms[formId];
-            rtn.vapp.unmount();
+            try {
+                rtn.vapp.unmount();
+            }
+            catch (err: any) {
+                const msg = `Message: ${err.message}\nTask id: ${opt.taskId}\nForm id: ${formId}\nFunction: form.create, unmount.`;
+                notify({
+                    'title': 'Form Unmount Error',
+                    'content': msg,
+                    'type': 'danger'
+                });
+                console.log('Form Unmount Error', msg, err);
+            }
             rtn.vapp._container.remove();
+            elements.popList.querySelector('[data-form-id="' + rtn.vroot.formId + '"]')?.remove();
+            dom.clearWatchStyle(rtn.vroot.formId);
+            dom.clearPropertyStyle(rtn.vroot.formId);
+            // --- 移除 style ---
             dom.removeStyle(rtn.vroot.taskId, 'form', rtn.vroot.formId);
             return -8;
         }
@@ -2202,7 +2206,7 @@ export function dialog(opt: string | types.IFormDialogOptions): Promise<string> 
                 }
             }
         };
-        cls.create(undefined, `<form title="${nopt.title ?? 'dialog'}" min="false" max="false" resize="false" height="0" border="${nopt.title ? 'normal' : 'plain'}" direction="v"><dialog :buttons="buttons" @select="select"${nopt.direction ? ` direction="${nopt.direction}"` : ''}>${nopt.content}</dialog></form>`).then((frm) => {
+        cls.create(undefined, `<form title="${nopt.title ?? 'dialog'}" min="false" max="false" resize="false" height="0" width="0" border="${nopt.title ? 'normal' : 'plain'}" direction="v"><dialog :buttons="buttons" @select="select"${nopt.direction ? ` direction="${nopt.direction}"` : ''}>${nopt.content}</dialog></form>`).then((frm) => {
             if (typeof frm === 'number') {
                 resolve('');
                 return;

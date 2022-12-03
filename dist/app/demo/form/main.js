@@ -15,7 +15,6 @@ const check_1 = require("./control/check/check");
 const dialog_1 = require("./control/dialog/dialog");
 const file_1 = require("./control/file/file");
 const form_1 = require("./control/form/form");
-const greatview_1 = require("./control/greatview/greatview");
 const list_1 = require("./control/list/list");
 const marquee_1 = require("./control/marquee/marquee");
 const menu_1 = require("./control/menu/menu");
@@ -27,7 +26,7 @@ const scroll_1 = require("./control/scroll/scroll");
 const select_1 = require("./control/select/select");
 const tab_1 = require("./control/tab/tab");
 const text_1 = require("./control/text/text");
-const view_1 = require("./control/view/view");
+const vflow_1 = require("./control/vflow/vflow");
 const form_2 = require("./event/form/form");
 const screen_1 = require("./event/screen/screen");
 const task_1 = require("./event/task/task");
@@ -44,6 +43,15 @@ class default_1 extends clickgo.form.AbstractForm {
     constructor() {
         super(...arguments);
         this.ntab = '';
+        this.test = 0;
+    }
+    onMounted() {
+        return __awaiter(this, void 0, void 0, function* () {
+            while (true) {
+                yield clickgo.tool.sleep(2000);
+                this.test += 1;
+            }
+        });
     }
     openForm(name) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -73,8 +81,8 @@ class default_1 extends clickgo.form.AbstractForm {
                     frm = yield form_1.default.create();
                     break;
                 }
-                case 'cgreatview': {
-                    frm = yield greatview_1.default.create();
+                case 'cvflow': {
+                    frm = yield vflow_1.default.create();
                     break;
                 }
                 case 'cimg': {
@@ -131,10 +139,6 @@ class default_1 extends clickgo.form.AbstractForm {
                 }
                 case 'ctext': {
                     frm = yield text_1.default.create();
-                    break;
-                }
-                case 'cview': {
-                    frm = yield view_1.default.create();
                     break;
                 }
                 case 'eform': {

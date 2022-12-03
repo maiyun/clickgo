@@ -6,7 +6,6 @@ import ccheckFrm from './control/check/check';
 import cdialogFrm from './control/dialog/dialog';
 import cfileFrm from './control/file/file';
 import cformFrm from './control/form/form';
-import cgreatviewFrm from './control/greatview/greatview';
 import clistFrm from './control/list/list';
 import cmarqueeFrm from './control/marquee/marquee';
 import cmenuFrm from './control/menu/menu';
@@ -18,7 +17,7 @@ import cscrollFrm from './control/scroll/scroll';
 import cselectFrm from './control/select/select';
 import ctabFrm from './control/tab/tab';
 import ctextFrm from './control/text/text';
-import cviewFrm from './control/view/view';
+import cvflowFrm from './control/vflow/vflow';
 
 import eformFrm from './event/form/form';
 import escreenFrm from './event/screen/screen';
@@ -37,6 +36,15 @@ import mzipFrm from './method/zip/zip';
 export default class extends clickgo.form.AbstractForm {
 
     public ntab = '';
+
+    public test = 0;
+
+    public async onMounted(): Promise<void> {
+        while (true) {
+            await clickgo.tool.sleep(2000);
+            this.test += 1;
+        }
+    }
 
     public async openForm(name: string): Promise<void> {
         let frm: number | types.AbstractForm = 0;
@@ -65,8 +73,8 @@ export default class extends clickgo.form.AbstractForm {
                 frm = await cformFrm.create();
                 break;
             }
-            case 'cgreatview': {
-                frm = await cgreatviewFrm.create();
+            case 'cvflow': {
+                frm = await cvflowFrm.create();
                 break;
             }
             case 'cimg': {
@@ -123,10 +131,6 @@ export default class extends clickgo.form.AbstractForm {
             }
             case 'ctext': {
                 frm = await ctextFrm.create();
-                break;
-            }
-            case 'cview': {
-                frm = await cviewFrm.create();
                 break;
             }
 

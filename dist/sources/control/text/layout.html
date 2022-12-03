@@ -1,24 +1,24 @@
-<div class="wrap" :class="[isFocus && 'focus', 'border-' + border]" :data-cg-disabled="isDisabled ? '' : undefined" :tabindex="!isDisabled && focus && '0'" @mousedown="down" @touchstart="down" @keydown="keydown" @focus="focus">
+<div class="wrap" :class="[isFocus && 'focus']" :data-cg-disabled="propBoolean('disabled') ? '' : undefined" @mousedown="down" @touchstart="down">
     <div class="op" :style="{'margin': opMargin}">
-        <template v-if="isMulti">
+        <template v-if="propBoolean('multi') && !propBoolean('password')">
             <div class="multi-t">
-                <textarea ref="text" class="text" :value="value" :style="{'padding': padding, '-webkit-text-security': isPassword ? 'disc' : undefined, 'white-space': isWrap ? undefined : 'nowrap', 'font': font, 'background': background, 'color': color}" :readonly="isReadonly" :disabled="isDisabled" @focus="tfocus" @blur="tblur" @input="input" @wheel="wheel" @scroll="scroll" @touchstart="inputTouch" @touchmove="move" @touchend="end" @touchcancel="end" @change="$event.stopPropagation()" @contextmenu="contextmenu" @select="select" @mousedown="reselect" @keydown="reselect"></textarea>
-                <cg-scroll :disabled="lengthHeight <= clientHeight" :length="lengthHeight" :client="clientHeight" :scroll-offset="scrollTopEmit" @update:scroll-offset="refs.text.scrollTop = $event"></cg-scroll>
+                <textarea ref="text" class="text" :value="value" :style="{'padding': padding, 'white-space': propBoolean('wrap') ? undefined : 'nowrap', 'font': font, 'background': background, 'color': color}" :readonly="propBoolean('readonly')" :disabled="propBoolean('disabled')" @focus="tfocus" @blur="tblur" @input="input" @wheel="wheel" @scroll="scroll" @touchstart="inputTouch" @change="$event.stopPropagation()" @contextmenu="contextmenu" @select="select"></textarea>
+                <cg-scroll :length="size.sh" :client="size.ch" :offset="size.st" @update:offset="refs.text.scrollTop = $event"></cg-scroll>
             </div>
-            <div v-if="lengthWidth > clientWidth" class="multi-b">
-                <cg-scroll direction="h" :length="lengthWidth" :client="clientWidth" :scroll-offset="scrollLeftEmit" @update:scroll-offset="refs.text.scrollLeft = $event"></cg-scroll>
+            <div v-if="!propBoolean('wrap')" class="multi-b">
+                <cg-scroll direction="h" :length="size.sw" :client="size.cw" :offset="size.sl" @update:offset="refs.text.scrollLeft = $event"></cg-scroll>
                 <div class="multi-rb"></div>
             </div>
         </template>
-        <input v-else ref="text" class="text" type="text" :value="value" :style="{'padding': padding, '-webkit-text-security': isPassword ? 'disc' : undefined, 'font': font, 'background': background, 'color': color}" :readonly="isReadonly" :disabled="isDisabled" @focus="tfocus" @blur="tblur" @input="input" @wheel="wheel" @scroll="scroll" @touchstart="inputTouch"  @touchmove="move" @touchend="end" @touchcancel="end" @change="$event.stopPropagation()" @contextmenu="contextmenu" @select="select" @mousedown="reselect" @keydown="reselect">
+        <input v-else ref="text" class="text" :type="propBoolean('password') ? 'password' : 'text'" :value="value" :style="{'padding': padding, 'font': font, 'background': background, 'color': color}" :readonly="propBoolean('readonly')" :disabled="propBoolean('disabled')" @focus="tfocus" @blur="tblur" @input="input" @wheel="wheel" @scroll="scroll" @touchstart="inputTouch" @change="$event.stopPropagation()" @contextmenu="contextmenu" @select="select">
     </div>
-    <teleport to="#cg-pop-list">
-        <div ref="pop" class="pop" data-cg-pop>
+    <teleport to="system">
+        <div ref="pop" class="pop">
             <slot>
                 <cg-menulist>
-                    <cg-menulist-item alt="T" @click="execCmd('cut')">{{l('cut')}}</cg-menulist-item>
-                    <cg-menulist-item alt="C" @click="execCmd('copy')">{{l('copy')}}</cg-menulist-item>
-                    <cg-menulist-item alt="P" @click="execCmd('paste')">{{l('paste')}}</cg-menulist-item>
+                    <cg-menulist-item alt="T" @click="execCmd('cut')" :disabled="propBoolean('readonly') || propBoolean('password')">{{l('cut')}}</cg-menulist-item>
+                    <cg-menulist-item alt="C" @click="execCmd('copy')" :disabled="propBoolean('password')">{{l('copy')}}</cg-menulist-item>
+                    <cg-menulist-item alt="P" @click="execCmd('paste')" :disabled="propBoolean('readonly')">{{l('paste')}}</cg-menulist-item>
                 </cg-menulist>
             </slot>
         </div>

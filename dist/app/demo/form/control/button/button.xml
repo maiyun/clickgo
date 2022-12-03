@@ -60,7 +60,7 @@
             </layout>
             <label>Menu:</label>
             <layout gutter="10" class="buttons">
-                <button :type="type" :area="area" :plain="plain === 'plain' ? 'plain' : undefined" @click="dialog('Click!')">
+                <button :type="type[0]" :area="area[0]" :plain="plain[0] === 'plain' ? 'plain' : undefined" @click="dialog('Click!')">
                     <template v-slot>Area all</template>
                     <template v-slot:pop>
                         <menulist>

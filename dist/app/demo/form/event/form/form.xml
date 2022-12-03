@@ -3,14 +3,14 @@
     <layout align-h="center" align-v="center" style="margin-top: 10px; flex: 1; height: 0;">
         <layout gutter="10" direction="v">
             <layout align-v="center" v-for="(form, fid) of flist" gutter="5" @click="changeFocus(fid)" class="item" :class="{'flash': form.flash, 'focus': form.focus}">
-                <img v-if="form.icon" :src="form.icon" width="16" height="16" /><label>{{form.title}}{{form.max ? ' (max)' : ''}}{{form.min ? ' (min)' : ''}}</label>
+                <img v-if="form.icon" :src="form.icon" style="16px; height: 16px;" /><label>{{form.title}}{{form.max ? ' (max)' : ''}}{{form.min ? ' (min)' : ''}}</label>
             </layout>
         </layout>
     </layout>
     <layout gutter="10" style="margin-top: 10px; height: 80px;">
         <list :data="['formCreated', 'formRemoved', 'formTitleChanged', 'formIconChanged', 'formStateMinChanged', 'formStateMaxChanged', 'formShowChanged', 'formFocused', 'formBlurred', 'formFlash']" style="width: 150px;"></list>
-        <greatview v-slot="data" :data="list" direction="v" style="color: #FFF; background: hsl(0, 0%, 20%); line-height: 1.5; flex: 1; width: 0; padding: 10px;" same>
+        <vflow v-slot="data" :data="list" direction="v" style="color: #FFF; background: hsl(0, 0%, 20%); line-height: 1.5; flex: 1; width: 0; padding: 10px;" same>
             <label>[{{data.row.time}}] {{data.row.name}}, {{data.row.text}}.</label>
-        </greatview>
+        </vflow>
     </layout>
 </form>

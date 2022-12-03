@@ -7,11 +7,11 @@
     display: flex; outline: none; position: relative;
     // --- 外边框 ---
     &::before {
-        content: ''; pointer-events: none; position: absolute; left: 0; top: 0; width: 200%; height: 200%; transform-origin: 0 0; transform: scale(.5); z-index: 1;
+        content: ''; pointer-events: none; position: absolute; left: 0; top: 0; width: 100%; height: 100%; z-index: 1;
     }
     // --- 焦点框 ---
     &::after, .inner::after, .arrow::after {
-        content: ''; pointer-events: none; position: absolute; left: 2px; top: 2px; width: calc(200% - 8px); height: calc(200% - 8px); transform-origin: 0 0; transform: scale(.5); display: none; z-index: 1;
+        content: ''; pointer-events: none; position: absolute; left: 3px; top: 3px; width: calc(100% - 6px); height: calc(100% - 6px); display: none; z-index: 1;
     }
     // --- 获取焦点时自动显示焦点框 ---
     &:focus::after, .inner:focus::after, .arrow:focus::after {
@@ -29,7 +29,7 @@
         flex: 1; display: flex; align-items: center; justify-content: center; outline: none; position: relative;
         // --- inner 右边框 ---
         &::before {
-            content: ''; pointer-events: none; position: absolute; left: 0; top: 0; width: 200%; height: 200%; transform-origin: 0 0; transform: scale(.5); z-index: 1;
+            content: ''; pointer-events: none; position: absolute; left: 0; top: 0; width: 100%; height: 100%; z-index: 1;
         }
     }
     .arrow {
@@ -49,13 +49,13 @@
             --background-focus:var(--g-background-focus);
             --background-disabled:var(--g-background-disabled);
 
-            --border:solid 1px var(--g-border-color);
-            --border-hover:solid 1px var(--g-border-color-hover);
-            --border-active:solid 1px var(--g-border-color-active);
+            --border:solid .5px var(--g-border-color);
+            --border-hover:solid .5px var(--g-border-color-hover);
+            --border-active:solid .5px var(--g-border-color-active);
             --border-focus:solid 2px var(--g-border-color-focus);
-            --border-disabled:solid 1px var(--g-border-color-disabled);
+            --border-disabled:solid .5px var(--g-border-color-disabled);
 
-            --focusbox-border:dotted 1px var(--g-border-color);
+            --focusbox-border:dotted .5px var(--g-border-color);
         }
         &.plain {
             --color-hover:var(--g-plain-color-hover);
@@ -69,13 +69,13 @@
             --background-focus:var(--g-plain-background-focus);
             --background-disabled:var(--g-plain-background-disabled);
 
-            --border:solid 1px var(--g-plain-border-color);
-            --border-hover:solid 1px var(--g-plain-border-color-hover);
-            --border-active:solid 1px var(--g-plain-border-color-active);
-            --border-focus:solid 1px var(--g-plain-border-color-focus);
-            --border-disabled:solid 1px var(--g-plain-border-color-disabled);
+            --border:solid .5px var(--g-plain-border-color);
+            --border-hover:solid .5px var(--g-plain-border-color-hover);
+            --border-active:solid .5px var(--g-plain-border-color-active);
+            --border-focus:solid .5px var(--g-plain-border-color-focus);
+            --border-disabled:solid .5px var(--g-plain-border-color-disabled);
 
-            --focusbox-border:dotted 1px var(--g-plain-border-color);
+            --focusbox-border:dotted .5px var(--g-plain-border-color);
         }
     }
     &.tool {
@@ -90,12 +90,12 @@
             --background-focus:var(--g-background-focus);
             --background-disabled:var(--g-background-disabled);
 
-            --border-hover:solid 1px var(--g-border-color-hover);
-            --border-active:solid 1px var(--g-border-color-active);
-            --border-focus:solid 1px var(--g-border-color-focus);
-            --border-disabled:solid 1px var(--g-border-color-disabled);
+            --border-hover:solid .5px var(--g-border-color-hover);
+            --border-active:solid .5px var(--g-border-color-active);
+            --border-focus:solid .5px var(--g-border-color-focus);
+            --border-disabled:solid .5px var(--g-border-color-disabled);
 
-            --focusbox-border:dotted 1px var(--g-border-color);
+            --focusbox-border:dotted .5px var(--g-border-color);
         }
         &.plain {
             --color-hover:var(--g-plain-color-hover);
@@ -108,12 +108,12 @@
             --background-focus:hsl(0, 0%, 100%);
             --background-disabled:var(--g-plain-background-disabled);
 
-            --border-hover:solid 1px var(--g-plain-border-color-hover);
-            --border-active:solid 1px var(--g-plain-border-color-active);
-            --border-focus:solid 1px var(--g-plain-border-color-focus);
-            --border-disabled:solid 1px var(--g-plain-border-color-disabled);
+            --border-hover:solid .5px var(--g-plain-border-color-hover);
+            --border-active:solid .5px var(--g-plain-border-color-active);
+            --border-focus:solid .5px var(--g-plain-border-color-focus);
+            --border-disabled:solid .5px var(--g-plain-border-color-disabled);
 
-            --focusbox-border:dotted 1px var(--g-plain-border-color);
+            --focusbox-border:dotted .5px var(--g-plain-border-color);
         }
     }
     &.primary {
@@ -130,7 +130,7 @@
             --background-focus:var(--success-focus);
             --background-disabled:var(--success-disabled);
 
-            --focusbox-border:dotted 1px hsl(0, 0%, 100%);
+            --focusbox-border:dotted .5px hsl(0, 0%, 100%);
         }
         &.plain {
             --color:var(--success);
@@ -145,13 +145,13 @@
             --background-focus:hsl(0, 0%, 100%);
             --background-disabled:var(--g-plain-background-disabled);
 
-            --border:solid 1px var(--success);
-            --border-hover:solid 1px var(--success-hover);
-            --border-active:solid 1px var(--success-active);
-            --border-focus:solid 1px var(--success-focus);
-            --border-disabled:solid 1px var(--success-disabled);
+            --border:solid .5px var(--success);
+            --border-hover:solid .5px var(--success-hover);
+            --border-active:solid .5px var(--success-active);
+            --border-focus:solid .5px var(--success-focus);
+            --border-disabled:solid .5px var(--success-disabled);
 
-            --focusbox-border:dotted 1px var(--g-plain-border-color);
+            --focusbox-border:dotted .5px var(--g-plain-border-color);
         }
     }
     &.info {
@@ -168,7 +168,7 @@
             --background-focus:var(--info-focus);
             --background-disabled:var(--info-disabled);
 
-            --focusbox-border:dotted 1px hsl(0, 0%, 100%);
+            --focusbox-border:dotted .5px hsl(0, 0%, 100%);
         }
         &.plain {
             --color:var(--info);
@@ -183,13 +183,13 @@
             --background-focus:hsl(0, 0%, 100%);
             --background-disabled:var(--g-plain-background-disabled);
 
-            --border:solid 1px var(--info);
-            --border-hover:solid 1px var(--info-hover);
-            --border-active:solid 1px var(--info-active);
-            --border-focus:solid 1px var(--info-focus);
-            --border-disabled:solid 1px var(--info-disabled);
+            --border:solid .5px var(--info);
+            --border-hover:solid .5px var(--info-hover);
+            --border-active:solid .5px var(--info-active);
+            --border-focus:solid .5px var(--info-focus);
+            --border-disabled:solid .5px var(--info-disabled);
 
-            --focusbox-border:dotted 1px var(--g-plain-border-color);
+            --focusbox-border:dotted .5px var(--g-plain-border-color);
         }
     }
     &.warning {
@@ -206,7 +206,7 @@
             --background-focus:var(--warning-focus);
             --background-disabled:var(--warning-disabled);
 
-            --focusbox-border:dotted 1px hsl(0, 0%, 100%);
+            --focusbox-border:dotted .5px hsl(0, 0%, 100%);
         }
         &.plain {
             --color:var(--warning);
@@ -221,13 +221,13 @@
             --background-focus:hsl(0, 0%, 100%);
             --background-disabled:var(--g-plain-background-disabled);
 
-            --border:solid 1px var(--warning);
-            --border-hover:solid 1px var(--warning-hover);
-            --border-active:solid 1px var(--warning-active);
-            --border-focus:solid 1px var(--warning-focus);
-            --border-disabled:solid 1px var(--warning-disabled);
+            --border:solid .5px var(--warning);
+            --border-hover:solid .5px var(--warning-hover);
+            --border-active:solid .5px var(--warning-active);
+            --border-focus:solid .5px var(--warning-focus);
+            --border-disabled:solid .5px var(--warning-disabled);
 
-            --focusbox-border:dotted 1px var(--g-plain-border-color);
+            --focusbox-border:dotted .5px var(--g-plain-border-color);
         }
     }
     &.danger {
@@ -244,7 +244,7 @@
             --background-focus:var(--danger-focus);
             --background-disabled:var(--danger-disabled);
 
-            --focusbox-border:dotted 1px hsl(0, 0%, 100%);
+            --focusbox-border:dotted .5px hsl(0, 0%, 100%);
         }
         &.plain {
             --color:var(--danger);
@@ -259,13 +259,13 @@
             --background-focus:hsl(0, 0%, 100%);
             --background-disabled:var(--g-plain-background-disabled);
 
-            --border:solid 1px var(--danger);
-            --border-hover:solid 1px var(--danger-hover);
-            --border-active:solid 1px var(--danger-active);
-            --border-focus:solid 1px var(--danger-focus);
-            --border-disabled:solid 1px var(--danger-disabled);
+            --border:solid .5px var(--danger);
+            --border-hover:solid .5px var(--danger-hover);
+            --border-active:solid .5px var(--danger-active);
+            --border-focus:solid .5px var(--danger-focus);
+            --border-disabled:solid .5px var(--danger-disabled);
 
-            --focusbox-border:dotted 1px var(--g-plain-border-color);
+            --focusbox-border:dotted .5px var(--g-plain-border-color);
         }
     }
 

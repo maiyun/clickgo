@@ -43,8 +43,7 @@ class default_1 extends clickgo.form.AbstractForm {
                 'type': 1
             }
         ];
-        this.select = 0;
-        this.disabled = false;
+        this.select = [];
         this.slist2 = [
             'haha1', 'haha2', 'haha3', 'haha4', {
                 'value': 'ha5',
@@ -70,24 +69,84 @@ class default_1 extends clickgo.form.AbstractForm {
                 'children': ['xixi', 'xixida', 'gogogo']
             }
         ];
-        this.select2 = 'haha2';
-        this.editable = false;
+        this.slist2r = [];
+        this.select2 = ['haha2'];
+        this.label2 = [];
         this.padding = false;
         this.fontSize = false;
         this.background = false;
+        this.disabled = false;
+        this.multi = false;
+        this.editable = false;
+        this.tree = false;
+        this.async = false;
+        this.icon = false;
+        this.remote = false;
+    }
+    get sizes() {
+        const rtn = {};
+        for (let i = 0; i < this.slist.length; ++i) {
+            if (this.slist[i].control === 'split') {
+                rtn[i] = 3;
+                continue;
+            }
+            if (this.slist[i].type === 1) {
+                rtn[i] = 31;
+                continue;
+            }
+        }
+        return rtn;
+    }
+    onLoad(value, resolve) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (value !== 'haha4') {
+                yield clickgo.tool.sleep(100);
+                if (value === '2') {
+                    resolve(['60']);
+                }
+                else {
+                    resolve();
+                }
+                return;
+            }
+            yield clickgo.tool.sleep(300);
+            resolve(['he', 'ha']);
+        });
+    }
+    onRemote(value, resolve) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield clickgo.tool.sleep(300);
+            if (value === '8') {
+                this.slist2r = [];
+                resolve();
+                return;
+            }
+            this.slist2r = ['test', value, 'remote'];
+            resolve();
+        });
     }
     onMounted() {
-        this.watch('select', (n, o) => __awaiter(this, void 0, void 0, function* () {
-            if (this.slist[n].type === 0) {
+        this.watch(() => this.select.join(','), (n, o) => {
+            let select = [];
+            const now = n.split(',');
+            const old = o.split(',');
+            for (const item of now) {
+                if (this.slist[parseInt(item)].type !== 0) {
+                    continue;
+                }
+                select.push(parseInt(item));
+            }
+            if (select.length === now.length) {
                 return;
             }
-            yield this.nextTick();
-            if (this.slist[o].type === 0) {
-                this.select = o;
-                return;
+            select = [];
+            for (const item of old) {
+                select.push(parseInt(item));
             }
-            this.select = 0;
-        }));
+            this.select = select;
+        }, {
+            'deep': true
+        });
     }
 }
 exports.default = default_1;

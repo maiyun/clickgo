@@ -9,9 +9,6 @@ class default_1 extends clickgo.control.AbstractControl {
             'alt': ''
         };
     }
-    get isDisabled() {
-        return clickgo.tool.getBoolean(this.props.disabled);
-    }
     enter(e) {
         if (clickgo.dom.hasTouchButMouse(e)) {
             return;

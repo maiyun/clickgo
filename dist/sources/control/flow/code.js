@@ -7,117 +7,98 @@ class default_1 extends clickgo.control.AbstractControl {
         this.props = {
             'direction': 'h',
             'selection': false,
+            'gesture': [],
             'scrollLeft': 0,
             'scrollTop': 0
         };
-        this.clientWidth = 0;
-        this.clientHeight = 0;
-        this.lengthWidth = 0;
-        this.lengthHeight = 0;
-        this.touchX = 0;
-        this.touchY = 0;
-        this.canTouchScroll = false;
-        this.alreadySb = false;
         this.access = {
             'selectionOrigin': { 'x': 0, 'y': 0 },
             'selectionCurrent': { 'x': 0, 'y': 0, 'quick': false },
             'selectionTimer': 0
         };
     }
-    get maxScrollLeft() {
-        return Math.round(this.lengthWidth - this.clientWidth);
+    maxScrollLeft() {
+        return this.element.scrollWidth - this.element.clientWidth;
     }
-    get maxScrollTop() {
-        return Math.round(this.lengthHeight - this.clientHeight);
+    maxScrollTop() {
+        return this.element.scrollHeight - this.element.clientHeight;
     }
     scroll() {
-        const sl = Math.round(this.element.scrollLeft);
-        if (this.props.scrollLeft !== sl) {
+        let sl = Math.round(this.element.scrollLeft);
+        const msl = this.maxScrollLeft();
+        if (sl > msl) {
+            sl = msl;
+        }
+        if (this.propInt('scrollLeft') !== sl) {
             this.emit('update:scrollLeft', sl);
         }
-        const st = Math.round(this.element.scrollTop);
-        if (this.props.scrollTop !== st) {
+        let st = Math.round(this.element.scrollTop);
+        const mst = this.maxScrollTop();
+        if (st > mst) {
+            st = mst;
+        }
+        if (this.propInt('scrollTop') !== st) {
             this.emit('update:scrollTop', st);
+        }
+        if (!this.access.selectionTimer) {
+            return;
         }
         this.refreshSelection(clickgo.dom.is.shift, clickgo.dom.is.ctrl);
     }
     wheel(e) {
-        const scrollTop = Math.ceil(this.element.scrollTop);
-        const scrollLeft = Math.ceil(this.element.scrollLeft);
-        if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
-            if (e.deltaY < 0) {
-                if (scrollTop > 0) {
-                    e.stopPropagation();
-                }
-                else if (scrollLeft > 0) {
-                    e.stopPropagation();
-                    e.preventDefault();
-                    this.element.scrollLeft = scrollLeft + e.deltaY;
-                }
-                else {
-                    if (this.props.direction === 'h') {
-                        e.direction = 'h';
+        clickgo.dom.bindGesture(e, (e, dir) => {
+            switch (dir) {
+                case 'top': {
+                    if (this.element.scrollTop > 0) {
+                        e.stopPropagation();
                     }
-                    this.emit('scrollborder', e);
+                    else {
+                        if (this.propArray('gesture').includes('top')) {
+                            return true;
+                        }
+                    }
+                    break;
+                }
+                case 'bottom': {
+                    if (Math.round(this.element.scrollTop) < this.maxScrollTop()) {
+                        e.stopPropagation();
+                    }
+                    else {
+                        if (this.propArray('gesture').includes('bottom')) {
+                            return true;
+                        }
+                    }
+                    break;
+                }
+                case 'left': {
+                    if (this.element.scrollLeft > 0) {
+                        e.stopPropagation();
+                    }
+                    else {
+                        if (this.propArray('gesture').includes('left')) {
+                            return true;
+                        }
+                    }
+                    break;
+                }
+                default: {
+                    if (Math.round(this.element.scrollLeft) < this.maxScrollLeft()) {
+                        e.stopPropagation();
+                    }
+                    else {
+                        if (this.propArray('gesture').includes('right')) {
+                            return true;
+                        }
+                    }
                 }
             }
-            else {
-                if (scrollTop < this.maxScrollTop) {
-                    e.stopPropagation();
-                }
-                else if (scrollLeft < this.maxScrollLeft) {
-                    e.stopPropagation();
-                    e.preventDefault();
-                    this.element.scrollLeft = scrollLeft + e.deltaY;
-                }
-                else {
-                    if (this.props.direction === 'h') {
-                        e.direction = 'h';
-                    }
-                    this.emit('scrollborder', e);
-                }
-            }
-        }
-        else {
-            if (e.deltaX < 0) {
-                if (scrollLeft > 0) {
-                    e.stopPropagation();
-                }
-                else if (scrollTop > 0) {
-                    e.stopPropagation();
-                    e.preventDefault();
-                    this.element.scrollTop = scrollTop + e.deltaX;
-                }
-                else {
-                    if (this.props.direction === 'v') {
-                        e.direction = 'v';
-                    }
-                    this.emit('scrollborder', e);
-                }
-            }
-            else {
-                if (scrollLeft < this.maxScrollLeft) {
-                    e.stopPropagation();
-                }
-                else if (scrollTop < this.maxScrollTop) {
-                    e.stopPropagation();
-                    e.preventDefault();
-                    this.element.scrollTop = scrollTop + e.deltaX;
-                }
-                else {
-                    if (this.props.direction === 'v') {
-                        e.direction = 'v';
-                    }
-                    this.emit('scrollborder', e);
-                }
-            }
-        }
+            return false;
+        }, (dir) => {
+            this.emit('gesture', dir);
+        });
     }
     down(e) {
         if (this.propBoolean('selection')) {
-            if (clickgo.dom.hasTouchButMouse(e)) {
-                return;
-            }
             const x = (e instanceof MouseEvent) ? e.clientX : e.touches[0].clientX;
             const y = (e instanceof MouseEvent) ? e.clientY : e.touches[0].clientY;
             clickgo.dom.bindDown(e, {
@@ -149,7 +130,8 @@ class default_1 extends clickgo.control.AbstractControl {
                             }
                         }
                         else if (this.access.selectionCurrent.x > rect.right) {
-                            if (this.element.scrollLeft < this.maxScrollLeft) {
+                            const maxLeft = this.maxScrollLeft();
+                            if (this.element.scrollLeft < maxLeft) {
                                 const x = this.access.selectionCurrent.x - rect.right;
                                 let dist = 0;
                                 if (this.access.selectionCurrent.quick) {
@@ -159,8 +141,8 @@ class default_1 extends clickgo.control.AbstractControl {
                                 else {
                                     dist = x / 5;
                                 }
-                                if (this.element.scrollLeft + dist > this.maxScrollLeft) {
-                                    dist = this.maxScrollLeft - this.element.scrollLeft;
+                                if (this.element.scrollLeft + dist > maxLeft) {
+                                    dist = maxLeft - this.element.scrollLeft;
                                 }
                                 this.element.scrollLeft += dist;
                                 this.emit('update:scrollLeft', Math.round(this.element.scrollLeft));
@@ -185,7 +167,8 @@ class default_1 extends clickgo.control.AbstractControl {
                             }
                         }
                         else if (this.access.selectionCurrent.y > rect.bottom) {
-                            if (this.element.scrollTop < this.maxScrollTop) {
+                            const maxTop = this.maxScrollTop();
+                            if (this.element.scrollTop < maxTop) {
                                 const x = this.access.selectionCurrent.y - rect.bottom;
                                 let dist = 0;
                                 if (this.access.selectionCurrent.quick) {
@@ -195,8 +178,8 @@ class default_1 extends clickgo.control.AbstractControl {
                                 else {
                                     dist = x / 5;
                                 }
-                                if (this.element.scrollTop + dist > this.maxScrollTop) {
-                                    dist = this.maxScrollTop - this.element.scrollTop;
+                                if (this.element.scrollTop + dist > maxTop) {
+                                    dist = maxTop - this.element.scrollTop;
                                 }
                                 this.element.scrollTop += dist;
                                 this.emit('update:scrollTop', Math.round(this.element.scrollTop));
@@ -228,11 +211,59 @@ class default_1 extends clickgo.control.AbstractControl {
             });
         }
         else {
-            if (e instanceof TouchEvent) {
-                this.touchX = e.touches[0].clientX;
-                this.touchY = e.touches[0].clientY;
-                this.canTouchScroll = false;
+            if (e instanceof MouseEvent) {
+                return;
             }
+            clickgo.dom.bindGesture(e, (ne, dir) => {
+                switch (dir) {
+                    case 'top': {
+                        if (this.element.scrollTop > 0) {
+                            ne.stopPropagation();
+                        }
+                        else {
+                            if (this.propArray('gesture').includes('top')) {
+                                return true;
+                            }
+                        }
+                        break;
+                    }
+                    case 'bottom': {
+                        if (Math.round(this.element.scrollTop) < this.maxScrollTop()) {
+                            ne.stopPropagation();
+                        }
+                        else {
+                            if (this.propArray('gesture').includes('bottom')) {
+                                return true;
+                            }
+                        }
+                        break;
+                    }
+                    case 'left': {
+                        if (this.element.scrollLeft > 0) {
+                            ne.stopPropagation();
+                        }
+                        else {
+                            if (this.propArray('gesture').includes('left')) {
+                                return true;
+                            }
+                        }
+                        break;
+                    }
+                    default: {
+                        if (Math.round(this.element.scrollLeft) < this.maxScrollLeft()) {
+                            ne.stopPropagation();
+                        }
+                        else {
+                            if (this.propArray('gesture').includes('right')) {
+                                return true;
+                            }
+                        }
+                    }
+                }
+                return false;
+            }, (dir) => {
+                this.emit('gesture', dir);
+            });
         }
     }
     refreshSelection(shift = false, ctrl = false) {
@@ -253,7 +284,7 @@ class default_1 extends clickgo.control.AbstractControl {
         if (x >= this.access.selectionOrigin.x) {
             area.x = Math.round(this.access.selectionOrigin.x);
             area.width = Math.round(x - this.access.selectionOrigin.x);
-            const maxWidth = this.maxScrollLeft + this.clientWidth - area.x;
+            const maxWidth = this.maxScrollLeft() + this.element.clientWidth - area.x;
             if (area.width > maxWidth) {
                 area.width = maxWidth;
             }
@@ -268,7 +299,7 @@ class default_1 extends clickgo.control.AbstractControl {
         if (y >= this.access.selectionOrigin.y) {
             area.y = Math.round(this.access.selectionOrigin.y);
             area.height = Math.round(y - this.access.selectionOrigin.y);
-            const maxHeight = this.maxScrollTop + this.clientHeight - area.y;
+            const maxHeight = this.maxScrollTop() + this.element.clientHeight - area.y;
             if (area.height > maxHeight) {
                 area.height = maxHeight;
             }
@@ -286,127 +317,28 @@ class default_1 extends clickgo.control.AbstractControl {
         this.refs.selection.style.height = area.height.toString() + 'px';
         this.emit('select', area);
     }
-    move(e) {
-        if (this.propBoolean('selection')) {
-            return;
-        }
-        const scrollTop = Math.ceil(this.element.scrollTop);
-        const scrollLeft = Math.ceil(this.element.scrollLeft);
-        const deltaX = this.touchX - e.touches[0].clientX;
-        const deltaY = this.touchY - e.touches[0].clientY;
-        if (this.canTouchScroll) {
-            e.stopPropagation();
-            return;
-        }
-        if (Math.abs(deltaY) > Math.abs(deltaX)) {
-            if (deltaY < 0) {
-                if (scrollTop > 0) {
-                    e.stopPropagation();
-                    this.canTouchScroll = true;
-                }
-                else {
-                    if (!this.alreadySb) {
-                        this.alreadySb = true;
-                        this.emit('scrollborder', e);
-                    }
-                }
-            }
-            else {
-                if (scrollTop < this.maxScrollTop) {
-                    e.stopPropagation();
-                    this.canTouchScroll = true;
-                }
-                else {
-                    if (!this.alreadySb) {
-                        this.alreadySb = true;
-                        this.emit('scrollborder', e);
-                    }
-                }
-            }
-        }
-        else {
-            if (deltaX < 0) {
-                if (scrollLeft > 0) {
-                    e.stopPropagation();
-                    this.canTouchScroll = true;
-                }
-                else {
-                    if (!this.alreadySb) {
-                        this.alreadySb = true;
-                        this.emit('scrollborder', e);
-                    }
-                }
-            }
-            else {
-                if (scrollLeft < this.maxScrollLeft) {
-                    e.stopPropagation();
-                    this.canTouchScroll = true;
-                }
-                else {
-                    if (!this.alreadySb) {
-                        this.alreadySb = true;
-                        this.emit('scrollborder', e);
-                    }
-                }
-            }
-        }
-        this.touchX = e.touches[0].clientX;
-        this.touchY = e.touches[0].clientY;
-    }
-    end() {
-        this.alreadySb = false;
-    }
-    refreshLength() {
-        if (!this.element.offsetParent) {
-            return;
-        }
-        const lengthWidth = this.element.scrollWidth;
-        const lengthHeight = this.element.scrollHeight;
-        if (this.lengthWidth !== lengthWidth) {
-            this.lengthWidth = lengthWidth;
-            if (this.props.direction === 'h') {
-                this.emit('change', lengthWidth);
-            }
-        }
-        if (this.lengthHeight !== lengthHeight) {
-            this.lengthHeight = lengthHeight;
-            if (this.props.direction === 'v') {
-                this.emit('change', lengthHeight);
-            }
-        }
-    }
     onMounted() {
         this.watch('scrollLeft', () => {
-            if (this.propInt('scrollLeft') === this.element.scrollLeft) {
+            const prop = this.propInt('scrollLeft');
+            if (prop === Math.round(this.element.scrollLeft)) {
                 return;
             }
-            this.element.scrollLeft = this.propInt('scrollLeft');
+            this.element.scrollLeft = prop;
         });
         this.watch('scrollTop', () => {
-            if (this.propInt('scrollTop') === this.element.scrollTop) {
+            const prop = this.propInt('scrollTop');
+            if (prop === Math.round(this.element.scrollTop)) {
                 return;
             }
-            this.element.scrollTop = this.propInt('scrollTop');
+            this.element.scrollTop = prop;
         });
         clickgo.dom.watchSize(this.element, () => {
-            const clientWidth = this.element.clientWidth;
-            const clientHeight = this.element.clientHeight;
-            if (this.clientWidth !== clientWidth) {
-                this.clientWidth = clientWidth;
-                this.emit(this.props.direction === 'v' ? 'resizen' : 'resize', Math.round(this.clientWidth));
-            }
-            if (clientHeight !== this.clientHeight) {
-                this.clientHeight = clientHeight;
-                this.emit(this.props.direction === 'v' ? 'resize' : 'resizen', Math.round(this.clientHeight));
-            }
-            this.refreshLength();
+            this.emit('clientwidth', this.element.clientWidth);
+            this.emit('clientheight', this.element.clientHeight);
         }, true);
-        clickgo.dom.watch(this.element, () => {
-            this.refreshLength();
-        }, 'childsub', true);
-        clickgo.dom.watchStyle(this.element, ['padding', 'font'], () => {
-            this.refreshLength();
-        });
+        clickgo.dom.watchProperty(this.element, ['scrollWidth', 'scrollHeight'], (name, val) => {
+            this.emit(name.toLowerCase(), val);
+        }, true);
         this.element.scrollTop = this.propInt('scrollTop');
         this.element.scrollLeft = this.propInt('scrollLeft');
     }

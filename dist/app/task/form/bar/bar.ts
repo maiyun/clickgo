@@ -73,7 +73,7 @@ export default class extends clickgo.form.AbstractForm {
         }
     }
 
-    public close(index: number): void {
+    public cclose(index: number): void {
         const app = this.apps[index];
         if (!app) {
             return;

@@ -6,7 +6,7 @@ export default class extends clickgo.form.AbstractForm {
 
     public list: any[] = [];
 
-    public tid = 0;
+    public tid = [];
 
     public pushConsole(name: string, text: string): void {
         const date = new Date();
@@ -23,8 +23,8 @@ export default class extends clickgo.form.AbstractForm {
     }
 
     public async end(): Promise<void> {
-        if (await clickgo.form.confirm(`Are you sure to end Task ${this.tid}?`)) {
-            clickgo.task.end(this.tid);
+        if (await clickgo.form.confirm(`Are you sure to end Task ${this.tid[0]}?`)) {
+            clickgo.task.end(this.tid[0]);
         }
     }
 

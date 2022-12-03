@@ -1,9 +1,19 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.fullscreen = exports.siblingsData = exports.siblings = exports.findParentByClass = exports.findParentByData = exports.bindResize = exports.bindMove = exports.is = exports.bindDrag = exports.bindLong = exports.allowEvent = exports.bindGesture = exports.bindDown = exports.isWatchStyle = exports.watchStyle = exports.clearWatch = exports.unwatch = exports.watch = exports.clearWatchSize = exports.unwatchSize = exports.watchSize = exports.getSize = exports.getStyleCount = exports.removeStyle = exports.pushStyle = exports.removeFromStyleList = exports.createToStyleList = exports.hasTouchButMouse = exports.setGlobalCursor = void 0;
+exports.fullscreen = exports.siblingsData = exports.siblings = exports.findParentByClass = exports.findParentByData = exports.bindResize = exports.bindMove = exports.is = exports.bindDrag = exports.bindLong = exports.allowEvent = exports.bindGesture = exports.bindDown = exports.bindClick = exports.clearPropertyStyle = exports.isWatchProperty = exports.watchProperty = exports.clearWatchStyle = exports.isWatchStyle = exports.watchStyle = exports.clearWatch = exports.unwatch = exports.watch = exports.clearWatchSize = exports.unwatchSize = exports.watchSize = exports.getStyleCount = exports.removeStyle = exports.pushStyle = exports.removeFromStyleList = exports.createToStyleList = exports.hasTouchButMouse = exports.setGlobalCursor = void 0;
 const clickgo = require("../clickgo");
 const form = require("./form");
 const core = require("./core");
+const tool = require("./tool");
 const topClass = ['#cg-form-list', '#cg-pop-list', '#cg-system', '#cg-simpletask', '#cg-launcher'];
 function classUnfold(after, out = []) {
     const arr = [];
@@ -20,8 +30,8 @@ styleList.style.display = 'none';
 document.getElementsByTagName('body')[0].appendChild(styleList);
 styleList.insertAdjacentHTML('beforeend', '<style id=\'cg-global-cursor\'></style>');
 styleList.insertAdjacentHTML('beforeend', `<style id='cg-global'>
-${classUnfold()} {-webkit-user-select: none; user-select: none; position: fixed; cursor: default; box-sizing: border-box;}
-${topClass.slice(0, 3).join(', ')} {left: 0; top: 0; width: 0; height: 0;}
+${classUnfold()} {-webkit-user-select: none; user-select: none; cursor: default; box-sizing: border-box;}
+${topClass.slice(0, 3).join(', ')} {left: 0; top: 0; width: 0; height: 0; position: absolute;}
 ${classUnfold('img')} {vertical-align: bottom;}
 ${classUnfold('::selection', ['#cg-launcher'])} {background-color: rgba(0, 0, 0, .1);}
 ${classUnfold('*')}, ${classUnfold('*::after')}, ${classUnfold('*::before')} {box-sizing: border-box; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); flex-shrink: 0;}
@@ -125,119 +135,88 @@ function getStyleCount(taskId, type) {
     return document.querySelectorAll(`#cg-style-task${taskId} > .cg-style-${type} > style`).length;
 }
 exports.getStyleCount = getStyleCount;
-function getSize(el) {
-    const rect = el.getBoundingClientRect();
-    const cs = getComputedStyle(el);
-    const border = {
-        'top': parseFloat(cs.borderTopWidth),
-        'right': parseFloat(cs.borderRightWidth),
-        'bottom': parseFloat(cs.borderBottomWidth),
-        'left': parseFloat(cs.borderLeftWidth)
-    };
-    const padding = {
-        'top': parseFloat(cs.paddingTop),
-        'right': parseFloat(cs.paddingRight),
-        'bottom': parseFloat(cs.paddingBottom),
-        'left': parseFloat(cs.paddingLeft)
-    };
-    return {
-        'top': rect.top,
-        'right': rect.right,
-        'bottom': rect.bottom,
-        'left': rect.left,
-        'width': rect.width,
-        'height': rect.height,
-        'padding': padding,
-        'border': border,
-        'clientWidth': rect.width - border.left - border.right,
-        'clientHeight': rect.height - border.top - border.bottom,
-        'innerWidth': rect.width - border.left - border.right - padding.left - padding.right,
-        'innerHeight': rect.height - border.top - border.bottom - padding.top - padding.bottom,
-        'scrollWidth': el.scrollWidth,
-        'scrollHeight': el.scrollHeight
-    };
-}
-exports.getSize = getSize;
-const watchSizeList = [];
+const watchSizeList = {};
+let watchSizeIndex = 0;
+const resizeObserver = new ResizeObserver(function (entries) {
+    for (const entrie of entries) {
+        const el = entrie.target;
+        if (!el.offsetParent) {
+            resizeObserver.unobserve(el);
+            continue;
+        }
+        const item = watchSizeList[parseInt(el.dataset.cgRoindex)];
+        const r = item.handler();
+        if (r instanceof Promise) {
+            r.catch(function (e) {
+                console.log(e);
+            });
+        }
+    }
+});
 function watchSize(el, cb, immediate = false, taskId) {
-    const fsize = getSize(el);
-    for (const item of watchSizeList) {
+    for (const index in watchSizeList) {
+        const item = watchSizeList[index];
         if (item.el === el) {
-            return fsize;
+            return false;
         }
     }
     if (immediate) {
-        const r = cb(fsize);
+        const r = cb();
         if (r instanceof Promise) {
             r.catch(function (e) {
                 console.log(e);
             });
         }
     }
-    const resizeObserver = new window.ResizeObserver(function () {
-        const size = getSize(el);
-        if (Number.isNaN(size.clientWidth)) {
-            return;
-        }
-        const r = cb(size);
-        if (r instanceof Promise) {
-            r.catch(function (e) {
-                console.log(e);
-            });
-        }
-    });
     resizeObserver.observe(el);
-    watchSizeList.push({
+    watchSizeList[watchSizeIndex] = {
         'el': el,
-        'ro': resizeObserver,
+        'handler': cb,
         'taskId': taskId
-    });
-    return fsize;
+    };
+    el.dataset.cgRoindex = watchSizeIndex.toString();
+    ++watchSizeIndex;
+    return true;
 }
 exports.watchSize = watchSize;
 function unwatchSize(el, taskId) {
-    for (let i = 0; i < watchSizeList.length; ++i) {
-        const item = watchSizeList[i];
-        if (item.el !== el) {
-            continue;
-        }
-        if (taskId && taskId !== item.taskId) {
-            return;
-        }
-        if (item.el.offsetParent) {
-            item.ro.unobserve(item.el);
-        }
-        watchSizeList.splice(i, 1);
-        --i;
+    const index = el.dataset.cgRoindex;
+    if (index === undefined) {
         return;
     }
+    const item = watchSizeList[index];
+    if (taskId && item.taskId !== taskId) {
+        return;
+    }
+    resizeObserver.unobserve(el);
+    el.dataset.cgRoindex = undefined;
+    delete watchSizeList[index];
 }
 exports.unwatchSize = unwatchSize;
 function clearWatchSize(taskId) {
     if (!taskId) {
         return;
     }
-    for (let i = 0; i < watchSizeList.length; ++i) {
-        const item = watchSizeList[i];
+    for (const index in watchSizeList) {
+        const item = watchSizeList[index];
         if (taskId !== item.taskId) {
             continue;
         }
-        if (item.el.offsetParent) {
-            item.ro.unobserve(item.el);
-        }
-        watchSizeList.splice(i, 1);
-        --i;
+        resizeObserver.unobserve(item.el);
+        item.el.dataset.cgRoindex = undefined;
+        delete watchSizeList[index];
     }
 }
 exports.clearWatchSize = clearWatchSize;
 function cgClearWatchSize() {
-    for (let i = 0; i < watchSizeList.length; ++i) {
-        const item = watchSizeList[i];
+    for (const index in watchSizeList) {
+        const item = watchSizeList[index];
         if (item.el.offsetParent) {
             continue;
         }
-        watchSizeList.splice(i, 1);
-        --i;
+        resizeObserver.unobserve(item.el);
+        item.el.dataset.cgRoindex = undefined;
+        delete watchSizeList[index];
     }
 }
 setInterval(cgClearWatchSize, 1000 * 60 * 5);
@@ -284,7 +263,9 @@ function watch(el, cb, mode = 'default', immediate = false, taskId) {
             moi = mode;
         }
     }
-    const mo = new MutationObserver(cb);
+    const mo = new MutationObserver(() => {
+        cb();
+    });
     mo.observe(el, moi);
     watchList.push({
         'el': el,
@@ -339,19 +320,27 @@ function cgClearWatch() {
     }
 }
 setInterval(cgClearWatch, 1000 * 60 * 5);
-const watchStyleObjects = [];
+const watchStyleObjects = {};
+let watchStyleIndex = 0;
 function watchStyle(el, name, cb, immediate = false) {
     if (typeof name === 'string') {
         name = [name];
     }
-    for (const item of watchStyleObjects) {
-        if (item.el !== el) {
-            continue;
-        }
+    const formWrap = findParentByData(el, 'form-id');
+    if (!formWrap) {
+        return;
+    }
+    const formId = formWrap.dataset.formId;
+    if (!watchStyleObjects[formId]) {
+        watchStyleObjects[formId] = {};
+    }
+    const index = el.dataset.cgStyleindex;
+    if (index) {
+        const item = watchStyleObjects[formId][index];
         for (const n of name) {
             if (!item.names[n]) {
                 item.names[n] = {
-                    'old': item.sd[n],
+                    'val': item.sd[n],
                     'cb': [cb]
                 };
             }
@@ -359,60 +348,187 @@ function watchStyle(el, name, cb, immediate = false) {
                 item.names[n].cb.push(cb);
             }
             if (immediate) {
-                cb(n, item.sd[n]);
+                cb(n, item.sd[n], '');
             }
         }
         return;
     }
     const sd = getComputedStyle(el);
-    watchStyleObjects.push({
+    watchStyleObjects[formId][watchStyleIndex] = {
         'el': el,
         'sd': sd,
         'names': {}
-    });
-    const item = watchStyleObjects[watchStyleObjects.length - 1];
+    };
+    const item = watchStyleObjects[formId][watchStyleIndex];
     for (const n of name) {
         item.names[n] = {
-            'old': item.sd[n],
+            'val': item.sd[n],
             'cb': [cb]
         };
         if (immediate) {
-            cb(n, item.sd[n]);
+            cb(n, item.sd[n], '');
         }
     }
+    el.dataset.cgStyleindex = watchStyleIndex.toString();
+    ++watchStyleIndex;
 }
 exports.watchStyle = watchStyle;
-const watchStyleRAF = function () {
-    for (let i = 0; i < watchStyleObjects.length; ++i) {
-        const item = watchStyleObjects[i];
-        if (watchStyleObjects[i].sd.flex === '') {
-            watchStyleObjects.splice(i, 1);
-            --i;
-            continue;
-        }
-        for (const name in item.names) {
-            if (item.sd[name] === item.names[name].old) {
-                continue;
-            }
-            item.names[name].old = item.sd[name];
-            for (const cb of item.names[name].cb) {
-                cb(name, item.sd[name]);
+let watchStyleTimer = 0;
+const watchStyleHandler = function () {
+    if (form.getFocus) {
+        const formId = form.getFocus();
+        if (formId && watchStyleObjects[formId]) {
+            for (const index in watchStyleObjects[formId]) {
+                const item = watchStyleObjects[formId][index];
+                if (!item.el.offsetParent) {
+                    item.el.dataset.cgStyleindex = undefined;
+                    delete watchStyleObjects[formId][index];
+                    if (!Object.keys(watchStyleObjects[formId]).length) {
+                        delete watchStyleObjects[formId];
+                    }
+                    continue;
+                }
+                for (const name in item.names) {
+                    if (item.sd[name] === item.names[name].val) {
+                        continue;
+                    }
+                    const old = item.names[name].val;
+                    item.names[name].val = item.sd[name];
+                    for (const cb of item.names[name].cb) {
+                        cb(name, item.sd[name], old);
+                    }
+                }
             }
         }
     }
-    requestAnimationFrame(watchStyleRAF);
+    watchStyleTimer = requestAnimationFrame(watchStyleHandler);
 };
-watchStyleRAF();
+watchStyleHandler();
 function isWatchStyle(el) {
-    for (const item of watchStyleObjects) {
-        if (item.el !== el) {
-            continue;
-        }
-        return true;
-    }
-    return false;
+    return el.dataset.cgStyleindex ? true : false;
 }
 exports.isWatchStyle = isWatchStyle;
+function clearWatchStyle(formId) {
+    if (!watchStyleObjects[formId]) {
+        return;
+    }
+    for (const index in watchStyleObjects[formId]) {
+        const item = watchStyleObjects[formId][index];
+        item.el.dataset.cgStyleindex = undefined;
+    }
+    delete watchStyleObjects[formId];
+}
+exports.clearWatchStyle = clearWatchStyle;
+const watchPropertyObjects = {};
+let watchPropertyIndex = 0;
+function watchProperty(el, name, cb, immediate = false) {
+    if (typeof name === 'string') {
+        name = [name];
+    }
+    const formWrap = findParentByData(el, 'form-id');
+    if (!formWrap) {
+        return;
+    }
+    const formId = formWrap.dataset.formId;
+    if (!watchPropertyObjects[formId]) {
+        watchPropertyObjects[formId] = {};
+    }
+    const index = el.dataset.cgPropertyindex;
+    if (index) {
+        const item = watchPropertyObjects[formId][index];
+        for (const n of name) {
+            if (!item.names[n]) {
+                item.names[n] = {
+                    'val': item.el[n],
+                    'cb': [cb]
+                };
+            }
+            else {
+                item.names[n].cb.push(cb);
+            }
+            if (immediate) {
+                cb(n, item.el[n]);
+            }
+        }
+        return;
+    }
+    watchPropertyObjects[formId][watchPropertyIndex] = {
+        'el': el,
+        'names': {}
+    };
+    const item = watchPropertyObjects[formId][watchPropertyIndex];
+    for (const n of name) {
+        item.names[n] = {
+            'val': item.el[n],
+            'cb': [cb]
+        };
+        if (immediate) {
+            cb(n, item.el[n]);
+        }
+    }
+    el.dataset.cgPropertyindex = watchPropertyIndex.toString();
+    ++watchPropertyIndex;
+}
+exports.watchProperty = watchProperty;
+let watchPropertyTimer = 0;
+const watchPropertyHandler = function () {
+    if (form.getFocus) {
+        const formId = form.getFocus();
+        if (formId && watchPropertyObjects[formId]) {
+            for (const index in watchPropertyObjects[formId]) {
+                const item = watchPropertyObjects[formId][index];
+                if (!item.el.offsetParent) {
+                    item.el.dataset.cgPropertyindex = undefined;
+                    delete watchPropertyObjects[formId][index];
+                    if (!Object.keys(watchPropertyObjects[formId]).length) {
+                        delete watchPropertyObjects[formId];
+                    }
+                    continue;
+                }
+                for (const name in item.names) {
+                    if (item.el[name] === item.names[name].val) {
+                        continue;
+                    }
+                    item.names[name].val = item.el[name];
+                    for (const cb of item.names[name].cb) {
+                        cb(name, item.el[name]);
+                    }
+                }
+            }
+        }
+    }
+    watchPropertyTimer = requestAnimationFrame(watchPropertyHandler);
+};
+watchPropertyHandler();
+function isWatchProperty(el) {
+    return el.dataset.cgPropertyindex ? true : false;
+}
+exports.isWatchProperty = isWatchProperty;
+function clearPropertyStyle(formId) {
+    if (!watchPropertyObjects[formId]) {
+        return;
+    }
+    for (const index in watchPropertyObjects[formId]) {
+        const item = watchPropertyObjects[formId][index];
+        item.el.dataset.cgPropertyindex = undefined;
+    }
+    delete watchPropertyObjects[formId];
+}
+exports.clearPropertyStyle = clearPropertyStyle;
+function bindClick(e, handler) {
+    const x = e instanceof MouseEvent ? e.clientX : e.touches[0].clientX;
+    const y = e instanceof MouseEvent ? e.clientY : e.touches[0].clientY;
+    bindDown(e, {
+        up: (ne) => {
+            const nx = ne instanceof MouseEvent ? ne.clientX : ne.touches[0].clientX;
+            const ny = ne instanceof MouseEvent ? ne.clientY : ne.touches[0].clientY;
+            if (nx === x && ny === y) {
+                handler();
+            }
+        }
+    });
+}
+exports.bindClick = bindClick;
 function bindDown(oe, opt) {
     var _a;
     if (hasTouchButMouse(oe)) {
@@ -430,7 +546,7 @@ function bindDown(oe, opt) {
     let isStart = false;
     let end = undefined;
     const move = function (e) {
-        if (!e.target || !e.target.offsetParent) {
+        if ((!e.target || !e.target.offsetParent) && e.cancelable) {
             e.preventDefault();
         }
         let dir = 'top';
@@ -523,342 +639,268 @@ function bindDown(oe, opt) {
     (_a = opt.down) === null || _a === void 0 ? void 0 : _a.call(opt, oe);
 }
 exports.bindDown = bindDown;
-const bindGestureData = {
-    'el': null,
-    'xx': 0,
-    'xy': 0,
-    'tx': 0,
-    'ty': 0,
-    'dir': null,
-    'timers': {
-        'ani': 0,
-        'sleep': 0
-    }
+const gestureWheel = {
+    'last': 0,
+    'offset': 0,
+    'done': false,
+    'timer': 0,
+    'firstTimer': false,
+    'dir': ''
 };
-function clearGestureData() {
-    bindGestureData.xx = 0;
-    bindGestureData.xy = 0;
-    bindGestureData.tx = 0;
-    bindGestureData.ty = 0;
-}
-function bindGestureAnimation(opt) {
-    var _a;
-    if (!bindGestureData.el) {
-        return;
-    }
-    const speed = 6;
-    const gestureElement = document.getElementById('cg-gesture');
-    const dirs = (_a = opt.dirs) !== null && _a !== void 0 ? _a : ['top', 'bottom'];
-    if (bindGestureData.tx > bindGestureData.xx) {
-        bindGestureData.xx += speed;
-        if (bindGestureData.xx > bindGestureData.tx) {
-            bindGestureData.xx = bindGestureData.tx;
-        }
-    }
-    else {
-        bindGestureData.xx -= speed;
-        if (bindGestureData.xx < bindGestureData.tx) {
-            bindGestureData.xx = bindGestureData.tx;
-        }
-    }
-    if (bindGestureData.ty > bindGestureData.xy) {
-        bindGestureData.xy += speed;
-        if (bindGestureData.xy > bindGestureData.ty) {
-            bindGestureData.xy = bindGestureData.ty;
-        }
-    }
-    else {
-        bindGestureData.xy -= speed;
-        if (bindGestureData.xy < bindGestureData.ty) {
-            bindGestureData.xy = bindGestureData.ty;
-        }
-    }
-    const xxAbs = Math.abs(bindGestureData.xx);
-    const xyAbs = Math.abs(bindGestureData.xy);
-    if ((!dirs.includes('top') && !dirs.includes('bottom')) || ((xxAbs > xyAbs) && (dirs.includes('left') || dirs.includes('right')))) {
-        if (bindGestureData.xx < 0) {
-            if (!dirs.includes('left')) {
-                gestureElement.style.opacity = '0';
-                clearGestureData();
-                return;
-            }
-            gestureElement.style.opacity = '1';
-            if (xxAbs === 90) {
-                bindGestureData.dir = 'left';
-                gestureElement.classList.add('done');
-            }
-            else {
-                bindGestureData.dir = null;
-                gestureElement.classList.remove('done');
-            }
-            gestureElement.style.top = (opt.rect.top + ((opt.rect.height - 20) / 2)).toString() + 'px';
-            gestureElement.style.left = (opt.rect.left - 10 + (xxAbs / 1.5)).toString() + 'px';
-            gestureElement.style.transform = 'scale(' + (xxAbs / 90).toString() + ')';
-        }
-        else {
-            if (!dirs.includes('right')) {
-                gestureElement.style.opacity = '0';
-                clearGestureData();
-                return;
-            }
-            gestureElement.style.opacity = '1';
-            if (xxAbs === 90) {
-                bindGestureData.dir = 'right';
-                gestureElement.classList.add('done');
-            }
-            else {
-                bindGestureData.dir = null;
-                gestureElement.classList.remove('done');
-            }
-            gestureElement.style.top = (opt.rect.top + ((opt.rect.height - 20) / 2)).toString() + 'px';
-            gestureElement.style.left = (opt.rect.left + opt.rect.width - 10 - (xxAbs / 1.5)).toString() + 'px';
-            gestureElement.style.transform = 'scale(' + (xxAbs / 90).toString() + ')';
-        }
-    }
-    else {
-        if (bindGestureData.xy < 0) {
-            if (!dirs.includes('top')) {
-                gestureElement.style.opacity = '0';
-                clearGestureData();
-                return;
-            }
-            gestureElement.style.opacity = '1';
-            if (xyAbs === 90) {
-                bindGestureData.dir = 'top';
-                gestureElement.classList.add('done');
-            }
-            else {
-                bindGestureData.dir = null;
-                gestureElement.classList.remove('done');
-            }
-            gestureElement.style.left = (opt.rect.left + ((opt.rect.width - 20) / 2)).toString() + 'px';
-            gestureElement.style.top = (opt.rect.top - 10 + (xyAbs / 1.5)).toString() + 'px';
-            gestureElement.style.transform = 'scale(' + (xyAbs / 90).toString() + ')';
-        }
-        else {
-            if (!dirs.includes('bottom')) {
-                gestureElement.style.opacity = '0';
-                clearGestureData();
-                return;
-            }
-            gestureElement.style.opacity = '1';
-            if (xyAbs === 90) {
-                bindGestureData.dir = 'bottom';
-                gestureElement.classList.add('done');
-            }
-            else {
-                bindGestureData.dir = null;
-                gestureElement.classList.remove('done');
-            }
-            gestureElement.style.left = (opt.rect.left + ((opt.rect.width - 20) / 2)).toString() + 'px';
-            gestureElement.style.top = (opt.rect.top + opt.rect.height - 10 - (xyAbs / 1.5)).toString() + 'px';
-            gestureElement.style.transform = 'scale(' + (xyAbs / 90).toString() + ')';
-        }
-    }
-    if (bindGestureData.xx === bindGestureData.tx && bindGestureData.xy === bindGestureData.ty) {
-        bindGestureData.timers.ani = 0;
-        bindGestureData.timers.sleep = window.setTimeout(() => {
-            clearGestureData();
-            bindGestureData.timers.sleep = 0;
-            gestureElement.style.opacity = '0';
-            if (!bindGestureData.dir) {
-                return;
-            }
-            opt.handler(bindGestureData.dir);
-        }, 500);
-        return;
-    }
-    bindGestureData.timers.ani = requestAnimationFrame(() => {
-        bindGestureAnimation(opt);
-    });
-}
-function bindGesture(e, opt) {
-    var _a, _b, _c, _d, _e;
-    const gestureElement = document.getElementById('cg-gesture');
-    const el = (_b = (_a = e.currentTarget) !== null && _a !== void 0 ? _a : e.target) !== null && _b !== void 0 ? _b : opt.el;
+function bindGesture(oe, before, handler) {
+    const el = oe.currentTarget;
     if (!el) {
         return;
     }
-    let rect;
-    if (e.rect) {
-        rect = e.rect;
-    }
-    else if (opt.rect) {
-        rect = opt.rect;
-    }
-    else {
-        if (!(el.getBoundingClientRect)) {
-            return;
-        }
-        rect = el.getBoundingClientRect();
-    }
-    const dirs = (_c = opt.dirs) !== null && _c !== void 0 ? _c : ['top', 'bottom'];
-    if ((e instanceof MouseEvent || e instanceof TouchEvent) && !(e instanceof WheelEvent)) {
-        const x = e instanceof MouseEvent ? e.clientX : e.touches[0].clientX;
-        const y = e instanceof MouseEvent ? e.clientY : e.touches[0].clientY;
-        let dir = null;
-        bindDown(e, {
-            move: (e) => {
-                e.preventDefault();
-                if (bindGestureData.timers.ani !== 0) {
-                    cancelAnimationFrame(bindGestureData.timers.ani);
-                    bindGestureData.timers.ani = 0;
-                }
-                if (bindGestureData.timers.sleep !== 0) {
-                    clearTimeout(bindGestureData.timers.sleep);
-                    bindGestureData.timers.sleep = 0;
-                }
-                const nx = e instanceof MouseEvent ? e.clientX : e.touches[0].clientX;
-                const ny = e instanceof MouseEvent ? e.clientY : e.touches[0].clientY;
-                const xx = nx - x;
-                const xy = ny - y;
-                let xxAbs = Math.abs(xx);
-                let xyAbs = Math.abs(xy);
-                if ((!dirs.includes('top') && !dirs.includes('bottom')) || ((xxAbs > xyAbs) && (dirs.includes('left') || dirs.includes('right')))) {
-                    if (xx > 0) {
-                        if (!dirs.includes('left')) {
-                            gestureElement.style.opacity = '0';
-                            return;
-                        }
-                        gestureElement.style.opacity = '1';
-                        if (xxAbs > 90) {
-                            xxAbs = 90;
-                            dir = 'left';
-                            gestureElement.classList.add('done');
-                        }
-                        else {
-                            dir = null;
-                            gestureElement.classList.remove('done');
-                        }
-                        gestureElement.style.top = (rect.top + ((rect.height - 20) / 2)).toString() + 'px';
-                        gestureElement.style.left = (rect.left - 10 + (xxAbs / 1.5)).toString() + 'px';
-                        gestureElement.style.transform = 'scale(' + (xxAbs / 90).toString() + ')';
+    const rect = el.getBoundingClientRect();
+    if ((oe instanceof MouseEvent || oe instanceof TouchEvent) && !(oe instanceof WheelEvent)) {
+        let offset = 0;
+        let origin = 0;
+        let first = 1;
+        let dir = 'top';
+        bindDown(oe, {
+            move: (e, d) => {
+                if (first < 0) {
+                    if (first > -30) {
+                        before(e, dir);
+                        --first;
                     }
-                    else {
-                        if (!dirs.includes('right')) {
-                            gestureElement.style.opacity = '0';
-                            return;
+                    return;
+                }
+                if (first === 1) {
+                    first = 0;
+                    switch (d) {
+                        case 'top': {
+                            dir = 'bottom';
+                            break;
                         }
-                        gestureElement.style.opacity = '1';
-                        if (xxAbs > 90) {
-                            xxAbs = 90;
+                        case 'bottom': {
+                            dir = 'top';
+                            break;
+                        }
+                        case 'left': {
                             dir = 'right';
-                            gestureElement.classList.add('done');
+                            break;
+                        }
+                        default: {
+                            dir = 'left';
+                        }
+                    }
+                    if (!before(e, dir)) {
+                        first = -1;
+                        return;
+                    }
+                    switch (dir) {
+                        case 'top':
+                        case 'bottom': {
+                            origin = oe instanceof MouseEvent ? oe.clientY : oe.touches[0].clientY;
+                            break;
+                        }
+                        default: {
+                            origin = oe instanceof MouseEvent ? oe.clientX : oe.touches[0].clientX;
+                        }
+                    }
+                }
+                let pos = 0;
+                switch (dir) {
+                    case 'top':
+                    case 'bottom': {
+                        pos = e instanceof MouseEvent ? e.clientY : e.touches[0].clientY;
+                        if (dir === 'top') {
+                            offset = pos - origin;
                         }
                         else {
-                            dir = null;
-                            gestureElement.classList.remove('done');
+                            offset = origin - pos;
                         }
-                        gestureElement.style.top = (rect.top + ((rect.height - 20) / 2)).toString() + 'px';
-                        gestureElement.style.left = (rect.left + rect.width - 10 - (xxAbs / 1.5)).toString() + 'px';
-                        gestureElement.style.transform = 'scale(' + (xxAbs / 90).toString() + ')';
+                        break;
                     }
+                    default: {
+                        pos = e instanceof MouseEvent ? e.clientX : e.touches[0].clientX;
+                        if (dir === 'left') {
+                            offset = pos - origin;
+                        }
+                        else {
+                            offset = origin - pos;
+                        }
+                    }
+                }
+                if (offset >= 90) {
+                    offset = 90;
+                    form.elements.gesture.style.opacity = '1';
+                    form.elements.gesture.classList.add('done');
                 }
                 else {
-                    if (xy > 0) {
-                        if (!dirs.includes('top')) {
-                            gestureElement.style.opacity = '0';
-                            return;
-                        }
-                        gestureElement.style.opacity = '1';
-                        if (xyAbs > 90) {
-                            xyAbs = 90;
-                            dir = 'top';
-                            gestureElement.classList.add('done');
-                        }
-                        else {
-                            dir = null;
-                            gestureElement.classList.remove('done');
-                        }
-                        gestureElement.style.left = (rect.left + ((rect.width - 20) / 2)).toString() + 'px';
-                        gestureElement.style.top = (rect.top - 10 + (xyAbs / 1.5)).toString() + 'px';
-                        gestureElement.style.transform = 'scale(' + (xyAbs / 90).toString() + ')';
+                    form.elements.gesture.classList.remove('done');
+                    if (offset < 0) {
+                        offset = 0;
+                        form.elements.gesture.style.opacity = '0';
                     }
                     else {
-                        if (!dirs.includes('bottom')) {
-                            gestureElement.style.opacity = '0';
-                            return;
-                        }
-                        gestureElement.style.opacity = '1';
-                        if (xyAbs > 90) {
-                            xyAbs = 90;
-                            dir = 'bottom';
-                            gestureElement.classList.add('done');
+                        form.elements.gesture.style.opacity = '1';
+                    }
+                }
+                form.elements.gesture.style.transform = 'scale(' + (offset / 90).toString() + ')';
+                switch (dir) {
+                    case 'top':
+                    case 'bottom': {
+                        form.elements.gesture.style.left = (rect.left + ((rect.width - 20) / 2)).toString() + 'px';
+                        if (dir === 'top') {
+                            form.elements.gesture.style.top = (rect.top + (offset / 1.5)).toString() + 'px';
                         }
                         else {
-                            dir = null;
-                            gestureElement.classList.remove('done');
+                            form.elements.gesture.style.top = (rect.bottom - 20 - (offset / 1.5)).toString() + 'px';
                         }
-                        gestureElement.style.left = (rect.left + ((rect.width - 20) / 2)).toString() + 'px';
-                        gestureElement.style.top = (rect.top + rect.height - 10 - (xyAbs / 1.5)).toString() + 'px';
-                        gestureElement.style.transform = 'scale(' + (xyAbs / 90).toString() + ')';
+                        break;
+                    }
+                    default: {
+                        form.elements.gesture.style.top = (rect.top + ((rect.height - 20) / 2)).toString() + 'px';
+                        if (dir === 'left') {
+                            form.elements.gesture.style.left = (rect.left + (offset / 1.5)).toString() + 'px';
+                        }
+                        else {
+                            form.elements.gesture.style.left = (rect.right - 20 - (offset / 1.5)).toString() + 'px';
+                        }
                     }
                 }
             },
             end: () => {
-                gestureElement.style.opacity = '0';
-                if (!dir) {
+                form.elements.gesture.style.opacity = '0';
+                if (offset < 90) {
                     return;
                 }
-                opt.handler(dir);
+                handler(dir);
             }
         });
     }
     else {
-        if (bindGestureData.el !== el) {
-            bindGestureData.el = el;
-            bindGestureData.xx = 0;
-            bindGestureData.xy = 0;
-        }
-        let x = 0, y = 0;
-        if (e instanceof WheelEvent) {
-            e.preventDefault();
-            if (Math.abs(e.deltaX) < 5 && Math.abs(e.deltaY) < 5) {
+        (() => __awaiter(this, void 0, void 0, function* () {
+            const now = Date.now();
+            if (now - gestureWheel.last > 250) {
+                gestureWheel.offset = 0;
+                gestureWheel.done = false;
+                gestureWheel.timer = 0;
+                gestureWheel.firstTimer = false;
+                gestureWheel.dir = '';
+            }
+            gestureWheel.last = now;
+            if (gestureWheel.firstTimer) {
                 return;
             }
-            x = Math.round(e.deltaX / 3);
-            y = Math.round(e.deltaY / 3);
-            if (e.direction === 'h') {
-                x = y;
-                y = 0;
+            if (gestureWheel.done) {
+                return;
             }
-            else if (e.direction === 'v') {
-                y = x;
-                x = 0;
+            let deltaY = oe.deltaY;
+            let deltaX = oe.deltaX;
+            if (clickgo.dom.is.shift) {
+                deltaY = oe.deltaX;
+                deltaX = oe.deltaY;
             }
-        }
-        else {
-            x = (_d = e.x) !== null && _d !== void 0 ? _d : 0;
-            y = (_e = e.y) !== null && _e !== void 0 ? _e : 0;
-        }
-        let tx = bindGestureData.tx + x;
-        if (tx > 90) {
-            tx = 90;
-        }
-        else if (tx < -90) {
-            tx = -90;
-        }
-        let ty = bindGestureData.ty + y;
-        if (ty > 90) {
-            ty = 90;
-        }
-        else if (ty < -90) {
-            ty = -90;
-        }
-        bindGestureData.tx = tx;
-        bindGestureData.ty = ty;
-        if (bindGestureData.timers.ani !== 0) {
-            cancelAnimationFrame(bindGestureData.timers.ani);
-            bindGestureData.timers.ani = 0;
-        }
-        if (bindGestureData.timers.sleep !== 0) {
-            clearTimeout(bindGestureData.timers.sleep);
-            bindGestureData.timers.sleep = 0;
-        }
-        bindGestureAnimation({
-            'rect': rect,
-            'dirs': opt.dirs,
-            'handler': opt.handler
+            if (gestureWheel.dir === '') {
+                if (Math.abs(deltaY) > Math.abs(deltaX)) {
+                    if (deltaY < 0) {
+                        gestureWheel.dir = 'top';
+                    }
+                    else {
+                        gestureWheel.dir = 'bottom';
+                    }
+                }
+                else {
+                    if (deltaX < 0) {
+                        gestureWheel.dir = 'left';
+                    }
+                    else {
+                        gestureWheel.dir = 'right';
+                    }
+                }
+                if (!before(oe, gestureWheel.dir)) {
+                    gestureWheel.done = true;
+                    return;
+                }
+                form.elements.gesture.style.transform = 'scale(0)';
+                switch (gestureWheel.dir) {
+                    case 'top':
+                    case 'bottom': {
+                        form.elements.gesture.style.left = (rect.left + ((rect.width - 20) / 2)).toString() + 'px';
+                        if (gestureWheel.dir === 'top') {
+                            form.elements.gesture.style.top = (rect.top + 10).toString() + 'px';
+                        }
+                        else {
+                            form.elements.gesture.style.top = (rect.bottom - 10).toString() + 'px';
+                        }
+                        break;
+                    }
+                    default: {
+                        form.elements.gesture.style.top = (rect.top + ((rect.height - 20) / 2)).toString() + 'px';
+                        if (gestureWheel.dir === 'left') {
+                            form.elements.gesture.style.left = (rect.left + 10).toString() + 'px';
+                        }
+                        else {
+                            form.elements.gesture.style.left = (rect.right - 10).toString() + 'px';
+                        }
+                    }
+                }
+                gestureWheel.firstTimer = true;
+                yield tool.sleep(30);
+                gestureWheel.firstTimer = false;
+                form.elements.gesture.classList.add('ani');
+            }
+            switch (gestureWheel.dir) {
+                case 'top':
+                case 'bottom': {
+                    gestureWheel.offset += (gestureWheel.dir === 'top') ? -deltaY : deltaY;
+                    break;
+                }
+                default: {
+                    gestureWheel.offset += (gestureWheel.dir === 'left') ? -deltaX : deltaX;
+                }
+            }
+            if (gestureWheel.offset < 0) {
+                gestureWheel.offset = 0;
+                form.elements.gesture.style.opacity = '0';
+                return;
+            }
+            form.elements.gesture.style.opacity = '1';
+            let offset = gestureWheel.offset / 1.38;
+            if (offset > 90) {
+                offset = 90;
+                form.elements.gesture.classList.add('done');
+            }
+            else {
+                form.elements.gesture.classList.remove('done');
+            }
+            form.elements.gesture.style.transform = 'scale(' + (offset / 90).toString() + ')';
+            switch (gestureWheel.dir) {
+                case 'top': {
+                    form.elements.gesture.style.top = (rect.top + (offset / 1.5)).toString() + 'px';
+                    break;
+                }
+                case 'bottom': {
+                    form.elements.gesture.style.top = (rect.bottom - 20 - (offset / 1.5)).toString() + 'px';
+                    break;
+                }
+                case 'left': {
+                    form.elements.gesture.style.left = (rect.left + (offset / 1.5)).toString() + 'px';
+                    break;
+                }
+                default: {
+                    form.elements.gesture.style.left = (rect.right - 20 - (offset / 1.5)).toString() + 'px';
+                }
+            }
+            clearTimeout(gestureWheel.timer);
+            if (offset < 90) {
+                gestureWheel.timer = window.setTimeout(() => {
+                    form.elements.gesture.style.opacity = '0';
+                    form.elements.gesture.classList.remove('ani');
+                }, 250);
+                return;
+            }
+            gestureWheel.done = true;
+            handler(gestureWheel.dir);
+            yield tool.sleep(500);
+            form.elements.gesture.style.opacity = '0';
+            form.elements.gesture.classList.remove('ani');
+        }))().catch((e) => {
+            console.log('error', 'dom.bindGesture', e);
         });
     }
 }
@@ -939,9 +981,9 @@ function bindDrag(e, opt) {
             otop = rect.top;
             oleft = rect.left;
         },
-        'move': function (ox, oy, x, y) {
-            const ntop = otop + oy;
-            const nleft = oleft + ox;
+        'move': function (e, o) {
+            const ntop = otop + o.oy;
+            const nleft = oleft + o.ox;
             form.moveDrag({
                 'top': ntop,
                 'left': nleft,
@@ -949,7 +991,7 @@ function bindDrag(e, opt) {
             });
             otop = ntop;
             oleft = nleft;
-            const els = document.elementsFromPoint(x, y);
+            const els = document.elementsFromPoint(o.x, o.y);
             for (const el of els) {
                 if (el.dataset.cgDrop === undefined) {
                     continue;
@@ -1273,7 +1315,20 @@ function bindMove(e, opt) {
                 'ox': ox,
                 'oy': oy
             });
-            (_c = opt.move) === null || _c === void 0 ? void 0 : _c.call(opt, ox, oy, x, y, border, dir, e);
+            (_c = opt.move) === null || _c === void 0 ? void 0 : _c.call(opt, e, {
+                'ox': ox,
+                'oy': oy,
+                'x': x,
+                'y': y,
+                'border': border,
+                'inBorder': {
+                    'top': inBorderTop,
+                    'right': inBorderRight,
+                    'bottom': inBorderBottom,
+                    'left': inBorderLeft
+                },
+                'dir': dir
+            });
             tx = x;
             ty = y;
         },
@@ -1376,23 +1431,23 @@ function bindResize(e, opt) {
         'offsetRight': offsetRight,
         'offsetBottom': offsetBottom,
         'start': opt.start,
-        'move': function (ox, oy, x, y, border) {
+        'move': function (e, o) {
             var _a;
             if (opt.border === 'tr' || opt.border === 'r' || opt.border === 'rb') {
-                opt.objectWidth += ox;
+                opt.objectWidth += o.ox;
             }
             else if (opt.border === 'bl' || opt.border === 'l' || opt.border === 'lt') {
-                opt.objectWidth -= ox;
-                opt.objectLeft += ox;
+                opt.objectWidth -= o.ox;
+                opt.objectLeft += o.ox;
             }
             if (opt.border === 'rb' || opt.border === 'b' || opt.border === 'bl') {
-                opt.objectHeight += oy;
+                opt.objectHeight += o.oy;
             }
             else if (opt.border === 'lt' || opt.border === 't' || opt.border === 'tr') {
-                opt.objectHeight -= oy;
-                opt.objectTop += oy;
+                opt.objectHeight -= o.oy;
+                opt.objectTop += o.oy;
             }
-            (_a = opt.move) === null || _a === void 0 ? void 0 : _a.call(opt, opt.objectLeft, opt.objectTop, opt.objectWidth, opt.objectHeight, x, y, border);
+            (_a = opt.move) === null || _a === void 0 ? void 0 : _a.call(opt, opt.objectLeft, opt.objectTop, opt.objectWidth, opt.objectHeight, x, y, o.border);
         },
         'end': opt.end
     });
@@ -1474,3 +1529,13 @@ function fullscreen() {
     }
 }
 exports.fullscreen = fullscreen;
+document.addEventListener('visibilitychange', function () {
+    if (document.hidden) {
+        cancelAnimationFrame(watchStyleTimer);
+        cancelAnimationFrame(watchPropertyTimer);
+    }
+    else {
+        watchStyleTimer = requestAnimationFrame(watchStyleHandler);
+        watchPropertyTimer = requestAnimationFrame(watchPropertyHandler);
+    }
+});

@@ -6,7 +6,7 @@
             <button @click="title = (title === 'Form') ? 'Changed' : 'Form'">Set title</button>
             <button @click="min = min ? false : true">{{min ? 'Hide' : 'Show'}} min button</button>
             <button @click="max = max ? false : true">{{max ? 'Hide' : 'Show'}} max button</button>
-            <button @click="close = close ? false : true">{{close ? 'Hide' : 'Show'}} close button</button>
+            <button @click="cclose = cclose ? false : true">{{cclose ? 'Hide' : 'Show'}} close button</button>
             <button @click="stateMax = true">To max</button>
             <button @click="stateMin = true">To min</button>
             <button @click="minWidth = (minWidth === 200) ? 300 : 200">Set min-width to {{minWidth === 200 ? '300' : '200'}}</button>

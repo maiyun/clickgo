@@ -16,7 +16,7 @@ class default_1 extends clickgo.form.AbstractForm {
         super(...arguments);
         this.ppath = '/';
         this.list = [];
-        this.val = '';
+        this.val = [];
         this.access = {
             'zip': undefined
         };
@@ -60,16 +60,16 @@ class default_1 extends clickgo.form.AbstractForm {
             if (!this.access.zip) {
                 return;
             }
-            const r = this.access.zip.isFile(this.val);
+            const r = this.access.zip.isFile(this.val[0]);
             if (r) {
-                const extlio = this.val.lastIndexOf('.');
+                const extlio = this.val[0].lastIndexOf('.');
                 if (extlio === -1) {
                     yield clickgo.form.dialog('This extension is not supported.');
                     return;
                 }
-                const ext = this.val.toLowerCase().slice(extlio + 1);
+                const ext = this.val[0].toLowerCase().slice(extlio + 1);
                 if (['xml', 'js', 'ts', 'json', 'css', 'html', 'php'].includes(ext)) {
-                    const content = yield this.access.zip.getContent(this.val);
+                    const content = yield this.access.zip.getContent(this.val[0]);
                     if (!content) {
                         yield clickgo.form.dialog('This file cannot be opened.');
                         return;
@@ -80,7 +80,7 @@ class default_1 extends clickgo.form.AbstractForm {
                     }
                     f.show();
                     this.send(f.formId, {
-                        'title': this.val.slice(this.val.lastIndexOf('/') + 1),
+                        'title': this.val[0].slice(this.val[0].lastIndexOf('/') + 1),
                         'content': content
                     });
                     return;
@@ -88,7 +88,7 @@ class default_1 extends clickgo.form.AbstractForm {
                 yield clickgo.form.dialog('This extension is not supported.');
                 return;
             }
-            this.open(this.val);
+            this.open(this.val[0]);
         });
     }
     up() {

@@ -1,5 +1,4 @@
 import * as clickgo from 'clickgo';
-import * as types from '~/types/index';
 
 export default class extends clickgo.control.AbstractControl {
 
@@ -74,7 +73,7 @@ export default class extends clickgo.control.AbstractControl {
         }
         // --- 用来屏蔽不小心触发前进、后退的浏览器事件 ---
         e.preventDefault();
-        (this.refs.tabs[0] as HTMLElement).scrollLeft += e.deltaY;
+        this.refs.tabs[0].scrollLeft += e.deltaY;
     }
 
     public down(e: MouseEvent | TouchEvent, index: number): void {
@@ -148,10 +147,11 @@ export default class extends clickgo.control.AbstractControl {
     }
 
     // --- 检测是否显示箭头 ---
-    public onResize(size: types.IDomSize): void {
+    public onResize(): void {
+        const tab = this.refs.tabs[0];
         if (this.props.tabPosition === 'top' || this.props.tabPosition === 'bottom') {
-            const width = this.arrow ? Math.round(size.clientWidth) + 40 : Math.round(size.clientWidth);
-            if (size.scrollWidth > width) {
+            const width = this.arrow ? tab.clientWidth + 40 : tab.clientWidth;
+            if (tab.scrollWidth > width) {
                 this.arrow = true;
             }
             else {
@@ -159,8 +159,8 @@ export default class extends clickgo.control.AbstractControl {
             }
         }
         else {
-            const height = this.arrow ? Math.round(size.clientHeight) + 40 : Math.round(size.clientHeight);
-            if (size.scrollHeight > height) {
+            const height = this.arrow ? tab.clientHeight + 40 : tab.clientHeight;
+            if (tab.scrollHeight > height) {
                 this.arrow = true;
             }
             else {
@@ -204,7 +204,7 @@ export default class extends clickgo.control.AbstractControl {
         this.watch('tabsComp', (): void => {
             this.refreshValue();
             this.nextTick().then(() => {
-                this.onResize(clickgo.dom.getSize(this.refs.tabs[0]));
+                this.onResize();
             }).catch(function(e) {
                 console.log(e);
             });
@@ -217,8 +217,8 @@ export default class extends clickgo.control.AbstractControl {
                 return;
             }
             this.oldTabs = this.refs.tabs[0];
-            clickgo.dom.watchSize(this.refs.tabs[0], (size) => {
-                this.onResize(size);
+            clickgo.dom.watchSize(this.refs.tabs[0], () => {
+                this.onResize();
             });
         });
 
@@ -226,8 +226,8 @@ export default class extends clickgo.control.AbstractControl {
         this.tabsData = this.props.tabs;
         // --- 检测是否显示箭头 ---
         this.oldTabs = this.refs.tabs[0];
-        clickgo.dom.watchSize(this.refs.tabs[0], (size) => {
-            this.onResize(size);
+        clickgo.dom.watchSize(this.refs.tabs[0], () => {
+            this.onResize();
         });
         this.refreshValue();
     }

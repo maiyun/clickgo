@@ -14,7 +14,7 @@ export default class extends clickgo.form.AbstractForm {
 
     public max = true;
 
-    public close = true;
+    public cclose = true;
 
     public stateMax = false;
 

@@ -19,7 +19,7 @@ class default_1 extends clickgo.form.AbstractForm {
         this.title = 'Form';
         this.min = true;
         this.max = true;
-        this.close = true;
+        this.cclose = true;
         this.stateMax = false;
         this.stateMin = false;
         this.minWidth = 200;

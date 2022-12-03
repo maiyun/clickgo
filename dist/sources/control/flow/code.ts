@@ -4,35 +4,19 @@ export default class extends clickgo.control.AbstractControl {
 
     public props: {
         'direction': 'h' | 'v';
-        'selection': false | string;
+        'selection': boolean | string;
+        'gesture': string[] | string;
 
         'scrollLeft': number | string;
         'scrollTop': number | string;
     } = {
             'direction': 'h',
             'selection': false,
+            'gesture': [],
 
             'scrollLeft': 0,
             'scrollTop': 0
         };
-
-    public clientWidth = 0;
-
-    public clientHeight = 0;
-
-    public lengthWidth = 0;
-
-    public lengthHeight = 0;
-
-    public touchX = 0;
-
-    public touchY = 0;
-
-    /** --- 当可以用手指操作滚动时则设置为 true，防止被上层的屏蔽掉滚动 scroll 效果 --- */
-    public canTouchScroll = false;
-
-    /** --- 本次是否滚动到了边缘 --- */
-    public alreadySb = false;
 
     public access = {
         /** --- 选框开始时的鼠标坐标原点相对于元素本身 --- */
@@ -46,125 +30,106 @@ export default class extends clickgo.control.AbstractControl {
     /**
      * --- 最大可拖动的 scroll 左侧位置 ---
      */
-    public get maxScrollLeft(): number {
-        return Math.round(this.lengthWidth - this.clientWidth);
+    public maxScrollLeft(): number {
+        return this.element.scrollWidth - this.element.clientWidth;
     }
 
     /**
      * --- 最大可拖动的 scroll 顶部位置 ---
      */
-    public get maxScrollTop(): number {
-        return Math.round(this.lengthHeight - this.clientHeight);
+    public maxScrollTop(): number {
+        return this.element.scrollHeight - this.element.clientHeight;
     }
 
+    /**
+     * --- wrap 的 scroll 事件 ---
+     */
     public scroll(): void {
-        const sl = Math.round(this.element.scrollLeft);
-        if (this.props.scrollLeft !== sl) {
+        // --- scroll left ---
+        let sl = Math.round(this.element.scrollLeft);
+        const msl = this.maxScrollLeft();
+        if (sl > msl) {
+            sl = msl;
+        }
+        if (this.propInt('scrollLeft') !== sl) {
             this.emit('update:scrollLeft', sl);
         }
-        const st = Math.round(this.element.scrollTop);
-        if (this.props.scrollTop !== st) {
+        // --- scroll top ---
+        let st = Math.round(this.element.scrollTop);
+        const mst = this.maxScrollTop();
+        if (st > mst) {
+            st = mst;
+        }
+        if (this.propInt('scrollTop') !== st) {
             this.emit('update:scrollTop', st);
+        }
+        if (!this.access.selectionTimer) {
+            return;
         }
         this.refreshSelection(clickgo.dom.is.shift, clickgo.dom.is.ctrl);
     }
 
+    /**
+     * --- 电脑的 wheel 事件，横向滚动不能被屏蔽 ---
+     */
     public wheel(e: WheelEvent): void {
-        const scrollTop = Math.ceil(this.element.scrollTop);
-        const scrollLeft = Math.ceil(this.element.scrollLeft);
-        if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
-            // --- 竖向滚动 ---
-            if (e.deltaY < 0) {
-                // --- 向上滚 ---
-                if (scrollTop > 0) {
-                    // --- 可以滚动 ---
-                    e.stopPropagation();
-                }
-                else if (scrollLeft > 0) {
-                    // --- 上面不能滚但左边可以 ---
-                    e.stopPropagation();
-                    e.preventDefault();
-                    this.element.scrollLeft = scrollLeft + e.deltaY; // deltaY 是负数，实际上是向左
-                }
-                else {
-                    // --- 上边左边都不能滚 ---
-                    if (this.props.direction === 'h') {
-                        (e as any).direction = 'h';
+        clickgo.dom.bindGesture(e, (e, dir) => {
+            switch (dir) {
+                case 'top': {
+                    if (this.element.scrollTop > 0) {
+                        e.stopPropagation();
                     }
-                    this.emit('scrollborder', e);
+                    else {
+                        if (this.propArray('gesture').includes('top')) {
+                            return true;
+                        }
+                    }
+                    break;
+                }
+                case 'bottom': {
+                    if (Math.round(this.element.scrollTop) < this.maxScrollTop()) {
+                        e.stopPropagation();
+                    }
+                    else {
+                        if (this.propArray('gesture').includes('bottom')) {
+                            return true;
+                        }
+                    }
+                    break;
+                }
+                case 'left': {
+                    if (this.element.scrollLeft > 0) {
+                        e.stopPropagation();
+                    }
+                    else {
+                        if (this.propArray('gesture').includes('left')) {
+                            return true;
+                        }
+                    }
+                    break;
+                }
+                default: {
+                    if (Math.round(this.element.scrollLeft) < this.maxScrollLeft()) {
+                        e.stopPropagation();
+                    }
+                    else {
+                        if (this.propArray('gesture').includes('right')) {
+                            return true;
+                        }
+                    }
                 }
             }
-            else {
-                // --- 向下滚 ---
-                if (scrollTop < this.maxScrollTop) {
-                    e.stopPropagation();
-                }
-                else if (scrollLeft < this.maxScrollLeft) {
-                    // --- 下面不能滚但右边可以 ---
-                    e.stopPropagation();
-                    e.preventDefault();
-                    this.element.scrollLeft = scrollLeft + e.deltaY;
-                }
-                else {
-                    // --- 下边右边都不能滚 ---
-                    if (this.props.direction === 'h') {
-                        (e as any).direction = 'h';
-                    }
-                    this.emit('scrollborder', e);
-                }
-            }
-        }
-        else {
-            // --- 横向滚动 ---
-            if (e.deltaX < 0) {
-                // --- 向左滚 ---
-                if (scrollLeft > 0) {
-                    // --- 可以滚动 ---
-                    e.stopPropagation();
-                }
-                else if (scrollTop > 0) {
-                    // --- 左面不能滚但上边可以 ---
-                    e.stopPropagation();
-                    e.preventDefault();
-                    this.element.scrollTop = scrollTop + e.deltaX;
-                }
-                else {
-                    // --- 左边上边都不能滚 ---
-                    if (this.props.direction === 'v') {
-                        (e as any).direction = 'v';
-                    }
-                    this.emit('scrollborder', e);
-                }
-            }
-            else {
-                // --- 向右滚 ---
-                if (scrollLeft < this.maxScrollLeft) {
-                    e.stopPropagation();
-                }
-                else if (scrollTop < this.maxScrollTop) {
-                    e.stopPropagation();
-                    e.preventDefault();
-                    this.element.scrollTop = scrollTop + e.deltaX;
-                }
-                else {
-                    // --- 右边下边都不能滚 ---
-                    if (this.props.direction === 'v') {
-                        (e as any).direction = 'v';
-                    }
-                    this.emit('scrollborder', e);
-                }
-            }
-        }
+            return false;
+        }, (dir) => {
+            this.emit('gesture', dir);
+        });
     }
 
     public down(e: TouchEvent | MouseEvent): void {
         if (this.propBoolean('selection')) {
-            if (clickgo.dom.hasTouchButMouse(e)) {
-                return;
-            }
-            // --- 鼠标手指只会响应一个，进行建立选区 ---
             const x: number = (e instanceof MouseEvent) ? e.clientX : e.touches[0].clientX;
             const y: number = (e instanceof MouseEvent) ? e.clientY : e.touches[0].clientY;
+            // --- 鼠标手指只会响应一个，进行建立选区 ---
             clickgo.dom.bindDown(e, {
                 start: (): void => {
                     const rect = this.element.getBoundingClientRect();
@@ -199,8 +164,9 @@ export default class extends clickgo.control.AbstractControl {
                             }
                         }
                         else if (this.access.selectionCurrent.x > rect.right) {
+                            const maxLeft = this.maxScrollLeft();
                             // --- 向右滚动 ---
-                            if (this.element.scrollLeft < this.maxScrollLeft) {
+                            if (this.element.scrollLeft < maxLeft) {
                                 /** --- 差值 --- */
                                 const x = this.access.selectionCurrent.x - rect.right;
                                 /** --- 移动的距离 --- */
@@ -213,8 +179,8 @@ export default class extends clickgo.control.AbstractControl {
                                 else {
                                     dist = x / 5;
                                 }
-                                if (this.element.scrollLeft + dist > this.maxScrollLeft) {
-                                    dist = this.maxScrollLeft - this.element.scrollLeft;
+                                if (this.element.scrollLeft + dist > maxLeft) {
+                                    dist = maxLeft - this.element.scrollLeft;
                                 }
                                 this.element.scrollLeft += dist;
                                 this.emit('update:scrollLeft', Math.round(this.element.scrollLeft));
@@ -244,8 +210,9 @@ export default class extends clickgo.control.AbstractControl {
                             }
                         }
                         else if (this.access.selectionCurrent.y > rect.bottom) {
+                            const maxTop = this.maxScrollTop();
                             // --- 向右滚动 ---
-                            if (this.element.scrollTop < this.maxScrollTop) {
+                            if (this.element.scrollTop < maxTop) {
                                 /** --- 差值 --- */
                                 const x = this.access.selectionCurrent.y - rect.bottom;
                                 /** --- 移动的距离 --- */
@@ -258,8 +225,8 @@ export default class extends clickgo.control.AbstractControl {
                                 else {
                                     dist = x / 5;
                                 }
-                                if (this.element.scrollTop + dist > this.maxScrollTop) {
-                                    dist = this.maxScrollTop - this.element.scrollTop;
+                                if (this.element.scrollTop + dist > maxTop) {
+                                    dist = maxTop - this.element.scrollTop;
                                 }
                                 this.element.scrollTop += dist;
                                 this.emit('update:scrollTop', Math.round(this.element.scrollTop));
@@ -293,11 +260,60 @@ export default class extends clickgo.control.AbstractControl {
             });
         }
         else {
-            if (e instanceof TouchEvent) {
-                this.touchX = e.touches[0].clientX;
-                this.touchY = e.touches[0].clientY;
-                this.canTouchScroll = false;
+            if (e instanceof MouseEvent) {
+                return;
             }
+            // --- 仅 touch ---
+            clickgo.dom.bindGesture(e, (ne, dir) => {
+                switch (dir) {
+                    case 'top': {
+                        if (this.element.scrollTop > 0) {
+                            ne.stopPropagation();
+                        }
+                        else {
+                            if (this.propArray('gesture').includes('top')) {
+                                return true;
+                            }
+                        }
+                        break;
+                    }
+                    case 'bottom': {
+                        if (Math.round(this.element.scrollTop) < this.maxScrollTop()) {
+                            ne.stopPropagation();
+                        }
+                        else {
+                            if (this.propArray('gesture').includes('bottom')) {
+                                return true;
+                            }
+                        }
+                        break;
+                    }
+                    case 'left': {
+                        if (this.element.scrollLeft > 0) {
+                            ne.stopPropagation();
+                        }
+                        else {
+                            if (this.propArray('gesture').includes('left')) {
+                                return true;
+                            }
+                        }
+                        break;
+                    }
+                    default: {
+                        if (Math.round(this.element.scrollLeft) < this.maxScrollLeft()) {
+                            ne.stopPropagation();
+                        }
+                        else {
+                            if (this.propArray('gesture').includes('right')) {
+                                return true;
+                            }
+                        }
+                    }
+                }
+                return false;
+            }, (dir) => {
+                this.emit('gesture', dir);
+            });
         }
     }
 
@@ -324,7 +340,7 @@ export default class extends clickgo.control.AbstractControl {
             // --- 右 ---
             area.x = Math.round(this.access.selectionOrigin.x);
             area.width = Math.round(x - this.access.selectionOrigin.x);
-            const maxWidth = this.maxScrollLeft + this.clientWidth - area.x;
+            const maxWidth = this.maxScrollLeft() + this.element.clientWidth - area.x;
             if (area.width > maxWidth) {
                 area.width = maxWidth;
             }
@@ -342,7 +358,7 @@ export default class extends clickgo.control.AbstractControl {
             // --- 下 ---
             area.y = Math.round(this.access.selectionOrigin.y);
             area.height = Math.round(y - this.access.selectionOrigin.y);
-            const maxHeight = this.maxScrollTop + this.clientHeight - area.y;
+            const maxHeight = this.maxScrollTop() + this.element.clientHeight - area.y;
             if (area.height > maxHeight) {
                 area.height = maxHeight;
             }
@@ -364,143 +380,32 @@ export default class extends clickgo.control.AbstractControl {
         this.emit('select', area);
     }
 
-    public move(e: TouchEvent): void {
-        if (this.propBoolean('selection')) {
-            return;
-        }
-        const scrollTop = Math.ceil(this.element.scrollTop);
-        const scrollLeft = Math.ceil(this.element.scrollLeft);
-        const deltaX = this.touchX - e.touches[0].clientX;
-        const deltaY = this.touchY - e.touches[0].clientY;
-        if (this.canTouchScroll) {
-            // --- 必须有这个，要不然被上层的 e.preventDefault(); 给屏蔽不能拖动，可拖时必须 stopPropagation(虽然 wheel 已经有了 stioPropagation，但毕竟那是 wheel 的，touch 被 preventDefault 照样不能拖动) ---
-            e.stopPropagation();
-            return;
-        }
-        if (Math.abs(deltaY) > Math.abs(deltaX)) {
-            // --- 竖向滚动 ---
-            if (deltaY < 0) {
-                // --- 向上滚 ---
-                if (scrollTop > 0) {
-                    // --- 可以滚动 ---
-                    e.stopPropagation();
-                    this.canTouchScroll = true;
-                }
-                else {
-                    if (!this.alreadySb) {
-                        this.alreadySb = true;
-                        this.emit('scrollborder', e);
-                    }
-                }
-            }
-            else {
-                // --- 向下滚 ---
-                if (scrollTop < this.maxScrollTop) {
-                    e.stopPropagation();
-                    this.canTouchScroll = true;
-                }
-                else {
-                    if (!this.alreadySb) {
-                        this.alreadySb = true;
-                        this.emit('scrollborder', e);
-                    }
-                }
-            }
-        }
-        else {
-            // --- 横向滚动 ---
-            if (deltaX < 0) {
-                // --- 向左滚 ---
-                if (scrollLeft > 0) {
-                    // --- 可以滚动 ---
-                    e.stopPropagation();
-                    this.canTouchScroll = true;
-                }
-                else {
-                    if (!this.alreadySb) {
-                        this.alreadySb = true;
-                        this.emit('scrollborder', e);
-                    }
-                }
-            }
-            else {
-                // --- 向右滚 ---
-                if (scrollLeft < this.maxScrollLeft) {
-                    e.stopPropagation();
-                    this.canTouchScroll = true;
-                }
-                else {
-                    if (!this.alreadySb) {
-                        this.alreadySb = true;
-                        this.emit('scrollborder', e);
-                    }
-                }
-            }
-        }
-        this.touchX = e.touches[0].clientX;
-        this.touchY = e.touches[0].clientY;
-    }
-
-    public end(): void {
-        this.alreadySb = false;
-    }
-
-    public refreshLength(): void {
-        if (!this.element.offsetParent) {
-            return;
-        }
-        const lengthWidth = this.element.scrollWidth;
-        const lengthHeight = this.element.scrollHeight;
-        if (this.lengthWidth !== lengthWidth) {
-            this.lengthWidth = lengthWidth;
-            if (this.props.direction === 'h') {
-                this.emit('change', lengthWidth);
-            }
-        }
-        if (this.lengthHeight !== lengthHeight) {
-            this.lengthHeight = lengthHeight;
-            if (this.props.direction === 'v') {
-                this.emit('change', lengthHeight);
-            }
-        }
-    }
-
     public onMounted(): void {
         this.watch('scrollLeft', (): void => {
-            if (this.propInt('scrollLeft') === this.element.scrollLeft) {
+            const prop = this.propInt('scrollLeft');
+            if (prop === Math.round(this.element.scrollLeft)) {
                 return;
             }
-            this.element.scrollLeft = this.propInt('scrollLeft');
+            this.element.scrollLeft = prop;
         });
         this.watch('scrollTop', (): void => {
-            if (this.propInt('scrollTop') ===  this.element.scrollTop) {
+            const prop = this.propInt('scrollTop');
+            if (prop === Math.round(this.element.scrollTop)) {
                 return;
             }
-            this.element.scrollTop = this.propInt('scrollTop');
+            this.element.scrollTop = prop;
         });
 
         // --- 大小改变，会影响 scroll offset、client，也会影响 length ---
         clickgo.dom.watchSize(this.element, () => {
-            const clientWidth = this.element.clientWidth;
-            const clientHeight = this.element.clientHeight;
-            if (this.clientWidth !== clientWidth) {
-                this.clientWidth = clientWidth;
-                this.emit(this.props.direction === 'v' ? 'resizen' : 'resize', Math.round(this.clientWidth));
-            }
-            if (clientHeight !== this.clientHeight) {
-                this.clientHeight = clientHeight;
-                this.emit(this.props.direction === 'v' ? 'resize' : 'resizen', Math.round(this.clientHeight));
-            }
-            this.refreshLength();
+            this.emit('clientwidth', this.element.clientWidth);
+            this.emit('clientheight', this.element.clientHeight);
         }, true);
 
         // --- 内容改变 ---
-        clickgo.dom.watch(this.element, () => {
-            this.refreshLength();
-        }, 'childsub', true);
-        clickgo.dom.watchStyle(this.element, ['padding', 'font'], () => {
-            this.refreshLength();
-        });
+        clickgo.dom.watchProperty(this.element, ['scrollWidth', 'scrollHeight'], (name, val) => {
+            this.emit(name.toLowerCase(), val);
+        }, true);
 
         // --- 对 scroll 位置进行归位 ---
         this.element.scrollTop = this.propInt('scrollTop');

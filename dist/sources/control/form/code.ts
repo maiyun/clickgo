@@ -314,21 +314,21 @@ export default class extends clickgo.control.AbstractControl {
                     };
                 }
             },
-            'move': (ox, oy, x, y, border) => {
-                this.leftData += ox;
+            'move': (e, o) => {
+                this.leftData += o.ox;
                 this.emit('update:left', this.leftData);
-                this.topData += oy;
+                this.topData += o.oy;
                 this.emit('update:top', this.topData);
-                if (border !== '') {
-                    if ((border === 't' && this.isMax) || (border !== 't' && this.isResize)) {
+                if (o.border !== '') {
+                    if ((o.border === 't' && this.isMax) || (o.border !== 't' && this.isResize)) {
                         if (isBorder === '') {
-                            isBorder = border;
-                            clickgo.form.showCircular(x, y);
-                            clickgo.form.showRectangle(x, y, border);
+                            isBorder = o.border;
+                            clickgo.form.showCircular(o.x, o.y);
+                            clickgo.form.showRectangle(o.x, o.y, o.border);
                         }
                         else {
-                            isBorder = border;
-                            clickgo.form.moveRectangle(border);
+                            isBorder = o.border;
+                            clickgo.form.moveRectangle(o.border);
                         }
                     }
                     else {

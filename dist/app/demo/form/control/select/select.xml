@@ -1,74 +1,76 @@
 <form title="Select" width="400" height="450" min-width="300" min-height="400" padding="10">
-    <tab v-model="ntab" :tabs="['greatselect', 'select']" style="flex: 1; width: 0;">
-        <!-- greatselect -->
-        <layout v-if="ntab === 'greatselect'" gutter="10" direction="v" style="flex: 1; width: 0; padding: 10px;">
-            <label>Now select value is {{select}}:</label>
-            <greatselect v-model="select" :data="slist" :area="area" :disabled="disabled" :style="{'font-size': fontSize ? '16px' : undefined, 'padding': padding ? '15px' : undefined, 'background': background ? 'red' : undefined, 'color': background ? '#FFF' : undefined}">
-                <layout align-v="center" gutter="5" style="line-height: 1.3; flex: 1;">
-                    <img :src="slist[select].src" style="width: 32px; height: 32px;"></img>
-                    <block>
-                        <block>{{slist[select].name}}</block>
-                        <block style="opacity: .7;">{{slist[select].path}}</block>
-                    </block>
-                </layout>
-                <template v-slot:pop="data">
-                    <layout v-if="data.row.type === 0" align-v="center" gutter="5" style="flex: 1; line-height: 1.3;">
-                        <img :src="data.row.src" style="width: 32px; height: 32px;"></img>
-                        <block style="flex: 1;">
-                            <block>{{data.row.name}}</block>
-                            <block style="opacity: .7;">{{data.row.path}}</block>
+    <layout gutter="10" direction="v" style="flex: 1; width: 0;">
+        <tab v-model="ntab" :tabs="['greatselect', 'select']" style="flex: 1; height: 0;">
+            <!-- greatselect -->
+            <layout v-if="ntab === 'greatselect'" gutter="10" direction="v" style="flex: 1; width: 0; padding: 10px;">
+                <label>Now select value is {{select}}:</label>
+                <greatselect v-model="select" :data="slist" :area="area" :disabled="disabled" :multi="multi" :sizes="sizes" :style="{'font-size': fontSize ? '16px' : undefined, 'padding': padding ? '15px' : undefined, 'background': background ? 'red' : undefined, 'color': background ? '#FFF' : undefined}" style="line-height: 1.3;">
+                    <layout align-v="center" gutter="5" style="flex: 1;">
+                        <img :src="slist[select[0]] ? slist[select[0]].src : ''" style="width: 32px; height: 32px;"></img>
+                        <block>
+                            <block>{{slist[select[0]] ? slist[select[0]].name : 'None'}}{{select.length > 1 ? ' [multi]' : ''}}</block>
+                            <block style="opacity: .7;">{{slist[select[0]] ? slist[select[0]].path : none}}</block>
                         </block>
                     </layout>
-                    <template v-else>Other</template>
-                </template>
-                <template v-slot:itempop>
-                    <menulist>
-                        <menulist-item alt="S">Set the default</menulist-item>
-                    </menulist>
-                </template>
-            </greatselect>
-            <label>Custom pop:</label>
-            <greatselect pop="custom" :area="area" :disabled="disabled" :style="{'font-size': fontSize ? '16px' : undefined, 'padding': padding ? '15px' : undefined, 'background': background ? 'red' : undefined, 'color': background ? '#FFF' : undefined}">
-                <label>Pop is button.</label>
-                <template v-slot:pop>
-                    <button style="height: 30px;">Nothing</button>
-                </template>
-            </greatselect>
-            <layout gutter="10">
-                <button @click="slist.splice(-2, 0, {'type': 0, 'name': 'Card' + slist.length, 'path': 'Bob >> folder >> Card', 'src': '/package/res/r-2.svg','disabled': false})" style="flex: 1; height: 30px;">Add item</button>
-                <button @click="slist.splice(-3, 1)" style="flex: 1; height: 30px;">Remove item</button>
+                    <template v-slot:pop="data">
+                        <layout v-if="data.row.type === 0" align-v="center" gutter="5" style="flex: 1;">
+                            <img :src="data.row.src" style="width: 32px; height: 32px;"></img>
+                            <block>
+                                <block>{{data.row.name}}</block>
+                                <block style="opacity: .7;">{{data.row.path}}</block>
+                            </block>
+                        </layout>
+                        <template v-else>Other</template>
+                    </template>
+                    <template v-slot:itempop>
+                        <menulist>
+                            <menulist-item alt="S">Set the default</menulist-item>
+                        </menulist>
+                    </template>
+                </greatselect>
+                <label>Custom pop:</label>
+                <greatselect pop="custom" :area="area" :disabled="disabled" :style="{'font-size': fontSize ? '16px' : undefined, 'padding': padding ? '15px' : undefined, 'background': background ? 'red' : undefined, 'color': background ? '#FFF' : undefined}">
+                    <label>Pop is button.</label>
+                    <template v-slot:pop>
+                        <button style="height: 30px;">Nothing</button>
+                    </template>
+                </greatselect>
+                <layout gutter="10">
+                    <button @click="slist.splice(-2, 0, {'type': 0, 'name': 'Card' + slist.length, 'path': 'Bob >> folder >> Card', 'src': '/package/res/r-2.svg','disabled': false})" style="flex: 1; height: 30px;">Add item</button>
+                    <button @click="slist.splice(-3, 1)" style="flex: 1; height: 30px;">Remove item</button>
+                </layout>
             </layout>
-            <layout gutter="10">
-                <button @click="disabled = !disabled" style="flex: 1; height: 30px;">Disabled: {{disabled}}</button>
-                <button @click="area = area === 'all' ? 'arrow' : 'all'" style="flex: 1; height: 30px;">Area: {{area}}</button>
-            </layout>
-            <layout gutter="10">
-                <button @click="fontSize = !fontSize" style="flex: 1; height: 30px;">Change font size</button>
-                <button @click="padding = !padding" style="flex: 1; height: 30px;">Change padding</button>
-            </layout>
-            <layout gutter="10">
-                <button @click="background = !background" style="flex: 1; height: 30px;">Change background and color</button>
-            </layout>
+            <!-- select -->
+            <flow v-else-if="ntab === 'select'" direction="v" style="flex: 1; width: 0;">
+                <layout gutter="10" direction="v" style="padding: 10px;">
+                    <label>Now select value is {{select2}}</label>
+                    <label>Label: {{label2}}</label>
+                    <select v-model="select2" @label="label2 = $event" :data="remote ? slist2r : slist2" :disabled="disabled" :editable="editable" :multi="multi" :tree="tree" :async="async" :remote="remote" :icon="icon" icon-default="../../../res/txt.svg" @load="onLoad" @remote="onRemote" :style="{'font-size': fontSize ? '16px' : undefined, 'padding': padding ? '15px' : undefined, 'background': background ? 'red' : undefined, 'color': background ? '#FFF' : undefined}"></select>
+                    <label>Custom height:</label>
+                    <select :data="remote ? slist2r : ['1','2','3','4','5']" :disabled="disabled" :editable="editable" :multi="multi" :tree="tree" :async="async" :remote="remote" :icon="icon" icon-default="../../../res/txt.svg" style="height: 60px;" @load="onLoad" @remote="onRemote" :style="{'font-size': fontSize ? '16px' : undefined, 'padding': padding ? '15px' : undefined, 'background': background ? 'red' : undefined, 'color': background ? '#FFF' : undefined}"></select>
+                    <label>Always editable:</label>
+                    <select :data="remote ? slist2r : ['1','2','3','4','5']" :disabled="disabled" editable :multi="multi" :tree="tree" :async="async" :remote="remote" :icon="icon" icon-default="../../../res/txt.svg" @load="onLoad" @remote="onRemote" :style="{'font-size': fontSize ? '16px' : undefined, 'padding': padding ? '15px' : undefined, 'background': background ? 'red' : undefined, 'color': background ? '#FFF' : undefined}"></select>
+                    <layout gutter="10">
+                        <button @click="icon = !icon" style="flex: 1; height: 30px;">{{icon ? '' : '!'}}icon</button>
+                        <button @click="tree = !tree" style="flex: 1; height: 30px;">{{tree ? '' : '!'}}tree</button>
+                        <button @click="async = !async" style="flex: 1; height: 30px;">{{async ? '' : '!'}}async</button>
+                        <button @click="remote = !remote" style="flex: 1; height: 30px;">{{remote ? '' : '!'}}remote</button>
+                    </layout>
+                </layout>
+            </flow>
+        </tab>
+        <layout gutter="10">
+            <button @click="disabled = !disabled" style="flex: 1; height: 30px;">{{disabled ? '' : '!'}}disabled</button>
+            <button v-if="ntab === 'greatselect'" @click="area = area === 'all' ? 'arrow' : 'all'" style="flex: 1; height: 30px;">Area: {{area}}</button>
+            <button v-else @click="editable = !editable" style="flex: 1; height: 30px;">{{editable ? '' : '!'}}editable</button>
         </layout>
-        <!-- select -->
-        <layout v-else-if="ntab === 'select'" gutter="10" direction="v" style="flex: 1; width: 0; padding: 10px;">
-            <label>Now select value is {{select2}}:</label>
-            <select v-model="select2" :data="slist2" :disabled="disabled" :editable="editable" :style="{'font-size': fontSize ? '16px' : undefined, 'padding': padding ? '15px' : undefined, 'background': background ? 'red' : undefined, 'color': background ? '#FFF' : undefined}"></select>
-            <label>Custom height:</label>
-            <select :data="['1','2','3','4','5']" :disabled="disabled" :editable="editable" style="height: 60px;" :style="{'font-size': fontSize ? '16px' : undefined, 'padding': padding ? '15px' : undefined, 'background': background ? 'red' : undefined, 'color': background ? '#FFF' : undefined}"></select>
-            <label>Always editable:</label>
-            <select :data="['1','2','3','4','5']" :disabled="disabled" editable :style="{'font-size': fontSize ? '16px' : undefined, 'padding': padding ? '15px' : undefined, 'background': background ? 'red' : undefined, 'color': background ? '#FFF' : undefined}"></select>
-            <layout gutter="10">
-                <button @click="disabled = !disabled" style="flex: 1; height: 30px;">Disabled: {{disabled}}</button>
-                <button @click="editable = !editable" style="flex: 1; height: 30px;">Editable: {{editable}}</button>
-            </layout>
-            <layout gutter="10">
-                <button @click="fontSize = !fontSize" style="flex: 1; height: 30px;">Change font size</button>
-                <button @click="padding = !padding" style="flex: 1; height: 30px;">Change padding</button>
-            </layout>
-            <layout gutter="10">
-                <button @click="background = !background" style="flex: 1; height: 30px;">Change background and color</button>
-            </layout>
+        <layout gutter="10">
+            <button @click="fontSize = !fontSize" style="flex: 1; height: 30px;">Change font size</button>
+            <button @click="padding = !padding" style="flex: 1; height: 30px;">Change padding</button>
         </layout>
-    </tab>
+        <layout gutter="10">
+            <button @click="background = !background" style="flex: 1; height: 30px;">Change bg &amp; color</button>
+            <button @click="multi = !multi" style="flex: 1; height: 30px;">{{multi ? '' : '!'}}multi</button>
+        </layout>
+    </layout>
 </form>

@@ -17,6 +17,7 @@ import * as types from '../../types';
 import * as clickgo from '../clickgo';
 import * as form from './form';
 import * as core from './core';
+import * as tool from './tool';
 
 /** --- style list 的 div --- */
 const topClass: string[] = ['#cg-form-list', '#cg-pop-list', '#cg-system', '#cg-simpletask', '#cg-launcher'];
@@ -31,17 +32,13 @@ function classUnfold(after?: string, out: string[] = []): string {
     return arr.join(', ');
 }
 
-/*
-#cg-gesture {box-sizing: border-box; position: fixed; z-index: 20020004; border: solid 3px #ff976a; border-radius: 50%; filter: drop-shadow(0 0 3px #ff976a); pointer-events: none; opacity: 0; transform: scale(0); width: 20px; height: 20px;}
-#cg-gesture.done {background: #ff976a;}
-*/
 const styleList: HTMLDivElement = document.createElement('div');
 styleList.style.display = 'none';
 document.getElementsByTagName('body')[0].appendChild(styleList);
 styleList.insertAdjacentHTML('beforeend', '<style id=\'cg-global-cursor\'></style>');
 styleList.insertAdjacentHTML('beforeend', `<style id='cg-global'>
-${classUnfold()} {-webkit-user-select: none; user-select: none; position: fixed; cursor: default; box-sizing: border-box;}
-${topClass.slice(0, 3).join(', ')} {left: 0; top: 0; width: 0; height: 0;}
+${classUnfold()} {-webkit-user-select: none; user-select: none; cursor: default; box-sizing: border-box;}
+${topClass.slice(0, 3).join(', ')} {left: 0; top: 0; width: 0; height: 0; position: absolute;}
 ${classUnfold('img')} {vertical-align: bottom;}
 ${classUnfold('::selection', ['#cg-launcher'])} {background-color: rgba(0, 0, 0, .1);}
 ${classUnfold('*')}, ${classUnfold('*::after')}, ${classUnfold('*::before')} {box-sizing: border-box; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); flex-shrink: 0;}
@@ -184,45 +181,33 @@ export function getStyleCount(taskId: number, type: 'theme' | 'control' | 'form'
     return document.querySelectorAll(`#cg-style-task${taskId} > .cg-style-${type} > style`).length;
 }
 
-/**
- * --- 获取实时的 DOM SIZE ---
- * @param el 要获取的 dom
- */
-export function getSize(el: HTMLElement): types.IDomSize {
-    const rect = el.getBoundingClientRect();
-    const cs = getComputedStyle(el);
-    const border = {
-        'top': parseFloat(cs.borderTopWidth),
-        'right': parseFloat(cs.borderRightWidth),
-        'bottom': parseFloat(cs.borderBottomWidth),
-        'left': parseFloat(cs.borderLeftWidth)
-    };
-    const padding = {
-        'top': parseFloat(cs.paddingTop),
-        'right': parseFloat(cs.paddingRight),
-        'bottom': parseFloat(cs.paddingBottom),
-        'left': parseFloat(cs.paddingLeft)
-    };
-    return {
-        'top': rect.top,
-        'right': rect.right,
-        'bottom': rect.bottom,
-        'left': rect.left,
-        'width': rect.width,
-        'height': rect.height,
-        'padding': padding,
-        'border': border,
-        'clientWidth': rect.width - border.left - border.right,
-        'clientHeight': rect.height - border.top - border.bottom,
-        'innerWidth': rect.width - border.left - border.right - padding.left - padding.right,
-        'innerHeight': rect.height - border.top - border.bottom - padding.top - padding.bottom,
-        'scrollWidth': el.scrollWidth,
-        'scrollHeight': el.scrollHeight
-    };
-}
+// -----------------
+// --- watchSize ---
+// -----------------
 
 /** --- 被监视中的元素 --- */
-const watchSizeList: types.IWatchSizeItem[] = [];
+const watchSizeList: Record<string, types.IWatchSizeItem> = {};
+
+/** --- 监视元素的 data-cg-roindex --- */
+let watchSizeIndex: number = 0;
+
+// --- 创建 ro 对象 ---
+const resizeObserver = new ResizeObserver(function(entries): void {
+    for (const entrie of entries) {
+        const el = entrie.target as HTMLElement;
+        if (!el.offsetParent) {
+            resizeObserver.unobserve(el);
+            continue;
+        }
+        const item = watchSizeList[parseInt(el.dataset.cgRoindex!)];
+        const r = item.handler();
+        if (r instanceof Promise) {
+            r.catch(function(e) {
+                console.log(e);
+            });
+        }
+    }
+});
 
 /**
  * --- 添加监视 Element 对象大小，元素移除后自动停止监视（浏览器原生效果） ---
@@ -233,43 +218,33 @@ const watchSizeList: types.IWatchSizeItem[] = [];
  */
 export function watchSize(
     el: HTMLElement,
-    cb: (size: types.IDomSize) => Promise<void> | void,
+    cb: () => void | Promise<void>,
     immediate: boolean = false,
     taskId?: number
-): types.IDomSize {
-    const fsize = getSize(el);
-    for (const item of watchSizeList) {
+): boolean {
+    for (const index in watchSizeList) {
+        const item = watchSizeList[index];
         if (item.el === el) {
-            return fsize;
+            return false;
         }
     }
     if (immediate) {
-        const r = cb(fsize);
+        const r = cb();
         if (r instanceof Promise) {
             r.catch(function(e) {
                 console.log(e);
             });
         }
     }
-    const resizeObserver = new (window as any).ResizeObserver(function(): void {
-        const size = getSize(el);
-        if (Number.isNaN(size.clientWidth)) {
-            return;
-        }
-        const r = cb(size);
-        if (r instanceof Promise) {
-            r.catch(function(e) {
-                console.log(e);
-            });
-        }
-    });
     resizeObserver.observe(el);
-    watchSizeList.push({
+    watchSizeList[watchSizeIndex] = {
         'el': el,
-        'ro': resizeObserver,
+        'handler': cb,
         'taskId': taskId
-    });
-    return fsize;
+    };
+    el.dataset.cgRoindex = watchSizeIndex.toString();
+    ++watchSizeIndex;
+    return true;
 }
 
 /**
@@ -278,23 +253,17 @@ export function watchSize(
  * @param taskId 校验任务 id，App 模式下无效
  */
 export function unwatchSize(el: HTMLElement, taskId?: number): void {
-    for (let i = 0; i < watchSizeList.length; ++i) {
-        const item = watchSizeList[i];
-        if (item.el !== el) {
-            continue;
-        }
-        if (taskId && taskId !== item.taskId) {
-            // --- taskId 校验失败 ---
-            return;
-        }
-        // --- 要移除 ---
-        if (item.el.offsetParent) {
-            item.ro.unobserve(item.el);
-        }
-        watchSizeList.splice(i, 1);
-        --i;
+    const index = el.dataset.cgRoindex;
+    if (index === undefined) {
         return;
     }
+    const item = watchSizeList[index];
+    if (taskId && item.taskId !== taskId) {
+        return;
+    }
+    resizeObserver.unobserve(el);
+    el.dataset.cgRoindex = undefined;
+    delete watchSizeList[index];
 }
 
 /**
@@ -305,33 +274,36 @@ export function clearWatchSize(taskId?: number): void {
     if (!taskId) {
         return;
     }
-    for (let i = 0; i < watchSizeList.length; ++i) {
-        const item = watchSizeList[i];
+    for (const index in watchSizeList) {
+        const item = watchSizeList[index];
         if (taskId !== item.taskId) {
             continue;
         }
-        if (item.el.offsetParent) {
-            item.ro.unobserve(item.el);
-        }
-        watchSizeList.splice(i, 1);
-        --i;
+        resizeObserver.unobserve(item.el);
+        item.el.dataset.cgRoindex = undefined;
+        delete watchSizeList[index];
     }
 }
 
 /**
- * --- 每隔一段时间清除一次无效的 el ---
+ * --- 每隔一段时间清除一次无效的 el, CG 垃圾回收 ---
  */
 function cgClearWatchSize(): void {
-    for (let i = 0; i < watchSizeList.length; ++i) {
-        const item = watchSizeList[i];
+    for (const index in watchSizeList) {
+        const item = watchSizeList[index];
         if (item.el.offsetParent) {
             continue;
         }
-        watchSizeList.splice(i, 1);
-        --i;
+        resizeObserver.unobserve(item.el);
+        item.el.dataset.cgRoindex = undefined;
+        delete watchSizeList[index];
     }
 }
 setInterval(cgClearWatchSize, 1000 * 60 * 5);
+
+// -------------
+// --- watch ---
+// -------------
 
 /** --- 监视 dom 变动中的元素 */
 const watchList: types.IWatchItem[] = [];
@@ -343,9 +315,9 @@ const watchList: types.IWatchItem[] = [];
  * @param mode 监听模式
  * @param taskId 归属到一个任务里可留空，App 模式下无效
  */
-export function watch(el: HTMLElement, cb: () => void, mode: 'child' | 'childsub' | 'style' | 'default' = 'default', immediate: boolean = false, taskId?: number): void {
+export function watch(el: HTMLElement, cb: () => void | Promise<void>, mode: 'child' | 'childsub' | 'style' | 'default' = 'default', immediate: boolean = false, taskId?: number): void {
     if (immediate) {
-        cb();
+        (cb as any)();
     }
     let moi: MutationObserverInit;
     switch (mode) {
@@ -385,7 +357,9 @@ export function watch(el: HTMLElement, cb: () => void, mode: 'child' | 'childsub
             moi = mode;
         }
     }
-    const mo = new MutationObserver(cb);
+    const mo = new MutationObserver(() => {
+        (cb as any)();
+    });
     mo.observe(el, moi);
     watchList.push({
         'el': el,
@@ -464,15 +438,173 @@ function cgClearWatch(): void {
 }
 setInterval(cgClearWatch, 1000 * 60 * 5);
 
-const watchStyleObjects: Array<{
+// ------------------
+// --- watchStyle ---
+// ------------------
+
+const watchStyleObjects: Record<string, Record<string, {
     'el': HTMLElement;
     'sd': CSSStyleDeclaration;
     'names': Record<string, {
-        'old': string;
+        'val': string;
+        'cb': Array<(name: string, value: string, old: string) => void>;
+    }>;
+}>> = {};
+
+/** --- 监视元素的 data-cg-styleindex --- */
+let watchStyleIndex: number = 0;
+
+/**
+ * --- 监听一个标签的计算后样式的变化 ---
+ * @param el 对象
+ * @param name 样式名
+ * @param cb 变更回调
+ * @param immediate 是否立刻执行一次
+ */
+export function watchStyle(
+    el: HTMLElement,
+    name: string | string[],
+    cb: (name: string, value: string, old: string) => void,
+    immediate: boolean = false
+): void {
+    if (typeof name === 'string') {
+        name = [name];
+    }
+    // --- 获取监视标签的所属 wrap ---
+    const formWrap = findParentByData(el, 'form-id');
+    if (!formWrap) {
+        return;
+    }
+    const formId = formWrap.dataset.formId!;
+    if (!watchStyleObjects[formId]) {
+        watchStyleObjects[formId] = {};
+    }
+    const index = el.dataset.cgStyleindex;
+    if (index) {
+        const item = watchStyleObjects[formId][index];
+        // --- 已经有监听了 ---
+        for (const n of name) {
+            if (!item.names[n]) {
+                item.names[n] = {
+                    'val': (item.sd as any)[n],
+                    'cb': [cb]
+                };
+            }
+            else {
+                item.names[n].cb.push(cb);
+            }
+            if (immediate) {
+                cb(n, (item.sd as any)[n], '');
+            }
+        }
+        return;
+    }
+    // --- 创建监听 ---
+    const sd = getComputedStyle(el);
+    watchStyleObjects[formId][watchStyleIndex] = {
+        'el': el,
+        'sd': sd,
+        'names': {}
+    };
+    const item = watchStyleObjects[formId][watchStyleIndex];
+    for (const n of name) {
+        item.names[n] = {
+            'val': (item.sd as any)[n],
+            'cb': [cb]
+        };
+        if (immediate) {
+            cb(n, (item.sd as any)[n], '');
+        }
+    }
+    el.dataset.cgStyleindex = watchStyleIndex.toString();
+    ++watchStyleIndex;
+}
+
+/** --- watch style 的 timer --- */
+let watchStyleTimer = 0;
+const watchStyleHandler = function(): void {
+    // --- 为什么要判断 form.getFocus 存在否，因为 form 类可能还没加载出来，这个函数就已经开始执行了 ---
+    if (form.getFocus) {
+        // --- 只判断和执行活跃中的窗体的监听事件 ---
+        const formId: number | null = form.getFocus();
+        if (formId && watchStyleObjects[formId]) {
+            for (const index in watchStyleObjects[formId]) {
+                const item = watchStyleObjects[formId][index];
+                if (!item.el.offsetParent) {
+                    item.el.dataset.cgStyleindex = undefined;
+                    delete watchStyleObjects[formId][index];
+                    if (!Object.keys(watchStyleObjects[formId]).length) {
+                        delete watchStyleObjects[formId];
+                    }
+                    continue;
+                }
+                // --- 执行 cb ---
+                for (const name in item.names) {
+                    if ((item.sd as any)[name] === item.names[name].val) {
+                        continue;
+                    }
+                    const old = item.names[name].val;
+                    item.names[name].val = (item.sd as any)[name];
+                    for (const cb of item.names[name].cb) {
+                        cb(name, (item.sd as any)[name], old);
+                    }
+                }
+            }
+        }
+    }
+    watchStyleTimer = requestAnimationFrame(watchStyleHandler);
+};
+watchStyleHandler();
+
+/**
+ * --- 检测一个标签是否正在被 watchStyle ---
+ * @param el 要检测的标签
+ */
+export function isWatchStyle(el: HTMLElement): boolean {
+    return el.dataset.cgStyleindex ? true : false;
+}
+
+/**
+ * --- 清除某个窗体的所有 watch style 监视，虽然窗体结束后相关监视永远不会再被执行，但是会形成冗余，App 模式下无效 ---
+ * @param formId 窗体 id
+ */
+export function clearWatchStyle(formId: number | string): void {
+    if (!watchStyleObjects[formId]) {
+        return;
+    }
+    for (const index in watchStyleObjects[formId]) {
+        const item = watchStyleObjects[formId][index];
+        item.el.dataset.cgStyleindex = undefined;
+    }
+    delete watchStyleObjects[formId];
+}
+
+// ---------------------
+// --- watchProperty ---
+// ---------------------
+
+/**
+ * --- 监听中的标签对象，对应 formId -> 数组列表 ---
+ */
+const watchPropertyObjects: Record<string, Record<string, {
+    'el': HTMLElement;
+    'names': Record<string, {
+        'val': string;
         'cb': Array<(name: string, value: string) => void>;
     }>;
-}> = [];
-export function watchStyle(
+}>> = {};
+
+/** --- 监视元素的 data-cg-propertyindex --- */
+let watchPropertyIndex: number = 0;
+
+/**
+ * --- 监听一个对象的属性变化 ---
+ * @param el 对象
+ * @param name 属性名
+ * @param cb 回调函数
+ * @param immediate 是否立即执行一次
+ */
+export function watchProperty(
     el: HTMLElement,
     name: string | string[],
     cb: (name: string, value: string) => void,
@@ -481,15 +613,23 @@ export function watchStyle(
     if (typeof name === 'string') {
         name = [name];
     }
-    for (const item of watchStyleObjects) {
-        if (item.el !== el) {
-            continue;
-        }
+    // --- 获取监视标签的所属 wrap ---
+    const formWrap = findParentByData(el, 'form-id');
+    if (!formWrap) {
+        return;
+    }
+    const formId = formWrap.dataset.formId!;
+    if (!watchPropertyObjects[formId]) {
+        watchPropertyObjects[formId] = {};
+    }
+    const index = el.dataset.cgPropertyindex;
+    if (index) {
+        const item = watchPropertyObjects[formId][index];
         // --- 已经有监听了 ---
         for (const n of name) {
             if (!item.names[n]) {
                 item.names[n] = {
-                    'old': (item.sd as any)[n],
+                    'val': (item.el as any)[n],
                     'cb': [cb]
                 };
             }
@@ -497,69 +637,110 @@ export function watchStyle(
                 item.names[n].cb.push(cb);
             }
             if (immediate) {
-                cb(n, (item.sd as any)[n]);
+                cb(n, (item.el as any)[n]);
             }
         }
         return;
     }
     // --- 创建监听 ---
-    const sd = getComputedStyle(el);
-    watchStyleObjects.push({
+    watchPropertyObjects[formId][watchPropertyIndex] = {
         'el': el,
-        'sd': sd,
         'names': {}
-    });
-    const item = watchStyleObjects[watchStyleObjects.length - 1];
+    };
+    const item = watchPropertyObjects[formId][watchPropertyIndex];
     for (const n of name) {
         item.names[n] = {
-            'old': (item.sd as any)[n],
+            'val': (item.el as any)[n],
             'cb': [cb]
         };
         if (immediate) {
-            cb(n, (item.sd as any)[n]);
+            cb(n, (item.el as any)[n]);
         }
     }
+    el.dataset.cgPropertyindex = watchPropertyIndex.toString();
+    ++watchPropertyIndex;
 }
-const watchStyleRAF = function(): void {
-    for (let i = 0; i < watchStyleObjects.length; ++i) {
-        const item = watchStyleObjects[i];
-        if (watchStyleObjects[i].sd.flex === '') {
-            watchStyleObjects.splice(i, 1);
-            --i;
-            continue;
-        }
-        // --- 执行 cb ---
-        for (const name in item.names) {
-            if ((item.sd as any)[name] === item.names[name].old) {
-                continue;
-            }
-            item.names[name].old = (item.sd as any)[name];
-            for (const cb of item.names[name].cb) {
-                cb(name, (item.sd as any)[name]);
+
+/** --- watch property 的 timer --- */
+let watchPropertyTimer = 0;
+const watchPropertyHandler = function(): void {
+    // --- 为什么要判断 form.getFocus 存在否，因为 form 类可能还没加载出来，这个函数就已经开始执行了 ---
+    if (form.getFocus) {
+        // --- 只判断和执行活跃中的窗体的监听事件 ---
+        const formId: number | null = form.getFocus();
+        if (formId && watchPropertyObjects[formId]) {
+            for (const index in watchPropertyObjects[formId]) {
+                const item = watchPropertyObjects[formId][index];
+                if (!item.el.offsetParent) {
+                    item.el.dataset.cgPropertyindex = undefined;
+                    delete watchPropertyObjects[formId][index];
+                    if (!Object.keys(watchPropertyObjects[formId]).length) {
+                        delete watchPropertyObjects[formId];
+                    }
+                    continue;
+                }
+                // --- 执行 cb ---
+                for (const name in item.names) {
+                    if ((item.el as any)[name] === item.names[name].val) {
+                        continue;
+                    }
+                    item.names[name].val = (item.el as any)[name];
+                    for (const cb of item.names[name].cb) {
+                        cb(name, (item.el as any)[name]);
+                    }
+                }
             }
         }
     }
-    requestAnimationFrame(watchStyleRAF);
+    watchPropertyTimer = requestAnimationFrame(watchPropertyHandler);
 };
-watchStyleRAF();
+watchPropertyHandler();
 
 /**
- * --- 检测一个标签是否正在被 watchStyle ---
+ * --- 检测一个标签是否正在被 watchProperty ---
  * @param el 要检测的标签
  */
-export function isWatchStyle(el: HTMLElement): boolean {
-    for (const item of watchStyleObjects) {
-        if (item.el !== el) {
-            continue;
-        }
-        return true;
-    }
-    return false;
+export function isWatchProperty(el: HTMLElement): boolean {
+    return el.dataset.cgPropertyindex ? true : false;
 }
 
 /**
- * --- 绑定按下以及弹起事件 ---
- * @param e MouseEvent | TouchEvent
+ * --- 清除某个窗体的所有 watch property 监视，虽然窗体结束后相关监视永远不会再被执行，但是会形成冗余，App 模式下无效 ---
+ * @param formId 窗体 id
+ */
+export function clearPropertyStyle(formId: number | string): void {
+    if (!watchPropertyObjects[formId]) {
+        return;
+    }
+    for (const index in watchPropertyObjects[formId]) {
+        const item = watchPropertyObjects[formId][index];
+        item.el.dataset.cgPropertyindex = undefined;
+    }
+    delete watchPropertyObjects[formId];
+}
+
+/**
+ * --- 鼠标/手指没移动时，click 才生效 ---
+ * @param e 事件对象
+ * @param handler 回调
+ */
+export function bindClick(e: MouseEvent | TouchEvent, handler: () => void): void {
+    const x = e instanceof MouseEvent ? e.clientX : e.touches[0].clientX;
+    const y = e instanceof MouseEvent ? e.clientY : e.touches[0].clientY;
+    bindDown(e, {
+        up: (ne) => {
+            const nx = ne instanceof MouseEvent ? ne.clientX : ne.touches[0].clientX;
+            const ny = ne instanceof MouseEvent ? ne.clientY : ne.touches[0].clientY;
+            if (nx === x && ny === y) {
+                handler();
+            }
+        }
+    });
+}
+
+/**
+ * --- 绑定按下以及弹起事件，touch 和 mouse 只会绑定一个 ---
+ * @param oe MouseEvent | TouchEvent
  * @param opt 回调选项
  */
 export function bindDown(oe: MouseEvent | TouchEvent, opt: types.IBindDownOptions): void {
@@ -583,7 +764,7 @@ export function bindDown(oe: MouseEvent | TouchEvent, opt: types.IBindDownOption
     let end: ((e: MouseEvent | TouchEvent) => void) | undefined = undefined;
     const move = function(e: MouseEvent | TouchEvent): void {
         // --- 虽然上层已经有 preventDefault 了，但是有可能 e.target 会被注销，这样就响应不到上层的 preventDefault 事件，所以要在这里再加一个 ---
-        if (!e.target || !(e.target as HTMLElement).offsetParent) {
+        if ((!e.target || !(e.target as HTMLElement).offsetParent) && e.cancelable) {
             e.preventDefault();
         }
         /** --- 本次的移动方向 --- */
@@ -683,380 +864,314 @@ export function bindDown(oe: MouseEvent | TouchEvent, opt: types.IBindDownOption
     opt.down?.(oe);
 }
 
-const bindGestureData: {
-    'el': HTMLElement | null;
-    'xx': number;
-    'xy': number;
-    'tx': number;
-    'ty': number;
-    'dir': 'top' | 'right' | 'bottom' | 'left' | null;
-    'timers': {
-        'ani': number;
-        'sleep': number;
-    };
-} = {
-    'el': null,
-    'xx': 0,    // 当前 x
-    'xy': 0,
-    'tx': 0,    // 最终 x
-    'ty': 0,
-    'dir': null,
-    'timers': {
-        'ani': 0,
-        'sleep': 0
-    }
+/** --- 绑定拖拉响应操作的 wheel 数据对象 --- */
+const gestureWheel = {
+    /** --- 最后一次响应事件时间 --- */
+    'last': 0,
+    /** --- 本轮 offset 滚动距离 --- */
+    'offset': 0,
+    /** --- 本轮是否已经完成了滚动 --- */
+    'done': false,
+    /** --- 未执行等待隐藏的 timer --- */
+    'timer': 0,
+    /** --- 是否等待首次执行中 --- */
+    'firstTimer': false,
+    /** --- 本轮滚动的方向 --- */
+    'dir': ''
 };
-
-function clearGestureData(): void {
-    bindGestureData.xx = 0;
-    bindGestureData.xy = 0;
-    bindGestureData.tx = 0;
-    bindGestureData.ty = 0;
-}
-
-function bindGestureAnimation(opt: { 'rect': DOMRect; 'dirs'?: Array<('top' | 'right' | 'bottom' | 'left')>; handler: (dir: 'top' | 'right' | 'bottom' | 'left') => void; }): void {
-    if (!bindGestureData.el) {
-        return;
-    }
-    const speed: number = 6;
-    const gestureElement = document.getElementById('cg-gesture')!;
-    const dirs = opt.dirs ?? ['top', 'bottom'];
-
-    if (bindGestureData.tx > bindGestureData.xx) {
-        bindGestureData.xx += speed;
-        if (bindGestureData.xx > bindGestureData.tx) {
-            bindGestureData.xx = bindGestureData.tx;
-        }
-    }
-    else {
-        bindGestureData.xx -= speed;
-        if (bindGestureData.xx < bindGestureData.tx) {
-            bindGestureData.xx = bindGestureData.tx;
-        }
-    }
-    if (bindGestureData.ty > bindGestureData.xy) {
-        bindGestureData.xy += speed;
-        if (bindGestureData.xy > bindGestureData.ty) {
-            bindGestureData.xy = bindGestureData.ty;
-        }
-    }
-    else {
-        bindGestureData.xy -= speed;
-        if (bindGestureData.xy < bindGestureData.ty) {
-            bindGestureData.xy = bindGestureData.ty;
-        }
-    }
-    const xxAbs = Math.abs(bindGestureData.xx);
-    const xyAbs = Math.abs(bindGestureData.xy);
-    if ((!dirs.includes('top') && !dirs.includes('bottom')) || ((xxAbs > xyAbs) && (dirs.includes('left') || dirs.includes('right')))) {
-        // --- 水平 ---
-        if (bindGestureData.xx < 0) {
-            // --- left ---
-            if (!dirs.includes('left')) {
-                gestureElement.style.opacity = '0';
-                clearGestureData();
-                return;
-            }
-            gestureElement.style.opacity = '1';
-            if (xxAbs === 90) {
-                bindGestureData.dir = 'left';
-                gestureElement.classList.add('done');
-            }
-            else {
-                bindGestureData.dir = null;
-                gestureElement.classList.remove('done');
-            }
-            gestureElement.style.top = (opt.rect.top + ((opt.rect.height - 20) / 2)).toString() + 'px';
-            gestureElement.style.left = (opt.rect.left - 10 + (xxAbs / 1.5)).toString() + 'px';
-            gestureElement.style.transform = 'scale(' + (xxAbs / 90).toString() + ')';
-        }
-        else {
-            // --- right ---
-            if (!dirs.includes('right')) {
-                gestureElement.style.opacity = '0';
-                clearGestureData();
-                return;
-            }
-            gestureElement.style.opacity = '1';
-            if (xxAbs === 90) {
-                bindGestureData.dir = 'right';
-                gestureElement.classList.add('done');
-            }
-            else {
-                bindGestureData.dir = null;
-                gestureElement.classList.remove('done');
-            }
-            gestureElement.style.top = (opt.rect.top + ((opt.rect.height - 20) / 2)).toString() + 'px';
-            gestureElement.style.left = (opt.rect.left + opt.rect.width - 10 - (xxAbs / 1.5)).toString() + 'px';
-            gestureElement.style.transform = 'scale(' + (xxAbs / 90).toString() + ')';
-        }
-    }
-    else {
-        if (bindGestureData.xy < 0) {
-            // --- top ---
-            if (!dirs.includes('top')) {
-                gestureElement.style.opacity = '0';
-                clearGestureData();
-                return;
-            }
-            gestureElement.style.opacity = '1';
-            if (xyAbs === 90) {
-                bindGestureData.dir = 'top';
-                gestureElement.classList.add('done');
-            }
-            else {
-                bindGestureData.dir = null;
-                gestureElement.classList.remove('done');
-            }
-            gestureElement.style.left = (opt.rect.left + ((opt.rect.width - 20) / 2)).toString() + 'px';
-            gestureElement.style.top = (opt.rect.top - 10 + (xyAbs / 1.5)).toString() + 'px';
-            gestureElement.style.transform = 'scale(' + (xyAbs / 90).toString() + ')';
-        }
-        else {
-            // --- bottom ---
-            if (!dirs.includes('bottom')) {
-                gestureElement.style.opacity = '0';
-                clearGestureData();
-                return;
-            }
-            gestureElement.style.opacity = '1';
-            if (xyAbs === 90) {
-                bindGestureData.dir = 'bottom';
-                gestureElement.classList.add('done');
-            }
-            else {
-                bindGestureData.dir = null;
-                gestureElement.classList.remove('done');
-            }
-            gestureElement.style.left = (opt.rect.left + ((opt.rect.width - 20) / 2)).toString() + 'px';
-            gestureElement.style.top = (opt.rect.top + opt.rect.height - 10 - (xyAbs / 1.5)).toString() + 'px';
-            gestureElement.style.transform = 'scale(' + (xyAbs / 90).toString() + ')';
-        }
-    }
-
-    if (bindGestureData.xx === bindGestureData.tx && bindGestureData.xy === bindGestureData.ty) {
-        // --- 中途终止 ---
-        bindGestureData.timers.ani = 0;
-        bindGestureData.timers.sleep = window.setTimeout(() => {
-            // --- 触摸板 wheel 可能会多次执行，导致圆圈一直在，有缓动 ---
-            clearGestureData();
-            bindGestureData.timers.sleep = 0;
-            gestureElement.style.opacity = '0';
-            if (!bindGestureData.dir) {
-                return;
-            }
-            opt.handler(bindGestureData.dir);
-        }, 500);
-        return;
-    }
-    bindGestureData.timers.ani = requestAnimationFrame(() => {
-        bindGestureAnimation(opt);
-    });
-}
 
 /**
  * --- 绑定上拉、下拉、左拉、右拉 ---
- * @param e 响应事件
- * @param opt 选项
+ * @param oe 响应事件
+ * @param before before 事件，返回 true 则显示 gesture
+ * @param handler 执行完毕的话才会回调
  */
-export function bindGesture(e: MouseEvent | TouchEvent | WheelEvent | { 'x'?: number; 'y'?: number; }, opt: types.IBindGestureOptions): void {
-    const gestureElement = document.getElementById('cg-gesture')!;
-    const el: HTMLElement | undefined = ((e as any).currentTarget as HTMLElement | undefined)
-        ?? ((e as any).target as HTMLElement | undefined) ?? opt.el;
+export function bindGesture(oe: MouseEvent | TouchEvent | WheelEvent, before: (e: MouseEvent | TouchEvent | WheelEvent, dir: 'top' | 'right' | 'bottom' | 'left') => boolean, handler: (dir: 'top' | 'right' | 'bottom' | 'left') => void | Promise<void>): void {
+    const el = oe.currentTarget as HTMLElement | null;
     if (!el) {
         return;
     }
-    let rect: DOMRect;
-    if ((e as any).rect) {
-        rect = (e as any).rect as DOMRect;
-    }
-    else if (opt.rect) {
-        rect = opt.rect;
-    }
-    else {
-        if (!(el.getBoundingClientRect)) {
-            return;
-        }
-        rect = el.getBoundingClientRect();
-    }
-    const dirs = opt.dirs ?? ['top', 'bottom'];
-    if ((e instanceof MouseEvent || e instanceof TouchEvent) && !(e instanceof WheelEvent)) {
-        // --- touch / mouse 触发的 ---
-        const x: number = e instanceof MouseEvent ? e.clientX : e.touches[0].clientX;
-        const y: number = e instanceof MouseEvent ? e.clientY : e.touches[0].clientY;
-        let dir: 'top' | 'right' | 'bottom' | 'left' | null = null;
+    const rect = el.getBoundingClientRect();
+    if ((oe instanceof MouseEvent || oe instanceof TouchEvent) && !(oe instanceof WheelEvent)) {
+        // --- touch / mouse 触发的，dir 会和鼠标的 dir 相反，向下拖动是上方加载 ---
+        let offset: number = 0;
+        let origin: number = 0;
+        /** --- 是否第一次执行 move 事件,1-是,0-不是且继续,-1-终止 --- */
+        let first = 1;
+        /** --- 哪个方向要加载 --- */
+        let dir: 'top' | 'right' | 'bottom' | 'left' = 'top';
         /** --- 当前手势方向 --- */
-        bindDown(e, {
-            move: (e) => {
-                e.preventDefault();
-                if (bindGestureData.timers.ani !== 0) {
-                    cancelAnimationFrame(bindGestureData.timers.ani);
-                    bindGestureData.timers.ani = 0;
+        bindDown(oe, {
+            move: (e, d) => {
+                if (first < 0) {
+                    if (first > -30) {
+                        before(e, dir);
+                        --first;
+                    }
+                    return;
                 }
-                if (bindGestureData.timers.sleep !== 0) {
-                    clearTimeout(bindGestureData.timers.sleep);
-                    bindGestureData.timers.sleep = 0;
+                if (first === 1) {
+                    // --- 第一次执行，响应 before 判断是否继续执行 ---
+                    first = 0;
+                    switch (d) {
+                        case 'top': {
+                            dir = 'bottom';
+                            break;
+                        }
+                        case 'bottom': {
+                            dir = 'top';
+                            break;
+                        }
+                        case 'left': {
+                            dir = 'right';
+                            break;
+                        }
+                        default: {
+                            dir = 'left';
+                        }
+                    }
+                    if (!before(e, dir)) {
+                        first = -1;
+                        return;
+                    }
+                    // --- 初始化原点 ---
+                    switch (dir) {
+                        case 'top':
+                        case 'bottom': {
+                            origin = oe instanceof MouseEvent ? oe.clientY : oe.touches[0].clientY;
+                            break;
+                        }
+                        default: {
+                            origin = oe instanceof MouseEvent ? oe.clientX : oe.touches[0].clientX;
+                        }
+                    }
+                }
+                /** --- 当前坐标 --- */
+                let pos: number = 0;
+                switch (dir) {
+                    case 'top':
+                    case 'bottom': {
+                        pos = e instanceof MouseEvent ? e.clientY : e.touches[0].clientY;
+                        if (dir === 'top') {
+                            offset = pos - origin;
+                        }
+                        else {
+                            offset = origin - pos;
+                        }
+                        break;
+                    }
+                    default: {
+                        pos = e instanceof MouseEvent ? e.clientX : e.touches[0].clientX;
+                        if (dir === 'left') {
+                            offset = pos - origin;
+                        }
+                        else {
+                            offset = origin - pos;
+                        }
+                    }
                 }
 
-                const nx: number = e instanceof MouseEvent ? e.clientX : e.touches[0].clientX;
-                const ny: number = e instanceof MouseEvent ? e.clientY : e.touches[0].clientY;
-                /** --- 相对于按下时 x 的差值 --- */
-                const xx = nx - x;
-                /** --- 相对于按下时 y 的差值 --- */
-                const xy = ny - y;
-                let xxAbs = Math.abs(xx);
-                let xyAbs = Math.abs(xy);
-                if ((!dirs.includes('top') && !dirs.includes('bottom')) || ((xxAbs > xyAbs) && (dirs.includes('left') || dirs.includes('right')))) {
-                    // --- 水平 ---
-                    if (xx > 0) {
-                        // --- left ---
-                        if (!dirs.includes('left')) {
-                            gestureElement.style.opacity = '0';
-                            return;
-                        }
-                        gestureElement.style.opacity = '1';
-                        if (xxAbs > 90) {
-                            xxAbs = 90;
-                            dir = 'left';
-                            gestureElement.classList.add('done');
-                        }
-                        else {
-                            dir = null;
-                            gestureElement.classList.remove('done');
-                        }
-                        gestureElement.style.top = (rect.top + ((rect.height - 20) / 2)).toString() + 'px';
-                        gestureElement.style.left = (rect.left - 10 + (xxAbs / 1.5)).toString() + 'px';
-                        gestureElement.style.transform = 'scale(' + (xxAbs / 90).toString() + ')';
-                    }
-                    else {
-                        // --- right ---
-                        if (!dirs.includes('right')) {
-                            gestureElement.style.opacity = '0';
-                            return;
-                        }
-                        gestureElement.style.opacity = '1';
-                        if (xxAbs > 90) {
-                            xxAbs = 90;
-                            dir = 'right';
-                            gestureElement.classList.add('done');
-                        }
-                        else {
-                            dir = null;
-                            gestureElement.classList.remove('done');
-                        }
-                        gestureElement.style.top = (rect.top + ((rect.height - 20) / 2)).toString() + 'px';
-                        gestureElement.style.left = (rect.left + rect.width - 10 - (xxAbs / 1.5)).toString() + 'px';
-                        gestureElement.style.transform = 'scale(' + (xxAbs / 90).toString() + ')';
-                    }
+                // --- 处理差值 ---
+                if (offset >= 90) {
+                    offset = 90;
+                    form.elements.gesture.style.opacity = '1';
+                    form.elements.gesture.classList.add('done');
                 }
                 else {
-                    if (xy > 0) {
-                        // --- top ---
-                        if (!dirs.includes('top')) {
-                            gestureElement.style.opacity = '0';
-                            return;
-                        }
-                        gestureElement.style.opacity = '1';
-                        if (xyAbs > 90) {
-                            xyAbs = 90;
-                            dir = 'top';
-                            gestureElement.classList.add('done');
-                        }
-                        else {
-                            dir = null;
-                            gestureElement.classList.remove('done');
-                        }
-                        gestureElement.style.left = (rect.left + ((rect.width - 20) / 2)).toString() + 'px';
-                        gestureElement.style.top = (rect.top - 10 + (xyAbs / 1.5)).toString() + 'px';
-                        gestureElement.style.transform = 'scale(' + (xyAbs / 90).toString() + ')';
+                    form.elements.gesture.classList.remove('done');
+                    if (offset < 0) {
+                        offset = 0;
+                        form.elements.gesture.style.opacity = '0';
                     }
                     else {
-                        // --- bottom ---
-                        if (!dirs.includes('bottom')) {
-                            gestureElement.style.opacity = '0';
-                            return;
-                        }
-                        gestureElement.style.opacity = '1';
-                        if (xyAbs > 90) {
-                            xyAbs = 90;
-                            dir = 'bottom';
-                            gestureElement.classList.add('done');
+                        form.elements.gesture.style.opacity = '1';
+                    }
+                }
+                form.elements.gesture.style.transform = 'scale(' + (offset / 90).toString() + ')';
+
+                // --- 处理标签位置 ---
+                switch (dir) {
+                    case 'top':
+                    case 'bottom': {
+                        form.elements.gesture.style.left = (rect.left + ((rect.width - 20) / 2)).toString() + 'px';
+                        if (dir === 'top') {
+                            form.elements.gesture.style.top = (rect.top + (offset / 1.5)).toString() + 'px';
                         }
                         else {
-                            dir = null;
-                            gestureElement.classList.remove('done');
+                            form.elements.gesture.style.top = (rect.bottom - 20 - (offset / 1.5)).toString() + 'px';
                         }
-                        gestureElement.style.left = (rect.left + ((rect.width - 20) / 2)).toString() + 'px';
-                        gestureElement.style.top = (rect.top + rect.height - 10 - (xyAbs / 1.5)).toString() + 'px';
-                        gestureElement.style.transform = 'scale(' + (xyAbs / 90).toString() + ')';
+                        break;
+                    }
+                    default: {
+                        form.elements.gesture.style.top = (rect.top + ((rect.height - 20) / 2)).toString() + 'px';
+                        if (dir === 'left') {
+                            form.elements.gesture.style.left = (rect.left + (offset / 1.5)).toString() + 'px';
+                        }
+                        else {
+                            form.elements.gesture.style.left = (rect.right - 20 - (offset / 1.5)).toString() + 'px';
+                        }
                     }
                 }
             },
             end: (): void => {
-                gestureElement.style.opacity = '0';
-                if (!dir) {
+                form.elements.gesture.style.opacity = '0';
+                if (offset < 90) {
                     return;
                 }
-                opt.handler(dir);
+                handler(dir) as any;
             }
         });
     }
     else {
-        // --- wheel 触发、自定义触发 ---
-        if (bindGestureData.el !== el) {
-            bindGestureData.el = el;
-            bindGestureData.xx = 0;
-            bindGestureData.xy = 0;
-        }
-        let x: number = 0, y: number = 0;
-        if (e instanceof WheelEvent) {
-            e.preventDefault();
-            if (Math.abs(e.deltaX) < 5 && Math.abs(e.deltaY) < 5) {
+        // --- wheel 触发 ---
+        (async () => {
+            const now = Date.now();
+            if (now - gestureWheel.last > 250) {
+                // --- 超过 250 毫秒，已经进入下一轮 ---
+                gestureWheel.offset = 0;
+                gestureWheel.done = false;
+                gestureWheel.timer = 0;
+                gestureWheel.firstTimer = false;
+                gestureWheel.dir = '';
+            }
+            // --- 赋值最后执行时间 ---
+            gestureWheel.last = now;
+            if (gestureWheel.firstTimer) {
                 return;
             }
-            x = Math.round(e.deltaX / 3);
-            y = Math.round(e.deltaY / 3);
-            if ((e as any).direction === 'h') {
-                x = y;
-                y = 0;
+            // --- 判断本轮是否已经处理结束 ---
+            if (gestureWheel.done) {
+                return;
             }
-            else if ((e as any).direction === 'v') {
-                y = x;
-                x = 0;
+            // --- 获取滚动 delta 坐标 ---
+            let deltaY = oe.deltaY;
+            let deltaX = oe.deltaX;
+            if (clickgo.dom.is.shift) {
+                deltaY = oe.deltaX;
+                deltaX = oe.deltaY;
             }
-        }
-        else {
-            x = e.x ?? 0;
-            y = e.y ?? 0;
-        }
-        let tx = bindGestureData.tx + x;
-        if (tx > 90) {
-            tx = 90;
-        }
-        else if (tx < -90) {
-            tx = -90;
-        }
-        let ty = bindGestureData.ty + y;
-        if (ty > 90) {
-            ty = 90;
-        }
-        else if (ty < -90) {
-            ty = -90;
-        }
-        bindGestureData.tx = tx;
-        bindGestureData.ty = ty;
-        if (bindGestureData.timers.ani !== 0) {
-            cancelAnimationFrame(bindGestureData.timers.ani);
-            bindGestureData.timers.ani = 0;
-        }
-        if (bindGestureData.timers.sleep !== 0) {
-            clearTimeout(bindGestureData.timers.sleep);
-            bindGestureData.timers.sleep = 0;
-        }
-        bindGestureAnimation({
-            'rect': rect,
-            'dirs': opt.dirs,
-            'handler': opt.handler
+            // --- 判断是不是本轮首次滚动 ---
+            if (gestureWheel.dir === '') {
+                // --- 判断滚动方向 ---
+                if (Math.abs(deltaY) > Math.abs(deltaX)) {
+                    // --- 竖向滚动 ---
+                    if (deltaY < 0) {
+                        // --- 向上滚 ---
+                        gestureWheel.dir = 'top';
+                    }
+                    else {
+                        // --- 向下滚 ---
+                        gestureWheel.dir = 'bottom';
+                    }
+                }
+                else {
+                    // --- 横向滚动 ---
+                    if (deltaX < 0) {
+                        // --- 向左滚 ---
+                        gestureWheel.dir = 'left';
+                    }
+                    else {
+                        // --- 向下滚 ---
+                        gestureWheel.dir = 'right';
+                    }
+                }
+                // --- 判断是否要显示滚动条 ---
+                if (!before(oe, gestureWheel.dir as any)) {
+                    // --- 不显示 ---
+                    gestureWheel.done = true;
+                    return;
+                }
+                // --- 重置位置 ---
+                form.elements.gesture.style.transform = 'scale(0)';
+                switch (gestureWheel.dir) {
+                    case 'top':
+                    case 'bottom': {
+                        form.elements.gesture.style.left = (rect.left + ((rect.width - 20) / 2)).toString() + 'px';
+                        if (gestureWheel.dir === 'top') {
+                            form.elements.gesture.style.top = (rect.top + 10).toString() + 'px';
+                        }
+                        else {
+                            form.elements.gesture.style.top = (rect.bottom - 10).toString() + 'px';
+                        }
+                        break;
+                    }
+                    default: {
+                        form.elements.gesture.style.top = (rect.top + ((rect.height - 20) / 2)).toString() + 'px';
+                        if (gestureWheel.dir === 'left') {
+                            form.elements.gesture.style.left = (rect.left + 10).toString() + 'px';
+                        }
+                        else {
+                            form.elements.gesture.style.left = (rect.right - 10).toString() + 'px';
+                        }
+                    }
+                }
+                gestureWheel.firstTimer = true;
+                await tool.sleep(30);
+                gestureWheel.firstTimer = false;
+                form.elements.gesture.classList.add('ani');
+            }
+            // --- 滚动 ---
+            switch (gestureWheel.dir) {
+                case 'top':
+                case 'bottom': {
+                    gestureWheel.offset += (gestureWheel.dir === 'top') ? -deltaY : deltaY;
+                    break;
+                }
+                default: {
+                    gestureWheel.offset += (gestureWheel.dir === 'left') ? -deltaX : deltaX;
+                }
+            }
+            if (gestureWheel.offset < 0) {
+                // --- 隐藏了，直接 return ---
+                gestureWheel.offset = 0;
+                form.elements.gesture.style.opacity = '0';
+                return;
+            }
+            // --- 显示 gesture 对象 ---
+            form.elements.gesture.style.opacity = '1';
+            let offset = gestureWheel.offset / 1.38;
+            if (offset > 90) {
+                offset = 90;
+                form.elements.gesture.classList.add('done');
+            }
+            else {
+                form.elements.gesture.classList.remove('done');
+            }
+            // --- 处理标签位置（20 像素是 gesture 的宽高） ---
+            form.elements.gesture.style.transform = 'scale(' + (offset / 90).toString() + ')';
+            switch (gestureWheel.dir) {
+                case 'top': {
+                    form.elements.gesture.style.top = (rect.top + (offset / 1.5)).toString() + 'px';
+                    break;
+                }
+                case 'bottom': {
+                    form.elements.gesture.style.top = (rect.bottom - 20 - (offset / 1.5)).toString() + 'px';
+                    break;
+                }
+                case 'left': {
+                    form.elements.gesture.style.left = (rect.left + (offset / 1.5)).toString() + 'px';
+                    break;
+                }
+                default: {
+                    form.elements.gesture.style.left = (rect.right - 20 - (offset / 1.5)).toString() + 'px';
+                }
+            }
+            // --- 看是否要响应 ---
+            clearTimeout(gestureWheel.timer);
+            if (offset < 90) {
+                gestureWheel.timer = window.setTimeout(() => {
+                    form.elements.gesture.style.opacity = '0';
+                    form.elements.gesture.classList.remove('ani');
+                }, 250);
+                return;
+            }
+            gestureWheel.done = true;
+            handler(gestureWheel.dir as any) as any;
+            await tool.sleep(500);
+            form.elements.gesture.style.opacity = '0';
+            form.elements.gesture.classList.remove('ani');
+        })().catch((e) => {
+            console.log('error', 'dom.bindGesture', e);
         });
     }
 }
@@ -1151,9 +1266,9 @@ export function bindDrag(e: MouseEvent | TouchEvent, opt: { 'el': HTMLElement; '
             otop = rect.top;
             oleft = rect.left;
         },
-        'move': function(ox, oy, x, y) {
-            const ntop = otop + oy;
-            const nleft = oleft + ox;
+        'move': function(e, o) {
+            const ntop = otop + o.oy;
+            const nleft = oleft + o.ox;
             form.moveDrag({
                 'top': ntop,
                 'left': nleft,
@@ -1162,7 +1277,7 @@ export function bindDrag(e: MouseEvent | TouchEvent, opt: { 'el': HTMLElement; '
             otop = ntop;
             oleft = nleft;
             // --- 获取当前 element ---
-            const els = document.elementsFromPoint(x, y) as HTMLElement[];
+            const els = document.elementsFromPoint(o.x, o.y) as HTMLElement[];
             for (const el of els) {
                 if (el.dataset.cgDrop === undefined) {
                     continue;
@@ -1549,8 +1664,20 @@ export function bindMove(e: MouseEvent | TouchEvent, opt: types.IBindMoveOptions
                 'ox': ox,
                 'oy': oy
             });
-
-            opt.move?.(ox, oy, x, y, border, dir, e);
+            opt.move?.(e, {
+                'ox': ox,
+                'oy': oy,
+                'x': x,
+                'y': y,
+                'border': border,
+                'inBorder': {
+                    'top': inBorderTop,
+                    'right': inBorderRight,
+                    'bottom': inBorderBottom,
+                    'left': inBorderLeft
+                },
+                'dir': dir
+            });
             tx = x;
             ty = y;
         },
@@ -1668,22 +1795,22 @@ export function bindResize(e: MouseEvent | TouchEvent, opt: types.IBindResizeOpt
         'offsetRight': offsetRight,
         'offsetBottom': offsetBottom,
         'start': opt.start,
-        'move': function(ox, oy, x, y, border) {
+        'move': function(e, o) {
             if (opt.border === 'tr' || opt.border === 'r' || opt.border === 'rb') {
-                opt.objectWidth! += ox;
+                opt.objectWidth! += o.ox;
             }
             else if (opt.border === 'bl' || opt.border === 'l' || opt.border === 'lt') {
-                opt.objectWidth! -= ox;
-                opt.objectLeft! += ox;
+                opt.objectWidth! -= o.ox;
+                opt.objectLeft! += o.ox;
             }
             if (opt.border === 'rb' || opt.border === 'b' || opt.border === 'bl') {
-                opt.objectHeight! += oy;
+                opt.objectHeight! += o.oy;
             }
             else if (opt.border === 'lt' || opt.border === 't' || opt.border === 'tr') {
-                opt.objectHeight! -= oy;
-                opt.objectTop! += oy;
+                opt.objectHeight! -= o.oy;
+                opt.objectTop! += o.oy;
             }
-            opt.move?.(opt.objectLeft!, opt.objectTop!, opt.objectWidth!, opt.objectHeight!, x, y, border);
+            opt.move?.(opt.objectLeft!, opt.objectTop!, opt.objectWidth!, opt.objectHeight!, x, y, o.border);
         },
         'end': opt.end
     });
@@ -1786,3 +1913,17 @@ export function fullscreen(): boolean {
         return false;
     }
 }
+
+// --- 处理 timer 类，窗体消失时不进行监听 ---
+document.addEventListener('visibilitychange', function() {
+    if (document.hidden) {
+        // --- 隐藏 ---
+        cancelAnimationFrame(watchStyleTimer);
+        cancelAnimationFrame(watchPropertyTimer);
+    }
+    else {
+        // --- 显示 ---
+        watchStyleTimer = requestAnimationFrame(watchStyleHandler);
+        watchPropertyTimer = requestAnimationFrame(watchPropertyHandler);
+    }
+});

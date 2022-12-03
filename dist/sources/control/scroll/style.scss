@@ -43,7 +43,7 @@
     }
 
     // --- bar 滚动部分 ---
-    .scroll-bar {
+    .bar {
         flex: 1; overflow: hidden;
     
         // --- 滚动块 ---
@@ -89,7 +89,7 @@
             }
         }
 
-        .scroll-bar {
+        .bar {
             visibility: hidden; pointer-events: none;
         }
     }

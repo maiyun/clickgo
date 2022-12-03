@@ -95,6 +95,18 @@ export abstract class AbstractApp {
                 const beforeTotal = Object.keys(t.app.files).length;
                 net.progress?.(loaded + beforeTotal, total + beforeTotal) as unknown;
                 for (const file of files) {
+                    if (t.app.files[file]) {
+                        ++loaded;
+                        net.progress?.(loaded + beforeTotal, total + beforeTotal) as unknown;
+                        if (net.notify) {
+                            form.notifyProgress(net.notify, (loaded / total) / 2 + 0.5);
+                        }
+                        if (loaded < total) {
+                            continue;
+                        }
+                        resolve();
+                        return;
+                    }
                     fs.getContent(net.url + file.slice(1), {
                         'current': net.current
                     }).then(async function(blob) {
@@ -392,7 +404,12 @@ clickgo.vue.watch(config, function() {
 });
 
 /** --- module 列表 --- */
-const modules: Record<string, { func: () => any | Promise<any>; 'obj': null | any; 'loading': boolean; }> = {
+const modules: Record<string, {
+    func: () => any | Promise<any>;
+    'obj': null | any;
+    'loading': boolean;
+    'resolve': Array<() => void | Promise<void>>;
+}> = {
     'monaco': {
         func: async function() {
             return new Promise(function(resolve, reject) {
@@ -408,7 +425,8 @@ const modules: Record<string, { func: () => any | Promise<any>; 'obj': null | an
             });
         },
         'obj': null,
-        'loading': false
+        'loading': false,
+        'resolve': []
     }
 };
 
@@ -424,95 +442,59 @@ export function regModule(name: string, func: () => any | Promise<any>): boolean
     modules[name] = {
         func: func,
         'obj': null,
-        'loading': false
+        'loading': false,
+        'resolve': []
     };
     return true;
-}
-
-/**
- * --- 外接模块需要 init 后才能使用 ---
- * @param names 要加载的模块名
- */
-export function initModules(names: string | string[]): Promise<number> {
-    return new Promise(function(resolve) {
-        if (typeof names === 'string') {
-            names = [names];
-        }
-        if (names.length === 0) {
-            resolve(0);
-            return;
-        }
-        let loaded = 0;
-        let successful = 0;
-        for (const name of names) {
-            if (!modules[name]) {
-                ++loaded;
-                if (loaded === names.length) {
-                    resolve(successful);
-                    return;
-                }
-                continue;
-            }
-            if (modules[name].obj) {
-                ++loaded;
-                ++successful;
-                if (loaded === names.length) {
-                    resolve(successful);
-                    return;
-                }
-                continue;
-            }
-            if (modules[name].loading) {
-                ++loaded;
-                if (loaded === names.length) {
-                    resolve(successful);
-                    return;
-                }
-                continue;
-            }
-            // --- 正式开始加载 init ---
-            modules[name].loading = true;
-            const rtn = modules[name].func();
-            if (rtn instanceof Promise) {
-                rtn.then(function(obj) {
-                    modules[name].obj = obj;
-                    modules[name].loading = false;
-                    ++loaded;
-                    ++successful;
-                    if (loaded === names.length) {
-                        resolve(successful);
-                        return;
-                    }
-                }).catch(function() {
-                    modules[name].loading = false;
-                    ++loaded;
-                    if (loaded === names.length) {
-                        resolve(successful);
-                    }
-                });
-            }
-            else {
-                modules[name].obj = rtn;
-                modules[name].loading = false;
-                ++loaded;
-                ++successful;
-                if (loaded === names.length) {
-                    resolve(successful);
-                }
-            }
-        }
-    });
 }
 
 /**
  * --- 获取外接模块 ---
  * @param name 模块名
  */
-export function getModule(name: string): null | any {
-    if (!modules[name]) {
-        return null;
-    }
-    return modules[name].obj;
+export function getModule(name: string): Promise<null | any> {
+    return new Promise((resolve) => {
+        if (!modules[name]) {
+            return null;
+        }
+        if (!modules[name].obj) {
+            // --- obj 是 null 判断是否要初始化 ---
+            if (modules[name].loading) {
+                // --- 加载中，等待 ---
+                modules[name].resolve.push(() => {
+                    resolve(modules[name].obj);
+                });
+            }
+            else {
+                // --- 没加载，开始加载 ---
+                const rtn = modules[name].func();
+                if (rtn instanceof Promise) {
+                    modules[name].loading = true;
+                    rtn.then(function(obj) {
+                        modules[name].obj = obj;
+                        modules[name].loading = false;
+                        resolve(obj);
+                        for (const r of modules[name].resolve) {
+                            r() as any;
+                        }
+                    }).catch(function() {
+                        modules[name].loading = false;
+                        resolve(null);
+                        for (const r of modules[name].resolve) {
+                            r() as any;
+                        }
+                    });
+                }
+                else {
+                    modules[name].obj = rtn;
+                    resolve(rtn);
+                }
+            }
+            return;
+        }
+        resolve(modules[name].obj);
+        return;
+    });
 }
 
 /** --- 系统要处理的全局响应事件 --- */

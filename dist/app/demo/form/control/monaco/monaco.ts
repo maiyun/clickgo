@@ -2,7 +2,7 @@ import * as clickgo from 'clickgo';
 
 export default class extends clickgo.form.AbstractForm {
 
-    public npath = '/index.html';
+    public npath = ['/index.html'];
 
     public file = '';
 
@@ -54,7 +54,7 @@ export default class extends clickgo.form.AbstractForm {
         }
     ];
 
-    public theme = 'vs';
+    public theme = ['vs'];
 
     public themes = ['vs', 'vs-dark', 'hc-black'];
 
@@ -68,11 +68,9 @@ export default class extends clickgo.form.AbstractForm {
 
     public disabled = false;
 
-    public size = '12px';
+    public size = ['12px'];
 
     public family = false;
-
-    public initMonaco = false;
 
     public get filesName(): string[] {
         const names: string[] = [];
@@ -112,16 +110,8 @@ export default class extends clickgo.form.AbstractForm {
         }).catch((e) => { throw e; });
     }
 
-    public pathLebel(label: string): void {
-        this.language = label.toLowerCase();
-    }
-
-    public onMounted(): void {
-        clickgo.core.initModules('monaco').then(() => {
-            this.initMonaco = true;
-        }).catch(() => {
-            this.initMonaco = true;
-        });
+    public pathLebel(label: string[]): void {
+        this.language = label[0].toLowerCase();
     }
 
 }

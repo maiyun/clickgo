@@ -2,32 +2,19 @@ import * as clickgo from 'clickgo';
 
 export default class extends clickgo.control.AbstractControl {
 
-    public props = {
-        'accept': undefined,
-        'multi': false,
-        'dir': false
-    };
-
-    public get isMulti(): boolean {
-        return clickgo.tool.getBoolean(this.props.multi);
-    }
-
-    public get isDir(): boolean {
-        return clickgo.tool.getBoolean(this.props.dir);
-    }
+    public props: {
+        'accept': string[] | string;
+        'multi': boolean | string;
+        'dir': boolean | string;
+    } = {
+            'accept': [],
+            'multi': false,
+            'dir': false
+        };
 
     public get acceptComp(): string | undefined {
-        if (!this.props.accept) {
-            return undefined;
-        }
-        if (!Array.isArray(this.props.accept)) {
-            return undefined;
-        }
         const accept: string[] = [];
-        for (const item of this.props.accept as any[]) {
-            if (typeof item !== 'string') {
-                continue;
-            }
+        for (const item of this.propArray('accept')) {
             accept.push('.' + item);
         }
         return accept.join(',');

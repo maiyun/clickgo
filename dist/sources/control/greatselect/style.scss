@@ -1,5 +1,5 @@
 .wrap {
-    display: flex; outline: none; position: relative; padding: 7px;
+    display: flex; outline: none; padding: 7px; border: solid .5px var(--g-border-color);
     &.area-all {
         background: var(--g-background);
     }
@@ -7,34 +7,23 @@
         background: var(--g-plain-background);
     }
 
-    &::before {
-        content: ''; pointer-events: none; position: absolute; left: 0; top: 0; width: 200%; height: 200%; transform-origin: 0 0; transform: scale(.5); border: solid 1px var(--g-border-color); z-index: 1;
-    }
     &[data-cg-pop-open] {
         &.area-all {
             background: var(--g-background-active);
         }
-        &::before {
-            border: solid 1px var(--g-border-color-active);
-        }
+        border: solid .5px var(--g-border-color-active);
     }
 
     &[data-cg-disabled] {
-        background: var(--g-background-disabled); color: var(--g-color-disabled);;
-        &::before {
-            border: solid 1px var(--g-border-color-disabled);
-        }
+        background: var(--g-background-disabled); color: var(--g-color-disabled);
+        border: solid .5px var(--g-border-color-disabled);
     }
     &:not([data-cg-disabled]):not([data-cg-pop-open]) {
         &:hover, &:focus {
-            &::before {
-                border: solid 1px var(--g-border-color-hover);
-            }
+            border: solid .5px var(--g-border-color-hover);
         }
         &:active, &.active {
-            &::before {
-                border: solid 1px var(--g-border-color-active);
-            }
+            border: solid .5px var(--g-border-color-active);
         }
         &.area-all {
             &:hover, &:focus {
@@ -61,10 +50,7 @@
     }
 
     .arrow {
-        position: relative; display: flex; justify-content: center; align-items: center; width: 20px;
-        &::before {
-            content: ''; pointer-events: none; position: absolute; left: 0; top: 0; width: 200%; height: 200%; transform-origin: 0 0; transform: scale(.5); border: solid 1px transparent;
-        }
+        position: relative; display: flex; justify-content: center; align-items: center; width: 20px; border: solid .5px transparent;
         &::after {
             content: ''; border: solid 1px var(--g-color); border-width: 0 1px 1px 0; width: 6px; height: 6px; transform: rotate(45deg); margin-top: -3px;
         }
@@ -75,15 +61,11 @@
             .arrow {
                 &:hover {
                     background: var(--g-plain-background-hover);
-                    &::before {
-                        border-left-color: var(--g-plain-border-color-hover);
-                    }
+                    border-left-color: var(--g-plain-border-color-hover);
                 }
                 &:active {
                     background: var(--g-plain-background-active);
-                    &::before {
-                        border-left-color: var(--g-plain-border-color-active);
-                    }
+                    border-left-color: var(--g-plain-border-color-active);
                 }
             }
         }
@@ -92,9 +74,7 @@
         &[data-cg-pop-open], &.active {
             .arrow {
                 background: var(--g-plain-background-active);
-                &::before {
-                    border-left-color: var(--g-plain-border-color-active);
-                }
+                border-left-color: var(--g-plain-border-color-active);
             }
         }
     }

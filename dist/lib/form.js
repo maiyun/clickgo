@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.hideLauncher = exports.showLauncher = exports.flash = exports.confirm = exports.dialog = exports.create = exports.remove = exports.doFocusAndPopEvent = exports.hidePop = exports.showPop = exports.removeFromPop = exports.appendToPop = exports.hideNotify = exports.notifyProgress = exports.notify = exports.hideDrag = exports.moveDrag = exports.showDrag = exports.hideRectangle = exports.showRectangle = exports.moveRectangle = exports.showCircular = exports.getRectByBorder = exports.getMaxZIndexID = exports.changeFocus = exports.getList = exports.send = exports.get = exports.getTaskId = exports.refreshMaxPosition = exports.bindDrag = exports.bindResize = exports.close = exports.max = exports.min = exports.launcherRoot = exports.simpleSystemTaskRoot = exports.AbstractForm = void 0;
+exports.hideLauncher = exports.showLauncher = exports.flash = exports.confirm = exports.dialog = exports.create = exports.remove = exports.doFocusAndPopEvent = exports.hidePop = exports.showPop = exports.removeFromPop = exports.appendToPop = exports.hideNotify = exports.notifyProgress = exports.notify = exports.hideDrag = exports.moveDrag = exports.showDrag = exports.hideRectangle = exports.showRectangle = exports.moveRectangle = exports.showCircular = exports.getRectByBorder = exports.getMaxZIndexID = exports.changeFocus = exports.getFocus = exports.getList = exports.send = exports.get = exports.getTaskId = exports.refreshMaxPosition = exports.bindDrag = exports.bindResize = exports.close = exports.max = exports.min = exports.elements = exports.launcherRoot = exports.simpleSystemTaskRoot = exports.AbstractForm = void 0;
 const clickgo = require("../clickgo");
 const core = require("./core");
 const task = require("./task");
@@ -18,6 +18,7 @@ const dom = require("./dom");
 const control = require("./control");
 const fs = require("./fs");
 const native = require("./native");
+let focusId = null;
 const info = {
     'lastId': 0,
     'lastZIndex': 999,
@@ -177,7 +178,7 @@ class AbstractForm {
             return (_d = (_b = (_a = task.list[this.taskId].locale.data[this.locale]) === null || _a === void 0 ? void 0 : _a[key]) !== null && _b !== void 0 ? _b : (_c = task.list[this.taskId].locale.data['en']) === null || _c === void 0 ? void 0 : _c[key]) !== null && _d !== void 0 ? _d : 'LocaleError';
         };
     }
-    classPrepend() {
+    get classPrepend() {
         return (cla) => {
             if (typeof cla !== 'string') {
                 return cla;
@@ -267,6 +268,9 @@ class AbstractForm {
         const v = this;
         v.$refs.form.$data.isShow = false;
     }
+    close() {
+        clickgo.form.close(this.formId);
+    }
     onBeforeCreate() {
         return;
     }
@@ -346,7 +350,7 @@ const popInfo = {
     'elList': [],
     'lastZIndex': 0
 };
-const elements = {
+exports.elements = {
     'wrap': document.createElement('div'),
     'list': document.createElement('div'),
     'popList': document.createElement('div'),
@@ -361,6 +365,21 @@ const elements = {
     'init': function () {
         this.wrap.id = 'cg-wrap';
         document.getElementsByTagName('body')[0].appendChild(this.wrap);
+        this.wrap.addEventListener('touchmove', function (e) {
+            if (e.cancelable) {
+                e.preventDefault();
+            }
+        }, {
+            'passive': false
+        });
+        this.wrap.addEventListener('wheel', function (e) {
+            e.preventDefault();
+        }, {
+            'passive': false
+        });
+        this.wrap.addEventListener('contextmenu', function (e) {
+            e.preventDefault();
+        });
         if (clickgo.isImmersion()) {
             this.wrap.addEventListener('mouseenter', function () {
                 native.invoke('cg-mouse-ignore', native.getToken(), false);
@@ -371,31 +390,8 @@ const elements = {
         }
         this.list.id = 'cg-form-list';
         this.wrap.appendChild(this.list);
-        this.list.addEventListener('touchmove', function (e) {
-            if (e.cancelable) {
-                e.preventDefault();
-            }
-        }, {
-            'passive': false
-        });
-        this.list.addEventListener('wheel', function (e) {
-            e.preventDefault();
-        }, {
-            'passive': false
-        });
-        this.list.addEventListener('contextmenu', function (e) {
-            e.preventDefault();
-        });
         this.popList.id = 'cg-pop-list';
-        this.popList.addEventListener('contextmenu', function (e) {
-            e.preventDefault();
-        });
         this.wrap.appendChild(this.popList);
-        this.popList.addEventListener('touchmove', function (e) {
-            e.preventDefault();
-        }, {
-            'passive': false
-        });
         this.circular.id = 'cg-circular';
         this.wrap.appendChild(this.circular);
         this.rectangle.setAttribute('data-pos', '');
@@ -408,25 +404,9 @@ const elements = {
         this.dragIcon = this.drag.childNodes[0];
         this.wrap.appendChild(this.drag);
         this.system.id = 'cg-system';
-        this.system.addEventListener('contextmenu', function (e) {
-            e.preventDefault();
-        });
         this.wrap.appendChild(this.system);
-        this.system.addEventListener('touchmove', function (e) {
-            e.preventDefault();
-        }, {
-            'passive': false
-        });
         this.simpleSystemtask.id = 'cg-simpletask';
-        this.simpleSystemtask.addEventListener('contextmenu', function (e) {
-            e.preventDefault();
-        });
         this.wrap.appendChild(this.simpleSystemtask);
-        this.simpleSystemtask.addEventListener('touchmove', function (e) {
-            e.preventDefault();
-        }, {
-            'passive': false
-        });
         const simpletaskApp = clickgo.vue.createApp({
             'template': '<div v-for="(item, formId) of forms" class="cg-simpletask-item" @click="click(parseInt(formId))"><div v-if="item.icon" class="cg-simpletask-icon" :style="{\'background-image\': \'url(\' + item.icon + \')\'}"></div><div>{{item.title}}</div></div>',
             'data': function () {
@@ -439,14 +419,14 @@ const elements = {
                     handler: function () {
                         const length = Object.keys(this.forms).length;
                         if (length > 0) {
-                            if (elements.simpleSystemtask.style.bottom !== '0px') {
-                                elements.simpleSystemtask.style.bottom = '0px';
+                            if (exports.elements.simpleSystemtask.style.bottom !== '0px') {
+                                exports.elements.simpleSystemtask.style.bottom = '0px';
                                 core.trigger('screenResize');
                             }
                         }
                         else {
-                            if (elements.simpleSystemtask.style.bottom === '0px') {
-                                elements.simpleSystemtask.style.bottom = '-46px';
+                            if (exports.elements.simpleSystemtask.style.bottom === '0px') {
+                                exports.elements.simpleSystemtask.style.bottom = '-46px';
                                 core.trigger('screenResize');
                             }
                         }
@@ -465,20 +445,12 @@ const elements = {
         });
         simpletaskApp.mount('#cg-simpletask');
         this.launcher.id = 'cg-launcher';
-        this.launcher.addEventListener('contextmenu', function (e) {
-            e.preventDefault();
-        });
         this.wrap.appendChild(this.launcher);
-        this.launcher.addEventListener('touchmove', function (e) {
-            e.preventDefault();
-        }, {
-            'passive': false
-        });
         const waiting = function () {
             if (!core.config) {
                 setTimeout(function () {
                     waiting();
-                }, 2000);
+                }, 150);
                 return;
             }
             const launcherApp = clickgo.vue.createApp({
@@ -643,7 +615,7 @@ const elements = {
         waiting();
     }
 };
-elements.init();
+exports.elements.init();
 function changeState(state, formId) {
     const tid = getTaskId(formId);
     const t = task.list[tid];
@@ -715,8 +687,8 @@ function bindDrag(e) {
 exports.bindDrag = bindDrag;
 function refreshMaxPosition() {
     const area = core.getAvailArea();
-    for (let i = 0; i < elements.list.children.length; ++i) {
-        const el = elements.list.children.item(i);
+    for (let i = 0; i < exports.elements.list.children.length; ++i) {
+        const el = exports.elements.list.children.item(i);
         const ef = el.children.item(0);
         if (ef.dataset.cgMax === undefined) {
             continue;
@@ -735,7 +707,7 @@ function refreshMaxPosition() {
 }
 exports.refreshMaxPosition = refreshMaxPosition;
 function getTaskId(formId) {
-    const formElement = elements.list.querySelector(`[data-form-id='${formId}']`);
+    const formElement = exports.elements.list.querySelector(`[data-form-id='${formId}']`);
     if (!formElement) {
         return 0;
     }
@@ -792,8 +764,12 @@ function getList(taskId) {
     return list;
 }
 exports.getList = getList;
+function getFocus() {
+    return focusId;
+}
+exports.getFocus = getFocus;
 function changeFocus(formId = 0) {
-    var _a, _b;
+    var _a;
     if (typeof formId !== 'number') {
         notify({
             'title': 'Warning',
@@ -802,37 +778,31 @@ function changeFocus(formId = 0) {
         });
         return;
     }
-    const focusElement = document.querySelector('#cg-form-list > [data-form-focus]');
-    if (focusElement) {
-        const dataFormId = focusElement.getAttribute('data-form-id');
-        if (dataFormId) {
-            const dataFormIdNumber = parseInt(dataFormId);
-            if (dataFormIdNumber === formId) {
-                return;
-            }
-            else {
-                const taskId = parseInt((_a = focusElement.getAttribute('data-task-id')) !== null && _a !== void 0 ? _a : '0');
-                const t = task.list[taskId];
-                t.forms[dataFormIdNumber].vapp._container.removeAttribute('data-form-focus');
-                t.forms[dataFormIdNumber].vroot._formFocus = false;
-                core.trigger('formBlurred', taskId, dataFormIdNumber);
-            }
-        }
-        else {
+    const dataFormId = getFocus();
+    if (dataFormId) {
+        if (dataFormId === formId) {
             return;
         }
+        else {
+            const t = task.list[task.getFocus()];
+            t.forms[dataFormId].vapp._container.removeAttribute('data-form-focus');
+            t.forms[dataFormId].vroot._formFocus = false;
+            core.trigger('formBlurred', t.id, dataFormId);
+        }
     }
+    focusId = null;
+    task.setFocus();
     if (formId === 0) {
         return;
     }
-    const el = document.querySelector(`#cg-form-list > [data-form-id='${formId}']`);
+    const el = exports.elements.list.querySelector(`.cg-form-wrap[data-form-id='${formId}']`);
     if (!el) {
         return;
     }
     if (el.children.item(0).dataset.cgMin !== undefined) {
         min(formId);
     }
-    const taskId = parseInt((_b = el.getAttribute('data-task-id')) !== null && _b !== void 0 ? _b : '0');
+    const taskId = parseInt((_a = el.getAttribute('data-task-id')) !== null && _a !== void 0 ? _a : '0');
     const t = task.list[taskId];
     if (t.runtime.dialogFormIds.length) {
         const dialogFormId = t.runtime.dialogFormIds[t.runtime.dialogFormIds.length - 1];
@@ -847,6 +817,8 @@ function changeFocus(formId = 0) {
         }
         t.forms[dialogFormId].vapp._container.dataset.formFocus = '';
         t.forms[dialogFormId].vroot._formFocus = true;
+        focusId = dialogFormId;
+        task.setFocus(t.id);
         core.trigger('formFocused', taskId, dialogFormId);
         if (dialogFormId !== formId) {
             clickgo.form.flash(dialogFormId, taskId);
@@ -861,6 +833,8 @@ function changeFocus(formId = 0) {
         }
         t.forms[formId].vapp._container.dataset.formFocus = '';
         t.forms[formId].vroot._formFocus = true;
+        focusId = formId;
+        task.setFocus(t.id);
         core.trigger('formFocused', taskId, formId);
     }
 }
@@ -869,8 +843,8 @@ function getMaxZIndexID(out = {}) {
     var _a, _b;
     let zIndex = 0;
     let formId = null;
-    for (let i = 0; i < elements.list.children.length; ++i) {
-        const formWrap = elements.list.children.item(i);
+    for (let i = 0; i < exports.elements.list.children.length; ++i) {
+        const formWrap = exports.elements.list.children.item(i);
         const formInner = formWrap.children.item(0);
         if (!formInner) {
             continue;
@@ -980,21 +954,21 @@ function getRectByBorder(border) {
 }
 exports.getRectByBorder = getRectByBorder;
 function showCircular(x, y) {
-    elements.circular.style.transition = 'none';
+    exports.elements.circular.style.transition = 'none';
     requestAnimationFrame(function () {
-        elements.circular.style.width = '6px';
-        elements.circular.style.height = '6px';
-        elements.circular.style.left = (x - 3).toString() + 'px';
-        elements.circular.style.top = (y - 3).toString() + 'px';
-        elements.circular.style.opacity = '1';
+        exports.elements.circular.style.width = '6px';
+        exports.elements.circular.style.height = '6px';
+        exports.elements.circular.style.left = (x - 3).toString() + 'px';
+        exports.elements.circular.style.top = (y - 3).toString() + 'px';
+        exports.elements.circular.style.opacity = '1';
         requestAnimationFrame(function () {
-            elements.circular.style.transition = 'all .3s ease-out';
+            exports.elements.circular.style.transition = 'all .3s ease-out';
             requestAnimationFrame(function () {
-                elements.circular.style.width = '60px';
-                elements.circular.style.height = '60px';
-                elements.circular.style.left = (x - 30).toString() + 'px';
-                elements.circular.style.top = (y - 30).toString() + 'px';
-                elements.circular.style.opacity = '0';
+                exports.elements.circular.style.width = '60px';
+                exports.elements.circular.style.height = '60px';
+                exports.elements.circular.style.left = (x - 30).toString() + 'px';
+                exports.elements.circular.style.top = (y - 30).toString() + 'px';
+                exports.elements.circular.style.opacity = '0';
             });
         });
     });
@@ -1002,43 +976,43 @@ function showCircular(x, y) {
 exports.showCircular = showCircular;
 function moveRectangle(border) {
     var _a, _b, _c, _d;
-    const dataReady = (_a = elements.rectangle.getAttribute('data-ready')) !== null && _a !== void 0 ? _a : '0';
+    const dataReady = (_a = exports.elements.rectangle.getAttribute('data-ready')) !== null && _a !== void 0 ? _a : '0';
     if (dataReady === '0') {
         return;
     }
-    const dataBorder = (_b = elements.rectangle.getAttribute('data-border')) !== null && _b !== void 0 ? _b : '';
+    const dataBorder = (_b = exports.elements.rectangle.getAttribute('data-border')) !== null && _b !== void 0 ? _b : '';
     const setDataBorder = typeof border === 'string' ? border : `o-${border.left}-${(_c = border.top) !== null && _c !== void 0 ? _c : 'n'}-${border.width}-${(_d = border.height) !== null && _d !== void 0 ? _d : 'n'}`;
     if (dataBorder === setDataBorder) {
         return;
     }
-    elements.rectangle.setAttribute('data-dir', setDataBorder);
+    exports.elements.rectangle.setAttribute('data-dir', setDataBorder);
     const pos = getRectByBorder(border);
     const width = pos.width - 20;
     const height = pos.height - 20;
     const left = pos.left + 10;
     const top = pos.top + 10;
     if (width !== undefined && height !== undefined && left !== undefined && top !== undefined) {
-        elements.rectangle.style.width = width.toString() + 'px';
-        elements.rectangle.style.height = height.toString() + 'px';
-        elements.rectangle.style.left = left.toString() + 'px';
-        elements.rectangle.style.top = top.toString() + 'px';
+        exports.elements.rectangle.style.width = width.toString() + 'px';
+        exports.elements.rectangle.style.height = height.toString() + 'px';
+        exports.elements.rectangle.style.left = left.toString() + 'px';
+        exports.elements.rectangle.style.top = top.toString() + 'px';
     }
 }
 exports.moveRectangle = moveRectangle;
 function showRectangle(x, y, border) {
-    elements.rectangle.style.transition = 'none';
+    exports.elements.rectangle.style.transition = 'none';
     requestAnimationFrame(function () {
-        elements.rectangle.style.width = '5px';
-        elements.rectangle.style.height = '5px';
-        elements.rectangle.style.left = (x - 10).toString() + 'px';
-        elements.rectangle.style.top = (y - 10).toString() + 'px';
-        elements.rectangle.style.opacity = '1';
-        elements.rectangle.setAttribute('data-ready', '0');
-        elements.rectangle.setAttribute('data-dir', '');
+        exports.elements.rectangle.style.width = '5px';
+        exports.elements.rectangle.style.height = '5px';
+        exports.elements.rectangle.style.left = (x - 10).toString() + 'px';
+        exports.elements.rectangle.style.top = (y - 10).toString() + 'px';
+        exports.elements.rectangle.style.opacity = '1';
+        exports.elements.rectangle.setAttribute('data-ready', '0');
+        exports.elements.rectangle.setAttribute('data-dir', '');
         requestAnimationFrame(function () {
-            elements.rectangle.style.transition = 'all .2s ease-out';
+            exports.elements.rectangle.style.transition = 'all .2s ease-out';
             requestAnimationFrame(function () {
-                elements.rectangle.setAttribute('data-ready', '1');
+                exports.elements.rectangle.setAttribute('data-ready', '1');
                 moveRectangle(border);
             });
         });
@@ -1046,40 +1020,40 @@ function showRectangle(x, y, border) {
 }
 exports.showRectangle = showRectangle;
 function hideRectangle() {
-    elements.rectangle.style.opacity = '0';
+    exports.elements.rectangle.style.opacity = '0';
 }
 exports.hideRectangle = hideRectangle;
 function showDrag() {
-    elements.drag.style.opacity = '1';
+    exports.elements.drag.style.opacity = '1';
 }
 exports.showDrag = showDrag;
 function moveDrag(opt) {
     if (opt.top) {
-        elements.drag.style.top = opt.top.toString() + 'px';
+        exports.elements.drag.style.top = opt.top.toString() + 'px';
     }
     if (opt.left) {
-        elements.drag.style.left = opt.left.toString() + 'px';
+        exports.elements.drag.style.left = opt.left.toString() + 'px';
     }
     if (opt.width) {
-        elements.drag.style.width = opt.width.toString() + 'px';
+        exports.elements.drag.style.width = opt.width.toString() + 'px';
     }
     if (opt.height) {
-        elements.drag.style.height = opt.height.toString() + 'px';
+        exports.elements.drag.style.height = opt.height.toString() + 'px';
     }
     if (opt.icon) {
-        if (elements.dragIcon) {
-            elements.dragIcon.style.display = 'block';
+        if (exports.elements.dragIcon) {
+            exports.elements.dragIcon.style.display = 'block';
         }
     }
     else {
-        if (elements.dragIcon) {
-            elements.dragIcon.style.display = 'none';
+        if (exports.elements.dragIcon) {
+            exports.elements.dragIcon.style.display = 'none';
         }
     }
 }
 exports.moveDrag = moveDrag;
 function hideDrag() {
-    elements.drag.style.opacity = '0';
+    exports.elements.drag.style.opacity = '0';
 }
 exports.hideDrag = hideDrag;
 let notifyTop = 10;
@@ -1115,7 +1089,7 @@ function notify(opt) {
         el.childNodes.item(0).style.background = 'url(' + opt.icon + ')';
         el.childNodes.item(0).style.backgroundSize = '16px';
     }
-    elements.system.appendChild(el);
+    exports.elements.system.appendChild(el);
     notifyTop += el.offsetHeight + 10;
     requestAnimationFrame(function () {
         el.style.transform = `translateY(${y}px) translateX(-10px)`;
@@ -1128,7 +1102,7 @@ function notify(opt) {
 }
 exports.notify = notify;
 function notifyProgress(notifyId, per) {
-    const el = elements.system.querySelector(`[data-notifyid="${notifyId}"]`);
+    const el = exports.elements.system.querySelector(`[data-notifyid="${notifyId}"]`);
     if (!el) {
         return;
     }
@@ -1152,7 +1126,7 @@ function notifyProgress(notifyId, per) {
 }
 exports.notifyProgress = notifyProgress;
 function hideNotify(notifyId) {
-    const el = elements.system.querySelector(`[data-notifyid="${notifyId}"]`);
+    const el = exports.elements.system.querySelector(`[data-notifyid="${notifyId}"]`);
     if (!el) {
         return;
     }
@@ -1179,11 +1153,11 @@ function hideNotify(notifyId) {
 }
 exports.hideNotify = hideNotify;
 function appendToPop(el) {
-    elements.popList.appendChild(el);
+    exports.elements.popList.appendChild(el);
 }
 exports.appendToPop = appendToPop;
 function removeFromPop(el) {
-    elements.popList.removeChild(el);
+    exports.elements.popList.removeChild(el);
 }
 exports.removeFromPop = removeFromPop;
 let lastShowPopTime = 0;
@@ -1410,6 +1384,7 @@ function remove(formId) {
         }
         task.list[taskId].forms[formId].vroot.$refs.form.$data.isShow = false;
         setTimeout(function () {
+            var _a;
             const fid = getMaxZIndexID({
                 'formIds': [formId]
             });
@@ -1424,12 +1399,15 @@ function remove(formId) {
             }
             task.list[taskId].forms[formId].vapp.unmount();
             task.list[taskId].forms[formId].vapp._container.remove();
+            (_a = exports.elements.popList.querySelector('[data-form-id="' + formId.toString() + '"]')) === null || _a === void 0 ? void 0 : _a.remove();
             if (io > -1) {
                 task.list[taskId].forms[formId].vroot.cgDialogCallback();
             }
             delete task.list[taskId].forms[formId];
             dom.removeStyle(taskId, 'form', formId);
             core.trigger('formRemoved', taskId, formId, title, icon);
+            dom.clearWatchStyle(formId);
+            dom.clearPropertyStyle(formId);
             if (Object.keys(task.list[taskId].forms).length === 0) {
                 task.end(taskId);
             }
@@ -1453,7 +1431,7 @@ function getForm(taskId, formId) {
     return form;
 }
 function create(opt) {
-    var _a, _b, _c, _d, _e;
+    var _a, _b, _c, _d, _e, _f;
     return __awaiter(this, void 0, void 0, function* () {
         if (!opt.taskId) {
             return -1;
@@ -1511,8 +1489,12 @@ function create(opt) {
         }
         layout = tool.layoutClassPrepend(layout, prepList);
         layout = tool.eventsAttrWrap(layout);
-        elements.list.insertAdjacentHTML('beforeend', `<div class="cg-form-wrap" data-form-id="${formId.toString()}" data-task-id="${opt.taskId.toString()}"></div>`);
-        const el = elements.list.children.item(elements.list.children.length - 1);
+        if (layout.includes('<teleport')) {
+            layout = tool.teleportGlue(layout, formId);
+        }
+        exports.elements.list.insertAdjacentHTML('beforeend', `<div class="cg-form-wrap" data-form-id="${formId.toString()}" data-task-id="${opt.taskId.toString()}"></div>`);
+        exports.elements.popList.insertAdjacentHTML('beforeend', `<div data-form-id="${formId.toString()}" data-task-id="${opt.taskId.toString()}"></div>`);
+        const el = exports.elements.list.children.item(exports.elements.list.children.length - 1);
         computed.formId = {
             get: function () {
                 return formId;
@@ -1654,10 +1636,23 @@ function create(opt) {
             }
             catch (err) {
                 core.trigger('error', rtn.vroot.taskId, rtn.vroot.formId, err, 'Create form mounted error.');
-                t.forms[formId] = undefined;
                 delete t.forms[formId];
-                rtn.vapp.unmount();
+                try {
+                    rtn.vapp.unmount();
+                }
+                catch (err) {
+                    const msg = `Message: ${err.message}\nTask id: ${opt.taskId}\nForm id: ${formId}\nFunction: form.create, unmount.`;
+                    notify({
+                        'title': 'Form Unmount Error',
+                        'content': msg,
+                        'type': 'danger'
+                    });
+                    console.log('Form Unmount Error', msg, err);
+                }
                 rtn.vapp._container.remove();
+                (_f = exports.elements.popList.querySelector('[data-form-id="' + rtn.vroot.formId + '"]')) === null || _f === void 0 ? void 0 : _f.remove();
+                dom.clearWatchStyle(rtn.vroot.formId);
+                dom.clearPropertyStyle(rtn.vroot.formId);
                 dom.removeStyle(rtn.vroot.taskId, 'form', rtn.vroot.formId);
                 return -8;
             }
@@ -1721,7 +1716,7 @@ function dialog(opt) {
                 }
             }
         };
-        cls.create(undefined, `<form title="${(_c = nopt.title) !== null && _c !== void 0 ? _c : 'dialog'}" min="false" max="false" resize="false" height="0" border="${nopt.title ? 'normal' : 'plain'}" direction="v"><dialog :buttons="buttons" @select="select"${nopt.direction ? ` direction="${nopt.direction}"` : ''}>${nopt.content}</dialog></form>`).then((frm) => {
+        cls.create(undefined, `<form title="${(_c = nopt.title) !== null && _c !== void 0 ? _c : 'dialog'}" min="false" max="false" resize="false" height="0" width="0" border="${nopt.title ? 'normal' : 'plain'}" direction="v"><dialog :buttons="buttons" @select="select"${nopt.direction ? ` direction="${nopt.direction}"` : ''}>${nopt.content}</dialog></form>`).then((frm) => {
             if (typeof frm === 'number') {
                 resolve('');
                 return;
@@ -1797,20 +1792,20 @@ function flash(formId, taskId) {
 }
 exports.flash = flash;
 function showLauncher() {
-    elements.launcher.style.display = 'flex';
+    exports.elements.launcher.style.display = 'flex';
     requestAnimationFrame(function () {
-        elements.launcher.classList.add('cg-show');
+        exports.elements.launcher.classList.add('cg-show');
     });
 }
 exports.showLauncher = showLauncher;
 function hideLauncher() {
-    elements.launcher.classList.remove('cg-show');
+    exports.elements.launcher.classList.remove('cg-show');
     setTimeout(function () {
         if (exports.launcherRoot.folderName !== '') {
             exports.launcherRoot.closeFolder();
         }
         exports.launcherRoot.name = '';
-        elements.launcher.style.display = 'none';
+        exports.elements.launcher.style.display = 'none';
     }, 300);
 }
 exports.hideLauncher = hideLauncher;

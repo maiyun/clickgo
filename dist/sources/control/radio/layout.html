@@ -1,4 +1,4 @@
-<div class="wrap" :class="[isKeyDown && 'active', (value === modelValue) && 'selected']" :data-cg-disabled="isDisabled ? '' : undefined" :tabindex="!isDisabled && formFocus && '0'" @click="click" @keydown="keydown" @keyup="keyup">
+<div class="wrap" :class="[isKeyDown && 'active', (value === modelValue) && 'selected']" :data-cg-disabled="propBoolean('disabled') ? '' : undefined" :tabindex="!propBoolean('disabled') && formFocus && '0'" @click="click" @keydown="keydown" @keyup="keyup">
     <div class="radio"></div>
     <div class="label">
         <slot></slot>

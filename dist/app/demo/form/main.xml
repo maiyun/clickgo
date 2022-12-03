@@ -15,8 +15,7 @@
                 <button @click="openForm('cfile')">File</button>
                 <button @click="openForm('cblock')">Block</button>
                 <button @click="openForm('cflow')">Flow</button>
-                <button @click="openForm('cview')">View</button>
-                <button @click="openForm('cgreatview')">Greatview</button>
+                <button @click="openForm('cvflow')">Vflow</button>
                 <button @click="openForm('cmarquee')">Marquee</button>
                 <button @click="openForm('cscroll')">Scroll</button>
                 <button @click="openForm('cmenu')">Menu</button>

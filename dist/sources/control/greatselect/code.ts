@@ -2,31 +2,53 @@ import * as clickgo from 'clickgo';
 
 export default class extends clickgo.control.AbstractControl {
 
-    public props = {
-        'disabled': false,
+    public props: {
+        'disabled': boolean | string;
+        'multi': boolean | string;
+        'direction': 'h' | 'v';
+        'area': 'all' | 'arrow';
+        'pop': 'greatlist' | 'custom';
 
-        'direction': 'h',
-
-        'area': 'all',
-
-        'pop': 'greatlist',
-
-        'data': [],
-
-        'modelValue': -1
-    };
+        'data': Array<{
+            'disabled': boolean;
+            'control'?: 'split';
+            [key: string]: any;
+        }>;
+        'sizes': Record<string, number | undefined>;
+        'modelValue': number[];
+    } = {
+            'disabled': false,
+            'multi': false,
+            'direction': 'h',
+            'area': 'all',
+            'pop': 'greatlist',
+            'data': [],
+            'sizes': {},
+            'modelValue': []
+        };
 
     public padding = '';
 
-    public isKeyDown = false;
+    public font = '';
 
-    public get isDisabled(): boolean {
-        return clickgo.tool.getBoolean(this.props.disabled);
-    }
+    public isSpaceDown = false;
 
     public get opMargin(): string {
         return this.padding.replace(/(\w+)/g, '-$1');
     }
+
+    /**
+     * --- 显示 pop，可供别人调用 ---
+     */
+    public showPop(): void {
+        clickgo.form.showPop(this.element, this.refs.pop, 'v', {
+            'size': {
+                'width': this.element.offsetWidth
+            }
+        });
+    }
+
+    // --- 内部方法 ---
 
     public keydown(e: KeyboardEvent): void {
         if (e.key === 'Enter') {
@@ -35,15 +57,15 @@ export default class extends clickgo.control.AbstractControl {
         }
         else if (e.key === ' ') {
             e.preventDefault();
-            this.isKeyDown = true;
+            this.isSpaceDown = true;
         }
     }
 
     public keyup(e: KeyboardEvent): void {
-        if (!this.isKeyDown) {
+        if (!this.isSpaceDown) {
             return;
         }
-        this.isKeyDown = false;
+        this.isSpaceDown = false;
         this.click(e, 'arrow');
     }
 
@@ -56,11 +78,7 @@ export default class extends clickgo.control.AbstractControl {
             // --- 当前只能箭头展开，并且点击的还是不能展开的左侧 ---
             return;
         }
-        clickgo.form.showPop(this.element, this.refs.pop, 'v', {
-            'size': {
-                'width': this.element.offsetWidth
-            }
-        });
+        this.showPop();
     }
 
     public updateModelValue(val: number): void {
@@ -71,12 +89,25 @@ export default class extends clickgo.control.AbstractControl {
         if (arrow) {
             return;
         }
+        if (this.propBoolean('multi')) {
+            // --- 多选不隐藏 ---
+            return;
+        }
         clickgo.form.hidePop();
     }
 
     public onMounted(): void {
-        clickgo.dom.watchStyle(this.element, 'padding', (n, v) => {
-            this.padding = v;
+        clickgo.dom.watchStyle(this.element, ['font', 'padding'], (n, v) => {
+            switch (n) {
+                case 'font': {
+                    this.font = v;
+                    break;
+                }
+                case 'padding': {
+                    this.padding = v;
+                    break;
+                }
+            }
         }, true);
     }
 

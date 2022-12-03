@@ -5,8 +5,8 @@
     <div ref="tray" class="tray">
         <slot name="tray"></slot>
     </div>
-    <teleport v-if="slots('pop').length" to="#cg-pop-list">
-        <div ref="pop" data-cg-pop>
+    <teleport v-if="slots['pop']" to="system">
+        <div ref="pop">
             <slot name="pop"></slot>
         </div>
     </teleport>

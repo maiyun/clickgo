@@ -5,97 +5,50 @@ class default_1 extends clickgo.control.AbstractControl {
     constructor() {
         super(...arguments);
         this.props = {
-            'adaptation': false,
             'disabled': false,
             'must': true,
             'multi': false,
+            'ctrl': true,
+            'selection': false,
+            'gesture': [],
+            'scroll': 'auto',
             'tree': false,
             'treeDefault': 0,
             'async': false,
             'icon': false,
             'iconDefault': '',
             'data': [],
-            'modelValue': ''
+            'modelValue': []
         };
         this.dataFormat = [];
     }
-    get isMust() {
-        return clickgo.tool.getBoolean(this.props.must);
-    }
-    get isMulti() {
-        return clickgo.tool.getBoolean(this.props.multi);
-    }
-    get isTree() {
-        return clickgo.tool.getBoolean(this.props.tree);
-    }
-    get isAsync() {
-        return clickgo.tool.getBoolean(this.props.async);
-    }
-    get isIcon() {
-        return clickgo.tool.getBoolean(this.props.icon);
-    }
     get value() {
-        var _a;
+        if (!this.dataGl.length) {
+            return [];
+        }
         let change = false;
-        let modelValue = this.props.modelValue;
-        if (typeof modelValue === 'object') {
-            if (!this.isMulti) {
-                change = true;
-                modelValue = (_a = modelValue[0]) !== null && _a !== void 0 ? _a : '';
-            }
+        const modelValue = clickgo.tool.clone(this.props.modelValue);
+        if (modelValue.length > 1 && !this.propBoolean('multi')) {
+            change = true;
+            modelValue.splice(1);
         }
-        else {
-            if (this.isMulti) {
-                change = true;
-                modelValue = modelValue === '' ? [] : [modelValue];
-            }
+        if (!modelValue.length && this.propBoolean('must')) {
+            return [];
         }
-        if (this.isMust) {
-            if (typeof modelValue === 'object') {
-                if (modelValue.length === 0) {
-                    return [];
-                }
-            }
-            else {
-                if (modelValue === '') {
-                    return -1;
-                }
-            }
-        }
-        let value;
-        let label;
-        if (typeof modelValue === 'object') {
-            value = [];
-            label = [];
-            if (modelValue.length > 0) {
-                for (let i = 0; i < modelValue.length; ++i) {
-                    const item = this.find(modelValue[i], this.dataFormat);
-                    if (item) {
-                        const j = this.findComp(item.value);
-                        value.push(j);
-                        label.push(item.label);
-                    }
-                    else {
-                        change = true;
-                        modelValue.splice(i, 1);
-                        --i;
-                    }
-                }
-            }
-        }
-        else {
-            value = -1;
-            label = '';
-            if (modelValue !== '') {
-                const item = this.find(modelValue, this.dataFormat);
-                if (item) {
-                    const j = this.findComp(item.value);
-                    value = j;
-                    label = item.label;
+        const value = [];
+        const label = [];
+        if (modelValue.length > 0) {
+            for (let i = 0; i < modelValue.length; ++i) {
+                const result = this.findFormat(modelValue[i]);
+                if (result) {
+                    const j = this.findGl(result[modelValue[i]].value);
+                    value.push(j);
+                    label.push(result[modelValue[i]].label);
                 }
                 else {
                     change = true;
-                    modelValue = '';
+                    modelValue.splice(i, 1);
+                    --i;
                 }
             }
         }
@@ -105,40 +58,67 @@ class default_1 extends clickgo.control.AbstractControl {
         this.emit('label', label);
         return value;
     }
-    get dataComp() {
+    get dataGl() {
         return this.unpack(this.dataFormat);
     }
-    updateModelValue(value) {
-        if (typeof value === 'object') {
-            const modelValue = [];
-            const label = [];
-            for (const item of value) {
-                if (this.dataComp[item] && !this.dataComp[item].disabled) {
-                    modelValue.push(this.dataComp[item].value);
-                    label.push(this.dataComp[item].label);
+    findFormat(value, autoOpen = true, data, level) {
+        const rtn = {};
+        if (level === undefined) {
+            level = 0;
+        }
+        if (!Array.isArray(value)) {
+            value = [value];
+        }
+        if (!data) {
+            data = this.dataFormat;
+        }
+        for (const item of data) {
+            if (value.includes(item.value)) {
+                rtn[item.value] = item;
+                if (Object.keys(rtn).length === value.length) {
+                    return rtn;
                 }
             }
-            this.emit('update:modelValue', modelValue);
-            this.emit('label', label);
+            const result = this.findFormat(value, autoOpen, item.children, level + 1);
+            if (Object.keys(result).length) {
+                if (autoOpen && (item.tree === 0)) {
+                    item.tree = 1;
+                }
+                Object.assign(rtn, result);
+                if (Object.keys(rtn).length === value.length) {
+                    return result;
+                }
+            }
         }
-        else {
-            this.emit('update:modelValue', this.dataComp[value] ? this.dataComp[value].value : '');
-            this.emit('label', this.dataComp[value] ? this.dataComp[value].label : '');
-        }
+        return level ? rtn : (Object.keys(rtn).length ? rtn : null);
     }
-    formatData(newData, oldData) {
+    arrowUp() {
+        this.refs.gl.arrowUp();
+    }
+    arrowDown() {
+        this.refs.gl.arrowDown();
+    }
+    updateModelValue(value) {
+        const modelValue = [];
+        const label = [];
+        for (const item of value) {
+            if (!this.dataGl[item]) {
+                continue;
+            }
+            modelValue.push(this.dataGl[item].value);
+            label.push(this.dataGl[item].label);
+        }
+        this.emit('update:modelValue', modelValue);
+        this.emit('label', label);
+    }
+    formatData(nowData, oldData) {
         var _a, _b, _c, _d, _e, _f;
         const data = [];
         const oldValues = [];
         for (const item of oldData) {
-            if (oldValues.includes(item.value)) {
-                continue;
-            }
             oldValues.push(item.value);
         }
-        for (let k = 0; k < newData.length; ++k) {
-            const item = newData[k];
-            const type = typeof item;
+        for (let k = 0; k < nowData.length; ++k) {
             const over = {
                 'label': '',
                 'value': '',
@@ -148,9 +128,10 @@ class default_1 extends clickgo.control.AbstractControl {
                 'tree': this.props.treeDefault,
                 'children': []
             };
-            const value = type === 'object' ? ((_b = (_a = item.value) !== null && _a !== void 0 ? _a : item.label) !== null && _b !== void 0 ? _b : k) : item;
+            const item = nowData[k];
+            const value = typeof item === 'object' ? ((_b = (_a = item.value) !== null && _a !== void 0 ? _a : item.label) !== null && _b !== void 0 ? _b : k) : item;
             const oldIo = oldValues.indexOf(value);
-            if (type === 'object') {
+            if (typeof item === 'object') {
                 over.label = (_d = (_c = item.label) !== null && _c !== void 0 ? _c : item.value) !== null && _d !== void 0 ? _d : k;
                 over.value = value;
                 over.title = item.title !== undefined ? item.title : false;
@@ -193,7 +174,7 @@ class default_1 extends clickgo.control.AbstractControl {
         const result = [];
         for (const item of data) {
             let tree = item.tree;
-            if ((item.children.length === 0) && !this.isAsync) {
+            if ((item.children.length === 0) && !this.propBoolean('async')) {
                 tree = -1;
             }
             result.push({
@@ -208,53 +189,35 @@ class default_1 extends clickgo.control.AbstractControl {
                 'level': level,
                 'format': item
             });
-            if (!this.isTree || (tree === 1)) {
+            if (!this.propBoolean('tree') || (tree === 1)) {
                 result.push(...this.unpack(item.children, level + 1));
             }
         }
         return result;
     }
-    find(value, data) {
-        for (const item of data) {
-            if ((item.value === value) && !item.disabled) {
-                return item;
-            }
-            const result = this.find(value, item.children);
-            if (result) {
-                if (item.tree === 0) {
-                    item.tree = 1;
-                }
-                return result;
-            }
-        }
-        return null;
-    }
-    findComp(value) {
-        for (let i = 0; i < this.dataComp.length; ++i) {
-            if (this.dataComp[i].value === value) {
+    findGl(value) {
+        for (let i = 0; i < this.dataGl.length; ++i) {
+            if (this.dataGl[i].value === value) {
                 return i;
             }
         }
         return null;
     }
-    treeClick(item) {
+    treeClick(e, item) {
+        if (item.format.tree > -1) {
+            e.stopPropagation();
+        }
         if (item.format.tree === 0) {
-            if (this.isAsync && item.format.children.length === 0) {
+            if (this.propBoolean('async') && !item.format.children.length) {
                 item.format.tree = 2;
                 this.emit('load', item.value, (children) => {
-                    if (children) {
-                        if (children.length === 0) {
-                            item.format.children = [];
-                            item.format.tree = -1;
-                        }
-                        else {
-                            item.format.children = this.formatData(children, []);
-                            item.format.tree = 1;
-                        }
-                    }
-                    else {
+                    if (!children || !children.length) {
+                        item.format.children = [];
                         item.format.tree = -1;
+                        return;
                     }
+                    item.format.children = this.formatData(children, []);
+                    item.format.tree = 1;
                 });
             }
             else {
@@ -263,6 +226,14 @@ class default_1 extends clickgo.control.AbstractControl {
         }
         else if (item.format.tree === 1) {
             item.format.tree = 0;
+            for (const vitem of this.props.modelValue) {
+                if (!this.findFormat(vitem, false, item.format.children)) {
+                    continue;
+                }
+                this.emit('update:modelValue', [item.value]);
+                this.emit('label', item.label);
+                break;
+            }
         }
     }
     onMounted() {

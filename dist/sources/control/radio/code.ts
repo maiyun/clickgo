@@ -2,18 +2,19 @@ import * as clickgo from 'clickgo';
 
 export default class extends clickgo.control.AbstractControl {
 
-    public props = {
-        'disabled': false,
+    public props: {
+        'disabled': boolean | string;
 
-        'value': '',
-        'modelValue': ''
-    };
+        'value': string;
+        'modelValue': string;
+    } = {
+            'disabled': false,
 
-    public get isDisabled(): boolean {
-        return clickgo.tool.getBoolean(this.props.disabled);
-    }
+            'value': '',
+            'modelValue': ''
+        };
 
-    public isKeyDown = false;
+    public isSpaceDown = false;
 
     public click(): void {
         this.emit('update:modelValue', this.props.value);
@@ -26,15 +27,15 @@ export default class extends clickgo.control.AbstractControl {
         }
         else if (e.key === ' ') {
             e.preventDefault();
-            this.isKeyDown = true;
+            this.isSpaceDown = true;
         }
     }
 
     public keyup(): void {
-        if (!this.isKeyDown) {
+        if (!this.isSpaceDown) {
             return;
         }
-        this.isKeyDown = false;
+        this.isSpaceDown = false;
         this.click();
     }
 

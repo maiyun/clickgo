@@ -3,7 +3,7 @@ import * as clickgo from 'clickgo';
 export default class extends clickgo.control.AbstractControl {
 
     public props: {
-        'disabled': boolean;
+        'disabled': boolean | string;
 
         'alt': string;
         'type': string;
@@ -19,10 +19,6 @@ export default class extends clickgo.control.AbstractControl {
         };
 
     public padding = '';
-
-    public get isDisabled(): boolean {
-        return clickgo.tool.getBoolean(this.props.disabled);
-    }
 
     public get opMargin(): string {
         return this.padding.replace(/(\w+)/g, '-$1');
@@ -42,7 +38,7 @@ export default class extends clickgo.control.AbstractControl {
 
     public click(): void {
         if (!this.props.type) {
-            if (!this.slots('pop').length) {
+            if (!this.slots['pop']) {
                 // --- 没有下层，则隐藏所有 pop ---
                 clickgo.form.hidePop();
             }
@@ -59,7 +55,6 @@ export default class extends clickgo.control.AbstractControl {
     }
 
     public onBeforeUnmount(): void | Promise<void> {
-        // --- TODO, menulist 是谁 ---
         const menulist = this.parentByName('menulist');
         if (!menulist) {
             return;

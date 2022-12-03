@@ -1,23 +1,25 @@
-<div class="wrap" :data-cg-disabled="isDisabled ? '' : undefined" :tabindex="!isDisabled && formFocus && '0'" @keydown="keydown">
-    <div class="inner" ref="inner" @contextmenu="context" @mousedown="innerDown" @touchstart="innerDown" @click="click">
-        <cg-greatview ref="view" :same="isSame" :selection="isSelection" :data="data" v-slot="d" direction="v" v-model:scroll-top="offset" @beforeselect="onBeforeSelect" @select="onSelect($event)" @afterselect="onAfterSelect" @itemsposchange="onItemsPosChange" @resize="client = $event" @resizen="clientWidth = $event" @change="length = $event">
-            <div v-if="d.row.control === 'split'" class="split"></div>
-            <div v-else class="item" :class="[isSelected(d.index) && 'selected', (shiftStart === d.index) && 'shift']" :style="{'width': clientWidth + 'px'}" :data-cg-disabled="d.row.disabled ? '' : undefined" @touchstart="itemTouch($event, d.index)" @contextmenu="itemContext($event, d.index)">
-                <div class="itemInner" @click="itemClick($event, d.index)">
-                    <slot :row="d.row" :index="d.index"></slot>
-                </div>
-                <div v-if="!d.row.disabled && d.row.menu" class="itemArrow" @click="arrowClick($event, d.index)"></div>
+<div class="wrap" :data-cg-disabled="propBoolean('disabled') ? '' : undefined" :tabindex="!propBoolean('disabled') && formFocus && '0'" @keydown="keydown">
+    <cg-vflow ref="flow" :selection="selection" :gesture="gesture" @gesture="emit('gesture', $event)" :data="data" v-slot="d" :sizes="sizes" direction="v" v-model:scroll-top="offset" @beforeselect="onBeforeSelect" @select="onSelect($event)" @afterselect="onAfterSelect" @clientheight="client = $event" @scrollheight="length = $event" @contextmenu="context" @touchstart="down" @mousedown="down">
+        <div v-if="d.row.control === 'split'" class="split"></div>
+        <div v-else class="item" :class="[isSelected(d.index) && 'selected', (shiftStart === d.index) && 'shift']" :data-cg-disabled="d.row.disabled ? '' : undefined" @touchstart="itemTouch($event, d.index)" @contextmenu="itemContext($event, d.index)">
+            <div class="itemInner" @click="innerClick($event, d.index)">
+                <slot :row="d.row" :index="d.index"></slot>
             </div>
-        </cg-greatview>
+            <div v-if="!d.row.disabled && d.row.menu" class="itemArrow" @click="arrowClick($event, d.index)"></div>
+        </div>
+    </cg-vflow>
+    <cg-scroll v-if="scroll !== 'hidden'" :length="length" :client="client" v-model:offset="offset" :float="scroll === 'auto'"></cg-scroll>
+    <div class="empty" v-show="!data.length">
+        <svg viewBox="0 0 24 24"><path d="M17.75 3C19.55 3 21 4.46 21 6.25v11.5c0 1.8-1.46 3.25-3.25 3.25H6.25A3.25 3.25 0 013 17.75V6.25C3 4.45 4.46 3 6.25 3h11.5zm1.75 5.5h-15v9.25c0 .97.78 1.75 1.75 1.75h11.5c.97 0 1.75-.78 1.75-1.75V8.5zm-1.75-4H6.25c-.97 0-1.75.78-1.75 1.75V7h15v-.75c0-.97-.78-1.75-1.75-1.75z"></path></svg>
     </div>
-    <cg-scroll v-if="scroll !== 'hidden'" v-show="(scroll === 'visible') || (length > client)" :length="length" :client="client" v-model:scroll-offset="offset" :float="scroll === 'auto'"></cg-scroll>
-    <teleport v-if="slots('pop').length" to="#cg-pop-list">
-        <div ref="pop" data-cg-pop>
+    <!-- 浮动层 -->
+    <teleport v-if="slots['pop']" to="system">
+        <div ref="pop">
             <slot name="pop"></slot>
         </div>
     </teleport>
-    <teleport v-if="slots('itempop').length" to="#cg-pop-list">
-        <div ref="itempop" data-cg-pop>
+    <teleport v-if="slots['itempop']" to="system">
+        <div ref="itempop">
             <slot name="itempop"></slot>
         </div>
     </teleport>

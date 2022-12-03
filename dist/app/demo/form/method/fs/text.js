@@ -7,10 +7,7 @@ class default_1 extends clickgo.form.AbstractForm {
         this.title = 'Text viewer';
         this.content = '';
     }
-    onReceive(obj) {
-        if (obj.taskId !== this.taskId) {
-            return;
-        }
+    onMounted(obj) {
         this.title = obj.title + ' - Text viewer';
         this.content = obj.content;
     }

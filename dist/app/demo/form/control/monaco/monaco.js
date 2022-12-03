@@ -4,7 +4,7 @@ const clickgo = require("clickgo");
 class default_1 extends clickgo.form.AbstractForm {
     constructor() {
         super(...arguments);
-        this.npath = '/index.html';
+        this.npath = ['/index.html'];
         this.file = '';
         this.files = {
             '/index.html': `<html>
@@ -52,16 +52,15 @@ class default_1 extends clickgo.form.AbstractForm {
                 'value': '/index.scss'
             }
         ];
-        this.theme = 'vs';
+        this.theme = ['vs'];
         this.themes = ['vs', 'vs-dark', 'hc-black'];
         this.language = '';
         this.globali = false;
         this.newi = false;
         this.readonly = false;
         this.disabled = false;
-        this.size = '12px';
+        this.size = ['12px'];
         this.family = false;
-        this.initMonaco = false;
     }
     get filesName() {
         const names = [];
@@ -98,14 +97,7 @@ class default_1 extends clickgo.form.AbstractForm {
         }).catch((e) => { throw e; });
     }
     pathLebel(label) {
-        this.language = label.toLowerCase();
-    }
-    onMounted() {
-        clickgo.core.initModules('monaco').then(() => {
-            this.initMonaco = true;
-        }).catch(() => {
-            this.initMonaco = true;
-        });
+        this.language = label[0].toLowerCase();
     }
 }
 exports.default = default_1;

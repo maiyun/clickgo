@@ -16,7 +16,7 @@ class default_1 extends clickgo.form.AbstractForm {
         super(...arguments);
         this.ppath = '/';
         this.list = [];
-        this.val = '';
+        this.val = [];
     }
     open(path) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -36,16 +36,16 @@ class default_1 extends clickgo.form.AbstractForm {
     }
     dblclick() {
         return __awaiter(this, void 0, void 0, function* () {
-            const r = yield clickgo.fs.isFile(this.val);
+            const r = yield clickgo.fs.isFile(this.val[0]);
             if (r) {
-                const extlio = this.val.lastIndexOf('.');
+                const extlio = this.val[0].lastIndexOf('.');
                 if (extlio === -1) {
                     yield clickgo.form.dialog('This extension is not supported.');
                     return;
                 }
-                const ext = this.val.toLowerCase().slice(extlio + 1);
+                const ext = this.val[0].toLowerCase().slice(extlio + 1);
                 if (['xml', 'js', 'ts', 'json', 'css', 'html', 'php'].includes(ext)) {
-                    let content = yield clickgo.fs.getContent(this.val);
+                    let content = yield clickgo.fs.getContent(this.val[0]);
                     if (!content) {
                         yield clickgo.form.dialog('This file cannot be opened.');
                         return;
@@ -53,21 +53,20 @@ class default_1 extends clickgo.form.AbstractForm {
                     if (content instanceof Blob) {
                         content = yield clickgo.tool.blob2Text(content);
                     }
-                    const f = yield text_1.default.create();
+                    const f = yield text_1.default.create({
+                        'title': this.val[0].slice(this.val[0].lastIndexOf('/') + 1),
+                        'content': content
+                    });
                     if (typeof f === 'number') {
                         return;
                     }
                     f.show();
-                    this.send(f.formId, {
-                        'title': this.val.slice(this.val.lastIndexOf('/') + 1),
-                        'content': content
-                    });
                     return;
                 }
-                yield clickgo.form.dialog('This extension is not supported.');
+                yield clickgo.form.dialog('The extension "' + ext + '" is not supported.');
                 return;
             }
-            yield this.open(this.val);
+            yield this.open(this.val[0]);
         });
     }
     up() {

@@ -5,19 +5,16 @@
     }
 
     .radio {
-        width: 14px; height: 14px; position: relative; border-radius: 50%;
-        &::before {
-            content: ''; pointer-events: none; position: absolute; left: 0; top: 0; width: 200%; height: 200%; transform-origin: 0 0; transform: scale(.5); border-radius: 50%;
-        }
+        width: 14px; height: 14px; border-radius: 50%; border: solid .5px transparent; position: relative;
         &::after {
-            content: ''; pointer-events: none; position: absolute; left: 4px; top: 4px; width: calc(100% - 8px); height: calc(100% - 8px); display: none; border-radius: 50%;
+            content: ''; pointer-events: none; position: absolute; left: 3px; top: 3px; width: calc(100% - 6px); height: calc(100% - 6px); display: none; border-radius: 50%;
         }
     }
 
     .label {
-        padding-left: 5px; position: relative;
+        margin-left: 5px; position: relative;
         &::before {
-            content: ''; pointer-events: none; position: absolute; left: 4px; top: -1px; width: calc(200% - 6px); height: calc(200% + 4px); transform-origin: 0 0; transform: scale(.5); display: none;
+            content: ''; pointer-events: none; position: absolute; left: -1px; top: -1px; width: calc(100% + 2px); height: calc(100% + 2px); display: none;
         }
     }
 
@@ -30,9 +27,7 @@
     &:not([data-cg-disabled]) {
         .radio {
             background: var(--g-plain-background);
-            &::before {
-                border: solid 1px var(--g-plain-border-color);
-            }
+            border-color: var(--g-plain-border-color);
             &::after {
                 background: var(--g-plain-color);
             }
@@ -40,7 +35,7 @@
 
         .label {
             &::before {
-                border: dotted 1px var(--g-plain-border-color);
+                border: dotted .5px var(--g-plain-border-color);
             }
         }
 
@@ -49,9 +44,7 @@
 
             .radio {
                 background: var(--g-plain-background-focus);
-                &::before {
-                    border: solid 1px var(--g-plain-border-color-focus);
-                }
+                border-color: var(--g-plain-border-color-focus);
                 &::after {
                     background: var(--g-plain-color-focus);
                 }
@@ -68,9 +61,7 @@
             color: var(--g-plain-color-hover);
 
             .radio {
-                &::before {
-                    border: solid 1px var(--g-plain-border-color-hover);
-                }
+                border-color: var(--g-plain-border-color-hover);
                 &::after {
                     background: var(--g-plain-color-hover);
                 }
@@ -82,9 +73,7 @@
 
             .radio {
                 background: var(--g-plain-background-active); color: var(--g-plain-color-active);
-                &::before {
-                    border: solid 1px var(--g-plain-border-color-active);
-                }
+                border-color: var(--g-plain-border-color-active);
                 &::after {
                     background: var(--g-plain-color-active);
                 }
@@ -97,9 +86,7 @@
 
         .radio {
             background: var(--g-plain-background-disabled);
-            &::before {
-                border: solid 1px var(--g-plain-border-color-disabled);
-            }
+            border-color: var(--g-plain-border-color-disabled);
             &::after {
                 background: var(--g-plain-color-disabled);
             }

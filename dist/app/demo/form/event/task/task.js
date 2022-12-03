@@ -15,7 +15,7 @@ class default_1 extends clickgo.form.AbstractForm {
         super(...arguments);
         this.tlist = [];
         this.list = [];
-        this.tid = 0;
+        this.tid = [];
     }
     pushConsole(name, text) {
         const date = new Date();
@@ -33,8 +33,8 @@ class default_1 extends clickgo.form.AbstractForm {
     }
     end() {
         return __awaiter(this, void 0, void 0, function* () {
-            if (yield clickgo.form.confirm(`Are you sure to end Task ${this.tid}?`)) {
-                clickgo.task.end(this.tid);
+            if (yield clickgo.form.confirm(`Are you sure to end Task ${this.tid[0]}?`)) {
+                clickgo.task.end(this.tid[0]);
             }
         });
     }

@@ -2,15 +2,15 @@ import * as clickgo from 'clickgo';
 
 export default class extends clickgo.control.AbstractControl {
 
-    public props = {
-        'disabled': false,
+    public props: {
+        'disabled': boolean | string;
 
-        'alt': ''
-    };
+        'alt': string;
+    } = {
+            'disabled': false,
 
-    public get isDisabled(): boolean {
-        return clickgo.tool.getBoolean(this.props.disabled);
-    }
+            'alt': ''
+        };
 
     public enter(e: MouseEvent): void {
         if (clickgo.dom.hasTouchButMouse(e)) {

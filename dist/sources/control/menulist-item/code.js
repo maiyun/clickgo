@@ -13,9 +13,6 @@ class default_1 extends clickgo.control.AbstractControl {
         };
         this.padding = '';
     }
-    get isDisabled() {
-        return clickgo.tool.getBoolean(this.props.disabled);
-    }
     get opMargin() {
         return this.padding.replace(/(\w+)/g, '-$1');
     }
@@ -30,7 +27,7 @@ class default_1 extends clickgo.control.AbstractControl {
     }
     click() {
         if (!this.props.type) {
-            if (!this.slots('pop').length) {
+            if (!this.slots['pop']) {
                 clickgo.form.hidePop();
             }
             return;

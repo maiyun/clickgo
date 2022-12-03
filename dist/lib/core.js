@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getAvailArea = exports.fetchApp = exports.readApp = exports.trigger = exports.getModule = exports.initModules = exports.regModule = exports.boot = exports.getCdn = exports.AbstractApp = exports.config = void 0;
+exports.getAvailArea = exports.fetchApp = exports.readApp = exports.trigger = exports.getModule = exports.regModule = exports.boot = exports.getCdn = exports.AbstractApp = exports.config = void 0;
 const clickgo = require("../clickgo");
 const fs = require("./fs");
 const form = require("./form");
@@ -68,12 +68,24 @@ class AbstractApp {
                 const files = t.config.files;
                 const net = t.app.net;
                 yield new Promise(function (resolve) {
-                    var _a;
+                    var _a, _b;
                     let loaded = 0;
                     const total = files.length;
                     const beforeTotal = Object.keys(t.app.files).length;
                     (_a = net.progress) === null || _a === void 0 ? void 0 : _a.call(net, loaded + beforeTotal, total + beforeTotal);
                     for (const file of files) {
+                        if (t.app.files[file]) {
+                            ++loaded;
+                            (_b = net.progress) === null || _b === void 0 ? void 0 : _b.call(net, loaded + beforeTotal, total + beforeTotal);
+                            if (net.notify) {
+                                form.notifyProgress(net.notify, (loaded / total) / 2 + 0.5);
+                            }
+                            if (loaded < total) {
+                                continue;
+                            }
+                            resolve();
+                            return;
+                        }
                         fs.getContent(net.url + file.slice(1), {
                             'current': net.current
                         }).then(function (blob) {
@@ -322,7 +334,8 @@ const modules = {
             });
         },
         'obj': null,
-        'loading': false
+        'loading': false,
+        'resolve': []
     }
 };
 function regModule(name, func) {
@@ -332,86 +345,52 @@ function regModule(name, func) {
     modules[name] = {
         func: func,
         'obj': null,
-        'loading': false
+        'loading': false,
+        'resolve': []
     };
     return true;
 }
 exports.regModule = regModule;
-function initModules(names) {
-    return new Promise(function (resolve) {
-        if (typeof names === 'string') {
-            names = [names];
+function getModule(name) {
+    return new Promise((resolve) => {
+        if (!modules[name]) {
+            return null;
         }
-        if (names.length === 0) {
-            resolve(0);
-            return;
-        }
-        let loaded = 0;
-        let successful = 0;
-        for (const name of names) {
-            if (!modules[name]) {
-                ++loaded;
-                if (loaded === names.length) {
-                    resolve(successful);
-                    return;
-                }
-                continue;
-            }
-            if (modules[name].obj) {
-                ++loaded;
-                ++successful;
-                if (loaded === names.length) {
-                    resolve(successful);
-                    return;
-                }
-                continue;
-            }
+        if (!modules[name].obj) {
             if (modules[name].loading) {
-                ++loaded;
-                if (loaded === names.length) {
-                    resolve(successful);
-                    return;
-                }
-                continue;
-            }
-            modules[name].loading = true;
-            const rtn = modules[name].func();
-            if (rtn instanceof Promise) {
-                rtn.then(function (obj) {
-                    modules[name].obj = obj;
-                    modules[name].loading = false;
-                    ++loaded;
-                    ++successful;
-                    if (loaded === names.length) {
-                        resolve(successful);
-                        return;
-                    }
-                }).catch(function () {
-                    modules[name].loading = false;
-                    ++loaded;
-                    if (loaded === names.length) {
-                        resolve(successful);
-                    }
+                modules[name].resolve.push(() => {
+                    resolve(modules[name].obj);
                 });
             }
             else {
-                modules[name].obj = rtn;
-                modules[name].loading = false;
-                ++loaded;
-                ++successful;
-                if (loaded === names.length) {
-                    resolve(successful);
+                const rtn = modules[name].func();
+                if (rtn instanceof Promise) {
+                    modules[name].loading = true;
+                    rtn.then(function (obj) {
+                        modules[name].obj = obj;
+                        modules[name].loading = false;
+                        resolve(obj);
+                        for (const r of modules[name].resolve) {
+                            r();
+                        }
+                    }).catch(function () {
+                        modules[name].loading = false;
+                        resolve(null);
+                        for (const r of modules[name].resolve) {
+                            r();
+                        }
+                    });
+                }
+                else {
+                    modules[name].obj = rtn;
+                    resolve(rtn);
                 }
             }
+            return;
         }
+        resolve(modules[name].obj);
+        return;
     });
-}
-exports.initModules = initModules;
-function getModule(name) {
-    if (!modules[name]) {
-        return null;
-    }
-    return modules[name].obj;
 }
 exports.getModule = getModule;
 const globalEvents = {

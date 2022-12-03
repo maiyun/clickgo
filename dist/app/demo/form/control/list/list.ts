@@ -4,6 +4,8 @@ export default class extends clickgo.form.AbstractForm {
 
     public ntab = '';
 
+    // --- greatlist ---
+
     public slist = [
         {
             'type': 0,
@@ -33,27 +35,27 @@ export default class extends clickgo.form.AbstractForm {
         }
     ];
 
-    public select = 0;
+    public select: number[] = [];
 
-    public select2 = 'Appraise';
+    // --- list ---
 
-    public label2 = '';
+    public select2 = ['Appraise'];
 
-    public tree = false;
+    public label2 = [''];
 
-    public async = false;
-
-    public icon = false;
+    // --- async ---
 
     public sub6children: string[] = [];
 
-    public select3 = 0;
+    public select3 = [0];
 
     public listData3 = [];
 
-    public select4 = '';
+    public select4 = [];
 
     public listData4 = [];
+
+    // --- 操作 ---
 
     public disabled = false;
 
@@ -61,12 +63,39 @@ export default class extends clickgo.form.AbstractForm {
 
     public multi = false;
 
+    public ctrl = true;
+
     public selection = false;
+
+    public gesture = false;
 
     public selectionArea = {};
 
+    public tree = false;
+
+    public async = false;
+
+    public icon = false;
+
     public scroll = 'auto';
 
+    // --- size 高度 ---
+    public get sizes(): any {
+        const rtn: any = {};
+        for (let i = 0; i < this.slist.length; ++i) {
+            if (this.slist[i].control === 'split') {
+                rtn[i] = 3;
+                continue;
+            }
+            if (this.slist[i].type === 1) {
+                rtn[i] = 31;
+                continue;
+            }
+        }
+        return rtn;
+    }
+
+    // --- 自适应选项卡的数据 ---
     public get adData(): any[] {
         const data: any[] = [];
         for (let i = 0; i < this.slist.length; ++i) {
@@ -78,6 +107,8 @@ export default class extends clickgo.form.AbstractForm {
         }
         return data;
     }
+
+    // --- list ---
 
     public get listData(): any[] {
         const data: any[] = ['Item1', {
@@ -159,15 +190,15 @@ export default class extends clickgo.form.AbstractForm {
 
     public selectButton(): void {
         if (this.ntab === 'list') {
-            this.select2 = 'Item1';
+            this.select2 = ['Item1'];
         }
         else {
-            this.select = 1;
+            this.select = [1];
         }
     }
 
     public selectButtonList(): void {
-        this.select2 = 'Sub3';
+        this.select2 = ['Sub3'];
     }
 
     public async onSelectLoad(value: string, resolve: (child?: any[]) => void): Promise<void> {
@@ -203,6 +234,10 @@ export default class extends clickgo.form.AbstractForm {
                 this.scroll = 'auto';
             }
         }
+    }
+
+    public async onGesture(dir: string): Promise<void> {
+        await clickgo.form.dialog('onGesture: ' + dir);
     }
 
 }

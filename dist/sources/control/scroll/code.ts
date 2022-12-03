@@ -2,89 +2,160 @@ import * as clickgo from 'clickgo';
 
 export default class extends clickgo.control.AbstractControl {
 
-    public props = {
-        'disabled': false,
+    public props: {
+        'disabled': boolean | string;
+        'float': boolean | string;
 
-        'direction': 'v',
+        'direction': 'h' | 'v';
 
-        'length': 1000,
-        'client': 100,
-        'scrollOffset': 0,
-        'float': false
-    };
+        'length': number | string;
+        'client': number | string;
+        'offset': number | string;
+    } = {
+            'disabled': false,
+            'float': false,
 
-    public scrollOffsetData = 0;
+            'direction': 'v',
 
-    public scrollOffsetPx = 0;
+            'length': 1000,
+            'client': 100,
+            'offset': 0
+        };
 
-    public barLengthPx = 0;
+    /** --- 当前位置（数值） --- */
+    public offsetData = 0;
 
-    public timer = 0;
+    /** --- 将在多久后隐藏 --- */
+    public hideTimer = 0;
 
-    public tran = false;
+    /** --- 是否在以设定数值的形式滚动中的 timer 值（controlDown） --- */
+    public tran = 0;
 
-    public opacity = '1';
+    /** --- 是否在显示 --- */
+    public isShow = true;
 
-    public opacityTimer = 0;
-
+    /** --- 是否是 enter 状态 --- */
     public isEnter = false;
 
+    /** --- 整体的元素的宽度像素 --- */
     public width = 0;
 
+    /** --- 整体的元素高度像素 --- */
     public height = 0;
 
-    /**
-     * --- 滑块真实应该长度 px ---
-     */
-    public get realSize(): number {
-        if (this.props.client >= this.props.length) {
-            return this.barLengthPx;
-        }
-        return this.props.client / this.props.length * this.barLengthPx;
-    }
+    /** --- bar 的 px --- */
+    public barPx = 0;
 
-    /**
-     * --- 滑块目前显示长度 ---
-     */
-    public get size(): number {
-        if (this.realSize < 5) {
-            if (5 > this.barLengthPx) {
-                return this.barLengthPx;
-            }
+    /** --- block 的 px --- */
+    public get blockPx(): number {
+        const px = this.propInt('client') / this.propInt('length') * this.barPx;
+        if (px < 5) {
             return 5;
         }
-        return this.realSize;
+        return px;
     }
 
     /**
-     * --- 目前显示长度大于真实长度的长度 ---
+     * --- 最大可拖动的 offset 位置 ---
      */
-    public get sizeOut(): number {
-        return this.size - this.realSize;
+    public get maxOffset(): number {
+        return (this.props.length > this.props.client) ? this.propInt('length') - this.propInt('client') : 0;
     }
 
     /**
-     * --- 除去滑块外的 bar 长度 ---
+     * --- 当前 offset 位置相对于最大位置的比例，最大为 1 ---
      */
-    public get barOutSize(): number {
-        return this.barLengthPx - this.size;
+    public get offsetRatio(): number {
+        return this.maxOffset ? this.offsetData / this.maxOffset : 0;
     }
 
     /**
-     * --- 最大可拖动的 scroll 位置 ---
+     * --- 除去 block 剩余的 bar 部分的像素 ---
      */
-    public get maxScroll(): number {
-        return (this.props.length > this.props.client) ? this.props.length - this.props.client : 0;
+    public get outBlockPx(): number {
+        return this.barPx - this.blockPx;
     }
 
-    public get isDisabled(): boolean {
-        return clickgo.tool.getBoolean(this.props.disabled);
+    /**
+     * --- 当前位置（像素） ---
+     */
+    public get offsetPx(): number {
+        return this.outBlockPx * this.offsetRatio;
     }
 
-    public get isFloat(): boolean {
-        return clickgo.tool.getBoolean(this.props.float);
+    /**
+     * ---- wrap 的 touchstart 事件 ---
+     */
+    public wrapTouch(e: TouchEvent): void {
+        // --- 防止在手机模式按下的状态下滚动条被自动隐藏，PC 下有 enter 所以没事 ---
+        clickgo.dom.bindDown(e, {
+            down: () => {
+                this.isEnter = true;
+                if (this.propBoolean('float')) {
+                    this.isShow = true;
+                    if (this.hideTimer) {
+                        clickgo.task.removeTimer(this.hideTimer);
+                        this.hideTimer = 0;
+                    }
+                }
+            },
+            up: () => {
+                this.isEnter = false;
+                if (this.propBoolean('float')) {
+                    this.hideTimer = clickgo.task.sleep(() => {
+                        this.isShow = false;
+                    }, 800);
+                }
+            }
+        });
     }
 
+    /** --- 上下控制按钮按下事件 --- */
+    public controlDown(e: MouseEvent | TouchEvent, type: 'start' | 'end'): void {
+        if (this.props.client >= this.props.length) {
+            return;
+        }
+        clickgo.dom.bindDown(e, {
+            down: () => {
+                this.tran = clickgo.task.onFrame(() => {
+                    if (type === 'start') {
+                        // --- 向上 ---
+                        if (this.offsetData - 10 < 0) {
+                            if (this.offsetData !== 0) {
+                                this.offsetData = 0;
+                                this.emit('update:offset', this.offsetData);
+                            }
+                        }
+                        else {
+                            this.offsetData -= 10;
+                            this.emit('update:offset', this.offsetData);
+                        }
+                    }
+                    else {
+                        // --- 向下 ---
+                        if (this.offsetData + 10 > this.maxOffset) {
+                            if (this.offsetData !== this.maxOffset) {
+                                this.offsetData = this.maxOffset;
+                                this.emit('update:offset', this.offsetData);
+                            }
+                        }
+                        else {
+                            this.offsetData += 10;
+                            this.emit('update:offset', this.offsetData);
+                        }
+                    }
+                });
+            },
+            up: () => {
+                clickgo.task.offFrame(this.tran);
+                this.tran = 0;
+            }
+        });
+    }
+
+    /**
+     * --- block 的 down 事件 ---
+     */
     public down(e: MouseEvent | TouchEvent): void {
         if (clickgo.dom.hasTouchButMouse(e)) {
             return;
@@ -92,17 +163,28 @@ export default class extends clickgo.control.AbstractControl {
         clickgo.dom.bindMove(e, {
             'areaObject': this.refs.bar,
             'object': this.refs.block,
-            'move': (ox, oy) => {
-                this.scrollOffsetPx += this.props.direction === 'v' ? oy : ox;
-                /** --- 滚动百分比 --- */
-                const scrollPer = (this.barOutSize > 0) ? (this.scrollOffsetPx / this.barOutSize) : 0;
-                this.scrollOffsetData = Math.round(scrollPer * this.maxScroll);
-                this.emit('update:scrollOffset', this.scrollOffsetData);
+            'move': (e, o) => {
+                if ((this.props.direction === 'v' && o.inBorder.top) || (this.props.direction === 'h' && o.inBorder.left)) {
+                    this.offsetData = 0;
+                }
+                else if ((this.props.direction === 'v' && o.inBorder.bottom) || (this.props.direction === 'h' && o.inBorder.right)) {
+                    this.offsetData = this.maxOffset;
+                }
+                else {
+                    const offsetPx = this.offsetPx + (this.props.direction === 'v' ? o.oy : o.ox);
+                    /** --- 滚动百分比 --- */
+                    const ratio = (this.outBlockPx > 0) ? (offsetPx / this.outBlockPx) : 0;
+                    this.offsetData = Math.round(ratio * this.maxOffset);
+                }
+                this.emit('update:offset', this.offsetData);
             }
         });
     }
 
-    public bardown(e: MouseEvent | TouchEvent): void {
+    /**
+     * --- bar 的空白区域（非 down 区域）按下事件 ---
+     */
+    public barDown(e: MouseEvent | TouchEvent): void {
         if (clickgo.dom.hasTouchButMouse(e)) {
             return;
         }
@@ -112,72 +194,23 @@ export default class extends clickgo.control.AbstractControl {
         /** --- bar inner 的 rect 对象 --- */
         const barRect = this.refs.bar.getBoundingClientRect();
         /** --- bar inner 对应的 left 或 top 位置 --- */
-        const barOffset = this.props.direction === 'v' ? barRect.top : barRect.left;
+        const barOffsetPx = this.props.direction === 'v' ? barRect.top : barRect.left;
         /** --- 鼠标点击在 bar 中的位置 --- */
-        let eOffset = this.props.direction === 'v' ? (e instanceof MouseEvent ? e.clientY : e.touches[0].clientY) : (e instanceof MouseEvent ? e.clientX : e.touches[0].clientX);
-        eOffset = eOffset - barOffset;
-
-        let scrollOffsetPx = eOffset - this.size / 2;
-        if (scrollOffsetPx < 0) {
-            scrollOffsetPx = 0;
+        let eOffsetPx = this.props.direction === 'v' ? (e instanceof MouseEvent ? e.clientY : e.touches[0].clientY) : (e instanceof MouseEvent ? e.clientX : e.touches[0].clientX);
+        eOffsetPx = eOffsetPx - barOffsetPx;
+        // --- 计算 offset px 位置 ---
+        let offsetPx = eOffsetPx - this.blockPx / 2;
+        if (offsetPx < 0) {
+            offsetPx = 0;
         }
-        if (scrollOffsetPx + this.size > this.barLengthPx) {
-            scrollOffsetPx = this.barLengthPx - this.size;
+        if (offsetPx + this.blockPx > this.barPx) {
+            offsetPx = this.barPx - this.blockPx;
         }
-        this.scrollOffsetPx = scrollOffsetPx;
         /** --- 滚动百分比 --- */
-        const scrollPer = this.scrollOffsetPx / this.barOutSize;
-        this.scrollOffsetData = Math.round(scrollPer * this.maxScroll);
-        this.emit('update:scrollOffset', this.scrollOffsetData);
+        const ratio = (this.outBlockPx > 0) ? (offsetPx / this.outBlockPx) : 0;
+        this.offsetData = Math.round(ratio * this.maxOffset);
+        this.emit('update:offset', this.offsetData);
         this.down(e);
-    }
-
-    public longDown(e: MouseEvent | TouchEvent, type: 'start' | 'end'): void {
-        if (this.props.client >= this.props.length) {
-            return;
-        }
-        clickgo.dom.bindDown(e, {
-            down: () => {
-                this.tran = true;
-                this.timer = clickgo.task.onFrame(() => {
-                    if (type === 'start') {
-                        if (this.scrollOffsetData - 10 < 0) {
-                            if (this.scrollOffsetData !== 0) {
-                                this.scrollOffsetData = 0;
-                                this.scrollOffsetPx = 0;
-                                this.emit('update:scrollOffset', this.scrollOffsetData);
-                            }
-                        }
-                        else {
-                            this.scrollOffsetData -= 10;
-                            this.scrollOffsetPx = (this.maxScroll > 0)
-                                ? (this.barOutSize * (this.scrollOffsetData / this.maxScroll)) : 0;
-                            this.emit('update:scrollOffset', this.scrollOffsetData);
-                        }
-                    }
-                    else {
-                        if (this.scrollOffsetData + 10 > this.maxScroll) {
-                            if (this.scrollOffsetData !== this.maxScroll) {
-                                this.scrollOffsetData = this.maxScroll;
-                                this.scrollOffsetPx = this.barOutSize;
-                                this.emit('update:scrollOffset', this.scrollOffsetData);
-                            }
-                        }
-                        else {
-                            this.scrollOffsetData += 10;
-                            this.scrollOffsetPx = (this.maxScroll > 0)
-                                ? (this.barOutSize * (this.scrollOffsetData / this.maxScroll)) : 0;
-                            this.emit('update:scrollOffset', this.scrollOffsetData);
-                        }
-                    }
-                });
-            },
-            up: () => {
-                this.tran = false;
-                clickgo.task.offFrame(this.timer);
-                this.timer = 0;
-            }
-        });
     }
 
     // --- 进入时保持滚动条常亮 ---
@@ -186,140 +219,89 @@ export default class extends clickgo.control.AbstractControl {
             return;
         }
         this.isEnter = true;
-        if (this.isFloat) {
-            this.opacity = '1';
-            if (this.opacityTimer > 0) {
-                clickgo.task.removeTimer(this.opacityTimer);
-                this.opacityTimer = 0;
+        if (this.propBoolean('float')) {
+            this.isShow = true;
+            if (this.hideTimer) {
+                clickgo.task.removeTimer(this.hideTimer);
+                this.hideTimer = 0;
             }
         }
     }
 
+    // --- 移出后十滚动条隐藏 ---
     public leave(e: MouseEvent): void {
         if (clickgo.dom.hasTouchButMouse(e)) {
             return;
         }
         this.isEnter = false;
-        if (this.isFloat) {
-            this.opacityTimer = clickgo.task.sleep(() => {
-                this.opacity = '0';
+        if (this.propBoolean('float')) {
+            this.hideTimer = clickgo.task.sleep(() => {
+                this.isShow = false;
             }, 800);
-        }
-    }
-
-    public wrapDown(e: TouchEvent): void {
-        // --- 防止在手机模式按下的状态下滚动条被自动隐藏，PC 下有 enter 所以没事 ---
-        clickgo.dom.bindDown(e, {
-            down: () => {
-                this.isEnter = true;
-                if (this.isFloat) {
-                    this.opacity = '1';
-                    if (this.opacityTimer > 0) {
-                        clickgo.task.removeTimer(this.opacityTimer);
-                        this.opacityTimer = 0;
-                    }
-                }
-            },
-            up: () => {
-                this.isEnter = false;
-                if (this.isFloat) {
-                    this.opacityTimer = clickgo.task.sleep(() => {
-                        this.opacity = '0';
-                    }, 800);
-                }
-            }
-        });
-    }
-
-    // --- 根据 this.scrollOffsetData 值，来设定 px 位置的值 ---
-    public resizePx(): void {
-        if (this.scrollOffsetData > this.maxScroll) {
-            this.scrollOffsetData = this.maxScroll;
-            this.scrollOffsetPx = this.barOutSize;
-            this.emit('update:scrollOffset', this.scrollOffsetData);
-        }
-        else if (this.scrollOffsetData < 0) {
-            this.scrollOffsetData = 0;
-            this.scrollOffsetPx = 0;
-            this.emit('update:scrollOffset', this.scrollOffsetData);
-        }
-        else {
-            this.scrollOffsetPx = this.barOutSize * (this.scrollOffsetData / this.maxScroll);
         }
     }
 
     public onMounted(): void {
-        this.watch('length', (): void => {
-            this.resizePx();
-        });
-        this.watch('client', (): void => {
-            this.resizePx();
-        });
-        this.watch('scrollOffset', (): void => {
-            const scrollOffsetData = Math.round(this.props.scrollOffset);
-            if (this.scrollOffsetData === scrollOffsetData) {
+        const checkOffset = (): void => {
+            if (this.offsetData <= this.maxOffset) {
                 return;
             }
-            this.scrollOffsetData = scrollOffsetData;
-            this.resizePx();
-        });
-        this.watch('scrollOffsetData', (): void => {
-            if (!this.isFloat) {
+            this.offsetData = this.maxOffset;
+            this.emit('update:offset', this.offsetData);
+        };
+        this.watch('length', checkOffset);
+        this.watch('client', checkOffset);
+        // --- 监听 prop 用户的 offset 设定 ---
+        this.watch('offset', (): void => {
+            if (this.offsetData === this.propInt('offset')) {
                 return;
             }
-            if (this.isEnter) {
-                return;
+            this.offsetData = this.propInt('offset');
+            // --- 如果是隐藏状态，要显示一下 ---
+            if (this.propBoolean('float') && !this.isEnter) {
+                if (this.hideTimer) {
+                    clickgo.task.removeTimer(this.hideTimer);
+                }
+                this.isShow = true;
+                this.hideTimer = clickgo.task.sleep(() => {
+                    this.isShow = false;
+                }, 800);
             }
-            if (this.opacityTimer > 0) {
-                clickgo.task.removeTimer(this.opacityTimer);
-                this.opacityTimer = 0;
-            }
-            this.opacityTimer = clickgo.task.sleep(() => {
-                this.opacity = '0';
-            }, 800);
-            this.opacity = '1';
+        }, {
+            'immediate': true
         });
+        // --- 监听用户设定的浮动 ---
         this.watch('float', (): void => {
-            if (this.isFloat) {
-                this.opacityTimer = clickgo.task.sleep(() => {
-                    this.opacity = '0';
+            if (this.propBoolean('float')) {
+                // --- 设定为 true，隐藏 ---
+                this.hideTimer = clickgo.task.sleep(() => {
+                    this.isShow = false;
                 }, 800);
             }
             else {
-                if (this.opacityTimer > 0) {
-                    clickgo.task.removeTimer(this.opacityTimer);
-                    this.opacityTimer = 0;
+                this.isShow = true;
+                if (this.hideTimer) {
+                    clickgo.task.removeTimer(this.hideTimer);
+                    this.hideTimer = 0;
                 }
-                this.opacity = '1';
             }
+        }, {
+            'immediate': true
         });
-
-        // --- 是否自动隐藏 scroll ---
-        if (this.isFloat) {
-            this.opacityTimer = clickgo.task.sleep(() => {
-                this.opacity = '0';
-            }, 800);
-        }
         // --- 监听 bar 的 size ---
-        clickgo.dom.watchSize(this.refs.bar, (size) => {
-            this.barLengthPx = this.props.direction === 'v' ? size.height : size.width;
-            this.scrollOffsetPx =  this.barOutSize * (this.scrollOffsetData / this.maxScroll);
+        clickgo.dom.watchSize(this.refs.bar, () => {
+            const barRect = this.refs.bar.getBoundingClientRect();
+            this.barPx = this.props.direction === 'v' ? barRect.height : barRect.width;
             // --- bar 的 size 改了，整个 el 肯定也改了 ---
-            const els = clickgo.dom.getSize(this.element);
-            this.width = els.width;
-            this.height = els.height;
+            const rect = this.element.getBoundingClientRect();
+            this.width = rect.width;
+            this.height = rect.height;
         }, true);
-        const scrollOffsetData = Math.round(this.props.scrollOffset);
-        if (this.scrollOffsetData === scrollOffsetData) {
-            return;
-        }
-        this.scrollOffsetData = scrollOffsetData;
-        this.resizePx();
     }
 
     public onUnmounted(): void {
-        if (this.timer > 0) {
-            clickgo.task.offFrame(this.timer);
+        if (this.hideTimer) {
+            clickgo.task.offFrame(this.hideTimer);
         }
     }
 

@@ -155,7 +155,7 @@ export function launcher(boot: AbstractBoot): void {
     (async function() {
         // --- 通过标签加载库 ---
         const paths: string[] = [
-            loader.cdn + '/npm/vue@3.2.40/dist/vue.global.prod.min.js'
+            loader.cdn + '/npm/vue@3.2.41/dist/vue.global.prod.min.js'
         ];
         // --- 判断 ResizeObserver 是否存在 ---
         let ro = true;
@@ -216,7 +216,7 @@ export function launcher(boot: AbstractBoot): void {
         core.boot = boot;
         // --- 执行回调 ---
         await boot.main();
-    })().catch(function() {
-        return;
+    })().catch(function(e) {
+        console.log('launcher', e);
     });
 }

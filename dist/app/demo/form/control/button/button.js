@@ -14,10 +14,10 @@ class default_1 extends clickgo.form.AbstractForm {
     constructor() {
         super(...arguments);
         this.btnChecked = false;
-        this.btnRadio = 0;
-        this.type = 'default';
-        this.area = 'all';
-        this.plain = 'not';
+        this.btnRadio = '0';
+        this.type = ['default'];
+        this.area = ['all'];
+        this.plain = ['not'];
     }
     dialog(text) {
         return __awaiter(this, void 0, void 0, function* () {

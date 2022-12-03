@@ -54,7 +54,7 @@ async function run(): Promise<void> {
         'withFileTypes': true
     });
     for (const item of list) {
-        if (['check', 'dialog', 'file', 'greatlist', 'greatselect', 'greatview', 'img', 'label', 'layout', 'list', 'loading', 'marquee', 'menu', 'menu-item', 'menulist', 'menulist-item', 'menulist-split', 'flow', 'radio', 'scroll', 'select', 'tab', 'text', 'view', 'task-item'].includes(item.name)) {
+        if (['check', 'dialog', 'file', 'greatlist', 'greatselect', 'vflow', 'img', 'label', 'layout', 'list', 'loading', 'marquee', 'menu', 'menu-item', 'menulist', 'menulist-item', 'menulist-split', 'flow', 'radio', 'scroll', 'select', 'tab', 'text', 'task-item'].includes(item.name)) {
             continue;
         }
         if (item.name.startsWith('.')) {
@@ -73,7 +73,7 @@ async function run(): Promise<void> {
             await addFile(zipo, base + 'file', 'file');
             await addFile(zipo, base + 'greatlist', 'greatlist');
             await addFile(zipo, base + 'greatselect', 'greatselect');
-            await addFile(zipo, base + 'greatview', 'greatview');
+            await addFile(zipo, base + 'vflow', 'vflow');
             await addFile(zipo, base + 'img', 'img');
             await addFile(zipo, base + 'label', 'label');
             await addFile(zipo, base + 'layout', 'layout');
@@ -91,7 +91,6 @@ async function run(): Promise<void> {
             await addFile(zipo, base + 'select', 'select');
             await addFile(zipo, base + 'tab', 'tab');
             await addFile(zipo, base + 'text', 'text');
-            await addFile(zipo, base + 'view', 'view');
         }
         else if (item.name === 'task') {
             await addFile(zipo, base + 'task-item', 'task-item');

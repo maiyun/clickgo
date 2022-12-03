@@ -3,11 +3,11 @@ import * as clickgo from 'clickgo';
 export default class extends clickgo.control.AbstractControl {
 
     public props: {
-        'disabled': boolean;
+        'disabled': boolean | string;
 
         'sort': 'kind' | 'letter';
         'type': 'property' | 'event';
-        'desc': boolean;
+        'desc': boolean | string;
         'modelValue': Array<{
             'title': string;
             'desc': string;
@@ -70,14 +70,6 @@ export default class extends clickgo.control.AbstractControl {
     public description = '';
 
     public dockValue = '';
-
-    public get isDisabled(): boolean {
-        return clickgo.tool.getBoolean(this.props.disabled);
-    }
-
-    public get isDesc(): boolean {
-        return clickgo.tool.getBoolean(this.descData);
-    }
 
     public get subValue() {
         return (item2: Record<string, any>, i3: number, isDefault: boolean = false): string => {
@@ -329,7 +321,7 @@ export default class extends clickgo.control.AbstractControl {
             'immediate': true
         });
         this.watch('desc', (): void => {
-            this.descData = this.props.desc;
+            this.descData = this.propBoolean('desc');
         }, {
             'immediate': true
         });

@@ -56,7 +56,7 @@ export default class extends clickgo.control.AbstractControl {
             if (this.canDoMain) {
                 // --- 在主标签响应 ---
                 this.innerClick(e);
-                if (!this.slots('pop').length || (this.props.area === 'mark')) {
+                if (!this.slots['pop'] || (this.props.area === 'mark')) {
                     // --- 没有菜单，或者有菜单但是是 mark 模式 ---
                     this.element.click();
                     if (this.refs.arrow.dataset.cgPopOpen !== undefined) {
@@ -109,7 +109,7 @@ export default class extends clickgo.control.AbstractControl {
                 return;
             }
             this.innerClick(e);
-            if (!this.slots('pop').length || (this.props.area === 'mark')) {
+            if (!this.slots['pop'] || (this.props.area === 'mark')) {
                 // --- 没有菜单，或者有菜单但是是 mark 模式 ---
                 this.element.click();
             }
@@ -139,7 +139,7 @@ export default class extends clickgo.control.AbstractControl {
 
     // --- 左侧点击 ---
     public innerClick(e: MouseEvent | KeyboardEvent): void {
-        if (!this.slots('pop').length || (this.props.area === 'split' || this.props.area === 'mark')) {
+        if (!this.slots['pop'] || (this.props.area === 'split' || this.props.area === 'mark')) {
             // --- 没有菜单，或者有菜单，但是是分离或者 mark 模式，则不在左侧点击时响应事件 ---
             return;
         }

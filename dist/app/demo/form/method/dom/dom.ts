@@ -50,15 +50,14 @@ export default class extends clickgo.form.AbstractForm {
         clickgo.form.dialog(clickgo.dom.getStyleCount(this.taskId, 'form').toString()).catch((e) => { throw e; });
     }
 
-    public getSize(): void {
-        clickgo.form.dialog(JSON.stringify(clickgo.dom.getSize(this.refs.getSize.$el))).catch((e) => { throw e; });
-    }
-
     public watchSize(): void {
         this.watchSizeText = !this.watchSizeText;
         if (this.watchSizeText) {
-            clickgo.dom.watchSize(this.refs.watchSize.$el, (size) => {
-                clickgo.form.dialog(JSON.stringify(size)).catch((e) => { throw e; });
+            clickgo.dom.watchSize(this.refs.watchSize.$el, () => {
+                clickgo.form.dialog(JSON.stringify({
+                    'width': this.refs.watchSize.$el.offsetWidth,
+                    'height': this.refs.watchSize.$el.offsetHeight
+                })).catch((e) => { throw e; });
             });
         }
         else {
@@ -83,34 +82,28 @@ export default class extends clickgo.form.AbstractForm {
     }
 
     public bindGesture(e: MouseEvent | TouchEvent): void {
-        clickgo.dom.bindGesture(e, {
-            'dirs': ['top', 'bottom'],
-            handler: (dir) => {
-                this.bindGestureText = dir.slice(0, 1).toUpperCase() + dir.slice(1);
-                const handler = async (): Promise<void> => {
-                    await clickgo.tool.sleep(500);
-                    this.bindGestureText = '';
-                };
-                handler().catch((e) => {
-                    console.log(e);
-                });
+        clickgo.dom.bindGesture(e, (ne, dir) => {
+            if (['top', 'bottom'].includes(dir)) {
+                return true;
             }
+            return false;
+        }, async (dir): Promise<void> => {
+            this.bindGestureText = dir.slice(0, 1).toUpperCase() + dir.slice(1);
+            await clickgo.tool.sleep(500);
+            this.bindGestureText = '';
         });
     }
 
     public bindGestureWheel(e: WheelEvent): void {
-        clickgo.dom.bindGesture(e, {
-            'dirs': ['top', 'bottom', 'left', 'right'],
-            handler: (dir) => {
-                this.bindGestureWheelText = dir.slice(0, 1).toUpperCase() + dir.slice(1);
-                const handler = async (): Promise<void> => {
-                    await clickgo.tool.sleep(500);
-                    this.bindGestureWheelText = '';
-                };
-                handler().catch((e) => {
-                    console.log(e);
-                });
+        clickgo.dom.bindGesture(e, (ne, dir) => {
+            if (['top', 'bottom', 'left', 'right'].includes(dir)) {
+                return true;
             }
+            return false;
+        }, async (dir) => {
+            this.bindGestureWheelText = dir.slice(0, 1).toUpperCase() + dir.slice(1);
+            await clickgo.tool.sleep(500);
+            this.bindGestureWheelText = '';
         });
     }
 
@@ -155,9 +148,9 @@ export default class extends clickgo.form.AbstractForm {
         clickgo.dom.bindMove(e, {
             'areaObject': e.currentTarget as HTMLElement,
             'object': this.refs.move,
-            move: (ox: number, oy: number): void => {
-                this.moveLeft += ox;
-                this.moveTop += oy;
+            move: (e, o): void => {
+                this.moveLeft += o.ox;
+                this.moveTop += o.oy;
             }
         });
     }

@@ -13,7 +13,7 @@
     }
 
     .tabs-wrap {
-        display: flex; position: relative; z-index: 1;
+        display: flex; z-index: 1;
     }
     &.left, &.right {
         .tabs-wrap {
@@ -27,15 +27,13 @@
             content: ''; pointer-events: none; border: solid 1px var(--g-color); width: 6px; height: 6px; transform: rotate(45deg);
         }
         &:hover {
-            background: var(--g-plain-background-hover);
             &::before {
                 border-color: var(--g-color-hover);
             }
         }
         &:active {
-            background: var(--g-color);
             &::before {
-                border-color: var(--face);
+                border-color: var(--g-color-active);
             }
         }
     }
@@ -70,7 +68,7 @@
     }
     &.top, &.bottom {
         .tabs {
-            width: 0; overflow-x: auto;
+            width: 0; overflow-x: auto; overflow-y: hidden;
         }
     }
     &.top .tabs {
@@ -81,7 +79,7 @@
     }
     &.left, &.right {
         .tabs {
-            height: 0; flex-direction: column; overflow-y: auto;
+            height: 0; flex-direction: column; overflow-y: auto; overflow-x: hidden;
         }
     }
     &.left .tabs {
@@ -92,18 +90,15 @@
     }
 
     .tab {
-        background: var(--face); display: inline-flex; align-items: center; position: relative;
-        &::before {
-            content: ''; pointer-events: none; position: absolute; left: 0; top: 0; width: 200%; height: 200%; transform-origin: 0 0; transform: scale(.5); border: solid 1px var(--g-plain-border-color); z-index: 1;
-        }
+        background: var(--face); display: inline-flex; align-items: center; border: solid .5px var(--g-plain-border-color); position: relative;
         &::after {
-            content: ' '; pointer-events: none; position: absolute; transform: scale(.5); background: var(--background-selected); display: none;
+            content: ' '; pointer-events: none; position: absolute; background: var(--background-selected); display: none;
         }
         &:not(.selected):not([data-cg-hover]):hover {
             background: var(--g-plain-background-hover);
         }
         &.selected {
-            background: var(--background-selected);;
+            background: var(--background-selected);
         }
         &[data-cg-hover] {
             background: var(--g-color); color: var(--face);
@@ -134,45 +129,35 @@
         .tabs {
             .tab {
                 &.selected {
-                    &::before {
-                        border-right-width: 1px;
-                    }
+                    border-right-width: .5px;
                     + * {
-                        &::before {
-                            border-left-width: 0;
-                        }
+                        border-left-width: 0;
                     }
                 }
             }
             > .tab:last-child {
-                &::before {
-                    border-right-width: 1px;
-                }
+                border-right-width: .5px;
             }
         }
     }
     &.top {
         .tab {
-            &::before {
-                border-width: 1px 0 0 1px;
-            }
+            border-width: .5px 0 0 .5px;
             &.selected {
                 padding-bottom: 3px;
                 &::after {
-                    display: block; left: 0; top: calc(100% - 2px); width: calc(200% - 2px); height: 4px; transform-origin: 1px 50%;
+                    display: block; left: 0; top: calc(100% - 2px); width: 100%; height: 4px;
                 }
             }
         }
     }
     &.bottom {
         .tab {
-            &::before {
-                border-width: 0 0 1px 1px;
-            }
+            border-width: 0 0 1px 1px;
             &.selected {
                 padding-top: 3px;
                 &::after {
-                    display: block; left: 0; top: -2px; width: calc(200% - 2px); height: 4px; transform-origin: 1px 50%;
+                    display: block; left: 0; top: -2px; width: 100%; height: 4px;
                 }
             }
         }
@@ -181,52 +166,39 @@
         .tabs {
             .tab {
                 &.selected {
-                    &::before {
-                        border-bottom-width: 1px;
-                    }
+                    border-bottom-width: 1px;
                     + * {
-                        &::before {
-                            border-top-width: 0;
-                        }
+                        border-top-width: 0;
                     }
                 }
             }
             > .tab:last-child {
-                &::before {
-                    border-bottom-width: 1px;
-                }
+                border-bottom-width: 1px;
             }
         }
     }
     &.left {
         .tab {
-            &::before {
-                border-width: 1px 0 0 1px;
-            }
+            border-width: 1px 0 0 1px;
             &.selected {
                 &::after {
-                    display: block; left: calc(100% - 2px); top: 0; width: 4px; height: calc(200% - 2px); transform-origin: 50% 1px;
+                    display: block; left: calc(100% - 2px); top: 0; width: 4px; height: 100%;
                 }
             }
         }
     }
     &.right {
         .tab {
-            &::before {
-                border-width: 1px 1px 0 0;
-            }
+            border-width: 1px 1px 0 0;
             &.selected {
                 &::after {
-                    display: block; left: -2px; top: 0; width: 4px; height: calc(200% - 2px); transform-origin: 50% 1px;
+                    display: block; left: -2px; top: 0; width: 4px; height: 100%;
                 }
             }
         }
     }
 
     .panel {
-        background: var(--background-selected);; display: flex; flex: 1; overflow: hidden; position: relative;
-        &::before {
-            content: ''; pointer-events: none; position: absolute; left: 0; top: 0; width: 200%; height: 200%; transform-origin: 0 0; transform: scale(.5); border: solid 1px var(--g-plain-border-color);
-        }
+        background: var(--background-selected); display: flex; flex: 1; overflow: hidden; border: solid .5px var(--g-plain-border-color);
     }    
 }

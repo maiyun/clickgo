@@ -29,6 +29,7 @@
                 <button @click="sshowDialog" style="height: 30px; flex: 1;">showDialog()</button>
                 <label>result: {{dr}}</label>
             </layout>
+            <button @click="close" style="height: 30px;">close()</button>
         </layout>
     </flow>
 </form>

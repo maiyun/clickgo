@@ -25,7 +25,7 @@ export default class extends clickgo.control.AbstractControl {
     }
 
     public click(): void {
-        if (!this.slots('pop').length) {
+        if (!this.slots['pop']) {
             return;
         }
         if (this.element.dataset.cgPopOpen !== undefined) {
@@ -39,7 +39,7 @@ export default class extends clickgo.control.AbstractControl {
         if (clickgo.dom.hasTouchButMouse(e)) {
             return;
         }
-        if (!this.slots('contextmenu').length) {
+        if (!this.slots['contextmenu']) {
             return;
         }
         clickgo.form.showPop(this.element, this.refs.contextmenu, 'v');

@@ -1,11 +1,13 @@
 <div class="wrap" :class="[position, isSelected && 'selected', isOpened && 'opened', isMulti && 'multi']" @mousedown="down" @touchstart="down" @contextmenu="contextmenu" @click="click">
     <slot></slot>
     <div class="line"></div>
-    <teleport to="#cg-pop-list">
-        <div v-if="slots('pop').length" ref="pop" data-cg-pop>
+    <teleport to="system">
+        <div v-if="slots['pop']" ref="pop">
             <slot name="pop"></slot>
         </div>
-        <div v-if="slots('contextmenu').length" ref="contextmenu" data-cg-pop>
+    </teleport>
+    <teleport to="system">
+        <div v-if="slots['contextmenu']" ref="contextmenu">
             <slot name="contextmenu"></slot>
         </div>
     </teleport>

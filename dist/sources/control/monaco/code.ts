@@ -3,9 +3,9 @@ import * as clickgo from 'clickgo';
 export default class extends clickgo.control.AbstractControl {
 
     public props: {
-        'disabled': boolean;
+        'disabled': boolean | string;
 
-        'readonly': boolean;
+        'readonly': boolean | string;
         'modelValue': string;
         'language': string;
         'theme': string;
@@ -27,14 +27,6 @@ export default class extends clickgo.control.AbstractControl {
             'instance': undefined,
             'monaco': undefined
         };
-
-    public get isDisabled(): boolean {
-        return clickgo.tool.getBoolean(this.props.disabled);
-    }
-
-    public get isReadonly(): boolean {
-        return clickgo.tool.getBoolean(this.props.readonly);
-    }
 
     public get showMask(): boolean {
         // --- 防止拖动导致卡顿 ---
@@ -176,21 +168,21 @@ export default class extends clickgo.control.AbstractControl {
         }
     }
 
-    public onMounted(): void | Promise<void> {
-        this.watch('isReadonly', (): void => {
+    public async onMounted(): Promise<void> {
+        this.watch('readonly', (): void => {
             if (!this.access.instance) {
                 return;
             }
             this.access.instance.updateOptions({
-                'readOnly': this.isDisabled ? true : this.isReadonly
+                'readOnly': this.propBoolean('disabled') ? true : this.propBoolean('readonly')
             });
         });
-        this.watch('isDisabled', (): void => {
+        this.watch('disabled', (): void => {
             if (!this.access.instance) {
                 return;
             }
             this.access.instance.updateOptions({
-                'readOnly': this.isDisabled ? true : this.isReadonly
+                'readOnly': this.propBoolean('disabled') ? true : this.propBoolean('readonly')
             });
         });
 
@@ -302,21 +294,21 @@ export default class extends clickgo.control.AbstractControl {
         monacoEl.style.height = '100%';
         idoc.body.append(monacoEl);
         /** --- monaco 的 loader 文件全量 data url --- */
-        const monaco = clickgo.core.getModule('monaco');
+        const monaco = await clickgo.core.getModule('monaco');
         if (monaco) {
             const loaderEl = idoc.createElement('script');
             loaderEl.addEventListener('load', () => {
                 (iwindow as any).require.config({
                     paths: {
-                        'vs': clickgo.core.getCdn() + '/npm/monaco-editor@0.33.0/min/vs'
+                        'vs': clickgo.core.getCdn() + '/npm/monaco-editor@0.34.1/min/vs'
                     }
                 });
                 // --- 初始化 Monaco ---
                 const proxy = (iwindow as any).URL.createObjectURL(new Blob([`
                     self.MonacoEnvironment = {
-                        baseUrl: '${clickgo.core.getCdn()}/npm/monaco-editor@0.33.0/min/'
+                        baseUrl: '${clickgo.core.getCdn()}/npm/monaco-editor@0.34.1/min/'
                     };
-                    importScripts('${clickgo.core.getCdn()}/npm/monaco-editor@0.33.0/min/vs/base/worker/workerMain.js');
+                    importScripts('${clickgo.core.getCdn()}/npm/monaco-editor@0.34.1/min/vs/base/worker/workerMain.js');
                 `], { type: 'text/javascript' }));
                 (iwindow as any).MonacoEnvironment = {
                     getWorkerUrl: () => proxy

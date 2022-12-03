@@ -9,10 +9,7 @@ class default_1 extends clickgo.control.AbstractControl {
             'value': '',
             'modelValue': ''
         };
-        this.isKeyDown = false;
-    }
-    get isDisabled() {
-        return clickgo.tool.getBoolean(this.props.disabled);
+        this.isSpaceDown = false;
     }
     click() {
         this.emit('update:modelValue', this.props.value);
@@ -24,14 +21,14 @@ class default_1 extends clickgo.control.AbstractControl {
         }
         else if (e.key === ' ') {
             e.preventDefault();
-            this.isKeyDown = true;
+            this.isSpaceDown = true;
         }
     }
     keyup() {
-        if (!this.isKeyDown) {
+        if (!this.isSpaceDown) {
             return;
         }
-        this.isKeyDown = false;
+        this.isSpaceDown = false;
         this.click();
     }
 }

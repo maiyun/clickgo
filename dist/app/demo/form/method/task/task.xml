@@ -7,7 +7,6 @@
                     <button @click="frameStart(0)" style="height: 30px; flex: 1;">Once</button>
                     <button @click="frameStart(1)" style="height: 30px; flex: 1;">Count 100</button>
                     <button @click="frameStart(2)" style="height: 30px; flex: 1;">Form</button>
-                    <button @click="frameStart(3)" style="height: 30px; flex: 1;">Task</button>
                 </template>
                 <template v-else>
                     <button @click="frameEnd" style="height: 30px; flex: 1;">End</button>
@@ -19,7 +18,6 @@
                     <button @click="timerStart(0)" style="height: 30px; flex: 1;">Once</button>
                     <button @click="timerStart(1)" style="height: 30px; flex: 1;">Count 100</button>
                     <button @click="timerStart(2)" style="height: 30px; flex: 1;">Form</button>
-                    <button @click="timerStart(3)" style="height: 30px; flex: 1;">Task</button>
                 </template>
                 <template v-else>
                     <button @click="timerEnd" style="height: 30px; flex: 1;">End</button>

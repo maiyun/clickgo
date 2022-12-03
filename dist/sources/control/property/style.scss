@@ -13,18 +13,12 @@
             font-family: 'ifont'; margin-right: 1px; font-size: 14px; width: 24px; height: 24px;
         }
         .split {
-            position: relative; width: 6px;
-            &::before {
-                content: ''; pointer-events: none; position: absolute; left: 0; top: 0; width: 100%; height: 200%; transform-origin: 0 0; transform: scale(.5); border-right: solid 1px var(--g-border-color); z-index: 1;
-            }
+            width: .5px; background: var(--g-border-color); margin: 0 3px 0 2px;
         }
     }
 
     .content {
-        margin-top: 3px; background: #FFF; flex: 1; display: flex; position: relative; overflow: hidden;
-        &::before {
-            content: ''; pointer-events: none; position: absolute; left: 0; top: 0; width: 200%; height: 200%; transform-origin: 0 0; transform: scale(.5); border: solid 1px var(--g-border-color); z-index: 1;
-        }
+        margin-top: 2px; background: #FFF; flex: 1; display: flex; overflow: hidden; border: solid .5px var(--g-border-color);
 
         cg-view {
             flex: 1;
@@ -50,10 +44,7 @@
         }
 
         .line {
-            display: flex; position: relative; white-space: nowrap;
-            &::before {
-                content: ''; pointer-events: none; position: absolute; left: 0; top: 0; width: 200%; height: 200%; transform-origin: 0 0; transform: scale(.5); border-bottom: solid 1px var(--face); z-index: 1;
-            }
+            display: flex; white-space: nowrap; border-bottom: solid 1px var(--face);
 
             .control {
                 background: var(--face); width: 24px; display: flex; align-items: center; justify-content: center;
@@ -96,7 +87,7 @@
                 }
 
                 .arrow {
-                    position: relative; display: flex; justify-content: center; align-items: center; width: 20px;
+                    display: flex; justify-content: center; align-items: center; width: 20px;
                     &::after {
                         content: ''; border: solid 1px var(--g-color); border-width: 0 1px 1px 0; width: 6px; height: 6px; transform: rotate(45deg); margin-top: -3px;
                     }
@@ -106,10 +97,7 @@
     }
 
     .description {
-        margin-top: 3px; background: var(--face); position: relative; height: 51px; padding: 5px; overflow: hidden;
-        &::before {
-            content: ''; pointer-events: none; position: absolute; left: 0; top: 0; width: 200%; height: 200%; transform-origin: 0 0; transform: scale(.5); border: solid 1px var(--g-border-color); z-index: 1;
-        }
+        margin-top: 2px; background: var(--face); height: 51px; padding: 5px; overflow: hidden; border: solid .5px var(--g-border-color);
 
         .title {
             font-weight: bold;
@@ -124,10 +112,7 @@
 // --- POP ---
 
 .dock-pop {
-    position: relative; background: #FFF; display: flex; flex-direction: column; width: 200px; padding: 1px;
-    &::before {
-        content: ''; pointer-events: none; position: absolute; left: 0; top: 0; width: 200%; height: 200%; transform-origin: 0 0; transform: scale(.5); border: solid 1px var(--g-border-color); z-index: 1;
-    }
+    background: #FFF; border: solid .5px var(--g-border-color); display: flex; flex-direction: column; width: 200px; padding: 1px;
 
     > :not(:last-child) {
         margin-bottom: 1px;

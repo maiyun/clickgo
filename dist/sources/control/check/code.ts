@@ -8,12 +8,17 @@ export default class extends clickgo.control.AbstractControl {
 
     public isSpaceDown = false;
 
-    public props = {
-        'disabled': false,
+    public props: {
+        'disabled': boolean | string;
 
-        'modelValue': undefined,
-        'indeterminate': undefined
-    };
+        'modelValue': boolean | string;
+        'indeterminate': boolean | string;
+    } = {
+            'disabled': false,
+
+            'modelValue': false,
+            'indeterminate': false
+        };
 
     public click(): void {
         if (this.indeterminateData) {
@@ -48,7 +53,7 @@ export default class extends clickgo.control.AbstractControl {
     public onMounted(): void | Promise<void> {
         this.watch('modelValue', () => {
             if (this.props.modelValue !== undefined) {
-                this.value = this.props.modelValue;
+                this.value = this.propBoolean('modelValue');
             }
             if (this.indeterminateData && !this.value) {
                 this.indeterminateData = false;
@@ -59,7 +64,7 @@ export default class extends clickgo.control.AbstractControl {
         });
         this.watch('indeterminate', () => {
             if (this.props.indeterminate !== undefined) {
-                this.indeterminateData = this.props.indeterminate;
+                this.indeterminateData = this.propBoolean('indeterminate');
             }
             if (!this.value && this.indeterminateData) {
                 this.value = true;
