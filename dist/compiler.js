@@ -20,25 +20,27 @@ function purify(text) {
 }
 function addFile(zipo, base = '', path = '') {
     return __awaiter(this, void 0, void 0, function* () {
-        let config;
-        try {
-            const c = yield fs.promises.readFile(base + '/config.json', 'utf8');
-            config = JSON.parse(c);
-        }
-        catch (e) {
-            console.log('[ERROR]', e);
-            return;
-        }
-        zipo.file(path + (path ? '/' : '') + 'config.json', JSON.stringify(config));
-        for (const file of config.files) {
-            const p = base + file;
-            const buf = yield fs.promises.readFile(p);
-            const bfile = path ? file : file.slice(1);
-            if (file.endsWith('.html')) {
-                zipo.file(path + bfile, purify(buf.toString()));
+        const list = yield fs.promises.readdir(base);
+        for (const item of list) {
+            try {
+                const stat = yield fs.promises.lstat(base + '/' + item);
+                if (stat.isDirectory()) {
+                    yield addFile(zipo, base + '/' + item, path + '/' + item);
+                    continue;
+                }
+                if (item.endsWith('.ts') || item.endsWith('.scss')) {
+                    continue;
+                }
+                const buf = yield fs.promises.readFile(base + '/' + item);
+                if (item.endsWith('.html')) {
+                    zipo.file(path + (path ? '/' : '') + item, purify(buf.toString()));
+                }
+                else {
+                    zipo.file(path + (path ? '/' : '') + item, buf);
+                }
             }
-            else {
-                zipo.file(path + bfile, buf);
+            catch (_a) {
+                continue;
             }
         }
     });

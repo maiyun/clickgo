@@ -5,10 +5,5 @@
     "author": "clickgo",
 
     "code": "/code",
-    "layout": "/layout",
-
-    "files": [
-        "/code.js",
-        "/layout.html"
-    ]
+    "layout": "/layout"
 }

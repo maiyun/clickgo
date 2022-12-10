@@ -21,6 +21,7 @@ import * as tool from './tool';
 import * as form from './form';
 import * as control from './control';
 import * as fs from './fs';
+import * as theme from './theme';
 import * as native from './native';
 
 /** --- 当前运行的程序，App 模式下无效 --- */
@@ -183,7 +184,7 @@ export function get(tid: number): types.ITaskInfo | null {
         return null;
     }
     return {
-        'name': list[tid].config.name,
+        'name': list[tid].app.config.name,
         'locale': list[tid].locale.lang,
         'customTheme': list[tid].customTheme,
         'formCount': Object.keys(list[tid].forms).length,
@@ -201,7 +202,7 @@ export function getList(): Record<string, types.ITaskInfo> {
     for (const tid in list) {
         const item = list[tid];
         rtn[tid] = {
-            'name': item.config.name,
+            'name': item.app.config.name,
             'locale': item.locale.lang,
             'customTheme': item.customTheme,
             'formCount': Object.keys(item.forms).length,
@@ -249,20 +250,14 @@ export async function run(url: string, opt: types.ITaskRunOptions = {}): Promise
         'current': ntask ? ntask.current : undefined,
         'progress': opt.progress
     });
-    if (!app) {
-        // --- fetch 失败，则返回错误，隐藏 notify ---
-        if (notifyId) {
-            setTimeout(function(): void {
-                form.hideNotify(notifyId);
-            }, 2000);
-        }
-        return -1;
-    }
-    if (notifyId && !app.net) {
-        // --- 仅 app 模式隐藏，net 模式还要在 config 当中加载 xml 等非 js 资源文件 ---
+    // --- 无论是否成功，都可以先隐藏 notify 了 ---
+    if (notifyId) {
         setTimeout(function(): void {
             form.hideNotify(notifyId);
         }, 2000);
+    }
+    if (!app) {
+        return -1;
     }
     // --- 申请任务ID ---
     const taskId = ++lastId;
@@ -407,8 +402,8 @@ export async function run(url: string, opt: types.ITaskRunOptions = {}): Promise
             unwatchSize: function(el: HTMLElement): void {
                 dom.unwatchSize(el, taskId);
             },
-            clearWatchSize(): void {
-                dom.clearWatchSize(taskId);
+            isWatchSize(el: HTMLElement): boolean {
+                return dom.isWatchSize(el);
             },
             watch: function(el: HTMLElement, cb: () => void, mode: 'child' | 'childsub' | 'style' | 'default' = 'default', immediate: boolean = false): void {
                 dom.watch(el, cb, mode, immediate, taskId);
@@ -416,8 +411,8 @@ export async function run(url: string, opt: types.ITaskRunOptions = {}): Promise
             unwatch: function(el: HTMLElement): void {
                 dom.unwatch(el, taskId);
             },
-            clearWatch: function(): void {
-                dom.clearWatch(taskId);
+            isWatch(el: HTMLElement): boolean {
+                return dom.isWatch(el);
             },
             watchStyle: function(
                 el: HTMLElement,
@@ -746,6 +741,17 @@ export async function run(url: string, opt: types.ITaskRunOptions = {}): Promise
             },
             run: function(url: string, opt: types.ITaskRunOptions = {}): Promise<number> {
                 opt.taskId = taskId;
+                if (opt.unblock) {
+                    const inUnblock: string[] = [];
+                    // --- 只能解除屏蔽当前函数里面被解除的变量 ---
+                    for (const item of opt.unblock) {
+                        if (!unblock.includes(item)) {
+                            continue;
+                        }
+                        inUnblock.push(item);
+                    }
+                    opt.unblock = inUnblock;
+                }
                 return run(url, opt);
             },
             end: function(tid: number): boolean {
@@ -908,12 +914,11 @@ export async function run(url: string, opt: types.ITaskRunOptions = {}): Promise
     const path = url;
     const lio = path.endsWith('.cga') ? path.lastIndexOf('/') : path.slice(0, -1).lastIndexOf('/');
     const current = path.slice(0, lio);
-    // --- 创建任务对象 task.IRT ---
+    // --- 创建任务对象 ---
     list[taskId] = {
         'id': taskId,
         'app': app,
         // 'class': null,
-        // 'config': {},
         'customTheme': false,
         'locale': clickgo.vue.reactive({
             'lang': '',
@@ -931,6 +936,30 @@ export async function run(url: string, opt: types.ITaskRunOptions = {}): Promise
         'timers': {},
         'invoke': invoke
     } as any;
+    // --- locale ---
+    if (app.config.locales) {
+        for (let path in app.config.locales) {
+            const locale = app.config.locales[path];
+            if (!path.endsWith('.json')) {
+                path += '.json';
+            }
+            const lcontent = await fs.getContent(path, {
+                'encoding': 'utf8',
+                'files': app.files,
+                'current': current
+            });
+            if (!lcontent) {
+                continue;
+            }
+            try {
+                const data = JSON.parse(lcontent);
+                loadLocaleData(locale, data, '', taskId);
+            }
+            catch {
+                // --- 无所谓 ---
+            }
+        }
+    }
     let expo: any = [];
     try {
         expo = loader.require('/app.js', app.files, {
@@ -953,6 +982,48 @@ export async function run(url: string, opt: types.ITaskRunOptions = {}): Promise
     }
     // --- 创建 Task 总 style ---
     dom.createToStyleList(taskId);
+    // --- 加载 control ---
+    const r = await control.init(taskId, invoke);
+    if (r < 0) {
+        dom.removeFromStyleList(taskId);
+        delete list[taskId];
+        return -400 + r;
+    }
+    // --- 加载 theme ---
+    if (app.config.themes?.length) {
+        for (let path of app.config.themes) {
+            path += '.cgt';
+            path = tool.urlResolve('/', path);
+            const file = await fs.getContent(path, {
+                'files': app.files,
+                'current': current
+            });
+            if (file && typeof file !== 'string') {
+                const th = await theme.read(file);
+                if (th) {
+                    await theme.load(th, taskId);
+                }
+            }
+        }
+    }
+    else {
+        // --- 加载全局主题 ---
+        if (theme.global) {
+            await theme.load(undefined, taskId);
+        }
+    }
+    // --- 加载任务级全局样式 ---
+    if (app.config.style) {
+        const style = await fs.getContent(app.config.style + '.css', {
+            'encoding': 'utf8',
+            'files': app.files,
+            'current': current
+        });
+        if (style) {
+            const r = tool.stylePrepend(style, 'cg-task' + taskId.toString() + '_');
+            dom.pushStyle(taskId, await tool.styleUrl2DataUrl(app.config.style, r.style, app.files));
+        }
+    }
     // --- 触发 taskStarted 事件 ---
     core.trigger('taskStarted', taskId);
     // --- 第一个任务给 native 发送任务启动成功的消息 ---
@@ -961,15 +1032,8 @@ export async function run(url: string, opt: types.ITaskRunOptions = {}): Promise
     }
     // --- 执行 app ---
     const appCls: core.AbstractApp = new expo.default();
+    list[taskId].class = appCls;
     await appCls.main();
-    if (!list[taskId].class) {
-        // --- 创建任务失败，也可能没设置 config，报弹窗错误，清理启动应用并返回错误 ---
-        // --- 结束任务 ---
-        delete list[taskId];
-        dom.removeFromStyleList(taskId);
-        core.trigger('taskEnded', taskId);
-        return -4;
-    }
     return taskId;
 }
 
@@ -1016,7 +1080,7 @@ export function end(taskId: number): boolean {
         f.vapp._container.remove();
         form.elements.popList.querySelector('[data-form-id="' + f.id.toString() + '"]')?.remove();
         dom.clearWatchStyle(fid);
-        dom.clearPropertyStyle(fid);
+        dom.clearWatchProperty(fid);
     }
     // --- 移除可能残留的 form wrap ---
     const flist = form.elements.list.querySelectorAll('.cg-form-wrap[data-task-id="' + taskId.toString() + '"]');
@@ -1038,6 +1102,7 @@ export function end(taskId: number): boolean {
     }
     // --- 移除各类监听 ---
     dom.clearWatchSize(taskId);
+    dom.clearWatch(taskId);
     // --- 移除 task ---
     delete list[taskId];
     // --- 触发 taskEnded 事件 ---

@@ -35,6 +35,7 @@ const core_1 = require("./method/core/core");
 const dom_1 = require("./method/dom/dom");
 const form_3 = require("./method/form/form");
 const fs_1 = require("./method/fs/fs");
+const system_1 = require("./method/system/system");
 const task_2 = require("./method/task/task");
 const theme_1 = require("./method/theme/theme");
 const tool_1 = require("./method/tool/tool");
@@ -171,6 +172,10 @@ class default_1 extends clickgo.form.AbstractForm {
                 }
                 case 'mfs': {
                     frm = yield fs_1.default.create();
+                    break;
+                }
+                case 'msystem': {
+                    frm = yield system_1.default.create();
                     break;
                 }
                 case 'mtask': {

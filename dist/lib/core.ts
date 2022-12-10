@@ -19,10 +19,7 @@ import * as fs from './fs';
 import * as form from './form';
 import * as task from './task';
 import * as tool from './tool';
-import * as control from './control';
-import * as theme from './theme';
 import * as zip from './zip';
-import * as dom from './dom';
 
 /** --- Config 原始参考对象 --- */
 const configOrigin: types.IConfig = {
@@ -71,165 +68,6 @@ export abstract class AbstractApp {
 
     /** --- App 的入口文件 --- */
     public abstract main(): Promise<void>;
-
-    /**
-     * --- 先设置 App 的配置信息 ---
-     * @param config 配置对象
-     */
-    public async config(config: types.IAppConfig): Promise<boolean> {
-        const t = task.list[this.taskId];
-        if (!t) {
-            return false;
-        }
-        t.config = config;
-        // --- 加载余下的 xml 等静态包内资源，仅限 net 的 app 模式 ---
-        if (t.app.net) {
-            if (!t.config.files) {
-                return false;
-            }
-            const files = t.config.files;
-            const net = t.app.net;
-            await new Promise<void>(function(resolve) {
-                let loaded = 0;
-                const total = files.length;
-                const beforeTotal = Object.keys(t.app.files).length;
-                net.progress?.(loaded + beforeTotal, total + beforeTotal) as unknown;
-                for (const file of files) {
-                    if (t.app.files[file]) {
-                        ++loaded;
-                        net.progress?.(loaded + beforeTotal, total + beforeTotal) as unknown;
-                        if (net.notify) {
-                            form.notifyProgress(net.notify, (loaded / total) / 2 + 0.5);
-                        }
-                        if (loaded < total) {
-                            continue;
-                        }
-                        resolve();
-                        return;
-                    }
-                    fs.getContent(net.url + file.slice(1), {
-                        'current': net.current
-                    }).then(async function(blob) {
-                        if (blob === null || typeof blob === 'string') {
-                            clickgo.form.notify({
-                                'title': 'File not found',
-                                'content': net.url + file.slice(1),
-                                'type': 'danger'
-                            });
-                            return;
-                        }
-                        const mime = tool.getMimeByPath(file);
-                        if (['txt', 'json', 'js', 'css', 'xml', 'html'].includes(mime.ext)) {
-                            t.app.files[file] = (await tool.blob2Text(blob)).replace(/^\ufeff/, '');
-                        }
-                        else {
-                            t.app.files[file] = blob;
-                        }
-                        ++loaded;
-                        net.progress?.(loaded + beforeTotal, total + beforeTotal) as unknown;
-                        if (net.notify) {
-                            form.notifyProgress(net.notify, (loaded / total) / 2 + 0.5);
-                        }
-                        if (loaded < total) {
-                            return;
-                        }
-                        resolve();
-                    }).catch(function() {
-                        ++loaded;
-                        net.progress?.(loaded + beforeTotal, total + beforeTotal) as unknown;
-                        if (net.notify) {
-                            form.notifyProgress(net.notify, (loaded / total) / 2 + 0.5);
-                        }
-                        if (loaded < total) {
-                            return;
-                        }
-                        resolve();
-                    });
-                }
-            });
-            if (net.notify) {
-                setTimeout(function(): void {
-                    form.hideNotify(net.notify!);
-                }, 2000);
-            }
-        }
-        // --- 要加载 control ---
-        if (!await control.init(this.taskId)) {
-            return false;
-        }
-        // --- theme ---
-        if (config.themes?.length) {
-            for (let path of config.themes) {
-                path += '.cgt';
-                path = tool.urlResolve('/', path);
-                const file = await fs.getContent(path, {
-                    'files': t.app.files,
-                    'current': t.current
-                });
-                if (file && typeof file !== 'string') {
-                    const th = await theme.read(file);
-                    if (th) {
-                        await theme.load(th, t.id);
-                    }
-                }
-            }
-        }
-        else {
-            // --- 加载全局主题 ---
-            if (theme.global) {
-                await theme.load(undefined, this.taskId);
-            }
-        }
-        // --- locale ---
-        if (config.locales) {
-            for (let path in config.locales) {
-                const locale = config.locales[path];
-                if (!path.endsWith('.json')) {
-                    path += '.json';
-                }
-                const lcontent = await fs.getContent(path, {
-                    'encoding': 'utf8',
-                    'files': t.app.files,
-                    'current': t.current
-                });
-                if (!lcontent) {
-                    continue;
-                }
-                try {
-                    const data = JSON.parse(lcontent);
-                    task.loadLocaleData(locale, data, '', t.id);
-                }
-                catch {
-                    // --- 无所谓 ---
-                }
-            }
-        }
-        // --- 加载任务级全局样式 ---
-        if (config.style) {
-            const style = await fs.getContent(config.style + '.css', {
-                'encoding': 'utf8',
-                'files': t.app.files,
-                'current': t.current
-            });
-            if (style) {
-                const r = tool.stylePrepend(style, 'cg-task' + this.taskId.toString() + '_');
-                dom.pushStyle(this.taskId, await tool.styleUrl2DataUrl(config.style, r.style, t.app.files));
-            }
-        }
-        // --- 加载图标 ---
-        if (config.icon) {
-            const icon = await fs.getContent(config.icon, {
-                'files': t.app.files,
-                'current': t.current
-            });
-            if (icon && typeof icon !== 'string') {
-                t.app.icon = await tool.blob2DataUrl(icon);
-            }
-        }
-        // --- 全部成功，设置 t.class 为自己 ---
-        t.class = this;
-        return true;
-    }
 
     /**
      * --- 以某个窗体进行正式启动这个 app（入口 form），不启动则任务也启动失败 ---
@@ -689,6 +527,13 @@ export async function readApp(blob: Blob): Promise<false | types.IApp> {
     }
     // --- 开始读取文件 ---
     const files: Record<string, Blob | string> = {};
+    /** --- 配置文件 --- */
+    const configContent = await z.getContent('/config.json');
+    if (!configContent) {
+        return false;
+    }
+    const config: types.IAppConfig = JSON.parse(configContent);
+    // --- 读取包 ---
     const list = z.readDir('/', {
         'hasChildren': true
     });
@@ -712,8 +557,10 @@ export async function readApp(blob: Blob): Promise<false | types.IApp> {
         }
     }
     return {
-        'icon': icon,
-        'files': files
+        'type': 'app',
+        'config': config,
+        'files': files,
+        'icon': icon
     };
 }
 
@@ -780,53 +627,78 @@ export async function fetchApp(
             return null;
         }
     }
-    // --- 从网络嗅探 ---
-    let loaded = 0;
-    let total = 30;
-    // --- 网络嗅探，不知道文件总数，先暂定 30，不过超出 30 文件的建议打包为 cga ---
-    const files = await loader.sniffFiles(url + 'app.js', {
-        'dir': '/',
-        adapter: async (url) => {
-            const r = await fs.getContent(url, {
-                'encoding': 'utf8',
-                'current': current
-            });
-            return r;
-        },
-        'loaded': () => {
-            ++loaded;
-            if (loaded === total) {
-                ++total;
-            }
-            if (opt.notifyId) {
-                form.notifyProgress(opt.notifyId, (loaded / total) / 2);
-            }
-            if (opt.progress) {
-                opt.progress(loaded, total) as unknown;
-            }
+    // --- 从网络加载 app ---
+    let config: types.IAppConfig;
+    /** --- 已加载的 files --- */
+    const files: Record<string, Blob | string> = {};
+    try {
+        const blob = await fs.getContent(url + 'config.json', {
+            'current': current
+        });
+        if (blob === null || typeof blob === 'string') {
+            return null;
         }
-    });
-    // --- net 模式此处加载完只算到 50%，因为还有 app 类当中 config 中的静态部分，暂定预留 50% ---
-    if (opt.notifyId) {
-        form.notifyProgress(opt.notifyId, 0.5);
+        config = JSON.parse(await tool.blob2Text(blob));
+        await new Promise<void>(function(resolve) {
+            if (!config.files) {
+                return;
+            }
+            const total = config.files.length;
+            let loaded = 0;
+            for (const file of config.files) {
+                fs.getContent(url + file.slice(1), {
+                    'current': current
+                }).then(async function(blob) {
+                    if (blob === null || typeof blob === 'string') {
+                        clickgo.form.notify({
+                            'title': 'File not found',
+                            'content': url + file.slice(1),
+                            'type': 'danger'
+                        });
+                        return;
+                    }
+                    const mime = tool.getMimeByPath(file);
+                    if (['txt', 'json', 'js', 'css', 'xml', 'html'].includes(mime.ext)) {
+                        files[file] = (await tool.blob2Text(blob)).replace(/^\ufeff/, '');
+                    }
+                    else {
+                        files[file] = blob;
+                    }
+                    ++loaded;
+                    if (opt.notifyId) {
+                        form.notifyProgress(opt.notifyId, loaded / total);
+                    }
+                    if (loaded < total) {
+                        return;
+                    }
+                    resolve();
+                }).catch(function() {
+                    ++loaded;
+                    if (opt.notifyId) {
+                        form.notifyProgress(opt.notifyId, loaded / total);
+                    }
+                    if (loaded < total) {
+                        return;
+                    }
+                    resolve();
+                });
+            }
+        });
     }
-    if (Object.keys(files).length === 0) {
+    catch {
         return null;
     }
-    const ul = url.length - 1;
-    for (const fn in files) {
-        files[fn.slice(ul)] = files[fn];
-        delete files[fn];
+
+    let icon = '/clickgo/icon.png';
+    if (config.icon && (files[config.icon] instanceof Blob)) {
+        icon = await tool.blob2DataUrl(files[config.icon] as Blob);
     }
+
     return {
-        'net': {
-            'current': current,
-            'notify': opt.notifyId,
-            'url': url,
-            'progress': opt.progress
-        },
-        'icon': '',
-        'files': files
+        'type': 'app',
+        'config': config,
+        'files': files,
+        'icon': icon
     };
 }
 

@@ -36,6 +36,7 @@
                 <button @click="openForm('mtool')">Library tool</button>
                 <button @click="openForm('mzip')">Library zip</button>
                 <button @click="openForm('aform')">Abstract Form</button>
+                <button @click="openForm('msystem')">System</button>
             </layout>
         </flow>
         <flow v-else class="inner" direction="v">

@@ -17,7 +17,8 @@ class Boot extends clickgo.AbstractBoot {
             el.innerHTML = 'Starting main app...';
         }
         const taskId = await clickgo.task.run('/clickgo/app/demo/', {
-            'notify': window.location.href.includes('?single') ? false : undefined
+            'notify': window.location.href.includes('?single') ? false : undefined,
+            'unblock': ['sessionStorage']
         });
         if (taskId <= 0) {
             el.innerHTML = `Start main app failed(${taskId.toString()}).`;
@@ -28,12 +29,12 @@ class Boot extends clickgo.AbstractBoot {
             const du = await clickgo.tool.blob2DataUrl(icon);
             clickgo.core.config['launcher.list'] = [
                 {
-                    'name': clickgo.task.list[taskId].config.name + '01',
+                    'name': clickgo.task.list[taskId].app.config.name + '01',
                     'icon': du,
                     'path': clickgo.task.list[taskId].path
                 },
                 {
-                    'name': clickgo.task.list[taskId].config.name + '02',
+                    'name': clickgo.task.list[taskId].app.config.name + '02',
                     'icon': du,
                     'path': clickgo.task.list[taskId].path
                 },
@@ -41,12 +42,12 @@ class Boot extends clickgo.AbstractBoot {
                     'name': 'folder1',
                     'list': [
                         {
-                            'name': clickgo.task.list[taskId].config.name + '11',
+                            'name': clickgo.task.list[taskId].app.config.name + '11',
                             'icon': du,
                             'path': clickgo.task.list[taskId].path
                         },
                         {
-                            'name': clickgo.task.list[taskId].config.name + '12',
+                            'name': clickgo.task.list[taskId].app.config.name + '12',
                             'icon': du,
                             'path': clickgo.task.list[taskId].path
                         }
@@ -56,7 +57,7 @@ class Boot extends clickgo.AbstractBoot {
                     'name': 'folder2',
                     'list': [
                         {
-                            'name': clickgo.task.list[taskId].config.name + '21',
+                            'name': clickgo.task.list[taskId].app.config.name + '21',
                             'icon': du,
                             'path': clickgo.task.list[taskId].path
                         }

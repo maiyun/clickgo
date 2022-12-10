@@ -1407,7 +1407,7 @@ function remove(formId) {
             dom.removeStyle(taskId, 'form', formId);
             core.trigger('formRemoved', taskId, formId, title, icon);
             dom.clearWatchStyle(formId);
-            dom.clearPropertyStyle(formId);
+            dom.clearWatchProperty(formId);
             if (Object.keys(task.list[taskId].forms).length === 0) {
                 task.end(taskId);
             }
@@ -1652,7 +1652,7 @@ function create(opt) {
                 rtn.vapp._container.remove();
                 (_f = exports.elements.popList.querySelector('[data-form-id="' + rtn.vroot.formId + '"]')) === null || _f === void 0 ? void 0 : _f.remove();
                 dom.clearWatchStyle(rtn.vroot.formId);
-                dom.clearPropertyStyle(rtn.vroot.formId);
+                dom.clearWatchProperty(rtn.vroot.formId);
                 dom.removeStyle(rtn.vroot.taskId, 'form', rtn.vroot.formId);
                 return -8;
             }

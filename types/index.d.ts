@@ -35,9 +35,6 @@ export interface IControlConfig {
     'layout': string;
     /** --- 不带扩展名，系统会在末尾添加 .css --- */
     'style': string;
-
-    /** --- 将要加载的文件 --- */
-    'files': string[];
 }
 
 /** --- 控件对象 --- */
@@ -97,17 +94,13 @@ export interface ICoreFetchAppOptions {
 
 /** --- 应用包解包后对象 --- */
 export interface IApp {
-    /** --- net 模式将包含 net 属性，否则是 app 解包模式 --- */
-    'net'?: {
-        'current': string;
-        'url': string;
-        'notify'?: number;
-        'progress'?: (loaded: number, total: number) => void | Promise<void>;
-    };
-    /** --- 应用图标，net 模式下可能为空 --- */
-    'icon': string;
+    'type': 'app';
+    /** --- 控件对象配置文件 --- */
+    'config': IAppConfig;
     /** --- 所有已加载的文件内容 --- */
     'files': Record<string, Blob | string>;
+    /** --- 应用图标，net 模式下可能为空 --- */
+    'icon': string;
 }
 
 /** --- 应用文件包 config --- */
@@ -134,7 +127,7 @@ export interface IAppConfig {
     /** --- 图标路径，需包含扩展名 --- */
     'icon'?: string;
 
-    /** --- 将要加载的非 js 文件列表，仅 net 模式有用 --- */
+    /** --- 将要加载的非 js 文件列表，打包为 cga 模式下此配置可省略 --- */
     'files'?: string[];
 }
 
@@ -362,7 +355,6 @@ export interface ITask {
     'id': number;
     'app': IApp;
     'class': import('../dist/lib/core').AbstractApp;
-    'config': IAppConfig;
     'customTheme': boolean;
     'locale': {
         'lang': string;
@@ -394,8 +386,6 @@ export interface ITask {
     }>;
     /** --- 任务中的 timer 列表 --- */
     'timers': Record<string, number>;
-    /** --- 用于初始化 control 时 invoke 用 --- */
-    'invoke'?: Record<string, any>;
 }
 
 /** --- 系统任务信息 --- */

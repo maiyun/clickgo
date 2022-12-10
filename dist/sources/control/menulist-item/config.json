@@ -6,12 +6,5 @@
 
     "code": "/code",
     "layout": "/layout",
-    "style": "/style",
-
-    "files": [
-        "/res/check.svg",
-        "/code.js",
-        "/layout.html",
-        "/style.css"
-    ]
+    "style": "/style"
 }

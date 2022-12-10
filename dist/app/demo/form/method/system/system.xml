@@ -1,0 +1,11 @@
+<form width="350" height="400" title="System">
+    <layout direction="v" gutter="10" style="flex: 1; padding: 10px;">
+        <button @click="getVersion" style="height: 30px;">clickgo.getVersion()</button>
+        <button @click="isNative" style="height: 30px;">clickgo.isNative()</button>
+        <button @click="getPlatform" style="height: 30px;">clickgo.getPlatform()</button>
+        <button @click="isImmersion" style="height: 30px;">clickgo.isImmersion()</button>
+        <button @click="hasFrame" style="height: 30px;">clickgo.hasFrame()</button>
+        <button @click="unblock" style="height: 30px;">unblock: ['sessionStorage']</button>
+        <button @click="ls" style="height: 30px;">typeof localStorage</button>
+    </layout>
+</form>

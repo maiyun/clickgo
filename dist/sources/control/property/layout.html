@@ -7,7 +7,7 @@
         <cg-button :checked="typeData === 'event'" @click="changeType('event')">&#xe613;</cg-button>
     </div>
     <div ref="content" class="content" @mousedown="down" @touchstart="down" @contextmenu="contextmenu">
-        <cg-view direction="v">
+        <cg-flow direction="v">
             <template v-for="item of value">
                 <div v-if="item.title" class="bigTitle">
                     <div class="control arrow" :class="{'open': !bigClosed.includes(item.title)}" @click="bigToggle(item.title)"></div>
@@ -19,13 +19,13 @@
                         <div class="title" @dblclick="reset">{{item2.title}}</div>
                         <div class="value">
                             <template v-if="!selectedSub && (selectedTitle === item2.title)">
-                                <cg-text v-if="item2.control === 'text'" class="text" border="none" :modelValue="item2.value" @update:modelValue="update($event)" :style="{'font-weight': item2.default !== item2.value ? 'bold' : undefined}"></cg-text>
+                                <cg-text v-if="item2.control === 'text'" class="text" :modelValue="item2.value" @update:modelValue="update($event)" :style="{'font-weight': item2.default !== item2.value ? 'bold' : undefined}"></cg-text>
                                 <cg-check v-else-if="item2.control === 'check'" :modelValue="item2.value === 'true'" @update:modelValue="update($event ? 'true' : 'false')" :style="{'font-weight': item2.default !== item2.value ? 'bold' : undefined}">{{item2.value}}</cg-check>
                                 <div v-else-if="item2.control === 'dock'" class="dock">
                                     <div class="text" :style="{'font-weight': item2.default !== item2.value ? 'bold' : undefined}">{{item2.value}}</div>
                                     <cg-button @click="dock($event)"><div class="arrow"></div></cg-button>
                                 </div>
-                                <cg-select v-else-if="item2.control === 'select'" class="text" :modelValue="item2.value" @update:modelValue="update($event)" :data="item2.data" :style="{'font-weight': item2.default !== item2.value ? 'bold' : undefined}"></cg-select>
+                                <cg-select v-else-if="item2.control === 'select'" class="text" :modelValue="[item2.value]" @update:modelValue="update($event[0])" :data="item2.data" :style="{'font-weight': item2.default !== item2.value ? 'bold' : undefined}"></cg-select>
                             </template>
                             <template v-else>
                                 <div class="text" :style="{'font-weight': item2.default !== item2.value ? 'bold' : undefined}">{{item2.value}}</div>
@@ -39,20 +39,20 @@
                         </div>
                         <div class="value">
                             <template v-if="(selectedTitle === item2.title) && (selectedSub === item3.title)">
-                                <cg-text v-if="item3.control === 'text'" class="text" border="none" :modelValue="subValue(item2, i3)" @update:modelValue="update($event)" :style="{'font-weight': subValue(item2, i3, true) !== subValue(item2, i3) ? 'bold' : undefined}"></cg-text>
+                                <cg-text v-if="item3.control === 'text'" class="text" :modelValue="subValue(item2, i3)" @update:modelValue="update($event)" :style="{'font-weight': subValue(item2, i3, true) !== subValue(item2, i3) ? 'bold' : undefined}"></cg-text>
                                 <cg-check v-else-if="item3.control === 'check'" :modelValue="subValue(item2, i3) === 'true'" @update:modelValue="update($event ? 'true' : 'false')" :style="{'font-weight': subValue(item2, i3, true) !== subValue(item2, i3) ? 'bold' : undefined}">{{subValue(item2, i3)}}</cg-check>
                                 <div v-else-if="item3.control === 'dock'" class="dock">
                                     <div class="text" :style="{'font-weight': subValue(item2, i3, true) !== subValue(item2, i3) ? 'bold' : undefined}">{{subValue(item2, i3)}}</div>
                                     <cg-button @click="dock($event)"><div class="arrow"></div></cg-button>
                                 </div>
-                                <cg-select v-else-if="item3.control === 'select'" class="text" :modelValue="subValue(item2, i3)" @update:modelValue="update($event)" :data="item3.data" :style="{'font-weight': subValue(item2, i3, true) !== subValue(item2, i3) ? 'bold' : undefined}"></cg-select>
+                                <cg-select v-else-if="item3.control === 'select'" class="text" :modelValue="[subValue(item2, i3)]" @update:modelValue="update($event[0])" :data="item3.data" :style="{'font-weight': subValue(item2, i3, true) !== subValue(item2, i3) ? 'bold' : undefined}"></cg-select>
                             </template>
                             <template v-else><div class="text" :style="{'font-weight': subValue(item2, i3, true) !== subValue(item2, i3) ? 'bold' : undefined}">{{subValue(item2, i3)}}</div></template>
                         </div>
                     </div>
                 </template>
             </template>
-        </cg-view>
+        </cg-flow>
     </div>
     <div v-if="isDesc" class="description">
         <div class="title">{{title}}</div>

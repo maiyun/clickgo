@@ -287,107 +287,65 @@ export async function read(blob: Blob): Promise<false | types.TControlPackage> {
     }
     /** --- 要返回的 control pkg 对象 --- */
     const controlPkg: types.TControlPackage = {};
-    /** --- 已处理的控件 --- */
-    let controlProcessed = 0;
-    /** --- 控件包中的控件根目录列表 --- */
-    const controls = z.readDir();
-    // --- 开始处理 ---
-    await new Promise<void>(function(resolve) {
-        /** --- 一个 control item 处理完后就执行一次 --- */
-        const controlCb = function(): void {
-            ++controlProcessed;
-            if (controlProcessed < controls.length) {
-                return;
-            }
-            // --- 加载完毕 ---
-            resolve();
-        };
-        for (const control of controls) {
-            if (control.isFile) {
-                controlCb();
-                continue;
-            }
-            z.getContent('/' + control.name + '/config.json').then(async function(configContent) {
-                if (!configContent) {
-                    controlCb();
-                    return;
-                }
-                /** --- 子控件的配置文件 --- */
-                const config: types.IControlConfig = JSON.parse(configContent);
-                // --- 开始读取文件 ---
-                const files: Record<string, Blob | string> = {};
-                /** --- 配置文件中的文件数量总数 --- */
-                const filesLength = Object.keys(config.files).length;
-                /** --- 已处理的文件数 --- */
-                let fileLoadedLength = 0;
-                // --- 开始加载子控件中的文件 ---
-                await new Promise<void>(function(resolve) {
-                    /** --- 一个文件加载完后就执行一次 --- */
-                    const loadedCb = function(): void {
-                        ++fileLoadedLength;
-                        if (fileLoadedLength < filesLength) {
-                            return;
-                        }
-                        // --- 加载完毕 ---
-                        resolve();
-                    };
-                    for (const file of config.files) {
-                        const mime = tool.getMimeByPath(file);
-                        if (['txt', 'json', 'js', 'css', 'xml', 'html'].includes(mime.ext)) {
-                            z.getContent('/' + control.name + file, 'string').then(function(fab) {
-                                if (!fab) {
-                                    loadedCb();
-                                    return;
-                                }
-                                // --- 去除 BOM ---
-                                files[file] = fab.replace(/^\ufeff/, '');
-                                loadedCb();
-                            }).catch(function() {
-                                loadedCb();
-                            });
-                        }
-                        else {
-                            z.getContent('/' + control.name + file, 'arraybuffer').then(function(fab) {
-                                if (!fab) {
-                                    loadedCb();
-                                    return;
-                                }
-                                files[file] = new Blob([fab], {
-                                    'type': mime.mime
-                                });
-                                loadedCb();
-                            }).catch(function() {
-                                loadedCb();
-                            });
-                        }
-                    }
-                });
-                controlPkg[control.name] = {
-                    'type': 'control',
-                    'config': config,
-                    'files': files
-                };
-                controlCb();
-            }).catch(function() {
-                controlCb();
-            });
+
+    // --- 读取包 ---
+    const list = z.readDir('/');
+    for (const sub of list) {
+        if (sub.isFile) {
+            continue;
         }
-    });
+        const configContent = await z.getContent('/' + sub.name + '/config.json');
+        if (!configContent) {
+            continue;
+        }
+        // --- 读取本条控件内容 ---
+        const config: types.IControlConfig = JSON.parse(configContent);
+        controlPkg[config.name] = {
+            'type': 'control',
+            'config': config,
+            'files': {}
+        };
+        // --- 读取控件包文件 ---
+        const list = z.readDir('/' + sub.name + '/', {
+            'hasChildren': true
+        });
+        for (const file of list) {
+            const pre = file.path.slice(config.name.length + 1);
+            const mime = tool.getMimeByPath(file.name);
+            if (['txt', 'json', 'js', 'css', 'xml', 'html'].includes(mime.ext)) {
+                const fab = await z.getContent(file.path + file.name, 'string');
+                if (!fab) {
+                    continue;
+                }
+                controlPkg[config.name].files[pre + file.name] = fab.replace(/^\ufeff/, '');
+            }
+            else {
+                const fab = await z.getContent(file.path + file.name, 'arraybuffer');
+                if (!fab) {
+                    continue;
+                }
+                controlPkg[config.name].files[pre + file.name] = new Blob([fab], {
+                    'type': mime.mime
+                });
+            }
+        }
+    }
     return controlPkg;
 }
 
 /**
- * --- 任务创建过程中，需要对 control 进行先行初始化 ---
+ * --- 任务创建过程中，需要对 control 进行先行初始化，并将样式表插入到实际的任务 DOM 中 ---
  * @param taskId 要处理的任务 ID
  */
 export async function init(
-    taskId: number
-): Promise<boolean> {
+    taskId: number,
+    invoke: Record<string, any>
+): Promise<number> {
     const t = task.list[taskId];
     if (!t) {
-        return false;
+        return -1;
     }
-    for (let path of t.config.controls) {
+    for (let path of t.app.config.controls) {
         if (!path.endsWith('.cgc')) {
             path += '.cgc';
         }
@@ -422,7 +380,7 @@ export async function init(
                     t.controls[name].layout = item.files[item.config.layout + '.html'] as string;
                     if (t.controls[name].layout === undefined) {
                         // --- 控件没有 layout 那肯定不能用 ---
-                        return false;
+                        return -2;
                     }
                     // --- 给 layout 增加 data-cg-control-xxx ---
                     t.controls[name].layout = t.controls[name].layout.replace(/^(<[a-zA-Z0-9-]+)( |>)/, '$1 data-cg-control-' + name + '$2');
@@ -465,7 +423,7 @@ export async function init(
                         try {
                             expo = loader.require(item.config.code, item.files, {
                                 'dir': '/',
-                                'invoke': t.invoke,
+                                'invoke': invoke,
                                 'preprocess': function(code: string, path: string): string {
                                     // --- 屏蔽 eval 函数 ---
                                     const exec = /eval\W/.exec(code);
@@ -490,12 +448,12 @@ export async function init(
                         }
                         catch (e: any) {
                             core.trigger('error', taskId, 0, e, e.message + '(-4)');
-                            return false;
+                            return -3;
                         }
                         if (!expo?.default) {
                             const msg = '"default" not found on "' + item.config.code + '" of "' + name + '" control.';
                             core.trigger('error', taskId, 0, new Error(msg), msg);
-                            return false;
+                            return -4;
                         }
                         cls = new expo.default();
                     }
@@ -561,13 +519,11 @@ export async function init(
                     'content': 'Control failed to load.\nTask id: ' + t.id.toString() + '\nPath: ' + path,
                     'type': 'danger'
                 });
-                return false;
+                return -5;
             }
         }
     }
-    t.invoke = undefined;
-    delete t.invoke;
-    return true;
+    return 1;
 }
 
 /**

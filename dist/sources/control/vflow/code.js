@@ -1,4 +1,13 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const clickgo = require("clickgo");
 class default_1 extends clickgo.control.AbstractControl {
@@ -107,6 +116,7 @@ class default_1 extends clickgo.control.AbstractControl {
                     return { 'start': 0, 'end': 9 };
                 }
                 pos.start = 0;
+                rtn.start = 0;
                 start = this.pos[0];
             }
             if (area.start > start.start) {
@@ -185,9 +195,17 @@ class default_1 extends clickgo.control.AbstractControl {
     }
     refreshSize() {
         var _a;
+        let need = false;
         const el = this.element.querySelector('[data-cg-size="same"]');
         if (el) {
-            this.size = this.props.direction === 'h' ? el.offsetWidth : el.offsetHeight;
+            const size = this.props.direction === 'h' ? el.offsetWidth : el.offsetHeight;
+            if (size !== this.size) {
+                this.size = size;
+                need = true;
+            }
+        }
+        if (!need && (this.pos.length === this.dataFormat.length)) {
+            return;
         }
         this.pos = [];
         this.length = 0;
@@ -209,6 +227,27 @@ class default_1 extends clickgo.control.AbstractControl {
         });
         this.showPos.start = rtn.start;
         this.showPos.end = rtn.end;
+        this.nextTick().then(() => {
+            let el = this.element.querySelector('[data-cg-roindex]');
+            if (el) {
+                if (el.dataset.cgSize !== 'same') {
+                    clickgo.dom.unwatchSize(el);
+                }
+                else {
+                    return;
+                }
+            }
+            el = this.element.querySelector('[data-cg-size="same"]');
+            if (!el) {
+                return;
+            }
+            clickgo.dom.watchSize(el, () => {
+                if (el.dataset.cgSize !== 'same') {
+                    return;
+                }
+                this.refreshSize();
+            });
+        });
     }
     updateScrollOffset(val, pos) {
         if (pos === 'left') {
@@ -251,14 +290,16 @@ class default_1 extends clickgo.control.AbstractControl {
         area.end = rtn.end;
     }
     onMounted() {
-        this.watch('dataFormat', () => {
+        this.watch('dataFormat', () => __awaiter(this, void 0, void 0, function* () {
+            yield this.nextTick();
             this.refreshSize();
-        }, {
+        }), {
             'deep': true
         });
-        this.watch('direction', () => {
+        this.watch('direction', () => __awaiter(this, void 0, void 0, function* () {
+            yield this.nextTick();
             this.refreshSize();
-        });
+        }));
         this.watch('scrollLeft', () => {
             if (this.props.direction === 'h' && this.scrollLeftData !== this.propInt('scrollLeft')) {
                 this.scrollLeftData = this.propInt('scrollLeft');
@@ -295,24 +336,6 @@ class default_1 extends clickgo.control.AbstractControl {
             }
             this.refreshSize();
         }, true);
-        clickgo.dom.watch(this.element, () => {
-            let el = null;
-            for (const child of this.element.children) {
-                if (child.dataset.cgSize !== 'same') {
-                    continue;
-                }
-                el = child;
-                break;
-            }
-            if (!el) {
-                return;
-            }
-            const size = this.props.direction === 'h' ? el.offsetWidth : el.offsetHeight;
-            if (size === this.size) {
-                return;
-            }
-            this.refreshSize();
-        }, 'childsub');
     }
 }
 exports.default = default_1;

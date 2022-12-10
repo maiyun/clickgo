@@ -15,10 +15,7 @@ const fs = require("./fs");
 const form = require("./form");
 const task = require("./task");
 const tool = require("./tool");
-const control = require("./control");
-const theme = require("./theme");
 const zip = require("./zip");
-const dom = require("./dom");
 const configOrigin = {
     'locale': 'en',
     'task.position': 'bottom',
@@ -51,159 +48,6 @@ class AbstractApp {
             'title': 'Error',
             'content': `The software tries to modify the system variable "taskId" to "${v}".\nPath: ${this.filename}`,
             'type': 'danger'
-        });
-    }
-    config(config) {
-        var _a;
-        return __awaiter(this, void 0, void 0, function* () {
-            const t = task.list[this.taskId];
-            if (!t) {
-                return false;
-            }
-            t.config = config;
-            if (t.app.net) {
-                if (!t.config.files) {
-                    return false;
-                }
-                const files = t.config.files;
-                const net = t.app.net;
-                yield new Promise(function (resolve) {
-                    var _a, _b;
-                    let loaded = 0;
-                    const total = files.length;
-                    const beforeTotal = Object.keys(t.app.files).length;
-                    (_a = net.progress) === null || _a === void 0 ? void 0 : _a.call(net, loaded + beforeTotal, total + beforeTotal);
-                    for (const file of files) {
-                        if (t.app.files[file]) {
-                            ++loaded;
-                            (_b = net.progress) === null || _b === void 0 ? void 0 : _b.call(net, loaded + beforeTotal, total + beforeTotal);
-                            if (net.notify) {
-                                form.notifyProgress(net.notify, (loaded / total) / 2 + 0.5);
-                            }
-                            if (loaded < total) {
-                                continue;
-                            }
-                            resolve();
-                            return;
-                        }
-                        fs.getContent(net.url + file.slice(1), {
-                            'current': net.current
-                        }).then(function (blob) {
-                            var _a;
-                            return __awaiter(this, void 0, void 0, function* () {
-                                if (blob === null || typeof blob === 'string') {
-                                    clickgo.form.notify({
-                                        'title': 'File not found',
-                                        'content': net.url + file.slice(1),
-                                        'type': 'danger'
-                                    });
-                                    return;
-                                }
-                                const mime = tool.getMimeByPath(file);
-                                if (['txt', 'json', 'js', 'css', 'xml', 'html'].includes(mime.ext)) {
-                                    t.app.files[file] = (yield tool.blob2Text(blob)).replace(/^\ufeff/, '');
-                                }
-                                else {
-                                    t.app.files[file] = blob;
-                                }
-                                ++loaded;
-                                (_a = net.progress) === null || _a === void 0 ? void 0 : _a.call(net, loaded + beforeTotal, total + beforeTotal);
-                                if (net.notify) {
-                                    form.notifyProgress(net.notify, (loaded / total) / 2 + 0.5);
-                                }
-                                if (loaded < total) {
-                                    return;
-                                }
-                                resolve();
-                            });
-                        }).catch(function () {
-                            var _a;
-                            ++loaded;
-                            (_a = net.progress) === null || _a === void 0 ? void 0 : _a.call(net, loaded + beforeTotal, total + beforeTotal);
-                            if (net.notify) {
-                                form.notifyProgress(net.notify, (loaded / total) / 2 + 0.5);
-                            }
-                            if (loaded < total) {
-                                return;
-                            }
-                            resolve();
-                        });
-                    }
-                });
-                if (net.notify) {
-                    setTimeout(function () {
-                        form.hideNotify(net.notify);
-                    }, 2000);
-                }
-            }
-            if (!(yield control.init(this.taskId))) {
-                return false;
-            }
-            if ((_a = config.themes) === null || _a === void 0 ? void 0 : _a.length) {
-                for (let path of config.themes) {
-                    path += '.cgt';
-                    path = tool.urlResolve('/', path);
-                    const file = yield fs.getContent(path, {
-                        'files': t.app.files,
-                        'current': t.current
-                    });
-                    if (file && typeof file !== 'string') {
-                        const th = yield theme.read(file);
-                        if (th) {
-                            yield theme.load(th, t.id);
-                        }
-                    }
-                }
-            }
-            else {
-                if (theme.global) {
-                    yield theme.load(undefined, this.taskId);
-                }
-            }
-            if (config.locales) {
-                for (let path in config.locales) {
-                    const locale = config.locales[path];
-                    if (!path.endsWith('.json')) {
-                        path += '.json';
-                    }
-                    const lcontent = yield fs.getContent(path, {
-                        'encoding': 'utf8',
-                        'files': t.app.files,
-                        'current': t.current
-                    });
-                    if (!lcontent) {
-                        continue;
-                    }
-                    try {
-                        const data = JSON.parse(lcontent);
-                        task.loadLocaleData(locale, data, '', t.id);
-                    }
-                    catch (_b) {
-                    }
-                }
-            }
-            if (config.style) {
-                const style = yield fs.getContent(config.style + '.css', {
-                    'encoding': 'utf8',
-                    'files': t.app.files,
-                    'current': t.current
-                });
-                if (style) {
-                    const r = tool.stylePrepend(style, 'cg-task' + this.taskId.toString() + '_');
-                    dom.pushStyle(this.taskId, yield tool.styleUrl2DataUrl(config.style, r.style, t.app.files));
-                }
-            }
-            if (config.icon) {
-                const icon = yield fs.getContent(config.icon, {
-                    'files': t.app.files,
-                    'current': t.current
-                });
-                if (icon && typeof icon !== 'string') {
-                    t.app.icon = yield tool.blob2DataUrl(icon);
-                }
-            }
-            t.class = this;
-            return true;
         });
     }
     run(form) {
@@ -577,6 +421,11 @@ function readApp(blob) {
             return false;
         }
         const files = {};
+        const configContent = yield z.getContent('/config.json');
+        if (!configContent) {
+            return false;
+        }
+        const config = JSON.parse(configContent);
         const list = z.readDir('/', {
             'hasChildren': true
         });
@@ -600,8 +449,10 @@ function readApp(blob) {
             }
         }
         return {
-            'icon': icon,
-            'files': files
+            'type': 'app',
+            'config': config,
+            'files': files,
+            'icon': icon
         };
     });
 }
@@ -658,50 +509,76 @@ function fetchApp(url, opt = {}) {
                 return null;
             }
         }
-        let loaded = 0;
-        let total = 30;
-        const files = yield loader.sniffFiles(url + 'app.js', {
-            'dir': '/',
-            adapter: (url) => __awaiter(this, void 0, void 0, function* () {
-                const r = yield fs.getContent(url, {
-                    'encoding': 'utf8',
-                    'current': current
-                });
-                return r;
-            }),
-            'loaded': () => {
-                ++loaded;
-                if (loaded === total) {
-                    ++total;
-                }
-                if (opt.notifyId) {
-                    form.notifyProgress(opt.notifyId, (loaded / total) / 2);
-                }
-                if (opt.progress) {
-                    opt.progress(loaded, total);
-                }
+        let config;
+        const files = {};
+        try {
+            const blob = yield fs.getContent(url + 'config.json', {
+                'current': current
+            });
+            if (blob === null || typeof blob === 'string') {
+                return null;
             }
-        });
-        if (opt.notifyId) {
-            form.notifyProgress(opt.notifyId, 0.5);
+            config = JSON.parse(yield tool.blob2Text(blob));
+            yield new Promise(function (resolve) {
+                if (!config.files) {
+                    return;
+                }
+                const total = config.files.length;
+                let loaded = 0;
+                for (const file of config.files) {
+                    fs.getContent(url + file.slice(1), {
+                        'current': current
+                    }).then(function (blob) {
+                        return __awaiter(this, void 0, void 0, function* () {
+                            if (blob === null || typeof blob === 'string') {
+                                clickgo.form.notify({
+                                    'title': 'File not found',
+                                    'content': url + file.slice(1),
+                                    'type': 'danger'
+                                });
+                                return;
+                            }
+                            const mime = tool.getMimeByPath(file);
+                            if (['txt', 'json', 'js', 'css', 'xml', 'html'].includes(mime.ext)) {
+                                files[file] = (yield tool.blob2Text(blob)).replace(/^\ufeff/, '');
+                            }
+                            else {
+                                files[file] = blob;
+                            }
+                            ++loaded;
+                            if (opt.notifyId) {
+                                form.notifyProgress(opt.notifyId, loaded / total);
+                            }
+                            if (loaded < total) {
+                                return;
+                            }
+                            resolve();
+                        });
+                    }).catch(function () {
+                        ++loaded;
+                        if (opt.notifyId) {
+                            form.notifyProgress(opt.notifyId, loaded / total);
+                        }
+                        if (loaded < total) {
+                            return;
+                        }
+                        resolve();
+                    });
+                }
+            });
         }
-        if (Object.keys(files).length === 0) {
+        catch (_b) {
             return null;
         }
-        const ul = url.length - 1;
-        for (const fn in files) {
-            files[fn.slice(ul)] = files[fn];
-            delete files[fn];
+        let icon = '/clickgo/icon.png';
+        if (config.icon && (files[config.icon] instanceof Blob)) {
+            icon = yield tool.blob2DataUrl(files[config.icon]);
         }
         return {
-            'net': {
-                'current': current,
-                'notify': opt.notifyId,
-                'url': url,
-                'progress': opt.progress
-            },
-            'icon': '',
-            'files': files
+            'type': 'app',
+            'config': config,
+            'files': files,
+            'icon': icon
         };
     });
 }

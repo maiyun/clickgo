@@ -1,16 +1,10 @@
 {
-    "name": "textbox",
+    "name": "text",
     "ver": 1,
     "version": "0.1",
     "author": "clickgo",
 
     "code": "/code",
     "layout": "/layout",
-    "style": "/style",
-
-    "files": [
-        "/code.js",
-        "/layout.html",
-        "/style.css"
-    ]
+    "style": "/style"
 }

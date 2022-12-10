@@ -142,6 +142,7 @@ export class Zip {
         return pstats;
     }
 
+    /** --- 读取目录，hasChildren: false, hasDir: true, pathAsKey: false --- */
     public readDir(path?: string, opt?: { 'hasChildren'?: boolean; 'hasDir'?: boolean; 'pathAsKey'?: false; }): types.IZipItem[];
     public readDir(path?: string, opt?: { 'hasChildren'?: boolean; 'hasDir'?: boolean; 'pathAsKey': true; }): Record<string, types.IZipItem>;
     /**
@@ -278,6 +279,7 @@ export class Zip {
      */
     private _refreshList(): void {
         const list: Record<string, Record<string, types.IZipItem>> = {};
+        // eslint-disable-next-line @litert/rules/disable-for-each-method
         this._zip.forEach(function(relativePath: string, item: jszip.JSZipObject) {
             if (relativePath.startsWith('/')) {
                 relativePath = relativePath.slice(1);

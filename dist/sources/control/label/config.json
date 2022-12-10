@@ -5,10 +5,5 @@
     "author": "clickgo",
 
     "layout": "/layout",
-    "style": "/style",
-
-    "files": [
-        "/layout.html",
-        "/style.css"
-    ]
+    "style": "/style"
 }

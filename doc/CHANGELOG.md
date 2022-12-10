@@ -1,5 +1,22 @@
 # Changelog
 
+# 3.1.2-dev11
+
+[+] Add onRuntimeFileLoad, onRuntimeFileLoaded methods of AbstractBoot.  
+[+] Add isImmersion, hasFrame of native.  
+[\*] Other.
+
+# 3.1.1-dev10
+
+[+] Add createForm method in AbstractForm.  
+[+] Add layout param of create method in AbstractForm.  
+[\*] Fix dialog and isMask.  
+[\*] Other.
+
+# 3.1.0-dev9
+
+[\*] Many updates, changes to class.
+
 # 3.0.7-dev8
 
 [+] Add launcher.  

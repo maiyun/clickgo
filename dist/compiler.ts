@@ -24,26 +24,28 @@ function purify(text: string): string {
  * @param path zip 中的路径基，不以 / 结尾
  */
 async function addFile(zipo: zip, base: string = '', path: string = ''): Promise<void> {
-    let config: Record<string, any>;
-    try {
-        const c = await fs.promises.readFile(base + '/config.json', 'utf8');
-        config = JSON.parse(c);
-    }
-    catch (e) {
-        console.log('[ERROR]', e);
-        return;
-    }
-    zipo.file(path + (path ? '/' : '') + 'config.json', JSON.stringify(config));
-    for (const file of config.files as string[]) {
-        const p = base + file;
-        const buf = await fs.promises.readFile(p);
-        const bfile = path ? file : file.slice(1);
-        if (file.endsWith('.html')) {
-            // --- 为了去除 html 中的空白和注释 ---
-            zipo.file(path + bfile, purify(buf.toString()));
+    const list = await fs.promises.readdir(base);
+    for (const item of list) {
+        try {
+            const stat = await fs.promises.lstat(base + '/' + item);
+            if (stat.isDirectory()) {
+                await addFile(zipo, base + '/' + item, path + '/' + item);
+                continue;
+            }
+            if (item.endsWith('.ts') || item.endsWith('.scss')) {
+                continue;
+            }
+            const buf = await fs.promises.readFile(base + '/' + item);
+            if (item.endsWith('.html')) {
+                // --- 为了去除 html 中的空白和注释 ---
+                zipo.file(path + (path ? '/' : '') + item, purify(buf.toString()));
+            }
+            else {
+                zipo.file(path + (path ? '/' : '') + item, buf);
+            }
         }
-        else {
-            zipo.file(path + bfile, buf);
+        catch {
+            continue;
         }
     }
 }

@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.zip = exports.tool = exports.theme = exports.task = exports.native = exports.fs = exports.form = exports.dom = exports.core = exports.control = exports.vue = exports.hasFrame = exports.isImmersion = exports.getPlatform = exports.isNative = exports.getVersion = void 0;
-const version = '3.0.0';
+const version = '3.1.3';
 function getVersion() {
     return version;
 }

@@ -162,92 +162,56 @@ function read(blob) {
             return false;
         }
         const controlPkg = {};
-        let controlProcessed = 0;
-        const controls = z.readDir();
-        yield new Promise(function (resolve) {
-            const controlCb = function () {
-                ++controlProcessed;
-                if (controlProcessed < controls.length) {
-                    return;
-                }
-                resolve();
-            };
-            for (const control of controls) {
-                if (control.isFile) {
-                    controlCb();
-                    continue;
-                }
-                z.getContent('/' + control.name + '/config.json').then(function (configContent) {
-                    return __awaiter(this, void 0, void 0, function* () {
-                        if (!configContent) {
-                            controlCb();
-                            return;
-                        }
-                        const config = JSON.parse(configContent);
-                        const files = {};
-                        const filesLength = Object.keys(config.files).length;
-                        let fileLoadedLength = 0;
-                        yield new Promise(function (resolve) {
-                            const loadedCb = function () {
-                                ++fileLoadedLength;
-                                if (fileLoadedLength < filesLength) {
-                                    return;
-                                }
-                                resolve();
-                            };
-                            for (const file of config.files) {
-                                const mime = tool.getMimeByPath(file);
-                                if (['txt', 'json', 'js', 'css', 'xml', 'html'].includes(mime.ext)) {
-                                    z.getContent('/' + control.name + file, 'string').then(function (fab) {
-                                        if (!fab) {
-                                            loadedCb();
-                                            return;
-                                        }
-                                        files[file] = fab.replace(/^\ufeff/, '');
-                                        loadedCb();
-                                    }).catch(function () {
-                                        loadedCb();
-                                    });
-                                }
-                                else {
-                                    z.getContent('/' + control.name + file, 'arraybuffer').then(function (fab) {
-                                        if (!fab) {
-                                            loadedCb();
-                                            return;
-                                        }
-                                        files[file] = new Blob([fab], {
-                                            'type': mime.mime
-                                        });
-                                        loadedCb();
-                                    }).catch(function () {
-                                        loadedCb();
-                                    });
-                                }
-                            }
-                        });
-                        controlPkg[control.name] = {
-                            'type': 'control',
-                            'config': config,
-                            'files': files
-                        };
-                        controlCb();
-                    });
-                }).catch(function () {
-                    controlCb();
-                });
+        const list = z.readDir('/');
+        for (const sub of list) {
+            if (sub.isFile) {
+                continue;
             }
-        });
+            const configContent = yield z.getContent('/' + sub.name + '/config.json');
+            if (!configContent) {
+                continue;
+            }
+            const config = JSON.parse(configContent);
+            controlPkg[config.name] = {
+                'type': 'control',
+                'config': config,
+                'files': {}
+            };
+            const list = z.readDir('/' + sub.name + '/', {
+                'hasChildren': true
+            });
+            for (const file of list) {
+                const pre = file.path.slice(config.name.length + 1);
+                const mime = tool.getMimeByPath(file.name);
+                if (['txt', 'json', 'js', 'css', 'xml', 'html'].includes(mime.ext)) {
+                    const fab = yield z.getContent(file.path + file.name, 'string');
+                    if (!fab) {
+                        continue;
+                    }
+                    controlPkg[config.name].files[pre + file.name] = fab.replace(/^\ufeff/, '');
+                }
+                else {
+                    const fab = yield z.getContent(file.path + file.name, 'arraybuffer');
+                    if (!fab) {
+                        continue;
+                    }
+                    controlPkg[config.name].files[pre + file.name] = new Blob([fab], {
+                        'type': mime.mime
+                    });
+                }
+            }
+        }
         return controlPkg;
     });
 }
 exports.read = read;
-function init(taskId) {
+function init(taskId, invoke) {
     return __awaiter(this, void 0, void 0, function* () {
         const t = task.list[taskId];
         if (!t) {
-            return false;
+            return -1;
         }
-        for (let path of t.config.controls) {
+        for (let path of t.app.config.controls) {
             if (!path.endsWith('.cgc')) {
                 path += '.cgc';
             }
@@ -276,7 +240,7 @@ function init(taskId) {
                         };
                         t.controls[name].layout = item.files[item.config.layout + '.html'];
                         if (t.controls[name].layout === undefined) {
-                            return false;
+                            return -2;
                         }
                         t.controls[name].layout = t.controls[name].layout.replace(/^(<[a-zA-Z0-9-]+)( |>)/, '$1 data-cg-control-' + name + '$2');
                         const style = item.files[item.config.style + '.css'];
@@ -309,7 +273,7 @@ function init(taskId) {
                             try {
                                 expo = loader.require(item.config.code, item.files, {
                                     'dir': '/',
-                                    'invoke': t.invoke,
+                                    'invoke': invoke,
                                     'preprocess': function (code, path) {
                                         const exec = /eval\W/.exec(code);
                                         if (exec) {
@@ -332,12 +296,12 @@ function init(taskId) {
                             }
                             catch (e) {
                                 core.trigger('error', taskId, 0, e, e.message + '(-4)');
-                                return false;
+                                return -3;
                             }
                             if (!(expo === null || expo === void 0 ? void 0 : expo.default)) {
                                 const msg = '"default" not found on "' + item.config.code + '" of "' + name + '" control.';
                                 core.trigger('error', taskId, 0, new Error(msg), msg);
-                                return false;
+                                return -4;
                             }
                             cls = new expo.default();
                         }
@@ -400,13 +364,11 @@ function init(taskId) {
                         'content': 'Control failed to load.\nTask id: ' + t.id.toString() + '\nPath: ' + path,
                         'type': 'danger'
                     });
-                    return false;
+                    return -5;
                 }
             }
         }
-        t.invoke = undefined;
-        delete t.invoke;
-        return true;
+        return 1;
     });
 }
 exports.init = init;

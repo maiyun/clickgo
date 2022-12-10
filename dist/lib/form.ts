@@ -1848,7 +1848,7 @@ export function remove(formId: number): boolean {
             // --- 触发 formRemoved 事件 ---
             core.trigger('formRemoved', taskId, formId, title, icon);
             dom.clearWatchStyle(formId);
-            dom.clearPropertyStyle(formId);
+            dom.clearWatchProperty(formId);
             // --- 检测是否已经没有窗体了，如果没有了的话就要结束任务了 ---
             if (Object.keys(task.list[taskId].forms).length === 0) {
                 task.end(taskId);
@@ -2139,7 +2139,7 @@ export async function create(opt: types.IFormCreateOptions): Promise<number> {
             rtn.vapp._container.remove();
             elements.popList.querySelector('[data-form-id="' + rtn.vroot.formId + '"]')?.remove();
             dom.clearWatchStyle(rtn.vroot.formId);
-            dom.clearPropertyStyle(rtn.vroot.formId);
+            dom.clearWatchProperty(rtn.vroot.formId);
             // --- 移除 style ---
             dom.removeStyle(rtn.vroot.taskId, 'form', rtn.vroot.formId);
             return -8;

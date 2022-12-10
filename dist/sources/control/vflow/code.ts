@@ -187,6 +187,7 @@ export default class extends clickgo.control.AbstractControl {
                     return { 'start': 0, 'end': 9 };
                 }
                 pos.start = 0;
+                rtn.start = 0;
                 start = this.pos[0];
             }
             if (area.start > start.start) {
@@ -288,11 +289,18 @@ export default class extends clickgo.control.AbstractControl {
      */
     public refreshSize(): void {
         // --- 计算通用胖度 ---
+        let need: boolean = false;
         const el: HTMLElement | null = this.element.querySelector('[data-cg-size="same"]');
         if (el) {
-            this.size = this.props.direction === 'h' ? el.offsetWidth : el.offsetHeight;
+            const size = this.props.direction === 'h' ? el.offsetWidth : el.offsetHeight;
+            if (size !== this.size) {
+                this.size = size;
+                need = true;
+            }
         }
-
+        if (!need && (this.pos.length === this.dataFormat.length)) {
+            return;
+        }
         // --- 重置所有项的 pos ---
         this.pos = [];
         /** --- 已计算的胖度 --- */
@@ -320,6 +328,32 @@ export default class extends clickgo.control.AbstractControl {
         });
         this.showPos.start = rtn.start;
         this.showPos.end = rtn.end;
+        this.nextTick().then(() => {
+            // --- 获取正在监听中的对象 ---
+            let el: HTMLElement | null = this.element.querySelector('[data-cg-roindex]');
+            if (el) {
+                // --- 存在已绑定监听的 same  ---
+                if (el.dataset.cgSize !== 'same') {
+                    // --- 移除原监听 ---
+                    clickgo.dom.unwatchSize(el);
+                }
+                else {
+                    return;
+                }
+            }
+            // --- 重新创建内部监听 ---
+            el = this.element.querySelector('[data-cg-size="same"]');
+            if (!el) {
+                return;
+            }
+            clickgo.dom.watchSize(el, () => {
+                if (el!.dataset.cgSize !== 'same') {
+                    // --- 虚拟化后有些 dom 被复用可能已经变了不是 same，此段监听无效 ---
+                    return;
+                }
+                this.refreshSize();
+            });
+        }) as any;
     }
 
     /**
@@ -372,12 +406,14 @@ export default class extends clickgo.control.AbstractControl {
     }
 
     public onMounted(): void {
-        this.watch('dataFormat', (): void => {
+        this.watch('dataFormat', async (): Promise<void> => {
+            await this.nextTick();
             this.refreshSize();
         }, {
             'deep': true
         });
-        this.watch('direction', (): void => {
+        this.watch('direction', async (): Promise<void> => {
+            await this.nextTick();
             this.refreshSize();
         });
         // --- watch props 的 scroll 项 ---
@@ -418,26 +454,6 @@ export default class extends clickgo.control.AbstractControl {
             }
             this.refreshSize();
         }, true);
-        // --- 监听 content 发生的变动，如果不监听，可能导致内容撑开了元素，但是行高没有改变 ---
-        clickgo.dom.watch(this.element, () => {
-            let el: HTMLElement | null = null;
-            for (const child of this.element.children) {
-                if ((child as HTMLElement).dataset.cgSize !== 'same') {
-                    continue;
-                }
-                el = child as HTMLElement;
-                break;
-            }
-            if (!el) {
-                return;
-            }
-            const size = this.props.direction === 'h' ? el.offsetWidth : el.offsetHeight;
-            if (size === this.size) {
-                return;
-            }
-            // --- refresh ---
-            this.refreshSize();
-        }, 'childsub');
     }
 
 }

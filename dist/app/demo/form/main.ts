@@ -28,6 +28,7 @@ import mcoreFrm from './method/core/core';
 import mdomFrm from './method/dom/dom';
 import mformFrm from './method/form/form';
 import mfsFrm from './method/fs/fs';
+import msystemFrm from './method/system/system';
 import mtaskFrm from './method/task/task';
 import mthemeFrm from './method/theme/theme';
 import mtoolFrm from './method/tool/tool';
@@ -165,6 +166,10 @@ export default class extends clickgo.form.AbstractForm {
             }
             case 'mfs': {
                 frm = await mfsFrm.create();
+                break;
+            }
+            case 'msystem': {
+                frm = await msystemFrm.create();
                 break;
             }
             case 'mtask': {

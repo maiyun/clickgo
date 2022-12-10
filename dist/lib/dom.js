@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.fullscreen = exports.siblingsData = exports.siblings = exports.findParentByClass = exports.findParentByData = exports.bindResize = exports.bindMove = exports.is = exports.bindDrag = exports.bindLong = exports.allowEvent = exports.bindGesture = exports.bindDown = exports.bindClick = exports.clearPropertyStyle = exports.isWatchProperty = exports.watchProperty = exports.clearWatchStyle = exports.isWatchStyle = exports.watchStyle = exports.clearWatch = exports.unwatch = exports.watch = exports.clearWatchSize = exports.unwatchSize = exports.watchSize = exports.getStyleCount = exports.removeStyle = exports.pushStyle = exports.removeFromStyleList = exports.createToStyleList = exports.hasTouchButMouse = exports.setGlobalCursor = void 0;
+exports.fullscreen = exports.siblingsData = exports.siblings = exports.findParentByClass = exports.findParentByData = exports.bindResize = exports.bindMove = exports.is = exports.bindDrag = exports.bindLong = exports.allowEvent = exports.bindGesture = exports.bindDown = exports.bindClick = exports.clearWatchProperty = exports.isWatchProperty = exports.watchProperty = exports.clearWatchStyle = exports.isWatchStyle = exports.watchStyle = exports.clearWatch = exports.isWatch = exports.unwatch = exports.watch = exports.clearWatchSize = exports.isWatchSize = exports.unwatchSize = exports.watchSize = exports.getStyleCount = exports.removeStyle = exports.pushStyle = exports.removeFromStyleList = exports.createToStyleList = exports.hasTouchButMouse = exports.setGlobalCursor = void 0;
 const clickgo = require("../clickgo");
 const form = require("./form");
 const core = require("./core");
@@ -142,30 +142,40 @@ const resizeObserver = new ResizeObserver(function (entries) {
         const el = entrie.target;
         if (!el.offsetParent) {
             resizeObserver.unobserve(el);
+            if (watchSizeList[el.dataset.cgRoindex]) {
+                delete watchSizeList[el.dataset.cgRoindex];
+            }
             continue;
         }
-        const item = watchSizeList[parseInt(el.dataset.cgRoindex)];
-        const r = item.handler();
-        if (r instanceof Promise) {
-            r.catch(function (e) {
-                console.log(e);
-            });
+        const item = watchSizeList[el.dataset.cgRoindex];
+        try {
+            const r = item.handler();
+            if (r instanceof Promise) {
+                r.catch(function (e) {
+                    console.log('ResizeObserver', e);
+                });
+            }
+        }
+        catch (e) {
+            console.log('ResizeObserver', e);
         }
     }
 });
 function watchSize(el, cb, immediate = false, taskId) {
-    for (const index in watchSizeList) {
-        const item = watchSizeList[index];
-        if (item.el === el) {
-            return false;
-        }
+    if (isWatchSize(el)) {
+        return false;
     }
     if (immediate) {
-        const r = cb();
-        if (r instanceof Promise) {
-            r.catch(function (e) {
-                console.log(e);
-            });
+        try {
+            const r = cb();
+            if (r instanceof Promise) {
+                r.catch(function (e) {
+                    console.log('dom.watchSize', e);
+                });
+            }
+        }
+        catch (e) {
+            console.log('dom.watchSize', e);
         }
     }
     resizeObserver.observe(el);
@@ -189,42 +199,46 @@ function unwatchSize(el, taskId) {
         return;
     }
     resizeObserver.unobserve(el);
-    el.dataset.cgRoindex = undefined;
+    el.removeAttribute('data-cg-roindex');
     delete watchSizeList[index];
 }
 exports.unwatchSize = unwatchSize;
+function isWatchSize(el) {
+    return el.dataset.cgRoindex ? true : false;
+}
+exports.isWatchSize = isWatchSize;
 function clearWatchSize(taskId) {
-    if (!taskId) {
-        return;
-    }
     for (const index in watchSizeList) {
         const item = watchSizeList[index];
         if (taskId !== item.taskId) {
             continue;
         }
         resizeObserver.unobserve(item.el);
-        item.el.dataset.cgRoindex = undefined;
+        item.el.removeAttribute('data-cg-roindex');
         delete watchSizeList[index];
     }
 }
 exports.clearWatchSize = clearWatchSize;
-function cgClearWatchSize() {
-    for (const index in watchSizeList) {
-        const item = watchSizeList[index];
-        if (item.el.offsetParent) {
-            continue;
-        }
-        resizeObserver.unobserve(item.el);
-        item.el.dataset.cgRoindex = undefined;
-        delete watchSizeList[index];
-    }
-}
-setInterval(cgClearWatchSize, 1000 * 60 * 5);
-const watchList = [];
+const watchList = {};
+let watchIndex = 0;
 function watch(el, cb, mode = 'default', immediate = false, taskId) {
-    if (immediate) {
-        cb();
+    if (isWatch(el)) {
+        return false;
     }
+    if (immediate) {
+        try {
+            const r = cb([]);
+            if (r instanceof Promise) {
+                r.catch(function (e) {
+                    console.log('dom.watch', e);
+                });
+            }
+        }
+        catch (e) {
+            console.log('dom.watch', e);
+        }
+    }
+    const index = watchIndex;
     let moi;
     switch (mode) {
         case 'child': {
@@ -263,64 +277,68 @@ function watch(el, cb, mode = 'default', immediate = false, taskId) {
             moi = mode;
         }
     }
-    const mo = new MutationObserver(() => {
-        cb();
+    const mo = new MutationObserver((mutations) => {
+        if (!el.offsetParent) {
+            mo.disconnect();
+            if (watchList[index]) {
+                delete watchList[index];
+            }
+            return;
+        }
+        try {
+            const r = cb(mutations);
+            if (r instanceof Promise) {
+                r.catch(function (e) {
+                    console.log('dom.watch', e);
+                });
+            }
+        }
+        catch (e) {
+            console.log('dom.watch', e);
+        }
     });
     mo.observe(el, moi);
-    watchList.push({
+    watchList[index] = {
         'el': el,
         'mo': mo,
         'taskId': taskId
-    });
+    };
+    el.dataset.cgMoindex = index.toString();
+    ++watchIndex;
+    return true;
 }
 exports.watch = watch;
 function unwatch(el, taskId) {
-    for (let i = 0; i < watchList.length; ++i) {
-        const item = watchList[i];
-        if (item.el !== el) {
-            continue;
-        }
-        if (taskId && taskId !== item.taskId) {
-            return;
-        }
-        if (item.el.offsetParent) {
-            item.mo.disconnect();
-        }
-        watchList.splice(i, 1);
-        --i;
+    const index = el.dataset.cgMoindex;
+    if (index === undefined) {
         return;
     }
+    const item = watchList[index];
+    if (taskId && item.taskId !== taskId) {
+        return;
+    }
+    el.removeAttribute('data-cg-moindex');
+    watchList[index].mo.disconnect();
+    delete watchList[index];
 }
 exports.unwatch = unwatch;
+function isWatch(el) {
+    return el.dataset.cgMoindex ? true : false;
+}
+exports.isWatch = isWatch;
 function clearWatch(taskId) {
-    if (!taskId) {
-        return;
-    }
-    for (let i = 0; i < watchList.length; ++i) {
-        const item = watchList[i];
+    for (const index in watchList) {
+        const item = watchList[index];
         if (taskId !== item.taskId) {
             continue;
         }
-        if (item.el.offsetParent) {
-            item.mo.disconnect();
-        }
-        watchList.splice(i, 1);
-        --i;
+        item.el.removeAttribute('data-cg-moindex');
+        item.mo.disconnect();
+        delete watchList[index];
     }
 }
 exports.clearWatch = clearWatch;
-function cgClearWatch() {
-    for (let i = 0; i < watchList.length; ++i) {
-        const item = watchList[i];
-        if (item.el.offsetParent) {
-            continue;
-        }
-        watchList.splice(i, 1);
-        --i;
-    }
-}
-setInterval(cgClearWatch, 1000 * 60 * 5);
-const watchStyleObjects = {};
+const watchStyleList = {};
 let watchStyleIndex = 0;
 function watchStyle(el, name, cb, immediate = false) {
     if (typeof name === 'string') {
@@ -331,12 +349,12 @@ function watchStyle(el, name, cb, immediate = false) {
         return;
     }
     const formId = formWrap.dataset.formId;
-    if (!watchStyleObjects[formId]) {
-        watchStyleObjects[formId] = {};
+    if (!watchStyleList[formId]) {
+        watchStyleList[formId] = {};
     }
     const index = el.dataset.cgStyleindex;
     if (index) {
-        const item = watchStyleObjects[formId][index];
+        const item = watchStyleList[formId][index];
         for (const n of name) {
             if (!item.names[n]) {
                 item.names[n] = {
@@ -354,12 +372,12 @@ function watchStyle(el, name, cb, immediate = false) {
         return;
     }
     const sd = getComputedStyle(el);
-    watchStyleObjects[formId][watchStyleIndex] = {
+    watchStyleList[formId][watchStyleIndex] = {
         'el': el,
         'sd': sd,
         'names': {}
     };
-    const item = watchStyleObjects[formId][watchStyleIndex];
+    const item = watchStyleList[formId][watchStyleIndex];
     for (const n of name) {
         item.names[n] = {
             'val': item.sd[n],
@@ -377,14 +395,13 @@ let watchStyleTimer = 0;
 const watchStyleHandler = function () {
     if (form.getFocus) {
         const formId = form.getFocus();
-        if (formId && watchStyleObjects[formId]) {
-            for (const index in watchStyleObjects[formId]) {
-                const item = watchStyleObjects[formId][index];
+        if (formId && watchStyleList[formId]) {
+            for (const index in watchStyleList[formId]) {
+                const item = watchStyleList[formId][index];
                 if (!item.el.offsetParent) {
-                    item.el.dataset.cgStyleindex = undefined;
-                    delete watchStyleObjects[formId][index];
-                    if (!Object.keys(watchStyleObjects[formId]).length) {
-                        delete watchStyleObjects[formId];
+                    delete watchStyleList[formId][index];
+                    if (!Object.keys(watchStyleList[formId]).length) {
+                        delete watchStyleList[formId];
                     }
                     continue;
                 }
@@ -409,14 +426,14 @@ function isWatchStyle(el) {
 }
 exports.isWatchStyle = isWatchStyle;
 function clearWatchStyle(formId) {
-    if (!watchStyleObjects[formId]) {
+    if (!watchStyleList[formId]) {
         return;
     }
-    for (const index in watchStyleObjects[formId]) {
-        const item = watchStyleObjects[formId][index];
-        item.el.dataset.cgStyleindex = undefined;
+    for (const index in watchStyleList[formId]) {
+        const item = watchStyleList[formId][index];
+        item.el.removeAttribute('data-cg-styleindex');
     }
-    delete watchStyleObjects[formId];
+    delete watchStyleList[formId];
 }
 exports.clearWatchStyle = clearWatchStyle;
 const watchPropertyObjects = {};
@@ -478,7 +495,6 @@ const watchPropertyHandler = function () {
             for (const index in watchPropertyObjects[formId]) {
                 const item = watchPropertyObjects[formId][index];
                 if (!item.el.offsetParent) {
-                    item.el.dataset.cgPropertyindex = undefined;
                     delete watchPropertyObjects[formId][index];
                     if (!Object.keys(watchPropertyObjects[formId]).length) {
                         delete watchPropertyObjects[formId];
@@ -504,17 +520,17 @@ function isWatchProperty(el) {
     return el.dataset.cgPropertyindex ? true : false;
 }
 exports.isWatchProperty = isWatchProperty;
-function clearPropertyStyle(formId) {
+function clearWatchProperty(formId) {
     if (!watchPropertyObjects[formId]) {
         return;
     }
     for (const index in watchPropertyObjects[formId]) {
         const item = watchPropertyObjects[formId][index];
-        item.el.dataset.cgPropertyindex = undefined;
+        item.el.removeAttribute('data-cg-propertyindex');
     }
     delete watchPropertyObjects[formId];
 }
-exports.clearPropertyStyle = clearPropertyStyle;
+exports.clearWatchProperty = clearWatchProperty;
 function bindClick(e, handler) {
     const x = e instanceof MouseEvent ? e.clientX : e.touches[0].clientX;
     const y = e instanceof MouseEvent ? e.clientY : e.touches[0].clientY;

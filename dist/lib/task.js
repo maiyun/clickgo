@@ -17,6 +17,7 @@ const tool = require("./tool");
 const form = require("./form");
 const control = require("./control");
 const fs = require("./fs");
+const theme = require("./theme");
 const native = require("./native");
 exports.list = {};
 exports.lastId = 0;
@@ -134,7 +135,7 @@ function get(tid) {
         return null;
     }
     return {
-        'name': exports.list[tid].config.name,
+        'name': exports.list[tid].app.config.name,
         'locale': exports.list[tid].locale.lang,
         'customTheme': exports.list[tid].customTheme,
         'formCount': Object.keys(exports.list[tid].forms).length,
@@ -149,7 +150,7 @@ function getList() {
     for (const tid in exports.list) {
         const item = exports.list[tid];
         rtn[tid] = {
-            'name': item.config.name,
+            'name': item.app.config.name,
             'locale': item.locale.lang,
             'customTheme': item.customTheme,
             'formCount': Object.keys(item.forms).length,
@@ -162,7 +163,7 @@ function getList() {
 }
 exports.getList = getList;
 function run(url, opt = {}) {
-    var _a, _b, _c;
+    var _a, _b, _c, _d;
     return __awaiter(this, void 0, void 0, function* () {
         let ntask = null;
         if (opt.taskId) {
@@ -190,18 +191,13 @@ function run(url, opt = {}) {
             'current': ntask ? ntask.current : undefined,
             'progress': opt.progress
         });
-        if (!app) {
-            if (notifyId) {
-                setTimeout(function () {
-                    form.hideNotify(notifyId);
-                }, 2000);
-            }
-            return -1;
-        }
-        if (notifyId && !app.net) {
+        if (notifyId) {
             setTimeout(function () {
                 form.hideNotify(notifyId);
             }, 2000);
+        }
+        if (!app) {
+            return -1;
         }
         const taskId = ++exports.lastId;
         const unblock = (_c = opt.unblock) !== null && _c !== void 0 ? _c : [];
@@ -328,8 +324,8 @@ function run(url, opt = {}) {
                 unwatchSize: function (el) {
                     dom.unwatchSize(el, taskId);
                 },
-                clearWatchSize() {
-                    dom.clearWatchSize(taskId);
+                isWatchSize(el) {
+                    return dom.isWatchSize(el);
                 },
                 watch: function (el, cb, mode = 'default', immediate = false) {
                     dom.watch(el, cb, mode, immediate, taskId);
@@ -337,8 +333,8 @@ function run(url, opt = {}) {
                 unwatch: function (el) {
                     dom.unwatch(el, taskId);
                 },
-                clearWatch: function () {
-                    dom.clearWatch(taskId);
+                isWatch(el) {
+                    return dom.isWatch(el);
                 },
                 watchStyle: function (el, name, cb, immediate = false) {
                     dom.watchStyle(el, name, cb, immediate);
@@ -646,6 +642,16 @@ function run(url, opt = {}) {
                 },
                 run: function (url, opt = {}) {
                     opt.taskId = taskId;
+                    if (opt.unblock) {
+                        const inUnblock = [];
+                        for (const item of opt.unblock) {
+                            if (!unblock.includes(item)) {
+                                continue;
+                            }
+                            inUnblock.push(item);
+                        }
+                        opt.unblock = inUnblock;
+                    }
                     return run(url, opt);
                 },
                 end: function (tid) {
@@ -821,6 +827,28 @@ function run(url, opt = {}) {
             'timers': {},
             'invoke': invoke
         };
+        if (app.config.locales) {
+            for (let path in app.config.locales) {
+                const locale = app.config.locales[path];
+                if (!path.endsWith('.json')) {
+                    path += '.json';
+                }
+                const lcontent = yield fs.getContent(path, {
+                    'encoding': 'utf8',
+                    'files': app.files,
+                    'current': current
+                });
+                if (!lcontent) {
+                    continue;
+                }
+                try {
+                    const data = JSON.parse(lcontent);
+                    loadLocaleData(locale, data, '', taskId);
+                }
+                catch (_e) {
+                }
+            }
+        }
         let expo = [];
         try {
             expo = loader.require('/app.js', app.files, {
@@ -842,18 +870,51 @@ function run(url, opt = {}) {
             return -3;
         }
         dom.createToStyleList(taskId);
+        const r = yield control.init(taskId, invoke);
+        if (r < 0) {
+            dom.removeFromStyleList(taskId);
+            delete exports.list[taskId];
+            return -400 + r;
+        }
+        if ((_d = app.config.themes) === null || _d === void 0 ? void 0 : _d.length) {
+            for (let path of app.config.themes) {
+                path += '.cgt';
+                path = tool.urlResolve('/', path);
+                const file = yield fs.getContent(path, {
+                    'files': app.files,
+                    'current': current
+                });
+                if (file && typeof file !== 'string') {
+                    const th = yield theme.read(file);
+                    if (th) {
+                        yield theme.load(th, taskId);
+                    }
+                }
+            }
+        }
+        else {
+            if (theme.global) {
+                yield theme.load(undefined, taskId);
+            }
+        }
+        if (app.config.style) {
+            const style = yield fs.getContent(app.config.style + '.css', {
+                'encoding': 'utf8',
+                'files': app.files,
+                'current': current
+            });
+            if (style) {
+                const r = tool.stylePrepend(style, 'cg-task' + taskId.toString() + '_');
+                dom.pushStyle(taskId, yield tool.styleUrl2DataUrl(app.config.style, r.style, app.files));
+            }
+        }
         core.trigger('taskStarted', taskId);
         if (taskId === 1) {
             native.invoke('cg-init', native.getToken());
         }
         const appCls = new expo.default();
+        exports.list[taskId].class = appCls;
         yield appCls.main();
-        if (!exports.list[taskId].class) {
-            delete exports.list[taskId];
-            dom.removeFromStyleList(taskId);
-            core.trigger('taskEnded', taskId);
-            return -4;
-        }
         return taskId;
     });
 }
@@ -894,7 +955,7 @@ function end(taskId) {
         f.vapp._container.remove();
         (_a = form.elements.popList.querySelector('[data-form-id="' + f.id.toString() + '"]')) === null || _a === void 0 ? void 0 : _a.remove();
         dom.clearWatchStyle(fid);
-        dom.clearPropertyStyle(fid);
+        dom.clearWatchProperty(fid);
     }
     const flist = form.elements.list.querySelectorAll('.cg-form-wrap[data-task-id="' + taskId.toString() + '"]');
     for (const f of flist) {
@@ -912,6 +973,7 @@ function end(taskId) {
         }
     }
     dom.clearWatchSize(taskId);
+    dom.clearWatch(taskId);
     delete exports.list[taskId];
     core.trigger('taskEnded', taskId);
     clearSystem(taskId);

@@ -197,14 +197,22 @@ const resizeObserver = new ResizeObserver(function(entries): void {
         const el = entrie.target as HTMLElement;
         if (!el.offsetParent) {
             resizeObserver.unobserve(el);
+            if (watchSizeList[el.dataset.cgRoindex!]) {
+                delete watchSizeList[el.dataset.cgRoindex!];
+            }
             continue;
         }
-        const item = watchSizeList[parseInt(el.dataset.cgRoindex!)];
-        const r = item.handler();
-        if (r instanceof Promise) {
-            r.catch(function(e) {
-                console.log(e);
-            });
+        const item = watchSizeList[el.dataset.cgRoindex!];
+        try {
+            const r = item.handler();
+            if (r instanceof Promise) {
+                r.catch(function(e) {
+                    console.log('ResizeObserver', e);
+                });
+            }
+        }
+        catch (e) {
+            console.log('ResizeObserver', e);
         }
     }
 });
@@ -222,18 +230,20 @@ export function watchSize(
     immediate: boolean = false,
     taskId?: number
 ): boolean {
-    for (const index in watchSizeList) {
-        const item = watchSizeList[index];
-        if (item.el === el) {
-            return false;
-        }
+    if (isWatchSize(el)) {
+        return false;
     }
     if (immediate) {
-        const r = cb();
-        if (r instanceof Promise) {
-            r.catch(function(e) {
-                console.log(e);
-            });
+        try {
+            const r = cb();
+            if (r instanceof Promise) {
+                r.catch(function(e) {
+                    console.log('dom.watchSize', e);
+                });
+            }
+        }
+        catch (e) {
+            console.log('dom.watchSize', e);
         }
     }
     resizeObserver.observe(el);
@@ -248,7 +258,7 @@ export function watchSize(
 }
 
 /**
- * --- 移除监视 Element 对象大小
+ * --- 移除监视 Element 对象大小 ---
  * @param el 要移除监视
  * @param taskId 校验任务 id，App 模式下无效
  */
@@ -262,51 +272,43 @@ export function unwatchSize(el: HTMLElement, taskId?: number): void {
         return;
     }
     resizeObserver.unobserve(el);
-    el.dataset.cgRoindex = undefined;
+    el.removeAttribute('data-cg-roindex');
     delete watchSizeList[index];
 }
 
 /**
- * --- 清除某个任务下面的所有监视 ---
- * @param taskId 任务 id，App 模式下无效
+ * --- 检测一个标签是否正在被 watchSize ---
+ * @param el 要检测的标签
  */
-export function clearWatchSize(taskId?: number): void {
-    if (!taskId) {
-        return;
-    }
+export function isWatchSize(el: HTMLElement): boolean {
+    return el.dataset.cgRoindex ? true : false;
+}
+
+/**
+ * --- 清除某个任务的所有 watch size 监视，App 模式下无效 ---
+ * @param taskId 任务 id
+ */
+export function clearWatchSize(taskId: number): void {
     for (const index in watchSizeList) {
         const item = watchSizeList[index];
         if (taskId !== item.taskId) {
             continue;
         }
         resizeObserver.unobserve(item.el);
-        item.el.dataset.cgRoindex = undefined;
+        item.el.removeAttribute('data-cg-roindex');
         delete watchSizeList[index];
     }
 }
-
-/**
- * --- 每隔一段时间清除一次无效的 el, CG 垃圾回收 ---
- */
-function cgClearWatchSize(): void {
-    for (const index in watchSizeList) {
-        const item = watchSizeList[index];
-        if (item.el.offsetParent) {
-            continue;
-        }
-        resizeObserver.unobserve(item.el);
-        item.el.dataset.cgRoindex = undefined;
-        delete watchSizeList[index];
-    }
-}
-setInterval(cgClearWatchSize, 1000 * 60 * 5);
 
 // -------------
 // --- watch ---
 // -------------
 
 /** --- 监视 dom 变动中的元素 */
-const watchList: types.IWatchItem[] = [];
+const watchList: Record<string, types.IWatchItem> = {};
+
+/** --- 监视元素的 data-cg-moindex --- */
+let watchIndex: number = 0;
 
 /**
  * --- 添加 DOM 内容变化监视 ---
@@ -315,10 +317,24 @@ const watchList: types.IWatchItem[] = [];
  * @param mode 监听模式
  * @param taskId 归属到一个任务里可留空，App 模式下无效
  */
-export function watch(el: HTMLElement, cb: () => void | Promise<void>, mode: 'child' | 'childsub' | 'style' | 'default' = 'default', immediate: boolean = false, taskId?: number): void {
-    if (immediate) {
-        (cb as any)();
+export function watch(el: HTMLElement, cb: (mutations: MutationRecord[]) => void | Promise<void>, mode: 'child' | 'childsub' | 'style' | 'default' = 'default', immediate: boolean = false, taskId?: number): boolean {
+    if (isWatch(el)) {
+        return false;
     }
+    if (immediate) {
+        try {
+            const r = cb([]);
+            if (r instanceof Promise) {
+                r.catch(function(e) {
+                    console.log('dom.watch', e);
+                });
+            }
+        }
+        catch (e) {
+            console.log('dom.watch', e);
+        }
+    }
+    const index = watchIndex;
     let moi: MutationObserverInit;
     switch (mode) {
         case 'child': {
@@ -357,15 +373,35 @@ export function watch(el: HTMLElement, cb: () => void | Promise<void>, mode: 'ch
             moi = mode;
         }
     }
-    const mo = new MutationObserver(() => {
-        (cb as any)();
+    const mo = new MutationObserver((mutations) => {
+        if (!el.offsetParent) {
+            mo.disconnect();
+            if (watchList[index]) {
+                delete watchList[index];
+            }
+            return;
+        }
+        try {
+            const r = cb(mutations);
+            if (r instanceof Promise) {
+                r.catch(function(e) {
+                    console.log('dom.watch', e);
+                });
+            }
+        }
+        catch (e) {
+            console.log('dom.watch', e);
+        }
     });
     mo.observe(el, moi);
-    watchList.push({
+    watchList[index] = {
         'el': el,
         'mo': mo,
         'taskId': taskId
-    });
+    };
+    el.dataset.cgMoindex = index.toString();
+    ++watchIndex;
+    return true;
     /*
     {
         'attributeFilter': ['style', 'class'],
@@ -378,71 +414,53 @@ export function watch(el: HTMLElement, cb: () => void | Promise<void>, mode: 'ch
 }
 
 /**
- * --- 移除监视 Element 对象大小
+ * --- 移除监视 Element 对象变动 ---
  * @param el 要移除监视
  * @param taskId 校验任务 id 可留空，App 模式下无效
  */
 export function unwatch(el: HTMLElement, taskId?: number): void {
-    for (let i = 0; i < watchList.length; ++i) {
-        const item = watchList[i];
-        if (item.el !== el) {
-            continue;
-        }
-        if (taskId && taskId !== item.taskId) {
-            // --- taskId 校验失败 ---
-            return;
-        }
-        // --- 要移除 ---
-        if (item.el.offsetParent) {
-            item.mo.disconnect();
-        }
-        watchList.splice(i, 1);
-        --i;
+    const index = el.dataset.cgMoindex;
+    if (index === undefined) {
         return;
     }
+    const item = watchList[index];
+    if (taskId && item.taskId !== taskId) {
+        return;
+    }
+    el.removeAttribute('data-cg-moindex');
+    watchList[index].mo.disconnect();
+    delete watchList[index];
 }
 
 /**
- * --- 清除某个任务下面的所有 watch 监视 ---
+ * --- 检测一个标签是否正在被 watchSize ---
+ * @param el 要检测的标签
+ */
+export function isWatch(el: HTMLElement): boolean {
+    return el.dataset.cgMoindex ? true : false;
+}
+
+/**
+ * --- 清除某个任务下面的所有 watch 监视，App 模式下无效 ---
  * @param taskId 任务 id，App 模式下无效
  */
-export function clearWatch(taskId?: number): void {
-    if (!taskId) {
-        return;
-    }
-    for (let i = 0; i < watchList.length; ++i) {
-        const item = watchList[i];
+export function clearWatch(taskId: number): void {
+    for (const index in watchList) {
+        const item = watchList[index];
         if (taskId !== item.taskId) {
             continue;
         }
-        if (item.el.offsetParent) {
-            item.mo.disconnect();
-        }
-        watchList.splice(i, 1);
-        --i;
+        item.el.removeAttribute('data-cg-moindex');
+        item.mo.disconnect();
+        delete watchList[index];
     }
 }
-
-/**
- * --- 每隔一段时间清除一次无效的 watch el ---
- */
-function cgClearWatch(): void {
-    for (let i = 0; i < watchList.length; ++i) {
-        const item = watchList[i];
-        if (item.el.offsetParent) {
-            continue;
-        }
-        watchList.splice(i, 1);
-        --i;
-    }
-}
-setInterval(cgClearWatch, 1000 * 60 * 5);
 
 // ------------------
 // --- watchStyle ---
 // ------------------
 
-const watchStyleObjects: Record<string, Record<string, {
+const watchStyleList: Record<string, Record<string, {
     'el': HTMLElement;
     'sd': CSSStyleDeclaration;
     'names': Record<string, {
@@ -476,12 +494,12 @@ export function watchStyle(
         return;
     }
     const formId = formWrap.dataset.formId!;
-    if (!watchStyleObjects[formId]) {
-        watchStyleObjects[formId] = {};
+    if (!watchStyleList[formId]) {
+        watchStyleList[formId] = {};
     }
     const index = el.dataset.cgStyleindex;
     if (index) {
-        const item = watchStyleObjects[formId][index];
+        const item = watchStyleList[formId][index];
         // --- 已经有监听了 ---
         for (const n of name) {
             if (!item.names[n]) {
@@ -501,12 +519,12 @@ export function watchStyle(
     }
     // --- 创建监听 ---
     const sd = getComputedStyle(el);
-    watchStyleObjects[formId][watchStyleIndex] = {
+    watchStyleList[formId][watchStyleIndex] = {
         'el': el,
         'sd': sd,
         'names': {}
     };
-    const item = watchStyleObjects[formId][watchStyleIndex];
+    const item = watchStyleList[formId][watchStyleIndex];
     for (const n of name) {
         item.names[n] = {
             'val': (item.sd as any)[n],
@@ -527,14 +545,13 @@ const watchStyleHandler = function(): void {
     if (form.getFocus) {
         // --- 只判断和执行活跃中的窗体的监听事件 ---
         const formId: number | null = form.getFocus();
-        if (formId && watchStyleObjects[formId]) {
-            for (const index in watchStyleObjects[formId]) {
-                const item = watchStyleObjects[formId][index];
+        if (formId && watchStyleList[formId]) {
+            for (const index in watchStyleList[formId]) {
+                const item = watchStyleList[formId][index];
                 if (!item.el.offsetParent) {
-                    item.el.dataset.cgStyleindex = undefined;
-                    delete watchStyleObjects[formId][index];
-                    if (!Object.keys(watchStyleObjects[formId]).length) {
-                        delete watchStyleObjects[formId];
+                    delete watchStyleList[formId][index];
+                    if (!Object.keys(watchStyleList[formId]).length) {
+                        delete watchStyleList[formId];
                     }
                     continue;
                 }
@@ -565,18 +582,18 @@ export function isWatchStyle(el: HTMLElement): boolean {
 }
 
 /**
- * --- 清除某个窗体的所有 watch style 监视，虽然窗体结束后相关监视永远不会再被执行，但是会形成冗余，App 模式下无效 ---
+ * --- 清除某个窗体的所有 watch style 监视，App 模式下无效 ---
  * @param formId 窗体 id
  */
 export function clearWatchStyle(formId: number | string): void {
-    if (!watchStyleObjects[formId]) {
+    if (!watchStyleList[formId]) {
         return;
     }
-    for (const index in watchStyleObjects[formId]) {
-        const item = watchStyleObjects[formId][index];
-        item.el.dataset.cgStyleindex = undefined;
+    for (const index in watchStyleList[formId]) {
+        const item = watchStyleList[formId][index];
+        item.el.removeAttribute('data-cg-styleindex');
     }
-    delete watchStyleObjects[formId];
+    delete watchStyleList[formId];
 }
 
 // ---------------------
@@ -672,7 +689,6 @@ const watchPropertyHandler = function(): void {
             for (const index in watchPropertyObjects[formId]) {
                 const item = watchPropertyObjects[formId][index];
                 if (!item.el.offsetParent) {
-                    item.el.dataset.cgPropertyindex = undefined;
                     delete watchPropertyObjects[formId][index];
                     if (!Object.keys(watchPropertyObjects[formId]).length) {
                         delete watchPropertyObjects[formId];
@@ -708,13 +724,13 @@ export function isWatchProperty(el: HTMLElement): boolean {
  * --- 清除某个窗体的所有 watch property 监视，虽然窗体结束后相关监视永远不会再被执行，但是会形成冗余，App 模式下无效 ---
  * @param formId 窗体 id
  */
-export function clearPropertyStyle(formId: number | string): void {
+export function clearWatchProperty(formId: number | string): void {
     if (!watchPropertyObjects[formId]) {
         return;
     }
     for (const index in watchPropertyObjects[formId]) {
         const item = watchPropertyObjects[formId][index];
-        item.el.dataset.cgPropertyindex = undefined;
+        item.el.removeAttribute('data-cg-propertyindex');
     }
     delete watchPropertyObjects[formId];
 }

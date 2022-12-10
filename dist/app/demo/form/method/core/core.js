@@ -14,6 +14,11 @@ class default_1 extends clickgo.form.AbstractForm {
     get config() {
         return JSON.stringify(clickgo.core.config, null, 4).replace(/"icon": "([\s\S]+?)"/g, '"icon": "data:image/..."');
     }
+    getCdn() {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield clickgo.form.dialog(clickgo.core.getCdn());
+        });
+    }
     getAvailArea() {
         return __awaiter(this, void 0, void 0, function* () {
             yield clickgo.form.dialog(JSON.stringify(clickgo.core.getAvailArea()));
