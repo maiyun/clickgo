@@ -163,7 +163,7 @@ function getList() {
 }
 exports.getList = getList;
 function run(url, opt = {}) {
-    var _a, _b, _c, _d;
+    var _a, _b, _c;
     return __awaiter(this, void 0, void 0, function* () {
         let ntask = null;
         if (opt.taskId) {
@@ -200,13 +200,32 @@ function run(url, opt = {}) {
             return -1;
         }
         const taskId = ++exports.lastId;
-        const unblock = (_c = opt.unblock) !== null && _c !== void 0 ? _c : [];
+        const unblock = opt.unblock ? tool.clone(opt.unblock) : [];
+        const unblockSys = [
+            'require',
+            '__awaiter', 'eval', 'Math', 'Array', 'Blob', 'Error', 'Infinity', 'parseInt', 'parseFloat', 'Promise', 'Date', 'JSON', 'fetch'
+        ];
+        for (const name of unblockSys) {
+            if (unblock.includes(name)) {
+                continue;
+            }
+            unblock.push(name);
+        }
         const invoke = {};
         if (!unblock.includes('window')) {
-            invoke.window = undefined;
+            invoke.window = {};
+            for (const name of unblock) {
+                if (window[name] === undefined) {
+                    continue;
+                }
+                invoke.window[name] = window[name];
+            }
         }
         const ks = Object.getOwnPropertyNames(window);
         for (const k of ks) {
+            if (k.includes('window')) {
+                continue;
+            }
             if (k.includes('Event')) {
                 continue;
             }
@@ -214,12 +233,6 @@ function run(url, opt = {}) {
                 continue;
             }
             if (/^[0-9]+$/.test(k)) {
-                continue;
-            }
-            if ([
-                'require',
-                '__awaiter', 'eval', 'Math', 'Array', 'Blob', 'Infinity', 'parseInt', 'parseFloat', 'Promise', 'Date', 'JSON', 'fetch'
-            ].includes(k)) {
                 continue;
             }
             if (unblock.includes(k)) {
@@ -606,20 +619,49 @@ function run(url, opt = {}) {
                 }
             },
             'native': {
+                on(name, handler, once = false, formId) {
+                    native.on(name, handler, once, formId, taskId);
+                },
+                once(name, handler, formId) {
+                    native.once(name, handler, formId, taskId);
+                },
+                off(name, formId) {
+                    native.off(name, formId, taskId);
+                },
+                clear(formId, taskId) {
+                    native.clear(formId, taskId);
+                },
+                getListenerList(taskId) {
+                    return native.getListenerList(taskId);
+                },
                 invoke: function (name, ...param) {
                     return native.invoke(name, ...param);
                 },
                 max: function () {
-                    native.max();
+                    return __awaiter(this, void 0, void 0, function* () {
+                        yield native.max();
+                    });
                 },
                 min: function () {
-                    native.min();
+                    return __awaiter(this, void 0, void 0, function* () {
+                        yield native.min();
+                    });
                 },
                 restore: function () {
-                    native.restore();
+                    return __awaiter(this, void 0, void 0, function* () {
+                        yield native.restore();
+                    });
                 },
                 size: function (width, height) {
-                    native.size(width, height);
+                    return __awaiter(this, void 0, void 0, function* () {
+                        yield native.size(width, height);
+                    });
+                },
+                ping: function (val) {
+                    return native.ping(val);
+                },
+                isMax: function () {
+                    return native.isMax();
                 }
             },
             'task': {
@@ -845,7 +887,7 @@ function run(url, opt = {}) {
                     const data = JSON.parse(lcontent);
                     loadLocaleData(locale, data, '', taskId);
                 }
-                catch (_e) {
+                catch (_d) {
                 }
             }
         }
@@ -876,7 +918,7 @@ function run(url, opt = {}) {
             delete exports.list[taskId];
             return -400 + r;
         }
-        if ((_d = app.config.themes) === null || _d === void 0 ? void 0 : _d.length) {
+        if ((_c = app.config.themes) === null || _c === void 0 ? void 0 : _c.length) {
             for (let path of app.config.themes) {
                 path += '.cgt';
                 path = tool.urlResolve('/', path);
@@ -910,7 +952,7 @@ function run(url, opt = {}) {
         }
         core.trigger('taskStarted', taskId);
         if (taskId === 1) {
-            native.invoke('cg-init', native.getToken());
+            yield native.invoke('cg-init', native.getToken());
         }
         const appCls = new expo.default();
         exports.list[taskId].class = appCls;
@@ -974,6 +1016,7 @@ function end(taskId) {
     }
     dom.clearWatchSize(taskId);
     dom.clearWatch(taskId);
+    native.clear(undefined, taskId);
     delete exports.list[taskId];
     core.trigger('taskEnded', taskId);
     clearSystem(taskId);

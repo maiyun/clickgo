@@ -56,6 +56,7 @@ const info = {
 };
 class AbstractForm {
     constructor() {
+        this.isNativeSync = false;
         this._firstShow = true;
         this.dialogResult = '';
     }
@@ -269,7 +270,7 @@ class AbstractForm {
         v.$refs.form.$data.isShow = false;
     }
     close() {
-        clickgo.form.close(this.formId);
+        close(this.formId);
     }
     onBeforeCreate() {
         return;
@@ -1408,6 +1409,7 @@ function remove(formId) {
             core.trigger('formRemoved', taskId, formId, title, icon);
             dom.clearWatchStyle(formId);
             dom.clearWatchProperty(formId);
+            native.clear(formId, taskId);
             if (Object.keys(task.list[taskId].forms).length === 0) {
                 task.end(taskId);
             }
@@ -1562,6 +1564,9 @@ function create(opt) {
                 return;
             }
         };
+        if (clickgo.isNative() && (formId === 1) && !clickgo.isImmersion() && !clickgo.hasFrame()) {
+            data.isNativeSync = true;
+        }
         if (style) {
             dom.pushStyle(opt.taskId, style, 'form', formId);
         }
@@ -1653,13 +1658,13 @@ function create(opt) {
                 (_f = exports.elements.popList.querySelector('[data-form-id="' + rtn.vroot.formId + '"]')) === null || _f === void 0 ? void 0 : _f.remove();
                 dom.clearWatchStyle(rtn.vroot.formId);
                 dom.clearWatchProperty(rtn.vroot.formId);
+                native.clear(formId, t.id);
                 dom.removeStyle(rtn.vroot.taskId, 'form', rtn.vroot.formId);
                 return -8;
             }
         }
         core.trigger('formCreated', opt.taskId, formId, rtn.vroot.$refs.form.title, rtn.vroot.$refs.form.iconDataUrl);
-        if (clickgo.isNative() && (formId === 1) && !clickgo.isImmersion() && !clickgo.hasFrame()) {
-            rtn.vroot.$refs.form.isNativeSync = true;
+        if (rtn.vroot.isNativeSync) {
             native.invoke('cg-set-size', native.getToken(), rtn.vroot.$refs.form.$el.offsetWidth, rtn.vroot.$refs.form.$el.offsetHeight);
             window.addEventListener('resize', function () {
                 rtn.vroot.$refs.form.setPropData('width', window.innerWidth);

@@ -247,6 +247,9 @@ export abstract class AbstractForm {
         };
     }
 
+    /** --- 当前窗体是否和 native 的实体窗体大小、状态同步 --- */
+    public isNativeSync: boolean = false;
+
     /**
      * --- 监视变动 ---
      * @param name 监视的属性
@@ -404,7 +407,7 @@ export abstract class AbstractForm {
      * --- 关闭当前窗体 ---
      */
     public close(): void {
-        clickgo.form.close(this.formId);
+        close(this.formId);
     }
 
     /**
@@ -1849,6 +1852,7 @@ export function remove(formId: number): boolean {
             core.trigger('formRemoved', taskId, formId, title, icon);
             dom.clearWatchStyle(formId);
             dom.clearWatchProperty(formId);
+            native.clear(formId, taskId);
             // --- 检测是否已经没有窗体了，如果没有了的话就要结束任务了 ---
             if (Object.keys(task.list[taskId].forms).length === 0) {
                 task.end(taskId);
@@ -2035,6 +2039,10 @@ export async function create(opt: types.IFormCreateOptions): Promise<number> {
             return;
         }
     };
+    // --- 判断是否要与 native 实体窗体大小同步 ---
+    if (clickgo.isNative() && (formId === 1) && !clickgo.isImmersion() && !clickgo.hasFrame()) {
+        data.isNativeSync = true;
+    }
     // --- 挂载 style ---
     if (style) {
         // --- 窗体的 style ---
@@ -2140,6 +2148,7 @@ export async function create(opt: types.IFormCreateOptions): Promise<number> {
             elements.popList.querySelector('[data-form-id="' + rtn.vroot.formId + '"]')?.remove();
             dom.clearWatchStyle(rtn.vroot.formId);
             dom.clearWatchProperty(rtn.vroot.formId);
+            native.clear(formId, t.id);
             // --- 移除 style ---
             dom.removeStyle(rtn.vroot.taskId, 'form', rtn.vroot.formId);
             return -8;
@@ -2147,9 +2156,8 @@ export async function create(opt: types.IFormCreateOptions): Promise<number> {
     }
     // --- 触发 formCreated 事件 ---
     core.trigger('formCreated', opt.taskId, formId, rtn.vroot.$refs.form.title, rtn.vroot.$refs.form.iconDataUrl);
-    // --- 判断是否要与 native 实体窗体大小同步 ---
-    if (clickgo.isNative() && (formId === 1) && !clickgo.isImmersion() && !clickgo.hasFrame()) {
-        rtn.vroot.$refs.form.isNativeSync = true;
+    // --- 同步的窗体先进行同步一下 ---
+    if (rtn.vroot.isNativeSync) {
         native.invoke('cg-set-size', native.getToken(), rtn.vroot.$refs.form.$el.offsetWidth, rtn.vroot.$refs.form.$el.offsetHeight);
         window.addEventListener('resize', function(): void {
             rtn.vroot.$refs.form.setPropData('width', window.innerWidth);

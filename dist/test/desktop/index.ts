@@ -67,8 +67,8 @@ class Boot extends clickgo.AbstractBoot {
         }
         el.innerHTML = 'Running...';
         const body = document.getElementsByTagName('body')[0];
-        if (clickgo.isNative() && (clickgo.isImmersion() || window.location.href.includes('?single'))) {
-            // --- 是否将网页背景设置为透明（仅在 native 且沉浸模式或单应用模式才设置） ---
+        if (clickgo.isNative() && clickgo.isImmersion()) {
+            // --- 是否将网页背景设置为透明（仅在 native 且沉浸模式才设置） ---
             body.style.background = 'transparent';
             document.getElementById('spic')!.style.display = 'none';
         }

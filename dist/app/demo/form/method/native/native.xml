@@ -1,0 +1,12 @@
+<form width="350" height="400" title="Library native" padding="10">
+    <layout gutter="10" direction="v" style="flex: 1;">
+        <button @click="getListenerList" style="height: 30px;">getListenerList</button>
+        <button @click="max" style="height: 30px;">max</button>
+        <button @click="min" style="height: 30px;">min</button>
+        <layout gutter="10" align-v="center">
+            <text style="flex: 1;" v-model="val"></text>
+            <button @click="ping" style="height: 30px; padding: 0 10px;">ping("{{val}}")</button>
+        </layout>
+        <button @click="isMax" style="height: 30px;">isMax</button>
+    </layout>
+</form>

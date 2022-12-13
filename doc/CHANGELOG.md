@@ -1,5 +1,9 @@
 # Changelog
 
+# 3.1.3-dev12
+
+[\*] A lot.
+
 # 3.1.2-dev11
 
 [+] Add onRuntimeFileLoad, onRuntimeFileLoaded methods of AbstractBoot.  

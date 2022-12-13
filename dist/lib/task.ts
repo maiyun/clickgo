@@ -263,14 +263,33 @@ export async function run(url: string, opt: types.ITaskRunOptions = {}): Promise
     const taskId = ++lastId;
     // --- 注入的参数，屏蔽浏览器全局对象，注入新的对象 ---
     /** --- 不屏蔽的全局对象 --- */
-    const unblock = opt.unblock ?? [];
+    const unblock = opt.unblock ? tool.clone(opt.unblock) : [];
+    const unblockSys = [
+        'require',
+        '__awaiter', 'eval', 'Math', 'Array', 'Blob', 'Error', 'Infinity', 'parseInt', 'parseFloat', 'Promise', 'Date', 'JSON', 'fetch'
+    ];
+    for (const name of unblockSys) {
+        if (unblock.includes(name)) {
+            continue;
+        }
+        unblock.push(name);
+    }
     /** --- 最终注入的对象 --- */
     const invoke: Record<string, any> = {};
     if (!unblock.includes('window')) {
-        invoke.window = undefined;
+        invoke.window = {};
+        for (const name of unblock) {
+            if (window[name] === undefined) {
+                continue;
+            }
+            invoke.window[name] = window[name];
+        }
     }
     const ks = Object.getOwnPropertyNames(window);
     for (const k of ks) {
+        if (k.includes('window')) {
+            continue;
+        }
         if (k.includes('Event')) {
             continue;
         }
@@ -278,11 +297,6 @@ export async function run(url: string, opt: types.ITaskRunOptions = {}): Promise
             continue;
         }
         if (/^[0-9]+$/.test(k)) {
-            continue;
-        }
-        if ([
-            'require',
-            '__awaiter', 'eval', 'Math', 'Array', 'Blob', 'Infinity', 'parseInt', 'parseFloat', 'Promise', 'Date', 'JSON', 'fetch'].includes(k)) {
             continue;
         }
         if (unblock.includes(k)) {
@@ -703,20 +717,50 @@ export async function run(url: string, opt: types.ITaskRunOptions = {}): Promise
             }
         },
         'native': {
-            invoke: function(name: string, ...param: any[]): any {
+            on(
+                name: string,
+                handler: (...param: any[]) => any | Promise<any>,
+                once: boolean = false,
+                formId?: number
+            ): void {
+                native.on(name, handler, once, formId, taskId);
+            },
+            once(
+                name: string,
+                handler: (...param: any[]) => any | Promise<any>,
+                formId?: number
+            ): void {
+                native.once(name, handler, formId, taskId);
+            },
+            off(name: string, formId?: number): void {
+                native.off(name, formId, taskId);
+            },
+            clear(formId?: number, taskId?: number): void {
+                native.clear(formId, taskId);
+            },
+            getListenerList(taskId?: number): Record<string, Record<string, Record<string, number>>> {
+                return native.getListenerList(taskId);
+            },
+            invoke: function(name: string, ...param: any[]): Promise<any> {
                 return native.invoke(name, ...param);
             },
-            max: function(): void {
-                native.max();
+            max: async function(): Promise<void> {
+                await native.max();
             },
-            min: function(): void {
-                native.min();
+            min: async function(): Promise<void> {
+                await native.min();
             },
-            restore: function(): void {
-                native.restore();
+            restore: async function(): Promise<void> {
+                await native.restore();
             },
-            size: function(width: number, height: number): void {
-                native.size(width, height);
+            size: async function(width: number, height: number): Promise<void> {
+                await native.size(width, height);
+            },
+            ping: function(val: string): Promise<string> {
+                return native.ping(val);
+            },
+            isMax: function(): Promise<boolean> {
+                return native.isMax();
             }
         },
         'task': {
@@ -1028,7 +1072,7 @@ export async function run(url: string, opt: types.ITaskRunOptions = {}): Promise
     core.trigger('taskStarted', taskId);
     // --- 第一个任务给 native 发送任务启动成功的消息 ---
     if (taskId === 1) {
-        native.invoke('cg-init', native.getToken());
+        await native.invoke('cg-init', native.getToken());
     }
     // --- 执行 app ---
     const appCls: core.AbstractApp = new expo.default();
@@ -1048,7 +1092,7 @@ export function end(taskId: number): boolean {
     }
     // --- 如果是 native 模式 ---
     if (clickgo.isNative() && (taskId === 1)) {
-        native.invoke('cg-close', native.getToken());
+        native.invoke('cg-close', native.getToken()) as any;
     }
     // --- 获取最大的 z index 窗体，并让他获取焦点 ---
     const fid = form.getMaxZIndexID({
@@ -1103,6 +1147,7 @@ export function end(taskId: number): boolean {
     // --- 移除各类监听 ---
     dom.clearWatchSize(taskId);
     dom.clearWatch(taskId);
+    native.clear(undefined, taskId);
     // --- 移除 task ---
     delete list[taskId];
     // --- 触发 taskEnded 事件 ---

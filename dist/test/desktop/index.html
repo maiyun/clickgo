@@ -23,7 +23,8 @@
     </div>
 </div>
 <script>
-if (!navigator.userAgent.toLowerCase().includes('electron/') || navigator.userAgent.toLowerCase().includes('frame/1')) {
+const ua = navigator.userAgent.toLowerCase();
+if (!ua.includes('electron/') || !ua.includes('immersion/1')) {
     document.getElementById('main').insertAdjacentHTML('beforeend', '<style>body{background: #222;}</style>');
 }
 </script>

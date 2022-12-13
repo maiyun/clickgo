@@ -91,7 +91,7 @@ export default class extends clickgo.control.AbstractControl {
     /** --- 是否是内联窗体 --- */
     public isInside = false;
 
-    /** --- 是否和实体窗体同步大小 --- */
+    /** --- 当前窗体是否和 native 的实体窗体大小、状态同步 --- */
     public isNativeSync = false;
 
     public get isMin(): boolean {
@@ -244,14 +244,6 @@ export default class extends clickgo.control.AbstractControl {
                     else {
                         this.heightData = this.historyLocation.height;
                         this.emit('update:height', this.historyLocation.height);
-                    }
-                    // --- 是否同步实体窗体 ---
-                    if (this.isNativeSync) {
-                        clickgo.native.restore();
-                        // --- mac 要多处理一步 ---
-                        if (clickgo.getPlatform() === 'darwin') {
-                            clickgo.native.size(this.widthData, this.heightData);
-                        }
                     }
                 }
                 else if (this.stateAbs) {
@@ -429,6 +421,7 @@ export default class extends clickgo.control.AbstractControl {
             // --- 当前是正常/最大化状态，需要变成最小化 ---
             this.emit('min', event, 1, {});
             if (event.go) {
+                // --- 不能用 isNativeSync，因为沉浸式也要最小化 ---
                 if (clickgo.isNative() && (this.formId === 1) && !clickgo.hasFrame()) {
                     // --- 最小化不要管是否是沉浸式，沉浸式也要实体最小化 ---
                     clickgo.native.min();
@@ -541,9 +534,6 @@ export default class extends clickgo.control.AbstractControl {
             // --- 当前是正常状态，需要变成最大化 ---
             this.emit('max', event, 1, {});
             if (event.go) {
-                if (this.isNativeSync) {
-                    clickgo.native.max();
-                }
                 if (this.stateAbs) {
                     this.stateAbs = '';
                 }
@@ -555,12 +545,22 @@ export default class extends clickgo.control.AbstractControl {
                         'top': this.topData
                     };
                 }
-                this.element.dataset.cgMax = '';
-                this.stateMaxData = true;
-                this.emit('update:stateMax', true);
+                if (this.isNativeSync) {
+                    clickgo.native.max();
+                }
+                else {
+                    this.element.dataset.cgMax = '';
+                    this.stateMaxData = true;
+                    this.emit('update:stateMax', true);
+                }
                 // --- 变窗体样子 ---
-                this.element.style.transition = 'all .1s linear';
-                this.element.style.transitionProperty = 'left,top,width,height';
+                if (!this.isNativeSync) {
+                    this.element.style.transition = 'all .1s linear';
+                    this.element.style.transitionProperty = 'left,top,width,height';
+                    clickgo.tool.sleep(150).then(() => {
+                        this.element.style.transition = '';
+                    }).catch((e) => { console.log(e); });
+                }
                 const area = clickgo.core.getAvailArea();
                 this.leftData = area.left;
                 this.emit('update:left', this.leftData);
@@ -574,9 +574,6 @@ export default class extends clickgo.control.AbstractControl {
                 if (this.heightComp > 0) {
                     this.emit('update:height', this.heightData);
                 }
-                clickgo.tool.sleep(150).then(() => {
-                    this.element.style.transition = '';
-                }).catch((e) => { console.log(e); });
             }
             else {
                 return false;
@@ -586,16 +583,18 @@ export default class extends clickgo.control.AbstractControl {
             // --- 需要变正常 ---
             this.emit('max', event, 0, this.historyLocation);
             if (event.go) {
-                this.element.removeAttribute('data-cg-max');
-                this.stateMaxData = false;
-                this.emit('update:stateMax', false);
                 // --- 变窗体样子 ---
-                this.element.style.transition = 'all .1s linear';
-                this.element.style.transitionProperty = 'left,top,width,height';
-                this.leftData = this.historyLocation.left;
-                this.emit('update:left', this.historyLocation.left);
-                this.topData = this.historyLocation.top;
-                this.emit('update:top', this.historyLocation.top);
+                if (this.isNativeSync) {
+                    clickgo.native.restore();
+                }
+                else {
+                    this.element.removeAttribute('data-cg-max');
+                    this.stateMaxData = false;
+                    this.emit('update:stateMax', false);
+                    // --- 动画效果 ---
+                    this.element.style.transition = 'all .1s linear';
+                    this.element.style.transitionProperty = 'left,top,width,height';
+                }
                 if (!this.widthComp) {
                     this.widthData = 0;
                 }
@@ -610,13 +609,22 @@ export default class extends clickgo.control.AbstractControl {
                     this.heightData = this.historyLocation.height;
                     this.emit('update:height', this.historyLocation.height);
                 }
+                this.leftData = this.historyLocation.left;
+                this.emit('update:left', this.historyLocation.left);
+                this.topData = this.historyLocation.top;
+                this.emit('update:top', this.historyLocation.top);
                 // --- native 模式非 frame、非沉浸模式，要调整 size ---
                 if (this.isNativeSync) {
-                    clickgo.native.size(this.widthData, this.heightData);
+                    // --- mac 要多处理一步 ---
+                    if (clickgo.getPlatform() === 'darwin') {
+                        clickgo.native.size(this.widthData, this.heightData);
+                    }
                 }
-                clickgo.tool.sleep(150).then(() => {
-                    this.element.style.transition = '';
-                }).catch((e) => { console.log(e); });
+                else {
+                    clickgo.tool.sleep(150).then(() => {
+                        this.element.style.transition = '';
+                    }).catch((e) => { console.log(e); });
+                }
             }
             else {
                 return false;
@@ -952,6 +960,24 @@ export default class extends clickgo.control.AbstractControl {
         this.watch('top', () => {
             this.topData = this.topComp;
         });
+
+        // --- 监听 native 窗体状态变化 ---
+
+        if (this.parent.controlName === 'root') {
+            this.isNativeSync = this.parent.isNativeSync;
+            if (this.isNativeSync) {
+                clickgo.native.on('maximize', () => {
+                    this.element.dataset.cgMax = '';
+                    this.stateMaxData = true;
+                    this.emit('update:stateMax', true);
+                }, false, this.formId);
+                clickgo.native.on('unmaximize', () => {
+                    this.element.removeAttribute('data-cg-max');
+                    this.stateMaxData = false;
+                    this.emit('update:stateMax', false);
+                }, false, this.formId);
+            }
+        }
 
         // --- 其他 ---
 

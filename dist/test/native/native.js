@@ -112,6 +112,12 @@ const methods = {
         handler: function (t) {
             return 'pong: ' + t;
         }
+    },
+    'cg-is-max': {
+        'once': false,
+        handler: function () {
+            return (form === null || form === void 0 ? void 0 : form.isMaximized) ? true : false;
+        }
     }
 };
 class AbstractBoot {
@@ -224,7 +230,7 @@ function createForm(p) {
         'resizable': false,
         'show': false,
         'center': true,
-        'transparent': hasFrame ? false : true
+        'transparent': isImmersion ? true : false
     };
     form = new electron.BrowserWindow(op);
     form.webContents.userAgent = 'electron/' + electron.app.getVersion() + ' ' + platform + '/' + process.arch + ' immersion/' + (isImmersion ? '1' : '0') + ' frame/' + (hasFrame ? '1' : '0');
@@ -252,5 +258,11 @@ function createForm(p) {
     });
     form.on('close', function () {
         form = undefined;
+    });
+    form.on('maximize', function () {
+        form === null || form === void 0 ? void 0 : form.webContents.executeJavaScript('if(window.clickgoNativeWeb){clickgoNativeWeb.invoke("maximize")}');
+    });
+    form.on('unmaximize', function () {
+        form === null || form === void 0 ? void 0 : form.webContents.executeJavaScript('if(window.clickgoNativeWeb){clickgoNativeWeb.invoke("unmaximize")}');
     });
 }

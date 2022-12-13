@@ -121,12 +121,22 @@ const methods: Record<string, {
             }
         }
     },
+
+    // --- 无需校验码 ---
+
     // --- 测试与 native 的连通性 ---
     'cg-ping': {
         'once': false,
         handler: function(t: string): string {
             // --- t 不是 token，传过来什么就会传回去 ---
             return 'pong: ' + t;
+        }
+    },
+    // --- 判断窗体是否是最大化状态 ---
+    'cg-is-max': {
+        'once': false,
+        handler: function(): boolean {
+            return form?.isMaximized ? true : false;
         }
     }
 };
@@ -318,11 +328,11 @@ function createForm(p: string): void {
         'resizable': false,
         'show': false,
         'center': true,
-        'transparent': hasFrame ? false : true
+        'transparent': isImmersion ? true : false
     };
     form = new electron.BrowserWindow(op);
     form.webContents.userAgent = 'electron/' + electron.app.getVersion() + ' ' + platform + '/' + process.arch + ' immersion/' + (isImmersion ? '1' : '0') + ' frame/' + (hasFrame ? '1' : '0');
-    // win.webContents.openDevTools();
+    // form.webContents.openDevTools();
     form.once('ready-to-show', function(): void {
         if (!form) {
             return;
@@ -349,5 +359,13 @@ function createForm(p: string): void {
     });
     form.on('close', function() {
         form = undefined;
+    });
+    // --- 最大化事件 ---
+    form.on('maximize', function() {
+        form?.webContents.executeJavaScript('if(window.clickgoNativeWeb){clickgoNativeWeb.invoke("maximize")}') as any;
+    });
+    // --- 最大化还原 ---
+    form.on('unmaximize', function() {
+        form?.webContents.executeJavaScript('if(window.clickgoNativeWeb){clickgoNativeWeb.invoke("unmaximize")}') as any;
     });
 }

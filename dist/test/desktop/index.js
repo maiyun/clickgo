@@ -74,7 +74,7 @@ class Boot extends clickgo.AbstractBoot {
             }
             el.innerHTML = 'Running...';
             const body = document.getElementsByTagName('body')[0];
-            if (clickgo.isNative() && (clickgo.isImmersion() || window.location.href.includes('?single'))) {
+            if (clickgo.isNative() && clickgo.isImmersion()) {
                 body.style.background = 'transparent';
                 document.getElementById('spic').style.display = 'none';
             }
