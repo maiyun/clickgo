@@ -617,10 +617,10 @@ export const elements: {
         if (clickgo.isImmersion()) {
             // --- 只有沉浸式模式（Windows 下非 frame 的 native）才会绑定这个事件 ---
             this.wrap.addEventListener('mouseenter', function() {
-                native.invoke('cg-mouse-ignore', native.getToken(), false);
+                native.invoke('cg-mouse-ignore', native.getToken(), false) as any;
             });
             this.wrap.addEventListener('mouseleave', function() {
-                native.invoke('cg-mouse-ignore', native.getToken(), true);
+                native.invoke('cg-mouse-ignore', native.getToken(), true) as any;
             });
         }
 
@@ -2158,7 +2158,7 @@ export async function create(opt: types.IFormCreateOptions): Promise<number> {
     core.trigger('formCreated', opt.taskId, formId, rtn.vroot.$refs.form.title, rtn.vroot.$refs.form.iconDataUrl);
     // --- 同步的窗体先进行同步一下 ---
     if (rtn.vroot.isNativeSync) {
-        native.invoke('cg-set-size', native.getToken(), rtn.vroot.$refs.form.$el.offsetWidth, rtn.vroot.$refs.form.$el.offsetHeight);
+        await native.invoke('cg-set-size', native.getToken(), rtn.vroot.$refs.form.$el.offsetWidth, rtn.vroot.$refs.form.$el.offsetHeight);
         window.addEventListener('resize', function(): void {
             rtn.vroot.$refs.form.setPropData('width', window.innerWidth);
             rtn.vroot.$refs.form.setPropData('height', window.innerHeight);

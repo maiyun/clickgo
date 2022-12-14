@@ -189,6 +189,8 @@ export async function invoke(name: string, ...param: any[]): Promise<any> {
     return (window as any).clickgoNative.invoke(name, ...param) as Promise<any>;
 }
 
+invoke('cg-init', token) as any;
+
 // --- 常见向 native 发送的操作 ---
 
 export async function max(): Promise<void> {

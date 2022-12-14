@@ -645,6 +645,9 @@ export async function fetchApp(
             }
             const total = config.files.length;
             let loaded = 0;
+            if (opt.progress) {
+                opt.progress(loaded + 1, total + 1) as unknown;
+            }
             for (const file of config.files) {
                 fs.getContent(url + file.slice(1), {
                     'current': current
@@ -668,6 +671,9 @@ export async function fetchApp(
                     if (opt.notifyId) {
                         form.notifyProgress(opt.notifyId, loaded / total);
                     }
+                    if (opt.progress) {
+                        opt.progress(loaded + 1, total + 1) as unknown;
+                    }
                     if (loaded < total) {
                         return;
                     }
@@ -677,6 +683,9 @@ export async function fetchApp(
                     if (opt.notifyId) {
                         form.notifyProgress(opt.notifyId, loaded / total);
                     }
+                    if (opt.progress) {
+                        opt.progress(loaded + 1, total + 1) as unknown;
+                    }
                     if (loaded < total) {
                         return;
                     }
@@ -685,7 +694,9 @@ export async function fetchApp(
             }
         });
     }
-    catch {
+    catch (e: any) {
+        console.log('core.fetchApp', e);
+        trigger('error', 0, 0, e, e.message);
         return null;
     }
 

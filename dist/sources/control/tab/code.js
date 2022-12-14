@@ -63,13 +63,46 @@ class default_1 extends clickgo.control.AbstractControl {
     }
     wheel(e) {
         if (this.props.tabPosition === 'left' || this.props.tabPosition === 'right') {
+            this.refs.tabs[0].scrollTop += e.deltaY;
             return;
         }
         if (e.deltaX !== 0) {
+            this.refs.tabs[0].scrollLeft += e.deltaX;
             return;
         }
-        e.preventDefault();
         this.refs.tabs[0].scrollLeft += e.deltaY;
+    }
+    touch(e) {
+        clickgo.dom.bindGesture(e, (ne, dir) => {
+            switch (dir) {
+                case 'top': {
+                    if (this.refs.tabs[0].scrollTop > 0) {
+                        ne.stopPropagation();
+                    }
+                    break;
+                }
+                case 'bottom': {
+                    if (Math.round(this.refs.tabs[0].scrollTop) <
+                        (this.refs.tabs[0].scrollHeight - this.refs.tabs[0].clientHeight)) {
+                        ne.stopPropagation();
+                    }
+                    break;
+                }
+                case 'left': {
+                    if (this.refs.tabs[0].scrollLeft > 0) {
+                        ne.stopPropagation();
+                    }
+                    break;
+                }
+                default: {
+                    if (Math.round(this.refs.tabs[0].scrollLeft) <
+                        (this.refs.tabs[0].scrollWidth - this.refs.tabs[0].clientWidth)) {
+                        ne.stopPropagation();
+                    }
+                }
+            }
+            return false;
+        });
     }
     down(e, index) {
         const nval = this.tabsComp[index].value;

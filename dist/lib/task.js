@@ -951,9 +951,6 @@ function run(url, opt = {}) {
             }
         }
         core.trigger('taskStarted', taskId);
-        if (taskId === 1) {
-            yield native.invoke('cg-init', native.getToken());
-        }
         const appCls = new expo.default();
         exports.list[taskId].class = appCls;
         yield appCls.main();

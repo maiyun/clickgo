@@ -224,8 +224,8 @@ function createForm(p) {
             'contextIsolation': true,
             'preload': path.join(__dirname, '/pre.js')
         },
-        'width': 800,
-        'height': 600,
+        'width': 500,
+        'height': 300,
         'frame': hasFrame,
         'resizable': false,
         'show': false,

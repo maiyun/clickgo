@@ -784,7 +784,7 @@ function bindGesture(oe, before, handler) {
                 if (offset < 90) {
                     return;
                 }
-                handler(dir);
+                handler === null || handler === void 0 ? void 0 : handler(dir);
             }
         });
     }
@@ -911,7 +911,7 @@ function bindGesture(oe, before, handler) {
                 return;
             }
             gestureWheel.done = true;
-            handler(gestureWheel.dir);
+            handler === null || handler === void 0 ? void 0 : handler(gestureWheel.dir);
             yield tool.sleep(500);
             form.elements.gesture.style.opacity = '0';
             form.elements.gesture.classList.remove('ani');

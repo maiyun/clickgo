@@ -902,7 +902,7 @@ const gestureWheel = {
  * @param before before 事件，返回 true 则显示 gesture
  * @param handler 执行完毕的话才会回调
  */
-export function bindGesture(oe: MouseEvent | TouchEvent | WheelEvent, before: (e: MouseEvent | TouchEvent | WheelEvent, dir: 'top' | 'right' | 'bottom' | 'left') => boolean, handler: (dir: 'top' | 'right' | 'bottom' | 'left') => void | Promise<void>): void {
+export function bindGesture(oe: MouseEvent | TouchEvent | WheelEvent, before: (e: MouseEvent | TouchEvent | WheelEvent, dir: 'top' | 'right' | 'bottom' | 'left') => boolean, handler?: (dir: 'top' | 'right' | 'bottom' | 'left') => void | Promise<void>): void {
     const el = oe.currentTarget as HTMLElement | null;
     if (!el) {
         return;
@@ -1034,7 +1034,7 @@ export function bindGesture(oe: MouseEvent | TouchEvent | WheelEvent, before: (e
                 if (offset < 90) {
                     return;
                 }
-                handler(dir) as any;
+                handler?.(dir) as any;
             }
         });
     }
@@ -1182,7 +1182,7 @@ export function bindGesture(oe: MouseEvent | TouchEvent | WheelEvent, before: (e
                 return;
             }
             gestureWheel.done = true;
-            handler(gestureWheel.dir as any) as any;
+            handler?.(gestureWheel.dir as any) as any;
             await tool.sleep(500);
             form.elements.gesture.style.opacity = '0';
             form.elements.gesture.classList.remove('ani');

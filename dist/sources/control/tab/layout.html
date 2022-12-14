@@ -2,7 +2,7 @@
     <template v-for="i of 2">
         <div v-if="(i === 1 && (tabPosition === 'top' || tabPosition === 'left')) || (i === 2 && (tabPosition === 'right' || tabPosition === 'bottom'))" class="tabs-wrap">
             <div v-show="arrow" class="arrow start" @mousedown="longDown($event, 'start')" @touchstart="longDown($event, 'start')"></div>
-            <div ref="tabs" class="tabs" @wheel="wheel">
+            <div ref="tabs" class="tabs" @wheel="wheel" @touchstart="touch">
                 <div v-for="item, index of tabsComp" class="tab" :class="[value === item.value ? 'selected' : undefined]" @click="tabClick($event, item)" data-cg-drop @drop="drop($event, index)">
                     <div v-if="item.drag" class="drag" @mousedown="down($event, index)" @touchstart="down($event, index)">&#xea02;</div>
                     <div class="content">{{item.value}}</div>

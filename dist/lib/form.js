@@ -1665,7 +1665,7 @@ function create(opt) {
         }
         core.trigger('formCreated', opt.taskId, formId, rtn.vroot.$refs.form.title, rtn.vroot.$refs.form.iconDataUrl);
         if (rtn.vroot.isNativeSync) {
-            native.invoke('cg-set-size', native.getToken(), rtn.vroot.$refs.form.$el.offsetWidth, rtn.vroot.$refs.form.$el.offsetHeight);
+            yield native.invoke('cg-set-size', native.getToken(), rtn.vroot.$refs.form.$el.offsetWidth, rtn.vroot.$refs.form.$el.offsetHeight);
             window.addEventListener('resize', function () {
                 rtn.vroot.$refs.form.setPropData('width', window.innerWidth);
                 rtn.vroot.$refs.form.setPropData('height', window.innerHeight);

@@ -1070,10 +1070,6 @@ export async function run(url: string, opt: types.ITaskRunOptions = {}): Promise
     }
     // --- 触发 taskStarted 事件 ---
     core.trigger('taskStarted', taskId);
-    // --- 第一个任务给 native 发送任务启动成功的消息 ---
-    if (taskId === 1) {
-        await native.invoke('cg-init', native.getToken());
-    }
     // --- 执行 app ---
     const appCls: core.AbstractApp = new expo.default();
     list[taskId].class = appCls;

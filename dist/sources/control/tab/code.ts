@@ -66,14 +66,47 @@ export default class extends clickgo.control.AbstractControl {
 
     public wheel(e: WheelEvent): void {
         if (this.props.tabPosition === 'left' || this.props.tabPosition === 'right') {
+            this.refs.tabs[0].scrollTop += e.deltaY;
             return;
         }
         if (e.deltaX !== 0) {
+            this.refs.tabs[0].scrollLeft += e.deltaX;
             return;
         }
-        // --- 用来屏蔽不小心触发前进、后退的浏览器事件 ---
-        e.preventDefault();
         this.refs.tabs[0].scrollLeft += e.deltaY;
+    }
+
+    public touch(e: TouchEvent): void {
+        clickgo.dom.bindGesture(e, (ne, dir) => {
+            switch (dir) {
+                case 'top': {
+                    if (this.refs.tabs[0].scrollTop > 0) {
+                        ne.stopPropagation();
+                    }
+                    break;
+                }
+                case 'bottom': {
+                    if (Math.round(this.refs.tabs[0].scrollTop) <
+                        (this.refs.tabs[0].scrollHeight - this.refs.tabs[0].clientHeight)) {
+                        ne.stopPropagation();
+                    }
+                    break;
+                }
+                case 'left': {
+                    if (this.refs.tabs[0].scrollLeft > 0) {
+                        ne.stopPropagation();
+                    }
+                    break;
+                }
+                default: {
+                    if (Math.round(this.refs.tabs[0].scrollLeft) <
+                        (this.refs.tabs[0].scrollWidth - this.refs.tabs[0].clientWidth)) {
+                        ne.stopPropagation();
+                    }
+                }
+            }
+            return false;
+        });
     }
 
     public down(e: MouseEvent | TouchEvent, index: number): void {
@@ -132,10 +165,10 @@ export default class extends clickgo.control.AbstractControl {
             down: () => {
                 this.timer = clickgo.task.onFrame(() => {
                     if (this.props.tabPosition === 'top' || this.props.tabPosition === 'bottom') {
-                        (this.refs.tabs[0] as HTMLElement).scrollLeft += num;
+                        this.refs.tabs[0].scrollLeft += num;
                     }
                     else {
-                        (this.refs.tabs[0] as HTMLElement).scrollTop += num;
+                        this.refs.tabs[0].scrollTop += num;
                     }
                 });
             },

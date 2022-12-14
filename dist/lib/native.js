@@ -121,6 +121,7 @@ function invoke(name, ...param) {
     });
 }
 exports.invoke = invoke;
+invoke('cg-init', token);
 function max() {
     return __awaiter(this, void 0, void 0, function* () {
         yield invoke('cg-set-state', token, 'max');

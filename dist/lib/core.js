@@ -525,6 +525,9 @@ function fetchApp(url, opt = {}) {
                 }
                 const total = config.files.length;
                 let loaded = 0;
+                if (opt.progress) {
+                    opt.progress(loaded + 1, total + 1);
+                }
                 for (const file of config.files) {
                     fs.getContent(url + file.slice(1), {
                         'current': current
@@ -549,6 +552,9 @@ function fetchApp(url, opt = {}) {
                             if (opt.notifyId) {
                                 form.notifyProgress(opt.notifyId, loaded / total);
                             }
+                            if (opt.progress) {
+                                opt.progress(loaded + 1, total + 1);
+                            }
                             if (loaded < total) {
                                 return;
                             }
@@ -559,6 +565,9 @@ function fetchApp(url, opt = {}) {
                         if (opt.notifyId) {
                             form.notifyProgress(opt.notifyId, loaded / total);
                         }
+                        if (opt.progress) {
+                            opt.progress(loaded + 1, total + 1);
+                        }
                         if (loaded < total) {
                             return;
                         }
@@ -567,7 +576,9 @@ function fetchApp(url, opt = {}) {
                 }
             });
         }
-        catch (_b) {
+        catch (e) {
+            console.log('core.fetchApp', e);
+            trigger('error', 0, 0, e, e.message);
             return null;
         }
         let icon = '/clickgo/icon.png';
