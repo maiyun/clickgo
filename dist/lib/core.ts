@@ -700,9 +700,17 @@ export async function fetchApp(
         return null;
     }
 
-    let icon = '/clickgo/icon.png';
+    let icon = '';
     if (config.icon && (files[config.icon] instanceof Blob)) {
         icon = await tool.blob2DataUrl(files[config.icon] as Blob);
+    }
+    if (icon === '') {
+        const iconBlob = await fs.getContent('/clickgo/icon.png', {
+            'current': current
+        });
+        if (iconBlob instanceof Blob) {
+            icon = await tool.blob2DataUrl(iconBlob);
+        }
     }
 
     return {
@@ -766,4 +774,24 @@ export function getAvailArea(): types.IAvailArea {
             'height': height
         };
     }
+}
+
+/**
+ * --- 修改浏览器 hash ---
+ * @param hash 修改的值，不含 #
+ * @param taskId 基任务，App 模式下无效
+ */
+export function hash(hash: string, taskId?: number): boolean {
+    if (!taskId) {
+        return false;
+    }
+    const t = task.list[taskId];
+    if (!t) {
+        return false;
+    }
+    if (!t.runtime.permissions.includes('root') && !t.runtime.permissions.includes('hash')) {
+        return false;
+    }
+    window.location.hash = hash;
+    return true;
 }

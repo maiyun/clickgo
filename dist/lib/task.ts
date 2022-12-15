@@ -394,6 +394,9 @@ export async function run(url: string, opt: types.ITaskRunOptions = {}): Promise
             },
             getAvailArea: function(): types.IAvailArea {
                 return core.getAvailArea();
+            },
+            hash: function(hash: string): boolean {
+                return core.hash(hash, taskId);
             }
         },
         'dom': {
@@ -745,15 +748,31 @@ export async function run(url: string, opt: types.ITaskRunOptions = {}): Promise
                 return native.invoke(name, ...param);
             },
             max: async function(): Promise<void> {
+                const rtn = await checkPermission('native.form', false, undefined, taskId);
+                if (!rtn[0]) {
+                    return;
+                }
                 await native.max();
             },
             min: async function(): Promise<void> {
+                const rtn = await checkPermission('native.form', false, undefined, taskId);
+                if (!rtn[0]) {
+                    return;
+                }
                 await native.min();
             },
             restore: async function(): Promise<void> {
+                const rtn = await checkPermission('native.form', false, undefined, taskId);
+                if (!rtn[0]) {
+                    return;
+                }
                 await native.restore();
             },
             size: async function(width: number, height: number): Promise<void> {
+                const rtn = await checkPermission('native.form', false, undefined, taskId);
+                if (!rtn[0]) {
+                    return;
+                }
                 await native.size(width, height);
             },
             ping: function(val: string): Promise<string> {
@@ -796,7 +815,19 @@ export async function run(url: string, opt: types.ITaskRunOptions = {}): Promise
                     }
                     opt.unblock = inUnblock;
                 }
+                if (opt.permissions) {
+                    if (ntask && !ntask.runtime.permissions.includes('root')) {
+                        opt.permissions = undefined;
+                    }
+                }
                 return run(url, opt);
+            },
+            checkPermission: function(
+                vals: string | string[],
+                apply: boolean = false,
+                applyHandler?: (list: string[]) => void | Promise<void>
+            ): Promise<boolean[]> {
+                return checkPermission(vals, apply, applyHandler, taskId);
             },
             end: function(tid: number): boolean {
                 return end(tid ?? taskId);
@@ -972,8 +1003,8 @@ export async function run(url: string, opt: types.ITaskRunOptions = {}): Promise
         'current': current,
 
         'runtime': clickgo.vue.reactive({
-            'permissions': {},
-            'dialogFormIds': []
+            'dialogFormIds': [],
+            'permissions': opt.permissions ?? []
         }),
         'forms': {},
         'controls': {},
@@ -1070,11 +1101,185 @@ export async function run(url: string, opt: types.ITaskRunOptions = {}): Promise
     }
     // --- 触发 taskStarted 事件 ---
     core.trigger('taskStarted', taskId);
+    // --- 请求权限 ---
+    if (app.config.permissions) {
+        await checkPermission(app.config.permissions, true, undefined, taskId);
+    }
     // --- 执行 app ---
     const appCls: core.AbstractApp = new expo.default();
     list[taskId].class = appCls;
     await appCls.main();
     return taskId;
+}
+
+/** --- 本页用到的语言包 --- */
+const locale: Record<string, {
+    'unknown': string;
+    // eslint-disable-next-line @typescript-eslint/naming-convention
+    'apply-permission': string;
+    // eslint-disable-next-line @typescript-eslint/naming-convention
+    'native.form': string;
+    'hash': string;
+    'fs': string;
+    'readonly': string;
+    // eslint-disable-next-line @typescript-eslint/naming-convention
+    'read-write': string;
+}> = {
+    'sc': {
+        'unknown': '未知权限',
+        'apply-permission': '正在申请权限，请您仔细确认',
+        'native.form': '实体窗体控制',
+        'hash': '可修改地址栏 hash',
+        'fs': '文件系统',
+        'readonly': '只读',
+        'read-write': '读写'
+    },
+    'tc': {
+        'unknown': '未知許可權',
+        'apply-permission': '正在申請許可權，請您仔細確認',
+        'native.form': '實體視窗控制',
+        'hash': '可修改位址列 hash',
+        'fs': '檔案系統',
+        'readonly': '唯讀',
+        'read-write': '讀寫'
+    },
+    'en': {
+        'unknown': 'Unknown',
+        'apply-permission': 'is applying for permissions, please check carefully',
+        'native.form': 'Native window control',
+        'hash': 'Can modify the location hash',
+        'fs': 'File system',
+        'readonly': 'Read only',
+        'read-write': 'Read and write'
+    },
+    'ja': {
+        'unknown': '不明な許可',
+        'apply-permission': '許可申請中、よくご確認ください',
+        'native.form': 'ローカルウィンドウを操作する',
+        'hash': '網址の hash 変更可能',
+        'fs': '資料システム',
+        'readonly': '読み取り専用',
+        'read-write': '読み書き'
+    }
+};
+
+// fs.{path}{r/w}，path 以 / 结尾则是路径权限，不以 / 结尾是文件权限
+
+/**
+ * --- 检测应用是否有相应的权限 ---
+ * @param vals 要检测的权限
+ * @param apply 如果没有权限是否自动弹出申请，默认为否
+ * @param applyHandler 向用户申请成功的权限列表回调
+ * @param taskId 要检查的任务 ID，App 模式下无效
+ */
+export async function checkPermission(
+    vals: string | string[],
+    apply: boolean = false,
+    applyHandler?: (list: string[]) => void | Promise<void>,
+    taskId?: number
+): Promise<boolean[]> {
+    if (!taskId) {
+        return [false];
+    }
+    const task = list[taskId];
+    if (!task) {
+        return [false];
+    }
+    if (typeof vals === 'string') {
+        vals = [vals];
+    }
+    const rtn: boolean[] = [];
+    /** --- 需要申请的权限 --- */
+    const applyList: string[] = [];
+    for (const val of vals) {
+        if (task.runtime.permissions.includes('root')) {
+            // --- 有 root 权限，一定成功 ---
+            rtn.push(true);
+            continue;
+        }
+        if (val.startsWith('fs.')) {
+            // --- fs 判断比较特殊 ---
+            let yes = false;
+            const path = val.slice(3, -1);
+            for (const v of task.runtime.permissions) {
+                if (!v.startsWith('fs.')) {
+                    continue;
+                }
+                const pa = v.slice(3, -1);
+                if (pa.endsWith('/')) {
+                    if (!path.startsWith(pa)) {
+                        continue;
+                    }
+                }
+                else if (pa !== path) {
+                    continue;
+                }
+                // --- 找到了 ---
+                if (val.endsWith('w')) {
+                    // --- 用户要求读写 ---
+                    if (v.endsWith('r')) {
+                        // --- 但目前只有读的权限 ---
+                        continue;
+                    }
+                }
+                // --- 正常，有权限 ---
+                yes = true;
+                break;
+            }
+            rtn.push(yes);
+            if (!yes && apply) {
+                // --- 要申请权限 ---
+                applyList.push(val);
+            }
+            continue;
+        }
+        // --- 其他权限判断 ---
+        const result = task.runtime.permissions.includes(val);
+        if (!result && apply) {
+            // --- 要申请权限 ---
+            applyList.push(val);
+        }
+        rtn.push(result);
+    }
+    // --- 申请权限 ---
+    if (applyList.length) {
+        let html = '<div>"' + tool.escapeHTML(task.app.config.name) + '" ' + ((locale[core.config.locale]?.['apply-permission'] ?? locale['en']['apply-permission']) + ':') + '</div>';
+        for (const item of applyList) {
+            if (item.startsWith('fs.')) {
+                // --- fs 判断比较特殊 ---
+                const path = item.slice(3, -1);
+                html += '<div style="margin-top: 10px;">' +
+                    (locale[core.config.locale]?.fs ?? locale['en'].fs) + ' ' + tool.escapeHTML(path) + ' ' + (item.endsWith('r') ? (locale[core.config.locale]?.readonly ?? locale['en'].readonly) : (locale[core.config.locale]?.['read-write'] ?? locale['en']['read-write'])) +
+                    '<div style="color: var(--system-border-color);">' + tool.escapeHTML(item) + '</div>' +
+                '</div>';
+                continue;
+            }
+            const lang = (locale as any)[core.config.locale]?.[item] ?? (locale as any)['en'][item];
+            html += '<div style="margin-top: 10px;">' +
+                (lang ?? locale[core.config.locale]?.unknown ?? locale['en'].unknown) +
+                '<div style="color: var(--system-border-color);">' + tool.escapeHTML(item) + '</div>' +
+            '</div>';
+        }
+        if (await form.superConfirm(html)) {
+            // --- 所有 false 变成 true ---
+            for (let i = 0; i < rtn.length; ++i) {
+                if (rtn[i]) {
+                    continue;
+                }
+                rtn[i] = true;
+            }
+            for (const item of applyList) {
+                task.runtime.permissions.push(item);
+            }
+            try {
+                applyHandler?.(applyList) as any;
+            }
+            catch (e) {
+                console.log('task.checkPermission', e);
+            }
+        }
+    }
+    return rtn;
 }
 
 /**

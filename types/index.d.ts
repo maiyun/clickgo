@@ -99,7 +99,7 @@ export interface IApp {
     'config': IAppConfig;
     /** --- 所有已加载的文件内容 --- */
     'files': Record<string, Blob | string>;
-    /** --- 应用图标，net 模式下可能为空 --- */
+    /** --- 应用图标 --- */
     'icon': string;
 }
 
@@ -119,7 +119,7 @@ export interface IAppConfig {
     /** --- 将自动加载的主题 --- */
     'themes'?: string[];
     /** --- 将自动申请的权限 --- */
-    'permissions'?: Record<string, any>;
+    'permissions'?: string[];
     /** --- 将自动加载的语言包，path: lang --- */
     'locales'?: Record<string, string>;
     /** --- 全局样式，不带扩展名，系统会在末尾添加 .css --- */
@@ -370,7 +370,7 @@ export interface ITask {
         /** --- 独占窗体序列 --- */
         'dialogFormIds': number[];
         /** --- 已申请的权限列表 --- */
-        'permissions': Record<string, any>;
+        'permissions': string[];
     };
     /** --- 窗体对象列表 --- */
     'forms': Record<string, IForm>;
@@ -403,8 +403,10 @@ export interface ITaskRunOptions {
     'notify'?: boolean;
     /** --- 所属任务，App 模式无法设置 --- */
     'taskId'?: number;
-    /** --- 不禁止某些浏览器对象，App 模式下无法设置 --- */
+    /** --- 不禁止某些浏览器对象，App 模式下仅能设置基任务中已经 unblock 的值 --- */
     'unblock'?: string[];
+    /** --- 直接赋予此任务相应权限，App 模式下有 "root" 权限的应用才能设置 --- */
+    'permissions'?: string[];
 }
 
 export interface ICreateTimerOptions {

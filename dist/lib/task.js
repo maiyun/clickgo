@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.refreshSystemPosition = exports.clearSystem = exports.setSystem = exports.systemTaskInfo = exports.sleep = exports.removeTimer = exports.createTimer = exports.clearLocaleLang = exports.setLocaleLang = exports.setLocale = exports.clearLocale = exports.loadLocale = exports.loadLocaleData = exports.end = exports.run = exports.getList = exports.get = exports.offFrame = exports.onFrame = exports.getFocus = exports.setFocus = exports.lastId = exports.list = void 0;
+exports.refreshSystemPosition = exports.clearSystem = exports.setSystem = exports.systemTaskInfo = exports.sleep = exports.removeTimer = exports.createTimer = exports.clearLocaleLang = exports.setLocaleLang = exports.setLocale = exports.clearLocale = exports.loadLocale = exports.loadLocaleData = exports.end = exports.checkPermission = exports.run = exports.getList = exports.get = exports.offFrame = exports.onFrame = exports.getFocus = exports.setFocus = exports.lastId = exports.list = void 0;
 const clickgo = require("../clickgo");
 const core = require("./core");
 const dom = require("./dom");
@@ -163,7 +163,7 @@ function getList() {
 }
 exports.getList = getList;
 function run(url, opt = {}) {
-    var _a, _b, _c;
+    var _a, _b, _c, _d;
     return __awaiter(this, void 0, void 0, function* () {
         let ntask = null;
         if (opt.taskId) {
@@ -319,6 +319,9 @@ function run(url, opt = {}) {
                 },
                 getAvailArea: function () {
                     return core.getAvailArea();
+                },
+                hash: function (hash) {
+                    return core.hash(hash, taskId);
                 }
             },
             'dom': {
@@ -639,21 +642,37 @@ function run(url, opt = {}) {
                 },
                 max: function () {
                     return __awaiter(this, void 0, void 0, function* () {
+                        const rtn = yield checkPermission('native.form', false, undefined, taskId);
+                        if (!rtn[0]) {
+                            return;
+                        }
                         yield native.max();
                     });
                 },
                 min: function () {
                     return __awaiter(this, void 0, void 0, function* () {
+                        const rtn = yield checkPermission('native.form', false, undefined, taskId);
+                        if (!rtn[0]) {
+                            return;
+                        }
                         yield native.min();
                     });
                 },
                 restore: function () {
                     return __awaiter(this, void 0, void 0, function* () {
+                        const rtn = yield checkPermission('native.form', false, undefined, taskId);
+                        if (!rtn[0]) {
+                            return;
+                        }
                         yield native.restore();
                     });
                 },
                 size: function (width, height) {
                     return __awaiter(this, void 0, void 0, function* () {
+                        const rtn = yield checkPermission('native.form', false, undefined, taskId);
+                        if (!rtn[0]) {
+                            return;
+                        }
                         yield native.size(width, height);
                     });
                 },
@@ -694,7 +713,15 @@ function run(url, opt = {}) {
                         }
                         opt.unblock = inUnblock;
                     }
+                    if (opt.permissions) {
+                        if (ntask && !ntask.runtime.permissions.includes('root')) {
+                            opt.permissions = undefined;
+                        }
+                    }
                     return run(url, opt);
+                },
+                checkPermission: function (vals, apply = false, applyHandler) {
+                    return checkPermission(vals, apply, applyHandler, taskId);
                 },
                 end: function (tid) {
                     return end(tid !== null && tid !== void 0 ? tid : taskId);
@@ -861,8 +888,8 @@ function run(url, opt = {}) {
             'path': path,
             'current': current,
             'runtime': clickgo.vue.reactive({
-                'permissions': {},
-                'dialogFormIds': []
+                'dialogFormIds': [],
+                'permissions': (_c = opt.permissions) !== null && _c !== void 0 ? _c : []
             }),
             'forms': {},
             'controls': {},
@@ -887,7 +914,7 @@ function run(url, opt = {}) {
                     const data = JSON.parse(lcontent);
                     loadLocaleData(locale, data, '', taskId);
                 }
-                catch (_d) {
+                catch (_e) {
                 }
             }
         }
@@ -918,7 +945,7 @@ function run(url, opt = {}) {
             delete exports.list[taskId];
             return -400 + r;
         }
-        if ((_c = app.config.themes) === null || _c === void 0 ? void 0 : _c.length) {
+        if ((_d = app.config.themes) === null || _d === void 0 ? void 0 : _d.length) {
             for (let path of app.config.themes) {
                 path += '.cgt';
                 path = tool.urlResolve('/', path);
@@ -951,6 +978,9 @@ function run(url, opt = {}) {
             }
         }
         core.trigger('taskStarted', taskId);
+        if (app.config.permissions) {
+            yield checkPermission(app.config.permissions, true, undefined, taskId);
+        }
         const appCls = new expo.default();
         exports.list[taskId].class = appCls;
         yield appCls.main();
@@ -958,6 +988,139 @@ function run(url, opt = {}) {
     });
 }
 exports.run = run;
+const locale = {
+    'sc': {
+        'unknown': '未知权限',
+        'apply-permission': '正在申请权限，请您仔细确认',
+        'native.form': '实体窗体控制',
+        'hash': '可修改地址栏 hash',
+        'fs': '文件系统',
+        'readonly': '只读',
+        'read-write': '读写'
+    },
+    'tc': {
+        'unknown': '未知許可權',
+        'apply-permission': '正在申請許可權，請您仔細確認',
+        'native.form': '實體視窗控制',
+        'hash': '可修改位址列 hash',
+        'fs': '檔案系統',
+        'readonly': '唯讀',
+        'read-write': '讀寫'
+    },
+    'en': {
+        'unknown': 'Unknown',
+        'apply-permission': 'is applying for permissions, please check carefully',
+        'native.form': 'Native window control',
+        'hash': 'Can modify the location hash',
+        'fs': 'File system',
+        'readonly': 'Read only',
+        'read-write': 'Read and write'
+    },
+    'ja': {
+        'unknown': '不明な許可',
+        'apply-permission': '許可申請中、よくご確認ください',
+        'native.form': 'ローカルウィンドウを操作する',
+        'hash': '網址の hash 変更可能',
+        'fs': '資料システム',
+        'readonly': '読み取り専用',
+        'read-write': '読み書き'
+    }
+};
+function checkPermission(vals, apply = false, applyHandler, taskId) {
+    var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m;
+    return __awaiter(this, void 0, void 0, function* () {
+        if (!taskId) {
+            return [false];
+        }
+        const task = exports.list[taskId];
+        if (!task) {
+            return [false];
+        }
+        if (typeof vals === 'string') {
+            vals = [vals];
+        }
+        const rtn = [];
+        const applyList = [];
+        for (const val of vals) {
+            if (task.runtime.permissions.includes('root')) {
+                rtn.push(true);
+                continue;
+            }
+            if (val.startsWith('fs.')) {
+                let yes = false;
+                const path = val.slice(3, -1);
+                for (const v of task.runtime.permissions) {
+                    if (!v.startsWith('fs.')) {
+                        continue;
+                    }
+                    const pa = v.slice(3, -1);
+                    if (pa.endsWith('/')) {
+                        if (!path.startsWith(pa)) {
+                            continue;
+                        }
+                    }
+                    else if (pa !== path) {
+                        continue;
+                    }
+                    if (val.endsWith('w')) {
+                        if (v.endsWith('r')) {
+                            continue;
+                        }
+                    }
+                    yes = true;
+                    break;
+                }
+                rtn.push(yes);
+                if (!yes && apply) {
+                    applyList.push(val);
+                }
+                continue;
+            }
+            const result = task.runtime.permissions.includes(val);
+            if (!result && apply) {
+                applyList.push(val);
+            }
+            rtn.push(result);
+        }
+        if (applyList.length) {
+            let html = '<div>"' + tool.escapeHTML(task.app.config.name) + '" ' + (((_b = (_a = locale[core.config.locale]) === null || _a === void 0 ? void 0 : _a['apply-permission']) !== null && _b !== void 0 ? _b : locale['en']['apply-permission']) + ':') + '</div>';
+            for (const item of applyList) {
+                if (item.startsWith('fs.')) {
+                    const path = item.slice(3, -1);
+                    html += '<div style="margin-top: 10px;">' +
+                        ((_d = (_c = locale[core.config.locale]) === null || _c === void 0 ? void 0 : _c.fs) !== null && _d !== void 0 ? _d : locale['en'].fs) + ' ' + tool.escapeHTML(path) + ' ' + (item.endsWith('r') ? ((_f = (_e = locale[core.config.locale]) === null || _e === void 0 ? void 0 : _e.readonly) !== null && _f !== void 0 ? _f : locale['en'].readonly) : ((_h = (_g = locale[core.config.locale]) === null || _g === void 0 ? void 0 : _g['read-write']) !== null && _h !== void 0 ? _h : locale['en']['read-write'])) +
+                        '<div style="color: var(--system-border-color);">' + tool.escapeHTML(item) + '</div>' +
+                        '</div>';
+                    continue;
+                }
+                const lang = (_k = (_j = locale[core.config.locale]) === null || _j === void 0 ? void 0 : _j[item]) !== null && _k !== void 0 ? _k : locale['en'][item];
+                html += '<div style="margin-top: 10px;">' +
+                    ((_m = lang !== null && lang !== void 0 ? lang : (_l = locale[core.config.locale]) === null || _l === void 0 ? void 0 : _l.unknown) !== null && _m !== void 0 ? _m : locale['en'].unknown) +
+                    '<div style="color: var(--system-border-color);">' + tool.escapeHTML(item) + '</div>' +
+                    '</div>';
+            }
+            if (yield form.superConfirm(html)) {
+                for (let i = 0; i < rtn.length; ++i) {
+                    if (rtn[i]) {
+                        continue;
+                    }
+                    rtn[i] = true;
+                }
+                for (const item of applyList) {
+                    task.runtime.permissions.push(item);
+                }
+                try {
+                    applyHandler === null || applyHandler === void 0 ? void 0 : applyHandler(applyList);
+                }
+                catch (e) {
+                    console.log('task.checkPermission', e);
+                }
+            }
+        }
+        return rtn;
+    });
+}
+exports.checkPermission = checkPermission;
 function end(taskId) {
     var _a;
     const task = exports.list[taskId];

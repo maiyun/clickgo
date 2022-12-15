@@ -567,6 +567,9 @@ const popInfo: {
 export let simpleSystemTaskRoot: types.IVue;
 export let launcherRoot: types.IVue;
 
+/** --- 系统级 confirm 的用户回调函数 --- */
+let superConfirmHandler: undefined | ((result: boolean) => void | Promise<void>) = undefined;
+
 export const elements: {
     'wrap': HTMLDivElement;
     'list': HTMLDivElement;
@@ -575,10 +578,10 @@ export const elements: {
     'rectangle': HTMLDivElement;
     'gesture': HTMLDivElement;
     'drag': HTMLDivElement;
-    'dragIcon'?: HTMLElement;
-    'system': HTMLElement;
-    'simpleSystemtask': HTMLDivElement;
+    'notify': HTMLElement;
+    'simpletask': HTMLDivElement;
     'launcher': HTMLDivElement;
+    'confirm': HTMLDivElement;
     'init': () => void;
 } = {
     'wrap': document.createElement('div'),
@@ -588,10 +591,10 @@ export const elements: {
     'rectangle': document.createElement('div'),
     'gesture': document.createElement('div'),
     'drag': document.createElement('div'),
-    'dragIcon': undefined,
-    'system': document.createElement('div'),
-    'simpleSystemtask': document.createElement('div'),
+    'notify': document.createElement('div'),
+    'simpletask': document.createElement('div'),
     'launcher': document.createElement('div'),
+    'confirm': document.createElement('div'),
     'init': function() {
         /** --- clickgo 所有的 div wrap --- */
         this.wrap.id = 'cg-wrap';
@@ -648,16 +651,15 @@ export const elements: {
         // --- drag drop 的拖动占位符 ---
         this.drag.id = 'cg-drag';
         this.drag.innerHTML = '<svg width="16" height="16" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 8L40 40" stroke="#FFF" stroke-width="4" stroke-linecap="butt" stroke-linejoin="miter"/><path d="M8 40L40 8" stroke="#FFF" stroke-width="4" stroke-linecap="butt" stroke-linejoin="miter"/></svg>';
-        this.dragIcon = this.drag.childNodes[0] as HTMLElement;
         this.wrap.appendChild(this.drag);
 
         // --- 添加 cg-system 的 dom ---
-        this.system.id = 'cg-system';
-        this.wrap.appendChild(this.system);
+        this.notify.id = 'cg-notify';
+        this.wrap.appendChild(this.notify);
 
         // --- 添加 cg-simpletask 的 dom ---
-        this.simpleSystemtask.id = 'cg-simpletask';
-        this.wrap.appendChild(this.simpleSystemtask);
+        this.simpletask.id = 'cg-simpletask';
+        this.wrap.appendChild(this.simpletask);
         const simpletaskApp = clickgo.vue.createApp({
             'template': '<div v-for="(item, formId) of forms" class="cg-simpletask-item" @click="click(parseInt(formId))"><div v-if="item.icon" class="cg-simpletask-icon" :style="{\'background-image\': \'url(\' + item.icon + \')\'}"></div><div>{{item.title}}</div></div>',
             'data': function() {
@@ -670,14 +672,14 @@ export const elements: {
                     handler: function(this: types.IVue) {
                         const length = Object.keys(this.forms).length;
                         if (length > 0) {
-                            if (elements.simpleSystemtask.style.bottom !== '0px') {
-                                elements.simpleSystemtask.style.bottom = '0px';
+                            if (elements.simpletask.style.bottom !== '0px') {
+                                elements.simpletask.style.bottom = '0px';
                                 core.trigger('screenResize');
                             }
                         }
                         else {
-                            if (elements.simpleSystemtask.style.bottom === '0px') {
-                                elements.simpleSystemtask.style.bottom = '-46px';
+                            if (elements.simpletask.style.bottom === '0px') {
+                                elements.simpletask.style.bottom = '-46px';
                                 core.trigger('screenResize');
                             }
                         }
@@ -872,9 +874,57 @@ export const elements: {
             launcherApp.mount('#cg-launcher');
         };
         waiting();
+
+        // --- cg-confirm ---
+        this.confirm.id = 'cg-confirm';
+        this.wrap.appendChild(this.confirm);
+
+        this.confirm.innerHTML = `<div class="cg-confirm-box">` +
+            `<div id="cg-confirm-content"></div>` +
+            `<div class="cg-confirm-controls">` +
+                `<div id="cg-confirm-cancel"></div>` +
+                `<div id="cg-confirm-ok"></div>` +
+            `</div>` +
+        `</div>`;
+        this.confirm.style.display = 'none';
+        document.getElementById('cg-confirm-cancel')!.addEventListener('click', () => {
+            superConfirmHandler?.(false) as any;
+            this.confirm.style.display = 'none';
+            const fid = getMaxZIndexID();
+            if (fid) {
+                changeFocus(fid);
+            }
+        });
+        document.getElementById('cg-confirm-ok')!.addEventListener('click', () => {
+            superConfirmHandler?.(true) as any;
+            this.confirm.style.display = 'none';
+            const fid = getMaxZIndexID();
+            if (fid) {
+                changeFocus(fid);
+            }
+        });
+
     }
 };
 elements.init();
+
+/** --- 显示系统级询问框，App 模式下无效 --- */
+export function superConfirm(html: string): Promise<boolean> {
+    return new Promise((resolve) => {
+        if (superConfirmHandler !== undefined) {
+            resolve(false);
+            return;
+        }
+        elements.confirm.style.display = 'flex';
+        document.getElementById('cg-confirm-content')!.innerHTML = html;
+        document.getElementById('cg-confirm-cancel')!.innerHTML = info.locale[core.config.locale]?.cancel ?? info.locale['en'].cancel;
+        document.getElementById('cg-confirm-ok')!.innerHTML = info.locale[core.config.locale]?.ok ?? info.locale['en'].ok;
+        superConfirmHandler = (result: boolean) => {
+            superConfirmHandler = undefined;
+            resolve(result);
+        };
+    });
+}
 
 /**
  * --- 修改窗体的最大化、最小化状态，外部或不可调整 state 时才调用 ---
@@ -1407,14 +1457,10 @@ export function moveDrag(opt: types.IMoveDragOptions): void {
         elements.drag.style.height = opt.height.toString() + 'px';
     }
     if (opt.icon) {
-        if (elements.dragIcon) {
-            elements.dragIcon.style.display = 'block';
-        }
+        (elements.drag.childNodes[0] as HTMLElement).style.display = 'block';
     }
     else {
-        if (elements.dragIcon) {
-            elements.dragIcon.style.display = 'none';
-        }
+        (elements.drag.childNodes[0] as HTMLElement).style.display = 'none';
     }
 }
 
@@ -1451,21 +1497,21 @@ export function notify(opt: types.INotifyOptions): number {
     // --- 创建 notify element ---
     const el = document.createElement('div');
     const y = notifyTop;
-    el.classList.add('cg-system-notify');
+    el.classList.add('cg-notify-wrap');
     el.setAttribute('data-notifyid', nid.toString());
     el.style.transform = `translateY(${y}px) translateX(280px)`;
     el.style.opacity = '1';
-    el.innerHTML = `<div class="cg-system-icon cg-${tool.escapeHTML(opt.type ?? 'primary')}"></div>
+    el.innerHTML = `<div class="cg-notify-icon cg-${tool.escapeHTML(opt.type ?? 'primary')}"></div>
 <div style="flex: 1;">
-    <div class="cg-system-notify-title">${tool.escapeHTML(opt.title)}</div>
-    <div class="cg-system-notify-content">${tool.escapeHTML(opt.content).replace(/\r\n/g, '\n').replace(/\r/g, '\n').replace(/\n/g, '<br>')}</div>
-    ${opt.progress ? '<div class="cg-system-notify-progress"></div>' : ''}
+    <div class="cg-notify-title">${tool.escapeHTML(opt.title)}</div>
+    <div class="cg-notify-content">${tool.escapeHTML(opt.content).replace(/\r\n/g, '\n').replace(/\r/g, '\n').replace(/\n/g, '<br>')}</div>
+    ${opt.progress ? '<div class="cg-notify-progress"></div>' : ''}
 </div>`;
     if (opt.icon) {
         (el.childNodes.item(0) as HTMLElement).style.background = 'url(' + opt.icon + ')';
         (el.childNodes.item(0) as HTMLElement).style.backgroundSize = '16px';
     }
-    elements.system.appendChild(el);
+    elements.notify.appendChild(el);
     notifyTop += el.offsetHeight + 10;
     requestAnimationFrame(function() {
         el.style.transform = `translateY(${y}px) translateX(-10px)`;
@@ -1483,11 +1529,11 @@ export function notify(opt: types.INotifyOptions): number {
  * @param per 进度，0 - 100 或 0% - 100% (0 - 1)
  */
 export function notifyProgress(notifyId: number, per: number): void {
-    const el: HTMLElement = elements.system.querySelector(`[data-notifyid="${notifyId}"]`)!;
+    const el: HTMLElement = elements.notify.querySelector(`[data-notifyid="${notifyId}"]`)!;
     if (!el) {
         return;
     }
-    const progress: HTMLElement = el.querySelector('.cg-system-notify-progress')!;
+    const progress: HTMLElement = el.querySelector('.cg-notify-progress')!;
     if (!progress) {
         return;
     }
@@ -1511,7 +1557,7 @@ export function notifyProgress(notifyId: number, per: number): void {
  * @param notifyId 要隐藏的 notify id
  */
 export function hideNotify(notifyId: number): void {
-    const el: HTMLElement = elements.system.querySelector(`[data-notifyid="${notifyId}"]`)!;
+    const el: HTMLElement = elements.notify.querySelector(`[data-notifyid="${notifyId}"]`)!;
     if (!el) {
         return;
     }
@@ -1520,7 +1566,7 @@ export function hideNotify(notifyId: number): void {
     el.style.opacity = '0';
     setTimeout(function() {
         notifyTop -= notifyHeight + 10;
-        const notifyElementList = document.getElementsByClassName('cg-system-notify') as HTMLCollectionOf<HTMLDivElement>;
+        const notifyElementList = document.getElementsByClassName('cg-notify-wrap') as HTMLCollectionOf<HTMLDivElement>;
         let needSub = false;
         for (const notifyElement of notifyElementList) {
             if (notifyElement === el) {

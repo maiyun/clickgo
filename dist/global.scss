@@ -30,6 +30,8 @@
 
     --system-color:hsl(0, 0%, 95%);
     --system-background:hsla(0, 0%, 0%, .5);
+    --system-background-hover:hsla(0, 0%, 100%, .05);
+    --system-background-active:hsla(0, 0%, 0%, .2);
     --system-border-color:hsla(0, 0%, 100%, .2);
     --face:hsl(0, 0%, 95%);
 
@@ -222,13 +224,14 @@
     }
 }
 
-#cg-system {
+#cg-notify {
     z-index: 20020005;
 }
-.cg-system-notify {
+
+.cg-notify-wrap {
     background: var(--system-background); position: fixed; padding: 15px; border-radius: 3px; right: 0; top: 0; width: 280px; font-size: 14px; display: flex; transition: .1s ease-out; transition-property: transform, opacity; overflow: hidden; color: var(--system-color); box-shadow: 0 5px 20px rgba(0, 0, 0, .25); -webkit-backdrop-filter: blur(30px) brightness(1.2); backdrop-filter: blur(30px) brightness(1.2);
 }
-.cg-system-icon {
+.cg-notify-icon {
     margin-right: 10px; width: 16px; height: 16px; border-radius: 50%;
     &.cg-primary {
         background: var(--success);
@@ -246,13 +249,13 @@
         background: var(--cg);
     }
 }
-.cg-system-notify-title {
+.cg-notify-title {
     font-size: 16px; font-weight: bold; padding-bottom: 10px;
 }
-.cg-system-notify-content {
+.cg-notify-content {
     line-height: 1.5; word-break: break-word;
 }
-.cg-system-notify-progress {
+.cg-notify-progress {
     position: absolute; bottom: 0; left: 0; border-radius: 1px; background: var(--cg); transition: width 1s ease-out; width: 0%; height: 2px;
 }
 
@@ -273,4 +276,33 @@
 }
 .cg-simpletask-icon {
     margin-right: 5px; background-size: cover; width: 16px; height: 16px;
+}
+
+#cg-confirm {
+    z-index: 20020006; position: fixed; left: 0; top: 0; width: 100%; height: 100%; background: var(--system-background); -webkit-backdrop-filter: blur(30px) brightness(1.2); backdrop-filter: blur(30px) brightness(1.2); justify-content: center; align-items: center;
+
+    .cg-confirm-box {
+        background: var(--system-background); width: 60%; box-shadow: 0 5px 20px rgba(0, 0, 0, .25); font-size: 14px; border-radius: 3px; overflow: hidden; color: var(--system-color);
+
+        #cg-confirm-content {
+            padding: 25px;
+        }
+
+        .cg-confirm-controls {
+            border-top: solid .5px var(--system-border-color); display: flex;
+
+            > div {
+                padding: 20px; flex: 1; text-align: center;
+                &:last-child {
+                    border-left: solid .5px var(--system-border-color);
+                }
+                &:hover {
+                    background: var(--system-background-hover);
+                }
+                &:active {
+                    background: var(--system-background-active);
+                }
+            }
+        }
+    }
 }

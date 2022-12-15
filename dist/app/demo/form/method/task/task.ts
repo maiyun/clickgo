@@ -92,12 +92,19 @@ export default class extends clickgo.form.AbstractForm {
     }
 
     public getList(): void {
-        clickgo.form.dialog(JSON.stringify(clickgo.task.getList())).catch((e) => { throw e; });
+        let msg = JSON.stringify(clickgo.task.getList());
+        msg = msg.replace(/(data:image\/).+?"/g, '$1..."');
+        clickgo.form.dialog(msg).catch((e) => { throw e; });
     }
 
     public async run(): Promise<void> {
         const tid = await clickgo.task.run('/clickgo/app/demo/');
         await clickgo.form.dialog('Task ID: ' + tid.toString());
+    }
+
+    public async checkPermission(): Promise<void> {
+        const rtn = await clickgo.task.checkPermission('hash', true);
+        await clickgo.form.dialog(rtn[0] ? 'Succeed' : 'Failed');
     }
 
     public async end(): Promise<void> {

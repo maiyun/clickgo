@@ -11,6 +11,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const clickgo = require("clickgo");
 class default_1 extends clickgo.form.AbstractForm {
+    constructor() {
+        super(...arguments);
+        this.hash = 'test';
+    }
     get config() {
         return JSON.stringify(clickgo.core.config, null, 4).replace(/"icon": "([\s\S]+?)"/g, '"icon": "data:image/..."');
     }
@@ -22,6 +26,14 @@ class default_1 extends clickgo.form.AbstractForm {
     getAvailArea() {
         return __awaiter(this, void 0, void 0, function* () {
             yield clickgo.form.dialog(JSON.stringify(clickgo.core.getAvailArea()));
+        });
+    }
+    hashe() {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (clickgo.core.hash(this.hash)) {
+                return;
+            }
+            yield clickgo.form.dialog('No permission.');
         });
     }
 }

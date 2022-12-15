@@ -91,12 +91,20 @@ class default_1 extends clickgo.form.AbstractForm {
         clickgo.form.dialog(r ? JSON.stringify(r) : 'null').catch((e) => { throw e; });
     }
     getList() {
-        clickgo.form.dialog(JSON.stringify(clickgo.task.getList())).catch((e) => { throw e; });
+        let msg = JSON.stringify(clickgo.task.getList());
+        msg = msg.replace(/(data:image\/).+?"/g, '$1..."');
+        clickgo.form.dialog(msg).catch((e) => { throw e; });
     }
     run() {
         return __awaiter(this, void 0, void 0, function* () {
             const tid = yield clickgo.task.run('/clickgo/app/demo/');
             yield clickgo.form.dialog('Task ID: ' + tid.toString());
+        });
+    }
+    checkPermission() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const rtn = yield clickgo.task.checkPermission('hash', true);
+            yield clickgo.form.dialog(rtn[0] ? 'Succeed' : 'Failed');
         });
     }
     end() {

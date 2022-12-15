@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.hideLauncher = exports.showLauncher = exports.flash = exports.confirm = exports.dialog = exports.create = exports.remove = exports.doFocusAndPopEvent = exports.hidePop = exports.showPop = exports.removeFromPop = exports.appendToPop = exports.hideNotify = exports.notifyProgress = exports.notify = exports.hideDrag = exports.moveDrag = exports.showDrag = exports.hideRectangle = exports.showRectangle = exports.moveRectangle = exports.showCircular = exports.getRectByBorder = exports.getMaxZIndexID = exports.changeFocus = exports.getFocus = exports.getList = exports.send = exports.get = exports.getTaskId = exports.refreshMaxPosition = exports.bindDrag = exports.bindResize = exports.close = exports.max = exports.min = exports.elements = exports.launcherRoot = exports.simpleSystemTaskRoot = exports.AbstractForm = void 0;
+exports.hideLauncher = exports.showLauncher = exports.flash = exports.confirm = exports.dialog = exports.create = exports.remove = exports.doFocusAndPopEvent = exports.hidePop = exports.showPop = exports.removeFromPop = exports.appendToPop = exports.hideNotify = exports.notifyProgress = exports.notify = exports.hideDrag = exports.moveDrag = exports.showDrag = exports.hideRectangle = exports.showRectangle = exports.moveRectangle = exports.showCircular = exports.getRectByBorder = exports.getMaxZIndexID = exports.changeFocus = exports.getFocus = exports.getList = exports.send = exports.get = exports.getTaskId = exports.refreshMaxPosition = exports.bindDrag = exports.bindResize = exports.close = exports.max = exports.min = exports.superConfirm = exports.elements = exports.launcherRoot = exports.simpleSystemTaskRoot = exports.AbstractForm = void 0;
 const clickgo = require("../clickgo");
 const core = require("./core");
 const task = require("./task");
@@ -351,6 +351,7 @@ const popInfo = {
     'elList': [],
     'lastZIndex': 0
 };
+let superConfirmHandler = undefined;
 exports.elements = {
     'wrap': document.createElement('div'),
     'list': document.createElement('div'),
@@ -359,10 +360,10 @@ exports.elements = {
     'rectangle': document.createElement('div'),
     'gesture': document.createElement('div'),
     'drag': document.createElement('div'),
-    'dragIcon': undefined,
-    'system': document.createElement('div'),
-    'simpleSystemtask': document.createElement('div'),
+    'notify': document.createElement('div'),
+    'simpletask': document.createElement('div'),
     'launcher': document.createElement('div'),
+    'confirm': document.createElement('div'),
     'init': function () {
         this.wrap.id = 'cg-wrap';
         document.getElementsByTagName('body')[0].appendChild(this.wrap);
@@ -402,12 +403,11 @@ exports.elements = {
         this.wrap.appendChild(this.gesture);
         this.drag.id = 'cg-drag';
         this.drag.innerHTML = '<svg width="16" height="16" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 8L40 40" stroke="#FFF" stroke-width="4" stroke-linecap="butt" stroke-linejoin="miter"/><path d="M8 40L40 8" stroke="#FFF" stroke-width="4" stroke-linecap="butt" stroke-linejoin="miter"/></svg>';
-        this.dragIcon = this.drag.childNodes[0];
         this.wrap.appendChild(this.drag);
-        this.system.id = 'cg-system';
-        this.wrap.appendChild(this.system);
-        this.simpleSystemtask.id = 'cg-simpletask';
-        this.wrap.appendChild(this.simpleSystemtask);
+        this.notify.id = 'cg-notify';
+        this.wrap.appendChild(this.notify);
+        this.simpletask.id = 'cg-simpletask';
+        this.wrap.appendChild(this.simpletask);
         const simpletaskApp = clickgo.vue.createApp({
             'template': '<div v-for="(item, formId) of forms" class="cg-simpletask-item" @click="click(parseInt(formId))"><div v-if="item.icon" class="cg-simpletask-icon" :style="{\'background-image\': \'url(\' + item.icon + \')\'}"></div><div>{{item.title}}</div></div>',
             'data': function () {
@@ -420,14 +420,14 @@ exports.elements = {
                     handler: function () {
                         const length = Object.keys(this.forms).length;
                         if (length > 0) {
-                            if (exports.elements.simpleSystemtask.style.bottom !== '0px') {
-                                exports.elements.simpleSystemtask.style.bottom = '0px';
+                            if (exports.elements.simpletask.style.bottom !== '0px') {
+                                exports.elements.simpletask.style.bottom = '0px';
                                 core.trigger('screenResize');
                             }
                         }
                         else {
-                            if (exports.elements.simpleSystemtask.style.bottom === '0px') {
-                                exports.elements.simpleSystemtask.style.bottom = '-46px';
+                            if (exports.elements.simpletask.style.bottom === '0px') {
+                                exports.elements.simpletask.style.bottom = '-46px';
                                 core.trigger('screenResize');
                             }
                         }
@@ -614,9 +614,53 @@ exports.elements = {
             launcherApp.mount('#cg-launcher');
         };
         waiting();
+        this.confirm.id = 'cg-confirm';
+        this.wrap.appendChild(this.confirm);
+        this.confirm.innerHTML = `<div class="cg-confirm-box">` +
+            `<div id="cg-confirm-content"></div>` +
+            `<div class="cg-confirm-controls">` +
+            `<div id="cg-confirm-cancel"></div>` +
+            `<div id="cg-confirm-ok"></div>` +
+            `</div>` +
+            `</div>`;
+        this.confirm.style.display = 'none';
+        document.getElementById('cg-confirm-cancel').addEventListener('click', () => {
+            superConfirmHandler === null || superConfirmHandler === void 0 ? void 0 : superConfirmHandler(false);
+            this.confirm.style.display = 'none';
+            const fid = getMaxZIndexID();
+            if (fid) {
+                changeFocus(fid);
+            }
+        });
+        document.getElementById('cg-confirm-ok').addEventListener('click', () => {
+            superConfirmHandler === null || superConfirmHandler === void 0 ? void 0 : superConfirmHandler(true);
+            this.confirm.style.display = 'none';
+            const fid = getMaxZIndexID();
+            if (fid) {
+                changeFocus(fid);
+            }
+        });
     }
 };
 exports.elements.init();
+function superConfirm(html) {
+    return new Promise((resolve) => {
+        var _a, _b, _c, _d;
+        if (superConfirmHandler !== undefined) {
+            resolve(false);
+            return;
+        }
+        exports.elements.confirm.style.display = 'flex';
+        document.getElementById('cg-confirm-content').innerHTML = html;
+        document.getElementById('cg-confirm-cancel').innerHTML = (_b = (_a = info.locale[core.config.locale]) === null || _a === void 0 ? void 0 : _a.cancel) !== null && _b !== void 0 ? _b : info.locale['en'].cancel;
+        document.getElementById('cg-confirm-ok').innerHTML = (_d = (_c = info.locale[core.config.locale]) === null || _c === void 0 ? void 0 : _c.ok) !== null && _d !== void 0 ? _d : info.locale['en'].ok;
+        superConfirmHandler = (result) => {
+            superConfirmHandler = undefined;
+            resolve(result);
+        };
+    });
+}
+exports.superConfirm = superConfirm;
 function changeState(state, formId) {
     const tid = getTaskId(formId);
     const t = task.list[tid];
@@ -1042,14 +1086,10 @@ function moveDrag(opt) {
         exports.elements.drag.style.height = opt.height.toString() + 'px';
     }
     if (opt.icon) {
-        if (exports.elements.dragIcon) {
-            exports.elements.dragIcon.style.display = 'block';
-        }
+        exports.elements.drag.childNodes[0].style.display = 'block';
     }
     else {
-        if (exports.elements.dragIcon) {
-            exports.elements.dragIcon.style.display = 'none';
-        }
+        exports.elements.drag.childNodes[0].style.display = 'none';
     }
 }
 exports.moveDrag = moveDrag;
@@ -1076,21 +1116,21 @@ function notify(opt) {
     }
     const el = document.createElement('div');
     const y = notifyTop;
-    el.classList.add('cg-system-notify');
+    el.classList.add('cg-notify-wrap');
     el.setAttribute('data-notifyid', nid.toString());
     el.style.transform = `translateY(${y}px) translateX(280px)`;
     el.style.opacity = '1';
-    el.innerHTML = `<div class="cg-system-icon cg-${tool.escapeHTML((_a = opt.type) !== null && _a !== void 0 ? _a : 'primary')}"></div>
+    el.innerHTML = `<div class="cg-notify-icon cg-${tool.escapeHTML((_a = opt.type) !== null && _a !== void 0 ? _a : 'primary')}"></div>
 <div style="flex: 1;">
-    <div class="cg-system-notify-title">${tool.escapeHTML(opt.title)}</div>
-    <div class="cg-system-notify-content">${tool.escapeHTML(opt.content).replace(/\r\n/g, '\n').replace(/\r/g, '\n').replace(/\n/g, '<br>')}</div>
-    ${opt.progress ? '<div class="cg-system-notify-progress"></div>' : ''}
+    <div class="cg-notify-title">${tool.escapeHTML(opt.title)}</div>
+    <div class="cg-notify-content">${tool.escapeHTML(opt.content).replace(/\r\n/g, '\n').replace(/\r/g, '\n').replace(/\n/g, '<br>')}</div>
+    ${opt.progress ? '<div class="cg-notify-progress"></div>' : ''}
 </div>`;
     if (opt.icon) {
         el.childNodes.item(0).style.background = 'url(' + opt.icon + ')';
         el.childNodes.item(0).style.backgroundSize = '16px';
     }
-    exports.elements.system.appendChild(el);
+    exports.elements.notify.appendChild(el);
     notifyTop += el.offsetHeight + 10;
     requestAnimationFrame(function () {
         el.style.transform = `translateY(${y}px) translateX(-10px)`;
@@ -1103,11 +1143,11 @@ function notify(opt) {
 }
 exports.notify = notify;
 function notifyProgress(notifyId, per) {
-    const el = exports.elements.system.querySelector(`[data-notifyid="${notifyId}"]`);
+    const el = exports.elements.notify.querySelector(`[data-notifyid="${notifyId}"]`);
     if (!el) {
         return;
     }
-    const progress = el.querySelector('.cg-system-notify-progress');
+    const progress = el.querySelector('.cg-notify-progress');
     if (!progress) {
         return;
     }
@@ -1127,7 +1167,7 @@ function notifyProgress(notifyId, per) {
 }
 exports.notifyProgress = notifyProgress;
 function hideNotify(notifyId) {
-    const el = exports.elements.system.querySelector(`[data-notifyid="${notifyId}"]`);
+    const el = exports.elements.notify.querySelector(`[data-notifyid="${notifyId}"]`);
     if (!el) {
         return;
     }
@@ -1136,7 +1176,7 @@ function hideNotify(notifyId) {
     el.style.opacity = '0';
     setTimeout(function () {
         notifyTop -= notifyHeight + 10;
-        const notifyElementList = document.getElementsByClassName('cg-system-notify');
+        const notifyElementList = document.getElementsByClassName('cg-notify-wrap');
         let needSub = false;
         for (const notifyElement of notifyElementList) {
             if (notifyElement === el) {

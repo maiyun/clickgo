@@ -30,6 +30,7 @@
             </layout>
             <button @click="getList" style="height: 30px;">getList()</button>
             <button @click="run" style="height: 30px;">run('/clickgo/app/demo/')</button>
+            <button @click="checkPermission" style="height: 30px;">checkPermission('hash')</button>
             <button @click="end" style="height: 30px;">end('{{tid}}')</button>
             <label>Now locale: {{locale}}, Global locale: {{globalLocale}}</label>
             <label>l('File name'): {{l('File name')}}</label>

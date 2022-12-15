@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getAvailArea = exports.fetchApp = exports.readApp = exports.trigger = exports.getModule = exports.regModule = exports.boot = exports.getCdn = exports.AbstractApp = exports.config = void 0;
+exports.hash = exports.getAvailArea = exports.fetchApp = exports.readApp = exports.trigger = exports.getModule = exports.regModule = exports.boot = exports.getCdn = exports.AbstractApp = exports.config = void 0;
 const clickgo = require("../clickgo");
 const fs = require("./fs");
 const form = require("./form");
@@ -581,9 +581,17 @@ function fetchApp(url, opt = {}) {
             trigger('error', 0, 0, e, e.message);
             return null;
         }
-        let icon = '/clickgo/icon.png';
+        let icon = '';
         if (config.icon && (files[config.icon] instanceof Blob)) {
             icon = yield tool.blob2DataUrl(files[config.icon]);
+        }
+        if (icon === '') {
+            const iconBlob = yield fs.getContent('/clickgo/icon.png', {
+                'current': current
+            });
+            if (iconBlob instanceof Blob) {
+                icon = yield tool.blob2DataUrl(iconBlob);
+            }
         }
         return {
             'type': 'app',
@@ -646,3 +654,18 @@ function getAvailArea() {
     }
 }
 exports.getAvailArea = getAvailArea;
+function hash(hash, taskId) {
+    if (!taskId) {
+        return false;
+    }
+    const t = task.list[taskId];
+    if (!t) {
+        return false;
+    }
+    if (!t.runtime.permissions.includes('root') && !t.runtime.permissions.includes('hash')) {
+        return false;
+    }
+    window.location.hash = hash;
+    return true;
+}
+exports.hash = hash;
