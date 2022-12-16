@@ -1,0 +1,5 @@
+<form width="500" height="550" title="About other" padding="10">
+    <vflow v-slot="data" :data="list" direction="v" style="color: #FFF; background: hsl(0, 0%, 20%); line-height: 1.5; padding: 10px; flex: 1;">
+        <label>[{{data.row.time}}] {{data.row.name}}, {{data.row.content}}.</label>
+    </vflow>
+</form>

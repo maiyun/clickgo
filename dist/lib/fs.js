@@ -9,10 +9,48 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.copyFile = exports.copyFolder = exports.readDir = exports.rename = exports.chmod = exports.rmdirDeep = exports.rmdir = exports.mkdir = exports.isFile = exports.isDir = exports.stats = exports.unlink = exports.symlink = exports.readLink = exports.putContent = exports.getContent = void 0;
+exports.copyFile = exports.copyFolder = exports.readDir = exports.rename = exports.chmod = exports.rmdirDeep = exports.rmdir = exports.mkdir = exports.isFile = exports.isDir = exports.stats = exports.unlink = exports.symlink = exports.readLink = exports.putContent = exports.getContent = exports.unmount = exports.mount = void 0;
 const tool = require("./tool");
-const clickgoFiles = ['/app/', '/app/demo/', '/app/demo/app.js', '/app/demo/config.json', '/app/demo/form/', '/app/demo/form/control/', '/app/demo/form/control/block/', '/app/demo/form/control/block/block.css', '/app/demo/form/control/block/block.xml', '/app/demo/form/control/button/', '/app/demo/form/control/button/button.css', '/app/demo/form/control/button/button.js', '/app/demo/form/control/button/button.xml', '/app/demo/form/control/check/', '/app/demo/form/control/check/check.js', '/app/demo/form/control/check/check.xml', '/app/demo/form/control/dialog/', '/app/demo/form/control/dialog/dialog.js', '/app/demo/form/control/dialog/dialog.xml', '/app/demo/form/control/file/', '/app/demo/form/control/file/file.js', '/app/demo/form/control/file/file.xml', '/app/demo/form/control/flow/', '/app/demo/form/control/flow/flow.css', '/app/demo/form/control/flow/flow.js', '/app/demo/form/control/flow/flow.xml', '/app/demo/form/control/form/', '/app/demo/form/control/form/form.css', '/app/demo/form/control/form/form.js', '/app/demo/form/control/form/form.xml', '/app/demo/form/control/img/', '/app/demo/form/control/img/img.xml', '/app/demo/form/control/label/', '/app/demo/form/control/label/label.xml', '/app/demo/form/control/list/', '/app/demo/form/control/list/list.css', '/app/demo/form/control/list/list.js', '/app/demo/form/control/list/list.xml', '/app/demo/form/control/loading/', '/app/demo/form/control/loading/loading.xml', '/app/demo/form/control/marquee/', '/app/demo/form/control/marquee/marquee.js', '/app/demo/form/control/marquee/marquee.xml', '/app/demo/form/control/menu/', '/app/demo/form/control/menu/menu.js', '/app/demo/form/control/menu/menu.xml', '/app/demo/form/control/monaco/', '/app/demo/form/control/monaco/monaco.js', '/app/demo/form/control/monaco/monaco.xml', '/app/demo/form/control/property/', '/app/demo/form/control/property/property.js', '/app/demo/form/control/property/property.xml', '/app/demo/form/control/radio/', '/app/demo/form/control/radio/radio.js', '/app/demo/form/control/radio/radio.xml', '/app/demo/form/control/scroll/', '/app/demo/form/control/scroll/scroll.js', '/app/demo/form/control/scroll/scroll.xml', '/app/demo/form/control/select/', '/app/demo/form/control/select/select.js', '/app/demo/form/control/select/select.xml', '/app/demo/form/control/tab/', '/app/demo/form/control/tab/tab.js', '/app/demo/form/control/tab/tab.xml', '/app/demo/form/control/text/', '/app/demo/form/control/text/text.js', '/app/demo/form/control/text/text.xml', '/app/demo/form/control/vflow/', '/app/demo/form/control/vflow/vflow.css', '/app/demo/form/control/vflow/vflow.js', '/app/demo/form/control/vflow/vflow.xml', '/app/demo/form/event/', '/app/demo/form/event/form/', '/app/demo/form/event/form/form.css', '/app/demo/form/event/form/form.js', '/app/demo/form/event/form/form.xml', '/app/demo/form/event/screen/', '/app/demo/form/event/screen/screen.js', '/app/demo/form/event/screen/screen.xml', '/app/demo/form/event/task/', '/app/demo/form/event/task/task.js', '/app/demo/form/event/task/task.xml', '/app/demo/form/main.css', '/app/demo/form/main.js', '/app/demo/form/main.xml', '/app/demo/form/method/', '/app/demo/form/method/aform/', '/app/demo/form/method/aform/aform.js', '/app/demo/form/method/aform/aform.xml', '/app/demo/form/method/aform/test.xml', '/app/demo/form/method/core/', '/app/demo/form/method/core/core.js', '/app/demo/form/method/core/core.xml', '/app/demo/form/method/dom/', '/app/demo/form/method/dom/dom.css', '/app/demo/form/method/dom/dom.js', '/app/demo/form/method/dom/dom.xml', '/app/demo/form/method/form/', '/app/demo/form/method/form/form.css', '/app/demo/form/method/form/form.js', '/app/demo/form/method/form/form.xml', '/app/demo/form/method/fs/', '/app/demo/form/method/fs/fs.js', '/app/demo/form/method/fs/fs.xml', '/app/demo/form/method/fs/text.js', '/app/demo/form/method/fs/text.xml', '/app/demo/form/method/native/', '/app/demo/form/method/native/native.js', '/app/demo/form/method/native/native.xml', '/app/demo/form/method/system/', '/app/demo/form/method/system/system.js', '/app/demo/form/method/system/system.xml', '/app/demo/form/method/task/', '/app/demo/form/method/task/locale1.json', '/app/demo/form/method/task/locale2.json', '/app/demo/form/method/task/task.js', '/app/demo/form/method/task/task.xml', '/app/demo/form/method/theme/', '/app/demo/form/method/theme/theme.js', '/app/demo/form/method/theme/theme.xml', '/app/demo/form/method/tool/', '/app/demo/form/method/tool/tool.js', '/app/demo/form/method/tool/tool.xml', '/app/demo/form/method/zip/', '/app/demo/form/method/zip/zip.js', '/app/demo/form/method/zip/zip.xml', '/app/demo/global.css', '/app/demo/res/', '/app/demo/res/icon.svg', '/app/demo/res/img.jpg', '/app/demo/res/r-1.svg', '/app/demo/res/r-2.svg', '/app/demo/res/sql.svg', '/app/demo/res/txt.svg', '/app/demo/res/zip.svg', '/app/task/', '/app/task/app.js', '/app/task/config.json', '/app/task/form/', '/app/task/form/bar/', '/app/task/form/bar/bar.js', '/app/task/form/bar/bar.xml', '/app/task/form/desktop/', '/app/task/form/desktop/desktop.xml', '/app/task/locale/', '/app/task/locale/en.json', '/app/task/locale/ja.json', '/app/task/locale/sc.json', '/app/task/locale/tc.json', '/clickgo.js', '/clickgo.ts', '/control/', '/control/common.cgc', '/control/form.cgc', '/control/monaco.cgc', '/control/property.cgc', '/control/task.cgc', '/global.css', '/icon.png', '/index.js', '/index.ts', '/lib/', '/lib/control.js', '/lib/control.ts', '/lib/core.js', '/lib/core.ts', '/lib/dom.js', '/lib/dom.ts', '/lib/form.js', '/lib/form.ts', '/lib/fs.js', '/lib/fs.ts', '/lib/native.js', '/lib/native.ts', '/lib/task.js', '/lib/task.ts', '/lib/theme.js', '/lib/theme.ts', '/lib/tool.js', '/lib/tool.ts', '/lib/zip.js', '/lib/zip.ts', '/theme/', '/theme/familiar.cgt'];
+const task = require("./task");
+const clickgoFiles = ['/app/', '/app/demo/', '/app/demo/app.js', '/app/demo/config.json', '/app/demo/form/', '/app/demo/form/control/', '/app/demo/form/control/block/', '/app/demo/form/control/block/block.css', '/app/demo/form/control/block/block.xml', '/app/demo/form/control/button/', '/app/demo/form/control/button/button.css', '/app/demo/form/control/button/button.js', '/app/demo/form/control/button/button.xml', '/app/demo/form/control/check/', '/app/demo/form/control/check/check.js', '/app/demo/form/control/check/check.xml', '/app/demo/form/control/dialog/', '/app/demo/form/control/dialog/dialog.js', '/app/demo/form/control/dialog/dialog.xml', '/app/demo/form/control/file/', '/app/demo/form/control/file/file.js', '/app/demo/form/control/file/file.xml', '/app/demo/form/control/flow/', '/app/demo/form/control/flow/flow.css', '/app/demo/form/control/flow/flow.js', '/app/demo/form/control/flow/flow.xml', '/app/demo/form/control/form/', '/app/demo/form/control/form/form.css', '/app/demo/form/control/form/form.js', '/app/demo/form/control/form/form.xml', '/app/demo/form/control/img/', '/app/demo/form/control/img/img.xml', '/app/demo/form/control/label/', '/app/demo/form/control/label/label.xml', '/app/demo/form/control/list/', '/app/demo/form/control/list/list.css', '/app/demo/form/control/list/list.js', '/app/demo/form/control/list/list.xml', '/app/demo/form/control/loading/', '/app/demo/form/control/loading/loading.xml', '/app/demo/form/control/marquee/', '/app/demo/form/control/marquee/marquee.js', '/app/demo/form/control/marquee/marquee.xml', '/app/demo/form/control/menu/', '/app/demo/form/control/menu/menu.js', '/app/demo/form/control/menu/menu.xml', '/app/demo/form/control/monaco/', '/app/demo/form/control/monaco/monaco.js', '/app/demo/form/control/monaco/monaco.xml', '/app/demo/form/control/property/', '/app/demo/form/control/property/property.js', '/app/demo/form/control/property/property.xml', '/app/demo/form/control/radio/', '/app/demo/form/control/radio/radio.js', '/app/demo/form/control/radio/radio.xml', '/app/demo/form/control/scroll/', '/app/demo/form/control/scroll/scroll.js', '/app/demo/form/control/scroll/scroll.xml', '/app/demo/form/control/select/', '/app/demo/form/control/select/select.js', '/app/demo/form/control/select/select.xml', '/app/demo/form/control/tab/', '/app/demo/form/control/tab/tab.js', '/app/demo/form/control/tab/tab.xml', '/app/demo/form/control/text/', '/app/demo/form/control/text/text.js', '/app/demo/form/control/text/text.xml', '/app/demo/form/control/vflow/', '/app/demo/form/control/vflow/vflow.css', '/app/demo/form/control/vflow/vflow.js', '/app/demo/form/control/vflow/vflow.xml', '/app/demo/form/event/', '/app/demo/form/event/form/', '/app/demo/form/event/form/form.css', '/app/demo/form/event/form/form.js', '/app/demo/form/event/form/form.xml', '/app/demo/form/event/other/', '/app/demo/form/event/other/other.js', '/app/demo/form/event/other/other.xml', '/app/demo/form/event/screen/', '/app/demo/form/event/screen/screen.js', '/app/demo/form/event/screen/screen.xml', '/app/demo/form/event/task/', '/app/demo/form/event/task/task.js', '/app/demo/form/event/task/task.xml', '/app/demo/form/main.css', '/app/demo/form/main.js', '/app/demo/form/main.xml', '/app/demo/form/method/', '/app/demo/form/method/aform/', '/app/demo/form/method/aform/aform.js', '/app/demo/form/method/aform/aform.xml', '/app/demo/form/method/aform/test.xml', '/app/demo/form/method/core/', '/app/demo/form/method/core/core.js', '/app/demo/form/method/core/core.xml', '/app/demo/form/method/dom/', '/app/demo/form/method/dom/dom.css', '/app/demo/form/method/dom/dom.js', '/app/demo/form/method/dom/dom.xml', '/app/demo/form/method/form/', '/app/demo/form/method/form/form.css', '/app/demo/form/method/form/form.js', '/app/demo/form/method/form/form.xml', '/app/demo/form/method/fs/', '/app/demo/form/method/fs/fs.js', '/app/demo/form/method/fs/fs.xml', '/app/demo/form/method/fs/text.js', '/app/demo/form/method/fs/text.xml', '/app/demo/form/method/native/', '/app/demo/form/method/native/native.js', '/app/demo/form/method/native/native.xml', '/app/demo/form/method/system/', '/app/demo/form/method/system/system.js', '/app/demo/form/method/system/system.xml', '/app/demo/form/method/task/', '/app/demo/form/method/task/locale1.json', '/app/demo/form/method/task/locale2.json', '/app/demo/form/method/task/task.js', '/app/demo/form/method/task/task.xml', '/app/demo/form/method/theme/', '/app/demo/form/method/theme/theme.js', '/app/demo/form/method/theme/theme.xml', '/app/demo/form/method/tool/', '/app/demo/form/method/tool/tool.js', '/app/demo/form/method/tool/tool.xml', '/app/demo/form/method/zip/', '/app/demo/form/method/zip/zip.js', '/app/demo/form/method/zip/zip.xml', '/app/demo/global.css', '/app/demo/res/', '/app/demo/res/icon.svg', '/app/demo/res/img.jpg', '/app/demo/res/r-1.svg', '/app/demo/res/r-2.svg', '/app/demo/res/sql.svg', '/app/demo/res/txt.svg', '/app/demo/res/zip.svg', '/app/task/', '/app/task/app.js', '/app/task/config.json', '/app/task/form/', '/app/task/form/bar/', '/app/task/form/bar/bar.js', '/app/task/form/bar/bar.xml', '/app/task/form/desktop/', '/app/task/form/desktop/desktop.xml', '/app/task/locale/', '/app/task/locale/en.json', '/app/task/locale/ja.json', '/app/task/locale/sc.json', '/app/task/locale/tc.json', '/clickgo.js', '/clickgo.ts', '/control/', '/control/common.cgc', '/control/form.cgc', '/control/monaco.cgc', '/control/property.cgc', '/control/task.cgc', '/global.css', '/icon.png', '/index.js', '/index.ts', '/lib/', '/lib/control.js', '/lib/control.ts', '/lib/core.js', '/lib/core.ts', '/lib/dom.js', '/lib/dom.ts', '/lib/form.js', '/lib/form.ts', '/lib/fs.js', '/lib/fs.ts', '/lib/native.js', '/lib/native.ts', '/lib/task.js', '/lib/task.ts', '/lib/theme.js', '/lib/theme.ts', '/lib/tool.js', '/lib/tool.ts', '/lib/zip.js', '/lib/zip.ts', '/theme/', '/theme/familiar.cgt'];
+const mounts = {};
+function getMountName(path) {
+    const io = path.slice(9).indexOf('/');
+    return path.slice(9, io + 9);
+}
+function mount(name, handler) {
+    if (mounts[name]) {
+        return false;
+    }
+    if (!/^[a-zA-Z][\w]+$/.test(name)) {
+        return false;
+    }
+    if (handler.taskId) {
+        const t = task.list[handler.taskId];
+        if (t) {
+            const val = 'fs./mounted/' + name + '/w';
+            if (!t.runtime.permissions.includes(val)) {
+                t.runtime.permissions.push(val);
+            }
+        }
+    }
+    mounts[name] = handler;
+    return true;
+}
+exports.mount = mount;
+function unmount(name, taskId) {
+    if (!mounts[name]) {
+        return true;
+    }
+    if (taskId && (mounts[name].taskId !== taskId)) {
+        return false;
+    }
+    delete mounts[name];
+    return true;
+}
+exports.unmount = unmount;
 function getContent(path, options) {
+    var _a, _b;
     return __awaiter(this, void 0, void 0, function* () {
         path = tool.urlResolve('/', path);
         const fpath = path.slice(8);
@@ -71,7 +109,7 @@ function getContent(path, options) {
                     fr.readAsText(blob, encoding);
                 });
             }
-            catch (_a) {
+            catch (_c) {
                 return null;
             }
         }
@@ -79,7 +117,12 @@ function getContent(path, options) {
             return null;
         }
         else if (path.startsWith('/mounted/')) {
-            return null;
+            const name = getMountName(path);
+            const hanlder = mounts[name];
+            if (!hanlder) {
+                return null;
+            }
+            return (_b = (_a = hanlder.getContent) === null || _a === void 0 ? void 0 : _a.call(hanlder, path.slice(9 + name.length), options)) !== null && _b !== void 0 ? _b : null;
         }
         else if (path.startsWith('/package/')) {
             if (!options.files) {
@@ -118,6 +161,7 @@ function getContent(path, options) {
 }
 exports.getContent = getContent;
 function putContent(path, data, options = {}) {
+    var _a, _b;
     return __awaiter(this, void 0, void 0, function* () {
         path = tool.urlResolve('/', path);
         const fpath = path.slice(8);
@@ -128,7 +172,12 @@ function putContent(path, data, options = {}) {
             return false;
         }
         else if (path.startsWith('/mounted/')) {
-            return false;
+            const name = getMountName(path);
+            const hanlder = mounts[name];
+            if (!hanlder) {
+                return false;
+            }
+            return (_b = (_a = hanlder.putContent) === null || _a === void 0 ? void 0 : _a.call(hanlder, path.slice(9 + name.length), data, options)) !== null && _b !== void 0 ? _b : false;
         }
         else if (path.startsWith('/package/')) {
             return false;
@@ -147,6 +196,7 @@ function putContent(path, data, options = {}) {
 }
 exports.putContent = putContent;
 function readLink(path, options) {
+    var _a, _b;
     return __awaiter(this, void 0, void 0, function* () {
         path = tool.urlResolve('/', path);
         const fpath = path.slice(8);
@@ -165,7 +215,12 @@ function readLink(path, options) {
             return null;
         }
         else if (path.startsWith('/mounted/')) {
-            return null;
+            const name = getMountName(path);
+            const hanlder = mounts[name];
+            if (!hanlder) {
+                return null;
+            }
+            return (_b = (_a = hanlder.readLink) === null || _a === void 0 ? void 0 : _a.call(hanlder, path.slice(9 + name.length), options)) !== null && _b !== void 0 ? _b : null;
         }
         else if (path.startsWith('/package/')) {
             return null;
@@ -186,6 +241,7 @@ function readLink(path, options) {
 }
 exports.readLink = readLink;
 function symlink(filePath, linkPath, options = {}) {
+    var _a, _b;
     return __awaiter(this, void 0, void 0, function* () {
         filePath = tool.urlResolve('/', filePath);
         linkPath = tool.urlResolve('/', linkPath);
@@ -196,7 +252,16 @@ function symlink(filePath, linkPath, options = {}) {
             return false;
         }
         else if (filePath.startsWith('/mounted/')) {
-            return false;
+            const fname = getMountName(filePath);
+            const lname = getMountName(linkPath);
+            if (fname !== lname) {
+                return false;
+            }
+            const hanlder = mounts[fname];
+            if (!hanlder) {
+                return false;
+            }
+            return (_b = (_a = hanlder.symlink) === null || _a === void 0 ? void 0 : _a.call(hanlder, filePath.slice(9 + fname.length), linkPath.slice(9 + fname.length), options)) !== null && _b !== void 0 ? _b : false;
         }
         else if (filePath.startsWith('/package/')) {
             return false;
@@ -218,6 +283,7 @@ function symlink(filePath, linkPath, options = {}) {
 }
 exports.symlink = symlink;
 function unlink(path, options = {}) {
+    var _a, _b;
     return __awaiter(this, void 0, void 0, function* () {
         path = tool.urlResolve('/', path);
         const fpath = path.slice(8);
@@ -228,7 +294,12 @@ function unlink(path, options = {}) {
             return false;
         }
         else if (path.startsWith('/mounted/')) {
-            return false;
+            const name = getMountName(path);
+            const hanlder = mounts[name];
+            if (!hanlder) {
+                return false;
+            }
+            return (_b = (_a = hanlder.unlink) === null || _a === void 0 ? void 0 : _a.call(hanlder, path.slice(9 + name.length), options)) !== null && _b !== void 0 ? _b : false;
         }
         else if (path.startsWith('/package/')) {
             return false;
@@ -322,6 +393,7 @@ function getClickGoStats(path) {
     });
 }
 function stats(path, options = {}) {
+    var _a, _b;
     return __awaiter(this, void 0, void 0, function* () {
         path = tool.urlResolve('/', path);
         let fpath = path.slice(8);
@@ -338,7 +410,12 @@ function stats(path, options = {}) {
             return null;
         }
         else if (path.startsWith('/mounted/')) {
-            return null;
+            const name = getMountName(path);
+            const hanlder = mounts[name];
+            if (!hanlder) {
+                return null;
+            }
+            return (_b = (_a = hanlder.stats) === null || _a === void 0 ? void 0 : _a.call(hanlder, path.slice(9 + name.length), options)) !== null && _b !== void 0 ? _b : false;
         }
         else if (path.startsWith('/package/')) {
             if (!options.files) {
@@ -444,6 +521,7 @@ function isFile(path, options = {}) {
 }
 exports.isFile = isFile;
 function mkdir(path, mode = 0o755, options = {}) {
+    var _a, _b;
     return __awaiter(this, void 0, void 0, function* () {
         path = tool.urlResolve('/', path);
         if (yield isDir(path, options)) {
@@ -457,7 +535,12 @@ function mkdir(path, mode = 0o755, options = {}) {
             return false;
         }
         else if (path.startsWith('/mounted/')) {
-            return false;
+            const name = getMountName(path);
+            const hanlder = mounts[name];
+            if (!hanlder) {
+                return false;
+            }
+            return (_b = (_a = hanlder.mkdir) === null || _a === void 0 ? void 0 : _a.call(hanlder, path.slice(9 + name.length), mode, options)) !== null && _b !== void 0 ? _b : false;
         }
         else if (path.startsWith('/package/')) {
             return false;
@@ -476,6 +559,7 @@ function mkdir(path, mode = 0o755, options = {}) {
 }
 exports.mkdir = mkdir;
 function rmdir(path, options = {}) {
+    var _a, _b;
     return __awaiter(this, void 0, void 0, function* () {
         path = tool.urlResolve('/', path);
         const fpath = path.slice(8);
@@ -486,7 +570,12 @@ function rmdir(path, options = {}) {
             return false;
         }
         else if (path.startsWith('/mounted/')) {
-            return false;
+            const name = getMountName(path);
+            const hanlder = mounts[name];
+            if (!hanlder) {
+                return false;
+            }
+            return (_b = (_a = hanlder.rmdir) === null || _a === void 0 ? void 0 : _a.call(hanlder, path.slice(9 + name.length), options)) !== null && _b !== void 0 ? _b : false;
         }
         else if (path.startsWith('/package/')) {
             return false;
@@ -534,6 +623,7 @@ function rmdirDeep(path, options = {}) {
 }
 exports.rmdirDeep = rmdirDeep;
 function chmod(path, mod, options = {}) {
+    var _a, _b;
     return __awaiter(this, void 0, void 0, function* () {
         path = tool.urlResolve('/', path);
         const fpath = path.slice(8);
@@ -544,7 +634,12 @@ function chmod(path, mod, options = {}) {
             return false;
         }
         else if (path.startsWith('/mounted/')) {
-            return false;
+            const name = getMountName(path);
+            const hanlder = mounts[name];
+            if (!hanlder) {
+                return false;
+            }
+            return (_b = (_a = hanlder.chmod) === null || _a === void 0 ? void 0 : _a.call(hanlder, path.slice(9 + name.length), mod, options)) !== null && _b !== void 0 ? _b : false;
         }
         else if (path.startsWith('/package/')) {
             return false;

@@ -344,6 +344,9 @@ class AbstractForm {
     onLauncherFolderNameChanged() {
         return;
     }
+    onHashChanged() {
+        return;
+    }
 }
 exports.AbstractForm = AbstractForm;
 const popInfo = {
@@ -482,7 +485,8 @@ exports.elements = {
                 'data': function () {
                     return {
                         'name': '',
-                        'folderName': ''
+                        'folderName': '',
+                        'folderItem': {}
                     };
                 },
                 'computed': {

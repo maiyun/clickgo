@@ -203,7 +203,7 @@ function run(url, opt = {}) {
         const unblock = opt.unblock ? tool.clone(opt.unblock) : [];
         const unblockSys = [
             'require',
-            '__awaiter', 'eval', 'Math', 'Array', 'Blob', 'Error', 'Infinity', 'parseInt', 'parseFloat', 'Promise', 'Date', 'JSON', 'fetch'
+            '__awaiter', 'eval', 'Math', 'Array', 'Blob', 'Error', 'Infinity', 'parseInt', 'parseFloat', 'Promise', 'Date', 'JSON', 'fetch', 'Number'
         ];
         for (const name of unblockSys) {
             if (unblock.includes(name)) {
@@ -241,8 +241,65 @@ function run(url, opt = {}) {
             invoke[k] = undefined;
         }
         invoke.console = {
-            log: function (message, ...optionalParams) {
-                console.log(message, ...optionalParams);
+            assert: function (condition, ...data) {
+                console.assert(condition, ...data);
+            },
+            clear: function () {
+                console.clear();
+            },
+            count: function (label) {
+                console.count(label);
+            },
+            countReset: function (label) {
+                console.countReset(label);
+            },
+            debug: function (...data) {
+                console.debug(...data);
+            },
+            dir: function (item, options) {
+                console.dir(item, options);
+            },
+            dirxml: function (...data) {
+                console.dirxml(...data);
+            },
+            error: function (...data) {
+                console.error(...data);
+            },
+            group: function (...data) {
+                console.group(...data);
+            },
+            groupCollapsed: function (...data) {
+                console.groupCollapsed(...data);
+            },
+            groupEnd: function () {
+                console.groupEnd();
+            },
+            info: function (...data) {
+                console.info(...data);
+            },
+            log: function (...data) {
+                console.log(...data);
+            },
+            table: function (tabularData, properties) {
+                console.table(tabularData, properties);
+            },
+            time: function (label) {
+                console.time(label);
+            },
+            timeEnd: function (label) {
+                console.timeEnd(label);
+            },
+            timeLog: function (label, ...data) {
+                console.timeLog(label, ...data);
+            },
+            timeStamp: function (label) {
+                console.timeStamp(label);
+            },
+            trace: function (...data) {
+                console.trace(...data);
+            },
+            warn: function (...data) {
+                console.warn(...data);
             }
         };
         invoke.loader = {

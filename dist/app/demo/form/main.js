@@ -28,6 +28,7 @@ const tab_1 = require("./control/tab/tab");
 const text_1 = require("./control/text/text");
 const vflow_1 = require("./control/vflow/vflow");
 const form_2 = require("./event/form/form");
+const other_1 = require("./event/other/other");
 const screen_1 = require("./event/screen/screen");
 const task_1 = require("./event/task/task");
 const aform_1 = require("./method/aform/aform");
@@ -145,6 +146,10 @@ class default_1 extends clickgo.form.AbstractForm {
                 }
                 case 'eform': {
                     frm = yield form_2.default.create();
+                    break;
+                }
+                case 'eother': {
+                    frm = yield other_1.default.create();
                     break;
                 }
                 case 'escreen': {

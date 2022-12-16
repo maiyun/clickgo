@@ -548,6 +548,12 @@ export abstract class AbstractForm {
         return;
     }
 
+    /** --- location hash 改变事件 --- */
+    public onHashChanged(hash: string): void | Promise<void>;
+    public onHashChanged(): void {
+        return;
+    }
+
 }
 
 /** --- pop 相关信息 --- */
@@ -738,7 +744,8 @@ export const elements: {
                 'data': function() {
                     return {
                         'name': '',
-                        'folderName': ''
+                        'folderName': '',
+                        'folderItem': {}
                     };
                 },
                 'computed': {

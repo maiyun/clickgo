@@ -45,6 +45,7 @@
                 <button @click="openForm('escreen')">About screen</button>
                 <button @click="openForm('eform')">About form</button>
                 <button @click="openForm('etask')">About task</button>
+                <button @click="openForm('eother')">About other</button>
             </layout>
         </flow>
     </tab>

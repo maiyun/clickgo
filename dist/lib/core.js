@@ -106,6 +106,9 @@ class AbstractApp {
     onLauncherFolderNameChanged() {
         return;
     }
+    onHashChanged() {
+        return;
+    }
 }
 exports.AbstractApp = AbstractApp;
 function getCdn() {
@@ -282,7 +285,7 @@ const globalEvents = {
     }
 };
 function trigger(name, taskId = 0, formId = 0, param1 = '', param2 = '') {
-    var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z, _0, _1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12;
+    var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z, _0, _1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12, _13, _14, _15;
     const eventName = 'on' + name[0].toUpperCase() + name.slice(1);
     switch (name) {
         case 'error': {
@@ -396,7 +399,7 @@ function trigger(name, taskId = 0, formId = 0, param1 = '', param2 = '') {
             if (typeof formId !== 'string') {
                 break;
             }
-            if (typeof taskId === 'number') {
+            if (typeof taskId !== 'string') {
                 taskId = taskId.toString();
             }
             exports.boot[eventName](taskId, formId);
@@ -405,6 +408,20 @@ function trigger(name, taskId = 0, formId = 0, param1 = '', param2 = '') {
                 (_10 = t.class) === null || _10 === void 0 ? void 0 : _10[eventName](taskId, formId);
                 for (const fid in t.forms) {
                     (_12 = (_11 = t.forms[fid].vroot)[eventName]) === null || _12 === void 0 ? void 0 : _12.call(_11, taskId, formId);
+                }
+            }
+            break;
+        }
+        case 'hashChanged': {
+            if (typeof taskId !== 'string') {
+                break;
+            }
+            exports.boot[eventName](taskId);
+            for (const tid in task.list) {
+                const t = task.list[tid];
+                (_13 = t.class) === null || _13 === void 0 ? void 0 : _13[eventName](taskId);
+                for (const fid in t.forms) {
+                    (_15 = (_14 = t.forms[fid].vroot)[eventName]) === null || _15 === void 0 ? void 0 : _15.call(_14, taskId);
                 }
             }
             break;
@@ -669,3 +686,6 @@ function hash(hash, taskId) {
     return true;
 }
 exports.hash = hash;
+window.addEventListener('hashchange', function () {
+    trigger('hashChanged', window.location.hash ? window.location.hash.slice(1) : '');
+});

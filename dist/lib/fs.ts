@@ -7,8 +7,59 @@
 */
 import * as types from '../../types';
 import * as tool from './tool';
+import * as task from './task';
 
-const clickgoFiles = ['/app/', '/app/demo/', '/app/demo/app.js', '/app/demo/config.json', '/app/demo/form/', '/app/demo/form/control/', '/app/demo/form/control/block/', '/app/demo/form/control/block/block.css', '/app/demo/form/control/block/block.xml', '/app/demo/form/control/button/', '/app/demo/form/control/button/button.css', '/app/demo/form/control/button/button.js', '/app/demo/form/control/button/button.xml', '/app/demo/form/control/check/', '/app/demo/form/control/check/check.js', '/app/demo/form/control/check/check.xml', '/app/demo/form/control/dialog/', '/app/demo/form/control/dialog/dialog.js', '/app/demo/form/control/dialog/dialog.xml', '/app/demo/form/control/file/', '/app/demo/form/control/file/file.js', '/app/demo/form/control/file/file.xml', '/app/demo/form/control/flow/', '/app/demo/form/control/flow/flow.css', '/app/demo/form/control/flow/flow.js', '/app/demo/form/control/flow/flow.xml', '/app/demo/form/control/form/', '/app/demo/form/control/form/form.css', '/app/demo/form/control/form/form.js', '/app/demo/form/control/form/form.xml', '/app/demo/form/control/img/', '/app/demo/form/control/img/img.xml', '/app/demo/form/control/label/', '/app/demo/form/control/label/label.xml', '/app/demo/form/control/list/', '/app/demo/form/control/list/list.css', '/app/demo/form/control/list/list.js', '/app/demo/form/control/list/list.xml', '/app/demo/form/control/loading/', '/app/demo/form/control/loading/loading.xml', '/app/demo/form/control/marquee/', '/app/demo/form/control/marquee/marquee.js', '/app/demo/form/control/marquee/marquee.xml', '/app/demo/form/control/menu/', '/app/demo/form/control/menu/menu.js', '/app/demo/form/control/menu/menu.xml', '/app/demo/form/control/monaco/', '/app/demo/form/control/monaco/monaco.js', '/app/demo/form/control/monaco/monaco.xml', '/app/demo/form/control/property/', '/app/demo/form/control/property/property.js', '/app/demo/form/control/property/property.xml', '/app/demo/form/control/radio/', '/app/demo/form/control/radio/radio.js', '/app/demo/form/control/radio/radio.xml', '/app/demo/form/control/scroll/', '/app/demo/form/control/scroll/scroll.js', '/app/demo/form/control/scroll/scroll.xml', '/app/demo/form/control/select/', '/app/demo/form/control/select/select.js', '/app/demo/form/control/select/select.xml', '/app/demo/form/control/tab/', '/app/demo/form/control/tab/tab.js', '/app/demo/form/control/tab/tab.xml', '/app/demo/form/control/text/', '/app/demo/form/control/text/text.js', '/app/demo/form/control/text/text.xml', '/app/demo/form/control/vflow/', '/app/demo/form/control/vflow/vflow.css', '/app/demo/form/control/vflow/vflow.js', '/app/demo/form/control/vflow/vflow.xml', '/app/demo/form/event/', '/app/demo/form/event/form/', '/app/demo/form/event/form/form.css', '/app/demo/form/event/form/form.js', '/app/demo/form/event/form/form.xml', '/app/demo/form/event/screen/', '/app/demo/form/event/screen/screen.js', '/app/demo/form/event/screen/screen.xml', '/app/demo/form/event/task/', '/app/demo/form/event/task/task.js', '/app/demo/form/event/task/task.xml', '/app/demo/form/main.css', '/app/demo/form/main.js', '/app/demo/form/main.xml', '/app/demo/form/method/', '/app/demo/form/method/aform/', '/app/demo/form/method/aform/aform.js', '/app/demo/form/method/aform/aform.xml', '/app/demo/form/method/aform/test.xml', '/app/demo/form/method/core/', '/app/demo/form/method/core/core.js', '/app/demo/form/method/core/core.xml', '/app/demo/form/method/dom/', '/app/demo/form/method/dom/dom.css', '/app/demo/form/method/dom/dom.js', '/app/demo/form/method/dom/dom.xml', '/app/demo/form/method/form/', '/app/demo/form/method/form/form.css', '/app/demo/form/method/form/form.js', '/app/demo/form/method/form/form.xml', '/app/demo/form/method/fs/', '/app/demo/form/method/fs/fs.js', '/app/demo/form/method/fs/fs.xml', '/app/demo/form/method/fs/text.js', '/app/demo/form/method/fs/text.xml', '/app/demo/form/method/native/', '/app/demo/form/method/native/native.js', '/app/demo/form/method/native/native.xml', '/app/demo/form/method/system/', '/app/demo/form/method/system/system.js', '/app/demo/form/method/system/system.xml', '/app/demo/form/method/task/', '/app/demo/form/method/task/locale1.json', '/app/demo/form/method/task/locale2.json', '/app/demo/form/method/task/task.js', '/app/demo/form/method/task/task.xml', '/app/demo/form/method/theme/', '/app/demo/form/method/theme/theme.js', '/app/demo/form/method/theme/theme.xml', '/app/demo/form/method/tool/', '/app/demo/form/method/tool/tool.js', '/app/demo/form/method/tool/tool.xml', '/app/demo/form/method/zip/', '/app/demo/form/method/zip/zip.js', '/app/demo/form/method/zip/zip.xml', '/app/demo/global.css', '/app/demo/res/', '/app/demo/res/icon.svg', '/app/demo/res/img.jpg', '/app/demo/res/r-1.svg', '/app/demo/res/r-2.svg', '/app/demo/res/sql.svg', '/app/demo/res/txt.svg', '/app/demo/res/zip.svg', '/app/task/', '/app/task/app.js', '/app/task/config.json', '/app/task/form/', '/app/task/form/bar/', '/app/task/form/bar/bar.js', '/app/task/form/bar/bar.xml', '/app/task/form/desktop/', '/app/task/form/desktop/desktop.xml', '/app/task/locale/', '/app/task/locale/en.json', '/app/task/locale/ja.json', '/app/task/locale/sc.json', '/app/task/locale/tc.json', '/clickgo.js', '/clickgo.ts', '/control/', '/control/common.cgc', '/control/form.cgc', '/control/monaco.cgc', '/control/property.cgc', '/control/task.cgc', '/global.css', '/icon.png', '/index.js', '/index.ts', '/lib/', '/lib/control.js', '/lib/control.ts', '/lib/core.js', '/lib/core.ts', '/lib/dom.js', '/lib/dom.ts', '/lib/form.js', '/lib/form.ts', '/lib/fs.js', '/lib/fs.ts', '/lib/native.js', '/lib/native.ts', '/lib/task.js', '/lib/task.ts', '/lib/theme.js', '/lib/theme.ts', '/lib/tool.js', '/lib/tool.ts', '/lib/zip.js', '/lib/zip.ts', '/theme/', '/theme/familiar.cgt'];
+const clickgoFiles = ['/app/', '/app/demo/', '/app/demo/app.js', '/app/demo/config.json', '/app/demo/form/', '/app/demo/form/control/', '/app/demo/form/control/block/', '/app/demo/form/control/block/block.css', '/app/demo/form/control/block/block.xml', '/app/demo/form/control/button/', '/app/demo/form/control/button/button.css', '/app/demo/form/control/button/button.js', '/app/demo/form/control/button/button.xml', '/app/demo/form/control/check/', '/app/demo/form/control/check/check.js', '/app/demo/form/control/check/check.xml', '/app/demo/form/control/dialog/', '/app/demo/form/control/dialog/dialog.js', '/app/demo/form/control/dialog/dialog.xml', '/app/demo/form/control/file/', '/app/demo/form/control/file/file.js', '/app/demo/form/control/file/file.xml', '/app/demo/form/control/flow/', '/app/demo/form/control/flow/flow.css', '/app/demo/form/control/flow/flow.js', '/app/demo/form/control/flow/flow.xml', '/app/demo/form/control/form/', '/app/demo/form/control/form/form.css', '/app/demo/form/control/form/form.js', '/app/demo/form/control/form/form.xml', '/app/demo/form/control/img/', '/app/demo/form/control/img/img.xml', '/app/demo/form/control/label/', '/app/demo/form/control/label/label.xml', '/app/demo/form/control/list/', '/app/demo/form/control/list/list.css', '/app/demo/form/control/list/list.js', '/app/demo/form/control/list/list.xml', '/app/demo/form/control/loading/', '/app/demo/form/control/loading/loading.xml', '/app/demo/form/control/marquee/', '/app/demo/form/control/marquee/marquee.js', '/app/demo/form/control/marquee/marquee.xml', '/app/demo/form/control/menu/', '/app/demo/form/control/menu/menu.js', '/app/demo/form/control/menu/menu.xml', '/app/demo/form/control/monaco/', '/app/demo/form/control/monaco/monaco.js', '/app/demo/form/control/monaco/monaco.xml', '/app/demo/form/control/property/', '/app/demo/form/control/property/property.js', '/app/demo/form/control/property/property.xml', '/app/demo/form/control/radio/', '/app/demo/form/control/radio/radio.js', '/app/demo/form/control/radio/radio.xml', '/app/demo/form/control/scroll/', '/app/demo/form/control/scroll/scroll.js', '/app/demo/form/control/scroll/scroll.xml', '/app/demo/form/control/select/', '/app/demo/form/control/select/select.js', '/app/demo/form/control/select/select.xml', '/app/demo/form/control/tab/', '/app/demo/form/control/tab/tab.js', '/app/demo/form/control/tab/tab.xml', '/app/demo/form/control/text/', '/app/demo/form/control/text/text.js', '/app/demo/form/control/text/text.xml', '/app/demo/form/control/vflow/', '/app/demo/form/control/vflow/vflow.css', '/app/demo/form/control/vflow/vflow.js', '/app/demo/form/control/vflow/vflow.xml', '/app/demo/form/event/', '/app/demo/form/event/form/', '/app/demo/form/event/form/form.css', '/app/demo/form/event/form/form.js', '/app/demo/form/event/form/form.xml', '/app/demo/form/event/other/', '/app/demo/form/event/other/other.js', '/app/demo/form/event/other/other.xml', '/app/demo/form/event/screen/', '/app/demo/form/event/screen/screen.js', '/app/demo/form/event/screen/screen.xml', '/app/demo/form/event/task/', '/app/demo/form/event/task/task.js', '/app/demo/form/event/task/task.xml', '/app/demo/form/main.css', '/app/demo/form/main.js', '/app/demo/form/main.xml', '/app/demo/form/method/', '/app/demo/form/method/aform/', '/app/demo/form/method/aform/aform.js', '/app/demo/form/method/aform/aform.xml', '/app/demo/form/method/aform/test.xml', '/app/demo/form/method/core/', '/app/demo/form/method/core/core.js', '/app/demo/form/method/core/core.xml', '/app/demo/form/method/dom/', '/app/demo/form/method/dom/dom.css', '/app/demo/form/method/dom/dom.js', '/app/demo/form/method/dom/dom.xml', '/app/demo/form/method/form/', '/app/demo/form/method/form/form.css', '/app/demo/form/method/form/form.js', '/app/demo/form/method/form/form.xml', '/app/demo/form/method/fs/', '/app/demo/form/method/fs/fs.js', '/app/demo/form/method/fs/fs.xml', '/app/demo/form/method/fs/text.js', '/app/demo/form/method/fs/text.xml', '/app/demo/form/method/native/', '/app/demo/form/method/native/native.js', '/app/demo/form/method/native/native.xml', '/app/demo/form/method/system/', '/app/demo/form/method/system/system.js', '/app/demo/form/method/system/system.xml', '/app/demo/form/method/task/', '/app/demo/form/method/task/locale1.json', '/app/demo/form/method/task/locale2.json', '/app/demo/form/method/task/task.js', '/app/demo/form/method/task/task.xml', '/app/demo/form/method/theme/', '/app/demo/form/method/theme/theme.js', '/app/demo/form/method/theme/theme.xml', '/app/demo/form/method/tool/', '/app/demo/form/method/tool/tool.js', '/app/demo/form/method/tool/tool.xml', '/app/demo/form/method/zip/', '/app/demo/form/method/zip/zip.js', '/app/demo/form/method/zip/zip.xml', '/app/demo/global.css', '/app/demo/res/', '/app/demo/res/icon.svg', '/app/demo/res/img.jpg', '/app/demo/res/r-1.svg', '/app/demo/res/r-2.svg', '/app/demo/res/sql.svg', '/app/demo/res/txt.svg', '/app/demo/res/zip.svg', '/app/task/', '/app/task/app.js', '/app/task/config.json', '/app/task/form/', '/app/task/form/bar/', '/app/task/form/bar/bar.js', '/app/task/form/bar/bar.xml', '/app/task/form/desktop/', '/app/task/form/desktop/desktop.xml', '/app/task/locale/', '/app/task/locale/en.json', '/app/task/locale/ja.json', '/app/task/locale/sc.json', '/app/task/locale/tc.json', '/clickgo.js', '/clickgo.ts', '/control/', '/control/common.cgc', '/control/form.cgc', '/control/monaco.cgc', '/control/property.cgc', '/control/task.cgc', '/global.css', '/icon.png', '/index.js', '/index.ts', '/lib/', '/lib/control.js', '/lib/control.ts', '/lib/core.js', '/lib/core.ts', '/lib/dom.js', '/lib/dom.ts', '/lib/form.js', '/lib/form.ts', '/lib/fs.js', '/lib/fs.ts', '/lib/native.js', '/lib/native.ts', '/lib/task.js', '/lib/task.ts', '/lib/theme.js', '/lib/theme.ts', '/lib/tool.js', '/lib/tool.ts', '/lib/zip.js', '/lib/zip.ts', '/theme/', '/theme/familiar.cgt'];
+
+/** --- 已经挂载的列表 --- */
+const mounts: Record<string, types.IMountHandler> = {};
+
+/** --- 根据 mounted 的 path 获取挂载点 name --- */
+function getMountName(path: string): string {
+    const io = path.slice(9).indexOf('/');
+    return path.slice(9, io + 9);
+}
+
+/**
+ * --- 挂载到 mounted 目录下 ---
+ * @param name 目录名
+ * @param handler 回调相关，taskId 在 App 模式下无效
+ */
+export function mount(name: string, handler: types.IMountHandler): boolean {
+    if (mounts[name]) {
+        return false;
+    }
+    if (!/^[a-zA-Z][\w]+$/.test(name)) {
+        return false;
+    }
+    if (handler.taskId) {
+        const t = task.list[handler.taskId];
+        if (t) {
+            const val = 'fs./mounted/' + name + '/w';
+            if (!t.runtime.permissions.includes(val)) {
+                t.runtime.permissions.push(val);
+            }
+        }
+    }
+    mounts[name] = handler;
+    return true;
+}
+
+/**
+ * --- 卸载 mounted ---
+ * @param name 目录名
+ * @param taskId 校验 taskId，App 模式下无效
+ */
+export function unmount(name: string, taskId?: number): boolean {
+    if (!mounts[name]) {
+        return true;
+    }
+    if (taskId && (mounts[name].taskId !== taskId)) {
+        return false;
+    }
+    delete mounts[name];
+    return true;
+}
 
 export async function getContent(path: string, options?: {
     'start'?: number;
@@ -104,8 +155,12 @@ export async function getContent(path: string, options?: BufferEncoding | {
         return null;
     }
     else if (path.startsWith('/mounted/')) {
-        // --- TODO ---
-        return null;
+        const name = getMountName(path);
+        const hanlder = mounts[name];
+        if (!hanlder) {
+            return null;
+        }
+        return hanlder.getContent?.(path.slice(9 + name.length), options) ?? null;
     }
     else if (path.startsWith('/package/')) {
         if (!options.files) {
@@ -150,7 +205,7 @@ export async function getContent(path: string, options?: BufferEncoding | {
  * @param data 要写入的内容
  * @param options 选项
  */
-export async function putContent(path: string, data: string | Buffer, options: {
+export async function putContent(path: string, data: string | Blob, options: {
     'encoding'?: BufferEncoding | null;
     'mode'?: string | number;
     'flag'?: string | number;
@@ -166,8 +221,12 @@ export async function putContent(path: string, data: string | Buffer, options: {
         return false;
     }
     else if (path.startsWith('/mounted/')) {
-        // --- TODO ---
-        return false;
+        const name = getMountName(path);
+        const hanlder = mounts[name];
+        if (!hanlder) {
+            return false;
+        }
+        return hanlder.putContent?.(path.slice(9 + name.length), data, options) ?? false;
     }
     else if (path.startsWith('/package/')) {
         return false;
@@ -212,8 +271,12 @@ export async function readLink(path: string, options?: BufferEncoding | {
         return null;
     }
     else if (path.startsWith('/mounted/')) {
-        // --- TODO ---
-        return null;
+        const name = getMountName(path);
+        const hanlder = mounts[name];
+        if (!hanlder) {
+            return null;
+        }
+        return hanlder.readLink?.(path.slice(9 + name.length), options) ?? null;
     }
     else if (path.startsWith('/package/')) {
         return null;
@@ -252,8 +315,16 @@ export async function symlink(filePath: string, linkPath: string, options: {
         return false;
     }
     else if (filePath.startsWith('/mounted/')) {
-        // --- TODO ---
-        return false;
+        const fname = getMountName(filePath);
+        const lname = getMountName(linkPath);
+        if (fname !== lname) {
+            return false;
+        }
+        const hanlder = mounts[fname];
+        if (!hanlder) {
+            return false;
+        }
+        return hanlder.symlink?.(filePath.slice(9 + fname.length), linkPath.slice(9 + fname.length), options) ?? false;
     }
     else if (filePath.startsWith('/package/')) {
         return false;
@@ -290,8 +361,12 @@ export async function unlink(path: string, options: {
         return false;
     }
     else if (path.startsWith('/mounted/')) {
-        // --- TODO ---
-        return false;
+        const name = getMountName(path);
+        const hanlder = mounts[name];
+        if (!hanlder) {
+            return false;
+        }
+        return hanlder.unlink?.(path.slice(9 + name.length), options) ?? false;
     }
     else if (path.startsWith('/package/')) {
         return false;
@@ -409,8 +484,12 @@ export async function stats(path: string, options: {
         return null;
     }
     else if (path.startsWith('/mounted/')) {
-        // --- TODO ---
-        return null;
+        const name = getMountName(path);
+        const hanlder = mounts[name];
+        if (!hanlder) {
+            return null;
+        }
+        return hanlder.stats?.(path.slice(9 + name.length), options) ?? false;
     }
     else if (path.startsWith('/package/')) {
         if (!options.files) {
@@ -549,8 +628,12 @@ export async function mkdir(path: string, mode: number = 0o755, options: {
         return false;
     }
     else if (path.startsWith('/mounted/')) {
-        // --- TODO ---
-        return false;
+        const name = getMountName(path);
+        const hanlder = mounts[name];
+        if (!hanlder) {
+            return false;
+        }
+        return hanlder.mkdir?.(path.slice(9 + name.length), mode, options) ?? false;
     }
     else if (path.startsWith('/package/')) {
         return false;
@@ -584,8 +667,12 @@ export async function rmdir(path: string, options: {
         return false;
     }
     else if (path.startsWith('/mounted/')) {
-        // --- TODO ---
-        return false;
+        const name = getMountName(path);
+        const hanlder = mounts[name];
+        if (!hanlder) {
+            return false;
+        }
+        return hanlder.rmdir?.(path.slice(9 + name.length), options) ?? false;
     }
     else if (path.startsWith('/package/')) {
         return false;
@@ -654,8 +741,12 @@ export async function chmod(path: string, mod: string | number, options: {
         return false;
     }
     else if (path.startsWith('/mounted/')) {
-        // --- TODO ---
-        return false;
+        const name = getMountName(path);
+        const hanlder = mounts[name];
+        if (!hanlder) {
+            return false;
+        }
+        return hanlder.chmod?.(path.slice(9 + name.length), mod, options) ?? false;
     }
     else if (path.startsWith('/package/')) {
         return false;

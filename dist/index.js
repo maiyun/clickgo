@@ -79,6 +79,9 @@ class AbstractBoot {
     onLauncherFolderNameChanged() {
         return;
     }
+    onHashChanged() {
+        return;
+    }
     onRuntimeFileLoad() {
         return;
     }

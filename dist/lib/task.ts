@@ -266,7 +266,7 @@ export async function run(url: string, opt: types.ITaskRunOptions = {}): Promise
     const unblock = opt.unblock ? tool.clone(opt.unblock) : [];
     const unblockSys = [
         'require',
-        '__awaiter', 'eval', 'Math', 'Array', 'Blob', 'Error', 'Infinity', 'parseInt', 'parseFloat', 'Promise', 'Date', 'JSON', 'fetch'
+        '__awaiter', 'eval', 'Math', 'Array', 'Blob', 'Error', 'Infinity', 'parseInt', 'parseFloat', 'Promise', 'Date', 'JSON', 'fetch', 'Number'
     ];
     for (const name of unblockSys) {
         if (unblock.includes(name)) {
@@ -306,8 +306,65 @@ export async function run(url: string, opt: types.ITaskRunOptions = {}): Promise
     }
     // --- console ---
     invoke.console = {
-        log: function(message?: any, ...optionalParams: any[]) {
-            console.log(message, ...optionalParams);
+        assert: function(condition?: boolean, ...data: any[]): void {
+            console.assert(condition, ...data);
+        },
+        clear: function(): void {
+            console.clear();
+        },
+        count: function(label?: string): void {
+            console.count(label);
+        },
+        countReset: function(label?: string): void {
+            console.countReset(label);
+        },
+        debug: function(...data: any[]): void {
+            console.debug(...data);
+        },
+        dir: function(item?: any, options?: any): void {
+            console.dir(item, options);
+        },
+        dirxml: function(...data: any[]): void {
+            console.dirxml(...data);
+        },
+        error: function(...data: any[]): void {
+            console.error(...data);
+        },
+        group: function(...data: any[]): void {
+            console.group(...data);
+        },
+        groupCollapsed: function(...data: any[]): void {
+            console.groupCollapsed(...data);
+        },
+        groupEnd: function(): void {
+            console.groupEnd();
+        },
+        info: function(...data: any[]): void {
+            console.info(...data);
+        },
+        log: function(...data: any[]): void {
+            console.log(...data);
+        },
+        table: function(tabularData?: any, properties?: string[]): void {
+            console.table(tabularData, properties);
+        },
+        time: function(label?: string): void {
+            console.time(label);
+        },
+        timeEnd: function(label?: string): void {
+            console.timeEnd(label);
+        },
+        timeLog: function(label?: string, ...data: any[]): void {
+            console.timeLog(label, ...data);
+        },
+        timeStamp: function(label?: string): void {
+            console.timeStamp(label);
+        },
+        trace: function(...data: any[]): void {
+            console.trace(...data);
+        },
+        warn: function(...data: any[]): void {
+            console.warn(...data);
         }
     };
     // --- loader ---
@@ -616,7 +673,7 @@ export async function run(url: string, opt: types.ITaskRunOptions = {}): Promise
                 }
                 return fs.getContent(path, options);
             },
-            putContent: function(path: string, data: string | Buffer, options: any = {}) {
+            putContent: function(path: string, data: string | Blob, options: any = {}) {
                 if (!options.current) {
                     options.current = list[taskId].current;
                 }

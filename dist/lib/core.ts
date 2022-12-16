@@ -179,6 +179,12 @@ export abstract class AbstractApp {
         return;
     }
 
+    /** --- location hash 改变事件 --- */
+    public onHashChanged(hash: string): void | Promise<void>;
+    public onHashChanged(): void {
+        return;
+    }
+
 }
 
 /** --- CDN 地址 --- */
@@ -498,7 +504,7 @@ export function trigger(name: types.TGlobalEvent, taskId: number | string | bool
             if (typeof formId !== 'string') {
                 break;
             }
-            if (typeof taskId === 'number') {
+            if (typeof taskId !== 'string') {
                 taskId = taskId.toString();
             }
             (boot as any)[eventName](taskId, formId);
@@ -507,6 +513,20 @@ export function trigger(name: types.TGlobalEvent, taskId: number | string | bool
                 (t.class as any)?.[eventName](taskId, formId);
                 for (const fid in t.forms) {
                     t.forms[fid].vroot[eventName]?.(taskId, formId);
+                }
+            }
+            break;
+        }
+        case 'hashChanged': {
+            if (typeof taskId !== 'string') {
+                break;
+            }
+            (boot as any)[eventName](taskId);
+            for (const tid in task.list) {
+                const t = task.list[tid];
+                (t.class as any)?.[eventName](taskId);
+                for (const fid in t.forms) {
+                    t.forms[fid].vroot[eventName]?.(taskId);
                 }
             }
             break;
@@ -795,3 +815,7 @@ export function hash(hash: string, taskId?: number): boolean {
     window.location.hash = hash;
     return true;
 }
+
+window.addEventListener('hashchange', function() {
+    trigger('hashChanged', window.location.hash ? window.location.hash.slice(1) : '');
+});

@@ -20,6 +20,7 @@ import ctextFrm from './control/text/text';
 import cvflowFrm from './control/vflow/vflow';
 
 import eformFrm from './event/form/form';
+import eotherFrm from './event/other/other';
 import escreenFrm from './event/screen/screen';
 import etaskFrm from './event/task/task';
 
@@ -138,6 +139,10 @@ export default class extends clickgo.form.AbstractForm {
 
             case 'eform': {
                 frm = await eformFrm.create();
+                break;
+            }
+            case 'eother': {
+                frm = await eotherFrm.create();
                 break;
             }
             case 'escreen': {

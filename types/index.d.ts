@@ -83,7 +83,7 @@ export interface IAvailArea {
 }
 
 /** --- 全局事件类型 --- */
-export type TGlobalEvent = 'error' | 'screenResize' | 'configChanged' | 'formCreated' | 'formRemoved' | 'formTitleChanged' | 'formIconChanged' | 'formStateMinChanged' | 'formStateMaxChanged' | 'formShowChanged' | 'formFocused' | 'formBlurred' | 'formFlash' | 'taskStarted' | 'taskEnded' | 'launcherFolderNameChanged';
+export type TGlobalEvent = 'error' | 'screenResize' | 'configChanged' | 'formCreated' | 'formRemoved' | 'formTitleChanged' | 'formIconChanged' | 'formStateMinChanged' | 'formStateMaxChanged' | 'formShowChanged' | 'formFocused' | 'formBlurred' | 'formFlash' | 'taskStarted' | 'taskEnded' | 'launcherFolderNameChanged' | 'hashChanged';
 
 /** --- 现场下载 app 的参数 --- */
 export interface ICoreFetchAppOptions {
@@ -321,21 +321,64 @@ export interface IFormCreateCode {
 // --------- fs lib ---------
 // --------------------------
 
+export interface IMountHandler {
+    'taskId'?: number;
+    getContent?: (path: string, options?: BufferEncoding | {
+        'encoding'?: BufferEncoding;
+        'start'?: number;
+        'end'?: number;
+        'files'?: Record<string, Blob | string>;
+        'current'?: string;
+        'progress'?: (loaded: number, total: number) => void | Promise<void>;
+    }) => Promise<Blob | string | null>;
+    putContent?: (path: string, data: string | Blob, options?: {
+        'encoding'?: BufferEncoding | null;
+        'mode'?: string | number;
+        'flag'?: string | number;
+        'current'?: string;
+    }) => Promise<boolean>;
+    readLink?: (path: string, options?: BufferEncoding | {
+        'encoding'?: BufferEncoding;
+        /** --- 不以 / 结尾的路径 --- */
+        'current'?: string;
+    }) => Promise<string | null>;
+    symlink?: (filePath: string, linkPath: string, options?: {
+        'type'?: 'dir' | 'file' | 'junction';
+        'current'?: string;
+    }) => Promise<boolean>;
+    unlink?: (path: string, options?: {
+        'current'?: string;
+    }) => Promise<boolean>;
+    stats: (path: string, options?: {
+        'files'?: Record<string, Blob | string>;
+        'current'?: string;
+    }) => Promise<IStats | null>;
+    mkdir: (path: string, mode?: number, options?: {
+        'current'?: string;
+    }) => Promise<boolean>;
+    rmdir: (path: string, options?: {
+        'current'?: string;
+    }) => Promise<boolean>;
+    chmod: (path: string, mod: string | number, options?: {
+        'current'?: string;
+    }) => Promise<boolean>;
+}
+
 /** --- 文件/文件夹信息对象 --- */
 export interface IStats {
     isFile(): boolean;
     isDirectory(): boolean;
     isSymbolicLink(): boolean;
-    size: number;
-    blksize: number;
-    atimeMs: number;
-    mtimeMs: number;
-    ctimeMs: number;
-    birthtimeMs: number;
-    atime: Date;
-    mtime: Date;
-    ctime: Date;
-    birthtime: Date;
+    'size': number;
+    'blksize': number;
+    'atimeMs': number;
+    'mtimeMs': number;
+    'ctimeMs': number;
+    'birthtimeMs': number;
+    'atime': Date;
+    'mtime': Date;
+    'ctime': Date;
+    'birthtime': Date;
 }
 
 /** --- 目录下项目 ---  */
@@ -343,7 +386,7 @@ export interface IDirent {
     isFile(): boolean;
     isDirectory(): boolean;
     isSymbolicLink(): boolean;
-    name: string;
+    'name': string;
 }
 
 // --------------------------

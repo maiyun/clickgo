@@ -137,6 +137,12 @@ export abstract class AbstractBoot {
         return;
     }
 
+    /** --- location hash 改变事件 --- */
+    public onHashChanged(hash: string): void | Promise<void>;
+    public onHashChanged(): void {
+        return;
+    }
+
     /** --- 环境文件准备加载时的事件 --- */
     public onRuntimeFileLoad(url: string): void | Promise<void>;
     public onRuntimeFileLoad(): void {

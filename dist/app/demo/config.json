@@ -60,6 +60,8 @@
         "/form/event/form/form.css",
         "/form/event/form/form.js",
         "/form/event/form/form.xml",
+        "/form/event/other/other.js",
+        "/form/event/other/other.xml",
         "/form/event/screen/screen.js",
         "/form/event/screen/screen.xml",
         "/form/event/task/task.js",

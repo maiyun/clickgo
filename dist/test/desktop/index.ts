@@ -40,6 +40,7 @@ class Boot extends clickgo.AbstractBoot {
                     'path': clickgo.task.list[taskId].path
                 },
                 {
+                    'id': '1',
                     'name': 'folder1',
                     'list': [
                         {
@@ -55,6 +56,7 @@ class Boot extends clickgo.AbstractBoot {
                     ]
                 },
                 {
+                    'id': '2',
                     'name': 'folder2',
                     'list': [
                         {
