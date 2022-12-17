@@ -2,10 +2,14 @@
 
 # 3.1.4-dev13
 
-[+] Added checkPermission method in task library.  
+[+] Add checkPermission method in task library.  
 [+] Add location hash related functions.  
 [\*] Fix the tab can not be dragged and scrolled under the mobile.  
 [\*] Fix the progress event is not called in the fetchApp method.  
+[\*] Optimize the console object.  
+[\*] Unblock add a "Number" object by default.  
+[\*] Fixed the form can still be maximized and restored when double-clicking when max is disabled.  
+[\*] Fix the problem of displaying multiple dialog levels.
 
 # 3.1.3-dev12
 
