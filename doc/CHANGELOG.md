@@ -1,5 +1,12 @@
 # Changelog
 
+# 3.1.4-dev13
+
+[+] Added checkPermission method in task library.  
+[+] Add location hash related functions.  
+[\*] Fix the tab can not be dragged and scrolled under the mobile.  
+[\*] Fix the progress event is not called in the fetchApp method.  
+
 # 3.1.3-dev12
 
 [\*] A lot.

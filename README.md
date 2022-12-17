@@ -19,7 +19,7 @@ Load the module loader first, and then load it using the module loader.
 **index.html**
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/@litert/loader@3.4.1/dist/loader.min.js?path=index&npm={'clickgo':'3.0.7-dev8'}"></script>
+<script src="https://cdn.jsdelivr.net/npm/@litert/loader@3.4.3/dist/loader.min.js?path=index&npm={'clickgo':'3.1.4-dev13'}"></script>
 ```
 
 **index.js**
