@@ -1,6 +1,5 @@
 <form width="200" height="200" title="From path">
-    <layout align-v="center" align-h="center" direction="v" gutter="10" style="flex: 1; width: 0;">
-        <label>Haha!</label>
-        <button @click="dialogResult = dialogResult ? '' : 'Done'" style="padding: 10px;">{{dialogResult ? 'Remove' : 'Set'}} dialogResult</button>
+    <layout align-v="center" align-h="center" style="flex: 1; width: 0;">
+        <label>Create form path</label>
     </layout>
 </form>

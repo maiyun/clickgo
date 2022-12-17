@@ -121,6 +121,19 @@ const methods: Record<string, {
             }
         }
     },
+    // --- 是否允许最大化 ---
+    'cg-maximizable': {
+        'once': false,
+        handler: function(t: string, val: boolean): void {
+            if (isImmersion || !form) {
+                return;
+            }
+            if (!verifyToken(t)) {
+                return;
+            }
+            form.setMaximizable(val);
+        }
+    },
 
     // --- 无需校验码 ---
 

@@ -107,6 +107,18 @@ const methods = {
             }
         }
     },
+    'cg-maximizable': {
+        'once': false,
+        handler: function (t, val) {
+            if (isImmersion || !form) {
+                return;
+            }
+            if (!verifyToken(t)) {
+                return;
+            }
+            form.setMaximizable(val);
+        }
+    },
     'cg-ping': {
         'once': false,
         handler: function (t) {

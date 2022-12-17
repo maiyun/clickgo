@@ -832,6 +832,13 @@ export async function run(url: string, opt: types.ITaskRunOptions = {}): Promise
                 }
                 await native.size(width, height);
             },
+            maximizable: async function(val: boolean): Promise<void> {
+                const rtn = await checkPermission('native.form', false, undefined, taskId);
+                if (!rtn[0]) {
+                    return;
+                }
+                await native.maximizable(val);
+            },
             ping: function(val: string): Promise<string> {
                 return native.ping(val);
             },

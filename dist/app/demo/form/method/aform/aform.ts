@@ -1,4 +1,5 @@
 import * as clickgo from 'clickgo';
+import sdFrm from './sd';
 
 export default class extends clickgo.form.AbstractForm {
 
@@ -31,7 +32,7 @@ export default class extends clickgo.form.AbstractForm {
     }
 
     public async sshowDialog(): Promise<void> {
-        const frm = await this.createForm('test');
+        const frm = await sdFrm.create();
         if (typeof frm === 'number') {
             return;
         }

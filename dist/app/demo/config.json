@@ -68,6 +68,8 @@
         "/form/event/task/task.xml",
         "/form/method/aform/aform.js",
         "/form/method/aform/aform.xml",
+        "/form/method/aform/sd.js",
+        "/form/method/aform/sd.xml",
         "/form/method/aform/test.xml",
         "/form/method/core/core.js",
         "/form/method/core/core.xml",

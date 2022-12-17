@@ -733,6 +733,15 @@ function run(url, opt = {}) {
                         yield native.size(width, height);
                     });
                 },
+                maximizable: function (val) {
+                    return __awaiter(this, void 0, void 0, function* () {
+                        const rtn = yield checkPermission('native.form', false, undefined, taskId);
+                        if (!rtn[0]) {
+                            return;
+                        }
+                        yield native.maximizable(val);
+                    });
+                },
                 ping: function (val) {
                     return native.ping(val);
                 },

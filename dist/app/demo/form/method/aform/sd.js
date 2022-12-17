@@ -10,49 +10,19 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const clickgo = require("clickgo");
-const sd_1 = require("./sd");
-class default_1 extends clickgo.form.AbstractForm {
+class Sd extends clickgo.form.AbstractForm {
     constructor() {
         super(...arguments);
-        this.fid = '0';
-        this.sendValue = 'sendValue';
-        this.test = 'A';
         this.dr = '';
     }
-    ccreateForm() {
+    newDialog() {
         return __awaiter(this, void 0, void 0, function* () {
-            const frm = yield this.createForm('test');
-            if (typeof frm === 'number') {
-                return;
-            }
-            frm.show();
-        });
-    }
-    ssend() {
-        this.send(parseInt(this.fid), {
-            'key': this.sendValue
-        });
-    }
-    hhide() {
-        return __awaiter(this, void 0, void 0, function* () {
-            this.hide();
-            yield clickgo.tool.sleep(1000);
-            this.show();
-        });
-    }
-    sshowDialog() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const frm = yield sd_1.default.create();
+            const frm = yield Sd.create();
             if (typeof frm === 'number') {
                 return;
             }
             this.dr = yield frm.showDialog();
         });
     }
-    onMounted() {
-        this.watch('test', () => __awaiter(this, void 0, void 0, function* () {
-            yield clickgo.form.dialog('test changed.');
-        }));
-    }
 }
-exports.default = default_1;
+exports.default = Sd;

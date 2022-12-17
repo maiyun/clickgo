@@ -126,7 +126,9 @@ class default_1 extends clickgo.control.AbstractControl {
                     this.maxVMethod(true);
                 }
                 else {
-                    this.maxMethod();
+                    if (this.propBoolean('max')) {
+                        this.maxMethod();
+                    }
                 }
             });
         }
@@ -807,6 +809,11 @@ class default_1 extends clickgo.control.AbstractControl {
                     this.stateMaxData = false;
                     this.emit('update:stateMax', false);
                 }, false, this.formId);
+                this.watch('max', () => {
+                    clickgo.native.maximizable(this.propBoolean('max'));
+                }, {
+                    'immediate': true
+                });
             }
         }
         if (this.parent.controlName !== 'root') {

@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.isMax = exports.ping = exports.size = exports.restore = exports.min = exports.max = exports.invoke = exports.getListenerList = exports.clear = exports.off = exports.once = exports.on = exports.getToken = void 0;
+exports.isMax = exports.ping = exports.maximizable = exports.size = exports.restore = exports.min = exports.max = exports.invoke = exports.getListenerList = exports.clear = exports.off = exports.once = exports.on = exports.getToken = void 0;
 const clickgo = require("../clickgo");
 const token = (Math.random() * 100000000000000 * (100 + Math.round(Math.random() * (999 - 100)))).toString(32);
 function getToken() {
@@ -146,6 +146,12 @@ function size(width, height) {
     });
 }
 exports.size = size;
+function maximizable(val) {
+    return __awaiter(this, void 0, void 0, function* () {
+        yield invoke('cg-maximizable', token, val);
+    });
+}
+exports.maximizable = maximizable;
 function ping(val) {
     return __awaiter(this, void 0, void 0, function* () {
         return invoke('cg-ping', val);

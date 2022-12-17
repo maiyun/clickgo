@@ -385,9 +385,9 @@ export abstract class AbstractForm {
      * --- 显示独占的窗体 ---
      */
     public async showDialog(): Promise<string> {
-        this.topMost = true;
-        this.show();
         task.list[this.taskId].runtime.dialogFormIds.push(this.formId);
+        this.show();
+        this.topMost = true;
         return new Promise((resolve) => {
             (this as any).cgDialogCallback = () => {
                 resolve(this.dialogResult);

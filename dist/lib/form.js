@@ -255,9 +255,9 @@ class AbstractForm {
     }
     showDialog() {
         return __awaiter(this, void 0, void 0, function* () {
-            this.topMost = true;
-            this.show();
             task.list[this.taskId].runtime.dialogFormIds.push(this.formId);
+            this.show();
+            this.topMost = true;
             return new Promise((resolve) => {
                 this.cgDialogCallback = () => {
                     resolve(this.dialogResult);

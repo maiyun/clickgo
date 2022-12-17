@@ -188,7 +188,9 @@ export default class extends clickgo.control.AbstractControl {
                     this.maxVMethod(true);
                 }
                 else {
-                    this.maxMethod();
+                    if (this.propBoolean('max')) {
+                        this.maxMethod();
+                    }
                 }
             });
         }
@@ -424,7 +426,7 @@ export default class extends clickgo.control.AbstractControl {
                 // --- 不能用 isNativeSync，因为沉浸式也要最小化 ---
                 if (clickgo.isNative() && (this.formId === 1) && !clickgo.hasFrame()) {
                     // --- 最小化不要管是否是沉浸式，沉浸式也要实体最小化 ---
-                    clickgo.native.min();
+                    clickgo.native.min() as any;
                 }
                 else {
                     this.element.dataset.cgMin = '';
@@ -546,7 +548,7 @@ export default class extends clickgo.control.AbstractControl {
                     };
                 }
                 if (this.isNativeSync) {
-                    clickgo.native.max();
+                    clickgo.native.max() as any;
                 }
                 else {
                     this.element.dataset.cgMax = '';
@@ -585,7 +587,7 @@ export default class extends clickgo.control.AbstractControl {
             if (event.go) {
                 // --- 变窗体样子 ---
                 if (this.isNativeSync) {
-                    clickgo.native.restore();
+                    clickgo.native.restore() as any;
                 }
                 else {
                     this.element.removeAttribute('data-cg-max');
@@ -617,7 +619,7 @@ export default class extends clickgo.control.AbstractControl {
                 if (this.isNativeSync) {
                     // --- mac 要多处理一步 ---
                     if (clickgo.getPlatform() === 'darwin') {
-                        clickgo.native.size(this.widthData, this.heightData);
+                        clickgo.native.size(this.widthData, this.heightData) as any;
                     }
                 }
                 else {
@@ -976,6 +978,13 @@ export default class extends clickgo.control.AbstractControl {
                     this.stateMaxData = false;
                     this.emit('update:stateMax', false);
                 }, false, this.formId);
+                // --- 同步情况下，需要同步 max 状态到 native ---
+                this.watch('max', () => {
+                    // --- 设置实体窗口是否可以最大化（主要应对的就是双击最大化，毕竟没有最大化按钮） ---
+                    clickgo.native.maximizable(this.propBoolean('max')) as any;
+                }, {
+                    'immediate': true
+                });
             }
         }
 

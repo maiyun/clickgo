@@ -209,6 +209,10 @@ export async function size(width: number, height: number): Promise<void> {
     await invoke('cg-set-size', token, width, height);
 }
 
+export async function maximizable(val: boolean): Promise<void> {
+    await invoke('cg-maximizable', token, val);
+}
+
 // --- 以下无需 token ---
 
 export async function ping(val: string): Promise<string> {
