@@ -11,6 +11,7 @@ export default class extends clickgo.control.AbstractControl {
         'gesture': string[] | string;
 
         'modelValue': string;
+        'placeholder': string;
         'selectionStart': number | string;
         'selectionEnd': number | string;
         'scrollLeft': number | string;
@@ -24,6 +25,7 @@ export default class extends clickgo.control.AbstractControl {
             'gesture': [],
 
             'modelValue': '',
+            'placeholder': '',
             'selectionStart': 0,
             'selectionEnd': 0,
             'scrollLeft': 0,
@@ -43,6 +45,9 @@ export default class extends clickgo.control.AbstractControl {
     public color = '';
 
     public padding = '';
+
+    /** --- 如果 background 颜色比较深，则此值设定为 true --- */
+    public darkbg = false;
 
     // --- 其他 ---
 
@@ -412,6 +417,8 @@ export default class extends clickgo.control.AbstractControl {
                 }
                 case 'background': {
                     this.background = v;
+                    const hsl = clickgo.tool.rgb2hsl(v);
+                    this.darkbg = hsl[2] < 0.5 ? true : false;
                     break;
                 }
                 case 'color': {

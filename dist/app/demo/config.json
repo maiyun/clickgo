@@ -109,5 +109,8 @@
         "/res/zip.svg",
         "/app.js",
         "/global.css"
-    ]
+    ],
+    "map": {
+        "~c/": "/form/control/"
+    }
 }

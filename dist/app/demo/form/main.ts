@@ -1,7 +1,7 @@
 import * as clickgo from 'clickgo';
 import * as types from '~/types/index';
 
-import cbuttonFrm from './control/button/button';
+import cbuttonFrm from '~c/button/button';
 import ccheckFrm from './control/check/check';
 import cdialogFrm from './control/dialog/dialog';
 import cfileFrm from './control/file/file';

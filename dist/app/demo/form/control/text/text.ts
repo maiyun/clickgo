@@ -52,6 +52,8 @@ export default class extends clickgo.form.AbstractForm {
 
     public background = undefined;
 
+    public phcolor = undefined;
+
     public get textBorder(): any {
         switch (this.border) {
             case 'underline': {

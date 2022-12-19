@@ -10,7 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const clickgo = require("clickgo");
-const button_1 = require("./control/button/button");
+const button_1 = require("~c/button/button");
 const check_1 = require("./control/check/check");
 const dialog_1 = require("./control/dialog/dialog");
 const file_1 = require("./control/file/file");

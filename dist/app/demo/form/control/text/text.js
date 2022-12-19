@@ -35,6 +35,7 @@ class default_1 extends clickgo.form.AbstractForm {
         this.fontSize = 12;
         this.border = 'solid';
         this.background = undefined;
+        this.phcolor = undefined;
     }
     get textBorder() {
         switch (this.border) {

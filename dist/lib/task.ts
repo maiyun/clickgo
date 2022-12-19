@@ -1016,6 +1016,9 @@ export async function run(url: string, opt: types.ITaskRunOptions = {}): Promise
             escapeHTML: function(html: string): string {
                 return tool.escapeHTML(html);
             },
+            rgb2hsl: function(rgb: string): number[] {
+                return tool.rgb2hsl(rgb);
+            },
             request: function(url: string, opt: types.IRequestOptions): Promise<null | any> {
                 return tool.request(url, opt);
             },
@@ -1115,13 +1118,17 @@ export async function run(url: string, opt: types.ITaskRunOptions = {}): Promise
     }
     let expo: any = [];
     try {
+        const map = {
+            'clickgo': '/invoke/clickgo'
+        };
+        if (app.config.map) {
+            Object.assign(map, app.config.map);
+        }
         expo = loader.require('/app.js', app.files, {
             'dir': '/',
             'invoke': invoke,
             'preprocess': preprocess,
-            'map': {
-                'clickgo': '/invoke/clickgo'
-            }
+            'map': map
         })[0];
     }
     catch (e: any) {

@@ -129,6 +129,8 @@ export interface IAppConfig {
 
     /** --- 将要加载的非 js 文件列表，打包为 cga 模式下此配置可省略 --- */
     'files'?: string[];
+    /** --- import 的目录映射关系 --- */
+    'map'?: Record<string, string>;
 }
 
 // -------------------------

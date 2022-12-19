@@ -55,6 +55,9 @@ class default_1 extends clickgo.form.AbstractForm {
     escapeHTML() {
         clickgo.form.dialog(clickgo.tool.escapeHTML(this.purifyTxt)).catch((e) => { throw e; });
     }
+    rgb2hsl() {
+        clickgo.form.dialog(JSON.stringify(clickgo.tool.rgb2hsl('9,105,218'))).catch((e) => { throw e; });
+    }
     parseUrl() {
         clickgo.form.dialog(JSON.stringify(clickgo.tool.parseUrl(this.url))).catch((e) => { throw e; });
     }

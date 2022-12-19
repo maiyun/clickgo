@@ -61,6 +61,12 @@ export default class extends clickgo.form.AbstractForm {
         ).catch((e) => { throw e; });
     }
 
+    public rgb2hsl(): void {
+        clickgo.form.dialog(
+            JSON.stringify(clickgo.tool.rgb2hsl('9,105,218'))
+        ).catch((e) => { throw e; });
+    }
+
     public parseUrl(): void {
         clickgo.form.dialog(
             JSON.stringify(clickgo.tool.parseUrl(this.url))

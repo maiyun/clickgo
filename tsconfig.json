@@ -11,7 +11,8 @@
         "declarationMap": false,
         "newLine": "LF",
         "paths": {
-            "~/*": ["./*"]
+            "~/*": ["./*"],
+            "~c/*": ["./dist/app/demo/form/control/*"]
         },
         "resolveJsonModule": true,
         "typeRoots": [

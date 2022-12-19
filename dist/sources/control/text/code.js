@@ -21,6 +21,7 @@ class default_1 extends clickgo.control.AbstractControl {
             'wrap': true,
             'gesture': [],
             'modelValue': '',
+            'placeholder': '',
             'selectionStart': 0,
             'selectionEnd': 0,
             'scrollLeft': 0,
@@ -30,6 +31,7 @@ class default_1 extends clickgo.control.AbstractControl {
         this.background = '';
         this.color = '';
         this.padding = '';
+        this.darkbg = false;
         this.isFocus = false;
         this.value = '';
         this.size = {
@@ -355,6 +357,8 @@ class default_1 extends clickgo.control.AbstractControl {
                 }
                 case 'background': {
                     this.background = v;
+                    const hsl = clickgo.tool.rgb2hsl(v);
+                    this.darkbg = hsl[2] < 0.5 ? true : false;
                     break;
                 }
                 case 'color': {

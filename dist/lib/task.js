@@ -902,6 +902,9 @@ function run(url, opt = {}) {
                 escapeHTML: function (html) {
                     return tool.escapeHTML(html);
                 },
+                rgb2hsl: function (rgb) {
+                    return tool.rgb2hsl(rgb);
+                },
                 request: function (url, opt) {
                     return tool.request(url, opt);
                 },
@@ -992,13 +995,17 @@ function run(url, opt = {}) {
         }
         let expo = [];
         try {
+            const map = {
+                'clickgo': '/invoke/clickgo'
+            };
+            if (app.config.map) {
+                Object.assign(map, app.config.map);
+            }
             expo = loader.require('/app.js', app.files, {
                 'dir': '/',
                 'invoke': invoke,
                 'preprocess': preprocess,
-                'map': {
-                    'clickgo': '/invoke/clickgo'
-                }
+                'map': map
             })[0];
         }
         catch (e) {

@@ -574,6 +574,47 @@ export function escapeHTML(html: string): string {
 }
 
 /**
+ * --- rgb 字符串转 hsl 数组 ---
+ * @param rgb rgb(x, x, x) 或直接 x,x,x
+ */
+export function rgb2hsl(rgb: string): number[] {
+    if (rgb.includes('(')) {
+        const match = /[0-9., ]+/.exec(rgb);
+        if (!match) {
+            return [0, 0, 0];
+        }
+        rgb = match[0];
+    }
+    const arr = rgb.split(',');
+    const [r, g, b] = arr.map(v => parseInt(v) / 255);
+
+    const max = Math.max(r, g, b);
+    const min = Math.min(r, g, b);
+    const diff = max - min;
+
+    let h = 0 ;
+    const l = (max + min) / 2;
+    const s2 = 1 - Math.abs(max + min - 1);
+    const s = s2 ? (diff / s2) : 0;
+
+    switch (min) {
+        case max:
+            h = 0 ;
+            break;
+        case r:
+            h = (60 * ((b - g) / diff)) + 180;
+            break;
+        case g:
+            h = (60 * ((r - b) / diff)) + 300;
+            break;
+        case b:
+            h = (60 * ((g - r) / diff)) + 60;
+            break;
+    }
+    return [h, s, l] ;
+}
+
+/**
  * --- 发起一个网络请求 ---
  * @param url 网址
  * @param opt 选项
