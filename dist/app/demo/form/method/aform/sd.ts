@@ -5,10 +5,7 @@ class Sd extends clickgo.form.AbstractForm {
     public dr = '';
 
     public async newDialog(): Promise<void> {
-        const frm = await Sd.create();
-        if (typeof frm === 'number') {
-            return;
-        }
+        const frm = await clickgo.form.create(Sd);
         this.dr = await frm.showDialog();
     }
 

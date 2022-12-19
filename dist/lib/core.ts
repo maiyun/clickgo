@@ -73,13 +73,7 @@ export abstract class AbstractApp {
      * --- 以某个窗体进行正式启动这个 app（入口 form），不启动则任务也启动失败 ---
      * @param form 窗体对象
      */
-    public run(form: form.AbstractForm | number): void {
-        if (typeof form === 'number') {
-            // --- 报错 ---
-            const msg = 'Application run error, Form creation failed (' + form.toString() + ').';
-            trigger('error', this.taskId, 0, new Error(msg), msg);
-            return;
-        }
+    public run(form: form.AbstractForm): void {
         form.show();
     }
 

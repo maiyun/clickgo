@@ -46,167 +46,162 @@ class default_1 extends clickgo.form.AbstractForm {
     constructor() {
         super(...arguments);
         this.ntab = '';
-        this.test = 0;
-    }
-    onMounted() {
-        return __awaiter(this, void 0, void 0, function* () {
-            while (true) {
-                yield clickgo.tool.sleep(2000);
-                this.test += 1;
-            }
-        });
     }
     openForm(name) {
         return __awaiter(this, void 0, void 0, function* () {
-            let frm = 0;
+            let frm;
             switch (name) {
                 case 'cblock': {
-                    frm = yield this.createForm('control/block/block');
+                    frm = yield clickgo.form.create('control/block/block', undefined, {
+                        'path': this.filename
+                    });
                     break;
                 }
                 case 'cbutton': {
-                    frm = yield button_1.default.create();
+                    frm = yield clickgo.form.create(button_1.default);
                     break;
                 }
                 case 'ccheck': {
-                    frm = yield check_1.default.create();
+                    frm = yield clickgo.form.create(check_1.default);
                     break;
                 }
                 case 'cdialog': {
-                    frm = yield dialog_1.default.create();
+                    frm = yield clickgo.form.create(dialog_1.default);
                     break;
                 }
                 case 'cfile': {
-                    frm = yield file_1.default.create();
+                    frm = yield clickgo.form.create(file_1.default);
                     break;
                 }
                 case 'cform': {
-                    frm = yield form_1.default.create();
+                    frm = yield clickgo.form.create(form_1.default);
                     break;
                 }
                 case 'cvflow': {
-                    frm = yield vflow_1.default.create();
+                    frm = yield clickgo.form.create(vflow_1.default);
                     break;
                 }
                 case 'cimg': {
-                    frm = yield this.createForm('control/img/img');
+                    frm = yield clickgo.form.create('control/img/img', undefined, {
+                        'path': this.filename
+                    });
                     break;
                 }
                 case 'clabel': {
-                    frm = yield this.createForm('control/label/label');
+                    frm = yield clickgo.form.create('control/label/label', undefined, {
+                        'path': this.filename
+                    });
                     break;
                 }
                 case 'clist': {
-                    frm = yield list_1.default.create();
+                    frm = yield clickgo.form.create(list_1.default);
                     break;
                 }
                 case 'cloading': {
-                    frm = yield this.createForm('control/loading/loading');
+                    frm = yield clickgo.form.create('control/loading/loading', undefined, {
+                        'path': this.filename
+                    });
                     break;
                 }
                 case 'cmarquee': {
-                    frm = yield marquee_1.default.create();
+                    frm = yield clickgo.form.create(marquee_1.default);
                     break;
                 }
                 case 'cmenu': {
-                    frm = yield menu_1.default.create();
+                    frm = yield clickgo.form.create(menu_1.default);
                     break;
                 }
                 case 'cmonaco': {
-                    frm = yield monaco_1.default.create();
+                    frm = yield clickgo.form.create(monaco_1.default);
                     break;
                 }
                 case 'cflow': {
-                    frm = yield flow_1.default.create();
+                    frm = yield clickgo.form.create(flow_1.default);
                     break;
                 }
                 case 'cproperty': {
-                    frm = yield property_1.default.create();
+                    frm = yield clickgo.form.create(property_1.default);
                     break;
                 }
                 case 'cradio': {
-                    frm = yield radio_1.default.create();
+                    frm = yield clickgo.form.create(radio_1.default);
                     break;
                 }
                 case 'cscroll': {
-                    frm = yield scroll_1.default.create();
+                    frm = yield clickgo.form.create(scroll_1.default);
                     break;
                 }
                 case 'cselect': {
-                    frm = yield select_1.default.create();
+                    frm = yield clickgo.form.create(select_1.default);
                     break;
                 }
                 case 'ctab': {
-                    frm = yield tab_1.default.create();
+                    frm = yield clickgo.form.create(tab_1.default);
                     break;
                 }
                 case 'ctext': {
-                    frm = yield text_1.default.create();
+                    frm = yield clickgo.form.create(text_1.default);
                     break;
                 }
                 case 'eform': {
-                    frm = yield form_2.default.create();
+                    frm = yield clickgo.form.create(form_2.default);
                     break;
                 }
                 case 'eother': {
-                    frm = yield other_1.default.create();
+                    frm = yield clickgo.form.create(other_1.default);
                     break;
                 }
                 case 'escreen': {
-                    frm = yield screen_1.default.create();
+                    frm = yield clickgo.form.create(screen_1.default);
                     break;
                 }
                 case 'etask': {
-                    frm = yield task_1.default.create();
+                    frm = yield clickgo.form.create(task_1.default);
                     break;
                 }
                 case 'aform': {
-                    frm = yield aform_1.default.create();
+                    frm = yield clickgo.form.create(aform_1.default);
                     break;
                 }
                 case 'mcore': {
-                    frm = yield core_1.default.create();
+                    frm = yield clickgo.form.create(core_1.default);
                     break;
                 }
                 case 'mdom': {
-                    frm = yield dom_1.default.create();
+                    frm = yield clickgo.form.create(dom_1.default);
                     break;
                 }
                 case 'mform': {
-                    frm = yield form_3.default.create();
+                    frm = yield clickgo.form.create(form_3.default);
                     break;
                 }
                 case 'mfs': {
-                    frm = yield fs_1.default.create();
+                    frm = yield clickgo.form.create(fs_1.default);
                     break;
                 }
                 case 'mnative': {
-                    frm = yield native_1.default.create();
+                    frm = yield clickgo.form.create(native_1.default);
                     break;
                 }
                 case 'msystem': {
-                    frm = yield system_1.default.create();
+                    frm = yield clickgo.form.create(system_1.default);
                     break;
                 }
                 case 'mtask': {
-                    frm = yield task_2.default.create();
+                    frm = yield clickgo.form.create(task_2.default);
                     break;
                 }
                 case 'mtheme': {
-                    frm = yield theme_1.default.create();
+                    frm = yield clickgo.form.create(theme_1.default);
                     break;
                 }
                 case 'mtool': {
-                    frm = yield tool_1.default.create();
+                    frm = yield clickgo.form.create(tool_1.default);
                     break;
                 }
-                case 'mzip': {
-                    frm = yield zip_1.default.create();
-                    break;
+                default: {
+                    frm = yield clickgo.form.create(zip_1.default);
                 }
-            }
-            if (typeof frm === 'number') {
-                return;
             }
             frm.show();
         });

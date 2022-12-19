@@ -17,10 +17,7 @@ class Sd extends clickgo.form.AbstractForm {
     }
     newDialog() {
         return __awaiter(this, void 0, void 0, function* () {
-            const frm = yield Sd.create();
-            if (typeof frm === 'number') {
-                return;
-            }
+            const frm = yield clickgo.form.create(Sd);
             this.dr = yield frm.showDialog();
         });
     }

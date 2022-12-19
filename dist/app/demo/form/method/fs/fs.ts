@@ -42,13 +42,10 @@ export default class extends clickgo.form.AbstractForm {
                 if (content instanceof Blob) {
                     content = await clickgo.tool.blob2Text(content);
                 }
-                const f = await testFrm.create({
+                const f = await clickgo.form.create(testFrm, {
                     'title': this.val[0].slice(this.val[0].lastIndexOf('/') + 1),
                     'content': content
                 });
-                if (typeof f === 'number') {
-                    return;
-                }
                 f.show();
                 return;
             }

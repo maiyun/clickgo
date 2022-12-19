@@ -11,14 +11,6 @@ export default class extends clickgo.form.AbstractForm {
 
     public dr = '';
 
-    public async ccreateForm(): Promise<void> {
-        const frm = await this.createForm('test');
-        if (typeof frm === 'number') {
-            return;
-        }
-        frm.show();
-    }
-
     public ssend(): void {
         this.send(parseInt(this.fid), {
             'key': this.sendValue
@@ -32,10 +24,7 @@ export default class extends clickgo.form.AbstractForm {
     }
 
     public async sshowDialog(): Promise<void> {
-        const frm = await sdFrm.create();
-        if (typeof frm === 'number') {
-            return;
-        }
+        const frm = await clickgo.form.create(sdFrm);
         this.dr = await frm.showDialog();
     }
 

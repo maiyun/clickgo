@@ -81,89 +81,6 @@ const info: {
 /** --- 窗体的抽象类 --- */
 export abstract class AbstractForm {
 
-    /**
-     * --- 创建窗体工厂函数 ---
-     * @param data 要传递的对象
-     * @param layout 是否使用此参数替换 layout 值
-     */
-    public static async create(data?: Record<string, any>, layout?: string): Promise<AbstractForm | number> {
-        const frm: AbstractForm = new (this as any)();
-        /** --- 要挂载的 vue 参数 --- */
-        const code: types.IFormCreateCode = {
-            'data': {},
-            'methods': {},
-            'computed': {},
-
-            beforeCreate: (frm as any).onBeforeCreate,
-            created: function(this: types.IVue) {
-                this.onCreated();
-            },
-            beforeMount: function(this: types.IVue) {
-                this.onBeforeMount();
-            },
-            mounted: function(this: types.IVue, data?: Record<string, any>) {
-                // await this.$nextTick();
-                // --- form 不用 nextTick，因为全部处理完后才会主动调用本方法 ---
-                this.onMounted(data);
-            },
-            beforeUpdate: function(this: types.IVue) {
-                this.onBeforeUpdate();
-            },
-            updated: async function(this: types.IVue) {
-                await this.$nextTick();
-                this.onUpdated();
-            },
-            beforeUnmount: function(this: types.IVue) {
-                this.onBeforeUnmount();
-            },
-            unmounted: async function(this: types.IVue) {
-                await this.$nextTick();
-                this.onUnmounted();
-            }
-        };
-        /** --- class 对象类的属性列表 --- */
-        const cdata = Object.entries(frm);
-        for (const item of cdata) {
-            if (item[0] === 'access') {
-                // --- access 属性不放在 data 当中 ---
-
-                continue;
-            }
-            code.data![item[0]] = item[1];
-        }
-        if (!layout) {
-            const l = task.list[frm.taskId].app.files[frm.filename.slice(0, -2) + 'xml'];
-            if (typeof l !== 'string') {
-                return 0;
-            }
-            layout = l;
-        }
-        const prot = tool.getClassPrototype(frm);
-        code.methods = prot.method;
-        code.computed = prot.access;
-        // --- 窗体样式 ---
-        let style: string | undefined = undefined;
-        const fstyle = task.list[frm.taskId].app.files[frm.filename.slice(0, -2) + 'css'];
-        if (typeof fstyle === 'string') {
-            style = fstyle;
-        }
-        const fid = await create({
-            'code': code,
-            'layout': layout,
-            'style': style,
-
-            'path': frm.filename.slice(0, frm.filename.lastIndexOf('/')),
-            'data': data,
-            'taskId': frm.taskId
-        });
-        if (fid > 0) {
-            return task.list[frm.taskId].forms[fid].vroot as any;
-        }
-        else {
-            return fid;
-        }
-    }
-
     /** --- 当前文件路径 --- */
     public get filename(): string {
         // --- require 时系统自动在继承类中重写本函数 ---
@@ -304,26 +221,6 @@ export abstract class AbstractForm {
 
     // --- 以下为窗体有，但 control 没有 ---
 
-    /**
-     * --- 无 js 文件的窗体创建 ---
-     * @param path 包内相对于本窗体的路径或包内绝对路径，不含扩展名
-     * @param data 要传递的值
-     */
-    public async createForm(path: string, data?: Record<string, any>): Promise<AbstractForm | number> {
-        path = tool.urlResolve(this.filename, path);
-        const taskId = this.taskId;
-        const cls = class extends AbstractForm {
-            public get filename(): string {
-                return path + '.js';
-            }
-
-            public get taskId(): number {
-                return taskId;
-            }
-        };
-        return cls.create(data);
-    }
-
     /** --- 是否是置顶 --- */
     public get topMost(): boolean {
         // --- 将在初始化时系统自动重写本函数 ---
@@ -362,8 +259,7 @@ export abstract class AbstractForm {
      */
     public show(): void {
         // --- 创建成功的窗体，可以直接显示 ---
-        const v = this as any;
-        v.$refs.form.$data.isShow = true;
+        const v = this as unknown as types.IVue;
         if (this._firstShow) {
             this._firstShow = false;
             // --- 将窗体居中 ---
@@ -378,6 +274,9 @@ export abstract class AbstractForm {
             }
             v.$refs.form.$data.isShow = true;
             changeFocus(this.formId);
+        }
+        else {
+            v.$refs.form.$data.isShow = true;
         }
     }
 
@@ -1937,63 +1836,112 @@ function getForm(taskId: number, formId: number): types.IForm | null {
 }
 
 /**
- * --- 创建一个窗体，App 模式下无效 ---
- * @param opt 创建窗体的配置对象
+ * --- 创建一个窗体 ---
+ * @param cls 路径字符串或 AbstractForm 类
+ * @param data 要传递的对象
+ * @param opt 其他替换选项
+ * @param taskId App 模式下无效
  */
-export async function create(opt: types.IFormCreateOptions): Promise<number> {
-    if (!opt.taskId) {
-        return -1;
+export async function create<T extends AbstractForm>(
+    cls: string | (new () => T),
+    data?: Record<string, any>,
+    opt: {
+        'layout'?: string;
+        'style'?: string;
+        /** --- cls 为 string 时，path 参数才有效，为基准路径，如果不以 / 结尾则以最后一个 / 字符为准 --- */
+        'path'?: string;
+    } = {},
+    taskId?: number
+): Promise<T> {
+    if (!taskId) {
+        const err = new Error('form.create: -1');
+        core.trigger('error', 0, 0, err, err.message);
+        throw err;
     }
     /** --- 当前的 task 对象 --- */
-    const t = task.list[opt.taskId];
+    const t = task.list[taskId];
     if (!t) {
-        return -2;
+        const err = new Error('form.create: -2');
+        core.trigger('error', 0, 0, err, err.message);
+        throw err;
     }
+    /** --- 布局内容 --- */
+    let layout: string = '';
+    if (opt.layout) {
+        layout = opt.layout;
+    }
+    /** --- 样式内容 --- */
+    let style: string = '';
+    if (opt.style) {
+        style = opt.style;
+    }
+    /** --- 样式前缀 --- */
+    let prep = '';
+    /** --- 文件在包内的路径，不以 / 结尾 --- */
+    let filename = '';
+    if (typeof cls === 'string') {
+        filename = tool.urlResolve(opt.path ?? '/', cls);
+        if (!layout) {
+            const l = t.app.files[filename + '.xml'];
+            if (typeof l !== 'string') {
+                const err = new Error('form.create: -3');
+                core.trigger('error', 0, 0, err, err.message);
+                throw err;
+            }
+            layout = l;
+        }
+        if (!style) {
+            const s = t.app.files[filename + '.css'];
+            if (typeof s === 'string') {
+                style = s;
+            }
+        }
+        cls = class extends AbstractForm {
+            public get filename(): string {
+                return filename + '.js';
+            }
+
+            public get taskId(): number {
+                return t.id;
+            }
+        } as (new () => T);
+    }
+
     // ---  申请 formId ---
     const formId = ++info.lastId;
-    // --- 获取要定义的控件列表 ---
-    const components = control.buildComponents(t.id, formId, opt.path ?? '');
-    if (!components) {
-        return -3;
+    /** --- 要新建的窗体类对象 --- */
+    const frm = new cls();
+    if (!filename) {
+        filename = frm.filename;
     }
-    // --- 准备相关变量 ---
-    let data: Record<string, any> = {};
-    let access: Record<string, any> = {};
-    let methods: Record<string, any> | undefined = undefined;
-    let computed: Record<string, any> = {};
-    let beforeCreate: (() => void) | undefined = undefined;
-    let created: (() => void) | undefined = undefined;
-    let beforeMount: (() => void) | undefined = undefined;
-    let mounted: ((data?: Record<string, any>) => void | Promise<void>) | undefined = undefined;
-    let beforeUpdate: (() => void) | undefined = undefined;
-    let updated: (() => void) | undefined = undefined;
-    let beforeUnmount: (() => void) | undefined = undefined;
-    let unmounted: (() => void) | undefined = undefined;
-    if (opt.code) {
-        data = opt.code.data ?? {};
-        access = opt.code.access ?? {};
-        methods = opt.code.methods;
-        computed = opt.code.computed ?? {};
-        beforeCreate = opt.code.beforeCreate;
-        created = opt.code.created;
-        beforeMount = opt.code.beforeMount;
-        mounted = opt.code.mounted;
-        beforeUpdate = opt.code.beforeUpdate;
-        updated = opt.code.updated;
-        beforeUnmount = opt.code.beforeUnmount;
-        unmounted = opt.code.unmounted;
+    const lio = filename.lastIndexOf('/');
+    const path = filename.slice(0, lio);
+    // --- 样式 ---
+    if (!style) {
+        const s = t.app.files[filename.slice(0, -2) + 'css'];
+        if (typeof s === 'string') {
+            style = s;
+        }
     }
-    // --- 应用样式表 ---
-    let style = '';
-    let prep = '';
-    if (opt.style) {
+    if (style) {
         // --- 将 style 中的 tag 标签转换为 class，如 button 变为 .tag-button，然后将 class 进行标准程序，添加 prep 进行区分隔离 ---
-        const r = tool.stylePrepend(opt.style);
+        const r = tool.stylePrepend(style);
         prep = r.prep;
-        style = await tool.styleUrl2DataUrl(opt.path ?? '/', r.style, t.app.files);
+        style = await tool.styleUrl2DataUrl(path + '/', r.style, t.app.files);
     }
-    // --- 要创建的 form 的 layout 所有标签增加 cg 前缀，并增加新的 class 为 tag-xxx ---
-    let layout = tool.purify(opt.layout);
+
+    // --- 布局 ---
+    if (!layout) {
+        const l = t.app.files[frm.filename.slice(0, -2) + 'xml'];
+        if (typeof l !== 'string') {
+            const err = new Error('form.create: -4');
+            core.trigger('error', 0, 0, err, err.message);
+            throw err;
+        }
+        layout = l;
+    }
+    // --- 纯净化 ---
+    layout = tool.purify(layout);
     // --- 标签增加 cg- 前缀，增加 class 为 tag-xxx ---
     layout = tool.layoutAddTagClassAndReTagName(layout, true);
     // --- 给所有控件传递窗体的 focus 信息 ---
@@ -2001,7 +1949,7 @@ export async function create(opt: types.IFormCreateOptions): Promise<number> {
         'include': [/^cg-.+/]
     });
     // --- 给 layout 的 class 增加前置 ---
-    const prepList = ['cg-task' + opt.taskId.toString() + '_'];
+    const prepList = ['cg-task' + t.id.toString() + '_'];
     if (prep !== '') {
         prepList.push(prep);
     }
@@ -2017,17 +1965,37 @@ export async function create(opt: types.IFormCreateOptions): Promise<number> {
     if (layout.includes('<teleport')) {
         layout = tool.teleportGlue(layout, formId);
     }
-    // --- 插入 HTML 到 Element ---
-    elements.list.insertAdjacentHTML('beforeend', `<div class="cg-form-wrap" data-form-id="${formId.toString()}" data-task-id="${opt.taskId.toString()}"></div>`);
-    elements.popList.insertAdjacentHTML('beforeend', `<div data-form-id="${formId.toString()}" data-task-id="${opt.taskId.toString()}"></div>`);
-    // --- 获取刚才的 form wrap element 对象 ---
-    const el: HTMLElement = elements.list.children.item(elements.list.children.length - 1) as HTMLElement;
-    // --- 创建窗体对象 ---
+    // --- 获取要定义的控件列表 ---
+    const components = control.buildComponents(t.id, formId, path);
+    if (!components) {
+        const err = new Error('form.create: -5');
+        core.trigger('error', 0, 0, err, err.message);
+        throw err;
+    }
+    /** --- class 对象类的属性列表 --- */
+    const idata: Record<string, any> = {};
+    const cdata = Object.entries(frm);
+    for (const item of cdata) {
+        if (item[0] === 'access') {
+            // --- access 属性不放在 data 当中 ---
+            continue;
+        }
+        idata[item[0]] = item[1];
+    }
+    idata._formFocus = false;
+    // --- 判断是否要与 native 实体窗体大小同步 ---
+    if (clickgo.isNative() && (formId === 1) && !clickgo.isImmersion() && !clickgo.hasFrame()) {
+        idata.isNativeSync = true;
+    }
+    /** --- class 对象的方法和 getter/setter 列表 --- */
+    const prot = tool.getClassPrototype(frm);
+    const methods = prot.method;
+    const computed = prot.access;
     computed.formId = {
         get: function(): number {
             return formId;
         },
-        set: function(): void {
+        set: function(this: types.IVue): void {
             notify({
                 'title': 'Error',
                 'content': `The software tries to modify the system variable "formId".\nPath: ${this.filename}`,
@@ -2036,12 +2004,11 @@ export async function create(opt: types.IFormCreateOptions): Promise<number> {
             return;
         }
     };
-    data._formFocus = false;
     computed.path = {
         get: function(): string {
-            return opt.path ?? '';
+            return path;
         },
-        set: function(): void {
+        set: function(this: types.IVue): void {
             notify({
                 'title': 'Error',
                 'content': `The software tries to modify the system variable "path".\nPath: ${this.filename}`,
@@ -2054,7 +2021,7 @@ export async function create(opt: types.IFormCreateOptions): Promise<number> {
         get: function(): string {
             return prep;
         },
-        set: function(): void {
+        set: function(this: types.IVue): void {
             notify({
                 'title': 'Error',
                 'content': `The software tries to modify the system variable "cgPrep".\nPath: ${this.filename}`,
@@ -2064,9 +2031,9 @@ export async function create(opt: types.IFormCreateOptions): Promise<number> {
         }
     };
     // --- 是否在顶层的窗体 ---
-    data._topMost = false;
+    idata._topMost = false;
     computed.topMost = {
-        get: function(): number {
+        get: function(this: types.IVue): number {
             return this._topMost;
         },
         set: function(v: boolean): void {
@@ -2092,15 +2059,16 @@ export async function create(opt: types.IFormCreateOptions): Promise<number> {
             return;
         }
     };
-    // --- 判断是否要与 native 实体窗体大小同步 ---
-    if (clickgo.isNative() && (formId === 1) && !clickgo.isImmersion() && !clickgo.hasFrame()) {
-        data.isNativeSync = true;
-    }
-    // --- 挂载 style ---
+
+    // --- 插入 dom ---
+    elements.list.insertAdjacentHTML('beforeend', `<div class="cg-form-wrap" data-form-id="${formId.toString()}" data-task-id="${t.id.toString()}"></div>`);
+    elements.popList.insertAdjacentHTML('beforeend', `<div data-form-id="${formId.toString()}" data-task-id="${t.id.toString()}"></div>`);
     if (style) {
-        // --- 窗体的 style ---
-        dom.pushStyle(opt.taskId, style, 'form', formId);
+        dom.pushStyle(t.id, style, 'form', formId);
     }
+    /** --- form wrap element 对象 --- */
+    const el: HTMLElement = elements.list.children.item(elements.list.children.length - 1) as HTMLElement;
+
     // --- 创建 app 对象 ---
     const rtn: {
         'vapp': types.IVApp;
@@ -2109,17 +2077,21 @@ export async function create(opt: types.IFormCreateOptions): Promise<number> {
         const vapp = clickgo.vue.createApp({
             'template': layout.replace(/^<cg-form/, '<cg-form ref="form"'),
             'data': function() {
-                return tool.clone(data);
+                return tool.clone(idata);
             },
             'methods': methods,
             'computed': computed,
 
-            'beforeCreate': beforeCreate,
+            'beforeCreate': (frm as any).onBeforeCreate,
             'created': function(this: types.IVue) {
-                this.access = tool.clone(access);
-                created?.call(this);
+                if ((frm as any).access) {
+                    this.access = tool.clone((frm as any).access);
+                }
+                this.onCreated();
             },
-            'beforeMount': beforeMount,
+            'beforeMount': function(this: types.IVue) {
+                this.onBeforeMount();
+            },
             'mounted': async function(this: types.IVue) {
                 await this.$nextTick();
                 // --- 判断是否有 icon，对 icon 进行第一次读取 ---
@@ -2138,10 +2110,20 @@ export async function create(opt: types.IFormCreateOptions): Promise<number> {
                     'vroot': this
                 });
             },
-            'beforeUpdate': beforeUpdate,
-            'updated': updated,
-            'beforeUnmount': beforeUnmount,
-            'unmounted': unmounted
+            'beforeUpdate': function(this: types.IVue) {
+                this.onBeforeUpdate();
+            },
+            'updated': async function(this: types.IVue) {
+                await this.$nextTick();
+                this.onUpdated();
+            },
+            'beforeUnmount': function(this: types.IVue) {
+                this.onBeforeUnmount();
+            },
+            'unmounted': async function(this: types.IVue) {
+                await this.$nextTick();
+                this.onUnmounted();
+            }
         });
         vapp.config.errorHandler = function(err: Error, vm: types.IVue, info: string): void {
             notify({
@@ -2161,10 +2143,10 @@ export async function create(opt: types.IFormCreateOptions): Promise<number> {
         catch (err: any) {
             notify({
                 'title': 'Runtime Error',
-                'content': `Message: ${err.message}\nTask id: ${opt.taskId}\nForm id: ${formId}`,
+                'content': `Message: ${err.message}\nTask id: ${t.id}\nForm id: ${formId}`,
                 'type': 'danger'
             });
-            core.trigger('error', opt.taskId, formId, err, err.message + '(-2)');
+            core.trigger('error', t.id, formId, err, err.message);
         }
     });
     // --- 创建 form 信息对象 ---
@@ -2177,38 +2159,36 @@ export async function create(opt: types.IFormCreateOptions): Promise<number> {
     t.forms[formId] = nform;
     // --- 执行 mounted ---
     await tool.sleep(34);
-    if (mounted) {
+    try {
+        await frm.onMounted.call(rtn.vroot, data ?? {});
+    }
+    catch (err: any) {
+        // --- 窗体创建失败，做垃圾回收 ---
+        core.trigger('error', rtn.vroot.taskId, rtn.vroot.formId, err, 'Create form mounted error: -7.');
+        delete t.forms[formId];
         try {
-            await mounted.call(rtn.vroot, opt.data);
+            rtn.vapp.unmount();
         }
         catch (err: any) {
-            // --- 窗体创建失败，做垃圾回收 ---
-            core.trigger('error', rtn.vroot.taskId, rtn.vroot.formId, err, 'Create form mounted error.');
-            delete t.forms[formId];
-            try {
-                rtn.vapp.unmount();
-            }
-            catch (err: any) {
-                const msg = `Message: ${err.message}\nTask id: ${opt.taskId}\nForm id: ${formId}\nFunction: form.create, unmount.`;
-                notify({
-                    'title': 'Form Unmount Error',
-                    'content': msg,
-                    'type': 'danger'
-                });
-                console.log('Form Unmount Error', msg, err);
-            }
-            rtn.vapp._container.remove();
-            elements.popList.querySelector('[data-form-id="' + rtn.vroot.formId + '"]')?.remove();
-            dom.clearWatchStyle(rtn.vroot.formId);
-            dom.clearWatchProperty(rtn.vroot.formId);
-            native.clear(formId, t.id);
-            // --- 移除 style ---
-            dom.removeStyle(rtn.vroot.taskId, 'form', rtn.vroot.formId);
-            return -8;
+            const msg = `Message: ${err.message}\nTask id: ${t.id}\nForm id: ${formId}\nFunction: form.create, unmount.`;
+            notify({
+                'title': 'Form Unmount Error',
+                'content': msg,
+                'type': 'danger'
+            });
+            console.log('Form Unmount Error', msg, err);
         }
+        rtn.vapp._container.remove();
+        elements.popList.querySelector('[data-form-id="' + rtn.vroot.formId + '"]')?.remove();
+        dom.clearWatchStyle(rtn.vroot.formId);
+        dom.clearWatchProperty(rtn.vroot.formId);
+        native.clear(formId, t.id);
+        // --- 移除 style ---
+        dom.removeStyle(rtn.vroot.taskId, 'form', rtn.vroot.formId);
+        throw err;
     }
     // --- 触发 formCreated 事件 ---
-    core.trigger('formCreated', opt.taskId, formId, rtn.vroot.$refs.form.title, rtn.vroot.$refs.form.iconDataUrl);
+    core.trigger('formCreated', t.id, formId, rtn.vroot.$refs.form.title, rtn.vroot.$refs.form.iconDataUrl);
     // --- 同步的窗体先进行同步一下 ---
     if (rtn.vroot.isNativeSync) {
         await native.invoke('cg-set-size', native.getToken(), rtn.vroot.$refs.form.$el.offsetWidth, rtn.vroot.$refs.form.$el.offsetHeight);
@@ -2217,7 +2197,7 @@ export async function create(opt: types.IFormCreateOptions): Promise<number> {
             rtn.vroot.$refs.form.setPropData('height', window.innerHeight);
         });
     }
-    return formId;
+    return rtn.vroot as any;
 }
 
 /**
@@ -2231,6 +2211,7 @@ export function dialog(opt: string | types.IFormDialogOptions): Promise<string> 
                 'content': opt
             };
         }
+        const filename = tool.urlResolve(opt.path ?? '/', './tmp' + (Math.random() * 100000000000000).toFixed() + '.js');
         const nopt = opt;
         const taskId = nopt.taskId;
         if (!taskId) {
@@ -2248,6 +2229,10 @@ export function dialog(opt: string | types.IFormDialogOptions): Promise<string> 
         }
         const cls = class extends AbstractForm {
             public buttons = nopt.buttons;
+
+            public get filename(): string {
+                return filename;
+            }
 
             public get taskId(): number {
                 return taskId;
@@ -2267,7 +2252,10 @@ export function dialog(opt: string | types.IFormDialogOptions): Promise<string> 
                 }
             }
         };
-        cls.create(undefined, `<form title="${nopt.title ?? 'dialog'}" min="false" max="false" resize="false" height="0" width="0" border="${nopt.title ? 'normal' : 'plain'}" direction="v"><dialog :buttons="buttons" @select="select"${nopt.direction ? ` direction="${nopt.direction}"` : ''}>${nopt.content}</dialog></form>`).then((frm) => {
+        create(cls, undefined, {
+            'layout': `<form title="${nopt.title ?? 'dialog'}" min="false" max="false" resize="false" height="0" width="0" border="${nopt.title ? 'normal' : 'plain'}" direction="v"><dialog :buttons="buttons" @select="select"${nopt.direction ? ` direction="${nopt.direction}"` : ''}>${nopt.content}</dialog></form>`,
+            'style': nopt.style
+        }, t.id).then((frm) => {
             if (typeof frm === 'number') {
                 resolve('');
                 return;

@@ -74,10 +74,7 @@ class default_1 extends clickgo.form.AbstractForm {
                         yield clickgo.form.dialog('This file cannot be opened.');
                         return;
                     }
-                    const f = yield text_1.default.create();
-                    if (typeof f === 'number') {
-                        return;
-                    }
+                    const f = yield clickgo.form.create(text_1.default);
                     f.show();
                     this.send(f.formId, {
                         'title': this.val[0].slice(this.val[0].lastIndexOf('/') + 1),

@@ -33,6 +33,7 @@
             <teleport to="system">
                 <block ref="pop" style="border: solid 1px #000; background: #FFF; width: 200px; height: 100px; display: flex; justify-content: center; align-items: center;">refs.pop</block>
             </teleport>
+            <button @click="create" style="height: 30px;">create('test', undefined, { 'path': this.filename })</button>
             <label>Dialog result: {{dr}}.</label>
             <button @click="dialog" style="height: 30px;">dialog('Hello world!')</button>
             <button @click="dialogLong">dialog('long...')</button>

@@ -53,13 +53,10 @@ class default_1 extends clickgo.form.AbstractForm {
                     if (content instanceof Blob) {
                         content = yield clickgo.tool.blob2Text(content);
                     }
-                    const f = yield text_1.default.create({
+                    const f = yield clickgo.form.create(text_1.default, {
                         'title': this.val[0].slice(this.val[0].lastIndexOf('/') + 1),
                         'content': content
                     });
-                    if (typeof f === 'number') {
-                        return;
-                    }
                     f.show();
                     return;
                 }

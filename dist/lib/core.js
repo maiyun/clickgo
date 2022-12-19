@@ -51,11 +51,6 @@ class AbstractApp {
         });
     }
     run(form) {
-        if (typeof form === 'number') {
-            const msg = 'Application run error, Form creation failed (' + form.toString() + ').';
-            trigger('error', this.taskId, 0, new Error(msg), msg);
-            return;
-        }
         form.show();
     }
     onError() {

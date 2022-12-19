@@ -284,39 +284,6 @@ export interface IFormInfo {
     'focus': boolean;
 }
 
-/** --- 窗体创建选项 --- */
-export interface IFormCreateOptions {
-    'code'?: IFormCreateCode;
-    'layout': string;
-    'style'?: string;
-
-    /** --- 当前窗体的基准路径，不以 / 结尾，仅用作传值，App 内无法填写 --- */
-    'path'?: string;
-    /** --- 传递到 onMounted 的数据 --- */
-    'data'?: Record<string, any>;
-    /** --- APP 内无法填写 --- */
-    'taskId'?: number;
-}
-
-/** --- 窗体的 code 参数 --- */
-export interface IFormCreateCode {
-    'data'?: Record<string, any>;
-    'access'?: Record<string, any>;
-    'methods'?: Record<string, any>;
-    'computed'?: Record<string, {
-        'get'?: any;
-        'set'?: any;
-    }>;
-    'beforeCreate'?: any;
-    'created'?: any;
-    'beforeMount'?: any;
-    'mounted'?: any;
-    'beforeUpdate'?: any;
-    'updated'?: any;
-    'beforeUnmount'?: any;
-    'unmounted'?: any;
-}
-
 // --------------------------
 // --------- fs lib ---------
 // --------------------------
@@ -572,15 +539,19 @@ export interface IZipMetadata {
 
 /** --- Dialog 选项 --- */
 export interface IFormDialogOptions {
-    /** --- 当前的 taskId，App 模式下无效 --- */
-    'taskId'?: number;
-
     'title'?: string;
     'content': string;
     'buttons'?: string[];
     'direction'?: 'h' | 'v';
 
+    'style'?: string;
+    /** --- 路径基，以 / 结束或文件路径则以文件的基路径为准，可留空 --- */
+    'path'?: string;
+
     'select'?: (e: Event, button: string) => void;
+
+    /** --- 当前的 taskId，App 模式下无效 --- */
+    'taskId'?: number;
 }
 
 /** --- Confirm 选项 --- */

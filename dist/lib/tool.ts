@@ -680,6 +680,10 @@ export function urlResolve(from: string, to: string): string {
     return loader.urlResolve(from, to);
 }
 
+export function urlAtom(url: string): string {
+    return loader.urlAtom(url);
+}
+
 export function blob2Text(blob: Blob): Promise<string> {
     return loader.blob2Text(blob);
 }

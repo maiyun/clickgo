@@ -68,10 +68,7 @@ export default class extends clickgo.form.AbstractForm {
                     await clickgo.form.dialog('This file cannot be opened.');
                     return;
                 }
-                const f = await testFrm.create();
-                if (typeof f === 'number') {
-                    return;
-                }
+                const f = await clickgo.form.create(testFrm);
                 f.show();
                 this.send(f.formId, {
                     'title': this.val[0].slice(this.val[0].lastIndexOf('/') + 1),

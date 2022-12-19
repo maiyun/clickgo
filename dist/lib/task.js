@@ -537,6 +537,9 @@ function run(url, opt = {}) {
                 hidePop: function (pop) {
                     form.hidePop(pop);
                 },
+                create: function (cls, data, opt) {
+                    return form.create(cls, data, opt, taskId);
+                },
                 dialog: function (opt) {
                     if (typeof opt === 'string') {
                         opt = {
@@ -907,6 +910,9 @@ function run(url, opt = {}) {
                 },
                 urlResolve: function (from, to) {
                     return tool.urlResolve(from, to);
+                },
+                urlAtom: function (url) {
+                    return tool.urlAtom(url);
                 },
                 blob2Text: function (blob) {
                     return tool.blob2Text(blob);

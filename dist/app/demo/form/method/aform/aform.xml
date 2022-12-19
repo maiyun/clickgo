@@ -13,7 +13,6 @@
                 <label>test: {{test}}</label>
                 <button @click="test = test === 'A' ? 'B' : 'A'" style="height: 30px; flex: 1;">watch('test', () => { dialog })</button>
             </layout>
-            <button @click="ccreateForm" style="height: 30px;">createForm('test')</button>
             <button @click="topMost = !topMost" style="height: 30px;">topMost: {{topMost ? 'true' : 'false'}}</button>
             <layout gutter="10" align-v="center">
                 <label>Form ID:</label>

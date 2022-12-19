@@ -60,80 +60,6 @@ class AbstractForm {
         this._firstShow = true;
         this.dialogResult = '';
     }
-    static create(data, layout) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const frm = new this();
-            const code = {
-                'data': {},
-                'methods': {},
-                'computed': {},
-                beforeCreate: frm.onBeforeCreate,
-                created: function () {
-                    this.onCreated();
-                },
-                beforeMount: function () {
-                    this.onBeforeMount();
-                },
-                mounted: function (data) {
-                    this.onMounted(data);
-                },
-                beforeUpdate: function () {
-                    this.onBeforeUpdate();
-                },
-                updated: function () {
-                    return __awaiter(this, void 0, void 0, function* () {
-                        yield this.$nextTick();
-                        this.onUpdated();
-                    });
-                },
-                beforeUnmount: function () {
-                    this.onBeforeUnmount();
-                },
-                unmounted: function () {
-                    return __awaiter(this, void 0, void 0, function* () {
-                        yield this.$nextTick();
-                        this.onUnmounted();
-                    });
-                }
-            };
-            const cdata = Object.entries(frm);
-            for (const item of cdata) {
-                if (item[0] === 'access') {
-                    continue;
-                }
-                code.data[item[0]] = item[1];
-            }
-            if (!layout) {
-                const l = task.list[frm.taskId].app.files[frm.filename.slice(0, -2) + 'xml'];
-                if (typeof l !== 'string') {
-                    return 0;
-                }
-                layout = l;
-            }
-            const prot = tool.getClassPrototype(frm);
-            code.methods = prot.method;
-            code.computed = prot.access;
-            let style = undefined;
-            const fstyle = task.list[frm.taskId].app.files[frm.filename.slice(0, -2) + 'css'];
-            if (typeof fstyle === 'string') {
-                style = fstyle;
-            }
-            const fid = yield create({
-                'code': code,
-                'layout': layout,
-                'style': style,
-                'path': frm.filename.slice(0, frm.filename.lastIndexOf('/')),
-                'data': data,
-                'taskId': frm.taskId
-            });
-            if (fid > 0) {
-                return task.list[frm.taskId].forms[fid].vroot;
-            }
-            else {
-                return fid;
-            }
-        });
-    }
     get filename() {
         return '';
     }
@@ -205,21 +131,6 @@ class AbstractForm {
         }
         core.trigger(name, this.taskId, this.formId, param1, param2);
     }
-    createForm(path, data) {
-        return __awaiter(this, void 0, void 0, function* () {
-            path = tool.urlResolve(this.filename, path);
-            const taskId = this.taskId;
-            const cls = class extends AbstractForm {
-                get filename() {
-                    return path + '.js';
-                }
-                get taskId() {
-                    return taskId;
-                }
-            };
-            return cls.create(data);
-        });
-    }
     get topMost() {
         return false;
     }
@@ -237,7 +148,6 @@ class AbstractForm {
     }
     show() {
         const v = this;
-        v.$refs.form.$data.isShow = true;
         if (this._firstShow) {
             this._firstShow = false;
             const area = core.getAvailArea();
@@ -251,6 +161,9 @@ class AbstractForm {
             }
             v.$refs.form.$data.isShow = true;
             changeFocus(this.formId);
+        }
+        else {
+            v.$refs.form.$data.isShow = true;
         }
     }
     showDialog() {
@@ -1476,60 +1389,89 @@ function getForm(taskId, formId) {
     }
     return form;
 }
-function create(opt) {
-    var _a, _b, _c, _d, _e, _f;
+function create(cls, data, opt = {}, taskId) {
+    var _a, _b;
     return __awaiter(this, void 0, void 0, function* () {
-        if (!opt.taskId) {
-            return -1;
+        if (!taskId) {
+            const err = new Error('form.create: -1');
+            core.trigger('error', 0, 0, err, err.message);
+            throw err;
         }
-        const t = task.list[opt.taskId];
+        const t = task.list[taskId];
         if (!t) {
-            return -2;
+            const err = new Error('form.create: -2');
+            core.trigger('error', 0, 0, err, err.message);
+            throw err;
         }
-        const formId = ++info.lastId;
-        const components = control.buildComponents(t.id, formId, (_a = opt.path) !== null && _a !== void 0 ? _a : '');
-        if (!components) {
-            return -3;
-        }
-        let data = {};
-        let access = {};
-        let methods = undefined;
-        let computed = {};
-        let beforeCreate = undefined;
-        let created = undefined;
-        let beforeMount = undefined;
-        let mounted = undefined;
-        let beforeUpdate = undefined;
-        let updated = undefined;
-        let beforeUnmount = undefined;
-        let unmounted = undefined;
-        if (opt.code) {
-            data = (_b = opt.code.data) !== null && _b !== void 0 ? _b : {};
-            access = (_c = opt.code.access) !== null && _c !== void 0 ? _c : {};
-            methods = opt.code.methods;
-            computed = (_d = opt.code.computed) !== null && _d !== void 0 ? _d : {};
-            beforeCreate = opt.code.beforeCreate;
-            created = opt.code.created;
-            beforeMount = opt.code.beforeMount;
-            mounted = opt.code.mounted;
-            beforeUpdate = opt.code.beforeUpdate;
-            updated = opt.code.updated;
-            beforeUnmount = opt.code.beforeUnmount;
-            unmounted = opt.code.unmounted;
+        let layout = '';
+        if (opt.layout) {
+            layout = opt.layout;
         }
         let style = '';
-        let prep = '';
         if (opt.style) {
-            const r = tool.stylePrepend(opt.style);
-            prep = r.prep;
-            style = yield tool.styleUrl2DataUrl((_e = opt.path) !== null && _e !== void 0 ? _e : '/', r.style, t.app.files);
+            style = opt.style;
         }
-        let layout = tool.purify(opt.layout);
+        let prep = '';
+        let filename = '';
+        if (typeof cls === 'string') {
+            filename = tool.urlResolve((_a = opt.path) !== null && _a !== void 0 ? _a : '/', cls);
+            if (!layout) {
+                const l = t.app.files[filename + '.xml'];
+                if (typeof l !== 'string') {
+                    const err = new Error('form.create: -3');
+                    core.trigger('error', 0, 0, err, err.message);
+                    throw err;
+                }
+                layout = l;
+            }
+            if (!style) {
+                const s = t.app.files[filename + '.css'];
+                if (typeof s === 'string') {
+                    style = s;
+                }
+            }
+            cls = class extends AbstractForm {
+                get filename() {
+                    return filename + '.js';
+                }
+                get taskId() {
+                    return t.id;
+                }
+            };
+        }
+        const formId = ++info.lastId;
+        const frm = new cls();
+        if (!filename) {
+            filename = frm.filename;
+        }
+        const lio = filename.lastIndexOf('/');
+        const path = filename.slice(0, lio);
+        if (!style) {
+            const s = t.app.files[filename.slice(0, -2) + 'css'];
+            if (typeof s === 'string') {
+                style = s;
+            }
+        }
+        if (style) {
+            const r = tool.stylePrepend(style);
+            prep = r.prep;
+            style = yield tool.styleUrl2DataUrl(path + '/', r.style, t.app.files);
+        }
+        if (!layout) {
+            const l = t.app.files[frm.filename.slice(0, -2) + 'xml'];
+            if (typeof l !== 'string') {
+                const err = new Error('form.create: -4');
+                core.trigger('error', 0, 0, err, err.message);
+                throw err;
+            }
+            layout = l;
+        }
+        layout = tool.purify(layout);
         layout = tool.layoutAddTagClassAndReTagName(layout, true);
         layout = tool.layoutInsertAttr(layout, ':form-focus=\'formFocus\'', {
             'include': [/^cg-.+/]
         });
-        const prepList = ['cg-task' + opt.taskId.toString() + '_'];
+        const prepList = ['cg-task' + t.id.toString() + '_'];
         if (prep !== '') {
             prepList.push(prep);
         }
@@ -1538,9 +1480,27 @@ function create(opt) {
         if (layout.includes('<teleport')) {
             layout = tool.teleportGlue(layout, formId);
         }
-        exports.elements.list.insertAdjacentHTML('beforeend', `<div class="cg-form-wrap" data-form-id="${formId.toString()}" data-task-id="${opt.taskId.toString()}"></div>`);
-        exports.elements.popList.insertAdjacentHTML('beforeend', `<div data-form-id="${formId.toString()}" data-task-id="${opt.taskId.toString()}"></div>`);
-        const el = exports.elements.list.children.item(exports.elements.list.children.length - 1);
+        const components = control.buildComponents(t.id, formId, path);
+        if (!components) {
+            const err = new Error('form.create: -5');
+            core.trigger('error', 0, 0, err, err.message);
+            throw err;
+        }
+        const idata = {};
+        const cdata = Object.entries(frm);
+        for (const item of cdata) {
+            if (item[0] === 'access') {
+                continue;
+            }
+            idata[item[0]] = item[1];
+        }
+        idata._formFocus = false;
+        if (clickgo.isNative() && (formId === 1) && !clickgo.isImmersion() && !clickgo.hasFrame()) {
+            idata.isNativeSync = true;
+        }
+        const prot = tool.getClassPrototype(frm);
+        const methods = prot.method;
+        const computed = prot.access;
         computed.formId = {
             get: function () {
                 return formId;
@@ -1554,11 +1514,9 @@ function create(opt) {
                 return;
             }
         };
-        data._formFocus = false;
         computed.path = {
             get: function () {
-                var _a;
-                return (_a = opt.path) !== null && _a !== void 0 ? _a : '';
+                return path;
             },
             set: function () {
                 notify({
@@ -1582,7 +1540,7 @@ function create(opt) {
                 return;
             }
         };
-        data._topMost = false;
+        idata._topMost = false;
         computed.topMost = {
             get: function () {
                 return this._topMost;
@@ -1608,26 +1566,30 @@ function create(opt) {
                 return;
             }
         };
-        if (clickgo.isNative() && (formId === 1) && !clickgo.isImmersion() && !clickgo.hasFrame()) {
-            data.isNativeSync = true;
-        }
+        exports.elements.list.insertAdjacentHTML('beforeend', `<div class="cg-form-wrap" data-form-id="${formId.toString()}" data-task-id="${t.id.toString()}"></div>`);
+        exports.elements.popList.insertAdjacentHTML('beforeend', `<div data-form-id="${formId.toString()}" data-task-id="${t.id.toString()}"></div>`);
         if (style) {
-            dom.pushStyle(opt.taskId, style, 'form', formId);
+            dom.pushStyle(t.id, style, 'form', formId);
         }
+        const el = exports.elements.list.children.item(exports.elements.list.children.length - 1);
         const rtn = yield new Promise(function (resolve) {
             const vapp = clickgo.vue.createApp({
                 'template': layout.replace(/^<cg-form/, '<cg-form ref="form"'),
                 'data': function () {
-                    return tool.clone(data);
+                    return tool.clone(idata);
                 },
                 'methods': methods,
                 'computed': computed,
-                'beforeCreate': beforeCreate,
+                'beforeCreate': frm.onBeforeCreate,
                 'created': function () {
-                    this.access = tool.clone(access);
-                    created === null || created === void 0 ? void 0 : created.call(this);
+                    if (frm.access) {
+                        this.access = tool.clone(frm.access);
+                    }
+                    this.onCreated();
                 },
-                'beforeMount': beforeMount,
+                'beforeMount': function () {
+                    this.onBeforeMount();
+                },
                 'mounted': function () {
                     return __awaiter(this, void 0, void 0, function* () {
                         yield this.$nextTick();
@@ -1644,10 +1606,24 @@ function create(opt) {
                         });
                     });
                 },
-                'beforeUpdate': beforeUpdate,
-                'updated': updated,
-                'beforeUnmount': beforeUnmount,
-                'unmounted': unmounted
+                'beforeUpdate': function () {
+                    this.onBeforeUpdate();
+                },
+                'updated': function () {
+                    return __awaiter(this, void 0, void 0, function* () {
+                        yield this.$nextTick();
+                        this.onUpdated();
+                    });
+                },
+                'beforeUnmount': function () {
+                    this.onBeforeUnmount();
+                },
+                'unmounted': function () {
+                    return __awaiter(this, void 0, void 0, function* () {
+                        yield this.$nextTick();
+                        this.onUnmounted();
+                    });
+                }
             });
             vapp.config.errorHandler = function (err, vm, info) {
                 notify({
@@ -1666,10 +1642,10 @@ function create(opt) {
             catch (err) {
                 notify({
                     'title': 'Runtime Error',
-                    'content': `Message: ${err.message}\nTask id: ${opt.taskId}\nForm id: ${formId}`,
+                    'content': `Message: ${err.message}\nTask id: ${t.id}\nForm id: ${formId}`,
                     'type': 'danger'
                 });
-                core.trigger('error', opt.taskId, formId, err, err.message + '(-2)');
+                core.trigger('error', t.id, formId, err, err.message);
             }
         });
         const nform = {
@@ -1679,35 +1655,33 @@ function create(opt) {
         };
         t.forms[formId] = nform;
         yield tool.sleep(34);
-        if (mounted) {
+        try {
+            yield frm.onMounted.call(rtn.vroot, data !== null && data !== void 0 ? data : {});
+        }
+        catch (err) {
+            core.trigger('error', rtn.vroot.taskId, rtn.vroot.formId, err, 'Create form mounted error: -7.');
+            delete t.forms[formId];
             try {
-                yield mounted.call(rtn.vroot, opt.data);
+                rtn.vapp.unmount();
             }
             catch (err) {
-                core.trigger('error', rtn.vroot.taskId, rtn.vroot.formId, err, 'Create form mounted error.');
-                delete t.forms[formId];
-                try {
-                    rtn.vapp.unmount();
-                }
-                catch (err) {
-                    const msg = `Message: ${err.message}\nTask id: ${opt.taskId}\nForm id: ${formId}\nFunction: form.create, unmount.`;
-                    notify({
-                        'title': 'Form Unmount Error',
-                        'content': msg,
-                        'type': 'danger'
-                    });
-                    console.log('Form Unmount Error', msg, err);
-                }
-                rtn.vapp._container.remove();
-                (_f = exports.elements.popList.querySelector('[data-form-id="' + rtn.vroot.formId + '"]')) === null || _f === void 0 ? void 0 : _f.remove();
-                dom.clearWatchStyle(rtn.vroot.formId);
-                dom.clearWatchProperty(rtn.vroot.formId);
-                native.clear(formId, t.id);
-                dom.removeStyle(rtn.vroot.taskId, 'form', rtn.vroot.formId);
-                return -8;
+                const msg = `Message: ${err.message}\nTask id: ${t.id}\nForm id: ${formId}\nFunction: form.create, unmount.`;
+                notify({
+                    'title': 'Form Unmount Error',
+                    'content': msg,
+                    'type': 'danger'
+                });
+                console.log('Form Unmount Error', msg, err);
             }
+            rtn.vapp._container.remove();
+            (_b = exports.elements.popList.querySelector('[data-form-id="' + rtn.vroot.formId + '"]')) === null || _b === void 0 ? void 0 : _b.remove();
+            dom.clearWatchStyle(rtn.vroot.formId);
+            dom.clearWatchProperty(rtn.vroot.formId);
+            native.clear(formId, t.id);
+            dom.removeStyle(rtn.vroot.taskId, 'form', rtn.vroot.formId);
+            throw err;
         }
-        core.trigger('formCreated', opt.taskId, formId, rtn.vroot.$refs.form.title, rtn.vroot.$refs.form.iconDataUrl);
+        core.trigger('formCreated', t.id, formId, rtn.vroot.$refs.form.title, rtn.vroot.$refs.form.iconDataUrl);
         if (rtn.vroot.isNativeSync) {
             yield native.invoke('cg-set-size', native.getToken(), rtn.vroot.$refs.form.$el.offsetWidth, rtn.vroot.$refs.form.$el.offsetHeight);
             window.addEventListener('resize', function () {
@@ -1715,18 +1689,19 @@ function create(opt) {
                 rtn.vroot.$refs.form.setPropData('height', window.innerHeight);
             });
         }
-        return formId;
+        return rtn.vroot;
     });
 }
 exports.create = create;
 function dialog(opt) {
     return new Promise(function (resolve) {
-        var _a, _b, _c;
+        var _a, _b, _c, _d;
         if (typeof opt === 'string') {
             opt = {
                 'content': opt
             };
         }
+        const filename = tool.urlResolve((_a = opt.path) !== null && _a !== void 0 ? _a : '/', './tmp' + (Math.random() * 100000000000000).toFixed() + '.js');
         const nopt = opt;
         const taskId = nopt.taskId;
         if (!taskId) {
@@ -1740,12 +1715,15 @@ function dialog(opt) {
         }
         const locale = t.locale.lang || core.config.locale;
         if (nopt.buttons === undefined) {
-            nopt.buttons = [(_b = (_a = info.locale[locale]) === null || _a === void 0 ? void 0 : _a.ok) !== null && _b !== void 0 ? _b : info.locale['en'].ok];
+            nopt.buttons = [(_c = (_b = info.locale[locale]) === null || _b === void 0 ? void 0 : _b.ok) !== null && _c !== void 0 ? _c : info.locale['en'].ok];
         }
         const cls = class extends AbstractForm {
             constructor() {
                 super(...arguments);
                 this.buttons = nopt.buttons;
+            }
+            get filename() {
+                return filename;
             }
             get taskId() {
                 return taskId;
@@ -1765,7 +1743,10 @@ function dialog(opt) {
                 }
             }
         };
-        cls.create(undefined, `<form title="${(_c = nopt.title) !== null && _c !== void 0 ? _c : 'dialog'}" min="false" max="false" resize="false" height="0" width="0" border="${nopt.title ? 'normal' : 'plain'}" direction="v"><dialog :buttons="buttons" @select="select"${nopt.direction ? ` direction="${nopt.direction}"` : ''}>${nopt.content}</dialog></form>`).then((frm) => {
+        create(cls, undefined, {
+            'layout': `<form title="${(_d = nopt.title) !== null && _d !== void 0 ? _d : 'dialog'}" min="false" max="false" resize="false" height="0" width="0" border="${nopt.title ? 'normal' : 'plain'}" direction="v"><dialog :buttons="buttons" @select="select"${nopt.direction ? ` direction="${nopt.direction}"` : ''}>${nopt.content}</dialog></form>`,
+            'style': nopt.style
+        }, t.id).then((frm) => {
             if (typeof frm === 'number') {
                 resolve('');
                 return;

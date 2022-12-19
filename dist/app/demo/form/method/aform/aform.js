@@ -19,15 +19,6 @@ class default_1 extends clickgo.form.AbstractForm {
         this.test = 'A';
         this.dr = '';
     }
-    ccreateForm() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const frm = yield this.createForm('test');
-            if (typeof frm === 'number') {
-                return;
-            }
-            frm.show();
-        });
-    }
     ssend() {
         this.send(parseInt(this.fid), {
             'key': this.sendValue
@@ -42,10 +33,7 @@ class default_1 extends clickgo.form.AbstractForm {
     }
     sshowDialog() {
         return __awaiter(this, void 0, void 0, function* () {
-            const frm = yield sd_1.default.create();
-            if (typeof frm === 'number') {
-                return;
-            }
+            const frm = yield clickgo.form.create(sd_1.default);
             this.dr = yield frm.showDialog();
         });
     }

@@ -632,6 +632,17 @@ export async function run(url: string, opt: types.ITaskRunOptions = {}): Promise
             hidePop: function(pop?: HTMLElement): void {
                 form.hidePop(pop);
             },
+            create: function<T extends form.AbstractForm>(
+                cls: string | (new () => T),
+                data?: Record<string, any>,
+                opt?: {
+                    'layout'?: string;
+                    'style'?: string;
+                    'path'?: string;
+                }
+            ): Promise<T> {
+                return form.create(cls, data, opt, taskId);
+            },
             dialog: function(opt: string | types.IFormDialogOptions): Promise<string> {
                 if (typeof opt === 'string') {
                     opt = {
@@ -1013,6 +1024,9 @@ export async function run(url: string, opt: types.ITaskRunOptions = {}): Promise
             },
             urlResolve: function(from: string, to: string): string {
                 return tool.urlResolve(from, to);
+            },
+            urlAtom: function(url: string): string {
+                return tool.urlAtom(url);
             },
             blob2Text: function(blob: Blob): Promise<string> {
                 return tool.blob2Text(blob);

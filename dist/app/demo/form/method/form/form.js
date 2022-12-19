@@ -118,13 +118,12 @@ class default_1 extends clickgo.form.AbstractForm {
         }
         clickgo.form.showPop(e.currentTarget, this.refs.pop, 'v');
     }
-    createTop() {
+    create() {
         return __awaiter(this, void 0, void 0, function* () {
-            const frm = yield this.createForm('test');
-            if (typeof frm === 'number') {
-                return;
-            }
-            frm.topMost = true;
+            const frm = yield clickgo.form.create('test', undefined, {
+                'path': this.filename
+            });
+            frm.show();
         });
     }
     dialog() {

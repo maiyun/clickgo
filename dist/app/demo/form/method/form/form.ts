@@ -122,12 +122,11 @@ export default class extends clickgo.form.AbstractForm {
         clickgo.form.showPop(e.currentTarget as HTMLElement, this.refs.pop, 'v');
     }
 
-    public async createTop(): Promise<void> {
-        const frm = await this.createForm('test');
-        if (typeof frm === 'number') {
-            return;
-        }
-        frm.topMost = true;
+    public async create(): Promise<void> {
+        const frm = await clickgo.form.create('test', undefined, {
+            'path': this.filename
+        });
+        frm.show();
     }
 
     public async dialog(): Promise<void> {
