@@ -1,5 +1,13 @@
 # Changelog
 
+# 3.1.5-dev14
+
+[+] Add create of form library.  
+[+] Add urlAtom of tool library.  
+[+] Add rgb2hsl of tool library.  
+[+] Add placeholder of text control.  
+[+] Add map of app config.
+
 # 3.1.4-dev13
 
 [+] Add checkPermission method in task library.  
