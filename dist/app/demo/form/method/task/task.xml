@@ -28,6 +28,7 @@
                 <text v-model="tid" style="flex: 1; width: 0; height: 30px;"></text>
                 <button @click="get" style="height: 30px; padding: 0 10px;">get({{tid}})</button>
             </layout>
+            <button @click="getPermissions" style="height: 30px;">getPermissions({{tid}})</button>
             <button @click="getList" style="height: 30px;">getList()</button>
             <button @click="run" style="height: 30px;">run('/clickgo/app/demo/')</button>
             <button @click="checkPermission" style="height: 30px;">checkPermission('hash')</button>

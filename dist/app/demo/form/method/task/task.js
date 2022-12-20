@@ -88,7 +88,11 @@ class default_1 extends clickgo.form.AbstractForm {
     }
     get() {
         const r = clickgo.task.get(parseInt(this.tid));
-        clickgo.form.dialog(r ? JSON.stringify(r) : 'null').catch((e) => { throw e; });
+        clickgo.form.dialog(r ? JSON.stringify(r).replace(/(data:image\/).+?"/g, '$1..."') : 'null').catch((e) => { throw e; });
+    }
+    getPermissions() {
+        const r = clickgo.task.getPermissions(parseInt(this.tid));
+        clickgo.form.dialog(JSON.stringify(r)).catch((e) => { throw e; });
     }
     getList() {
         let msg = JSON.stringify(clickgo.task.getList());

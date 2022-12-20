@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.refreshSystemPosition = exports.clearSystem = exports.setSystem = exports.systemTaskInfo = exports.sleep = exports.removeTimer = exports.createTimer = exports.clearLocaleLang = exports.setLocaleLang = exports.setLocale = exports.clearLocale = exports.loadLocale = exports.loadLocaleData = exports.end = exports.checkPermission = exports.run = exports.getList = exports.get = exports.offFrame = exports.onFrame = exports.getFocus = exports.setFocus = exports.lastId = exports.list = void 0;
+exports.refreshSystemPosition = exports.clearSystem = exports.setSystem = exports.systemTaskInfo = exports.sleep = exports.removeTimer = exports.createTimer = exports.clearLocaleLang = exports.setLocaleLang = exports.setLocale = exports.clearLocale = exports.loadLocale = exports.loadLocaleData = exports.end = exports.checkPermission = exports.run = exports.getList = exports.getPermissions = exports.get = exports.offFrame = exports.onFrame = exports.getFocus = exports.setFocus = exports.lastId = exports.list = void 0;
 const clickgo = require("../clickgo");
 const core = require("./core");
 const dom = require("./dom");
@@ -145,6 +145,13 @@ function get(tid) {
     };
 }
 exports.get = get;
+function getPermissions(tid) {
+    if (exports.list[tid] === undefined) {
+        return [];
+    }
+    return tool.clone(exports.list[tid].runtime.permissions);
+}
+exports.getPermissions = getPermissions;
 function getList() {
     const rtn = {};
     for (const tid in exports.list) {
@@ -712,6 +719,9 @@ function run(url, opt = {}, ntid) {
                 },
                 get: function (tid) {
                     return get(tid);
+                },
+                getPermissions: function (tid) {
+                    return getPermissions(tid);
                 },
                 getList: function () {
                     return getList();

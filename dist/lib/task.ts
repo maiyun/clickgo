@@ -195,6 +195,17 @@ export function get(tid: number): types.ITaskInfo | null {
 }
 
 /**
+ * --- 获取某个任务的已授权权限列表 ---
+ * @param tid 任务 id
+ */
+export function getPermissions(tid: number): string[] {
+    if (list[tid] === undefined) {
+        return [];
+    }
+    return tool.clone(list[tid].runtime.permissions);
+}
+
+/**
  * --- 获取 task list 的简略情况 ---
  */
 export function getList(): Record<string, types.ITaskInfo> {
@@ -821,6 +832,9 @@ export async function run(url: string, opt: types.ITaskRunOptions = {}, ntid?: n
             },
             get: function(tid: number): types.ITaskInfo | null {
                 return get(tid);
+            },
+            getPermissions: function(tid: number): string[] {
+                return getPermissions(tid);
             },
             getList: function(): Record<string, types.ITaskInfo> {
                 return getList();

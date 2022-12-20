@@ -88,7 +88,12 @@ export default class extends clickgo.form.AbstractForm {
 
     public get(): void {
         const r = clickgo.task.get(parseInt(this.tid));
-        clickgo.form.dialog(r ? JSON.stringify(r) : 'null').catch((e) => { throw e; });
+        clickgo.form.dialog(r ? JSON.stringify(r).replace(/(data:image\/).+?"/g, '$1..."') : 'null').catch((e) => { throw e; });
+    }
+
+    public getPermissions(): void {
+        const r = clickgo.task.getPermissions(parseInt(this.tid));
+        clickgo.form.dialog(JSON.stringify(r)).catch((e) => { throw e; });
     }
 
     public getList(): void {
