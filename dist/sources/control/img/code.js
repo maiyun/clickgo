@@ -41,7 +41,7 @@ class default_1 extends clickgo.control.AbstractControl {
             if (pre === 'file:/') {
                 return;
             }
-            if (pre === 'http:/' || pre === 'https:' || pre === 'data:i') {
+            if (pre === 'http:/' || pre === 'https:' || pre.startsWith('data:')) {
                 this.imgData = `url(${this.props.src})`;
                 return;
             }

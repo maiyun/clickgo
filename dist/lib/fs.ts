@@ -8,8 +8,29 @@
 import * as types from '../../types';
 import * as tool from './tool';
 import * as task from './task';
+import * as form from './form';
+import * as core from './core';
 
 const clickgoFiles = ['/app/', '/app/demo/', '/app/demo/app.js', '/app/demo/config.json', '/app/demo/form/', '/app/demo/form/control/', '/app/demo/form/control/block/', '/app/demo/form/control/block/block.css', '/app/demo/form/control/block/block.xml', '/app/demo/form/control/button/', '/app/demo/form/control/button/button.css', '/app/demo/form/control/button/button.js', '/app/demo/form/control/button/button.xml', '/app/demo/form/control/check/', '/app/demo/form/control/check/check.js', '/app/demo/form/control/check/check.xml', '/app/demo/form/control/dialog/', '/app/demo/form/control/dialog/dialog.js', '/app/demo/form/control/dialog/dialog.xml', '/app/demo/form/control/file/', '/app/demo/form/control/file/file.js', '/app/demo/form/control/file/file.xml', '/app/demo/form/control/flow/', '/app/demo/form/control/flow/flow.css', '/app/demo/form/control/flow/flow.js', '/app/demo/form/control/flow/flow.xml', '/app/demo/form/control/form/', '/app/demo/form/control/form/form.css', '/app/demo/form/control/form/form.js', '/app/demo/form/control/form/form.xml', '/app/demo/form/control/img/', '/app/demo/form/control/img/img.xml', '/app/demo/form/control/label/', '/app/demo/form/control/label/label.xml', '/app/demo/form/control/list/', '/app/demo/form/control/list/list.css', '/app/demo/form/control/list/list.js', '/app/demo/form/control/list/list.xml', '/app/demo/form/control/loading/', '/app/demo/form/control/loading/loading.xml', '/app/demo/form/control/marquee/', '/app/demo/form/control/marquee/marquee.js', '/app/demo/form/control/marquee/marquee.xml', '/app/demo/form/control/menu/', '/app/demo/form/control/menu/menu.js', '/app/demo/form/control/menu/menu.xml', '/app/demo/form/control/monaco/', '/app/demo/form/control/monaco/monaco.js', '/app/demo/form/control/monaco/monaco.xml', '/app/demo/form/control/property/', '/app/demo/form/control/property/property.js', '/app/demo/form/control/property/property.xml', '/app/demo/form/control/radio/', '/app/demo/form/control/radio/radio.js', '/app/demo/form/control/radio/radio.xml', '/app/demo/form/control/scroll/', '/app/demo/form/control/scroll/scroll.js', '/app/demo/form/control/scroll/scroll.xml', '/app/demo/form/control/select/', '/app/demo/form/control/select/select.js', '/app/demo/form/control/select/select.xml', '/app/demo/form/control/tab/', '/app/demo/form/control/tab/tab.js', '/app/demo/form/control/tab/tab.xml', '/app/demo/form/control/text/', '/app/demo/form/control/text/text.js', '/app/demo/form/control/text/text.xml', '/app/demo/form/control/vflow/', '/app/demo/form/control/vflow/vflow.css', '/app/demo/form/control/vflow/vflow.js', '/app/demo/form/control/vflow/vflow.xml', '/app/demo/form/event/', '/app/demo/form/event/form/', '/app/demo/form/event/form/form.css', '/app/demo/form/event/form/form.js', '/app/demo/form/event/form/form.xml', '/app/demo/form/event/other/', '/app/demo/form/event/other/other.js', '/app/demo/form/event/other/other.xml', '/app/demo/form/event/screen/', '/app/demo/form/event/screen/screen.js', '/app/demo/form/event/screen/screen.xml', '/app/demo/form/event/task/', '/app/demo/form/event/task/task.js', '/app/demo/form/event/task/task.xml', '/app/demo/form/main.css', '/app/demo/form/main.js', '/app/demo/form/main.xml', '/app/demo/form/method/', '/app/demo/form/method/aform/', '/app/demo/form/method/aform/aform.js', '/app/demo/form/method/aform/aform.xml', '/app/demo/form/method/aform/sd.js', '/app/demo/form/method/aform/sd.xml', '/app/demo/form/method/core/', '/app/demo/form/method/core/core.js', '/app/demo/form/method/core/core.xml', '/app/demo/form/method/dom/', '/app/demo/form/method/dom/dom.css', '/app/demo/form/method/dom/dom.js', '/app/demo/form/method/dom/dom.xml', '/app/demo/form/method/form/', '/app/demo/form/method/form/form.css', '/app/demo/form/method/form/form.js', '/app/demo/form/method/form/form.xml', '/app/demo/form/method/form/test.xml', '/app/demo/form/method/fs/', '/app/demo/form/method/fs/fs.js', '/app/demo/form/method/fs/fs.xml', '/app/demo/form/method/fs/text.js', '/app/demo/form/method/fs/text.xml', '/app/demo/form/method/native/', '/app/demo/form/method/native/native.js', '/app/demo/form/method/native/native.xml', '/app/demo/form/method/system/', '/app/demo/form/method/system/system.js', '/app/demo/form/method/system/system.xml', '/app/demo/form/method/task/', '/app/demo/form/method/task/locale1.json', '/app/demo/form/method/task/locale2.json', '/app/demo/form/method/task/task.js', '/app/demo/form/method/task/task.xml', '/app/demo/form/method/theme/', '/app/demo/form/method/theme/theme.js', '/app/demo/form/method/theme/theme.xml', '/app/demo/form/method/tool/', '/app/demo/form/method/tool/tool.js', '/app/demo/form/method/tool/tool.xml', '/app/demo/form/method/zip/', '/app/demo/form/method/zip/zip.js', '/app/demo/form/method/zip/zip.xml', '/app/demo/global.css', '/app/demo/res/', '/app/demo/res/icon.svg', '/app/demo/res/img.jpg', '/app/demo/res/r-1.svg', '/app/demo/res/r-2.svg', '/app/demo/res/sql.svg', '/app/demo/res/txt.svg', '/app/demo/res/zip.svg', '/app/task/', '/app/task/app.js', '/app/task/config.json', '/app/task/form/', '/app/task/form/bar/', '/app/task/form/bar/bar.js', '/app/task/form/bar/bar.xml', '/app/task/form/desktop/', '/app/task/form/desktop/desktop.xml', '/app/task/locale/', '/app/task/locale/en.json', '/app/task/locale/ja.json', '/app/task/locale/sc.json', '/app/task/locale/tc.json', '/clickgo.js', '/clickgo.ts', '/control/', '/control/common.cgc', '/control/form.cgc', '/control/monaco.cgc', '/control/property.cgc', '/control/task.cgc', '/global.css', '/icon.png', '/index.js', '/index.ts', '/lib/', '/lib/control.js', '/lib/control.ts', '/lib/core.js', '/lib/core.ts', '/lib/dom.js', '/lib/dom.ts', '/lib/form.js', '/lib/form.ts', '/lib/fs.js', '/lib/fs.ts', '/lib/native.js', '/lib/native.ts', '/lib/task.js', '/lib/task.ts', '/lib/theme.js', '/lib/theme.ts', '/lib/tool.js', '/lib/tool.ts', '/lib/zip.js', '/lib/zip.ts', '/theme/', '/theme/familiar.cgt'];
+
+/** --- fs lib 用到的语言包 --- */
+const localeData: Record<string, {
+    // eslint-disable-next-line @typescript-eslint/naming-convention
+    'apply-unmount': string;
+}> = {
+    'en': {
+        'apply-unmount': 'Are you sure to unmount the "?" mount point?',
+    },
+    'sc': {
+        'apply-unmount': '确定卸载“?”挂载点吗？'
+    },
+    'tc': {
+        'apply-unmount': '確定卸載「?」掛載點嗎？'
+    },
+    'ja': {
+        'apply-unmount': '「?」マウント ポイントをアンマウントしますか?'
+    }
+};
 
 /** --- 已经挂载的列表 --- */
 const mounts: Record<string, types.IMountHandler> = {};
@@ -17,23 +38,24 @@ const mounts: Record<string, types.IMountHandler> = {};
 /** --- 根据 mounted 的 path 获取挂载点 name --- */
 function getMountName(path: string): string {
     const io = path.slice(9).indexOf('/');
-    return path.slice(9, io + 9);
+    return io === -1 ? path.slice(9) : path.slice(9, io + 9);
 }
 
 /**
  * --- 挂载到 mounted 目录下 ---
  * @param name 目录名
- * @param handler 回调相关，taskId 在 App 模式下无效
+ * @param handler 回调相关
+ * @param taskId App 模式下无效
  */
-export function mount(name: string, handler: types.IMountHandler): boolean {
+export function mount(name: string, handler: types.IMountHandler, taskId?: number): boolean {
     if (mounts[name]) {
         return false;
     }
     if (!/^[a-zA-Z][\w]+$/.test(name)) {
         return false;
     }
-    if (handler.taskId) {
-        const t = task.list[handler.taskId];
+    if (taskId) {
+        const t = task.list[taskId];
         if (t) {
             const val = 'fs./mounted/' + name + '/w';
             if (!t.runtime.permissions.includes(val)) {
@@ -48,13 +70,13 @@ export function mount(name: string, handler: types.IMountHandler): boolean {
 /**
  * --- 卸载 mounted ---
  * @param name 目录名
- * @param taskId 校验 taskId，App 模式下无效
  */
-export function unmount(name: string, taskId?: number): boolean {
+export async function unmount(name: string): Promise<boolean> {
     if (!mounts[name]) {
         return true;
     }
-    if (taskId && (mounts[name].taskId !== taskId)) {
+    const loc = localeData[core.config.locale]?.['apply-unmount'] ?? localeData['en']['apply-unmount'];
+    if (!await form.superConfirm(loc.replace('?', '/mount/' + name + '/'))) {
         return false;
     }
     delete mounts[name];
@@ -64,31 +86,26 @@ export function unmount(name: string, taskId?: number): boolean {
 export async function getContent(path: string, options?: {
     'start'?: number;
     'end'?: number;
-    'files'?: Record<string, Blob | string>;
-    'current'?: string;
     'progress'?: (loaded: number, total: number) => void | Promise<void>;
-}): Promise<string | Blob | null>;
+}, taskId?: number): Promise<string | Blob | null>;
 export async function getContent(path: string, options: BufferEncoding | {
     'encoding': BufferEncoding;
     'start'?: number;
     'end'?: number;
-    'files'?: Record<string, Blob | string>;
-    'current'?: string;
     'progress'?: (loaded: number, total: number) => void | Promise<void>;
-}): Promise<string | null>;
+}, taskId?: number): Promise<string | null>;
 /**
  * --- 读取完整文件或一段 ---
  * @param path 文件路径
  * @param options 编码或选项
+ * @param taskId App 模式下无效
  */
 export async function getContent(path: string, options?: BufferEncoding | {
     'encoding'?: BufferEncoding;
     'start'?: number;
     'end'?: number;
-    'files'?: Record<string, Blob | string>;
-    'current'?: string;
     'progress'?: (loaded: number, total: number) => void | Promise<void>;
-}): Promise<Blob | string | null> {
+}, taskId?: number): Promise<Blob | string | null> {
     path = tool.urlResolve('/', path);
     const fpath = path.slice(8);
     if (typeof options === 'string') {
@@ -162,11 +179,14 @@ export async function getContent(path: string, options?: BufferEncoding | {
         }
         return hanlder.getContent?.(path.slice(9 + name.length), options) ?? null;
     }
-    else if (path.startsWith('/package/')) {
-        if (!options.files) {
+    else if (path.startsWith('/package/') || path.startsWith('/current/')) {
+        if (!taskId) {
             return null;
         }
-        const file = options.files[fpath];
+        if (path.startsWith('/current/')) {
+            return getContent(task.list[taskId].current + fpath, options, taskId);
+        }
+        const file = task.list[taskId].app.files[fpath];
         if (!file) {
             return null;
         }
@@ -176,7 +196,10 @@ export async function getContent(path: string, options?: BufferEncoding | {
         }
         if (!options.encoding) {
             // --- 没有编码则返回 blob ---
-            return file;
+            if (start === undefined && end === undefined) {
+                return file;
+            }
+            return file.slice(start, end, file.type);
         }
         const encoding = options.encoding;
         return new Promise(function(resolve) {
@@ -186,13 +209,6 @@ export async function getContent(path: string, options?: BufferEncoding | {
             });
             fr.readAsText(file, encoding);
         });
-    }
-    else if (path.startsWith('/current/')) {
-        if (!options.current) {
-            return null;
-        }
-        const current = options.current.endsWith('/') ? options.current.slice(0, -1) : options.current;
-        return getContent(current + fpath, options);
     }
     else {
         return null;
@@ -204,13 +220,13 @@ export async function getContent(path: string, options?: BufferEncoding | {
  * @param path 文件路径
  * @param data 要写入的内容
  * @param options 选项
+ * @param taskId App 模式下无效
  */
 export async function putContent(path: string, data: string | Blob, options: {
     'encoding'?: BufferEncoding | null;
     'mode'?: string | number;
     'flag'?: string | number;
-    'current'?: string;
-} = {}): Promise<boolean> {
+} = {}, taskId?: number): Promise<boolean> {
     path = tool.urlResolve('/', path);
     const fpath = path.slice(8);
     if (path.startsWith('/clickgo/')) {
@@ -232,11 +248,10 @@ export async function putContent(path: string, data: string | Blob, options: {
         return false;
     }
     else if (path.startsWith('/current/')) {
-        if (!options.current) {
+        if (!taskId) {
             return false;
         }
-        const current = options.current.endsWith('/') ? options.current.slice(0, -1) : options.current;
-        return putContent(current + fpath, data, options);
+        return putContent(task.list[taskId].current + fpath, data, options, taskId);
     }
     else {
         return false;
@@ -250,9 +265,7 @@ export async function putContent(path: string, data: string | Blob, options: {
  */
 export async function readLink(path: string, options?: BufferEncoding | {
     'encoding'?: BufferEncoding;
-    /** --- 不以 / 结尾的路径 --- */
-    'current'?: string;
-}): Promise<string | null> {
+}, taskId?: number): Promise<string | null> {
     path = tool.urlResolve('/', path);
     const fpath = path.slice(8);
     if (typeof options === 'string') {
@@ -282,13 +295,10 @@ export async function readLink(path: string, options?: BufferEncoding | {
         return null;
     }
     else if (path.startsWith('/current/')) {
-        if (!options.current) {
+        if (!taskId) {
             return null;
         }
-        if (options.current.endsWith('/')) {
-            return options.current.slice(0, -1);
-        }
-        return options.current;
+        return task.list[taskId].current;
     }
     else {
         return null;
@@ -300,11 +310,11 @@ export async function readLink(path: string, options?: BufferEncoding | {
  * @param filePath 源文件
  * @param linkPath 连接路径
  * @param options 选项
+ * @param taskId App 模式下无效
  */
 export async function symlink(filePath: string, linkPath: string, options: {
     'type'?: 'dir' | 'file' | 'junction';
-    'current'?: string;
-} = {}): Promise<boolean> {
+} = {}, taskId?: number): Promise<boolean> {
     filePath = tool.urlResolve('/', filePath);
     linkPath = tool.urlResolve('/', linkPath);
     if (filePath.startsWith('/clickgo/')) {
@@ -330,14 +340,13 @@ export async function symlink(filePath: string, linkPath: string, options: {
         return false;
     }
     else if (filePath.startsWith('/current/')) {
-        if (!options.current) {
+        if (!taskId) {
             return false;
         }
-        const current = options.current.endsWith('/') ? options.current.slice(0, -1) : options.current;
         if (linkPath.startsWith('/current/')) {
-            linkPath = current + linkPath.slice(8);
+            linkPath = task.list[taskId].current + linkPath.slice(8);
         }
-        return symlink(current + filePath.slice(8), linkPath, options);
+        return symlink(task.list[taskId].current + filePath.slice(8), linkPath, options, taskId);
     }
     else {
         return false;
@@ -347,10 +356,9 @@ export async function symlink(filePath: string, linkPath: string, options: {
 /**
  * --- 删除一个文件 ---
  * @param path 要删除的文件路径
+ * @param taskId App 模式下无效
  */
-export async function unlink(path: string, options: {
-    'current'?: string;
-} = {}): Promise<boolean> {
+export async function unlink(path: string, taskId?: number): Promise<boolean> {
     path = tool.urlResolve('/', path);
     const fpath = path.slice(8);
     if (path.startsWith('/clickgo/')) {
@@ -366,17 +374,16 @@ export async function unlink(path: string, options: {
         if (!hanlder) {
             return false;
         }
-        return hanlder.unlink?.(path.slice(9 + name.length), options) ?? false;
+        return hanlder.unlink?.(path.slice(9 + name.length)) ?? false;
     }
     else if (path.startsWith('/package/')) {
         return false;
     }
     else if (path.startsWith('/current/')) {
-        if (!options.current) {
+        if (!taskId) {
             return false;
         }
-        const current = options.current.endsWith('/') ? options.current.slice(0, -1) : options.current;
-        return unlink(current + fpath, options);
+        return unlink(task.list[taskId].current + fpath, taskId);
     }
     else {
         return false;
@@ -462,12 +469,9 @@ async function getClickGoStats(path: string): Promise<types.IStats | null> {
 /**
  * --- 获取对象是否存在，存在则返回 stats 对象，否则返回 null ---
  * @param path 对象路径
- * @param options 选项
+ * @param taskId App 模式下无效
  */
-export async function stats(path: string, options: {
-    'files'?: Record<string, Blob | string>;
-    'current'?: string;
-} = {}): Promise<types.IStats | null> {
+export async function stats(path: string, taskId?: number): Promise<types.IStats | null> {
     path = tool.urlResolve('/', path);
     let fpath = path.slice(8);
     if (path.startsWith('/clickgo/')) {
@@ -489,15 +493,18 @@ export async function stats(path: string, options: {
         if (!hanlder) {
             return null;
         }
-        return hanlder.stats?.(path.slice(9 + name.length), options) ?? false;
+        return hanlder.stats?.(path.slice(9 + name.length)) ?? null;
     }
-    else if (path.startsWith('/package/')) {
-        if (!options.files) {
+    else if (path.startsWith('/package/') || path.startsWith('/current/')) {
+        if (!taskId) {
             return null;
         }
-        if (options.files[fpath]) {
+        if (path.startsWith('/current/')) {
+            return stats(task.list[taskId].current + fpath, taskId);
+        }
+        if (task.list[taskId].app.files[fpath]) {
             // --- 文件 ---
-            const file = options.files[fpath];
+            const file = task.list[taskId].app.files[fpath];
             const date = new Date();
             const ms = date.getTime();
             let size = 0;
@@ -533,7 +540,7 @@ export async function stats(path: string, options: {
         if (!fpath.endsWith('/')) {
             fpath += '/';
         }
-        for (const p in options.files) {
+        for (const p in task.list[taskId].app.files) {
             if (!p.startsWith(fpath)) {
                 continue;
             }
@@ -564,13 +571,6 @@ export async function stats(path: string, options: {
         }
         return null;
     }
-    else if (path.startsWith('/current/')) {
-        if (!options.current) {
-            return null;
-        }
-        const current = options.current.endsWith('/') ? options.current.slice(0, -1) : options.current;
-        return stats(current + fpath, options);
-    }
     else {
         return null;
     }
@@ -579,13 +579,10 @@ export async function stats(path: string, options: {
 /**
  * --- 判断是否是目录或目录是否存在，是的话返回 stats ---
  * @param path 判断路径
- * @param options 选项
+ * @param taskId App 模式下无效
  */
-export async function isDir(path: string, options: {
-    'files'?: Record<string, Blob | string>;
-    'current'?: string;
-} = {}): Promise<types.IStats | false> {
-    const pstats = await stats(path, options);
+export async function isDir(path: string, taskId?: number): Promise<types.IStats | false> {
+    const pstats = await stats(path, taskId);
     if (!pstats || !pstats.isDirectory()) {
         return false;
     }
@@ -595,12 +592,10 @@ export async function isDir(path: string, options: {
 /**
  * --- 判断是否是文件或文件是否存在，是的话返回 stats ---
  * @param path 判断路径
+ * @param taskId App 模式下无效
  */
-export async function isFile(path: string, options: {
-    'files'?: Record<string, Blob | string>;
-    'current'?: string;
-} = {}): Promise<types.IStats | false> {
-    const pstats = await stats(path, options);
+export async function isFile(path: string, taskId?: number): Promise<types.IStats | false> {
+    const pstats = await stats(path, taskId);
     if (!pstats || !pstats.isFile()) {
         return false;
     }
@@ -611,12 +606,11 @@ export async function isFile(path: string, options: {
  * --- 深度创建目录，如果最末目录存在，则自动创建成功 ---
  * @param path 要创建的路径，如 /a/b/c/
  * @param mode 权限
+ * @param taskId App 模式下无效
  */
-export async function mkdir(path: string, mode: number = 0o755, options: {
-    'current'?: string;
-} = {}): Promise<boolean> {
+export async function mkdir(path: string, mode: number = 0o755, taskId?: number): Promise<boolean> {
     path = tool.urlResolve('/', path);
-    if (await isDir(path, options)) {
+    if (await isDir(path, taskId)) {
         return true;
     }
     const fpath = path.slice(8);
@@ -633,17 +627,16 @@ export async function mkdir(path: string, mode: number = 0o755, options: {
         if (!hanlder) {
             return false;
         }
-        return hanlder.mkdir?.(path.slice(9 + name.length), mode, options) ?? false;
+        return hanlder.mkdir?.(path.slice(9 + name.length), mode) ?? false;
     }
     else if (path.startsWith('/package/')) {
         return false;
     }
     else if (path.startsWith('/current/')) {
-        if (!options.current) {
+        if (!taskId) {
             return false;
         }
-        const current = options.current.endsWith('/') ? options.current.slice(0, -1) : options.current;
-        return mkdir(current + fpath, mode, options);
+        return mkdir(task.list[taskId].current + fpath, mode, taskId);
     }
     else {
         return false;
@@ -653,10 +646,9 @@ export async function mkdir(path: string, mode: number = 0o755, options: {
 /**
  * --- 删除空目录 ---
  * @param path 要删除的目录
+ * @param taskId App 模式下无效
  */
-export async function rmdir(path: string, options: {
-    'current'?: string;
-} = {}): Promise<boolean> {
+export async function rmdir(path: string, taskId?: number): Promise<boolean> {
     path = tool.urlResolve('/', path);
     const fpath = path.slice(8);
     if (path.startsWith('/clickgo/')) {
@@ -672,17 +664,16 @@ export async function rmdir(path: string, options: {
         if (!hanlder) {
             return false;
         }
-        return hanlder.rmdir?.(path.slice(9 + name.length), options) ?? false;
+        return hanlder.rmdir?.(path.slice(9 + name.length)) ?? false;
     }
     else if (path.startsWith('/package/')) {
         return false;
     }
     else if (path.startsWith('/current/')) {
-        if (!options.current) {
+        if (!taskId) {
             return false;
         }
-        const current = options.current.endsWith('/') ? options.current.slice(0, -1) : options.current;
-        return rmdir(current + fpath, options);
+        return rmdir(task.list[taskId].current + fpath, taskId);
     }
     else {
         return false;
@@ -692,45 +683,44 @@ export async function rmdir(path: string, options: {
 /**
  * --- 删除一个非空目录 ---
  * --- [ Danger ] [ 危险 ] ---
+ * @param path 目录路径
+ * @param taskId App 模式下无效
  */
-export async function rmdirDeep(path: string, options: {
-    'current'?: string;
-} = {}): Promise<boolean> {
+export async function rmdirDeep(path: string, taskId?: number): Promise<boolean> {
     path = tool.urlResolve('/', path);
     if (!path.endsWith('/')) {
         path += '/';
     }
-    const list = await readDir(path, options);
+    const list = await readDir(path, undefined, taskId);
     for (const item of list) {
-        const stat = await stats(path + item.name, options);
+        const stat = await stats(path + item.name, taskId);
         if (!stat) {
             return false;
         }
         if (stat.isDirectory()) {
             // --- 目录 ---
-            const rtn = await rmdirDeep(path + item.name, options);
+            const rtn = await rmdirDeep(path + item.name, taskId);
             if (!rtn) {
                 return false;
             }
         }
         else {
-            const rtn = await unlink(path + item.name, options);
+            const rtn = await unlink(path + item.name, taskId);
             if (!rtn) {
                 return false;
             }
         }
     }
-    return rmdir(path, options);
+    return rmdir(path, taskId);
 }
 
 /**
  * --- 修改权限
  * @param path 要修改的路径
  * @param mod 权限
+ * @param taskId App 模式下无效
  */
-export async function chmod(path: string, mod: string | number, options: {
-    'current'?: string;
-} = {}): Promise<boolean> {
+export async function chmod(path: string, mod: string | number, taskId?: number): Promise<boolean> {
     path = tool.urlResolve('/', path);
     const fpath = path.slice(8);
     if (path.startsWith('/clickgo/')) {
@@ -746,17 +736,16 @@ export async function chmod(path: string, mod: string | number, options: {
         if (!hanlder) {
             return false;
         }
-        return hanlder.chmod?.(path.slice(9 + name.length), mod, options) ?? false;
+        return hanlder.chmod?.(path.slice(9 + name.length), mod) ?? false;
     }
     else if (path.startsWith('/package/')) {
         return false;
     }
     else if (path.startsWith('/current/')) {
-        if (!options.current) {
+        if (!taskId) {
             return false;
         }
-        const current = options.current.endsWith('/') ? options.current.slice(0, -1) : options.current;
-        return chmod(current + fpath, mod, options);
+        return chmod(task.list[taskId].current + fpath, mod, taskId);
     }
     else {
         return false;
@@ -768,9 +757,7 @@ export async function chmod(path: string, mod: string | number, options: {
  * @param oldPath 老名
  * @param newPath 新名
  */
-export async function rename(oldPath: string, newPath: string, options: {
-    'current'?: string;
-} = {}): Promise<boolean> {
+export async function rename(oldPath: string, newPath: string, taskId?: number): Promise<boolean> {
     oldPath = tool.urlResolve('/', oldPath);
     newPath = tool.urlResolve('/', newPath);
     if (!oldPath.startsWith(newPath.slice(0, 9))) {
@@ -786,18 +773,25 @@ export async function rename(oldPath: string, newPath: string, options: {
         return false;
     }
     else if (oldPath.startsWith('/mounted/')) {
-        // --- TODO ---
-        return false;
+        const fname = getMountName(oldPath);
+        const lname = getMountName(newPath);
+        if (fname !== lname) {
+            return false;
+        }
+        const hanlder = mounts[fname];
+        if (!hanlder) {
+            return false;
+        }
+        return hanlder.rename?.(oldPath.slice(9 + fname.length), newPath.slice(9 + fname.length)) ?? false;
     }
     else if (oldPath.startsWith('/package/')) {
         return false;
     }
     else if (oldPath.startsWith('/current/')) {
-        if (!options.current) {
+        if (!taskId) {
             return false;
         }
-        const current = options.current.endsWith('/') ? options.current.slice(0, -1) : options.current;
-        return rename(current + ofpath, current + nfpath, options);
+        return rename(task.list[taskId].current + ofpath, task.list[taskId].current + nfpath, taskId);
     }
     else {
         return false;
@@ -807,12 +801,12 @@ export async function rename(oldPath: string, newPath: string, options: {
 /**
  * --- 获取文件夹下文件列表 ---
  * @param path 文件夹路径
+ * @param options 选项
+ * @param taskId App 模式下无效
  */
 export async function readDir(path: string, options: {
     'encoding'?: BufferEncoding;
-    'files'?: Record<string, Blob | string>;
-    'current'?: string;
-} = {}): Promise<types.IDirent[]> {
+} = {}, taskId?: number): Promise<types.IDirent[]> {
     path = tool.urlResolve('/', path);
     if (path === '/') {
         const list = [
@@ -853,7 +847,7 @@ export async function readDir(path: string, options: {
                 'name': 'mounted'
             }
         ];
-        if (options.files) {
+        if (taskId) {
             list.push({
                 isFile: function() {
                     return false;
@@ -867,7 +861,7 @@ export async function readDir(path: string, options: {
                 'name': 'package'
             });
         }
-        if (options.current) {
+        if (taskId) {
             list.push({
                 isFile: function() {
                     return false;
@@ -942,16 +936,41 @@ export async function readDir(path: string, options: {
         return [];
     }
     else if (path.startsWith('/mounted/')) {
-        // --- TODO ---
-        return [];
-    }
-    else if (path.startsWith('/package/')) {
-        if (!options.files) {
+        if (path === '/mounted/') {
+            const list: types.IDirent[] = [];
+            for (const name in mounts) {
+                list.push({
+                    isFile: function() {
+                        return false;
+                    },
+                    isDirectory: function() {
+                        return true;
+                    },
+                    isSymbolicLink: function() {
+                        return false;
+                    },
+                    'name': name
+                });
+            }
+            return list;
+        }
+        const name = getMountName(path);
+        const hanlder = mounts[name];
+        if (!hanlder) {
             return [];
+        }
+        return hanlder.readDir?.(path.slice(9 + name.length), options) ?? [];
+    }
+    else if (path.startsWith('/package/') || path.startsWith('/current/')) {
+        if (!taskId) {
+            return [];
+        }
+        if (path.startsWith('/current/')) {
+            return readDir(task.list[taskId].current + fpath, options, taskId);
         }
         const list: types.IDirent[] = [];
         const dirs: string[] = [];
-        for (const p in options.files) {
+        for (const p in task.list[taskId].app.files) {
             if (!p.startsWith(fpath)) {
                 continue;
             }
@@ -993,13 +1012,6 @@ export async function readDir(path: string, options: {
         }
         return list;
     }
-    else if (path.startsWith('/current/')) {
-        if (!options.current) {
-            return [];
-        }
-        const current = options.current.endsWith('/') ? options.current.slice(0, -1) : options.current;
-        return readDir(current + fpath, options);
-    }
     else {
         return [];
     }
@@ -1010,11 +1022,11 @@ export async function readDir(path: string, options: {
  * @param from 源，末尾加 /
  * @param to 目标，末尾加 /
  * @param options 选项
+ * @param taskId App 模式下无效
  */
 export async function copyFolder(from: string, to: string, options: {
     'ignore'?: RegExp[];
-    'current'?: string;
-} = {}): Promise<number> {
+} = {}, taskId?: number): Promise<number> {
     from = tool.urlResolve('/', from);
     to = tool.urlResolve('/', to);
     if (!from.startsWith(to.slice(0, 9))) {
@@ -1030,18 +1042,25 @@ export async function copyFolder(from: string, to: string, options: {
         return 0;
     }
     else if (from.startsWith('/mounted/')) {
-        // --- TODO ---
-        return 0;
+        const fname = getMountName(from);
+        const lname = getMountName(to);
+        if (fname !== lname) {
+            return 0;
+        }
+        const hanlder = mounts[fname];
+        if (!hanlder) {
+            return 0;
+        }
+        return hanlder.copyFolder?.(from.slice(9 + fname.length), to.slice(9 + fname.length), options) ?? 0;
     }
     else if (from.startsWith('/package/')) {
         return 0;
     }
     else if (from.startsWith('/current/')) {
-        if (!options.current) {
+        if (!taskId) {
             return 0;
         }
-        const current = options.current.endsWith('/') ? options.current.slice(0, -1) : options.current;
-        return copyFolder(current + ffpath, current + tfpath, options);
+        return copyFolder(task.list[taskId].current + ffpath, task.list[taskId].current + tfpath, options);
     }
     else {
         return 0;
@@ -1052,10 +1071,9 @@ export async function copyFolder(from: string, to: string, options: {
  * --- 复制文件 ---
  * @param src 源文件
  * @param dest 目标文件
+ * @param taskId App 模式下无效
  */
-export async function copyFile(src: string, dest: string, options: {
-    'current'?: string;
-} = {}): Promise<boolean> {
+export async function copyFile(src: string, dest: string, taskId?: number): Promise<boolean> {
     src = tool.urlResolve('/', src);
     dest = tool.urlResolve('/', dest);
     if (!src.startsWith(dest.slice(0, 9))) {
@@ -1071,18 +1089,25 @@ export async function copyFile(src: string, dest: string, options: {
         return false;
     }
     else if (src.startsWith('/mounted/')) {
-        // --- TODO ---
-        return false;
+        const fname = getMountName(src);
+        const lname = getMountName(dest);
+        if (fname !== lname) {
+            return false;
+        }
+        const hanlder = mounts[fname];
+        if (!hanlder) {
+            return false;
+        }
+        return hanlder.copyFile?.(src.slice(9 + fname.length), dest.slice(9 + fname.length)) ?? false;
     }
     else if (src.startsWith('/package/')) {
         return false;
     }
     else if (src.startsWith('/current/')) {
-        if (!options.current) {
+        if (!taskId) {
             return false;
         }
-        const current = options.current.endsWith('/') ? options.current.slice(0, -1) : options.current;
-        return copyFile(current + sfpath, current + dfpath, options);
+        return copyFile(task.list[taskId].current + sfpath, task.list[taskId].current + dfpath, taskId);
     }
     else {
         return false;

@@ -216,10 +216,7 @@ function init(taskId, invoke) {
                 path += '.cgc';
             }
             path = tool.urlResolve('/', path);
-            const file = yield fs.getContent(path, {
-                'files': t.app.files,
-                'current': t.current
-            });
+            const file = yield fs.getContent(path, undefined, taskId);
             if (file && typeof file !== 'string') {
                 const c = yield read(file);
                 if (c) {

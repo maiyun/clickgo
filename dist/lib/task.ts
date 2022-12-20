@@ -218,13 +218,9 @@ export function getList(): Record<string, types.ITaskInfo> {
  * --- 运行一个应用，cga 直接文件全部正常加载，url 则静态文件需要去 config 里加载 ---
  * @param url app 路径（以 / 为结尾的路径或以 .cga 结尾的文件）
  * @param opt 选项
+ * @param ntid App 模式下无效
  */
-export async function run(url: string, opt: types.ITaskRunOptions = {}): Promise<number> {
-    /** --- 是否是在任务当中启动的任务 --- */
-    let ntask: types.ITask | null = null;
-    if (opt.taskId) {
-        ntask = list[opt.taskId];
-    }
+export async function run(url: string, opt: types.ITaskRunOptions = {}, ntid?: number): Promise<number> {
     // --- 检测 url 是否合法 ---
     if (!url.endsWith('/') && !url.endsWith('.cga')) {
         return 0;
@@ -244,12 +240,21 @@ export async function run(url: string, opt: types.ITaskRunOptions = {}): Promise
         'timeout': 0,
         'progress': true
     }) : undefined;
+    // --- 非 ntid 模式下 current 以 location 为准 ---
+    if (!ntid &&
+        !url.startsWith('/clickgo/') &&
+        !url.startsWith('/storage/') &&
+        !url.startsWith('/mounted/') &&
+        !url.startsWith('/package/') &&
+        !url.startsWith('/current/')
+    ) {
+        url = tool.urlResolve(location.href, url);
+    }
     // --- 获取并加载 app 对象 ---
     const app = await core.fetchApp(url, {
         'notifyId': notifyId,
-        'current': ntask ? ntask.current : undefined,
         'progress': opt.progress
-    });
+    }, ntid);
     // --- 无论是否成功，都可以先隐藏 notify 了 ---
     if (notifyId) {
         setTimeout(function(): void {
@@ -672,119 +677,62 @@ export async function run(url: string, opt: types.ITaskRunOptions = {}): Promise
             }
         },
         'fs': {
+            mount: function(name: string, handler: types.IMountHandler): boolean {
+                return clickgo.fs.mount(name, handler, taskId);
+            },
+            unmount: function(name: string): Promise<boolean> {
+                return clickgo.fs.unmount(name);
+            },
             getContent: function(
                 path: string,
                 options: any = {}
             ): Promise<Blob | string | null> {
-                if (!options.files) {
-                    options.files = list[taskId].app.files;
-                }
-                if (!options.current) {
-                    options.current = list[taskId].current;
-                }
-                return fs.getContent(path, options);
+                return fs.getContent(path, options, taskId);
             },
             putContent: function(path: string, data: string | Blob, options: any = {}) {
-                if (!options.current) {
-                    options.current = list[taskId].current;
-                }
-                return fs.putContent(path, data, options);
+                return fs.putContent(path, data, options, taskId);
             },
             readLink: function(path: string, options: any = {}): Promise<string | null> {
-                if (!options.current) {
-                    options.current = list[taskId].current;
-                }
-                return fs.readLink(path, options);
+                return fs.readLink(path, options, taskId);
             },
             symlink: function(fPath: string, linkPath: string, options: any = {}): Promise<boolean> {
-                if (!options.current) {
-                    options.current = list[taskId].current;
-                }
-                return fs.symlink(fPath, linkPath, options);
+                return fs.symlink(fPath, linkPath, options, taskId);
             },
-            unlink: function(path: string, options: any = {}): Promise<boolean> {
-                if (!options.current) {
-                    options.current = list[taskId].current;
-                }
-                return fs.unlink(path, options);
+            unlink: function(path: string): Promise<boolean> {
+                return fs.unlink(path, taskId);
             },
-            stats: function(path: string, options: any = {}): Promise<types.IStats | null> {
-                if (!options.files) {
-                    options.files = list[taskId].app.files;
-                }
-                if (!options.current) {
-                    options.current = list[taskId].current;
-                }
-                return fs.stats(path, options);
+            stats: function(path: string): Promise<types.IStats | null> {
+                return fs.stats(path, taskId);
             },
-            isDir: function(path: string, options: any = {}): Promise<types.IStats | false> {
-                if (!options.files) {
-                    options.files = list[taskId].app.files;
-                }
-                if (!options.current) {
-                    options.current = list[taskId].current;
-                }
-                return fs.isDir(path, options);
+            isDir: function(path: string): Promise<types.IStats | false> {
+                return fs.isDir(path, taskId);
             },
-            isFile: function(path: string, options: any = {}): Promise<types.IStats | false> {
-                if (!options.files) {
-                    options.files = list[taskId].app.files;
-                }
-                if (!options.current) {
-                    options.current = list[taskId].current;
-                }
-                return fs.isFile(path, options);
+            isFile: function(path: string): Promise<types.IStats | false> {
+                return fs.isFile(path, taskId);
             },
-            mkdir: function(path: string, mode?: number, options: any = {}): Promise<boolean> {
-                if (!options.current) {
-                    options.current = list[taskId].current;
-                }
-                return fs.mkdir(path, mode, options);
+            mkdir: function(path: string, mode?: number): Promise<boolean> {
+                return fs.mkdir(path, mode, taskId);
             },
-            rmdir: function(path: string, options: any = {}): Promise<boolean> {
-                if (!options.current) {
-                    options.current = list[taskId].current;
-                }
-                return fs.rmdir(path, options);
+            rmdir: function(path: string): Promise<boolean> {
+                return fs.rmdir(path, taskId);
             },
-            rmdirDeep: function(path: string, options: any = {}): Promise<boolean> {
-                if (!options.current) {
-                    options.current = list[taskId].current;
-                }
-                return fs.rmdirDeep(path, options);
+            rmdirDeep: function(path: string): Promise<boolean> {
+                return fs.rmdirDeep(path, taskId);
             },
-            chmod: function(path: string, mod: string | number, options: any = {}): Promise<boolean> {
-                if (!options.current) {
-                    options.current = list[taskId].current;
-                }
-                return fs.chmod(path, mod, options);
+            chmod: function(path: string, mod: string | number): Promise<boolean> {
+                return fs.chmod(path, mod, taskId);
             },
-            rename(oldPath: string, newPath: string, options: any = {}): Promise<boolean> {
-                if (!options.current) {
-                    options.current = list[taskId].current;
-                }
-                return fs.rename(oldPath, newPath, options);
+            rename(oldPath: string, newPath: string): Promise<boolean> {
+                return fs.rename(oldPath, newPath, taskId);
             },
             readDir(path: string, options: any = {}): Promise<types.IDirent[]> {
-                if (!options.files) {
-                    options.files = list[taskId].app.files;
-                }
-                if (!options.current) {
-                    options.current = list[taskId].current;
-                }
-                return fs.readDir(path, options);
+                return fs.readDir(path, options, taskId);
             },
             copyFolder(from: string, to: string, options: any = {}): Promise<number> {
-                if (!options.current) {
-                    options.current = list[taskId].current;
-                }
-                return fs.copyFolder(from, to, options);
+                return fs.copyFolder(from, to, options, taskId);
             },
-            copyFile(src: string, dest: string, options: any = {}): Promise<boolean> {
-                if (!options.current) {
-                    options.current = list[taskId].current;
-                }
-                return fs.copyFile(src, dest, options);
+            copyFile(src: string, dest: string): Promise<boolean> {
+                return fs.copyFile(src, dest, taskId);
             }
         },
         'native': {
@@ -878,7 +826,6 @@ export async function run(url: string, opt: types.ITaskRunOptions = {}): Promise
                 return getList();
             },
             run: function(url: string, opt: types.ITaskRunOptions = {}): Promise<number> {
-                opt.taskId = taskId;
                 if (opt.unblock) {
                     const inUnblock: string[] = [];
                     // --- 只能解除屏蔽当前函数里面被解除的变量 ---
@@ -891,11 +838,11 @@ export async function run(url: string, opt: types.ITaskRunOptions = {}): Promise
                     opt.unblock = inUnblock;
                 }
                 if (opt.permissions) {
-                    if (ntask && !ntask.runtime.permissions.includes('root')) {
+                    if (!list[taskId]?.runtime.permissions.includes('root')) {
                         opt.permissions = undefined;
                     }
                 }
-                return run(url, opt);
+                return run(url, opt, taskId);
             },
             checkPermission: function(
                 vals: string | string[],
@@ -1100,10 +1047,8 @@ export async function run(url: string, opt: types.ITaskRunOptions = {}): Promise
                 path += '.json';
             }
             const lcontent = await fs.getContent(path, {
-                'encoding': 'utf8',
-                'files': app.files,
-                'current': current
-            });
+                'encoding': 'utf8'
+            }, taskId);
             if (!lcontent) {
                 continue;
             }
@@ -1154,10 +1099,7 @@ export async function run(url: string, opt: types.ITaskRunOptions = {}): Promise
         for (let path of app.config.themes) {
             path += '.cgt';
             path = tool.urlResolve('/', path);
-            const file = await fs.getContent(path, {
-                'files': app.files,
-                'current': current
-            });
+            const file = await fs.getContent(path, undefined, taskId);
             if (file && typeof file !== 'string') {
                 const th = await theme.read(file);
                 if (th) {
@@ -1175,10 +1117,8 @@ export async function run(url: string, opt: types.ITaskRunOptions = {}): Promise
     // --- 加载任务级全局样式 ---
     if (app.config.style) {
         const style = await fs.getContent(app.config.style + '.css', {
-            'encoding': 'utf8',
-            'files': app.files,
-            'current': current
-        });
+            'encoding': 'utf8'
+        }, taskId);
         if (style) {
             const r = tool.stylePrepend(style, 'cg-task' + taskId.toString() + '_');
             dom.pushStyle(taskId, await tool.styleUrl2DataUrl(app.config.style, r.style, app.files));
@@ -1486,10 +1426,8 @@ export async function loadLocale(lang: string, path: string, taskId?: number): P
     path = tool.urlResolve(task.current + '/', path) + '.json';
     /** --- 获取的语言文件 --- */
     const fcontent = await fs.getContent(path, {
-        'encoding': 'utf8',
-        'files': task.app.files,
-        'current': task.current
-    });
+        'encoding': 'utf8'
+    }, taskId);
     if (!fcontent) {
         return false;
     }

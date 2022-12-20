@@ -350,10 +350,7 @@ export async function init(
             path += '.cgc';
         }
         path = tool.urlResolve('/', path);
-        const file = await fs.getContent(path, {
-            'files': t.app.files,
-            'current': t.current
-        });
+        const file = await fs.getContent(path, undefined, taskId);
         if (file && typeof file !== 'string') {
             const c = await read(file);
             if (c) {

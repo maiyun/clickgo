@@ -88,7 +88,6 @@ export type TGlobalEvent = 'error' | 'screenResize' | 'configChanged' | 'formCre
 /** --- 现场下载 app 的参数 --- */
 export interface ICoreFetchAppOptions {
     'notifyId'?: number;
-    'current'?: string;
     'progress'?: (loaded: number, total: number) => void | Promise<void>;
 }
 
@@ -291,46 +290,36 @@ export interface IFormInfo {
 // --------------------------
 
 export interface IMountHandler {
-    'taskId'?: number;
     getContent?: (path: string, options?: BufferEncoding | {
         'encoding'?: BufferEncoding;
         'start'?: number;
         'end'?: number;
-        'files'?: Record<string, Blob | string>;
-        'current'?: string;
         'progress'?: (loaded: number, total: number) => void | Promise<void>;
-    }) => Promise<Blob | string | null>;
+    }) => Blob | string | null | Promise<Blob | string | null>;
     putContent?: (path: string, data: string | Blob, options?: {
         'encoding'?: BufferEncoding | null;
         'mode'?: string | number;
         'flag'?: string | number;
-        'current'?: string;
-    }) => Promise<boolean>;
+    }) => boolean | Promise<boolean>;
     readLink?: (path: string, options?: BufferEncoding | {
         'encoding'?: BufferEncoding;
-        /** --- 不以 / 结尾的路径 --- */
-        'current'?: string;
-    }) => Promise<string | null>;
+    }) => string | null | Promise<string | null>;
     symlink?: (filePath: string, linkPath: string, options?: {
         'type'?: 'dir' | 'file' | 'junction';
-        'current'?: string;
-    }) => Promise<boolean>;
-    unlink?: (path: string, options?: {
-        'current'?: string;
-    }) => Promise<boolean>;
-    stats: (path: string, options?: {
-        'files'?: Record<string, Blob | string>;
-        'current'?: string;
-    }) => Promise<IStats | null>;
-    mkdir: (path: string, mode?: number, options?: {
-        'current'?: string;
-    }) => Promise<boolean>;
-    rmdir: (path: string, options?: {
-        'current'?: string;
-    }) => Promise<boolean>;
-    chmod: (path: string, mod: string | number, options?: {
-        'current'?: string;
-    }) => Promise<boolean>;
+    }) => boolean | Promise<boolean>;
+    unlink?: (path: string) => boolean | Promise<boolean>;
+    stats?: (path: string) => IStats | null | Promise<IStats | null>;
+    mkdir?: (path: string, mode?: number) => boolean | Promise<boolean>;
+    rmdir?: (path: string) => boolean | Promise<boolean>;
+    chmod?: (path: string, mod: string | number) => boolean | Promise<boolean>;
+    rename?: (oldPath: string, newPath: string) => boolean | Promise<boolean>;
+    readDir?: (path: string, options?: {
+        'encoding'?: BufferEncoding;
+    }) => IDirent[] | Promise<IDirent[]>;
+    copyFolder?: (from: string, to: string, options?: {
+        'ignore'?: RegExp[];
+    }) => number | Promise<number>;
+    copyFile?: (src: string, dest: string) => boolean | Promise<boolean>;
 }
 
 /** --- 文件/文件夹信息对象 --- */
@@ -413,8 +402,6 @@ export interface ITaskRunOptions {
     'progress'?: (loaded: number, total: number) => void | Promise<void>;
     /** --- 显示 notify 窗口 --- */
     'notify'?: boolean;
-    /** --- 所属任务，App 模式无法设置 --- */
-    'taskId'?: number;
     /** --- 不禁止某些浏览器对象，App 模式下仅能设置基任务中已经 unblock 的值 --- */
     'unblock'?: string[];
     /** --- 直接赋予此任务相应权限，App 模式下有 "root" 权限的应用才能设置 --- */

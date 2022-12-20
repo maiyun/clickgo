@@ -20,7 +20,7 @@ import * as core from './core';
 import * as tool from './tool';
 
 /** --- style list 的 div --- */
-const topClass: string[] = ['#cg-form-list', '#cg-pop-list', '#cg-notify', '#cg-simpletask', '#cg-launcher'];
+const topClass: string[] = ['#cg-form-list', '#cg-pop-list', '#cg-notify', '#cg-simpletask', '#cg-launcher', '#cg-confirm'];
 function classUnfold(after?: string, out: string[] = []): string {
     const arr: string[] = [];
     for (const name of topClass) {

@@ -147,9 +147,20 @@ export abstract class AbstractForm {
     /**
      * --- 获取语言内容 ---
      */
-    public get l(): (key: string) => string {
-        return (key: string): string => {
-            return task.list[this.taskId].locale.data[this.locale]?.[key] ?? task.list[this.taskId].locale.data['en']?.[key] ?? 'LocaleError';
+    public get l(): (key: string, data?: string[]) => string {
+        return (key: string, data?: string[]): string => {
+            const loc = task.list[this.taskId].locale.data[this.locale]?.[key] ?? task.list[this.taskId].locale.data['en']?.[key] ?? 'LocaleError';
+            if (!data) {
+                return loc;
+            }
+            let i: number = -1;
+            return loc.replace(/\?/g, function() {
+                ++i;
+                if (!data[i]) {
+                    return '';
+                }
+                return data[i];
+            });
         };
     }
 
@@ -2098,10 +2109,7 @@ export async function create<T extends AbstractForm>(
                 // --- 为啥要在这搞，因为 form 控件中读取，将可能导致下方的 formCreate 事件获取不到 icon 图标 ---
                 // --- 而如果用延迟的方式获取，将可能导致 changeFocus 的窗体焦点事件先于 formCreate 触发 ---
                 if (this.$refs.form.icon) {
-                    const icon = await fs.getContent(this.$refs.form.icon, {
-                        'current': t.current,
-                        'files': t.app.files
-                    });
+                    const icon = await fs.getContent(this.$refs.form.icon, undefined, taskId);
                     this.$refs.form.iconDataUrl = (icon instanceof Blob) ? await tool.blob2DataUrl(icon) : '';
                 }
                 // --- 完成 ---

@@ -469,7 +469,7 @@ function readApp(blob) {
     });
 }
 exports.readApp = readApp;
-function fetchApp(url, opt = {}) {
+function fetchApp(url, opt = {}, taskId) {
     return __awaiter(this, void 0, void 0, function* () {
         let cga = '';
         if (!url.endsWith('/')) {
@@ -479,27 +479,9 @@ function fetchApp(url, opt = {}) {
                 return null;
             }
         }
-        let current = '';
-        if (opt.current) {
-            current = opt.current.endsWith('/') ? opt.current.slice(0, -1) : opt.current;
-            url = tool.urlResolve('/current/', url);
-        }
-        else {
-            if (!url.startsWith('/clickgo/') && !url.startsWith('/storage/') && !url.startsWith('/mounted/')) {
-                current = tool.urlResolve(window.location.href, url);
-                if (cga) {
-                    current = current.slice(0, -cga.length - 1);
-                    url = '/current/' + cga;
-                }
-                else {
-                    url = '/current/';
-                }
-            }
-        }
         if (cga) {
             try {
                 const blob = yield fs.getContent(url, {
-                    'current': current,
                     'progress': (loaded, total) => {
                         if (opt.notifyId) {
                             form.notifyProgress(opt.notifyId, loaded / total);
@@ -508,7 +490,7 @@ function fetchApp(url, opt = {}) {
                             opt.progress(loaded, total);
                         }
                     }
-                });
+                }, taskId);
                 if ((blob === null) || typeof blob === 'string') {
                     return null;
                 }
@@ -524,9 +506,7 @@ function fetchApp(url, opt = {}) {
         let config;
         const files = {};
         try {
-            const blob = yield fs.getContent(url + 'config.json', {
-                'current': current
-            });
+            const blob = yield fs.getContent(url + 'config.json', undefined, taskId);
             if (blob === null || typeof blob === 'string') {
                 return null;
             }
@@ -541,9 +521,7 @@ function fetchApp(url, opt = {}) {
                     opt.progress(loaded + 1, total + 1);
                 }
                 for (const file of config.files) {
-                    fs.getContent(url + file.slice(1), {
-                        'current': current
-                    }).then(function (blob) {
+                    fs.getContent(url + file.slice(1), undefined, taskId).then(function (blob) {
                         return __awaiter(this, void 0, void 0, function* () {
                             if (blob === null || typeof blob === 'string') {
                                 clickgo.form.notify({
@@ -598,9 +576,7 @@ function fetchApp(url, opt = {}) {
             icon = yield tool.blob2DataUrl(files[config.icon]);
         }
         if (icon === '') {
-            const iconBlob = yield fs.getContent('/clickgo/icon.png', {
-                'current': current
-            });
+            const iconBlob = yield fs.getContent('/clickgo/icon.png', undefined, taskId);
             if (iconBlob instanceof Blob) {
                 icon = yield tool.blob2DataUrl(iconBlob);
             }

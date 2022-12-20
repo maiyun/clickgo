@@ -14,7 +14,7 @@ const clickgo = require("../clickgo");
 const form = require("./form");
 const core = require("./core");
 const tool = require("./tool");
-const topClass = ['#cg-form-list', '#cg-pop-list', '#cg-notify', '#cg-simpletask', '#cg-launcher'];
+const topClass = ['#cg-form-list', '#cg-pop-list', '#cg-notify', '#cg-simpletask', '#cg-launcher', '#cg-confirm'];
 function classUnfold(after, out = []) {
     const arr = [];
     for (const name of topClass) {

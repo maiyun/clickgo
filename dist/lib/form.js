@@ -100,9 +100,20 @@ class AbstractForm {
         return task.list[this.taskId].locale.lang || core.config.locale;
     }
     get l() {
-        return (key) => {
+        return (key, data) => {
             var _a, _b, _c, _d;
-            return (_d = (_b = (_a = task.list[this.taskId].locale.data[this.locale]) === null || _a === void 0 ? void 0 : _a[key]) !== null && _b !== void 0 ? _b : (_c = task.list[this.taskId].locale.data['en']) === null || _c === void 0 ? void 0 : _c[key]) !== null && _d !== void 0 ? _d : 'LocaleError';
+            const loc = (_d = (_b = (_a = task.list[this.taskId].locale.data[this.locale]) === null || _a === void 0 ? void 0 : _a[key]) !== null && _b !== void 0 ? _b : (_c = task.list[this.taskId].locale.data['en']) === null || _c === void 0 ? void 0 : _c[key]) !== null && _d !== void 0 ? _d : 'LocaleError';
+            if (!data) {
+                return loc;
+            }
+            let i = -1;
+            return loc.replace(/\?/g, function () {
+                ++i;
+                if (!data[i]) {
+                    return '';
+                }
+                return data[i];
+            });
         };
     }
     get classPrepend() {
@@ -1594,10 +1605,7 @@ function create(cls, data, opt = {}, taskId) {
                     return __awaiter(this, void 0, void 0, function* () {
                         yield this.$nextTick();
                         if (this.$refs.form.icon) {
-                            const icon = yield fs.getContent(this.$refs.form.icon, {
-                                'current': t.current,
-                                'files': t.app.files
-                            });
+                            const icon = yield fs.getContent(this.$refs.form.icon, undefined, taskId);
                             this.$refs.form.iconDataUrl = (icon instanceof Blob) ? yield tool.blob2DataUrl(icon) : '';
                         }
                         resolve({

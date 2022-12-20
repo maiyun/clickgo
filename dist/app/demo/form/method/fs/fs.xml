@@ -3,6 +3,14 @@
         <label>Double click the item below:</label>
         <block style="background: #000; color: #FFF; padding: 5px;">{{ppath}}</block>
         <list v-model="val" :data="list" @dblclick="dblclick" style="flex: 1; height: 0;"></list>
-        <button style="height: 30px;" @click="up">Up</button>
+        <layout gutter="10">
+            <button style="height: 30px; padding: 0 10px;" @click="open(ppath)">Refresh</button>
+            <button style="height: 30px; flex: 1;" @click="up">Up</button>
+        </layout>
+        <layout gutter="10">
+            <button style="height: 30px; flex: 1;" @click="mount">Mount "test"</button>
+            <button style="height: 30px; flex: 1;" @click="unmount">Unmount</button>
+            <button style="height: 30px; flex: 1;" @click="get = !get">{{get ? '' : '!'}}get(2,4)</button>
+        </layout>
     </layout>
 </form>

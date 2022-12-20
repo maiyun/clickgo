@@ -162,13 +162,9 @@ function getList() {
     return rtn;
 }
 exports.getList = getList;
-function run(url, opt = {}) {
+function run(url, opt = {}, ntid) {
     var _a, _b, _c, _d;
     return __awaiter(this, void 0, void 0, function* () {
-        let ntask = null;
-        if (opt.taskId) {
-            ntask = exports.list[opt.taskId];
-        }
         if (!url.endsWith('/') && !url.endsWith('.cga')) {
             return 0;
         }
@@ -186,11 +182,18 @@ function run(url, opt = {}) {
             'timeout': 0,
             'progress': true
         }) : undefined;
+        if (!ntid &&
+            !url.startsWith('/clickgo/') &&
+            !url.startsWith('/storage/') &&
+            !url.startsWith('/mounted/') &&
+            !url.startsWith('/package/') &&
+            !url.startsWith('/current/')) {
+            url = tool.urlResolve(location.href, url);
+        }
         const app = yield core.fetchApp(url, {
             'notifyId': notifyId,
-            'current': ntask ? ntask.current : undefined,
             'progress': opt.progress
-        });
+        }, ntid);
         if (notifyId) {
             setTimeout(function () {
                 form.hideNotify(notifyId);
@@ -569,116 +572,59 @@ function run(url, opt = {}) {
                 }
             },
             'fs': {
+                mount: function (name, handler) {
+                    return clickgo.fs.mount(name, handler, taskId);
+                },
+                unmount: function (name) {
+                    return clickgo.fs.unmount(name);
+                },
                 getContent: function (path, options = {}) {
-                    if (!options.files) {
-                        options.files = exports.list[taskId].app.files;
-                    }
-                    if (!options.current) {
-                        options.current = exports.list[taskId].current;
-                    }
-                    return fs.getContent(path, options);
+                    return fs.getContent(path, options, taskId);
                 },
                 putContent: function (path, data, options = {}) {
-                    if (!options.current) {
-                        options.current = exports.list[taskId].current;
-                    }
-                    return fs.putContent(path, data, options);
+                    return fs.putContent(path, data, options, taskId);
                 },
                 readLink: function (path, options = {}) {
-                    if (!options.current) {
-                        options.current = exports.list[taskId].current;
-                    }
-                    return fs.readLink(path, options);
+                    return fs.readLink(path, options, taskId);
                 },
                 symlink: function (fPath, linkPath, options = {}) {
-                    if (!options.current) {
-                        options.current = exports.list[taskId].current;
-                    }
-                    return fs.symlink(fPath, linkPath, options);
+                    return fs.symlink(fPath, linkPath, options, taskId);
                 },
-                unlink: function (path, options = {}) {
-                    if (!options.current) {
-                        options.current = exports.list[taskId].current;
-                    }
-                    return fs.unlink(path, options);
+                unlink: function (path) {
+                    return fs.unlink(path, taskId);
                 },
-                stats: function (path, options = {}) {
-                    if (!options.files) {
-                        options.files = exports.list[taskId].app.files;
-                    }
-                    if (!options.current) {
-                        options.current = exports.list[taskId].current;
-                    }
-                    return fs.stats(path, options);
+                stats: function (path) {
+                    return fs.stats(path, taskId);
                 },
-                isDir: function (path, options = {}) {
-                    if (!options.files) {
-                        options.files = exports.list[taskId].app.files;
-                    }
-                    if (!options.current) {
-                        options.current = exports.list[taskId].current;
-                    }
-                    return fs.isDir(path, options);
+                isDir: function (path) {
+                    return fs.isDir(path, taskId);
                 },
-                isFile: function (path, options = {}) {
-                    if (!options.files) {
-                        options.files = exports.list[taskId].app.files;
-                    }
-                    if (!options.current) {
-                        options.current = exports.list[taskId].current;
-                    }
-                    return fs.isFile(path, options);
+                isFile: function (path) {
+                    return fs.isFile(path, taskId);
                 },
-                mkdir: function (path, mode, options = {}) {
-                    if (!options.current) {
-                        options.current = exports.list[taskId].current;
-                    }
-                    return fs.mkdir(path, mode, options);
+                mkdir: function (path, mode) {
+                    return fs.mkdir(path, mode, taskId);
                 },
-                rmdir: function (path, options = {}) {
-                    if (!options.current) {
-                        options.current = exports.list[taskId].current;
-                    }
-                    return fs.rmdir(path, options);
+                rmdir: function (path) {
+                    return fs.rmdir(path, taskId);
                 },
-                rmdirDeep: function (path, options = {}) {
-                    if (!options.current) {
-                        options.current = exports.list[taskId].current;
-                    }
-                    return fs.rmdirDeep(path, options);
+                rmdirDeep: function (path) {
+                    return fs.rmdirDeep(path, taskId);
                 },
-                chmod: function (path, mod, options = {}) {
-                    if (!options.current) {
-                        options.current = exports.list[taskId].current;
-                    }
-                    return fs.chmod(path, mod, options);
+                chmod: function (path, mod) {
+                    return fs.chmod(path, mod, taskId);
                 },
-                rename(oldPath, newPath, options = {}) {
-                    if (!options.current) {
-                        options.current = exports.list[taskId].current;
-                    }
-                    return fs.rename(oldPath, newPath, options);
+                rename(oldPath, newPath) {
+                    return fs.rename(oldPath, newPath, taskId);
                 },
                 readDir(path, options = {}) {
-                    if (!options.files) {
-                        options.files = exports.list[taskId].app.files;
-                    }
-                    if (!options.current) {
-                        options.current = exports.list[taskId].current;
-                    }
-                    return fs.readDir(path, options);
+                    return fs.readDir(path, options, taskId);
                 },
                 copyFolder(from, to, options = {}) {
-                    if (!options.current) {
-                        options.current = exports.list[taskId].current;
-                    }
-                    return fs.copyFolder(from, to, options);
+                    return fs.copyFolder(from, to, options, taskId);
                 },
-                copyFile(src, dest, options = {}) {
-                    if (!options.current) {
-                        options.current = exports.list[taskId].current;
-                    }
-                    return fs.copyFile(src, dest, options);
+                copyFile(src, dest) {
+                    return fs.copyFile(src, dest, taskId);
                 }
             },
             'native': {
@@ -771,7 +717,7 @@ function run(url, opt = {}) {
                     return getList();
                 },
                 run: function (url, opt = {}) {
-                    opt.taskId = taskId;
+                    var _a;
                     if (opt.unblock) {
                         const inUnblock = [];
                         for (const item of opt.unblock) {
@@ -783,11 +729,11 @@ function run(url, opt = {}) {
                         opt.unblock = inUnblock;
                     }
                     if (opt.permissions) {
-                        if (ntask && !ntask.runtime.permissions.includes('root')) {
+                        if (!((_a = exports.list[taskId]) === null || _a === void 0 ? void 0 : _a.runtime.permissions.includes('root'))) {
                             opt.permissions = undefined;
                         }
                     }
-                    return run(url, opt);
+                    return run(url, opt, taskId);
                 },
                 checkPermission: function (vals, apply = false, applyHandler) {
                     return checkPermission(vals, apply, applyHandler, taskId);
@@ -978,10 +924,8 @@ function run(url, opt = {}) {
                     path += '.json';
                 }
                 const lcontent = yield fs.getContent(path, {
-                    'encoding': 'utf8',
-                    'files': app.files,
-                    'current': current
-                });
+                    'encoding': 'utf8'
+                }, taskId);
                 if (!lcontent) {
                     continue;
                 }
@@ -1028,10 +972,7 @@ function run(url, opt = {}) {
             for (let path of app.config.themes) {
                 path += '.cgt';
                 path = tool.urlResolve('/', path);
-                const file = yield fs.getContent(path, {
-                    'files': app.files,
-                    'current': current
-                });
+                const file = yield fs.getContent(path, undefined, taskId);
                 if (file && typeof file !== 'string') {
                     const th = yield theme.read(file);
                     if (th) {
@@ -1047,10 +988,8 @@ function run(url, opt = {}) {
         }
         if (app.config.style) {
             const style = yield fs.getContent(app.config.style + '.css', {
-                'encoding': 'utf8',
-                'files': app.files,
-                'current': current
-            });
+                'encoding': 'utf8'
+            }, taskId);
             if (style) {
                 const r = tool.stylePrepend(style, 'cg-task' + taskId.toString() + '_');
                 dom.pushStyle(taskId, yield tool.styleUrl2DataUrl(app.config.style, r.style, app.files));
@@ -1291,10 +1230,8 @@ function loadLocale(lang, path, taskId) {
         }
         path = tool.urlResolve(task.current + '/', path) + '.json';
         const fcontent = yield fs.getContent(path, {
-            'encoding': 'utf8',
-            'files': task.app.files,
-            'current': task.current
-        });
+            'encoding': 'utf8'
+        }, taskId);
         if (!fcontent) {
             return false;
         }

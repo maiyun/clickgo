@@ -12,21 +12,37 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.copyFile = exports.copyFolder = exports.readDir = exports.rename = exports.chmod = exports.rmdirDeep = exports.rmdir = exports.mkdir = exports.isFile = exports.isDir = exports.stats = exports.unlink = exports.symlink = exports.readLink = exports.putContent = exports.getContent = exports.unmount = exports.mount = void 0;
 const tool = require("./tool");
 const task = require("./task");
+const form = require("./form");
+const core = require("./core");
 const clickgoFiles = ['/app/', '/app/demo/', '/app/demo/app.js', '/app/demo/config.json', '/app/demo/form/', '/app/demo/form/control/', '/app/demo/form/control/block/', '/app/demo/form/control/block/block.css', '/app/demo/form/control/block/block.xml', '/app/demo/form/control/button/', '/app/demo/form/control/button/button.css', '/app/demo/form/control/button/button.js', '/app/demo/form/control/button/button.xml', '/app/demo/form/control/check/', '/app/demo/form/control/check/check.js', '/app/demo/form/control/check/check.xml', '/app/demo/form/control/dialog/', '/app/demo/form/control/dialog/dialog.js', '/app/demo/form/control/dialog/dialog.xml', '/app/demo/form/control/file/', '/app/demo/form/control/file/file.js', '/app/demo/form/control/file/file.xml', '/app/demo/form/control/flow/', '/app/demo/form/control/flow/flow.css', '/app/demo/form/control/flow/flow.js', '/app/demo/form/control/flow/flow.xml', '/app/demo/form/control/form/', '/app/demo/form/control/form/form.css', '/app/demo/form/control/form/form.js', '/app/demo/form/control/form/form.xml', '/app/demo/form/control/img/', '/app/demo/form/control/img/img.xml', '/app/demo/form/control/label/', '/app/demo/form/control/label/label.xml', '/app/demo/form/control/list/', '/app/demo/form/control/list/list.css', '/app/demo/form/control/list/list.js', '/app/demo/form/control/list/list.xml', '/app/demo/form/control/loading/', '/app/demo/form/control/loading/loading.xml', '/app/demo/form/control/marquee/', '/app/demo/form/control/marquee/marquee.js', '/app/demo/form/control/marquee/marquee.xml', '/app/demo/form/control/menu/', '/app/demo/form/control/menu/menu.js', '/app/demo/form/control/menu/menu.xml', '/app/demo/form/control/monaco/', '/app/demo/form/control/monaco/monaco.js', '/app/demo/form/control/monaco/monaco.xml', '/app/demo/form/control/property/', '/app/demo/form/control/property/property.js', '/app/demo/form/control/property/property.xml', '/app/demo/form/control/radio/', '/app/demo/form/control/radio/radio.js', '/app/demo/form/control/radio/radio.xml', '/app/demo/form/control/scroll/', '/app/demo/form/control/scroll/scroll.js', '/app/demo/form/control/scroll/scroll.xml', '/app/demo/form/control/select/', '/app/demo/form/control/select/select.js', '/app/demo/form/control/select/select.xml', '/app/demo/form/control/tab/', '/app/demo/form/control/tab/tab.js', '/app/demo/form/control/tab/tab.xml', '/app/demo/form/control/text/', '/app/demo/form/control/text/text.js', '/app/demo/form/control/text/text.xml', '/app/demo/form/control/vflow/', '/app/demo/form/control/vflow/vflow.css', '/app/demo/form/control/vflow/vflow.js', '/app/demo/form/control/vflow/vflow.xml', '/app/demo/form/event/', '/app/demo/form/event/form/', '/app/demo/form/event/form/form.css', '/app/demo/form/event/form/form.js', '/app/demo/form/event/form/form.xml', '/app/demo/form/event/other/', '/app/demo/form/event/other/other.js', '/app/demo/form/event/other/other.xml', '/app/demo/form/event/screen/', '/app/demo/form/event/screen/screen.js', '/app/demo/form/event/screen/screen.xml', '/app/demo/form/event/task/', '/app/demo/form/event/task/task.js', '/app/demo/form/event/task/task.xml', '/app/demo/form/main.css', '/app/demo/form/main.js', '/app/demo/form/main.xml', '/app/demo/form/method/', '/app/demo/form/method/aform/', '/app/demo/form/method/aform/aform.js', '/app/demo/form/method/aform/aform.xml', '/app/demo/form/method/aform/sd.js', '/app/demo/form/method/aform/sd.xml', '/app/demo/form/method/core/', '/app/demo/form/method/core/core.js', '/app/demo/form/method/core/core.xml', '/app/demo/form/method/dom/', '/app/demo/form/method/dom/dom.css', '/app/demo/form/method/dom/dom.js', '/app/demo/form/method/dom/dom.xml', '/app/demo/form/method/form/', '/app/demo/form/method/form/form.css', '/app/demo/form/method/form/form.js', '/app/demo/form/method/form/form.xml', '/app/demo/form/method/form/test.xml', '/app/demo/form/method/fs/', '/app/demo/form/method/fs/fs.js', '/app/demo/form/method/fs/fs.xml', '/app/demo/form/method/fs/text.js', '/app/demo/form/method/fs/text.xml', '/app/demo/form/method/native/', '/app/demo/form/method/native/native.js', '/app/demo/form/method/native/native.xml', '/app/demo/form/method/system/', '/app/demo/form/method/system/system.js', '/app/demo/form/method/system/system.xml', '/app/demo/form/method/task/', '/app/demo/form/method/task/locale1.json', '/app/demo/form/method/task/locale2.json', '/app/demo/form/method/task/task.js', '/app/demo/form/method/task/task.xml', '/app/demo/form/method/theme/', '/app/demo/form/method/theme/theme.js', '/app/demo/form/method/theme/theme.xml', '/app/demo/form/method/tool/', '/app/demo/form/method/tool/tool.js', '/app/demo/form/method/tool/tool.xml', '/app/demo/form/method/zip/', '/app/demo/form/method/zip/zip.js', '/app/demo/form/method/zip/zip.xml', '/app/demo/global.css', '/app/demo/res/', '/app/demo/res/icon.svg', '/app/demo/res/img.jpg', '/app/demo/res/r-1.svg', '/app/demo/res/r-2.svg', '/app/demo/res/sql.svg', '/app/demo/res/txt.svg', '/app/demo/res/zip.svg', '/app/task/', '/app/task/app.js', '/app/task/config.json', '/app/task/form/', '/app/task/form/bar/', '/app/task/form/bar/bar.js', '/app/task/form/bar/bar.xml', '/app/task/form/desktop/', '/app/task/form/desktop/desktop.xml', '/app/task/locale/', '/app/task/locale/en.json', '/app/task/locale/ja.json', '/app/task/locale/sc.json', '/app/task/locale/tc.json', '/clickgo.js', '/clickgo.ts', '/control/', '/control/common.cgc', '/control/form.cgc', '/control/monaco.cgc', '/control/property.cgc', '/control/task.cgc', '/global.css', '/icon.png', '/index.js', '/index.ts', '/lib/', '/lib/control.js', '/lib/control.ts', '/lib/core.js', '/lib/core.ts', '/lib/dom.js', '/lib/dom.ts', '/lib/form.js', '/lib/form.ts', '/lib/fs.js', '/lib/fs.ts', '/lib/native.js', '/lib/native.ts', '/lib/task.js', '/lib/task.ts', '/lib/theme.js', '/lib/theme.ts', '/lib/tool.js', '/lib/tool.ts', '/lib/zip.js', '/lib/zip.ts', '/theme/', '/theme/familiar.cgt'];
+const localeData = {
+    'en': {
+        'apply-unmount': 'Are you sure to unmount the "?" mount point?',
+    },
+    'sc': {
+        'apply-unmount': '确定卸载“?”挂载点吗？'
+    },
+    'tc': {
+        'apply-unmount': '確定卸載「?」掛載點嗎？'
+    },
+    'ja': {
+        'apply-unmount': '「?」マウント ポイントをアンマウントしますか?'
+    }
+};
 const mounts = {};
 function getMountName(path) {
     const io = path.slice(9).indexOf('/');
-    return path.slice(9, io + 9);
+    return io === -1 ? path.slice(9) : path.slice(9, io + 9);
 }
-function mount(name, handler) {
+function mount(name, handler, taskId) {
     if (mounts[name]) {
         return false;
     }
     if (!/^[a-zA-Z][\w]+$/.test(name)) {
         return false;
     }
-    if (handler.taskId) {
-        const t = task.list[handler.taskId];
+    if (taskId) {
+        const t = task.list[taskId];
         if (t) {
             const val = 'fs./mounted/' + name + '/w';
             if (!t.runtime.permissions.includes(val)) {
@@ -38,18 +54,22 @@ function mount(name, handler) {
     return true;
 }
 exports.mount = mount;
-function unmount(name, taskId) {
-    if (!mounts[name]) {
+function unmount(name) {
+    var _a, _b;
+    return __awaiter(this, void 0, void 0, function* () {
+        if (!mounts[name]) {
+            return true;
+        }
+        const loc = (_b = (_a = localeData[core.config.locale]) === null || _a === void 0 ? void 0 : _a['apply-unmount']) !== null && _b !== void 0 ? _b : localeData['en']['apply-unmount'];
+        if (!(yield form.superConfirm(loc.replace('?', '/mount/' + name + '/')))) {
+            return false;
+        }
+        delete mounts[name];
         return true;
-    }
-    if (taskId && (mounts[name].taskId !== taskId)) {
-        return false;
-    }
-    delete mounts[name];
-    return true;
+    });
 }
 exports.unmount = unmount;
-function getContent(path, options) {
+function getContent(path, options, taskId) {
     var _a, _b;
     return __awaiter(this, void 0, void 0, function* () {
         path = tool.urlResolve('/', path);
@@ -124,11 +144,14 @@ function getContent(path, options) {
             }
             return (_b = (_a = hanlder.getContent) === null || _a === void 0 ? void 0 : _a.call(hanlder, path.slice(9 + name.length), options)) !== null && _b !== void 0 ? _b : null;
         }
-        else if (path.startsWith('/package/')) {
-            if (!options.files) {
+        else if (path.startsWith('/package/') || path.startsWith('/current/')) {
+            if (!taskId) {
                 return null;
             }
-            const file = options.files[fpath];
+            if (path.startsWith('/current/')) {
+                return getContent(task.list[taskId].current + fpath, options, taskId);
+            }
+            const file = task.list[taskId].app.files[fpath];
             if (!file) {
                 return null;
             }
@@ -136,7 +159,10 @@ function getContent(path, options) {
                 return file;
             }
             if (!options.encoding) {
-                return file;
+                if (start === undefined && end === undefined) {
+                    return file;
+                }
+                return file.slice(start, end, file.type);
             }
             const encoding = options.encoding;
             return new Promise(function (resolve) {
@@ -147,20 +173,13 @@ function getContent(path, options) {
                 fr.readAsText(file, encoding);
             });
         }
-        else if (path.startsWith('/current/')) {
-            if (!options.current) {
-                return null;
-            }
-            const current = options.current.endsWith('/') ? options.current.slice(0, -1) : options.current;
-            return getContent(current + fpath, options);
-        }
         else {
             return null;
         }
     });
 }
 exports.getContent = getContent;
-function putContent(path, data, options = {}) {
+function putContent(path, data, options = {}, taskId) {
     var _a, _b;
     return __awaiter(this, void 0, void 0, function* () {
         path = tool.urlResolve('/', path);
@@ -183,11 +202,10 @@ function putContent(path, data, options = {}) {
             return false;
         }
         else if (path.startsWith('/current/')) {
-            if (!options.current) {
+            if (!taskId) {
                 return false;
             }
-            const current = options.current.endsWith('/') ? options.current.slice(0, -1) : options.current;
-            return putContent(current + fpath, data, options);
+            return putContent(task.list[taskId].current + fpath, data, options, taskId);
         }
         else {
             return false;
@@ -195,7 +213,7 @@ function putContent(path, data, options = {}) {
     });
 }
 exports.putContent = putContent;
-function readLink(path, options) {
+function readLink(path, options, taskId) {
     var _a, _b;
     return __awaiter(this, void 0, void 0, function* () {
         path = tool.urlResolve('/', path);
@@ -226,13 +244,10 @@ function readLink(path, options) {
             return null;
         }
         else if (path.startsWith('/current/')) {
-            if (!options.current) {
+            if (!taskId) {
                 return null;
             }
-            if (options.current.endsWith('/')) {
-                return options.current.slice(0, -1);
-            }
-            return options.current;
+            return task.list[taskId].current;
         }
         else {
             return null;
@@ -240,7 +255,7 @@ function readLink(path, options) {
     });
 }
 exports.readLink = readLink;
-function symlink(filePath, linkPath, options = {}) {
+function symlink(filePath, linkPath, options = {}, taskId) {
     var _a, _b;
     return __awaiter(this, void 0, void 0, function* () {
         filePath = tool.urlResolve('/', filePath);
@@ -267,14 +282,13 @@ function symlink(filePath, linkPath, options = {}) {
             return false;
         }
         else if (filePath.startsWith('/current/')) {
-            if (!options.current) {
+            if (!taskId) {
                 return false;
             }
-            const current = options.current.endsWith('/') ? options.current.slice(0, -1) : options.current;
             if (linkPath.startsWith('/current/')) {
-                linkPath = current + linkPath.slice(8);
+                linkPath = task.list[taskId].current + linkPath.slice(8);
             }
-            return symlink(current + filePath.slice(8), linkPath, options);
+            return symlink(task.list[taskId].current + filePath.slice(8), linkPath, options, taskId);
         }
         else {
             return false;
@@ -282,7 +296,7 @@ function symlink(filePath, linkPath, options = {}) {
     });
 }
 exports.symlink = symlink;
-function unlink(path, options = {}) {
+function unlink(path, taskId) {
     var _a, _b;
     return __awaiter(this, void 0, void 0, function* () {
         path = tool.urlResolve('/', path);
@@ -299,17 +313,16 @@ function unlink(path, options = {}) {
             if (!hanlder) {
                 return false;
             }
-            return (_b = (_a = hanlder.unlink) === null || _a === void 0 ? void 0 : _a.call(hanlder, path.slice(9 + name.length), options)) !== null && _b !== void 0 ? _b : false;
+            return (_b = (_a = hanlder.unlink) === null || _a === void 0 ? void 0 : _a.call(hanlder, path.slice(9 + name.length))) !== null && _b !== void 0 ? _b : false;
         }
         else if (path.startsWith('/package/')) {
             return false;
         }
         else if (path.startsWith('/current/')) {
-            if (!options.current) {
+            if (!taskId) {
                 return false;
             }
-            const current = options.current.endsWith('/') ? options.current.slice(0, -1) : options.current;
-            return unlink(current + fpath, options);
+            return unlink(task.list[taskId].current + fpath, taskId);
         }
         else {
             return false;
@@ -392,7 +405,7 @@ function getClickGoStats(path) {
         }
     });
 }
-function stats(path, options = {}) {
+function stats(path, taskId) {
     var _a, _b;
     return __awaiter(this, void 0, void 0, function* () {
         path = tool.urlResolve('/', path);
@@ -415,14 +428,17 @@ function stats(path, options = {}) {
             if (!hanlder) {
                 return null;
             }
-            return (_b = (_a = hanlder.stats) === null || _a === void 0 ? void 0 : _a.call(hanlder, path.slice(9 + name.length), options)) !== null && _b !== void 0 ? _b : false;
+            return (_b = (_a = hanlder.stats) === null || _a === void 0 ? void 0 : _a.call(hanlder, path.slice(9 + name.length))) !== null && _b !== void 0 ? _b : null;
         }
-        else if (path.startsWith('/package/')) {
-            if (!options.files) {
+        else if (path.startsWith('/package/') || path.startsWith('/current/')) {
+            if (!taskId) {
                 return null;
             }
-            if (options.files[fpath]) {
-                const file = options.files[fpath];
+            if (path.startsWith('/current/')) {
+                return stats(task.list[taskId].current + fpath, taskId);
+            }
+            if (task.list[taskId].app.files[fpath]) {
+                const file = task.list[taskId].app.files[fpath];
                 const date = new Date();
                 const ms = date.getTime();
                 let size = 0;
@@ -457,7 +473,7 @@ function stats(path, options = {}) {
             if (!fpath.endsWith('/')) {
                 fpath += '/';
             }
-            for (const p in options.files) {
+            for (const p in task.list[taskId].app.files) {
                 if (!p.startsWith(fpath)) {
                     continue;
                 }
@@ -487,22 +503,15 @@ function stats(path, options = {}) {
             }
             return null;
         }
-        else if (path.startsWith('/current/')) {
-            if (!options.current) {
-                return null;
-            }
-            const current = options.current.endsWith('/') ? options.current.slice(0, -1) : options.current;
-            return stats(current + fpath, options);
-        }
         else {
             return null;
         }
     });
 }
 exports.stats = stats;
-function isDir(path, options = {}) {
+function isDir(path, taskId) {
     return __awaiter(this, void 0, void 0, function* () {
-        const pstats = yield stats(path, options);
+        const pstats = yield stats(path, taskId);
         if (!pstats || !pstats.isDirectory()) {
             return false;
         }
@@ -510,9 +519,9 @@ function isDir(path, options = {}) {
     });
 }
 exports.isDir = isDir;
-function isFile(path, options = {}) {
+function isFile(path, taskId) {
     return __awaiter(this, void 0, void 0, function* () {
-        const pstats = yield stats(path, options);
+        const pstats = yield stats(path, taskId);
         if (!pstats || !pstats.isFile()) {
             return false;
         }
@@ -520,11 +529,11 @@ function isFile(path, options = {}) {
     });
 }
 exports.isFile = isFile;
-function mkdir(path, mode = 0o755, options = {}) {
+function mkdir(path, mode = 0o755, taskId) {
     var _a, _b;
     return __awaiter(this, void 0, void 0, function* () {
         path = tool.urlResolve('/', path);
-        if (yield isDir(path, options)) {
+        if (yield isDir(path, taskId)) {
             return true;
         }
         const fpath = path.slice(8);
@@ -540,17 +549,16 @@ function mkdir(path, mode = 0o755, options = {}) {
             if (!hanlder) {
                 return false;
             }
-            return (_b = (_a = hanlder.mkdir) === null || _a === void 0 ? void 0 : _a.call(hanlder, path.slice(9 + name.length), mode, options)) !== null && _b !== void 0 ? _b : false;
+            return (_b = (_a = hanlder.mkdir) === null || _a === void 0 ? void 0 : _a.call(hanlder, path.slice(9 + name.length), mode)) !== null && _b !== void 0 ? _b : false;
         }
         else if (path.startsWith('/package/')) {
             return false;
         }
         else if (path.startsWith('/current/')) {
-            if (!options.current) {
+            if (!taskId) {
                 return false;
             }
-            const current = options.current.endsWith('/') ? options.current.slice(0, -1) : options.current;
-            return mkdir(current + fpath, mode, options);
+            return mkdir(task.list[taskId].current + fpath, mode, taskId);
         }
         else {
             return false;
@@ -558,7 +566,7 @@ function mkdir(path, mode = 0o755, options = {}) {
     });
 }
 exports.mkdir = mkdir;
-function rmdir(path, options = {}) {
+function rmdir(path, taskId) {
     var _a, _b;
     return __awaiter(this, void 0, void 0, function* () {
         path = tool.urlResolve('/', path);
@@ -575,17 +583,16 @@ function rmdir(path, options = {}) {
             if (!hanlder) {
                 return false;
             }
-            return (_b = (_a = hanlder.rmdir) === null || _a === void 0 ? void 0 : _a.call(hanlder, path.slice(9 + name.length), options)) !== null && _b !== void 0 ? _b : false;
+            return (_b = (_a = hanlder.rmdir) === null || _a === void 0 ? void 0 : _a.call(hanlder, path.slice(9 + name.length))) !== null && _b !== void 0 ? _b : false;
         }
         else if (path.startsWith('/package/')) {
             return false;
         }
         else if (path.startsWith('/current/')) {
-            if (!options.current) {
+            if (!taskId) {
                 return false;
             }
-            const current = options.current.endsWith('/') ? options.current.slice(0, -1) : options.current;
-            return rmdir(current + fpath, options);
+            return rmdir(task.list[taskId].current + fpath, taskId);
         }
         else {
             return false;
@@ -593,36 +600,36 @@ function rmdir(path, options = {}) {
     });
 }
 exports.rmdir = rmdir;
-function rmdirDeep(path, options = {}) {
+function rmdirDeep(path, taskId) {
     return __awaiter(this, void 0, void 0, function* () {
         path = tool.urlResolve('/', path);
         if (!path.endsWith('/')) {
             path += '/';
         }
-        const list = yield readDir(path, options);
+        const list = yield readDir(path, undefined, taskId);
         for (const item of list) {
-            const stat = yield stats(path + item.name, options);
+            const stat = yield stats(path + item.name, taskId);
             if (!stat) {
                 return false;
             }
             if (stat.isDirectory()) {
-                const rtn = yield rmdirDeep(path + item.name, options);
+                const rtn = yield rmdirDeep(path + item.name, taskId);
                 if (!rtn) {
                     return false;
                 }
             }
             else {
-                const rtn = yield unlink(path + item.name, options);
+                const rtn = yield unlink(path + item.name, taskId);
                 if (!rtn) {
                     return false;
                 }
             }
         }
-        return rmdir(path, options);
+        return rmdir(path, taskId);
     });
 }
 exports.rmdirDeep = rmdirDeep;
-function chmod(path, mod, options = {}) {
+function chmod(path, mod, taskId) {
     var _a, _b;
     return __awaiter(this, void 0, void 0, function* () {
         path = tool.urlResolve('/', path);
@@ -639,17 +646,16 @@ function chmod(path, mod, options = {}) {
             if (!hanlder) {
                 return false;
             }
-            return (_b = (_a = hanlder.chmod) === null || _a === void 0 ? void 0 : _a.call(hanlder, path.slice(9 + name.length), mod, options)) !== null && _b !== void 0 ? _b : false;
+            return (_b = (_a = hanlder.chmod) === null || _a === void 0 ? void 0 : _a.call(hanlder, path.slice(9 + name.length), mod)) !== null && _b !== void 0 ? _b : false;
         }
         else if (path.startsWith('/package/')) {
             return false;
         }
         else if (path.startsWith('/current/')) {
-            if (!options.current) {
+            if (!taskId) {
                 return false;
             }
-            const current = options.current.endsWith('/') ? options.current.slice(0, -1) : options.current;
-            return chmod(current + fpath, mod, options);
+            return chmod(task.list[taskId].current + fpath, mod, taskId);
         }
         else {
             return false;
@@ -657,7 +663,8 @@ function chmod(path, mod, options = {}) {
     });
 }
 exports.chmod = chmod;
-function rename(oldPath, newPath, options = {}) {
+function rename(oldPath, newPath, taskId) {
+    var _a, _b;
     return __awaiter(this, void 0, void 0, function* () {
         oldPath = tool.urlResolve('/', oldPath);
         newPath = tool.urlResolve('/', newPath);
@@ -673,17 +680,25 @@ function rename(oldPath, newPath, options = {}) {
             return false;
         }
         else if (oldPath.startsWith('/mounted/')) {
-            return false;
+            const fname = getMountName(oldPath);
+            const lname = getMountName(newPath);
+            if (fname !== lname) {
+                return false;
+            }
+            const hanlder = mounts[fname];
+            if (!hanlder) {
+                return false;
+            }
+            return (_b = (_a = hanlder.rename) === null || _a === void 0 ? void 0 : _a.call(hanlder, oldPath.slice(9 + fname.length), newPath.slice(9 + fname.length))) !== null && _b !== void 0 ? _b : false;
         }
         else if (oldPath.startsWith('/package/')) {
             return false;
         }
         else if (oldPath.startsWith('/current/')) {
-            if (!options.current) {
+            if (!taskId) {
                 return false;
             }
-            const current = options.current.endsWith('/') ? options.current.slice(0, -1) : options.current;
-            return rename(current + ofpath, current + nfpath, options);
+            return rename(task.list[taskId].current + ofpath, task.list[taskId].current + nfpath, taskId);
         }
         else {
             return false;
@@ -691,7 +706,8 @@ function rename(oldPath, newPath, options = {}) {
     });
 }
 exports.rename = rename;
-function readDir(path, options = {}) {
+function readDir(path, options = {}, taskId) {
+    var _a, _b;
     return __awaiter(this, void 0, void 0, function* () {
         path = tool.urlResolve('/', path);
         if (path === '/') {
@@ -733,7 +749,7 @@ function readDir(path, options = {}) {
                     'name': 'mounted'
                 }
             ];
-            if (options.files) {
+            if (taskId) {
                 list.push({
                     isFile: function () {
                         return false;
@@ -747,7 +763,7 @@ function readDir(path, options = {}) {
                     'name': 'package'
                 });
             }
-            if (options.current) {
+            if (taskId) {
                 list.push({
                     isFile: function () {
                         return false;
@@ -816,15 +832,41 @@ function readDir(path, options = {}) {
             return [];
         }
         else if (path.startsWith('/mounted/')) {
-            return [];
-        }
-        else if (path.startsWith('/package/')) {
-            if (!options.files) {
+            if (path === '/mounted/') {
+                const list = [];
+                for (const name in mounts) {
+                    list.push({
+                        isFile: function () {
+                            return false;
+                        },
+                        isDirectory: function () {
+                            return true;
+                        },
+                        isSymbolicLink: function () {
+                            return false;
+                        },
+                        'name': name
+                    });
+                }
+                return list;
+            }
+            const name = getMountName(path);
+            const hanlder = mounts[name];
+            if (!hanlder) {
                 return [];
+            }
+            return (_b = (_a = hanlder.readDir) === null || _a === void 0 ? void 0 : _a.call(hanlder, path.slice(9 + name.length), options)) !== null && _b !== void 0 ? _b : [];
+        }
+        else if (path.startsWith('/package/') || path.startsWith('/current/')) {
+            if (!taskId) {
+                return [];
+            }
+            if (path.startsWith('/current/')) {
+                return readDir(task.list[taskId].current + fpath, options, taskId);
             }
             const list = [];
             const dirs = [];
-            for (const p in options.files) {
+            for (const p in task.list[taskId].app.files) {
                 if (!p.startsWith(fpath)) {
                     continue;
                 }
@@ -864,20 +906,14 @@ function readDir(path, options = {}) {
             }
             return list;
         }
-        else if (path.startsWith('/current/')) {
-            if (!options.current) {
-                return [];
-            }
-            const current = options.current.endsWith('/') ? options.current.slice(0, -1) : options.current;
-            return readDir(current + fpath, options);
-        }
         else {
             return [];
         }
     });
 }
 exports.readDir = readDir;
-function copyFolder(from, to, options = {}) {
+function copyFolder(from, to, options = {}, taskId) {
+    var _a, _b;
     return __awaiter(this, void 0, void 0, function* () {
         from = tool.urlResolve('/', from);
         to = tool.urlResolve('/', to);
@@ -893,17 +929,25 @@ function copyFolder(from, to, options = {}) {
             return 0;
         }
         else if (from.startsWith('/mounted/')) {
-            return 0;
+            const fname = getMountName(from);
+            const lname = getMountName(to);
+            if (fname !== lname) {
+                return 0;
+            }
+            const hanlder = mounts[fname];
+            if (!hanlder) {
+                return 0;
+            }
+            return (_b = (_a = hanlder.copyFolder) === null || _a === void 0 ? void 0 : _a.call(hanlder, from.slice(9 + fname.length), to.slice(9 + fname.length), options)) !== null && _b !== void 0 ? _b : 0;
         }
         else if (from.startsWith('/package/')) {
             return 0;
         }
         else if (from.startsWith('/current/')) {
-            if (!options.current) {
+            if (!taskId) {
                 return 0;
             }
-            const current = options.current.endsWith('/') ? options.current.slice(0, -1) : options.current;
-            return copyFolder(current + ffpath, current + tfpath, options);
+            return copyFolder(task.list[taskId].current + ffpath, task.list[taskId].current + tfpath, options);
         }
         else {
             return 0;
@@ -911,7 +955,8 @@ function copyFolder(from, to, options = {}) {
     });
 }
 exports.copyFolder = copyFolder;
-function copyFile(src, dest, options = {}) {
+function copyFile(src, dest, taskId) {
+    var _a, _b;
     return __awaiter(this, void 0, void 0, function* () {
         src = tool.urlResolve('/', src);
         dest = tool.urlResolve('/', dest);
@@ -927,17 +972,25 @@ function copyFile(src, dest, options = {}) {
             return false;
         }
         else if (src.startsWith('/mounted/')) {
-            return false;
+            const fname = getMountName(src);
+            const lname = getMountName(dest);
+            if (fname !== lname) {
+                return false;
+            }
+            const hanlder = mounts[fname];
+            if (!hanlder) {
+                return false;
+            }
+            return (_b = (_a = hanlder.copyFile) === null || _a === void 0 ? void 0 : _a.call(hanlder, src.slice(9 + fname.length), dest.slice(9 + fname.length))) !== null && _b !== void 0 ? _b : false;
         }
         else if (src.startsWith('/package/')) {
             return false;
         }
         else if (src.startsWith('/current/')) {
-            if (!options.current) {
+            if (!taskId) {
                 return false;
             }
-            const current = options.current.endsWith('/') ? options.current.slice(0, -1) : options.current;
-            return copyFile(current + sfpath, current + dfpath, options);
+            return copyFile(task.list[taskId].current + sfpath, task.list[taskId].current + dfpath, taskId);
         }
         else {
             return false;

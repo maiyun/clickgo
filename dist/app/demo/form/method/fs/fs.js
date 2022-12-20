@@ -17,6 +17,7 @@ class default_1 extends clickgo.form.AbstractForm {
         this.ppath = '/';
         this.list = [];
         this.val = [];
+        this.get = false;
     }
     open(path) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -44,8 +45,11 @@ class default_1 extends clickgo.form.AbstractForm {
                     return;
                 }
                 const ext = this.val[0].toLowerCase().slice(extlio + 1);
-                if (['xml', 'js', 'ts', 'json', 'css', 'html', 'php'].includes(ext)) {
-                    let content = yield clickgo.fs.getContent(this.val[0]);
+                if (['xml', 'js', 'ts', 'json', 'css', 'html', 'php', 'txt'].includes(ext)) {
+                    let content = yield clickgo.fs.getContent(this.val[0], this.get ? {
+                        'start': 2,
+                        'end': 4
+                    } : undefined);
                     if (!content) {
                         yield clickgo.form.dialog('This file cannot be opened.');
                         return;
@@ -75,6 +79,104 @@ class default_1 extends clickgo.form.AbstractForm {
             const lif = path.lastIndexOf('/');
             const npath = path.slice(0, lif + 1);
             yield this.open(npath);
+        });
+    }
+    mount() {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield clickgo.form.dialog(clickgo.fs.mount('test', {
+                readDir: (path) => {
+                    const list = [];
+                    switch (path) {
+                        case '/': {
+                            list.push({
+                                isFile: function () {
+                                    return false;
+                                },
+                                isDirectory: function () {
+                                    return true;
+                                },
+                                isSymbolicLink: function () {
+                                    return false;
+                                },
+                                'name': 'test1'
+                            });
+                            list.push({
+                                isFile: function () {
+                                    return false;
+                                },
+                                isDirectory: function () {
+                                    return true;
+                                },
+                                isSymbolicLink: function () {
+                                    return false;
+                                },
+                                'name': 'test2'
+                            });
+                            break;
+                        }
+                        case '/test2/': {
+                            list.push({
+                                isFile: function () {
+                                    return true;
+                                },
+                                isDirectory: function () {
+                                    return false;
+                                },
+                                isSymbolicLink: function () {
+                                    return false;
+                                },
+                                'name': 'test.txt'
+                            });
+                            break;
+                        }
+                    }
+                    return list;
+                },
+                stats: (path) => {
+                    if (path !== '/test2/test.txt') {
+                        return null;
+                    }
+                    const date = new Date();
+                    const ms = date.getTime();
+                    const size = 7;
+                    return {
+                        isFile: function () {
+                            return true;
+                        },
+                        isDirectory: function () {
+                            return false;
+                        },
+                        isSymbolicLink: function () {
+                            return false;
+                        },
+                        'size': size,
+                        'blksize': size,
+                        'atimeMs': ms,
+                        'mtimeMs': ms,
+                        'ctimeMs': ms,
+                        'birthtimeMs': ms,
+                        'atime': date,
+                        'mtime': date,
+                        'ctime': date,
+                        'birthtime': date
+                    };
+                },
+                getContent: (path, options) => {
+                    if (path !== '/test2/test.txt') {
+                        return null;
+                    }
+                    const content = 'testabc';
+                    if (!options || typeof options === 'string') {
+                        return content;
+                    }
+                    return content.slice(options.start, options.end);
+                },
+            }) ? 'true' : 'fasle');
+        });
+    }
+    unmount() {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield clickgo.form.dialog((yield clickgo.fs.unmount('test')) ? 'true' : 'false');
         });
     }
     onMounted() {

@@ -582,10 +582,12 @@ export async function readApp(blob: Blob): Promise<false | types.IApp> {
  * --- 从网址下载应用，App 模式下本方法不可用 ---
  * @param url 对于当前网页的相对、绝对路径，以 / 结尾的目录或 .cga 结尾的文件 ---
  * @param opt,notifyId:显示进度条的 notify id,current:设置则以设置的为准，不以 / 结尾，否则以 location 为准 ---
+ * @param taskId 所属任务 ID
  */
 export async function fetchApp(
     url: string,
-    opt: types.ICoreFetchAppOptions = {}
+    opt: types.ICoreFetchAppOptions = {},
+    taskId?: number
 ): Promise<null | types.IApp> {
     /** --- 若是 cga 文件，则是 cga 的文件名，含 .cga --- */
     let cga: string = '';
@@ -596,30 +598,10 @@ export async function fetchApp(
             return null;
         }
     }
-
-    let current = '';
-    if (opt.current) {
-        current = opt.current.endsWith('/') ? opt.current.slice(0, -1) : opt.current;
-        url = tool.urlResolve('/current/', url);
-    }
-    else {
-        if (!url.startsWith('/clickgo/') && !url.startsWith('/storage/') && !url.startsWith('/mounted/')) {
-            current = tool.urlResolve(window.location.href, url);
-            if (cga) {
-                current = current.slice(0, -cga.length - 1);
-                url = '/current/' + cga;
-            }
-            else {
-                url = '/current/';
-            }
-        }
-    }
-
     // --- 如果是 cga 文件，直接读取并交给 readApp 函数处理 ---
     if (cga) {
         try {
             const blob = await fs.getContent(url, {
-                'current': current,
                 'progress': (loaded: number, total: number): void => {
                     if (opt.notifyId) {
                         form.notifyProgress(opt.notifyId, loaded / total);
@@ -628,7 +610,7 @@ export async function fetchApp(
                         opt.progress(loaded, total) as unknown;
                     }
                 }
-            });
+            }, taskId);
             if ((blob === null) || typeof blob === 'string') {
                 return null;
             }
@@ -646,9 +628,7 @@ export async function fetchApp(
     /** --- 已加载的 files --- */
     const files: Record<string, Blob | string> = {};
     try {
-        const blob = await fs.getContent(url + 'config.json', {
-            'current': current
-        });
+        const blob = await fs.getContent(url + 'config.json', undefined, taskId);
         if (blob === null || typeof blob === 'string') {
             return null;
         }
@@ -663,9 +643,7 @@ export async function fetchApp(
                 opt.progress(loaded + 1, total + 1) as unknown;
             }
             for (const file of config.files) {
-                fs.getContent(url + file.slice(1), {
-                    'current': current
-                }).then(async function(blob) {
+                fs.getContent(url + file.slice(1), undefined, taskId).then(async function(blob) {
                     if (blob === null || typeof blob === 'string') {
                         clickgo.form.notify({
                             'title': 'File not found',
@@ -719,9 +697,7 @@ export async function fetchApp(
         icon = await tool.blob2DataUrl(files[config.icon] as Blob);
     }
     if (icon === '') {
-        const iconBlob = await fs.getContent('/clickgo/icon.png', {
-            'current': current
-        });
+        const iconBlob = await fs.getContent('/clickgo/icon.png', undefined, taskId);
         if (iconBlob instanceof Blob) {
             icon = await tool.blob2DataUrl(iconBlob);
         }

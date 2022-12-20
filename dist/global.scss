@@ -285,7 +285,7 @@
         background: var(--system-background); width: 60%; box-shadow: 0 5px 20px rgba(0, 0, 0, .25); font-size: 14px; border-radius: 3px; overflow: hidden; color: var(--system-color);
 
         #cg-confirm-content {
-            padding: 25px;
+            padding: 25px; line-height: 1.5;
         }
 
         .cg-confirm-controls {

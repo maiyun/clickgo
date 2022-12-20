@@ -68,7 +68,7 @@ class default_1 extends clickgo.form.AbstractForm {
                     return;
                 }
                 const ext = this.val[0].toLowerCase().slice(extlio + 1);
-                if (['xml', 'js', 'ts', 'json', 'css', 'html', 'php'].includes(ext)) {
+                if (['xml', 'js', 'ts', 'json', 'css', 'html', 'php', 'txt'].includes(ext)) {
                     const content = yield this.access.zip.getContent(this.val[0]);
                     if (!content) {
                         yield clickgo.form.dialog('This file cannot be opened.');
