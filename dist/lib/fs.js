@@ -148,6 +148,9 @@ function getContent(path, options, taskId) {
                 }
                 return (_b = (_a = hanlder.getContent) === null || _a === void 0 ? void 0 : _a.call(hanlder, path.slice(9 + name.length), options)) !== null && _b !== void 0 ? _b : null;
             }
+            if (options.progress) {
+                delete options.progress;
+            }
             const rtn = yield native.invoke('cg-fs-getContent', native.getToken(), fpath, options);
             if (!rtn) {
                 return null;

@@ -183,6 +183,10 @@ export async function getContent(path: string, options?: BufferEncoding | {
             return hanlder.getContent?.(path.slice(9 + name.length), options) ?? null;
         }
         // --- storage ---
+        if (options.progress) {
+            // --- native 暂不支持 progress ---
+            delete options.progress;
+        }
         const rtn = await native.invoke('cg-fs-getContent', native.getToken(), fpath, options);
         if (!rtn) {
             return null;
