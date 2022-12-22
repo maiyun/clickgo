@@ -15,7 +15,6 @@ class default_1 extends clickgo.control.AbstractControl {
         super(...arguments);
         this.props = {
             'direction': 'left',
-            'scroll': true,
             'speed': 1
         };
         this.padding = '';
@@ -24,45 +23,20 @@ class default_1 extends clickgo.control.AbstractControl {
         this.client = 0;
         this.length = 0;
         this.timer = 0;
+        this.ani = false;
     }
     get opMargin() {
         return this.padding.replace(/(\w+)/g, '-$1');
     }
     get speedPx() {
-        return this.propInt('speed') * 0.5;
+        return this.propInt('speed') * 0.8;
     }
     refresh() {
+        this.ani = false;
         if (this.length === 0 || this.client === 0) {
             return;
         }
-        if (this.propBoolean('scroll')) {
-            if (this.timer > 0) {
-                return;
-            }
-            switch (this.props.direction) {
-                case 'left': {
-                    this.left = this.client;
-                    this.top = 0;
-                    break;
-                }
-                case 'right': {
-                    this.left = -this.length;
-                    this.top = 0;
-                    break;
-                }
-                case 'top': {
-                    this.left = 0;
-                    this.top = this.client;
-                    break;
-                }
-                case 'bottom': {
-                    this.left = 0;
-                    this.top = -this.length;
-                    break;
-                }
-            }
-        }
-        else if (this.length > this.client) {
+        if (this.length > this.client) {
             if (this.timer > 0) {
                 return;
             }
@@ -73,7 +47,7 @@ class default_1 extends clickgo.control.AbstractControl {
                     break;
                 }
                 case 'right': {
-                    this.left = this.length - this.client;
+                    this.left = -(this.length - this.client);
                     this.top = 0;
                     break;
                 }
@@ -84,7 +58,7 @@ class default_1 extends clickgo.control.AbstractControl {
                 }
                 case 'bottom': {
                     this.left = 0;
-                    this.top = this.length - this.client;
+                    this.top = -(this.length - this.client);
                     break;
                 }
             }
@@ -99,55 +73,34 @@ class default_1 extends clickgo.control.AbstractControl {
             this.top = 0;
             return;
         }
-        this.timer = clickgo.task.onFrame(() => __awaiter(this, void 0, void 0, function* () {
-            if (!this.element.offsetParent) {
-                clickgo.task.offFrame(this.timer);
-                this.timer = 0;
+        clickgo.task.sleep(() => {
+            if (this.length <= this.client) {
                 return;
             }
-            if (this.propBoolean('scroll')) {
-                switch (this.props.direction) {
-                    case 'left': {
-                        this.left -= this.speedPx;
-                        if (this.left < -this.length) {
-                            this.left = this.client;
-                        }
-                        break;
-                    }
-                    case 'right': {
-                        this.left += this.speedPx;
-                        if (this.left > this.client) {
-                            this.left = -this.length;
-                        }
-                        break;
-                    }
-                    case 'top': {
-                        this.top -= this.speedPx;
-                        if (this.top < -this.length) {
-                            this.top = this.client;
-                        }
-                        break;
-                    }
-                    case 'bottom': {
-                        this.top += this.speedPx;
-                        if (this.top > this.client) {
-                            this.top = -this.length;
-                        }
-                        break;
-                    }
-                }
+            if (this.timer > 0) {
+                return;
             }
-            else {
+            this.timer = clickgo.task.onFrame(() => __awaiter(this, void 0, void 0, function* () {
+                if (!this.element.offsetParent) {
+                    clickgo.task.offFrame(this.timer);
+                    this.timer = 0;
+                    return;
+                }
                 const xv = this.length - this.client;
                 switch (this.props.direction) {
                     case 'left': {
                         if (this.left === -xv) {
                             this.left = 0;
+                            clickgo.task.sleep(() => {
+                                this.ani = false;
+                            }, 150);
+                            yield clickgo.tool.sleep(1000);
                         }
                         else {
                             this.left -= this.speedPx;
                             if (this.left < -xv) {
                                 this.left = -xv;
+                                this.ani = true;
                                 yield clickgo.tool.sleep(1000);
                             }
                         }
@@ -155,12 +108,17 @@ class default_1 extends clickgo.control.AbstractControl {
                     }
                     case 'right': {
                         if (this.left === 0) {
-                            this.left = xv;
+                            this.left = -xv;
+                            clickgo.task.sleep(() => {
+                                this.ani = false;
+                            }, 150);
+                            yield clickgo.tool.sleep(1000);
                         }
                         else {
                             this.left += this.speedPx;
                             if (this.left > 0) {
                                 this.left = 0;
+                                this.ani = true;
                                 yield clickgo.tool.sleep(1000);
                             }
                         }
@@ -169,11 +127,16 @@ class default_1 extends clickgo.control.AbstractControl {
                     case 'top': {
                         if (this.top === -xv) {
                             this.top = 0;
+                            clickgo.task.sleep(() => {
+                                this.ani = false;
+                            }, 150);
+                            yield clickgo.tool.sleep(1000);
                         }
                         else {
                             this.top -= this.speedPx;
                             if (this.top < -xv) {
                                 this.top = -xv;
+                                this.ani = true;
                                 yield clickgo.tool.sleep(1000);
                             }
                         }
@@ -181,27 +144,29 @@ class default_1 extends clickgo.control.AbstractControl {
                     }
                     case 'bottom': {
                         if (this.top === 0) {
-                            this.top = xv;
+                            this.top = -xv;
+                            clickgo.task.sleep(() => {
+                                this.ani = false;
+                            }, 150);
+                            yield clickgo.tool.sleep(1000);
                         }
                         else {
                             this.top += this.speedPx;
                             if (this.top > 0) {
                                 this.top = 0;
+                                this.ani = true;
                                 yield clickgo.tool.sleep(1000);
                             }
                         }
                         break;
                     }
                 }
-            }
-        }), {
-            'formId': this.formId
-        });
+            }), {
+                'formId': this.formId
+            });
+        }, 1000);
     }
     onMounted() {
-        this.watch('scroll', () => {
-            this.refresh();
-        });
         this.watch('direction', (n, o) => {
             if (this.timer === 0) {
                 return;
@@ -222,7 +187,7 @@ class default_1 extends clickgo.control.AbstractControl {
             this.padding = v;
         }, true);
         clickgo.dom.watchSize(this.element, () => {
-            const client = (this.props.direction === 'left' || this.props.direction === 'right') ? this.element.getBoundingClientRect().width : this.element.getBoundingClientRect().height;
+            const client = (this.props.direction === 'left' || this.props.direction === 'right') ? this.element.offsetWidth : this.element.offsetHeight;
             if (client === this.client) {
                 return;
             }
@@ -230,7 +195,7 @@ class default_1 extends clickgo.control.AbstractControl {
             this.refresh();
         }, true);
         clickgo.dom.watchSize(this.refs.inner, () => {
-            const length = (this.props.direction === 'left' || this.props.direction === 'right') ? this.refs.inner.getBoundingClientRect().width : this.refs.inner.getBoundingClientRect().height;
+            const length = (this.props.direction === 'left' || this.props.direction === 'right') ? this.refs.inner.offsetWidth : this.refs.inner.offsetHeight;
             if (length === this.length) {
                 return;
             }

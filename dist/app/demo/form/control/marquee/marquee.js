@@ -7,7 +7,6 @@ class default_1 extends clickgo.form.AbstractForm {
         this.lineCount = 2;
         this.style = false;
         this.direction = 'top';
-        this.scroll = false;
     }
     changeDirection() {
         switch (this.direction) {

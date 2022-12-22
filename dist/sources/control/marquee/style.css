@@ -1,1 +1,1 @@
-.wrap{overflow:hidden;display:flex}.wrap .inner{display:flex}.wrap.top,.wrap.bottom{flex-direction:column}.wrap.top .inner,.wrap.bottom .inner{flex-direction:column}
+.wrap{overflow:hidden;display:flex;max-width:100%;max-height:100%}.wrap .inner{display:flex}.wrap .inner.ani{transition:transform .1s ease-out}.wrap.top,.wrap.bottom{flex-direction:column}.wrap.top .inner,.wrap.bottom .inner{flex-direction:column}

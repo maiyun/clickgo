@@ -1,5 +1,5 @@
 <div class="wrap" :class="[direction]">
-    <div ref="inner" class="inner" :style="{'transform': 'translate3d(' + left + 'px, ' + top + 'px, 0) translateZ(0px)', 'padding': padding, 'margin': opMargin}">
+    <div ref="inner" class="inner" :class="[ani && 'ani']" :style="{'transform': 'translate3d(' + left + 'px, ' + top + 'px, 0) translateZ(0px)', 'padding': padding, 'margin': opMargin}">
         <slot></slot>
     </div>
 </div>

@@ -8,8 +8,6 @@ export default class extends clickgo.form.AbstractForm {
 
     public direction = 'top';
 
-    public scroll = false;
-
     public changeDirection(): void {
         switch (this.direction) {
             case 'top': {

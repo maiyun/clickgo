@@ -3,14 +3,13 @@ import * as clickgo from 'clickgo';
 export default class extends clickgo.control.AbstractControl {
 
     public props: {
+        /** --- 滚动方向 --- */
         'direction': 'left' | 'right' | 'top' | 'bottom';
 
-        'scroll': boolean | string;
         'speed': number | string;
     } = {
             'direction': 'left',
 
-            'scroll': true,
             'speed': 1
         };
 
@@ -26,47 +25,22 @@ export default class extends clickgo.control.AbstractControl {
 
     public timer = 0;
 
+    public ani = false;
+
     public get opMargin(): string {
         return this.padding.replace(/(\w+)/g, '-$1');
     }
 
     public get speedPx(): number {
-        return this.propInt('speed') * 0.5;
+        return this.propInt('speed') * 0.8;
     }
 
     public refresh(): void {
+        this.ani = false;
         if (this.length === 0 || this.client === 0) {
             return;
         }
-        if (this.propBoolean('scroll')) {
-            // --- 无论是否超出都要滚动 ---
-            if (this.timer > 0) {
-                return;
-            }
-            switch (this.props.direction) {
-                case 'left': {
-                    this.left = this.client;
-                    this.top = 0;
-                    break;
-                }
-                case 'right': {
-                    this.left = -this.length;
-                    this.top = 0;
-                    break;
-                }
-                case 'top': {
-                    this.left = 0;
-                    this.top = this.client;
-                    break;
-                }
-                case 'bottom': {
-                    this.left = 0;
-                    this.top = -this.length;
-                    break;
-                }
-            }
-        }
-        else if (this.length > this.client) {
+        if (this.length > this.client) {
             // --- 超出，得滚动 ---
             if (this.timer > 0) {
                 return;
@@ -78,7 +52,7 @@ export default class extends clickgo.control.AbstractControl {
                     break;
                 }
                 case 'right': {
-                    this.left = this.length - this.client;
+                    this.left = -(this.length - this.client);
                     this.top = 0;
                     break;
                 }
@@ -89,13 +63,13 @@ export default class extends clickgo.control.AbstractControl {
                 }
                 case 'bottom': {
                     this.left = 0;
-                    this.top = this.length - this.client;
+                    this.top = -(this.length - this.client);
                     break;
                 }
             }
         }
         else {
-            // --- 未超出、且不需要滚动 ---
+            // --- 未超出、无需滚动 ---
             if (this.timer === 0) {
                 return;
             }
@@ -105,57 +79,36 @@ export default class extends clickgo.control.AbstractControl {
             this.top = 0;
             return;
         }
-        // --- 没创建的 timer 的现在创建 timer ---
-        this.timer = clickgo.task.onFrame(async () => {
-            if (!this.element.offsetParent) {
-                clickgo.task.offFrame(this.timer);
-                this.timer = 0;
+        clickgo.task.sleep(() => {
+            if (this.length <= this.client) {
                 return;
             }
-            if (this.propBoolean('scroll')) {
-                switch (this.props.direction) {
-                    case 'left': {
-                        this.left -= this.speedPx;
-                        if (this.left < -this.length) {
-                            this.left = this.client;
-                        }
-                        break;
-                    }
-                    case 'right': {
-                        this.left += this.speedPx;
-                        if (this.left > this.client) {
-                            this.left = -this.length;
-                        }
-                        break;
-                    }
-                    case 'top': {
-                        this.top -=  this.speedPx;
-                        if (this.top < -this.length) {
-                            this.top = this.client;
-                        }
-                        break;
-                    }
-                    case 'bottom': {
-                        this.top += this.speedPx;
-                        if (this.top > this.client) {
-                            this.top = -this.length;
-                        }
-                        break;
-                    }
-                }
+            if (this.timer > 0) {
+                return;
             }
-            else {
+            // --- 没创建的 timer 的现在创建 timer ---
+            this.timer = clickgo.task.onFrame(async () => {
+                if (!this.element.offsetParent) {
+                    clickgo.task.offFrame(this.timer);
+                    this.timer = 0;
+                    return;
+                }
                 // --- 超出才滚动 ---
                 const xv = this.length - this.client;
                 switch (this.props.direction) {
                     case 'left': {
                         if (this.left === -xv) {
                             this.left = 0;
+                            clickgo.task.sleep(() => {
+                                this.ani = false;
+                            }, 150);
+                            await clickgo.tool.sleep(1000);
                         }
                         else {
                             this.left -= this.speedPx;
                             if (this.left < -xv) {
                                 this.left = -xv;
+                                this.ani = true;
                                 await clickgo.tool.sleep(1000);
                             }
                         }
@@ -163,12 +116,17 @@ export default class extends clickgo.control.AbstractControl {
                     }
                     case 'right': {
                         if (this.left === 0) {
-                            this.left = xv;
+                            this.left = -xv;
+                            clickgo.task.sleep(() => {
+                                this.ani = false;
+                            }, 150);
+                            await clickgo.tool.sleep(1000);
                         }
                         else {
                             this.left += this.speedPx;
                             if (this.left > 0) {
                                 this.left = 0;
+                                this.ani = true;
                                 await clickgo.tool.sleep(1000);
                             }
                         }
@@ -177,11 +135,16 @@ export default class extends clickgo.control.AbstractControl {
                     case 'top': {
                         if (this.top === -xv) {
                             this.top = 0;
+                            clickgo.task.sleep(() => {
+                                this.ani = false;
+                            }, 150);
+                            await clickgo.tool.sleep(1000);
                         }
                         else {
                             this.top -= this.speedPx;
                             if (this.top < -xv) {
                                 this.top = -xv;
+                                this.ani = true;
                                 await clickgo.tool.sleep(1000);
                             }
                         }
@@ -189,28 +152,30 @@ export default class extends clickgo.control.AbstractControl {
                     }
                     case 'bottom': {
                         if (this.top === 0) {
-                            this.top = xv;
+                            this.top = -xv;
+                            clickgo.task.sleep(() => {
+                                this.ani = false;
+                            }, 150);
+                            await clickgo.tool.sleep(1000);
                         }
                         else {
                             this.top += this.speedPx;
                             if (this.top > 0) {
                                 this.top = 0;
+                                this.ani = true;
                                 await clickgo.tool.sleep(1000);
                             }
                         }
                         break;
                     }
                 }
-            }
-        }, {
-            'formId': this.formId
-        });
+            }, {
+                'formId': this.formId
+            });
+        }, 1000);
     }
 
     public onMounted(): void | Promise<void> {
-        this.watch('scroll', (): void => {
-            this.refresh();
-        });
         this.watch('direction', (n, o): void => {
             if (this.timer === 0) {
                 return;
@@ -233,16 +198,17 @@ export default class extends clickgo.control.AbstractControl {
         }, true);
         // --- 外部包裹的改变 ---
         clickgo.dom.watchSize(this.element, () => {
-            const client = (this.props.direction === 'left' || this.props.direction === 'right') ? this.element.getBoundingClientRect().width : this.element.getBoundingClientRect().height;
+            const client = (this.props.direction === 'left' || this.props.direction === 'right') ? this.element.offsetWidth : this.element.offsetHeight;
             if (client === this.client) {
                 return;
             }
             this.client = client;
             this.refresh();
         }, true);
+
         // --- 内部内容的改变 ---
         clickgo.dom.watchSize(this.refs.inner, () => {
-            const length = (this.props.direction === 'left' || this.props.direction === 'right') ? this.refs.inner.getBoundingClientRect().width : this.refs.inner.getBoundingClientRect().height;
+            const length = (this.props.direction === 'left' || this.props.direction === 'right') ? this.refs.inner.offsetWidth : this.refs.inner.offsetHeight;
             if (length === this.length) {
                 return;
             }
