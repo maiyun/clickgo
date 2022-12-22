@@ -9,15 +9,51 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.verifyToken = exports.launcher = exports.AbstractBoot = void 0;
+exports.verifyToken = exports.launcher = exports.AbstractBoot = exports.sleep = void 0;
 const electron = require("electron");
 const path = require("path");
+const fs = require("fs");
 let isImmersion = false;
 let hasFrame = false;
 let isNoFormQuit = true;
 let form;
 let token = '';
 const platform = process.platform;
+const drives = [];
+function refreshDrives() {
+    return __awaiter(this, void 0, void 0, function* () {
+        if (platform !== 'win32') {
+            return;
+        }
+        drives.length = 0;
+        for (let i = 0; i < 26; ++i) {
+            const char = String.fromCharCode(97 + i);
+            try {
+                yield fs.promises.stat(char + ':/');
+                drives.push(char + ':');
+            }
+            catch (_a) {
+            }
+        }
+    });
+}
+function formatPath(path) {
+    if (platform !== 'win32') {
+        return path;
+    }
+    if (path === '/') {
+        return path;
+    }
+    return path.slice(1);
+}
+function sleep(ms) {
+    return new Promise(function (resolve) {
+        setTimeout(function () {
+            resolve();
+        }, ms);
+    });
+}
+exports.sleep = sleep;
 const methods = {
     'cg-init': {
         'once': true,
@@ -119,6 +155,324 @@ const methods = {
             form.setMaximizable(val);
         }
     },
+    'cg-fs-getContent': {
+        'once': false,
+        handler: function (t, path, options) {
+            return __awaiter(this, void 0, void 0, function* () {
+                if (!verifyToken(t)) {
+                    return null;
+                }
+                path = formatPath(path);
+                const encoding = options.encoding;
+                const start = options.start;
+                const end = options.end;
+                if (start || end) {
+                    return new Promise(function (resolve) {
+                        const rs = fs.createReadStream(path, {
+                            'encoding': encoding,
+                            'start': start,
+                            'end': end
+                        });
+                        const data = [];
+                        rs.on('data', function (chunk) {
+                            data.push(chunk);
+                        }).on('end', function () {
+                            const buf = Buffer.concat(data);
+                            if (encoding) {
+                                resolve(buf.toString());
+                            }
+                            else {
+                                resolve(buf);
+                            }
+                        }).on('error', function () {
+                            resolve(null);
+                        });
+                    });
+                }
+                else {
+                    try {
+                        if (encoding) {
+                            return yield fs.promises.readFile(path, {
+                                'encoding': encoding
+                            });
+                        }
+                        else {
+                            return yield fs.promises.readFile(path);
+                        }
+                    }
+                    catch (_a) {
+                        return null;
+                    }
+                }
+            });
+        }
+    },
+    'cg-fs-putContent': {
+        'once': false,
+        handler: function (t, path, data, options) {
+            return __awaiter(this, void 0, void 0, function* () {
+                if (!verifyToken(t)) {
+                    return false;
+                }
+                path = formatPath(path);
+                try {
+                    yield fs.promises.writeFile(path, data, options);
+                    return true;
+                }
+                catch (_a) {
+                    return false;
+                }
+            });
+        }
+    },
+    'cg-fs-readLink': {
+        'once': false,
+        handler: function (t, path, encoding) {
+            return __awaiter(this, void 0, void 0, function* () {
+                if (!verifyToken(t)) {
+                    return null;
+                }
+                path = formatPath(path);
+                try {
+                    return yield fs.promises.readlink(path, {
+                        'encoding': encoding
+                    });
+                }
+                catch (_a) {
+                    return null;
+                }
+            });
+        }
+    },
+    'cg-fs-symlink': {
+        'once': false,
+        handler: function (t, filePath, linkPath, type) {
+            return __awaiter(this, void 0, void 0, function* () {
+                if (!verifyToken(t)) {
+                    return false;
+                }
+                filePath = formatPath(filePath);
+                linkPath = formatPath(linkPath);
+                try {
+                    yield fs.promises.symlink(filePath, linkPath, type);
+                    return true;
+                }
+                catch (_a) {
+                    return false;
+                }
+            });
+        }
+    },
+    'cg-fs-unlink': {
+        'once': false,
+        handler: function (t, path) {
+            return __awaiter(this, void 0, void 0, function* () {
+                if (!verifyToken(t)) {
+                    return false;
+                }
+                path = formatPath(path);
+                for (let i = 0; i <= 2; ++i) {
+                    try {
+                        yield fs.promises.unlink(path);
+                        return true;
+                    }
+                    catch (_a) {
+                        yield sleep(250);
+                    }
+                }
+                try {
+                    yield fs.promises.unlink(path);
+                    return true;
+                }
+                catch (_b) {
+                    return false;
+                }
+            });
+        }
+    },
+    'cg-fs-stats': {
+        'once': false,
+        handler: function (t, path) {
+            return __awaiter(this, void 0, void 0, function* () {
+                if (!verifyToken(t)) {
+                    return null;
+                }
+                path = formatPath(path);
+                try {
+                    const item = yield fs.promises.lstat(path);
+                    return {
+                        isFile: item.isFile(),
+                        isDirectory: item.isDirectory(),
+                        isSymbolicLink: item.isSymbolicLink(),
+                        'size': item.size,
+                        'blksize': item.blksize,
+                        'atimeMs': item.atimeMs,
+                        'mtimeMs': item.mtimeMs,
+                        'ctimeMs': item.ctimeMs,
+                        'birthtimeMs': item.birthtimeMs,
+                        'atime': item.atime,
+                        'mtime': item.mtime,
+                        'ctime': item.ctime,
+                        'birthtime': item.birthtime
+                    };
+                }
+                catch (_a) {
+                    return null;
+                }
+            });
+        }
+    },
+    'cg-fs-mkdir': {
+        'once': false,
+        handler: function (t, path, mode) {
+            return __awaiter(this, void 0, void 0, function* () {
+                if (!verifyToken(t)) {
+                    return false;
+                }
+                path = formatPath(path);
+                const stats = yield fs.promises.lstat(path);
+                if (stats.isDirectory()) {
+                    return true;
+                }
+                try {
+                    yield fs.promises.mkdir(path, {
+                        'recursive': true,
+                        'mode': mode
+                    });
+                    return true;
+                }
+                catch (_a) {
+                    return false;
+                }
+            });
+        }
+    },
+    'cg-fs-rmdir': {
+        'once': false,
+        handler: function (t, path) {
+            return __awaiter(this, void 0, void 0, function* () {
+                if (!verifyToken(t)) {
+                    return false;
+                }
+                path = formatPath(path);
+                const stats = yield fs.promises.lstat(path);
+                if (!stats.isDirectory()) {
+                    return true;
+                }
+                try {
+                    yield fs.promises.rmdir(path);
+                    return true;
+                }
+                catch (_a) {
+                    return false;
+                }
+            });
+        }
+    },
+    'cg-fs-chmod': {
+        'once': false,
+        handler: function (t, path, mod) {
+            return __awaiter(this, void 0, void 0, function* () {
+                if (!verifyToken(t)) {
+                    return false;
+                }
+                path = formatPath(path);
+                try {
+                    yield fs.promises.chmod(path, mod);
+                    return true;
+                }
+                catch (_a) {
+                    return false;
+                }
+            });
+        }
+    },
+    'cg-fs-rename': {
+        'once': false,
+        handler: function (t, oldPath, newPath) {
+            return __awaiter(this, void 0, void 0, function* () {
+                if (!verifyToken(t)) {
+                    return false;
+                }
+                oldPath = formatPath(oldPath);
+                newPath = formatPath(newPath);
+                try {
+                    yield fs.promises.rename(oldPath, newPath);
+                    return true;
+                }
+                catch (_a) {
+                    return false;
+                }
+            });
+        }
+    },
+    'cg-fs-readDir': {
+        'once': false,
+        handler: function (t, path, options) {
+            return __awaiter(this, void 0, void 0, function* () {
+                if (!verifyToken(t)) {
+                    return [];
+                }
+                try {
+                    const list = [];
+                    if (platform === 'win32') {
+                        if (path === '/') {
+                            for (const item of drives) {
+                                list.push({
+                                    isFile: false,
+                                    isDirectory: true,
+                                    isSymbolicLink: false,
+                                    'name': item
+                                });
+                            }
+                            return list;
+                        }
+                        else {
+                            path = path.slice(1);
+                        }
+                    }
+                    const dlist = yield fs.promises.readdir(path, {
+                        'encoding': options.encoding,
+                        'withFileTypes': true
+                    });
+                    for (const item of dlist) {
+                        if (item.name === '.' || item.name === '..') {
+                            continue;
+                        }
+                        list.push({
+                            isFile: item.isFile(),
+                            isDirectory: item.isDirectory(),
+                            isSymbolicLink: item.isSymbolicLink(),
+                            'name': item.name
+                        });
+                    }
+                    return list;
+                }
+                catch (_a) {
+                    return [];
+                }
+            });
+        }
+    },
+    'cg-fs-copyFile': {
+        'once': false,
+        handler: function (t, src, dest) {
+            return __awaiter(this, void 0, void 0, function* () {
+                if (!verifyToken(t)) {
+                    return false;
+                }
+                src = formatPath(src);
+                dest = formatPath(dest);
+                try {
+                    yield fs.promises.copyFile(src, dest);
+                    return true;
+                }
+                catch (_a) {
+                    return false;
+                }
+            });
+        }
+    },
     'cg-ping': {
         'once': false,
         handler: function (t) {
@@ -204,6 +558,7 @@ function launcher(boot) {
     (function () {
         return __awaiter(this, void 0, void 0, function* () {
             yield electron.app.whenReady();
+            yield refreshDrives();
             yield boot.main();
         });
     })().catch(function () {
@@ -236,8 +591,8 @@ function createForm(p) {
             'contextIsolation': true,
             'preload': path.join(__dirname, '/pre.js')
         },
-        'width': 500,
-        'height': 300,
+        'width': hasFrame ? 800 : 500,
+        'height': hasFrame ? 600 : 300,
         'frame': hasFrame,
         'resizable': false,
         'show': false,

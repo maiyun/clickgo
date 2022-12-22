@@ -163,6 +163,20 @@ export function purify(text: string): string {
 }
 
 /**
+ * --- 传入正则进行匹配 str 是否有一项满足 ---
+ * @param str 要检测的字符串
+ * @param regs 正则列表
+ */
+export function match(str: string, regs: RegExp[]): boolean {
+    for (const reg of regs) {
+        if (reg.test(str)) {
+            return true;
+        }
+    }
+    return false;
+}
+
+/**
  * --- 将 style 中的 url 转换成 base64 data url ---
  * @param path 路径基准或以文件的路径为基准，以 / 结尾
  * @param style 样式表

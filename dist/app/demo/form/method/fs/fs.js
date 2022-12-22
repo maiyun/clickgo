@@ -35,6 +35,12 @@ class default_1 extends clickgo.form.AbstractForm {
             this.ppath = path;
         });
     }
+    stats() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const stats = yield clickgo.fs.stats(this.val[0]);
+            yield clickgo.form.dialog(stats ? JSON.stringify(stats) : 'null');
+        });
+    }
     dblclick() {
         return __awaiter(this, void 0, void 0, function* () {
             const r = yield clickgo.fs.isFile(this.val[0]);

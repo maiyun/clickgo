@@ -107,8 +107,8 @@ export default class extends clickgo.form.AbstractForm {
         await clickgo.form.dialog('Task ID: ' + tid.toString());
     }
 
-    public async checkPermission(): Promise<void> {
-        const rtn = await clickgo.task.checkPermission('hash', true);
+    public async checkPermission(val: string): Promise<void> {
+        const rtn = await clickgo.task.checkPermission(val, true);
         await clickgo.form.dialog(rtn[0] ? 'Succeed' : 'Failed');
     }
 

@@ -105,9 +105,9 @@ class default_1 extends clickgo.form.AbstractForm {
             yield clickgo.form.dialog('Task ID: ' + tid.toString());
         });
     }
-    checkPermission() {
+    checkPermission(val) {
         return __awaiter(this, void 0, void 0, function* () {
-            const rtn = yield clickgo.task.checkPermission('hash', true);
+            const rtn = yield clickgo.task.checkPermission(val, true);
             yield clickgo.form.dialog(rtn[0] ? 'Succeed' : 'Failed');
         });
     }

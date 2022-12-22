@@ -1019,6 +1019,7 @@ exports.run = run;
 const locale = {
     'sc': {
         'unknown': '未知权限',
+        'root': '<b>危险！</b>最高权限！请一定确认是否允许！',
         'apply-permission': '正在申请权限，请您仔细确认',
         'native.form': '实体窗体控制',
         'hash': '可修改地址栏 hash',
@@ -1028,6 +1029,7 @@ const locale = {
     },
     'tc': {
         'unknown': '未知許可權',
+        'root': '<b>危險！</b>最高許可權！請一定確認是否允許！',
         'apply-permission': '正在申請許可權，請您仔細確認',
         'native.form': '實體視窗控制',
         'hash': '可修改位址列 hash',
@@ -1037,6 +1039,7 @@ const locale = {
     },
     'en': {
         'unknown': 'Unknown',
+        'root': '<b>Danger!</b> Highest authorization! Please confirm whether to authorize?',
         'apply-permission': 'is applying for permissions, please check carefully',
         'native.form': 'Native window control',
         'hash': 'Can modify the location hash',
@@ -1046,6 +1049,7 @@ const locale = {
     },
     'ja': {
         'unknown': '不明な許可',
+        'root': '<b>危険！</b>最高の許可！承認するかどうかを確認してください！',
         'apply-permission': '許可申請中、よくご確認ください',
         'native.form': 'ローカルウィンドウを操作する',
         'hash': '網址の hash 変更可能',

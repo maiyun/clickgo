@@ -10,6 +10,7 @@ import * as tool from './tool';
 import * as task from './task';
 import * as form from './form';
 import * as core from './core';
+import * as native from './native';
 
 const clickgoFiles = ['/app/', '/app/demo/', '/app/demo/app.js', '/app/demo/config.json', '/app/demo/form/', '/app/demo/form/control/', '/app/demo/form/control/block/', '/app/demo/form/control/block/block.css', '/app/demo/form/control/block/block.xml', '/app/demo/form/control/button/', '/app/demo/form/control/button/button.css', '/app/demo/form/control/button/button.js', '/app/demo/form/control/button/button.xml', '/app/demo/form/control/check/', '/app/demo/form/control/check/check.js', '/app/demo/form/control/check/check.xml', '/app/demo/form/control/dialog/', '/app/demo/form/control/dialog/dialog.js', '/app/demo/form/control/dialog/dialog.xml', '/app/demo/form/control/file/', '/app/demo/form/control/file/file.js', '/app/demo/form/control/file/file.xml', '/app/demo/form/control/flow/', '/app/demo/form/control/flow/flow.css', '/app/demo/form/control/flow/flow.js', '/app/demo/form/control/flow/flow.xml', '/app/demo/form/control/form/', '/app/demo/form/control/form/form.css', '/app/demo/form/control/form/form.js', '/app/demo/form/control/form/form.xml', '/app/demo/form/control/img/', '/app/demo/form/control/img/img.xml', '/app/demo/form/control/label/', '/app/demo/form/control/label/label.xml', '/app/demo/form/control/list/', '/app/demo/form/control/list/list.css', '/app/demo/form/control/list/list.js', '/app/demo/form/control/list/list.xml', '/app/demo/form/control/loading/', '/app/demo/form/control/loading/loading.xml', '/app/demo/form/control/marquee/', '/app/demo/form/control/marquee/marquee.js', '/app/demo/form/control/marquee/marquee.xml', '/app/demo/form/control/menu/', '/app/demo/form/control/menu/menu.js', '/app/demo/form/control/menu/menu.xml', '/app/demo/form/control/monaco/', '/app/demo/form/control/monaco/monaco.js', '/app/demo/form/control/monaco/monaco.xml', '/app/demo/form/control/property/', '/app/demo/form/control/property/property.js', '/app/demo/form/control/property/property.xml', '/app/demo/form/control/radio/', '/app/demo/form/control/radio/radio.js', '/app/demo/form/control/radio/radio.xml', '/app/demo/form/control/scroll/', '/app/demo/form/control/scroll/scroll.js', '/app/demo/form/control/scroll/scroll.xml', '/app/demo/form/control/select/', '/app/demo/form/control/select/select.js', '/app/demo/form/control/select/select.xml', '/app/demo/form/control/tab/', '/app/demo/form/control/tab/tab.js', '/app/demo/form/control/tab/tab.xml', '/app/demo/form/control/text/', '/app/demo/form/control/text/text.js', '/app/demo/form/control/text/text.xml', '/app/demo/form/control/vflow/', '/app/demo/form/control/vflow/vflow.css', '/app/demo/form/control/vflow/vflow.js', '/app/demo/form/control/vflow/vflow.xml', '/app/demo/form/event/', '/app/demo/form/event/form/', '/app/demo/form/event/form/form.css', '/app/demo/form/event/form/form.js', '/app/demo/form/event/form/form.xml', '/app/demo/form/event/other/', '/app/demo/form/event/other/other.js', '/app/demo/form/event/other/other.xml', '/app/demo/form/event/screen/', '/app/demo/form/event/screen/screen.js', '/app/demo/form/event/screen/screen.xml', '/app/demo/form/event/task/', '/app/demo/form/event/task/task.js', '/app/demo/form/event/task/task.xml', '/app/demo/form/main.css', '/app/demo/form/main.js', '/app/demo/form/main.xml', '/app/demo/form/method/', '/app/demo/form/method/aform/', '/app/demo/form/method/aform/aform.js', '/app/demo/form/method/aform/aform.xml', '/app/demo/form/method/aform/sd.js', '/app/demo/form/method/aform/sd.xml', '/app/demo/form/method/core/', '/app/demo/form/method/core/core.js', '/app/demo/form/method/core/core.xml', '/app/demo/form/method/dom/', '/app/demo/form/method/dom/dom.css', '/app/demo/form/method/dom/dom.js', '/app/demo/form/method/dom/dom.xml', '/app/demo/form/method/form/', '/app/demo/form/method/form/form.css', '/app/demo/form/method/form/form.js', '/app/demo/form/method/form/form.xml', '/app/demo/form/method/form/test.xml', '/app/demo/form/method/fs/', '/app/demo/form/method/fs/fs.js', '/app/demo/form/method/fs/fs.xml', '/app/demo/form/method/fs/text.js', '/app/demo/form/method/fs/text.xml', '/app/demo/form/method/native/', '/app/demo/form/method/native/native.js', '/app/demo/form/method/native/native.xml', '/app/demo/form/method/system/', '/app/demo/form/method/system/system.js', '/app/demo/form/method/system/system.xml', '/app/demo/form/method/task/', '/app/demo/form/method/task/locale1.json', '/app/demo/form/method/task/locale2.json', '/app/demo/form/method/task/task.js', '/app/demo/form/method/task/task.xml', '/app/demo/form/method/theme/', '/app/demo/form/method/theme/theme.js', '/app/demo/form/method/theme/theme.xml', '/app/demo/form/method/tool/', '/app/demo/form/method/tool/tool.js', '/app/demo/form/method/tool/tool.xml', '/app/demo/form/method/zip/', '/app/demo/form/method/zip/zip.js', '/app/demo/form/method/zip/zip.xml', '/app/demo/global.css', '/app/demo/res/', '/app/demo/res/icon.svg', '/app/demo/res/img.jpg', '/app/demo/res/r-1.svg', '/app/demo/res/r-2.svg', '/app/demo/res/sql.svg', '/app/demo/res/txt.svg', '/app/demo/res/zip.svg', '/app/task/', '/app/task/app.js', '/app/task/config.json', '/app/task/form/', '/app/task/form/bar/', '/app/task/form/bar/bar.js', '/app/task/form/bar/bar.xml', '/app/task/form/desktop/', '/app/task/form/desktop/desktop.xml', '/app/task/locale/', '/app/task/locale/en.json', '/app/task/locale/ja.json', '/app/task/locale/sc.json', '/app/task/locale/tc.json', '/clickgo.js', '/clickgo.ts', '/control/', '/control/common.cgc', '/control/form.cgc', '/control/monaco.cgc', '/control/property.cgc', '/control/task.cgc', '/global.css', '/icon.png', '/index.js', '/index.ts', '/lib/', '/lib/control.js', '/lib/control.ts', '/lib/core.js', '/lib/core.ts', '/lib/dom.js', '/lib/dom.ts', '/lib/form.js', '/lib/form.ts', '/lib/fs.js', '/lib/fs.ts', '/lib/native.js', '/lib/native.ts', '/lib/task.js', '/lib/task.ts', '/lib/theme.js', '/lib/theme.ts', '/lib/tool.js', '/lib/tool.ts', '/lib/zip.js', '/lib/zip.ts', '/theme/', '/theme/familiar.cgt'];
 
@@ -63,6 +64,7 @@ export function mount(name: string, handler: types.IMountHandler, taskId?: numbe
             }
         }
     }
+    handler.date = new Date();
     mounts[name] = handler;
     return true;
 }
@@ -167,17 +169,30 @@ export async function getContent(path: string, options?: BufferEncoding | {
             return null;
         }
     }
-    else if (path.startsWith('/storage/')) {
-        // --- TODO ---
-        return null;
-    }
-    else if (path.startsWith('/mounted/')) {
-        const name = getMountName(path);
-        const hanlder = mounts[name];
-        if (!hanlder) {
+    else if (path.startsWith('/storage/') || path.startsWith('/mounted/')) {
+        const r = await task.checkPermission('fs.' + path + 'r', false, undefined, taskId);
+        if (!r[0]) {
             return null;
         }
-        return hanlder.getContent?.(path.slice(9 + name.length), options) ?? null;
+        if (path.startsWith('/mounted/')) {
+            const name = getMountName(path);
+            const hanlder = mounts[name];
+            if (!hanlder) {
+                return null;
+            }
+            return hanlder.getContent?.(path.slice(9 + name.length), options) ?? null;
+        }
+        // --- storage ---
+        const rtn = await native.invoke('cg-fs-getContent', native.getToken(), fpath, options);
+        if (!rtn) {
+            return null;
+        }
+        if (typeof rtn === 'string') {
+            return rtn;
+        }
+        return new Blob([rtn], {
+            'type': tool.getMimeByPath(path).mime
+        });
     }
     else if (path.startsWith('/package/') || path.startsWith('/current/')) {
         if (!taskId) {
@@ -232,17 +247,25 @@ export async function putContent(path: string, data: string | Blob, options: {
     if (path.startsWith('/clickgo/')) {
         return false;
     }
-    else if (path.startsWith('/storage/')) {
-        // --- TODO ---
-        return false;
-    }
-    else if (path.startsWith('/mounted/')) {
-        const name = getMountName(path);
-        const hanlder = mounts[name];
-        if (!hanlder) {
+    else if (path.startsWith('/storage/') || path.startsWith('/mounted/')) {
+        const r = await task.checkPermission('fs.' + path + 'w', false, undefined, taskId);
+        if (!r[0]) {
             return false;
         }
-        return hanlder.putContent?.(path.slice(9 + name.length), data, options) ?? false;
+        if (path.startsWith('/mounted/')) {
+            const name = getMountName(path);
+            const hanlder = mounts[name];
+            if (!hanlder) {
+                return false;
+            }
+            return hanlder.putContent?.(path.slice(9 + name.length), data, options) ?? false;
+        }
+        // --- storage ---
+        let buf: Uint8Array | undefined = undefined;
+        if (data instanceof Blob) {
+            buf = new Uint8Array(await data.arrayBuffer());
+        }
+        return native.invoke('cg-fs-putContent', native.getToken(), fpath, buf ?? data, options);
     }
     else if (path.startsWith('/package/')) {
         return false;
@@ -263,33 +286,27 @@ export async function putContent(path: string, data: string | Blob, options: {
  * @param path 要读取的路径
  * @param options 选项
  */
-export async function readLink(path: string, options?: BufferEncoding | {
-    'encoding'?: BufferEncoding;
-}, taskId?: number): Promise<string | null> {
+export async function readLink(path: string, encoding?: BufferEncoding, taskId?: number): Promise<string | null> {
     path = tool.urlResolve('/', path);
     const fpath = path.slice(8);
-    if (typeof options === 'string') {
-        options = {
-            'encoding': options
-        };
-    }
-    else if (!options) {
-        options = {};
-    }
     if (path.startsWith('/clickgo/')) {
         return null;
     }
-    else if (path.startsWith('/storage/')) {
-        // --- TODO ---
-        return null;
-    }
-    else if (path.startsWith('/mounted/')) {
-        const name = getMountName(path);
-        const hanlder = mounts[name];
-        if (!hanlder) {
+    else if (path.startsWith('/storage/') || path.startsWith('/mounted/')) {
+        const r = await task.checkPermission('fs.' + path + 'r', false, undefined, taskId);
+        if (!r[0]) {
             return null;
         }
-        return hanlder.readLink?.(path.slice(9 + name.length), options) ?? null;
+        if (path.startsWith('/mounted/')) {
+            const name = getMountName(path);
+            const hanlder = mounts[name];
+            if (!hanlder) {
+                return null;
+            }
+            return hanlder.readLink?.(path.slice(9 + name.length), encoding) ?? null;
+        }
+        // --- storage ---
+        return native.invoke('cg-fs-readLink', native.getToken(), fpath, encoding);
     }
     else if (path.startsWith('/package/')) {
         return null;
@@ -309,32 +326,34 @@ export async function readLink(path: string, options?: BufferEncoding | {
  * --- 把源文件创建一个 link ---
  * @param filePath 源文件
  * @param linkPath 连接路径
- * @param options 选项
+ * @param type 选项
  * @param taskId App 模式下无效
  */
-export async function symlink(filePath: string, linkPath: string, options: {
-    'type'?: 'dir' | 'file' | 'junction';
-} = {}, taskId?: number): Promise<boolean> {
+export async function symlink(filePath: string, linkPath: string, type?: 'dir' | 'file' | 'junction', taskId?: number): Promise<boolean> {
     filePath = tool.urlResolve('/', filePath);
     linkPath = tool.urlResolve('/', linkPath);
     if (filePath.startsWith('/clickgo/')) {
         return false;
     }
-    else if (filePath.startsWith('/storage/')) {
-        // --- TODO ---
-        return false;
-    }
-    else if (filePath.startsWith('/mounted/')) {
-        const fname = getMountName(filePath);
-        const lname = getMountName(linkPath);
-        if (fname !== lname) {
+    else if (filePath.startsWith('/storage/') || filePath.startsWith('/mounted/')) {
+        const r = await task.checkPermission('fs.' + filePath + 'w', false, undefined, taskId);
+        if (!r[0]) {
             return false;
         }
-        const hanlder = mounts[fname];
-        if (!hanlder) {
-            return false;
+        if (filePath.startsWith('/mounted/')) {
+            const fname = getMountName(filePath);
+            const lname = getMountName(linkPath);
+            if (fname !== lname) {
+                return false;
+            }
+            const hanlder = mounts[fname];
+            if (!hanlder) {
+                return false;
+            }
+            return hanlder.symlink?.(filePath.slice(9 + fname.length), linkPath.slice(9 + fname.length), type) ?? false;
         }
-        return hanlder.symlink?.(filePath.slice(9 + fname.length), linkPath.slice(9 + fname.length), options) ?? false;
+        // --- storage ---
+        return native.invoke('cg-fs-symlink', native.getToken(), filePath.slice(8), linkPath.slice(8), type);
     }
     else if (filePath.startsWith('/package/')) {
         return false;
@@ -346,7 +365,7 @@ export async function symlink(filePath: string, linkPath: string, options: {
         if (linkPath.startsWith('/current/')) {
             linkPath = task.list[taskId].current + linkPath.slice(8);
         }
-        return symlink(task.list[taskId].current + filePath.slice(8), linkPath, options, taskId);
+        return symlink(task.list[taskId].current + filePath.slice(8), linkPath, type, taskId);
     }
     else {
         return false;
@@ -364,17 +383,21 @@ export async function unlink(path: string, taskId?: number): Promise<boolean> {
     if (path.startsWith('/clickgo/')) {
         return false;
     }
-    else if (path.startsWith('/storage/')) {
-        // --- TODO ---
-        return false;
-    }
-    else if (path.startsWith('/mounted/')) {
-        const name = getMountName(path);
-        const hanlder = mounts[name];
-        if (!hanlder) {
+    else if (path.startsWith('/storage/') || path.startsWith('/mounted/')) {
+        const r = await task.checkPermission('fs.' + path + 'w', false, undefined, taskId);
+        if (!r[0]) {
             return false;
         }
-        return hanlder.unlink?.(path.slice(9 + name.length)) ?? false;
+        if (path.startsWith('/mounted/')) {
+            const name = getMountName(path);
+            const hanlder = mounts[name];
+            if (!hanlder) {
+                return false;
+            }
+            return hanlder.unlink?.(path.slice(9 + name.length)) ?? false;
+        }
+        // --- storage ---
+        return native.invoke('cg-fs-unlink', native.getToken(), fpath);
     }
     else if (path.startsWith('/package/')) {
         return false;
@@ -427,7 +450,11 @@ async function getClickGoStats(path: string): Promise<types.IStats | null> {
             });
             const hdate = res.headers.get('date');
             const hmdate = res.headers.get('last-modified');
-            const hlength = res.headers.get('content-length');
+            let hlength = res.headers.get('content-range');
+            if (hlength) {
+                const lio = hlength.lastIndexOf('/');
+                hlength = hlength.slice(lio + 1);
+            }
             let date = new Date();
             let mdate = date;
             if (hdate) {
@@ -473,6 +500,59 @@ async function getClickGoStats(path: string): Promise<types.IStats | null> {
  */
 export async function stats(path: string, taskId?: number): Promise<types.IStats | null> {
     path = tool.urlResolve('/', path);
+    if (path.endsWith('/')) {
+        path = path.slice(0, -1);
+    }
+    if (['', '/clickgo', '/storage', '/mounted', '/package'].includes(path)) {
+        const date = new Date();
+        const ms = date.getTime();
+        return {
+            isFile: function() {
+                return false;
+            },
+            isDirectory: function() {
+                return true;
+            },
+            isSymbolicLink: function() {
+                return false;
+            },
+            'size': 0,
+            'blksize': 0,
+            'atimeMs': ms,
+            'mtimeMs': ms,
+            'ctimeMs': ms,
+            'birthtimeMs': ms,
+            'atime': date,
+            'mtime': date,
+            'ctime': date,
+            'birthtime': date
+        };
+    }
+    if (path === '/current') {
+        const date = new Date();
+        const ms = date.getTime();
+        return {
+            isFile: function() {
+                return false;
+            },
+            isDirectory: function() {
+                return false;
+            },
+            isSymbolicLink: function() {
+                return true;
+            },
+            'size': 0,
+            'blksize': 0,
+            'atimeMs': ms,
+            'mtimeMs': ms,
+            'ctimeMs': ms,
+            'birthtimeMs': ms,
+            'atime': date,
+            'mtime': date,
+            'ctime': date,
+            'birthtime': date
+        };
+    }
     let fpath = path.slice(8);
     if (path.startsWith('/clickgo/')) {
         if (!clickgoFiles.includes(fpath)) {
@@ -484,13 +564,68 @@ export async function stats(path: string, taskId?: number): Promise<types.IStats
         return getClickGoStats(fpath);
     }
     else if (path.startsWith('/storage/')) {
-        // --- TODO ---
-        return null;
+        const r = await task.checkPermission('fs.' + path + 'r', false, undefined, taskId);
+        if (!r[0]) {
+            return null;
+        }
+        const item = await native.invoke('cg-fs-stats', native.getToken(), fpath);
+        if (!item) {
+            return null;
+        }
+        return {
+            isFile: function() {
+                return item.isFile;
+            },
+            isDirectory: function() {
+                return item.isDirectory;
+            },
+            isSymbolicLink: function() {
+                return item.isSymbolicLink;
+            },
+            'size': item.size,
+            'blksize': item.blksize,
+            'atimeMs': item.atimeMs,
+            'mtimeMs': item.mtimeMs,
+            'ctimeMs': item.ctimeMs,
+            'birthtimeMs': item.birthtimeMs,
+            'atime': item.atime,
+            'mtime': item.mtime,
+            'ctime': item.ctime,
+            'birthtime': item.birthtime
+        };
     }
     else if (path.startsWith('/mounted/')) {
         const name = getMountName(path);
         const hanlder = mounts[name];
         if (!hanlder) {
+            return null;
+        }
+        if (path === '/mounted/' + name) {
+            const ms = hanlder.date!.getTime();
+            return {
+                isFile: function() {
+                    return false;
+                },
+                isDirectory: function() {
+                    return true;
+                },
+                isSymbolicLink: function() {
+                    return false;
+                },
+                'size': 0,
+                'blksize': 0,
+                'atimeMs': ms,
+                'mtimeMs': ms,
+                'ctimeMs': ms,
+                'birthtimeMs': ms,
+                'atime': hanlder.date!,
+                'mtime': hanlder.date!,
+                'ctime': hanlder.date!,
+                'birthtime': hanlder.date!
+            };
+        }
+        const r = await task.checkPermission('fs.' + path + 'r', false, undefined, taskId);
+        if (!r[0]) {
             return null;
         }
         return hanlder.stats?.(path.slice(9 + name.length)) ?? null;
@@ -617,17 +752,21 @@ export async function mkdir(path: string, mode: number = 0o755, taskId?: number)
     if (path.startsWith('/clickgo/')) {
         return false;
     }
-    else if (path.startsWith('/storage/')) {
-        // --- TODO ---
-        return false;
-    }
-    else if (path.startsWith('/mounted/')) {
-        const name = getMountName(path);
-        const hanlder = mounts[name];
-        if (!hanlder) {
+    else if (path.startsWith('/storage/') || path.startsWith('/mounted/')) {
+        const r = await task.checkPermission('fs.' + path + 'w', false, undefined, taskId);
+        if (!r[0]) {
             return false;
         }
-        return hanlder.mkdir?.(path.slice(9 + name.length), mode) ?? false;
+        if (path.startsWith('/mounted/')) {
+            const name = getMountName(path);
+            const hanlder = mounts[name];
+            if (!hanlder) {
+                return false;
+            }
+            return hanlder.mkdir?.(path.slice(9 + name.length), mode) ?? false;
+        }
+        // --- storage ---
+        return native.invoke('cg-fs-mkdir', native.getToken(), fpath, mode);
     }
     else if (path.startsWith('/package/')) {
         return false;
@@ -654,17 +793,21 @@ export async function rmdir(path: string, taskId?: number): Promise<boolean> {
     if (path.startsWith('/clickgo/')) {
         return false;
     }
-    else if (path.startsWith('/storage/')) {
-        // --- TODO ---
-        return false;
-    }
-    else if (path.startsWith('/mounted/')) {
-        const name = getMountName(path);
-        const hanlder = mounts[name];
-        if (!hanlder) {
+    else if (path.startsWith('/storage/') || path.startsWith('/mounted/')) {
+        const r = await task.checkPermission('fs.' + path + 'w', false, undefined, taskId);
+        if (!r[0]) {
             return false;
         }
-        return hanlder.rmdir?.(path.slice(9 + name.length)) ?? false;
+        if (path.startsWith('/mounted/')) {
+            const name = getMountName(path);
+            const hanlder = mounts[name];
+            if (!hanlder) {
+                return false;
+            }
+            return hanlder.rmdir?.(path.slice(9 + name.length)) ?? false;
+        }
+        // --- storage ---
+        return native.invoke('cg-fs-rmdir', native.getToken(), fpath);
     }
     else if (path.startsWith('/package/')) {
         return false;
@@ -715,7 +858,7 @@ export async function rmdirDeep(path: string, taskId?: number): Promise<boolean>
 }
 
 /**
- * --- 修改权限
+ * --- 修改权限 ---
  * @param path 要修改的路径
  * @param mod 权限
  * @param taskId App 模式下无效
@@ -726,17 +869,21 @@ export async function chmod(path: string, mod: string | number, taskId?: number)
     if (path.startsWith('/clickgo/')) {
         return false;
     }
-    else if (path.startsWith('/storage/')) {
-        // --- TODO ---
-        return false;
-    }
-    else if (path.startsWith('/mounted/')) {
-        const name = getMountName(path);
-        const hanlder = mounts[name];
-        if (!hanlder) {
+    else if (path.startsWith('/storage/') || path.startsWith('/mounted/')) {
+        const r = await task.checkPermission('fs.' + path + 'w', false, undefined, taskId);
+        if (!r[0]) {
             return false;
         }
-        return hanlder.chmod?.(path.slice(9 + name.length), mod) ?? false;
+        if (path.startsWith('/mounted/')) {
+            const name = getMountName(path);
+            const hanlder = mounts[name];
+            if (!hanlder) {
+                return false;
+            }
+            return hanlder.chmod?.(path.slice(9 + name.length), mod) ?? false;
+        }
+        // --- storage ---
+        return native.invoke('cg-fs-chmod', native.getToken(), fpath, mod);
     }
     else if (path.startsWith('/package/')) {
         return false;
@@ -768,21 +915,29 @@ export async function rename(oldPath: string, newPath: string, taskId?: number):
     if (oldPath.startsWith('/clickgo/')) {
         return false;
     }
-    else if (oldPath.startsWith('/storage/')) {
-        // --- TODO ---
-        return false;
-    }
-    else if (oldPath.startsWith('/mounted/')) {
-        const fname = getMountName(oldPath);
-        const lname = getMountName(newPath);
-        if (fname !== lname) {
+    else if (oldPath.startsWith('/storage/') || oldPath.startsWith('/mounted/')) {
+        let r = await task.checkPermission('fs.' + oldPath + 'w', false, undefined, taskId);
+        if (!r[0]) {
             return false;
         }
-        const hanlder = mounts[fname];
-        if (!hanlder) {
+        r = await task.checkPermission('fs.' + newPath + 'w', false, undefined, taskId);
+        if (!r[0]) {
             return false;
         }
-        return hanlder.rename?.(oldPath.slice(9 + fname.length), newPath.slice(9 + fname.length)) ?? false;
+        if (oldPath.startsWith('/mounted/')) {
+            const fname = getMountName(oldPath);
+            const lname = getMountName(newPath);
+            if (fname !== lname) {
+                return false;
+            }
+            const hanlder = mounts[fname];
+            if (!hanlder) {
+                return false;
+            }
+            return hanlder.rename?.(oldPath.slice(9 + fname.length), newPath.slice(9 + fname.length)) ?? false;
+        }
+        // --- storage ---
+        return native.invoke('cg-fs-rename', native.getToken(), ofpath, nfpath);
     }
     else if (oldPath.startsWith('/package/')) {
         return false;
@@ -804,9 +959,7 @@ export async function rename(oldPath: string, newPath: string, taskId?: number):
  * @param options 选项
  * @param taskId App 模式下无效
  */
-export async function readDir(path: string, options: {
-    'encoding'?: BufferEncoding;
-} = {}, taskId?: number): Promise<types.IDirent[]> {
+export async function readDir(path: string, encoding?: BufferEncoding, taskId?: number): Promise<types.IDirent[]> {
     path = tool.urlResolve('/', path);
     if (path === '/') {
         const list = [
@@ -931,13 +1084,9 @@ export async function readDir(path: string, options: {
         }
         return list;
     }
-    else if (path.startsWith('/storage/')) {
-        // --- TODO ---
-        return [];
-    }
-    else if (path.startsWith('/mounted/')) {
+    else if (path.startsWith('/storage/') || path.startsWith('/mounted/')) {
+        const list: types.IDirent[] = [];
         if (path === '/mounted/') {
-            const list: types.IDirent[] = [];
             for (const name in mounts) {
                 list.push({
                     isFile: function() {
@@ -954,19 +1103,42 @@ export async function readDir(path: string, options: {
             }
             return list;
         }
-        const name = getMountName(path);
-        const hanlder = mounts[name];
-        if (!hanlder) {
+        const r = await task.checkPermission('fs.' + path + 'r', false, undefined, taskId);
+        if (!r[0]) {
             return [];
         }
-        return hanlder.readDir?.(path.slice(9 + name.length), options) ?? [];
+        if (path.startsWith('/mounted/')) {
+            const name = getMountName(path);
+            const hanlder = mounts[name];
+            if (!hanlder) {
+                return [];
+            }
+            return hanlder.readDir?.(path.slice(9 + name.length), encoding) ?? [];
+        }
+        // --- storage ---
+        const ls = await native.invoke('cg-fs-readDir', native.getToken(), fpath, encoding);
+        for (const item of ls) {
+            list.push({
+                isFile: function() {
+                    return item.isFile;
+                },
+                isDirectory: function() {
+                    return item.isDirectory;
+                },
+                isSymbolicLink: function() {
+                    return item.isSymbolicLink;
+                },
+                'name': item.name
+            });
+        }
+        return list;
     }
     else if (path.startsWith('/package/') || path.startsWith('/current/')) {
         if (!taskId) {
             return [];
         }
         if (path.startsWith('/current/')) {
-            return readDir(task.list[taskId].current + fpath, options, taskId);
+            return readDir(task.list[taskId].current + fpath, encoding, taskId);
         }
         const list: types.IDirent[] = [];
         const dirs: string[] = [];
@@ -1021,50 +1193,47 @@ export async function readDir(path: string, options: {
  * --- 复制文件夹里的内容到另一个地方，失败不会回滚 ---
  * @param from 源，末尾加 /
  * @param to 目标，末尾加 /
- * @param options 选项
+ * @param ignore 忽略的文件
  * @param taskId App 模式下无效
  */
-export async function copyFolder(from: string, to: string, options: {
-    'ignore'?: RegExp[];
-} = {}, taskId?: number): Promise<number> {
-    from = tool.urlResolve('/', from);
-    to = tool.urlResolve('/', to);
-    if (!from.startsWith(to.slice(0, 9))) {
+export async function copyFolder(from: string, to: string, ignore: RegExp[] = [], taskId?: number): Promise<number> {
+    let num = 0;
+    // --- 如果源目录不存在或不是目录，则直接成功 :) ---
+    if (!await isDir(from, taskId)) {
         return 0;
     }
-    const ffpath = from.slice(8);
-    const tfpath = from.slice(8);
-    if (from.startsWith('/clickgo/')) {
-        return 0;
-    }
-    else if (from.startsWith('/storage/')) {
-        // --- TODO ---
-        return 0;
-    }
-    else if (from.startsWith('/mounted/')) {
-        const fname = getMountName(from);
-        const lname = getMountName(to);
-        if (fname !== lname) {
-            return 0;
+    // --- 遍历源目录文件和文件夹，准备复制 ---
+    const flist = await readDir(from, undefined, taskId);
+    /** --- to 目录是否检查是否存在，空目录不复制，所以确定有 item file 的时候才创建 --- */
+    let checkTo = false;
+    for (const item of flist) {
+        if (item.isDirectory()) {
+            const r = await copyFolder(from + item.name + '/', to + item.name + '/', ignore, taskId);
+            if (r === -1) {
+                return r;
+            }
+            else {
+                num += r;
+            }
         }
-        const hanlder = mounts[fname];
-        if (!hanlder) {
-            return 0;
+        else if (item.isFile()) {
+            // --- 先判断本文件是否被排除 ---
+            if (ignore.length > 0 && tool.match(item.name, ignore)) {
+                continue;
+            }
+            if (!checkTo) {
+                if (!await mkdir(to, undefined, taskId)) {
+                    return -1;
+                }
+                checkTo = true;
+            }
+            if (!(await copyFile(from + item.name, to + item.name, taskId))) {
+                continue;
+            }
+            ++num;
         }
-        return hanlder.copyFolder?.(from.slice(9 + fname.length), to.slice(9 + fname.length), options) ?? 0;
     }
-    else if (from.startsWith('/package/')) {
-        return 0;
-    }
-    else if (from.startsWith('/current/')) {
-        if (!taskId) {
-            return 0;
-        }
-        return copyFolder(task.list[taskId].current + ffpath, task.list[taskId].current + tfpath, options);
-    }
-    else {
-        return 0;
-    }
+    return num;
 }
 
 /**
@@ -1084,21 +1253,29 @@ export async function copyFile(src: string, dest: string, taskId?: number): Prom
     if (src.startsWith('/clickgo/')) {
         return false;
     }
-    else if (src.startsWith('/storage/')) {
-        // --- TODO ---
-        return false;
-    }
-    else if (src.startsWith('/mounted/')) {
-        const fname = getMountName(src);
-        const lname = getMountName(dest);
-        if (fname !== lname) {
+    else if (src.startsWith('/storage/') || dest.startsWith('/mounted/')) {
+        let r = await task.checkPermission('fs.' + src + 'r', false, undefined, taskId);
+        if (!r[0]) {
             return false;
         }
-        const hanlder = mounts[fname];
-        if (!hanlder) {
+        r = await task.checkPermission('fs.' + dest + 'w', false, undefined, taskId);
+        if (!r[0]) {
             return false;
         }
-        return hanlder.copyFile?.(src.slice(9 + fname.length), dest.slice(9 + fname.length)) ?? false;
+        if (src.startsWith('/mounted/')) {
+            const fname = getMountName(src);
+            const lname = getMountName(dest);
+            if (fname !== lname) {
+                return false;
+            }
+            const hanlder = mounts[fname];
+            if (!hanlder) {
+                return false;
+            }
+            return hanlder.copyFile?.(src.slice(9 + fname.length), dest.slice(9 + fname.length)) ?? false;
+        }
+        // --- storage ---
+        return native.invoke('cg-fs-copyFile', native.getToken(), sfpath, dfpath);
     }
     else if (src.startsWith('/package/')) {
         return false;

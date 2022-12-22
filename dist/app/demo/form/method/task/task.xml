@@ -31,7 +31,11 @@
             <button @click="getPermissions" style="height: 30px;">getPermissions({{tid}})</button>
             <button @click="getList" style="height: 30px;">getList()</button>
             <button @click="run" style="height: 30px;">run('/clickgo/app/demo/')</button>
-            <button @click="checkPermission" style="height: 30px;">checkPermission('hash')</button>
+            <layout gutter="10" align-v="center">
+                <label>checkPermission:</label>
+                <button @click="checkPermission('hash')" style="height: 30px; flex: 1;">hash</button>
+                <button @click="checkPermission('root')" style="height: 30px; flex: 1; color: red;">root</button>
+            </layout>
             <button @click="end" style="height: 30px;">end('{{tid}}')</button>
             <label>Now locale: {{locale}}, Global locale: {{globalLocale}}</label>
             <label>l('File name'): {{l('File name')}}</label>

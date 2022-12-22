@@ -287,7 +287,7 @@ function trigger(name, taskId = 0, formId = 0, param1 = '', param2 = '') {
             if (typeof taskId !== 'number' || typeof formId !== 'number') {
                 break;
             }
-            exports.boot[eventName](taskId, formId, param1, param2);
+            exports.boot === null || exports.boot === void 0 ? void 0 : exports.boot[eventName](taskId, formId, param1, param2);
             for (const tid in task.list) {
                 const t = task.list[tid];
                 (_a = t.class) === null || _a === void 0 ? void 0 : _a[eventName](taskId, formId, param1, param2);
@@ -299,7 +299,7 @@ function trigger(name, taskId = 0, formId = 0, param1 = '', param2 = '') {
         }
         case 'screenResize': {
             globalEvents.screenResize();
-            exports.boot[eventName]();
+            exports.boot === null || exports.boot === void 0 ? void 0 : exports.boot[eventName]();
             for (const tid in task.list) {
                 const t = task.list[tid];
                 (_d = t.class) === null || _d === void 0 ? void 0 : _d[eventName]();
@@ -313,7 +313,7 @@ function trigger(name, taskId = 0, formId = 0, param1 = '', param2 = '') {
             if ((typeof taskId !== 'string') || (typeof formId === 'number')) {
                 break;
             }
-            exports.boot[eventName]();
+            exports.boot === null || exports.boot === void 0 ? void 0 : exports.boot[eventName]();
             for (const tid in task.list) {
                 const t = task.list[tid];
                 (_g = t.class) === null || _g === void 0 ? void 0 : _g[eventName](taskId, formId);
@@ -326,7 +326,7 @@ function trigger(name, taskId = 0, formId = 0, param1 = '', param2 = '') {
         case 'formCreated':
         case 'formRemoved': {
             (_l = (_k = globalEvents)[name]) === null || _l === void 0 ? void 0 : _l.call(_k, taskId, formId, param1, param2);
-            exports.boot[eventName](taskId, formId, param1, param2);
+            exports.boot === null || exports.boot === void 0 ? void 0 : exports.boot[eventName](taskId, formId, param1, param2);
             for (const tid in task.list) {
                 const t = task.list[tid];
                 (_m = t.class) === null || _m === void 0 ? void 0 : _m[eventName](taskId, formId, param1, param2);
@@ -339,7 +339,7 @@ function trigger(name, taskId = 0, formId = 0, param1 = '', param2 = '') {
         case 'formTitleChanged':
         case 'formIconChanged': {
             (_r = (_q = globalEvents)[name]) === null || _r === void 0 ? void 0 : _r.call(_q, taskId, formId, param1);
-            exports.boot[eventName](taskId, formId, param1);
+            exports.boot === null || exports.boot === void 0 ? void 0 : exports.boot[eventName](taskId, formId, param1);
             for (const tid in task.list) {
                 const t = task.list[tid];
                 (_s = t.class) === null || _s === void 0 ? void 0 : _s[eventName](taskId, formId, param1);
@@ -353,7 +353,7 @@ function trigger(name, taskId = 0, formId = 0, param1 = '', param2 = '') {
         case 'formStateMaxChanged':
         case 'formShowChanged': {
             (_w = (_v = globalEvents)[name]) === null || _w === void 0 ? void 0 : _w.call(_v, taskId, formId, param1);
-            exports.boot[eventName](taskId, formId, param1);
+            exports.boot === null || exports.boot === void 0 ? void 0 : exports.boot[eventName](taskId, formId, param1);
             for (const tid in task.list) {
                 const t = task.list[tid];
                 (_x = t.class) === null || _x === void 0 ? void 0 : _x[eventName](taskId, formId, param1);
@@ -367,7 +367,7 @@ function trigger(name, taskId = 0, formId = 0, param1 = '', param2 = '') {
         case 'formBlurred':
         case 'formFlash': {
             (_1 = (_0 = globalEvents)[name]) === null || _1 === void 0 ? void 0 : _1.call(_0, taskId, formId);
-            exports.boot[eventName](taskId, formId);
+            exports.boot === null || exports.boot === void 0 ? void 0 : exports.boot[eventName](taskId, formId);
             for (const tid in task.list) {
                 const t = task.list[tid];
                 (_2 = t.class) === null || _2 === void 0 ? void 0 : _2[eventName](taskId, formId);
@@ -380,7 +380,7 @@ function trigger(name, taskId = 0, formId = 0, param1 = '', param2 = '') {
         case 'taskStarted':
         case 'taskEnded': {
             (_6 = (_5 = globalEvents)[name]) === null || _6 === void 0 ? void 0 : _6.call(_5, taskId, formId);
-            exports.boot[eventName](taskId, formId);
+            exports.boot === null || exports.boot === void 0 ? void 0 : exports.boot[eventName](taskId, formId);
             for (const tid in task.list) {
                 const t = task.list[tid];
                 (_7 = t.class) === null || _7 === void 0 ? void 0 : _7[eventName](taskId);
@@ -397,7 +397,7 @@ function trigger(name, taskId = 0, formId = 0, param1 = '', param2 = '') {
             if (typeof taskId !== 'string') {
                 taskId = taskId.toString();
             }
-            exports.boot[eventName](taskId, formId);
+            exports.boot === null || exports.boot === void 0 ? void 0 : exports.boot[eventName](taskId, formId);
             for (const tid in task.list) {
                 const t = task.list[tid];
                 (_10 = t.class) === null || _10 === void 0 ? void 0 : _10[eventName](taskId, formId);
@@ -411,7 +411,7 @@ function trigger(name, taskId = 0, formId = 0, param1 = '', param2 = '') {
             if (typeof taskId !== 'string') {
                 break;
             }
-            exports.boot[eventName](taskId);
+            exports.boot === null || exports.boot === void 0 ? void 0 : exports.boot[eventName](taskId);
             for (const tid in task.list) {
                 const t = task.list[tid];
                 (_13 = t.class) === null || _13 === void 0 ? void 0 : _13[eventName](taskId);

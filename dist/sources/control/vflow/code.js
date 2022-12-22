@@ -127,6 +127,10 @@ class default_1 extends clickgo.control.AbstractControl {
                     rtn.start = i;
                     break;
                 }
+                if (rtn.start === -1) {
+                    rtn.start = 0;
+                    rtn.end = 9;
+                }
             }
             else {
                 let found = false;

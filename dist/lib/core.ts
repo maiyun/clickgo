@@ -391,7 +391,7 @@ export function trigger(name: types.TGlobalEvent, taskId: number | string | bool
             if (typeof taskId !== 'number' || typeof formId !== 'number') {
                 break;
             }
-            (boot as any)[eventName](taskId, formId, param1, param2);
+            (boot as any)?.[eventName](taskId, formId, param1, param2);
             for (const tid in task.list) {
                 const t = task.list[tid];
                 (t.class as any)?.[eventName](taskId, formId, param1, param2);
@@ -403,7 +403,7 @@ export function trigger(name: types.TGlobalEvent, taskId: number | string | bool
         }
         case 'screenResize': {
             globalEvents.screenResize();
-            (boot as any)[eventName]();
+            (boot as any)?.[eventName]();
             for (const tid in task.list) {
                 const t = task.list[tid];
                 (t.class as any)?.[eventName]();
@@ -417,7 +417,7 @@ export function trigger(name: types.TGlobalEvent, taskId: number | string | bool
             if ((typeof taskId !== 'string') || (typeof formId === 'number')) {
                 break;
             }
-            (boot as any)[eventName]();
+            (boot as any)?.[eventName]();
             for (const tid in task.list) {
                 const t = task.list[tid];
                 (t.class as any)?.[eventName](taskId, formId);
@@ -430,7 +430,7 @@ export function trigger(name: types.TGlobalEvent, taskId: number | string | bool
         case 'formCreated':
         case 'formRemoved': {
             (globalEvents as any)[name]?.(taskId, formId, param1, param2);
-            (boot as any)[eventName](taskId, formId, param1, param2);
+            (boot as any)?.[eventName](taskId, formId, param1, param2);
             for (const tid in task.list) {
                 const t = task.list[tid];
                 (t.class as any)?.[eventName](taskId, formId, param1, param2);
@@ -443,7 +443,7 @@ export function trigger(name: types.TGlobalEvent, taskId: number | string | bool
         case 'formTitleChanged':
         case 'formIconChanged': {
             (globalEvents as any)[name]?.(taskId, formId, param1);
-            (boot as any)[eventName](taskId, formId, param1);
+            (boot as any)?.[eventName](taskId, formId, param1);
             for (const tid in task.list) {
                 const t = task.list[tid];
                 (t.class as any)?.[eventName](taskId, formId, param1);
@@ -457,7 +457,7 @@ export function trigger(name: types.TGlobalEvent, taskId: number | string | bool
         case 'formStateMaxChanged':
         case 'formShowChanged': {
             (globalEvents as any)[name]?.(taskId, formId, param1);
-            (boot as any)[eventName](taskId, formId, param1);
+            (boot as any)?.[eventName](taskId, formId, param1);
             for (const tid in task.list) {
                 const t = task.list[tid];
                 (t.class as any)?.[eventName](taskId, formId, param1);
@@ -471,7 +471,7 @@ export function trigger(name: types.TGlobalEvent, taskId: number | string | bool
         case 'formBlurred':
         case 'formFlash': {
             (globalEvents as any)[name]?.(taskId, formId);
-            (boot as any)[eventName](taskId, formId);
+            (boot as any)?.[eventName](taskId, formId);
             for (const tid in task.list) {
                 const t = task.list[tid];
                 (t.class as any)?.[eventName](taskId, formId);
@@ -484,7 +484,7 @@ export function trigger(name: types.TGlobalEvent, taskId: number | string | bool
         case 'taskStarted':
         case 'taskEnded': {
             (globalEvents as any)[name]?.(taskId, formId);
-            (boot as any)[eventName](taskId, formId);
+            (boot as any)?.[eventName](taskId, formId);
             for (const tid in task.list) {
                 const t = task.list[tid];
                 (t.class as any)?.[eventName](taskId);
@@ -501,7 +501,7 @@ export function trigger(name: types.TGlobalEvent, taskId: number | string | bool
             if (typeof taskId !== 'string') {
                 taskId = taskId.toString();
             }
-            (boot as any)[eventName](taskId, formId);
+            (boot as any)?.[eventName](taskId, formId);
             for (const tid in task.list) {
                 const t = task.list[tid];
                 (t.class as any)?.[eventName](taskId, formId);
@@ -515,7 +515,7 @@ export function trigger(name: types.TGlobalEvent, taskId: number | string | bool
             if (typeof taskId !== 'string') {
                 break;
             }
-            (boot as any)[eventName](taskId);
+            (boot as any)?.[eventName](taskId);
             for (const tid in task.list) {
                 const t = task.list[tid];
                 (t.class as any)?.[eventName](taskId);

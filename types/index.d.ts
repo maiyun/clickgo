@@ -290,6 +290,8 @@ export interface IFormInfo {
 // --------------------------
 
 export interface IMountHandler {
+    /** --- 挂载时间，无需设置 --- */
+    'date'?: Date;
     getContent?: (path: string, options?: BufferEncoding | {
         'encoding'?: BufferEncoding;
         'start'?: number;
@@ -301,24 +303,15 @@ export interface IMountHandler {
         'mode'?: string | number;
         'flag'?: string | number;
     }) => boolean | Promise<boolean>;
-    readLink?: (path: string, options?: BufferEncoding | {
-        'encoding'?: BufferEncoding;
-    }) => string | null | Promise<string | null>;
-    symlink?: (filePath: string, linkPath: string, options?: {
-        'type'?: 'dir' | 'file' | 'junction';
-    }) => boolean | Promise<boolean>;
+    readLink?: (path: string, encoding?: BufferEncoding) => string | null | Promise<string | null>;
+    symlink?: (filePath: string, linkPath: string, type?: 'dir' | 'file' | 'junction') => boolean | Promise<boolean>;
     unlink?: (path: string) => boolean | Promise<boolean>;
     stats?: (path: string) => IStats | null | Promise<IStats | null>;
     mkdir?: (path: string, mode?: number) => boolean | Promise<boolean>;
     rmdir?: (path: string) => boolean | Promise<boolean>;
     chmod?: (path: string, mod: string | number) => boolean | Promise<boolean>;
     rename?: (oldPath: string, newPath: string) => boolean | Promise<boolean>;
-    readDir?: (path: string, options?: {
-        'encoding'?: BufferEncoding;
-    }) => IDirent[] | Promise<IDirent[]>;
-    copyFolder?: (from: string, to: string, options?: {
-        'ignore'?: RegExp[];
-    }) => number | Promise<number>;
+    readDir?: (path: string, encoding?: BufferEncoding) => IDirent[] | Promise<IDirent[]>;
     copyFile?: (src: string, dest: string) => boolean | Promise<boolean>;
 }
 

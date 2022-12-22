@@ -201,6 +201,11 @@ export default class extends clickgo.control.AbstractControl {
                     rtn.start = i;
                     break;
                 }
+                if (rtn.start === -1) {
+                    // --- 找到最后都没找到，应该是 area 的区域远远大于目前存在的所有项的位置 ---
+                    rtn.start = 0;
+                    rtn.end = 9;
+                }
             }
             else {
                 // --- 区域顶部小于等于原起项的顶部 ---

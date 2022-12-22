@@ -27,6 +27,11 @@ export default class extends clickgo.form.AbstractForm {
         this.ppath = path;
     }
 
+    public async stats(): Promise<void> {
+        const stats = await clickgo.fs.stats(this.val[0]);
+        await clickgo.form.dialog(stats ? JSON.stringify(stats) : 'null');
+    }
+
     public async dblclick(): Promise<void> {
         const r = await clickgo.fs.isFile(this.val[0]);
         if (r) {
