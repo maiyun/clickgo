@@ -5,6 +5,7 @@
     "author": "clickgo",
 
     "controls": [
+        "/clickgo/control/box",
         "/clickgo/control/common",
         "/clickgo/control/form",
         "/clickgo/control/monaco",
@@ -15,6 +16,8 @@
     "files": [
         "/form/control/block/block.css",
         "/form/control/block/block.xml",
+        "/form/control/box/box.js",
+        "/form/control/box/box.xml",
         "/form/control/button/button.css",
         "/form/control/button/button.js",
         "/form/control/button/button.xml",

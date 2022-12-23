@@ -1067,7 +1067,8 @@ exports.bindDrag = bindDrag;
 exports.is = clickgo.vue.reactive({
     'move': false,
     'shift': false,
-    'ctrl': false
+    'ctrl': false,
+    'meta': false
 });
 window.addEventListener('keydown', function (e) {
     switch (e.key) {
@@ -1077,6 +1078,10 @@ window.addEventListener('keydown', function (e) {
         }
         case 'Control': {
             exports.is.ctrl = true;
+            break;
+        }
+        case 'Meta': {
+            exports.is.meta = true;
             break;
         }
     }
@@ -1089,6 +1094,10 @@ window.addEventListener('keyup', function (e) {
         }
         case 'Control': {
             exports.is.ctrl = false;
+            break;
+        }
+        case 'Meta': {
+            exports.is.meta = false;
             break;
         }
     }
@@ -1104,12 +1113,12 @@ function bindMove(e, opt) {
         };
     }
     exports.is.move = true;
-    setGlobalCursor(getComputedStyle(e.target).cursor);
+    setGlobalCursor(opt.cursor ? opt.cursor : getComputedStyle(e.target).cursor);
     let tx = e instanceof MouseEvent ? e.clientX : e.touches[0].clientX;
     let ty = e instanceof MouseEvent ? e.clientY : e.touches[0].clientY;
     let left, top, right, bottom;
     if (opt.areaObject) {
-        if (!(opt.areaObject instanceof HTMLElement)) {
+        if (!(opt.areaObject instanceof Element)) {
             opt.areaObject = opt.areaObject.$el;
         }
         const areaRect = opt.areaObject.getBoundingClientRect();
@@ -1154,7 +1163,7 @@ function bindMove(e, opt) {
                 }
             }
             if (opt.object) {
-                if (!(opt.object instanceof HTMLElement)) {
+                if (!(opt.object instanceof Element)) {
                     opt.object = opt.object.$el;
                 }
                 const rect = opt.object.getBoundingClientRect();
@@ -1396,7 +1405,7 @@ function bindResize(e, opt) {
         if (!opt.object) {
             return;
         }
-        if (!(opt.object instanceof HTMLElement)) {
+        if (!(opt.object instanceof Element)) {
             opt.object = opt.object.$el;
         }
         const objectRect = opt.object.getBoundingClientRect();

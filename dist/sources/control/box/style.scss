@@ -1,0 +1,60 @@
+.wrap {
+    z-index: 1;
+
+    // --- 正在被拖动/交互中 ---
+    &.isInteract {
+        .box.isSelected {
+            stroke-width: 2;
+        }
+    }
+    &:not(.isInteract) {
+        .box.isSelected {
+            stroke-dasharray: 2; stroke-width: .5;
+        }
+    }
+    .box {
+        fill: transparent;
+        &.isSelected {
+            stroke: var(--g-border-color);
+        }
+        // --- 可拖动 ---
+        &.move {
+            cursor: move;
+        }
+    }
+
+    .ctrl {
+        fill: var(--g-plain-background); stroke: var(--g-border-color); stroke-width: .5; width: 8px; height: 8px; 
+        &.lt {
+            cursor: nw-resize;
+        }
+        &.t {
+            cursor: n-resize;
+        }
+        &.tr {
+            cursor: ne-resize;
+        }
+        &.r {
+            cursor: e-resize;
+        }
+        &.rb {
+            cursor: se-resize
+        }
+        &.b {
+            cursor: s-resize
+        }
+        &.bl {
+            cursor: sw-resize
+        }
+        &.l {
+            cursor: w-resize
+        }
+    }
+
+    .selection {
+        fill: transparent; pointer-events: none;
+        &.do {
+            fill: var(--g-background-opacity); stroke: var(--g-border-color-focus); stroke-width: .5;
+        }
+    }
+}

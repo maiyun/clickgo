@@ -1,0 +1,15 @@
+<form width="400" height="500" title="Box" padding="10">
+    <layout direction="v" gutter="10" style="flex: 1;">
+        <box style="flex: 1;" v-model="val1"></box>
+        <layout gutter="10" style="flex: 1;">
+            <block style="flex: 1; position: relative; border: solid 1px #000; overflow: hidden;">
+                <button v-for="item, id of val2" style="position: absolute; z-index: 1;" :style="{'left': item.x + 'px', 'top': item.y + 'px', 'width': item.width + 'px', 'height': item.height + 'px'}">test</button>
+                <box v-model="val2" style="flex: 1; position: absolute; width: 100%; height: 100%;"></box>
+            </block>
+            <layout direction="v" gutter="10">
+                <button style="flex: 1; padding: 0 10px;" @click="add">Add</button>
+                <button style="flex: 1; padding: 0 10px;" @click="remove">Remove</button>
+            </layout>
+        </layout>
+    </layout>
+</form>

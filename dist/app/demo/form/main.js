@@ -10,6 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const clickgo = require("clickgo");
+const box_1 = require("./control/box/box");
 const button_1 = require("~c/button/button");
 const check_1 = require("./control/check/check");
 const dialog_1 = require("./control/dialog/dialog");
@@ -55,6 +56,10 @@ class default_1 extends clickgo.form.AbstractForm {
                     frm = yield clickgo.form.create('control/block/block', undefined, {
                         'path': this.filename
                     });
+                    break;
+                }
+                case 'cbox': {
+                    frm = yield clickgo.form.create(box_1.default);
                     break;
                 }
                 case 'cbutton': {

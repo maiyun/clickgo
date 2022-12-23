@@ -214,6 +214,7 @@ export interface IBindMoveOptions {
     'objectHeight'?: number;
     'object'?: HTMLElement | IVue;
     'showRect'?: boolean;
+    'cursor'?: string;
     'start'?: (x: number, y: number) => any;
     'move'?: (e: MouseEvent | TouchEvent, opt: IBindMoveMoveOptions) => void;
     'up'?: (moveTimes: Array<{ 'time': number; 'ox': number; 'oy': number; }>, e: MouseEvent | TouchEvent) => void;

@@ -1356,7 +1356,8 @@ export function bindDrag(e: MouseEvent | TouchEvent, opt: { 'el': HTMLElement; '
 export const is = clickgo.vue.reactive({
     'move': false,
     'shift': false,
-    'ctrl': false
+    'ctrl': false,
+    'meta': false
 });
 
 window.addEventListener('keydown', function(e: KeyboardEvent) {
@@ -1369,6 +1370,10 @@ window.addEventListener('keydown', function(e: KeyboardEvent) {
             is.ctrl = true;
             break;
         }
+        case 'Meta': {
+            is.meta = true;
+            break;
+        }
     }
 });
 window.addEventListener('keyup', function(e: KeyboardEvent) {
@@ -1379,6 +1384,10 @@ window.addEventListener('keyup', function(e: KeyboardEvent) {
         }
         case 'Control': {
             is.ctrl = false;
+            break;
+        }
+        case 'Meta': {
+            is.meta = false;
             break;
         }
     }
@@ -1399,7 +1408,7 @@ export function bindMove(e: MouseEvent | TouchEvent, opt: types.IBindMoveOptions
         };
     }
     is.move = true;
-    setGlobalCursor(getComputedStyle(e.target as Element).cursor);
+    setGlobalCursor(opt.cursor ? opt.cursor : getComputedStyle(e.target as Element).cursor);
     /** --- 上一次的 x 坐标 --- */
     let tx: number = e instanceof MouseEvent ? e.clientX : e.touches[0].clientX;
     /** --- 上一次的 y 坐标 --- */
@@ -1414,7 +1423,7 @@ export function bindMove(e: MouseEvent | TouchEvent, opt: types.IBindMoveOptions
         /** --- 拖动限定区域底部 --- */
         bottom: number;
     if (opt.areaObject) {
-        if (!(opt.areaObject instanceof HTMLElement)) {
+        if (!(opt.areaObject instanceof Element)) {
             opt.areaObject = opt.areaObject.$el;
         }
         const areaRect = opt.areaObject.getBoundingClientRect();
@@ -1474,7 +1483,7 @@ export function bindMove(e: MouseEvent | TouchEvent, opt: types.IBindMoveOptions
             }
             // --- 限定拖动对象，限定后整体对象将无法拖动出边界 ---
             if (opt.object) {
-                if (!(opt.object instanceof HTMLElement)) {
+                if (!(opt.object instanceof Element)) {
                     opt.object = opt.object.$el;
                 }
                 const rect = opt.object.getBoundingClientRect();
@@ -1756,7 +1765,7 @@ export function bindResize(e: MouseEvent | TouchEvent, opt: types.IBindResizeOpt
         if (!opt.object) {
             return;
         }
-        if (!(opt.object instanceof HTMLElement)) {
+        if (!(opt.object instanceof Element)) {
             opt.object = opt.object.$el;
         }
         const objectRect = opt.object.getBoundingClientRect();
