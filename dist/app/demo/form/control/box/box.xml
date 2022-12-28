@@ -3,7 +3,10 @@
         <box style="flex: 1;" v-model="val1"></box>
         <layout gutter="10" style="flex: 1;">
             <block style="flex: 1; position: relative; border: solid 1px #000; overflow: hidden;">
-                <button v-for="item, id of val2" style="position: absolute; z-index: 1;" :style="{'left': item.x + 'px', 'top': item.y + 'px', 'width': item.width + 'px', 'height': item.height + 'px'}">test</button>
+                <template v-for="item, id of val2">
+                    <button v-if="(id === 'btn') || (id.slice(3) % 2)" style="position: absolute; z-index: 1;" :style="{'left': item.x + 'px', 'top': item.y + 'px', 'width': item.width + 'px', 'height': item.height + 'px'}">button{{id.slice(3)}}</button>
+                    <text v-else :modelValue="'text' + id.slice(3)" style="position: absolute; z-index: 1;" :style="{'left': item.x + 'px', 'top': item.y + 'px', 'width': item.width + 'px', 'height': item.height + 'px'}"></text>
+                </template>
                 <box v-model="val2" style="flex: 1; position: absolute; width: 100%; height: 100%;"></box>
             </block>
             <layout direction="v" gutter="10">
