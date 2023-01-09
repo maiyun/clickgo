@@ -114,8 +114,11 @@ function sleepFrame(count) {
 exports.sleepFrame = sleepFrame;
 function purify(text) {
     text = '>' + text + '<';
-    text = text.replace(/<!--([\s\S]*?)-->/g, '').replace(/>([\s\S]*?)</g, function (t, t1) {
-        return '>' + t1.replace(/\t|\r\n| {2}/g, '').replace(/\n|\r/g, '') + '<';
+    text = text.replace(/<!--([\s\S]*?)-->/g, '').replace(/>([\s\S]*?)<(\/?\w+)/g, function (t, t1, t2) {
+        if (t2.toLowerCase() === '/script') {
+            return t;
+        }
+        return '>' + t1.replace(/\t|\r\n| {2}/g, '').replace(/\n|\r/g, '') + '<' + t2;
     });
     return text.slice(1, -1);
 }

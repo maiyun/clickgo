@@ -13,6 +13,17 @@ export default class extends clickgo.form.AbstractForm {
         <h1>Title</h1>
         <!-- content -->
         <div>content</div>
+        <div>// abc</div>
+        <script>
+        // --- test ---
+        if (a) {
+           alert('zzz');
+        }
+        /* --- test 2 --- */
+        if (b) {
+           alert('zzz');
+        }
+        </script>
     </body>
 </html>`;
 
