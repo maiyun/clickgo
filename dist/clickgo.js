@@ -1,4 +1,27 @@
 "use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.zip = exports.tool = exports.theme = exports.task = exports.native = exports.fs = exports.form = exports.dom = exports.core = exports.control = exports.vue = exports.hasFrame = exports.isImmersion = exports.getPlatform = exports.isNative = exports.getVersion = void 0;
 const version = '3.1.3';
@@ -35,13 +58,13 @@ function hasFrame() {
 }
 exports.hasFrame = hasFrame;
 exports.vue = window.Vue;
-exports.control = require("./lib/control");
-exports.core = require("./lib/core");
-exports.dom = require("./lib/dom");
-exports.form = require("./lib/form");
-exports.fs = require("./lib/fs");
-exports.native = require("./lib/native");
-exports.task = require("./lib/task");
-exports.theme = require("./lib/theme");
-exports.tool = require("./lib/tool");
-exports.zip = require("./lib/zip");
+exports.control = __importStar(require("./lib/control"));
+exports.core = __importStar(require("./lib/core"));
+exports.dom = __importStar(require("./lib/dom"));
+exports.form = __importStar(require("./lib/form"));
+exports.fs = __importStar(require("./lib/fs"));
+exports.native = __importStar(require("./lib/native"));
+exports.task = __importStar(require("./lib/task"));
+exports.theme = __importStar(require("./lib/theme"));
+exports.tool = __importStar(require("./lib/tool"));
+exports.zip = __importStar(require("./lib/zip"));

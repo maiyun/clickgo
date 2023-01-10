@@ -282,7 +282,7 @@ export async function run(url: string, opt: types.ITaskRunOptions = {}, ntid?: n
     const unblock = opt.unblock ? tool.clone(opt.unblock) : [];
     const unblockSys = [
         'require',
-        '__awaiter', 'eval', 'Math', 'Array', 'Blob', 'Error', 'Infinity', 'parseInt', 'parseFloat', 'Promise', 'Date', 'JSON', 'fetch', 'Number'
+        '__awaiter', 'eval', 'Math', 'Array', 'Blob', 'Error', 'Infinity', 'parseInt', 'parseFloat', 'Promise', 'Date', 'JSON', 'fetch', 'Number', 'Object'
     ];
     for (const name of unblockSys) {
         if (unblock.includes(name)) {

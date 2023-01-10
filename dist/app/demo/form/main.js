@@ -1,4 +1,27 @@
 "use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -8,41 +31,44 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-const clickgo = require("clickgo");
-const box_1 = require("./control/box/box");
-const button_1 = require("~c/button/button");
-const check_1 = require("./control/check/check");
-const dialog_1 = require("./control/dialog/dialog");
-const file_1 = require("./control/file/file");
-const form_1 = require("./control/form/form");
-const list_1 = require("./control/list/list");
-const marquee_1 = require("./control/marquee/marquee");
-const menu_1 = require("./control/menu/menu");
-const monaco_1 = require("./control/monaco/monaco");
-const flow_1 = require("./control/flow/flow");
-const property_1 = require("./control/property/property");
-const radio_1 = require("./control/radio/radio");
-const scroll_1 = require("./control/scroll/scroll");
-const select_1 = require("./control/select/select");
-const tab_1 = require("./control/tab/tab");
-const text_1 = require("./control/text/text");
-const vflow_1 = require("./control/vflow/vflow");
-const form_2 = require("./event/form/form");
-const other_1 = require("./event/other/other");
-const screen_1 = require("./event/screen/screen");
-const task_1 = require("./event/task/task");
-const aform_1 = require("./method/aform/aform");
-const core_1 = require("./method/core/core");
-const dom_1 = require("./method/dom/dom");
-const form_3 = require("./method/form/form");
-const fs_1 = require("./method/fs/fs");
-const native_1 = require("./method/native/native");
-const system_1 = require("./method/system/system");
-const task_2 = require("./method/task/task");
-const theme_1 = require("./method/theme/theme");
-const tool_1 = require("./method/tool/tool");
-const zip_1 = require("./method/zip/zip");
+const clickgo = __importStar(require("clickgo"));
+const box_1 = __importDefault(require("./control/box/box"));
+const button_1 = __importDefault(require("~c/button/button"));
+const check_1 = __importDefault(require("./control/check/check"));
+const dialog_1 = __importDefault(require("./control/dialog/dialog"));
+const file_1 = __importDefault(require("./control/file/file"));
+const form_1 = __importDefault(require("./control/form/form"));
+const list_1 = __importDefault(require("./control/list/list"));
+const marquee_1 = __importDefault(require("./control/marquee/marquee"));
+const menu_1 = __importDefault(require("./control/menu/menu"));
+const monaco_1 = __importDefault(require("./control/monaco/monaco"));
+const flow_1 = __importDefault(require("./control/flow/flow"));
+const property_1 = __importDefault(require("./control/property/property"));
+const radio_1 = __importDefault(require("./control/radio/radio"));
+const scroll_1 = __importDefault(require("./control/scroll/scroll"));
+const select_1 = __importDefault(require("./control/select/select"));
+const tab_1 = __importDefault(require("./control/tab/tab"));
+const text_1 = __importDefault(require("./control/text/text"));
+const vflow_1 = __importDefault(require("./control/vflow/vflow"));
+const form_2 = __importDefault(require("./event/form/form"));
+const other_1 = __importDefault(require("./event/other/other"));
+const screen_1 = __importDefault(require("./event/screen/screen"));
+const task_1 = __importDefault(require("./event/task/task"));
+const aform_1 = __importDefault(require("./method/aform/aform"));
+const core_1 = __importDefault(require("./method/core/core"));
+const dom_1 = __importDefault(require("./method/dom/dom"));
+const form_3 = __importDefault(require("./method/form/form"));
+const fs_1 = __importDefault(require("./method/fs/fs"));
+const native_1 = __importDefault(require("./method/native/native"));
+const system_1 = __importDefault(require("./method/system/system"));
+const task_2 = __importDefault(require("./method/task/task"));
+const theme_1 = __importDefault(require("./method/theme/theme"));
+const tool_1 = __importDefault(require("./method/tool/tool"));
+const zip_1 = __importDefault(require("./method/zip/zip"));
 class default_1 extends clickgo.form.AbstractForm {
     constructor() {
         super(...arguments);

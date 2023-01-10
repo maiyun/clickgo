@@ -1,6 +1,6 @@
 import * as fs from 'fs';
 // import * as crypto from 'crypto';
-import * as zip from 'jszip';
+import zip from 'jszip';
 
 // --- sass --watch dist/:dist/ --style compressed --no-source-map ---
 // --- git config core.ignorecase false ---

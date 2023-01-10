@@ -19,19 +19,19 @@ Load the module loader first, and then load it using the module loader.
 **index.html**
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/@litert/loader@3.4.5/dist/loader.min.js?path=index&npm={'clickgo':'3.1.5-dev14'}"></script>
+<script src="https://cdn.jsdelivr.net/npm/@litert/loader@3.4.6/dist/loader.min.js?path=index&npm={'clickgo':'3.1.5-dev14'}"></script>
 ```
 
 **index.js**
 
 ```typescript
 import * as clickgo from 'clickgo';
-(async function() {
-    await clickgo.init();
-    await clickgo.task.run('xxx');
-})().catch((e) => {
-    console.log(e);
-});
+class Boot extends clickgo.AbstractBoot {
+    public async main(): Promise<void> {
+        await clickgo.task.run('xxx');
+    }
+}
+clickgo.launcher(new Boot());
 ```
 
 ### NPM

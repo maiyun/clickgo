@@ -1,4 +1,4 @@
-import * as jszip from 'jszip';
+import jszip from 'jszip';
 import * as types from '../../types';
 import * as tool from './tool';
 

@@ -18,7 +18,8 @@
         "typeRoots": [
             "./node_modules/@types",
             "./node_modules/@litert/loader"
-        ]
+        ],
+        "esModuleInterop": true
     },
     "include": [
         "./**/*.ts"

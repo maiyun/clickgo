@@ -1,4 +1,27 @@
 "use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -10,15 +33,15 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.refreshSystemPosition = exports.clearSystem = exports.setSystem = exports.systemTaskInfo = exports.sleep = exports.removeTimer = exports.createTimer = exports.clearLocaleLang = exports.setLocaleLang = exports.setLocale = exports.clearLocale = exports.loadLocale = exports.loadLocaleData = exports.end = exports.checkPermission = exports.run = exports.getList = exports.getPermissions = exports.get = exports.offFrame = exports.onFrame = exports.getFocus = exports.setFocus = exports.lastId = exports.list = void 0;
-const clickgo = require("../clickgo");
-const core = require("./core");
-const dom = require("./dom");
-const tool = require("./tool");
-const form = require("./form");
-const control = require("./control");
-const fs = require("./fs");
-const theme = require("./theme");
-const native = require("./native");
+const clickgo = __importStar(require("../clickgo"));
+const core = __importStar(require("./core"));
+const dom = __importStar(require("./dom"));
+const tool = __importStar(require("./tool"));
+const form = __importStar(require("./form"));
+const control = __importStar(require("./control"));
+const fs = __importStar(require("./fs"));
+const theme = __importStar(require("./theme"));
+const native = __importStar(require("./native"));
 exports.list = {};
 exports.lastId = 0;
 let focusId = null;
@@ -213,7 +236,7 @@ function run(url, opt = {}, ntid) {
         const unblock = opt.unblock ? tool.clone(opt.unblock) : [];
         const unblockSys = [
             'require',
-            '__awaiter', 'eval', 'Math', 'Array', 'Blob', 'Error', 'Infinity', 'parseInt', 'parseFloat', 'Promise', 'Date', 'JSON', 'fetch', 'Number'
+            '__awaiter', 'eval', 'Math', 'Array', 'Blob', 'Error', 'Infinity', 'parseInt', 'parseFloat', 'Promise', 'Date', 'JSON', 'fetch', 'Number', 'Object'
         ];
         for (const name of unblockSys) {
             if (unblock.includes(name)) {

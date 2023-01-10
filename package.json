@@ -23,6 +23,6 @@
     "@types/node": "^18.11.14",
     "electron": "^22.0.0",
     "jszip": "^3.10.1",
-    "typescript": "^4.8.4"
+    "typescript": "^4.9.4"
   }
 }
