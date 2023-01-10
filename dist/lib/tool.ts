@@ -156,11 +156,16 @@ export async function sleepFrame(count: number): Promise<void> {
  */
 export function purify(text: string): string {
     text = '>' + text + '<';
-    text = text.replace(/<!--([\s\S]*?)-->/g, '').replace(/>([\s\S]*?)<(\/?\w+)/g, function(t: string, t1: string, t2: string) {
-        if (t2.toLowerCase() === '/script') {
-            return t;
-        }
-        return '>' + t1.replace(/\t|\r\n| {2}/g, '').replace(/\n|\r/g, '') + '<' + t2;
+    const scripts: string[] = [];
+    let num: number = -1;
+    text = text.replace(/<!--([\s\S]*?)-->/g, '').replace(/<script[\s\S]+?<\/script>/g, function(t: string): string {
+        scripts.push(t);
+        return '[SCRIPT]';
+    }).replace(/>([\s\S]*?)</g, function(t: string, t1: string): string {
+        return '>' + t1.replace(/\t|\r\n| {2}/g, '').replace(/\n|\r/g, '') + '<';
+    }).replace(/\[SCRIPT\]/g, function(): string {
+        ++num;
+        return scripts[num];
     });
     return text.slice(1, -1);
 }
