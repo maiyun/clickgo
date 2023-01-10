@@ -3,6 +3,7 @@
         <flow v-if="ntab === 'control'" class="inner" direction="v">
             <layout class="buttons" gutter="10" direction="v">
                 <button @click="openForm('cform')">Form</button>
+                <button @click="openForm('clayout')">Layout</button>
                 <button @click="openForm('cimg')">Img</button>
                 <button @click="openForm('cbutton')">Button</button>
                 <button @click="openForm('ccheck')">Check</button>

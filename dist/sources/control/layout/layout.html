@@ -1,3 +1,5 @@
-<div class="wrap" :class="[direction, gutter && 'gutter' + gutter]" :style="{'align-items': direction === 'v' ? (alignH && (alignH !== 'center' ? 'flex-' : '') + alignH) : (alignV && (alignV !== 'center' ? 'flex-' : '') + alignV), 'justify-content': direction === 'v' ? (alignV && (alignV !== 'center' ? 'flex-' : '') + alignV) : (alignH && (alignH !== 'center' ? 'flex-' : '') + alignH)}">
-    <slot></slot>
+<div class="wrap">
+    <div class="content" :class="[directionData, gutter && 'gutter']" :style="{'align-items': directionData === 'v' ? (alignH && (alignH !== 'center' ? 'flex-' : '') + alignH) : (alignV && (alignV !== 'center' ? 'flex-' : '') + alignV), 'justify-content': directionData === 'v' ? (alignV && (alignV !== 'center' ? 'flex-' : '') + alignV) : (alignH && (alignH !== 'center' ? 'flex-' : '') + alignH), '--cg-layout-gutter': propNumber('gutter') ? (gutter + 'px') : 'initial'}">
+        <slot></slot>
+    </div>
 </div>

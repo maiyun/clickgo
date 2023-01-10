@@ -35,6 +35,8 @@
         "/form/control/form/form.xml",
         "/form/control/img/img.xml",
         "/form/control/label/label.xml",
+        "/form/control/layout/layout.xml",
+        "/form/control/layout/layout.js",
         "/form/control/list/list.css",
         "/form/control/list/list.js",
         "/form/control/list/list.xml",

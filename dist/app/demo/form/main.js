@@ -42,6 +42,7 @@ const check_1 = __importDefault(require("./control/check/check"));
 const dialog_1 = __importDefault(require("./control/dialog/dialog"));
 const file_1 = __importDefault(require("./control/file/file"));
 const form_1 = __importDefault(require("./control/form/form"));
+const layout_1 = __importDefault(require("./control/layout/layout"));
 const list_1 = __importDefault(require("./control/list/list"));
 const marquee_1 = __importDefault(require("./control/marquee/marquee"));
 const menu_1 = __importDefault(require("./control/menu/menu"));
@@ -122,6 +123,10 @@ class default_1 extends clickgo.form.AbstractForm {
                     frm = yield clickgo.form.create('control/label/label', undefined, {
                         'path': this.filename
                     });
+                    break;
+                }
+                case 'clayout': {
+                    frm = yield clickgo.form.create(layout_1.default);
                     break;
                 }
                 case 'clist': {

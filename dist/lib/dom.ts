@@ -218,7 +218,7 @@ const resizeObserver = new ResizeObserver(function(entries): void {
 });
 
 /**
- * --- 添加监视 Element 对象大小，元素移除后自动停止监视（浏览器原生效果） ---
+ * --- 添加监视 Element 对象大小，元素移除后自动停止监视（浏览器原生效果），已经监视中的不会再次监视 ---
  * @param el 要监视的大小
  * @param cb 回调函数
  * @param immediate 立刻先执行一次回调

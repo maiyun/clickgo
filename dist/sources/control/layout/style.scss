@@ -1,44 +1,18 @@
 .wrap {
-    display: flex; position: relative;
-    &.v {
-        flex-direction: column;
-        &.gutter5 > :not(:first-child) {
-            margin-top: 5px;
+    display: flex;
+
+    .content {
+        flex: 1; display: flex;
+        &.v {
+            flex-direction: column;
+            &.gutter > :not(:first-child) {
+                margin-top: var(--cg-layout-gutter);
+            }
         }
-        &.gutter10 > :not(:first-child) {
-            margin-top: 10px;
-        }
-        &.gutter15 > :not(:first-child) {
-            margin-top: 15px;
-        }
-        &.gutter20 > :not(:first-child) {
-            margin-top: 20px;
-        }
-        &.gutter25 > :not(:first-child) {
-            margin-top: 25px;
-        }
-        &.gutter30 > :not(:first-child) {
-            margin-top: 30px;
-        }
-    }
-    &.h {
-        &.gutter5 > :not(:first-child) {
-            margin-left: 5px;
-        }
-        &.gutter10 > :not(:first-child) {
-            margin-left: 10px;
-        }
-        &.gutter15 > :not(:first-child) {
-            margin-left: 15px;
-        }
-        &.gutter20 > :not(:first-child) {
-            margin-left: 20px;
-        }
-        &.gutter25 > :not(:first-child) {
-            margin-left: 25px;
-        }
-        &.gutter30 > :not(:first-child) {
-            margin-left: 30px;
+        &.h {
+            &.gutter > :not(:first-child) {
+                margin-left: var(--cg-layout-gutter);
+            }
         }
     }
 }

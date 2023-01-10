@@ -1,0 +1,16 @@
+<form width="300" height="300" title="Layout">
+    <layout direction="v" gutter="10" style="padding: 10px; flex: 1; width: 0;">
+        <label>direction: {{direction[0]}}</label>
+        <layout v-model:direction="direction[0]" :direction-width="dw" :gutter="gutter" style="flex: 1; border: solid 1px #000; padding: 10px;">
+            <block style="background: var(--success); flex: 1;" />
+            <block style="background: var(--info); flex: 1;" />
+        </layout>
+        <button @click="dw = dw ? 0 : 300" style="height: 30px;">direction width: {{dw}}</button>
+        <layout align-v="center" gutter="10">
+            <label>gutter:</label>
+            <select v-model="gutter" :data="[0, 10, 12, 30, 31, 50]" style="flex: 1;"></select>
+            <layout>direction:</layout>
+            <select v-model="direction" :data="['h', 'v']" style="flex: 1;"></select>
+        </layout>
+    </layout>
+</form>

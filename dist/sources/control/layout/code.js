@@ -29,10 +29,56 @@ class default_1 extends clickgo.control.AbstractControl {
         super(...arguments);
         this.props = {
             'direction': 'h',
+            'directionWidth': 0,
             'gutter': '',
-            'align-h': '',
-            'align-v': ''
+            'alignH': '',
+            'alignV': ''
         };
+        this.directionData = 'h';
+    }
+    onMounted() {
+        this.watch('directionWidth', (n, o) => {
+            if (n && o) {
+                return;
+            }
+            const w = this.propNumber('directionWidth');
+            if (w) {
+                clickgo.dom.watchSize(this.element, () => {
+                    if (this.element.offsetWidth >= w) {
+                        if (this.directionData === 'h') {
+                            return;
+                        }
+                        this.directionData = 'h';
+                    }
+                    else {
+                        if (this.directionData === 'v') {
+                            return;
+                        }
+                        this.directionData = 'v';
+                    }
+                    if (this.directionData === this.props.direction) {
+                        return;
+                    }
+                    this.emit('update:direction', this.directionData);
+                });
+            }
+            else {
+                clickgo.dom.unwatchSize(this.element);
+            }
+        }, {
+            'immediate': true
+        });
+        this.watch('direction', () => {
+            if (!this.propNumber('directionWidth')) {
+                this.directionData = this.props.direction;
+                return;
+            }
+            if (this.directionData === this.props.direction) {
+                return;
+            }
+            this.emit('update:direction', this.directionData);
+        });
+        this.directionData = this.props.direction;
     }
 }
 exports.default = default_1;

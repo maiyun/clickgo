@@ -7,6 +7,7 @@ import ccheckFrm from './control/check/check';
 import cdialogFrm from './control/dialog/dialog';
 import cfileFrm from './control/file/file';
 import cformFrm from './control/form/form';
+import clayoutFrm from './control/layout/layout';
 import clistFrm from './control/list/list';
 import cmarqueeFrm from './control/marquee/marquee';
 import cmenuFrm from './control/menu/menu';
@@ -88,6 +89,10 @@ export default class extends clickgo.form.AbstractForm {
                 frm = await clickgo.form.create('control/label/label', undefined, {
                     'path': this.filename
                 });
+                break;
+            }
+            case 'clayout': {
+                frm = await clickgo.form.create(clayoutFrm);
                 break;
             }
             case 'clist': {
