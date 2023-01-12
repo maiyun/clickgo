@@ -28,8 +28,30 @@ class default_1 extends clickgo.form.AbstractForm {
     constructor() {
         super(...arguments);
         this.direction = ['h'];
-        this.dw = 0;
+        this.bigColor = false;
+        this.media = [];
+        this.mediaVal = -1;
         this.gutter = 0;
+    }
+    onMedia(v) {
+        this.mediaVal = v;
+        switch (v) {
+            case 450: {
+                this.direction[0] = 'h';
+                this.bigColor = true;
+                break;
+            }
+            case 300:
+            case -1: {
+                this.direction[0] = 'h';
+                this.bigColor = false;
+                break;
+            }
+            default: {
+                this.direction[0] = 'v';
+                this.bigColor = false;
+            }
+        }
     }
 }
 exports.default = default_1;

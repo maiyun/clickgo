@@ -77,7 +77,7 @@ function run() {
             'withFileTypes': true
         });
         for (const item of list) {
-            if (['check', 'dialog', 'file', 'greatlist', 'greatselect', 'vflow', 'img', 'label', 'layout', 'list', 'loading', 'marquee', 'menu', 'menu-item', 'menulist', 'menulist-item', 'menulist-split', 'flow', 'radio', 'scroll', 'select', 'tab', 'text', 'task-item'].includes(item.name)) {
+            if (['check', 'dialog', 'file', 'greatlist', 'greatselect', 'vflow', 'img', 'label', 'layout', 'list', 'loading', 'marquee', 'menu', 'menu-item', 'menulist', 'menulist-item', 'menulist-split', 'flow', 'radio', 'scroll', 'select', 'tab', 'text', 'task-item', 'table-item'].includes(item.name)) {
                 continue;
             }
             if (item.name.startsWith('.')) {
@@ -115,6 +115,9 @@ function run() {
             }
             else if (item.name === 'task') {
                 yield addFile(zipo, base + 'task-item', 'task-item');
+            }
+            else if (item.name === 'table') {
+                yield addFile(zipo, base + 'table-item', 'table-item');
             }
             const buf = yield zipo.generateAsync({
                 type: 'nodebuffer',

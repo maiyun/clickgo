@@ -35,18 +35,23 @@ class default_1 extends clickgo.control.AbstractControl {
             'selection': false,
             'gesture': [],
             'scroll': 'auto',
+            'contentWidth': 'fill',
             'data': [],
             'sizes': {},
             'modelValue': []
         };
+        this.cw = 0;
         this.client = 0;
         this.length = 0;
+        this.sw = 0;
+        this.sl = 0;
         this.offset = 0;
         this.valueData = [];
         this.shiftStart = 0;
         this.selectValues = [];
         this.beforeSelectValues = [];
         this.isSelectStart = false;
+        this.scrollShow = true;
     }
     get isSelected() {
         return (value) => {
@@ -316,7 +321,7 @@ class default_1 extends clickgo.control.AbstractControl {
     onSelect(area) {
         if (this.propBoolean('multi')) {
             if (area.shift || area.ctrl) {
-                if (area.start === -1) {
+                if (area.empty) {
                     for (const item of this.selectValues) {
                         this.select(item, false, true);
                     }
@@ -366,7 +371,7 @@ class default_1 extends clickgo.control.AbstractControl {
                 }
             }
             else {
-                if (area.start !== -1) {
+                if (!area.empty) {
                     this.shiftStart = area.start;
                     this.select(area.end, true);
                 }
@@ -376,7 +381,7 @@ class default_1 extends clickgo.control.AbstractControl {
             }
         }
         else {
-            if (area.start !== -1) {
+            if (!area.empty) {
                 this.select(area.start, area.shift, area.ctrl);
             }
         }

@@ -120,7 +120,7 @@ class default_1 extends clickgo.control.AbstractControl {
         return false;
     }
     getNewPos(pos, area) {
-        const rtn = { 'start': -1, 'end': -1 };
+        const rtn = { 'start': -1, 'end': -1, 'empty': false };
         const startShow = this.inArea(pos.start, area);
         if (startShow) {
             rtn.start = pos.start;
@@ -136,7 +136,7 @@ class default_1 extends clickgo.control.AbstractControl {
             let start = this.pos[pos.start];
             if (!start) {
                 if (pos.start === 0 || !this.pos[0]) {
-                    return { 'start': 0, 'end': 9 };
+                    return { 'start': 0, 'end': 9, 'empty': true };
                 }
                 pos.start = 0;
                 rtn.start = 0;
@@ -151,8 +151,7 @@ class default_1 extends clickgo.control.AbstractControl {
                     break;
                 }
                 if (rtn.start === -1) {
-                    rtn.start = 0;
-                    rtn.end = 9;
+                    return { 'start': 0, 'end': 9, 'empty': true };
                 }
             }
             else {
@@ -220,7 +219,7 @@ class default_1 extends clickgo.control.AbstractControl {
         }
         return rtn;
     }
-    refreshSize() {
+    refreshSize(force = false) {
         var _a;
         let need = false;
         const el = this.element.querySelector('[data-cg-size="same"]');
@@ -231,7 +230,7 @@ class default_1 extends clickgo.control.AbstractControl {
                 need = true;
             }
         }
-        if (!need && (this.pos.length === this.dataFormat.length)) {
+        if (!force && !need && (this.pos.length === this.dataFormat.length)) {
             return;
         }
         this.pos = [];
@@ -315,6 +314,7 @@ class default_1 extends clickgo.control.AbstractControl {
         this.selectPos.end = rtn.end;
         area.start = rtn.start;
         area.end = rtn.end;
+        area.empty = rtn.empty;
     }
     onMounted() {
         this.watch('dataFormat', () => __awaiter(this, void 0, void 0, function* () {
@@ -340,7 +340,7 @@ class default_1 extends clickgo.control.AbstractControl {
             }
         });
         this.watch('sizes', () => {
-            this.refreshSize();
+            this.refreshSize(true);
         });
         clickgo.dom.watchStyle(this.element, ['padding-top', 'padding-right', 'padding-bottom', 'padding-left', 'font'], (n, v) => {
             switch (n) {

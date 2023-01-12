@@ -18,6 +18,7 @@ import cradioFrm from './control/radio/radio';
 import cscrollFrm from './control/scroll/scroll';
 import cselectFrm from './control/select/select';
 import ctabFrm from './control/tab/tab';
+import ctableFrm from './control/table/table';
 import ctextFrm from './control/text/text';
 import cvflowFrm from './control/vflow/vflow';
 
@@ -139,6 +140,10 @@ export default class extends clickgo.form.AbstractForm {
             }
             case 'ctab': {
                 frm = await clickgo.form.create(ctabFrm);
+                break;
+            }
+            case 'ctable': {
+                frm = await clickgo.form.create(ctableFrm);
                 break;
             }
             case 'ctext': {

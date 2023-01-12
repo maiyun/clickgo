@@ -347,6 +347,9 @@ class default_1 extends clickgo.control.AbstractControl {
                 return;
             }
             this.element.scrollLeft = prop;
+            if (this.element.scrollLeft !== prop) {
+                this.emit('update:scrollLeft', this.element.scrollLeft);
+            }
         });
         this.watch('scrollTop', () => {
             const prop = this.propInt('scrollTop');
@@ -354,6 +357,9 @@ class default_1 extends clickgo.control.AbstractControl {
                 return;
             }
             this.element.scrollTop = prop;
+            if (this.element.scrollTop !== prop) {
+                this.emit('update:scrollTop', this.element.scrollTop);
+            }
         });
         clickgo.dom.watchSize(this.element, () => {
             this.emit('clientwidth', this.element.clientWidth);

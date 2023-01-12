@@ -161,8 +161,8 @@ export default class extends clickgo.control.AbstractControl {
      * @param area 区域的像素段
      * @returns 新 pos 的 item index 段
      */
-    public getNewPos(pos: { 'start': number; 'end': number; }, area: { 'start': number; 'end': number; }): { 'start': number; 'end': number; } {
-        const rtn = { 'start': -1, 'end': -1 };
+    public getNewPos(pos: { 'start': number; 'end': number; }, area: { 'start': number; 'end': number; }): { 'start': number; 'end': number; 'empty': boolean; } {
+        const rtn = { 'start': -1, 'end': -1, 'empty': false };
         /** --- 起项是否在新 area 区域内 --- */
         const startShow = this.inArea(pos.start, area);
         // --- 检测起始 ---
@@ -184,7 +184,7 @@ export default class extends clickgo.control.AbstractControl {
             if (!start) {
                 // --- 起项不存在 ---
                 if (pos.start === 0 || !this.pos[0]) {
-                    return { 'start': 0, 'end': 9 };
+                    return { 'start': 0, 'end': 9, 'empty': true };
                 }
                 pos.start = 0;
                 rtn.start = 0;
@@ -203,8 +203,7 @@ export default class extends clickgo.control.AbstractControl {
                 }
                 if (rtn.start === -1) {
                     // --- 找到最后都没找到，应该是 area 的区域远远大于目前存在的所有项的位置 ---
-                    rtn.start = 0;
-                    rtn.end = 9;
+                    return { 'start': 0, 'end': 9, 'empty': true };
                 }
             }
             else {
@@ -292,8 +291,8 @@ export default class extends clickgo.control.AbstractControl {
     /**
      * --- 重新计算单项胖度和总 pos 位置 ---
      */
-    public refreshSize(): void {
-        // --- 计算通用胖度 ---
+    public refreshSize(force: boolean = false): void {
+        // --- 通用胖度是否发生了变化 ---
         let need: boolean = false;
         const el: HTMLElement | null = this.element.querySelector('[data-cg-size="same"]');
         if (el) {
@@ -303,7 +302,7 @@ export default class extends clickgo.control.AbstractControl {
                 need = true;
             }
         }
-        if (!need && (this.pos.length === this.dataFormat.length)) {
+        if (!force && !need && (this.pos.length === this.dataFormat.length)) {
             return;
         }
         // --- 重置所有项的 pos ---
@@ -397,7 +396,7 @@ export default class extends clickgo.control.AbstractControl {
         }
     }
 
-    public onSelect(area: Record<string, number>): void {
+    public onSelect(area: Record<string, any>): void {
         const offset = this.props.direction === 'v' ? area.y : area.x;
         const length = this.props.direction === 'v' ? area.height : area.width;
         const rtn = this.getNewPos(this.selectPos, {
@@ -408,6 +407,7 @@ export default class extends clickgo.control.AbstractControl {
         this.selectPos.end = rtn.end;
         area.start = rtn.start;
         area.end = rtn.end;
+        area.empty = rtn.empty;
     }
 
     public onMounted(): void {
@@ -435,7 +435,7 @@ export default class extends clickgo.control.AbstractControl {
             }
         });
         this.watch('sizes', (): void => {
-            this.refreshSize();
+            this.refreshSize(true);
         });
         // --- 监听 padding ---
         clickgo.dom.watchStyle(this.element, ['padding-top', 'padding-right', 'padding-bottom', 'padding-left', 'font'], (n, v) => {

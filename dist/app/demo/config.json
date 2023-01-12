@@ -9,7 +9,8 @@
         "/clickgo/control/common",
         "/clickgo/control/form",
         "/clickgo/control/monaco",
-        "/clickgo/control/property"
+        "/clickgo/control/property",
+        "/clickgo/control/table"
     ],
     "style": "/package/global",
 
@@ -57,6 +58,8 @@
         "/form/control/select/select.xml",
         "/form/control/tab/tab.js",
         "/form/control/tab/tab.xml",
+        "/form/control/table/table.js",
+        "/form/control/table/table.xml",
         "/form/control/text/text.js",
         "/form/control/text/text.xml",
         "/form/control/vflow/vflow.css",

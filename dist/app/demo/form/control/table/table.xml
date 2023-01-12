@@ -1,0 +1,35 @@
+<form width="400" height="500" title="Table">
+    <layout direction="v" gutter="10" style="padding: 10px; flex: 1; width: 0;">
+        <label>Value: {{val}}</label>
+        <table :data="data" style="flex: 1;" v-model="val" :disabled="disabled" :must="must" :multi="multi" :ctrl="ctrl" :selection="selection" :gesture="gesture ? ['top', 'bottom'] : []" :split="split" @gesture="onGesture" :scroll="scroll" :sizes="sizes" :sort="sort" @select="onSelect" @sort="onSort">
+            <template v-slot="d">
+                <table-item v-if="index" label="index" width="80" sort="false">{{d.index}}</table-item>
+                <table-item label="name">{{d.row.name ?? 'name'}}</table-item>
+                <table-item label="size" width="50">{{d.row.type ?? '0'}}</table-item>
+            </template>
+            <template v-slot:pop>
+                <menulist>
+                    <menulist-item alt="S" @click="showIndex">Show select</menulist-item>
+                </menulist>
+            </template>
+        </table>
+        <layout gutter="10">
+            <button style="flex: 1; height: 30px;" @click="data.splice(-2, 0, {'type': 0, 'name': 'Card' + data.length, 'disabled': false});refreshSort()">Add</button>
+            <button style="flex: 1; height: 30px;" @click="data.splice(-3, 1);refreshSort()">Remove</button>
+            <button style="flex: 1; height: 30px;" @click="scrollChange">Scroll {{scroll}}</button>
+        </layout>
+        <layout gutter="10">
+            <button style="flex: 1; height: 30px;" @click="disabled = !disabled">{{disabled ? '' : '!'}}disabled</button>
+            <button style="flex: 1; height: 30px;" @click="multi = !multi">{{multi ? '' : '!'}}multi</button>
+            <button style="flex: 1; height: 30px;" @click="ctrl = !ctrl">{{ctrl ? '' : '!'}}ctrl</button>
+            <button style="flex: 1; height: 30px;" @click="must = !must">{{must ? '' : '!'}}must</button>
+            <button style="flex: 1; height: 30px;" @click="index = !index">{{index ? '' : '!'}}index</button>
+        </layout>
+        <layout gutter="10">
+            <button style="flex: 1; height: 30px;" @click="sortChange">sort {{sort ? 'true' : (sort === false ? 'false' : 'undefined')}}</button>
+            <button style="flex: 1; height: 30px;" @click="selection = !selection">{{selection ? '' : '!'}}selection</button>
+            <button style="flex: 1; height: 30px;" @click="gesture = !gesture">{{gesture ? '' : '!'}}gesture</button>
+            <button style="flex: 1; height: 30px;" @click="split = !split">{{split ? '' : '!'}}split</button>
+        </layout>
+    </layout>
+</form>

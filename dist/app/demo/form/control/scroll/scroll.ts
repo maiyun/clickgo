@@ -20,4 +20,6 @@ export default class extends clickgo.form.AbstractForm {
 
     public disabled = false;
 
+    public isShow = true;
+
 }

@@ -56,7 +56,7 @@ async function run(): Promise<void> {
         'withFileTypes': true
     });
     for (const item of list) {
-        if (['check', 'dialog', 'file', 'greatlist', 'greatselect', 'vflow', 'img', 'label', 'layout', 'list', 'loading', 'marquee', 'menu', 'menu-item', 'menulist', 'menulist-item', 'menulist-split', 'flow', 'radio', 'scroll', 'select', 'tab', 'text', 'task-item'].includes(item.name)) {
+        if (['check', 'dialog', 'file', 'greatlist', 'greatselect', 'vflow', 'img', 'label', 'layout', 'list', 'loading', 'marquee', 'menu', 'menu-item', 'menulist', 'menulist-item', 'menulist-split', 'flow', 'radio', 'scroll', 'select', 'tab', 'text', 'task-item', 'table-item'].includes(item.name)) {
             continue;
         }
         if (item.name.startsWith('.')) {
@@ -96,6 +96,9 @@ async function run(): Promise<void> {
         }
         else if (item.name === 'task') {
             await addFile(zipo, base + 'task-item', 'task-item');
+        }
+        else if (item.name === 'table') {
+            await addFile(zipo, base + 'table-item', 'table-item');
         }
 
         const buf = await zipo.generateAsync({

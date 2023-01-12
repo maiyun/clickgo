@@ -36,6 +36,7 @@ class default_1 extends clickgo.form.AbstractForm {
         this.count = 3;
         this.float = false;
         this.disabled = false;
+        this.isShow = true;
     }
 }
 exports.default = default_1;

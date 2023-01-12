@@ -11,6 +11,8 @@ export default class extends clickgo.control.AbstractControl {
         'selection': boolean | string;
         'gesture': string[] | string;
         'scroll': 'auto' | 'hidden' | 'visible';
+        /** --- 超出的内容是否顶开宽度，默认 fill，不顶开 --- */
+        'contentWidth': 'fill' | 'max';
 
         'data': Array<{
             'disabled': boolean;
@@ -27,17 +29,27 @@ export default class extends clickgo.control.AbstractControl {
             'selection': false,
             'gesture': [],
             'scroll': 'auto',
+            'contentWidth': 'fill',
 
             'data': [],
             'sizes': {},
             'modelValue': []
         };
 
+    /** --- clientWidth --- */
+    public cw = 0;
+
     /** --- 可视高度像素 --- */
     public client = 0;
 
     /** --- 总高度 --- */
     public length = 0;
+
+    /** --- scrollWidth --- */
+    public sw = 0;
+
+    /** --- scrollLeft --- */
+    public sl = 0;
 
     /** --- 滚动位置 --- */
     public offset = 0;
@@ -56,6 +68,9 @@ export default class extends clickgo.control.AbstractControl {
 
     /** --- 是否正在框选 --- */
     public isSelectStart = false;
+
+    /** --- 右侧的 scroll 是否在显示状态 --- */
+    public scrollShow = true;
 
     /** --- 判断值是否处于已经被选中的状态 --- */
     public get isSelected() {
@@ -413,7 +428,7 @@ export default class extends clickgo.control.AbstractControl {
         if (this.propBoolean('multi')) {
             // --- 多行 ---
             if (area.shift || area.ctrl) {
-                if (area.start === -1) {
+                if (area.empty) {
                     // --- 本次选中的先取消掉 ---
                     for (const item of this.selectValues) {
                         this.select(item, false, true);
@@ -480,7 +495,7 @@ export default class extends clickgo.control.AbstractControl {
             }
             else {
                 // --- 没有 ctrl 和 shift ---
-                if (area.start !== -1) {
+                if (!area.empty) {
                     this.shiftStart = area.start;
                     this.select(area.end, true);
                 }
@@ -492,7 +507,7 @@ export default class extends clickgo.control.AbstractControl {
         }
         else {
             // --- 单行 ---
-            if (area.start !== -1) {
+            if (!area.empty) {
                 this.select(area.start, area.shift, area.ctrl);
             }
         }

@@ -1,14 +1,20 @@
 <div class="wrap" :data-cg-disabled="propBoolean('disabled') ? '' : undefined" :tabindex="!propBoolean('disabled') && formFocus && '0'" @keydown="keydown">
-    <cg-vflow ref="flow" :selection="selection" :gesture="gesture" @gesture="emit('gesture', $event)" :data="data" v-slot="d" :sizes="sizes" direction="v" v-model:scroll-top="offset" @beforeselect="onBeforeSelect" @select="onSelect($event)" @afterselect="onAfterSelect" @clientheight="client = $event" @scrollheight="length = $event" @contextmenu="context" @touchstart="down" @mousedown="down">
-        <div v-if="d.row.control === 'split'" class="split"></div>
-        <div v-else class="item" :class="[isSelected(d.index) && 'selected', (shiftStart === d.index) && 'shift']" :data-cg-disabled="d.row.disabled ? '' : undefined" @touchstart="itemTouch($event, d.index)" @contextmenu="itemContext($event, d.index)">
-            <div class="itemInner" @click="innerClick($event, d.index)">
-                <slot :row="d.row" :index="d.index"></slot>
+    <div class="t">
+        <cg-vflow ref="flow" :selection="selection" :gesture="gesture" @gesture="emit('gesture', $event)" :data="data" v-slot="d" :sizes="sizes" direction="v" :scroll-left="sl" @update:scroll-left="sl=$event;emit('update:scroll-left',sl)" :scroll-top="offset" @update:scroll-top="offset=$event;emit('update:scroll-top',offset)" @beforeselect="onBeforeSelect" @select="onSelect($event)" @afterselect="onAfterSelect" @clientwidth="cw = $event" @clientheight="client = $event" @scrollwidth="sw = $event" @scrollheight="length = $event" @contextmenu="context" @touchstart="down" @mousedown="down">
+            <div v-if="d.row.control === 'split'" class="split"></div>
+            <div v-else class="item" :class="[isSelected(d.index) && 'selected', (shiftStart === d.index) && 'shift']" :data-cg-disabled="d.row.disabled ? '' : undefined" @touchstart="itemTouch($event, d.index)" @contextmenu="itemContext($event, d.index)">
+                <div class="itemInner" :class="['content-width-' + contentWidth]" @click="innerClick($event, d.index)">
+                    <slot :row="d.row" :index="d.index"></slot>
+                </div>
+                <div v-if="!d.row.disabled && d.row.menu" class="itemArrow" @click="arrowClick($event, d.index)"></div>
             </div>
-            <div v-if="!d.row.disabled && d.row.menu" class="itemArrow" @click="arrowClick($event, d.index)"></div>
-        </div>
-    </cg-vflow>
-    <cg-scroll v-if="(scroll === 'visible') || ((length > client) && (scroll !== 'hidden'))" :length="length" :client="client" v-model:offset="offset" :float="scroll === 'auto'"></cg-scroll>
+        </cg-vflow>
+        <cg-scroll :length="length" :client="client" v-model:offset="offset" :float="scroll === 'auto'" @show="scrollShow = $event" :style="{'display': (scroll === 'visible') || ((length > client) && (scroll !== 'hidden')) ? undefined : 'none'}"></cg-scroll>
+    </div>
+    <div v-if="sw > cw" class="b">
+        <cg-scroll direction="h" :length="sw" :client="cw" :offset="sl" @update:offset="sl = $event"></cg-scroll>
+        <div class="rb" :style="{'display': scrollShow && ((scroll === 'visible') || ((length > client) && (scroll !== 'hidden'))) ? undefined : 'none'}"></div>
+    </div>
     <div class="empty" v-show="!data.length">
         <svg viewBox="0 0 24 24"><path d="M17.75 3C19.55 3 21 4.46 21 6.25v11.5c0 1.8-1.46 3.25-3.25 3.25H6.25A3.25 3.25 0 013 17.75V6.25C3 4.45 4.46 3 6.25 3h11.5zm1.75 5.5h-15v9.25c0 .97.78 1.75 1.75 1.75h11.5c.97 0 1.75-.78 1.75-1.75V8.5zm-1.75-4H6.25c-.97 0-1.75.78-1.75 1.75V7h15v-.75c0-.97-.78-1.75-1.75-1.75z"></path></svg>
     </div>

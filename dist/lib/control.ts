@@ -165,6 +165,26 @@ export abstract class AbstractControl {
     /** --- 组件的子插槽 --- */
     public readonly slots: Record<string, any> = {};
 
+    /** --- 获取某插槽所有子类 --- */
+    public get slotsAll() {
+        return (name: string): any[] => {
+            const ls = this.slots[name]();
+            const rtn: any[] = [];
+            for (const slot of ls) {
+                if (!slot.props) {
+                    if (slot.children.length) {
+                        for (const item of slot.children) {
+                            rtn.push(item);
+                        }
+                    }
+                    continue;
+                }
+                rtn.push(slot);
+            }
+            return rtn;
+        };
+    }
+
     /**
      * --- 获取 props 中的 boolean 类型的值 ----
      */

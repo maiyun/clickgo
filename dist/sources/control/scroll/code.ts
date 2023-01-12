@@ -288,6 +288,10 @@ export default class extends clickgo.control.AbstractControl {
         }, {
             'immediate': true
         });
+        // --- 监听 isShow 并向上层传递 show 事件 ---
+        this.watch('isShow', (): void => {
+            this.emit('show', this.isShow);
+        });
         // --- 监听 bar 的 size ---
         clickgo.dom.watchSize(this.refs.bar, () => {
             const barRect = this.refs.bar.getBoundingClientRect();

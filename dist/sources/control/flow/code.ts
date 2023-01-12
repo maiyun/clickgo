@@ -387,6 +387,10 @@ export default class extends clickgo.control.AbstractControl {
                 return;
             }
             this.element.scrollLeft = prop;
+            if (this.element.scrollLeft !== prop) {
+                // --- 设置失败，提交 element 实际的 scrollLeft ---
+                this.emit('update:scrollLeft', this.element.scrollLeft);
+            }
         });
         this.watch('scrollTop', (): void => {
             const prop = this.propInt('scrollTop');
@@ -394,6 +398,10 @@ export default class extends clickgo.control.AbstractControl {
                 return;
             }
             this.element.scrollTop = prop;
+            if (this.element.scrollTop !== prop) {
+                // --- 设置失败，提交 element 实际的 scrollTop ---
+                this.emit('update:scrollTop', this.element.scrollTop);
+            }
         });
 
         // --- 大小改变，会影响 scroll offset、client，也会影响 length ---

@@ -1,5 +1,5 @@
 .wrap {
-    background: var(--g-plain-background); display: flex; outline: none; max-width: 100%; max-height: 100%; position: relative; border: solid .5px var(--g-plain-border-color); min-width: 32px; min-height: 32px;
+    background: var(--g-plain-background); outline: none; max-width: 100%; max-height: 100%; position: relative; border: solid .5px var(--g-plain-border-color); min-width: 32px; min-height: 32px; display: flex; flex-direction: column;
     &[data-cg-disabled] {
         background: var(--g-plain-background-disabled); color: var(--g-color-disabled);
         > * {
@@ -7,60 +7,79 @@
         }
     }
 
-    cg-vflow {
-        flex: 1; padding: 1px;
+    .t {
+        display: flex; max-height: 100%; flex: 1; height: 0; position: relative;
 
-        // --- item ---
-        .item {
-            display: flex; border: solid .5px transparent;
-            &:not([data-cg-disabled]) {
-                &:hover {
-                    background: var(--g-plain-background-hover);
+        cg-vflow {
+            flex: 1; padding: 1px;
+    
+            // --- item ---
+            .item {
+                display: flex; border: solid .5px transparent;
+                &:not([data-cg-disabled]) {
+                    &:hover {
+                        background: var(--g-plain-background-hover);
+                    }
+                    &.selected {
+                        background: var(--g-background-active);
+                    }
+                    &.shift {
+                        border-color: var(--g-border-color-focus);
+                    }
                 }
-                &.selected {
-                    background: var(--g-background-active);
+                &[data-cg-disabled] {
+                    color: var(--g-color-disabled);
+                    &:hover {
+                        background: var(--g-plain-background-disabled);
+                    }
                 }
-                &.shift {
-                    border-color: var(--g-border-color-focus);
+    
+                .itemInner {
+                    padding: 7px;
+                    &:not(.content-width-max) {
+                        flex: 1; width: 0; overflow: hidden;
+                    }
+                    &.content-width-max {
+                        min-width: 100%;
+                    }
+                }
+    
+                .itemArrow {
+                    width: 30px; display: flex; justify-content: center; align-items: center;
+                    &::after {
+                        position: absolute; content: ''; border-style: solid; border-color: var(--g-color); width: 8px; height: 8px; transform: rotate(45deg); border-width: 1px 1px 0 0; margin-left: -4px;
+                    }
+                    &:hover {
+                        background: rgba(0, 0, 0, .05);
+                    }
+                    &:active {
+                        background: rgba(0, 0, 0, .1);
+                    }
+    
+                    &[data-cg-pop-open] {
+                        background-color: rgba(0, 0, 0, .1);
+                    }
                 }
             }
-            &[data-cg-disabled] {
-                color: var(--g-color-disabled);
-                &:hover {
-                    background: var(--g-plain-background-disabled);
-                }
-            }
-
-            .itemInner {
-                flex: 1; width: 0; padding: 7px; overflow: hidden;
-            }
-
-            .itemArrow {
-                width: 30px; display: flex; justify-content: center; align-items: center;
-                &::after {
-                    position: absolute; content: ''; border-style: solid; border-color: var(--g-color); width: 8px; height: 8px; transform: rotate(45deg); border-width: 1px 1px 0 0; margin-left: -4px;
-                }
-                &:hover {
-                    background: rgba(0, 0, 0, .05);
-                }
-                &:active {
-                    background: rgba(0, 0, 0, .1);
-                }
-
-                &[data-cg-pop-open] {
-                    background-color: rgba(0, 0, 0, .1);
-                }
+    
+            // --- split ---
+            .split {
+                margin: 1px 0; height: .5px; background: var(--g-plain-border-color);
             }
         }
-
-        // --- split ---
-        .split {
-            margin: 1px 0; height: .5px; background: var(--g-plain-border-color);
+        cg-scroll {
+            width: 16px;
         }
     }
 
-    cg-scroll {
-        width: 16px;
+    .b {
+        display: flex;
+        cg-scroll {
+            height: 16px; flex: 1; width: 0;
+        }
+        .rb {
+            width: 16px; background: var(--face);
+        }
     }
 
     .empty {

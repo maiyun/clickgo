@@ -1,8 +1,7 @@
 .wrap {
-    display: flex;
-
+    display: flex; flex-direction: column; position: relative;
     .content {
-        flex: 1; display: flex;
+        display: flex; flex: 1; height: 0;
         &.v {
             flex-direction: column;
             &.gutter > :not(:first-child) {

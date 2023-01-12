@@ -109,6 +109,24 @@ class AbstractControl {
         }
         core.trigger(name, this.taskId, this.formId, param1, param2);
     }
+    get slotsAll() {
+        return (name) => {
+            const ls = this.slots[name]();
+            const rtn = [];
+            for (const slot of ls) {
+                if (!slot.props) {
+                    if (slot.children.length) {
+                        for (const item of slot.children) {
+                            rtn.push(item);
+                        }
+                    }
+                    continue;
+                }
+                rtn.push(slot);
+            }
+            return rtn;
+        };
+    }
     get propBoolean() {
         return (name) => {
             return tool.getBoolean(this.props[name]);

@@ -4,66 +4,53 @@ export default class extends clickgo.control.AbstractControl {
 
     public props: {
         'direction': 'h' | 'v';
-        /** --- 小于此值，则 direction 自动变为 v，大于等于则为 h --- */
-        'directionWidth': number | string;
+        /** --- 如 [100, 300]，width 每次达到后则响应 media 事件，并传入响应的数字值，否则为 0 就是比最小值还小 --- */
+        'media': number[] | string;
         'gutter': number | string;
         'alignH': string;
         'alignV': string;
     } = {
             'direction': 'h',
-            'directionWidth': 0,
+            'media': [],
             'gutter': '',
             'alignH': '',
             'alignV': ''
         };
 
-    public directionData: 'h' | 'v' = 'h';
+    public mediaOld: number = -1;
 
     public onMounted(): void | Promise<void> {
-        this.watch('directionWidth', (n, o) => {
-            if (n && o) {
-                return;
-            }
-            const w = this.propNumber('directionWidth');
-            if (w) {
+        this.watch('media', () => {
+            if (this.propArray('media').length) {
                 clickgo.dom.watchSize(this.element, () => {
-                    if (this.element.offsetWidth >= w) {
-                        // --- h ---
-                        if (this.directionData === 'h') {
-                            return;
+                    let now: number = 0;
+                    for (const width of this.propArray('media')) {
+                        if (this.element.offsetWidth < width) {
+                            continue;
                         }
-                        this.directionData = 'h';
-                    }
-                    else {
-                        // --- v ---
-                        if (this.directionData === 'v') {
-                            return;
+                        if (now > width) {
+                            continue;
                         }
-                        this.directionData = 'v';
+                        now = width;
                     }
-                    if (this.directionData === this.props.direction) {
+                    if (now === this.mediaOld) {
                         return;
                     }
-                    this.emit('update:direction', this.directionData);
-                });
+                    this.mediaOld = now;
+                    this.emit('media', now);
+                }, true);
             }
             else {
                 clickgo.dom.unwatchSize(this.element);
+                if (this.mediaOld === -1) {
+                    return;
+                }
+                this.mediaOld = -1;
+                this.emit('media', -1);
             }
         }, {
             'immediate': true
         });
-        this.watch('direction', () => {
-            if (!this.propNumber('directionWidth')) {
-                this.directionData = this.props.direction;
-                return;
-            }
-            if (this.directionData === this.props.direction) {
-                return;
-            }
-            this.emit('update:direction', this.directionData);
-        });
-        this.directionData = this.props.direction;
     }
 
 }

@@ -1,11 +1,11 @@
 <form width="300" height="300" title="Layout">
     <layout direction="v" gutter="10" style="padding: 10px; flex: 1; width: 0;">
-        <label>direction: {{direction[0]}}</label>
-        <layout v-model:direction="direction[0]" :direction-width="dw" :gutter="gutter" style="flex: 1; border: solid 1px #000; padding: 10px;">
+        <label>direction: {{direction[0]}}, media: {{mediaVal}}</label>
+        <layout :direction="direction[0]" :media="media" :gutter="gutter" @media="onMedia" style="flex: 1; border: solid 1px #000; padding: 10px;">
             <block style="background: var(--success); flex: 1;" />
-            <block style="background: var(--info); flex: 1;" />
+            <block style="flex: 1;" :style="{'background': bigColor ? 'var(--warning)' : 'var(--info)'}" />
         </layout>
-        <button @click="dw = dw ? 0 : 300" style="height: 30px;">direction width: {{dw}}</button>
+        <button @click="media = media.length ? [] : [300, 450]" style="height: 30px;">media: {{media}}</button>
         <layout align-v="center" gutter="10">
             <label>gutter:</label>
             <select v-model="gutter" :data="[0, 10, 12, 30, 31, 50]" style="flex: 1;"></select>

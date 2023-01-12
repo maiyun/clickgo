@@ -24,10 +24,13 @@
                     <block v-for="line of count">Line {{line}}.</block>
                 </block>
             </flow>
-            <scroll :length="sh2" :client="c2" v-model:offset="so2" :float="float" :disabled="disabled" style="width: 20px;"></scroll>
+            <scroll :length="sh2" :client="c2" v-model:offset="so2" :float="float" :disabled="disabled" @show="isShow = $event" style="width: 20px;"></scroll>
         </layout>
         <layout gutter="10" align-v="center">
-            <label style="flex: 1;">On the left is the flow control.</label>
+            <layout direction="v" gutter="10" style="flex: 1; width: 0;">
+                <label>On the left is the flow control.</label>
+                <label>isShow: {{isShow}}</label>
+            </layout>
             <button @click="float = !float" style="padding: 0 10px; height: 30px;">{{float ? 'Remove' : 'Set'}} float</button>
             <button @click="count += 10" style="padding: 0 10px; height: 30px;">Add 10 lines</button>
         </layout>

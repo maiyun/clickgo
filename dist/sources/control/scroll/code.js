@@ -237,6 +237,9 @@ class default_1 extends clickgo.control.AbstractControl {
         }, {
             'immediate': true
         });
+        this.watch('isShow', () => {
+            this.emit('show', this.isShow);
+        });
         clickgo.dom.watchSize(this.refs.bar, () => {
             const barRect = this.refs.bar.getBoundingClientRect();
             this.barPx = this.props.direction === 'v' ? barRect.height : barRect.width;

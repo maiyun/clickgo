@@ -28,46 +28,39 @@ class default_1 extends clickgo.control.AbstractControl {
     constructor() {
         super(...arguments);
         this.props = {
-            'direction': 'h',
-            'media': [],
-            'gutter': '',
-            'alignH': '',
-            'alignV': ''
+            'width': 0,
+            'label': 'label',
+            'sort': undefined
         };
-        this.mediaOld = -1;
+        this.table = {
+            'widthMap': {
+                [this.props.label]: 0
+            }
+        };
     }
     onMounted() {
-        this.watch('media', () => {
-            if (this.propArray('media').length) {
-                clickgo.dom.watchSize(this.element, () => {
-                    let now = 0;
-                    for (const width of this.propArray('media')) {
-                        if (this.element.offsetWidth < width) {
-                            continue;
-                        }
-                        if (now > width) {
-                            continue;
-                        }
-                        now = width;
-                    }
-                    if (now === this.mediaOld) {
-                        return;
-                    }
-                    this.mediaOld = now;
-                    this.emit('media', now);
-                }, true);
-            }
-            else {
-                clickgo.dom.unwatchSize(this.element);
-                if (this.mediaOld === -1) {
-                    return;
-                }
-                this.mediaOld = -1;
-                this.emit('media', -1);
-            }
-        }, {
-            'immediate': true
+        const table = this.parentByName('table');
+        if (!table) {
+            return;
+        }
+        table.refreshHeader();
+        this.watch('label', (n, o) => {
+            table.setHeaderLabel(n, o);
         });
+        this.watch('width', () => {
+            table.setHeaderWidth(this.props.label, this.propNumber('width'));
+        });
+        this.watch('sort', () => {
+            table.setHeaderSort(this.props.label, this.props.sort === undefined ? undefined : this.propBoolean('sort'));
+        });
+        this.table = table;
+    }
+    onUnmounted() {
+        const table = this.parentByName('table');
+        if (!table) {
+            return;
+        }
+        table.refreshHeader();
     }
 }
 exports.default = default_1;
