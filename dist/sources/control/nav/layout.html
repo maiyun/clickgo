@@ -1,0 +1,12 @@
+<div class="wrap" :class="[layer && 'layer', showData && 'show']">
+    <!-- 左侧 -->
+    <div class="menuwrap" @click="menuwrapClick">
+        <cg-flow class="menu" direction="v">
+            <slot></slot>
+        </cg-flow>
+    </div>
+    <!-- 右侧 -->
+    <div class="content">
+        <slot name="content"></slot>
+    </div>
+</div>

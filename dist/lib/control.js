@@ -111,6 +111,9 @@ class AbstractControl {
     }
     get slotsAll() {
         return (name) => {
+            if (!this.slots[name]) {
+                return [];
+            }
             const ls = this.slots[name]();
             const rtn = [];
             for (const slot of ls) {

@@ -10,7 +10,8 @@
         "/clickgo/control/form",
         "/clickgo/control/monaco",
         "/clickgo/control/property",
-        "/clickgo/control/table"
+        "/clickgo/control/table",
+        "/clickgo/control/nav"
     ],
     "style": "/package/global",
 
@@ -48,6 +49,8 @@
         "/form/control/menu/menu.xml",
         "/form/control/monaco/monaco.js",
         "/form/control/monaco/monaco.xml",
+        "/form/control/nav/nav.js",
+        "/form/control/nav/nav.xml",
         "/form/control/property/property.js",
         "/form/control/property/property.xml",
         "/form/control/radio/radio.js",

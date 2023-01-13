@@ -26,7 +26,7 @@ export default class extends clickgo.control.AbstractControl {
             'selection': false,
             'gesture': [],
             'scroll': 'auto',
-            'sort': true,
+            'sort': false,
             'split': false,
 
             'data': [],

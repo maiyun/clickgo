@@ -35,7 +35,7 @@ class default_1 extends clickgo.control.AbstractControl {
             'selection': false,
             'gesture': [],
             'scroll': 'auto',
-            'sort': true,
+            'sort': false,
             'split': false,
             'data': [],
             'sizes': {},

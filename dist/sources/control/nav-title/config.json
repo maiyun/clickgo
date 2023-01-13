@@ -1,0 +1,9 @@
+{
+    "name": "nav-title",
+    "ver": 1,
+    "version": "0.1",
+    "author": "clickgo",
+
+    "layout": "/layout",
+    "style": "/style"
+}

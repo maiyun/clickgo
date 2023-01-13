@@ -168,6 +168,9 @@ export abstract class AbstractControl {
     /** --- 获取某插槽所有子类 --- */
     public get slotsAll() {
         return (name: string): any[] => {
+            if (!this.slots[name]) {
+                return [];
+            }
             const ls = this.slots[name]();
             const rtn: any[] = [];
             for (const slot of ls) {

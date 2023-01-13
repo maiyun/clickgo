@@ -1,0 +1,8 @@
+<div class="wrap" :class="[showData && 'show', isChild && 'child', isSelected && 'selected']">
+    <div class="text" :class="[hasChild && 'hasChild']" @click="click">{{label}}</div>
+    <div v-if="hasChild" ref="menu" class="menu">
+        <div>
+            <slot></slot>
+        </div>
+    </div>
+</div>

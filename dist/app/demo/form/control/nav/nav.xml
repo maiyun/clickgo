@@ -1,0 +1,43 @@
+<form width="600" height="500" title="Nav" :loading="loading">
+    <nav v-model="label" v-model:show="isShow" @layer="layer = $event" style="flex: 1; width: 0;">
+        <nav-item label="Title1">
+            <nav-title>group1</nav-title>
+            <nav-item label="Sub1">
+                <nav-item label="Action1"></nav-item>
+                <nav-item label="Action2"></nav-item>
+            </nav-item>
+            <nav-item label="Sub2">
+                <nav-item label="Action3"></nav-item>
+                <nav-item label="Action4"></nav-item>
+            </nav-item>
+            <nav-title>group2</nav-title>
+            <nav-item label="Sub3">
+                <nav-item label="Action5"></nav-item>
+                <nav-item label="Action6"></nav-item>
+            </nav-item>
+            <nav-item label="Sub4">
+                <nav-item label="Action7"></nav-item>
+                <nav-item label="Action8"></nav-item>
+            </nav-item>
+        </nav-item>
+        <nav-item label="Title2">
+            <nav-item label="Sub5">
+                <nav-item label="Action9"></nav-item>
+                <nav-item label="Action10"></nav-item>
+            </nav-item>
+            <nav-item label="Sub6">
+                <nav-item label="Action11"></nav-item>
+                <nav-item label="Action12"></nav-item>
+            </nav-item>
+        </nav-item>
+        <template v-slot:content>
+            <layout direction="v" gutter="10" style="padding: 10px; flex: 1;">
+                <label>Change the size of the form to see the effect.</label>
+                <label>Now select: {{label}}</label>
+                <label>Layer show: {{isShow ? 'true' : 'false'}}</label>
+                <button v-if="layer" @click="isShow = true" style="height: 30px;">Open</button>
+                <button @click="label = 'Action11'" style="height: 30px;">Select "Action11"</button>
+            </layout>
+        </template>
+    </nav>
+</form>
