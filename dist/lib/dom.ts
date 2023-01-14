@@ -93,7 +93,7 @@ export function hasTouchButMouse(e: MouseEvent | TouchEvent | PointerEvent): boo
 }
 
 /**
- * --- 创建任务时连同一起创建的 style 标签 ---
+ * --- 创建任务时连同一起创建的 style 标签，App 模式下无效 ---
  * @param taskId 任务 id
  */
 export function createToStyleList(taskId: number): void {
@@ -101,7 +101,7 @@ export function createToStyleList(taskId: number): void {
 }
 
 /**
- * --- 任务结束时需要移除 task 的所有 style ---
+ * --- 任务结束时需要移除 task 的所有 style，App 模式下无效 ---
  * @param taskId 任务 id
  */
 export function removeFromStyleList(taskId: number): void {
@@ -109,13 +109,14 @@ export function removeFromStyleList(taskId: number): void {
 }
 
 /**
- * --- 将 style 内容写入 dom ---
+ * --- 将 style 内容写入 dom，App 模式下无效 ---
  * @param taskId 当前任务 ID
  * @param style 样式内容
  * @param type 插入的类型
- * @param formId 当前窗体 ID（global 下可空，theme 下为主题唯一标识符）
+ * @param formId 当前窗体 ID（global 下可空，theme 下为主题唯一标识符，control 下为控件名）
+ * @param panelId 若是 panel 中创建的则需要指定 panelId，仅 type 为 form 有效
  */
-export function pushStyle(taskId: number, style: string, type: 'global' | 'theme' | 'control' | 'form' = 'global', formId: number | string = 0): void {
+export function pushStyle(taskId: number, style: string, type: 'global' | 'theme' | 'control' | 'form' = 'global', formId: number | string = 0, panelId?: number): void {
     const el = document.querySelector(`#cg-style-task${taskId} > .cg-style-${type}`);
     if (!el) {
         return;
@@ -127,17 +128,19 @@ export function pushStyle(taskId: number, style: string, type: 'global' | 'theme
         el.insertAdjacentHTML('beforeend', `<style data-name="${formId}">${style}</style>`);
     }
     else {
-        el.insertAdjacentHTML('beforeend', `<style class="cg-style-form${formId}">${style}</style>`);
+        // --- form ---
+        el.insertAdjacentHTML('beforeend', `<style class="cg-style-form${formId}" data-panel="${panelId ? panelId.toString() : ''}">${style}</style>`);
     }
 }
 
 /**
- * --- 移除 style 样式 dom ---
+ * --- 移除 style 样式 dom，App 模式下无效 ---
  * @param taskId 要移除的任务 ID
  * @param type 移除的类型
  * @param formId 要移除的窗体 ID
+ * @param panelId type 为 form 模式下若不指定则当前 form 包含 panel 的样式都会被移除
  */
-export function removeStyle(taskId: number, type: 'global' | 'theme' | 'control' | 'form' = 'global', formId: number | string = 0): void {
+export function removeStyle(taskId: number, type: 'global' | 'theme' | 'control' | 'form' = 'global', formId: number | string = 0, panelId?: number): void {
     const styleTask = document.getElementById('cg-style-task' + taskId.toString());
     if (!styleTask) {
         return;
@@ -165,7 +168,8 @@ export function removeStyle(taskId: number, type: 'global' | 'theme' | 'control'
         }
     }
     else {
-        const elist = styleTask.querySelectorAll('.cg-style-form' + formId.toString());
+        // --- form ---
+        const elist = styleTask.querySelectorAll('.cg-style-form' + formId.toString() + (panelId ? '[data-panel="' + panelId.toString() + '"]' : ''));
         for (let i = 0; i < elist.length; ++i) {
             elist.item(i).remove();
         }
@@ -188,6 +192,24 @@ export function getStyleCount(taskId: number, type: 'theme' | 'control' | 'form'
 /** --- 被监视中的元素 --- */
 const watchSizeList: Record<string, types.IWatchSizeItem> = {};
 
+/**
+ * --- 获取当前 watch size 中的元素总数 ---
+ * @param taskId 留空则获取全部总数 ---
+ */
+export function getWatchSizeCount(taskId?: number): number {
+    if (!taskId) {
+        return Object.keys(watchSizeList).length;
+    }
+    let count = 0;
+    for (const id in watchSizeList) {
+        if (watchSizeList[id].taskId !== taskId) {
+            continue;
+        }
+        ++count;
+    }
+    return count;
+}
+
 /** --- 监视元素的 data-cg-roindex --- */
 let watchSizeIndex: number = 0;
 
@@ -195,7 +217,7 @@ let watchSizeIndex: number = 0;
 const resizeObserver = new ResizeObserver(function(entries): void {
     for (const entrie of entries) {
         const el = entrie.target as HTMLElement;
-        if (!el.offsetParent) {
+        if (!document.body.contains(el)) {
             resizeObserver.unobserve(el);
             if (watchSizeList[el.dataset.cgRoindex!]) {
                 delete watchSizeList[el.dataset.cgRoindex!];
@@ -307,6 +329,24 @@ export function clearWatchSize(taskId: number): void {
 /** --- 监视 dom 变动中的元素 */
 const watchList: Record<string, types.IWatchItem> = {};
 
+/**
+ * --- 获取当前 watch 中的元素总数 ---
+ * @param taskId 留空则获取全部总数 ---
+ */
+export function getWatchCount(taskId?: number): number {
+    if (!taskId) {
+        return Object.keys(watchList).length;
+    }
+    let count = 0;
+    for (const id in watchList) {
+        if (watchList[id].taskId !== taskId) {
+            continue;
+        }
+        ++count;
+    }
+    return count;
+}
+
 /** --- 监视元素的 data-cg-moindex --- */
 let watchIndex: number = 0;
 
@@ -317,7 +357,7 @@ let watchIndex: number = 0;
  * @param mode 监听模式
  * @param taskId 归属到一个任务里可留空，App 模式下无效
  */
-export function watch(el: HTMLElement, cb: (mutations: MutationRecord[]) => void | Promise<void>, mode: 'child' | 'childsub' | 'style' | 'default' = 'default', immediate: boolean = false, taskId?: number): boolean {
+export function watch(el: HTMLElement, cb: (mutations: MutationRecord[]) => void | Promise<void>, mode: 'child' | 'childsub' | 'style' | 'text' | 'default' = 'default', immediate: boolean = false, taskId?: number): boolean {
     if (isWatch(el)) {
         return false;
     }
@@ -358,7 +398,15 @@ export function watch(el: HTMLElement, cb: (mutations: MutationRecord[]) => void
             };
             break;
         }
-        case 'default': {
+        case 'text': {
+            moi = {
+                'characterData': true,
+                'childList': true,
+                'subtree': true
+            };
+            break;
+        }
+        default: {
             moi = {
                 'attributeFilter': ['style', 'class'],
                 'attributeOldValue': true,
@@ -367,14 +415,10 @@ export function watch(el: HTMLElement, cb: (mutations: MutationRecord[]) => void
                 'childList': true,
                 'subtree': true
             };
-            break;
-        }
-        default: {
-            moi = mode;
         }
     }
     const mo = new MutationObserver((mutations) => {
-        if (!el.offsetParent) {
+        if (!document.body.contains(el)) {
             mo.disconnect();
             if (watchList[index]) {
                 delete watchList[index];
@@ -456,18 +500,58 @@ export function clearWatch(taskId: number): void {
     }
 }
 
+// ----------------------
+// --- watch cg timer ---
+// ----------------------
+
+// --- watch 和 watchSize 依靠 cg 去清除元素已经消失但还占用 map 的情况 ---
+// --- style 和 property 因为是我们自己实现的，随时就能知道元素是否已经被移除了 ---
+
+const watchCgTimerHandler = function(): void {
+    for (const index in watchSizeList) {
+        const item = watchSizeList[index];
+        if (document.body.contains(item.el)) {
+            continue;
+        }
+        delete watchSizeList[index];
+    }
+    for (const index in watchList) {
+        const item = watchList[index];
+        if (document.body.contains(item.el)) {
+            continue;
+        }
+        delete watchList[index];
+    }
+    window.setTimeout(watchCgTimerHandler, 1000 * 60 * 7);
+};
+watchCgTimerHandler();
+
 // ------------------
 // --- watchStyle ---
 // ------------------
 
-const watchStyleList: Record<string, Record<string, {
+interface IWatchStyleItem {
     'el': HTMLElement;
     'sd': CSSStyleDeclaration;
     'names': Record<string, {
         'val': string;
         'cb': Array<(name: string, value: string, old: string) => void>;
     }>;
-}>> = {};
+}
+
+const watchStyleList: Record<
+    /** --- formId --- */
+    string,
+    Record<
+        /** --- panelId 或 default --- */
+        string,
+        Record<
+            /** --- index 值 --- */
+            string,
+            IWatchStyleItem
+        >
+    >
+> = {};
 
 /** --- 监视元素的 data-cg-styleindex --- */
 let watchStyleIndex: number = 0;
@@ -494,13 +578,14 @@ export function watchStyle(
         return;
     }
     const formId = formWrap.dataset.formId!;
-    if (!watchStyleList[formId]) {
-        watchStyleList[formId] = {};
-    }
+    // --- 获取监视标签的所属 panel ---
+    const panelWrap = findParentByData(el, 'panel-id');
+    const panelId = panelWrap ? panelWrap.dataset.panelId! : 'default';
+    /** --- 监视 index 值 --- */
     const index = el.dataset.cgStyleindex;
     if (index) {
-        const item = watchStyleList[formId][index];
         // --- 已经有监听了 ---
+        const item = watchStyleList[formId][panelId][index];
         for (const n of name) {
             if (!item.names[n]) {
                 item.names[n] = {
@@ -517,14 +602,21 @@ export function watchStyle(
         }
         return;
     }
+    // --- 创建 object ---
+    if (!watchStyleList[formId]) {
+        watchStyleList[formId] = {};
+    }
+    if (!watchStyleList[formId][panelId]) {
+        watchStyleList[formId][panelId] = {};
+    }
     // --- 创建监听 ---
     const sd = getComputedStyle(el);
-    watchStyleList[formId][watchStyleIndex] = {
+    watchStyleList[formId][panelId][watchStyleIndex] = {
         'el': el,
         'sd': sd,
         'names': {}
     };
-    const item = watchStyleList[formId][watchStyleIndex];
+    const item = watchStyleList[formId][panelId][watchStyleIndex];
     for (const n of name) {
         item.names[n] = {
             'val': (item.sd as any)[n],
@@ -538,41 +630,6 @@ export function watchStyle(
     ++watchStyleIndex;
 }
 
-/** --- watch style 的 timer --- */
-let watchStyleTimer = 0;
-const watchStyleHandler = function(): void {
-    // --- 为什么要判断 form.getFocus 存在否，因为 form 类可能还没加载出来，这个函数就已经开始执行了 ---
-    if (form.getFocus) {
-        // --- 只判断和执行活跃中的窗体的监听事件 ---
-        const formId: number | null = form.getFocus();
-        if (formId && watchStyleList[formId]) {
-            for (const index in watchStyleList[formId]) {
-                const item = watchStyleList[formId][index];
-                if (!item.el.offsetParent) {
-                    delete watchStyleList[formId][index];
-                    if (!Object.keys(watchStyleList[formId]).length) {
-                        delete watchStyleList[formId];
-                    }
-                    continue;
-                }
-                // --- 执行 cb ---
-                for (const name in item.names) {
-                    if ((item.sd as any)[name] === item.names[name].val) {
-                        continue;
-                    }
-                    const old = item.names[name].val;
-                    item.names[name].val = (item.sd as any)[name];
-                    for (const cb of item.names[name].cb) {
-                        cb(name, (item.sd as any)[name], old);
-                    }
-                }
-            }
-        }
-    }
-    watchStyleTimer = requestAnimationFrame(watchStyleHandler);
-};
-watchStyleHandler();
-
 /**
  * --- 检测一个标签是否正在被 watchStyle ---
  * @param el 要检测的标签
@@ -584,14 +641,26 @@ export function isWatchStyle(el: HTMLElement): boolean {
 /**
  * --- 清除某个窗体的所有 watch style 监视，App 模式下无效 ---
  * @param formId 窗体 id
+ * @param panelId 若指定则只清除当前窗体的某个 panel 的 watch
  */
-export function clearWatchStyle(formId: number | string): void {
+export function clearWatchStyle(formId: number | string, panelId?: number): void {
     if (!watchStyleList[formId]) {
         return;
     }
-    for (const index in watchStyleList[formId]) {
-        const item = watchStyleList[formId][index];
-        item.el.removeAttribute('data-cg-styleindex');
+    for (const panel in watchStyleList[formId]) {
+        if (panelId) {
+            if (panel !== panelId.toString()) {
+                continue;
+            }
+        }
+        for (const index in watchStyleList[formId][panel]) {
+            const item = watchStyleList[formId][panel][index];
+            item.el.removeAttribute('data-cg-styleindex');
+        }
+        delete watchStyleList[formId][panel];
+    }
+    if (Object.keys(watchStyleList[formId]).length) {
+        return;
     }
     delete watchStyleList[formId];
 }
@@ -600,16 +669,30 @@ export function clearWatchStyle(formId: number | string): void {
 // --- watchProperty ---
 // ---------------------
 
-/**
- * --- 监听中的标签对象，对应 formId -> 数组列表 ---
- */
-const watchPropertyObjects: Record<string, Record<string, {
+interface IWatchPropertyItem {
     'el': HTMLElement;
     'names': Record<string, {
         'val': string;
         'cb': Array<(name: string, value: string) => void>;
     }>;
-}>> = {};
+}
+
+/**
+ * --- 监听中的标签对象，对应 formId -> 数组列表 ---
+ */
+const watchPropertyObjects: Record<
+    /** --- formId --- */
+    string,
+    Record<
+        /** --- panelId 或 default --- */
+        string,
+        Record<
+            /** --- index 值 --- */
+            string,
+            IWatchPropertyItem
+        >
+    >
+> = {};
 
 /** --- 监视元素的 data-cg-propertyindex --- */
 let watchPropertyIndex: number = 0;
@@ -636,13 +719,14 @@ export function watchProperty(
         return;
     }
     const formId = formWrap.dataset.formId!;
-    if (!watchPropertyObjects[formId]) {
-        watchPropertyObjects[formId] = {};
-    }
+    // --- 获取监视标签的所属 panel ---
+    const panelWrap = findParentByData(el, 'panel-id');
+    const panelId = panelWrap ? panelWrap.dataset.panelId! : 'default';
+    /** --- 监视 index 值 --- */
     const index = el.dataset.cgPropertyindex;
     if (index) {
-        const item = watchPropertyObjects[formId][index];
         // --- 已经有监听了 ---
+        const item = watchPropertyObjects[formId][panelId][index];
         for (const n of name) {
             if (!item.names[n]) {
                 item.names[n] = {
@@ -659,12 +743,19 @@ export function watchProperty(
         }
         return;
     }
+    // --- 创建 object ---
+    if (!watchPropertyObjects[formId]) {
+        watchPropertyObjects[formId] = {};
+    }
+    if (!watchPropertyObjects[formId][panelId]) {
+        watchPropertyObjects[formId][panelId] = {};
+    }
     // --- 创建监听 ---
-    watchPropertyObjects[formId][watchPropertyIndex] = {
+    watchPropertyObjects[formId][panelId][watchPropertyIndex] = {
         'el': el,
         'names': {}
     };
-    const item = watchPropertyObjects[formId][watchPropertyIndex];
+    const item = watchPropertyObjects[formId][panelId][watchPropertyIndex];
     for (const n of name) {
         item.names[n] = {
             'val': (item.el as any)[n],
@@ -678,40 +769,6 @@ export function watchProperty(
     ++watchPropertyIndex;
 }
 
-/** --- watch property 的 timer --- */
-let watchPropertyTimer = 0;
-const watchPropertyHandler = function(): void {
-    // --- 为什么要判断 form.getFocus 存在否，因为 form 类可能还没加载出来，这个函数就已经开始执行了 ---
-    if (form.getFocus) {
-        // --- 只判断和执行活跃中的窗体的监听事件 ---
-        const formId: number | null = form.getFocus();
-        if (formId && watchPropertyObjects[formId]) {
-            for (const index in watchPropertyObjects[formId]) {
-                const item = watchPropertyObjects[formId][index];
-                if (!item.el.offsetParent) {
-                    delete watchPropertyObjects[formId][index];
-                    if (!Object.keys(watchPropertyObjects[formId]).length) {
-                        delete watchPropertyObjects[formId];
-                    }
-                    continue;
-                }
-                // --- 执行 cb ---
-                for (const name in item.names) {
-                    if ((item.el as any)[name] === item.names[name].val) {
-                        continue;
-                    }
-                    item.names[name].val = (item.el as any)[name];
-                    for (const cb of item.names[name].cb) {
-                        cb(name, (item.el as any)[name]);
-                    }
-                }
-            }
-        }
-    }
-    watchPropertyTimer = requestAnimationFrame(watchPropertyHandler);
-};
-watchPropertyHandler();
-
 /**
  * --- 检测一个标签是否正在被 watchProperty ---
  * @param el 要检测的标签
@@ -723,17 +780,128 @@ export function isWatchProperty(el: HTMLElement): boolean {
 /**
  * --- 清除某个窗体的所有 watch property 监视，虽然窗体结束后相关监视永远不会再被执行，但是会形成冗余，App 模式下无效 ---
  * @param formId 窗体 id
+ * @param panelId 若指定则只清除当前窗体的某个 panel 的 watch
  */
-export function clearWatchProperty(formId: number | string): void {
+export function clearWatchProperty(formId: number | string, panelId?: number): void {
     if (!watchPropertyObjects[formId]) {
         return;
     }
-    for (const index in watchPropertyObjects[formId]) {
-        const item = watchPropertyObjects[formId][index];
-        item.el.removeAttribute('data-cg-propertyindex');
+    for (const panel in watchPropertyObjects[formId]) {
+        if (panelId) {
+            if (panel !== panelId.toString()) {
+                continue;
+            }
+        }
+        for (const index in watchPropertyObjects[formId][panel]) {
+            const item = watchPropertyObjects[formId][panel][index];
+            item.el.removeAttribute('data-cg-propertyindex');
+        }
+        delete watchPropertyObjects[formId][panel];
+    }
+    if (Object.keys(watchPropertyObjects[formId]).length) {
+        return;
     }
     delete watchPropertyObjects[formId];
 }
+
+// -------------------
+// --- watch timer ---
+// -------------------
+
+/** --- watch style 的 timer --- */
+let watchTimer = 0;
+const watchTimerHandler = function(): void {
+    // --- 为什么要判断 form.getFocus 存在否，因为 form 类可能还没加载出来，这个函数就已经开始执行了 ---
+    if (form.getFocus) {
+        /** ---  --- */
+        const formId: number | null = form.getFocus();
+        if (formId) {
+            /** --- 活跃的 panel --- */
+            const panelIds = form.getActivePanel(formId);
+            if (watchStyleList[formId]) {
+                // --- style ---
+                const handler = (item: IWatchStyleItem, panelId: string, index: string): void => {
+                    if (!document.body.contains(item.el)) {
+                        delete watchStyleList[formId][panelId][index];
+                        if (!Object.keys(watchStyleList[formId][panelId]).length) {
+                            delete watchStyleList[formId][panelId];
+                        }
+                        if (!Object.keys(watchStyleList[formId]).length) {
+                            delete watchStyleList[formId];
+                        }
+                        return;
+                    }
+                    // --- 执行 cb ---
+                    for (const name in item.names) {
+                        if ((item.sd as any)[name] === item.names[name].val) {
+                            continue;
+                        }
+                        const old = item.names[name].val;
+                        item.names[name].val = (item.sd as any)[name];
+                        for (const cb of item.names[name].cb) {
+                            cb(name, (item.sd as any)[name], old);
+                        }
+                    }
+                };
+                // --- 先执行窗体默认的 ---
+                if (watchStyleList[formId].default) {
+                    for (const index in watchStyleList[formId].default) {
+                        handler(watchStyleList[formId].default[index], 'default', index);
+                    }
+                }
+                // --- 再执行活跃的 panel 的 ---
+                for (const id of panelIds) {
+                    if (watchStyleList[formId][id]) {
+                        for (const index in watchStyleList[formId][id]) {
+                            handler(watchStyleList[formId][id][index], id.toString(), index);
+                        }
+                    }
+                }
+            }
+            if (watchPropertyObjects[formId]) {
+                // --- property ---
+                const handler = (item: IWatchPropertyItem, panelId: string, index: string): void => {
+                    if (!document.body.contains(item.el)) {
+                        delete watchPropertyObjects[formId][panelId][index];
+                        if (!Object.keys(watchPropertyObjects[formId][panelId]).length) {
+                            delete watchPropertyObjects[formId][panelId];
+                        }
+                        if (!Object.keys(watchPropertyObjects[formId]).length) {
+                            delete watchPropertyObjects[formId];
+                        }
+                        return;
+                    }
+                    // --- 执行 cb ---
+                    for (const name in item.names) {
+                        if ((item.el as any)[name] === item.names[name].val) {
+                            continue;
+                        }
+                        item.names[name].val = (item.el as any)[name];
+                        for (const cb of item.names[name].cb) {
+                            cb(name, (item.el as any)[name]);
+                        }
+                    }
+                };
+                // --- 先执行窗体默认的 ---
+                if (watchPropertyObjects[formId].default) {
+                    for (const index in watchPropertyObjects[formId].default) {
+                        handler(watchPropertyObjects[formId].default[index], 'default', index);
+                    }
+                }
+                // --- 再执行活跃的 panel 的 ---
+                for (const id of panelIds) {
+                    if (watchPropertyObjects[formId][id]) {
+                        for (const index in watchPropertyObjects[formId][id]) {
+                            handler(watchPropertyObjects[formId][id][index], id.toString(), index);
+                        }
+                    }
+                }
+            }
+        }
+    }
+    watchTimer = requestAnimationFrame(watchTimerHandler);
+};
+watchTimerHandler();
 
 /**
  * --- 鼠标/手指没移动时，click 才生效 ---
@@ -780,7 +948,7 @@ export function bindDown(oe: MouseEvent | TouchEvent, opt: types.IBindDownOption
     let end: ((e: MouseEvent | TouchEvent) => void) | undefined = undefined;
     const move = function(e: MouseEvent | TouchEvent): void {
         // --- 虽然上层已经有 preventDefault 了，但是有可能 e.target 会被注销，这样就响应不到上层的 preventDefault 事件，所以要在这里再加一个 ---
-        if ((!e.target || !(e.target as HTMLElement).offsetParent) && e.cancelable) {
+        if (!e.target || !document.body.contains(e.target as HTMLElement) && e.cancelable) {
             e.preventDefault();
         }
         /** --- 本次的移动方向 --- */
@@ -1943,12 +2111,10 @@ export function fullscreen(): boolean {
 document.addEventListener('visibilitychange', function() {
     if (document.hidden) {
         // --- 隐藏 ---
-        cancelAnimationFrame(watchStyleTimer);
-        cancelAnimationFrame(watchPropertyTimer);
+        cancelAnimationFrame(watchTimer);
     }
     else {
         // --- 显示 ---
-        watchStyleTimer = requestAnimationFrame(watchStyleHandler);
-        watchPropertyTimer = requestAnimationFrame(watchPropertyHandler);
+        watchTimer = requestAnimationFrame(watchTimerHandler);
     }
 });

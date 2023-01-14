@@ -32,7 +32,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.hideLauncher = exports.showLauncher = exports.flash = exports.confirm = exports.dialog = exports.create = exports.remove = exports.doFocusAndPopEvent = exports.hidePop = exports.showPop = exports.removeFromPop = exports.appendToPop = exports.hideNotify = exports.notifyProgress = exports.notify = exports.hideDrag = exports.moveDrag = exports.showDrag = exports.hideRectangle = exports.showRectangle = exports.moveRectangle = exports.showCircular = exports.getRectByBorder = exports.getMaxZIndexID = exports.changeFocus = exports.getFocus = exports.getList = exports.send = exports.get = exports.getTaskId = exports.refreshMaxPosition = exports.bindDrag = exports.bindResize = exports.close = exports.max = exports.min = exports.superConfirm = exports.elements = exports.launcherRoot = exports.simpleSystemTaskRoot = exports.AbstractForm = void 0;
+exports.hideLauncher = exports.showLauncher = exports.flash = exports.confirm = exports.dialog = exports.create = exports.createPanel = exports.removePanel = exports.remove = exports.doFocusAndPopEvent = exports.hidePop = exports.showPop = exports.removeFromPop = exports.appendToPop = exports.hideNotify = exports.notifyProgress = exports.notify = exports.hideDrag = exports.moveDrag = exports.showDrag = exports.hideRectangle = exports.showRectangle = exports.moveRectangle = exports.showCircular = exports.getRectByBorder = exports.getMaxZIndexID = exports.changeFocus = exports.setActivePanel = exports.removeActivePanel = exports.getActivePanel = exports.activePanels = exports.getFocus = exports.getList = exports.send = exports.get = exports.getTaskId = exports.refreshMaxPosition = exports.bindDrag = exports.bindResize = exports.close = exports.max = exports.min = exports.superConfirm = exports.elements = exports.launcherRoot = exports.simpleSystemTaskRoot = exports.AbstractForm = exports.AbstractPanel = void 0;
 const clickgo = __importStar(require("../clickgo"));
 const core = __importStar(require("./core"));
 const task = __importStar(require("./task"));
@@ -44,6 +44,7 @@ const native = __importStar(require("./native"));
 let focusId = null;
 const info = {
     'lastId': 0,
+    'lastPanelId': 0,
     'lastZIndex': 999,
     'topLastZIndex': 9999999,
     'locale': {
@@ -77,12 +78,7 @@ const info = {
         }
     }
 };
-class AbstractForm {
-    constructor() {
-        this.isNativeSync = false;
-        this._firstShow = true;
-        this.dialogResult = '';
-    }
+class AbstractCommon {
     get filename() {
         return '';
     }
@@ -165,15 +161,62 @@ class AbstractForm {
         }
         core.trigger(name, this.taskId, this.formId, param1, param2);
     }
-    get topMost() {
-        return false;
-    }
-    set topMost(v) {
-    }
     send(fid, obj) {
         obj.taskId = this.taskId;
         obj.formId = this.formId;
         send(fid, obj);
+    }
+    onBeforeCreate() {
+        return;
+    }
+    onCreated() {
+        return;
+    }
+    onBeforeMount() {
+        return;
+    }
+    onBeforeUpdate() {
+        return;
+    }
+    onUpdated() {
+        return;
+    }
+    onBeforeUnmount() {
+        return;
+    }
+    onUnmounted() {
+        return;
+    }
+}
+class AbstractPanel extends AbstractCommon {
+    get panelId() {
+        return 0;
+    }
+    onShow() {
+        return;
+    }
+    onHide() {
+        return;
+    }
+    onMounted() {
+        return;
+    }
+    onReceive() {
+        return;
+    }
+}
+exports.AbstractPanel = AbstractPanel;
+class AbstractForm extends AbstractCommon {
+    constructor() {
+        super(...arguments);
+        this.isNativeSync = false;
+        this._firstShow = true;
+        this.dialogResult = '';
+    }
+    get topMost() {
+        return false;
+    }
+    set topMost(v) {
     }
     get isMask() {
         return !task.list[this.taskId].runtime.dialogFormIds.length ||
@@ -219,28 +262,7 @@ class AbstractForm {
     close() {
         close(this.formId);
     }
-    onBeforeCreate() {
-        return;
-    }
-    onCreated() {
-        return;
-    }
-    onBeforeMount() {
-        return;
-    }
     onMounted() {
-        return;
-    }
-    onBeforeUpdate() {
-        return;
-    }
-    onUpdated() {
-        return;
-    }
-    onBeforeUnmount() {
-        return;
-    }
-    onUnmounted() {
         return;
     }
     onReceive() {
@@ -764,6 +786,57 @@ function getFocus() {
     return focusId;
 }
 exports.getFocus = getFocus;
+exports.activePanels = {};
+function getActivePanel(formId) {
+    var _a;
+    return (_a = exports.activePanels[formId]) !== null && _a !== void 0 ? _a : [];
+}
+exports.getActivePanel = getActivePanel;
+function removeActivePanel(panelId, formId, taskId) {
+    if (!taskId) {
+        return false;
+    }
+    if (!task.list[taskId]) {
+        return false;
+    }
+    if (!task.list[taskId].forms[formId]) {
+        return false;
+    }
+    if (!exports.activePanels[formId]) {
+        return true;
+    }
+    const io = exports.activePanels[formId].indexOf(panelId);
+    if (io === -1) {
+        return true;
+    }
+    exports.activePanels[formId].splice(io, 1);
+    if (!exports.activePanels[formId].length) {
+        delete exports.activePanels[formId];
+    }
+    return true;
+}
+exports.removeActivePanel = removeActivePanel;
+function setActivePanel(panelId, formId, taskId) {
+    if (!taskId) {
+        return false;
+    }
+    if (!task.list[taskId]) {
+        return false;
+    }
+    if (!task.list[taskId].forms[formId]) {
+        return false;
+    }
+    if (!exports.activePanels[formId]) {
+        exports.activePanels[formId] = [];
+    }
+    const io = exports.activePanels[formId].indexOf(panelId);
+    if (io !== -1) {
+        return true;
+    }
+    exports.activePanels[formId].push(panelId);
+    return true;
+}
+exports.setActivePanel = setActivePanel;
 function changeFocus(formId = 0) {
     var _a;
     if (typeof formId !== 'number') {
@@ -1401,6 +1474,7 @@ function remove(formId) {
             dom.clearWatchStyle(formId);
             dom.clearWatchProperty(formId);
             native.clear(formId, taskId);
+            delete exports.activePanels[formId];
             if (Object.keys(task.list[taskId].forms).length === 0) {
                 task.end(taskId);
             }
@@ -1412,6 +1486,39 @@ function remove(formId) {
     }
 }
 exports.remove = remove;
+function removePanel(id, vapp, el) {
+    var _a;
+    const formWrap = dom.findParentByClass(el, 'cg-form-wrap');
+    if (!formWrap) {
+        return false;
+    }
+    const formId = formWrap.dataset.formId;
+    if (!formId) {
+        return false;
+    }
+    const taskId = formWrap.dataset.taskId;
+    if (!taskId) {
+        return false;
+    }
+    const tid = parseInt(taskId);
+    vapp.unmount();
+    vapp._container.remove();
+    (_a = el.querySelector('[data-panel-id="' + id.toString() + '"]')) === null || _a === void 0 ? void 0 : _a.remove();
+    dom.removeStyle(tid, 'form', formId, id);
+    dom.clearWatchStyle(formId, id);
+    dom.clearWatchProperty(formId, id);
+    if (exports.activePanels[formId]) {
+        const io = exports.activePanels[formId].indexOf(id);
+        if (io >= 0) {
+            exports.activePanels[formId].splice(io, 1);
+        }
+        if (!exports.activePanels[formId].length) {
+            delete exports.activePanels[formId];
+        }
+    }
+    return true;
+}
+exports.removePanel = removePanel;
 function getForm(taskId, formId) {
     const t = task.list[taskId];
     if (!t) {
@@ -1423,6 +1530,251 @@ function getForm(taskId, formId) {
     }
     return form;
 }
+function createPanel(cls, el, formId, taskId) {
+    return __awaiter(this, void 0, void 0, function* () {
+        if (!taskId) {
+            const err = new Error('form.createPanel: -1');
+            core.trigger('error', 0, 0, err, err.message);
+            throw err;
+        }
+        if (el.dataset.cgControlPanel === undefined) {
+            const err = new Error('form.createPanel: -2');
+            core.trigger('error', 0, 0, err, err.message);
+            throw err;
+        }
+        const t = task.list[taskId];
+        if (!t) {
+            const err = new Error('form.createPanel: -3');
+            core.trigger('error', 0, 0, err, err.message);
+            throw err;
+        }
+        let filename = '';
+        if (typeof cls === 'string') {
+            filename = cls + '.js';
+            cls = class extends AbstractPanel {
+                get filename() {
+                    return filename;
+                }
+                get taskId() {
+                    return t.id;
+                }
+            };
+        }
+        const panelId = ++info.lastPanelId;
+        const panel = new cls();
+        if (!filename) {
+            filename = panel.filename;
+        }
+        const lio = filename.lastIndexOf('/');
+        const path = filename.slice(0, lio);
+        const l = t.app.files[filename.slice(0, -2) + 'xml'];
+        if (typeof l !== 'string') {
+            const err = new Error('form.createPanel: -4');
+            core.trigger('error', 0, 0, err, err.message);
+            throw err;
+        }
+        let layout = l;
+        let style = '';
+        let prep = '';
+        const s = t.app.files[filename.slice(0, -2) + 'css'];
+        if (typeof s === 'string') {
+            style = s;
+            const r = tool.stylePrepend(style);
+            prep = r.prep;
+            style = yield tool.styleUrl2DataUrl(path + '/', r.style, t.app.files);
+        }
+        layout = tool.purify(layout);
+        layout = tool.layoutAddTagClassAndReTagName(layout, true);
+        layout = tool.layoutInsertAttr(layout, ':form-focus=\'formFocus\'', {
+            'include': [/^cg-.+/]
+        });
+        const prepList = ['cg-task' + t.id.toString() + '_'];
+        if (prep !== '') {
+            prepList.push(prep);
+        }
+        layout = tool.layoutClassPrepend(layout, prepList);
+        layout = tool.eventsAttrWrap(layout);
+        if (layout.includes('<teleport')) {
+            layout = tool.teleportGlue(layout, formId);
+        }
+        const components = control.buildComponents(t.id, formId, path);
+        if (!components) {
+            const err = new Error('form.createPanel: -5');
+            core.trigger('error', 0, 0, err, err.message);
+            throw err;
+        }
+        const idata = {};
+        const cdata = Object.entries(panel);
+        for (const item of cdata) {
+            if (item[0] === 'access') {
+                continue;
+            }
+            idata[item[0]] = item[1];
+        }
+        idata._formFocus = false;
+        const prot = tool.getClassPrototype(panel);
+        const methods = prot.method;
+        const computed = prot.access;
+        computed.formId = {
+            get: function () {
+                return formId;
+            },
+            set: function () {
+                notify({
+                    'title': 'Error',
+                    'content': `The software tries to modify the system variable "formId".\nPath: ${this.filename}`,
+                    'type': 'danger'
+                });
+                return;
+            }
+        };
+        computed.panelId = {
+            get: function () {
+                return panelId;
+            },
+            set: function () {
+                notify({
+                    'title': 'Error',
+                    'content': `The software tries to modify the system variable "panelId".\nPath: ${this.filename}`,
+                    'type': 'danger'
+                });
+                return;
+            }
+        };
+        computed.path = {
+            get: function () {
+                return path;
+            },
+            set: function () {
+                notify({
+                    'title': 'Error',
+                    'content': `The software tries to modify the system variable "path".\nPath: ${this.filename}`,
+                    'type': 'danger'
+                });
+                return;
+            }
+        };
+        computed.prep = {
+            get: function () {
+                return prep;
+            },
+            set: function () {
+                notify({
+                    'title': 'Error',
+                    'content': `The software tries to modify the system variable "cgPrep".\nPath: ${this.filename}`,
+                    'type': 'danger'
+                });
+                return;
+            }
+        };
+        el.insertAdjacentHTML('beforeend', `<div data-panel-id="${panelId.toString()}"></div>`);
+        if (style) {
+            dom.pushStyle(t.id, style, 'form', formId, panelId);
+        }
+        const mel = el.children.item(el.children.length - 1);
+        mel.style.flex = '1';
+        const rtn = yield new Promise(function (resolve) {
+            const vapp = clickgo.vue.createApp({
+                'template': layout.replace(/^<cg-panel([\s\S]+)-panel>$/, '<cg-layout$1-layout>'),
+                'data': function () {
+                    return tool.clone(idata);
+                },
+                'methods': methods,
+                'computed': computed,
+                'beforeCreate': panel.onBeforeCreate,
+                'created': function () {
+                    if (panel.access) {
+                        this.access = tool.clone(panel.access);
+                    }
+                    this.onCreated();
+                },
+                'beforeMount': function () {
+                    this.onBeforeMount();
+                },
+                'mounted': function () {
+                    return __awaiter(this, void 0, void 0, function* () {
+                        yield this.$nextTick();
+                        mel.children.item(0).style.flex = '1';
+                        resolve({
+                            'vapp': vapp,
+                            'vroot': this
+                        });
+                    });
+                },
+                'beforeUpdate': function () {
+                    this.onBeforeUpdate();
+                },
+                'updated': function () {
+                    return __awaiter(this, void 0, void 0, function* () {
+                        yield this.$nextTick();
+                        this.onUpdated();
+                    });
+                },
+                'beforeUnmount': function () {
+                    this.onBeforeUnmount();
+                },
+                'unmounted': function () {
+                    return __awaiter(this, void 0, void 0, function* () {
+                        yield this.$nextTick();
+                        this.onUnmounted();
+                    });
+                }
+            });
+            vapp.config.errorHandler = function (err, vm, info) {
+                notify({
+                    'title': 'Runtime Error',
+                    'content': `Message: ${err.message}\nTask id: ${vm.taskId}\nForm id: ${vm.formId}`,
+                    'type': 'danger'
+                });
+                core.trigger('error', vm.taskId, vm.formId, err, info + '(-3,' + vm.taskId + ',' + vm.formId + ')');
+            };
+            for (const key in components) {
+                vapp.component(key, components[key]);
+            }
+            try {
+                vapp.mount(mel);
+            }
+            catch (err) {
+                notify({
+                    'title': 'Runtime Error',
+                    'content': `Message: ${err.message}\nTask id: ${t.id}\nForm id: ${formId}`,
+                    'type': 'danger'
+                });
+                core.trigger('error', t.id, formId, err, err.message);
+            }
+        });
+        yield tool.sleep(34);
+        try {
+            yield panel.onMounted.call(rtn.vroot);
+        }
+        catch (err) {
+            core.trigger('error', rtn.vroot.taskId, rtn.vroot.formId, err, 'Create panel mounted error: -6.');
+            try {
+                rtn.vapp.unmount();
+            }
+            catch (err) {
+                const msg = `Message: ${err.message}\nTask id: ${t.id}\nForm id: ${formId}\nFunction: form.createPanel, unmount.`;
+                notify({
+                    'title': 'Panel Unmount Error',
+                    'content': msg,
+                    'type': 'danger'
+                });
+                console.log('Panel Unmount Error', msg, err);
+            }
+            rtn.vapp._container.remove();
+            dom.clearWatchStyle(rtn.vroot.formId, panelId);
+            dom.clearWatchProperty(rtn.vroot.formId, panelId);
+            dom.removeStyle(rtn.vroot.taskId, 'form', rtn.vroot.formId, panelId);
+            throw err;
+        }
+        return {
+            'id': panelId,
+            'vapp': rtn.vapp,
+            'vroot': rtn.vroot
+        };
+    });
+}
+exports.createPanel = createPanel;
 function create(cls, data, opt = {}, taskId) {
     var _a, _b;
     return __awaiter(this, void 0, void 0, function* () {
@@ -1442,10 +1794,10 @@ function create(cls, data, opt = {}, taskId) {
             layout = opt.layout;
         }
         let style = '';
+        let prep = '';
         if (opt.style) {
             style = opt.style;
         }
-        let prep = '';
         let filename = '';
         if (typeof cls === 'string') {
             filename = tool.urlResolve((_a = opt.path) !== null && _a !== void 0 ? _a : '/', cls);
@@ -1480,6 +1832,15 @@ function create(cls, data, opt = {}, taskId) {
         }
         const lio = filename.lastIndexOf('/');
         const path = filename.slice(0, lio);
+        if (!layout) {
+            const l = t.app.files[filename.slice(0, -2) + 'xml'];
+            if (typeof l !== 'string') {
+                const err = new Error('form.create: -4');
+                core.trigger('error', 0, 0, err, err.message);
+                throw err;
+            }
+            layout = l;
+        }
         if (!style) {
             const s = t.app.files[filename.slice(0, -2) + 'css'];
             if (typeof s === 'string') {
@@ -1490,15 +1851,6 @@ function create(cls, data, opt = {}, taskId) {
             const r = tool.stylePrepend(style);
             prep = r.prep;
             style = yield tool.styleUrl2DataUrl(path + '/', r.style, t.app.files);
-        }
-        if (!layout) {
-            const l = t.app.files[frm.filename.slice(0, -2) + 'xml'];
-            if (typeof l !== 'string') {
-                const err = new Error('form.create: -4');
-                core.trigger('error', 0, 0, err, err.message);
-                throw err;
-            }
-            layout = l;
         }
         layout = tool.purify(layout);
         layout = tool.layoutAddTagClassAndReTagName(layout, true);
@@ -1690,7 +2042,7 @@ function create(cls, data, opt = {}, taskId) {
             yield frm.onMounted.call(rtn.vroot, data !== null && data !== void 0 ? data : {});
         }
         catch (err) {
-            core.trigger('error', rtn.vroot.taskId, rtn.vroot.formId, err, 'Create form mounted error: -7.');
+            core.trigger('error', rtn.vroot.taskId, rtn.vroot.formId, err, 'Create form mounted error: -6.');
             delete t.forms[formId];
             try {
                 rtn.vapp.unmount();

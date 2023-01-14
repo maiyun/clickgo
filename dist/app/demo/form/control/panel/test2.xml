@@ -1,0 +1,3 @@
+<panel style="padding: 10px; border: solid 2px #000; border-color: #777 #DDD #DDD #777; background: #FFF;">
+    <label>Hello, test2!</label>
+</panel>

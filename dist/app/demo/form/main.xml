@@ -22,6 +22,7 @@
                 <button @click="openForm('cmenu')">Menu</button>
                 <button @click="openForm('clist')">List</button>
                 <button @click="openForm('cselect')">Select</button>
+                <button @click="openForm('cpanel')">Panel</button>
                 <button @click="openForm('cproperty')">Property</button>
                 <button @click="openForm('ctable')">Table</button>
                 <button @click="openForm('cnav')">Nav</button>

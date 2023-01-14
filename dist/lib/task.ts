@@ -482,6 +482,9 @@ export async function run(url: string, opt: types.ITaskRunOptions = {}, ntid?: n
             getStyleCount: function(taskId: number, type: 'theme' | 'control' | 'form'): number {
                 return dom.getStyleCount(taskId, type);
             },
+            getWatchSizeCount: function(taskId?: number): number {
+                return dom.getWatchSizeCount(taskId);
+            },
             watchSize: function(
                 el: HTMLElement,
                 cb: () => void | Promise<void>,
@@ -492,8 +495,11 @@ export async function run(url: string, opt: types.ITaskRunOptions = {}, ntid?: n
             unwatchSize: function(el: HTMLElement): void {
                 dom.unwatchSize(el, taskId);
             },
-            isWatchSize(el: HTMLElement): boolean {
+            isWatchSize: function(el: HTMLElement): boolean {
                 return dom.isWatchSize(el);
+            },
+            getWatchCount: function(taskId?: number): number {
+                return dom.getWatchCount(taskId);
             },
             watch: function(el: HTMLElement, cb: () => void, mode: 'child' | 'childsub' | 'style' | 'default' = 'default', immediate: boolean = false): void {
                 dom.watch(el, cb, mode, immediate, taskId);
@@ -568,6 +574,11 @@ export async function run(url: string, opt: types.ITaskRunOptions = {}, ntid?: n
             }
         },
         'form': {
+            'AbstractPanel': class extends form.AbstractPanel {
+                public get taskId(): number {
+                    return taskId;
+                }
+            },
             'AbstractForm': class extends form.AbstractForm {
                 public get taskId(): number {
                     return taskId;
@@ -599,6 +610,15 @@ export async function run(url: string, opt: types.ITaskRunOptions = {}, ntid?: n
             },
             getFocus: function(): number | null {
                 return form.getFocus();
+            },
+            getActivePanel: function(formId: number): number[] {
+                return form.getActivePanel(formId);
+            },
+            removeActivePanel: function(panelId: number, formId: number): boolean {
+                return form.removeActivePanel(panelId, formId, taskId);
+            },
+            setActivePanel: function(panelId: number, formId: number): boolean {
+                return form.setActivePanel(panelId, formId, taskId);
             },
             changeFocus: function(fid: number = 0): void {
                 form.changeFocus(fid);
@@ -647,6 +667,19 @@ export async function run(url: string, opt: types.ITaskRunOptions = {}, ntid?: n
             },
             hidePop: function(pop?: HTMLElement): void {
                 form.hidePop(pop);
+            },
+            removePanel(id: number, vapp: types.IVApp, el: HTMLElement): boolean {
+                return form.removePanel(id, vapp, el);
+            },
+            createPanel<T extends form.AbstractPanel>(
+                cls: (new () => T),
+                el: HTMLElement,
+                formId: number
+            ): Promise<{
+                'vapp': types.IVApp;
+                'vroot': T;
+            }> {
+                return form.createPanel(cls, el, formId, taskId);
             },
             create: function<T extends form.AbstractForm>(
                 cls: string | (new () => T),
@@ -1021,7 +1054,7 @@ export async function run(url: string, opt: types.ITaskRunOptions = {}, ntid?: n
             return '';
         }
         // --- 给 form 的 class 增加 filename 的 get ---
-        code = code.replace(/extends[\s\S]+?\.\s*(AbstractApp|AbstractForm)\s*{/, (t: string) => {
+        code = code.replace(/extends[\s\S]+?\.\s*(AbstractApp|AbstractForm|AbstractPanel)\s*{/, (t: string) => {
             return t + 'get filename() {return __filename;}';
         });
         return code;
@@ -1370,6 +1403,7 @@ export function end(taskId: number): boolean {
         form.elements.popList.querySelector('[data-form-id="' + f.id.toString() + '"]')?.remove();
         dom.clearWatchStyle(fid);
         dom.clearWatchProperty(fid);
+        delete form.activePanels[fid];
     }
     // --- 移除可能残留的 form wrap ---
     const flist = form.elements.list.querySelectorAll('.cg-form-wrap[data-task-id="' + taskId.toString() + '"]');

@@ -104,7 +104,7 @@ class default_1 extends clickgo.control.AbstractControl {
                 return;
             }
             this.timer = clickgo.task.onFrame(() => __awaiter(this, void 0, void 0, function* () {
-                if (!this.element.offsetParent) {
+                if (!document.body.contains(this.element)) {
                     clickgo.task.offFrame(this.timer);
                     this.timer = 0;
                     return;

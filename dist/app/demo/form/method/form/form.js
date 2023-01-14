@@ -64,6 +64,17 @@ class default_1 extends clickgo.form.AbstractForm {
     get() {
         clickgo.form.dialog(JSON.stringify(clickgo.form.get(parseInt(this.fid)))).catch((e) => { throw e; });
     }
+    getActivePanel() {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield clickgo.form.dialog(JSON.stringify(clickgo.form.getActivePanel(parseInt(this.fid))));
+        });
+    }
+    getFocus() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const f = clickgo.form.getFocus();
+            yield clickgo.form.dialog(f ? f.toString() : 'null');
+        });
+    }
     changeFocus() {
         clickgo.form.changeFocus(parseInt(this.fid));
     }

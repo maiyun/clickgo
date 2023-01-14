@@ -424,14 +424,20 @@ function run(url, opt = {}, ntid) {
                 getStyleCount: function (taskId, type) {
                     return dom.getStyleCount(taskId, type);
                 },
+                getWatchSizeCount: function (taskId) {
+                    return dom.getWatchSizeCount(taskId);
+                },
                 watchSize: function (el, cb, immediate = false) {
                     return dom.watchSize(el, cb, immediate, taskId);
                 },
                 unwatchSize: function (el) {
                     dom.unwatchSize(el, taskId);
                 },
-                isWatchSize(el) {
+                isWatchSize: function (el) {
                     return dom.isWatchSize(el);
+                },
+                getWatchCount: function (taskId) {
+                    return dom.getWatchCount(taskId);
                 },
                 watch: function (el, cb, mode = 'default', immediate = false) {
                     dom.watch(el, cb, mode, immediate, taskId);
@@ -493,6 +499,11 @@ function run(url, opt = {}, ntid) {
                 }
             },
             'form': {
+                'AbstractPanel': class extends form.AbstractPanel {
+                    get taskId() {
+                        return taskId;
+                    }
+                },
                 'AbstractForm': class extends form.AbstractForm {
                     get taskId() {
                         return taskId;
@@ -524,6 +535,15 @@ function run(url, opt = {}, ntid) {
                 },
                 getFocus: function () {
                     return form.getFocus();
+                },
+                getActivePanel: function (formId) {
+                    return form.getActivePanel(formId);
+                },
+                removeActivePanel: function (panelId, formId) {
+                    return form.removeActivePanel(panelId, formId, taskId);
+                },
+                setActivePanel: function (panelId, formId) {
+                    return form.setActivePanel(panelId, formId, taskId);
                 },
                 changeFocus: function (fid = 0) {
                     form.changeFocus(fid);
@@ -569,6 +589,12 @@ function run(url, opt = {}, ntid) {
                 },
                 hidePop: function (pop) {
                     form.hidePop(pop);
+                },
+                removePanel(id, vapp, el) {
+                    return form.removePanel(id, vapp, el);
+                },
+                createPanel(cls, el, formId) {
+                    return form.createPanel(cls, el, formId, taskId);
                 },
                 create: function (cls, data, opt) {
                     return form.create(cls, data, opt, taskId);
@@ -922,7 +948,7 @@ function run(url, opt = {}, ntid) {
                 });
                 return '';
             }
-            code = code.replace(/extends[\s\S]+?\.\s*(AbstractApp|AbstractForm)\s*{/, (t) => {
+            code = code.replace(/extends[\s\S]+?\.\s*(AbstractApp|AbstractForm|AbstractPanel)\s*{/, (t) => {
                 return t + 'get filename() {return __filename;}';
             });
             return code;
@@ -1213,6 +1239,7 @@ function end(taskId) {
         (_a = form.elements.popList.querySelector('[data-form-id="' + f.id.toString() + '"]')) === null || _a === void 0 ? void 0 : _a.remove();
         dom.clearWatchStyle(fid);
         dom.clearWatchProperty(fid);
+        delete form.activePanels[fid];
     }
     const flist = form.elements.list.querySelectorAll('.cg-form-wrap[data-task-id="' + taskId.toString() + '"]');
     for (const f of flist) {

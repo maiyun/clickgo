@@ -30,6 +30,8 @@ let focusId: number | null = null;
 const info: {
     /** --- 最后一个窗体 id --- */
     lastId: number;
+    /** --- 最后一个 panel id --- */
+    lastPanelId: number;
     /** --- 最后一个窗体层级，1000（一千）开始 --- */
     lastZIndex: number;
     /** --- 最后一个置顶窗体层级，10000000（一千万）开始 --- */
@@ -44,6 +46,7 @@ const info: {
     }>;
 } = {
     'lastId': 0,
+    'lastPanelId': 0,
     'lastZIndex': 999,
     'topLastZIndex': 9999999,
     'locale': {
@@ -78,8 +81,8 @@ const info: {
     }
 };
 
-/** --- 窗体的抽象类 --- */
-export abstract class AbstractForm {
+/** --- Panel 与 Form 共用的抽象类 --- */
+abstract class AbstractCommon {
 
     /** --- 当前文件路径 --- */
     public get filename(): string {
@@ -127,7 +130,7 @@ export abstract class AbstractForm {
         });
     }
 
-    /** --- 当前窗体的包内路径不以 / 结尾 --- */
+    /** --- 当前文件的包内路径不以 / 结尾 --- */
     public get path(): string {
         // --- 将在初始化时系统自动重写本函数 ---
         return '';
@@ -174,9 +177,6 @@ export abstract class AbstractForm {
             return `cg-task${this.taskId}_${cla}${this.prep ? (' ' + this.prep + cla) : ''}`;
         };
     }
-
-    /** --- 当前窗体是否和 native 的实体窗体大小、状态同步 --- */
-    public isNativeSync: boolean = false;
 
     /**
      * --- 监视变动 ---
@@ -230,6 +230,87 @@ export abstract class AbstractForm {
         core.trigger(name, this.taskId, this.formId, param1, param2);
     }
 
+    /**
+     * --- 给一个窗体发送一个对象，不会知道成功与失败状态 ---
+     * @param fid formId 要接收对象的 form id
+     * @param obj 要发送的对象
+     */
+    public send(fid: number, obj: Record<string, any>): void {
+        obj.taskId = this.taskId;
+        obj.formId = this.formId;
+        send(fid, obj);
+    }
+
+    // --- 控件响应事件，都可由用户重写 ---
+
+    public onBeforeCreate(): void | Promise<void> {
+        return;
+    }
+
+    public onCreated(): void | Promise<void> {
+        return;
+    }
+
+    public onBeforeMount(): void | Promise<void> {
+        return;
+    }
+
+    public onBeforeUpdate(): void | Promise<void> {
+        return;
+    }
+
+    public onUpdated(): void | Promise<void> {
+        return;
+    }
+
+    public onBeforeUnmount(): void | Promise<void> {
+        return;
+    }
+
+    public onUnmounted():  void | Promise<void> {
+        return;
+    }
+
+}
+
+/** --- Panel 控件抽象类 --- */
+export abstract class AbstractPanel extends AbstractCommon {
+
+    /** --- 当前的 panel ID --- */
+    public get panelId(): number {
+        // --- panel 创建时 createPanel 自动重写本函数 ---
+        return 0;
+    }
+
+    public onShow(data: Record<string, any>): void | Promise<void>;
+    public onShow(): void {
+        return;
+    }
+
+    public onHide(): void | Promise<void>;
+    public onHide(): void {
+        return;
+    }
+
+    public onMounted(): void | Promise<void>;
+    public onMounted(): void {
+        return;
+    }
+
+    /** --- 接收 send 传递过来的 data 数据（是 panel 控件的 send，不是 form 的 send） --- */
+    public onReceive(data: Record<string, any>): void | Promise<void>;
+    public onReceive(): void {
+        return;
+    }
+
+}
+
+/** --- 窗体的抽象类 --- */
+export abstract class AbstractForm extends AbstractCommon {
+
+    /** --- 当前窗体是否和 native 的实体窗体大小、状态同步 --- */
+    public isNativeSync: boolean = false;
+
     // --- 以下为窗体有，但 control 没有 ---
 
     /** --- 是否是置顶 --- */
@@ -240,17 +321,6 @@ export abstract class AbstractForm {
 
     public set topMost(v: boolean) {
         // --- 会进行重写 ---
-    }
-
-    /**
-     * --- 给一个窗体发送一个对象，不会知道成功与失败状态 ---
-     * @param fid formId 要接收对象的 form id
-     * @param obj 要发送的对象
-     */
-    public send(fid: number, obj: Record<string, any>): void {
-        obj.taskId = this.taskId;
-        obj.formId = this.formId;
-        send(fid, obj);
     }
 
     /**
@@ -325,42 +395,12 @@ export abstract class AbstractForm {
      */
     public dialogResult: string = '';
 
-    // --- 控件响应事件，都可由用户重写 ---
-
-    public onBeforeCreate(): void | Promise<void> {
-        return;
-    }
-
-    public onCreated(): void | Promise<void> {
-        return;
-    }
-
-    public onBeforeMount(): void | Promise<void> {
-        return;
-    }
+    // --- 窗体可以接收到的事件 ---
 
     public onMounted(obj: Record<string, any>): void | Promise<void>;
-    public onMounted(): void | Promise<void> {
+    public onMounted(): void {
         return;
     }
-
-    public onBeforeUpdate(): void | Promise<void> {
-        return;
-    }
-
-    public onUpdated(): void | Promise<void> {
-        return;
-    }
-
-    public onBeforeUnmount(): void | Promise<void> {
-        return;
-    }
-
-    public onUnmounted():  void | Promise<void> {
-        return;
-    }
-
-    // --- 窗体可以接收到的事件 ---
 
     /** --- 接收 send 传递过来的 data 数据 --- */
     public onReceive(data: Record<string, any>): void | Promise<void>;
@@ -394,13 +434,13 @@ export abstract class AbstractForm {
 
     /** --- 窗体标题改变事件 */
     public onFormTitleChanged(taskId: number, formId: number, title: string): void | Promise<void>;
-    public onFormTitleChanged(): void | Promise<void> {
+    public onFormTitleChanged(): void {
         return;
     }
 
     /** --- 窗体图标改变事件 --- */
     public onFormIconChanged(taskId: number, formId: number, icon: string): void | Promise<void>;
-    public onFormIconChanged(): void | Promise<void> {
+    public onFormIconChanged(): void {
         return;
     }
 
@@ -442,13 +482,13 @@ export abstract class AbstractForm {
 
     /** --- 任务开始事件 --- */
     public onTaskStarted(taskId: number): void | Promise<void>;
-    public onTaskStarted(): void | Promise<void> {
+    public onTaskStarted(): void {
         return;
     }
 
     /** --- 任务结束事件 --- */
     public onTaskEnded(taskId: number): void | Promise<void>;
-    public onTaskEnded(): void | Promise<void> {
+    public onTaskEnded(): void {
         return;
     }
 
@@ -1044,6 +1084,76 @@ export function getList(taskId: number): Record<string, types.IFormInfo> {
  */
 export function getFocus(): number | null {
     return focusId;
+}
+
+/**
+ * --- 当前活跃中的 panelId 列表 ---
+ */
+export const activePanels: Record<string, number[]> = {};
+
+/**
+ * --- 获取窗体当前活跃中的 panelId 列表 ---
+ * @param formId 要获取的窗体 id
+ */
+export function getActivePanel(formId: number): number[] {
+    return activePanels[formId] ?? [];
+}
+
+/**
+ * --- 移除 form 中正在活跃中的 panel id （panel 本身被置于隐藏时）
+ * @param panelId panel id
+ * @param formId 所属 form id
+ * @param taskId task id 校验，App 模式下无效
+ */
+export function removeActivePanel(panelId: number, formId: number, taskId?: number): boolean {
+    if (!taskId) {
+        return false;
+    }
+    if (!task.list[taskId]) {
+        return false;
+    }
+    if (!task.list[taskId].forms[formId]) {
+        return false;
+    }
+    if (!activePanels[formId]) {
+        return true;
+    }
+    const io = activePanels[formId].indexOf(panelId);
+    if (io === -1) {
+        return true;
+    }
+    activePanels[formId].splice(io, 1);
+    if (!activePanels[formId].length) {
+        delete activePanels[formId];
+    }
+    return true;
+}
+
+/**
+ * --- 将 form 中某个 panel 设置为活动的 ---
+ * @param panelId panel id
+ * @param formId 所属 form id
+ * @param taskId task id 校验，App 模式下无效
+ */
+export function setActivePanel(panelId: number, formId: number, taskId?: number): boolean {
+    if (!taskId) {
+        return false;
+    }
+    if (!task.list[taskId]) {
+        return false;
+    }
+    if (!task.list[taskId].forms[formId]) {
+        return false;
+    }
+    if (!activePanels[formId]) {
+        activePanels[formId] = [];
+    }
+    const io = activePanels[formId].indexOf(panelId);
+    if (io !== -1) {
+        return true;
+    }
+    activePanels[formId].push(panelId);
+    return true;
 }
 
 /**
@@ -1816,6 +1926,7 @@ export function remove(formId: number): boolean {
             dom.clearWatchStyle(formId);
             dom.clearWatchProperty(formId);
             native.clear(formId, taskId);
+            delete activePanels[formId];
             // --- 检测是否已经没有窗体了，如果没有了的话就要结束任务了 ---
             if (Object.keys(task.list[taskId].forms).length === 0) {
                 task.end(taskId);
@@ -1826,6 +1937,45 @@ export function remove(formId: number): boolean {
     else {
         return false;
     }
+}
+
+/**
+ * --- 移除 panel 挂载，通常发生在 panel 控件的 onBeforeUnmount 中 ---
+ * @param id panel id
+ * @param vapp panel 的 vapp 对象 ---
+ * @param el panel 控件
+ */
+export function removePanel(id: number, vapp: types.IVApp, el: HTMLElement): boolean {
+    const formWrap = dom.findParentByClass(el, 'cg-form-wrap');
+    if (!formWrap) {
+        return false;
+    }
+    const formId = formWrap.dataset.formId;
+    if (!formId) {
+        return false;
+    }
+    const taskId = formWrap.dataset.taskId;
+    if (!taskId) {
+        return false;
+    }
+    const tid = parseInt(taskId);
+    vapp.unmount();
+    vapp._container.remove();
+    el.querySelector('[data-panel-id="' + id.toString() + '"]')?.remove();
+    // --- 移除 form 的 style ---
+    dom.removeStyle(tid, 'form', formId, id);
+    dom.clearWatchStyle(formId, id);
+    dom.clearWatchProperty(formId, id);
+    if (activePanels[formId]) {
+        const io = activePanels[formId].indexOf(id);
+        if (io >= 0) {
+            activePanels[formId].splice(io, 1);
+        }
+        if (!activePanels[formId].length) {
+            delete activePanels[formId];
+        }
+    }
+    return true;
 }
 
 /**
@@ -1844,6 +1994,297 @@ function getForm(taskId: number, formId: number): types.IForm | null {
         return null;
     }
     return form;
+}
+
+/**
+ * --- 创建 panel 对象，一般情况下无需使用 ---
+ * @param cls 路径字符串或 AbstractPanel 类
+ * @param el 要挂载的节点
+ * @param formId 当前窗体 ID
+ * @param taskId 任务ID，App 模式下无效
+ */
+export async function createPanel<T extends AbstractPanel>(
+    cls: string | (new () => T),
+    el: HTMLElement,
+    formId: number,
+    taskId?: number
+): Promise<{
+    'id': number;
+    'vapp': types.IVApp;
+    'vroot': T;
+}> {
+    if (!taskId) {
+        const err = new Error('form.createPanel: -1');
+        core.trigger('error', 0, 0, err, err.message);
+        throw err;
+    }
+    if (el.dataset.cgControlPanel === undefined) {
+        const err = new Error('form.createPanel: -2');
+        core.trigger('error', 0, 0, err, err.message);
+        throw err;
+    }
+    /** --- 当前的 task 对象 --- */
+    const t = task.list[taskId];
+    if (!t) {
+        const err = new Error('form.createPanel: -3');
+        core.trigger('error', 0, 0, err, err.message);
+        throw err;
+    }
+    /** --- 文件在包内的路径，不以 / 结尾 --- */
+    let filename = '';
+    if (typeof cls === 'string') {
+        filename = cls + '.js';
+        cls = class extends AbstractPanel {
+            public get filename(): string {
+                return filename;
+            }
+
+            public get taskId(): number {
+                return t.id;
+            }
+        } as (new () => T);
+    }
+
+    // --- 申请 panelId ---
+    const panelId = ++info.lastPanelId;
+    /** --- 要新建的 panel 类对象 --- */
+    const panel = new cls();
+    if (!filename) {
+        filename = panel.filename;
+    }
+    const lio = filename.lastIndexOf('/');
+    const path = filename.slice(0, lio);
+
+    // --- 布局 ---
+    const l = t.app.files[filename.slice(0, -2) + 'xml'];
+    if (typeof l !== 'string') {
+        const err = new Error('form.createPanel: -4');
+        core.trigger('error', 0, 0, err, err.message);
+        throw err;
+    }
+    let layout = l;
+
+    // --- 样式 ---
+    /** --- 样式内容 --- */
+    let style: string = '';
+    /** --- 样式前缀 --- */
+    let prep = '';
+    const s = t.app.files[filename.slice(0, -2) + 'css'];
+    if (typeof s === 'string') {
+        style = s;
+        // --- 将 style 中的 tag 标签转换为 class，如 button 变为 .tag-button，然后将 class 进行标准程序，添加 prep 进行区分隔离 ---
+        const r = tool.stylePrepend(style);
+        prep = r.prep;
+        style = await tool.styleUrl2DataUrl(path + '/', r.style, t.app.files);
+    }
+
+    // --- 纯净化 ---
+    layout = tool.purify(layout);
+    // --- 标签增加 cg- 前缀，增加 class 为 tag-xxx ---
+    layout = tool.layoutAddTagClassAndReTagName(layout, true);
+    // --- 给所有控件传递窗体的 focus 信息 ---
+    layout = tool.layoutInsertAttr(layout, ':form-focus=\'formFocus\'', {
+        'include': [/^cg-.+/]
+    });
+    // --- 给 layout 的 class 增加前置 ---
+    const prepList = ['cg-task' + t.id.toString() + '_'];
+    if (prep !== '') {
+        prepList.push(prep);
+    }
+    layout = tool.layoutClassPrepend(layout, prepList);
+    // --- 给 event 增加包裹 ---
+    layout = tool.eventsAttrWrap(layout);
+    // --- 给 teleport 做处理 ---
+    if (layout.includes('<teleport')) {
+        layout = tool.teleportGlue(layout, formId);
+    }
+    // --- 获取要定义的控件列表 ---
+    const components = control.buildComponents(t.id, formId, path);
+    if (!components) {
+        const err = new Error('form.createPanel: -5');
+        core.trigger('error', 0, 0, err, err.message);
+        throw err;
+    }
+    /** --- class 对象类的属性列表 --- */
+    const idata: Record<string, any> = {};
+    const cdata = Object.entries(panel);
+    for (const item of cdata) {
+        if (item[0] === 'access') {
+            // --- access 属性不放在 data 当中 ---
+            continue;
+        }
+        idata[item[0]] = item[1];
+    }
+    idata._formFocus = false;
+    /** --- class 对象的方法和 getter/setter 列表 --- */
+    const prot = tool.getClassPrototype(panel);
+    const methods = prot.method;
+    const computed = prot.access;
+    computed.formId = {
+        get: function(): number {
+            return formId;
+        },
+        set: function(this: types.IVue): void {
+            notify({
+                'title': 'Error',
+                'content': `The software tries to modify the system variable "formId".\nPath: ${this.filename}`,
+                'type': 'danger'
+            });
+            return;
+        }
+    };
+    computed.panelId = {
+        get: function(): number {
+            return panelId;
+        },
+        set: function(this: types.IVue): void {
+            notify({
+                'title': 'Error',
+                'content': `The software tries to modify the system variable "panelId".\nPath: ${this.filename}`,
+                'type': 'danger'
+            });
+            return;
+        }
+    };
+    computed.path = {
+        get: function(): string {
+            return path;
+        },
+        set: function(this: types.IVue): void {
+            notify({
+                'title': 'Error',
+                'content': `The software tries to modify the system variable "path".\nPath: ${this.filename}`,
+                'type': 'danger'
+            });
+            return;
+        }
+    };
+    computed.prep = {
+        get: function(): string {
+            return prep;
+        },
+        set: function(this: types.IVue): void {
+            notify({
+                'title': 'Error',
+                'content': `The software tries to modify the system variable "cgPrep".\nPath: ${this.filename}`,
+                'type': 'danger'
+            });
+            return;
+        }
+    };
+
+    // --- 插入 dom ---
+    el.insertAdjacentHTML('beforeend', `<div data-panel-id="${panelId.toString()}"></div>`);
+    if (style) {
+        dom.pushStyle(t.id, style, 'form', formId, panelId);
+    }
+    /** --- panel wrap element 对象 --- */
+    const mel: HTMLElement = el.children.item(el.children.length - 1) as HTMLElement;
+    mel.style.flex = '1';
+
+    // --- 创建 app 对象 ---
+    const rtn: {
+        'vapp': types.IVApp;
+        'vroot': types.IVue;
+    } = await new Promise(function(resolve) {
+        const vapp = clickgo.vue.createApp({
+            'template': layout.replace(/^<cg-panel([\s\S]+)-panel>$/, '<cg-layout$1-layout>'),
+            'data': function() {
+                return tool.clone(idata);
+            },
+            'methods': methods,
+            'computed': computed,
+
+            'beforeCreate': (panel as any).onBeforeCreate,
+            'created': function(this: types.IVue) {
+                if ((panel as any).access) {
+                    this.access = tool.clone((panel as any).access);
+                }
+                this.onCreated();
+            },
+            'beforeMount': function(this: types.IVue) {
+                this.onBeforeMount();
+            },
+            'mounted': async function(this: types.IVue) {
+                await this.$nextTick();
+                (mel.children.item(0) as HTMLElement).style.flex = '1';
+                // --- 完成 ---
+                resolve({
+                    'vapp': vapp,
+                    'vroot': this
+                });
+            },
+            'beforeUpdate': function(this: types.IVue) {
+                this.onBeforeUpdate();
+            },
+            'updated': async function(this: types.IVue) {
+                await this.$nextTick();
+                this.onUpdated();
+            },
+            'beforeUnmount': function(this: types.IVue) {
+                this.onBeforeUnmount();
+            },
+            'unmounted': async function(this: types.IVue) {
+                await this.$nextTick();
+                this.onUnmounted();
+            }
+        });
+        vapp.config.errorHandler = function(err: Error, vm: types.IVue, info: string): void {
+            notify({
+                'title': 'Runtime Error',
+                'content': `Message: ${err.message}\nTask id: ${vm.taskId}\nForm id: ${vm.formId}`,
+                'type': 'danger'
+            });
+            core.trigger('error', vm.taskId, vm.formId, err, info + '(-3,' + vm.taskId + ',' + vm.formId + ')');
+        };
+        // --- 挂载控件对象到 vapp ---
+        for (const key in components) {
+            vapp.component(key, components[key]);
+        }
+        try {
+            vapp.mount(mel);
+        }
+        catch (err: any) {
+            notify({
+                'title': 'Runtime Error',
+                'content': `Message: ${err.message}\nTask id: ${t.id}\nForm id: ${formId}`,
+                'type': 'danger'
+            });
+            core.trigger('error', t.id, formId, err, err.message);
+        }
+    });
+    // --- 执行 mounted ---
+    await tool.sleep(34);
+    try {
+        await panel.onMounted.call(rtn.vroot);
+    }
+    catch (err: any) {
+        // --- 创建失败，做垃圾回收 ---
+        core.trigger('error', rtn.vroot.taskId, rtn.vroot.formId, err, 'Create panel mounted error: -6.');
+        try {
+            rtn.vapp.unmount();
+        }
+        catch (err: any) {
+            const msg = `Message: ${err.message}\nTask id: ${t.id}\nForm id: ${formId}\nFunction: form.createPanel, unmount.`;
+            notify({
+                'title': 'Panel Unmount Error',
+                'content': msg,
+                'type': 'danger'
+            });
+            console.log('Panel Unmount Error', msg, err);
+        }
+        rtn.vapp._container.remove();
+        dom.clearWatchStyle(rtn.vroot.formId, panelId);
+        dom.clearWatchProperty(rtn.vroot.formId, panelId);
+        // --- 移除 style ---
+        dom.removeStyle(rtn.vroot.taskId, 'form', rtn.vroot.formId, panelId);
+        throw err;
+    }
+    return {
+        'id': panelId,
+        'vapp': rtn.vapp,
+        'vroot': rtn.vroot as any
+    };
 }
 
 /**
@@ -1883,11 +2324,11 @@ export async function create<T extends AbstractForm>(
     }
     /** --- 样式内容 --- */
     let style: string = '';
+    /** --- 样式前缀 --- */
+    let prep = '';
     if (opt.style) {
         style = opt.style;
     }
-    /** --- 样式前缀 --- */
-    let prep = '';
     /** --- 文件在包内的路径，不以 / 结尾 --- */
     let filename = '';
     if (typeof cls === 'string') {
@@ -1918,7 +2359,7 @@ export async function create<T extends AbstractForm>(
         } as (new () => T);
     }
 
-    // ---  申请 formId ---
+    // --- 申请 formId ---
     const formId = ++info.lastId;
     /** --- 要新建的窗体类对象 --- */
     const frm = new cls();
@@ -1927,6 +2368,18 @@ export async function create<T extends AbstractForm>(
     }
     const lio = filename.lastIndexOf('/');
     const path = filename.slice(0, lio);
+
+    // --- 布局 ---
+    if (!layout) {
+        const l = t.app.files[filename.slice(0, -2) + 'xml'];
+        if (typeof l !== 'string') {
+            const err = new Error('form.create: -4');
+            core.trigger('error', 0, 0, err, err.message);
+            throw err;
+        }
+        layout = l;
+    }
+
     // --- 样式 ---
     if (!style) {
         const s = t.app.files[filename.slice(0, -2) + 'css'];
@@ -1941,16 +2394,6 @@ export async function create<T extends AbstractForm>(
         style = await tool.styleUrl2DataUrl(path + '/', r.style, t.app.files);
     }
 
-    // --- 布局 ---
-    if (!layout) {
-        const l = t.app.files[frm.filename.slice(0, -2) + 'xml'];
-        if (typeof l !== 'string') {
-            const err = new Error('form.create: -4');
-            core.trigger('error', 0, 0, err, err.message);
-            throw err;
-        }
-        layout = l;
-    }
     // --- 纯净化 ---
     layout = tool.purify(layout);
     // --- 标签增加 cg- 前缀，增加 class 为 tag-xxx ---
@@ -2172,7 +2615,7 @@ export async function create<T extends AbstractForm>(
     }
     catch (err: any) {
         // --- 窗体创建失败，做垃圾回收 ---
-        core.trigger('error', rtn.vroot.taskId, rtn.vroot.formId, err, 'Create form mounted error: -7.');
+        core.trigger('error', rtn.vroot.taskId, rtn.vroot.formId, err, 'Create form mounted error: -6.');
         delete t.forms[formId];
         try {
             rtn.vapp.unmount();

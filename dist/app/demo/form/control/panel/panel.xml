@@ -1,0 +1,11 @@
+<form width="600" height="500" title="Panel">
+    <layout direction="v" gutter="10" style="padding: 10px; flex: 1;">
+        <label>Form ID: {{formId}}</label>
+        <select v-model="selected" :data="['none', './test1', './test2']"></select>
+        <layout gutter="10">
+            <button v-if="selected[0] !== './test1'" style="height: 30px; flex: 1;" @click="go">Go test1 with {'type': 'show'}</button>
+            <button style="height: 30px; flex: 1;" @click="ssend">send {'type': 'send'}</button>
+        </layout>
+        <panel ref="panel" style="flex: 1;"></panel>
+    </layout>
+</form>

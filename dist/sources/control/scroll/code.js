@@ -52,7 +52,7 @@ class default_1 extends clickgo.control.AbstractControl {
         return px;
     }
     get maxOffset() {
-        return (this.props.length > this.props.client) ? this.propInt('length') - this.propInt('client') : 0;
+        return (this.propInt('length') > this.propInt('client')) ? this.propInt('length') - this.propInt('client') : 0;
     }
     get offsetRatio() {
         return this.maxOffset ? this.offsetData / this.maxOffset : 0;

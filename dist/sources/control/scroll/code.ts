@@ -59,7 +59,7 @@ export default class extends clickgo.control.AbstractControl {
      * --- 最大可拖动的 offset 位置 ---
      */
     public get maxOffset(): number {
-        return (this.props.length > this.props.client) ? this.propInt('length') - this.propInt('client') : 0;
+        return (this.propInt('length') > this.propInt('client')) ? this.propInt('length') - this.propInt('client') : 0;
     }
 
     /**

@@ -32,7 +32,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.fullscreen = exports.siblingsData = exports.siblings = exports.findParentByClass = exports.findParentByData = exports.bindResize = exports.bindMove = exports.is = exports.bindDrag = exports.bindLong = exports.allowEvent = exports.bindGesture = exports.bindDown = exports.bindClick = exports.clearWatchProperty = exports.isWatchProperty = exports.watchProperty = exports.clearWatchStyle = exports.isWatchStyle = exports.watchStyle = exports.clearWatch = exports.isWatch = exports.unwatch = exports.watch = exports.clearWatchSize = exports.isWatchSize = exports.unwatchSize = exports.watchSize = exports.getStyleCount = exports.removeStyle = exports.pushStyle = exports.removeFromStyleList = exports.createToStyleList = exports.hasTouchButMouse = exports.setGlobalCursor = void 0;
+exports.fullscreen = exports.siblingsData = exports.siblings = exports.findParentByClass = exports.findParentByData = exports.bindResize = exports.bindMove = exports.is = exports.bindDrag = exports.bindLong = exports.allowEvent = exports.bindGesture = exports.bindDown = exports.bindClick = exports.clearWatchProperty = exports.isWatchProperty = exports.watchProperty = exports.clearWatchStyle = exports.isWatchStyle = exports.watchStyle = exports.clearWatch = exports.isWatch = exports.unwatch = exports.watch = exports.getWatchCount = exports.clearWatchSize = exports.isWatchSize = exports.unwatchSize = exports.watchSize = exports.getWatchSizeCount = exports.getStyleCount = exports.removeStyle = exports.pushStyle = exports.removeFromStyleList = exports.createToStyleList = exports.hasTouchButMouse = exports.setGlobalCursor = void 0;
 const clickgo = __importStar(require("../clickgo"));
 const form = __importStar(require("./form"));
 const core = __importStar(require("./core"));
@@ -103,7 +103,7 @@ function removeFromStyleList(taskId) {
     (_a = document.getElementById('cg-style-task' + taskId.toString())) === null || _a === void 0 ? void 0 : _a.remove();
 }
 exports.removeFromStyleList = removeFromStyleList;
-function pushStyle(taskId, style, type = 'global', formId = 0) {
+function pushStyle(taskId, style, type = 'global', formId = 0, panelId) {
     const el = document.querySelector(`#cg-style-task${taskId} > .cg-style-${type}`);
     if (!el) {
         return;
@@ -115,11 +115,11 @@ function pushStyle(taskId, style, type = 'global', formId = 0) {
         el.insertAdjacentHTML('beforeend', `<style data-name="${formId}">${style}</style>`);
     }
     else {
-        el.insertAdjacentHTML('beforeend', `<style class="cg-style-form${formId}">${style}</style>`);
+        el.insertAdjacentHTML('beforeend', `<style class="cg-style-form${formId}" data-panel="${panelId ? panelId.toString() : ''}">${style}</style>`);
     }
 }
 exports.pushStyle = pushStyle;
-function removeStyle(taskId, type = 'global', formId = 0) {
+function removeStyle(taskId, type = 'global', formId = 0, panelId) {
     const styleTask = document.getElementById('cg-style-task' + taskId.toString());
     if (!styleTask) {
         return;
@@ -147,7 +147,7 @@ function removeStyle(taskId, type = 'global', formId = 0) {
         }
     }
     else {
-        const elist = styleTask.querySelectorAll('.cg-style-form' + formId.toString());
+        const elist = styleTask.querySelectorAll('.cg-style-form' + formId.toString() + (panelId ? '[data-panel="' + panelId.toString() + '"]' : ''));
         for (let i = 0; i < elist.length; ++i) {
             elist.item(i).remove();
         }
@@ -159,11 +159,25 @@ function getStyleCount(taskId, type) {
 }
 exports.getStyleCount = getStyleCount;
 const watchSizeList = {};
+function getWatchSizeCount(taskId) {
+    if (!taskId) {
+        return Object.keys(watchSizeList).length;
+    }
+    let count = 0;
+    for (const id in watchSizeList) {
+        if (watchSizeList[id].taskId !== taskId) {
+            continue;
+        }
+        ++count;
+    }
+    return count;
+}
+exports.getWatchSizeCount = getWatchSizeCount;
 let watchSizeIndex = 0;
 const resizeObserver = new ResizeObserver(function (entries) {
     for (const entrie of entries) {
         const el = entrie.target;
-        if (!el.offsetParent) {
+        if (!document.body.contains(el)) {
             resizeObserver.unobserve(el);
             if (watchSizeList[el.dataset.cgRoindex]) {
                 delete watchSizeList[el.dataset.cgRoindex];
@@ -243,6 +257,20 @@ function clearWatchSize(taskId) {
 }
 exports.clearWatchSize = clearWatchSize;
 const watchList = {};
+function getWatchCount(taskId) {
+    if (!taskId) {
+        return Object.keys(watchList).length;
+    }
+    let count = 0;
+    for (const id in watchList) {
+        if (watchList[id].taskId !== taskId) {
+            continue;
+        }
+        ++count;
+    }
+    return count;
+}
+exports.getWatchCount = getWatchCount;
 let watchIndex = 0;
 function watch(el, cb, mode = 'default', immediate = false, taskId) {
     if (isWatch(el)) {
@@ -285,7 +313,15 @@ function watch(el, cb, mode = 'default', immediate = false, taskId) {
             };
             break;
         }
-        case 'default': {
+        case 'text': {
+            moi = {
+                'characterData': true,
+                'childList': true,
+                'subtree': true
+            };
+            break;
+        }
+        default: {
             moi = {
                 'attributeFilter': ['style', 'class'],
                 'attributeOldValue': true,
@@ -294,14 +330,10 @@ function watch(el, cb, mode = 'default', immediate = false, taskId) {
                 'childList': true,
                 'subtree': true
             };
-            break;
-        }
-        default: {
-            moi = mode;
         }
     }
     const mo = new MutationObserver((mutations) => {
-        if (!el.offsetParent) {
+        if (!document.body.contains(el)) {
             mo.disconnect();
             if (watchList[index]) {
                 delete watchList[index];
@@ -361,6 +393,24 @@ function clearWatch(taskId) {
     }
 }
 exports.clearWatch = clearWatch;
+const watchCgTimerHandler = function () {
+    for (const index in watchSizeList) {
+        const item = watchSizeList[index];
+        if (document.body.contains(item.el)) {
+            continue;
+        }
+        delete watchSizeList[index];
+    }
+    for (const index in watchList) {
+        const item = watchList[index];
+        if (document.body.contains(item.el)) {
+            continue;
+        }
+        delete watchList[index];
+    }
+    window.setTimeout(watchCgTimerHandler, 1000 * 60 * 7);
+};
+watchCgTimerHandler();
 const watchStyleList = {};
 let watchStyleIndex = 0;
 function watchStyle(el, name, cb, immediate = false) {
@@ -372,12 +422,11 @@ function watchStyle(el, name, cb, immediate = false) {
         return;
     }
     const formId = formWrap.dataset.formId;
-    if (!watchStyleList[formId]) {
-        watchStyleList[formId] = {};
-    }
+    const panelWrap = findParentByData(el, 'panel-id');
+    const panelId = panelWrap ? panelWrap.dataset.panelId : 'default';
     const index = el.dataset.cgStyleindex;
     if (index) {
-        const item = watchStyleList[formId][index];
+        const item = watchStyleList[formId][panelId][index];
         for (const n of name) {
             if (!item.names[n]) {
                 item.names[n] = {
@@ -394,13 +443,19 @@ function watchStyle(el, name, cb, immediate = false) {
         }
         return;
     }
+    if (!watchStyleList[formId]) {
+        watchStyleList[formId] = {};
+    }
+    if (!watchStyleList[formId][panelId]) {
+        watchStyleList[formId][panelId] = {};
+    }
     const sd = getComputedStyle(el);
-    watchStyleList[formId][watchStyleIndex] = {
+    watchStyleList[formId][panelId][watchStyleIndex] = {
         'el': el,
         'sd': sd,
         'names': {}
     };
-    const item = watchStyleList[formId][watchStyleIndex];
+    const item = watchStyleList[formId][panelId][watchStyleIndex];
     for (const n of name) {
         item.names[n] = {
             'val': item.sd[n],
@@ -414,47 +469,28 @@ function watchStyle(el, name, cb, immediate = false) {
     ++watchStyleIndex;
 }
 exports.watchStyle = watchStyle;
-let watchStyleTimer = 0;
-const watchStyleHandler = function () {
-    if (form.getFocus) {
-        const formId = form.getFocus();
-        if (formId && watchStyleList[formId]) {
-            for (const index in watchStyleList[formId]) {
-                const item = watchStyleList[formId][index];
-                if (!item.el.offsetParent) {
-                    delete watchStyleList[formId][index];
-                    if (!Object.keys(watchStyleList[formId]).length) {
-                        delete watchStyleList[formId];
-                    }
-                    continue;
-                }
-                for (const name in item.names) {
-                    if (item.sd[name] === item.names[name].val) {
-                        continue;
-                    }
-                    const old = item.names[name].val;
-                    item.names[name].val = item.sd[name];
-                    for (const cb of item.names[name].cb) {
-                        cb(name, item.sd[name], old);
-                    }
-                }
-            }
-        }
-    }
-    watchStyleTimer = requestAnimationFrame(watchStyleHandler);
-};
-watchStyleHandler();
 function isWatchStyle(el) {
     return el.dataset.cgStyleindex ? true : false;
 }
 exports.isWatchStyle = isWatchStyle;
-function clearWatchStyle(formId) {
+function clearWatchStyle(formId, panelId) {
     if (!watchStyleList[formId]) {
         return;
     }
-    for (const index in watchStyleList[formId]) {
-        const item = watchStyleList[formId][index];
-        item.el.removeAttribute('data-cg-styleindex');
+    for (const panel in watchStyleList[formId]) {
+        if (panelId) {
+            if (panel !== panelId.toString()) {
+                continue;
+            }
+        }
+        for (const index in watchStyleList[formId][panel]) {
+            const item = watchStyleList[formId][panel][index];
+            item.el.removeAttribute('data-cg-styleindex');
+        }
+        delete watchStyleList[formId][panel];
+    }
+    if (Object.keys(watchStyleList[formId]).length) {
+        return;
     }
     delete watchStyleList[formId];
 }
@@ -470,12 +506,11 @@ function watchProperty(el, name, cb, immediate = false) {
         return;
     }
     const formId = formWrap.dataset.formId;
-    if (!watchPropertyObjects[formId]) {
-        watchPropertyObjects[formId] = {};
-    }
+    const panelWrap = findParentByData(el, 'panel-id');
+    const panelId = panelWrap ? panelWrap.dataset.panelId : 'default';
     const index = el.dataset.cgPropertyindex;
     if (index) {
-        const item = watchPropertyObjects[formId][index];
+        const item = watchPropertyObjects[formId][panelId][index];
         for (const n of name) {
             if (!item.names[n]) {
                 item.names[n] = {
@@ -492,11 +527,17 @@ function watchProperty(el, name, cb, immediate = false) {
         }
         return;
     }
-    watchPropertyObjects[formId][watchPropertyIndex] = {
+    if (!watchPropertyObjects[formId]) {
+        watchPropertyObjects[formId] = {};
+    }
+    if (!watchPropertyObjects[formId][panelId]) {
+        watchPropertyObjects[formId][panelId] = {};
+    }
+    watchPropertyObjects[formId][panelId][watchPropertyIndex] = {
         'el': el,
         'names': {}
     };
-    const item = watchPropertyObjects[formId][watchPropertyIndex];
+    const item = watchPropertyObjects[formId][panelId][watchPropertyIndex];
     for (const n of name) {
         item.names[n] = {
             'val': item.el[n],
@@ -510,50 +551,114 @@ function watchProperty(el, name, cb, immediate = false) {
     ++watchPropertyIndex;
 }
 exports.watchProperty = watchProperty;
-let watchPropertyTimer = 0;
-const watchPropertyHandler = function () {
+function isWatchProperty(el) {
+    return el.dataset.cgPropertyindex ? true : false;
+}
+exports.isWatchProperty = isWatchProperty;
+function clearWatchProperty(formId, panelId) {
+    if (!watchPropertyObjects[formId]) {
+        return;
+    }
+    for (const panel in watchPropertyObjects[formId]) {
+        if (panelId) {
+            if (panel !== panelId.toString()) {
+                continue;
+            }
+        }
+        for (const index in watchPropertyObjects[formId][panel]) {
+            const item = watchPropertyObjects[formId][panel][index];
+            item.el.removeAttribute('data-cg-propertyindex');
+        }
+        delete watchPropertyObjects[formId][panel];
+    }
+    if (Object.keys(watchPropertyObjects[formId]).length) {
+        return;
+    }
+    delete watchPropertyObjects[formId];
+}
+exports.clearWatchProperty = clearWatchProperty;
+let watchTimer = 0;
+const watchTimerHandler = function () {
     if (form.getFocus) {
         const formId = form.getFocus();
-        if (formId && watchPropertyObjects[formId]) {
-            for (const index in watchPropertyObjects[formId]) {
-                const item = watchPropertyObjects[formId][index];
-                if (!item.el.offsetParent) {
-                    delete watchPropertyObjects[formId][index];
-                    if (!Object.keys(watchPropertyObjects[formId]).length) {
-                        delete watchPropertyObjects[formId];
+        if (formId) {
+            const panelIds = form.getActivePanel(formId);
+            if (watchStyleList[formId]) {
+                const handler = (item, panelId, index) => {
+                    if (!document.body.contains(item.el)) {
+                        delete watchStyleList[formId][panelId][index];
+                        if (!Object.keys(watchStyleList[formId][panelId]).length) {
+                            delete watchStyleList[formId][panelId];
+                        }
+                        if (!Object.keys(watchStyleList[formId]).length) {
+                            delete watchStyleList[formId];
+                        }
+                        return;
                     }
-                    continue;
+                    for (const name in item.names) {
+                        if (item.sd[name] === item.names[name].val) {
+                            continue;
+                        }
+                        const old = item.names[name].val;
+                        item.names[name].val = item.sd[name];
+                        for (const cb of item.names[name].cb) {
+                            cb(name, item.sd[name], old);
+                        }
+                    }
+                };
+                if (watchStyleList[formId].default) {
+                    for (const index in watchStyleList[formId].default) {
+                        handler(watchStyleList[formId].default[index], 'default', index);
+                    }
                 }
-                for (const name in item.names) {
-                    if (item.el[name] === item.names[name].val) {
-                        continue;
+                for (const id of panelIds) {
+                    if (watchStyleList[formId][id]) {
+                        for (const index in watchStyleList[formId][id]) {
+                            handler(watchStyleList[formId][id][index], id.toString(), index);
+                        }
                     }
-                    item.names[name].val = item.el[name];
-                    for (const cb of item.names[name].cb) {
-                        cb(name, item.el[name]);
+                }
+            }
+            if (watchPropertyObjects[formId]) {
+                const handler = (item, panelId, index) => {
+                    if (!document.body.contains(item.el)) {
+                        delete watchPropertyObjects[formId][panelId][index];
+                        if (!Object.keys(watchPropertyObjects[formId][panelId]).length) {
+                            delete watchPropertyObjects[formId][panelId];
+                        }
+                        if (!Object.keys(watchPropertyObjects[formId]).length) {
+                            delete watchPropertyObjects[formId];
+                        }
+                        return;
+                    }
+                    for (const name in item.names) {
+                        if (item.el[name] === item.names[name].val) {
+                            continue;
+                        }
+                        item.names[name].val = item.el[name];
+                        for (const cb of item.names[name].cb) {
+                            cb(name, item.el[name]);
+                        }
+                    }
+                };
+                if (watchPropertyObjects[formId].default) {
+                    for (const index in watchPropertyObjects[formId].default) {
+                        handler(watchPropertyObjects[formId].default[index], 'default', index);
+                    }
+                }
+                for (const id of panelIds) {
+                    if (watchPropertyObjects[formId][id]) {
+                        for (const index in watchPropertyObjects[formId][id]) {
+                            handler(watchPropertyObjects[formId][id][index], id.toString(), index);
+                        }
                     }
                 }
             }
         }
     }
-    watchPropertyTimer = requestAnimationFrame(watchPropertyHandler);
+    watchTimer = requestAnimationFrame(watchTimerHandler);
 };
-watchPropertyHandler();
-function isWatchProperty(el) {
-    return el.dataset.cgPropertyindex ? true : false;
-}
-exports.isWatchProperty = isWatchProperty;
-function clearWatchProperty(formId) {
-    if (!watchPropertyObjects[formId]) {
-        return;
-    }
-    for (const index in watchPropertyObjects[formId]) {
-        const item = watchPropertyObjects[formId][index];
-        item.el.removeAttribute('data-cg-propertyindex');
-    }
-    delete watchPropertyObjects[formId];
-}
-exports.clearWatchProperty = clearWatchProperty;
+watchTimerHandler();
 function bindClick(e, handler) {
     const x = e instanceof MouseEvent ? e.clientX : e.touches[0].clientX;
     const y = e instanceof MouseEvent ? e.clientY : e.touches[0].clientY;
@@ -585,7 +690,7 @@ function bindDown(oe, opt) {
     let isStart = false;
     let end = undefined;
     const move = function (e) {
-        if ((!e.target || !e.target.offsetParent) && e.cancelable) {
+        if (!e.target || !document.body.contains(e.target) && e.cancelable) {
             e.preventDefault();
         }
         let dir = 'top';
@@ -1579,11 +1684,9 @@ function fullscreen() {
 exports.fullscreen = fullscreen;
 document.addEventListener('visibilitychange', function () {
     if (document.hidden) {
-        cancelAnimationFrame(watchStyleTimer);
-        cancelAnimationFrame(watchPropertyTimer);
+        cancelAnimationFrame(watchTimer);
     }
     else {
-        watchStyleTimer = requestAnimationFrame(watchStyleHandler);
-        watchPropertyTimer = requestAnimationFrame(watchPropertyHandler);
+        watchTimer = requestAnimationFrame(watchTimerHandler);
     }
 });

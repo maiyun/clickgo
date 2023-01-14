@@ -50,6 +50,10 @@ export default class extends clickgo.form.AbstractForm {
         clickgo.form.dialog(clickgo.dom.getStyleCount(this.taskId, 'form').toString()).catch((e) => { throw e; });
     }
 
+    public async getWatchSizeCount(taskId?: number): Promise<void> {
+        await clickgo.form.dialog(clickgo.dom.getWatchSizeCount(taskId).toString());
+    }
+
     public watchSize(): void {
         this.watchSizeText = !this.watchSizeText;
         if (this.watchSizeText) {
@@ -70,11 +74,15 @@ export default class extends clickgo.form.AbstractForm {
         if (this.watchText) {
             clickgo.dom.watch(this.refs.watch.$el, () => {
                 clickgo.form.dialog('Changed.').catch((e) => { throw e; });
-            });
+            }, 'text');
         }
         else {
             clickgo.dom.unwatch(this.refs.watch.$el);
         }
+    }
+
+    public async getWatchCount(taskId?: number): Promise<void> {
+        await clickgo.form.dialog(clickgo.dom.getWatchCount(taskId).toString());
     }
 
     public isWatchStyle(): void {

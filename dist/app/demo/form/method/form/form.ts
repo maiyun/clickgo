@@ -42,6 +42,15 @@ export default class extends clickgo.form.AbstractForm {
         clickgo.form.dialog(JSON.stringify(clickgo.form.get(parseInt(this.fid)))).catch((e) => { throw e; });
     }
 
+    public async getActivePanel(): Promise<void> {
+        await clickgo.form.dialog(JSON.stringify(clickgo.form.getActivePanel(parseInt(this.fid))));
+    }
+
+    public async getFocus(): Promise<void> {
+        const f = clickgo.form.getFocus();
+        await clickgo.form.dialog(f ? f.toString() : 'null');
+    }
+
     public changeFocus(): void {
         clickgo.form.changeFocus(parseInt(this.fid));
     }

@@ -67,6 +67,11 @@ class default_1 extends clickgo.form.AbstractForm {
     getStyleCount() {
         clickgo.form.dialog(clickgo.dom.getStyleCount(this.taskId, 'form').toString()).catch((e) => { throw e; });
     }
+    getWatchSizeCount(taskId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield clickgo.form.dialog(clickgo.dom.getWatchSizeCount(taskId).toString());
+        });
+    }
     watchSize() {
         this.watchSizeText = !this.watchSizeText;
         if (this.watchSizeText) {
@@ -86,11 +91,16 @@ class default_1 extends clickgo.form.AbstractForm {
         if (this.watchText) {
             clickgo.dom.watch(this.refs.watch.$el, () => {
                 clickgo.form.dialog('Changed.').catch((e) => { throw e; });
-            });
+            }, 'text');
         }
         else {
             clickgo.dom.unwatch(this.refs.watch.$el);
         }
+    }
+    getWatchCount(taskId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield clickgo.form.dialog(clickgo.dom.getWatchCount(taskId).toString());
+        });
     }
     isWatchStyle() {
         clickgo.form.dialog(clickgo.dom.isWatchStyle(this.refs.watchStyle.$el) ? 'true' : 'false').catch((e) => { throw e; });

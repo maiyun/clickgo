@@ -10,9 +10,17 @@
                 <button @click="watchSizeHeight = !watchSizeHeight" style="padding: 0 5px; flex: 1;">Change</button>
             </layout>
             <layout gutter="10">
+                <button style="height: 30px; flex: 1;" @click="getWatchSizeCount()">getWatchSizeCount()</button>
+                <button style="height: 30px; flex: 1;" @click="getWatchSizeCount(taskId)">getWatchSizeCount({{taskId}})</button>
+            </layout>
+            <layout gutter="10">
                 <layout ref="watch" align-v="center" align-h="center" style="flex: 1; background: #FFF;">{{watchInner ? 'inner' : 'Inner'}}</layout>
                 <button @click="wwatch" style="height: 30px; padding: 0 5px;">{{watchText ? '' : '!'}}watch</button>
                 <button @click="watchInner = !watchInner" style="padding: 0 5px;">Change</button>
+            </layout>
+            <layout gutter="10">
+                <button style="height: 30px; flex: 1;" @click="getWatchCount()">getWatchCount()</button>
+                <button style="height: 30px; flex: 1;" @click="getWatchCount(taskId)">getWatchCount({{taskId}})</button>
             </layout>
             <button @click="watchStyleChange = !watchStyleChange" ref="watchStyle" style="height: 30px;" :style="{'font-size': watchStyleChange ? 'inherit' : '16px'}">watchStyle(this.refs.watchStyle.$el, 'font-size', (n, v) => { ... })</button>
             <button @click="isWatchStyle" style="height: 30px;">isWatchStyle(this.refs.watchStyle.$el)</button>
