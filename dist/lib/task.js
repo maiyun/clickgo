@@ -107,7 +107,7 @@ function onFrame(fun, opt = {}) {
             else {
                 timer = requestAnimationFrame(function () {
                     timerHandler().catch(function (e) {
-                        console.log(e);
+                        console.log('task.onFrame: -3', e);
                     });
                 });
                 frameMaps[ft] = timer;
@@ -120,7 +120,7 @@ function onFrame(fun, opt = {}) {
         else {
             timer = requestAnimationFrame(function () {
                 timerHandler().catch(function (e) {
-                    console.log(e);
+                    console.log('task.onFrame: -2', e);
                 });
             });
             frameMaps[ft] = timer;
@@ -128,7 +128,7 @@ function onFrame(fun, opt = {}) {
     });
     timer = requestAnimationFrame(function () {
         timerHandler().catch(function (e) {
-            console.log(e);
+            console.log('task.onFrame: -1', e);
         });
     });
     frameMaps[ft] = timer;
@@ -415,6 +415,9 @@ function run(url, opt = {}, ntid) {
                 }
             },
             'dom': {
+                inPage: function (el) {
+                    return dom.inPage(el);
+                },
                 setGlobalCursor: function (type) {
                     dom.setGlobalCursor(type);
                 },
@@ -676,8 +679,8 @@ function run(url, opt = {}, ntid) {
                 rename(oldPath, newPath) {
                     return fs.rename(oldPath, newPath, taskId);
                 },
-                readDir(path, options = {}) {
-                    return fs.readDir(path, options, taskId);
+                readDir(path, encoding) {
+                    return fs.readDir(path, encoding, taskId);
                 },
                 copyFolder(from, to, options = {}) {
                     return fs.copyFolder(from, to, options, taskId);

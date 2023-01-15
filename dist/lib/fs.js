@@ -678,7 +678,7 @@ exports.stats = stats;
 function isDir(path, taskId) {
     return __awaiter(this, void 0, void 0, function* () {
         const pstats = yield stats(path, taskId);
-        if (!pstats || !pstats.isDirectory()) {
+        if (!(pstats === null || pstats === void 0 ? void 0 : pstats.isDirectory())) {
             return false;
         }
         return pstats;
@@ -688,7 +688,7 @@ exports.isDir = isDir;
 function isFile(path, taskId) {
     return __awaiter(this, void 0, void 0, function* () {
         const pstats = yield stats(path, taskId);
-        if (!pstats || !pstats.isFile()) {
+        if (!(pstats === null || pstats === void 0 ? void 0 : pstats.isFile())) {
             return false;
         }
         return pstats;

@@ -717,12 +717,12 @@ export async function stats(path: string, taskId?: number): Promise<types.IStats
 
 /**
  * --- 判断是否是目录或目录是否存在，是的话返回 stats ---
- * @param path 判断路径
+ * @param path 判断路径woml
  * @param taskId App 模式下无效
  */
 export async function isDir(path: string, taskId?: number): Promise<types.IStats | false> {
     const pstats = await stats(path, taskId);
-    if (!pstats || !pstats.isDirectory()) {
+    if (!pstats?.isDirectory()) {
         return false;
     }
     return pstats;
@@ -735,7 +735,7 @@ export async function isDir(path: string, taskId?: number): Promise<types.IStats
  */
 export async function isFile(path: string, taskId?: number): Promise<types.IStats | false> {
     const pstats = await stats(path, taskId);
-    if (!pstats || !pstats.isFile()) {
+    if (!pstats?.isFile()) {
         return false;
     }
     return pstats;
@@ -960,7 +960,7 @@ export async function rename(oldPath: string, newPath: string, taskId?: number):
 /**
  * --- 获取文件夹下文件列表 ---
  * @param path 文件夹路径
- * @param options 选项
+ * @param encoding 编码
  * @param taskId App 模式下无效
  */
 export async function readDir(path: string, encoding?: BufferEncoding, taskId?: number): Promise<types.IDirent[]> {

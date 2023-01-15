@@ -45,6 +45,14 @@ ${classUnfold('*')}, ${classUnfold('*::after')}, ${classUnfold('*::before')} {bo
 ${classUnfold()}, ${classUnfold('input')}, ${classUnfold('textarea')} {font-family: "Lucida Sans Unicode", "Helvetica Neue","Helvetica","PingFang SC","Hiragino Sans GB","Noto Sans CJK SC","Noto Sans CJK","Source Han Sans","WenQuanYi Micro Hei","Microsoft YaHei",sans-serif; font-size: 12px; line-height: 1; -webkit-font-smoothing: antialiased;}
 </style>`);
 
+/**
+ * --- 判断一个元素是否还存在于页面当中 ---
+ * @param el 要判断的元素
+ */
+export function inPage(el: HTMLElement): boolean {
+    return document.body.contains(el);
+}
+
 /** --- 全局 cursor 设置的 style 标签 --- */
 let globalCursorStyle: HTMLStyleElement;
 /**

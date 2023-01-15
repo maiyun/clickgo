@@ -119,7 +119,7 @@ export function onFrame(fun: () => void | Promise<void>, opt: {
                 // --- 接着循环 ---
                 timer = requestAnimationFrame(function() {
                     timerHandler().catch(function(e) {
-                        console.log(e);
+                        console.log('task.onFrame: -3', e);
                     });
                 });
                 frameMaps[ft] = timer;
@@ -134,7 +134,7 @@ export function onFrame(fun: () => void | Promise<void>, opt: {
             // --- 无限循环 ---
             timer = requestAnimationFrame(function() {
                 timerHandler().catch(function(e) {
-                    console.log(e);
+                    console.log('task.onFrame: -2', e);
                 });
             });
             frameMaps[ft] = timer;
@@ -143,7 +143,7 @@ export function onFrame(fun: () => void | Promise<void>, opt: {
     /** --- timer 对象 number --- */
     timer = requestAnimationFrame(function() {
         timerHandler().catch(function(e) {
-            console.log(e);
+            console.log('task.onFrame: -1', e);
         });
     });
     frameMaps[ft] = timer;
@@ -473,6 +473,9 @@ export async function run(url: string, opt: types.ITaskRunOptions = {}, ntid?: n
             }
         },
         'dom': {
+            inPage: function(el: HTMLElement): boolean {
+                return dom.inPage(el);
+            },
             setGlobalCursor: function(type?: string): void {
                 dom.setGlobalCursor(type);
             },
@@ -772,8 +775,8 @@ export async function run(url: string, opt: types.ITaskRunOptions = {}, ntid?: n
             rename(oldPath: string, newPath: string): Promise<boolean> {
                 return fs.rename(oldPath, newPath, taskId);
             },
-            readDir(path: string, options: any = {}): Promise<types.IDirent[]> {
-                return fs.readDir(path, options, taskId);
+            readDir(path: string, encoding?: BufferEncoding): Promise<types.IDirent[]> {
+                return fs.readDir(path, encoding, taskId);
             },
             copyFolder(from: string, to: string, options: any = {}): Promise<number> {
                 return fs.copyFolder(from, to, options, taskId);

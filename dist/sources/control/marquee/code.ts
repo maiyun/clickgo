@@ -88,7 +88,7 @@ export default class extends clickgo.control.AbstractControl {
             }
             // --- 没创建的 timer 的现在创建 timer ---
             this.timer = clickgo.task.onFrame(async () => {
-                if (!document.body.contains(this.element)) {
+                if (!clickgo.dom.inPage(this.element)) {
                     clickgo.task.offFrame(this.timer);
                     this.timer = 0;
                     return;
