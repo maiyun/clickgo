@@ -18,8 +18,8 @@
     "native4": "electron ./dist/test/native/index4"
   },
   "devDependencies": {
-    "@litert/eslint-plugin-rules": "^0.1.0",
-    "@litert/loader": "^3.4.4",
+    "@litert/eslint-plugin-rules": "^0.1.2",
+    "@litert/loader": "^3.4.6",
     "@types/node": "^18.11.14",
     "electron": "^22.0.2",
     "jszip": "^3.10.1",
