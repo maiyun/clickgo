@@ -1,8 +1,8 @@
 import * as electron from 'electron';
 import * as path from 'path';
-import * as libFs from './fs';
+import * as libFs from './lib/fs';
 export const fs = libFs;
-import * as libTool from './tool';
+import * as libTool from './lib/tool';
 export const tool = libTool;
 
 /** --- 是否是沉浸式的 --- */
