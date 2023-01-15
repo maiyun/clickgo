@@ -808,6 +808,81 @@ export function clearWatchProperty(formId: number | string, panelId?: number): v
 // --- watch timer ---
 // -------------------
 
+export function getWatchInfo(): types.IGetWatchInfoResult {
+    const rtn: types.IGetWatchInfoResult = {
+        'formId': 0,
+        'default': {},
+        'panels': {}
+    };
+    const formId: number | null = form.getFocus();
+    if (!formId) {
+        return rtn;
+    }
+    rtn.formId = formId;
+    const panelIds = form.getActivePanel(formId);
+    const handler = (item: {
+        'el': HTMLElement;
+        'names': Record<string, any>;
+    }, type: 'style' | 'property', panelId?: string): void => {
+        if (panelId) {
+            if (!rtn.panels[panelId]) {
+                rtn.panels[panelId] = {};
+            }
+        }
+        const ritem = panelId ? rtn.panels[panelId] : rtn.default;
+        /** --- 控件名 --- */
+        const cname = item.el.dataset.cgControl ?? findParentByData(item.el, 'cg-control')?.dataset.cgControl ?? 'unknown';
+        if (!ritem[cname]) {
+            ritem[cname] = {
+                'style': {
+                    'count': 0,
+                    'list': []
+                },
+                'property': {
+                    'count': 0,
+                    'list': []
+                }
+            };
+        }
+        ++ritem[cname][type].count;
+        for (const name in item.names) {
+            if (ritem[cname][type].list.includes(name)) {
+                continue;
+            }
+            ritem[cname][type].list.push(name);
+        }
+    };
+    // --- 先执行窗体默认的 ---
+    if (watchStyleList[formId].default) {
+        for (const index in watchStyleList[formId].default) {
+            handler(watchStyleList[formId].default[index], 'style');
+        }
+    }
+    // --- 再执行活跃的 panel 的 ---
+    for (const id of panelIds) {
+        if (watchStyleList[formId][id]) {
+            for (const index in watchStyleList[formId][id]) {
+                handler(watchStyleList[formId][id][index], 'style', id.toString());
+            }
+        }
+    }
+    // --- 先执行窗体默认的 ---
+    if (watchPropertyObjects[formId].default) {
+        for (const index in watchPropertyObjects[formId].default) {
+            handler(watchPropertyObjects[formId].default[index], 'property');
+        }
+    }
+    // --- 再执行活跃的 panel 的 ---
+    for (const id of panelIds) {
+        if (watchPropertyObjects[formId][id]) {
+            for (const index in watchPropertyObjects[formId][id]) {
+                handler(watchPropertyObjects[formId][id][index], 'property', id.toString());
+            }
+        }
+    }
+    return rtn;
+}
+
 /** --- watch style 的 timer --- */
 let watchTimer = 0;
 const watchTimerHandler = function(): void {
@@ -2013,8 +2088,9 @@ export function bindResize(e: MouseEvent | TouchEvent, opt: types.IBindResizeOpt
  * --- 通过 data 名查找上层所有标签是否存在 ---
  * @param el 当前标签
  * @param name 要查找的 data 名
+ * @param value data 对应的值，留空则代表只要匹配了名就可以
  */
-export function findParentByData(el: HTMLElement, name: string): HTMLElement | null {
+export function findParentByData(el: HTMLElement, name: string, value?: string): HTMLElement | null {
     let parent = el.parentNode as HTMLElement;
     while (parent) {
         if (!parent.tagName) {
@@ -2023,7 +2099,15 @@ export function findParentByData(el: HTMLElement, name: string): HTMLElement | n
         if (parent.tagName.toLowerCase() === 'body') {
             break;
         }
-        if (parent.getAttribute('data-' + name) !== null) {
+        const v = parent.getAttribute('data-' + name);
+        if (v !== null) {
+            if (value) {
+                if (value === v) {
+                    return parent;
+                }
+                // --- value 不匹配 ---
+                continue;
+            }
             return parent;
         }
         parent = parent.parentNode as HTMLElement;

@@ -89,6 +89,20 @@ export default class extends clickgo.form.AbstractForm {
         clickgo.form.dialog(clickgo.dom.isWatchStyle(this.refs.watchStyle.$el) ? 'true' : 'false').catch((e) => { throw e; });
     }
 
+    public getWatchInfoDisabled = false;
+
+    public getWatchInfoText = '{}';
+
+    public async getWatchInfo(): Promise<void> {
+        this.getWatchInfoDisabled = true;
+        for (let i = 0; i < 40; ++i) {
+            const rtn = clickgo.dom.getWatchInfo();
+            this.getWatchInfoText = JSON.stringify(rtn, undefined, 4);
+            await clickgo.tool.sleep(500);
+        }
+        this.getWatchInfoDisabled = false;
+    }
+
     public bindGesture(e: MouseEvent | TouchEvent): void {
         clickgo.dom.bindGesture(e, (ne, dir) => {
             if (['top', 'bottom'].includes(dir)) {

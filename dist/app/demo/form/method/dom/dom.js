@@ -48,6 +48,8 @@ class default_1 extends clickgo.form.AbstractForm {
         this.moveTop = 0;
         this.moveWidth = 25;
         this.moveHeight = 25;
+        this.getWatchInfoDisabled = false;
+        this.getWatchInfoText = '{}';
     }
     get isMove() {
         return clickgo.dom.is.move;
@@ -104,6 +106,17 @@ class default_1 extends clickgo.form.AbstractForm {
     }
     isWatchStyle() {
         clickgo.form.dialog(clickgo.dom.isWatchStyle(this.refs.watchStyle.$el) ? 'true' : 'false').catch((e) => { throw e; });
+    }
+    getWatchInfo() {
+        return __awaiter(this, void 0, void 0, function* () {
+            this.getWatchInfoDisabled = true;
+            for (let i = 0; i < 40; ++i) {
+                const rtn = clickgo.dom.getWatchInfo();
+                this.getWatchInfoText = JSON.stringify(rtn, undefined, 4);
+                yield clickgo.tool.sleep(500);
+            }
+            this.getWatchInfoDisabled = false;
+        });
     }
     bindGesture(e) {
         clickgo.dom.bindGesture(e, (ne, dir) => {

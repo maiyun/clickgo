@@ -403,7 +403,7 @@ export async function init(
                         return -2;
                     }
                     // --- 给 layout 增加 data-cg-control-xxx ---
-                    t.controls[name].layout = t.controls[name].layout.replace(/^(<[a-zA-Z0-9-]+)( |>)/, '$1 data-cg-control-' + name + '$2');
+                    t.controls[name].layout = t.controls[name].layout.replace(/^(<[a-zA-Z0-9-]+)( |>)/, '$1 data-cg-control="' + name + '"$2');
                     /** --- 样式表 --- */
                     const style = item.files[item.config.style + '.css'] as string;
                     if (style) {

@@ -1537,7 +1537,7 @@ function createPanel(cls, el, formId, taskId) {
             core.trigger('error', 0, 0, err, err.message);
             throw err;
         }
-        if (el.dataset.cgControlPanel === undefined) {
+        if (el.dataset.cgControl !== 'panel') {
             const err = new Error('form.createPanel: -2');
             core.trigger('error', 0, 0, err, err.message);
             throw err;

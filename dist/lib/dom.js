@@ -32,7 +32,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.fullscreen = exports.siblingsData = exports.siblings = exports.findParentByClass = exports.findParentByData = exports.bindResize = exports.bindMove = exports.is = exports.bindDrag = exports.bindLong = exports.allowEvent = exports.bindGesture = exports.bindDown = exports.bindClick = exports.clearWatchProperty = exports.isWatchProperty = exports.watchProperty = exports.clearWatchStyle = exports.isWatchStyle = exports.watchStyle = exports.clearWatch = exports.isWatch = exports.unwatch = exports.watch = exports.getWatchCount = exports.clearWatchSize = exports.isWatchSize = exports.unwatchSize = exports.watchSize = exports.getWatchSizeCount = exports.getStyleCount = exports.removeStyle = exports.pushStyle = exports.removeFromStyleList = exports.createToStyleList = exports.hasTouchButMouse = exports.setGlobalCursor = void 0;
+exports.fullscreen = exports.siblingsData = exports.siblings = exports.findParentByClass = exports.findParentByData = exports.bindResize = exports.bindMove = exports.is = exports.bindDrag = exports.bindLong = exports.allowEvent = exports.bindGesture = exports.bindDown = exports.bindClick = exports.getWatchInfo = exports.clearWatchProperty = exports.isWatchProperty = exports.watchProperty = exports.clearWatchStyle = exports.isWatchStyle = exports.watchStyle = exports.clearWatch = exports.isWatch = exports.unwatch = exports.watch = exports.getWatchCount = exports.clearWatchSize = exports.isWatchSize = exports.unwatchSize = exports.watchSize = exports.getWatchSizeCount = exports.getStyleCount = exports.removeStyle = exports.pushStyle = exports.removeFromStyleList = exports.createToStyleList = exports.hasTouchButMouse = exports.setGlobalCursor = void 0;
 const clickgo = __importStar(require("../clickgo"));
 const form = __importStar(require("./form"));
 const core = __importStar(require("./core"));
@@ -577,6 +577,74 @@ function clearWatchProperty(formId, panelId) {
     delete watchPropertyObjects[formId];
 }
 exports.clearWatchProperty = clearWatchProperty;
+function getWatchInfo() {
+    const rtn = {
+        'formId': 0,
+        'default': {},
+        'panels': {}
+    };
+    const formId = form.getFocus();
+    if (!formId) {
+        return rtn;
+    }
+    rtn.formId = formId;
+    const panelIds = form.getActivePanel(formId);
+    const handler = (item, type, panelId) => {
+        var _a, _b, _c;
+        if (panelId) {
+            if (!rtn.panels[panelId]) {
+                rtn.panels[panelId] = {};
+            }
+        }
+        const ritem = panelId ? rtn.panels[panelId] : rtn.default;
+        const cname = (_c = (_a = item.el.dataset.cgControl) !== null && _a !== void 0 ? _a : (_b = findParentByData(item.el, 'cg-control')) === null || _b === void 0 ? void 0 : _b.dataset.cgControl) !== null && _c !== void 0 ? _c : 'unknown';
+        if (!ritem[cname]) {
+            ritem[cname] = {
+                'style': {
+                    'count': 0,
+                    'list': []
+                },
+                'property': {
+                    'count': 0,
+                    'list': []
+                }
+            };
+        }
+        ++ritem[cname][type].count;
+        for (const name in item.names) {
+            if (ritem[cname][type].list.includes(name)) {
+                continue;
+            }
+            ritem[cname][type].list.push(name);
+        }
+    };
+    if (watchStyleList[formId].default) {
+        for (const index in watchStyleList[formId].default) {
+            handler(watchStyleList[formId].default[index], 'style');
+        }
+    }
+    for (const id of panelIds) {
+        if (watchStyleList[formId][id]) {
+            for (const index in watchStyleList[formId][id]) {
+                handler(watchStyleList[formId][id][index], 'style', id.toString());
+            }
+        }
+    }
+    if (watchPropertyObjects[formId].default) {
+        for (const index in watchPropertyObjects[formId].default) {
+            handler(watchPropertyObjects[formId].default[index], 'property');
+        }
+    }
+    for (const id of panelIds) {
+        if (watchPropertyObjects[formId][id]) {
+            for (const index in watchPropertyObjects[formId][id]) {
+                handler(watchPropertyObjects[formId][id][index], 'property', id.toString());
+            }
+        }
+    }
+    return rtn;
+}
+exports.getWatchInfo = getWatchInfo;
 let watchTimer = 0;
 const watchTimerHandler = function () {
     if (form.getFocus) {
@@ -1606,7 +1674,7 @@ function bindResize(e, opt) {
     });
 }
 exports.bindResize = bindResize;
-function findParentByData(el, name) {
+function findParentByData(el, name, value) {
     let parent = el.parentNode;
     while (parent) {
         if (!parent.tagName) {
@@ -1615,7 +1683,14 @@ function findParentByData(el, name) {
         if (parent.tagName.toLowerCase() === 'body') {
             break;
         }
-        if (parent.getAttribute('data-' + name) !== null) {
+        const v = parent.getAttribute('data-' + name);
+        if (v !== null) {
+            if (value) {
+                if (value === v) {
+                    return parent;
+                }
+                continue;
+            }
             return parent;
         }
         parent = parent.parentNode;

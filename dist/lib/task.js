@@ -454,13 +454,16 @@ function run(url, opt = {}, ntid) {
                 isWatchStyle: function (el) {
                     return dom.isWatchStyle(el);
                 },
-                watchProperty(el, name, cb, immediate = false) {
+                watchProperty: function (el, name, cb, immediate = false) {
                     dom.watchProperty(el, name, cb, immediate);
                 },
                 isWatchProperty(el) {
                     return dom.isWatchProperty(el);
                 },
-                bindClick(e, handler) {
+                getWatchInfo: function () {
+                    return dom.getWatchInfo();
+                },
+                bindClick: function (e, handler) {
                     dom.bindClick(e, handler);
                 },
                 bindDown: function (oe, opt) {
@@ -482,8 +485,8 @@ function run(url, opt = {}, ntid) {
                 bindResize: function (e, opt) {
                     dom.bindResize(e, opt);
                 },
-                findParentByData: function (el, name) {
-                    return dom.findParentByData(el, name);
+                findParentByData: function (el, name, value) {
+                    return dom.findParentByData(el, name, value);
                 },
                 findParentByClass: function (el, name) {
                     return dom.findParentByClass(el, name);

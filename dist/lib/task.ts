@@ -521,7 +521,7 @@ export async function run(url: string, opt: types.ITaskRunOptions = {}, ntid?: n
             isWatchStyle: function(el: HTMLElement): boolean {
                 return dom.isWatchStyle(el);
             },
-            watchProperty(
+            watchProperty: function(
                 el: HTMLElement,
                 name: string | string[],
                 cb: (name: string, value: string) => void,
@@ -532,7 +532,10 @@ export async function run(url: string, opt: types.ITaskRunOptions = {}, ntid?: n
             isWatchProperty(el: HTMLElement): boolean {
                 return dom.isWatchProperty(el);
             },
-            bindClick(e: MouseEvent | TouchEvent, handler: () => void): void {
+            getWatchInfo: function(): types.IGetWatchInfoResult {
+                return dom.getWatchInfo();
+            },
+            bindClick: function(e: MouseEvent | TouchEvent, handler: () => void): void {
                 dom.bindClick(e, handler);
             },
             bindDown: function(oe: MouseEvent | TouchEvent, opt: types.IBindDownOptions) {
@@ -557,8 +560,8 @@ export async function run(url: string, opt: types.ITaskRunOptions = {}, ntid?: n
             bindResize: function(e: MouseEvent | TouchEvent, opt: types.IBindResizeOptions): void {
                 dom.bindResize(e, opt);
             },
-            findParentByData: function(el: HTMLElement, name: string): HTMLElement | null {
-                return dom.findParentByData(el, name);
+            findParentByData: function(el: HTMLElement, name: string, value?: string): HTMLElement | null {
+                return dom.findParentByData(el, name, value);
             },
             findParentByClass: function(el: HTMLElement, name: string): HTMLElement | null {
                 return dom.findParentByClass(el, name);

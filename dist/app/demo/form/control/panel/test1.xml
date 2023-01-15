@@ -3,4 +3,14 @@
     <label>onShow count: {{scount}}</label>
     <label>data: {{data}}</label>
     <button @click="click" style="height: 30px;">Hi</button>
+    <layout>
+        <button style="padding: 15px 30px;" area="split">
+            Padding 10px 20px with pop
+            <template v-slot:pop>
+                <menulist>
+                    <menulist-item alt="T">Test 1</menulist-item>
+                </menulist>
+            </template>
+        </button>
+    </layout>
 </panel>

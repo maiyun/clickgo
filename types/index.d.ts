@@ -262,6 +262,33 @@ export interface IWatchItem {
     'taskId'?: number;
 }
 
+/** --- 获取当前正在监视中的 property 和 style 的元素信息 --- */
+export interface IGetWatchInfoResult {
+    'formId': number;
+    'default': Record<string, {
+        'style': {
+            'list': string[];
+            'count': number;
+        };
+        'property': {
+            'list': string[];
+            'count': number;
+        };
+    }>;
+    'panels': Record<string,
+        Record<string, {
+            'style': {
+                'list': string[];
+                'count': number;
+            };
+            'property': {
+                'list': string[];
+                'count': number;
+            };
+        }>
+    >;
+}
+
 // --------------------------
 // -------- form lib --------
 // --------------------------
