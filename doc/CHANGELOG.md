@@ -1,5 +1,16 @@
 # Changelog
 
+# 3.1.6-dev15
+
+[+] Add is.meta of dom library.  
+[+] Add table control.  
+[+] Add nav control.  
+[+] Add box control.  
+[+] Add panel control.  
+[+] Add getWatchInfo method of dom library.  
+[+] Add inPage method of dom library.  
+[\*] Lots of optimizations.
+
 # 3.1.5-dev14
 
 [+] Add create of form library.  
