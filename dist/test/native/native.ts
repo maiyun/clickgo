@@ -5,6 +5,9 @@ export const fs = libFs;
 import * as libTool from './lib/tool';
 export const tool = libTool;
 
+// npm publish --tag dev --access public
+// --- sass --watch dist/:dist/ --style compressed --no-source-map ---
+
 /** --- 是否是沉浸式的 --- */
 let isImmersion: boolean = false;
 // --- windows 下是且只会是沉浸式，其他系统以启动的第一个窗体为准绑定大小最小化最大化关闭等功能 ---

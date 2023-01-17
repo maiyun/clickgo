@@ -114,7 +114,6 @@ function launcher(boot) {
             const files = yield loader.sniffFiles('clickgo.js', {
                 'dir': __dirname + '/',
                 'after': after,
-                'afterIgnore': new RegExp('^' + loader.cdn.replace(/\./g, '\\.')),
                 'map': map,
                 'load': (url) => {
                     boot.onRuntimeFileLoad(url);
@@ -128,7 +127,7 @@ function launcher(boot) {
                 'map': map
             })[0];
             try {
-                const style = yield (yield fetch(__dirname + '/global.css' + (!__dirname.startsWith(loader.cdn) ? after : ''))).text();
+                const style = yield (yield fetch(__dirname + '/global.css')).text();
                 (_a = document.getElementById('cg-global')) === null || _a === void 0 ? void 0 : _a.insertAdjacentHTML('afterbegin', style);
             }
             catch (_b) {

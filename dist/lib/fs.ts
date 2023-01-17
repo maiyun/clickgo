@@ -140,14 +140,14 @@ export async function getContent(path: string, options?: BufferEncoding | {
                 headers['range'] = `bytes=${start === undefined ? '0' : start}-${end === undefined ? '' : end}`;
             }
             if (options.progress) {
-                blob = await tool.request(ourl + '?' + rand, {
+                blob = await tool.request(ourl + (!ourl.startsWith(loader.cdn) ? ('?' + rand) : ''), {
                     'headers': headers,
                     'progress': options.progress,
                     'responseType': 'blob'
                 });
             }
             else {
-                blob = await (await fetch(ourl + '?' + rand, {
+                blob = await (await fetch(ourl + (!ourl.startsWith(loader.cdn) ? ('?' + rand) : ''), {
                     'headers': headers
                 })).blob();
             }
@@ -447,7 +447,7 @@ async function getClickGoStats(path: string): Promise<types.IStats | null> {
     else {
         // --- 文件 ---
         try {
-            const res = await fetch(tool.urlResolve(__dirname, './').slice(0, -1) + path + '?' + Math.random().toString(), {
+            const res = await fetch(tool.urlResolve(__dirname, './').slice(0, -1) + path, {
                 'headers': {
                     'range': `bytes=0-1`
                 }

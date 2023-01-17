@@ -186,7 +186,6 @@ export function launcher(boot: AbstractBoot): void {
         const files = await loader.sniffFiles('clickgo.js', {
             'dir': __dirname + '/',
             'after': after,
-            'afterIgnore': new RegExp('^' + loader.cdn.replace(/\./g, '\\.')),
             'map': map,
             'load': (url) => {
                 boot.onRuntimeFileLoad(url) as any;
@@ -201,7 +200,7 @@ export function launcher(boot: AbstractBoot): void {
         })[0] as typeof import('../dist/clickgo');
         // --- 加载 clickgo 的 global css ---
         try {
-            const style = await (await fetch(__dirname + '/global.css' + (!__dirname.startsWith(loader.cdn) ? after : ''))).text();
+            const style = await (await fetch(__dirname + '/global.css')).text();
             document.getElementById('cg-global')?.insertAdjacentHTML('afterbegin', style);
         }
         catch {

@@ -1,5 +1,9 @@
 # Changelog
 
+# 3.1.7-dev16
+
+[\*] Optimize the caching mechanism.
+
 # 3.1.6-dev15
 
 [+] Add is.meta of dom library.  

@@ -129,14 +129,14 @@ function getContent(path, options, taskId) {
                     headers['range'] = `bytes=${start === undefined ? '0' : start}-${end === undefined ? '' : end}`;
                 }
                 if (options.progress) {
-                    blob = yield tool.request(ourl + '?' + rand, {
+                    blob = yield tool.request(ourl + (!ourl.startsWith(loader.cdn) ? ('?' + rand) : ''), {
                         'headers': headers,
                         'progress': options.progress,
                         'responseType': 'blob'
                     });
                 }
                 else {
-                    blob = yield (yield fetch(ourl + '?' + rand, {
+                    blob = yield (yield fetch(ourl + (!ourl.startsWith(loader.cdn) ? ('?' + rand) : ''), {
                         'headers': headers
                     })).blob();
                 }
@@ -412,7 +412,7 @@ function getClickGoStats(path) {
         }
         else {
             try {
-                const res = yield fetch(tool.urlResolve(__dirname, './').slice(0, -1) + path + '?' + Math.random().toString(), {
+                const res = yield fetch(tool.urlResolve(__dirname, './').slice(0, -1) + path, {
                     'headers': {
                         'range': `bytes=0-1`
                     }
