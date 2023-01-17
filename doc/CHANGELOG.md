@@ -1,5 +1,9 @@
 # Changelog
 
+# 3.1.8-dev17
+
+[\*] NPM version of it.
+
 # 3.1.7-dev16
 
 [\*] Optimize the caching mechanism.
