@@ -1,5 +1,9 @@
 # Changelog
 
+# 3.1.9-dev18
+
+[+] Add data param of run method in task lib.
+
 # 3.1.8-dev17
 
 [\*] NPM version of it.

@@ -1186,7 +1186,7 @@ export async function run(url: string, opt: types.ITaskRunOptions = {}, ntid?: n
     // --- 执行 app ---
     const appCls: core.AbstractApp = new expo.default();
     list[taskId].class = appCls;
-    await appCls.main();
+    await appCls.main(opt.data ?? {});
     return taskId;
 }
 

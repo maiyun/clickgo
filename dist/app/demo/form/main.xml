@@ -2,6 +2,7 @@
     <tab v-model="ntab" :tabs="['control', 'method', 'event']" style="margin: 10px; flex: 1;">
         <flow v-if="ntab === 'control'" class="inner" direction="v">
             <layout class="buttons" gutter="10" direction="v">
+                <label>App data: {{adata}}</label>
                 <button @click="openForm('cform')">Form</button>
                 <button @click="openForm('clayout')">Layout</button>
                 <button @click="openForm('cimg')">Img</button>

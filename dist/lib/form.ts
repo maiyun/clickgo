@@ -397,7 +397,7 @@ export abstract class AbstractForm extends AbstractCommon {
 
     // --- 窗体可以接收到的事件 ---
 
-    public onMounted(obj: Record<string, any>): void | Promise<void>;
+    public onMounted(data: Record<string, any>): void | Promise<void>;
     public onMounted(): void {
         return;
     }

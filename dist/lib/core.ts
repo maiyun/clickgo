@@ -67,7 +67,7 @@ export abstract class AbstractApp {
     }
 
     /** --- App 的入口文件 --- */
-    public abstract main(): Promise<void>;
+    public abstract main(data: Record<string, any>): Promise<void>;
 
     /**
      * --- 以某个窗体进行正式启动这个 app（入口 form），不启动则任务也启动失败 ---

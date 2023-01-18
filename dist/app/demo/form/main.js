@@ -77,6 +77,7 @@ class default_1 extends clickgo.form.AbstractForm {
     constructor() {
         super(...arguments);
         this.ntab = '';
+        this.adata = {};
     }
     openForm(name) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -256,6 +257,9 @@ class default_1 extends clickgo.form.AbstractForm {
             }
             frm.show();
         });
+    }
+    onMounted(data) {
+        this.adata = data;
     }
 }
 exports.default = default_1;

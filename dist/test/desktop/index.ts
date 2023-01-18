@@ -19,7 +19,10 @@ class Boot extends clickgo.AbstractBoot {
         const taskId = await clickgo.task.run('/clickgo/app/demo/', {
             'notify': window.location.href.includes('?single') ? false : undefined,
             'unblock': ['sessionStorage'],
-            'permissions': ['native.form']
+            'permissions': ['native.form'],
+            'data': {
+                'param': 'abc'
+            }
         });
         if (taskId <= 0) {
             el.innerHTML = `Start main app failed(${taskId.toString()}).`;

@@ -38,9 +38,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const clickgo = __importStar(require("clickgo"));
 const main_1 = __importDefault(require("./form/main"));
 class default_1 extends clickgo.core.AbstractApp {
-    main() {
+    main(data) {
+        var _a;
         return __awaiter(this, void 0, void 0, function* () {
-            this.run(yield clickgo.form.create(main_1.default));
+            this.run(yield clickgo.form.create(main_1.default, {
+                'param': (_a = data.param) !== null && _a !== void 0 ? _a : 'none'
+            }));
         });
     }
 }

@@ -427,6 +427,8 @@ export interface ITaskRunOptions {
     'unblock'?: string[];
     /** --- 直接赋予此任务相应权限，App 模式下有 "root" 权限的应用才能设置 --- */
     'permissions'?: string[];
+    /** --- 给 task 传值 --- */
+    'data'?: Record<string, any>;
 }
 
 export interface ICreateTimerOptions {

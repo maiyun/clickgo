@@ -193,7 +193,7 @@ function getList() {
 }
 exports.getList = getList;
 function run(url, opt = {}, ntid) {
-    var _a, _b, _c, _d;
+    var _a, _b, _c, _d, _e;
     return __awaiter(this, void 0, void 0, function* () {
         if (!url.endsWith('/') && !url.endsWith('.cga')) {
             return 0;
@@ -998,7 +998,7 @@ function run(url, opt = {}, ntid) {
                     const data = JSON.parse(lcontent);
                     loadLocaleData(locale, data, '', taskId);
                 }
-                catch (_e) {
+                catch (_f) {
                 }
             }
         }
@@ -1066,7 +1066,7 @@ function run(url, opt = {}, ntid) {
         }
         const appCls = new expo.default();
         exports.list[taskId].class = appCls;
-        yield appCls.main();
+        yield appCls.main((_e = opt.data) !== null && _e !== void 0 ? _e : {});
         return taskId;
     });
 }

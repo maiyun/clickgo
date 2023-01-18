@@ -45,6 +45,8 @@ export default class extends clickgo.form.AbstractForm {
 
     public ntab = '';
 
+    public adata: any = {};
+
     public async openForm(name: string): Promise<void> {
         let frm: types.AbstractForm;
         switch (name) {
@@ -224,4 +226,9 @@ export default class extends clickgo.form.AbstractForm {
         }
         frm.show();
     }
+
+    public onMounted(data: Record<string, any>): void {
+        this.adata = data;
+    }
+
 }
