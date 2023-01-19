@@ -2,7 +2,8 @@
 
 # 3.1.10-beta
 
-[+] Add post of tool lib.
+[+] Add post of tool lib.  
+[\*] Update @litert/loader to 3.4.9.
 
 # 3.1.9-dev18
 
