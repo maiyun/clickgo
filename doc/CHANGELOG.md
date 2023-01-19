@@ -1,5 +1,11 @@
 # Changelog
 
+# 3.1.11-beta2
+
+[+] Add getHash method of core lib.  
+[+] Add name param of nav-item control.  
+[\*] Decode hash string on hashChanged event.
+
 # 3.1.10-beta
 
 [+] Add post of tool lib.  
