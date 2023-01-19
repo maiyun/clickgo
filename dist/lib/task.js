@@ -919,6 +919,9 @@ function run(url, opt = {}, ntid) {
                 request: function (url, opt) {
                     return tool.request(url, opt);
                 },
+                post: function (url, data, opt) {
+                    return tool.post(url, data, opt);
+                },
                 parseUrl: function (url) {
                     return tool.parseUrl(url);
                 },

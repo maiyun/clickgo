@@ -1022,6 +1022,12 @@ export async function run(url: string, opt: types.ITaskRunOptions = {}, ntid?: n
             request: function(url: string, opt: types.IRequestOptions): Promise<null | any> {
                 return tool.request(url, opt);
             },
+            post: function(url: string, data: Record<string, any> | FormData, opt?: {
+                'credentials'?: 'include' | 'same-origin' | 'omit';
+                'headers'?: HeadersInit;
+            }): Promise<Response | null> {
+                return tool.post(url, data, opt);
+            },
             parseUrl: function(url: string): ILoaderUrl {
                 return tool.parseUrl(url);
             },

@@ -735,6 +735,13 @@ export function request(url: string, opt: types.IRequestOptions): Promise<null |
     });
 }
 
+export function post(url: string, data: Record<string, any> | FormData, opt?: {
+    'credentials'?: 'include' | 'same-origin' | 'omit';
+    'headers'?: HeadersInit;
+}): Promise<Response | null> {
+    return loader.post(url, data, opt);
+}
+
 export function parseUrl(url: string): ILoaderUrl {
     return loader.parseUrl(url);
 }
