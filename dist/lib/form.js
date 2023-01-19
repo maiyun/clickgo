@@ -99,9 +99,6 @@ class AbstractCommon {
     get formId() {
         return 0;
     }
-    get formFocus() {
-        return this._formFocus;
-    }
     set formFocus(b) {
         notify({
             'title': 'Error',
@@ -192,6 +189,13 @@ class AbstractPanel extends AbstractCommon {
     get panelId() {
         return 0;
     }
+    get rootForm() {
+        return {};
+    }
+    get formFocus() {
+        var _a;
+        return (_a = this.rootForm.formFocus) !== null && _a !== void 0 ? _a : false;
+    }
     onShow() {
         return;
     }
@@ -222,6 +226,9 @@ class AbstractForm extends AbstractCommon {
         return !task.list[this.taskId].runtime.dialogFormIds.length ||
             task.list[this.taskId].runtime.dialogFormIds[task.list[this.taskId].runtime.dialogFormIds.length - 1]
                 === this.formId ? false : true;
+    }
+    get formFocus() {
+        return this._formFocus;
     }
     show() {
         const v = this;
@@ -1611,7 +1618,6 @@ function createPanel(cls, el, formId, taskId) {
             }
             idata[item[0]] = item[1];
         }
-        idata._formFocus = false;
         const prot = tool.getClassPrototype(panel);
         const methods = prot.method;
         const computed = prot.access;
@@ -1661,7 +1667,20 @@ function createPanel(cls, el, formId, taskId) {
             set: function () {
                 notify({
                     'title': 'Error',
-                    'content': `The software tries to modify the system variable "cgPrep".\nPath: ${this.filename}`,
+                    'content': `The software tries to modify the system variable "prep".\nPath: ${this.filename}`,
+                    'type': 'danger'
+                });
+                return;
+            }
+        };
+        computed.rootForm = {
+            get: function () {
+                return t.forms[formId].vroot;
+            },
+            set: function () {
+                notify({
+                    'title': 'Error',
+                    'content': `The software tries to modify the system variable "rootForm".\nPath: ${this.filename}`,
                     'type': 'danger'
                 });
                 return;
@@ -1920,7 +1939,7 @@ function create(cls, data, opt = {}, taskId) {
             set: function () {
                 notify({
                     'title': 'Error',
-                    'content': `The software tries to modify the system variable "cgPrep".\nPath: ${this.filename}`,
+                    'content': `The software tries to modify the system variable "prep".\nPath: ${this.filename}`,
                     'type': 'danger'
                 });
                 return;

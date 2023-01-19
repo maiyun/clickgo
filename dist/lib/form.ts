@@ -116,12 +116,6 @@ abstract class AbstractCommon {
         return 0;
     }
 
-    /** --- 当前窗体是否是焦点 --- */
-    public get formFocus(): boolean {
-        // --- _formFocus 在初始化时由系统设置 ---
-        return (this as any)._formFocus;
-    }
-
     public set formFocus(b: boolean) {
         notify({
             'title': 'Error',
@@ -282,6 +276,16 @@ export abstract class AbstractPanel extends AbstractCommon {
         return 0;
     }
 
+    /** --- 当前 panel 所在窗体的窗体对象，系统会在创建时重写本函数 --- */
+    public get rootForm(): AbstractForm & Record<string, any> {
+        return {} as any;
+    }
+
+    /** --- 当前窗体是否是焦点 --- */
+    public get formFocus(): boolean {
+        return this.rootForm.formFocus ?? false;
+    }
+
     public onShow(data: Record<string, any>): void | Promise<void>;
     public onShow(): void {
         return;
@@ -330,6 +334,12 @@ export abstract class AbstractForm extends AbstractCommon {
         return !task.list[this.taskId].runtime.dialogFormIds.length ||
         task.list[this.taskId].runtime.dialogFormIds[task.list[this.taskId].runtime.dialogFormIds.length - 1]
             === this.formId ? false : true;
+    }
+
+    /** --- 当前窗体是否是焦点 --- */
+    public get formFocus(): boolean {
+        // --- _formFocus 在初始化时由系统设置 ---
+        return (this as any)._formFocus;
     }
 
     /** --- 当前是不是初次显示 --- */
@@ -2115,7 +2125,6 @@ export async function createPanel<T extends AbstractPanel>(
         }
         idata[item[0]] = item[1];
     }
-    idata._formFocus = false;
     /** --- class 对象的方法和 getter/setter 列表 --- */
     const prot = tool.getClassPrototype(panel);
     const methods = prot.method;
@@ -2166,7 +2175,20 @@ export async function createPanel<T extends AbstractPanel>(
         set: function(this: types.IVue): void {
             notify({
                 'title': 'Error',
-                'content': `The software tries to modify the system variable "cgPrep".\nPath: ${this.filename}`,
+                'content': `The software tries to modify the system variable "prep".\nPath: ${this.filename}`,
+                'type': 'danger'
+            });
+            return;
+        }
+    };
+    computed.rootForm = {
+        get: function(): AbstractForm & Record<string, any> {
+            return t.forms[formId].vroot as any;
+        },
+        set: function(this: types.IVue): void {
+            notify({
+                'title': 'Error',
+                'content': `The software tries to modify the system variable "rootForm".\nPath: ${this.filename}`,
                 'type': 'danger'
             });
             return;
@@ -2478,7 +2500,7 @@ export async function create<T extends AbstractForm>(
         set: function(this: types.IVue): void {
             notify({
                 'title': 'Error',
-                'content': `The software tries to modify the system variable "cgPrep".\nPath: ${this.filename}`,
+                'content': `The software tries to modify the system variable "prep".\nPath: ${this.filename}`,
                 'type': 'danger'
             });
             return;

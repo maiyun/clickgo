@@ -32,6 +32,7 @@ class default_1 extends clickgo.form.AbstractForm {
     constructor() {
         super(...arguments);
         this.selected = ['none'];
+        this.parentData = 'yeah!';
     }
     go() {
         this.refs.panel.go(test1_1.default, {

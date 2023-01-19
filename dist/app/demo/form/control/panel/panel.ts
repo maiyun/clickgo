@@ -5,6 +5,8 @@ export default class extends clickgo.form.AbstractForm {
 
     public selected: string[] = ['none'];
 
+    public parentData = 'yeah!';
+
     public go(): void {
         this.refs.panel.go(test1, {
             'type': 'show'
