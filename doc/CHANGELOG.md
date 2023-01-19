@@ -1,5 +1,9 @@
 # Changelog
 
+# 3.1.10-beta
+
+[+] Add post of tool lib.
+
 # 3.1.9-dev18
 
 [+] Add data param of run method in task lib.
