@@ -1,5 +1,11 @@
 # Changelog
 
+# 3.1.12
+
+[+] Add rootForm param in AbstractPanel class.  
+[\*] Fix formFocus param in panel control.  
+[\*] Optimize content style in nav control.
+
 # 3.1.11-beta2
 
 [+] Add getHash method of core lib.  
