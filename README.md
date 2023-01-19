@@ -1,14 +1,23 @@
 # ClickGo
 
 <p align="center"><img src="dist/icon.png" width="68" height="68" alt="ClickGo"></p>
-
-[![npm version](https://img.shields.io/npm/v/clickgo.svg?colorB=brightgreen)](https://www.npmjs.com/package/clickgo "Stable Version")
-[![npm version](https://img.shields.io/npm/v/clickgo/dev.svg)](https://www.npmjs.com/package/clickgo "Development Version")
-[![npm version](https://img.shields.io/npm/v/clickgo/beta.svg)](https://www.npmjs.com/package/clickgo "Beta Version")
-[![License](https://img.shields.io/github/license/maiyun/clickgo.svg)](https://github.com/maiyun/clickgo/blob/master/LICENSE)
-[![GitHub issues](https://img.shields.io/github/issues/maiyun/clickgo.svg)](https://github.com/maiyun/clickgo/issues)
-[![GitHub Releases](https://img.shields.io/github/release/maiyun/clickgo.svg)](https://github.com/maiyun/clickgo/releases "Stable Release")
-[![GitHub Pre-Releases](https://img.shields.io/github/release/maiyun/clickgo/all.svg)](https://github.com/maiyun/clickgo/releases "Pre-Release")
+<p align="center">
+    <a href="https://github.com/maiyun/clickgo/blob/master/LICENSE">
+        <img alt="License" src="https://img.shields.io/github/license/maiyun/clickgo.svg?color=blue" />
+    </a>
+    <a href="https://www.npmjs.com/package/clickgo">
+        <img alt="NPM stable version" src="https://img.shields.io/npm/v/clickgo.svg?color=brightgreen&logo=npm" />
+        <img alt="NPM beta version" src="https://img.shields.io/npm/v/clickgo/beta.svg?color=yellowgreen&logo=npm" />
+        <img alt="NPM development version" src="https://img.shields.io/npm/v/clickgo/dev.svg?color=yellow&logo=npm" />
+    </a><br>
+    <a href="https://github.com/maiyun/clickgo/releases">
+        <img alt="GitHub releases" src="https://img.shields.io/github/release/maiyun/clickgo.svg?color=brightgreen&logo=github" />
+        <img alt="GitHub pre-releases" src="https://img.shields.io/github/release/maiyun/clickgo/all.svg?color=yellow&logo=github" />
+    </a>
+    <a href="https://github.com/maiyun/clickgo/issues">
+        <img alt="GitHub issues" src="https://img.shields.io/github/issues/maiyun/clickgo.svg?color=blue&logo=github" />
+    </a>
+</p>
 
 Quickly and easily create a beautiful console interface.
 
