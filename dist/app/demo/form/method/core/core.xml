@@ -8,5 +8,6 @@
             <text v-model="hash" style="flex: 1;" />
             <button @click="hashe" style="height: 30px; padding: 0 10px;">hash('{{hash}}')</button>
         </layout>
+        <button @click="getHash" style="height: 30px;">getHash()</button>
     </layout>
 </form>

@@ -236,7 +236,7 @@ function run(url, opt = {}, ntid) {
         const unblock = opt.unblock ? tool.clone(opt.unblock) : [];
         const unblockSys = [
             'require',
-            '__awaiter', 'eval', 'Math', 'Array', 'Blob', 'Error', 'Infinity', 'parseInt', 'parseFloat', 'Promise', 'Date', 'JSON', 'fetch', 'Number', 'Object'
+            '__awaiter', 'eval', 'Math', 'Array', 'Blob', 'Error', 'Infinity', 'parseInt', 'parseFloat', 'Promise', 'Date', 'JSON', 'fetch', 'Number', 'Object', 'encodeURIComponent', 'decodeURIComponent'
         ];
         for (const name of unblockSys) {
             if (unblock.includes(name)) {
@@ -412,6 +412,9 @@ function run(url, opt = {}, ntid) {
                 },
                 hash: function (hash) {
                     return core.hash(hash, taskId);
+                },
+                getHash: function () {
+                    return core.getHash();
                 }
             },
             'dom': {

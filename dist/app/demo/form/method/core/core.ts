@@ -23,4 +23,8 @@ export default class extends clickgo.form.AbstractForm {
         await clickgo.form.dialog('No permission.');
     }
 
+    public async getHash(): Promise<void> {
+        await clickgo.form.dialog('Hash is: ' + clickgo.core.getHash());
+    }
+
 }

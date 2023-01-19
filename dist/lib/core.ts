@@ -786,6 +786,13 @@ export function hash(hash: string, taskId?: number): boolean {
     return true;
 }
 
+/**
+ * --- 获取当前浏览器的 hash ---
+ */
+export function getHash(): string {
+    return window.location.hash ? decodeURIComponent(window.location.hash.slice(1)) : '';
+}
+
 window.addEventListener('hashchange', function() {
-    trigger('hashChanged', window.location.hash ? window.location.hash.slice(1) : '');
+    trigger('hashChanged', window.location.hash ? decodeURIComponent(window.location.hash.slice(1)) : '');
 });

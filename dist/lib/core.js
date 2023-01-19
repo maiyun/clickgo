@@ -32,7 +32,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.hash = exports.getAvailArea = exports.fetchApp = exports.readApp = exports.trigger = exports.getModule = exports.regModule = exports.boot = exports.getCdn = exports.AbstractApp = exports.config = void 0;
+exports.getHash = exports.hash = exports.getAvailArea = exports.fetchApp = exports.readApp = exports.trigger = exports.getModule = exports.regModule = exports.boot = exports.getCdn = exports.AbstractApp = exports.config = void 0;
 const clickgo = __importStar(require("../clickgo"));
 const fs = __importStar(require("./fs"));
 const form = __importStar(require("./form"));
@@ -680,6 +680,10 @@ function hash(hash, taskId) {
     return true;
 }
 exports.hash = hash;
+function getHash() {
+    return window.location.hash ? decodeURIComponent(window.location.hash.slice(1)) : '';
+}
+exports.getHash = getHash;
 window.addEventListener('hashchange', function () {
-    trigger('hashChanged', window.location.hash ? window.location.hash.slice(1) : '');
+    trigger('hashChanged', window.location.hash ? decodeURIComponent(window.location.hash.slice(1)) : '');
 });
