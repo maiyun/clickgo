@@ -35,9 +35,9 @@ class default_1 extends clickgo.control.AbstractControl {
         this.selected = '';
         this.layer = false;
     }
-    select(label) {
-        this.selected = label;
-        this.emit('update:modelValue', label);
+    select(name) {
+        this.selected = name;
+        this.emit('update:modelValue', name);
         if (this.showData) {
             this.showData = false;
             this.emit('update:show', this.showData);

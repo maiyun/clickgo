@@ -37,12 +37,12 @@ class default_1 extends clickgo.form.AbstractForm {
     constructor() {
         super(...arguments);
         this.layer = false;
-        this.label = '';
+        this.name = '';
         this.isShow = false;
         this.loading = false;
     }
     onMounted() {
-        this.watch('label', () => __awaiter(this, void 0, void 0, function* () {
+        this.watch('name', () => __awaiter(this, void 0, void 0, function* () {
             this.loading = true;
             yield clickgo.tool.sleep(300);
             this.loading = false;

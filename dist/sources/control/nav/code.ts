@@ -12,16 +12,16 @@ export default class extends clickgo.control.AbstractControl {
 
     public showData = false;
 
-    /** --- 当前选中的 label --- */
+    /** --- 当前选中的 name --- */
     public selected: string = '';
 
     /** --- 当前是否是层的模式 --- */
     public layer = false;
 
-    /** --- 选择一个 label，child 可能也会调用 --- */
-    public select(label: string): void {
-        this.selected = label;
-        this.emit('update:modelValue', label);
+    /** --- 选择一个 name，child 可能也会调用 --- */
+    public select(name: string): void {
+        this.selected = name;
+        this.emit('update:modelValue', name);
         if (this.showData) {
             this.showData = false;
             this.emit('update:show', this.showData);

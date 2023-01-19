@@ -4,9 +4,11 @@ export default class extends clickgo.control.AbstractControl {
 
     public props: {
         'label': string;
+        'name': string;
         'show': boolean | string;
     } = {
             'label': '',
+            'name': '',
             'show': false
         };
 
@@ -23,6 +25,11 @@ export default class extends clickgo.control.AbstractControl {
         return this.slotsAll('default').length ? true : false;
     }
 
+    /** --- name 应该值，name 为空则为 label 值 --- */
+    public get overName(): string {
+        return this.props.name === '' ? this.props.label : this.props.name;
+    }
+
     /** --- 当前选择的 label 字符串 --- */
     public get selected(): string {
         return this.nav.selected ?? '';
@@ -30,7 +37,7 @@ export default class extends clickgo.control.AbstractControl {
 
     /** --- 当前是否是选中状态 --- */
     public get isSelected(): boolean {
-        if (this.selected === this.props.label) {
+        if (this.selected === this.overName) {
             return true;
         }
         return false;
@@ -43,7 +50,7 @@ export default class extends clickgo.control.AbstractControl {
             if (this.isSelected) {
                 return;
             }
-            this.nav.select(this.props.label);
+            this.nav.select(this.overName);
             return;
         }
         this.showData = !this.showData;

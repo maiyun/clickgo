@@ -38,6 +38,7 @@ class default_1 extends clickgo.control.AbstractControl {
         super(...arguments);
         this.props = {
             'label': '',
+            'name': '',
             'show': false
         };
         this.showData = false;
@@ -47,12 +48,15 @@ class default_1 extends clickgo.control.AbstractControl {
     get hasChild() {
         return this.slotsAll('default').length ? true : false;
     }
+    get overName() {
+        return this.props.name === '' ? this.props.label : this.props.name;
+    }
     get selected() {
         var _a;
         return (_a = this.nav.selected) !== null && _a !== void 0 ? _a : '';
     }
     get isSelected() {
-        if (this.selected === this.props.label) {
+        if (this.selected === this.overName) {
             return true;
         }
         return false;
@@ -62,7 +66,7 @@ class default_1 extends clickgo.control.AbstractControl {
             if (this.isSelected) {
                 return;
             }
-            this.nav.select(this.props.label);
+            this.nav.select(this.overName);
             return;
         }
         this.showData = !this.showData;
