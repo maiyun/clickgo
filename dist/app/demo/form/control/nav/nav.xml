@@ -35,6 +35,9 @@
                 <nav-item label="有 name" name="hasname"></nav-item>
             </nav-item>
         </nav-item>
+        <nav-item label="Root1"></nav-item>
+        <nav-item label="Root2"></nav-item>
+        <nav-item label="Root3"></nav-item>
         <template v-slot:content>
             <layout direction="v" gutter="10" style="padding: 10px; flex: 1;">
                 <label>Change the size of the form to see the effect.</label>

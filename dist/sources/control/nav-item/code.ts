@@ -59,6 +59,9 @@ export default class extends clickgo.control.AbstractControl {
 
     public onMounted(): void | Promise<void> {
         this.watch('show', () => {
+            if (!this.hasChild) {
+                return;
+            }
             this.showData = this.propBoolean('show');
         }, {
             'immediate': true
@@ -90,10 +93,6 @@ export default class extends clickgo.control.AbstractControl {
         this.watch('isSelected', () => {
             if (!this.isSelected) {
                 return;
-            }
-            if (!this.showData) {
-                this.showData = true;
-                this.emit('update:show', this.showData);
             }
             let parent = this.parentByName('nav-item');
             while (parent) {
