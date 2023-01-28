@@ -96,19 +96,21 @@ function purify(text) {
                 'level': 9
             }
         });
+        let iconBuf;
         if (args[1]) {
             const icon = yield fs.promises.readFile(args[1]);
             if (icon) {
                 const length = icon.length.toString().padStart(7, '0');
-                buf = Buffer.concat([Buffer.from(length), icon, buf]);
+                iconBuf = Buffer.concat([Buffer.from(length), icon]);
             }
             else {
-                buf = Buffer.concat([Buffer.from('0000000'), buf]);
+                iconBuf = Buffer.from('0000000');
             }
         }
         else {
-            buf = Buffer.concat([Buffer.from('0000000'), buf]);
+            iconBuf = Buffer.from('0000000');
         }
+        buf = Buffer.concat([Buffer.from('-CGA-'), buf.subarray(0, 16), iconBuf, buf.subarray(16)]);
         yield fs.promises.writeFile(bpath + name + '.cga', buf);
     });
 })();

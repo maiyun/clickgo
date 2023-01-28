@@ -449,12 +449,19 @@ function trigger(name, taskId = 0, formId = 0, param1 = '', param2 = '') {
 exports.trigger = trigger;
 function readApp(blob) {
     return __awaiter(this, void 0, void 0, function* () {
-        const iconLength = parseInt(yield blob.slice(0, 7).text());
+        const head = yield tool.blob2Text(blob.slice(0, 5));
+        if (head !== '-CGA-') {
+            return false;
+        }
+        const iconLength = parseInt(yield blob.slice(21, 28).text());
         if (Number.isNaN(iconLength)) {
             return false;
         }
-        const icon = iconLength ? yield tool.blob2DataUrl(blob.slice(7, 7 + iconLength)) : '';
-        const z = yield zip.get(blob.slice(7 + iconLength));
+        const icon = iconLength ? yield tool.blob2DataUrl(blob.slice(28, 28 + iconLength)) : '';
+        const nb = new Blob([blob.slice(5, 21), blob.slice(28 + iconLength)], {
+            'type': blob.type
+        });
+        const z = yield zip.get(nb);
         if (!z) {
             return false;
         }

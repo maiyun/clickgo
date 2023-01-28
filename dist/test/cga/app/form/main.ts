@@ -8,4 +8,8 @@ export default class extends clickgo.form.AbstractForm {
         this.data = 'OK';
     }
 
+    public async click(): Promise<void> {
+        await clickgo.form.dialog('OK');
+    }
+
 }

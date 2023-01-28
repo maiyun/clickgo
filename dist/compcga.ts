@@ -75,18 +75,20 @@ function purify(text: string): string {
             'level': 9
         }
     });
+    let iconBuf: Buffer;
     if (args[1]) {
         const icon = await fs.promises.readFile(args[1]);
         if (icon) {
             const length = icon.length.toString().padStart(7, '0');
-            buf = Buffer.concat([Buffer.from(length), icon, buf]);
+            iconBuf = Buffer.concat([Buffer.from(length), icon]);
         }
         else {
-            buf = Buffer.concat([Buffer.from('0000000'), buf]);
+            iconBuf = Buffer.from('0000000');
         }
     }
     else {
-        buf = Buffer.concat([Buffer.from('0000000'), buf]);
+        iconBuf = Buffer.from('0000000');
     }
+    buf = Buffer.concat([Buffer.from('-CGA-'), buf.subarray(0, 16), iconBuf, buf.subarray(16)]);
     await fs.promises.writeFile(bpath + name + '.cga', buf);
 })() as any;
