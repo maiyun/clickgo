@@ -1,5 +1,9 @@
 # Changelog
 
+# 3.1.13
+
+[\*] Fix nav control.
+
 # 3.1.12
 
 [+] Add rootForm param in AbstractPanel class.  
