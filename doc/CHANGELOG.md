@@ -1,5 +1,9 @@
 # Changelog
 
+# 3.1.14
+
+[+] Newly updated standalone CGA application file mode.
+
 # 3.1.13
 
 [\*] Fix nav control.
