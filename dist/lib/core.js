@@ -450,7 +450,10 @@ exports.trigger = trigger;
 function readApp(blob) {
     return __awaiter(this, void 0, void 0, function* () {
         const iconLength = parseInt(yield blob.slice(0, 7).text());
-        const icon = yield tool.blob2DataUrl(blob.slice(7, 7 + iconLength));
+        if (Number.isNaN(iconLength)) {
+            return false;
+        }
+        const icon = iconLength ? yield tool.blob2DataUrl(blob.slice(7, 7 + iconLength)) : '';
         const z = yield zip.get(blob.slice(7 + iconLength));
         if (!z) {
             return false;
@@ -501,6 +504,17 @@ function fetchApp(url, opt = {}, taskId) {
             if (!cga.endsWith('.cga')) {
                 return null;
             }
+        }
+        if (!taskId &&
+            !url.startsWith('/clickgo/') &&
+            !url.startsWith('/storage/') &&
+            !url.startsWith('/mounted/') &&
+            !url.startsWith('/package/') &&
+            !url.startsWith('/current/') &&
+            !url.startsWith('http:') &&
+            !url.startsWith('https:') &&
+            !url.startsWith('file:')) {
+            url = tool.urlResolve(location.href, url);
         }
         if (cga) {
             try {

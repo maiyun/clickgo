@@ -421,6 +421,8 @@ export interface ITaskRunOptions {
     'icon'?: string;
     /** --- 加载进度回调 --- */
     'progress'?: (loaded: number, total: number) => void | Promise<void>;
+    /** --- 初始化进度回调 --- */
+    'initProgress'?: (state: string) => void | Promise<void>;
     /** --- 显示 notify 窗口 --- */
     'notify'?: boolean;
     /** --- 不禁止某些浏览器对象，App 模式下仅能设置基任务中已经 unblock 的值 --- */
@@ -429,6 +431,8 @@ export interface ITaskRunOptions {
     'permissions'?: string[];
     /** --- 给 task 传值 --- */
     'data'?: Record<string, any>;
+    /** --- 执行文件的基路径，一般在传入 APP 包时使用，以 .cga 结尾或不以 / 结尾的路径 --- */
+    'path'?: string;
 }
 
 export interface ICreateTimerOptions {

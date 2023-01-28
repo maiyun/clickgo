@@ -1,0 +1,11 @@
+{
+    "name": "Clickgo Demo",
+    "ver": 1,
+    "version": "0.1",
+    "author": "clickgo",
+
+    "controls": [
+        "/clickgo/control/common",
+        "/clickgo/control/form"
+    ]
+}

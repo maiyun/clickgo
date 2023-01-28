@@ -1,6 +1,7 @@
 import * as fs from 'fs';
 // import * as crypto from 'crypto';
 import zip from 'jszip';
+import * as terser from 'terser';
 
 // --- sass --watch dist/:dist/ --style compressed --no-source-map ---
 // --- git config core.ignorecase false ---
@@ -29,7 +30,7 @@ async function addFile(zipo: zip, base: string = '', path: string = ''): Promise
         try {
             const stat = await fs.promises.lstat(base + '/' + item);
             if (stat.isDirectory()) {
-                await addFile(zipo, base + '/' + item, path + '/' + item);
+                await addFile(zipo, base + '/' + item, path + (path ? '/' : '') + item);
                 continue;
             }
             if (item.endsWith('.ts') || item.endsWith('.scss')) {
@@ -39,6 +40,11 @@ async function addFile(zipo: zip, base: string = '', path: string = ''): Promise
             if (item.endsWith('.html')) {
                 // --- 为了去除 html 中的空白和注释 ---
                 zipo.file(path + (path ? '/' : '') + item, purify(buf.toString()));
+            }
+            else if (item.endsWith('.js')) {
+                // --- 压缩 js ---
+                const rtn = await terser.minify(buf.toString());
+                zipo.file(path + (path ? '/' : '') + item, rtn.code ?? '');
             }
             else {
                 zipo.file(path + (path ? '/' : '') + item, buf);
@@ -107,10 +113,10 @@ async function run(): Promise<void> {
         }
 
         const buf = await zipo.generateAsync({
-            type: 'nodebuffer',
-            compression: 'DEFLATE',
-            compressionOptions: {
-                level: 9
+            'type': 'nodebuffer',
+            'compression': 'DEFLATE',
+            'compressionOptions': {
+                'level': 9
             }
         });
         // const sha256 = Buffer.from(crypto.createHash('sha256').update(buf).digest('hex'));

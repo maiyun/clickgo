@@ -11,6 +11,6 @@ tsconfig.json
 /dist/sources/
 /dist/test/
 /dist/build*
-/dist/compiler*
+/dist/comp*
 /dist/global.scss
 /types/dev.d.ts

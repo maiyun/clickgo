@@ -37,6 +37,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const fs = __importStar(require("fs"));
 const jszip_1 = __importDefault(require("jszip"));
+const terser = __importStar(require("terser"));
 function purify(text) {
     text = '>' + text + '<';
     text = text.replace(/<!--([\s\S]*?)-->/g, '').replace(/>([\s\S]*?)</g, function (t, t1) {
@@ -45,13 +46,14 @@ function purify(text) {
     return text.slice(1, -1);
 }
 function addFile(zipo, base = '', path = '') {
+    var _a;
     return __awaiter(this, void 0, void 0, function* () {
         const list = yield fs.promises.readdir(base);
         for (const item of list) {
             try {
                 const stat = yield fs.promises.lstat(base + '/' + item);
                 if (stat.isDirectory()) {
-                    yield addFile(zipo, base + '/' + item, path + '/' + item);
+                    yield addFile(zipo, base + '/' + item, path + (path ? '/' : '') + item);
                     continue;
                 }
                 if (item.endsWith('.ts') || item.endsWith('.scss')) {
@@ -61,11 +63,15 @@ function addFile(zipo, base = '', path = '') {
                 if (item.endsWith('.html')) {
                     zipo.file(path + (path ? '/' : '') + item, purify(buf.toString()));
                 }
+                else if (item.endsWith('.js')) {
+                    const rtn = yield terser.minify(buf.toString());
+                    zipo.file(path + (path ? '/' : '') + item, (_a = rtn.code) !== null && _a !== void 0 ? _a : '');
+                }
                 else {
                     zipo.file(path + (path ? '/' : '') + item, buf);
                 }
             }
-            catch (_a) {
+            catch (_b) {
                 continue;
             }
         }
@@ -125,10 +131,10 @@ function run() {
                 yield addFile(zipo, base + 'nav-title', 'nav-title');
             }
             const buf = yield zipo.generateAsync({
-                type: 'nodebuffer',
-                compression: 'DEFLATE',
-                compressionOptions: {
-                    level: 9
+                'type': 'nodebuffer',
+                'compression': 'DEFLATE',
+                'compressionOptions': {
+                    'level': 9
                 }
             });
             yield fs.promises.writeFile('dist/control/' + name + '.cgc', buf);

@@ -1,0 +1,5 @@
+<form width="400" height="400" title="Demo">
+    <layout align-v="center" align-h="center" style="flex: 1;">
+        <button style="padding: 30px 40px;">{{data}}</button>
+    </layout>
+</form>

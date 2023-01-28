@@ -227,50 +227,59 @@ export function getList(): Record<string, types.ITaskInfo> {
 
 /**
  * --- 运行一个应用，cga 直接文件全部正常加载，url 则静态文件需要去 config 里加载 ---
- * @param url app 路径（以 / 为结尾的路径或以 .cga 结尾的文件）
+ * @param url app 路径（以 / 为结尾的路径或以 .cga 结尾的文件），或 APP 包对象
  * @param opt 选项
  * @param ntid App 模式下无效
  */
-export async function run(url: string, opt: types.ITaskRunOptions = {}, ntid?: number): Promise<number> {
-    // --- 检测 url 是否合法 ---
-    if (!url.endsWith('/') && !url.endsWith('.cga')) {
-        return 0;
+export async function run(url: string | types.IApp, opt: types.ITaskRunOptions = {}, ntid?: number): Promise<number> {
+    let app: types.IApp | null = null;
+    if (typeof url === 'string') {
+        // --- 检测 url 是否合法 ---
+        if (!url.endsWith('/') && !url.endsWith('.cga')) {
+            return 0;
+        }
+        /** --- 要显示的应用图标 --- */
+        let icon = __dirname + '/../icon.png';
+        if (opt.icon) {
+            icon = opt.icon;
+        }
+        if (opt.notify === undefined) {
+            opt.notify = true;
+        }
+        const notifyId: number | undefined = opt.notify ? form.notify({
+            'title': localeData[core.config.locale]?.loading ?? localeData['en'].loading,
+            'content': url,
+            'icon': icon,
+            'timeout': 0,
+            'progress': true
+        }) : undefined;
+        // --- 非 ntid 模式下 current 以 location 为准 ---
+        if (!ntid &&
+            !url.startsWith('/clickgo/') &&
+            !url.startsWith('/storage/') &&
+            !url.startsWith('/mounted/') &&
+            !url.startsWith('/package/') &&
+            !url.startsWith('/current/')
+        ) {
+            url = tool.urlResolve(location.href, url);
+        }
+        // --- 获取并加载 app 对象 ---
+        app = await core.fetchApp(url, {
+            'notifyId': notifyId,
+            'progress': opt.progress
+        }, ntid);
+        // --- 无论是否成功，都可以先隐藏 notify 了 ---
+        if (notifyId) {
+            setTimeout(function(): void {
+                form.hideNotify(notifyId);
+            }, 2000);
+        }
     }
-    /** --- 要显示的应用图标 --- */
-    let icon = __dirname + '/../icon.png';
-    if (opt.icon) {
-        icon = opt.icon;
+    else if (url.type !== 'app') {
+        return -1;
     }
-    if (opt.notify === undefined) {
-        opt.notify = true;
-    }
-    const notifyId: number | undefined = opt.notify ? form.notify({
-        'title': localeData[core.config.locale]?.loading ?? localeData['en'].loading,
-        'content': url,
-        'icon': icon,
-        'timeout': 0,
-        'progress': true
-    }) : undefined;
-    // --- 非 ntid 模式下 current 以 location 为准 ---
-    if (!ntid &&
-        !url.startsWith('/clickgo/') &&
-        !url.startsWith('/storage/') &&
-        !url.startsWith('/mounted/') &&
-        !url.startsWith('/package/') &&
-        !url.startsWith('/current/')
-    ) {
-        url = tool.urlResolve(location.href, url);
-    }
-    // --- 获取并加载 app 对象 ---
-    const app = await core.fetchApp(url, {
-        'notifyId': notifyId,
-        'progress': opt.progress
-    }, ntid);
-    // --- 无论是否成功，都可以先隐藏 notify 了 ---
-    if (notifyId) {
-        setTimeout(function(): void {
-            form.hideNotify(notifyId);
-        }, 2000);
+    else {
+        app = url;
     }
     if (!app) {
         return -1;
@@ -1076,7 +1085,7 @@ export async function run(url: string, opt: types.ITaskRunOptions = {}, ntid?: n
     };
     app.files['/invoke/clickgo.js'] = `module.exports = invokeClickgo;`;
     /** --- .cga 文件，或者不含 / 结尾的路径 --- */
-    const path = url;
+    const path = opt.path ?? ((typeof url === 'string') ? url : '/runtime/' + tool.random(8, tool.RANDOM_LUN) + '.cga');
     const lio = path.endsWith('.cga') ? path.lastIndexOf('/') : path.slice(0, -1).lastIndexOf('/');
     const current = path.slice(0, lio);
     // --- 创建任务对象 ---
@@ -1108,6 +1117,7 @@ export async function run(url: string, opt: types.ITaskRunOptions = {}, ntid?: n
             if (!path.endsWith('.json')) {
                 path += '.json';
             }
+            await opt.initProgress?.('Load local ' + path + ' ...');
             const lcontent = await fs.getContent(path, {
                 'encoding': 'utf8'
             }, taskId);
@@ -1150,6 +1160,7 @@ export async function run(url: string, opt: types.ITaskRunOptions = {}, ntid?: n
     // --- 创建 Task 总 style ---
     dom.createToStyleList(taskId);
     // --- 加载 control ---
+    await opt.initProgress?.('Control initialization ...');
     const r = await control.init(taskId, invoke);
     if (r < 0) {
         dom.removeFromStyleList(taskId);
@@ -1161,6 +1172,7 @@ export async function run(url: string, opt: types.ITaskRunOptions = {}, ntid?: n
         for (let path of app.config.themes) {
             path += '.cgt';
             path = tool.urlResolve('/', path);
+            await opt.initProgress?.('Load theme ' + path + ' ...');
             const file = await fs.getContent(path, undefined, taskId);
             if (file && typeof file !== 'string') {
                 const th = await theme.read(file);
@@ -1173,6 +1185,7 @@ export async function run(url: string, opt: types.ITaskRunOptions = {}, ntid?: n
     else {
         // --- 加载全局主题 ---
         if (theme.global) {
+            await opt.initProgress?.('Load global theme ...');
             await theme.load(undefined, taskId);
         }
     }
@@ -1183,6 +1196,7 @@ export async function run(url: string, opt: types.ITaskRunOptions = {}, ntid?: n
         }, taskId);
         if (style) {
             const r = tool.stylePrepend(style, 'cg-task' + taskId.toString() + '_');
+            await opt.initProgress?.('Style initialization ...');
             dom.pushStyle(taskId, await tool.styleUrl2DataUrl(app.config.style, r.style, app.files));
         }
     }
@@ -1190,11 +1204,13 @@ export async function run(url: string, opt: types.ITaskRunOptions = {}, ntid?: n
     core.trigger('taskStarted', taskId);
     // --- 请求权限 ---
     if (app.config.permissions) {
+        await opt.initProgress?.('Style initialization ...');
         await checkPermission(app.config.permissions, true, undefined, taskId);
     }
     // --- 执行 app ---
     const appCls: core.AbstractApp = new expo.default();
     list[taskId].class = appCls;
+    await opt.initProgress?.('Starting ...');
     await appCls.main(opt.data ?? {});
     return taskId;
 }

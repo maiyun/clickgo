@@ -534,7 +534,10 @@ export function trigger(name: types.TGlobalEvent, taskId: number | string | bool
  */
 export async function readApp(blob: Blob): Promise<false | types.IApp> {
     const iconLength = parseInt(await blob.slice(0, 7).text());
-    const icon = await tool.blob2DataUrl(blob.slice(7, 7 + iconLength));
+    if (Number.isNaN(iconLength)) {
+        return false;
+    }
+    const icon = iconLength ? await tool.blob2DataUrl(blob.slice(7, 7 + iconLength)) : '';
     const z = await zip.get(blob.slice(7 + iconLength));
     if (!z) {
         return false;
@@ -597,6 +600,19 @@ export async function fetchApp(
         if (!cga.endsWith('.cga')) {
             return null;
         }
+    }
+    // --- 非 taskId 模式下 current 以 location 为准 ---
+    if (!taskId &&
+        !url.startsWith('/clickgo/') &&
+        !url.startsWith('/storage/') &&
+        !url.startsWith('/mounted/') &&
+        !url.startsWith('/package/') &&
+        !url.startsWith('/current/') &&
+        !url.startsWith('http:') &&
+        !url.startsWith('https:') &&
+        !url.startsWith('file:')
+    ) {
+        url = tool.urlResolve(location.href, url);
     }
     // --- 如果是 cga 文件，直接读取并交给 readApp 函数处理 ---
     if (cga) {

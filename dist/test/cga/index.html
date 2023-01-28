@@ -1,0 +1,39 @@
+<html>
+<head>
+<title>This is cga file test</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no">
+<script src="https://cdn.jsdelivr.net/npm/@litert/loader@3.4.9/dist/loader.min.js?path=index"></script>
+<style>
+#state ::selection {
+    background: rgba(255, 255, 255, .3);
+}
+
+.title {
+    border: dotted 1px transparent;
+}
+.selected .title {
+    background: hsl(225, 85%, 25%); border-color: #FFF;
+}
+.selected #mask {
+    background: hsla(225, 85%, 25%, .7);
+}
+</style>
+</head>
+<body>
+<div style="position: fixed; left: 0; top: 0; width: 100%; height: 100%; background: #FFF; display: flex; flex-direction: column; padding: 20px; font-size: 14px; box-sizing: border-box; color: #FFF;">
+    <div style="background: hsl(210, 50%, 50%); user-select: none; display: flex; justify-content: center; align-items: center; height: 150px;">
+        <div id="iconwrap" style="display: none; flex-direction: column; align-items: center;">
+            <div id="icon" style="width: 32px; height: 32px; background-size: 32px; position: relative;">
+                <div id="mask" style="width: 32px; height: 32px; -webkit-mask-size: 32px; mask-size: 32px; position: absolute; left: 0; top: 0;"></div>
+            </div>
+            <div class="title" style="text-align: center; margin-top: 5px; padding: 3px; line-height: 1; font-size: 12px;">app.cga</div>
+        </div>
+    </div>
+    <input id="download" type="button" style="margin-top: 20px; padding: 10px;" value="Download 'app.cga'" />
+    <div id="fl" style="display: none; margin-top: 20px; color: #000;">
+        <a id="fl" href="https://www.flaticon.com/free-icons/shapes" title="shapes icons" target="_blank">Shapes icons created by Freepik - Flaticon</a>, double click the icon above to run task.
+    </div>
+    <div id="state" style="margin-top: 20px; background: #000; line-height: 2; padding: 20px; flex: 1; box-sizing: border-box; height: 0; overflow: auto;"></div>
+</div>
+</body>
+</html>
