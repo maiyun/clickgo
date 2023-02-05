@@ -1,5 +1,9 @@
 # Changelog
 
+# 3.1.15-dev
+
+[+] Add desc control.
+
 # 3.1.14
 
 [+] Newly updated standalone CGA application file mode.
