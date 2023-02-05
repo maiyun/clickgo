@@ -81,8 +81,8 @@
 }
 
 .pop {
-    width: 800px;
+    width: 800px; display: flex; max-height: 300px;
     > * {
-        max-height: 300px;
+        flex: 1;
     }
 }
