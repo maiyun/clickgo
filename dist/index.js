@@ -95,7 +95,7 @@ function launcher(boot) {
         var _a;
         return __awaiter(this, void 0, void 0, function* () {
             const paths = [
-                loader.cdn + '/npm/vue@3.2.41/dist/vue.global.prod.min.js'
+                loader.cdn + '/npm/vue@3.2.47/dist/vue.global.prod.min.js'
             ];
             let ro = true;
             if (!(window.ResizeObserver)) {
