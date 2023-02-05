@@ -11,7 +11,8 @@
         "/clickgo/control/monaco",
         "/clickgo/control/property",
         "/clickgo/control/table",
-        "/clickgo/control/nav"
+        "/clickgo/control/nav",
+        "/clickgo/control/desc"
     ],
     "style": "/package/global",
 
@@ -25,6 +26,8 @@
         "/form/control/button/button.xml",
         "/form/control/check/check.js",
         "/form/control/check/check.xml",
+        "/form/control/desc/desc.js",
+        "/form/control/desc/desc.xml",
         "/form/control/dialog/dialog.js",
         "/form/control/dialog/dialog.xml",
         "/form/control/file/file.js",

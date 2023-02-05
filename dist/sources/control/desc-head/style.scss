@@ -1,0 +1,6 @@
+.wrap {
+    padding: 10px; background: var(--);
+    &.border {
+        border: solid .5px var(--g-plain-border-color);
+    }
+}

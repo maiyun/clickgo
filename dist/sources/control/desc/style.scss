@@ -1,0 +1,8 @@
+.wrap {
+    &.border {
+        border: solid .5px var(--g-plain-border-color); background: var(--face);
+    }
+    &.collapse {
+        border-collapse: collapse;
+    }
+}

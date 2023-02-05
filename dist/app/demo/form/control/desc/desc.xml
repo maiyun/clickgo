@@ -1,0 +1,26 @@
+<form title="Desc" width="300" height="300" padding="10">
+    <layout gutter="10" direction="v" style="flex: 1;">
+        <desc :border="border" :collapse="collapse">
+            <desc-row>
+                <desc-head>HEAD1</desc-head>
+                <desc-head>HEAD2</desc-head>
+                <desc-head>HEAD3</desc-head>
+                <desc-head>HEAD4</desc-head>
+            </desc-row>
+            <desc-row>
+                <desc-head>HEAD5</desc-head>
+                <desc-cell>CELL1</desc-cell>
+                <desc-head>HEAD6</desc-head>
+                <desc-cell>CELL2</desc-cell>
+            </desc-row>
+            <desc-row>
+                <desc-head>HEAD7</desc-head>
+                <desc-cell colspan="3">CELL1</desc-cell>
+            </desc-row>
+        </desc>
+        <layout gutter="10">
+            <button @click="border = !border" style="flex: 1; padding: 10px 0;">border: {{border ? 'true' : 'false'}}</button>
+            <button @click="collapse = !collapse" style="flex: 1; padding: 10px 0;">collapse: {{collapse ? 'true' : 'false'}}</button>
+        </layout>
+    </layout>
+</form>

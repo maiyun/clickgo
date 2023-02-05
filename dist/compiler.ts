@@ -62,7 +62,7 @@ async function run(): Promise<void> {
         'withFileTypes': true
     });
     for (const item of list) {
-        if (['check', 'dialog', 'file', 'greatlist', 'greatselect', 'vflow', 'img', 'label', 'layout', 'list', 'loading', 'marquee', 'menu', 'menu-item', 'menulist', 'menulist-item', 'menulist-split', 'flow', 'radio', 'scroll', 'select', 'tab', 'text', 'task-item', 'table-item', 'nav-item', 'nav-title', 'panel'].includes(item.name)) {
+        if (['check', 'dialog', 'file', 'greatlist', 'greatselect', 'vflow', 'img', 'label', 'layout', 'list', 'loading', 'marquee', 'menu', 'menu-item', 'menulist', 'menulist-item', 'menulist-split', 'flow', 'radio', 'scroll', 'select', 'tab', 'text', 'task-item', 'table-item', 'nav-item', 'nav-title', 'panel', 'desc-cell', 'desc-head', 'desc-row'].includes(item.name)) {
             continue;
         }
         if (item.name.startsWith('.')) {
@@ -110,6 +110,11 @@ async function run(): Promise<void> {
         else if (item.name === 'nav') {
             await addFile(zipo, base + 'nav-item', 'nav-item');
             await addFile(zipo, base + 'nav-title', 'nav-title');
+        }
+        else if (item.name === 'desc') {
+            await addFile(zipo, base + 'desc-cell', 'desc-cell');
+            await addFile(zipo, base + 'desc-head', 'desc-head');
+            await addFile(zipo, base + 'desc-row', 'desc-row');
         }
 
         const buf = await zipo.generateAsync({

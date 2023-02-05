@@ -2,6 +2,7 @@
 node_modules/
 .eslintrc
 .gitignore
+.npmrc
 .npmignore
 tsconfig.json
 .DS_Store
