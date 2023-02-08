@@ -81,7 +81,7 @@
 }
 
 .pop {
-    width: 800px; display: flex; max-height: 300px;
+    width: 800px; display: flex; max-height: 300px; color: var(--g-color);
     > * {
         flex: 1;
     }

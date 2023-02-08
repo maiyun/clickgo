@@ -200,7 +200,7 @@ export function launcher(boot: AbstractBoot): void {
         })[0] as typeof import('../dist/clickgo');
         // --- 加载 clickgo 的 global css ---
         try {
-            const style = await (await fetch(__dirname + '/global.css')).text();
+            const style = await (await fetch(__dirname + '/global.css' + (__dirname.startsWith(loader.cdn) ? '' : '?' + Math.random().toString()))).text();
             document.getElementById('cg-global')?.insertAdjacentHTML('afterbegin', style);
         }
         catch {

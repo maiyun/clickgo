@@ -1,0 +1,12 @@
+{
+    "name": "byterun",
+    "ver": 1,
+    "version": "0.1",
+    "author": "byterun",
+
+    "style": "/style",
+
+    "files": [
+        "/style.css"
+    ]
+}

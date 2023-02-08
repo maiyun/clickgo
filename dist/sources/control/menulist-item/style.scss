@@ -1,5 +1,5 @@
 .wrap {
-    padding: 6px 35px 6px 10px;
+    padding: 7px 35px 7px 10px;
     &:not([data-cg-disabled]) {
         &:hover {
             background: var(--g-background-active);
@@ -23,7 +23,7 @@
     }
 
     .check {
-        background-image: url(res/check.svg); background-color: var(--g-background-active); background-size: 12px 12px; background-position: center center; background-repeat: no-repeat; width: 24px; height: 24px; visibility: hidden;
+        background-color: var(--g-background-active); width: 24px; height: 24px; visibility: hidden; display: flex; justify-content: center; align-items: center; fill: var(--g-color);
     }
     .radio {
         background-color: var(--g-background-active); display: flex; align-items: center; justify-content: center; width: 24px; height: 24px; visibility: hidden;
@@ -42,4 +42,8 @@
             content: ''; border: solid 1px var(--g-color); border-width: 1px 1px 0 0; width: 6px; height: 6px; transform: rotate(45deg); margin-left: -3px;
         }
     }
+}
+
+.pop {
+    color: var(--g-color);
 }

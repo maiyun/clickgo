@@ -1,1 +1,1 @@
-.wrap{padding:15px;min-width:200px;max-width:400px;word-break:break-all}.wrap .content{background:#fff}.wrap .controls{padding:10px 10px 10px 70px;border-top:solid .5px var(--g-border-color)}.wrap .controls cg-button{height:30px;width:80px}
+.wrap{padding:15px;min-width:200px;max-width:400px;word-break:break-all}.wrap .content{background:var(--g-plain-background)}.wrap .controls{padding:10px 10px 10px 70px;border-top:solid .5px var(--g-border-color)}.wrap .controls cg-button{height:30px;width:80px}

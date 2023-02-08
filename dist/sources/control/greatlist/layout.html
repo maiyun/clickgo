@@ -20,12 +20,12 @@
     </div>
     <!-- 浮动层 -->
     <teleport v-if="slots['pop']" to="system">
-        <div ref="pop">
+        <div ref="pop" class="pop">
             <slot name="pop"></slot>
         </div>
     </teleport>
     <teleport v-if="slots['itempop']" to="system">
-        <div ref="itempop">
+        <div ref="itempop" class="pop">
             <slot name="itempop"></slot>
         </div>
     </teleport>

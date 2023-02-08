@@ -102,8 +102,8 @@ function load(theme, taskId) {
         }
         style = tool.stylePrepend(style, `cg-theme-task${taskId}-`).style;
         style = yield tool.styleUrl2DataUrl(theme.config.style, style, theme.files);
-        style = style.replace(/\[CGTMP-GLOBAL\] +::selection/g, `#cg-form-list > [data-task-id="${taskId}"] ::selection, #cg-pop-list > [class^="cg-theme-task${taskId}-"] ::selection`);
-        style = style.replace(/\[CGTMP-GLOBAL\]/g, `#cg-form-list > [data-task-id="${taskId}"], #cg-pop-list > [class^="cg-theme-task${taskId}-"]`);
+        style = style.replace(/\[CGTMP-GLOBAL\] +::selection/g, `#cg-form-list > [data-task-id="${taskId}"] ::selection, #cg-pop-list > [data-task-id="${taskId}"] ::selection`);
+        style = style.replace(/\[CGTMP-GLOBAL\]/g, `#cg-form-list > [data-task-id="${taskId}"], #cg-pop-list > [data-task-id="${taskId}"]`);
         if (!t.customTheme) {
             if (!isGlobal) {
                 t.customTheme = true;

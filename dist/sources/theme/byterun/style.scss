@@ -1,0 +1,661 @@
+global {
+
+    // --- 基础颜色 ---
+
+    --success:hsl(150, 100%, 30%);
+    --success-hover:hsl(150, 100%, 35%);
+    --success-active:hsl(150, 100%, 20%);
+    --success-focus:hsl(150, 100%, 25%);
+    --success-disabled:hsl(150, 0%, 30%);
+
+    --info:hsl(210, 100%, 40%);
+    --info-hover:hsl(210, 100%, 50%);
+    --info-active:hsl(210, 100%, 30%);
+    --info-focus:hsl(210, 100%, 35%);
+    --info-disabled:hsl(210, 0%, 40%);
+
+    --warning:hsl(20, 100%, 60%);
+    --warning-hover:hsl(20, 100%, 70%);
+    --warning-active:hsl(20, 100%, 50%);
+    --warning-focus:hsl(20, 100%, 55%);
+    --warning-disabled:hsl(20, 0%, 60%);
+
+    --danger:hsl(350, 100%, 40%);
+    --danger-hover:hsl(350, 100%, 60%);
+    --danger-active:hsl(350, 100%, 30%);
+    --danger-focus:hsl(350, 100%, 35%);
+    --danger-disabled:hsl(350, 0%, 40%);
+    --face:hsl(220, 20%, 15%);
+    --pop-background:hsla(220, 20%, 15%, .4);
+
+    // --- 组件默认颜色（如按钮） ---
+
+    --g-color:rgba(255,255,255,.7);
+    --g-color-hover:rgba(255,255,255,.8);
+    --g-color-active:rgba(255,255,255,.6);
+    --g-color-focus:rgba(255,255,255,.65);
+    --g-color-disabled:rgba(255,255,255,.5);
+
+    --g-background:rgba(255,255,255,.05);
+    --g-background-hover:hsla(240,70%,60%,.3);
+    --g-background-active:hsla(170,55%,50%,.3);
+    --g-background-opacity:hsla(240,70%,60%,.1);
+    --g-background-focus:hsla(240,70%,60%,.3);
+    --g-background-disabled:rgba(255,255,255,.1);
+
+    --g-border-color:rgba(255,255,255,.2);
+    --g-border-color-hover:hsl(240,70%,60%);
+    --g-border-color-active:hsl(170,55%,50%);
+    --g-border-color-focus:hsl(240,70%,60%);
+    
+    // --- 组件轻量颜色（如文本框） ---
+
+    --g-plain-color:var(--g-color);
+    --g-plain-color-hover:hsl(240,70%,60%);
+    --g-plain-color-active:hsl(170,55%,50%);
+    --g-plain-color-focus:hsl(240,70%,60%);
+
+    --g-plain-background:transparent;
+    --g-plain-background-hover:transparent;
+    --g-plain-background-active:transparent;
+    --g-plain-background-focus:transparent;
+    --g-plain-background-disabled:rgba(255,255,255,.1);
+
+    --g-plain-border-color:rgba(255,255,255,.05);
+    --g-plain-border-color-hover:hsl(240,70%,60%);
+    --g-plain-border-color-active:hsl(170,55%,50%);
+    --g-plain-border-color-focus:hsl(240,70%,60%);
+    --g-plain-border-color-disabled:hsl(240,0%,60%);
+
+    ::selection {
+        background-color: hsl(255, 255, 255, .1);
+    }
+}
+
+// -- CONTROL -- button --
+
+.button_wrap {
+    border-radius: 5px; transition: all .1s ease-out; transition-property: color, background;
+
+    &::before {                                 // --- 外边框 ---
+        border-radius: 5px; transition: all .1s ease-out;
+    }
+    &::after, .button_inner::after, .button_arrow::after {    // --- 焦点框 ---
+        border-radius: 3px; transition: all .1s ease-out;
+    }
+    &.button_area-split {
+        .button_inner::before {
+            transition: all .1s ease-out;
+        }
+    }
+    &:not([data-cg-disabled]) {
+        &:focus, &.button_childfocus {                 // --- 焦点状态 ---
+            &::before {                         // --- 外边框 ---
+                border-width: 2px;
+            }
+            &.button_area-split {
+                .button_inner::before {                // --- 里边框 ---
+                    border-right-width: 2px;
+                }
+            }
+        }
+        &:hover {                               // --- 鼠标悬停 ---
+            &::before {                         // --- 外边框 ---
+                border-width: 2px;
+            }
+            &.button_area-split {
+                .button_inner::before {                // --- 里边框 ---
+                    border-right-width: 2px;
+                }
+            }
+        }
+        &:active, &.button_active, &[data-cg-pop-open] {     // --- 鼠标按下 ---
+            &::before {
+                border-width: 2px;
+            }
+            &.button_area-split {
+                .button_inner::before {                // --- 里边框 ---
+                    border-right-width: 2px;
+                }
+            }
+        }
+
+        &.button_area-split {
+            .button_inner, .button_arrow {
+                &:hover {                       // --- 鼠标悬停 ---
+                    transition: all .1s ease-out;
+                }
+                // --- 鼠标按下 ---
+                &:active, &.button_active, &[data-cg-pop-open] {
+                    transition: all .1s ease-out;
+                }
+                &[data-cg-pop-open]:not(:active, &.button_active) {
+                    color: var(--color-hover);
+                    background: var(--background-hover);
+                }
+            }
+        }
+    }
+    &[data-cg-disabled] {
+        color: var(--g-color-disabled);
+    }
+}
+.button_pop {
+    border-radius: 5px;
+}
+
+// -- CONTROL -- check --
+
+.check_wrap {
+    transition: all .1s ease-out;
+
+    .check_check {
+        transition: all .1s ease-out; width: 18px; height: 18px; border-radius: 5px;
+    }
+
+    .check_label {
+        &::before {
+            transition: all .1s ease-out;
+        }
+    }
+
+    // --- 半选中模式 ---
+    &.check_indeterminate {
+        .check_check::after {
+            transition: all .1s ease-out; left: 4px; top: 4px; width: calc(100% - 8px); height: calc(100% - 8px); border-radius: 3px;
+        }
+    }
+
+    &:not([data-cg-disabled]) {
+        &.check_checked:not(:focus):not(:hover):not(:active):not(.check_active) {
+            color: var(--g-plain-color-active);
+            .check_check {
+                background: var(--g-plain-background-active); border: solid 2px var(--g-plain-border-color-active);
+            }
+            &.check_indeterminate {
+                .check_check::after {
+                    background: var(--g-plain-color-active);
+                }
+            }
+        }
+
+        &.check_checked, &:focus, &:hover, &:active, &.check_active {
+            .check_check {
+                border-width: 2px;
+            }
+
+            &.check_indeterminate {
+                .check_check::after {
+                    left: 3px; top: 3px; width: calc(100% - 6px); height: calc(100% - 6px);
+                }
+            }
+        }
+    }
+    &[data-cg-disabled] {
+        &.check_checked {
+            .check_check {
+                border-width: 2px;
+            }
+            &.check_indeterminate {
+                .check_check::after {
+                    left: 3px; top: 3px; width: calc(100% - 6px); height: calc(100% - 6px);
+                }
+            }
+        }
+    }
+}
+
+// -- CONTROL -- desc-head --
+
+.desc-head_wrap {
+    background: var(--g-background);
+}
+
+// -- CONTROL -- form --
+
+.form_wrap {
+    &:not([data-cg-max]) {
+        border-radius: 5px;
+    }
+    &:not(.form_border-none):not([data-cg-max]) {
+        border-color: var(--g-plain-border-color);
+    }
+    &.form_focus {
+        &:not(.form_border-none):not([data-cg-max]) {
+            border-color: var(--g-border-color);
+        }
+    }
+    // --- 内部 ---
+    .form_inner {
+        // --- 头部 ---
+        .form_header {
+            background: hsl(220, 20%, 10%);
+            // --- 控制按钮 ---
+            .form_controls {
+                .form_min, .form_max {
+                    &:hover {
+                        background: rgba(255, 255, 255, .05);
+                    }
+                    &:active {
+                        background: rgba(255, 255, 255, .1);
+                    }
+                }
+            }
+        }
+    }
+    &:not([data-cg-max]) {
+        .form_inner {
+            .form_header {
+                border-radius: 5px 5px 0 0; overflow: hidden;
+            }
+        }
+        .form_content {
+            border-radius: 0 0 5px 5px; overflow: hidden;
+            &.form_noheader {
+                border-radius: 5px;
+            }
+        }
+    }
+}
+
+// -- CONTROL -- greatlist --
+
+.greatlist_wrap {
+    border-radius: 5px;
+    .greatlist_t {
+        .greatlist_tag-cg-vflow {
+            .greatlist_item {
+                transition: all .1s ease-out; border-radius: 5px; border-width: 2px;
+                &:not([data-cg-disabled]) {
+                    &:hover {
+                        background: var(--g-background);
+                    }
+                    &.greatlist_selected {
+                        background: var(--g-background-active);
+                    }
+                    &.greatlist_shift {
+                        border-color: var(--g-border-color-active);
+                    }
+                }
+                &[data-cg-disabled] {
+                    color: var(--g-color-disabled);
+                    &:hover {
+                        background: transparent;
+                    }
+                }
+            }
+        }
+    }
+}
+.greatlist_pop {
+    border-radius: 5px;
+}
+
+// -- CONTROL -- greatselect --
+
+.greatselect_wrap {
+    border-radius: 5px; transition: all .1s ease-out;
+    &:not([data-cg-disabled]):not([data-cg-pop-open]) {
+        &.greatselect_area-arrow {
+            .greatselect_arrow {
+                &:hover {
+                    background: var(--g-background-hover);
+                }
+                &:active {
+                    background: var(--g-background-active);
+                }
+            }
+        }
+    }
+    &.greatselect_area-arrow {
+        &[data-cg-pop-open], &.greatselect_active {
+            .greatselect_arrow {
+                background: var(--g-background-active);
+            }
+        }
+    }
+}
+.greatselect_pop {
+    border-radius: 5px; background: var(--pop-background); backdrop-filter: blur(20px) brightness(1.1);
+}
+
+// -- CONTROL -- menu --
+
+.menu_wrap {
+    border-bottom-color: var(--g-plain-border-color); padding-bottom: 1px;
+}
+
+// -- CONTROL -- menu-item --
+
+.menu-item_wrap {
+    transition: all .1s ease-out; border-radius: 5px; border: none; padding: 10px;
+    &:not([data-cg-disabled]) {
+        &:hover {
+            background: var(--g-background);
+        }
+        &:active, &[data-cg-pop-open] {
+            background: var(--g-border-color-hover);
+        }
+    }
+    &[data-cg-disabled] {
+        color: var(--g-color-disabled);
+        &:hover {
+            background: transparent;
+        }
+    }
+}
+.menu-item_pop {
+    border-radius: 5px;
+}
+
+// -- CONTROL -- menulist --
+
+.menulist_wrap {
+    border-radius: 5px; background: var(--pop-background); backdrop-filter: blur(20px) brightness(1.1);
+}
+
+// -- CONTROL -- menulist-item --
+
+.menulist-item_wrap {
+    padding: 10px 35px 10px 10px; border-radius: 3px;
+    &:not([data-cg-disabled]) {
+        &:hover {
+            background: var(--g-background);
+            .menulist-item_check, .menulist-item_radio {
+                background-color: var(--g-border-color-hover);
+            }
+        }
+    }
+    &[data-cg-disabled] {
+        &:hover {
+            background: transparent;
+        }
+    }
+    &[data-cg-pop-open] {
+        background: var(--g-background);
+    }
+
+    .menulist-item_check {
+        background-color: var(--g-background-hover); width: 32px; height: 32px; border-radius: 3px;
+    }
+    .menulist-item_radio {
+        background-color: var(--g-background-hover); width: 32px; height: 32px; border-radius: 3px;
+    }
+}
+.menulist-item_pop {
+    border-radius: 5px;
+}
+
+// -- CONTROL -- menulist-split --
+
+.menulist-split_wrap {
+    .menulist-split_type {
+        width: 32px;
+    }
+    .menulist-split_line {
+        background: var(--g-background);
+    }  
+}
+
+// -- CONTROL -- monaco --
+
+.monaco_wrap {
+    border-radius: 5px;
+    .monaco_iframe {
+        border-radius: 5px;
+    }
+}
+.monaco_pop {
+    border-radius: 5px;
+}
+
+// -- CONTROL -- nav --
+
+.nav_wrap {
+    .nav_menuwrap {
+        .nav_menu {
+            border-right-color: var(--g-plain-border-color);
+        }
+    }
+    &.nav_layer {
+        .nav_menuwrap {
+            .nav_menu {
+                border-right-color: var(--g-border-color);
+            }
+        }
+        &.nav_show {
+            .nav_menuwrap {
+                background: rgba(0, 0, 0, .5);
+            }
+        }
+    }
+}
+
+// -- CONTROL -- nav-item --
+
+.nav-item_wrap {
+    > .nav-item_text {
+        border-radius: 5px;
+    }
+
+    &:not(.nav-item_child) {
+        &.nav-item_show {
+            > .nav-item_text {
+                background: var(--g-background);
+            }
+        }
+    }
+
+    &:not(.nav-item_selected) {
+        > .nav-item_text:hover {
+            background: var(--g-background);
+        }
+    }
+    &.nav-item_selected {
+        > .nav-item_text {
+            background: var(--g-border-color-hover);
+        }
+    }
+
+    &:not(.nav-item_child) {
+        > .nav-item_menu {
+            background: var(--g-background);
+        }
+    }
+}
+
+// -- CONTROL -- property --
+
+.property_wrap {
+    .property_controls {
+        .property_split {
+            background: var(--g-plain-border-color);
+        }
+    }
+    .property_content {
+        border-color: var(--g-plain-border-color);
+        .property_bigTitle {
+            background: var(--g-background);
+        }
+        .property_line {
+            border-bottom-color: var(--g-plain-border-color);
+            .property_control {
+                background: var(--g-background);
+            }
+            &.property_selected .property_title {
+                background: var(--g-border-color-hover);
+            }
+        }
+    }
+}
+.property_pop {
+    border-radius: 5px;
+}
+
+// -- CONTROL -- radio --
+
+.radio_wrap {
+    transition: all .1s ease-out;
+
+    .radio_radio {
+        transition: all .1s ease-out; width: 18px; height: 18px;
+        &::after {
+            transition: all .1s ease-out; left: 4px; top: 4px; width: calc(100% - 8px); height: calc(100% - 8px);
+        }
+    }
+
+    .radio_label {
+        &::before {
+            transition: all .1s ease-out;
+        }
+    }
+
+    &:not([data-cg-disabled]) {
+        &.radio_selected:not(:focus):not(:hover):not(:active):not(.radio_active) {
+            color: var(--g-plain-color-active);
+            .radio_radio {
+                background: var(--g-plain-background-active); border: solid 2px var(--g-plain-border-color-active);
+                &::after {
+                    background: var(--g-plain-color-active);
+                }
+            }
+        }
+
+        &.radio_selected, &:focus, &:hover, &:active, &.radio_active {
+            .radio_radio {
+                border-width: 2px;
+                &::after {
+                    left: 3px; top: 3px; width: calc(100% - 6px); height: calc(100% - 6px);
+                }
+            }
+        }
+    }
+    &[data-cg-disabled] {
+        &.radio_selected {
+            .radio_radio {
+                border-width: 2px;
+                &::after {
+                    left: 3px; top: 3px; width: calc(100% - 6px); height: calc(100% - 6px);
+                }
+            }
+        }
+    }
+
+}
+
+// -- CONTROL -- scroll --
+
+.scroll_wrap {
+    background-color:transparent;
+    --block-background:var(--g-background);
+    --block-background-hover:var(--g-border-color-hover);
+    .scroll_start, .scroll_end {
+        display: none;
+    }
+    .scroll_bar {
+        .scroll_block {
+            border-radius: 5px; transition: all .1s ease-out; transition-property: background;
+        }
+    }
+}
+
+// -- CONTROL -- tab --
+
+.tab_wrap {
+    .tab_tab {
+        transition: all .1s ease-out; border: none;
+        &::after {
+            display: none;
+        }
+        &:not(.tab_selected):not([data-cg-hover]):hover {
+            color: #FFF; background: transparent;
+        }
+        &.tab_selected {
+            background: var(--g-background); font-weight: bold; color: #FFF;
+        }
+        .tab_content {
+            padding: 10px;
+        }
+        .tab_close {
+            transition: all .1s ease-out;
+            &:hover {
+                background: var(--g-background);
+            }
+            &:active {
+                background: var(--g-color); color: var(--face);
+            }
+        }
+    }
+    &.tab_top {
+        .tab_tabs {
+            .tab_tab {
+                border-radius: 5px 5px 0 0;
+                &.tab_selected {
+                    padding-bottom: 0;
+                }
+            }
+        }
+        .tab_panel {
+            border-radius: 0 0 5px 5px;
+        }
+    }
+    &.tab_bottom {
+        .tab_tabs {
+            .tab_tab {
+                border-radius: 0 0 5px 5px;
+                &.tab_selected {
+                    padding-top: 0;
+                }
+            }
+        }
+        .tab_panel {
+            border-radius: 5px 5px 0 0;
+        }
+    }
+    &.tab_left {
+        .tab_tabs {
+            .tab_tab {
+                border-radius: 5px 0 0 5px;
+            }
+        }
+        .tab_panel {
+            border-radius: 5px 0 0 5px;
+        }
+    }
+    &.tab_right {
+        .tab_tabs {
+            .tab_tab {
+                border-radius: 0 5px 5px 0;
+            }
+        }
+        .tab_panel {
+            border-radius: 0 5px 5px 0;
+        }
+    }
+
+    .tab_panel {
+        background: var(--g-background); border: none;
+    }
+}
+
+// -- CONTROL -- task --
+
+.task_pop {
+    border-radius: 5px;
+}
+
+// -- CONTROL -- task-item --
+
+.task-item_pop {
+    border-radius: 5px;
+}
+
+// -- CONTROL -- text --
+
+.text_wrap {
+    padding: 10px; transition: all .1s ease-out; border-radius: 5px;
+}
+.text_pop {
+    border-radius: 5px;
+}
+

@@ -59,7 +59,7 @@ export default class extends clickgo.control.AbstractControl {
                 if (!this.slots['pop'] || (this.props.area === 'mark')) {
                     // --- 没有菜单，或者有菜单但是是 mark 模式 ---
                     this.element.click();
-                    if (this.refs.arrow.dataset.cgPopOpen !== undefined) {
+                    if (this.refs.arrow?.dataset.cgPopOpen !== undefined) {
                         clickgo.form.hidePop(this.refs.arrow);
                     }
                 }
@@ -84,7 +84,7 @@ export default class extends clickgo.control.AbstractControl {
             this.isSpaceDown = true;
             if (this.props.area === 'mark') {
                 // --- mark 模式长按弹出菜单 ---
-                if (this.refs.arrow.dataset.cgPopOpen !== undefined) {
+                if (this.refs.arrow?.dataset.cgPopOpen !== undefined) {
                     clickgo.form.hidePop(this.refs.arrow);
                 }
                 clickgo.tool.sleep(300).then(() => {
@@ -104,7 +104,7 @@ export default class extends clickgo.control.AbstractControl {
         this.isSpaceDown = false;
         if (this.canDoMain) {
             // --- 在主标签响应 ---
-            if (this.refs.arrow.dataset.cgPopOpen !== undefined) {
+            if (this.refs.arrow?.dataset.cgPopOpen !== undefined) {
                 // --- 已经显示了 mark 的菜单，则此处不再响应事件 ---
                 return;
             }
@@ -167,7 +167,7 @@ export default class extends clickgo.control.AbstractControl {
         }
         else {
             // --- mark / split ---
-            if (this.refs.arrow.dataset.cgPopOpen === undefined) {
+            if (this.refs.arrow?.dataset.cgPopOpen === undefined) {
                 clickgo.form.showPop(this.refs.arrow, this.refs.pop, this.props.area === 'split' ? 'v' : 'h');
             }
             else {

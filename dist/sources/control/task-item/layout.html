@@ -2,12 +2,12 @@
     <slot></slot>
     <div class="line"></div>
     <teleport to="system">
-        <div v-if="slots['pop']" ref="pop">
+        <div v-if="slots['pop']" ref="pop" class="pop">
             <slot name="pop"></slot>
         </div>
     </teleport>
     <teleport to="system">
-        <div v-if="slots['contextmenu']" ref="contextmenu">
+        <div v-if="slots['contextmenu']" ref="contextmenu" class="pop">
             <slot name="contextmenu"></slot>
         </div>
     </teleport>

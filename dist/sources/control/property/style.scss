@@ -18,7 +18,7 @@
     }
 
     .content {
-        margin-top: 2px; background: #FFF; flex: 1; display: flex; overflow: hidden; border: solid .5px var(--g-border-color);
+        margin-top: 2px; background: var(--g-plain-background); flex: 1; display: flex; overflow: hidden; border: solid .5px var(--g-border-color);
 
         cg-flow {
             flex: 1;
@@ -112,7 +112,7 @@
 // --- POP ---
 
 .dock-pop {
-    background: #FFF; border: solid .5px var(--g-border-color); display: flex; flex-direction: column; width: 200px; padding: 1px;
+    background: var(--face); border: solid .5px var(--g-border-color); display: flex; flex-direction: column; width: 200px; padding: 1px;
 
     > :not(:last-child) {
         margin-bottom: 1px;
@@ -134,4 +134,8 @@
             margin-right: 1px;
         }
     }
+}
+
+.pop {
+    color: var(--g-color);
 }

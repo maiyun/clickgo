@@ -1,5 +1,5 @@
 .wrap {
-    display: inline-block; padding: 6px; border: solid .5px transparent;
+    display: inline-block; padding: 7px; border: solid .5px transparent;
     &:not([data-cg-disabled]) {
         &:hover {
             background: var(--g-background-hover); border-color: var(--g-border-color-hover);
@@ -18,4 +18,8 @@
     .inner {
         display: flex; align-items: center;
     }
+}
+
+.pop {
+    color: var(--g-color);
 }

@@ -6,7 +6,7 @@
         <div v-if="slots['pop']" ref="arrow" class="arrow" :class="[arrowFocus && isSpaceDown && 'active']" :tabindex="!propBoolean('disabled') && formFocus && !canDoMain && '0'" @focus="arrowFocus = true" @blur="arrowFocus = false" @click="arrowClick">&#xe877;</div>
     </div>
     <teleport v-if="slots['pop']" to="system">
-        <div ref="pop">
+        <div ref="pop" class="pop">
             <slot name="pop"></slot>
         </div>
     </teleport>

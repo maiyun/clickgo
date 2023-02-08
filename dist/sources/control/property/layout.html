@@ -59,7 +59,7 @@
         <div class="desc">{{description}}</div>
     </div>
     <teleport to="system">
-        <div ref="pop">
+        <div ref="pop" class="pop">
             <cg-menulist>
                 <cg-menulist-item alt="R" @click="reset">{{l('reset')}}</cg-menulist-item>
                 <cg-menulist-split></cg-menulist-split>
@@ -68,7 +68,7 @@
         </div>
     </teleport>
     <teleport to="system">
-        <div ref="dock" class="dock-pop">
+        <div ref="dock" class="dock-pop pop">
             <cg-button class="top" :checked="dockValue === 'top'" @click="dockSelect('top')"></cg-button>
             <div class="center">
                 <cg-button class="left" :checked="dockValue === 'left'" @click="dockSelect('left')"></cg-button>

@@ -127,7 +127,7 @@ function launcher(boot) {
                 'map': map
             })[0];
             try {
-                const style = yield (yield fetch(__dirname + '/global.css')).text();
+                const style = yield (yield fetch(__dirname + '/global.css' + (__dirname.startsWith(loader.cdn) ? '' : '?' + Math.random().toString()))).text();
                 (_a = document.getElementById('cg-global')) === null || _a === void 0 ? void 0 : _a.insertAdjacentHTML('afterbegin', style);
             }
             catch (_b) {

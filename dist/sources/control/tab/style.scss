@@ -6,8 +6,6 @@
 .wrap {
     display: flex;
 
-    --background-selected: #FFF;
-
     &.top, &.bottom {
         flex-direction: column;
     }
@@ -92,13 +90,13 @@
     .tab {
         background: var(--face); display: inline-flex; align-items: center; border: solid .5px var(--g-plain-border-color); position: relative;
         &::after {
-            content: ' '; pointer-events: none; position: absolute; background: var(--background-selected); display: none;
+            content: ' '; pointer-events: none; position: absolute; background: var(--g-plain-background); display: none;
         }
         &:not(.selected):not([data-cg-hover]):hover {
-            background: var(--g-plain-background-hover);
+            background: var(--g-background-hover);
         }
         &.selected {
-            background: var(--background-selected);
+            background: var(--g-plain-background);
         }
         &[data-cg-hover] {
             background: var(--g-color); color: var(--face);
@@ -199,6 +197,6 @@
     }
 
     .panel {
-        background: var(--background-selected); display: flex; flex: 1; overflow: hidden; border: solid .5px var(--g-plain-border-color);
+        background: var(--g-plain-background); display: flex; flex: 1; overflow: hidden; border: solid .5px var(--g-plain-border-color);
     }    
 }
