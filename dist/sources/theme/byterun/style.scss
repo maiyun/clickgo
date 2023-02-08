@@ -457,6 +457,9 @@ global {
         }
     }
 
+    > .nav-item_menu {
+        border-radius: 5px;
+    }
     &:not(.nav-item_child) {
         > .nav-item_menu {
             background: var(--g-background);
