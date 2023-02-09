@@ -1,5 +1,10 @@
 # Changelog
 
+# 3.1.16-dev2
+
+[+] Add byterun theme.  
+[+] Add html control.
+
 # 3.1.15-dev
 
 [+] Add desc control.
