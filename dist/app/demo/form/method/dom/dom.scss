@@ -2,9 +2,9 @@
     display: flex; flex: 1; margin-bottom: 5px;
 
     > block {
-        border: 1px solid rgba(0, 0, 0, 0.3); background-color: #FFF; flex: 1; margin-right: 5px; display: flex; justify-content: center; align-items: center;
+        border: solid 1px var(--g-plain-border-color); flex: 1; margin-right: 5px; display: flex; justify-content: center; align-items: center;
         &[data-cg-hover] {
-            background-color: #333; color: #FFF;
+            background-color: var(--g-color); color: var(--face);
         }
     }
 }

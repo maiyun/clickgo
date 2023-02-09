@@ -14,7 +14,7 @@
                 <button style="height: 30px; flex: 1;" @click="getWatchSizeCount(taskId)">getWatchSizeCount({{taskId}})</button>
             </layout>
             <layout gutter="10">
-                <layout ref="watch" align-v="center" align-h="center" style="flex: 1; background: #FFF;">{{watchInner ? 'inner' : 'Inner'}}</layout>
+                <layout ref="watch" align-v="center" align-h="center" style="flex: 1; background: var(--g-plain-background); border: solid 1px var(--g-plain-border-color);">{{watchInner ? 'inner' : 'Inner'}}</layout>
                 <button @click="wwatch" style="height: 30px; padding: 0 5px;">{{watchText ? '' : '!'}}watch</button>
                 <button @click="watchInner = !watchInner" style="padding: 0 5px;">Change</button>
             </layout>
@@ -27,12 +27,12 @@
             <!-- getWatchInfo -->
             <text :model-value="getWatchInfoText" readonly multi style="height: 300px;"></text>
             <button @click="getWatchInfo" :disabled="getWatchInfoDisabled" style="height: 30px; padding: 0 10px;">getWatchInfo 20s</button>
-            <block @mousedown="bindGesture" @touchstart="bindGesture" style="height: 50px; background: #FFF; display: flex; justify-content: center; align-items: center; color: rgba(0, 0, 0, .5); font-size: 14px;">{{bindGestureText ? bindGestureText : 'bindGesture(e: Touch | Mouse, { ... })'}}</block>
-            <block @wheel="bindGestureWheel" style="height: 50px; background: #FFF; display: flex; justify-content: center; align-items: center; color: rgba(0, 0, 0, .5); font-size: 14px;">{{bindGestureWheelText ? bindGestureWheelText : 'bindGesture(e: Wheel, { ... })'}}</block>
+            <block @mousedown="bindGesture" @touchstart="bindGesture" style="height: 50px; display: flex; justify-content: center; align-items: center; font-size: 14px; background: var(--g-plain-background); border: solid 1px var(--g-plain-border-color);">{{bindGestureText ? bindGestureText : 'bindGesture(e: Touch | Mouse, { ... })'}}</block>
+            <block @wheel="bindGestureWheel" style="height: 50px; display: flex; justify-content: center; align-items: center; font-size: 14px; background: var(--g-plain-background); border: solid 1px var(--g-plain-border-color);">{{bindGestureWheelText ? bindGestureWheelText : 'bindGesture(e: Wheel, { ... })'}}</block>
             <button @click="bindLong" ref="bindLong" @mousedown="bindLongDown" @touchstart="bindLongDown" style="height: 30px;">{{bindLongText ? 'Yeah!' : 'bindLong(e, () => { ... })'}}</button>
-            <block style="height: 100px; display: flex; background: #FFF;">
+            <block style="height: 100px; display: flex; background: var(--g-plain-background); border: solid 1px var(--g-plain-border-color);">
                 <block style="flex: 1; display: flex; justify-content: center; align-items: center;">
-                    <block @mousedown="bindDragDown" @touchstart="bindDragDown" ref="bindDrag" style="border: 1px solid rgba(0, 0, 0, 0.3); width: 50px; height: 50px; display: flex; justify-content: center; align-items: center;">Drag</block>
+                    <block @mousedown="bindDragDown" @touchstart="bindDragDown" ref="bindDrag" style="width: 50px; height: 50px; display: flex; justify-content: center; align-items: center; border: solid 1px var(--g-plain-border-color);">Drag</block>
                 </block>
                 <block style="margin-left: 10px; flex: 1; display: flex; flex-direction: column; padding: 5px 0 0 5px;">
                     <block class="dropLine">
@@ -52,7 +52,7 @@
                     </block>
                 </block>
             </block>
-            <block @mousedown="bindMoveDown" @touchstart="bindMoveDown" style="height: 50px; background: #FFF; display: flex; justify-content: center; align-items: center; color: rgba(0, 0, 0, .5); font-size: 14px; position: relative;">
+            <block @mousedown="bindMoveDown" @touchstart="bindMoveDown" style="height: 50px; display: flex; justify-content: center; align-items: center; font-size: 14px; position: relative; background: var(--g-plain-background); border: solid 1px var(--g-plain-border-color);">
                 <label>bindMove(e, { ... })</label>
                 <block ref="move" style="background: #07c160; position: absolute;" :style="{'left': moveLeft + 'px', 'top': moveTop + 'px', 'width': moveWidth + 'px', 'height': moveHeight + 'px'}" @dblclick="moveWidth = moveWidth === 25 ? 50 : 25;moveHeight = moveHeight === 25 ? 50 : 25"></block>
             </block>

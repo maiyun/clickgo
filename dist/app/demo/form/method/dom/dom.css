@@ -1,1 +1,1 @@
-.dropLine{display:flex;flex:1;margin-bottom:5px}.dropLine>block{border:1px solid rgba(0,0,0,.3);background-color:#fff;flex:1;margin-right:5px;display:flex;justify-content:center;align-items:center}.dropLine>block[data-cg-hover]{background-color:#333;color:#fff}
+.dropLine{display:flex;flex:1;margin-bottom:5px}.dropLine>block{border:solid 1px var(--g-plain-border-color);flex:1;margin-right:5px;display:flex;justify-content:center;align-items:center}.dropLine>block[data-cg-hover]{background-color:var(--g-color);color:var(--face)}

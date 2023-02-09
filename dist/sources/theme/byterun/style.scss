@@ -316,7 +316,7 @@ global {
     }
 }
 .greatselect_pop {
-    border-radius: 5px; background: var(--pop-background); backdrop-filter: blur(20px) brightness(1.1);
+    border-radius: 5px; background: var(--pop-background); -webkit-backdrop-filter: blur(20px) brightness(1.1); backdrop-filter: blur(20px) brightness(1.1);
 }
 
 // -- CONTROL -- menu --
@@ -351,7 +351,7 @@ global {
 // -- CONTROL -- menulist --
 
 .menulist_wrap {
-    border-radius: 5px; background: var(--pop-background); backdrop-filter: blur(20px) brightness(1.1);
+    border-radius: 5px; background: var(--pop-background); -webkit-backdrop-filter: blur(20px) brightness(1.1); backdrop-filter: blur(20px) brightness(1.1);
 }
 
 // -- CONTROL -- menulist-item --
@@ -643,12 +643,22 @@ global {
 
 // -- CONTROL -- task --
 
+.task_wrap {
+    background: var(--pop-background); -webkit-backdrop-filter: blur(20px) brightness(1.1); backdrop-filter: blur(20px) brightness(1.1);
+}
 .task_pop {
     border-radius: 5px;
 }
 
 // -- CONTROL -- task-item --
 
+.task-item_wrap {
+    &.task-item_opened {
+        .task-item_line::after {
+            background: var(--g-border-color-active);
+        }
+    }
+}
 .task-item_pop {
     border-radius: 5px;
 }

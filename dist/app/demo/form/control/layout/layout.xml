@@ -1,7 +1,7 @@
 <form width="300" height="300" title="Layout">
     <layout direction="v" gutter="10" style="padding: 10px; flex: 1; width: 0;">
         <label>direction: {{direction[0]}}, media: {{mediaVal}}</label>
-        <layout :direction="direction[0]" :media="media" :gutter="gutter" @media="onMedia" style="flex: 1; border: solid 1px #000; padding: 10px;">
+        <layout :direction="direction[0]" :media="media" :gutter="gutter" @media="onMedia" style="flex: 1; border: solid 1px var(--g-border-color); padding: 10px;">
             <block style="background: var(--success); flex: 1;" />
             <block style="flex: 1;" :style="{'background': bigColor ? 'var(--warning)' : 'var(--info)'}" />
         </layout>
