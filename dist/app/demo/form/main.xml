@@ -30,6 +30,7 @@
                 <button @click="openForm('cbox')">Box</button>
                 <button @click="openForm('cmonaco')">Monaco</button>
                 <button @click="openForm('cdesc')">Desc</button>
+                <button @click="openForm('chtml')">Html</button>
             </layout>
         </flow>
         <flow v-else-if="ntab === 'method'" class="inner" direction="v">

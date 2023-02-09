@@ -1001,6 +1001,18 @@ export async function run(url: string | types.IApp, opt: types.ITaskRunOptions =
             purify: function(text: string): string {
                 return tool.purify(text);
             },
+            match: function(str: string, regs: RegExp[]): boolean {
+                return tool.match(str, regs);
+            },
+            layoutAddTagClassAndReTagName: function(layout: string, retagname: boolean): string {
+                return tool.layoutAddTagClassAndReTagName(layout, retagname);
+            },
+            layoutClassPrepend: function(layout: string, preps: string[]): string {
+                return tool.layoutClassPrepend(layout, preps);
+            },
+            stylePrepend: function(style: string, prep: string = ''): { 'style': string; 'prep': string; } {
+                return tool.stylePrepend(style, prep);
+            },
             rand: function(min: number, max: number): number {
                 return tool.rand(min, max);
             },

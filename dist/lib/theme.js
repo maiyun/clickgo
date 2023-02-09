@@ -50,21 +50,24 @@ function read(blob) {
         }
         const config = JSON.parse(configContent);
         const files = {};
-        for (const file of config.files) {
-            const mime = tool.getMimeByPath(file);
+        const list = z.readDir('/', {
+            'hasChildren': true
+        });
+        for (const file of list) {
+            const mime = tool.getMimeByPath(file.name);
             if (['txt', 'json', 'js', 'css', 'xml', 'html'].includes(mime.ext)) {
-                const fab = yield z.getContent(file, 'string');
+                const fab = yield z.getContent(file.path + file.name, 'string');
                 if (!fab) {
                     continue;
                 }
-                files[file] = fab.replace(/^\ufeff/, '');
+                files[file.path + file.name] = fab.replace(/^\ufeff/, '');
             }
             else {
-                const fab = yield z.getContent(file, 'arraybuffer');
+                const fab = yield z.getContent(file.path + file.name, 'arraybuffer');
                 if (!fab) {
                     continue;
                 }
-                files[file] = new Blob([fab], {
+                files[file.path + file.name] = new Blob([fab], {
                     'type': mime.mime
                 });
             }

@@ -898,6 +898,18 @@ function run(url, opt = {}, ntid) {
                 purify: function (text) {
                     return tool.purify(text);
                 },
+                match: function (str, regs) {
+                    return tool.match(str, regs);
+                },
+                layoutAddTagClassAndReTagName: function (layout, retagname) {
+                    return tool.layoutAddTagClassAndReTagName(layout, retagname);
+                },
+                layoutClassPrepend: function (layout, preps) {
+                    return tool.layoutClassPrepend(layout, preps);
+                },
+                stylePrepend: function (style, prep = '') {
+                    return tool.stylePrepend(style, prep);
+                },
                 rand: function (min, max) {
                     return tool.rand(min, max);
                 },

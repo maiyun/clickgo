@@ -4,9 +4,5 @@
     "version": "0.1",
     "author": "byterun",
 
-    "style": "/style",
-
-    "files": [
-        "/style.css"
-    ]
+    "style": "/style"
 }

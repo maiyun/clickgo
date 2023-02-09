@@ -325,7 +325,7 @@ function layoutClassPrependObject(object: string): string {
     }) + '}';
 }
 /**
- * --- 给 class 增加 scope 的随机前缀 ---
+ * --- 给 class 增加 scope 的随机前缀，给 id 新增前缀 ---
  * @param layout layout
  * @param preps 前置标识符列表，特殊字符串 scope 会被替换为随机前缀
  */
@@ -340,7 +340,7 @@ export function layoutClassPrepend(layout: string, preps: string[]): string {
                 resultList.push(prep + item);
             }
         }
-        return ` class='${resultList.join(' ')}'`;
+        return ` class="${resultList.join(' ')}"`;
     }).replace(/ :class=(["']).+?>/gi, function(t, sp) {
         return t.replace(new RegExp(` :class=${sp}(.+?)${sp}`, 'gi'), function(t, t1: string) {
             // --- t1 为 [] 或 {} ---
@@ -366,7 +366,7 @@ export function layoutClassPrepend(layout: string, preps: string[]): string {
             }
             return ` :class="${t1}"`;
         });
-    });
+    }).replace(/ id=(["'])/gi, ' id=$1' + preps[0]);
 }
 
 /**

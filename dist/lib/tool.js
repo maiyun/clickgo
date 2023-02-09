@@ -254,7 +254,7 @@ function layoutClassPrepend(layout, preps) {
                 resultList.push(prep + item);
             }
         }
-        return ` class='${resultList.join(' ')}'`;
+        return ` class="${resultList.join(' ')}"`;
     }).replace(/ :class=(["']).+?>/gi, function (t, sp) {
         return t.replace(new RegExp(` :class=${sp}(.+?)${sp}`, 'gi'), function (t, t1) {
             t1 = t1.trim();
@@ -277,7 +277,7 @@ function layoutClassPrepend(layout, preps) {
             }
             return ` :class="${t1}"`;
         });
-    });
+    }).replace(/ id=(["'])/gi, ' id=$1' + preps[0]);
 }
 exports.layoutClassPrepend = layoutClassPrepend;
 function eventsAttrWrap(layout) {

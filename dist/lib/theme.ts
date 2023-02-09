@@ -36,23 +36,26 @@ export async function read(blob: Blob): Promise<types.ITheme | false> {
         return false;
     }
     const config: types.IThemeConfig = JSON.parse(configContent);
-    // --- 开始读取文件 ---
     const files: Record<string, Blob | string> = {};
-    for (const file of config.files) {
-        const mime = tool.getMimeByPath(file);
+    // --- 读取包文件 ---
+    const list = z.readDir('/', {
+        'hasChildren': true
+    });
+    for (const file of list) {
+        const mime = tool.getMimeByPath(file.name);
         if (['txt', 'json', 'js', 'css', 'xml', 'html'].includes(mime.ext)) {
-            const fab = await z.getContent(file, 'string');
+            const fab = await z.getContent(file.path + file.name, 'string');
             if (!fab) {
                 continue;
             }
-            files[file] = fab.replace(/^\ufeff/, '');
+            files[file.path + file.name] = fab.replace(/^\ufeff/, '');
         }
         else {
-            const fab = await z.getContent(file, 'arraybuffer');
+            const fab = await z.getContent(file.path + file.name, 'arraybuffer');
             if (!fab) {
                 continue;
             }
-            files[file] = new Blob([fab], {
+            files[file.path + file.name] = new Blob([fab], {
                 'type': mime.mime
             });
         }

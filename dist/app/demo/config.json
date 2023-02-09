@@ -12,7 +12,8 @@
         "/clickgo/control/property",
         "/clickgo/control/table",
         "/clickgo/control/nav",
-        "/clickgo/control/desc"
+        "/clickgo/control/desc",
+        "/clickgo/control/html"
     ],
     "style": "/package/global",
 
@@ -38,6 +39,8 @@
         "/form/control/form/form.css",
         "/form/control/form/form.js",
         "/form/control/form/form.xml",
+        "/form/control/html/html.js",
+        "/form/control/html/html.xml",
         "/form/control/img/img.xml",
         "/form/control/label/label.xml",
         "/form/control/layout/layout.xml",
