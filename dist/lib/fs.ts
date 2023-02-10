@@ -129,7 +129,7 @@ export async function getContent(path: string, options?: BufferEncoding | {
             }
             ourl = tool.urlResolve(__dirname, './').slice(0, -1) + fpath;
         }
-        else  {
+        else {
             ourl = path;
         }
         try {

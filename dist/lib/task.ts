@@ -1518,10 +1518,8 @@ export async function loadLocale(lang: string, path: string, taskId?: number): P
     if (!task) {
         return false;
     }
-    /** --- 当前父 form 的路径（以 / 结尾）或 /（没有基路径的话） --- */
-    path = tool.urlResolve(task.current + '/', path) + '.json';
     /** --- 获取的语言文件 --- */
-    const fcontent = await fs.getContent(path, {
+    const fcontent = await fs.getContent(path + '.json', {
         'encoding': 'utf8'
     }, taskId);
     if (!fcontent) {

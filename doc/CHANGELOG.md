@@ -1,5 +1,9 @@
 # Changelog
 
+# 3.2.1-beta2
+
+[\*] Fix locale.
+
 # 3.2.0-beta
 
 [+] Add logo param of nav control.  

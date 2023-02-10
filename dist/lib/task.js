@@ -1332,8 +1332,7 @@ function loadLocale(lang, path, taskId) {
         if (!task) {
             return false;
         }
-        path = tool.urlResolve(task.current + '/', path) + '.json';
-        const fcontent = yield fs.getContent(path, {
+        const fcontent = yield fs.getContent(path + '.json', {
             'encoding': 'utf8'
         }, taskId);
         if (!fcontent) {
