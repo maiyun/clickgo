@@ -205,10 +205,22 @@ global {
     }
 }
 
+// -- CONTROL -- desc --
+
+.desc_wrap {
+    border-radius: 5px;
+}
+
+// -- CONTROL -- desc-cell --
+
+.desc-cell_wrap {
+    padding: 15px; border-radius: 5px;
+}
+
 // -- CONTROL -- desc-head --
 
 .desc-head_wrap {
-    background: var(--g-background);
+    background: var(--g-background); padding: 15px; border-radius: 5px;
 }
 
 // -- CONTROL -- form --

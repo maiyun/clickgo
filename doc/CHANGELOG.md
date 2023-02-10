@@ -1,5 +1,10 @@
 # Changelog
 
+# 3.2.2-beta3
+
+[\*] Optimized byterun theme.  
+[\*] Optimized desc control.
+
 # 3.2.1-beta2
 
 [\*] Fix locale.
