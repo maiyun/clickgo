@@ -22,6 +22,15 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const clickgo = __importStar(require("clickgo"));
 class default_1 extends clickgo.control.AbstractControl {
@@ -29,9 +38,12 @@ class default_1 extends clickgo.control.AbstractControl {
         super(...arguments);
         this.props = {
             'modelValue': '',
-            'show': false
+            'show': false,
+            'logo': ''
         };
         this.showData = false;
+        this.logoData = '';
+        this.logoCount = 0;
         this.selected = '';
         this.layer = false;
     }
@@ -79,6 +91,37 @@ class default_1 extends clickgo.control.AbstractControl {
         this.watch('modelValue', () => {
             this.select(this.props.modelValue);
         }, {
+            'immediate': true
+        });
+        this.watch('logo', () => __awaiter(this, void 0, void 0, function* () {
+            const count = ++this.logoCount;
+            if (typeof this.props.logo !== 'string' || this.props.logo === '') {
+                this.logoData = '';
+                return;
+            }
+            const pre = this.props.logo.slice(0, 6).toLowerCase();
+            if (pre === 'file:/') {
+                return;
+            }
+            if (pre === 'http:/' || pre === 'https:' || pre.startsWith('data:')) {
+                this.logoData = `url(${this.props.logo})`;
+                return;
+            }
+            const path = clickgo.tool.urlResolve('/package' + this.path + '/', this.props.logo);
+            const blob = yield clickgo.fs.getContent(path);
+            if ((count !== this.logoCount) || !blob || typeof blob === 'string') {
+                return;
+            }
+            const t = yield clickgo.tool.blob2DataUrl(blob);
+            if (count !== this.logoCount) {
+                return;
+            }
+            if (t) {
+                this.logoData = 'url(' + t + ')';
+                return;
+            }
+            this.logoData = '';
+        }), {
             'immediate': true
         });
     }

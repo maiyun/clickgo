@@ -39,6 +39,7 @@ class default_1 extends clickgo.control.AbstractControl {
         this.props = {
             'label': '',
             'name': '',
+            'icon': '',
             'show': false
         };
         this.showData = false;

@@ -10,6 +10,8 @@ export default class extends clickgo.form.AbstractForm {
 
     public loading = false;
 
+    public logo = '';
+
     public onMounted(): void {
         this.watch('name', async () => {
             this.loading = true;

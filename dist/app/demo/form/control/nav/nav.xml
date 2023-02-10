@@ -1,5 +1,5 @@
 <form width="600" height="500" title="Nav" :loading="loading">
-    <nav v-model="name" v-model:show="isShow" @layer="layer = $event" style="flex: 1; width: 0;">
+    <nav v-model="name" v-model:show="isShow" :logo="logo" @layer="layer = $event" style="flex: 1; width: 0;">
         <nav-item label="Title1">
             <nav-title>group1</nav-title>
             <nav-item label="Sub1">
@@ -37,7 +37,7 @@
         </nav-item>
         <nav-item label="Root1"></nav-item>
         <nav-item label="Root2"></nav-item>
-        <nav-item label="Root3"></nav-item>
+        <nav-item label="Root3" icon="/package/res/icon.svg"></nav-item>
         <template v-slot:content>
             <layout direction="v" gutter="10" style="padding: 10px; flex: 1;">
                 <label>Change the size of the form to see the effect.</label>
@@ -46,6 +46,7 @@
                 <button v-if="layer" @click="isShow = true" style="height: 30px;">Open</button>
                 <button @click="name = 'Action11'" style="height: 30px;">Select "Action11"</button>
                 <button @click="name = 'hasname'" style="height: 30px;">Select "hasname"</button>
+                <button @click="logo = logo ? '' : '/clickgo/icon.png'" style="height: 30px;">{{logo ? 'Remove' : 'Set'}} logo</button>
             </layout>
         </template>
     </nav>

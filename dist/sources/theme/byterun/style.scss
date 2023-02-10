@@ -68,7 +68,7 @@ global {
     --g-plain-border-color-disabled:hsl(240,0%,60%);
 
     ::selection {
-        background-color: hsl(255, 255, 255, .1);
+        background-color: rgba(255, 255, 255, .1);
     }
 }
 
@@ -248,11 +248,15 @@ global {
             .form_header {
                 border-radius: 5px 5px 0 0; overflow: hidden;
             }
-        }
-        .form_content {
-            border-radius: 0 0 5px 5px; overflow: hidden;
-            &.form_noheader {
-                border-radius: 5px;
+            .form_content {
+                border-radius: 0 0 5px 5px; overflow: hidden;
+                &.form_noheader {
+                    border-radius: 5px;
+                }
+                /* --- Loading 遮罩 --- */
+                .form_loading {
+                    background-color: rgba(255, 255, 255, .1);
+                }
             }
         }
     }
@@ -429,13 +433,32 @@ global {
             }
         }
     }
+
+    .nav_content {
+        .nav_header {
+            height: 40px; border-bottom: solid .5px var(--g-plain-border-color);
+            .nav_mbutton {
+                width: 40px; transition: all .1s ease-out; border-radius: 5px;
+                &:hover {
+                    background: var(--g-border-color-hover);
+                }
+                &:active {
+                    background: var(--g-background);
+                }
+
+                .nav_tag-svg {
+                    width: 28px; height: 28px;
+                }
+            }
+        }
+    }
 }
 
 // -- CONTROL -- nav-item --
 
 .nav-item_wrap {
     > .nav-item_text {
-        border-radius: 5px;
+        padding: 15px; border-radius: 5px; transition: all .1s ease-out;
     }
 
     &:not(.nav-item_child) {
@@ -465,6 +488,12 @@ global {
             background: var(--g-background);
         }
     }
+}
+
+// -- CONTROL -- nav-title --
+
+.nav-title_wrap {
+    padding: 10px;
 }
 
 // -- CONTROL -- property --

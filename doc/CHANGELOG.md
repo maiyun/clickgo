@@ -1,5 +1,11 @@
 # Changelog
 
+# 3.2.0-beta
+
+[+] Add logo param of nav control.  
+[+] Add icon param of nav-item control.  
+[\*] Other optimizations.
+
 # 3.1.16-dev2
 
 [+] Add byterun theme.  

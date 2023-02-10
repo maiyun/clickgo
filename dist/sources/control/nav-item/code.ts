@@ -5,10 +5,12 @@ export default class extends clickgo.control.AbstractControl {
     public props: {
         'label': string;
         'name': string;
+        'icon': string;
         'show': boolean | string;
     } = {
             'label': '',
             'name': '',
+            'icon': '',
             'show': false
         };
 

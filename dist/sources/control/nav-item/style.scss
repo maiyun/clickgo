@@ -5,6 +5,10 @@
         &.hasChild::after {
             content: ''; border: solid 1px var(--g-color); border-width: 0 1px 1px 0; width: 6px; height: 6px; display: block; position: absolute; right: 10px; top: 50%; transform: translateY(-5px) rotate(45deg); transition: all .1s ease-out; transition-property: transform;
         }
+
+        cg-img {
+            width: 16px; height: 16px; margin-right: 5px;
+        }
     }
 
     &.show {
