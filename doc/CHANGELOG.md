@@ -1,5 +1,11 @@
 # Changelog
 
+# 3.2.3
+
+[+] Add location method of core lib.  
+[+] Add getLocation method of core lib.  
+[+] Add link control in common.cgc.
+
 # 3.2.2-beta3
 
 [\*] Optimized byterun theme.  
