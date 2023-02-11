@@ -4,6 +4,8 @@ export default class extends clickgo.form.AbstractForm {
 
     public hash: string = 'test';
 
+    public location: string = 'https://www.google.com';
+
     public get config(): string {
         return JSON.stringify(clickgo.core.config, null, 4).replace(/"icon": "([\s\S]+?)"/g, '"icon": "data:image/..."');
     }
@@ -25,6 +27,17 @@ export default class extends clickgo.form.AbstractForm {
 
     public async getHash(): Promise<void> {
         await clickgo.form.dialog('Hash is: ' + clickgo.core.getHash());
+    }
+
+    public async locatione(): Promise<void> {
+        if (clickgo.core.location(this.location)) {
+            return;
+        }
+        await clickgo.form.dialog('No permission.');
+    }
+
+    public async getLocation(): Promise<void> {
+        await clickgo.form.dialog('Location is: ' + clickgo.core.getLocation());
     }
 
 }

@@ -9,5 +9,10 @@
             <button @click="hashe" style="height: 30px; padding: 0 10px;">hash('{{hash}}')</button>
         </layout>
         <button @click="getHash" style="height: 30px;">getHash()</button>
+        <layout gutter="10" align-v="center">
+            <text v-model="location" style="flex: 1;" />
+            <button @click="locatione" style="height: 30px; padding: 0 10px;">location('...{{location.slice(-5)}}')</button>
+        </layout>
+        <button @click="getLocation" style="height: 30px;">getLocation()</button>
     </layout>
 </form>

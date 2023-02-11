@@ -424,6 +424,12 @@ function run(url, opt = {}, ntid) {
                 },
                 getHash: function () {
                     return core.getHash();
+                },
+                location: function (url) {
+                    return core.location(url, taskId);
+                },
+                getLocation: function () {
+                    return core.getLocation();
                 }
             },
             'dom': {

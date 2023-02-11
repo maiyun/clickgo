@@ -482,6 +482,12 @@ export async function run(url: string | types.IApp, opt: types.ITaskRunOptions =
             },
             getHash: function(): string {
                 return core.getHash();
+            },
+            location: function(url: string): boolean {
+                return core.location(url, taskId);
+            },
+            getLocation: function(): string {
+                return core.getLocation();
             }
         },
         'dom': {

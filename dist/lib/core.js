@@ -32,7 +32,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getHash = exports.hash = exports.getAvailArea = exports.fetchApp = exports.readApp = exports.trigger = exports.getModule = exports.regModule = exports.boot = exports.getCdn = exports.AbstractApp = exports.config = void 0;
+exports.getLocation = exports.location = exports.getHash = exports.hash = exports.getAvailArea = exports.fetchApp = exports.readApp = exports.trigger = exports.getModule = exports.regModule = exports.boot = exports.getCdn = exports.AbstractApp = exports.config = void 0;
 const clickgo = __importStar(require("../clickgo"));
 const fs = __importStar(require("./fs"));
 const form = __importStar(require("./form"));
@@ -521,7 +521,7 @@ function fetchApp(url, opt = {}, taskId) {
             !url.startsWith('http:') &&
             !url.startsWith('https:') &&
             !url.startsWith('file:')) {
-            url = tool.urlResolve(location.href, url);
+            url = tool.urlResolve(window.location.href, url);
         }
         if (cga) {
             try {
@@ -705,6 +705,25 @@ function getHash() {
     return window.location.hash ? decodeURIComponent(window.location.hash.slice(1)) : '';
 }
 exports.getHash = getHash;
+function location(url, taskId) {
+    if (!taskId) {
+        return false;
+    }
+    const t = task.list[taskId];
+    if (!t) {
+        return false;
+    }
+    if (!t.runtime.permissions.includes('root') && !t.runtime.permissions.includes('location')) {
+        return false;
+    }
+    window.location.href = url;
+    return true;
+}
+exports.location = location;
+function getLocation() {
+    return window.location.href;
+}
+exports.getLocation = getLocation;
 window.addEventListener('hashchange', function () {
     trigger('hashChanged', window.location.hash ? decodeURIComponent(window.location.hash.slice(1)) : '');
 });

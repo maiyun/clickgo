@@ -619,7 +619,7 @@ export async function fetchApp(
         !url.startsWith('https:') &&
         !url.startsWith('file:')
     ) {
-        url = tool.urlResolve(location.href, url);
+        url = tool.urlResolve(window.location.href, url);
     }
     // --- 如果是 cga 文件，直接读取并交给 readApp 函数处理 ---
     if (cga) {
@@ -814,6 +814,33 @@ export function hash(hash: string, taskId?: number): boolean {
  */
 export function getHash(): string {
     return window.location.hash ? decodeURIComponent(window.location.hash.slice(1)) : '';
+}
+
+/**
+ * --- 对浏览器做跳转操作 ---
+ * @param url 要跳转的新 URL
+ * @param taskId 基任务，App 模式下无效
+ */
+export function location(url: string, taskId?: number): boolean {
+    if (!taskId) {
+        return false;
+    }
+    const t = task.list[taskId];
+    if (!t) {
+        return false;
+    }
+    if (!t.runtime.permissions.includes('root') && !t.runtime.permissions.includes('location')) {
+        return false;
+    }
+    window.location.href = url;
+    return true;
+}
+
+/**
+ * --- 获取当前的浏览器的 url ---
+ */
+export function getLocation(): string {
+    return window.location.href;
 }
 
 window.addEventListener('hashchange', function() {

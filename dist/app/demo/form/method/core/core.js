@@ -37,6 +37,7 @@ class default_1 extends clickgo.form.AbstractForm {
     constructor() {
         super(...arguments);
         this.hash = 'test';
+        this.location = 'https://www.google.com';
     }
     get config() {
         return JSON.stringify(clickgo.core.config, null, 4).replace(/"icon": "([\s\S]+?)"/g, '"icon": "data:image/..."');
@@ -62,6 +63,19 @@ class default_1 extends clickgo.form.AbstractForm {
     getHash() {
         return __awaiter(this, void 0, void 0, function* () {
             yield clickgo.form.dialog('Hash is: ' + clickgo.core.getHash());
+        });
+    }
+    locatione() {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (clickgo.core.location(this.location)) {
+                return;
+            }
+            yield clickgo.form.dialog('No permission.');
+        });
+    }
+    getLocation() {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield clickgo.form.dialog('Location is: ' + clickgo.core.getLocation());
         });
     }
 }
