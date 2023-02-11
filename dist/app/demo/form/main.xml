@@ -12,6 +12,7 @@
                 <button @click="openForm('ctext')">Text</button>
                 <button @click="openForm('ctab')">Tab</button>
                 <button @click="openForm('clabel')">Label</button>
+                <button @click="openForm('clink')">Link</button>
                 <button @click="openForm('cloading')">Loading</button>
                 <button @click="openForm('cdialog')">Dialog</button>
                 <button @click="openForm('cfile')">File</button>

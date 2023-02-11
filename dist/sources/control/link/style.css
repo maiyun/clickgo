@@ -1,0 +1,1 @@
+.wrap{color:var(--info);text-decoration:underline;position:relative;display:block;cursor:pointer;outline:none}.wrap:hover{color:var(--info-hover)}.wrap:active{color:var(--info-active)}.wrap:focus{color:var(--info-focus)}.wrap:focus::after{content:"";position:absolute;width:100%;height:100%;border:dotted .5px var(--g-plain-border-color);left:0;top:0}

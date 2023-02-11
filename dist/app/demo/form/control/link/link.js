@@ -34,48 +34,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const clickgo = __importStar(require("clickgo"));
 class default_1 extends clickgo.form.AbstractForm {
-    constructor() {
-        super(...arguments);
-        this.hash = 'test';
-        this.location = 'https://www.maiyun.net';
-    }
-    get config() {
-        return JSON.stringify(clickgo.core.config, null, 4).replace(/"icon": "([\s\S]+?)"/g, '"icon": "data:image/..."');
-    }
-    getCdn() {
+    alert() {
         return __awaiter(this, void 0, void 0, function* () {
-            yield clickgo.form.dialog(clickgo.core.getCdn());
-        });
-    }
-    getAvailArea() {
-        return __awaiter(this, void 0, void 0, function* () {
-            yield clickgo.form.dialog(JSON.stringify(clickgo.core.getAvailArea()));
-        });
-    }
-    hashe() {
-        return __awaiter(this, void 0, void 0, function* () {
-            if (clickgo.core.hash(this.hash)) {
-                return;
-            }
-            yield clickgo.form.dialog('No permission.');
-        });
-    }
-    getHash() {
-        return __awaiter(this, void 0, void 0, function* () {
-            yield clickgo.form.dialog('Hash is: ' + clickgo.core.getHash());
-        });
-    }
-    locatione() {
-        return __awaiter(this, void 0, void 0, function* () {
-            if (clickgo.core.location(this.location)) {
-                return;
-            }
-            yield clickgo.form.dialog('No permission.');
-        });
-    }
-    getLocation() {
-        return __awaiter(this, void 0, void 0, function* () {
-            yield clickgo.form.dialog('Location is: ' + clickgo.core.getLocation());
+            yield clickgo.form.dialog('Alert');
         });
     }
 }

@@ -1,0 +1,6 @@
+<a v-if="url" class="wrap" :href="url" target="_blank">
+    <slot></slot>
+</a>
+<div v-else class="wrap" :tabindex="formFocus && '0'" @keydown="keydown">
+    <slot></slot>
+</div>

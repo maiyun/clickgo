@@ -4,7 +4,7 @@ export default class extends clickgo.form.AbstractForm {
 
     public hash: string = 'test';
 
-    public location: string = 'https://www.google.com';
+    public location: string = 'https://www.maiyun.net';
 
     public get config(): string {
         return JSON.stringify(clickgo.core.config, null, 4).replace(/"icon": "([\s\S]+?)"/g, '"icon": "data:image/..."');

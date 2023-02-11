@@ -1,0 +1,13 @@
+<form width="300" height="300" title="Link">
+    <layout direction="v" gutter="10" style="padding: 10px; flex: 1; width: 0;">
+        <label>You can use CSS to customize the link:</label>
+        <link>Normal</link>
+        <link style="text-align: center;">Center</link>
+        <link style="color: red;">Color</link>
+        <link style="background: rgba(0, 0, 0, .1);">Background</link>
+        <link style="background: rgba(0, 0, 0, .1); padding: 10px;">Padding</link>
+        <link style="font-size: 36px;">Font size</link>
+        <link url="https://www.maiyun.net">https://www.maiyun.net</link>
+        <link @click="alert">Alert</link>
+    </layout>
+</form>
