@@ -121,9 +121,9 @@ class default_1 extends clickgo.form.AbstractForm {
     bindGesture(e) {
         clickgo.dom.bindGesture(e, (ne, dir) => {
             if (['top', 'bottom'].includes(dir)) {
-                return true;
+                return 1;
             }
-            return false;
+            return 0;
         }, (dir) => __awaiter(this, void 0, void 0, function* () {
             this.bindGestureText = dir.slice(0, 1).toUpperCase() + dir.slice(1);
             yield clickgo.tool.sleep(500);
@@ -133,9 +133,9 @@ class default_1 extends clickgo.form.AbstractForm {
     bindGestureWheel(e) {
         clickgo.dom.bindGesture(e, (ne, dir) => {
             if (['top', 'bottom', 'left', 'right'].includes(dir)) {
-                return true;
+                return 1;
             }
-            return false;
+            return 0;
         }, (dir) => __awaiter(this, void 0, void 0, function* () {
             this.bindGestureWheelText = dir.slice(0, 1).toUpperCase() + dir.slice(1);
             yield clickgo.tool.sleep(500);

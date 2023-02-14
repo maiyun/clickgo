@@ -1,5 +1,9 @@
 # Changelog
 
+# 3.2.4
+
+[\*] optimize scroll.
+
 # 3.2.3
 
 [+] Add location method of core lib.  

@@ -106,9 +106,9 @@ export default class extends clickgo.form.AbstractForm {
     public bindGesture(e: MouseEvent | TouchEvent): void {
         clickgo.dom.bindGesture(e, (ne, dir) => {
             if (['top', 'bottom'].includes(dir)) {
-                return true;
+                return 1;
             }
-            return false;
+            return 0;
         }, async (dir): Promise<void> => {
             this.bindGestureText = dir.slice(0, 1).toUpperCase() + dir.slice(1);
             await clickgo.tool.sleep(500);
@@ -119,9 +119,9 @@ export default class extends clickgo.form.AbstractForm {
     public bindGestureWheel(e: WheelEvent): void {
         clickgo.dom.bindGesture(e, (ne, dir) => {
             if (['top', 'bottom', 'left', 'right'].includes(dir)) {
-                return true;
+                return 1;
             }
-            return false;
+            return 0;
         }, async (dir) => {
             this.bindGestureWheelText = dir.slice(0, 1).toUpperCase() + dir.slice(1);
             await clickgo.tool.sleep(500);

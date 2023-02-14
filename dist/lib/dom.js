@@ -878,7 +878,14 @@ function bindGesture(oe, before, handler) {
             move: (e, d) => {
                 if (first < 0) {
                     if (first > -30) {
-                        before(e, dir);
+                        const rtn = before(e, dir);
+                        if (rtn === 1) {
+                            e.stopPropagation();
+                            e.preventDefault();
+                        }
+                        else if (rtn === -1) {
+                            e.stopPropagation();
+                        }
                         --first;
                     }
                     return;
@@ -902,7 +909,15 @@ function bindGesture(oe, before, handler) {
                             dir = 'left';
                         }
                     }
-                    if (!before(e, dir)) {
+                    const rtn = before(e, dir);
+                    if (rtn === 1) {
+                        e.stopPropagation();
+                        e.preventDefault();
+                    }
+                    else {
+                        if (rtn === -1) {
+                            e.stopPropagation();
+                        }
                         first = -1;
                         return;
                     }
@@ -1028,8 +1043,19 @@ function bindGesture(oe, before, handler) {
                         gestureWheel.dir = 'right';
                     }
                 }
-                if (!before(oe, gestureWheel.dir)) {
-                    gestureWheel.done = true;
+                const rtn = before(oe, gestureWheel.dir);
+                if (rtn === 1) {
+                    oe.stopPropagation();
+                    oe.preventDefault();
+                }
+                else {
+                    if (rtn === -1) {
+                        oe.stopPropagation();
+                        gestureWheel.done = true;
+                    }
+                    else {
+                        gestureWheel.dir = '';
+                    }
                     return;
                 }
                 form.elements.gesture.style.transform = 'scale(0)';

@@ -77,49 +77,49 @@ export default class extends clickgo.control.AbstractControl {
             switch (dir) {
                 case 'top': {
                     if (this.element.scrollTop > 0) {
-                        e.stopPropagation();
+                        return -1;
                     }
                     else {
                         if (this.propArray('gesture').includes('top')) {
-                            return true;
+                            return 1;
                         }
                     }
                     break;
                 }
                 case 'bottom': {
                     if (Math.round(this.element.scrollTop) < this.maxScrollTop()) {
-                        e.stopPropagation();
+                        return -1;
                     }
                     else {
                         if (this.propArray('gesture').includes('bottom')) {
-                            return true;
+                            return 1;
                         }
                     }
                     break;
                 }
                 case 'left': {
                     if (this.element.scrollLeft > 0) {
-                        e.stopPropagation();
+                        return -1;
                     }
                     else {
                         if (this.propArray('gesture').includes('left')) {
-                            return true;
+                            return 1;
                         }
                     }
                     break;
                 }
                 default: {
                     if (Math.round(this.element.scrollLeft) < this.maxScrollLeft()) {
-                        e.stopPropagation();
+                        return -1;
                     }
                     else {
                         if (this.propArray('gesture').includes('right')) {
-                            return true;
+                            return 1;
                         }
                     }
                 }
             }
-            return false;
+            return 0;
         }, (dir) => {
             this.emit('gesture', dir);
         });
@@ -268,49 +268,49 @@ export default class extends clickgo.control.AbstractControl {
                 switch (dir) {
                     case 'top': {
                         if (this.element.scrollTop > 0) {
-                            ne.stopPropagation();
+                            return -1;
                         }
                         else {
                             if (this.propArray('gesture').includes('top')) {
-                                return true;
+                                return 1;
                             }
                         }
                         break;
                     }
                     case 'bottom': {
                         if (Math.round(this.element.scrollTop) < this.maxScrollTop()) {
-                            ne.stopPropagation();
+                            return -1;
                         }
                         else {
                             if (this.propArray('gesture').includes('bottom')) {
-                                return true;
+                                return 1;
                             }
                         }
                         break;
                     }
                     case 'left': {
                         if (this.element.scrollLeft > 0) {
-                            ne.stopPropagation();
+                            return -1;
                         }
                         else {
                             if (this.propArray('gesture').includes('left')) {
-                                return true;
+                                return 1;
                             }
                         }
                         break;
                     }
                     default: {
                         if (Math.round(this.element.scrollLeft) < this.maxScrollLeft()) {
-                            ne.stopPropagation();
+                            return -1;
                         }
                         else {
                             if (this.propArray('gesture').includes('right')) {
-                                return true;
+                                return 1;
                             }
                         }
                     }
                 }
-                return false;
+                return 0;
             }, (dir) => {
                 this.emit('gesture', dir);
             });

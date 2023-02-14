@@ -1150,10 +1150,10 @@ const gestureWheel = {
 /**
  * --- 绑定上拉、下拉、左拉、右拉 ---
  * @param oe 响应事件
- * @param before before 事件，返回 true 则显示 gesture
+ * @param before before 事件，返回 1 则显示 gesture，0 则不处理（可能会向上传递事件），-1 则 stopPropagation（本层可拖动，若实际不可拖动则可能导致浏览器页面滚动）
  * @param handler 执行完毕的话才会回调
  */
-export function bindGesture(oe: MouseEvent | TouchEvent | WheelEvent, before: (e: MouseEvent | TouchEvent | WheelEvent, dir: 'top' | 'right' | 'bottom' | 'left') => boolean, handler?: (dir: 'top' | 'right' | 'bottom' | 'left') => void | Promise<void>): void {
+export function bindGesture(oe: MouseEvent | TouchEvent | WheelEvent, before: (e: MouseEvent | TouchEvent | WheelEvent, dir: 'top' | 'right' | 'bottom' | 'left') => number, handler?: (dir: 'top' | 'right' | 'bottom' | 'left') => void | Promise<void>): void {
     const el = oe.currentTarget as HTMLElement | null;
     if (!el) {
         return;
@@ -1172,7 +1172,14 @@ export function bindGesture(oe: MouseEvent | TouchEvent | WheelEvent, before: (e
             move: (e, d) => {
                 if (first < 0) {
                     if (first > -30) {
-                        before(e, dir);
+                        const rtn = before(e, dir);
+                        if (rtn === 1) {
+                            e.stopPropagation();
+                            e.preventDefault();
+                        }
+                        else if (rtn === -1) {
+                            e.stopPropagation();
+                        }
                         --first;
                     }
                     return;
@@ -1197,7 +1204,15 @@ export function bindGesture(oe: MouseEvent | TouchEvent | WheelEvent, before: (e
                             dir = 'left';
                         }
                     }
-                    if (!before(e, dir)) {
+                    const rtn = before(e, dir);
+                    if (rtn === 1) {
+                        e.stopPropagation();
+                        e.preventDefault();
+                    }
+                    else {
+                        if (rtn === -1) {
+                            e.stopPropagation();
+                        }
                         first = -1;
                         return;
                     }
@@ -1342,10 +1357,22 @@ export function bindGesture(oe: MouseEvent | TouchEvent | WheelEvent, before: (e
                         gestureWheel.dir = 'right';
                     }
                 }
-                // --- 判断是否要显示滚动条 ---
-                if (!before(oe, gestureWheel.dir as any)) {
+                // --- 判断是否要显示 gesture ---
+                const rtn = before(oe, gestureWheel.dir as any);
+                if (rtn === 1) {
+                    oe.stopPropagation();
+                    oe.preventDefault();
+                }
+                else {
                     // --- 不显示 ---
-                    gestureWheel.done = true;
+                    // --- 还得判断是不是 stopPropagation 了，如果 stopPropagation 了，才 true ---
+                    if (rtn === -1) {
+                        oe.stopPropagation();
+                        gestureWheel.done = true;
+                    }
+                    else {
+                        gestureWheel.dir = '';
+                    }
                     return;
                 }
                 // --- 重置位置 ---

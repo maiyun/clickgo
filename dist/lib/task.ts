@@ -562,7 +562,7 @@ export async function run(url: string | types.IApp, opt: types.ITaskRunOptions =
             bindDown: function(oe: MouseEvent | TouchEvent, opt: types.IBindDownOptions) {
                 dom.bindDown(oe, opt);
             },
-            bindGesture: function(oe: MouseEvent | TouchEvent | WheelEvent, before: (e: MouseEvent | TouchEvent | WheelEvent, dir: 'top' | 'right' | 'bottom' | 'left') => boolean, handler: (dir: 'top' | 'right' | 'bottom' | 'left') => void): void {
+            bindGesture: function(oe: MouseEvent | TouchEvent | WheelEvent, before: (e: MouseEvent | TouchEvent | WheelEvent, dir: 'top' | 'right' | 'bottom' | 'left') => number, handler: (dir: 'top' | 'right' | 'bottom' | 'left') => void): void {
                 dom.bindGesture(oe, before, handler);
             },
             bindLong: function(

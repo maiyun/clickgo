@@ -100,31 +100,31 @@ class default_1 extends clickgo.control.AbstractControl {
             switch (dir) {
                 case 'top': {
                     if (this.refs.tabs[0].scrollTop > 0) {
-                        ne.stopPropagation();
+                        return -1;
                     }
                     break;
                 }
                 case 'bottom': {
                     if (Math.round(this.refs.tabs[0].scrollTop) <
                         (this.refs.tabs[0].scrollHeight - this.refs.tabs[0].clientHeight)) {
-                        ne.stopPropagation();
+                        return -1;
                     }
                     break;
                 }
                 case 'left': {
                     if (this.refs.tabs[0].scrollLeft > 0) {
-                        ne.stopPropagation();
+                        return -1;
                     }
                     break;
                 }
                 default: {
                     if (Math.round(this.refs.tabs[0].scrollLeft) <
                         (this.refs.tabs[0].scrollWidth - this.refs.tabs[0].clientWidth)) {
-                        ne.stopPropagation();
+                        return -1;
                     }
                 }
             }
-            return false;
+            return 0;
         });
     }
     down(e, index) {
