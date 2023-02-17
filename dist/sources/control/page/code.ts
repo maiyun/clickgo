@@ -84,7 +84,7 @@ export default class extends clickgo.control.AbstractControl {
         }
 
         this.nexts.length = 0;
-        const last2 = this.propInt('max') - 1;
+        const last2 = this.maxPage - 1;
         if (this.page < last2) {
             let next = this.page + 2;
             if (next > last2) {
@@ -98,7 +98,7 @@ export default class extends clickgo.control.AbstractControl {
 
     // --- 更新最大页面数值 ---
     public refreshMaxPage(): void {
-        const max = this.propInt('max');
+        const max = this.maxPage;
         if (max) {
             this.maxPage = max;
             return;
@@ -108,6 +108,14 @@ export default class extends clickgo.control.AbstractControl {
             return;
         }
         this.maxPage = Math.ceil(this.propInt('total') / this.propInt('count'));
+    }
+
+    public keydown(e: KeyboardEvent): void {
+        if (e.key !== 'Enter') {
+            return;
+        }
+        e.preventDefault();
+        (e.target as HTMLElement).click();
     }
 
     public onMounted(): void | Promise<void> {
@@ -124,6 +132,7 @@ export default class extends clickgo.control.AbstractControl {
             this.refreshMaxPage();
         });
         this.refreshMaxPage();
+        this.refresh();
     }
 
 }

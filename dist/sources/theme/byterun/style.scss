@@ -244,6 +244,9 @@ global {
             background: hsl(220, 20%, 10%);
             // --- 控制按钮 ---
             .form_controls {
+                .form_min, .form_max, .form_close {
+                    transition: all .1s ease-out;
+                }
                 .form_min, .form_max {
                     &:hover {
                         background: rgba(255, 255, 255, .05);
@@ -506,6 +509,29 @@ global {
 
 .nav-title_wrap {
     padding: 10px;
+}
+
+// -- CONTROL -- page --
+
+.page_wrap {
+    .page_list {
+        > .page_tag-div {
+            border-radius: 5px; transition: all .1s ease-out; border: none; background: transparent;
+            &::after {
+                border-radius: 3px;
+            }
+
+            &:focus {
+                background: transparent;
+            }
+            &:hover {
+                background: var(--g-background);
+            }
+            &:active, &.page_selected {
+                background: var(--g-border-color-hover);
+            }
+        }
+    }
 }
 
 // -- CONTROL -- property --
