@@ -50,6 +50,13 @@ const info: {
     'lastZIndex': 999,
     'topLastZIndex': 9999999,
     'locale': {
+        'en': {
+            'ok': 'OK',
+            'yes': 'Yes',
+            'no': 'No',
+            'cancel': 'Cancel',
+            'search': 'Search'
+        },
         'sc': {
             'ok': '好',
             'yes': '是',
@@ -64,19 +71,68 @@ const info: {
             'cancel': '取消',
             'search': '檢索'
         },
-        'en': {
-            'ok': 'OK',
-            'yes': 'Yes',
-            'no': 'No',
-            'cancel': 'Cancel',
-            'search': 'Search'
-        },
         'ja': {
             'ok': '好',
             'yes': 'はい',
             'no': 'いいえ',
             'cancel': 'キャンセル',
             'search': '検索'
+        },
+        'ko': {
+            'ok': '확인',
+            'yes': '예',
+            'no': '아니오',
+            'cancel': '취소',
+            'search': '검색'
+        },
+        'th': {
+            'ok': 'ตกลง',
+            'yes': 'ใช่',
+            'no': 'ไม่',
+            'cancel': 'ยกเลิก',
+            'search': 'ค้นหา'
+        },
+        'es': {
+            'ok': 'Aceptar',
+            'yes': 'Sí',
+            'no': 'No',
+            'cancel': 'Cancelar',
+            'search': 'Buscar'
+        },
+        'de': {
+            'ok': 'OK',
+            'yes': 'Ja',
+            'no': 'Nein',
+            'cancel': 'Abbrechen',
+            'search': 'Suchen'
+        },
+        'fr': {
+            'ok': 'OK',
+            'yes': 'Oui',
+            'no': 'Non',
+            'cancel': 'Annuler',
+            'search': 'Rechercher'
+        },
+        'pt': {
+            'ok': 'OK',
+            'yes': 'Sim',
+            'no': 'Não',
+            'cancel': 'Cancelar',
+            'search': 'Buscar'
+        },
+        'ru': {
+            'ok': 'OK',
+            'yes': 'Да',
+            'no': 'Нет',
+            'cancel': 'Отмена',
+            'search': 'Поиск'
+        },
+        'vi': {
+            'ok': 'OK',
+            'yes': 'Có',
+            'no': 'Không',
+            'cancel': 'Hủy bỏ',
+            'search': 'Tìm kiếm'
         }
     }
 };

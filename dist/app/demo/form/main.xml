@@ -28,6 +28,7 @@
                 <button @click="openForm('cproperty')">Property</button>
                 <button @click="openForm('ctable')">Table</button>
                 <button @click="openForm('cnav')">Nav</button>
+                <button @click="openForm('cpage')">Page</button>
                 <button @click="openForm('cbox')">Box</button>
                 <button @click="openForm('cmonaco')">Monaco</button>
                 <button @click="openForm('cdesc')">Desc</button>

@@ -50,7 +50,39 @@ class default_1 extends clickgo.control.AbstractControl {
             },
             'ja': {
                 'reset': 'リセット',
-                'description': '形容'
+                'description': '説明'
+            },
+            'ko': {
+                'reset': '재설정',
+                'description': '설명'
+            },
+            'th': {
+                'reset': 'รีเซ็ต',
+                'description': 'คำอธิบาย'
+            },
+            'es': {
+                'reset': 'Reiniciar',
+                'description': 'Descripción'
+            },
+            'de': {
+                'reset': 'Zurücksetzen',
+                'description': 'Beschreibung'
+            },
+            'fr': {
+                'reset': 'Réinitialiser',
+                'description': 'Description'
+            },
+            'pt': {
+                'reset': 'Redefinir',
+                'description': 'Descrição'
+            },
+            'ru': {
+                'reset': 'Сбросить',
+                'description': 'Описание'
+            },
+            'vi': {
+                'reset': 'Đặt lại',
+                'description': 'Mô tả'
             }
         };
         this.sortData = 'kind';

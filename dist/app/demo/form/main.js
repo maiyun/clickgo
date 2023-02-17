@@ -51,6 +51,7 @@ const menu_1 = __importDefault(require("./control/menu/menu"));
 const monaco_1 = __importDefault(require("./control/monaco/monaco"));
 const desc_1 = __importDefault(require("./control/desc/desc"));
 const nav_1 = __importDefault(require("./control/nav/nav"));
+const page_1 = __importDefault(require("./control/page/page"));
 const panel_1 = __importDefault(require("./control/panel/panel"));
 const flow_1 = __importDefault(require("./control/flow/flow"));
 const property_1 = __importDefault(require("./control/property/property"));
@@ -172,6 +173,10 @@ class default_1 extends clickgo.form.AbstractForm {
                 }
                 case 'cnav': {
                     frm = yield clickgo.form.create(nav_1.default);
+                    break;
+                }
+                case 'cpage': {
+                    frm = yield clickgo.form.create(page_1.default);
                     break;
                 }
                 case 'cpanel': {

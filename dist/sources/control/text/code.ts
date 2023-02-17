@@ -87,15 +87,45 @@ export default class extends clickgo.control.AbstractControl {
             'cut': '切り取り',
             'paste': '貼り付け'
         },
+        'ko': {
+            'copy': '복사',
+            'cut': '잘라내기',
+            'paste': '붙여넣기',
+        },
+        'th': {
+            'copy': 'คัดลอก',
+            'cut': 'ตัด',
+            'paste': 'วาง',
+        },
+        'es': {
+            'copy': 'Copiar',
+            'cut': 'Cortar',
+            'paste': 'Pegar',
+        },
+        'de': {
+            'copy': 'Kopieren',
+            'cut': 'Ausschneiden',
+            'paste': 'Einfügen'
+        },
+        'fr': {
+            'copy': 'Copier',
+            'cut': 'Couper',
+            'paste': 'Coller'
+        },
+        'pt': {
+            'copy': 'Copiar',
+            'cut': 'Recortar',
+            'paste': 'Colar'
+        },
         'ru': {
             'copy': 'Копировать',
             'cut': 'Вырезать',
             'paste': 'Вставить'
         },
-        'ko': {
-            'copy': '복사',
-            'cut': '자르다',
-            'paste': '반죽'
+        'vi': {
+            'copy': 'Sao chép',
+            'cut': 'Cắt',
+            'paste': 'Dán'
         }
     };
 

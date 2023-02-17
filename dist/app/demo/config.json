@@ -12,6 +12,7 @@
         "/clickgo/control/property",
         "/clickgo/control/table",
         "/clickgo/control/nav",
+        "/clickgo/control/page",
         "/clickgo/control/desc",
         "/clickgo/control/html"
     ],
@@ -59,6 +60,8 @@
         "/form/control/monaco/monaco.xml",
         "/form/control/nav/nav.js",
         "/form/control/nav/nav.xml",
+        "/form/control/page/page.js",
+        "/form/control/page/page.xml",
         "/form/control/panel/panel.js",
         "/form/control/panel/panel.xml",
         "/form/control/panel/test1.js",

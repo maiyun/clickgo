@@ -16,6 +16,7 @@ import cmenuFrm from './control/menu/menu';
 import cmonacoFrm from './control/monaco/monaco';
 import cdescFrm from './control/desc/desc';
 import cnavFrm from './control/nav/nav';
+import cpageFrm from './control/page/page';
 import cpanelFrm from './control/panel/panel';
 import cflowFrm from './control/flow/flow';
 import cpropertyFrm from './control/property/property';
@@ -139,6 +140,10 @@ export default class extends clickgo.form.AbstractForm {
             }
             case 'cnav': {
                 frm = await clickgo.form.create(cnavFrm);
+                break;
+            }
+            case 'cpage': {
+                frm = await clickgo.form.create(cpageFrm);
                 break;
             }
             case 'cpanel': {

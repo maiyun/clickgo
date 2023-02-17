@@ -61,6 +61,30 @@ const localeData: Record<string, {
     },
     'ja': {
         'loading': '読み込み中...'
+    },
+    'ko': {
+        'loading': '로딩 중...'
+    },
+    'th': {
+        'loading': 'กำลังโหลด...'
+    },
+    'es': {
+        'loading': 'Cargando...'
+    },
+    'de': {
+        'loading': 'Laden...'
+    },
+    'fr': {
+        'loading': 'Chargement en cours...'
+    },
+    'pt': {
+        'loading': 'Carregando...'
+    },
+    'ru': {
+        'loading': 'Загрузка...'
+    },
+    'vi': {
+        'loading': 'Đang tải...'
     }
 };
 
@@ -1269,23 +1293,103 @@ const locale: Record<string, {
     },
     'en': {
         'unknown': 'Unknown',
-        'root': '<b>Danger!</b> Highest authorization! Please confirm whether to authorize?',
-        'apply-permission': 'is applying for permissions, please check carefully',
+        'root': '<b>Danger!</b> Highest permission! Please confirm if you want to allow!',
+        'apply-permission': 'Applying permission, please confirm carefully',
         'native.form': 'Native window control',
-        'hash': 'Can modify the location hash',
+        'hash': 'Can modify address bar "hash"',
         'fs': 'File system',
-        'readonly': 'Read only',
+        'readonly': 'Read-only',
         'read-write': 'Read and write'
     },
     'ja': {
-        'unknown': '不明な許可',
-        'root': '<b>危険！</b>最高の許可！承認するかどうかを確認してください！',
-        'apply-permission': '許可申請中、よくご確認ください',
-        'native.form': 'ローカルウィンドウを操作する',
-        'hash': '網址の hash 変更可能',
-        'fs': '資料システム',
+        'unknown': '不明な権限',
+        'root': '<b>危険！</b>最高権限です！許可するかどうか必ず確認してください！',
+        'apply-permission': '権限を申請中です。よくご確認ください',
+        'native.form': 'ネイティブフォームコントロール',
+        'hash': 'アドレスバーの "hash" を変更できます',
+        'fs': 'ファイルシステム',
         'readonly': '読み取り専用',
-        'read-write': '読み書き'
+        'read-write': '読み書き可能'
+    },
+    'ko': {
+        'unknown': '알 수 없는 권한',
+        'root': '<b>위험!</b> 최고 권한입니다! 반드시 허용할 것인지 확인하십시오!',
+        'apply-permission': '권한을 신청 중입니다. 주의 깊게 확인하십시오',
+        'native.form': '네이티브 폼 제어',
+        'hash': '주소 표시 줄 "hash" 를 수정할 수 있습니다',
+        'fs': '파일 시스템',
+        'readonly': '읽기 전용',
+        'read-write': '읽기 및 쓰기',
+    },
+    'th': {
+        'unknown': 'สิทธิ์ที่ไม่รู้จัก',
+        'root': '<b>อันตราย!</b> สิทธิ์สูงสุด! โปรดตรวจสอบว่าต้องการอนุญาตหรือไม่!',
+        'apply-permission': 'กำลังขอสิทธิ์ โปรดตรวจสอบอย่างรอบคอบ',
+        'native.form': 'การควบคุมแบบฟอร์มแบบ Native',
+        'hash': 'สามารถแก้ไขแถบที่อยู่ "hash"',
+        'fs': 'ระบบไฟล์',
+        'readonly': 'อ่านได้อย่างเดียว',
+        'read-write': 'อ่านและเขียนได้'
+    },
+    'es': {
+        'unknown': 'Permiso desconocido',
+        'root': '<b>¡Peligro!</b> ¡Permiso máximo! ¡Asegúrese de permitirlo!',
+        'apply-permission': 'Solicitando permiso. Por favor, compruebe cuidadosamente',
+        'native.form': 'Control de formulario nativo',
+        'hash': 'Puede modificar el "hash" de la barra de direcciones',
+        'fs': 'Sistema de archivos',
+        'readonly': 'Solo lectura',
+        'read-write': 'Lectura y escritura',
+    },
+    'de': {
+        'unknown': 'Unbekannte Berechtigung',
+        'root': '<b>Gefahr!</b> Höchste Berechtigung! Bitte stellen Sie unbedingt sicher, ob dies erlaubt ist!',
+        'apply-permission': 'Bitte bestätigen Sie die Berechtigungsanfrage sorgfältig',
+        'native.form': 'Natives Formularsteuerelement',
+        'hash': 'Adressleisten "hash" bearbeiten',
+        'fs': 'Dateisystem',
+        'readonly': 'Schreibgeschützt',
+        'read-write': 'Lesen/Schreiben'
+    },
+    'fr': {
+        'unknown': 'Autorisation inconnue',
+        'root': '<b>Danger !</b> Autorisation maximale ! Veuillez vous assurer que vous êtes autorisé à le faire !',
+        'apply-permission': 'Demande d\'autorisation en cours, veuillez vérifier attentivement',
+        'native.form': 'Contrôle de formulaire natif',
+        'hash': 'Modifier le "hash" de la barre d\'adresse',
+        'fs': 'Système de fichiers',
+        'readonly': 'Lecture seule',
+        'read-write': 'Lecture/écriture'
+    },
+    'pt': {
+        'unknown': 'Permissão desconhecida',
+        'root': '<b>Perigo!</b> Permissão máxima! Certifique-se de ter permissão para fazê-lo!',
+        'apply-permission': 'Solicitando permissão, por favor confirme cuidadosamente',
+        'native.form': 'Controle de formulário nativo',
+        'hash': 'Editar "hash" da barra de endereço',
+        'fs': 'Sistema de arquivos',
+        'readonly': 'Somente leitura',
+        'read-write': 'Leitura/escrita'
+    },
+    'ru': {
+        'unknown': 'Неизвестное разрешение',
+        'root': '<b>Опасность!</b> Максимальное разрешение! Пожалуйста, обязательно убедитесь, что это разрешено!',
+        'apply-permission': 'Выполняется запрос на разрешение, пожалуйста, внимательно подтвердите',
+        'native.form': 'Нативный элемент формы',
+        'hash': 'Изменить "hash" адресной строки',
+        'fs': 'Файловая система',
+        'readonly': 'Только для чтения',
+        'read-write': 'Чтение/запись'
+    },
+    'vi': {
+        'unknown': 'Quyền không xác định',
+        'root': '<b>Nguy hiểm!</b> Quyền hạn cao nhất! Hãy đảm bảo rằng bạn được phép làm điều này!',
+        'apply-permission': 'Đang yêu cầu quyền truy cập, vui lòng xác nhận cẩn thận',
+        'native.form': 'Thiết bị kiểm soát biểu mẫu gốc',
+        'hash': 'Chỉnh sửa "hash" thanh địa chỉ',
+        'fs': 'Hệ thống tập tin',
+        'readonly': 'Chỉ đọc',
+        'read-write': 'Đọc/ghi'
     }
 };
 

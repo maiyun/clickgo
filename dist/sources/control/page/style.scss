@@ -1,0 +1,43 @@
+.wrap {
+    .list {
+        display: flex; justify-content: center;
+        > div {
+            border: solid .5px var(--g-border-color); background: var(--g-background); line-height: 1; position: relative; outline: none; display: flex; justify-content: center; align-items: center; width: 28px; height: 28px;
+            &::after {
+                content: ''; pointer-events: none; position: absolute; left: 3px; top: 3px; width: calc(100% - 6px); height: calc(100% - 6px); display: none; z-index: 1; border: dotted .5px var(--g-border-color);
+            }
+    
+            &:focus {
+                border-color: var(--g-border-color-focus); background: var(--g-background-focus); color: var(--g-color-focus);
+                &::after {
+                    display: block;
+                }
+            }
+            &:hover {
+                border-color: var(--g-border-color-hover); background: var(--g-background-hover); color: var(--g-color-hover);
+            }
+            &:active, &.selected {
+                border-color: var(--g-border-color-active); background: var(--g-background-active); color: var(--g-color-active);
+            }
+        }
+        > :not(:first-child) {
+            margin-left: 10px;
+        }
+
+        .left, .right {
+            &::before {
+                content: ''; pointer-events: none; border: solid 1px var(--g-color); width: 6px; height: 6px;
+            }
+        }
+        .left::before {
+            border-width: 0 0 1px 1px; transform: translateX(2px) rotate(45deg);
+        }
+        .right::before {
+            border-width: 1px 1px 0 0; transform: translateX(-2px) rotate(45deg);
+        }
+    }
+    
+    .total {
+        margin-top: 10px; text-align: center;
+    }
+}

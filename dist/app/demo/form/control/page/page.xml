@@ -1,0 +1,9 @@
+<form width="650" height="400" title="Page">
+    <layout direction="v" gutter="10" style="flex: 1; padding: 10px;">
+        <page max="10" />
+        <page v-model="p1" max="10" />
+        <page v-model="p2" max="30" />
+        <page v-model="p3" total="1282" />
+        <page v-model="p4" total="1282" count="20" />
+    </layout>
+</form>
