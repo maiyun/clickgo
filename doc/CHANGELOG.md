@@ -1,5 +1,11 @@
 # Changelog
 
+# 3.2.5
+
+[+] Add iconview control.  
+[+] Add page control.  
+[+] Add 8 languages.
+
 # 3.2.4
 
 [\*] optimize scroll.
