@@ -54,7 +54,7 @@
             </block>
             <block @mousedown="bindMoveDown" @touchstart="bindMoveDown" style="height: 50px; display: flex; justify-content: center; align-items: center; font-size: 14px; position: relative; background: var(--g-plain-background); border: solid 1px var(--g-plain-border-color);">
                 <label>bindMove(e, { ... })</label>
-                <block ref="move" style="background: #07c160; position: absolute;" :style="{'left': moveLeft + 'px', 'top': moveTop + 'px', 'width': moveWidth + 'px', 'height': moveHeight + 'px'}" @dblclick="moveWidth = moveWidth === 25 ? 50 : 25;moveHeight = moveHeight === 25 ? 50 : 25"></block>
+                <block ref="move" style="background: #07c160; position: absolute;" :style="{'left': moveLeft + 'px', 'top': moveTop + 'px', 'width': moveWidth + 'px', 'height': moveHeight + 'px'}" @touchstart="moveDown" @mousedown="moveDown"></block>
             </block>
             <button @click="fullscreen" style="height: 30px;">fullscreen()</button>
             <label>clickgo.form.is.move: {{isMove ? 'true' : 'false'}}</label>

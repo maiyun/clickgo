@@ -511,6 +511,9 @@ function run(url, opt = {}, ntid) {
                 bindClick: function (e, handler) {
                     dom.bindClick(e, handler);
                 },
+                bindDblClick: function (e, handler) {
+                    dom.bindDblClick(e, handler);
+                },
                 bindDown: function (oe, opt) {
                     dom.bindDown(oe, opt);
                 },
@@ -519,6 +522,9 @@ function run(url, opt = {}, ntid) {
                 },
                 bindLong: function (e, long) {
                     dom.bindLong(e, long);
+                },
+                setDragData(data) {
+                    dom.setDragData(data);
                 },
                 bindDrag: function (e, opt) {
                     dom.bindDrag(e, opt);

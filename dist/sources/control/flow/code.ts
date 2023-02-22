@@ -126,6 +126,9 @@ export default class extends clickgo.control.AbstractControl {
     }
 
     public down(e: TouchEvent | MouseEvent): void {
+        if ((e.target as HTMLElement).dataset.cgFlowDownCancel !== undefined || clickgo.dom.findParentByData(e.target as HTMLElement, 'cg-flow-down-cancel')) {
+            return;
+        }
         if (this.propBoolean('selection')) {
             const x: number = (e instanceof MouseEvent) ? e.clientX : e.touches[0].clientX;
             const y: number = (e instanceof MouseEvent) ? e.clientY : e.touches[0].clientY;

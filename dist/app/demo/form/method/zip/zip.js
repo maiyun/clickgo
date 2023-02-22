@@ -81,8 +81,8 @@ class default_1 extends clickgo.form.AbstractForm {
         }
         this.ppath = path;
     }
-    dblclick() {
-        return __awaiter(this, void 0, void 0, function* () {
+    dblclick(e) {
+        clickgo.dom.bindDblClick(e, () => __awaiter(this, void 0, void 0, function* () {
             if (!this.access.zip) {
                 return;
             }
@@ -112,7 +112,7 @@ class default_1 extends clickgo.form.AbstractForm {
                 return;
             }
             this.open(this.val[0]);
-        });
+        }));
     }
     up() {
         if (this.ppath === '/') {

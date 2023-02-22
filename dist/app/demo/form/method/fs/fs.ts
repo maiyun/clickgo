@@ -32,38 +32,40 @@ export default class extends clickgo.form.AbstractForm {
         await clickgo.form.dialog(stats ? JSON.stringify(stats) : 'null');
     }
 
-    public async dblclick(): Promise<void> {
-        const r = await clickgo.fs.isFile(this.val[0]);
-        if (r) {
-            const extlio: number = this.val[0].lastIndexOf('.');
-            if (extlio === -1) {
-                await clickgo.form.dialog('This extension is not supported.');
-                return;
-            }
-            const ext: string = this.val[0].toLowerCase().slice(extlio + 1);
-            if (['xml', 'js', 'ts', 'json', 'css', 'html', 'php', 'txt'].includes(ext)) {
-                let content = await clickgo.fs.getContent(this.val[0], this.get ? {
-                    'start': 2,
-                    'end': 4
-                } : undefined);
-                if (!content) {
-                    await clickgo.form.dialog('This file cannot be opened.');
+    public dblclick(e: MouseEvent | TouchEvent): void {
+        clickgo.dom.bindDblClick(e, async () => {
+            const r = await clickgo.fs.isFile(this.val[0]);
+            if (r) {
+                const extlio: number = this.val[0].lastIndexOf('.');
+                if (extlio === -1) {
+                    await clickgo.form.dialog('This extension is not supported.');
                     return;
                 }
-                if (content instanceof Blob) {
-                    content = await clickgo.tool.blob2Text(content);
+                const ext: string = this.val[0].toLowerCase().slice(extlio + 1);
+                if (['xml', 'js', 'ts', 'json', 'css', 'html', 'php', 'txt'].includes(ext)) {
+                    let content = await clickgo.fs.getContent(this.val[0], this.get ? {
+                        'start': 2,
+                        'end': 4
+                    } : undefined);
+                    if (!content) {
+                        await clickgo.form.dialog('This file cannot be opened.');
+                        return;
+                    }
+                    if (content instanceof Blob) {
+                        content = await clickgo.tool.blob2Text(content);
+                    }
+                    const f = await clickgo.form.create(testFrm, {
+                        'title': this.val[0].slice(this.val[0].lastIndexOf('/') + 1),
+                        'content': content
+                    });
+                    f.show();
+                    return;
                 }
-                const f = await clickgo.form.create(testFrm, {
-                    'title': this.val[0].slice(this.val[0].lastIndexOf('/') + 1),
-                    'content': content
-                });
-                f.show();
+                await clickgo.form.dialog('The extension "' + ext + '" is not supported.');
                 return;
             }
-            await clickgo.form.dialog('The extension "' + ext + '" is not supported.');
-            return;
-        }
-        await this.open(this.val[0]);
+            await this.open(this.val[0]);
+        });
     }
 
     public async up(): Promise<void> {

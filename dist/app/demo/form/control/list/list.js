@@ -167,20 +167,15 @@ class default_1 extends clickgo.form.AbstractForm {
         clickgo.form.dialog('Index is ' + this.select2.toString() + '.').catch((e) => { throw e; });
     }
     showType() {
-        if (Array.isArray(this.select)) {
-            if (this.select.length === 0) {
-                clickgo.form.dialog('There are currently no selected items.').catch((e) => { throw e; });
-            }
-            else {
-                const types = [];
-                for (const item of this.select) {
-                    types.push(this.slist[item].type);
-                }
-                clickgo.form.dialog(`Type is ${types}.`).catch((e) => { throw e; });
-            }
+        if (this.select.length === 0) {
+            clickgo.form.dialog('There are currently no selected items.').catch((e) => { throw e; });
         }
         else {
-            clickgo.form.dialog(this.select === -1 ? 'There are currently no selected items.' : `Type is ${this.slist[this.select].type}.`).catch((e) => { throw e; });
+            const types = [];
+            for (const item of this.select) {
+                types.push(this.slist[item].type);
+            }
+            clickgo.form.dialog(`Type is ${types}.`).catch((e) => { throw e; });
         }
     }
     selectButton() {

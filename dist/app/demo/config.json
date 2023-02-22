@@ -14,7 +14,8 @@
         "/clickgo/control/nav",
         "/clickgo/control/page",
         "/clickgo/control/desc",
-        "/clickgo/control/html"
+        "/clickgo/control/html",
+        "/clickgo/control/iconview"
     ],
     "style": "/package/global",
 
@@ -42,6 +43,8 @@
         "/form/control/form/form.xml",
         "/form/control/html/html.js",
         "/form/control/html/html.xml",
+        "/form/control/iconview/iconview.js",
+        "/form/control/iconview/iconview.xml",
         "/form/control/img/img.xml",
         "/form/control/label/label.xml",
         "/form/control/layout/layout.xml",

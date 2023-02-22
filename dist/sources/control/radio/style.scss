@@ -1,7 +1,7 @@
 .wrap {
     display: flex; align-items: center; outline: none;
     &[data-cg-disabled] {
-        color: hsl(205, 0%, 60%);
+        color: var(--g-plain-color-disabled); fill: var(--g-plain-color-disabled);
     }
 
     .radio {
@@ -40,7 +40,7 @@
         }
 
         &:focus {
-            color: var(--g-plain-color-focus);
+            color: var(--g-plain-color-focus); fill: var(--g-plain-color-focus);
 
             .radio {
                 background: var(--g-plain-background-focus);
@@ -58,7 +58,7 @@
         }
 
         &:hover {
-            color: var(--g-plain-color-hover);
+            color: var(--g-plain-color-hover); fill: var(--g-plain-color-hover);
 
             .radio {
                 border-color: var(--g-plain-border-color-hover);
@@ -69,10 +69,10 @@
         }
 
         &:active, &.active {
-            color: var(--g-plain-color-active);
+            color: var(--g-plain-color-active); fill: var(--g-plain-color-active);
 
             .radio {
-                background: var(--g-plain-background-active); color: var(--g-plain-color-active);
+                background: var(--g-plain-background-active); color: var(--g-plain-color-active); fill: var(--g-plain-color-active);
                 border-color: var(--g-plain-border-color-active);
                 &::after {
                     background: var(--g-plain-color-active);
@@ -82,7 +82,7 @@
     }
 
     &[data-cg-disabled] {
-        color: var(--g-plain-color-disabled);
+        color: var(--g-plain-color-disabled); fill: var(--g-plain-color-disabled);
 
         .radio {
             background: var(--g-plain-background-disabled);

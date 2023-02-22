@@ -991,17 +991,64 @@ watchTimerHandler();
  * @param e 事件对象
  * @param handler 回调
  */
-export function bindClick(e: MouseEvent | TouchEvent, handler: () => void): void {
+export function bindClick(
+    e: MouseEvent | TouchEvent,
+    handler: (e: MouseEvent | TouchEvent, x: number, y: number) => void
+): void {
+    if ((e instanceof MouseEvent) && (e.button > 0)) {
+        return;
+    }
     const x = e instanceof MouseEvent ? e.clientX : e.touches[0].clientX;
     const y = e instanceof MouseEvent ? e.clientY : e.touches[0].clientY;
+    const time = Date.now();
     bindDown(e, {
         up: (ne) => {
-            const nx = ne instanceof MouseEvent ? ne.clientX : ne.touches[0].clientX;
-            const ny = ne instanceof MouseEvent ? ne.clientY : ne.touches[0].clientY;
+            if (Date.now() - time >= 250) {
+                return;
+            }
+            const nx = ne instanceof MouseEvent ? ne.clientX : ne.changedTouches[0].clientX;
+            const ny = ne instanceof MouseEvent ? ne.clientY : ne.changedTouches[0].clientY;
             if (nx === x && ny === y) {
-                handler();
+                handler(ne, nx, ny);
             }
         }
+    });
+}
+
+/** --- 双击事件中，最后一次单击的数据 --- */
+const lastDblClickData = {
+    'time': 0,
+    'x': 0,
+    'y': 0
+};
+
+/**
+ * --- 相当于鼠标/手指两次 click 的效果，并且两次位置差别不太大，dblclick 才生效 ---
+ * @param e 事件对象
+ * @param handler 回调
+ */
+export function bindDblClick(
+    e: MouseEvent | TouchEvent,
+    handler: (e: MouseEvent | TouchEvent, x: number, y: number) => void | Promise<void>
+): void {
+    bindClick(e, (ne, x, y) => {
+        // --- 判断当前第几次点击 ---
+        const now = Date.now();
+        if (now - lastDblClickData.time <= 300) {
+            const xx = Math.abs(x - lastDblClickData.x);
+            const xy = Math.abs(y - lastDblClickData.y);
+            if (xx < 10 && xy < 10) {
+                // --- 响应双击 ---
+                handler(ne, x, y) as any;
+                lastDblClickData.time = 0;
+                lastDblClickData.x = 0;
+                lastDblClickData.y = 0;
+                return;
+            }
+        }
+        lastDblClickData.time = now;
+        lastDblClickData.x = x;
+        lastDblClickData.y = y;
     });
 }
 
@@ -1536,18 +1583,37 @@ export function bindLong(e: MouseEvent | TouchEvent, long: (e: MouseEvent | Touc
     });
 }
 
+/** --- 要传输的 drag data 数据 --- */
+let bindDragData: any = undefined;
+
+/**
+ * --- 重新绑定 drag 数据 ---
+ * @param data 要绑定的数据
+ */
+export function setDragData(data?: string | number | boolean | Record<string, any>): void {
+    bindDragData = data;
+}
+
 /**
  * --- 绑定拖动 ---
  * @param e 鼠标事件
  * @param opt 参数
  */
-export function bindDrag(e: MouseEvent | TouchEvent, opt: { 'el': HTMLElement; 'data'?: any; }): void {
+export function bindDrag(e: MouseEvent | TouchEvent, opt: {
+    'el': HTMLElement;
+    'data'?: any;
+
+    'start'?: (x: number, y: number) => any;
+    'move'?: (e: MouseEvent | TouchEvent, opt: types.IBindMoveMoveOptions) => void;
+    'end'?: (moveTimes: Array<{ 'time': number; 'ox': number; 'oy': number; }>, e: MouseEvent | TouchEvent) => void;
+}): void {
+    bindDragData = opt.data;
     let otop = 0;
     let oleft = 0;
     let nel: HTMLElement | null = null;
     bindMove(e, {
         'object': opt.el,
-        'start': function() {
+        'start': function(x, y) {
             const rect = opt.el.getBoundingClientRect();
             form.showDrag();
             form.moveDrag({
@@ -1559,6 +1625,7 @@ export function bindDrag(e: MouseEvent | TouchEvent, opt: { 'el': HTMLElement; '
             });
             otop = rect.top;
             oleft = rect.left;
+            opt.start?.(x, y);
         },
         'move': function(e, o) {
             const ntop = otop + o.oy;
@@ -1587,7 +1654,7 @@ export function bindDrag(e: MouseEvent | TouchEvent, opt: { 'el': HTMLElement; '
                     nel.removeAttribute('data-cg-hover');
                     nel.dispatchEvent(new CustomEvent('dragleave', {
                         'detail': {
-                            'value': opt.data
+                            'value': bindDragData
                         }
                     }));
                 }
@@ -1595,7 +1662,7 @@ export function bindDrag(e: MouseEvent | TouchEvent, opt: { 'el': HTMLElement; '
                 nel = el;
                 nel.dispatchEvent(new CustomEvent('dragenter', {
                     'detail': {
-                        'value': opt.data
+                        'value': bindDragData
                     }
                 }));
                 return;
@@ -1610,12 +1677,13 @@ export function bindDrag(e: MouseEvent | TouchEvent, opt: { 'el': HTMLElement; '
             nel.removeAttribute('data-cg-hover');
             nel.dispatchEvent(new CustomEvent('dragleave', {
                 'detail': {
-                    'value': opt.data
+                    'value': bindDragData
                 }
             }));
             nel = null;
+            opt.move?.(e, o);
         },
-        'end': function() {
+        'end': function(moveTimes, e) {
             form.hideDrag();
             if (nel === null) {
                 return;
@@ -1623,9 +1691,11 @@ export function bindDrag(e: MouseEvent | TouchEvent, opt: { 'el': HTMLElement; '
             nel.removeAttribute('data-cg-hover');
             nel.dispatchEvent(new CustomEvent('drop', {
                 'detail': {
-                    'value': opt.data
+                    'value': bindDragData
                 }
             }));
+            opt.end?.(moveTimes, e);
+            bindDragData = undefined;
         }
     });
 }

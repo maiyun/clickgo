@@ -1,8 +1,3 @@
-@font-face {
-    font-family: 'ifont';
-    src: url('res/font.woff') format('woff');
-}
-
 .wrap {
     display: flex; outline: none; position: relative;
     // --- 外边框 ---
@@ -33,7 +28,10 @@
         }
     }
     .arrow {
-        font-family: 'ifont'; font-size: 12px; display: flex; align-items: center; justify-content: center; width: 16px; outline: none; position: relative;
+        display: flex; align-items: center; justify-content: center; width: 16px; outline: none; position: relative;
+        svg {
+            width: 14px; height: 14px;
+        }
     }
 
     &.default {
@@ -276,6 +274,7 @@
         border: var(--focusbox-border);
     }
     color: var(--color);                        // --- 文字色 ---
+    fill: var(--color);
     background: var(--background);              // --- 背景色 ---
     &.area-split {
         .inner::before {
@@ -289,6 +288,7 @@
             }
             &.area-all, &.area-mark {
                 color: var(--color-focus);
+                fill: var(--color-focus);
                 background: var(--background-focus);
             }
             &.area-split {
@@ -303,6 +303,7 @@
             }
             &.area-all, &.area-mark {
                 color: var(--color-hover);
+                fill: var(--color-hover);
                 background: var(--background-hover);
             }
             &.area-split {
@@ -317,6 +318,7 @@
             }
             &.area-all, &.area-mark {
                 color: var(--color-active);
+                fill: var(--color-active);
                 background: var(--background-active);
             }
             &.area-split {
@@ -330,11 +332,13 @@
             .inner, .arrow {
                 &:hover {                       // --- 鼠标悬停 ---
                     color: var(--color-hover);
+                    fill: var(--color-hover);
                     background: var(--background-hover);
                 }
                 // --- 鼠标按下 ---
                 &:active, &.active, &[data-cg-pop-open] {
                     color: var(--color-active);
+                    fill: var(--color-active);
                     background: var(--background-active);
                 }
             }
@@ -351,10 +355,12 @@
             border: var(--border-disabled);
         }
         color: var(--color-disabled);
+        fill: var(--color-disabled);
         background: var(--background-disabled);
     }
 }
 
 .pop {
     color: var(--g-color);
+    fill: var(--g-color);
 }

@@ -8,16 +8,16 @@
             }
     
             &:focus {
-                border-color: var(--g-border-color-focus); background: var(--g-background-focus); color: var(--g-color-focus);
+                border-color: var(--g-border-color-focus); background: var(--g-background-focus); color: var(--g-color-focus); fill: var(--g-color-focus);
                 &::after {
                     display: block;
                 }
             }
             &:hover {
-                border-color: var(--g-border-color-hover); background: var(--g-background-hover); color: var(--g-color-hover);
+                border-color: var(--g-border-color-hover); background: var(--g-background-hover); color: var(--g-color-hover); fill: var(--g-color-hover);
             }
             &:active, &.selected {
-                border-color: var(--g-border-color-active); background: var(--g-background-active); color: var(--g-color-active);
+                border-color: var(--g-border-color-active); background: var(--g-background-active); color: var(--g-color-active); fill: var(--g-color-active);
             }
         }
         > :not(:first-child) {

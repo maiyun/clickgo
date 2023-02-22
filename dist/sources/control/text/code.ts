@@ -42,8 +42,6 @@ export default class extends clickgo.control.AbstractControl {
 
     public background = '';
 
-    public color = '';
-
     public padding = '';
 
     /** --- 如果 background 颜色比较深，则此值设定为 true --- */
@@ -439,7 +437,7 @@ export default class extends clickgo.control.AbstractControl {
             this.refs.text.selectionEnd = prop;
         });
 
-        clickgo.dom.watchStyle(this.element, ['font', 'background', 'color', 'padding'], (n, v) => {
+        clickgo.dom.watchStyle(this.element, ['font', 'background', 'padding'], (n, v) => {
             switch (n) {
                 case 'font': {
                     this.font = v;
@@ -449,10 +447,6 @@ export default class extends clickgo.control.AbstractControl {
                     this.background = v;
                     const hsl = clickgo.tool.rgb2hsl(v);
                     this.darkbg = hsl[2] < 0.5 ? true : false;
-                    break;
-                }
-                case 'color': {
-                    this.color = v;
                     break;
                 }
                 case 'padding': {

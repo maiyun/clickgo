@@ -67,8 +67,8 @@ class default_1 extends clickgo.form.AbstractForm {
             yield clickgo.form.dialog(stats ? JSON.stringify(stats) : 'null');
         });
     }
-    dblclick() {
-        return __awaiter(this, void 0, void 0, function* () {
+    dblclick(e) {
+        clickgo.dom.bindDblClick(e, () => __awaiter(this, void 0, void 0, function* () {
             const r = yield clickgo.fs.isFile(this.val[0]);
             if (r) {
                 const extlio = this.val[0].lastIndexOf('.');
@@ -100,7 +100,7 @@ class default_1 extends clickgo.form.AbstractForm {
                 return;
             }
             yield this.open(this.val[0]);
-        });
+        }));
     }
     up() {
         return __awaiter(this, void 0, void 0, function* () {

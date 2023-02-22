@@ -50,36 +50,38 @@ export default class extends clickgo.form.AbstractForm {
         this.ppath = path;
     }
 
-    public async dblclick(): Promise<void> {
-        if (!this.access.zip) {
-            return;
-        }
-        const r = this.access.zip.isFile(this.val[0]);
-        if (r) {
-            const extlio: number = this.val[0].lastIndexOf('.');
-            if (extlio === -1) {
+    public dblclick(e: MouseEvent | TouchEvent): void {
+        clickgo.dom.bindDblClick(e, async () => {
+            if (!this.access.zip) {
+                return;
+            }
+            const r = this.access.zip.isFile(this.val[0]);
+            if (r) {
+                const extlio: number = this.val[0].lastIndexOf('.');
+                if (extlio === -1) {
+                    await clickgo.form.dialog('This extension is not supported.');
+                    return;
+                }
+                const ext: string = this.val[0].toLowerCase().slice(extlio + 1);
+                if (['xml', 'js', 'ts', 'json', 'css', 'html', 'php', 'txt'].includes(ext)) {
+                    const content = await this.access.zip.getContent(this.val[0]);
+                    if (!content) {
+                        await clickgo.form.dialog('This file cannot be opened.');
+                        return;
+                    }
+                    const f = await clickgo.form.create(testFrm);
+                    f.show();
+                    this.send(f.formId, {
+                        'title': this.val[0].slice(this.val[0].lastIndexOf('/') + 1),
+                        'content': content
+                    });
+                    return;
+                }
                 await clickgo.form.dialog('This extension is not supported.');
                 return;
             }
-            const ext: string = this.val[0].toLowerCase().slice(extlio + 1);
-            if (['xml', 'js', 'ts', 'json', 'css', 'html', 'php', 'txt'].includes(ext)) {
-                const content = await this.access.zip.getContent(this.val[0]);
-                if (!content) {
-                    await clickgo.form.dialog('This file cannot be opened.');
-                    return;
-                }
-                const f = await clickgo.form.create(testFrm);
-                f.show();
-                this.send(f.formId, {
-                    'title': this.val[0].slice(this.val[0].lastIndexOf('/') + 1),
-                    'content': content
-                });
-                return;
-            }
-            await clickgo.form.dialog('This extension is not supported.');
-            return;
-        }
-        this.open(this.val[0]);
+            this.open(this.val[0]);
+        });
     }
 
     public up(): void {

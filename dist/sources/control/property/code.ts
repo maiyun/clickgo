@@ -300,45 +300,47 @@ export default class extends clickgo.control.AbstractControl {
     }
 
     // --- 双击 ---
-    public reset(): void {
-        for (const item of this.props.modelValue) {
-            if (item.title !== this.selectedTitle) {
-                continue;
-            }
-            if (!this.selectedSub) {
-                // --- 大级别 ---
-                if (item.value === item.default) {
+    public reset(e: MouseEvent | TouchEvent): void {
+        clickgo.dom.bindDblClick(e, () => {
+            for (const item of this.props.modelValue) {
+                if (item.title !== this.selectedTitle) {
                     continue;
                 }
-                item.value = item.default;
-                this.emit('update:modelValue', this.props.modelValue);
-            }
-            else {
-                // --- 小级别 ---
-                const arr = item.value.split(',');
-                for (let i = 0; i < arr.length; ++i) {
-                    if (typeof arr[i] !== 'string') {
+                if (!this.selectedSub) {
+                    // --- 大级别 ---
+                    if (item.value === item.default) {
                         continue;
                     }
-                    arr[i] = arr[i].trim();
-                }
-                for (let i = 0; i < item.sub.length; ++i) {
-                    const sub = item.sub[i];
-                    if (sub.title !== this.selectedSub) {
-                        continue;
-                    }
-                    const val = this.subValue(item, i);
-                    const def = this.subValue(item, i, true);
-                    if (val === def) {
-                        continue;
-                    }
-                    // --- 要 reset ---
-                    arr[i] = def;
-                    item.value = arr.join(', ');
+                    item.value = item.default;
                     this.emit('update:modelValue', this.props.modelValue);
                 }
+                else {
+                    // --- 小级别 ---
+                    const arr = item.value.split(',');
+                    for (let i = 0; i < arr.length; ++i) {
+                        if (typeof arr[i] !== 'string') {
+                            continue;
+                        }
+                        arr[i] = arr[i].trim();
+                    }
+                    for (let i = 0; i < item.sub.length; ++i) {
+                        const sub = item.sub[i];
+                        if (sub.title !== this.selectedSub) {
+                            continue;
+                        }
+                        const val = this.subValue(item, i);
+                        const def = this.subValue(item, i, true);
+                        if (val === def) {
+                            continue;
+                        }
+                        // --- 要 reset ---
+                        arr[i] = def;
+                        item.value = arr.join(', ');
+                        this.emit('update:modelValue', this.props.modelValue);
+                    }
+                }
             }
-        }
+        });
     }
 
     public onMounted(): void {

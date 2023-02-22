@@ -8,6 +8,7 @@ import cdialogFrm from './control/dialog/dialog';
 import cfileFrm from './control/file/file';
 import cformFrm from './control/form/form';
 import chtmlFrm from './control/html/html';
+import ciconviewFrm from './control/iconview/iconview';
 import clinkFrm from './control/link/link';
 import clayoutFrm from './control/layout/layout';
 import clistFrm from './control/list/list';
@@ -90,6 +91,10 @@ export default class extends clickgo.form.AbstractForm {
             }
             case 'chtml': {
                 frm = await clickgo.form.create(chtmlFrm);
+                break;
+            }
+            case 'ciconview': {
+                frm = await clickgo.form.create(ciconviewFrm);
                 break;
             }
             case 'cvflow': {

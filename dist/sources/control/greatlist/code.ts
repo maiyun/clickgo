@@ -303,27 +303,30 @@ export default class extends clickgo.control.AbstractControl {
     }
 
     // --- arrow 的 click 事件 ---
-    public arrowClick(e: MouseEvent, value: number): void {
-        const hasTouch = clickgo.dom.hasTouchButMouse(e);
-        this.select(value, e.shiftKey, ((!this.propBoolean('ctrl') || hasTouch) && this.propBoolean('multi')) ? true : e.ctrlKey);
-        // --- 显示/隐藏 arrow menu ---
-        const current = e.currentTarget as HTMLElement;
-        if (current.dataset.cgPopOpen === undefined) {
-            clickgo.form.showPop(current, this.refs.itempop, e);
-        }
-        else {
-            clickgo.form.hidePop(current);
-        }
-        // --- 上报点击事件，true: arrow click ---
-        this.emit('itemclick', e, true);
+    public arrowDownClick(e: MouseEvent | TouchEvent, value: number): void {
+        clickgo.dom.bindClick(e, () => {
+            const hasTouch = clickgo.dom.hasTouchButMouse(e);
+            this.select(value, e.shiftKey, ((!this.propBoolean('ctrl') || hasTouch) && this.propBoolean('multi')) ? true : e.ctrlKey);
+            // --- 显示/隐藏 arrow menu ---
+            const current = e.currentTarget as HTMLElement;
+            if (current.dataset.cgPopOpen === undefined) {
+                clickgo.form.showPop(current, this.refs.itempop, e);
+            }
+            else {
+                clickgo.form.hidePop(current);
+            }
+            // --- 上报点击事件，true: arrow click ---
+            this.emit('itemclick', e, true);
+        });
     }
 
     // --- item inner 的 click 事件 ---
-    public innerClick(e: MouseEvent, value: number): void {
-        const hasTouch = clickgo.dom.hasTouchButMouse(e);
-        this.select(value, e.shiftKey, ((!this.propBoolean('ctrl') || hasTouch) && this.propBoolean('multi')) ? true : e.ctrlKey);
-        // --- 上报点击事件，false: arrow click ---
-        this.emit('itemclick', e, false);
+    public innerDown(e: MouseEvent | TouchEvent, value: number): void {
+        clickgo.dom.bindClick(e, () => {
+            this.select(value, e.shiftKey, ((!this.propBoolean('ctrl') || e instanceof TouchEvent) && this.propBoolean('multi')) ? true : e.ctrlKey);
+            // --- 上报点击事件，false: arrow click ---
+            this.emit('itemclick', e, false);
+        });
     }
 
     // --- flow 的鼠标或手指 down 事件 ---
@@ -338,7 +341,7 @@ export default class extends clickgo.control.AbstractControl {
         // --- click 空白处取消选择 ---
         if (!this.propBoolean('must')) {
             const gi = clickgo.dom.findParentByData(e.target as HTMLElement, 'cg-size');
-            if (!gi) {
+            if (((e.target as HTMLElement).dataset.cgSize === undefined) && !gi) {
                 // --- 空白处 ---
                 clickgo.dom.bindClick(e, () => {
                     this.select(-1, e.shiftKey, e.ctrlKey);

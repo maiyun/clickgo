@@ -189,6 +189,12 @@ class default_1 extends clickgo.form.AbstractForm {
             }
         });
     }
+    moveDown(e) {
+        clickgo.dom.bindDblClick(e, () => {
+            this.moveWidth = this.moveWidth === 25 ? 50 : 25;
+            this.moveHeight = this.moveHeight === 25 ? 50 : 25;
+        });
+    }
     fullscreen() {
         clickgo.dom.fullscreen();
     }

@@ -43,6 +43,7 @@ const dialog_1 = __importDefault(require("./control/dialog/dialog"));
 const file_1 = __importDefault(require("./control/file/file"));
 const form_1 = __importDefault(require("./control/form/form"));
 const html_1 = __importDefault(require("./control/html/html"));
+const iconview_1 = __importDefault(require("./control/iconview/iconview"));
 const link_1 = __importDefault(require("./control/link/link"));
 const layout_1 = __importDefault(require("./control/layout/layout"));
 const list_1 = __importDefault(require("./control/list/list"));
@@ -123,6 +124,10 @@ class default_1 extends clickgo.form.AbstractForm {
                 }
                 case 'chtml': {
                     frm = yield clickgo.form.create(html_1.default);
+                    break;
+                }
+                case 'ciconview': {
+                    frm = yield clickgo.form.create(iconview_1.default);
                     break;
                 }
                 case 'cvflow': {

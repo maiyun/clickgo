@@ -171,20 +171,15 @@ export default class extends clickgo.form.AbstractForm {
     }
 
     public showType(): void {
-        if (Array.isArray(this.select)) {
-            if (this.select.length === 0) {
-                clickgo.form.dialog('There are currently no selected items.').catch((e: Error) => { throw e; });
-            }
-            else {
-                const types = [];
-                for (const item of this.select) {
-                    types.push(this.slist[item].type);
-                }
-                clickgo.form.dialog(`Type is ${types}.`).catch((e: Error) => { throw e; });
-            }
+        if (this.select.length === 0) {
+            clickgo.form.dialog('There are currently no selected items.').catch((e: Error) => { throw e; });
         }
         else {
-            clickgo.form.dialog(this.select === -1 ? 'There are currently no selected items.' : `Type is ${this.slist[this.select].type}.`).catch((e: Error) => { throw e; });
+            const types = [];
+            for (const item of this.select) {
+                types.push(this.slist[item].type);
+            }
+            clickgo.form.dialog(`Type is ${types}.`).catch((e: Error) => { throw e; });
         }
     }
 

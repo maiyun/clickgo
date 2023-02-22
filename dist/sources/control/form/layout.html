@@ -1,11 +1,11 @@
 <div class="wrap" :class="[border !== 'normal' && 'border-' + border, flashTimer !== undefined ? 'flash' : undefined, stateMinData ? 'state-min-' + taskPosition : undefined, isShow && 'show', isInside && 'inside', !heightData && 'height-auto', !widthData && 'width-auto', formFocus && 'focus']" :style="{'width': widthData ? (widthData + 'px') : undefined, 'height': heightData ? (heightData + 'px') : undefined, 'left': isNativeSync ? '0' : (Math.round(leftData) + 'px'), 'top': isNativeSync ? 0 : (Math.round(topData) + 'px'), 'z-index': zIndex}">
     <template v-if="!stateMaxData && !stateMinData && !isMask && isResize">
         <div class="pop-resize-lt" @mousedown="resizeMethod($event, 'lt')" @touchstart="resizeMethod($event, 'lt')"></div>
-        <div class="pop-resize-t" @mousedown="resizeMethod($event, 't')" @touchstart="resizeMethod($event, 't')" @dblclick="maxVMethod"></div>
+        <div class="pop-resize-t" @mousedown="resizeMethod($event, 't')" @touchstart="resizeMethod($event, 't')"></div>
         <div class="pop-resize-tr" @mousedown="resizeMethod($event, 'tr')" @touchstart="resizeMethod($event, 'tr')"></div>
         <div class="pop-resize-r" @mousedown="resizeMethod($event, 'r')" @touchstart="resizeMethod($event, 'r')"></div>
         <div class="pop-resize-rb" @mousedown="resizeMethod($event, 'rb')" @touchstart="resizeMethod($event, 'rb')"></div>
-        <div class="pop-resize-b" @mousedown="resizeMethod($event, 'b')" @touchstart="resizeMethod($event, 'b')" @dblclick="maxVMethod"></div>
+        <div class="pop-resize-b" @mousedown="resizeMethod($event, 'b')" @touchstart="resizeMethod($event, 'b')"></div>
         <div class="pop-resize-bl" @mousedown="resizeMethod($event, 'bl')" @touchstart="resizeMethod($event, 'bl')"></div>
         <div class="pop-resize-l" @mousedown="resizeMethod($event, 'l')" @touchstart="resizeMethod($event, 'l')"></div>
     </template>

@@ -15,8 +15,7 @@
     }
 
     &[data-cg-disabled] {
-        background: var(--g-background-disabled); color: var(--g-color-disabled);
-        border: solid .5px var(--g-border-color-disabled);
+        background: var(--g-background-disabled); color: var(--g-color-disabled); fill: var(--g-color-disabled); border: solid .5px var(--g-border-color-disabled);
     }
     &:not([data-cg-disabled]):not([data-cg-pop-open]) {
         &:hover, &:focus {
@@ -81,7 +80,7 @@
 }
 
 .pop {
-    width: 800px; display: flex; max-height: 300px; color: var(--g-color);
+    width: 800px; display: flex; max-height: 300px; color: var(--g-color); fill: var(--g-color);
     > * {
         flex: 1;
     }

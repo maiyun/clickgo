@@ -32,7 +32,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.fullscreen = exports.siblingsData = exports.siblings = exports.findParentByClass = exports.findParentByData = exports.bindResize = exports.bindMove = exports.is = exports.bindDrag = exports.bindLong = exports.allowEvent = exports.bindGesture = exports.bindDown = exports.bindClick = exports.getWatchInfo = exports.clearWatchProperty = exports.isWatchProperty = exports.watchProperty = exports.clearWatchStyle = exports.isWatchStyle = exports.watchStyle = exports.clearWatch = exports.isWatch = exports.unwatch = exports.watch = exports.getWatchCount = exports.clearWatchSize = exports.isWatchSize = exports.unwatchSize = exports.watchSize = exports.getWatchSizeCount = exports.getStyleCount = exports.removeStyle = exports.pushStyle = exports.removeFromStyleList = exports.createToStyleList = exports.hasTouchButMouse = exports.setGlobalCursor = exports.inPage = void 0;
+exports.fullscreen = exports.siblingsData = exports.siblings = exports.findParentByClass = exports.findParentByData = exports.bindResize = exports.bindMove = exports.is = exports.bindDrag = exports.setDragData = exports.bindLong = exports.allowEvent = exports.bindGesture = exports.bindDown = exports.bindDblClick = exports.bindClick = exports.getWatchInfo = exports.clearWatchProperty = exports.isWatchProperty = exports.watchProperty = exports.clearWatchStyle = exports.isWatchStyle = exports.watchStyle = exports.clearWatch = exports.isWatch = exports.unwatch = exports.watch = exports.getWatchCount = exports.clearWatchSize = exports.isWatchSize = exports.unwatchSize = exports.watchSize = exports.getWatchSizeCount = exports.getStyleCount = exports.removeStyle = exports.pushStyle = exports.removeFromStyleList = exports.createToStyleList = exports.hasTouchButMouse = exports.setGlobalCursor = exports.inPage = void 0;
 const clickgo = __importStar(require("../clickgo"));
 const form = __importStar(require("./form"));
 const core = __importStar(require("./core"));
@@ -732,19 +732,51 @@ const watchTimerHandler = function () {
 };
 watchTimerHandler();
 function bindClick(e, handler) {
+    if ((e instanceof MouseEvent) && (e.button > 0)) {
+        return;
+    }
     const x = e instanceof MouseEvent ? e.clientX : e.touches[0].clientX;
     const y = e instanceof MouseEvent ? e.clientY : e.touches[0].clientY;
+    const time = Date.now();
     bindDown(e, {
         up: (ne) => {
-            const nx = ne instanceof MouseEvent ? ne.clientX : ne.touches[0].clientX;
-            const ny = ne instanceof MouseEvent ? ne.clientY : ne.touches[0].clientY;
+            if (Date.now() - time >= 250) {
+                return;
+            }
+            const nx = ne instanceof MouseEvent ? ne.clientX : ne.changedTouches[0].clientX;
+            const ny = ne instanceof MouseEvent ? ne.clientY : ne.changedTouches[0].clientY;
             if (nx === x && ny === y) {
-                handler();
+                handler(ne, nx, ny);
             }
         }
     });
 }
 exports.bindClick = bindClick;
+const lastDblClickData = {
+    'time': 0,
+    'x': 0,
+    'y': 0
+};
+function bindDblClick(e, handler) {
+    bindClick(e, (ne, x, y) => {
+        const now = Date.now();
+        if (now - lastDblClickData.time <= 300) {
+            const xx = Math.abs(x - lastDblClickData.x);
+            const xy = Math.abs(y - lastDblClickData.y);
+            if (xx < 10 && xy < 10) {
+                handler(ne, x, y);
+                lastDblClickData.time = 0;
+                lastDblClickData.x = 0;
+                lastDblClickData.y = 0;
+                return;
+            }
+        }
+        lastDblClickData.time = now;
+        lastDblClickData.x = x;
+        lastDblClickData.y = y;
+    });
+}
+exports.bindDblClick = bindDblClick;
 function bindDown(oe, opt) {
     var _a;
     if (hasTouchButMouse(oe)) {
@@ -1204,13 +1236,20 @@ function bindLong(e, long) {
     });
 }
 exports.bindLong = bindLong;
+let bindDragData = undefined;
+function setDragData(data) {
+    bindDragData = data;
+}
+exports.setDragData = setDragData;
 function bindDrag(e, opt) {
+    bindDragData = opt.data;
     let otop = 0;
     let oleft = 0;
     let nel = null;
     bindMove(e, {
         'object': opt.el,
-        'start': function () {
+        'start': function (x, y) {
+            var _a;
             const rect = opt.el.getBoundingClientRect();
             form.showDrag();
             form.moveDrag({
@@ -1222,8 +1261,10 @@ function bindDrag(e, opt) {
             });
             otop = rect.top;
             oleft = rect.left;
+            (_a = opt.start) === null || _a === void 0 ? void 0 : _a.call(opt, x, y);
         },
         'move': function (e, o) {
+            var _a;
             const ntop = otop + o.oy;
             const nleft = oleft + o.ox;
             form.moveDrag({
@@ -1248,7 +1289,7 @@ function bindDrag(e, opt) {
                     nel.removeAttribute('data-cg-hover');
                     nel.dispatchEvent(new CustomEvent('dragleave', {
                         'detail': {
-                            'value': opt.data
+                            'value': bindDragData
                         }
                     }));
                 }
@@ -1256,7 +1297,7 @@ function bindDrag(e, opt) {
                 nel = el;
                 nel.dispatchEvent(new CustomEvent('dragenter', {
                     'detail': {
-                        'value': opt.data
+                        'value': bindDragData
                     }
                 }));
                 return;
@@ -1270,12 +1311,14 @@ function bindDrag(e, opt) {
             nel.removeAttribute('data-cg-hover');
             nel.dispatchEvent(new CustomEvent('dragleave', {
                 'detail': {
-                    'value': opt.data
+                    'value': bindDragData
                 }
             }));
             nel = null;
+            (_a = opt.move) === null || _a === void 0 ? void 0 : _a.call(opt, e, o);
         },
-        'end': function () {
+        'end': function (moveTimes, e) {
+            var _a;
             form.hideDrag();
             if (nel === null) {
                 return;
@@ -1283,9 +1326,11 @@ function bindDrag(e, opt) {
             nel.removeAttribute('data-cg-hover');
             nel.dispatchEvent(new CustomEvent('drop', {
                 'detail': {
-                    'value': opt.data
+                    'value': bindDragData
                 }
             }));
+            (_a = opt.end) === null || _a === void 0 ? void 0 : _a.call(opt, moveTimes, e);
+            bindDragData = undefined;
         }
     });
 }

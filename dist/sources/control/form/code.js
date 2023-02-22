@@ -140,21 +140,16 @@ class default_1 extends clickgo.control.AbstractControl {
         if (this.isInside) {
             return;
         }
-        const el = e.currentTarget;
-        const dataHasDbl = el.getAttribute('data-has-dbl');
-        if (!dataHasDbl) {
-            el.setAttribute('data-has-dbl', 'yes');
-            el.addEventListener('dblclick', () => {
-                if (this.stateAbs) {
-                    this.maxVMethod(true);
+        clickgo.dom.bindDblClick(e, () => {
+            if (this.stateAbs) {
+                this.maxVMethod();
+            }
+            else {
+                if (this.propBoolean('max')) {
+                    this.maxMethod();
                 }
-                else {
-                    if (this.propBoolean('max')) {
-                        this.maxMethod();
-                    }
-                }
-            });
-        }
+            }
+        });
         let isBorder = '';
         clickgo.dom.bindMove(e, {
             'start': (x, y) => {
@@ -374,7 +369,7 @@ class default_1 extends clickgo.control.AbstractControl {
         this.trigger('formStateMinChanged', this.stateMinData);
         return true;
     }
-    maxVMethod(dbl) {
+    maxVMethod() {
         if (this.isInside) {
             return;
         }
@@ -388,17 +383,6 @@ class default_1 extends clickgo.control.AbstractControl {
             else {
                 this.heightData = this.historyLocation.height;
                 this.emit('update:height', this.heightData);
-            }
-            if (dbl) {
-                this.leftData = this.historyLocation.left;
-                this.emit('update:left', this.leftData);
-                if (!this.widthComp) {
-                    this.widthData = 0;
-                }
-                else {
-                    this.widthData = this.historyLocation.width;
-                    this.emit('update:width', this.widthData);
-                }
             }
         }
         else {
@@ -666,6 +650,11 @@ class default_1 extends clickgo.control.AbstractControl {
                 }
             }
         });
+        if (border === 't' || border === 'b') {
+            clickgo.dom.bindDblClick(e, () => {
+                this.maxVMethod();
+            });
+        }
     }
     setPropData(name, val, mode = '') {
         switch (name) {

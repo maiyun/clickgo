@@ -52,7 +52,6 @@ class default_1 extends clickgo.control.AbstractControl {
         };
         this.font = '';
         this.background = '';
-        this.color = '';
         this.padding = '';
         this.darkbg = false;
         this.isFocus = false;
@@ -402,7 +401,7 @@ class default_1 extends clickgo.control.AbstractControl {
             }
             this.refs.text.selectionEnd = prop;
         });
-        clickgo.dom.watchStyle(this.element, ['font', 'background', 'color', 'padding'], (n, v) => {
+        clickgo.dom.watchStyle(this.element, ['font', 'background', 'padding'], (n, v) => {
             switch (n) {
                 case 'font': {
                     this.font = v;
@@ -412,10 +411,6 @@ class default_1 extends clickgo.control.AbstractControl {
                     this.background = v;
                     const hsl = clickgo.tool.rgb2hsl(v);
                     this.darkbg = hsl[2] < 0.5 ? true : false;
-                    break;
-                }
-                case 'color': {
-                    this.color = v;
                     break;
                 }
                 case 'padding': {

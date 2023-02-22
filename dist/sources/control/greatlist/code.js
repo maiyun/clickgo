@@ -225,22 +225,25 @@ class default_1 extends clickgo.control.AbstractControl {
             this.emit('update:modelValue', this.valueData);
         }
     }
-    arrowClick(e, value) {
-        const hasTouch = clickgo.dom.hasTouchButMouse(e);
-        this.select(value, e.shiftKey, ((!this.propBoolean('ctrl') || hasTouch) && this.propBoolean('multi')) ? true : e.ctrlKey);
-        const current = e.currentTarget;
-        if (current.dataset.cgPopOpen === undefined) {
-            clickgo.form.showPop(current, this.refs.itempop, e);
-        }
-        else {
-            clickgo.form.hidePop(current);
-        }
-        this.emit('itemclick', e, true);
+    arrowDownClick(e, value) {
+        clickgo.dom.bindClick(e, () => {
+            const hasTouch = clickgo.dom.hasTouchButMouse(e);
+            this.select(value, e.shiftKey, ((!this.propBoolean('ctrl') || hasTouch) && this.propBoolean('multi')) ? true : e.ctrlKey);
+            const current = e.currentTarget;
+            if (current.dataset.cgPopOpen === undefined) {
+                clickgo.form.showPop(current, this.refs.itempop, e);
+            }
+            else {
+                clickgo.form.hidePop(current);
+            }
+            this.emit('itemclick', e, true);
+        });
     }
-    innerClick(e, value) {
-        const hasTouch = clickgo.dom.hasTouchButMouse(e);
-        this.select(value, e.shiftKey, ((!this.propBoolean('ctrl') || hasTouch) && this.propBoolean('multi')) ? true : e.ctrlKey);
-        this.emit('itemclick', e, false);
+    innerDown(e, value) {
+        clickgo.dom.bindClick(e, () => {
+            this.select(value, e.shiftKey, ((!this.propBoolean('ctrl') || e instanceof TouchEvent) && this.propBoolean('multi')) ? true : e.ctrlKey);
+            this.emit('itemclick', e, false);
+        });
     }
     down(e) {
         if (clickgo.dom.hasTouchButMouse(e)) {
@@ -251,7 +254,7 @@ class default_1 extends clickgo.control.AbstractControl {
         }
         if (!this.propBoolean('must')) {
             const gi = clickgo.dom.findParentByData(e.target, 'cg-size');
-            if (!gi) {
+            if ((e.target.dataset.cgSize === undefined) && !gi) {
                 clickgo.dom.bindClick(e, () => {
                     this.select(-1, e.shiftKey, e.ctrlKey);
                 });

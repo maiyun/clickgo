@@ -1,1 +1,32 @@
-<?xml version="1.0" standalone="no"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg t="1595816025497" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1175" xmlns:xlink="http://www.w3.org/1999/xlink" width="200" height="200"><defs><style type="text/css"></style></defs><path d="M61.281 512a450.56 450.56 0 1 0 901.12 0 450.56 450.56 0 1 0-901.12 0z" fill="#92CEF8" p-id="1176"></path><path d="M240.803 583.997a346.64 346.64 0 1 0 693.28 0 346.64 346.64 0 1 0-693.28 0z" fill="#62B4F9" p-id="1177"></path><path d="M481.659 486.22a245.248 245.248 0 1 1 0.03 346.773 245.207 245.207 0 0 1-0.03-346.772z" fill="#3599F3" p-id="1178"></path><path d="M509.44 245.76a268.8 268.8 0 1 0 268.8 268.8 269.102 269.102 0 0 0-268.8-268.8z m0 497.664A228.864 228.864 0 1 1 738.304 514.56 229.12 229.12 0 0 1 509.44 743.424z m0.287-386.458a20.096 20.096 0 0 0-18.289 11.31l-118.103 245.51 35.994 17.315 43.008-89.39H561.05l39.628 88.868 36.475-16.266-109.476-245.514a19.968 19.968 0 0 0-17.95-11.838zM471.552 501.76l37.202-77.312 34.478 77.312h-71.68z" fill="#FFFFFF" p-id="1179"></path></svg>
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
+<svg height="800px" width="800px" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" 
+	 viewBox="0 0 297 297" xml:space="preserve">
+<g>
+	<g>
+		<g>
+			<circle style="fill:#345065;" cx="148.5" cy="148.5" r="148.5"/>
+		</g>
+	</g>
+	<path style="fill:#2C3E50;" d="M216.895,109.734l-174.216,84.12l103.112,103.112c0.902,0.016,1.804,0.034,2.709,0.034
+		c69.329,0,127.557-47.51,143.913-111.748L216.895,109.734z"/>
+	<g>
+		<path style="fill:#CDD1D3;" d="M49,182c0-54.952,44.548-99.5,99.5-99.5S248,127.048,248,182H49z"/>
+	</g>
+	<g>
+		<path style="fill:#A3A7A8;" d="M148.5,82.5V182H248C248,127.048,203.452,82.5,148.5,82.5z"/>
+	</g>
+	<g>
+		<path style="fill:#99ABD5;" d="M54.5,198.5h188c9.941,0,18-8.059,18-18l0,0h-224l0,0C36.5,190.441,44.559,198.5,54.5,198.5z"/>
+	</g>
+	<g>
+		<circle style="fill:#99ABD5;" cx="148.5" cy="74.5" r="8.5"/>
+	</g>
+	<g>
+		<path style="fill:#8092B7;" d="M148.5,180.5v18h94c9.941,0,18-8.059,18-18H148.5z"/>
+	</g>
+	<g>
+		<path style="fill:#8092B7;" d="M157,74.5c0-4.694-3.806-8.5-8.5-8.5v17C153.194,83,157,79.194,157,74.5z"/>
+	</g>
+</g>
+</svg>

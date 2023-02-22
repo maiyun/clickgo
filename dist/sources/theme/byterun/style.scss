@@ -131,6 +131,7 @@ global {
                 }
                 &[data-cg-pop-open]:not(:active, &.button_active) {
                     color: var(--color-hover);
+                    fill: var(--color-hover);
                     background: var(--background-hover);
                 }
             }
@@ -138,6 +139,7 @@ global {
     }
     &[data-cg-disabled] {
         color: var(--g-color-disabled);
+        fill: var(--g-color-disabled);
     }
 }
 .button_pop {
@@ -151,6 +153,9 @@ global {
 
     .check_check {
         transition: all .1s ease-out; width: 18px; height: 18px; border-radius: 5px;
+        &::after {
+            transition: all .1s ease-out;
+        }
     }
 
     .check_label {
@@ -162,13 +167,13 @@ global {
     // --- 半选中模式 ---
     &.check_indeterminate {
         .check_check::after {
-            transition: all .1s ease-out; left: 4px; top: 4px; width: calc(100% - 8px); height: calc(100% - 8px); border-radius: 3px;
+            left: 4px; top: 4px; width: calc(100% - 8px); height: calc(100% - 8px); border-radius: 3px;
         }
     }
 
     &:not([data-cg-disabled]) {
         &.check_checked:not(:focus):not(:hover):not(:active):not(.check_active) {
-            color: var(--g-plain-color-active);
+            color: var(--g-plain-color-active); fill: var(--g-plain-color-active);
             .check_check {
                 background: var(--g-plain-background-active); border: solid 2px var(--g-plain-border-color-active);
             }
@@ -297,7 +302,7 @@ global {
                     }
                 }
                 &[data-cg-disabled] {
-                    color: var(--g-color-disabled);
+                    color: var(--g-color-disabled); fill: var(--g-color-disabled);
                     &:hover {
                         background: transparent;
                     }
@@ -338,6 +343,34 @@ global {
     border-radius: 5px; background: var(--pop-background); -webkit-backdrop-filter: blur(20px) brightness(1.1); backdrop-filter: blur(20px) brightness(1.1);
 }
 
+// -- CONTROL -- iconview --
+
+.iconview_wrap {
+    border-radius: 5px;
+    .iconview_tag-cg-vflow {
+        .iconview_row {
+            .iconview_item {
+                transition: all .1s ease-out; border-radius: 5px; 
+                &:hover {
+                    background: var(--g-background);
+                }
+                &.iconview_selected {
+                    background: var(--g-background-hover);
+                }
+                &.iconview_shift {
+                    border-color: var(--g-border-color-focus);
+                }
+                &[data-cg-hover] {
+                    background: var(--g-border-color-hover); color: var(--g-color); fill: var(--g-color);
+                }
+            };
+        }
+    }
+}
+.iconview_pop {
+    border-radius: 5px;
+}
+
 // -- CONTROL -- menu --
 
 .menu_wrap {
@@ -357,7 +390,7 @@ global {
         }
     }
     &[data-cg-disabled] {
-        color: var(--g-color-disabled);
+        color: var(--g-color-disabled); fill: var(--g-color-disabled);
         &:hover {
             background: transparent;
         }
@@ -516,7 +549,7 @@ global {
 .page_wrap {
     .page_list {
         > .page_tag-div {
-            border-radius: 5px; transition: all .1s ease-out; border: none; background: transparent;
+            border-radius: 5px; transition: all .1s ease-out; border: none; background: transparent; width: 32px; height: 32px;
             &::after {
                 border-radius: 3px;
             }
@@ -582,7 +615,7 @@ global {
 
     &:not([data-cg-disabled]) {
         &.radio_selected:not(:focus):not(:hover):not(:active):not(.radio_active) {
-            color: var(--g-plain-color-active);
+            color: var(--g-plain-color-active); fill: var(--g-plain-color-active);
             .radio_radio {
                 background: var(--g-plain-background-active); border: solid 2px var(--g-plain-border-color-active);
                 &::after {
@@ -638,10 +671,10 @@ global {
             display: none;
         }
         &:not(.tab_selected):not([data-cg-hover]):hover {
-            color: #FFF; background: transparent;
+            color: #FFF; fill: #FFF; background: transparent;
         }
         &.tab_selected {
-            background: var(--g-background); font-weight: bold; color: #FFF;
+            background: var(--g-background); font-weight: bold; color: #FFF; fill: #FFF;
         }
         .tab_content {
             padding: 10px;
@@ -652,7 +685,7 @@ global {
                 background: var(--g-background);
             }
             &:active {
-                background: var(--g-color); color: var(--face);
+                background: var(--g-color); color: var(--face); fill: var(--face);
             }
         }
     }
@@ -733,7 +766,7 @@ global {
 // -- CONTROL -- text --
 
 .text_wrap {
-    padding: 10px; transition: all .1s ease-out; border-radius: 5px;
+    padding: 10px; transition: all .1s ease-out; transition-property: color, background, border; border-radius: 5px;
 }
 .text_pop {
     border-radius: 5px;

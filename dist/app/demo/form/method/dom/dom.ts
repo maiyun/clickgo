@@ -177,6 +177,13 @@ export default class extends clickgo.form.AbstractForm {
         });
     }
 
+    public moveDown(e: MouseEvent | TouchEvent): void {
+        clickgo.dom.bindDblClick(e, () => {
+            this.moveWidth = this.moveWidth === 25 ? 50 : 25;
+            this.moveHeight = this.moveHeight === 25 ? 50 : 25;
+        });
+    }
+
     public fullscreen(): void {
         clickgo.dom.fullscreen();
     }

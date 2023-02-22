@@ -266,42 +266,44 @@ class default_1 extends clickgo.control.AbstractControl {
         this.update(value);
         clickgo.form.hidePop();
     }
-    reset() {
-        for (const item of this.props.modelValue) {
-            if (item.title !== this.selectedTitle) {
-                continue;
-            }
-            if (!this.selectedSub) {
-                if (item.value === item.default) {
+    reset(e) {
+        clickgo.dom.bindDblClick(e, () => {
+            for (const item of this.props.modelValue) {
+                if (item.title !== this.selectedTitle) {
                     continue;
                 }
-                item.value = item.default;
-                this.emit('update:modelValue', this.props.modelValue);
-            }
-            else {
-                const arr = item.value.split(',');
-                for (let i = 0; i < arr.length; ++i) {
-                    if (typeof arr[i] !== 'string') {
+                if (!this.selectedSub) {
+                    if (item.value === item.default) {
                         continue;
                     }
-                    arr[i] = arr[i].trim();
-                }
-                for (let i = 0; i < item.sub.length; ++i) {
-                    const sub = item.sub[i];
-                    if (sub.title !== this.selectedSub) {
-                        continue;
-                    }
-                    const val = this.subValue(item, i);
-                    const def = this.subValue(item, i, true);
-                    if (val === def) {
-                        continue;
-                    }
-                    arr[i] = def;
-                    item.value = arr.join(', ');
+                    item.value = item.default;
                     this.emit('update:modelValue', this.props.modelValue);
                 }
+                else {
+                    const arr = item.value.split(',');
+                    for (let i = 0; i < arr.length; ++i) {
+                        if (typeof arr[i] !== 'string') {
+                            continue;
+                        }
+                        arr[i] = arr[i].trim();
+                    }
+                    for (let i = 0; i < item.sub.length; ++i) {
+                        const sub = item.sub[i];
+                        if (sub.title !== this.selectedSub) {
+                            continue;
+                        }
+                        const val = this.subValue(item, i);
+                        const def = this.subValue(item, i, true);
+                        if (val === def) {
+                            continue;
+                        }
+                        arr[i] = def;
+                        item.value = arr.join(', ');
+                        this.emit('update:modelValue', this.props.modelValue);
+                    }
+                }
             }
-        }
+        });
     }
     onMounted() {
         this.watch('sort', () => {

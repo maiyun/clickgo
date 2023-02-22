@@ -1,1 +1,1 @@
-.wrap{width:100%;height:100%;display:flex;background:rgba(0,0,0,.5);-webkit-backdrop-filter:blur(30px) brightness(1.2);backdrop-filter:blur(30px) brightness(1.2)}.wrap.left,.wrap.right{flex-direction:column}.wrap .task{flex:1}.pop{color:var(--g-color)}
+.wrap{width:100%;height:100%;display:flex;background:rgba(0,0,0,.5);-webkit-backdrop-filter:blur(30px) brightness(1.2);backdrop-filter:blur(30px) brightness(1.2)}.wrap.left,.wrap.right{flex-direction:column}.wrap .task{flex:1}.pop{color:var(--g-color);fill:var(--g-color)}

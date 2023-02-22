@@ -1,0 +1,26 @@
+<div class="wrap" :data-cg-disabled="propBoolean('disabled') ? '' : undefined" :tabindex="!propBoolean('disabled') && formFocus && '0'" @keydown="keydown" @focus="focus=true" @blur="focus=false">
+    <cg-vflow ref="flow" :selection="selection" :gesture="gesture" @gesture="emit('gesture', $event)" :data="dataComp" v-slot="d" direction="v" :scroll-top="offset" @update:scroll-top="offset=$event;emit('update:scroll-top',offset)" @beforeselect="onBeforeSelect" @select="onSelect($event)" @afterselect="onAfterSelect" @clientheight="client=$event;$emit('client',client)" @clientwidth="cw=$event" @scrollheight="length=$event" @contextmenu="context" @touchstart="down" @mousedown="down">
+        <div class="row">
+            <template v-for="item, index of d.row">
+                <div v-if="item.type > -1" class="item" data-cg-item :class="[isSelected(d.index * rowCount + index) && 'selected', (shiftStart === d.index * rowCount + index) && 'shift']" @touchstart="itemDown($event, d.index, index)" @mousedown="itemDown($event, d.index, index)" @contextmenu="itemContext($event, d.index, index)" data-cg-flow-down-cancel :data-cg-drop="(item.type === 0 && (!focus || !isSelected(d.index * rowCount + index))) ? '' : undefined" @drop="drop($event, d.index, index)">
+                    <div class="icon" :class="['type' + item.type]" :style="{'background-size': this.propInt('size') + 'px', 'width': this.propInt('size') + 'px', 'height': this.propInt('size') + 'px', 'background-image': item.icon ? 'url(' + getIconData(item.icon) + ')' : undefined}"></div>
+                    <div class="name">{{item.name}}</div>
+                    <div v-if="propInt('size') >= 60" class="time">{{timeFormat(item.time)}}</div>
+                </div>
+                <div v-else class="blank"></div>
+            </template>
+        </div>
+    </cg-vflow>
+    <cg-scroll :length="length" :client="client" v-model:offset="offset" :float="scroll==='auto'" :style="{'display': (scroll === 'visible') || ((length > client) && (scroll !== 'hidden')) ? undefined : 'none'}"></cg-scroll>
+    <!-- 浮动层 -->
+    <teleport v-if="slots['pop']" to="system">
+        <div ref="pop" class="pop">
+            <slot name="pop"></slot>
+        </div>
+    </teleport>
+    <teleport v-if="slots['itempop']" to="system">
+        <div ref="itempop" class="pop">
+            <slot name="itempop"></slot>
+        </div>
+    </teleport>
+</div>

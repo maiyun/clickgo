@@ -179,21 +179,16 @@ export default class extends clickgo.control.AbstractControl {
             return;
         }
         // --- 绑定双击事件 ---
-        const el = e.currentTarget as HTMLElement;
-        const dataHasDbl = el.getAttribute('data-has-dbl');
-        if (!dataHasDbl) {
-            el.setAttribute('data-has-dbl', 'yes');
-            el.addEventListener('dblclick', () => {
-                if (this.stateAbs) {
-                    this.maxVMethod(true);
+        clickgo.dom.bindDblClick(e, () => {
+            if (this.stateAbs) {
+                this.maxVMethod();
+            }
+            else {
+                if (this.propBoolean('max')) {
+                    this.maxMethod();
                 }
-                else {
-                    if (this.propBoolean('max')) {
-                        this.maxMethod();
-                    }
-                }
-            });
-        }
+            }
+        });
         /** --- 当前所处边框 --- */
         let isBorder: types.TDomBorder = '';
         clickgo.dom.bindMove(e, {
@@ -470,7 +465,7 @@ export default class extends clickgo.control.AbstractControl {
     }
 
     // --- 竖版扩大 ---
-    public maxVMethod(dbl: boolean): void {
+    public maxVMethod(): void {
         if (this.isInside) {
             return;
         }
@@ -486,17 +481,18 @@ export default class extends clickgo.control.AbstractControl {
                 this.heightData = this.historyLocation.height;
                 this.emit('update:height', this.heightData);
             }
-            if (dbl) {
-                this.leftData = this.historyLocation.left;
-                this.emit('update:left', this.leftData);
-                if (!this.widthComp) {
-                    this.widthData = 0;
-                }
-                else {
-                    this.widthData = this.historyLocation.width;
-                    this.emit('update:width', this.widthData);
-                }
+            // --- 恢复左侧位置 ---
+            /*
+            this.leftData = this.historyLocation.left;
+            this.emit('update:left', this.leftData);
+            if (!this.widthComp) {
+                this.widthData = 0;
             }
+            else {
+                this.widthData = this.historyLocation.width;
+                this.emit('update:width', this.widthData);
+            }
+            */
         }
         else {
             this.stateAbs = 'l';
@@ -791,6 +787,12 @@ export default class extends clickgo.control.AbstractControl {
                 }
             }
         });
+        // --- 绑定双击事件 ---
+        if (border === 't' || border === 'b') {
+            clickgo.dom.bindDblClick(e, () => {
+                this.maxVMethod();
+            });
+        }
     }
 
     // --- 设置 left, width 等 ---

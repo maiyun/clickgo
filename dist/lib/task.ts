@@ -580,8 +580,17 @@ export async function run(url: string | types.IApp, opt: types.ITaskRunOptions =
             getWatchInfo: function(): types.IGetWatchInfoResult {
                 return dom.getWatchInfo();
             },
-            bindClick: function(e: MouseEvent | TouchEvent, handler: () => void): void {
+            bindClick: function(
+                e: MouseEvent | TouchEvent,
+                handler: (e: MouseEvent | TouchEvent, x: number, y: number) => void
+            ): void {
                 dom.bindClick(e, handler);
+            },
+            bindDblClick: function(
+                e: MouseEvent | TouchEvent,
+                handler: (e: MouseEvent | TouchEvent) => void | Promise<void>
+            ): void {
+                dom.bindDblClick(e, handler);
             },
             bindDown: function(oe: MouseEvent | TouchEvent, opt: types.IBindDownOptions) {
                 dom.bindDown(oe, opt);
@@ -595,7 +604,17 @@ export async function run(url: string | types.IApp, opt: types.ITaskRunOptions =
             ): void {
                 dom.bindLong(e, long);
             },
-            bindDrag: function(e: MouseEvent | TouchEvent, opt: { 'el': HTMLElement; 'data'?: any; }): void {
+            setDragData(data?: string | number | boolean | Record<string, any>): void {
+                dom.setDragData(data);
+            },
+            bindDrag: function(e: MouseEvent | TouchEvent, opt: {
+                'el': HTMLElement;
+                'data'?: any;
+
+                'start'?: (x: number, y: number) => any;
+                'move'?: (e: MouseEvent | TouchEvent, opt: types.IBindMoveMoveOptions) => void;
+                'end'?: (moveTimes: Array<{ 'time': number; 'ox': number; 'oy': number; }>, e: MouseEvent | TouchEvent) => void;
+            }): void {
                 dom.bindDrag(e, opt);
             },
             'is': dom.is,

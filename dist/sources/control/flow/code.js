@@ -121,6 +121,9 @@ class default_1 extends clickgo.control.AbstractControl {
         });
     }
     down(e) {
+        if (e.target.dataset.cgFlowDownCancel !== undefined || clickgo.dom.findParentByData(e.target, 'cg-flow-down-cancel')) {
+            return;
+        }
         if (this.propBoolean('selection')) {
             const x = (e instanceof MouseEvent) ? e.clientX : e.touches[0].clientX;
             const y = (e instanceof MouseEvent) ? e.clientY : e.touches[0].clientY;
