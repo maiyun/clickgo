@@ -1,5 +1,9 @@
 # Changelog
 
+# 3.2.6
+
+[\*] Fix page control.
+
 # 3.2.5
 
 [+] Add iconview control.  

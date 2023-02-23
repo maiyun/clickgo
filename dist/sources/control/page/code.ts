@@ -98,7 +98,7 @@ export default class extends clickgo.control.AbstractControl {
 
     // --- 更新最大页面数值 ---
     public refreshMaxPage(): void {
-        const max = this.maxPage;
+        const max = this.propInt('max');
         if (max) {
             this.maxPage = max;
             return;

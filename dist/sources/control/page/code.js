@@ -101,7 +101,7 @@ class default_1 extends clickgo.control.AbstractControl {
         }
     }
     refreshMaxPage() {
-        const max = this.maxPage;
+        const max = this.propInt('max');
         if (max) {
             this.maxPage = max;
             return;

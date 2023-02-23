@@ -1,7 +1,7 @@
 <div class="wrap">
     <div class="list">
         <div v-if="page > 1" :tabindex="formFocus && '0'" class="left" @click="--page;$emit('update:modelValue',page);refresh()" @keydown="keydown"></div>
-        <div v-if="page > 1" :tabindex="formFocus && '0'" @click="page=2;$emit('update:modelValue',page);refresh()" @keydown="keydown">1</div>
+        <div v-if="page > 1" :tabindex="formFocus && '0'" @click="page=1;$emit('update:modelValue',page);refresh()" @keydown="keydown">1</div>
         <div v-if="page > 4" :tabindex="formFocus && '0'" v-html="svg" @click="page-=10;if(page<1){page=1}$emit('update:modelValue',page);refresh()" @keydown="keydown"></div>
         <div :tabindex="formFocus && '0'" v-for="item of prevs" @click="page=item;$emit('update:modelValue',page);refresh()" @keydown="keydown">{{item}}</div>
         <!-- 中间的页码 -->
