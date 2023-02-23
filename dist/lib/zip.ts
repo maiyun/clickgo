@@ -124,7 +124,7 @@ export class Zip {
      */
     public isDir(path: string): types.IZipStats | false {
         const pstats = this.stats(path);
-        if (!pstats || !pstats.isDirectory) {
+        if (!pstats?.isDirectory) {
             return false;
         }
         return pstats;
@@ -136,7 +136,7 @@ export class Zip {
      */
     public isFile(path: string): types.IZipStats | false {
         const pstats = this.stats(path);
-        if (!pstats || !pstats.isFile) {
+        if (!pstats?.isFile) {
             return false;
         }
         return pstats;

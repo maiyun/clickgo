@@ -1,5 +1,9 @@
 # Changelog
 
+# 3.2.7
+
+[\*] Add change event in page control.
+
 # 3.2.6
 
 [\*] Fix page control.

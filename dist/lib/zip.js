@@ -120,14 +120,14 @@ class Zip {
     }
     isDir(path) {
         const pstats = this.stats(path);
-        if (!pstats || !pstats.isDirectory) {
+        if (!(pstats === null || pstats === void 0 ? void 0 : pstats.isDirectory)) {
             return false;
         }
         return pstats;
     }
     isFile(path) {
         const pstats = this.stats(path);
-        if (!pstats || !pstats.isFile) {
+        if (!(pstats === null || pstats === void 0 ? void 0 : pstats.isFile)) {
             return false;
         }
         return pstats;
