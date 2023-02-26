@@ -1,5 +1,10 @@
 # Changelog
 
+# 3.2.9
+
+[\*] Fix wrap param of text control.  
+[\*] Update @litert/loader to 3.4.10.
+
 # 3.2.8
 
 [+] Add data param in dialog method of form lib.  

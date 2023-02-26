@@ -1,6 +1,6 @@
 {
   "name": "clickgo",
-  "version": "3.2.8",
+  "version": "3.2.9",
   "description": "Background interface, software interface, mobile phone APP interface operation library.",
   "keywords": [
     "deskrt",
@@ -19,7 +19,7 @@
   },
   "devDependencies": {
     "@litert/eslint-plugin-rules": "^0.1.2",
-    "@litert/loader": "^3.4.9",
+    "@litert/loader": "^3.4.10",
     "@types/node": "^18.11.14",
     "electron": "^22.2.0",
     "jszip": "^3.10.1",
