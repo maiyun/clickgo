@@ -2759,6 +2759,8 @@ export function dialog(opt: string | types.IFormDialogOptions): Promise<string> 
         const cls = class extends AbstractForm {
             public buttons = nopt.buttons;
 
+            public data = nopt.data ?? {};
+
             public get filename(): string {
                 return filename;
             }
@@ -2782,7 +2784,7 @@ export function dialog(opt: string | types.IFormDialogOptions): Promise<string> 
             }
         };
         create(cls, undefined, {
-            'layout': `<form title="${nopt.title ?? 'dialog'}" min="false" max="false" resize="false" height="0" width="0" border="${nopt.title ? 'normal' : 'plain'}" direction="v"><dialog :buttons="buttons" @select="select"${nopt.direction ? ` direction="${nopt.direction}"` : ''}>${nopt.content}</dialog></form>`,
+            'layout': `<form title="${nopt.title ?? 'dialog'}" min="false" max="false" resize="false" height="0" width="0" border="${nopt.title ? 'normal' : 'plain'}" direction="v"><dialog :buttons="buttons" @select="select"${nopt.direction ? ` direction="${nopt.direction}"` : ''}${nopt.gutter ? ` gutter="${nopt.gutter}"` : ''}>${nopt.content}</dialog></form>`,
             'style': nopt.style
         }, t.id).then((frm) => {
             if (typeof frm === 'number') {

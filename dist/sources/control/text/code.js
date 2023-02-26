@@ -296,6 +296,9 @@ class default_1 extends clickgo.control.AbstractControl {
         }
         clickgo.form.showPop(this.element, this.refs.pop, e);
     }
+    select(e) {
+        e.stopPropagation();
+    }
     execCmd(ac) {
         return __awaiter(this, void 0, void 0, function* () {
             this.refs.text.focus();

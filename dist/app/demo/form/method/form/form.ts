@@ -172,6 +172,17 @@ export default class extends clickgo.form.AbstractForm {
         });
     }
 
+    public async dialogData(): Promise<void> {
+        this.dr = await clickgo.form.dialog({
+            'direction': 'v',
+            'gutter': 10,
+            'content': '<block>Hello text!</block><text :modelValue="data.txt">',
+            'data': {
+                'txt': 'Text\nLine 2.'
+            }
+        });
+    }
+
     public async confirm(cancel: boolean): Promise<void> {
         this.dr = await clickgo.form.confirm({
             'content': 'Hello world?',

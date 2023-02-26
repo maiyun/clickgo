@@ -1,8 +1,13 @@
 # Changelog
 
+# 3.2.8
+
+[+] Add data param in dialog method of form lib.  
+[+] Add gutter param in dialog method of form lib.
+
 # 3.2.7
 
-[\*] Add change event in page control.
+[+] Add change event in page control.
 
 # 3.2.6
 

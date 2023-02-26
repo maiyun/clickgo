@@ -320,6 +320,10 @@ export default class extends clickgo.control.AbstractControl {
         clickgo.form.showPop(this.element, this.refs.pop, e);
     }
 
+    public select(e: InputEvent): void {
+        e.stopPropagation();
+    }
+
     /** --- 执行复制粘贴剪切等操作 --- */
     public async execCmd(ac: string): Promise<void> {
         this.refs.text.focus();

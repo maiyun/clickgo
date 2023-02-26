@@ -2177,8 +2177,10 @@ function dialog(opt) {
         }
         const cls = class extends AbstractForm {
             constructor() {
+                var _a;
                 super(...arguments);
                 this.buttons = nopt.buttons;
+                this.data = (_a = nopt.data) !== null && _a !== void 0 ? _a : {};
             }
             get filename() {
                 return filename;
@@ -2202,7 +2204,7 @@ function dialog(opt) {
             }
         };
         create(cls, undefined, {
-            'layout': `<form title="${(_d = nopt.title) !== null && _d !== void 0 ? _d : 'dialog'}" min="false" max="false" resize="false" height="0" width="0" border="${nopt.title ? 'normal' : 'plain'}" direction="v"><dialog :buttons="buttons" @select="select"${nopt.direction ? ` direction="${nopt.direction}"` : ''}>${nopt.content}</dialog></form>`,
+            'layout': `<form title="${(_d = nopt.title) !== null && _d !== void 0 ? _d : 'dialog'}" min="false" max="false" resize="false" height="0" width="0" border="${nopt.title ? 'normal' : 'plain'}" direction="v"><dialog :buttons="buttons" @select="select"${nopt.direction ? ` direction="${nopt.direction}"` : ''}${nopt.gutter ? ` gutter="${nopt.gutter}"` : ''}>${nopt.content}</dialog></form>`,
             'style': nopt.style
         }, t.id).then((frm) => {
             if (typeof frm === 'number') {

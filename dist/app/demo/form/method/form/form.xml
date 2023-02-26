@@ -42,6 +42,7 @@
             <button @click="dialogTitle" style="height: 30px;">dialog({'title':'Title','content':'Hello world!'})</button>
             <button @click="dialogButtons" style="height: 30px;">dialog({'content':'Hello world!','buttons':['A','B','C']})</button>
             <button @click="dialogCannot" style="height: 30px;">Dialog can not be close</button>
+            <button @click="dialogData" style="height: 30px;">Dialog data</button>
             <button @click="confirm(false)" style="height: 30px;">confirm('confirm')</button>
             <button @click="confirm(true)" style="height: 30px;">confirm({'content':'confirm','cancel':true})</button>
             <button @click="flash" style="height: 30px;">flash({{formId}})</button>

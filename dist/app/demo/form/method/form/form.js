@@ -199,6 +199,18 @@ class default_1 extends clickgo.form.AbstractForm {
             });
         });
     }
+    dialogData() {
+        return __awaiter(this, void 0, void 0, function* () {
+            this.dr = yield clickgo.form.dialog({
+                'direction': 'v',
+                'gutter': 10,
+                'content': '<block>Hello text!</block><text :modelValue="data.txt">',
+                'data': {
+                    'txt': 'Text\nLine 2.'
+                }
+            });
+        });
+    }
     confirm(cancel) {
         return __awaiter(this, void 0, void 0, function* () {
             this.dr = yield clickgo.form.confirm({
