@@ -315,7 +315,7 @@ export async function run(url: string | types.IApp, opt: types.ITaskRunOptions =
     const unblock = opt.unblock ? tool.clone(opt.unblock) : [];
     const unblockSys = [
         'require',
-        '__awaiter', 'eval', 'Math', 'Array', 'Blob', 'Error', 'Infinity', 'parseInt', 'parseFloat', 'Promise', 'Date', 'JSON', 'fetch', 'Number', 'Object', 'encodeURIComponent', 'decodeURIComponent'
+        '__awaiter', 'eval', 'Math', 'Array', 'Blob', 'Error', 'Infinity', 'parseInt', 'parseFloat', 'Promise', 'Date', 'JSON', 'fetch', 'Number', 'Object', 'encodeURIComponent', 'decodeURIComponent', 'FormData'
     ];
     for (const name of unblockSys) {
         if (unblock.includes(name)) {
