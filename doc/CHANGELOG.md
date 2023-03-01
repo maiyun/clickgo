@@ -1,5 +1,9 @@
 # Changelog
 
+# 3.2.11
+
+[\*] Optimize img control.
+
 # 3.2.10
 
 [\*] The default value of the "unblock" parameter has been updated to include "FormData".
