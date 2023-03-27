@@ -1,4 +1,4 @@
-<div class="wrap" :data-cg-disabled="propBoolean('disabled') ? '' : undefined" :tabindex="!propBoolean('disabled') && formFocus && '0'" @keydown="keydown">
+<div class="wrap" :data-cg-disabled="propBoolean('disabled') ? '' : undefined" :tabindex="(!propBoolean('disabled') && formFocus) ? '0' : undefined" @keydown="keydown">
     <div class="t">
         <cg-vflow ref="flow" :selection="selection" :gesture="gesture" @gesture="emit('gesture', $event)" :data="data" v-slot="d" :sizes="sizes" direction="v" :scroll-left="sl" @update:scroll-left="sl=$event;emit('update:scroll-left',sl)" :scroll-top="offset" @update:scroll-top="offset=$event;emit('update:scroll-top',offset)" @beforeselect="onBeforeSelect" @select="onSelect($event)" @afterselect="onAfterSelect" @clientwidth="cw = $event" @clientheight="client=$event;$emit('client',client)" @scrollwidth="sw = $event" @scrollheight="length = $event" @contextmenu="context" @touchstart="down" @mousedown="down">
             <div v-if="d.row.control === 'split'" class="split"></div>

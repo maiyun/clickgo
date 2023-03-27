@@ -1,4 +1,4 @@
-<div class="wrap" :data-cg-disabled="propBoolean('disabled') ? '' : undefined" :tabindex="!propBoolean('disabled') && formFocus && '0'" @keydown="keydown" @focus="focus=true" @blur="focus=false">
+<div class="wrap" :data-cg-disabled="propBoolean('disabled') ? '' : undefined" :tabindex="(!propBoolean('disabled') && formFocus) ? '0' : undefined" @keydown="keydown" @focus="focus=true" @blur="focus=false">
     <cg-vflow ref="flow" :selection="selection" :gesture="gesture" @gesture="emit('gesture', $event)" :data="dataComp" v-slot="d" direction="v" :scroll-top="offset" @update:scroll-top="offset=$event;emit('update:scroll-top',offset)" @beforeselect="onBeforeSelect" @select="onSelect($event)" @afterselect="onAfterSelect" @clientheight="client=$event;$emit('client',client)" @clientwidth="cw=$event" @scrollheight="length=$event" @contextmenu="context" @touchstart="down" @mousedown="down">
         <div class="row">
             <template v-for="item, index of d.row">

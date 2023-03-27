@@ -229,7 +229,7 @@ class default_1 extends clickgo.control.AbstractControl {
         clickgo.dom.bindClick(e, () => {
             const hasTouch = clickgo.dom.hasTouchButMouse(e);
             this.select(value, e.shiftKey, ((!this.propBoolean('ctrl') || hasTouch) && this.propBoolean('multi')) ? true : e.ctrlKey);
-            const current = e.currentTarget;
+            const current = e.target;
             if (current.dataset.cgPopOpen === undefined) {
                 clickgo.form.showPop(current, this.refs.itempop, e);
             }

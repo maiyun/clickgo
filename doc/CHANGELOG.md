@@ -1,5 +1,9 @@
 # Changelog
 
+# 3.2.12
+
+[\*] Optimize byterun theme.
+
 # 3.2.11
 
 [\*] Optimize img control.

@@ -308,7 +308,7 @@ export default class extends clickgo.control.AbstractControl {
             const hasTouch = clickgo.dom.hasTouchButMouse(e);
             this.select(value, e.shiftKey, ((!this.propBoolean('ctrl') || hasTouch) && this.propBoolean('multi')) ? true : e.ctrlKey);
             // --- 显示/隐藏 arrow menu ---
-            const current = e.currentTarget as HTMLElement;
+            const current = e.target as HTMLElement;
             if (current.dataset.cgPopOpen === undefined) {
                 clickgo.form.showPop(current, this.refs.itempop, e);
             }

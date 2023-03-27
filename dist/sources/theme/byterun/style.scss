@@ -37,22 +37,22 @@ global {
     --g-color-disabled:rgba(255,255,255,.5);
 
     --g-background:rgba(255,255,255,.05);
-    --g-background-hover:hsla(240,70%,60%,.3);
-    --g-background-active:hsla(170,55%,50%,.3);
-    --g-background-opacity:hsla(240,70%,60%,.1);
-    --g-background-focus:hsla(240,70%,60%,.3);
+    --g-background-hover:rgba(255,255,255,.08);
+    --g-background-active:rgba(255,255,255,.02);
+    --g-background-opacity:hsla(240,70%,60%,.05);
+    --g-background-focus:rgba(255,255,255,.08);
     --g-background-disabled:rgba(255,255,255,.1);
 
     --g-border-color:rgba(255,255,255,.2);
     --g-border-color-hover:hsl(240,70%,60%);
-    --g-border-color-active:hsl(170,55%,50%);
+    --g-border-color-active:hsl(240,50%,60%);
     --g-border-color-focus:hsl(240,70%,60%);
     
     // --- 组件轻量颜色（如文本框） ---
 
     --g-plain-color:var(--g-color);
     --g-plain-color-hover:hsl(240,70%,60%);
-    --g-plain-color-active:hsl(170,55%,50%);
+    --g-plain-color-active:hsl(240,50%,60%);
     --g-plain-color-focus:hsl(240,70%,60%);
 
     --g-plain-background:transparent;
@@ -61,9 +61,9 @@ global {
     --g-plain-background-focus:transparent;
     --g-plain-background-disabled:rgba(255,255,255,.1);
 
-    --g-plain-border-color:rgba(255,255,255,.05);
+    --g-plain-border-color:rgba(255,255,255,.2);
     --g-plain-border-color-hover:hsl(240,70%,60%);
-    --g-plain-border-color-active:hsl(170,55%,50%);
+    --g-plain-border-color-active:hsl(240,50%,60%);
     --g-plain-border-color-focus:hsl(240,70%,60%);
     --g-plain-border-color-disabled:hsl(240,0%,60%);
 
@@ -75,13 +75,30 @@ global {
 // -- CONTROL -- button --
 
 .button_wrap {
-    border-radius: 5px; transition: all .1s ease-out; transition-property: color, background;
+    border-radius: 5px; overflow: hidden; transition: all .1s ease-out; transition-property: color, background;
 
     &::before {                                 // --- 外边框 ---
         border-radius: 5px; transition: all .1s ease-out;
     }
     &::after, .button_inner::after, .button_arrow::after {    // --- 焦点框 ---
         border-radius: 3px; transition: all .1s ease-out;
+    }
+    &.button_default {
+        &:not(.button_plain) {
+            --border:none;
+            --border-hover:none;
+            --border-active:none;
+            --border-focus:none;
+            --border-disabled:none;
+
+        }
+    }
+    &.button_tool {
+        &:not(.button_plain) {
+            --border-hover:none;
+            --border-active:none;
+            --border-focus:none;
+        }
     }
     &.button_area-split {
         .button_inner::before {
@@ -214,18 +231,27 @@ global {
 
 .desc_wrap {
     border-radius: 5px;
+    &.desc_border {
+        border-color: var(--g-background);
+    }
 }
 
 // -- CONTROL -- desc-cell --
 
 .desc-cell_wrap {
     padding: 15px; border-radius: 5px;
+    &.desc-cell_border {
+        border-color: var(--g-background);
+    }
 }
 
 // -- CONTROL -- desc-head --
 
 .desc-head_wrap {
     background: var(--g-background); padding: 15px; border-radius: 5px;
+    &.desc-head_border {
+        border-color: var(--g-background);
+    }
 }
 
 // -- CONTROL -- form --
@@ -295,10 +321,10 @@ global {
                         background: var(--g-background);
                     }
                     &.greatlist_selected {
-                        background: var(--g-background-active);
+                        background: var(--g-background-opacity); border-color: var(--g-border-color-hover);
                     }
-                    &.greatlist_shift {
-                        border-color: var(--g-border-color-active);
+                    &.greatlist_shift:not(.greatlist_selected) {
+                        border-color: var(--g-border-color);
                     }
                 }
                 &[data-cg-disabled] {
@@ -307,6 +333,12 @@ global {
                         background: transparent;
                     }
                 }
+                .greatlist_itemInner {
+                    padding: 10px;
+                }
+            }
+            .greatlist_split {
+               background: var(--g-background);
             }
         }
     }
@@ -355,10 +387,10 @@ global {
                     background: var(--g-background);
                 }
                 &.iconview_selected {
-                    background: var(--g-background-hover);
+                    background: var(--g-background-opacity); border-color: var(--g-border-color-hover);
                 }
-                &.iconview_shift {
-                    border-color: var(--g-border-color-focus);
+                &.iconview_shift:not(.iconview_selected) {
+                    border-color: var(--g-border-color);
                 }
                 &[data-cg-hover] {
                     background: var(--g-border-color-hover); color: var(--g-color); fill: var(--g-color);
@@ -466,13 +498,13 @@ global {
 .nav_wrap {
     .nav_menuwrap {
         .nav_menu {
-            border-right-color: var(--g-plain-border-color);
+            border-right-color: var(--g-background);
         }
     }
     &.nav_layer {
         .nav_menuwrap {
             .nav_menu {
-                border-right-color: var(--g-border-color);
+                border-right-color: var(--g-background);
             }
         }
         &.nav_show {
@@ -484,7 +516,7 @@ global {
 
     .nav_content {
         .nav_header {
-            height: 40px; border-bottom: solid .5px var(--g-plain-border-color);
+            height: 44px; border-bottom: solid .5px var(--g-background); padding: 2px;
             .nav_mbutton {
                 width: 40px; transition: all .1s ease-out; border-radius: 5px;
                 &:hover {
@@ -512,7 +544,7 @@ global {
     &:not(.nav-item_child) {
         &.nav-item_show {
             > .nav-item_text {
-                background: var(--g-background);
+                background: var(--g-background); border-radius: 5px 5px 0 0;
             }
         }
     }
@@ -529,7 +561,7 @@ global {
     }
 
     > .nav-item_menu {
-        border-radius: 5px;
+        border-radius: 0 0 5px 5px;
     }
     &:not(.nav-item_child) {
         > .nav-item_menu {
@@ -571,22 +603,45 @@ global {
 
 .property_wrap {
     .property_controls {
+        .property_tag-cg-button {
+            margin-right: 5px; width: 34px; height: 34px;
+        }
         .property_split {
-            background: var(--g-plain-border-color);
+            background: var(--g-background); margin: 0 5px 0 0;
         }
     }
     .property_content {
-        border-color: var(--g-plain-border-color);
+        margin-top: 5px;
         .property_bigTitle {
             background: var(--g-background);
+            .property_control {
+                width: 34px;
+            }
+            .property_title {
+                padding: 10px;
+            }
         }
         .property_line {
-            border-bottom-color: var(--g-plain-border-color);
+            border-bottom-color: var(--g-background);
             .property_control {
-                background: var(--g-background);
+                background: var(--g-background); width: 34px;
+            }
+            .property_title {
+                padding: 10px;
             }
             &.property_selected .property_title {
-                background: var(--g-border-color-hover);
+                background: var(--g-background-hover);
+            }
+            .property_value {
+                .property_text {
+                    padding: 10px; height: 32px;
+                }
+                .property_tag-cg-check {
+                    margin-left: 10px;
+                }
+                .property_arrow {
+                    width: 30px;
+                }
             }
         }
     }
@@ -739,6 +794,28 @@ global {
     .tab_panel {
         background: var(--g-background); border: none;
     }
+}
+
+// -- CONTROL -- table --
+
+.table_wrap {
+    border-radius: 5px;
+    .table_header {
+        .table_item {
+            padding: 10px;
+        }
+    }
+    .table_tag-cg-greatlist {
+        .table_item {
+            margin: -10px;
+        }
+    }
+}
+
+// -- CONTROL -- table-item --
+
+.table-item_wrap {
+    padding: 10px;
 }
 
 // -- CONTROL -- task --
