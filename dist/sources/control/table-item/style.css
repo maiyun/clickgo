@@ -1,1 +1,1 @@
-.wrap{padding:7px;display:flex;overflow:hidden}
+.wrap{padding:var(--g-padding);display:flex;overflow:hidden}

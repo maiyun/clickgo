@@ -1,1 +1,1 @@
-.wrap{padding:10px}.wrap.border{border:solid .5px var(--g-plain-border-color)}
+.wrap{padding:10px;border-radius:var(--g-radius)}.wrap.border{border:solid .5px var(--g-plain-border-color)}

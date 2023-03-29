@@ -18,7 +18,7 @@
     }
 
     .content {
-        margin-top: 2px; background: var(--g-plain-background); flex: 1; display: flex; overflow: hidden; border: solid .5px var(--g-border-color);
+        margin-top: var(--g-margin); background: var(--g-plain-background); flex: 1; display: flex; overflow: hidden; border: solid .5px var(--g-border-color); border-radius: var(--g-radius);
 
         cg-flow {
             flex: 1;
@@ -39,7 +39,7 @@
                 }
             }
             .title {
-                padding: 5px;
+                padding: var(--g-padding);
             }
         }
 
@@ -59,7 +59,7 @@
             }
 
             .title {
-                padding: 5px; flex: 1; width: 0; overflow: hidden;
+                padding: var(--g-padding); flex: 1; width: 0; overflow: hidden;
                 .sub {
                     padding-left: 10px;
                 }
@@ -72,7 +72,7 @@
                 flex: 1; width: 0; display: flex; flex-direction: column; justify-content: center;
 
                 .text {
-                    padding: 5px; height: 22px;
+                    padding: var(--g-padding); height: 22px;
                 }
 
                 cg-check {
@@ -97,7 +97,7 @@
     }
 
     .description {
-        margin-top: 2px; background: var(--face); height: 51px; padding: 5px; overflow: hidden; border: solid .5px var(--g-border-color);
+        margin-top: var(--g-margin); background: var(--face); height: 51px; padding: var(--g-padding); overflow: hidden; border: solid .5px var(--g-border-color); border-radius: var(--g-radius);
 
         .title {
             font-weight: bold;
@@ -112,7 +112,7 @@
 // --- POP ---
 
 .dock-pop {
-    background: var(--face); border: solid .5px var(--g-border-color); display: flex; flex-direction: column; width: 200px; padding: 1px;
+    background: var(--face); border: solid .5px var(--g-border-color); display: flex; flex-direction: column; width: 200px; padding: 1px; border-radius: var(--g-radius);
 
     > :not(:last-child) {
         margin-bottom: 1px;

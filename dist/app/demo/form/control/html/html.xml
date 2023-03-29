@@ -1,4 +1,4 @@
-<form title="Html" width="400" height="500" padding="10">
+<form title="Html" width="450" height="500" padding="10">
     <layout gutter="10" direction="v" style="flex: 1; width: 0;">
         <layout gutter="10" style="flex: 1; height: 0;">
             <html :html="html" :css="lcss" style="background: var(--g-plain-background); border: solid 1px var(--g-plain-border-color); padding: 10px; flex: 1; width: 0;"></html>

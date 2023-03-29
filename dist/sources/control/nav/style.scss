@@ -32,7 +32,7 @@
         .header {
             height: 30px; display: flex; background-repeat: no-repeat; background-position: center; background-size: auto 60%; box-shadow: 0 0 15px rgba(0, 0, 0, .25);
             .mbutton {
-                width: 30px; display: flex; align-items: center; justify-content: center;
+                width: 30px; display: flex; align-items: center; justify-content: center; border-radius: var(--g-radius);
                 &:hover {
                     background: var(--g-background-active);
                 }

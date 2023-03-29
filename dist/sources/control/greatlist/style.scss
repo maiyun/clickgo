@@ -1,5 +1,5 @@
 .wrap {
-    background: var(--g-plain-background); outline: none; max-width: 100%; max-height: 100%; position: relative; border: solid .5px var(--g-plain-border-color); min-width: 32px; min-height: 32px; display: flex; flex-direction: column;
+    background: var(--g-plain-background); outline: none; max-width: 100%; max-height: 100%; position: relative; border: solid .5px var(--g-plain-border-color); min-width: 32px; min-height: 32px; display: flex; flex-direction: column; border-radius: var(--g-radius);
     &[data-cg-disabled] {
         background: var(--g-plain-background-disabled); color: var(--g-color-disabled); fill: var(--g-color-disabled);
         > * {
@@ -15,7 +15,7 @@
     
             // --- item ---
             .item {
-                display: flex; border: solid .5px transparent;
+                display: flex; border: solid .5px transparent; border-radius: var(--g-radius);
                 &:not([data-cg-disabled]) {
                     &:hover {
                         background: var(--g-plain-background-hover);
@@ -35,7 +35,7 @@
                 }
     
                 .itemInner {
-                    padding: 7px;
+                    padding: var(--g-padding);
                     &:not(.content-width-max) {
                         flex: 1; width: 0; overflow: hidden;
                     }
@@ -92,5 +92,5 @@
 }
 
 .pop {
-    color: var(--g-color); fill: var(--g-color);
+    color: var(--g-color); fill: var(--g-color); border-radius: var(--g-radius);
 }

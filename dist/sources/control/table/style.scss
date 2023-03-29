@@ -1,5 +1,5 @@
 .wrap {
-    background: var(--g-plain-background); display: flex; flex-direction: column; outline: none; max-width: 100%; max-height: 100%; position: relative; border: solid .5px var(--g-plain-border-color); min-width: 32px; min-height: 32px;
+    background: var(--g-plain-background); display: flex; flex-direction: column; outline: none; max-width: 100%; max-height: 100%; position: relative; border: solid .5px var(--g-plain-border-color); min-width: 32px; min-height: 32px; border-radius: var(--g-radius);
     &[data-cg-disabled] {
         background: var(--g-plain-background-disabled); color: var(--g-color-disabled); fill: var(--g-color-disabled);
         > * {
@@ -14,7 +14,7 @@
         }
 
         .item {
-            padding: 7px; text-align: center; position: relative;
+            padding: var(--g-padding); text-align: center; position: relative;
             &:hover {
                 background: var(--g-plain-background-hover);
             }
@@ -41,7 +41,7 @@
         border: none; flex: 1;
 
         .item {
-            margin: -7px; display: flex;
+            margin: calc(-1 * var(--g-padding)); display: flex;
         }
     }
 }

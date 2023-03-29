@@ -1,5 +1,8 @@
 #cg-wrap {
     position: fixed; left: 0; top: 0;
+    --g-padding:7px;
+    --g-margin:2px;
+    --g-radius:0;
 
     // --- 基础颜色 ---
     --cg:hsl(20, 100%, 65%);

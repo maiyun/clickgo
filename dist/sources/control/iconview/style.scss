@@ -1,5 +1,5 @@
 .wrap {
-    background: var(--g-plain-background); outline: none; max-width: 100%; max-height: 100%; position: relative; border: solid .5px var(--g-plain-border-color); min-width: 32px; min-height: 32px; display: flex;
+    background: var(--g-plain-background); outline: none; max-width: 100%; max-height: 100%; position: relative; border: solid .5px var(--g-plain-border-color); min-width: 32px; min-height: 32px; display: flex; border-radius: var(--g-radius);
     &[data-cg-disabled] {
         background: var(--g-plain-background-disabled); color: var(--g-color-disabled); fill: var(--g-color-disabled);
         > * {
@@ -32,7 +32,7 @@
                 }
             }
             .item {
-                white-space: nowrap;
+                white-space: nowrap; border-radius: var(--g-radius);
                 &:hover {
                     background: var(--g-plain-background-hover);
                 }
@@ -54,5 +54,5 @@
 }
 
 .pop {
-    color: var(--g-color); fill: var(--g-color);
+    color: var(--g-color); fill: var(--g-color); border-radius: var(--g-radius);
 }

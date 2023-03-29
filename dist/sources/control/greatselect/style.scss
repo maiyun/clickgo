@@ -1,5 +1,5 @@
 .wrap {
-    display: flex; outline: none; padding: 7px; border: solid .5px var(--g-border-color);
+    display: flex; outline: none; padding: var(--g-padding); border-radius: var(--g-radius); border: solid .5px var(--g-border-color);
     &.area-all {
         background: var(--g-background);
     }
@@ -80,7 +80,7 @@
 }
 
 .pop {
-    width: 800px; display: flex; max-height: 300px; color: var(--g-color); fill: var(--g-color);
+    width: 800px; display: flex; max-height: 300px; color: var(--g-color); fill: var(--g-color); border-radius: var(--g-radius);
     > * {
         flex: 1;
     }

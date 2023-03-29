@@ -48,7 +48,7 @@
     
         // --- 滚动块 ---
         .block {
-            background: var(--block-background); display: flex;
+            background: var(--block-background); display: flex; border-radius: var(--g-radius);
             &:hover {
                 background: var(--block-background-hover);
             }

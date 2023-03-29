@@ -1,4 +1,5 @@
 .wrap {
+    border-radius: var(--g-radius);
     &.border {
         border: solid .5px var(--g-plain-border-color); background: var(--face);
     }

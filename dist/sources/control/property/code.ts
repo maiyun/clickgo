@@ -300,8 +300,8 @@ export default class extends clickgo.control.AbstractControl {
     }
 
     // --- 双击 ---
-    public reset(e: MouseEvent | TouchEvent): void {
-        clickgo.dom.bindDblClick(e, () => {
+    public reset(e?: MouseEvent | TouchEvent): void {
+        const handler = (): void => {
             for (const item of this.props.modelValue) {
                 if (item.title !== this.selectedTitle) {
                     continue;
@@ -340,7 +340,12 @@ export default class extends clickgo.control.AbstractControl {
                     }
                 }
             }
-        });
+        };
+        if (e) {
+            clickgo.dom.bindDblClick(e, handler);
+            return;
+        }
+        handler();
     }
 
     public onMounted(): void {

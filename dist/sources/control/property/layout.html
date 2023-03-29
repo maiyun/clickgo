@@ -54,16 +54,16 @@
             </template>
         </cg-flow>
     </div>
-    <div v-if="isDesc" class="description">
+    <div v-if="descData" class="description">
         <div class="title">{{title}}</div>
         <div class="desc">{{description}}</div>
     </div>
     <teleport to="system">
         <div ref="pop" class="pop">
             <cg-menulist>
-                <cg-menulist-item alt="R" @click="reset">{{l('reset')}}</cg-menulist-item>
+                <cg-menulist-item alt="R" @click="reset()">{{l('reset')}}</cg-menulist-item>
                 <cg-menulist-split></cg-menulist-split>
-                <cg-menulist-item alt="D" type="check" :modelValue="isDesc" @update:modelValue="this.descData = $event;emit('update:desc', $event)">{{l('description')}}</cg-menulist-item>
+                <cg-menulist-item alt="D" type="check" :modelValue="descData" @update:modelValue="this.descData = $event;emit('update:desc', $event)">{{l('description')}}</cg-menulist-item>
             </cg-menulist>
         </div>
     </teleport>

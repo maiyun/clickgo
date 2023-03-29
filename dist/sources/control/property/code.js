@@ -267,7 +267,7 @@ class default_1 extends clickgo.control.AbstractControl {
         clickgo.form.hidePop();
     }
     reset(e) {
-        clickgo.dom.bindDblClick(e, () => {
+        const handler = () => {
             for (const item of this.props.modelValue) {
                 if (item.title !== this.selectedTitle) {
                     continue;
@@ -303,7 +303,12 @@ class default_1 extends clickgo.control.AbstractControl {
                     }
                 }
             }
-        });
+        };
+        if (e) {
+            clickgo.dom.bindDblClick(e, handler);
+            return;
+        }
+        handler();
     }
     onMounted() {
         this.watch('sort', () => {

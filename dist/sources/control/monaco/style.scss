@@ -1,12 +1,12 @@
 .wrap {
-    display: flex; position: relative;
+    display: flex; position: relative; border-radius: var(--g-radius);
 
     .notInit {
         border: dotted 1px var(--g-color); flex: 1; display: flex; align-items: center; justify-content: center;
     }
 
     .iframe {
-        border: none; flex: 1; width: 0;
+        border: none; flex: 1; width: 0; border-radius: var(--g-radius);
     }
 
     .mask {
@@ -25,5 +25,5 @@
 }
 
 .pop {
-    color: var(--g-color); fill: var(--g-color);
+    color: var(--g-color); fill: var(--g-color); border-radius: var(--g-radius);
 }

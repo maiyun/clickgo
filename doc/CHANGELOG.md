@@ -1,5 +1,10 @@
 # Changelog
 
+# 3.2.13
+
+[\*] Optimize byterun theme.  
+[\*] Optimize html control.
+
 # 3.2.12
 
 [\*] Optimize byterun theme.

@@ -32,7 +32,7 @@
         position: absolute; transition: .1s ease-out; transition-property: transform, opacity; transform: translateX(10px) translateY(0) translateZ(0); opacity: 0;
     }
     &:not(.border-none):not([data-cg-max]) {
-        box-shadow: 0 5px 10px rgba(0, 0, 0, .25); border: solid .5px var(--g-color-disabled);
+        box-shadow: 0 5px 10px rgba(0, 0, 0, .25); border: solid .5px var(--g-color-disabled); border-radius: var(--g-radius);
     }
     &:not(.show) {
         pointer-events: none;
@@ -169,6 +169,19 @@
             /* --- Loading 遮罩 --- */
             .loading {
                 position: absolute; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(255, 255, 255, .3); display: flex; justify-content: center; align-items: center; z-index: 3;
+            }
+        }
+    }
+    &:not([data-cg-max]) {
+        .inner {
+            .header {
+                border-radius: var(--g-radius) var(--g-radius) 0 0; overflow: hidden;
+            }
+            .content {
+                border-radius: 0 0 var(--g-radius) var(--g-radius); overflow: hidden;
+                &.noheader {
+                    border-radius: var(--g-radius);
+                }
             }
         }
     }

@@ -1,1 +1,1 @@
-.wrap{padding:2px;background:var(--face);white-space:nowrap;border:solid .5px var(--g-border-color)}
+.wrap{padding:2px;background:var(--face);white-space:nowrap;border:solid .5px var(--g-border-color);border-radius:var(--g-radius)}

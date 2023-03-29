@@ -1,4 +1,7 @@
 global {
+    --g-padding:10px;
+    --g-margin:5px;
+    --g-radius:5px;
 
     // --- 基础颜色 ---
 
@@ -47,6 +50,7 @@ global {
     --g-border-color-hover:hsl(240,70%,60%);
     --g-border-color-active:hsl(240,50%,60%);
     --g-border-color-focus:hsl(240,70%,60%);
+    --g-border-color-disabled:rgba(255,255,255,.4);
     
     // --- 组件轻量颜色（如文本框） ---
 
@@ -65,7 +69,7 @@ global {
     --g-plain-border-color-hover:hsl(240,70%,60%);
     --g-plain-border-color-active:hsl(240,50%,60%);
     --g-plain-border-color-focus:hsl(240,70%,60%);
-    --g-plain-border-color-disabled:hsl(240,0%,60%);
+    --g-plain-border-color-disabled:rgba(255,255,255,.4);
 
     ::selection {
         background-color: rgba(255, 255, 255, .1);
@@ -75,10 +79,10 @@ global {
 // -- CONTROL -- button --
 
 .button_wrap {
-    border-radius: 5px; overflow: hidden; transition: all .1s ease-out; transition-property: color, background;
+    transition: all .1s ease-out; transition-property: color, background;
 
     &::before {                                 // --- 外边框 ---
-        border-radius: 5px; transition: all .1s ease-out;
+        transition: all .1s ease-out;
     }
     &::after, .button_inner::after, .button_arrow::after {    // --- 焦点框 ---
         border-radius: 3px; transition: all .1s ease-out;
@@ -159,9 +163,6 @@ global {
         fill: var(--g-color-disabled);
     }
 }
-.button_pop {
-    border-radius: 5px;
-}
 
 // -- CONTROL -- check --
 
@@ -169,7 +170,7 @@ global {
     transition: all .1s ease-out;
 
     .check_check {
-        transition: all .1s ease-out; width: 18px; height: 18px; border-radius: 5px;
+        transition: all .1s ease-out; width: 18px; height: 18px;
         &::after {
             transition: all .1s ease-out;
         }
@@ -230,7 +231,6 @@ global {
 // -- CONTROL -- desc --
 
 .desc_wrap {
-    border-radius: 5px;
     &.desc_border {
         border-color: var(--g-background);
     }
@@ -239,7 +239,7 @@ global {
 // -- CONTROL -- desc-cell --
 
 .desc-cell_wrap {
-    padding: 15px; border-radius: 5px;
+    padding: 15px;
     &.desc-cell_border {
         border-color: var(--g-background);
     }
@@ -248,7 +248,7 @@ global {
 // -- CONTROL -- desc-head --
 
 .desc-head_wrap {
-    background: var(--g-background); padding: 15px; border-radius: 5px;
+    background: var(--g-background); padding: 15px;
     &.desc-head_border {
         border-color: var(--g-background);
     }
@@ -257,9 +257,6 @@ global {
 // -- CONTROL -- form --
 
 .form_wrap {
-    &:not([data-cg-max]) {
-        border-radius: 5px;
-    }
     &:not(.form_border-none):not([data-cg-max]) {
         border-color: var(--g-plain-border-color);
     }
@@ -288,21 +285,10 @@ global {
                 }
             }
         }
-    }
-    &:not([data-cg-max]) {
-        .form_inner {
-            .form_header {
-                border-radius: 5px 5px 0 0; overflow: hidden;
-            }
-            .form_content {
-                border-radius: 0 0 5px 5px; overflow: hidden;
-                &.form_noheader {
-                    border-radius: 5px;
-                }
-                /* --- Loading 遮罩 --- */
-                .form_loading {
-                    background-color: rgba(255, 255, 255, .1);
-                }
+        .form_content {
+            /* --- Loading 遮罩 --- */
+            .form_loading {
+                background-color: rgba(255, 255, 255, .1);
             }
         }
     }
@@ -311,11 +297,10 @@ global {
 // -- CONTROL -- greatlist --
 
 .greatlist_wrap {
-    border-radius: 5px;
     .greatlist_t {
         .greatlist_tag-cg-vflow {
             .greatlist_item {
-                transition: all .1s ease-out; border-radius: 5px; border-width: 2px;
+                transition: all .1s ease-out; border-width: 2px;
                 &:not([data-cg-disabled]) {
                     &:hover {
                         background: var(--g-background);
@@ -333,9 +318,6 @@ global {
                         background: transparent;
                     }
                 }
-                .greatlist_itemInner {
-                    padding: 10px;
-                }
             }
             .greatlist_split {
                background: var(--g-background);
@@ -343,14 +325,11 @@ global {
         }
     }
 }
-.greatlist_pop {
-    border-radius: 5px;
-}
 
 // -- CONTROL -- greatselect --
 
 .greatselect_wrap {
-    border-radius: 5px; transition: all .1s ease-out;
+    transition: all .1s ease-out;
     &:not([data-cg-disabled]):not([data-cg-pop-open]) {
         &.greatselect_area-arrow {
             .greatselect_arrow {
@@ -363,6 +342,9 @@ global {
             }
         }
     }
+    .greatselect_arrow {
+        width: 25px;
+    }
     &.greatselect_area-arrow {
         &[data-cg-pop-open], &.greatselect_active {
             .greatselect_arrow {
@@ -372,17 +354,16 @@ global {
     }
 }
 .greatselect_pop {
-    border-radius: 5px; background: var(--pop-background); -webkit-backdrop-filter: blur(20px) brightness(1.1); backdrop-filter: blur(20px) brightness(1.1);
+    background: var(--pop-background); -webkit-backdrop-filter: blur(20px) brightness(1.1); backdrop-filter: blur(20px) brightness(1.1);
 }
 
 // -- CONTROL -- iconview --
 
 .iconview_wrap {
-    border-radius: 5px;
     .iconview_tag-cg-vflow {
         .iconview_row {
             .iconview_item {
-                transition: all .1s ease-out; border-radius: 5px; 
+                transition: all .1s ease-out;
                 &:hover {
                     background: var(--g-background);
                 }
@@ -399,9 +380,6 @@ global {
         }
     }
 }
-.iconview_pop {
-    border-radius: 5px;
-}
 
 // -- CONTROL -- menu --
 
@@ -412,7 +390,7 @@ global {
 // -- CONTROL -- menu-item --
 
 .menu-item_wrap {
-    transition: all .1s ease-out; border-radius: 5px; border: none; padding: 10px;
+    transition: all .1s ease-out; border: none;
     &:not([data-cg-disabled]) {
         &:hover {
             background: var(--g-background);
@@ -428,20 +406,16 @@ global {
         }
     }
 }
-.menu-item_pop {
-    border-radius: 5px;
-}
 
 // -- CONTROL -- menulist --
 
 .menulist_wrap {
-    border-radius: 5px; background: var(--pop-background); -webkit-backdrop-filter: blur(20px) brightness(1.1); backdrop-filter: blur(20px) brightness(1.1);
+    background: var(--pop-background); -webkit-backdrop-filter: blur(20px) brightness(1.1); backdrop-filter: blur(20px) brightness(1.1);
 }
 
 // -- CONTROL -- menulist-item --
 
 .menulist-item_wrap {
-    padding: 10px 35px 10px 10px; border-radius: 3px;
     &:not([data-cg-disabled]) {
         &:hover {
             background: var(--g-background);
@@ -466,9 +440,6 @@ global {
         background-color: var(--g-background-hover); width: 32px; height: 32px; border-radius: 3px;
     }
 }
-.menulist-item_pop {
-    border-radius: 5px;
-}
 
 // -- CONTROL -- menulist-split --
 
@@ -479,18 +450,6 @@ global {
     .menulist-split_line {
         background: var(--g-background);
     }  
-}
-
-// -- CONTROL -- monaco --
-
-.monaco_wrap {
-    border-radius: 5px;
-    .monaco_iframe {
-        border-radius: 5px;
-    }
-}
-.monaco_pop {
-    border-radius: 5px;
 }
 
 // -- CONTROL -- nav --
@@ -518,7 +477,7 @@ global {
         .nav_header {
             height: 44px; border-bottom: solid .5px var(--g-background); padding: 2px;
             .nav_mbutton {
-                width: 40px; transition: all .1s ease-out; border-radius: 5px;
+                width: 40px; transition: all .1s ease-out;
                 &:hover {
                     background: var(--g-border-color-hover);
                 }
@@ -538,13 +497,13 @@ global {
 
 .nav-item_wrap {
     > .nav-item_text {
-        padding: 15px; border-radius: 5px; transition: all .1s ease-out;
+        padding: 15px; transition: all .1s ease-out;
     }
 
     &:not(.nav-item_child) {
         &.nav-item_show {
             > .nav-item_text {
-                background: var(--g-background); border-radius: 5px 5px 0 0;
+                background: var(--g-background);
             }
         }
     }
@@ -560,9 +519,6 @@ global {
         }
     }
 
-    > .nav-item_menu {
-        border-radius: 0 0 5px 5px;
-    }
     &:not(.nav-item_child) {
         > .nav-item_menu {
             background: var(--g-background);
@@ -573,7 +529,7 @@ global {
 // -- CONTROL -- nav-title --
 
 .nav-title_wrap {
-    padding: 10px;
+    padding-left: 15px;
 }
 
 // -- CONTROL -- page --
@@ -581,7 +537,7 @@ global {
 .page_wrap {
     .page_list {
         > .page_tag-div {
-            border-radius: 5px; transition: all .1s ease-out; border: none; background: transparent; width: 32px; height: 32px;
+            transition: all .1s ease-out; border: none; background: transparent; width: 32px; height: 32px;
             &::after {
                 border-radius: 3px;
             }
@@ -611,14 +567,10 @@ global {
         }
     }
     .property_content {
-        margin-top: 5px;
         .property_bigTitle {
             background: var(--g-background);
             .property_control {
                 width: 34px;
-            }
-            .property_title {
-                padding: 10px;
             }
         }
         .property_line {
@@ -626,15 +578,12 @@ global {
             .property_control {
                 background: var(--g-background); width: 34px;
             }
-            .property_title {
-                padding: 10px;
-            }
             &.property_selected .property_title {
                 background: var(--g-background-hover);
             }
             .property_value {
                 .property_text {
-                    padding: 10px; height: 32px;
+                    height: 32px;
                 }
                 .property_tag-cg-check {
                     margin-left: 10px;
@@ -645,9 +594,12 @@ global {
             }
         }
     }
-}
-.property_pop {
-    border-radius: 5px;
+    .property_description {
+        height: 73px;
+        .property_desc {
+            line-height: 1.5;
+        }
+    }
 }
 
 // -- CONTROL -- radio --
@@ -712,7 +664,7 @@ global {
     }
     .scroll_bar {
         .scroll_block {
-            border-radius: 5px; transition: all .1s ease-out; transition-property: background;
+            transition: all .1s ease-out; transition-property: background;
         }
     }
 }
@@ -731,9 +683,6 @@ global {
         &.tab_selected {
             background: var(--g-background); font-weight: bold; color: #FFF; fill: #FFF;
         }
-        .tab_content {
-            padding: 10px;
-        }
         .tab_close {
             transition: all .1s ease-out;
             &:hover {
@@ -747,47 +696,19 @@ global {
     &.tab_top {
         .tab_tabs {
             .tab_tab {
-                border-radius: 5px 5px 0 0;
                 &.tab_selected {
                     padding-bottom: 0;
                 }
             }
         }
-        .tab_panel {
-            border-radius: 0 0 5px 5px;
-        }
     }
     &.tab_bottom {
         .tab_tabs {
             .tab_tab {
-                border-radius: 0 0 5px 5px;
                 &.tab_selected {
                     padding-top: 0;
                 }
             }
-        }
-        .tab_panel {
-            border-radius: 5px 5px 0 0;
-        }
-    }
-    &.tab_left {
-        .tab_tabs {
-            .tab_tab {
-                border-radius: 5px 0 0 5px;
-            }
-        }
-        .tab_panel {
-            border-radius: 5px 0 0 5px;
-        }
-    }
-    &.tab_right {
-        .tab_tabs {
-            .tab_tab {
-                border-radius: 0 5px 5px 0;
-            }
-        }
-        .tab_panel {
-            border-radius: 0 5px 5px 0;
         }
     }
 
@@ -796,35 +717,10 @@ global {
     }
 }
 
-// -- CONTROL -- table --
-
-.table_wrap {
-    border-radius: 5px;
-    .table_header {
-        .table_item {
-            padding: 10px;
-        }
-    }
-    .table_tag-cg-greatlist {
-        .table_item {
-            margin: -10px;
-        }
-    }
-}
-
-// -- CONTROL -- table-item --
-
-.table-item_wrap {
-    padding: 10px;
-}
-
 // -- CONTROL -- task --
 
 .task_wrap {
     background: var(--pop-background); -webkit-backdrop-filter: blur(20px) brightness(1.1); backdrop-filter: blur(20px) brightness(1.1);
-}
-.task_pop {
-    border-radius: 5px;
 }
 
 // -- CONTROL -- task-item --
@@ -836,16 +732,9 @@ global {
         }
     }
 }
-.task-item_pop {
-    border-radius: 5px;
-}
 
 // -- CONTROL -- text --
 
 .text_wrap {
-    padding: 10px; transition: all .1s ease-out; transition-property: color, background, border; border-radius: 5px;
+    transition: all .1s ease-out; transition-property: color, background, border;
 }
-.text_pop {
-    border-radius: 5px;
-}
-

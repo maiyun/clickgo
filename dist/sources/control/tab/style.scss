@@ -106,7 +106,7 @@
             cursor: move; padding-left: 8px; font-family: 'ifont'; opacity: .5;
         }
         .content {
-            padding: 8px;
+            padding: var(--g-padding);
         }
         .close {
             margin-right: 8px; font-family: 'ifont'; opacity: 0; font-weight: bold; padding: 2px; border-radius: 3px;
@@ -139,60 +139,80 @@
         }
     }
     &.top {
-        .tab {
-            border-width: .5px 0 0 .5px;
-            &.selected {
-                padding-bottom: 3px;
-                &::after {
-                    display: block; left: 0; top: calc(100% - 2px); width: 100%; height: 4px;
+        .tabs {
+            .tab {
+                border-width: .5px 0 0 .5px; border-radius: var(--g-radius) var(--g-radius) 0 0;
+                &.selected {
+                    padding-bottom: 3px;
+                    &::after {
+                        display: block; left: 0; top: calc(100% - 2px); width: 100%; height: 4px;
+                    }
                 }
             }
         }
+        .panel {
+            border-radius: 0 0 var(--g-radius) var(--g-radius);
+        }
     }
     &.bottom {
-        .tab {
-            border-width: 0 0 1px 1px;
-            &.selected {
-                padding-top: 3px;
-                &::after {
-                    display: block; left: 0; top: -2px; width: 100%; height: 4px;
+        .tabs {
+            .tab {
+                border-width: 0 0 .5px .5px; border-radius: 0 0 var(--g-radius) var(--g-radius);
+                &.selected {
+                    padding-top: 3px;
+                    &::after {
+                        display: block; left: 0; top: -2px; width: 100%; height: 4px;
+                    }
                 }
             }
+        }
+        .panel {
+            border-radius: var(--g-radius) var(--g-radius) 0 0;
         }
     }
     &.left, &.right {
         .tabs {
             .tab {
                 &.selected {
-                    border-bottom-width: 1px;
+                    border-bottom-width: .5px;
                     + * {
                         border-top-width: 0;
                     }
                 }
             }
             > .tab:last-child {
-                border-bottom-width: 1px;
+                border-bottom-width: .5px;
             }
         }
     }
     &.left {
-        .tab {
-            border-width: 1px 0 0 1px;
-            &.selected {
-                &::after {
-                    display: block; left: calc(100% - 2px); top: 0; width: 4px; height: 100%;
+        .tabs {
+            .tab {
+                border-width: .5px 0 0 .5px; border-radius: var(--g-radius) 0 0 var(--g-radius);
+                &.selected {
+                    &::after {
+                        display: block; left: calc(100% - 2px); top: 0; width: 4px; height: 100%;
+                    }
                 }
             }
         }
+        .panel {
+            border-radius: 0 var(--g-radius) var(--g-radius) 0;
+        }
     }
     &.right {
-        .tab {
-            border-width: 1px 1px 0 0;
-            &.selected {
-                &::after {
-                    display: block; left: -2px; top: 0; width: 4px; height: 100%;
+        .tabs {
+            .tab {
+                border-width: .5px .5px 0 0; border-radius: 0 var(--g-radius) var(--g-radius) 0;
+                &.selected {
+                    &::after {
+                        display: block; left: -2px; top: 0; width: 4px; height: 100%;
+                    }
                 }
             }
+        }
+        .panel {
+            border-radius: var(--g-radius) 0 0 var(--g-radius);
         }
     }
 

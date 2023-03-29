@@ -1,8 +1,8 @@
 .wrap {
-    display: flex; outline: none; position: relative;
+    display: flex; outline: none; position: relative; border-radius: var(--g-radius); padding: var(--g-padding); overflow: hidden;
     // --- 外边框 ---
     &::before {
-        content: ''; pointer-events: none; position: absolute; left: 0; top: 0; width: 100%; height: 100%; z-index: 1;
+        content: ''; pointer-events: none; position: absolute; left: 0; top: 0; width: 100%; height: 100%; z-index: 1; border-radius: var(--g-radius);
     }
     // --- 焦点框 ---
     &::after, .inner::after, .arrow::after {
@@ -361,6 +361,5 @@
 }
 
 .pop {
-    color: var(--g-color);
-    fill: var(--g-color);
+    color: var(--g-color); fill: var(--g-color); border-radius: var(--g-radius);
 }

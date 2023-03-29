@@ -18,6 +18,9 @@
         "/clickgo/control/iconview"
     ],
     "style": "/package/global",
+    "themes": [
+        "/clickgo/theme/byterun"
+    ],
 
     "files": [
         "/form/control/block/block.css",
