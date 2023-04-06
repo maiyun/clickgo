@@ -1,5 +1,9 @@
 # Changelog
 
+# 3.2.14
+
+[\*] Optimize style hierarchy relationships.
+
 # 3.2.13
 
 [\*] Optimize byterun theme.  

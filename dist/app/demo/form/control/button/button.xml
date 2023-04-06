@@ -100,7 +100,7 @@
                     </template>
                 </button>
                 <button type="tool" area="split" style="width: initial;">
-                    <img src="../../../res/icon.svg" style="margin: 0 5px;" />
+                    <img src="../../../res/icon.svg" />
                     <template v-slot:pop>
                         <menulist>
                             <menulist-item alt="T">Test 1</menulist-item>

@@ -99,7 +99,7 @@ function hasTouchButMouse(e) {
 }
 exports.hasTouchButMouse = hasTouchButMouse;
 function createToStyleList(taskId) {
-    styleList.insertAdjacentHTML('beforeend', `<div id="cg-style-task${taskId}"><style class="cg-style-global"></style><div class="cg-style-control"></div><div class="cg-style-theme"></div><div class="cg-style-form"></div></div>`);
+    styleList.insertAdjacentHTML('beforeend', `<div id="cg-style-task${taskId}"><div class="cg-style-control"></div><div class="cg-style-theme"></div><style class="cg-style-global"></style><div class="cg-style-form"></div></div>`);
 }
 exports.createToStyleList = createToStyleList;
 function removeFromStyleList(taskId) {
