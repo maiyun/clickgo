@@ -1,0 +1,7 @@
+<div class="wrap" :class="[notInit && 'notInit']" :data-cg-disabled="propBoolean('disabled') ? '' : undefined">
+    <div v-if="notInit" class="notInit">Xterm module not found.</div>
+    <div v-else class="content" ref="content" @mousedown="down"></div>
+    <div v-if="isLoading" class="mask" :class="[isLoading && 'loading']">
+        <cg-loading></cg-loading>
+    </div>
+</div>

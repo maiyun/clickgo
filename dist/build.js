@@ -61,6 +61,9 @@ function readDir(path) {
                 if ((path + item.name).startsWith('dist/compiler.')) {
                     continue;
                 }
+                if ((path + item.name).startsWith('dist/compcga.')) {
+                    continue;
+                }
                 files.push(path.slice(4) + item.name);
             }
             else {

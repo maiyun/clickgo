@@ -1,0 +1,10 @@
+{
+    "name": "xterm",
+    "ver": 1,
+    "version": "0.1",
+    "author": "clickgo",
+
+    "code": "/code",
+    "layout": "/layout",
+    "style": "/style"
+}

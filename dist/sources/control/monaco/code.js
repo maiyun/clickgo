@@ -306,127 +306,126 @@ class default_1 extends clickgo.control.AbstractControl {
             monacoEl.style.height = '100%';
             idoc.body.append(monacoEl);
             const monaco = yield clickgo.core.getModule('monaco');
-            if (monaco) {
-                const loaderEl = idoc.createElement('script');
-                loaderEl.addEventListener('load', () => {
-                    iwindow.require.config({
-                        paths: {
-                            'vs': clickgo.core.getCdn() + '/npm/monaco-editor@0.34.1/min/vs'
-                        }
+            if (!monaco) {
+                this.isLoading = false;
+                this.notInit = true;
+                return;
+            }
+            const loaderEl = idoc.createElement('script');
+            loaderEl.addEventListener('load', () => {
+                iwindow.require.config({
+                    paths: {
+                        'vs': clickgo.core.getCdn() + '/npm/monaco-editor@0.34.1/min/vs'
+                    }
+                });
+                const proxy = iwindow.URL.createObjectURL(new Blob([`
+                self.MonacoEnvironment = {
+                    baseUrl: '${clickgo.core.getCdn()}/npm/monaco-editor@0.34.1/min/'
+                };
+                importScripts('${clickgo.core.getCdn()}/npm/monaco-editor@0.34.1/min/vs/base/worker/workerMain.js');
+            `], { type: 'text/javascript' }));
+                iwindow.MonacoEnvironment = {
+                    getWorkerUrl: () => proxy
+                };
+                iwindow.require(['vs/editor/editor.main'], (monaco) => {
+                    this.access.monaco = monaco;
+                    this.access.instance = this.access.monaco.editor.create(monacoEl, {
+                        'model': null,
+                        'contextmenu': false,
+                        'minimap': {
+                            'enabled': false
+                        },
+                        'readOnly': this.props.readonly
                     });
-                    const proxy = iwindow.URL.createObjectURL(new Blob([`
-                    self.MonacoEnvironment = {
-                        baseUrl: '${clickgo.core.getCdn()}/npm/monaco-editor@0.34.1/min/'
-                    };
-                    importScripts('${clickgo.core.getCdn()}/npm/monaco-editor@0.34.1/min/vs/base/worker/workerMain.js');
-                `], { type: 'text/javascript' }));
-                    iwindow.MonacoEnvironment = {
-                        getWorkerUrl: () => proxy
-                    };
-                    iwindow.require(['vs/editor/editor.main'], (monaco) => {
-                        this.access.monaco = monaco;
-                        this.access.instance = this.access.monaco.editor.create(monacoEl, {
-                            'model': null,
-                            'contextmenu': false,
-                            'minimap': {
-                                'enabled': false
-                            },
-                            'readOnly': this.props.readonly
-                        });
-                        clickgo.dom.watchSize(this.refs.iframe, () => {
-                            this.access.instance.layout();
-                        });
-                        if (this.props.theme) {
-                            this.access.monaco.editor.setTheme(this.props.theme);
+                    clickgo.dom.watchSize(this.refs.iframe, () => {
+                        this.access.instance.layout();
+                    });
+                    if (this.props.theme) {
+                        this.access.monaco.editor.setTheme(this.props.theme);
+                    }
+                    const editorService = this.access.instance._codeEditorService;
+                    const openEditorBase = editorService.openCodeEditor.bind(editorService);
+                    editorService.openCodeEditor = (input, source) => __awaiter(this, void 0, void 0, function* () {
+                        const result = yield openEditorBase(input, source);
+                        if (result === null) {
+                            this.emit('jump', input);
                         }
-                        const editorService = this.access.instance._codeEditorService;
-                        const openEditorBase = editorService.openCodeEditor.bind(editorService);
-                        editorService.openCodeEditor = (input, source) => __awaiter(this, void 0, void 0, function* () {
-                            const result = yield openEditorBase(input, source);
-                            if (result === null) {
-                                this.emit('jump', input);
-                            }
-                            return result;
-                        });
-                        if (navigator.clipboard) {
-                            monacoEl.addEventListener('contextmenu', (e) => {
-                                e.preventDefault();
-                                if (clickgo.dom.hasTouchButMouse(e)) {
-                                    return;
-                                }
-                                const rect = this.element.getBoundingClientRect();
-                                clickgo.form.showPop(this.element, this.refs.pop, {
-                                    'x': rect.left + e.clientX,
-                                    'y': rect.top + e.clientY
-                                });
-                            });
-                        }
-                        const down = (e) => {
+                        return result;
+                    });
+                    if (navigator.clipboard) {
+                        monacoEl.addEventListener('contextmenu', (e) => {
+                            e.preventDefault();
                             if (clickgo.dom.hasTouchButMouse(e)) {
                                 return;
                             }
-                            if (e instanceof TouchEvent) {
-                                clickgo.dom.bindLong(e, () => {
-                                    clickgo.form.showPop(this.element, this.refs.pop, e);
-                                });
-                            }
-                            clickgo.form.changeFocus(this.formId);
-                            clickgo.form.hidePop();
-                        };
-                        monacoEl.addEventListener('mousedown', down);
-                        monacoEl.addEventListener('touchstart', down, {
-                            'passive': true
-                        });
-                        if (Object.keys(this.props.files).length) {
-                            this.refreshModels();
-                            const model = this.access.monaco.editor.getModel(this.access.monaco.Uri.parse(this.props.modelValue));
-                            if (model) {
-                                this.access.instance.setModel(model);
-                                if (this.props.language) {
-                                    this.access.monaco.editor.setModelLanguage(model, this.props.language.toLowerCase());
-                                }
-                            }
-                        }
-                        else {
-                            const model = this.access.monaco.editor.createModel(this.props.modelValue, this.props.language);
-                            model.pushEOL(0);
-                            model.onDidChangeContent(() => {
-                                this.emit('update:modelValue', model.getValue());
+                            const rect = this.element.getBoundingClientRect();
+                            clickgo.form.showPop(this.element, this.refs.pop, {
+                                'x': rect.left + e.clientX,
+                                'y': rect.top + e.clientY
                             });
-                            this.access.instance.setModel(model);
-                        }
-                        clickgo.dom.watchStyle(this.element, ['font-size', 'font-family'], (n, v) => {
-                            switch (n) {
-                                case 'font-size': {
-                                    idoc.body.style.fontSize = v;
-                                    this.access.instance.updateOptions({
-                                        'fontSize': v
-                                    });
-                                    break;
-                                }
-                                case 'font-family': {
-                                    idoc.body.style.fontFamily = v;
-                                    this.access.instance.updateOptions({
-                                        'fontFamily': v
-                                    });
-                                    break;
-                                }
-                            }
-                        }, true);
-                        this.isLoading = false;
-                        this.emit('init', {
-                            'monaco': this.access.monaco,
-                            'instance': this.access.instance
                         });
+                    }
+                    const down = (e) => {
+                        if (clickgo.dom.hasTouchButMouse(e)) {
+                            return;
+                        }
+                        if (e instanceof TouchEvent) {
+                            clickgo.dom.bindLong(e, () => {
+                                clickgo.form.showPop(this.element, this.refs.pop, e);
+                            });
+                        }
+                        clickgo.form.changeFocus(this.formId);
+                        clickgo.form.hidePop();
+                    };
+                    monacoEl.addEventListener('mousedown', down);
+                    monacoEl.addEventListener('touchstart', down, {
+                        'passive': true
+                    });
+                    if (Object.keys(this.props.files).length) {
+                        this.refreshModels();
+                        const model = this.access.monaco.editor.getModel(this.access.monaco.Uri.parse(this.props.modelValue));
+                        if (model) {
+                            this.access.instance.setModel(model);
+                            if (this.props.language) {
+                                this.access.monaco.editor.setModelLanguage(model, this.props.language.toLowerCase());
+                            }
+                        }
+                    }
+                    else {
+                        const model = this.access.monaco.editor.createModel(this.props.modelValue, this.props.language);
+                        model.pushEOL(0);
+                        model.onDidChangeContent(() => {
+                            this.emit('update:modelValue', model.getValue());
+                        });
+                        this.access.instance.setModel(model);
+                    }
+                    clickgo.dom.watchStyle(this.element, ['font-size', 'font-family'], (n, v) => {
+                        switch (n) {
+                            case 'font-size': {
+                                idoc.body.style.fontSize = v;
+                                this.access.instance.updateOptions({
+                                    'fontSize': v
+                                });
+                                break;
+                            }
+                            case 'font-family': {
+                                idoc.body.style.fontFamily = v;
+                                this.access.instance.updateOptions({
+                                    'fontFamily': v
+                                });
+                                break;
+                            }
+                        }
+                    }, true);
+                    this.isLoading = false;
+                    this.emit('init', {
+                        'monaco': this.access.monaco,
+                        'instance': this.access.instance
                     });
                 });
-                loaderEl.src = monaco;
-                idoc.head.append(loaderEl);
-            }
-            else {
-                this.isLoading = false;
-                this.notInit = true;
-            }
+            });
+            loaderEl.src = monaco;
+            idoc.head.append(loaderEl);
         });
     }
 }

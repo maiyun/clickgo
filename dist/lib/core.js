@@ -201,6 +201,28 @@ const modules = {
         'obj': null,
         'loading': false,
         'resolve': []
+    },
+    'xterm': {
+        func: function () {
+            return __awaiter(this, void 0, void 0, function* () {
+                yield loader.loadScripts([
+                    'https://cdn.jsdelivr.net/npm/xterm@5.1.0/lib/xterm.js',
+                    'https://cdn.jsdelivr.net/npm/xterm-addon-fit@0.7.0/lib/xterm-addon-fit.js',
+                    'https://cdn.jsdelivr.net/npm/xterm-addon-webgl@0.14.0/lib/xterm-addon-webgl.js'
+                ]);
+                yield loader.loadLinks([
+                    'https://cdn.jsdelivr.net/npm/xterm@5.1.0/css/xterm.min.css'
+                ]);
+                loader.loadStyle('.xterm-viewport::-webkit-scrollbar{display:none;}');
+                if (!window.Terminal) {
+                    throw Error('Xterm load failed.');
+                }
+                return [window.Terminal, window.FitAddon.FitAddon, window.WebglAddon.WebglAddon];
+            });
+        },
+        'obj': null,
+        'loading': false,
+        'resolve': []
     }
 };
 function regModule(name, func) {

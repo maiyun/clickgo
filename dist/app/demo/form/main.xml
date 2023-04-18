@@ -34,6 +34,7 @@
                 <button @click="openForm('cdesc')">Desc</button>
                 <button @click="openForm('chtml')">Html</button>
                 <button @click="openForm('ciconview')">Iconview</button>
+                <button @click="openForm('cxterm')">Xterm</button>
             </layout>
         </flow>
         <flow v-else-if="ntab === 'method'" class="inner" direction="v">

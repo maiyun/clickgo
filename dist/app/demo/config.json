@@ -15,7 +15,8 @@
         "/clickgo/control/page",
         "/clickgo/control/desc",
         "/clickgo/control/html",
-        "/clickgo/control/iconview"
+        "/clickgo/control/iconview",
+        "/clickgo/control/xterm"
     ],
     "style": "/package/global",
 
@@ -87,6 +88,8 @@
         "/form/control/vflow/vflow.css",
         "/form/control/vflow/vflow.js",
         "/form/control/vflow/vflow.xml",
+        "/form/control/xterm/xterm.js",
+        "/form/control/xterm/xterm.xml",
         "/form/event/form/form.css",
         "/form/event/form/form.js",
         "/form/event/form/form.xml",

@@ -735,6 +735,10 @@ export function request(url: string, opt: types.IRequestOptions): Promise<null |
     });
 }
 
+export function fetch(url: string, init?: RequestInit): Promise<string | Blob | null> {
+    return loader.fetch(url, init);
+}
+
 export function post(url: string, data: Record<string, any> | FormData, opt?: {
     'credentials'?: 'include' | 'same-origin' | 'omit';
     'headers'?: HeadersInit;

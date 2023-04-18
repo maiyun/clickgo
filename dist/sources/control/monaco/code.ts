@@ -335,149 +335,149 @@ export default class extends clickgo.control.AbstractControl {
         idoc.body.append(monacoEl);
         /** --- monaco 的 loader 文件全量 data url --- */
         const monaco = await clickgo.core.getModule('monaco');
-        if (monaco) {
-            const loaderEl = idoc.createElement('script');
-            loaderEl.addEventListener('load', () => {
-                (iwindow as any).require.config({
-                    paths: {
-                        'vs': clickgo.core.getCdn() + '/npm/monaco-editor@0.34.1/min/vs'
-                    }
-                });
-                // --- 初始化 Monaco ---
-                const proxy = (iwindow as any).URL.createObjectURL(new Blob([`
-                    self.MonacoEnvironment = {
-                        baseUrl: '${clickgo.core.getCdn()}/npm/monaco-editor@0.34.1/min/'
-                    };
-                    importScripts('${clickgo.core.getCdn()}/npm/monaco-editor@0.34.1/min/vs/base/worker/workerMain.js');
-                `], { type: 'text/javascript' }));
-                (iwindow as any).MonacoEnvironment = {
-                    getWorkerUrl: () => proxy
-                };
-                // --- 加载 ---
-                (iwindow as any).require(['vs/editor/editor.main'], (monaco: any) => {
-                    this.access.monaco = monaco;
-                    this.access.instance = this.access.monaco.editor.create(monacoEl, {
-                        'model': null,
-                        'contextmenu': false,
-                        'minimap': {
-                            'enabled': false
-                        },
-                        'readOnly': this.props.readonly
-                    });
-                    // --- 自动设置大小 ---
-                    clickgo.dom.watchSize(this.refs.iframe, () => {
-                        this.access.instance.layout();
-                    });
-                    // --- 设置主题 ---
-                    if (this.props.theme) {
-                        this.access.monaco.editor.setTheme(this.props.theme);
-                    }
-                    // --- 绑定点击引用事件 ---
-                    const editorService = this.access.instance._codeEditorService;
-                    const openEditorBase = editorService.openCodeEditor.bind(editorService);
-                    editorService.openCodeEditor = async (input: any, source: any) => {
-                        const result = await openEditorBase(input, source);
-                        if (result === null) {
-                            this.emit('jump', input);
-                            /*
-                            source.setSelection(input.options.selection);
-                            source.revealLine(input.options.selection.startLineNumber);
-                            */
-                        }
-                        return result;  // 必须 return result
-                    };
-                    // --- 绑定 contextmenu ---
-                    if (navigator.clipboard) {
-                        monacoEl.addEventListener('contextmenu', (e: MouseEvent) => {
-                            e.preventDefault();
-                            if (clickgo.dom.hasTouchButMouse(e)) {
-                                return;
-                            }
-                            const rect = this.element.getBoundingClientRect();
-                            clickgo.form.showPop(this.element, this.refs.pop, {
-                                'x': rect.left + e.clientX,
-                                'y': rect.top + e.clientY
-                            });
-                        });
-                    }
-                    // --- 绑定 down 事件 ---
-                    const down = (e: MouseEvent | TouchEvent): void => {
-                        if (clickgo.dom.hasTouchButMouse(e)) {
-                            return;
-                        }
-                        if (e instanceof TouchEvent) {
-                            // --- touch 长按弹出 ---
-                            clickgo.dom.bindLong(e, () => {
-                                clickgo.form.showPop(this.element, this.refs.pop, e);
-                            });
-                        }
-                        // --- 让本窗体获取焦点 ---
-                        clickgo.form.changeFocus(this.formId);
-                        // --- 无论是否 menu 是否被展开，都要隐藏，因为 iframe 外的 doFocusAndPopEvent 并不会执行 ---
-                        clickgo.form.hidePop();
-                    };
-                    monacoEl.addEventListener('mousedown', down);
-                    monacoEl.addEventListener('touchstart', down, {
-                        'passive': true
-                    });
-                    // -- 设置文件列表 ---
-                    if (Object.keys(this.props.files).length) {
-                        // --- 读取 files 中的文件内容 ---
-                        this.refreshModels();
-                        const model =
-                            this.access.monaco.editor.getModel(this.access.monaco.Uri.parse(this.props.modelValue));
-                        if (model) {
-                            this.access.instance.setModel(model);
-                            if (this.props.language) {
-                                this.access.monaco.editor.setModelLanguage(model, this.props.language.toLowerCase());
-                            }
-                        }
-                    }
-                    else {
-                        // --- modelValue 即是代码，无 files ---
-                        const model = this.access.monaco.editor.createModel(this.props.modelValue, this.props.language);
-                        model.pushEOL(0);
-                        // --- 内容改变 ---
-                        model.onDidChangeContent(() => {
-                            this.emit('update:modelValue', model.getValue());
-                        });
-                        this.access.instance.setModel(model);
-                    }
-                    // --- 监听 font 相关信息 ---
-                    clickgo.dom.watchStyle(this.element, ['font-size', 'font-family'], (n, v) => {
-                        switch (n) {
-                            case 'font-size': {
-                                idoc.body.style.fontSize = v;
-                                this.access.instance.updateOptions({
-                                    'fontSize': v
-                                });
-                                break;
-                            }
-                            case 'font-family': {
-                                idoc.body.style.fontFamily = v;
-                                this.access.instance.updateOptions({
-                                    'fontFamily': v
-                                });
-                                break;
-                            }
-                        }
-                    }, true);
-                    // --- 初始化成功 ---
-                    this.isLoading = false;
-                    this.emit('init', {
-                        'monaco': this.access.monaco,
-                        'instance': this.access.instance
-                    });
-                });
-            });
-            loaderEl.src = monaco;
-            idoc.head.append(loaderEl);
-        }
-        else {
+        if (!monaco) {
             // --- 没有成功 ---
             this.isLoading = false;
             this.notInit = true;
+            return;
         }
+        // --- 加载成功 ---
+        const loaderEl = idoc.createElement('script');
+        loaderEl.addEventListener('load', () => {
+            (iwindow as any).require.config({
+                paths: {
+                    'vs': clickgo.core.getCdn() + '/npm/monaco-editor@0.34.1/min/vs'
+                }
+            });
+            // --- 初始化 Monaco ---
+            const proxy = (iwindow as any).URL.createObjectURL(new Blob([`
+                self.MonacoEnvironment = {
+                    baseUrl: '${clickgo.core.getCdn()}/npm/monaco-editor@0.34.1/min/'
+                };
+                importScripts('${clickgo.core.getCdn()}/npm/monaco-editor@0.34.1/min/vs/base/worker/workerMain.js');
+            `], { type: 'text/javascript' }));
+            (iwindow as any).MonacoEnvironment = {
+                getWorkerUrl: () => proxy
+            };
+            // --- 加载 ---
+            (iwindow as any).require(['vs/editor/editor.main'], (monaco: any) => {
+                this.access.monaco = monaco;
+                this.access.instance = this.access.monaco.editor.create(monacoEl, {
+                    'model': null,
+                    'contextmenu': false,
+                    'minimap': {
+                        'enabled': false
+                    },
+                    'readOnly': this.props.readonly
+                });
+                // --- 自动设置大小 ---
+                clickgo.dom.watchSize(this.refs.iframe, () => {
+                    this.access.instance.layout();
+                });
+                // --- 设置主题 ---
+                if (this.props.theme) {
+                    this.access.monaco.editor.setTheme(this.props.theme);
+                }
+                // --- 绑定点击引用事件 ---
+                const editorService = this.access.instance._codeEditorService;
+                const openEditorBase = editorService.openCodeEditor.bind(editorService);
+                editorService.openCodeEditor = async (input: any, source: any) => {
+                    const result = await openEditorBase(input, source);
+                    if (result === null) {
+                        this.emit('jump', input);
+                        /*
+                        source.setSelection(input.options.selection);
+                        source.revealLine(input.options.selection.startLineNumber);
+                        */
+                    }
+                    return result;  // 必须 return result
+                };
+                // --- 绑定 contextmenu ---
+                if (navigator.clipboard) {
+                    monacoEl.addEventListener('contextmenu', (e: MouseEvent) => {
+                        e.preventDefault();
+                        if (clickgo.dom.hasTouchButMouse(e)) {
+                            return;
+                        }
+                        const rect = this.element.getBoundingClientRect();
+                        clickgo.form.showPop(this.element, this.refs.pop, {
+                            'x': rect.left + e.clientX,
+                            'y': rect.top + e.clientY
+                        });
+                    });
+                }
+                // --- 绑定 down 事件 ---
+                const down = (e: MouseEvent | TouchEvent): void => {
+                    if (clickgo.dom.hasTouchButMouse(e)) {
+                        return;
+                    }
+                    if (e instanceof TouchEvent) {
+                        // --- touch 长按弹出 ---
+                        clickgo.dom.bindLong(e, () => {
+                            clickgo.form.showPop(this.element, this.refs.pop, e);
+                        });
+                    }
+                    // --- 让本窗体获取焦点 ---
+                    clickgo.form.changeFocus(this.formId);
+                    // --- 无论是否 menu 是否被展开，都要隐藏，因为 iframe 外的 doFocusAndPopEvent 并不会执行 ---
+                    clickgo.form.hidePop();
+                };
+                monacoEl.addEventListener('mousedown', down);
+                monacoEl.addEventListener('touchstart', down, {
+                    'passive': true
+                });
+                // -- 设置文件列表 ---
+                if (Object.keys(this.props.files).length) {
+                    // --- 读取 files 中的文件内容 ---
+                    this.refreshModels();
+                    const model =
+                        this.access.monaco.editor.getModel(this.access.monaco.Uri.parse(this.props.modelValue));
+                    if (model) {
+                        this.access.instance.setModel(model);
+                        if (this.props.language) {
+                            this.access.monaco.editor.setModelLanguage(model, this.props.language.toLowerCase());
+                        }
+                    }
+                }
+                else {
+                    // --- modelValue 即是代码，无 files ---
+                    const model = this.access.monaco.editor.createModel(this.props.modelValue, this.props.language);
+                    model.pushEOL(0);
+                    // --- 内容改变 ---
+                    model.onDidChangeContent(() => {
+                        this.emit('update:modelValue', model.getValue());
+                    });
+                    this.access.instance.setModel(model);
+                }
+                // --- 监听 font 相关信息 ---
+                clickgo.dom.watchStyle(this.element, ['font-size', 'font-family'], (n, v) => {
+                    switch (n) {
+                        case 'font-size': {
+                            idoc.body.style.fontSize = v;
+                            this.access.instance.updateOptions({
+                                'fontSize': v
+                            });
+                            break;
+                        }
+                        case 'font-family': {
+                            idoc.body.style.fontFamily = v;
+                            this.access.instance.updateOptions({
+                                'fontFamily': v
+                            });
+                            break;
+                        }
+                    }
+                }, true);
+                // --- 初始化成功 ---
+                this.isLoading = false;
+                this.emit('init', {
+                    'monaco': this.access.monaco,
+                    'instance': this.access.instance
+                });
+            });
+        });
+        loaderEl.src = monaco;
+        idoc.head.append(loaderEl);
     }
 
 }

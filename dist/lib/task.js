@@ -269,7 +269,7 @@ function run(url, opt = {}, ntid) {
         const unblock = opt.unblock ? tool.clone(opt.unblock) : [];
         const unblockSys = [
             'require',
-            '__awaiter', 'eval', 'Math', 'Array', 'Blob', 'Error', 'Infinity', 'parseInt', 'parseFloat', 'Promise', 'Date', 'JSON', 'fetch', 'Number', 'Object', 'encodeURIComponent', 'decodeURIComponent', 'FormData'
+            '__awaiter', 'eval', 'Math', 'Array', 'Blob', 'Error', 'Infinity', 'parseInt', 'parseFloat', 'Promise', 'Date', 'JSON', 'fetch', 'Number', 'String', 'Object', 'encodeURIComponent', 'decodeURIComponent', 'FormData', 'WebSocket'
         ];
         for (const name of unblockSys) {
             if (unblock.includes(name)) {
@@ -978,6 +978,9 @@ function run(url, opt = {}, ntid) {
                 },
                 request: function (url, opt) {
                     return tool.request(url, opt);
+                },
+                fetch: function (url, init) {
+                    return tool.fetch(url, init);
                 },
                 post: function (url, data, opt) {
                     return tool.post(url, data, opt);

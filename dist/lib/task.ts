@@ -315,7 +315,7 @@ export async function run(url: string | types.IApp, opt: types.ITaskRunOptions =
     const unblock = opt.unblock ? tool.clone(opt.unblock) : [];
     const unblockSys = [
         'require',
-        '__awaiter', 'eval', 'Math', 'Array', 'Blob', 'Error', 'Infinity', 'parseInt', 'parseFloat', 'Promise', 'Date', 'JSON', 'fetch', 'Number', 'Object', 'encodeURIComponent', 'decodeURIComponent', 'FormData'
+        '__awaiter', 'eval', 'Math', 'Array', 'Blob', 'Error', 'Infinity', 'parseInt', 'parseFloat', 'Promise', 'Date', 'JSON', 'fetch', 'Number', 'String', 'Object', 'encodeURIComponent', 'decodeURIComponent', 'FormData', 'WebSocket'
     ];
     for (const name of unblockSys) {
         if (unblock.includes(name)) {
@@ -1094,6 +1094,9 @@ export async function run(url: string | types.IApp, opt: types.ITaskRunOptions =
             },
             request: function(url: string, opt: types.IRequestOptions): Promise<null | any> {
                 return tool.request(url, opt);
+            },
+            fetch: function(url: string, init?: RequestInit): Promise<string | Blob | null> {
+                return tool.fetch(url, init);
             },
             post: function(url: string, data: Record<string, any> | FormData, opt?: {
                 'credentials'?: 'include' | 'same-origin' | 'omit';

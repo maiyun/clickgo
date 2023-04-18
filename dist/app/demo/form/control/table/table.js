@@ -36,28 +36,9 @@ const clickgo = __importStar(require("clickgo"));
 class default_1 extends clickgo.form.AbstractForm {
     constructor() {
         super(...arguments);
+        this.loadFirst = false;
         this.val = [];
-        this.data = [
-            {
-                'type': 0,
-                'name': 'Appraise'
-            },
-            {
-                'type': 0,
-                'name': 'Card',
-            },
-            {
-                'type': 0,
-                'name': 'Appraise2',
-                'disabled': true
-            },
-            {
-                'control': 'split'
-            },
-            {
-                'type': 1
-            }
-        ];
+        this.data = [];
         this.disabled = false;
         this.must = true;
         this.multi = false;
@@ -159,6 +140,30 @@ class default_1 extends clickgo.form.AbstractForm {
                 this.sort = true;
             }
         }
+    }
+    load() {
+        this.data = [
+            {
+                'type': 0,
+                'name': 'Appraise'
+            },
+            {
+                'type': 0,
+                'name': 'Card',
+            },
+            {
+                'type': 0,
+                'name': 'Appraise2',
+                'disabled': true
+            },
+            {
+                'control': 'split'
+            },
+            {
+                'type': 1
+            }
+        ];
+        this.loadFirst = true;
     }
 }
 exports.default = default_1;

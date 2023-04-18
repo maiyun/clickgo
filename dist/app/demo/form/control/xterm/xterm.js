@@ -1,0 +1,81 @@
+"use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const clickgo = __importStar(require("clickgo"));
+class default_1 extends clickgo.form.AbstractForm {
+    constructor() {
+        super(...arguments);
+        this.access = {
+            'term': undefined
+        };
+        this.input = '';
+    }
+    onData(data) {
+        switch (data) {
+            case '\u0003': {
+                this.access.term.writeln('^C');
+                this.access.term.write('~$ ');
+                this.input = '';
+                break;
+            }
+            case '\r': {
+                this.access.term.writeln('');
+                if (this.input.length > 0) {
+                    this.access.term.writeln(`${this.input}: command not found`);
+                }
+                this.access.term.write('~$ ');
+                this.input = '';
+                break;
+            }
+            case '\u007F': {
+                if (this.input.length === 0) {
+                    break;
+                }
+                this.input = this.input.slice(0, -1);
+                this.access.term.write('\b \b');
+                break;
+            }
+            default: {
+                if ((data >= String.fromCharCode(0x20) && data <= String.fromCharCode(0x7E)) || (data === '\u00a0')) {
+                    for (const item of data) {
+                        if (this.input.length < 15) {
+                            this.input += item;
+                            this.access.term.write(item);
+                        }
+                    }
+                }
+                else {
+                    console.log('data', data);
+                }
+            }
+        }
+    }
+    onInit(term) {
+        this.access.term = term;
+        this.access.term.write('~$ ');
+        this.access.term.focus();
+    }
+}
+exports.default = default_1;

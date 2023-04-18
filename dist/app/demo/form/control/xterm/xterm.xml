@@ -1,0 +1,3 @@
+<form title="Xterm" width="500" height="450">
+    <xterm ref="xterm" style="flex: 1;" @data="onData" @init="onInit"></xterm>
+</form>

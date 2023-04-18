@@ -28,6 +28,7 @@ import ctabFrm from './control/tab/tab';
 import ctableFrm from './control/table/table';
 import ctextFrm from './control/text/text';
 import cvflowFrm from './control/vflow/vflow';
+import cxtermFrm from './control/xterm/xterm';
 
 import eformFrm from './event/form/form';
 import eotherFrm from './event/other/other';
@@ -99,6 +100,10 @@ export default class extends clickgo.form.AbstractForm {
             }
             case 'cvflow': {
                 frm = await clickgo.form.create(cvflowFrm);
+                break;
+            }
+            case 'cxterm': {
+                frm = await clickgo.form.create(cxtermFrm);
                 break;
             }
             case 'cimg': {

@@ -265,6 +265,26 @@ const modules: Record<string, {
         'obj': null,
         'loading': false,
         'resolve': []
+    },
+    'xterm': {
+        func: async function() {
+            await loader.loadScripts([
+                'https://cdn.jsdelivr.net/npm/xterm@5.1.0/lib/xterm.js',
+                'https://cdn.jsdelivr.net/npm/xterm-addon-fit@0.7.0/lib/xterm-addon-fit.js',
+                'https://cdn.jsdelivr.net/npm/xterm-addon-webgl@0.14.0/lib/xterm-addon-webgl.js'
+            ]);
+            await loader.loadLinks([
+                'https://cdn.jsdelivr.net/npm/xterm@5.1.0/css/xterm.min.css'
+            ]);
+            loader.loadStyle('.xterm-viewport::-webkit-scrollbar{display:none;}');
+            if (!(window as any).Terminal) {
+                throw Error('Xterm load failed.');
+            }
+            return [(window as any).Terminal, (window as any).FitAddon.FitAddon, (window as any).WebglAddon.WebglAddon];
+        },
+        'obj': null,
+        'loading': false,
+        'resolve': []
     }
 };
 

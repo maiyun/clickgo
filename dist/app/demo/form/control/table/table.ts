@@ -2,29 +2,11 @@ import * as clickgo from 'clickgo';
 
 export default class extends clickgo.form.AbstractForm {
 
+    public loadFirst = false;
+
     public val: any[] = [];
 
-    public data: any[] = [
-        {
-            'type': 0,
-            'name': 'Appraise'
-        },
-        {
-            'type': 0,
-            'name': 'Card',
-        },
-        {
-            'type': 0,
-            'name': 'Appraise2',
-            'disabled': true
-        },
-        {
-            'control': 'split'
-        },
-        {
-            'type': 1
-        }
-    ];
+    public data: any[] = [];
 
     // --- 操作 ---
 
@@ -142,6 +124,31 @@ export default class extends clickgo.form.AbstractForm {
                 this.sort = true;
             }
         }
+    }
+
+    public load(): void {
+        this.data = [
+            {
+                'type': 0,
+                'name': 'Appraise'
+            },
+            {
+                'type': 0,
+                'name': 'Card',
+            },
+            {
+                'type': 0,
+                'name': 'Appraise2',
+                'disabled': true
+            },
+            {
+                'control': 'split'
+            },
+            {
+                'type': 1
+            }
+        ];
+        this.loadFirst = true;
     }
 
 }
