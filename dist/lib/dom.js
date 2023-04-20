@@ -582,6 +582,7 @@ function clearWatchProperty(formId, panelId) {
 }
 exports.clearWatchProperty = clearWatchProperty;
 function getWatchInfo() {
+    var _a;
     const rtn = {
         'formId': 0,
         'default': {},
@@ -622,27 +623,31 @@ function getWatchInfo() {
             ritem[cname][type].list.push(name);
         }
     };
-    if (watchStyleList[formId].default) {
-        for (const index in watchStyleList[formId].default) {
-            handler(watchStyleList[formId].default[index], 'style');
+    if (watchStyleList[formId]) {
+        if (watchStyleList[formId].default) {
+            for (const index in watchStyleList[formId].default) {
+                handler(watchStyleList[formId].default[index], 'style');
+            }
         }
-    }
-    for (const id of panelIds) {
-        if (watchStyleList[formId][id]) {
-            for (const index in watchStyleList[formId][id]) {
-                handler(watchStyleList[formId][id][index], 'style', id.toString());
+        for (const id of panelIds) {
+            if (watchStyleList[formId][id]) {
+                for (const index in watchStyleList[formId][id]) {
+                    handler(watchStyleList[formId][id][index], 'style', id.toString());
+                }
             }
         }
     }
-    if (watchPropertyObjects[formId].default) {
-        for (const index in watchPropertyObjects[formId].default) {
-            handler(watchPropertyObjects[formId].default[index], 'property');
+    if (watchPropertyObjects[formId]) {
+        if (watchPropertyObjects[formId].default) {
+            for (const index in watchPropertyObjects[formId].default) {
+                handler(watchPropertyObjects[formId].default[index], 'property');
+            }
         }
-    }
-    for (const id of panelIds) {
-        if (watchPropertyObjects[formId][id]) {
-            for (const index in watchPropertyObjects[formId][id]) {
-                handler(watchPropertyObjects[formId][id][index], 'property', id.toString());
+        for (const id of panelIds) {
+            if ((_a = watchPropertyObjects[formId]) === null || _a === void 0 ? void 0 : _a[id]) {
+                for (const index in watchPropertyObjects[formId][id]) {
+                    handler(watchPropertyObjects[formId][id][index], 'property', id.toString());
+                }
             }
         }
     }

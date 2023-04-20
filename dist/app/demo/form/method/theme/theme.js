@@ -34,9 +34,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const clickgo = __importStar(require("clickgo"));
 class default_1 extends clickgo.form.AbstractForm {
-    get(isByterun = false) {
+    get(name) {
         return __awaiter(this, void 0, void 0, function* () {
-            const f = yield clickgo.fs.getContent('/clickgo/theme/' + (isByterun ? 'byterun.cgt' : 'familiar.cgt'));
+            const f = yield clickgo.fs.getContent('/clickgo/theme/' + name + '.cgt');
             if (!f) {
                 return null;
             }
@@ -57,7 +57,7 @@ class default_1 extends clickgo.form.AbstractForm {
                 'content': 'Theme loading...',
                 'type': 'info'
             });
-            const t = yield this.get();
+            const t = yield this.get('familiar');
             if (!t) {
                 clickgo.form.hideNotify(n);
                 return;
@@ -73,14 +73,14 @@ class default_1 extends clickgo.form.AbstractForm {
     clear() {
         clickgo.theme.clear().catch((e) => { throw e; });
     }
-    setGlobal(isByterun = false) {
+    setGlobal(name) {
         return __awaiter(this, void 0, void 0, function* () {
             const n = clickgo.form.notify({
                 'title': 'Info',
                 'content': 'Theme loading...',
                 'type': 'info'
             });
-            const t = yield this.get(isByterun);
+            const t = yield this.get(name);
             if (!t) {
                 clickgo.form.hideNotify(n);
                 return;

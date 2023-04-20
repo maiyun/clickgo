@@ -3,8 +3,8 @@ import * as types from '~/types/index';
 
 export default class extends clickgo.form.AbstractForm {
 
-    public async get(isByterun = false): Promise<types.ITheme | null> {
-        const f = await clickgo.fs.getContent('/clickgo/theme/' + (isByterun ? 'byterun.cgt' : 'familiar.cgt'));
+    public async get(name: 'familiar' | 'byterun' | 'light'): Promise<types.ITheme | null> {
+        const f = await clickgo.fs.getContent('/clickgo/theme/' + name + '.cgt');
         if (!f) {
             return null;
         }
@@ -24,7 +24,7 @@ export default class extends clickgo.form.AbstractForm {
             'content': 'Theme loading...',
             'type': 'info'
         });
-        const t = await this.get();
+        const t = await this.get('familiar');
         if (!t) {
             clickgo.form.hideNotify(n);
             return;
@@ -42,13 +42,13 @@ export default class extends clickgo.form.AbstractForm {
         clickgo.theme.clear().catch((e) => { throw e; });
     }
 
-    public async setGlobal(isByterun = false): Promise<void> {
+    public async setGlobal(name: 'familiar' | 'byterun' | 'light'): Promise<void> {
         const n = clickgo.form.notify({
             'title': 'Info',
             'content': 'Theme loading...',
             'type': 'info'
         });
-        const t = await this.get(isByterun);
+        const t = await this.get(name);
         if (!t) {
             clickgo.form.hideNotify(n);
             return;

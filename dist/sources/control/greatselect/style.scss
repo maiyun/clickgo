@@ -10,6 +10,11 @@
     &[data-cg-pop-open] {
         &.area-all {
             background: var(--g-background-active);
+            color: var(--g-color-hover);
+            fill: var(--g-color-hover);
+            .arrow::after {
+                border-color: var(--g-color-active);
+            }
         }
         border: solid .5px var(--g-border-color-active);
     }
@@ -27,9 +32,19 @@
         &.area-all {
             &:hover, &:focus {
                 background: var(--g-background-hover);
+                color: var(--g-color-hover);
+                fill: var(--g-color-hover);
+                .arrow::after {
+                    border-color: var(--g-color-hover);
+                }
             }
             &:active, &.active {
                 background: var(--g-background-active);
+                color: var(--g-color-active);
+                fill: var(--g-color-active);
+                .arrow::after {
+                    border-color: var(--g-color-active);
+                }
             }
         }
     }
@@ -61,10 +76,16 @@
                 &:hover {
                     background: var(--g-plain-background-hover);
                     border-left-color: var(--g-plain-border-color-hover);
+                    &::after {
+                        border-color: var(--g-color-hover);
+                    }
                 }
                 &:active {
                     background: var(--g-plain-background-active);
                     border-left-color: var(--g-plain-border-color-active);
+                    &::after {
+                        border-color: var(--g-color-active);
+                    }
                 }
             }
         }
@@ -74,6 +95,9 @@
             .arrow {
                 background: var(--g-plain-background-active);
                 border-left-color: var(--g-plain-border-color-active);
+                &::after {
+                    border-color: var(--g-color-active);
+                }
             }
         }
     }

@@ -34,3 +34,36 @@ global {
         background-color: hsl(205, 100%, 50%, .3);
     }
 }
+
+// -- CONTROL -- button --
+
+.button_wrap {
+    &.button_primary {
+        &.button_plain {
+            --background-hover:hsl(150, 100%, 95%);
+            --background-active:hsl(150, 100%, 90%);
+            --background-focus:hsl(150, 100%, 95%);
+        }
+    }
+    &.button_info {
+        &.button_plain {
+            --background-hover:hsl(210, 100%, 95%);
+            --background-active:hsl(210, 100%, 90%);
+            --background-focus:hsl(210, 100%, 95%);
+        }
+    }
+    &.button_warning {
+        &.button_plain {
+            --background-hover:hsl(20, 100%, 95%);
+            --background-active:hsl(20, 100%, 90%);
+            --background-focus:hsl(20, 100%, 95%);
+        }
+    }
+    &.button_danger {
+        &.button_plain {
+            --background-hover:hsl(350, 100%, 95%);
+            --background-active:hsl(350, 100%, 90%);
+            --background-focus:hsl(350, 100%, 95%);
+        }
+    }
+}

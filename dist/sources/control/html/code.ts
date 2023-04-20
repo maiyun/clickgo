@@ -45,7 +45,7 @@ export default class extends clickgo.control.AbstractControl {
         pre.push(after(buttons, ':hover') + '{border:solid .5px var(--g-border-color-hover);background:var(--g-background-hover);color:var(--g-color-hover)}');
         pre.push(after(buttons, ':active') + '{border:solid .5px var(--g-border-color-active);background:var(--g-background-active);color:var(--g-color-active)}');
         pre.push(after(buttons, ':focus:not(:active):not(:hover)') + '{border:solid .5px var(--g-border-color-focus);background:var(--g-background-focus);color:var(--g-color-focus)}');
-        pre.push(after(buttons, ':focus') + '{outline-color:var(--g-border-color)}');
+        pre.push(after(buttons, ':focus') + '{outline-color:var(--g-focusbox-border-color)}');
         pre.push(after(buttons, ':disabled') + '{border:solid .5px var(--g-border-color-disabled);background:var(--g-background-disabled);color:var(--g-color-disabled)}');
 
         /** --- 输入框类 --- */

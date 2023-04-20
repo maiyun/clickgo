@@ -1,0 +1,796 @@
+global {
+    --g-padding:10px;
+    --g-margin:5px;
+    --g-radius:5px;
+
+    // --- 基础颜色 ---
+
+    --face:#FFF;
+    --pop-background:rgba(255, 255, 255, .4);
+
+    // --- 组件默认颜色（如按钮） ---
+
+    --g-color-hover:#FFF;
+    --g-color-active:#FFF;
+    --g-color-focus:#FFF;
+
+    --g-background:rgba(0,0,0,.04);
+    --g-background-hover:hsl(240,70%,60%);
+    --g-background-active:hsl(240,70%,55%);
+    --g-background-opacity:hsla(240,70%,60%,.05);
+    --g-background-focus:hsl(240,70%,60%);
+    --g-background-disabled:rgba(0,0,0,.1);
+
+    --g-border-color:rgba(0,0,0,.2);
+    --g-border-color-hover:hsl(240,70%,60%);
+    --g-border-color-active:hsl(240,70%,55%);
+    --g-border-color-focus:hsl(240,70%,60%);
+    --g-border-color-disabled:rgba(0,0，0,.4);
+
+    --g-focusbox-border-color:rgba(255,255,255,.8);
+    
+    // --- 组件轻量颜色（如文本框） ---
+
+    --g-plain-color:var(--g-color);
+    --g-plain-color-hover:hsl(240,70%,60%);
+    --g-plain-color-active:hsl(240,70%,55%);
+    --g-plain-color-focus:hsl(240,70%,60%);
+
+    --g-plain-background:transparent;
+    --g-plain-background-hover:transparent;
+    --g-plain-background-active:transparent;
+    --g-plain-background-focus:transparent;
+    --g-plain-background-disabled:rgba(0,0,0,.1);
+
+    --g-plain-border-color:rgba(0,0,0,.2);
+    --g-plain-border-color-hover:hsl(240,70%,60%);
+    --g-plain-border-color-active:hsl(240,70%,55%);
+    --g-plain-border-color-focus:hsl(240,70%,60%);
+    --g-plain-border-color-disabled:rgba(0,0,0,.4);
+
+    ::selection {
+        background-color: rgba(0, 0, 0, .1);
+    }
+}
+
+// -- CONTROL -- button --
+
+.button_wrap {
+    transition: all .1s ease-out; transition-property: color, background;
+
+    &::before {                                 // --- 外边框 ---
+        transition: all .1s ease-out;
+    }
+    &::after, .button_inner::after, .button_arrow::after {    // --- 焦点框 ---
+        border-radius: 3px; transition: all .1s ease-out;
+    }
+    &.button_default {
+        &:not(.button_plain) {
+            --border:none;
+            --border-hover:none;
+            --border-active:none;
+            --border-focus:none;
+            --border-disabled:none;
+        }
+        &.button_plain {
+            --focusbox-border:dotted .5px var(--g-plain-border-color);
+        }
+    }
+    &.button_tool {
+        &:not(.button_plain) {
+            --color-hover:var(--g-color);
+            --color-active:var(--g-color);
+            --color-focus:var(--g-color);
+
+            --background-hover:rgba(0,0,0,.05);
+            --background-active:rgba(0,0,0,.2);
+            --background-focus:rgba(0,0,0,.05);
+
+            --border-hover:none;
+            --border-active:none;
+            --border-focus:none;
+        }
+        &.button_plain {
+            --focusbox-border:dotted .5px var(--g-plain-border-color);
+        }
+    }
+    &.button_primary {
+        &.button_plain {
+            --focusbox-border:dotted .5px var(--g-plain-border-color);
+        }
+    }
+    &.button_info {
+        &.button_plain {
+            --focusbox-border:dotted .5px var(--g-plain-border-color);
+        }
+    }
+    &.button_warning {
+        &.button_plain {
+            --focusbox-border:dotted .5px var(--g-plain-border-color);
+        }
+    }
+    &.button_danger {
+        &.button_plain {
+            --focusbox-border:dotted .5px var(--g-plain-border-color);
+        }
+    }
+    &.button_area-split {
+        .button_inner::before {
+            transition: all .1s ease-out;
+        }
+    }
+    &:not([data-cg-disabled]) {
+        &:focus, &.button_childfocus {                 // --- 焦点状态 ---
+            &::before {                         // --- 外边框 ---
+                border-width: 2px;
+            }
+            &.button_area-split {
+                .button_inner::before {                // --- 里边框 ---
+                    border-right-width: 2px;
+                }
+            }
+        }
+        &:hover {                               // --- 鼠标悬停 ---
+            &::before {                         // --- 外边框 ---
+                border-width: 2px;
+            }
+            &.button_area-split {
+                .button_inner::before {                // --- 里边框 ---
+                    border-right-width: 2px;
+                }
+            }
+        }
+        &:active, &.button_active, &[data-cg-pop-open] {     // --- 鼠标按下 ---
+            &::before {
+                border-width: 2px;
+            }
+            &.button_area-split {
+                .button_inner::before {                // --- 里边框 ---
+                    border-right-width: 2px;
+                }
+            }
+        }
+
+        &.button_area-split {
+            .button_inner, .button_arrow {
+                &:hover {                       // --- 鼠标悬停 ---
+                    transition: all .1s ease-out;
+                }
+                // --- 鼠标按下 ---
+                &:active, &.button_active, &[data-cg-pop-open] {
+                    transition: all .1s ease-out;
+                }
+                &[data-cg-pop-open]:not(:active, &.button_active) {
+                    color: var(--color-hover);
+                    fill: var(--color-hover);
+                    background: var(--background-hover);
+                }
+            }
+        }
+    }
+    &[data-cg-disabled] {
+        color: var(--g-color-disabled);
+        fill: var(--g-color-disabled);
+    }
+}
+
+// -- CONTROL -- check --
+
+.check_wrap {
+    transition: all .1s ease-out;
+
+    .check_check {
+        transition: all .1s ease-out; width: 18px; height: 18px;
+        &::after {
+            transition: all .1s ease-out;
+        }
+    }
+
+    .check_label {
+        &::before {
+            transition: all .1s ease-out;
+        }
+    }
+
+    // --- 半选中模式 ---
+    &.check_indeterminate {
+        .check_check::after {
+            left: 4px; top: 4px; width: calc(100% - 8px); height: calc(100% - 8px); border-radius: 3px;
+        }
+    }
+
+    &:not([data-cg-disabled]) {
+        &.check_checked:not(:focus):not(:hover):not(:active):not(.check_active) {
+            color: var(--g-plain-color-active); fill: var(--g-plain-color-active);
+            .check_check {
+                background: var(--g-plain-background-active); border: solid 2px var(--g-plain-border-color-active);
+            }
+            &.check_indeterminate {
+                .check_check::after {
+                    background: var(--g-plain-color-active);
+                }
+            }
+        }
+
+        &.check_checked, &:focus, &:hover, &:active, &.check_active {
+            .check_check {
+                border-width: 2px;
+            }
+
+            &.check_indeterminate {
+                .check_check::after {
+                    left: 3px; top: 3px; width: calc(100% - 6px); height: calc(100% - 6px);
+                }
+            }
+        }
+    }
+    &[data-cg-disabled] {
+        &.check_checked {
+            .check_check {
+                border-width: 2px;
+            }
+            &.check_indeterminate {
+                .check_check::after {
+                    left: 3px; top: 3px; width: calc(100% - 6px); height: calc(100% - 6px);
+                }
+            }
+        }
+    }
+}
+
+// -- CONTROL -- desc --
+
+.desc_wrap {
+    &.desc_border {
+        border-color: var(--g-background);
+    }
+}
+
+// -- CONTROL -- desc-cell --
+
+.desc-cell_wrap {
+    padding: 15px;
+    &.desc-cell_border {
+        border-color: var(--g-background);
+    }
+}
+
+// -- CONTROL -- desc-head --
+
+.desc-head_wrap {
+    background: var(--g-background); padding: 15px;
+    &.desc-head_border {
+        border-color: var(--g-background);
+    }
+}
+
+// -- CONTROL -- form --
+
+.form_wrap {
+    &:not(.form_border-none):not([data-cg-max]) {
+        border-color: var(--g-plain-border-color);
+    }
+    &.form_focus {
+        &:not(.form_border-none):not([data-cg-max]) {
+            border-color: var(--g-border-color);
+        }
+    }
+    // --- 内部 ---
+    .form_inner {
+        // --- 头部 ---
+        .form_header {
+            // --- 控制按钮 ---
+            .form_controls {
+                .form_min, .form_max, .form_close {
+                    transition: all .1s ease-out;
+                }
+            }
+        }
+    }
+}
+
+// -- CONTROL -- greatlist --
+
+.greatlist_wrap {
+    .greatlist_t {
+        .greatlist_tag-cg-vflow {
+            .greatlist_item {
+                transition: all .1s ease-out; border-width: 2px;
+                &:not([data-cg-disabled]) {
+                    &:hover {
+                        background: var(--g-background);
+                    }
+                    &.greatlist_selected {
+                        background: var(--g-background-opacity); border-color: var(--g-border-color-hover);
+                    }
+                    &.greatlist_shift:not(.greatlist_selected) {
+                        border-color: var(--g-border-color);
+                    }
+                }
+                &[data-cg-disabled] {
+                    color: var(--g-color-disabled); fill: var(--g-color-disabled);
+                    &:hover {
+                        background: transparent;
+                    }
+                }
+            }
+            .greatlist_split {
+               background: var(--g-background);
+            }
+        }
+    }
+}
+
+// -- CONTROL -- greatselect --
+
+.greatselect_wrap {
+    transition: all .1s ease-out;
+    &:not([data-cg-disabled]):not([data-cg-pop-open]) {
+        &.greatselect_area-arrow {
+            .greatselect_arrow {
+                &:hover {
+                    background: var(--g-background-hover);
+                }
+                &:active {
+                    background: var(--g-background-active);
+                }
+            }
+        }
+    }
+    .greatselect_arrow {
+        width: 25px;
+    }
+    &.greatselect_area-arrow {
+        &[data-cg-pop-open], &.greatselect_active {
+            .greatselect_arrow {
+                background: var(--g-background-active);
+            }
+        }
+    }
+}
+.greatselect_pop {
+    background: var(--pop-background); -webkit-backdrop-filter: blur(20px) brightness(1.1); backdrop-filter: blur(20px) brightness(1.1);
+}
+
+// -- CONTROL -- iconview --
+
+.iconview_wrap {
+    .iconview_tag-cg-vflow {
+        .iconview_row {
+            .iconview_item {
+                transition: all .1s ease-out;
+                &:hover {
+                    background: var(--g-background);
+                }
+                &.iconview_selected {
+                    background: var(--g-background-opacity); border-color: var(--g-border-color-hover);
+                }
+                &.iconview_shift:not(.iconview_selected) {
+                    border-color: var(--g-border-color);
+                }
+                &[data-cg-hover] {
+                    background: var(--g-border-color-hover); color: var(--g-color); fill: var(--g-color);
+                }
+            };
+        }
+    }
+}
+
+// -- CONTROL -- menu --
+
+.menu_wrap {
+    border-bottom-color: var(--g-plain-border-color); padding-bottom: 1px;
+}
+
+// -- CONTROL -- menu-item --
+
+.menu-item_wrap {
+    transition: all .1s ease-out; border: none;
+    &:not([data-cg-disabled]) {
+        &:hover {
+            background: var(--g-background);
+        }
+        &:active, &[data-cg-pop-open] {
+            background: var(--g-border-color-hover);
+        }
+    }
+    &[data-cg-disabled] {
+        color: var(--g-color-disabled); fill: var(--g-color-disabled);
+        &:hover {
+            background: transparent;
+        }
+    }
+}
+
+// -- CONTROL -- menulist --
+
+.menulist_wrap {
+    background: var(--pop-background); -webkit-backdrop-filter: blur(20px) brightness(1.1); backdrop-filter: blur(20px) brightness(1.1);
+}
+
+// -- CONTROL -- menulist-item --
+
+.menulist-item_wrap {
+    &:not([data-cg-disabled]) {
+        &:hover {
+            background: var(--g-background);
+            .menulist-item_check, .menulist-item_radio {
+                background-color: var(--g-border-color-hover);
+            }
+        }
+    }
+    &[data-cg-disabled] {
+        &:hover {
+            background: transparent;
+        }
+    }
+    &[data-cg-pop-open] {
+        background: var(--g-background);
+    }
+
+    .menulist-item_check {
+        background-color: var(--g-background-hover); fill: var(--g-color-hover); width: 32px; height: 32px; border-radius: 3px;
+    }
+    .menulist-item_radio {
+        background-color: var(--g-background-hover); width: 32px; height: 32px; border-radius: 3px;
+        &::before {
+            background-color: var(--g-color-hover);
+        }
+    }
+}
+
+// -- CONTROL -- menulist-split --
+
+.menulist-split_wrap {
+    .menulist-split_type {
+        width: 32px;
+    }
+    .menulist-split_line {
+        background: var(--g-background);
+    }  
+}
+
+// -- CONTROL -- nav --
+
+.nav_wrap {
+    .nav_menuwrap {
+        .nav_menu {
+            border-right-color: var(--g-background);
+        }
+    }
+    &.nav_layer {
+        .nav_menuwrap {
+            .nav_menu {
+                border-right-color: var(--g-background);
+            }
+        }
+        &.nav_show {
+            .nav_menuwrap {
+                background: rgba(0, 0, 0, .5);
+            }
+        }
+    }
+
+    .nav_content {
+        .nav_header {
+            height: 44px; border-bottom: solid .5px var(--g-background); padding: 2px;
+            .nav_mbutton {
+                width: 40px; transition: all .1s ease-out;
+                &:hover {
+                    background: var(--g-border-color-hover); fill: var(--g-color-hover);
+                }
+                &:active {
+                    background: var(--g-background);
+                }
+
+                .nav_tag-svg {
+                    width: 28px; height: 28px;
+                }
+            }
+        }
+    }
+}
+
+// -- CONTROL -- nav-item --
+
+.nav-item_wrap {
+    > .nav-item_text {
+        padding: 15px; transition: all .1s ease-out;
+    }
+
+    &:not(.nav-item_child) {
+        &.nav-item_show {
+            > .nav-item_text {
+                background: var(--g-background);
+            }
+        }
+    }
+
+    &:not(.nav-item_selected) {
+        > .nav-item_text:hover {
+            background: var(--g-background);
+        }
+    }
+    &.nav-item_selected {
+        > .nav-item_text {
+            background: var(--g-border-color-hover); color: var(--g-color-hover); fill: var(--g-color-hover);
+        }
+    }
+
+    &:not(.nav-item_child) {
+        > .nav-item_menu {
+            background: var(--g-background);
+        }
+    }
+}
+
+// -- CONTROL -- nav-title --
+
+.nav-title_wrap {
+    padding-left: 15px;
+}
+
+// -- CONTROL -- page --
+
+.page_wrap {
+    .page_list {
+        > .page_tag-div {
+            transition: all .1s ease-out; border: none; background: transparent; width: 32px; height: 32px;
+            &::after {
+                border-radius: 3px;
+            }
+
+            &:focus {
+                background: transparent; color: var(--g-color); fill: var(--g-color);
+            }
+            &:hover {
+                background: var(--g-background); color: var(--g-color); fill: var(--g-color);
+            }
+            &:active, &.page_selected {
+                background: var(--g-border-color-hover); color: var(--g-color-active); fill: var(--g-color-active);
+                &.page_left, &.page_right {
+                    &::before {
+                        border-color: var(--g-color-active);;
+                    }
+                }
+            }
+        }
+    }
+}
+
+// -- CONTROL -- property --
+
+.property_wrap {
+    .property_controls {
+        .property_tag-cg-button {
+            margin-right: 5px; width: 34px; height: 34px;
+        }
+        .property_split {
+            background: var(--g-background); margin: 0 5px 0 0;
+        }
+    }
+    .property_content {
+        .property_bigTitle {
+            background: var(--g-background);
+            .property_control {
+                width: 34px;
+            }
+        }
+        .property_line {
+            border-bottom-color: var(--g-background);
+            .property_control {
+                background: var(--g-background); width: 34px;
+            }
+            &.property_selected .property_title {
+                background: var(--g-background-hover); color: var(--g-color-hover);
+            }
+            .property_value {
+                .property_text {
+                    height: 32px;
+                }
+                .property_tag-cg-check {
+                    margin-left: 10px;
+                }
+                .property_dock {
+                    .property_tag-cg-button {
+                        &:hover, &:focus, &[data-cg-pop-open] {
+                            .property_arrow::after {
+                                border-color: var(--g-color-hover);
+                            }
+                        }
+                    }
+                }
+                .property_arrow {
+                    width: 30px;
+                }
+            }
+        }
+    }
+    .property_description {
+        height: 73px;
+        .property_desc {
+            line-height: 1.5;
+        }
+    }
+}
+
+// -- CONTROL -- radio --
+
+.radio_wrap {
+    transition: all .1s ease-out;
+
+    .radio_radio {
+        transition: all .1s ease-out; width: 18px; height: 18px;
+        &::after {
+            transition: all .1s ease-out; left: 4px; top: 4px; width: calc(100% - 8px); height: calc(100% - 8px);
+        }
+    }
+
+    .radio_label {
+        &::before {
+            transition: all .1s ease-out;
+        }
+    }
+
+    &:not([data-cg-disabled]) {
+        &.radio_selected:not(:focus):not(:hover):not(:active):not(.radio_active) {
+            color: var(--g-plain-color-active); fill: var(--g-plain-color-active);
+            .radio_radio {
+                background: var(--g-plain-background-active); border: solid 2px var(--g-plain-border-color-active);
+                &::after {
+                    background: var(--g-plain-color-active);
+                }
+            }
+        }
+
+        &.radio_selected, &:focus, &:hover, &:active, &.radio_active {
+            .radio_radio {
+                border-width: 2px;
+                &::after {
+                    left: 3px; top: 3px; width: calc(100% - 6px); height: calc(100% - 6px);
+                }
+            }
+        }
+    }
+    &[data-cg-disabled] {
+        &.radio_selected {
+            .radio_radio {
+                border-width: 2px;
+                &::after {
+                    left: 3px; top: 3px; width: calc(100% - 6px); height: calc(100% - 6px);
+                }
+            }
+        }
+    }
+
+}
+
+// -- CONTROL -- scroll --
+
+.scroll_wrap {
+    background-color:transparent;
+    --block-background:var(--g-background);
+    --block-background-hover:var(--g-border-color-hover);
+    .scroll_start, .scroll_end {
+        display: none;
+    }
+    .scroll_bar {
+        .scroll_block {
+            transition: all .1s ease-out; transition-property: background;
+        }
+    }
+}
+
+// -- CONTROL -- tab --
+
+.tab_wrap {
+    .tab_arrow {
+        &:hover {
+            &::before {
+                border-color: var(--g-border-color-hover);
+            }
+        }
+        &:active {
+            &::before {
+                border-color: var(--g-border-color-active);
+            }
+        }
+    }
+    .tab_tab {
+        transition: all .1s ease-out; border: none;
+        &::after {
+            background: var(--g-background-hover); transition: all .1s ease-out;
+        }
+        &:not(.tab_selected):not([data-cg-hover]):hover {
+            background: transparent; color: var(--g-border-color-hover); fill: var(--g-border-color-hover);
+        }
+        &.tab_selected {
+            background: transparent; font-weight: bold; color: var(--g-border-color-hover); fill: var(--g-border-color-hover);
+        }
+        .tab_close {
+            transition: all .1s ease-out;
+            &:hover {
+                background: var(--g-background);
+            }
+            &:active {
+                background: var(--g-color); color: var(--face); fill: var(--face);
+            }
+        }
+    }
+    &.tab_top {
+        .tab_tabs {
+            .tab_tab {
+                padding-bottom: 2px;
+                &.tab_selected {
+                    padding-bottom: 2px;
+                    &::after {
+                        top: initial; bottom: 0; height: 2px;
+                    }
+                }
+            }
+        }
+    }
+    &.tab_bottom {
+        .tab_tabs {
+            .tab_tab {
+                padding-top: 2px;
+                &.tab_selected {
+                    padding-top: 2px;
+                    &::after {
+                        top: 0; height: 2px;
+                    }
+                }
+            }
+        }
+    }
+    &.tab_left {
+        .tab_tabs {
+            .tab_tab {
+                padding-right: 2px;
+                &.tab_selected {
+                    &::after {
+                        left: initial; right: 0; width: 2px;
+                    }
+                }
+            }
+        }
+    }
+    &.tab_right {
+        .tab_tabs {
+            .tab_tab {
+                padding-left: 2px;
+                &.tab_selected {
+                    &::after {
+                        left: 0; width: 2px;
+                    }
+                }
+            }
+        }
+    }
+
+    .tab_panel {
+        border: none;
+    }
+}
+
+// -- CONTROL -- task --
+
+.task_wrap {
+    background: var(--pop-background); -webkit-backdrop-filter: blur(20px) brightness(1.1); backdrop-filter: blur(20px) brightness(1.1);
+}
+
+// -- CONTROL -- task-item --
+
+.task-item_wrap {
+    &.task-item_opened {
+        .task-item_line::after {
+            background: var(--g-border-color-active);
+        }
+    }
+}
+
+// -- CONTROL -- text --
+
+.text_wrap {
+    transition: all .1s ease-out; transition-property: color, background, border;
+}

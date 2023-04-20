@@ -53,7 +53,7 @@
             --border-focus:solid 2px var(--g-border-color-focus);
             --border-disabled:solid .5px var(--g-border-color-disabled);
 
-            --focusbox-border:dotted .5px var(--g-border-color);
+            --focusbox-border:dotted .5px var(--g-focusbox-border-color);
         }
         &.plain {
             --color-hover:var(--g-plain-color-hover);
@@ -73,7 +73,7 @@
             --border-focus:solid .5px var(--g-plain-border-color-focus);
             --border-disabled:solid .5px var(--g-plain-border-color-disabled);
 
-            --focusbox-border:dotted .5px var(--g-plain-border-color);
+            --focusbox-border:dotted .5px var(--g-focusbox-border-color);
         }
     }
     &.tool {
@@ -93,7 +93,7 @@
             --border-focus:solid .5px var(--g-border-color-focus);
             --border-disabled:solid .5px transparent;
 
-            --focusbox-border:dotted .5px var(--g-border-color);
+            --focusbox-border:dotted .5px var(--g-focusbox-border-color);
         }
         &.plain {
             --color-hover:var(--g-plain-color-hover);
@@ -102,7 +102,7 @@
             --color-disabled:var(--g-plain-color-disabled);
 
             --background-hover:var(--g-plain-background-hover);
-            --background-active::var(--g-plain-background-active);
+            --background-active:var(--g-plain-background-active);
             --background-focus:var(--g-plain-background-focus);
             --background-disabled:transparent;
 
@@ -111,7 +111,7 @@
             --border-focus:solid .5px var(--g-plain-border-color-focus);
             --border-disabled:solid .5px transparent;
 
-            --focusbox-border:dotted .5px var(--g-plain-border-color);
+            --focusbox-border:dotted .5px var(--g-focusbox-border-color);
         }
     }
     &.primary {
@@ -139,7 +139,7 @@
 
             --background:var(--g-plain-background);
             --background-hover:var(--g-plain-background-hover);
-            --background-active::var(--g-plain-background-active);
+            --background-active:var(--g-plain-background-active);
             --background-focus:var(--g-plain-background-focus);
             --background-disabled:var(--g-plain-background-disabled);
 
@@ -149,7 +149,7 @@
             --border-focus:solid .5px var(--success-focus);
             --border-disabled:solid .5px var(--success-disabled);
 
-            --focusbox-border:dotted .5px var(--g-plain-border-color);
+            --focusbox-border:dotted .5px var(--g-focusbox-border-color);
         }
     }
     &.info {
@@ -166,7 +166,7 @@
             --background-focus:var(--info-focus);
             --background-disabled:var(--info-disabled);
 
-            --focusbox-border:dotted .5px var(--g-plain-border-color);
+            --focusbox-border:dotted .5px hsl(0, 0%, 100%);
         }
         &.plain {
             --color:var(--info);
@@ -177,7 +177,7 @@
 
             --background:var(--g-plain-background);
             --background-hover:var(--g-plain-background-hover);
-            --background-active::var(--g-plain-background-active);
+            --background-active:var(--g-plain-background-active);
             --background-focus:var(--g-plain-background-focus);
             --background-disabled:var(--g-plain-background-disabled);
 
@@ -187,7 +187,7 @@
             --border-focus:solid .5px var(--info-focus);
             --border-disabled:solid .5px var(--info-disabled);
 
-            --focusbox-border:dotted .5px var(--g-plain-border-color);
+            --focusbox-border:dotted .5px var(--g-focusbox-border-color);
         }
     }
     &.warning {
@@ -204,7 +204,7 @@
             --background-focus:var(--warning-focus);
             --background-disabled:var(--warning-disabled);
 
-            --focusbox-border:dotted .5px var(--g-plain-border-color);
+            --focusbox-border:dotted .5px hsl(0, 0%, 100%);
         }
         &.plain {
             --color:var(--warning);
@@ -215,7 +215,7 @@
 
             --background:var(--g-plain-background);
             --background-hover:var(--g-plain-background-hover);
-            --background-active::var(--g-plain-background-active);
+            --background-active:var(--g-plain-background-active);
             --background-focus:var(--g-plain-background-focus);
             --background-disabled:var(--g-plain-background-disabled);
 
@@ -225,7 +225,7 @@
             --border-focus:solid .5px var(--warning-focus);
             --border-disabled:solid .5px var(--warning-disabled);
 
-            --focusbox-border:dotted .5px var(--g-plain-border-color);
+            --focusbox-border:dotted .5px var(--g-focusbox-border-color);
         }
     }
     &.danger {
@@ -242,7 +242,7 @@
             --background-focus:var(--danger-focus);
             --background-disabled:var(--danger-disabled);
 
-            --focusbox-border:dotted .5px var(--g-plain-border-color);
+            --focusbox-border:dotted .5px hsl(0, 0%, 100%);
         }
         &.plain {
             --color:var(--danger);
@@ -253,7 +253,7 @@
 
             --background:var(--g-plain-background);
             --background-hover:var(--g-plain-background-hover);
-            --background-active::var(--g-plain-background-active);
+            --background-active:var(--g-plain-background-active);
             --background-focus:var(--g-plain-background-focus);
             --background-disabled:var(--g-plain-background-disabled);
 
@@ -263,7 +263,7 @@
             --border-focus:solid .5px var(--danger-focus);
             --border-disabled:solid .5px var(--danger-disabled);
 
-            --focusbox-border:dotted .5px var(--g-plain-border-color);
+            --focusbox-border:dotted .5px var(--g-focusbox-border-color);
         }
     }
 
@@ -330,6 +330,11 @@
 
         &.area-split {
             .inner, .arrow {
+                &:focus {                       // --- 焦点 ---
+                    color: var(--color-focus);
+                    fill: var(--color-focus);
+                    background: var(--background-focus);
+                }
                 &:hover {                       // --- 鼠标悬停 ---
                     color: var(--color-hover);
                     fill: var(--color-hover);
