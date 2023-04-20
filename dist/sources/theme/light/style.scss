@@ -480,7 +480,7 @@ global {
                     background: var(--g-border-color-hover); fill: var(--g-color-hover);
                 }
                 &:active {
-                    background: var(--g-background);
+                    background: var(--g-border-color-active); fill: var(--g-color-hover);
                 }
 
                 .nav_tag-svg {
