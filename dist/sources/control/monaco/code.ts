@@ -346,15 +346,15 @@ export default class extends clickgo.control.AbstractControl {
         loaderEl.addEventListener('load', () => {
             (iwindow as any).require.config({
                 paths: {
-                    'vs': clickgo.core.getCdn() + '/npm/monaco-editor@0.34.1/min/vs'
+                    'vs': clickgo.core.getCdn() + '/npm/monaco-editor@0.37.1/min/vs'
                 }
             });
             // --- 初始化 Monaco ---
             const proxy = (iwindow as any).URL.createObjectURL(new Blob([`
                 self.MonacoEnvironment = {
-                    baseUrl: '${clickgo.core.getCdn()}/npm/monaco-editor@0.34.1/min/'
+                    baseUrl: '${clickgo.core.getCdn()}/npm/monaco-editor@0.37.1/min/'
                 };
-                importScripts('${clickgo.core.getCdn()}/npm/monaco-editor@0.34.1/min/vs/base/worker/workerMain.js');
+                importScripts('${clickgo.core.getCdn()}/npm/monaco-editor@0.37.1/min/vs/base/worker/workerMain.js');
             `], { type: 'text/javascript' }));
             (iwindow as any).MonacoEnvironment = {
                 getWorkerUrl: () => proxy
@@ -369,6 +369,44 @@ export default class extends clickgo.control.AbstractControl {
                         'enabled': false
                     },
                     'readOnly': this.props.readonly
+                }, {
+                    'codeEditorService': {
+                        onCodeEditorAdd: () => {
+                            //
+                        },
+                        onCodeEditorRemove: () => {
+                            //
+                        },
+                        listCodeEditors: () => {
+                            return [];
+                        },
+                        onDiffEditorAdd: () => {
+                            //
+                        },
+                        onDiffEditorRemove: () => {
+                            //
+                        },
+                        listDiffEditors: () => {
+                            return [];
+                        },
+                        willCreateCodeEditor: () => {
+                            //
+                        },
+                        addCodeEditor: () => {
+                            //
+                        },
+                        getFocusedCodeEditor: () => {
+                            return this.access.instance;
+                        },
+                        openCodeEditor: (input: any) => {
+                            this.emit('jump', input);
+                            /*
+                            source.setSelection(input.options.selection);
+                            source.revealLine(input.options.selection.startLineNumber);
+                            */
+                            return this.access.instance;
+                        }
+                    }
                 });
                 // --- 自动设置大小 ---
                 clickgo.dom.watchSize(this.refs.iframe, () => {
@@ -379,6 +417,7 @@ export default class extends clickgo.control.AbstractControl {
                     this.access.monaco.editor.setTheme(this.props.theme);
                 }
                 // --- 绑定点击引用事件 ---
+                /*
                 const editorService = this.access.instance._codeEditorService;
                 const openEditorBase = editorService.openCodeEditor.bind(editorService);
                 editorService.openCodeEditor = async (input: any, source: any) => {
@@ -388,10 +427,11 @@ export default class extends clickgo.control.AbstractControl {
                         /*
                         source.setSelection(input.options.selection);
                         source.revealLine(input.options.selection.startLineNumber);
-                        */
+                        /
                     }
                     return result;  // 必须 return result
                 };
+                */
                 // --- 绑定 contextmenu ---
                 if (navigator.clipboard) {
                     monacoEl.addEventListener('contextmenu', (e: MouseEvent) => {

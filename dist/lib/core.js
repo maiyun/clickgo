@@ -186,7 +186,7 @@ const modules = {
         func: function () {
             return __awaiter(this, void 0, void 0, function* () {
                 return new Promise(function (resolve, reject) {
-                    fetch(loader.cdn + '/npm/monaco-editor@0.34.1/min/vs/loader.js').then(function (r) {
+                    fetch(loader.cdn + '/npm/monaco-editor@0.37.1/min/vs/loader.js').then(function (r) {
                         return r.blob();
                     }).then(function (b) {
                         return tool.blob2DataUrl(b);
@@ -206,18 +206,32 @@ const modules = {
         func: function () {
             return __awaiter(this, void 0, void 0, function* () {
                 yield loader.loadScripts([
-                    'https://cdn.jsdelivr.net/npm/xterm@5.1.0/lib/xterm.js',
-                    'https://cdn.jsdelivr.net/npm/xterm-addon-fit@0.7.0/lib/xterm-addon-fit.js',
-                    'https://cdn.jsdelivr.net/npm/xterm-addon-webgl@0.14.0/lib/xterm-addon-webgl.js'
+                    loader.cdn + '/npm/xterm@5.1.0/lib/xterm.js',
+                    loader.cdn + '/npm/xterm-addon-fit@0.7.0/lib/xterm-addon-fit.js',
+                    loader.cdn + '/npm/xterm-addon-webgl@0.14.0/lib/xterm-addon-webgl.js'
                 ]);
                 yield loader.loadLinks([
-                    'https://cdn.jsdelivr.net/npm/xterm@5.1.0/css/xterm.min.css'
+                    loader.cdn + '/npm/xterm@5.1.0/css/xterm.min.css'
                 ]);
                 loader.loadStyle('.xterm-viewport::-webkit-scrollbar{display:none;}');
                 if (!window.Terminal) {
                     throw Error('Xterm load failed.');
                 }
                 return [window.Terminal, window.FitAddon.FitAddon, window.WebglAddon.WebglAddon];
+            });
+        },
+        'obj': null,
+        'loading': false,
+        'resolve': []
+    },
+    'echarts': {
+        func: function () {
+            return __awaiter(this, void 0, void 0, function* () {
+                yield loader.loadScript(loader.cdn + '/npm/echarts@5.4.2/dist/echarts.min.js');
+                if (!window.echarts) {
+                    throw Error('Xterm load failed.');
+                }
+                return window.echarts;
             });
         },
         'obj': null,

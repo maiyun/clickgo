@@ -315,14 +315,14 @@ class default_1 extends clickgo.control.AbstractControl {
             loaderEl.addEventListener('load', () => {
                 iwindow.require.config({
                     paths: {
-                        'vs': clickgo.core.getCdn() + '/npm/monaco-editor@0.34.1/min/vs'
+                        'vs': clickgo.core.getCdn() + '/npm/monaco-editor@0.37.1/min/vs'
                     }
                 });
                 const proxy = iwindow.URL.createObjectURL(new Blob([`
                 self.MonacoEnvironment = {
-                    baseUrl: '${clickgo.core.getCdn()}/npm/monaco-editor@0.34.1/min/'
+                    baseUrl: '${clickgo.core.getCdn()}/npm/monaco-editor@0.37.1/min/'
                 };
-                importScripts('${clickgo.core.getCdn()}/npm/monaco-editor@0.34.1/min/vs/base/worker/workerMain.js');
+                importScripts('${clickgo.core.getCdn()}/npm/monaco-editor@0.37.1/min/vs/base/worker/workerMain.js');
             `], { type: 'text/javascript' }));
                 iwindow.MonacoEnvironment = {
                     getWorkerUrl: () => proxy
@@ -336,6 +336,34 @@ class default_1 extends clickgo.control.AbstractControl {
                             'enabled': false
                         },
                         'readOnly': this.props.readonly
+                    }, {
+                        'codeEditorService': {
+                            onCodeEditorAdd: () => {
+                            },
+                            onCodeEditorRemove: () => {
+                            },
+                            listCodeEditors: () => {
+                                return [];
+                            },
+                            onDiffEditorAdd: () => {
+                            },
+                            onDiffEditorRemove: () => {
+                            },
+                            listDiffEditors: () => {
+                                return [];
+                            },
+                            willCreateCodeEditor: () => {
+                            },
+                            addCodeEditor: () => {
+                            },
+                            getFocusedCodeEditor: () => {
+                                return this.access.instance;
+                            },
+                            openCodeEditor: (input) => {
+                                this.emit('jump', input);
+                                return this.access.instance;
+                            }
+                        }
                     });
                     clickgo.dom.watchSize(this.refs.iframe, () => {
                         this.access.instance.layout();
@@ -343,15 +371,6 @@ class default_1 extends clickgo.control.AbstractControl {
                     if (this.props.theme) {
                         this.access.monaco.editor.setTheme(this.props.theme);
                     }
-                    const editorService = this.access.instance._codeEditorService;
-                    const openEditorBase = editorService.openCodeEditor.bind(editorService);
-                    editorService.openCodeEditor = (input, source) => __awaiter(this, void 0, void 0, function* () {
-                        const result = yield openEditorBase(input, source);
-                        if (result === null) {
-                            this.emit('jump', input);
-                        }
-                        return result;
-                    });
                     if (navigator.clipboard) {
                         monacoEl.addEventListener('contextmenu', (e) => {
                             e.preventDefault();
