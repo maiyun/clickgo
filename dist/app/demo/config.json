@@ -16,7 +16,8 @@
         "/clickgo/control/desc",
         "/clickgo/control/html",
         "/clickgo/control/iconview",
-        "/clickgo/control/xterm"
+        "/clickgo/control/xterm",
+        "/clickgo/control/echarts"
     ],
     "style": "/package/global",
 
@@ -34,6 +35,8 @@
         "/form/control/desc/desc.xml",
         "/form/control/dialog/dialog.js",
         "/form/control/dialog/dialog.xml",
+        "/form/control/echarts/echarts.js",
+        "/form/control/echarts/echarts.xml",
         "/form/control/file/file.js",
         "/form/control/file/file.xml",
         "/form/control/flow/flow.css",

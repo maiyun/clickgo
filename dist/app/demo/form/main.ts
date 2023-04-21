@@ -29,6 +29,7 @@ import ctableFrm from './control/table/table';
 import ctextFrm from './control/text/text';
 import cvflowFrm from './control/vflow/vflow';
 import cxtermFrm from './control/xterm/xterm';
+import cechartsFrm from './control/echarts/echarts';
 
 import eformFrm from './event/form/form';
 import eotherFrm from './event/other/other';
@@ -80,6 +81,10 @@ export default class extends clickgo.form.AbstractForm {
             }
             case 'cdialog': {
                 frm = await clickgo.form.create(cdialogFrm);
+                break;
+            }
+            case 'cecharts': {
+                frm = await clickgo.form.create(cechartsFrm);
                 break;
             }
             case 'cfile': {

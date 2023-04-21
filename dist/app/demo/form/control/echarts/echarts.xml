@@ -1,0 +1,12 @@
+<form title="Echarts" width="500" height="450">
+    <layout direction="v" gutter="10" style="flex: 1; padding: 10px;">
+        <echarts style="flex: 1;" :data="datas[data[0]]" :theme="theme[0]" :disabled="disabled" @init="onInit"></echarts>
+        <layout gutter="10" align-v="center">
+            <label>Data:</label>
+            <select :data="['line', 'stack']" v-model="data" style="flex: 1;"></select>
+            <label>Theme:</label>
+            <select :data="['light', 'dark']" v-model="theme" style="flex: 1;"></select>
+            <button @click="disabled = !disabled">{{disabled ? '' : '!'}}disabled</button>
+        </layout>
+    </layout>
+</form>

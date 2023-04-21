@@ -416,22 +416,6 @@ export default class extends clickgo.control.AbstractControl {
                 if (this.props.theme) {
                     this.access.monaco.editor.setTheme(this.props.theme);
                 }
-                // --- 绑定点击引用事件 ---
-                /*
-                const editorService = this.access.instance._codeEditorService;
-                const openEditorBase = editorService.openCodeEditor.bind(editorService);
-                editorService.openCodeEditor = async (input: any, source: any) => {
-                    const result = await openEditorBase(input, source);
-                    if (result === null) {
-                        this.emit('jump', input);
-                        /*
-                        source.setSelection(input.options.selection);
-                        source.revealLine(input.options.selection.startLineNumber);
-                        /
-                    }
-                    return result;  // 必须 return result
-                };
-                */
                 // --- 绑定 contextmenu ---
                 if (navigator.clipboard) {
                     monacoEl.addEventListener('contextmenu', (e: MouseEvent) => {
