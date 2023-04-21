@@ -1,5 +1,9 @@
 # Changelog
 
+# 3.3.1
+
+[\*] Optimize xterm and echarts libraries.
+
 # 3.3.0
 
 [+] Add xterm control.  
