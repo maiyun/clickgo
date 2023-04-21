@@ -1,5 +1,12 @@
 # Changelog
 
+# 3.3.0
+
+[+] Add xterm control.  
+[+] Add echarts control. 
+[+] Add light theme.  
+[\*] Update monaco to 0.37.1.
+
 # 3.2.14
 
 [\*] Optimize style hierarchy relationships.
