@@ -3,7 +3,7 @@
 # 3.3.0
 
 [+] Add xterm control.  
-[+] Add echarts control. 
+[+] Add echarts control.  
 [+] Add light theme.  
 [\*] Update monaco to 0.37.1.
 
