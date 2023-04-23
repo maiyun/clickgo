@@ -1,5 +1,9 @@
 # Changelog
 
+# 3.3.2
+
+[\*] Optimize xterm, echarts, monaco controls.
+
 # 3.3.1
 
 [\*] Optimize xterm and echarts libraries.
