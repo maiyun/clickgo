@@ -37,7 +37,8 @@ class default_1 extends clickgo.control.AbstractControl {
     constructor() {
         super(...arguments);
         this.props = {
-            'disabled': false
+            'disabled': false,
+            'theme': 'black'
         };
         this.notInit = false;
         this.isLoading = true;
@@ -81,9 +82,16 @@ class default_1 extends clickgo.control.AbstractControl {
             this.access.term.onData((char) => {
                 this.emit('data', char);
             });
-            this.access.term.onResize((cr) => {
-                this.emit('resize', cr);
-            });
+            this.access.term.onResize((cr) => __awaiter(this, void 0, void 0, function* () {
+                const screen = this.refs.content.querySelector('.xterm-screen');
+                yield clickgo.tool.sleep(50);
+                this.emit('resize', {
+                    'cols': cr.cols,
+                    'rows': cr.rows,
+                    'width': screen.clientWidth,
+                    'height': screen.clientHeight
+                });
+            }));
             const fitAddon = new xterm[1]();
             this.access.term.loadAddon(fitAddon);
             const webgl = new xterm[2]();

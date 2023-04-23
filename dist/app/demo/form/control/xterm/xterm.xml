@@ -1,3 +1,6 @@
 <form title="Xterm" width="500" height="450">
-    <xterm ref="xterm" style="flex: 1;" @data="onData" @init="onInit"></xterm>
+    <layout direction="v" style="flex: 1;">
+        <xterm ref="xterm" style="flex: 1; height: 0;" @data="onData" @resize="onResize" @init="onInit"></xterm>
+        <label style="padding: 5px;">cols: {{r.cols}}, rows: {{r.rows}}, width: {{r.width}}, height: {{r.height}}</label>
+    </layout>
 </form>

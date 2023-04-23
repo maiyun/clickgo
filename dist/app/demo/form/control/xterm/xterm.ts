@@ -2,6 +2,13 @@ import * as clickgo from 'clickgo';
 
 export default class extends clickgo.form.AbstractForm {
 
+    public r: Record<string, any> = {
+        'cols': 0,
+        'rows': 0,
+        'width': 0,
+        'height': 0
+    };
+
     public access: {
         'term': any;
     } = {
@@ -56,6 +63,10 @@ export default class extends clickgo.form.AbstractForm {
         this.access.term = term;
         this.access.term.write('~$ ');
         this.access.term.focus();
+    }
+
+    public onResize(r: Record<string, any>): void {
+        this.r = r;
     }
 
 }

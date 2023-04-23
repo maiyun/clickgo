@@ -27,6 +27,12 @@ const clickgo = __importStar(require("clickgo"));
 class default_1 extends clickgo.form.AbstractForm {
     constructor() {
         super(...arguments);
+        this.r = {
+            'cols': 0,
+            'rows': 0,
+            'width': 0,
+            'height': 0
+        };
         this.access = {
             'term': undefined
         };
@@ -76,6 +82,9 @@ class default_1 extends clickgo.form.AbstractForm {
         this.access.term = term;
         this.access.term.write('~$ ');
         this.access.term.focus();
+    }
+    onResize(r) {
+        this.r = r;
     }
 }
 exports.default = default_1;

@@ -1,4 +1,4 @@
-<div class="wrap" :class="[notInit && 'notInit']" :data-cg-disabled="propBoolean('disabled') ? '' : undefined">
+<div class="wrap" :data-cg-disabled="propBoolean('disabled') ? '' : undefined">
     <div v-if="notInit" class="notInit">Monaco module not found.</div>
     <iframe v-else class="iframe" ref="iframe"></iframe>
     <div class="mask" :class="[isLoading && 'loading']" v-show="showMask">

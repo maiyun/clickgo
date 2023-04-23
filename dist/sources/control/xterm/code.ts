@@ -4,8 +4,12 @@ export default class extends clickgo.control.AbstractControl {
 
     public props: {
         'disabled': boolean | string;
+
+        'theme': string;
     } = {
-            'disabled': false
+            'disabled': false,
+
+            'theme': 'black'
         };
 
     public notInit = false;
@@ -62,8 +66,15 @@ export default class extends clickgo.control.AbstractControl {
             this.emit('data', char);
         });
         // --- onResize ---
-        this.access.term.onResize((cr: Record<string, number>) => {
-            this.emit('resize', cr);
+        this.access.term.onResize(async (cr: Record<string, number>) => {
+            const screen: HTMLDivElement = this.refs.content.querySelector('.xterm-screen')!;
+            await clickgo.tool.sleep(50);
+            this.emit('resize', {
+                'cols': cr.cols,
+                'rows': cr.rows,
+                'width': screen.clientWidth,
+                'height': screen.clientHeight
+            });
         });
         // --- 加载自适应插件 ---
         const fitAddon = new xterm[1]();

@@ -1,4 +1,4 @@
-<div class="wrap" :class="[notInit && 'notInit']" :data-cg-disabled="propBoolean('disabled') ? '' : undefined">
+<div class="wrap" :data-cg-disabled="propBoolean('disabled') ? '' : undefined">
     <div v-if="notInit" class="notInit">Echarts module not found.</div>
     <div v-else class="content" ref="content"></div>
     <div v-if="isLoading" class="mask" :class="[isLoading && 'loading']">
