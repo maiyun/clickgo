@@ -6,7 +6,7 @@ global {
     // --- 基础颜色 ---
 
     --face:#FFF;
-    --pop-background:rgba(255, 255, 255, .4);
+    --pop-background:rgba(255, 255, 255, .6);
 
     // --- 组件默认颜色（如按钮） ---
 
@@ -782,6 +782,26 @@ global {
 // -- CONTROL -- task-item --
 
 .task-item_wrap {
+    &.task-item_left {
+        &.task-item_multi::after {
+            box-shadow: 0 1px 2px rgba(0, 0, 0, .3) inset;
+        }
+    }
+    &.task-item_right {
+        &.task-item_multi::after {
+            box-shadow: 0 1px 2px rgba(0, 0, 0, .3) inset;
+        }
+    }
+    &.task-item_top {
+        &.task-item_multi::after {
+            box-shadow: 1px 0 2px rgba(0, 0, 0, .3) inset;
+        }
+    }
+    &.task-item_bottom {
+        &.task-item_multi::after {
+            box-shadow: 1px 0 2px rgba(0, 0, 0, .3) inset;
+        }
+    }
     &.task-item_opened {
         .task-item_line::after {
             background: var(--g-border-color-active);
