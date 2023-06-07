@@ -391,7 +391,7 @@ global {
             background: var(--g-background);
         }
         &:active, &[data-cg-pop-open] {
-            background: var(--g-border-color-hover);
+            background: var(--g-border-color-hover); color: var(--g-color-hover);
         }
     }
     &[data-cg-disabled] {
