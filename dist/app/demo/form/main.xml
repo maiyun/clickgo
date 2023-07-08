@@ -17,6 +17,7 @@
                 <button @click="openForm('cdialog')">Dialog</button>
                 <button @click="openForm('cfile')">File</button>
                 <button @click="openForm('cblock')">Block</button>
+                <button @click="openForm('csvg')">Svg</button>
                 <button @click="openForm('cflow')">Flow</button>
                 <button @click="openForm('cvflow')">Vflow</button>
                 <button @click="openForm('cmarquee')">Marquee</button>

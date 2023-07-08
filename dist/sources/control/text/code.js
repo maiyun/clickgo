@@ -404,13 +404,13 @@ class default_1 extends clickgo.control.AbstractControl {
             }
             this.refs.text.selectionEnd = prop;
         });
-        clickgo.dom.watchStyle(this.element, ['font', 'background', 'padding'], (n, v) => {
+        clickgo.dom.watchStyle(this.element, ['font', 'background-color', 'padding'], (n, v) => {
             switch (n) {
                 case 'font': {
                     this.font = v;
                     break;
                 }
-                case 'background': {
+                case 'background-color': {
                     this.background = v;
                     const hsl = clickgo.tool.rgb2hsl(v);
                     this.darkbg = hsl[2] < 0.5 ? true : false;

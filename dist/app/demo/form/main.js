@@ -59,6 +59,7 @@ const property_1 = __importDefault(require("./control/property/property"));
 const radio_1 = __importDefault(require("./control/radio/radio"));
 const scroll_1 = __importDefault(require("./control/scroll/scroll"));
 const select_1 = __importDefault(require("./control/select/select"));
+const svg_1 = __importDefault(require("./control/svg/svg"));
 const tab_1 = __importDefault(require("./control/tab/tab"));
 const table_1 = __importDefault(require("./control/table/table"));
 const text_1 = __importDefault(require("./control/text/text"));
@@ -216,6 +217,10 @@ class default_1 extends clickgo.form.AbstractForm {
                 }
                 case 'cselect': {
                     frm = yield clickgo.form.create(select_1.default);
+                    break;
+                }
+                case 'csvg': {
+                    frm = yield clickgo.form.create(svg_1.default);
                     break;
                 }
                 case 'ctab': {

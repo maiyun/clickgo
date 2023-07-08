@@ -82,6 +82,8 @@
         "/form/control/scroll/scroll.xml",
         "/form/control/select/select.js",
         "/form/control/select/select.xml",
+        "/form/control/svg/svg.js",
+        "/form/control/svg/svg.xml",
         "/form/control/tab/tab.js",
         "/form/control/tab/tab.xml",
         "/form/control/table/table.js",

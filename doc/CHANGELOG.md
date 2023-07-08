@@ -1,5 +1,11 @@
 # Changelog
 
+# 3.3.3
+
+[+] Add svg control.  
+[\*] Optimize light theme.  
+[\*] Optimize form, button controls.
+
 # 3.3.2
 
 [\*] Optimize xterm, echarts, monaco controls.
