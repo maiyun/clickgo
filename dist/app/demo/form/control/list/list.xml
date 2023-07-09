@@ -1,6 +1,6 @@
 <form title="List" width="400" height="450" min-width="300" min-height="400" padding="10" direction="v">
     <label>Greatlist: {{select}}, list: {{select2}}, label: {{label2}}</label>
-    <tab v-model="ntab" :tabs="['greatlist', 'adaptation', 'beyond', 'list', 'async']" style="flex: 1; height: 0;">
+    <tab v-model="ntab" :tabs="['greatlist', 'adaptation', 'beyond', 'list', 'object', 'async']" style="flex: 1; height: 0;">
         <!-- 默认 -->
         <layout v-if="ntab === 'greatlist'" direction="v" style="flex: 1; width: 0; padding: 10px;">
             <greatlist v-model="select" :data="slist" :disabled="disabled" :must="must" :multi="multi" :ctrl="ctrl" :selection="selection" :gesture="gesture ? ['top', 'bottom'] : []" @gesture="onGesture" :scroll="scroll" :sizes="sizes" @select="onSelect" style="line-height: 1.3; flex: 1; height: 0;">
@@ -60,6 +60,13 @@
             </layout>
             <label class="tip">Right-click (computer) or press and hold (phone) to open the universal menu.</label>
         </layout>
+        <!-- object -->
+        <layout v-else-if="ntab === 'object'" direction="v" gutter="10" style="flex: 1; width: 0; padding: 10px;">
+            <label>Select value: {{selectObject}}</label>
+            <label>Raw data:</label>
+            <flow direction="v" style="border: solid 1px #b3b3b3; line-height: 1.5; height: 50px; padding: 5px;">{{listDataObject}}</flow>
+            <list v-model="selectObject" :disabled="disabled" :must="must" :multi="multi" :ctrl="ctrl" :selection="selection" :gesture="gesture ? ['top', 'bottom'] : []" @gesture="onGesture" :scroll="scroll" :data="listDataObject" style="flex: 1;"></list>
+        </layout>
         <!-- async -->
         <layout v-else gutter="10" style="flex: 1; width: 0; padding: 10px;">
             <layout direction="v" gutter="10" style="flex: 1; width: 0;">
@@ -76,13 +83,13 @@
             </layout>
         </layout>
     </tab>
-    <layout class="ctr" gutter="10" v-show="ntab !== 'async'">
+    <layout class="ctr" gutter="10" v-show="ntab !== 'async' && ntab !== 'object'">
         <button @click="slist.splice(-2, 0, {'type': 0, 'name': 'Card' + slist.length, 'path': 'Bob >> folder >> Card', 'src': '/package/res/r-2.svg','disabled': false})">Add</button>
         <button @click="slist.splice(-3, 1)">Remove</button>
         <button @click="scrollChange">Scroll {{scroll}}</button>
         <button @click="icon = !icon" v-show="ntab === 'list'">{{icon ? '' : '!'}}icon</button>
     </layout>
-    <layout class="ctr" gutter="10" v-show="ntab !== 'async'">
+    <layout class="ctr" gutter="10" v-show="ntab !== 'async' && ntab !== 'object'">
         <button @click="selectButton">Select {{ntab === 'list' ? 'item1' : 'item2'}}</button>
         <button @click="selectButtonList" v-show="ntab === 'list'">Select Sub3</button>
         <button @click="tree = !tree" v-show="ntab === 'list'">{{tree ? '' : '!'}}tree</button>

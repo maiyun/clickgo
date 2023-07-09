@@ -1,5 +1,10 @@
 # Changelog
 
+# 3.3.5
+
+[+] list, select control adds object data format.  
+[\*] Optimize svg control.
+
 # 3.3.4
 
 [+] Add src parameter of svg control.

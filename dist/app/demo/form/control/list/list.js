@@ -68,6 +68,13 @@ class default_1 extends clickgo.form.AbstractForm {
         this.select = [];
         this.select2 = ['Appraise'];
         this.label2 = [''];
+        this.selectObject = ['test'];
+        this.listDataObject = {
+            'test': 'This is test',
+            '-1': 'This is number',
+            'other': 'This is other',
+            'same': 'same'
+        };
         this.sub6children = [];
         this.select3 = [0];
         this.listData3 = [];

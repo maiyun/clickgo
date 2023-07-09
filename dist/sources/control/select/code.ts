@@ -16,7 +16,7 @@ export default class extends clickgo.control.AbstractControl {
         'iconDefault': string;
 
         'modelValue': string[];
-        'data': any[];
+        'data': any[] | Record<string, string>;
     } = {
             'disabled': false,
             'editable': false,

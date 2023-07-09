@@ -43,6 +43,17 @@ export default class extends clickgo.form.AbstractForm {
 
     public label2 = [''];
 
+    // --- obejct ---
+
+    public selectObject = ['test'];
+
+    public listDataObject = {
+        'test': 'This is test',
+        '-1': 'This is number',
+        'other': 'This is other',
+        'same': 'same'
+    };
+
     // --- async ---
 
     public sub6children: string[] = [];

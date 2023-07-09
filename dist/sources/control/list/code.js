@@ -136,6 +136,15 @@ class default_1 extends clickgo.control.AbstractControl {
     }
     formatData(nowData, oldData) {
         var _a, _b, _c, _d, _e, _f;
+        if (!Array.isArray(nowData)) {
+            const newArray = [];
+            for (const k in nowData) {
+                newArray.push({
+                    'value': k, 'label': nowData[k]
+                });
+            }
+            nowData = newArray;
+        }
         const data = [];
         const oldValues = [];
         for (const item of oldData) {
@@ -234,7 +243,7 @@ class default_1 extends clickgo.control.AbstractControl {
             if (this.propBoolean('async') && !item.format.children.length) {
                 item.format.tree = 2;
                 this.emit('load', item.value, (children) => {
-                    if (!children || !children.length) {
+                    if (!(children === null || children === void 0 ? void 0 : children.length)) {
                         item.format.children = [];
                         item.format.tree = -1;
                         return;

@@ -18,7 +18,7 @@ export default class extends clickgo.control.AbstractControl {
         'icon': boolean | string;
         'iconDefault': string;
 
-        'data': any[];
+        'data': any[] | Record<string, string>;
         'modelValue': Array<string | number>;
     } = {
             'disabled': false,
@@ -172,7 +172,16 @@ export default class extends clickgo.control.AbstractControl {
      * @param nowData 当前层用户数据
      * @param oldData 老数据对比层，主要用来判断 tree 是否是打开状态
      */
-    public formatData(nowData: Array<Record<string, any> | string>, oldData: any[]): any[] {
+    public formatData(nowData: Array<Record<string, any> | string> | Record<string, string>, oldData: any[]): any[] {
+        if (!Array.isArray(nowData)) {
+            const newArray: Array<Record<string, string>> = [];
+            for (const k in nowData) {
+                newArray.push({
+                    'value': k, 'label': nowData[k]
+                });
+            }
+            nowData = newArray;
+        }
         /** --- 最终的返回数据 --- */
         const data: any[] = [];
         // --- oldData 是 format 后的数据，获取当层 values ---
@@ -297,7 +306,7 @@ export default class extends clickgo.control.AbstractControl {
                 // --- 要异步加载子项 ---
                 item.format.tree = 2;
                 this.emit('load', item.value, (children?: any[]) => {
-                    if (!children || !children.length) {
+                    if (!children?.length) {
                         item.format.children = [];
                         item.format.tree = -1;
                         return;
