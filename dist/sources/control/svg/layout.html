@@ -1,1 +1,1 @@
-<svg :viewBox="layout ? viewBox : fileViewBox" xmlns="http://www.w3.org/2000/svg" v-html="layout ? layout : fileLayout"></svg>
+<svg :viewBox="layout ? viewBox : (fileViewBox ? fileViewBox : viewBox)" xmlns="http://www.w3.org/2000/svg" v-html="layout ? layout : fileLayout"></svg>
