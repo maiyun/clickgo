@@ -1,6 +1,8 @@
 <form title="Svg" width="400" height="450" min-width="400" min-height="400" padding="10" direction="v">
-    <layout align-v="center" align-h="center" style="flex: 1;" :style="{'fill': color}">
-        <svg :layout="layout" style="width: 64px; height: 64px;" />
+    <label>Shape: {{layout ? layout.slice(0, 30) + '...' : ''}}</label>
+    <label style="margin-top: 10px;">File: {{file ? file : ''}}</label>
+    <layout align-v="center" align-h="center" style="margin-top: 10px; flex: 1;" :style="{'fill': color}">
+        <svg :layout="layout" :src="file" style="width: 64px; height: 64px;" />
     </layout>
     <layout gutter="10" style="margin-top: 10px;">
         <button @click="color = undefined" style="padding: 0 10px; flex: 1; width: 0; height: 30px;">Default</button>
@@ -11,5 +13,12 @@
         <button @click="i = 0" style="padding: 0 10px; flex: 1; width: 0; height: 30px;">Shape 0</button>
         <button @click="i = 1" style="padding: 0 10px; flex: 1; width: 0; height: 30px;">1</button>
         <button @click="i = 2" style="padding: 0 10px; flex: 1; width: 0; height: 30px;">2</button>
+        <button @click="i = 3" style="padding: 0 10px; flex: 1; width: 0; height: 30px;">None</button>
+    </layout>
+    <layout gutter="10" style="margin-top: 10px;">
+        <button @click="f = 0" style="padding: 0 10px; flex: 1; width: 0; height: 30px;">File 0</button>
+        <button @click="f = 1" style="padding: 0 10px; flex: 1; width: 0; height: 30px;">1</button>
+        <button @click="f = 2" style="padding: 0 10px; flex: 1; width: 0; height: 30px;">2</button>
+        <button @click="f = 3" style="padding: 0 10px; flex: 1; width: 0; height: 30px;">None</button>
     </layout>
 </form>
