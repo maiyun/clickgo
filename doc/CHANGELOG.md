@@ -1,5 +1,9 @@
 # Changelog
 
+# 3.3.4
+
+[+] Add src parameter of svg control.
+
 # 3.3.3
 
 [+] Add svg control.  
