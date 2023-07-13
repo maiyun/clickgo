@@ -36,6 +36,24 @@ export default class extends clickgo.control.AbstractControl {
             'modelValue': []
         };
 
+    /** --- 最近的 table 控件，如果是 table 内部的本控件，才会有此控件 --- */
+    public table: any = null;
+
+    /** --- 如果是嵌套在 table 里的，那么要获取 table 内容的最大宽度（仅 split 模式），不获取的话，split 横线在横向内容内部超出时无法充满整个宽度 --- */
+    public get tableContentWidth(): number {
+        if (!this.table) {
+            return 0;
+        }
+        if (!this.table.split) {
+            return 0;
+        }
+        let w: number = 0;
+        for (const key in this.table.widthMap) {
+            w += this.table.widthMap[key];
+        }
+        return w;
+    }
+
     /** --- clientWidth --- */
     public cw = 0;
 
@@ -523,6 +541,11 @@ export default class extends clickgo.control.AbstractControl {
     }
 
     public onMounted(): void | Promise<void> {
+        const table = this.parentByName('table');
+        if (table) {
+            this.table = table;
+        }
+
         this.watch('must', (): void => {
             // --- 检测是否必须，但却没选择 ---
             if (this.propBoolean('must') && (this.valueData.length === 0)) {
@@ -582,6 +605,14 @@ export default class extends clickgo.control.AbstractControl {
             this.checkValue();
         }, {
             'deep': true
+        });
+
+        // --- 向上更新 scroll top 和 scroll left ---
+        this.watch('sl', () => {
+            this.emit('update:scroll-left', this.sl);
+        });
+        this.watch('offset', () => {
+            this.emit('update:scroll-top', this.offset);
         });
 
         // --- 监听用户设定的值的变更事件 ---

@@ -186,7 +186,7 @@ const modules = {
         func: function () {
             return __awaiter(this, void 0, void 0, function* () {
                 return new Promise(function (resolve, reject) {
-                    fetch(loader.cdn + '/npm/monaco-editor@0.37.1/min/vs/loader.js').then(function (r) {
+                    fetch(loader.cdn + '/npm/monaco-editor@0.40.0/min/vs/loader.js').then(function (r) {
                         return r.blob();
                     }).then(function (b) {
                         return tool.blob2DataUrl(b);
@@ -206,9 +206,9 @@ const modules = {
         func: function () {
             return __awaiter(this, void 0, void 0, function* () {
                 yield loader.loadScripts([
-                    loader.cdn + '/npm/xterm@5.1.0/lib/xterm.js',
+                    loader.cdn + '/npm/xterm@5.2.1/lib/xterm.js',
                     loader.cdn + '/npm/xterm-addon-fit@0.7.0/lib/xterm-addon-fit.js',
-                    loader.cdn + '/npm/xterm-addon-webgl@0.14.0/lib/xterm-addon-webgl.js'
+                    loader.cdn + '/npm/xterm-addon-webgl@0.15.0/lib/xterm-addon-webgl.js'
                 ]);
                 yield loader.loadLinks([
                     loader.cdn + '/npm/xterm@5.1.0/css/xterm.min.css'

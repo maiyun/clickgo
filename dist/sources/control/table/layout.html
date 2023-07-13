@@ -2,7 +2,7 @@
     <div class="header" ref="header" v-if="items.length">
         <div v-for="item, i of items" class="item" :class="[(item.label === nowSort[0]) && nowSort[1]]" :style="{'width': widthMap[item.label] ? widthMap[item.label] + 'px' : '0', 'flex': widthMap[item.label] ? undefined : '1'}" @mousedown="headerClick($event, i)" @touchstart="headerClick($event, i)">{{item.label}}<div v-if="propBoolean('split')" class="split" @mousedown="bindResize($event, i)" @touchstart="bindResize($event, i)"></div></div>
     </div>
-    <cg-greatlist ref="gl" :model-value="modelValue" @update:model-value="emit('update:modelValue', $event)" :data="data" :sizes="sizes" :disabled="disabled" :must="must" :multi="multi" :ctrl="ctrl" :selection="selection" @select="emit('select', $event)" :gesture="gesture" @gesture="emit('gesture', $event)" :scroll="scroll" content-width="max" @update:scroll-left="refs.header.scrollLeft=$event">
+    <cg-greatlist ref="gl" :model-value="modelValue" @update:model-value="emit('update:modelValue', $event)" :data="data" :sizes="sizes" :disabled="disabled" :must="must" :multi="multi" :ctrl="ctrl" :selection="selection" @select="emit('select', $event)" :gesture="gesture" @gesture="emit('gesture', $event)" :scroll="scroll" content-width="max" @update:scroll-left="updateScrollLeft">
         <template v-slot="data">
             <div class="item">
                 <slot :row="data.row" :index="data.index"></slot>

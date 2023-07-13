@@ -40,6 +40,7 @@ class default_1 extends clickgo.control.AbstractControl {
             'sizes': {},
             'modelValue': []
         };
+        this.table = null;
         this.cw = 0;
         this.client = 0;
         this.length = 0;
@@ -52,6 +53,19 @@ class default_1 extends clickgo.control.AbstractControl {
         this.beforeSelectValues = [];
         this.isSelectStart = false;
         this.scrollShow = true;
+    }
+    get tableContentWidth() {
+        if (!this.table) {
+            return 0;
+        }
+        if (!this.table.split) {
+            return 0;
+        }
+        let w = 0;
+        for (const key in this.table.widthMap) {
+            w += this.table.widthMap[key];
+        }
+        return w;
     }
     get isSelected() {
         return (value) => {
@@ -395,6 +409,10 @@ class default_1 extends clickgo.control.AbstractControl {
         this.emit('afterselect');
     }
     onMounted() {
+        const table = this.parentByName('table');
+        if (table) {
+            this.table = table;
+        }
         this.watch('must', () => {
             if (this.propBoolean('must') && (this.valueData.length === 0)) {
                 if (this.props.data[this.shiftStart] &&
@@ -445,6 +463,12 @@ class default_1 extends clickgo.control.AbstractControl {
             this.checkValue();
         }, {
             'deep': true
+        });
+        this.watch('sl', () => {
+            this.emit('update:scroll-left', this.sl);
+        });
+        this.watch('offset', () => {
+            this.emit('update:scroll-top', this.offset);
         });
         this.watch('modelValue', () => {
             if ((this.valueData.length === this.props.modelValue.length)

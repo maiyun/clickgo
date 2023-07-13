@@ -94,6 +94,10 @@ export default class extends clickgo.control.AbstractControl {
 
     // --- 内部 ---
 
+    public updateScrollLeft(sl: number): any {
+        this.refs.header.scrollLeft = sl;
+    }
+
     public refreshHeader(): void {
         const slots = this.slotsAll('default');
         if (slots.length === this.items.length) {

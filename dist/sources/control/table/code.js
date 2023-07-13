@@ -77,6 +77,9 @@ class default_1 extends clickgo.control.AbstractControl {
             break;
         }
     }
+    updateScrollLeft(sl) {
+        this.refs.header.scrollLeft = sl;
+    }
     refreshHeader() {
         const slots = this.slotsAll('default');
         if (slots.length === this.items.length) {
