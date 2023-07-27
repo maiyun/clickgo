@@ -159,6 +159,9 @@ export abstract class AbstractControl {
 
     // --- 以下为 control 有，但窗体没有 ---
 
+    /** --- 组件内部文件，由系统重写 --- */
+    public readonly files: Record<string, Blob | string> = {};
+
     /** --- 组件参数，由用户定义重写 --- */
     public readonly props = {};
 
@@ -386,6 +389,7 @@ export async function init(
                     t.controls[name] = {
                         'layout': '',
 
+                        'files': item.files,
                         'props': {
                             'formFocus': {
                                 'default': false
@@ -455,7 +459,7 @@ export async function init(
                                         });
                                         return '';
                                     }
-                                    // --- 给 form 的 class 增加 filename 的 get ---
+                                    // --- 给 control 的 class 增加 filename 的 get ---
                                     code = code.replace(/extends[\s\S]+?\.\s*AbstractControl\s*{/, (t: string) => {
                                         return t + 'get filename() {return __filename;}';
                                     });
@@ -495,6 +499,9 @@ export async function init(
                     // --- DATA ---
                     const cdata = Object.entries(cls);
                     for (const item of cdata) {
+                        if (item[0] === 'files') {
+                            continue;
+                        }
                         if (item[0] === 'access') {
                             // --- access 属性不放在 data 当中 ---
                             t.controls[name].access = item[1] as any;
@@ -600,7 +607,7 @@ export function buildComponents(
                 if (data.props) {
                     delete data.props;
                 }
-                return tool.clone(data);
+                return data;
             },
             'methods': control.methods,
             'computed': computed,
@@ -610,6 +617,10 @@ export function buildComponents(
                 this.props = this.$props;
                 this.slots = this.$slots;
                 this.access = tool.clone(control.access);
+                this.files = {};
+                for (const fname in control.files) {
+                    this.files[fname] = control.files[fname];
+                }
                 this.onCreated();
             },
             beforeMount: function() {

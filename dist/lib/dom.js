@@ -85,7 +85,7 @@ document.addEventListener('touchstart', function () {
     'passive': true
 });
 function hasTouchButMouse(e) {
-    if (e instanceof TouchEvent) {
+    if (e instanceof TouchEvent || e.type === 'touchstart') {
         return false;
     }
     if ((e.pointerType === 'touch') && (e.type === 'contextmenu')) {
@@ -1204,8 +1204,8 @@ function bindLong(e, long) {
     if (hasTouchButMouse(e)) {
         return;
     }
-    const tx = e instanceof MouseEvent ? e.clientX : e.touches[0].clientX;
-    const ty = e instanceof MouseEvent ? e.clientY : e.touches[0].clientY;
+    const tx = (e instanceof MouseEvent || e.type === 'mousedown') ? e.clientX : e.touches[0].clientX;
+    const ty = (e instanceof MouseEvent || e.type === 'mousedown') ? e.clientY : e.touches[0].clientY;
     let ox = 0;
     let oy = 0;
     let isLong = false;

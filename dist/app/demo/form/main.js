@@ -47,6 +47,7 @@ const iconview_1 = __importDefault(require("./control/iconview/iconview"));
 const link_1 = __importDefault(require("./control/link/link"));
 const layout_1 = __importDefault(require("./control/layout/layout"));
 const list_1 = __importDefault(require("./control/list/list"));
+const map_1 = __importDefault(require("./control/map/map"));
 const marquee_1 = __importDefault(require("./control/marquee/marquee"));
 const menu_1 = __importDefault(require("./control/menu/menu"));
 const monaco_1 = __importDefault(require("./control/monaco/monaco"));
@@ -173,6 +174,10 @@ class default_1 extends clickgo.form.AbstractForm {
                     frm = yield clickgo.form.create('control/loading/loading', undefined, {
                         'path': this.filename
                     });
+                    break;
+                }
+                case 'cmap': {
+                    frm = yield clickgo.form.create(map_1.default);
                     break;
                 }
                 case 'cmarquee': {

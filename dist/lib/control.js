@@ -42,6 +42,7 @@ const form = __importStar(require("./form"));
 const fs = __importStar(require("./fs"));
 class AbstractControl {
     constructor() {
+        this.files = {};
         this.props = {};
         this.slots = {};
     }
@@ -269,6 +270,7 @@ function init(taskId, invoke) {
                         let prep = '';
                         t.controls[name] = {
                             'layout': '',
+                            'files': item.files,
                             'props': {
                                 'formFocus': {
                                     'default': false
@@ -362,6 +364,9 @@ function init(taskId, invoke) {
                         }
                         const cdata = Object.entries(cls);
                         for (const item of cdata) {
+                            if (item[0] === 'files') {
+                                continue;
+                            }
                             if (item[0] === 'access') {
                                 t.controls[name].access = item[1];
                                 continue;
@@ -454,7 +459,7 @@ function buildComponents(taskId, formId, path) {
                 if (data.props) {
                     delete data.props;
                 }
-                return tool.clone(data);
+                return data;
             },
             'methods': control.methods,
             'computed': computed,
@@ -463,6 +468,10 @@ function buildComponents(taskId, formId, path) {
                 this.props = this.$props;
                 this.slots = this.$slots;
                 this.access = tool.clone(control.access);
+                this.files = {};
+                for (const fname in control.files) {
+                    this.files[fname] = control.files[fname];
+                }
                 this.onCreated();
             },
             beforeMount: function () {

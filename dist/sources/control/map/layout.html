@@ -1,0 +1,16 @@
+<div class="wrap" :data-cg-disabled="propBoolean('disabled') ? '' : undefined">
+    <div v-if="notInit" class="notInit">Key not found.</div>
+    <iframe v-else class="iframe" @load="iframeLoad"></iframe>
+    <div class="mask" :class="[isLoading && 'loading']" v-show="showMask">
+        <cg-loading v-if="isLoading"></cg-loading>
+    </div>
+    <teleport to="system">
+        <div ref="pop" class="pop">
+            <slot>
+                <cg-menulist>
+                    <cg-menulist-item alt="R" @click="removeNode">{{l('remove node')}}</cg-menulist-item>
+                </cg-menulist>
+            </slot>
+        </div>
+    </teleport>
+</div>

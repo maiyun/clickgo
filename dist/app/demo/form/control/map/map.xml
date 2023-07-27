@@ -1,0 +1,42 @@
+<form title="Map" width="500" min-width="380" height="500" min-height="400" padding="10">
+    <layout gutter="10" direction="v" style="flex: 1; width: 0;">
+        <label>lat: {{lat}}, lng: {{lng}}</label>
+        <map :akey="keyReal" :factory="factoryReal" :css="css" v-model:zoom="zoom" :zoomControl="zoomControl" v-model:lat="lat" v-model:lng="lng" v-model:markers="markers" v-model:lines="lines" v-model:polygons="polygons" v-model:overlays="overlays" @mapClick="click" @markerClick="mc" @markerUpdate="markerEvent" @lineInsert="lineEvent" @lineRemove="lineEvent" @lineUpdate="lineEvent" style="flex: 1; height: 0;"></map>
+        <layout gutter="10">
+            <select v-model="factory" :data="['google', 'tianditu']" style="height: 30px;"></select>
+            <text v-model="key" placeholder="Key" style="flex: 1; height: 30px;" />
+            <button @click="load" style="height: 30px;">Load</button>
+        </layout>
+        <layout gutter="10" align-v="center">
+            <label>zoom:</label><text v-model="zoom" style="height: 30px; flex: 1;" />
+            <button @click="zoomControl = !zoomControl" style="height: 30px;">zoomCtrl: {{zoomControl ? 'true' : 'false'}}</button>
+        </layout>
+        <layout gutter="10" align-v="center">
+            <label>marker:</label>
+            <button @click="markerAdd" style="height: 30px;">Add</button>
+            <button @click="markerRemove" style="height: 30px;">Remove</button>
+            <button @click="markerDrag" style="height: 30px;">Change 2 drag</button>
+            <button @click="markerAddGaoqiao(false)" style="height: 30px;">Add Gaoqiao (GCJ02)</button>
+            <button @click="markerAddGaoqiao(true)" style="height: 30px;">WGS84</button>
+        </layout>
+        <tab v-model="ntab" :tabs="['marker', 'line', 'polygon', 'overlay', 'log']">
+            <flow direction="v" style="line-height: 1.5; flex: 1; height: 100px; padding: 5px;">
+                <template v-if="ntab === 'log'">
+                    <div style="display: flex;border-bottom: solid 1px rgba(0,0,0,.1);">
+                        <div style="width: 100px;">TIME</div>
+                        <div style="width: 100px;">OBJECT</div>
+                        <div style="width: 100px;">EVENT</div>
+                        <div style="flex: 1;">DATA</div>
+                    </div>
+                    <div v-for="item of dataInfo" style="display: flex;border-bottom: solid 1px rgba(0,0,0,.1);">
+                        <div style="width: 100px;">{{item.time}}</div>
+                        <div style="width: 100px;">{{item.object}}</div>
+                        <div style="width: 100px;">{{item.event}}</div>
+                        <div style="flex: 1;">{{item.data}}</div>
+                    </div>
+                </template>
+                <template v-else>{{dataInfo}}</template>
+            </flow>
+        </tab>
+    </layout>
+</form>

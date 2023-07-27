@@ -400,6 +400,7 @@ export interface ITask {
     'controls': Record<string, {
         'layout': string;
 
+        'files': Record<string, Blob | string>;
         'props': Record<string, any>;
         'data': Record<string, any>;
         'access': Record<string, any>;

@@ -1792,13 +1792,13 @@ export function showPop(el: HTMLElement, pop: HTMLElement | undefined, direction
     else {
         let x: number;
         let y: number;
-        if (direction instanceof MouseEvent) {
-            x = direction.clientX;
-            y = direction.clientY;
+        if (direction instanceof MouseEvent || (direction as any).type === 'mousedown') {
+            x = (direction as MouseEvent).clientX;
+            y = (direction as MouseEvent).clientY;
         }
-        else if (direction instanceof TouchEvent) {
-            x = direction.touches[0].clientX;
-            y = direction.touches[0].clientY;
+        else if (direction instanceof TouchEvent || (direction as any).type === 'touchstart') {
+            x = (direction as TouchEvent).touches[0].clientX;
+            y = (direction as TouchEvent).touches[0].clientY;
         }
         else {
             x = direction.x;

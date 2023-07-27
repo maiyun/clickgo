@@ -12,6 +12,7 @@ import ciconviewFrm from './control/iconview/iconview';
 import clinkFrm from './control/link/link';
 import clayoutFrm from './control/layout/layout';
 import clistFrm from './control/list/list';
+import cmapFrm from './control/map/map';
 import cmarqueeFrm from './control/marquee/marquee';
 import cmenuFrm from './control/menu/menu';
 import cmonacoFrm from './control/monaco/monaco';
@@ -140,6 +141,10 @@ export default class extends clickgo.form.AbstractForm {
                 frm = await clickgo.form.create('control/loading/loading', undefined, {
                     'path': this.filename
                 });
+                break;
+            }
+            case 'cmap': {
+                frm = await clickgo.form.create(cmapFrm);
                 break;
             }
             case 'cmarquee': {

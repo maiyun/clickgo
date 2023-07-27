@@ -85,7 +85,7 @@ document.addEventListener('touchstart', function() {
  * --- 判断当前的事件是否是含有 touch 的设备触发的，如果当前就是 touch 则直接返回 false（false 代表 OK，true 代表 touch 设备却触发了 mouse 事件） ---
  */
 export function hasTouchButMouse(e: MouseEvent | TouchEvent | PointerEvent): boolean {
-    if (e instanceof TouchEvent) {
+    if (e instanceof TouchEvent || e.type === 'touchstart') {
         return false;
     }
     if (((e as any).pointerType === 'touch') && (e.type === 'contextmenu')) {
@@ -1548,8 +1548,8 @@ export function bindLong(e: MouseEvent | TouchEvent, long: (e: MouseEvent | Touc
         return;
     }
     /** --- 上一次的坐标 --- */
-    const tx: number = e instanceof MouseEvent ? e.clientX : e.touches[0].clientX;
-    const ty: number = e instanceof MouseEvent ? e.clientY : e.touches[0].clientY;
+    const tx: number = (e instanceof MouseEvent || e.type === 'mousedown') ? (e as MouseEvent).clientX : e.touches[0].clientX;
+    const ty: number = (e instanceof MouseEvent || e.type === 'mousedown') ? (e as MouseEvent).clientY : e.touches[0].clientY;
     let ox:  number = 0;
     let oy: number = 0;
     /** --- 是否执行了 long --- */

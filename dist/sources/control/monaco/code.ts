@@ -61,17 +61,17 @@ export default class extends clickgo.control.AbstractControl {
         'ko': {
             'copy': '복사',
             'cut': '잘라내기',
-            'paste': '붙여넣기',
+            'paste': '붙여넣기'
         },
         'th': {
             'copy': 'คัดลอก',
             'cut': 'ตัด',
-            'paste': 'วาง',
+            'paste': 'วาง'
         },
         'es': {
             'copy': 'Copiar',
             'cut': 'Cortar',
-            'paste': 'Pegar',
+            'paste': 'Pegar'
         },
         'de': {
             'copy': 'Kopieren',

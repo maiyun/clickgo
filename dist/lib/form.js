@@ -1363,11 +1363,11 @@ function showPop(el, pop, direction, opt = {}) {
     else {
         let x;
         let y;
-        if (direction instanceof MouseEvent) {
+        if (direction instanceof MouseEvent || direction.type === 'mousedown') {
             x = direction.clientX;
             y = direction.clientY;
         }
-        else if (direction instanceof TouchEvent) {
+        else if (direction instanceof TouchEvent || direction.type === 'touchstart') {
             x = direction.touches[0].clientX;
             y = direction.touches[0].clientY;
         }
