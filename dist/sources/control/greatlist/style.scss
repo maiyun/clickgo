@@ -29,9 +29,6 @@
                 }
                 &[data-cg-disabled] {
                     color: var(--g-color-disabled); fill: var(--g-color-disabled);
-                    &:hover {
-                        background: var(--g-plain-background-disabled);
-                    }
                 }
     
                 .itemInner {

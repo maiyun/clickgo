@@ -1,5 +1,5 @@
 .wrap {
-    display: flex; outline: none; padding: var(--g-padding); border-radius: var(--g-radius); border: solid .5px var(--g-border-color);
+    display: flex; outline: none; padding: var(--g-padding); border-radius: var(--g-radius); border: solid .5px var(--g-border-color); overflow: hidden;
     &.area-all {
         background: var(--g-background);
     }

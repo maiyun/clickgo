@@ -16,7 +16,7 @@
             <button @click="markerAdd" style="height: 30px;">Add</button>
             <button @click="markerRemove" style="height: 30px;">Remove</button>
             <button @click="markerDrag" style="height: 30px;">Change 2 drag</button>
-            <button @click="markerAddGaoqiao(false)" style="height: 30px;">Add Gaoqiao (GCJ02)</button>
+            <button @click="markerAddGaoqiao(false)" style="height: 30px;">Gaoqiao (GCJ02)</button>
             <button @click="markerAddGaoqiao(true)" style="height: 30px;">WGS84</button>
         </layout>
         <tab v-model="ntab" :tabs="['marker', 'line', 'polygon', 'overlay', 'log']">

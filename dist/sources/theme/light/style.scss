@@ -1,7 +1,7 @@
 global {
-    --g-padding:10px;
-    --g-margin:5px;
-    --g-radius:5px;
+    --g-padding:12px;
+    --g-margin:7px;
+    --g-radius:3px;
 
     // --- 基础颜色 ---
 
@@ -10,41 +10,36 @@ global {
 
     // --- 组件默认颜色（如按钮） ---
 
-    --g-color-hover:#FFF;
-    --g-color-active:#FFF;
-    --g-color-focus:#FFF;
-
-    --g-background:rgba(0,0,0,.04);
-    --g-background-hover:hsl(240,70%,60%);
-    --g-background-active:hsl(240,70%,55%);
-    --g-background-opacity:hsla(240,70%,60%,.05);
-    --g-background-focus:hsl(240,70%,60%);
+    --g-background:transparent;
+    --g-background-hover:rgba(0,0,0,.05);
+    --g-background-active:rgba(0,0,0,.1);
+    --g-background-opacity:rgba(0,0,0,.03);
+    --g-background-focus:rgba(0,0,0,.05);
     --g-background-disabled:rgba(0,0,0,.1);
 
     --g-border-color:rgba(0,0,0,.2);
-    --g-border-color-hover:hsl(240,70%,60%);
-    --g-border-color-active:hsl(240,70%,55%);
-    --g-border-color-focus:hsl(240,70%,60%);
-    --g-border-color-disabled:rgba(0,0，0,.4);
-
-    --g-focusbox-border-color:rgba(255,255,255,.8);
+    --g-border-color-hover:rgba(0,0,0,.4);
+    --g-border-color-active:rgba(0,0,0,.6);
+    --g-border-color-focus:rgba(0,0,0,.3);
+    --g-border-color-disabled:rgba(0,0,0,.4);
     
     // --- 组件轻量颜色（如文本框） ---
 
     --g-plain-color:var(--g-color);
-    --g-plain-color-hover:hsl(240,70%,60%);
-    --g-plain-color-active:hsl(240,70%,55%);
-    --g-plain-color-focus:hsl(240,70%,60%);
+    --g-plain-color-hover:rgba(0,0,0,.7);
+    --g-plain-color-active:rgba(0,0,0,.9);
+    --g-plain-color-focus:rgba(0,0,0,.8);
 
+    --g-plain-background:transparent;
     --g-plain-background-hover:transparent;
     --g-plain-background-active:transparent;
     --g-plain-background-focus:transparent;
     --g-plain-background-disabled:rgba(0,0,0,.1);
 
     --g-plain-border-color:rgba(0,0,0,.2);
-    --g-plain-border-color-hover:hsl(240,70%,60%);
-    --g-plain-border-color-active:hsl(240,70%,55%);
-    --g-plain-border-color-focus:hsl(240,70%,60%);
+    --g-plain-border-color-hover:rgba(0,0,0,.4);
+    --g-plain-border-color-active:rgba(0,0,0,.6);
+    --g-plain-border-color-focus:rgba(0,0,0,.3);
     --g-plain-border-color-disabled:rgba(0,0,0,.4);
 
     ::selection {
@@ -65,52 +60,14 @@ global {
     }
     &.button_default {
         &:not(.button_plain) {
-            --border:none;
-            --border-hover:none;
-            --border-active:none;
-            --border-focus:none;
-            --border-disabled:none;
-        }
-        &.button_plain {
-            --focusbox-border:dotted .5px var(--g-plain-border-color);
+            --border-focus:solid .5px var(--g-border-color-focus);
         }
     }
     &.button_tool {
         &:not(.button_plain) {
-            --color-hover:var(--g-color);
-            --color-active:var(--g-color);
-            --color-focus:var(--g-color);
-
-            --background-hover:rgba(0,0,0,.05);
-            --background-active:rgba(0,0,0,.2);
-            --background-focus:rgba(0,0,0,.05);
-
             --border-hover:none;
             --border-active:none;
             --border-focus:none;
-        }
-        &.button_plain {
-            --focusbox-border:dotted .5px var(--g-plain-border-color);
-        }
-    }
-    &.button_primary {
-        &.button_plain {
-            --focusbox-border:dotted .5px var(--g-plain-border-color);
-        }
-    }
-    &.button_info {
-        &.button_plain {
-            --focusbox-border:dotted .5px var(--g-plain-border-color);
-        }
-    }
-    &.button_warning {
-        &.button_plain {
-            --focusbox-border:dotted .5px var(--g-plain-border-color);
-        }
-    }
-    &.button_danger {
-        &.button_plain {
-            --focusbox-border:dotted .5px var(--g-plain-border-color);
         }
     }
     &.button_area-split {
@@ -119,37 +76,6 @@ global {
         }
     }
     &:not([data-cg-disabled]) {
-        &:focus, &.button_childfocus {                 // --- 焦点状态 ---
-            &::before {                         // --- 外边框 ---
-                border-width: 2px;
-            }
-            &.button_area-split {
-                .button_inner::before {                // --- 里边框 ---
-                    border-right-width: 2px;
-                }
-            }
-        }
-        &:hover {                               // --- 鼠标悬停 ---
-            &::before {                         // --- 外边框 ---
-                border-width: 2px;
-            }
-            &.button_area-split {
-                .button_inner::before {                // --- 里边框 ---
-                    border-right-width: 2px;
-                }
-            }
-        }
-        &:active, &.button_active, &[data-cg-pop-open] {     // --- 鼠标按下 ---
-            &::before {
-                border-width: 2px;
-            }
-            &.button_area-split {
-                .button_inner::before {                // --- 里边框 ---
-                    border-right-width: 2px;
-                }
-            }
-        }
-
         &.button_area-split {
             .button_inner, .button_arrow {
                 &:hover {                       // --- 鼠标悬停 ---
@@ -159,17 +85,8 @@ global {
                 &:active, &.button_active, &[data-cg-pop-open] {
                     transition: all .1s ease-out;
                 }
-                &[data-cg-pop-open]:not(:active, &.button_active) {
-                    color: var(--color-hover);
-                    fill: var(--color-hover);
-                    background: var(--background-hover);
-                }
             }
         }
-    }
-    &[data-cg-disabled] {
-        color: var(--g-color-disabled);
-        fill: var(--g-color-disabled);
     }
 }
 
@@ -199,23 +116,7 @@ global {
     }
 
     &:not([data-cg-disabled]) {
-        &.check_checked:not(:focus):not(:hover):not(:active):not(.check_active) {
-            color: var(--g-plain-color-active); fill: var(--g-plain-color-active);
-            .check_check {
-                background: var(--g-plain-background-active); border: solid 2px var(--g-plain-border-color-active);
-            }
-            &.check_indeterminate {
-                .check_check::after {
-                    background: var(--g-plain-color-active);
-                }
-            }
-        }
-
         &.check_checked, &:focus, &:hover, &:active, &.check_active {
-            .check_check {
-                border-width: 2px;
-            }
-
             &.check_indeterminate {
                 .check_check::after {
                     left: 3px; top: 3px; width: calc(100% - 6px); height: calc(100% - 6px);
@@ -225,9 +126,6 @@ global {
     }
     &[data-cg-disabled] {
         &.check_checked {
-            .check_check {
-                border-width: 2px;
-            }
             &.check_indeterminate {
                 .check_check::after {
                     left: 3px; top: 3px; width: calc(100% - 6px); height: calc(100% - 6px);
@@ -237,43 +135,22 @@ global {
     }
 }
 
-// -- CONTROL -- desc --
-
-.desc_wrap {
-    &.desc_border {
-        border-color: var(--g-background);
-    }
-}
 
 // -- CONTROL -- desc-cell --
 
 .desc-cell_wrap {
     padding: 15px;
-    &.desc-cell_border {
-        border-color: var(--g-background);
-    }
 }
 
 // -- CONTROL -- desc-head --
 
 .desc-head_wrap {
     background: var(--g-background); padding: 15px;
-    &.desc-head_border {
-        border-color: var(--g-background);
-    }
 }
 
 // -- CONTROL -- form --
 
 .form_wrap {
-    &:not(.form_border-none):not([data-cg-max]) {
-        border-color: var(--g-plain-border-color);
-    }
-    &.form_focus {
-        &:not(.form_border-none):not([data-cg-max]) {
-            border-color: var(--g-border-color);
-        }
-    }
     // --- 内部 ---
     .form_inner {
         // --- 头部 ---
@@ -291,30 +168,16 @@ global {
 // -- CONTROL -- greatlist --
 
 .greatlist_wrap {
+    background: transparent;
     .greatlist_t {
         .greatlist_tag-cg-vflow {
             .greatlist_item {
-                transition: all .1s ease-out; border-width: 2px;
+                transition: all .1s ease-out;
                 &:not([data-cg-disabled]) {
                     &:hover {
-                        background: var(--g-background);
-                    }
-                    &.greatlist_selected {
-                        background: var(--g-background-opacity); border-color: var(--g-border-color-hover);
-                    }
-                    &.greatlist_shift:not(.greatlist_selected) {
-                        border-color: var(--g-border-color);
+                        background: var(--g-background-hover);
                     }
                 }
-                &[data-cg-disabled] {
-                    color: var(--g-color-disabled); fill: var(--g-color-disabled);
-                    &:hover {
-                        background: transparent;
-                    }
-                }
-            }
-            .greatlist_split {
-               background: var(--g-background);
             }
         }
     }
@@ -348,7 +211,7 @@ global {
     }
 }
 .greatselect_pop {
-    background: var(--pop-background); -webkit-backdrop-filter: blur(20px) brightness(1.1); backdrop-filter: blur(20px) brightness(1.1);
+    -webkit-backdrop-filter: blur(20px) brightness(1.1); backdrop-filter: blur(20px) brightness(1.1);
 }
 
 // -- CONTROL -- iconview --
@@ -359,46 +222,20 @@ global {
             .iconview_item {
                 transition: all .1s ease-out;
                 &:hover {
-                    background: var(--g-background);
+                    background: var(--g-background-hover);
                 }
                 &.iconview_selected {
-                    background: var(--g-background-opacity); border-color: var(--g-border-color-hover);
-                }
-                &.iconview_shift:not(.iconview_selected) {
-                    border-color: var(--g-border-color);
-                }
-                &[data-cg-hover] {
-                    background: var(--g-border-color-hover); color: var(--g-color); fill: var(--g-color);
+                    background: var(--g-background-opacity);
                 }
             };
         }
     }
 }
 
-// -- CONTROL -- menu --
-
-.menu_wrap {
-    border-bottom-color: var(--g-plain-border-color); padding-bottom: 1px;
-}
-
 // -- CONTROL -- menu-item --
 
 .menu-item_wrap {
     transition: all .1s ease-out; border: none;
-    &:not([data-cg-disabled]) {
-        &:hover {
-            background: var(--g-background);
-        }
-        &:active, &[data-cg-pop-open] {
-            background: var(--g-border-color-hover); color: var(--g-color-hover);
-        }
-    }
-    &[data-cg-disabled] {
-        color: var(--g-color-disabled); fill: var(--g-color-disabled);
-        &:hover {
-            background: transparent;
-        }
-    }
 }
 
 // -- CONTROL -- menulist --
@@ -412,9 +249,8 @@ global {
 .menulist-item_wrap {
     &:not([data-cg-disabled]) {
         &:hover {
-            background: var(--g-background);
             .menulist-item_check, .menulist-item_radio {
-                background-color: var(--g-border-color-hover);
+                background-color: var(--g-background-hover);
             }
         }
     }
@@ -423,18 +259,12 @@ global {
             background: transparent;
         }
     }
-    &[data-cg-pop-open] {
-        background: var(--g-background);
-    }
 
     .menulist-item_check {
-        background-color: var(--g-background-hover); fill: var(--g-color-hover); width: 32px; height: 32px; border-radius: 3px;
+        width: 32px; height: 32px; border-radius: 3px;
     }
     .menulist-item_radio {
-        background-color: var(--g-background-hover); width: 32px; height: 32px; border-radius: 3px;
-        &::before {
-            background-color: var(--g-color-hover);
-        }
+        width: 32px; height: 32px; border-radius: 3px;
     }
 }
 
@@ -444,9 +274,6 @@ global {
     .menulist-split_type {
         width: 32px;
     }
-    .menulist-split_line {
-        background: var(--g-background);
-    }  
 }
 
 // -- CONTROL -- nav --
@@ -454,32 +281,22 @@ global {
 .nav_wrap {
     .nav_menuwrap {
         .nav_menu {
-            border-right-color: var(--g-background);
-        }
-    }
-    &.nav_layer {
-        .nav_menuwrap {
-            .nav_menu {
-                border-right-color: var(--g-background);
-            }
-        }
-        &.nav_show {
-            .nav_menuwrap {
-                background: rgba(0, 0, 0, .5);
+            width: 270px;
+            > * {
+                margin: 0 15px;
             }
         }
     }
-
     .nav_content {
         .nav_header {
-            height: 44px; border-bottom: solid .5px var(--g-background); padding: 2px;
+            height: 44px; padding: 2px;
             .nav_mbutton {
                 width: 40px; transition: all .1s ease-out;
                 &:hover {
-                    background: var(--g-border-color-hover); fill: var(--g-color-hover);
+                    background: var(--g-background-hover); fill: var(--g-color-hover);
                 }
                 &:active {
-                    background: var(--g-border-color-active); fill: var(--g-color-hover);
+                    background: var(--g-background-active); fill: var(--g-color-active);
                 }
 
                 .nav_tag-svg {
@@ -494,31 +311,29 @@ global {
 
 .nav-item_wrap {
     > .nav-item_text {
-        padding: 15px; transition: all .1s ease-out;
+        padding: 15px; margin: 3px 0; transition: all .1s ease-out;
     }
-
+    // --- 不是 child 项并且在显示中 ---
     &:not(.nav-item_child) {
         &.nav-item_show {
             > .nav-item_text {
-                background: var(--g-background);
+                background: transparent; border-radius: var(--g-radius) var(--g-radius) 0 0;
             }
         }
     }
-
     &:not(.nav-item_selected) {
         > .nav-item_text:hover {
-            background: var(--g-background);
+            background: var(--g-background-opacity);
         }
     }
     &.nav-item_selected {
         > .nav-item_text {
-            background: var(--g-border-color-hover); color: var(--g-color-hover); fill: var(--g-color-hover);
+            background: var(--g-background-hover);
         }
     }
-
     &:not(.nav-item_child) {
         > .nav-item_menu {
-            background: var(--g-background);
+            background: transparent;
         }
     }
 }
@@ -534,24 +349,9 @@ global {
 .page_wrap {
     .page_list {
         > .page_tag-div {
-            transition: all .1s ease-out; border: none; background: transparent; width: 32px; height: 32px;
+            transition: all .1s ease-out; width: 32px; height: 32px;
             &::after {
                 border-radius: 3px;
-            }
-
-            &:focus {
-                background: transparent; color: var(--g-color); fill: var(--g-color);
-            }
-            &:hover {
-                background: var(--g-background); color: var(--g-color); fill: var(--g-color);
-            }
-            &:active, &.page_selected {
-                background: var(--g-border-color-hover); color: var(--g-color-active); fill: var(--g-color-active);
-                &.page_left, &.page_right {
-                    &::before {
-                        border-color: var(--g-color-active);;
-                    }
-                }
             }
         }
     }
@@ -562,42 +362,33 @@ global {
 .property_wrap {
     .property_controls {
         .property_tag-cg-button {
-            margin-right: 5px; width: 34px; height: 34px;
+            margin-right: 5px; width: 34px; height: 34px; padding: 0;
         }
         .property_split {
-            background: var(--g-background); margin: 0 5px 0 0;
+            margin: 0 5px 0 0;
         }
     }
     .property_content {
         .property_bigTitle {
-            background: var(--g-background);
+            background: var(--g-background-opacity);
             .property_control {
                 width: 34px;
             }
         }
         .property_line {
-            border-bottom-color: var(--g-background);
+            border-bottom-color: var(--g-background-opacity);
             .property_control {
-                background: var(--g-background); width: 34px;
+                background: var(--g-background-opacity); width: 34px;
             }
             &.property_selected .property_title {
-                background: var(--g-background-hover); color: var(--g-color-hover);
+                background: var(--g-background-hover);
             }
             .property_value {
                 .property_text {
-                    height: 32px;
+                    height: 36px;
                 }
                 .property_tag-cg-check {
                     margin-left: 10px;
-                }
-                .property_dock {
-                    .property_tag-cg-button {
-                        &:hover, &:focus, &[data-cg-pop-open] {
-                            .property_arrow::after {
-                                border-color: var(--g-color-hover);
-                            }
-                        }
-                    }
                 }
                 .property_arrow {
                     width: 30px;
@@ -632,19 +423,8 @@ global {
     }
 
     &:not([data-cg-disabled]) {
-        &.radio_selected:not(:focus):not(:hover):not(:active):not(.radio_active) {
-            color: var(--g-plain-color-active); fill: var(--g-plain-color-active);
-            .radio_radio {
-                background: var(--g-plain-background-active); border: solid 2px var(--g-plain-border-color-active);
-                &::after {
-                    background: var(--g-plain-color-active);
-                }
-            }
-        }
-
         &.radio_selected, &:focus, &:hover, &:active, &.radio_active {
             .radio_radio {
-                border-width: 2px;
                 &::after {
                     left: 3px; top: 3px; width: calc(100% - 6px); height: calc(100% - 6px);
                 }
@@ -654,7 +434,6 @@ global {
     &[data-cg-disabled] {
         &.radio_selected {
             .radio_radio {
-                border-width: 2px;
                 &::after {
                     left: 3px; top: 3px; width: calc(100% - 6px); height: calc(100% - 6px);
                 }
@@ -668,8 +447,8 @@ global {
 
 .scroll_wrap {
     background-color:transparent;
-    --block-background:var(--g-background);
-    --block-background-hover:var(--g-border-color-hover);
+    --block-background:var(--g-background-hover);
+    --block-background-hover:var(--g-background-active);
     .scroll_start, .scroll_end {
         display: none;
     }
@@ -698,18 +477,18 @@ global {
     .tab_tab {
         transition: all .1s ease-out; border: none;
         &::after {
-            background: var(--g-background-hover); transition: all .1s ease-out;
+            background: hsl(240, 70%, 60%); transition: all .1s ease-out;
         }
         &:not(.tab_selected):not([data-cg-hover]):hover {
-            background: transparent; color: var(--g-border-color-hover); fill: var(--g-border-color-hover);
+            background: transparent; color: hsl(240, 70%, 60%); fill: hsl(240, 70%, 60%);
         }
         &.tab_selected {
-            background: transparent; font-weight: bold; color: var(--g-border-color-hover); fill: var(--g-border-color-hover);
+            background: transparent; font-weight: bold; color: hsl(240, 70%, 60%); fill: hsl(240, 70%, 60%);
         }
         .tab_close {
             transition: all .1s ease-out;
             &:hover {
-                background: var(--g-background);
+                background: var(--g-background-hover);
             }
             &:active {
                 background: var(--g-color); color: var(--face); fill: var(--face);
@@ -783,27 +562,27 @@ global {
 .task-item_wrap {
     &.task-item_left {
         &.task-item_multi::after {
-            box-shadow: 0 1px 2px rgba(0, 0, 0, .3) inset;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, .2) inset;
         }
     }
     &.task-item_right {
         &.task-item_multi::after {
-            box-shadow: 0 1px 2px rgba(0, 0, 0, .3) inset;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, .2) inset;
         }
     }
     &.task-item_top {
         &.task-item_multi::after {
-            box-shadow: 1px 0 2px rgba(0, 0, 0, .3) inset;
+            box-shadow: 1px 0 2px rgba(0, 0, 0, .2) inset;
         }
     }
     &.task-item_bottom {
         &.task-item_multi::after {
-            box-shadow: 1px 0 2px rgba(0, 0, 0, .3) inset;
+            box-shadow: 1px 0 2px rgba(0, 0, 0, .2) inset;
         }
     }
     &.task-item_opened {
         .task-item_line::after {
-            background: var(--g-border-color-active);
+            background: hsl(240, 70%, 60%);
         }
     }
 }
@@ -812,4 +591,20 @@ global {
 
 .text_wrap {
     transition: all .1s ease-out; transition-property: color, background, border;
+    &:not([data-cg-disabled]) {
+        &.text_focus {
+            border-color: var(--g-plain-border-color-hover); position: relative;
+            &::after {
+                content: ''; position: absolute; width: 100%; height: 1px; background: hsl(240, 70%, 60%); left: 0; bottom: 0;
+            }
+        }
+        &:hover {
+            border-color: var(--g-plain-border-color);
+            border-bottom-color: hsl(240, 70%, 60%);
+        }
+        &:active {
+            border-color: var(--g-plain-border-color-hover);
+            border-bottom-color: hsl(240, 70%, 60%);
+        }
+    }
 }
