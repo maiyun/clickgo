@@ -1,7 +1,7 @@
 <div class="wrap" :data-cg-disabled="propBoolean('disabled') ? '' : undefined" :tabindex="(!propBoolean('disabled') && formFocus) ? '0' : undefined" @keydown="keydown">
     <div class="t">
         <cg-vflow ref="flow" :selection="selection" :gesture="gesture" @gesture="emit('gesture', $event)" :data="data" v-slot="d" :sizes="sizes" direction="v" :scroll-left="sl" @update:scroll-left="sl=$event" :scroll-top="offset" @update:scroll-top="offset=$event" @beforeselect="onBeforeSelect" @select="onSelect($event)" @afterselect="onAfterSelect" @clientwidth="cw = $event" @clientheight="client=$event;$emit('client',client)" @scrollwidth="sw = $event" @scrollheight="length = $event" @contextmenu="context" @touchstart="down" @mousedown="down">
-            <div v-if="d.row.control === 'split'" class="split" :style="{'width': tableContentWidth ? tableContentWidth + 'px' : undefined}"></div>
+            <div v-if="d.row.control === 'split'" class="split" :style="{'min-width': tableContentWidth ? tableContentWidth + 'px' : undefined}"></div>
             <div v-else class="item" :class="[isSelected(d.index) && 'selected', (shiftStart === d.index) && 'shift']" :data-cg-disabled="d.row.disabled ? '' : undefined" @touchstart="itemTouch($event, d.index)" @contextmenu="itemContext($event, d.index)">
                 <div class="itemInner" :class="['content-width-' + contentWidth]" @mousedown="innerDown($event, d.index)" @touchstart="innerDown($event, d.index)">
                     <slot :row="d.row" :index="d.index"></slot>
