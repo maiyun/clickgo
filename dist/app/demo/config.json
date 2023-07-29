@@ -20,9 +20,6 @@
         "/clickgo/control/echarts",
         "/clickgo/control/map"
     ],
-    "themes": [
-        "/clickgo/theme/light"
-    ],
     "style": "/package/global",
 
     "files": [
