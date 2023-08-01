@@ -1,5 +1,9 @@
 # Changelog
 
+# 3.4.1
+
+[\*] Optimized the text control.
+
 # 3.4.0
 
 [+] Added a new map control.  
