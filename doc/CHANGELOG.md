@@ -1,5 +1,17 @@
 # Changelog
 
+# 3.4.0
+
+[+] Added a new map control.  
+[+] Introduced a new date control.  
+[+] Updated jszip to version 3.10.1.  
+[+] The Control class now includes the packageFiles attribute.  
+[\*] Upgraded vue to version 3.3.4.  
+[\*] Updated monaco-editor to version 0.40.0.  
+[\*] Upgraded xterm to version 5.2.1 and xterm-addon-webgl to version 0.15.0.  
+[\*] Optimized the greatlist and table controls.  
+[\*] Improved the light and byterun themes.
+
 # 3.3.5
 
 [+] list, select control adds object data format.  
