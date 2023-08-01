@@ -449,7 +449,18 @@ export default class extends clickgo.control.AbstractControl {
                 }
                 case 'background-color': {
                     this.background = v;
-                    const hsl = clickgo.tool.rgb2hsl(v);
+                    let color = v;
+                    let el: HTMLElement | null = this.element;
+                    let match = /rgba\([0-9 ]+,[0-9 ]+,[0-9 ]+,([0-9 ]+)\)/.exec(color);
+                    while (match && parseFloat(match[1]) <= 0.1) {
+                        el = el.parentElement;
+                        if (!el) {
+                            break;
+                        }
+                        color = getComputedStyle(el).backgroundColor;
+                        match = /rgba\([0-9 ]+,[0-9 ]+,[0-9 ]+,([0-9 ]+)\)/.exec(color);
+                    }
+                    const hsl = clickgo.tool.rgb2hsl(color);
                     this.darkbg = hsl[2] < 0.5 ? true : false;
                     break;
                 }

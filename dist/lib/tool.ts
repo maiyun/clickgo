@@ -649,7 +649,7 @@ export function rgb2hsl(rgb: string): number[] {
             h = (60 * ((g - r) / diff)) + 60;
             break;
     }
-    return [h, s, l] ;
+    return [h, s, l];
 }
 
 /**
