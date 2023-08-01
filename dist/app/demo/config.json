@@ -32,6 +32,8 @@
         "/form/control/button/button.xml",
         "/form/control/check/check.js",
         "/form/control/check/check.xml",
+        "/form/control/date/date.js",
+        "/form/control/date/date.xml",
         "/form/control/desc/desc.js",
         "/form/control/desc/desc.xml",
         "/form/control/dialog/dialog.js",

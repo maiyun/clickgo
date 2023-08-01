@@ -95,7 +95,7 @@ function launcher(boot) {
         var _a;
         return __awaiter(this, void 0, void 0, function* () {
             const paths = [
-                loader.cdn + '/npm/vue@3.2.47/dist/vue.global.prod.min.js'
+                loader.cdn + '/npm/vue@3.3.4/dist/vue.global.prod.min.js'
             ];
             let ro = true;
             if (!(window.ResizeObserver)) {
@@ -108,7 +108,7 @@ function launcher(boot) {
                 window.ResizeObserver = window.ResizeObserver.ResizeObserver;
             }
             const map = {
-                'jszip': loader.cdn + '/npm/jszip@3.10.0/dist/jszip.min'
+                'jszip': loader.cdn + '/npm/jszip@3.10.1/dist/jszip.min'
             };
             const after = '?' + Math.random().toString();
             const files = yield loader.sniffFiles('clickgo.js', {

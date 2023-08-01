@@ -6,7 +6,7 @@ global {
     // --- 基础颜色 ---
 
     --face:#FFF;
-    --pop-background:rgba(255, 255, 255, .6);
+    --pop-background:rgba(255, 255, 255, .5);
 
     // --- 组件默认颜色（如按钮） ---
 
@@ -89,6 +89,9 @@ global {
         }
     }
 }
+.button_pop {
+    background: var(--pop-background); -webkit-backdrop-filter: blur(20px) brightness(1.1); backdrop-filter: blur(20px) brightness(1.1);
+}
 
 // -- CONTROL -- check --
 
@@ -135,6 +138,20 @@ global {
     }
 }
 
+// -- CONTROL -- date ---
+
+.date_wrap {
+    &:not([data-cg-disabled]) {
+        > .date_tag-div {
+            &:hover:not(:active):not([data-cg-pop-open]) {
+                background: var(--g-background-hover);
+            }
+        }
+    }
+}
+.date_pop {
+    background: var(--pop-background); -webkit-backdrop-filter: blur(20px) brightness(1.1); backdrop-filter: blur(20px) brightness(1.1);
+}
 
 // -- CONTROL -- desc-cell --
 
@@ -181,6 +198,14 @@ global {
             }
         }
     }
+    .greatlist_b {
+        .greatlist_rb {
+            background: transparent;
+        }
+    }
+}
+.greatlist_pop {
+    background: var(--pop-background); -webkit-backdrop-filter: blur(20px) brightness(1.1); backdrop-filter: blur(20px) brightness(1.1);
 }
 
 // -- CONTROL -- greatselect --
@@ -211,7 +236,7 @@ global {
     }
 }
 .greatselect_pop {
-    -webkit-backdrop-filter: blur(20px) brightness(1.1); backdrop-filter: blur(20px) brightness(1.1);
+    background: var(--pop-background); -webkit-backdrop-filter: blur(20px) brightness(1.1); backdrop-filter: blur(20px) brightness(1.1);
 }
 
 // -- CONTROL -- iconview --
@@ -231,17 +256,23 @@ global {
         }
     }
 }
+.iconview_pop {
+    background: var(--pop-background); -webkit-backdrop-filter: blur(20px) brightness(1.1); backdrop-filter: blur(20px) brightness(1.1);
+}
 
 // -- CONTROL -- menu-item --
 
 .menu-item_wrap {
     transition: all .1s ease-out; border: none;
 }
+.menu-item_pop {
+    background: var(--pop-background); -webkit-backdrop-filter: blur(20px) brightness(1.1); backdrop-filter: blur(20px) brightness(1.1);
+}
 
 // -- CONTROL -- menulist --
 
 .menulist_wrap {
-    background: var(--pop-background); -webkit-backdrop-filter: blur(20px) brightness(1.1); backdrop-filter: blur(20px) brightness(1.1);
+    background: transparent;
 }
 
 // -- CONTROL -- menulist-item --
@@ -267,6 +298,9 @@ global {
         width: 32px; height: 32px; border-radius: 3px;
     }
 }
+.menulist-item_pop {
+    background: var(--pop-background); -webkit-backdrop-filter: blur(20px) brightness(1.1); backdrop-filter: blur(20px) brightness(1.1);
+}
 
 // -- CONTROL -- menulist-split --
 
@@ -274,6 +308,12 @@ global {
     .menulist-split_type {
         width: 32px;
     }
+}
+
+// -- CONTROL -- monaco --
+
+.monaco_pop {
+    background: var(--pop-background); -webkit-backdrop-filter: blur(20px) brightness(1.1); backdrop-filter: blur(20px) brightness(1.1);
 }
 
 // -- CONTROL -- nav --
@@ -403,6 +443,12 @@ global {
         }
     }
 }
+.property_dock-pop {
+    background: var(--pop-background); -webkit-backdrop-filter: blur(20px) brightness(1.1); backdrop-filter: blur(20px) brightness(1.1);
+}
+.property_pop {
+    background: var(--pop-background); -webkit-backdrop-filter: blur(20px) brightness(1.1); backdrop-filter: blur(20px) brightness(1.1);
+}
 
 // -- CONTROL -- radio --
 
@@ -475,7 +521,7 @@ global {
         }
     }
     .tab_tab {
-        transition: all .1s ease-out; border: none;
+        background: transparent; transition: all .1s ease-out; border: none;
         &::after {
             background: hsl(240, 70%, 60%); transition: all .1s ease-out;
         }
@@ -556,6 +602,9 @@ global {
 .task_wrap {
     background: var(--pop-background); -webkit-backdrop-filter: blur(20px) brightness(1.1); backdrop-filter: blur(20px) brightness(1.1);
 }
+.task_pop {
+    background: var(--pop-background); -webkit-backdrop-filter: blur(20px) brightness(1.1); backdrop-filter: blur(20px) brightness(1.1);
+}
 
 // -- CONTROL -- task-item --
 
@@ -586,11 +635,19 @@ global {
         }
     }
 }
+.task-item_pop {
+    background: var(--pop-background); -webkit-backdrop-filter: blur(20px) brightness(1.1); backdrop-filter: blur(20px) brightness(1.1);
+}
 
 // -- CONTROL -- text --
 
 .text_wrap {
     transition: all .1s ease-out; transition-property: color, background, border;
+    .text_multi-b {
+        .text_multi-rb {
+            background: transparent;
+        }
+    }
     &:not([data-cg-disabled]) {
         &.text_focus {
             border-color: var(--g-plain-border-color-hover); position: relative;
@@ -607,4 +664,7 @@ global {
             border-bottom-color: hsl(240, 70%, 60%);
         }
     }
+}
+.text_pop {
+    background: var(--pop-background); -webkit-backdrop-filter: blur(20px) brightness(1.1); backdrop-filter: blur(20px) brightness(1.1);
 }

@@ -42,7 +42,7 @@ const form = __importStar(require("./form"));
 const fs = __importStar(require("./fs"));
 class AbstractControl {
     constructor() {
-        this.files = {};
+        this.packageFiles = {};
         this.props = {};
         this.slots = {};
     }
@@ -468,9 +468,9 @@ function buildComponents(taskId, formId, path) {
                 this.props = this.$props;
                 this.slots = this.$slots;
                 this.access = tool.clone(control.access);
-                this.files = {};
+                this.packageFiles = {};
                 for (const fname in control.files) {
-                    this.files[fname] = control.files[fname];
+                    this.packageFiles[fname] = control.files[fname];
                 }
                 this.onCreated();
             },

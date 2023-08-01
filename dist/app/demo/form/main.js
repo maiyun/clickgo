@@ -39,6 +39,7 @@ const clickgo = __importStar(require("clickgo"));
 const box_1 = __importDefault(require("./control/box/box"));
 const button_1 = __importDefault(require("~c/button/button"));
 const check_1 = __importDefault(require("./control/check/check"));
+const date_1 = __importDefault(require("./control/date/date"));
 const dialog_1 = __importDefault(require("./control/dialog/dialog"));
 const file_1 = __importDefault(require("./control/file/file"));
 const form_1 = __importDefault(require("./control/form/form"));
@@ -108,6 +109,10 @@ class default_1 extends clickgo.form.AbstractForm {
                 }
                 case 'ccheck': {
                     frm = yield clickgo.form.create(check_1.default);
+                    break;
+                }
+                case 'cdate': {
+                    frm = yield clickgo.form.create(date_1.default);
                     break;
                 }
                 case 'cdesc': {

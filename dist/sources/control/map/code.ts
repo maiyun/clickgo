@@ -1441,7 +1441,7 @@ export default class extends clickgo.control.AbstractControl {
         });
 
         /** --- 加载 marker 样式图片（天地图-Maptalks） --- */
-        this.access.markerImg = await clickgo.tool.blob2DataUrl(this.files['/res/marker.svg'] as Blob);
+        this.access.markerImg = await clickgo.tool.blob2DataUrl(this.packageFiles['/res/marker.svg'] as Blob);
 
         // --- 选项变更 ---
 

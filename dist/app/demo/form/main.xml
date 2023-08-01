@@ -10,6 +10,7 @@
                 <button @click="openForm('ccheck')">Check</button>
                 <button @click="openForm('cradio')">Radio</button>
                 <button @click="openForm('ctext')">Text</button>
+                <button @click="openForm('cdate')">Date</button>
                 <button @click="openForm('ctab')">Tab</button>
                 <button @click="openForm('clabel')">Label</button>
                 <button @click="openForm('clink')">Link</button>

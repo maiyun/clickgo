@@ -4,6 +4,7 @@ import * as types from '~/types/index';
 import cboxFrm from './control/box/box';
 import cbuttonFrm from '~c/button/button';
 import ccheckFrm from './control/check/check';
+import cdateFrm from './control/date/date';
 import cdialogFrm from './control/dialog/dialog';
 import cfileFrm from './control/file/file';
 import cformFrm from './control/form/form';
@@ -75,6 +76,10 @@ export default class extends clickgo.form.AbstractForm {
             }
             case 'ccheck': {
                 frm = await clickgo.form.create(ccheckFrm);
+                break;
+            }
+            case 'cdate': {
+                frm = await clickgo.form.create(cdateFrm);
                 break;
             }
             case 'cdesc': {

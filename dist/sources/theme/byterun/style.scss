@@ -227,6 +227,21 @@ global {
     }
 }
 
+// -- CONTROL -- date ---
+
+.date_wrap {
+    &:not([data-cg-disabled]) {
+        > .date_tag-div {
+            &:hover:not(:active):not([data-cg-pop-open]) {
+                background: var(--g-background);
+            }
+        }
+    }
+}
+.date_pop {
+    background: var(--pop-background); -webkit-backdrop-filter: blur(20px) brightness(1.1); backdrop-filter: blur(20px) brightness(1.1);
+}
+
 // -- CONTROL -- desc --
 
 .desc_wrap {

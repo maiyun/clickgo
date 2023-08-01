@@ -83,7 +83,7 @@ function run() {
             'withFileTypes': true
         });
         for (const item of list) {
-            if (['check', 'dialog', 'file', 'greatlist', 'greatselect', 'vflow', 'img', 'label', 'layout', 'list', 'loading', 'marquee', 'menu', 'menu-item', 'menulist', 'menulist-item', 'menulist-split', 'flow', 'radio', 'scroll', 'select', 'svg', 'tab', 'text', 'task-item', 'table-item', 'nav-item', 'nav-title', 'panel', 'desc-cell', 'desc-head', 'desc-row', 'link'].includes(item.name)) {
+            if (['check', 'dialog', 'file', 'greatlist', 'greatselect', 'vflow', 'img', 'label', 'layout', 'list', 'loading', 'marquee', 'menu', 'menu-item', 'menulist', 'menulist-item', 'menulist-split', 'flow', 'radio', 'scroll', 'select', 'svg', 'tab', 'text', 'task-item', 'table-item', 'nav-item', 'nav-title', 'panel', 'desc-cell', 'desc-head', 'desc-row', 'link', 'date'].includes(item.name)) {
                 continue;
             }
             if (item.name.startsWith('.')) {
@@ -121,6 +121,7 @@ function run() {
                 yield addFile(zipo, base + 'text', 'text');
                 yield addFile(zipo, base + 'panel', 'panel');
                 yield addFile(zipo, base + 'link', 'link');
+                yield addFile(zipo, base + 'date', 'date');
             }
             else if (item.name === 'task') {
                 yield addFile(zipo, base + 'task-item', 'task-item');

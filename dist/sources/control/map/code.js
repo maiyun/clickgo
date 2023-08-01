@@ -1235,7 +1235,7 @@ class default_1 extends clickgo.control.AbstractControl {
             this.watch('factory', () => {
                 this.load();
             });
-            this.access.markerImg = yield clickgo.tool.blob2DataUrl(this.files['/res/marker.svg']);
+            this.access.markerImg = yield clickgo.tool.blob2DataUrl(this.packageFiles['/res/marker.svg']);
             this.watch('zoom', () => {
                 if (!this.access.map) {
                     return;

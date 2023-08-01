@@ -161,7 +161,7 @@ export function launcher(boot: AbstractBoot): void {
     (async function() {
         // --- 通过标签加载库 ---
         const paths: string[] = [
-            loader.cdn + '/npm/vue@3.2.47/dist/vue.global.prod.min.js'
+            loader.cdn + '/npm/vue@3.3.4/dist/vue.global.prod.min.js'
         ];
         // --- 判断 ResizeObserver 是否存在 ---
         let ro = true;
@@ -179,7 +179,7 @@ export function launcher(boot: AbstractBoot): void {
         }
         // --- map 加载库 ---
         const map: Record<string, string> = {
-            'jszip': loader.cdn + '/npm/jszip@3.10.0/dist/jszip.min'
+            'jszip': loader.cdn + '/npm/jszip@3.10.1/dist/jszip.min'
         };
         // --- 加载 clickgo 主程序 ---
         const after = '?' + Math.random().toString();

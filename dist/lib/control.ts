@@ -160,7 +160,7 @@ export abstract class AbstractControl {
     // --- 以下为 control 有，但窗体没有 ---
 
     /** --- 组件内部文件，由系统重写 --- */
-    public readonly files: Record<string, Blob | string> = {};
+    public readonly packageFiles: Record<string, Blob | string> = {};
 
     /** --- 组件参数，由用户定义重写 --- */
     public readonly props = {};
@@ -617,9 +617,9 @@ export function buildComponents(
                 this.props = this.$props;
                 this.slots = this.$slots;
                 this.access = tool.clone(control.access);
-                this.files = {};
+                this.packageFiles = {};
                 for (const fname in control.files) {
-                    this.files[fname] = control.files[fname];
+                    this.packageFiles[fname] = control.files[fname];
                 }
                 this.onCreated();
             },

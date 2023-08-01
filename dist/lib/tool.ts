@@ -99,12 +99,28 @@ export function clone(obj: Record<string, any> | any[]): any[] | any {
     if (obj instanceof Array) {
         newObj = [];
         for (let i = 0; i < obj.length; ++i) {
-            newObj[i] = typeof obj[i] === 'object' ? clone(obj[i]) : obj[i];
+            if (obj[i] instanceof Date) {
+                newObj[i] = new Date(obj[i].getTime());
+            }
+            else if (typeof obj[i] === 'object') {
+                newObj[i] = clone(obj[i]);
+            }
+            else {
+                newObj[i] = obj[i];
+            }
         }
     }
     else {
         for (const key in obj) {
-            newObj[key] = typeof obj[key] === 'object' ? clone(obj[key]) : obj[key];
+            if (obj[key] instanceof Date) {
+                newObj[key] = new Date(obj[key].getTime());
+            }
+            else if (typeof obj[key] === 'object') {
+                newObj[key] = clone(obj[key]);
+            }
+            else {
+                newObj[key] = obj[key];
+            }
         }
     }
     return newObj;
