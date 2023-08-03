@@ -1,5 +1,12 @@
 # Changelog
 
+# 3.4.2
+
+[+] Added new parameters, mode, time, date, zone, and tz, to the label widget.  
+[\*] Improved the nav widget to support SVG format icons.  
+[\*] Optimized the light theme.  
+[\*] Optimized the date control.
+
 # 3.4.1
 
 [\*] Optimized the text control.
