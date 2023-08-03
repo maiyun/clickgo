@@ -1,4 +1,4 @@
-<form width="300" height="300" title="Label">
+<form width="350" height="350" title="Label">
     <layout direction="v" gutter="10" style="padding: 10px; flex: 1; width: 0;">
         <label>You can use CSS to customize the label:</label>
         <label>Normal</label>
@@ -7,5 +7,17 @@
         <label style="background: rgba(0, 0, 0, .1);">Background</label>
         <label style="background: rgba(0, 0, 0, .1); padding: 10px;">Padding</label>
         <label style="font-size: 36px;">Font size</label>
+        <label mode="tip">mode: tip</label>
+        <layout gutter="10" align-v="center">
+            <label>mode: date</label>
+            <label mode="date" :date="date" :time="time" :zone="zone" :tz="tz[0]" style="flex: 1;">{{daten}}</label>
+            <button @click="addDate">Add</button>
+        </layout>
+        <layout gutter="10">
+            <button @click="date = !date" style="flex: 1;">{{date ? '' : '!'}}date</button>
+            <button @click="time = !time" style="flex: 1;">{{time ? '' : '!'}}time</button>
+            <button @click="zone = !zone" style="flex: 1;">{{zone ? '' : '!'}}zone</button>
+            <select :data="['01', '02', '08', '09']" v-model="tz"></select>
+        </layout>
     </layout>
 </form>

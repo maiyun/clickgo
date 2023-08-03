@@ -34,7 +34,7 @@ class default_1 extends clickgo.control.AbstractControl {
             'tz': undefined,
             'time': true,
             'date': true,
-            'zone': true
+            'zone': false
         };
         this.tzData = 0;
         this.dateObj = new Date();
@@ -251,6 +251,7 @@ class default_1 extends clickgo.control.AbstractControl {
                 else {
                     this.tzData = vz - (parseInt(this.vzdec[0]) / 60);
                 }
+                this.emit('update:tz', this.tzData);
                 this.dateObj.setTime(this.timestamp + this.tzData * 60 * 60 * 1000);
                 break;
             }
@@ -286,7 +287,7 @@ class default_1 extends clickgo.control.AbstractControl {
         this.watch('tz', () => {
             if (this.props.tz === undefined) {
                 this.tzData = -(this.dateObj.getTimezoneOffset() / 60);
-                this.emit('update:tz');
+                this.emit('update:tz', this.tzData);
             }
             else {
                 this.tzData = this.propNumber('tz');

@@ -11,6 +11,7 @@ import cformFrm from './control/form/form';
 import chtmlFrm from './control/html/html';
 import ciconviewFrm from './control/iconview/iconview';
 import clinkFrm from './control/link/link';
+import clabelFrm from './control/label/label';
 import clayoutFrm from './control/layout/layout';
 import clistFrm from './control/list/list';
 import cmapFrm from './control/map/map';
@@ -124,14 +125,12 @@ export default class extends clickgo.form.AbstractForm {
                 });
                 break;
             }
-            case 'clabel': {
-                frm = await clickgo.form.create('control/label/label', undefined, {
-                    'path': this.filename
-                });
-                break;
-            }
             case 'clink': {
                 frm = await clickgo.form.create(clinkFrm);
+                break;
+            }
+            case 'clabel': {
+                frm = await clickgo.form.create(clabelFrm);
                 break;
             }
             case 'clayout': {

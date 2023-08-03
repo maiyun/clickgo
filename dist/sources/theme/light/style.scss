@@ -358,6 +358,9 @@ global {
         &.nav-item_show {
             > .nav-item_text {
                 background: transparent; border-radius: var(--g-radius) var(--g-radius) 0 0;
+                .nav_tag-cg-img, .nav_tag-cg-svg {
+                    width: 20px; height: 20px; margin-right: 8px;
+                }
             }
         }
     }

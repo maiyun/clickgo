@@ -27,12 +27,14 @@ const clickgo = __importStar(require("clickgo"));
 class default_1 extends clickgo.form.AbstractForm {
     constructor() {
         super(...arguments);
+        this.daten = 1672599845;
         this.date = true;
         this.time = true;
         this.zone = true;
-        this.ts = 0;
-        this.tz = undefined;
-        this.disabled = false;
+        this.tz = ['08'];
+    }
+    addDate() {
+        this.daten += clickgo.tool.rand(0, 3600);
     }
 }
 exports.default = default_1;

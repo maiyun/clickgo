@@ -23,7 +23,7 @@ export default class extends clickgo.control.AbstractControl {
 
             'time': true,
             'date': true,
-            'zone': true
+            'zone': false
         };
 
     /** --- 当前时区信息（小时） --- */
@@ -278,6 +278,7 @@ export default class extends clickgo.control.AbstractControl {
                 else {
                     this.tzData = vz - (parseInt(this.vzdec[0]) / 60);
                 }
+                this.emit('update:tz', this.tzData);
                 this.dateObj.setTime(this.timestamp + this.tzData * 60 * 60 * 1000);
                 break;
             }
@@ -317,7 +318,7 @@ export default class extends clickgo.control.AbstractControl {
         this.watch('tz', () => {
             if (this.props.tz === undefined) {
                 this.tzData = -(this.dateObj.getTimezoneOffset() / 60);
-                this.emit('update:tz');
+                this.emit('update:tz', this.tzData);
             }
             else {
                 this.tzData = this.propNumber('tz');

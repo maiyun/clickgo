@@ -38,6 +38,7 @@
         <nav-item label="Root1"></nav-item>
         <nav-item label="Root2"></nav-item>
         <nav-item label="Root3" icon="/package/res/icon.svg"></nav-item>
+        <nav-item label="Root4" icon="/package/res/marker.svg"></nav-item>
         <template v-slot:content>
             <layout direction="v" gutter="10" style="padding: 10px; flex: 1;">
                 <label>Change the size of the form to see the effect.</label>

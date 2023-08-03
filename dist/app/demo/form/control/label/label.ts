@@ -2,16 +2,18 @@ import * as clickgo from 'clickgo';
 
 export default class extends clickgo.form.AbstractForm {
 
+    public daten: number = 1672599845;
+
     public date: boolean = true;
 
     public time: boolean = true;
 
     public zone: boolean = true;
 
-    public ts: number = 0;
+    public tz: string[] = ['08'];
 
-    public tz?: number = undefined;
-
-    public disabled: boolean = false;
+    public addDate(): void {
+        this.daten += clickgo.tool.rand(0, 3600);
+    }
 
 }

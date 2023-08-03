@@ -1,6 +1,9 @@
 <div class="wrap" :class="[showData && 'show', isChild && 'child', isSelected && 'selected']">
     <div class="text" :class="[hasChild && 'hasChild']" @click="click">
-        <cg-img v-if="icon" :src="icon" />
+        <template v-if="icon">
+            <cg-svg v-if="icon.endsWith('svg')" :src="icon" />
+            <cg-img v-else :src="icon" />
+        </template>
         <span>{{label}}</span>
     </div>
     <div v-if="hasChild" ref="menu" class="menu">

@@ -46,6 +46,7 @@ const form_1 = __importDefault(require("./control/form/form"));
 const html_1 = __importDefault(require("./control/html/html"));
 const iconview_1 = __importDefault(require("./control/iconview/iconview"));
 const link_1 = __importDefault(require("./control/link/link"));
+const label_1 = __importDefault(require("./control/label/label"));
 const layout_1 = __importDefault(require("./control/layout/layout"));
 const list_1 = __importDefault(require("./control/list/list"));
 const map_1 = __importDefault(require("./control/map/map"));
@@ -157,14 +158,12 @@ class default_1 extends clickgo.form.AbstractForm {
                     });
                     break;
                 }
-                case 'clabel': {
-                    frm = yield clickgo.form.create('control/label/label', undefined, {
-                        'path': this.filename
-                    });
-                    break;
-                }
                 case 'clink': {
                     frm = yield clickgo.form.create(link_1.default);
+                    break;
+                }
+                case 'clabel': {
+                    frm = yield clickgo.form.create(label_1.default);
                     break;
                 }
                 case 'clayout': {
