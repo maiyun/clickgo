@@ -1,5 +1,9 @@
 # Changelog
 
+# 3.4.3
+
+[\*] Optimized the map control.
+
 # 3.4.2
 
 [+] Added new parameters, mode, time, date, zone, and tz, to the label widget.  
