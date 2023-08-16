@@ -938,6 +938,7 @@ class default_1 extends clickgo.control.AbstractControl {
             'polygons': {},
             'overlays': {}
         };
+        this.needReUpdateMarkers = false;
         this.access = {
             'lib': undefined,
             'map': undefined,
@@ -1144,7 +1145,7 @@ class default_1 extends clickgo.control.AbstractControl {
             }
             case 'tianditu': {
                 const scriptEl = idoc.createElement('script');
-                scriptEl.src = 'https://js.maiyun.net/npm/maptalks@1.0.0-rc.23/dist/maptalks.min.js';
+                scriptEl.src = 'https://js.maiyun.net/npm/maptalks@1.0.0-rc.24/dist/maptalks.min.js';
                 scriptEl.addEventListener('load', () => {
                     var _a;
                     this.access.lib = this.access.iwindow.maptalks;
@@ -1315,7 +1316,7 @@ class default_1 extends clickgo.control.AbstractControl {
                 idoc.head.append(scriptEl);
                 const linkEl = idoc.createElement('link');
                 linkEl.rel = 'stylesheet';
-                linkEl.href = 'https://js.maiyun.net/npm/maptalks@1.0.0-rc.23/dist/maptalks.min.css';
+                linkEl.href = 'https://js.maiyun.net/npm/maptalks@1.0.0-rc.24/dist/maptalks.min.css';
                 idoc.head.append(linkEl);
                 break;
             }
@@ -1415,6 +1416,10 @@ class default_1 extends clickgo.control.AbstractControl {
                 break;
             }
             case 'tianditu': {
+                if (!this.access.markerImg) {
+                    this.needReUpdateMarkers = true;
+                    return;
+                }
                 for (const key in this.props.markers) {
                     const marker = this.props.markers[key];
                     if (!this.access.markers[key]) {
@@ -2223,6 +2228,9 @@ class default_1 extends clickgo.control.AbstractControl {
                 this.load();
             });
             this.access.markerImg = yield clickgo.tool.blob2DataUrl(this.packageFiles['/res/marker.svg']);
+            if (this.needReUpdateMarkers) {
+                this.updateMarkers();
+            }
             this.watch('zoom', () => {
                 if (!this.access.map) {
                     return;

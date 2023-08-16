@@ -991,6 +991,9 @@ export default class extends clickgo.control.AbstractControl {
         return this.isLoading ? true : clickgo.dom.is.move;
     }
 
+    /** --- 如果 markerImg 还没加载就执行了 updateMakers（天地图），那么加载后需要重新执行一遍 updateMarkers --- */
+    public needReUpdateMarkers = false;
+
     public access: {
         'lib': any;
         'map': any;
@@ -1294,7 +1297,7 @@ export default class extends clickgo.control.AbstractControl {
             case 'tianditu': {
                 // ---- 加载天地图 ---
                 const scriptEl = idoc.createElement('script');
-                scriptEl.src = 'https://js.maiyun.net/npm/maptalks@1.0.0-rc.23/dist/maptalks.min.js';
+                scriptEl.src = 'https://js.maiyun.net/npm/maptalks@1.0.0-rc.24/dist/maptalks.min.js';
                 scriptEl.addEventListener('load', () => {
                     this.access.lib = this.access.iwindow!.maptalks;
                     const attributions = {
@@ -1482,7 +1485,7 @@ export default class extends clickgo.control.AbstractControl {
                 idoc.head.append(scriptEl);
                 const linkEl = idoc.createElement('link');
                 linkEl.rel = 'stylesheet';
-                linkEl.href = 'https://js.maiyun.net/npm/maptalks@1.0.0-rc.23/dist/maptalks.min.css';
+                linkEl.href = 'https://js.maiyun.net/npm/maptalks@1.0.0-rc.24/dist/maptalks.min.css';
                 idoc.head.append(linkEl);
                 break;
             }
@@ -1589,6 +1592,10 @@ export default class extends clickgo.control.AbstractControl {
                 break;
             }
             case 'tianditu': {
+                if (!this.access.markerImg) {
+                    this.needReUpdateMarkers = true;
+                    return;
+                }
                 for (const key in this.props.markers) {
                     const marker = this.props.markers[key];
                     if (!this.access.markers[key]) {
@@ -2462,6 +2469,9 @@ export default class extends clickgo.control.AbstractControl {
 
         /** --- 加载 marker 样式图片（天地图-Maptalks） --- */
         this.access.markerImg = await clickgo.tool.blob2DataUrl(this.packageFiles['/res/marker.svg'] as Blob);
+        if (this.needReUpdateMarkers) {
+            this.updateMarkers();
+        }
 
         // --- 选项变更 ---
 
