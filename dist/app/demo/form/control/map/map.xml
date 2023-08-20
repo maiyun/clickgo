@@ -1,6 +1,8 @@
 <form title="Map" width="500" min-width="380" height="500" min-height="400" padding="10">
     <layout gutter="10" direction="v" style="flex: 1; width: 0;">
-        <label>lat: {{lat}}, lng: {{lng}}</label>
+        <layout gutter="10" align-v="center">
+            <label>lat: </label><text v-model="lat" style="flex: 1;" /><label>, lng: </label><text v-model="lng" style="flex: 1;" />
+        </layout>
         <map :akey="keyReal" :factory="factoryReal" :css="css" v-model:zoom="zoom" :zoomControl="zoomControl" v-model:lat="lat" v-model:lng="lng" v-model:markers="markers" v-model:lines="lines" v-model:polygons="polygons" v-model:overlays="overlays" @mapClick="click" @markerClick="mc" @markerUpdate="markerEvent" @lineInsert="lineEvent" @lineRemove="lineEvent" @lineUpdate="lineEvent" style="flex: 1; height: 0;"></map>
         <layout gutter="10">
             <select v-model="factory" :data="['google', 'tianditu']" style="height: 30px;"></select>
