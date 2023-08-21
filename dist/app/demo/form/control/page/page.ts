@@ -10,4 +10,8 @@ export default class extends clickgo.form.AbstractForm {
 
     public p4: number = 50;
 
+    public p5: number = 1;
+
+    public total5: number = 0;
+
 }

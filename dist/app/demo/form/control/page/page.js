@@ -31,6 +31,8 @@ class default_1 extends clickgo.form.AbstractForm {
         this.p2 = 25;
         this.p3 = 30;
         this.p4 = 50;
+        this.p5 = 1;
+        this.total5 = 0;
     }
 }
 exports.default = default_1;

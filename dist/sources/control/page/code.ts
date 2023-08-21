@@ -127,9 +127,11 @@ export default class extends clickgo.control.AbstractControl {
         });
         this.watch('max', () => {
             this.refreshMaxPage();
+            this.refresh();
         });
         this.watch('total', () => {
             this.refreshMaxPage();
+            this.refresh();
         });
         this.refreshMaxPage();
         this.refresh();

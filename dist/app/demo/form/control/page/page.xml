@@ -5,5 +5,7 @@
         <page v-model="p2" max="30" />
         <page v-model="p3" total="1282" />
         <page v-model="p4" total="1282" count="20" />
+        <page v-model="p5" :total="total5" count="20" />
+        <button @click="total5 = total5 ? 0 : 300">Set total = {{total5 ? 0 : 300}}</button>
     </layout>
 </form>
