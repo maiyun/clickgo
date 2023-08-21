@@ -1,5 +1,9 @@
 # Changelog
 
+# 3.4.5
+
+[\*] Optimized map and page controls.
+
 # 3.4.4
 
 [\*] Optimized map and property controls.
