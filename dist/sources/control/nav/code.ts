@@ -36,7 +36,6 @@ export default class extends clickgo.control.AbstractControl {
         this.selected = name;
         this.emit('update:modelValue', name);
         if (this.layer && this.showData) {
-            console.log('x2', this.layer, this.showData);
             this.showData = false;
             this.emit('update:show', this.showData);
         }
@@ -57,8 +56,10 @@ export default class extends clickgo.control.AbstractControl {
         this.emit('update:show', this.showData);
     }
 
-    public onMounted(): void | Promise<void> {
+    public async onMounted(): Promise<void> {
         // --- 切换层的模式 ---
+        await this.nextTick(); // 加这一段代表窗体项目也执行成功后再初始化本控件
+        // --- 之前初始化将导致窗体宽度还没重置结束，导致本 nav 会先识别成为 layer 模式，因为太窄 ---
         clickgo.dom.watchSize(this.element, () => {
             if (this.element.offsetWidth < 500) {
                 if (!this.layer) {

@@ -1,5 +1,9 @@
 # Changelog
 
+# 3.5.1
+
+[\*] Optimized nav control.
+
 # 3.5.0
 
 [+] Add alayout control.  

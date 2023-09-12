@@ -54,7 +54,6 @@ class default_1 extends clickgo.control.AbstractControl {
         this.selected = name;
         this.emit('update:modelValue', name);
         if (this.layer && this.showData) {
-            console.log('x2', this.layer, this.showData);
             this.showData = false;
             this.emit('update:show', this.showData);
         }
@@ -73,60 +72,63 @@ class default_1 extends clickgo.control.AbstractControl {
         this.emit('update:show', this.showData);
     }
     onMounted() {
-        clickgo.dom.watchSize(this.element, () => {
-            if (this.element.offsetWidth < 500) {
-                if (!this.layer) {
-                    this.layer = true;
-                    this.emit('layer', this.layer);
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.nextTick();
+            clickgo.dom.watchSize(this.element, () => {
+                if (this.element.offsetWidth < 500) {
+                    if (!this.layer) {
+                        this.layer = true;
+                        this.emit('layer', this.layer);
+                    }
                 }
-            }
-            else {
-                if (this.layer) {
-                    this.layer = false;
-                    this.emit('layer', this.layer);
+                else {
+                    if (this.layer) {
+                        this.layer = false;
+                        this.emit('layer', this.layer);
+                    }
                 }
-            }
-        }, true);
-        this.watch('show', () => {
-            this.showData = this.propBoolean('show');
-        }, {
-            'immediate': true
-        });
-        this.watch('modelValue', () => {
-            this.select(this.props.modelValue);
-        }, {
-            'immediate': true
-        });
-        this.watch('logo', () => __awaiter(this, void 0, void 0, function* () {
-            const count = ++this.logoCount;
-            if (typeof this.props.logo !== 'string' || this.props.logo === '') {
+            }, true);
+            this.watch('show', () => {
+                this.showData = this.propBoolean('show');
+            }, {
+                'immediate': true
+            });
+            this.watch('modelValue', () => {
+                this.select(this.props.modelValue);
+            }, {
+                'immediate': true
+            });
+            this.watch('logo', () => __awaiter(this, void 0, void 0, function* () {
+                const count = ++this.logoCount;
+                if (typeof this.props.logo !== 'string' || this.props.logo === '') {
+                    this.logoData = '';
+                    return;
+                }
+                const pre = this.props.logo.slice(0, 6).toLowerCase();
+                if (pre === 'file:/') {
+                    return;
+                }
+                if (pre === 'http:/' || pre === 'https:' || pre.startsWith('data:')) {
+                    this.logoData = `url(${this.props.logo})`;
+                    return;
+                }
+                const path = clickgo.tool.urlResolve('/package' + this.path + '/', this.props.logo);
+                const blob = yield clickgo.fs.getContent(path);
+                if ((count !== this.logoCount) || !blob || typeof blob === 'string') {
+                    return;
+                }
+                const t = yield clickgo.tool.blob2DataUrl(blob);
+                if (count !== this.logoCount) {
+                    return;
+                }
+                if (t) {
+                    this.logoData = 'url(' + t + ')';
+                    return;
+                }
                 this.logoData = '';
-                return;
-            }
-            const pre = this.props.logo.slice(0, 6).toLowerCase();
-            if (pre === 'file:/') {
-                return;
-            }
-            if (pre === 'http:/' || pre === 'https:' || pre.startsWith('data:')) {
-                this.logoData = `url(${this.props.logo})`;
-                return;
-            }
-            const path = clickgo.tool.urlResolve('/package' + this.path + '/', this.props.logo);
-            const blob = yield clickgo.fs.getContent(path);
-            if ((count !== this.logoCount) || !blob || typeof blob === 'string') {
-                return;
-            }
-            const t = yield clickgo.tool.blob2DataUrl(blob);
-            if (count !== this.logoCount) {
-                return;
-            }
-            if (t) {
-                this.logoData = 'url(' + t + ')';
-                return;
-            }
-            this.logoData = '';
-        }), {
-            'immediate': true
+            }), {
+                'immediate': true
+            });
         });
     }
 }
