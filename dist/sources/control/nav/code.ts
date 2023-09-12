@@ -13,8 +13,8 @@ export default class extends clickgo.control.AbstractControl {
             'logo': ''
         };
 
-    // --- pop 模式下是否在显示 ---
-    public showData = false;
+    // --- 菜单是否在显示 ---
+    public showData = true;
 
     /** --- logo 的实际图像 --- */
     public logoData: string = '';
@@ -30,9 +30,13 @@ export default class extends clickgo.control.AbstractControl {
 
     /** --- 选择一个 name，child 可能也会调用 --- */
     public select(name: string): void {
+        if (this.selected === name) {
+            return;
+        }
         this.selected = name;
         this.emit('update:modelValue', name);
-        if (this.showData) {
+        if (this.layer && this.showData) {
+            console.log('x2', this.layer, this.showData);
             this.showData = false;
             this.emit('update:show', this.showData);
         }

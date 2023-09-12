@@ -1,7 +1,7 @@
 global {
-    --g-padding:10px;
-    --g-margin:5px;
-    --g-radius:5px;
+    --g-padding:12px;
+    --g-margin:7px;
+    --g-radius:3px;
 
     // --- 基础颜色 ---
 
@@ -398,7 +398,7 @@ global {
 // -- CONTROL -- menu --
 
 .menu_wrap {
-    border-bottom-color: var(--g-plain-border-color); padding-bottom: 1px;
+    border-bottom: none;
 }
 
 // -- CONTROL -- menu-item --
@@ -489,9 +489,9 @@ global {
 
     .nav_content {
         .nav_header {
-            height: 44px; border-bottom: solid .5px var(--g-background); padding: 2px;
+            padding: 2px; box-shadow: none; border-bottom: solid .5px var(--g-background); padding: 2px;
             .nav_mbutton {
-                width: 40px; transition: all .1s ease-out;
+                width: 50px; min-height: 50px; transition: all .1s ease-out;
                 &:hover {
                     background: var(--g-border-color-hover);
                 }
@@ -500,7 +500,7 @@ global {
                 }
 
                 .nav_tag-svg {
-                    width: 28px; height: 28px;
+                    width: 34px; height: 34px;
                 }
             }
         }

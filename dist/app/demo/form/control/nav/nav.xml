@@ -39,15 +39,46 @@
         <nav-item label="Root2"></nav-item>
         <nav-item label="Root3" icon="/package/res/icon.svg"></nav-item>
         <nav-item label="Root4" icon="/package/res/marker.svg"></nav-item>
+        <template v-slot:header>
+            <label style="flex: 1; padding-left: 10px;">Test</label>
+            <menu>
+                <menu-item alt="G">
+                    <template v-slot>Item1</template>
+                    <template v-slot:pop>
+                        <menulist>
+                            <menulist-item alt="A">Item4</menulist-item>
+                        </menulist>
+                    </template>
+                </menu-item>
+                <menu-item alt="H">
+                    <template v-slot>Item2</template>
+                    <template v-slot:pop>
+                        <menulist>
+                            <menulist-item alt="A">Item6</menulist-item>
+                        </menulist>
+                    </template>
+                </menu-item>
+                <menu-item alt="I" disabled>
+                    <template v-slot>Item3</template>
+                    <template v-slot:pop>
+                        <menulist>
+                            <menulist-item alt="A">Item5</menulist-item>
+                        </menulist>
+                    </template>
+                </menu-item>
+                <menu-item alt="J">Item7</menu-item>
+            </menu>
+        </template>
         <template v-slot:content>
             <layout direction="v" gutter="10" style="padding: 10px; flex: 1;">
                 <label>Change the size of the form to see the effect.</label>
                 <label>Now select: {{name}}</label>
-                <label>Layer show: {{isShow ? 'true' : 'false'}}</label>
-                <button v-if="layer" @click="isShow = true" style="height: 30px;">Open</button>
-                <button @click="name = 'Action11'" style="height: 30px;">Select "Action11"</button>
-                <button @click="name = 'hasname'" style="height: 30px;">Select "hasname"</button>
-                <button @click="logo = logo ? '' : '/clickgo/icon.png'" style="height: 30px;">{{logo ? 'Remove' : 'Set'}} logo</button>
+                <label>Show: {{isShow ? 'true' : 'false'}}</label>
+                <label>Layer: {{layer ? 'true' : 'false'}}</label>
+                <button v-if="layer" @click="isShow = true">Open</button>
+                <button @click="name = 'Action11'">Select "Action11"</button>
+                <button @click="name = 'hasname'">Select "hasname"</button>
+                <button @click="logo = logo ? '' : '/clickgo/icon.png'">{{logo ? 'Remove' : 'Set'}} logo</button>
             </layout>
         </template>
     </nav>

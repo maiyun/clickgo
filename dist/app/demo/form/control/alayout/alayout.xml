@@ -1,0 +1,43 @@
+<form width="350" height="500" title="alayout" padding="10">
+    <alayout :gutter="gutter[0]" :item-gutter="igutter[0]" :direction="direction[0]" style="flex: 1;">
+        <alayout-row>
+            <alayout-cell span="4" style="background:hsl(0,0%,90%);">
+                <label>1234</label>
+            </alayout-cell>
+        </alayout-row>
+        <alayout-row>
+            <alayout-cell style="background:hsl(0,0%,85%);">
+                <label>1</label>
+            </alayout-cell>
+            <alayout-cell style="background:hsl(0,20%,85%);">
+                <label>2</label>
+            </alayout-cell>
+            <alayout-cell span="2" style="background:hsl(0,40%,85%);">
+                <label>34</label>
+            </alayout-cell>
+        </alayout-row>
+        <alayout-row>
+            <alayout-cell style="background:hsl(0,0%,80%);">
+                <label>1</label>
+            </alayout-cell>
+            <alayout-cell style="background:hsl(0,20%,80%);">
+                <label>2</label>
+            </alayout-cell>
+            <alayout-cell style="background:hsl(0,40%,80%);">
+                <label>3</label>
+            </alayout-cell>
+            <alayout-cell style="background:hsl(0,60%,80%);">
+                <label>Input</label>
+                <text style="flex: 1;" />
+            </alayout-cell>
+        </alayout-row>
+    </alayout>
+    <layout direction="v" gutter="10" class="right">
+        <label>gutter:</label>
+        <select v-model="gutter" :data="[0, 10, 12, 30, 31, 50]"></select>
+        <label>item gutter:</label>
+        <select v-model="igutter" :data="[0, 10, 12, 30, 31, 50]"></select>
+        <label>direction:</label>
+        <select v-model="direction" :data="['h', 'v']"></select>
+    </layout>
+</form>

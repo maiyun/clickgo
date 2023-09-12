@@ -36,6 +36,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const clickgo = __importStar(require("clickgo"));
+const alayout_1 = __importDefault(require("./control/alayout/alayout"));
 const box_1 = __importDefault(require("./control/box/box"));
 const button_1 = __importDefault(require("~c/button/button"));
 const check_1 = __importDefault(require("./control/check/check"));
@@ -98,6 +99,10 @@ class default_1 extends clickgo.form.AbstractForm {
                     frm = yield clickgo.form.create('control/block/block', undefined, {
                         'path': this.filename
                     });
+                    break;
+                }
+                case 'calayout': {
+                    frm = yield clickgo.form.create(alayout_1.default);
                     break;
                 }
                 case 'cbox': {

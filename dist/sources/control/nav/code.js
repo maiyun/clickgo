@@ -41,16 +41,20 @@ class default_1 extends clickgo.control.AbstractControl {
             'show': false,
             'logo': ''
         };
-        this.showData = false;
+        this.showData = true;
         this.logoData = '';
         this.logoCount = 0;
         this.selected = '';
         this.layer = false;
     }
     select(name) {
+        if (this.selected === name) {
+            return;
+        }
         this.selected = name;
         this.emit('update:modelValue', name);
-        if (this.showData) {
+        if (this.layer && this.showData) {
+            console.log('x2', this.layer, this.showData);
             this.showData = false;
             this.emit('update:show', this.showData);
         }

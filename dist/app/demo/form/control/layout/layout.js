@@ -31,7 +31,7 @@ class default_1 extends clickgo.form.AbstractForm {
         this.bigColor = false;
         this.media = [];
         this.mediaVal = -1;
-        this.gutter = 0;
+        this.gutter = [0];
     }
     onMedia(v) {
         this.mediaVal = v;

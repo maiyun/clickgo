@@ -6,7 +6,7 @@ export default class extends clickgo.form.AbstractForm {
 
     public name: string = '';
 
-    public isShow: boolean = false;
+    public isShow: boolean = true;
 
     public loading = false;
 

@@ -23,6 +23,9 @@
     "style": "/package/global",
 
     "files": [
+        "/form/control/alayout/alayout.js",
+        "/form/control/alayout/alayout.css",
+        "/form/control/alayout/alayout.xml",
         "/form/control/block/block.css",
         "/form/control/block/block.xml",
         "/form/control/box/box.js",

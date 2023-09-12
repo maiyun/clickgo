@@ -2,19 +2,19 @@
     display: flex; position: relative;
 
     .menuwrap {
-        display: flex;
+        display: flex; overflow: hidden;
         .menu {
-            background: var(--face); border-right: solid .5px var(--g-border-color); padding: 1px; width: 250px;
+            background: var(--face); border-right: solid .5px hsl(0, 0%, 70%); padding: 1px; width: 250px; transition: all .1s ease-out; transition-property: transform;
             .logo {
-                height: 80px; background-size: auto 50%; background-position: center; background-repeat: no-repeat;
+                height: 60px; background-size: auto 50%; background-position: center; background-repeat: no-repeat;
             }
         }
     }
     &.layer {
         .menuwrap {
-            position: absolute; width: 100%; height: 100%; left: 0; top: 0; background-color: rgba(0, 0, 0, 0); pointer-events: none; overflow: hidden; z-index: 2; transition: all .1s ease-out; transition-property: background-color;
+            position: absolute; width: 100%; height: 100%; left: 0; top: 0; background-color: rgba(0, 0, 0, 0); pointer-events: none; z-index: 2; transition: all .1s ease-out; transition-property: background-color;
             .menu {
-                box-shadow: 0px 5px 20px rgba(0, 0, 0, .25); transform: translateX(-300px); transition: all .1s ease-out; transition-property: transform;
+                box-shadow: 0px 5px 20px rgba(0, 0, 0, .25); transform: translateX(-300px);
             }
         }
         &.show {
@@ -26,13 +26,23 @@
             }
         }
     }
+    &:not(.layer) {
+        &:not(.show) {
+            .menuwrap {
+                position: absolute; width: 100%; height: 100%; left: 0; top: 0; pointer-events: none;
+                .menu {
+                    transform: translateX(-300px); transition: all .1s ease-out;
+                }
+            }
+        }
+    }
 
     .content {
         flex: 1; width: 0; display: flex; flex-direction: column;
         .header {
-            height: 30px; display: flex; background-repeat: no-repeat; background-position: center; background-size: auto 60%; box-shadow: 0 0 15px rgba(0, 0, 0, .25);
+            display: flex; align-items: center; box-shadow: 0 0 15px rgba(0, 0, 0, .1);
             .mbutton {
-                width: 30px; display: flex; align-items: center; justify-content: center; border-radius: var(--g-radius);
+                width: 30px; min-height: 30px; height: 100%; display: flex; align-items: center; justify-content: center; border-radius: var(--g-radius);
                 &:hover {
                     background: var(--g-background-active);
                 }

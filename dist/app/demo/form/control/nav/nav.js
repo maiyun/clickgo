@@ -38,7 +38,7 @@ class default_1 extends clickgo.form.AbstractForm {
         super(...arguments);
         this.layer = false;
         this.name = '';
-        this.isShow = false;
+        this.isShow = true;
         this.loading = false;
         this.logo = '';
     }

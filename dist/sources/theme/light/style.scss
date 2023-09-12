@@ -10,12 +10,12 @@ global {
 
     // --- 组件默认颜色（如按钮） ---
 
-    --g-background:transparent;
-    --g-background-hover:rgba(0,0,0,.05);
-    --g-background-active:rgba(0,0,0,.1);
-    --g-background-opacity:rgba(0,0,0,.03);
-    --g-background-focus:rgba(0,0,0,.05);
-    --g-background-disabled:rgba(0,0,0,.1);
+    --g-background:hsl(0,0%,100%);
+    --g-background-hover:hsl(0,0%,97%);
+    --g-background-active:hsl(0,0%,90%);
+    --g-background-opacity:hsl(0,0%,94%);
+    --g-background-focus:hsl(0,0%,97%);
+    --g-background-disabled:hsl(0,0%,90%);
 
     --g-border-color:rgba(0,0,0,.2);
     --g-border-color-hover:rgba(0,0,0,.4);
@@ -30,10 +30,10 @@ global {
     --g-plain-color-active:rgba(0,0,0,.9);
     --g-plain-color-focus:rgba(0,0,0,.8);
 
-    --g-plain-background:transparent;
-    --g-plain-background-hover:transparent;
-    --g-plain-background-active:transparent;
-    --g-plain-background-focus:transparent;
+    --g-plain-background:hsl(0,0%,100%);
+    --g-plain-background-hover:hsl(0,0%,100%);
+    --g-plain-background-active:hsl(0,0%,100%);
+    --g-plain-background-focus:hsl(0,0%,100%);
     --g-plain-background-disabled:rgba(0,0,0,.1);
 
     --g-plain-border-color:rgba(0,0,0,.2);
@@ -45,6 +45,9 @@ global {
     ::selection {
         background-color: rgba(0, 0, 0, .1);
     }
+
+    font-size: 14px;
+    font-family: 'Roboto', 'SF Pro SC', 'SF Pro Display', 'SF Pro Icons', 'PingFang SC', BlinkMacSystemFont, -apple-system, 'Segoe UI', 'Microsoft Yahei', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
 }
 
 // -- CONTROL -- button --
@@ -260,6 +263,12 @@ global {
     background: var(--pop-background); -webkit-backdrop-filter: blur(20px) brightness(1.1); backdrop-filter: blur(20px) brightness(1.1);
 }
 
+// -- CONTROL -- menu --
+
+.menu_wrap {
+    border-bottom: none;
+}
+
 // -- CONTROL -- menu-item --
 
 .menu-item_wrap {
@@ -278,13 +287,6 @@ global {
 // -- CONTROL -- menulist-item --
 
 .menulist-item_wrap {
-    &:not([data-cg-disabled]) {
-        &:hover {
-            .menulist-item_check, .menulist-item_radio {
-                background-color: var(--g-background-hover);
-            }
-        }
-    }
     &[data-cg-disabled] {
         &:hover {
             background: transparent;
@@ -321,7 +323,7 @@ global {
 .nav_wrap {
     .nav_menuwrap {
         .nav_menu {
-            width: 270px;
+            width: 270px; border-right: none;
             > * {
                 margin: 0 15px;
             }
@@ -329,9 +331,9 @@ global {
     }
     .nav_content {
         .nav_header {
-            height: 44px; padding: 2px;
+            padding: 2px; box-shadow: none;
             .nav_mbutton {
-                width: 40px; transition: all .1s ease-out;
+                width: 50px; min-height: 50px; transition: all .1s ease-out;
                 &:hover {
                     background: var(--g-background-hover); fill: var(--g-color-hover);
                 }
@@ -340,9 +342,12 @@ global {
                 }
 
                 .nav_tag-svg {
-                    width: 28px; height: 28px;
+                    width: 34px; height: 34px;
                 }
             }
+        }
+        .nav_body {
+            background: rgba(0,0,0,.02);
         }
     }
 }
@@ -352,6 +357,9 @@ global {
 .nav-item_wrap {
     > .nav-item_text {
         padding: 15px; margin: 3px 0; transition: all .1s ease-out;
+        .nav-item_tag-cg-img, .nav-item_tag-cg-svg {
+            width: 20px; height: 20px; margin-right: 8px;
+        }
     }
     // --- 不是 child 项并且在显示中 ---
     &:not(.nav-item_child) {
@@ -365,8 +373,11 @@ global {
         }
     }
     &:not(.nav-item_selected) {
+        > .nav-item_text:not(:hover) {
+            color: hsl(0, 0%, 40%);
+        }
         > .nav-item_text:hover {
-            background: var(--g-background-opacity);
+            background: var(--g-background-hover);
         }
     }
     &.nav-item_selected {

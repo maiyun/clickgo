@@ -1,1 +1,1 @@
-.wrap{display:flex;flex-direction:column;position:relative}.wrap .content{display:flex;flex:1;height:0}.wrap .content.v{flex-direction:column}.wrap .content.v.gutter>:not(:first-child){margin-top:var(--cg-layout-gutter)}.wrap .content.h.gutter>:not(:first-child){margin-left:var(--cg-layout-gutter)}
+.wrap{display:flex;position:relative}.wrap.v{flex-direction:column}

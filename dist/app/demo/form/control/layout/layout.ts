@@ -10,7 +10,7 @@ export default class extends clickgo.form.AbstractForm {
 
     public mediaVal = -1;
 
-    public gutter = 0;
+    public gutter = [0];
 
     public onMedia(v: number): void {
         this.mediaVal = v;

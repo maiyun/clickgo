@@ -1,17 +1,6 @@
 .wrap {
-    display: flex; flex-direction: column; position: relative;
-    .content {
-        display: flex; flex: 1; height: 0;
-        &.v {
-            flex-direction: column;
-            &.gutter > :not(:first-child) {
-                margin-top: var(--cg-layout-gutter);
-            }
-        }
-        &.h {
-            &.gutter > :not(:first-child) {
-                margin-left: var(--cg-layout-gutter);
-            }
-        }
+    display: flex; position: relative;
+    &.v {
+        flex-direction: column;
     }
 }
