@@ -1,5 +1,10 @@
 # Changelog
 
+# 3.5.0
+
+[+] Add alayout control.  
+[\*] Optimized layout and nav controls.
+
 # 3.4.5
 
 [\*] Optimized map and page controls.
