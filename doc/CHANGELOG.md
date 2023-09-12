@@ -1,5 +1,9 @@
 # Changelog
 
+# 3.5.2
+
+[\*] Optimized.
+
 # 3.5.1
 
 [\*] Optimized nav control.

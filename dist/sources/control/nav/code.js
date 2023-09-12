@@ -38,7 +38,7 @@ class default_1 extends clickgo.control.AbstractControl {
         super(...arguments);
         this.props = {
             'modelValue': '',
-            'show': false,
+            'show': undefined,
             'logo': ''
         };
         this.showData = true;
@@ -89,6 +89,11 @@ class default_1 extends clickgo.control.AbstractControl {
                 }
             }, true);
             this.watch('show', () => {
+                if (this.props.show === undefined) {
+                    this.showData = this.layer ? false : true;
+                    this.emit('update:show', this.showData);
+                    return;
+                }
                 this.showData = this.propBoolean('show');
             }, {
                 'immediate': true

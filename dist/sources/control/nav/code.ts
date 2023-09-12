@@ -5,11 +5,11 @@ export default class extends clickgo.control.AbstractControl {
     public props: {
         'modelValue': string;
         // --- pop 模式时是否在显示 ---
-        'show': boolean | string;
+        'show': boolean | string | undefined;
         'logo': string;
     } = {
             'modelValue': '',
-            'show': false,
+            'show': undefined,
             'logo': ''
         };
 
@@ -76,6 +76,11 @@ export default class extends clickgo.control.AbstractControl {
         }, true);
 
         this.watch('show', () => {
+            if (this.props.show === undefined) {
+                this.showData = this.layer ? false : true;
+                this.emit('update:show', this.showData);
+                return;
+            }
             this.showData = this.propBoolean('show');
         }, {
             'immediate': true
