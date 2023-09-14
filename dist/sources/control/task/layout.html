@@ -5,6 +5,7 @@
     <div ref="tray" class="tray">
         <slot name="tray"></slot>
     </div>
+    <div class="date">{{date}}</div>
     <teleport v-if="slots['pop']" to="system">
         <div ref="pop" class="pop">
             <slot name="pop"></slot>

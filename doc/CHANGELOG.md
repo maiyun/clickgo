@@ -1,5 +1,10 @@
 # Changelog
 
+# 3.5.3
+
+[+] Add back method of core library.  
+[+] Add showInSystemTask, bottomMost params of form.
+
 # 3.5.2
 
 [\*] Optimized.

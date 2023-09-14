@@ -41,7 +41,6 @@ class default_1 extends clickgo.form.AbstractForm {
         this.type = ['primary'];
         this.progress = ['noraml'];
         this.dr = '';
-        this.setTopMostValue = false;
     }
     min() {
         clickgo.form.min(this.formId);
@@ -224,10 +223,6 @@ class default_1 extends clickgo.form.AbstractForm {
                 this.dr = this.dr.toString() + ' (number)';
             }
         });
-    }
-    setTopMost() {
-        this.setTopMostValue = !this.setTopMostValue;
-        this.topMost = this.setTopMostValue;
     }
     flash() {
         clickgo.form.flash(this.formId);

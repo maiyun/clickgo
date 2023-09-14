@@ -78,5 +78,13 @@ class default_1 extends clickgo.form.AbstractForm {
             yield clickgo.form.dialog('Location is: ' + clickgo.core.getLocation());
         });
     }
+    back() {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (clickgo.core.back()) {
+                return;
+            }
+            yield clickgo.form.dialog('No permission.');
+        });
+    }
 }
 exports.default = default_1;

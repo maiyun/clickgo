@@ -40,4 +40,11 @@ export default class extends clickgo.form.AbstractForm {
         await clickgo.form.dialog('Location is: ' + clickgo.core.getLocation());
     }
 
+    public async back(): Promise<void> {
+        if (clickgo.core.back()) {
+            return;
+        }
+        await clickgo.form.dialog('No permission.');
+    }
+
 }

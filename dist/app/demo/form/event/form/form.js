@@ -62,12 +62,13 @@ class default_1 extends clickgo.form.AbstractForm {
                     'stateMin': flist[fid].stateMin,
                     'show': flist[fid].show,
                     'focus': flist[fid].focus,
-                    'flash': false
+                    'flash': false,
+                    'showInTask': flist[fid].showInSystemTask
                 };
             }
         }
     }
-    onFormCreated(taskId, formId, title, icon) {
+    onFormCreated(taskId, formId, title, icon, showInSystemTask) {
         this.flist[formId] = {
             'title': title,
             'icon': icon,
@@ -75,9 +76,10 @@ class default_1 extends clickgo.form.AbstractForm {
             'stateMin': false,
             'show': false,
             'focus': false,
-            'flash': false
+            'flash': false,
+            'showInTask': true
         };
-        this.pushConsole('formCreated', `taskId: ${taskId}, formId: ${formId}, title: ${title}, icon: ${icon ? icon.slice(0, 10) + '...' : 'null'}`);
+        this.pushConsole('formCreated', `taskId: ${taskId}, formId: ${formId}, title: ${title}, icon: ${icon ? icon.slice(0, 10) + '...' : 'null'}, sist: ${showInSystemTask ? 'true' : 'false'}`);
     }
     onFormRemoved(taskId, formId, title, icon) {
         if (!this.flist[formId]) {
@@ -149,6 +151,13 @@ class default_1 extends clickgo.form.AbstractForm {
             yield clickgo.tool.sleep(1000);
             this.flist[formId].flash = false;
         });
+    }
+    onFormShowInSystemTaskChange(taskId, formId, value) {
+        if (!this.flist[formId]) {
+            return;
+        }
+        this.flist[formId].title = value;
+        this.pushConsole('formShowInSystemTaskChange', `taskId: ${taskId}, formId: ${formId}, value: ${value}`);
     }
 }
 exports.default = default_1;

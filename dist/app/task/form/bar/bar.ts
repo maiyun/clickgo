@@ -130,12 +130,13 @@ export default class extends clickgo.form.AbstractForm {
             }
             const task = tasks[taskId];
             // --- 看看能不能找到 task ---
-            let appIndex = this.getAppIndexByPath(task.path);
+            let app: any = undefined;
+            const appIndex = this.getAppIndexByPath(task.path);
             if (appIndex >= 0) {
                 this.apps[appIndex].opened = true;
             }
             else {
-                this.apps.push({
+                app = {
                     'name': task.name,
                     'path': task.path,
                     'icon': task.icon,
@@ -144,28 +145,36 @@ export default class extends clickgo.form.AbstractForm {
                     'forms': {},
                     'formCount': 0,
                     'pin': false
-                });
-                appIndex = this.apps.length - 1;
+                };
             }
             // --- 获取窗体 ---
             const forms = clickgo.form.getList(parseInt(taskId));
             for (const formId in forms) {
                 const form = forms[formId];
-                this.apps[appIndex].forms[formId] = {
+                if (!form.showInSystemTask) {
+                    continue;
+                }
+                (app ?? this.apps[appIndex]).forms[formId] = {
                     'title': form.title,
-                    'icon': form.icon || this.apps[appIndex].icon
+                    'icon': form.icon || (app ?? this.apps[appIndex]).icon
                 };
             }
-            this.apps[appIndex].formCount = Object.keys(this.apps[appIndex].forms).length;
+            (app ?? this.apps[appIndex]).formCount = Object.keys((app ?? this.apps[appIndex]).forms).length;
+            if (app?.formCount) {
+                this.apps.push(app);
+            }
         }
     }
 
-    public onFormCreated(taskId: number, formId: number, title: string, icon: string): void {
+    public onFormCreated(taskId: number, formId: number, title: string, icon: string, sist: boolean): void {
         if (taskId === this.taskId) {
             return;
         }
         const task = clickgo.task.get(taskId);
         if (!task) {
+            return;
+        }
+        if (!sist) {
             return;
         }
         let appIndex = this.getAppIndexByPath(task.path);
@@ -199,6 +208,9 @@ export default class extends clickgo.form.AbstractForm {
         }
         const appIndex = this.getAppIndexByPath(task.path);
         if (appIndex < 0) {
+            return;
+        }
+        if (!this.apps[appIndex].forms[formId]) {
             return;
         }
         delete this.apps[appIndex].forms[formId];
@@ -270,6 +282,64 @@ export default class extends clickgo.form.AbstractForm {
             return;
         }
         this.apps[appIndex].forms[formId].icon = icon || this.apps[appIndex].icon;
+    }
+
+    public onFormShowInSystemTaskChange(taskId: number, formId: number, value: boolean): void {
+        const task = clickgo.task.get(taskId);
+        if (!task) {
+            return;
+        }
+        if (value) {
+            // --- 相当于创建 ---
+            const form = clickgo.form.get(formId);
+            if (!form) {
+                return;
+            }
+            let appIndex = this.getAppIndexByPath(task.path);
+            if (appIndex >= 0) {
+                this.apps[appIndex].opened = true;
+            }
+            else {
+                this.apps.push({
+                    'name': task.name,
+                    'path': task.path,
+                    'icon': task.icon,
+                    'selected': false,
+                    'opened': true,
+                    'forms': {},
+                    'formCount': 0,
+                    'pin': false
+                });
+                appIndex = this.apps.length - 1;
+            }
+            this.apps[appIndex].forms[formId] = {
+                'title': form.title,
+                'icon': form.icon || this.apps[appIndex].icon
+            };
+            ++this.apps[appIndex].formCount;
+        }
+        else {
+            // --- 相当于移除 ---
+            const appIndex = this.getAppIndexByPath(task.path);
+            if (appIndex < 0) {
+                return;
+            }
+            delete this.apps[appIndex].forms[formId];
+            --this.apps[appIndex].formCount;
+            // --- 检测 app 是否要关掉 ---
+            if (this.apps[appIndex].formCount > 0) {
+                return;
+            }
+            // --- 看看在不在 pin 里 ---
+            const pinPaths = Object.keys(clickgo.core.config['task.pin']);
+            if (pinPaths.includes(this.apps[appIndex].path)) {
+                this.apps[appIndex].opened = false;
+            }
+            else {
+                // --- 直接移除 ---
+                this.apps.splice(appIndex, 1);
+            }
+        }
     }
 
     public onConfigChanged<T extends types.IConfig, TK extends keyof T>(n: TK, v: T[TK]): void | Promise<void> {

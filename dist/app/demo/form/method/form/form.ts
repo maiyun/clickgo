@@ -12,8 +12,6 @@ export default class extends clickgo.form.AbstractForm {
 
     public dr: string | number | boolean = '';
 
-    public setTopMostValue = false;
-
     public min(): void {
         clickgo.form.min(this.formId);
     }
@@ -194,11 +192,6 @@ export default class extends clickgo.form.AbstractForm {
         else {
             this.dr = this.dr.toString() + ' (number)';
         }
-    }
-
-    public setTopMost(): void {
-        this.setTopMostValue = !this.setTopMostValue;
-        this.topMost = this.setTopMostValue;
     }
 
     public flash(): void {

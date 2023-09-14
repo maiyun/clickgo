@@ -32,9 +32,11 @@ const info: {
     lastId: number;
     /** --- 最后一个 panel id --- */
     lastPanelId: number;
-    /** --- 最后一个窗体层级，1000（一千）开始 --- */
+    /** --- 最后一个置底窗体层级，1000（一千）开始 --- */
+    bottomLastZIndex: number;
+    /** --- 最后一个窗体层级，1000000（百万）开始 --- */
     lastZIndex: number;
-    /** --- 最后一个置顶窗体层级，10000000（一千万）开始 --- */
+    /** --- 最后一个置顶窗体层级，100000000（一亿）开始 --- */
     topLastZIndex: number;
     /** --- 用到的语言包 --- */
     locale: Record<string, {
@@ -47,8 +49,9 @@ const info: {
 } = {
     'lastId': 0,
     'lastPanelId': 0,
-    'lastZIndex': 999,
-    'topLastZIndex': 9999999,
+    'bottomLastZIndex': 999,
+    'lastZIndex': 999999,
+    'topLastZIndex': 99999999,
     'locale': {
         'en': {
             'ok': 'OK',
@@ -383,6 +386,16 @@ export abstract class AbstractForm extends AbstractCommon {
         // --- 会进行重写 ---
     }
 
+    /** --- 是否是置底 --- */
+    public get bottomMost(): boolean {
+        // --- 将在初始化时系统自动重写本函数 ---
+        return false;
+    }
+
+    public set bottomMost(v: boolean) {
+        // --- 会进行重写 ---
+    }
+
     /**
      * --- 是否在本窗体上显示遮罩层 ---
      */
@@ -396,6 +409,16 @@ export abstract class AbstractForm extends AbstractCommon {
     public get formFocus(): boolean {
         // --- _formFocus 在初始化时由系统设置 ---
         return (this as any)._formFocus;
+    }
+
+    /** --- 当前窗体是否显示在任务栏 --- */
+    public get showInSystemTask(): boolean {
+        // --- 将在初始化时系统自动重写本函数 ---
+        return false;
+    }
+
+    public set showInSystemTask(v: boolean) {
+        // --- 会进行重写 ---
     }
 
     /** --- 当前是不是初次显示 --- */
@@ -487,7 +510,9 @@ export abstract class AbstractForm extends AbstractCommon {
     }
 
     /** --- 窗体创建事件 --- */
-    public onFormCreated(taskId: number, formId: number, title: string, icon: string): void | Promise<void>;
+    public onFormCreated(
+        taskId: number, formId: number, title: string, icon: string, showInSystemTask: boolean
+    ): void | Promise<void>;
     public onFormCreated(): void {
         return;
     }
@@ -543,6 +568,12 @@ export abstract class AbstractForm extends AbstractCommon {
     /** --- 窗体闪烁事件 --- */
     public onFormFlash(taskId: number, formId: number): void | Promise<void>;
     public onFormFlash(): void {
+        return;
+    }
+
+    /** --- 窗体是否显示在任务栏属性改变事件 --- */
+    public onFormShowInSystemTaskChange(taskId: number, formId: number, value: boolean): void | Promise<void>;
+    public onFormShowInSystemTaskChange(): void {
         return;
     }
 
@@ -1062,10 +1093,18 @@ export function refreshMaxPosition(): void {
             continue;
         }
         const vroot = task.list[taskId].forms[formId].vroot;
-        vroot.$refs.form.setPropData('left', area.left);
-        vroot.$refs.form.setPropData('top', area.top);
-        vroot.$refs.form.setPropData('width', area.width);
-        vroot.$refs.form.setPropData('height', area.height);
+        if (ef.dataset.cgBottomMost === undefined) {
+            // --- 不是置底窗体 ---
+            vroot.$refs.form.setPropData('left', area.left);
+            vroot.$refs.form.setPropData('top', area.top);
+            vroot.$refs.form.setPropData('width', area.width);
+            vroot.$refs.form.setPropData('height', area.height);
+        }
+        else {
+            // --- 是置底窗体 ---
+            vroot.$refs.form.setPropData('width', area.owidth);
+            vroot.$refs.form.setPropData('height', area.oheight);
+        }
     }
 }
 
@@ -1103,7 +1142,8 @@ export function get(formId: number): types.IFormInfo | null {
         'stateMax': item.vroot.$refs.form.stateMaxData,
         'stateMin': item.vroot.$refs.form.stateMinData,
         'show': item.vroot.$refs.form.isShow,
-        'focus': item.vroot.formFocus
+        'focus': item.vroot.formFocus,
+        'showInSystemTask': item.vroot.showInSystemTask
     };
 }
 
@@ -1139,7 +1179,8 @@ export function getList(taskId: number): Record<string, types.IFormInfo> {
             'stateMax': item.vroot.$refs.form.stateMaxData,
             'stateMin': item.vroot.$refs.form.stateMinData,
             'show': item.vroot.$refs.form.isShow,
-            'focus': item.vroot.formFocus
+            'focus': item.vroot.formFocus,
+            'showInSystemTask': item.vroot.showInSystemTask
         };
     }
     return list;
@@ -1275,6 +1316,9 @@ export function changeFocus(formId: number = 0): void {
         if (t.forms[dialogFormId].vroot._topMost) {
             t.forms[dialogFormId].vroot.$refs.form.$data.zIndex = ++info.topLastZIndex;
         }
+        else if (t.forms[dialogFormId].vroot._bottomMost) {
+            t.forms[dialogFormId].vroot.$refs.form.$data.zIndex = ++info.bottomLastZIndex;
+        }
         else {
             t.forms[dialogFormId].vroot.$refs.form.$data.zIndex = ++info.lastZIndex;
         }
@@ -1295,6 +1339,9 @@ export function changeFocus(formId: number = 0): void {
         // --- 没有 dialog，才修改 zindex ---
         if (t.forms[formId].vroot._topMost) {
             t.forms[formId].vroot.$refs.form.$data.zIndex = ++info.topLastZIndex;
+        }
+        else if (t.forms[formId].vroot._bottomMost) {
+            t.forms[formId].vroot.$refs.form.$data.zIndex = ++info.bottomLastZIndex;
         }
         else {
             t.forms[formId].vroot.$refs.form.$data.zIndex = ++info.lastZIndex;
@@ -2562,6 +2609,35 @@ export async function create<T extends AbstractForm>(
             return;
         }
     };
+    // --- 是否在底层的窗体 ---
+    idata._bottomMost = false;
+    computed.bottomMost = {
+        get: function(this: types.IVue): number {
+            return this._bottomMost;
+        },
+        set: function(v: boolean): void {
+            const form = t.forms[formId];
+            if (!form) {
+                return;
+            }
+            if (v) {
+                // --- 置底 ---
+                form.vroot.$data._bottomMost = true;
+                form.vroot.$el.dataset.cgBottomMost = '';
+                if (form.vroot.$data._topMost) {
+                    form.vroot.$data._topMost = false;
+                }
+                form.vroot.$refs.form.$data.zIndex = ++info.bottomLastZIndex;
+            }
+            else {
+                // --- 取消置底 ---
+                form.vroot.$data._bottomMost = false;
+                form.vroot.$el.removeAttribute('data-cg-bottom-most');
+                form.vroot.$refs.form.$data.zIndex = ++info.lastZIndex;
+            }
+            return;
+        }
+    };
     // --- 是否在顶层的窗体 ---
     idata._topMost = false;
     computed.topMost = {
@@ -2576,6 +2652,10 @@ export async function create<T extends AbstractForm>(
             if (v) {
                 // --- 置顶 ---
                 form.vroot.$data._topMost = true;
+                if (form.vroot.$data._bottomMost) {
+                    form.vroot.$data._bottomMost = false;
+                    form.vroot.$el.removeAttribute('data-cg-bottom-most');
+                }
                 if (!form.vroot._formFocus) {
                     changeFocus(form.id);
                 }
@@ -2589,6 +2669,21 @@ export async function create<T extends AbstractForm>(
                 form.vroot.$refs.form.$data.zIndex = ++info.lastZIndex;
             }
             return;
+        }
+    };
+    // --- 当前窗体是否显示在任务栏 ---
+    idata._showInSystemTask = true;
+    computed.showInSystemTask = {
+        get: function(this: types.IVue): number {
+            return this._showInSystemTask;
+        },
+        set: function(v: boolean): void {
+            const form = t.forms[formId];
+            if (!form) {
+                return;
+            }
+            form.vroot.$data._showInSystemTask = v;
+            core.trigger('formShowInSystemTaskChange', t.id, formId, v);
         }
     };
 
@@ -2717,7 +2812,7 @@ export async function create<T extends AbstractForm>(
         throw err;
     }
     // --- 触发 formCreated 事件 ---
-    core.trigger('formCreated', t.id, formId, rtn.vroot.$refs.form.title, rtn.vroot.$refs.form.iconDataUrl);
+    core.trigger('formCreated', t.id, formId, rtn.vroot.$refs.form.title, rtn.vroot.$refs.form.iconDataUrl, rtn.vroot.showInSystemTask);
     // --- 同步的窗体先进行同步一下 ---
     if (rtn.vroot.isNativeSync) {
         await native.invoke('cg-set-size', native.getToken(), rtn.vroot.$refs.form.$el.offsetWidth, rtn.vroot.$refs.form.$el.offsetHeight);

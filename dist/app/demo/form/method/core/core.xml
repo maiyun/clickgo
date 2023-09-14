@@ -1,18 +1,19 @@
-<form width="350" height="400" title="Library task" padding="10">
+<form width="350" height="430" title="Library task" padding="10">
     <layout direction="v" gutter="10" style="flex: 1;">
         <label>config:</label>
         <text v-model="config" readonly multi style="flex: 1;"></text>
-        <button @click="getCdn" style="height: 30px;">getCdn()</button>
-        <button @click="getAvailArea" style="height: 30px;">getAvailArea()</button>
-        <layout gutter="10" align-v="center">
+        <button @click="getCdn">getCdn()</button>
+        <button @click="getAvailArea">getAvailArea()</button>
+        <layout gutter="10">
             <text v-model="hash" style="flex: 1;" />
-            <button @click="hashe" style="height: 30px; padding: 0 10px;">hash('{{hash}}')</button>
+            <button @click="hashe">hash('{{hash}}')</button>
         </layout>
-        <button @click="getHash" style="height: 30px;">getHash()</button>
-        <layout gutter="10" align-v="center">
+        <button @click="getHash">getHash()</button>
+        <layout gutter="10">
             <text v-model="location" style="flex: 1;" />
-            <button @click="locatione" style="height: 30px; padding: 0 10px;">location('...{{location.slice(-5)}}')</button>
+            <button @click="locatione">location('...{{location.slice(-5)}}')</button>
         </layout>
-        <button @click="getLocation" style="height: 30px;">getLocation()</button>
+        <button @click="getLocation">getLocation()</button>
+        <button @click="back">back()</button>
     </layout>
 </form>

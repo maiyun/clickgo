@@ -80,10 +80,12 @@ export interface IAvailArea {
     'top': number;
     'width': number;
     'height': number;
+    'owidth': number;
+    'oheight': number;
 }
 
 /** --- 全局事件类型 --- */
-export type TGlobalEvent = 'error' | 'screenResize' | 'configChanged' | 'formCreated' | 'formRemoved' | 'formTitleChanged' | 'formIconChanged' | 'formStateMinChanged' | 'formStateMaxChanged' | 'formShowChanged' | 'formFocused' | 'formBlurred' | 'formFlash' | 'taskStarted' | 'taskEnded' | 'launcherFolderNameChanged' | 'hashChanged';
+export type TGlobalEvent = 'error' | 'screenResize' | 'configChanged' | 'formCreated' | 'formRemoved' | 'formTitleChanged' | 'formIconChanged' | 'formStateMinChanged' | 'formStateMaxChanged' | 'formShowChanged' | 'formFocused' | 'formBlurred' | 'formFlash' | 'formShowInSystemTaskChange' | 'taskStarted' | 'taskEnded' | 'launcherFolderNameChanged' | 'hashChanged';
 
 /** --- 现场下载 app 的参数 --- */
 export interface ICoreFetchAppOptions {
@@ -311,6 +313,7 @@ export interface IFormInfo {
     'stateMin': boolean;
     'show': boolean;
     'focus': boolean;
+    'showInSystemTask': boolean;
 }
 
 // --------------------------

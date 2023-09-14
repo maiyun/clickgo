@@ -32,7 +32,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getLocation = exports.location = exports.getHash = exports.hash = exports.getAvailArea = exports.fetchApp = exports.readApp = exports.trigger = exports.getModule = exports.regModule = exports.boot = exports.getCdn = exports.AbstractApp = exports.config = void 0;
+exports.back = exports.getLocation = exports.location = exports.getHash = exports.hash = exports.getAvailArea = exports.fetchApp = exports.readApp = exports.trigger = exports.getModule = exports.regModule = exports.boot = exports.getCdn = exports.AbstractApp = exports.config = void 0;
 const clickgo = __importStar(require("../clickgo"));
 const fs = __importStar(require("./fs"));
 const form = __importStar(require("./form"));
@@ -113,6 +113,9 @@ class AbstractApp {
         return;
     }
     onFormFlash() {
+        return;
+    }
+    onFormShowInSystemTaskChange() {
         return;
     }
     onTaskStarted() {
@@ -338,8 +341,8 @@ const globalEvents = {
         }
     }
 };
-function trigger(name, taskId = 0, formId = 0, param1 = '', param2 = '') {
-    var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z, _0, _1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12, _13, _14, _15;
+function trigger(name, taskId = 0, formId = 0, param1 = '', param2 = '', param3 = true) {
+    var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z, _0, _1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12, _13, _14, _15, _16, _17, _18, _19, _20;
     const eventName = 'on' + name[0].toUpperCase() + name.slice(1);
     switch (name) {
         case 'error': {
@@ -384,13 +387,13 @@ function trigger(name, taskId = 0, formId = 0, param1 = '', param2 = '') {
         }
         case 'formCreated':
         case 'formRemoved': {
-            (_l = (_k = globalEvents)[name]) === null || _l === void 0 ? void 0 : _l.call(_k, taskId, formId, param1, param2);
-            exports.boot === null || exports.boot === void 0 ? void 0 : exports.boot[eventName](taskId, formId, param1, param2);
+            (_l = (_k = globalEvents)[name]) === null || _l === void 0 ? void 0 : _l.call(_k, taskId, formId, param1, param2, param3);
+            exports.boot === null || exports.boot === void 0 ? void 0 : exports.boot[eventName](taskId, formId, param1, param2, param3);
             for (const tid in task.list) {
                 const t = task.list[tid];
-                (_m = t.class) === null || _m === void 0 ? void 0 : _m[eventName](taskId, formId, param1, param2);
+                (_m = t.class) === null || _m === void 0 ? void 0 : _m[eventName](taskId, formId, param1, param2, param3);
                 for (const fid in t.forms) {
-                    (_p = (_o = t.forms[fid].vroot)[eventName]) === null || _p === void 0 ? void 0 : _p.call(_o, taskId, formId, param1, param2);
+                    (_p = (_o = t.forms[fid].vroot)[eventName]) === null || _p === void 0 ? void 0 : _p.call(_o, taskId, formId, param1, param2, param3);
                 }
             }
             break;
@@ -436,15 +439,27 @@ function trigger(name, taskId = 0, formId = 0, param1 = '', param2 = '') {
             }
             break;
         }
+        case 'formShowInSystemTaskChange': {
+            (_6 = (_5 = globalEvents)[name]) === null || _6 === void 0 ? void 0 : _6.call(_5, taskId, formId, param1);
+            exports.boot === null || exports.boot === void 0 ? void 0 : exports.boot[eventName](taskId, formId, param1);
+            for (const tid in task.list) {
+                const t = task.list[tid];
+                (_7 = t.class) === null || _7 === void 0 ? void 0 : _7[eventName](taskId, formId, param1);
+                for (const fid in t.forms) {
+                    (_9 = (_8 = t.forms[fid].vroot)[eventName]) === null || _9 === void 0 ? void 0 : _9.call(_8, taskId, formId, param1);
+                }
+            }
+            break;
+        }
         case 'taskStarted':
         case 'taskEnded': {
-            (_6 = (_5 = globalEvents)[name]) === null || _6 === void 0 ? void 0 : _6.call(_5, taskId, formId);
+            (_11 = (_10 = globalEvents)[name]) === null || _11 === void 0 ? void 0 : _11.call(_10, taskId, formId);
             exports.boot === null || exports.boot === void 0 ? void 0 : exports.boot[eventName](taskId, formId);
             for (const tid in task.list) {
                 const t = task.list[tid];
-                (_7 = t.class) === null || _7 === void 0 ? void 0 : _7[eventName](taskId);
+                (_12 = t.class) === null || _12 === void 0 ? void 0 : _12[eventName](taskId);
                 for (const fid in t.forms) {
-                    (_9 = (_8 = t.forms[fid].vroot)[eventName]) === null || _9 === void 0 ? void 0 : _9.call(_8, taskId);
+                    (_14 = (_13 = t.forms[fid].vroot)[eventName]) === null || _14 === void 0 ? void 0 : _14.call(_13, taskId);
                 }
             }
             break;
@@ -459,9 +474,9 @@ function trigger(name, taskId = 0, formId = 0, param1 = '', param2 = '') {
             exports.boot === null || exports.boot === void 0 ? void 0 : exports.boot[eventName](taskId, formId);
             for (const tid in task.list) {
                 const t = task.list[tid];
-                (_10 = t.class) === null || _10 === void 0 ? void 0 : _10[eventName](taskId, formId);
+                (_15 = t.class) === null || _15 === void 0 ? void 0 : _15[eventName](taskId, formId);
                 for (const fid in t.forms) {
-                    (_12 = (_11 = t.forms[fid].vroot)[eventName]) === null || _12 === void 0 ? void 0 : _12.call(_11, taskId, formId);
+                    (_17 = (_16 = t.forms[fid].vroot)[eventName]) === null || _17 === void 0 ? void 0 : _17.call(_16, taskId, formId);
                 }
             }
             break;
@@ -473,9 +488,9 @@ function trigger(name, taskId = 0, formId = 0, param1 = '', param2 = '') {
             exports.boot === null || exports.boot === void 0 ? void 0 : exports.boot[eventName](taskId);
             for (const tid in task.list) {
                 const t = task.list[tid];
-                (_13 = t.class) === null || _13 === void 0 ? void 0 : _13[eventName](taskId);
+                (_18 = t.class) === null || _18 === void 0 ? void 0 : _18[eventName](taskId);
                 for (const fid in t.forms) {
-                    (_15 = (_14 = t.forms[fid].vroot)[eventName]) === null || _15 === void 0 ? void 0 : _15.call(_14, taskId);
+                    (_20 = (_19 = t.forms[fid].vroot)[eventName]) === null || _20 === void 0 ? void 0 : _20.call(_19, taskId);
                 }
             }
             break;
@@ -676,7 +691,9 @@ function getAvailArea() {
             'left': 0,
             'top': 0,
             'width': window.innerWidth,
-            'height': window.innerHeight - 46
+            'height': window.innerHeight - 46,
+            'owidth': window.innerWidth,
+            'oheight': window.innerHeight
         };
     }
     else {
@@ -717,7 +734,9 @@ function getAvailArea() {
             'left': left,
             'top': top,
             'width': width,
-            'height': height
+            'height': height,
+            'owidth': window.innerWidth,
+            'oheight': window.innerHeight
         };
     }
 }
@@ -760,6 +779,21 @@ function getLocation() {
     return window.location.href;
 }
 exports.getLocation = getLocation;
+function back(taskId) {
+    if (!taskId) {
+        return false;
+    }
+    const t = task.list[taskId];
+    if (!t) {
+        return false;
+    }
+    if (!t.runtime.permissions.includes('root') && !t.runtime.permissions.includes('location')) {
+        return false;
+    }
+    window.history.back();
+    return true;
+}
+exports.back = back;
 window.addEventListener('hashchange', function () {
     trigger('hashChanged', window.location.hash ? decodeURIComponent(window.location.hash.slice(1)) : '');
 });

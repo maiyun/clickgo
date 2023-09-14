@@ -7,6 +7,15 @@
     .task {
         flex: 1;
     }
+
+    .date {
+        padding: 0 15px; display: flex; align-items: center; color: #FFF;
+    }
+    &.left, &.right {
+        .date {
+            flex-direction: column; padding: 10px 0;
+        }
+    }
 }
 
 .pop {

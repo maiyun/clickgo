@@ -130,32 +130,6 @@ export default class extends clickgo.control.AbstractControl {
         return clickgo.task.systemTaskInfo.taskId === 0 ? 'bottom' : clickgo.core.config['task.position'];
     }
 
-    // --- 位置 computed ---
-
-    public get widthComp(): number {
-        return typeof this.props.width === 'string' ? parseInt(this.props.width) : this.props.width;
-    }
-
-    public get heightComp(): number {
-        return typeof this.props.height === 'string' ? parseInt(this.props.height) : this.props.height;
-    }
-
-    public get minWidthComp(): number {
-        return typeof this.props.minWidth === 'string' ? parseInt(this.props.minWidth) : this.props.minWidth;
-    }
-
-    public get minHeightComp(): number {
-        return typeof this.props.minHeight === 'string' ? parseInt(this.props.minHeight) : this.props.minHeight;
-    }
-
-    public get leftComp(): number {
-        return typeof this.props.left === 'string' ? parseInt(this.props.left) : this.props.left;
-    }
-
-    public get topComp(): number {
-        return typeof this.props.top === 'string' ? parseInt(this.props.top) : this.props.top;
-    }
-
     /**
      * --- 是否在本窗体上显示遮罩层 ---
      */
@@ -228,14 +202,14 @@ export default class extends clickgo.control.AbstractControl {
                     }
                     this.emit('update:top', this.topData);
                     // --- 还原宽高 ---
-                    if (!this.widthComp) {
+                    if (!this.propInt('width')) {
                         this.widthData = 0;
                     }
                     else {
                         this.widthData = this.historyLocation.width;
                         this.emit('update:width', this.historyLocation.width);
                     }
-                    if (!this.heightComp) {
+                    if (!this.propInt('height')) {
                         this.heightData = 0;
                     }
                     else {
@@ -279,14 +253,14 @@ export default class extends clickgo.control.AbstractControl {
                     }
                     this.emit('update:top', this.topData);
                     // --- 还原宽高 ---
-                    if (!this.widthComp) {
+                    if (!this.propInt('width')) {
                         this.widthData = 0;
                     }
                     else {
                         this.widthData = this.historyLocation.width;
                         this.emit('update:width', this.historyLocation.width);
                     }
-                    if (!this.heightComp) {
+                    if (!this.propInt('height')) {
                         this.heightData = 0;
                     }
                     else {
@@ -341,8 +315,8 @@ export default class extends clickgo.control.AbstractControl {
                         // --- 要最大化 ---
                         if (this.isMax) {
                             // --- 不要使用 emit，只是模拟原大小，马上值就又被改变了 ---
-                            this.widthData = !this.widthComp ? 0 : this.historyLocation.width;
-                            this.heightData = !this.heightComp ? 0 : this.historyLocation.height;
+                            this.widthData = !this.propInt('width') ? 0 : this.historyLocation.width;
+                            this.heightData = !this.propInt('height') ? 0 : this.historyLocation.height;
                             this.leftData = this.historyLocation.left;
                             this.topData = this.historyLocation.top;
                             this.maxMethod();
@@ -362,11 +336,11 @@ export default class extends clickgo.control.AbstractControl {
                             this.stateAbs = isBorder;
                             const pos = clickgo.form.getRectByBorder(isBorder);
                             this.widthData = pos.width;
-                            if (this.widthComp > 0) {
+                            if (this.propInt('width') > 0) {
                                 this.emit('update:width', this.widthData);
                             }
                             this.heightData = pos.height;
-                            if (this.heightComp > 0) {
+                            if (this.propInt('height') > 0) {
                                 this.emit('update:height', this.heightData);
                             }
                             this.leftData = pos.left;
@@ -474,7 +448,7 @@ export default class extends clickgo.control.AbstractControl {
             this.stateAbs = '';
             this.topData = this.historyLocation.top;
             this.emit('update:top', this.topData);
-            if (!this.heightComp) {
+            if (!this.propInt('height')) {
                 this.heightData = 0;
             }
             else {
@@ -506,7 +480,7 @@ export default class extends clickgo.control.AbstractControl {
             this.topData = area.top;
             this.emit('update:top', this.topData);
             this.heightData = area.height;
-            if (this.heightComp) {
+            if (this.propInt('height')) {
                 this.emit('update:height', this.heightData);
             }
         }
@@ -560,16 +534,26 @@ export default class extends clickgo.control.AbstractControl {
                     }).catch((e) => { console.log(e); });
                 }
                 const area = clickgo.core.getAvailArea();
-                this.leftData = area.left;
+                if (this.parentByName('root')?.bottomMost) {
+                    // --- 置底窗体 ---
+                    this.leftData = 0;
+                    this.topData = 0;
+                    this.widthData = area.owidth;
+                    this.heightData = area.oheight;
+                }
+                else {
+                    // --- 其他类型 ---
+                    this.leftData = area.left;
+                    this.topData = area.top;
+                    this.widthData = area.width;
+                    this.heightData = area.height;
+                }
                 this.emit('update:left', this.leftData);
-                this.topData = area.top;
                 this.emit('update:top', this.topData);
-                this.widthData = area.width;
-                if (this.widthComp > 0) {
+                if (this.propInt('width') > 0) {
                     this.emit('update:width', this.widthData);
                 }
-                this.heightData = area.height;
-                if (this.heightComp > 0) {
+                if (this.propInt('height') > 0) {
                     this.emit('update:height', this.heightData);
                 }
             }
@@ -593,14 +577,14 @@ export default class extends clickgo.control.AbstractControl {
                     this.element.style.transition = 'all .1s linear';
                     this.element.style.transitionProperty = 'left,top,width,height';
                 }
-                if (!this.widthComp) {
+                if (!this.propInt('width')) {
                     this.widthData = 0;
                 }
                 else {
                     this.widthData = this.historyLocation.width;
                     this.emit('update:width', this.historyLocation.width);
                 }
-                if (!this.heightComp) {
+                if (!this.propInt('height')) {
                     this.heightData = 0;
                 }
                 else {
@@ -717,8 +701,8 @@ export default class extends clickgo.control.AbstractControl {
             'objectTop': top,
             'objectWidth': width,
             'objectHeight': height,
-            'minWidth': this.minWidthComp,
-            'minHeight': this.minHeightComp,
+            'minWidth': this.propInt('minWidth'),
+            'minHeight': this.propInt('minHeight'),
             'border': border,
             'start': () => {
                 if (this.stateAbs && changeStateAbs) {
@@ -929,40 +913,40 @@ export default class extends clickgo.control.AbstractControl {
             this.trigger('formShowChanged', this.isShow);
         });
         this.watch('width', () => {
-            if (this.widthComp === this.widthData) {
+            if (this.propInt('width') === this.widthData) {
                 return;
             }
-            this.widthData = this.widthComp;
-            if (!this.widthComp) {
+            this.widthData = this.propInt('width');
+            if (!this.propInt('width')) {
                 return;
             }
-            if (this.widthData < this.minWidthComp) {
-                this.widthData = this.minWidthComp;
+            if (this.widthData < this.propInt('minWidth')) {
+                this.widthData = this.propInt('minWidth');
                 this.emit('update:width', this.widthData);
             }
         }, {
             'immediate': true
         });
         this.watch('height', () => {
-            if (this.heightComp === this.heightData) {
+            if (this.propInt('height') === this.heightData) {
                 return;
             }
-            this.heightData = this.heightComp;
-            if (!this.heightComp) {
+            this.heightData = this.propInt('height');
+            if (!this.propInt('height')) {
                 return;
             }
-            if (this.heightData < this.minHeightComp) {
-                this.heightData = this.minHeightComp;
+            if (this.heightData < this.propInt('minHeight')) {
+                this.heightData = this.propInt('minHeight');
                 this.emit('update:height', this.heightData);
             }
         }, {
             'immediate': true
         });
         this.watch('left', () => {
-            this.leftData = this.leftComp;
+            this.leftData = this.propInt('left');
         });
         this.watch('top', () => {
-            this.topData = this.topComp;
+            this.topData = this.propInt('top');
         });
 
         // --- 监听 native 窗体状态变化 ---

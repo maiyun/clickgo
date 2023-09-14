@@ -31,13 +31,14 @@ export default class extends clickgo.form.AbstractForm {
                     'stateMin': flist[fid].stateMin,
                     'show': flist[fid].show,
                     'focus': flist[fid].focus,
-                    'flash': false
+                    'flash': false,
+                    'showInTask': flist[fid].showInSystemTask
                 };
             }
         }
     }
 
-    public onFormCreated(taskId: number, formId: number, title: string, icon: string): void {
+    public onFormCreated(taskId: number, formId: number, title: string, icon: string, showInSystemTask: boolean): void {
         this.flist[formId] = {
             'title': title,
             'icon': icon,
@@ -45,9 +46,10 @@ export default class extends clickgo.form.AbstractForm {
             'stateMin': false,
             'show': false,
             'focus': false,
-            'flash': false
+            'flash': false,
+            'showInTask': true
         };
-        this.pushConsole('formCreated', `taskId: ${taskId}, formId: ${formId}, title: ${title}, icon: ${icon ? icon.slice(0, 10) + '...' : 'null'}`);
+        this.pushConsole('formCreated', `taskId: ${taskId}, formId: ${formId}, title: ${title}, icon: ${icon ? icon.slice(0, 10) + '...' : 'null'}, sist: ${showInSystemTask ? 'true' : 'false'}`);
     }
 
     public onFormRemoved(taskId: number, formId: number, title: string, icon: string): void {
@@ -126,6 +128,14 @@ export default class extends clickgo.form.AbstractForm {
         this.flist[formId].flash = true;
         await clickgo.tool.sleep(1000);
         this.flist[formId].flash = false;
+    }
+
+    public onFormShowInSystemTaskChange(taskId: number, formId: number, value: boolean): void {
+        if (!this.flist[formId]) {
+            return;
+        }
+        this.flist[formId].title = value;
+        this.pushConsole('formShowInSystemTaskChange', `taskId: ${taskId}, formId: ${formId}, value: ${value}`);
     }
 
 }

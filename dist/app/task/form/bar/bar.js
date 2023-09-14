@@ -144,12 +144,13 @@ class default_1 extends clickgo.form.AbstractForm {
                 continue;
             }
             const task = tasks[taskId];
-            let appIndex = this.getAppIndexByPath(task.path);
+            let app = undefined;
+            const appIndex = this.getAppIndexByPath(task.path);
             if (appIndex >= 0) {
                 this.apps[appIndex].opened = true;
             }
             else {
-                this.apps.push({
+                app = {
                     'name': task.name,
                     'path': task.path,
                     'icon': task.icon,
@@ -158,26 +159,34 @@ class default_1 extends clickgo.form.AbstractForm {
                     'forms': {},
                     'formCount': 0,
                     'pin': false
-                });
-                appIndex = this.apps.length - 1;
+                };
             }
             const forms = clickgo.form.getList(parseInt(taskId));
             for (const formId in forms) {
                 const form = forms[formId];
-                this.apps[appIndex].forms[formId] = {
+                if (!form.showInSystemTask) {
+                    continue;
+                }
+                (app !== null && app !== void 0 ? app : this.apps[appIndex]).forms[formId] = {
                     'title': form.title,
-                    'icon': form.icon || this.apps[appIndex].icon
+                    'icon': form.icon || (app !== null && app !== void 0 ? app : this.apps[appIndex]).icon
                 };
             }
-            this.apps[appIndex].formCount = Object.keys(this.apps[appIndex].forms).length;
+            (app !== null && app !== void 0 ? app : this.apps[appIndex]).formCount = Object.keys((app !== null && app !== void 0 ? app : this.apps[appIndex]).forms).length;
+            if (app === null || app === void 0 ? void 0 : app.formCount) {
+                this.apps.push(app);
+            }
         }
     }
-    onFormCreated(taskId, formId, title, icon) {
+    onFormCreated(taskId, formId, title, icon, sist) {
         if (taskId === this.taskId) {
             return;
         }
         const task = clickgo.task.get(taskId);
         if (!task) {
+            return;
+        }
+        if (!sist) {
             return;
         }
         let appIndex = this.getAppIndexByPath(task.path);
@@ -210,6 +219,9 @@ class default_1 extends clickgo.form.AbstractForm {
         }
         const appIndex = this.getAppIndexByPath(task.path);
         if (appIndex < 0) {
+            return;
+        }
+        if (!this.apps[appIndex].forms[formId]) {
             return;
         }
         delete this.apps[appIndex].forms[formId];
@@ -274,6 +286,58 @@ class default_1 extends clickgo.form.AbstractForm {
             return;
         }
         this.apps[appIndex].forms[formId].icon = icon || this.apps[appIndex].icon;
+    }
+    onFormShowInSystemTaskChange(taskId, formId, value) {
+        const task = clickgo.task.get(taskId);
+        if (!task) {
+            return;
+        }
+        if (value) {
+            const form = clickgo.form.get(formId);
+            if (!form) {
+                return;
+            }
+            let appIndex = this.getAppIndexByPath(task.path);
+            if (appIndex >= 0) {
+                this.apps[appIndex].opened = true;
+            }
+            else {
+                this.apps.push({
+                    'name': task.name,
+                    'path': task.path,
+                    'icon': task.icon,
+                    'selected': false,
+                    'opened': true,
+                    'forms': {},
+                    'formCount': 0,
+                    'pin': false
+                });
+                appIndex = this.apps.length - 1;
+            }
+            this.apps[appIndex].forms[formId] = {
+                'title': form.title,
+                'icon': form.icon || this.apps[appIndex].icon
+            };
+            ++this.apps[appIndex].formCount;
+        }
+        else {
+            const appIndex = this.getAppIndexByPath(task.path);
+            if (appIndex < 0) {
+                return;
+            }
+            delete this.apps[appIndex].forms[formId];
+            --this.apps[appIndex].formCount;
+            if (this.apps[appIndex].formCount > 0) {
+                return;
+            }
+            const pinPaths = Object.keys(clickgo.core.config['task.pin']);
+            if (pinPaths.includes(this.apps[appIndex].path)) {
+                this.apps[appIndex].opened = false;
+            }
+            else {
+                this.apps.splice(appIndex, 1);
+            }
+        }
     }
     onConfigChanged(n, v) {
         if (n !== 'task.pin') {

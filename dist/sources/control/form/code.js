@@ -105,24 +105,6 @@ class default_1 extends clickgo.control.AbstractControl {
     get taskPosition() {
         return clickgo.task.systemTaskInfo.taskId === 0 ? 'bottom' : clickgo.core.config['task.position'];
     }
-    get widthComp() {
-        return typeof this.props.width === 'string' ? parseInt(this.props.width) : this.props.width;
-    }
-    get heightComp() {
-        return typeof this.props.height === 'string' ? parseInt(this.props.height) : this.props.height;
-    }
-    get minWidthComp() {
-        return typeof this.props.minWidth === 'string' ? parseInt(this.props.minWidth) : this.props.minWidth;
-    }
-    get minHeightComp() {
-        return typeof this.props.minHeight === 'string' ? parseInt(this.props.minHeight) : this.props.minHeight;
-    }
-    get leftComp() {
-        return typeof this.props.left === 'string' ? parseInt(this.props.left) : this.props.left;
-    }
-    get topComp() {
-        return typeof this.props.top === 'string' ? parseInt(this.props.top) : this.props.top;
-    }
     get isMask() {
         var _a;
         if (this.isInside) {
@@ -184,14 +166,14 @@ class default_1 extends clickgo.control.AbstractControl {
                         this.topData = y - h2;
                     }
                     this.emit('update:top', this.topData);
-                    if (!this.widthComp) {
+                    if (!this.propInt('width')) {
                         this.widthData = 0;
                     }
                     else {
                         this.widthData = this.historyLocation.width;
                         this.emit('update:width', this.historyLocation.width);
                     }
-                    if (!this.heightComp) {
+                    if (!this.propInt('height')) {
                         this.heightData = 0;
                     }
                     else {
@@ -227,14 +209,14 @@ class default_1 extends clickgo.control.AbstractControl {
                         this.topData = y - hH2;
                     }
                     this.emit('update:top', this.topData);
-                    if (!this.widthComp) {
+                    if (!this.propInt('width')) {
                         this.widthData = 0;
                     }
                     else {
                         this.widthData = this.historyLocation.width;
                         this.emit('update:width', this.historyLocation.width);
                     }
-                    if (!this.heightComp) {
+                    if (!this.propInt('height')) {
                         this.heightData = 0;
                     }
                     else {
@@ -286,8 +268,8 @@ class default_1 extends clickgo.control.AbstractControl {
                 if (isBorder !== '') {
                     if (isBorder === 't') {
                         if (this.isMax) {
-                            this.widthData = !this.widthComp ? 0 : this.historyLocation.width;
-                            this.heightData = !this.heightComp ? 0 : this.historyLocation.height;
+                            this.widthData = !this.propInt('width') ? 0 : this.historyLocation.width;
+                            this.heightData = !this.propInt('height') ? 0 : this.historyLocation.height;
                             this.leftData = this.historyLocation.left;
                             this.topData = this.historyLocation.top;
                             this.maxMethod();
@@ -298,11 +280,11 @@ class default_1 extends clickgo.control.AbstractControl {
                             this.stateAbs = isBorder;
                             const pos = clickgo.form.getRectByBorder(isBorder);
                             this.widthData = pos.width;
-                            if (this.widthComp > 0) {
+                            if (this.propInt('width') > 0) {
                                 this.emit('update:width', this.widthData);
                             }
                             this.heightData = pos.height;
-                            if (this.heightComp > 0) {
+                            if (this.propInt('height') > 0) {
                                 this.emit('update:height', this.heightData);
                             }
                             this.leftData = pos.left;
@@ -377,7 +359,7 @@ class default_1 extends clickgo.control.AbstractControl {
             this.stateAbs = '';
             this.topData = this.historyLocation.top;
             this.emit('update:top', this.topData);
-            if (!this.heightComp) {
+            if (!this.propInt('height')) {
                 this.heightData = 0;
             }
             else {
@@ -397,12 +379,13 @@ class default_1 extends clickgo.control.AbstractControl {
             this.topData = area.top;
             this.emit('update:top', this.topData);
             this.heightData = area.height;
-            if (this.heightComp) {
+            if (this.propInt('height')) {
                 this.emit('update:height', this.heightData);
             }
         }
     }
     maxMethod() {
+        var _a;
         if (this.isInside) {
             return true;
         }
@@ -447,16 +430,24 @@ class default_1 extends clickgo.control.AbstractControl {
                     }).catch((e) => { console.log(e); });
                 }
                 const area = clickgo.core.getAvailArea();
-                this.leftData = area.left;
+                if ((_a = this.parentByName('root')) === null || _a === void 0 ? void 0 : _a.bottomMost) {
+                    this.leftData = 0;
+                    this.topData = 0;
+                    this.widthData = area.owidth;
+                    this.heightData = area.oheight;
+                }
+                else {
+                    this.leftData = area.left;
+                    this.topData = area.top;
+                    this.widthData = area.width;
+                    this.heightData = area.height;
+                }
                 this.emit('update:left', this.leftData);
-                this.topData = area.top;
                 this.emit('update:top', this.topData);
-                this.widthData = area.width;
-                if (this.widthComp > 0) {
+                if (this.propInt('width') > 0) {
                     this.emit('update:width', this.widthData);
                 }
-                this.heightData = area.height;
-                if (this.heightComp > 0) {
+                if (this.propInt('height') > 0) {
                     this.emit('update:height', this.heightData);
                 }
             }
@@ -477,14 +468,14 @@ class default_1 extends clickgo.control.AbstractControl {
                     this.element.style.transition = 'all .1s linear';
                     this.element.style.transitionProperty = 'left,top,width,height';
                 }
-                if (!this.widthComp) {
+                if (!this.propInt('width')) {
                     this.widthData = 0;
                 }
                 else {
                     this.widthData = this.historyLocation.width;
                     this.emit('update:width', this.historyLocation.width);
                 }
-                if (!this.heightComp) {
+                if (!this.propInt('height')) {
                     this.heightData = 0;
                 }
                 else {
@@ -584,8 +575,8 @@ class default_1 extends clickgo.control.AbstractControl {
             'objectTop': top,
             'objectWidth': width,
             'objectHeight': height,
-            'minWidth': this.minWidthComp,
-            'minHeight': this.minHeightComp,
+            'minWidth': this.propInt('minWidth'),
+            'minHeight': this.propInt('minHeight'),
             'border': border,
             'start': () => {
                 if (this.stateAbs && changeStateAbs) {
@@ -773,40 +764,40 @@ class default_1 extends clickgo.control.AbstractControl {
             this.trigger('formShowChanged', this.isShow);
         });
         this.watch('width', () => {
-            if (this.widthComp === this.widthData) {
+            if (this.propInt('width') === this.widthData) {
                 return;
             }
-            this.widthData = this.widthComp;
-            if (!this.widthComp) {
+            this.widthData = this.propInt('width');
+            if (!this.propInt('width')) {
                 return;
             }
-            if (this.widthData < this.minWidthComp) {
-                this.widthData = this.minWidthComp;
+            if (this.widthData < this.propInt('minWidth')) {
+                this.widthData = this.propInt('minWidth');
                 this.emit('update:width', this.widthData);
             }
         }, {
             'immediate': true
         });
         this.watch('height', () => {
-            if (this.heightComp === this.heightData) {
+            if (this.propInt('height') === this.heightData) {
                 return;
             }
-            this.heightData = this.heightComp;
-            if (!this.heightComp) {
+            this.heightData = this.propInt('height');
+            if (!this.propInt('height')) {
                 return;
             }
-            if (this.heightData < this.minHeightComp) {
-                this.heightData = this.minHeightComp;
+            if (this.heightData < this.propInt('minHeight')) {
+                this.heightData = this.propInt('minHeight');
                 this.emit('update:height', this.heightData);
             }
         }, {
             'immediate': true
         });
         this.watch('left', () => {
-            this.leftData = this.leftComp;
+            this.leftData = this.propInt('left');
         });
         this.watch('top', () => {
-            this.topData = this.topComp;
+            this.topData = this.propInt('top');
         });
         if (this.parent.controlName === 'root') {
             this.isNativeSync = this.parent.isNativeSync;

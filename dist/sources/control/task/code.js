@@ -30,6 +30,7 @@ class default_1 extends clickgo.control.AbstractControl {
         this.props = {
             'position': 'bottom'
         };
+        this.date = '00:00';
     }
     down(e) {
         if (clickgo.dom.hasTouchButMouse(e)) {
@@ -49,6 +50,17 @@ class default_1 extends clickgo.control.AbstractControl {
             return;
         }
         clickgo.form.showPop(this.element, this.refs.pop, e);
+    }
+    onMounted() {
+        const date = new Date();
+        clickgo.task.createTimer(() => {
+            date.setTime(Date.now());
+            const h = date.getHours().toString();
+            const m = date.getMinutes().toString();
+            this.date = (h.length === 1 ? '0' : '') + h + ':' + (m.length === 1 ? '0' : '') + m;
+        }, 200, {
+            'immediate': true
+        });
     }
 }
 exports.default = default_1;

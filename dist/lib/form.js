@@ -45,8 +45,9 @@ let focusId = null;
 const info = {
     'lastId': 0,
     'lastPanelId': 0,
-    'lastZIndex': 999,
-    'topLastZIndex': 9999999,
+    'bottomLastZIndex': 999,
+    'lastZIndex': 999999,
+    'topLastZIndex': 99999999,
     'locale': {
         'en': {
             'ok': 'OK',
@@ -278,6 +279,11 @@ class AbstractForm extends AbstractCommon {
     }
     set topMost(v) {
     }
+    get bottomMost() {
+        return false;
+    }
+    set bottomMost(v) {
+    }
     get isMask() {
         return !task.list[this.taskId].runtime.dialogFormIds.length ||
             task.list[this.taskId].runtime.dialogFormIds[task.list[this.taskId].runtime.dialogFormIds.length - 1]
@@ -285,6 +291,11 @@ class AbstractForm extends AbstractCommon {
     }
     get formFocus() {
         return this._formFocus;
+    }
+    get showInSystemTask() {
+        return false;
+    }
+    set showInSystemTask(v) {
     }
     show() {
         const v = this;
@@ -365,6 +376,9 @@ class AbstractForm extends AbstractCommon {
         return;
     }
     onFormFlash() {
+        return;
+    }
+    onFormShowInSystemTaskChange() {
         return;
     }
     onTaskStarted() {
@@ -780,10 +794,16 @@ function refreshMaxPosition() {
             continue;
         }
         const vroot = task.list[taskId].forms[formId].vroot;
-        vroot.$refs.form.setPropData('left', area.left);
-        vroot.$refs.form.setPropData('top', area.top);
-        vroot.$refs.form.setPropData('width', area.width);
-        vroot.$refs.form.setPropData('height', area.height);
+        if (ef.dataset.cgBottomMost === undefined) {
+            vroot.$refs.form.setPropData('left', area.left);
+            vroot.$refs.form.setPropData('top', area.top);
+            vroot.$refs.form.setPropData('width', area.width);
+            vroot.$refs.form.setPropData('height', area.height);
+        }
+        else {
+            vroot.$refs.form.setPropData('width', area.owidth);
+            vroot.$refs.form.setPropData('height', area.oheight);
+        }
     }
 }
 exports.refreshMaxPosition = refreshMaxPosition;
@@ -812,7 +832,8 @@ function get(formId) {
         'stateMax': item.vroot.$refs.form.stateMaxData,
         'stateMin': item.vroot.$refs.form.stateMinData,
         'show': item.vroot.$refs.form.isShow,
-        'focus': item.vroot.formFocus
+        'focus': item.vroot.formFocus,
+        'showInSystemTask': item.vroot.showInSystemTask
     };
 }
 exports.get = get;
@@ -839,7 +860,8 @@ function getList(taskId) {
             'stateMax': item.vroot.$refs.form.stateMaxData,
             'stateMin': item.vroot.$refs.form.stateMinData,
             'show': item.vroot.$refs.form.isShow,
-            'focus': item.vroot.formFocus
+            'focus': item.vroot.formFocus,
+            'showInSystemTask': item.vroot.showInSystemTask
         };
     }
     return list;
@@ -944,6 +966,9 @@ function changeFocus(formId = 0) {
         if (t.forms[dialogFormId].vroot._topMost) {
             t.forms[dialogFormId].vroot.$refs.form.$data.zIndex = ++info.topLastZIndex;
         }
+        else if (t.forms[dialogFormId].vroot._bottomMost) {
+            t.forms[dialogFormId].vroot.$refs.form.$data.zIndex = ++info.bottomLastZIndex;
+        }
         else {
             t.forms[dialogFormId].vroot.$refs.form.$data.zIndex = ++info.lastZIndex;
         }
@@ -959,6 +984,9 @@ function changeFocus(formId = 0) {
     else {
         if (t.forms[formId].vroot._topMost) {
             t.forms[formId].vroot.$refs.form.$data.zIndex = ++info.topLastZIndex;
+        }
+        else if (t.forms[formId].vroot._bottomMost) {
+            t.forms[formId].vroot.$refs.form.$data.zIndex = ++info.bottomLastZIndex;
         }
         else {
             t.forms[formId].vroot.$refs.form.$data.zIndex = ++info.lastZIndex;
@@ -2001,6 +2029,32 @@ function create(cls, data, opt = {}, taskId) {
                 return;
             }
         };
+        idata._bottomMost = false;
+        computed.bottomMost = {
+            get: function () {
+                return this._bottomMost;
+            },
+            set: function (v) {
+                const form = t.forms[formId];
+                if (!form) {
+                    return;
+                }
+                if (v) {
+                    form.vroot.$data._bottomMost = true;
+                    form.vroot.$el.dataset.cgBottomMost = '';
+                    if (form.vroot.$data._topMost) {
+                        form.vroot.$data._topMost = false;
+                    }
+                    form.vroot.$refs.form.$data.zIndex = ++info.bottomLastZIndex;
+                }
+                else {
+                    form.vroot.$data._bottomMost = false;
+                    form.vroot.$el.removeAttribute('data-cg-bottom-most');
+                    form.vroot.$refs.form.$data.zIndex = ++info.lastZIndex;
+                }
+                return;
+            }
+        };
         idata._topMost = false;
         computed.topMost = {
             get: function () {
@@ -2013,6 +2067,10 @@ function create(cls, data, opt = {}, taskId) {
                 }
                 if (v) {
                     form.vroot.$data._topMost = true;
+                    if (form.vroot.$data._bottomMost) {
+                        form.vroot.$data._bottomMost = false;
+                        form.vroot.$el.removeAttribute('data-cg-bottom-most');
+                    }
                     if (!form.vroot._formFocus) {
                         changeFocus(form.id);
                     }
@@ -2025,6 +2083,20 @@ function create(cls, data, opt = {}, taskId) {
                     form.vroot.$refs.form.$data.zIndex = ++info.lastZIndex;
                 }
                 return;
+            }
+        };
+        idata._showInSystemTask = true;
+        computed.showInSystemTask = {
+            get: function () {
+                return this._showInSystemTask;
+            },
+            set: function (v) {
+                const form = t.forms[formId];
+                if (!form) {
+                    return;
+                }
+                form.vroot.$data._showInSystemTask = v;
+                core.trigger('formShowInSystemTaskChange', t.id, formId, v);
             }
         };
         exports.elements.list.insertAdjacentHTML('beforeend', `<div class="cg-form-wrap" data-form-id="${formId.toString()}" data-task-id="${t.id.toString()}"></div>`);
@@ -2139,7 +2211,7 @@ function create(cls, data, opt = {}, taskId) {
             dom.removeStyle(rtn.vroot.taskId, 'form', rtn.vroot.formId);
             throw err;
         }
-        core.trigger('formCreated', t.id, formId, rtn.vroot.$refs.form.title, rtn.vroot.$refs.form.iconDataUrl);
+        core.trigger('formCreated', t.id, formId, rtn.vroot.$refs.form.title, rtn.vroot.$refs.form.iconDataUrl, rtn.vroot.showInSystemTask);
         if (rtn.vroot.isNativeSync) {
             yield native.invoke('cg-set-size', native.getToken(), rtn.vroot.$refs.form.$el.offsetWidth, rtn.vroot.$refs.form.$el.offsetHeight);
             window.addEventListener('resize', function () {

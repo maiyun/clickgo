@@ -8,7 +8,7 @@
         </layout>
     </layout>
     <layout gutter="10" style="margin-top: 10px; height: 80px;">
-        <list :data="['formCreated', 'formRemoved', 'formTitleChanged', 'formIconChanged', 'formStateMinChanged', 'formStateMaxChanged', 'formShowChanged', 'formFocused', 'formBlurred', 'formFlash']" style="width: 150px;"></list>
+        <list :data="['formCreated', 'formRemoved', 'formTitleChanged', 'formIconChanged', 'formStateMinChanged', 'formStateMaxChanged', 'formShowChanged', 'formFocused', 'formBlurred', 'formFlash', 'formShowInSystemTaskChange']" style="width: 150px;"></list>
         <vflow v-slot="data" :data="list" direction="v" style="color: #FFF; background: hsl(0, 0%, 20%); line-height: 1.5; flex: 1; width: 0; padding: 10px;" same>
             <label>[{{data.row.time}}] {{data.row.name}}, {{data.row.text}}.</label>
         </vflow>

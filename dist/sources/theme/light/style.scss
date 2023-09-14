@@ -615,6 +615,9 @@ global {
 
 .task_wrap {
     background: var(--pop-background); -webkit-backdrop-filter: blur(20px) brightness(1.1); backdrop-filter: blur(20px) brightness(1.1);
+    .task_date {
+        color: #000;
+    }
 }
 .task_pop {
     background: var(--pop-background); -webkit-backdrop-filter: blur(20px) brightness(1.1); backdrop-filter: blur(20px) brightness(1.1);

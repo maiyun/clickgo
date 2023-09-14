@@ -70,6 +70,9 @@ class AbstractBoot {
     onFormFlash() {
         return;
     }
+    onFormShowInSystemTaskChange() {
+        return;
+    }
     onTaskStarted() {
         return;
     }

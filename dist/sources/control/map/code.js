@@ -1379,7 +1379,6 @@ class default_1 extends clickgo.control.AbstractControl {
                 if (this.latData === this.propNumber('lat')) {
                     return;
                 }
-                console.log('x', this.latData, this.propNumber('lat'));
                 this.latData = this.propNumber('lat');
                 switch (this.props.factory) {
                     case 'google': {

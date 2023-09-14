@@ -60,7 +60,9 @@ export abstract class AbstractBoot {
     }
 
     /** --- 窗体创建事件 --- */
-    public onFormCreated(taskId: number, formId: number, title: string, icon: string): void | Promise<void>;
+    public onFormCreated(
+        taskId: number, formId: number, title: string, icon: string, showInSystemTask: boolean
+    ): void | Promise<void>;
     public onFormCreated(): void {
         return;
     }
@@ -116,6 +118,12 @@ export abstract class AbstractBoot {
     /** --- 窗体闪烁事件 --- */
     public onFormFlash(taskId: number, formId: number): void | Promise<void>;
     public onFormFlash(): void {
+        return;
+    }
+
+    /** --- 窗体是否显示在任务栏属性改变事件 --- */
+    public onFormShowInSystemTaskChange(taskId: number, formId: number, value: boolean): void | Promise<void>;
+    public onFormShowInSystemTaskChange(): void {
         return;
     }
 

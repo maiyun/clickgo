@@ -96,7 +96,9 @@ export abstract class AbstractApp {
     }
 
     /** --- 窗体创建事件 --- */
-    public onFormCreated(taskId: number, formId: number, title: string, icon: string): void | Promise<void>;
+    public onFormCreated(
+        taskId: number, formId: number, title: string, icon: string, showInSystemTask: boolean
+    ): void | Promise<void>;
     public onFormCreated(): void {
         return;
     }
@@ -152,6 +154,12 @@ export abstract class AbstractApp {
     /** --- 窗体闪烁事件 --- */
     public onFormFlash(taskId: number, formId: number): void | Promise<void>;
     public onFormFlash(): void {
+        return;
+    }
+
+    /** --- 窗体是否显示在任务栏属性改变事件 --- */
+    public onFormShowInSystemTaskChange(taskId: number, formId: number, value: boolean): void | Promise<void>;
+    public onFormShowInSystemTaskChange(): void {
         return;
     }
 
@@ -416,7 +424,7 @@ const globalEvents = {
 /**
  * --- 主动触发系统级事件，App 中无效，用 this.trigger 替代 ---
  */
-export function trigger(name: types.TGlobalEvent, taskId: number | string | boolean = 0, formId: number | string | boolean | Record<string, any> | null = 0, param1: boolean | Error | string = '', param2: string = ''): void {
+export function trigger(name: types.TGlobalEvent, taskId: number | string | boolean = 0, formId: number | string | boolean | Record<string, any> | null = 0, param1: boolean | Error | string = '', param2: string = '', param3: boolean = true): void {
     const eventName = 'on' + name[0].toUpperCase() + name.slice(1);
     switch (name) {
         case 'error': {
@@ -461,13 +469,13 @@ export function trigger(name: types.TGlobalEvent, taskId: number | string | bool
         }
         case 'formCreated':
         case 'formRemoved': {
-            (globalEvents as any)[name]?.(taskId, formId, param1, param2);
-            (boot as any)?.[eventName](taskId, formId, param1, param2);
+            (globalEvents as any)[name]?.(taskId, formId, param1, param2, param3);
+            (boot as any)?.[eventName](taskId, formId, param1, param2, param3);
             for (const tid in task.list) {
                 const t = task.list[tid];
-                (t.class as any)?.[eventName](taskId, formId, param1, param2);
+                (t.class as any)?.[eventName](taskId, formId, param1, param2, param3);
                 for (const fid in t.forms) {
-                    t.forms[fid].vroot[eventName]?.(taskId, formId, param1, param2);
+                    t.forms[fid].vroot[eventName]?.(taskId, formId, param1, param2, param3);
                 }
             }
             break;
@@ -509,6 +517,18 @@ export function trigger(name: types.TGlobalEvent, taskId: number | string | bool
                 (t.class as any)?.[eventName](taskId, formId);
                 for (const fid in t.forms) {
                     t.forms[fid].vroot[eventName]?.(taskId, formId);
+                }
+            }
+            break;
+        }
+        case 'formShowInSystemTaskChange': {
+            (globalEvents as any)[name]?.(taskId, formId, param1);
+            (boot as any)?.[eventName](taskId, formId, param1);
+            for (const tid in task.list) {
+                const t = task.list[tid];
+                (t.class as any)?.[eventName](taskId, formId, param1);
+                for (const fid in t.forms) {
+                    t.forms[fid].vroot[eventName]?.(taskId, formId, param1);
                 }
             }
             break;
@@ -775,7 +795,9 @@ export function getAvailArea(): types.IAvailArea {
             'left': 0,
             'top': 0,
             'width': window.innerWidth,
-            'height': window.innerHeight - 46
+            'height': window.innerHeight - 46,
+            'owidth': window.innerWidth,
+            'oheight': window.innerHeight
         };
     }
     else {
@@ -816,7 +838,9 @@ export function getAvailArea(): types.IAvailArea {
             'left': left,
             'top': top,
             'width': width,
-            'height': height
+            'height': height,
+            'owidth': window.innerWidth,
+            'oheight': window.innerHeight
         };
     }
 }
@@ -873,6 +897,25 @@ export function location(url: string, taskId?: number): boolean {
  */
 export function getLocation(): string {
     return window.location.href;
+}
+
+/**
+ * --- 对浏览器做返回操作 ---
+ * @param taskId 基任务，App 模式下无效
+ */
+export function back(taskId?: number): boolean {
+    if (!taskId) {
+        return false;
+    }
+    const t = task.list[taskId];
+    if (!t) {
+        return false;
+    }
+    if (!t.runtime.permissions.includes('root') && !t.runtime.permissions.includes('location')) {
+        return false;
+    }
+    window.history.back();
+    return true;
 }
 
 window.addEventListener('hashchange', function() {

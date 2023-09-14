@@ -512,6 +512,9 @@ export async function run(url: string | types.IApp, opt: types.ITaskRunOptions =
             },
             getLocation: function(): string {
                 return core.getLocation();
+            },
+            back: function(): boolean {
+                return core.back(taskId);
             }
         },
         'dom': {

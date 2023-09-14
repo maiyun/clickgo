@@ -454,6 +454,9 @@ function run(url, opt = {}, ntid) {
                 },
                 getLocation: function () {
                     return core.getLocation();
+                },
+                back: function () {
+                    return core.back(taskId);
                 }
             },
             'dom': {

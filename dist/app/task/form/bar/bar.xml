@@ -1,4 +1,4 @@
-  <form title="Bar" border="none" :resize="false" background="transparent">
+<form title="Bar" border="none" :resize="false" background="transparent">
     <task :position="position">
         <task-item @click="showLauncher">
             <img src="/clickgo/icon.png" style="width: 16px; height: 16px;" />
