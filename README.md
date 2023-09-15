@@ -74,3 +74,52 @@ Clone and visit "dist/test/index.html".
 ## License
 
 This library is published under [Apache-2.0](./LICENSE) license.
+
+## Third-party licenses
+
+### **LICENSE:** MIT License **AUTHOR:** sigurdarson
+
+#### Form
+
+[Minus SVG Vector](https://www.svgrepo.com/svg/447026/minus)  
+[Copy SVG Vector](https://www.svgrepo.com/svg/446994/copy)  
+[Border Radius SVG Vector](https://www.svgrepo.com/svg/446973/border-radius)  
+[Close SVG Vector](https://www.svgrepo.com/svg/446990/close)
+
+#### Greatlist
+
+[Document Remove SVG](https://www.svgrepo.com/svg/447002/document-remove)
+
+#### Menulist Item
+
+[Check SVG Vector](https://www.svgrepo.com/svg/446979/check)
+
+#### Nav
+
+[Menu SVG Vector](https://www.svgrepo.com/svg/447023/menu)
+
+#### Page
+
+[More Horizontal SVG Vector](https://www.svgrepo.com/svg/447028/more-horizontal)
+
+### **LICENSE:** MIT License **AUTHOR:** developmentseed
+
+#### Map
+
+[Marker SVG Vector](https://www.svgrepo.com/svg/379072/marker)
+
+### **LICENSE:** CC Attribution License **AUTHOR:** Solar Icons
+
+#### Property
+
+[Siderbar SVG Vector](https://www.svgrepo.com/svg/529875/siderbar)
+[Sort By Alphabet SVG Vector](https://www.svgrepo.com/svg/529901/sort-by-alphabet)
+[Notification Unread Lines SVG](https://www.svgrepo.com/svg/529113/notification-unread-lines)  
+[Bolt SVG Vector](https://www.svgrepo.com/svg/528871/bolt)
+
+### **LICENSE:** CC0 License **UPLOADER:** SVG Repo
+
+#### Iconview
+
+[Folder SVG Vector](https://www.svgrepo.com/svg/474852/folder)
+[File SVG Vector](https://www.svgrepo.com/svg/474842/file)

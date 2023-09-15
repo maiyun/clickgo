@@ -1,10 +1,35 @@
 <div class="wrap" :data-cg-disabled="propBoolean('disabled') ? '' : undefined">
     <div class="controls">
-        <cg-button :checked="sortData === 'kind'" @click="changeSort('kind')">&#xe742;</cg-button>
-        <cg-button :checked="sortData === 'letter'" @click="changeSort('letter')">&#xe7ad;</cg-button>
+        <cg-button :checked="sortData === 'kind'" @click="changeSort('kind')">
+            <svg viewBox="0 0 24 24">
+                <path d="M5.5 10H11.5" stroke-width="1.5" stroke-linecap="round"/>
+                <path d="M6.5 14H10.5" stroke-width="1.5" stroke-linecap="round"/>
+                <path d="M15 3L15 13M15 17L15 21" stroke-width="1.5" stroke-linecap="round"/>
+                <path d="M2 11V13C2 16.7712 2 18.6569 3.17157 19.8284C4.34315 21 6.22876 21 10 21H14C17.7712 21 19.6569 21 20.8284 19.8284C22 18.6569 22 16.7712 22 13V11C22 7.22876 22 5.34315 20.8284 4.17157C19.6569 3 17.7712 3 14 3H10C6.22876 3 4.34315 3 3.17157 4.17157C2.51839 4.82475 2.22937 5.69989 2.10149 7" stroke-width="1.5" stroke-linecap="round"/>
+                </svg>
+        </cg-button>
+        <cg-button :checked="sortData === 'letter'" @click="changeSort('letter')">
+            <svg viewBox="0 0 24 24">
+                <path d="M13 7L3 7" stroke-width="1.5" stroke-linecap="round"/>
+                <path d="M10 12H3" stroke-width="1.5" stroke-linecap="round"/>
+                <path d="M8 17H3" stroke-width="1.5" stroke-linecap="round"/>
+                <path class="fill" d="M11.3161 16.6922C11.1461 17.07 11.3145 17.514 11.6922 17.6839C12.07 17.8539 12.514 17.6855 12.6839 17.3078L11.3161 16.6922ZM16.5 7L17.1839 6.69223C17.0628 6.42309 16.7951 6.25 16.5 6.25C16.2049 6.25 15.9372 6.42309 15.8161 6.69223L16.5 7ZM20.3161 17.3078C20.486 17.6855 20.93 17.8539 21.3078 17.6839C21.6855 17.514 21.8539 17.07 21.6839 16.6922L20.3161 17.3078ZM19.3636 13.3636L20.0476 13.0559L19.3636 13.3636ZM13.6364 12.6136C13.2222 12.6136 12.8864 12.9494 12.8864 13.3636C12.8864 13.7779 13.2222 14.1136 13.6364 14.1136V12.6136ZM12.6839 17.3078L17.1839 7.30777L15.8161 6.69223L11.3161 16.6922L12.6839 17.3078ZM21.6839 16.6922L20.0476 13.0559L18.6797 13.6714L20.3161 17.3078L21.6839 16.6922ZM20.0476 13.0559L17.1839 6.69223L15.8161 7.30777L18.6797 13.6714L20.0476 13.0559ZM19.3636 12.6136H13.6364V14.1136H19.3636V12.6136Z"/>
+                </svg>
+        </cg-button>
         <div class="split"></div>
-        <cg-button :checked="typeData === 'property'" @click="changeType('property')">&#xe603;</cg-button>
-        <cg-button :checked="typeData === 'event'" @click="changeType('event')">&#xe613;</cg-button>
+        <cg-button :checked="typeData === 'property'" @click="changeType('property')">
+            <svg viewBox="0 0 24 24">
+                <circle cx="19" cy="5" r="3" stroke-width="1.5"/>
+                <path d="M7 14H16" stroke-width="1.5" stroke-linecap="round"/>
+                <path d="M7 17.5H13" stroke-width="1.5" stroke-linecap="round"/>
+                <path d="M2 12C2 16.714 2 19.0711 3.46447 20.5355C4.92893 22 7.28595 22 12 22C16.714 22 19.0711 22 20.5355 20.5355C22 19.0711 22 16.714 22 12V10.5M13.5 2H12C7.28595 2 4.92893 2 3.46447 3.46447C2.49073 4.43821 2.16444 5.80655 2.0551 8" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+        </cg-button>
+        <cg-button :checked="typeData === 'event'" @click="changeType('event')">
+            <svg viewBox="0 0 24 24">
+                <path d="M15.2683 18.2287C13.2889 20.9067 12.2992 22.2458 11.3758 21.9628C10.4525 21.6798 10.4525 20.0375 10.4525 16.7528L10.4526 16.4433C10.4526 15.2585 10.4526 14.6662 10.074 14.2946L10.054 14.2754C9.6673 13.9117 9.05079 13.9117 7.81775 13.9117C5.59888 13.9117 4.48945 13.9117 4.1145 13.2387C4.10829 13.2276 4.10225 13.2164 4.09639 13.205C3.74244 12.5217 4.3848 11.6526 5.66953 9.91436L8.73167 5.77133C10.711 3.09327 11.7007 1.75425 12.6241 2.03721C13.5474 2.32018 13.5474 3.96249 13.5474 7.24712V7.55682C13.5474 8.74151 13.5474 9.33386 13.926 9.70541L13.946 9.72466C14.3327 10.0884 14.9492 10.0884 16.1822 10.0884C18.4011 10.0884 19.5106 10.0884 19.8855 10.7613C19.8917 10.7724 19.8977 10.7837 19.9036 10.795C20.2576 11.4784 19.6152 12.3475 18.3304 14.0857" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+        </cg-button>
     </div>
     <div ref="content" class="content" @mousedown="down" @touchstart="down" @contextmenu="contextmenu">
         <cg-flow direction="v">

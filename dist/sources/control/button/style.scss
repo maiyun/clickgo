@@ -29,8 +29,8 @@
     }
     .arrow {
         display: flex; align-items: center; justify-content: center; width: 16px; outline: none; position: relative;
-        svg {
-            width: 14px; height: 14px;
+        &::before {
+            content: ''; width: 6px; height: 6px; border: solid 1px var(--g-color); border-width: 0 1px 1px 0; transform: rotate(45deg); margin-top: -3px;
         }
     }
 
@@ -351,7 +351,10 @@
 
         &.area-mark {
             .arrow {
-                position: absolute; right: -3px; bottom: -3px; width: initial; transform: rotate(-45deg);
+                position: absolute; right: 3px; bottom: 3spx; width: initial;
+                &::before {
+                    transform: initial; 
+                }
             }
         }
     }
