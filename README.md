@@ -112,8 +112,8 @@ This library is published under [Apache-2.0](./LICENSE) license.
 
 #### Property
 
-[Siderbar SVG Vector](https://www.svgrepo.com/svg/529875/siderbar)
-[Sort By Alphabet SVG Vector](https://www.svgrepo.com/svg/529901/sort-by-alphabet)
+[Siderbar SVG Vector](https://www.svgrepo.com/svg/529875/siderbar)  
+[Sort By Alphabet SVG Vector](https://www.svgrepo.com/svg/529901/sort-by-alphabet)  
 [Notification Unread Lines SVG](https://www.svgrepo.com/svg/529113/notification-unread-lines)  
 [Bolt SVG Vector](https://www.svgrepo.com/svg/528871/bolt)
 
