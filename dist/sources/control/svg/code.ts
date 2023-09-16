@@ -51,8 +51,8 @@ export default class extends clickgo.control.AbstractControl {
             }
             if (t) {
                 const viewBoxMatch = /<svg[\s\S]*?viewBox\s*?=\s*?"(.+?)"/.exec(t);
-                const fillMatch = /<svg[\s\S]*?fill\s*?=\s*?"(.+?)"/.exec(t);
-                const strokeMatch = /<svg[\s\S]*?stroke\s*?=\s*?"(.+?)"/.exec(t);
+                const fillMatch = /<svg[\sa-zA-Z0-9'"=:/._;]*?fill\s*?=\s*?"(.+?)"/.exec(t);
+                const strokeMatch = /<svg[\sa-zA-Z0-9'"=:/._;]*?stroke\s*?=\s*?"(.+?)"/.exec(t);
                 const layoutMatch = /<svg[\s\S]*?>([\s\S]*?)<\/svg>/.exec(t);
                 this.fileViewBox = viewBoxMatch ? viewBoxMatch[1] : '';
                 this.fileFill = fillMatch ? fillMatch[1] : '';

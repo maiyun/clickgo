@@ -1,5 +1,9 @@
 # Changelog
 
+# 3.5.5
+
+[\*] Optimized svg control.
+
 # 3.5.4
 
 [\*] Optimize svg parsing mechanism.  
