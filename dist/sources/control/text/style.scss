@@ -25,7 +25,7 @@
     }
 
     .text {
-        flex: 1; -webkit-appearance: none; appearance: none; border: none; margin: 0; outline: none; resize: none; -webkit-overflow-scrolling: touch; color: inherit; fill: inherit;
+        flex: 1; -webkit-appearance: none; appearance: none; border: none; margin: 0; outline: none; resize: none; -webkit-overflow-scrolling: touch; color: inherit; fill: inherit; stroke: inherit;
         &::-webkit-scrollbar {
             display: none;
         }
@@ -57,7 +57,7 @@
     }
 
     &[data-cg-disabled] {
-        background: var(--g-plain-background-disabled); color: var(--g-plain-color-disabled); fill: var(--g-plain-color-disabled);
+        background: var(--g-plain-background-disabled); color: var(--g-plain-color-disabled); fill: var(--g-plain-color-disabled); stroke: var(--g-plain-color-disabled);
         border-color: var(--g-plain-border-color-disabled);
 
         .op {

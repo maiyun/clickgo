@@ -152,6 +152,7 @@ global {
                 &[data-cg-pop-open]:not(:active, &.button_active) {
                     color: var(--color-hover);
                     fill: var(--color-hover);
+                    stroke: var(--color-hover);
                     background: var(--background-hover);
                 }
             }
@@ -160,6 +161,7 @@ global {
     &[data-cg-disabled] {
         color: var(--g-color-disabled);
         fill: var(--g-color-disabled);
+        stroke: var(--g-color-disabled);
     }
 }
 
@@ -190,7 +192,7 @@ global {
 
     &:not([data-cg-disabled]) {
         &.check_checked:not(:focus):not(:hover):not(:active):not(.check_active) {
-            color: var(--g-plain-color-active); fill: var(--g-plain-color-active);
+            color: var(--g-plain-color-active); fill: var(--g-plain-color-active); stroke: var(--g-plain-color-active);
             .check_check {
                 background: var(--g-plain-background-active); border: solid 2px var(--g-plain-border-color-active);
             }
@@ -327,7 +329,7 @@ global {
                     }
                 }
                 &[data-cg-disabled] {
-                    color: var(--g-color-disabled); fill: var(--g-color-disabled);
+                    color: var(--g-color-disabled); fill: var(--g-color-disabled); stroke: var(--g-color-disabled);
                     &:hover {
                         background: transparent;
                     }
@@ -388,7 +390,7 @@ global {
                     border-color: var(--g-border-color);
                 }
                 &[data-cg-hover] {
-                    background: var(--g-border-color-hover); color: var(--g-color); fill: var(--g-color);
+                    background: var(--g-border-color-hover); color: var(--g-color); fill: var(--g-color); stroke: var(--g-color)
                 }
             };
         }
@@ -414,7 +416,7 @@ global {
         }
     }
     &[data-cg-disabled] {
-        color: var(--g-color-disabled); fill: var(--g-color-disabled);
+        color: var(--g-color-disabled); fill: var(--g-color-disabled); stroke: var(--g-color-disabled);
         &:hover {
             background: transparent;
         }
@@ -636,7 +638,7 @@ global {
 
     &:not([data-cg-disabled]) {
         &.radio_selected:not(:focus):not(:hover):not(:active):not(.radio_active) {
-            color: var(--g-plain-color-active); fill: var(--g-plain-color-active);
+            color: var(--g-plain-color-active); fill: var(--g-plain-color-active); stroke: var(--g-plain-color-active);
             .radio_radio {
                 background: var(--g-plain-background-active); border: solid 2px var(--g-plain-border-color-active);
                 &::after {
@@ -692,10 +694,10 @@ global {
             display: none;
         }
         &:not(.tab_selected):not([data-cg-hover]):hover {
-            color: #FFF; fill: #FFF; background: transparent;
+            color: #FFF; fill: #FFF; stroke: #FFF; background: transparent;
         }
         &.tab_selected {
-            background: var(--g-background); font-weight: bold; color: #FFF; fill: #FFF;
+            background: var(--g-background); font-weight: bold; color: #FFF; fill: #FFF; stroke: #FFF;
         }
         .tab_close {
             transition: all .1s ease-out;
@@ -703,7 +705,7 @@ global {
                 background: var(--g-background);
             }
             &:active {
-                background: var(--g-color); color: var(--face); fill: var(--face);
+                background: var(--g-color); color: var(--face); fill: var(--face); stroke: var(--face);
             }
         }
     }

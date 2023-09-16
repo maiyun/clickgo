@@ -1,7 +1,7 @@
 <form title="Svg" width="400" height="450" min-width="400" min-height="400" padding="10" direction="v">
     <label>Shape: {{layout ? layout.slice(0, 30) + '...' : ''}}</label>
     <label style="margin-top: 10px;">File: {{file ? file : ''}}</label>
-    <layout align-v="center" align-h="center" style="margin-top: 10px; flex: 1;" :style="{'fill': color}">
+    <layout align-v="center" align-h="center" style="margin-top: 10px; flex: 1;" :style="{'fill': color, 'stroke': color}">
         <svg :layout="layout" :src="file" style="width: 64px; height: 64px;" />
     </layout>
     <layout gutter="10" style="margin-top: 10px;">

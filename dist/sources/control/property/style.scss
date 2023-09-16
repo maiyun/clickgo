@@ -7,10 +7,7 @@
         cg-button {
             margin-right: 1px; width: 24px; height: 24px; padding: 0; stroke: var(--g-color);
             svg {
-                width: 14px; height: 14px; fill: none;
-                .fill {
-                    fill: var(--g-color);
-                }
+                width: 14px; height: 14px;
             }
         }
         .split {
@@ -141,5 +138,5 @@
 }
 
 .pop {
-    color: var(--g-color); fill: var(--g-color);
+    color: var(--g-color); fill: var(--g-color); stroke: var(--g-color);
 }

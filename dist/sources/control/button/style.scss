@@ -275,6 +275,7 @@
     }
     color: var(--color);                        // --- 文字色 ---
     fill: var(--color);
+    stroke: var(--color);
     background: var(--background);              // --- 背景色 ---
     &.area-split {
         .inner::before {
@@ -289,6 +290,8 @@
             &.area-all, &.area-mark {
                 color: var(--color-focus);
                 fill: var(--color-focus);
+                stroke: var(--color-focus);
+
                 background: var(--background-focus);
             }
             &.area-split {
@@ -304,6 +307,7 @@
             &.area-all, &.area-mark {
                 color: var(--color-hover);
                 fill: var(--color-hover);
+                stroke: var(--color-hover);
                 background: var(--background-hover);
             }
             &.area-split {
@@ -319,6 +323,7 @@
             &.area-all, &.area-mark {
                 color: var(--color-active);
                 fill: var(--color-active);
+                stroke: var(--color-active);
                 background: var(--background-active);
             }
             &.area-split {
@@ -333,17 +338,20 @@
                 &:focus {                       // --- 焦点 ---
                     color: var(--color-focus);
                     fill: var(--color-focus);
+                    stroke: var(--color-focus);
                     background: var(--background-focus);
                 }
                 &:hover {                       // --- 鼠标悬停 ---
                     color: var(--color-hover);
                     fill: var(--color-hover);
+                    stroke: var(--color-hover);
                     background: var(--background-hover);
                 }
                 // --- 鼠标按下 ---
                 &:active, &.active, &[data-cg-pop-open] {
                     color: var(--color-active);
                     fill: var(--color-active);
+                    stroke: var(--color-active);
                     background: var(--background-active);
                 }
             }
@@ -364,10 +372,11 @@
         }
         color: var(--color-disabled);
         fill: var(--color-disabled);
+        stroke: var(--color-disabled);
         background: var(--background-disabled);
     }
 }
 
 .pop {
-    color: var(--g-color); fill: var(--g-color); border-radius: var(--g-radius);
+    color: var(--g-color); fill: var(--g-color); stroke: var(--g-color); border-radius: var(--g-radius);
 }

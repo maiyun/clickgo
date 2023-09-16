@@ -12,6 +12,7 @@
             background: var(--g-background-active);
             color: var(--g-color-hover);
             fill: var(--g-color-hover);
+            stroke: var(--g-color-hover);
             .arrow::after {
                 border-color: var(--g-color-active);
             }
@@ -20,7 +21,7 @@
     }
 
     &[data-cg-disabled] {
-        background: var(--g-background-disabled); color: var(--g-color-disabled); fill: var(--g-color-disabled); border: solid .5px var(--g-border-color-disabled);
+        background: var(--g-background-disabled); color: var(--g-color-disabled); fill: var(--g-color-disabled); stroke: var(--g-color-disabled); border: solid .5px var(--g-border-color-disabled);
     }
     &:not([data-cg-disabled]):not([data-cg-pop-open]) {
         &:hover, &:focus {
@@ -34,6 +35,7 @@
                 background: var(--g-background-hover);
                 color: var(--g-color-hover);
                 fill: var(--g-color-hover);
+                stroke: var(--g-color-hover);
                 .arrow::after {
                     border-color: var(--g-color-hover);
                 }
@@ -42,6 +44,7 @@
                 background: var(--g-background-active);
                 color: var(--g-color-active);
                 fill: var(--g-color-active);
+                stroke: var(--g-color-active);
                 .arrow::after {
                     border-color: var(--g-color-active);
                 }
@@ -104,7 +107,7 @@
 }
 
 .pop {
-    width: 800px; display: flex; max-height: 300px; color: var(--g-color); fill: var(--g-color); border-radius: var(--g-radius);
+    width: 800px; display: flex; max-height: 300px; color: var(--g-color); fill: var(--g-color); stroke: var(--g-color); border-radius: var(--g-radius);
     > * {
         flex: 1;
     }

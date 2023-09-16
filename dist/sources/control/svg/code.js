@@ -38,11 +38,15 @@ class default_1 extends clickgo.control.AbstractControl {
         super(...arguments);
         this.props = {
             'viewBox': '0 0 24 24',
+            'fill': '',
+            'stroke': '',
             'layout': '',
             'src': ''
         };
-        this.fileLayout = '';
         this.fileViewBox = '';
+        this.fileFill = '';
+        this.fileStroke = '';
+        this.fileLayout = '';
         this.count = 0;
     }
     onMounted() {
@@ -50,6 +54,8 @@ class default_1 extends clickgo.control.AbstractControl {
             const count = ++this.count;
             if (typeof this.props.src !== 'string' || this.props.src === '') {
                 this.fileLayout = '';
+                this.fileFill = '';
+                this.fileStroke = '';
                 this.fileViewBox = '';
                 return;
             }
@@ -68,13 +74,19 @@ class default_1 extends clickgo.control.AbstractControl {
             }
             if (t) {
                 const viewBoxMatch = /<svg[\s\S]*?viewBox\s*?=\s*?"(.+?)"/.exec(t);
+                const fillMatch = /<svg[\s\S]*?fill\s*?=\s*?"(.+?)"/.exec(t);
+                const strokeMatch = /<svg[\s\S]*?stroke\s*?=\s*?"(.+?)"/.exec(t);
                 const layoutMatch = /<svg[\s\S]*?>([\s\S]*?)<\/svg>/.exec(t);
                 this.fileViewBox = viewBoxMatch ? viewBoxMatch[1] : '';
+                this.fileFill = fillMatch ? fillMatch[1] : '';
+                this.fileStroke = strokeMatch ? strokeMatch[1] : '';
                 this.fileLayout = layoutMatch ? layoutMatch[1] : '';
                 return;
             }
-            this.fileLayout = '';
             this.fileViewBox = '';
+            this.fileFill = '';
+            this.fileStroke = '';
+            this.fileLayout = '';
         }), {
             'immediate': true
         });

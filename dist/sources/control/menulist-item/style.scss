@@ -9,7 +9,7 @@
         }
     }
     &[data-cg-disabled] {
-        color: var(--g-color-disabled); fill: var(--g-color-disabled);
+        color: var(--g-color-disabled); fill: var(--g-color-disabled); stroke: var(--g-color-disabled);
         &:hover {
             background: var(--g-background-disabled);
         }
@@ -23,7 +23,7 @@
     }
 
     .check {
-        background-color: var(--g-background-active); width: 24px; height: 24px; visibility: hidden; display: flex; justify-content: center; align-items: center; fill: var(--g-color);
+        background-color: var(--g-background-active); width: 24px; height: 24px; visibility: hidden; display: flex; justify-content: center; align-items: center; fill: var(--g-color); stroke: var(--g-color);
     }
     .radio {
         background-color: var(--g-background-active); display: flex; align-items: center; justify-content: center; width: 24px; height: 24px; visibility: hidden;
@@ -45,5 +45,5 @@
 }
 
 .pop {
-    color: var(--g-color); fill: var(--g-color); border-radius: var(--g-radius);
+    color: var(--g-color); fill: var(--g-color); stroke: var(--g-color); border-radius: var(--g-radius);
 }

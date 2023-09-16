@@ -1,5 +1,10 @@
 # Changelog
 
+# 3.5.4
+
+[\*] Optimize svg parsing mechanism.  
+[\*] Optimized property control.
+
 # 3.5.3
 
 [+] Add back method of core library.  

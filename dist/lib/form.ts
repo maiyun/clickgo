@@ -703,7 +703,7 @@ export const elements: {
 
         // --- drag drop 的拖动占位符 ---
         this.drag.id = 'cg-drag';
-        this.drag.innerHTML = '<svg width="16" height="16" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 8L40 40" stroke="#FFF" stroke-width="4" stroke-linecap="butt" stroke-linejoin="miter"/><path d="M8 40L40 8" stroke="#FFF" stroke-width="4" stroke-linecap="butt" stroke-linejoin="miter"/></svg>';
+        this.drag.innerHTML = '<svg width="16" height="16" viewBox="0 0 48 48" fill="none" stroke="#FFF" xmlns="http://www.w3.org/2000/svg"><path d="M8 8L40 40" stroke-width="4" stroke-linecap="butt" stroke-linejoin="miter"/><path d="M8 40L40 8" stroke-width="4" stroke-linecap="butt" stroke-linejoin="miter"/></svg>';
         this.wrap.appendChild(this.drag);
 
         // --- 添加 cg-system 的 dom ---

@@ -335,10 +335,10 @@ global {
             .nav_mbutton {
                 width: 50px; min-height: 50px; transition: all .1s ease-out;
                 &:hover {
-                    background: var(--g-background-hover); fill: var(--g-color-hover);
+                    background: var(--g-background-hover); fill: var(--g-color-hover); stroke: var(--g-color-hover);
                 }
                 &:active {
-                    background: var(--g-background-active); fill: var(--g-color-active);
+                    background: var(--g-background-active); fill: var(--g-color-active); stroke: var(--g-color-active);
                 }
 
                 .nav_tag-svg {
@@ -540,10 +540,10 @@ global {
             background: hsl(240, 70%, 60%); transition: all .1s ease-out;
         }
         &:not(.tab_selected):not([data-cg-hover]):hover {
-            background: transparent; color: hsl(240, 70%, 60%); fill: hsl(240, 70%, 60%);
+            background: transparent; color: hsl(240, 70%, 60%); fill: hsl(240, 70%, 60%); stroke: hsl(240, 70%, 60%);
         }
         &.tab_selected {
-            background: transparent; font-weight: bold; color: hsl(240, 70%, 60%); fill: hsl(240, 70%, 60%);
+            background: transparent; font-weight: bold; color: hsl(240, 70%, 60%); fill: hsl(240, 70%, 60%); stroke: hsl(240, 70%, 60%);
         }
         .tab_close {
             transition: all .1s ease-out;
@@ -551,7 +551,7 @@ global {
                 background: var(--g-background-hover);
             }
             &:active {
-                background: var(--g-color); color: var(--face); fill: var(--face);
+                background: var(--g-color); color: var(--face); fill: var(--face); stroke: var(--face);
             }
         }
     }

@@ -4,16 +4,22 @@ export default class extends clickgo.control.AbstractControl {
 
     public props = {
         'viewBox': '0 0 24 24',
+        'fill': '',
+        'stroke': '',
         /** --- 直接插入 svg 内部标签，有的话优先显示本图形 --- */
         'layout': '',
         /** --- 或者从文件中读取 --- */
         'src': ''
     };
 
+    public fileViewBox: string = '';
+
+    public fileFill: string = '';
+
+    public fileStroke: string = '';
+
     /** --- 文件中读取的 layout --- */
     public fileLayout: string = '';
-
-    public fileViewBox: string = '';
 
     /** --- watch: src 变更次数 --- */
     public count = 0;
@@ -23,6 +29,8 @@ export default class extends clickgo.control.AbstractControl {
             const count = ++this.count;
             if (typeof this.props.src !== 'string' || this.props.src === '') {
                 this.fileLayout = '';
+                this.fileFill = '';
+                this.fileStroke = '';
                 this.fileViewBox = '';
                 return;
             }
@@ -43,13 +51,19 @@ export default class extends clickgo.control.AbstractControl {
             }
             if (t) {
                 const viewBoxMatch = /<svg[\s\S]*?viewBox\s*?=\s*?"(.+?)"/.exec(t);
+                const fillMatch = /<svg[\s\S]*?fill\s*?=\s*?"(.+?)"/.exec(t);
+                const strokeMatch = /<svg[\s\S]*?stroke\s*?=\s*?"(.+?)"/.exec(t);
                 const layoutMatch = /<svg[\s\S]*?>([\s\S]*?)<\/svg>/.exec(t);
                 this.fileViewBox = viewBoxMatch ? viewBoxMatch[1] : '';
+                this.fileFill = fillMatch ? fillMatch[1] : '';
+                this.fileStroke = strokeMatch ? strokeMatch[1] : '';
                 this.fileLayout = layoutMatch ? layoutMatch[1] : '';
                 return;
             }
-            this.fileLayout = '';
             this.fileViewBox = '';
+            this.fileFill = '';
+            this.fileStroke = '';
+            this.fileLayout = '';
         }, {
             'immediate': true
         });

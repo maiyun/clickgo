@@ -59,7 +59,7 @@
         }
 
         &:focus {
-            color: var(--g-plain-color-focus); fill: var(--g-plain-color-focus);
+            color: var(--g-plain-color-focus); fill: var(--g-plain-color-focus); stroke: var(--g-plain-color-focus);
 
             .check {
                 background: var(--g-plain-background-focus);
@@ -81,7 +81,7 @@
 
         // --- hover ---
         &:hover {
-            color: var(--g-plain-color-hover); fill: var(--g-plain-color-hover);
+            color: var(--g-plain-color-hover); fill: var(--g-plain-color-hover); stroke: var(--g-plain-color-hover);
 
             .check {
                 border: solid .5px var(--g-plain-border-color-hover);
@@ -96,7 +96,7 @@
 
         // --- active ---
         &:active, &.active {
-            color: var(--g-plain-color-active); fill: var(--g-plain-color-active);
+            color: var(--g-plain-color-active); fill: var(--g-plain-color-active); stroke: var(--g-plain-color-active);
 
             .check {
                 background: var(--g-plain-background-active);
@@ -112,7 +112,7 @@
     }
 
     &[data-cg-disabled] {
-        color: var(--g-plain-color-disabled); fill: var(--g-plain-color-disabled);
+        color: var(--g-plain-color-disabled); fill: var(--g-plain-color-disabled); stroke: var(--g-plain-color-disabled);
 
         .check {
             background: var(--g-plain-background-disabled);

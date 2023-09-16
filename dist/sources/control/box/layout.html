@@ -1,4 +1,4 @@
-<svg class="wrap" :class="[isInteract && 'isInteract']" @touchstart="wrapDown" @mousedown="wrapDown">
+<svg class="wrap" :class="[isInteract && 'isInteract']" @touchstart="wrapDown" @mousedown="wrapDown" stroke="none">
     <template v-for="item, id of modelValue">
         <template v-if="item.type === 'rect'">
             <rect class="box" :class="[(item.move !== false) && 'move', selected.includes(id) && 'isSelected']" :style="{'width': item.width + 2 + 'px', 'height': item.height + 2 + 'px'}" :x="item.x - 1" :y="item.y - 1" @touchstart="down($event, id)" @mousedown="down($event, id)" />

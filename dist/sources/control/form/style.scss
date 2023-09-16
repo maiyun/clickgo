@@ -8,12 +8,14 @@
         box-shadow: 0 5px 20px rgba(0, 0, 0, .25);
         color: var(--g-color);
         fill: var(--g-color);
+        stroke: var(--g-color);
         border-color: var(--g-color);
     }
     51%, 100% {
         box-shadow: 0 5px 10px rgba(0, 0, 0, .25);
         color: var(--g-color-disabled);
         fill: var(--g-color-disabled);
+        stroke: var(--g-color-disabled);
         border-color: var(--g-color-disabled);
     }
 }
@@ -27,7 +29,7 @@
 }
 
 .wrap {
-    position: relative; color: var(--g-color-disabled); fill: var(--g-color-disabled); display: flex;
+    position: relative; color: var(--g-color-disabled); fill: var(--g-color-disabled); stroke: var(--g-color-disabled); display: flex;
     &:not(.inside) {
         position: absolute; transition: .1s ease-out; transition-property: transform, opacity; transform: translateX(10px) translateY(0) translateZ(0); opacity: 0;
     }
@@ -56,7 +58,7 @@
         transform: translateX(0px) translateY(50px) translateZ(0);
     }
     &.focus {
-        color: var(--g-color); fill: var(--g-color);
+        color: var(--g-color); fill: var(--g-color); stroke: var(--g-color);
         &:not(.border-none):not([data-cg-max]) {
             box-shadow: 0 5px 20px rgba(0, 0, 0, .25); border: solid .5px var(--g-color);
         }
@@ -151,10 +153,10 @@
                 }
                 .close {
                     &:hover {
-                        background: var(--danger); color: #FFF; fill: #FFF;
+                        background: var(--danger); color: #FFF; fill: #FFF; stroke: #FFF;
                     }
                     &:active {
-                        background: var(--danger-hover); color: #FFF; fill: #FFF;
+                        background: var(--danger-hover); color: #FFF; fill: #FFF; stroke: #FFF;
                     }
                 }
             }
