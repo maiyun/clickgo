@@ -1,5 +1,11 @@
 # Changelog
 
+# 3.5.6
+
+[+] The select component now includes the `remote-delay` and `placeholder` attributes.  
+[\*] Fixed an issue in the list and select components in tree mode where clicking the control buttons would result in items being selected.  
+[\*] Enhanced the button component.
+
 # 3.5.5
 
 [\*] Optimized svg control.
