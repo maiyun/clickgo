@@ -1,14 +1,14 @@
 <cg-greatselect ref="gs" :disabled="propBoolean('disabled')" :area="propBoolean('editable') ? 'arrow' : 'all'" pop="custom">
-    <div v-if="propBoolean('editable')" class="op" :style="{'margin': opMargin, 'background': background}">
-        <div v-if="propBoolean('multi')" class="tags">
+    <div v-if="propBoolean('editable')" class="op" :style="{'margin': opMargin}">
+        <div v-if="propBoolean('multi')" class="tags" :style="{'background': background}">
             <div v-for="item, index of label" class="tag" @click="removeTag(index)">{{item}}</div>
         </div>
-        <cg-text :modelValue="inputValue" @update:modelValue="updateInputValue" :disabled="disabled" :style="{'padding': padding}" @keydown="$event.stopPropagation()" @focus="focus" @keydown="keydown"></cg-text>
+        <cg-text :modelValue="inputValue" @update:modelValue="updateInputValue" :disabled="disabled" :placeholder="placeholder" :style="{'padding': padding, 'background': background}" @keydown="$event.stopPropagation()" @focus="focus" @keydown="keydown"></cg-text>
     </div>
     <template v-else>{{label.length ? label.join(', ') : '　'}}</template>
     <template v-slot:pop>
         <cg-list ref="list" @label="updateLabel" :data="data" :must="isMust" :multi="propBoolean('editable') ? false : multi" :ctrl="false" :modelValue="listValue" @update:modelValue="updateListValue" :tree="tree" :treeDefault="treeDefault" :async="async" :icon="icon" :iconDefault="iconDefault" @itemclick="listItemClick" @load="onLoad"></cg-list>
-        <div class="loading" v-show="loading">
+        <div class="loading" v-show="loading > 0">
             <cg-loading></cg-loading>
         </div>
     </template>

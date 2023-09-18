@@ -63,7 +63,7 @@ export default class extends clickgo.form.AbstractForm {
         }
     ];
 
-    public slist2r: string[] = [];
+    public slist2r: any[] = [];
 
     public select2 = ['haha2'];
 
@@ -90,6 +90,8 @@ export default class extends clickgo.form.AbstractForm {
     public icon = false;
 
     public remote = false;
+
+    public remoteDelay = [0];
 
     // --- size 高度 ---
     public get sizes(): any {
@@ -129,7 +131,13 @@ export default class extends clickgo.form.AbstractForm {
             resolve();
             return;
         }
-        this.slist2r = ['test', value, 'remote'];
+        this.slist2r = ['test', value, 'remote', {
+            'label': 'label',
+            'value': 'ok'
+        }, {
+            'label': 'label2',
+            'value': 2
+        }];
         resolve();
     }
 

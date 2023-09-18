@@ -7,6 +7,8 @@ export default class extends clickgo.control.AbstractControl {
         'editable': boolean | string;
         'multi': boolean | string;
         'remote': boolean | string;
+        /** --- 远程查询输入延迟调用，防止频繁发起查询 --- */
+        'remoteDelay': number | string;
 
         'tree': boolean | string;
         /** --- -1: 不存在子项, 0: 关闭状态, 1: 存在子项打开状态, 2: 加载状态 --- */
@@ -16,12 +18,14 @@ export default class extends clickgo.control.AbstractControl {
         'iconDefault': string;
 
         'modelValue': string[];
+        'placeholder': string;
         'data': any[] | Record<string, string>;
     } = {
             'disabled': false,
             'editable': false,
             'multi': false,
             'remote': false,
+            'remoteDelay': 500,
 
             'tree': false,
             'treeDefault': 0,
@@ -30,6 +34,7 @@ export default class extends clickgo.control.AbstractControl {
             'iconDefault': '',
 
             'modelValue': [],
+            'placeholder': '',
             'data': []
         };
 
@@ -104,13 +109,29 @@ export default class extends clickgo.control.AbstractControl {
         }
     }
 
+    /** --- remote 模式下，最后一次键入的时间 --- */
+    public lastRemoteInput: number = 0;
+
     // --- text 的值变更事件（只有 editable 时会触发） ----
-    public updateInputValue(value: string): void {
+    public async updateInputValue(value: string): Promise<void> {
         this.inputValue = value.trim();
         // --- 看看要不要远程搜索 ---
         if (this.propBoolean('remote')) {
             if (this.inputValue !== '') {
                 // --- 不为空 ---
+                if (this.loading === -1) {
+                    this.loading = 0;
+                }
+                const delay = this.propInt('remoteDelay');
+                this.lastRemoteInput = Date.now();
+                await clickgo.tool.sleep(delay);
+                if (Date.now() - this.lastRemoteInput < delay) {
+                    return;
+                }
+                if (this.loading === -1) {
+                    this.loading = 0;
+                    return;
+                }
                 const loading = ++this.loading;
                 this.emit('remote', this.inputValue, () => {
                     if (this.loading > loading) {
@@ -124,7 +145,7 @@ export default class extends clickgo.control.AbstractControl {
                 }
             }
             else {
-                this.loading = 0;
+                this.loading = -1;
                 // --- 为空不搜索 ---
                 if (this.element.dataset.cgPopOpen !== undefined) {
                     clickgo.form.hidePop();

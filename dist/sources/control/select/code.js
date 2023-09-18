@@ -22,6 +22,15 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const clickgo = __importStar(require("clickgo"));
 class default_1 extends clickgo.control.AbstractControl {
@@ -32,12 +41,14 @@ class default_1 extends clickgo.control.AbstractControl {
             'editable': false,
             'multi': false,
             'remote': false,
+            'remoteDelay': 500,
             'tree': false,
             'treeDefault': 0,
             'async': false,
             'icon': false,
             'iconDefault': '',
             'modelValue': [],
+            'placeholder': '',
             'data': []
         };
         this.value = [];
@@ -46,6 +57,7 @@ class default_1 extends clickgo.control.AbstractControl {
         this.loading = 0;
         this.background = '';
         this.padding = '';
+        this.lastRemoteInput = 0;
     }
     get opMargin() {
         return this.padding.replace(/(\w+)/g, '-$1');
@@ -91,40 +103,55 @@ class default_1 extends clickgo.control.AbstractControl {
         }
     }
     updateInputValue(value) {
-        this.inputValue = value.trim();
-        if (this.propBoolean('remote')) {
-            if (this.inputValue !== '') {
-                const loading = ++this.loading;
-                this.emit('remote', this.inputValue, () => {
-                    if (this.loading > loading) {
+        return __awaiter(this, void 0, void 0, function* () {
+            this.inputValue = value.trim();
+            if (this.propBoolean('remote')) {
+                if (this.inputValue !== '') {
+                    if (this.loading === -1) {
+                        this.loading = 0;
+                    }
+                    const delay = this.propInt('remoteDelay');
+                    this.lastRemoteInput = Date.now();
+                    yield clickgo.tool.sleep(delay);
+                    if (Date.now() - this.lastRemoteInput < delay) {
                         return;
                     }
-                    this.loading = 0;
-                });
-                if (this.element.dataset.cgPopOpen === undefined) {
-                    this.refs.gs.showPop();
+                    if (this.loading === -1) {
+                        this.loading = 0;
+                        return;
+                    }
+                    const loading = ++this.loading;
+                    this.emit('remote', this.inputValue, () => {
+                        if (this.loading > loading) {
+                            return;
+                        }
+                        this.loading = 0;
+                    });
+                    if (this.element.dataset.cgPopOpen === undefined) {
+                        this.refs.gs.showPop();
+                    }
                 }
+                else {
+                    this.loading = -1;
+                    if (this.element.dataset.cgPopOpen !== undefined) {
+                        clickgo.form.hidePop();
+                    }
+                }
+            }
+            if (this.propBoolean('multi')) {
+                return;
+            }
+            if (this.inputValue === '') {
+                this.value = [];
+                this.label = [];
             }
             else {
-                this.loading = 0;
-                if (this.element.dataset.cgPopOpen !== undefined) {
-                    clickgo.form.hidePop();
-                }
+                this.value = [this.inputValue];
+                this.label = [this.inputValue];
             }
-        }
-        if (this.propBoolean('multi')) {
-            return;
-        }
-        if (this.inputValue === '') {
-            this.value = [];
-            this.label = [];
-        }
-        else {
-            this.value = [this.inputValue];
-            this.label = [this.inputValue];
-        }
-        this.emit('update:modelValue', this.value);
-        this.emit('label', this.label);
+            this.emit('update:modelValue', this.value);
+            this.emit('label', this.label);
+        });
     }
     updateLabel(label) {
         if (!this.propBoolean('editable')) {

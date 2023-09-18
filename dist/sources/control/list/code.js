@@ -161,7 +161,10 @@ class default_1 extends clickgo.control.AbstractControl {
                 'children': []
             };
             const item = nowData[k];
-            const value = typeof item === 'object' ? ((_b = (_a = item.value) !== null && _a !== void 0 ? _a : item.label) !== null && _b !== void 0 ? _b : k) : item;
+            let value = typeof item === 'object' ? ((_b = (_a = item.value) !== null && _a !== void 0 ? _a : item.label) !== null && _b !== void 0 ? _b : k) : item;
+            if (typeof value === 'number') {
+                value = value.toString();
+            }
             const oldIo = oldValues.indexOf(value);
             if (typeof item === 'object') {
                 over.label = (_d = (_c = item.label) !== null && _c !== void 0 ? _c : item.value) !== null && _d !== void 0 ? _d : k;

@@ -204,7 +204,10 @@ export default class extends clickgo.control.AbstractControl {
             /** --- 用户单对象 --- */
             const item = nowData[k];
             /** --- 单对象的值 --- */
-            const value = typeof item === 'object' ? (item.value ?? item.label ?? k) : item;
+            let value = typeof item === 'object' ? (item.value ?? item.label ?? k) : item;
+            if (typeof value === 'number') {
+                value = value.toString();
+            }
             /** --- 值是否在原来的 oldData 里能找到 --- */
             const oldIo = oldValues.indexOf(value);
             if (typeof item === 'object') {

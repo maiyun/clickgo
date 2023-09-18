@@ -105,6 +105,7 @@ class default_1 extends clickgo.form.AbstractForm {
         this.async = false;
         this.icon = false;
         this.remote = false;
+        this.remoteDelay = [0];
     }
     get sizes() {
         const rtn = {};
@@ -144,7 +145,13 @@ class default_1 extends clickgo.form.AbstractForm {
                 resolve();
                 return;
             }
-            this.slist2r = ['test', value, 'remote'];
+            this.slist2r = ['test', value, 'remote', {
+                    'label': 'label',
+                    'value': 'ok'
+                }, {
+                    'label': 'label2',
+                    'value': 2
+                }];
             resolve();
         });
     }

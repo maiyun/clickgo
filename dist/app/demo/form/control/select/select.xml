@@ -45,16 +45,19 @@
                 <layout gutter="10" direction="v" style="padding: 10px;">
                     <label>Now select value is {{select2}}</label>
                     <label>Label: {{label2}}</label>
-                    <select v-model="select2" @label="label2 = $event" :data="remote ? slist2r : slist2" :disabled="disabled" :editable="editable" :multi="multi" :tree="tree" :async="async" :remote="remote" :icon="icon" icon-default="../../../res/txt.svg" @load="onLoad" @remote="onRemote" :style="{'font-size': fontSize ? '16px' : undefined, 'padding': padding ? '15px' : undefined, 'background': background ? 'red' : undefined, 'color': background ? '#FFF' : undefined}"></select>
+                    <select v-model="select2" @label="label2 = $event" :data="remote ? slist2r : slist2" :disabled="disabled" :editable="editable" :multi="multi" :tree="tree" :async="async" :remote="remote" :remote-delay="remoteDelay[0]" :icon="icon" icon-default="../../../res/txt.svg" @load="onLoad" @remote="onRemote" :style="{'font-size': fontSize ? '16px' : undefined, 'padding': padding ? '15px' : undefined, 'background': background ? 'red' : undefined, 'color': background ? '#FFF' : undefined}"></select>
                     <label>Custom height:</label>
-                    <select :data="remote ? slist2r : ['1','2','3','4','5']" :disabled="disabled" :editable="editable" :multi="multi" :tree="tree" :async="async" :remote="remote" :icon="icon" icon-default="../../../res/txt.svg" style="height: 60px;" @load="onLoad" @remote="onRemote" :style="{'font-size': fontSize ? '16px' : undefined, 'padding': padding ? '15px' : undefined, 'background': background ? 'red' : undefined, 'color': background ? '#FFF' : undefined}"></select>
+                    <select :data="remote ? slist2r : ['1','2','3','4','5']" :disabled="disabled" :editable="editable" :multi="multi" :tree="tree" :async="async" :remote="remote" :remote-delay="remoteDelay[0]" :icon="icon" icon-default="../../../res/txt.svg" style="height: 60px;" @load="onLoad" @remote="onRemote" :style="{'font-size': fontSize ? '16px' : undefined, 'padding': padding ? '15px' : undefined, 'background': background ? 'red' : undefined, 'color': background ? '#FFF' : undefined}"></select>
                     <label>Always editable:</label>
-                    <select :data="remote ? slist2r : ['1','2','3','4','5']" :disabled="disabled" editable :multi="multi" :tree="tree" :async="async" :remote="remote" :icon="icon" icon-default="../../../res/txt.svg" @load="onLoad" @remote="onRemote" :style="{'font-size': fontSize ? '16px' : undefined, 'padding': padding ? '15px' : undefined, 'background': background ? 'red' : undefined, 'color': background ? '#FFF' : undefined}"></select>
+                    <select :data="remote ? slist2r : ['1','2','3','4','5']" :disabled="disabled" editable :multi="multi" :tree="tree" :async="async" :remote="remote" :remote-delay="remoteDelay[0]" :icon="icon" icon-default="../../../res/txt.svg" placeholder="Please enter" @load="onLoad" @remote="onRemote" :style="{'font-size': fontSize ? '16px' : undefined, 'padding': padding ? '15px' : undefined, 'background': background ? 'red' : undefined, 'color': background ? '#FFF' : undefined}"></select>
                     <layout gutter="10">
                         <button @click="icon = !icon" style="flex: 1; height: 30px;">{{icon ? '' : '!'}}icon</button>
                         <button @click="tree = !tree" style="flex: 1; height: 30px;">{{tree ? '' : '!'}}tree</button>
                         <button @click="async = !async" style="flex: 1; height: 30px;">{{async ? '' : '!'}}async</button>
+                    </layout>
+                    <layout gutter="10">
                         <button @click="remote = !remote" style="flex: 1; height: 30px;">{{remote ? '' : '!'}}remote</button>
+                        <select :data="[0, 100, 500, 1000, 2000]" v-model="remoteDelay" style="flex: 1;"></select>
                     </layout>
                 </layout>
             </flow>
