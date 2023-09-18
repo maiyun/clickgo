@@ -53,6 +53,7 @@ class default_1 extends clickgo.control.AbstractControl {
         this.beforeSelectValues = [];
         this.isSelectStart = false;
         this.scrollShow = true;
+        this.lastGlno = 0;
     }
     get tableContentWidth() {
         if (!this.table) {
@@ -254,6 +255,15 @@ class default_1 extends clickgo.control.AbstractControl {
         });
     }
     innerDown(e, value) {
+        const el = e.target;
+        if (el.dataset.cgGlno !== undefined) {
+            this.lastGlno = Date.now();
+            return;
+        }
+        if (clickgo.dom.findParentByData(el, 'cg-glno')) {
+            this.lastGlno = Date.now();
+            return;
+        }
         clickgo.dom.bindClick(e, () => {
             this.select(value, e.shiftKey, ((!this.propBoolean('ctrl') || e instanceof TouchEvent) && this.propBoolean('multi')) ? true : e.ctrlKey);
             this.emit('itemclick', e, false);
@@ -436,6 +446,9 @@ class default_1 extends clickgo.control.AbstractControl {
             }
         });
         this.watch('shiftStart', () => {
+            if (Date.now() - this.lastGlno <= 300) {
+                return;
+            }
             const cb = (count = 0) => {
                 if (this.isSelectStart) {
                     return;

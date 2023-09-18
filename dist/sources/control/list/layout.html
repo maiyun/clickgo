@@ -1,7 +1,7 @@
 <cg-greatlist ref="gl" :model-value="value" @update:model-value="updateModelValue" :data="dataGl" :disabled="disabled" :must="must" :multi="multi" :ctrl="ctrl" :selection="selection" :gesture="gesture" :scroll="scroll">
     <template v-slot="data">
         <div class="item" :class="[data.row.disabled && 'disabled']" :style="{'padding-left': 'calc(var(--space) * ' + data.row.level + ')'}">
-            <div v-if="propBoolean('tree')" class="tree" :class="['tree' + data.row.tree]" @click="treeClick($event, data.row)">
+            <div v-if="propBoolean('tree')" class="tree" :class="['tree' + data.row.tree]" @click="treeClick($event, data.row)" data-cg-glno>
                 <cg-loading v-if="data.row.tree === 2"></cg-loading>
             </div>
             <cg-img v-if="propBoolean('icon')" class="icon" :src="((data.row.tree <= 0) || (data.row.tree === 2)) ? data.row.icon : (data.row.openicon || data.row.icon)"></cg-img>

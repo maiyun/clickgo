@@ -338,8 +338,20 @@ export default class extends clickgo.control.AbstractControl {
         });
     }
 
+    /** --- 最后一次响应 cg-glno 标签的时间 --- */
+    public lastGlno = 0;
+
     // --- item inner 的 click 事件 ---
     public innerDown(e: MouseEvent | TouchEvent, value: number): void {
+        const el = e.target as HTMLElement;
+        if (el.dataset.cgGlno !== undefined) {
+            this.lastGlno = Date.now();
+            return;
+        }
+        if (clickgo.dom.findParentByData(el, 'cg-glno')) {
+            this.lastGlno = Date.now();
+            return;
+        }
         clickgo.dom.bindClick(e, () => {
             this.select(value, e.shiftKey, ((!this.propBoolean('ctrl') || e instanceof TouchEvent) && this.propBoolean('multi')) ? true : e.ctrlKey);
             // --- 上报点击事件，false: arrow click ---
@@ -574,6 +586,10 @@ export default class extends clickgo.control.AbstractControl {
 
         // --- shift 原点变了，要监听并移动 scroll ---
         this.watch('shiftStart', (): void => {
+            if (Date.now() - this.lastGlno <= 300) {
+                // --- 鼠标或者点击禁止区域后操作的，不管，不需要移动，例如点击了 tree 的控制按钮 ---
+                return;
+            }
             const cb = (count: number = 0): void => {
                 if (this.isSelectStart) {
                     // --- 框选过程中变了，不管 ---
