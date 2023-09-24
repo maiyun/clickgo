@@ -101,6 +101,10 @@ export default class extends clickgo.control.AbstractControl {
 
     public arrowUp(): void {
         // --- 选项向上移动 ---
+        if (!this.valueData.length) {
+            this.select(this.shiftStart);
+            return;
+        }
         if (this.shiftStart === 0) {
             return;
         }
@@ -121,6 +125,10 @@ export default class extends clickgo.control.AbstractControl {
 
     public arrowDown(): void {
         // --- 选项向下移动 ---
+        if (!this.valueData.length) {
+            this.select(this.shiftStart);
+            return;
+        }
         if (this.shiftStart === this.props.data.length - 1) {
             return;
         }
@@ -640,9 +648,7 @@ export default class extends clickgo.control.AbstractControl {
                 return;
             }
             this.valueData = this.props.modelValue;
-            if (this.valueData[0] !== undefined) {
-                this.shiftStart = this.valueData[0];
-            }
+            this.shiftStart = this.valueData[0] !== undefined ? this.valueData[0] : 0;
             this.checkValue();
         });
         this.valueData = this.props.modelValue;

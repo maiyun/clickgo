@@ -90,6 +90,10 @@ This library is published under [Apache-2.0](./LICENSE) license.
 
 [Document Remove SVG](https://www.svgrepo.com/svg/447002/document-remove)
 
+#### Levelselect
+
+[Key Up SVG Vector](https://www.svgrepo.com/svg/447022/key-up)
+
 #### Menulist Item
 
 [Check SVG Vector](https://www.svgrepo.com/svg/446979/check)

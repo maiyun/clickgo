@@ -1,6 +1,6 @@
 <form title="Select" width="400" height="450" min-width="300" min-height="400" padding="10">
     <layout gutter="10" direction="v" style="flex: 1; width: 0;">
-        <tab v-model="ntab" :tabs="['greatselect', 'select']" style="flex: 1; height: 0;">
+        <tab v-model="ntab" :tabs="['greatselect', 'select', 'levelselect']" style="flex: 1; height: 0;">
             <!-- greatselect -->
             <layout v-if="ntab === 'greatselect'" gutter="10" direction="v" style="flex: 1; width: 0; padding: 10px;">
                 <label>Now select value is {{select}}:</label>
@@ -32,7 +32,7 @@
                 <greatselect pop="custom" :area="area" :disabled="disabled" :style="{'font-size': fontSize ? '16px' : undefined, 'padding': padding ? '15px' : undefined, 'background': background ? 'red' : undefined, 'color': background ? '#FFF' : undefined}">
                     <label>Pop is button.</label>
                     <template v-slot:pop>
-                        <button style="height: 30px;">Nothing</button>
+                        <button>Nothing</button>
                     </template>
                 </greatselect>
                 <layout gutter="10">
@@ -51,29 +51,40 @@
                     <label>Always editable:</label>
                     <select :data="remote ? slist2r : ['1','2','3','4','5']" :disabled="disabled" editable :multi="multi" :tree="tree" :async="async" :remote="remote" :remote-delay="remoteDelay[0]" :icon="icon" icon-default="../../../res/txt.svg" placeholder="Please enter" @load="onLoad" @remote="onRemote" :style="{'font-size': fontSize ? '16px' : undefined, 'padding': padding ? '15px' : undefined, 'background': background ? 'red' : undefined, 'color': background ? '#FFF' : undefined}"></select>
                     <layout gutter="10">
-                        <button @click="icon = !icon" style="flex: 1; height: 30px;">{{icon ? '' : '!'}}icon</button>
-                        <button @click="tree = !tree" style="flex: 1; height: 30px;">{{tree ? '' : '!'}}tree</button>
-                        <button @click="async = !async" style="flex: 1; height: 30px;">{{async ? '' : '!'}}async</button>
+                        <button @click="icon = !icon" style="flex: 1;">{{icon ? '' : '!'}}icon</button>
+                        <button @click="async = !async" style="flex: 1;">{{async ? '' : '!'}}async</button>
+                        <button @click="tree = !tree" style="flex: 1;">{{tree ? '' : '!'}}tree</button>
                     </layout>
                     <layout gutter="10">
-                        <button @click="remote = !remote" style="flex: 1; height: 30px;">{{remote ? '' : '!'}}remote</button>
+                        <button @click="remote = !remote" style="flex: 1;">{{remote ? '' : '!'}}remote</button>
                         <select :data="[0, 100, 500, 1000, 2000]" v-model="remoteDelay" style="flex: 1;"></select>
                     </layout>
                 </layout>
             </flow>
+            <!-- levelselect -->
+            <flow v-else-if="ntab === 'levelselect'" direction="v" style="flex: 1; width: 0;">
+                <layout gutter="10" direction="v" style="padding: 10px;">
+                    <label>Now select value is {{select3}}</label>
+                    <label>Label: {{label3}}</label>
+                    <levelselect v-model="select3" @label="label3 = $event" :data="s3other ? slist3r : slist2" :disabled="disabled" :editable="editable" :multi="multi" :async="async" placeholder="Please enter" @load="onLoad" :style="{'font-size': fontSize ? '16px' : undefined, 'padding': padding ? '15px' : undefined, 'background': background ? 'red' : undefined, 'color': background ? '#FFF' : undefined}"></levelselect>
+                    <button @click="async = !async">{{async ? '' : '!'}}async</button>
+                    <button @click="select3 = ['title', 'sub2']">Set: ['title', 'sub2']</button>
+                    <button @click="s3other = !s3other">Set {{s3other ? 'this' : 'other'}} data</button>
+                </layout>
+            </flow>
         </tab>
         <layout gutter="10">
-            <button @click="disabled = !disabled" style="flex: 1; height: 30px;">{{disabled ? '' : '!'}}disabled</button>
-            <button v-if="ntab === 'greatselect'" @click="area = area === 'all' ? 'arrow' : 'all'" style="flex: 1; height: 30px;">Area: {{area}}</button>
-            <button v-else @click="editable = !editable" style="flex: 1; height: 30px;">{{editable ? '' : '!'}}editable</button>
+            <button @click="disabled = !disabled" style="flex: 1;">{{disabled ? '' : '!'}}disabled</button>
+            <button v-if="ntab === 'greatselect'" @click="area = area === 'all' ? 'arrow' : 'all'" style="flex: 1;">Area: {{area}}</button>
+            <button v-else @click="editable = !editable" style="flex: 1;">{{editable ? '' : '!'}}editable</button>
         </layout>
         <layout gutter="10">
-            <button @click="fontSize = !fontSize" style="flex: 1; height: 30px;">Change font size</button>
-            <button @click="padding = !padding" style="flex: 1; height: 30px;">Change padding</button>
+            <button @click="fontSize = !fontSize" style="flex: 1;">Change font size</button>
+            <button @click="padding = !padding" style="flex: 1;">Change padding</button>
         </layout>
         <layout gutter="10">
-            <button @click="background = !background" style="flex: 1; height: 30px;">Change bg &amp; color</button>
-            <button @click="multi = !multi" style="flex: 1; height: 30px;">{{multi ? '' : '!'}}multi</button>
+            <button @click="background = !background" style="flex: 1;">Change bg &amp; color</button>
+            <button @click="multi = !multi" style="flex: 1;">{{multi ? '' : '!'}}multi</button>
         </layout>
     </layout>
 </form>

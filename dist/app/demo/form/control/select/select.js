@@ -95,6 +95,10 @@ class default_1 extends clickgo.form.AbstractForm {
         this.slist2r = [];
         this.select2 = ['haha2'];
         this.label2 = [];
+        this.select3 = [];
+        this.label3 = [];
+        this.s3other = false;
+        this.slist3r = ['a', 'b', 'c', 'haha3'];
         this.padding = false;
         this.fontSize = false;
         this.background = false;
@@ -125,7 +129,7 @@ class default_1 extends clickgo.form.AbstractForm {
         return __awaiter(this, void 0, void 0, function* () {
             if (value !== 'haha4') {
                 yield clickgo.tool.sleep(100);
-                if (value === '2') {
+                if (value === 'haha2') {
                     resolve(['60']);
                 }
                 else {

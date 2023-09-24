@@ -241,7 +241,7 @@ global {
     }
 }
 .date_pop {
-    background: var(--pop-background); -webkit-backdrop-filter: blur(20px) brightness(1.1); backdrop-filter: blur(20px) brightness(1.1);
+    background: var(--pop-background); -webkit-backdrop-filter: blur(50px) saturate(1.5); backdrop-filter: blur(50px) saturate(1.5);
 }
 
 // -- CONTROL -- desc --
@@ -370,7 +370,7 @@ global {
     }
 }
 .greatselect_pop {
-    background: var(--pop-background); -webkit-backdrop-filter: blur(20px) brightness(1.1); backdrop-filter: blur(20px) brightness(1.1);
+    background: var(--pop-background); -webkit-backdrop-filter: blur(50px) brightness(1.1) saturate(1.5); backdrop-filter: blur(50px) brightness(1.1) saturate(1.5);
 }
 
 // -- CONTROL -- iconview --
@@ -426,7 +426,7 @@ global {
 // -- CONTROL -- menulist --
 
 .menulist_wrap {
-    background: var(--pop-background); -webkit-backdrop-filter: blur(20px) brightness(1.1); backdrop-filter: blur(20px) brightness(1.1);
+    background: var(--pop-background); -webkit-backdrop-filter: blur(50px) brightness(1.1) saturate(1.5); backdrop-filter: blur(50px) brightness(1.1) saturate(1.5);
 }
 
 // -- CONTROL -- menulist-item --
@@ -736,7 +736,7 @@ global {
 // -- CONTROL -- task --
 
 .task_wrap {
-    background: var(--pop-background); -webkit-backdrop-filter: blur(20px) brightness(1.1); backdrop-filter: blur(20px) brightness(1.1);
+    background: var(--pop-background); -webkit-backdrop-filter: blur(50px) brightness(1.1) saturate(1.5); backdrop-filter: blur(50px) brightness(1.1) saturate(1.5);
 }
 
 // -- CONTROL -- task-item --

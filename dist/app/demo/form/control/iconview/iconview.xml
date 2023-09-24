@@ -21,7 +21,7 @@
             <button @click="scrollChange" style="padding: 10px; flex: 1;">Scroll {{scroll}}</button>
         </layout>
         <layout class="ctr" gutter="10">
-            <select v-model="size" :data="[0, 32, 64, 128, 256]" style="flex: 1;"></select>
+            <select v-model="size" :data="[32, 64, 100, 128, 256]" style="flex: 1;"></select>
             <button @click="select=[1]" style="padding: 10px; flex: 1;">Select 2th</button>
             <button v-if="multi" @click="select=[1,2]" style="padding: 10px; flex: 1;">Select two</button>
         </layout>

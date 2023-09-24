@@ -82,6 +82,10 @@ class default_1 extends clickgo.control.AbstractControl {
             }
             return;
         }
+        if ((e.key === 'ArrowDown') && (this.element.dataset.cgPopOpen === undefined)) {
+            this.refs.gs.showPop();
+            return;
+        }
         if ((e.key === 'ArrowUp' || e.key === 'ArrowDown') && this.element.dataset.cgPopOpen !== undefined) {
             e.preventDefault();
             switch (e.key) {
@@ -98,9 +102,10 @@ class default_1 extends clickgo.control.AbstractControl {
         if (e.key !== 'Enter') {
             return;
         }
-        if (this.inputValue !== '') {
-            this.listItemClick();
+        if (this.inputValue === '') {
+            return;
         }
+        this.listItemClick();
     }
     updateInputValue(value) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -230,7 +235,7 @@ class default_1 extends clickgo.control.AbstractControl {
                 return;
             }
             if (!this.propBoolean('multi')) {
-                this.inputValue = (_a = this.value[0]) !== null && _a !== void 0 ? _a : '';
+                this.inputValue = ((_a = this.value[0]) !== null && _a !== void 0 ? _a : '').toString();
             }
         }, {
             'immediate': true
@@ -239,7 +244,7 @@ class default_1 extends clickgo.control.AbstractControl {
             var _a;
             if (!this.propBoolean('multi')) {
                 if (this.propBoolean('editable')) {
-                    this.inputValue = (_a = this.value[0]) !== null && _a !== void 0 ? _a : '';
+                    this.inputValue = ((_a = this.value[0]) !== null && _a !== void 0 ? _a : '').toString();
                 }
                 return;
             }

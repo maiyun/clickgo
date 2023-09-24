@@ -1,6 +1,6 @@
 <cg-greatselect ref="gs" :disabled="propBoolean('disabled')" :area="propBoolean('editable') ? 'arrow' : 'all'" pop="custom">
     <div v-if="propBoolean('editable')" class="op" :style="{'margin': opMargin}">
-        <div v-if="propBoolean('multi')" class="tags" :style="{'background': background}">
+        <div v-if="propBoolean('multi')" class="tags">
             <div v-for="item, index of label" class="tag" @click="removeTag(index)">{{item}}</div>
         </div>
         <cg-text :modelValue="inputValue" @update:modelValue="updateInputValue" :disabled="disabled" :placeholder="placeholder" :style="{'padding': padding, 'background': background}" @keydown="$event.stopPropagation()" @focus="focus" @keydown="keydown"></cg-text>

@@ -84,6 +84,9 @@ class default_1 extends clickgo.control.AbstractControl {
     get dataGl() {
         return this.unpack(this.dataFormat);
     }
+    select(index) {
+        this.refs.gl.select(index);
+    }
     findFormat(value, autoOpen = true, data, level) {
         const rtn = {};
         if (level === undefined) {
@@ -91,6 +94,12 @@ class default_1 extends clickgo.control.AbstractControl {
         }
         if (!Array.isArray(value)) {
             value = [value];
+        }
+        for (let i = 0; i < value.length; ++i) {
+            if (typeof value[i] === 'string') {
+                continue;
+            }
+            value[i] = value[i].toString();
         }
         if (!data) {
             data = this.dataFormat;
@@ -139,9 +148,15 @@ class default_1 extends clickgo.control.AbstractControl {
         if (!Array.isArray(nowData)) {
             const newArray = [];
             for (const k in nowData) {
-                newArray.push({
-                    'value': k, 'label': nowData[k]
-                });
+                const item = nowData[k];
+                if (typeof item == 'string') {
+                    newArray.push({
+                        'value': k, 'label': item
+                    });
+                    continue;
+                }
+                item.value = k;
+                newArray.push(item);
             }
             nowData = newArray;
         }
@@ -157,7 +172,7 @@ class default_1 extends clickgo.control.AbstractControl {
                 'title': false,
                 'disabled': false,
                 'control': 'item',
-                'tree': this.props.treeDefault,
+                'tree': this.propInt('treeDefault'),
                 'children': []
             };
             const item = nowData[k];

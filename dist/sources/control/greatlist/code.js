@@ -74,6 +74,10 @@ class default_1 extends clickgo.control.AbstractControl {
         };
     }
     arrowUp() {
+        if (!this.valueData.length) {
+            this.select(this.shiftStart);
+            return;
+        }
         if (this.shiftStart === 0) {
             return;
         }
@@ -92,6 +96,10 @@ class default_1 extends clickgo.control.AbstractControl {
         }
     }
     arrowDown() {
+        if (!this.valueData.length) {
+            this.select(this.shiftStart);
+            return;
+        }
         if (this.shiftStart === this.props.data.length - 1) {
             return;
         }
@@ -489,9 +497,7 @@ class default_1 extends clickgo.control.AbstractControl {
                 return;
             }
             this.valueData = this.props.modelValue;
-            if (this.valueData[0] !== undefined) {
-                this.shiftStart = this.valueData[0];
-            }
+            this.shiftStart = this.valueData[0] !== undefined ? this.valueData[0] : 0;
             this.checkValue();
         });
         this.valueData = this.props.modelValue;

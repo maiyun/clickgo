@@ -101,6 +101,13 @@ export default class extends clickgo.control.AbstractControl {
     // --- method ---
 
     /**
+     * --- 根据 index 选中项目 ---
+     */
+    public select(index: number): void {
+        this.refs.gl.select(index);
+    }
+
+    /**
      * --- 在 dataFormat 找 .value 值等于 value 的 item，包含子项，如果是 tree 没展开的将自动展开，用户可调用 ---
      */
     public findFormat(
@@ -115,6 +122,12 @@ export default class extends clickgo.control.AbstractControl {
         }
         if (!Array.isArray(value)) {
             value = [value];
+        }
+        for (let i = 0; i < value.length; ++i) {
+            if (typeof value[i] === 'string') {
+                continue;
+            }
+            value[i] = value[i].toString();
         }
         if (!data) {
             data = this.dataFormat;
@@ -172,13 +185,22 @@ export default class extends clickgo.control.AbstractControl {
      * @param nowData 当前层用户数据
      * @param oldData 老数据对比层，主要用来判断 tree 是否是打开状态
      */
-    public formatData(nowData: Array<Record<string, any> | string> | Record<string, string>, oldData: any[]): any[] {
+    public formatData(
+        nowData: Array<Record<string, any> | string> | Record<string, string | Record<string, any>>
+        , oldData: any[]
+    ): any[] {
         if (!Array.isArray(nowData)) {
             const newArray: Array<Record<string, string>> = [];
             for (const k in nowData) {
-                newArray.push({
-                    'value': k, 'label': nowData[k]
-                });
+                const item = nowData[k];
+                if (typeof item == 'string') {
+                    newArray.push({
+                        'value': k, 'label': item
+                    });
+                    continue;
+                }
+                item.value = k;
+                newArray.push(item);
             }
             nowData = newArray;
         }
@@ -198,7 +220,7 @@ export default class extends clickgo.control.AbstractControl {
                 'title': false,
                 'disabled': false,
                 'control': 'item',
-                'tree': this.props.treeDefault,
+                'tree': this.propInt('treeDefault'),
                 'children': []
             };
             /** --- 用户单对象 --- */

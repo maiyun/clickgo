@@ -83,7 +83,7 @@ function run() {
             'withFileTypes': true
         });
         for (const item of list) {
-            if (['alayout', 'alayout-row', 'alayout-cell', 'check', 'dialog', 'file', 'greatlist', 'greatselect', 'vflow', 'img', 'label', 'layout', 'list', 'loading', 'marquee', 'menu', 'menu-item', 'menulist', 'menulist-item', 'menulist-split', 'flow', 'radio', 'scroll', 'select', 'svg', 'tab', 'text', 'task-item', 'table-item', 'nav-item', 'nav-title', 'panel', 'desc-cell', 'desc-head', 'desc-row', 'link', 'date'].includes(item.name)) {
+            if (['alayout', 'alayout-row', 'alayout-cell', 'check', 'dialog', 'file', 'greatlist', 'greatselect', 'vflow', 'img', 'label', 'layout', 'levelselect', 'list', 'loading', 'marquee', 'menu', 'menu-item', 'menulist', 'menulist-item', 'menulist-split', 'flow', 'radio', 'scroll', 'select', 'svg', 'tab', 'text', 'task-item', 'table-item', 'nav-item', 'nav-title', 'panel', 'desc-cell', 'desc-head', 'desc-row', 'link', 'date'].includes(item.name)) {
                 continue;
             }
             if (item.name.startsWith('.')) {
@@ -107,6 +107,7 @@ function run() {
                 yield addFile(zipo, base + 'img', 'img');
                 yield addFile(zipo, base + 'label', 'label');
                 yield addFile(zipo, base + 'layout', 'layout');
+                yield addFile(zipo, base + 'levelselect', 'levelselect');
                 yield addFile(zipo, base + 'list', 'list');
                 yield addFile(zipo, base + 'loading', 'loading');
                 yield addFile(zipo, base + 'marquee', 'marquee');

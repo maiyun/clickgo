@@ -32,10 +32,13 @@
     --danger-disabled:hsl(350, 0%, 50%);
 
     --system-color:hsl(0, 0%, 95%);
-    --system-background:hsla(0, 0%, 0%, .5);
-    --system-background-hover:hsla(0, 0%, 100%, .05);
-    --system-background-active:hsla(0, 0%, 0%, .2);
-    --system-border-color:hsla(0, 0%, 100%, .2);
+    --system-background:hsla(0, 0%, 0%, .35);
+    --system-control-background:hsla(0, 0%, 100%, .03);
+    --system-background-hover:hsla(0, 0%, 100%, .06);
+    --system-background-active:hsla(0, 0%, 100%, .1);
+    --system-border-color:hsla(0, 0%, 100%, .03);
+    --system-border-color-hover:hsla(0, 0%, 100%, .06);
+    --system-placeholder-color: hsla(0, 0%, 100%, .2);
     --face:hsl(0, 0%, 95%);
 
     // --- 组件默认颜色（如按钮） ---
@@ -111,7 +114,7 @@
     z-index: 20020003; box-sizing: border-box; position: absolute; border-radius: 3px; pointer-events: none; background: var(--system-background); box-shadow: 0 5px 20px rgba(0, 0, 0, .25); opacity: 0; display: flex; justify-content: center; align-items: center;
 }
 #cg-launcher {
-    z-index: 20020004; box-sizing: border-box; position: fixed; background: var(--system-background); -webkit-backdrop-filter: blur(25px) brightness(1.2); backdrop-filter: blur(25px) brightness(1.2); width: 100%; height: 100%; left: 0; top: 0; color: var(--system-color); display: none; flex-direction: column; transition: all .1s linear; transform: scale(1.2); opacity: 0;
+    z-index: 20020004; box-sizing: border-box; position: fixed; background: var(--system-background); -webkit-backdrop-filter: blur(50px) saturate(1.5); backdrop-filter: blur(50px) saturate(1.5); width: 100%; height: 100%; left: 0; top: 0; color: var(--system-color); display: none; flex-direction: column; transition: all .1s linear; transform: scale(1.2); opacity: 0;
     &:not(.cg-show) {
         pointer-events: none;
     }
@@ -123,21 +126,21 @@
     text-align: center; padding: 50px;
 }
 .cg-launcher-sinput {
-    -webkit-appearance: none; appearance: none; padding: 10px; height: 38px; border: solid 1px var(--system-border-color); background: transparent; width: 50%; border-radius: 3px; color: var(--system-color);
+    -webkit-appearance: none; appearance: none; padding: 15px; border: solid 1px transparent; background: var(--system-control-background); width: 60%; border-radius: 5px; color: var(--system-color); transition: all .1s ease-out;
     &::placeholder {
-        color: var(--system-border-color);
+        color: var(--system-placeholder-color);
     }
     &::selection {
-        background-color: var(--system-color); color: var(--g-color);
+        background-color: var(--system-background-hover);
     }
     &:focus {
-        outline: none; border-color: var(--system-color);
+        outline: none; border-color: var(--system-border-color-hover);
     }
 }
 .cg-launcher-foldername {
-    -webkit-appearance: none; appearance: none; height: 38px; font-size: 28px !important; border: none; background: transparent; width: 50%; color: var(--system-color); text-align: center;
+    -webkit-appearance: none; appearance: none; height: 50px; font-size: 28px !important; border: none; background: transparent; width: 50%; color: var(--system-color); text-align: center;
     &::selection {
-        background-color: var(--system-color); color: var(--g-color);
+        background-color: var(--system-background-hover);
     }
     &:focus {
         outline: none;
@@ -234,7 +237,7 @@
 }
 
 .cg-notify-wrap {
-    background: var(--system-background); position: fixed; padding: 15px; border-radius: 3px; right: 0; top: 0; width: 280px; font-size: 14px; display: flex; transition: .1s ease-out; transition-property: transform, opacity; overflow: hidden; color: var(--system-color); box-shadow: 0 5px 20px rgba(0, 0, 0, .25); -webkit-backdrop-filter: blur(25px) brightness(1.2); backdrop-filter: blur(25px) brightness(1.2);
+    background: var(--system-background); position: fixed; padding: 15px; border-radius: 5px; right: 0; top: 0; width: 280px; font-size: 14px; display: flex; transition: .1s ease-out; transition-property: transform, opacity; overflow: hidden; color: var(--system-color); box-shadow: 0 5px 20px rgba(0, 0, 0, .25); -webkit-backdrop-filter: blur(50px) saturate(1.5); backdrop-filter: blur(50px) saturate(1.5);
 }
 .cg-notify-icon {
     margin-right: 10px; width: 16px; height: 16px; border-radius: 50%;
@@ -265,7 +268,7 @@
 }
 
 #cg-simpletask {
-    left: 0; bottom: -46px; width: 100%; height: 46px; top: initial; background: var(--system-background); -webkit-backdrop-filter: blur(25px) brightness(1.2); backdrop-filter: blur(25px) brightness(1.2); padding: 5px 0 5px 5px; display: flex; color: var(--system-color); transition: bottom .1s ease-out; overflow-x: auto; position: fixed;
+    left: 0; bottom: -46px; width: 100%; height: 46px; top: initial; background: var(--system-background); -webkit-backdrop-filter: blur(50px) saturate(1.5); backdrop-filter: blur(50px) saturate(1.5); padding: 5px 0 5px 5px; display: flex; color: var(--system-color); transition: bottom .1s ease-out; overflow-x: auto; position: fixed;
     &::-webkit-scrollbar {
         display: none;
     }
@@ -284,7 +287,7 @@
 }
 
 #cg-confirm {
-    z-index: 20020006; position: fixed; left: 0; top: 0; width: 100%; height: 100%; background: var(--system-background); -webkit-backdrop-filter: blur(25px) brightness(1.2); backdrop-filter: blur(25px) brightness(1.2); justify-content: center; align-items: center;
+    z-index: 20020006; position: fixed; left: 0; top: 0; width: 100%; height: 100%; background: var(--system-background); -webkit-backdrop-filter: blur(50px) saturate(1.5); backdrop-filter: blur(50px) saturate(1.5); justify-content: center; align-items: center;
 
     .cg-confirm-box {
         background: var(--system-background); width: 60%; box-shadow: 0 5px 20px rgba(0, 0, 0, .25); font-size: 14px; border-radius: 3px; overflow: hidden; color: var(--system-color);

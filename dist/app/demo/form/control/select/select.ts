@@ -69,6 +69,14 @@ export default class extends clickgo.form.AbstractForm {
 
     public label2 = [];
 
+    public select3 = [];
+
+    public label3 = [];
+
+    public s3other = false;
+
+    public slist3r: any[] = ['a', 'b', 'c', 'haha3'];
+
     // --- 操作 ---
 
     public padding = false;
@@ -112,7 +120,7 @@ export default class extends clickgo.form.AbstractForm {
     public async onLoad(value: string, resolve: (child?: any[]) => void): Promise<void> {
         if (value !== 'haha4') {
             await clickgo.tool.sleep(100);
-            if (value === '2') {
+            if (value === 'haha2') {
                 resolve(['60']);
             }
             else {

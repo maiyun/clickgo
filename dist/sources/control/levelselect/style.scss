@@ -1,0 +1,35 @@
+cg-greatselect {
+    position: relative;
+    .op {
+        display: flex; align-items: center; flex: 1; width: 0;
+
+        cg-text {
+            flex: 1; border: none; background: transparent;
+        }
+
+        .oploading {
+            position: absolute; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(255, 255, 255, .3); display: flex; justify-content: center; align-items: center;
+        }
+    }
+}
+
+.pop {
+    display: flex; flex-direction: column; background: var(--face);
+    .back {
+        padding: var(--g-padding); display: flex; align-items: center; border: solid .5px var(--g-plain-border-color); border-bottom: none;
+        &:hover {
+            background: var(--g-plain-background-hover);
+        }
+        svg {
+            width: 16px; height: 16px; margin-right: 5px;
+        }
+    }
+    cg-list {
+        flex: 1; border-top: none;
+    }
+    .loading {
+        position: absolute; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(255, 255, 255, .3); display: flex; justify-content: center; align-items: center;
+    }
+}
+
+

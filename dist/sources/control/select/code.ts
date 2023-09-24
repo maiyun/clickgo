@@ -17,7 +17,7 @@ export default class extends clickgo.control.AbstractControl {
         'icon': boolean | string;
         'iconDefault': string;
 
-        'modelValue': string[];
+        'modelValue': Array<string | number>;
         'placeholder': string;
         'data': any[] | Record<string, string>;
     } = {
@@ -38,7 +38,7 @@ export default class extends clickgo.control.AbstractControl {
             'data': []
         };
 
-    public value: string[] = [];
+    public value: Array<string | number> = [];
 
     public label: string[] = [];
 
@@ -69,7 +69,7 @@ export default class extends clickgo.control.AbstractControl {
     }
 
     // --- 传递给 list 的 value ---
-    public get listValue(): string[] {
+    public get listValue(): Array<string | number> {
         const val = (this.propBoolean('editable') && this.propBoolean('multi')) ? [this.inputValue] : this.value;
         return val;
     }
@@ -84,6 +84,11 @@ export default class extends clickgo.control.AbstractControl {
                     this.label.splice(-1);
                 }
             }
+            return;
+        }
+        if ((e.key === 'ArrowDown') && (this.element.dataset.cgPopOpen === undefined)) {
+            // --- 展开下拉菜单 ---
+            this.refs.gs.showPop();
             return;
         }
         if ((e.key === 'ArrowUp' || e.key === 'ArrowDown') && this.element.dataset.cgPopOpen !== undefined) {
@@ -104,9 +109,10 @@ export default class extends clickgo.control.AbstractControl {
             return;
         }
         // --- enter ---
-        if (this.inputValue !== '') {
-            this.listItemClick();
+        if (this.inputValue === '') {
+            return;
         }
+        this.listItemClick();
     }
 
     /** --- remote 模式下，最后一次键入的时间 --- */
@@ -139,7 +145,7 @@ export default class extends clickgo.control.AbstractControl {
                     }
                     this.loading = 0;
                 });
-                // --- 显示加载框 ---
+                // --- 显示列表 ---
                 if (this.element.dataset.cgPopOpen === undefined) {
                     this.refs.gs.showPop();
                 }
@@ -270,7 +276,7 @@ export default class extends clickgo.control.AbstractControl {
             }
             // --- 变成可输入 ---
             if (!this.propBoolean('multi')) {
-                this.inputValue = this.value[0] ?? '';
+                this.inputValue = (this.value[0] ?? '').toString();
             }
         }, {
             'immediate': true
@@ -279,7 +285,7 @@ export default class extends clickgo.control.AbstractControl {
             if (!this.propBoolean('multi')) {
                 // --- 多变单 ---
                 if (this.propBoolean('editable')) {
-                    this.inputValue = this.value[0] ?? '';
+                    this.inputValue = (this.value[0] ?? '').toString();
                 }
                 return;
             }
