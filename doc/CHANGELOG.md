@@ -1,5 +1,10 @@
 # Changelog
 
+# 3.6.0
+
+[+] Add Levelselect control.  
+[\*] Optimized light theme and task application.
+
 # 3.5.6
 
 [+] The select component now includes the `remote-delay` and `placeholder` attributes.  
