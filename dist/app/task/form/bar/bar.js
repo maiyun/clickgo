@@ -167,6 +167,9 @@ class default_1 extends clickgo.form.AbstractForm {
                 if (!form.showInSystemTask) {
                     continue;
                 }
+                if (!form.show) {
+                    continue;
+                }
                 (app !== null && app !== void 0 ? app : this.apps[appIndex]).forms[formId] = {
                     'title': form.title,
                     'icon': form.icon || (app !== null && app !== void 0 ? app : this.apps[appIndex]).icon
@@ -213,6 +216,9 @@ class default_1 extends clickgo.form.AbstractForm {
         ++this.apps[appIndex].formCount;
     }
     onFormRemoved(taskId, formId) {
+        if (taskId === this.taskId) {
+            return;
+        }
         const task = clickgo.task.get(taskId);
         if (!task) {
             return;
@@ -287,18 +293,27 @@ class default_1 extends clickgo.form.AbstractForm {
         }
         this.apps[appIndex].forms[formId].icon = icon || this.apps[appIndex].icon;
     }
-    onFormShowInSystemTaskChange(taskId, formId, value) {
+    onFormShowAndShowInTaskChange(taskId, formId, show) {
+        if (taskId === this.taskId) {
+            return;
+        }
         const task = clickgo.task.get(taskId);
         if (!task) {
             return;
         }
-        if (value) {
+        if (show) {
             const form = clickgo.form.get(formId);
             if (!form) {
                 return;
             }
+            if (!form.showInSystemTask || !form.show) {
+                return;
+            }
             let appIndex = this.getAppIndexByPath(task.path);
             if (appIndex >= 0) {
+                if (this.apps[appIndex].forms[formId]) {
+                    return;
+                }
                 this.apps[appIndex].opened = true;
             }
             else {
@@ -325,6 +340,9 @@ class default_1 extends clickgo.form.AbstractForm {
             if (appIndex < 0) {
                 return;
             }
+            if (!this.apps[appIndex].forms[formId]) {
+                return;
+            }
             delete this.apps[appIndex].forms[formId];
             --this.apps[appIndex].formCount;
             if (this.apps[appIndex].formCount > 0) {
@@ -338,6 +356,12 @@ class default_1 extends clickgo.form.AbstractForm {
                 this.apps.splice(appIndex, 1);
             }
         }
+    }
+    onFormShowChanged(taskId, formId, state) {
+        this.onFormShowAndShowInTaskChange(taskId, formId, state);
+    }
+    onFormShowInSystemTaskChange(taskId, formId, value) {
+        this.onFormShowAndShowInTaskChange(taskId, formId, value);
     }
     onConfigChanged(n, v) {
         if (n !== 'task.pin') {

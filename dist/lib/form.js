@@ -924,13 +924,8 @@ function setActivePanel(panelId, formId, taskId) {
 exports.setActivePanel = setActivePanel;
 function changeFocus(formId = 0) {
     var _a;
-    if (typeof formId !== 'number') {
-        notify({
-            'title': 'Warning',
-            'content': 'The "formId" of "changeFocus" must be a number type.',
-            'type': 'warning'
-        });
-        return;
+    if (typeof formId === 'string') {
+        formId = parseInt(formId);
     }
     const dataFormId = getFocus();
     if (dataFormId) {

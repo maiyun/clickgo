@@ -1267,14 +1267,9 @@ export function setActivePanel(panelId: number, formId: number, taskId?: number)
  * --- 改变 form 的焦点 class ---
  * @param formId 变更后的 form id
  */
-export function changeFocus(formId: number = 0): void {
-    if (typeof formId !== 'number') {
-        notify({
-            'title': 'Warning',
-            'content': 'The "formId" of "changeFocus" must be a number type.',
-            'type': 'warning'
-        });
-        return;
+export function changeFocus(formId: number | string = 0): void {
+    if (typeof formId === 'string') {
+        formId = parseInt(formId);
     }
     const dataFormId = getFocus();
     if (dataFormId) {

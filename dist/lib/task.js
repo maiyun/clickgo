@@ -1366,6 +1366,9 @@ function checkPermission(vals, apply = false, applyHandler, taskId) {
 exports.checkPermission = checkPermission;
 function end(taskId) {
     var _a;
+    if (typeof taskId === 'string') {
+        taskId = parseInt(taskId);
+    }
     const task = exports.list[taskId];
     if (!task) {
         return true;
@@ -1669,13 +1672,8 @@ function clearSystem(taskId) {
     if (!taskId) {
         return false;
     }
-    if (typeof taskId !== 'number') {
-        form.notify({
-            'title': 'Warning',
-            'content': 'The "formId" of "clearTask" must be a number type.',
-            'type': 'warning'
-        });
-        return false;
+    if (typeof taskId === 'string') {
+        taskId = parseInt(taskId);
     }
     if (exports.systemTaskInfo.taskId !== taskId) {
         return false;

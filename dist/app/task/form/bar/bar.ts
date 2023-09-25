@@ -154,6 +154,9 @@ export default class extends clickgo.form.AbstractForm {
                 if (!form.showInSystemTask) {
                     continue;
                 }
+                if (!form.show) {
+                    continue;
+                }
                 (app ?? this.apps[appIndex]).forms[formId] = {
                     'title': form.title,
                     'icon': form.icon || (app ?? this.apps[appIndex]).icon
@@ -202,6 +205,9 @@ export default class extends clickgo.form.AbstractForm {
     }
 
     public onFormRemoved(taskId: number, formId: number): void {
+        if (taskId === this.taskId) {
+            return;
+        }
         const task = clickgo.task.get(taskId);
         if (!task) {
             return;
@@ -284,19 +290,30 @@ export default class extends clickgo.form.AbstractForm {
         this.apps[appIndex].forms[formId].icon = icon || this.apps[appIndex].icon;
     }
 
-    public onFormShowInSystemTaskChange(taskId: number, formId: number, value: boolean): void {
+    public onFormShowAndShowInTaskChange(taskId: number, formId: number, show: boolean): void {
+        if (taskId === this.taskId) {
+            return;
+        }
         const task = clickgo.task.get(taskId);
         if (!task) {
             return;
         }
-        if (value) {
+        if (show) {
             // --- 相当于创建 ---
             const form = clickgo.form.get(formId);
             if (!form) {
                 return;
             }
+            if (!form.showInSystemTask || !form.show) {
+                // --- 不应该显示 ---
+                return;
+            }
             let appIndex = this.getAppIndexByPath(task.path);
             if (appIndex >= 0) {
+                if (this.apps[appIndex].forms[formId]) {
+                    // --- 窗体本就显示，那就不管 ---
+                    return;
+                }
                 this.apps[appIndex].opened = true;
             }
             else {
@@ -324,6 +341,11 @@ export default class extends clickgo.form.AbstractForm {
             if (appIndex < 0) {
                 return;
             }
+            if (!this.apps[appIndex].forms[formId]) {
+                // --- 窗体本就不显示，那就不管 ---
+                return;
+            }
+            // --- 不用管 show 和 showInSystemTask 状态，因为只要有一个为 false（本次就是 false）就不显示 ---
             delete this.apps[appIndex].forms[formId];
             --this.apps[appIndex].formCount;
             // --- 检测 app 是否要关掉 ---
@@ -340,6 +362,14 @@ export default class extends clickgo.form.AbstractForm {
                 this.apps.splice(appIndex, 1);
             }
         }
+    }
+
+    public onFormShowChanged(taskId: number, formId: number, state: boolean): void {
+        this.onFormShowAndShowInTaskChange(taskId, formId, state);
+    }
+
+    public onFormShowInSystemTaskChange(taskId: number, formId: number, value: boolean): void {
+        this.onFormShowAndShowInTaskChange(taskId, formId, value);
     }
 
     public onConfigChanged<T extends types.IConfig, TK extends keyof T>(n: TK, v: T[TK]): void | Promise<void> {

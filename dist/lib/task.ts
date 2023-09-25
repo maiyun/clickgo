@@ -1541,7 +1541,10 @@ export async function checkPermission(
  * --- 完全结束任务 ---
  * @param taskId 任务 id
  */
-export function end(taskId: number): boolean {
+export function end(taskId: number | string): boolean {
+    if (typeof taskId === 'string') {
+        taskId = parseInt(taskId);
+    }
     const task = list[taskId];
     if (!task) {
         return true;
@@ -1921,17 +1924,12 @@ export function setSystem(formId: number, taskId?: number): boolean {
  * --- 清除系统任务设定 ---
  * @param taskId 清除的 taskid 为 task id 才能清除，App 模式下无效
  */
-export function clearSystem(taskId?: number): boolean {
+export function clearSystem(taskId?: number | string): boolean {
     if (!taskId) {
         return false;
     }
-    if (typeof taskId !== 'number') {
-        form.notify({
-            'title': 'Warning',
-            'content': 'The "formId" of "clearTask" must be a number type.',
-            'type': 'warning'
-        });
-        return false;
+    if (typeof taskId === 'string') {
+        taskId = parseInt(taskId);
     }
     if (systemTaskInfo.taskId !== taskId) {
         return false;
