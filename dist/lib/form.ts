@@ -1370,9 +1370,9 @@ export function getMaxZIndexID(out: {
         if (!formInner) {
             continue;
         }
-        // --- 排除 top most 窗体 ---
+        // --- 排除 bottom most 窗体 ---
         const z = parseInt(formInner.style.zIndex);
-        if (z > 9999999) {
+        if (z < 1000000) {
             continue;
         }
         // --- 排除最小化窗体 ---
@@ -1381,6 +1381,10 @@ export function getMaxZIndexID(out: {
         }
         // --- 排除用户定义的 task id 窗体 ---
         const tid = parseInt(formWrap.getAttribute('data-task-id')!);
+        if (tid === task.systemTaskInfo.taskId) {
+            // --- 系统任务排除掉 ---
+            continue;
+        }
         if (out.taskIds?.includes(tid)) {
             continue;
         }

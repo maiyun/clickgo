@@ -1008,13 +1008,16 @@ function getMaxZIndexID(out = {}) {
             continue;
         }
         const z = parseInt(formInner.style.zIndex);
-        if (z > 9999999) {
+        if (z < 1000000) {
             continue;
         }
         if (formInner.dataset.cgMin !== undefined) {
             continue;
         }
         const tid = parseInt(formWrap.getAttribute('data-task-id'));
+        if (tid === task.systemTaskInfo.taskId) {
+            continue;
+        }
         if ((_a = out.taskIds) === null || _a === void 0 ? void 0 : _a.includes(tid)) {
             continue;
         }
