@@ -1,5 +1,10 @@
 # Changelog
 
+# 3.6.1
+
+[+] Add plain param of link control.  
+[\*] Optimize the issue of closing dialog mode form flickering.
+
 # 3.6.0
 
 [+] Add Levelselect control.  
