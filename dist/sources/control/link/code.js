@@ -28,7 +28,8 @@ class default_1 extends clickgo.control.AbstractControl {
     constructor() {
         super(...arguments);
         this.props = {
-            'url': ''
+            'url': '',
+            'plain': false
         };
     }
     keydown(e) {

@@ -4,8 +4,10 @@ export default class extends clickgo.control.AbstractControl {
 
     public props: {
         'url': string;
+        'plain': boolean | string;
     } = {
-            'url': ''
+            'url': '',
+            'plain': false
         };
 
     public keydown(e: KeyboardEvent): void {

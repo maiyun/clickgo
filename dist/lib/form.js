@@ -824,6 +824,9 @@ function get(formId) {
     if (taskId === 0) {
         return null;
     }
+    if (!task.list[taskId].forms[formId]) {
+        return null;
+    }
     const item = task.list[taskId].forms[formId];
     return {
         'taskId': taskId,

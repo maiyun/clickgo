@@ -397,6 +397,17 @@ global {
     }
 }
 
+// --- CONTROL -- link ---
+
+.link_wrap {
+    &.link_plain {
+        color: hsl(210, 0%, 40%); transition: all .1s ease-out;
+        &:hover {
+            color: hsl(210, 0%, 70%);
+        }
+    }
+}
+
 // -- CONTROL -- menu --
 
 .menu_wrap {

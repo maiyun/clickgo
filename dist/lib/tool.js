@@ -429,12 +429,10 @@ function getBoolean(param) {
     if (t === 'boolean') {
         return param;
     }
-    else if (t === 'string') {
+    if (t === 'string') {
         return param === 'false' ? false : true;
     }
-    else {
-        return param ? true : false;
-    }
+    return param ? true : false;
 }
 exports.getBoolean = getBoolean;
 function getNumber(param) {

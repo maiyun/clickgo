@@ -12,4 +12,11 @@
             content: ''; position: absolute; width: 100%; height: 100%; border: dotted .5px var(--g-plain-border-color); left: 0; top: 0;
         }
     }
+
+    &.plain {
+        color: hsl(0, 0%, 60%); text-decoration: none;
+        &:hover {
+            color: hsl(0, 0%, 30%);
+        }
+    }
 }

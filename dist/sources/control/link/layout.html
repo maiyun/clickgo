@@ -1,6 +1,6 @@
-<a v-if="url" class="wrap" :href="url" target="_blank">
+<a v-if="url" class="wrap" :class="[propBoolean('plain') && 'plain']" :href="url" target="_blank">
     <slot></slot>
 </a>
-<div v-else class="wrap" :tabindex="formFocus ? '0' : undefined" @keydown="keydown">
+<div v-else class="wrap" :class="[propBoolean('plain') && 'plain']" :tabindex="formFocus ? '0' : undefined" @keydown="keydown">
     <slot></slot>
 </div>

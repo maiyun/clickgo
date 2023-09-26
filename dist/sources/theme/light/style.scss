@@ -264,6 +264,14 @@ global {
     background: var(--pop-background); -webkit-backdrop-filter: blur(50px) saturate(1.5); backdrop-filter: blur(50px) saturate(1.5);
 }
 
+// --- CONTROL -- link ---
+
+.link_wrap {
+    &.link_plain {
+        transition: all .1s ease-out;
+    }
+}
+
 // -- CONTROL -- menu --
 
 .menu_wrap {

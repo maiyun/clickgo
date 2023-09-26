@@ -565,12 +565,10 @@ export function getBoolean(param: boolean | string | number | undefined): boolea
     if (t === 'boolean') {
         return param as boolean;
     }
-    else if (t === 'string') {
+    if (t === 'string') {
         return param === 'false' ? false : true;
     }
-    else {
-        return param ? true : false;
-    }
+    return param ? true : false;
 }
 
 /**
