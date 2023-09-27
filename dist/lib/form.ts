@@ -1744,65 +1744,11 @@ export function removeFromPop(el: HTMLElement): void {
     elements.popList.removeChild(el);
 }
 
-/** --- 最后一次 touchstart 的时间戳 */
-let lastShowPopTime: number = 0;
-/**
- * --- 获取 pop 显示出来的坐标并报系统全局记录 ---
- * @param el 响应的元素
- * @param pop 要显示 pop 元素
- * @param direction 要显示方向（以 $el 为准的 h 水平和 v 垂直）或坐标
- * @param opt width / height 显示的 pop 定义自定义宽/高度，可省略；null，true 代表为空也会显示，默认为 false
- */
-export function showPop(el: HTMLElement, pop: HTMLElement | undefined, direction: 'h' | 'v' | MouseEvent | TouchEvent | { x: number; y: number; }, opt: { 'size'?: { width?: number; height?: number; }; 'null'?: boolean; } = {}): void {
-    // --- opt.null 为 true 代表可为空，为空也会被显示，默认为 false ---
-    if (opt.null === undefined) {
-        opt.null = false;
-    }
-    if (opt.size === undefined) {
-        opt.size = {};
-    }
-    // --- 也可能不执行本次显示 ---
-    if (!pop && !opt.null) {
-        return;
-    }
-    // --- 如果短时间内已经有了 pop 被展示，则可能是冒泡序列，本次则不展示 ---
-    const now = Date.now();
-    if (now - lastShowPopTime < 5) {
-        lastShowPopTime = now;
-        return;
-    }
-    lastShowPopTime = now;
-    // --- 检测是不是已经显示了 ---
-    if (el.dataset.cgPopOpen !== undefined) {
-        return;
-    }
-    /** --- 要不要隐藏别的 pop --- */
-    const parentPop = dom.findParentByData(el, 'cg-pop');
-    if (parentPop) {
-        for (let i = 0; i < popInfo.list.length; ++i) {
-            if (popInfo.list[i] !== parentPop) {
-                continue;
-            }
-            if (!popInfo.elList[i + 1]) {
-                continue;
-            }
-            hidePop(popInfo.elList[i + 1]);
-        }
-    }
-    else {
-        // --- 本层不是 pop，因此要隐藏所有 pop ---
-        hidePop();
-    }
-    // --- 检测如果 pop 是 undefined 还显示吗 ---
-    if (!pop) {
-        popInfo.elList.push(el);
-        el.dataset.cgPopOpen = '';
-        el.dataset.cgLevel = (popInfo.elList.length - 1).toString();
-        return;
-    }
+/** --- 重新调整 pop 的位置 --- */
+function refreshPopPosition(el: HTMLElement, pop: HTMLElement, direction: 'h' | 'v' | MouseEvent | TouchEvent | { x: number; y: number; }, size: { width?: number; height?: number; } = {}): void {
     // --- 最终 pop 的大小 ---
-    const width = opt.size.width ?? (pop ? pop.offsetWidth : 0);
-    const height = opt.size.height ?? (pop ? pop.offsetHeight : 0);
+    const width = size.width ?? pop.offsetWidth;
+    const height = size.height ?? pop.offsetHeight;
     // --- 最终显示位置 ---
     let left: number, top: number;
     if (typeof direction === 'string') {
@@ -1873,11 +1819,77 @@ export function showPop(el: HTMLElement, pop: HTMLElement | undefined, direction
     pop.style.left = left.toString() + 'px';
     pop.style.top = top.toString() + 'px';
     pop.style.zIndex = (++popInfo.lastZIndex).toString();
-    if (opt.size.width) {
-        pop.style.width = opt.size.width.toString() + 'px';
+    if (size.width) {
+        pop.style.width = size.width.toString() + 'px';
     }
-    if (opt.size.height) {
-        pop.style.height = opt.size.height.toString() + 'px';
+    if (size.height) {
+        pop.style.height = size.height.toString() + 'px';
+    }
+}
+
+/** --- 最后一次 touchstart 的时间戳 */
+let lastShowPopTime: number = 0;
+/**
+ * --- 获取 pop 显示出来的坐标并报系统全局记录 ---
+ * @param el 响应的元素
+ * @param pop 要显示 pop 元素
+ * @param direction 要显示方向（以 $el 为准的 h 水平和 v 垂直）或坐标
+ * @param opt width / height 显示的 pop 定义自定义宽/高度，可省略；null，true 代表为空也会显示，默认为 false; autoPosition, 自动更新 pop 位置，默认 false，true 为原元素位置变更，pop 位置也会变更，pop 大小变更，位置也会变更
+ */
+export function showPop(el: HTMLElement, pop: HTMLElement | undefined, direction: 'h' | 'v' | MouseEvent | TouchEvent | { x: number; y: number; }, opt: { 'size'?: { width?: number; height?: number; }; 'null'?: boolean; 'autoPosition'?: boolean; } = {}): void {
+    // --- opt.null 为 true 代表可为空，为空也会被显示，默认为 false ---
+    if (opt.null === undefined) {
+        opt.null = false;
+    }
+    if (opt.size === undefined) {
+        opt.size = {};
+    }
+    // --- 也可能不执行本次显示 ---
+    if (!pop && !opt.null) {
+        return;
+    }
+    // --- 如果短时间内已经有了 pop 被展示，则可能是冒泡序列，本次则不展示 ---
+    const now = Date.now();
+    if (now - lastShowPopTime < 5) {
+        lastShowPopTime = now;
+        return;
+    }
+    lastShowPopTime = now;
+    // --- 检测是不是已经显示了 ---
+    if (el.dataset.cgPopOpen !== undefined) {
+        return;
+    }
+    /** --- 要不要隐藏别的 pop --- */
+    const parentPop = dom.findParentByData(el, 'cg-pop');
+    if (parentPop) {
+        for (let i = 0; i < popInfo.list.length; ++i) {
+            if (popInfo.list[i] !== parentPop) {
+                continue;
+            }
+            if (!popInfo.elList[i + 1]) {
+                continue;
+            }
+            hidePop(popInfo.elList[i + 1]);
+        }
+    }
+    else {
+        // --- 本层不是 pop，因此要隐藏所有 pop ---
+        hidePop();
+    }
+    // --- 检测如果 pop 是 undefined 还显示吗 ---
+    if (!pop) {
+        popInfo.elList.push(el);
+        el.dataset.cgPopOpen = '';
+        el.dataset.cgLevel = (popInfo.elList.length - 1).toString();
+        return;
+    }
+    // --- 设定 pop 位置 ---
+    refreshPopPosition(el, pop, direction, opt.size);
+    if (opt.autoPosition && typeof direction === 'string' && ['h', 'v'].includes(direction)) {
+        // --- 可能要重置 pop 位置 ---
+        clickgo.dom.watchSize(pop, () => {
+            refreshPopPosition(el, pop, direction, opt.size);
+        });
     }
     popInfo.list.push(pop);
     popInfo.elList.push(el);
@@ -1919,6 +1931,7 @@ export function hidePop(pop?: HTMLElement): void {
     if (isPop) {
         pop.removeAttribute('data-cg-open');
         pop.removeAttribute('data-cg-level');
+        clickgo.dom.unwatchSize(pop);
         popInfo.elList[level].removeAttribute('data-cg-pop-open');
         popInfo.elList[level].removeAttribute('data-cg-level');
     }
@@ -1926,6 +1939,7 @@ export function hidePop(pop?: HTMLElement): void {
         if (popInfo.list[level]) {
             popInfo.list[level].removeAttribute('data-cg-open');
             popInfo.list[level].removeAttribute('data-cg-level');
+            clickgo.dom.unwatchSize(popInfo.list[level]);
         }
         pop.removeAttribute('data-cg-pop-open');
         pop.removeAttribute('data-cg-level');

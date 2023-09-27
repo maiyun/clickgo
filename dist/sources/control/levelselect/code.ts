@@ -166,7 +166,6 @@ export default class extends clickgo.control.AbstractControl {
         if (e.key === 'Enter') {
             // --- enter ---
             await this.listItemClick();
-            this.inputValue = '';
             return;
         }
     }
@@ -231,6 +230,7 @@ export default class extends clickgo.control.AbstractControl {
     }
 
     public async listItemClick(): Promise<void> {
+        this.inputValue = '';
         /** --- 已选 item 的下一层 list --- */
         let nextChildren: any[] | Record<string, any> | null = null;
         /** --- 当前层是否有选择 --- */

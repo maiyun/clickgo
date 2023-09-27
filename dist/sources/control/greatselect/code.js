@@ -48,7 +48,8 @@ class default_1 extends clickgo.control.AbstractControl {
         clickgo.form.showPop(this.element, this.refs.pop, 'v', {
             'size': {
                 'width': this.element.offsetWidth
-            }
+            },
+            'autoPosition': true
         });
     }
     keydown(e) {

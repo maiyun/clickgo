@@ -44,7 +44,8 @@ export default class extends clickgo.control.AbstractControl {
         clickgo.form.showPop(this.element, this.refs.pop, 'v', {
             'size': {
                 'width': this.element.offsetWidth
-            }
+            },
+            'autoPosition': true
         });
     }
 

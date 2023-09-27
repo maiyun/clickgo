@@ -165,7 +165,6 @@ class default_1 extends clickgo.control.AbstractControl {
             }
             if (e.key === 'Enter') {
                 yield this.listItemClick();
-                this.inputValue = '';
                 return;
             }
         });
@@ -220,6 +219,7 @@ class default_1 extends clickgo.control.AbstractControl {
     listItemClick() {
         var _a, _b, _c;
         return __awaiter(this, void 0, void 0, function* () {
+            this.inputValue = '';
             let nextChildren = null;
             let isSelected = false;
             const isArray = Array.isArray(this.lists[this.level]);

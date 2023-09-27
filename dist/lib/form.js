@@ -1317,50 +1317,10 @@ function removeFromPop(el) {
     exports.elements.popList.removeChild(el);
 }
 exports.removeFromPop = removeFromPop;
-let lastShowPopTime = 0;
-function showPop(el, pop, direction, opt = {}) {
+function refreshPopPosition(el, pop, direction, size = {}) {
     var _a, _b;
-    if (opt.null === undefined) {
-        opt.null = false;
-    }
-    if (opt.size === undefined) {
-        opt.size = {};
-    }
-    if (!pop && !opt.null) {
-        return;
-    }
-    const now = Date.now();
-    if (now - lastShowPopTime < 5) {
-        lastShowPopTime = now;
-        return;
-    }
-    lastShowPopTime = now;
-    if (el.dataset.cgPopOpen !== undefined) {
-        return;
-    }
-    const parentPop = dom.findParentByData(el, 'cg-pop');
-    if (parentPop) {
-        for (let i = 0; i < popInfo.list.length; ++i) {
-            if (popInfo.list[i] !== parentPop) {
-                continue;
-            }
-            if (!popInfo.elList[i + 1]) {
-                continue;
-            }
-            hidePop(popInfo.elList[i + 1]);
-        }
-    }
-    else {
-        hidePop();
-    }
-    if (!pop) {
-        popInfo.elList.push(el);
-        el.dataset.cgPopOpen = '';
-        el.dataset.cgLevel = (popInfo.elList.length - 1).toString();
-        return;
-    }
-    const width = (_a = opt.size.width) !== null && _a !== void 0 ? _a : (pop ? pop.offsetWidth : 0);
-    const height = (_b = opt.size.height) !== null && _b !== void 0 ? _b : (pop ? pop.offsetHeight : 0);
+    const width = (_a = size.width) !== null && _a !== void 0 ? _a : pop.offsetWidth;
+    const height = (_b = size.height) !== null && _b !== void 0 ? _b : pop.offsetHeight;
     let left, top;
     if (typeof direction === 'string') {
         const bcr = el.getBoundingClientRect();
@@ -1422,11 +1382,59 @@ function showPop(el, pop, direction, opt = {}) {
     pop.style.left = left.toString() + 'px';
     pop.style.top = top.toString() + 'px';
     pop.style.zIndex = (++popInfo.lastZIndex).toString();
-    if (opt.size.width) {
-        pop.style.width = opt.size.width.toString() + 'px';
+    if (size.width) {
+        pop.style.width = size.width.toString() + 'px';
     }
-    if (opt.size.height) {
-        pop.style.height = opt.size.height.toString() + 'px';
+    if (size.height) {
+        pop.style.height = size.height.toString() + 'px';
+    }
+}
+let lastShowPopTime = 0;
+function showPop(el, pop, direction, opt = {}) {
+    if (opt.null === undefined) {
+        opt.null = false;
+    }
+    if (opt.size === undefined) {
+        opt.size = {};
+    }
+    if (!pop && !opt.null) {
+        return;
+    }
+    const now = Date.now();
+    if (now - lastShowPopTime < 5) {
+        lastShowPopTime = now;
+        return;
+    }
+    lastShowPopTime = now;
+    if (el.dataset.cgPopOpen !== undefined) {
+        return;
+    }
+    const parentPop = dom.findParentByData(el, 'cg-pop');
+    if (parentPop) {
+        for (let i = 0; i < popInfo.list.length; ++i) {
+            if (popInfo.list[i] !== parentPop) {
+                continue;
+            }
+            if (!popInfo.elList[i + 1]) {
+                continue;
+            }
+            hidePop(popInfo.elList[i + 1]);
+        }
+    }
+    else {
+        hidePop();
+    }
+    if (!pop) {
+        popInfo.elList.push(el);
+        el.dataset.cgPopOpen = '';
+        el.dataset.cgLevel = (popInfo.elList.length - 1).toString();
+        return;
+    }
+    refreshPopPosition(el, pop, direction, opt.size);
+    if (opt.autoPosition && typeof direction === 'string' && ['h', 'v'].includes(direction)) {
+        clickgo.dom.watchSize(pop, () => {
+            refreshPopPosition(el, pop, direction, opt.size);
+        });
     }
     popInfo.list.push(pop);
     popInfo.elList.push(el);
@@ -1463,6 +1471,7 @@ function hidePop(pop) {
     if (isPop) {
         pop.removeAttribute('data-cg-open');
         pop.removeAttribute('data-cg-level');
+        clickgo.dom.unwatchSize(pop);
         popInfo.elList[level].removeAttribute('data-cg-pop-open');
         popInfo.elList[level].removeAttribute('data-cg-level');
     }
@@ -1470,6 +1479,7 @@ function hidePop(pop) {
         if (popInfo.list[level]) {
             popInfo.list[level].removeAttribute('data-cg-open');
             popInfo.list[level].removeAttribute('data-cg-level');
+            clickgo.dom.unwatchSize(popInfo.list[level]);
         }
         pop.removeAttribute('data-cg-pop-open');
         pop.removeAttribute('data-cg-level');
