@@ -1,5 +1,9 @@
 # Changelog
 
+# 3.6.2
+
+[\*] Optimized.
+
 # 3.6.1
 
 [+] Add plain param of link control.  
