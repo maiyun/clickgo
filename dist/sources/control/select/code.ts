@@ -265,10 +265,37 @@ export default class extends clickgo.control.AbstractControl {
 
     public onMounted(): void | Promise<void> {
         this.watch('modelValue', (): void => {
+            if (this.propBoolean('editable')) {
+                if (this.props.modelValue.length) {
+                    if (this.propBoolean('multi')) {
+                        // --- 多值模式 ---
+                        this.inputValue = '';
+                        this.label.length = 0;
+                        for (const item of this.props.modelValue) {
+                            const items = item.toString();
+                            const result = this.refs.list.findFormat(items, false);
+                            if (result?.[items]) {
+                                this.label.push(result[items].label);
+                            }
+                            else {
+                                this.label.push(items);
+                            }
+                            this.emit('label', this.label);
+                        }
+                    }
+                    else {
+                        this.inputValue = (this.props.modelValue[0]).toString();
+                    }
+                }
+                else {
+                    this.inputValue = '';
+                    this.label.length = 0;
+                }
+            }
             this.value = this.props.modelValue;
-            // --- 可能有异常 ---
         }, {
-            'immediate': true
+            'immediate': true,
+            'deep': true
         });
         this.watch('editable', (): void => {
             if (!this.propBoolean('editable')) {

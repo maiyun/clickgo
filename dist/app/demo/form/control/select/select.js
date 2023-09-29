@@ -94,6 +94,7 @@ class default_1 extends clickgo.form.AbstractForm {
         ];
         this.slist2r = [];
         this.select2 = ['haha2'];
+        this.aemodel = [];
         this.label2 = [];
         this.select3 = [];
         this.label3 = [];

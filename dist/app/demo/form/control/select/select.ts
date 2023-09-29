@@ -67,6 +67,8 @@ export default class extends clickgo.form.AbstractForm {
 
     public select2 = ['haha2'];
 
+    public aemodel = [];
+
     public label2 = [];
 
     public select3 = [];
