@@ -1,5 +1,10 @@
 # Changelog
 
+# 3.6.3
+
+[+] Add loaded event of levelselect control.  
+[\*] Optimized light theme.
+
 # 3.6.2
 
 [\*] Optimized.
