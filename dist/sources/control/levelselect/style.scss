@@ -14,9 +14,9 @@ cg-greatselect {
 }
 
 .pop {
-    display: flex; flex-direction: column; background: var(--face);
+    display: flex; flex-direction: column;
     .back {
-        padding: var(--g-padding); display: flex; align-items: center; border: solid .5px var(--g-plain-border-color); border-bottom: none;
+        padding: var(--g-padding); display: flex; align-items: center; border: solid .5px var(--g-plain-border-color); background: var(--face); border-bottom: none;
         &:hover {
             background: var(--g-plain-background-hover);
         }

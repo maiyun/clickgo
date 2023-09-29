@@ -264,6 +264,17 @@ global {
     background: var(--pop-background); -webkit-backdrop-filter: blur(50px) saturate(1.5); backdrop-filter: blur(50px) saturate(1.5);
 }
 
+// --- CONTROL -- levelselect ---
+
+.levelselect_pop {
+    .levelselect_back {
+        background: var(--pop-background); transition: all .1s ease-out;
+        &:hover {
+            background: var(--g-background-hover);
+        }
+    }
+}
+
 // --- CONTROL -- link ---
 
 .link_wrap {
@@ -290,7 +301,7 @@ global {
 // -- CONTROL -- menulist --
 
 .menulist_wrap {
-    background: transparent;
+    background: transparent; border: none;
 }
 
 // -- CONTROL -- menulist-item --

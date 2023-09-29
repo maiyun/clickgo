@@ -244,6 +244,7 @@ class default_1 extends clickgo.control.AbstractControl {
                     const children = yield new Promise((resolve) => {
                         this.emit('load', this.vals[this.level], (children) => {
                             resolve(children);
+                            this.emit('loaded');
                         });
                     });
                     this.loading = false;
@@ -268,6 +269,9 @@ class default_1 extends clickgo.control.AbstractControl {
         --this.level;
         this.emitModelValueAndLabel();
         this.setNowList(this.lists[this.level]);
+        if (this.propBoolean('async')) {
+            this.emit('loaded');
+        }
     }
     onMounted() {
         this.watch('data', () => {
@@ -381,6 +385,9 @@ class default_1 extends clickgo.control.AbstractControl {
                 this.emitModelValueAndLabel();
                 this.level = 0;
                 this.setNowList(this.lists[0]);
+                if (this.propBoolean('async')) {
+                    this.emit('loaded');
+                }
                 return;
             }
             for (let i = 0; i < this.props.modelValue.length; ++i) {
@@ -406,6 +413,9 @@ class default_1 extends clickgo.control.AbstractControl {
                     this.emitModelValueAndLabel();
                     this.level = i;
                     this.setNowList(this.lists[i]);
+                    if (this.propBoolean('async')) {
+                        this.emit('loaded');
+                    }
                     return;
                 }
                 if (!nextChildren) {
@@ -426,6 +436,7 @@ class default_1 extends clickgo.control.AbstractControl {
                         this.emitModelValueAndLabel();
                         this.level = i;
                         this.setNowList(this.lists[i]);
+                        this.emit('loaded');
                         return;
                     }
                     nextChildren = children;

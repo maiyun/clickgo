@@ -263,6 +263,7 @@ export default class extends clickgo.control.AbstractControl {
                 const children = await new Promise<any[] | undefined>((resolve) => {
                     this.emit('load', this.vals[this.level], (children?: any[]) => {
                         resolve(children);
+                        this.emit('loaded');
                     });
                 });
                 this.loading = false;
@@ -292,6 +293,9 @@ export default class extends clickgo.control.AbstractControl {
         --this.level;
         this.emitModelValueAndLabel();
         this.setNowList(this.lists[this.level]);
+        if (this.propBoolean('async')) {
+            this.emit('loaded');
+        }
     }
 
     public onMounted(): void | Promise<void> {
@@ -354,6 +358,7 @@ export default class extends clickgo.control.AbstractControl {
                 return;
             }
             if (!this.propBoolean('multi')) {
+                // --- 非多层情况 ---
                 if (!this.props.modelValue.length) {
                     this.vals.length = 0;
                     this.labs.length = 0;
@@ -418,7 +423,7 @@ export default class extends clickgo.control.AbstractControl {
                 this.setNowList(this.lists[this.level]);
                 return;
             }
-            // --- 多层情况 ---
+            // --- 多层情况，那么可能要触发 loaded 事件，代表所有异步下层都加载完毕后的回调 ---
             this.vals.length = 0;
             this.labs.length = 0;
             if (!this.props.modelValue.length) {
@@ -427,6 +432,9 @@ export default class extends clickgo.control.AbstractControl {
                 this.emitModelValueAndLabel();
                 this.level = 0;
                 this.setNowList(this.lists[0]);
+                if (this.propBoolean('async')) {
+                    this.emit('loaded');
+                }
                 return;
             }
             // --- 需要逐层处理 ---
@@ -457,6 +465,9 @@ export default class extends clickgo.control.AbstractControl {
                     this.emitModelValueAndLabel();
                     this.level = i;
                     this.setNowList(this.lists[i]);
+                    if (this.propBoolean('async')) {
+                        this.emit('loaded');
+                    }
                     return;
                 }
                 // --- 选中了，接着去下级 ---
@@ -481,6 +492,7 @@ export default class extends clickgo.control.AbstractControl {
                         this.emitModelValueAndLabel();
                         this.level = i;
                         this.setNowList(this.lists[i]);
+                        this.emit('loaded');
                         return;
                     }
                     nextChildren = children;

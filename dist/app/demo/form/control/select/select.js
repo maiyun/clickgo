@@ -141,6 +141,11 @@ class default_1 extends clickgo.form.AbstractForm {
             resolve(['he', 'ha']);
         });
     }
+    onLoaded() {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield clickgo.form.dialog('done');
+        });
+    }
     onRemote(value, resolve) {
         return __awaiter(this, void 0, void 0, function* () {
             yield clickgo.tool.sleep(300);

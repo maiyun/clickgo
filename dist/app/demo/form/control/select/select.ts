@@ -132,6 +132,10 @@ export default class extends clickgo.form.AbstractForm {
         resolve(['he', 'ha']);
     }
 
+    public async onLoaded(): Promise<void> {
+        await clickgo.form.dialog('done');
+    }
+
     public async onRemote(value: string, resolve: () => void): Promise<void> {
         await clickgo.tool.sleep(300);
         if (value === '8') {
