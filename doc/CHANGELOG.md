@@ -1,5 +1,9 @@
 # Changelog
 
+# 3.6.5
+
+[\*] Optimized.
+
 # 3.6.4
 
 [+] New append slot for text control.  
