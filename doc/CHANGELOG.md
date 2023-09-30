@@ -1,5 +1,10 @@
 # Changelog
 
+# 3.6.4
+
+[+] New append slot for text control.  
+[\*] Fix some problems with the select control.
+
 # 3.6.3
 
 [+] Add loaded event of levelselect control.  
