@@ -56,6 +56,7 @@ class default_1 extends clickgo.form.AbstractForm {
         this.long = false;
         this.lineHeight = 1;
         this.fontSize = 12;
+        this.append = false;
         this.border = 'solid';
         this.background = undefined;
         this.phcolor = undefined;

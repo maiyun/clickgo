@@ -6,32 +6,34 @@
             <menulist v-if="menu">
                 <menulist-item>Custom</menulist-item>
             </menulist>
+            <template v-if="append" v-slot:append>KG</template>
         </text>
         <layout gutter="10">
-            <button @click="multi = !multi" style="flex: 1; height: 30px;">{{multi ? '' : '!'}}multi</button>
-            <button @click="disabled = !disabled" style="flex: 1; height: 30px;">{{disabled ? '' : '!'}}disabled</button>
-            <button @click="readonly = !readonly" style="flex: 1; height: 30px;">{{readonly ? '' : '!'}}readonly</button>
-            <button @click="longClick" style="flex: 1; height: 30px;">{{long ? '' : '!'}}long</button>
+            <button @click="multi = !multi" style="flex: 1;">{{multi ? '' : '!'}}multi</button>
+            <button @click="disabled = !disabled" style="flex: 1;">{{disabled ? '' : '!'}}disabled</button>
+            <button @click="readonly = !readonly" style="flex: 1;">{{readonly ? '' : '!'}}readonly</button>
+            <button @click="longClick" style="flex: 1;">{{long ? '' : '!'}}long</button>
         </layout>
         <layout gutter="10">
-            <button @click="password = !password" style="flex: 1; height: 30px;">{{password ? '' : '!'}}password</button>
-            <button @click="wrap = !wrap" style="flex: 1; height: 30px;">{{wrap ? '' : '!'}}wrap</button>
-            <button @click="menu = !menu" style="flex: 1; height: 30px;">{{menu ? '' : '!'}}menu</button>
-            <button @click="gesture = !gesture" style="flex: 1; height: 30px;">{{gesture ? '' : '!'}}gesture</button>
+            <button @click="password = !password" style="flex: 1;">{{password ? '' : '!'}}password</button>
+            <button @click="wrap = !wrap" style="flex: 1;">{{wrap ? '' : '!'}}wrap</button>
+            <button @click="menu = !menu" style="flex: 1;">{{menu ? '' : '!'}}menu</button>
+            <button @click="gesture = !gesture" style="flex: 1;">{{gesture ? '' : '!'}}gesture</button>
         </layout>
         <layout gutter="10">
-            <button @click="lineHeight = lineHeight === 1 ? 1.5 : 1" style="flex: 1; height: 30px;">Set line-height {{lineHeight === 1 ? 1.5 : 1}}</button>
-            <button @click="fontSize = fontSize === 12 ? 16 : 12" style="flex: 1; height: 30px;">Set font-size {{fontSize === 12 ? 16 : 12}}</button>
+            <button @click="lineHeight = lineHeight === 1 ? 1.5 : 1" style="flex: 1;">Set line {{lineHeight === 1 ? 1.5 : 1}}</button>
+            <button @click="fontSize = fontSize === 12 ? 16 : 12" style="flex: 1;">Set size {{fontSize === 12 ? 16 : 12}}</button>
+            <button @click="append = !append" style="flex: 1;">{{append ? '' : '!'}}append</button>
         </layout>
         <layout gutter="10">
-            <button @click="border = 'solid'" style="flex: 2; height: 30px;">Set border solid</button>
-            <button @click="border = 'underline'" style="flex: 1; height: 30px;">Underline</button>
-            <button @click="border = 'none'" style="flex: 1; height: 30px;">None</button>
+            <button @click="border = 'solid'" style="flex: 2;">Set border solid</button>
+            <button @click="border = 'underline'" style="flex: 1;">Underline</button>
+            <button @click="border = 'none'" style="flex: 1;">None</button>
         </layout>
         <layout gutter="10">
-            <button @click="background = 'red'" style="flex: 2; height: 30px;">Set background red</button>
-            <button @click="background = 'green'" style="flex: 1; height: 30px;">Green</button>
-            <button @click="background = undefined" style="flex: 1; height: 30px;">Remove</button>
+            <button @click="background = 'red'" style="flex: 2;">Set background red</button>
+            <button @click="background = 'green'" style="flex: 1;">Green</button>
+            <button @click="background = undefined" style="flex: 1;">Remove</button>
         </layout>
     </layout>
 </form>

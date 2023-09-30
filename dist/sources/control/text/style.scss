@@ -24,6 +24,10 @@
         }
     }
 
+    .single {
+        display: flex; flex: 1;
+    }
+
     .text {
         flex: 1; -webkit-appearance: none; appearance: none; border: none; margin: 0; outline: none; resize: none; -webkit-overflow-scrolling: touch; color: inherit; fill: inherit; stroke: inherit;
         &::-webkit-scrollbar {
@@ -37,8 +41,8 @@
         }
     }
 
-    input {
-        height: 0;
+    .append {
+        display: flex; align-items: center; padding: var(--g-padding); padding-left: 0;
     }
 
     &:not([data-cg-disabled]) {

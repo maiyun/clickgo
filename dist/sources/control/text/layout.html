@@ -3,6 +3,7 @@
         <template v-if="propBoolean('multi') && !propBoolean('password')">
             <div class="multi-t">
                 <textarea ref="text" class="text" :class="[darkbg && 'darkbg']" :value="value" :placeholder="placeholder" :style="{'padding': padding, 'font': font, 'background': background}" :readonly="propBoolean('readonly')" :disabled="propBoolean('disabled')" :wrap="propBoolean('wrap') ? undefined : 'off'" @focus="tfocus" @blur="tblur" @input="input" @wheel="wheel" @scroll="scroll" @touchstart="inputTouch" @change="$event.stopPropagation()" @contextmenu="contextmenu" @select="select"></textarea>
+                <div v-if="slots['append']" class="append"><slot name="append"></slot></div>
                 <cg-scroll :length="size.sh" :client="size.ch" :offset="size.st" @update:offset="refs.text.scrollTop = $event"></cg-scroll>
             </div>
             <div v-if="!propBoolean('wrap')" class="multi-b">
@@ -10,7 +11,10 @@
                 <div class="multi-rb"></div>
             </div>
         </template>
-        <input v-else ref="text" class="text" :class="[darkbg && 'darkbg']" :type="propBoolean('password') ? 'password' : 'text'" :value="value" :placeholder="placeholder" :style="{'padding': padding, 'font': font, 'background': background}" :readonly="propBoolean('readonly')" :disabled="propBoolean('disabled')" @focus="tfocus" @blur="tblur" @input="input" @wheel="wheel" @scroll="scroll" @touchstart="inputTouch" @change="$event.stopPropagation()" @contextmenu="contextmenu" @select="select">
+        <div v-else class="single">
+            <input ref="text" class="text" :class="[darkbg && 'darkbg']" :type="propBoolean('password') ? 'password' : 'text'" :value="value" :placeholder="placeholder" :style="{'padding': padding, 'font': font, 'background': background}" :readonly="propBoolean('readonly')" :disabled="propBoolean('disabled')" @focus="tfocus" @blur="tblur" @input="input" @wheel="wheel" @scroll="scroll" @touchstart="inputTouch" @change="$event.stopPropagation()" @contextmenu="contextmenu" @select="select">
+            <div v-if="slots['append']" class="append"><slot name="append"></slot></div>
+        </div>
     </div>
     <teleport to="system">
         <div ref="pop" class="pop">

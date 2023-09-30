@@ -48,6 +48,8 @@ export default class extends clickgo.form.AbstractForm {
 
     public fontSize = 12;
 
+    public append = false;
+
     public border = 'solid';
 
     public background = undefined;
