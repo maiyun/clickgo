@@ -187,7 +187,7 @@ export default class extends clickgo.control.AbstractControl {
             return;
         }
         this.labs[this.level] = label[0];
-        this.emit('label', this.propBoolean('multi') ? this.labs : [this.labs[this.level]]);
+        this.emit('label', this.propBoolean('multi') ? clickgo.tool.clone(this.labs) : [this.labs[this.level]]);
     }
 
     // --- list 值的变更 ---
@@ -196,7 +196,7 @@ export default class extends clickgo.control.AbstractControl {
             return;
         }
         this.vals[this.level] = value[0];
-        this.emit('update:modelValue', this.propBoolean('multi') ? this.vals : [this.vals[this.level]]);
+        this.emit('update:modelValue', this.propBoolean('multi') ? clickgo.tool.clone(this.vals) : [this.vals[this.level]]);
     }
 
     /** --- 向上级提交 modelValue 和 labs 变动 --- */
@@ -211,11 +211,11 @@ export default class extends clickgo.control.AbstractControl {
             newval = this.vals.length ? [this.vals[this.vals.length - 1]] : [];
             newlabel = this.labs.length ? [this.labs[this.labs.length - 1]] : [];
         }
+        this.emit('label', clickgo.tool.clone(newlabel));
         if (JSON.stringify(this.props.modelValue) === JSON.stringify(newval)) {
             return;
         }
-        this.emit('update:modelValue', newval);
-        this.emit('label', newlabel);
+        this.emit('update:modelValue', clickgo.tool.clone(newval));
     }
 
     /** --- 将一个对象克隆，并设置到 nowlist --- */
@@ -516,7 +516,7 @@ export default class extends clickgo.control.AbstractControl {
         this.watch('multi', (): void => {
             if (this.propBoolean('multi')) {
                 // --- 单变多 ---
-                this.emit('update:modelValue', this.vals);
+                this.emit('update:modelValue', clickgo.tool.clone(this.vals));
                 return;
             }
             // --- 多变单 ---

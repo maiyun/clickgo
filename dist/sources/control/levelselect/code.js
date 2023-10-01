@@ -181,14 +181,14 @@ class default_1 extends clickgo.control.AbstractControl {
             return;
         }
         this.labs[this.level] = label[0];
-        this.emit('label', this.propBoolean('multi') ? this.labs : [this.labs[this.level]]);
+        this.emit('label', this.propBoolean('multi') ? clickgo.tool.clone(this.labs) : [this.labs[this.level]]);
     }
     updateListValue(value) {
         if (!value[0]) {
             return;
         }
         this.vals[this.level] = value[0];
-        this.emit('update:modelValue', this.propBoolean('multi') ? this.vals : [this.vals[this.level]]);
+        this.emit('update:modelValue', this.propBoolean('multi') ? clickgo.tool.clone(this.vals) : [this.vals[this.level]]);
     }
     emitModelValueAndLabel() {
         let newval = [];
@@ -201,11 +201,11 @@ class default_1 extends clickgo.control.AbstractControl {
             newval = this.vals.length ? [this.vals[this.vals.length - 1]] : [];
             newlabel = this.labs.length ? [this.labs[this.labs.length - 1]] : [];
         }
+        this.emit('label', clickgo.tool.clone(newlabel));
         if (JSON.stringify(this.props.modelValue) === JSON.stringify(newval)) {
             return;
         }
-        this.emit('update:modelValue', newval);
-        this.emit('label', newlabel);
+        this.emit('update:modelValue', clickgo.tool.clone(newval));
     }
     setNowList(list) {
         this.nowlist = clickgo.tool.clone(list);
@@ -457,7 +457,7 @@ class default_1 extends clickgo.control.AbstractControl {
         });
         this.watch('multi', () => {
             if (this.propBoolean('multi')) {
-                this.emit('update:modelValue', this.vals);
+                this.emit('update:modelValue', clickgo.tool.clone(this.vals));
                 return;
             }
             if (!this.vals.length) {

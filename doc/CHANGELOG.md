@@ -1,5 +1,9 @@
 # Changelog
 
+# 3.6.7
+
+[\*] Optimized.
+
 # 3.6.6
 
 [\*] Optimized levelselect control.
