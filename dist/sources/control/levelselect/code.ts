@@ -501,7 +501,8 @@ export default class extends clickgo.control.AbstractControl {
                 this.lists[i + 1] = nextChildren;
             }
         }, {
-            'immediate': true
+            'immediate': true,
+            'deep': true
         });
         this.watch('editable', (): void => {
             if (!this.propBoolean('editable')) {

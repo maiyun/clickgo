@@ -74,6 +74,7 @@
                     <button @click="async = !async">{{async ? '' : '!'}}async</button>
                     <button @click="select3 = ['title', 'sub2']">Set: ['title', 'sub2']</button>
                     <button @click="select3 = ['haha2', '60']">Set: ['haha2', '60']</button>
+                    <button @click="select3.length = 0">Clear</button>
                     <button @click="s3other = !s3other">Set {{s3other ? 'this' : 'other'}} data</button>
                 </layout>
             </flow>
