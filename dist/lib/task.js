@@ -1341,14 +1341,14 @@ function checkPermission(vals, apply = false, applyHandler, taskId) {
                     const path = item.slice(3, -1);
                     html += '<div style="margin-top: 10px;">' +
                         ((_d = (_c = locale[core.config.locale]) === null || _c === void 0 ? void 0 : _c.fs) !== null && _d !== void 0 ? _d : locale['en'].fs) + ' ' + tool.escapeHTML(path) + ' ' + (item.endsWith('r') ? ((_f = (_e = locale[core.config.locale]) === null || _e === void 0 ? void 0 : _e.readonly) !== null && _f !== void 0 ? _f : locale['en'].readonly) : ((_h = (_g = locale[core.config.locale]) === null || _g === void 0 ? void 0 : _g['read-write']) !== null && _h !== void 0 ? _h : locale['en']['read-write'])) +
-                        '<div style="color: var(--system-border-color);">' + tool.escapeHTML(item) + '</div>' +
+                        '<div style="color: hsl(0,0%,60%);">' + tool.escapeHTML(item) + '</div>' +
                         '</div>';
                     continue;
                 }
                 const lang = (_k = (_j = locale[core.config.locale]) === null || _j === void 0 ? void 0 : _j[item]) !== null && _k !== void 0 ? _k : locale['en'][item];
                 html += '<div style="margin-top: 10px;">' +
                     ((_m = lang !== null && lang !== void 0 ? lang : (_l = locale[core.config.locale]) === null || _l === void 0 ? void 0 : _l.unknown) !== null && _m !== void 0 ? _m : locale['en'].unknown) +
-                    '<div style="color: var(--system-border-color);">' + tool.escapeHTML(item) + '</div>' +
+                    '<div style="color: hsl(0,0%,60%);">' + tool.escapeHTML(item) + '</div>' +
                     '</div>';
             }
             if (yield form.superConfirm(html)) {

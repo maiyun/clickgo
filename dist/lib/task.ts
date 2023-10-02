@@ -1514,14 +1514,14 @@ export async function checkPermission(
                 const path = item.slice(3, -1);
                 html += '<div style="margin-top: 10px;">' +
                     (locale[core.config.locale]?.fs ?? locale['en'].fs) + ' ' + tool.escapeHTML(path) + ' ' + (item.endsWith('r') ? (locale[core.config.locale]?.readonly ?? locale['en'].readonly) : (locale[core.config.locale]?.['read-write'] ?? locale['en']['read-write'])) +
-                    '<div style="color: var(--system-border-color);">' + tool.escapeHTML(item) + '</div>' +
+                    '<div style="color: hsl(0,0%,60%);">' + tool.escapeHTML(item) + '</div>' +
                 '</div>';
                 continue;
             }
             const lang = (locale as any)[core.config.locale]?.[item] ?? (locale as any)['en'][item];
             html += '<div style="margin-top: 10px;">' +
                 (lang ?? locale[core.config.locale]?.unknown ?? locale['en'].unknown) +
-                '<div style="color: var(--system-border-color);">' + tool.escapeHTML(item) + '</div>' +
+                '<div style="color: hsl(0,0%,60%);">' + tool.escapeHTML(item) + '</div>' +
             '</div>';
         }
         if (await form.superConfirm(html)) {
