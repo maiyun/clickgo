@@ -690,6 +690,15 @@ export async function run(url: string | types.IApp, opt: types.ITaskRunOptions =
             setActivePanel: function(panelId: number, formId: number): boolean {
                 return form.setActivePanel(panelId, formId, taskId);
             },
+            hash: function(hash: string, formId: number): boolean {
+                return form.hash(hash, formId);
+            },
+            getHash: function(formId: number): string {
+                return form.getHash(formId);
+            },
+            hashBack: function(formId: number): boolean {
+                return form.hashBack(formId);
+            },
             changeFocus: function(fid: number = 0): void {
                 form.changeFocus(fid);
             },

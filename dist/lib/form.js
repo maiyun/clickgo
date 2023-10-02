@@ -32,7 +32,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.hideLauncher = exports.showLauncher = exports.flash = exports.confirm = exports.dialog = exports.create = exports.createPanel = exports.removePanel = exports.remove = exports.doFocusAndPopEvent = exports.hidePop = exports.showPop = exports.removeFromPop = exports.appendToPop = exports.hideNotify = exports.notifyProgress = exports.notify = exports.hideDrag = exports.moveDrag = exports.showDrag = exports.hideRectangle = exports.showRectangle = exports.moveRectangle = exports.showCircular = exports.getRectByBorder = exports.getMaxZIndexID = exports.changeFocus = exports.setActivePanel = exports.removeActivePanel = exports.getActivePanel = exports.activePanels = exports.getFocus = exports.getList = exports.send = exports.get = exports.getTaskId = exports.refreshMaxPosition = exports.bindDrag = exports.bindResize = exports.close = exports.max = exports.min = exports.superConfirm = exports.elements = exports.launcherRoot = exports.simpleSystemTaskRoot = exports.AbstractForm = exports.AbstractPanel = void 0;
+exports.showLauncher = exports.flash = exports.confirm = exports.dialog = exports.create = exports.createPanel = exports.removePanel = exports.remove = exports.doFocusAndPopEvent = exports.hidePop = exports.showPop = exports.removeFromPop = exports.appendToPop = exports.hideNotify = exports.notifyProgress = exports.notify = exports.hideDrag = exports.moveDrag = exports.showDrag = exports.hideRectangle = exports.showRectangle = exports.moveRectangle = exports.showCircular = exports.getRectByBorder = exports.getMaxZIndexID = exports.changeFocus = exports.hashBack = exports.getHash = exports.hash = exports.setActivePanel = exports.removeActivePanel = exports.getActivePanel = exports.activePanels = exports.getFocus = exports.getList = exports.send = exports.get = exports.getTaskId = exports.refreshMaxPosition = exports.bindDrag = exports.bindResize = exports.close = exports.max = exports.min = exports.superConfirm = exports.elements = exports.launcherRoot = exports.simpleSystemTaskRoot = exports.AbstractForm = exports.AbstractPanel = void 0;
+exports.hideLauncher = void 0;
 const clickgo = __importStar(require("../clickgo"));
 const core = __importStar(require("./core"));
 const task = __importStar(require("./task"));
@@ -274,6 +275,11 @@ class AbstractForm extends AbstractCommon {
         this._firstShow = true;
         this.dialogResult = '';
     }
+    get formHash() {
+        return '';
+    }
+    set formHash(v) {
+    }
     get topMost() {
         return false;
     }
@@ -296,6 +302,21 @@ class AbstractForm extends AbstractCommon {
         return false;
     }
     set showInSystemTask(v) {
+    }
+    formHashBack() {
+        const v = this;
+        if (!v.$data._historyHash.length) {
+            if (v.$data._formHash) {
+                v.$data._formHash = '';
+                core.trigger('formHashChange', this.taskId, this.formId, '');
+                return;
+            }
+            return;
+        }
+        const parent = v.$data._historyHash[v.$data._historyHash.length - 1];
+        v.$data._formHash = parent;
+        v.$data._historyHash.splice(-1);
+        core.trigger('formHashChange', this.taskId, this.formId, parent);
     }
     show() {
         const v = this;
@@ -379,6 +400,9 @@ class AbstractForm extends AbstractCommon {
         return;
     }
     onFormShowInSystemTaskChange() {
+        return;
+    }
+    onFormHashChange() {
         return;
     }
     onTaskStarted() {
@@ -925,6 +949,56 @@ function setActivePanel(panelId, formId, taskId) {
     return true;
 }
 exports.setActivePanel = setActivePanel;
+function hash(hash, formId) {
+    const taskId = getTaskId(formId);
+    if (taskId === 0) {
+        return false;
+    }
+    const t = task.list[taskId];
+    if (!t) {
+        return false;
+    }
+    const item = task.list[taskId].forms[formId];
+    if (!item) {
+        return false;
+    }
+    item.vroot.formHash = hash;
+    return true;
+}
+exports.hash = hash;
+function getHash(formId) {
+    const taskId = getTaskId(formId);
+    if (taskId === 0) {
+        return '';
+    }
+    const t = task.list[taskId];
+    if (!t) {
+        return '';
+    }
+    const item = task.list[taskId].forms[formId];
+    if (!item) {
+        return '';
+    }
+    return item.vroot.$data._formHash;
+}
+exports.getHash = getHash;
+function hashBack(formId) {
+    const taskId = getTaskId(formId);
+    if (taskId === 0) {
+        return false;
+    }
+    const t = task.list[taskId];
+    if (!t) {
+        return false;
+    }
+    const item = task.list[taskId].forms[formId];
+    if (!item) {
+        return false;
+    }
+    item.vroot.formHashBack();
+    return true;
+}
+exports.hashBack = hashBack;
 function changeFocus(formId = 0) {
     var _a;
     if (typeof formId === 'string') {
@@ -2046,24 +2120,19 @@ function create(cls, data, opt = {}, taskId) {
                 return this._bottomMost;
             },
             set: function (v) {
-                const form = t.forms[formId];
-                if (!form) {
-                    return;
-                }
                 if (v) {
-                    form.vroot.$data._bottomMost = true;
-                    form.vroot.$el.dataset.cgBottomMost = '';
-                    if (form.vroot.$data._topMost) {
-                        form.vroot.$data._topMost = false;
+                    this._bottomMost = true;
+                    this.$el.dataset.cgBottomMost = '';
+                    if (this._topMost) {
+                        this._topMost = false;
                     }
-                    form.vroot.$refs.form.$data.zIndex = ++info.bottomLastZIndex;
+                    this.$refs.form.$data.zIndex = ++info.bottomLastZIndex;
                 }
                 else {
-                    form.vroot.$data._bottomMost = false;
-                    form.vroot.$el.removeAttribute('data-cg-bottom-most');
-                    form.vroot.$refs.form.$data.zIndex = ++info.lastZIndex;
+                    this._bottomMost = false;
+                    this.$el.removeAttribute('data-cg-bottom-most');
+                    this.$refs.form.$data.zIndex = ++info.lastZIndex;
                 }
-                return;
             }
         };
         idata._topMost = false;
@@ -2072,28 +2141,40 @@ function create(cls, data, opt = {}, taskId) {
                 return this._topMost;
             },
             set: function (v) {
-                const form = t.forms[formId];
-                if (!form) {
-                    return;
-                }
                 if (v) {
-                    form.vroot.$data._topMost = true;
-                    if (form.vroot.$data._bottomMost) {
-                        form.vroot.$data._bottomMost = false;
-                        form.vroot.$el.removeAttribute('data-cg-bottom-most');
+                    this._topMost = true;
+                    if (this._bottomMost) {
+                        this._bottomMost = false;
+                        this.$el.removeAttribute('data-cg-bottom-most');
                     }
-                    if (!form.vroot._formFocus) {
-                        changeFocus(form.id);
+                    if (!this._formFocus) {
+                        changeFocus(this.formId);
                     }
                     else {
-                        form.vroot.$refs.form.$data.zIndex = ++info.topLastZIndex;
+                        this.$refs.form.$data.zIndex = ++info.topLastZIndex;
                     }
                 }
                 else {
-                    form.vroot.$data._topMost = false;
-                    form.vroot.$refs.form.$data.zIndex = ++info.lastZIndex;
+                    this._topMost = false;
+                    this.$refs.form.$data.zIndex = ++info.lastZIndex;
                 }
-                return;
+            }
+        };
+        idata._historyHash = [];
+        idata._formHash = '';
+        computed.formHash = {
+            get: function () {
+                return this._formHash;
+            },
+            set: function (v) {
+                if (v === this._formHash) {
+                    return;
+                }
+                if (this._formHash) {
+                    this._historyHash.push(this._formHash);
+                }
+                this._formHash = v;
+                core.trigger('formHashChange', t.id, formId, v);
             }
         };
         idata._showInSystemTask = true;
@@ -2102,11 +2183,7 @@ function create(cls, data, opt = {}, taskId) {
                 return this._showInSystemTask;
             },
             set: function (v) {
-                const form = t.forms[formId];
-                if (!form) {
-                    return;
-                }
-                form.vroot.$data._showInSystemTask = v;
+                this._showInSystemTask = v;
                 core.trigger('formShowInSystemTaskChange', t.id, formId, v);
             }
         };

@@ -44,6 +44,7 @@ class default_1 extends clickgo.form.AbstractForm {
         this.sendValue = 'sendValue';
         this.test = 'A';
         this.dr = '';
+        this.hash = 'testhash';
     }
     ssend() {
         this.send(parseInt(this.fid), {

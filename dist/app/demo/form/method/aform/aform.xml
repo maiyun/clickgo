@@ -25,6 +25,16 @@
                 <text v-model="sendValue" style="flex: 1; width: 0;"></text>
                 <button @click="ssend">send({{fid}}, { 'key': '{{sendValue}}' })</button>
             </layout>
+            <layout gutter="10">
+                <label>Now Form Hash:</label>
+                <label>{{formHash}}</label>
+            </layout>
+            <button @click="formHashBack">formHashBack()</button>
+            <layout gutter="10" align-v="center">
+                <label>Form Hash:</label>
+                <text v-model="hash" style="flex: 1; width: 0;"></text>
+            </layout>
+            <button @click="formHash = hash">formHash = '{{hash}}'</button>
             <button @click="hhide">hide() and show()</button>
             <layout gutter="10" align-v="center">
                 <button @click="sshowDialog" style="flex: 1;">showDialog()</button>

@@ -11,6 +11,8 @@ export default class extends clickgo.form.AbstractForm {
 
     public dr = '';
 
+    public hash = 'testhash';
+
     public ssend(): void {
         this.send(parseInt(this.fid), {
             'key': this.sendValue

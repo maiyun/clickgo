@@ -376,6 +376,15 @@ export abstract class AbstractForm extends AbstractCommon {
 
     // --- 以下为窗体有，但 control 没有 ---
 
+    /** --- 获取 form 的 hash 值，不是浏览器的 hash --- */
+    public get formHash(): string {
+        return '';
+    }
+
+    public set formHash(v: string) {
+        // --- 会进行重写 ---
+    }
+
     /** --- 是否是置顶 --- */
     public get topMost(): boolean {
         // --- 将在初始化时系统自动重写本函数 ---
@@ -419,6 +428,23 @@ export abstract class AbstractForm extends AbstractCommon {
 
     public set showInSystemTask(v: boolean) {
         // --- 会进行重写 ---
+    }
+
+    /** --- form hash 回退 --- */
+    public formHashBack(): void {
+        const v = this as any;
+        if (!v.$data._historyHash.length) {
+            if (v.$data._formHash) {
+                v.$data._formHash = '';
+                core.trigger('formHashChange', this.taskId, this.formId, '');
+                return;
+            }
+            return;
+        }
+        const parent = v.$data._historyHash[v.$data._historyHash.length - 1];
+        v.$data._formHash = parent;
+        v.$data._historyHash.splice(-1);
+        core.trigger('formHashChange', this.taskId, this.formId, parent);
     }
 
     /** --- 当前是不是初次显示 --- */
@@ -574,6 +600,12 @@ export abstract class AbstractForm extends AbstractCommon {
     /** --- 窗体是否显示在任务栏属性改变事件 --- */
     public onFormShowInSystemTaskChange(taskId: number, formId: number, value: boolean): void | Promise<void>;
     public onFormShowInSystemTaskChange(): void {
+        return;
+    }
+
+    /** --- 窗体的 formHash 改变事件 --- */
+    public onFormHashChange(taskId: number, formId: number, value: string): void | Promise<void>;
+    public onFormHashChange(): void {
         return;
     }
 
@@ -1263,6 +1295,67 @@ export function setActivePanel(panelId: number, formId: number, taskId?: number)
         return true;
     }
     activePanels[formId].push(panelId);
+    return true;
+}
+
+/**
+ * --- 修改窗体 hash ---
+ * @param hash 修改的值，不含 #
+ * @param formId 要修改的窗体 ID
+ */
+export function hash(hash: string, formId: number): boolean {
+    const taskId = getTaskId(formId);
+    if (taskId === 0) {
+        return false;
+    }
+    const t = task.list[taskId];
+    if (!t) {
+        return false;
+    }
+    const item = task.list[taskId].forms[formId];
+    if (!item) {
+        return false;
+    }
+    item.vroot.formHash = hash;
+    return true;
+}
+
+/**
+ * --- 获取窗体的 hash ---
+ */
+export function getHash(formId: number): string {
+    const taskId = getTaskId(formId);
+    if (taskId === 0) {
+        return '';
+    }
+    const t = task.list[taskId];
+    if (!t) {
+        return '';
+    }
+    const item = task.list[taskId].forms[formId];
+    if (!item) {
+        return '';
+    }
+    return item.vroot.$data._formHash;
+}
+
+/**
+ * --- 将窗体的 hash 退回上一个 ---
+ */
+export function hashBack(formId: number): boolean {
+    const taskId = getTaskId(formId);
+    if (taskId === 0) {
+        return false;
+    }
+    const t = task.list[taskId];
+    if (!t) {
+        return false;
+    }
+    const item = task.list[taskId].forms[formId];
+    if (!item) {
+        return false;
+    }
+    item.vroot.formHashBack();
     return true;
 }
 
@@ -2628,63 +2721,71 @@ export async function create<T extends AbstractForm>(
     // --- 是否在底层的窗体 ---
     idata._bottomMost = false;
     computed.bottomMost = {
-        get: function(this: types.IVue): number {
+        get: function(this: types.IVue): boolean {
             return this._bottomMost;
         },
-        set: function(v: boolean): void {
-            const form = t.forms[formId];
-            if (!form) {
-                return;
-            }
+        set: function(this: types.IVue, v: boolean): void {
             if (v) {
                 // --- 置底 ---
-                form.vroot.$data._bottomMost = true;
-                form.vroot.$el.dataset.cgBottomMost = '';
-                if (form.vroot.$data._topMost) {
-                    form.vroot.$data._topMost = false;
+                this._bottomMost = true;
+                this.$el.dataset.cgBottomMost = '';
+                if (this._topMost) {
+                    this._topMost = false;
                 }
-                form.vroot.$refs.form.$data.zIndex = ++info.bottomLastZIndex;
+                this.$refs.form.$data.zIndex = ++info.bottomLastZIndex;
             }
             else {
                 // --- 取消置底 ---
-                form.vroot.$data._bottomMost = false;
-                form.vroot.$el.removeAttribute('data-cg-bottom-most');
-                form.vroot.$refs.form.$data.zIndex = ++info.lastZIndex;
+                this._bottomMost = false;
+                this.$el.removeAttribute('data-cg-bottom-most');
+                this.$refs.form.$data.zIndex = ++info.lastZIndex;
             }
-            return;
         }
     };
     // --- 是否在顶层的窗体 ---
     idata._topMost = false;
     computed.topMost = {
-        get: function(this: types.IVue): number {
+        get: function(this: types.IVue): boolean {
             return this._topMost;
         },
-        set: function(v: boolean): void {
-            const form = t.forms[formId];
-            if (!form) {
-                return;
-            }
+        set: function(this: types.IVue, v: boolean): void {
             if (v) {
                 // --- 置顶 ---
-                form.vroot.$data._topMost = true;
-                if (form.vroot.$data._bottomMost) {
-                    form.vroot.$data._bottomMost = false;
-                    form.vroot.$el.removeAttribute('data-cg-bottom-most');
+                this._topMost = true;
+                if (this._bottomMost) {
+                    this._bottomMost = false;
+                    this.$el.removeAttribute('data-cg-bottom-most');
                 }
-                if (!form.vroot._formFocus) {
-                    changeFocus(form.id);
+                if (!this._formFocus) {
+                    changeFocus(this.formId);
                 }
                 else {
-                    form.vroot.$refs.form.$data.zIndex = ++info.topLastZIndex;
+                    this.$refs.form.$data.zIndex = ++info.topLastZIndex;
                 }
             }
             else {
                 // --- 取消置顶 ---
-                form.vroot.$data._topMost = false;
-                form.vroot.$refs.form.$data.zIndex = ++info.lastZIndex;
+                this._topMost = false;
+                this.$refs.form.$data.zIndex = ++info.lastZIndex;
             }
-            return;
+        }
+    };
+    // --- 获取和设置 form hash ---
+    idata._historyHash = [];
+    idata._formHash = '';
+    computed.formHash = {
+        get: function(this: types.IVue): string {
+            return this._formHash;
+        },
+        set: function(this: types.IVue, v: string): void {
+            if (v === this._formHash) {
+                return;
+            }
+            if (this._formHash) {
+                this._historyHash.push(this._formHash);
+            }
+            this._formHash = v;
+            core.trigger('formHashChange', t.id, formId, v);
         }
     };
     // --- 当前窗体是否显示在任务栏 ---
@@ -2693,12 +2794,8 @@ export async function create<T extends AbstractForm>(
         get: function(this: types.IVue): number {
             return this._showInSystemTask;
         },
-        set: function(v: boolean): void {
-            const form = t.forms[formId];
-            if (!form) {
-                return;
-            }
-            form.vroot.$data._showInSystemTask = v;
+        set: function(this: types.IVue, v: boolean): void {
+            this._showInSystemTask = v;
             core.trigger('formShowInSystemTaskChange', t.id, formId, v);
         }
     };

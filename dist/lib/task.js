@@ -602,6 +602,15 @@ function run(url, opt = {}, ntid) {
                 setActivePanel: function (panelId, formId) {
                     return form.setActivePanel(panelId, formId, taskId);
                 },
+                hash: function (hash, formId) {
+                    return form.hash(hash, formId);
+                },
+                getHash: function (formId) {
+                    return form.getHash(formId);
+                },
+                hashBack: function (formId) {
+                    return form.hashBack(formId);
+                },
                 changeFocus: function (fid = 0) {
                     form.changeFocus(fid);
                 },

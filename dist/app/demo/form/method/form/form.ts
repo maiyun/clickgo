@@ -40,6 +40,20 @@ export default class extends clickgo.form.AbstractForm {
         clickgo.form.dialog(JSON.stringify(clickgo.form.get(parseInt(this.fid)))).catch((e) => { throw e; });
     }
 
+    public async getHash(): Promise<void> {
+        await clickgo.form.dialog(JSON.stringify(clickgo.form.getHash(parseInt(this.fid))));
+    }
+
+    public async hashBack(): Promise<void> {
+        await clickgo.form.dialog(JSON.stringify(clickgo.form.hashBack(parseInt(this.fid))));
+    }
+
+    public async tohash(): Promise<void> {
+        await clickgo.form.dialog(JSON.stringify(clickgo.form.hash(this.hash, parseInt(this.fid))));
+    }
+
+    public hash: string = 'hash' + clickgo.tool.rand(0, 100).toString();
+
     public async getActivePanel(): Promise<void> {
         await clickgo.form.dialog(JSON.stringify(clickgo.form.getActivePanel(parseInt(this.fid))));
     }

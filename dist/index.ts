@@ -127,6 +127,12 @@ export abstract class AbstractBoot {
         return;
     }
 
+    /** --- 窗体的 formHash 改变事件 --- */
+    public onFormHashChange(taskId: number, formId: number, value: string): void | Promise<void>;
+    public onFormHashChange(): void {
+        return;
+    }
+
     /** --- 任务开始事件 --- */
     public onTaskStarted(taskId: number): void | Promise<void>;
     public onTaskStarted(): void | Promise<void> {

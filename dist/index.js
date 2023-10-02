@@ -73,6 +73,9 @@ class AbstractBoot {
     onFormShowInSystemTaskChange() {
         return;
     }
+    onFormHashChange() {
+        return;
+    }
     onTaskStarted() {
         return;
     }

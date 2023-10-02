@@ -41,6 +41,7 @@ class default_1 extends clickgo.form.AbstractForm {
         this.type = ['primary'];
         this.progress = ['noraml'];
         this.dr = '';
+        this.hash = 'hash' + clickgo.tool.rand(0, 100).toString();
     }
     min() {
         clickgo.form.min(this.formId);
@@ -62,6 +63,21 @@ class default_1 extends clickgo.form.AbstractForm {
     }
     get() {
         clickgo.form.dialog(JSON.stringify(clickgo.form.get(parseInt(this.fid)))).catch((e) => { throw e; });
+    }
+    getHash() {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield clickgo.form.dialog(JSON.stringify(clickgo.form.getHash(parseInt(this.fid))));
+        });
+    }
+    hashBack() {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield clickgo.form.dialog(JSON.stringify(clickgo.form.hashBack(parseInt(this.fid))));
+        });
+    }
+    tohash() {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield clickgo.form.dialog(JSON.stringify(clickgo.form.hash(this.hash, parseInt(this.fid))));
+        });
     }
     getActivePanel() {
         return __awaiter(this, void 0, void 0, function* () {

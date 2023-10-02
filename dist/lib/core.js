@@ -118,6 +118,9 @@ class AbstractApp {
     onFormShowInSystemTaskChange() {
         return;
     }
+    onFormHashChange() {
+        return;
+    }
     onTaskStarted() {
         return;
     }
@@ -342,7 +345,7 @@ const globalEvents = {
     }
 };
 function trigger(name, taskId = 0, formId = 0, param1 = '', param2 = '', param3 = true) {
-    var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z, _0, _1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12, _13, _14, _15, _16, _17, _18, _19, _20;
+    var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z, _0, _1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12, _13, _14, _15, _16, _17, _18, _19, _20, _21, _22, _23, _24, _25;
     const eventName = 'on' + name[0].toUpperCase() + name.slice(1);
     switch (name) {
         case 'error': {
@@ -451,15 +454,27 @@ function trigger(name, taskId = 0, formId = 0, param1 = '', param2 = '', param3 
             }
             break;
         }
+        case 'formHashChange': {
+            (_11 = (_10 = globalEvents)[name]) === null || _11 === void 0 ? void 0 : _11.call(_10, taskId, formId, param1);
+            exports.boot === null || exports.boot === void 0 ? void 0 : exports.boot[eventName](taskId, formId, param1);
+            for (const tid in task.list) {
+                const t = task.list[tid];
+                (_12 = t.class) === null || _12 === void 0 ? void 0 : _12[eventName](taskId, formId, param1);
+                for (const fid in t.forms) {
+                    (_14 = (_13 = t.forms[fid].vroot)[eventName]) === null || _14 === void 0 ? void 0 : _14.call(_13, taskId, formId, param1);
+                }
+            }
+            break;
+        }
         case 'taskStarted':
         case 'taskEnded': {
-            (_11 = (_10 = globalEvents)[name]) === null || _11 === void 0 ? void 0 : _11.call(_10, taskId, formId);
+            (_16 = (_15 = globalEvents)[name]) === null || _16 === void 0 ? void 0 : _16.call(_15, taskId, formId);
             exports.boot === null || exports.boot === void 0 ? void 0 : exports.boot[eventName](taskId, formId);
             for (const tid in task.list) {
                 const t = task.list[tid];
-                (_12 = t.class) === null || _12 === void 0 ? void 0 : _12[eventName](taskId);
+                (_17 = t.class) === null || _17 === void 0 ? void 0 : _17[eventName](taskId);
                 for (const fid in t.forms) {
-                    (_14 = (_13 = t.forms[fid].vroot)[eventName]) === null || _14 === void 0 ? void 0 : _14.call(_13, taskId);
+                    (_19 = (_18 = t.forms[fid].vroot)[eventName]) === null || _19 === void 0 ? void 0 : _19.call(_18, taskId);
                 }
             }
             break;
@@ -474,9 +489,9 @@ function trigger(name, taskId = 0, formId = 0, param1 = '', param2 = '', param3 
             exports.boot === null || exports.boot === void 0 ? void 0 : exports.boot[eventName](taskId, formId);
             for (const tid in task.list) {
                 const t = task.list[tid];
-                (_15 = t.class) === null || _15 === void 0 ? void 0 : _15[eventName](taskId, formId);
+                (_20 = t.class) === null || _20 === void 0 ? void 0 : _20[eventName](taskId, formId);
                 for (const fid in t.forms) {
-                    (_17 = (_16 = t.forms[fid].vroot)[eventName]) === null || _17 === void 0 ? void 0 : _17.call(_16, taskId, formId);
+                    (_22 = (_21 = t.forms[fid].vroot)[eventName]) === null || _22 === void 0 ? void 0 : _22.call(_21, taskId, formId);
                 }
             }
             break;
@@ -488,9 +503,9 @@ function trigger(name, taskId = 0, formId = 0, param1 = '', param2 = '', param3 
             exports.boot === null || exports.boot === void 0 ? void 0 : exports.boot[eventName](taskId);
             for (const tid in task.list) {
                 const t = task.list[tid];
-                (_18 = t.class) === null || _18 === void 0 ? void 0 : _18[eventName](taskId);
+                (_23 = t.class) === null || _23 === void 0 ? void 0 : _23[eventName](taskId);
                 for (const fid in t.forms) {
-                    (_20 = (_19 = t.forms[fid].vroot)[eventName]) === null || _20 === void 0 ? void 0 : _20.call(_19, taskId);
+                    (_25 = (_24 = t.forms[fid].vroot)[eventName]) === null || _25 === void 0 ? void 0 : _25.call(_24, taskId);
                 }
             }
             break;
