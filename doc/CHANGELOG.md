@@ -1,5 +1,11 @@
 # Changelog
 
+# 3.7.0
+
+[+] Added storage library.  
+[+] Added formHash system.  
+[\*] Optimize permission alert box.
+
 # 3.6.7
 
 [\*] Optimized.
