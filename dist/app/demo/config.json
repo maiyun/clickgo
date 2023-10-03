@@ -131,6 +131,8 @@
         "/form/method/fs/text.xml",
         "/form/method/native/native.js",
         "/form/method/native/native.xml",
+        "/form/method/storage/storage.js",
+        "/form/method/storage/storage.xml",
         "/form/method/system/system.js",
         "/form/method/system/system.xml",
         "/form/method/task/locale1.json",

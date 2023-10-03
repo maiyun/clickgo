@@ -820,8 +820,28 @@ function run(url, opt = {}, ntid) {
                     return native.isMax();
                 }
             },
+            'storage': {
+                get: function (key) {
+                    return clickgo.storage.get(key, taskId);
+                },
+                set: function (key, val) {
+                    return clickgo.storage.set(key, val, taskId);
+                },
+                remove: function (key) {
+                    return clickgo.storage.remove(key, taskId);
+                },
+                list: function () {
+                    return clickgo.storage.list(taskId);
+                },
+                all: function () {
+                    return clickgo.storage.all();
+                },
+                clear: function (path) {
+                    return clickgo.storage.clear(path);
+                }
+            },
             'task': {
-                getFocus() {
+                getFocus: function () {
                     return focusId;
                 },
                 onFrame: function (fun, opt = {}) {

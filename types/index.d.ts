@@ -435,7 +435,7 @@ export interface ITaskRunOptions {
     'permissions'?: string[];
     /** --- 给 task 传值 --- */
     'data'?: Record<string, any>;
-    /** --- 执行文件的基路径，一般在传入 APP 包时使用，以 .cga 结尾或不以 / 结尾的路径 --- */
+    /** --- 执行文件的基路径，一般在传入 APP 包时使用，以 .cga 结尾或以 / 结尾的路径 --- */
     'path'?: string;
 }
 

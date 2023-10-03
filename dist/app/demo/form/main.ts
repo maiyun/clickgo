@@ -47,6 +47,7 @@ import mdomFrm from './method/dom/dom';
 import mformFrm from './method/form/form';
 import mfsFrm from './method/fs/fs';
 import mnativeFrm from './method/native/native';
+import mstorageFrm from './method/storage/storage';
 import msystemFrm from './method/system/system';
 import mtaskFrm from './method/task/task';
 import mthemeFrm from './method/theme/theme';
@@ -256,6 +257,10 @@ export default class extends clickgo.form.AbstractForm {
             }
             case 'mnative': {
                 frm = await clickgo.form.create(mnativeFrm);
+                break;
+            }
+            case 'mstorage': {
+                frm = await clickgo.form.create(mstorageFrm);
                 break;
             }
             case 'msystem': {

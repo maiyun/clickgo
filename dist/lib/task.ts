@@ -928,8 +928,28 @@ export async function run(url: string | types.IApp, opt: types.ITaskRunOptions =
                 return native.isMax();
             }
         },
+        'storage': {
+            get: function(key: string): any {
+                return clickgo.storage.get(key, taskId);
+            },
+            set: function(key: string, val: string | number | any[] | Record<string, any>): boolean {
+                return clickgo.storage.set(key, val, taskId);
+            },
+            remove: function(key: string): boolean {
+                return clickgo.storage.remove(key, taskId);
+            },
+            list: function(): Record<string, number> {
+                return clickgo.storage.list(taskId);
+            },
+            all: function(): Record<string, number> {
+                return clickgo.storage.all();
+            },
+            clear: function(path: string): Promise<number> {
+                return clickgo.storage.clear(path);
+            }
+        },
         'task': {
-            getFocus(): number | null {
+            getFocus: function(): number | null {
                 return focusId;
             },
             onFrame: function(fun: () => void | Promise<void>, opt: any = {}): number {
@@ -1160,7 +1180,7 @@ export async function run(url: string | types.IApp, opt: types.ITaskRunOptions =
         return code;
     };
     app.files['/invoke/clickgo.js'] = `module.exports = invokeClickgo;`;
-    /** --- .cga 文件，或者不含 / 结尾的路径 --- */
+    /** --- .cga 文件，或者以 / 结尾的路径 --- */
     const path = opt.path ?? ((typeof url === 'string') ? url : '/runtime/' + tool.random(8, tool.RANDOM_LUN) + '.cga');
     const lio = path.endsWith('.cga') ? path.lastIndexOf('/') : path.slice(0, -1).lastIndexOf('/');
     const current = path.slice(0, lio);

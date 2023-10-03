@@ -61,6 +61,7 @@ export * as dom from './lib/dom';
 export * as form from './lib/form';
 export * as fs from './lib/fs';
 export * as native from './lib/native';
+export * as storage from './lib/storage';
 export * as task from './lib/task';
 export * as theme from './lib/theme';
 export * as tool from './lib/tool';

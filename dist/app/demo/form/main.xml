@@ -49,6 +49,7 @@
                 <button @click="openForm('mform')">Library form</button>
                 <button @click="openForm('mfs')">Library fs</button>
                 <button @click="openForm('mnative')">Library native</button>
+                <button @click="openForm('mstorage')">Library storage</button>
                 <button @click="openForm('mtask')">Library task</button>
                 <button @click="openForm('mtheme')">Library theme</button>
                 <button @click="openForm('mtool')">Library tool</button>

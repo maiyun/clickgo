@@ -9,6 +9,7 @@ export let dom: typeof import('./lib/dom');
 export let form: typeof import('./lib/form');
 export let fs: typeof import('./lib/fs');
 export let native: typeof import('./lib/native');
+export let storage: typeof import('./lib/storage');
 export let task: typeof import('./lib/task');
 export let theme: typeof import('./lib/theme');
 export let tool: typeof import('./lib/tool');

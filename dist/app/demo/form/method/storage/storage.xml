@@ -1,0 +1,18 @@
+<form width="300" height="450" title="Library storage" padding="10">
+    <layout gutter="10" direction="v" style="flex: 1;">
+        <layout gutter="10">
+            <text style="flex: 1;" v-model="key"></text>
+            <button @click="get">get('{{key}}')</button>
+        </layout>
+        <layout gutter="10">
+            <text style="flex: 1;" v-model="val"></text>
+            <button @click="set">set('{{key}}')</button>
+        </layout>
+        <button @click="remove">remove('{{key}}')</button>
+        <button @click="getlist">list()</button>
+        <button @click="all">all()</button>
+        <list :data="list" style="flex: 1;" />
+        <text v-model="ppath"></text>
+        <button @click="clear">clear('{{ppath}}')</button>
+    </layout>
+</form>

@@ -80,6 +80,7 @@ const dom_1 = __importDefault(require("./method/dom/dom"));
 const form_3 = __importDefault(require("./method/form/form"));
 const fs_1 = __importDefault(require("./method/fs/fs"));
 const native_1 = __importDefault(require("./method/native/native"));
+const storage_1 = __importDefault(require("./method/storage/storage"));
 const system_1 = __importDefault(require("./method/system/system"));
 const task_2 = __importDefault(require("./method/task/task"));
 const theme_1 = __importDefault(require("./method/theme/theme"));
@@ -287,6 +288,10 @@ class default_1 extends clickgo.form.AbstractForm {
                 }
                 case 'mnative': {
                     frm = yield clickgo.form.create(native_1.default);
+                    break;
+                }
+                case 'mstorage': {
+                    frm = yield clickgo.form.create(storage_1.default);
                     break;
                 }
                 case 'msystem': {

@@ -23,7 +23,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.zip = exports.tool = exports.theme = exports.task = exports.native = exports.fs = exports.form = exports.dom = exports.core = exports.control = exports.vue = exports.hasFrame = exports.isImmersion = exports.getPlatform = exports.isNative = exports.getVersion = void 0;
+exports.zip = exports.tool = exports.theme = exports.task = exports.storage = exports.native = exports.fs = exports.form = exports.dom = exports.core = exports.control = exports.vue = exports.hasFrame = exports.isImmersion = exports.getPlatform = exports.isNative = exports.getVersion = void 0;
 const version = '3.6.7';
 function getVersion() {
     return version;
@@ -64,6 +64,7 @@ exports.dom = __importStar(require("./lib/dom"));
 exports.form = __importStar(require("./lib/form"));
 exports.fs = __importStar(require("./lib/fs"));
 exports.native = __importStar(require("./lib/native"));
+exports.storage = __importStar(require("./lib/storage"));
 exports.task = __importStar(require("./lib/task"));
 exports.theme = __importStar(require("./lib/theme"));
 exports.tool = __importStar(require("./lib/tool"));
