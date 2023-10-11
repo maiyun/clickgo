@@ -4,6 +4,7 @@ export * as dom from '../dist/lib/dom';
 export * as form from '../dist/lib/form';
 export * as fs from '../dist/lib/fs';
 export * as native from '../dist/lib/native';
+export * as storage from '../dist/lib/storage';
 export * as task from '../dist/lib/task';
 export * as theme from '../dist/lib/theme';
 export * as tool from '../dist/lib/tool';
