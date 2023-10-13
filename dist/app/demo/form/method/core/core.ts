@@ -29,6 +29,10 @@ export default class extends clickgo.form.AbstractForm {
         await clickgo.form.dialog('Hash is: ' + clickgo.core.getHash());
     }
 
+    public async getHost(): Promise<void> {
+        await clickgo.form.dialog('Host is: ' + clickgo.core.getHost());
+    }
+
     public async locatione(): Promise<void> {
         if (clickgo.core.location(this.location)) {
             return;

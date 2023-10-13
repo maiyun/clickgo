@@ -32,7 +32,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.back = exports.getLocation = exports.location = exports.getHash = exports.hash = exports.getAvailArea = exports.fetchApp = exports.readApp = exports.trigger = exports.getModule = exports.regModule = exports.boot = exports.getCdn = exports.AbstractApp = exports.config = void 0;
+exports.back = exports.getLocation = exports.location = exports.getHost = exports.getHash = exports.hash = exports.getAvailArea = exports.fetchApp = exports.readApp = exports.trigger = exports.getModule = exports.regModule = exports.boot = exports.getCdn = exports.AbstractApp = exports.config = void 0;
 const clickgo = __importStar(require("../clickgo"));
 const fs = __importStar(require("./fs"));
 const form = __importStar(require("./form"));
@@ -775,6 +775,14 @@ function getHash() {
     return window.location.hash ? decodeURIComponent(window.location.hash.slice(1)) : '';
 }
 exports.getHash = getHash;
+function getHost() {
+    const match = /https?:\/\/([-a-zA-Z0-9:.]+)/.exec(window.location.href);
+    if (!match) {
+        return '';
+    }
+    return match[1];
+}
+exports.getHost = getHost;
 function location(url, taskId) {
     if (!taskId) {
         return false;

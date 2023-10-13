@@ -65,6 +65,11 @@ class default_1 extends clickgo.form.AbstractForm {
             yield clickgo.form.dialog('Hash is: ' + clickgo.core.getHash());
         });
     }
+    getHost() {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield clickgo.form.dialog('Host is: ' + clickgo.core.getHost());
+        });
+    }
     locatione() {
         return __awaiter(this, void 0, void 0, function* () {
             if (clickgo.core.location(this.location)) {

@@ -891,6 +891,17 @@ export function getHash(): string {
 }
 
 /**
+ * --- 获取当前浏览器的 host ---
+ */
+export function getHost(): string {
+    const match = /https?:\/\/([-a-zA-Z0-9:.]+)/.exec(window.location.href);
+    if (!match) {
+        return '';
+    }
+    return match[1];
+}
+
+/**
  * --- 对浏览器做跳转操作 ---
  * @param url 要跳转的新 URL
  * @param taskId 基任务，App 模式下无效

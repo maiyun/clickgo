@@ -507,6 +507,9 @@ export async function run(url: string | types.IApp, opt: types.ITaskRunOptions =
             getHash: function(): string {
                 return core.getHash();
             },
+            getHost: function(): string {
+                return core.getHost();
+            },
             location: function(url: string): boolean {
                 return core.location(url, taskId);
             },

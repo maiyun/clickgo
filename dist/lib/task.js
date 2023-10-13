@@ -449,6 +449,9 @@ function run(url, opt = {}, ntid) {
                 getHash: function () {
                     return core.getHash();
                 },
+                getHost: function () {
+                    return core.getHost();
+                },
                 location: function (url) {
                     return core.location(url, taskId);
                 },
