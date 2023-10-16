@@ -74,13 +74,13 @@ class AbstractControl {
         return (key, data) => {
             var _a, _b, _c, _d, _e, _f;
             if (data) {
-                return (_c = (_b = (_a = data[this.locale]) === null || _a === void 0 ? void 0 : _a[key]) !== null && _b !== void 0 ? _b : data['en'][key]) !== null && _c !== void 0 ? _c : 'LocaleError';
+                return (_c = (_b = (_a = data[this.locale]) === null || _a === void 0 ? void 0 : _a[key]) !== null && _b !== void 0 ? _b : data['en'][key]) !== null && _c !== void 0 ? _c : '[LocaleError]' + key;
             }
             else if (this.localeData) {
-                return (_f = (_e = (_d = this.localeData[this.locale]) === null || _d === void 0 ? void 0 : _d[key]) !== null && _e !== void 0 ? _e : this.localeData['en'][key]) !== null && _f !== void 0 ? _f : 'LocaleError';
+                return (_f = (_e = (_d = this.localeData[this.locale]) === null || _d === void 0 ? void 0 : _d[key]) !== null && _e !== void 0 ? _e : this.localeData['en'][key]) !== null && _f !== void 0 ? _f : '[LocaleError]' + key;
             }
             else {
-                return 'LocaleError';
+                return '[LocaleError]' + key;
             }
         };
     }

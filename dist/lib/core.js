@@ -212,17 +212,17 @@ const modules = {
         func: function () {
             return __awaiter(this, void 0, void 0, function* () {
                 yield loader.loadScripts([
-                    loader.cdn + '/npm/xterm@5.2.1/lib/xterm.js',
-                    loader.cdn + '/npm/xterm-addon-fit@0.7.0/lib/xterm-addon-fit.js',
-                    loader.cdn + '/npm/xterm-addon-webgl@0.15.0/lib/xterm-addon-webgl.js'
+                    loader.cdn + '/npm/xterm@5.3.0/lib/xterm.js',
+                    loader.cdn + '/npm/xterm-addon-fit@0.8.0/lib/xterm-addon-fit.js',
+                    loader.cdn + '/npm/xterm-addon-webgl@0.16.0/lib/xterm-addon-webgl.js'
                 ]);
-                yield loader.loadLinks([
-                    loader.cdn + '/npm/xterm@5.1.0/css/xterm.min.css'
-                ]);
-                loader.loadStyle('.xterm-viewport::-webkit-scrollbar{display:none;}');
                 if (!window.Terminal) {
                     throw Error('Xterm load failed.');
                 }
+                yield loader.loadLinks([
+                    loader.cdn + '/npm/xterm@5.3.0/css/xterm.min.css'
+                ]);
+                loader.loadStyle('.xterm-viewport::-webkit-scrollbar{display:none;}');
                 return [window.Terminal, window.FitAddon.FitAddon, window.WebglAddon.WebglAddon];
             });
         },
@@ -238,6 +238,38 @@ const modules = {
                     throw Error('Xterm load failed.');
                 }
                 return window.echarts;
+            });
+        },
+        'obj': null,
+        'loading': false,
+        'resolve': []
+    },
+    'tuieditor': {
+        func: function () {
+            return __awaiter(this, void 0, void 0, function* () {
+                yield loader.loadScripts([
+                    __dirname + '/../ext/toastui-editor-all.min.js'
+                ]);
+                if (!window.toastui.Editor) {
+                    throw Error('Tuieditor load failed.');
+                }
+                yield loader.loadScripts([
+                    loader.cdn + '/npm/@toast-ui/editor@3.2.2/dist/i18n/zh-cn.min.js',
+                    loader.cdn + '/npm/@toast-ui/editor@3.2.2/dist/i18n/zh-tw.min.js',
+                    loader.cdn + '/npm/@toast-ui/editor@3.2.2/dist/i18n/ja-jp.min.js',
+                    loader.cdn + '/npm/@toast-ui/editor@3.2.2/dist/i18n/ko-kr.min.js',
+                    loader.cdn + '/npm/@toast-ui/editor@3.2.2/dist/i18n/es-es.min.js',
+                    loader.cdn + '/npm/@toast-ui/editor@3.2.2/dist/i18n/de-de.min.js',
+                    loader.cdn + '/npm/@toast-ui/editor@3.2.2/dist/i18n/fr-fr.min.js',
+                    loader.cdn + '/npm/@toast-ui/editor@3.2.2/dist/i18n/pt-br.min.js',
+                    loader.cdn + '/npm/@toast-ui/editor@3.2.2/dist/i18n/ru-ru.min.js'
+                ]);
+                yield loader.loadLinks([
+                    loader.cdn + '/npm/@toast-ui/editor@3.2.2/dist/toastui-editor.min.css',
+                    loader.cdn + '/npm/@toast-ui/editor@3.2.2/dist/theme/toastui-editor-dark.css'
+                ]);
+                loader.loadStyle('.toastui-editor-defaultUI-toolbar,.ProseMirror{box-sizing:initial !important}.toastui-editor-main{background:var(--g-plain-background);border-radius:0 0 3px 3px}.ProseMirror{cursor:text}');
+                return window.toastui.Editor;
             });
         },
         'obj': null,

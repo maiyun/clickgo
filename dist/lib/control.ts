@@ -83,13 +83,13 @@ export abstract class AbstractControl {
     ) => string {
         return (key: string, data?: Record<string, Record<string, string>>): string => {
             if (data) {
-                return data[this.locale]?.[key] ?? data['en'][key] ?? 'LocaleError';
+                return data[this.locale]?.[key] ?? data['en'][key] ?? '[LocaleError]' + key;
             }
             else if ((this as any).localeData) {
-                return (this as any).localeData[this.locale]?.[key] ?? (this as any).localeData['en'][key] ?? 'LocaleError';
+                return (this as any).localeData[this.locale]?.[key] ?? (this as any).localeData['en'][key] ?? '[LocaleError]' + key;
             }
             else {
-                return 'LocaleError';
+                return '[LocaleError]' + key;
             }
         };
     }

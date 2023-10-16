@@ -18,7 +18,8 @@
         "/clickgo/control/iconview",
         "/clickgo/control/xterm",
         "/clickgo/control/echarts",
-        "/clickgo/control/map"
+        "/clickgo/control/map",
+        "/clickgo/control/tuieditor"
     ],
     "style": "/package/global",
 
@@ -99,6 +100,8 @@
         "/form/control/table/table.xml",
         "/form/control/text/text.js",
         "/form/control/text/text.xml",
+        "/form/control/tuieditor/tuieditor.js",
+        "/form/control/tuieditor/tuieditor.xml",
         "/form/control/vflow/vflow.css",
         "/form/control/vflow/vflow.js",
         "/form/control/vflow/vflow.xml",

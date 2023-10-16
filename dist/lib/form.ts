@@ -205,7 +205,7 @@ abstract class AbstractCommon {
      */
     public get l(): (key: string, data?: string[]) => string {
         return (key: string, data?: string[]): string => {
-            const loc = task.list[this.taskId].locale.data[this.locale]?.[key] ?? task.list[this.taskId].locale.data['en']?.[key] ?? 'LocaleError';
+            const loc = task.list[this.taskId].locale.data[this.locale]?.[key] ?? task.list[this.taskId].locale.data['en']?.[key] ?? '[LocaleError]' + key;
             if (!data) {
                 return loc;
             }

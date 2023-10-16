@@ -176,7 +176,7 @@ class AbstractCommon {
     get l() {
         return (key, data) => {
             var _a, _b, _c, _d;
-            const loc = (_d = (_b = (_a = task.list[this.taskId].locale.data[this.locale]) === null || _a === void 0 ? void 0 : _a[key]) !== null && _b !== void 0 ? _b : (_c = task.list[this.taskId].locale.data['en']) === null || _c === void 0 ? void 0 : _c[key]) !== null && _d !== void 0 ? _d : 'LocaleError';
+            const loc = (_d = (_b = (_a = task.list[this.taskId].locale.data[this.locale]) === null || _a === void 0 ? void 0 : _a[key]) !== null && _b !== void 0 ? _b : (_c = task.list[this.taskId].locale.data['en']) === null || _c === void 0 ? void 0 : _c[key]) !== null && _d !== void 0 ? _d : '[LocaleError]' + key;
             if (!data) {
                 return loc;
             }

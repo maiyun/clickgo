@@ -4,16 +4,16 @@ export default class extends clickgo.control.AbstractControl {
 
     public props: {
         'disabled': boolean | string;
-
         'readonly': boolean | string;
+
         'modelValue': string;
         'language': string;
         'theme': string;
         'files': Record<string, any>;
     } = {
             'disabled': false,
-
             'readonly': false,
+
             'modelValue': '',
             'language': '',
             'theme': '',
