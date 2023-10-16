@@ -180,6 +180,9 @@ class default_1 extends clickgo.control.AbstractControl {
                 if (!target.classList.contains('ProseMirror') && !clickgo.dom.findParentByClass(target, 'ProseMirror')) {
                     return;
                 }
+                if (target.tagName.toLowerCase() === 'table' || clickgo.dom.findParentByTag(target, 'table')) {
+                    return;
+                }
                 clickgo.form.showPop(this.element, this.refs.pop, e);
             });
             const down = (e) => {

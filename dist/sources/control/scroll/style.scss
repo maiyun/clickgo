@@ -1,8 +1,5 @@
 .wrap {
-    background-color: var(--face); display: flex; transition: opacity .1s ease-out;
-
-    --block-background:hsl(0, 0%, 85%);
-    --block-background-hover:hsl(0, 0%, 75%);
+    background-color: var(--face); display: flex; transition: opacity .15s ease;
 
     &.v {
         flex-direction: column;
@@ -48,9 +45,9 @@
     
         // --- 滚动块 ---
         .block {
-            background: var(--block-background); display: flex; border-radius: var(--g-radius);
+            background: var(--g-block-background); display: flex; border-radius: var(--g-radius);
             &:hover {
-                background: var(--block-background-hover);
+                background: var(---g-block-background-hover);
             }
             &.tran {
                 transition: transform .03s linear;
@@ -66,7 +63,7 @@
     &:not([data-cg-disabled]) {
         .start:not([data-cg-disabled]), .end:not([data-cg-disabled]) {
             &:hover {
-                background: var(--block-background);
+                background: var(--g-block-background);
             }
             &:active {
                 background-color: var(--g-color);

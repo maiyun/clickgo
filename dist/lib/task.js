@@ -548,6 +548,9 @@ function run(url, opt = {}, ntid) {
                 findParentByClass: function (el, name) {
                     return dom.findParentByClass(el, name);
                 },
+                findParentByTag(el, name) {
+                    return dom.findParentByTag(el, name);
+                },
                 siblings: function (el) {
                     return dom.siblings(el);
                 },

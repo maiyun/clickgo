@@ -2247,6 +2247,29 @@ export function findParentByClass(el: HTMLElement, name: string): HTMLElement | 
 }
 
 /**
+ * --- 通过 tagname 查找上层所有标签是否存在 ---
+ * @param el 当前标签
+ * @param name 要查找的 tagname 名，小写，如 table
+ */
+export function findParentByTag(el: HTMLElement, name: string): HTMLElement | null {
+    let parent = el.parentNode as HTMLElement;
+    while (parent) {
+        if (!parent.tagName) {
+            continue;
+        }
+        const tag = parent.tagName.toLowerCase();
+        if (tag === 'body') {
+            break;
+        }
+        if (tag === name) {
+            return parent;
+        }
+        parent = parent.parentNode as HTMLElement;
+    }
+    return null;
+}
+
+/**
  * --- 查找指定 el 的同级所有元素 ---
  * @param el 基准
  * @returns HTMLElement[]

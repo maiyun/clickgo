@@ -5,6 +5,16 @@
     }
     .content {
         flex: 1; width: 0;
+
+        ::-webkit-scrollbar {
+            width: 6px; cursor: default;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--g-block-background); border-radius:3px;
+            &:hover {
+                background: var(--g-block-background-hover);
+            }
+        }
     }
 
     .mask {

@@ -163,6 +163,9 @@ export default class extends clickgo.control.AbstractControl {
             if (!target.classList.contains('ProseMirror') && !clickgo.dom.findParentByClass(target, 'ProseMirror')) {
                 return;
             }
+            if (target.tagName.toLowerCase() === 'table' || clickgo.dom.findParentByTag(target, 'table')) {
+                return;
+            }
             clickgo.form.showPop(this.element, this.refs.pop, e);
         });
         // --- 绑定 down 事件 ---

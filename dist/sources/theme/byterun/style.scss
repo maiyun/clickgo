@@ -71,6 +71,11 @@ global {
     --g-plain-border-color-focus:hsl(240,70%,60%);
     --g-plain-border-color-disabled:rgba(255,255,255,.4);
 
+    // --- 特殊组件颜色 ---
+    
+    --g-block-background:var(--g-background);
+    --g-block-background-hover:var(--g-border-color-hover);
+
     ::selection {
         background-color: rgba(255, 255, 255, .1);
     }
@@ -79,13 +84,13 @@ global {
 // -- CONTROL -- button --
 
 .button_wrap {
-    transition: all .1s ease-out; transition-property: color, background;
+    transition: all .15s ease; transition-property: color, background;
 
     &::before {                                 // --- 外边框 ---
-        transition: all .1s ease-out;
+        transition: all .15s ease;
     }
     &::after, .button_inner::after, .button_arrow::after {    // --- 焦点框 ---
-        border-radius: 3px; transition: all .1s ease-out;
+        border-radius: 3px; transition: all .15s ease;
     }
     &.button_default {
         &:not(.button_plain) {
@@ -105,7 +110,7 @@ global {
     }
     &.button_area-split {
         .button_inner::before {
-            transition: all .1s ease-out;
+            transition: all .15s ease;
         }
     }
     &:not([data-cg-disabled]) {
@@ -143,11 +148,11 @@ global {
         &.button_area-split {
             .button_inner, .button_arrow {
                 &:hover {                       // --- 鼠标悬停 ---
-                    transition: all .1s ease-out;
+                    transition: all .15s ease;
                 }
                 // --- 鼠标按下 ---
                 &:active, &.button_active, &[data-cg-pop-open] {
-                    transition: all .1s ease-out;
+                    transition: all .15s ease;
                 }
                 &[data-cg-pop-open]:not(:active, &.button_active) {
                     color: var(--color-hover);
@@ -168,18 +173,18 @@ global {
 // -- CONTROL -- check --
 
 .check_wrap {
-    transition: all .1s ease-out;
+    transition: all .15s ease;
 
     .check_check {
-        transition: all .1s ease-out; width: 18px; height: 18px;
+        transition: all .15s ease; width: 18px; height: 18px;
         &::after {
-            transition: all .1s ease-out;
+            transition: all .15s ease;
         }
     }
 
     .check_label {
         &::before {
-            transition: all .1s ease-out;
+            transition: all .15s ease;
         }
     }
 
@@ -289,7 +294,7 @@ global {
             // --- 控制按钮 ---
             .form_controls {
                 .form_min, .form_max, .form_close {
-                    transition: all .1s ease-out;
+                    transition: all .15s ease;
                 }
                 .form_min, .form_max {
                     &:hover {
@@ -316,7 +321,7 @@ global {
     .greatlist_t {
         .greatlist_tag-cg-vflow {
             .greatlist_item {
-                transition: all .1s ease-out; border-width: 2px;
+                transition: all .15s ease; border-width: 2px;
                 &:not([data-cg-disabled]) {
                     &:hover {
                         background: var(--g-background);
@@ -345,7 +350,7 @@ global {
 // -- CONTROL -- greatselect --
 
 .greatselect_wrap {
-    transition: all .1s ease-out;
+    transition: all .15s ease;
     &:not([data-cg-disabled]):not([data-cg-pop-open]) {
         &.greatselect_area-arrow {
             .greatselect_arrow {
@@ -379,7 +384,7 @@ global {
     .iconview_tag-cg-vflow {
         .iconview_row {
             .iconview_item {
-                transition: all .1s ease-out;
+                transition: all .15s ease;
                 &:hover {
                     background: var(--g-background);
                 }
@@ -401,7 +406,7 @@ global {
 
 .link_wrap {
     &.link_plain {
-        color: hsl(210, 0%, 40%); transition: all .1s ease-out;
+        color: hsl(210, 0%, 40%); transition: all .15s ease;
         &:hover {
             color: hsl(210, 0%, 70%);
         }
@@ -417,7 +422,7 @@ global {
 // -- CONTROL -- menu-item --
 
 .menu-item_wrap {
-    transition: all .1s ease-out; border: none;
+    transition: all .15s ease; border: none;
     &:not([data-cg-disabled]) {
         &:hover {
             background: var(--g-background);
@@ -504,7 +509,7 @@ global {
         .nav_header {
             padding: 2px; box-shadow: none; border-bottom: solid .5px var(--g-background); padding: 2px;
             .nav_mbutton {
-                width: 50px; min-height: 50px; transition: all .1s ease-out;
+                width: 50px; min-height: 50px; transition: all .15s ease;
                 &:hover {
                     background: var(--g-border-color-hover);
                 }
@@ -524,7 +529,7 @@ global {
 
 .nav-item_wrap {
     > .nav-item_text {
-        padding: 15px; transition: all .1s ease-out;
+        padding: 15px; transition: all .15s ease;
     }
 
     &:not(.nav-item_child) {
@@ -564,7 +569,7 @@ global {
 .page_wrap {
     .page_list {
         > .page_tag-div {
-            transition: all .1s ease-out; border: none; background: transparent; width: 32px; height: 32px;
+            transition: all .15s ease; border: none; background: transparent; width: 32px; height: 32px;
             &::after {
                 border-radius: 3px;
             }
@@ -632,18 +637,18 @@ global {
 // -- CONTROL -- radio --
 
 .radio_wrap {
-    transition: all .1s ease-out;
+    transition: all .15s ease;
 
     .radio_radio {
-        transition: all .1s ease-out; width: 18px; height: 18px;
+        transition: all .15s ease; width: 18px; height: 18px;
         &::after {
-            transition: all .1s ease-out; left: 4px; top: 4px; width: calc(100% - 8px); height: calc(100% - 8px);
+            transition: all .15s ease; left: 4px; top: 4px; width: calc(100% - 8px); height: calc(100% - 8px);
         }
     }
 
     .radio_label {
         &::before {
-            transition: all .1s ease-out;
+            transition: all .15s ease;
         }
     }
 
@@ -684,14 +689,12 @@ global {
 
 .scroll_wrap {
     background-color:transparent;
-    --block-background:var(--g-background);
-    --block-background-hover:var(--g-border-color-hover);
     .scroll_start, .scroll_end {
         display: none;
     }
     .scroll_bar {
         .scroll_block {
-            transition: all .1s ease-out; transition-property: background;
+            transition: all .15s ease; transition-property: background;
         }
     }
 }
@@ -700,7 +703,7 @@ global {
 
 .tab_wrap {
     .tab_tab {
-        transition: all .1s ease-out; border: none;
+        transition: all .15s ease; border: none;
         &::after {
             display: none;
         }
@@ -711,7 +714,7 @@ global {
             background: var(--g-background); font-weight: bold; color: #FFF; fill: #FFF; stroke: #FFF;
         }
         .tab_close {
-            transition: all .1s ease-out;
+            transition: all .15s ease;
             &:hover {
                 background: var(--g-background);
             }
@@ -763,5 +766,18 @@ global {
 // -- CONTROL -- text --
 
 .text_wrap {
-    transition: all .1s ease-out; transition-property: color, background, border;
+    transition: all .15s ease; transition-property: color, background, border;
+}
+
+// -- CONTROL -- tuieditor --
+
+.tuieditor_wrap {
+    .tuieditor_content {
+        ::-webkit-scrollbar-thumb {
+            transition: all .15s ease;
+        }
+    }
+}
+.tuieditor_pop {
+    background: var(--pop-background); -webkit-backdrop-filter: blur(50px) saturate(1.5); backdrop-filter: blur(50px) saturate(1.5);
 }
