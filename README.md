@@ -136,5 +136,5 @@ This library is published under [Apache-2.0](./LICENSE) license.
 
 #### Arteditor
 
-[Bold SVG Vector](https://www.svgrepo.com/svg/501109/bold)
+[Bold SVG Vector](https://www.svgrepo.com/svg/501109/bold)  
 [Italic SVG Vector](https://www.svgrepo.com/svg/501238/italic)
