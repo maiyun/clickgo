@@ -31,60 +31,34 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const clickgo = __importStar(require("clickgo"));
+const img_1 = __importDefault(require("./img"));
 class default_1 extends clickgo.form.AbstractForm {
     constructor() {
         super(...arguments);
-        this.value = '';
-        this.isFocus = false;
-        this.selectionStart = 0;
-        this.selectionEnd = 0;
-        this.scrollLeft = 0;
-        this.scrollTop = 0;
-        this.clientHeight = 0;
-        this.clientWidth = 0;
-        this.scrollHeight = 0;
-        this.scrollWidth = 0;
-        this.multi = false;
-        this.disabled = false;
         this.readonly = false;
-        this.adaption = false;
-        this.scroll = true;
-        this.password = false;
-        this.wrap = true;
-        this.menu = false;
-        this.gesture = false;
-        this.long = false;
-        this.lineHeight = 1;
-        this.fontSize = 12;
-        this.append = false;
-        this.border = 'solid';
-        this.background = undefined;
-        this.phcolor = undefined;
-    }
-    get textBorder() {
-        switch (this.border) {
-            case 'underline': {
-                return '0 0 .5px 0';
+        this.disabled = false;
+        this.size = ['12px'];
+        this.family = false;
+        this.value = [
+            {
+                'type': 'p',
+                'value': 'This is a paragraph. You can say whatever you want to say, I won\'t stop you. Just like a bird can fly in the sky as long as it likes.'
             }
-            case 'none': {
-                return '0';
-            }
-        }
-        return undefined;
+        ];
     }
-    longClick() {
-        this.value = this.long ? 'short\nshort\nshort\nshort\nshort\nshort\nshort\nshort\nshort' : 'long\nlong\nlong\nlong\nlong\nlong\nlong\nlong\nlong\nlong\nlong\nlong\nlong\nlong\nlong\nlong\nlong\nlong\nlong\nlong\nlong\nlong\nlong\nlong\nlong\nlong\nlong\n\n\nlong\nlong\n' + `long
-
-
-long`;
-        this.long = !this.long;
-        this.scrollTop = 0;
-    }
-    onGesture(dir) {
+    imgselect(cb) {
         return __awaiter(this, void 0, void 0, function* () {
-            yield clickgo.form.dialog('onGesture: ' + dir);
+            const frm = yield clickgo.form.create(img_1.default);
+            const path = yield frm.showDialog();
+            if (!path) {
+                return;
+            }
+            cb(path);
         });
     }
 }

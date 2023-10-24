@@ -10,9 +10,19 @@
             width: 6px; cursor: default;
         }
         ::-webkit-scrollbar-thumb {
-            background: var(--g-block-background); border-radius:3px;
+            background: rgba(0,0,0,.1); border-radius:3px;
             &:hover {
-                background: var(--g-block-background-hover);
+                background: rgba(0,0,0,.2);
+            }
+        }
+    }
+    &.dark {
+        .content {
+            ::-webkit-scrollbar-thumb {
+                background: rgba(255,255,255,.05);
+                &:hover {
+                    background: rgba(255,255,255,.15);
+                }
             }
         }
     }

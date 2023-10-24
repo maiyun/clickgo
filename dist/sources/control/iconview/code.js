@@ -45,6 +45,7 @@ class default_1 extends clickgo.control.AbstractControl {
             'gesture': [],
             'scroll': 'auto',
             'size': 100,
+            'name': true,
             'data': [],
             'modelValue': []
         };
@@ -72,7 +73,10 @@ class default_1 extends clickgo.control.AbstractControl {
     get timeFormat() {
         return (time) => {
             const d = new Date(time * 1000);
-            return (d.getMonth() + 1).toString().padStart(2, '0') + '-' + d.getDate().toString().padStart(2, '0') + ' ' + d.getHours().toString().padStart(2, '0') + ':' + d.getMinutes().toString().padStart(2, '0');
+            return (this.propInt('size') >= 128 ? d.getFullYear().toString() + '-' : '') +
+                (d.getMonth() + 1).toString().padStart(2, '0') + '-' +
+                d.getDate().toString().padStart(2, '0') + ' ' +
+                d.getHours().toString().padStart(2, '0') + ':' + d.getMinutes().toString().padStart(2, '0');
         };
     }
     get dataComp() {
@@ -82,11 +86,15 @@ class default_1 extends clickgo.control.AbstractControl {
         }
         const data = [];
         let rowNow = this.rowCount;
-        for (const item of this.props.data) {
+        const propData = clickgo.tool.clone(this.props.data);
+        for (const item of propData) {
             ++rowNow;
             if (rowNow === this.rowCount + 1) {
                 rowNow = 1;
                 data.push([]);
+            }
+            if (item.type === undefined) {
+                item.type = 1;
             }
             data[data.length - 1].push(item);
         }
@@ -94,10 +102,7 @@ class default_1 extends clickgo.control.AbstractControl {
         if (remain > 0) {
             for (let i = 0; i < remain; ++i) {
                 data[data.length - 1].push({
-                    'id': '',
-                    'type': -1,
-                    'name': '',
-                    'time': 0
+                    'type': -1
                 });
             }
         }
@@ -563,6 +568,9 @@ class default_1 extends clickgo.control.AbstractControl {
                                 continue;
                             }
                         }
+                        if (this.propBoolean('must') && this.selectValues.length === 1) {
+                            break;
+                        }
                         this.selectValues.splice(i, 1);
                         --i;
                         change = true;
@@ -572,7 +580,7 @@ class default_1 extends clickgo.control.AbstractControl {
                         this.emit('update:modelValue', this.valueData);
                     }
                     else {
-                        if (this.selectValues.length === 0 && this.valueData.length > 0) {
+                        if (!this.propBoolean('must') && this.selectValues.length === 0 && this.valueData.length > 0) {
                             this.valueData = [];
                             this.emit('update:modelValue', this.valueData);
                         }

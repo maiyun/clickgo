@@ -1,7 +1,7 @@
-<form title="Iconview" width="400" height="500" padding="10">
+<form title="Iconview" width="500" height="500" padding="10">
     <layout gutter="10" direction="v" style="flex: 1; width: 0;">
         <label>select: {{select}}</label>
-        <iconview :data="list" v-model="select" :disabled="disabled" :must="must" :multi="multi" :ctrl="ctrl" :selection="selection" :gesture="gesture ? ['top', 'bottom'] : []" @gesture="onGesture" :scroll="scroll" :size="size[0] ? size[0] : undefined" style="flex: 1;" @drop="drop" @select="onSelect" @open="onOpen">
+        <iconview :data="list" v-model="select" :disabled="disabled" :must="must" :multi="multi" :ctrl="ctrl" :selection="selection" :gesture="gesture ? ['top', 'bottom'] : []" @gesture="onGesture" :scroll="scroll" :size="size[0] ? size[0] : undefined" :name="name" style="flex: 1;" @drop="drop" @select="onSelect" @open="onOpen">
             <template v-slot:pop>
                 <menulist>
                     <menulist-item alt="S">Some options</menulist-item>
@@ -16,24 +16,25 @@
         </iconview>
         <label>Area: {{selectionArea}}</label>
         <layout gutter="10">
-            <button @click="add" style="padding: 10px; flex: 1;">Add</button>
-            <button @click="remove" style="padding: 10px; flex: 1;">Remove</button>
-            <button @click="scrollChange" style="padding: 10px; flex: 1;">Scroll {{scroll}}</button>
+            <button @click="add" style="flex: 1;">Add</button>
+            <button @click="remove" style="flex: 1;">Remove</button>
+            <button @click="scrollChange" style="flex: 1;">Scroll {{scroll}}</button>
         </layout>
         <layout class="ctr" gutter="10">
             <select v-model="size" :data="[32, 64, 100, 128, 256]" style="flex: 1;"></select>
-            <button @click="select=[1]" style="padding: 10px; flex: 1;">Select 2th</button>
-            <button v-if="multi" @click="select=[1,2]" style="padding: 10px; flex: 1;">Select two</button>
+            <button @click="select=[1]" style="flex: 1;">Select 2th</button>
+            <button v-if="multi" @click="select=[1,2]" style="flex: 1;">Select two</button>
         </layout>
         <layout class="ctr" gutter="10">
-            <button @click="disabled = !disabled" style="padding: 10px; flex: 1;">{{disabled ? '' : '!'}}disabled</button>
-            <button @click="multi = !multi" style="padding: 10px; flex: 1;">{{multi ? '' : '!'}}multi</button>
-            <button @click="ctrl = !ctrl" style="padding: 10px; flex: 1;">{{ctrl ? '' : '!'}}ctrl</button>
+            <button @click="disabled = !disabled" style="flex: 1;">{{disabled ? '' : '!'}}disabled</button>
+            <button @click="multi = !multi" style="flex: 1;">{{multi ? '' : '!'}}multi</button>
+            <button @click="ctrl = !ctrl" style="flex: 1;">{{ctrl ? '' : '!'}}ctrl</button>
         </layout>
         <layout class="ctr" gutter="10">
-            <button @click="must = !must" style="padding: 10px; flex: 1;">{{must ? '' : '!'}}must</button>
-            <button @click="selection = !selection" style="padding: 10px; flex: 1;">{{selection ? '' : '!'}}selection</button>
-            <button @click="gesture = !gesture" style="padding: 10px; flex: 1;">{{gesture ? '' : '!'}}gesture</button>
+            <button @click="must = !must" style="flex: 1;">{{must ? '' : '!'}}must</button>
+            <button @click="selection = !selection" style="flex: 1;">{{selection ? '' : '!'}}selection</button>
+            <button @click="gesture = !gesture" style="flex: 1;">{{gesture ? '' : '!'}}gesture</button>
+            <button @click="name = !name" style="flex: 1;">{{name ? '' : '!'}}name</button>
         </layout>
     </layout>
 </form>

@@ -47,7 +47,7 @@
         .block {
             background: var(--g-block-background); display: flex; border-radius: var(--g-radius);
             &:hover {
-                background: var(---g-block-background-hover);
+                background: var(--g-block-background-hover);
             }
             &.tran {
                 transition: transform .03s linear;

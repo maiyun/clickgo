@@ -1,0 +1,6 @@
+<form title="Select image" width="400" height="400" padding="10" min="false" max="false">
+    <layout gutter="10" direction="v" style="flex: 1; width: 0;">
+        <iconview :data="list" v-model="select" name="false" multi="false" selection="false" must size="64" style="flex: 1;"></iconview>
+        <button @click="selectClick">Select</button>
+    </layout>
+</form>

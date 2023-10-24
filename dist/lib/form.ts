@@ -2305,9 +2305,11 @@ export async function createPanel<T extends AbstractPanel>(
     // --- 标签增加 cg- 前缀，增加 class 为 tag-xxx ---
     layout = tool.layoutAddTagClassAndReTagName(layout, true);
     // --- 给所有控件传递窗体的 focus 信息 ---
+    /*
     layout = tool.layoutInsertAttr(layout, ':form-focus=\'formFocus\'', {
         'include': [/^cg-.+/]
     });
+    */
     // --- 给 layout 的 class 增加前置 ---
     const prepList = ['cg-task' + t.id.toString() + '_'];
     if (prep !== '') {
@@ -2633,9 +2635,11 @@ export async function create<T extends AbstractForm>(
     // --- 标签增加 cg- 前缀，增加 class 为 tag-xxx ---
     layout = tool.layoutAddTagClassAndReTagName(layout, true);
     // --- 给所有控件传递窗体的 focus 信息 ---
+    /*
     layout = tool.layoutInsertAttr(layout, ':form-focus=\'formFocus\'', {
         'include': [/^cg-.+/]
     });
+    */
     // --- 给 layout 的 class 增加前置 ---
     const prepList = ['cg-task' + t.id.toString() + '_'];
     if (prep !== '') {

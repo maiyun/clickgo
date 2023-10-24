@@ -552,7 +552,7 @@ export async function run(url: string | types.IApp, opt: types.ITaskRunOptions =
             getWatchCount: function(taskId?: number): number {
                 return dom.getWatchCount(taskId);
             },
-            watch: function(el: HTMLElement, cb: () => void, mode: 'child' | 'childsub' | 'style' | 'default' = 'default', immediate: boolean = false): void {
+            watch: function(el: HTMLElement, cb: (mutations: MutationRecord[]) => void | Promise<void>, mode: 'child' | 'childsub' | 'style' | 'default' = 'default', immediate: boolean = false): void {
                 dom.watch(el, cb, mode, immediate, taskId);
             },
             unwatch: function(el: HTMLElement): void {
@@ -564,7 +564,7 @@ export async function run(url: string | types.IApp, opt: types.ITaskRunOptions =
             watchStyle: function(
                 el: HTMLElement,
                 name: string | string[],
-                cb: (name: string, value: string, old: string) => void,
+                cb: (name: string, value: string, old: string) => void | Promise<void>,
                 immediate: boolean = false
             ): void {
                 dom.watchStyle(el, name, cb, immediate);
@@ -575,7 +575,7 @@ export async function run(url: string | types.IApp, opt: types.ITaskRunOptions =
             watchProperty: function(
                 el: HTMLElement,
                 name: string | string[],
-                cb: (name: string, value: string) => void,
+                cb: (name: string, value: string) => void | Promise<void>,
                 immediate: boolean = false
             ): void {
                 dom.watchProperty(el, name, cb, immediate);

@@ -6,9 +6,12 @@
     }
 
     .multi-t {
-        flex: 1; display: flex;
+        flex: 1; display: flex; position: relative;
         textarea {
             width: 0;
+        }
+        pre {
+            position: absolute; left: 0; top: 0; margin: 0; pointer-events: none; word-break: break-word; white-space: pre-wrap; opacity: 0;
         }
         cg-scroll {
             width: 16px;
@@ -25,11 +28,11 @@
     }
 
     .single {
-        display: flex; flex: 1;
+        display: flex; flex: 1; height: 0;
     }
 
     .text {
-        flex: 1; width: 0; -webkit-appearance: none; appearance: none; border: none; margin: 0; outline: none; resize: none; -webkit-overflow-scrolling: touch; color: inherit; fill: inherit; stroke: inherit;
+        flex: 1; width: 0; -webkit-appearance: none; appearance: none; border: none; margin: 0; outline: none; resize: none; -webkit-overflow-scrolling: touch; color: inherit; fill: inherit; stroke: inherit; min-height: 100%;
         &::-webkit-scrollbar {
             display: none;
         }

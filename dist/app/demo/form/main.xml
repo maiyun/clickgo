@@ -36,6 +36,7 @@
                 <button @click="openForm('cdesc')">Desc</button>
                 <button @click="openForm('chtml')">Html</button>
                 <button @click="openForm('ciconview')">Iconview</button>
+                <button @click="openForm('carteditor')">Arteditor</button>
                 <button @click="openForm('cmonaco')">Monaco</button>
                 <button @click="openForm('cxterm')">Xterm</button>
                 <button @click="openForm('cecharts')">Echarts</button>

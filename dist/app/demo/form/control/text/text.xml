@@ -1,8 +1,8 @@
-<form width="350" height="350" title="Textbox">
+<form width="350" height="550" title="Textbox">
     <layout direction="v" gutter="10" style="padding: 10px; flex: 1; width: 0;">
         <label>Text Length: {{value.length}}, Selection Start: {{selectionStart}}, Selection End: {{selectionEnd}}, Focus: {{isFocus}}</label>
         <label>Scroll Left: {{scrollLeft}}, Scroll Top: {{scrollTop}}, Scroll Height: {{scrollHeight}}, Scroll Width: {{scrollWidth}}, Client Height: {{clientHeight}}, Client Width: {{clientWidth}}</label>
-        <text v-model="value" placeholder="placeholder" :multi="multi" :gesture="gesture ? ['top', 'bottom'] : []" @gesture="onGesture" :disabled="disabled" :readonly="readonly" :password="password" :wrap="wrap" v-model:scroll-left="scrollLeft" v-model:scroll-top="scrollTop" v-model:selection-start="selectionStart" v-model:selection-end="selectionEnd" @clientheight="clientHeight = $event" @clientwidth="clientWidth = $event" @scrollheight="scrollHeight = $event" @scrollwidth="scrollWidth = $event" @focus="isFocus = true" @blur="isFocus = false" :style="{'flex': multi ? '1' : undefined, 'line-height': lineHeight, 'font-size': fontSize + 'px', 'background': background, 'color': background ? '#FFF' : undefined, 'height': multi ? undefined : '30px', 'border-width': textBorder}" :class="[phcolor && ('ph-' + phcolor)]">
+        <text v-model="value" placeholder="placeholder" :multi="multi" :gesture="gesture ? ['top', 'bottom'] : []" @gesture="onGesture" :disabled="disabled" :readonly="readonly" :adaption="adaption" :scroll="scroll" :password="password" :wrap="wrap" v-model:scroll-left="scrollLeft" v-model:scroll-top="scrollTop" v-model:selection-start="selectionStart" v-model:selection-end="selectionEnd" @clientheight="clientHeight = $event" @clientwidth="clientWidth = $event" @scrollheight="scrollHeight = $event" @scrollwidth="scrollWidth = $event" @focus="isFocus = true" @blur="isFocus = false" :style="{'flex': multi && (!adaption || scroll || !wrap) ? '1' : undefined, 'line-height': lineHeight, 'font-size': fontSize + 'px', 'background': background, 'color': background ? '#FFF' : undefined, 'height': multi && (!adaption || scroll || !wrap) ? '0' : undefined, 'border-width': textBorder}" :class="[phcolor && ('ph-' + phcolor)]">
             <menulist v-if="menu">
                 <menulist-item>Custom</menulist-item>
             </menulist>
@@ -12,7 +12,7 @@
             <button @click="multi = !multi" style="flex: 1;">{{multi ? '' : '!'}}multi</button>
             <button @click="disabled = !disabled" style="flex: 1;">{{disabled ? '' : '!'}}disabled</button>
             <button @click="readonly = !readonly" style="flex: 1;">{{readonly ? '' : '!'}}readonly</button>
-            <button @click="longClick" style="flex: 1;">{{long ? '' : '!'}}long</button>
+            <button @click="scroll = !scroll" style="flex: 1;">{{scroll ? '' : '!'}}scroll</button>
         </layout>
         <layout gutter="10">
             <button @click="password = !password" style="flex: 1;">{{password ? '' : '!'}}password</button>
@@ -21,9 +21,13 @@
             <button @click="gesture = !gesture" style="flex: 1;">{{gesture ? '' : '!'}}gesture</button>
         </layout>
         <layout gutter="10">
+            <button @click="append = !append" style="flex: 1;">{{append ? '' : '!'}}append</button>
+            <button @click="adaption = !adaption" style="flex: 1;">{{adaption ? '' : '!'}}adaption</button>
+            <button @click="longClick" style="flex: 1;">{{long ? '' : '!'}}long</button>
+        </layout>
+        <layout gutter="10">
             <button @click="lineHeight = lineHeight === 1 ? 1.5 : 1" style="flex: 1;">Set line {{lineHeight === 1 ? 1.5 : 1}}</button>
             <button @click="fontSize = fontSize === 12 ? 16 : 12" style="flex: 1;">Set size {{fontSize === 12 ? 16 : 12}}</button>
-            <button @click="append = !append" style="flex: 1;">{{append ? '' : '!'}}append</button>
         </layout>
         <layout gutter="10">
             <button @click="border = 'solid'" style="flex: 2;">Set border solid</button>

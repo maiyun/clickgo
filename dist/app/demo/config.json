@@ -19,7 +19,8 @@
         "/clickgo/control/xterm",
         "/clickgo/control/echarts",
         "/clickgo/control/map",
-        "/clickgo/control/tuieditor"
+        "/clickgo/control/tuieditor",
+        "/clickgo/control/arteditor"
     ],
     "style": "/package/global",
 
@@ -27,6 +28,10 @@
         "/form/control/alayout/alayout.js",
         "/form/control/alayout/alayout.css",
         "/form/control/alayout/alayout.xml",
+        "/form/control/arteditor/arteditor.js",
+        "/form/control/arteditor/arteditor.xml",
+        "/form/control/arteditor/img.js",
+        "/form/control/arteditor/img.xml",
         "/form/control/block/block.css",
         "/form/control/block/block.xml",
         "/form/control/box/box.js",

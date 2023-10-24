@@ -1,11 +1,11 @@
 import * as clickgo from 'clickgo';
 
 interface IItem {
-    'id': string;
+    'id'?: string;
     /** --- 0: 文件夹, 1: 文件 --- */
-    'type': -1 | 0 | 1;
-    'name': string;
-    'time': number;
+    'type'?: -1 | 0 | 1;
+    'name'?: string;
+    'time'?: number;
 
     'icon'?: string;
     'path'?: string;
@@ -23,6 +23,7 @@ export default class extends clickgo.control.AbstractControl {
         'gesture': string[] | string;
         'scroll': 'auto' | 'hidden' | 'visible';
         'size': number | string;
+        'name': boolean | string;
 
         'data': IItem[];
         'modelValue': number[];
@@ -35,6 +36,7 @@ export default class extends clickgo.control.AbstractControl {
             'gesture': [],
             'scroll': 'auto',
             'size': 100,
+            'name': true,
 
             'data': [],
             'modelValue': []
@@ -95,7 +97,10 @@ export default class extends clickgo.control.AbstractControl {
     public get timeFormat() {
         return (time: number): string => {
             const d = new Date(time * 1000);
-            return (d.getMonth() + 1).toString().padStart(2, '0') + '-' + d.getDate().toString().padStart(2, '0') + ' ' + d.getHours().toString().padStart(2, '0') + ':' + d.getMinutes().toString().padStart(2, '0');
+            return (this.propInt('size') >= 128 ? d.getFullYear().toString() + '-' : '') +
+                (d.getMonth() + 1).toString().padStart(2, '0') + '-' +
+                d.getDate().toString().padStart(2, '0') + ' ' +
+                d.getHours().toString().padStart(2, '0') + ':' + d.getMinutes().toString().padStart(2, '0');
         };
     }
 
@@ -108,11 +113,15 @@ export default class extends clickgo.control.AbstractControl {
         }
         const data: IItem[][] = [];
         let rowNow = this.rowCount;
-        for (const item of this.props.data) {
+        const propData = clickgo.tool.clone(this.props.data);
+        for (const item of propData) {
             ++rowNow;
             if (rowNow === this.rowCount + 1) {
                 rowNow = 1;
                 data.push([]);
+            }
+            if (item.type === undefined) {
+                item.type = 1;
             }
             data[data.length - 1].push(item);
         }
@@ -120,10 +129,7 @@ export default class extends clickgo.control.AbstractControl {
         if (remain > 0) {
             for (let i = 0; i < remain; ++i) {
                 data[data.length - 1].push({
-                    'id': '',
-                    'type': -1,
-                    'name': '',
-                    'time': 0
+                    'type': -1
                 });
             }
         }
@@ -713,6 +719,9 @@ export default class extends clickgo.control.AbstractControl {
                             }
                         }
                         // --- 要剔除 ---
+                        if (this.propBoolean('must') && this.selectValues.length === 1) {
+                            break;
+                        }
                         this.selectValues.splice(i, 1);
                         --i;
                         change = true;
@@ -722,7 +731,7 @@ export default class extends clickgo.control.AbstractControl {
                         this.emit('update:modelValue', this.valueData);
                     }
                     else {
-                        if (this.selectValues.length === 0 && this.valueData.length > 0) {
+                        if (!this.propBoolean('must') && this.selectValues.length === 0 && this.valueData.length > 0) {
                             this.valueData = [];
                             this.emit('update:modelValue', this.valueData);
                         }

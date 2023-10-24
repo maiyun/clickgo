@@ -53,8 +53,7 @@ export abstract class AbstractControl {
      * --- 当前窗体是否有焦点 ---
      */
     public get formFocus(): boolean {
-        // --- 实际上就是 props 中的 formFocus ---
-        return (this as any).props.formFocus;
+        return this.parentByName('root')!.formFocus;
     }
 
     /** --- 当前控件所在运行窗体的包内路径不以 / 结尾 --- */
@@ -390,11 +389,7 @@ export async function init(
                         'layout': '',
 
                         'files': item.files,
-                        'props': {
-                            'formFocus': {
-                                'default': false
-                            }
-                        },
+                        'props': {},
                         'data': {},
                         'access': {},
                         'methods': {},
@@ -428,11 +423,13 @@ export async function init(
                     // --- 给 layout 的 class 增加前置 ---
                     t.controls[name].layout = tool.layoutClassPrepend(t.controls[name].layout, prepList);
                     // --- 给 cg 对象增加 :form-focus 传递 ---
+                    /*
                     if (t.controls[name].layout.includes('<cg-')) {
                         t.controls[name].layout = tool.layoutInsertAttr(t.controls[name].layout, ':form-focus=\'formFocus\'', {
                             'include': [/^cg-.+/]
                         });
                     }
+                    */
                     // --- 给 event 增加包裹 ---
                     t.controls[name].layout = tool.eventsAttrWrap(t.controls[name].layout);
                     // --- 给 teleport 做处理 ---

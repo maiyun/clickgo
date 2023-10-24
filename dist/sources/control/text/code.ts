@@ -8,6 +8,8 @@ export default class extends clickgo.control.AbstractControl {
         'readonly': boolean | string;
         'password': boolean | string;
         'wrap': boolean | string;
+        'scroll': boolean | string;
+        'adaption': boolean | string;
         'gesture': string[] | string;
 
         'modelValue': string;
@@ -22,6 +24,8 @@ export default class extends clickgo.control.AbstractControl {
             'readonly': false,
             'password': false,
             'wrap': true,
+            'scroll': true,
+            'adaption': false,
             'gesture': [],
 
             'modelValue': '',
@@ -39,6 +43,8 @@ export default class extends clickgo.control.AbstractControl {
     }
 
     public font = '';
+
+    public textAlign = '';
 
     public background = '';
 
@@ -164,8 +170,10 @@ export default class extends clickgo.control.AbstractControl {
     }
 
     /** --- 文本框的 input 事件 --- */
-    public input(e: InputEvent): void {
+    public async input(e: InputEvent): Promise<void> {
         this.value = (e.target as HTMLInputElement).value;
+        await this.nextTick();
+        this.checkAdaption();
         this.emit('update:modelValue', this.value);
     }
 
@@ -336,9 +344,10 @@ export default class extends clickgo.control.AbstractControl {
             this.value = this.value.slice(0, this.refs.text.selectionStart)
                 + str
                 + this.value.slice(this.refs.text.selectionEnd);
-            this.emit('update:modelValue', this.value);
             // --- 等待 vue 响应一次 ---
             await this.nextTick();
+            this.checkAdaption();
+            this.emit('update:modelValue', this.value);
             this.refs.text.selectionStart = this.refs.text.selectionStart + str.length;
             this.refs.text.selectionEnd = this.refs.text.selectionStart;
         }
@@ -358,7 +367,7 @@ export default class extends clickgo.control.AbstractControl {
             'selectionEnd',
             'scrollWidth',
             'scrollHeight'
-        ], (n, v) => {
+        ], (n, v): void => {
             switch (n) {
                 // --- 选择改变 ---
                 case 'selectionStart':
@@ -386,27 +395,76 @@ export default class extends clickgo.control.AbstractControl {
             this.emit('clientwidth', this.refs.text.clientWidth);
             this.size.ch = this.refs.text.clientHeight;
             this.emit('clientheight', this.refs.text.clientHeight);
+            this.checkAdaption();
         }, true);
+    }
+
+    /** --- 设置的 textarea 的高度 --- */
+    public adaptionHeight: number = 0;
+
+    // --- 若是自适应的情况下，需要进行一次判断，看看当前高度是否正确 ---
+    public checkAdaption(): void {
+        this.adaptionHeight = 0;
+        if (!this.refs.pre) {
+            return;
+        }
+        if (!this.propBoolean('adaption')) {
+            // --- 不是自适应 ---
+            return;
+        }
+        if (!this.propBoolean('multi')) {
+            // --- 不是多行 ---
+            return;
+        }
+        if (!this.propBoolean('wrap')) {
+            // --- 不是可换行 ---
+            return;
+        }
+        if (this.propBoolean('scroll')) {
+            // --- 不是隐藏滚动条 ---
+            return;
+        }
+        // --- 多行下，并且开启自适应 ---
+        this.refs.pre.style.width = this.refs.text.clientWidth.toString() + 'px';
+        this.adaptionHeight = this.refs.pre.offsetHeight;
     }
 
     public onMounted(): void {
         // --- prop 修改值 ---
         this.watch('modelValue', async (): Promise<void> => {
+            if (this.value === this.props.modelValue) {
+                return;
+            }
             this.value = this.props.modelValue;
             await this.nextTick();
             // --- 有可能设置后控件实际值和设置的值不同，所以要重新判断一下 ---
             if (this.refs.text.value === this.value) {
+                this.checkAdaption();
                 return;
             }
             this.value = this.refs.text.value;
+            await this.nextTick();
+            this.checkAdaption();
             this.emit('update:modelValue', this.value);
         }, {
             'immediate': true
         });
         // --- 监听 text 相关 ---
-        this.watch('multi', async (): Promise<void> => {
-            await this.nextTick();
+        this.watch('multi', (): void => {
             this.checkWatch();
+            this.checkAdaption();
+        });
+        this.watch('scroll', async (): Promise<void> => {
+            await this.nextTick();
+            this.checkAdaption();
+        });
+        this.watch('adaption', async (): Promise<void> => {
+            await this.nextTick();
+            this.checkAdaption();
+        });
+        this.watch('wrap', async (): Promise<void> => {
+            await this.nextTick();
+            this.checkAdaption();
         });
         this.watch('password', async (): Promise<void> => {
             await this.nextTick();
@@ -441,10 +499,16 @@ export default class extends clickgo.control.AbstractControl {
             this.refs.text.selectionEnd = prop;
         });
 
-        clickgo.dom.watchStyle(this.element, ['font', 'background-color', 'padding'], (n, v) => {
+        clickgo.dom.watchStyle(this.element, ['font', 'text-align', 'background-color', 'padding'], async (n, v): Promise<void> => {
             switch (n) {
                 case 'font': {
                     this.font = v;
+                    await this.nextTick();
+                    this.checkAdaption();
+                    break;
+                }
+                case 'text-align': {
+                    this.textAlign = v;
                     break;
                 }
                 case 'background-color': {

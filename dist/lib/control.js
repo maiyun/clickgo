@@ -59,7 +59,7 @@ class AbstractControl {
         return 0;
     }
     get formFocus() {
-        return this.props.formFocus;
+        return this.parentByName('root').formFocus;
     }
     get path() {
         return '';
@@ -271,11 +271,7 @@ function init(taskId, invoke) {
                         t.controls[name] = {
                             'layout': '',
                             'files': item.files,
-                            'props': {
-                                'formFocus': {
-                                    'default': false
-                                }
-                            },
+                            'props': {},
                             'data': {},
                             'access': {},
                             'methods': {},
@@ -300,11 +296,6 @@ function init(taskId, invoke) {
                         }
                         t.controls[name].layout = tool.layoutAddTagClassAndReTagName(t.controls[name].layout, false);
                         t.controls[name].layout = tool.layoutClassPrepend(t.controls[name].layout, prepList);
-                        if (t.controls[name].layout.includes('<cg-')) {
-                            t.controls[name].layout = tool.layoutInsertAttr(t.controls[name].layout, ':form-focus=\'formFocus\'', {
-                                'include': [/^cg-.+/]
-                            });
-                        }
                         t.controls[name].layout = tool.eventsAttrWrap(t.controls[name].layout);
                         if (t.controls[name].layout.includes('<teleport')) {
                             t.controls[name].layout = tool.teleportGlue(t.controls[name].layout, '{{{formId}}}');

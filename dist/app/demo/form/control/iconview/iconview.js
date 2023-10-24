@@ -75,6 +75,10 @@ class default_1 extends clickgo.form.AbstractForm {
                 'name': 'pack.zip',
                 'time': 1676600099,
                 'icon': '/package/res/zip.svg'
+            },
+            {
+                'id': 7,
+                'icon': 'https://cdn.jsdelivr.net/npm/clickgo@3.7.0/dist/app/demo/res/img.jpg'
             }
         ];
         this.select = [];
@@ -84,6 +88,7 @@ class default_1 extends clickgo.form.AbstractForm {
         this.ctrl = true;
         this.selection = true;
         this.gesture = false;
+        this.name = true;
         this.selectionArea = {};
         this.scroll = 'auto';
         this.size = [100];

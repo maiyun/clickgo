@@ -1,5 +1,5 @@
 global {
-    --g-padding:12px;
+    --g-padding:10px;
     --g-margin:7px;
     --g-radius:3px;
 
@@ -56,6 +56,36 @@ global {
     font-family: 'Roboto', 'SF Pro SC', 'SF Pro Display', 'SF Pro Icons', 'PingFang SC', BlinkMacSystemFont, -apple-system, 'Segoe UI', 'Microsoft Yahei', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
 }
 
+// -- CONTROL -- arteditor --
+
+.arteditor_wrap {
+    .arteditor_controls {
+        .arteditor_left {
+            .arteditor_button {
+                transition: all .15s ease;
+            }
+        }
+        .arteditor_right {
+            .arteditor_write, .arteditor_preview {
+                transition: all .15s ease;
+            }
+        }
+    }
+    .arteditor_tag-cg-flow {
+        .arteditor_item {
+            .arteditor_remove {
+                transition: all .15s ease;
+            }
+        }
+        .arteditor_add {
+            transition: all .15s ease;
+        }
+    }
+}
+.arteditor_pop {
+    background: var(--pop-background); -webkit-backdrop-filter: blur(30px) saturate(1.5); backdrop-filter: blur(30px) saturate(1.5);
+}
+
 // -- CONTROL -- button --
 
 .button_wrap {
@@ -99,7 +129,7 @@ global {
     }
 }
 .button_pop {
-    background: var(--pop-background); -webkit-backdrop-filter: blur(50px) saturate(1.5); backdrop-filter: blur(50px) saturate(1.5);
+    background: var(--pop-background); -webkit-backdrop-filter: blur(30px) saturate(1.5); backdrop-filter: blur(30px) saturate(1.5);
 }
 
 // -- CONTROL -- check --
@@ -159,7 +189,7 @@ global {
     }
 }
 .date_pop {
-    background: var(--pop-background); -webkit-backdrop-filter: blur(50px) saturate(1.5); backdrop-filter: blur(50px) saturate(1.5);
+    background: var(--pop-background); -webkit-backdrop-filter: blur(30px) saturate(1.5); backdrop-filter: blur(30px) saturate(1.5);
 }
 
 // -- CONTROL -- desc-cell --
@@ -214,7 +244,7 @@ global {
     }
 }
 .greatlist_pop {
-    background: var(--pop-background); -webkit-backdrop-filter: blur(50px) saturate(1.5); backdrop-filter: blur(50px) saturate(1.5);
+    background: var(--pop-background); -webkit-backdrop-filter: blur(30px) saturate(1.5); backdrop-filter: blur(30px) saturate(1.5);
 }
 
 // -- CONTROL -- greatselect --
@@ -245,7 +275,7 @@ global {
     }
 }
 .greatselect_pop {
-    background: var(--pop-background); -webkit-backdrop-filter: blur(50px) saturate(1.5); backdrop-filter: blur(50px) saturate(1.5);
+    background: var(--pop-background); -webkit-backdrop-filter: blur(30px) saturate(1.5); backdrop-filter: blur(30px) saturate(1.5);
 }
 
 // -- CONTROL -- iconview --
@@ -266,7 +296,7 @@ global {
     }
 }
 .iconview_pop {
-    background: var(--pop-background); -webkit-backdrop-filter: blur(50px) saturate(1.5); backdrop-filter: blur(50px) saturate(1.5);
+    background: var(--pop-background); -webkit-backdrop-filter: blur(30px) saturate(1.5); backdrop-filter: blur(30px) saturate(1.5);
 }
 
 // --- CONTROL -- levelselect ---
@@ -300,7 +330,7 @@ global {
     transition: all .15s ease; border: none;
 }
 .menu-item_pop {
-    background: var(--pop-background); -webkit-backdrop-filter: blur(50px) saturate(1.5); backdrop-filter: blur(50px) saturate(1.5);
+    background: var(--pop-background); -webkit-backdrop-filter: blur(30px) saturate(1.5); backdrop-filter: blur(30px) saturate(1.5);
 }
 
 // -- CONTROL -- menulist --
@@ -326,7 +356,7 @@ global {
     }
 }
 .menulist-item_pop {
-    background: var(--pop-background); -webkit-backdrop-filter: blur(50px) saturate(1.5); backdrop-filter: blur(50px) saturate(1.5);
+    background: var(--pop-background); -webkit-backdrop-filter: blur(30px) saturate(1.5); backdrop-filter: blur(30px) saturate(1.5);
 }
 
 // -- CONTROL -- menulist-split --
@@ -340,7 +370,7 @@ global {
 // -- CONTROL -- monaco --
 
 .monaco_pop {
-    background: var(--pop-background); -webkit-backdrop-filter: blur(50px) saturate(1.5); backdrop-filter: blur(50px) saturate(1.5);
+    background: var(--pop-background); -webkit-backdrop-filter: blur(30px) saturate(1.5); backdrop-filter: blur(30px) saturate(1.5);
 }
 
 // -- CONTROL -- nav --
@@ -464,7 +494,7 @@ global {
             }
             .property_value {
                 .property_text {
-                    height: 36px;
+                    height: 32px;
                 }
                 .property_tag-cg-check {
                     margin-left: 10px;
@@ -476,17 +506,17 @@ global {
         }
     }
     .property_description {
-        height: 73px;
+        height: 77px;
         .property_desc {
             line-height: 1.5;
         }
     }
 }
 .property_dock-pop {
-    background: var(--pop-background); -webkit-backdrop-filter: blur(50px) saturate(1.5); backdrop-filter: blur(50px) saturate(1.5);
+    background: var(--pop-background); -webkit-backdrop-filter: blur(30px) saturate(1.5); backdrop-filter: blur(30px) saturate(1.5);
 }
 .property_pop {
-    background: var(--pop-background); -webkit-backdrop-filter: blur(50px) saturate(1.5); backdrop-filter: blur(50px) saturate(1.5);
+    background: var(--pop-background); -webkit-backdrop-filter: blur(30px) saturate(1.5); backdrop-filter: blur(30px) saturate(1.5);
 }
 
 // -- CONTROL -- radio --
@@ -637,13 +667,13 @@ global {
 // -- CONTROL -- task --
 
 .task_wrap {
-    background: var(--pop-background); -webkit-backdrop-filter: blur(50px) saturate(1.5); backdrop-filter: blur(50px) saturate(1.5);
+    background: var(--pop-background); -webkit-backdrop-filter: blur(30px) saturate(1.5); backdrop-filter: blur(30px) saturate(1.5);
     .task_date {
         color: #000;
     }
 }
 .task_pop {
-    background: var(--pop-background); -webkit-backdrop-filter: blur(50px) saturate(1.5); backdrop-filter: blur(50px) saturate(1.5);
+    background: var(--pop-background); -webkit-backdrop-filter: blur(30px) saturate(1.5); backdrop-filter: blur(30px) saturate(1.5);
 }
 
 // -- CONTROL -- task-item --
@@ -676,7 +706,7 @@ global {
     }
 }
 .task-item_pop {
-    background: var(--pop-background); -webkit-backdrop-filter: blur(50px) saturate(1.5); backdrop-filter: blur(50px) saturate(1.5);
+    background: var(--pop-background); -webkit-backdrop-filter: blur(30px) saturate(1.5); backdrop-filter: blur(30px) saturate(1.5);
 }
 
 // -- CONTROL -- text --
@@ -706,7 +736,7 @@ global {
     }
 }
 .text_pop {
-    background: var(--pop-background); -webkit-backdrop-filter: blur(50px) saturate(1.5); backdrop-filter: blur(50px) saturate(1.5);
+    background: var(--pop-background); -webkit-backdrop-filter: blur(30px) saturate(1.5); backdrop-filter: blur(30px) saturate(1.5);
 }
 
 // -- CONTROL -- tuieditor --
@@ -719,5 +749,5 @@ global {
     }
 }
 .tuieditor_pop {
-    background: var(--pop-background); -webkit-backdrop-filter: blur(50px) saturate(1.5); backdrop-filter: blur(50px) saturate(1.5);
+    background: var(--pop-background); -webkit-backdrop-filter: blur(30px) saturate(1.5); backdrop-filter: blur(30px) saturate(1.5);
 }

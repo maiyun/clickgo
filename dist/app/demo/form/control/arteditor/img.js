@@ -27,13 +27,25 @@ const clickgo = __importStar(require("clickgo"));
 class default_1 extends clickgo.form.AbstractForm {
     constructor() {
         super(...arguments);
-        this.theme = ['light'];
-        this.themes = ['light', 'dark'];
-        this.disabled = false;
-        this.size = ['12px'];
-        this.family = false;
-        this.visual = false;
-        this.text = 'a**b**c';
+        this.select = [];
+        this.list = [
+            {
+                'icon': 'https://cdn.jsdelivr.net/npm/clickgo@3.7.0/dist/app/demo/res/sql.svg'
+            },
+            {
+                'icon': 'https://cdn.jsdelivr.net/npm/clickgo@3.7.0/dist/app/demo/res/txt.svg'
+            },
+            {
+                'icon': 'https://cdn.jsdelivr.net/npm/clickgo@3.7.0/dist/app/demo/res/zip.svg'
+            },
+            {
+                'icon': 'https://cdn.jsdelivr.net/npm/clickgo@3.7.0/dist/app/demo/res/img.jpg'
+            }
+        ];
+    }
+    selectClick() {
+        this.dialogResult = this.list[this.select[0]].icon.slice(-11);
+        this.close();
     }
 }
 exports.default = default_1;

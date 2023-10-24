@@ -1761,9 +1761,6 @@ function createPanel(cls, el, formId, taskId) {
         }
         layout = tool.purify(layout);
         layout = tool.layoutAddTagClassAndReTagName(layout, true);
-        layout = tool.layoutInsertAttr(layout, ':form-focus=\'formFocus\'', {
-            'include': [/^cg-.+/]
-        });
         const prepList = ['cg-task' + t.id.toString() + '_'];
         if (prep !== '') {
             prepList.push(prep);
@@ -2042,9 +2039,6 @@ function create(cls, data, opt = {}, taskId) {
         }
         layout = tool.purify(layout);
         layout = tool.layoutAddTagClassAndReTagName(layout, true);
-        layout = tool.layoutInsertAttr(layout, ':form-focus=\'formFocus\'', {
-            'include': [/^cg-.+/]
-        });
         const prepList = ['cg-task' + t.id.toString() + '_'];
         if (prep !== '') {
             prepList.push(prep);

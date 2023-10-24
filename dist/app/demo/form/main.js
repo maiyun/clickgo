@@ -71,6 +71,7 @@ const vflow_1 = __importDefault(require("./control/vflow/vflow"));
 const xterm_1 = __importDefault(require("./control/xterm/xterm"));
 const echarts_1 = __importDefault(require("./control/echarts/echarts"));
 const tuieditor_1 = __importDefault(require("./control/tuieditor/tuieditor"));
+const arteditor_1 = __importDefault(require("./control/arteditor/arteditor"));
 const form_2 = __importDefault(require("./event/form/form"));
 const other_1 = __importDefault(require("./event/other/other"));
 const screen_1 = __importDefault(require("./event/screen/screen"));
@@ -253,6 +254,10 @@ class default_1 extends clickgo.form.AbstractForm {
                 }
                 case 'ctuieditor': {
                     frm = yield clickgo.form.create(tuieditor_1.default);
+                    break;
+                }
+                case 'carteditor': {
+                    frm = yield clickgo.form.create(arteditor_1.default);
                     break;
                 }
                 case 'eform': {

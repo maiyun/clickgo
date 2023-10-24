@@ -32,6 +32,10 @@ export default class extends clickgo.form.AbstractForm {
 
     public readonly = false;
 
+    public adaption = false;
+
+    public scroll = true;
+
     public password = false;
 
     public wrap = true;

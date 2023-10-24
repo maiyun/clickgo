@@ -6,8 +6,6 @@ export default class extends clickgo.form.AbstractForm {
 
     public themes = ['light', 'dark'];
 
-    public readonly = false;
-
     public disabled = false;
 
     public size = ['12px'];

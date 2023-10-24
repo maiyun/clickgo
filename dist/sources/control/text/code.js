@@ -42,6 +42,8 @@ class default_1 extends clickgo.control.AbstractControl {
             'readonly': false,
             'password': false,
             'wrap': true,
+            'scroll': true,
+            'adaption': false,
             'gesture': [],
             'modelValue': '',
             'placeholder': '',
@@ -51,6 +53,7 @@ class default_1 extends clickgo.control.AbstractControl {
             'scrollTop': 0
         };
         this.font = '';
+        this.textAlign = '';
         this.background = '';
         this.padding = '';
         this.darkbg = false;
@@ -126,6 +129,7 @@ class default_1 extends clickgo.control.AbstractControl {
                 'paste': 'Dán'
             }
         };
+        this.adaptionHeight = 0;
     }
     get opMargin() {
         return this.padding.replace(/(\w+)/g, '-$1');
@@ -154,8 +158,12 @@ class default_1 extends clickgo.control.AbstractControl {
         this.emit('blur');
     }
     input(e) {
-        this.value = e.target.value;
-        this.emit('update:modelValue', this.value);
+        return __awaiter(this, void 0, void 0, function* () {
+            this.value = e.target.value;
+            yield this.nextTick();
+            this.checkAdaption();
+            this.emit('update:modelValue', this.value);
+        });
     }
     scroll() {
         let sl = Math.round(this.refs.text.scrollLeft);
@@ -310,8 +318,9 @@ class default_1 extends clickgo.control.AbstractControl {
                 this.value = this.value.slice(0, this.refs.text.selectionStart)
                     + str
                     + this.value.slice(this.refs.text.selectionEnd);
-                this.emit('update:modelValue', this.value);
                 yield this.nextTick();
+                this.checkAdaption();
+                this.emit('update:modelValue', this.value);
                 this.refs.text.selectionStart = this.refs.text.selectionStart + str.length;
                 this.refs.text.selectionEnd = this.refs.text.selectionStart;
             }
@@ -354,23 +363,62 @@ class default_1 extends clickgo.control.AbstractControl {
             this.emit('clientwidth', this.refs.text.clientWidth);
             this.size.ch = this.refs.text.clientHeight;
             this.emit('clientheight', this.refs.text.clientHeight);
+            this.checkAdaption();
         }, true);
+    }
+    checkAdaption() {
+        this.adaptionHeight = 0;
+        if (!this.refs.pre) {
+            return;
+        }
+        if (!this.propBoolean('adaption')) {
+            return;
+        }
+        if (!this.propBoolean('multi')) {
+            return;
+        }
+        if (!this.propBoolean('wrap')) {
+            return;
+        }
+        if (this.propBoolean('scroll')) {
+            return;
+        }
+        this.refs.pre.style.width = this.refs.text.clientWidth.toString() + 'px';
+        this.adaptionHeight = this.refs.pre.offsetHeight;
     }
     onMounted() {
         this.watch('modelValue', () => __awaiter(this, void 0, void 0, function* () {
+            if (this.value === this.props.modelValue) {
+                return;
+            }
             this.value = this.props.modelValue;
             yield this.nextTick();
             if (this.refs.text.value === this.value) {
+                this.checkAdaption();
                 return;
             }
             this.value = this.refs.text.value;
+            yield this.nextTick();
+            this.checkAdaption();
             this.emit('update:modelValue', this.value);
         }), {
             'immediate': true
         });
-        this.watch('multi', () => __awaiter(this, void 0, void 0, function* () {
-            yield this.nextTick();
+        this.watch('multi', () => {
             this.checkWatch();
+            this.checkAdaption();
+        });
+        this.watch('scroll', () => __awaiter(this, void 0, void 0, function* () {
+            yield this.nextTick();
+            this.checkAdaption();
+        }));
+        this.watch('adaption', () => __awaiter(this, void 0, void 0, function* () {
+            yield this.nextTick();
+            this.checkAdaption();
+        }));
+        this.watch('wrap', () => __awaiter(this, void 0, void 0, function* () {
+            yield this.nextTick();
+            this.checkAdaption();
         }));
         this.watch('password', () => __awaiter(this, void 0, void 0, function* () {
             yield this.nextTick();
@@ -404,10 +452,16 @@ class default_1 extends clickgo.control.AbstractControl {
             }
             this.refs.text.selectionEnd = prop;
         });
-        clickgo.dom.watchStyle(this.element, ['font', 'background-color', 'padding'], (n, v) => {
+        clickgo.dom.watchStyle(this.element, ['font', 'text-align', 'background-color', 'padding'], (n, v) => __awaiter(this, void 0, void 0, function* () {
             switch (n) {
                 case 'font': {
                     this.font = v;
+                    yield this.nextTick();
+                    this.checkAdaption();
+                    break;
+                }
+                case 'text-align': {
+                    this.textAlign = v;
                     break;
                 }
                 case 'background-color': {
@@ -432,7 +486,7 @@ class default_1 extends clickgo.control.AbstractControl {
                     break;
                 }
             }
-        }, true);
+        }), true);
         this.refs.text.scrollTop = this.propInt('scrollTop');
         this.refs.text.scrollLeft = this.propInt('scrollLeft');
         this.refs.text.selectionStart = this.propInt('selectionStart');

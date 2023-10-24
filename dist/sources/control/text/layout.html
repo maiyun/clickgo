@@ -2,17 +2,18 @@
     <div class="op" :style="{'margin': opMargin}">
         <template v-if="propBoolean('multi') && !propBoolean('password')">
             <div class="multi-t">
-                <textarea ref="text" class="text" :class="[darkbg && 'darkbg']" :value="value" :placeholder="placeholder" :style="{'padding': padding, 'font': font, 'background': background}" :readonly="propBoolean('readonly')" :disabled="propBoolean('disabled')" :wrap="propBoolean('wrap') ? undefined : 'off'" @focus="tfocus" @blur="tblur" @input="input" @wheel="wheel" @scroll="scroll" @touchstart="inputTouch" @change="$event.stopPropagation()" @contextmenu="contextmenu" @select="select"></textarea>
+                <textarea ref="text" class="text" :class="[darkbg && 'darkbg']" :value="value" :placeholder="placeholder" :style="{'padding': padding, 'font': font, 'text-align': textAlign, 'background': background}" :readonly="propBoolean('readonly')" :disabled="propBoolean('disabled')" :wrap="propBoolean('wrap') ? undefined : 'off'" @focus="tfocus" @blur="tblur" @input="input" @wheel="wheel" @scroll="scroll" @touchstart="inputTouch" @change="$event.stopPropagation()" @contextmenu="contextmenu" @select="select" :style="{'height':adaptionHeight?adaptionHeight+'px':undefined}"></textarea>
+                <pre v-if="propBoolean('adaption') && propBoolean('multi') && propBoolean('wrap') && !propBoolean('scroll')" ref="pre" :style="{'padding': padding, 'text-align': textAlign, 'font': font}">{{value ? (value + (value.endsWith('\n') ? ' ' : '')) : ' '}}</pre>
                 <div v-if="slots['append']" class="append"><slot name="append"></slot></div>
-                <cg-scroll :length="size.sh" :client="size.ch" :offset="size.st" @update:offset="refs.text.scrollTop = $event"></cg-scroll>
+                <cg-scroll v-if="propBoolean('scroll')" :length="size.sh" :client="size.ch" :offset="size.st" @update:offset="refs.text.scrollTop = $event"></cg-scroll>
             </div>
             <div v-if="!propBoolean('wrap')" class="multi-b">
-                <cg-scroll direction="h" :length="size.sw" :client="size.cw" :offset="size.sl" @update:offset="refs.text.scrollLeft = $event"></cg-scroll>
+                <cg-scroll v-if="propBoolean('scroll')" direction="h" :length="size.sw" :client="size.cw" :offset="size.sl" @update:offset="refs.text.scrollLeft = $event"></cg-scroll>
                 <div class="multi-rb"></div>
             </div>
         </template>
         <div v-else class="single">
-            <input ref="text" class="text" :class="[darkbg && 'darkbg']" :type="propBoolean('password') ? 'password' : 'text'" :value="value" :placeholder="placeholder" :style="{'padding': padding, 'font': font, 'background': background}" :readonly="propBoolean('readonly')" :disabled="propBoolean('disabled')" @focus="tfocus" @blur="tblur" @input="input" @wheel="wheel" @scroll="scroll" @touchstart="inputTouch" @change="$event.stopPropagation()" @contextmenu="contextmenu" @select="select">
+            <input ref="text" class="text" :class="[darkbg && 'darkbg']" :type="propBoolean('password') ? 'password' : 'text'" :value="value" :placeholder="placeholder" :style="{'padding': padding, 'font': font, 'text-align': textAlign, 'background': background}" :readonly="propBoolean('readonly')" :disabled="propBoolean('disabled')" @focus="tfocus" @blur="tblur" @input="input" @wheel="wheel" @scroll="scroll" @touchstart="inputTouch" @change="$event.stopPropagation()" @contextmenu="contextmenu" @select="select">
             <div v-if="slots['append']" class="append"><slot name="append"></slot></div>
         </div>
     </div>

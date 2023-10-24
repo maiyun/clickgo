@@ -42,7 +42,7 @@ ${topClass.slice(0, 3).join(', ')} {left: 0; top: 0; width: 0; height: 0; positi
 ${classUnfold('img')} {vertical-align: bottom;}
 ${classUnfold('::selection', ['#cg-launcher'])} {background-color: rgba(0, 0, 0, .1);}
 ${classUnfold('*')}, ${classUnfold('*::after')}, ${classUnfold('*::before')} {box-sizing: border-box; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); flex-shrink: 0;}
-${classUnfold()}, ${classUnfold('input')}, ${classUnfold('textarea')} {font-family: "Lucida Sans Unicode", "Helvetica Neue","Helvetica","PingFang SC","Hiragino Sans GB","Noto Sans CJK SC","Noto Sans CJK","Source Han Sans","WenQuanYi Micro Hei","Microsoft YaHei",sans-serif; font-size: 12px; line-height: 1; -webkit-font-smoothing: antialiased;}
+${classUnfold()}, ${classUnfold('input')}, ${classUnfold('textarea')} {font-family: var(--g-family); font-size: var(--g-size); line-height: var(--g-line); -webkit-font-smoothing: antialiased;}
 </style>`);
 
 /**
@@ -543,7 +543,7 @@ interface IWatchStyleItem {
     'sd': CSSStyleDeclaration;
     'names': Record<string, {
         'val': string;
-        'cb': Array<(name: string, value: string, old: string) => void>;
+        'cb': Array<(name: string, value: string, old: string) => void | Promise<void>>;
     }>;
 }
 
@@ -574,7 +574,7 @@ let watchStyleIndex: number = 0;
 export function watchStyle(
     el: HTMLElement,
     name: string | string[],
-    cb: (name: string, value: string, old: string) => void,
+    cb: (name: string, value: string, old: string) => void | Promise<void>,
     immediate: boolean = false
 ): void {
     if (typeof name === 'string') {
@@ -605,7 +605,7 @@ export function watchStyle(
                 item.names[n].cb.push(cb);
             }
             if (immediate) {
-                cb(n, (item.sd as any)[n], '');
+                cb(n, (item.sd as any)[n], '') as any;
             }
         }
         return;
@@ -631,7 +631,7 @@ export function watchStyle(
             'cb': [cb]
         };
         if (immediate) {
-            cb(n, (item.sd as any)[n], '');
+            cb(n, (item.sd as any)[n], '') as any;
         }
     }
     el.dataset.cgStyleindex = watchStyleIndex.toString();
@@ -681,7 +681,7 @@ interface IWatchPropertyItem {
     'el': HTMLElement;
     'names': Record<string, {
         'val': string;
-        'cb': Array<(name: string, value: string) => void>;
+        'cb': Array<(name: string, value: string) => void | Promise<void>>;
     }>;
 }
 
@@ -715,7 +715,7 @@ let watchPropertyIndex: number = 0;
 export function watchProperty(
     el: HTMLElement,
     name: string | string[],
-    cb: (name: string, value: string) => void,
+    cb: (name: string, value: string) => void | Promise<void>,
     immediate: boolean = false
 ): void {
     if (typeof name === 'string') {
@@ -746,7 +746,7 @@ export function watchProperty(
                 item.names[n].cb.push(cb);
             }
             if (immediate) {
-                cb(n, (item.el as any)[n]);
+                cb(n, (item.el as any)[n]) as any;
             }
         }
         return;
@@ -770,7 +770,7 @@ export function watchProperty(
             'cb': [cb]
         };
         if (immediate) {
-            cb(n, (item.el as any)[n]);
+            cb(n, (item.el as any)[n]) as any;
         }
     }
     el.dataset.cgPropertyindex = watchPropertyIndex.toString();
@@ -926,7 +926,7 @@ const watchTimerHandler = function(): void {
                         const old = item.names[name].val;
                         item.names[name].val = (item.sd as any)[name];
                         for (const cb of item.names[name].cb) {
-                            cb(name, (item.sd as any)[name], old);
+                            cb(name, (item.sd as any)[name], old) as any;
                         }
                     }
                 };
@@ -965,7 +965,7 @@ const watchTimerHandler = function(): void {
                         }
                         item.names[name].val = (item.el as any)[name];
                         for (const cb of item.names[name].cb) {
-                            cb(name, (item.el as any)[name]);
+                            cb(name, (item.el as any)[name]) as any;
                         }
                     }
                 };

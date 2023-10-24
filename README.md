@@ -106,6 +106,10 @@ This library is published under [Apache-2.0](./LICENSE) license.
 
 [More Horizontal SVG Vector](https://www.svgrepo.com/svg/447028/more-horizontal)
 
+#### Arteditor
+
+[Plus SVG Vector](https://www.svgrepo.com/svg/447037/plus)
+
 ### **LICENSE:** MIT License **AUTHOR:** developmentseed
 
 #### Map
@@ -127,3 +131,10 @@ This library is published under [Apache-2.0](./LICENSE) license.
 
 [Folder SVG Vector](https://www.svgrepo.com/svg/474852/folder)
 [File SVG Vector](https://www.svgrepo.com/svg/474842/file)
+
+### **LICENSE:** MIT License **AUTHOR:** instructure-ui
+
+#### Arteditor
+
+[Bold SVG Vector](https://www.svgrepo.com/svg/501109/bold)
+[Italic SVG Vector](https://www.svgrepo.com/svg/501238/italic)
