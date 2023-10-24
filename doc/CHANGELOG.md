@@ -1,5 +1,14 @@
 # Changelog
 
+# 3.8.0
+
+[+] Add getHost method of core library.  
+[+] Add tuieditor control.  
+[+] Add arteditor control.  
+[+] Add name param of iconview control.  
+[+] Add scroll, adaption param of text control.  
+[\*] Optimize property, scroll controls.
+
 # 3.7.0
 
 [+] Added storage library.  

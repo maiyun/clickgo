@@ -1,7 +1,7 @@
 <form title="Arteditor" width="500" height="450" padding="10">
     <layout gutter="10" direction="v" style="flex: 1; width: 0;">
         <label>Line: {{value.length}}</label>
-        <arteditor v-model="value" :readonly="readonly" :disabled="disabled" pre="https://cdn.jsdelivr.net/npm/clickgo@3.7.0/dist/app/demo/" style="flex: 1; height: 0;" @imgselect="imgselect" :style="{'font-size': size[0], 'font-family': family ? 'Consolas, \'Courier New\', monospace' : undefined}"></arteditor>
+        <arteditor v-model="value" :readonly="readonly" :disabled="disabled" pre="https://cdn.jsdelivr.net/npm/clickgo@3.8.0/dist/app/demo/" style="flex: 1; height: 0;" @imgselect="imgselect" :style="{'font-size': size[0], 'font-family': family ? 'Consolas, \'Courier New\', monospace' : undefined}"></arteditor>
         <layout gutter="10">
             <button @click="disabled = !disabled" style="flex: 1; width: 0;">{{disabled ? '' : '!'}}disabled</button>
             <button @click="readonly = !readonly" style="flex: 1; width: 0;">{{readonly ? '' : '!'}}readonly</button>
