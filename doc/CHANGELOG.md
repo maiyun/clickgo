@@ -1,5 +1,9 @@
 # Changelog
 
+# 3.8.1
+
+[+] Add request param of request method in tool library.
+
 # 3.8.0
 
 [+] Add getHost method of core library.  

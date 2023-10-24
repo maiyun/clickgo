@@ -491,6 +491,7 @@ export interface IThemeConfig {
 // --------------------------
 
 export interface IRequestOptions {
+    'credentials'?: boolean;
     'method'?: 'GET' | 'POST';
     'body'?: FormData;
     'timeout'?: number;

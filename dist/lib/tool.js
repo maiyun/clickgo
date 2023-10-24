@@ -499,6 +499,9 @@ function request(url, opt) {
     return new Promise(function (resove) {
         var _a;
         const xhr = new XMLHttpRequest();
+        if (opt.credentials === false) {
+            xhr.withCredentials = false;
+        }
         xhr.upload.onloadstart = function (e) {
             var _a;
             const r = (_a = opt.uploadStart) === null || _a === void 0 ? void 0 : _a.call(opt, e.total);

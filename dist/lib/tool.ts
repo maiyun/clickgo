@@ -658,6 +658,9 @@ export function rgb2hsl(rgb: string): number[] {
 export function request(url: string, opt: types.IRequestOptions): Promise<null | any> {
     return new Promise(function(resove) {
         const xhr = new XMLHttpRequest();
+        if (opt.credentials === false) {
+            xhr.withCredentials = false;
+        }
         xhr.upload.onloadstart = function(e: ProgressEvent): void {
             const r = opt.uploadStart?.(e.total);
             if (r && (r instanceof Promise)) {
