@@ -129,7 +129,7 @@ This library is published under [Apache-2.0](./LICENSE) license.
 
 #### Iconview
 
-[Folder SVG Vector](https://www.svgrepo.com/svg/474852/folder)
+[Folder SVG Vector](https://www.svgrepo.com/svg/474852/folder)  
 [File SVG Vector](https://www.svgrepo.com/svg/474842/file)
 
 ### **LICENSE:** MIT License **AUTHOR:** instructure-ui
