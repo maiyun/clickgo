@@ -977,6 +977,14 @@ export function back(taskId?: number): boolean {
     return true;
 }
 
+/**
+ * --- 打开新的标签页
+ * @param url 要访问的网址
+ */
+export function open(url: string): void {
+    window.open(url);
+}
+
 window.addEventListener('hashchange', function() {
     trigger('hashChanged', window.location.hash ? decodeURIComponent(window.location.hash.slice(1)) : '');
 });

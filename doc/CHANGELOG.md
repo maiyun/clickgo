@@ -1,5 +1,9 @@
 # Changelog
 
+# 3.8.2
+
+[+] Add open method of core library.
+
 # 3.8.1
 
 [+] Add request param of request method in tool library.

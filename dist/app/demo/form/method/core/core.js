@@ -91,5 +91,8 @@ class default_1 extends clickgo.form.AbstractForm {
             yield clickgo.form.dialog('No permission.');
         });
     }
+    open() {
+        clickgo.core.open('https://www.maiyun.net');
+    }
 }
 exports.default = default_1;

@@ -460,6 +460,9 @@ function run(url, opt = {}, ntid) {
                 },
                 back: function () {
                     return core.back(taskId);
+                },
+                open: function (url) {
+                    core.open(url);
                 }
             },
             'dom': {

@@ -518,6 +518,9 @@ export async function run(url: string | types.IApp, opt: types.ITaskRunOptions =
             },
             back: function(): boolean {
                 return core.back(taskId);
+            },
+            open: function(url: string): void {
+                core.open(url);
             }
         },
         'dom': {

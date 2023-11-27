@@ -51,4 +51,8 @@ export default class extends clickgo.form.AbstractForm {
         await clickgo.form.dialog('No permission.');
     }
 
+    public open(): void {
+        clickgo.core.open('https://www.maiyun.net');
+    }
+
 }
