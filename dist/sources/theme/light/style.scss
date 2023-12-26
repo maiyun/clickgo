@@ -1,7 +1,7 @@
 global {
     --g-padding:10px;
     --g-margin:7px;
-    --g-radius:3px;
+    --g-radius:5px;
 
     // --- 基础颜色 ---
 
@@ -207,6 +207,14 @@ global {
 // -- CONTROL -- form --
 
 .form_wrap {
+    &:not(.form_border-none):not([data-cg-max]) {
+        border: none;
+    }
+    &.form_focus {
+        &:not(.form_border-none):not([data-cg-max]) {
+            border: none;
+        }
+    }
     // --- 内部 ---
     .form_inner {
         // --- 头部 ---
