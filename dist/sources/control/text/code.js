@@ -165,7 +165,7 @@ class default_1 extends clickgo.control.AbstractControl {
             this.emit('update:modelValue', this.value);
         });
     }
-    scroll() {
+    scrollEvent() {
         let sl = Math.round(this.refs.text.scrollLeft);
         const msl = this.maxScrollLeft();
         if (sl > msl) {
@@ -404,10 +404,11 @@ class default_1 extends clickgo.control.AbstractControl {
         }), {
             'immediate': true
         });
-        this.watch('multi', () => {
+        this.watch('multi', () => __awaiter(this, void 0, void 0, function* () {
+            yield this.nextTick();
             this.checkWatch();
             this.checkAdaption();
-        });
+        }));
         this.watch('scroll', () => __awaiter(this, void 0, void 0, function* () {
             yield this.nextTick();
             this.checkAdaption();

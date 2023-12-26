@@ -178,7 +178,7 @@ export default class extends clickgo.control.AbstractControl {
     }
 
     /** --- input 的 scroll 事件 --- */
-    public scroll(): void {
+    public scrollEvent(): void {
         // --- scroll left ---
         let sl = Math.round(this.refs.text.scrollLeft);
         const msl = this.maxScrollLeft();
@@ -450,7 +450,8 @@ export default class extends clickgo.control.AbstractControl {
             'immediate': true
         });
         // --- 监听 text 相关 ---
-        this.watch('multi', (): void => {
+        this.watch('multi', async (): Promise<void> => {
+            await this.nextTick();
             this.checkWatch();
             this.checkAdaption();
         });
