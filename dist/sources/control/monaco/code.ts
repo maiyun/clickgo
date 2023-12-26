@@ -346,15 +346,15 @@ export default class extends clickgo.control.AbstractControl {
         loaderEl.addEventListener('load', () => {
             (iwindow as any).require.config({
                 paths: {
-                    'vs': clickgo.core.getCdn() + '/npm/monaco-editor@0.37.1/min/vs'
+                    'vs': clickgo.core.getCdn() + '/npm/monaco-editor@0.45.0/min/vs'
                 }
             });
             // --- 初始化 Monaco ---
             const proxy = (iwindow as any).URL.createObjectURL(new Blob([`
                 self.MonacoEnvironment = {
-                    baseUrl: '${clickgo.core.getCdn()}/npm/monaco-editor@0.37.1/min/'
+                    baseUrl: '${clickgo.core.getCdn()}/npm/monaco-editor@0.45.0/min/'
                 };
-                importScripts('${clickgo.core.getCdn()}/npm/monaco-editor@0.37.1/min/vs/base/worker/workerMain.js');
+                importScripts('${clickgo.core.getCdn()}/npm/monaco-editor@0.45.0/min/vs/base/worker/workerMain.js');
             `], { type: 'text/javascript' }));
             (iwindow as any).MonacoEnvironment = {
                 getWorkerUrl: () => proxy
@@ -368,50 +368,17 @@ export default class extends clickgo.control.AbstractControl {
                     'minimap': {
                         'enabled': false
                     },
-                    'readOnly': this.props.readonly
-                }, {
-                    'codeEditorService': {
-                        onCodeEditorAdd: () => {
-                            //
-                        },
-                        onCodeEditorRemove: () => {
-                            //
-                        },
-                        listCodeEditors: () => {
-                            return [];
-                        },
-                        onDiffEditorAdd: () => {
-                            //
-                        },
-                        onDiffEditorRemove: () => {
-                            //
-                        },
-                        listDiffEditors: () => {
-                            return [];
-                        },
-                        willCreateCodeEditor: () => {
-                            //
-                        },
-                        addCodeEditor: () => {
-                            //
-                        },
-                        getFocusedCodeEditor: () => {
-                            return this.access.instance;
-                        },
-                        openCodeEditor: (input: any) => {
-                            this.emit('jump', input);
-                            /*
-                            source.setSelection(input.options.selection);
-                            source.revealLine(input.options.selection.startLineNumber);
-                            */
-                            return this.access.instance;
-                        }
-                    }
+                    'readOnly': this.props.readonly,
+                    'automaticLayout': true
                 });
-                // --- 自动设置大小 ---
-                clickgo.dom.watchSize(this.refs.iframe, () => {
-                    this.access.instance.layout();
-                });
+                this.access.instance._codeEditorService.openCodeEditor = (input: any) => {
+                    this.emit('jump', input);
+                    /*
+                    source.setSelection(input.options.selection);
+                    source.revealLine(input.options.selection.startLineNumber);
+                    */
+                    return this.access.instance;
+                };
                 // --- 设置主题 ---
                 if (this.props.theme) {
                     this.access.monaco.editor.setTheme(this.props.theme);
