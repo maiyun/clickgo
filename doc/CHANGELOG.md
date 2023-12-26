@@ -1,5 +1,13 @@
 # Changelog
 
+# 3.8.3
+
+[\*] Fix some issues with the Monaco control.  
+[\*] Fix an issue with the scroll property not updating in the text control.  
+[\*] Update Monaco to version 0.45.0.  
+[\*] Update Vue to version 3.3.13.  
+[\*] Optimize the light theme.
+
 # 3.8.2
 
 [+] Add open method of core library.
