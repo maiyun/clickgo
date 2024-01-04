@@ -9,6 +9,7 @@
         </layout>
         <layout gutter="10">
             <button @click="disabled = !disabled" style="flex: 1;">{{disabled ? '' : '!'}}disabled</button>
+            <button @click="settime" style="flex: 1;">Set time</button>
         </layout>
     </layout>
 </form>

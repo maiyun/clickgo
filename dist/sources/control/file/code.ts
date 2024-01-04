@@ -29,7 +29,13 @@ export default class extends clickgo.control.AbstractControl {
     public change(e: InputEvent): void {
         e.stopPropagation();
         const inputEl = this.refs.input as unknown as HTMLInputElement;
-        this.emit('change', inputEl.files);
+        const files: File[] = [];
+        if (inputEl.files) {
+            for (const file of inputEl.files) {
+                files.push(file);
+            }
+        }
+        this.emit('change', files);
         inputEl.value = '';
     }
 

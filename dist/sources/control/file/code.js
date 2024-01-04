@@ -46,7 +46,13 @@ class default_1 extends clickgo.control.AbstractControl {
     change(e) {
         e.stopPropagation();
         const inputEl = this.refs.input;
-        this.emit('change', inputEl.files);
+        const files = [];
+        if (inputEl.files) {
+            for (const file of inputEl.files) {
+                files.push(file);
+            }
+        }
+        this.emit('change', files);
         inputEl.value = '';
     }
 }

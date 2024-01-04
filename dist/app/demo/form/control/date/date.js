@@ -34,5 +34,8 @@ class default_1 extends clickgo.form.AbstractForm {
         this.tz = undefined;
         this.disabled = false;
     }
+    settime() {
+        this.ts = clickgo.tool.rand(1504304812000, 1704304812000);
+    }
 }
 exports.default = default_1;
