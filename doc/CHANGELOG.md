@@ -1,5 +1,9 @@
 # Changelog
 
+# 3.8.4
+
+[\*] Optimize the file control.
+
 # 3.8.3
 
 [\*] Fix some issues with the Monaco control.  
