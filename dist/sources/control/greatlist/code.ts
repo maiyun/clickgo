@@ -149,16 +149,26 @@ export default class extends clickgo.control.AbstractControl {
 
     // --- method ---
 
+    /** --- 当前队列中的需要 checkValue 的次数 --- */
+    private _needCheckValue: number = 0;
+
     /**
      * --- 检测 value 是否合法 ---
      */
-    public checkValue(): void {
+    public async checkValue(): Promise<void> {
         if (!this.props.data.length) {
             return;
         }
+        ++this._needCheckValue;
+        await this.nextTick();
+        if (this._needCheckValue > 1) {
+            --this._needCheckValue;
+            return;
+        }
+        --this._needCheckValue;
 
         let change: boolean = false;
-        /** --- 获取一个正常值，作为是在没办法的替补值 --- */
+        /** --- 获取一个正常值，作为实在没办法的替补值 --- */
         const notDisabledIndex = this.getFirstNotDisabledIndex();
         /** --- 当前数据最大的 index --- */
         const dataMaxIndex = this.props.data.length - 1;
@@ -625,8 +635,8 @@ export default class extends clickgo.control.AbstractControl {
         });
 
         // --- 监听 data 变动 ---
-        this.watch('data', () => {
-            this.checkValue();
+        this.watch('data', async () => {
+            await this.checkValue();
         }, {
             'deep': true
         });
@@ -649,13 +659,17 @@ export default class extends clickgo.control.AbstractControl {
             }
             this.valueData = this.props.modelValue;
             this.shiftStart = this.valueData[0] !== undefined ? this.valueData[0] : 0;
-            this.checkValue();
+            this.checkValue().catch(() => {
+                //
+            });
         });
         this.valueData = this.props.modelValue;
         if (this.valueData[0]) {
             this.shiftStart = this.valueData[0];
         }
-        this.checkValue();
+        this.checkValue().catch(() => {
+            //
+        });
     }
 
 }

@@ -22,6 +22,15 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const clickgo = __importStar(require("clickgo"));
 class default_1 extends clickgo.control.AbstractControl {
@@ -53,6 +62,7 @@ class default_1 extends clickgo.control.AbstractControl {
         this.beforeSelectValues = [];
         this.isSelectStart = false;
         this.scrollShow = true;
+        this._needCheckValue = 0;
         this.lastGlno = 0;
     }
     get tableContentWidth() {
@@ -119,36 +129,45 @@ class default_1 extends clickgo.control.AbstractControl {
     }
     checkValue() {
         var _a, _b, _c;
-        if (!this.props.data.length) {
-            return;
-        }
-        let change = false;
-        const notDisabledIndex = this.getFirstNotDisabledIndex();
-        const dataMaxIndex = this.props.data.length - 1;
-        if (!this.propBoolean('multi') && (this.valueData.length > 1)) {
-            change = true;
-            this.valueData.splice(1);
-            this.shiftStart = this.valueData[0];
-        }
-        for (let i = 0; i < this.valueData.length; ++i) {
-            if ((this.valueData[i] > dataMaxIndex) ||
-                (((_a = this.props.data[this.valueData[i]]) === null || _a === void 0 ? void 0 : _a.disabled) || (((_b = this.props.data[this.valueData[i]]) === null || _b === void 0 ? void 0 : _b.control) === 'split'))) {
-                change = true;
-                if (this.shiftStart === this.valueData[i]) {
-                    this.shiftStart = i > 0 ? ((_c = this.valueData[0]) !== null && _c !== void 0 ? _c : notDisabledIndex) : notDisabledIndex;
-                }
-                this.valueData.splice(i, 1);
-                --i;
+        return __awaiter(this, void 0, void 0, function* () {
+            if (!this.props.data.length) {
+                return;
             }
-        }
-        if (this.propBoolean('must') && (this.valueData.length === 0)) {
-            change = true;
-            this.valueData = [notDisabledIndex];
-            this.shiftStart = this.valueData[0];
-        }
-        if (change) {
-            this.emit('update:modelValue', this.valueData);
-        }
+            ++this._needCheckValue;
+            yield this.nextTick();
+            if (this._needCheckValue > 1) {
+                --this._needCheckValue;
+                return;
+            }
+            --this._needCheckValue;
+            let change = false;
+            const notDisabledIndex = this.getFirstNotDisabledIndex();
+            const dataMaxIndex = this.props.data.length - 1;
+            if (!this.propBoolean('multi') && (this.valueData.length > 1)) {
+                change = true;
+                this.valueData.splice(1);
+                this.shiftStart = this.valueData[0];
+            }
+            for (let i = 0; i < this.valueData.length; ++i) {
+                if ((this.valueData[i] > dataMaxIndex) ||
+                    (((_a = this.props.data[this.valueData[i]]) === null || _a === void 0 ? void 0 : _a.disabled) || (((_b = this.props.data[this.valueData[i]]) === null || _b === void 0 ? void 0 : _b.control) === 'split'))) {
+                    change = true;
+                    if (this.shiftStart === this.valueData[i]) {
+                        this.shiftStart = i > 0 ? ((_c = this.valueData[0]) !== null && _c !== void 0 ? _c : notDisabledIndex) : notDisabledIndex;
+                    }
+                    this.valueData.splice(i, 1);
+                    --i;
+                }
+            }
+            if (this.propBoolean('must') && (this.valueData.length === 0)) {
+                change = true;
+                this.valueData = [notDisabledIndex];
+                this.shiftStart = this.valueData[0];
+            }
+            if (change) {
+                this.emit('update:modelValue', this.valueData);
+            }
+        });
     }
     select(value, shift = false, ctrl = false) {
         let change = false;
@@ -480,9 +499,9 @@ class default_1 extends clickgo.control.AbstractControl {
             };
             cb();
         });
-        this.watch('data', () => {
-            this.checkValue();
-        }, {
+        this.watch('data', () => __awaiter(this, void 0, void 0, function* () {
+            yield this.checkValue();
+        }), {
             'deep': true
         });
         this.watch('sl', () => {
@@ -498,13 +517,15 @@ class default_1 extends clickgo.control.AbstractControl {
             }
             this.valueData = this.props.modelValue;
             this.shiftStart = this.valueData[0] !== undefined ? this.valueData[0] : 0;
-            this.checkValue();
+            this.checkValue().catch(() => {
+            });
         });
         this.valueData = this.props.modelValue;
         if (this.valueData[0]) {
             this.shiftStart = this.valueData[0];
         }
-        this.checkValue();
+        this.checkValue().catch(() => {
+        });
     }
 }
 exports.default = default_1;
