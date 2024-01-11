@@ -1,5 +1,13 @@
 # Changelog
 
+# 3.8.5
+
+[+] Add label param of tab control.  
+[+] Add value param in close event of tab control.  
+[+] Add search param of select control.  
+[+] Add compar method of tool library.  
+[\*] Optimize the greatlist control.
+
 # 3.8.4
 
 [\*] Optimize the file control.
