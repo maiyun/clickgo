@@ -1,4 +1,4 @@
-<form title="List" width="400" height="450" min-width="300" min-height="400" padding="10" direction="v">
+<form title="List" width="450" height="450" min-width="300" min-height="400" padding="10" direction="v">
     <label>Greatlist: {{select}}, list: {{select2}}, label: {{label2}}</label>
     <tab v-model="ntab" :tabs="['greatlist', 'adaptation', 'beyond', 'list', 'object', 'async']" style="flex: 1; height: 0;">
         <!-- 默认 -->

@@ -91,6 +91,8 @@ export default class extends clickgo.form.AbstractForm {
 
     public multi = false;
 
+    public search = false;
+
     public editable = false;
 
     public tree = false;
@@ -138,21 +140,39 @@ export default class extends clickgo.form.AbstractForm {
         await clickgo.form.dialog('done');
     }
 
-    public async onRemote(value: string, resolve: () => void): Promise<void> {
+    public async onRemote(value: string, resolve: (data?: any[] | Record<string, string>) => void): Promise<void> {
         await clickgo.tool.sleep(300);
+        if (value === '') {
+            resolve(['1', '3', '5']);
+            return;
+        }
         if (value === '8') {
-            this.slist2r = [];
             resolve();
             return;
         }
-        this.slist2r = ['test', value, 'remote', {
+        resolve(['test', value, 'remote', {
             'label': 'label',
             'value': 'ok'
         }, {
             'label': 'label2',
             'value': 2
-        }];
-        resolve();
+        }]);
+    }
+
+    public changeArea(): void {
+        switch (this.area) {
+            case 'all': {
+                this.area = 'arrow';
+                break;
+            }
+            case 'arrow': {
+                this.area = 'text';
+                break;
+            }
+            default: {
+                this.area = 'all';
+            }
+        }
     }
 
     public onMounted(): void {

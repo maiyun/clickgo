@@ -105,6 +105,7 @@ class default_1 extends clickgo.form.AbstractForm {
         this.background = false;
         this.disabled = false;
         this.multi = false;
+        this.search = false;
         this.editable = false;
         this.tree = false;
         this.async = false;
@@ -150,20 +151,37 @@ class default_1 extends clickgo.form.AbstractForm {
     onRemote(value, resolve) {
         return __awaiter(this, void 0, void 0, function* () {
             yield clickgo.tool.sleep(300);
+            if (value === '') {
+                resolve(['1', '3', '5']);
+                return;
+            }
             if (value === '8') {
-                this.slist2r = [];
                 resolve();
                 return;
             }
-            this.slist2r = ['test', value, 'remote', {
+            resolve(['test', value, 'remote', {
                     'label': 'label',
                     'value': 'ok'
                 }, {
                     'label': 'label2',
                     'value': 2
-                }];
-            resolve();
+                }]);
         });
+    }
+    changeArea() {
+        switch (this.area) {
+            case 'all': {
+                this.area = 'arrow';
+                break;
+            }
+            case 'arrow': {
+                this.area = 'text';
+                break;
+            }
+            default: {
+                this.area = 'all';
+            }
+        }
     }
     onMounted() {
         this.watch(() => this.select.join(','), (n, o) => {

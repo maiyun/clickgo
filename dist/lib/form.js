@@ -1571,11 +1571,28 @@ function doFocusAndPopEvent(e) {
     if (!target) {
         return;
     }
-    const element = target;
-    if (element.dataset.cgPopOpen !== undefined) {
-        return;
-    }
     const paths = (_a = e.path) !== null && _a !== void 0 ? _a : (e.composedPath ? e.composedPath() : []);
+    let isCgPopOpen = false;
+    for (const item of paths) {
+        if (!item.tagName) {
+            continue;
+        }
+        if (item.dataset.cgPopOpen !== undefined) {
+            isCgPopOpen = true;
+            continue;
+        }
+        if (item.classList.contains('cg-form-wrap')) {
+            const formId = parseInt((_b = item.getAttribute('data-form-id')) !== null && _b !== void 0 ? _b : '0');
+            changeFocus(formId);
+            if (!isCgPopOpen) {
+                hidePop();
+            }
+            return;
+        }
+        if (item.tagName.toLowerCase() === 'body') {
+            break;
+        }
+    }
     for (const item of paths) {
         if (!item.tagName) {
             continue;
@@ -1584,23 +1601,6 @@ function doFocusAndPopEvent(e) {
             break;
         }
         if (item.id === 'cg-pop-list') {
-            return;
-        }
-        if (item.dataset.cgPopOpen !== undefined) {
-            return;
-        }
-    }
-    for (const item of paths) {
-        if (!item.tagName) {
-            continue;
-        }
-        if (item.tagName.toLowerCase() === 'body') {
-            break;
-        }
-        if (item.classList.contains('cg-form-wrap')) {
-            const formId = parseInt((_b = item.getAttribute('data-form-id')) !== null && _b !== void 0 ? _b : '0');
-            changeFocus(formId);
-            hidePop();
             return;
         }
     }

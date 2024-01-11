@@ -6,19 +6,35 @@ cg-greatselect {
             display: flex;
 
             .tag {
-                background: var(--g-background); border-radius: 3px; padding: 3px 6px; line-height: 1; margin-left: 7px;
-                &:hover {
-                    background: var(--g-background-hover);
+                border-radius: 3px; padding: 3px 6px; line-height: 1;
+
+                &:not(.placeholder) {
+                    background: rgba(0, 0, 0, .1);
+                    &:hover {
+                        background: rgba(0, 0, 0, .05);
+                    }
+                    &:active {
+                        background: rgba(0, 0, 0, .2);
+                    }
                 }
-                &:active {
-                    background: var(--g-background-active);
-                }
+
+            }
+
+            > :not(:first-child) {
+                margin-left: 7px;
             }
         }
 
         cg-text {
             flex: 1; border: none; background: transparent;
         }
+    }
+}
+
+.pop {
+    display: flex; flex-direction: column;
+    cg-list {
+        flex: 1; border-top: none;
     }
 }
 

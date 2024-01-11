@@ -27,7 +27,9 @@ const clickgo = __importStar(require("clickgo"));
 class default_1 extends clickgo.form.AbstractForm {
     constructor() {
         super(...arguments);
-        this.html = `<h1>Hello world!</h1>
+        this.htmlIndex = 0;
+        this.html = [
+            `<h1>Hello world!</h1>
 <button>Button</button> <button disabled>Button2</button>
 <h2>H2 title</h2>
 <div>div</div>
@@ -45,7 +47,10 @@ class default_1 extends clickgo.form.AbstractForm {
     <li id="li">li</li>
 </ol>
 <script>alert('b');</script>
-<style>li{background:red;}div{background:blue;}#li{background:yellow;}</style>`;
+<style>li{background:red;}div{background:blue;}#li{background:yellow;}</style>`,
+            `<h2>123</h2>
+<button>Test</button>`
+        ];
         this.css = `div{background:blue;}.test{background:red;}#li{background:yellow;}`;
         this.lcss = '';
         this.rcss = '';

@@ -790,3 +790,36 @@ export function execCommand(ac: string): void {
     // eslint-disable-next-line deprecation/deprecation
     document.execCommand(ac);
 }
+
+/**
+ * ---- 对比老值和新值，看看新值中哪些移除了，哪些新增了 ---
+ * @param before 老值
+ * @param after 新值
+ */
+export function compar(before: string[], after: string[]): {
+    'remove': Record<string, number>;
+    'add': Record<string, number>;
+} {
+    const rtn: {
+        'remove': Record<string, number>;
+        'add': Record<string, number>;
+    } = {
+        'remove': {},
+        'add': {}
+    };
+    for (let i = 0; i < before.length; ++i) {
+        const item = before[i];
+        if (after.includes(item)) {
+            continue;
+        }
+        rtn.remove[item] = i;
+    }
+    for (let i = 0; i < after.length; ++i) {
+        const item = after[i];
+        if (before.includes(item)) {
+            continue;
+        }
+        rtn.add[item] = i;
+    }
+    return rtn;
+}

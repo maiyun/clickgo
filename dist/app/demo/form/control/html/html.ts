@@ -2,7 +2,10 @@ import * as clickgo from 'clickgo';
 
 export default class extends clickgo.form.AbstractForm {
 
-    public html = `<h1>Hello world!</h1>
+    public htmlIndex = 0;
+
+    public html = [
+        `<h1>Hello world!</h1>
 <button>Button</button> <button disabled>Button2</button>
 <h2>H2 title</h2>
 <div>div</div>
@@ -20,7 +23,10 @@ export default class extends clickgo.form.AbstractForm {
     <li id="li">li</li>
 </ol>
 <script>alert('b');</script>
-<style>li{background:red;}div{background:blue;}#li{background:yellow;}</style>`;
+<style>li{background:red;}div{background:blue;}#li{background:yellow;}</style>`,
+        `<h2>123</h2>
+<button>Test</button>`
+    ];
 
     public css = `div{background:blue;}.test{background:red;}#li{background:yellow;}`;
 

@@ -30,4 +30,8 @@ export default class extends clickgo.form.AbstractForm {
         await clickgo.form.dialog('typeof localStorage: ' + typeof localStorage);
     }
 
+    public async map(): Promise<void> {
+        await clickgo.form.dialog('typeof Map: ' + typeof Map);
+    }
+
 }

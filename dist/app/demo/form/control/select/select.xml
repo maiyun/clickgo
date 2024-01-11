@@ -1,4 +1,4 @@
-<form title="Select" width="400" height="450" min-width="300" min-height="400" padding="10">
+<form title="Select" width="400" height="550" min-width="300" min-height="400" padding="10">
     <layout gutter="10" direction="v" style="flex: 1; width: 0;">
         <tab v-model="ntab" :tabs="['greatselect', 'select', 'levelselect']" style="flex: 1; height: 0;">
             <!-- greatselect -->
@@ -45,23 +45,26 @@
                 <layout gutter="10" direction="v" style="padding: 10px;">
                     <label>Now select value is {{select2}}</label>
                     <label>Label: {{label2}}</label>
-                    <select v-model="select2" @label="label2 = $event" :data="remote ? slist2r : slist2" :disabled="disabled" :editable="editable" :multi="multi" :tree="tree" :async="async" :remote="remote" :remote-delay="remoteDelay[0]" :icon="icon" icon-default="../../../res/txt.svg" @load="onLoad" @remote="onRemote" :style="{'font-size': fontSize ? '16px' : undefined, 'padding': padding ? '15px' : undefined, 'background': background ? 'red' : undefined, 'color': background ? '#FFF' : undefined}"></select>
+                    <select v-model="select2" @label="label2 = $event" :data="remote ? slist2r : slist2" :disabled="disabled" :editable="editable" :multi="multi" :tree="tree" :async="async" :search="search" :remote="remote" :remote-delay="remoteDelay[0]" :icon="icon" icon-default="../../../res/txt.svg" @load="onLoad" @remote="onRemote" :style="{'font-size': fontSize ? '16px' : undefined, 'padding': padding ? '15px' : undefined, 'background': background ? 'red' : undefined, 'color': background ? '#FFF' : undefined}"></select>
                     <label>Custom height:</label>
-                    <select :data="remote ? slist2r : ['1','2','3','4','5']" :disabled="disabled" :editable="editable" :multi="multi" :tree="tree" :async="async" :remote="remote" :remote-delay="remoteDelay[0]" :icon="icon" icon-default="../../../res/txt.svg" style="height: 60px;" @load="onLoad" @remote="onRemote" :style="{'font-size': fontSize ? '16px' : undefined, 'padding': padding ? '15px' : undefined, 'background': background ? 'red' : undefined, 'color': background ? '#FFF' : undefined}"></select>
+                    <select :data="remote ? slist2r : ['1','2','3','4','5']" :disabled="disabled" :editable="editable" :multi="multi" :tree="tree" :async="async" :search="search" :remote="remote" :remote-delay="remoteDelay[0]" :icon="icon" icon-default="../../../res/txt.svg" style="height: 60px;" @load="onLoad" @remote="onRemote" :style="{'font-size': fontSize ? '16px' : undefined, 'padding': padding ? '15px' : undefined, 'background': background ? 'red' : undefined, 'color': background ? '#FFF' : undefined}"></select>
                     <label>Always editable: {{aemodel}}</label>
                     <layout gutter="10">
-                        <select v-model="aemodel" :data="remote ? slist2r : ['1','2','3','4','5']" :disabled="disabled" editable :multi="multi" :tree="tree" :async="async" :remote="remote" :remote-delay="remoteDelay[0]" :icon="icon" icon-default="../../../res/txt.svg" placeholder="Please enter" @load="onLoad" @remote="onRemote" style="flex: 1;" :style="{'font-size': fontSize ? '16px' : undefined, 'padding': padding ? '15px' : undefined, 'background': background ? 'red' : undefined, 'color': background ? '#FFF' : undefined}"></select>
+                        <select v-model="aemodel" :data="remote ? slist2r : ['1','2','3','4','5']" :disabled="disabled" editable :multi="multi" :tree="tree" :async="async" :search="search" :remote="remote" :remote-delay="remoteDelay[0]" :icon="icon" icon-default="../../../res/txt.svg" placeholder="Please enter" @load="onLoad" @remote="onRemote" style="flex: 1;" :style="{'font-size': fontSize ? '16px' : undefined, 'padding': padding ? '15px' : undefined, 'background': background ? 'red' : undefined, 'color': background ? '#FFF' : undefined}"></select>
                         <button @click="aemodel.length=0">clear</button>
                         <button @click="aemodel[0] = '4'">4</button>
                     </layout>
                     <layout gutter="10">
                         <button @click="icon = !icon" style="flex: 1;">{{icon ? '' : '!'}}icon</button>
-                        <button @click="async = !async" style="flex: 1;">{{async ? '' : '!'}}async</button>
                         <button @click="tree = !tree" style="flex: 1;">{{tree ? '' : '!'}}tree</button>
+                        <button v-if="tree" @click="async = !async" style="flex: 1;">{{async ? '' : '!'}}async</button>
                     </layout>
                     <layout gutter="10">
-                        <button @click="remote = !remote" style="flex: 1;">{{remote ? '' : '!'}}remote</button>
-                        <select :data="[0, 100, 500, 1000, 2000]" v-model="remoteDelay" style="flex: 1;"></select>
+                        <button @click="search = !search" style="flex: 1;">{{search ? '' : '!'}}search</button>
+                        <template v-if="search">
+                            <button @click="remote = !remote" style="flex: 1;">{{remote ? '' : '!'}}remote</button>
+                            <select :data="[0, 100, 500, 1000, 2000]" v-model="remoteDelay" style="flex: 1;"></select>
+                        </template>
                     </layout>
                 </layout>
             </flow>
@@ -81,7 +84,7 @@
         </tab>
         <layout gutter="10">
             <button @click="disabled = !disabled" style="flex: 1;">{{disabled ? '' : '!'}}disabled</button>
-            <button v-if="ntab === 'greatselect'" @click="area = area === 'all' ? 'arrow' : 'all'" style="flex: 1;">Area: {{area}}</button>
+            <button v-if="ntab === 'greatselect'" @click="changeArea" style="flex: 1;">Area: {{area}}</button>
             <button v-else @click="editable = !editable" style="flex: 1;">{{editable ? '' : '!'}}editable</button>
         </layout>
         <layout gutter="10">

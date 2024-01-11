@@ -296,7 +296,7 @@ export async function run(url: string | types.IApp, opt: types.ITaskRunOptions =
         if (notifyId) {
             setTimeout(function(): void {
                 form.hideNotify(notifyId);
-            }, 2000);
+            }, 3000);
         }
     }
     else if (url.type !== 'app') {
@@ -315,7 +315,8 @@ export async function run(url: string | types.IApp, opt: types.ITaskRunOptions =
     const unblock = opt.unblock ? tool.clone(opt.unblock) : [];
     const unblockSys = [
         'require',
-        '__awaiter', 'eval', 'Math', 'Array', 'Blob', 'Error', 'Infinity', 'getComputedStyle', 'parseInt', 'parseFloat', 'Promise', 'Date', 'JSON', 'fetch', 'Number', 'String', 'Object', 'encodeURIComponent', 'decodeURIComponent', 'FormData', 'WebSocket'
+        '__awaiter', 'eval', 'Math', 'Array', 'Blob', 'Error', 'Infinity', 'getComputedStyle', 'parseInt', 'parseFloat', 'Promise', 'Date', 'JSON', 'fetch', 'Number', 'String', 'Object', 'encodeURIComponent', 'decodeURIComponent', 'FormData', 'WebSocket',
+        'Map', 'Set', 'WeakMap', 'WeakSet', 'RegExp', 'Function', 'Boolean', 'Symbol', 'Proxy', 'Reflect', 'Intl', 'NaN', 'navigator', 'Image', 'Audio', 'CanvasRenderingContext2D', 'WebGLRenderingContext', 'NodeList', 'HTMLCollection', 'Event', 'MouseEvent', 'KeyboardEvent', 'TouchEvent', 'File', 'FileList', 'URL', 'Navigator', 'Performance', 'Crypto', 'Worker', 'SharedWorker', 'ServiceWorker', 'WebAssembly', 'IntersectionObserver', 'MutationObserver', 'AudioContext', 'WebGL2RenderingContext', 'WebGLVertexArrayObject', 'WebGLBuffer', 'WebGLShader', 'WebGLProgram', 'WebGLTexture', 'WebGLRenderbuffer', 'WebGLFramebuffer', 'WebGLUniformLocation', 'WebGLActiveInfo', 'WebGLShaderPrecisionFormat', 'PerformanceObserver', 'PerformanceEntry', 'performance', 'ResizeObserver', 'requestIdleCallback', 'cancelIdleCallback', 'AbortController', 'AbortSignal', 'TextDecoder', 'TextEncoder', 'StorageEvent', 'BeforeUnloadEvent', 'PointerEvent', 'CompositionEvent', 'WheelEvent', 'InputEvent', 'HashChangeEvent', 'PopStateEvent', 'MessageEvent', 'Notification', 'BatteryManager', 'DeviceOrientationEvent', 'DeviceMotionEvent', 'ScreenOrientation', 'MediaQueryList', 'SpeechSynthesisUtterance', 'BroadcastChannel', 'Worklet', 'CustomEvent', 'TransitionEvent', 'AnimationEvent', 'Response', 'Request', 'Headers', 'ReadableStream', 'WritableStream', 'TransformStream', 'URLSearchParams', 'History', 'location', 'crypto', 'indexedDB', 'IDBFactory', 'IDBDatabase', 'IDBTransaction', 'IDBObjectStore', 'IDBIndex', 'IDBCursor', 'IDBKeyRange', 'IDBRequest', 'FileReader', 'Atomics', 'CanvasGradient', 'CanvasPattern', 'TextMetrics', 'ImageData', 'Path2D', 'TextTrack', 'VTTCue', 'TrackEvent', 'OfflineAudioContext', 'AnalyserNode', 'AudioBuffer', 'AudioBufferSourceNode', 'AudioDestinationNode', 'AudioListener', 'AudioNode', 'AudioParam', 'AudioScheduledSourceNode', 'AudioWorklet', 'BaseAudioContext', 'BiquadFilterNode', 'ChannelMergerNode', 'ChannelSplitterNode', 'ConstantSourceNode', 'ConvolverNode', 'DelayNode', 'DynamicsCompressorNode', 'GainNode', 'IIRFilterNode', 'MediaElementAudioSourceNode', 'MediaStreamAudioSourceNode', 'MediaStreamAudioDestinationNode', 'OscillatorNode', 'PannerNode', 'PeriodicWave', 'ScriptProcessorNode', 'StereoPannerNode', 'WaveShaperNode', 'UIEvent', 'FocusEvent', 'ClipboardEvent', 'GamepadEvent', 'MediaKeyMessageEvent', 'PageTransitionEvent', 'ProgressEvent', 'Touch', 'ErrorEvent', 'MediaStreamEvent', 'IDBVersionChangeEvent', 'SpeechSynthesisEvent', 'AudioProcessingEvent', 'OfflineAudioCompletionEvent', 'ClipboardItem', 'PresentationConnection', 'PresentationConnectionAvailableEvent', 'PresentationConnectionCloseEvent', 'PresentationConnectionList', 'PresentationReceiver', 'PresentationRequest', 'PushManager', 'PushSubscription', 'PushSubscriptionOptions', 'ServiceWorkerContainer', 'PaymentRequest', 'PaymentAddress', 'PaymentRequestUpdateEvent', 'PaymentResponse', 'PresentationAvailability', 'Bluetooth', 'BluetoothDevice', 'BluetoothRemoteGATTServer', 'BluetoothRemoteGATTService', 'BluetoothRemoteGATTCharacteristic', 'BluetoothRemoteGATTDescriptor', 'MediaRecorder', 'MessageChannel', 'MessagePort', 'atob', 'btoa'
     ];
     for (const name of unblockSys) {
         if (unblock.includes(name)) {
@@ -756,6 +757,9 @@ export async function run(url: string | types.IApp, opt: types.ITaskRunOptions =
             hidePop: function(pop?: HTMLElement): void {
                 form.hidePop(pop);
             },
+            doFocusAndPopEvent: function(e: MouseEvent | TouchEvent): void {
+                form.doFocusAndPopEvent(e);
+            },
             removePanel(id: number, vapp: types.IVApp, el: HTMLElement): boolean {
                 return form.removePanel(id, vapp, el);
             },
@@ -1162,6 +1166,12 @@ export async function run(url: string | types.IApp, opt: types.ITaskRunOptions =
             },
             execCommand: function(ac: string): void {
                 tool.execCommand(ac);
+            },
+            compar(before: string[], after: string[]): {
+                'remove': Record<string, number>;
+                'add': Record<string, number>;
+            } {
+                return tool.compar(before, after);
             }
         },
         'zip': {

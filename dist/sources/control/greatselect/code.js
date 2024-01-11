@@ -55,7 +55,7 @@ class default_1 extends clickgo.control.AbstractControl {
     keydown(e) {
         if (e.key === 'Enter') {
             e.preventDefault();
-            this.click(e, 'arrow');
+            this.down(e, 'arrow');
         }
         else if (e.key === ' ') {
             e.preventDefault();
@@ -67,9 +67,12 @@ class default_1 extends clickgo.control.AbstractControl {
             return;
         }
         this.isSpaceDown = false;
-        this.click(e, 'arrow');
+        this.down(e, 'arrow');
     }
-    click(e, area) {
+    down(e, area) {
+        if (!(e instanceof KeyboardEvent) && clickgo.dom.hasTouchButMouse(e)) {
+            return;
+        }
         if (this.element.dataset.cgPopOpen !== undefined) {
             clickgo.form.hidePop(this.element);
             return;

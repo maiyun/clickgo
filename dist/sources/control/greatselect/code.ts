@@ -6,7 +6,7 @@ export default class extends clickgo.control.AbstractControl {
         'disabled': boolean | string;
         'multi': boolean | string;
         'direction': 'h' | 'v';
-        'area': 'all' | 'arrow';
+        'area': 'all' | 'text' | 'arrow';
         'pop': 'greatlist' | 'custom';
 
         'data': Array<{
@@ -54,7 +54,7 @@ export default class extends clickgo.control.AbstractControl {
     public keydown(e: KeyboardEvent): void {
         if (e.key === 'Enter') {
             e.preventDefault();
-            this.click(e, 'arrow');
+            this.down(e, 'arrow');
         }
         else if (e.key === ' ') {
             e.preventDefault();
@@ -67,10 +67,13 @@ export default class extends clickgo.control.AbstractControl {
             return;
         }
         this.isSpaceDown = false;
-        this.click(e, 'arrow');
+        this.down(e, 'arrow');
     }
 
-    public click(e: MouseEvent | KeyboardEvent, area: 'left' | 'arrow'): void {
+    public down(e: MouseEvent | TouchEvent | KeyboardEvent, area: 'left' | 'arrow'): void {
+        if (!(e instanceof KeyboardEvent) && clickgo.dom.hasTouchButMouse(e)) {
+            return;
+        }
         if (this.element.dataset.cgPopOpen !== undefined) {
             clickgo.form.hidePop(this.element);
             return;

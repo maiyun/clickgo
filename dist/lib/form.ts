@@ -2053,12 +2053,30 @@ export function doFocusAndPopEvent(e: MouseEvent | TouchEvent): void {
     if (!target) {
         return;
     }
-    const element: HTMLElement | null = target as HTMLElement;
-    if (element.dataset.cgPopOpen !== undefined) {
-        // --- 此对象为已打开 pop 的组件，不做处理，组件自行处理 ---
-        return;
-    }
     const paths: HTMLElement[] = (e as any).path ?? (e.composedPath ? e.composedPath() : []);
+    // --- 检测是不是窗体内部点击 ---
+    let isCgPopOpen = false;
+    for (const item of paths) {
+        if (!item.tagName) {
+            continue;
+        }
+        if (item.dataset.cgPopOpen !== undefined) {
+            isCgPopOpen = true;
+            continue;
+        }
+        if (item.classList.contains('cg-form-wrap')) {
+            // --- 窗体内部点击，转换焦点到当前窗体，但触发隐藏 pop ---
+            const formId = parseInt(item.getAttribute('data-form-id') ?? '0');
+            changeFocus(formId);
+            if (!isCgPopOpen) {
+                hidePop();
+            }
+            return;
+        }
+        if (item.tagName.toLowerCase() === 'body') {
+            break;
+        }
+    }
     // --- 检测是不是弹出层 ---
     for (const item of paths) {
         if (!item.tagName) {
@@ -2069,25 +2087,6 @@ export function doFocusAndPopEvent(e: MouseEvent | TouchEvent): void {
         }
         if (item.id === 'cg-pop-list') {
             // --- 弹出层点击，不触发丢失焦点，也不触发隐藏 pop，是否隐藏请自行处理 ---
-            return;
-        }
-        if (item.dataset.cgPopOpen !== undefined) {
-            return;
-        }
-    }
-    // --- 检测是不是窗体内部点击 ---
-    for (const item of paths) {
-        if (!item.tagName) {
-            continue;
-        }
-        if (item.tagName.toLowerCase() === 'body') {
-            break;
-        }
-        if (item.classList.contains('cg-form-wrap')) {
-            // --- 窗体内部点击，转换焦点到当前窗体，但触发隐藏 pop ---
-            const formId = parseInt(item.getAttribute('data-form-id') ?? '0');
-            changeFocus(formId);
-            hidePop();
             return;
         }
     }

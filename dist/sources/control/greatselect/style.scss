@@ -3,7 +3,7 @@
     &.area-all {
         background: var(--g-background);
     }
-    &.area-arrow {
+    &.area-arrow, &.area-text {
         background: var(--g-plain-background);
     }
 
@@ -92,8 +92,28 @@
                 }
             }
         }
+        &.area-text {
+            &:hover {
+                .arrow {
+                    background: var(--g-plain-background-hover);
+                    border-left-color: var(--g-plain-border-color-hover);
+                    &::after {
+                        border-color: var(--g-color-hover);
+                    }
+                }
+            }
+            &:active {
+                .arrow {
+                    background: var(--g-plain-background-active);
+                    border-left-color: var(--g-plain-border-color-active);
+                    &::after {
+                        border-color: var(--g-color-active);
+                    }
+                }
+            }
+        }
     }
-    &.area-arrow {
+    &.area-arrow, &.area-text {
         &[data-cg-pop-open], &.active {
             .arrow {
                 background: var(--g-plain-background-active);
