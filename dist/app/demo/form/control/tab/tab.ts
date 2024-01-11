@@ -4,7 +4,10 @@ export default class extends clickgo.form.AbstractForm {
 
     public ntab = '';
 
-    public tabs: any[] = ['tab1'];
+    public tabs: any[] = ['tab1', {
+        'label': 'haha',
+        'value': 'ok'
+    }];
 
     public tindex = 1;
 
@@ -18,8 +21,9 @@ export default class extends clickgo.form.AbstractForm {
 
     public cclose = false;
 
-    public async onClose(e: CustomEvent, i: number): Promise<void> {
+    public async onClose(e: CustomEvent, i: number, v: string): Promise<void> {
         if (i !== 10) {
+            await clickgo.form.dialog('Closed, index: ' + i.toString() + ', value: ' + v);
             return;
         }
         e.preventDefault();

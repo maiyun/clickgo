@@ -16,6 +16,7 @@ export default class extends clickgo.control.AbstractControl {
     public timer = 0;
 
     public tabsData: Array<{
+        'label'?: string;
         'value'?: string;
         'drag'?: boolean;
         'close'?: boolean;
@@ -40,6 +41,7 @@ export default class extends clickgo.control.AbstractControl {
         for (const item of this.tabsData) {
             if (typeof item !== 'object') {
                 tabs.push({
+                    'label': item,
                     'value': item,
                     'drag': this.isDrag,
                     'close': this.isClose
@@ -47,7 +49,8 @@ export default class extends clickgo.control.AbstractControl {
             }
             else {
                 tabs.push({
-                    'value': item.value ?? 'error',
+                    'label': item.label ?? item.value ?? 'error',
+                    'value': item.value ?? item.label ?? 'error',
                     'drag': item.drag ?? this.isDrag,
                     'close': item.close ?? this.isClose
                 });
@@ -124,14 +127,14 @@ export default class extends clickgo.control.AbstractControl {
         });
     }
 
-    public tabClose(e: MouseEvent, index: number): void {
+    public tabClose(e: MouseEvent, index: number, value: string): void {
         const event = {
             'go': true,
             preventDefault: function() {
                 this.go = false;
             }
         };
-        this.emit('close', event, index);
+        this.emit('close', event, index, value);
         if (!event.go) {
             return;
         }

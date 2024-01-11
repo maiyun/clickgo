@@ -37,7 +37,10 @@ class default_1 extends clickgo.form.AbstractForm {
     constructor() {
         super(...arguments);
         this.ntab = '';
-        this.tabs = ['tab1'];
+        this.tabs = ['tab1', {
+                'label': 'haha',
+                'value': 'ok'
+            }];
         this.tindex = 1;
         this.tabPosition = 'top';
         this.color = undefined;
@@ -45,9 +48,10 @@ class default_1 extends clickgo.form.AbstractForm {
         this.drag = false;
         this.cclose = false;
     }
-    onClose(e, i) {
+    onClose(e, i, v) {
         return __awaiter(this, void 0, void 0, function* () {
             if (i !== 10) {
+                yield clickgo.form.dialog('Closed, index: ' + i.toString() + ', value: ' + v);
                 return;
             }
             e.preventDefault();

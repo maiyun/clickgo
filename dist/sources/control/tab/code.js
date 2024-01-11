@@ -57,11 +57,12 @@ class default_1 extends clickgo.control.AbstractControl {
         return clickgo.tool.getBoolean(this.props.close);
     }
     get tabsComp() {
-        var _a, _b, _c;
+        var _a, _b, _c, _d, _e, _f;
         const tabs = [];
         for (const item of this.tabsData) {
             if (typeof item !== 'object') {
                 tabs.push({
+                    'label': item,
                     'value': item,
                     'drag': this.isDrag,
                     'close': this.isClose
@@ -69,9 +70,10 @@ class default_1 extends clickgo.control.AbstractControl {
             }
             else {
                 tabs.push({
-                    'value': (_a = item.value) !== null && _a !== void 0 ? _a : 'error',
-                    'drag': (_b = item.drag) !== null && _b !== void 0 ? _b : this.isDrag,
-                    'close': (_c = item.close) !== null && _c !== void 0 ? _c : this.isClose
+                    'label': (_b = (_a = item.label) !== null && _a !== void 0 ? _a : item.value) !== null && _b !== void 0 ? _b : 'error',
+                    'value': (_d = (_c = item.value) !== null && _c !== void 0 ? _c : item.label) !== null && _d !== void 0 ? _d : 'error',
+                    'drag': (_e = item.drag) !== null && _e !== void 0 ? _e : this.isDrag,
+                    'close': (_f = item.close) !== null && _f !== void 0 ? _f : this.isClose
                 });
             }
         }
@@ -141,14 +143,14 @@ class default_1 extends clickgo.control.AbstractControl {
             }
         });
     }
-    tabClose(e, index) {
+    tabClose(e, index, value) {
         const event = {
             'go': true,
             preventDefault: function () {
                 this.go = false;
             }
         };
-        this.emit('close', event, index);
+        this.emit('close', event, index, value);
         if (!event.go) {
             return;
         }

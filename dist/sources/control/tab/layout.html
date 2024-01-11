@@ -5,8 +5,8 @@
             <div ref="tabs" class="tabs" @wheel="wheel" @touchstart="touch">
                 <div v-for="item, index of tabsComp" class="tab" :class="[value === item.value ? 'selected' : undefined]" @click="tabClick($event, item)" data-cg-drop @drop="drop($event, index)">
                     <div v-if="item.drag" class="drag" @mousedown="down($event, index)" @touchstart="down($event, index)">&#xea02;</div>
-                    <div class="content">{{item.value}}</div>
-                    <div v-if="item.close" class="close" @click="tabClose($event, index)">&#xea01;</div>
+                    <div class="content">{{item.label}}</div>
+                    <div v-if="item.close" class="close" @click="tabClose($event, index, item.value)">&#xea01;</div>
                 </div>
             </div>
             <div v-show="arrow" class="arrow end" @mousedown="longDown($event, 'end')" @touchstart="longDown($event, 'end')"></div>
