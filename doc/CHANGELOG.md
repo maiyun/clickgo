@@ -1,5 +1,10 @@
 # Changelog
 
+# 3.8.7
+
+[+] Add check event of menulist-item control.  
+[\*] Fix the wrap bug of arteditor.
+
 # 3.8.6
 
 [+] Add add, remove events of select.  
