@@ -172,9 +172,12 @@ export default class extends clickgo.control.AbstractControl {
             if (this.propBoolean('multi')) {
                 // --- 判断是否删除其他 tag ---
                 if ((e.target as HTMLInputElement).value === '' && this.propBoolean('multi') && this.value.length > 0) {
+                    const index = this.value.length - 1;
+                    const value = this.value[index];
                     this.value.splice(-1);
                     this.label.splice(-1);
                     this.updateValue();
+                    this.emit('remove', index, value);
                 }
             }
             return;
@@ -196,6 +199,9 @@ export default class extends clickgo.control.AbstractControl {
                 'clearInput': true,
                 'clearList': true
             });
+            const addIndex = this.value.length - 1;
+            const addValue = this.value[addIndex];
+            this.emit('add', addIndex, addValue);
             if (this.propBoolean('search')) {
                 await this._search();
             }
@@ -255,6 +261,9 @@ export default class extends clickgo.control.AbstractControl {
                     'clearInput': true,
                     'clearList': true
                 });
+                const addIndex = this.value.length - 1;
+                const addValue = this.value[addIndex];
+                this.emit('add', addIndex, addValue);
                 clickgo.form.hidePop();
                 if (this.propBoolean('search')) {
                     await this._search();
@@ -297,6 +306,9 @@ export default class extends clickgo.control.AbstractControl {
                 this.label.push(this.listLabel[0]);
                 this.searchValue = '';
                 this.updateValue();
+                const addIndex = this.value.length - 1;
+                const addValue = this.value[addIndex];
+                this.emit('add', addIndex, addValue);
                 clickgo.form.hidePop();
                 await this._search();
             }
@@ -460,6 +472,9 @@ export default class extends clickgo.control.AbstractControl {
                     'clearInput': true,
                     'clearList': true
                 });
+                const addIndex = this.value.length - 1;
+                const addValue = this.value[addIndex];
+                this.emit('add', addIndex, addValue);
                 if (this.propBoolean('search')) {
                     clickgo.form.hidePop();
                     await this._search();
@@ -496,13 +511,31 @@ export default class extends clickgo.control.AbstractControl {
                         'clearInput': true,
                         'clearList': true
                     });
+                    const addIndex = this.value.length - 1;
+                    const addValue = this.value[addIndex];
+                    this.emit('add', addIndex, addValue);
                     clickgo.form.hidePop();
                     await this._search();
                 }
                 else {
-                    this.value = clickgo.tool.clone(this.listValue);
-                    this.label = clickgo.tool.clone(this.listLabel);
-                    this.updateValue();
+                    // --- 多选情况，可能有新增，可能有减少，要比对 ---
+                    const rtn = clickgo.tool.compar(this.value, this.listValue);
+                    if (rtn.length.add || rtn.length.remove) {
+                        // --- 有变化 ---
+                        this.value = clickgo.tool.clone(this.listValue);
+                        this.label = clickgo.tool.clone(this.listLabel);
+                        if (rtn.length.add) {
+                            for (const name in rtn.add) {
+                                this.emit('add', rtn.add[name], name);
+                            }
+                        }
+                        if (rtn.length.remove) {
+                            for (const name in rtn.remove) {
+                                this.emit('remove', rtn.remove[name], name);
+                            }
+                        }
+                        this.updateValue();
+                    }
                 }
             }
             else {
@@ -531,12 +564,14 @@ export default class extends clickgo.control.AbstractControl {
                 return;
             }
         }
+        const value = this.value[index];
         this.value.splice(index, 1);
         this.label.splice(index, 1);
         if (this.isMust) {
             this.listValue = clickgo.tool.clone(this.value);
         }
         this.updateValue();
+        this.emit('remove', index, value);
     }
 
     /** --- tags 的鼠标滚轮事件 --- */

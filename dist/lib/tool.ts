@@ -799,13 +799,25 @@ export function execCommand(ac: string): void {
 export function compar(before: string[], after: string[]): {
     'remove': Record<string, number>;
     'add': Record<string, number>;
+    'length': {
+        'remove': number;
+        'add': number;
+    };
 } {
     const rtn: {
         'remove': Record<string, number>;
         'add': Record<string, number>;
+        'length': {
+            'remove': number;
+            'add': number;
+        };
     } = {
         'remove': {},
-        'add': {}
+        'add': {},
+        'length': {
+            'remove': 0,
+            'add': 0
+        }
     };
     for (let i = 0; i < before.length; ++i) {
         const item = before[i];
@@ -813,6 +825,7 @@ export function compar(before: string[], after: string[]): {
             continue;
         }
         rtn.remove[item] = i;
+        ++rtn.length.remove;
     }
     for (let i = 0; i < after.length; ++i) {
         const item = after[i];
@@ -820,6 +833,7 @@ export function compar(before: string[], after: string[]): {
             continue;
         }
         rtn.add[item] = i;
+        ++rtn.length.add;
     }
     return rtn;
 }

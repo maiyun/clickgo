@@ -1170,6 +1170,10 @@ export async function run(url: string | types.IApp, opt: types.ITaskRunOptions =
             compar(before: string[], after: string[]): {
                 'remove': Record<string, number>;
                 'add': Record<string, number>;
+                'length': {
+                    'remove': number;
+                    'add': number;
+                };
             } {
                 return tool.compar(before, after);
             }

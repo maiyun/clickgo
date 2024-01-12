@@ -639,7 +639,11 @@ exports.execCommand = execCommand;
 function compar(before, after) {
     const rtn = {
         'remove': {},
-        'add': {}
+        'add': {},
+        'length': {
+            'remove': 0,
+            'add': 0
+        }
     };
     for (let i = 0; i < before.length; ++i) {
         const item = before[i];
@@ -647,6 +651,7 @@ function compar(before, after) {
             continue;
         }
         rtn.remove[item] = i;
+        ++rtn.length.remove;
     }
     for (let i = 0; i < after.length; ++i) {
         const item = after[i];
@@ -654,6 +659,7 @@ function compar(before, after) {
             continue;
         }
         rtn.add[item] = i;
+        ++rtn.length.add;
     }
     return rtn;
 }

@@ -144,9 +144,12 @@ class default_1 extends clickgo.control.AbstractControl {
             if (e.key === 'Backspace') {
                 if (this.propBoolean('multi')) {
                     if (e.target.value === '' && this.propBoolean('multi') && this.value.length > 0) {
+                        const index = this.value.length - 1;
+                        const value = this.value[index];
                         this.value.splice(-1);
                         this.label.splice(-1);
                         this.updateValue();
+                        this.emit('remove', index, value);
                     }
                 }
                 return;
@@ -168,6 +171,9 @@ class default_1 extends clickgo.control.AbstractControl {
                     'clearInput': true,
                     'clearList': true
                 });
+                const addIndex = this.value.length - 1;
+                const addValue = this.value[addIndex];
+                this.emit('add', addIndex, addValue);
                 if (this.propBoolean('search')) {
                     yield this._search();
                 }
@@ -222,6 +228,9 @@ class default_1 extends clickgo.control.AbstractControl {
                         'clearInput': true,
                         'clearList': true
                     });
+                    const addIndex = this.value.length - 1;
+                    const addValue = this.value[addIndex];
+                    this.emit('add', addIndex, addValue);
                     clickgo.form.hidePop();
                     if (this.propBoolean('search')) {
                         yield this._search();
@@ -261,6 +270,9 @@ class default_1 extends clickgo.control.AbstractControl {
                     this.label.push(this.listLabel[0]);
                     this.searchValue = '';
                     this.updateValue();
+                    const addIndex = this.value.length - 1;
+                    const addValue = this.value[addIndex];
+                    this.emit('add', addIndex, addValue);
                     clickgo.form.hidePop();
                     yield this._search();
                 }
@@ -403,6 +415,9 @@ class default_1 extends clickgo.control.AbstractControl {
                         'clearInput': true,
                         'clearList': true
                     });
+                    const addIndex = this.value.length - 1;
+                    const addValue = this.value[addIndex];
+                    this.emit('add', addIndex, addValue);
                     if (this.propBoolean('search')) {
                         clickgo.form.hidePop();
                         yield this._search();
@@ -436,13 +451,29 @@ class default_1 extends clickgo.control.AbstractControl {
                             'clearInput': true,
                             'clearList': true
                         });
+                        const addIndex = this.value.length - 1;
+                        const addValue = this.value[addIndex];
+                        this.emit('add', addIndex, addValue);
                         clickgo.form.hidePop();
                         yield this._search();
                     }
                     else {
-                        this.value = clickgo.tool.clone(this.listValue);
-                        this.label = clickgo.tool.clone(this.listLabel);
-                        this.updateValue();
+                        const rtn = clickgo.tool.compar(this.value, this.listValue);
+                        if (rtn.length.add || rtn.length.remove) {
+                            this.value = clickgo.tool.clone(this.listValue);
+                            this.label = clickgo.tool.clone(this.listLabel);
+                            if (rtn.length.add) {
+                                for (const name in rtn.add) {
+                                    this.emit('add', rtn.add[name], name);
+                                }
+                            }
+                            if (rtn.length.remove) {
+                                for (const name in rtn.remove) {
+                                    this.emit('remove', rtn.remove[name], name);
+                                }
+                            }
+                            this.updateValue();
+                        }
                     }
                 }
                 else {
@@ -469,12 +500,14 @@ class default_1 extends clickgo.control.AbstractControl {
                 return;
             }
         }
+        const value = this.value[index];
         this.value.splice(index, 1);
         this.label.splice(index, 1);
         if (this.isMust) {
             this.listValue = clickgo.tool.clone(this.value);
         }
         this.updateValue();
+        this.emit('remove', index, value);
     }
     tagsWheel(e) {
         if (e.deltaY === 0) {

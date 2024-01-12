@@ -93,6 +93,7 @@ class default_1 extends clickgo.form.AbstractForm {
             }
         ];
         this.slist2r = [];
+        this.addRemoveList = [];
         this.select2 = ['haha2'];
         this.aemodel = [];
         this.label2 = [];
@@ -169,6 +170,12 @@ class default_1 extends clickgo.form.AbstractForm {
                     'value': 2
                 }]);
         });
+    }
+    onAdd(index, value) {
+        this.addRemoveList.unshift('@add, index: ' + index.toString() + ', value: ' + value);
+    }
+    onRemove(index, value) {
+        this.addRemoveList.unshift('@remove, index: ' + index.toString() + ', value: ' + value);
     }
     changeArea() {
         switch (this.area) {

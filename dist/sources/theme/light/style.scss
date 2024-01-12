@@ -580,6 +580,18 @@ global {
     }
 }
 
+// -- CONTROL -- select --
+
+.select_tag-cg-greatselect {
+    .select_op {
+        .select_tags {
+            .select_tag {
+                padding: 6px 10px;
+            }
+        }
+    }
+}
+
 // -- CONTROL -- tab --
 
 .tab_wrap {

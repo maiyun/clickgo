@@ -65,6 +65,9 @@ export default class extends clickgo.form.AbstractForm {
 
     public slist2r: any[] = [];
 
+    /** --- onAdd / onRemove --- */
+    public addRemoveList: string[] = [];
+
     public select2 = ['haha2'];
 
     public aemodel = [];
@@ -161,6 +164,14 @@ export default class extends clickgo.form.AbstractForm {
             'label': 'label2',
             'value': 2
         }]);
+    }
+
+    public onAdd(index: number, value: string): void {
+        this.addRemoveList.unshift('@add, index: ' + index.toString() + ', value: ' + value);
+    }
+
+    public onRemove(index: number, value: string): void {
+        this.addRemoveList.unshift('@remove, index: ' + index.toString() + ', value: ' + value);
     }
 
     public changeArea(): void {
