@@ -76,7 +76,7 @@ export default class extends clickgo.form.AbstractForm {
 
     public asyncModel = ['1'];
 
-    public asyncData = [];
+    public asyncData: any[] = [];
 
     public select3 = [];
 
@@ -187,6 +187,17 @@ export default class extends clickgo.form.AbstractForm {
             default: {
                 this.area = 'all';
             }
+        }
+    }
+
+    /** --- 异步加载按钮 --- */
+    public asyncLoad(): void {
+        const list = ['0', {
+            'label': 'ok',
+            'value': '1'
+        }, '2', '3'];
+        for (const item of list) {
+            this.asyncData.push(item);
         }
     }
 

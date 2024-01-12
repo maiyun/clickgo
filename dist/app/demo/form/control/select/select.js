@@ -192,6 +192,15 @@ class default_1 extends clickgo.form.AbstractForm {
             }
         }
     }
+    asyncLoad() {
+        const list = ['0', {
+                'label': 'ok',
+                'value': '1'
+            }, '2', '3'];
+        for (const item of list) {
+            this.asyncData.push(item);
+        }
+    }
     onMounted() {
         this.watch(() => this.select.join(','), (n, o) => {
             let select = [];

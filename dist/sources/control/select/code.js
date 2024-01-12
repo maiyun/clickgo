@@ -655,12 +655,18 @@ class default_1 extends clickgo.control.AbstractControl {
         });
         this.watch('data', () => __awaiter(this, void 0, void 0, function* () {
             yield this.nextTick();
-            if (JSON.stringify(this.label) === JSON.stringify(this.listLabel)) {
-                return;
+            yield clickgo.tool.sleep(0);
+            if (JSON.stringify(this.value) !== JSON.stringify(this.listValue)) {
+                this.value = clickgo.tool.clone(this.listValue);
+                this.emit('update:modelValue', clickgo.tool.clone(this.value));
             }
-            this.label = clickgo.tool.clone(this.listLabel);
-            this.emit('label', clickgo.tool.clone(this.label));
-        }));
+            if (JSON.stringify(this.label) !== JSON.stringify(this.listLabel)) {
+                this.label = clickgo.tool.clone(this.listLabel);
+                this.emit('label', clickgo.tool.clone(this.label));
+            }
+        }), {
+            'deep': true
+        });
         clickgo.dom.watchStyle(this.element, ['background', 'padding'], (n, v) => {
             switch (n) {
                 case 'background': {
