@@ -17,6 +17,8 @@
                                 <menulist>
                                     <menulist-item type="check" alt="A" v-model="check1">Check1</menulist-item>
                                     <menulist-item type="check" alt="B" v-model="check2">Check2</menulist-item>
+                                    <menulist-item type="check" alt="C" v-model="check3" @check="onCheck">Check3 (not)</menulist-item>
+                                    <menulist-item type="check" alt="D">Check4 (nov)</menulist-item>
                                 </menulist>
                             </template>
                         </menulist-item>

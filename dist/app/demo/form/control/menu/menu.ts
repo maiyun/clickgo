@@ -8,4 +8,10 @@ export default class extends clickgo.form.AbstractForm {
 
     public check2 = false;
 
+    public check3 = true;
+
+    public onCheck(event: Event): void {
+        event.preventDefault();
+    }
+
 }

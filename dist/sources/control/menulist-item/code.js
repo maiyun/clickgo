@@ -34,6 +34,7 @@ class default_1 extends clickgo.control.AbstractControl {
             'label': '',
             'modelValue': ''
         };
+        this.value = '';
         this.padding = '';
     }
     get opMargin() {
@@ -55,11 +56,27 @@ class default_1 extends clickgo.control.AbstractControl {
             }
             return;
         }
-        if (this.props.type === 'radio') {
-            this.emit('update:modelValue', this.props.label);
-        }
-        else if (this.props.type === 'check') {
-            this.emit('update:modelValue', this.props.modelValue ? false : true);
+        if (this.props.type) {
+            const event = {
+                'go': true,
+                preventDefault: function () {
+                    this.go = false;
+                }
+            };
+            if (this.props.type === 'radio') {
+                this.emit('check', event, this.value, this.props.label);
+                if (event.go) {
+                    this.value = this.props.label;
+                    this.emit('update:modelValue', this.value);
+                }
+            }
+            else if (this.props.type === 'check') {
+                this.emit('check', event, this.value);
+                if (event.go) {
+                    this.value = !this.value;
+                    this.emit('update:modelValue', this.value);
+                }
+            }
         }
         clickgo.form.hidePop();
     }
@@ -84,6 +101,14 @@ class default_1 extends clickgo.control.AbstractControl {
             else {
                 --menulist.hasTypeItemsCount;
             }
+        }, {
+            'immediate': true
+        });
+        this.watch('modelValue', () => {
+            if (this.value === this.props.modelValue) {
+                return;
+            }
+            this.value = this.props.modelValue;
         }, {
             'immediate': true
         });

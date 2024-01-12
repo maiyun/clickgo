@@ -30,6 +30,10 @@ class default_1 extends clickgo.form.AbstractForm {
         this.radio = 'radio1';
         this.check1 = true;
         this.check2 = false;
+        this.check3 = true;
+    }
+    onCheck(event) {
+        event.preventDefault();
     }
 }
 exports.default = default_1;
