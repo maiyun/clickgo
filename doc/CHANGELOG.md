@@ -1,5 +1,11 @@
 # Changelog
 
+# 3.8.6
+
+[+] Add add, remove events of select.  
+[\*] Fix the tag exceeding when select is multi-selected of select control.  
+[\*] Fix the label not displaying when delay loading data of select control.
+
 # 3.8.5
 
 [+] Add label param of tab control.  
