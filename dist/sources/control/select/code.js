@@ -476,6 +476,13 @@ class default_1 extends clickgo.control.AbstractControl {
         }
         this.updateValue();
     }
+    tagsWheel(e) {
+        if (e.deltaY === 0) {
+            return;
+        }
+        e.preventDefault();
+        this.refs.tags.scrollLeft += e.deltaY;
+    }
     tagdown(e) {
         if (clickgo.dom.hasTouchButMouse(e)) {
             return;
@@ -613,6 +620,14 @@ class default_1 extends clickgo.control.AbstractControl {
         }, {
             'immediate': true
         });
+        this.watch('data', () => __awaiter(this, void 0, void 0, function* () {
+            yield this.nextTick();
+            if (JSON.stringify(this.label) === JSON.stringify(this.listLabel)) {
+                return;
+            }
+            this.label = clickgo.tool.clone(this.listLabel);
+            this.emit('label', clickgo.tool.clone(this.label));
+        }));
         clickgo.dom.watchStyle(this.element, ['background', 'padding'], (n, v) => {
             switch (n) {
                 case 'background': {

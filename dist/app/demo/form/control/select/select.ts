@@ -71,6 +71,10 @@ export default class extends clickgo.form.AbstractForm {
 
     public label2 = [];
 
+    public asyncModel = ['1'];
+
+    public asyncData = [];
+
     public select3 = [];
 
     public label3 = [];

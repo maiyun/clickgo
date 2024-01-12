@@ -66,6 +66,12 @@
                             <select :data="[0, 100, 500, 1000, 2000]" v-model="remoteDelay" style="flex: 1;"></select>
                         </template>
                     </layout>
+                    <!-- async 延迟加载 data -->
+                    <label>Async value: {{asyncModel}}</label>
+                    <layout gutter="10">
+                        <select v-model="asyncModel" :data="asyncData" style="flex: 1;"></select>
+                        <button v-if="!asyncData.length" @click="asyncData=['0', {'label':'ok','value':'1'},'2','3']">Load</button>
+                    </layout>
                 </layout>
             </flow>
             <!-- levelselect -->

@@ -539,6 +539,15 @@ export default class extends clickgo.control.AbstractControl {
         this.updateValue();
     }
 
+    /** --- tags 的鼠标滚轮事件 --- */
+    public tagsWheel(e: WheelEvent): void {
+        if (e.deltaY === 0) {
+            return;
+        }
+        e.preventDefault();
+        this.refs.tags.scrollLeft += e.deltaY;
+    }
+
     public tagdown(e: MouseEvent | TouchEvent): void {
         if (clickgo.dom.hasTouchButMouse(e)) {
             return;
@@ -691,6 +700,14 @@ export default class extends clickgo.control.AbstractControl {
             }
         }, {
             'immediate': true
+        });
+        this.watch('data', async (): Promise<void> => {
+            await this.nextTick();
+            if (JSON.stringify(this.label) === JSON.stringify(this.listLabel)) {
+                return;
+            }
+            this.label = clickgo.tool.clone(this.listLabel);
+            this.emit('label', clickgo.tool.clone(this.label));
         });
 
         clickgo.dom.watchStyle(this.element, ['background', 'padding'], (n, v) => {
