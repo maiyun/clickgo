@@ -35,7 +35,16 @@ class default_1 extends clickgo.control.AbstractControl {
         this.isSpaceDown = false;
     }
     click() {
-        this.emit('update:modelValue', this.props.value);
+        const event = {
+            'go': true,
+            preventDefault: function () {
+                this.go = false;
+            }
+        };
+        this.emit('change', event, this.props.modelValue, this.props.value);
+        if (event.go) {
+            this.emit('update:modelValue', this.props.value);
+        }
     }
     keydown(e) {
         if (e.key === 'Enter') {

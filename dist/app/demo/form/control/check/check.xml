@@ -5,9 +5,12 @@
         <layout gutter="10">
             <check v-model="checked1" v-model:indeterminate="indeterminate1" :disabled="disabled" style="flex: 1;">check1</check>
             <check v-model="checked2" v-model:indeterminate="indeterminate2" :disabled="disabled" style="flex: 1;">check2</check>
-            <check v-model="checked3" v-model:indeterminate="indeterminate3" :disabled="disabled" style="flex: 1;">check3</check>
         </layout>
-        <button style="height: 30px;" @click="indeterminate1 = true; indeterminate2 = true; indeterminate3 = true">Set indeterminate</button>
+        <layout gutter="10">
+            <check v-model="checked3" v-model:indeterminate="indeterminate3" :disabled="disabled" style="flex: 1;">check3</check>
+            <check v-model:indeterminate="indeterminate4" :disabled="disabled" @change="onChange" style="flex: 1;">check4 (not)</check>
+        </layout>
+        <button style="height: 30px;" @click="indeterminate1=true;indeterminate2=true;indeterminate3=true;indeterminate4=true">Set indeterminate</button>
         <button style="height: 30px;" @click="disabled = !disabled">{{disabled ? 'Remove' : 'Set'}} disabled</button>
     </layout>
 </form>

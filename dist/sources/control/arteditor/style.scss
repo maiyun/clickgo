@@ -1,5 +1,5 @@
 .wrap {
-    border-radius: var(--g-radius); border-style: solid; border-width: .5px; display: flex; flex-direction: column; border-color: #dadde6;
+    border-radius: var(--g-radius); border-style: solid; border-width: .5px; display: flex; flex-direction: column; border-color: #dadde6; white-space: initial;
 
     &:not([data-cg-disabled]) {
         background: var(--g-plain-background);
@@ -41,9 +41,6 @@
             }
             .write {
                 border-right: solid .5px #e4e7ee;
-            }
-            .preview {
-                white-space: initial;
             }
 
             .selected {

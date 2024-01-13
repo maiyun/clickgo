@@ -37,13 +37,22 @@ class default_1 extends clickgo.control.AbstractControl {
         };
     }
     click() {
-        if (this.indeterminateData) {
-            this.indeterminateData = false;
-            this.emit('update:indeterminate', this.indeterminateData);
-        }
-        else {
-            this.value = !this.value;
-            this.emit('update:modelValue', this.value);
+        const event = {
+            'go': true,
+            preventDefault: function () {
+                this.go = false;
+            }
+        };
+        this.emit('change', event, this.value, this.indeterminateData);
+        if (event.go) {
+            if (this.indeterminateData) {
+                this.indeterminateData = false;
+                this.emit('update:indeterminate', this.indeterminateData);
+            }
+            else {
+                this.value = !this.value;
+                this.emit('update:modelValue', this.value);
+            }
         }
     }
     keydown(e) {

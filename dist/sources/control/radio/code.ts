@@ -17,7 +17,16 @@ export default class extends clickgo.control.AbstractControl {
     public isSpaceDown = false;
 
     public click(): void {
-        this.emit('update:modelValue', this.props.value);
+        const event = {
+            'go': true,
+            preventDefault: function() {
+                this.go = false;
+            }
+        };
+        this.emit('change', event, this.props.modelValue, this.props.value);
+        if (event.go) {
+            this.emit('update:modelValue', this.props.value);
+        }
     }
 
     public keydown(e: KeyboardEvent): void {
