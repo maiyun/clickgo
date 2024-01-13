@@ -3,49 +3,89 @@
         <flow v-if="ntab === 'control'" class="inner" direction="v">
             <layout class="buttons" gutter="10" direction="v">
                 <label>App data: {{adata}}</label>
-                <button @click="openForm('cform')">Form</button>
-                <button @click="openForm('clayout')">Layout</button>
-                <button @click="openForm('cimg')">Img</button>
-                <button @click="openForm('cbutton')">Button</button>
-                <button @click="openForm('ccheck')">Check</button>
-                <button @click="openForm('cradio')">Radio</button>
-                <button @click="openForm('ctext')">Text</button>
-                <button @click="openForm('cdate')">Date</button>
-                <button @click="openForm('ctab')">Tab</button>
-                <button @click="openForm('clabel')">Label</button>
-                <button @click="openForm('clink')">Link</button>
-                <button @click="openForm('cloading')">Loading</button>
-                <button @click="openForm('cdialog')">Dialog</button>
-                <button @click="openForm('cfile')">File</button>
-                <button @click="openForm('cblock')">Block</button>
-                <button @click="openForm('calayout')">Alayout</button>
-                <button @click="openForm('csvg')">Svg</button>
-                <button @click="openForm('cflow')">Flow</button>
-                <button @click="openForm('cvflow')">Vflow</button>
-                <button @click="openForm('cmarquee')">Marquee</button>
-                <button @click="openForm('cscroll')">Scroll</button>
-                <button @click="openForm('cmenu')">Menu</button>
-                <button @click="openForm('clist')">List</button>
-                <button @click="openForm('cselect')">Select</button>
-                <button @click="openForm('cpanel')">Panel</button>
-                <button @click="openForm('cproperty')">Property</button>
-                <button @click="openForm('ctable')">Table</button>
-                <button @click="openForm('cnav')">Nav</button>
-                <button @click="openForm('cpage')">Page</button>
-                <button @click="openForm('cbox')">Box</button>
-                <button @click="openForm('cdesc')">Desc</button>
-                <button @click="openForm('chtml')">Html</button>
-                <button @click="openForm('ciconview')">Iconview</button>
-                <button @click="openForm('carteditor')">Arteditor</button>
-                <button @click="openForm('cmonaco')">Monaco</button>
-                <button @click="openForm('cxterm')">Xterm</button>
-                <button @click="openForm('cecharts')">Echarts</button>
-                <button @click="openForm('cmap')">Map</button>
-                <button @click="openForm('ctuieditor')">Tuieditor</button>
+                <layout gutter="10">
+                    <button @click="openForm('cform')">Form</button>
+                    <button @click="openForm('clayout')">Layout</button>
+                </layout>
+                <layout gutter="10">
+                    <button @click="openForm('cimg')">Img</button>
+                    <button @click="openForm('cbutton')">Button</button>
+                </layout>
+                <layout gutter="10">
+                    <button @click="openForm('ccheck')">Check</button>
+                    <button @click="openForm('cradio')">Radio</button>
+                </layout>
+                <layout gutter="10">
+                    <button @click="openForm('ctext')">Text</button>
+                    <button @click="openForm('cdate')">Date</button>
+                </layout>
+                <layout gutter="10">
+                    <button @click="openForm('ctab')">Tab</button>
+                    <button @click="openForm('clabel')">Label</button>
+                </layout>
+                <layout gutter="10">
+                    <button @click="openForm('clink')">Link</button>
+                    <button @click="openForm('cloading')">Loading</button>
+                </layout>
+                <layout gutter="10">
+                    <button @click="openForm('cdialog')">Dialog</button>
+                    <button @click="openForm('cfile')">File</button>
+                </layout>
+                <layout gutter="10">
+                    <button @click="openForm('cblock')">Block</button>
+                    <button @click="openForm('calayout')">Alayout</button>
+                </layout>
+                <layout gutter="10">
+                    <button @click="openForm('csvg')">Svg</button>
+                    <button @click="openForm('cflow')">Flow</button>
+                </layout>
+                <layout gutter="10">
+                    <button @click="openForm('cvflow')">Vflow</button>
+                    <button @click="openForm('cmarquee')">Marquee</button>
+                </layout>
+                <layout gutter="10">
+                    <button @click="openForm('cscroll')">Scroll</button>
+                    <button @click="openForm('cmenu')">Menu</button>
+                </layout>
+                <layout gutter="10">
+                    <button @click="openForm('clist')">List</button>
+                    <button @click="openForm('cselect')">Select</button>
+                </layout>
+                <layout gutter="10">
+                    <button @click="openForm('cpanel')">Panel</button>
+                    <button @click="openForm('cproperty')">Property</button>
+                </layout>
+                <layout gutter="10">
+                    <button @click="openForm('ctable')">Table</button>
+                    <button @click="openForm('cnav')">Nav</button>
+                </layout>
+                <layout gutter="10">
+                    <button @click="openForm('cpage')">Page</button>
+                    <button @click="openForm('cbox')">Box</button>
+                </layout>
+                <layout gutter="10">
+                    <button @click="openForm('cdesc')">Desc</button>
+                    <button @click="openForm('chtml')">Html</button>
+                </layout>
+                <layout gutter="10">
+                    <button @click="openForm('ciconview')">Iconview</button>
+                    <button @click="openForm('carteditor')">Arteditor</button>
+                </layout>
+                <layout gutter="10">
+                    <button @click="openForm('cmonaco')">Monaco</button>
+                    <button @click="openForm('cxterm')">Xterm</button>
+                </layout>
+                <layout gutter="10">
+                    <button @click="openForm('cecharts')">Echarts</button>
+                    <button @click="openForm('cmap')">Map</button>
+                </layout>
+                <layout gutter="10">
+                    <button @click="openForm('ctuieditor')">Tuieditor</button>
+                </layout>
             </layout>
         </flow>
         <flow v-else-if="ntab === 'method'" class="inner" direction="v">
-            <layout class="buttons" gutter="10" direction="v">
+            <layout gutter="10" direction="v">
                 <button @click="openForm('mcore')">Library core</button>
                 <button @click="openForm('mdom')">Library dom</button>
                 <button @click="openForm('mform')">Library form</button>
@@ -61,7 +101,7 @@
             </layout>
         </flow>
         <flow v-else class="inner" direction="v">
-            <layout class="buttons" gutter="10" direction="v">
+            <layout gutter="10" direction="v">
                 <button @click="openForm('escreen')">About screen</button>
                 <button @click="openForm('eform')">About form</button>
                 <button @click="openForm('etask')">About task</button>

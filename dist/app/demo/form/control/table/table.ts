@@ -10,6 +10,8 @@ export default class extends clickgo.form.AbstractForm {
 
     // --- 操作 ---
 
+    public adaptation = false;
+
     public disabled = false;
 
     public must = true;

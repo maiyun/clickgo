@@ -39,6 +39,7 @@ class default_1 extends clickgo.form.AbstractForm {
         this.loadFirst = false;
         this.val = [];
         this.data = [];
+        this.adaptation = false;
         this.disabled = false;
         this.must = true;
         this.multi = false;
