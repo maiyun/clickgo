@@ -1,5 +1,9 @@
 # Changelog
 
+# 3.8.8
+
+[+] Add change event of check, radio controls.
+
 # 3.8.7
 
 [+] Add check event of menulist-item control.  
