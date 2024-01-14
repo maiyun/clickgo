@@ -2415,7 +2415,10 @@ export async function createPanel<T extends AbstractPanel>(
     }
     /** --- panel wrap element 对象 --- */
     const mel: HTMLElement = el.children.item(el.children.length - 1) as HTMLElement;
-    mel.style.flex = '1';
+    mel.style.position = 'absolute';
+    mel.style.pointerEvents = 'none';
+    mel.style.opacity = '0';
+    mel.style.display = 'flex';
 
     // --- 创建 app 对象 ---
     const rtn: {

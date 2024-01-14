@@ -46,9 +46,10 @@ class default_1 extends clickgo.control.AbstractControl {
                 return;
             }
             clickgo.form.removeActivePanel(this.activeId, this.formId);
-            const old = this.element.querySelector('[data-panel-id="' + this.activeId.toString() + '"]');
-            old.style.display = 'none';
             yield this.loaded[this.activeId].vroot.onHide();
+            const old = this.element.querySelector('[data-panel-id="' + this.activeId.toString() + '"]');
+            old.style.opacity = '0';
+            old.style.pointerEvents = 'none';
         });
     }
     go(cls, data) {
@@ -73,7 +74,8 @@ class default_1 extends clickgo.control.AbstractControl {
                 this.activeId = parseInt(id);
                 clickgo.form.setActivePanel(this.activeId, this.formId);
                 const n = this.element.querySelector('[data-panel-id="' + id + '"]');
-                n.style.display = 'flex';
+                n.style.opacity = '1';
+                n.style.pointerEvents = '';
                 yield item.vroot.onShow(data !== null && data !== void 0 ? data : {});
                 this.loading = false;
                 return true;
@@ -89,7 +91,8 @@ class default_1 extends clickgo.control.AbstractControl {
                     'vroot': rtn.vroot
                 };
                 const n = this.element.querySelector('[data-panel-id="' + rtn.id.toString() + '"]');
-                n.style.display = 'flex';
+                n.style.opacity = '1';
+                n.style.pointerEvents = '';
                 yield rtn.vroot.onShow(data !== null && data !== void 0 ? data : {});
                 this.loading = false;
                 return true;

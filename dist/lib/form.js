@@ -1857,7 +1857,10 @@ function createPanel(cls, el, formId, taskId) {
             dom.pushStyle(t.id, style, 'form', formId, panelId);
         }
         const mel = el.children.item(el.children.length - 1);
-        mel.style.flex = '1';
+        mel.style.position = 'absolute';
+        mel.style.pointerEvents = 'none';
+        mel.style.opacity = '0';
+        mel.style.display = 'flex';
         const rtn = yield new Promise(function (resolve) {
             const vapp = clickgo.vue.createApp({
                 'template': layout.replace(/^<cg-panel([\s\S]+)-panel>$/, '<cg-layout$1-layout>'),

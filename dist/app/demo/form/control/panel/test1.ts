@@ -6,9 +6,16 @@ export default class extends clickgo.form.AbstractPanel {
 
     public data: any = {};
 
-    public onShow(d: Record<string, any>): void {
+    public async onShow(d: Record<string, any>): Promise<void> {
+        // --- 装作要做一些什么 await 的事件 ---
+        await clickgo.tool.sleep(1000);
         ++this.scount;
         this.data = d;
+    }
+
+    public async onHide(): Promise<void> {
+        // --- 装作要做一些什么 await 的事件 ---
+        await clickgo.tool.sleep(1000);
     }
 
     public async onReceive(data: Record<string, any>): Promise<void> {

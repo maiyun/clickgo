@@ -7,10 +7,14 @@ export default class extends clickgo.form.AbstractForm {
 
     public parentData = 'yeah!';
 
-    public go(): void {
-        this.refs.panel.go(test1, {
+    public loading = false;
+
+    public async go(): Promise<void> {
+        this.loading = true;
+        await this.refs.panel.go(test1, {
             'type': 'show'
         });
+        this.loading = false;
     }
 
     public ssend(): void {
@@ -20,17 +24,21 @@ export default class extends clickgo.form.AbstractForm {
     }
 
     public onMounted(): void {
-        this.watch('selected', () => {
+        this.watch('selected', async (): Promise<void> => {
             switch (this.selected[0]) {
                 case 'none': {
                     break;
                 }
                 case './test1': {
-                    this.refs.panel.go(test1);
+                    this.loading = true;
+                    await this.refs.panel.go(test1);
+                    this.loading = false;
                     break;
                 }
                 case './test2': {
-                    this.refs.panel.go('./test2');
+                    this.loading = true;
+                    await this.refs.panel.go('./test2');
+                    this.loading = false;
                     break;
                 }
             }

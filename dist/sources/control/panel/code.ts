@@ -20,9 +20,10 @@ export default class extends clickgo.control.AbstractControl {
             return;
         }
         clickgo.form.removeActivePanel(this.activeId, this.formId);
-        const old: HTMLElement = this.element.querySelector('[data-panel-id="' + this.activeId.toString() + '"]')!;
-        old.style.display = 'none';
         await this.loaded[this.activeId].vroot.onHide();
+        const old: HTMLElement = this.element.querySelector('[data-panel-id="' + this.activeId.toString() + '"]')!;
+        old.style.opacity = '0';
+        old.style.pointerEvents = 'none';
     }
 
     /**
@@ -57,7 +58,8 @@ export default class extends clickgo.control.AbstractControl {
             this.activeId = parseInt(id);
             clickgo.form.setActivePanel(this.activeId, this.formId);
             const n: HTMLElement = this.element.querySelector('[data-panel-id="' + id + '"]')!;
-            n.style.display = 'flex';
+            n.style.opacity = '1';
+            n.style.pointerEvents = '';
             await item.vroot.onShow(data ?? {});
             this.loading = false;
             return true;
@@ -76,7 +78,8 @@ export default class extends clickgo.control.AbstractControl {
                 'vroot': rtn.vroot
             };
             const n: HTMLElement = this.element.querySelector('[data-panel-id="' + rtn.id.toString() + '"]')!;
-            n.style.display = 'flex';
+            n.style.opacity = '1';
+            n.style.pointerEvents = '';
             await rtn.vroot.onShow(data ?? {});
             this.loading = false;
             return true;

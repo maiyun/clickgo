@@ -40,8 +40,16 @@ class default_1 extends clickgo.form.AbstractPanel {
         this.data = {};
     }
     onShow(d) {
-        ++this.scount;
-        this.data = d;
+        return __awaiter(this, void 0, void 0, function* () {
+            yield clickgo.tool.sleep(1000);
+            ++this.scount;
+            this.data = d;
+        });
+    }
+    onHide() {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield clickgo.tool.sleep(1000);
+        });
     }
     onReceive(data) {
         return __awaiter(this, void 0, void 0, function* () {
