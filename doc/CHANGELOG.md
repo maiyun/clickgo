@@ -1,5 +1,12 @@
 # Changelog
 
+# 3.9.0
+
+[+] Add video control.  
+[+] Add select event of nav-item control.  
+[+] Add direction, align-v, align-h, gutter param of table-item control.  
+[\*] Optimized the issue of panel control loading side by side or flickering.
+
 # 3.8.8
 
 [+] Add change event of check, radio controls.
