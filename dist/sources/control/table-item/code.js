@@ -30,7 +30,11 @@ class default_1 extends clickgo.control.AbstractControl {
         this.props = {
             'width': 0,
             'label': 'label',
-            'sort': undefined
+            'sort': undefined,
+            'direction': 'h',
+            'gutter': '',
+            'alignH': '',
+            'alignV': ''
         };
         this.table = {
             'widthMap': {

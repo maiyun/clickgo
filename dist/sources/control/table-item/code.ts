@@ -6,10 +6,18 @@ export default class extends clickgo.control.AbstractControl {
         'width': number | string;
         'label': string;
         'sort'?: boolean | string;
+        'direction': 'h' | 'v';
+        'gutter': number | string;
+        'alignH': string;
+        'alignV': string;
     } = {
             'width': 0,
             'label': 'label',
-            'sort': undefined
+            'sort': undefined,
+            'direction': 'h',
+            'gutter': '',
+            'alignH': '',
+            'alignV': ''
         };
 
     public table: any = {

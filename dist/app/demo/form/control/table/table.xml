@@ -5,7 +5,11 @@
             <template v-slot="d">
                 <table-item v-if="index" label="index" width="80" sort="false">{{d.index}}</table-item>
                 <table-item label="name">{{d.row.name ?? 'name'}}</table-item>
-                <table-item label="size" width="50">{{d.row.type ?? '0'}}</table-item>
+                <table-item label="size" width="50" align-v="center" align-h="center">{{d.row.type ?? '0'}}</table-item>
+                <table-item label="col" width="100" direction="v" gutter="5">
+                    <label>line1</label>
+                    <button>line2</button>
+                </table-item>
             </template>
             <template v-slot:pop>
                 <menulist>
@@ -15,23 +19,23 @@
         </table>
         <template v-if="loadFirst">
             <layout gutter="10">
-                <button style="flex: 1; height: 30px;" @click="data.splice(-2, 0, {'type': 0, 'name': 'Card' + data.length, 'disabled': false});refreshSort()">Add</button>
-                <button style="flex: 1; height: 30px;" @click="data.splice(-3, 1);refreshSort()">Remove</button>
-                <button style="flex: 1; height: 30px;" @click="scrollChange">Scroll {{scroll}}</button>
-                <button style="flex: 1; height: 30px;" @click="adaptation = !adaptation">{{adaptation ? '' : '!'}}adaptation</button>
+                <button style="flex: 1;" @click="data.splice(-2, 0, {'type': 0, 'name': 'Card' + data.length, 'disabled': false});refreshSort()">Add</button>
+                <button style="flex: 1;" @click="data.splice(-3, 1);refreshSort()">Remove</button>
+                <button style="flex: 1;" @click="scrollChange">Scroll {{scroll}}</button>
+                <button style="flex: 1;" @click="adaptation = !adaptation">{{adaptation ? '' : '!'}}adaptation</button>
             </layout>
             <layout gutter="10">
-                <button style="flex: 1; height: 30px;" @click="disabled = !disabled">{{disabled ? '' : '!'}}disabled</button>
-                <button style="flex: 1; height: 30px;" @click="multi = !multi">{{multi ? '' : '!'}}multi</button>
-                <button style="flex: 1; height: 30px;" @click="ctrl = !ctrl">{{ctrl ? '' : '!'}}ctrl</button>
-                <button style="flex: 1; height: 30px;" @click="must = !must">{{must ? '' : '!'}}must</button>
-                <button style="flex: 1; height: 30px;" @click="index = !index">{{index ? '' : '!'}}index</button>
+                <button style="flex: 1;" @click="disabled = !disabled">{{disabled ? '' : '!'}}disabled</button>
+                <button style="flex: 1;" @click="multi = !multi">{{multi ? '' : '!'}}multi</button>
+                <button style="flex: 1;" @click="ctrl = !ctrl">{{ctrl ? '' : '!'}}ctrl</button>
+                <button style="flex: 1;" @click="must = !must">{{must ? '' : '!'}}must</button>
+                <button style="flex: 1;" @click="index = !index">{{index ? '' : '!'}}index</button>
             </layout>
             <layout gutter="10">
-                <button style="flex: 1; height: 30px;" @click="sortChange">sort {{sort ? 'true' : (sort === false ? 'false' : 'undefined')}}</button>
-                <button style="flex: 1; height: 30px;" @click="selection = !selection">{{selection ? '' : '!'}}selection</button>
-                <button style="flex: 1; height: 30px;" @click="gesture = !gesture">{{gesture ? '' : '!'}}gesture</button>
-                <button style="flex: 1; height: 30px;" @click="split = !split">{{split ? '' : '!'}}split</button>
+                <button style="flex: 1;" @click="sortChange">sort {{sort ? 'true' : (sort === false ? 'false' : 'undefined')}}</button>
+                <button style="flex: 1;" @click="selection = !selection">{{selection ? '' : '!'}}selection</button>
+                <button style="flex: 1;" @click="gesture = !gesture">{{gesture ? '' : '!'}}gesture</button>
+                <button style="flex: 1;" @click="split = !split">{{split ? '' : '!'}}split</button>
             </layout>
         </template>
         <button v-else @click="load">Load</button>

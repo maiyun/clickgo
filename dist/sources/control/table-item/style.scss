@@ -1,3 +1,6 @@
 .wrap {
     padding: var(--g-padding); display: flex; overflow: hidden;
+    &.v {
+        flex-direction: column;
+    }
 }
