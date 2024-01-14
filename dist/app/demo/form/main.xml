@@ -69,7 +69,7 @@
                 </layout>
                 <layout gutter="10">
                     <button @click="openForm('ciconview')">Iconview</button>
-                    <button @click="openForm('carteditor')">Arteditor</button>
+                    <button @click="openForm('cvideo')">Video (Beta)</button>
                 </layout>
                 <layout gutter="10">
                     <button @click="openForm('cmonaco')">Monaco</button>
@@ -80,6 +80,7 @@
                     <button @click="openForm('cmap')">Map</button>
                 </layout>
                 <layout gutter="10">
+                    <button @click="openForm('carteditor')">Arteditor</button>
                     <button @click="openForm('ctuieditor')">Tuieditor</button>
                 </layout>
             </layout>

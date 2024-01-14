@@ -12,6 +12,11 @@ export default class extends clickgo.form.AbstractForm {
 
     public logo = '';
 
+    public async onSelect(e: Event, o: string, v: string): Promise<void> {
+        e.preventDefault();
+        await clickgo.form.dialog('Not nav, o: ' + o + ', v: ' + v);
+    }
+
     public onMounted(): void {
         this.watch('name', async () => {
             this.loading = true;

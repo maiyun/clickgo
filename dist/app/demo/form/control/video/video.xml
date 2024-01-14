@@ -1,0 +1,14 @@
+<form width="350" height="500" title="Video" padding="10">
+    <layout direction="v" gutter="10" style="flex: 1;">
+        <label>volume: {{volume}}</label>
+        <video src="/package/res/video.mp4" :controls="controls" :loop="loop" :muted="muted" v-model:volume="volume" v-model:play="play" style="flex: 1; height: 0;"></video>
+        <layout gutter="10">
+            <!--<button @click="controls = !controls" style="flex: 1;">{{controls ? '' : '!'}}controls</button>-->
+            <button @click="loop = !loop" style="flex: 1;">{{loop ? '' : '!'}}loop</button>
+            <button @click="muted = !muted" style="flex: 1;">{{muted ? '' : '!'}}muted</button>
+        </layout>
+        <layout gutter="10">
+            <button @click="play = !play" style="flex: 1;">{{play ? '' : '!'}}play</button>
+        </layout>
+    </layout>
+</form>

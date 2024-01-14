@@ -57,9 +57,9 @@
                 <block ref="move" style="background: #07c160; position: absolute;" :style="{'left': moveLeft + 'px', 'top': moveTop + 'px', 'width': moveWidth + 'px', 'height': moveHeight + 'px'}" @touchstart="moveDown" @mousedown="moveDown"></block>
             </block>
             <button @click="fullscreen" style="height: 30px;">fullscreen()</button>
-            <label>clickgo.form.is.move: {{isMove ? 'true' : 'false'}}</label>
-            <label>clickgo.form.is.shift: {{isShift ? 'true' : 'false'}}</label>
-            <label>clickgo.form.is.ctrl: {{isCtrl ? 'true' : 'false'}}</label>
+            <label>clickgo.dom.is.move: {{isMove ? 'true' : 'false'}}</label>
+            <label>clickgo.dom.is.shift: {{isShift ? 'true' : 'false'}}</label>
+            <label>clickgo.dom.is.ctrl: {{isCtrl ? 'true' : 'false'}}</label>
         </layout>
     </flow>
 </form>

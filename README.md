@@ -110,6 +110,12 @@ This library is published under [Apache-2.0](./LICENSE) license.
 
 [Plus SVG Vector](https://www.svgrepo.com/svg/447037/plus)
 
+#### Video
+
+[Play SVG Vector](https://www.svgrepo.com/svg/447035/play)  
+[Pause SVG Vector](https://www.svgrepo.com/svg/447033/pause)  
+[Border Radius SVG Vector](https://www.svgrepo.com/svg/446973/border-radius)
+
 ### **LICENSE:** MIT License **AUTHOR:** developmentseed
 
 #### Map

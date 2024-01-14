@@ -34,13 +34,14 @@ export default class extends clickgo.control.AbstractControl {
             }
             const pre = this.props.src.slice(0, 6).toLowerCase();
             if (pre === 'file:/') {
+                this.imgData = '';
                 return;
             }
             if (pre === 'http:/' || pre === 'https:' || pre.startsWith('data:')) {
                 this.imgData = `url(${this.props.src})`;
                 return;
             }
-            // --- 本 app 包 ---
+            // --- 本 app 包或 blob 模式的文件 ---
             const path = clickgo.tool.urlResolve('/package' + this.path + '/', this.props.src);
             const blob = await clickgo.fs.getContent(path);
             if ((count !== this.count) || !blob || typeof blob === 'string') {

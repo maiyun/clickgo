@@ -1,0 +1,35 @@
+.wrap {
+    position: relative; display: flex;
+    video {
+        flex: 1; width: 0; background: #000;
+    }
+    .controls {
+        position: absolute; left: 0; bottom: 0; width: 100%;
+        .top {
+            background: rgba(255, 255, 255, .2); height: 3px; position: relative;
+            &::after {
+                content: ''; position: absolute; width: 100%; left: 0; bottom: -2px; height: 7px; cursor: pointer;
+            }
+        }
+        .bottom {
+            display: flex; padding: var(--g-padding); background: linear-gradient(to bottom, rgba(0, 0, 0, .2), rgba(0, 0, 0, .6)); color: #FFF; fill: rgba(255, 255, 255, .7);
+            .left {
+                flex: 1; display: flex; align-items: center;
+            }
+
+            .left, .right {
+                .button {
+                    width: 24px; height: 24px; display: flex; align-items: center; justify-content: center;
+                    &:hover {
+                        fill: rgba(255, 255, 255, 1);
+                    }
+                }
+            }
+            .left {
+                svg {
+                    margin-right: var(--g-padding);
+                }
+            }
+        }
+    }
+}

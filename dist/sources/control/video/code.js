@@ -38,35 +38,66 @@ class default_1 extends clickgo.control.AbstractControl {
         super(...arguments);
         this.props = {
             'src': '',
-            'mode': 'default'
+            'controls': false,
+            'loop': false,
+            'muted': false,
+            'volume': 50,
+            'play': false
         };
-        this.imgData = '';
-        this.width = 0;
-        this.height = 0;
+        this.srcData = '';
+        this.isBlob = false;
         this.count = 0;
+        this.playData = false;
     }
-    get backgroundSize() {
-        if (this.props.mode === 'default') {
-            return this.width.toString() + 'px ' + this.height.toString() + 'px';
+    onPlay() {
+        this.playData = true;
+        this.emit('update:play', this.playData);
+    }
+    onPause() {
+        this.playData = false;
+        this.emit('update:play', this.playData);
+    }
+    playClick() {
+        if (this.playData) {
+            this.refs.video.pause();
         }
         else {
-            return this.props.mode;
+            this.refs.video.play();
         }
+        this.playData = !this.playData;
+        this.emit('update:play', this.playData);
+    }
+    fullClick() {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.element.requestFullscreen();
+        });
     }
     onMounted() {
         this.watch('src', () => __awaiter(this, void 0, void 0, function* () {
             const count = ++this.count;
             if (typeof this.props.src !== 'string' || this.props.src === '') {
-                this.imgData = '';
+                if (this.isBlob) {
+                    this.isBlob = false;
+                    URL.revokeObjectURL(this.srcData);
+                }
+                this.srcData = '';
                 return;
             }
             const pre = this.props.src.slice(0, 6).toLowerCase();
             if (pre === 'file:/') {
-                this.imgData = '';
+                if (this.isBlob) {
+                    this.isBlob = false;
+                    URL.revokeObjectURL(this.srcData);
+                }
+                this.srcData = '';
                 return;
             }
             if (pre === 'http:/' || pre === 'https:' || pre.startsWith('data:')) {
-                this.imgData = `url(${this.props.src})`;
+                if (this.isBlob) {
+                    this.isBlob = false;
+                    URL.revokeObjectURL(this.srcData);
+                }
+                this.srcData = this.props.src;
                 return;
             }
             const path = clickgo.tool.urlResolve('/package' + this.path + '/', this.props.src);
@@ -74,22 +105,38 @@ class default_1 extends clickgo.control.AbstractControl {
             if ((count !== this.count) || !blob || typeof blob === 'string') {
                 return;
             }
-            const t = yield clickgo.tool.blob2DataUrl(blob);
-            if (count !== this.count) {
-                return;
+            if (this.isBlob) {
+                URL.revokeObjectURL(this.srcData);
             }
-            if (t) {
-                this.imgData = 'url(' + t + ')';
-                return;
-            }
-            this.imgData = '';
+            const t = URL.createObjectURL(blob);
+            this.srcData = t;
         }), {
             'immediate': true
         });
-        clickgo.dom.watchSize(this.element, () => {
-            this.width = this.element.offsetWidth;
-            this.height = this.element.offsetHeight;
-        }, true);
+        this.watch('volume', () => {
+            this.refs.video.volume = this.propInt('volume') / 100;
+        }, {
+            'immediate': true
+        });
+        this.watch('play', () => {
+            if (this.playData === this.propBoolean('play')) {
+                return;
+            }
+            this.playData = this.propBoolean('play');
+            if (this.playData) {
+                this.refs.video.play();
+            }
+            else {
+                this.refs.video.pause();
+            }
+        }, {
+            'immediate': true
+        });
+    }
+    onUnmounted() {
+        if (this.isBlob) {
+            URL.revokeObjectURL(this.srcData);
+        }
     }
 }
 exports.default = default_1;

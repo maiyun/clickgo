@@ -110,6 +110,8 @@
         "/form/control/vflow/vflow.css",
         "/form/control/vflow/vflow.js",
         "/form/control/vflow/vflow.xml",
+        "/form/control/video/video.js",
+        "/form/control/video/video.xml",
         "/form/control/xterm/xterm.js",
         "/form/control/xterm/xterm.xml",
         "/form/event/form/form.css",
@@ -163,6 +165,7 @@
         "/res/r-2.svg",
         "/res/sql.svg",
         "/res/txt.svg",
+        "/res/video.mp4",
         "/res/zip.svg",
         "/app.js",
         "/global.css"

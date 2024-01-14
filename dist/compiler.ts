@@ -62,7 +62,7 @@ async function run(): Promise<void> {
         'withFileTypes': true
     });
     for (const item of list) {
-        if (['alayout', 'alayout-row', 'alayout-cell', 'check', 'dialog', 'file', 'greatlist', 'greatselect', 'vflow', 'img', 'label', 'layout', 'levelselect', 'list', 'loading', 'marquee', 'menu', 'menu-item', 'menulist', 'menulist-item', 'menulist-split', 'flow', 'radio', 'scroll', 'select', 'svg', 'tab', 'text', 'task-item', 'table-item', 'nav-item', 'nav-title', 'panel', 'desc-cell', 'desc-head', 'desc-row', 'link', 'date'].includes(item.name)) {
+        if (['alayout', 'alayout-row', 'alayout-cell', 'check', 'dialog', 'file', 'greatlist', 'greatselect', 'vflow', 'video', 'img', 'label', 'layout', 'levelselect', 'list', 'loading', 'marquee', 'menu', 'menu-item', 'menulist', 'menulist-item', 'menulist-split', 'flow', 'radio', 'scroll', 'select', 'svg', 'tab', 'text', 'task-item', 'table-item', 'nav-item', 'nav-title', 'panel', 'desc-cell', 'desc-head', 'desc-row', 'link', 'date'].includes(item.name)) {
             continue;
         }
         if (item.name.startsWith('.')) {
@@ -85,6 +85,7 @@ async function run(): Promise<void> {
             await addFile(zipo, base + 'greatlist', 'greatlist');
             await addFile(zipo, base + 'greatselect', 'greatselect');
             await addFile(zipo, base + 'vflow', 'vflow');
+            await addFile(zipo, base + 'video', 'video');
             await addFile(zipo, base + 'img', 'img');
             await addFile(zipo, base + 'label', 'label');
             await addFile(zipo, base + 'layout', 'layout');

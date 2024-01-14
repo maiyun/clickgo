@@ -67,7 +67,16 @@ class default_1 extends clickgo.control.AbstractControl {
             if (this.isSelected) {
                 return;
             }
-            this.nav.select(this.overName);
+            const event = {
+                'go': true,
+                preventDefault: function () {
+                    this.go = false;
+                }
+            };
+            this.emit('select', event, this.selected, this.overName);
+            if (event.go) {
+                this.nav.select(this.overName);
+            }
             return;
         }
         this.showData = !this.showData;
