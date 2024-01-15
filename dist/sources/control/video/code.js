@@ -42,34 +42,175 @@ class default_1 extends clickgo.control.AbstractControl {
             'loop': false,
             'muted': false,
             'volume': 50,
-            'play': false
+            'play': false,
+            'current': 0
         };
         this.srcData = '';
         this.isBlob = false;
         this.count = 0;
+        this.duration = 0;
+        this.inBar = false;
+        this.hideTimer = 0;
+        this.isShow = false;
+        this.currentData = 0;
+        this._currentTimer = 0;
         this.playData = false;
+        this.bcurrent = 0;
+    }
+    onDurationchange() {
+        this.duration = this.refs.video.duration;
+        this.emit('durationchange', this.duration);
+    }
+    get durations() {
+        return clickgo.tool.formatSecond(this.duration);
+    }
+    currentUpdateStart() {
+        if (this._currentTimer) {
+            return;
+        }
+        this._currentTimer = clickgo.task.onFrame(() => {
+            if (this.currentData === this.refs.video.currentTime) {
+                return;
+            }
+            this.currentData = this.refs.video.currentTime;
+            this.emit('update:current', this.currentData);
+        }, {
+            'formId': this.formId
+        });
+    }
+    currentUpdateEnd() {
+        if (!this._currentTimer) {
+            return;
+        }
+        clickgo.task.offFrame(this._currentTimer);
+        this._currentTimer = 0;
+    }
+    get currents() {
+        return clickgo.tool.formatSecond(this.currentData);
     }
     onPlay() {
+        if (this.playData) {
+            return;
+        }
+        this.currentUpdateStart();
         this.playData = true;
         this.emit('update:play', this.playData);
     }
     onPause() {
+        if (!this.playData) {
+            return;
+        }
+        this.currentUpdateEnd();
         this.playData = false;
         this.emit('update:play', this.playData);
     }
     playClick() {
         if (this.playData) {
             this.refs.video.pause();
+            this.currentUpdateEnd();
         }
         else {
             this.refs.video.play();
+            this.currentUpdateStart();
         }
         this.playData = !this.playData;
         this.emit('update:play', this.playData);
     }
     fullClick() {
         return __awaiter(this, void 0, void 0, function* () {
+            if (clickgo.dom.is.full) {
+                yield clickgo.dom.exitFullscreen();
+                return;
+            }
             yield this.element.requestFullscreen();
+        });
+    }
+    get isFull() {
+        return clickgo.dom.is.full;
+    }
+    onMouseEnter(e) {
+        if (clickgo.dom.hasTouchButMouse(e)) {
+            return;
+        }
+        if (!this.propBoolean('controls')) {
+            return;
+        }
+        this.isShow = true;
+        if (this.hideTimer) {
+            clickgo.task.removeTimer(this.hideTimer);
+            this.hideTimer = 0;
+        }
+    }
+    onMouseLeave(e) {
+        if (clickgo.dom.hasTouchButMouse(e)) {
+            return;
+        }
+        if (!this.propBoolean('controls')) {
+            return;
+        }
+        this.hideTimer = clickgo.task.sleep(() => {
+            this.isShow = false;
+        }, 800);
+    }
+    onTouch(e) {
+        if (!this.propBoolean('controls')) {
+            return;
+        }
+        clickgo.dom.bindDown(e, {
+            down: () => {
+                this.isShow = true;
+                if (this.hideTimer) {
+                    clickgo.task.removeTimer(this.hideTimer);
+                    this.hideTimer = 0;
+                }
+            },
+            up: () => {
+                this.hideTimer = clickgo.task.sleep(() => {
+                    this.isShow = false;
+                }, 800);
+            }
+        });
+    }
+    get bcurrents() {
+        return clickgo.tool.formatSecond(this.bcurrent);
+    }
+    onBMove(e) {
+        if (clickgo.dom.hasTouchButMouse(e)) {
+            return;
+        }
+        this.inBar = true;
+        const bcr = this.refs.top.getBoundingClientRect();
+        const x = e.clientX - bcr.left;
+        this.bcurrent = x / bcr.width * this.duration;
+    }
+    onBLeave(e) {
+        if (clickgo.dom.hasTouchButMouse(e)) {
+            return;
+        }
+        this.inBar = false;
+    }
+    onBClick(e) {
+        if (clickgo.dom.hasTouchButMouse(e)) {
+            return;
+        }
+        this.currentData = this.bcurrent;
+        this.refs.video.currentTime = this.currentData;
+        this.emit('update:current', this.currentData);
+    }
+    onBTouch(e) {
+        const bcr = this.refs.top.getBoundingClientRect();
+        clickgo.dom.bindDown(e, {
+            move: (e2) => {
+                this.inBar = true;
+                const x = e2.touches[0].clientX - bcr.left;
+                this.bcurrent = x / bcr.width * this.duration;
+            },
+            up: () => {
+                this.inBar = false;
+                this.currentData = this.bcurrent;
+                this.refs.video.currentTime = this.currentData;
+                this.emit('update:current', this.currentData);
+            }
         });
     }
     onMounted() {
@@ -125,9 +266,27 @@ class default_1 extends clickgo.control.AbstractControl {
             this.playData = this.propBoolean('play');
             if (this.playData) {
                 this.refs.video.play();
+                this.currentUpdateStart();
             }
             else {
                 this.refs.video.pause();
+                this.currentUpdateEnd();
+            }
+        }, {
+            'immediate': true
+        });
+        this.watch('controls', () => {
+            if (this.propBoolean('controls')) {
+                this.isShow = true;
+                this.hideTimer = clickgo.task.sleep(() => {
+                    this.isShow = false;
+                }, 800);
+            }
+            else {
+                if (this.hideTimer) {
+                    clickgo.task.removeTimer(this.hideTimer);
+                    this.hideTimer = 0;
+                }
             }
         }, {
             'immediate': true

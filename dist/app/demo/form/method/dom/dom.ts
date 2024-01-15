@@ -38,6 +38,14 @@ export default class extends clickgo.form.AbstractForm {
         return clickgo.dom.is.ctrl;
     }
 
+    public get isMeta(): boolean {
+        return clickgo.dom.is.meta;
+    }
+
+    public get isFull(): boolean {
+        return clickgo.dom.is.full;
+    }
+
     public setGlobalCursor(type?: string): void {
         clickgo.dom.setGlobalCursor(type);
     }
@@ -184,8 +192,8 @@ export default class extends clickgo.form.AbstractForm {
         });
     }
 
-    public fullscreen(): void {
-        clickgo.dom.fullscreen();
+    public async fullscreen(): Promise<void> {
+        await clickgo.dom.fullscreen();
     }
 
     public onMounted(): void {

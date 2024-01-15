@@ -173,15 +173,15 @@ export interface IDomSize {
 }
 
 /** --- 绑定鼠标事件选项 --- */
-export interface IBindDownOptions {
-    'down'?: (e: MouseEvent | TouchEvent) => void;
-    'start'?: (e: MouseEvent | TouchEvent) => any;
+export interface IBindDownOptions<T extends MouseEvent | TouchEvent> {
+    'down'?: (e: T) => void;
+    'start'?: (e: T) => any;
     'move'?: (
-        e: MouseEvent | TouchEvent,
+        e: T,
         dir: 'top' | 'right' | 'bottom' | 'left'
     ) => any;
-    'up'?: (e: MouseEvent | TouchEvent) => void;
-    'end'?: (e: MouseEvent | TouchEvent) => void;
+    'up'?: (e: T) => void;
+    'end'?: (e: T) => void;
 }
 
 /** --- 绑定拖动选项 move 回调的回调参数 --- */

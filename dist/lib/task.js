@@ -563,6 +563,9 @@ function run(url, opt = {}, ntid) {
                 },
                 fullscreen: function () {
                     return dom.fullscreen();
+                },
+                exitFullscreen: function () {
+                    return dom.exitFullscreen();
                 }
             },
             'form': {
@@ -1048,8 +1051,11 @@ function run(url, opt = {}, ntid) {
                 execCommand: function (ac) {
                     tool.execCommand(ac);
                 },
-                compar(before, after) {
+                compar: function (before, after) {
                     return tool.compar(before, after);
+                },
+                formatSecond: function (second) {
+                    return tool.formatSecond(second);
                 }
             },
             'zip': {

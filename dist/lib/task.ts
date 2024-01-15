@@ -602,7 +602,7 @@ export async function run(url: string | types.IApp, opt: types.ITaskRunOptions =
             ): void {
                 dom.bindDblClick(e, handler);
             },
-            bindDown: function(oe: MouseEvent | TouchEvent, opt: types.IBindDownOptions) {
+            bindDown: function<T extends MouseEvent | TouchEvent>(oe: T, opt: types.IBindDownOptions<T>) {
                 dom.bindDown(oe, opt);
             },
             bindGesture: function(oe: MouseEvent | TouchEvent | WheelEvent, before: (e: MouseEvent | TouchEvent | WheelEvent, dir: 'top' | 'right' | 'bottom' | 'left') => number, handler: (dir: 'top' | 'right' | 'bottom' | 'left') => void): void {
@@ -649,8 +649,11 @@ export async function run(url: string | types.IApp, opt: types.ITaskRunOptions =
             siblingsData: function(el: HTMLElement, name: string): HTMLElement[] {
                 return dom.siblingsData(el, name);
             },
-            fullscreen: function(): boolean {
+            fullscreen: function() {
                 return dom.fullscreen();
+            },
+            exitFullscreen: function() {
+                return dom.exitFullscreen();
             }
         },
         'form': {
@@ -1167,7 +1170,7 @@ export async function run(url: string | types.IApp, opt: types.ITaskRunOptions =
             execCommand: function(ac: string): void {
                 tool.execCommand(ac);
             },
-            compar(before: string[], after: string[]): {
+            compar: function(before: string[], after: string[]): {
                 'remove': Record<string, number>;
                 'add': Record<string, number>;
                 'length': {
@@ -1176,6 +1179,9 @@ export async function run(url: string | types.IApp, opt: types.ITaskRunOptions =
                 };
             } {
                 return tool.compar(before, after);
+            },
+            formatSecond: function(second: number): string {
+                return tool.formatSecond(second);
             }
         },
         'zip': {

@@ -60,6 +60,12 @@ class default_1 extends clickgo.form.AbstractForm {
     get isCtrl() {
         return clickgo.dom.is.ctrl;
     }
+    get isMeta() {
+        return clickgo.dom.is.meta;
+    }
+    get isFull() {
+        return clickgo.dom.is.full;
+    }
     setGlobalCursor(type) {
         clickgo.dom.setGlobalCursor(type);
     }
@@ -196,7 +202,9 @@ class default_1 extends clickgo.form.AbstractForm {
         });
     }
     fullscreen() {
-        clickgo.dom.fullscreen();
+        return __awaiter(this, void 0, void 0, function* () {
+            yield clickgo.dom.fullscreen();
+        });
     }
     onMounted() {
         clickgo.dom.watchStyle(this.refs.watchStyle.$el, 'font-size', (n, v) => {

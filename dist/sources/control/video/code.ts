@@ -11,6 +11,7 @@ export default class extends clickgo.control.AbstractControl {
 
         'volume': number | string;
         'play': boolean | string;
+        'current': number | string;
     } = {
             'src': '',
 
@@ -19,7 +20,8 @@ export default class extends clickgo.control.AbstractControl {
             'muted': false,
 
             'volume': 50,
-            'play': false
+            'play': false,
+            'current': 0
         };
 
     public srcData = '';
@@ -30,16 +32,79 @@ export default class extends clickgo.control.AbstractControl {
     /** --- watch: src 变更次数 --- */
     public count = 0;
 
+    /** --- 媒介长度，秒数 --- */
+    public duration: number = 0;
+
+    /** --- 当前鼠标是否在进度条内 --- */
+    public inBar: boolean = false;
+
+    /** --- 将在多久后隐藏 (controls) --- */
+    public hideTimer = 0;
+
+    /** --- 是否在显示 (controls) --- */
+    public isShow = false;
+
+    /** --- 媒介长度改变时 video 会触发 --- */
+    public onDurationchange(): void {
+        this.duration = this.refs.video.duration;
+        this.emit('durationchange', this.duration);
+    }
+
+    public get durations(): string {
+        return clickgo.tool.formatSecond(this.duration);
+    }
+
+    /** --- 当前播放秒数 --- */
+    public currentData: number = 0;
+
+    /** --- 用于 current 更新的 timer --- */
+    private _currentTimer: number = 0;
+
+    public currentUpdateStart(): void {
+        if (this._currentTimer) {
+            return;
+        }
+        this._currentTimer = clickgo.task.onFrame(() => {
+            if (this.currentData === this.refs.video.currentTime) {
+                return;
+            }
+            this.currentData = this.refs.video.currentTime;
+            this.emit('update:current', this.currentData);
+        }, {
+            'formId': this.formId
+        });
+    }
+
+    public currentUpdateEnd(): void {
+        if (!this._currentTimer) {
+            return;
+        }
+        clickgo.task.offFrame(this._currentTimer);
+        this._currentTimer = 0;
+    }
+
+    public get currents(): string {
+        return clickgo.tool.formatSecond(this.currentData);
+    }
+
     // --- 播放状态相关事件 ---
 
     public playData: boolean = false;
 
     public onPlay(): void {
+        if (this.playData) {
+            return;
+        }
+        this.currentUpdateStart();
         this.playData = true;
         this.emit('update:play', this.playData);
     }
 
     public onPause(): void {
+        if (!this.playData) {
+            return;
+        }
+        this.currentUpdateEnd();
         this.playData = false;
         this.emit('update:play', this.playData);
     }
@@ -47,16 +112,129 @@ export default class extends clickgo.control.AbstractControl {
     public playClick(): void {
         if (this.playData) {
             this.refs.video.pause();
+            this.currentUpdateEnd();
         }
         else {
             this.refs.video.play();
+            this.currentUpdateStart();
         }
         this.playData = !this.playData;
         this.emit('update:play', this.playData);
     }
 
     public async fullClick(): Promise<void> {
+        if (clickgo.dom.is.full) {
+            await clickgo.dom.exitFullscreen();
+            return;
+        }
         await this.element.requestFullscreen();
+    }
+
+    /** --- 当前是否是全屏 --- */
+    public get isFull(): boolean {
+        return clickgo.dom.is.full;
+    }
+
+    // --- 进入时保持 controls 常亮 ---
+    public onMouseEnter(e: MouseEvent): void {
+        if (clickgo.dom.hasTouchButMouse(e)) {
+            return;
+        }
+        if (!this.propBoolean('controls')) {
+            return;
+        }
+        this.isShow = true;
+        if (this.hideTimer) {
+            clickgo.task.removeTimer(this.hideTimer);
+            this.hideTimer = 0;
+        }
+    }
+
+    public onMouseLeave(e: MouseEvent): void {
+        if (clickgo.dom.hasTouchButMouse(e)) {
+            return;
+        }
+        if (!this.propBoolean('controls')) {
+            return;
+        }
+        this.hideTimer = clickgo.task.sleep(() => {
+            this.isShow = false;
+        }, 800);
+    }
+
+    public onTouch(e: TouchEvent): void {
+        if (!this.propBoolean('controls')) {
+            return;
+        }
+        // --- 防止在手机模式按下状态下 controls 被自动隐藏，PC 下有 enter 所以没事 ---
+        clickgo.dom.bindDown(e, {
+            down: () => {
+                this.isShow = true;
+                if (this.hideTimer) {
+                    clickgo.task.removeTimer(this.hideTimer);
+                    this.hideTimer = 0;
+                }
+            },
+            up: () => {
+                this.hideTimer = clickgo.task.sleep(() => {
+                    this.isShow = false;
+                }, 800);
+            }
+        });
+    }
+
+    // --- 鼠标和 bar 相关 ---
+
+    public bcurrent: number = 0;
+
+    public get bcurrents(): string {
+        return clickgo.tool.formatSecond(this.bcurrent);
+    }
+
+    /** --- 鼠标移动事件 --- */
+    public onBMove(e: MouseEvent): void {
+        if (clickgo.dom.hasTouchButMouse(e)) {
+            return;
+        }
+        this.inBar = true;
+        const bcr = this.refs.top.getBoundingClientRect();
+        const x = e.clientX - bcr.left;
+        this.bcurrent = x / bcr.width * this.duration;
+    }
+
+    public onBLeave(e: MouseEvent): void {
+        if (clickgo.dom.hasTouchButMouse(e)) {
+            return;
+        }
+        this.inBar = false;
+    }
+
+    public onBClick(e: MouseEvent): void {
+        if (clickgo.dom.hasTouchButMouse(e)) {
+            return;
+        }
+        this.currentData = this.bcurrent;
+        this.refs.video.currentTime = this.currentData;
+        this.emit('update:current', this.currentData);
+    }
+
+    /** --- 手指移动事件 --- */
+    public onBTouch(e: TouchEvent): void {
+        const bcr = this.refs.top.getBoundingClientRect();
+        clickgo.dom.bindDown(e, {
+            move: (e2) => {
+                this.inBar = true;
+                const x = e2.touches[0].clientX - bcr.left;
+                this.bcurrent = x / bcr.width * this.duration;
+            },
+            up: () => {
+                this.inBar = false;
+                // --- 直接响应 ---
+                this.currentData = this.bcurrent;
+                this.refs.video.currentTime = this.currentData;
+                this.emit('update:current', this.currentData);
+            }
+        });
     }
 
     public onMounted(): void {
@@ -117,9 +295,29 @@ export default class extends clickgo.control.AbstractControl {
             this.playData = this.propBoolean('play');
             if (this.playData) {
                 this.refs.video.play();
+                this.currentUpdateStart();
             }
             else {
                 this.refs.video.pause();
+                this.currentUpdateEnd();
+            }
+        }, {
+            'immediate': true
+        });
+
+        // --- 监听控件显示/隐藏状态 ---
+        this.watch('controls', () => {
+            if (this.propBoolean('controls')) {
+                this.isShow = true;
+                this.hideTimer = clickgo.task.sleep(() => {
+                    this.isShow = false;
+                }, 800);
+            }
+            else {
+                if (this.hideTimer) {
+                    clickgo.task.removeTimer(this.hideTimer);
+                    this.hideTimer = 0;
+                }
             }
         }, {
             'immediate': true

@@ -837,3 +837,12 @@ export function compar(before: string[], after: string[]): {
     }
     return rtn;
 }
+
+/** --- 将秒数格式化为 0:0:0 的字符串 --- */
+export function formatSecond(second: number): string {
+    const h = Math.floor(second / 3600);
+    second = second - h * 3600;
+    const m = Math.floor(second / 60);
+    const s = Math.floor(second - m * 60);
+    return (h ? h.toString().padStart(2, '0') + ':' : '') + m.toString().padStart(2, '0') + ':' + s.toString().padStart(2, '0');
+}

@@ -32,7 +32,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.fullscreen = exports.siblingsData = exports.siblings = exports.findParentByTag = exports.findParentByClass = exports.findParentByData = exports.bindResize = exports.bindMove = exports.is = exports.bindDrag = exports.setDragData = exports.bindLong = exports.allowEvent = exports.bindGesture = exports.bindDown = exports.bindDblClick = exports.bindClick = exports.getWatchInfo = exports.clearWatchProperty = exports.isWatchProperty = exports.watchProperty = exports.clearWatchStyle = exports.isWatchStyle = exports.watchStyle = exports.clearWatch = exports.isWatch = exports.unwatch = exports.watch = exports.getWatchCount = exports.clearWatchSize = exports.isWatchSize = exports.unwatchSize = exports.watchSize = exports.getWatchSizeCount = exports.getStyleCount = exports.removeStyle = exports.pushStyle = exports.removeFromStyleList = exports.createToStyleList = exports.hasTouchButMouse = exports.setGlobalCursor = exports.inPage = void 0;
+exports.exitFullscreen = exports.fullscreen = exports.siblingsData = exports.siblings = exports.findParentByTag = exports.findParentByClass = exports.findParentByData = exports.bindResize = exports.bindMove = exports.is = exports.bindDrag = exports.setDragData = exports.bindLong = exports.allowEvent = exports.bindGesture = exports.bindDown = exports.bindDblClick = exports.bindClick = exports.getWatchInfo = exports.clearWatchProperty = exports.isWatchProperty = exports.watchProperty = exports.clearWatchStyle = exports.isWatchStyle = exports.watchStyle = exports.clearWatch = exports.isWatch = exports.unwatch = exports.watch = exports.getWatchCount = exports.clearWatchSize = exports.isWatchSize = exports.unwatchSize = exports.watchSize = exports.getWatchSizeCount = exports.getStyleCount = exports.removeStyle = exports.pushStyle = exports.removeFromStyleList = exports.createToStyleList = exports.hasTouchButMouse = exports.setGlobalCursor = exports.inPage = void 0;
 const clickgo = __importStar(require("../clickgo"));
 const form = __importStar(require("./form"));
 const core = __importStar(require("./core"));
@@ -1344,7 +1344,8 @@ exports.is = clickgo.vue.reactive({
     'move': false,
     'shift': false,
     'ctrl': false,
-    'meta': false
+    'meta': false,
+    'full': false
 });
 window.addEventListener('keydown', function (e) {
     switch (e.key) {
@@ -1841,20 +1842,39 @@ function siblingsData(el, name) {
 }
 exports.siblingsData = siblingsData;
 function fullscreen() {
-    const he = document.getElementsByTagName('html')[0];
-    if (he.webkitRequestFullscreen) {
-        he.webkitRequestFullscreen();
-        return true;
-    }
-    else if (he.requestFullscreen) {
-        he.requestFullscreen();
-        return true;
-    }
-    else {
-        return false;
-    }
+    return __awaiter(this, void 0, void 0, function* () {
+        const he = document.getElementsByTagName('html')[0];
+        if (he.webkitRequestFullscreen) {
+            yield he.webkitRequestFullscreen();
+            return true;
+        }
+        else if (he.requestFullscreen) {
+            yield he.requestFullscreen();
+            return true;
+        }
+        else {
+            return false;
+        }
+    });
 }
 exports.fullscreen = fullscreen;
+function exitFullscreen() {
+    return __awaiter(this, void 0, void 0, function* () {
+        const d = document;
+        if (d.webkitExitFullscreen) {
+            yield d.webkitExitFullscreen();
+            return true;
+        }
+        else if (d.exitFullscreen) {
+            yield d.exitFullscreen();
+            return true;
+        }
+        else {
+            return false;
+        }
+    });
+}
+exports.exitFullscreen = exitFullscreen;
 document.addEventListener('visibilitychange', function () {
     if (document.hidden) {
         cancelAnimationFrame(watchTimer);
@@ -1862,4 +1882,15 @@ document.addEventListener('visibilitychange', function () {
     else {
         watchTimer = requestAnimationFrame(watchTimerHandler);
     }
+});
+document.addEventListener('fullscreenchange', function () {
+    if (document.webkitFullscreenElement) {
+        exports.is.full = true;
+        return;
+    }
+    if (document.fullscreenElement) {
+        exports.is.full = true;
+        return;
+    }
+    exports.is.full = false;
 });

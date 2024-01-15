@@ -1061,7 +1061,7 @@ export function bindDblClick(
  * @param oe MouseEvent | TouchEvent
  * @param opt 回调选项
  */
-export function bindDown(oe: MouseEvent | TouchEvent, opt: types.IBindDownOptions): void {
+export function bindDown<T extends MouseEvent | TouchEvent>(oe: T, opt: types.IBindDownOptions<T>): void {
     if (hasTouchButMouse(oe)) {
         return;
     }
@@ -1079,8 +1079,8 @@ export function bindDown(oe: MouseEvent | TouchEvent, opt: types.IBindDownOption
     /** --- 是否是第一次执行 move --- */
     let isStart: boolean = false;
 
-    let end: ((e: MouseEvent | TouchEvent) => void) | undefined = undefined;
-    const move = function(e: MouseEvent | TouchEvent): void {
+    let end: (<TU extends T>(e: TU) => void) | undefined = undefined;
+    const move = function<TU extends T>(e: TU): void {
         // --- 虽然上层已经有 preventDefault 了，但是有可能 e.target 会被注销，这样就响应不到上层的 preventDefault 事件，所以要在这里再加一个 ---
         if (!e.target || !document.body.contains(e.target as HTMLElement) && e.cancelable) {
             e.preventDefault();
@@ -1123,42 +1123,42 @@ export function bindDown(oe: MouseEvent | TouchEvent, opt: types.IBindDownOption
             isStart = true;
             if (opt.start && (opt.start(e) === false)) {
                 if (e instanceof MouseEvent) {
-                    window.removeEventListener('mousemove', move);
-                    window.removeEventListener('mouseup', end!);
+                    window.removeEventListener('mousemove', move as EventListener);
+                    window.removeEventListener('mouseup', end as EventListener);
                 }
                 else {
-                    (oe.target as HTMLElement).removeEventListener('touchmove', move);
-                    (oe.target as HTMLElement).removeEventListener('touchend', end!);
-                    (oe.target as HTMLElement).removeEventListener('touchcancel', end!);
+                    (oe.target as HTMLElement).removeEventListener('touchmove', move as EventListener);
+                    (oe.target as HTMLElement).removeEventListener('touchend', end as EventListener);
+                    (oe.target as HTMLElement).removeEventListener('touchcancel', end as EventListener);
                 }
                 return;
             }
         }
         if (opt.move && (opt.move(e, dir) === false)) {
             if (e instanceof MouseEvent) {
-                window.removeEventListener('mousemove', move);
-                window.removeEventListener('mouseup', end!);
+                window.removeEventListener('mousemove', move as EventListener);
+                window.removeEventListener('mouseup', end as EventListener);
             }
             else {
                 if (oe.target) {
-                    (oe.target as HTMLElement).removeEventListener('touchmove', move);
-                    (oe.target as HTMLElement).removeEventListener('touchend', end!);
-                    (oe.target as HTMLElement).removeEventListener('touchcancel', end!);
+                    (oe.target as HTMLElement).removeEventListener('touchmove', move as EventListener);
+                    (oe.target as HTMLElement).removeEventListener('touchend', end as EventListener);
+                    (oe.target as HTMLElement).removeEventListener('touchcancel', end as EventListener);
                 }
             }
             return;
         }
     };
-    end = function(e: MouseEvent | TouchEvent): void {
+    end = function<TU extends T>(e: TU): void {
         if (e instanceof MouseEvent) {
-            window.removeEventListener('mousemove', move);
-            window.removeEventListener('mouseup', end!);
+            window.removeEventListener('mousemove', move as EventListener);
+            window.removeEventListener('mouseup', end as EventListener);
         }
         else {
             if (oe.target) {
-                (oe.target as HTMLElement).removeEventListener('touchmove', move);
-                (oe.target as HTMLElement).removeEventListener('touchend', end!);
-                (oe.target as HTMLElement).removeEventListener('touchcancel', end!);
+                (oe.target as HTMLElement).removeEventListener('touchmove', move as EventListener);
+                (oe.target as HTMLElement).removeEventListener('touchend', end as EventListener);
+                (oe.target as HTMLElement).removeEventListener('touchcancel', end as EventListener);
             }
         }
         opt.up?.(e);
@@ -1167,17 +1167,17 @@ export function bindDown(oe: MouseEvent | TouchEvent, opt: types.IBindDownOption
         }
     };
     if (oe instanceof MouseEvent) {
-        window.addEventListener('mousemove', move, {
+        window.addEventListener('mousemove', move as (e: MouseEvent) => void, {
             'passive': false
         });
-        window.addEventListener('mouseup', end);
+        window.addEventListener('mouseup', end as (e: MouseEvent) => void);
     }
     else {
-        (oe.target as HTMLElement).addEventListener('touchmove', move, {
+        (oe.target as HTMLElement).addEventListener('touchmove', move as (e: TouchEvent) => void, {
             'passive': false
         });
-        (oe.target as HTMLElement).addEventListener('touchend', end);
-        (oe.target as HTMLElement).addEventListener('touchcancel', end);
+        (oe.target as HTMLElement).addEventListener('touchend', end as (e: TouchEvent) => void);
+        (oe.target as HTMLElement).addEventListener('touchcancel', end as (e: TouchEvent) => void);
     }
     opt.down?.(oe);
 }
@@ -1709,7 +1709,8 @@ export const is = clickgo.vue.reactive({
     'move': false,
     'shift': false,
     'ctrl': false,
-    'meta': false
+    'meta': false,
+    'full': false
 });
 
 window.addEventListener('keydown', function(e: KeyboardEvent) {
@@ -2308,14 +2309,30 @@ export function siblingsData(el: HTMLElement, name: string): HTMLElement[] {
 }
 
 // --- 全屏 ---
-export function fullscreen(): boolean {
+export async function fullscreen(): Promise<boolean> {
     const he = document.getElementsByTagName('html')[0] as any;
     if (he.webkitRequestFullscreen) {
-        he.webkitRequestFullscreen();
+        await he.webkitRequestFullscreen();
         return true;
     }
     else if (he.requestFullscreen) {
-        he.requestFullscreen();
+        await he.requestFullscreen();
+        return true;
+    }
+    else {
+        return false;
+    }
+}
+
+// --- 退出全屏 ---
+export async function exitFullscreen(): Promise<boolean> {
+    const d = document as any;
+    if (d.webkitExitFullscreen) {
+        await d.webkitExitFullscreen();
+        return true;
+    }
+    else if (d.exitFullscreen) {
+        await d.exitFullscreen();
         return true;
     }
     else {
@@ -2333,4 +2350,17 @@ document.addEventListener('visibilitychange', function() {
         // --- 显示 ---
         watchTimer = requestAnimationFrame(watchTimerHandler);
     }
+});
+
+// --- 监听 fullscreen 情况的变动 ---
+document.addEventListener('fullscreenchange', function() {
+    if ((document as any).webkitFullscreenElement) {
+        is.full = true;
+        return;
+    }
+    if (document.fullscreenElement) {
+        is.full = true;
+        return;
+    }
+    is.full = false;
 });
