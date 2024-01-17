@@ -1,5 +1,13 @@
 # Changelog
 
+# 3.9.1
+
+[+] Add is.full of dom library.  
+[+] Add exitFullscreen of dom library.  
+[+] Add formatSecond of tool library.  
+[+] Add step control.  
+[\*] Optimize select, nav controls.
+
 # 3.9.0
 
 [+] Add video control.  
