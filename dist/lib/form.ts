@@ -447,6 +447,38 @@ export abstract class AbstractForm extends AbstractCommon {
         core.trigger('formHashChange', this.taskId, this.formId, parent);
     }
 
+    // --- step 相关 ---
+
+    private _inStep: boolean = false;
+
+    /** --- 当前是否在 step 环节中 --- */
+    public get inStep(): boolean {
+        return this._inStep;
+    }
+
+    /** --- 进入 form hash 为源的步进条（Dev 版） --- */
+    public enterStep(opt: {
+        /** --- 当前的步骤名 --- */
+        'name'?: string;
+        /** --- hash list，第一个必须为当前的 formHash --- */
+        'list': Array<{
+            /** --- 子步骤名 --- */
+            'name': string;
+            /** --- 步骤 hash --- */
+            'hash': string;
+        }>;
+    }): boolean {
+        if (this._inStep) {
+            return false;
+        }
+        if (opt.list[0].hash !== this.formHash) {
+            return false;
+        }
+        // --- 进入当前页面步骤 ---
+        this._inStep = true;
+        return false;
+    }
+
     /** --- 当前是不是初次显示 --- */
     private _firstShow: boolean = true;
 

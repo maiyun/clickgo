@@ -1,0 +1,19 @@
+<div class="wrap" :class="[propBoolean('plain') && 'plain']">
+    <div v-for="item, index of dataComp" class="item" :class="[(nowIndex > index) && 'end', (index === nowIndex) && 'now']">
+        <div class="icon">
+            <template v-if="item.icon">
+                <cg-svg v-if="item.icon.endsWith('svg')" :src="item.icon" class="img" />
+                <cg-img v-else :src="item.icon" class="img" />
+            </template>
+            <div v-else class="num">{{index + 1}}</div>
+            <template v-if="!propBoolean('plain')">
+                <div v-if="index > 0" class="line left"></div>
+                <div v-if="index < dataComp.length - 1" class="line right"></div>
+            </template>
+        </div>
+        <div class="label">{{item.label}}</div>
+        <div class="desc">{{item.desc}}</div>
+        <!-- 下面是朴素模式的箭头 -->
+        <div v-if="propBoolean('plain') && (index !== dataComp.length - 1)" class="arrow"></div>
+    </div>
+</div>

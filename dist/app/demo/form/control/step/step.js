@@ -27,44 +27,25 @@ const clickgo = __importStar(require("clickgo"));
 class default_1 extends clickgo.form.AbstractForm {
     constructor() {
         super(...arguments);
-        this.border = true;
-        this.collapse = true;
         this.data = [
             {
-                'name': 'name1',
-                'child': ['val1', 'val2']
+                'label': 'step1'
             },
             {
-                'name': 'name2',
-                'child': ['val1', 'val2', 'val3']
+                'value': 'step2'
             },
             {
-                'name': 'name3',
-                'child': ['val1', 'val2', 'val3', 'val4']
+                'icon': '/package/res/marker.svg',
+                'value': 'icon'
+            },
+            {
+                'label': 'successful',
+                'value': 'step3',
+                'desc': 'qq'
             }
         ];
-    }
-    get maxLine() {
-        let len = 0;
-        for (const item of this.data) {
-            if (!len) {
-                len = item.child.length;
-                continue;
-            }
-            len *= item.child.length;
-        }
-        return len;
-    }
-    get cols() {
-        const cols = [];
-        for (let i = 0; i < this.data.length; ++i) {
-            if (i === 0) {
-                cols.push(this.maxLine / this.data[i].child.length);
-                continue;
-            }
-            cols.push(cols[i - 1] / this.data[i].child.length);
-        }
-        return cols;
+        this.plain = false;
+        this.step1 = '';
     }
 }
 exports.default = default_1;

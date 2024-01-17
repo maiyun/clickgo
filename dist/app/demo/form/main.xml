@@ -72,6 +72,9 @@
                     <button @click="openForm('cvideo')">Video</button>
                 </layout>
                 <layout gutter="10">
+                    <button @click="openForm('cstep')">Step</button>
+                </layout>
+                <layout gutter="10">
                     <button @click="openForm('cmonaco')">Monaco</button>
                     <button @click="openForm('cxterm')">Xterm</button>
                 </layout>

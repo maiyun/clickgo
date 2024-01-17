@@ -1,0 +1,16 @@
+<form title="Step" width="500" height="500" min-width="300" min-height="400" padding="10">
+    <layout direction="v" gutter="10" style="flex: 1;">
+        <label>value: {{step1}}</label>
+        <step :data="data" :plain="plain" v-model="step1"></step>
+        <layout gutter="10">
+            <button style="flex: 1;" @click="step1 = 'step1'">step1</button>
+            <button style="flex: 1;" @click="step1 = 'step2'">step2</button>
+            <button style="flex: 1;" @click="step1 = 'icon'">icon</button>
+        </layout>
+        <layout gutter="10">
+            <button style="flex: 1;" @click="step1 = 'step3'">step3</button>
+            <button style="flex: 1;" @click="step1 = '#'">done</button>
+            <button style="flex: 1;" @click="plain = !plain">{{plain ? '' : '!'}}plain</button>
+        </layout>
+    </layout>
+</form>

@@ -37,6 +37,8 @@
         </nav-item>
         <nav-item label="Root1"></nav-item>
         <nav-item label="Root2"></nav-item>
+        <nav-item label="Root3" name="root?id=1"></nav-item>
+        <nav-item label="Root4" name="root?id=2"></nav-item>
         <nav-item label="Event" @select="onSelect"></nav-item>
         <nav-item label="Root3" icon="/package/res/icon.svg"></nav-item>
         <nav-item label="Root4" icon="/package/res/marker.svg"></nav-item>

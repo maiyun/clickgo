@@ -615,7 +615,9 @@ class default_1 extends clickgo.control.AbstractControl {
             }
             this.searchValue = '';
             yield this._search();
-        }));
+        }), {
+            'immediate': true
+        });
         this.watch('remote', () => __awaiter(this, void 0, void 0, function* () {
             if (!this.propBoolean('search')) {
                 return;

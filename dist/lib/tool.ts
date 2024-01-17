@@ -357,8 +357,9 @@ export function layoutClassPrepend(layout: string, preps: string[]): string {
             }
         }
         return ` class="${resultList.join(' ')}"`;
-    }).replace(/ :class=(["']).+?>/gi, function(t, sp) {
-        return t.replace(new RegExp(` :class=${sp}(.+?)${sp}`, 'gi'), function(t, t1: string) {
+    //}).replace(/ :class=(["']).+?>/gi, function(t, sp) {
+    }).replace(/ :class=(["']).+?["'](\s+[a-zA-Z0-9-_:@]+=|\s*>)/gi, function(t, sp) {
+        return t.replace(new RegExp(` :class=${sp}(.+?)${sp}(\\s+[a-zA-Z0-9-_:@]+=|\\s*>)`, 'gi'), function(t, t1: string, t2: string) {
             // --- t1 为 [] 或 {} ---
             t1 = t1.trim();
             if (t1.startsWith('[')) {
@@ -380,7 +381,7 @@ export function layoutClassPrepend(layout: string, preps: string[]): string {
             else {
                 t1 = layoutClassPrependObject(t1);
             }
-            return ` :class="${t1}"`;
+            return ` :class="${t1}"${t2}`;
         });
     }).replace(/ id=(["'])/gi, ' id=$1' + preps[0]);
 }

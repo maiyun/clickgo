@@ -596,7 +596,7 @@ export default class extends clickgo.control.AbstractControl {
         this.emit('load', value, resolve);
     }
 
-    public onMounted(): void | Promise<void> {
+    public onMounted(): void {
         let mvimmediate = true;
         this.watch('modelValue', async (): Promise<void> => {
             if (mvimmediate) {
@@ -696,6 +696,8 @@ export default class extends clickgo.control.AbstractControl {
             }
             this.searchValue = '';
             await this._search();
+        }, {
+            'immediate': true
         });
         this.watch('remote', async () => {
             if (!this.propBoolean('search')) {

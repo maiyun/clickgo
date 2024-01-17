@@ -272,6 +272,7 @@ class AbstractForm extends AbstractCommon {
     constructor() {
         super(...arguments);
         this.isNativeSync = false;
+        this._inStep = false;
         this._firstShow = true;
         this.dialogResult = '';
     }
@@ -317,6 +318,19 @@ class AbstractForm extends AbstractCommon {
         v.$data._formHash = parent;
         v.$data._historyHash.splice(-1);
         core.trigger('formHashChange', this.taskId, this.formId, parent);
+    }
+    get inStep() {
+        return this._inStep;
+    }
+    enterStep(opt) {
+        if (this._inStep) {
+            return false;
+        }
+        if (opt.list[0].hash !== this.formHash) {
+            return false;
+        }
+        this._inStep = true;
+        return false;
     }
     show() {
         const v = this;

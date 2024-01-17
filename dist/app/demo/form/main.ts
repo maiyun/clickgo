@@ -34,6 +34,7 @@ import ctableFrm from './control/table/table';
 import ctextFrm from './control/text/text';
 import cvflowFrm from './control/vflow/vflow';
 import cvideoFrm from './control/video/video';
+import cstepFrm from './control/step/step';
 import cxtermFrm from './control/xterm/xterm';
 import cechartsFrm from './control/echarts/echarts';
 import ctuieditorFrm from './control/tuieditor/tuieditor';
@@ -126,6 +127,10 @@ export default class extends clickgo.form.AbstractForm {
             }
             case 'cvideo': {
                 frm = await clickgo.form.create(cvideoFrm);
+                break;
+            }
+            case 'cstep': {
+                frm = await clickgo.form.create(cstepFrm);
                 break;
             }
             case 'cxterm': {

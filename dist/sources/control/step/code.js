@@ -24,47 +24,42 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const clickgo = __importStar(require("clickgo"));
-class default_1 extends clickgo.form.AbstractForm {
+class default_1 extends clickgo.control.AbstractControl {
     constructor() {
         super(...arguments);
-        this.border = true;
-        this.collapse = true;
-        this.data = [
-            {
-                'name': 'name1',
-                'child': ['val1', 'val2']
-            },
-            {
-                'name': 'name2',
-                'child': ['val1', 'val2', 'val3']
-            },
-            {
-                'name': 'name3',
-                'child': ['val1', 'val2', 'val3', 'val4']
-            }
-        ];
+        this.props = {
+            'data': [],
+            'plain': false,
+            'modelValue': ''
+        };
     }
-    get maxLine() {
-        let len = 0;
-        for (const item of this.data) {
-            if (!len) {
-                len = item.child.length;
+    get dataComp() {
+        var _a, _b, _c, _d, _e, _f;
+        const data = [];
+        for (const item of this.props.data) {
+            data.push({
+                'icon': (_a = item.icon) !== null && _a !== void 0 ? _a : '',
+                'label': (_c = (_b = item.label) !== null && _b !== void 0 ? _b : item.value) !== null && _c !== void 0 ? _c : 'label',
+                'value': (_e = (_d = item.value) !== null && _d !== void 0 ? _d : item.label) !== null && _e !== void 0 ? _e : 'value',
+                'desc': (_f = item.desc) !== null && _f !== void 0 ? _f : ''
+            });
+        }
+        return data;
+    }
+    get nowIndex() {
+        var _a, _b;
+        if (this.props.modelValue === '#') {
+            return this.dataComp.length;
+        }
+        for (let i = 0; i < this.dataComp.length; ++i) {
+            const item = this.dataComp[i];
+            if (item.value !== this.props.modelValue) {
                 continue;
             }
-            len *= item.child.length;
+            return i;
         }
-        return len;
-    }
-    get cols() {
-        const cols = [];
-        for (let i = 0; i < this.data.length; ++i) {
-            if (i === 0) {
-                cols.push(this.maxLine / this.data[i].child.length);
-                continue;
-            }
-            cols.push(cols[i - 1] / this.data[i].child.length);
-        }
-        return cols;
+        this.emit('update:modelValue', (_b = (_a = this.dataComp[0]) === null || _a === void 0 ? void 0 : _a.value) !== null && _b !== void 0 ? _b : '');
+        return 0;
     }
 }
 exports.default = default_1;

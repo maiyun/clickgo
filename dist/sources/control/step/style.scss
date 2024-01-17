@@ -1,0 +1,87 @@
+.wrap {
+    display: flex;
+
+    .item {
+        display: flex; flex-direction: column; flex: 1;
+
+        .icon {
+            display: flex; justify-content: center; position: relative;
+            .num {
+                border: solid .5px var(--g-plain-border-color); border-radius: 100%; display: flex; align-items: center; justify-content: center; width: 24px; height: 24px;
+            }
+            .img {
+                width: 24px; height: 24px;
+            }
+            .line {
+                position: absolute; top: 12px; height: 0; width: calc(50% - 17px); border-bottom: solid .5px var(--g-plain-border-color);
+                &.left {
+                    left: 0;
+                }
+                &.right {
+                    right: 0;
+                }
+            }
+        }
+        .label {
+            padding: var(--g-padding); display: flex; justify-content: center; font-weight: bold;
+        }
+        .desc {
+            display: flex; justify-content: center;
+        }
+
+        &.end {
+            color: var(--success); fill: var(--success); stroke: var(--success);
+            .icon {
+                .num {
+                    border-color: var(--success);
+                }
+                .line {
+                    &.left, &.right {
+                        border-bottom-color: var(--success);
+                    }
+                }
+            }
+        }
+        &.now {
+            color: var(--info); fill: var(--info); stroke: var(--info);
+            .icon {
+                .num {
+                    border-color: var(--info);
+                }
+                .line {
+                    &.left {
+                        border-bottom-color: var(--success);
+                    }
+                }
+            }
+        }
+    }
+
+    // --- 朴素模式 ---
+
+    &.plain {
+        .item {
+            flex-direction: row; align-items: center;
+            .label {
+                font-weight: initial;
+            }
+            .desc {
+                display: none;
+            }
+            .arrow {
+                flex: 1; display: flex; justify-content: center;
+                &::after {
+                    content: ''; display: block; border: solid 1px var(--g-plain-border-color); border-width: 0 1px 1px 0; width: 12px; height: 12px; transform: rotate(-45deg); margin-left: calc(-6px - var(--g-padding))
+                }
+            }
+
+            &.end {
+                .arrow {
+                    &::after {
+                        border-color: var(--success);
+                    }
+                }
+            }
+        }
+    }
+}

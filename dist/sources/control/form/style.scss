@@ -136,7 +136,7 @@
             .controls {
                 display: flex;
                 .min, .max, .close {
-                    padding: 0 15px; font-size: 14px; display: flex; align-items: center; fill-rule: evenodd;
+                    padding: 0 15px; font-size: 14px; display: flex; align-items: center;
                 }
                 .min, .max {
                     &:hover {

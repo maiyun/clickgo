@@ -1,4 +1,4 @@
-<form title="Desc" width="300" height="300" padding="10">
+<form title="Desc" width="500" height="500" padding="10">
     <layout gutter="10" direction="v" style="flex: 1;">
         <desc :border="border" :collapse="collapse">
             <desc-row>
@@ -22,5 +22,21 @@
             <button @click="border = !border" style="flex: 1; padding: 10px 0;">border: {{border ? 'true' : 'false'}}</button>
             <button @click="collapse = !collapse" style="flex: 1; padding: 10px 0;">collapse: {{collapse ? 'true' : 'false'}}</button>
         </layout>
+        <label>Test: {{cols}}</label>
+        <flow style="flex: 1;">
+            <desc :border="border" :collapse="collapse" style="flex: 1;">
+                <desc-row v-for="line of maxLine">
+                    <!-- 行 1 - max -->
+                    <template v-for="col of data.length">
+                        <!-- 列 1 - max -->
+                        <desc-cell v-if="col===data.length">{{data[col-1].child[(line-1)%cols[col-2]]}}</desc-cell>
+                        <desc-cell v-else-if="line%cols[col-1]===1" :rowspan="cols[col-1]">{{data[col-1].child[Math.floor((line-1)/cols[col-1])%data[col-1].child.length]}}</desc-cell>
+                    </template>
+                    <desc-cell>LINE-{{line}}</desc-cell>
+                    <desc-cell>DATA1</desc-cell>
+                    <desc-cell>DATA2</desc-cell>
+                </desc-row>
+            </desc>
+        </flow>
     </layout>
 </form>

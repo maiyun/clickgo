@@ -271,8 +271,8 @@ function layoutClassPrepend(layout, preps) {
             }
         }
         return ` class="${resultList.join(' ')}"`;
-    }).replace(/ :class=(["']).+?>/gi, function (t, sp) {
-        return t.replace(new RegExp(` :class=${sp}(.+?)${sp}`, 'gi'), function (t, t1) {
+    }).replace(/ :class=(["']).+?["'](\s+[a-zA-Z0-9-_:@]+=|\s*>)/gi, function (t, sp) {
+        return t.replace(new RegExp(` :class=${sp}(.+?)${sp}(\\s+[a-zA-Z0-9-_:@]+=|\\s*>)`, 'gi'), function (t, t1, t2) {
             t1 = t1.trim();
             if (t1.startsWith('[')) {
                 t1 = t1.slice(1, -1);
@@ -291,7 +291,7 @@ function layoutClassPrepend(layout, preps) {
             else {
                 t1 = layoutClassPrependObject(t1);
             }
-            return ` :class="${t1}"`;
+            return ` :class="${t1}"${t2}`;
         });
     }).replace(/ id=(["'])/gi, ' id=$1' + preps[0]);
 }
