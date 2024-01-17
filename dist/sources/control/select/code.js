@@ -305,7 +305,16 @@ class default_1 extends clickgo.control.AbstractControl {
                     --this._needSearch;
                     return;
                 }
+                if (this._needSearch === 0) {
+                    return;
+                }
                 --this._needSearch;
+                if (searchValue === '') {
+                    this.searchData = clickgo.tool.clone(this.props.data);
+                    yield this.nextTick();
+                    yield (success === null || success === void 0 ? void 0 : success());
+                    return;
+                }
                 ++this.searching;
                 this.emit('remote', searchValue, (data) => __awaiter(this, void 0, void 0, function* () {
                     --this.searching;

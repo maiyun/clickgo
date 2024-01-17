@@ -349,7 +349,16 @@ export default class extends clickgo.control.AbstractControl {
                 --this._needSearch;
                 return;
             }
+            if (this._needSearch === 0) {
+                return;
+            }
             --this._needSearch;
+            if (searchValue === '') {
+                this.searchData = clickgo.tool.clone(this.props.data);
+                await this.nextTick();
+                await success?.();
+                return;
+            }
             ++this.searching;
             this.emit('remote', searchValue, async (data?: any[] | Record<string, string>): Promise<void> => {
                 --this.searching;

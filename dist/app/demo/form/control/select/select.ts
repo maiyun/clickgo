@@ -63,8 +63,6 @@ export default class extends clickgo.form.AbstractForm {
         }
     ];
 
-    public slist2r: any[] = [];
-
     /** --- onAdd / onRemove --- */
     public addRemoveList: string[] = [];
 

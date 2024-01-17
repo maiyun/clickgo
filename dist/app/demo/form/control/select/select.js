@@ -92,7 +92,6 @@ class default_1 extends clickgo.form.AbstractForm {
                 'children': ['xixi', 'xixida', 'gogogo']
             }
         ];
-        this.slist2r = [];
         this.addRemoveList = [];
         this.select2 = ['haha2'];
         this.aemodel = [];
