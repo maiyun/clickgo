@@ -1,4 +1,5 @@
 import * as clickgo from 'clickgo';
+import * as types from '~/types/index';
 
 export default class extends clickgo.control.AbstractControl {
 
@@ -311,9 +312,21 @@ export default class extends clickgo.control.AbstractControl {
                     if (indexOf > -1) {
                         // --- 选择已经存在的值 ---
                         if (!this.propBoolean('must') || (this.valueData.length > 1)) {
-                            change = true;
-                            this.valueData.splice(indexOf, 1);
-                            this.shiftStart = value;
+                            const event: types.IGreatlistRemoveEvent = {
+                                'go': true,
+                                preventDefault: function() {
+                                    this.go = false;
+                                },
+                                'detail': {
+                                    'value': value
+                                }
+                            };
+                            this.emit('remove', event);
+                            if (event.go) {
+                                change = true;
+                                this.valueData.splice(indexOf, 1);
+                                this.shiftStart = value;
+                            }
                         }
                     }
                     else {

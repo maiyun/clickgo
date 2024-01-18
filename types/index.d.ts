@@ -615,11 +615,24 @@ export interface INotifyOptions {
     'progress'?: boolean;
 }
 
-// --- Tab Control ---
+// --- Custom Event Control ---
 
-export interface ITabCloseEvent {
+interface ICustomEvent {
     'go': boolean;
     preventDefault: () => void;
+}
+
+// --- Greatlist Control ---
+
+export interface IGreatlistRemoveEvent extends ICustomEvent {
+    'detail': {
+        'value': number;
+    };
+}
+
+// --- Tab Control ---
+
+export interface ITabCloseEvent extends ICustomEvent {
     'detail': {
         'index': number;
         'value': string;

@@ -243,9 +243,21 @@ class default_1 extends clickgo.control.AbstractControl {
                     const indexOf = this.valueData.indexOf(value);
                     if (indexOf > -1) {
                         if (!this.propBoolean('must') || (this.valueData.length > 1)) {
-                            change = true;
-                            this.valueData.splice(indexOf, 1);
-                            this.shiftStart = value;
+                            const event = {
+                                'go': true,
+                                preventDefault: function () {
+                                    this.go = false;
+                                },
+                                'detail': {
+                                    'value': value
+                                }
+                            };
+                            this.emit('remove', event);
+                            if (event.go) {
+                                change = true;
+                                this.valueData.splice(indexOf, 1);
+                                this.shiftStart = value;
+                            }
                         }
                     }
                     else {

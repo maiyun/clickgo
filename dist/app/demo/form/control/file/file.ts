@@ -10,6 +10,8 @@ export default class extends clickgo.form.AbstractForm {
 
     public list: string[] = [];
 
+    public fd = new FormData();
+
     public select(): void {
         this.refs.file.select();
     }
@@ -21,6 +23,7 @@ export default class extends clickgo.form.AbstractForm {
         }
         for (const file of files) {
             this.list.push((file.webkitRelativePath || file.name) + ' (' + file.size.toString() + ')');
+            this.fd.append('file', file, file.name);
         }
     }
 

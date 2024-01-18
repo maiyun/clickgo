@@ -73,6 +73,13 @@ function clone(obj) {
             if (obj[i] instanceof Date) {
                 newObj[i] = new Date(obj[i].getTime());
             }
+            else if (obj[i] instanceof FormData) {
+                const fd = new FormData();
+                for (const item of obj[i]) {
+                    fd.append(item[0], item[1]);
+                }
+                newObj[i] = fd;
+            }
             else if (typeof obj[i] === 'object') {
                 newObj[i] = clone(obj[i]);
             }
@@ -85,6 +92,13 @@ function clone(obj) {
         for (const key in obj) {
             if (obj[key] instanceof Date) {
                 newObj[key] = new Date(obj[key].getTime());
+            }
+            else if (obj[key] instanceof FormData) {
+                const fd = new FormData();
+                for (const item of obj[key]) {
+                    fd.append(item[0], item[1]);
+                }
+                newObj[key] = fd;
             }
             else if (typeof obj[key] === 'object') {
                 newObj[key] = clone(obj[key]);
