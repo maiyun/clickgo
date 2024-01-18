@@ -1,4 +1,5 @@
 import * as clickgo from 'clickgo';
+import * as types from '~/types/index';
 
 export default class extends clickgo.control.AbstractControl {
 
@@ -128,13 +129,17 @@ export default class extends clickgo.control.AbstractControl {
     }
 
     public tabClose(e: MouseEvent, index: number, value: string): void {
-        const event = {
+        const event: types.ITabCloseEvent = {
             'go': true,
             preventDefault: function() {
                 this.go = false;
+            },
+            'detail': {
+                'index': index,
+                'value': value
             }
         };
-        this.emit('close', event, index, value);
+        this.emit('close', event);
         if (!event.go) {
             return;
         }

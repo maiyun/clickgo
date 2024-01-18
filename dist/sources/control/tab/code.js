@@ -148,9 +148,13 @@ class default_1 extends clickgo.control.AbstractControl {
             'go': true,
             preventDefault: function () {
                 this.go = false;
+            },
+            'detail': {
+                'index': index,
+                'value': value
             }
         };
-        this.emit('close', event, index, value);
+        this.emit('close', event);
         if (!event.go) {
             return;
         }

@@ -48,10 +48,10 @@ class default_1 extends clickgo.form.AbstractForm {
         this.drag = false;
         this.cclose = false;
     }
-    onClose(e, i, v) {
+    onClose(e) {
         return __awaiter(this, void 0, void 0, function* () {
-            if (i !== 10) {
-                yield clickgo.form.dialog('Closed, index: ' + i.toString() + ', value: ' + v);
+            if (e.detail.index !== 10) {
+                yield clickgo.form.dialog('Closed, index: ' + e.detail.index.toString() + ', value: ' + e.detail.value);
                 return;
             }
             e.preventDefault();

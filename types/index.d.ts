@@ -615,6 +615,17 @@ export interface INotifyOptions {
     'progress'?: boolean;
 }
 
+// --- Tab Control ---
+
+export interface ITabCloseEvent {
+    'go': boolean;
+    preventDefault: () => void;
+    'detail': {
+        'index': number;
+        'value': string;
+    };
+}
+
 // -------------------------
 // ---------- vue ----------
 // -------------------------
