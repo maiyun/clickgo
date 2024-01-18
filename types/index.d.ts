@@ -630,6 +630,12 @@ export interface IGreatlistRemoveEvent extends ICustomEvent {
     };
 }
 
+export interface IGreatlistAddEvent extends ICustomEvent {
+    'detail': {
+        'value': number;
+    };
+}
+
 // --- Tab Control ---
 
 export interface ITabCloseEvent extends ICustomEvent {

@@ -1,4 +1,5 @@
 import * as clickgo from 'clickgo';
+import * as types from '~/types';
 
 export default class extends clickgo.form.AbstractForm {
 
@@ -244,6 +245,22 @@ export default class extends clickgo.form.AbstractForm {
 
     public async onGesture(dir: string): Promise<void> {
         await clickgo.form.dialog('onGesture: ' + dir);
+    }
+
+    public onGAdd(e: types.IGreatlistAddEvent): void {
+        clickgo.form.notify({
+            'type': 'info',
+            'title': 'Greatlist @add',
+            'content': 'value: ' + e.detail.value.toString()
+        });
+    }
+
+    public onGRemove(e: types.IGreatlistRemoveEvent): void {
+        clickgo.form.notify({
+            'type': 'info',
+            'title': 'Greatlist @remove',
+            'content': 'value: ' + e.detail.value.toString()
+        });
     }
 
 }

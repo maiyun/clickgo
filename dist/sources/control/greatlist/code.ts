@@ -312,17 +312,24 @@ export default class extends clickgo.control.AbstractControl {
                     if (indexOf > -1) {
                         // --- 选择已经存在的值 ---
                         if (!this.propBoolean('must') || (this.valueData.length > 1)) {
-                            const event: types.IGreatlistRemoveEvent = {
-                                'go': true,
-                                preventDefault: function() {
-                                    this.go = false;
-                                },
-                                'detail': {
-                                    'value': value
+                            if (this.propBoolean('multi')) {
+                                const event: types.IGreatlistRemoveEvent = {
+                                    'go': true,
+                                    preventDefault: function() {
+                                        this.go = false;
+                                    },
+                                    'detail': {
+                                        'value': value
+                                    }
+                                };
+                                this.emit('remove', event);
+                                if (event.go) {
+                                    change = true;
+                                    this.valueData.splice(indexOf, 1);
+                                    this.shiftStart = value;
                                 }
-                            };
-                            this.emit('remove', event);
-                            if (event.go) {
+                            }
+                            else {
                                 change = true;
                                 this.valueData.splice(indexOf, 1);
                                 this.shiftStart = value;
@@ -332,12 +339,26 @@ export default class extends clickgo.control.AbstractControl {
                     else {
                         // --- 选择不存在的值 ---
                         if (canSelect(value)) {
-                            change = true;
-                            this.shiftStart = value;
                             if (this.propBoolean('multi')) {
-                                this.valueData.push(value);
+                                const event: types.IGreatlistAddEvent = {
+                                    'go': true,
+                                    preventDefault: function() {
+                                        this.go = false;
+                                    },
+                                    'detail': {
+                                        'value': value
+                                    }
+                                };
+                                this.emit('add', event);
+                                if (event.go) {
+                                    change = true;
+                                    this.shiftStart = value;
+                                    this.valueData.push(value);
+                                }
                             }
                             else {
+                                change = true;
+                                this.shiftStart = value;
                                 this.valueData = [value];
                             }
                         }

@@ -243,17 +243,24 @@ class default_1 extends clickgo.control.AbstractControl {
                     const indexOf = this.valueData.indexOf(value);
                     if (indexOf > -1) {
                         if (!this.propBoolean('must') || (this.valueData.length > 1)) {
-                            const event = {
-                                'go': true,
-                                preventDefault: function () {
-                                    this.go = false;
-                                },
-                                'detail': {
-                                    'value': value
+                            if (this.propBoolean('multi')) {
+                                const event = {
+                                    'go': true,
+                                    preventDefault: function () {
+                                        this.go = false;
+                                    },
+                                    'detail': {
+                                        'value': value
+                                    }
+                                };
+                                this.emit('remove', event);
+                                if (event.go) {
+                                    change = true;
+                                    this.valueData.splice(indexOf, 1);
+                                    this.shiftStart = value;
                                 }
-                            };
-                            this.emit('remove', event);
-                            if (event.go) {
+                            }
+                            else {
                                 change = true;
                                 this.valueData.splice(indexOf, 1);
                                 this.shiftStart = value;
@@ -262,12 +269,26 @@ class default_1 extends clickgo.control.AbstractControl {
                     }
                     else {
                         if (canSelect(value)) {
-                            change = true;
-                            this.shiftStart = value;
                             if (this.propBoolean('multi')) {
-                                this.valueData.push(value);
+                                const event = {
+                                    'go': true,
+                                    preventDefault: function () {
+                                        this.go = false;
+                                    },
+                                    'detail': {
+                                        'value': value
+                                    }
+                                };
+                                this.emit('add', event);
+                                if (event.go) {
+                                    change = true;
+                                    this.shiftStart = value;
+                                    this.valueData.push(value);
+                                }
                             }
                             else {
+                                change = true;
+                                this.shiftStart = value;
                                 this.valueData = [value];
                             }
                         }

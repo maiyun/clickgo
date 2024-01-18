@@ -235,5 +235,19 @@ class default_1 extends clickgo.form.AbstractForm {
             yield clickgo.form.dialog('onGesture: ' + dir);
         });
     }
+    onGAdd(e) {
+        clickgo.form.notify({
+            'type': 'info',
+            'title': 'Greatlist @add',
+            'content': 'value: ' + e.detail.value.toString()
+        });
+    }
+    onGRemove(e) {
+        clickgo.form.notify({
+            'type': 'info',
+            'title': 'Greatlist @remove',
+            'content': 'value: ' + e.detail.value.toString()
+        });
+    }
 }
 exports.default = default_1;
