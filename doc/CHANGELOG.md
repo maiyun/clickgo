@@ -2,17 +2,17 @@
 
 # 3.10.0
 
-[\*] Caution: This update is disruptive, proceed with caution.
-[+] Added 'add' and 'remove' events to the 'greatlist' control.
-[+] 'List' control now supports 'add' and 'remove' events.
-[+] 'Greatselect' control now includes 'add' and 'remove' events.
-[+] 'Select' control introduces 'add,' 'added,' 'remove,' 'removed,' and 'tagclick' events.
-[+] New 'emits' parameter in the 'AbstractControl' class for capturing custom events.
-[\*] Improved tag-click close functionality in the 'select' control by placing the close button on the right side of the tag.
-[\*] Updated 'itemclick' events for 'greatlist' and 'list' to 'itemclicked' events, now with a single event parameter.
-[\*] Resolved issues related to data passthrough.
-[\*] Disruptive update: 'close' event for the 'tab' control now takes a single 'ITabCloseEvent' parameter.
-[\*] Fixed occasional issues with the 'tool.clone' method.
+[\*] Caution: This update is disruptive, proceed with caution.  
+[+] Added 'add' and 'remove' events to the 'greatlist' control.  
+[+] 'List' control now supports 'add' and 'remove' events.  
+[+] 'Greatselect' control now includes 'add' and 'remove' events.  
+[+] 'Select' control introduces 'add,' 'added,' 'remove,' 'removed,' and 'tagclick' events.  
+[+] New 'emits' parameter in the 'AbstractControl' class for capturing custom events.  
+[\*] Improved tag-click close functionality in the 'select' control by placing the close button on the right side of the tag.  
+[\*] Updated 'itemclick' events for 'greatlist' and 'list' to 'itemclicked' events, now with a single event parameter.  
+[\*] Resolved issues related to data passthrough.  
+[\*] Disruptive update: 'close' event for the 'tab' control now takes a single 'ITabCloseEvent' parameter.  
+[\*] Fixed occasional issues with the 'tool.clone' method.  
 [\*] Updated Vue to version 3.4.15.
 
 # 3.9.1
