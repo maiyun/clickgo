@@ -1,4 +1,5 @@
 import * as clickgo from 'clickgo';
+import * as types from '~/types';
 
 export default class extends clickgo.form.AbstractForm {
 
@@ -147,11 +148,7 @@ export default class extends clickgo.form.AbstractForm {
 
     public async onRemote(value: string, resolve: (data?: any[] | Record<string, string>) => void): Promise<void> {
         await clickgo.tool.sleep(300);
-        if (value === '') {
-            resolve(['1', '3', '5']);
-            return;
-        }
-        if (value === '8') {
+        if (!value || value === '8') {
             resolve();
             return;
         }
@@ -162,6 +159,22 @@ export default class extends clickgo.form.AbstractForm {
             'label': 'label2',
             'value': 2
         }]);
+    }
+
+    public onGAdd(e: types.IGreatselectAddEvent): void {
+        clickgo.form.notify({
+            'type': 'info',
+            'title': 'Greatselect @add',
+            'content': 'value: ' + e.detail.value.toString()
+        });
+    }
+
+    public onGRemove(e: types.IGreatselectRemoveEvent): void {
+        clickgo.form.notify({
+            'type': 'info',
+            'title': 'Greaselect @remove',
+            'content': 'value: ' + e.detail.value.toString()
+        });
     }
 
     public onAdd(index: number, value: string): void {

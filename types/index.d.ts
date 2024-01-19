@@ -637,6 +637,20 @@ export interface IGreatlistAddEvent extends ICustomEvent {
     };
 }
 
+// --- Greatselect Control ---
+
+export interface IGreatselectRemoveEvent extends ICustomEvent {
+    'detail': {
+        'value': number;
+    };
+}
+
+export interface IGreatselectAddEvent extends ICustomEvent {
+    'detail': {
+        'value': number;
+    };
+}
+
 // --- List Control ---
 
 export interface IListRemoveEvent extends ICustomEvent {

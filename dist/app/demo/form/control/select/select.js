@@ -153,11 +153,7 @@ class default_1 extends clickgo.form.AbstractForm {
     onRemote(value, resolve) {
         return __awaiter(this, void 0, void 0, function* () {
             yield clickgo.tool.sleep(300);
-            if (value === '') {
-                resolve(['1', '3', '5']);
-                return;
-            }
-            if (value === '8') {
+            if (!value || value === '8') {
                 resolve();
                 return;
             }
@@ -168,6 +164,20 @@ class default_1 extends clickgo.form.AbstractForm {
                     'label': 'label2',
                     'value': 2
                 }]);
+        });
+    }
+    onGAdd(e) {
+        clickgo.form.notify({
+            'type': 'info',
+            'title': 'Greatselect @add',
+            'content': 'value: ' + e.detail.value.toString()
+        });
+    }
+    onGRemove(e) {
+        clickgo.form.notify({
+            'type': 'info',
+            'title': 'Greaselect @remove',
+            'content': 'value: ' + e.detail.value.toString()
         });
     }
     onAdd(index, value) {

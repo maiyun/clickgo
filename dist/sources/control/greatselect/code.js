@@ -27,6 +27,10 @@ const clickgo = __importStar(require("clickgo"));
 class default_1 extends clickgo.control.AbstractControl {
     constructor() {
         super(...arguments);
+        this.emits = {
+            'remove': null,
+            'add': null
+        };
         this.props = {
             'disabled': false,
             'multi': false,
@@ -93,6 +97,36 @@ class default_1 extends clickgo.control.AbstractControl {
             return;
         }
         clickgo.form.hidePop();
+    }
+    onAdd(e) {
+        const event = {
+            'go': true,
+            preventDefault: function () {
+                this.go = false;
+            },
+            'detail': {
+                'value': e.detail.value
+            }
+        };
+        this.emit('add', event);
+        if (!event.go) {
+            e.preventDefault();
+        }
+    }
+    onRemove(e) {
+        const event = {
+            'go': true,
+            preventDefault: function () {
+                this.go = false;
+            },
+            'detail': {
+                'value': e.detail.value
+            }
+        };
+        this.emit('remove', event);
+        if (!event.go) {
+            e.preventDefault();
+        }
     }
     onMounted() {
         clickgo.dom.watchStyle(this.element, ['font', 'padding'], (n, v) => {

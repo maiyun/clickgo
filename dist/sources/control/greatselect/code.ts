@@ -1,6 +1,12 @@
 import * as clickgo from 'clickgo';
+import * as types from '~/types';
 
 export default class extends clickgo.control.AbstractControl {
+
+    public emits = {
+        'remove': null,
+        'add': null
+    };
 
     public props: {
         'disabled': boolean | string;
@@ -98,6 +104,38 @@ export default class extends clickgo.control.AbstractControl {
             return;
         }
         clickgo.form.hidePop();
+    }
+
+    public onAdd(e: types.IGreatlistAddEvent): void {
+        const event: types.IGreatselectAddEvent = {
+            'go': true,
+            preventDefault: function() {
+                this.go = false;
+            },
+            'detail': {
+                'value': e.detail.value
+            }
+        };
+        this.emit('add', event);
+        if (!event.go) {
+            e.preventDefault();
+        }
+    }
+
+    public onRemove(e: types.IGreatlistRemoveEvent): void {
+        const event: types.IGreatselectRemoveEvent = {
+            'go': true,
+            preventDefault: function() {
+                this.go = false;
+            },
+            'detail': {
+                'value': e.detail.value
+            }
+        };
+        this.emit('remove', event);
+        if (!event.go) {
+            e.preventDefault();
+        }
     }
 
     public onMounted(): void {
