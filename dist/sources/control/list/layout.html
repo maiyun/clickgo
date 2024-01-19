@@ -1,4 +1,4 @@
-<cg-greatlist ref="gl" :model-value="value" @update:model-value="updateModelValue" :data="dataGl" :disabled="disabled" :must="must" :multi="multi" :ctrl="ctrl" :selection="selection" :gesture="gesture" :scroll="scroll">
+<cg-greatlist ref="gl" :model-value="value" @update:model-value="updateModelValue" :data="dataGl" :disabled="disabled" :must="must" :multi="multi" :ctrl="ctrl" :selection="selection" :gesture="gesture" :scroll="scroll" @add="onAdd" @remove="onRemove">
     <template v-slot="data">
         <div class="item" :class="[data.row.disabled && 'disabled']" :style="{'padding-left': 'calc(var(--space) * ' + data.row.level + ')'}">
             <div v-if="propBoolean('tree')" class="tree" :class="['tree' + data.row.tree]" @click="treeClick($event, data.row)" data-cg-glno>

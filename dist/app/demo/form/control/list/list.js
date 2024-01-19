@@ -249,5 +249,19 @@ class default_1 extends clickgo.form.AbstractForm {
             'content': 'value: ' + e.detail.value.toString()
         });
     }
+    onLAdd(e) {
+        clickgo.form.notify({
+            'type': 'info',
+            'title': 'List @add',
+            'content': 'value: ' + e.detail.value
+        });
+    }
+    onLRemove(e) {
+        clickgo.form.notify({
+            'type': 'info',
+            'title': 'List @remove',
+            'content': 'value: ' + e.detail.value
+        });
+    }
 }
 exports.default = default_1;

@@ -1,4 +1,5 @@
 import * as clickgo from 'clickgo';
+import * as types from '~/types';
 
 export default class extends clickgo.control.AbstractControl {
 
@@ -359,6 +360,38 @@ export default class extends clickgo.control.AbstractControl {
             }
         }
         // --- 其他不存在和加载状态不处理 ---
+    }
+
+    public onAdd(e: types.IGreatlistAddEvent): void {
+        const event: types.IListAddEvent = {
+            'go': true,
+            preventDefault: function() {
+                this.go = false;
+            },
+            'detail': {
+                'value': this.dataGl[e.detail.value]
+            }
+        };
+        this.emit('add', event);
+        if (!event.go) {
+            e.preventDefault();
+        }
+    }
+
+    public onRemove(e: types.IGreatlistRemoveEvent): void {
+        const event: types.IListRemoveEvent = {
+            'go': true,
+            preventDefault: function() {
+                this.go = false;
+            },
+            'detail': {
+                'value': this.dataGl[e.detail.value]
+            }
+        };
+        this.emit('remove', event);
+        if (!event.go) {
+            e.preventDefault();
+        }
     }
 
     public onMounted(): void {

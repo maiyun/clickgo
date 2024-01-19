@@ -263,4 +263,20 @@ export default class extends clickgo.form.AbstractForm {
         });
     }
 
+    public onLAdd(e: types.IListAddEvent): void {
+        clickgo.form.notify({
+            'type': 'info',
+            'title': 'List @add',
+            'content': 'value: ' + e.detail.value
+        });
+    }
+
+    public onLRemove(e: types.IListRemoveEvent): void {
+        clickgo.form.notify({
+            'type': 'info',
+            'title': 'List @remove',
+            'content': 'value: ' + e.detail.value
+        });
+    }
+
 }

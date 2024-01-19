@@ -286,6 +286,36 @@ class default_1 extends clickgo.control.AbstractControl {
             }
         }
     }
+    onAdd(e) {
+        const event = {
+            'go': true,
+            preventDefault: function () {
+                this.go = false;
+            },
+            'detail': {
+                'value': this.dataGl[e.detail.value]
+            }
+        };
+        this.emit('add', event);
+        if (!event.go) {
+            e.preventDefault();
+        }
+    }
+    onRemove(e) {
+        const event = {
+            'go': true,
+            preventDefault: function () {
+                this.go = false;
+            },
+            'detail': {
+                'value': this.dataGl[e.detail.value]
+            }
+        };
+        this.emit('remove', event);
+        if (!event.go) {
+            e.preventDefault();
+        }
+    }
     onMounted() {
         this.watch('data', () => {
             this.dataFormat = this.formatData(this.props.data, this.dataFormat);

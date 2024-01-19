@@ -636,6 +636,20 @@ export interface IGreatlistAddEvent extends ICustomEvent {
     };
 }
 
+// --- List Control ---
+
+export interface IListRemoveEvent extends ICustomEvent {
+    'detail': {
+        'value': string;
+    };
+}
+
+export interface IListAddEvent extends ICustomEvent {
+    'detail': {
+        'value': string;
+    };
+}
+
 // --- Tab Control ---
 
 export interface ITabCloseEvent extends ICustomEvent {
