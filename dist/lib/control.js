@@ -44,6 +44,7 @@ class AbstractControl {
     constructor() {
         this.packageFiles = {};
         this.props = {};
+        this.emits = {};
         this.slots = {};
     }
     get filename() {
@@ -272,6 +273,7 @@ function init(taskId, invoke) {
                             'layout': '',
                             'files': item.files,
                             'props': {},
+                            'emits': {},
                             'data': {},
                             'access': {},
                             'methods': {},
@@ -351,6 +353,11 @@ function init(taskId, invoke) {
                                 t.controls[name].props[key] = {
                                     'default': cls.props[key]
                                 };
+                            }
+                        }
+                        if (cls.emits) {
+                            for (const key in cls.emits) {
+                                t.controls[name].emits[key] = cls.emits[key];
                             }
                         }
                         const cdata = Object.entries(cls);
@@ -445,10 +452,14 @@ function buildComponents(taskId, formId, path) {
         components['cg-' + name] = {
             'template': control.layout.replace(/{{{formId}}}/g, formId.toString()),
             'props': control.props,
+            'emits': control.emits,
             'data': function () {
                 const data = tool.clone(control.data);
                 if (data.props) {
                     delete data.props;
+                }
+                if (data.emits) {
+                    delete data.emits;
                 }
                 return data;
             },

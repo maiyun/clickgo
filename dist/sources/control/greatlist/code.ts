@@ -3,6 +3,11 @@ import * as types from '~/types/index';
 
 export default class extends clickgo.control.AbstractControl {
 
+    public emits = {
+        'remove': null,
+        'add': null
+    };
+
     public props: {
         'disabled': boolean | string;
         'must': boolean | string;

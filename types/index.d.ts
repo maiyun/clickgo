@@ -406,6 +406,7 @@ export interface ITask {
 
         'files': Record<string, Blob | string>;
         'props': Record<string, any>;
+        'emits': Record<string, any>;
         'data': Record<string, any>;
         'access': Record<string, any>;
         'methods': Record<string, any>;

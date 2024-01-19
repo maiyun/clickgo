@@ -264,6 +264,7 @@ export default class extends clickgo.form.AbstractForm {
     }
 
     public onLAdd(e: types.IListAddEvent): void {
+        console.log('x', e.detail);
         clickgo.form.notify({
             'type': 'info',
             'title': 'List @add',

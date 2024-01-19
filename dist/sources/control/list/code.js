@@ -27,6 +27,10 @@ const clickgo = __importStar(require("clickgo"));
 class default_1 extends clickgo.control.AbstractControl {
     constructor() {
         super(...arguments);
+        this.emits = {
+            'remove': null,
+            'add': null
+        };
         this.props = {
             'disabled': false,
             'must': true,
@@ -293,7 +297,7 @@ class default_1 extends clickgo.control.AbstractControl {
                 this.go = false;
             },
             'detail': {
-                'value': this.dataGl[e.detail.value]
+                'value': this.dataGl[e.detail.value].value
             }
         };
         this.emit('add', event);
@@ -308,7 +312,7 @@ class default_1 extends clickgo.control.AbstractControl {
                 this.go = false;
             },
             'detail': {
-                'value': this.dataGl[e.detail.value]
+                'value': this.dataGl[e.detail.value].value
             }
         };
         this.emit('remove', event);

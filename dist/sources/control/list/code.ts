@@ -3,6 +3,11 @@ import * as types from '~/types';
 
 export default class extends clickgo.control.AbstractControl {
 
+    public emits = {
+        'remove': null,
+        'add': null
+    };
+
     public props: {
         'disabled': boolean | string;
         'must': boolean | string;
@@ -369,7 +374,7 @@ export default class extends clickgo.control.AbstractControl {
                 this.go = false;
             },
             'detail': {
-                'value': this.dataGl[e.detail.value]
+                'value': this.dataGl[e.detail.value].value
             }
         };
         this.emit('add', event);
@@ -385,7 +390,7 @@ export default class extends clickgo.control.AbstractControl {
                 this.go = false;
             },
             'detail': {
-                'value': this.dataGl[e.detail.value]
+                'value': this.dataGl[e.detail.value].value
             }
         };
         this.emit('remove', event);

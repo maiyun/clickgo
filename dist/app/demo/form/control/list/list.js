@@ -250,6 +250,7 @@ class default_1 extends clickgo.form.AbstractForm {
         });
     }
     onLAdd(e) {
+        console.log('x', e.detail);
         clickgo.form.notify({
             'type': 'info',
             'title': 'List @add',

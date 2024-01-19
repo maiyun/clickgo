@@ -164,6 +164,9 @@ export abstract class AbstractControl {
     /** --- 组件参数，由用户定义重写 --- */
     public readonly props = {};
 
+    /** --- 组件参数，由用户定义重写 --- */
+    public readonly emits: Record<string, null | ((payload: any) => boolean)> = {};
+
     /** --- 组件的子插槽 --- */
     public readonly slots: Record<string, any> = {};
 
@@ -390,6 +393,7 @@ export async function init(
 
                         'files': item.files,
                         'props': {},
+                        'emits': {},
                         'data': {},
                         'access': {},
                         'methods': {},
@@ -491,6 +495,11 @@ export async function init(
                             t.controls[name].props[key] = {
                                 'default': cls.props[key]
                             };
+                        }
+                    }
+                    if (cls.emits) {
+                        for (const key in cls.emits) {
+                            t.controls[name].emits[key] = cls.emits[key];
                         }
                     }
                     // --- DATA ---
@@ -598,11 +607,15 @@ export function buildComponents(
         components['cg-' + name] = {
             'template': control.layout.replace(/{{{formId}}}/g, formId.toString()),
             'props': control.props,
+            'emits': control.emits,
 
             'data': function() {
                 const data = tool.clone(control.data);
                 if (data.props) {
                     delete data.props;
+                }
+                if (data.emits) {
+                    delete data.emits;
                 }
                 return data;
             },
