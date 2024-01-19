@@ -586,7 +586,15 @@ global {
     .select_op {
         .select_tags {
             .select_tag {
-                padding: 6px 10px;
+                .select_label, .select_close {
+                    transition: all .15s ease;
+                }
+                .select_label {
+                    padding: 0 10px;
+                }
+                .select_close {
+                    width: 22px; height: 22px;
+                }
             }
         }
     }

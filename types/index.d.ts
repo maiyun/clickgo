@@ -717,6 +717,13 @@ export interface ISelectRemovedEvent {
     };
 }
 
+export interface ISelectTagclickEvent {
+    'detail': {
+        'index': number;
+        'value': string;
+    };
+}
+
 // --- Tab Control ---
 
 export interface ITabCloseEvent extends ICustomEvent {

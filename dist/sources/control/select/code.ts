@@ -8,6 +8,7 @@ export default class extends clickgo.control.AbstractControl {
         'added': null,
         'remove': null,
         'removed': null,
+        'tagclick': null,
 
         'remote': null,
         'load': null,
@@ -757,6 +758,18 @@ export default class extends clickgo.control.AbstractControl {
                 'mode': 'list'
             }
         });
+    }
+
+    // --- tag 的 label 的点击事件 ---
+    public tagClick(index: number): void {
+        const value = this.value[index];
+        const event: types.ISelectTagclickEvent = {
+            'detail': {
+                'index': index,
+                'value': value
+            }
+        };
+        this.emit('tagclick', event);
     }
 
     // --- tag 的点击事件 ---

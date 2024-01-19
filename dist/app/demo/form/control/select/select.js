@@ -195,6 +195,9 @@ class default_1 extends clickgo.form.AbstractForm {
     onRemoved(e) {
         this.addRemoveList.unshift('@removed, index: ' + e.detail.index.toString() + ', value: ' + e.detail.value + ', mode: ' + e.detail.mode);
     }
+    onTagclick(e) {
+        this.addRemoveList.unshift('@tagclick, index: ' + e.detail.index.toString() + ', value: ' + e.detail.value);
+    }
     changeArea() {
         switch (this.area) {
             case 'all': {

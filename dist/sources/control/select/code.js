@@ -41,6 +41,7 @@ class default_1 extends clickgo.control.AbstractControl {
             'added': null,
             'remove': null,
             'removed': null,
+            'tagclick': null,
             'remote': null,
             'load': null,
             'label': null
@@ -663,6 +664,16 @@ class default_1 extends clickgo.control.AbstractControl {
                 'mode': 'list'
             }
         });
+    }
+    tagClick(index) {
+        const value = this.value[index];
+        const event = {
+            'detail': {
+                'index': index,
+                'value': value
+            }
+        };
+        this.emit('tagclick', event);
     }
     removeTag(index) {
         if (this.isMust) {

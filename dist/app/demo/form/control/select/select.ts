@@ -196,6 +196,10 @@ export default class extends clickgo.form.AbstractForm {
         this.addRemoveList.unshift('@removed, index: ' + e.detail.index.toString() + ', value: ' + e.detail.value + ', mode: ' + e.detail.mode);
     }
 
+    public onTagclick(e: types.ISelectTagclickEvent): void {
+        this.addRemoveList.unshift('@tagclick, index: ' + e.detail.index.toString() + ', value: ' + e.detail.value);
+    }
+
     public changeArea(): void {
         switch (this.area) {
             case 'all': {
