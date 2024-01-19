@@ -167,6 +167,9 @@ export default class extends clickgo.form.AbstractForm {
             'title': 'Greatselect @add',
             'content': 'value: ' + e.detail.value.toString()
         });
+        if (this.slist[e.detail.value].type === 1) {
+            e.preventDefault();
+        }
     }
 
     public onGRemove(e: types.IGreatselectRemoveEvent): void {
@@ -177,12 +180,20 @@ export default class extends clickgo.form.AbstractForm {
         });
     }
 
-    public onAdd(index: number, value: string): void {
-        this.addRemoveList.unshift('@add, index: ' + index.toString() + ', value: ' + value);
+    public onAdd(e: types.ISelectAddEvent): void {
+        this.addRemoveList.unshift('@add, index: ' + e.detail.index.toString() + ', value: ' + e.detail.value);
     }
 
-    public onRemove(index: number, value: string): void {
-        this.addRemoveList.unshift('@remove, index: ' + index.toString() + ', value: ' + value);
+    public onAdded(e: types.ISelectAddedEvent): void {
+        this.addRemoveList.unshift('@added, index: ' + e.detail.index.toString() + ', value: ' + e.detail.value);
+    }
+
+    public onRemove(e: types.ISelectRemoveEvent): void {
+        this.addRemoveList.unshift('@remove, index: ' + e.detail.index.toString() + ', value: ' + e.detail.value + ', mode: ' + e.detail.mode);
+    }
+
+    public onRemoved(e: types.ISelectRemovedEvent): void {
+        this.addRemoveList.unshift('@removed, index: ' + e.detail.index.toString() + ', value: ' + e.detail.value + ', mode: ' + e.detail.mode);
     }
 
     public changeArea(): void {
@@ -214,25 +225,13 @@ export default class extends clickgo.form.AbstractForm {
 
     public onMounted(): void {
         this.watch(() => this.select.join(','), (n, o): void => {
-            let select: number[] = [];
-            const now = n.split(',');
-            const old = o.split(',');
-            for (const item of now) {
-                if (this.slist[parseInt(item)].type !== 0) {
-                    continue;
-                }
-                select.push(parseInt(item));
-            }
-            if (select.length === now.length) {
+            if (this.multi) {
                 return;
             }
-            select = [];
-            for (const item of old) {
-                select.push(parseInt(item));
+            if (this.slist[parseInt(n)].type === 0) {
+                return;
             }
-            this.select = select;
-        }, {
-            'deep': true
+            this.select = [parseInt(o)];
         });
     }
 

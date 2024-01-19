@@ -1,6 +1,18 @@
 import * as clickgo from 'clickgo';
+import * as types from '~/types';
 
 export default class extends clickgo.control.AbstractControl {
+
+    public emits = {
+        'add': null,
+        'added': null,
+        'remove': null,
+        'removed': null,
+
+        'remote': null,
+        'load': null,
+        'label': null
+    };
 
     public props: {
         'disabled': boolean | string;
@@ -174,10 +186,31 @@ export default class extends clickgo.control.AbstractControl {
                 if ((e.target as HTMLInputElement).value === '' && this.propBoolean('multi') && this.value.length > 0) {
                     const index = this.value.length - 1;
                     const value = this.value[index];
-                    this.value.splice(-1);
-                    this.label.splice(-1);
-                    this.updateValue();
-                    this.emit('remove', index, value);
+                    // --- 判断是否可移除 ---
+                    const event: types.ISelectRemoveEvent = {
+                        'go': true,
+                        preventDefault: function() {
+                            this.go = false;
+                        },
+                        'detail': {
+                            'index': index,
+                            'value': value,
+                            'mode': 'backspace'
+                        }
+                    };
+                    this.emit('remove', event);
+                    if (event.go) {
+                        this.value.splice(-1);
+                        this.label.splice(-1);
+                        this.updateValue();
+                        this.emit('removed', {
+                            'detail': {
+                                'index': index,
+                                'value': value,
+                                'mode': 'backspace'
+                            }
+                        });
+                    }
                 }
             }
             return;
@@ -193,17 +226,35 @@ export default class extends clickgo.control.AbstractControl {
                 clickgo.form.hidePop();
                 return;
             }
-            this.value.push(this.inputValue);
-            this.label.push(this.listLabel[0] || this.inputValue);
-            this.updateValue({
-                'clearInput': true,
-                'clearList': true
-            });
-            const addIndex = this.value.length - 1;
-            const addValue = this.value[addIndex];
-            this.emit('add', addIndex, addValue);
-            if (this.propBoolean('search')) {
-                await this._search();
+            // --- 判断是否允许新增项 ---
+            const addIndex = this.value.length;
+            const event: types.ISelectAddEvent = {
+                'go': true,
+                preventDefault: function() {
+                    this.go = false;
+                },
+                'detail': {
+                    'index': addIndex,
+                    'value': this.inputValue
+                }
+            };
+            this.emit('add', event);
+            if (event.go) {
+                this.value.push(this.inputValue);
+                this.label.push(this.listLabel[0] || this.inputValue);
+                this.updateValue({
+                    'clearInput': true,
+                    'clearList': true
+                });
+                this.emit('added', {
+                    'detail': {
+                        'index': addIndex,
+                        'value': this.inputValue
+                    }
+                });
+                if (this.propBoolean('search')) {
+                    await this._search();
+                }
             }
             return;
         }
@@ -255,18 +306,36 @@ export default class extends clickgo.control.AbstractControl {
                     clickgo.form.hidePop();
                     return;
                 }
-                this.value.push(value);
-                this.label.push(this.listLabel[0] || value);
-                this.updateValue({
-                    'clearInput': true,
-                    'clearList': true
-                });
-                const addIndex = this.value.length - 1;
-                const addValue = this.value[addIndex];
-                this.emit('add', addIndex, addValue);
-                clickgo.form.hidePop();
-                if (this.propBoolean('search')) {
-                    await this._search();
+                // --- 判断是否允许新增项 ---
+                const addIndex = this.value.length;
+                const event: types.ISelectAddEvent = {
+                    'go': true,
+                    preventDefault: function() {
+                        this.go = false;
+                    },
+                    'detail': {
+                        'index': addIndex,
+                        'value': value
+                    }
+                };
+                this.emit('add', event);
+                if (event.go) {
+                    this.value.push(value);
+                    this.label.push(this.listLabel[0] || value);
+                    this.updateValue({
+                        'clearInput': true,
+                        'clearList': true
+                    });
+                    this.emit('added', {
+                        'detail': {
+                            'index': addIndex,
+                            'value': value
+                        }
+                    });
+                    clickgo.form.hidePop();
+                    if (this.propBoolean('search')) {
+                        await this._search();
+                    }
                 }
             }
             else {
@@ -302,15 +371,33 @@ export default class extends clickgo.control.AbstractControl {
                     await this._search();
                     return;
                 }
-                this.value.push(value);
-                this.label.push(this.listLabel[0]);
-                this.searchValue = '';
-                this.updateValue();
-                const addIndex = this.value.length - 1;
-                const addValue = this.value[addIndex];
-                this.emit('add', addIndex, addValue);
-                clickgo.form.hidePop();
-                await this._search();
+                // --- 判断是否允许新增项 ---
+                const addIndex = this.value.length;
+                const event: types.ISelectAddEvent = {
+                    'go': true,
+                    preventDefault: function() {
+                        this.go = false;
+                    },
+                    'detail': {
+                        'index': addIndex,
+                        'value': value
+                    }
+                };
+                this.emit('add', event);
+                if (event.go) {
+                    this.value.push(value);
+                    this.label.push(this.listLabel[0]);
+                    this.searchValue = '';
+                    this.updateValue();
+                    this.emit('added', {
+                        'detail': {
+                            'index': addIndex,
+                            'value': value
+                        }
+                    });
+                    clickgo.form.hidePop();
+                    await this._search();
+                }
             }
             else {
                 // --- 单选 ---
@@ -465,7 +552,7 @@ export default class extends clickgo.control.AbstractControl {
     }
 
     /** --- list 上的点击事件 --- */
-    public async listItemClick(): Promise<void> {
+    public async listItemClicked(): Promise<void> {
         if (this.propBoolean('editable')) {
             const v = this.listValue[0];
             // -- 可编辑 ---
@@ -475,21 +562,39 @@ export default class extends clickgo.control.AbstractControl {
                     clickgo.form.hidePop();
                     return;
                 }
-                this.value.push(v);
-                this.label.push(this.listLabel[0]);
-                this.updateValue({
-                    'clearInput': true,
-                    'clearList': true
-                });
-                const addIndex = this.value.length - 1;
-                const addValue = this.value[addIndex];
-                this.emit('add', addIndex, addValue);
-                if (this.propBoolean('search')) {
-                    clickgo.form.hidePop();
-                    await this._search();
-                }
-                else {
-                    clickgo.form.hidePop();
+                // --- 判断是否允许新增项 ---
+                const addIndex = this.value.length;
+                const event: types.ISelectAddEvent = {
+                    'go': true,
+                    preventDefault: function() {
+                        this.go = false;
+                    },
+                    'detail': {
+                        'index': addIndex,
+                        'value': v
+                    }
+                };
+                this.emit('add', event);
+                if (event.go) {
+                    this.value.push(v);
+                    this.label.push(this.listLabel[0]);
+                    this.updateValue({
+                        'clearInput': true,
+                        'clearList': true
+                    });
+                    this.emit('added', {
+                        'detail': {
+                            'index': addIndex,
+                            'value': this.inputValue
+                        }
+                    });
+                    if (this.propBoolean('search')) {
+                        clickgo.form.hidePop();
+                        await this._search();
+                    }
+                    else {
+                        clickgo.form.hidePop();
+                    }
                 }
             }
             else {
@@ -514,20 +619,39 @@ export default class extends clickgo.control.AbstractControl {
                         await this._search();
                         return;
                     }
-                    this.value.push(this.listValue[0]);
-                    this.label.push(this.listLabel[0]);
-                    this.updateValue({
-                        'clearInput': true,
-                        'clearList': true
-                    });
-                    const addIndex = this.value.length - 1;
-                    const addValue = this.value[addIndex];
-                    this.emit('add', addIndex, addValue);
-                    clickgo.form.hidePop();
-                    await this._search();
+                    // --- 判断是否允许新增项 ---
+                    const addIndex = this.value.length;
+                    const event: types.ISelectAddEvent = {
+                        'go': true,
+                        preventDefault: function() {
+                            this.go = false;
+                        },
+                        'detail': {
+                            'index': addIndex,
+                            'value': this.listValue[0]
+                        }
+                    };
+                    this.emit('add', event);
+                    if (event.go) {
+                        this.value.push(this.listValue[0]);
+                        this.label.push(this.listLabel[0]);
+                        this.updateValue({
+                            'clearInput': true,
+                            'clearList': true
+                        });
+                        this.emit('added', {
+                            'detail': {
+                                'index': addIndex,
+                                'value': this.inputValue
+                            }
+                        });
+                        clickgo.form.hidePop();
+                        await this._search();
+                    }
                 }
                 else {
-                    // --- 多选情况，可能有新增，可能有减少，要比对 ---
+                    // --- 多选情况，可能有新增，可能有减少，现在交给 @add, @remove 处理了 ---
+                    /*
                     const rtn = clickgo.tool.compar(this.value, this.listValue);
                     if (rtn.length.add || rtn.length.remove) {
                         // --- 有变化 ---
@@ -545,6 +669,7 @@ export default class extends clickgo.control.AbstractControl {
                         }
                         this.updateValue();
                     }
+                    */
                 }
             }
             else {
@@ -566,6 +691,74 @@ export default class extends clickgo.control.AbstractControl {
         }
     }
 
+    // --- list 的相关事件 ---
+
+    public onAdd(e: types.IListAddEvent): void {
+        if (!this.propBoolean('multi')) {
+            return;
+        }
+        if (this.propBoolean('search')) {
+            return;
+        }
+        const addIndex = this.value.length;
+        const event: types.ISelectAddEvent = {
+            'go': true,
+            preventDefault: function() {
+                this.go = false;
+            },
+            'detail': {
+                'index': addIndex,
+                'value': e.detail.value
+            }
+        };
+        this.emit('add', event);
+        if (!event.go) {
+            e.preventDefault();
+            return;
+        }
+        // --- 可添加 ---
+        this.value.push(e.detail.value);
+        const result = this.refs.list.findFormat(e.detail.value, false);
+        this.label.push(result?.[e.detail.value].label ?? 'error');
+        this.emit('added', event);
+    }
+
+    public onRemove(e: types.IListAddEvent): void {
+        if (!this.propBoolean('multi')) {
+            return;
+        }
+        if (this.propBoolean('search')) {
+            return;
+        }
+        const removeIndex = e.detail.index;
+        const event: types.ISelectRemoveEvent = {
+            'go': true,
+            preventDefault: function() {
+                this.go = false;
+            },
+            'detail': {
+                'index': removeIndex,
+                'value': e.detail.value,
+                'mode': 'list'
+            }
+        };
+        this.emit('remove', event);
+        if (!event.go) {
+            e.preventDefault();
+            return;
+        }
+        // --- 可移除 ---
+        this.value.splice(e.detail.index, 1);
+        this.label.splice(e.detail.index, 1);
+        this.emit('removed', {
+            'detail': {
+                'index': removeIndex,
+                'value': e.detail.value,
+                'mode': 'list'
+            }
+        });
+    }
+
     // --- tag 的点击事件 ---
     public removeTag(index: number): void {
         if (this.isMust) {
@@ -574,13 +767,35 @@ export default class extends clickgo.control.AbstractControl {
             }
         }
         const value = this.value[index];
+        // --- 判断是否可移除 ---
+        const event: types.ISelectRemoveEvent = {
+            'go': true,
+            preventDefault: function() {
+                this.go = false;
+            },
+            'detail': {
+                'index': index,
+                'value': value,
+                'mode': 'tag'
+            }
+        };
+        this.emit('remove', event);
+        if (!event.go) {
+            return;
+        }
         this.value.splice(index, 1);
         this.label.splice(index, 1);
         if (this.isMust) {
             this.listValue = clickgo.tool.clone(this.value);
         }
         this.updateValue();
-        this.emit('remove', index, value);
+        this.emit('removed', {
+            'detail': {
+                'index': index,
+                'value': value,
+                'mode': 'tag'
+            }
+        });
     }
 
     /** --- tags 的鼠标滚轮事件 --- */

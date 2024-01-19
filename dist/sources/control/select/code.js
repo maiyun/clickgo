@@ -36,6 +36,15 @@ const clickgo = __importStar(require("clickgo"));
 class default_1 extends clickgo.control.AbstractControl {
     constructor() {
         super(...arguments);
+        this.emits = {
+            'add': null,
+            'added': null,
+            'remove': null,
+            'removed': null,
+            'remote': null,
+            'load': null,
+            'label': null
+        };
         this.props = {
             'disabled': false,
             'editable': false,
@@ -146,10 +155,30 @@ class default_1 extends clickgo.control.AbstractControl {
                     if (e.target.value === '' && this.propBoolean('multi') && this.value.length > 0) {
                         const index = this.value.length - 1;
                         const value = this.value[index];
-                        this.value.splice(-1);
-                        this.label.splice(-1);
-                        this.updateValue();
-                        this.emit('remove', index, value);
+                        const event = {
+                            'go': true,
+                            preventDefault: function () {
+                                this.go = false;
+                            },
+                            'detail': {
+                                'index': index,
+                                'value': value,
+                                'mode': 'backspace'
+                            }
+                        };
+                        this.emit('remove', event);
+                        if (event.go) {
+                            this.value.splice(-1);
+                            this.label.splice(-1);
+                            this.updateValue();
+                            this.emit('removed', {
+                                'detail': {
+                                    'index': index,
+                                    'value': value,
+                                    'mode': 'backspace'
+                                }
+                            });
+                        }
                     }
                 }
                 return;
@@ -165,17 +194,34 @@ class default_1 extends clickgo.control.AbstractControl {
                     clickgo.form.hidePop();
                     return;
                 }
-                this.value.push(this.inputValue);
-                this.label.push(this.listLabel[0] || this.inputValue);
-                this.updateValue({
-                    'clearInput': true,
-                    'clearList': true
-                });
-                const addIndex = this.value.length - 1;
-                const addValue = this.value[addIndex];
-                this.emit('add', addIndex, addValue);
-                if (this.propBoolean('search')) {
-                    yield this._search();
+                const addIndex = this.value.length;
+                const event = {
+                    'go': true,
+                    preventDefault: function () {
+                        this.go = false;
+                    },
+                    'detail': {
+                        'index': addIndex,
+                        'value': this.inputValue
+                    }
+                };
+                this.emit('add', event);
+                if (event.go) {
+                    this.value.push(this.inputValue);
+                    this.label.push(this.listLabel[0] || this.inputValue);
+                    this.updateValue({
+                        'clearInput': true,
+                        'clearList': true
+                    });
+                    this.emit('added', {
+                        'detail': {
+                            'index': addIndex,
+                            'value': this.inputValue
+                        }
+                    });
+                    if (this.propBoolean('search')) {
+                        yield this._search();
+                    }
                 }
                 return;
             }
@@ -222,18 +268,35 @@ class default_1 extends clickgo.control.AbstractControl {
                         clickgo.form.hidePop();
                         return;
                     }
-                    this.value.push(value);
-                    this.label.push(this.listLabel[0] || value);
-                    this.updateValue({
-                        'clearInput': true,
-                        'clearList': true
-                    });
-                    const addIndex = this.value.length - 1;
-                    const addValue = this.value[addIndex];
-                    this.emit('add', addIndex, addValue);
-                    clickgo.form.hidePop();
-                    if (this.propBoolean('search')) {
-                        yield this._search();
+                    const addIndex = this.value.length;
+                    const event = {
+                        'go': true,
+                        preventDefault: function () {
+                            this.go = false;
+                        },
+                        'detail': {
+                            'index': addIndex,
+                            'value': value
+                        }
+                    };
+                    this.emit('add', event);
+                    if (event.go) {
+                        this.value.push(value);
+                        this.label.push(this.listLabel[0] || value);
+                        this.updateValue({
+                            'clearInput': true,
+                            'clearList': true
+                        });
+                        this.emit('added', {
+                            'detail': {
+                                'index': addIndex,
+                                'value': value
+                            }
+                        });
+                        clickgo.form.hidePop();
+                        if (this.propBoolean('search')) {
+                            yield this._search();
+                        }
                     }
                 }
                 else {
@@ -266,15 +329,32 @@ class default_1 extends clickgo.control.AbstractControl {
                         yield this._search();
                         return;
                     }
-                    this.value.push(value);
-                    this.label.push(this.listLabel[0]);
-                    this.searchValue = '';
-                    this.updateValue();
-                    const addIndex = this.value.length - 1;
-                    const addValue = this.value[addIndex];
-                    this.emit('add', addIndex, addValue);
-                    clickgo.form.hidePop();
-                    yield this._search();
+                    const addIndex = this.value.length;
+                    const event = {
+                        'go': true,
+                        preventDefault: function () {
+                            this.go = false;
+                        },
+                        'detail': {
+                            'index': addIndex,
+                            'value': value
+                        }
+                    };
+                    this.emit('add', event);
+                    if (event.go) {
+                        this.value.push(value);
+                        this.label.push(this.listLabel[0]);
+                        this.searchValue = '';
+                        this.updateValue();
+                        this.emit('added', {
+                            'detail': {
+                                'index': addIndex,
+                                'value': value
+                            }
+                        });
+                        clickgo.form.hidePop();
+                        yield this._search();
+                    }
                 }
                 else {
                     if (!this.listValue[0]) {
@@ -409,7 +489,7 @@ class default_1 extends clickgo.control.AbstractControl {
             this.updateValue();
         });
     }
-    listItemClick() {
+    listItemClicked() {
         return __awaiter(this, void 0, void 0, function* () {
             if (this.propBoolean('editable')) {
                 const v = this.listValue[0];
@@ -418,21 +498,38 @@ class default_1 extends clickgo.control.AbstractControl {
                         clickgo.form.hidePop();
                         return;
                     }
-                    this.value.push(v);
-                    this.label.push(this.listLabel[0]);
-                    this.updateValue({
-                        'clearInput': true,
-                        'clearList': true
-                    });
-                    const addIndex = this.value.length - 1;
-                    const addValue = this.value[addIndex];
-                    this.emit('add', addIndex, addValue);
-                    if (this.propBoolean('search')) {
-                        clickgo.form.hidePop();
-                        yield this._search();
-                    }
-                    else {
-                        clickgo.form.hidePop();
+                    const addIndex = this.value.length;
+                    const event = {
+                        'go': true,
+                        preventDefault: function () {
+                            this.go = false;
+                        },
+                        'detail': {
+                            'index': addIndex,
+                            'value': v
+                        }
+                    };
+                    this.emit('add', event);
+                    if (event.go) {
+                        this.value.push(v);
+                        this.label.push(this.listLabel[0]);
+                        this.updateValue({
+                            'clearInput': true,
+                            'clearList': true
+                        });
+                        this.emit('added', {
+                            'detail': {
+                                'index': addIndex,
+                                'value': this.inputValue
+                            }
+                        });
+                        if (this.propBoolean('search')) {
+                            clickgo.form.hidePop();
+                            yield this._search();
+                        }
+                        else {
+                            clickgo.form.hidePop();
+                        }
                     }
                 }
                 else {
@@ -454,35 +551,36 @@ class default_1 extends clickgo.control.AbstractControl {
                             yield this._search();
                             return;
                         }
-                        this.value.push(this.listValue[0]);
-                        this.label.push(this.listLabel[0]);
-                        this.updateValue({
-                            'clearInput': true,
-                            'clearList': true
-                        });
-                        const addIndex = this.value.length - 1;
-                        const addValue = this.value[addIndex];
-                        this.emit('add', addIndex, addValue);
-                        clickgo.form.hidePop();
-                        yield this._search();
+                        const addIndex = this.value.length;
+                        const event = {
+                            'go': true,
+                            preventDefault: function () {
+                                this.go = false;
+                            },
+                            'detail': {
+                                'index': addIndex,
+                                'value': this.listValue[0]
+                            }
+                        };
+                        this.emit('add', event);
+                        if (event.go) {
+                            this.value.push(this.listValue[0]);
+                            this.label.push(this.listLabel[0]);
+                            this.updateValue({
+                                'clearInput': true,
+                                'clearList': true
+                            });
+                            this.emit('added', {
+                                'detail': {
+                                    'index': addIndex,
+                                    'value': this.inputValue
+                                }
+                            });
+                            clickgo.form.hidePop();
+                            yield this._search();
+                        }
                     }
                     else {
-                        const rtn = clickgo.tool.compar(this.value, this.listValue);
-                        if (rtn.length.add || rtn.length.remove) {
-                            this.value = clickgo.tool.clone(this.listValue);
-                            this.label = clickgo.tool.clone(this.listLabel);
-                            if (rtn.length.add) {
-                                for (const name in rtn.add) {
-                                    this.emit('add', rtn.add[name], name);
-                                }
-                            }
-                            if (rtn.length.remove) {
-                                for (const name in rtn.remove) {
-                                    this.emit('remove', rtn.remove[name], name);
-                                }
-                            }
-                            this.updateValue();
-                        }
                     }
                 }
                 else {
@@ -503,6 +601,69 @@ class default_1 extends clickgo.control.AbstractControl {
             }
         });
     }
+    onAdd(e) {
+        var _a;
+        if (!this.propBoolean('multi')) {
+            return;
+        }
+        if (this.propBoolean('search')) {
+            return;
+        }
+        const addIndex = this.value.length;
+        const event = {
+            'go': true,
+            preventDefault: function () {
+                this.go = false;
+            },
+            'detail': {
+                'index': addIndex,
+                'value': e.detail.value
+            }
+        };
+        this.emit('add', event);
+        if (!event.go) {
+            e.preventDefault();
+            return;
+        }
+        this.value.push(e.detail.value);
+        const result = this.refs.list.findFormat(e.detail.value, false);
+        this.label.push((_a = result === null || result === void 0 ? void 0 : result[e.detail.value].label) !== null && _a !== void 0 ? _a : 'error');
+        this.emit('added', event);
+    }
+    onRemove(e) {
+        if (!this.propBoolean('multi')) {
+            return;
+        }
+        if (this.propBoolean('search')) {
+            return;
+        }
+        const removeIndex = e.detail.index;
+        const event = {
+            'go': true,
+            preventDefault: function () {
+                this.go = false;
+            },
+            'detail': {
+                'index': removeIndex,
+                'value': e.detail.value,
+                'mode': 'list'
+            }
+        };
+        this.emit('remove', event);
+        if (!event.go) {
+            e.preventDefault();
+            return;
+        }
+        this.value.splice(e.detail.index, 1);
+        this.label.splice(e.detail.index, 1);
+        this.emit('removed', {
+            'detail': {
+                'index': removeIndex,
+                'value': e.detail.value,
+                'mode': 'list'
+            }
+        });
+    }
     removeTag(index) {
         if (this.isMust) {
             if (this.value.length === 1) {
@@ -510,13 +671,34 @@ class default_1 extends clickgo.control.AbstractControl {
             }
         }
         const value = this.value[index];
+        const event = {
+            'go': true,
+            preventDefault: function () {
+                this.go = false;
+            },
+            'detail': {
+                'index': index,
+                'value': value,
+                'mode': 'tag'
+            }
+        };
+        this.emit('remove', event);
+        if (!event.go) {
+            return;
+        }
         this.value.splice(index, 1);
         this.label.splice(index, 1);
         if (this.isMust) {
             this.listValue = clickgo.tool.clone(this.value);
         }
         this.updateValue();
-        this.emit('remove', index, value);
+        this.emit('removed', {
+            'detail': {
+                'index': index,
+                'value': value,
+                'mode': 'tag'
+            }
+        });
     }
     tagsWheel(e) {
         if (e.deltaY === 0) {

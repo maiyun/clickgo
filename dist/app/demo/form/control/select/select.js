@@ -172,6 +172,9 @@ class default_1 extends clickgo.form.AbstractForm {
             'title': 'Greatselect @add',
             'content': 'value: ' + e.detail.value.toString()
         });
+        if (this.slist[e.detail.value].type === 1) {
+            e.preventDefault();
+        }
     }
     onGRemove(e) {
         clickgo.form.notify({
@@ -180,11 +183,17 @@ class default_1 extends clickgo.form.AbstractForm {
             'content': 'value: ' + e.detail.value.toString()
         });
     }
-    onAdd(index, value) {
-        this.addRemoveList.unshift('@add, index: ' + index.toString() + ', value: ' + value);
+    onAdd(e) {
+        this.addRemoveList.unshift('@add, index: ' + e.detail.index.toString() + ', value: ' + e.detail.value);
     }
-    onRemove(index, value) {
-        this.addRemoveList.unshift('@remove, index: ' + index.toString() + ', value: ' + value);
+    onAdded(e) {
+        this.addRemoveList.unshift('@added, index: ' + e.detail.index.toString() + ', value: ' + e.detail.value);
+    }
+    onRemove(e) {
+        this.addRemoveList.unshift('@remove, index: ' + e.detail.index.toString() + ', value: ' + e.detail.value + ', mode: ' + e.detail.mode);
+    }
+    onRemoved(e) {
+        this.addRemoveList.unshift('@removed, index: ' + e.detail.index.toString() + ', value: ' + e.detail.value + ', mode: ' + e.detail.mode);
     }
     changeArea() {
         switch (this.area) {
@@ -212,25 +221,13 @@ class default_1 extends clickgo.form.AbstractForm {
     }
     onMounted() {
         this.watch(() => this.select.join(','), (n, o) => {
-            let select = [];
-            const now = n.split(',');
-            const old = o.split(',');
-            for (const item of now) {
-                if (this.slist[parseInt(item)].type !== 0) {
-                    continue;
-                }
-                select.push(parseInt(item));
-            }
-            if (select.length === now.length) {
+            if (this.multi) {
                 return;
             }
-            select = [];
-            for (const item of old) {
-                select.push(parseInt(item));
+            if (this.slist[parseInt(n)].type === 0) {
+                return;
             }
-            this.select = select;
-        }, {
-            'deep': true
+            this.select = [parseInt(o)];
         });
     }
 }

@@ -811,7 +811,7 @@ export function execCommand(ac: string): void {
  * @param before 老值
  * @param after 新值
  */
-export function compar(before: string[], after: string[]): {
+export function compar(before: Array<string | number>, after: Array<string | number>): {
     'remove': Record<string, number>;
     'add': Record<string, number>;
     'length': {

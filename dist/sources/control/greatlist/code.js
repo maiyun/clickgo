@@ -38,7 +38,8 @@ class default_1 extends clickgo.control.AbstractControl {
         super(...arguments);
         this.emits = {
             'remove': null,
-            'add': null
+            'add': null,
+            'itemclicked': null
         };
         this.props = {
             'disabled': false,
@@ -224,7 +225,6 @@ class default_1 extends clickgo.control.AbstractControl {
                             if (!canSelect(k)) {
                                 continue;
                             }
-                            change = true;
                             valueData.push(k);
                         }
                     }
@@ -233,14 +233,51 @@ class default_1 extends clickgo.control.AbstractControl {
                             if (!canSelect(k)) {
                                 continue;
                             }
-                            change = true;
                             valueData.push(k);
                         }
                     }
                     if ((valueData.length !== this.valueData.length)
                         || !valueData.every((item) => this.valueData.includes(item))) {
-                        change = true;
-                        this.valueData = valueData;
+                        const rtn = clickgo.tool.compar(this.valueData, valueData);
+                        if (rtn.length.add) {
+                            for (const name in rtn.add) {
+                                const event = {
+                                    'go': true,
+                                    preventDefault: function () {
+                                        this.go = false;
+                                    },
+                                    'detail': {
+                                        'index': rtn.add[name],
+                                        'value': parseInt(name)
+                                    }
+                                };
+                                this.emit('add', event);
+                                if (event.go) {
+                                    change = true;
+                                }
+                            }
+                        }
+                        if (rtn.length.remove) {
+                            for (const name in rtn.remove) {
+                                const event = {
+                                    'go': true,
+                                    preventDefault: function () {
+                                        this.go = false;
+                                    },
+                                    'detail': {
+                                        'index': rtn.add[name],
+                                        'value': parseInt(name)
+                                    }
+                                };
+                                this.emit('remove', event);
+                                if (event.go) {
+                                    change = true;
+                                }
+                            }
+                        }
+                        if (change) {
+                            this.valueData = valueData;
+                        }
                     }
                 }
                 else {
@@ -254,6 +291,7 @@ class default_1 extends clickgo.control.AbstractControl {
                                         this.go = false;
                                     },
                                     'detail': {
+                                        'index': indexOf,
                                         'value': value
                                     }
                                 };
@@ -280,6 +318,7 @@ class default_1 extends clickgo.control.AbstractControl {
                                         this.go = false;
                                     },
                                     'detail': {
+                                        'index': this.valueData.length,
                                         'value': value
                                     }
                                 };
@@ -315,7 +354,13 @@ class default_1 extends clickgo.control.AbstractControl {
             else {
                 clickgo.form.hidePop(current);
             }
-            this.emit('itemclick', e, true);
+            this.emit('itemclicked', {
+                'detail': {
+                    'event': e,
+                    'value': value,
+                    'arrow': true
+                }
+            });
         });
     }
     innerDown(e, value) {
@@ -330,7 +375,13 @@ class default_1 extends clickgo.control.AbstractControl {
         }
         clickgo.dom.bindClick(e, () => {
             this.select(value, e.shiftKey, ((!this.propBoolean('ctrl') || e instanceof TouchEvent) && this.propBoolean('multi')) ? true : e.ctrlKey);
-            this.emit('itemclick', e, false);
+            this.emit('itemclicked', {
+                'detail': {
+                    'event': e,
+                    'value': value,
+                    'arrow': false
+                }
+            });
         });
     }
     down(e) {

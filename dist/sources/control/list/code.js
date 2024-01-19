@@ -29,7 +29,8 @@ class default_1 extends clickgo.control.AbstractControl {
         super(...arguments);
         this.emits = {
             'remove': null,
-            'add': null
+            'add': null,
+            'itemclicked': null
         };
         this.props = {
             'disabled': false,
@@ -297,6 +298,7 @@ class default_1 extends clickgo.control.AbstractControl {
                 this.go = false;
             },
             'detail': {
+                'index': e.detail.index,
                 'value': this.dataGl[e.detail.value].value
             }
         };
@@ -312,6 +314,7 @@ class default_1 extends clickgo.control.AbstractControl {
                 this.go = false;
             },
             'detail': {
+                'index': e.detail.index,
                 'value': this.dataGl[e.detail.value].value
             }
         };
@@ -319,6 +322,9 @@ class default_1 extends clickgo.control.AbstractControl {
         if (!event.go) {
             e.preventDefault();
         }
+    }
+    onItemclicked(e) {
+        this.emit('itemclicked', e);
     }
     onMounted() {
         this.watch('data', () => {

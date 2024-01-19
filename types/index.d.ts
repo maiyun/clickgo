@@ -627,13 +627,23 @@ interface ICustomEvent {
 
 export interface IGreatlistRemoveEvent extends ICustomEvent {
     'detail': {
+        'index': number;
         'value': number;
     };
 }
 
 export interface IGreatlistAddEvent extends ICustomEvent {
     'detail': {
+        'index': number;
         'value': number;
+    };
+}
+
+export interface IGreatlistItemclickedEvent {
+    'detail': {
+        'event': MouseEvent | TouchEvent;
+        'value': number;
+        'arrow': boolean;
     };
 }
 
@@ -655,13 +665,55 @@ export interface IGreatselectAddEvent extends ICustomEvent {
 
 export interface IListRemoveEvent extends ICustomEvent {
     'detail': {
+        'index': number;
         'value': string;
     };
 }
 
 export interface IListAddEvent extends ICustomEvent {
     'detail': {
+        'index': number;
         'value': string;
+    };
+}
+
+export interface IListItemclickedEvent {
+    'detail': {
+        'event': MouseEvent | TouchEvent;
+        'value': number;
+        'arrow': boolean;
+    };
+}
+
+// --- Select Control ---
+
+export interface ISelectAddEvent extends ICustomEvent {
+    'detail': {
+        'index': number;
+        'value': string;
+    };
+}
+
+export interface ISelectRemoveEvent extends ICustomEvent {
+    'detail': {
+        'index': number;
+        'value': string;
+        'mode': 'backspace' | 'tag' | 'list';
+    };
+}
+
+export interface ISelectAddedEvent {
+    'detail': {
+        'index': number;
+        'value': string;
+    };
+}
+
+export interface ISelectRemovedEvent {
+    'detail': {
+        'index': number;
+        'value': string;
+        'mode': 'backspace' | 'tag' | 'list';
     };
 }
 

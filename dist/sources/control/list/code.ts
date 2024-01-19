@@ -5,7 +5,8 @@ export default class extends clickgo.control.AbstractControl {
 
     public emits = {
         'remove': null,
-        'add': null
+        'add': null,
+        'itemclicked': null
     };
 
     public props: {
@@ -25,7 +26,7 @@ export default class extends clickgo.control.AbstractControl {
         'iconDefault': string;
 
         'data': any[] | Record<string, string>;
-        'modelValue': Array<string | number>;
+        'modelValue': string[];
     } = {
             'disabled': false,
             'must': true,
@@ -374,6 +375,7 @@ export default class extends clickgo.control.AbstractControl {
                 this.go = false;
             },
             'detail': {
+                'index': e.detail.index,
                 'value': this.dataGl[e.detail.value].value
             }
         };
@@ -390,6 +392,7 @@ export default class extends clickgo.control.AbstractControl {
                 this.go = false;
             },
             'detail': {
+                'index': e.detail.index,
                 'value': this.dataGl[e.detail.value].value
             }
         };
@@ -397,6 +400,10 @@ export default class extends clickgo.control.AbstractControl {
         if (!event.go) {
             e.preventDefault();
         }
+    }
+
+    public onItemclicked(e: types.IGreatlistItemclickedEvent): void {
+        this.emit('itemclicked', e);
     }
 
     public onMounted(): void {
