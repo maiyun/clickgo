@@ -46,6 +46,7 @@ class default_1 extends clickgo.control.AbstractControl {
         this.logoCount = 0;
         this.selected = '';
         this.layer = false;
+        this.childs = [];
     }
     select(name) {
         if (this.selected === name) {

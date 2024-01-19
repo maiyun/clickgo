@@ -22,11 +22,14 @@ export default class extends clickgo.control.AbstractControl {
     /** --- watch: logo 变更次数 --- */
     public logoCount: number = 0;
 
-    /** --- 当前选中的 name --- */
+    /** --- 当前选中的 name（可能带 qs） --- */
     public selected: string = '';
 
     /** --- 当前是否是层的模式 --- */
     public layer = false;
+
+    /** --- 当前的所有子集列表，['panel', 'order?a=b'] --- */
+    public childs: string[] = [];
 
     /** --- 选择一个 name，child 可能也会调用 --- */
     public select(name: string): void {

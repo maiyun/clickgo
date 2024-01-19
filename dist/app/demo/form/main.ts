@@ -58,6 +58,8 @@ import mthemeFrm from './method/theme/theme';
 import mtoolFrm from './method/tool/tool';
 import mzipFrm from './method/zip/zip';
 
+import sbackpanelFrm from './solution/backpanel/backpanel';
+
 export default class extends clickgo.form.AbstractForm {
 
     public ntab = '';
@@ -299,8 +301,12 @@ export default class extends clickgo.form.AbstractForm {
                 frm = await clickgo.form.create(mtoolFrm);
                 break;
             }
-            default: {
+            case 'mzip': {
                 frm = await clickgo.form.create(mzipFrm);
+                break;
+            }
+            default: {
+                frm = await clickgo.form.create(sbackpanelFrm);
             }
         }
         frm.show();

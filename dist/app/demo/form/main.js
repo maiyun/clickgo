@@ -90,6 +90,7 @@ const task_2 = __importDefault(require("./method/task/task"));
 const theme_1 = __importDefault(require("./method/theme/theme"));
 const tool_1 = __importDefault(require("./method/tool/tool"));
 const zip_1 = __importDefault(require("./method/zip/zip"));
+const backpanel_1 = __importDefault(require("./solution/backpanel/backpanel"));
 class default_1 extends clickgo.form.AbstractForm {
     constructor() {
         super(...arguments);
@@ -330,8 +331,12 @@ class default_1 extends clickgo.form.AbstractForm {
                     frm = yield clickgo.form.create(tool_1.default);
                     break;
                 }
-                default: {
+                case 'mzip': {
                     frm = yield clickgo.form.create(zip_1.default);
+                    break;
+                }
+                default: {
+                    frm = yield clickgo.form.create(backpanel_1.default);
                 }
             }
             frm.show();

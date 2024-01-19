@@ -1,5 +1,5 @@
 <form width="600" height="500" title="Nav" :loading="loading">
-    <nav v-model="name" v-model:show="isShow" :logo="logo" @layer="layer = $event" style="flex: 1; width: 0;">
+    <nav v-model="name" v-model:show="isShow" v-model:qs="qs" :logo="logo" @layer="layer = $event" style="flex: 1; width: 0;">
         <nav-item label="Title1">
             <nav-title>group1</nav-title>
             <nav-item label="Sub1">
@@ -39,9 +39,10 @@
         <nav-item label="Root2"></nav-item>
         <nav-item label="Root3" name="root?id=1"></nav-item>
         <nav-item label="Root4" name="root?id=2"></nav-item>
+        <nav-item label="Root5" name="root"></nav-item>
         <nav-item label="Event" @select="onSelect"></nav-item>
-        <nav-item label="Root3" icon="/package/res/icon.svg"></nav-item>
-        <nav-item label="Root4" icon="/package/res/marker.svg"></nav-item>
+        <nav-item label="Root6" name="root6" icon="/package/res/icon.svg"></nav-item>
+        <nav-item label="Root7" icon="/package/res/marker.svg"></nav-item>
         <template v-slot:header>
             <label style="flex: 1; padding-left: 10px;">Test</label>
             <menu>
@@ -81,6 +82,7 @@
                 <button v-if="layer" @click="isShow = true">Open</button>
                 <button @click="name = 'Action11'">Select "Action11"</button>
                 <button @click="name = 'hasname'">Select "hasname"</button>
+                <button @click="name = 'root6?id=8'">Select "root6?id=8"</button>
                 <button @click="logo = logo ? '' : '/clickgo/icon.png'">{{logo ? 'Remove' : 'Set'}} logo</button>
             </layout>
         </template>

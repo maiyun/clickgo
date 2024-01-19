@@ -157,6 +157,8 @@
         "/form/method/tool/tool.xml",
         "/form/method/zip/zip.js",
         "/form/method/zip/zip.xml",
+        "/form/solution/backpanel/backpanel.js",
+        "/form/solution/backpanel/backpanel.xml",
         "/form/main.css",
         "/form/main.js",
         "/form/main.xml",

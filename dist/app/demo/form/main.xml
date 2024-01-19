@@ -1,5 +1,5 @@
 <form width="400" height="550" title="ClickGo demo" icon="/package/res/icon.svg">
-    <tab v-model="ntab" :tabs="['control', 'method', 'event']" style="margin: 10px; flex: 1;">
+    <tab v-model="ntab" :tabs="['control', 'method', 'event', 'solution']" style="margin: 10px; flex: 1;">
         <flow v-if="ntab === 'control'" class="inner" direction="v">
             <layout class="buttons" gutter="10" direction="v">
                 <label>App data: {{adata}}</label>
@@ -104,12 +104,17 @@
                 <button @click="openForm('msystem')">System</button>
             </layout>
         </flow>
-        <flow v-else class="inner" direction="v">
+        <flow v-else-if="ntab === 'event'" class="inner" direction="v">
             <layout gutter="10" direction="v">
                 <button @click="openForm('escreen')">About screen</button>
                 <button @click="openForm('eform')">About form</button>
                 <button @click="openForm('etask')">About task</button>
                 <button @click="openForm('eother')">About other</button>
+            </layout>
+        </flow>
+        <flow v-else class="inner" direction="v">
+            <layout gutter="10" direction="v">
+                <button @click="openForm('sbackpanel')">Backend panel</button>
             </layout>
         </flow>
     </tab>

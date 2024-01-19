@@ -117,6 +117,10 @@ This library is published under [Apache-2.0](./LICENSE) license.
 [Border Radius SVG Vector](https://www.svgrepo.com/svg/446973/border-radius)  
 [Copy SVG Vector](https://www.svgrepo.com/svg/446994/copy)
 
+#### Select
+
+[Close SVG Vector](https://www.svgrepo.com/svg/446990/close)
+
 ### **LICENSE:** MIT License **AUTHOR:** developmentseed
 
 #### Map

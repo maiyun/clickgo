@@ -685,6 +685,15 @@ export interface IListItemclickedEvent {
     };
 }
 
+// --- Nav Item ---
+
+export interface INavItemSelectEvent extends ICustomEvent {
+    'detail': {
+        'name': string;
+        'selected': string;
+    };
+}
+
 // --- Select Control ---
 
 export interface ISelectAddEvent extends ICustomEvent {

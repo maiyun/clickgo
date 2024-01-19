@@ -1,0 +1,9 @@
+<form width="500" height="500" title="Backend Panel" padding="10">
+    <layout direction="v" style="flex: 1;">
+        <layout gutter="10" align-v="center">
+            <label>formHash:</label>
+            <text v-model="fh" style="flex: 1;" />
+            <button @click="formHash = fh">Change</button>
+        </layout>
+    </layout>
+</form>

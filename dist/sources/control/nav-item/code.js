@@ -36,6 +36,9 @@ const clickgo = __importStar(require("clickgo"));
 class default_1 extends clickgo.control.AbstractControl {
     constructor() {
         super(...arguments);
+        this.emits = {
+            'select': null
+        };
         this.props = {
             'label': '',
             'name': '',
@@ -60,7 +63,21 @@ class default_1 extends clickgo.control.AbstractControl {
         if (this.selected === this.overName) {
             return true;
         }
-        return false;
+        const selecteda = this.selected.split('?');
+        const namea = this.overName.split('?');
+        if (selecteda[0] !== namea[0]) {
+            return false;
+        }
+        if (namea[1]) {
+            return false;
+        }
+        if (!selecteda[1]) {
+            return true;
+        }
+        if (this.nav.childs.includes(this.selected)) {
+            return false;
+        }
+        return true;
     }
     click() {
         if (!this.hasChild) {
@@ -71,9 +88,13 @@ class default_1 extends clickgo.control.AbstractControl {
                 'go': true,
                 preventDefault: function () {
                     this.go = false;
+                },
+                'detail': {
+                    'name': this.overName,
+                    'selected': this.selected
                 }
             };
-            this.emit('select', event, this.selected, this.overName);
+            this.emit('select', event);
             if (event.go) {
                 this.nav.select(this.overName);
             }
@@ -125,7 +146,17 @@ class default_1 extends clickgo.control.AbstractControl {
                 parent = parent.parentByName('nav-item');
             }
         });
+        this.watch('overName', (n, o) => {
+            const io = this.nav.childs.indexOf(o);
+            this.nav.childs.splice(io, 1);
+            this.nav.childs.push(n);
+        });
         this.nav = this.parentByName('nav');
+        this.nav.childs.push(this.overName);
+    }
+    onUnmounted() {
+        const io = this.nav.childs.indexOf(this.overName);
+        this.nav.childs.splice(io, 1);
     }
 }
 exports.default = default_1;
