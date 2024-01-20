@@ -1,48 +1,25 @@
-<form width="500" height="500" title="Backend Panel" padding="10">
-    <layout direction="v" style="flex: 1;">
+<form width="800" height="500" title="Backend Panel" padding="10">
+    <layout direction="v" gutter="10" style="flex: 1;">
         <layout gutter="10" align-v="center">
             <label>formHash:</label>
             <text v-model="fh" style="flex: 1;" />
             <button @click="formHash = fh">Change</button>
         </layout>
-        <nav v-model="name" style="flex: 1; width: 0;">
-            <nav-item label="Big1">
-                <nav-title>User</nav-title>
-                <nav-item label="User">
-                    <nav-item label="List"></nav-item>
-                    <nav-item label="A"></nav-item>
-                </nav-item>
-                <nav-item label="Sub2">
-                    <nav-item label="Action3"></nav-item>
-                    <nav-item label="Action4"></nav-item>
-                </nav-item>
-                <nav-title>group2</nav-title>
-                <nav-item label="Sub3">
-                    <nav-item label="Action5"></nav-item>
-                    <nav-item label="Action6"></nav-item>
-                </nav-item>
-                <nav-item label="Sub4">
-                    <nav-item label="Action7"></nav-item>
-                    <nav-item label="Action8"></nav-item>
-                </nav-item>
+        <nav v-model="name" default="list" style="flex: 1;">
+            <nav-item label="User">
+                <nav-item label="All list" name="list"></nav-item>
+                <nav-item label="Available" name="list?avail=1"></nav-item>
             </nav-item>
-            <nav-item label="Big2">
-                <nav-item label="Action9"></nav-item>
-                <nav-item label="Action10"></nav-item>
-                <nav-item label="Action11"></nav-item>
-                <nav-item label="Action12"></nav-item>
+            <nav-item label="Goods">
+                <nav-item label="Available" name="goodslist?avail=1"></nav-item>
+                <nav-item label="Unavailable" name="goodslist?avail=0"></nav-item>
             </nav-item>
-            <nav-item label="Action" name="root?id=1"></nav-item>
-            <nav-item label="Root4" name="root?id=2"></nav-item>
-            <nav-item label="Root5" name="root"></nav-item>
-            <nav-item label="Event" @select="onSelect"></nav-item>
-            <nav-item label="Root6" name="root6" icon="/package/res/icon.svg"></nav-item>
-            <nav-item label="Root7" icon="/package/res/marker.svg"></nav-item>
+            <nav-item label="Form" name="form"></nav-item>
             <template v-slot:header>
-                <label style="flex: 1;">User</label>
+                <label style="flex: 1; text-align: right; padding-right: var(--g-padding);">Panel</label>
             </template>
             <template v-slot:content>
-                <panel></panel>
+                <panel style="flex: 1;"></panel>
             </template>
         </nav>
     </layout>

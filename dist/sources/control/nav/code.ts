@@ -8,11 +8,14 @@ export default class extends clickgo.control.AbstractControl {
 
     public props: {
         'modelValue': string;
+        /** --- 默认 name，如果 modelValue 为空，则默认使用本值 --- */
+        'default': string;
         // --- pop 模式时是否在显示 ---
         'show': boolean | string | undefined;
         'logo': string;
     } = {
             'modelValue': '',
+            'default': '',
             'show': undefined,
             'logo': ''
         };
@@ -94,7 +97,7 @@ export default class extends clickgo.control.AbstractControl {
         });
 
         this.watch('modelValue', () => {
-            this.select(this.props.modelValue);
+            this.select(this.props.modelValue || this.props.default);
         }, {
             'immediate': true
         });

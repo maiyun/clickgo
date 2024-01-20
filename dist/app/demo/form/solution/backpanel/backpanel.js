@@ -28,6 +28,7 @@ class default_1 extends clickgo.form.AbstractForm {
     constructor() {
         super(...arguments);
         this.fd = '';
+        this.name = '';
     }
     onMounted() {
         this.watch('formHash', () => {

@@ -41,6 +41,7 @@ class default_1 extends clickgo.control.AbstractControl {
         };
         this.props = {
             'modelValue': '',
+            'default': '',
             'show': undefined,
             'logo': ''
         };
@@ -103,7 +104,7 @@ class default_1 extends clickgo.control.AbstractControl {
                 'immediate': true
             });
             this.watch('modelValue', () => {
-                this.select(this.props.modelValue);
+                this.select(this.props.modelValue || this.props.default);
             }, {
                 'immediate': true
             });
