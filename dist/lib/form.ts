@@ -447,6 +447,9 @@ export abstract class AbstractForm extends AbstractCommon {
         core.trigger('formHashChange', this.taskId, this.formId, parent);
     }
 
+    /** --- 覆盖整个窗体的 loading --- */
+    public loading: boolean = false;
+
     // --- step 相关 ---
 
     private _inStep: boolean = false;

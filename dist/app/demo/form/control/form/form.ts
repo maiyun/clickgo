@@ -26,14 +26,14 @@ export default class extends clickgo.form.AbstractForm {
 
     public resize = true;
 
-    public loading = false;
+    public floading = false;
 
     public border = 'normal';
 
     public async showLoading(): Promise<void> {
-        this.loading = true;
+        this.floading = true;
         await clickgo.tool.sleep(1000);
-        this.loading = false;
+        this.floading = false;
     }
 
 }

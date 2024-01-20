@@ -272,6 +272,7 @@ class AbstractForm extends AbstractCommon {
     constructor() {
         super(...arguments);
         this.isNativeSync = false;
+        this.loading = false;
         this._inStep = false;
         this._firstShow = true;
         this.dialogResult = '';

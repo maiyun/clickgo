@@ -30,6 +30,12 @@ export default class extends clickgo.form.AbstractForm {
         this.dr = await frm.showDialog();
     }
 
+    public async showLoading(): Promise<void> {
+        this.loading = true;
+        await clickgo.tool.sleep(1000);
+        this.loading = false;
+    }
+
     public onMounted(): void {
         this.watch('test', async () => {
             await clickgo.form.dialog('test changed.');

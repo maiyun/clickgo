@@ -94,7 +94,7 @@ class default_1 extends clickgo.control.AbstractControl {
         return clickgo.tool.getBoolean(this.props.move);
     }
     get isLoading() {
-        return clickgo.tool.getBoolean(this.props.loading);
+        return this.isInside ? clickgo.tool.getBoolean(this.props.loading) : this.parent.loading;
     }
     get isStateMax() {
         return clickgo.tool.getBoolean(this.props.stateMax);
