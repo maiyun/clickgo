@@ -1,5 +1,5 @@
 <form width="600" height="500" title="Nav" :loading="loading">
-    <nav v-model="name" v-model:show="isShow" v-model:qs="qs" :logo="logo" @layer="layer = $event" style="flex: 1; width: 0;">
+    <nav v-model="name" v-model:show="isShow" :logo="logo" @layer="layer = $event" style="flex: 1; width: 0;">
         <nav-item label="Title1">
             <nav-title>group1</nav-title>
             <nav-item label="Sub1">

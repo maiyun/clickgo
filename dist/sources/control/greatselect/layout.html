@@ -1,9 +1,9 @@
 <div class="wrap" :class="['area-' + area, isKeyDown && 'active']" :data-cg-disabled="propBoolean('disabled') ? '' : undefined" :tabindex="(!propBoolean('disabled') && formFocus) ? '0' : undefined" @keydown="keydown" @keyup="keyup">
     <div class="op" :style="{'margin': opMargin}">
-        <div class="content" @mousedown="down($event, 'left')" @tocuhstart="down($event, 'left')" :class="[direction]" :style="{'padding': padding}">
+        <div class="content" @mousedown="down($event, 'left')" @touchstart="down($event, 'left')" :class="[direction]" :style="{'padding': padding}">
             <slot></slot>
         </div>
-        <div class="arrow" @mousedown="down($event, 'arrow')" @tocuhstart="down($event, 'arrow')"></div>
+        <div class="arrow" @mousedown="down($event, 'arrow')" @touchstart="down($event, 'arrow')"></div>
     </div>
     <teleport to="system">
         <div ref="pop" class="pop">
