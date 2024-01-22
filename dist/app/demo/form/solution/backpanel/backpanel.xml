@@ -5,7 +5,7 @@
             <text v-model="fh" style="flex: 1;" />
             <button @click="formHash = fh">Change</button>
         </layout>
-        <nav v-model="name" default="list" style="flex: 1;">
+        <nav v-model="name" default="list" hash style="flex: 1;">
             <nav-item label="User">
                 <nav-item label="All list" name="list"></nav-item>
                 <nav-item label="Available" name="list?avail=1"></nav-item>
@@ -14,12 +14,14 @@
                 <nav-item label="Available" name="goodslist?avail=1"></nav-item>
                 <nav-item label="Unavailable" name="goodslist?avail=0"></nav-item>
             </nav-item>
-            <nav-item label="Form" name="form"></nav-item>
+            <nav-item label="Form" name="form" @select="onSelect"></nav-item>
+            <nav-item label="Test1" name="test1"></nav-item>
+            <nav-item label="Test2" name="test2"></nav-item>
             <template v-slot:header>
                 <label style="flex: 1; text-align: right; padding-right: var(--g-padding);">Panel</label>
             </template>
             <template v-slot:content>
-                <panel style="flex: 1;"></panel>
+                <panel :map="map" style="flex: 1;" @go="loading = true" @went="loading = false"></panel>
             </template>
         </nav>
     </layout>
