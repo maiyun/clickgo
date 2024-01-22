@@ -5,6 +5,8 @@ export default class extends clickgo.form.AbstractForm {
 
     public layer: boolean = false;
 
+    public qs: Record<string, string> = {};
+
     public name: string = '';
 
     public isShow: boolean = true;

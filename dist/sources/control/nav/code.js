@@ -37,7 +37,8 @@ class default_1 extends clickgo.control.AbstractControl {
     constructor() {
         super(...arguments);
         this.emits = {
-            'layer': null
+            'layer': null,
+            'qs': null
         };
         this.props = {
             'modelValue': '',
@@ -50,6 +51,7 @@ class default_1 extends clickgo.control.AbstractControl {
         this.logoData = '';
         this.logoCount = 0;
         this.selected = '';
+        this.qs = {};
         this.layer = false;
         this.childs = [];
     }
@@ -62,6 +64,9 @@ class default_1 extends clickgo.control.AbstractControl {
         }
         this.selected = name;
         this.emit('update:modelValue', name);
+        const qs = this.selected.split('?');
+        this.qs = qs[1] ? Object.fromEntries(qs[1].split('&').map(item => item.split('='))) : {};
+        this.emit('qs', clickgo.tool.clone(this.qs));
         if (this.propBoolean('hash') && (this.rootForm.formHash !== this.selected)) {
             this.rootForm.formHash = this.selected;
         }

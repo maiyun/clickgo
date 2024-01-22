@@ -1,5 +1,5 @@
 <form width="600" height="500" title="Nav">
-    <nav v-model="name" v-model:show="isShow" :logo="logo" @layer="layer = $event" :hash="hash" style="flex: 1; width: 0;">
+    <nav v-model="name" default="Action1" v-model:show="isShow" :logo="logo" @layer="layer = $event" @qs="qs = $event" :hash="hash" style="flex: 1; width: 0;">
         <nav-item label="Title1">
             <nav-title>group1</nav-title>
             <nav-item label="Sub1">
@@ -79,6 +79,7 @@
                 <label>Now select: {{name}}</label>
                 <label>Show: {{isShow ? 'true' : 'false'}}</label>
                 <label>Layer: {{layer ? 'true' : 'false'}}</label>
+                <label>Qs: {{qs}}</label>
                 <label>formHash: {{formHash}}</label>
                 <button v-if="layer" @click="isShow = true">Open</button>
                 <button @click="name = 'Action11'">Select "Action11"</button>

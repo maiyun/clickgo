@@ -3,7 +3,8 @@ import * as clickgo from 'clickgo';
 export default class extends clickgo.control.AbstractControl {
 
     public emits = {
-        'layer': null
+        'layer': null,
+        'qs': null
     };
 
     public props: {
@@ -35,6 +36,9 @@ export default class extends clickgo.control.AbstractControl {
     /** --- 当前选中的 name（可能带 qs） --- */
     public selected: string = '';
 
+    /** --- 当前选中的 name 中解析后的 qs 值 --- */
+    public qs: Record<string, string> = {};
+
     /** --- 当前是否是层的模式 --- */
     public layer = false;
 
@@ -53,6 +57,9 @@ export default class extends clickgo.control.AbstractControl {
         }
         this.selected = name;
         this.emit('update:modelValue', name);
+        const qs = this.selected.split('?');
+        this.qs = qs[1] ? Object.fromEntries(qs[1].split('&').map(item => item.split('='))) : {};
+        this.emit('qs', clickgo.tool.clone(this.qs));
         if (this.propBoolean('hash') && (this.rootForm.formHash !== this.selected)) {
             this.rootForm.formHash = this.selected;
         }
