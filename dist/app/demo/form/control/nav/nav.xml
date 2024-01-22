@@ -85,7 +85,10 @@
                 <button @click="name = 'hasname'">Select "hasname"</button>
                 <button @click="name = 'root6?id=8'">Select "root6?id=8"</button>
                 <button @click="logo = logo ? '' : '/clickgo/icon.png'">{{logo ? 'Remove' : 'Set'}} logo</button>
-                <button @click="hash = !hash">{{hash ? '' : '!'}}hash</button>
+                <layout gutter="10">
+                    <button @click="hash = !hash" style="flex: 1;">{{hash ? '' : '!'}}hash</button>
+                    <button v-if="hash" @click="formHashBack" style="flex: 1;">hashBack</button>
+                </layout>
             </layout>
         </template>
     </nav>

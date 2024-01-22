@@ -53,7 +53,7 @@ export default class extends clickgo.control.AbstractControl {
         }
         this.selected = name;
         this.emit('update:modelValue', name);
-        if (this.propBoolean('hash')) {
+        if (this.propBoolean('hash') && (this.rootForm.formHash !== this.selected)) {
             this.rootForm.formHash = this.selected;
         }
         if (this.layer && this.showData) {
@@ -109,8 +109,6 @@ export default class extends clickgo.control.AbstractControl {
 
         this.watch('modelValue', () => {
             this.select(this.props.modelValue || this.props.default);
-        }, {
-            'immediate': true
         });
 
         // --- 监听 logo 是否显示 ---
@@ -146,6 +144,36 @@ export default class extends clickgo.control.AbstractControl {
         }, {
             'immediate': true
         });
+
+        // --- 监听 formHash ---
+        this.watch('formHash', () => {
+            if (!this.propBoolean('hash')) {
+                return;
+            }
+            if (this.selected === this.formHash) {
+                return;
+            }
+            this.select(this.formHash || this.props.default);
+        });
+
+        // --- 监听 hash 属性变动 ---
+        this.watch('hash', () => {
+            if (!this.propBoolean('hash')) {
+                return;
+            }
+            if (this.formHash === this.selected) {
+                return;
+            }
+            this.rootForm.formHash = this.selected;
+        });
+
+        // --- 初始化初始 nav ---
+        if (this.propBoolean('hash')) {
+            this.select(this.formHash || this.props.default);
+        }
+        else {
+            this.select(this.props.modelValue || this.props.default);
+        }
     }
 
 }
