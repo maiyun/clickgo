@@ -11,6 +11,9 @@ export default class extends clickgo.control.AbstractControl {
         'vroot': clickgo.form.AbstractPanel;
     }> = {};
 
+    /** --- nav 控件 --- */
+    public nav: any = null;
+
     /** --- 当前 active 的 panel id --- */
     public activeId: number = 0;
 
@@ -66,7 +69,7 @@ export default class extends clickgo.control.AbstractControl {
         }
         // --- 要加载 ---
         try {
-            const rtn = await clickgo.form.createPanel(cls, this.element, this.formId);
+            const rtn = await clickgo.form.createPanel(cls, this.element);
             // --- 隐藏老的 ---
             await this.hideActive();
             // --- 显示新的 ---
@@ -99,6 +102,10 @@ export default class extends clickgo.control.AbstractControl {
             return;
         }
         this.loaded[this.activeId].vroot.onReceive(data) as any;
+    }
+
+    public onMounted(): void | Promise<void> {
+        this.nav = this.parentByName('nav');
     }
 
     public onBeforeUnmount(): void | Promise<void> {

@@ -2262,37 +2262,76 @@ function getForm(taskId: number, formId: number): types.IForm | null {
 export async function createPanel<T extends AbstractPanel>(
     cls: string | (new () => T),
     el: HTMLElement,
-    formId: number,
+    opt: {
+        'layout'?: string;
+        'style'?: string;
+        /** --- cls 为 string 时，path 参数才有效，为基准路径，如果不以 / 结尾则以最后一个 / 字符为准 --- */
+        'path'?: string;
+    } = {},
     taskId?: number
 ): Promise<{
     'id': number;
     'vapp': types.IVApp;
     'vroot': T;
 }> {
-    if (!taskId) {
-        const err = new Error('form.createPanel: -1');
+    if (el.dataset.cgControl !== 'panel') {
+        const err = new Error('form.createPanel: -0');
         core.trigger('error', 0, 0, err, err.message);
         throw err;
     }
-    if (el.dataset.cgControl !== 'panel') {
-        const err = new Error('form.createPanel: -2');
+    const formWrap = dom.findParentByData(el, 'form-id');
+    if (!formWrap) {
+        const err = new Error('form.createPanel: -0');
+        core.trigger('error', 0, 0, err, err.message);
+        throw err;
+    }
+    const formId = parseInt(formWrap.dataset.formId!);
+    if (!taskId) {
+        const err = new Error('form.createPanel: -1');
         core.trigger('error', 0, 0, err, err.message);
         throw err;
     }
     /** --- 当前的 task 对象 --- */
     const t = task.list[taskId];
     if (!t) {
-        const err = new Error('form.createPanel: -3');
+        const err = new Error('form.createPanel: -2');
         core.trigger('error', 0, 0, err, err.message);
         throw err;
+    }
+    /** --- 布局内容 --- */
+    let layout: string = '';
+    if (opt.layout) {
+        layout = opt.layout;
+    }
+    /** --- 样式内容 --- */
+    let style: string = '';
+    /** --- 样式前缀 --- */
+    let prep = '';
+    if (opt.style) {
+        style = opt.style;
     }
     /** --- 文件在包内的路径，不以 / 结尾 --- */
     let filename = '';
     if (typeof cls === 'string') {
-        filename = cls + '.js';
+        filename = tool.urlResolve(opt.path ?? '/', cls);
+        if (!layout) {
+            const l = t.app.files[filename + '.xml'];
+            if (typeof l !== 'string') {
+                const err = new Error('form.createPanel: -3');
+                core.trigger('error', 0, 0, err, err.message);
+                throw err;
+            }
+            layout = l;
+        }
+        if (!style) {
+            const s = t.app.files[filename + '.css'];
+            if (typeof s === 'string') {
+                style = s;
+            }
+        }
         cls = class extends AbstractPanel {
             public get filename(): string {
-                return filename;
+                return filename + '.js';
             }
 
             public get taskId(): number {
@@ -2312,22 +2351,24 @@ export async function createPanel<T extends AbstractPanel>(
     const path = filename.slice(0, lio);
 
     // --- 布局 ---
-    const l = t.app.files[filename.slice(0, -2) + 'xml'];
-    if (typeof l !== 'string') {
-        const err = new Error('form.createPanel: -4');
-        core.trigger('error', 0, 0, err, err.message);
-        throw err;
+    if (!layout) {
+        const l = t.app.files[filename.slice(0, -2) + 'xml'];
+        if (typeof l !== 'string') {
+            const err = new Error('form.createPanel: -4');
+            core.trigger('error', 0, 0, err, err.message);
+            throw err;
+        }
+        layout = l;
     }
-    let layout = l;
 
     // --- 样式 ---
-    /** --- 样式内容 --- */
-    let style: string = '';
-    /** --- 样式前缀 --- */
-    let prep = '';
-    const s = t.app.files[filename.slice(0, -2) + 'css'];
-    if (typeof s === 'string') {
-        style = s;
+    if (!style) {
+        const s = t.app.files[filename.slice(0, -2) + 'css'];
+        if (typeof s === 'string') {
+            style = s;
+        }
+    }
+    if (style) {
         // --- 将 style 中的 tag 标签转换为 class，如 button 变为 .tag-button，然后将 class 进行标准程序，添加 prep 进行区分隔离 ---
         const r = tool.stylePrepend(style);
         prep = r.prep;

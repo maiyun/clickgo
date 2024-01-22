@@ -769,12 +769,16 @@ export async function run(url: string | types.IApp, opt: types.ITaskRunOptions =
             createPanel<T extends form.AbstractPanel>(
                 cls: (new () => T),
                 el: HTMLElement,
-                formId: number
+                opt?: {
+                    'layout'?: string;
+                    'style'?: string;
+                    'path'?: string;
+                }
             ): Promise<{
                 'vapp': types.IVApp;
                 'vroot': T;
             }> {
-                return form.createPanel(cls, el, formId, taskId);
+                return form.createPanel(cls, el, opt, taskId);
             },
             create: function<T extends form.AbstractForm>(
                 cls: string | (new () => T),

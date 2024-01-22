@@ -38,6 +38,7 @@ class default_1 extends clickgo.control.AbstractControl {
         super(...arguments);
         this.loading = false;
         this.loaded = {};
+        this.nav = null;
         this.activeId = 0;
     }
     hideActive() {
@@ -81,7 +82,7 @@ class default_1 extends clickgo.control.AbstractControl {
                 return true;
             }
             try {
-                const rtn = yield clickgo.form.createPanel(cls, this.element, this.formId);
+                const rtn = yield clickgo.form.createPanel(cls, this.element);
                 yield this.hideActive();
                 this.activeId = rtn.id;
                 clickgo.form.setActivePanel(this.activeId, this.formId);
@@ -108,6 +109,9 @@ class default_1 extends clickgo.control.AbstractControl {
             return;
         }
         this.loaded[this.activeId].vroot.onReceive(data);
+    }
+    onMounted() {
+        this.nav = this.parentByName('nav');
     }
     onBeforeUnmount() {
         for (const id in this.loaded) {

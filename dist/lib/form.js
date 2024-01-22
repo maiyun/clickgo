@@ -1721,30 +1721,62 @@ function getForm(taskId, formId) {
     }
     return form;
 }
-function createPanel(cls, el, formId, taskId) {
+function createPanel(cls, el, opt = {}, taskId) {
+    var _a;
     return __awaiter(this, void 0, void 0, function* () {
+        if (el.dataset.cgControl !== 'panel') {
+            const err = new Error('form.createPanel: -0');
+            core.trigger('error', 0, 0, err, err.message);
+            throw err;
+        }
+        const formWrap = dom.findParentByData(el, 'form-id');
+        if (!formWrap) {
+            const err = new Error('form.createPanel: -0');
+            core.trigger('error', 0, 0, err, err.message);
+            throw err;
+        }
+        const formId = parseInt(formWrap.dataset.formId);
         if (!taskId) {
             const err = new Error('form.createPanel: -1');
             core.trigger('error', 0, 0, err, err.message);
             throw err;
         }
-        if (el.dataset.cgControl !== 'panel') {
+        const t = task.list[taskId];
+        if (!t) {
             const err = new Error('form.createPanel: -2');
             core.trigger('error', 0, 0, err, err.message);
             throw err;
         }
-        const t = task.list[taskId];
-        if (!t) {
-            const err = new Error('form.createPanel: -3');
-            core.trigger('error', 0, 0, err, err.message);
-            throw err;
+        let layout = '';
+        if (opt.layout) {
+            layout = opt.layout;
+        }
+        let style = '';
+        let prep = '';
+        if (opt.style) {
+            style = opt.style;
         }
         let filename = '';
         if (typeof cls === 'string') {
-            filename = cls + '.js';
+            filename = tool.urlResolve((_a = opt.path) !== null && _a !== void 0 ? _a : '/', cls);
+            if (!layout) {
+                const l = t.app.files[filename + '.xml'];
+                if (typeof l !== 'string') {
+                    const err = new Error('form.createPanel: -3');
+                    core.trigger('error', 0, 0, err, err.message);
+                    throw err;
+                }
+                layout = l;
+            }
+            if (!style) {
+                const s = t.app.files[filename + '.css'];
+                if (typeof s === 'string') {
+                    style = s;
+                }
+            }
             cls = class extends AbstractPanel {
                 get filename() {
-                    return filename;
+                    return filename + '.js';
                 }
                 get taskId() {
                     return t.id;
@@ -1758,18 +1790,22 @@ function createPanel(cls, el, formId, taskId) {
         }
         const lio = filename.lastIndexOf('/');
         const path = filename.slice(0, lio);
-        const l = t.app.files[filename.slice(0, -2) + 'xml'];
-        if (typeof l !== 'string') {
-            const err = new Error('form.createPanel: -4');
-            core.trigger('error', 0, 0, err, err.message);
-            throw err;
+        if (!layout) {
+            const l = t.app.files[filename.slice(0, -2) + 'xml'];
+            if (typeof l !== 'string') {
+                const err = new Error('form.createPanel: -4');
+                core.trigger('error', 0, 0, err, err.message);
+                throw err;
+            }
+            layout = l;
         }
-        let layout = l;
-        let style = '';
-        let prep = '';
-        const s = t.app.files[filename.slice(0, -2) + 'css'];
-        if (typeof s === 'string') {
-            style = s;
+        if (!style) {
+            const s = t.app.files[filename.slice(0, -2) + 'css'];
+            if (typeof s === 'string') {
+                style = s;
+            }
+        }
+        if (style) {
             const r = tool.stylePrepend(style);
             prep = r.prep;
             style = yield tool.styleUrl2DataUrl(path + '/', r.style, t.app.files);
