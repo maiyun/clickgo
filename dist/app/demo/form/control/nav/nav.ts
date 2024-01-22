@@ -9,9 +9,9 @@ export default class extends clickgo.form.AbstractForm {
 
     public isShow: boolean = true;
 
-    public loading = false;
-
     public logo = '';
+
+    public hash = false;
 
     public async onSelect(e: types.INavItemSelectEvent): Promise<void> {
         e.preventDefault();

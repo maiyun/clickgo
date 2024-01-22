@@ -42,6 +42,7 @@ class default_1 extends clickgo.control.AbstractControl {
         this.props = {
             'modelValue': '',
             'default': '',
+            'hash': false,
             'show': undefined,
             'logo': ''
         };
@@ -52,12 +53,18 @@ class default_1 extends clickgo.control.AbstractControl {
         this.layer = false;
         this.childs = [];
     }
+    get formHash() {
+        return this.rootForm.formHash;
+    }
     select(name) {
         if (this.selected === name) {
             return;
         }
         this.selected = name;
         this.emit('update:modelValue', name);
+        if (this.propBoolean('hash')) {
+            this.rootForm.formHash = this.selected;
+        }
         if (this.layer && this.showData) {
             this.showData = false;
             this.emit('update:show', this.showData);

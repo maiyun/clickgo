@@ -42,6 +42,7 @@ const form = __importStar(require("./form"));
 const fs = __importStar(require("./fs"));
 class AbstractControl {
     constructor() {
+        this._rootForm = null;
         this.packageFiles = {};
         this.props = {};
         this.emits = {};
@@ -59,8 +60,22 @@ class AbstractControl {
     get formId() {
         return 0;
     }
+    get rootForm() {
+        if (!this._rootForm) {
+            this._rootForm = this.parentByName('root');
+            if (!this._rootForm) {
+                form.notify({
+                    'title': 'Error',
+                    'content': `The "rootForm" is not ready yet.\nFile: "${this.controlName}".`,
+                    'type': 'danger'
+                });
+            }
+        }
+        return this._rootForm;
+    }
     get formFocus() {
-        return this.parentByName('root').formFocus;
+        var _a, _b;
+        return (_b = (_a = this.rootForm) === null || _a === void 0 ? void 0 : _a.formFocus) !== null && _b !== void 0 ? _b : false;
     }
     get path() {
         return '';

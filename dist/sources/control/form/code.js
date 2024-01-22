@@ -106,11 +106,10 @@ class default_1 extends clickgo.control.AbstractControl {
         return clickgo.task.systemTaskInfo.taskId === 0 ? 'bottom' : clickgo.core.config['task.position'];
     }
     get isMask() {
-        var _a;
         if (this.isInside) {
             return false;
         }
-        return (_a = this.parentByName('root')) === null || _a === void 0 ? void 0 : _a.isMask;
+        return this.rootForm.isMask;
     }
     moveMethod(e, custom = false) {
         if (clickgo.dom.hasTouchButMouse(e)) {
@@ -385,7 +384,6 @@ class default_1 extends clickgo.control.AbstractControl {
         }
     }
     maxMethod() {
-        var _a;
         if (this.isInside) {
             return true;
         }
@@ -430,7 +428,7 @@ class default_1 extends clickgo.control.AbstractControl {
                     }).catch((e) => { console.log(e); });
                 }
                 const area = clickgo.core.getAvailArea();
-                if ((_a = this.parentByName('root')) === null || _a === void 0 ? void 0 : _a.bottomMost) {
+                if (this.rootForm.bottomMost) {
                     this.leftData = 0;
                     this.topData = 0;
                     this.widthData = area.owidth;

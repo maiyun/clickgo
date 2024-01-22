@@ -49,11 +49,29 @@ export abstract class AbstractControl {
         return 0;
     }
 
+    /** --- root form --- */
+    private _rootForm: form.AbstractForm & Record<string, any> | null = null;
+
+    /** --- 当前控件所在窗体的窗体对象，系统会在创建时重写本函数 --- */
+    public get rootForm(): form.AbstractForm & Record<string, any> {
+        if (!this._rootForm) {
+            this._rootForm = this.parentByName('root') as any;
+            if (!this._rootForm) {
+                form.notify({
+                    'title': 'Error',
+                    'content': `The "rootForm" is not ready yet.\nFile: "${this.controlName}".`,
+                    'type': 'danger'
+                });
+            }
+        }
+        return this._rootForm!;
+    }
+
     /**
      * --- 当前窗体是否有焦点 ---
      */
     public get formFocus(): boolean {
-        return this.parentByName('root')!.formFocus;
+        return this.rootForm?.formFocus ?? false;
     }
 
     /** --- 当前控件所在运行窗体的包内路径不以 / 结尾 --- */

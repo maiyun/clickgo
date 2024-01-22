@@ -39,8 +39,8 @@ class default_1 extends clickgo.form.AbstractForm {
         this.layer = false;
         this.name = '';
         this.isShow = true;
-        this.loading = false;
         this.logo = '';
+        this.hash = false;
     }
     onSelect(e) {
         return __awaiter(this, void 0, void 0, function* () {

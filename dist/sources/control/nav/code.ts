@@ -10,12 +10,15 @@ export default class extends clickgo.control.AbstractControl {
         'modelValue': string;
         /** --- 默认 name，如果 modelValue 为空，则默认使用本值 --- */
         'default': string;
+        /** --- 是否开启 form hash 模式，开启后，form hash 将和当前选中 selected 联动 --- */
+        'hash': boolean | string;
         // --- pop 模式时是否在显示 ---
         'show': boolean | string | undefined;
         'logo': string;
     } = {
             'modelValue': '',
             'default': '',
+            'hash': false,
             'show': undefined,
             'logo': ''
         };
@@ -38,6 +41,11 @@ export default class extends clickgo.control.AbstractControl {
     /** --- 当前的所有子集列表，['panel', 'order?a=b'] --- */
     public childs: string[] = [];
 
+    /** --- 当前窗体的 form hash --- */
+    public get formHash(): string {
+        return this.rootForm.formHash;
+    }
+
     /** --- 选择一个 name，child 可能也会调用 --- */
     public select(name: string): void {
         if (this.selected === name) {
@@ -45,6 +53,9 @@ export default class extends clickgo.control.AbstractControl {
         }
         this.selected = name;
         this.emit('update:modelValue', name);
+        if (this.propBoolean('hash')) {
+            this.rootForm.formHash = this.selected;
+        }
         if (this.layer && this.showData) {
             this.showData = false;
             this.emit('update:show', this.showData);

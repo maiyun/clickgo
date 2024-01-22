@@ -137,7 +137,7 @@ export default class extends clickgo.control.AbstractControl {
         if (this.isInside) {
             return false;
         }
-        return this.parentByName('root')?.isMask;
+        return this.rootForm.isMask;
     }
 
     // --- 拖动 ---
@@ -534,7 +534,7 @@ export default class extends clickgo.control.AbstractControl {
                     }).catch((e) => { console.log(e); });
                 }
                 const area = clickgo.core.getAvailArea();
-                if (this.parentByName('root')?.bottomMost) {
+                if (this.rootForm.bottomMost) {
                     // --- 置底窗体 ---
                     this.leftData = 0;
                     this.topData = 0;
