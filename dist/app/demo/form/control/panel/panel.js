@@ -41,8 +41,9 @@ class default_1 extends clickgo.form.AbstractForm {
     constructor() {
         super(...arguments);
         this.selected = ['none'];
+        this.panelv = '';
         this.parentData = 'yeah!';
-        this.loading = false;
+        this.map = null;
     }
     go() {
         return __awaiter(this, void 0, void 0, function* () {
@@ -58,22 +59,41 @@ class default_1 extends clickgo.form.AbstractForm {
             'type': 'send'
         });
     }
+    changeMap() {
+        this.map = this.map ? null : {
+            'test1': test1_1.default,
+            'test2': './test2'
+        };
+    }
     onMounted() {
         this.watch('selected', () => __awaiter(this, void 0, void 0, function* () {
             switch (this.selected[0]) {
                 case 'none': {
+                    if (this.map) {
+                        this.panelv = '';
+                    }
                     break;
                 }
                 case './test1': {
-                    this.loading = true;
-                    yield this.refs.panel.go(test1_1.default);
-                    this.loading = false;
+                    if (this.map) {
+                        this.panelv = 'test1';
+                    }
+                    else {
+                        this.loading = true;
+                        yield this.refs.panel.go(test1_1.default);
+                        this.loading = false;
+                    }
                     break;
                 }
                 case './test2': {
-                    this.loading = true;
-                    yield this.refs.panel.go('./test2');
-                    this.loading = false;
+                    if (this.map) {
+                        this.panelv = 'test2';
+                    }
+                    else {
+                        this.loading = true;
+                        yield this.refs.panel.go('./test2');
+                        this.loading = false;
+                    }
                     break;
                 }
             }

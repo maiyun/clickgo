@@ -80,6 +80,9 @@ function clone(obj) {
                 }
                 newObj[i] = fd;
             }
+            else if (obj[i] === null) {
+                newObj[i] = null;
+            }
             else if (typeof obj[i] === 'object') {
                 newObj[i] = clone(obj[i]);
             }
@@ -99,6 +102,9 @@ function clone(obj) {
                     fd.append(item[0], item[1]);
                 }
                 newObj[key] = fd;
+            }
+            else if (obj[key] === null) {
+                newObj[key] = null;
             }
             else if (typeof obj[key] === 'object') {
                 newObj[key] = clone(obj[key]);

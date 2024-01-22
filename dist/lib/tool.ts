@@ -109,6 +109,9 @@ export function clone(obj: Record<string, any> | any[]): any[] | any {
                 }
                 newObj[i] = fd;
             }
+            else if (obj[i] === null) {
+                newObj[i] = null;
+            }
             else if (typeof obj[i] === 'object') {
                 newObj[i] = clone(obj[i]);
             }
@@ -128,6 +131,9 @@ export function clone(obj: Record<string, any> | any[]): any[] | any {
                     fd.append(item[0], item[1]);
                 }
                 newObj[key] = fd;
+            }
+            else if (obj[key] === null) {
+                newObj[key] = null;
             }
             else if (typeof obj[key] === 'object') {
                 newObj[key] = clone(obj[key]);

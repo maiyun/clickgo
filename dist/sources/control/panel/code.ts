@@ -1,6 +1,24 @@
 import * as clickgo from 'clickgo';
+import * as types from '~/types';
 
 export default class extends clickgo.control.AbstractControl {
+
+    public emits = {
+        'go': null,
+        'went': null
+    };
+
+    public props: {
+        'modelValue': string;
+        /** --- 传入 map 后，则 modelValue 会生效，可根据 modelValue 自动跳转到相应面板（这种模式无法带 data 参数，如果和 nav 合用，则 modelValue 失效，以 nav 的选中的 name 为准） */
+        'map': Record<string, string | (new () => clickgo.form.AbstractPanel)> | null;
+    } = {
+            'modelValue': '',
+            'map': null
+        };
+
+    /** --- 如果有 map，要看当前真实选中的 key 是谁 --- */
+    public mapSelected = '';
 
     public loading = false;
 
@@ -13,6 +31,11 @@ export default class extends clickgo.control.AbstractControl {
 
     /** --- nav 控件 --- */
     public nav: any = null;
+
+    /** --- nav 选中的 name 值 --- */
+    public get navSelected(): string {
+        return this.nav ? this.nav.selected : '';
+    }
 
     /** --- 当前 active 的 panel id --- */
     public activeId: number = 0;
@@ -104,8 +127,62 @@ export default class extends clickgo.control.AbstractControl {
         this.loaded[this.activeId].vroot.onReceive(data) as any;
     }
 
+    /** --- 根据 name 更新 panel 的方法 --- */
+    public async mapNameChange(): Promise<void> {
+        if (!this.props.map) {
+            this.mapSelected = '';
+            return;
+        }
+        const name = this.nav ? this.nav.selected : this.props.modelValue;
+        if (name === this.mapSelected) {
+            return;
+        }
+        const event: types.IPanelGoEvent = {
+            'go': true,
+            preventDefault: function() {
+                this.go = false;
+            },
+            'detail': {
+                'from': this.mapSelected,
+                'to': name
+            }
+        };
+        this.emit('go', event);
+        if (!event.go) {
+            return;
+        }
+        const rtn = await this.go(this.props.map[name]);
+        const wentEvent: types.IPanelWentEvent = {
+            'detail': {
+                'result': rtn,
+                'from': event.detail.from,
+                'to': event.detail.to
+            }
+        };
+        this.emit('went', wentEvent);
+        if (!rtn) {
+            // --- 跳转失败 ---
+            return;
+        }
+        this.mapSelected = name;
+    }
+
     public onMounted(): void | Promise<void> {
         this.nav = this.parentByName('nav');
+        this.watch('modelValue', async () => {
+            await this.mapNameChange();
+        }, {
+            'immediate': true
+        });
+        this.watch('navSelected', async () => {
+            await this.mapNameChange();
+        });
+        this.watch('map', async () => {
+            await this.mapNameChange();
+        }, {
+            'deep': true,
+            'immediate': true
+        });
     }
 
     public onBeforeUnmount(): void | Promise<void> {

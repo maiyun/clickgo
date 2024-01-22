@@ -694,6 +694,23 @@ export interface INavItemSelectEvent extends ICustomEvent {
     };
 }
 
+// --- Panel Item ---
+
+export interface IPanelGoEvent extends ICustomEvent {
+    'detail': {
+        'from': string;
+        'to': string;
+    };
+}
+
+export interface IPanelWentEvent {
+    'detail': {
+        'result': boolean;
+        'from': string;
+        'to': string;
+    };
+}
+
 // --- Select Control ---
 
 export interface ISelectAddEvent extends ICustomEvent {

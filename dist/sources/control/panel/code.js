@@ -36,10 +36,22 @@ const clickgo = __importStar(require("clickgo"));
 class default_1 extends clickgo.control.AbstractControl {
     constructor() {
         super(...arguments);
+        this.emits = {
+            'go': null,
+            'went': null
+        };
+        this.props = {
+            'modelValue': '',
+            'map': null
+        };
+        this.mapSelected = '';
         this.loading = false;
         this.loaded = {};
         this.nav = null;
         this.activeId = 0;
+    }
+    get navSelected() {
+        return this.nav ? this.nav.selected : '';
     }
     hideActive() {
         return __awaiter(this, void 0, void 0, function* () {
@@ -110,8 +122,61 @@ class default_1 extends clickgo.control.AbstractControl {
         }
         this.loaded[this.activeId].vroot.onReceive(data);
     }
+    mapNameChange() {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (!this.props.map) {
+                this.mapSelected = '';
+                return;
+            }
+            const name = this.nav ? this.nav.selected : this.props.modelValue;
+            if (name === this.mapSelected) {
+                return;
+            }
+            const event = {
+                'go': true,
+                preventDefault: function () {
+                    this.go = false;
+                },
+                'detail': {
+                    'from': this.mapSelected,
+                    'to': name
+                }
+            };
+            this.emit('go', event);
+            if (!event.go) {
+                return;
+            }
+            const rtn = yield this.go(this.props.map[name]);
+            const wentEvent = {
+                'detail': {
+                    'result': rtn,
+                    'from': event.detail.from,
+                    'to': event.detail.to
+                }
+            };
+            this.emit('went', wentEvent);
+            if (!rtn) {
+                return;
+            }
+            this.mapSelected = name;
+        });
+    }
     onMounted() {
         this.nav = this.parentByName('nav');
+        this.watch('modelValue', () => __awaiter(this, void 0, void 0, function* () {
+            yield this.mapNameChange();
+        }), {
+            'immediate': true
+        });
+        this.watch('navSelected', () => __awaiter(this, void 0, void 0, function* () {
+            yield this.mapNameChange();
+        }));
+        this.watch('map', () => __awaiter(this, void 0, void 0, function* () {
+            yield this.mapNameChange();
+        }), {
+            'deep': true,
+            'immediate': true
+        });
     }
     onBeforeUnmount() {
         for (const id in this.loaded) {
