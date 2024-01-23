@@ -6,7 +6,9 @@ export default class extends clickgo.control.AbstractControl {
     public emits = {
         'remove': null,
         'add': null,
-        'itemclicked': null
+        'itemclicked': null,
+        'label': null,
+        'item': null
     };
 
     public props: {
@@ -73,6 +75,7 @@ export default class extends clickgo.control.AbstractControl {
         // --- 其他情况在这里处理 ---
         const value: number[] = [];
         const label: string[] = [];
+        const items: any[] = [];
 
         if (modelValue.length > 0) {
             // --- 先遍历输入的 value 数组 ---
@@ -82,6 +85,7 @@ export default class extends clickgo.control.AbstractControl {
                     const j = this.findGl(result[modelValue[i]].value)!;
                     value.push(j);
                     label.push(result[modelValue[i]].label);
+                    items.push(this.dataGl[j]);
                 }
                 else {
                     // --- 没找到或被禁用 ---
@@ -96,6 +100,7 @@ export default class extends clickgo.control.AbstractControl {
             this.emit('update:modelValue', modelValue);
         }
         this.emit('label', label);
+        this.emit('item', items);
 
         return value;
     }
@@ -176,15 +181,18 @@ export default class extends clickgo.control.AbstractControl {
     public updateModelValue(value: number[]): void {
         const modelValue = [];
         const label = [];
+        const items: any[] = [];
         for (const item of value) {
             if (!this.dataGl[item]) {
                 continue;
             }
             modelValue.push(this.dataGl[item].value);
             label.push(this.dataGl[item].label);
+            items.push(this.dataGl[item]);
         }
         this.emit('update:modelValue', modelValue);
         this.emit('label', label);
+        this.emit('item', items);
     }
 
     /**
@@ -364,7 +372,16 @@ export default class extends clickgo.control.AbstractControl {
                     continue;
                 }
                 this.emit('update:modelValue', [item.value]);
-                this.emit('label', item.label);
+                this.emit('label', [item.label]);
+                this.emit('item', [item]);
+                const event: types.IListItemclickedEvent = {
+                    'detail': {
+                        'event': e,
+                        'value': item.value,
+                        'arrow': false
+                    }
+                };
+                this.emit('itemclicked', event);
                 break;
             }
         }
@@ -406,7 +423,14 @@ export default class extends clickgo.control.AbstractControl {
     }
 
     public onItemclicked(e: types.IGreatlistItemclickedEvent): void {
-        this.emit('itemclicked', e);
+        const event: types.IListItemclickedEvent = {
+            'detail': {
+                'event': e.detail.event,
+                'value': this.dataGl[e.detail.value].value,
+                'arrow': e.detail.arrow
+            }
+        };
+        this.emit('itemclicked', event);
     }
 
     public onMounted(): void {

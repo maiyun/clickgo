@@ -680,7 +680,7 @@ export interface IListAddEvent extends ICustomEvent {
 export interface IListItemclickedEvent {
     'detail': {
         'event': MouseEvent | TouchEvent;
-        'value': number;
+        'value': string;
         'arrow': boolean;
     };
 }

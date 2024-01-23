@@ -39,7 +39,10 @@ export default class extends clickgo.form.AbstractForm {
     public select: number[] = [];
 
     public slist2 = [
-        'haha1', 'haha2', 'haha3', 'haha4', {
+        'haha1', 'haha2', 'haha3', {
+            'label': 'tip',
+            'color': 'tip'
+        }, 'haha4', {
             'value': 'ha5',
             'label': 'The value is ha5'
         }, {

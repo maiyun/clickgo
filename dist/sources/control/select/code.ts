@@ -116,6 +116,9 @@ export default class extends clickgo.control.AbstractControl {
     /** --- list 的选中的 label --- */
     public listLabel: string[] = [];
 
+    /** --- list 的选中的 item 属性包列表 --- */
+    public listItem: any[] = [];
+
     /** --- pop 的 loading --- */
     public loading = 0;
 

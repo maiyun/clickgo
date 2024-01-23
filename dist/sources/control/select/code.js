@@ -107,6 +107,7 @@ class default_1 extends clickgo.control.AbstractControl {
         this.searchData = [];
         this.listValue = [];
         this.listLabel = [];
+        this.listItem = [];
         this.loading = 0;
         this.background = '';
         this.padding = '';

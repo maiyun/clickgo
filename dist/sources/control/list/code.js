@@ -30,7 +30,9 @@ class default_1 extends clickgo.control.AbstractControl {
         this.emits = {
             'remove': null,
             'add': null,
-            'itemclicked': null
+            'itemclicked': null,
+            'label': null,
+            'item': null
         };
         this.props = {
             'disabled': false,
@@ -65,6 +67,7 @@ class default_1 extends clickgo.control.AbstractControl {
         }
         const value = [];
         const label = [];
+        const items = [];
         if (modelValue.length > 0) {
             for (let i = 0; i < modelValue.length; ++i) {
                 const result = this.findFormat(modelValue[i]);
@@ -72,6 +75,7 @@ class default_1 extends clickgo.control.AbstractControl {
                     const j = this.findGl(result[modelValue[i]].value);
                     value.push(j);
                     label.push(result[modelValue[i]].label);
+                    items.push(this.dataGl[j]);
                 }
                 else {
                     change = true;
@@ -84,6 +88,7 @@ class default_1 extends clickgo.control.AbstractControl {
             this.emit('update:modelValue', modelValue);
         }
         this.emit('label', label);
+        this.emit('item', items);
         return value;
     }
     get dataGl() {
@@ -138,15 +143,18 @@ class default_1 extends clickgo.control.AbstractControl {
     updateModelValue(value) {
         const modelValue = [];
         const label = [];
+        const items = [];
         for (const item of value) {
             if (!this.dataGl[item]) {
                 continue;
             }
             modelValue.push(this.dataGl[item].value);
             label.push(this.dataGl[item].label);
+            items.push(this.dataGl[item]);
         }
         this.emit('update:modelValue', modelValue);
         this.emit('label', label);
+        this.emit('item', items);
     }
     formatData(nowData, oldData) {
         var _a, _b, _c, _d, _e, _f;
@@ -289,7 +297,16 @@ class default_1 extends clickgo.control.AbstractControl {
                     continue;
                 }
                 this.emit('update:modelValue', [item.value]);
-                this.emit('label', item.label);
+                this.emit('label', [item.label]);
+                this.emit('item', [item]);
+                const event = {
+                    'detail': {
+                        'event': e,
+                        'value': item.value,
+                        'arrow': false
+                    }
+                };
+                this.emit('itemclicked', event);
                 break;
             }
         }
@@ -327,7 +344,14 @@ class default_1 extends clickgo.control.AbstractControl {
         }
     }
     onItemclicked(e) {
-        this.emit('itemclicked', e);
+        const event = {
+            'detail': {
+                'event': e.detail.event,
+                'value': this.dataGl[e.detail.value].value,
+                'arrow': e.detail.arrow
+            }
+        };
+        this.emit('itemclicked', event);
     }
     onMounted() {
         this.watch('data', () => {

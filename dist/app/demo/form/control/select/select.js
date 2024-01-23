@@ -68,7 +68,10 @@ class default_1 extends clickgo.form.AbstractForm {
         ];
         this.select = [];
         this.slist2 = [
-            'haha1', 'haha2', 'haha3', 'haha4', {
+            'haha1', 'haha2', 'haha3', {
+                'label': 'tip',
+                'color': 'tip'
+            }, 'haha4', {
                 'value': 'ha5',
                 'label': 'The value is ha5'
             }, {

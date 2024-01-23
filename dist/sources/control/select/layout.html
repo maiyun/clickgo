@@ -1,5 +1,5 @@
 <cg-greatselect ref="gs" :disabled="propBoolean('disabled')" :area="propBoolean('editable') ? (propBoolean('search') ? 'text' : 'arrow') : 'all'" pop="custom">
-    <template v-if="!propBoolean('multi') && !propBoolean('editable')">{{label[0] || '　'}}</template>
+    <span v-if="!propBoolean('multi') && !propBoolean('editable')" :style="{'color':listItem[0]?listItem[0].color:undefined}">{{label[0] || '　'}}</span>
     <div v-else class="op" :style="{'margin': opMargin}">
         <div v-if="propBoolean('multi')" ref="tags" class="tags" :class="[propBoolean('editable') && 'editable']" :style="{'padding': padding, 'padding-right': '0'}" v-show="!propBoolean('editable') || label.length" @wheel="tagsWheel">
             <div v-for="item, index of label" class="tag" @mousedown="tagdown" @touchstart="tagdown">
@@ -15,7 +15,7 @@
     <template v-slot:pop>
         <div class="pop">
             <cg-text v-if="propBoolean('search') && !propBoolean('editable')" :modelValue="searchValue" @update:modelValue="updateSearchValue" :placeholder="l('search')" @keydown="textKeyDown"></cg-text>
-            <cg-list ref="list" @label="listLabel=$event" v-model="listValue" :data="dataComp" :must="isMust" :multi="isMust ? multi : false" :ctrl="false" :tree="tree" :treeDefault="treeDefault" :async="async" :icon="icon" :iconDefault="iconDefault" @itemclicked="listItemClicked" @load="onLoad" @add="onAdd" @remove="onRemove"></cg-list>
+            <cg-list ref="list" @label="listLabel=$event" @item="listItem=$event" v-model="listValue" :data="dataComp" :must="isMust" :multi="isMust ? multi : false" :ctrl="false" :tree="tree" :treeDefault="treeDefault" :async="async" :icon="icon" :iconDefault="iconDefault" @itemclicked="listItemClicked" @load="onLoad" @add="onAdd" @remove="onRemove"></cg-list>
             <div class="loading" v-show="searching > 0">
                 <cg-loading></cg-loading>
             </div>
