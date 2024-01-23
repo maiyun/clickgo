@@ -89,8 +89,8 @@ class default_1 extends clickgo.control.AbstractControl {
     updateModelValue(val) {
         this.emit('update:modelValue', val);
     }
-    itemclick(e, arrow) {
-        if (arrow) {
+    itemclicked(e) {
+        if (e.detail.arrow) {
             return;
         }
         if (this.propBoolean('multi')) {

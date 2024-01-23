@@ -7,7 +7,7 @@
     </div>
     <teleport to="system">
         <div ref="pop" class="pop">
-            <cg-greatlist v-if="pop === 'greatlist'" :modelValue="modelValue" @update:modelValue="updateModelValue" :data="data" :sizes="sizes" :multi="propBoolean('multi')" :ctrl="false" @add="onAdd" @remove="onRemove" @itemclick="itemclick" :style="{'font': font}">
+            <cg-greatlist v-if="pop === 'greatlist'" :modelValue="modelValue" @update:modelValue="updateModelValue" :data="data" :sizes="sizes" :multi="propBoolean('multi')" :ctrl="false" @add="onAdd" @remove="onRemove" @itemclicked="itemclicked" :style="{'font': font}">
                 <template v-slot="d">
                     <slot name="pop" :row="d.row" :index="d.index"></slot>
                 </template>

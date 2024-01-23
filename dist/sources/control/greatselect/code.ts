@@ -95,8 +95,8 @@ export default class extends clickgo.control.AbstractControl {
         this.emit('update:modelValue', val);
     }
 
-    public itemclick(e: MouseEvent, arrow: boolean): void {
-        if (arrow) {
+    public itemclicked(e: types.IListItemclickedEvent): void {
+        if (e.detail.arrow) {
             return;
         }
         if (this.propBoolean('multi')) {
