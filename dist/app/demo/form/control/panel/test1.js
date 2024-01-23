@@ -57,6 +57,12 @@ class default_1 extends clickgo.form.AbstractPanel {
             yield clickgo.form.dialog('test1 got data.');
         });
     }
+    onQsChange() {
+        clickgo.form.notify({
+            'title': 'Test1 Panel',
+            'content': 'onQsChange: ' + Object.keys(this.qs).length.toString()
+        });
+    }
     click() {
         return __awaiter(this, void 0, void 0, function* () {
             yield clickgo.form.dialog('Hello panel!');

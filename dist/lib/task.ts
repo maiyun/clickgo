@@ -767,8 +767,8 @@ export async function run(url: string | types.IApp, opt: types.ITaskRunOptions =
                 return form.removePanel(id, vapp, el);
             },
             createPanel<T extends form.AbstractPanel>(
-                cls: (new () => T),
-                el: HTMLElement,
+                rootPanel: control.AbstractControl,
+                cls: string | (new () => T),
                 opt?: {
                     'layout'?: string;
                     'style'?: string;
@@ -778,7 +778,7 @@ export async function run(url: string | types.IApp, opt: types.ITaskRunOptions =
                 'vapp': types.IVApp;
                 'vroot': T;
             }> {
-                return form.createPanel(cls, el, opt, taskId);
+                return form.createPanel(rootPanel, cls, opt, taskId);
             },
             create: function<T extends form.AbstractForm>(
                 cls: string | (new () => T),

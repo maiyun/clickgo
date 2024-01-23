@@ -23,6 +23,13 @@ export default class extends clickgo.form.AbstractPanel {
         await clickgo.form.dialog('test1 got data.');
     }
 
+    public onQsChange(): void {
+        clickgo.form.notify({
+            'title': 'Test1 Panel',
+            'content': 'onQsChange: ' + Object.keys(this.qs).length.toString()
+        });
+    }
+
     public async click(): Promise<void> {
         await clickgo.form.dialog('Hello panel!');
     }

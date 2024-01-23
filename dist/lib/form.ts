@@ -340,6 +340,14 @@ export abstract class AbstractPanel extends AbstractCommon {
         return {} as any;
     }
 
+    /** --- 当前 panel 所在的 panel control 对象，系统会在创建时重写本函数 --- */
+    public get rootPanel(): control.AbstractControl & Record<string, any> {
+        return {} as any;
+    }
+
+    /** --- 当前的 nav（若有）传递过来的 qs --- */
+    public qs: Record<string, string> = {};
+
     /** --- 当前窗体是否是焦点 --- */
     public get formFocus(): boolean {
         return this.rootForm.formFocus ?? false;
@@ -363,6 +371,11 @@ export abstract class AbstractPanel extends AbstractCommon {
     /** --- 接收 send 传递过来的 data 数据（是 panel 控件的 send，不是 form 的 send） --- */
     public onReceive(data: Record<string, any>): void | Promise<void>;
     public onReceive(): void {
+        return;
+    }
+
+    /** --- qs 变动时调用，如果只是用来做 qs 数据处理，建议用此方法 --- */
+    public onQsChange(): void | Promise<void> {
         return;
     }
 
@@ -2260,8 +2273,8 @@ function getForm(taskId: number, formId: number): types.IForm | null {
  * @param taskId 任务ID，App 模式下无效
  */
 export async function createPanel<T extends AbstractPanel>(
+    rootPanel: control.AbstractControl,
     cls: string | (new () => T),
-    el: HTMLElement,
     opt: {
         'layout'?: string;
         'style'?: string;
@@ -2274,12 +2287,12 @@ export async function createPanel<T extends AbstractPanel>(
     'vapp': types.IVApp;
     'vroot': T;
 }> {
-    if (el.dataset.cgControl !== 'panel') {
+    if (rootPanel.element.dataset.cgControl !== 'panel') {
         const err = new Error('form.createPanel: -0');
         core.trigger('error', 0, 0, err, err.message);
         throw err;
     }
-    const formWrap = dom.findParentByData(el, 'form-id');
+    const formWrap = dom.findParentByData(rootPanel.element, 'form-id');
     if (!formWrap) {
         const err = new Error('form.createPanel: -0');
         core.trigger('error', 0, 0, err, err.message);
@@ -2483,14 +2496,27 @@ export async function createPanel<T extends AbstractPanel>(
             return;
         }
     };
+    computed.rootPanel = {
+        get: function(): control.AbstractControl & Record<string, any> {
+            return rootPanel;
+        },
+        set: function(this: types.IVue): void {
+            notify({
+                'title': 'Error',
+                'content': `The software tries to modify the system variable "rootPanel".\nPath: ${this.filename}`,
+                'type': 'danger'
+            });
+            return;
+        }
+    };
 
     // --- 插入 dom ---
-    el.insertAdjacentHTML('beforeend', `<div data-panel-id="${panelId.toString()}"></div>`);
+    rootPanel.element.insertAdjacentHTML('beforeend', `<div data-panel-id="${panelId.toString()}"></div>`);
     if (style) {
         dom.pushStyle(t.id, style, 'form', formId, panelId);
     }
     /** --- panel wrap element 对象 --- */
-    const mel: HTMLElement = el.children.item(el.children.length - 1) as HTMLElement;
+    const mel: HTMLElement = rootPanel.element.children.item(rootPanel.element.children.length - 1) as HTMLElement;
     mel.style.position = 'absolute';
     mel.style.pointerEvents = 'none';
     mel.style.opacity = '0';

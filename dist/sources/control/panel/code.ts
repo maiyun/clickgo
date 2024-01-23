@@ -74,7 +74,12 @@ export default class extends clickgo.control.AbstractControl {
             }
             // --- 加载过要跳转的就是当前 item ---
             if (this.activeId.toString() === id) {
-                // --- 同一个，什么都不处理 ---
+                // --- 同一个，也就是仅仅是 qs 变了（也可能就是用户 go 了两次相同的） ---
+                if (this.nav) {
+                    // --- 有 nav 的话，就大概率不是用户来 go 的了 ---
+                    item.vroot.qs = clickgo.tool.clone(this.nav.qs);
+                    await item.vroot.onQsChange();
+                }
                 this.loading = false;
                 return true;
             }
@@ -86,13 +91,21 @@ export default class extends clickgo.control.AbstractControl {
             const n: HTMLElement = this.element.querySelector('[data-panel-id="' + id + '"]')!;
             n.style.opacity = '1';
             n.style.pointerEvents = '';
+            let qsChange = false;
+            if (this.nav && (JSON.stringify(item.vroot.qs) !== JSON.stringify(this.nav.qs))) {
+                item.vroot.qs = clickgo.tool.clone(this.nav.qs);
+                qsChange = true;
+            }
             await item.vroot.onShow(data ?? {});
+            if (qsChange) {
+                await item.vroot.onQsChange();
+            }
             this.loading = false;
             return true;
         }
         // --- 要加载 ---
         try {
-            const rtn = await clickgo.form.createPanel(cls, this.element);
+            const rtn = await clickgo.form.createPanel(this, cls);
             // --- 隐藏老的 ---
             await this.hideActive();
             // --- 显示新的 ---
@@ -106,6 +119,10 @@ export default class extends clickgo.control.AbstractControl {
             const n: HTMLElement = this.element.querySelector('[data-panel-id="' + rtn.id.toString() + '"]')!;
             n.style.opacity = '1';
             n.style.pointerEvents = '';
+            if (this.nav) {
+                rtn.vroot.qs = clickgo.tool.clone(this.nav.qs);
+                await rtn.vroot.onQsChange();
+            }
             await rtn.vroot.onShow(data ?? {});
             this.loading = false;
             return true;
@@ -137,21 +154,25 @@ export default class extends clickgo.control.AbstractControl {
         if (name === this.mapSelected) {
             return;
         }
+        const from = this.mapSelected.split('?');
+        const to = name.split('?');
+        // --- 也可能仅仅是 qs 变了 ---
         const event: types.IPanelGoEvent = {
             'go': true,
             preventDefault: function() {
                 this.go = false;
             },
             'detail': {
-                'from': this.mapSelected,
-                'to': name
+                'from': from[0],
+                'to': to[0]
             }
         };
         this.emit('go', event);
         if (!event.go) {
             return;
         }
-        const rtn = await this.go(this.props.map[name]);
+        /** --- went 事件对象 --- */
+        const rtn = await this.go(this.props.map[to[0]]);
         const wentEvent: types.IPanelWentEvent = {
             'detail': {
                 'result': rtn,
@@ -160,7 +181,7 @@ export default class extends clickgo.control.AbstractControl {
             }
         };
         this.emit('went', wentEvent);
-        if (!rtn) {
+        if (!wentEvent.detail.result) {
             // --- 跳转失败 ---
             return;
         }

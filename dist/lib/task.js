@@ -675,8 +675,8 @@ function run(url, opt = {}, ntid) {
                 removePanel(id, vapp, el) {
                     return form.removePanel(id, vapp, el);
                 },
-                createPanel(cls, el, opt) {
-                    return form.createPanel(cls, el, opt, taskId);
+                createPanel(rootPanel, cls, opt) {
+                    return form.createPanel(rootPanel, cls, opt, taskId);
                 },
                 create: function (cls, data, opt) {
                     return form.create(cls, data, opt, taskId);

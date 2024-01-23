@@ -3,6 +3,7 @@
     <label>onShow count: {{scount}}</label>
     <label>Data: {{data}}</label>
     <label>Parent data: {{rootForm.parentData}}</label>
+    <label>Qs: {{qs}}</label>
     <button @click="click" style="height: 30px;">Hi</button>
     <layout>
         <button style="padding: 15px 30px;" area="split">

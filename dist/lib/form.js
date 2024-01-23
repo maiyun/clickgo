@@ -244,10 +244,17 @@ class AbstractCommon {
     }
 }
 class AbstractPanel extends AbstractCommon {
+    constructor() {
+        super(...arguments);
+        this.qs = {};
+    }
     get panelId() {
         return 0;
     }
     get rootForm() {
+        return {};
+    }
+    get rootPanel() {
         return {};
     }
     get formFocus() {
@@ -264,6 +271,9 @@ class AbstractPanel extends AbstractCommon {
         return;
     }
     onReceive() {
+        return;
+    }
+    onQsChange() {
         return;
     }
 }
@@ -1721,15 +1731,15 @@ function getForm(taskId, formId) {
     }
     return form;
 }
-function createPanel(cls, el, opt = {}, taskId) {
+function createPanel(rootPanel, cls, opt = {}, taskId) {
     var _a;
     return __awaiter(this, void 0, void 0, function* () {
-        if (el.dataset.cgControl !== 'panel') {
+        if (rootPanel.element.dataset.cgControl !== 'panel') {
             const err = new Error('form.createPanel: -0');
             core.trigger('error', 0, 0, err, err.message);
             throw err;
         }
-        const formWrap = dom.findParentByData(el, 'form-id');
+        const formWrap = dom.findParentByData(rootPanel.element, 'form-id');
         if (!formWrap) {
             const err = new Error('form.createPanel: -0');
             core.trigger('error', 0, 0, err, err.message);
@@ -1903,11 +1913,24 @@ function createPanel(cls, el, opt = {}, taskId) {
                 return;
             }
         };
-        el.insertAdjacentHTML('beforeend', `<div data-panel-id="${panelId.toString()}"></div>`);
+        computed.rootPanel = {
+            get: function () {
+                return rootPanel;
+            },
+            set: function () {
+                notify({
+                    'title': 'Error',
+                    'content': `The software tries to modify the system variable "rootPanel".\nPath: ${this.filename}`,
+                    'type': 'danger'
+                });
+                return;
+            }
+        };
+        rootPanel.element.insertAdjacentHTML('beforeend', `<div data-panel-id="${panelId.toString()}"></div>`);
         if (style) {
             dom.pushStyle(t.id, style, 'form', formId, panelId);
         }
-        const mel = el.children.item(el.children.length - 1);
+        const mel = rootPanel.element.children.item(rootPanel.element.children.length - 1);
         mel.style.position = 'absolute';
         mel.style.pointerEvents = 'none';
         mel.style.opacity = '0';

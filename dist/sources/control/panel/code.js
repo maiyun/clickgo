@@ -80,6 +80,10 @@ class default_1 extends clickgo.control.AbstractControl {
                     continue;
                 }
                 if (this.activeId.toString() === id) {
+                    if (this.nav) {
+                        item.vroot.qs = clickgo.tool.clone(this.nav.qs);
+                        yield item.vroot.onQsChange();
+                    }
                     this.loading = false;
                     return true;
                 }
@@ -89,12 +93,20 @@ class default_1 extends clickgo.control.AbstractControl {
                 const n = this.element.querySelector('[data-panel-id="' + id + '"]');
                 n.style.opacity = '1';
                 n.style.pointerEvents = '';
+                let qsChange = false;
+                if (this.nav && (JSON.stringify(item.vroot.qs) !== JSON.stringify(this.nav.qs))) {
+                    item.vroot.qs = clickgo.tool.clone(this.nav.qs);
+                    qsChange = true;
+                }
                 yield item.vroot.onShow(data !== null && data !== void 0 ? data : {});
+                if (qsChange) {
+                    yield item.vroot.onQsChange();
+                }
                 this.loading = false;
                 return true;
             }
             try {
-                const rtn = yield clickgo.form.createPanel(cls, this.element);
+                const rtn = yield clickgo.form.createPanel(this, cls);
                 yield this.hideActive();
                 this.activeId = rtn.id;
                 clickgo.form.setActivePanel(this.activeId, this.formId);
@@ -106,6 +118,10 @@ class default_1 extends clickgo.control.AbstractControl {
                 const n = this.element.querySelector('[data-panel-id="' + rtn.id.toString() + '"]');
                 n.style.opacity = '1';
                 n.style.pointerEvents = '';
+                if (this.nav) {
+                    rtn.vroot.qs = clickgo.tool.clone(this.nav.qs);
+                    yield rtn.vroot.onQsChange();
+                }
                 yield rtn.vroot.onShow(data !== null && data !== void 0 ? data : {});
                 this.loading = false;
                 return true;
@@ -132,21 +148,23 @@ class default_1 extends clickgo.control.AbstractControl {
             if (name === this.mapSelected) {
                 return;
             }
+            const from = this.mapSelected.split('?');
+            const to = name.split('?');
             const event = {
                 'go': true,
                 preventDefault: function () {
                     this.go = false;
                 },
                 'detail': {
-                    'from': this.mapSelected,
-                    'to': name
+                    'from': from[0],
+                    'to': to[0]
                 }
             };
             this.emit('go', event);
             if (!event.go) {
                 return;
             }
-            const rtn = yield this.go(this.props.map[name]);
+            const rtn = yield this.go(this.props.map[to[0]]);
             const wentEvent = {
                 'detail': {
                     'result': rtn,
@@ -155,7 +173,7 @@ class default_1 extends clickgo.control.AbstractControl {
                 }
             };
             this.emit('went', wentEvent);
-            if (!rtn) {
+            if (!wentEvent.detail.result) {
                 return;
             }
             this.mapSelected = name;
