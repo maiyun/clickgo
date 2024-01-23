@@ -1,5 +1,19 @@
 # Changelog
 
+# 3.10.1
+
+[+] AbstractForm now supports the 'loading' attribute by default, eliminating the need to explicitly pass the 'loading' parameter to the form.  
+[+] The 'nav' component introduces a new 'default' attribute.  
+[+] The 'panel' component adds 'go' and 'went' events, along with 'v-model' and 'map' attributes.  
+[+] The 'nav' component adds a 'hash' attribute for automatic association with the 'formHash' attribute.  
+[+] The 'nav' component introduces a 'qs' event that triggers when the query string changes.  
+[+] AbstractControl includes a new 'rootForm' attribute.  
+[+] AbstractPanel adds a 'qs' attribute to retrieve the current query string passed by the 'nav'.  
+[+] AbstractPanel introduces a 'rootPanel' attribute for accessing the AbstractControl object of the current panel.  
+[\*] The 'select' event of 'nav-item' is updated to single-parameter mode.  
+[\*] Fixed an issue where the 'select' control was unclickable on mobile devices.  
+[\*] Various other optimizations.
+
 # 3.10.0
 
 [\*] Caution: This update is disruptive, proceed with caution.  
