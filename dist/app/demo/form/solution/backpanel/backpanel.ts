@@ -25,4 +25,11 @@ export default class extends clickgo.form.AbstractForm {
         await clickgo.form.dialog('Show form');
     }
 
+    public onMounted(data: Record<string, any>): void {
+        if (!data.hash) {
+            return;
+        }
+        this.formHash = data.hash;
+    }
+
 }

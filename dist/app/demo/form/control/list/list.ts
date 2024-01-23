@@ -124,6 +124,9 @@ export default class extends clickgo.form.AbstractForm {
 
     public get listData(): any[] {
         const data: any[] = ['Item1', {
+            'label': 'Tip',
+            'color': 'tip'
+        }, {
             'label': 'Title1',
             'children': [
                 'Sub1',

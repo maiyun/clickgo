@@ -909,6 +909,7 @@ export default class extends clickgo.control.AbstractControl {
                 // --- 单条 ---
                 this.listValue = [this.props.modelValue[0].toString()];
                 await this.nextTick();
+                await clickgo.tool.sleep(0);
                 this.value = clickgo.tool.clone(this.listValue);
                 this.label = clickgo.tool.clone(this.listLabel);
                 this.updateValue();

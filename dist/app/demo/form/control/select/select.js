@@ -93,7 +93,7 @@ class default_1 extends clickgo.form.AbstractForm {
             }
         ];
         this.addRemoveList = [];
-        this.select2 = ['haha2'];
+        this.select2 = ['haha21111'];
         this.aemodel = [];
         this.label2 = [];
         this.asyncModel = ['1'];

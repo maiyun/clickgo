@@ -66,7 +66,7 @@ export default class extends clickgo.form.AbstractForm {
 
     public adata: any = {};
 
-    public async openForm(name: string): Promise<void> {
+    public async openForm(name: string, data?: Record<string, string>): Promise<void> {
         let frm: types.AbstractForm;
         switch (name) {
             case 'cblock': {
@@ -306,7 +306,7 @@ export default class extends clickgo.form.AbstractForm {
                 break;
             }
             default: {
-                frm = await clickgo.form.create(sbackpanelFrm);
+                frm = await clickgo.form.create(sbackpanelFrm, data);
             }
         }
         frm.show();

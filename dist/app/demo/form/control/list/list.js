@@ -119,6 +119,9 @@ class default_1 extends clickgo.form.AbstractForm {
     }
     get listData() {
         const data = ['Item1', {
+                'label': 'Tip',
+                'color': 'tip'
+            }, {
                 'label': 'Title1',
                 'children': [
                     'Sub1',

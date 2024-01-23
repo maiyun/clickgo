@@ -59,5 +59,11 @@ class default_1 extends clickgo.form.AbstractForm {
             yield clickgo.form.dialog('Show form');
         });
     }
+    onMounted(data) {
+        if (!data.hash) {
+            return;
+        }
+        this.formHash = data.hash;
+    }
 }
 exports.default = default_1;

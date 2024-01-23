@@ -115,6 +115,7 @@
         <flow v-else class="inner" direction="v">
             <layout gutter="10" direction="v">
                 <button @click="openForm('sbackpanel')">Backend panel</button>
+                <button @click="openForm('sbackpanel', {'hash': 'test2?p=6'})">Backend panel with hash</button>
             </layout>
         </flow>
     </tab>

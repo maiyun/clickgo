@@ -226,6 +226,7 @@ export default class extends clickgo.control.AbstractControl {
                 'value': '',
                 'title': false,
                 'disabled': false,
+                'color': undefined,
                 'control': 'item',
                 'tree': this.propInt('treeDefault'),
                 'children': []
@@ -244,6 +245,7 @@ export default class extends clickgo.control.AbstractControl {
                 over.value = value;
                 over.title = item.title !== undefined ? item.title : false;
                 over.disabled = item.disabled !== undefined ? item.disabled : (over.title ? true : false);
+                over.color = item.color ? (item.color === 'tip' ? 'var(--g-color-disabled)' : item.color) : undefined;
                 over.control = item.control ?? 'item';
                 if (item.icon) {
                     over.icon = item.icon;
@@ -298,6 +300,7 @@ export default class extends clickgo.control.AbstractControl {
                 'value': item.value,
                 'title': item.title,
                 'disabled': item.disabled,
+                'color': item.color,
                 'control': item.control,
                 'tree': tree,
                 'icon': item.icon ?? this.props.iconDefault,

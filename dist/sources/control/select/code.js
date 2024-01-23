@@ -794,6 +794,7 @@ class default_1 extends clickgo.control.AbstractControl {
                 }
                 this.listValue = [this.props.modelValue[0].toString()];
                 yield this.nextTick();
+                yield clickgo.tool.sleep(0);
                 this.value = clickgo.tool.clone(this.listValue);
                 this.label = clickgo.tool.clone(this.listLabel);
                 this.updateValue();
