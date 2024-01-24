@@ -1,4 +1,5 @@
 import * as clickgo from 'clickgo';
+import * as types from '~/types';
 
 export default class extends clickgo.form.AbstractForm {
 
@@ -119,16 +120,16 @@ export default class extends clickgo.form.AbstractForm {
         this.list.splice(-1, 1);
     }
 
-    public async drop(data: Record<string, any>): Promise<void> {
-        await clickgo.form.dialog(JSON.stringify(data));
+    public async drop(e: types.IIconviewDropEvent): Promise<void> {
+        await clickgo.form.dialog(JSON.stringify(e.detail));
     }
 
-    public onSelect(area: Record<string, any>): void {
-        this.selectionArea = area;
+    public onSelect(e: types.IIconviewSelectEvent): void {
+        this.selectionArea = e.detail.area;
     }
 
-    public async onOpen(v: number): Promise<void> {
-        await clickgo.form.dialog('onOpen: ' + v.toString());
+    public async onOpen(e: types.IIconviewOpenEvent): Promise<void> {
+        await clickgo.form.dialog('onOpen: ' + e.detail.value.toString());
     }
 
     public scrollChange(): void {

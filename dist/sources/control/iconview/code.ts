@@ -1,4 +1,5 @@
 import * as clickgo from 'clickgo';
+import * as types from '~/types';
 
 interface IItem {
     'id'?: string;
@@ -12,6 +13,15 @@ interface IItem {
 }
 
 export default class extends clickgo.control.AbstractControl {
+
+    public emits = {
+        'beforeselect': null,
+        'select': null,
+        'afterselect': null,
+        'itemclicked': null,
+        'open': null,
+        'drop': null
+    };
 
     public props: {
         'disabled': boolean | string;
@@ -104,13 +114,17 @@ export default class extends clickgo.control.AbstractControl {
         };
     }
 
-    /** --- 处理后的 data --- */
-    public get dataComp(): IItem[][] {
-        /** --- row 宽度 --- */
+    /** --- 宽度改变时触发的事件 --- */
+    public clientwidth(cw: number): void {
+        this.cw = cw;
         this.rowCount = Math.floor(this.cw / (this.propInt('size') + 80));
         if (this.rowCount < 1) {
             this.rowCount = 1;
         }
+    }
+
+    /** --- 处理后的 data --- */
+    public get dataComp(): IItem[][] {
         const data: IItem[][] = [];
         let rowNow = this.rowCount;
         const propData = clickgo.tool.clone(this.props.data);
@@ -442,7 +456,7 @@ export default class extends clickgo.control.AbstractControl {
         }
     }
 
-    // --- （仅手指）长按 item 选中自己 ---
+    // --- （仅手指）长按 item 选中自己，和通用事件 ---
     public itemDown(e: TouchEvent | MouseEvent, dindex: number, value: number): void {
         // --- 长按 ---
         const v = dindex * this.rowCount + value;
@@ -456,8 +470,14 @@ export default class extends clickgo.control.AbstractControl {
         }
         clickgo.dom.bindClick(e, () => {
             this.select(v, e.shiftKey, (!this.propBoolean('ctrl') && this.propBoolean('multi')) ? true : e.ctrlKey);
-            // --- 上报点击事件，false: arrow click ---
-            this.emit('itemclick', e);
+            // --- 上报点击事件 ---
+            const event: types.IIconviewItemclickedEvent = {
+                'detail': {
+                    'event': e,
+                    'value': value
+                }
+            };
+            this.emit('itemclicked', event);
         });
         // --- 拖拽 ---
         clickgo.dom.bindDrag(e, {
@@ -484,7 +504,12 @@ export default class extends clickgo.control.AbstractControl {
         });
         // --- 双击 ---
         clickgo.dom.bindDblClick(e, () => {
-            this.emit('open', [v]);
+            const event: types.IIconviewOpenEvent = {
+                'detail': {
+                    'value': [value]
+                }
+            };
+            this.emit('open', event);
         });
     }
 
@@ -543,7 +568,12 @@ export default class extends clickgo.control.AbstractControl {
             if (!this.valueData.length) {
                 return;
             }
-            this.emit('open', this.valueData);
+            const event: types.IIconviewOpenEvent = {
+                'detail': {
+                    'value': clickgo.tool.clone(this.valueData)
+                }
+            };
+            this.emit('open', event);
         }
     }
 
@@ -555,7 +585,11 @@ export default class extends clickgo.control.AbstractControl {
         if (e.detail.value.type !== 'fs') {
             return;
         }
-        const list = [];
+        const list: Array<{
+            'index': number;
+            'type': 0 | 1 | -1 | undefined;
+            'path': string;
+        }> = [];
         for (const item of e.detail.value.list) {
             list.push({
                 'index': item.index ?? 0,
@@ -564,15 +598,18 @@ export default class extends clickgo.control.AbstractControl {
             });
         }
         const tov = dindex * this.rowCount + index;
-        this.emit('drop', {
-            'self': e.detail.value.rand === this.rand ? true : false,
-            'from': list,
-            'to': {
-                'index': tov,
-                'type': this.props.data[tov].type,
-                'path': this.props.data[tov].path ?? ''
+        const event: types.IIconviewDropEvent = {
+            'detail': {
+                'self': e.detail.value.rand === this.rand ? true : false,
+                'from': list,
+                'to': {
+                    'index': tov,
+                    'type': this.props.data[tov].type,
+                    'path': this.props.data[tov].path ?? ''
+                }
             }
-        });
+        };
+        this.emit('drop', event);
     }
 
     // --- 当出现了选区 ---
@@ -750,7 +787,22 @@ export default class extends clickgo.control.AbstractControl {
                 this.select(area.start * this.rowCount + cellStart, area.shift, area.ctrl);
             }
         }
-        this.emit('select', area);
+        const event: types.IIconviewSelectEvent = {
+            'detail': {
+                'area': {
+                    'x': area.x,
+                    'y': area.y,
+                    'width': area.width,
+                    'height': area.height,
+                    'shift': area.shift,
+                    'ctrl': area.ctrl,
+                    'start': area.start,
+                    'end': area.end,
+                    'empty': area.empty
+                }
+            }
+        };
+        this.emit('select', event);
     }
 
     public onAfterSelect(): void {
@@ -837,6 +889,12 @@ export default class extends clickgo.control.AbstractControl {
                 this.valueData.splice(1);
                 this.shiftStart = this.valueData[0];
                 this.emit('update:modelValue', this.valueData);
+            }
+        });
+        this.watch('size', () => {
+            this.rowCount = Math.floor(this.cw / (this.propInt('size') + 80));
+            if (this.rowCount < 1) {
+                this.rowCount = 1;
             }
         });
 

@@ -135,17 +135,17 @@ class default_1 extends clickgo.form.AbstractForm {
             this.list.splice(-1, 1);
         });
     }
-    drop(data) {
+    drop(e) {
         return __awaiter(this, void 0, void 0, function* () {
-            yield clickgo.form.dialog(JSON.stringify(data));
+            yield clickgo.form.dialog(JSON.stringify(e.detail));
         });
     }
-    onSelect(area) {
-        this.selectionArea = area;
+    onSelect(e) {
+        this.selectionArea = e.detail.area;
     }
-    onOpen(v) {
+    onOpen(e) {
         return __awaiter(this, void 0, void 0, function* () {
-            yield clickgo.form.dialog('onOpen: ' + v.toString());
+            yield clickgo.form.dialog('onOpen: ' + e.detail.value.toString());
         });
     }
     scrollChange() {

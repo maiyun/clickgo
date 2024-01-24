@@ -661,6 +661,53 @@ export interface IGreatselectAddEvent extends ICustomEvent {
     };
 }
 
+// --- Iconview Control ---
+
+export interface IIconviewItemclickedEvent {
+    'detail': {
+        'event': MouseEvent | TouchEvent;
+        'value': number;
+    };
+}
+
+export interface IIconviewOpenEvent {
+    'detail': {
+        'value': number[];
+    };
+}
+
+export interface IIconviewDropEvent {
+    'detail': {
+        'self': boolean;
+        'from': Array<{
+            'index': number;
+            'type': 0 | 1 | -1 | undefined;
+            'path': string;
+        }>;
+        'to': {
+            'index': number;
+            'type': 0 | 1 | -1 | undefined;
+            'path': string;
+        };
+    };
+}
+
+export interface IIconviewSelectEvent {
+    'detail': {
+        'area': {
+            'x': number;
+            'y': number;
+            'width': number;
+            'height': number;
+            'shift': boolean;
+            'ctrl': boolean;
+            'start': number;
+            'end': number;
+            'empty': boolean;
+        };
+    };
+}
+
 // --- List Control ---
 
 export interface IListRemoveEvent extends ICustomEvent {

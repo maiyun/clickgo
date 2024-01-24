@@ -36,6 +36,14 @@ const clickgo = __importStar(require("clickgo"));
 class default_1 extends clickgo.control.AbstractControl {
     constructor() {
         super(...arguments);
+        this.emits = {
+            'beforeselect': null,
+            'select': null,
+            'afterselect': null,
+            'itemclicked': null,
+            'open': null,
+            'drop': null
+        };
         this.props = {
             'disabled': false,
             'must': false,
@@ -79,11 +87,14 @@ class default_1 extends clickgo.control.AbstractControl {
                 d.getHours().toString().padStart(2, '0') + ':' + d.getMinutes().toString().padStart(2, '0');
         };
     }
-    get dataComp() {
+    clientwidth(cw) {
+        this.cw = cw;
         this.rowCount = Math.floor(this.cw / (this.propInt('size') + 80));
         if (this.rowCount < 1) {
             this.rowCount = 1;
         }
+    }
+    get dataComp() {
         const data = [];
         let rowNow = this.rowCount;
         const propData = clickgo.tool.clone(this.props.data);
@@ -356,7 +367,13 @@ class default_1 extends clickgo.control.AbstractControl {
         }
         clickgo.dom.bindClick(e, () => {
             this.select(v, e.shiftKey, (!this.propBoolean('ctrl') && this.propBoolean('multi')) ? true : e.ctrlKey);
-            this.emit('itemclick', e);
+            const event = {
+                'detail': {
+                    'event': e,
+                    'value': value
+                }
+            };
+            this.emit('itemclicked', event);
         });
         clickgo.dom.bindDrag(e, {
             'el': e.currentTarget,
@@ -380,7 +397,12 @@ class default_1 extends clickgo.control.AbstractControl {
             }
         });
         clickgo.dom.bindDblClick(e, () => {
-            this.emit('open', [v]);
+            const event = {
+                'detail': {
+                    'value': [value]
+                }
+            };
+            this.emit('open', event);
         });
     }
     itemContext(e, dindex, value) {
@@ -430,7 +452,12 @@ class default_1 extends clickgo.control.AbstractControl {
             if (!this.valueData.length) {
                 return;
             }
-            this.emit('open', this.valueData);
+            const event = {
+                'detail': {
+                    'value': clickgo.tool.clone(this.valueData)
+                }
+            };
+            this.emit('open', event);
         }
     }
     drop(e, dindex, index) {
@@ -450,15 +477,18 @@ class default_1 extends clickgo.control.AbstractControl {
             });
         }
         const tov = dindex * this.rowCount + index;
-        this.emit('drop', {
-            'self': e.detail.value.rand === this.rand ? true : false,
-            'from': list,
-            'to': {
-                'index': tov,
-                'type': this.props.data[tov].type,
-                'path': (_d = this.props.data[tov].path) !== null && _d !== void 0 ? _d : ''
+        const event = {
+            'detail': {
+                'self': e.detail.value.rand === this.rand ? true : false,
+                'from': list,
+                'to': {
+                    'index': tov,
+                    'type': this.props.data[tov].type,
+                    'path': (_d = this.props.data[tov].path) !== null && _d !== void 0 ? _d : ''
+                }
             }
-        });
+        };
+        this.emit('drop', event);
     }
     onBeforeSelect() {
         this.isSelectStart = true;
@@ -597,7 +627,22 @@ class default_1 extends clickgo.control.AbstractControl {
                 this.select(area.start * this.rowCount + cellStart, area.shift, area.ctrl);
             }
         }
-        this.emit('select', area);
+        const event = {
+            'detail': {
+                'area': {
+                    'x': area.x,
+                    'y': area.y,
+                    'width': area.width,
+                    'height': area.height,
+                    'shift': area.shift,
+                    'ctrl': area.ctrl,
+                    'start': area.start,
+                    'end': area.end,
+                    'empty': area.empty
+                }
+            }
+        };
+        this.emit('select', event);
     }
     onAfterSelect() {
         this.isSelectStart = false;
@@ -675,6 +720,12 @@ class default_1 extends clickgo.control.AbstractControl {
                 this.valueData.splice(1);
                 this.shiftStart = this.valueData[0];
                 this.emit('update:modelValue', this.valueData);
+            }
+        });
+        this.watch('size', () => {
+            this.rowCount = Math.floor(this.cw / (this.propInt('size') + 80));
+            if (this.rowCount < 1) {
+                this.rowCount = 1;
             }
         });
         this.watch('shiftStart', () => {
