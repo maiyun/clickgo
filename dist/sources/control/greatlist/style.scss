@@ -70,7 +70,7 @@
     }
 
     .b {
-        display: flex;
+        display: flex; position: sticky; bottom: 0; z-index: 1;
         cg-scroll {
             height: 16px; flex: 1; width: 0;
         }

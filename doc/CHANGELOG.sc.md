@@ -1,5 +1,13 @@
 # 更新日志
 
+# 3.10.2
+
+[+] AbstractPanel 新增 onQsChange 事件。  
+[+] list 控件数据新增 color 属性，可设置为 CSS 支持的颜色和 tip 字符串。  
+[+] list 控件新增 item 事件，可获取选中的数据对象列表。  
+[\*] 重写 levelselect 事件，请注意相关变化。  
+[\*] 修复 iconview 控件卡顿的问题。
+
 # 3.10.1
 
 [+] AbstractForm 默认支持 loading 属性，无需再显示传递给 form 的 loading 参数。  
