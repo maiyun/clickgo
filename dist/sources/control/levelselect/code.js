@@ -36,18 +36,19 @@ const clickgo = __importStar(require("clickgo"));
 class default_1 extends clickgo.control.AbstractControl {
     constructor() {
         super(...arguments);
+        this.emits = {
+            'label': null,
+            'load': null,
+            'loaded': null,
+            'level': null
+        };
         this.props = {
             'disabled': false,
-            'editable': false,
-            'multi': false,
             'async': false,
-            'modelValue': [],
+            'modelValue': '',
             'placeholder': '',
             'data': []
         };
-        this.inputValue = '';
-        this.oploading = false;
-        this.loading = false;
         this.localeData = {
             'en': {
                 'back': 'Back'
@@ -87,19 +88,28 @@ class default_1 extends clickgo.control.AbstractControl {
             }
         };
         this.level = 0;
-        this.vals = [];
-        this.labs = [];
-        this.lists = [];
+        this.value = [];
+        this.label = [];
+        this.inputValue = '';
+        this.listValue = [];
+        this.listLabel = [];
+        this.oploading = false;
+        this.loading = false;
+        this.lists = [
+            []
+        ];
         this.nowlist = [];
+        this.levelData = [
+            {
+                'label': '',
+                'value': ''
+            }
+        ];
         this.background = '';
         this.padding = '';
-        this.lastRemoteInput = 0;
     }
     get opMargin() {
         return this.padding.replace(/(\w+)/g, '-$1');
-    }
-    get listValue() {
-        return this.vals[this.level] ? [this.vals[this.level]] : [];
     }
     get nowlistComp() {
         var _a, _b;
@@ -108,7 +118,7 @@ class default_1 extends clickgo.control.AbstractControl {
         }
         const inputValue = this.inputValue.toLowerCase();
         const isArray = Array.isArray(this.nowlist);
-        const newlist = isArray ? [] : {};
+        const searchData = isArray ? [] : {};
         for (const key in this.nowlist) {
             const item = this.nowlist[key];
             const val = (isArray ?
@@ -128,13 +138,34 @@ class default_1 extends clickgo.control.AbstractControl {
                 continue;
             }
             if (isArray) {
-                newlist.push(item);
+                searchData.push(item);
             }
             else {
-                newlist[key] = item;
+                searchData[key] = item;
             }
         }
-        return newlist;
+        return searchData;
+    }
+    updateValue() {
+        if (this.value.length < 2) {
+            this.emit('label', '');
+            this.emit('level', []);
+            if (this.props.modelValue === '') {
+                return;
+            }
+            this.emit('update:modelValue', '');
+            return;
+        }
+        this.emit('label', this.label[this.label.length - 2]);
+        this.emit('level', this.levelData.slice(0, -1));
+        const newval = this.value[this.value.length - 2];
+        if (this.props.modelValue === newval) {
+            return;
+        }
+        this.emit('update:modelValue', newval);
+    }
+    blur() {
+        this.inputValue = '';
     }
     keydown(e) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -163,49 +194,23 @@ class default_1 extends clickgo.control.AbstractControl {
                 }
                 return;
             }
-            if (e.key === 'Enter') {
-                yield this.listItemClick();
+            if (e.key !== 'Enter') {
                 return;
             }
+            if (!this.listValue[0]) {
+                return;
+            }
+            e.stopPropagation();
+            yield this.listItemClicked();
         });
     }
     updateInputValue(value) {
         this.inputValue = value.trim();
+        this.listValue = [this.inputValue];
         if ((this.inputValue !== '') && (this.element.dataset.cgPopOpen === undefined)) {
             this.refs.gs.showPop();
             return;
         }
-    }
-    updateLabel(label) {
-        if (!label[0]) {
-            return;
-        }
-        this.labs[this.level] = label[0];
-        this.emit('label', this.propBoolean('multi') ? clickgo.tool.clone(this.labs) : [this.labs[this.level]]);
-    }
-    updateListValue(value) {
-        if (!value[0]) {
-            return;
-        }
-        this.vals[this.level] = value[0];
-        this.emit('update:modelValue', this.propBoolean('multi') ? clickgo.tool.clone(this.vals) : [this.vals[this.level]]);
-    }
-    emitModelValueAndLabel() {
-        let newval = [];
-        let newlabel = [];
-        if (this.propBoolean('multi')) {
-            newval = this.vals;
-            newlabel = this.labs;
-        }
-        else {
-            newval = this.vals.length ? [this.vals[this.vals.length - 1]] : [];
-            newlabel = this.labs.length ? [this.labs[this.labs.length - 1]] : [];
-        }
-        this.emit('label', clickgo.tool.clone(newlabel));
-        if (JSON.stringify(this.props.modelValue) === JSON.stringify(newval)) {
-            return;
-        }
-        this.emit('update:modelValue', clickgo.tool.clone(newval));
     }
     setNowList(list) {
         this.nowlist = clickgo.tool.clone(list);
@@ -216,7 +221,7 @@ class default_1 extends clickgo.control.AbstractControl {
             delete this.nowlist[key].children;
         }
     }
-    listItemClick() {
+    listItemClicked() {
         var _a, _b, _c;
         return __awaiter(this, void 0, void 0, function* () {
             this.inputValue = '';
@@ -228,245 +233,191 @@ class default_1 extends clickgo.control.AbstractControl {
                 const val = (isArray ?
                     (typeof item === 'object' ? ((_b = (_a = item.value) !== null && _a !== void 0 ? _a : item.label) !== null && _b !== void 0 ? _b : '') : item) :
                     key).toString();
-                if (this.vals[this.level] !== val) {
+                if (this.listValue[0] !== val) {
                     continue;
                 }
                 nextChildren = (_c = item.children) !== null && _c !== void 0 ? _c : null;
                 isSelected = true;
+                this.value[this.level] = this.listValue[0];
+                this.label[this.level] = this.listLabel[0];
+                this.levelData[this.level] = {
+                    'label': this.label[this.level],
+                    'value': this.value[this.level]
+                };
             }
-            if (isSelected) {
-                if (!nextChildren) {
-                    if (!this.propBoolean('async')) {
-                        clickgo.form.hidePop();
-                        return;
-                    }
-                    this.loading = true;
-                    const children = yield new Promise((resolve) => {
-                        this.emit('load', this.vals[this.level], (children) => {
-                            resolve(children);
-                            this.emit('loaded');
-                        });
-                    });
-                    this.loading = false;
-                    if (!(children === null || children === void 0 ? void 0 : children.length)) {
-                        clickgo.form.hidePop();
-                        return;
-                    }
-                    nextChildren = children;
-                }
-                this.setNowList(nextChildren);
-                ++this.level;
-                this.lists[this.level] = nextChildren;
+            if (!isSelected) {
                 return;
             }
-            clickgo.form.hidePop();
+            if (!nextChildren) {
+                if (!this.propBoolean('async')) {
+                    clickgo.form.hidePop();
+                    ++this.level;
+                    this.listValue = [];
+                    this.nowlist = [];
+                    this.value[this.level] = '';
+                    this.label[this.level] = '';
+                    this.lists[this.level] = [];
+                    this.levelData[this.level] = {
+                        'label': '',
+                        'value': ''
+                    };
+                    this.updateValue();
+                    return;
+                }
+                this.loading = true;
+                const children = yield new Promise((resolve) => {
+                    this.emit('load', this.value[this.level], (children) => {
+                        resolve(children);
+                        this.emit('loaded');
+                    });
+                });
+                this.loading = false;
+                if (!(children === null || children === void 0 ? void 0 : children.length)) {
+                    clickgo.form.hidePop();
+                    ++this.level;
+                    this.listValue = [];
+                    this.nowlist = [];
+                    this.value[this.level] = '';
+                    this.label[this.level] = '';
+                    this.lists[this.level] = [];
+                    this.levelData[this.level] = {
+                        'label': '',
+                        'value': ''
+                    };
+                    this.updateValue();
+                    return;
+                }
+                nextChildren = children;
+            }
+            ++this.level;
+            this.listValue = [];
+            this.setNowList(nextChildren);
+            this.value[this.level] = '';
+            this.label[this.level] = '';
+            this.lists[this.level] = nextChildren;
+            this.levelData[this.level] = {
+                'label': '',
+                'value': ''
+            };
+            this.updateValue();
         });
     }
     back() {
-        this.vals.splice(this.level);
-        this.labs.splice(this.level);
-        this.lists.splice(this.level);
+        this.value.splice(-1);
+        this.label.splice(-1);
+        this.lists.splice(-1);
+        this.levelData.splice(this.level);
         --this.level;
-        this.emitModelValueAndLabel();
+        this.listValue = [];
+        this.value[this.level] = '';
+        this.label[this.level] = '';
+        this.levelData[this.level] = {
+            'label': '',
+            'value': ''
+        };
         this.setNowList(this.lists[this.level]);
-        if (this.propBoolean('async')) {
-            this.emit('loaded');
-        }
+        this.updateValue();
     }
     onMounted() {
         this.watch('data', () => {
-            var _a, _b, _c;
-            let leveldata = this.props.data;
-            for (let level = 0; level <= this.level; ++level) {
-                let nextChildren = null;
-                let isSelected = false;
-                const isArray = Array.isArray(leveldata);
-                for (const key in leveldata) {
-                    const item = leveldata[key];
-                    const val = (isArray ?
-                        (typeof item === 'object' ? ((_b = (_a = item.value) !== null && _a !== void 0 ? _a : item.label) !== null && _b !== void 0 ? _b : '') : item) :
-                        key).toString();
-                    if (this.vals[level] !== val) {
-                        continue;
-                    }
-                    nextChildren = (_c = item.children) !== null && _c !== void 0 ? _c : null;
-                    isSelected = true;
-                }
-                this.lists[level] = leveldata;
-                if (isSelected) {
-                    if (nextChildren) {
-                        leveldata = nextChildren;
-                        continue;
-                    }
-                    this.level = level;
-                    this.vals.splice(level + 1);
-                    this.labs.splice(level + 1);
-                    this.lists.splice(level + 1);
-                    this.emitModelValueAndLabel();
-                    this.setNowList(leveldata);
-                    break;
-                }
-                this.level = level;
-                this.vals.splice(level);
-                this.labs.splice(level);
-                this.lists.splice(level + 1);
-                this.emitModelValueAndLabel();
-                this.setNowList(leveldata);
-                break;
-            }
+            this.level = 0;
+            this.listValue = [];
+            this.value = [''];
+            this.label = [''];
+            this.setNowList(this.props.data);
+            this.lists[0] = this.props.data;
+            this.levelData[0] = {
+                'label': '',
+                'value': ''
+            };
+            this.updateValue();
         }, {
-            'deep': true,
-            'immediate': true
-        });
-        this.watch('modelValue', () => __awaiter(this, void 0, void 0, function* () {
-            var _a, _b, _c, _d, _e, _f, _g, _h;
-            const nowval = this.propBoolean('multi') ? this.vals : (this.vals.length ? [this.vals[this.vals.length - 1]] : []);
-            if (JSON.stringify(this.props.modelValue) === JSON.stringify(nowval)) {
-                return;
-            }
-            if (!this.propBoolean('multi')) {
-                if (!this.props.modelValue.length) {
-                    this.vals.length = 0;
-                    this.labs.length = 0;
-                    this.lists.splice(1);
-                    this.emitModelValueAndLabel();
-                    return;
-                }
-                const lval = this.props.modelValue[0].toString();
-                let nextChildren = null;
-                let isSelected = false;
-                const isArray = Array.isArray(this.lists[this.level]);
-                for (const key in this.lists[this.level]) {
-                    const item = this.lists[this.level][key];
-                    const val = (isArray ?
-                        (typeof item === 'object' ? ((_b = (_a = item.value) !== null && _a !== void 0 ? _a : item.label) !== null && _b !== void 0 ? _b : '') : item) :
-                        key).toString();
-                    if (lval !== val) {
-                        continue;
-                    }
-                    nextChildren = (_c = item.children) !== null && _c !== void 0 ? _c : null;
-                    isSelected = true;
-                    this.vals[this.level] = val;
-                    this.labs[this.level] = (_d = item.label) !== null && _d !== void 0 ? _d : val;
-                    this.emitModelValueAndLabel();
-                }
-                if (!isSelected) {
-                    this.vals.splice(this.level);
-                    this.labs.splice(this.level);
-                    this.lists.splice(this.level + 1);
-                    this.emitModelValueAndLabel();
-                    return;
-                }
-                if (!nextChildren) {
-                    if (!this.propBoolean('async')) {
-                        return;
-                    }
-                    this.loading = true;
-                    const children = yield new Promise((resolve) => {
-                        this.emit('load', this.vals[this.level], (children) => {
-                            resolve(children);
-                        });
-                    });
-                    this.loading = false;
-                    if (!(children === null || children === void 0 ? void 0 : children.length)) {
-                        return;
-                    }
-                    nextChildren = children;
-                }
-                ++this.level;
-                this.lists[this.level] = nextChildren;
-                this.setNowList(this.lists[this.level]);
-                return;
-            }
-            this.vals.length = 0;
-            this.labs.length = 0;
-            if (!this.props.modelValue.length) {
-                this.lists.splice(1);
-                this.emitModelValueAndLabel();
-                this.level = 0;
-                this.setNowList(this.lists[0]);
-                if (this.propBoolean('async')) {
-                    this.emit('loaded');
-                }
-                return;
-            }
-            for (let i = 0; i < this.props.modelValue.length; ++i) {
-                const lval = this.props.modelValue[i].toString();
-                let nextChildren = null;
-                let isSelected = false;
-                const isArray = Array.isArray(this.lists[i]);
-                for (const key in this.lists[i]) {
-                    const item = this.lists[i][key];
-                    const val = (isArray ?
-                        (typeof item === 'object' ? ((_f = (_e = item.value) !== null && _e !== void 0 ? _e : item.label) !== null && _f !== void 0 ? _f : '') : item) :
-                        key).toString();
-                    if (lval !== val) {
-                        continue;
-                    }
-                    nextChildren = (_g = item.children) !== null && _g !== void 0 ? _g : null;
-                    isSelected = true;
-                    this.vals.push(val);
-                    this.labs.push((_h = item.label) !== null && _h !== void 0 ? _h : val);
-                }
-                if (!isSelected) {
-                    this.lists.splice(i + 1);
-                    this.emitModelValueAndLabel();
-                    this.level = i;
-                    this.setNowList(this.lists[i]);
-                    if (this.propBoolean('async')) {
-                        this.emit('loaded');
-                    }
-                    return;
-                }
-                if (!nextChildren) {
-                    if (!this.propBoolean('async')) {
-                        this.lists.splice(i + 1);
-                        this.emitModelValueAndLabel();
-                        this.level = i;
-                        this.setNowList(this.lists[i]);
-                        return;
-                    }
-                    const children = yield new Promise((resolve) => {
-                        this.emit('load', this.vals[i], (children) => {
-                            resolve(children);
-                        });
-                    });
-                    if (!(children === null || children === void 0 ? void 0 : children.length)) {
-                        this.lists.splice(i + 1);
-                        this.emitModelValueAndLabel();
-                        this.level = i;
-                        this.setNowList(this.lists[i]);
-                        this.emit('loaded');
-                        return;
-                    }
-                    nextChildren = children;
-                }
-                this.lists[i + 1] = nextChildren;
-            }
-        }), {
-            'immediate': true,
             'deep': true
         });
-        this.watch('editable', () => {
-            if (!this.propBoolean('editable')) {
+        this.watch('modelValue', () => __awaiter(this, void 0, void 0, function* () {
+            var _a, _b, _c, _d;
+            if (this.props.modelValue === '') {
                 return;
             }
-            this.inputValue = '';
-        }, {
-            'immediate': true
-        });
-        this.watch('multi', () => {
-            if (this.propBoolean('multi')) {
-                this.emit('update:modelValue', clickgo.tool.clone(this.vals));
+            if (this.value.length > 1 && (this.props.modelValue === this.value[this.level - 1])) {
                 return;
             }
-            if (!this.vals.length) {
+            const mval = this.props.modelValue.toString();
+            let nextChildren = null;
+            let isSelected = false;
+            const isArray = Array.isArray(this.lists[this.level]);
+            for (const key in this.lists[this.level]) {
+                const item = this.lists[this.level][key];
+                const val = (isArray ?
+                    (typeof item === 'object' ? ((_b = (_a = item.value) !== null && _a !== void 0 ? _a : item.label) !== null && _b !== void 0 ? _b : '') : item) :
+                    key).toString();
+                if (mval !== val) {
+                    continue;
+                }
+                nextChildren = (_c = item.children) !== null && _c !== void 0 ? _c : null;
+                isSelected = true;
+                this.value[this.level] = val;
+                this.label[this.level] = (_d = item.label) !== null && _d !== void 0 ? _d : val;
+                this.levelData[this.level] = {
+                    'value': this.value[this.level],
+                    'label': this.label[this.level]
+                };
+            }
+            if (!isSelected) {
+                this.emit('update:modelValue', '');
                 return;
             }
-            this.emit('update:modelValue', [this.vals[this.vals.length - 1]]);
-        }, {
-            'immediate': true
-        });
+            if (!nextChildren) {
+                if (!this.propBoolean('async')) {
+                    ++this.level;
+                    this.listValue = [];
+                    this.nowlist = [];
+                    this.value[this.level] = '';
+                    this.label[this.level] = '';
+                    this.lists[this.level] = [];
+                    this.levelData[this.level] = {
+                        'label': '',
+                        'value': ''
+                    };
+                    this.updateValue();
+                    return;
+                }
+                this.loading = true;
+                const children = yield new Promise((resolve) => {
+                    this.emit('load', this.value[this.level], (children) => {
+                        resolve(children);
+                        this.emit('loaded');
+                    });
+                });
+                this.loading = false;
+                if (!(children === null || children === void 0 ? void 0 : children.length)) {
+                    ++this.level;
+                    this.listValue = [];
+                    this.nowlist = [];
+                    this.value[this.level] = '';
+                    this.label[this.level] = '';
+                    this.lists[this.level] = [];
+                    this.levelData[this.level] = {
+                        'label': '',
+                        'value': ''
+                    };
+                    this.updateValue();
+                    return;
+                }
+                nextChildren = children;
+            }
+            ++this.level;
+            this.listValue = [];
+            this.setNowList(nextChildren);
+            this.value[this.level] = '';
+            this.label[this.level] = '';
+            this.lists[this.level] = nextChildren;
+            this.levelData[this.level] = {
+                'label': '',
+                'value': ''
+            };
+            this.updateValue();
+        }));
         clickgo.dom.watchStyle(this.element, ['background', 'padding'], (n, v) => {
             switch (n) {
                 case 'background': {
@@ -479,6 +430,8 @@ class default_1 extends clickgo.control.AbstractControl {
                 }
             }
         }, true);
+        this.setNowList(this.props.data);
+        this.lists[0] = this.props.data;
     }
 }
 exports.default = default_1;

@@ -101,8 +101,9 @@ class default_1 extends clickgo.form.AbstractForm {
         this.label2 = [];
         this.asyncModel = ['1'];
         this.asyncData = [];
-        this.select3 = [];
-        this.label3 = [];
+        this.select3 = '';
+        this.label3 = '';
+        this.level3 = [];
         this.s3other = false;
         this.slist3r = ['a', 'b', 'c', 'haha3'];
         this.padding = false;
@@ -149,8 +150,10 @@ class default_1 extends clickgo.form.AbstractForm {
         });
     }
     onLoaded() {
-        return __awaiter(this, void 0, void 0, function* () {
-            yield clickgo.form.dialog('done');
+        clickgo.form.notify({
+            'type': 'info',
+            'title': 'Levelselect @loaded',
+            'content': 'Done'
         });
     }
     onRemote(value, resolve) {

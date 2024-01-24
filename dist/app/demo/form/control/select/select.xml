@@ -80,11 +80,12 @@
                 <layout gutter="10" direction="v" style="padding: 10px;">
                     <label>Now select value is {{select3}}</label>
                     <label>Label: {{label3}}</label>
-                    <levelselect v-model="select3" @label="label3 = $event" :data="s3other ? slist3r : slist2" :disabled="disabled" :editable="editable" :multi="multi" :async="async" placeholder="Please enter" @load="onLoad" @loaded="onLoaded" :style="{'font-size': fontSize ? '16px' : undefined, 'padding': padding ? '15px' : undefined, 'background': background ? 'red' : undefined, 'color': background ? '#FFF' : undefined}"></levelselect>
+                    <label>Level: {{level3}}</label>
+                    <levelselect v-model="select3" @label="label3 = $event" @level="level3 = $event" :data="s3other ? slist3r : slist2" :disabled="disabled" :editable="editable" :multi="multi" :async="async" placeholder="Please enter" @load="onLoad" @loaded="onLoaded" :style="{'font-size': fontSize ? '16px' : undefined, 'padding': padding ? '15px' : undefined, 'background': background ? 'red' : undefined, 'color': background ? '#FFF' : undefined}"></levelselect>
                     <button @click="async = !async">{{async ? '' : '!'}}async</button>
-                    <button @click="select3 = ['title', 'sub2']">Set: ['title', 'sub2']</button>
-                    <button @click="select3 = ['haha2', '60']">Set: ['haha2', '60']</button>
-                    <button @click="select3.length = 0">Clear</button>
+                    <button @click="select3 = 'title'">Set: 'title'</button>
+                    <button @click="select3 = 'haha2'">Set: 'haha2'</button>
+                    <button @click="select3 = ''">Clear</button>
                     <button @click="s3other = !s3other">Set {{s3other ? 'this' : 'other'}} data</button>
                 </layout>
             </flow>
@@ -92,7 +93,7 @@
         <layout gutter="10">
             <button @click="disabled = !disabled" style="flex: 1;">{{disabled ? '' : '!'}}disabled</button>
             <button v-if="ntab === 'greatselect'" @click="changeArea" style="flex: 1;">Area: {{area}}</button>
-            <button v-else @click="editable = !editable" style="flex: 1;">{{editable ? '' : '!'}}editable</button>
+            <button v-else-if="ntab === 'select'" @click="editable = !editable" style="flex: 1;">{{editable ? '' : '!'}}editable</button>
         </layout>
         <layout gutter="10">
             <button @click="fontSize = !fontSize" style="flex: 1;">Change font size</button>
@@ -100,7 +101,7 @@
         </layout>
         <layout gutter="10">
             <button @click="background = !background" style="flex: 1;">Change bg &amp; color</button>
-            <button @click="multi = !multi" style="flex: 1;">{{multi ? '' : '!'}}multi</button>
+            <button v-if="ntab !== 'levelselect'" @click="multi = !multi" style="flex: 1;">{{multi ? '' : '!'}}multi</button>
         </layout>
     </layout>
 </form>

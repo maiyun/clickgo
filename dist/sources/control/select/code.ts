@@ -273,10 +273,10 @@ export default class extends clickgo.control.AbstractControl {
 
     /** --- search 和 input 的通用 keydown 事件 --- */
     public async textKeyDown(e: KeyboardEvent): Promise<void> {
-        e.stopPropagation();
+        e.stopPropagation(); // --- 放置响应到 greatselect 的 mode:text enter 导致收不起来 ---
         if ((e.key === 'ArrowUp' || e.key === 'ArrowDown') && this.element.dataset.cgPopOpen !== undefined) {
             // --- 要键盘上下选择 ---
-            e.preventDefault();
+            e.preventDefault(); // --- 用来防止光标依浏览器原生要求移动 ---
             switch (e.key) {
                 case 'ArrowUp': {
                     this.refs.list.arrowUp();
@@ -295,6 +295,7 @@ export default class extends clickgo.control.AbstractControl {
         if (e.key !== 'Enter') {
             return;
         }
+        // --- enter ---
         // --- 选中的 list item ---
         const value = this.searchValue || this.inputValue;
         if (this.propBoolean('editable')) {

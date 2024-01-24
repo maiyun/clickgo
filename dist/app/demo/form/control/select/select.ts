@@ -80,9 +80,11 @@ export default class extends clickgo.form.AbstractForm {
 
     public asyncData: any[] = [];
 
-    public select3 = [];
+    public select3 = '';
 
-    public label3 = [];
+    public label3 = '';
+
+    public level3 = [];
 
     public s3other = false;
 
@@ -145,8 +147,12 @@ export default class extends clickgo.form.AbstractForm {
         resolve(['he', 'ha']);
     }
 
-    public async onLoaded(): Promise<void> {
-        await clickgo.form.dialog('done');
+    public onLoaded(): void {
+        clickgo.form.notify({
+            'type': 'info',
+            'title': 'Levelselect @loaded',
+            'content': 'Done'
+        });
     }
 
     public async onRemote(value: string, resolve: (data?: any[] | Record<string, string>) => void): Promise<void> {

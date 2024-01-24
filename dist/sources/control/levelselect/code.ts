@@ -2,31 +2,29 @@ import * as clickgo from 'clickgo';
 
 export default class extends clickgo.control.AbstractControl {
 
+    public emits = {
+        'label': null,
+        'load': null,
+        'loaded': null,
+        /** --- modelValue 变更时同步提交所有层级的 level value/label 值 --- */
+        'level': null
+    };
+
     public props: {
         'disabled': boolean | string;
-        'editable': boolean | string;
-        'multi': boolean | string;
         'async': boolean | string;
 
-        'modelValue': Array<string | number>;
+        'modelValue': string;
         'placeholder': string;
         'data': any[] | Record<string, any>;
     } = {
             'disabled': false,
-            'editable': false,
-            'multi': false,
             'async': false,
 
-            'modelValue': [],
+            'modelValue': '',
             'placeholder': '',
             'data': []
         };
-
-    public inputValue = '';
-
-    public oploading = false;
-
-    public loading = false;
 
     // --- 本地使用 ---
 
@@ -69,15 +67,46 @@ export default class extends clickgo.control.AbstractControl {
         }
     };
 
+    /** --- 当前展示中的层级 --- */
     public level: number = 0;
 
-    public vals: string[] = [];
+    public value: string[] = [];
 
-    public labs: string[] = [];
+    public label: string[] = [];
 
-    public lists: any[] = [];
+    /** --- 输入框 --- */
+    public inputValue = '';
 
+    /** --- list 的选中值 --- */
+    public listValue: string[] = [];
+
+    /** --- list 的选中的 label --- */
+    public listLabel: string[] = [];
+
+    /** --- select 框框的 loading --- */
+    public oploading = false;
+
+    /** --- pop 的 loading --- */
+    public loading = false;
+
+    /** --- 已经装载的每层的数据列表 --- */
+    public lists: any[] = [
+        []
+    ];
+
+    /** --- 当前层级的 list，含 children --- */
     public nowlist: any[] | Record<string, any> = [];
+
+    /** --- 要提交的 level data --- */
+    public levelData: Array<{
+        'label': string;
+        'value': string;
+    }> = [
+            {
+                'label': '',
+                'value': ''
+            }
+        ];
 
     // --- 样式 ---
 
@@ -91,11 +120,6 @@ export default class extends clickgo.control.AbstractControl {
         return this.padding.replace(/(\w+)/g, '-$1');
     }
 
-    // --- 传递给 list 的 value ---
-    public get listValue(): Array<string | number> {
-        return this.vals[this.level] ? [this.vals[this.level]] : [];
-    }
-
     // --- 传递给 list 的 data ---
     public get nowlistComp(): any[] | Record<string, any> {
         if (this.inputValue === '') {
@@ -103,7 +127,7 @@ export default class extends clickgo.control.AbstractControl {
         }
         const inputValue = this.inputValue.toLowerCase();
         const isArray = Array.isArray(this.nowlist);
-        const newlist: any[] | Record<string, any> = isArray ? [] : {};
+        const searchData = isArray ? [] : {};
         for (const key in this.nowlist) {
             const item = (this.nowlist as any)[key];
             const val = (isArray ?
@@ -124,13 +148,38 @@ export default class extends clickgo.control.AbstractControl {
                 continue;
             }
             if (isArray) {
-                (newlist as any).push(item);
+                (searchData as any).push(item);
             }
             else {
-                (newlist as any)[key] = item;
+                (searchData as any)[key] = item;
             }
         }
-        return newlist;
+        return searchData;
+    }
+
+    /** --- 向上更新值 --- */
+    public updateValue(): void {
+        if (this.value.length < 2) {
+            this.emit('label', '');
+            this.emit('level', []);
+            if (this.props.modelValue === '') {
+                return;
+            }
+            this.emit('update:modelValue', '');
+            return;
+        }
+        this.emit('label', this.label[this.label.length - 2]);
+        this.emit('level', this.levelData.slice(0, -1));
+        const newval: string = this.value[this.value.length - 2];
+        if (this.props.modelValue === newval) {
+            return;
+        }
+        this.emit('update:modelValue', newval);
+    }
+
+    /** --- text 的失去焦点事件 --- */
+    public blur(): void {
+        this.inputValue = '';
     }
 
     /** --- text 的 keydown 事件 --- */
@@ -139,6 +188,7 @@ export default class extends clickgo.control.AbstractControl {
             if (this.level > 0) {
                 // --- 判断是否返回上级 ---
                 if ((e.target as HTMLInputElement).value === '') {
+                    // --- 返回上级 ---
                     this.back();
                 }
             }
@@ -151,7 +201,7 @@ export default class extends clickgo.control.AbstractControl {
         }
         if ((e.key === 'ArrowUp' || e.key === 'ArrowDown') && (this.element.dataset.cgPopOpen !== undefined)) {
             // --- 展开状态，要键盘上下选择 ---
-            e.preventDefault();
+            e.preventDefault(); // --- 用来防止光标依浏览器原生要求移动 ---
             switch (e.key) {
                 case 'ArrowUp': {
                     this.refs.list.arrowUp();
@@ -163,59 +213,25 @@ export default class extends clickgo.control.AbstractControl {
             }
             return;
         }
-        if (e.key === 'Enter') {
-            // --- enter ---
-            await this.listItemClick();
+        if (e.key !== 'Enter') {
             return;
         }
+        // --- enter ---
+        if (!this.listValue[0]) {
+            return;
+        }
+        e.stopPropagation(); // --- 放置响应到 greatselect 的 mode:text enter 导致收不起来 ---
+        await this.listItemClicked();
     }
 
-    /** --- remote 模式下，最后一次键入的时间 --- */
-    public lastRemoteInput: number = 0;
-
-    // --- text 的值变更事件（只有 editable 时会触发） ----
+    // --- text 的值变更事件 ----
     public updateInputValue(value: string): void {
         this.inputValue = value.trim();
+        this.listValue = [this.inputValue];
         if ((this.inputValue !== '') && (this.element.dataset.cgPopOpen === undefined)) {
             this.refs.gs.showPop();
             return;
         }
-    }
-
-    public updateLabel(label: string[]): void {
-        if (!label[0]) {
-            return;
-        }
-        this.labs[this.level] = label[0];
-        this.emit('label', this.propBoolean('multi') ? clickgo.tool.clone(this.labs) : [this.labs[this.level]]);
-    }
-
-    // --- list 值的变更 ---
-    public updateListValue(value: string[]): void {
-        if (!value[0]) {
-            return;
-        }
-        this.vals[this.level] = value[0];
-        this.emit('update:modelValue', this.propBoolean('multi') ? clickgo.tool.clone(this.vals) : [this.vals[this.level]]);
-    }
-
-    /** --- 向上级提交 modelValue 和 labs 变动 --- */
-    public emitModelValueAndLabel(): void {
-        let newval: string[] = [];
-        let newlabel: string[] = [];
-        if (this.propBoolean('multi')) {
-            newval = this.vals;
-            newlabel = this.labs;
-        }
-        else {
-            newval = this.vals.length ? [this.vals[this.vals.length - 1]] : [];
-            newlabel = this.labs.length ? [this.labs[this.labs.length - 1]] : [];
-        }
-        this.emit('label', clickgo.tool.clone(newlabel));
-        if (JSON.stringify(this.props.modelValue) === JSON.stringify(newval)) {
-            return;
-        }
-        this.emit('update:modelValue', clickgo.tool.clone(newval));
     }
 
     /** --- 将一个对象克隆，并设置到 nowlist --- */
@@ -229,7 +245,8 @@ export default class extends clickgo.control.AbstractControl {
         }
     }
 
-    public async listItemClick(): Promise<void> {
+    // --- list 的点击事件 ---
+    public async listItemClicked(): Promise<void> {
         this.inputValue = '';
         /** --- 已选 item 的下一层 list --- */
         let nextChildren: any[] | Record<string, any> | null = null;
@@ -241,27 +258,178 @@ export default class extends clickgo.control.AbstractControl {
             const val = (isArray ?
                 (typeof item === 'object' ? (item.value ?? item.label ?? '') : item) :
                 key).toString();
-            if (this.vals[this.level] !== val) {
+            if (this.listValue[0] !== val) {
                 continue;
             }
             // --- 有项被选择 ---
             nextChildren = item.children ?? null;
             isSelected = true;
+            this.value[this.level] = this.listValue[0];
+            this.label[this.level] = this.listLabel[0];
+            this.levelData[this.level] = {
+                'label': this.label[this.level],
+                'value': this.value[this.level]
+            };
         }
 
-        if (isSelected) {
-            // --- 有选择 ---
+        if (!isSelected) {
+            // --- 没有选中，可能是 enter ---
+            return;
+        }
+        // --- 有选择 ---
+        if (!nextChildren) {
+            if (!this.propBoolean('async')) {
+                // --- 无下层，啥也不管 ---
+                clickgo.form.hidePop();
+                ++this.level;
+                this.listValue = [];
+                this.nowlist = [];
+                this.value[this.level] = '';
+                this.label[this.level] = '';
+                this.lists[this.level] = [];
+                this.levelData[this.level] = {
+                    'label': '',
+                    'value': ''
+                };
+                this.updateValue();
+                return;
+            }
+            // --- 无下层，但是要异步获取 ---
+            this.loading = true;
+            // --- 要远程获取 ---
+            const children = await new Promise<any[] | undefined>((resolve) => {
+                this.emit('load', this.value[this.level], (children?: any[]) => {
+                    resolve(children);
+                    this.emit('loaded');
+                });
+            });
+            this.loading = false;
+            if (!children?.length) {
+                // --- 真的没下层，结束 ---
+                clickgo.form.hidePop();
+                ++this.level;
+                this.listValue = [];
+                this.nowlist = [];
+                this.value[this.level] = '';
+                this.label[this.level] = '';
+                this.lists[this.level] = [];
+                this.levelData[this.level] = {
+                    'label': '',
+                    'value': ''
+                };
+                this.updateValue();
+                return;
+            }
+            // --- 有，那就走跳转模式 ---
+            nextChildren = children;
+        }
+        // --- 有下层，跳转，不隐藏 pop ---
+        ++this.level;
+        this.listValue = [];
+        this.setNowList(nextChildren);
+        this.value[this.level] = '';
+        this.label[this.level] = '';
+        this.lists[this.level] = nextChildren;
+        this.levelData[this.level] = {
+            'label': '',
+            'value': ''
+        };
+        this.updateValue();
+    }
+
+    // --- 返回上级 ---
+    public back(): void {
+        this.value.splice(-1);
+        this.label.splice(-1);
+        this.lists.splice(-1);
+        this.levelData.splice(this.level);
+        --this.level;
+        this.listValue = [];
+        this.value[this.level] = '';
+        this.label[this.level] = '';
+        this.levelData[this.level] = {
+            'label': '',
+            'value': ''
+        };
+        this.setNowList(this.lists[this.level]);
+        this.updateValue();
+    }
+
+    public onMounted(): void | Promise<void> {
+        this.watch('data', () => {
+            this.level = 0;
+            this.listValue = [];
+            this.value = [''];
+            this.label = [''];
+            this.setNowList(this.props.data);
+            this.lists[0] = this.props.data;
+            this.levelData[0] = {
+                'label': '',
+                'value': ''
+            };
+            this.updateValue();
+        }, {
+            'deep': true
+        });
+
+        this.watch('modelValue', async (): Promise<void> => {
+            if (this.props.modelValue === '') {
+                return;
+            }
+            if (this.value.length > 1 && (this.props.modelValue === this.value[this.level - 1])) {
+                // --- 当前值和本层的上级值一样，可能仅仅是刚刚 update 的 ---
+                return;
+            }
+            const mval = this.props.modelValue.toString();
+            /** --- 已选 item 的下一层 list --- */
+            let nextChildren: any[] | Record<string, string> | null = null;
+            let isSelected: boolean = false;
+            const isArray = Array.isArray(this.lists[this.level]);
+            for (const key in this.lists[this.level]) {
+                const item = this.lists[this.level][key];
+                const val = (isArray ?
+                    (typeof item === 'object' ? (item.value ?? item.label ?? '') : item) :
+                    key).toString();
+                if (mval !== val) {
+                    continue;
+                }
+                nextChildren = item.children ?? null;
+                isSelected = true;
+                this.value[this.level] = val;
+                this.label[this.level] = item.label ?? val;
+                this.levelData[this.level] = {
+                    'value': this.value[this.level],
+                    'label': this.label[this.level]
+                };
+            }
+            if (!isSelected) {
+                // --- 当前未被选中，直接结束 ---
+                this.emit('update:modelValue', '');
+                return;
+            }
+            // --- 选中 ---
             if (!nextChildren) {
+                // --- 选中但无下级 ---
                 if (!this.propBoolean('async')) {
                     // --- 无下层，啥也不管 ---
-                    clickgo.form.hidePop();
+                    ++this.level;
+                    this.listValue = [];
+                    this.nowlist = [];
+                    this.value[this.level] = '';
+                    this.label[this.level] = '';
+                    this.lists[this.level] = [];
+                    this.levelData[this.level] = {
+                        'label': '',
+                        'value': ''
+                    };
+                    this.updateValue();
                     return;
                 }
                 // --- 无下层，但是要异步获取 ---
                 this.loading = true;
                 // --- 要远程获取 ---
                 const children = await new Promise<any[] | undefined>((resolve) => {
-                    this.emit('load', this.vals[this.level], (children?: any[]) => {
+                    this.emit('load', this.value[this.level], (children?: any[]) => {
                         resolve(children);
                         this.emit('loaded');
                     });
@@ -269,263 +437,34 @@ export default class extends clickgo.control.AbstractControl {
                 this.loading = false;
                 if (!children?.length) {
                     // --- 真的没下层，结束 ---
-                    clickgo.form.hidePop();
+                    ++this.level;
+                    this.listValue = [];
+                    this.nowlist = [];
+                    this.value[this.level] = '';
+                    this.label[this.level] = '';
+                    this.lists[this.level] = [];
+                    this.levelData[this.level] = {
+                        'label': '',
+                        'value': ''
+                    };
+                    this.updateValue();
                     return;
                 }
                 // --- 有，那就走跳转模式 ---
                 nextChildren = children;
             }
             // --- 有下层，跳转 ---
-            this.setNowList(nextChildren);
             ++this.level;
+            this.listValue = [];
+            this.setNowList(nextChildren);
+            this.value[this.level] = '';
+            this.label[this.level] = '';
             this.lists[this.level] = nextChildren;
-            return;
-        }
-        // --- 没有选中，那么这里理论上不应该触发 ---
-        clickgo.form.hidePop();
-    }
-
-    // --- 返回上级 ---
-    public back(): void {
-        this.vals.splice(this.level);
-        this.labs.splice(this.level);
-        this.lists.splice(this.level);
-        --this.level;
-        this.emitModelValueAndLabel();
-        this.setNowList(this.lists[this.level]);
-        if (this.propBoolean('async')) {
-            this.emit('loaded');
-        }
-    }
-
-    public onMounted(): void | Promise<void> {
-        this.watch('data', () => {
-            /** --- 当前层的 list --- */
-            let leveldata = this.props.data;
-            for (let level = 0; level <= this.level; ++level) {
-                /** --- 已选 item 的下一层 list --- */
-                let nextChildren: any[] | Record<string, string> | null = null;
-                /** --- 当前层是否有选择 --- */
-                let isSelected: boolean = false;
-                const isArray = Array.isArray(leveldata);
-                for (const key in leveldata) {
-                    const item = (leveldata as any)[key];
-                    const val = (isArray ?
-                        (typeof item === 'object' ? (item.value ?? item.label ?? '') : item) :
-                        key).toString();
-                    if (this.vals[level] !== val) {
-                        continue;
-                    }
-                    // --- 选择的是本层（leveldata） ---
-                    nextChildren = item.children ?? null;
-                    isSelected = true;
-                }
-                this.lists[level] = leveldata;
-
-                if (isSelected) {
-                    // --- 有选择 ---
-                    if (nextChildren) {
-                        // --- 有下层，接着循环 ---
-                        leveldata = nextChildren;
-                        continue;
-                    }
-                    // --- 没下层，结束循环 ---
-                    this.level = level;
-                    this.vals.splice(level + 1);
-                    this.labs.splice(level + 1);
-                    this.lists.splice(level + 1);
-                    this.emitModelValueAndLabel();
-                    this.setNowList(leveldata);
-                    break;
-                }
-                // --- 无选择 ---
-                this.level = level;
-                this.vals.splice(level);
-                this.labs.splice(level);
-                this.lists.splice(level + 1);
-                this.emitModelValueAndLabel();
-                this.setNowList(leveldata);
-                break;
-            }
-        }, {
-            'deep': true,
-            'immediate': true
-        });
-
-        this.watch('modelValue', async (): Promise<void> => {
-            const nowval: string[] = this.propBoolean('multi') ? this.vals : (this.vals.length ? [this.vals[this.vals.length - 1]] : []);
-            if (JSON.stringify(this.props.modelValue) === JSON.stringify(nowval)) {
-                return;
-            }
-            if (!this.propBoolean('multi')) {
-                // --- 非多层情况 ---
-                if (!this.props.modelValue.length) {
-                    this.vals.length = 0;
-                    this.labs.length = 0;
-                    this.lists.splice(1);
-                    this.emitModelValueAndLabel();
-                    return;
-                }
-                const lval = this.props.modelValue[0].toString();
-                /** --- 已选 item 的下一层 list --- */
-                let nextChildren: any[] | Record<string, string> | null = null;
-                // --- 单层情况，比较简单 ---
-                let isSelected: boolean = false;
-                const isArray = Array.isArray(this.lists[this.level]);
-                for (const key in this.lists[this.level]) {
-                    const item = this.lists[this.level][key];
-                    const val = (isArray ?
-                        (typeof item === 'object' ? (item.value ?? item.label ?? '') : item) :
-                        key).toString();
-                    if (lval !== val) {
-                        continue;
-                    }
-                    nextChildren = item.children ?? null;
-                    isSelected = true;
-                    this.vals[this.level] = val;
-                    this.labs[this.level] = item.label ?? val;
-                    this.emitModelValueAndLabel();
-                }
-                if (!isSelected) {
-                    // --- 当前未被选中，直接结束 ---
-                    this.vals.splice(this.level);
-                    this.labs.splice(this.level);
-                    this.lists.splice(this.level + 1);
-                    this.emitModelValueAndLabel();
-                    return;
-                }
-                // --- 选中 ---
-                if (!nextChildren) {
-                    // --- 选中但无下级 ---
-                    if (!this.propBoolean('async')) {
-                        // --- 无下层，啥也不管 ---
-                        return;
-                    }
-                    // --- 无下层，但是要异步获取 ---
-                    this.loading = true;
-                    // --- 要远程获取 ---
-                    const children = await new Promise<any[] | undefined>((resolve) => {
-                        this.emit('load', this.vals[this.level], (children?: any[]) => {
-                            resolve(children);
-                        });
-                    });
-                    this.loading = false;
-                    if (!children?.length) {
-                        // --- 真的没下层，结束 ---
-                        return;
-                    }
-                    // --- 有，那就走跳转模式 ---
-                    nextChildren = children;
-                }
-                // --- 有下层，跳转 ---
-                ++this.level;
-                this.lists[this.level] = nextChildren;
-                this.setNowList(this.lists[this.level]);
-                return;
-            }
-            // --- 多层情况，那么可能要触发 loaded 事件，代表所有异步下层都加载完毕后的回调 ---
-            this.vals.length = 0;
-            this.labs.length = 0;
-            if (!this.props.modelValue.length) {
-                // --- 没有值 ---
-                this.lists.splice(1);
-                this.emitModelValueAndLabel();
-                this.level = 0;
-                this.setNowList(this.lists[0]);
-                if (this.propBoolean('async')) {
-                    this.emit('loaded');
-                }
-                return;
-            }
-            // --- 需要逐层处理 ---
-            for (let i = 0; i < this.props.modelValue.length; ++i) {
-                const lval = this.props.modelValue[i].toString();
-                /** --- 已选 item 的下一层 list --- */
-                let nextChildren: any[] | Record<string, string> | null = null;
-                /** --- 当前层是否有选择 --- */
-                let isSelected: boolean = false;
-                const isArray = Array.isArray(this.lists[i]);
-                for (const key in this.lists[i]) {
-                    const item = this.lists[i][key];
-                    const val = (isArray ?
-                        (typeof item === 'object' ? (item.value ?? item.label ?? '') : item) :
-                        key).toString();
-                    if (lval !== val) {
-                        continue;
-                    }
-                    // --- 选择的是本层（leveldata） ---
-                    nextChildren = item.children ?? null;
-                    isSelected = true;
-                    this.vals.push(val);
-                    this.labs.push(item.label ?? val);
-                }
-                if (!isSelected) {
-                    // --- 当前未被选中，直接结束 ---
-                    this.lists.splice(i + 1);
-                    this.emitModelValueAndLabel();
-                    this.level = i;
-                    this.setNowList(this.lists[i]);
-                    if (this.propBoolean('async')) {
-                        this.emit('loaded');
-                    }
-                    return;
-                }
-                // --- 选中了，接着去下级 ---
-                if (!nextChildren) {
-                    if (!this.propBoolean('async')) {
-                        // --- 没有下级，直接结束 ---
-                        this.lists.splice(i + 1);
-                        this.emitModelValueAndLabel();
-                        this.level = i;
-                        this.setNowList(this.lists[i]);
-                        return;
-                    }
-                    // --- 要远程获取 ---
-                    const children = await new Promise<any[] | undefined>((resolve) => {
-                        this.emit('load', this.vals[i], (children?: any[]) => {
-                            resolve(children);
-                        });
-                    });
-                    if (!children?.length) {
-                        // --- 没有下级，直接结束 ---
-                        this.lists.splice(i + 1);
-                        this.emitModelValueAndLabel();
-                        this.level = i;
-                        this.setNowList(this.lists[i]);
-                        this.emit('loaded');
-                        return;
-                    }
-                    nextChildren = children;
-                }
-                // --- 有下级，接着循环 ---
-                this.lists[i + 1] = nextChildren;
-            }
-        }, {
-            'immediate': true,
-            'deep': true
-        });
-        this.watch('editable', (): void => {
-            if (!this.propBoolean('editable')) {
-                return;
-            }
-            // --- 变成可输入 ---
-            this.inputValue = '';
-        }, {
-            'immediate': true
-        });
-        this.watch('multi', (): void => {
-            if (this.propBoolean('multi')) {
-                // --- 单变多 ---
-                this.emit('update:modelValue', clickgo.tool.clone(this.vals));
-                return;
-            }
-            // --- 多变单 ---
-            if (!this.vals.length) {
-                return;
-            }
-            this.emit('update:modelValue', [this.vals[this.vals.length - 1]]);
-        }, {
-            'immediate': true
+            this.levelData[this.level] = {
+                'label': '',
+                'value': ''
+            };
+            this.updateValue();
         });
 
         clickgo.dom.watchStyle(this.element, ['background', 'padding'], (n, v) => {
@@ -540,6 +479,9 @@ export default class extends clickgo.control.AbstractControl {
                 }
             }
         }, true);
+
+        this.setNowList(this.props.data);
+        this.lists[0] = this.props.data;
     }
 
 }
