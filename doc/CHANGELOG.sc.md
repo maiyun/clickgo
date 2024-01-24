@@ -1,5 +1,9 @@
 # 更新日志
 
+# 3.10.3
+
+[+] levelselect 控件新增 selectLevelValue 方法，用于一次性选择多层值。
+
 # 3.10.2
 
 [+] AbstractPanel 新增 onQsChange 事件。  
