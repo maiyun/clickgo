@@ -355,6 +355,134 @@ export default class extends clickgo.control.AbstractControl {
         this.updateValue();
     }
 
+    /** --- 供外部调用的设置层级 value 的函数 --- */
+    public async selectLevelValue(list: string[]): Promise<void> {
+        this.level = 0;
+        this.listValue = [];
+        this.value = [''];
+        this.label = [''];
+        this.setNowList(this.props.data);
+        this.lists = [this.props.data];
+        this.levelData = [{
+            'label': '',
+            'value': ''
+        }];
+        for (let i = 0; i < list.length; ++i) {
+            this.level = i;
+            const r = await this._selectValue(list[i], false);
+            await this.nextTick();
+            if (!r) {
+                break;
+            }
+        }
+        // --- 结束更新 ---
+        this.updateValue();
+    }
+
+    /** --- 选择一个值的内部方法 --- */
+    private async _selectValue(value: string, autoUpdate: boolean = true): Promise<boolean> {
+        if (value === '') {
+            return false;
+        }
+        if (this.value.length > 1 && (value === this.value[this.level - 1])) {
+            // --- 当前值和本层的上级值一样，可能仅仅是刚刚 update 的 ---
+            return false;
+        }
+        /** --- 已选 item 的下一层 list --- */
+        let nextChildren: any[] | Record<string, string> | null = null;
+        let isSelected: boolean = false;
+        const isArray = Array.isArray(this.lists[this.level]);
+        for (const key in this.lists[this.level]) {
+            const item = this.lists[this.level][key];
+            const val = (isArray ?
+                (typeof item === 'object' ? (item.value ?? item.label ?? '') : item) :
+                key).toString();
+            if (value !== val) {
+                continue;
+            }
+            nextChildren = item.children ?? null;
+            isSelected = true;
+            this.value[this.level] = val;
+            this.label[this.level] = item.label ?? val;
+            this.levelData[this.level] = {
+                'value': this.value[this.level],
+                'label': this.label[this.level]
+            };
+        }
+        if (!isSelected) {
+            // --- 当前未被选中，直接结束 ---
+            if (autoUpdate) {
+                this.emit('update:modelValue', '');
+            }
+            return false;
+        }
+        // --- 选中 ---
+        if (!nextChildren) {
+            // --- 选中但无下级 ---
+            if (!this.propBoolean('async')) {
+                // --- 无下层，啥也不管 ---
+                ++this.level;
+                this.listValue = [];
+                this.nowlist = [];
+                this.value[this.level] = '';
+                this.label[this.level] = '';
+                this.lists[this.level] = [];
+                this.levelData[this.level] = {
+                    'label': '',
+                    'value': ''
+                };
+                if (autoUpdate) {
+                    this.updateValue();
+                }
+                return false;
+            }
+            // --- 无下层，但是要异步获取 ---
+            this.loading = true;
+            // --- 要远程获取 ---
+            const children = await new Promise<any[] | undefined>((resolve) => {
+                this.emit('load', this.value[this.level], (children?: any[]) => {
+                    resolve(children);
+                    this.emit('loaded');
+                });
+            });
+            this.loading = false;
+            if (!children?.length) {
+                // --- 真的没下层，结束 ---
+                ++this.level;
+                this.listValue = [];
+                this.nowlist = [];
+                this.value[this.level] = '';
+                this.label[this.level] = '';
+                this.lists[this.level] = [];
+                this.levelData[this.level] = {
+                    'label': '',
+                    'value': ''
+                };
+                if (autoUpdate) {
+                    this.updateValue();
+                }
+                return false;
+            }
+            // --- 有，那就走跳转模式 ---
+            nextChildren = children;
+        }
+        // --- 有下层，跳转 ---
+        ++this.level;
+        this.listValue = [];
+        this.setNowList(nextChildren);
+        this.value[this.level] = '';
+        this.label[this.level] = '';
+        this.lists[this.level] = nextChildren;
+        this.levelData[this.level] = {
+            'label': '',
+            'value': ''
+        };
+        if (autoUpdate) {
+            this.updateValue();
+        }
+        return true;
+    }
+
     public onMounted(): void | Promise<void> {
         this.watch('data', () => {
             this.level = 0;
@@ -362,109 +490,18 @@ export default class extends clickgo.control.AbstractControl {
             this.value = [''];
             this.label = [''];
             this.setNowList(this.props.data);
-            this.lists[0] = this.props.data;
-            this.levelData[0] = {
+            this.lists = [this.props.data];
+            this.levelData = [{
                 'label': '',
                 'value': ''
-            };
+            }];
             this.updateValue();
         }, {
             'deep': true
         });
 
         this.watch('modelValue', async (): Promise<void> => {
-            if (this.props.modelValue === '') {
-                return;
-            }
-            if (this.value.length > 1 && (this.props.modelValue === this.value[this.level - 1])) {
-                // --- 当前值和本层的上级值一样，可能仅仅是刚刚 update 的 ---
-                return;
-            }
-            const mval = this.props.modelValue.toString();
-            /** --- 已选 item 的下一层 list --- */
-            let nextChildren: any[] | Record<string, string> | null = null;
-            let isSelected: boolean = false;
-            const isArray = Array.isArray(this.lists[this.level]);
-            for (const key in this.lists[this.level]) {
-                const item = this.lists[this.level][key];
-                const val = (isArray ?
-                    (typeof item === 'object' ? (item.value ?? item.label ?? '') : item) :
-                    key).toString();
-                if (mval !== val) {
-                    continue;
-                }
-                nextChildren = item.children ?? null;
-                isSelected = true;
-                this.value[this.level] = val;
-                this.label[this.level] = item.label ?? val;
-                this.levelData[this.level] = {
-                    'value': this.value[this.level],
-                    'label': this.label[this.level]
-                };
-            }
-            if (!isSelected) {
-                // --- 当前未被选中，直接结束 ---
-                this.emit('update:modelValue', '');
-                return;
-            }
-            // --- 选中 ---
-            if (!nextChildren) {
-                // --- 选中但无下级 ---
-                if (!this.propBoolean('async')) {
-                    // --- 无下层，啥也不管 ---
-                    ++this.level;
-                    this.listValue = [];
-                    this.nowlist = [];
-                    this.value[this.level] = '';
-                    this.label[this.level] = '';
-                    this.lists[this.level] = [];
-                    this.levelData[this.level] = {
-                        'label': '',
-                        'value': ''
-                    };
-                    this.updateValue();
-                    return;
-                }
-                // --- 无下层，但是要异步获取 ---
-                this.loading = true;
-                // --- 要远程获取 ---
-                const children = await new Promise<any[] | undefined>((resolve) => {
-                    this.emit('load', this.value[this.level], (children?: any[]) => {
-                        resolve(children);
-                        this.emit('loaded');
-                    });
-                });
-                this.loading = false;
-                if (!children?.length) {
-                    // --- 真的没下层，结束 ---
-                    ++this.level;
-                    this.listValue = [];
-                    this.nowlist = [];
-                    this.value[this.level] = '';
-                    this.label[this.level] = '';
-                    this.lists[this.level] = [];
-                    this.levelData[this.level] = {
-                        'label': '',
-                        'value': ''
-                    };
-                    this.updateValue();
-                    return;
-                }
-                // --- 有，那就走跳转模式 ---
-                nextChildren = children;
-            }
-            // --- 有下层，跳转 ---
-            ++this.level;
-            this.listValue = [];
-            this.setNowList(nextChildren);
-            this.value[this.level] = '';
-            this.label[this.level] = '';
-            this.lists[this.level] = nextChildren;
-            this.levelData[this.level] = {
-                'label': '',
-                'value': ''
-            };
-            this.updateValue();
+            await this._selectValue(this.props.modelValue.toString());
         });
 
         clickgo.dom.watchStyle(this.element, ['background', 'padding'], (n, v) => {

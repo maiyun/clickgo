@@ -318,31 +318,38 @@ class default_1 extends clickgo.control.AbstractControl {
         this.setNowList(this.lists[this.level]);
         this.updateValue();
     }
-    onMounted() {
-        this.watch('data', () => {
+    selectLevelValue(list) {
+        return __awaiter(this, void 0, void 0, function* () {
             this.level = 0;
             this.listValue = [];
             this.value = [''];
             this.label = [''];
             this.setNowList(this.props.data);
-            this.lists[0] = this.props.data;
-            this.levelData[0] = {
-                'label': '',
-                'value': ''
-            };
+            this.lists = [this.props.data];
+            this.levelData = [{
+                    'label': '',
+                    'value': ''
+                }];
+            for (let i = 0; i < list.length; ++i) {
+                this.level = i;
+                const r = yield this._selectValue(list[i], false);
+                yield this.nextTick();
+                if (!r) {
+                    break;
+                }
+            }
             this.updateValue();
-        }, {
-            'deep': true
         });
-        this.watch('modelValue', () => __awaiter(this, void 0, void 0, function* () {
-            var _a, _b, _c, _d;
-            if (this.props.modelValue === '') {
-                return;
+    }
+    _selectValue(value, autoUpdate = true) {
+        var _a, _b, _c, _d;
+        return __awaiter(this, void 0, void 0, function* () {
+            if (value === '') {
+                return false;
             }
-            if (this.value.length > 1 && (this.props.modelValue === this.value[this.level - 1])) {
-                return;
+            if (this.value.length > 1 && (value === this.value[this.level - 1])) {
+                return false;
             }
-            const mval = this.props.modelValue.toString();
             let nextChildren = null;
             let isSelected = false;
             const isArray = Array.isArray(this.lists[this.level]);
@@ -351,7 +358,7 @@ class default_1 extends clickgo.control.AbstractControl {
                 const val = (isArray ?
                     (typeof item === 'object' ? ((_b = (_a = item.value) !== null && _a !== void 0 ? _a : item.label) !== null && _b !== void 0 ? _b : '') : item) :
                     key).toString();
-                if (mval !== val) {
+                if (value !== val) {
                     continue;
                 }
                 nextChildren = (_c = item.children) !== null && _c !== void 0 ? _c : null;
@@ -364,8 +371,10 @@ class default_1 extends clickgo.control.AbstractControl {
                 };
             }
             if (!isSelected) {
-                this.emit('update:modelValue', '');
-                return;
+                if (autoUpdate) {
+                    this.emit('update:modelValue', '');
+                }
+                return false;
             }
             if (!nextChildren) {
                 if (!this.propBoolean('async')) {
@@ -379,8 +388,10 @@ class default_1 extends clickgo.control.AbstractControl {
                         'label': '',
                         'value': ''
                     };
-                    this.updateValue();
-                    return;
+                    if (autoUpdate) {
+                        this.updateValue();
+                    }
+                    return false;
                 }
                 this.loading = true;
                 const children = yield new Promise((resolve) => {
@@ -401,8 +412,10 @@ class default_1 extends clickgo.control.AbstractControl {
                         'label': '',
                         'value': ''
                     };
-                    this.updateValue();
-                    return;
+                    if (autoUpdate) {
+                        this.updateValue();
+                    }
+                    return false;
                 }
                 nextChildren = children;
             }
@@ -416,7 +429,30 @@ class default_1 extends clickgo.control.AbstractControl {
                 'label': '',
                 'value': ''
             };
+            if (autoUpdate) {
+                this.updateValue();
+            }
+            return true;
+        });
+    }
+    onMounted() {
+        this.watch('data', () => {
+            this.level = 0;
+            this.listValue = [];
+            this.value = [''];
+            this.label = [''];
+            this.setNowList(this.props.data);
+            this.lists = [this.props.data];
+            this.levelData = [{
+                    'label': '',
+                    'value': ''
+                }];
             this.updateValue();
+        }, {
+            'deep': true
+        });
+        this.watch('modelValue', () => __awaiter(this, void 0, void 0, function* () {
+            yield this._selectValue(this.props.modelValue.toString());
         }));
         clickgo.dom.watchStyle(this.element, ['background', 'padding'], (n, v) => {
             switch (n) {
