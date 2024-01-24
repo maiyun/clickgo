@@ -630,6 +630,7 @@ class default_1 extends clickgo.control.AbstractControl {
         this.value.push(e.detail.value);
         const result = this.refs.list.findFormat(e.detail.value, false);
         this.label.push((_a = result === null || result === void 0 ? void 0 : result[e.detail.value].label) !== null && _a !== void 0 ? _a : 'error');
+        this.updateValue();
         this.emit('added', event);
     }
     onRemove(e) {
@@ -658,6 +659,7 @@ class default_1 extends clickgo.control.AbstractControl {
         }
         this.value.splice(e.detail.index, 1);
         this.label.splice(e.detail.index, 1);
+        this.updateValue();
         this.emit('removed', {
             'detail': {
                 'index': removeIndex,
@@ -819,9 +821,7 @@ class default_1 extends clickgo.control.AbstractControl {
             }
             this.searchValue = '';
             yield this._search();
-        }), {
-            'immediate': true
-        });
+        }));
         this.watch('remote', () => __awaiter(this, void 0, void 0, function* () {
             if (!this.propBoolean('search')) {
                 return;
@@ -847,9 +847,7 @@ class default_1 extends clickgo.control.AbstractControl {
             if (!this.propBoolean('multi')) {
                 this.inputValue = ((_a = this.value[0]) !== null && _a !== void 0 ? _a : '').toString();
             }
-        }), {
-            'immediate': true
-        });
+        }));
         this.watch('multi', () => {
             var _a;
             if (!this.propBoolean('multi')) {
@@ -867,8 +865,6 @@ class default_1 extends clickgo.control.AbstractControl {
             if (this.propBoolean('editable')) {
                 this.inputValue = '';
             }
-        }, {
-            'immediate': true
         });
         this.watch('data', () => __awaiter(this, void 0, void 0, function* () {
             yield this.nextTick();

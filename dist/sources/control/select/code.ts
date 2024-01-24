@@ -725,6 +725,7 @@ export default class extends clickgo.control.AbstractControl {
         this.value.push(e.detail.value);
         const result = this.refs.list.findFormat(e.detail.value, false);
         this.label.push(result?.[e.detail.value].label ?? 'error');
+        this.updateValue();
         this.emit('added', event);
     }
 
@@ -755,6 +756,7 @@ export default class extends clickgo.control.AbstractControl {
         // --- 可移除 ---
         this.value.splice(e.detail.index, 1);
         this.label.splice(e.detail.index, 1);
+        this.updateValue();
         this.emit('removed', {
             'detail': {
                 'index': removeIndex,
@@ -939,8 +941,6 @@ export default class extends clickgo.control.AbstractControl {
             }
             this.searchValue = '';
             await this._search();
-        }, {
-            'immediate': true
         });
         this.watch('remote', async () => {
             if (!this.propBoolean('search')) {
@@ -969,8 +969,6 @@ export default class extends clickgo.control.AbstractControl {
                 // --- 当前是单选 ---
                 this.inputValue = (this.value[0] ?? '').toString();
             }
-        }, {
-            'immediate': true
         });
         this.watch('multi', (): void => {
             if (!this.propBoolean('multi')) {
@@ -990,8 +988,6 @@ export default class extends clickgo.control.AbstractControl {
             if (this.propBoolean('editable')) {
                 this.inputValue = '';
             }
-        }, {
-            'immediate': true
         });
         this.watch('data', async (): Promise<void> => {
             await this.nextTick();

@@ -70,7 +70,7 @@ export default class extends clickgo.form.AbstractForm {
     /** --- onAdd / onRemove --- */
     public addRemoveList: string[] = [];
 
-    public select2 = ['haha21111'];
+    public select2 = ['haha4'];
 
     public aemodel = [];
 

@@ -1,5 +1,9 @@
 # Changelog
 
+# 3.10.4
+
+[\*] Optimized the select control.
+
 # 3.10.3
 
 [+] The "levelselect" control now includes the "selectLevelValue" method for choosing multiple levels at once.
