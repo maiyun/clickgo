@@ -828,15 +828,26 @@ class default_1 extends clickgo.control.AbstractControl {
             }
             yield this._search();
         }));
-        this.watch('editable', () => {
+        this.watch('editable', () => __awaiter(this, void 0, void 0, function* () {
             var _a;
             if (!this.propBoolean('editable')) {
+                if (this.propBoolean('multi')) {
+                    yield this.nextTick();
+                    this.listValue = clickgo.tool.clone(this.value);
+                    yield this.nextTick();
+                    if (JSON.stringify(this.value) === JSON.stringify(this.listValue)) {
+                        return;
+                    }
+                    this.value = clickgo.tool.clone(this.listValue);
+                    this.label = clickgo.tool.clone(this.listLabel);
+                    this.updateValue();
+                }
                 return;
             }
             if (!this.propBoolean('multi')) {
                 this.inputValue = ((_a = this.value[0]) !== null && _a !== void 0 ? _a : '').toString();
             }
-        }, {
+        }), {
             'immediate': true
         });
         this.watch('multi', () => {

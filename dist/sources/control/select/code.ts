@@ -934,6 +934,7 @@ export default class extends clickgo.control.AbstractControl {
             await this.nextTick();
             this.listValue = clickgo.tool.clone(this.value);
             if (!this.propBoolean('search')) {
+                // --- 变成不可输入 ---
                 return;
             }
             this.searchValue = '';
@@ -947,8 +948,20 @@ export default class extends clickgo.control.AbstractControl {
             }
             await this._search();
         });
-        this.watch('editable', (): void => {
+        this.watch('editable', async (): Promise<void> => {
             if (!this.propBoolean('editable')) {
+                // --- 变成不可输入 ---
+                if (this.propBoolean('multi')) {
+                    await this.nextTick(); // --- 让 list 反应一下变成支持多选 ---
+                    this.listValue = clickgo.tool.clone(this.value);
+                    await this.nextTick();
+                    if (JSON.stringify(this.value) === JSON.stringify(this.listValue)) {
+                        return;
+                    }
+                    this.value = clickgo.tool.clone(this.listValue);
+                    this.label = clickgo.tool.clone(this.listLabel);
+                    this.updateValue();
+                }
                 return;
             }
             // --- 变成可输入 ---
