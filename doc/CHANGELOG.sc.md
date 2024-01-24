@@ -5,6 +5,8 @@
 [+] AbstractPanel 新增 onQsChange 事件。  
 [+] list 控件数据新增 color 属性，可设置为 CSS 支持的颜色和 tip 字符串。  
 [+] list 控件新增 item 事件，可获取选中的数据对象列表。  
+[+] table 控件增加 header 和横向 scroll 超出显示区域时也会显示的特性。  
+[+] greatlist 控件增加横向 scroll 超出显示区域时也会显示的特性。  
 [\*] 重写 levelselect 事件，请注意相关变化。  
 [\*] 修复 iconview 控件卡顿的问题。
 

@@ -28,7 +28,7 @@
                     }
                 }
                 &[data-cg-disabled] {
-                    color: var(--g-color-disabled); fill: var(--g-color-disabled); stroke: var(--g-color-disabled);
+                    color: var(--g-color-disabled); fill: var(--g-color-disabled); stroke: var(--g-color-disabled); pointer-events: none;
                 }
     
                 .itemInner {

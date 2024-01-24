@@ -1,5 +1,15 @@
 # Changelog
 
+# 3.10.2
+
+[+] Added onQsChange event to AbstractPanel.  
+[+] Added color attribute to list control for setting colors and tip strings in CSS format.  
+[+] Added item event to list control for retrieving selected data object lists.  
+[+] Enhanced table control with header and the ability to display horizontally scrolled content beyond the visible area.  
+[+] Improved greatlist control to display horizontally scrolled content beyond the visible area.  
+[\*] Rewrote levelselect event—please be aware of related changes.  
+[\*] Fixed lag issue in iconview control.
+
 # 3.10.1
 
 [+] AbstractForm now supports the 'loading' attribute by default, eliminating the need to explicitly pass the 'loading' parameter to the form.  
