@@ -178,7 +178,8 @@ export default class extends clickgo.control.AbstractControl {
     }
 
     /** --- text 的失去焦点事件 --- */
-    public blur(): void {
+    public async blur(): Promise<void> {
+        await clickgo.tool.sleep(350);
         this.inputValue = '';
     }
 

@@ -165,7 +165,10 @@ class default_1 extends clickgo.control.AbstractControl {
         this.emit('update:modelValue', newval);
     }
     blur() {
-        this.inputValue = '';
+        return __awaiter(this, void 0, void 0, function* () {
+            yield clickgo.tool.sleep(350);
+            this.inputValue = '';
+        });
     }
     keydown(e) {
         return __awaiter(this, void 0, void 0, function* () {
