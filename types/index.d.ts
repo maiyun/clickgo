@@ -708,6 +708,19 @@ export interface IIconviewSelectEvent {
     };
 }
 
+// --- Levelselect Control ---
+
+export interface ILevelselectLevelEvent {
+    'detail': {
+        'list': Array<{
+            'label': string;
+            'value': string;
+        }>;
+        'values': string[];
+        'labels': string[];
+    };
+}
+
 // --- List Control ---
 
 export interface IListRemoveEvent extends ICustomEvent {

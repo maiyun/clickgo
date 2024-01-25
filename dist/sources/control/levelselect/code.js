@@ -147,9 +147,16 @@ class default_1 extends clickgo.control.AbstractControl {
         return searchData;
     }
     updateValue() {
+        const event = {
+            'detail': {
+                'list': [],
+                'values': [],
+                'labels': []
+            }
+        };
         if (this.value.length < 2) {
             this.emit('label', '');
-            this.emit('level', []);
+            this.emit('level', event);
             if (this.props.modelValue === '') {
                 return;
             }
@@ -157,7 +164,15 @@ class default_1 extends clickgo.control.AbstractControl {
             return;
         }
         this.emit('label', this.label[this.label.length - 2]);
-        this.emit('level', this.levelData.slice(0, -1));
+        for (let i = 0; i < this.levelData.length - 1; ++i) {
+            event.detail.list.push({
+                'label': this.levelData[i].label,
+                'value': this.levelData[i].value
+            });
+            event.detail.values.push(this.levelData[i].value);
+            event.detail.labels.push(this.levelData[i].label);
+        }
+        this.emit('level', event);
         const newval = this.value[this.value.length - 2];
         if (this.props.modelValue === newval) {
             return;
