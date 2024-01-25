@@ -1,7 +1,7 @@
 <div class="wrap" :class="[layer && 'layer', showData && 'show']">
     <!-- 左侧 -->
     <div class="menuwrap" @click="menuwrapClick">
-        <cg-flow class="menu" direction="v">
+        <cg-flow ref="flow" class="menu" direction="v">
             <div v-if="logoData" class="logo" :style="{'background-image': logoData}"></div>
             <slot></slot>
         </cg-flow>

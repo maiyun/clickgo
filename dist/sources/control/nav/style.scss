@@ -2,7 +2,7 @@
     display: flex; position: relative;
 
     .menuwrap {
-        display: flex; overflow: hidden;
+        display: flex; overflow: hidden; z-index: 2;
         .menu {
             background: var(--face); border-right: solid .5px hsl(0, 0%, 70%); padding: 1px; width: 250px; transition: all .15s ease; transition-property: transform;
             .logo {

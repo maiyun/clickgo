@@ -1,4 +1,4 @@
-<div class="wrap" :class="[showData && 'show', isChild && 'child', isSelected && 'selected']">
+<div class="wrap" :class="[showData && 'show', isChild && 'child', isSelected && 'selected']" :data-nav-item-selected="isSelected ? '' : undefined">
     <div class="text" :class="[hasChild && 'hasChild']" @click="click">
         <template v-if="icon">
             <cg-svg v-if="icon.endsWith('svg')" :src="icon" />

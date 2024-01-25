@@ -142,7 +142,7 @@ export abstract class AbstractControl {
     /**
      * --- 获取 refs 情况 ---
      */
-    public get refs(): Record<string, HTMLElement & types.IVue> {
+    public get refs(): Record<string, HTMLElement & AbstractControl & Record<string, any>> {
         return (this as any).$refs;
     }
 

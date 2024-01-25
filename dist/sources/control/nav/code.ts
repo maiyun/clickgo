@@ -51,7 +51,7 @@ export default class extends clickgo.control.AbstractControl {
     }
 
     /** --- 选择一个 name，child 可能也会调用 --- */
-    public select(name: string): void {
+    public async select(name: string): Promise<void> {
         if (this.selected === name) {
             return;
         }
@@ -67,6 +67,27 @@ export default class extends clickgo.control.AbstractControl {
             this.showData = false;
             this.emit('update:show', this.showData);
         }
+        await this.nextTick();
+        // --- 判断选择的是否在可视区域之外 ---
+        const selected = this.refs.flow.element.querySelector('[data-nav-item-selected]');
+        if (!selected) {
+            return;
+        }
+        const flowBcr = this.refs.flow.element.getBoundingClientRect();
+        // --- 超出这个，就要滚动了 ---
+        const maxBottom = flowBcr.top + flowBcr.height;
+        const selBcr = selected.getBoundingClientRect();
+        const selBottom = selBcr.top + selBcr.height;
+        if (selBottom > maxBottom) {
+            this.refs.flow.element.scrollTop =
+                selBcr.top - flowBcr.top + this.refs.flow.element.scrollTop - flowBcr.height + selBcr.height + 10;
+            return;
+        }
+        // --- 判断是不是在顶上之外 ---
+        if (selBcr.top >= flowBcr.top) {
+            return;
+        }
+        this.refs.flow.element.scrollTop -= flowBcr.top - selBcr.top + 10;
     }
 
     /** --- pop 模式点击外边空白处收缩 --- */
@@ -114,8 +135,8 @@ export default class extends clickgo.control.AbstractControl {
             'immediate': true
         });
 
-        this.watch('modelValue', () => {
-            this.select(this.props.modelValue || this.props.default);
+        this.watch('modelValue', async () => {
+            await this.select(this.props.modelValue || this.props.default);
         });
 
         // --- 监听 logo 是否显示 ---
@@ -153,14 +174,14 @@ export default class extends clickgo.control.AbstractControl {
         });
 
         // --- 监听 formHash ---
-        this.watch('formHash', () => {
+        this.watch('formHash', async () => {
             if (!this.propBoolean('hash')) {
                 return;
             }
             if (this.selected === this.formHash) {
                 return;
             }
-            this.select(this.formHash || this.props.default);
+            await this.select(this.formHash || this.props.default);
         });
 
         // --- 监听 hash 属性变动 ---
@@ -176,10 +197,10 @@ export default class extends clickgo.control.AbstractControl {
 
         // --- 初始化初始 nav ---
         if (this.propBoolean('hash')) {
-            this.select(this.formHash || this.props.default);
+            await this.select(this.formHash || this.props.default);
         }
         else {
-            this.select(this.props.modelValue || this.props.default);
+            await this.select(this.props.modelValue || this.props.default);
         }
     }
 

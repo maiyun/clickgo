@@ -59,21 +59,41 @@ class default_1 extends clickgo.control.AbstractControl {
         return this.rootForm.formHash;
     }
     select(name) {
-        if (this.selected === name) {
-            return;
-        }
-        this.selected = name;
-        this.emit('update:modelValue', name);
-        const qs = this.selected.split('?');
-        this.qs = qs[1] ? Object.fromEntries(qs[1].split('&').map(item => item.split('='))) : {};
-        this.emit('qs', clickgo.tool.clone(this.qs));
-        if (this.propBoolean('hash') && (this.rootForm.formHash !== this.selected)) {
-            this.rootForm.formHash = this.selected;
-        }
-        if (this.layer && this.showData) {
-            this.showData = false;
-            this.emit('update:show', this.showData);
-        }
+        return __awaiter(this, void 0, void 0, function* () {
+            if (this.selected === name) {
+                return;
+            }
+            this.selected = name;
+            this.emit('update:modelValue', name);
+            const qs = this.selected.split('?');
+            this.qs = qs[1] ? Object.fromEntries(qs[1].split('&').map(item => item.split('='))) : {};
+            this.emit('qs', clickgo.tool.clone(this.qs));
+            if (this.propBoolean('hash') && (this.rootForm.formHash !== this.selected)) {
+                this.rootForm.formHash = this.selected;
+            }
+            if (this.layer && this.showData) {
+                this.showData = false;
+                this.emit('update:show', this.showData);
+            }
+            yield this.nextTick();
+            const selected = this.refs.flow.element.querySelector('[data-nav-item-selected]');
+            if (!selected) {
+                return;
+            }
+            const flowBcr = this.refs.flow.element.getBoundingClientRect();
+            const maxBottom = flowBcr.top + flowBcr.height;
+            const selBcr = selected.getBoundingClientRect();
+            const selBottom = selBcr.top + selBcr.height;
+            if (selBottom > maxBottom) {
+                this.refs.flow.element.scrollTop =
+                    selBcr.top - flowBcr.top + this.refs.flow.element.scrollTop - flowBcr.height + selBcr.height + 10;
+                return;
+            }
+            if (selBcr.top >= flowBcr.top) {
+                return;
+            }
+            this.refs.flow.element.scrollTop -= flowBcr.top - selBcr.top + 10;
+        });
     }
     menuwrapClick(e) {
         if (!this.layer) {
@@ -115,9 +135,9 @@ class default_1 extends clickgo.control.AbstractControl {
             }, {
                 'immediate': true
             });
-            this.watch('modelValue', () => {
-                this.select(this.props.modelValue || this.props.default);
-            });
+            this.watch('modelValue', () => __awaiter(this, void 0, void 0, function* () {
+                yield this.select(this.props.modelValue || this.props.default);
+            }));
             this.watch('logo', () => __awaiter(this, void 0, void 0, function* () {
                 const count = ++this.logoCount;
                 if (typeof this.props.logo !== 'string' || this.props.logo === '') {
@@ -149,15 +169,15 @@ class default_1 extends clickgo.control.AbstractControl {
             }), {
                 'immediate': true
             });
-            this.watch('formHash', () => {
+            this.watch('formHash', () => __awaiter(this, void 0, void 0, function* () {
                 if (!this.propBoolean('hash')) {
                     return;
                 }
                 if (this.selected === this.formHash) {
                     return;
                 }
-                this.select(this.formHash || this.props.default);
-            });
+                yield this.select(this.formHash || this.props.default);
+            }));
             this.watch('hash', () => {
                 if (!this.propBoolean('hash')) {
                     return;
@@ -168,10 +188,10 @@ class default_1 extends clickgo.control.AbstractControl {
                 this.rootForm.formHash = this.selected;
             });
             if (this.propBoolean('hash')) {
-                this.select(this.formHash || this.props.default);
+                yield this.select(this.formHash || this.props.default);
             }
             else {
-                this.select(this.props.modelValue || this.props.default);
+                yield this.select(this.props.modelValue || this.props.default);
             }
         });
     }
