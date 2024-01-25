@@ -10,6 +10,10 @@ export default class extends clickgo.form.AbstractForm {
         return JSON.stringify(clickgo.core.config, null, 4).replace(/"icon": "([\s\S]+?)"/g, '"icon": "data:image/..."');
     }
 
+    public get global(): string {
+        return JSON.stringify(clickgo.core.global, null, 4);
+    }
+
     public async getCdn(): Promise<void> {
         await clickgo.form.dialog(clickgo.core.getCdn());
     }

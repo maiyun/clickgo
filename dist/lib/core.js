@@ -31,8 +31,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.open = exports.back = exports.getLocation = exports.location = exports.getHost = exports.getHash = exports.hash = exports.getAvailArea = exports.fetchApp = exports.readApp = exports.trigger = exports.getModule = exports.regModule = exports.boot = exports.getCdn = exports.AbstractApp = exports.config = void 0;
+exports.open = exports.back = exports.getLocation = exports.location = exports.getHost = exports.getHash = exports.hash = exports.getAvailArea = exports.fetchApp = exports.readApp = exports.trigger = exports.getModule = exports.regModule = exports.boot = exports.getCdn = exports.AbstractApp = exports.global = exports.config = void 0;
 const clickgo = __importStar(require("../clickgo"));
 const fs = __importStar(require("./fs"));
 const form = __importStar(require("./form"));
@@ -59,6 +60,7 @@ exports.config = clickgo.vue.reactive({
     'desktop.path': null,
     'launcher.list': []
 });
+exports.global = (_a = window.clickgoGlobal) !== null && _a !== void 0 ? _a : {};
 class AbstractApp {
     get filename() {
         return '';

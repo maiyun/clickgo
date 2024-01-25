@@ -45,6 +45,9 @@ export const config: types.IConfig = clickgo.vue.reactive({
     'launcher.list': []
 });
 
+/** --- 用户在浏览器页面定义的全局数据 --- */
+export const global: Record<string, any> = (window as any).clickgoGlobal ?? {};
+
 /** --- App 抽象类 --- */
 export abstract class AbstractApp {
 

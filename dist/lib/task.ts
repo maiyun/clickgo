@@ -480,6 +480,7 @@ export async function run(url: string | types.IApp, opt: types.ITaskRunOptions =
         },
         'core': {
             'config': clickgo.core.config,
+            'global': clickgo.tool.clone(clickgo.core.global),
             'AbstractApp': class extends core.AbstractApp {
                 // eslint-disable-next-line @typescript-eslint/require-await
                 public async main(): Promise<void> {

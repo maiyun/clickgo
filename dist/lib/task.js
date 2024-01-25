@@ -422,6 +422,7 @@ function run(url, opt = {}, ntid) {
             },
             'core': {
                 'config': clickgo.core.config,
+                'global': clickgo.tool.clone(clickgo.core.global),
                 'AbstractApp': class extends core.AbstractApp {
                     main() {
                         return __awaiter(this, void 0, void 0, function* () {
