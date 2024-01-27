@@ -10,10 +10,12 @@ export default class extends clickgo.control.AbstractControl {
 
     public props: {
         'modelValue': string;
+        'plain': boolean | string;
         /** --- 传入 map 后，则 modelValue 会生效，可根据 modelValue 自动跳转到相应面板（这种模式无法带 data 参数，如果和 nav 合用，则 modelValue 失效，以 nav 的选中的 name 为准） */
         'map': Record<string, string | (new () => clickgo.form.AbstractPanel)> | null;
     } = {
             'modelValue': '',
+            'plain': false,
             'map': null
         };
 

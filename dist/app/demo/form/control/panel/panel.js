@@ -43,6 +43,7 @@ class default_1 extends clickgo.form.AbstractForm {
         this.selected = ['none'];
         this.panelv = '';
         this.parentData = 'yeah!';
+        this.plain = false;
         this.map = null;
     }
     go() {

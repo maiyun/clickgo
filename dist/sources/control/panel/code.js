@@ -42,6 +42,7 @@ class default_1 extends clickgo.control.AbstractControl {
         };
         this.props = {
             'modelValue': '',
+            'plain': false,
             'map': null
         };
         this.mapSelected = '';

@@ -10,6 +10,8 @@ export default class extends clickgo.form.AbstractForm {
 
     public parentData = 'yeah!';
 
+    public plain = false;
+
     /** --- 当前的 map 模式 --- */
     public map: Record<string, string | (new () => clickgo.form.AbstractPanel)> | null = null;
 

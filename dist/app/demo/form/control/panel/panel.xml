@@ -5,8 +5,11 @@
         <layout gutter="10">
             <button v-if="selected[0] !== './test1'" style="flex: 1;" @click="go">Go test1 with {'type': 'show'}</button>
             <button style="flex: 1;" @click="ssend">send {'type': 'send'}</button>
+        </layout>
+        <layout gutter="10">
+            <button style="flex: 1;" @click="plain = !plain">{{plain ? '' : '!'}}plain</button>
             <button style="flex: 1;" @click="changeMap">{{map ? '' : '!'}}map</button>
         </layout>
-        <panel ref="panel" v-model="panelv" :map="map" @go="loading=true" @went="loading=false" style="flex: 1;"></panel>
+        <panel ref="panel" v-model="panelv" :plain="plain" :map="map" @go="loading=true" @went="loading=false" style="flex: 1;"></panel>
     </layout>
 </form>
