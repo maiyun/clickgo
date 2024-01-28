@@ -755,8 +755,10 @@ global {
             background: transparent;
         }
     }
-    .text_pwdicon {
-        transition: all .15s ease;
+    .text_single {
+        .text_pwdicon {
+            transition: all .15s ease;
+        }
     }
     &:not([data-cg-disabled]) {
         &.text_focus {

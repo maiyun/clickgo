@@ -6,6 +6,7 @@
             <menulist v-if="menu">
                 <menulist-item>Custom</menulist-item>
             </menulist>
+            <template v-if="prepend" v-slot:prepend>$</template>
             <template v-if="append" v-slot:append>KG</template>
         </text>
         <layout gutter="10">
@@ -21,6 +22,7 @@
             <button @click="gesture = !gesture" style="flex: 1;">{{gesture ? '' : '!'}}gesture</button>
         </layout>
         <layout gutter="10">
+            <button @click="prepend = !prepend" style="flex: 1;">{{prepend ? '' : '!'}}prepend</button>
             <button @click="append = !append" style="flex: 1;">{{append ? '' : '!'}}append</button>
             <button @click="adaption = !adaption" style="flex: 1;">{{adaption ? '' : '!'}}adaption</button>
             <button @click="longClick" style="flex: 1;">{{long ? '' : '!'}}long</button>

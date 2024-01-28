@@ -29,6 +29,20 @@
 
     .single {
         display: flex; flex: 1; height: 0;
+
+        .pwdicon {
+            display: flex; align-items: center; padding-right: var(--g-padding); opacity: .6;
+            svg {
+                width: 16px; height: 16px;
+            }
+            &:hover {
+                opacity: 1;
+            }
+        }
+    }
+
+    .prepend {
+        display: flex; align-items: center; padding-left: var(--g-padding);
     }
 
     .text {
@@ -41,16 +55,6 @@
         }
         &.darkbg::placeholder {
             color: rgba(255, 255, 255, .3);
-        }
-    }
-
-    .pwdicon {
-        display: flex; align-items: center; padding-right: var(--g-padding); opacity: .6;
-        svg {
-            width: 16px; height: 16px;
-        }
-        &:hover {
-            opacity: 1;
         }
     }
 
