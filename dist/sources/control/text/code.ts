@@ -53,6 +53,9 @@ export default class extends clickgo.control.AbstractControl {
     /** --- 如果 background 颜色比较深，则此值设定为 true --- */
     public darkbg = false;
 
+    /** --- 当前是否正在显示密码的状态 --- */
+    public showPassword = false;
+
     // --- 其他 ---
 
     public isFocus = false;

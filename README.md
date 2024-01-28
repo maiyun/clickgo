@@ -149,3 +149,10 @@ This library is published under [Apache-2.0](./LICENSE) license.
 
 [Bold SVG Vector](https://www.svgrepo.com/svg/501109/bold)  
 [Italic SVG Vector](https://www.svgrepo.com/svg/501238/italic)
+
+### **LICENSE:** CC Attribution License **AUTHOR:** Dazzle UI
+
+#### Text
+
+[Eye Slash Alt SVG](https://www.svgrepo.com/svg/532463/eye-slash-alt)  
+[Eye Alt SVG Vector ](https://www.svgrepo.com/svg/532492/eye-alt)

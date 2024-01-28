@@ -57,6 +57,7 @@ class default_1 extends clickgo.control.AbstractControl {
         this.background = '';
         this.padding = '';
         this.darkbg = false;
+        this.showPassword = false;
         this.isFocus = false;
         this.value = '';
         this.size = {

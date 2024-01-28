@@ -18,11 +18,11 @@ global {
     --g-background-focus:hsl(0,0%,97%);
     --g-background-disabled:hsl(0,0%,90%);
 
-    --g-border-color:rgba(0,0,0,.2);
-    --g-border-color-hover:rgba(0,0,0,.4);
-    --g-border-color-active:rgba(0,0,0,.6);
-    --g-border-color-focus:rgba(0,0,0,.3);
-    --g-border-color-disabled:rgba(0,0,0,.4);
+    --g-border-color:rgba(0,0,0,.1);
+    --g-border-color-hover:rgba(0,0,0,.3);
+    --g-border-color-active:rgba(0,0,0,.5);
+    --g-border-color-focus:rgba(0,0,0,.2);
+    --g-border-color-disabled:rgba(0,0,0,.3);
     
     // --- 组件轻量颜色（如文本框） ---
 
@@ -37,11 +37,11 @@ global {
     --g-plain-background-focus:hsl(0,0%,100%);
     --g-plain-background-disabled:rgba(0,0,0,.1);
 
-    --g-plain-border-color:rgba(0,0,0,.2);
-    --g-plain-border-color-hover:rgba(0,0,0,.4);
-    --g-plain-border-color-active:rgba(0,0,0,.6);
-    --g-plain-border-color-focus:rgba(0,0,0,.3);
-    --g-plain-border-color-disabled:rgba(0,0,0,.4);
+    --g-plain-border-color:rgba(0,0,0,.1);
+    --g-plain-border-color-hover:rgba(0,0,0,.3);
+    --g-plain-border-color-active:rgba(0,0,0,.5);
+    --g-plain-border-color-focus:rgba(0,0,0,.2);
+    --g-plain-border-color-disabled:rgba(0,0,0,.3);
 
     // --- 特殊组件颜色 ---
 
@@ -99,6 +99,7 @@ global {
     }
     &.button_default {
         &:not(.button_plain) {
+            --background:hsla(0,0%,0%,.02);
             --border-focus:solid .5px var(--g-border-color-focus);
         }
     }
@@ -753,6 +754,9 @@ global {
         .text_multi-rb {
             background: transparent;
         }
+    }
+    .text_pwdicon {
+        transition: all .15s ease;
     }
     &:not([data-cg-disabled]) {
         &.text_focus {
