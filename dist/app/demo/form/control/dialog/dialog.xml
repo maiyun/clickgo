@@ -4,22 +4,22 @@
             <form title="Title" :min="false" :max="false" :resize="false" width="auto" height="auto" direction="v">
                 <dialog @select="btn = $event" :buttons="buttons" :direction="message === 'lines' ? 'v' : 'h'">
                     <template v-if="message === 'message'">Message</template>
-                    <template v-else-if="message === 'buttons'"><button style="flex: 1; height: 30px;">Button1</button><button style="margin-left: 10px; flex: 1; height: 30px;">Button2</button></template>
+                    <template v-else-if="message === 'buttons'"><button style="flex: 1;">Button1</button><button style="margin-left: 10px; flex: 1;">Button2</button></template>
                     <template v-else-if="message === 'lines'"><block v-for="i of 5">Line {{i}}.</block></template>
                     <template v-else>longlonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglong</template>
                 </dialog>
             </form>
         </layout>
         <layout gutter="10">
-            <button style="flex: 1; height: 30px;" @click="buttons = ['A', 'B', 'C']">['A', 'B', 'C']</button>
-            <button style="flex: 1; height: 30px;" @click="buttons = ['Cancel', 'OK']">['Cancel', 'OK']</button>
-            <button style="flex: 1; height: 30px;" @click="buttons = ['OK']">['OK']</button>
+            <button style="flex: 1;" @click="buttons = ['A', 'B', 'C']">['A', 'B', 'C']</button>
+            <button style="flex: 1;" @click="buttons = ['Cancel', 'OK']">['Cancel', 'OK']</button>
+            <button style="flex: 1;" @click="buttons = ['OK']">['OK']</button>
         </layout>
         <layout gutter="10">
-            <button style="flex: 1; height: 30px;" @click="message = 'message'">Message</button>
-            <button style="flex: 1; height: 30px;" @click="message = 'long'">Long</button>
-            <button style="flex: 1; height: 30px;" @click="message = 'buttons'">Two buttons</button>
-            <button style="flex: 1; height: 30px;" @click="message = 'lines'">Multiple lines</button>
+            <button style="flex: 1;" @click="message = 'message'">Message</button>
+            <button style="flex: 1;" @click="message = 'long'">Long</button>
+            <button style="flex: 1;" @click="message = 'buttons'">Two buttons</button>
+            <button style="flex: 1;" @click="message = 'lines'">Multiple lines</button>
         </layout>
         <label>You click: {{btn}}.</label>
     </layout>

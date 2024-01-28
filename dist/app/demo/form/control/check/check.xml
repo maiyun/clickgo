@@ -10,7 +10,7 @@
             <check v-model="checked3" v-model:indeterminate="indeterminate3" :disabled="disabled" style="flex: 1;">check3</check>
             <check v-model:indeterminate="indeterminate4" :disabled="disabled" @change="onChange" style="flex: 1;">check4 (not)</check>
         </layout>
-        <button style="height: 30px;" @click="indeterminate1=true;indeterminate2=true;indeterminate3=true;indeterminate4=true">Set indeterminate</button>
-        <button style="height: 30px;" @click="disabled = !disabled">{{disabled ? 'Remove' : 'Set'}} disabled</button>
+        <button @click="indeterminate1=true;indeterminate2=true;indeterminate3=true;indeterminate4=true">Set indeterminate</button>
+        <button @click="disabled = !disabled">{{disabled ? 'Remove' : 'Set'}} disabled</button>
     </layout>
 </form>

@@ -1,27 +1,27 @@
 <form width="350" height="400" title="Library tool">
     <flow direction="v" style="flex: 1; padding: 10px;">
         <layout direction="v" gutter="10">
-            <button @click="sleep" style="height: 30px;">{{sleeping ? 'Waiting...' : 'sleep(1000)'}}</button>
+            <button @click="sleep">{{sleeping ? 'Waiting...' : 'sleep(1000)'}}</button>
             <text v-model="purifyTxt" multi style="height: 100px;"></text>
-            <button @click="purify" style="height: 30px;">purify('{{purifyTxt.slice(0, 5).replace("'", "\\'")}}...')</button>
+            <button @click="purify">purify('{{purifyTxt.slice(0, 5).replace("'", "\\'")}}...')</button>
             <layout gutter="10">
-                <text v-model="min" style="height: 30px; flex: 1;"></text>
-                <text v-model="max" style="height: 30px; flex: 1;"></text>
-                <button @click="rand" style="height: 30px; padding: 0 10px;">rand({{min}}, {{max}})</button>
+                <text v-model="min" style="flex: 1;"></text>
+                <text v-model="max" style="flex: 1;"></text>
+                <button @click="rand" style="padding: 0 10px;">rand({{min}}, {{max}})</button>
             </layout>
             <layout gutter="10">
-                <text v-model="length" style="height: 30px; width: 30px;"></text>
-                <text v-model="block" style="height: 30px; flex: 1;"></text>
-                <button @click="random" style="height: 30px; padding: 0 10px;">random({{length}}, RANDOM_LN, '{{block}}')</button>
+                <text v-model="length" style="width: 30px;"></text>
+                <text v-model="block" style="flex: 1;"></text>
+                <button @click="random" style="padding: 0 10px;">random({{length}}, RANDOM_LN, '{{block}}')</button>
             </layout>
-            <button @click="escapeHTML" style="height: 30px;">escapeHTML('{{purifyTxt.slice(0, 5).replace("'", "\\'")}}...')</button>
-            <button @click="rgb2hsl" style="height: 30px;">rgb2hsl('9,105,218')</button>
-            <text v-model="url" style="height: 30px;"></text>
-            <button @click="parseUrl" style="height: 30px;">parseUrl('{{url.slice(0, 5).replace("'","\\'")}}...')</button>
+            <button @click="escapeHTML">escapeHTML('{{purifyTxt.slice(0, 5).replace("'", "\\'")}}...')</button>
+            <button @click="rgb2hsl">rgb2hsl('9,105,218')</button>
+            <text v-model="url"></text>
+            <button @click="parseUrl">parseUrl('{{url.slice(0, 5).replace("'","\\'")}}...')</button>
             <label>urlResolve:</label>
-            <text v-model="url1" style="height: 30px;"></text>
-            <text v-model="url2" style="height: 30px;"></text>
-            <button @click="urlResolve" style="height: 30px;">urlResolve('{{url1.slice(0, 5)}}...', '{{url2.slice(0, 5)}}...')</button>
+            <text v-model="url1"></text>
+            <text v-model="url2"></text>
+            <button @click="urlResolve">urlResolve('{{url1.slice(0, 5)}}...', '{{url2.slice(0, 5)}}...')</button>
         </layout>
     </flow>
 </form>

@@ -5,7 +5,7 @@
             <block style="background: var(--success); flex: 1;" />
             <block style="flex: 1;" :style="{'background': bigColor ? 'var(--warning)' : 'var(--info)'}" />
         </layout>
-        <button @click="media = media.length ? [] : [300, 450]" style="height: 30px;">media: {{media}}</button>
+        <button @click="media = media.length ? [] : [300, 450]">media: {{media}}</button>
         <layout align-v="center" gutter="10">
             <label>gutter:</label>
             <select v-model="gutter" :data="[0, 10, 12, 30, 31, 50]" style="flex: 1;"></select>

@@ -3,20 +3,20 @@
     <tab v-model="ntab" v-model:tabs="tabs" :tabPosition="tabPosition" :drag="drag" :close="cclose" @close="onClose" style="margin-top: 10px; flex: 1; height: 0;" :style="{'font-size': size, 'color': color}">
         <!-- 默认 -->
         <layout style="padding: 10px;">
-            <button v-if="ntab === 'tab2'" style="padding: 0 10px; height: 30px;">Test button</button>
+            <button v-if="ntab === 'tab2'" style="padding: 0 10px;">Test button</button>
             <label v-else>The tab's value is "{{ntab}}";</label>
         </layout>
     </tab>
     <layout gutter="10" style="margin-top: 10px;">
-        <button @click="add" style="padding: 0 10px; flex: 1; width: 0; height: 30px;">Add</button>
-        <button @click="remove" style="padding: 0 10px; flex: 1; width: 0; height: 30px;">Remove</button>
-        <button @click="position" style="padding: 0 10px; flex: 1; width: 0; height: 30px;">Position</button>
-        <button @click="ntab = 'tab2'" style="padding: 0 10px; flex: 1; width: 0; height: 30px;">Tab2</button>
+        <button @click="add" style="padding: 0 10px; flex: 1; width: 0;">Add</button>
+        <button @click="remove" style="padding: 0 10px; flex: 1; width: 0;">Remove</button>
+        <button @click="position" style="padding: 0 10px; flex: 1; width: 0;">Position</button>
+        <button @click="ntab = 'tab2'" style="padding: 0 10px; flex: 1; width: 0;">Tab2</button>
     </layout>
     <layout gutter="10" style="margin-top: 10px;">
-        <button @click="color = color ? undefined : 'red'" style="padding: 0 10px; flex: 1; width: 0; height: 30px;">{{color ? '' : '!'}}red</button>
-        <button @click="size = size ? undefined : '18px'" style="padding: 0 10px; flex: 1; width: 0; height: 30px;">{{size ? '' : '!'}}18px</button>
-        <button @click="drag = !drag" style="padding: 0 10px; flex: 1; width: 0; height: 30px;">{{drag ? '' : '!'}}drag</button>
-        <button @click="cclose = !cclose" style="padding: 0 10px; flex: 1; width: 0; height: 30px;">{{cclose ? '' : '!'}}close</button>
+        <button @click="color = color ? undefined : 'red'" style="padding: 0 10px; flex: 1; width: 0;">{{color ? '' : '!'}}red</button>
+        <button @click="size = size ? undefined : '18px'" style="padding: 0 10px; flex: 1; width: 0;">{{size ? '' : '!'}}18px</button>
+        <button @click="drag = !drag" style="padding: 0 10px; flex: 1; width: 0;">{{drag ? '' : '!'}}drag</button>
+        <button @click="cclose = !cclose" style="padding: 0 10px; flex: 1; width: 0;">{{cclose ? '' : '!'}}close</button>
     </layout>
 </form>

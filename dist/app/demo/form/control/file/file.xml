@@ -16,7 +16,7 @@
             <radio v-model="dir" value="true" style="flex: 1;">true</radio>
             <radio v-model="dir" value="false" style="flex: 1;">false</radio>
         </layout>
-        <button @click="select" style="height: 30px;">
+        <button @click="select">
             Select
             <file ref="file" @change="change" :accept="[accept]" :multi="multi" :dir="dir"></file>
         </button>

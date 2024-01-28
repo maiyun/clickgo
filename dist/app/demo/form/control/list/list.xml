@@ -74,12 +74,12 @@
                 <greatlist v-model="select3" :disabled="disabled" :must="must" :multi="multi" :ctrl="ctrl" :selection="selection" :gesture="gesture ? ['top', 'bottom'] : []" @gesture="onGesture" :scroll="scroll" :data="listData3" v-slot="data" style="flex: 1; height: 0;">
                     {{data.row.value ? data.row.value : data.row}}
                 </greatlist>
-                <button v-if="listData3.length === 0" @click="listData3 = [{'value': 'A', disabled: true}, 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N'];select3 = [12]" style="height: 30px;">Load data</button>
+                <button v-if="listData3.length === 0" @click="listData3 = [{'value': 'A', disabled: true}, 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N'];select3 = [12]">Load data</button>
             </layout>
             <layout direction="v" gutter="10" style="flex: 1; width: 0;">
                 <label>list: {{select4}}</label>
                 <list v-model="select4" :disabled="disabled" :must="must" :multi="multi" :ctrl="ctrl" :selection="selection" :gesture="gesture ? ['top', 'bottom'] : []" @gesture="onGesture" :scroll="scroll" :data="listData4" style="flex: 1; height: 0;"></list>
-                <button v-if="listData4.length === 0" @click="listData4 = [{'value': 'A', disabled: true}, 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N'];select4 = ['M']" style="height: 30px;">Load data</button>
+                <button v-if="listData4.length === 0" @click="listData4 = [{'value': 'A', disabled: true}, 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N'];select4 = ['M']">Load data</button>
             </layout>
         </layout>
     </tab>

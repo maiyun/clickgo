@@ -4,58 +4,58 @@
             <label>onFrame(): timer: {{frameTimer}}, count: {{frameCount}}</label>
             <layout gutter="10">
                 <template v-if="frameTimer === 0">
-                    <button @click="frameStart(0)" style="height: 30px; flex: 1;">Once</button>
-                    <button @click="frameStart(1)" style="height: 30px; flex: 1;">Count 100</button>
-                    <button @click="frameStart(2)" style="height: 30px; flex: 1;">Form</button>
+                    <button @click="frameStart(0)" style="flex: 1;">Once</button>
+                    <button @click="frameStart(1)" style="flex: 1;">Count 100</button>
+                    <button @click="frameStart(2)" style="flex: 1;">Form</button>
                 </template>
                 <template v-else>
-                    <button @click="frameEnd" style="height: 30px; flex: 1;">End</button>
+                    <button @click="frameEnd" style="flex: 1;">End</button>
                 </template>
             </layout>
             <label>createTimer(): timer: {{timer}}, count: {{timerCount}}</label>
             <layout gutter="10">
                 <template v-if="timer === 0">
-                    <button @click="timerStart(0)" style="height: 30px; flex: 1;">Once</button>
-                    <button @click="timerStart(1)" style="height: 30px; flex: 1;">Count 100</button>
-                    <button @click="timerStart(2)" style="height: 30px; flex: 1;">Form</button>
+                    <button @click="timerStart(0)" style="flex: 1;">Once</button>
+                    <button @click="timerStart(1)" style="flex: 1;">Count 100</button>
+                    <button @click="timerStart(2)" style="flex: 1;">Form</button>
                 </template>
                 <template v-else>
-                    <button @click="timerEnd" style="height: 30px; flex: 1;">End</button>
+                    <button @click="timerEnd" style="flex: 1;">End</button>
                 </template>
             </layout>
             <layout gutter="10" align-v="center">
                 <label>Task ID:</label>
-                <text v-model="tid" style="flex: 1; width: 0; height: 30px;"></text>
-                <button @click="get" style="height: 30px; padding: 0 10px;">get({{tid}})</button>
+                <text v-model="tid" style="flex: 1; width: 0;"></text>
+                <button @click="get" style="padding: 0 10px;">get({{tid}})</button>
             </layout>
-            <button @click="getPermissions" style="height: 30px;">getPermissions({{tid}})</button>
-            <button @click="getList" style="height: 30px;">getList()</button>
-            <button @click="run" style="height: 30px;">run('/clickgo/app/demo/')</button>
+            <button @click="getPermissions">getPermissions({{tid}})</button>
+            <button @click="getList">getList()</button>
+            <button @click="run">run('/clickgo/app/demo/')</button>
             <layout gutter="10" align-v="center">
                 <label>checkPermission:</label>
-                <button @click="checkPermission('hash')" style="height: 30px; flex: 1;">hash</button>
-                <button @click="checkPermission('root')" style="height: 30px; flex: 1; color: red;">root</button>
+                <button @click="checkPermission('hash')" style="flex: 1;">hash</button>
+                <button @click="checkPermission('root')" style="flex: 1; color: red;">root</button>
             </layout>
-            <button @click="end" style="height: 30px;">end('{{tid}}')</button>
+            <button @click="end">end('{{tid}}')</button>
             <label>Now locale: {{locale}}, Global locale: {{globalLocale}}</label>
             <label>l('File name'): {{l('File name')}}</label>
             <label>l('File size'): {{l('File size')}}</label>
-            <button @click="loadLocale('en', 'locale1')" style="height: 30px;">loadLocale('en', 'locale1')</button>
-            <button @click="loadLocale('sc', 'locale2')" style="height: 30px;">loadLocale('sc', 'locale2')</button>
-            <button @click="setLocale('sc', 'locale2')" style="height: 30px;">setLocale('sc', 'locale2')</button>
-            <button @click="clearLocale" style="height: 30px;">clearLocale()</button>
-            <button @click="loadLocaleData('en', {'File size': 'File size'})" style="height: 30px;">loadLocaleData('en', {'File size': 'File size'})</button>
-            <button @click="loadLocaleData('sc', {'File size': '文件大小'})" style="height: 30px;">loadLocaleData('sc', {'File size': '文件大小'})</button>
-            <button @click="setLocaleLang('en')" style="height: 30px;">setLocaleLang('en')</button>
-            <button @click="setLocaleLang('sc')" style="height: 30px;">setLocaleLang('sc')</button>
-            <button @click="clearLocaleLang()" style="height: 30px;">clearLocaleLang()</button>
+            <button @click="loadLocale('en', 'locale1')">loadLocale('en', 'locale1')</button>
+            <button @click="loadLocale('sc', 'locale2')">loadLocale('sc', 'locale2')</button>
+            <button @click="setLocale('sc', 'locale2')">setLocale('sc', 'locale2')</button>
+            <button @click="clearLocale">clearLocale()</button>
+            <button @click="loadLocaleData('en', {'File size': 'File size'})">loadLocaleData('en', {'File size': 'File size'})</button>
+            <button @click="loadLocaleData('sc', {'File size': '文件大小'})">loadLocaleData('sc', {'File size': '文件大小'})</button>
+            <button @click="setLocaleLang('en')">setLocaleLang('en')</button>
+            <button @click="setLocaleLang('sc')">setLocaleLang('sc')</button>
+            <button @click="clearLocaleLang()">clearLocaleLang()</button>
             <label>Change global locale lang:</label>
             <layout gutter="10">
                 <select v-model="select" :data="['en', 'sc', 'tc', 'ja', 'ko', 'th', 'es', 'de', 'fr', 'pt', 'ru', 'vi']" style="flex: 1; width: 0;"></select>
-                <button @click="changeLocaleLang" style="padding: 0 10px; height: 30px;">Change</button>
+                <button @click="changeLocaleLang" style="padding: 0 10px;">Change</button>
             </layout>
-            <button @click="sleep" style="height: 30px;">{{sleeping ? 'Waiting...' : 'sleep(() => { ... }, 1000)'}}</button>
-            <button @click="systemTaskInfo()" style="height: 30px;">systemTaskInfo</button>
+            <button @click="sleep">{{sleeping ? 'Waiting...' : 'sleep(() => { ... }, 1000)'}}</button>
+            <button @click="systemTaskInfo()">systemTaskInfo</button>
         </layout>
     </flow>
 </form>
