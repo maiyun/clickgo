@@ -1,10 +1,10 @@
 .wrap {
-    position: relative; overflow: hidden; background: #FFF;
+    position: relative; overflow: hidden;
     > * {
         position: absolute; left: 0; top: 0; width: 100%; height: 100%;
     }
 
-    &.plain {
-        background: transparent;
+    &:not(.plain) {
+        background: #FFF;
     }
 }

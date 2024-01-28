@@ -474,6 +474,14 @@ global {
     }
 }
 
+// --- CONTROL -- panel --
+
+.panel_wrap {
+    &:not(.panel_plain) {
+        background: var(--g-background-kp);
+    }
+}
+
 // -- CONTROL -- property --
 
 .property_wrap {
