@@ -1,3 +1,3 @@
-<div class="wrap" :class="[direction]" :style="{'flex': colWidth, 'gap': gutter}">
+<div class="wrap" :class="[direction]" :style="{'align-items': direction === 'v' ? (alignH && (alignH !== 'center' ? 'flex-' : '') + alignH) : (alignV && (alignV !== 'center' ? 'flex-' : '') + alignV), 'justify-content': direction === 'v' ? (alignV && (alignV !== 'center' ? 'flex-' : '') + alignV) : (alignH && (alignH !== 'center' ? 'flex-' : '') + alignH), 'flex': colWidth, 'gap': gutter}">
     <slot></slot>
 </div>

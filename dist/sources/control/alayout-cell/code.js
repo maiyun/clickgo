@@ -30,6 +30,8 @@ class default_1 extends clickgo.control.AbstractControl {
         this.alayout = null;
         this.props = {
             'span': 1,
+            'alignH': '',
+            'alignV': ''
         };
     }
     get colWidth() {

@@ -20,8 +20,8 @@
             <alayout-cell style="background:hsl(0,0%,80%);">
                 <label>1</label>
             </alayout-cell>
-            <alayout-cell style="background:hsl(0,20%,80%);">
-                <label>2</label>
+            <alayout-cell align-v="center" align-h="center" style="background:hsl(0,20%,80%);">
+                <label>2</label><label>1</label>
             </alayout-cell>
             <alayout-cell style="background:hsl(0,40%,80%);">
                 <label>3</label>
