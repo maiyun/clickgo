@@ -19,6 +19,7 @@ export default class extends clickgo.control.AbstractControl {
         'disabled': boolean | string;
         'editable': boolean | string;
         'multi': boolean | string;
+        'plain': boolean | string;
 
         /** --- 是否开启可搜索特性 --- */
         'search': boolean | string;
@@ -42,6 +43,7 @@ export default class extends clickgo.control.AbstractControl {
             'disabled': false,
             'editable': false,
             'multi': false,
+            'plain': false,
 
             'search': false,
             'remote': false,

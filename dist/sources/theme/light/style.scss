@@ -261,26 +261,14 @@ global {
 .greatselect_wrap {
     transition: all .15s ease;
     &:not([data-cg-disabled]):not([data-cg-pop-open]) {
-        &.greatselect_area-arrow {
-            .greatselect_arrow {
-                &:hover {
-                    background: var(--g-background-hover);
-                }
-                &:active {
-                    background: var(--g-background-active);
-                }
+        &.greatselect_plain {
+            &:hover, &:focus {
+                background: hsla(0,0%,97%);
             }
         }
     }
     .greatselect_arrow {
-        width: 25px;
-    }
-    &.greatselect_area-arrow {
-        &[data-cg-pop-open], &.greatselect_active {
-            .greatselect_arrow {
-                background: var(--g-background-active);
-            }
-        }
+        transition: all .15s ease; width: 25px;
     }
 }
 .greatselect_pop {

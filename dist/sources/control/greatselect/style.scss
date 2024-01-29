@@ -1,10 +1,15 @@
 .wrap {
     display: flex; outline: none; padding: var(--g-padding); border-radius: var(--g-radius); border: solid .5px var(--g-border-color); overflow: hidden;
-    &.area-all {
-        background: var(--g-background);
+    &:not(.plain) {
+        &.area-all {
+            background: var(--g-background);
+        }
+        &.area-arrow, &.area-text {
+            background: var(--g-plain-background);
+        }
     }
-    &.area-arrow, &.area-text {
-        background: var(--g-plain-background);
+    &.plain {
+        background: var(--g-plain-background); border-color: transparent;
     }
 
     &[data-cg-pop-open] {
@@ -17,37 +22,49 @@
                 border-color: var(--g-color-active);
             }
         }
-        border: solid .5px var(--g-border-color-active);
+        &:not(.plain) {
+            border: solid .5px var(--g-border-color-active);
+        }
     }
 
     &[data-cg-disabled] {
         background: var(--g-background-disabled); color: var(--g-color-disabled); fill: var(--g-color-disabled); stroke: var(--g-color-disabled); border: solid .5px var(--g-border-color-disabled);
     }
     &:not([data-cg-disabled]):not([data-cg-pop-open]) {
-        &:hover, &:focus {
-            border: solid .5px var(--g-border-color-hover);
-        }
-        &:active, &.active {
-            border: solid .5px var(--g-border-color-active);
-        }
-        &.area-all {
+        &:not(.plain) {
             &:hover, &:focus {
-                background: var(--g-background-hover);
-                color: var(--g-color-hover);
-                fill: var(--g-color-hover);
-                stroke: var(--g-color-hover);
-                .arrow::after {
-                    border-color: var(--g-color-hover);
-                }
+                border: solid .5px var(--g-border-color-hover);
             }
             &:active, &.active {
-                background: var(--g-background-active);
-                color: var(--g-color-active);
-                fill: var(--g-color-active);
-                stroke: var(--g-color-active);
-                .arrow::after {
-                    border-color: var(--g-color-active);
+                border: solid .5px var(--g-border-color-active);
+            }
+            &.area-all {
+                &:hover, &:focus {
+                    background: var(--g-background-hover);
+                    color: var(--g-color-hover);
+                    fill: var(--g-color-hover);
+                    stroke: var(--g-color-hover);
+                    .arrow::after {
+                        border-color: var(--g-color-hover);
+                    }
                 }
+                &:active, &.active {
+                    background: var(--g-background-active);
+                    color: var(--g-color-active);
+                    fill: var(--g-color-active);
+                    stroke: var(--g-color-active);
+                    .arrow::after {
+                        border-color: var(--g-color-active);
+                    }
+                }
+            }
+        }
+        &.plain {
+            &:hover, &:focus {
+                background: var(--g-plain-background-hover);
+            }
+            &:active, &.active {
+                background: var(--g-plain-background-active);
             }
         }
     }
@@ -70,6 +87,11 @@
         position: relative; display: flex; justify-content: center; align-items: center; width: 20px; border: solid .5px transparent;
         &::after {
             content: ''; border: solid 1px var(--g-color); border-width: 0 1px 1px 0; width: 6px; height: 6px; transform: rotate(45deg); margin-top: -3px;
+        }
+    }
+    &.plain {
+        .arrow {
+            border: none;
         }
     }
 

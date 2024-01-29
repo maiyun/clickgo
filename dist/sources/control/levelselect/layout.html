@@ -1,4 +1,4 @@
-<cg-greatselect ref="gs" :disabled="propBoolean('disabled')" area="text" pop="custom">
+<cg-greatselect ref="gs" :disabled="propBoolean('disabled')" :plain="propBoolean('plain')" area="text" pop="custom">
     <div class="op" :style="{'margin': opMargin, 'padding-left': label.length > 1 ? 'var(--g-padding)' : undefined}">
         <div v-if="label.length > 1">{{label.length > 1 ? label.slice(0, -1).join(' / ') : '　'}}</div>
         <cg-text :modelValue="inputValue" @update:modelValue="updateInputValue" :disabled="disabled" :placeholder="placeholder" :style="{'padding': padding, 'background': background}" @focus="focus" @keydown="keydown" @blur="blur"></cg-text>

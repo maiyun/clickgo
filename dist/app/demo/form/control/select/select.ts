@@ -116,6 +116,8 @@ export default class extends clickgo.form.AbstractForm {
 
     public remoteDelay = [0];
 
+    public plain = false;
+
     // --- size 高度 ---
     public get sizes(): any {
         const rtn: any = {};
