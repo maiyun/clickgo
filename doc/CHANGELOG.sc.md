@@ -1,5 +1,19 @@
 # 更新日志
 
+# 3.11.0
+
+[+] core 库新增 global 属性，用于获取网页设置的全局 clickgoGlobal 变量。  
+[+] 新增 tag 控件。  
+[+] panel 控件新增 plain 参数。  
+[+] alayout-cell 控件新增 align-v、align-h 参数。  
+[+] text 控件的 password 模式新增眼睛图标，可点击隐藏/显示密码。  
+[+] text 控件新增 prepend 插槽，用来插入图标和文字。  
+[+] text 控件新增 before、after 插槽，用来插入不需要内边距的控件。  
+[+] levelselect、greatselect、select 控件都增加了 plain 参数。  
+[\*] 修复 levelselect 失去焦点时无法选择项的问题。  
+[\*] 修改 levelselect 的 level 事件的 event 对象。  
+[\*] 优化 nav 控件使某项被选择时如果处于可视区域外则自动滚动到可视区域内。
+
 # 3.10.4
 
 [\*] 优化 select 控件。

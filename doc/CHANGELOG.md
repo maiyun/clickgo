@@ -1,5 +1,19 @@
 # Changelog
 
+# 3.11.0
+
+[+] Added `global` property to the core library for accessing the global `clickgoGlobal` variable set by webpage configurations.  
+[+] Introducing the new `tag` control.  
+[+] Added the `plain` parameter to the `panel` control.  
+[+] Enhanced the `alayout-cell` control with new `align-v` and `align-h` parameters.  
+[+] Improved the password mode of the `text` control with an eye icon for toggling password visibility.  
+[+] Added the `prepend` slot to the `text` control for inserting icons and text.  
+[+] Introduced `before` and `after` slots in the `text` control for inserting controls without internal padding.  
+[+] Added the `plain` parameter to the `levelselect`, `greatselect`, and `select` controls.  
+[\*] Fixed the issue in `levelselect` where items couldn't be selected when losing focus.  
+[\*] Modified the event object for the `level` event in `levelselect`.  
+[\*] Optimized the `nav` control to automatically scroll into view when an item is selected and outside the visible area.
+
 # 3.10.4
 
 [\*] Optimized the select control.
