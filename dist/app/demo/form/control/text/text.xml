@@ -6,13 +6,10 @@
             <menulist v-if="menu">
                 <menulist-item>Custom</menulist-item>
             </menulist>
-            <template v-if="prepend" v-slot:prepend>
-                <layout gutter="10" align-v="center">
-                    <select v-if="slotselect" :data="['A','B','C']"></select>
-                    <label>$<label>
-                </layout>
-            </template>
+            <template v-if="before" v-slot:before><select :data="['A','B','C']" plain></select></template>
+            <template v-if="prepend" v-slot:prepend>$</template>
             <template v-if="append" v-slot:append>KG</template>
+            <template v-if="after" v-slot:after><select :data="['D','E','F']" plain></select></template>
         </text>
         <layout gutter="10">
             <button @click="multi = !multi" style="flex: 1;">{{multi ? '' : '!'}}multi</button>
@@ -33,9 +30,10 @@
             <button @click="longClick" style="flex: 1;">{{long ? '' : '!'}}long</button>
         </layout>
         <layout gutter="10">
-            <button @click="lineHeight = lineHeight === 1 ? 1.5 : 1" style="flex: 1;">Set line {{lineHeight === 1 ? 1.5 : 1}}</button>
-            <button @click="fontSize = fontSize === 12 ? 16 : 12" style="flex: 1;">Set size {{fontSize === 12 ? 16 : 12}}</button>
-            <button v-if="prepend" @click="slotselect = !slotselect" style="flex: 1;">{{slotselect ? '' : '!'}}slotselect</button>
+            <button @click="lineHeight = lineHeight === 1 ? 1.5 : 1" style="flex: 1;">line to {{lineHeight === 1 ? 1.5 : 1}}</button>
+            <button @click="fontSize = fontSize === 12 ? 16 : 12" style="flex: 1;">size to {{fontSize === 12 ? 16 : 12}}</button>
+            <button @click="before = !before" style="flex: 1;">{{before ? '' : '!'}}before</button>
+            <button @click="after = !after" style="flex: 1;">{{after ? '' : '!'}}after</button>
         </layout>
         <layout gutter="10">
             <button @click="border = 'solid'" style="flex: 2;">Set border solid</button>

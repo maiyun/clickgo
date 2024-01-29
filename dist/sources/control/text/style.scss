@@ -41,6 +41,10 @@
         }
     }
 
+    .before, .after {
+        display: flex;
+    }
+
     .prepend {
         display: flex; align-items: center; padding-left: var(--g-padding);
     }

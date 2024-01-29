@@ -56,7 +56,9 @@ export default class extends clickgo.form.AbstractForm {
 
     public append = false;
 
-    public slotselect = false;
+    public before = false;
+
+    public after = false;
 
     public border = 'solid';
 
