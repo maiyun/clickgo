@@ -1,0 +1,33 @@
+.wrap {
+    padding: 4px 5px; border-radius: 5px; display: inline-flex; display: flex; align-items: center; justify-content: center;
+    &:not(.plain) {
+        background: var(--g-plain-border-color); color: #FFF;
+        &.primary {
+            background: var(--success);
+        }
+        &.info {
+            background: var(--info);
+        }
+        &.warning {
+            background: var(--warning);
+        }
+        &.danger {
+            background: var(--danger);
+        }
+    }
+    &.plain {
+        border: solid .5px var(--g-plain-border-color); color: var(--g-plain-border-color);
+        &.primary {
+            border-color: var(--success); color: var(--success); background: var(--success-bg);
+        }
+        &.info {
+            border-color: var(--info); color: var(--info); background: var(--info-bg);
+        }
+        &.warning {
+            border-color: var(--warning); color: var(--warning); background: var(--warning-bg);
+        }
+        &.danger {
+            border-color: var(--danger); color: var(--danger); background: var(--danger-bg);
+        }
+    }
+}

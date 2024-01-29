@@ -135,6 +135,10 @@ export default class extends clickgo.form.AbstractForm {
                 frm = await clickgo.form.create(cstepFrm);
                 break;
             }
+            case 'ctag': {
+                frm = await clickgo.form.create('/form/control/tag/tag');
+                break;
+            }
             case 'cxterm': {
                 frm = await clickgo.form.create(cxtermFrm);
                 break;

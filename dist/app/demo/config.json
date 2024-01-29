@@ -105,6 +105,7 @@
         "/form/control/tab/tab.xml",
         "/form/control/table/table.js",
         "/form/control/table/table.xml",
+        "/form/control/tag/tag.xml",
         "/form/control/text/text.js",
         "/form/control/text/text.xml",
         "/form/control/tuieditor/tuieditor.js",

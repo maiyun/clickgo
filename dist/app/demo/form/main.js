@@ -167,6 +167,10 @@ class default_1 extends clickgo.form.AbstractForm {
                     frm = yield clickgo.form.create(step_1.default);
                     break;
                 }
+                case 'ctag': {
+                    frm = yield clickgo.form.create('/form/control/tag/tag');
+                    break;
+                }
                 case 'cxterm': {
                     frm = yield clickgo.form.create(xterm_1.default);
                     break;
