@@ -1,5 +1,10 @@
 # Changelog
 
+# 3.11.1
+
+[+] Added `ready` method to `AbstractForm` class.  
+[+] Introducing `enterStep` and `doneStep` to `AbstractForm`.
+
 # 3.11.0
 
 [+] Added `global` property to the core library for accessing the global `clickgoGlobal` variable set by webpage configurations.  

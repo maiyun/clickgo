@@ -1,5 +1,10 @@
 # 更新日志
 
+# 3.11.1
+
+[+] AbstractForm 类新增 ready 方法。  
+[+] AbstractForm 新增 enterStep、doneStep。
+
 # 3.11.0
 
 [+] core 库新增 global 属性，用于获取网页设置的全局 clickgoGlobal 变量。  
