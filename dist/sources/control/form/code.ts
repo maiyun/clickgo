@@ -867,6 +867,41 @@ export default class extends clickgo.control.AbstractControl {
             }
         }
     }
+    // --- step 相关 ---
+
+    public stepData: any[] = [];
+
+    public stepValue: string = '';
+
+    public stepShowData: boolean = false;
+
+    /** --- 隐藏 step --- */
+    public stepHide(): void {
+        this.stepShowData = false;
+    }
+
+    public stepShow(): void {
+        this.refs.step.style.top = (this.refs.content.offsetHeight / 10 * 9 - this.refs.step.offsetHeight).toString() + 'px';
+        this.refs.step.style.left = ((this.refs.content.offsetWidth - this.refs.step.offsetWidth) / 2).toString() + 'px';
+        this.stepShowData = true;
+    }
+
+    public async stepDone(): Promise<void> {
+        this.stepValue = '#';
+        await clickgo.tool.sleep(500);
+        this.stepShowData = false;
+    }
+
+    public stepDown(e: MouseEvent | TouchEvent): void {
+        clickgo.dom.bindMove(e, {
+            'areaObject': this.refs.content,
+            'object': this.refs.step,
+            move: (e, o): void => {
+                this.refs.step.style.left = (parseFloat(this.refs.step.style.left) + o.ox).toString() + 'px';
+                this.refs.step.style.top = (parseFloat(this.refs.step.style.top) + o.oy).toString() + 'px';
+            }
+        });
+    }
 
     public onMounted(): void {
         this.watch('icon', async () => {

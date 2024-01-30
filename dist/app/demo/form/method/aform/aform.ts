@@ -36,6 +36,28 @@ export default class extends clickgo.form.AbstractForm {
         this.loading = false;
     }
 
+    public async toEnterStep(): Promise<void> {
+        const rtn = await this.enterStep([
+            {
+                'value': 'step1',
+                'label': 'step1'
+            },
+            {
+                'value': 'step2'
+            },
+            {
+                'icon': '/package/res/marker.svg',
+                'value': 'icon'
+            },
+            {
+                'label': 'successful',
+                'value': 'step3',
+                'desc': 'qq'
+            }
+        ]);
+        await clickgo.form.dialog('Result: ' + (rtn ? 'true' : 'false'));
+    }
+
     public onMounted(): void {
         this.watch('test', async () => {
             await clickgo.form.dialog('test changed.');

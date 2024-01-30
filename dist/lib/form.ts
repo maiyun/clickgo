@@ -45,6 +45,7 @@ const info: {
         'no': string;
         'cancel': string;
         'search': string;
+        'confirmExitStep': string;
     }>;
 } = {
     'lastId': 0,
@@ -58,84 +59,96 @@ const info: {
             'yes': 'Yes',
             'no': 'No',
             'cancel': 'Cancel',
-            'search': 'Search'
+            'search': 'Search',
+            'confirmExitStep': 'This operation will exit the current process. Are you sure you want to exit?'
         },
         'sc': {
             'ok': '好',
             'yes': '是',
             'no': '否',
             'cancel': '取消',
-            'search': '搜索'
+            'search': '搜索',
+            'confirmExitStep': '此操作将退出当前流程，确定退出吗？'
         },
         'tc': {
             'ok': '好',
             'yes': '是',
             'no': '否',
             'cancel': '取消',
-            'search': '檢索'
+            'search': '檢索',
+            'confirmExitStep': '此操作將結束目前的流程，確定退出嗎？'
         },
         'ja': {
             'ok': '好',
             'yes': 'はい',
             'no': 'いいえ',
             'cancel': 'キャンセル',
-            'search': '検索'
+            'search': '検索',
+            'confirmExitStep': 'この操作は現在のプロセスを終了します。本当に終了しますか？'
         },
         'ko': {
             'ok': '확인',
             'yes': '예',
             'no': '아니오',
             'cancel': '취소',
-            'search': '검색'
+            'search': '검색',
+            'confirmExitStep': '이 작업은 현재 프로세스를 종료합니다. 종료하시겠습니까?'
         },
         'th': {
             'ok': 'ตกลง',
             'yes': 'ใช่',
             'no': 'ไม่',
             'cancel': 'ยกเลิก',
-            'search': 'ค้นหา'
+            'search': 'ค้นหา',
+            'confirmExitStep': 'การดำเนินการนี้จะออกจากกระบวนการปัจจุบัน ยืนยันที่จะออกไหม？'
         },
         'es': {
             'ok': 'Aceptar',
             'yes': 'Sí',
             'no': 'No',
             'cancel': 'Cancelar',
-            'search': 'Buscar'
+            'search': 'Buscar',
+            'confirmExitStep': 'Esta operación cerrará el proceso actual. ¿Estás seguro de que quieres salir?'
         },
         'de': {
             'ok': 'OK',
             'yes': 'Ja',
             'no': 'Nein',
             'cancel': 'Abbrechen',
-            'search': 'Suchen'
+            'search': 'Suchen',
+            'confirmExitStep': 'Diese Aktion beendet den aktuellen Prozess. Möchten Sie wirklich beenden?'
         },
         'fr': {
             'ok': 'OK',
             'yes': 'Oui',
             'no': 'Non',
             'cancel': 'Annuler',
-            'search': 'Rechercher'
+            'search': 'Rechercher',
+            'confirmExitStep': 'Cette opération va quitter le processus en cours. Êtes-vous sûr de vouloir quitter ?'
         },
         'pt': {
             'ok': 'OK',
             'yes': 'Sim',
             'no': 'Não',
             'cancel': 'Cancelar',
-            'search': 'Buscar'
+            'search': 'Buscar',
+            'confirmExitStep': 'Esta operação encerrará o processo atual. Você tem certeza de que deseja sair?'
         },
         'ru': {
             'ok': 'OK',
             'yes': 'Да',
             'no': 'Нет',
             'cancel': 'Отмена',
-            'search': 'Поиск'
+            'search': 'Поиск',
+            'confirmExitStep': 'Эта операция завершит текущий процесс. Вы уверены, что хотите выйти?'
         },
         'vi': {
             'ok': 'OK',
             'yes': 'Có',
             'no': 'Không',
             'cancel': 'Hủy bỏ',
-            'search': 'Tìm kiếm'
+            'search': 'Tìm kiếm',
+            'confirmExitStep': 'Thao tác này sẽ thoát khỏi quy trình hiện tại. Bạn có chắc chắn muốn thoát không?'
         }
     }
 };
@@ -453,10 +466,20 @@ export abstract class AbstractForm extends AbstractCommon {
     }
 
     /** --- form hash 回退 --- */
-    public formHashBack(): void {
+    public async formHashBack(): Promise<void> {
         const v = this as any;
         if (!v.$data._historyHash.length) {
             if (v.$data._formHash) {
+                if (this.inStep) {
+                    if (!await clickgo.form.confirm({
+                        'taskId': this.taskId,
+                        'content': info.locale[this.locale].confirmExitStep
+                    })) {
+                        return;
+                    }
+                    this._inStep = false;
+                    this.refs.form.stepHide();
+                }
                 v.$data._formHash = '';
                 core.trigger('formHashChange', this.taskId, this.formId, '');
                 return;
@@ -464,6 +487,21 @@ export abstract class AbstractForm extends AbstractCommon {
             return;
         }
         const parent = v.$data._historyHash[v.$data._historyHash.length - 1];
+        if (this.inStep) {
+            if (this._stepValues.includes(parent)) {
+                this.refs.form.stepValue = parent;
+            }
+            else {
+                if (!await clickgo.form.confirm({
+                    'taskId': this.taskId,
+                    'content': info.locale[this.locale].confirmExitStep
+                })) {
+                    return;
+                }
+                this._inStep = false;
+                this.refs.form.stepHide();
+            }
+        }
         v.$data._formHash = parent;
         v.$data._historyHash.splice(-1);
         core.trigger('formHashChange', this.taskId, this.formId, parent);
@@ -481,27 +519,43 @@ export abstract class AbstractForm extends AbstractCommon {
         return this._inStep;
     }
 
-    /** --- 进入 form hash 为源的步进条（Dev 版） --- */
-    public enterStep(opt: {
-        /** --- 当前的步骤名 --- */
-        'name'?: string;
-        /** --- hash list，第一个必须为当前的 formHash --- */
-        'list': Array<{
-            /** --- 子步骤名 --- */
-            'name': string;
-            /** --- 步骤 hash --- */
-            'hash': string;
-        }>;
-    }): boolean {
+    /** --- 序列化后的 step value 值 --- */
+    private readonly _stepValues: string[] = [];
+
+    /** --- 进入 form hash 为源的步进条 --- */
+    public async enterStep(list: Array<{
+        /** --- 步骤 hash，第一个必须为当前 hash --- */
+        'value': string;
+        'label'?: string;
+        'icon'?: string;
+        'desc'?: string;
+    }>): Promise<boolean> {
         if (this._inStep) {
             return false;
         }
-        if (opt.list[0].hash !== this.formHash) {
+        if (list[0].value !== this.formHash) {
             return false;
         }
         // --- 进入当前页面步骤 ---
         this._inStep = true;
-        return false;
+        this._stepValues.length = 0;
+        for (const item of list) {
+            this._stepValues.push(item.value);
+        }
+        this.refs.form.stepData = list;
+        this.refs.form.stepValue = this.formHash;
+        await this.nextTick();
+        this.refs.form.stepShow();
+        return true;
+    }
+
+    /** --- 完成当前步骤条 --- */
+    public async doneStep(): Promise<void> {
+        if (!this._inStep) {
+            return;
+        }
+        this._inStep = false;
+        await this.refs.form.stepDone();
     }
 
     /** --- 当前是不是初次显示 --- */
@@ -1399,7 +1453,7 @@ export function getHash(formId: number): string {
 /**
  * --- 将窗体的 hash 退回上一个 ---
  */
-export function hashBack(formId: number): boolean {
+export async function hashBack(formId: number): Promise<boolean> {
     const taskId = getTaskId(formId);
     if (taskId === 0) {
         return false;
@@ -1412,7 +1466,7 @@ export function hashBack(formId: number): boolean {
     if (!item) {
         return false;
     }
-    item.vroot.formHashBack();
+    await item.vroot.formHashBack();
     return true;
 }
 
@@ -2896,6 +2950,32 @@ export async function create<T extends AbstractForm>(
         },
         set: function(this: types.IVue, v: string): void {
             if (v === this._formHash) {
+                return;
+            }
+            if (this.inStep) {
+                // --- 在 step 中，要判断 step 是否正确 ---
+                (async (): Promise<void> => {
+                    if (this._stepValues.includes(v)) {
+                        this.$refs.form.stepValue = v;
+                    }
+                    else {
+                        // --- 不应该 ---
+                        if (!await clickgo.form.confirm({
+                            'taskId': this.taskId,
+                            'content': info.locale[this.locale].confirmExitStep
+                        })) {
+                            return;
+                        }
+                        // --- 退出了 ---
+                        this._inStep = false;
+                        this.$refs.form.stepHide();
+                    }
+                    if (this._formHash) {
+                        this._historyHash.push(this._formHash);
+                    }
+                    this._formHash = v;
+                    core.trigger('formHashChange', t.id, formId, v);
+                })() as any;
                 return;
             }
             if (this._formHash) {

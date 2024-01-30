@@ -55,84 +55,96 @@ const info = {
             'yes': 'Yes',
             'no': 'No',
             'cancel': 'Cancel',
-            'search': 'Search'
+            'search': 'Search',
+            'confirmExitStep': 'This operation will exit the current process. Are you sure you want to exit?'
         },
         'sc': {
             'ok': '好',
             'yes': '是',
             'no': '否',
             'cancel': '取消',
-            'search': '搜索'
+            'search': '搜索',
+            'confirmExitStep': '此操作将退出当前流程，确定退出吗？'
         },
         'tc': {
             'ok': '好',
             'yes': '是',
             'no': '否',
             'cancel': '取消',
-            'search': '檢索'
+            'search': '檢索',
+            'confirmExitStep': '此操作將結束目前的流程，確定退出嗎？'
         },
         'ja': {
             'ok': '好',
             'yes': 'はい',
             'no': 'いいえ',
             'cancel': 'キャンセル',
-            'search': '検索'
+            'search': '検索',
+            'confirmExitStep': 'この操作は現在のプロセスを終了します。本当に終了しますか？'
         },
         'ko': {
             'ok': '확인',
             'yes': '예',
             'no': '아니오',
             'cancel': '취소',
-            'search': '검색'
+            'search': '검색',
+            'confirmExitStep': '이 작업은 현재 프로세스를 종료합니다. 종료하시겠습니까?'
         },
         'th': {
             'ok': 'ตกลง',
             'yes': 'ใช่',
             'no': 'ไม่',
             'cancel': 'ยกเลิก',
-            'search': 'ค้นหา'
+            'search': 'ค้นหา',
+            'confirmExitStep': 'การดำเนินการนี้จะออกจากกระบวนการปัจจุบัน ยืนยันที่จะออกไหม？'
         },
         'es': {
             'ok': 'Aceptar',
             'yes': 'Sí',
             'no': 'No',
             'cancel': 'Cancelar',
-            'search': 'Buscar'
+            'search': 'Buscar',
+            'confirmExitStep': 'Esta operación cerrará el proceso actual. ¿Estás seguro de que quieres salir?'
         },
         'de': {
             'ok': 'OK',
             'yes': 'Ja',
             'no': 'Nein',
             'cancel': 'Abbrechen',
-            'search': 'Suchen'
+            'search': 'Suchen',
+            'confirmExitStep': 'Diese Aktion beendet den aktuellen Prozess. Möchten Sie wirklich beenden?'
         },
         'fr': {
             'ok': 'OK',
             'yes': 'Oui',
             'no': 'Non',
             'cancel': 'Annuler',
-            'search': 'Rechercher'
+            'search': 'Rechercher',
+            'confirmExitStep': 'Cette opération va quitter le processus en cours. Êtes-vous sûr de vouloir quitter ?'
         },
         'pt': {
             'ok': 'OK',
             'yes': 'Sim',
             'no': 'Não',
             'cancel': 'Cancelar',
-            'search': 'Buscar'
+            'search': 'Buscar',
+            'confirmExitStep': 'Esta operação encerrará o processo atual. Você tem certeza de que deseja sair?'
         },
         'ru': {
             'ok': 'OK',
             'yes': 'Да',
             'no': 'Нет',
             'cancel': 'Отмена',
-            'search': 'Поиск'
+            'search': 'Поиск',
+            'confirmExitStep': 'Эта операция завершит текущий процесс. Вы уверены, что хотите выйти?'
         },
         'vi': {
             'ok': 'OK',
             'yes': 'Có',
             'no': 'Không',
             'cancel': 'Hủy bỏ',
-            'search': 'Tìm kiếm'
+            'search': 'Tìm kiếm',
+            'confirmExitStep': 'Thao tác này sẽ thoát khỏi quy trình hiện tại. Bạn có chắc chắn muốn thoát không?'
         }
     }
 };
@@ -285,6 +297,7 @@ class AbstractForm extends AbstractCommon {
         this.isReady = false;
         this.loading = false;
         this._inStep = false;
+        this._stepValues = [];
         this._firstShow = true;
         this.dialogResult = '';
     }
@@ -320,32 +333,78 @@ class AbstractForm extends AbstractCommon {
         cb();
     }
     formHashBack() {
-        const v = this;
-        if (!v.$data._historyHash.length) {
-            if (v.$data._formHash) {
-                v.$data._formHash = '';
-                core.trigger('formHashChange', this.taskId, this.formId, '');
+        return __awaiter(this, void 0, void 0, function* () {
+            const v = this;
+            if (!v.$data._historyHash.length) {
+                if (v.$data._formHash) {
+                    if (this.inStep) {
+                        if (!(yield clickgo.form.confirm({
+                            'taskId': this.taskId,
+                            'content': info.locale[this.locale].confirmExitStep
+                        }))) {
+                            return;
+                        }
+                        this._inStep = false;
+                        this.refs.form.stepHide();
+                    }
+                    v.$data._formHash = '';
+                    core.trigger('formHashChange', this.taskId, this.formId, '');
+                    return;
+                }
                 return;
             }
-            return;
-        }
-        const parent = v.$data._historyHash[v.$data._historyHash.length - 1];
-        v.$data._formHash = parent;
-        v.$data._historyHash.splice(-1);
-        core.trigger('formHashChange', this.taskId, this.formId, parent);
+            const parent = v.$data._historyHash[v.$data._historyHash.length - 1];
+            if (this.inStep) {
+                if (this._stepValues.includes(parent)) {
+                    this.refs.form.stepValue = parent;
+                }
+                else {
+                    if (!(yield clickgo.form.confirm({
+                        'taskId': this.taskId,
+                        'content': info.locale[this.locale].confirmExitStep
+                    }))) {
+                        return;
+                    }
+                    this._inStep = false;
+                    this.refs.form.stepHide();
+                }
+            }
+            v.$data._formHash = parent;
+            v.$data._historyHash.splice(-1);
+            core.trigger('formHashChange', this.taskId, this.formId, parent);
+        });
     }
     get inStep() {
         return this._inStep;
     }
-    enterStep(opt) {
-        if (this._inStep) {
-            return false;
-        }
-        if (opt.list[0].hash !== this.formHash) {
-            return false;
-        }
-        this._inStep = true;
-        return false;
+    enterStep(list) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (this._inStep) {
+                return false;
+            }
+            if (list[0].value !== this.formHash) {
+                return false;
+            }
+            this._inStep = true;
+            this._stepValues.length = 0;
+            for (const item of list) {
+                this._stepValues.push(item.value);
+            }
+            this.refs.form.stepData = list;
+            this.refs.form.stepValue = this.formHash;
+            yield this.nextTick();
+            this.refs.form.stepShow();
+            return true;
+        });
+    }
+    doneStep() {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (!this._inStep) {
+                return;
+            }
+            this._inStep = false;
+            yield this.refs.form.stepDone();
+        });
     }
     show() {
         const v = this;
@@ -1012,20 +1071,22 @@ function getHash(formId) {
 }
 exports.getHash = getHash;
 function hashBack(formId) {
-    const taskId = getTaskId(formId);
-    if (taskId === 0) {
-        return false;
-    }
-    const t = task.list[taskId];
-    if (!t) {
-        return false;
-    }
-    const item = task.list[taskId].forms[formId];
-    if (!item) {
-        return false;
-    }
-    item.vroot.formHashBack();
-    return true;
+    return __awaiter(this, void 0, void 0, function* () {
+        const taskId = getTaskId(formId);
+        if (taskId === 0) {
+            return false;
+        }
+        const t = task.list[taskId];
+        if (!t) {
+            return false;
+        }
+        const item = task.list[taskId].forms[formId];
+        if (!item) {
+            return false;
+        }
+        yield item.vroot.formHashBack();
+        return true;
+    });
 }
 exports.hashBack = hashBack;
 function changeFocus(formId = 0) {
@@ -2243,6 +2304,29 @@ function create(cls, data, opt = {}, taskId) {
             },
             set: function (v) {
                 if (v === this._formHash) {
+                    return;
+                }
+                if (this.inStep) {
+                    (() => __awaiter(this, void 0, void 0, function* () {
+                        if (this._stepValues.includes(v)) {
+                            this.$refs.form.stepValue = v;
+                        }
+                        else {
+                            if (!(yield clickgo.form.confirm({
+                                'taskId': this.taskId,
+                                'content': info.locale[this.locale].confirmExitStep
+                            }))) {
+                                return;
+                            }
+                            this._inStep = false;
+                            this.$refs.form.stepHide();
+                        }
+                        if (this._formHash) {
+                            this._historyHash.push(this._formHash);
+                        }
+                        this._formHash = v;
+                        core.trigger('formHashChange', t.id, formId, v);
+                    }))();
                     return;
                 }
                 if (this._formHash) {

@@ -77,6 +77,9 @@ class default_1 extends clickgo.control.AbstractControl {
         this.flashTimer = undefined;
         this.isInside = false;
         this.isNativeSync = false;
+        this.stepData = [];
+        this.stepValue = '';
+        this.stepShowData = false;
     }
     get isMin() {
         return clickgo.tool.getBoolean(this.props.min);
@@ -731,6 +734,31 @@ class default_1 extends clickgo.control.AbstractControl {
                 break;
             }
         }
+    }
+    stepHide() {
+        this.stepShowData = false;
+    }
+    stepShow() {
+        this.refs.step.style.top = (this.refs.content.offsetHeight / 10 * 9 - this.refs.step.offsetHeight).toString() + 'px';
+        this.refs.step.style.left = ((this.refs.content.offsetWidth - this.refs.step.offsetWidth) / 2).toString() + 'px';
+        this.stepShowData = true;
+    }
+    stepDone() {
+        return __awaiter(this, void 0, void 0, function* () {
+            this.stepValue = '#';
+            yield clickgo.tool.sleep(500);
+            this.stepShowData = false;
+        });
+    }
+    stepDown(e) {
+        clickgo.dom.bindMove(e, {
+            'areaObject': this.refs.content,
+            'object': this.refs.step,
+            move: (e, o) => {
+                this.refs.step.style.left = (parseFloat(this.refs.step.style.left) + o.ox).toString() + 'px';
+                this.refs.step.style.top = (parseFloat(this.refs.step.style.top) + o.oy).toString() + 'px';
+            }
+        });
     }
     onMounted() {
         this.watch('icon', () => __awaiter(this, void 0, void 0, function* () {

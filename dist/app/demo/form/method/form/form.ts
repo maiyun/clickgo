@@ -45,7 +45,7 @@ export default class extends clickgo.form.AbstractForm {
     }
 
     public async hashBack(): Promise<void> {
-        await clickgo.form.dialog(JSON.stringify(clickgo.form.hashBack(parseInt(this.fid))));
+        await clickgo.form.dialog(JSON.stringify(await clickgo.form.hashBack(parseInt(this.fid))));
     }
 
     public async tohash(): Promise<void> {

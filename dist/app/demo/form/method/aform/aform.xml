@@ -1,4 +1,4 @@
-<form width="350" height="400" title="Abstract Form">
+<form width="550" height="400" title="Abstract Form">
     <flow direction="v" style="flex: 1; padding: 10px;">
         <layout gutter="10" direction="v" style="flex: 1;">
             <label>filename: {{filename}}</label>
@@ -42,6 +42,15 @@
                 <label>result: {{dr}}</label>
             </layout>
             <button @click="close">close()</button>
+            <label>enterStep: [ {{formHash}} ]</label>
+            <button @click="toEnterStep">enterStep</button>
+            <layout gutter="10">
+                <button @click="formHash = 'step1'" style="flex: 1;">fh = 'step1'</button>
+                <button @click="formHash = 'step2'" style="flex: 1;">step2</button>
+                <button @click="formHash = 'step3'" style="flex: 1;">step3</button>
+                <button @click="formHash = 'step4'" style="flex: 1;">step4</button>
+                <button @click="doneStep()" style="flex: 1;">done</button>
+            </layout>
         </layout>
     </flow>
 </form>

@@ -71,6 +71,29 @@ class default_1 extends clickgo.form.AbstractForm {
             this.loading = false;
         });
     }
+    toEnterStep() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const rtn = yield this.enterStep([
+                {
+                    'value': 'step1',
+                    'label': 'step1'
+                },
+                {
+                    'value': 'step2'
+                },
+                {
+                    'icon': '/package/res/marker.svg',
+                    'value': 'icon'
+                },
+                {
+                    'label': 'successful',
+                    'value': 'step3',
+                    'desc': 'qq'
+                }
+            ]);
+            yield clickgo.form.dialog('Result: ' + (rtn ? 'true' : 'false'));
+        });
+    }
     onMounted() {
         this.watch('test', () => __awaiter(this, void 0, void 0, function* () {
             yield clickgo.form.dialog('test changed.');

@@ -71,7 +71,7 @@ class default_1 extends clickgo.form.AbstractForm {
     }
     hashBack() {
         return __awaiter(this, void 0, void 0, function* () {
-            yield clickgo.form.dialog(JSON.stringify(clickgo.form.hashBack(parseInt(this.fid))));
+            yield clickgo.form.dialog(JSON.stringify(yield clickgo.form.hashBack(parseInt(this.fid))));
         });
     }
     tohash() {

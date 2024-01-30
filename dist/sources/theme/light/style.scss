@@ -6,7 +6,7 @@ global {
     // --- 基础颜色 ---
 
     --face:#FFF;
-    --pop-background:rgba(255, 255, 255, .5);
+    --pop-background:rgba(255, 255, 255, .4);
 
     // --- 组件默认颜色（如按钮） ---
 
@@ -225,6 +225,12 @@ global {
                 .form_min, .form_max, .form_close {
                     transition: all .15s ease;
                 }
+            }
+        }
+        // --- 主体内容 ---
+        .form_content {
+            .form_step {
+                background: var(--pop-background); -webkit-backdrop-filter: blur(30px) saturate(1.5); backdrop-filter: blur(30px) saturate(1.5); border-radius: 30px; padding: 10px 25px; box-shadow: 0 1px 10px rgba(0, 0, 0, .15);
             }
         }
     }

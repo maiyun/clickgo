@@ -15,8 +15,8 @@
             </layout>
             <layout gutter="10">
                 <layout ref="watch" align-v="center" align-h="center" style="flex: 1; background: var(--g-plain-background); border: solid 1px var(--g-plain-border-color);">{{watchInner ? 'inner' : 'Inner'}}</layout>
-                <button @click="wwatch" style="padding: 0 5px;">{{watchText ? '' : '!'}}watch</button>
-                <button @click="watchInner = !watchInner" style="padding: 0 5px;">Change</button>
+                <button @click="wwatch">{{watchText ? '' : '!'}}watch</button>
+                <button @click="watchInner = !watchInner">Change</button>
             </layout>
             <layout gutter="10">
                 <button style="flex: 1;" @click="getWatchCount()">getWatchCount()</button>
@@ -26,7 +26,7 @@
             <button @click="isWatchStyle" >isWatchStyle(this.refs.watchStyle.$el)</button>
             <!-- getWatchInfo -->
             <text :model-value="getWatchInfoText" readonly multi style="height: 300px;"></text>
-            <button @click="getWatchInfo" :disabled="getWatchInfoDisabled" style="padding: 0 10px;">getWatchInfo 20s</button>
+            <button @click="getWatchInfo" :disabled="getWatchInfoDisabled">getWatchInfo 20s</button>
             <block @mousedown="bindGesture" @touchstart="bindGesture" style="height: 50px; display: flex; justify-content: center; align-items: center; font-size: 14px; background: var(--g-plain-background); border: solid 1px var(--g-plain-border-color);">{{bindGestureText ? bindGestureText : 'bindGesture(e: Touch | Mouse, { ... })'}}</block>
             <block @wheel="bindGestureWheel" style="height: 50px; display: flex; justify-content: center; align-items: center; font-size: 14px; background: var(--g-plain-background); border: solid 1px var(--g-plain-border-color);">{{bindGestureWheelText ? bindGestureWheelText : 'bindGesture(e: Wheel, { ... })'}}</block>
             <button @click="bindLong" ref="bindLong" @mousedown="bindLongDown" @touchstart="bindLongDown" >{{bindLongText ? 'Yeah!' : 'bindLong(e, () => { ... })'}}</button>

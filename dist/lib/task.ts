@@ -710,7 +710,7 @@ export async function run(url: string | types.IApp, opt: types.ITaskRunOptions =
             getHash: function(formId: number): string {
                 return form.getHash(formId);
             },
-            hashBack: function(formId: number): boolean {
+            hashBack: function(formId: number): Promise<boolean> {
                 return form.hashBack(formId);
             },
             changeFocus: function(fid: number = 0): void {
