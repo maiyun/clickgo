@@ -42,6 +42,7 @@ class default_1 extends clickgo.form.AbstractForm {
         super(...arguments);
         this.fh = '';
         this.name = '';
+        this.mountData = 'none';
         this.map = {
             'test1': test1_1.default,
             'test2': '../../control/panel/test2'
@@ -60,10 +61,14 @@ class default_1 extends clickgo.form.AbstractForm {
         });
     }
     onMounted(data) {
-        if (!data.hash) {
-            return;
-        }
-        this.formHash = data.hash;
+        return __awaiter(this, void 0, void 0, function* () {
+            if (!data.hash) {
+                return;
+            }
+            this.formHash = data.hash;
+            yield clickgo.tool.sleep(500);
+            this.mountData = 'ok';
+        });
     }
 }
 exports.default = default_1;

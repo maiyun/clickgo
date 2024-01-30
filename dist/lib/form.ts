@@ -389,6 +389,9 @@ export abstract class AbstractForm extends AbstractCommon {
 
     // --- 以下为窗体有，但 control 没有 ---
 
+    /** --- 当前是否完全创建完毕 --- */
+    public isReady: boolean = false;
+
     /** --- 获取 form 的 hash 值，不是浏览器的 hash --- */
     public get formHash(): string {
         return '';
@@ -441,6 +444,12 @@ export abstract class AbstractForm extends AbstractCommon {
 
     public set showInSystemTask(v: boolean) {
         // --- 会进行重写 ---
+    }
+
+    /** --- 将在 form 完全装载完后执行，如果已经装载完则立即执行 --- */
+    public ready(cb: () => void | Promise<void>): void {
+        // --- 会进行重写 ---
+        cb() as any;
     }
 
     /** --- form hash 回退 --- */
@@ -2907,6 +2916,15 @@ export async function create<T extends AbstractForm>(
             core.trigger('formShowInSystemTaskChange', t.id, formId, v);
         }
     };
+    // --- ready 方法 ---
+    const cbs: Array<() => void | Promise<void>> = [];
+    methods.ready = function(cb: () => void | Promise<void>): void {
+        if (this.isReady) {
+            cb() as any;
+            return;
+        }
+        cbs.push(cb);
+    };
 
     // --- 插入 dom ---
     elements.list.insertAdjacentHTML('beforeend', `<div class="cg-form-wrap" data-form-id="${formId.toString()}" data-task-id="${t.id.toString()}"></div>`);
@@ -3041,6 +3059,11 @@ export async function create<T extends AbstractForm>(
             rtn.vroot.$refs.form.setPropData('width', window.innerWidth);
             rtn.vroot.$refs.form.setPropData('height', window.innerHeight);
         });
+    }
+    // --- 完全创建完毕 ---
+    rtn.vroot.isReady = true;
+    for (const cb of cbs) {
+        cb.call(rtn.vroot) as any;
     }
     return rtn.vroot as any;
 }

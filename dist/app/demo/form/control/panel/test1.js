@@ -38,6 +38,7 @@ class default_1 extends clickgo.form.AbstractPanel {
         super(...arguments);
         this.scount = 0;
         this.data = {};
+        this.rootMountData = 'none';
     }
     onShow(d) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -67,6 +68,9 @@ class default_1 extends clickgo.form.AbstractPanel {
         return __awaiter(this, void 0, void 0, function* () {
             yield clickgo.form.dialog('Hello panel!');
         });
+    }
+    onMounted() {
+        this.rootMountData = this.rootForm.mountData;
     }
 }
 exports.default = default_1;

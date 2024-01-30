@@ -190,25 +190,28 @@ export default class extends clickgo.control.AbstractControl {
         this.mapSelected = name;
     }
 
-    public onMounted(): void | Promise<void> {
+    public onMounted(): void {
         this.nav = this.parentByName('nav');
-        this.watch('modelValue', async () => {
-            await this.mapNameChange();
-        }, {
-            'immediate': true
-        });
-        this.watch('navSelected', async () => {
-            await this.mapNameChange();
-        });
-        this.watch('map', async () => {
-            await this.mapNameChange();
-        }, {
-            'deep': true,
-            'immediate': true
+        // --- 等待 rootForm 的 mounted 真正的挂载完成，在执行下面的内容 ---
+        this.rootForm.ready(() => {
+            this.watch('modelValue', async () => {
+                await this.mapNameChange();
+            }, {
+                'immediate': true
+            });
+            this.watch('navSelected', async () => {
+                await this.mapNameChange();
+            });
+            this.watch('map', async () => {
+                await this.mapNameChange();
+            }, {
+                'deep': true,
+                'immediate': true
+            });
         });
     }
 
-    public onBeforeUnmount(): void | Promise<void> {
+    public onBeforeUnmount(): void {
         for (const id in this.loaded) {
             clickgo.form.removePanel(parseInt(id), this.loaded[id].vapp, this.element);
             delete this.loaded[id];

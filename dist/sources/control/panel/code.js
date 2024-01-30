@@ -182,19 +182,21 @@ class default_1 extends clickgo.control.AbstractControl {
     }
     onMounted() {
         this.nav = this.parentByName('nav');
-        this.watch('modelValue', () => __awaiter(this, void 0, void 0, function* () {
-            yield this.mapNameChange();
-        }), {
-            'immediate': true
-        });
-        this.watch('navSelected', () => __awaiter(this, void 0, void 0, function* () {
-            yield this.mapNameChange();
-        }));
-        this.watch('map', () => __awaiter(this, void 0, void 0, function* () {
-            yield this.mapNameChange();
-        }), {
-            'deep': true,
-            'immediate': true
+        this.rootForm.ready(() => {
+            this.watch('modelValue', () => __awaiter(this, void 0, void 0, function* () {
+                yield this.mapNameChange();
+            }), {
+                'immediate': true
+            });
+            this.watch('navSelected', () => __awaiter(this, void 0, void 0, function* () {
+                yield this.mapNameChange();
+            }));
+            this.watch('map', () => __awaiter(this, void 0, void 0, function* () {
+                yield this.mapNameChange();
+            }), {
+                'deep': true,
+                'immediate': true
+            });
         });
     }
     onBeforeUnmount() {

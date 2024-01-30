@@ -282,6 +282,7 @@ class AbstractForm extends AbstractCommon {
     constructor() {
         super(...arguments);
         this.isNativeSync = false;
+        this.isReady = false;
         this.loading = false;
         this._inStep = false;
         this._firstShow = true;
@@ -314,6 +315,9 @@ class AbstractForm extends AbstractCommon {
         return false;
     }
     set showInSystemTask(v) {
+    }
+    ready(cb) {
+        cb();
     }
     formHashBack() {
         const v = this;
@@ -2258,6 +2262,14 @@ function create(cls, data, opt = {}, taskId) {
                 core.trigger('formShowInSystemTaskChange', t.id, formId, v);
             }
         };
+        const cbs = [];
+        methods.ready = function (cb) {
+            if (this.isReady) {
+                cb();
+                return;
+            }
+            cbs.push(cb);
+        };
         exports.elements.list.insertAdjacentHTML('beforeend', `<div class="cg-form-wrap" data-form-id="${formId.toString()}" data-task-id="${t.id.toString()}"></div>`);
         exports.elements.popList.insertAdjacentHTML('beforeend', `<div data-form-id="${formId.toString()}" data-task-id="${t.id.toString()}"></div>`);
         if (style) {
@@ -2377,6 +2389,10 @@ function create(cls, data, opt = {}, taskId) {
                 rtn.vroot.$refs.form.setPropData('width', window.innerWidth);
                 rtn.vroot.$refs.form.setPropData('height', window.innerHeight);
             });
+        }
+        rtn.vroot.isReady = true;
+        for (const cb of cbs) {
+            cb.call(rtn.vroot);
         }
         return rtn.vroot;
     });

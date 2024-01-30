@@ -99,6 +99,7 @@ class default_1 extends clickgo.form.AbstractForm {
     }
     openForm(name, data) {
         return __awaiter(this, void 0, void 0, function* () {
+            this.loading = true;
             let frm;
             switch (name) {
                 case 'cblock': {
@@ -343,6 +344,7 @@ class default_1 extends clickgo.form.AbstractForm {
                     frm = yield clickgo.form.create(backpanel_1.default, data);
                 }
             }
+            this.loading = false;
             frm.show();
         });
     }

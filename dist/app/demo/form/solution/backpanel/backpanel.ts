@@ -8,6 +8,8 @@ export default class extends clickgo.form.AbstractForm {
 
     public name: string = '';
 
+    public mountData = 'none';
+
     public map: Record<string, any> = {
         'test1': test1Panel,
         'test2': '../../control/panel/test2'
@@ -25,11 +27,13 @@ export default class extends clickgo.form.AbstractForm {
         await clickgo.form.dialog('Show form');
     }
 
-    public onMounted(data: Record<string, any>): void {
+    public async onMounted(data: Record<string, any>): Promise<void> {
         if (!data.hash) {
             return;
         }
         this.formHash = data.hash;
+        await clickgo.tool.sleep(500);
+        this.mountData = 'ok';
     }
 
 }

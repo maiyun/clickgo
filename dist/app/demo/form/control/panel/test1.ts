@@ -34,4 +34,10 @@ export default class extends clickgo.form.AbstractPanel {
         await clickgo.form.dialog('Hello panel!');
     }
 
+    public rootMountData = 'none';
+
+    public onMounted(): void {
+        this.rootMountData = this.rootForm.mountData;
+    }
+
 }

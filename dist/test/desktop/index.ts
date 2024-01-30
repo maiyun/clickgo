@@ -79,8 +79,8 @@ class Boot extends clickgo.AbstractBoot {
             document.getElementById('spic')!.style.display = 'none';
         }
         else {
-            body.style.background = '#0063b1';
-            document.getElementById('spic')!.style.background = '#0063b1';
+            body.classList.add('loaded');
+            document.getElementById('spic')!.style.background = 'transparent';
         }
     }
 

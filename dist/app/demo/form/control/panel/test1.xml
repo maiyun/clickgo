@@ -4,6 +4,7 @@
     <label>Data: {{data}}</label>
     <label>Parent data: {{rootForm.parentData}}</label>
     <label>Qs: {{qs}}</label>
+    <label>rootMountData: {{rootMountData}}</label>
     <button @click="click" style="height: 30px;">Hi</button>
     <layout>
         <button style="padding: 15px 30px;" area="split">
