@@ -358,6 +358,22 @@ export abstract class AbstractPanel extends AbstractCommon {
         return {} as any;
     }
 
+    /** --- 母窗体进入 form hash 为源的步进条 --- */
+    public async enterStep(list: Array<{
+        /** --- 步骤 hash，第一个必须为当前 hash --- */
+        'value': string;
+        'label'?: string;
+        'icon'?: string;
+        'desc'?: string;
+    }>): Promise<boolean> {
+        return this.rootForm.enterStep(list);
+    }
+
+    /** --- 目窗体完成当前步骤 --- */
+    public async doneStep(): Promise<void> {
+        await this.rootForm.doneStep();
+    }
+
     /** --- 当前的 nav（若有）传递过来的 qs --- */
     public qs: Record<string, string> = {};
 
