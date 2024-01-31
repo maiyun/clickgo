@@ -269,6 +269,16 @@ class AbstractPanel extends AbstractCommon {
     get rootPanel() {
         return {};
     }
+    enterStep(list) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return this.rootForm.enterStep(list);
+        });
+    }
+    doneStep() {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.rootForm.doneStep();
+        });
+    }
     get formFocus() {
         var _a;
         return (_a = this.rootForm.formFocus) !== null && _a !== void 0 ? _a : false;
