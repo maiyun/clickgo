@@ -230,7 +230,7 @@ global {
         // --- 主体内容 ---
         .form_content {
             .form_step {
-                background: var(--pop-background); -webkit-backdrop-filter: blur(30px) saturate(1.5); backdrop-filter: blur(30px) saturate(1.5); border-radius: 30px; padding: 10px 25px; box-shadow: 0 1px 10px rgba(0, 0, 0, .15);
+                min-width: 400px; background: var(--pop-background); -webkit-backdrop-filter: blur(30px) saturate(1.5); backdrop-filter: blur(30px) saturate(1.5); border-radius: 30px; padding: 15px 35px; box-shadow: 0 1px 10px rgba(0, 0, 0, .15);
             }
         }
     }
