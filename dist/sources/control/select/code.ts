@@ -156,7 +156,8 @@ export default class extends clickgo.control.AbstractControl {
             // --- 不搜索，data 数据恒定不变 ---
             return this.props.data;
         }
-        return this.searchData;
+        const searchValue = (this.propBoolean('editable') ? this.inputValue : this.searchValue).trim();
+        return searchValue ? this.searchData : this.props.data;
     }
 
     /** --- 向上更新值 --- */
@@ -448,7 +449,7 @@ export default class extends clickgo.control.AbstractControl {
             }
             --this._needSearch;
             if (searchValue === '') {
-                this.searchData = clickgo.tool.clone(this.props.data);
+                this.searchData = [];
                 await this.nextTick();
                 await success?.();
                 return;
@@ -470,7 +471,7 @@ export default class extends clickgo.control.AbstractControl {
             }
             --this._needSearch;
             if (searchValue === '') {
-                this.searchData = clickgo.tool.clone(this.props.data);
+                this.searchData = [];
                 await this.nextTick();
                 await success?.();
                 return;

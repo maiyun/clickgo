@@ -131,7 +131,8 @@ class default_1 extends clickgo.control.AbstractControl {
         if (!this.propBoolean('search')) {
             return this.props.data;
         }
-        return this.searchData;
+        const searchValue = (this.propBoolean('editable') ? this.inputValue : this.searchValue).trim();
+        return searchValue ? this.searchData : this.props.data;
     }
     updateValue(opt = {}) {
         this.emit('update:modelValue', clickgo.tool.clone(this.value));
@@ -393,7 +394,7 @@ class default_1 extends clickgo.control.AbstractControl {
                 }
                 --this._needSearch;
                 if (searchValue === '') {
-                    this.searchData = clickgo.tool.clone(this.props.data);
+                    this.searchData = [];
                     yield this.nextTick();
                     yield (success === null || success === void 0 ? void 0 : success());
                     return;
@@ -414,7 +415,7 @@ class default_1 extends clickgo.control.AbstractControl {
                 }
                 --this._needSearch;
                 if (searchValue === '') {
-                    this.searchData = clickgo.tool.clone(this.props.data);
+                    this.searchData = [];
                     yield this.nextTick();
                     yield (success === null || success === void 0 ? void 0 : success());
                     return;
