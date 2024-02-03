@@ -1,5 +1,10 @@
 # 更新日志
 
+# 3.11.2
+
+[+] AbstractPanel 新增 enterStep、doneStep 方法。  
+[\*] 修复了 select 控件默认为 search 模式时不显示文本内容也不显示列表的问题。
+
 # 3.11.1
 
 [+] AbstractForm 类新增 ready 方法。  

@@ -1,5 +1,10 @@
 # Changelog
 
+# 3.11.2
+
+[+] Added enterStep and doneStep methods to AbstractPanel.  
+[\*] Fixed an issue with the select control where, in default search mode, text content and the list were not displayed.
+
 # 3.11.1
 
 [+] Added `ready` method to `AbstractForm` class.  
