@@ -781,6 +781,20 @@ global {
     background: var(--pop-background); -webkit-backdrop-filter: blur(30px) saturate(1.5); backdrop-filter: blur(30px) saturate(1.5);
 }
 
+// --- tip ---
+
+.tip_pop {
+    border: none;
+    &::after {
+        border: none; bottom: -5px;
+    }
+    &[data-pop-t-bottom] {
+        &::after {
+            top: -5px; 
+        }
+    }
+}
+
 // -- CONTROL -- tuieditor --
 
 .tuieditor_wrap {

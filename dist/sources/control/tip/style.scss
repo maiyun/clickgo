@@ -1,0 +1,16 @@
+span {
+    display: none;
+}
+
+.pop {
+    background: var(--g-plain-background); color: var(--g-color); border-radius: var(--g-radius); padding: var(--g-padding); border: solid .5px var(--g-plain-border-color); width: max-content; max-width: 200px; pointer-events: none;
+    &::after {
+        content: ''; position: absolute; width: 10px; height: 10px; background: var(--g-plain-background); border: solid .5px var(--g-plain-border-color); border-width: 0 .5px .5px 0; transform: rotate(45deg); left: calc(50% - 5px); bottom: -6px;
+    }
+
+    &[data-pop-t-bottom] {
+        &::after {
+            bottom: initial; top: -6px; border-width: .5px 0 0 .5px;
+        }
+    }
+}

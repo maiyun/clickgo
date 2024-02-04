@@ -1514,25 +1514,38 @@ function refreshPopPosition(el, pop, direction, size = {}) {
             left = bcr.left;
             top = bcr.top + bcr.height;
         }
-        else {
+        else if (direction === 'h') {
             left = bcr.left + bcr.width - 2;
             top = bcr.top - 2;
+        }
+        else {
+            pop.removeAttribute('data-pop-t-bottom');
+            left = bcr.left + bcr.width / 2 - width / 2;
+            top = bcr.top - height - 10;
         }
         if (width + left > window.innerWidth) {
             if (direction === 'v') {
                 left = bcr.left + bcr.width - width;
             }
-            else {
+            else if (direction === 'h') {
                 left = bcr.left - width + 2;
+            }
+            else {
             }
         }
         if (height + top > window.innerHeight) {
             if (direction === 'v') {
                 top = bcr.top - height;
             }
-            else {
+            else if (direction === 'h') {
                 top = bcr.top + bcr.height - height + 2;
             }
+            else {
+            }
+        }
+        else if (top < 0 && direction === 't') {
+            top = bcr.top + bcr.height + 10;
+            pop.dataset.popTBottom = '';
         }
     }
     else {
@@ -1617,7 +1630,7 @@ function showPop(el, pop, direction, opt = {}) {
         return;
     }
     refreshPopPosition(el, pop, direction, opt.size);
-    if (opt.autoPosition && typeof direction === 'string' && ['h', 'v'].includes(direction)) {
+    if (opt.autoPosition && typeof direction === 'string') {
         clickgo.dom.watchSize(pop, () => {
             refreshPopPosition(el, pop, direction, opt.size);
         });

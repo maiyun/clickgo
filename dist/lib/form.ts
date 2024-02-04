@@ -1985,23 +1985,30 @@ export function removeFromPop(el: HTMLElement): void {
 }
 
 /** --- 重新调整 pop 的位置 --- */
-function refreshPopPosition(el: HTMLElement, pop: HTMLElement, direction: 'h' | 'v' | MouseEvent | TouchEvent | { x: number; y: number; }, size: { width?: number; height?: number; } = {}): void {
+function refreshPopPosition(el: HTMLElement, pop: HTMLElement, direction: 'h' | 'v' | 't' | MouseEvent | TouchEvent | { x: number; y: number; }, size: { width?: number; height?: number; } = {}): void {
     // --- 最终 pop 的大小 ---
     const width = size.width ?? pop.offsetWidth;
     const height = size.height ?? pop.offsetHeight;
     // --- 最终显示位置 ---
     let left: number, top: number;
     if (typeof direction === 'string') {
+        /** --- 母对象的位置 --- */
         const bcr = el.getBoundingClientRect();
         if (direction === 'v') {
             // --- 垂直弹出 ---
             left = bcr.left;
             top = bcr.top + bcr.height;
         }
-        else {
+        else if (direction === 'h') {
             // --- 水平弹出 ---
             left = bcr.left + bcr.width - 2;
             top = bcr.top - 2;
+        }
+        else {
+            // --- 垂直水平居中 ---
+            pop.removeAttribute('data-pop-t-bottom');
+            left = bcr.left + bcr.width / 2 - width / 2;
+            top = bcr.top - height - 10;
         }
         // --- 检查水平是否出框 ---
         if (width + left > window.innerWidth) {
@@ -2009,19 +2016,30 @@ function refreshPopPosition(el: HTMLElement, pop: HTMLElement, direction: 'h' | 
                 // --- 垂直弹出 ---
                 left = bcr.left + bcr.width - width;
             }
-            else {
+            else if (direction === 'h') {
                 // --- 水平弹出，右边位置不够弹到左边 ---
                 left = bcr.left - width + 2;
             }
+            else {
+                // --- 垂直水平居中，水平超出不管 ---
+            }
         }
-        // --- 检测垂直是否出框 ---
+        // --- 检测垂直是否下侧出框 ---
         if (height + top > window.innerHeight) {
             if (direction === 'v') {
                 top = bcr.top - height;
             }
-            else {
+            else if (direction === 'h') {
                 top = bcr.top + bcr.height - height + 2;
             }
+            else {
+                // --- 垂直水平居中，下侧出框不管 ---
+            }
+        }
+        else if (top < 0 && direction === 't') {
+            // --- 垂直水平居中，上侧出框 ---
+            top = bcr.top + bcr.height + 10;
+            pop.dataset.popTBottom = '';
         }
     }
     else {
@@ -2073,10 +2091,14 @@ let lastShowPopTime: number = 0;
  * --- 获取 pop 显示出来的坐标并报系统全局记录 ---
  * @param el 响应的元素
  * @param pop 要显示 pop 元素
- * @param direction 要显示方向（以 $el 为准的 h 水平和 v 垂直）或坐标
+ * @param direction 要显示方向（以 $el 为准的 h 水平 v 垂直 t 垂直水平居中）或坐标
  * @param opt width / height 显示的 pop 定义自定义宽/高度，可省略；null，true 代表为空也会显示，默认为 false; autoPosition, 自动更新 pop 位置，默认 false，true 为原元素位置变更，pop 位置也会变更，pop 大小变更，位置也会变更
  */
-export function showPop(el: HTMLElement, pop: HTMLElement | undefined, direction: 'h' | 'v' | MouseEvent | TouchEvent | { x: number; y: number; }, opt: { 'size'?: { width?: number; height?: number; }; 'null'?: boolean; 'autoPosition'?: boolean; } = {}): void {
+export function showPop(el: HTMLElement, pop: HTMLElement | undefined, direction: 'h' | 'v' | 't' | MouseEvent | TouchEvent | { x: number; y: number; }, opt: {
+    'size'?: { width?: number; height?: number; };
+    'null'?: boolean;
+    'autoPosition'?: boolean;
+} = {}): void {
     // --- opt.null 为 true 代表可为空，为空也会被显示，默认为 false ---
     if (opt.null === undefined) {
         opt.null = false;
@@ -2125,7 +2147,7 @@ export function showPop(el: HTMLElement, pop: HTMLElement | undefined, direction
     }
     // --- 设定 pop 位置 ---
     refreshPopPosition(el, pop, direction, opt.size);
-    if (opt.autoPosition && typeof direction === 'string' && ['h', 'v'].includes(direction)) {
+    if (opt.autoPosition && typeof direction === 'string') {
         // --- 可能要重置 pop 位置 ---
         clickgo.dom.watchSize(pop, () => {
             refreshPopPosition(el, pop, direction, opt.size);

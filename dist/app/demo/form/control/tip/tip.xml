@@ -1,0 +1,13 @@
+<form width="300" height="500" title="Tip">
+    <layout direction="v" gutter="10" style="flex: 1; padding: 10px;">
+        <tip label="ok">
+            <button>123</button>
+        </tip>
+        <tip label="Click me">
+            <button>456</button>
+        </tip>
+        <tip label="This is a select">
+            <select :data="[1,2,3,4]"></select>
+        </tip>
+    </layout>
+</form>

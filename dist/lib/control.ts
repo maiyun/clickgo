@@ -186,7 +186,7 @@ export abstract class AbstractControl {
     public readonly emits: Record<string, null | ((payload: any) => boolean)> = {};
 
     /** --- 组件的子插槽 --- */
-    public readonly slots: Record<string, any> = {};
+    public readonly slots: Record<string, () => any[]> = {};
 
     /** --- 获取某插槽所有子类 --- */
     public get slotsAll() {
