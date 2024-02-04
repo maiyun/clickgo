@@ -5,6 +5,7 @@
         <layout gutter="10">
             <button v-if="selected[0] !== './test1'" style="flex: 1;" @click="go">Go test1 with {'type': 'show'}</button>
             <button style="flex: 1;" @click="ssend">send {'type': 'send'}</button>
+            <button style="flex: 1;" @click="sendToPanel(refs.panel, {'type': 's2p'})">sendToPanel {'type': 's2p'}</button>
         </layout>
         <layout gutter="10">
             <button style="flex: 1;" @click="plain = !plain">{{plain ? '' : '!'}}plain</button>

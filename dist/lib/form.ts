@@ -368,6 +368,11 @@ export abstract class AbstractPanel extends AbstractCommon {
         this.rootForm.formHash = fh;
     }
 
+    /** --- 发送一段数据到自己这个 panel 控件，本质上也是调用的 panel 控件的 send 方法，主要用来实现发送给跳转后的 panel --- */
+    public sendToRootPanel(data: Record<string, any>): void {
+        this.rootPanel.send(data);
+    }
+
     /** --- 母窗体进入 form hash 为源的步进条 --- */
     public async enterStep(list: Array<{
         /** --- 步骤 hash，第一个必须为当前 hash --- */

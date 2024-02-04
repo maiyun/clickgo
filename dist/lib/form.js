@@ -275,6 +275,9 @@ class AbstractPanel extends AbstractCommon {
     set formHash(fh) {
         this.rootForm.formHash = fh;
     }
+    sendToRootPanel(data) {
+        this.rootPanel.send(data);
+    }
     enterStep(list) {
         return __awaiter(this, void 0, void 0, function* () {
             return this.rootForm.enterStep(list);
