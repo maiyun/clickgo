@@ -8,7 +8,6 @@
 [+] Added `queryStringify` and `queryParse` methods to the `tool` library for serializing/deserializing query strings.  
 [+] Introduced a new `tip` control.
 
-
 # 3.11.2
 
 [+] Added enterStep and doneStep methods to AbstractPanel.  
