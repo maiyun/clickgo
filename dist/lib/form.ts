@@ -2099,6 +2099,17 @@ export function showPop(el: HTMLElement, pop: HTMLElement | undefined, direction
     'null'?: boolean;
     'autoPosition'?: boolean;
 } = {}): void {
+    if (pop && direction === 't') {
+        refreshPopPosition(el, pop, 't', opt.size);
+        if (opt.autoPosition) {
+            clickgo.dom.watchSize(pop, () => {
+                refreshPopPosition(el, pop, 't', opt.size);
+            });
+        }
+        pop.dataset.cgOpen = '';
+        pop.dataset.cgT = '';
+        return;
+    }
     // --- opt.null 为 true 代表可为空，为空也会被显示，默认为 false ---
     if (opt.null === undefined) {
         opt.null = false;
@@ -2170,6 +2181,12 @@ export function hidePop(pop?: HTMLElement): void {
             return;
         }
         hidePop(popInfo.elList[0]);
+        return;
+    }
+    if (pop.dataset.cgT !== undefined) {
+        pop.removeAttribute('data-cg-t');
+        pop.removeAttribute('data-cg-open');
+        clickgo.dom.unwatchSize(pop);
         return;
     }
     let isPop: boolean = false;

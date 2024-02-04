@@ -1590,6 +1590,17 @@ function refreshPopPosition(el, pop, direction, size = {}) {
 }
 let lastShowPopTime = 0;
 function showPop(el, pop, direction, opt = {}) {
+    if (pop && direction === 't') {
+        refreshPopPosition(el, pop, 't', opt.size);
+        if (opt.autoPosition) {
+            clickgo.dom.watchSize(pop, () => {
+                refreshPopPosition(el, pop, 't', opt.size);
+            });
+        }
+        pop.dataset.cgOpen = '';
+        pop.dataset.cgT = '';
+        return;
+    }
     if (opt.null === undefined) {
         opt.null = false;
     }
@@ -1649,6 +1660,12 @@ function hidePop(pop) {
             return;
         }
         hidePop(popInfo.elList[0]);
+        return;
+    }
+    if (pop.dataset.cgT !== undefined) {
+        pop.removeAttribute('data-cg-t');
+        pop.removeAttribute('data-cg-open');
+        clickgo.dom.unwatchSize(pop);
         return;
     }
     let isPop = false;

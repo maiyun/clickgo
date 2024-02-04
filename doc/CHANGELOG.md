@@ -1,5 +1,14 @@
 # Changelog
 
+# 3.11.3
+
+[+] Added `formHash` property to the `AbstractPanel` class for retrieving and setting the formHash of the parent form.  
+[+] Introduced the `sendToPanel` method to the `AbstractForm` class, allowing sending data to a panel control, essentially an extension of the panel control's `send` method.  
+[+] Expanded the functionality of the `AbstractPanel` class with the `sendToRootPanel` method, designed for sending data to the base panel control with a delayed call, facilitating data transmission to panels after navigation.  
+[+] Added `queryStringify` and `queryParse` methods to the `tool` library for serializing/deserializing query strings.  
+[+] Introduced a new `tip` control.
+
+
 # 3.11.2
 
 [+] Added enterStep and doneStep methods to AbstractPanel.  

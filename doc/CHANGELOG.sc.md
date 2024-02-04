@@ -1,5 +1,13 @@
 # 更新日志
 
+# 3.11.3
+
+[+] AbstractPanel 类新增 formHash 属性，用来获取和设置母窗体的 formHash。  
+[+] AbstractForm 类新增 sendToPanel 方法，可以给一个 panel 控件发送 data，这本质上是 panel 控件的 send 方法。  
+[+] AbstractPanel 类新增 sendToRootPanel 方法，用来给基 panel 控件发送 data，使用延迟调用，实现给跳转后的 panel 发送 data。  
+[+] tool 库新增 queryStringify、queryParse 方法。用来序列化/反序列化 query string。  
+[+] 新增 tip 控件。
+
 # 3.11.2
 
 [+] AbstractPanel 新增 enterStep、doneStep 方法。  
