@@ -269,6 +269,12 @@ class AbstractPanel extends AbstractCommon {
     get rootPanel() {
         return {};
     }
+    get formHash() {
+        return this.rootForm.formHash;
+    }
+    set formHash(fh) {
+        this.rootForm.formHash = fh;
+    }
     enterStep(list) {
         return __awaiter(this, void 0, void 0, function* () {
             return this.rootForm.enterStep(list);
@@ -383,6 +389,9 @@ class AbstractForm extends AbstractCommon {
             v.$data._historyHash.splice(-1);
             core.trigger('formHashChange', this.taskId, this.formId, parent);
         });
+    }
+    sendToPanel(panel, data) {
+        panel.send(data);
     }
     get inStep() {
         return this._inStep;

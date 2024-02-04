@@ -358,6 +358,16 @@ export abstract class AbstractPanel extends AbstractCommon {
         return {} as any;
     }
 
+    /** --- 获取母窗体的 formHash --- */
+    public get formHash(): string {
+        return this.rootForm.formHash;
+    }
+
+    /** --- 设置母窗体的 formHash --- */
+    public set formHash(fh: string) {
+        this.rootForm.formHash = fh;
+    }
+
     /** --- 母窗体进入 form hash 为源的步进条 --- */
     public async enterStep(list: Array<{
         /** --- 步骤 hash，第一个必须为当前 hash --- */
@@ -521,6 +531,11 @@ export abstract class AbstractForm extends AbstractCommon {
         v.$data._formHash = parent;
         v.$data._historyHash.splice(-1);
         core.trigger('formHashChange', this.taskId, this.formId, parent);
+    }
+
+    /** --- 发送一段数据到 panel 控件，本质上也是调用的 panel 控件的 send 方法 --- */
+    public sendToPanel(panel: control.AbstractControl & Record<string, any>, data: Record<string, any>): void {
+        panel.send(data);
     }
 
     /** --- 覆盖整个窗体的 loading --- */

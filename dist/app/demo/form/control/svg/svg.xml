@@ -5,20 +5,20 @@
         <svg :layout="layout" :src="file" style="width: 64px; height: 64px;" />
     </layout>
     <layout gutter="10" style="margin-top: 10px;">
-        <button @click="color = undefined" style="padding: 0 10px; flex: 1; width: 0;">Default</button>
-        <button @click="color = 'green'" style="padding: 0 10px; flex: 1; width: 0;">Green</button>
-        <button @click="color = 'red'" style="padding: 0 10px; flex: 1; width: 0;">Red</button>
+        <button @click="color = undefined" style="flex: 1; width: 0;">Default</button>
+        <button @click="color = 'green'" style="flex: 1; width: 0;">Green</button>
+        <button @click="color = 'red'" style="flex: 1; width: 0;">Red</button>
     </layout>
     <layout gutter="10" style="margin-top: 10px;">
-        <button @click="i = 0" style="padding: 0 10px; flex: 1; width: 0;">Shape 0</button>
-        <button @click="i = 1" style="padding: 0 10px; flex: 1; width: 0;">1</button>
-        <button @click="i = 2" style="padding: 0 10px; flex: 1; width: 0;">2</button>
-        <button @click="i = 3" style="padding: 0 10px; flex: 1; width: 0;">None</button>
+        <button @click="i = 0" style="flex: 1; width: 0;">Shape 0</button>
+        <button @click="i = 1" style="flex: 1; width: 0;">1</button>
+        <button @click="i = 2" style="flex: 1; width: 0;">2</button>
+        <button @click="i = 3" style="flex: 1; width: 0;">None</button>
     </layout>
     <layout gutter="10" style="margin-top: 10px;">
-        <button @click="f = 0" style="padding: 0 10px; flex: 1; width: 0;">File 0</button>
-        <button @click="f = 1" style="padding: 0 10px; flex: 1; width: 0;">1</button>
-        <button @click="f = 2" style="padding: 0 10px; flex: 1; width: 0;">2</button>
-        <button @click="f = 3" style="padding: 0 10px; flex: 1; width: 0;">None</button>
+        <button @click="f = 0" style="flex: 1; width: 0;">File 0</button>
+        <button @click="f = 1" style="flex: 1; width: 0;">1</button>
+        <button @click="f = 2" style="flex: 1; width: 0;">2</button>
+        <button @click="f = 3" style="flex: 1; width: 0;">None</button>
     </layout>
 </form>
