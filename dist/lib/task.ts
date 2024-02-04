@@ -1187,6 +1187,12 @@ export async function run(url: string | types.IApp, opt: types.ITaskRunOptions =
             },
             formatSecond: function(second: number): string {
                 return tool.formatSecond(second);
+            },
+            queryStringify: function(query: Record<string, any>): string {
+                return tool.queryStringify(query);
+            },
+            queryParse: function(query: string): Record<string, string | string[]> {
+                return tool.queryParse(query);
             }
         },
         'zip': {

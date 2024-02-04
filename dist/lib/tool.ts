@@ -867,3 +867,47 @@ export function formatSecond(second: number): string {
     const s = Math.floor(second - m * 60);
     return (h ? h.toString().padStart(2, '0') + ':' : '') + m.toString().padStart(2, '0') + ':' + s.toString().padStart(2, '0');
 }
+
+/**
+ * --- 将对象转换为 query string ---
+ * @param query 要转换的对象
+ */
+export function queryStringify(query: Record<string, any>): string {
+    return Object.entries(query).map(([k, v]) => {
+        if (Array.isArray(v)) {
+            return v.map((i) => `${encodeURIComponent(k)}=${encodeURIComponent(`${i}`)}`).join('&');
+        }
+        return `${encodeURIComponent(k)}=${encodeURIComponent(`${v}`)}`;
+    }).join('&');
+}
+
+/**
+ * --- 将 query string 转换为对象 ---
+ * @param query 要转换的字符串
+ */
+export function queryParse(query: string): Record<string, string | string[]> {
+    const ret: Record<string, string | string[]> = {};
+    const arrayKeys: Record<string, boolean> = {};
+    for (const i of query.split('&')) {
+        if (!i.length) {
+            continue;
+        }
+
+        const pos = i.indexOf('=');
+
+        const key = decodeURIComponent(pos === -1 ? i : i.slice(0, pos));
+        const value = pos === -1 ? '' : decodeURIComponent(i.slice(pos + 1));
+
+        if (arrayKeys[key]) {
+            (ret[key] as string[]).push(value);
+        }
+        else if (undefined === ret[key]) {
+            ret[key] = value;
+        }
+        else {
+            ret[key] = [ret[key] as string, value];
+            arrayKeys[key] = true;
+        }
+    }
+    return ret;
+}

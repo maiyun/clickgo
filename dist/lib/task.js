@@ -1057,6 +1057,12 @@ function run(url, opt = {}, ntid) {
                 },
                 formatSecond: function (second) {
                     return tool.formatSecond(second);
+                },
+                queryStringify: function (query) {
+                    return tool.queryStringify(query);
+                },
+                queryParse: function (query) {
+                    return tool.queryParse(query);
                 }
             },
             'zip': {

@@ -66,6 +66,8 @@ class default_1 extends clickgo.form.AbstractForm {
         this.url = 'HtTp://uSer:pAss@sUBDom.TopdOm23.CoM:29819/Admxw2Ksiz/dszas?Mdi=KdiMs1&a=JDd#hehHe';
         this.url1 = '/abc/def/hehe';
         this.url2 = '../bb.index';
+        this.second = '4531';
+        this.qs = 'a=1&b=2&c=3';
     }
     sleep() {
         return __awaiter(this, void 0, void 0, function* () {
@@ -97,6 +99,21 @@ class default_1 extends clickgo.form.AbstractForm {
     }
     urlResolve() {
         clickgo.form.dialog(clickgo.tool.urlResolve(this.url1, this.url2)).catch((e) => { throw e; });
+    }
+    formatSecond() {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield clickgo.form.dialog(clickgo.tool.formatSecond(parseInt(this.second) || 0));
+        });
+    }
+    queryParse() {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield clickgo.form.dialog(JSON.stringify(clickgo.tool.queryParse(this.qs)));
+        });
+    }
+    queryStringify() {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield clickgo.form.dialog(clickgo.tool.queryStringify({ 'a': 1, 'b': 'c' }));
+        });
     }
 }
 exports.default = default_1;

@@ -90,4 +90,20 @@ export default class extends clickgo.form.AbstractForm {
         ).catch((e) => { throw e; });
     }
 
+    public second = '4531';
+
+    public async formatSecond() {
+        await clickgo.form.dialog(clickgo.tool.formatSecond(parseInt(this.second) || 0));
+    }
+
+    public qs = 'a=1&b=2&c=3';
+
+    public async queryParse() {
+        await clickgo.form.dialog(JSON.stringify(clickgo.tool.queryParse(this.qs)));
+    }
+
+    public async queryStringify() {
+        await clickgo.form.dialog(clickgo.tool.queryStringify({'a':1,'b':'c'}));
+    }
+
 }

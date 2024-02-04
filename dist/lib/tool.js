@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.formatSecond = exports.compar = exports.execCommand = exports.blob2DataUrl = exports.blob2Text = exports.urlAtom = exports.urlResolve = exports.parseUrl = exports.post = exports.fetch = exports.request = exports.rgb2hsl = exports.escapeHTML = exports.getArray = exports.getNumber = exports.getBoolean = exports.random = exports.RANDOM_LUNS = exports.RANDOM_V = exports.RANDOM_LUN = exports.RANDOM_LU = exports.RANDOM_LN = exports.RANDOM_UN = exports.RANDOM_L = exports.RANDOM_U = exports.RANDOM_N = exports.rand = exports.getMimeByPath = exports.stylePrepend = exports.teleportGlue = exports.eventsAttrWrap = exports.layoutClassPrepend = exports.layoutInsertAttr = exports.layoutAddTagClassAndReTagName = exports.styleUrl2DataUrl = exports.match = exports.purify = exports.sleepFrame = exports.nextFrame = exports.sleep = exports.clone = exports.blob2ArrayBuffer = exports.getClassPrototype = void 0;
+exports.queryParse = exports.queryStringify = exports.formatSecond = exports.compar = exports.execCommand = exports.blob2DataUrl = exports.blob2Text = exports.urlAtom = exports.urlResolve = exports.parseUrl = exports.post = exports.fetch = exports.request = exports.rgb2hsl = exports.escapeHTML = exports.getArray = exports.getNumber = exports.getBoolean = exports.random = exports.RANDOM_LUNS = exports.RANDOM_V = exports.RANDOM_LUN = exports.RANDOM_LU = exports.RANDOM_LN = exports.RANDOM_UN = exports.RANDOM_L = exports.RANDOM_U = exports.RANDOM_N = exports.rand = exports.getMimeByPath = exports.stylePrepend = exports.teleportGlue = exports.eventsAttrWrap = exports.layoutClassPrepend = exports.layoutInsertAttr = exports.layoutAddTagClassAndReTagName = exports.styleUrl2DataUrl = exports.match = exports.purify = exports.sleepFrame = exports.nextFrame = exports.sleep = exports.clone = exports.blob2ArrayBuffer = exports.getClassPrototype = void 0;
 function getClassPrototype(obj, over = [], level = 0) {
     if (level === 0) {
         return getClassPrototype(Object.getPrototypeOf(obj), over, level + 1);
@@ -692,3 +692,36 @@ function formatSecond(second) {
     return (h ? h.toString().padStart(2, '0') + ':' : '') + m.toString().padStart(2, '0') + ':' + s.toString().padStart(2, '0');
 }
 exports.formatSecond = formatSecond;
+function queryStringify(query) {
+    return Object.entries(query).map(([k, v]) => {
+        if (Array.isArray(v)) {
+            return v.map((i) => `${encodeURIComponent(k)}=${encodeURIComponent(`${i}`)}`).join('&');
+        }
+        return `${encodeURIComponent(k)}=${encodeURIComponent(`${v}`)}`;
+    }).join('&');
+}
+exports.queryStringify = queryStringify;
+function queryParse(query) {
+    const ret = {};
+    const arrayKeys = {};
+    for (const i of query.split('&')) {
+        if (!i.length) {
+            continue;
+        }
+        const pos = i.indexOf('=');
+        const key = decodeURIComponent(pos === -1 ? i : i.slice(0, pos));
+        const value = pos === -1 ? '' : decodeURIComponent(i.slice(pos + 1));
+        if (arrayKeys[key]) {
+            ret[key].push(value);
+        }
+        else if (undefined === ret[key]) {
+            ret[key] = value;
+        }
+        else {
+            ret[key] = [ret[key], value];
+            arrayKeys[key] = true;
+        }
+    }
+    return ret;
+}
+exports.queryParse = queryParse;

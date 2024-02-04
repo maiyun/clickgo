@@ -1,4 +1,4 @@
-<form width="350" height="400" title="Library tool">
+<form width="350" height="500" title="Library tool">
     <flow direction="v" style="flex: 1; padding: 10px;">
         <layout direction="v" gutter="10">
             <button @click="sleep">{{sleeping ? 'Waiting...' : 'sleep(1000)'}}</button>
@@ -7,12 +7,12 @@
             <layout gutter="10">
                 <text v-model="min" style="flex: 1;"></text>
                 <text v-model="max" style="flex: 1;"></text>
-                <button @click="rand" style="padding: 0 10px;">rand({{min}}, {{max}})</button>
+                <button @click="rand">rand({{min}}, {{max}})</button>
             </layout>
             <layout gutter="10">
                 <text v-model="length" style="width: 30px;"></text>
                 <text v-model="block" style="flex: 1;"></text>
-                <button @click="random" style="padding: 0 10px;">random({{length}}, RANDOM_LN, '{{block}}')</button>
+                <button @click="random">random({{length}}, RANDOM_LN, '{{block}}')</button>
             </layout>
             <button @click="escapeHTML">escapeHTML('{{purifyTxt.slice(0, 5).replace("'", "\\'")}}...')</button>
             <button @click="rgb2hsl">rgb2hsl('9,105,218')</button>
@@ -22,6 +22,15 @@
             <text v-model="url1"></text>
             <text v-model="url2"></text>
             <button @click="urlResolve">urlResolve('{{url1.slice(0, 5)}}...', '{{url2.slice(0, 5)}}...')</button>
+            <layout gutter="10">
+                <text v-model="second" style="flex: 1;"></text>
+                <button @click="formatSecond">formatSecond({{second}})</button>
+            </layout>
+            <layout gutter="10">
+                <text v-model="qs" style="flex: 1;"></text>
+                <button @click="queryParse">queryParse('{{qs.slice(0, 5)}}...')</button>
+            </layout>
+            <button @click="queryStringify">queryStringify({'a':1,'b':'c'})</button>
         </layout>
     </flow>
 </form>
