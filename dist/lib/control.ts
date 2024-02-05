@@ -128,9 +128,9 @@ export abstract class AbstractControl {
      * @param cb 回调
      * @param opt 参数
      */
-    public watch<T extends this & this['props'], TK extends keyof T>(
-        name: TK,
-        cb: (val: T[TK], old: T[TK]) => void | Promise<void>,
+    public watch<T extends this & this['props'], TK extends keyof T, TR>(
+        name: TK | (() => TR),
+        cb: (val: T[TK] & TR, old: T[TK] & TR) => void | Promise<void>,
         opt: {
             'immediate'?: boolean;
             'deep'?: boolean;

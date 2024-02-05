@@ -34,11 +34,6 @@ export default class extends clickgo.control.AbstractControl {
     /** --- nav 控件 --- */
     public nav: any = null;
 
-    /** --- nav 选中的 name 值 --- */
-    public get navSelected(): string {
-        return this.nav ? this.nav.selected : '';
-    }
-
     /** --- 当前 active 的 panel id --- */
     public activeId: number = 0;
 
@@ -59,11 +54,25 @@ export default class extends clickgo.control.AbstractControl {
      */
     public async go(
         cls: string | (new () => clickgo.form.AbstractPanel),
-        data?: Record<string, any>
+        data: Record<string, any> = {},
+        opt: {
+            'nav'?: boolean;
+            'action'?: 'forword' | 'back';
+            'previous'?: string;
+        } = {}
     ): Promise<boolean> {
         if (this.loading) {
             return false;
         }
+        const showEvent: types.IAbstractPanelShowEvent = {
+            'detail': {
+                'data': data,
+                'nav': opt.nav ?? false,
+                'action': opt.action ?? 'forword',
+                'previous': opt.previous ?? '',
+                'qsChange': false
+            }
+        };
         this.loading = true;
         if (typeof cls === 'string') {
             cls = clickgo.tool.urlResolve(this.path + '/', cls);
@@ -96,8 +105,9 @@ export default class extends clickgo.control.AbstractControl {
             if (this.nav && (JSON.stringify(item.vroot.qs) !== JSON.stringify(this.nav.qs))) {
                 item.vroot.qs = clickgo.tool.clone(this.nav.qs);
                 await item.vroot.onQsChange();
+                showEvent.detail.qsChange = true;
             }
-            await item.vroot.onShow(data ?? {});
+            await item.vroot.onShow(showEvent);
             this.loading = false;
             return true;
         }
@@ -120,8 +130,9 @@ export default class extends clickgo.control.AbstractControl {
             if (this.nav) {
                 rtn.vroot.qs = clickgo.tool.clone(this.nav.qs);
                 await rtn.vroot.onQsChange();
+                showEvent.detail.qsChange = true;
             }
-            await rtn.vroot.onShow(data ?? {});
+            await rtn.vroot.onShow(showEvent);
             this.loading = false;
             return true;
         }
@@ -143,7 +154,10 @@ export default class extends clickgo.control.AbstractControl {
     }
 
     /** --- 根据 name 更新 panel 的方法 --- */
-    public async mapNameChange(): Promise<void> {
+    public async mapNameChange(opt: {
+        'action'?: 'forword' | 'back';
+        'previous'?: string;
+    } = {}): Promise<void> {
         if (!this.props.map) {
             this.mapSelected = '';
             return;
@@ -170,7 +184,11 @@ export default class extends clickgo.control.AbstractControl {
             return;
         }
         /** --- went 事件对象 --- */
-        const rtn = await this.go(this.props.map[to[0]]);
+        const rtn = await this.go(this.props.map[to[0]], undefined, {
+            'nav': this.nav ? true : false,
+            'action': opt.action ?? 'forword',
+            'previous': opt.previous ?? ''
+        });
         const wentEvent: types.IPanelWentEvent = {
             'detail': {
                 'result': rtn,
@@ -191,21 +209,33 @@ export default class extends clickgo.control.AbstractControl {
     public onMounted(): void {
         this.nav = this.parentByName('nav');
         // --- 等待 rootForm 的 mounted 真正的挂载完成，在执行下面的内容 ---
-        this.rootForm.ready(() => {
+        this.rootForm.ready(async() => {
             this.watch('modelValue', async () => {
-                await this.mapNameChange();
-            }, {
-                'immediate': true
-            });
-            this.watch('navSelected', async () => {
                 await this.mapNameChange();
             });
             this.watch('map', async () => {
                 await this.mapNameChange();
             }, {
-                'deep': true,
-                'immediate': true
+                'deep': true
             });
+            if (this.nav) {
+                this.watch((): string[] => {
+                    const hh = clickgo.tool.clone(this.rootForm._historyHash);
+                    if (this.rootForm.formHash) {
+                        hh.push(this.rootForm.formHash);
+                    }
+                    return hh;
+                }, async (n, o) => {
+                    const action = n.length < o.length ? 'back' : 'forword';
+                    await this.mapNameChange({
+                        'action': action,
+                        'previous': o[o.length - 1]
+                    });
+                }, {
+                    'deep': true
+                });
+            }
+            await this.mapNameChange();
         });
     }
 

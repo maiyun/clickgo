@@ -402,7 +402,7 @@ export abstract class AbstractPanel extends AbstractCommon {
         return this.rootForm.formFocus ?? false;
     }
 
-    public onShow(data: Record<string, any>): void | Promise<void>;
+    public onShow(e: types.IAbstractPanelShowEvent): void | Promise<void>;
     public onShow(): void {
         return;
     }

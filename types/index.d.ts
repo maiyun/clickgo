@@ -623,6 +623,22 @@ interface ICustomEvent {
     preventDefault: () => void;
 }
 
+// --- AbstractPanel Control ---
+
+export interface IAbstractPanelShowEvent {
+    'detail': {
+        'data': Record<string, any>;
+        /** --- 是否是 nav 模式 --- */
+        'nav': boolean;
+        /** --- 仅 nav 联动时有效，代表是前进还是回退 --- */
+        'action': 'forword' | 'back';
+        /** --- 仅 nav 联动时有效，代表上一个的 formHash 的值 --- */
+        'previous': string;
+        /** --- 仅 nav 联动时有效，代表本次 show 的时候 qs 是否发生了变化 --- */
+        'qsChange': boolean;
+    }
+}
+
 // --- Greatlist Control ---
 
 export interface IGreatlistRemoveEvent extends ICustomEvent {

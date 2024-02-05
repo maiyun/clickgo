@@ -51,9 +51,6 @@ class default_1 extends clickgo.control.AbstractControl {
         this.nav = null;
         this.activeId = 0;
     }
-    get navSelected() {
-        return this.nav ? this.nav.selected : '';
-    }
     hideActive() {
         return __awaiter(this, void 0, void 0, function* () {
             if (!this.activeId) {
@@ -66,11 +63,21 @@ class default_1 extends clickgo.control.AbstractControl {
             old.style.pointerEvents = 'none';
         });
     }
-    go(cls, data) {
+    go(cls, data = {}, opt = {}) {
+        var _a, _b, _c;
         return __awaiter(this, void 0, void 0, function* () {
             if (this.loading) {
                 return false;
             }
+            const showEvent = {
+                'detail': {
+                    'data': data,
+                    'nav': (_a = opt.nav) !== null && _a !== void 0 ? _a : false,
+                    'action': (_b = opt.action) !== null && _b !== void 0 ? _b : 'forword',
+                    'previous': (_c = opt.previous) !== null && _c !== void 0 ? _c : '',
+                    'qsChange': false
+                }
+            };
             this.loading = true;
             if (typeof cls === 'string') {
                 cls = clickgo.tool.urlResolve(this.path + '/', cls);
@@ -97,8 +104,9 @@ class default_1 extends clickgo.control.AbstractControl {
                 if (this.nav && (JSON.stringify(item.vroot.qs) !== JSON.stringify(this.nav.qs))) {
                     item.vroot.qs = clickgo.tool.clone(this.nav.qs);
                     yield item.vroot.onQsChange();
+                    showEvent.detail.qsChange = true;
                 }
-                yield item.vroot.onShow(data !== null && data !== void 0 ? data : {});
+                yield item.vroot.onShow(showEvent);
                 this.loading = false;
                 return true;
             }
@@ -118,12 +126,13 @@ class default_1 extends clickgo.control.AbstractControl {
                 if (this.nav) {
                     rtn.vroot.qs = clickgo.tool.clone(this.nav.qs);
                     yield rtn.vroot.onQsChange();
+                    showEvent.detail.qsChange = true;
                 }
-                yield rtn.vroot.onShow(data !== null && data !== void 0 ? data : {});
+                yield rtn.vroot.onShow(showEvent);
                 this.loading = false;
                 return true;
             }
-            catch (_a) {
+            catch (_d) {
                 this.loading = false;
                 return false;
             }
@@ -135,7 +144,8 @@ class default_1 extends clickgo.control.AbstractControl {
         }
         this.loaded[this.activeId].vroot.onReceive(data);
     }
-    mapNameChange() {
+    mapNameChange(opt = {}) {
+        var _a, _b;
         return __awaiter(this, void 0, void 0, function* () {
             if (!this.props.map) {
                 this.mapSelected = '';
@@ -161,7 +171,11 @@ class default_1 extends clickgo.control.AbstractControl {
             if (!event.go) {
                 return;
             }
-            const rtn = yield this.go(this.props.map[to[0]]);
+            const rtn = yield this.go(this.props.map[to[0]], undefined, {
+                'nav': this.nav ? true : false,
+                'action': (_a = opt.action) !== null && _a !== void 0 ? _a : 'forword',
+                'previous': (_b = opt.previous) !== null && _b !== void 0 ? _b : ''
+            });
             const wentEvent = {
                 'detail': {
                     'result': rtn,
@@ -179,22 +193,34 @@ class default_1 extends clickgo.control.AbstractControl {
     }
     onMounted() {
         this.nav = this.parentByName('nav');
-        this.rootForm.ready(() => {
+        this.rootForm.ready(() => __awaiter(this, void 0, void 0, function* () {
             this.watch('modelValue', () => __awaiter(this, void 0, void 0, function* () {
-                yield this.mapNameChange();
-            }), {
-                'immediate': true
-            });
-            this.watch('navSelected', () => __awaiter(this, void 0, void 0, function* () {
                 yield this.mapNameChange();
             }));
             this.watch('map', () => __awaiter(this, void 0, void 0, function* () {
                 yield this.mapNameChange();
             }), {
-                'deep': true,
-                'immediate': true
+                'deep': true
             });
-        });
+            if (this.nav) {
+                this.watch(() => {
+                    const hh = clickgo.tool.clone(this.rootForm._historyHash);
+                    if (this.rootForm.formHash) {
+                        hh.push(this.rootForm.formHash);
+                    }
+                    return hh;
+                }, (n, o) => __awaiter(this, void 0, void 0, function* () {
+                    const action = n.length < o.length ? 'back' : 'forword';
+                    yield this.mapNameChange({
+                        'action': action,
+                        'previous': o[o.length - 1]
+                    });
+                }), {
+                    'deep': true
+                });
+            }
+            yield this.mapNameChange();
+        }));
     }
     onBeforeUnmount() {
         for (const id in this.loaded) {

@@ -4,6 +4,7 @@
             <label>formHash:</label>
             <text v-model="fh" style="flex: 1;" />
             <button @click="formHash = fh">Change</button>
+            <button @click="formHashBack">Back</button>
         </layout>
         <nav v-model="name" default="list" hash style="flex: 1;">
             <nav-item label="User">

@@ -1,4 +1,5 @@
 import * as clickgo from 'clickgo';
+import * as types from '~/types';
 
 export default class extends clickgo.form.AbstractPanel {
 
@@ -6,11 +7,11 @@ export default class extends clickgo.form.AbstractPanel {
 
     public data: any = {};
 
-    public async onShow(d: Record<string, any>): Promise<void> {
+    public async onShow(e: types.IAbstractPanelShowEvent): Promise<void> {
         // --- 装作要做一些什么 await 的事件 ---
         await clickgo.tool.sleep(1000);
         ++this.scount;
-        this.data = d;
+        this.data = e;
     }
 
     public async onHide(): Promise<void> {
