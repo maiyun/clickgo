@@ -689,7 +689,7 @@ export default class extends clickgo.control.AbstractControl {
         /** --- 真实窗体宽度 --- */
         let width = this.widthData || this.element.offsetWidth;
         /** --- 恢复吸附标记 --- */
-        let changeStateAbs = false;
+        // let changeStateAbs = false;
         if (this.stateAbs) {
             /*
             switch (this.stateAbs) {

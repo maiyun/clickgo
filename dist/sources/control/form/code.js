@@ -569,7 +569,6 @@ class default_1 extends clickgo.control.AbstractControl {
         let left = this.leftData;
         let height = this.heightData || this.element.offsetHeight;
         let width = this.widthData || this.element.offsetWidth;
-        let changeStateAbs = false;
         if (this.stateAbs) {
         }
         else {
