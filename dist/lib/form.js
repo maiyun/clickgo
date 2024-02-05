@@ -275,6 +275,11 @@ class AbstractPanel extends AbstractCommon {
     set formHash(fh) {
         this.rootForm.formHash = fh;
     }
+    formHashBack() {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.rootForm.formHashBack();
+        });
+    }
     sendToRootPanel(data) {
         this.rootPanel.send(data);
     }
@@ -293,6 +298,9 @@ class AbstractPanel extends AbstractCommon {
         return (_a = this.rootForm.formFocus) !== null && _a !== void 0 ? _a : false;
     }
     onShow() {
+        return;
+    }
+    onShowed() {
         return;
     }
     onHide() {

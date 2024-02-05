@@ -178,6 +178,7 @@ class default_1 extends clickgo.control.AbstractControl {
                 return;
             }
             this.mapSelected = name;
+            this.loaded[this.activeId].vroot.onShowed();
         });
     }
     onMounted() {

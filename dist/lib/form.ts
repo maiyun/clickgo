@@ -368,6 +368,11 @@ export abstract class AbstractPanel extends AbstractCommon {
         this.rootForm.formHash = fh;
     }
 
+    /** --- 将母窗体的 form hash 回退 --- */
+    public async formHashBack(): Promise<void> {
+        await this.rootForm.formHashBack();
+    }
+
     /** --- 发送一段数据到自己这个 panel 控件，本质上也是调用的 panel 控件的 send 方法，主要用来实现发送给跳转后的 panel --- */
     public sendToRootPanel(data: Record<string, any>): void {
         this.rootPanel.send(data);
@@ -399,6 +404,12 @@ export abstract class AbstractPanel extends AbstractCommon {
 
     public onShow(data: Record<string, any>): void | Promise<void>;
     public onShow(): void {
+        return;
+    }
+
+    public onShowed(): void | Promise<void>;
+    /** --- panel 已经完全显示后所要执行的 --- */
+    public onShowed() {
         return;
     }
 

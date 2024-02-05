@@ -188,6 +188,8 @@ export default class extends clickgo.control.AbstractControl {
             return;
         }
         this.mapSelected = name;
+        // --- 真正跳转成功，执行 panel 的 onShowed ---
+        this.loaded[this.activeId].vroot.onShowed();
     }
 
     public onMounted(): void {
