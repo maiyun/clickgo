@@ -642,6 +642,7 @@ export default class extends clickgo.control.AbstractControl {
         if (clickgo.dom.hasTouchButMouse(e)) {
             return;
         }
+        /** --- 拖动过程中贴入的边边 --- */
         let isBorder: types.TDomBorder = '';
         let top = this.topData;
         let left = this.leftData;
@@ -652,6 +653,7 @@ export default class extends clickgo.control.AbstractControl {
         /** --- 恢复吸附标记 --- */
         let changeStateAbs = false;
         if (this.stateAbs) {
+            /*
             switch (this.stateAbs) {
                 case 'l':
                 case 'r': {
@@ -672,6 +674,7 @@ export default class extends clickgo.control.AbstractControl {
                 case 'b': {
                     // --- 底部半屏吸附 ---
                     if (border === 't' || border === 'b') {
+                        // --- 仅上下调整，无需改变吸附状态 ---
                         break;
                     }
                     changeStateAbs = true;
@@ -687,6 +690,7 @@ export default class extends clickgo.control.AbstractControl {
                     break;
                 }
             }
+            */
         }
         else {
             this.historyLocation = {
@@ -705,12 +709,15 @@ export default class extends clickgo.control.AbstractControl {
             'minHeight': this.propInt('minHeight'),
             'border': border,
             'start': () => {
+                /*
                 if (this.stateAbs && changeStateAbs) {
                     // --- 吸附拖动还原 ---
                     this.stateAbs = '';
                 }
+                */
             },
             'move': (left, top, width, height, x, y, nborder) => {
+                // --- 内联窗体不会执行这个 ---
                 this.leftData = left;
                 this.emit('update:left', left);
                 this.topData = top;
@@ -719,32 +726,28 @@ export default class extends clickgo.control.AbstractControl {
                 this.emit('update:width', width);
                 this.heightData = height;
                 this.emit('update:height', height);
-                if (!this.isInside) {
-                    if (nborder !== '') {
-                        if (
-                            ((border === 'lt' || border === 't' || border === 'tr') && (nborder === 'lt' || nborder === 't' || nborder === 'tr')) ||
-                            ((border === 'bl' || border === 'b' || border === 'rb') && (nborder === 'bl' || nborder === 'b' || nborder === 'rb'))
-                        ) {
-                            if (isBorder === '') {
-                                isBorder = nborder;
+                if (nborder !== '') {
+                    if (
+                        ((border === 'lt' || border === 't' || border === 'tr') && (nborder === 'lt' || nborder === 't' || nborder === 'tr')) ||
+                        ((border === 'bl' || border === 'b' || border === 'rb') && (nborder === 'bl' || nborder === 'b' || nborder === 'rb'))
+                    ) {
+                        if (isBorder === '') {
+                            isBorder = nborder;
+                            if (!this.stateAbs) {
                                 clickgo.form.showCircular(x, y);
                                 clickgo.form.showRectangle(x, y, {
                                     'left': left,
                                     'width': width
                                 });
                             }
-                            else {
-                                isBorder = nborder;
+                        }
+                        else {
+                            isBorder = nborder;
+                            if (!this.stateAbs) {
                                 clickgo.form.moveRectangle({
                                     'left': left,
                                     'width': width
                                 });
-                            }
-                        }
-                        else {
-                            if (isBorder !== '') {
-                                isBorder = '';
-                                clickgo.form.hideRectangle();
                             }
                         }
                     }
@@ -755,20 +758,32 @@ export default class extends clickgo.control.AbstractControl {
                         }
                     }
                 }
+                else {
+                    if (isBorder !== '') {
+                        isBorder = '';
+                        clickgo.form.hideRectangle();
+                    }
+                }
             },
             'end': () => {
-                if (isBorder !== '') {
-                    if (!this.stateAbs && isBorder !== 'l' && isBorder !== 'r') {
-                        // --- 当前不是吸附状态，判断是否要吸附 ---
-                        const area = clickgo.core.getAvailArea();
-                        this.stateAbs = 'l';
-                        this.heightData = area.height;
-                        this.emit('update:height', this.heightData);
-                        this.topData = area.top;
-                        this.emit('update:top', this.topData);
-                    }
-                    clickgo.form.hideRectangle();
+                if (!isBorder) {
+                    return;
                 }
+                if (this.stateAbs) {
+                    return;
+                }
+                if (isBorder === 'l' || isBorder === 'r') {
+                    // --- 左右拖动不会产生任何吸附效果 ---
+                    return;
+                }
+                // --- 当前不是吸附状态，判断是否要吸附 ---
+                const area = clickgo.core.getAvailArea();
+                this.stateAbs = 'l';
+                this.heightData = area.height;
+                this.emit('update:height', this.heightData);
+                this.topData = area.top;
+                this.emit('update:top', this.topData);
+                clickgo.form.hideRectangle();
             }
         });
         // --- 绑定双击事件 ---

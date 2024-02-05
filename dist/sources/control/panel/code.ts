@@ -93,15 +93,11 @@ export default class extends clickgo.control.AbstractControl {
             const n: HTMLElement = this.element.querySelector('[data-panel-id="' + id + '"]')!;
             n.style.opacity = '1';
             n.style.pointerEvents = '';
-            let qsChange = false;
             if (this.nav && (JSON.stringify(item.vroot.qs) !== JSON.stringify(this.nav.qs))) {
                 item.vroot.qs = clickgo.tool.clone(this.nav.qs);
-                qsChange = true;
-            }
-            await item.vroot.onShow(data ?? {});
-            if (qsChange) {
                 await item.vroot.onQsChange();
             }
+            await item.vroot.onShow(data ?? {});
             this.loading = false;
             return true;
         }

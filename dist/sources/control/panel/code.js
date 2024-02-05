@@ -94,15 +94,11 @@ class default_1 extends clickgo.control.AbstractControl {
                 const n = this.element.querySelector('[data-panel-id="' + id + '"]');
                 n.style.opacity = '1';
                 n.style.pointerEvents = '';
-                let qsChange = false;
                 if (this.nav && (JSON.stringify(item.vroot.qs) !== JSON.stringify(this.nav.qs))) {
                     item.vroot.qs = clickgo.tool.clone(this.nav.qs);
-                    qsChange = true;
-                }
-                yield item.vroot.onShow(data !== null && data !== void 0 ? data : {});
-                if (qsChange) {
                     yield item.vroot.onQsChange();
                 }
+                yield item.vroot.onShow(data !== null && data !== void 0 ? data : {});
                 this.loading = false;
                 return true;
             }

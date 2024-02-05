@@ -534,34 +534,6 @@ class default_1 extends clickgo.control.AbstractControl {
         let width = this.widthData || this.element.offsetWidth;
         let changeStateAbs = false;
         if (this.stateAbs) {
-            switch (this.stateAbs) {
-                case 'l':
-                case 'r': {
-                    if (border === 'l' || border === 'r') {
-                        break;
-                    }
-                    changeStateAbs = true;
-                    if (border === 'bl' || border === 'b' || border === 'rb') {
-                        top = height - this.historyLocation.height;
-                    }
-                    height = this.historyLocation.height;
-                    break;
-                }
-                case 'b': {
-                    if (border === 't' || border === 'b') {
-                        break;
-                    }
-                    changeStateAbs = true;
-                    if (border === 'tr' || border === 'r' || border === 'rb') {
-                        left = width - this.historyLocation.width;
-                    }
-                    width = this.historyLocation.width;
-                    break;
-                }
-                default: {
-                    break;
-                }
-            }
         }
         else {
             this.historyLocation = {
@@ -580,9 +552,6 @@ class default_1 extends clickgo.control.AbstractControl {
             'minHeight': this.propInt('minHeight'),
             'border': border,
             'start': () => {
-                if (this.stateAbs && changeStateAbs) {
-                    this.stateAbs = '';
-                }
             },
             'move': (left, top, width, height, x, y, nborder) => {
                 this.leftData = left;
@@ -593,30 +562,26 @@ class default_1 extends clickgo.control.AbstractControl {
                 this.emit('update:width', width);
                 this.heightData = height;
                 this.emit('update:height', height);
-                if (!this.isInside) {
-                    if (nborder !== '') {
-                        if (((border === 'lt' || border === 't' || border === 'tr') && (nborder === 'lt' || nborder === 't' || nborder === 'tr')) ||
-                            ((border === 'bl' || border === 'b' || border === 'rb') && (nborder === 'bl' || nborder === 'b' || nborder === 'rb'))) {
-                            if (isBorder === '') {
-                                isBorder = nborder;
+                if (nborder !== '') {
+                    if (((border === 'lt' || border === 't' || border === 'tr') && (nborder === 'lt' || nborder === 't' || nborder === 'tr')) ||
+                        ((border === 'bl' || border === 'b' || border === 'rb') && (nborder === 'bl' || nborder === 'b' || nborder === 'rb'))) {
+                        if (isBorder === '') {
+                            isBorder = nborder;
+                            if (!this.stateAbs) {
                                 clickgo.form.showCircular(x, y);
                                 clickgo.form.showRectangle(x, y, {
                                     'left': left,
                                     'width': width
                                 });
                             }
-                            else {
-                                isBorder = nborder;
+                        }
+                        else {
+                            isBorder = nborder;
+                            if (!this.stateAbs) {
                                 clickgo.form.moveRectangle({
                                     'left': left,
                                     'width': width
                                 });
-                            }
-                        }
-                        else {
-                            if (isBorder !== '') {
-                                isBorder = '';
-                                clickgo.form.hideRectangle();
                             }
                         }
                     }
@@ -627,19 +592,30 @@ class default_1 extends clickgo.control.AbstractControl {
                         }
                     }
                 }
+                else {
+                    if (isBorder !== '') {
+                        isBorder = '';
+                        clickgo.form.hideRectangle();
+                    }
+                }
             },
             'end': () => {
-                if (isBorder !== '') {
-                    if (!this.stateAbs && isBorder !== 'l' && isBorder !== 'r') {
-                        const area = clickgo.core.getAvailArea();
-                        this.stateAbs = 'l';
-                        this.heightData = area.height;
-                        this.emit('update:height', this.heightData);
-                        this.topData = area.top;
-                        this.emit('update:top', this.topData);
-                    }
-                    clickgo.form.hideRectangle();
+                if (!isBorder) {
+                    return;
                 }
+                if (this.stateAbs) {
+                    return;
+                }
+                if (isBorder === 'l' || isBorder === 'r') {
+                    return;
+                }
+                const area = clickgo.core.getAvailArea();
+                this.stateAbs = 'l';
+                this.heightData = area.height;
+                this.emit('update:height', this.heightData);
+                this.topData = area.top;
+                this.emit('update:top', this.topData);
+                clickgo.form.hideRectangle();
             }
         });
         if (border === 't' || border === 'b') {
