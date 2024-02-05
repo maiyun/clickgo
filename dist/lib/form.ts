@@ -397,6 +397,11 @@ export abstract class AbstractPanel extends AbstractCommon {
     /** --- 当前的 nav（若有）传递过来的 qs --- */
     public qs: Record<string, string> = {};
 
+    /** --- 确定不再使用 qs 时可调用此方法清空，这样再次通过相同 qs 进入本 panel 依然会响应 qschange 事件 --- */
+    public clearQs() {
+        this.qs = {};
+    }
+
     /** --- 当前窗体是否是焦点 --- */
     public get formFocus(): boolean {
         return this.rootForm.formFocus ?? false;

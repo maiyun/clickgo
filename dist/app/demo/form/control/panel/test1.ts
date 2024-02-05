@@ -35,6 +35,11 @@ export default class extends clickgo.form.AbstractPanel {
         await clickgo.form.dialog('Hello panel!');
     }
 
+    public async clearQss() {
+        this.clearQs();
+        await clickgo.form.dialog('cleard.');
+    }
+
     public rootMountData = 'none';
 
     public onMounted(): void {

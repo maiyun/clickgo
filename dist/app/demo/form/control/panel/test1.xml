@@ -7,6 +7,7 @@
     <label>rootMountData: {{rootMountData}}</label>
     <button @click="click">Hi</button>
     <button @click="sendToRootPanel({'a':1})" style="height: 30px;">sendToRootPanel({'a':1})</button>
+    <button @click="clearQss">clearQs()</button>
     <layout>
         <button style="padding: 15px 30px;" area="split">
             Padding 10px 20px with pop

@@ -293,6 +293,9 @@ class AbstractPanel extends AbstractCommon {
             yield this.rootForm.doneStep();
         });
     }
+    clearQs() {
+        this.qs = {};
+    }
     get formFocus() {
         var _a;
         return (_a = this.rootForm.formFocus) !== null && _a !== void 0 ? _a : false;

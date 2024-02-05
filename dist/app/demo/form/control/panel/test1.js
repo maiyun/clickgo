@@ -69,6 +69,12 @@ class default_1 extends clickgo.form.AbstractPanel {
             yield clickgo.form.dialog('Hello panel!');
         });
     }
+    clearQss() {
+        return __awaiter(this, void 0, void 0, function* () {
+            this.clearQs();
+            yield clickgo.form.dialog('cleard.');
+        });
+    }
     onMounted() {
         this.rootMountData = this.rootForm.mountData;
     }
