@@ -1,5 +1,12 @@
 # Changelog
 
+# 3.11.4
+
+[+] Added `formHashBack` and `clearQs` methods to the `AbstractPanel` class.  
+[+] Added the `onShowed` event to the `AbstractPanel` class.  
+[\*] Modified the `onShow` event of the `AbstractPanel` class to `AstractPanelShowEvent`, allowing access to information such as forward/backward state, previous route, and whether the query string has changed.  
+[\*] Optimized the `close`, `min`, and `max` events of the `form` control to have a single parameter, useful for determining whether the event was triggered by the user clicking on a window button.
+
 # 3.11.3
 
 [+] Added `formHash` property to the `AbstractPanel` class for retrieving and setting the formHash of the parent form.  

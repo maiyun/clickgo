@@ -1,5 +1,12 @@
 # 更新日志
 
+# 3.11.4
+
+[+] AbstractPanel 类新增 formHashBack、clearQs 方法。  
+[+] AbstractPanel 类新增 onShowed 事件。  
+[\*] 修改了 AbstractPanel 类的 onShow 事件为 AstractPanelShowEvent，可读取前进、后退状态、上一个路由、qs 是否变化等信息。  
+[\*] form 控件的 close、min、max 事件优化为单一参数，可用来判断是否是用户点击了窗体按钮而触发的事件。
+
 # 3.11.3
 
 [+] AbstractPanel 类新增 formHash 属性，用来获取和设置母窗体的 formHash。  
