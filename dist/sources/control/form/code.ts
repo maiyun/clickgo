@@ -3,6 +3,12 @@ import * as types from '~/types/index';
 
 export default class extends clickgo.control.AbstractControl {
 
+    public emits = {
+        'max': null,
+        'min': null,
+        'close': null
+    };
+
     public props: {
 
         // --- 内部不可变更 ---
@@ -169,7 +175,20 @@ export default class extends clickgo.control.AbstractControl {
             'start': (x, y) => {
                 if (this.stateMaxData) {
                     // --- 不能用 maxMethod 方法，因为那个获得的形状不能满足拖动还原的形状 ---
-                    this.emit('max', e, 0, this.historyLocation);
+                    const event: types.IFormMaxEvent = {
+                        'detail': {
+                            'event': e,
+                            'action': 'move',
+                            'max': true,
+                            'history': {
+                                'width': this.historyLocation.width,
+                                'height': this.historyLocation.height,
+                                'left': this.historyLocation.left,
+                                'top': this.historyLocation.top
+                            }
+                        }
+                    };
+                    this.emit('max', event);
                     this.element.removeAttribute('data-cg-max');
                     this.stateMaxData = false;
                     this.emit('update:stateMax', false);
@@ -356,7 +375,7 @@ export default class extends clickgo.control.AbstractControl {
     }
 
     // --- 最小化 ---
-    public minMethod(): boolean {
+    public minMethod(e?: MouseEvent): boolean {
         if (this.isInside) {
             return true;
         }
@@ -390,48 +409,59 @@ export default class extends clickgo.control.AbstractControl {
         */
         if (!this.stateMinData) {
             // --- 当前是正常/最大化状态，需要变成最小化 ---
-            this.emit('min', event, 1, {});
-            if (event.go) {
-                // --- 不能用 isNativeSync，因为沉浸式也要最小化 ---
-                if (clickgo.isNative() && (this.formId === 1) && !clickgo.hasFrame()) {
-                    // --- 最小化不要管是否是沉浸式，沉浸式也要实体最小化 ---
-                    clickgo.native.min() as any;
+            const event: types.IFormMinEvent = {
+                'detail': {
+                    'event': e ?? null,
+                    'action': e ? 'click' : 'method',
+                    'min': false,
+                    'history': null
                 }
-                else {
-                    this.element.dataset.cgMin = '';
-                    this.stateMinData = true;
-                    this.emit('update:stateMin', true);
-                    // --- 如果当前有焦点，则使别人获取焦点 ---
-                    if (this.formFocus) {
-                        const formId = clickgo.form.getMaxZIndexID({
-                            'formIds': [this.formId]
-                        });
-                        clickgo.tool.sleep(100).then(() => {
-                            if (formId) {
-                                clickgo.form.changeFocus(formId);
-                            }
-                            else {
-                                clickgo.form.changeFocus();
-                            }
-                        }).catch((e) => { throw e; });
-                    }
-                }
+            };
+            this.emit('min', event);
+            // --- 不能用 isNativeSync，因为沉浸式也要最小化 ---
+            if (clickgo.isNative() && (this.formId === 1) && !clickgo.hasFrame()) {
+                // --- 最小化不要管是否是沉浸式，沉浸式也要实体最小化 ---
+                clickgo.native.min() as any;
             }
             else {
-                return false;
+                this.element.dataset.cgMin = '';
+                this.stateMinData = true;
+                this.emit('update:stateMin', true);
+                // --- 如果当前有焦点，则使别人获取焦点 ---
+                if (this.formFocus) {
+                    const formId = clickgo.form.getMaxZIndexID({
+                        'formIds': [this.formId]
+                    });
+                    clickgo.tool.sleep(100).then(() => {
+                        if (formId) {
+                            clickgo.form.changeFocus(formId);
+                        }
+                        else {
+                            clickgo.form.changeFocus();
+                        }
+                    }).catch((e) => { throw e; });
+                }
             }
         }
         else {
             // --- 需要变正常 ---
-            this.emit('min', event, 0, this.historyLocation);
-            if (event.go) {
-                this.element.removeAttribute('data-cg-min');
-                this.stateMinData = false;
-                this.emit('update:stateMin', false);
-            }
-            else {
-                return false;
-            }
+            const event: types.IFormMinEvent = {
+                'detail': {
+                    'event': e ?? null,
+                    'action': e ? 'click' : 'method',
+                    'min': true,
+                    'history': {
+                        'width': this.historyLocation.width,
+                        'height': this.historyLocation.height,
+                        'left': this.historyLocation.left,
+                        'top': this.historyLocation.top
+                    }
+                }
+            };
+            this.emit('min', event);
+            this.element.removeAttribute('data-cg-min');
+            this.stateMinData = false;
+            this.emit('update:stateMin', false);
         }
         // --- 触发 formStateMinChanged 事件 ---
         this.trigger('formStateMinChanged', this.stateMinData);
@@ -487,7 +517,7 @@ export default class extends clickgo.control.AbstractControl {
     }
 
     // --- 最大化 ---
-    public maxMethod(): boolean {
+    public maxMethod(e?: MouseEvent): boolean {
         if (this.isInside) {
             return true;
         }
@@ -496,120 +526,125 @@ export default class extends clickgo.control.AbstractControl {
                 return false;
             }
         }
-        const event = {
-            'go': true,
-            preventDefault: function() {
-                this.go = false;
-            }
-        };
         if (!this.stateMaxData) {
             // --- 当前是正常状态，需要变成最大化 ---
-            this.emit('max', event, 1, {});
-            if (event.go) {
-                if (this.stateAbs) {
-                    this.stateAbs = '';
+            const event: types.IFormMaxEvent = {
+                'detail': {
+                    'event': e ?? null,
+                    'action': e ? 'click' : 'move',
+                    'max': false,
+                    'history': null
                 }
-                else {
-                    this.historyLocation = {
-                        'width': this.widthData || this.element.offsetWidth,
-                        'height': this.heightData || this.element.offsetHeight,
-                        'left': this.leftData,
-                        'top': this.topData
-                    };
-                }
-                if (this.isNativeSync) {
-                    clickgo.native.max() as any;
-                }
-                else {
-                    this.element.dataset.cgMax = '';
-                    this.stateMaxData = true;
-                    this.emit('update:stateMax', true);
-                }
-                // --- 变窗体样子 ---
-                if (!this.isNativeSync) {
-                    this.element.style.transition = 'all .1s linear';
-                    this.element.style.transitionProperty = 'left,top,width,height';
-                    clickgo.tool.sleep(150).then(() => {
-                        this.element.style.transition = '';
-                    }).catch((e) => { console.log(e); });
-                }
-                const area = clickgo.core.getAvailArea();
-                if (this.rootForm.bottomMost) {
-                    // --- 置底窗体 ---
-                    this.leftData = 0;
-                    this.topData = 0;
-                    this.widthData = area.owidth;
-                    this.heightData = area.oheight;
-                }
-                else {
-                    // --- 其他类型 ---
-                    this.leftData = area.left;
-                    this.topData = area.top;
-                    this.widthData = area.width;
-                    this.heightData = area.height;
-                }
-                this.emit('update:left', this.leftData);
-                this.emit('update:top', this.topData);
-                if (this.propInt('width') > 0) {
-                    this.emit('update:width', this.widthData);
-                }
-                if (this.propInt('height') > 0) {
-                    this.emit('update:height', this.heightData);
-                }
+            };
+            this.emit('max', event);
+            if (this.stateAbs) {
+                this.stateAbs = '';
             }
             else {
-                return false;
+                this.historyLocation = {
+                    'width': this.widthData || this.element.offsetWidth,
+                    'height': this.heightData || this.element.offsetHeight,
+                    'left': this.leftData,
+                    'top': this.topData
+                };
+            }
+            if (this.isNativeSync) {
+                clickgo.native.max() as any;
+            }
+            else {
+                this.element.dataset.cgMax = '';
+                this.stateMaxData = true;
+                this.emit('update:stateMax', true);
+            }
+            // --- 变窗体样子 ---
+            if (!this.isNativeSync) {
+                this.element.style.transition = 'all .1s linear';
+                this.element.style.transitionProperty = 'left,top,width,height';
+                clickgo.tool.sleep(150).then(() => {
+                    this.element.style.transition = '';
+                }).catch((e) => { console.log(e); });
+            }
+            const area = clickgo.core.getAvailArea();
+            if (this.rootForm.bottomMost) {
+                // --- 置底窗体 ---
+                this.leftData = 0;
+                this.topData = 0;
+                this.widthData = area.owidth;
+                this.heightData = area.oheight;
+            }
+            else {
+                // --- 其他类型 ---
+                this.leftData = area.left;
+                this.topData = area.top;
+                this.widthData = area.width;
+                this.heightData = area.height;
+            }
+            this.emit('update:left', this.leftData);
+            this.emit('update:top', this.topData);
+            if (this.propInt('width') > 0) {
+                this.emit('update:width', this.widthData);
+            }
+            if (this.propInt('height') > 0) {
+                this.emit('update:height', this.heightData);
             }
         }
         else {
             // --- 需要变正常 ---
-            this.emit('max', event, 0, this.historyLocation);
-            if (event.go) {
-                // --- 变窗体样子 ---
-                if (this.isNativeSync) {
-                    clickgo.native.restore() as any;
-                }
-                else {
-                    this.element.removeAttribute('data-cg-max');
-                    this.stateMaxData = false;
-                    this.emit('update:stateMax', false);
-                    // --- 动画效果 ---
-                    this.element.style.transition = 'all .1s linear';
-                    this.element.style.transitionProperty = 'left,top,width,height';
-                }
-                if (!this.propInt('width')) {
-                    this.widthData = 0;
-                }
-                else {
-                    this.widthData = this.historyLocation.width;
-                    this.emit('update:width', this.historyLocation.width);
-                }
-                if (!this.propInt('height')) {
-                    this.heightData = 0;
-                }
-                else {
-                    this.heightData = this.historyLocation.height;
-                    this.emit('update:height', this.historyLocation.height);
-                }
-                this.leftData = this.historyLocation.left;
-                this.emit('update:left', this.historyLocation.left);
-                this.topData = this.historyLocation.top;
-                this.emit('update:top', this.historyLocation.top);
-                // --- native 模式非 frame、非沉浸模式，要调整 size ---
-                if (this.isNativeSync) {
-                    // --- mac 要多处理一步 ---
-                    if (clickgo.getPlatform() === 'darwin') {
-                        clickgo.native.size(this.widthData, this.heightData) as any;
+            const event: types.IFormMaxEvent = {
+                'detail': {
+                    'event': e ?? null,
+                    'action': e ? 'click' : 'move',
+                    'max': true,
+                    'history': {
+                        'height': this.historyLocation.height,
+                        'left': this.historyLocation.left,
+                        'top': this.historyLocation.top,
+                        'width': this.historyLocation.width
                     }
                 }
-                else {
-                    clickgo.tool.sleep(150).then(() => {
-                        this.element.style.transition = '';
-                    }).catch((e) => { console.log(e); });
+            };
+            this.emit('max', event);
+            // --- 变窗体样子 ---
+            if (this.isNativeSync) {
+                clickgo.native.restore() as any;
+            }
+            else {
+                this.element.removeAttribute('data-cg-max');
+                this.stateMaxData = false;
+                this.emit('update:stateMax', false);
+                // --- 动画效果 ---
+                this.element.style.transition = 'all .1s linear';
+                this.element.style.transitionProperty = 'left,top,width,height';
+            }
+            if (!this.propInt('width')) {
+                this.widthData = 0;
+            }
+            else {
+                this.widthData = this.historyLocation.width;
+                this.emit('update:width', this.historyLocation.width);
+            }
+            if (!this.propInt('height')) {
+                this.heightData = 0;
+            }
+            else {
+                this.heightData = this.historyLocation.height;
+                this.emit('update:height', this.historyLocation.height);
+            }
+            this.leftData = this.historyLocation.left;
+            this.emit('update:left', this.historyLocation.left);
+            this.topData = this.historyLocation.top;
+            this.emit('update:top', this.historyLocation.top);
+            // --- native 模式非 frame、非沉浸模式，要调整 size ---
+            if (this.isNativeSync) {
+                // --- mac 要多处理一步 ---
+                if (clickgo.getPlatform() === 'darwin') {
+                    clickgo.native.size(this.widthData, this.heightData) as any;
                 }
             }
             else {
-                return false;
+                clickgo.tool.sleep(150).then(() => {
+                    this.element.style.transition = '';
+                }).catch((e) => { console.log(e); });
             }
         }
         // --- 触发 formRemoved 事件 ---
@@ -618,14 +653,17 @@ export default class extends clickgo.control.AbstractControl {
     }
 
     // --- 关闭窗体 ---
-    public closeMethod(): void {
+    public closeMethod(e: MouseEvent): void {
         if (this.isInside) {
             return;
         }
-        const event = {
-            go: true,
+        const event: types.IFormCloseEvent = {
+            'go': true,
             preventDefault: function() {
                 this.go = false;
+            },
+            'detail': {
+                'event': e
             }
         };
         this.emit('close', event);

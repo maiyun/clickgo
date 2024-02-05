@@ -50,6 +50,7 @@ class default_1 extends clickgo.form.AbstractForm {
         this.resize = true;
         this.floading = false;
         this.border = 'normal';
+        this.banClose = false;
     }
     showLoading() {
         return __awaiter(this, void 0, void 0, function* () {
@@ -57,6 +58,11 @@ class default_1 extends clickgo.form.AbstractForm {
             yield clickgo.tool.sleep(1000);
             this.floading = false;
         });
+    }
+    onClose(e) {
+        if (this.banClose) {
+            e.preventDefault();
+        }
     }
 }
 exports.default = default_1;

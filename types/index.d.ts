@@ -623,7 +623,7 @@ interface ICustomEvent {
     preventDefault: () => void;
 }
 
-// --- AbstractPanel Control ---
+// --- AbstractPanel ---
 
 export interface IAbstractPanelShowEvent {
     'detail': {
@@ -636,6 +636,46 @@ export interface IAbstractPanelShowEvent {
         'previous': string;
         /** --- 仅 nav 联动时有效，代表本次 show 的时候 qs 是否发生了变化 --- */
         'qsChange': boolean;
+    }
+}
+
+// --- Form Control ---
+
+export interface IFormCloseEvent extends ICustomEvent {
+    'detail': {
+        'event': MouseEvent;
+    }
+}
+
+export interface IFormMaxEvent {
+    'detail': {
+        'event': MouseEvent | TouchEvent | null;
+        'action': 'click' | 'move';
+        /** --- 当前是否时最大化状态 --- */
+        'max': boolean;
+        /** --- 最大化之前的窗体位置 --- */
+        'history': {
+            'width': number;
+            'height': number;
+            'left': number;
+            'top': number;
+        } | null
+    }
+}
+
+export interface IFormMinEvent {
+    'detail': {
+        'event': MouseEvent | TouchEvent | null;
+        'action': 'click' | 'method';
+        /** --- 当前是否时最小化状态 --- */
+        'min': boolean;
+        /** --- 最小化之前的窗体位置 --- */
+        'history': {
+            'width': number;
+            'height': number;
+            'left': number;
+            'top': number;
+        } | null
     }
 }
 

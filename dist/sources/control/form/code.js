@@ -36,6 +36,11 @@ const clickgo = __importStar(require("clickgo"));
 class default_1 extends clickgo.control.AbstractControl {
     constructor() {
         super(...arguments);
+        this.emits = {
+            'max': null,
+            'min': null,
+            'close': null
+        };
         this.props = {
             'icon': '',
             'title': 'title',
@@ -138,7 +143,20 @@ class default_1 extends clickgo.control.AbstractControl {
         clickgo.dom.bindMove(e, {
             'start': (x, y) => {
                 if (this.stateMaxData) {
-                    this.emit('max', e, 0, this.historyLocation);
+                    const event = {
+                        'detail': {
+                            'event': e,
+                            'action': 'move',
+                            'max': true,
+                            'history': {
+                                'width': this.historyLocation.width,
+                                'height': this.historyLocation.height,
+                                'left': this.historyLocation.left,
+                                'top': this.historyLocation.top
+                            }
+                        }
+                    };
+                    this.emit('max', event);
                     this.element.removeAttribute('data-cg-max');
                     this.stateMaxData = false;
                     this.emit('update:stateMax', false);
@@ -300,7 +318,7 @@ class default_1 extends clickgo.control.AbstractControl {
             }
         });
     }
-    minMethod() {
+    minMethod(e) {
         if (this.isInside) {
             return true;
         }
@@ -311,44 +329,55 @@ class default_1 extends clickgo.control.AbstractControl {
             }
         };
         if (!this.stateMinData) {
-            this.emit('min', event, 1, {});
-            if (event.go) {
-                if (clickgo.isNative() && (this.formId === 1) && !clickgo.hasFrame()) {
-                    clickgo.native.min();
+            const event = {
+                'detail': {
+                    'event': e !== null && e !== void 0 ? e : null,
+                    'action': e ? 'click' : 'method',
+                    'min': false,
+                    'history': null
                 }
-                else {
-                    this.element.dataset.cgMin = '';
-                    this.stateMinData = true;
-                    this.emit('update:stateMin', true);
-                    if (this.formFocus) {
-                        const formId = clickgo.form.getMaxZIndexID({
-                            'formIds': [this.formId]
-                        });
-                        clickgo.tool.sleep(100).then(() => {
-                            if (formId) {
-                                clickgo.form.changeFocus(formId);
-                            }
-                            else {
-                                clickgo.form.changeFocus();
-                            }
-                        }).catch((e) => { throw e; });
-                    }
-                }
+            };
+            this.emit('min', event);
+            if (clickgo.isNative() && (this.formId === 1) && !clickgo.hasFrame()) {
+                clickgo.native.min();
             }
             else {
-                return false;
+                this.element.dataset.cgMin = '';
+                this.stateMinData = true;
+                this.emit('update:stateMin', true);
+                if (this.formFocus) {
+                    const formId = clickgo.form.getMaxZIndexID({
+                        'formIds': [this.formId]
+                    });
+                    clickgo.tool.sleep(100).then(() => {
+                        if (formId) {
+                            clickgo.form.changeFocus(formId);
+                        }
+                        else {
+                            clickgo.form.changeFocus();
+                        }
+                    }).catch((e) => { throw e; });
+                }
             }
         }
         else {
-            this.emit('min', event, 0, this.historyLocation);
-            if (event.go) {
-                this.element.removeAttribute('data-cg-min');
-                this.stateMinData = false;
-                this.emit('update:stateMin', false);
-            }
-            else {
-                return false;
-            }
+            const event = {
+                'detail': {
+                    'event': e !== null && e !== void 0 ? e : null,
+                    'action': e ? 'click' : 'method',
+                    'min': true,
+                    'history': {
+                        'width': this.historyLocation.width,
+                        'height': this.historyLocation.height,
+                        'left': this.historyLocation.left,
+                        'top': this.historyLocation.top
+                    }
+                }
+            };
+            this.emit('min', event);
+            this.element.removeAttribute('data-cg-min');
+            this.stateMinData = false;
+            this.emit('update:stateMin', false);
         }
         this.trigger('formStateMinChanged', this.stateMinData);
         return true;
@@ -386,7 +415,7 @@ class default_1 extends clickgo.control.AbstractControl {
             }
         }
     }
-    maxMethod() {
+    maxMethod(e) {
         if (this.isInside) {
             return true;
         }
@@ -395,124 +424,132 @@ class default_1 extends clickgo.control.AbstractControl {
                 return false;
             }
         }
-        const event = {
-            'go': true,
-            preventDefault: function () {
-                this.go = false;
-            }
-        };
         if (!this.stateMaxData) {
-            this.emit('max', event, 1, {});
-            if (event.go) {
-                if (this.stateAbs) {
-                    this.stateAbs = '';
+            const event = {
+                'detail': {
+                    'event': e !== null && e !== void 0 ? e : null,
+                    'action': e ? 'click' : 'move',
+                    'max': false,
+                    'history': null
                 }
-                else {
-                    this.historyLocation = {
-                        'width': this.widthData || this.element.offsetWidth,
-                        'height': this.heightData || this.element.offsetHeight,
-                        'left': this.leftData,
-                        'top': this.topData
-                    };
-                }
-                if (this.isNativeSync) {
-                    clickgo.native.max();
-                }
-                else {
-                    this.element.dataset.cgMax = '';
-                    this.stateMaxData = true;
-                    this.emit('update:stateMax', true);
-                }
-                if (!this.isNativeSync) {
-                    this.element.style.transition = 'all .1s linear';
-                    this.element.style.transitionProperty = 'left,top,width,height';
-                    clickgo.tool.sleep(150).then(() => {
-                        this.element.style.transition = '';
-                    }).catch((e) => { console.log(e); });
-                }
-                const area = clickgo.core.getAvailArea();
-                if (this.rootForm.bottomMost) {
-                    this.leftData = 0;
-                    this.topData = 0;
-                    this.widthData = area.owidth;
-                    this.heightData = area.oheight;
-                }
-                else {
-                    this.leftData = area.left;
-                    this.topData = area.top;
-                    this.widthData = area.width;
-                    this.heightData = area.height;
-                }
-                this.emit('update:left', this.leftData);
-                this.emit('update:top', this.topData);
-                if (this.propInt('width') > 0) {
-                    this.emit('update:width', this.widthData);
-                }
-                if (this.propInt('height') > 0) {
-                    this.emit('update:height', this.heightData);
-                }
+            };
+            this.emit('max', event);
+            if (this.stateAbs) {
+                this.stateAbs = '';
             }
             else {
-                return false;
+                this.historyLocation = {
+                    'width': this.widthData || this.element.offsetWidth,
+                    'height': this.heightData || this.element.offsetHeight,
+                    'left': this.leftData,
+                    'top': this.topData
+                };
+            }
+            if (this.isNativeSync) {
+                clickgo.native.max();
+            }
+            else {
+                this.element.dataset.cgMax = '';
+                this.stateMaxData = true;
+                this.emit('update:stateMax', true);
+            }
+            if (!this.isNativeSync) {
+                this.element.style.transition = 'all .1s linear';
+                this.element.style.transitionProperty = 'left,top,width,height';
+                clickgo.tool.sleep(150).then(() => {
+                    this.element.style.transition = '';
+                }).catch((e) => { console.log(e); });
+            }
+            const area = clickgo.core.getAvailArea();
+            if (this.rootForm.bottomMost) {
+                this.leftData = 0;
+                this.topData = 0;
+                this.widthData = area.owidth;
+                this.heightData = area.oheight;
+            }
+            else {
+                this.leftData = area.left;
+                this.topData = area.top;
+                this.widthData = area.width;
+                this.heightData = area.height;
+            }
+            this.emit('update:left', this.leftData);
+            this.emit('update:top', this.topData);
+            if (this.propInt('width') > 0) {
+                this.emit('update:width', this.widthData);
+            }
+            if (this.propInt('height') > 0) {
+                this.emit('update:height', this.heightData);
             }
         }
         else {
-            this.emit('max', event, 0, this.historyLocation);
-            if (event.go) {
-                if (this.isNativeSync) {
-                    clickgo.native.restore();
-                }
-                else {
-                    this.element.removeAttribute('data-cg-max');
-                    this.stateMaxData = false;
-                    this.emit('update:stateMax', false);
-                    this.element.style.transition = 'all .1s linear';
-                    this.element.style.transitionProperty = 'left,top,width,height';
-                }
-                if (!this.propInt('width')) {
-                    this.widthData = 0;
-                }
-                else {
-                    this.widthData = this.historyLocation.width;
-                    this.emit('update:width', this.historyLocation.width);
-                }
-                if (!this.propInt('height')) {
-                    this.heightData = 0;
-                }
-                else {
-                    this.heightData = this.historyLocation.height;
-                    this.emit('update:height', this.historyLocation.height);
-                }
-                this.leftData = this.historyLocation.left;
-                this.emit('update:left', this.historyLocation.left);
-                this.topData = this.historyLocation.top;
-                this.emit('update:top', this.historyLocation.top);
-                if (this.isNativeSync) {
-                    if (clickgo.getPlatform() === 'darwin') {
-                        clickgo.native.size(this.widthData, this.heightData);
+            const event = {
+                'detail': {
+                    'event': e !== null && e !== void 0 ? e : null,
+                    'action': e ? 'click' : 'move',
+                    'max': true,
+                    'history': {
+                        'height': this.historyLocation.height,
+                        'left': this.historyLocation.left,
+                        'top': this.historyLocation.top,
+                        'width': this.historyLocation.width
                     }
                 }
-                else {
-                    clickgo.tool.sleep(150).then(() => {
-                        this.element.style.transition = '';
-                    }).catch((e) => { console.log(e); });
+            };
+            this.emit('max', event);
+            if (this.isNativeSync) {
+                clickgo.native.restore();
+            }
+            else {
+                this.element.removeAttribute('data-cg-max');
+                this.stateMaxData = false;
+                this.emit('update:stateMax', false);
+                this.element.style.transition = 'all .1s linear';
+                this.element.style.transitionProperty = 'left,top,width,height';
+            }
+            if (!this.propInt('width')) {
+                this.widthData = 0;
+            }
+            else {
+                this.widthData = this.historyLocation.width;
+                this.emit('update:width', this.historyLocation.width);
+            }
+            if (!this.propInt('height')) {
+                this.heightData = 0;
+            }
+            else {
+                this.heightData = this.historyLocation.height;
+                this.emit('update:height', this.historyLocation.height);
+            }
+            this.leftData = this.historyLocation.left;
+            this.emit('update:left', this.historyLocation.left);
+            this.topData = this.historyLocation.top;
+            this.emit('update:top', this.historyLocation.top);
+            if (this.isNativeSync) {
+                if (clickgo.getPlatform() === 'darwin') {
+                    clickgo.native.size(this.widthData, this.heightData);
                 }
             }
             else {
-                return false;
+                clickgo.tool.sleep(150).then(() => {
+                    this.element.style.transition = '';
+                }).catch((e) => { console.log(e); });
             }
         }
         this.trigger('formStateMaxChanged', this.stateMaxData);
         return true;
     }
-    closeMethod() {
+    closeMethod(e) {
         if (this.isInside) {
             return;
         }
         const event = {
-            go: true,
+            'go': true,
             preventDefault: function () {
                 this.go = false;
+            },
+            'detail': {
+                'event': e
             }
         };
         this.emit('close', event);

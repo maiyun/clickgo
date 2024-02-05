@@ -1,4 +1,5 @@
 import * as clickgo from 'clickgo';
+import * as types from '~/types';
 
 export default class extends clickgo.form.AbstractForm {
 
@@ -34,6 +35,14 @@ export default class extends clickgo.form.AbstractForm {
         this.floading = true;
         await clickgo.tool.sleep(1000);
         this.floading = false;
+    }
+
+    public banClose = false;
+
+    public onClose(e: types.IFormCloseEvent) {
+        if (this.banClose) {
+            e.preventDefault();
+        }
     }
 
 }
