@@ -29,64 +29,31 @@ class default_1 extends clickgo.control.AbstractControl {
         super(...arguments);
         this.props = {
             'mode': 'default',
+            'content': '',
             'time': true,
             'date': true,
             'zone': false,
             'tz': undefined
         };
-        this.dateTxt = '';
     }
-    pad(n) {
-        const ns = n.toString();
-        if (ns.length >= 2) {
-            return ns;
-        }
-        return '0' + ns;
-    }
-    refreshDate() {
+    get contentComp() {
         if (this.props.mode !== 'date') {
-            return;
+            return this.props.content;
         }
         const dateTxt = [];
-        const date = new Date(parseInt(this.element.innerHTML) * 1000);
+        const date = new Date(this.propNumber('content') * 1000);
         const tz = this.props.tz === undefined ? -(date.getTimezoneOffset() / 60) : this.propNumber('tz');
         date.setTime(date.getTime() + tz * 60 * 60 * 1000);
         if (this.propBoolean('date')) {
-            dateTxt.push(date.getUTCFullYear().toString() + '-' + this.pad(date.getUTCMonth() + 1) + '-' + this.pad(date.getUTCDate()));
+            dateTxt.push(date.getUTCFullYear().toString() + '-' + (date.getUTCMonth() + 1).toString().padStart(2, '0') + '-' + date.getUTCDate().toString().padStart(2, '0'));
         }
         if (this.propBoolean('time')) {
-            dateTxt.push(this.pad(date.getUTCHours()) + ':' + this.pad(date.getUTCMinutes()) + ':' + this.pad(date.getUTCSeconds()));
+            dateTxt.push(date.getUTCHours().toString().padStart(2, '0') + ':' + date.getUTCMinutes().toString().padStart(2, '0') + ':' + date.getUTCSeconds().toString().padStart(2, '0'));
         }
         if (this.propBoolean('zone')) {
             dateTxt.push('UTC' + (tz >= 0 ? '+' : '') + tz.toString());
         }
-        this.dateTxt = dateTxt.join(' ');
-    }
-    onMounted() {
-        this.watch('mode', () => {
-            if (this.props.mode === 'date') {
-                clickgo.dom.watch(this.element, () => {
-                    this.refreshDate();
-                }, 'text', true);
-            }
-            else {
-                clickgo.dom.unwatch(this.element);
-            }
-        }, {
-            'immediate': true
-        });
-        this.watch('time', () => {
-            this.refreshDate();
-        });
-        this.watch('date', () => {
-            this.refreshDate();
-        });
-        this.watch('zone', () => {
-            this.refreshDate();
-        });
-        this.watch('tz', () => {
-            this.refreshDate();
-        });
+        return dateTxt.join(' ');
     }
 }
 exports.default = default_1;

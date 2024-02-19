@@ -1,3 +1,4 @@
 <div class="wrap" :class="[mode]" :data-date="dateTxt">
-    <slot></slot>
+    <template v-if="content">{{contentComp}}</template>
+    <slot v-else></slot>
 </div>

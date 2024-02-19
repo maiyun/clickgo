@@ -3,7 +3,8 @@ import * as clickgo from 'clickgo';
 export default class extends clickgo.control.AbstractControl {
 
     public props: {
-        'mode': 'default' | 'tip' | 'date';
+        'mode': 'default' | 'tip' | 'mtip' | 'date';
+        'content': string;
 
         'time': boolean | string;
         'date': boolean | string;
@@ -12,71 +13,34 @@ export default class extends clickgo.control.AbstractControl {
         'tz'?: number | string;
     } = {
             'mode': 'default',
+            'content': '',
 
             'time': true,
             'date': true,
             'zone': false,
             'tz': undefined
         };
-
-    public dateTxt: string = '';
-
-    /** --- 补全两位 --- */
-    public pad(n: number): string {
-        const ns = n.toString();
-        if (ns.length >= 2) {
-            return ns;
-        }
-        return '0' + ns;
-    }
-
-    /** --- 刷新 date 显示文本 --- */
-    public refreshDate(): void {
+    
+    /** --- 替换 slot 数据 --- */
+    public get contentComp(): string {
         if (this.props.mode !== 'date') {
-            return;
+            return this.props.content;
         }
         const dateTxt: string[] = [];
-        const date = new Date(parseInt(this.element.innerHTML) * 1000);
+        const date = new Date(this.propNumber('content') * 1000);
         /** --- 当前设定的时区 --- */
         const tz = this.props.tz === undefined ? -(date.getTimezoneOffset() / 60) : this.propNumber('tz');
         date.setTime(date.getTime() + tz * 60 * 60 * 1000);
         if (this.propBoolean('date')) {
-            dateTxt.push(date.getUTCFullYear().toString() + '-' + this.pad(date.getUTCMonth() + 1) + '-' + this.pad(date.getUTCDate()));
+            dateTxt.push(date.getUTCFullYear().toString() + '-' + (date.getUTCMonth() + 1).toString().padStart(2, '0') + '-' + date.getUTCDate().toString().padStart(2, '0'));
         }
         if (this.propBoolean('time')) {
-            dateTxt.push(this.pad(date.getUTCHours()) + ':' + this.pad(date.getUTCMinutes()) + ':' + this.pad(date.getUTCSeconds()));
+            dateTxt.push(date.getUTCHours().toString().padStart(2, '0') + ':' + date.getUTCMinutes().toString().padStart(2, '0') + ':' + date.getUTCSeconds().toString().padStart(2, '0'));
         }
         if (this.propBoolean('zone')) {
             dateTxt.push('UTC' + (tz >= 0 ? '+' : '') + tz.toString());
         }
-        this.dateTxt = dateTxt.join(' ');
-    }
-
-    public onMounted(): void | Promise<void> {
-        this.watch('mode', () => {
-            if (this.props.mode === 'date') {
-                clickgo.dom.watch(this.element, () => {
-                    this.refreshDate();
-                }, 'text', true);
-            }
-            else {
-                clickgo.dom.unwatch(this.element);
-            }
-        }, {
-            'immediate': true
-        });
-        this.watch('time', () => {
-            this.refreshDate();
-        });
-        this.watch('date', () => {
-            this.refreshDate();
-        });
-        this.watch('zone', () => {
-            this.refreshDate();
-        });
-        this.watch('tz', () => {
-            this.refreshDate();
-        });
+        return dateTxt.join(' ');
     }
 
 }

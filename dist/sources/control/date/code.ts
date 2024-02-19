@@ -292,7 +292,7 @@ export default class extends clickgo.control.AbstractControl {
 
     public onMounted(): void {
         // --- 填充年月日时分秒时区 ---
-        const maxYear = this.dateObj.getUTCFullYear() + 1;
+        const maxYear = this.dateObj.getUTCFullYear() + 20;
         for (let i = 1900; i <= maxYear; ++i) {
             this.years.push(i.toString());
         }
