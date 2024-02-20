@@ -264,7 +264,7 @@ abstract class AbstractCommon {
     /**
      * --- 获取 refs 情况 ---
      */
-    public get refs(): Record<string, HTMLElement & types.IVue> {
+    public get refs(): Record<string, HTMLElement & control.AbstractControl & Record<string, any>> {
         return (this as any).$refs;
     }
 
