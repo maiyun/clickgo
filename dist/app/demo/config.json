@@ -5,8 +5,8 @@
     "author": "clickgo",
 
     "controls": [
-        "/clickgo/control/box",
         "/package/res/custombtn",
+        "/clickgo/control/box",
         "/clickgo/control/common",
         "/clickgo/control/form",
         "/clickgo/control/monaco",
