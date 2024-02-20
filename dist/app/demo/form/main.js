@@ -79,6 +79,7 @@ const other_1 = __importDefault(require("./event/other/other"));
 const screen_1 = __importDefault(require("./event/screen/screen"));
 const task_1 = __importDefault(require("./event/task/task"));
 const aform_1 = __importDefault(require("./method/aform/aform"));
+const acontrol_1 = __importDefault(require("./method/acontrol/acontrol"));
 const core_1 = __importDefault(require("./method/core/core"));
 const dom_1 = __importDefault(require("./method/dom/dom"));
 const form_3 = __importDefault(require("./method/form/form"));
@@ -298,6 +299,10 @@ class default_1 extends clickgo.form.AbstractForm {
                 }
                 case 'aform': {
                     frm = yield clickgo.form.create(aform_1.default);
+                    break;
+                }
+                case 'acontrol': {
+                    frm = yield clickgo.form.create(acontrol_1.default);
                     break;
                 }
                 case 'mcore': {

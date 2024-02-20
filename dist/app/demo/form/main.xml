@@ -105,6 +105,7 @@
                 <button @click="openForm('mtool')">Library tool</button>
                 <button @click="openForm('mzip')">Library zip</button>
                 <button @click="openForm('aform')">Abstract Form</button>
+                <button @click="openForm('acontrol')">Abstract Control</button>
                 <button @click="openForm('msystem')">System</button>
             </layout>
         </flow>

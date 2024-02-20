@@ -6,6 +6,7 @@
 
     "controls": [
         "/clickgo/control/box",
+        "/package/res/custombtn",
         "/clickgo/control/common",
         "/clickgo/control/form",
         "/clickgo/control/monaco",
@@ -127,6 +128,8 @@
         "/form/event/screen/screen.xml",
         "/form/event/task/task.js",
         "/form/event/task/task.xml",
+        "/form/method/acontrol/acontrol.js",
+        "/form/method/acontrol/acontrol.xml",
         "/form/method/aform/aform.js",
         "/form/method/aform/aform.xml",
         "/form/method/aform/sd.js",
@@ -164,6 +167,7 @@
         "/form/main.css",
         "/form/main.js",
         "/form/main.xml",
+        "/res/custombtn.cgc",
         "/res/icon.svg",
         "/res/img.jpg",
         "/res/marker.svg",

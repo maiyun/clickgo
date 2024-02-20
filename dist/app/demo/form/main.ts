@@ -46,6 +46,7 @@ import escreenFrm from './event/screen/screen';
 import etaskFrm from './event/task/task';
 
 import aformFrm from './method/aform/aform';
+import acontrolFrm from './method/acontrol/acontrol';
 import mcoreFrm from './method/core/core';
 import mdomFrm from './method/dom/dom';
 import mformFrm from './method/form/form';
@@ -268,6 +269,10 @@ export default class extends clickgo.form.AbstractForm {
 
             case 'aform': {
                 frm = await clickgo.form.create(aformFrm);
+                break;
+            }
+            case 'acontrol': {
+                frm = await clickgo.form.create(acontrolFrm);
                 break;
             }
             case 'mcore': {
