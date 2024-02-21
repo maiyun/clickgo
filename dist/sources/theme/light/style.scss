@@ -6,7 +6,7 @@ global {
     // --- 基础颜色 ---
 
     --face:#FFF;
-    --pop-background:rgba(255, 255, 255, .4);
+    --pop-background:rgba(255, 255, 255, .8);
 
     // --- 组件默认颜色（如按钮） ---
 
@@ -83,7 +83,7 @@ global {
     }
 }
 .arteditor_pop {
-    background: var(--pop-background); -webkit-backdrop-filter: blur(30px) saturate(1.5); backdrop-filter: blur(30px) saturate(1.5);
+    background: var(--pop-background); -webkit-backdrop-filter: blur(30px) saturate(2); backdrop-filter: blur(30px) saturate(2);
 }
 
 // -- CONTROL -- button --
@@ -130,7 +130,7 @@ global {
     }
 }
 .button_pop {
-    background: var(--pop-background); -webkit-backdrop-filter: blur(30px) saturate(1.5); backdrop-filter: blur(30px) saturate(1.5);
+    background: var(--pop-background); -webkit-backdrop-filter: blur(30px) saturate(2); backdrop-filter: blur(30px) saturate(2);
 }
 
 // -- CONTROL -- check --
@@ -190,7 +190,7 @@ global {
     }
 }
 .date_pop {
-    background: var(--pop-background); -webkit-backdrop-filter: blur(30px) saturate(1.5); backdrop-filter: blur(30px) saturate(1.5);
+    background: var(--pop-background); -webkit-backdrop-filter: blur(30px) saturate(2); backdrop-filter: blur(30px) saturate(2);
 }
 
 // -- CONTROL -- desc-cell --
@@ -230,7 +230,7 @@ global {
         // --- 主体内容 ---
         .form_content {
             .form_step {
-                min-width: 400px; background: var(--pop-background); -webkit-backdrop-filter: blur(30px) saturate(1.5); backdrop-filter: blur(30px) saturate(1.5); border-radius: 30px; padding: 15px 35px; box-shadow: 0 1px 10px rgba(0, 0, 0, .15);
+                min-width: 400px; background: var(--pop-background); -webkit-backdrop-filter: blur(30px) saturate(2); backdrop-filter: blur(30px) saturate(2); border-radius: 30px; padding: 15px 35px; box-shadow: 0 1px 10px rgba(0, 0, 0, .15);
             }
         }
     }
@@ -259,7 +259,7 @@ global {
     }
 }
 .greatlist_pop {
-    background: var(--pop-background); -webkit-backdrop-filter: blur(30px) saturate(1.5); backdrop-filter: blur(30px) saturate(1.5);
+    background: var(--pop-background); -webkit-backdrop-filter: blur(30px) saturate(2); backdrop-filter: blur(30px) saturate(2);
 }
 
 // -- CONTROL -- greatselect --
@@ -278,7 +278,7 @@ global {
     }
 }
 .greatselect_pop {
-    background: var(--pop-background); -webkit-backdrop-filter: blur(30px) saturate(1.5); backdrop-filter: blur(30px) saturate(1.5);
+    background: var(--pop-background); -webkit-backdrop-filter: blur(30px) saturate(2); backdrop-filter: blur(30px) saturate(2);
 }
 
 // -- CONTROL -- iconview --
@@ -299,7 +299,7 @@ global {
     }
 }
 .iconview_pop {
-    background: var(--pop-background); -webkit-backdrop-filter: blur(30px) saturate(1.5); backdrop-filter: blur(30px) saturate(1.5);
+    background: var(--pop-background); -webkit-backdrop-filter: blur(30px) saturate(2); backdrop-filter: blur(30px) saturate(2);
 }
 
 // --- CONTROL -- levelselect ---
@@ -333,7 +333,7 @@ global {
     transition: all .15s ease; border: none;
 }
 .menu-item_pop {
-    background: var(--pop-background); -webkit-backdrop-filter: blur(30px) saturate(1.5); backdrop-filter: blur(30px) saturate(1.5);
+    background: var(--pop-background); -webkit-backdrop-filter: blur(30px) saturate(2); backdrop-filter: blur(30px) saturate(2);
 }
 
 // -- CONTROL -- menulist --
@@ -359,7 +359,7 @@ global {
     }
 }
 .menulist-item_pop {
-    background: var(--pop-background); -webkit-backdrop-filter: blur(30px) saturate(1.5); backdrop-filter: blur(30px) saturate(1.5);
+    background: var(--pop-background); -webkit-backdrop-filter: blur(30px) saturate(2); backdrop-filter: blur(30px) saturate(2);
 }
 
 // -- CONTROL -- menulist-split --
@@ -373,7 +373,7 @@ global {
 // -- CONTROL -- monaco --
 
 .monaco_pop {
-    background: var(--pop-background); -webkit-backdrop-filter: blur(30px) saturate(1.5); backdrop-filter: blur(30px) saturate(1.5);
+    background: var(--pop-background); -webkit-backdrop-filter: blur(30px) saturate(2); backdrop-filter: blur(30px) saturate(2);
 }
 
 // -- CONTROL -- nav --
@@ -521,10 +521,10 @@ global {
     }
 }
 .property_dock-pop {
-    background: var(--pop-background); -webkit-backdrop-filter: blur(30px) saturate(1.5); backdrop-filter: blur(30px) saturate(1.5);
+    background: var(--pop-background); -webkit-backdrop-filter: blur(30px) saturate(2); backdrop-filter: blur(30px) saturate(2);
 }
 .property_pop {
-    background: var(--pop-background); -webkit-backdrop-filter: blur(30px) saturate(1.5); backdrop-filter: blur(30px) saturate(1.5);
+    background: var(--pop-background); -webkit-backdrop-filter: blur(30px) saturate(2); backdrop-filter: blur(30px) saturate(2);
 }
 
 // -- CONTROL -- radio --
@@ -701,13 +701,13 @@ global {
 // -- CONTROL -- task --
 
 .task_wrap {
-    background: var(--pop-background); -webkit-backdrop-filter: blur(30px) saturate(1.5); backdrop-filter: blur(30px) saturate(1.5);
+    background: var(--pop-background); -webkit-backdrop-filter: blur(30px) saturate(2); backdrop-filter: blur(30px) saturate(2);
     .task_date {
         color: #000;
     }
 }
 .task_pop {
-    background: var(--pop-background); -webkit-backdrop-filter: blur(30px) saturate(1.5); backdrop-filter: blur(30px) saturate(1.5);
+    background: var(--pop-background); -webkit-backdrop-filter: blur(30px) saturate(2); backdrop-filter: blur(30px) saturate(2);
 }
 
 // -- CONTROL -- task-item --
@@ -740,7 +740,7 @@ global {
     }
 }
 .task-item_pop {
-    background: var(--pop-background); -webkit-backdrop-filter: blur(30px) saturate(1.5); backdrop-filter: blur(30px) saturate(1.5);
+    background: var(--pop-background); -webkit-backdrop-filter: blur(30px) saturate(2); backdrop-filter: blur(30px) saturate(2);
 }
 
 // -- CONTROL -- text --
@@ -775,7 +775,7 @@ global {
     }
 }
 .text_pop {
-    background: var(--pop-background); -webkit-backdrop-filter: blur(30px) saturate(1.5); backdrop-filter: blur(30px) saturate(1.5);
+    background: var(--pop-background); -webkit-backdrop-filter: blur(30px) saturate(2); backdrop-filter: blur(30px) saturate(2);
 }
 
 // --- tip ---
@@ -802,7 +802,7 @@ global {
     }
 }
 .tuieditor_pop {
-    background: var(--pop-background); -webkit-backdrop-filter: blur(30px) saturate(1.5); backdrop-filter: blur(30px) saturate(1.5);
+    background: var(--pop-background); -webkit-backdrop-filter: blur(30px) saturate(2); backdrop-filter: blur(30px) saturate(2);
 }
 
 // --- CONTROL -- video ---
