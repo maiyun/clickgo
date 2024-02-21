@@ -47,9 +47,20 @@ export default class extends clickgo.control.AbstractControl {
                 // --- svg 只能从本地读取 ---
                 return;
             }
+            let blob: string | Blob | null = null;
+            if (this.props.src.startsWith('/control/')) {
+                // --- 从 rootControl 中读取 ---
+                if (!this.rootControl) {
+                    return;
+                }
+                blob = this.rootControl.packageFiles[this.props.src.slice(8)];
+            }
+            else {
+                // --- 从 app 包中读取 ---
+                const path = clickgo.tool.urlResolve('/package' + this.path + '/', this.props.src);
+                blob = await clickgo.fs.getContent(path);
+            }
             // --- 本 app 包 ---
-            const path = clickgo.tool.urlResolve('/package' + this.path + '/', this.props.src);
-            const blob = await clickgo.fs.getContent(path);
             if ((count !== this.count) || !blob || typeof blob === 'string') {
                 return;
             }

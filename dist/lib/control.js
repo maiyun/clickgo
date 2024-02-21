@@ -194,6 +194,24 @@ class AbstractControl {
             }
         };
     }
+    get parentByAccess() {
+        return (name, val) => {
+            let parent = this.$parent;
+            while (true) {
+                if (!parent) {
+                    return null;
+                }
+                if (!parent.access) {
+                    parent = parent.$parent;
+                    continue;
+                }
+                if (parent.access[name] === val) {
+                    return parent;
+                }
+                parent = parent.$parent;
+            }
+        };
+    }
     onBeforeCreate() {
         return;
     }
@@ -321,7 +339,8 @@ function init(taskId, invoke) {
                         if (t.controls[name].layout.includes('<teleport')) {
                             t.controls[name].layout = tool.teleportGlue(t.controls[name].layout, '{{{formId}}}');
                         }
-                        t.controls[name].layout = t.controls[name].layout.replace(/(<cg-[a-zA-Z0-9-_]+)/g, '$1 data-cg-rootcontrol=""');
+                        t.controls[name].access['cgPCMap'] = tool.random(8, tool.RANDOM_LUNS);
+                        t.controls[name].layout = t.controls[name].layout.replace(/(<cg-[a-zA-Z0-9-_]+)/g, `$1 data-cg-rootcontrol="${t.controls[name].access['cgPCMap']}"`);
                         let cls;
                         if (item.files[item.config.code + '.js']) {
                             item.files['/invoke/clickgo.js'] = `module.exports = invokeClickgo;`;
@@ -500,7 +519,14 @@ function buildComponents(taskId, formId, path) {
                 this.onBeforeMount();
             },
             mounted: function () {
+                var _a;
                 return __awaiter(this, void 0, void 0, function* () {
+                    if (((_a = this.element.dataset) === null || _a === void 0 ? void 0 : _a.cgRootcontrol) !== undefined) {
+                        const rc = this.parentByAccess('cgPCMap', this.element.dataset.cgRootcontrol);
+                        if (rc) {
+                            this._rootControl = rc;
+                        }
+                    }
                     yield this.$nextTick();
                     this.onMounted();
                 });

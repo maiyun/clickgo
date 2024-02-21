@@ -69,8 +69,17 @@ class default_1 extends clickgo.control.AbstractControl {
                 this.imgData = `url(${this.props.src})`;
                 return;
             }
-            const path = clickgo.tool.urlResolve('/package' + this.path + '/', this.props.src);
-            const blob = yield clickgo.fs.getContent(path);
+            let blob = null;
+            if (this.props.src.startsWith('/control/')) {
+                if (!this.rootControl) {
+                    return;
+                }
+                blob = this.rootControl.packageFiles[this.props.src.slice(8)];
+            }
+            else {
+                const path = clickgo.tool.urlResolve('/package' + this.path + '/', this.props.src);
+                blob = yield clickgo.fs.getContent(path);
+            }
             if ((count !== this.count) || !blob || typeof blob === 'string') {
                 return;
             }

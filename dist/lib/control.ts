@@ -294,6 +294,28 @@ export abstract class AbstractControl {
         };
     }
 
+    /**
+    * --- 根据 control access 查询上层控件 ---
+    */
+    public get parentByAccess() {
+        return (name: string, val:string): (AbstractControl & Record<string, any>) | null => {
+            let parent = (this as any).$parent;
+            while (true) {
+                if (!parent) {
+                    return null;
+                }
+                if (!parent.access) {
+                    parent = parent.$parent;
+                    continue;
+                }
+                if (parent.access[name] === val) {
+                    return parent;
+                }
+                parent = parent.$parent;
+            }
+        };
+    }
+
     // --- 控件响应事件，都可由用户重写 ---
 
     public onBeforeCreate(): void | Promise<void> {
@@ -467,8 +489,8 @@ export async function init(
                         t.controls[name].layout = tool.teleportGlue(t.controls[name].layout, '{{{formId}}}');
                     }
                     // --- 添加父子组件的映射关系 ---
-                    // --- TODO ---
-                    t.controls[name].layout = t.controls[name].layout.replace(/(<cg-[a-zA-Z0-9-_]+)/g, '$1 data-cg-rootcontrol=""');
+                    t.controls[name].access['cgPCMap'] = tool.random(8, tool.RANDOM_LUNS);
+                    t.controls[name].layout = t.controls[name].layout.replace(/(<cg-[a-zA-Z0-9-_]+)/g, `$1 data-cg-rootcontrol="${t.controls[name].access['cgPCMap']}"`);
                     // --- 检测是否有 js ---
                     let cls: any;
                     if (item.files[item.config.code + '.js']) {
@@ -666,6 +688,12 @@ export function buildComponents(
                 this.onBeforeMount();
             },
             mounted: async function() {
+                if (this.element.dataset?.cgRootcontrol !== undefined) {
+                    const rc = this.parentByAccess('cgPCMap', this.element.dataset.cgRootcontrol);
+                    if (rc) {
+                        this._rootControl = rc;
+                    }
+                }
                 await this.$nextTick();
                 this.onMounted();
             },
