@@ -1,5 +1,13 @@
 # Changelog
 
+# 3.11.5
+
+[+] Added `content` parameter to the label control, which, if present, will replace the content of the slot. If the mode is set to date, the timestamp must be placed within the `content` parameter.  
+[+] Added `flow` parameter to the `showPop` method of the form library, allowing exclusion of entering pop into pop flow by setting it to `false`.  
+[\*] Now img and svg support the src parameter when wrapped in custom controls, allowing direct specification of paths within the custom control package, but it must begin with `/control/`.  
+[\*] Some code hint optimizations.
+
+
 # 3.11.4
 
 [+] Added `formHashBack` and `clearQs` methods to the `AbstractPanel` class.  

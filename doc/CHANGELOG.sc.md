@@ -1,5 +1,12 @@
 # 更新日志
 
+# 3.11.5
+
+[+] label 控件新增 `content` 参数，若存在则会替换掉 slot 的内容，若 mode 为 date 模式，则时间戳必须放置在 `content` 参数内。  
+[+] form 库的 showPop 方法新增 flow 参数，可通过设置 false 来排除 pop 进入 pop 流。  
+[\*] img、svg 现在支持包裹在自定义控件时的 src 参数可以直接指定自定义控件包内路径，但必须以 `/control/` 开头。  
+[\*] 一些代码提示优化。
+
 # 3.11.4
 
 [+] AbstractPanel 类新增 formHashBack、clearQs 方法。  
