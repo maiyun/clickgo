@@ -7,7 +7,6 @@
 [\*] Now img and svg support the src parameter when wrapped in custom controls, allowing direct specification of paths within the custom control package, but it must begin with `/control/`.  
 [\*] Some code hint optimizations.
 
-
 # 3.11.4
 
 [+] Added `formHashBack` and `clearQs` methods to the `AbstractPanel` class.  
