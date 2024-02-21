@@ -38,7 +38,11 @@ class default_1 extends clickgo.control.AbstractControl {
         super(...arguments);
         this.props = {
             'src': '',
-            'mode': 'default'
+            'mode': 'default',
+            'direction': 'h',
+            'gutter': '',
+            'alignH': '',
+            'alignV': ''
         };
         this.imgData = '';
         this.width = 0;

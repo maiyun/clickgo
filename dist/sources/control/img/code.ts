@@ -2,9 +2,22 @@ import * as clickgo from 'clickgo';
 
 export default class extends clickgo.control.AbstractControl {
 
-    public props = {
+    public props: {
+        'src': string;
+        'mode': string;
+
+        'direction': 'h' | 'v';
+        'gutter': number | string;
+        'alignH': string;
+        'alignV': string;
+    } = {
         'src': '',
-        'mode': 'default'
+        'mode': 'default',
+
+        'direction': 'h',
+        'gutter': '',
+        'alignH': '',
+        'alignV': ''
     };
 
     public imgData = '';
