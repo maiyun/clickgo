@@ -1,5 +1,11 @@
 # Changelog
 
+# 3.11.6
+
+[+] Added new parameters direction, gutter, align-h, and align-v to the img component, and now supports inserting tags internally.  
+[\*] Fixed an issue where :class would throw errors in certain cases.  
+[\*] Optimized the light theme.
+
 # 3.11.5
 
 [+] Added `content` parameter to the label control, which, if present, will replace the content of the slot. If the mode is set to date, the timestamp must be placed within the `content` parameter.  

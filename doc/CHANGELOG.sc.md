@@ -1,5 +1,11 @@
 # 更新日志
 
+# 3.11.6
+
+[+] img 控件新增 direction、gutter、align-h、align-v 参数，并且支持在内部插入标签。  
+[\*] 修复某些情况下 :class 报错的问题。  
+[\*] 优化 light 主题。
+
 # 3.11.5
 
 [+] label 控件新增 `content` 参数，若存在则会替换掉 slot 的内容，若 mode 为 date 模式，则时间戳必须放置在 `content` 参数内。  
