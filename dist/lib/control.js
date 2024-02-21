@@ -43,6 +43,7 @@ const fs = __importStar(require("./fs"));
 class AbstractControl {
     constructor() {
         this._rootForm = null;
+        this._rootControl = null;
         this.packageFiles = {};
         this.props = {};
         this.emits = {};
@@ -72,6 +73,9 @@ class AbstractControl {
             }
         }
         return this._rootForm;
+    }
+    get rootControl() {
+        return this._rootControl;
     }
     get formFocus() {
         var _a, _b;
@@ -317,6 +321,7 @@ function init(taskId, invoke) {
                         if (t.controls[name].layout.includes('<teleport')) {
                             t.controls[name].layout = tool.teleportGlue(t.controls[name].layout, '{{{formId}}}');
                         }
+                        t.controls[name].layout = t.controls[name].layout.replace(/(<cg-[a-zA-Z0-9-_]+)/g, '$1 data-cg-rootcontrol=""');
                         let cls;
                         if (item.files[item.config.code + '.js']) {
                             item.files['/invoke/clickgo.js'] = `module.exports = invokeClickgo;`;

@@ -2108,24 +2108,14 @@ let lastShowPopTime: number = 0;
  * @param el 响应的元素
  * @param pop 要显示 pop 元素
  * @param direction 要显示方向（以 $el 为准的 h 水平 v 垂直 t 垂直水平居中）或坐标
- * @param opt width / height 显示的 pop 定义自定义宽/高度，可省略；null，true 代表为空也会显示，默认为 false; autoPosition, 自动更新 pop 位置，默认 false，true 为原元素位置变更，pop 位置也会变更，pop 大小变更，位置也会变更
+ * @param opt width / height 显示的 pop 定义自定义宽/高度，可省略；null，true 代表为空也会显示，默认为 false; autoPosition, 自动更新 pop 位置，默认 false，true 为原元素位置变更，pop 位置也会变更，pop 大小变更，位置也会变更, flow: 是否加入 pop 流，默认加入，不加入的话将不会自动隐藏
  */
 export function showPop(el: HTMLElement, pop: HTMLElement | undefined, direction: 'h' | 'v' | 't' | MouseEvent | TouchEvent | { x: number; y: number; }, opt: {
     'size'?: { width?: number; height?: number; };
     'null'?: boolean;
     'autoPosition'?: boolean;
+    'flow'?: boolean;
 } = {}): void {
-    if (pop && direction === 't') {
-        refreshPopPosition(el, pop, 't', opt.size);
-        if (opt.autoPosition) {
-            clickgo.dom.watchSize(pop, () => {
-                refreshPopPosition(el, pop, 't', opt.size);
-            });
-        }
-        pop.dataset.cgOpen = '';
-        pop.dataset.cgT = '';
-        return;
-    }
     // --- opt.null 为 true 代表可为空，为空也会被显示，默认为 false ---
     if (opt.null === undefined) {
         opt.null = false;
@@ -2133,8 +2123,23 @@ export function showPop(el: HTMLElement, pop: HTMLElement | undefined, direction
     if (opt.size === undefined) {
         opt.size = {};
     }
+    if (opt.flow === undefined) {
+        opt.flow = true;
+    }
     // --- 也可能不执行本次显示 ---
     if (!pop && !opt.null) {
+        return;
+    }
+    // --- 是否不进入 pop 流 ---
+    if (pop && !opt.flow) {
+        refreshPopPosition(el, pop, direction, opt.size);
+        if (opt.autoPosition) {
+            clickgo.dom.watchSize(pop, () => {
+                refreshPopPosition(el, pop, direction, opt.size);
+            });
+        }
+        pop.dataset.cgOpen = '';
+        pop.dataset.cgFlow = '';
         return;
     }
     // --- 如果短时间内已经有了 pop 被展示，则可能是冒泡序列，本次则不展示 ---
@@ -2199,8 +2204,8 @@ export function hidePop(pop?: HTMLElement): void {
         hidePop(popInfo.elList[0]);
         return;
     }
-    if (pop.dataset.cgT !== undefined) {
-        pop.removeAttribute('data-cg-t');
+    if (pop.dataset.cgFlow !== undefined) {
+        pop.removeAttribute('data-cg-flow');
         pop.removeAttribute('data-cg-open');
         clickgo.dom.unwatchSize(pop);
         return;

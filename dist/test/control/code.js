@@ -31,5 +31,13 @@ class default_1 extends clickgo.control.AbstractControl {
             'touch': null
         };
     }
+    ok() {
+        if (this.refs.btn.dataset.cgPopOpen === undefined) {
+            clickgo.form.showPop(this.refs.btn, this.refs.pop, 't');
+        }
+        else {
+            clickgo.form.hidePop(this.refs.btn);
+        }
+    }
 }
 exports.default = default_1;

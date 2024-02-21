@@ -1,3 +1,11 @@
-<div class="wrap" @click="emit('touch', $event)">
-    <slot></slot>
+<div class="wrap">
+    <div @click="emit('touch', $event)">
+        <slot></slot>
+    </div>
+    <div ref="btn" @click="ok">POP</div>
+    <teleport to="system">
+        <div ref="pop" class="pop">
+            abc
+        </div>
+    </teleport>
 </div>

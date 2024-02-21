@@ -1601,24 +1601,27 @@ function refreshPopPosition(el, pop, direction, size = {}) {
 }
 let lastShowPopTime = 0;
 function showPop(el, pop, direction, opt = {}) {
-    if (pop && direction === 't') {
-        refreshPopPosition(el, pop, 't', opt.size);
-        if (opt.autoPosition) {
-            clickgo.dom.watchSize(pop, () => {
-                refreshPopPosition(el, pop, 't', opt.size);
-            });
-        }
-        pop.dataset.cgOpen = '';
-        pop.dataset.cgT = '';
-        return;
-    }
     if (opt.null === undefined) {
         opt.null = false;
     }
     if (opt.size === undefined) {
         opt.size = {};
     }
+    if (opt.flow === undefined) {
+        opt.flow = true;
+    }
     if (!pop && !opt.null) {
+        return;
+    }
+    if (pop && !opt.flow) {
+        refreshPopPosition(el, pop, direction, opt.size);
+        if (opt.autoPosition) {
+            clickgo.dom.watchSize(pop, () => {
+                refreshPopPosition(el, pop, direction, opt.size);
+            });
+        }
+        pop.dataset.cgOpen = '';
+        pop.dataset.cgFlow = '';
         return;
     }
     const now = Date.now();
@@ -1673,8 +1676,8 @@ function hidePop(pop) {
         hidePop(popInfo.elList[0]);
         return;
     }
-    if (pop.dataset.cgT !== undefined) {
-        pop.removeAttribute('data-cg-t');
+    if (pop.dataset.cgFlow !== undefined) {
+        pop.removeAttribute('data-cg-flow');
         pop.removeAttribute('data-cg-open');
         clickgo.dom.unwatchSize(pop);
         return;

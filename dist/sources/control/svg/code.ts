@@ -2,7 +2,15 @@ import * as clickgo from 'clickgo';
 
 export default class extends clickgo.control.AbstractControl {
 
-    public props = {
+    public props: {
+        'viewBox': string;
+        'fill': string;
+        'stroke': string;
+        /** --- 直接插入 svg 内部标签，有的话优先显示本图形 --- */
+        'layout': string;
+        /** --- 或者从文件中读取 --- */
+        'src': string;
+    } = {
         'viewBox': '0 0 24 24',
         'fill': '',
         'stroke': '',

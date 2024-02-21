@@ -40,7 +40,9 @@ class default_1 extends clickgo.control.AbstractControl {
             if (clickgo.dom.hasTouchButMouse(e)) {
                 return;
             }
-            clickgo.form.showPop(el, this.refs.pop, 't');
+            clickgo.form.showPop(el, this.refs.pop, 't', {
+                'flow': false
+            });
         };
         const leave = (e) => {
             if (clickgo.dom.hasTouchButMouse(e)) {

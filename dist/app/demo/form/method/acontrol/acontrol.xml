@@ -1,5 +1,5 @@
 <form width="400" height="400" title="Abstract Control">
     <layout align-h="center" align-v="center" style="flex: 1;">
-        <custombtn @touch="onTouch" style="width: 100px; height: 100px;">123</custombtn>
+        <custombtn @touch="onTouch" style="width: 200px; height: 100px;">123</custombtn>
     </layout>
 </form>

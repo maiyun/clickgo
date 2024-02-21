@@ -17,7 +17,9 @@ export default class extends clickgo.control.AbstractControl {
             if (clickgo.dom.hasTouchButMouse(e)) {
                 return;
             }
-            clickgo.form.showPop(el, this.refs.pop, 't');
+            clickgo.form.showPop(el, this.refs.pop, 't', {
+                'flow': false
+            });
         }
         const leave = (e: MouseEvent | TouchEvent) => {
             if (clickgo.dom.hasTouchButMouse(e)) {

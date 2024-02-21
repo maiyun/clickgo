@@ -755,7 +755,12 @@ export async function run(url: string | types.IApp, opt: types.ITaskRunOptions =
             hideNotify: function(notifyId: number): void {
                 form.hideNotify(notifyId);
             },
-            showPop: function(el: HTMLElement, pop: HTMLElement | undefined, direction: 'h' | 'v' | MouseEvent | TouchEvent | { x: number; y: number; }, opt: { 'size'?: { width?: number; height?: number; }; 'null'?: boolean; 'autoPosition'?: boolean; } = {}): void {
+            showPop: function(el: HTMLElement, pop: HTMLElement | undefined, direction: 'h' | 'v' | 't' | MouseEvent | TouchEvent | { x: number; y: number; }, opt: {
+                'size'?: { width?: number; height?: number; };
+                'null'?: boolean;
+                'autoPosition'?: boolean;
+                'flow'?: boolean;
+            } = {}): void {
                 form.showPop(el, pop, direction, opt);
             },
             hidePop: function(pop?: HTMLElement): void {

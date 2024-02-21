@@ -50,9 +50,9 @@ export abstract class AbstractControl {
     }
 
     /** --- root form --- */
-    private _rootForm: form.AbstractForm & Record<string, any> | null = null;
+    private _rootForm: (form.AbstractForm & Record<string, any>) | null = null;
 
-    /** --- 当前控件所在窗体的窗体对象，系统会在创建时重写本函数 --- */
+    /** --- 当前控件所在窗体的窗体对象 --- */
     public get rootForm(): form.AbstractForm & Record<string, any> {
         if (!this._rootForm) {
             this._rootForm = this.parentByName('root') as any;
@@ -65,6 +65,14 @@ export abstract class AbstractControl {
             }
         }
         return this._rootForm!;
+    }
+
+    /** --- 当前组件是否是别的组件的子组件，仅仅是包裹在组件的 layout 初始化中的才算 --- */
+    private _rootControl: (AbstractControl & Record<string, any>) | null = null;
+
+    /** --- 当前组件如果在开发控件层面被包裹了，则可以获取到包裹他的组件对象 --- */
+    public get rootControl(): (AbstractControl & Record<string, any>) | null {
+        return this._rootControl;
     }
 
     /**
@@ -458,6 +466,9 @@ export async function init(
                     if (t.controls[name].layout.includes('<teleport')) {
                         t.controls[name].layout = tool.teleportGlue(t.controls[name].layout, '{{{formId}}}');
                     }
+                    // --- 添加父子组件的映射关系 ---
+                    // --- TODO ---
+                    t.controls[name].layout = t.controls[name].layout.replace(/(<cg-[a-zA-Z0-9-_]+)/g, '$1 data-cg-rootcontrol=""');
                     // --- 检测是否有 js ---
                     let cls: any;
                     if (item.files[item.config.code + '.js']) {

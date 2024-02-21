@@ -1,9 +1,22 @@
 .wrap {
     border: solid 1px #000; color: #000; background: hsl(0, 0%, 100%); display: flex; align-items: center; justify-content: center;
-    &:hover {
-        background: hsl(0, 0%, 90%);
+
+    > div {
+        border: solid 1px #000; padding: 10px 15px;
+        &:hover {
+            background: hsl(0, 0%, 90%);
+        }
+        &:active {
+            background: hsl(0, 0%, 0%); color: #FFF;
+        }
     }
-    &:active {
-        background: hsl(0, 0%, 0%); color: #FFF;
+
+    > :last-child {
+        border-left: none;
     }
+
+}
+
+.pop {
+    padding: 10px; background: #FFF; border: solid 1px #000;
 }
