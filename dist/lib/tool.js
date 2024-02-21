@@ -264,20 +264,20 @@ function layoutInsertAttr(layout, insert, opt = {}) {
 exports.layoutInsertAttr = layoutInsertAttr;
 function layoutClassPrependObject(object) {
     object = object.slice(1, -1).trim();
-    return '{' + object.replace(/(.+?):(.+?)(,|$)/g, function (t, t1, t2, t3) {
+    return '{' + object.replace(/([ a-zA-Z0-9'"`\[\]\-_]+)(\s*:)/g, function (t, t1, t2) {
         t1 = t1.trim();
         if (t1.startsWith('[')) {
             t1 = '[classPrepend(' + t1.slice(1, -1) + ')]';
         }
         else {
             let sp = '';
-            if (t1.startsWith('\'') || t1.startsWith('"')) {
+            if (t1.startsWith('\'') || t1.startsWith('"') || t1.startsWith('`')) {
                 sp = t1[0];
                 t1 = t1.slice(1, -1);
             }
             t1 = `[classPrepend(${sp}${t1}${sp})]`;
         }
-        return t1 + ':' + t2 + t3;
+        return t1 + t2;
     }) + '}';
 }
 function layoutClassPrepend(layout, preps) {
@@ -291,8 +291,8 @@ function layoutClassPrepend(layout, preps) {
             }
         }
         return ` class="${resultList.join(' ')}"`;
-    }).replace(/ :class=(["']).+?["'](\s+[a-zA-Z0-9-_:@]+=|\s*>)/gi, function (t, sp) {
-        return t.replace(new RegExp(` :class=${sp}(.+?)${sp}(\\s+[a-zA-Z0-9-_:@]+=|\\s*>)`, 'gi'), function (t, t1, t2) {
+    }).replace(/ :class=(["']).+?["']((\s+[a-zA-Z0-9-_:@]+(=|\s*>))|(\s*)>)/gi, function (t, sp) {
+        return t.replace(new RegExp(` :class=${sp}(.+?)${sp}((\\s+[a-zA-Z0-9-_:@]+(=|\\s*>))|(\\s*)>)`, 'gi'), function (t, t1, t2) {
             t1 = t1.trim();
             if (t1.startsWith('[')) {
                 t1 = t1.slice(1, -1);

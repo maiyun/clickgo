@@ -343,6 +343,7 @@ export function layoutInsertAttr(layout: string, insert: string, opt: { 'ignore'
  */
 function layoutClassPrependObject(object: string): string {
     object = object.slice(1, -1).trim();
+    /*
     return '{' + object.replace(/(.+?):(.+?)(,|$)/g, function(t, t1: string, t2: string, t3: string) {
         // --- t1 是 'xxx', t2 是 xxx，t3 是结尾或者 , 分隔符 ---
         t1 = t1.trim();
@@ -358,6 +359,23 @@ function layoutClassPrependObject(object: string): string {
             t1 = `[classPrepend(${sp}${t1}${sp})]`;
         }
         return t1 + ':' + t2 + t3;
+    }) + '}';
+    //*/
+    return '{' + object.replace(/([ a-zA-Z0-9'"`\[\]\-_]+)(\s*:)/g, function(t, t1: string, t2:string) {
+        // --- t1 是 'xxx', t2 是 xxx，t3 是结尾或者 , 分隔符 ---
+        t1 = t1.trim();
+        if (t1.startsWith('[')) {
+            t1 = '[classPrepend(' + t1.slice(1, -1) + ')]';
+        }
+        else {
+            let sp = '';
+            if (t1.startsWith('\'') || t1.startsWith('"') || t1.startsWith('`')) {
+                sp = t1[0];
+                t1 = t1.slice(1, -1);
+            }
+            t1 = `[classPrepend(${sp}${t1}${sp})]`;
+        }
+        return t1 + t2;
     }) + '}';
 }
 /**
@@ -378,8 +396,8 @@ export function layoutClassPrepend(layout: string, preps: string[]): string {
         }
         return ` class="${resultList.join(' ')}"`;
     //}).replace(/ :class=(["']).+?>/gi, function(t, sp) {
-    }).replace(/ :class=(["']).+?["'](\s+[a-zA-Z0-9-_:@]+=|\s*>)/gi, function(t, sp) {
-        return t.replace(new RegExp(` :class=${sp}(.+?)${sp}(\\s+[a-zA-Z0-9-_:@]+=|\\s*>)`, 'gi'), function(t, t1: string, t2: string) {
+    }).replace(/ :class=(["']).+?["']((\s+[a-zA-Z0-9-_:@]+(=|\s*>))|(\s*)>)/gi, function(t, sp) {
+        return t.replace(new RegExp(` :class=${sp}(.+?)${sp}((\\s+[a-zA-Z0-9-_:@]+(=|\\s*>))|(\\s*)>)`, 'gi'), function(t, t1: string, t2: string) {
             // --- t1 为 [] 或 {} ---
             t1 = t1.trim();
             if (t1.startsWith('[')) {
