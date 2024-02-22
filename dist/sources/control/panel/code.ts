@@ -31,8 +31,13 @@ export default class extends clickgo.control.AbstractControl {
         'vroot': clickgo.form.AbstractPanel;
     }> = {};
 
-    /** --- nav 控件 --- */
-    public nav: any = null;
+
+    public access: {
+        'nav': (clickgo.control.AbstractControl & Record<string, any>) | null
+    } = {
+        /** --- nav 控件 --- */
+        'nav': null
+    };
 
     /** --- 当前 active 的 panel id --- */
     public activeId: number = 0;
@@ -86,9 +91,9 @@ export default class extends clickgo.control.AbstractControl {
             // --- 加载过要跳转的就是当前 item ---
             if (this.activeId.toString() === id) {
                 // --- 同一个，也就是仅仅是 qs 变了（也可能就是用户 go 了两次相同的） ---
-                if (this.nav) {
+                if (this.access.nav) {
                     // --- 有 nav 的话，就大概率不是用户来 go 的了 ---
-                    item.vroot.qs = clickgo.tool.clone(this.nav.qs);
+                    item.vroot.qs = clickgo.tool.clone(this.access.nav.qs);
                     await item.vroot.onQsChange();
                 }
                 this.loading = false;
@@ -102,8 +107,8 @@ export default class extends clickgo.control.AbstractControl {
             const n: HTMLElement = this.element.querySelector('[data-panel-id="' + id + '"]')!;
             n.style.opacity = '1';
             n.style.pointerEvents = '';
-            if (this.nav && (JSON.stringify(item.vroot.qs) !== JSON.stringify(this.nav.qs))) {
-                item.vroot.qs = clickgo.tool.clone(this.nav.qs);
+            if (this.access.nav && (JSON.stringify(item.vroot.qs) !== JSON.stringify(this.access.nav.qs))) {
+                item.vroot.qs = clickgo.tool.clone(this.access.nav.qs);
                 await item.vroot.onQsChange();
                 showEvent.detail.qsChange = true;
             }
@@ -127,8 +132,8 @@ export default class extends clickgo.control.AbstractControl {
             const n: HTMLElement = this.element.querySelector('[data-panel-id="' + rtn.id.toString() + '"]')!;
             n.style.opacity = '1';
             n.style.pointerEvents = '';
-            if (this.nav) {
-                rtn.vroot.qs = clickgo.tool.clone(this.nav.qs);
+            if (this.access.nav) {
+                rtn.vroot.qs = clickgo.tool.clone(this.access.nav.qs);
                 await rtn.vroot.onQsChange();
                 showEvent.detail.qsChange = true;
             }
@@ -162,7 +167,7 @@ export default class extends clickgo.control.AbstractControl {
             this.mapSelected = '';
             return;
         }
-        const name = this.nav ? this.nav.selected : this.props.modelValue;
+        const name = this.access.nav ? this.access.nav.selected : this.props.modelValue;
         if (name === this.mapSelected) {
             return;
         }
@@ -185,7 +190,7 @@ export default class extends clickgo.control.AbstractControl {
         }
         /** --- went 事件对象 --- */
         const rtn = await this.go(this.props.map[to[0]], undefined, {
-            'nav': this.nav ? true : false,
+            'nav': this.access.nav ? true : false,
             'action': opt.action ?? 'forword',
             'previous': opt.previous ?? ''
         });
@@ -207,7 +212,7 @@ export default class extends clickgo.control.AbstractControl {
     }
 
     public onMounted(): void {
-        this.nav = this.parentByName('nav');
+        this.access.nav = this.parentByName('nav');
         // --- 等待 rootForm 的 mounted 真正的挂载完成，在执行下面的内容 ---
         this.rootForm.ready(async() => {
             this.watch('modelValue', async () => {
@@ -218,7 +223,7 @@ export default class extends clickgo.control.AbstractControl {
             }, {
                 'deep': true
             });
-            if (this.nav) {
+            if (this.access.nav) {
                 this.watch((): string[] => {
                     const hh = clickgo.tool.clone(this.rootForm._historyHash);
                     if (this.rootForm.formHash) {

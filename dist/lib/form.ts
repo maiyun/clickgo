@@ -601,6 +601,18 @@ export abstract class AbstractForm extends AbstractCommon {
         return true;
     }
 
+    /** --- 更新步进条，用于动态改变某个项的 hash 值时使用 --- */
+    public updateStep(index: number, value: string): boolean {
+        if (this._inStep) {
+            return false;
+        }
+        if (this._stepValues[index] === undefined) {
+            return false;
+        }
+        this._stepValues[index] = value;
+        return true;
+    }
+
     /** --- 完成当前步骤条 --- */
     public async doneStep(): Promise<void> {
         if (!this._inStep) {
@@ -3080,6 +3092,10 @@ export async function create<T extends AbstractForm>(
             this._formHash = v;
             core.trigger('formHashChange', t.id, formId, v);
         }
+    };
+    // --- 获取和设置 form hash with data 的数据 ---
+    idata._formHashData = {};
+    computed.formHashData = {
     };
     // --- 当前窗体是否显示在任务栏 ---
     idata._showInSystemTask = true;
