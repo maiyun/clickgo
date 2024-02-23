@@ -275,6 +275,12 @@ class AbstractPanel extends AbstractCommon {
     set formHash(fh) {
         this.rootForm.formHash = fh;
     }
+    get formHashData() {
+        return this.rootForm.formHashData;
+    }
+    set formHashData(v) {
+        this.rootForm.formHashData = v;
+    }
     formHashBack() {
         return __awaiter(this, void 0, void 0, function* () {
             yield this.rootForm.formHashBack();
@@ -336,6 +342,11 @@ class AbstractForm extends AbstractCommon {
     }
     set formHash(v) {
     }
+    get formHashData() {
+        return {};
+    }
+    set formHashData(v) {
+    }
     get topMost() {
         return false;
     }
@@ -365,6 +376,9 @@ class AbstractForm extends AbstractCommon {
     formHashBack() {
         return __awaiter(this, void 0, void 0, function* () {
             const v = this;
+            if (Date.now() - v.$data._lastFormHashData > 300) {
+                v.$data._formHashData = {};
+            }
             if (!v.$data._historyHash.length) {
                 if (v.$data._formHash) {
                     if (this.inStep) {
@@ -378,7 +392,7 @@ class AbstractForm extends AbstractCommon {
                         this.refs.form.stepHide();
                     }
                     v.$data._formHash = '';
-                    core.trigger('formHashChange', this.taskId, this.formId, '');
+                    core.trigger('formHashChange', this.taskId, this.formId, '', v.$data._formHashData);
                     return;
                 }
                 return;
@@ -401,7 +415,7 @@ class AbstractForm extends AbstractCommon {
             }
             v.$data._formHash = parent;
             v.$data._historyHash.splice(-1);
-            core.trigger('formHashChange', this.taskId, this.formId, parent);
+            core.trigger('formHashChange', this.taskId, this.formId, parent, v.$data._formHashData);
         });
     }
     sendToPanel(panel, data) {
@@ -429,6 +443,16 @@ class AbstractForm extends AbstractCommon {
             this.refs.form.stepShow();
             return true;
         });
+    }
+    updateStep(index, value) {
+        if (this._inStep) {
+            return false;
+        }
+        if (this._stepValues[index] === undefined) {
+            return false;
+        }
+        this._stepValues[index] = value;
+        return true;
     }
     doneStep() {
         return __awaiter(this, void 0, void 0, function* () {
@@ -2372,6 +2396,9 @@ function create(cls, data, opt = {}, taskId) {
                 if (v === this._formHash) {
                     return;
                 }
+                if (Date.now() - this._lastFormHashData > 300) {
+                    this._formHashData = {};
+                }
                 if (this.inStep) {
                     (() => __awaiter(this, void 0, void 0, function* () {
                         if (this._stepValues.includes(v)) {
@@ -2391,7 +2418,7 @@ function create(cls, data, opt = {}, taskId) {
                             this._historyHash.push(this._formHash);
                         }
                         this._formHash = v;
-                        core.trigger('formHashChange', t.id, formId, v);
+                        core.trigger('formHashChange', t.id, formId, v, this._formHashData);
                     }))();
                     return;
                 }
@@ -2399,7 +2426,18 @@ function create(cls, data, opt = {}, taskId) {
                     this._historyHash.push(this._formHash);
                 }
                 this._formHash = v;
-                core.trigger('formHashChange', t.id, formId, v);
+                core.trigger('formHashChange', t.id, formId, v, this._formHashData);
+            }
+        };
+        idata._lastFormHashData = 0;
+        idata._formHashData = {};
+        computed.formHashData = {
+            get: function () {
+                return this._formHashData;
+            },
+            set: function (v) {
+                this._formHashData = v;
+                this._lastFormHashData = Date.now();
             }
         };
         idata._showInSystemTask = true;

@@ -138,11 +138,11 @@ export default class extends clickgo.form.AbstractForm {
         this.pushConsole('formShowInSystemTaskChange', `taskId: ${taskId}, formId: ${formId}, value: ${value}`);
     }
 
-    public onFormHashChange(taskId: number, formId: number, value: string): void {
+    public onFormHashChange(taskId: number, formId: number, value: string, data: Record<string, any>): void {
         if (!this.flist[formId]) {
             return;
         }
-        this.pushConsole('formHashChange', `taskId: ${taskId}, formId: ${formId}, value: ${value}`);
+        this.pushConsole('formHashChange', `taskId: ${taskId}, formId: ${formId}, value: ${value}, data: ${JSON.stringify(data).slice(0, 20)}...`);
         return;
     }
 

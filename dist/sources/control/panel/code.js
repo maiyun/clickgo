@@ -48,7 +48,9 @@ class default_1 extends clickgo.control.AbstractControl {
         this.mapSelected = '';
         this.loading = false;
         this.loaded = {};
-        this.nav = null;
+        this.access = {
+            'nav': null
+        };
         this.activeId = 0;
     }
     hideActive() {
@@ -88,8 +90,8 @@ class default_1 extends clickgo.control.AbstractControl {
                     continue;
                 }
                 if (this.activeId.toString() === id) {
-                    if (this.nav) {
-                        item.vroot.qs = clickgo.tool.clone(this.nav.qs);
+                    if (this.access.nav) {
+                        item.vroot.qs = clickgo.tool.clone(this.access.nav.qs);
                         yield item.vroot.onQsChange();
                     }
                     this.loading = false;
@@ -101,8 +103,8 @@ class default_1 extends clickgo.control.AbstractControl {
                 const n = this.element.querySelector('[data-panel-id="' + id + '"]');
                 n.style.opacity = '1';
                 n.style.pointerEvents = '';
-                if (this.nav && (JSON.stringify(item.vroot.qs) !== JSON.stringify(this.nav.qs))) {
-                    item.vroot.qs = clickgo.tool.clone(this.nav.qs);
+                if (this.access.nav && (JSON.stringify(item.vroot.qs) !== JSON.stringify(this.access.nav.qs))) {
+                    item.vroot.qs = clickgo.tool.clone(this.access.nav.qs);
                     yield item.vroot.onQsChange();
                     showEvent.detail.qsChange = true;
                 }
@@ -123,8 +125,8 @@ class default_1 extends clickgo.control.AbstractControl {
                 const n = this.element.querySelector('[data-panel-id="' + rtn.id.toString() + '"]');
                 n.style.opacity = '1';
                 n.style.pointerEvents = '';
-                if (this.nav) {
-                    rtn.vroot.qs = clickgo.tool.clone(this.nav.qs);
+                if (this.access.nav) {
+                    rtn.vroot.qs = clickgo.tool.clone(this.access.nav.qs);
                     yield rtn.vroot.onQsChange();
                     showEvent.detail.qsChange = true;
                 }
@@ -151,7 +153,7 @@ class default_1 extends clickgo.control.AbstractControl {
                 this.mapSelected = '';
                 return;
             }
-            const name = this.nav ? this.nav.selected : this.props.modelValue;
+            const name = this.access.nav ? this.access.nav.selected : this.props.modelValue;
             if (name === this.mapSelected) {
                 return;
             }
@@ -171,8 +173,8 @@ class default_1 extends clickgo.control.AbstractControl {
             if (!event.go) {
                 return;
             }
-            const rtn = yield this.go(this.props.map[to[0]], undefined, {
-                'nav': this.nav ? true : false,
+            const rtn = yield this.go(this.props.map[to[0]], this.rootForm.formHashData, {
+                'nav': this.access.nav ? true : false,
                 'action': (_a = opt.action) !== null && _a !== void 0 ? _a : 'forword',
                 'previous': (_b = opt.previous) !== null && _b !== void 0 ? _b : ''
             });
@@ -192,7 +194,7 @@ class default_1 extends clickgo.control.AbstractControl {
         });
     }
     onMounted() {
-        this.nav = this.parentByName('nav');
+        this.access.nav = this.parentByName('nav');
         this.rootForm.ready(() => __awaiter(this, void 0, void 0, function* () {
             this.watch('modelValue', () => __awaiter(this, void 0, void 0, function* () {
                 yield this.mapNameChange();
@@ -202,7 +204,7 @@ class default_1 extends clickgo.control.AbstractControl {
             }), {
                 'deep': true
             });
-            if (this.nav) {
+            if (this.access.nav) {
                 this.watch(() => {
                     const hh = clickgo.tool.clone(this.rootForm._historyHash);
                     if (this.rootForm.formHash) {

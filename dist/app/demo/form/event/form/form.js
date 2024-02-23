@@ -159,11 +159,11 @@ class default_1 extends clickgo.form.AbstractForm {
         this.flist[formId].title = value;
         this.pushConsole('formShowInSystemTaskChange', `taskId: ${taskId}, formId: ${formId}, value: ${value}`);
     }
-    onFormHashChange(taskId, formId, value) {
+    onFormHashChange(taskId, formId, value, data) {
         if (!this.flist[formId]) {
             return;
         }
-        this.pushConsole('formHashChange', `taskId: ${taskId}, formId: ${formId}, value: ${value}`);
+        this.pushConsole('formHashChange', `taskId: ${taskId}, formId: ${formId}, value: ${value}, data: ${JSON.stringify(data).slice(0, 20)}...`);
         return;
     }
 }

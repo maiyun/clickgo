@@ -489,13 +489,13 @@ function trigger(name, taskId = 0, formId = 0, param1 = '', param2 = '', param3 
             break;
         }
         case 'formHashChange': {
-            (_11 = (_10 = globalEvents)[name]) === null || _11 === void 0 ? void 0 : _11.call(_10, taskId, formId, param1);
-            exports.boot === null || exports.boot === void 0 ? void 0 : exports.boot[eventName](taskId, formId, param1);
+            (_11 = (_10 = globalEvents)[name]) === null || _11 === void 0 ? void 0 : _11.call(_10, taskId, formId, param1, param2);
+            exports.boot === null || exports.boot === void 0 ? void 0 : exports.boot[eventName](taskId, formId, param1, param2);
             for (const tid in task.list) {
                 const t = task.list[tid];
-                (_12 = t.class) === null || _12 === void 0 ? void 0 : _12[eventName](taskId, formId, param1);
+                (_12 = t.class) === null || _12 === void 0 ? void 0 : _12[eventName](taskId, formId, param1, param2);
                 for (const fid in t.forms) {
-                    (_14 = (_13 = t.forms[fid].vroot)[eventName]) === null || _14 === void 0 ? void 0 : _14.call(_13, taskId, formId, param1);
+                    (_14 = (_13 = t.forms[fid].vroot)[eventName]) === null || _14 === void 0 ? void 0 : _14.call(_13, taskId, formId, param1, param2);
                 }
             }
             break;

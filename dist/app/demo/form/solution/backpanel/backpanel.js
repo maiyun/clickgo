@@ -48,7 +48,7 @@ class default_1 extends clickgo.form.AbstractForm {
             'test2': '../../control/panel/test2'
         };
     }
-    onFormHashChange(taskId, formId, value) {
+    onFormHashChange(taskId, formId, value, data) {
         if (formId !== this.formId) {
             return;
         }
@@ -59,6 +59,11 @@ class default_1 extends clickgo.form.AbstractForm {
             e.preventDefault();
             yield clickgo.form.dialog('Show form');
         });
+    }
+    onJumpdataSelect(e) {
+        e.preventDefault();
+        this.formHashData = { 'key': 'form hash data' };
+        this.formHash = 'test1';
     }
     onMounted(data) {
         return __awaiter(this, void 0, void 0, function* () {

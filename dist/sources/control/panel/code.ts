@@ -189,7 +189,7 @@ export default class extends clickgo.control.AbstractControl {
             return;
         }
         /** --- went 事件对象 --- */
-        const rtn = await this.go(this.props.map[to[0]], undefined, {
+        const rtn = await this.go(this.props.map[to[0]], this.rootForm.formHashData, {
             'nav': this.access.nav ? true : false,
             'action': opt.action ?? 'forword',
             'previous': opt.previous ?? ''

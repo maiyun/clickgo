@@ -167,7 +167,7 @@ export abstract class AbstractApp {
     }
 
     /** --- 窗体的 formHash 改变事件 --- */
-    public onFormHashChange(taskId: number, formId: number, value: string): void | Promise<void>;
+    public onFormHashChange(taskId: number, formId: number, value: string, data: Record<string, any>): void | Promise<void>;
     public onFormHashChange(): void {
         return;
     }
@@ -463,7 +463,7 @@ const globalEvents = {
 /**
  * --- 主动触发系统级事件，App 中无效，用 this.trigger 替代 ---
  */
-export function trigger(name: types.TGlobalEvent, taskId: number | string | boolean = 0, formId: number | string | boolean | Record<string, any> | null = 0, param1: boolean | Error | string = '', param2: string = '', param3: boolean = true): void {
+export function trigger(name: types.TGlobalEvent, taskId: number | string | boolean = 0, formId: number | string | boolean | Record<string, any> | null = 0, param1: boolean | Error | string = '', param2: string | Record<string, any> = '', param3: boolean = true): void {
     const eventName = 'on' + name[0].toUpperCase() + name.slice(1);
     switch (name) {
         case 'error': {
@@ -573,13 +573,13 @@ export function trigger(name: types.TGlobalEvent, taskId: number | string | bool
             break;
         }
         case 'formHashChange': {
-            (globalEvents as any)[name]?.(taskId, formId, param1);
-            (boot as any)?.[eventName](taskId, formId, param1);
+            (globalEvents as any)[name]?.(taskId, formId, param1, param2);
+            (boot as any)?.[eventName](taskId, formId, param1, param2);
             for (const tid in task.list) {
                 const t = task.list[tid];
-                (t.class as any)?.[eventName](taskId, formId, param1);
+                (t.class as any)?.[eventName](taskId, formId, param1, param2);
                 for (const fid in t.forms) {
-                    t.forms[fid].vroot[eventName]?.(taskId, formId, param1);
+                    t.forms[fid].vroot[eventName]?.(taskId, formId, param1, param2);
                 }
             }
             break;

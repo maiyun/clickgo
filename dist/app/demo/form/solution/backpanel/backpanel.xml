@@ -19,6 +19,7 @@
             <nav-item label="Test1" name="test1"></nav-item>
             <nav-item label="Test1QS" name="test1?a=1&b=2"></nav-item>
             <nav-item label="Test2" name="test2"></nav-item>
+            <nav-item label="jumpdata" name="jumpdata" @select="onJumpdataSelect"></nav-item>
             <template v-slot:header>
                 <label style="flex: 1; text-align: right; padding-right: var(--g-padding);">Panel</label>
             </template>

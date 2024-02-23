@@ -368,6 +368,16 @@ export abstract class AbstractPanel extends AbstractCommon {
         this.rootForm.formHash = fh;
     }
 
+    
+    /** --- 获取 form 的 formhash with data 值 --- */
+    public get formHashData(): Record<string, any> {
+        return this.rootForm.formHashData;
+    }
+
+    public set formHashData(v: Record<string, any>) {
+        this.rootForm.formHashData = v;
+    }
+
     /** --- 将母窗体的 form hash 回退 --- */
     public async formHashBack(): Promise<void> {
         await this.rootForm.formHashBack();
@@ -461,6 +471,15 @@ export abstract class AbstractForm extends AbstractCommon {
         // --- 会进行重写 ---
     }
 
+    /** --- 获取 form 的 formhash with data 值 --- */
+    public get formHashData(): Record<string, any> {
+        return {};
+    }
+
+    public set formHashData(v: Record<string, any>) {
+        // --- 会进行重写 ---
+    }
+
     /** --- 是否是置顶 --- */
     public get topMost(): boolean {
         // --- 将在初始化时系统自动重写本函数 ---
@@ -515,6 +534,9 @@ export abstract class AbstractForm extends AbstractCommon {
     /** --- form hash 回退 --- */
     public async formHashBack(): Promise<void> {
         const v = this as any;
+        if (Date.now() - v.$data._lastFormHashData > 300) {
+            v.$data._formHashData = {};
+        }
         if (!v.$data._historyHash.length) {
             if (v.$data._formHash) {
                 if (this.inStep) {
@@ -528,7 +550,7 @@ export abstract class AbstractForm extends AbstractCommon {
                     this.refs.form.stepHide();
                 }
                 v.$data._formHash = '';
-                core.trigger('formHashChange', this.taskId, this.formId, '');
+                core.trigger('formHashChange', this.taskId, this.formId, '', v.$data._formHashData);
                 return;
             }
             return;
@@ -551,7 +573,7 @@ export abstract class AbstractForm extends AbstractCommon {
         }
         v.$data._formHash = parent;
         v.$data._historyHash.splice(-1);
-        core.trigger('formHashChange', this.taskId, this.formId, parent);
+        core.trigger('formHashChange', this.taskId, this.formId, parent, v.$data._formHashData);
     }
 
     /** --- 发送一段数据到 panel 控件，本质上也是调用的 panel 控件的 send 方法 --- */
@@ -779,7 +801,7 @@ export abstract class AbstractForm extends AbstractCommon {
     }
 
     /** --- 窗体的 formHash 改变事件 --- */
-    public onFormHashChange(taskId: number, formId: number, value: string): void | Promise<void>;
+    public onFormHashChange(taskId: number, formId: number, value: string, data: Record<string, any>): void | Promise<void>;
     public onFormHashChange(): void {
         return;
     }
@@ -3060,6 +3082,9 @@ export async function create<T extends AbstractForm>(
             if (v === this._formHash) {
                 return;
             }
+            if (Date.now() - this._lastFormHashData > 300) {
+                this._formHashData = {};
+            }
             if (this.inStep) {
                 // --- 在 step 中，要判断 step 是否正确 ---
                 (async (): Promise<void> => {
@@ -3082,7 +3107,7 @@ export async function create<T extends AbstractForm>(
                         this._historyHash.push(this._formHash);
                     }
                     this._formHash = v;
-                    core.trigger('formHashChange', t.id, formId, v);
+                    core.trigger('formHashChange', t.id, formId, v, this._formHashData);
                 })() as any;
                 return;
             }
@@ -3090,12 +3115,20 @@ export async function create<T extends AbstractForm>(
                 this._historyHash.push(this._formHash);
             }
             this._formHash = v;
-            core.trigger('formHashChange', t.id, formId, v);
+            core.trigger('formHashChange', t.id, formId, v, this._formHashData);
         }
     };
     // --- 获取和设置 form hash with data 的数据 ---
+    idata._lastFormHashData = 0;
     idata._formHashData = {};
     computed.formHashData = {
+        get: function(this: types.IVue): string {
+            return this._formHashData;
+        },
+        set: function(this: types.IVue, v: Record<string, any>): void {
+            this._formHashData = v;
+            this._lastFormHashData = Date.now();
+        }
     };
     // --- 当前窗体是否显示在任务栏 ---
     idata._showInSystemTask = true;
