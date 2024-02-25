@@ -40,6 +40,9 @@ class default_1 extends clickgo.control.AbstractControl {
         if (this.props.mode !== 'date') {
             return this.props.content;
         }
+        if (this.propNumber('content') === 0) {
+            return '';
+        }
         const dateTxt = [];
         const date = new Date(this.propNumber('content') * 1000);
         const tz = this.props.tz === undefined ? -(date.getTimezoneOffset() / 60) : this.propNumber('tz');

@@ -26,6 +26,9 @@ export default class extends clickgo.control.AbstractControl {
         if (this.props.mode !== 'date') {
             return this.props.content;
         }
+        if (this.propNumber('content') === 0) {
+            return '';
+        }
         const dateTxt: string[] = [];
         const date = new Date(this.propNumber('content') * 1000);
         /** --- 当前设定的时区 --- */
