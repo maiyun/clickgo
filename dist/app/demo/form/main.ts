@@ -9,6 +9,7 @@ import cdateFrm from './control/date/date';
 import cdialogFrm from './control/dialog/dialog';
 import cfileFrm from './control/file/file';
 import cformFrm from './control/form/form';
+import cgroupFrm from './control/group/group';
 import chtmlFrm from './control/html/html';
 import ciconviewFrm from './control/iconview/iconview';
 import clinkFrm from './control/link/link';
@@ -115,6 +116,10 @@ export default class extends clickgo.form.AbstractForm {
             }
             case 'cform': {
                 frm = await clickgo.form.create(cformFrm);
+                break;
+            }
+            case 'cgroup': {
+                frm = await clickgo.form.create(cgroupFrm);
                 break;
             }
             case 'chtml': {

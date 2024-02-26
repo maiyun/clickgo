@@ -44,6 +44,7 @@ const date_1 = __importDefault(require("./control/date/date"));
 const dialog_1 = __importDefault(require("./control/dialog/dialog"));
 const file_1 = __importDefault(require("./control/file/file"));
 const form_1 = __importDefault(require("./control/form/form"));
+const group_1 = __importDefault(require("./control/group/group"));
 const html_1 = __importDefault(require("./control/html/html"));
 const iconview_1 = __importDefault(require("./control/iconview/iconview"));
 const link_1 = __importDefault(require("./control/link/link"));
@@ -147,6 +148,10 @@ class default_1 extends clickgo.form.AbstractForm {
                 }
                 case 'cform': {
                     frm = yield clickgo.form.create(form_1.default);
+                    break;
+                }
+                case 'cgroup': {
+                    frm = yield clickgo.form.create(group_1.default);
                     break;
                 }
                 case 'chtml': {

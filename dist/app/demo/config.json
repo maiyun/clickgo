@@ -58,6 +58,8 @@
         "/form/control/form/form.css",
         "/form/control/form/form.js",
         "/form/control/form/form.xml",
+        "/form/control/group/group.js",
+        "/form/control/group/group.xml",
         "/form/control/html/html.js",
         "/form/control/html/html.xml",
         "/form/control/iconview/iconview.js",

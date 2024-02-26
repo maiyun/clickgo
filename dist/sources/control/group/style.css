@@ -1,0 +1,1 @@
+.wrap{padding:var(--g-bpadding);background:var(--face)}.wrap .title{font-size:20px}.wrap .content{display:flex;margin-top:var(--g-bpadding)}.wrap.v .content{flex-direction:column}

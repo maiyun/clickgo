@@ -1,5 +1,6 @@
 global {
     --g-padding:10px;
+    --g-bpadding:25px;
     --g-margin:7px;
     --g-radius:5px;
 
@@ -279,6 +280,15 @@ global {
 }
 .greatselect_pop {
     background: var(--pop-background); -webkit-backdrop-filter: blur(30px) saturate(2); backdrop-filter: blur(30px) saturate(2);
+}
+
+// -- CONTROL -- group --
+
+.group_wrap {
+    border-radius: 15px;
+    .group_title {
+        font-size: 24px;
+    }
 }
 
 // -- CONTROL -- iconview --
