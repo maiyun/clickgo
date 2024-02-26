@@ -77,6 +77,10 @@ This library is published under [Apache-2.0](./LICENSE) license.
 
 ## Third-party licenses
 
+#### Greatlist
+
+<a href="https://www.flaticon.com/free-icons/empty" title="empty icons">Empty icons created by Ghozi Muhtarom - Flaticon</a>
+
 ### **LICENSE:** MIT License **AUTHOR:** sigurdarson
 
 #### Form
@@ -85,10 +89,6 @@ This library is published under [Apache-2.0](./LICENSE) license.
 [Copy SVG Vector](https://www.svgrepo.com/svg/446994/copy)  
 [Border Radius SVG Vector](https://www.svgrepo.com/svg/446973/border-radius)  
 [Close SVG Vector](https://www.svgrepo.com/svg/446990/close)
-
-#### Greatlist
-
-[Document Remove SVG](https://www.svgrepo.com/svg/447002/document-remove)
 
 #### Levelselect
 
