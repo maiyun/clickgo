@@ -46,7 +46,7 @@ class default_1 extends clickgo.control.AbstractControl {
     maxScrollTop() {
         return this.element.scrollHeight - this.element.clientHeight;
     }
-    scroll() {
+    onScroll() {
         let sl = Math.round(this.element.scrollLeft);
         const msl = this.maxScrollLeft();
         if (sl > msl) {

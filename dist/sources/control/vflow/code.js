@@ -77,7 +77,7 @@ class default_1 extends clickgo.control.AbstractControl {
         }
         return list;
     }
-    get scroll() {
+    get scrollComp() {
         return this.props.direction === 'v' ? this.scrollTopData : this.scrollLeftData;
     }
     get client() {
@@ -248,8 +248,8 @@ class default_1 extends clickgo.control.AbstractControl {
     }
     reShow() {
         const rtn = this.getNewPos(this.showPos, {
-            'start': this.scroll - 20,
-            'end': this.scroll + this.client + 20
+            'start': this.scrollComp - 20,
+            'end': this.scrollComp + this.client + 20
         });
         this.showPos.start = rtn.start;
         this.showPos.end = rtn.end;

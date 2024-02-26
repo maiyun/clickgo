@@ -44,7 +44,7 @@ export default class extends clickgo.control.AbstractControl {
     /**
      * --- wrap 的 scroll 事件 ---
      */
-    public scroll(): void {
+    public onScroll(): void {
         // --- scroll left ---
         let sl = Math.round(this.element.scrollLeft);
         const msl = this.maxScrollLeft();

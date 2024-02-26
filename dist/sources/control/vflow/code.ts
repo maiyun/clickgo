@@ -85,7 +85,7 @@ export default class extends clickgo.control.AbstractControl {
     /**
      * --- 获取同方向的 scroll 值 ---
      */
-    public get scroll(): number {
+    public get scrollComp(): number {
         return this.props.direction === 'v' ? this.scrollTopData : this.scrollLeftData;
     }
 
@@ -327,8 +327,8 @@ export default class extends clickgo.control.AbstractControl {
      */
     public reShow(): void {
         const rtn = this.getNewPos(this.showPos, {
-            'start': this.scroll - 20,
-            'end': this.scroll + this.client + 20
+            'start': this.scrollComp - 20,
+            'end': this.scrollComp + this.client + 20
         });
         this.showPos.start = rtn.start;
         this.showPos.end = rtn.end;
