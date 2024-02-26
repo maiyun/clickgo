@@ -1,0 +1,30 @@
+.wrap {
+    display: flex; align-items: center;
+    .left {
+        height: 12px; width: 4px; background: var(--g-plain-border-color);
+    }
+    .content {
+        font-size: 14px; margin-left: var(--g-padding);
+    }
+    
+    &.primary {
+        .left {
+            background: var(--success);
+        }
+    }
+    &.info {
+        .left {
+            background: var(--info);
+        }
+    }
+    &.warning {
+        .left {
+            background: var(--warning);
+        }
+    }
+    &.danger {
+        .left {
+            background: var(--danger);
+        }
+    }
+}

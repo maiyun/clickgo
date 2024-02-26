@@ -83,7 +83,7 @@ function run() {
             'withFileTypes': true
         });
         for (const item of list) {
-            if (['alayout', 'alayout-row', 'alayout-cell', 'check', 'dialog', 'file', 'greatlist', 'greatselect', 'group', 'vflow', 'video', 'img', 'label', 'layout', 'levelselect', 'list', 'loading', 'marquee', 'menu', 'menu-item', 'menulist', 'menulist-item', 'menulist-split', 'flow', 'radio', 'scroll', 'select', 'step', 'svg', 'tab', 'tag', 'text', 'tip', 'task-item', 'table-item', 'nav-item', 'nav-title', 'panel', 'desc-cell', 'desc-head', 'desc-row', 'link', 'date'].includes(item.name)) {
+            if (['alayout', 'alayout-row', 'alayout-cell', 'check', 'dialog', 'file', 'greatlist', 'greatselect', 'group', 'vflow', 'video', 'img', 'label', 'layout', 'levelselect', 'list', 'loading', 'marquee', 'menu', 'menu-item', 'menulist', 'menulist-item', 'menulist-split', 'flow', 'radio', 'scroll', 'select', 'step', 'svg', 'tab', 'tag', 'text', 'tip', 'title', 'task-item', 'table-item', 'nav-item', 'nav-title', 'panel', 'desc-cell', 'desc-head', 'desc-row', 'link', 'date'].includes(item.name)) {
                 continue;
             }
             if (item.name.startsWith('.')) {
@@ -128,6 +128,7 @@ function run() {
                 yield addFile(zipo, base + 'tag', 'tag');
                 yield addFile(zipo, base + 'text', 'text');
                 yield addFile(zipo, base + 'tip', 'tip');
+                yield addFile(zipo, base + 'title', 'title');
                 yield addFile(zipo, base + 'panel', 'panel');
                 yield addFile(zipo, base + 'link', 'link');
                 yield addFile(zipo, base + 'date', 'date');

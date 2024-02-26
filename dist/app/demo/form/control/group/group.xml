@@ -1,9 +1,21 @@
 <form title="Group" width="450" height="500" padding="10" background="hsl(0, 0%, 90%)">
     <layout gutter="10" direction="v" style="flex: 1; width: 0;">
-        <group :title="title" direction="v" gutter="10">
-            <label>123</label>
-            <button>abc</button>
-        </group>
+        <flow direction="v" style="flex: 1; height: 0;">
+            <group :title="title" direction="v" gutter="10">
+                <label>123</label>
+                <button>abc</button>
+                <title>Small title</title>
+                <button>def</button>
+                <title type="primary">Primary title</title>
+                <label>123</label>
+                <title type="info">Info title</title>
+                <label>123</label>
+                <title type="warning">Warning title</title>
+                <label>123</label>
+                <title type="danger">Danger title</title>
+                <label>123</label>
+            </group>
+        </flow>
         <layout gutter="10">
             <button style="flex: 1;" @click="title = title === 'The title' ? 'Changed title' : 'The title'">Change title</button>
         </layout>

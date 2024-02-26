@@ -62,7 +62,7 @@ async function run(): Promise<void> {
         'withFileTypes': true
     });
     for (const item of list) {
-        if (['alayout', 'alayout-row', 'alayout-cell', 'check', 'dialog', 'file', 'greatlist', 'greatselect', 'group', 'vflow', 'video', 'img', 'label', 'layout', 'levelselect', 'list', 'loading', 'marquee', 'menu', 'menu-item', 'menulist', 'menulist-item', 'menulist-split', 'flow', 'radio', 'scroll', 'select', 'step', 'svg', 'tab', 'tag', 'text', 'tip', 'task-item', 'table-item', 'nav-item', 'nav-title', 'panel', 'desc-cell', 'desc-head', 'desc-row', 'link', 'date'].includes(item.name)) {
+        if (['alayout', 'alayout-row', 'alayout-cell', 'check', 'dialog', 'file', 'greatlist', 'greatselect', 'group', 'vflow', 'video', 'img', 'label', 'layout', 'levelselect', 'list', 'loading', 'marquee', 'menu', 'menu-item', 'menulist', 'menulist-item', 'menulist-split', 'flow', 'radio', 'scroll', 'select', 'step', 'svg', 'tab', 'tag', 'text', 'tip', 'title', 'task-item', 'table-item', 'nav-item', 'nav-title', 'panel', 'desc-cell', 'desc-head', 'desc-row', 'link', 'date'].includes(item.name)) {
             continue;
         }
         if (item.name.startsWith('.')) {
@@ -109,6 +109,7 @@ async function run(): Promise<void> {
             await addFile(zipo, base + 'tag', 'tag');
             await addFile(zipo, base + 'text', 'text');
             await addFile(zipo, base + 'tip', 'tip');
+            await addFile(zipo, base + 'title', 'title');
             await addFile(zipo, base + 'panel', 'panel');
             await addFile(zipo, base + 'link', 'link');
             await addFile(zipo, base + 'date', 'date');

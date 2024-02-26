@@ -802,6 +802,18 @@ global {
     }
 }
 
+// -- CONTROL -- title --
+
+.title_wrap {
+    .title_left {
+        height: 14px;
+    }
+    .title_content {
+        font-size: 16px; margin-left: var(--g-padding);
+    }
+}
+
+
 // -- CONTROL -- tuieditor --
 
 .tuieditor_wrap {

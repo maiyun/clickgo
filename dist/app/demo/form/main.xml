@@ -77,7 +77,7 @@
                 </layout>
                 <layout gutter="10">
                     <button @click="openForm('ctip')">Tip</button>
-                    <button @click="openForm('cgroup')">Group</button>
+                    <button @click="openForm('cgroup')">Group + Title</button>
                 </layout>
                 <layout gutter="10">
                     <button @click="openForm('cmonaco')">Monaco</button>
