@@ -1,5 +1,14 @@
 # 更新日志
 
+# 3.11.7
+
+[+] AbstractForm 类新增 updateStep 方法，允许处于流程中动态修改流程 value 值。  
+[+] 新增 group 控件。  
+[+] 新增 title 控件。  
+[+] AbstractForm 类新增 formHashData 属性，允许在 formHash 之前传递 data 数据。  
+[\*] 修改 greatlist 控件在没有内容显示时的图标。  
+[\*] 优化 levelselect 控件设置 v-model 时会自动选择非异步的子项。
+
 # 3.11.6
 
 [+] img 控件新增 direction、gutter、align-h、align-v 参数，并且支持在内部插入标签。  

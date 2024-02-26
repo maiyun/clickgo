@@ -1,5 +1,14 @@
 # Changelog
 
+# 3.11.7
+
+[+] Added `updateStep` method to `AbstractForm` class, allowing dynamic modification of process `value` while in progress.  
+[+] Added `group` control.  
+[+] Added `title` control.  
+[+] Added `formHashData` property to `AbstractForm` class, allowing passing `data` before `formHash`.  
+[\*] Modified icon displayed for `greatlist` control when there is no content to show.  
+[\*] Optimized `levelselect` control to automatically select non-asynchronous sub-items when setting `v-model`.
+
 # 3.11.6
 
 [+] Added new parameters direction, gutter, align-h, and align-v to the img component, and now supports inserting tags internally.  
