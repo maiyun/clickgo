@@ -63,7 +63,10 @@ export default class extends clickgo.form.AbstractForm {
             ]
         }, {
             'label': 'happy',
-            'children': ['xixi', 'xixida', 'gogogo']
+            'children': ['xixi', 'xixida', {
+                'value': 'gogogo',
+                'children': ['aaa', 'bbb', 'ccc']
+            }]
         }
     ];
 

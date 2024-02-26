@@ -92,7 +92,10 @@ class default_1 extends clickgo.form.AbstractForm {
                 ]
             }, {
                 'label': 'happy',
-                'children': ['xixi', 'xixida', 'gogogo']
+                'children': ['xixi', 'xixida', {
+                        'value': 'gogogo',
+                        'children': ['aaa', 'bbb', 'ccc']
+                    }]
             }
         ];
         this.addRemoveList = [];

@@ -85,7 +85,10 @@
                     <button @click="async = !async">{{async ? '' : '!'}}async</button>
                     <button @click="select3 = 'title'">Set: 'title'</button>
                     <button @click="select3 = 'haha2'">Set: 'haha2'</button>
-                    <button @click="select3 = 'sub2'">Set: 'sub2'</button>
+                    <layout gutter="10">
+                        <button @click="select3 = 'sub2'" style="flex: 1;">Set: 'sub2'</button>
+                        <button @click="select3 = 'gogogo'" style="flex: 1;">'gogogo'</button>
+                    </layout>
                     <button @click="refs.lese.selectLevelValue(['title', 'sub2'])">selectLevelValue(['title', 'sub2'])</button>
                     <button @click="refs.lese.selectLevelValue(['haha4', 'he'])">selectLevelValue(['haha4', 'he'])</button>
                     <button @click="select3 = ''">Clear</button>

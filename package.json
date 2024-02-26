@@ -20,10 +20,10 @@
   "devDependencies": {
     "@litert/eslint-plugin-rules": "^0.1.6",
     "@litert/loader": "^3.5.1",
-    "@types/node": "^20.11.19",
-    "npm": "^28.2.1",
+    "@types/node": "^20.11.20",
+    "electron": "^29.0.1",
     "jszip": "^3.10.1",
-    "terser": "^5.27.2",
+    "terser": "^5.28.1",
     "typescript": "^5.3.3"
   }
 }

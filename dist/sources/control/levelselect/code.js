@@ -108,6 +108,13 @@ class default_1 extends clickgo.control.AbstractControl {
         ];
         this.background = '';
         this.padding = '';
+        this._fvid = {
+            'level': 0,
+            'value': [],
+            'label': [],
+            'lists': [],
+            'levelData': []
+        };
     }
     get opMargin() {
         return this.padding.replace(/(\w+)/g, '-$1');
@@ -179,6 +186,135 @@ class default_1 extends clickgo.control.AbstractControl {
             return;
         }
         this.emit('update:modelValue', newval);
+    }
+    _findValueInDataAndSelectValueCheckChildren(nextChildren, autoUpdate = true, hidePop = false) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (!nextChildren) {
+                if (!this.propBoolean('async')) {
+                    if (hidePop) {
+                        clickgo.form.hidePop();
+                    }
+                    ++this.level;
+                    this.listValue = [];
+                    this.nowlist = [];
+                    this.value[this.level] = '';
+                    this.label[this.level] = '';
+                    this.lists[this.level] = [];
+                    this.levelData[this.level] = {
+                        'label': '',
+                        'value': ''
+                    };
+                    if (autoUpdate) {
+                        this.updateValue();
+                    }
+                    return false;
+                }
+                this.loading = true;
+                const children = yield new Promise((resolve) => {
+                    this.emit('load', this.value[this.level], (children) => {
+                        resolve(children);
+                        this.emit('loaded');
+                    });
+                });
+                this.loading = false;
+                if (!(children === null || children === void 0 ? void 0 : children.length)) {
+                    if (hidePop) {
+                        clickgo.form.hidePop();
+                    }
+                    ++this.level;
+                    this.listValue = [];
+                    this.nowlist = [];
+                    this.value[this.level] = '';
+                    this.label[this.level] = '';
+                    this.lists[this.level] = [];
+                    this.levelData[this.level] = {
+                        'label': '',
+                        'value': ''
+                    };
+                    if (autoUpdate) {
+                        this.updateValue();
+                    }
+                    return false;
+                }
+                nextChildren = children;
+            }
+            ++this.level;
+            this.listValue = [];
+            this.setNowList(nextChildren);
+            this.value[this.level] = '';
+            this.label[this.level] = '';
+            this.lists[this.level] = nextChildren;
+            this.levelData[this.level] = {
+                'label': '',
+                'value': ''
+            };
+            if (autoUpdate) {
+                this.updateValue();
+            }
+            return true;
+        });
+    }
+    findValueInData(value, data) {
+        var _a, _b, _c, _d, _e;
+        return __awaiter(this, void 0, void 0, function* () {
+            if (!data) {
+                data = this.props.data;
+                this._fvid.level = 0;
+                this._fvid.value = [''];
+                this._fvid.label = [''];
+                this._fvid.lists = [data];
+                this._fvid.levelData = [{
+                        'label': '',
+                        'value': ''
+                    }];
+            }
+            let nextChildren = null;
+            const isArray = Array.isArray(data);
+            for (const key in data) {
+                const item = data[key];
+                const val = (isArray ?
+                    (typeof item === 'object' ? ((_b = (_a = item.value) !== null && _a !== void 0 ? _a : item.label) !== null && _b !== void 0 ? _b : '') : item) :
+                    key).toString();
+                if (value !== val) {
+                    if (!item.children) {
+                        continue;
+                    }
+                    this._fvid.value[this._fvid.level] = val;
+                    this._fvid.label[this._fvid.level] = (_c = item.label) !== null && _c !== void 0 ? _c : val;
+                    this._fvid.lists[this._fvid.level] = data;
+                    this._fvid.levelData[this._fvid.level] = {
+                        'value': this._fvid.value[this._fvid.level],
+                        'label': this._fvid.label[this._fvid.level]
+                    };
+                    ++this._fvid.level;
+                    if (yield this.findValueInData(value, item.children)) {
+                        return true;
+                    }
+                    this._fvid.value.splice(-1);
+                    this._fvid.label.splice(-1);
+                    this._fvid.lists.splice(-1);
+                    this._fvid.levelData.splice(-1);
+                    --this._fvid.level;
+                    continue;
+                }
+                nextChildren = (_d = item.children) !== null && _d !== void 0 ? _d : null;
+                this.level = this._fvid.level;
+                this._fvid.value[this._fvid.level] = val;
+                this._fvid.label[this._fvid.level] = (_e = item.label) !== null && _e !== void 0 ? _e : val;
+                this._fvid.lists[this._fvid.level] = data;
+                this._fvid.levelData[this._fvid.level] = {
+                    'value': this._fvid.value[this._fvid.level],
+                    'label': this._fvid.label[this._fvid.level]
+                };
+                this.value = this._fvid.value;
+                this.label = this._fvid.label;
+                this.lists = this._fvid.lists;
+                this.levelData = this._fvid.levelData;
+                yield this._findValueInDataAndSelectValueCheckChildren(nextChildren);
+                return true;
+            }
+            return false;
+        });
     }
     blur() {
         return __awaiter(this, void 0, void 0, function* () {
@@ -267,58 +403,7 @@ class default_1 extends clickgo.control.AbstractControl {
             if (!isSelected) {
                 return;
             }
-            if (!nextChildren) {
-                if (!this.propBoolean('async')) {
-                    clickgo.form.hidePop();
-                    ++this.level;
-                    this.listValue = [];
-                    this.nowlist = [];
-                    this.value[this.level] = '';
-                    this.label[this.level] = '';
-                    this.lists[this.level] = [];
-                    this.levelData[this.level] = {
-                        'label': '',
-                        'value': ''
-                    };
-                    this.updateValue();
-                    return;
-                }
-                this.loading = true;
-                const children = yield new Promise((resolve) => {
-                    this.emit('load', this.value[this.level], (children) => {
-                        resolve(children);
-                        this.emit('loaded');
-                    });
-                });
-                this.loading = false;
-                if (!(children === null || children === void 0 ? void 0 : children.length)) {
-                    clickgo.form.hidePop();
-                    ++this.level;
-                    this.listValue = [];
-                    this.nowlist = [];
-                    this.value[this.level] = '';
-                    this.label[this.level] = '';
-                    this.lists[this.level] = [];
-                    this.levelData[this.level] = {
-                        'label': '',
-                        'value': ''
-                    };
-                    this.updateValue();
-                    return;
-                }
-                nextChildren = children;
-            }
-            ++this.level;
-            this.listValue = [];
-            this.setNowList(nextChildren);
-            this.value[this.level] = '';
-            this.label[this.level] = '';
-            this.lists[this.level] = nextChildren;
-            this.levelData[this.level] = {
-                'label': '',
-                'value': ''
-            };
-            this.updateValue();
+            this._findValueInDataAndSelectValueCheckChildren(nextChildren, true, true);
         });
     }
     back() {
@@ -351,6 +436,9 @@ class default_1 extends clickgo.control.AbstractControl {
                 }];
             for (let i = 0; i < list.length; ++i) {
                 this.level = i;
+                if (!list[i]) {
+                    break;
+                }
                 const r = yield this._selectValue(list[i], false);
                 yield this.nextTick();
                 if (!r) {
@@ -363,12 +451,6 @@ class default_1 extends clickgo.control.AbstractControl {
     _selectValue(value, autoUpdate = true) {
         var _a, _b, _c, _d;
         return __awaiter(this, void 0, void 0, function* () {
-            if (value === '') {
-                return false;
-            }
-            if (this.value.length > 1 && (value === this.value[this.level - 1])) {
-                return false;
-            }
             let nextChildren = null;
             let isSelected = false;
             const isArray = Array.isArray(this.lists[this.level]);
@@ -395,63 +477,7 @@ class default_1 extends clickgo.control.AbstractControl {
                 }
                 return false;
             }
-            if (!nextChildren) {
-                if (!this.propBoolean('async')) {
-                    ++this.level;
-                    this.listValue = [];
-                    this.nowlist = [];
-                    this.value[this.level] = '';
-                    this.label[this.level] = '';
-                    this.lists[this.level] = [];
-                    this.levelData[this.level] = {
-                        'label': '',
-                        'value': ''
-                    };
-                    if (autoUpdate) {
-                        this.updateValue();
-                    }
-                    return false;
-                }
-                this.loading = true;
-                const children = yield new Promise((resolve) => {
-                    this.emit('load', this.value[this.level], (children) => {
-                        resolve(children);
-                        this.emit('loaded');
-                    });
-                });
-                this.loading = false;
-                if (!(children === null || children === void 0 ? void 0 : children.length)) {
-                    ++this.level;
-                    this.listValue = [];
-                    this.nowlist = [];
-                    this.value[this.level] = '';
-                    this.label[this.level] = '';
-                    this.lists[this.level] = [];
-                    this.levelData[this.level] = {
-                        'label': '',
-                        'value': ''
-                    };
-                    if (autoUpdate) {
-                        this.updateValue();
-                    }
-                    return false;
-                }
-                nextChildren = children;
-            }
-            ++this.level;
-            this.listValue = [];
-            this.setNowList(nextChildren);
-            this.value[this.level] = '';
-            this.label[this.level] = '';
-            this.lists[this.level] = nextChildren;
-            this.levelData[this.level] = {
-                'label': '',
-                'value': ''
-            };
-            if (autoUpdate) {
-                this.updateValue();
-            }
-            return true;
+            return yield this._findValueInDataAndSelectValueCheckChildren(nextChildren, autoUpdate);
         });
     }
     onMounted() {
@@ -471,7 +497,17 @@ class default_1 extends clickgo.control.AbstractControl {
             'deep': true
         });
         this.watch('modelValue', () => __awaiter(this, void 0, void 0, function* () {
-            yield this._selectValue(this.props.modelValue.toString());
+            const value = this.props.modelValue.toString();
+            if (value === '') {
+                return;
+            }
+            if (this.value.length > 1 && (value === this.value[this.level - 1])) {
+                return;
+            }
+            if (yield this._selectValue(value)) {
+                return;
+            }
+            this.findValueInData(value);
         }));
         clickgo.dom.watchStyle(this.element, ['background', 'padding'], (n, v) => {
             switch (n) {
