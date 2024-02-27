@@ -42,6 +42,7 @@ const button_1 = __importDefault(require("~c/button/button"));
 const check_1 = __importDefault(require("./control/check/check"));
 const date_1 = __importDefault(require("./control/date/date"));
 const dialog_1 = __importDefault(require("./control/dialog/dialog"));
+const drawer_1 = __importDefault(require("./control/drawer/drawer"));
 const file_1 = __importDefault(require("./control/file/file"));
 const form_1 = __importDefault(require("./control/form/form"));
 const group_1 = __importDefault(require("./control/group/group"));
@@ -136,6 +137,10 @@ class default_1 extends clickgo.form.AbstractForm {
                 }
                 case 'cdialog': {
                     frm = yield clickgo.form.create(dialog_1.default);
+                    break;
+                }
+                case 'cdrawer': {
+                    frm = yield clickgo.form.create(drawer_1.default);
                     break;
                 }
                 case 'cecharts': {

@@ -83,6 +83,10 @@ This library is published under [Apache-2.0](./LICENSE) license.
 
 ### **LICENSE:** MIT License **AUTHOR:** sigurdarson
 
+#### Drawer
+
+[Close SVG Vector](https://www.svgrepo.com/svg/446990/close)
+
 #### Form
 
 [Minus SVG Vector](https://www.svgrepo.com/svg/447026/minus)  

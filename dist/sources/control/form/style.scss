@@ -136,7 +136,7 @@
             .controls {
                 display: flex;
                 .min, .max, .close {
-                    padding: 0 15px; font-size: 14px; display: flex; align-items: center;
+                    padding: 0 15px; display: flex; align-items: center;
                 }
                 .min, .max {
                     &:hover {
@@ -148,10 +148,10 @@
                 }
                 .close {
                     &:hover {
-                        background: var(--danger); color: #FFF; fill: #FFF; stroke: #FFF;
+                        background: var(--danger); fill: #FFF; stroke: #FFF;
                     }
                     &:active {
-                        background: var(--danger-hover); color: #FFF; fill: #FFF; stroke: #FFF;
+                        background: var(--danger-hover); fill: #FFF; stroke: #FFF;
                     }
                 }
             }

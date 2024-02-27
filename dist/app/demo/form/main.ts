@@ -7,6 +7,7 @@ import cbuttonFrm from '~c/button/button';
 import ccheckFrm from './control/check/check';
 import cdateFrm from './control/date/date';
 import cdialogFrm from './control/dialog/dialog';
+import cdrawerFrm from './control/drawer/drawer';
 import cfileFrm from './control/file/file';
 import cformFrm from './control/form/form';
 import cgroupFrm from './control/group/group';
@@ -104,6 +105,10 @@ export default class extends clickgo.form.AbstractForm {
             }
             case 'cdialog': {
                 frm = await clickgo.form.create(cdialogFrm);
+                break;
+            }
+            case 'cdrawer': {
+                frm = await clickgo.form.create(cdrawerFrm);
                 break;
             }
             case 'cecharts': {

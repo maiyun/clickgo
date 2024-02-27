@@ -1,0 +1,19 @@
+<form width="600" height="500" title="Drawer" padding="10" direction="v">
+    <layout direction="v" gutter="10">
+        <label>drawer: {{drawer ? 'true' : 'false'}}</label>
+        <button @click="drawer = true">Open</button>
+    </layout>
+    <drawer title="Drawer" gutter="10" v-model="drawer" direction="v" width="50%">
+        <label>123</label>
+        <button @click="drawer2 = true">456</button>
+    </drawer>
+    <drawer title="Drawer2" gutter="10" v-model="drawer2" direction="v">
+        <label>789</label>
+        <button>012</button>
+        <template v-slot:footer>
+            <layout align-h="end" style="flex: 1;">
+                <button type="info" @click="drawer2 = false">OK</button>
+            </layout>
+        </template>
+    </drawer>
+</form>

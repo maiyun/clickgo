@@ -17,7 +17,5 @@ export default class extends clickgo.control.AbstractControl {
             'alignH': '',
             'alignV': ''
         };
-    
-    
 
 }
