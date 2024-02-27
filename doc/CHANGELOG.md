@@ -1,5 +1,9 @@
 # Changelog
 
+# 3.11.9
+
+[\*] Updated dependencies.
+
 # 3.11.8
 
 [+] Added drawer control.  
