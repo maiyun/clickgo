@@ -315,14 +315,14 @@ class default_1 extends clickgo.control.AbstractControl {
             loaderEl.addEventListener('load', () => {
                 iwindow.require.config({
                     paths: {
-                        'vs': clickgo.core.getCdn() + '/npm/monaco-editor@0.45.0/min/vs'
+                        'vs': clickgo.core.getCdn() + '/npm/monaco-editor@0.46.0/min/vs'
                     }
                 });
                 const proxy = iwindow.URL.createObjectURL(new Blob([`
                 self.MonacoEnvironment = {
-                    baseUrl: '${clickgo.core.getCdn()}/npm/monaco-editor@0.45.0/min/'
+                    baseUrl: '${clickgo.core.getCdn()}/npm/monaco-editor@0.46.0/min/'
                 };
-                importScripts('${clickgo.core.getCdn()}/npm/monaco-editor@0.45.0/min/vs/base/worker/workerMain.js');
+                importScripts('${clickgo.core.getCdn()}/npm/monaco-editor@0.46.0/min/vs/base/worker/workerMain.js');
             `], { type: 'text/javascript' }));
                 iwindow.MonacoEnvironment = {
                     getWorkerUrl: () => proxy
