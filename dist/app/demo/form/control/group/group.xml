@@ -18,6 +18,7 @@
         </flow>
         <layout gutter="10">
             <button style="flex: 1;" @click="title = title === 'The title' ? 'Changed title' : 'The title'">Change title</button>
+            <button style="flex: 1;" @click="title = ''">Set empty</button>
         </layout>
     </layout>
 </form>

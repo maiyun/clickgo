@@ -2,10 +2,10 @@
     padding: var(--g-bpadding); background: var(--face);
 
     .title {
-        font-size: 20px;
+        font-size: 20px; margin-bottom: var(--g-bpadding);
     }
     .content {
-        display: flex; margin-top: var(--g-bpadding);
+        display: flex;
     }
     &.v {
         .content {
