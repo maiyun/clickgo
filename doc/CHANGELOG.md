@@ -3,7 +3,7 @@
 # 3.11.8
 
 [+] Added drawer control.  
-[*] Optimized some abnormal issues.
+[\*] Optimized some abnormal issues.
 
 # 3.11.7
 
