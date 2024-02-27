@@ -1,5 +1,10 @@
 # Changelog
 
+# 3.11.8
+
+[+] Added drawer control.  
+[*] Optimized some abnormal issues.
+
 # 3.11.7
 
 [+] Added `updateStep` method to `AbstractForm` class, allowing dynamic modification of process `value` while in progress.  
