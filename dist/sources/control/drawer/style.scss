@@ -7,12 +7,12 @@
     .body {
         background: var(--face); border-left: solid .5px hsl(0, 0%, 70%); box-shadow: 0px 5px 20px rgba(0, 0, 0, .25); display: flex; flex-direction: column; transform: translateX(1500px); transition: all .15s ease; transition-property: transform;
         .header {
-            display: flex;
+            display: flex; align-items: center;
             .title {
                 flex: 1; padding: var(--g-bpadding); font-size: 20px;
             }
             .close {
-                padding: 0 15px; display: flex; align-items: center;
+                padding: var(--g-padding); margin-right: var(--g-bpadding); display: flex; align-items: center;
                 &:hover {
                     background: var(--danger); fill: #FFF; stroke: #FFF;
                 }

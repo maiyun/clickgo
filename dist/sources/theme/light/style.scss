@@ -211,9 +211,8 @@ global {
 .drawer_wrap {
     .drawer_body {
         .drawer_header {
-            align-items: center;
             .drawer_close {
-                padding: 10px; margin-right: var(--g-bpadding); transition: all .15s ease; border-radius: var(--g-radius);
+                transition: all .15s ease; border-radius: var(--g-radius);
                 &:hover {
                     background: var(--g-background-hover); fill: initial; stroke: initial;
                 }
