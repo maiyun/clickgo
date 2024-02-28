@@ -1,5 +1,9 @@
 # Changelog
 
+# 3.11.10
+
+[+] Added `content` slot to the `tip` control.
+
 # 3.11.9
 
 [\*] Updated dependencies.
