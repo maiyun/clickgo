@@ -439,7 +439,7 @@ class default_1 extends clickgo.control.AbstractControl {
                 if (!list[i]) {
                     break;
                 }
-                const r = yield this._selectValue(list[i], false);
+                const r = yield this._selectValue(list[i]);
                 yield this.nextTick();
                 if (!r) {
                     break;
@@ -448,7 +448,7 @@ class default_1 extends clickgo.control.AbstractControl {
             this.updateValue();
         });
     }
-    _selectValue(value, autoUpdate = true) {
+    _selectValue(value) {
         var _a, _b, _c, _d;
         return __awaiter(this, void 0, void 0, function* () {
             let nextChildren = null;
@@ -472,12 +472,9 @@ class default_1 extends clickgo.control.AbstractControl {
                 };
             }
             if (!isSelected) {
-                if (autoUpdate) {
-                    this.emit('update:modelValue', '');
-                }
                 return false;
             }
-            return yield this._findValueInDataAndSelectValueCheckChildren(nextChildren, autoUpdate);
+            return yield this._findValueInDataAndSelectValueCheckChildren(nextChildren, false);
         });
     }
     onMounted() {
@@ -499,15 +496,44 @@ class default_1 extends clickgo.control.AbstractControl {
         this.watch('modelValue', () => __awaiter(this, void 0, void 0, function* () {
             const value = this.props.modelValue.toString();
             if (value === '') {
+                if (this.value.length === 1) {
+                    return;
+                }
+                this.level = 0;
+                this.value = [''];
+                this.label = [''];
+                this.setNowList(this.props.data);
+                this.lists = [this.props.data];
+                this.levelData = [{
+                        'label': '',
+                        'value': ''
+                    }];
+                this.updateValue();
                 return;
             }
             if (this.value.length > 1 && (value === this.value[this.level - 1])) {
                 return;
             }
             if (yield this._selectValue(value)) {
+                this.updateValue();
                 return;
             }
-            this.findValueInData(value);
+            if (yield this.findValueInData(value)) {
+                return;
+            }
+            if (this.value.length === 1) {
+                return;
+            }
+            this.level = 0;
+            this.value = [''];
+            this.label = [''];
+            this.setNowList(this.props.data);
+            this.lists = [this.props.data];
+            this.levelData = [{
+                    'label': '',
+                    'value': ''
+                }];
+            this.updateValue();
         }));
         clickgo.dom.watchStyle(this.element, ['background', 'padding'], (n, v) => {
             switch (n) {

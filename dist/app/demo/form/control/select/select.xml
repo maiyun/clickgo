@@ -83,8 +83,11 @@
                     <label>Level: {{level3}}</label>
                     <levelselect ref="lese" v-model="select3" @label="label3 = $event" @level="level3 = $event" :data="s3other ? slist3r : slist2" :disabled="disabled" :plain="plain" :async="async" placeholder="Please enter" @load="onLoad" @loaded="onLoaded" :style="{'font-size': fontSize ? '16px' : undefined, 'padding': padding ? '15px' : undefined, 'background': background ? 'red' : undefined, 'color': background ? '#FFF' : undefined}"></levelselect>
                     <button @click="async = !async">{{async ? '' : '!'}}async</button>
-                    <button @click="select3 = 'title'">Set: 'title'</button>
-                    <button @click="select3 = 'haha2'">Set: 'haha2'</button>
+                    <layout gutter="10">
+                        <button @click="select3 = 'title'" style="flex: 1;">Set: 'title'</button>
+                        <button @click="select3 = 'haha2'" style="flex: 1;">'haha2'</button>
+                        <button @click="select3 = 'ababa'" style="flex: 1;">'ababa'</button>
+                    </layout>
                     <layout gutter="10">
                         <button @click="select3 = 'sub2'" style="flex: 1;">Set: 'sub2'</button>
                         <button @click="select3 = 'gogogo'" style="flex: 1;">'gogogo'</button>

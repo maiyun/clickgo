@@ -488,7 +488,7 @@ export default class extends clickgo.control.AbstractControl {
             if (!list[i]) {
                 break;
             }
-            const r = await this._selectValue(list[i], false);
+            const r = await this._selectValue(list[i]);
             await this.nextTick();
             if (!r) {
                 break;
@@ -499,7 +499,7 @@ export default class extends clickgo.control.AbstractControl {
     }
 
     /** --- 选择一个值的内部方法，返回 false 代表当前没选中或选中但没有下级了--- */
-    private async _selectValue(value: string, autoUpdate: boolean = true): Promise<boolean> {
+    private async _selectValue(value: string): Promise<boolean> {
         /** --- 已选 item 的下一层 list --- */
         let nextChildren: any[] | Record<string, string> | null = null;
         let isSelected: boolean = false;
@@ -523,13 +523,10 @@ export default class extends clickgo.control.AbstractControl {
         }
         if (!isSelected) {
             // --- 当前未被选中，直接结束 ---
-            if (autoUpdate) {
-                this.emit('update:modelValue', '');
-            }
             return false;
         }
         // --- 选中 ---
-        return await this._findValueInDataAndSelectValueCheckChildren(nextChildren, autoUpdate);
+        return await this._findValueInDataAndSelectValueCheckChildren(nextChildren, false);
     }
 
     public onMounted(): void | Promise<void> {
@@ -552,6 +549,19 @@ export default class extends clickgo.control.AbstractControl {
         this.watch('modelValue', async (): Promise<void> => {
             const value = this.props.modelValue.toString();
             if (value === '') {
+                if (this.value.length === 1) {
+                    return;
+                }
+                this.level = 0;
+                this.value = [''];
+                this.label = [''];
+                this.setNowList(this.props.data);
+                this.lists = [this.props.data];
+                this.levelData = [{
+                    'label': '',
+                    'value': ''
+                }]
+                this.updateValue();
                 return;
             }
             if (this.value.length > 1 && (value === this.value[this.level - 1])) {
@@ -559,9 +569,25 @@ export default class extends clickgo.control.AbstractControl {
                 return;
             }
             if (await this._selectValue(value)) {
+                this.updateValue();
                 return;
             }
-            this.findValueInData(value);
+            if (await this.findValueInData(value)) {
+                return;
+            }
+            if (this.value.length === 1) {
+                return;
+            }
+            this.level = 0;
+            this.value = [''];
+            this.label = [''];
+            this.setNowList(this.props.data);
+            this.lists = [this.props.data];
+            this.levelData = [{
+                'label': '',
+                'value': ''
+            }]
+            this.updateValue();
         });
 
         clickgo.dom.watchStyle(this.element, ['background', 'padding'], (n, v) => {
