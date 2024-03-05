@@ -59,7 +59,7 @@ ClickGo demand loading Vue, jszip, resize-observer, but **DO NOT** reference the
 
 Clone and visit "dist/test/index.html".
 
-[Click here to visit online.](https://maiyunnet.github.io/ClickGo/dist/test/)
+[Click here to visit online.](https://maiyun.github.io/clickgo/dist/test/)
 
 ## Changelog
 
