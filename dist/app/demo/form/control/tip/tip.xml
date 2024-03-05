@@ -12,8 +12,11 @@
         <tip>
             <template v-slot:content>
                 <layout direction="v" gutter="5">
-                    <label>Label</label>
-                    <button>Button</button>
+                    <label style="text-align: center;">Label</label>
+                    <layout gutter="5">
+                        <label style="color: red;">Label2</label>
+                        <label>Label3</label>
+                    </layout>
                 </layout>
             </template>
             <button>789</button>
