@@ -45,16 +45,10 @@ clickgo.launcher(new Boot());
 
 ### NPM
 
-You can install directly using NPM:
+After installing with NPM, you'll get code hints.
 
 ```sh
-$ npm i clickgo --save
-```
-
-Or install the developing (unstable) version for newest features:
-
-```sh
-$ npm i clickgo@dev --save
+$ npm i clickgo --save-dev
 ```
 
 ## Note
