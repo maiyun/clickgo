@@ -178,6 +178,10 @@ export function launcher(boot: AbstractBoot): void {
         const paths: string[] = [
             loader.cdn + '/npm/vue@3.4.21/dist/vue.global.prod.min.js'
         ];
+        // --- 判断 TouchEvent 是否存在（例如某些浏览器可能不存在这个对象） ---
+        if (!((window as any).TouchEvent)) {
+            (window as any).TouchEvent = CustomEvent;
+        }
         // --- 判断 ResizeObserver 是否存在 ---
         let ro = true;
         // ResizeObserver = undefined;

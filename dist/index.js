@@ -103,6 +103,9 @@ function launcher(boot) {
             const paths = [
                 loader.cdn + '/npm/vue@3.4.21/dist/vue.global.prod.min.js'
             ];
+            if (!(window.TouchEvent)) {
+                window.TouchEvent = CustomEvent;
+            }
             let ro = true;
             if (!(window.ResizeObserver)) {
                 ro = false;
