@@ -1407,6 +1407,8 @@ function hideRectangle() {
 exports.hideRectangle = hideRectangle;
 function showDrag() {
     exports.elements.drag.style.opacity = '1';
+    exports.elements.drag.style.transform = 'perspective(100px) rotateX(15deg) translateZ(15px)';
+    exports.elements.drag.style.borderBottomWidth = '2px';
 }
 exports.showDrag = showDrag;
 function moveDrag(opt) {
@@ -1416,11 +1418,21 @@ function moveDrag(opt) {
     if (opt.left) {
         exports.elements.drag.style.left = opt.left.toString() + 'px';
     }
+    let perspective = 0;
     if (opt.width) {
         exports.elements.drag.style.width = opt.width.toString() + 'px';
+        if (perspective < opt.width) {
+            perspective = opt.width;
+        }
     }
     if (opt.height) {
         exports.elements.drag.style.height = opt.height.toString() + 'px';
+        if (perspective < opt.height) {
+            perspective = opt.height;
+        }
+    }
+    if (perspective) {
+        exports.elements.drag.style.transform = 'perspective(' + (perspective + 50) + 'px) rotateX(15deg) translateZ(15px)';
     }
     if (opt.icon) {
         exports.elements.drag.childNodes[0].style.display = 'block';
@@ -1431,7 +1443,11 @@ function moveDrag(opt) {
 }
 exports.moveDrag = moveDrag;
 function hideDrag() {
-    exports.elements.drag.style.opacity = '0';
+    exports.elements.drag.style.transform = 'initial';
+    exports.elements.drag.style.borderBottomWidth = '1px';
+    setTimeout(() => {
+        exports.elements.drag.style.opacity = '0';
+    }, 300);
 }
 exports.hideDrag = hideDrag;
 let notifyTop = 10;

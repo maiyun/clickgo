@@ -1869,6 +1869,8 @@ export function hideRectangle(): void {
  */
 export function showDrag(): void {
     elements.drag.style.opacity = '1';
+    elements.drag.style.transform = 'perspective(100px) rotateX(15deg) translateZ(15px)';
+    elements.drag.style.borderBottomWidth = '2px';
 }
 
 /**
@@ -1882,11 +1884,21 @@ export function moveDrag(opt: types.IMoveDragOptions): void {
     if (opt.left) {
         elements.drag.style.left = opt.left.toString() + 'px';
     }
+    let perspective = 0;
     if (opt.width) {
         elements.drag.style.width = opt.width.toString() + 'px';
+        if (perspective < opt.width) {
+            perspective = opt.width;
+        }
     }
     if (opt.height) {
         elements.drag.style.height = opt.height.toString() + 'px';
+        if (perspective < opt.height) {
+            perspective = opt.height;
+        }
+    }
+    if (perspective) {
+        elements.drag.style.transform = 'perspective(' + (perspective + 50) + 'px) rotateX(15deg) translateZ(15px)'
     }
     if (opt.icon) {
         (elements.drag.childNodes[0] as HTMLElement).style.display = 'block';
@@ -1900,7 +1912,11 @@ export function moveDrag(opt: types.IMoveDragOptions): void {
  * --- 隐藏拖拽框框 ---
  */
 export function hideDrag(): void {
-    elements.drag.style.opacity = '0';
+    elements.drag.style.transform = 'initial';
+    elements.drag.style.borderBottomWidth = '1px';
+    setTimeout(() => {
+        elements.drag.style.opacity = '0';
+    }, 300);
 }
 
 let notifyTop: number = 10;
