@@ -1,5 +1,12 @@
 # Changelog
 
+# 3.11.11
+
+[+] tuieditor control adds imgselect event.  
+[\*] Fixed the issue that the levelselect setting value would not automatically find non-asynchronous items in other levels.  
+[\*] Optimize the drag box style.  
+[\*] Optimized the issue of reporting errors when the TouchEvent object does not exist in certain browser environments.
+
 # 3.11.10
 
 [+] Added `content` slot to the `tip` control.
