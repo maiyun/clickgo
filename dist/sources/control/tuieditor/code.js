@@ -36,6 +36,9 @@ const clickgo = __importStar(require("clickgo"));
 class default_1 extends clickgo.control.AbstractControl {
     constructor() {
         super(...arguments);
+        this.emits = {
+            'imgselect': null
+        };
         this.props = {
             'disabled': false,
             'modelValue': '',
@@ -165,11 +168,39 @@ class default_1 extends clickgo.control.AbstractControl {
                         this.emit('update:modelValue', this.access.tuieditor.getMarkdown());
                     }
                 },
-                'hooks': {
-                    addImageBlobHook: (file, callback) => {
-                        this.emit('upload', file, callback);
+                'toolbarItems': [
+                    ['heading', 'bold', 'italic', 'strike'],
+                    ['hr', 'quote'],
+                    ['ul', 'ol', 'task', 'indent', 'outdent'],
+                    ['table', 'link'],
+                    ['code', 'codeblock'],
+                    ['scrollSync'],
+                ]
+            });
+            const cgimage = clickgo.dom.createElement('button');
+            cgimage.className = 'image toastui-editor-toolbar-icons';
+            cgimage.style.margin = '0';
+            cgimage.addEventListener('click', () => {
+                this.emit('imgselect', (url, opt) => {
+                    var _a;
+                    if (opt && (opt.width || opt.height)) {
+                        if (this.access.tuieditor.isMarkdownMode()) {
+                            this.access.tuieditor.replaceSelection(`<div${opt.align ? ' align="center"' : ''}><img src="${url}"${opt.alt ? ` alt="${opt.alt}"` : ''}${opt.width ? ` width="${opt.width}"` : ''}${opt.height ? ` height="${opt.height}"` : ''}></div>`);
+                            return;
+                        }
                     }
-                }
+                    this.access.tuieditor.exec('addImage', {
+                        'imageUrl': url,
+                        'altText': (_a = opt === null || opt === void 0 ? void 0 : opt.alt) !== null && _a !== void 0 ? _a : ''
+                    });
+                });
+            });
+            this.access.tuieditor.insertToolbarItem({
+                'groupIndex': 3,
+                'itemIndex': 1
+            }, {
+                'el': cgimage,
+                'tooltip': this.access.tuieditor.i18n.get('Insert image')
             });
             this.element.addEventListener('contextmenu', (e) => {
                 e.preventDefault();

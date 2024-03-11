@@ -22,8 +22,21 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const clickgo = __importStar(require("clickgo"));
+const img_1 = __importDefault(require("../arteditor/img"));
 class default_1 extends clickgo.form.AbstractForm {
     constructor() {
         super(...arguments);
@@ -34,6 +47,16 @@ class default_1 extends clickgo.form.AbstractForm {
         this.family = false;
         this.visual = false;
         this.text = 'a**b**c';
+    }
+    imgselect(cb) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const frm = yield clickgo.form.create(img_1.default);
+            const path = yield frm.showDialog();
+            if (!path) {
+                return;
+            }
+            cb('https://cdn.jsdelivr.net/npm/clickgo@3.7.0/dist/app/demo/' + path);
+        });
     }
 }
 exports.default = default_1;

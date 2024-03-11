@@ -567,6 +567,9 @@ function run(url, opt = {}, ntid) {
                 },
                 exitFullscreen: function () {
                     return dom.exitFullscreen();
+                },
+                createElement: function (tagName) {
+                    return dom.createElement(tagName);
                 }
             },
             'form': {

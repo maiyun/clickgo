@@ -655,6 +655,9 @@ export async function run(url: string | types.IApp, opt: types.ITaskRunOptions =
             },
             exitFullscreen: function() {
                 return dom.exitFullscreen();
+            },
+            createElement: function<K extends keyof HTMLElementTagNameMap>(tagName: K): HTMLElementTagNameMap[K] {
+                return dom.createElement(tagName);
             }
         },
         'form': {

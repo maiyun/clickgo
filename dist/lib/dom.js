@@ -32,7 +32,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.exitFullscreen = exports.fullscreen = exports.siblingsData = exports.siblings = exports.findParentByTag = exports.findParentByClass = exports.findParentByData = exports.bindResize = exports.bindMove = exports.is = exports.bindDrag = exports.setDragData = exports.bindLong = exports.allowEvent = exports.bindGesture = exports.bindDown = exports.bindDblClick = exports.bindClick = exports.getWatchInfo = exports.clearWatchProperty = exports.isWatchProperty = exports.watchProperty = exports.clearWatchStyle = exports.isWatchStyle = exports.watchStyle = exports.clearWatch = exports.isWatch = exports.unwatch = exports.watch = exports.getWatchCount = exports.clearWatchSize = exports.isWatchSize = exports.unwatchSize = exports.watchSize = exports.getWatchSizeCount = exports.getStyleCount = exports.removeStyle = exports.pushStyle = exports.removeFromStyleList = exports.createToStyleList = exports.hasTouchButMouse = exports.setGlobalCursor = exports.inPage = void 0;
+exports.createElement = exports.exitFullscreen = exports.fullscreen = exports.siblingsData = exports.siblings = exports.findParentByTag = exports.findParentByClass = exports.findParentByData = exports.bindResize = exports.bindMove = exports.is = exports.bindDrag = exports.setDragData = exports.bindLong = exports.allowEvent = exports.bindGesture = exports.bindDown = exports.bindDblClick = exports.bindClick = exports.getWatchInfo = exports.clearWatchProperty = exports.isWatchProperty = exports.watchProperty = exports.clearWatchStyle = exports.isWatchStyle = exports.watchStyle = exports.clearWatch = exports.isWatch = exports.unwatch = exports.watch = exports.getWatchCount = exports.clearWatchSize = exports.isWatchSize = exports.unwatchSize = exports.watchSize = exports.getWatchSizeCount = exports.getStyleCount = exports.removeStyle = exports.pushStyle = exports.removeFromStyleList = exports.createToStyleList = exports.hasTouchButMouse = exports.setGlobalCursor = exports.inPage = void 0;
 const clickgo = __importStar(require("../clickgo"));
 const form = __importStar(require("./form"));
 const core = __importStar(require("./core"));
@@ -1875,6 +1875,10 @@ function exitFullscreen() {
     });
 }
 exports.exitFullscreen = exitFullscreen;
+function createElement(tagName) {
+    return document.createElement(tagName);
+}
+exports.createElement = createElement;
 document.addEventListener('visibilitychange', function () {
     if (document.hidden) {
         cancelAnimationFrame(watchTimer);

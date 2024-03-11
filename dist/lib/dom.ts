@@ -2308,7 +2308,9 @@ export function siblingsData(el: HTMLElement, name: string): HTMLElement[] {
     return olist;
 }
 
-// --- 全屏 ---
+/**
+ * --- 全屏 ---
+ */
 export async function fullscreen(): Promise<boolean> {
     const he = document.getElementsByTagName('html')[0] as any;
     if (he.webkitRequestFullscreen) {
@@ -2324,7 +2326,9 @@ export async function fullscreen(): Promise<boolean> {
     }
 }
 
-// --- 退出全屏 ---
+/**
+ * --- 退出全屏 ---
+ */
 export async function exitFullscreen(): Promise<boolean> {
     const d = document as any;
     if (d.webkitExitFullscreen) {
@@ -2338,6 +2342,15 @@ export async function exitFullscreen(): Promise<boolean> {
     else {
         return false;
     }
+}
+
+/**
+ * 
+ * @param tagName 
+ * @returns 
+ */
+export function createElement<K extends keyof HTMLElementTagNameMap>(tagName: K): HTMLElementTagNameMap[K] {
+    return document.createElement(tagName);
 }
 
 // --- 处理 timer 类，窗体消失时不进行监听 ---
