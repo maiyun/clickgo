@@ -22,58 +22,29 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const clickgo = __importStar(require("clickgo"));
-class default_1 extends clickgo.control.AbstractControl {
+class default_1 extends clickgo.form.AbstractForm {
     constructor() {
         super(...arguments);
-        this.value = false;
-        this.isSpaceDown = false;
-        this.props = {
-            'disabled': false,
-            'modelValue': false
-        };
+        this.checked1 = false;
+        this.checked2 = false;
+        this.checked3 = false;
+        this.disabled = false;
     }
-    click() {
-        const event = {
-            'go': true,
-            preventDefault: function () {
-                this.go = false;
-            },
-            'detail': {
-                'value': this.value
-            }
-        };
-        this.emit('change', event);
-        if (event.go) {
-            this.value = !this.value;
-            this.emit('update:modelValue', this.value);
-        }
-    }
-    keydown(e) {
-        if (e.key === 'Enter') {
+    onChange(e) {
+        return __awaiter(this, void 0, void 0, function* () {
             e.preventDefault();
-            this.click();
-        }
-        else if (e.key === ' ') {
-            e.preventDefault();
-            this.isSpaceDown = true;
-        }
-    }
-    keyup() {
-        if (!this.isSpaceDown) {
-            return;
-        }
-        this.isSpaceDown = false;
-        this.click();
-    }
-    onMounted() {
-        this.watch('modelValue', () => {
-            if (this.props.modelValue !== undefined) {
-                this.value = this.propBoolean('modelValue');
-            }
-        }, {
-            'immediate': true
+            yield clickgo.form.dialog('v: ' + (e.detail.value ? 'true' : 'false'));
         });
     }
 }

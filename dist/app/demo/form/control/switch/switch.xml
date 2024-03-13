@@ -1,0 +1,18 @@
+<form title="Switch" width="300" height="300" padding="10">
+    <layout direction="v" gutter="10" style="flex: 1; width: 0;">
+        <label>Checked: {{checked1}}, {{checked2}}, {{checked3}}</label>
+        <layout gutter="10" align-v="center">
+            <switch v-model="checked1" :disabled="disabled"></switch>
+            <label style="flex: 1;">{{checked1 ? 'on' : 'off'}}</label>
+            <switch v-model="checked2" :disabled="disabled"></switch>
+            <label style="flex: 1;">{{checked2 ? 'true' : 'false'}}</label>
+        </layout>
+        <layout gutter="10" align-v="center">
+            <switch v-model="checked3" :disabled="disabled"></switch>
+            <label style="flex: 1;">{{checked3 ? 'ok' : 'no'}}</label>
+            <switch :disabled="disabled" @change="onChange" />
+            <label style="flex: 1;">not</label>
+        </layout>
+        <button @click="disabled = !disabled">{{disabled ? 'Remove' : 'Set'}} disabled</button>
+    </layout>
+</form>

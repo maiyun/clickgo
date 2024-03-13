@@ -107,6 +107,8 @@
         "/form/control/step/step.xml",
         "/form/control/svg/svg.js",
         "/form/control/svg/svg.xml",
+        "/form/control/switch/switch.js",
+        "/form/control/switch/switch.xml",
         "/form/control/tab/tab.js",
         "/form/control/tab/tab.xml",
         "/form/control/table/table.js",

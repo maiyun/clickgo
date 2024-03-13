@@ -639,6 +639,15 @@ export interface IAbstractPanelShowEvent {
     }
 }
 
+// --- Check Control ---
+
+export interface ICheckChangeEvent extends ICustomEvent {
+    'detail': {
+        'value': boolean;
+        'indeterminate': boolean;
+    };
+}
+
 // --- Form Control ---
 
 export interface IFormCloseEvent extends ICustomEvent {
@@ -868,10 +877,9 @@ export interface ISelectTagclickEvent {
 
 // --- Switch Control ---
 
-export interface ICheckChangeEvent extends ICustomEvent {
+export interface ISwitchChangeEvent extends ICustomEvent {
     'detail': {
         'value': boolean;
-        'indeterminate': boolean;
     };
 }
 

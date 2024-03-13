@@ -28,6 +28,7 @@ import cpanelFrm from './control/panel/panel';
 import cflowFrm from './control/flow/flow';
 import cpropertyFrm from './control/property/property';
 import cradioFrm from './control/radio/radio';
+import cswitchFrm from './control/switch/switch';
 import cscrollFrm from './control/scroll/scroll';
 import cselectFrm from './control/select/select';
 import csvgFrm from './control/svg/svg';
@@ -225,6 +226,10 @@ export default class extends clickgo.form.AbstractForm {
             }
             case 'cradio': {
                 frm = await clickgo.form.create(cradioFrm);
+                break;
+            }
+            case 'cswitch': {
+                frm = await clickgo.form.create(cswitchFrm);
                 break;
             }
             case 'cscroll': {

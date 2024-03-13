@@ -1,8 +1,11 @@
 import * as clickgo from 'clickgo';
+import * as types from '~/types/index';
 
 export default class extends clickgo.control.AbstractControl {
 
     public value = false;
+
+    public isSpaceDown = false;
 
     public props: {
         'disabled': boolean | string;
@@ -15,22 +18,19 @@ export default class extends clickgo.control.AbstractControl {
         };
 
     public click(): void {
-        const event = {
+        const event: types.ISwitchChangeEvent = {
             'go': true,
             preventDefault: function() {
                 this.go = false;
+            },
+            'detail': {
+                'value': this.value
             }
         };
-        this.emit('change', event, this.value, this.indeterminateData);
+        this.emit('change', event);
         if (event.go) {
-            if (this.indeterminateData) {
-                this.indeterminateData = false;
-                this.emit('update:indeterminate', this.indeterminateData);
-            }
-            else {
-                this.value = !this.value;
-                this.emit('update:modelValue', this.value);
-            }
+            this.value = !this.value;
+            this.emit('update:modelValue', this.value);
         }
     }
 
@@ -57,21 +57,6 @@ export default class extends clickgo.control.AbstractControl {
         this.watch('modelValue', () => {
             if (this.props.modelValue !== undefined) {
                 this.value = this.propBoolean('modelValue');
-            }
-            if (this.indeterminateData && !this.value) {
-                this.indeterminateData = false;
-                this.emit('update:indeterminate', this.indeterminateData);
-            }
-        }, {
-            'immediate': true
-        });
-        this.watch('indeterminate', () => {
-            if (this.props.indeterminate !== undefined) {
-                this.indeterminateData = this.propBoolean('indeterminate');
-            }
-            if (!this.value && this.indeterminateData) {
-                this.value = true;
-                this.emit('update:modelValue', this.value);
             }
         }, {
             'immediate': true
