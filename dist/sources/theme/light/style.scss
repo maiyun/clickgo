@@ -632,6 +632,9 @@ global {
 
 .switch_wrap {
     width: 42px; height: 22px; border-radius: 11px;
+    &::after {
+        border-radius: 10px;
+    }
     .switch_block {
         width: 16px; border-radius: 8px;
     }
