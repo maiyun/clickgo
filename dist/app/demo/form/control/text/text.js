@@ -58,6 +58,7 @@ class default_1 extends clickgo.form.AbstractForm {
         this.long = false;
         this.lineHeight = 1;
         this.fontSize = 12;
+        this.maxlength = 0;
         this.prepend = false;
         this.append = false;
         this.before = false;

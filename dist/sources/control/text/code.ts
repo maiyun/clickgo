@@ -8,6 +8,7 @@ export default class extends clickgo.control.AbstractControl {
         'readonly': boolean | string;
         'password': boolean | string;
         'wrap': boolean | string;
+        'maxlength': number | string;
         'scroll': boolean | string;
         'adaption': boolean | string;
         'gesture': string[] | string;
@@ -24,6 +25,7 @@ export default class extends clickgo.control.AbstractControl {
             'readonly': false,
             'password': false,
             'wrap': true,
+            'maxlength': 0,
             'scroll': true,
             'adaption': false,
             'gesture': [],
@@ -473,6 +475,18 @@ export default class extends clickgo.control.AbstractControl {
         this.watch('password', async (): Promise<void> => {
             await this.nextTick();
             this.checkWatch();
+        });
+        this.watch('maxlength', async () => {
+            if (!this.propNumber('maxlength')) {
+                return;
+            }
+            if (this.value.length <= this.propNumber('maxlength')) {
+                return;
+            }
+            this.value = this.value.slice(0, this.propNumber('maxlength'));
+            await this.nextTick();
+            this.checkAdaption();
+            this.emit('update:modelValue', this.value);
         });
         this.watch('scrollLeft', (): void => {
             const prop = this.propInt('scrollLeft');
