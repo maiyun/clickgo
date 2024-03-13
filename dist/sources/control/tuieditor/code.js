@@ -303,6 +303,15 @@ class default_1 extends clickgo.control.AbstractControl {
                     }
                 }
             });
+            this.watch('modelValue', (v) => {
+                if (!this.access.tuieditor) {
+                    return;
+                }
+                if (v === this.access.tuieditor.getMarkdown()) {
+                    return;
+                }
+                this.access.tuieditor.setMarkdown(v);
+            });
             clickgo.dom.watchStyle(this.element, ['font-size', 'font-family'], (n, v) => {
                 if (!this.access.tuieditor) {
                     return;

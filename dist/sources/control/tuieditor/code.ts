@@ -298,6 +298,16 @@ export default class extends clickgo.control.AbstractControl {
                 }
             }
         });
+        // --- 监听上面的值的变动 ---
+        this.watch('modelValue', (v: string) => {
+            if (!this.access.tuieditor) {
+                return;
+            }
+            if (v === this.access.tuieditor.getMarkdown()) {
+                return;
+            }
+            this.access.tuieditor.setMarkdown(v);
+        });
         // --- 监听 font 相关信息 ---
         clickgo.dom.watchStyle(this.element, ['font-size', 'font-family'], (n, v) => {
             if (!this.access.tuieditor) {
