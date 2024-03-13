@@ -30,6 +30,9 @@ class default_1 extends clickgo.control.AbstractControl {
         this.value = false;
         this.indeterminateData = false;
         this.isSpaceDown = false;
+        this.emits = {
+            'change': null
+        };
         this.props = {
             'disabled': false,
             'modelValue': false,
@@ -41,9 +44,13 @@ class default_1 extends clickgo.control.AbstractControl {
             'go': true,
             preventDefault: function () {
                 this.go = false;
+            },
+            'detail': {
+                'value': this.value,
+                'indeterminate': this.indeterminateData
             }
         };
-        this.emit('change', event, this.value, this.indeterminateData);
+        this.emit('change', event);
         if (event.go) {
             if (this.indeterminateData) {
                 this.indeterminateData = false;

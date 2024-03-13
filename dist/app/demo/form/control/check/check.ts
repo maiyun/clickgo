@@ -1,4 +1,5 @@
 import * as clickgo from 'clickgo';
+import * as types from '~/types/index';
 
 export default class extends clickgo.form.AbstractForm {
 
@@ -18,9 +19,9 @@ export default class extends clickgo.form.AbstractForm {
 
     public disabled = false;
 
-    public async onChange(e: Event, v: boolean, i: boolean): Promise<void> {
+    public async onChange(e: types.ICheckChangeEvent): Promise<void> {
         e.preventDefault();
-        await clickgo.form.dialog('v: ' + (v ? 'true' : 'false') + ', i: ' + (i ? 'true' : 'false'));
+        await clickgo.form.dialog('v: ' + (e.detail.value ? 'true' : 'false') + ', i: ' + (e.detail.indeterminate ? 'true' : 'false'));
     }
 
 }

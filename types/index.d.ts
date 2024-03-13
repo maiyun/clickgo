@@ -866,6 +866,15 @@ export interface ISelectTagclickEvent {
     };
 }
 
+// --- Switch Control ---
+
+export interface ICheckChangeEvent extends ICustomEvent {
+    'detail': {
+        'value': boolean;
+        'indeterminate': boolean;
+    };
+}
+
 // --- Tab Control ---
 
 export interface ITabCloseEvent extends ICustomEvent {

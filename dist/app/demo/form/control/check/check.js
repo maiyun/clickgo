@@ -45,10 +45,10 @@ class default_1 extends clickgo.form.AbstractForm {
         this.indeterminate4 = false;
         this.disabled = false;
     }
-    onChange(e, v, i) {
+    onChange(e) {
         return __awaiter(this, void 0, void 0, function* () {
             e.preventDefault();
-            yield clickgo.form.dialog('v: ' + (v ? 'true' : 'false') + ', i: ' + (i ? 'true' : 'false'));
+            yield clickgo.form.dialog('v: ' + (e.detail.value ? 'true' : 'false') + ', i: ' + (e.detail.indeterminate ? 'true' : 'false'));
         });
     }
 }
