@@ -836,6 +836,17 @@ export interface IPanelWentEvent {
     };
 }
 
+// --- Radio Control ---
+
+export interface IRadioChangeEvent extends ICustomEvent {
+    'detail': {
+        /** --- 设定的值 --- */
+        'value': string;
+        /** --- 选中的值 --- */
+        'selected': string;
+    };
+}
+
 // --- Select Control ---
 
 export interface ISelectAddEvent extends ICustomEvent {

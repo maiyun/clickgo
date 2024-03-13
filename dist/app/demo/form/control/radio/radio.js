@@ -39,13 +39,13 @@ class default_1 extends clickgo.form.AbstractForm {
         this.value = 'radio1';
         this.disabled = false;
     }
-    onChange(e, o, n) {
+    onChange(e) {
         return __awaiter(this, void 0, void 0, function* () {
-            if (o !== 'radio2') {
+            if (e.detail.selected !== 'radio2') {
                 return;
             }
             e.preventDefault();
-            yield clickgo.form.dialog('o: ' + o + ', n: ' + n);
+            yield clickgo.form.dialog('selected: ' + e.detail.selected + ', value: ' + e.detail.value);
         });
     }
 }

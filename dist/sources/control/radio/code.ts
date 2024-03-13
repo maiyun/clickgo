@@ -1,4 +1,5 @@
 import * as clickgo from 'clickgo';
+import * as types from '~/types';
 
 export default class extends clickgo.control.AbstractControl {
 
@@ -17,13 +18,17 @@ export default class extends clickgo.control.AbstractControl {
     public isSpaceDown = false;
 
     public click(): void {
-        const event = {
+        const event: types.IRadioChangeEvent = {
             'go': true,
             preventDefault: function() {
                 this.go = false;
+            },
+            'detail': {
+                'value': this.props.value,
+                'selected': this.props.modelValue
             }
         };
-        this.emit('change', event, this.props.modelValue, this.props.value);
+        this.emit('change', event);
         if (event.go) {
             this.emit('update:modelValue', this.props.value);
         }

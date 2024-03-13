@@ -39,9 +39,13 @@ class default_1 extends clickgo.control.AbstractControl {
             'go': true,
             preventDefault: function () {
                 this.go = false;
+            },
+            'detail': {
+                'value': this.props.value,
+                'selected': this.props.modelValue
             }
         };
-        this.emit('change', event, this.props.modelValue, this.props.value);
+        this.emit('change', event);
         if (event.go) {
             this.emit('update:modelValue', this.props.value);
         }
