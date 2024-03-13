@@ -1,5 +1,14 @@
 # Changelog
 
+# 3.11.12
+
+[+] Added switch control.  
+[+] Added maxlength parameter to text control.  
+[\*] Updated img control to display default image when src parameter is empty.  
+[\*] Important: Changed event for radio control to a single IRadioChangeEvent parameter.  
+[\*] Important: Changed event for check control to a single ICheckChangeEvent parameter.  
+[\*] Fixed an issue in tuieditor where manually changing the value didn't reflect in the editor content.
+
 # 3.11.11
 
 [+] tuieditor control adds imgselect event.  

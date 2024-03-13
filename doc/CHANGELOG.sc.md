@@ -1,5 +1,14 @@
 # 更新日志
 
+# 3.11.12
+
+[+] 新增 switch 控件。  
+[+] text 控件新增 maxlength 参数。  
+[\*] img 控件在 src 参数为空时将显示默认图像。  
+[\*] 重要：修改了 radio 控件的 event 事件为单一 IRadioChangeEvent 参数。  
+[\*] 重要：修改了 check 控件的 event 事件为单一 ICheckChangeEvent 参数。  
+[\*] 修复 tuieditor 主动修改值时编辑器内容没有改变的问题。
+
 # 3.11.11
 
 [+] tuieditor 控件新增 imgselect 事件。  
