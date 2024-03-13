@@ -118,7 +118,7 @@ class default_1 extends clickgo.control.AbstractControl {
             }
             if (this.showData) {
                 this.refs.menu.style.height = this.refs.menu.children[0].offsetHeight.toString() + 'px';
-                yield clickgo.tool.sleep(150);
+                yield clickgo.tool.sleep(300);
                 this.refs.menu.style.height = '';
             }
             else {

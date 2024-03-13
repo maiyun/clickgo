@@ -119,7 +119,7 @@ export default class extends clickgo.control.AbstractControl {
             }
             if (this.showData) {
                 this.refs.menu.style.height = (this.refs.menu.children[0] as HTMLElement).offsetHeight.toString() + 'px';
-                await clickgo.tool.sleep(150);
+                await clickgo.tool.sleep(300);
                 this.refs.menu.style.height = '';
             }
             else {
