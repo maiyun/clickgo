@@ -1,5 +1,5 @@
 .wrap {
-    outline: none; width: 32px; height: 16px; border-radius: var(--g-radius); position: relative; transition: all .3s var(--g-cubic); transition-property: background-color;
+    outline: none; width: 32px; height: 16px; border-radius: var(--g-radius); position: relative; transition: all .3s var(--g-cubic); transition-property: background-color, filter;
     &::after {
         content: ''; pointer-events: none; position: absolute; left: 1px; top: 1px; width: calc(100% - 2px); height: calc(100% - 2px); display: none; border: dotted .5px hsl(0, 0%, 100%)
     }
