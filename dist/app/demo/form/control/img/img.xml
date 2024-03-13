@@ -1,20 +1,26 @@
-<form width="300" height="500" title="Img">
+<form width="500" height="500" title="Img">
     <flow direction="v" style="flex: 1; width: 0;">
-        <layout direction="v" gutter="10" style="padding: 10px;">
-            <label>Load "../../../res/img.jpg":</label>
-            <img src="../../../res/img.jpg" style="width: 200px; height: 200px;" />
-            <label>Mode auto:</label>
-            <img src="../../../res/img.jpg" mode="auto" style="width: 200px; height: 200px;" />
-            <label>Mode cover:</label>
-            <img src="../../../res/img.jpg" mode="cover" style="width: 200px; height: 250px;" />
-            <label>Slot:</label>
-            <img src="../../../res/img.jpg" mode="cover" align-h="center" align-v="end" style="width: 200px; height: 200px; padding-bottom: 10px; color: #FFF; font-weight: bold; font-size: 18px;">
-                <label>Test</label>
-            </img>
-            <label>Mode contain:</label>
-            <img src="../../../res/img.jpg" mode="contain" style="border: dotted 1px rgba(0, 0, 0, .5); width: 200px; height: 250px;" />
-            <label>You can also use http://, https:// and data: url, load "https://nodejs.org/static/images/logo.svg":</label>
-            <img src="https://nodejs.org/static/images/logo.svg" style="background-color: #333; width: 122px; height: 75px;" />
+        <layout gutter="10" style="padding: 10px;">
+            <layout direction="v" gutter="10" style="flex: 1; width: 0; overflow: hidden;">
+                <label>Load "../../../res/img.jpg":</label>
+                <img src="../../../res/img.jpg" style="width: 200px; height: 200px;" />
+                <label>Mode cover:</label>
+                <img src="../../../res/img.jpg" mode="cover" style="width: 200px; height: 250px;" />
+                <label>Slot:</label>
+                <img src="../../../res/img.jpg" mode="cover" align-h="center" align-v="end" style="width: 200px; height: 200px; padding-bottom: 10px; color: #FFF; font-weight: bold; font-size: 18px;">
+                    <label>Test</label>
+                </img>
+                <label>You can also use http://, https:// and data: url, load "https://nodejs.org/static/images/logo.svg":</label>
+                <img src="https://nodejs.org/static/images/logo.svg" style="background-color: #333; width: 122px; height: 75px;" />
+            </layout>
+            <layout direction="v" gutter="10" style="flex: 1; width: 0; overflow: hidden;">
+                <label>Mode auto:</label>
+                <img src="../../../res/img.jpg" mode="auto" style="width: 200px; height: 200px;" />
+                <label>Mode contain:</label>
+                <img src="../../../res/img.jpg" mode="contain" style="border: dotted 1px rgba(0, 0, 0, .5); width: 200px; height: 250px;" />
+                <label>No image:</label>
+                <img style="border: dotted 1px rgba(0, 0, 0, .5); width: 200px; height: 200px;" />
+            </layout>
         </layout>
     </flow>
 </form>

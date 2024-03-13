@@ -1,3 +1,6 @@
 .wrap {
     display: inline-flex; background-repeat: no-repeat; background-position: center;
+    &.empty {
+        background-image: url(./res/empty.png); background-size: 64px;
+    }
 }

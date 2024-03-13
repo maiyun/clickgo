@@ -75,6 +75,10 @@ This library is published under [Apache-2.0](./LICENSE) license.
 
 <a href="https://www.flaticon.com/free-icons/empty" title="empty icons">Empty icons created by Ghozi Muhtarom - Flaticon</a>
 
+#### Img
+
+<a href="https://www.flaticon.com/free-icons/no-photo" title="no photo icons">No photo icons created by kerismaker - Flaticon</a>
+
 ### **LICENSE:** MIT License **AUTHOR:** sigurdarson
 
 #### Drawer
