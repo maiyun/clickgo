@@ -1789,7 +1789,7 @@ export function showCircular(x: number, y: number): void {
         elements.circular.style.top = (y - 3).toString() + 'px';
         elements.circular.style.opacity = '1';
         requestAnimationFrame(function() {
-            elements.circular.style.transition = 'all .3s ease-out';
+            elements.circular.style.transition = 'all .3s var(--g-cubic)';
             requestAnimationFrame(function() {
                 elements.circular.style.width = '60px';
                 elements.circular.style.height = '60px';
@@ -1846,7 +1846,7 @@ export function showRectangle(x: number, y: number, border: types.TDomBorderCust
         elements.rectangle.setAttribute('data-ready', '0');
         elements.rectangle.setAttribute('data-dir', '');
         requestAnimationFrame(function() {
-            elements.rectangle.style.transition = 'all .2s ease-out';
+            elements.rectangle.style.transition = 'all .3s var(--g-cubic)';
             requestAnimationFrame(function() {
                 elements.rectangle.setAttribute('data-ready', '1');
                 moveRectangle(border);

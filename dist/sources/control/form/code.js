@@ -454,7 +454,7 @@ class default_1 extends clickgo.control.AbstractControl {
                 this.emit('update:stateMax', true);
             }
             if (!this.isNativeSync) {
-                this.element.style.transition = 'all .1s linear';
+                this.element.style.transition = 'all .3s var(--g-cubic)';
                 this.element.style.transitionProperty = 'left,top,width,height';
                 clickgo.tool.sleep(150).then(() => {
                     this.element.style.transition = '';
@@ -504,7 +504,7 @@ class default_1 extends clickgo.control.AbstractControl {
                 this.element.removeAttribute('data-cg-max');
                 this.stateMaxData = false;
                 this.emit('update:stateMax', false);
-                this.element.style.transition = 'all .1s linear';
+                this.element.style.transition = 'all .3s var(--g-cubic)';
                 this.element.style.transitionProperty = 'left,top,width,height';
             }
             if (!this.propInt('width')) {

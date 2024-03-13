@@ -1344,7 +1344,7 @@ function showCircular(x, y) {
         exports.elements.circular.style.top = (y - 3).toString() + 'px';
         exports.elements.circular.style.opacity = '1';
         requestAnimationFrame(function () {
-            exports.elements.circular.style.transition = 'all .3s ease-out';
+            exports.elements.circular.style.transition = 'all .3s var(--g-cubic)';
             requestAnimationFrame(function () {
                 exports.elements.circular.style.width = '60px';
                 exports.elements.circular.style.height = '60px';
@@ -1392,7 +1392,7 @@ function showRectangle(x, y, border) {
         exports.elements.rectangle.setAttribute('data-ready', '0');
         exports.elements.rectangle.setAttribute('data-dir', '');
         requestAnimationFrame(function () {
-            exports.elements.rectangle.style.transition = 'all .2s ease-out';
+            exports.elements.rectangle.style.transition = 'all .3s var(--g-cubic)';
             requestAnimationFrame(function () {
                 exports.elements.rectangle.setAttribute('data-ready', '1');
                 moveRectangle(border);

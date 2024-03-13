@@ -558,7 +558,7 @@ export default class extends clickgo.control.AbstractControl {
             }
             // --- 变窗体样子 ---
             if (!this.isNativeSync) {
-                this.element.style.transition = 'all .1s linear';
+                this.element.style.transition = 'all .3s var(--g-cubic)';
                 this.element.style.transitionProperty = 'left,top,width,height';
                 clickgo.tool.sleep(150).then(() => {
                     this.element.style.transition = '';
@@ -613,7 +613,7 @@ export default class extends clickgo.control.AbstractControl {
                 this.stateMaxData = false;
                 this.emit('update:stateMax', false);
                 // --- 动画效果 ---
-                this.element.style.transition = 'all .1s linear';
+                this.element.style.transition = 'all .3s var(--g-cubic)';
                 this.element.style.transitionProperty = 'left,top,width,height';
             }
             if (!this.propInt('width')) {
