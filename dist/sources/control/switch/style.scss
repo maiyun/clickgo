@@ -1,5 +1,5 @@
 .wrap {
-    outline: none; width: 32px; height: 16px; border-radius: var(--g-radius); position: relative;
+    outline: none; width: 32px; height: 16px; border-radius: var(--g-radius); position: relative; transition: all .3s var(--g-cubic); transition-property: background-color;
     &::after {
         content: ''; pointer-events: none; position: absolute; left: 1px; top: 1px; width: calc(100% - 2px); height: calc(100% - 2px); display: none; border: dotted .5px hsl(0, 0%, 100%)
     }
@@ -8,7 +8,7 @@
         display: block;
     }
     .block {
-        left: 3px; top: 3px; width: 10px; height: calc(100% - 6px); background: #FFF; position: absolute; transition: all .3s ease;
+        left: 3px; top: 3px; width: 10px; height: calc(100% - 6px); background: #FFF; position: absolute; transition: all .3s var(--g-cubic);
     }
     // --- 选中模式（含全、半） ---
     &.checked {

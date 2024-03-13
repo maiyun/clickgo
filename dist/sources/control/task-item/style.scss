@@ -22,13 +22,13 @@
     }
 
     &.multi::after {
-        content: ''; position: absolute; transition: all .15s ease;
+        content: ''; position: absolute; transition: all .3s var(--g-cubic);
     }
 
     .line {
         position: absolute; display: flex; pointer-events: none; justify-content: center;
         &::after {
-            content: ''; display: block; transition: .15s ease; transition-property: width, height;
+            content: ''; display: block; transition: all .3s var(--g-cubic); transition-property: width, height;
         }
     }
     &.left {

@@ -4,7 +4,7 @@
         flex: 1; width: 0; background: #000;
     }
     .controls {
-        position: absolute; left: 0; bottom: 0; width: 100%; transition: opacity .15s ease;
+        position: absolute; left: 0; bottom: 0; width: 100%; transition: opacity .3s var(--g-cubic);
         .top {
             background: rgba(255, 255, 255, .2); height: 3px; position: relative;
             &::after {

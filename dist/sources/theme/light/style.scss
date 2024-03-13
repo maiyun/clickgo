@@ -63,23 +63,23 @@ global {
     .arteditor_controls {
         .arteditor_left {
             .arteditor_button {
-                transition: all .15s ease;
+                transition: all .3s var(--g-cubic);
             }
         }
         .arteditor_right {
             .arteditor_write, .arteditor_preview {
-                transition: all .15s ease;
+                transition: all .3s var(--g-cubic);
             }
         }
     }
     .arteditor_tag-cg-flow {
         .arteditor_item {
             .arteditor_remove {
-                transition: all .15s ease;
+                transition: all .3s var(--g-cubic);
             }
         }
         .arteditor_add {
-            transition: all .15s ease;
+            transition: all .3s var(--g-cubic);
         }
     }
 }
@@ -90,13 +90,13 @@ global {
 // -- CONTROL -- button --
 
 .button_wrap {
-    transition: all .15s ease; transition-property: color, background;
+    transition: all .3s var(--g-cubic); transition-property: color, background-color;
 
     &::before {                                 // --- 外边框 ---
-        transition: all .15s ease;
+        transition: all .3s var(--g-cubic);
     }
     &::after, .button_inner::after, .button_arrow::after {    // --- 焦点框 ---
-        border-radius: 3px; transition: all .15s ease;
+        border-radius: 3px; transition: all .3s var(--g-cubic);
     }
     &.button_default {
         &:not(.button_plain) {
@@ -113,18 +113,18 @@ global {
     }
     &.button_area-split {
         .button_inner::before {
-            transition: all .15s ease;
+            transition: all .3s var(--g-cubic);
         }
     }
     &:not([data-cg-disabled]) {
         &.button_area-split {
             .button_inner, .button_arrow {
                 &:hover {                       // --- 鼠标悬停 ---
-                    transition: all .15s ease;
+                    transition: all .3s var(--g-cubic);
                 }
                 // --- 鼠标按下 ---
                 &:active, &.button_active, &[data-cg-pop-open] {
-                    transition: all .15s ease;
+                    transition: all .3s var(--g-cubic);
                 }
             }
         }
@@ -137,18 +137,18 @@ global {
 // -- CONTROL -- check --
 
 .check_wrap {
-    transition: all .15s ease;
+    transition: all .3s var(--g-cubic);
 
     .check_check {
-        transition: all .15s ease; width: 18px; height: 18px;
+        transition: all .3s var(--g-cubic); width: 18px; height: 18px;
         &::after {
-            transition: all .15s ease;
+            transition: all .3s var(--g-cubic);
         }
     }
 
     .check_label {
         &::before {
-            transition: all .15s ease;
+            transition: all .3s var(--g-cubic);
         }
     }
 
@@ -212,7 +212,7 @@ global {
     .drawer_body {
         .drawer_header {
             .drawer_close {
-                transition: all .15s ease; border-radius: var(--g-radius);
+                transition: all .3s var(--g-cubic); border-radius: var(--g-radius);
                 &:hover {
                     background: var(--g-background-hover); fill: initial; stroke: initial;
                 }
@@ -242,7 +242,7 @@ global {
             // --- 控制按钮 ---
             .form_controls {
                 .form_min, .form_max, .form_close {
-                    transition: all .15s ease;
+                    transition: all .3s var(--g-cubic);
                 }
             }
         }
@@ -262,7 +262,7 @@ global {
     .greatlist_t {
         .greatlist_tag-cg-vflow {
             .greatlist_item {
-                transition: all .15s ease;
+                transition: all .3s var(--g-cubic);
                 &:not([data-cg-disabled]) {
                     &:hover {
                         background: var(--g-background-hover);
@@ -284,7 +284,7 @@ global {
 // -- CONTROL -- greatselect --
 
 .greatselect_wrap {
-    transition: all .15s ease;
+    transition: all .3s var(--g-cubic);
     &:not([data-cg-disabled]):not([data-cg-pop-open]) {
         &.greatselect_plain {
             &:hover, &:focus {
@@ -293,7 +293,7 @@ global {
         }
     }
     .greatselect_arrow {
-        transition: all .15s ease; width: 25px;
+        transition: all .3s var(--g-cubic); width: 25px;
     }
 }
 .greatselect_pop {
@@ -315,7 +315,7 @@ global {
     .iconview_tag-cg-vflow {
         .iconview_row {
             .iconview_item {
-                transition: all .15s ease;
+                transition: all .3s var(--g-cubic);
                 &:hover {
                     background: var(--g-background-hover);
                 }
@@ -334,7 +334,7 @@ global {
 
 .levelselect_pop {
     .levelselect_back {
-        background: var(--pop-background); transition: all .15s ease;
+        background: var(--pop-background); transition: all .3s var(--g-cubic);
         &:hover {
             background: var(--g-background-hover);
         }
@@ -345,7 +345,7 @@ global {
 
 .link_wrap {
     &.link_plain {
-        transition: all .15s ease;
+        transition: all .3s var(--g-cubic);
     }
 }
 
@@ -358,7 +358,7 @@ global {
 // -- CONTROL -- menu-item --
 
 .menu-item_wrap {
-    transition: all .15s ease; border: none;
+    transition: all .3s var(--g-cubic); border: none;
 }
 .menu-item_pop {
     background: var(--pop-background); -webkit-backdrop-filter: blur(30px) saturate(2); backdrop-filter: blur(30px) saturate(2);
@@ -419,7 +419,7 @@ global {
         .nav_header {
             padding: 2px; box-shadow: none;
             .nav_mbutton {
-                width: 50px; min-height: 50px; transition: all .15s ease;
+                width: 50px; min-height: 50px; transition: all .3s var(--g-cubic);
                 &:hover {
                     background: var(--g-background-hover); fill: var(--g-color-hover); stroke: var(--g-color-hover);
                 }
@@ -439,7 +439,7 @@ global {
 
 .nav-item_wrap {
     > .nav-item_text {
-        padding: 15px; margin: 3px 0; transition: all .15s ease;
+        padding: 15px; margin: 3px 0; transition: all .3s var(--g-cubic);
         .nav-item_tag-cg-img, .nav-item_tag-cg-svg {
             width: 20px; height: 20px; margin-right: 8px;
         }
@@ -486,7 +486,7 @@ global {
 .page_wrap {
     .page_list {
         > .page_tag-div {
-            transition: all .15s ease; width: 32px; height: 32px;
+            transition: all .3s var(--g-cubic); width: 32px; height: 32px;
             &::after {
                 border-radius: 3px;
             }
@@ -558,18 +558,18 @@ global {
 // -- CONTROL -- radio --
 
 .radio_wrap {
-    transition: all .15s ease;
+    transition: all .3s var(--g-cubic);
 
     .radio_radio {
-        transition: all .15s ease; width: 18px; height: 18px;
+        transition: all .3s var(--g-cubic); width: 18px; height: 18px;
         &::after {
-            transition: all .15s ease; left: 4px; top: 4px; width: calc(100% - 8px); height: calc(100% - 8px);
+            transition: all .3s var(--g-cubic); left: 4px; top: 4px; width: calc(100% - 8px); height: calc(100% - 8px);
         }
     }
 
     .radio_label {
         &::before {
-            transition: all .15s ease;
+            transition: all .3s var(--g-cubic);
         }
     }
 
@@ -603,7 +603,7 @@ global {
     }
     .scroll_bar {
         .scroll_block {
-            transition: all .15s ease; transition-property: background;
+            transition: all .3s var(--g-cubic); transition-property: background-color;
         }
     }
 }
@@ -615,7 +615,7 @@ global {
         .select_tags {
             .select_tag {
                 .select_label, .select_close {
-                    transition: all .15s ease;
+                    transition: all .3s var(--g-cubic);
                 }
                 .select_label {
                     padding: 0 10px;
@@ -661,9 +661,9 @@ global {
         }
     }
     .tab_tab {
-        background: transparent; transition: all .15s ease; border: none;
+        background: transparent; transition: all .3s var(--g-cubic); border: none;
         &::after {
-            background: hsl(240, 70%, 60%); transition: all .15s ease;
+            background: hsl(240, 70%, 60%); transition: all .3s var(--g-cubic);
         }
         &:not(.tab_selected):not([data-cg-hover]):hover {
             background: transparent; color: hsl(240, 70%, 60%); fill: hsl(240, 70%, 60%); stroke: hsl(240, 70%, 60%);
@@ -672,7 +672,7 @@ global {
             background: transparent; font-weight: bold; color: hsl(240, 70%, 60%); fill: hsl(240, 70%, 60%); stroke: hsl(240, 70%, 60%);
         }
         .tab_close {
-            transition: all .15s ease;
+            transition: all .3s var(--g-cubic);
             &:hover {
                 background: var(--g-background-hover);
             }
@@ -791,7 +791,7 @@ global {
 // -- CONTROL -- text --
 
 .text_wrap {
-    transition: all .15s ease; transition-property: color, background, border;
+    transition: all .3s var(--g-cubic); transition-property: color, background-color, border;
     .text_multi-b {
         .text_multi-rb {
             background: transparent;
@@ -799,7 +799,7 @@ global {
     }
     .text_single {
         .text_pwdicon {
-            transition: all .15s ease;
+            transition: all .3s var(--g-cubic);
         }
     }
     &:not([data-cg-disabled]) {
@@ -854,7 +854,7 @@ global {
 .tuieditor_wrap {
     .tuieditor_content {
         ::-webkit-scrollbar-thumb {
-            transition: all .15s ease;
+            transition: all .3s var(--g-cubic);
         }
     }
 }
@@ -869,7 +869,7 @@ global {
         .video_bottom {
             .video_left, .video_right {
                 .video_button {
-                    transition: all .15s ease;
+                    transition: all .3s var(--g-cubic);
                 }
             }
         }

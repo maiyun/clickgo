@@ -1864,10 +1864,17 @@ export function hideRectangle(): void {
 
 // --- DRAG ---
 
+/** --- 是否马上要隐藏的 timer --- */
+let dragTimeOut: number = 0;
+
 /**
  * --- 显示 drag 虚拟框 ---
  */
 export function showDrag(): void {
+    if (dragTimeOut) {
+        clearTimeout(dragTimeOut);
+        dragTimeOut = 0;
+    }
     elements.drag.style.opacity = '1';
     elements.drag.style.transform = 'perspective(100px) rotateX(15deg) translateZ(15px)';
     elements.drag.style.borderBottomWidth = '2px';
@@ -1914,7 +1921,8 @@ export function moveDrag(opt: types.IMoveDragOptions): void {
 export function hideDrag(): void {
     elements.drag.style.transform = 'initial';
     elements.drag.style.borderBottomWidth = '1px';
-    setTimeout(() => {
+    dragTimeOut = window.setTimeout(() => {
+        dragTimeOut = 0;
         elements.drag.style.opacity = '0';
     }, 300);
 }
@@ -2409,7 +2417,7 @@ export function remove(formId: number): boolean {
             if (Object.keys(task.list[taskId].forms).length === 0) {
                 task.end(taskId);
             }
-        }, 100);
+        }, 300);
         return true;
     }
     else {

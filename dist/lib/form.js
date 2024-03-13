@@ -1405,7 +1405,12 @@ function hideRectangle() {
     exports.elements.rectangle.style.opacity = '0';
 }
 exports.hideRectangle = hideRectangle;
+let dragTimeOut = 0;
 function showDrag() {
+    if (dragTimeOut) {
+        clearTimeout(dragTimeOut);
+        dragTimeOut = 0;
+    }
     exports.elements.drag.style.opacity = '1';
     exports.elements.drag.style.transform = 'perspective(100px) rotateX(15deg) translateZ(15px)';
     exports.elements.drag.style.borderBottomWidth = '2px';
@@ -1445,7 +1450,8 @@ exports.moveDrag = moveDrag;
 function hideDrag() {
     exports.elements.drag.style.transform = 'initial';
     exports.elements.drag.style.borderBottomWidth = '1px';
-    setTimeout(() => {
+    dragTimeOut = window.setTimeout(() => {
+        dragTimeOut = 0;
         exports.elements.drag.style.opacity = '0';
     }, 300);
 }
@@ -1850,7 +1856,7 @@ function remove(formId) {
             if (Object.keys(task.list[taskId].forms).length === 0) {
                 task.end(taskId);
             }
-        }, 100);
+        }, 300);
         return true;
     }
     else {

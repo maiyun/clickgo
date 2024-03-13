@@ -7,6 +7,7 @@
     --g-size:12px;
     --g-family:"Lucida Sans Unicode", "Helvetica Neue","Helvetica","PingFang SC","Hiragino Sans GB","Noto Sans CJK SC","Noto Sans CJK","Source Han Sans","WenQuanYi Micro Hei","Microsoft YaHei",sans-serif;
     --g-line:1;
+    --g-cubic:cubic-bezier(0.785, 0.135, 0.15, 0.86);
 
     // --- 基础颜色 ---
     --cg:hsl(20, 100%, 65%);
@@ -120,14 +121,14 @@
         background: rgba(255, 255, 255, .3); border: solid 3px rgba(0, 0, 0, .3);
     }
     &.ani {
-        transition: all .15s ease; transition-property: left, top, transform;
+        transition: all .3s var(--g-cubic); transition-property: left, top, transform;
     }
 }
 #cg-drag {
-    z-index: 20020003; box-sizing: border-box; position: absolute; border-radius: 3px; pointer-events: none; background: rgba(255, 255, 255, .1); -webkit-backdrop-filter: blur(5px); backdrop-filter: blur(5px); box-shadow: 0 3px 5px rgba(0, 0, 0, .1); opacity: 0; display: flex; justify-content: center; align-items: center; border: solid 1px #FFF; transition: all .3s ease; transition-property: transform, border; transform: initial;
+    z-index: 20020003; box-sizing: border-box; position: absolute; border-radius: 3px; pointer-events: none; background: rgba(255, 255, 255, .1); -webkit-backdrop-filter: blur(5px); backdrop-filter: blur(5px); box-shadow: 0 3px 5px rgba(0, 0, 0, .1); opacity: 0; display: flex; justify-content: center; align-items: center; border: solid 1px #FFF; transition: all .3s var(--g-cubic); transition-property: transform, border; transform: initial;
 }
 #cg-launcher {
-    z-index: 20020004; box-sizing: border-box; position: fixed; background: var(--system-background); -webkit-backdrop-filter: blur(30px) saturate(1.5); backdrop-filter: blur(30px) saturate(1.5); width: 100%; height: 100%; left: 0; top: 0; color: var(--system-color); display: none; flex-direction: column; transition: all .1s linear; transform: scale(1.2); opacity: 0;
+    z-index: 20020004; box-sizing: border-box; position: fixed; background: var(--system-background); -webkit-backdrop-filter: blur(30px) saturate(1.5); backdrop-filter: blur(30px) saturate(1.5); width: 100%; height: 100%; left: 0; top: 0; color: var(--system-color); display: none; flex-direction: column; transition: all .3s var(--g-cubic); transform: scale(1.2); opacity: 0;
     &:not(.cg-show) {
         pointer-events: none;
     }
@@ -139,7 +140,7 @@
     text-align: center; padding: 50px;
 }
 .cg-launcher-sinput {
-    -webkit-appearance: none; appearance: none; padding: 15px; border: solid 1px transparent; background: var(--system-control-background); width: 60%; border-radius: 5px; color: var(--system-color); transition: all .15s ease;
+    -webkit-appearance: none; appearance: none; padding: 15px; border: solid 1px transparent; background: var(--system-control-background); width: 60%; border-radius: 5px; color: var(--system-color); transition: all .3s var(--g-cubic);
     &::placeholder {
         color: var(--system-placeholder-color);
     }
@@ -176,7 +177,7 @@
     font-size: 13px; font-weight: bold; text-shadow: 0 0 3px rgba(0, 0, 0, .6); text-align: center; margin-top: 20px;
 }
 .cg-launcher-icon, .cg-launcher-name {
-    transition: all .1s linear; transition-property: opacity;
+    transition: all .3s var(--g-cubic); transition-property: opacity;
 }
 .cg-launcher-space {
     width: 50px;
@@ -185,12 +186,12 @@
     display: flex; justify-content: center; height: 80px;
 
     > div {
-        height: 80px; width: 80px; background: rgba(255, 255, 255, .3); border-radius: 20px; padding: 10px 4px 4px 10px; transition: all .1s linear; transition-property: left, top, width, height, opacity; overflow-y: auto;
+        height: 80px; width: 80px; background: rgba(255, 255, 255, .3); border-radius: 20px; padding: 10px 4px 4px 10px; transition: all .3s var(--g-cubic); transition-property: left, top, width, height, opacity; overflow-y: auto;
         &::-webkit-scrollbar {
             display: none;
         }
         .cg-launcher-item, .cg-launcher-space {
-            transition: all .1s linear;
+            transition: all .3s var(--g-cubic);
         }
 
         &.cg-show {
@@ -236,7 +237,7 @@
 }
 
 [data-cg-pop] {
-    position: absolute; box-shadow: 0px 5px 20px rgba(0, 0, 0, .25); transition: .15s ease; transition-property: transform, opacity; transform: translateY(-10px); opacity: 0;
+    position: absolute; box-shadow: 0px 5px 20px rgba(0, 0, 0, .25); transition: .3s var(--g-cubic); transition-property: transform, opacity; transform: translateY(-10px); opacity: 0;
     &:not([data-cg-open]) {
         pointer-events: none;
     }
@@ -250,7 +251,7 @@
 }
 
 .cg-notify-wrap {
-    background: var(--system-background); position: fixed; padding: 15px; border-radius: 5px; right: 0; top: 0; width: 280px; font-size: 14px; display: flex; transition: .15s ease; transition-property: transform, opacity; overflow: hidden; color: var(--system-color); box-shadow: 0 5px 20px rgba(0, 0, 0, .25); -webkit-backdrop-filter: blur(30px) saturate(1.5); backdrop-filter: blur(30px) saturate(1.5);
+    background: var(--system-background); position: fixed; padding: 15px; border-radius: 5px; right: 0; top: 0; width: 280px; font-size: 14px; display: flex; transition: .3s var(--g-cubic); transition-property: transform, opacity; overflow: hidden; color: var(--system-color); box-shadow: 0 5px 20px rgba(0, 0, 0, .25); -webkit-backdrop-filter: blur(30px) saturate(1.5); backdrop-filter: blur(30px) saturate(1.5);
 }
 .cg-notify-icon {
     margin-right: 10px; width: 16px; height: 16px; border-radius: 50%;
@@ -281,7 +282,7 @@
 }
 
 #cg-simpletask {
-    left: 0; bottom: -46px; width: 100%; height: 46px; top: initial; background: var(--system-background); -webkit-backdrop-filter: blur(30px) saturate(1.5); backdrop-filter: blur(30px) saturate(1.5); padding: 5px 0 5px 5px; display: flex; color: var(--system-color); transition: bottom .15s ease; overflow-x: auto; position: fixed;
+    left: 0; bottom: -46px; width: 100%; height: 46px; top: initial; background: var(--system-background); -webkit-backdrop-filter: blur(30px) saturate(1.5); backdrop-filter: blur(30px) saturate(1.5); padding: 5px 0 5px 5px; display: flex; color: var(--system-color); transition: bottom .3s var(--g-cubic); overflow-x: auto; position: fixed;
     &::-webkit-scrollbar {
         display: none;
     }

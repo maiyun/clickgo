@@ -4,7 +4,7 @@
     .inner {
         display: flex;
         &.ani {
-            transition: transform .15s ease;
+            transition: transform .15s linear;
         }
     }
     &.top, &.bottom {
