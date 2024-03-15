@@ -6,7 +6,7 @@
             <button @click="formHash = fh">Change</button>
             <button @click="formHashBack">Back</button>
         </layout>
-        <nav v-model="name" default="list" hash style="flex: 1;">
+        <nav v-model="name" default="list" hash style="flex: 1; height: 0;">
             <nav-item label="User">
                 <nav-item label="All list" name="list"></nav-item>
                 <nav-item label="Available" name="list?avail=1"></nav-item>
