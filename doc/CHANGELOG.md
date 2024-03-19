@@ -1,5 +1,10 @@
 # Changelog
 
+# 3.11.13
+
+[\*] Adjusted tuieditor to no longer automatically gain focus by default.  
+[\*] Enhanced some behaviors of the drawer control.
+
 # 3.11.12
 
 [+] Added switch control.  
