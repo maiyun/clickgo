@@ -163,6 +163,7 @@ class default_1 extends clickgo.control.AbstractControl {
                 'theme': this.props.theme,
                 'initialValue': this.props.modelValue,
                 'language': this.getLanguage(),
+                'autofocus': false,
                 'events': {
                     change: () => {
                         this.emit('update:modelValue', this.access.tuieditor.getMarkdown());

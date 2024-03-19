@@ -6,6 +6,7 @@
     <drawer title="Drawer" gutter="10" v-model="drawer" direction="v" width="50%">
         <label>123</label>
         <button @click="drawer2 = true">456</button>
+        <tuieditor style="height: 200px;"></tuieditor>
     </drawer>
     <drawer title="Drawer2" gutter="10" v-model="drawer2" direction="v">
         <label>789</label>

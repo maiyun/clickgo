@@ -145,6 +145,7 @@ export default class extends clickgo.control.AbstractControl {
             'theme': this.props.theme,
             'initialValue': this.props.modelValue,
             'language': this.getLanguage(),
+            'autofocus': false,
             'events': {
                 // --- 用户输入事件 ---
                 change: () => {
