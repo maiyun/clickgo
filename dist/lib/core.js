@@ -633,7 +633,8 @@ function fetchApp(url, opt = {}, taskId) {
                         if (opt.progress) {
                             opt.progress(loaded, total);
                         }
-                    }
+                    },
+                    'cache': opt.cache
                 }, taskId);
                 if ((blob === null) || typeof blob === 'string') {
                     return null;
@@ -650,7 +651,9 @@ function fetchApp(url, opt = {}, taskId) {
         let config;
         const files = {};
         try {
-            const blob = yield fs.getContent(url + 'config.json', undefined, taskId);
+            const blob = yield fs.getContent(url + 'config.json', {
+                'cache': opt.cache
+            }, taskId);
             if (blob === null || typeof blob === 'string') {
                 return null;
             }
@@ -665,7 +668,9 @@ function fetchApp(url, opt = {}, taskId) {
                     opt.progress(loaded + 1, total + 1);
                 }
                 for (const file of config.files) {
-                    fs.getContent(url + file.slice(1), undefined, taskId).then(function (blob) {
+                    fs.getContent(url + file.slice(1), {
+                        'cache': opt.cache
+                    }, taskId).then(function (blob) {
                         return __awaiter(this, void 0, void 0, function* () {
                             if (blob === null || typeof blob === 'string') {
                                 clickgo.form.notify({

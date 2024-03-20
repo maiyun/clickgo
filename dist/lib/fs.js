@@ -119,7 +119,7 @@ function unmount(name) {
 }
 exports.unmount = unmount;
 function getContent(path, options, taskId) {
-    var _a, _b;
+    var _a, _b, _c;
     return __awaiter(this, void 0, void 0, function* () {
         path = tool.urlResolve('/', path);
         const fpath = path.slice(8);
@@ -146,21 +146,21 @@ function getContent(path, options, taskId) {
                 ourl = path;
             }
             try {
-                const rand = Math.random().toString();
+                const rand = '?' + ((_a = options.cache) !== null && _a !== void 0 ? _a : Math.random().toString());
                 let blob = null;
                 const headers = {};
                 if (start || end) {
                     headers['range'] = `bytes=${start === undefined ? '0' : start}-${end === undefined ? '' : end}`;
                 }
                 if (options.progress) {
-                    blob = yield tool.request(ourl + (!ourl.startsWith(loader.cdn) ? ('?' + rand) : ''), {
+                    blob = yield tool.request(ourl + (!ourl.startsWith(loader.cdn) ? rand : ''), {
                         'headers': headers,
                         'progress': options.progress,
                         'responseType': 'blob'
                     });
                 }
                 else {
-                    blob = yield (yield fetch(ourl + (!ourl.startsWith(loader.cdn) ? ('?' + rand) : ''), {
+                    blob = yield (yield fetch(ourl + (!ourl.startsWith(loader.cdn) ? rand : ''), {
                         'headers': headers
                     })).blob();
                 }
@@ -178,7 +178,7 @@ function getContent(path, options, taskId) {
                     fr.readAsText(blob, encoding);
                 });
             }
-            catch (_c) {
+            catch (_d) {
                 return null;
             }
         }
@@ -193,7 +193,7 @@ function getContent(path, options, taskId) {
                 if (!hanlder) {
                     return null;
                 }
-                return (_b = (_a = hanlder.getContent) === null || _a === void 0 ? void 0 : _a.call(hanlder, path.slice(9 + name.length), options)) !== null && _b !== void 0 ? _b : null;
+                return (_c = (_b = hanlder.getContent) === null || _b === void 0 ? void 0 : _b.call(hanlder, path.slice(9 + name.length), options)) !== null && _c !== void 0 ? _c : null;
             }
             if (options.progress) {
                 delete options.progress;

@@ -415,7 +415,8 @@ export async function read(blob: Blob): Promise<false | types.TControlPackage> {
  */
 export async function init(
     taskId: number,
-    invoke: Record<string, any>
+    invoke: Record<string, any>,
+    cache?: string
 ): Promise<number> {
     const t = task.list[taskId];
     if (!t) {
@@ -426,7 +427,9 @@ export async function init(
             path += '.cgc';
         }
         path = tool.urlResolve('/', path);
-        const file = await fs.getContent(path, undefined, taskId);
+        const file = await fs.getContent(path, {
+            'cache': cache
+        }, taskId);
         if (file && typeof file !== 'string') {
             const c = await read(file);
             if (c) {

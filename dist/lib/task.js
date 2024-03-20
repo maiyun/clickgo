@@ -248,7 +248,8 @@ function run(url, opt = {}, ntid) {
             }
             app = yield core.fetchApp(url, {
                 'notifyId': notifyId,
-                'progress': opt.progress
+                'progress': opt.progress,
+                'cache': opt.cache
             }, ntid);
             if (notifyId) {
                 setTimeout(function () {
@@ -1159,7 +1160,7 @@ function run(url, opt = {}, ntid) {
         }
         dom.createToStyleList(taskId);
         yield ((_f = opt.initProgress) === null || _f === void 0 ? void 0 : _f.call(opt, 'Control initialization ...'));
-        const r = yield control.init(taskId, invoke);
+        const r = yield control.init(taskId, invoke, opt.cache);
         if (r < 0) {
             dom.removeFromStyleList(taskId);
             delete exports.list[taskId];

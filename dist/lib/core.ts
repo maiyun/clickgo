@@ -735,7 +735,8 @@ export async function fetchApp(
                     if (opt.progress) {
                         opt.progress(loaded, total) as unknown;
                     }
-                }
+                },
+                'cache': opt.cache
             }, taskId);
             if ((blob === null) || typeof blob === 'string') {
                 return null;
@@ -754,7 +755,9 @@ export async function fetchApp(
     /** --- 已加载的 files --- */
     const files: Record<string, Blob | string> = {};
     try {
-        const blob = await fs.getContent(url + 'config.json', undefined, taskId);
+        const blob = await fs.getContent(url + 'config.json', {
+            'cache': opt.cache
+        }, taskId);
         if (blob === null || typeof blob === 'string') {
             return null;
         }
@@ -769,7 +772,9 @@ export async function fetchApp(
                 opt.progress(loaded + 1, total + 1) as unknown;
             }
             for (const file of config.files) {
-                fs.getContent(url + file.slice(1), undefined, taskId).then(async function(blob) {
+                fs.getContent(url + file.slice(1), {
+                    'cache': opt.cache
+                }, taskId).then(async function(blob) {
                     if (blob === null || typeof blob === 'string') {
                         clickgo.form.notify({
                             'title': 'File not found',

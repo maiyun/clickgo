@@ -92,6 +92,7 @@ export type TGlobalEvent = 'error' | 'screenResize' | 'configChanged' | 'formCre
 export interface ICoreFetchAppOptions {
     'notifyId'?: number;
     'progress'?: (loaded: number, total: number) => void | Promise<void>;
+    'cache'?: string;
 }
 
 /** --- 应用包解包后对象 --- */
@@ -329,6 +330,7 @@ export interface IMountHandler {
         'start'?: number;
         'end'?: number;
         'progress'?: (loaded: number, total: number) => void | Promise<void>;
+        'cache'?: string;
     }) => Blob | string | null | Promise<Blob | string | null>;
     putContent?: (path: string, data: string | Blob, options?: {
         'encoding'?: BufferEncoding | null;
@@ -439,6 +441,8 @@ export interface ITaskRunOptions {
     'data'?: Record<string, any>;
     /** --- 执行文件的基路径，一般在传入 APP 包时使用，以 .cga 结尾或以 / 结尾的路径 --- */
     'path'?: string;
+    /** --- 是否禁用缓存加载，默认禁用 --- */
+    'cache'?: string;
 }
 
 export interface ICreateTimerOptions {

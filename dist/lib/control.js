@@ -288,7 +288,7 @@ function read(blob) {
     });
 }
 exports.read = read;
-function init(taskId, invoke) {
+function init(taskId, invoke, cache) {
     return __awaiter(this, void 0, void 0, function* () {
         const t = task.list[taskId];
         if (!t) {
@@ -299,7 +299,9 @@ function init(taskId, invoke) {
                 path += '.cgc';
             }
             path = tool.urlResolve('/', path);
-            const file = yield fs.getContent(path, undefined, taskId);
+            const file = yield fs.getContent(path, {
+                'cache': cache
+            }, taskId);
             if (file && typeof file !== 'string') {
                 const c = yield read(file);
                 if (c) {

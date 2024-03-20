@@ -290,7 +290,8 @@ export async function run(url: string | types.IApp, opt: types.ITaskRunOptions =
         // --- 获取并加载 app 对象 ---
         app = await core.fetchApp(url, {
             'notifyId': notifyId,
-            'progress': opt.progress
+            'progress': opt.progress,
+            'cache': opt.cache
         }, ntid);
         // --- 无论是否成功，都可以先隐藏 notify 了 ---
         if (notifyId) {
@@ -1305,7 +1306,7 @@ export async function run(url: string | types.IApp, opt: types.ITaskRunOptions =
     dom.createToStyleList(taskId);
     // --- 加载 control ---
     await opt.initProgress?.('Control initialization ...');
-    const r = await control.init(taskId, invoke);
+    const r = await control.init(taskId, invoke, opt.cache);
     if (r < 0) {
         dom.removeFromStyleList(taskId);
         delete list[taskId];

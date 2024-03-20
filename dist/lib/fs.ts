@@ -113,12 +113,14 @@ export async function getContent(path: string, options?: {
     'start'?: number;
     'end'?: number;
     'progress'?: (loaded: number, total: number) => void | Promise<void>;
+    'cache'?: string;
 }, taskId?: number): Promise<string | Blob | null>;
 export async function getContent(path: string, options: BufferEncoding | {
     'encoding': BufferEncoding;
     'start'?: number;
     'end'?: number;
     'progress'?: (loaded: number, total: number) => void | Promise<void>;
+    'cache'?: string;
 }, taskId?: number): Promise<string | null>;
 /**
  * --- 读取完整文件或一段 ---
@@ -131,6 +133,7 @@ export async function getContent(path: string, options?: BufferEncoding | {
     'start'?: number;
     'end'?: number;
     'progress'?: (loaded: number, total: number) => void | Promise<void>;
+    'cache'?: string;
 }, taskId?: number): Promise<Blob | string | null> {
     path = tool.urlResolve('/', path);
     const fpath = path.slice(8);
@@ -157,21 +160,22 @@ export async function getContent(path: string, options?: BufferEncoding | {
             ourl = path;
         }
         try {
-            const rand = Math.random().toString();
+            /** --- 后缀 --- */
+            const rand = '?' + (options.cache ?? Math.random().toString());
             let blob: Blob | null = null;
             const headers: Record<string, string> = {};
             if (start || end) {
                 headers['range'] = `bytes=${start === undefined ? '0' : start}-${end === undefined ? '' : end}`;
             }
             if (options.progress) {
-                blob = await tool.request(ourl + (!ourl.startsWith(loader.cdn) ? ('?' + rand) : ''), {
+                blob = await tool.request(ourl + (!ourl.startsWith(loader.cdn) ? rand : ''), {
                     'headers': headers,
                     'progress': options.progress,
                     'responseType': 'blob'
                 });
             }
             else {
-                blob = await (await fetch(ourl + (!ourl.startsWith(loader.cdn) ? ('?' + rand) : ''), {
+                blob = await (await fetch(ourl + (!ourl.startsWith(loader.cdn) ? rand : ''), {
                     'headers': headers
                 })).blob();
             }
