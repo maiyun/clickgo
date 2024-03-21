@@ -11,6 +11,18 @@
     <drawer title="Drawer2" gutter="10" v-model="drawer2" direction="v">
         <label>789</label>
         <button>012</button>
+        <button>012</button>
+        <button>012</button>
+        <button>012</button>
+        <button>012</button>
+        <button>012</button>
+        <button>012</button>
+        <button>012</button>
+        <button>012</button>
+        <button>012</button>
+        <button>012</button>
+        <button>012</button>
+        <button>012</button>
         <template v-slot:footer>
             <layout align-h="end" style="flex: 1;">
                 <button type="info" @click="drawer2 = false">OK</button>
