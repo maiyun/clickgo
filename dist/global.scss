@@ -99,6 +99,9 @@
     --g-block-background:hsl(0, 0%, 85%);
     --g-block-background-hover:hsl(0, 0%, 75%);
 }
+[data-cg-disabled] {
+    cursor: not-allowed;
+}
 
 #cg-form-list {
     z-index: 20020000;
