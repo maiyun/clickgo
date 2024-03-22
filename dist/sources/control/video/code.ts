@@ -237,6 +237,16 @@ export default class extends clickgo.control.AbstractControl {
         });
     }
 
+    // --- 当视频可以播放之时要处理的事件 ---
+    public onCanplay() {
+        this.playData = this.propBoolean('play');
+        if (this.playData && !this._currentTimer) {
+            this.refs.video.play();
+            this.currentUpdateStart();
+        }
+        this.emit('canplay');
+    }
+
     public onMounted(): void {
         this.watch('src', async () => {
             const count = ++this.count;
@@ -287,24 +297,6 @@ export default class extends clickgo.control.AbstractControl {
             'immediate': true
         });
 
-        // --- 检测播放状态 ---
-        this.watch('play', () => {
-            if (this.playData === this.propBoolean('play')) {
-                return;
-            }
-            this.playData = this.propBoolean('play');
-            if (this.playData) {
-                this.refs.video.play();
-                this.currentUpdateStart();
-            }
-            else {
-                this.refs.video.pause();
-                this.currentUpdateEnd();
-            }
-        }, {
-            'immediate': true
-        });
-
         // --- 监听控件显示/隐藏状态 ---
         this.watch('controls', () => {
             if (this.propBoolean('controls')) {
@@ -321,6 +313,22 @@ export default class extends clickgo.control.AbstractControl {
             }
         }, {
             'immediate': true
+        });
+
+        // --- 检测播放状态 ---
+        this.watch('play', () => {
+            if (this.playData === this.propBoolean('play')) {
+                return;
+            }
+            this.playData = this.propBoolean('play');
+            if (this.playData) {
+                this.refs.video.play();
+                this.currentUpdateStart();
+            }
+            else {
+                this.refs.video.pause();
+                this.currentUpdateEnd();
+            }
         });
     }
 

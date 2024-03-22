@@ -213,6 +213,14 @@ class default_1 extends clickgo.control.AbstractControl {
             }
         });
     }
+    onCanplay() {
+        this.playData = this.propBoolean('play');
+        if (this.playData && !this._currentTimer) {
+            this.refs.video.play();
+            this.currentUpdateStart();
+        }
+        this.emit('canplay');
+    }
     onMounted() {
         this.watch('src', () => __awaiter(this, void 0, void 0, function* () {
             const count = ++this.count;
@@ -259,22 +267,6 @@ class default_1 extends clickgo.control.AbstractControl {
         }, {
             'immediate': true
         });
-        this.watch('play', () => {
-            if (this.playData === this.propBoolean('play')) {
-                return;
-            }
-            this.playData = this.propBoolean('play');
-            if (this.playData) {
-                this.refs.video.play();
-                this.currentUpdateStart();
-            }
-            else {
-                this.refs.video.pause();
-                this.currentUpdateEnd();
-            }
-        }, {
-            'immediate': true
-        });
         this.watch('controls', () => {
             if (this.propBoolean('controls')) {
                 this.isShow = true;
@@ -290,6 +282,20 @@ class default_1 extends clickgo.control.AbstractControl {
             }
         }, {
             'immediate': true
+        });
+        this.watch('play', () => {
+            if (this.playData === this.propBoolean('play')) {
+                return;
+            }
+            this.playData = this.propBoolean('play');
+            if (this.playData) {
+                this.refs.video.play();
+                this.currentUpdateStart();
+            }
+            else {
+                this.refs.video.pause();
+                this.currentUpdateEnd();
+            }
         });
     }
     onUnmounted() {
