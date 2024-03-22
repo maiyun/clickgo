@@ -5,7 +5,10 @@
                 <cg-loading v-if="data.row.tree === 2"></cg-loading>
             </div>
             <cg-img v-if="propBoolean('icon')" class="icon" :src="((data.row.tree <= 0) || (data.row.tree === 2)) ? data.row.icon : (data.row.openicon || data.row.icon)"></cg-img>
-            <cg-marquee scroll="false">
+            <div v-if="slots['row']" class="slot">
+                <slot name="row" :row="data.row" :index="data.index"></slot>
+            </div>
+            <cg-marquee v-else scroll="false">
                 <div :class="[data.row.title && 'title']">{{data.row.label === '' ? '　' : data.row.label}}</div>
             </cg-marquee>
         </div>
