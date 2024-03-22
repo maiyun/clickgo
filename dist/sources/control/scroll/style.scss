@@ -22,7 +22,7 @@
         }
     }
     &.float {
-        position: absolute;
+        position: absolute; z-index: 1;
         &.v {
             height: 100% !important; right: 0; top: 0;
         }

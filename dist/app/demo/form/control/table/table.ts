@@ -36,6 +36,8 @@ export default class extends clickgo.form.AbstractForm {
 
     public split: boolean = false;
 
+    public virtual: boolean = false;
+
     // --- size 高度 ---
     public get sizes(): any {
         const rtn: any = {};

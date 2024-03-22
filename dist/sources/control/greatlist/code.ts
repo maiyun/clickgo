@@ -20,6 +20,8 @@ export default class extends clickgo.control.AbstractControl {
         'scroll': 'auto' | 'hidden' | 'visible';
         /** --- 超出的内容是否顶开宽度，默认 fill，不顶开 --- */
         'contentWidth': 'fill' | 'max';
+        /** --- 是否开启虚拟 dom 模式，默认不开启，如果数据量超大的话才需要开启 --- */
+        'virtual': boolean | string;
 
         'data': Array<{
             'disabled': boolean;
@@ -37,6 +39,7 @@ export default class extends clickgo.control.AbstractControl {
             'gesture': [],
             'scroll': 'auto',
             'contentWidth': 'fill',
+            'virtual': false,
 
             'data': [],
             'sizes': {},

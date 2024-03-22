@@ -27,14 +27,12 @@ export default class extends clickgo.form.AbstractForm {
 
     public resize = true;
 
-    public floading = false;
-
     public border = 'normal';
 
     public async showLoading(): Promise<void> {
-        this.floading = true;
+        this.loading = true;
         await clickgo.tool.sleep(1000);
-        this.floading = false;
+        this.loading = false;
     }
 
     public banClose = false;

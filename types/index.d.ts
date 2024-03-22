@@ -304,6 +304,8 @@ export interface IForm {
     'id': number;
     'vapp': IVApp;
     'vroot': IVue;
+    /** --- 是否已经执行过了关闭窗体方法，此处加判断为了防止重复执行 close 导致的 bug --- */
+    'closed': boolean;
 }
 
 /** --- Form 的简略情况，通常在 list 当中 --- */

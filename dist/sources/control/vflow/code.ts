@@ -2,6 +2,17 @@ import * as clickgo from 'clickgo';
 
 export default class extends clickgo.control.AbstractControl {
 
+    public emits = {
+        'gesture': null,
+        'beforeselect': null,
+        'afterselect': null,
+        'select': null,
+        'clientwidth': null,
+        'clientheight': null,
+        'scrollwidth': null,
+        'scrollheight': null
+    };
+
     public props: {
         'direction': 'h' | 'v';
         'selection': boolean | string;
@@ -387,6 +398,7 @@ export default class extends clickgo.control.AbstractControl {
         if (this.props.direction === 'h') {
             this.reShow();
         }
+        this.emit('clientwidth', v);
     }
 
     public clientheight(v: number): void {
@@ -394,6 +406,7 @@ export default class extends clickgo.control.AbstractControl {
         if (this.props.direction === 'v') {
             this.reShow();
         }
+        this.emit('clientheight', v);
     }
 
     public onSelect(area: Record<string, any>): void {
@@ -408,6 +421,7 @@ export default class extends clickgo.control.AbstractControl {
         area.start = rtn.start;
         area.end = rtn.end;
         area.empty = rtn.empty;
+        this.emit('select', area);
     }
 
     public onMounted(): void {

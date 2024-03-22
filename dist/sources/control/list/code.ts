@@ -19,6 +19,8 @@ export default class extends clickgo.control.AbstractControl {
         'selection': boolean | string;
         'gesture': string[] | string;
         'scroll': 'auto' | 'hidden' | 'visible';
+        /** --- 是否开启虚拟 dom 模式，默认不开启，如果数据量超大的话才需要开启 --- */
+        'virtual': boolean | string;
 
         'tree': boolean | string;
         /** --- -1: 不存在子项, 0: 关闭状态, 1: 存在子项打开状态, 2: 加载状态 --- */
@@ -37,6 +39,7 @@ export default class extends clickgo.control.AbstractControl {
             'selection': false,
             'gesture': [],
             'scroll': 'auto',
+            'virtual': false,
 
             'tree': false,
             'treeDefault': 0,

@@ -36,6 +36,16 @@ const clickgo = __importStar(require("clickgo"));
 class default_1 extends clickgo.control.AbstractControl {
     constructor() {
         super(...arguments);
+        this.emits = {
+            'gesture': null,
+            'beforeselect': null,
+            'afterselect': null,
+            'select': null,
+            'clientwidth': null,
+            'clientheight': null,
+            'scrollwidth': null,
+            'scrollheight': null
+        };
         this.props = {
             'direction': 'h',
             'selection': false,
@@ -296,12 +306,14 @@ class default_1 extends clickgo.control.AbstractControl {
         if (this.props.direction === 'h') {
             this.reShow();
         }
+        this.emit('clientwidth', v);
     }
     clientheight(v) {
         this.clientHeight = v;
         if (this.props.direction === 'v') {
             this.reShow();
         }
+        this.emit('clientheight', v);
     }
     onSelect(area) {
         const offset = this.props.direction === 'v' ? area.y : area.x;
@@ -315,6 +327,7 @@ class default_1 extends clickgo.control.AbstractControl {
         area.start = rtn.start;
         area.end = rtn.end;
         area.empty = rtn.empty;
+        this.emit('select', area);
     }
     onMounted() {
         this.watch('dataFormat', () => __awaiter(this, void 0, void 0, function* () {

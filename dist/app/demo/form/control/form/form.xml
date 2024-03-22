@@ -1,4 +1,4 @@
-<form v-model:width="width" v-model:height="height" :icon="icon" :title="title" :min="min" :max="max" :close="close" v-model:state-max="stateMax" v-model:state-min="stateMin" :min-width="minWidth" :min-height="minHeight" :resize="resize" :loading="floading" :border="border" direction="v" @close="onClose">
+<form v-model:width="width" v-model:height="height" :icon="icon" :title="title" :min="min" :max="max" :close="close" v-model:state-max="stateMax" v-model:state-min="stateMin" :min-width="minWidth" :min-height="minHeight" :resize="resize" :border="border" direction="v" @close="onClose">
     <flow direction="v">
         <layout direction="v" gutter="10" style="padding: 10px;">
             <label>focus: {{formFocus}}, width: {{width}}, height: {{height}}, state-max: {{stateMax}}, state-min: {{stateMin}}.</label>

@@ -1816,52 +1816,52 @@ window.addEventListener('touchstart', doFocusAndPopEvent, {
 window.addEventListener('mousedown', doFocusAndPopEvent);
 function remove(formId) {
     const taskId = getTaskId(formId);
-    let title = '';
-    let icon = '';
-    if (task.list[taskId].forms[formId]) {
-        title = task.list[taskId].forms[formId].vroot.$refs.form.title;
-        icon = task.list[taskId].forms[formId].vroot.$refs.form.iconDataUrl;
-        const io = task.list[taskId].runtime.dialogFormIds.indexOf(formId);
-        if (io > -1) {
-            task.list[taskId].runtime.dialogFormIds.splice(io, 1);
-        }
-        task.list[taskId].forms[formId].vroot.$refs.form.$data.isShow = false;
-        setTimeout(function () {
-            var _a;
-            const fid = getMaxZIndexID({
-                'formIds': [formId]
-            });
-            if (fid) {
-                changeFocus(fid);
-            }
-            else {
-                changeFocus();
-            }
-            if (!task.list[taskId]) {
-                return true;
-            }
-            task.list[taskId].forms[formId].vapp.unmount();
-            task.list[taskId].forms[formId].vapp._container.remove();
-            (_a = exports.elements.popList.querySelector('[data-form-id="' + formId.toString() + '"]')) === null || _a === void 0 ? void 0 : _a.remove();
-            if (io > -1) {
-                task.list[taskId].forms[formId].vroot.cgDialogCallback();
-            }
-            delete task.list[taskId].forms[formId];
-            dom.removeStyle(taskId, 'form', formId);
-            core.trigger('formRemoved', taskId, formId, title, icon);
-            dom.clearWatchStyle(formId);
-            dom.clearWatchProperty(formId);
-            native.clear(formId, taskId);
-            delete exports.activePanels[formId];
-            if (Object.keys(task.list[taskId].forms).length === 0) {
-                task.end(taskId);
-            }
-        }, 300);
-        return true;
-    }
-    else {
+    if (!task.list[taskId].forms[formId]) {
         return false;
     }
+    if (task.list[taskId].forms[formId].closed) {
+        return false;
+    }
+    task.list[taskId].forms[formId].closed = true;
+    const title = task.list[taskId].forms[formId].vroot.$refs.form.title;
+    const icon = task.list[taskId].forms[formId].vroot.$refs.form.iconDataUrl;
+    const io = task.list[taskId].runtime.dialogFormIds.indexOf(formId);
+    if (io > -1) {
+        task.list[taskId].runtime.dialogFormIds.splice(io, 1);
+    }
+    task.list[taskId].forms[formId].vroot.$refs.form.$data.isShow = false;
+    setTimeout(function () {
+        var _a;
+        const fid = getMaxZIndexID({
+            'formIds': [formId]
+        });
+        if (fid) {
+            changeFocus(fid);
+        }
+        else {
+            changeFocus();
+        }
+        if (!task.list[taskId]) {
+            return true;
+        }
+        task.list[taskId].forms[formId].vapp.unmount();
+        task.list[taskId].forms[formId].vapp._container.remove();
+        (_a = exports.elements.popList.querySelector('[data-form-id="' + formId.toString() + '"]')) === null || _a === void 0 ? void 0 : _a.remove();
+        if (io > -1) {
+            task.list[taskId].forms[formId].vroot.cgDialogCallback();
+        }
+        delete task.list[taskId].forms[formId];
+        dom.removeStyle(taskId, 'form', formId);
+        core.trigger('formRemoved', taskId, formId, title, icon);
+        dom.clearWatchStyle(formId);
+        dom.clearWatchProperty(formId);
+        native.clear(formId, taskId);
+        delete exports.activePanels[formId];
+        if (Object.keys(task.list[taskId].forms).length === 0) {
+            task.end(taskId);
+        }
+    }, 300);
+    return true;
 }
 exports.remove = remove;
 function removePanel(id, vapp, el) {
@@ -2562,7 +2562,8 @@ function create(cls, data, opt = {}, taskId) {
         const nform = {
             'id': formId,
             'vapp': rtn.vapp,
-            'vroot': rtn.vroot
+            'vroot': rtn.vroot,
+            'closed': false
         };
         t.forms[formId] = nform;
         yield tool.sleep(34);

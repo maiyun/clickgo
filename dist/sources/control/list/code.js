@@ -42,6 +42,7 @@ class default_1 extends clickgo.control.AbstractControl {
             'selection': false,
             'gesture': [],
             'scroll': 'auto',
+            'virtual': false,
             'tree': false,
             'treeDefault': 0,
             'async': false,

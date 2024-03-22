@@ -15,6 +15,7 @@ export default class extends clickgo.control.AbstractControl {
         'disabled': boolean | string;
         'async': boolean | string;
         'plain': boolean | string;
+        'virtual': boolean | string;
 
         'modelValue': string;
         'placeholder': string;
@@ -23,6 +24,7 @@ export default class extends clickgo.control.AbstractControl {
             'disabled': false,
             'async': false,
             'plain': false,
+            'virtual': false,
 
             'modelValue': '',
             'placeholder': '',

@@ -4,7 +4,7 @@
             <!-- greatselect -->
             <layout v-if="ntab === 'greatselect'" gutter="10" direction="v" style="flex: 1; width: 0; padding: 10px;">
                 <label>Now select value is {{select}}:</label>
-                <greatselect v-model="select" :data="slist" :area="area" :disabled="disabled" :multi="multi" :plain="plain" :sizes="sizes" :style="{'font-size': fontSize ? '16px' : undefined, 'padding': padding ? '15px' : undefined, 'background': background ? 'red' : undefined, 'color': background ? '#FFF' : undefined}" style="line-height: 1.3;" @add="onGAdd" @remove="onGRemove">
+                <greatselect v-model="select" :data="slist" :area="area" :disabled="disabled" :multi="multi" :plain="plain" :sizes="sizes" :virtual="virtual" :style="{'font-size': fontSize ? '16px' : undefined, 'padding': padding ? '15px' : undefined, 'background': background ? 'red' : undefined, 'color': background ? '#FFF' : undefined}" style="line-height: 1.3;" @add="onGAdd" @remove="onGRemove">
                     <layout align-v="center" gutter="5" style="flex: 1;">
                         <img :src="slist[select[0]] ? slist[select[0]].src : ''" style="width: 32px; height: 32px;"></img>
                         <block>
@@ -29,7 +29,7 @@
                     </template>
                 </greatselect>
                 <label>Custom pop:</label>
-                <greatselect pop="custom" :area="area" :plain="plain" :disabled="disabled" :style="{'font-size': fontSize ? '16px' : undefined, 'padding': padding ? '15px' : undefined, 'background': background ? 'red' : undefined, 'color': background ? '#FFF' : undefined}">
+                <greatselect pop="custom" :area="area" :plain="plain" :disabled="disabled" :virtual="virtual" :style="{'font-size': fontSize ? '16px' : undefined, 'padding': padding ? '15px' : undefined, 'background': background ? 'red' : undefined, 'color': background ? '#FFF' : undefined}">
                     <label>Pop is button.</label>
                     <template v-slot:pop>
                         <button>Nothing</button>
@@ -81,7 +81,7 @@
                     <label>Now select value is {{select3}}</label>
                     <label>Label: {{label3}}</label>
                     <label>Level: {{level3}}</label>
-                    <levelselect ref="lese" v-model="select3" @label="label3 = $event" @level="level3 = $event" :data="s3other ? slist3r : slist2" :disabled="disabled" :plain="plain" :async="async" placeholder="Please enter" @load="onLoad" @loaded="onLoaded" :style="{'font-size': fontSize ? '16px' : undefined, 'padding': padding ? '15px' : undefined, 'background': background ? 'red' : undefined, 'color': background ? '#FFF' : undefined}"></levelselect>
+                    <levelselect ref="lese" v-model="select3" @label="label3 = $event" @level="level3 = $event" :data="s3other ? slist3r : slist2" :disabled="disabled" :plain="plain" :async="async" :virtual="virtual" placeholder="Please enter" @load="onLoad" @loaded="onLoaded" :style="{'font-size': fontSize ? '16px' : undefined, 'padding': padding ? '15px' : undefined, 'background': background ? 'red' : undefined, 'color': background ? '#FFF' : undefined}"></levelselect>
                     <button @click="async = !async">{{async ? '' : '!'}}async</button>
                     <layout gutter="10">
                         <button @click="select3 = 'title'" style="flex: 1;">Set: 'title'</button>
@@ -110,8 +110,9 @@
             <button @click="padding = !padding" style="flex: 1;">Change padding</button>
         </layout>
         <layout gutter="10">
-            <button @click="background = !background" style="flex: 1;">Change bg &amp; color</button>
+            <button @click="background = !background" style="flex: 1;">Change bg color</button>
             <button v-if="ntab !== 'levelselect'" @click="multi = !multi" style="flex: 1;">{{multi ? '' : '!'}}multi</button>
+            <button @click="virtual = !virtual" style="flex: 1;">{{virtual ? '' : '!'}}virtual</button>
         </layout>
     </layout>
 </form>

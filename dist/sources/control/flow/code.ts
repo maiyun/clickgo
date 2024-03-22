@@ -2,6 +2,17 @@ import * as clickgo from 'clickgo';
 
 export default class extends clickgo.control.AbstractControl {
 
+    public emits = {
+        'gesture': null,
+        'beforeselect': null,
+        'afterselect': null,
+        'select': null,
+        'clientwidth': null,
+        'clientheight': null,
+        'scrollwidth': null,
+        'scrollheight': null
+    };
+
     public props: {
         'direction': 'h' | 'v';
         'selection': boolean | string;
@@ -25,6 +36,12 @@ export default class extends clickgo.control.AbstractControl {
         'selectionCurrent': { 'x': 0, 'y': 0, 'quick': false },
         /** --- 选框的 timer --- */
         'selectionTimer': 0
+    };
+
+    /** --- 当前框选的部分起终下标 --- */
+    public selectPos = {
+        'start': 0,
+        'end': 0
     };
 
     /**
@@ -332,6 +349,10 @@ export default class extends clickgo.control.AbstractControl {
         const y = this.access.selectionCurrent.y - rect.top + this.element.scrollTop;
         /** --- 要显示的区域 --- */
         const area = {
+            'start': 0,
+            'end': 0,
+            'empty': false,
+
             'x': 0,
             'y': 0,
             'width': 0,
@@ -379,8 +400,190 @@ export default class extends clickgo.control.AbstractControl {
         this.refs.selection.style.top = area.y.toString() + 'px';
         this.refs.selection.style.width = area.width.toString() + 'px';
         this.refs.selection.style.height = area.height.toString() + 'px';
+        // --- 查看选中了哪些子项 ---
+        const offset = this.props.direction === 'v' ? area.y : area.x;
+        const length = this.props.direction === 'v' ? area.height : area.width;
+        const rtn = this.getNewPos(this.selectPos, {
+            'start': offset,
+            'end': offset + length
+        });
+        this.selectPos.start = rtn.start;
+        this.selectPos.end = rtn.end;
+        area.start = rtn.start;
+        area.end = rtn.end;
+        area.empty = rtn.empty;
         // --- 响应 select 事件 ---
         this.emit('select', area);
+    }
+
+    /**
+     * ---- 供外部调用的获取某项的 start 和 end 像素 ---
+     * @param val 项下标
+     */
+    public getPos(val: number): { 'start': number; 'end': number; } | undefined {
+        const el = this.element.children[val] as HTMLDivElement;
+        if (!el) {
+            return undefined;
+        }
+        if (el.className.includes('selection')) {
+            return undefined;
+        }
+        return this.props.direction === 'h' ? {
+            'start': el.offsetLeft,
+            'end': el.offsetLeft + el.offsetWidth
+        } : {
+            'start': el.offsetTop,
+            'end': el.offsetTop + el.offsetHeight
+        };
+    }
+
+    /**
+     * --- 判断一个 item 项是否在一个 area 内 ---
+     * @param i 项 index
+     * @param area 区域像素
+     */
+    public inArea(i: number, area: { 'start': number; 'end': number; }): boolean {
+        const pos = this.getPos(i);
+        if (!pos) {
+            return false;
+        }
+        if ((pos.end > area.start) && (pos.start < area.end)) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * --- 根据一个旧 pos 和新 area，来获得一个新在 area 当中的 pos 段 ---
+     * @param pos 旧 pos 的 item index 段
+     * @param area 区域的像素段
+     * @returns 新 pos 的 item index 段
+     */
+    public getNewPos(pos: { 'start': number; 'end': number; }, area: { 'start': number; 'end': number; }): { 'start': number; 'end': number; 'empty': boolean; } {
+        const rtn = { 'start': -1, 'end': -1, 'empty': false };
+        /** --- 起项是否在新 area 区域内 --- */
+        const startShow = this.inArea(pos.start, area);
+        // --- 检测起始 ---
+        if (startShow) {
+            rtn.start = pos.start;
+            // --- 起项在区域内，则往上找，看看上面还有没有显示 ---
+            for (let i = pos.start - 1; i >= 0; --i) {
+                if (this.inArea(i, area)) {
+                    rtn.start = i;
+                    continue;
+                }
+                // --- 一旦碰到没找到的，意味着到底了 ---
+                break;
+            }
+        }
+        else {
+            // --- 起项不在区域内 ---
+            let start = this.getPos(pos.start);
+            if (!start) {
+                // --- 起项不存在 ---
+                if (pos.start === 0 || !this.getPos(0)) {
+                    return { 'start': 0, 'end': 9, 'empty': true };
+                }
+                pos.start = 0;
+                rtn.start = 0;
+                start = this.getPos(0)!;
+            }
+            if (area.start > start.start) {
+                // --- 区域顶部大于原起项的顶部 ---
+                // --- 向下找 ---
+                for (let i = pos.start + 1; i < this.element.children.length - 1; ++i) {
+                    if (!this.inArea(i, area)) {
+                        continue;
+                    }
+                    // --- 找到了，直接结束 ---
+                    rtn.start = i;
+                    break;
+                }
+                if (rtn.start === -1) {
+                    // --- 找到最后都没找到，应该是 area 的区域远远大于目前存在的所有项的位置 ---
+                    return { 'start': 0, 'end': 9, 'empty': true };
+                }
+            }
+            else {
+                // --- 区域顶部小于等于原起项的顶部 ---
+                // --- 向上找 ---
+                let found = false;
+                for (let i = pos.start - 1; i >= 0; --i) {
+                    if (!this.inArea(i, area)) {
+                        if (found) {
+                            // --- 找到了后又没找到了意味着到底了 ---
+                            break;
+                        }
+                        continue;
+                    }
+                    // --- 找到了 ---
+                    if (!found) {
+                        found = true;
+                    }
+                    rtn.start = i;
+                    if (rtn.end === -1) {
+                        rtn.end = i;
+                    }
+                }
+            }
+        }
+        if (rtn.end > -1) {
+            return rtn;
+        }
+        // --- 要找终项 ---
+        if (!this.getPos(pos.end)) {
+            // --- 终项不存在，指定为起项 ---
+            pos.end = rtn.start;
+        }
+        const endShow = this.inArea(pos.end, area);
+        if (endShow) {
+            rtn.end = pos.end;
+            // --- 终项在区域内，则往下找，看看下面还有没有显示 ---
+            for (let i = pos.end + 1; i < this.element.children.length - 1; ++i) {
+                if (this.inArea(i, area)) {
+                    rtn.end = i;
+                    continue;
+                }
+                // --- 一旦碰到没找到的，意味着到底了 ---
+                break;
+            }
+        }
+        else {
+            // --- 终项不在区域内 ---
+            const end = this.getPos(pos.end)!;
+            if (area.end < end.end) {
+                // --- 区域底部小于终项的底部 ---
+                // --- 向上找 ---
+                for (let i = pos.end - 1; i >= 0; --i) {
+                    if (!this.inArea(i, area)) {
+                        continue;
+                    }
+                    // --- 找到了，直接结束 ---
+                    rtn.end = i;
+                    break;
+                }
+            }
+            else {
+                // --- 区域底部大于等于终项的底部 ---
+                // --- 向下找 ---
+                let found = false;
+                for (let i = pos.end + 1; i < this.element.children.length - 1; ++i) {
+                    if (!this.inArea(i, area)) {
+                        if (found) {
+                            // --- 找到了后又没找到了意味着到底了 ---
+                            break;
+                        }
+                        continue;
+                    }
+                    // --- 找到了 ---
+                    if (!found) {
+                        found = true;
+                    }
+                    rtn.end = i;
+                }
+            }
+        }
+        return rtn;
     }
 
     public onMounted(): void {

@@ -14,7 +14,7 @@
                 <layout gutter="10">
                     <button @click="openForm('ccheck')">Check</button>
                     <button @click="openForm('cradio')">Radio</button>
-                    <button @click="openForm('cswitch')">switch</button>
+                    <button @click="openForm('cswitch')">Switch</button>
                 </layout>
                 <layout gutter="10">
                     <button @click="openForm('ctext')">Text</button>

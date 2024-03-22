@@ -20,9 +20,6 @@
         <button>012</button>
         <button>012</button>
         <button>012</button>
-        <button>012</button>
-        <button>012</button>
-        <button>012</button>
         <template v-slot:footer>
             <layout align-h="end" style="flex: 1;">
                 <button type="info" @click="drawer2 = false">OK</button>

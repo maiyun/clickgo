@@ -50,6 +50,7 @@ class default_1 extends clickgo.control.AbstractControl {
             'gesture': [],
             'scroll': 'auto',
             'contentWidth': 'fill',
+            'virtual': false,
             'data': [],
             'sizes': {},
             'modelValue': []

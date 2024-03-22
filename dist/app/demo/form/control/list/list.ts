@@ -91,6 +91,8 @@ export default class extends clickgo.form.AbstractForm {
 
     public scroll = 'auto';
 
+    public virtual = false;
+
     // --- size 高度 ---
     public get sizes(): any {
         const rtn: any = {};
@@ -267,7 +269,6 @@ export default class extends clickgo.form.AbstractForm {
     }
 
     public onLAdd(e: types.IListAddEvent): void {
-        console.log('x', e.detail);
         clickgo.form.notify({
             'type': 'info',
             'title': 'List @add',

@@ -51,6 +51,7 @@ class default_1 extends clickgo.control.AbstractControl {
             'editable': false,
             'multi': false,
             'plain': false,
+            'virtual': false,
             'search': false,
             'remote': false,
             'remoteDelay': 500,

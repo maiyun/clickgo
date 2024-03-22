@@ -14,6 +14,8 @@ export default class extends clickgo.control.AbstractControl {
         'sort': boolean | string;
         /** --- 是否鼠标可调整列宽度，此模式下每列宽均为数值，不能为 0 --- */
         'split': boolean | string;
+        /** --- 是否开启虚拟 DOM 模式，默认不开启 --- */
+        'virtual': boolean | string;
 
         'data': any[];
         'sizes': Record<string, number | undefined>;
@@ -28,6 +30,7 @@ export default class extends clickgo.control.AbstractControl {
             'scroll': 'auto',
             'sort': false,
             'split': false,
+            'virtual': false,
 
             'data': [],
             'sizes': {},

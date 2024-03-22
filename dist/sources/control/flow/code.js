@@ -27,6 +27,16 @@ const clickgo = __importStar(require("clickgo"));
 class default_1 extends clickgo.control.AbstractControl {
     constructor() {
         super(...arguments);
+        this.emits = {
+            'gesture': null,
+            'beforeselect': null,
+            'afterselect': null,
+            'select': null,
+            'clientwidth': null,
+            'clientheight': null,
+            'scrollwidth': null,
+            'scrollheight': null
+        };
         this.props = {
             'direction': 'h',
             'selection': false,
@@ -38,6 +48,10 @@ class default_1 extends clickgo.control.AbstractControl {
             'selectionOrigin': { 'x': 0, 'y': 0 },
             'selectionCurrent': { 'x': 0, 'y': 0, 'quick': false },
             'selectionTimer': 0
+        };
+        this.selectPos = {
+            'start': 0,
+            'end': 0
         };
     }
     maxScrollLeft() {
@@ -300,6 +314,9 @@ class default_1 extends clickgo.control.AbstractControl {
         const x = this.access.selectionCurrent.x - rect.left + this.element.scrollLeft;
         const y = this.access.selectionCurrent.y - rect.top + this.element.scrollTop;
         const area = {
+            'start': 0,
+            'end': 0,
+            'empty': false,
             'x': 0,
             'y': 0,
             'width': 0,
@@ -341,7 +358,144 @@ class default_1 extends clickgo.control.AbstractControl {
         this.refs.selection.style.top = area.y.toString() + 'px';
         this.refs.selection.style.width = area.width.toString() + 'px';
         this.refs.selection.style.height = area.height.toString() + 'px';
+        const offset = this.props.direction === 'v' ? area.y : area.x;
+        const length = this.props.direction === 'v' ? area.height : area.width;
+        const rtn = this.getNewPos(this.selectPos, {
+            'start': offset,
+            'end': offset + length
+        });
+        this.selectPos.start = rtn.start;
+        this.selectPos.end = rtn.end;
+        area.start = rtn.start;
+        area.end = rtn.end;
+        area.empty = rtn.empty;
         this.emit('select', area);
+    }
+    getPos(val) {
+        const el = this.element.children[val];
+        if (!el) {
+            return undefined;
+        }
+        if (el.className.includes('selection')) {
+            return undefined;
+        }
+        return this.props.direction === 'h' ? {
+            'start': el.offsetLeft,
+            'end': el.offsetLeft + el.offsetWidth
+        } : {
+            'start': el.offsetTop,
+            'end': el.offsetTop + el.offsetHeight
+        };
+    }
+    inArea(i, area) {
+        const pos = this.getPos(i);
+        if (!pos) {
+            return false;
+        }
+        if ((pos.end > area.start) && (pos.start < area.end)) {
+            return true;
+        }
+        return false;
+    }
+    getNewPos(pos, area) {
+        const rtn = { 'start': -1, 'end': -1, 'empty': false };
+        const startShow = this.inArea(pos.start, area);
+        if (startShow) {
+            rtn.start = pos.start;
+            for (let i = pos.start - 1; i >= 0; --i) {
+                if (this.inArea(i, area)) {
+                    rtn.start = i;
+                    continue;
+                }
+                break;
+            }
+        }
+        else {
+            let start = this.getPos(pos.start);
+            if (!start) {
+                if (pos.start === 0 || !this.getPos(0)) {
+                    return { 'start': 0, 'end': 9, 'empty': true };
+                }
+                pos.start = 0;
+                rtn.start = 0;
+                start = this.getPos(0);
+            }
+            if (area.start > start.start) {
+                for (let i = pos.start + 1; i < this.element.children.length - 1; ++i) {
+                    if (!this.inArea(i, area)) {
+                        continue;
+                    }
+                    rtn.start = i;
+                    break;
+                }
+                if (rtn.start === -1) {
+                    return { 'start': 0, 'end': 9, 'empty': true };
+                }
+            }
+            else {
+                let found = false;
+                for (let i = pos.start - 1; i >= 0; --i) {
+                    if (!this.inArea(i, area)) {
+                        if (found) {
+                            break;
+                        }
+                        continue;
+                    }
+                    if (!found) {
+                        found = true;
+                    }
+                    rtn.start = i;
+                    if (rtn.end === -1) {
+                        rtn.end = i;
+                    }
+                }
+            }
+        }
+        if (rtn.end > -1) {
+            return rtn;
+        }
+        if (!this.getPos(pos.end)) {
+            pos.end = rtn.start;
+        }
+        const endShow = this.inArea(pos.end, area);
+        if (endShow) {
+            rtn.end = pos.end;
+            for (let i = pos.end + 1; i < this.element.children.length - 1; ++i) {
+                if (this.inArea(i, area)) {
+                    rtn.end = i;
+                    continue;
+                }
+                break;
+            }
+        }
+        else {
+            const end = this.getPos(pos.end);
+            if (area.end < end.end) {
+                for (let i = pos.end - 1; i >= 0; --i) {
+                    if (!this.inArea(i, area)) {
+                        continue;
+                    }
+                    rtn.end = i;
+                    break;
+                }
+            }
+            else {
+                let found = false;
+                for (let i = pos.end + 1; i < this.element.children.length - 1; ++i) {
+                    if (!this.inArea(i, area)) {
+                        if (found) {
+                            break;
+                        }
+                        continue;
+                    }
+                    if (!found) {
+                        found = true;
+                    }
+                    rtn.end = i;
+                }
+            }
+        }
+        return rtn;
     }
     onMounted() {
         this.watch('scrollLeft', () => {

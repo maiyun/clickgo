@@ -38,6 +38,7 @@ class default_1 extends clickgo.control.AbstractControl {
             'area': 'all',
             'pop': 'greatlist',
             'plain': false,
+            'virtual': false,
             'data': [],
             'sizes': {},
             'modelValue': []

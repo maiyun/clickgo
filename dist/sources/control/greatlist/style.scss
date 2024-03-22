@@ -10,7 +10,7 @@
     .t {
         display: flex; max-height: 100%; flex: 1; height: 0; position: relative;
 
-        cg-vflow {
+        cg-vflow, cg-flow {
             flex: 1; padding: 1px;
     
             // --- item ---

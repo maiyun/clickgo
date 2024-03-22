@@ -3,7 +3,7 @@
     <tab v-model="ntab" :tabs="['greatlist', 'adaptation', 'beyond', 'list', 'object', 'async']" style="flex: 1; height: 0;">
         <!-- 默认 -->
         <layout v-if="ntab === 'greatlist'" direction="v" style="flex: 1; width: 0; padding: 10px;">
-            <greatlist v-model="select" :data="slist" :disabled="disabled" :must="must" :multi="multi" :ctrl="ctrl" :selection="selection" :gesture="gesture ? ['top', 'bottom'] : []" @gesture="onGesture" @add="onGAdd" @Remove="onGRemove" :scroll="scroll" :sizes="sizes" @select="onSelect" style="line-height: 1.3; flex: 1; height: 0;">
+            <greatlist v-model="select" :data="slist" :disabled="disabled" :must="must" :multi="multi" :ctrl="ctrl" :selection="selection" :gesture="gesture ? ['top', 'bottom'] : []" :virtual="virtual" @gesture="onGesture" @add="onGAdd" @Remove="onGRemove" :scroll="scroll" :sizes="sizes" @select="onSelect" style="line-height: 1.3; flex: 1; height: 0;">
                 <template v-slot="data">
                     <layout v-if="data.row.type === 0" align-v="center" gutter="5" style="flex: 1;">
                         <img :src="data.row.src" style="width: 32px; height: 32px;"></img>
@@ -31,7 +31,7 @@
         </layout>
         <!-- 自适应 -->
         <layout v-else-if="ntab === 'adaptation'" direction="v" style="flex: 1; width: 0; padding: 10px;">
-            <greatlist :data="adData" v-model="select" :disabled="disabled" :must="must" :multi="multi" :ctrl="ctrl" :selection="selection" :gesture="gesture ? ['top', 'bottom'] : []" @gesture="onGesture" :scroll="scroll">
+            <greatlist :data="adData" v-model="select" :disabled="disabled" :must="must" :multi="multi" :ctrl="ctrl" :selection="selection" :gesture="gesture ? ['top', 'bottom'] : []" @gesture="onGesture" :scroll="scroll" :virtual="virtual">
                 <template v-slot="data">type: {{data.row.type}}, index: {{data.index}}. {{(data.index === 20) ? 'long test long test long test long test long test' : ''}}</template>
                 <template v-slot:itempop>
                     <menulist>
@@ -42,7 +42,7 @@
         </layout>
         <!-- beyond -->
         <layout v-else-if="ntab === 'beyond'" gutter="10" style="flex: 1; width: 0; padding: 10px;">
-            <greatlist :data="adData" v-model="select" :disabled="disabled" :must="must" :multi="multi" :ctrl="ctrl" :selection="selection" :gesture="gesture ? ['top', 'bottom'] : []" @gesture="onGesture" :scroll="scroll" content-width="max" style="flex: 1; width: 0; white-space: nowrap;">
+            <greatlist :data="adData" v-model="select" :disabled="disabled" :must="must" :multi="multi" :ctrl="ctrl" :selection="selection" :gesture="gesture ? ['top', 'bottom'] : []" @gesture="onGesture" :scroll="scroll" :virtual="virtual" content-width="max" style="flex: 1; width: 0; white-space: nowrap;">
                 <template v-slot="data">index: {{data.index}}. long long long long long long long long long long long.</template>
             </greatlist>
         </layout>
@@ -51,12 +51,12 @@
             <label>Raw data:</label>
             <flow direction="v" style="border: solid 1px #b3b3b3; line-height: 1.5; height: 50px; padding: 5px;">{{listData}}</flow>
             <layout gutter="10" style="flex: 1; height: 0;">
-                <list v-model="select2" :disabled="disabled" :must="must" :multi="multi" :ctrl="ctrl" :selection="selection" :gesture="gesture ? ['top', 'bottom'] : []" @gesture="onGesture" :scroll="scroll" :data="listData" @label="label2 = $event" style="flex: 2; width: 0;" :tree="tree" :async="async" :icon="icon" icon-default="../../../res/txt.svg" @load="onSelectLoad" @add="onLAdd" @Remove="onLRemove">
+                <list v-model="select2" :disabled="disabled" :must="must" :multi="multi" :ctrl="ctrl" :selection="selection" :gesture="gesture ? ['top', 'bottom'] : []" @gesture="onGesture" :scroll="scroll" :data="listData" @label="label2 = $event" style="flex: 2; width: 0;" :tree="tree" :async="async" :icon="icon" icon-default="../../../res/txt.svg" :virtual="virtual" @load="onSelectLoad" @add="onLAdd" @Remove="onLRemove">
                     <menulist>
                         <menulist-item alt="I" @click="showIndex2">Show select</menulist-item>
                     </menulist>
                 </list>
-                <list :disabled="disabled" :must="must" :multi="multi" :ctrl="ctrl" :selection="selection" :gesture="gesture ? ['top', 'bottom'] : []" @gesture="onGesture" :scroll="scroll" :data="listData2" style="flex: 1; width: 0;"></list>
+                <list :disabled="disabled" :must="must" :multi="multi" :ctrl="ctrl" :selection="selection" :gesture="gesture ? ['top', 'bottom'] : []" @gesture="onGesture" :scroll="scroll" :virtual="virtual" :data="listData2" style="flex: 1; width: 0;"></list>
             </layout>
             <label class="tip">Right-click (computer) or press and hold (phone) to open the universal menu.</label>
         </layout>
@@ -65,20 +65,20 @@
             <label>Select value: {{selectObject}}</label>
             <label>Raw data:</label>
             <flow direction="v" style="border: solid 1px #b3b3b3; line-height: 1.5; height: 50px; padding: 5px;">{{listDataObject}}</flow>
-            <list v-model="selectObject" :disabled="disabled" :must="must" :multi="multi" :ctrl="ctrl" :selection="selection" :gesture="gesture ? ['top', 'bottom'] : []" @gesture="onGesture" :scroll="scroll" :data="listDataObject" style="flex: 1;"></list>
+            <list v-model="selectObject" :disabled="disabled" :must="must" :multi="multi" :ctrl="ctrl" :selection="selection" :gesture="gesture ? ['top', 'bottom'] : []" @gesture="onGesture" :scroll="scroll" :data="listDataObject" :virtual="virtual" style="flex: 1;"></list>
         </layout>
         <!-- async -->
         <layout v-else gutter="10" style="flex: 1; width: 0; padding: 10px;">
             <layout direction="v" gutter="10" style="flex: 1; width: 0;">
                 <label>greatlist: {{select3}}</label>
-                <greatlist v-model="select3" :disabled="disabled" :must="must" :multi="multi" :ctrl="ctrl" :selection="selection" :gesture="gesture ? ['top', 'bottom'] : []" @gesture="onGesture" :scroll="scroll" :data="listData3" v-slot="data" style="flex: 1; height: 0;">
+                <greatlist v-model="select3" :disabled="disabled" :must="must" :multi="multi" :ctrl="ctrl" :selection="selection" :gesture="gesture ? ['top', 'bottom'] : []" @gesture="onGesture" :scroll="scroll" :data="listData3" :virtual="virtual" v-slot="data" style="flex: 1; height: 0;">
                     {{data.row.value ? data.row.value : data.row}}
                 </greatlist>
                 <button v-if="listData3.length === 0" @click="listData3 = [{'value': 'A', disabled: true}, 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N'];select3 = [12]">Load data</button>
             </layout>
             <layout direction="v" gutter="10" style="flex: 1; width: 0;">
                 <label>list: {{select4}}</label>
-                <list v-model="select4" :disabled="disabled" :must="must" :multi="multi" :ctrl="ctrl" :selection="selection" :gesture="gesture ? ['top', 'bottom'] : []" @gesture="onGesture" :scroll="scroll" :data="listData4" style="flex: 1; height: 0;"></list>
+                <list v-model="select4" :disabled="disabled" :must="must" :multi="multi" :ctrl="ctrl" :selection="selection" :gesture="gesture ? ['top', 'bottom'] : []" @gesture="onGesture" :scroll="scroll" :virtual="virtual" :data="listData4" style="flex: 1; height: 0;"></list>
                 <button v-if="listData4.length === 0" @click="listData4 = [{'value': 'A', disabled: true}, 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N'];select4 = ['M']">Load data</button>
             </layout>
         </layout>
@@ -104,5 +104,6 @@
         <button @click="must = !must">{{must ? '' : '!'}}must</button>
         <button @click="selection = !selection">{{selection ? '' : '!'}}selection</button>
         <button @click="gesture = !gesture">{{gesture ? '' : '!'}}gesture</button>
+        <button @click="virtual = !virtual">{{virtual ? '' : '!'}}virtual</button>
     </layout>
 </form>

@@ -37,6 +37,7 @@ class default_1 extends clickgo.control.AbstractControl {
             'scroll': 'auto',
             'sort': false,
             'split': false,
+            'virtual': false,
             'data': [],
             'sizes': {},
             'modelValue': []

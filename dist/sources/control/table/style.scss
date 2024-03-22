@@ -14,7 +14,7 @@
         }
 
         .item {
-            padding: var(--g-padding); text-align: center; position: relative;
+            padding: var(--g-padding); text-align: center; position: relative; overflow: hidden;
             &:hover {
                 background: var(--g-plain-background-hover);
             }

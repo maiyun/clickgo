@@ -48,15 +48,14 @@ class default_1 extends clickgo.form.AbstractForm {
         this.minWidth = 200;
         this.minHeight = 100;
         this.resize = true;
-        this.floading = false;
         this.border = 'normal';
         this.banClose = false;
     }
     showLoading() {
         return __awaiter(this, void 0, void 0, function* () {
-            this.floading = true;
+            this.loading = true;
             yield clickgo.tool.sleep(1000);
-            this.floading = false;
+            this.loading = false;
         });
     }
     onClose(e) {

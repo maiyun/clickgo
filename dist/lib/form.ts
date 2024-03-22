@@ -2370,59 +2370,59 @@ window.addEventListener('mousedown', doFocusAndPopEvent);
  */
 export function remove(formId: number): boolean {
     const taskId: number = getTaskId(formId);
-    let title = '';
-    let icon = '';
-    if (task.list[taskId].forms[formId]) {
-        title = task.list[taskId].forms[formId].vroot.$refs.form.title;
-        icon = task.list[taskId].forms[formId].vroot.$refs.form.iconDataUrl;
-        const io = task.list[taskId].runtime.dialogFormIds.indexOf(formId);
-        if (io > -1) {
-            // --- 取消 dialog mask 记录 ---
-            task.list[taskId].runtime.dialogFormIds.splice(io, 1);
-        }
-        task.list[taskId].forms[formId].vroot.$refs.form.$data.isShow = false;
-        setTimeout(function() {
-            // --- 获取最大的 z index 窗体，并让他获取焦点 ---
-            const fid = getMaxZIndexID({
-                'formIds': [formId]
-            });
-            if (fid) {
-                changeFocus(fid);
-            }
-            else {
-                changeFocus();
-            }
-            // --- 延长 100 秒是为了响应 100 毫秒的动画 ---
-            if (!task.list[taskId]) {
-                // --- 可能这时候 task 已经被结束了 ---
-                return true;
-            }
-            task.list[taskId].forms[formId].vapp.unmount();
-            task.list[taskId].forms[formId].vapp._container.remove();
-            elements.popList.querySelector('[data-form-id="' + formId.toString() + '"]')?.remove();
-            if (io > -1) {
-                // --- 如果是 dialog 则要执行回调 ---
-                task.list[taskId].forms[formId].vroot.cgDialogCallback();
-            }
-            delete task.list[taskId].forms[formId];
-            // --- 移除 form 的 style ---
-            dom.removeStyle(taskId, 'form', formId);
-            // --- 触发 formRemoved 事件 ---
-            core.trigger('formRemoved', taskId, formId, title, icon);
-            dom.clearWatchStyle(formId);
-            dom.clearWatchProperty(formId);
-            native.clear(formId, taskId);
-            delete activePanels[formId];
-            // --- 检测是否已经没有窗体了，如果没有了的话就要结束任务了 ---
-            if (Object.keys(task.list[taskId].forms).length === 0) {
-                task.end(taskId);
-            }
-        }, 300);
-        return true;
-    }
-    else {
+    if (!task.list[taskId].forms[formId]) {
         return false;
     }
+    if (task.list[taskId].forms[formId].closed) {
+        return false;
+    }
+    task.list[taskId].forms[formId].closed = true;
+    const title = task.list[taskId].forms[formId].vroot.$refs.form.title;
+    const icon = task.list[taskId].forms[formId].vroot.$refs.form.iconDataUrl;
+    const io = task.list[taskId].runtime.dialogFormIds.indexOf(formId);
+    if (io > -1) {
+        // --- 取消 dialog mask 记录 ---
+        task.list[taskId].runtime.dialogFormIds.splice(io, 1);
+    }
+    task.list[taskId].forms[formId].vroot.$refs.form.$data.isShow = false;
+    setTimeout(function() {
+        // --- 获取最大的 z index 窗体，并让他获取焦点 ---
+        const fid = getMaxZIndexID({
+            'formIds': [formId]
+        });
+        if (fid) {
+            changeFocus(fid);
+        }
+        else {
+            changeFocus();
+        }
+        // --- 延长 100 秒是为了响应 100 毫秒的动画 ---
+        if (!task.list[taskId]) {
+            // --- 可能这时候 task 已经被结束了 ---
+            return true;
+        }
+        task.list[taskId].forms[formId].vapp.unmount();
+        task.list[taskId].forms[formId].vapp._container.remove();
+        elements.popList.querySelector('[data-form-id="' + formId.toString() + '"]')?.remove();
+        if (io > -1) {
+            // --- 如果是 dialog 则要执行回调 ---
+            task.list[taskId].forms[formId].vroot.cgDialogCallback();
+        }
+        delete task.list[taskId].forms[formId];
+        // --- 移除 form 的 style ---
+        dom.removeStyle(taskId, 'form', formId);
+        // --- 触发 formRemoved 事件 ---
+        core.trigger('formRemoved', taskId, formId, title, icon);
+        dom.clearWatchStyle(formId);
+        dom.clearWatchProperty(formId);
+        native.clear(formId, taskId);
+        delete activePanels[formId];
+        // --- 检测是否已经没有窗体了，如果没有了的话就要结束任务了 ---
+        if (Object.keys(task.list[taskId].forms).length === 0) {
+            task.end(taskId);
+        }
+    }, 300);
+    return true;
 }
 
 /**
@@ -3265,7 +3265,8 @@ export async function create<T extends AbstractForm>(
     const nform: types.IForm = {
         'id': formId,
         'vapp': rtn.vapp,
-        'vroot': rtn.vroot
+        'vroot': rtn.vroot,
+        'closed': false
     };
     // --- 挂载 form ---
     t.forms[formId] = nform;

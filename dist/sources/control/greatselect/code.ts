@@ -15,6 +15,7 @@ export default class extends clickgo.control.AbstractControl {
         'area': 'all' | 'text' | 'arrow';
         'pop': 'greatlist' | 'custom';
         'plain': boolean | string;
+        'virtual': boolean | string;
 
         'data': Array<{
             'disabled': boolean;
@@ -30,6 +31,7 @@ export default class extends clickgo.control.AbstractControl {
             'area': 'all',
             'pop': 'greatlist',
             'plain': false,
+            'virtual': false,
             'data': [],
             'sizes': {},
             'modelValue': []

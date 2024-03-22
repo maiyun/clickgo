@@ -52,6 +52,7 @@ class default_1 extends clickgo.form.AbstractForm {
         this.nowSort = [];
         this.index = false;
         this.split = false;
+        this.virtual = false;
     }
     get sizes() {
         const rtn = {};

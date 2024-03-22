@@ -91,6 +91,7 @@ class default_1 extends clickgo.form.AbstractForm {
         this.async = false;
         this.icon = false;
         this.scroll = 'auto';
+        this.virtual = false;
     }
     get sizes() {
         const rtn = {};
@@ -253,7 +254,6 @@ class default_1 extends clickgo.form.AbstractForm {
         });
     }
     onLAdd(e) {
-        console.log('x', e.detail);
         clickgo.form.notify({
             'type': 'info',
             'title': 'List @add',
