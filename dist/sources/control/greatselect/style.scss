@@ -1,73 +1,5 @@
 .wrap {
     display: flex; outline: none; padding: var(--g-padding); border-radius: var(--g-radius); border: solid .5px var(--g-border-color); overflow: hidden;
-    &:not(.plain) {
-        &.area-all {
-            background: var(--g-background);
-        }
-        &.area-arrow, &.area-text {
-            background: var(--g-plain-background);
-        }
-    }
-    &.plain {
-        background: var(--g-plain-background); border-color: transparent;
-    }
-
-    &[data-cg-pop-open] {
-        &.area-all {
-            background: var(--g-background-active);
-            color: var(--g-color-hover);
-            fill: var(--g-color-hover);
-            stroke: var(--g-color-hover);
-            .arrow::after {
-                border-color: var(--g-color-active);
-            }
-        }
-        &:not(.plain) {
-            border: solid .5px var(--g-border-color-active);
-        }
-    }
-
-    &[data-cg-disabled] {
-        background: var(--g-background-disabled); color: var(--g-color-disabled); fill: var(--g-color-disabled); stroke: var(--g-color-disabled); border: solid .5px var(--g-border-color-disabled);
-    }
-    &:not([data-cg-disabled]):not([data-cg-pop-open]) {
-        &:not(.plain) {
-            &:hover, &:focus {
-                border: solid .5px var(--g-border-color-hover);
-            }
-            &:active, &.active {
-                border: solid .5px var(--g-border-color-active);
-            }
-            &.area-all {
-                &:hover, &:focus {
-                    background: var(--g-background-hover);
-                    color: var(--g-color-hover);
-                    fill: var(--g-color-hover);
-                    stroke: var(--g-color-hover);
-                    .arrow::after {
-                        border-color: var(--g-color-hover);
-                    }
-                }
-                &:active, &.active {
-                    background: var(--g-background-active);
-                    color: var(--g-color-active);
-                    fill: var(--g-color-active);
-                    stroke: var(--g-color-active);
-                    .arrow::after {
-                        border-color: var(--g-color-active);
-                    }
-                }
-            }
-        }
-        &.plain {
-            &:hover, &:focus {
-                background: var(--g-plain-background-hover);
-            }
-            &:active, &.active {
-                background: var(--g-plain-background-active);
-            }
-        }
-    }
 
     .op {
         display: flex; flex: 1;
@@ -90,58 +22,146 @@
         }
     }
     &.plain {
-        .arrow {
-            border: none;
-        }
+        border: none;
     }
 
-    &:not([data-cg-disabled]):not([data-cg-pop-open]) {
-        &.area-arrow {
-            .arrow {
-                &:hover {
-                    background: var(--g-plain-background-hover);
-                    border-left-color: var(--g-plain-border-color-hover);
-                    &::after {
-                        border-color: var(--g-color-hover);
-                    }
-                }
-                &:active {
-                    background: var(--g-plain-background-active);
-                    border-left-color: var(--g-plain-border-color-active);
-                    &::after {
-                        border-color: var(--g-color-active);
-                    }
-                }
-            }
-        }
-        &.area-text {
-            &:hover {
-                .arrow {
-                    background: var(--g-plain-background-hover);
-                    border-left-color: var(--g-plain-border-color-hover);
-                    &::after {
-                        border-color: var(--g-color-hover);
-                    }
-                }
-            }
-            &:active {
-                .arrow {
-                    background: var(--g-plain-background-active);
-                    border-left-color: var(--g-plain-border-color-active);
-                    &::after {
-                        border-color: var(--g-color-active);
-                    }
-                }
-            }
+    &[data-cg-disabled] {
+        // --- 禁用模式 ---
+        background: var(--g-background-disabled); color: var(--g-color-disabled); fill: var(--g-color-disabled); stroke: var(--g-color-disabled);
+        &:not(.plain) {
+            border: solid .5px var(--g-border-color-disabled);
         }
     }
-    &.area-arrow, &.area-text {
-        &[data-cg-pop-open], &.active {
-            .arrow {
-                background: var(--g-plain-background-active);
-                border-left-color: var(--g-plain-border-color-active);
-                &::after {
-                    border-color: var(--g-color-active);
+    &:not([data-cg-disabled]) {
+        // --- 非禁用模式 ---
+        &.plain {
+            // --- 朴素模式 ---
+            &:not([data-cg-pop-open]):not(.active) {
+                // --- 正常状态 ---
+                background: var(--g-plain-background);
+                &.area-all {
+                    &:hover {
+                        background: var(--g-plain-background-hover);
+                    }
+                }
+                &.area-arrow {
+                    .arrow {
+                        &:hover {
+                            background: var(--g-plain-background-hover);
+                            &::after {
+                                border-color: var(--g-color-hover);
+                            }
+                        }
+                        &:active {
+                            background: var(--g-plain-background-active);
+                            &::after {
+                                border-color: var(--g-color-active);
+                            }
+                        }
+                    }
+                }
+                &.area-text {
+                    &:hover {
+                        .arrow {
+                            background: var(--g-plain-background-hover);
+                            &::after {
+                                border-color: var(--g-color-hover);
+                            }
+                        }
+                    }
+                    &:active {
+                        .arrow {
+                            background: var(--g-plain-background-active);
+                            &::after {
+                                border-color: var(--g-color-active);
+                            }
+                        }
+                    }
+                }
+            }
+            &[data-cg-pop-open], &.active {
+                // --- 展开状态 ---
+                &.area-all {
+                    background: var(--g-background-active); color: var(--g-color-hover); fill: var(--g-color-hover); stroke: var(--g-color-hover);
+                    .arrow::after {
+                        border-color: var(--g-color-active);
+                    }
+                }
+                &.area-arrow, &.area-text {
+                    .arrow {
+                        background: var(--g-plain-background-active);
+                        &::after {
+                            border-color: var(--g-color-active);
+                        }
+                    }
+                }
+            }
+        }
+        &:not(.plain) {
+            // --- 非朴素模式 ---
+            &:not([data-cg-pop-open]):not(.active) {
+                // --- 正常状态 ---
+                border: solid .5px var(--g-border-color);
+                &.area-all {
+                    background: var(--g-background);
+                    &:hover {
+                        background: var(--g-background-hover);
+                    }
+                }
+                &.area-arrow, &.area-text {
+                    background: var(--g-plain-background);
+                }
+                &.area-arrow {
+                    .arrow {
+                        &:hover {
+                            background: var(--g-plain-background-hover); border-left-color: var(--g-plain-border-color-hover);
+                            &::after {
+                                border-color: var(--g-color-hover);
+                            }
+                        }
+                        &:active {
+                            background: var(--g-plain-background-active); border-left-color: var(--g-plain-border-color-active);
+                            &::after {
+                                border-color: var(--g-color-active);
+                            }
+                        }
+                    }
+                }
+                &.area-text {
+                    &:hover {
+                        .arrow {
+                            background: var(--g-plain-background-hover); border-left-color: var(--g-plain-border-color-hover);
+                            &::after {
+                                border-color: var(--g-color-hover);
+                            }
+                        }
+                    }
+                    &:active {
+                        .arrow {
+                            background: var(--g-plain-background-active); border-left-color: var(--g-plain-border-color-active);
+                            &::after {
+                                border-color: var(--g-color-active);
+                            }
+                        }
+                    }
+                }
+            }
+            &[data-cg-pop-open], &.active {
+                // --- 展开状态 ---
+                &.area-all {
+                    background: var(--g-background-active); color: var(--g-color-hover); fill: var(--g-color-hover); stroke: var(--g-color-hover);
+                    .arrow::after {
+                        border-color: var(--g-color-active);
+                    }
+                }
+                &.area-arrow, &.area-text {
+                    border: solid .5px var(--g-border-color-active);
+                    .arrow {
+                        background: var(--g-background-active); border-left-color: var(--g-border-color-active);
+                        &::after {
+                            border-color: var(--g-color-active);
+                        }
+                    }
                 }
             }
         }
