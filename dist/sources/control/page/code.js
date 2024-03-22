@@ -31,7 +31,8 @@ class default_1 extends clickgo.control.AbstractControl {
             'modelValue': 1,
             'max': 0,
             'total': 0,
-            'count': 10
+            'count': 10,
+            'control': 2
         };
         this.svg = '<svg width="14" height="14" viewBox="0 0 24 24" stroke="none"><path d="m6 10.25c-.9665 0-1.75.7835-1.75 1.75s.7835 1.75 1.75 1.75h.01c.9665 0 1.75-.7835 1.75-1.75s-.7835-1.75-1.75-1.75zm4.25 1.75c0-.9665.7835-1.75 1.75-1.75h.01c.9665 0 1.75.7835 1.75 1.75s-.7835 1.75-1.75 1.75h-.01c-.9665 0-1.75-.7835-1.75-1.75zm6 0c0-.9665.7835-1.75 1.75-1.75h.01c.9665 0 1.75.7835 1.75 1.75s-.7835 1.75-1.75 1.75h-.01c-.9665 0-1.75-.7835-1.75-1.75z" /></svg>';
         this.prevs = [];
@@ -79,10 +80,10 @@ class default_1 extends clickgo.control.AbstractControl {
     }
     refresh() {
         this.prevs.length = 0;
-        if (this.page > 2) {
-            let prev = this.page - 2;
-            if (prev < 2) {
-                prev = 2;
+        if (this.page > this.propNumber('control')) {
+            let prev = this.page - this.propNumber('control');
+            if (prev < this.propNumber('control')) {
+                prev = this.propNumber('control');
             }
             for (let i = prev; i < this.page; ++i) {
                 this.prevs.push(i);
@@ -91,7 +92,7 @@ class default_1 extends clickgo.control.AbstractControl {
         this.nexts.length = 0;
         const last2 = this.maxPage - 1;
         if (this.page < last2) {
-            let next = this.page + 2;
+            let next = this.page + this.propNumber('control');
             if (next > last2) {
                 next = last2;
             }
@@ -132,6 +133,9 @@ class default_1 extends clickgo.control.AbstractControl {
         });
         this.watch('total', () => {
             this.refreshMaxPage();
+            this.refresh();
+        });
+        this.watch('control', () => {
             this.refresh();
         });
         this.refreshMaxPage();

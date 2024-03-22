@@ -2,12 +2,12 @@
     <div class="list">
         <div v-if="page > 1" :tabindex="formFocus ? '0' : undefined" class="left" @click="--page;$emit('update:modelValue',page);$emit('change',page);refresh()" @keydown="keydown"></div>
         <div v-if="page > 1" :tabindex="formFocus ? '0' : undefined" @click="page=1;$emit('update:modelValue',page);$emit('change',page);refresh()" @keydown="keydown">1</div>
-        <div v-if="page > 4" :tabindex="formFocus ? '0' : undefined" v-html="svg" @click="page-=10;if(page<1){page=1}$emit('update:modelValue',page);$emit('change',page);refresh()" @keydown="keydown"></div>
+        <div v-if="page > propNumber('control') + 2" :tabindex="formFocus ? '0' : undefined" v-html="svg" @click="page-=10;if(page<1){page=1}$emit('update:modelValue',page);$emit('change',page);refresh()" @keydown="keydown"></div>
         <div :tabindex="formFocus ? '0' : undefined" v-for="item of prevs" @click="page=item;$emit('update:modelValue',page);$emit('change',page);refresh()" @keydown="keydown">{{item}}</div>
         <!-- 中间的页码 -->
         <div :tabindex="formFocus ? '0' : undefined" class="selected">{{page}}</div>
         <div :tabindex="formFocus ? '0' : undefined" v-for="item of nexts" @click="page=item;$emit('update:modelValue',page);$emit('change',page);refresh()" @keydown="keydown">{{item}}</div>
-        <div v-if="page < maxPage - 3" :tabindex="formFocus ? '0' : undefined" v-html="svg" @click="page+=10;if(page>maxPage){page=maxPage}$emit('update:modelValue',page);$emit('change',page);refresh()" @keydown="keydown"></div>
+        <div v-if="page < maxPage - propNumber('control') - 1" :tabindex="formFocus ? '0' : undefined" v-html="svg" @click="page+=10;if(page>maxPage){page=maxPage}$emit('update:modelValue',page);$emit('change',page);refresh()" @keydown="keydown"></div>
         <div v-if="page < maxPage" :tabindex="formFocus ? '0' : undefined" @click="page=maxPage;$emit('update:modelValue',page);$emit('change',page);refresh()" @keydown="keydown">{{maxPage}}</div>
         <div v-if="page < maxPage" :tabindex="formFocus ? '0' : undefined" class="right" @click="++page;$emit('update:modelValue',page);$emit('change',page);refresh()" @keydown="keydown"></div>
     </div>

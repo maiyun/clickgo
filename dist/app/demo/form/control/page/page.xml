@@ -1,11 +1,17 @@
-<form width="650" height="400" title="Page">
+<form width="700" height="400" title="Page">
     <layout direction="v" gutter="10" style="flex: 1; padding: 10px;">
-        <page max="10" />
-        <page v-model="p1" max="10" />
-        <page v-model="p2" max="30" />
-        <page v-model="p3" total="1282" />
-        <page v-model="p4" total="1282" count="20" />
-        <page v-model="p5" :total="total5" count="20" />
-        <button @click="total5 = total5 ? 0 : 300">Set total = {{total5 ? 0 : 300}}</button>
+        <page max="10" :control="control" />
+        <page v-model="p1" max="10" :control="control" />
+        <page v-model="p2" max="30" :control="control" />
+        <page v-model="p3" total="1282" :control="control" />
+        <page v-model="p4" total="1282" count="20" :control="control" />
+        <page v-model="p5" :total="total5" count="20" :control="control" />
+        <layout gutter="10">
+            <button @click="total5 = total5 ? 0 : 300" style="flex: 2;">total to {{total5 ? 0 : 300}}</button>
+            <button @click="control=2" style="flex: 2;">control to 2</button>
+            <button @click="control=5" style="flex: 1;">to 5</button>
+            <button @click="control=0" style="flex: 1;">to 0</button>
+            <button @click="control=1" style="flex: 1;">to 1</button>
+        </layout>
     </layout>
 </form>
