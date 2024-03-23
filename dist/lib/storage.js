@@ -181,8 +181,8 @@ function all() {
 }
 exports.all = all;
 function clear(path) {
-    var _a, _b;
     return __awaiter(this, void 0, void 0, function* () {
+        var _a, _b;
         if (!path) {
             return 0;
         }

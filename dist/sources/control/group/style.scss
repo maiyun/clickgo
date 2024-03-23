@@ -2,14 +2,17 @@
     padding: var(--g-bpadding); background: var(--face);
 
     .title {
-        font-size: 20px; margin-bottom: var(--g-bpadding);
+        font-size: 20px; margin-bottom: var(--g-bpadding); display: flex;
     }
     .content {
-        display: flex;
+        display: flex; flex: 1;
     }
     &.v {
         .content {
             flex-direction: column;
         }
+    }
+    .footer {
+        display: flex; margin-top: var(--g-bpadding);
     }
 }

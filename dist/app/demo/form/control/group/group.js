@@ -28,6 +28,8 @@ class default_1 extends clickgo.form.AbstractForm {
     constructor() {
         super(...arguments);
         this.title = 'The title';
+        this.slotTitle = false;
+        this.slotFooter = false;
     }
 }
 exports.default = default_1;

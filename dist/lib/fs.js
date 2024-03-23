@@ -104,8 +104,8 @@ function mount(name, handler, taskId) {
 }
 exports.mount = mount;
 function unmount(name) {
-    var _a, _b;
     return __awaiter(this, void 0, void 0, function* () {
+        var _a, _b;
         if (!mounts[name]) {
             return true;
         }
@@ -119,8 +119,8 @@ function unmount(name) {
 }
 exports.unmount = unmount;
 function getContent(path, options, taskId) {
-    var _a, _b, _c;
     return __awaiter(this, void 0, void 0, function* () {
+        var _a, _b, _c;
         path = tool.urlResolve('/', path);
         const fpath = path.slice(8);
         if (typeof options === 'string') {
@@ -244,9 +244,9 @@ function getContent(path, options, taskId) {
     });
 }
 exports.getContent = getContent;
-function putContent(path, data, options = {}, taskId) {
-    var _a, _b;
-    return __awaiter(this, void 0, void 0, function* () {
+function putContent(path_1, data_1) {
+    return __awaiter(this, arguments, void 0, function* (path, data, options = {}, taskId) {
+        var _a, _b;
         path = tool.urlResolve('/', path);
         const fpath = path.slice(8);
         if (path.startsWith('/clickgo/')) {
@@ -287,8 +287,8 @@ function putContent(path, data, options = {}, taskId) {
 }
 exports.putContent = putContent;
 function readLink(path, encoding, taskId) {
-    var _a, _b;
     return __awaiter(this, void 0, void 0, function* () {
+        var _a, _b;
         path = tool.urlResolve('/', path);
         const fpath = path.slice(8);
         if (path.startsWith('/clickgo/')) {
@@ -325,8 +325,8 @@ function readLink(path, encoding, taskId) {
 }
 exports.readLink = readLink;
 function symlink(filePath, linkPath, type, taskId) {
-    var _a, _b;
     return __awaiter(this, void 0, void 0, function* () {
+        var _a, _b;
         filePath = tool.urlResolve('/', filePath);
         linkPath = tool.urlResolve('/', linkPath);
         if (filePath.startsWith('/clickgo/')) {
@@ -370,8 +370,8 @@ function symlink(filePath, linkPath, type, taskId) {
 }
 exports.symlink = symlink;
 function unlink(path, taskId) {
-    var _a, _b;
     return __awaiter(this, void 0, void 0, function* () {
+        var _a, _b;
         path = tool.urlResolve('/', path);
         const fpath = path.slice(8);
         if (path.startsWith('/clickgo/')) {
@@ -487,8 +487,8 @@ function getClickGoStats(path) {
     });
 }
 function stats(path, taskId) {
-    var _a, _b;
     return __awaiter(this, void 0, void 0, function* () {
+        var _a, _b;
         path = tool.urlResolve('/', path);
         if (path.endsWith('/')) {
             path = path.slice(0, -1);
@@ -719,9 +719,9 @@ function isFile(path, taskId) {
     });
 }
 exports.isFile = isFile;
-function mkdir(path, mode = 0o755, taskId) {
-    var _a, _b;
-    return __awaiter(this, void 0, void 0, function* () {
+function mkdir(path_1) {
+    return __awaiter(this, arguments, void 0, function* (path, mode = 0o755, taskId) {
+        var _a, _b;
         path = tool.urlResolve('/', path);
         if (yield isDir(path, taskId)) {
             return true;
@@ -761,8 +761,8 @@ function mkdir(path, mode = 0o755, taskId) {
 }
 exports.mkdir = mkdir;
 function rmdir(path, taskId) {
-    var _a, _b;
     return __awaiter(this, void 0, void 0, function* () {
+        var _a, _b;
         path = tool.urlResolve('/', path);
         const fpath = path.slice(8);
         if (path.startsWith('/clickgo/')) {
@@ -828,8 +828,8 @@ function rmdirDeep(path, taskId) {
 }
 exports.rmdirDeep = rmdirDeep;
 function chmod(path, mod, taskId) {
-    var _a, _b;
     return __awaiter(this, void 0, void 0, function* () {
+        var _a, _b;
         path = tool.urlResolve('/', path);
         const fpath = path.slice(8);
         if (path.startsWith('/clickgo/')) {
@@ -866,8 +866,8 @@ function chmod(path, mod, taskId) {
 }
 exports.chmod = chmod;
 function rename(oldPath, newPath, taskId) {
-    var _a, _b;
     return __awaiter(this, void 0, void 0, function* () {
+        var _a, _b;
         oldPath = tool.urlResolve('/', oldPath);
         newPath = tool.urlResolve('/', newPath);
         if (!oldPath.startsWith(newPath.slice(0, 9))) {
@@ -917,8 +917,8 @@ function rename(oldPath, newPath, taskId) {
 }
 exports.rename = rename;
 function readDir(path, encoding, taskId) {
-    var _a, _b;
     return __awaiter(this, void 0, void 0, function* () {
+        var _a, _b;
         path = tool.urlResolve('/', path);
         if (path === '/') {
             const list = [
@@ -1141,8 +1141,8 @@ function readDir(path, encoding, taskId) {
     });
 }
 exports.readDir = readDir;
-function copyFolder(from, to, ignore = [], taskId) {
-    return __awaiter(this, void 0, void 0, function* () {
+function copyFolder(from_1, to_1) {
+    return __awaiter(this, arguments, void 0, function* (from, to, ignore = [], taskId) {
         let num = 0;
         if (!(yield isDir(from, taskId))) {
             return 0;
@@ -1180,8 +1180,8 @@ function copyFolder(from, to, ignore = [], taskId) {
 }
 exports.copyFolder = copyFolder;
 function copyFile(src, dest, taskId) {
-    var _a, _b;
     return __awaiter(this, void 0, void 0, function* () {
+        var _a, _b;
         src = tool.urlResolve('/', src);
         dest = tool.urlResolve('/', dest);
         if (!src.startsWith(dest.slice(0, 9))) {

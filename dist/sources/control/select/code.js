@@ -379,8 +379,8 @@ class default_1 extends clickgo.control.AbstractControl {
         });
     }
     _search(success) {
-        var _a, _b;
         return __awaiter(this, void 0, void 0, function* () {
+            var _a, _b;
             const searchValue = (this.propBoolean('editable') ? this.inputValue : this.searchValue).trim().toLowerCase();
             if (this.propBoolean('remote')) {
                 const delay = this.propInt('remoteDelay');

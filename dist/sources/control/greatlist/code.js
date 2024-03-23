@@ -134,8 +134,8 @@ class default_1 extends clickgo.control.AbstractControl {
         }
     }
     checkValue() {
-        var _a, _b, _c;
         return __awaiter(this, void 0, void 0, function* () {
+            var _a, _b, _c;
             if (!this.props.data.length) {
                 return;
             }

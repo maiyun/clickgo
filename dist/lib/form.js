@@ -1908,9 +1908,9 @@ function getForm(taskId, formId) {
     }
     return form;
 }
-function createPanel(rootPanel, cls, opt = {}, taskId) {
-    var _a;
-    return __awaiter(this, void 0, void 0, function* () {
+function createPanel(rootPanel_1, cls_1) {
+    return __awaiter(this, arguments, void 0, function* (rootPanel, cls, opt = {}, taskId) {
+        var _a;
         if (rootPanel.element.dataset.cgControl !== 'panel') {
             const err = new Error('form.createPanel: -0');
             core.trigger('error', 0, 0, err, err.message);
@@ -2214,9 +2214,9 @@ function createPanel(rootPanel, cls, opt = {}, taskId) {
     });
 }
 exports.createPanel = createPanel;
-function create(cls, data, opt = {}, taskId) {
-    var _a, _b;
-    return __awaiter(this, void 0, void 0, function* () {
+function create(cls_1, data_1) {
+    return __awaiter(this, arguments, void 0, function* (cls, data, opt = {}, taskId) {
+        var _a, _b;
         if (!taskId) {
             const err = new Error('form.create: -1');
             core.trigger('error', 0, 0, err, err.message);
@@ -2681,8 +2681,8 @@ function dialog(opt) {
 }
 exports.dialog = dialog;
 function confirm(opt) {
-    var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k;
     return __awaiter(this, void 0, void 0, function* () {
+        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k;
         if (typeof opt === 'string') {
             opt = {
                 'content': opt

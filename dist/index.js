@@ -98,8 +98,8 @@ class AbstractBoot {
 exports.AbstractBoot = AbstractBoot;
 function launcher(boot) {
     (function () {
-        var _a;
         return __awaiter(this, void 0, void 0, function* () {
+            var _a;
             const paths = [
                 loader.cdn + '/npm/vue@3.4.21/dist/vue.global.prod.min.js'
             ];

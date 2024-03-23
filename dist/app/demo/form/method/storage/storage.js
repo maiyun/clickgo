@@ -42,8 +42,8 @@ class default_1 extends clickgo.form.AbstractForm {
         this.ppath = '';
     }
     get() {
-        var _a;
         return __awaiter(this, void 0, void 0, function* () {
+            var _a;
             yield clickgo.form.dialog((_a = clickgo.storage.get(this.key)) !== null && _a !== void 0 ? _a : 'null');
         });
     }

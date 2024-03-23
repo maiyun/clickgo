@@ -188,8 +188,8 @@ class default_1 extends clickgo.control.AbstractControl {
         }
         this.emit('update:modelValue', newval);
     }
-    _findValueInDataAndSelectValueCheckChildren(nextChildren, autoUpdate = true, hidePop = false) {
-        return __awaiter(this, void 0, void 0, function* () {
+    _findValueInDataAndSelectValueCheckChildren(nextChildren_1) {
+        return __awaiter(this, arguments, void 0, function* (nextChildren, autoUpdate = true, hidePop = false) {
             if (!nextChildren) {
                 if (!this.propBoolean('async')) {
                     if (hidePop) {
@@ -256,8 +256,8 @@ class default_1 extends clickgo.control.AbstractControl {
         });
     }
     findValueInData(value, data) {
-        var _a, _b, _c, _d, _e;
         return __awaiter(this, void 0, void 0, function* () {
+            var _a, _b, _c, _d, _e;
             if (!data) {
                 data = this.props.data;
                 this._fvid.level = 0;
@@ -378,8 +378,8 @@ class default_1 extends clickgo.control.AbstractControl {
         }
     }
     listItemClicked() {
-        var _a, _b, _c;
         return __awaiter(this, void 0, void 0, function* () {
+            var _a, _b, _c;
             this.inputValue = '';
             let nextChildren = null;
             let isSelected = false;
@@ -450,8 +450,8 @@ class default_1 extends clickgo.control.AbstractControl {
         });
     }
     _selectValue(value) {
-        var _a, _b, _c, _d;
         return __awaiter(this, void 0, void 0, function* () {
+            var _a, _b, _c, _d;
             let nextChildren = null;
             let isSelected = false;
             const isArray = Array.isArray(this.lists[this.level]);

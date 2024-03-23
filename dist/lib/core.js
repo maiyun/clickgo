@@ -602,8 +602,8 @@ function readApp(blob) {
     });
 }
 exports.readApp = readApp;
-function fetchApp(url, opt = {}, taskId) {
-    return __awaiter(this, void 0, void 0, function* () {
+function fetchApp(url_1) {
+    return __awaiter(this, arguments, void 0, function* (url, opt = {}, taskId) {
         let cga = '';
         if (!url.endsWith('/')) {
             const lio = url.lastIndexOf('/');

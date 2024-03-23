@@ -45,9 +45,9 @@ function purify(text) {
     });
     return text.slice(1, -1);
 }
-function addFile(zipo, base = '', path = '') {
-    var _a;
-    return __awaiter(this, void 0, void 0, function* () {
+function addFile(zipo_1) {
+    return __awaiter(this, arguments, void 0, function* (zipo, base = '', path = '') {
+        var _a;
         const list = yield fs.promises.readdir(base);
         for (const item of list) {
             try {

@@ -65,9 +65,9 @@ class default_1 extends clickgo.control.AbstractControl {
             old.style.pointerEvents = 'none';
         });
     }
-    go(cls, data = {}, opt = {}) {
-        var _a, _b, _c;
-        return __awaiter(this, void 0, void 0, function* () {
+    go(cls_1) {
+        return __awaiter(this, arguments, void 0, function* (cls, data = {}, opt = {}) {
+            var _a, _b, _c;
             if (this.loading) {
                 return false;
             }
@@ -146,9 +146,9 @@ class default_1 extends clickgo.control.AbstractControl {
         }
         this.loaded[this.activeId].vroot.onReceive(data);
     }
-    mapNameChange(opt = {}) {
-        var _a, _b;
-        return __awaiter(this, void 0, void 0, function* () {
+    mapNameChange() {
+        return __awaiter(this, arguments, void 0, function* (opt = {}) {
+            var _a, _b;
             if (!this.props.map) {
                 this.mapSelected = '';
                 return;

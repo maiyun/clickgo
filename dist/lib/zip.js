@@ -45,8 +45,8 @@ class Zip {
         this._zip = zip;
         this._refreshList();
     }
-    getContent(path, type = 'string') {
-        return __awaiter(this, void 0, void 0, function* () {
+    getContent(path_1) {
+        return __awaiter(this, arguments, void 0, function* (path, type = 'string') {
             path = tool.urlResolve(this._path, path);
             const f = this._zip.file(path.slice(1));
             if (!f) {

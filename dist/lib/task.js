@@ -216,9 +216,9 @@ function getList() {
     return rtn;
 }
 exports.getList = getList;
-function run(url, opt = {}, ntid) {
-    var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o;
-    return __awaiter(this, void 0, void 0, function* () {
+function run(url_1) {
+    return __awaiter(this, arguments, void 0, function* (url, opt = {}, ntid) {
+        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o;
         let app = null;
         if (typeof url === 'string') {
             if (!url.endsWith('/') && !url.endsWith('.cga')) {
@@ -1331,9 +1331,9 @@ const locale = {
         'read-write': 'Đọc/ghi'
     }
 };
-function checkPermission(vals, apply = false, applyHandler, taskId) {
-    var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m;
-    return __awaiter(this, void 0, void 0, function* () {
+function checkPermission(vals_1) {
+    return __awaiter(this, arguments, void 0, function* (vals, apply = false, applyHandler, taskId) {
+        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m;
         if (!taskId) {
             return [false];
         }

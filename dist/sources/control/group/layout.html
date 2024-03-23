@@ -1,6 +1,14 @@
 <div class="wrap" :class="[direction]">
-    <div class="title" v-if="title">{{title}}</div>
+    <div class="title" v-if="title || slots['title']">
+        <template v-if="title">{{title}}</template>
+        <template v-else>
+            <slot name="title"></slot>
+        </template>
+    </div>
     <div class="content" :style="{'align-items': direction === 'v' ? (alignH && (alignH !== 'center' ? 'flex-' : '') + alignH) : (alignV && (alignV !== 'center' ? 'flex-' : '') + alignV), 'justify-content': direction === 'v' ? (alignV && (alignV !== 'center' ? 'flex-' : '') + alignV) : (alignH && (alignH !== 'center' ? 'flex-' : '') + alignH), 'gap': propNumber('gutter') ? (gutter + 'px') : '0'}">
         <slot></slot>
+    </div>
+    <div v-if="slots['footer']" class="footer">
+        <slot name="footer"></slot>
     </div>
 </div>

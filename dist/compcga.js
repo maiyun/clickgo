@@ -38,9 +38,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const fs = __importStar(require("fs"));
 const jszip_1 = __importDefault(require("jszip"));
 const terser = __importStar(require("terser"));
-function addFile(zipo, base = '', path = '') {
-    var _a;
-    return __awaiter(this, void 0, void 0, function* () {
+function addFile(zipo_1) {
+    return __awaiter(this, arguments, void 0, function* (zipo, base = '', path = '') {
+        var _a;
         const list = yield fs.promises.readdir(base);
         for (const item of list) {
             try {

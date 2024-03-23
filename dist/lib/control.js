@@ -521,8 +521,8 @@ function buildComponents(taskId, formId, path) {
                 this.onBeforeMount();
             },
             mounted: function () {
-                var _a;
                 return __awaiter(this, void 0, void 0, function* () {
+                    var _a;
                     if (((_a = this.element.dataset) === null || _a === void 0 ? void 0 : _a.cgRootcontrol) !== undefined) {
                         const rc = this.parentByAccess('cgPCMap', this.element.dataset.cgRootcontrol);
                         if (rc) {
