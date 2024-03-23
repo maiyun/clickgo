@@ -52,12 +52,6 @@
                                 border-color: var(--g-color-hover);
                             }
                         }
-                        &:active {
-                            background: var(--g-plain-background-active);
-                            &::after {
-                                border-color: var(--g-color-active);
-                            }
-                        }
                     }
                 }
                 &.area-text {
@@ -69,20 +63,12 @@
                             }
                         }
                     }
-                    &:active {
-                        .arrow {
-                            background: var(--g-plain-background-active);
-                            &::after {
-                                border-color: var(--g-color-active);
-                            }
-                        }
-                    }
                 }
             }
             &[data-cg-pop-open], &.active {
                 // --- 展开状态 ---
                 &.area-all {
-                    background: var(--g-background-active); color: var(--g-color-hover); fill: var(--g-color-hover); stroke: var(--g-color-hover);
+                    background: var(--g-plain-background-active); color: var(--g-color-hover); fill: var(--g-color-hover); stroke: var(--g-color-hover);
                     .arrow::after {
                         border-color: var(--g-color-active);
                     }

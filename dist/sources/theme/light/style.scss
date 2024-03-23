@@ -285,10 +285,38 @@ global {
 
 .greatselect_wrap {
     transition: all .3s var(--g-cubic);
-    &:not([data-cg-disabled]):not([data-cg-pop-open]) {
+    &:not([data-cg-disabled]) {
         &.greatselect_plain {
-            &:hover, &:focus {
-                background: hsla(0,0%,97%);
+            &:not([data-cg-pop-open]):not(.greatselect_active) {
+                &.greatselect_area-all {
+                    &:hover {
+                        background: hsla(0,0%,97%);
+                    }
+                }
+                &.greatselect_area-arrow {
+                    .greatselect_arrow {
+                        &:hover {
+                            background: hsla(0,0%,97%);
+                        }
+                    }
+                }
+                &.greatselect_area-text {
+                    &:hover {
+                        .greatselect_arrow {
+                            background: hsla(0,0%,97%);
+                        }
+                    }
+                }
+            }
+            &[data-cg-pop-open], &.greatselect_active {
+                &.greatselect_area-all {
+                    background: hsla(0,0%,95%);
+                }
+                &.greatselect_area-arrow, &.greatselect_area-text {
+                    .greatselect_arrow {
+                        background: hsla(0,0%,95%);
+                    }
+                }
             }
         }
     }
