@@ -1,5 +1,17 @@
 # Changelog
 
+# 3.11.14
+
+[+] Added `cache` parameter to `fs.getContent` and `task.run` functions, enabling cached mode for faster loading of applications and files.  
+[+] Added `virtual` parameter to `greatlist`, `greatselect`, `levelselect`, `list`, `select`, and `table` controls. By default, it's turned off. Enabling it allows loading of large amounts of data using virtual DOM mode.  
+[+] Added `control` parameter to `page` control for customizing the number of pagination buttons. Default is 2.  
+[+] Added `slot:row` to `list` for customizing item content.  
+[\*] Optimized `drawer` control to prevent element expansion when content exceeds vertically.  
+[\*] Improved `form.close` method to prevent errors when closing the same window multiple times.  
+[\*] Fixed issue with `video` control not automatically playing when `play` is set to true during loading.  
+[\*] Enhanced all controls globally to change mouse pointer to `not-allowed` when disabled.  
+[\*] Fixed styling issue with `select`, `greatselect`, and `levelselect` controls when disabled.
+
 # 3.11.13
 
 [\*] Adjusted tuieditor to no longer automatically gain focus by default.  

@@ -1,5 +1,17 @@
 # 更新日志
 
+# 3.11.14
+
+[+] fs.getContent、task.run 新增 cache 参数，可以以有缓存模式加载应用和文件，加快加载速度。  
+[+] greatlist、greatselect、levelselect、list、select、table 控件新增 virtual 参数，默认关闭，开启可使用虚拟 DOM 模式加载超大量数据。  
+[+] page 控件新增 control 参数，可以自定义翻页按钮数量，默认为 2。  
+[+] list 新增 slot:row，可自定义项的内容。  
+[\*] 优化 drawer 控件，使内容竖向超出时不会撑开元素。  
+[\*] 优化 form.close 方法，多次关闭相同窗体不会报错了。  
+[\*] 修复 video 控件加载时 play 为 true 时不自动播放的问题。  
+[\*] 优化全局所有控件当被禁用时鼠标指针将自动变为 not-allowed。  
+[\*] 修复 select、greatselect、levelselect 控件禁用时样式不明显的问题。
+
 # 3.11.13
 
 [\*] 修改 tuieditor 默认不自动获得焦点。  
