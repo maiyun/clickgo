@@ -1,5 +1,5 @@
 .wrap {
-    padding: var(--g-bpadding); background: var(--face);
+    padding: var(--g-bpadding); background: var(--face); display: flex; flex-direction: column;
 
     .title {
         font-size: 20px; margin-bottom: var(--g-bpadding); display: flex;
